@@ -30,6 +30,7 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
   )
 })
 
+
 setMethodS3("as.character", "AffymetrixCdfFile", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Path: %s", getPath(this)));
@@ -390,6 +391,9 @@ setMethodS3("restruct", "AffymetrixCdfFile", function(this, cdf, ...) {
 }, protected=TRUE)
 
 
+
+
+
 ###########################################################################/**
 # @RdocMethod setRestructor
 #
@@ -581,6 +585,9 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
 
 ############################################################################
 # HISTORY:
+# 2006-08-25
+# o Added getFirstCellIndices().  This may be used by methods to identify
+#   unit or unit groups for which no probe signals have been assigned yet.
 # 2006-08-24
 # o Added reconstruct().
 # o Added Rdoc comments.

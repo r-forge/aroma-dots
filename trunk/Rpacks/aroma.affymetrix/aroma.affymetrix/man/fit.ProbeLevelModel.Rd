@@ -24,14 +24,14 @@
   are stored in array specific files.
  }
 
- \usage{\method{fit}{ProbeLevelModel}(this, units=NULL, ..., force=FALSE, verbose=FALSE)}
+ \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., unitsPerChunk=1000, force=FALSE, verbose=FALSE)}
 
  \arguments{
    \item{...}{Not used.}
  }
 
  \value{
-  Returns a \code{\link[base]{character}} string.
+  Returns the indices of the units fitted, or \code{\link[base]{NULL}} if no units had to be fitted.
  }
 
  \details{

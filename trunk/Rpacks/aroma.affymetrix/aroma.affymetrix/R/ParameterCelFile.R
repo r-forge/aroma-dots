@@ -47,6 +47,8 @@ setConstructorS3("ParameterCelFile", function(...) {
 }, abstract=TRUE)
 
 
+
+
 setMethodS3("createFrom", "ParameterCelFile", function(static, dataSet, filename, path=NULL, ..., verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -111,9 +113,8 @@ setMethodS3("decode", "ParameterCelFile", function(static, units, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=TRUE, readPixels=TRUE) {
-  units <- NextMethod("readUnits", this, ..., readStdvs=readStdvs, 
-                                                    readPixels=readPixels);
+setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=TRUE, readPixels=TRUE, stratifyBy=NULL) {
+  units <- NextMethod("readUnits", this, ..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy);
   decode(this, units);
 });
 

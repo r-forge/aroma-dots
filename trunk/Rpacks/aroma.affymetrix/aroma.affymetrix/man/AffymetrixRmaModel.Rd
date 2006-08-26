@@ -48,9 +48,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\tabular{rll}{
- \tab \code{fit} \tab  -\cr
-}
+\emph{No methods defined}.
 
 
 \bold{Methods inherited from ProbeLevelModel}:\cr
