@@ -56,6 +56,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{getRectangle} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{image270}} \tab Displays all or a subset of the data spatially.\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
+ \tab \code{writeSpatial} \tab  -\cr
 }
 
 

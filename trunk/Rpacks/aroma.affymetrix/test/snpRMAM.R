@@ -17,7 +17,7 @@ verbose <- Arguments$getVerbose(TRUE);
 # Setup
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the dataset to be used
-ds <- AffymetrixCelSet$fromFiles("cel/Hind/");
+ds <- AffymetrixCelSet$fromFiles("chip_data/Hind/");
 
 # Tweak the CDF such that forward and reverse strands are treated
 # together.  Thus, each time the CDF is queried the below function

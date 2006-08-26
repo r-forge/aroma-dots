@@ -383,8 +383,8 @@ setMethodS3("getIntensities", "AffymetrixCelFile", function(this, indices=NULL, 
 }, protected=TRUE);
 
 
-setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
-  readCelRectangle(this$.pathname, ...);
+setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), fields=c("intensities", "stdvs", "pixels"), ...) {
+  readCelRectangle(this$.pathname, xrange=xrange, yrange=yrange, readIntensities=("intensities" %in% fields), readStdvs=("stdvs" %in% fields), readPixels=("pixels" %in% fields));
 })
 
 
@@ -436,19 +436,8 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   # Argument 'field':
   field <- match.arg(field);
 
-  readIntensities <- readStdvs <- readPixels <- FALSE;
-  if (identical(field, "intensities")) {
-    readIntensities <- TRUE;
-  } else if (identical(field, "stdvs")) {
-    readStdvs <- TRUE;
-  } else if (identical(field, "pixels")) {
-    readPixels <- TRUE;
-  }
-
-  
-
   suppressWarnings({
-    cel <- getRectangle(this, xrange=xrange, yrange=yrange, readIntensities=readIntensities, readStdvs=readStdvs, readPixels=readPixels, ...);
+    cel <- getRectangle(this, xrange=xrange, yrange=yrange, fields=field, ...);
   })
 
   # Display the rectangle
@@ -477,9 +466,112 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 })
 
 
+
+
+###########################################################################/**
+# @RdocMethod writeSpatial
+#
+# @title "Writes a spatial image of the CEL data to an image file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{filename}{The filename of the image file.}
+#   \item{path}{The path to the image file.}
+#   \item{...}{Additional arguments passed to @seemethod "readRectangle".}
+#   \item{field}{The data field to be displayed.}
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
+# }
+#
+# \value{
+#   Returns (invisibly) the pathname of the generated image file.
+# }
+#
+# \section{Details}{
+#   If any other image format than the pixmap *.pgm format is requested,
+#   an external image coverted is used to convert from the PGM format.
+#   You may specify the absolute pathname to such an image converted by:
+#   \code{options(imageConverter="C:/Program Files/ImageMagick/bin/convert")}.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "image270".
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf(fmtstr, getName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), verbose=FALSE) {
+  require(R.image) || throw("Package R.image not loaded.");
+
+  # Argument 'field':
+  field <- match.arg(field);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Argument 'filename' and 'path':
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  verbose && enter(verbose, "Read CEL data");
+  suppressWarnings({
+    cel <- getRectangle(this, fields=field, ...);
+  })
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Create in memory image");
+  # Get the image
+  img <- cel[[field]];
+  
+  # Create 256-levels gray-scale image
+  img <- sqrt(img) - 1;
+  img <- GrayImage(img);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Write image to temporary PGM file");
+  pgmfile <- paste(pathname, ".pgm", sep="");
+  on.exit({
+    # Remove the PGM file if the final file was successfully create.
+    if (isFile(pathname))
+      file.remove(pgmfile)
+  });
+  write(img, pgmfile);
+  verbose && exit(verbose);
+
+  # Done?
+  if (regexpr("[.]pgm$", pathname) != -1)
+    return(invisible(pathname));
+
+  # Convert PGM to final image format using ImageMagick
+  verbose && enter(verbose, "Convert to final file using ImageMagick");
+  converter <- getOption("imageConverter");
+  if (is.character(converter)) {
+    converter <- function(srcfile, destfile, format, options=NULL, ...) {
+      res <- system(paste(converter, options, pgmfile, pathname));
+      (res == 0);
+    }
+  }
+
+  suppressWarnings({
+    converter(pgmfile, pathname, ...);
+  })
+
+  verbose && exit(verbose);
+
+  invisible(pathname);
+})
+
+
 ############################################################################
 # HISTORY:
 # 2006-08-25
+# o Added image270() and writeSpatial().
 # o Added methods "[" and "[[" mapped to readUnits().
 # 2006-08-24
 # o Added the option to specify an 'cdf' object, making it possible to 

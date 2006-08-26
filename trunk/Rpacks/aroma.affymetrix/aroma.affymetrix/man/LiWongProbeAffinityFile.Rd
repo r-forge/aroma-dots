@@ -59,7 +59,7 @@ createFrom, findUnitsTodo, getFirstCellIndices, readUnits, updateUnits
 createFrom, decode, decodeUnit, decodeUnitGroup, encode, encodeUnit, encodeUnitGroup, readUnits, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, fromFile, getCdf, getChipType, getHeader, getIntensities, getRectangle, image270, readUnits, setCdf, updateUnits
+[, [[, fromFile, getCdf, getChipType, getHeader, getIntensities, getRectangle, image270, readUnits, setCdf, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, fromFile, getFilename, getFileSize, getFileType, getName, getPath, getPathname
