@@ -50,7 +50,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelFile}\cr
 
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-fromFile, getCdf, getChipType, getHeader, getIntensities, getRectangle, image270, readUnits, setCdf, updateUnits
+[, [[, fromFile, getCdf, getChipType, getHeader, getIntensities, getRectangle, image270, readUnits, setCdf, updateUnits
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, fromFile, getFilename, getFileSize, getFileType, getName, getPath, getPathname

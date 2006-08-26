@@ -107,11 +107,6 @@ setMethodS3("getFitFunction", "AffymetrixRmaModel", function(static, ...) {
   rmaModel;
 }, static=TRUE, protected=TRUE)
 
-setMethodS3("fit", "AffymetrixRmaModel", function(...) {
-  NextMethod("fit", ...);
-})
-
-
 
 
 ############################################################################

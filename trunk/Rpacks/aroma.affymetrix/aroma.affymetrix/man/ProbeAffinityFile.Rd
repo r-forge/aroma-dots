@@ -49,6 +49,7 @@ extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{createFrom} \tab  -\cr
+ \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
@@ -57,7 +58,7 @@ extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 createFrom, decode, decodeUnit, decodeUnitGroup, encode, encodeUnit, encodeUnitGroup, readUnits, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-fromFile, getCdf, getChipType, getHeader, getIntensities, getRectangle, image270, readUnits, setCdf, updateUnits
+[, [[, fromFile, getCdf, getChipType, getHeader, getIntensities, getRectangle, image270, readUnits, setCdf, updateUnits
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, fromFile, getFilename, getFileSize, getFileType, getName, getPath, getPathname
@@ -71,8 +72,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-   An object of this class is typically obtain through the
-   \code{getProbeAffinities()} method for an
-   \code{\link{AffymetrixProbeAffinityModel}} class.
+   An object of this class is typically obtained through the
+   \code{getProbeAffinities()} method for the \code{\link{ProbeLevelModel}} class.
  }
 \keyword{classes}

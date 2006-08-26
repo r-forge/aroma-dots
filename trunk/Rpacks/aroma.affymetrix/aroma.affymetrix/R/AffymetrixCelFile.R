@@ -294,10 +294,10 @@ setMethodS3("getChipType", "AffymetrixCelFile", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NULL, ...) {
+setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NULL, ..., stratifyBy=NULL) {
   if (is.null(cdf)) {
     suppressWarnings({
-      cdf <- getUnits(getCdf(this), units=units, ...);
+      cdf <- readUnits(getCdf(this), units=units, stratifyBy=stratifyBy);
     });
   }
   suppressWarnings({
@@ -343,6 +343,17 @@ setMethodS3("updateUnits", "AffymetrixCelFile", function(this, data, ...) {
 
 
 
+setMethodS3("[", "AffymetrixCelFile", function(this, units=NULL, drop=FALSE) {
+  data <- readUnits(this, units=units);
+  if (drop && length(data) == 1)
+    data <- data[[1]];
+  data;
+})
+
+setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
+  this[units=unit, drop=TRUE];
+})
+
 
 setMethodS3("getIntensities", "AffymetrixCelFile", function(this, indices=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -377,8 +388,45 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
 })
 
 
+
+###########################################################################/**
+# @RdocMethod image270
+#
+# @title "Displays all or a subset of the data spatially"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{xrange}{A @numeric @vector of length two giving the left and right
+#          coordinates of the cells to be returned.}
+#   \item{yrange}{A @numeric @vector of length two giving the top and bottom
+#          coordinates of the cells to be returned.}
+#   \item{...}{Additional arguments passed to @seemethod "readRectangle",
+#      but also @see "graphics::image".}
+#   \item{field}{The data field to be displayed.}
+#   \item{col}{The color map to be used.}
+#   \item{main}{The main title of the plot.}
+# }
+#
+# \value{
+#  Returns the (270-degrees rotated) data @matrix.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "updateUnits".
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
 setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=NULL, yrange=xrange, ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(paf)) {
-  rotate270.matrix <- function(x, ...) {
+  rotate270 <- function(x, ...) {
     x <- t(x)
     nc <- ncol(x)
     if (nc < 2) return(x)
@@ -388,19 +436,26 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=NULL, yrange=
   # Argument 'field':
   field <- match.arg(field);
 
-  suppressWarnings({
-    cel <- getRectangle(this, xrange=xrange, yrange=yrange, ...);
-  })
-
-  # Rotate fields
-  for (ff in intersect(c("intensities", "stdvs", "pixels"), names(cel))) {
-    cel[[ff]] <- rotate270.matrix(cel[[ff]]);
+  readIntensities <- readStdvs <- readPixels <- FALSE;
+  if (identical(field, "intensities")) {
+    readIntensities <- TRUE;
+  } else if (identical(field, "stdvs")) {
+    readStdvs <- TRUE;
+  } else if (identical(field, "pixels")) {
+    readPixels <- TRUE;
   }
 
-  # Display the field of interest
-  y <- cel[[field]];
+  
+
   suppressWarnings({
-    image(y, col=col, ..., axes=FALSE, main=main);
+    cel <- getRectangle(this, xrange=xrange, yrange=yrange, readIntensities=readIntensities, readStdvs=readStdvs, readPixels=readPixels, ...);
+  })
+
+  # Display the rectangle
+  y <- cel[[field]];
+
+  suppressWarnings({
+    image(rotate270(y), col=col, ..., axes=FALSE, main=main);
   })
 
   if (is.null(xrange)) 
@@ -424,6 +479,8 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=NULL, yrange=
 
 ############################################################################
 # HISTORY:
+# 2006-08-25
+# o Added methods "[" and "[[" mapped to readUnits().
 # 2006-08-24
 # o Added the option to specify an 'cdf' object, making it possible to 
 #   override the default CDF file according to the CEL header.  It is

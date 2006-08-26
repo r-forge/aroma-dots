@@ -141,7 +141,6 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
 
 
 
-
 ###########################################################################/**
 # @RdocMethod getFitFunction
 #
@@ -173,6 +172,8 @@ setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 
 
 
+
+
 ###########################################################################/**
 # @RdocMethod fit
 #
@@ -194,7 +195,7 @@ setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 # }
 #
 # \value{
-#  Returns a @character string.
+#  Returns the indices of the units fitted, or @NULL if no units had to be fitted.
 # }
 #
 # \details{
@@ -230,108 +231,122 @@ setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "ProbeLevelModel", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., unitsPerChunk=1000, force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the some basic information about this model
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ds <- getDataSet(this);
+  cdf <- getCdf(ds);
+  paf <- getProbeAffinities(this);
+  # Get (and create if missing) the chip files, which stores chip estimates
+#  chipFiles <- getChipEffects(this);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  # Argument 'units':
+  doRemaining <- FALSE;
+  if (is.null(units)) {
+  } else if (is.numeric(units)) {
+    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+  } else if (identical(units, "remaining")) {
+    doRemaining <- TRUE;
+    units <- findUnitsTodo(paf);
+  } else {
+    throw("Unknown mode of argument 'units': ", mode(units));
+  }
+
   # Argument 'force':
   force <- Arguments$getLogical(force);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Setup the output directory etc
+  # Identify units to be fitted
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # The pathname of the CEL file where probe-affinity parameter estimates are stored
-  paf <- getProbeAffinities(this);
-
-
-  # For each of the data files, create a file to store the estimates in
-  ds <- getDataSet(this);
-  cdf <- getCdf(ds);
-
-  # Get (and create if missing) the chip files, which stores chip estimates
-#  chipFiles <- getChipEffects(this);
-
-  # Get the CDF cell indices
-  verbose && enter(verbose, "Identifying CDF cell indices");
-  stratifyBy <- switch(this$model, pm="pm");
-  # IMPORTANT: This is the only place where the actually CDF structure
-  # is being specified. The reading/writing is done using this structure!
-  # This means that we can have getCellIndices() of AffymetrixCdfFile 
-  # class to return a structure specific to our analysis.  For instance,
-  # in CRLMM we estimate a model for each unit group, whereas in RLMM
-  # and BRLMM, we estimate one model where the forward and reverse
-  # strands have been joined. Thus, we only have to modify the 
-  # getCellIndices() so it returns a structure that suits the.
-  # model-fitting algorithm.  Pretty sweet actually :)  /HB 2006-08-24
-  cdf0 <- getCellIndices(cdf, units=units, ..., stratifyBy=stratifyBy);
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Reading probe-affinity estimates");
-  cel <- readUnits(paf, cdf=cdf0);
-  verbose && str(verbose, cel, max.level=3, level=-5);
-  verbose && exit(verbose);
+  if (is.null(units)) {
+    nbrOfUnits <- nbrOfUnits(cdf);
+    units <- 1:nbrOfUnits;
+  } else {
+    # Fit only unique units
+    units <- unique(units);
+    nbrOfUnits <- length(units);
+  }
+  verbose && printf(verbose, "Getting model fit for %d units.\n", nbrOfUnits);
 
   # Identify which of the requested units have *not* already been estimated
-  if (force) {
-    ntodo <- length(cel);
-  } else {
-    todo <- unlist(lapply(cel, FUN=function(unit) {
-      any(isZero(.subset2(.subset2(unit, 1), "stdvs")));
-    }), use.names=FALSE);
-    ntodo <- sum(todo);
+  if (!doRemaining) {
+    if (force) {
+      verbose && printf(verbose, "All of these are forced to be fitted.\n");
+    } else {
+      units <- findUnitsTodo(paf, units=units);
+      nbrOfUnits <- length(units);
+      verbose && printf(verbose, "Out of these, %d units need to be fitted.\n", nbrOfUnits);
+    }
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Estimate model for set of units not already estimated
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (ntodo > 0) {
-    fitfcn <- getFitFunction(this);
+  # Nothing more to do?
+  if (nbrOfUnits == 0)
+    return(NULL);
 
-    if (force) {
-      verbose && cat(verbose, "Forced estimation of ", ntodo, " units.");
-      cdf <- cdf0;
-    } else {
-      verbose && cat(verbose, "Needs to estimate ", ntodo, " units.");
-      cdf <- cdf0[todo];
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fit the model in chunks
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get what set of probes to read
+  stratifyBy <- switch(this$model, pm="pm");
+
+  # Get the model-fit function
+  fitfcn <- getFitFunction(this);
+
+  idxs <- 1:nbrOfUnits;
+  head <- 1:unitsPerChunk;
+  nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
+  verbose && cat(verbose, "Number units per chunk: ", unitsPerChunk);
+
+  count <- 1;
+  while (length(idxs) > 0) {
+    verbose && enter(verbose, "Fitting chunk #", count, " of ", nbrOfChunks);
+    if (length(idxs) < unitsPerChunk) {
+      head <- 1:length(idxs);
     }
+    uu <- idxs[head];
+
+    # Get the CDF cell indices
+    verbose && enter(verbose, "Identifying CDF cell indices");
+    cdfUnits <- getCellIndices(cdf, units=units[uu], ..., stratifyBy=stratifyBy);
+    verbose && exit(verbose);
 
     # Get the CEL intensities by units
     verbose && enter(verbose, "Reading probe intensities");
-    y <- getUnitIntensities(ds, units=cdf, ...);
+    y <- getUnitIntensities(ds, units=cdfUnits, ...);
     verbose && exit(verbose);
   
-    # Apply the Li-Wong model
-    verbose && enter(verbose, "Fitting probeset model");
+    # Fit the model
+    verbose && enter(verbose, "Fitting unit-group model");
     fit <- lapply(y, FUN=function(unit) {
-      groups <- lapply(unit, FUN=function(group) {
+      lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1);
-        f <- fitfcn(y);
+        fitfcn(y);
       })
-      groups;
     })
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Storing parameter estimates");
-    fit <- updateUnits(paf, cdf=cdf, data=fit);
+    fit <- updateUnits(paf, cdf=cdfUnits, data=fit);
     verbose && exit(verbose);
-    fit <- decode(paf, fit);
 
-    verbose && enter(verbose, "Mixing parameter estimates");
-    if (force) {
-      cel <- fit;
-    } else {
-      cel[todo] <- fit;
-    }
+    idxs <- idxs[-head];
+    count <- count + 1;
     verbose && exit(verbose);
-  } else {
-    verbose && cat(verbose, "No need to fit anything. Found estimates for all units requested.");
-  } # if (length(cdf) > 0)
+  } # while()
 
-  cel;
+  invisible(units);
 })
+
 
 setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
   chipFiles <- this$.chipFiles;

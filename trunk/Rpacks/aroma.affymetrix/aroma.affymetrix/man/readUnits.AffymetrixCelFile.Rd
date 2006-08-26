@@ -19,7 +19,7 @@
  Reads CEL data unit by unit for all or a subset of units (probeset).
 }
 
-\usage{\method{readUnits}{AffymetrixCelFile}(this, units=NULL, cdf=NULL, ...)}
+\usage{\method{readUnits}{AffymetrixCelFile}(this, units=NULL, cdf=NULL, ..., stratifyBy=NULL)}
 
 \arguments{
   \item{units}{The units to be read. If \code{\link[base]{NULL}}, all units are read.}
