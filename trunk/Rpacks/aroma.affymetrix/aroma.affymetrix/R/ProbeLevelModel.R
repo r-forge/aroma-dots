@@ -8,9 +8,9 @@
 #
 #  This abstract class represents any probe-level model (PLM). 
 #  To quote the \pkg{affyPLM} package: 
-#  "A [...] PLM is a model that is fit to probe-intensity data. 
-#   More specifically, it is where we fit a model with probe level
-#   and chip level parameters on a probeset by probeset basis",
+#    "A [...] PLM is a model that is fit to probe-intensity data. 
+#     More specifically, it is where we fit a model with probe level
+#     and chip level parameters on a probeset by probeset basis",
 #  where the more general case for a probeset is a unit group
 #  using Affymetrix CDF terms.
 # }
@@ -32,12 +32,6 @@
 #
 # 
 # @author
-#
-# \section{Model estimates}{
-#   The estimated probe affinities are represented by the
-#   @see "ProbeAffinityFile" class.  
-#   Use @seemethod "getProbeAffinities" to access these.
-# }
 #
 # \seealso{
 #   For more details on probe-level models, please see 
@@ -95,6 +89,9 @@ setConstructorS3("ProbeLevelModel", function(dataSet=NULL, path=filePath("modelP
 #*/###########################################################################
 setMethodS3("getProbeAffinityClass", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 
+setMethodS3("getChipEffectClass", "ProbeLevelModel", function(static, ...) {
+  ChipEffectFile;
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -125,17 +122,22 @@ setMethodS3("getProbeAffinityClass", "ProbeLevelModel", abstract=TRUE, static=TR
 #*/###########################################################################
 setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
   paFile <- this$.paFile;
-  if (is.null(paFile)) {
-    # Get the probe-affinity class object
-    clazz <- getProbeAffinityClass(this);
+  if (!is.null(paFile))
+    return(paFile);
 
-    # Let the parameter object know about the CDF structure, because we 
-    # might use a modified version of the one in the CEL header.
-    cdf <- getCdf(this);
-    pathname <- clazz$createFrom(cdf=cdf, path=getPath(this), dataSet=getDataSet(this));
-    paFile <- newInstance(clazz, pathname, cdf=cdf, model=this$model);
-    this$.paFile <- paFile;
-  }
+  # Get the probe-affinity class object
+  clazz <- getProbeAffinityClass(this);
+
+  # Let the parameter object know about the CDF structure, because we 
+  # might use a modified version of the one in the CEL header.
+  cdf <- getCdf(this);
+  ds <- getDataSet(this);
+  if (length(ds) == 0)
+    throw("Cannot create probe-affinity file. The CEL set is empty.");
+  pathname <- clazz$createFrom(cdf=cdf, path=getPath(this), celFile=ds[[1]]);
+  paFile <- newInstance(clazz, pathname, cdf=cdf, model=this$model);
+  this$.paFile <- paFile;
+
   paFile;
 })
 
@@ -237,9 +239,13 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ds <- getDataSet(this);
   cdf <- getCdf(ds);
+
+  # Get (and create if missing) the probe-affinity file (one per dataset)
   paf <- getProbeAffinities(this);
-  # Get (and create if missing) the chip files, which stores chip estimates
-#  chipFiles <- getChipEffects(this);
+
+  # Get (and create if missing) the chip-effect files (one per array)
+  ces <- getChipEffects(this);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -262,6 +268,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -335,10 +342,16 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     })
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "Storing parameter estimates");
-    fit <- updateUnits(paf, cdf=cdfUnits, data=fit);
+    verbose && enter(verbose, "Storing probe-affinity estimates");
+    updateUnits(paf, cdf=cdfUnits, data=fit);
     verbose && exit(verbose);
 
+    verbose && enter(verbose, "Storing chip-effect estimates");
+    firstCells <- getFirstCellIndices(paf, units=units[uu]);
+    updateUnits(ces, cdf=firstCells, data=fit, verbose=verbose);
+    verbose && exit(verbose);
+
+    # Next chunk...
     idxs <- idxs[-head];
     count <- count + 1;
     verbose && exit(verbose);
@@ -348,48 +361,102 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
 })
 
 
+###########################################################################/**
+# @RdocMethod getChipEffects
+#
+# @title "Gets the chip-effect files for this model"
+#
+# \description{
+#  @get "title".  There is one chip-effect file per array.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{verbose}{A @logical or a @see "Verbose" object.}
+# }
+#
+# \value{
+#  Returns a @see "ChipEffectSet" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
   chipFiles <- this$.chipFiles;
   if (!is.null(chipFiles))
     return(chipFiles);
 
-  # For each of the data files, create a file to store the estimates in
-  path <- getPath(this);
-  ds <- getDataSet(this);
-  cdf <- getCdf(ds);
-  unitSizes <- getUnitSizes(cdf);
-  unitOffsets <- cumsum(unitSizes) - unitSizes[1] + 1;
-  n <- sum(unitSizes);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create chip-effect files 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the probe-affinity class object
+  clazz <- getChipEffectClass(this);
 
+  # Let the parameter object know about the CDF structure, because we 
+  # might use a modified version of the one in the CEL header.
+  cdf <- getCdf(this);
+  ds <- getDataSet(this);
+  if (length(ds) == 0)
+    throw("Cannot create chip-effect file. The CEL set is empty.");
+  
+  # For each CEL file, create a chip-effect file
+  df <- ds[[1]];
+
+  template <- NULL;  
   chipFiles <- list();
+  nFiles <- length(ds);
   for (kk in seq(ds)) {
     df <- ds[[kk]];
-    filename <- sprintf("%s-liwong.apd", getName(df));
-    filename <- filePath(path, filename);
-    if (!isFile(filename)) {
-      X <- FileFloatVector(filename, length=n);
-      X <- FileFloatVector(length=n, appendTo=X);
-      X <- FileByteVector(length=n, appendTo=X);
-      close(X);
-      rm(X);
-    }
-    set <- AbstractFileArray$fromFile(filename);
-    # We have to close the parameter files, because Windows can only
-    # handle ~512 open connections, and we might have more arrays.
-    # Instead we have to open and close the connections each time we
-    # read data.
-    close(set[[1]]);
-    chipFiles[[kk]] <- set;
-  } # for (kk in ...)
+    name <- getName(df);
+    verbose && enter(verbose, sprintf("Creating chip-effect file #%d of %d: %s", kk, nFiles, name));
+    filename <- sprintf("%s-chipEffect.CEL", name);
+    pathname <- Arguments$getWritablePathname(filename, path=getPath(this));
 
+    # Use template to create missing files
+    if (!isFile(pathname)) {
+      # Create an empty template CEL file for quick copy of the others
+      if (is.null(template)) {
+        verbose && enter(verbose, "Creating template");
+        template <- clazz$createFrom(cdf=cdf, filename="template.CEL", path=getPath(this), celFile=df, verbose=verbose);
+        on.exit(file.remove(template));
+        verbose && exit(verbose);
+      }
+  
+      verbose && enter(verbose, "Copying template");
+      file.copy(template, pathname);
+      verbose && exit(verbose);
+    } else {
+      verbose && cat(verbose, "File already exists.");
+    }
+
+    # Create a chip-effect object
+    chipFile <- newInstance(clazz, pathname, cdf=cdf, model=this$model);
+
+    chipFiles <- c(chipFiles, list(chipFile));
+
+    verbose && exit(verbose);
+  }
+
+  chipFiles <- ChipEffectSet(chipFiles);
   this$.chipFiles <- chipFiles;
 
   chipFiles;
-}, protected=TRUE)
+})
 
 
 ############################################################################
 # HISTORY:
+# 2006-08-26
+# o Added new getChipEffects().
 # 2006-08-25
 # o Created from AffymetrixLiWongModel.  So much is in common with the RMA
 #   model so a lot can be reused if done cleverly.

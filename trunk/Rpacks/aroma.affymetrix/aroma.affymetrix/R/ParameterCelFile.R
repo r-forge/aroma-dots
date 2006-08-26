@@ -48,19 +48,15 @@ setConstructorS3("ParameterCelFile", function(...) {
 
 
 
-
-setMethodS3("createFrom", "ParameterCelFile", function(static, dataSet, filename, path=NULL, ..., verbose=TRUE) {
+setMethodS3("createFrom", "ParameterCelFile", function(static, celFile, filename, path=NULL, ..., verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'dataSet':
-  if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "AffymetrixCelSet")) {
-      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", 
-                                                      class(dataSet)[1]);
-    }
-    if (length(dataSet) == 0) {
-      throw("Cannot create ", class(static)[1], " object. The ", class(dataSet), " does not contain any files.");
+  # Argument 'celFile':
+  if (!is.null(celFile)) {
+    if (!inherits(celFile, "AffymetrixCelFile")) {
+      throw("Argument 'celFile' is not an AffymetrixCelFile object: ", 
+                                                      class(celFile)[1]);
     }
   }
 
@@ -75,12 +71,11 @@ setMethodS3("createFrom", "ParameterCelFile", function(static, dataSet, filename
     return(pathname);
 
   verbose && enter(verbose, "Creating file for probe-affinity estimates.");
-  # 1. Get the pathname to get first CEL file
-  copyFrom <- getPathname(dataSet[[1]]);
-  file.copy(copyFrom, pathname);
+  # 1. Get the pathname for the CEL file
+  file.copy(getPathname(celFile), pathname);
 
   # 2. Clear the file
-  cdf <- getCdf(dataSet);
+  cdf <- getCdf(celFile);
   bfr <- double(nbrOfCells(cdf));
   updateCel(pathname, intensities=bfr, stdvs=bfr, pixels=bfr);
 
@@ -130,6 +125,8 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-08-26
+# o Now createFrom() takes a CEL file and not a CEL set.
 # 2006-08-24
 # o Added Rdoc comments.
 # 2006-08-23

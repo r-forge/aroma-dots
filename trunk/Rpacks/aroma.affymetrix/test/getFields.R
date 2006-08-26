@@ -16,7 +16,7 @@ cel <- ds[[1]]
 subset <- seq(from=1, to=nbrOfCells(cdf), length=1e4)
 X <- getFields(cel, indices=subset, fields=c("intensities", "stdvs"))
 X <- as.matrix(X)
-xlim <- c(0,65535) / 64
+xlim <- c(0,65535) / 16
 ylim <- xlim
 plot(X, xlim=xlim, ylim=ylim, xlab="y", ylab=expression(sigma), main=getName(cel))
 usr <- par("usr")
