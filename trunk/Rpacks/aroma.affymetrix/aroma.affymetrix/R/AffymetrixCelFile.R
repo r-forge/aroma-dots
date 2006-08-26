@@ -355,7 +355,39 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 })
 
 
-setMethodS3("getIntensities", "AffymetrixCelFile", function(this, indices=NULL, ..., verbose=FALSE) {
+
+###########################################################################/**
+# @RdocMethod getFields
+#
+# @title "Gets all or a subset of the fields in a CEL file"
+#
+# \description{
+#  @get "title" for all or a subset of the cells.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{indices}{A @numeric @vector of cell indices.  If @NULL, all cells
+#     are considered.}
+#   \item{fields}{Names of fields to be retrieved.}
+#   \item{...}{Additional arguments passed to @see "affxparser::readCel".}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".
+# }
+#
+# \value{
+#  Returns a @data.frame of the fields requested.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("getFields", "AffymetrixCelFile", function(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -367,19 +399,35 @@ setMethodS3("getIntensities", "AffymetrixCelFile", function(this, indices=NULL, 
     nbrOfCells <- length(indices);
   }
 
+  # Argument 'fields':
+  fields <- intersect(fields, c("xy", "intensities", "stdvs", "pixels"));
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  pathname <- this$.pathname;
+
   cVerbose <- -(as.numeric(verbose) + 1);
-  y <- readCel(pathname, indices=indices, 
-          readHeader=FALSE, 
-          readIntensities=TRUE, readStdvs=FALSE, 
-          readPixels=FALSE, readXY=FALSE, 
-          readOutliers=FALSE, readMasked=FALSE,
-          ...,
-          verbose=cVerbose)$intensities;
-   y;
+  cel <- readCel(this$.pathname, indices=indices, 
+                 readHeader=FALSE, 
+                 readIntensities=("intensities" %in% fields), 
+                 readStdvs=("stdvs" %in% fields), 
+                 readPixels=("pixels" %in% fields), 
+                 readXY=("xy" %in% fields), 
+                 readOutliers=FALSE, 
+                 readMasked=FALSE,
+                 ...,
+                 verbose=cVerbose);
+   cel <- as.data.frame(cel, row.names=indices);
+   isXY <- which(fields == "xy");
+   if (length(isXY) > 0) {
+     fields <- as.list(fields);
+     fields[[isXY]] <- c("x", "y");
+     fields <- unlist(fields, use.names=TRUE);
+   }
+   if (!identical(names(cel), fields)) {
+     cel <- cel[,fields];
+   }
+   cel;
 }, protected=TRUE);
 
 
@@ -571,6 +619,7 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 ############################################################################
 # HISTORY:
 # 2006-08-25
+# o Renamed getIntensities() to getFields() which returns a data frame.
 # o Added image270() and writeSpatial().
 # o Added methods "[" and "[[" mapped to readUnits().
 # 2006-08-24
