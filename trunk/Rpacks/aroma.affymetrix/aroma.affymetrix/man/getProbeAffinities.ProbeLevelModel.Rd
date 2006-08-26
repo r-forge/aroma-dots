@@ -1,0 +1,38 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  ProbeLevelModel.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\name{getProbeAffinities.ProbeLevelModel}
+\alias{getProbeAffinities.ProbeLevelModel}
+\alias{ProbeLevelModel.getProbeAffinities}
+\alias{getProbeAffinities.ProbeLevelModel}
+\alias{getProbeAffinities,ProbeLevelModel-method}
+
+
+\title{Gets the probe affinities for this model}
+
+\description{
+ Gets the probe affinities for this model.
+}
+
+\usage{\method{getProbeAffinities}{ProbeLevelModel}(this, ...)}
+
+\arguments{
+  \item{...}{Not used.}
+}
+
+\value{
+ Returns a \code{\link{ProbeAffinityFile}} object.
+}
+
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+\seealso{
+  For more information see \code{\link{ProbeLevelModel}}.
+}
+\keyword{internal}
+\keyword{methods}

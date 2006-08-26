@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  LiWongProbeAffinityFile.R
+%  RmaProbeAffinityFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{LiWongProbeAffinityFile}
+ \name{RmaProbeAffinityFile}
 \docType{class}
-\alias{LiWongProbeAffinityFile}
+\alias{RmaProbeAffinityFile}
 
 
- \title{The LiWongProbeAffinityFile class}
+ \title{The RmaProbeAffinityFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class LiWongProbeAffinityFile}\cr
+\bold{Class RmaProbeAffinityFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -27,21 +27,21 @@
 \code{~~~~~~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{LiWongProbeAffinityFile}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{RmaProbeAffinityFile}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{LiWongProbeAffinityFile}\cr
+public static class \bold{RmaProbeAffinityFile}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
 
 
 
   This class represents estimates of probe affinities in the
-  Li \& Wong (2001) model.
+  RMA model, see \code{\link{AffymetrixRmaModel}}.
  }
 
- \usage{LiWongProbeAffinityFile(...)}
+ \usage{RmaProbeAffinityFile(...)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
@@ -93,8 +93,8 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \section{File format}{
-   This class subclasses \code{\link{ParameterCelFile}} so that the above
-   estimates can be stored in a CEL file.  Please see that class for
+   This class subclasses the \code{\link{ProbeAffinityFile}} class so that the
+   above estimates can be stored in a CEL file.  Please see that class for
    more details on the general idea behind encoding/decoding data in
    CEL files.
 
@@ -102,26 +102,11 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    \itemize{
      \item{intensities}{Hold \code{phi} (probe affinities).}
      \item{stdvs}{Hold \code{stdvs} (SD of the probe affinities).}
-     \item{pixels}{Hold \code{outliers}, \code{nbrOfIterations},
-       \code{converged}, and \code{convergedOutliers}.
-       This is done by letting the sign code for \code{outliers} such that
-       a negative sign corresponds to \code{\link[base:logical]{TRUE}} and a positive to \code{\link[base:logical]{FALSE}}.
-       Then the absolute value of \code{pixels[1]} equals
-       \code{nbrOfIterations}.
-       The \code{converged} is encoded as the second bit (module 2) of
-       \code{pixel[2]}, and \code{convergedOutliers} as the third
-       bit (modulo 4).  Note that we know that there are at least two
-       probes, because otherwise we cannot fit the model.}
+     \item{pixels}{Currently just zeros.}
    }
    For more details about the file format, see also the source code of
    this class.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \seealso{
-   An object of this class is typically obtain through the
-   \code{getProbeAffinities()} method for the
-   \code{\link{AffymetrixLiWongModel}} class.
- }
 \keyword{classes}

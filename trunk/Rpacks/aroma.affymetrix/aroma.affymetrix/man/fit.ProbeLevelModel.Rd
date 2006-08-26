@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixLiWongModel.R
+%  ProbeLevelModel.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{fit.AffymetrixLiWongModel}
-\alias{fit.AffymetrixLiWongModel}
-\alias{AffymetrixLiWongModel.fit}
-\alias{fit.AffymetrixLiWongModel}
-\alias{fit,AffymetrixLiWongModel-method}
+ \name{fit.ProbeLevelModel}
+\alias{fit.ProbeLevelModel}
+\alias{ProbeLevelModel.fit}
+\alias{fit.ProbeLevelModel}
+\alias{fit,ProbeLevelModel-method}
 
 
  \title{Fits a unit groups (probeset) model}
@@ -24,7 +24,7 @@
   are stored in array specific files.
  }
 
- \usage{\method{fit}{AffymetrixLiWongModel}(this, units=NULL, ..., force=FALSE, verbose=FALSE)}
+ \usage{\method{fit}{ProbeLevelModel}(this, units=NULL, ..., force=FALSE, verbose=FALSE)}
 
  \arguments{
    \item{...}{Not used.}
@@ -62,12 +62,10 @@
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-   For more information see \code{\link{AffymetrixLiWongModel}}.
+   For more information see \code{\link{ProbeLevelModel}}.
  }
-
 
 
 \keyword{internal}
 \keyword{methods}
 \keyword{IO}
-\keyword{programming}

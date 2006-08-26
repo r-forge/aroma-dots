@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{AffymetrixUnitGroupsModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixLiWongModel}\cr
+\emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}, \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 public abstract static class \bold{AffymetrixUnitGroupsModel}\cr
 extends \link[R.oo]{Object}\cr
@@ -35,7 +35,7 @@ extends \link[R.oo]{Object}\cr
   the Li & Wong model belongs to this class of models.
  }
 
- \usage{AffymetrixUnitGroupsModel(path=NULL, ..., dataSet=NULL)}
+ \usage{AffymetrixUnitGroupsModel(dataSet=NULL, path=NULL, ...)}
 
  \arguments{
    \item{...}{Not used.}
@@ -45,11 +45,11 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{as.character} \tab  -\cr
- \tab \code{fit} \tab  -\cr
- \tab \code{getCdf} \tab  -\cr
- \tab \code{getDataSet} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fit.AffymetrixUnitGroupsModel]{fit}} \tab Estimates the model parameters.\cr
+ \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixUnitGroupsModel]{getCdf}} \tab Gets the CDF structure for this model.\cr
+ \tab \code{\link[aroma.affymetrix:getDataSet.AffymetrixUnitGroupsModel]{getDataSet}} \tab Gets the data set for this model.\cr
  \tab \code{getParameterSet} \tab  -\cr
- \tab \code{getPath} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getPath.AffymetrixUnitGroupsModel]{getPath}} \tab Gets the path (directory) for this model.\cr
  \tab \code{setup} \tab  -\cr
 }
 
