@@ -382,6 +382,45 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
 })
 
 
+
+setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NULL, stratifyBy=NULL, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Trying to load cached results");
+  key <- list(chipType=getChipType(this), stratifyBy=stratifyBy, restuctor=this$.restructor);
+  res <- loadCache(key=key);
+  verbose && exit(verbose);
+
+  if (is.null(res)) {
+    verbose && enter(verbose, "Reading all cell indices");
+    res <- getCellIndices(this, units=NULL, ..., stratifyBy=stratifyBy);
+    verbose && exit(verbose);
+      
+    verbose && enter(verbose, "Extracting the first cell in each unit group");
+    # For each unit and each group, get the index of the first cell.
+    res <- applyCdfGroups(res, function(groups) {
+      # For each group, pull out the first cell.
+      lapply(groups, FUN=function(group) {
+        # group$indices[1] == group[[1]][1] == ...
+        list(indices=.subset(.subset2(group, 1), 1));
+      })
+    });
+    verbose && exit(verbose);
+  
+    # Save to cache file
+    saveCache(key=key, res);
+  }
+
+  # Subset?
+  if (!is.null(units))
+    res <- res[units];
+
+  res;
+}, protected=TRUE)
+
+
+
 setMethodS3("restruct", "AffymetrixCdfFile", function(this, cdf, ...) {
   # Rearrange CDF structure?
   fcn <- this$.restructor;

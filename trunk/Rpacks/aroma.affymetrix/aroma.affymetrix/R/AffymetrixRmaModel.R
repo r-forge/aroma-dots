@@ -74,6 +74,7 @@ setMethodS3("getProbeAffinityClass", "AffymetrixRmaModel", function(static, ...)
 }, static=TRUE, protected=TRUE)
 
 
+
 setMethodS3("getFitFunction", "AffymetrixRmaModel", function(static, ...) {
   rmaModel <- function(y, psiCode=0, psiK=1.345){
     # Log-additive model

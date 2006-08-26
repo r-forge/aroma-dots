@@ -21,6 +21,8 @@ source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/ParameterFile.R")
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/ParameterCelFile.R")
 
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/ProbeAffinityFile.R")
+source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/ChipEffectFile.R")
+source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/ChipEffectSet.R")
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixUnitGroupsModel.R")
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/ProbeLevelModel.R")
 

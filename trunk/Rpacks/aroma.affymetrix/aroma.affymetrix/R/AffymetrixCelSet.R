@@ -381,6 +381,37 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
 
 
 
+setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Read signals
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Get the pathnames of all CEL files
+  pathnames <- unlist(lapply(this, getPathname), use.names=FALSE);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Cached values
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (is.list(units)) {
+    res <- readCelUnits(pathnames, cdf=units, readStdvs=FALSE, 
+                                                    readPixels=FALSE, ...);
+  } else {
+    # Always ask for CDF information from the CDF object!
+    cdf <- readUnits(getCdf(this), units=units);
+    res <- readCelUnits(pathnames, cdf=cdf, readStdvs=FALSE, 
+                                                    readPixels=FALSE, ...);
+  }
+
+  res;
+})
+
+
+
 setMethodS3("applyToUnitIntensities", "AffymetrixCelSet", function(this, units=NULL, FUN, stratifyBy="pm", verbose=FALSE, ...) {
   y <- getUnitIntensities(this, units=units, stratifyBy=stratifyBy, ...);
 

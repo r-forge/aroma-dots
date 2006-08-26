@@ -6,8 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  This class represents estimates of probe affinities in the 
-#  RMA model.
+#  This class represents estimates of probe affinities in probe-level models.
 # }
 # 
 # @synopsis
@@ -42,45 +41,23 @@ setConstructorS3("ProbeAffinityFile", function(..., model=c("pm")) {
 })
 
 
-# Note: This method 
+
+
 setMethodS3("getFirstCellIndices", "ProbeAffinityFile", function(this, units=NULL, ..., verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
+  # Argument 'verbose': 
+ verbose <- Arguments$getVerbose(verbose);
 
   res <- this$.firstCells;
   if (is.null(res)) {
-    cdf <- getCdf(this);
     stratifyBy <- switch(this$model, pm="pm");
-    verbose && enter(verbose, "Checking in file cache");
-    key <- list(chipType=getChipType(cdf), stratifyBy=stratifyBy);
-    res <- loadCache(key=key);
-    verbose && exit(verbose);
-    if (is.null(res)) {
-      verbose && enter(verbose, "Reading all cell indices");
-      res <- getCellIndices(cdf, units=NULL, ..., stratifyBy=stratifyBy);
-      verbose && exit(verbose);
-    
-      verbose && enter(verbose, "Extracting the first cell in each unit group");
-      # For each unit and each group, get the index of the first cell.
-      res <- applyCdfGroups(res, function(groups) {
-        # For each group, pull out the first cell.
-        lapply(groups, FUN=function(group) {
-          # group$indices[1] == group[[1]][1] == ...
-          list(indices=.subset(.subset2(group, 1), 1));
-        })
-      });
-      verbose && exit(verbose);
-      saveCache(key=key, res);
-    }
-
-    # Storing in cache
+    cdf <- getCdf(this);
+    res <- getFirstCellIndices(cdf, units=NULL, ..., stratifyBy=stratifyBy, verbose=verbose);
     this$.firstCells <- res;
   }
 
   # Subset?
-  if (!is.null(units)) {
+  if (!is.null(units))
     res <- res[units];
-  }
 
   res;
 }, protected=TRUE)

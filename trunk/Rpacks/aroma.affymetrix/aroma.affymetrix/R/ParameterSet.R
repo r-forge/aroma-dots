@@ -6,7 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  An ParameterSet object represents a set of parameter (estimates).
+#  An ParameterSet object represents a set of parameter estimates.
 # }
 # 
 # @synopsis
