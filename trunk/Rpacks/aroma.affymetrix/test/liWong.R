@@ -6,7 +6,7 @@ verbose <- Arguments$getVerbose(TRUE);
 # Setup
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the dataset to be used
-ds <- AffymetrixCelSet$fromFiles("cel/Hind/");
+ds <- AffymetrixCelSet$fromFiles("chip_data/Hind/");
 
 # Specify the model we want to fit
 model <- AffymetrixLiWongModel(ds);

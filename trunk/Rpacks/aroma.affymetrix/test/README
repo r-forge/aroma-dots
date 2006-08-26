@@ -1,13 +1,18 @@
+ABOUT TEST SCRIPTS
+------------------
+
 DESCRIPTION
 Most of the script in this directory is test scripts used for developing
 the package.  
 
+
 WHERE TO PUT EXAMPLE DATA
-Note that they all search for data in directory cel/<chiptype>/, e.g. 
-cel/Hind/.  The CDF files are found trough affxparser::findCdf().
-On *nix systems you may create a soft link to any directory containing
-the CEL data.  On Windows there are no soft link, but instead you may 
-use Windows Shortcuts, because the aroma.affymetrix package recognizes
-such.  Thus, you do not have to copy data here to run these scripts.
+Note that they all search for data in directory chip_data/<chiptype>/, 
+e.g. chip_data/Hind/.  The CDF files are always found through findCdf()
+in the affxparser package.  
+
+On *nix systems you can create a soft link to the chip_data/ directory,
+and on Windows you can use Windows Shortcuts.
+
 
 Henrik 2006-08-25
