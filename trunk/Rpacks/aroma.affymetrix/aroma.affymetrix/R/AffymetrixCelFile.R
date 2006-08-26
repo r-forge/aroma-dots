@@ -425,7 +425,7 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=NULL, yrange=xrange, ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(paf)) {
+setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(this)) {
   rotate270 <- function(x, ...) {
     x <- t(x)
     nc <- ncol(x)
