@@ -1,6 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.2.0 [2006-08-25]
+o Have done a big redesign of the package. There are now also
+  some basic model fitting algorithm available.  Probe-affinity
+  estimates are stored in CEL files. Soon chip effects will also
+  be stored in CEL files using customized CDF files that we very
+  can write using the affxparser package.
+
 Version: 0.1.5 [2006-07-2x]
 o BUG FIX: The 'outPath' argument of normalizeQuantile() in the 
   AffymetrixDataset class was not recognized.
