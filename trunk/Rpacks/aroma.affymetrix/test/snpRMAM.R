@@ -37,10 +37,13 @@ print(model);
 # Fit a few units.  The method is clever such that it will not 
 # estimate the same units if not needed, instead it will read the
 # data from the files where parameter estimates are stored.
-f <- fit(model, units=50000:50010, force=TRUE);
-str(f, max.level=2)
-str(f[1])
+units <- fit(model, units=50000:50010, force=TRUE);
+cat("Fitted ", length(units), " units.\n");
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Investigated the fitted units
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Work with probe-affinity estimates only.  The object returned
 # inherits from the AffymetrixCelFile class, that is, you can plot
 # probe affinities spatially just as if they were probe signals 
