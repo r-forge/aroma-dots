@@ -78,7 +78,9 @@ setMethodS3("createFrom", "ParameterCelFile", function(static, dataSet, filename
   file.copy(copyFrom, pathname);
 
   # 2. Clear the file
-  updateCel(pathname, pixels=rep(0:0, length=nbrOfCells(getCdf(dataSet))));
+  cdf <- getCdf(dataSet);
+  bfr <- double(nbrOfCells(cdf));
+  updateCel(pathname, intensities=bfr, stdvs=bfr, pixels=bfr);
 
   verbose && exit(verbose);
 
@@ -88,20 +90,20 @@ setMethodS3("createFrom", "ParameterCelFile", function(static, dataSet, filename
 
 setMethodS3("encodeUnitGroup", "ParameterCelFile", abstract=TRUE, static=TRUE, protected=TRUE);
 
-setMethodS3("decodeUnitGroup", "ParameterCelFile", function(static, intensities=NULL, stdvs=NULL, pixels=NULL, ...) {
-  list(intensities=intensities, stdvs=stdvs, pixels=pixels);
-}, static=TRUE, protected=TRUE)
-
 setMethodS3("encodeUnit", "ParameterCelFile", function(static, unit, ...) {
   lapply(unit, FUN=function(group) encodeUnitGroup(static, group, ...));
 }, protected=TRUE)
 
-setMethodS3("decodeUnit", "ParameterCelFile", function(static, unit, ...) {
-  lapply(unit, FUN=function(group) decodeUnitGroup(static, group, ...));
-}, protected=TRUE)
-
 setMethodS3("encode", "ParameterCelFile", function(static, units, ...) {
   lapply(units, FUN=function(unit) encodeUnit(static, unit, ...));
+}, protected=TRUE)
+
+setMethodS3("decodeUnitGroup", "ParameterCelFile", function(static, intensities=NULL, stdvs=NULL, pixels=NULL, ...) {
+  list(intensities=intensities, stdvs=stdvs, pixels=pixels);
+}, static=TRUE, protected=TRUE)
+
+setMethodS3("decodeUnit", "ParameterCelFile", function(static, unit, ...) {
+  lapply(unit, FUN=function(group) decodeUnitGroup(static, group, ...));
 }, protected=TRUE)
 
 setMethodS3("decode", "ParameterCelFile", function(static, units, ...) {

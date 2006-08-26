@@ -76,26 +76,12 @@
 # }
 #
 #*/###########################################################################
-setConstructorS3("LiWongProbeAffinityFile", function(..., model=c("pm")) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'model':
-  model <- match.arg(model);
-
-  extend(ParameterCelFile(...), "LiWongProbeAffinityFile",
-    model = model
-  )
+setConstructorS3("LiWongProbeAffinityFile", function(...) {
+  extend(ProbeAffinityFile(...), "LiWongProbeAffinityFile");
 })
 
 
-setMethodS3("createFrom", "LiWongProbeAffinityFile", function(static, ..., filename="probeAffinities.CEL") {
-  createFrom.ParameterCelFile(static, ..., filename=filename);
-}, static=TRUE);
-
-
-
-setMethodS3("encodeUnitGroup", "LiWongProbeAffinityFile", function(static, groupData) {
+setMethodS3("encodeUnitGroup", "LiWongProbeAffinityFile", function(static, groupData, ...) {
   # Rename some fields (so that we support the structure of this class,
   # but also output from affy::fit.li.wong().
   names <- names(groupData);
@@ -145,26 +131,6 @@ setMethodS3("decodeUnitGroup", "LiWongProbeAffinityFile", function(static, group
 
   list(phi=groupData$intensities, stdvs=groupData$stdvs, outliers=outliers, nbrOfIterations=nbrOfIterations, converged=converged, convergedOutliers=convergedOutliers);
 }, static=TRUE, protected=TRUE)
-
-
-
-setMethodS3("readUnits", "LiWongProbeAffinityFile", function(this, ...) {
-  # Note that the actually call to the decoding is done in readUnits()
-  # of the superclass.
-  stratifyBy <- switch(this$model, pm="pm");
-  NextMethod("readUnits", this, ..., stratifyBy=stratifyBy);
-});
-
-
-
-
-setMethodS3("updateUnits", "LiWongProbeAffinityFile", function(this, data, ...) {
-  # Note that the actually call to the encoding is done in updateUnits()
-  # of the superclass.
-  stratifyBy <- switch(this$model, pm="pm");
-  NextMethod("updateUnits", this, data=data, ..., stratifyBy=stratifyBy);
-}, protected=TRUE);
-
 
 
 ############################################################################

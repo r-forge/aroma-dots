@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
+\link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixCelFile}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
@@ -51,7 +51,9 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
- \tab \code{setCdf} \tab  -\cr
+ \tab \code{getRectangle} \tab  -\cr
+ \tab \code{image270} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
 }
 
 

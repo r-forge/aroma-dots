@@ -15,7 +15,7 @@
 
 
  \description{
-   This package provides memory-efficient methods to perform basic analysis such as normalization and probeset summarization on Affymetrix data.  An AffymetrixDataset object defines a set of Affymetrix data files (typically CEL files) on the file system for which there are methods to access the data by probes or probesets across arrays.  The data is accessed as if it is in memory, but are internally read from file on request.  With this approach there is in theory no limitation in the number of arrays a data set has, e.g. we have quantile normalized ninety 100K SNP chips using only 150Mb RAM.
+   This package implements classes for files and sets of files for various Affymetrix file formats, e.g AffymetrixCdfFile, AffymetrixCelFile, and AffymetrixCelSet. These are designed to be memory efficient but still being fast. The idea is to work keep all data on file and only read data into memory when needed.  Clever caching mechanisms are used to minimize the overhead of data IO.  All of the above is hidden in the package API and for the developer (and the end user), the is queried as if it lives in memory.  With this design it is only the diskspace that limits what number of arrays can be analyzed, e.g. we have quantile normalized ninety 100K SNP chips using only 150Mb RAM.  Note that the purpose of this package is to provide other developers with a solid foundation for working with Affymetrix data.  It is not intended for analysis by the end user.  Such methods should be implemented in higher-level packages utilizing aroma.affymetrix.
 
    This package should be considered to be in an alpha or beta phase.
    You should expect the API to be changing over time.

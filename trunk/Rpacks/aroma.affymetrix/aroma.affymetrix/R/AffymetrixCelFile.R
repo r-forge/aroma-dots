@@ -372,6 +372,55 @@ setMethodS3("getIntensities", "AffymetrixCelFile", function(this, indices=NULL, 
 }, protected=TRUE);
 
 
+setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
+  readCelRectangle(this$.pathname, ...);
+})
+
+
+setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=NULL, yrange=xrange, ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(paf)) {
+  rotate270.matrix <- function(x, ...) {
+    x <- t(x)
+    nc <- ncol(x)
+    if (nc < 2) return(x)
+    x[,nc:1,drop=FALSE]
+  }
+
+  # Argument 'field':
+  field <- match.arg(field);
+
+  suppressWarnings({
+    cel <- getRectangle(this, xrange=xrange, yrange=yrange, ...);
+  })
+
+  # Rotate fields
+  for (ff in intersect(c("intensities", "stdvs", "pixels"), names(cel))) {
+    cel[[ff]] <- rotate270.matrix(cel[[ff]]);
+  }
+
+  # Display the field of interest
+  y <- cel[[field]];
+  suppressWarnings({
+    image(y, col=col, ..., axes=FALSE, main=main);
+  })
+
+  if (is.null(xrange)) 
+    xrange <- c(0,ncol(y)-1);
+  if (is.null(yrange)) 
+    yrange <- c(0,nrow(y)-1);
+
+  cdf <- getCdf(this);
+  dim <- paste(getDimension(cdf), collapse="x");
+  label <- sprintf("Chip type: %s [%s]", getChipType(cdf), dim);
+  text(x=0, y=0, labels=label, adj=c(0,1.2), cex=0.8, xpd=TRUE)
+  label <- sprintf("(%d,%d)", as.integer(xrange[1]), as.integer(yrange[1]));
+  text(x=0, y=1, labels=label, adj=c(0,-0.7), cex=0.8, xpd=TRUE)
+  label <- sprintf("(%d,%d)", as.integer(xrange[2]), as.integer(yrange[2]));
+  text(x=1, y=0, labels=label, adj=c(1,1.2), cex=0.8, xpd=TRUE)
+
+  # Return the plotted data.
+  invisible(y);
+})
+
 
 ############################################################################
 # HISTORY:
