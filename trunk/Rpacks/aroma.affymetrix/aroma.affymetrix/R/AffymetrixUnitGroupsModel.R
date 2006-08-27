@@ -34,7 +34,9 @@ setConstructorS3("AffymetrixUnitGroupsModel", function(dataSet=NULL, name="model
   # Argument 'path':
   if (is.null(path)) {
     if (!is.null(dataSet)) {
-      path <- filePath(name, getChipType(getCdf(dataSet)));
+      # Path structure: <data-set name>/<model name>/<chip type>/
+      # Compare with  : <data-set name>/chip_data/<chip type>/
+      path <- filePath(getName(dataSet), name, getChipType(getCdf(dataSet)));
     }
   } 
   if (!is.null(path)) {

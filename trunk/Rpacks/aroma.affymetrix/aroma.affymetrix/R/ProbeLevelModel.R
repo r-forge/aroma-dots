@@ -227,7 +227,7 @@ setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., transform=NULL, postCdfTransform=NULL, unitsPerChunk=100000/length(getDataSet(this)), force=FALSE, verbose=FALSE) {
+setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., transform=NULL, postCdfTransform=NULL, unitsPerChunk=moreUnits*100000/length(getDataSet(this)), moreUnits=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the some basic information about this model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -270,6 +270,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
   } else {
     throw("Argument 'postCdfTransform' is not a function: ", mode(postCdfTransform));
   }
+
+  # Argument 'unitsPerChunk':
+  unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
 
   # Argument 'force':
   force <- Arguments$getLogical(force);
@@ -329,6 +332,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
       head <- 1:length(idxs);
     }
     uu <- idxs[head];
+    verbose && cat(verbose, "Chunk size: ", length(uu));
 
     # Get the CDF cell indices
     verbose && enter(verbose, "Identifying CDF cell indices");
