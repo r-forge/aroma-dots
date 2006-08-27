@@ -19,7 +19,7 @@
  Gets the cell indices unit by unit of all or a subset of the units.
 }
 
-\usage{\method{getCellIndices}{AffymetrixCdfFile}(this, units=NULL, ...)}
+\usage{\method{getCellIndices}{AffymetrixCdfFile}(this, units=NULL, ..., verbose=FALSE)}
 
 \arguments{
   \item{units}{The units of interest. If \code{\link[base]{NULL}}, all units are considered.}

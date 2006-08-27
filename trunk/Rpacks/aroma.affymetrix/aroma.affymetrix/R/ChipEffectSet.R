@@ -62,25 +62,6 @@ setMethodS3("getFirstCellIndices", "ChipEffectSet", function(this, units=NULL, .
 
 
 
-setMethodS3("encodeUnitGroup", "ChipEffectSet", function(static, groupData, ...) {
-  theta <- .subset2(groupData, "theta");
-  ncells <- length(theta);
-  stdvs <- rep(1, ncells);
-  pixels <- rep(0, ncells);
-  list(intensities=theta, stdvs=stdvs, pixels=pixels);
-}, static=TRUE, protected=TRUE)
-
-
-
-
-setMethodS3("decodeUnitGroup", "ChipEffectSet", function(static, groupData, ...) {
-  attachLocally(groupData);
-  pixels <- groupData$pixels;
-  list(theta=groupData$intensities, stdvs=groupData$stdvs);
-}, static=TRUE, protected=TRUE)
-
-
-
 setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, ...) {
   if (is.null(cdf)) {
     # Use only the first cell in each unit group.
@@ -90,7 +71,13 @@ setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, .
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
   stratifyBy <- switch(this$model, pm="pm");
-  NextMethod("readUnits", this, units=cdf, ..., stratifyBy=stratifyBy);
+  res <- NextMethod("readUnits", this, units=cdf, ..., stratifyBy=stratifyBy);
+
+  # Get first chip-effect file and use that to decode the read structure
+  ce <- as.list(this)[[1]];
+  res <- decode(ce, res);
+
+  res;
 });
 
 
@@ -109,7 +96,7 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
   names <- getNames(this);
   for (kk in seq(this)) {
     verbose && enter(verbose, sprintf("Array #%d of %d: %s", kk, n, names[kk]));
-    ce <- this[[kk]];
+    ce <- as.list(this)[[kk]];
 
     verbose && enter(verbose, "Extracting estimates");
     dataOne <- lapply(data, function(groups) {

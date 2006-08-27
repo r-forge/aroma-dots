@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ProbeAffinityFile.R
+%  ChipEffectFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{ProbeAffinityFile}
+ \name{ChipEffectFile}
 \docType{class}
-\alias{ProbeAffinityFile}
+\alias{ChipEffectFile}
 
 
- \title{The ProbeAffinityFile class}
+ \title{The ChipEffectFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class ProbeAffinityFile}\cr
+\bold{Class ChipEffectFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -25,20 +25,20 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\emph{\code{ProbeAffinityFile}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{ChipEffectFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{LiWongProbeAffinityFile}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\cr
 
-public abstract static class \bold{ProbeAffinityFile}\cr
+public static class \bold{ChipEffectFile}\cr
 extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 
 
 
-  This class represents estimates of probe affinities in probe-level models.
+  This class represents estimates of chip effects in the probe-level models.
  }
 
- \usage{ProbeAffinityFile(..., model=c("pm"))}
+ \usage{ChipEffectFile(..., model=c("pm"))}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
@@ -48,9 +48,7 @@ extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{createFrom} \tab  -\cr
- \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
- \tab \code{writeSpatial} \tab  -\cr
 }
 
 
@@ -73,6 +71,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  \seealso{
    An object of this class is typically obtained through the
-   \code{getProbeAffinities()} method for the \code{\link{ProbeLevelModel}} class.
+   \code{getChipEffects()} method for the \code{\link{ProbeLevelModel}} class.
  }
 \keyword{classes}

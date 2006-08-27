@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixApdFile}, \link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \emph{\link[aroma.affymetrix]{AffymetrixDataFile}}, \link[aroma.affymetrix]{AffymetrixParameterFile}, \link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \link[aroma.affymetrix]{ParameterFile}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{AffymetrixApdFile}, \link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \emph{\link[aroma.affymetrix]{AffymetrixDataFile}}, \link[aroma.affymetrix]{AffymetrixParameterFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \link[aroma.affymetrix]{ParameterFile}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixFile}\cr
 extends \link[R.oo]{Object}\cr

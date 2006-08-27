@@ -50,22 +50,13 @@
 # \references{
 # }
 #*/###########################################################################
-setConstructorS3("AffymetrixRmaModel", function(dataSet=NULL, path=filePath("modelRMA", getChipType(getCdf(dataSet))), ...) {
+setConstructorS3("AffymetrixRmaModel", function(..., name="modelRMA") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(affyPLM) || throw("Package 'affyPLM' not loaded.");
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'path':
-  if (is.null(dataSet)) {
-    # A work-around for the fact that getCdf(NULL) is not work.
-    path=NULL;
-  }
-
-  extend(ProbeLevelModel(dataSet=dataSet, path=path, ...), "AffymetrixRmaModel")
+  extend(ProbeLevelModel(..., name=name), "AffymetrixRmaModel")
 })
 
 
@@ -77,6 +68,10 @@ setMethodS3("getProbeAffinityClass", "AffymetrixRmaModel", function(static, ...)
 
 setMethodS3("getFitFunction", "AffymetrixRmaModel", function(static, ...) {
   rmaModel <- function(y, psiCode=0, psiK=1.345){
+    if (length(dim(y)) != 2) {
+      str(y);
+      stop("Argument 'y' must have two dimensions: ", paste(dim(y), collapse="x"));
+    }
     # Log-additive model
     y <- log(y, base=2)
 

@@ -186,7 +186,16 @@ setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ...) {
     throw("The specified CDF structure is not compatible with the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", getHeader(this)$total);
   }
 
+  # Nothing to do?
+  oldCdf <- getCdf(this);
+  if (equals(cdf, oldCdf))
+    return(invisible(this));
+
+  # Have to clear the cache 
+  clearCache(this);
+
   this$.cdf <- cdf;
+
   invisible(this);
 })
 
@@ -372,7 +381,7 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 #     are considered.}
 #   \item{fields}{Names of fields to be retrieved.}
 #   \item{...}{Additional arguments passed to @see "affxparser::readCel".}
-#   \item{verbose}{A @logical or @see "R.utils::Verbose".
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -555,11 +564,18 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf(fmtstr, getName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), verbose=FALSE) {
+setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf(fmtstr, getName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), transform=sqrt, zlim=NULL, verbose=FALSE) {
   require(R.image) || throw("Package R.image not loaded.");
 
   # Argument 'field':
   field <- match.arg(field);
+
+  # Argument 'transform':
+  if (is.null(transform)) {
+  } else if (is.function(transform)) {
+  } else {
+    throw("Argument 'transform' is not a function: ", mode(transform));
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -567,18 +583,49 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
   # Argument 'filename' and 'path':
   pathname <- Arguments$getWritablePathname(filename, path=path);
 
-  verbose && enter(verbose, "Read CEL data");
+  verbose && enter(verbose, "Reading CEL data");
   suppressWarnings({
     cel <- getRectangle(this, fields=field, ...);
   })
   verbose && exit(verbose);
 
-  verbose && enter(verbose, "Create in memory image");
+  verbose && enter(verbose, "Creating an in-memory image");
   # Get the image
   img <- cel[[field]];
-  
-  # Create 256-levels gray-scale image
-  img <- sqrt(img) - 1;
+
+  if (!is.null(transform)) {
+    verbose && enter(verbose, "Custom transformation of data");
+    img <- transform(img);
+    verbose && exit(verbose);
+  }
+
+  # zlim?
+  if (is.null(zlim)) {
+    zlim <- range(img, na.rm=TRUE);
+  } else {
+    # Truncating to zlim
+    img[(img < zlim[1])] <- zlim[1];
+    img[(img > zlim[2])] <- zlim[2];
+
+    # Rescale to zlim
+    img <- img - zlim[1];
+    img <- img / diff(zlim);
+  }
+
+  verbose && printf(verbose, "zlim = [%g,%g]\n", zlim[1], zlim[2]);
+
+  rimg <- range(img, na.rm=TRUE);
+  verbose && printf(verbose, "range = [%g,%g]\n", rimg[1], rimg[2]);
+
+  # Rescale to 256-levels gray-scale image
+  img <- (255/max(img, na.rm=TRUE)) * img;
+
+  rimg <- range(img, na.rm=TRUE);
+  verbose && printf(verbose, "new range = [%g,%g]\n", rimg[1], rimg[2]);
+
+  # Truncate again just in case (but it should not be necessary)
+  img[img < 0] <- 0;
+  img[img > 255] <- 255;
   img <- GrayImage(img);
   verbose && exit(verbose);
 

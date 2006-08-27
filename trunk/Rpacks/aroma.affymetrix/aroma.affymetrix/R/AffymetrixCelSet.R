@@ -118,8 +118,18 @@ setMethodS3("getCdf", "AffymetrixCelSet", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, ...) {
+  # Nothing to do?
+  oldCdf <- getCdf(this);
+  if (equals(cdf, oldCdf))
+    return(invisible(this));
+
   # Set the CDF for all CEL files
   lapply(this, setCdf, cdf, ...);
+
+  # Have to clear the cache 
+  clearCache(this);
+
+  invisible(this);
 })
 
 
@@ -425,6 +435,16 @@ setMethodS3("applyToUnitIntensities", "AffymetrixCelSet", function(this, units=N
 })
 
 
+setMethodS3("[", "AffymetrixCelSet", function(this, units=NULL, ..., drop=FALSE) {
+  res <- readUnits(this, units=units, ...);
+  if (drop && length(res) == 1)
+    res <- res[[1]];
+  res;
+})
+
+setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
+  this[units=units, ..., drop=TRUE];
+})
 
 ############################################################################
 # HISTORY:

@@ -29,7 +29,7 @@ extends \link[R.oo]{Object}\cr
 
 
 
-  An ParameterSet object represents a set of parameter (estimates).
+  An ParameterSet object represents a set of parameter estimates.
  }
 
  \usage{ParameterSet(files=NULL, ...)}

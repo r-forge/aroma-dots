@@ -38,20 +38,14 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(dataSet=NULL, path=filePath("modelPLM", getChipType(getCdf(dataSet))), model=c("pm"), ...) {
+setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'model':
   model <- match.arg(model);
 
-  # Argument 'path':
-  if (is.null(dataSet)) {
-    # A work-around for the fact that getCdf(NULL) is not work.
-    path=NULL;
-  }
-
-  extend(AffymetrixUnitGroupsModel(dataSet=dataSet, path=path, ...), "ProbeLevelModel",
+  extend(AffymetrixUnitGroupsModel(..., name=name), "ProbeLevelModel",
     "cached:.paFile" = NULL,
     "cached:.chipFiles" = NULL,
     model = model
@@ -134,7 +128,7 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
   ds <- getDataSet(this);
   if (length(ds) == 0)
     throw("Cannot create probe-affinity file. The CEL set is empty.");
-  pathname <- clazz$createFrom(cdf=cdf, path=getPath(this), celFile=ds[[1]]);
+  pathname <- clazz$createFrom(cdf=cdf, path=getPath(this), celFile=as.list(ds)[[1]]);
   paFile <- newInstance(clazz, pathname, cdf=cdf, model=this$model);
   this$.paFile <- paFile;
 
@@ -233,7 +227,7 @@ setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., unitsPerChunk=1000, force=FALSE, verbose=FALSE) {
+setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., transform=NULL, postCdfTransform=NULL, unitsPerChunk=100000/length(getDataSet(this)), force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the some basic information about this model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -263,6 +257,20 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     throw("Unknown mode of argument 'units': ", mode(units));
   }
 
+  # Argument 'transform':
+  if (is.null(transform)) {
+  } else if (is.function(transform)) {
+  } else {
+    throw("Argument 'transform' is not a function: ", mode(transform));
+  }
+
+  # Argument 'postCdfTransform':
+  if (is.null(postCdfTransform)) {
+  } else if (is.function(postCdfTransform)) {
+  } else {
+    throw("Argument 'postCdfTransform' is not a function: ", mode(postCdfTransform));
+  }
+
   # Argument 'force':
   force <- Arguments$getLogical(force);
 
@@ -289,7 +297,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     if (force) {
       verbose && printf(verbose, "All of these are forced to be fitted.\n");
     } else {
-      units <- findUnitsTodo(paf, units=units);
+      units <- findUnitsTodo(paf, units=units, transform=postCdfTransform);
       nbrOfUnits <- length(units);
       verbose && printf(verbose, "Out of these, %d units need to be fitted.\n", nbrOfUnits);
     }
@@ -337,23 +345,39 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     fit <- lapply(y, FUN=function(unit) {
       lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1);
+        if (!is.null(transform))
+          y <- transform(y);
         fitfcn(y);
       })
     })
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Storing probe-affinity estimates");
-    updateUnits(paf, cdf=cdfUnits, data=fit);
+    y <- NULL; # Not needed anymore (to minimize memory usage)
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Storing chip-effect estimates");
     firstCells <- getFirstCellIndices(paf, units=units[uu]);
+    if (!is.null(postCdfTransform)) {
+      firstCells <- postCdfTransform(firstCells);
+    }
     updateUnits(ces, cdf=firstCells, data=fit, verbose=verbose);
+    firstCells <- NULL; # Not needed anymore
+    verbose && exit(verbose);
+
+    # Store the probe-affinities *last* because we use these to 
+    # identify which units are already modelled or not.
+    verbose && enter(verbose, "Storing probe-affinity estimates");
+    if (!is.null(postCdfTransform)) {
+      cdfUnits <- postCdfTransform(cdfUnits);
+    }
+    updateUnits(paf, cdf=cdfUnits, data=fit);
+    cdfUnits <- fit <- NULL; # Not needed anymore
     verbose && exit(verbose);
 
     # Next chunk...
     idxs <- idxs[-head];
     count <- count + 1;
+
+    # Garbage collection
+    gc();
     verbose && exit(verbose);
   } # while()
 
@@ -409,13 +433,13 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
     throw("Cannot create chip-effect file. The CEL set is empty.");
   
   # For each CEL file, create a chip-effect file
-  df <- ds[[1]];
+  df <- as.list(ds)[[1]];
 
   template <- NULL;  
   chipFiles <- list();
   nFiles <- length(ds);
   for (kk in seq(ds)) {
-    df <- ds[[kk]];
+    df <- as.list(ds)[[kk]];
     name <- getName(df);
     verbose && enter(verbose, sprintf("Creating chip-effect file #%d of %d: %s", kk, nFiles, name));
     filename <- sprintf("%s-chipEffect.CEL", name);

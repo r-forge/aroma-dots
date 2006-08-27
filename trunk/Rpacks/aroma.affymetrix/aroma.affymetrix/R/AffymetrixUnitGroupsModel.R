@@ -27,11 +27,16 @@
 # \seealso{
 # }
 #*/###########################################################################
-setConstructorS3("AffymetrixUnitGroupsModel", function(dataSet=NULL, path=NULL, ...) {
+setConstructorS3("AffymetrixUnitGroupsModel", function(dataSet=NULL, name="modelUnitGroups", path=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'path':
+  if (is.null(path)) {
+    if (!is.null(dataSet)) {
+      path <- filePath(name, getChipType(getCdf(dataSet)));
+    }
+  } 
   if (!is.null(path)) {
     path <- Arguments$getWritablePath(path);
   }

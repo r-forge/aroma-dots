@@ -37,10 +37,9 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
   see \code{\link{AffymetrixLiWongModel}}.
  }
 
- \usage{AffymetrixLiWongModel(dataSet=NULL, path=filePath("modelLiWong", getChipType(getCdf(dataSet))), ...)}
+ \usage{AffymetrixLiWongModel(..., name="modelLiWong")}
 
  \arguments{
-   \item{dataSet}{An \code{\link{AffymetrixCelSet}} object.}
    \item{path}{The \code{\link[base]{character}} string specifying the path to the directory
       to contain the parameter-estimate files.}
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
@@ -52,7 +51,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 
 \bold{Methods inherited from ProbeLevelModel}:\cr
-fit, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass
+fit, getChipEffectClass, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass
 
 \bold{Methods inherited from AffymetrixUnitGroupsModel}:\cr
 as.character, fit, getCdf, getDataSet, getParameterSet, getPath, setup

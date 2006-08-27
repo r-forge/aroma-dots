@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\emph{\code{ProbeLevelModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}\cr
+\emph{\link[aroma.affymetrix]{AffymetrixCnRmaModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}\cr
 
 public abstract static class \bold{ProbeLevelModel}\cr
 extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
@@ -33,14 +33,14 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
 
   This abstract class represents any probe-level model (PLM).
   To quote the \pkg{affyPLM} package:
-  "A [...] PLM is a model that is fit to probe-intensity data.
-   More specifically, it is where we fit a model with probe level
-   and chip level parameters on a probeset by probeset basis",
+    "A [...] PLM is a model that is fit to probe-intensity data.
+     More specifically, it is where we fit a model with probe level
+     and chip level parameters on a probeset by probeset basis",
   where the more general case for a probeset is a unit group
   using Affymetrix CDF terms.
  }
 
- \usage{ProbeLevelModel(dataSet=NULL, path=filePath("modelPLM", getChipType(getCdf(dataSet))), model=c("pm"), ...)}
+ \usage{ProbeLevelModel(..., name="modelPLM", model=c("pm"))}
 
  \arguments{
    \item{dataSet}{An \code{\link{AffymetrixCelSet}} object.}
@@ -55,6 +55,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:fit.ProbeLevelModel]{fit}} \tab Fits a unit groups (probeset) model.\cr
+ \tab \code{\link[aroma.affymetrix:getChipEffects.ProbeLevelModel]{getChipEffects}} \tab Gets the chip-effect files for this model.\cr
  \tab \code{\link[aroma.affymetrix:getFitFunction.ProbeLevelModel]{getFitFunction}} \tab Static method to get the low-level function that fits the PLM.\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinities.ProbeLevelModel]{getProbeAffinities}} \tab Gets the probe affinities for this model.\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinityClass.ProbeLevelModel]{getProbeAffinityClass}} \tab Static method to get the ProbeAffinity Class object for this model.\cr
@@ -72,12 +73,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \section{Model estimates}{
-   The estimated probe affinities are represented by the
-   \code{\link{ProbeAffinityFile}} class.
-   Use \code{\link[aroma.affymetrix:getProbeAffinities.ProbeLevelModel]{*getProbeAffinities}()} to access these.
- }
 
  \seealso{
    For more details on probe-level models, please see

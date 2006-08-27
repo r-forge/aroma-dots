@@ -53,13 +53,13 @@ extends \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
 
 
 \bold{Methods inherited from ProbeAffinityFile}:\cr
-createFrom, findUnitsTodo, getFirstCellIndices, readUnits, updateUnits
+createFrom, findUnitsTodo, getFirstCellIndices, readUnits, updateUnits, writeSpatial
 
 \bold{Methods inherited from ParameterCelFile}:\cr
 createFrom, decode, decodeUnit, decodeUnitGroup, encode, encodeUnit, encodeUnitGroup, readUnits, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, fromFile, getCdf, getChipType, getHeader, getIntensities, getRectangle, image270, readUnits, setCdf, updateUnits, writeSpatial
+[, [[, fromFile, getCdf, getChipType, getFields, getHeader, getRectangle, image270, normalizeQuantiles, readUnits, setCdf, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, fromFile, getFilename, getFileSize, getFileType, getName, getPath, getPathname
