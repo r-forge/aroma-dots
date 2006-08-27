@@ -13,7 +13,6 @@
 # @synopsis
 #
 # \arguments{
-#   \item{dataSet}{An @see "AffymetrixCelSet" object.}
 #   \item{path}{The @character string specifying the path to the directory
 #      to contain the parameter-estimate files.}
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
@@ -30,22 +29,13 @@
 #   Li, C. and Wong, W.H. (2001), Proc. Natl. Acad. Sci USA 98, 31-36.\cr
 # }
 #*/###########################################################################
-setConstructorS3("AffymetrixLiWongModel", function(dataSet=NULL, path=filePath("modelLiWong", getChipType(getCdf(dataSet))), ...) {
+setConstructorS3("AffymetrixLiWongModel", function(..., name="modelLiWong") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(affy) || throw("Package 'affy' not loaded.");
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'path':
-  if (is.null(dataSet)) {
-    # A work-around for the fact that getCdf(NULL) is not work.
-    path=NULL;
-  }
-
-  extend(ProbeLevelModel(dataSet=dataSet, path=path, ...), "AffymetrixLiWongModel")
+  extend(ProbeLevelModel(..., name=name), "AffymetrixLiWongModel")
 })
 
 
@@ -64,7 +54,7 @@ setMethodS3("getFitFunction", "AffymetrixLiWongModel", function(static, ...) {
 
 
 
-setMethodS3("getChipEffects", "AffymetrixLiWongModel", function(this, ..., verbose=FALSE) {
+setMethodS3("getChipEffects2", "AffymetrixLiWongModel", function(this, ..., verbose=FALSE) {
   chipFiles <- this$.chipFiles;
   if (!is.null(chipFiles))
     return(chipFiles);
@@ -79,7 +69,7 @@ setMethodS3("getChipEffects", "AffymetrixLiWongModel", function(this, ..., verbo
 
   chipFiles <- list();
   for (kk in seq(ds)) {
-    df <- ds[[kk]];
+    df <- as.list(ds)[[kk]];
     filename <- sprintf("%s-liwong.apd", getName(df));
     filename <- filePath(path, filename);
     if (!isFile(filename)) {
@@ -94,7 +84,7 @@ setMethodS3("getChipEffects", "AffymetrixLiWongModel", function(this, ..., verbo
     # handle ~512 open connections, and we might have more arrays.
     # Instead we have to open and close the connections each time we
     # read data.
-    close(set[[1]]);
+    close(as.list(set)[[1]]);
     chipFiles[[kk]] <- set;
   } # for (kk in ...)
 

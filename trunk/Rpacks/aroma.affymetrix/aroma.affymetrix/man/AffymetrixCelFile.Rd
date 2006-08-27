@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixCelFile}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
@@ -55,8 +55,10 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
  \tab \code{getRectangle} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{image270}} \tab Displays all or a subset of the data spatially.\cr
+ \tab \code{\link[aroma.affymetrix:normalizeQuantiles.AffymetrixCelFile]{normalizeQuantiles}} \tab Normalizes the probe intensities to a target empirical distribution.\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
- \tab \code{writeSpatial} \tab  -\cr
+ \tab \code{transformAffine} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:writeSpatial.AffymetrixCelFile]{writeSpatial}} \tab Writes a spatial image of the CEL data to an image file.\cr
 }
 
 

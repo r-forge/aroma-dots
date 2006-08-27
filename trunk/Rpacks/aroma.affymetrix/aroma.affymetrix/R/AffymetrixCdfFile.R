@@ -376,25 +376,34 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ...) {
+setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Reading cell indices from CDF file");
   cdf <- readCdfCellIndices(this$.pathname, units=units, ...);
-  restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Restructuring");
+  cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
+  verbose && exit(verbose);
+  cdf;
 })
 
 
 
-setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NULL, stratifyBy=NULL, ..., verbose=FALSE) {
+setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NULL, stratifyBy=NULL, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
   verbose && enter(verbose, "Trying to load cached results");
-  key <- list(chipType=getChipType(this), stratifyBy=stratifyBy, restuctor=this$.restructor);
-  res <- loadCache(key=key);
+  key <- list(method="getFirstCellIndices.AffymetrixCdfFile", chipType=getChipType(this), stratifyBy=stratifyBy, restructor=this$.restructor);
+  res <- if (force) NULL else loadCache(key=key);
   verbose && exit(verbose);
 
   if (is.null(res)) {
-    verbose && enter(verbose, "Reading all cell indices");
-    res <- getCellIndices(this, units=NULL, ..., stratifyBy=stratifyBy);
+    verbose && enter(verbose, "Reading all cell indices (slow)");
+    res <- getCellIndices(this, units=NULL, ..., stratifyBy=stratifyBy, verbose=verbose);
     verbose && exit(verbose);
       
     verbose && enter(verbose, "Extracting the first cell in each unit group");
@@ -407,7 +416,7 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
       })
     });
     verbose && exit(verbose);
-  
+
     # Save to cache file
     saveCache(key=key, res);
   }

@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{AffymetrixUnitGroupsModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}, \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+\emph{\link[aroma.affymetrix]{AffymetrixCnRmaModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}, \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 public abstract static class \bold{AffymetrixUnitGroupsModel}\cr
 extends \link[R.oo]{Object}\cr
@@ -35,7 +35,7 @@ extends \link[R.oo]{Object}\cr
   the Li & Wong model belongs to this class of models.
  }
 
- \usage{AffymetrixUnitGroupsModel(dataSet=NULL, path=NULL, ...)}
+ \usage{AffymetrixUnitGroupsModel(dataSet=NULL, name="modelUnitGroups", path=NULL, ...)}
 
  \arguments{
    \item{...}{Not used.}

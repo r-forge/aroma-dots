@@ -63,7 +63,7 @@ setMethodS3("getFirstCellIndices", "ProbeAffinityFile", function(this, units=NUL
 }, protected=TRUE)
 
 
-setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, field="stdvs", ..., verbose=FALSE) {
+setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, field="stdvs", ..., transform=NULL, verbose=FALSE) {
   # Argument 'field':
   field <- match.arg(field);
 
@@ -73,6 +73,10 @@ setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, fie
 
   # Get the indices of the first cells in each unit group
   indices <- getFirstCellIndices(this, units=units, ...);
+
+  if (!is.null(transform)) {
+    indices <- transform(indices);
+  }
 
   # Keep only the first group
   indices <- applyCdfGroups(indices, .subset, 1);
@@ -120,8 +124,26 @@ setMethodS3("updateUnits", "ProbeAffinityFile", function(this, data, ...) {
 }, protected=TRUE);
 
 
+setMethodS3("writeSpatial", "ProbeAffinityFile", function(this, ..., transform=NULL, zlim=c(0,3)) {
+  if (is.null(transform)) {
+    transform <- function(x) {
+      # Probe-affinities are in (0,Inf]
+      nok <- (x == 0);
+      # Truncate zeros to smallest strictly positive value
+      x[nok] <- min(x[!nok], na.rm=TRUE);
+
+#      x <- log(x, base=2);
+      x;
+    }
+  }
+
+  NextMethod("writeSpatial", this, ..., transform=transform, zlim=zlim);
+})
+
 ############################################################################
 # HISTORY:
+# 2006-08-26
+# o Added writeSpatial().
 # 2006-08-25
 # o Added findUnitsTodo().
 # o Added getFirstCellIndices(). Since reading all cell indices can take

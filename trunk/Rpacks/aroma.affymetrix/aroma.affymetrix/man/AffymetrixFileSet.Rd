@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}\cr
 
 public static class \bold{AffymetrixFileSet}\cr
 extends \link[R.oo]{Object}\cr
@@ -43,8 +43,6 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:000-LB-.AffymetrixFileSet]{[}} \tab Extract a subset of the file set.\cr
- \tab \code{\link[aroma.affymetrix:000-LB--LB-.AffymetrixFileSet]{[[}} \tab Gets a subset of the files in the file set.\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixFileSet.AffymetrixFileSet]{as.AffymetrixFileSet}} \tab Coerce an object to an AffymetrixFileSet object.\cr
  \tab \code{\link[aroma.affymetrix:as.character.AffymetrixFileSet]{as.character}} \tab Returns a short string describing the Affymetrix file set.\cr
