@@ -281,9 +281,44 @@ setMethodS3("fromFile", "AffymetrixFile", function(static, filename, path=NULL, 
 }, static=TRUE)
 
 
+setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, overwrite=FALSE, ..., verbose=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'filename' and 'path':
+  pathname <- Arguments$getWritablePathname(filename, path=path, mustNotExist=!overwrite);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Assert that we're not trying to copy to itself
+  if (identical(pathname, getPathname(this)))
+    throw("Cannot copy Affymetrix file. Source and destination are identical: ", pathname);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Copy
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Copying Affymetrix file");
+  verbose && cat(verbose, "Source: ", getPathname(this));
+  verbose && cat(verbose, "Destination: ", pathname);
+  # Get the pathname for the CEL file
+  file.copy(getPathname(this), pathname, overwrite=overwrite);
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create object of the same class.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  res <- newInstance(this, pathname);
+
+  res;
+})
+
 
 ############################################################################
 # HISTORY:
+# 2006-08-27
+# o Added copyTo().
 # 2006-08-14
 # o Added abstract fromFile().
 # 2006-08-11

@@ -61,6 +61,7 @@ setMethodS3("getFirstCellIndices", "ChipEffectFile", function(this, units=NULL, 
 }, protected=TRUE)
 
 
+
 setMethodS3("encodeUnitGroup", "ChipEffectFile", function(static, groupData, ...) {
   theta <- .subset2(groupData, "theta");
   ncells <- length(theta);
@@ -73,15 +74,15 @@ setMethodS3("encodeUnitGroup", "ChipEffectFile", function(static, groupData, ...
 
 
 setMethodS3("decodeUnitGroup", "ChipEffectFile", function(static, groupData, ...) {
-  attachLocally(groupData);
-  pixels <- groupData$pixels;
-  list(theta=groupData$intensities, stdvs=groupData$stdvs);
+  res <- list();
+  if (!is.null(groupData$intensities))
+    res$theta <- groupData$intensities;
+  if (!is.null(groupData$stdvs))
+    res$stdvs <- groupData$stdvs;
+  if (!is.null(groupData$pixels))
+    res$pixels <- groupData$pixels;
+  res;
 }, static=TRUE, protected=TRUE)
-
-
-setMethodS3("createFrom", "ChipEffectFile", function(static, ..., filename="probeAffinities.CEL") {
-  createFrom.ParameterCelFile(static, ..., filename=filename);
-}, static=TRUE);
 
 
 
@@ -91,12 +92,12 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
     cdf <- getFirstCellIndices(this, units=units, ...);
   }
 
-str(cdf);
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
   stratifyBy <- switch(this$model, pm="pm");
   NextMethod("readUnits", this, cdf=cdf, ..., stratifyBy=stratifyBy);
 });
+
 
 
 setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, data, ...) {

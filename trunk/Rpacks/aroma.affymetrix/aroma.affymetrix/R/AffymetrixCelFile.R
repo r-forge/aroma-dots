@@ -106,6 +106,32 @@ setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NUL
 
 
 
+setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, clear=TRUE, ..., verbose=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'filename' and 'path':
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Don't create if already exists
+  if (isFile(pathname)) {
+    res <- newInstance(this, pathname);
+    return(res);
+  }
+
+  res <- copyFile(this, filename=pathname, path=NULL, verbose=verbose);
+
+  if (clear) {
+    clearData(res, ..., .forSure=TRUE, verbose=verbose);
+  }
+
+  res;
+}, protected=TRUE)
+
+
 
 ###########################################################################/**
 # @RdocMethod getCdf
@@ -182,8 +208,8 @@ setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ...) {
   }
 
   # Assure that the CDF is compatible with the CEL file
-  if (nbrOfCells(cdf) != getHeader(this)$total) {
-    throw("The specified CDF structure is not compatible with the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", getHeader(this)$total);
+  if (nbrOfCells(cdf) != nbrOfCells(this)) {
+    throw("The specified CDF structure is not compatible with the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(this));
   }
 
   # Nothing to do?
@@ -235,6 +261,11 @@ setMethodS3("getHeader", "AffymetrixCelFile", function(this, ...) {
   header;
 }, protected=TRUE)
 
+
+
+setMethodS3("nbrOfCells", "AffymetrixCelFile", function(this, ...) {
+  getHeader(this)$total;
+})
 
 
 ###########################################################################/**
@@ -329,8 +360,7 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
 # \arguments{
 #   \item{data}{A @list structure consisting of grouped data similar to 
 #      what @seemethod "readUnits" returns.}
-#   \item{...}{Additional arguments passed to the
-#      @see "affxparser::updateCelUnits" methods.}
+#   \item{...}{Not used.}
 # }
 #
 # \value{
@@ -349,6 +379,79 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
 setMethodS3("updateUnits", "AffymetrixCelFile", function(this, data, ...) {
   updateCelUnits(this$.pathname, data=data, ...);
 }, protected=TRUE);
+
+
+
+###########################################################################/**
+# @RdocMethod clearData
+#
+# @title "Clears all or a subset of the fields in a CEL file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{fields}{A @characer @vector of fields to be cleared.}
+#   \item{value}{A @numeric value to be written over the data.}
+#   \item{...}{Additional arguments passed to the
+#      @see "affxparser::updateCelUnits" methods.}
+#   \item{.forSure}{If not @TRUE, an exception is thrown asking if the
+#      method was called by mistake.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns (invisibly) the names of the fields cleared.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("clearData", "AffymetrixCelFile", function(this, fields=c("intensities", "stdvs", "pixels"), value=0, ..., .forSure=FALSE, verbose=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'fields':
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  if (!identical(.forSure, TRUE))
+    throw("Did you call clearData() by mistake? If not, use .forSure=TRUE.");
+
+  # Nothing do to?
+  if (length(fields) == 0) {
+    verbose && cat(verbose, "No fields to be cleared.");
+    return(invisible(fields));
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Clear
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Clearing Affymetrix CEL file");
+  verbose && cat(verbose, "Fields to be cleared: ", paste(fields, collapse=", "));
+  bfr <- rep(value, length.out=nbrOfCells(this));
+  intensities <- stdvs <- pixels <- NULL;
+  if ("intensities" %in% fields)
+    intensities <- bfr;
+  if ("stdvs" %in% fields)
+    stdvs <- bfr;
+  if ("pixels" %in% fields)
+    pixels <- bfr;
+  updateCel(getPathname(this), intensities=bfr, stdvs=bfr, pixels=bfr);
+  verbose && exit(verbose);
+
+  invisible(fields);
+}, static=TRUE, protected=TRUE)
+
 
 
 
@@ -665,6 +768,12 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-08-27
+# o Added nbrOfCells() because it is so common.
+# o Added createFrom() which utilizes new functions copyFile() and 
+#   clearData(). It is also no longer static. This is more generic and 
+#   cleaner.  The new clearData() does also not require the CDF file 
+#   (in case that should be missing).
 # 2006-08-25
 # o Renamed getIntensities() to getFields() which returns a data frame.
 # o Added image270() and writeSpatial().

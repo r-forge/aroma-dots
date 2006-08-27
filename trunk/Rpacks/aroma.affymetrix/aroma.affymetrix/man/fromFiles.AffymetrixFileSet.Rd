@@ -29,11 +29,20 @@
     of the abstract \code{\link{AffymetrixFile}} class are search for.}
  \item{recursive}{If \code{\link[base:logical]{TRUE}}, subdirectories are search recursively,
     otherwise not.}
- \item{...}{Other arguments passed to \code{\link[base]{list.files}}().}
+ \item{...}{Other arguments passed to \code{\link[base]{list.files}}()}
 }
 
 \value{
   Returns an \code{\link{AffymetrixFileSet}} object.
+}
+
+\section{Reserved filenames}{
+  Note that files with names starting with a period \code{.} are not
+  searched for.  The reason for this is that such files are reserved for
+  internal use of this package.  For instance, the package store average
+  signals across CEL files in a file named as \code{.average<something>.CEL}
+  in the same directory as the CEL files of the dataset, and when such a
+  directory is scanned we do not want such files to be interpreted as data.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

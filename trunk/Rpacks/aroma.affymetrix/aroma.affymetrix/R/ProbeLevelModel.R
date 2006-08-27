@@ -115,24 +115,26 @@ setMethodS3("getChipEffectClass", "ProbeLevelModel", function(static, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
-  paFile <- this$.paFile;
-  if (!is.null(paFile))
-    return(paFile);
+  res <- this$.paFile;
+  if (!is.null(res))
+    return(res);
 
   # Get the probe-affinity class object
   clazz <- getProbeAffinityClass(this);
 
-  # Let the parameter object know about the CDF structure, because we 
-  # might use a modified version of the one in the CEL header.
-  cdf <- getCdf(this);
   ds <- getDataSet(this);
   if (length(ds) == 0)
     throw("Cannot create probe-affinity file. The CEL set is empty.");
-  pathname <- clazz$createFrom(cdf=cdf, path=getPath(this), celFile=as.list(ds)[[1]]);
-  paFile <- newInstance(clazz, pathname, cdf=cdf, model=this$model);
-  this$.paFile <- paFile;
 
-  paFile;
+  # Create probe-affinity file from CEL file template
+  df <- as.list(ds)[[1]];
+  res <- createFrom(df, filename="probeAffinities.CEL", path=getPath(this), ...);
+
+  # Make it into an object of the correct class
+  res <- newInstance(clazz, getPathname(res), cdf=getCdf(ds), model=this$model);
+  this$.paFile <- res;
+
+  res;
 })
 
 
@@ -454,7 +456,9 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
       # Create an empty template CEL file for quick copy of the others
       if (is.null(template)) {
         verbose && enter(verbose, "Creating template");
-        template <- clazz$createFrom(cdf=cdf, filename="template.CEL", path=getPath(this), celFile=df, verbose=verbose);
+        template <- createFrom(df, filename=".template.CEL", path=getPath(this), 
+                                                               verbose=verbose);
+        template <- getPathname(template);
         on.exit(file.remove(template));
         verbose && exit(verbose);
       }

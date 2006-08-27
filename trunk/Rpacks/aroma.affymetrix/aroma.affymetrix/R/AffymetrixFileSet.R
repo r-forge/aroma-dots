@@ -421,11 +421,20 @@ setMethodS3("clearCache", "AffymetrixFileSet", function(this, ...) {
 #     of the abstract @see "AffymetrixFile" class are search for.}
 #  \item{recursive}{If @TRUE, subdirectories are search recursively,
 #     otherwise not.}
-#  \item{...}{Other arguments passed to @see "base::list.files".}
+#  \item{...}{Other arguments passed to @see "base::list.files"}
 # }
 #
 # \value{
 #   Returns an @see "AffymetrixFileSet" object.
+# }
+#
+# \section{Reserved filenames}{
+#   Note that files with names starting with a period \code{.} are not 
+#   searched for.  The reason for this is that such files are reserved for
+#   internal use of this package.  For instance, the package store average
+#   signals across CEL files in a file named as \code{.average<something>.CEL}
+#   in the same directory as the CEL files of the dataset, and when such a
+#   directory is scanned we do not want such files to be interpreted as data.
 # }
 #
 # @author
@@ -457,7 +466,7 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Scan for Affymetrix files
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE, 
-                                                  recursive=recursive, ...);
+                               all.files=FALSE, recursive=recursive, ...);
   if (length(pathnames) == 0)
     throw("No files found: ", path);
 
@@ -481,6 +490,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-08-27
+# o Made filenames starting with a period reserved for internal use.
 # 2006-08-26
 # o Now getName() of a file set is inferred from the pathname:
 #     path/to/<name>/chip_files/<"chip type">/
