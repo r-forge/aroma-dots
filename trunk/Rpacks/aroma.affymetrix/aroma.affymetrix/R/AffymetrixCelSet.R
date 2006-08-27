@@ -418,6 +418,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., ver
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -428,16 +429,155 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., ver
   # Cached values
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (is.list(units)) {
-    res <- readCelUnits(pathnames, cdf=units, readStdvs=FALSE, 
-                                                    readPixels=FALSE, ...);
+    res <- readCelUnits(pathnames, cdf=units, ...);
   } else {
     # Always ask for CDF information from the CDF object!
     cdf <- readUnits(getCdf(this), units=units);
-    res <- readCelUnits(pathnames, cdf=cdf, readStdvs=FALSE, 
-                                                    readPixels=FALSE, ...);
+    res <- readCelUnits(pathnames, cdf=cdf, ...);
   }
 
   res;
+})
+
+
+setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indices="remaining", mean=c("mean", "median"), sd=c("sd", "mad"), na.rm=FALSE, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'mean':
+  if (is.character(mean)) {
+    mean <- match.arg(mean);
+    meanName <- mean;
+    if (mean == "mean")
+      mean <- base::rowMeans;
+  } else if (is.function(mean)) {
+    meanName <- "customMean";
+  } else {
+    throw("Argument 'mean' must be either a character or a function: ", mode(mean));
+  }
+
+  # Argument 'sd':
+  if (is.character(sd)) {
+    sd <- match.arg(sd);
+    sdName <- sd;
+    if (sd == "sd")
+      sd <- rowSds;
+  } else if (is.function(sd)) {
+    sdName <- "customSd";
+  } else {
+    throw("Argument 'sd' must be either a character or a function: ", mode(sd));
+  }
+
+  # Argument 'name':
+  if (is.null(name))
+    name <- sprintf("average-%s-%s", meanName, sdName);
+
+  # Argument 'indices':
+  df <- as.list(this)[[1]];
+  nbrOfCells <- getHeader(df)$total;
+  if (is.null(indices)) {
+    indices <- 1:nbrOfCells; 
+  } else if (identical(indices, "remaining")) {
+  } else {
+    indices <- Arguments$getIndices(indices, range=c(1, nbrOfCells));
+  }
+
+  # Argument 'cellsPerChunk':
+  cellsPerChunk <- Arguments$getInteger(cellsPerChunk, range=c(1,Inf));
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create CEL file to store the average array
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create a private filename (with a dot prefix) to make sure it is not
+  # identified as a regular CEL file when the directory is scanned for files.
+  filename <- sprintf(".%s.CEL", name);
+  res <- createFrom(df, filename=filename, path=getPath(this), verbose=verbose);
+  pathname <- getPathname(res);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify which indices to use
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (identical(indices, "remaining")) {
+    pixels <- readCel(pathname, readIntensities=FALSE, readStdvs=FALSE, 
+                      readPixels=TRUE)$pixels;
+    indices <- which(pixels == 0);
+    rm(pixels); # Not needed anymore.
+  }
+  nbrOfIndices <- length(indices);
+
+  # Nothing more to do?
+  if (nbrOfIndices == 0)
+    return(res);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Estimate the mean and standard deviation
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Since we might want to do this robustly, but also because we want to
+  # estimate the standard deviation, for each cell we need all data across 
+  # arrays at once.  In order to this efficiently, we do this in chunks
+  idxs <- 1:nbrOfIndices;
+  head <- 1:cellsPerChunk;
+  nbrOfChunks <- ceiling(nbrOfIndices / cellsPerChunk);
+  verbose && cat(verbose, "Number cells per chunk: ", cellsPerChunk);
+
+  # Get the pathnames of all CEL files to average
+  pathnames <- lapply(this, getPathname);
+  pathnames <- unlist(pathnames, use.names=FALSE);
+
+  if (!na.rm)
+    n <- rep(length(this), length=cellsPerChunk);
+  count <- 1;
+  while (length(idxs) > 0) {
+    verbose && enter(verbose, "Fitting chunk #", count, " of ", nbrOfChunks);
+    if (length(idxs) < cellsPerChunk) {
+      head <- 1:length(idxs);
+      if (!na.rm)
+        n <- rep(length(pathnames), length=length(idxs));
+    }
+
+    # The indices to be used in this chunk
+    ii <- idxs[head];
+    verbose && cat(verbose, "Chunk size: ", length(ii));
+
+    verbose && enter(verbose, "Reading data");
+    X <- readCelIntensities(pathnames, indices=indices[ii]);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Estimating averages and standard deviations");
+    if (na.rm)
+      n <- apply(X, MARGIN=1, FUN=function(x) { sum(!is.na(x)) });
+
+    # Calculate the mean signal    
+    mu <- mean(X, na.rm=na.rm);          # Special mean()!
+
+    # Calculate the standard deviation of the signals
+    sigma <- sd(X, mean=mu, na.rm=na.rm);   # Special sd()!
+    verbose && exit(verbose);
+
+    # Write estimates to result file
+    verbose && enter(verbose, "Writing estimates");
+    updateCel(pathname, indices=indices[ii], intensities=mu, stdvs=sigma, pixels=n);
+    verbose && exit(verbose);
+
+    # Not needed anymore
+    mu <- sigma <- NULL;
+
+    # Next chunk...
+    idxs <- idxs[-head];
+    count <- count + 1;
+
+    # Garbage collection
+    gc();
+    verbose && exit(verbose);
+  } # while()
+
+  res;  
 })
 
 
@@ -468,6 +608,8 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-08-27
+# o Added getAverageFile().
 # 2006-08-26
 # o Now getName() of a CEL set is inferred from the pathname:
 #     path/to/<name>/chip_files/<"chip type">/

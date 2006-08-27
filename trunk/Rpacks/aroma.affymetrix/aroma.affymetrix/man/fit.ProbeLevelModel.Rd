@@ -24,7 +24,7 @@
   are stored in array specific files.
  }
 
- \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., transform=NULL, postCdfTransform=NULL, unitsPerChunk=1e+05/length(getDataSet(this)), force=FALSE, verbose=FALSE)}
+ \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., transform=NULL, postCdfTransform=NULL, unitsPerChunk=moreUnits * 1e+05/length(getDataSet(this)), moreUnits=1, force=FALSE, verbose=FALSE)}
 
  \arguments{
    \item{...}{Not used.}

@@ -88,14 +88,21 @@ setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, fie
   readIntensities <- FALSE;
   readStdvs <- FALSE;
   readPixels <- FALSE;
-  if (field == "stdvs") {
+  if (field == "intensities") {
+    readIntensities <- TRUE;
+  } else if (field == "stdvs") {
     readStdvs <- TRUE;
+  } else if (field == "pixels") {
+    readPixels <- TRUE;
   }
+
+  # Read one cell from each unit
   value <- readCel(getPathname(this), indices=indices, readIntensities=readIntensities, readStdvs=readStdvs, readPixels=readPixels);
   value <- value[[field]];
 
   # Identify units for which the stdvs <= 0.
   todo <- which(value <= 0);
+
   if (!is.null(units))
     todo <- units[todo];
 
@@ -103,24 +110,21 @@ setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, fie
 })
 
 
-setMethodS3("createFrom", "ProbeAffinityFile", function(static, ..., filename="probeAffinities.CEL") {
-  createFrom.ParameterCelFile(static, ..., filename=filename);
-}, static=TRUE);
-
-
 
 setMethodS3("readUnits", "ProbeAffinityFile", function(this, ...) {
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
   stratifyBy <- switch(this$model, pm="pm");
-  NextMethod("readUnits", this, ..., stratifyBy=stratifyBy);
+  res <- NextMethod("readUnits", this, ..., stratifyBy=stratifyBy);
+  res;
 });
 
 
 setMethodS3("updateUnits", "ProbeAffinityFile", function(this, data, ...) {
   # Note that the actually call to the encoding is done in updateUnits()
   # of the superclass.
-  NextMethod("updateUnits", this, data=data, ...);
+  stratifyBy <- switch(this$model, pm="pm");
+  NextMethod("updateUnits", this, data=data, ..., stratifyBy=stratifyBy);
 }, protected=TRUE);
 
 

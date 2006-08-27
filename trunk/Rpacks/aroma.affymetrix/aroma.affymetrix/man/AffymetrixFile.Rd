@@ -48,6 +48,7 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:as.character.AffymetrixFile]{as.character}} \tab Returns a short string describing the Affymetrix file.\cr
+ \tab \code{copyFile} \tab  -\cr
  \tab \code{fromFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFilename.AffymetrixFile]{getFilename}} \tab Gets the filename of the file.\cr
  \tab \code{getFileSize} \tab  -\cr

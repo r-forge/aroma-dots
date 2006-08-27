@@ -51,19 +51,23 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 \tabular{rll}{
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
+ \tab \code{calcMvsA} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
  \tab \code{getRectangle} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{image270}} \tab Displays all or a subset of the data spatially.\cr
+ \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:normalizeQuantiles.AffymetrixCelFile]{normalizeQuantiles}} \tab Normalizes the probe intensities to a target empirical distribution.\cr
+ \tab \code{plotMvsA} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
+ \tab \code{smoothScatterMvsA} \tab  -\cr
  \tab \code{transformAffine} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:writeSpatial.AffymetrixCelFile]{writeSpatial}} \tab Writes a spatial image of the CEL data to an image file.\cr
 }
 
 
 \bold{Methods inherited from AffymetrixFile}:\cr
-as.character, fromFile, getFilename, getFileSize, getFileType, getName, getPath, getPathname
+as.character, copyFile, fromFile, getFilename, getFileSize, getFileType, getName, getPath, getPathname
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

@@ -1,3 +1,20 @@
+#     # Find the longest common suffix of CEL file names.
+#     names <- getNames(this);
+#     names <- strsplit(names, split="");
+#     names <- lapply(names, FUN=rev);
+#     names <- lapply(names, FUN=paste, collapse="");
+#     names <- unlist(names, use.names=FALSE);
+#     suffix <- stringTree(names, maxDepth=1);
+#     suffix <- suffix[1];
+#     suffix <- names(suffix);
+#     if (identical(suffix, "EOS")) {
+#       suffix <- "";
+#     } else {
+#       suffix <- strsplit(suffix, split="")[[1]];
+#       suffix <- rev(suffix);
+#       suffix <- paste(suffix, collapse="");
+#     }
+# 
 setMethodS3("stringTree", "character", function(strs, maxDepth=-1, countRemaining=TRUE, ...) {
   if (length(strs) == 0)
     return(list(EOS=0));

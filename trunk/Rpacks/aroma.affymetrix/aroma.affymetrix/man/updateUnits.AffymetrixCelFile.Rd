@@ -24,8 +24,7 @@
 \arguments{
   \item{data}{A \code{\link[base]{list}} structure consisting of grouped data similar to
      what \code{\link[aroma.affymetrix:readUnits.AffymetrixCelFile]{*readUnits}()} returns.}
-  \item{...}{Additional arguments passed to the
-     \code{\link[affxparser]{updateCelUnits}} methods.}
+  \item{...}{Not used.}
 }
 
 \value{

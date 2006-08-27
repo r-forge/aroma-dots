@@ -50,7 +50,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 
 \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, fromFiles, getCdf, getIntensities, getUnitIntensities, nbrOfArrays, readUnits, setCdf
+[, [[, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, fromFiles, getAverageFile, getCdf, getIntensities, getName, getUnitIntensities, nbrOfArrays, readUnits, setCdf
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, as.character, as.list, clearCache, extract, fromFiles, getFileSize, getName, getNames, getPath, lapply, length, nbrOfFiles, seq

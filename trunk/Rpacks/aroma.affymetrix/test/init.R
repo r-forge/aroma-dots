@@ -7,6 +7,11 @@ library(affxparser)
 library(aroma.apd)
 library(aroma.affymetrix)
 
+# Digest is still broken
+#source("patches/digest.R")
+
+source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/rowSds.R")
+
 # Patching during development
 #source("~/braju.com.R/affxparser/affxparser/R/updateCel.R")
 #source("~/braju.com.R/affxparser/affxparser/R/private.readCelHeaderV4.R")
@@ -16,6 +21,7 @@ source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixFileSet.R")
 # source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixFileSet.SUBSETTING.R")
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixCdfFile.R")
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixCelFile.R")
+source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixCelFile.PLOT.R")
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixCelSet.R")
 
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/ParameterFile.R")

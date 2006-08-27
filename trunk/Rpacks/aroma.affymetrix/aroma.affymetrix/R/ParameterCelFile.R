@@ -48,44 +48,39 @@ setConstructorS3("ParameterCelFile", function(...) {
 
 
 
-setMethodS3("createFrom", "ParameterCelFile", function(static, celFile, filename, path=NULL, ..., verbose=TRUE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'celFile':
-  if (!is.null(celFile)) {
-    if (!inherits(celFile, "AffymetrixCelFile")) {
-      throw("Argument 'celFile' is not an AffymetrixCelFile object: ", 
-                                                      class(celFile)[1]);
-    }
-  }
 
-  # Argument 'filename' and 'path':
-  pathname <- Arguments$getWritablePathname(filename, path=path);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  # Don't create if already there
-  if (isFile(pathname))
-    return(pathname);
-
-  verbose && enter(verbose, "Creating file for probe-affinity estimates.");
-  # 1. Get the pathname for the CEL file
-  file.copy(getPathname(celFile), pathname);
-
-  # 2. Clear the file
-  cdf <- getCdf(celFile);
-  bfr <- double(nbrOfCells(cdf));
-  updateCel(pathname, intensities=bfr, stdvs=bfr, pixels=bfr);
-
-  verbose && exit(verbose);
-
-  pathname;
-}, static=TRUE, protected=TRUE)
-
-
+###########################################################################/**
+# @RdocMethod encodeUnitGroup
+#
+# @title "Returns a unit group with fields as in a CEL file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a named @list structure with elements \code{intensities},
+#  \code{stdvs}, and \code{pixels}, all of equal length.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
 setMethodS3("encodeUnitGroup", "ParameterCelFile", abstract=TRUE, static=TRUE, protected=TRUE);
+
+
+
 
 setMethodS3("encodeUnit", "ParameterCelFile", function(static, unit, ...) {
   lapply(unit, FUN=function(group) encodeUnitGroup(static, group, ...));
@@ -96,7 +91,14 @@ setMethodS3("encode", "ParameterCelFile", function(static, units, ...) {
 }, protected=TRUE)
 
 setMethodS3("decodeUnitGroup", "ParameterCelFile", function(static, intensities=NULL, stdvs=NULL, pixels=NULL, ...) {
-  list(intensities=intensities, stdvs=stdvs, pixels=pixels);
+  res <- list();
+  if (!is.null(intensities))
+    res$intensities <- intensities;
+  if (!is.null(stdvs))
+    res$stdvs <- stdvs;
+  if (!is.null(pixels))
+    res$pixels <- pixels;
+  res;
 }, static=TRUE, protected=TRUE)
 
 setMethodS3("decodeUnit", "ParameterCelFile", function(static, unit, ...) {
@@ -108,7 +110,7 @@ setMethodS3("decode", "ParameterCelFile", function(static, units, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=TRUE, readPixels=TRUE, stratifyBy=NULL) {
+setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE, readPixels=FALSE, stratifyBy=NULL) {
   units <- NextMethod("readUnits", this, ..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy);
   decode(this, units);
 });
@@ -125,6 +127,8 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-08-27
+# o Moved createFrom() to the AffymetrixCelFile class.
 # 2006-08-26
 # o Now createFrom() takes a CEL file and not a CEL set.
 # 2006-08-24

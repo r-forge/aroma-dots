@@ -65,11 +65,12 @@ setConstructorS3("RmaProbeAffinityFile", function(...) {
 })
 
 
+
 setMethodS3("encodeUnitGroup", "RmaProbeAffinityFile", function(static, groupData, ...) {
   phi <- .subset2(groupData, "phi");
   ncells <- length(phi);
-  pixels <- rep(0, ncells);
   stdvs <- rep(1, ncells);
+  pixels <- rep(0, ncells);
   list(intensities=phi, stdvs=stdvs, pixels=pixels);
 }, static=TRUE, protected=TRUE)
 
@@ -77,11 +78,14 @@ setMethodS3("encodeUnitGroup", "RmaProbeAffinityFile", function(static, groupDat
 
 
 setMethodS3("decodeUnitGroup", "RmaProbeAffinityFile", function(static, groupData, ...) {
-  attachLocally(groupData);
-
-  pixels <- groupData$pixels;
-
-  list(phi=groupData$intensities, stdvs=groupData$stdvs, pixels=pixels);
+  res <- list();
+  if (!is.null(groupData$intensities))
+    res$phi <- groupData$intensities;
+  if (!is.null(groupData$stdvs))
+    res$stdvs <- groupData$stdvs;
+  if (!is.null(groupData$pixels))
+    res$pixels <- groupData$pixels;
+  res;
 }, static=TRUE, protected=TRUE)
 
 
