@@ -163,6 +163,7 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, ...) {
 #*/###########################################################################
 setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
+  s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
   s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
@@ -178,6 +179,25 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="cel/", patte
   # Use the same CDF object for all CEL files.
   setCdf(this, getCdf(this));
   this;
+})
+
+
+setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
+  # The name of a file set is inferred from the pathname of the directory
+  # of the set, i.e. path/to/<name>/chip_files/<"chip type">/
+  # Get the path of this file set
+  path <- getPath(this);
+
+  while(TRUE) {
+    path <- dirname(path);
+    # If that directory is named 'chip_data' (or 'chipdata') go up on level
+    name <- basename(path);
+    pattern <- "^chip[_]*data$";
+    if (regexpr(pattern, name) == -1)
+      break;
+  }
+  
+  name;
 })
 
 
@@ -448,6 +468,9 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-08-26
+# o Now getName() of a CEL set is inferred from the pathname:
+#     path/to/<name>/chip_files/<"chip type">/
 # 2006-08-21
 # o Now AffymetrixCelSet inherits from AffymetrixFileSet.
 # 2006-08-11

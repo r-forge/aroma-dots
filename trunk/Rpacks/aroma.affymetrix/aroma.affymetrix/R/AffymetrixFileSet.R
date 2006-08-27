@@ -48,7 +48,21 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
 
 
 setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
-  basename(getPath(this));
+  # The name of a file set is inferred from the pathname of the directory
+  # of the set assuming path/to/<name>/<something>/<"chip type">/
+  # Get the path of this file set
+  path <- getPath(this);
+
+  # path/to/<name>/<something>
+  path <- dirname(path);
+
+  # path/to/<name>
+  path <- dirname(path);
+
+  # <name>
+  name <- basename(path);
+
+  name;
 })
 
 
@@ -82,6 +96,7 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 #*/###########################################################################
 setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
+  s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Number of files: %d", nbrOfFiles(this)));
   s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
@@ -466,6 +481,9 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-08-26
+# o Now getName() of a file set is inferred from the pathname:
+#     path/to/<name>/chip_files/<"chip type">/
 # 2006-08-21
 # o Renamed 'array' to 'file'.
 # o Extracted from AffymetrixCelSet.R.
