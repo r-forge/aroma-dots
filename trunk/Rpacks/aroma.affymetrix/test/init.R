@@ -11,6 +11,7 @@ library(aroma.affymetrix)
 #source("patches/digest.R")
 
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/rowSds.R")
+source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/plotUtils.R")
 
 # Patching during development
 #source("~/braju.com.R/affxparser/affxparser/R/updateCel.R")

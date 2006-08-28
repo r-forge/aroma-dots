@@ -65,7 +65,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
 \bold{Methods inherited from AffymetrixFile}:\cr
-as.character, copyFile, fromFile, getFilename, getFileSize, getFileType, getName, getPath, getPathname
+as.character, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

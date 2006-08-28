@@ -48,6 +48,12 @@ setMethodS3("smoothScatterMvsA", "AffymetrixCelFile", function(this, reference, 
   smoothScatter(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
 })
 
+# Annotate 
+setMethodS3("stextChipType", "AffymetrixCelFile", function(this, side=4, fmtstr="Chip type: %s", pos=1, cex=0.7, col="darkgray", ...) {
+  stext(side=side, text=sprintf(fmtstr, getChipType(this)), pos=pos, cex=cex, col=col, ...);
+})
+
+
 
 ############################################################################
 # HISTORY:
