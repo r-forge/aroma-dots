@@ -72,7 +72,9 @@ setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, fie
 
 
   # Get the indices of the first cells in each unit group
-  indices <- getFirstCellIndices(this, units=units, ...);
+  verbose && enter(verbose, "Identifying the first cell index of each unit group");
+  indices <- getFirstCellIndices(this, units=units, ..., verbose=verbose);
+  verbose && exit(verbose);
 
   if (!is.null(transform)) {
     indices <- transform(indices);
@@ -97,8 +99,10 @@ setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, fie
   }
 
   # Read one cell from each unit
+  verbose && enter(verbose, "Reading data for these cells");
   value <- readCel(getPathname(this), indices=indices, readIntensities=readIntensities, readStdvs=readStdvs, readPixels=readPixels);
   value <- value[[field]];
+  verbose && exit(verbose);
 
   # Identify units for which the stdvs <= 0.
   todo <- which(value <= 0);

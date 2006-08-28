@@ -397,7 +397,7 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
   verbose <- Arguments$getVerbose(verbose);
 
   verbose && enter(verbose, "Trying to load cached results");
-  key <- list(method="getFirstCellIndices.AffymetrixCdfFile", chipType=getChipType(this), stratifyBy=stratifyBy, restructor=this$.restructor);
+  key <- list(method="getFirstCellIndices.AffymetrixCdfFile", chipType=getChipType(this), stratifyBy=stratifyBy, restructor=body(this$.restructor));
   res <- if (force) NULL else loadCache(key=key);
   verbose && exit(verbose);
 
@@ -418,7 +418,9 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
     verbose && exit(verbose);
 
     # Save to cache file
+    verbose && enter(verbose, "Saving results to cache");
     saveCache(key=key, res);
+    verbose && exit(verbose);
   }
 
   # Subset?
