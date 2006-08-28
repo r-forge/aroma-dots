@@ -46,7 +46,7 @@ setMethodS3("getProbeAffinityClass", "AffymetrixLiWongModel", function(static, .
 
 setMethodS3("getFitFunction", "AffymetrixLiWongModel", function(static, ...) {
   liWong <- function(y, ...) {
-    affy::fit.li.wong(t(y));
+    fit.li.wong(t(y));
   }
 
   liWong;
