@@ -307,6 +307,13 @@ setMethodS3("as.list", "AffymetrixFileSet", function(x, ...) {
   this$files;
 })
 
+setMethodS3("getFile", "AffymetrixFileSet", function(this, idx, ...) {
+  this$files[[idx]];
+})
+
+setMethodS3("getFiles", "AffymetrixFileSet", function(this, idxs, ...) {
+  this$files[idxs];
+})
 
 
 ###########################################################################/**
@@ -491,6 +498,7 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 ############################################################################
 # HISTORY:
 # 2006-08-27
+# o Added getFile() and getFiles().
 # o Made filenames starting with a period reserved for internal use.
 # 2006-08-26
 # o Now getName() of a file set is inferred from the pathname:

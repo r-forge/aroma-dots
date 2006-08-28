@@ -80,6 +80,7 @@ setMethodS3("as.character", "AffymetrixFile", function(this, ...) {
   s <- paste(s, " File type: ", getFileType(this), ".", sep="");
   s <- sprintf("%s Pathname: %s (%.2fMb).", s, getPathname(this), 
                                                    getFileSize(this)/1024^2);
+  s <- sprintf("%s RAM: %.2fMb.", s, objectSize(this)/1024^2);
   s;
 })
 

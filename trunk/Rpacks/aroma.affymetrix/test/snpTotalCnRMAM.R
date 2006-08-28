@@ -34,8 +34,6 @@ cat("Fitted ", length(units), " units.\n");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 cesAvg <- getAverageFile(ces, verbose=TRUE);
 
-ce <- as.list(ces)[[1]];
-smoothScatterMvsA(ce, cesAvg, xlim=c(8,16))
-abline(h=log(1:6/2, base=2), lty=c(3,2,rep(3,4)))
-textChipType(ce);
-textLabels(ce, cesAvg);
+ce <- getFile(ces, 1);
+smoothScatterMvsA(ce, cesAvg, xlim=c(8,16));
+abline(h=log(1:6/2, base=2), lty=3);
