@@ -44,6 +44,12 @@ setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, ...) {
 }, abstract=TRUE)
 
 
+setMethodS3("clone", "AffymetrixFile", function(this, clear=TRUE, ...) {
+  object <- NextMethod("clone", this, ...);
+  if (clear)
+    clearCache(object);
+  object;
+})
 
 
 ###########################################################################/**

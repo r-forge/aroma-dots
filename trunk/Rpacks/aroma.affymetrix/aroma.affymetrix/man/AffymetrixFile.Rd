@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixApdFile}, \link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \emph{\link[aroma.affymetrix]{AffymetrixDataFile}}, \link[aroma.affymetrix]{AffymetrixParameterFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \link[aroma.affymetrix]{ParameterFile}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{AffymetrixApdFile}, \link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \emph{\link[aroma.affymetrix]{AffymetrixDataFile}}, \link[aroma.affymetrix]{AffymetrixParameterFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{GdasAnnotationFile}, \link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \link[aroma.affymetrix]{ParameterFile}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixFile}\cr
 extends \link[R.oo]{Object}\cr
@@ -48,6 +48,7 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:as.character.AffymetrixFile]{as.character}} \tab Returns a short string describing the Affymetrix file.\cr
+ \tab \code{clone} \tab  -\cr
  \tab \code{copyFile} \tab  -\cr
  \tab \code{fromFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFilename.AffymetrixFile]{getFilename}} \tab Gets the filename of the file.\cr

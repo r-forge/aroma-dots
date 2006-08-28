@@ -5,6 +5,11 @@ path <- "chip_data/Hind/";
 path <- "chip_data2/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
+models <- AffymetrixModelSet(
+  tCnRma = AffymetrixCnRmaModel(ds, name="modelTCNRma"),
+  tCnLiWong = AffymetrixCnRmaModel(ds, name="modelTCNRma")
+)
+
 # Specify the model we want to fit
 model <- AffymetrixCnRmaModel(ds, name="modelTCNRma");
 print(model);

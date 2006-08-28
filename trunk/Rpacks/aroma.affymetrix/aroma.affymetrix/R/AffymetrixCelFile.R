@@ -48,6 +48,22 @@ setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
   this;
 })
 
+setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
+  # Clone itself (and clear the cached fields)
+  object <- NextMethod("clone", clear=TRUE, ...);
+
+  # Clone the CDF
+  if (!is.null(object$.cdf))
+    object$.cdf <- clone(object$.cdf);
+
+  # Clear any cache
+  clearCache(object);
+
+  object;
+})
+
+
+
 
 ###########################################################################/**
 # @RdocMethod fromFile
@@ -103,7 +119,6 @@ setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NUL
   # Create a new instance of the same class
   newInstance(static, pathname);
 }, static=TRUE)
-
 
 
 setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, clear=TRUE, ..., verbose=TRUE) {
@@ -469,7 +484,7 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 
 
 ###########################################################################/**
-# @RdocMethod getFields
+# @RdocMethod getData
 #
 # @title "Gets all or a subset of the fields in a CEL file"
 #
@@ -499,7 +514,7 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getFields", "AffymetrixCelFile", function(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
+setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -768,6 +783,9 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-08-28
+# o Renamed getFields() to getData() because getFields() is "reserved"
+#   for use in the Object class.
 # 2006-08-27
 # o Added nbrOfCells() because it is so common.
 # o Added createFrom() which utilizes new functions copyFile() and 

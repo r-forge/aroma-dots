@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\emph{\code{ProbeLevelModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixCnRmaModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}\cr
+\emph{\link[aroma.affymetrix]{AffymetrixCnLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixCnRmaModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}\cr
 
 public abstract static class \bold{ProbeLevelModel}\cr
 extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr

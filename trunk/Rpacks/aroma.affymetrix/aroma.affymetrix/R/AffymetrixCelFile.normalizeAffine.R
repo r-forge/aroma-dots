@@ -32,7 +32,7 @@ setMethodS3("transformAffine", "AffymetrixCelFile", function(this, outPath=file.
   }
 
   # Get probe signals
-  x <- getFields(this, fields="intensities", ..., verbose=verbose);
+  x <- getData(this, fields="intensities", ..., verbose=verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify the subset of probes to be updated

@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{GdasAnnotationSet}\cr
 
 public static class \bold{AffymetrixFileSet}\cr
 extends \link[R.oo]{Object}\cr
@@ -48,8 +48,10 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:as.character.AffymetrixFileSet]{as.character}} \tab Returns a short string describing the Affymetrix file set.\cr
  \tab \code{\link[aroma.affymetrix:as.list.AffymetrixFileSet]{as.list}} \tab Returns the files of the Affymetrix file set.\cr
  \tab \code{clearCache} \tab  -\cr
+ \tab \code{clone} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:extract.AffymetrixFileSet]{extract}} \tab Extract a subset of the file set.\cr
  \tab \code{\link[aroma.affymetrix:fromFiles.AffymetrixFileSet]{fromFiles}} \tab Defines an AffymetrixFileSet object by searching for Affymetrix files.\cr
+ \tab \code{getFile} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getNames.AffymetrixFileSet]{getNames}} \tab Gets the names of the files in the file set.\cr
