@@ -15,8 +15,8 @@ setMethodS3("stext", "default", function(text, side=1, line=0, pos=0.5, margin=c
     dx <- margin[1]*charDim[1];
     dy <- margin[2]*charDim[2];
   } else {
-    dx <- margin[2]*charDim[2];
-    dy <- margin[1]*charDim[1];
+    dx <- margin[2]*charDim[1];
+    dy <- margin[1]*charDim[2];
   }
 
   usr <- par("usr");
@@ -37,6 +37,7 @@ setMethodS3("stext", "default", function(text, side=1, line=0, pos=0.5, margin=c
     xlim <- xlim - c(-1,+1)*dx;
     ylim <- ylim - c(-1,+1)*dy;
   }
+
 
   # Debug
   # lines(x=xlim[c(1,1,2,2,1)], y=ylim[c(1,2,2,1,1)], col="red", xpd=TRUE);

@@ -41,6 +41,10 @@ source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/RmaProbeAffinityFile.R
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixRmaModel.R")
 source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/AffymetrixCnRmaModel.R")
 
+source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/GdasAnnotationFile.R")
+source("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/GdasAnnotationSet.R")
+
+
 # Setup up the search path to ImageMagick
 imageMagickConvert <- function(srcfile, destfile, format, options=NULL, ...) {
   pathname <- "C:/Program Files/ImageMagick-6.2.7-Q16/convert";
