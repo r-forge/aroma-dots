@@ -49,6 +49,13 @@ setConstructorS3("AffymetrixUnitGroupsModel", function(dataSet=NULL, name="model
       throw("Argument 'dataSet' is not an AffymetrixFileSet object: ", class(dataSet));
   }
 
+  # Clone the data set.  Since the CDF is defined in the data set,
+  # models using different CDF structures must not share the same
+  # CDF, thus not the same data set. /HB 2006-08-28
+  if (!is.null(dataSet)) {
+    dataSet <- clone(dataSet);
+  }
+
   extend(Object(), "AffymetrixUnitGroupsModel",
     path = path,
     dataSet = dataSet,

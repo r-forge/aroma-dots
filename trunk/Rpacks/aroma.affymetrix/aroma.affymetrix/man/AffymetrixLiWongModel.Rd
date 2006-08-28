@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\emph{\code{AffymetrixLiWongModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\emph{\link[aroma.affymetrix]{AffymetrixCnLiWongModel}}\cr
 
 public abstract static class \bold{AffymetrixLiWongModel}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr

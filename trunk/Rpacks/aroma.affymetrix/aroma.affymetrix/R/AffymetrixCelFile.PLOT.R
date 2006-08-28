@@ -12,7 +12,7 @@ setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=N
   }
 
   # Get the signals for this channel
-  y1 <- getFields(this, indices=indices, fields="intensities")[,1];
+  y1 <- getData(this, indices=indices, fields="intensities")[,1];
 
   # Identify non-zero signals
   keep <- which(y1 != 0);
@@ -28,7 +28,7 @@ setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=N
     } else {
       indices <- indices[keep];
     }
-    y2 <- getFields(reference, indices=indices, fields="intensities")[,1];
+    y2 <- getData(reference, indices=indices, fields="intensities")[,1];
     y2 <- log(y2, base=2);
   }
 

@@ -46,6 +46,24 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
 })
 
 
+setMethodS3("clone", "AffymetrixFileSet", function(this, clear=TRUE, ...) {
+  # Clone itself
+  object <- NextMethod("clone", this, ...);
+
+  # Clone each file object
+  files <- as.list(object);
+  for (kk in seq(along=files)) {
+    files[[kk]] <- clone(files[[kk]], clear=TRUE);
+  }
+  object$files <- files;
+
+  # Clear the cached fields?
+  if (clear)
+    clearCache(object);
+
+  object;
+})
+
 
 setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
   # The name of a file set is inferred from the pathname of the directory

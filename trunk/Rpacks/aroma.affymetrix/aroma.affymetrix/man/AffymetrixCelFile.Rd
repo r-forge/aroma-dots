@@ -52,6 +52,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{calcMvsA} \tab  -\cr
+ \tab \code{clone} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
  \tab \code{getRectangle} \tab  -\cr
@@ -59,6 +60,8 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:normalizeQuantiles.AffymetrixCelFile]{normalizeQuantiles}} \tab Normalizes the probe intensities to a target empirical distribution.\cr
  \tab \code{plotMvsA} \tab  -\cr
+ \tab \code{plotMvsPosition} \tab  -\cr
+ \tab \code{plotMvsX} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
  \tab \code{smoothScatterMvsA} \tab  -\cr
  \tab \code{stextChipType} \tab  -\cr
@@ -68,7 +71,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
 \bold{Methods inherited from AffymetrixFile}:\cr
-as.character, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels
+as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

@@ -66,7 +66,7 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelFile", function(this, outPath=fi
   }
 
   # Get all probe signals
-  x <- getFields(this, fields="intensities", ..., verbose=verbose);
+  x <- getData(this, fields="intensities", ..., verbose=verbose);
 
   # Identify the subset of probes to be updated
   cdf <- getCdf(this);
@@ -146,7 +146,7 @@ setMethodS3("fitQuantileNormFcn", "AffymetrixCelFile", function(this, yTarget, s
   verbose && enter(verbose, "Fitting (quantile) normalization function");
 
   # Read the probe intensities
-  y <- getFields(this, fields="intensities", verbose=verbose);
+  y <- getData(this, fields="intensities", verbose=verbose);
 
   # Sort signals
   verbose && enter(verbose, "Sorting probe signals");
