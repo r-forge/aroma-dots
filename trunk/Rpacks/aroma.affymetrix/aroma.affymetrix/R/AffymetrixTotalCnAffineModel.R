@@ -1,12 +1,12 @@
 ###########################################################################/**
-# @RdocClass AffymetrixCnLiWongModel
+# @RdocClass AffymetrixTotalCnAffineModel
 #
-# @title "The AffymetrixCnLiWongModel class"
+# @title "The AffymetrixTotalCnAffineModel class"
 #
 # \description{
 #  @classhierarchy
 #
-#  This class represents the multiplicate model by Li and Wong (2001).
+#  This class represents the affine model used by Bengtsson \& Hössjer (2006).
 #  It can be used to fit the model on a @see "AffymetrixCelSet".
 # }
 # 
@@ -23,34 +23,28 @@
 #  @allmethods "public"
 # }
 #
-# \section{Model}{
-#   Consider a specific unit group.  The log-additive model in RMA is:
-#
-#    \deqn{log_2(y_{ij})} = \beta_i + \alpha_j + \eps_{ij}
-#
-#   where \eqn{\beta_i} are the chip effects for arrays \eqn{i=1,...,I}, 
-#   and \eqn{\alpha_j} are the probe affinities for probes \eqn{j=1,...,J}.
-#   The \eqn{\eps_{ij}} are zero-mean noise with equal variance.
-#
-#   To minimize the risk for mistakes, all probe-affinity models return
-#   parameter estimates on the intensity scale.  That is, this class
-#   returns \eqn{\theta_i = 2^\beta_i} and \eqn{\phi_i = 2^\alpha_i},
-#   cf. the multiplicative model of Li & Wong.
-#
-#   Use @seemethod "getProbeAffinities" to get the probe-affinity estimates.
-# }
-#
 # @author
 #
 # \section{Model estimates}{
 #   The estimated probe affinities are represented by the
-#   @see "LiWongProbeAffinityFile" class.  
+#   @see "AffineProbeAffinityFile" class.  
 # }
 #
 # \references{
 # }
 #*/###########################################################################
-setConstructorS3("AffymetrixCnLiWongModel", function(dataSet=NULL, ..., name="modelCnLiWong") {
+setConstructorS3("AffymetrixTotalCnAffineModel", function(..., name="modelTotalCnAffine") {
+  this <- extend(AffymetrixAffineModel(..., name=name), "AffymetrixTotalCnAffineModel")
+  this <- setup(this);
+  this;
+})
+
+
+setMethodS3("setup", "AffymetrixTotalCnAffineModel", function(this, ...) {
+  dataSet <- getDataSet(this);
+  if (is.null(dataSet))
+    return(invisible(this));
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -76,11 +70,12 @@ setConstructorS3("AffymetrixCnLiWongModel", function(dataSet=NULL, ..., name="mo
     setCdf(dataSet, cdf);
   }
 
-  extend(AffymetrixLiWongModel(dataSet=dataSet, ..., name=name), "AffymetrixCnLiWongModel")
-})
+  invisible(this);
+}, protected=TRUE);
 
 
-setMethodS3("fit", "AffymetrixCnLiWongModel", function(this, ..., transform=NULL, postCdfTransform=NULL) {
+
+setMethodS3("fit", "AffymetrixTotalCnAffineModel", function(this, ..., transform=NULL, postCdfTransform=NULL) {
   # The CDF object should be such that it returns an array where the first
   # dimension has alleles "A" and "B".  Thus, when retrieving the data,
   # data[1,,] is signals for allele A, and data[2,,] for allele B.
@@ -114,6 +109,6 @@ setMethodS3("fit", "AffymetrixCnLiWongModel", function(this, ..., transform=NULL
 
 ############################################################################
 # HISTORY:
-# 2006-08-27
-# o Created.
+# 2006-08-28
+# o Created from the corresponding RMA model.  More or less identical.
 ############################################################################

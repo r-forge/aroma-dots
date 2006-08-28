@@ -52,12 +52,9 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
   # Clone itself (and clear the cached fields)
   object <- NextMethod("clone", clear=TRUE, ...);
 
-  # Clone the CDF
+  # Clone the CDF here.
   if (!is.null(object$.cdf))
     object$.cdf <- clone(object$.cdf);
-
-  # Clear any cache
-  clearCache(object);
 
   object;
 })

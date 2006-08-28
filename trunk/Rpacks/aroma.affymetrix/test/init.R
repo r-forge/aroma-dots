@@ -35,13 +35,20 @@ tryCatch({
   source("AffymetrixUnitGroupsModel.R")
   source("ProbeLevelModel.R")
   
+  # Li-Wong related  
   source("LiWongProbeAffinityFile.R")
   source("AffymetrixLiWongModel.R")
-  source("AffymetrixCnLiWongModel.R")
-  
+  source("AffymetrixTotalCnLiWongModel.R")
+
+  # RMA related  
   source("RmaProbeAffinityFile.R")
   source("AffymetrixRmaModel.R")
-  source("AffymetrixCnRmaModel.R")
+  source("AffymetrixTotalCnRmaModel.R")
+  
+  # Affine related  
+  source("AffineProbeAffinityFile.R")
+  source("AffymetrixAffineModel.R")
+  source("AffymetrixTotalCnAffineModel.R")
   
   source("GdasAnnotationFile.R")
   source("GdasAnnotationSet.R")

@@ -55,8 +55,8 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
 
 
 setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=TRUE) {
-  # Clone itself, the files, (and clear all cached fields)
-  object <- NextMethod("clone", clear=TRUE, ...);
+  # Clone itself and the files.  The call below will clear the cache!
+  object <- NextMethod("clone", clear=FALSE, ...);
 
   # Clone the CDF (this will update the CDF of all file object)
   cdf <- clone(getCdf(object));

@@ -1,7 +1,7 @@
 ###########################################################################/**
-# @RdocClass AffymetrixCnRmaModel
+# @RdocClass AffymetrixTotalCnRmaModel
 #
-# @title "The AffymetrixCnRmaModel class"
+# @title "The AffymetrixTotalCnRmaModel class"
 #
 # \description{
 #  @classhierarchy
@@ -50,7 +50,18 @@
 # \references{
 # }
 #*/###########################################################################
-setConstructorS3("AffymetrixCnRmaModel", function(dataSet=NULL, ..., name="modelCnRma") {
+setConstructorS3("AffymetrixTotalCnRmaModel", function(..., name="modelTotalCnRma") {
+  this <- extend(AffymetrixRmaModel(..., name=name), "AffymetrixTotalCnRmaModel")
+  this <- setup(this);
+  this;
+})
+
+
+setMethodS3("setup", "AffymetrixTotalCnRmaModel", function(this, ...) {
+  dataSet <- getDataSet(this);
+  if (is.null(dataSet))
+    return(invisible(this));
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -76,11 +87,12 @@ setConstructorS3("AffymetrixCnRmaModel", function(dataSet=NULL, ..., name="model
     setCdf(dataSet, cdf);
   }
 
-  extend(AffymetrixRmaModel(dataSet=dataSet, ..., name=name), "AffymetrixCnRmaModel")
-})
+  invisible(this);
+}, protected=TRUE);
 
 
-setMethodS3("fit", "AffymetrixCnRmaModel", function(this, ..., transform=NULL, postCdfTransform=NULL) {
+
+setMethodS3("fit", "AffymetrixTotalCnRmaModel", function(this, ..., transform=NULL, postCdfTransform=NULL) {
   # The CDF object should be such that it returns an array where the first
   # dimension has alleles "A" and "B".  Thus, when retrieving the data,
   # data[1,,] is signals for allele A, and data[2,,] for allele B.
@@ -114,6 +126,8 @@ setMethodS3("fit", "AffymetrixCnRmaModel", function(this, ..., transform=NULL, p
 
 ############################################################################
 # HISTORY:
+# 2006-08-28
+# o Renamed from AffymetrixCnRmaModel to AffymetrixTotalCnRmaModel.
 # 2006-08-26
 # o Created.
 ############################################################################

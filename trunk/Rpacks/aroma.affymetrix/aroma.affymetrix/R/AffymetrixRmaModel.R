@@ -50,7 +50,7 @@
 # \references{
 # }
 #*/###########################################################################
-setConstructorS3("AffymetrixRmaModel", function(..., name="modelRMA") {
+setConstructorS3("AffymetrixRmaModel", function(..., name="modelRma") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
