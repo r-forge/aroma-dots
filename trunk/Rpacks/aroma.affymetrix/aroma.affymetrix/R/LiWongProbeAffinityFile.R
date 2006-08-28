@@ -116,6 +116,8 @@ setMethodS3("encodeUnitGroup", "LiWongProbeAffinityFile", function(static, group
 setMethodS3("decodeUnitGroup", "LiWongProbeAffinityFile", function(static, groupData, ...) {
   attachLocally(groupData);
 
+str(groupData);
+
   pixels <- groupData$pixels;
 
   # Outliers are encoded by the sign of 'pixels'.

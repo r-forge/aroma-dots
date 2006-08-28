@@ -119,7 +119,7 @@ setMethodS3("readUnits", "ProbeAffinityFile", function(this, ...) {
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
   stratifyBy <- switch(this$model, pm="pm");
-  res <- NextMethod("readUnits", this, ..., stratifyBy=stratifyBy);
+  res <- NextMethod("readUnits", this, readStdvs=TRUE, readPixels=TRUE, ..., stratifyBy=stratifyBy);
   res;
 });
 

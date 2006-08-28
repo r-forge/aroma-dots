@@ -71,6 +71,31 @@ setMethodS3("as.character", "AffymetrixUnitGroupsModel", function(this, ...) {
   s;
 })
 
+setMethodS3("getName", "AffymetrixUnitGroupsModel", function(this, ...) {
+  # Name from pathname structure: <data set>/<name>/<chip type>/
+  path <- getPath(this);
+  
+  # <data set>/<name>/
+  path <- dirname(path);
+
+  # <name>
+  name <- basename(path);
+
+  name;
+})
+
+setMethodS3("getLabel", "AffymetrixUnitGroupsModel", function(this, ...) {
+  label <- this$.label;
+  if (is.null(label))
+    label <- getName(this, ...);
+  label;
+})
+
+setMethodS3("setLabel", "AffymetrixUnitGroupsModel", function(this, label, ...) {
+  oldLabel <- this$.label;
+  this$.label <- label;
+  invisible(oldLabel);
+})
 
 ###########################################################################/**
 # @RdocMethod getPath
@@ -206,6 +231,8 @@ setMethodS3("setup", "AffymetrixUnitGroupsModel", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2006-08-28
+# o Added getLabel(), which defaults to getName(), and setLabel().
 # 2006-08-24
 # o Added some Rdoc comments.
 # 2006-08-17
