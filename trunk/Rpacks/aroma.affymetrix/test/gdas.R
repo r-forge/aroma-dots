@@ -6,10 +6,11 @@ path <- "chip_data2/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
 # Specify the model we want to fit
-model <- AffymetrixCnRmaModel(ds, name="modelTCNRMA");
+model <- AffymetrixCnRmaModel(ds, name="modelTCNRma");
 print(model);
 
 ces <- getChipEffects(model);
+print(ces);
 cesAvg <- getAverageFile(ces, verbose=TRUE);
 
 if (!exists("gdas")) {
@@ -21,10 +22,10 @@ if (!exists("gdas")) {
 fig <- 1;
 
 ccs <- c(1:22,"X");
-ccs <- c("X");
+#ccs <- c("X");
 Device$set(2, width=12, height=3)
 par(ask=TRUE);
-for (ss in 6:length(ces)) {
+for (ss in 1:length(ces)) {
   ce <- getFile(ces, ss);
   for (cc in ccs) {
     cat(sprintf("Sample %d, chromosome %s...\n", ss, cc));
