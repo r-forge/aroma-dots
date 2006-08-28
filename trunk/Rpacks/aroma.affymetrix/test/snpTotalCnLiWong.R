@@ -11,7 +11,7 @@ path <- "chip_data2/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
 # Specify the model we want to fit
-model <- AffymetrixCnRmaModel(ds, name="modelTCNRMA");
+model <- AffymetrixCnLiWongModel(ds, name="modelTCNLiWong");
 print(model);
 
 paf <- getProbeAffinities(model);

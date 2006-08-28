@@ -311,10 +311,11 @@ setMethodS3("getFile", "AffymetrixFileSet", function(this, idx, ...) {
   this$files[[idx]];
 })
 
-setMethodS3("getFiles", "AffymetrixFileSet", function(this, idxs, ...) {
-  this$files[idxs];
-})
+#setMethodS3("getFiles", "AffymetrixFileSet", function(this, idxs, ...) {
+#  this$files[idxs];
+#})
 
+rm(getFiles.AffymetrixFileSet)
 
 ###########################################################################/**
 # @RdocMethod extract
