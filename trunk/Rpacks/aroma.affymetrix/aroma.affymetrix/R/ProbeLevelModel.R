@@ -48,6 +48,7 @@ setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm")
   extend(AffymetrixUnitGroupsModel(..., name=name), "ProbeLevelModel",
     "cached:.paFile" = NULL,
     "cached:.chipFiles" = NULL,
+    "cached:.lastPlotData" = NULL,
     model = model
   )
 }, abstract=TRUE)
@@ -496,8 +497,33 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
 })
 
 
+
+setMethodS3("plotMvsPosition", "ProbeLevelModel", function(this, sample, ..., annotate=TRUE) {
+  ces <- getChipEffects(this);
+  ce <- getFile(ces, sample);
+  cesAvg <- getAverageFile(ces);
+  res <- plotMvsPosition(ce, reference=cesAvg, ..., annotate=annotate);  
+  if (annotate) {
+    stext(getLabel(this), side=1, pos=1, line=-1, cex=0.7, col="darkgrey");
+  }
+
+  this$lastPlotData <- res;
+  this$lastPlotSample <- sample;
+
+  invisible(res);
+})
+
+setMethodS3("highlight", "ProbeLevelModel", function(this, ...) {
+  ces <- getChipEffects(this);
+  ce <- getFile(ces, this$lastPlotSample);
+  highlight(ce, ...);
+})
+
+
 ############################################################################
 # HISTORY:
+# 2006-08-28
+# o Added plotMvsPosition().
 # 2006-08-26
 # o Added new getChipEffects().
 # 2006-08-25
