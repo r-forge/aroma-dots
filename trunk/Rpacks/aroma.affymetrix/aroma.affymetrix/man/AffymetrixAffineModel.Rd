@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixRmaModel.R
+%  AffymetrixAffineModel.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{AffymetrixRmaModel}
+ \name{AffymetrixAffineModel}
 \docType{class}
-\alias{AffymetrixRmaModel}
+\alias{AffymetrixAffineModel}
 
 
- \title{The AffymetrixRmaModel class}
+ \title{The AffymetrixAffineModel class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class AffymetrixRmaModel}\cr
+\bold{Class AffymetrixAffineModel}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -23,24 +23,23 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\emph{\code{AffymetrixRmaModel}}\cr
+\code{~~~~~~~~~~~~+--}\emph{\code{AffymetrixAffineModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixTotalCnRmaModel}\cr
+\link[aroma.affymetrix]{AffymetrixTotalCnAffineModel}\cr
 
-public abstract static class \bold{AffymetrixRmaModel}\cr
+public abstract static class \bold{AffymetrixAffineModel}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 
 
-  This class represents the log-additive model used in RMA.
-  It can be used to fit the model on a \code{\link{AffymetrixCelSet}}.
+  This class represents the Bengtsson \& Hössjer (2006) model,
+  see \code{\link{AffymetrixAffineModel}}.
  }
 
- \usage{AffymetrixRmaModel(..., name="modelRma")}
+ \usage{AffymetrixAffineModel(..., name="modelAffine")}
 
  \arguments{
-   \item{dataSet}{An \code{\link{AffymetrixCelSet}} object.}
    \item{path}{The \code{\link[base]{character}} string specifying the path to the directory
       to contain the parameter-estimate files.}
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
@@ -63,30 +62,9 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \section{Model}{
-   Consider a specific unit group.  The log-additive model in RMA is:
-
-    \deqn{log_2(y_{ij})} = \beta_i + \alpha_j + \eps_{ij}
-
-   where \eqn{\beta_i} are the chip effects for arrays \eqn{i=1,...,I},
-   and \eqn{\alpha_j} are the probe affinities for probes \eqn{j=1,...,J}.
-   The \eqn{\eps_{ij}} are zero-mean noise with equal variance.
-
-   To minimize the risk for mistakes, all probe-affinity models return
-   parameter estimates on the intensity scale.  That is, this class
-   returns \eqn{\theta_i = 2^\beta_i} and \eqn{\phi_i = 2^\alpha_i},
-   cf. the multiplicative model of Li & Wong.
-
-   Use \code{\link[aroma.affymetrix:getProbeAffinities.AffymetrixRmaModel]{*getProbeAffinities}()} to get the probe-affinity estimates.
- }
-
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
- \section{Model estimates}{
-   The estimated probe affinities are represented by the
-   \code{\link{RmaProbeAffinityFile}} class.
- }
-
  \references{
+   Bengtsson \& Hössjer (2006). \cr
  }
 \keyword{classes}

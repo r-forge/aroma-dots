@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\emph{\code{ProbeLevelModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixCnLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixCnRmaModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}\cr
+\emph{\link[aroma.affymetrix]{AffymetrixAffineModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}, \link[aroma.affymetrix]{AffymetrixTotalCnAffineModel}, \link[aroma.affymetrix]{AffymetrixTotalCnLiWongModel}, \link[aroma.affymetrix]{AffymetrixTotalCnRmaModel}\cr
 
 public abstract static class \bold{ProbeLevelModel}\cr
 extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
@@ -59,11 +59,12 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
  \tab \code{\link[aroma.affymetrix:getFitFunction.ProbeLevelModel]{getFitFunction}} \tab Static method to get the low-level function that fits the PLM.\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinities.ProbeLevelModel]{getProbeAffinities}} \tab Gets the probe affinities for this model.\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinityClass.ProbeLevelModel]{getProbeAffinityClass}} \tab Static method to get the ProbeAffinity Class object for this model.\cr
+ \tab \code{plotMvsPosition} \tab  -\cr
 }
 
 
 \bold{Methods inherited from AffymetrixUnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getParameterSet, getPath, setup
+as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

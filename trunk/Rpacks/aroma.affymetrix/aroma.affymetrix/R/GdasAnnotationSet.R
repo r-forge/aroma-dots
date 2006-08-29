@@ -1,5 +1,6 @@
 setConstructorS3("GdasAnnotationSet", function(...) {
-  extend(AffymetrixFileSet(...), "GdasAnnotationSet"
+  extend(AffymetrixFileSet(...), "GdasAnnotationSet",
+    .cdf = NULL
   )
 })
 
@@ -68,8 +69,78 @@ setMethodS3("[", "GdasAnnotationSet", function(this, i=NULL, j=NULL, drop=TRUE) 
 })
 
 
+setMethodS3("getChipType", "GdasAnnotationSet", function(this, ...) {
+  # Figure out the chip type from the 'ArrayName' header in the files
+  file <- getFile(this, 1);
+  hdr <- readHeader(file);
+  chipType <- hdr$ArrayName;
+
+  # Check if we can find a CDF for this chip type
+  cdfFile <- findCdf(chipType);
+  if (is.null(cdfFile))
+    warning("Could not find a CDF file for inferred chip type: ", chipType);
+    
+  chipType;
+})
+
+setMethodS3("getCdf", "GdasAnnotationSet", function(this, ...) {
+  cdf <- this$.cdf;
+  if (is.null(cdf)) {
+    cdf <- AffymetrixCdfFile$fromChipType(getChipType(this));
+    this$.cdf <- cdf;
+  }
+  cdf;
+})
+
+setMethodS3("select", "GdasAnnotationSet", function(this, ...) {
+  dfAll <- this[];
+
+  args <- list(...);
+  fields <- names(args);
+
+  df <- dfAll;
+  for (kk in seq(along=fields)) {
+    field <- fields[kk];
+    field <- strsplit(field, split=":")[[1]];
+    if (length(field) > 1) {
+      modifier <- field[1];
+      field <- paste(field[-1], collapse=":");
+    } else {
+      modifier <- NULL;
+    }
+
+    # Partial matching for field names
+    cc <- pmatch(field, colnames(df));
+
+    data <- df[,cc];
+    test <- args[[kk]];
+    if (is.function(test)) {
+      keep <- test(data);      
+    } else if (identical(modifier, "pattern")) {
+      pattern <- as.character(test);
+      keep <- (regexpr(pattern, data) != -1);  
+    } else {
+      keep <- (test == data);
+    }
+    df <- df[keep,,drop=FALSE];
+  }
+
+  df;
+})
+
+setMethodS3("getUnitIndices", "GdasAnnotationSet", function(this, ..., cdf=getCdf(this)) {
+  df <- select(this, ...);
+  names <- rownames(df);
+  unitNames <- getUnitNames(cdf);
+  pos <- match(names, unitNames);
+  pos;
+})
+
 ############################################################################
 # HISTORY:
+# 2006-08-28
+# o Added select() [cool!] and then getUnitIndices().
+# o Added getChipType() and getCdf().
 # 2006-08-27
 # o Created.
 ############################################################################

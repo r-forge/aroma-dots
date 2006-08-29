@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ProbeAffinityFile.R
+%  AffineProbeAffinityFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{ProbeAffinityFile}
+ \name{AffineProbeAffinityFile}
 \docType{class}
-\alias{ProbeAffinityFile}
+\alias{AffineProbeAffinityFile}
 
 
- \title{The ProbeAffinityFile class}
+ \title{The AffineProbeAffinityFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class ProbeAffinityFile}\cr
+\bold{Class AffineProbeAffinityFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -25,20 +25,23 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\emph{\code{ProbeAffinityFile}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{AffineProbeAffinityFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{LiWongProbeAffinityFile}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\cr
 
-public abstract static class \bold{ProbeAffinityFile}\cr
-extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
+public static class \bold{AffineProbeAffinityFile}\cr
+extends \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
 
 
 
-  This class represents estimates of probe affinities in probe-level models.
+  This class represents estimates of probe affinities in the
+  Bengtsson \& Hössjer (2006) model.
  }
 
- \usage{ProbeAffinityFile(..., model=c("pm"))}
+ \usage{AffineProbeAffinityFile(...)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
@@ -46,12 +49,11 @@ extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\tabular{rll}{
- \tab \code{findUnitsTodo} \tab  -\cr
- \tab \code{readUnits} \tab  -\cr
- \tab \code{writeSpatial} \tab  -\cr
-}
+\emph{No methods defined}.
 
+
+\bold{Methods inherited from ProbeAffinityFile}:\cr
+findUnitsTodo, getFirstCellIndices, readUnits, updateUnits, writeSpatial
 
 \bold{Methods inherited from ParameterCelFile}:\cr
 decode, decodeUnit, decodeUnitGroup, encode, encodeUnit, encodeUnitGroup, readUnits, updateUnits
@@ -71,7 +73,8 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-   An object of this class is typically obtained through the
-   \code{getProbeAffinities()} method for the \code{\link{ProbeLevelModel}} class.
+   An object of this class is typically obtain through the
+   \code{getProbeAffinities()} method for the
+   \code{\link{AffymetrixAffineModel}} class.
  }
 \keyword{classes}
