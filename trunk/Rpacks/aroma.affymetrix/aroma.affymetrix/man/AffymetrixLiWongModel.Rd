@@ -51,7 +51,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 
 \bold{Methods inherited from ProbeLevelModel}:\cr
-fit, getChipEffectClass, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass, plotMvsPosition
+fit, getChipEffectClass, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass, highlight, plotMvsPosition
 
 \bold{Methods inherited from AffymetrixUnitGroupsModel}:\cr
 as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup

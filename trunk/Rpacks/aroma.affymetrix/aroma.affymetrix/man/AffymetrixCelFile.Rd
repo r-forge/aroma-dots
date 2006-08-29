@@ -56,6 +56,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
  \tab \code{getRectangle} \tab  -\cr
+ \tab \code{highlight} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{image270}} \tab Displays all or a subset of the data spatially.\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:normalizeQuantiles.AffymetrixCelFile]{normalizeQuantiles}} \tab Normalizes the probe intensities to a target empirical distribution.\cr
