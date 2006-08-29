@@ -37,15 +37,15 @@ print(model);
 
 # Always re-grab the data set, chip effects, and probe affinities.
 ds <- getDataSet(model);
-ces <- getChipEffects(model);
-samples <- 1:length(ces);
+samples <- seq(ds);
+names <- getNames(ds);
 
-print(ces);
+#ces <- getChipEffects(model);
+#print(ces);
+#cesAvg <- getAverageFile(ces, verbose=TRUE);
 
-cesAvg <- getAverageFile(ces, verbose=TRUE);
-
-ccs <- 5;
-samples <- 19;
+ccs <- 23;
+samples <- 6;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Display CN estimates along the chromosome
@@ -53,18 +53,15 @@ samples <- 19;
 fig <- mm;
 fig <- fig + 1;
 Device$set(fig, width=12, height=3)
-par(ask=TRUE);
+par(ask=FALSE);
 for (ss in samples) {
-  ce <- getFile(ces, ss);
-  print(getName(ce));
   for (cc in chromosomes[ccs]) {
-    cat(sprintf("Sample %d, chromosome %s...\n", ss, cc));
+    cat(sprintf("Sample #%d (%s), chromosome %s...\n", ss, names[ss], cc));
     opar <- par(mar=c(5,4,2,2)+0.1);
-    plotMvsPosition(ce, cesAvg, gdas=gdas, chromosome=cc, pch=176);
+    plotMvsPosition(model, sample=ss, chromosome=cc, gdas=gdas, pch=176);
     abline(h=log(1:6/2, base=2), lty=2);
     abline(h=c(-1,1)/2, lty=4);
-    stext(side=3, pos=1, sprintf("Chromosome %s", cc));
-    stext(side=1, pos=1, line=-1, cex=0.7, getLabel(model), col="darkgrey");
     par(opar);
+    par(ask=FALSE);
   }
 }

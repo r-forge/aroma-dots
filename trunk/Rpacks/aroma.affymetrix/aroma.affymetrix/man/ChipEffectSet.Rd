@@ -45,6 +45,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{getAverageFile} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 

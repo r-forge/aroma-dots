@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\emph{\code{AffymetrixLiWongModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixCnLiWongModel}}\cr
+\link[aroma.affymetrix]{AffymetrixTotalCnLiWongModel}\cr
 
 public abstract static class \bold{AffymetrixLiWongModel}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
@@ -51,10 +51,10 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 
 \bold{Methods inherited from ProbeLevelModel}:\cr
-fit, getChipEffectClass, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass
+fit, getChipEffectClass, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass, plotMvsPosition
 
 \bold{Methods inherited from AffymetrixUnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getParameterSet, getPath, setup
+as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

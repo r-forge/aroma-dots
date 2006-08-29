@@ -6,11 +6,11 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getFields.AffymetrixCelFile}
-\alias{getFields.AffymetrixCelFile}
-\alias{AffymetrixCelFile.getFields}
-\alias{getFields.AffymetrixCelFile}
-\alias{getFields,AffymetrixCelFile-method}
+\name{getData.AffymetrixCelFile}
+\alias{getData.AffymetrixCelFile}
+\alias{AffymetrixCelFile.getData}
+\alias{getData.AffymetrixCelFile}
+\alias{getData,AffymetrixCelFile-method}
 
 
 \title{Gets all or a subset of the fields in a CEL file}
@@ -19,7 +19,7 @@
  Gets all or a subset of the fields in a CEL file for all or a subset of the cells.
 }
 
-\usage{\method{getFields}{AffymetrixCelFile}(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE)}
+\usage{\method{getData}{AffymetrixCelFile}(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE)}
 
 \arguments{
   \item{indices}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of cell indices.  If \code{\link[base]{NULL}}, all cells

@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{AffymetrixUnitGroupsModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixCnLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixCnRmaModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}, \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+\emph{\link[aroma.affymetrix]{AffymetrixAffineModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}, \link[aroma.affymetrix]{AffymetrixTotalCnAffineModel}, \link[aroma.affymetrix]{AffymetrixTotalCnLiWongModel}, \link[aroma.affymetrix]{AffymetrixTotalCnRmaModel}, \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 public abstract static class \bold{AffymetrixUnitGroupsModel}\cr
 extends \link[R.oo]{Object}\cr
@@ -48,8 +48,11 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:fit.AffymetrixUnitGroupsModel]{fit}} \tab Estimates the model parameters.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixUnitGroupsModel]{getCdf}} \tab Gets the CDF structure for this model.\cr
  \tab \code{\link[aroma.affymetrix:getDataSet.AffymetrixUnitGroupsModel]{getDataSet}} \tab Gets the data set for this model.\cr
+ \tab \code{getLabel} \tab  -\cr
+ \tab \code{getName} \tab  -\cr
  \tab \code{getParameterSet} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getPath.AffymetrixUnitGroupsModel]{getPath}} \tab Gets the path (directory) for this model.\cr
+ \tab \code{setLabel} \tab  -\cr
  \tab \code{setup} \tab  -\cr
 }
 

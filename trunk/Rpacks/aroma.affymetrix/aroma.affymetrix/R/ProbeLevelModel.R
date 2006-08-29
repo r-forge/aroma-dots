@@ -339,12 +339,14 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
     # Get the CDF cell indices
     verbose && enter(verbose, "Identifying CDF cell indices");
     cdfUnits <- getCellIndices(cdf, units=units[uu], ..., stratifyBy=stratifyBy);
+    verbose && print(verbose, cdfUnits[1]);
     verbose && exit(verbose);
 
     # Get the CEL intensities by units
     verbose && enter(verbose, "Reading probe intensities");
     y <- getUnitIntensities(ds, units=cdfUnits, ...);
     verbose && exit(verbose);
+    verbose && str(verbose, y[1]);
   
     # Fit the model
     verbose && enter(verbose, "Fitting unit-group model");
@@ -356,6 +358,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
         fitfcn(y);
       })
     })
+    verbose && print(verbose, fit[1]);
     y <- NULL; # Not needed anymore (to minimize memory usage)
     verbose && exit(verbose);
 
@@ -364,17 +367,25 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
     if (!is.null(postCdfTransform)) {
       firstCells <- postCdfTransform(firstCells);
     }
+    verbose && print(verbose, firstCells[1]);
     updateUnits(ces, cdf=firstCells, data=fit, verbose=verbose);
-    firstCells <- NULL; # Not needed anymore
     verbose && exit(verbose);
+
+    # Update average chip-effect file?
+    verbose && enter(verbose, "Updating chip-effect averages");
+    indices <- unlist(firstCells, use.names=FALSE);
+    cesAvg <- getAverageFile(ces, indices=indices, force=TRUE);
+    verbose && exit(verbose);
+    firstCells <- NULL; # Not needed anymore
 
     # Store the probe-affinities *last* because we use these to 
     # identify which units are already modelled or not.
     verbose && enter(verbose, "Storing probe-affinity estimates");
     if (!is.null(postCdfTransform)) {
-      cdfUnits <- postCdfTransform(cdfUnits);
+      postCdfUnits <- postCdfTransform(cdfUnits);
     }
-    updateUnits(paf, cdf=cdfUnits, data=fit);
+    verbose && print(verbose, postCdfUnits[1]);
+    updateUnits(paf, cdf=postCdfUnits, data=fit);
     cdfUnits <- fit <- NULL; # Not needed anymore
     verbose && exit(verbose);
 

@@ -452,7 +452,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., ver
 })
 
 
-setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indices="remaining", mean=c("mean", "median"), sd=c("sd", "mad"), na.rm=FALSE, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, verbose=FALSE) {
+setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indices="remaining", mean=c("mean", "median"), sd=c("sd", "mad"), na.rm=FALSE, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -487,6 +487,12 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
   # Argument 'indices':
   df <- as.list(this)[[1]];
   nbrOfCells <- getHeader(df)$total;
+  if (force) {
+    if (identical(indices, "remaining")) {
+      indices <- NULL;
+    }
+  }
+
   if (is.null(indices)) {
     indices <- 1:nbrOfCells; 
   } else if (identical(indices, "remaining")) {
@@ -499,6 +505,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -520,6 +527,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
     indices <- which(pixels == 0);
     rm(pixels); # Not needed anymore.
   }
+
   nbrOfIndices <- length(indices);
 
   # Nothing more to do?

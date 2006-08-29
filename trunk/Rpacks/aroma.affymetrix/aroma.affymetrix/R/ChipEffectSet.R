@@ -116,8 +116,24 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
 }, protected=TRUE);
 
 
+setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining", cellsPerChunk=100, ...) {
+  # Argument 'indices':
+  if (identical(indices, "remaining")) {
+  } else if (is.null(indices)) {
+    # Update only cells which stores values
+    indices <- getFirstCellIndices(this);
+    indices <- unlist(indices, use.names=FALSE);
+  }
+
+  NextMethod("getAverageFile", this, indices=indices, cellsPerChunk=cellsPerChunk, ...);
+})
+
+
 ############################################################################
 # HISTORY:
+# 2006-08-28
+# o Added getAverageFile() so that only cells that store actual chip-effect
+#   estimates are averaged.
 # 2006-08-26
 # o Created.
 ############################################################################
