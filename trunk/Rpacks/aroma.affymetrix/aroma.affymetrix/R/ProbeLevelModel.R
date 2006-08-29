@@ -372,11 +372,11 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
     updateUnits(ces, cdf=firstCells, data=fit, verbose=verbose);
     verbose && exit(verbose);
 
-    # Update average chip-effect file?
-    verbose && enter(verbose, "Updating chip-effect averages");
-    indices <- unlist(firstCells, use.names=FALSE);
-    cesAvg <- getAverageFile(ces, indices=indices, force=TRUE);
-    verbose && exit(verbose);
+#    # Update average chip-effect file?
+#    verbose && enter(verbose, "Updating chip-effect averages");
+#    indices <- unlist(firstCells, use.names=FALSE);
+#    cesAvg <- getAverageFile(ces, indices=indices, force=TRUE);
+#    verbose && exit(verbose);
     firstCells <- NULL; # Not needed anymore
 
     # Store the probe-affinities *last* because we use these to 

@@ -496,6 +496,9 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   if (length(pathnames) == 0)
     throw("No files found: ", path);
 
+  # Sort files in lexicographic order
+  pathnames <- sort(pathnames);
+
   files <- list();
   for (kk in seq(along=pathnames)) {
     df <- fromFile(dfStatic, pathnames[kk]);
