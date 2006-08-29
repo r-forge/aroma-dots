@@ -59,7 +59,7 @@ findUnitsTodo, getFirstCellIndices, readUnits, updateUnits, writeSpatial
 decode, decodeUnit, decodeUnitGroup, encode, encodeUnit, encodeUnitGroup, readUnits, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels

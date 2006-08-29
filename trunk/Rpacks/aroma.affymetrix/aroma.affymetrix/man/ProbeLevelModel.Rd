@@ -59,6 +59,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
  \tab \code{\link[aroma.affymetrix:getFitFunction.ProbeLevelModel]{getFitFunction}} \tab Static method to get the low-level function that fits the PLM.\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinities.ProbeLevelModel]{getProbeAffinities}} \tab Gets the probe affinities for this model.\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinityClass.ProbeLevelModel]{getProbeAffinityClass}} \tab Static method to get the ProbeAffinity Class object for this model.\cr
+ \tab \code{highlight} \tab  -\cr
  \tab \code{plotMvsPosition} \tab  -\cr
 }
 
