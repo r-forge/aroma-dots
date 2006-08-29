@@ -76,13 +76,14 @@ setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, fie
   indices <- getFirstCellIndices(this, units=units, ..., verbose=verbose);
   verbose && exit(verbose);
 
+  # Keep only the first group
+  indices <- applyCdfGroups(indices, .subset, 1);
+  verbose && str(verbose, indices[1]);
+  
   if (!is.null(transform)) {
     indices <- transform(indices);
   }
 
-  # Keep only the first group
-  indices <- applyCdfGroups(indices, .subset, 1);
-  
   # Flatten to get a vector
   indices <- unlist(indices, use.names=FALSE);
 
@@ -102,6 +103,7 @@ setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, fie
   verbose && enter(verbose, "Reading data for these cells");
   value <- readCel(getPathname(this), indices=indices, readIntensities=readIntensities, readStdvs=readStdvs, readPixels=readPixels);
   value <- value[[field]];
+  verbose && str(verbose, value);
   verbose && exit(verbose);
 
   # Identify units for which the stdvs <= 0.
