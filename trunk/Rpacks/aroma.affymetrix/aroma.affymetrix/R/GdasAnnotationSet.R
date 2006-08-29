@@ -92,7 +92,7 @@ setMethodS3("getCdf", "GdasAnnotationSet", function(this, ...) {
   cdf;
 })
 
-setMethodS3("select", "GdasAnnotationSet", function(this, ...) {
+setMethodS3("select", "GdasAnnotationSet", function(this, ..., sortBy=NULL) {
   dfAll <- this[];
 
   args <- list(...);
@@ -123,6 +123,28 @@ setMethodS3("select", "GdasAnnotationSet", function(this, ...) {
       keep <- (test == data);
     }
     df <- df[keep,,drop=FALSE];
+  }
+
+  if (!is.null(sortBy)) {
+    args <- list();
+    for (kk in seq(along=sortBy)) {
+      name <- sortBy[kk];
+      name <- strsplit(name, split=":")[[1]];
+      if (length(name) > 1) {
+        modifier <- name[1];
+        name <- paste(name[-1], collapse=":");
+      } else {
+        modifier <- NULL;
+      }
+      cc <- pmatch(name, colnames(df));
+      value <- df[,cc];
+      if (!is.null(modifier)) {
+        storage.mode(value) <- modifier;
+      }
+      args[[kk]] <- value;
+    }
+    o <- do.call("order", args=args);
+    df <- df[o,];
   }
 
   df;

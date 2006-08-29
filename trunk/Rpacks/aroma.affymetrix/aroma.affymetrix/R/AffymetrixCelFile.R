@@ -39,6 +39,7 @@
 setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
   this <- extend(AffymetrixFile(...), "AffymetrixCelFile",
     "cached:.header" = NULL,
+    "cached:lastPlotData" = NULL,
     .cdf = NULL
   )
 
