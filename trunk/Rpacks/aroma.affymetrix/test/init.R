@@ -16,7 +16,7 @@ library(aroma.affymetrix)
 #source("~/braju.com.R/affxparser/affxparser/R/private.readCelHeaderV4.R")
 
 tryCatch({
-  opwd <- setwd("~/braju.com.R/aroma.affymetrix/aroma.affymetrix/R/");
+  opwd <- setwd("../aroma.affymetrix/R/");
   source("rowSds.R")
   source("plotUtils.R")
   source("AffymetrixFile.R")
