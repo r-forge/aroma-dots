@@ -7,7 +7,7 @@
 #  @classhierarchy
 #
 #  This class represents estimates of probe affinities in the 
-#  RMA model, see @see "AffymetrixRmaModel".
+#  RMA model, see @see "RmaPlm".
 # }
 # 
 # @synopsis

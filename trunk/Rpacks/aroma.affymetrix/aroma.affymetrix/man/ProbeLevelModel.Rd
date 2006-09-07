@@ -19,15 +19,15 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\emph{\code{ProbeLevelModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixAffineModel}}, \emph{\link[aroma.affymetrix]{AffymetrixLiWongModel}}, \emph{\link[aroma.affymetrix]{AffymetrixRmaModel}}, \link[aroma.affymetrix]{AffymetrixTotalCnAffineModel}, \link[aroma.affymetrix]{AffymetrixTotalCnLiWongModel}, \link[aroma.affymetrix]{AffymetrixTotalCnRmaModel}\cr
+\emph{\link[aroma.affymetrix]{AffinePlm}}, \emph{\link[aroma.affymetrix]{MbeiPlm}}, \emph{\link[aroma.affymetrix]{RmaPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}, \link[aroma.affymetrix]{TotalCnAffinePlm}, \link[aroma.affymetrix]{TotalCnMbeiPlm}, \link[aroma.affymetrix]{TotalCnRmaPlm}\cr
 
 public abstract static class \bold{ProbeLevelModel}\cr
-extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
+extends \emph{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
 
 
 
@@ -48,7 +48,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
       to contain the parameter-estimate files.}
    \item{model}{A \code{\link[base]{character}} string specifying how PM and MM values
       should be modelled.  By default only PM signals are used.}
-   \item{...}{Arguments passed to \code{\link{AffymetrixUnitGroupsModel}}.}
+   \item{...}{Arguments passed to \code{\link{UnitGroupsModel}}.}
  }
 
  \section{Fields and Methods}{
@@ -64,7 +64,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixUnitGroupsModel}}\cr
 }
 
 
-\bold{Methods inherited from AffymetrixUnitGroupsModel}:\cr
+\bold{Methods inherited from UnitGroupsModel}:\cr
 as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
 
 \bold{Methods inherited from Object}:\cr

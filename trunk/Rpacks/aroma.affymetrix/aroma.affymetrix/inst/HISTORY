@@ -1,6 +1,9 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.2.1 [2006-09-07]
+o Another big change in how classes are named.
+
 Version: 0.2.0 [2006-08-25]
 o Have done a big redesign of the package. There are now also
   some basic model fitting algorithm available.  Probe-affinity

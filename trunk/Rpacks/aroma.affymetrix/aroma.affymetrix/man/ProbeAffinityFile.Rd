@@ -28,7 +28,7 @@
 \code{~~~~~~~~~~~~~~~~~+--}\emph{\code{ProbeAffinityFile}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{LiWongProbeAffinityFile}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{MbeiProbeAffinityFile}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
 
 public abstract static class \bold{ProbeAffinityFile}\cr
 extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
