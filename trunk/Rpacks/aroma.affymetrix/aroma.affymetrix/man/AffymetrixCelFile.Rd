@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{LiWongProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{MbeiProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixCelFile}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr

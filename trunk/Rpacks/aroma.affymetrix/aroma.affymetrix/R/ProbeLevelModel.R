@@ -6,8 +6,8 @@
 # \description{
 #  @classhierarchy
 #
-#  This abstract class represents any probe-level model (PLM). 
-#  To quote the \pkg{affyPLM} package: 
+#  This abstract class represents any probe-level model (PLM).
+#  To quote the \pkg{affyPLM} package:
 #    "A [...] PLM is a model that is fit to probe-intensity data. 
 #     More specifically, it is where we fit a model with probe level
 #     and chip level parameters on a probeset by probeset basis",
@@ -23,7 +23,7 @@
 #      to contain the parameter-estimate files.}
 #   \item{model}{A @character string specifying how PM and MM values
 #      should be modelled.  By default only PM signals are used.}
-#   \item{...}{Arguments passed to @see "AffymetrixUnitGroupsModel".}
+#   \item{...}{Arguments passed to @see "UnitGroupsModel".}
 # }
 #
 # \section{Fields and Methods}{
@@ -45,7 +45,7 @@ setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm")
   # Argument 'model':
   model <- match.arg(model);
 
-  extend(AffymetrixUnitGroupsModel(..., name=name), "ProbeLevelModel",
+  extend(UnitGroupsModel(..., name=name), "ProbeLevelModel",
     "cached:.paFile" = NULL,
     "cached:.chipFiles" = NULL,
     "cached:.lastPlotData" = NULL,
@@ -58,7 +58,7 @@ setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm")
 ###########################################################################/**
 # @RdocMethod getProbeAffinityClass
 #
-# @title "Static method to get the ProbeAffinity Class object for this model"
+# @title "Static method to get the ProbeAffinityFile Class object"
 #
 # \description{
 #  @get "title".
@@ -384,8 +384,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
     verbose && enter(verbose, "Storing probe-affinity estimates");
     if (!is.null(postCdfTransform)) {
       postCdfUnits <- postCdfTransform(cdfUnits);
+      verbose && print(verbose, postCdfUnits[1]);
+    } else {
+      postCdfUnits <- cdfUnits;
     }
-    verbose && print(verbose, postCdfUnits[1]);
     updateUnits(paf, cdf=postCdfUnits, data=fit);
     cdfUnits <- fit <- NULL; # Not needed anymore
     verbose && exit(verbose);

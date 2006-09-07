@@ -1,0 +1,161 @@
+###########################################################################/**
+# @RdocClass MbeiPlm
+#
+# @title "The MbeiPlm class"
+#
+# \description{
+#  @classhierarchy
+#
+#  This class represents the Li \& Wong (2001) model,
+#  see @see "MbeiPlm".
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{path}{The @character string specifying the path to the directory
+#      to contain the parameter-estimate files.}
+#   \item{...}{Arguments passed to @see "ProbeLevelModel".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# @author
+#
+# \references{
+#   Li, C. and Wong, W.H. (2001), Genome Biology 2, 1-11.\cr
+#   Li, C. and Wong, W.H. (2001), Proc. Natl. Acad. Sci USA 98, 31-36.\cr
+# }
+#*/###########################################################################
+setConstructorS3("MbeiPlm", function(..., name="modelMbei") {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Load required packages
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  require(affy) || throw("Package 'affy' not loaded.");
+
+  extend(ProbeLevelModel(..., name=name), "MbeiPlm")
+})
+
+
+###########################################################################/**
+# @RdocMethod getProbeAffinityClass
+#
+# @title "Static method to get the ProbeAffinityFile Class object"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @see "Class" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getProbeAffinityClass", "MbeiPlm", function(static, ...) {
+  MbeiProbeAffinityFile;
+}, static=TRUE, protected=TRUE)
+
+
+
+###########################################################################/**
+# @RdocMethod getFitFunction
+#
+# @title "Static method to get the low-level function that fits the PLM"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @function.
+# }
+#
+# @author
+#
+# \seealso{
+#   @see "affy::fit.li.wong".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getFitFunction", "MbeiPlm", function(static, ...) {
+  liWong <- function(y, ...) {
+    fit.li.wong(t(y));
+  }
+
+  liWong;
+}, static=TRUE, protected=TRUE)
+
+
+
+setMethodS3("getChipEffects2", "MbeiPlm", function(this, ..., verbose=FALSE) {
+  chipFiles <- this$.chipFiles;
+  if (!is.null(chipFiles))
+    return(chipFiles);
+
+  # For each of the data files, create a file to store the estimates in
+  path <- getPath(this);
+  ds <- getDataSet(this);
+  cdf <- getCdf(ds);
+  unitSizes <- getUnitSizes(cdf);
+  unitOffsets <- cumsum(unitSizes) - unitSizes[1] + 1;
+  n <- sum(unitSizes);
+
+  chipFiles <- list();
+  for (kk in seq(ds)) {
+    df <- as.list(ds)[[kk]];
+    filename <- sprintf("%s-liwong.apd", getName(df));
+    filename <- filePath(path, filename);
+    if (!isFile(filename)) {
+      X <- FileFloatVector(filename, length=n);
+      X <- FileFloatVector(length=n, appendTo=X);
+      X <- FileByteVector(length=n, appendTo=X);
+      close(X);
+      rm(X);
+    }
+    set <- AbstractFileArray$fromFile(filename);
+    # We have to close the parameter files, because Windows can only
+    # handle ~512 open connections, and we might have more arrays.
+    # Instead we have to open and close the connections each time we
+    # read data.
+    close(as.list(set)[[1]]);
+    chipFiles[[kk]] <- set;
+  } # for (kk in ...)
+
+  this$.chipFiles <- chipFiles;
+
+  chipFiles;
+}, protected=TRUE)
+
+
+############################################################################
+# HISTORY:
+# 2006-08-24
+# o Added Rdoc comments.
+# 2006-08-23
+# o Added getProbeAffinities() and the corrsponding cached fields.
+# o Now fit() does not re-read data just updated.
+# 2006-08-19
+# o After all the bug fixes in updateCel() I think this function finally
+#   works correctly.
+# 2006-08-17
+# o Created.
+############################################################################

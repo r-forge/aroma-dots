@@ -213,22 +213,24 @@ setMethodS3("getCdf", "AffymetrixCelFile", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ...) {
-  # Argument 'cdf':
-  if (!inherits(cdf, "AffymetrixCdfFile")) {
-    throw("Argument 'cdf' is not an AffymetrixCdfFile object: ", 
-                                                               class(cdf)[1]);
-  }
+setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ..., .checkArgs=TRUE) {
+  if (.checkArgs) {
+    # Argument 'cdf':
+    if (!inherits(cdf, "AffymetrixCdfFile")) {
+      throw("Argument 'cdf' is not an AffymetrixCdfFile object: ", 
+                                                                 class(cdf)[1]);
+    }
+  
+    # Assure that the CDF is compatible with the CEL file
+    if (nbrOfCells(cdf) != nbrOfCells(this)) {
+      throw("The specified CDF structure is not compatible with the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(this));
+    }
 
-  # Assure that the CDF is compatible with the CEL file
-  if (nbrOfCells(cdf) != nbrOfCells(this)) {
-    throw("The specified CDF structure is not compatible with the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(this));
+    # Nothing to do?
+    oldCdf <- getCdf(this);
+    if (equals(cdf, oldCdf))
+      return(invisible(this));
   }
-
-  # Nothing to do?
-  oldCdf <- getCdf(this);
-  if (equals(cdf, oldCdf))
-    return(invisible(this));
 
   # Have to clear the cache 
   clearCache(this);

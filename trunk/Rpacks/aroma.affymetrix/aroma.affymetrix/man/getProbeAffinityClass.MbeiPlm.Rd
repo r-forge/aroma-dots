@@ -1,28 +1,26 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ProbeLevelModel.R
+%  MbeiPlm.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getProbeAffinityClass.ProbeLevelModel}
-\alias{getProbeAffinityClass.ProbeLevelModel}
-\alias{ProbeLevelModel.getProbeAffinityClass}
-\alias{getProbeAffinityClass.ProbeLevelModel}
-\alias{getProbeAffinityClass,ProbeLevelModel-method}
+\name{getProbeAffinityClass.MbeiPlm}
+\alias{getProbeAffinityClass.MbeiPlm}
+\alias{MbeiPlm.getProbeAffinityClass}
+\alias{getProbeAffinityClass.MbeiPlm}
+\alias{getProbeAffinityClass,MbeiPlm-method}
 
 
 \title{Static method to get the ProbeAffinityFile Class object}
 
 \description{
  Static method to get the ProbeAffinityFile Class object.
- Any subclass model must provide this method, which should return
- a \code{\link[R.oo]{Class}} that subsets the \code{\link{ProbeAffinityFile}} class.
 }
 
-\synopsis{getProbeAffinityClass.ProbeLevelModel(...)}
-\usage{ProbeLevelModel$getProbeAffinityClass()}
+\synopsis{getProbeAffinityClass.MbeiPlm(static, ...)}
+\usage{MbeiPlm$getProbeAffinityClass(...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -35,7 +33,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{ProbeLevelModel}}.
+  For more information see \code{\link{MbeiPlm}}.
 }
 \keyword{internal}
 \keyword{methods}
