@@ -5,7 +5,7 @@ verbose <- Arguments$getVerbose(TRUE);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the dataset to be used
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-path <- "chip_data3/Xba/";
+path <- "chip_data2/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -13,9 +13,9 @@ ds <- AffymetrixCelSet$fromFiles(path);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("models", mode="list")) {
   models <- list(
-    liWong = AffymetrixLiWongModel(ds),
-    rma    = AffymetrixRmaModel(ds),
-    affine = AffymetrixAffineModel(ds)
+    mbei = MbeiPlm(ds),
+    rma = RmaPlm(ds),
+    affine = AffinePlm(ds)
   )
 }
 

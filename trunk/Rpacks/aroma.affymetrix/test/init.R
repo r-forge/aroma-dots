@@ -1,12 +1,17 @@
 savehistory();
 closeAllConnections();
-
 library(R.oo)
-library(R.graphics)
 library(R.utils)
+library(R.graphics)
+library(R.cache)
 library(affxparser)
-library(aroma.apd)
-library(aroma.affymetrix)
+
+#library(aroma.apd)
+#library(aroma.affymetrix)
+
+verbose <- Arguments$getVerbose(TRUE);
+
+verbose && enter(verbose, "Sourcing all *.R files");
 
 # Digest is still broken
 #source("patches/digest.R")
@@ -16,44 +21,10 @@ library(aroma.affymetrix)
 #source("~/braju.com.R/affxparser/affxparser/R/private.readCelHeaderV4.R")
 
 tryCatch({
-  opwd <- setwd("../aroma.affymetrix/R/");
-  source("rowSds.R")
-  source("plotUtils.R")
-  source("AffymetrixFile.R")
-  source("AffymetrixFileSet.R")
-  source("AffymetrixCdfFile.R")
-  source("AffymetrixCelFile.R")
-  source("AffymetrixCelFile.PLOT.R")
-  source("AffymetrixCelSet.R")
-  
-  source("ParameterFile.R")
-  source("ParameterCelFile.R")
-  
-  source("ProbeAffinityFile.R")
-  source("ChipEffectFile.R")
-  source("ChipEffectSet.R")
-  source("AffymetrixUnitGroupsModel.R")
-  source("ProbeLevelModel.R")
-  
-  # Li-Wong related  
-  source("LiWongProbeAffinityFile.R")
-  source("AffymetrixLiWongModel.R")
-  source("AffymetrixTotalCnLiWongModel.R")
-
-  # RMA related  
-  source("RmaProbeAffinityFile.R")
-  source("AffymetrixRmaModel.R")
-  source("AffymetrixTotalCnRmaModel.R")
-  
-  # Affine related  
-  source("AffineProbeAffinityFile.R")
-  source("AffymetrixAffineModel.R")
-  source("AffymetrixTotalCnAffineModel.R")
-  
-  source("GdasAnnotationFile.R")
-  source("GdasAnnotationSet.R")
+  sourceDirectory("../aroma.affymetrix/R/", recursive=FALSE);
 }, finally = { setwd(opwd) })
 
+verbose && exit(verbose);
 
 # Setup up the search path to ImageMagick
 imageMagickConvert <- function(srcfile, destfile, format, options=NULL, ...) {
@@ -65,3 +36,4 @@ imageMagickConvert <- function(srcfile, destfile, format, options=NULL, ...) {
   system(paste(pathname, options, srcfile, destfile));
 }
 options(imageConverter=imageMagickConvert);
+
