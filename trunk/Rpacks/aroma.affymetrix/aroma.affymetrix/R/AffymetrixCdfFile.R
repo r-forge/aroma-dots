@@ -392,43 +392,6 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
 
 
 
-setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NULL, stratifyBy=NULL, ..., force=FALSE, verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  verbose && enter(verbose, "Trying to load cached results");
-  key <- list(method="getFirstCellIndices.AffymetrixCdfFile", chipType=getChipType(this), stratifyBy=stratifyBy, restructor=body(this$.restructor));
-  res <- if (force) NULL else loadCache(key=key);
-  verbose && exit(verbose);
-
-  if (is.null(res)) {
-    verbose && enter(verbose, "Reading all cell indices (slow)");
-    res <- getCellIndices(this, units=NULL, ..., stratifyBy=stratifyBy, verbose=verbose);
-    verbose && exit(verbose);
-      
-    verbose && enter(verbose, "Extracting the first cell in each unit group");
-    # For each unit and each group, get the index of the first cell.
-    res <- applyCdfGroups(res, function(groups) {
-      # For each group, pull out the first cell.
-      lapply(groups, FUN=function(group) {
-        # group$indices[1] == group[[1]][1] == ...
-        list(indices=.subset(.subset2(group, 1), 1));
-      })
-    });
-    verbose && exit(verbose);
-
-    # Save to cache file
-    verbose && enter(verbose, "Saving results to cache");
-    saveCache(key=key, res);
-    verbose && exit(verbose);
-  }
-
-  # Subset?
-  if (!is.null(units))
-    res <- res[units];
-
-  res;
-}, protected=TRUE)
 
 
 
@@ -633,8 +596,402 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
 }, protected=TRUE);
 
 
+setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NULL, stratifyBy=NULL, ..., force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Trying to load cached results");
+  key <- list(method="getFirstCellIndices.AffymetrixCdfFile", chipType=getChipType(this), stratifyBy=stratifyBy, restructor=body(this$.restructor));
+  res <- if (force) NULL else loadCache(key=key);
+  verbose && exit(verbose);
+
+  if (is.null(res)) {
+    verbose && enter(verbose, "Reading all cell indices (slow)");
+    res <- getCellIndices(this, units=NULL, ..., stratifyBy=stratifyBy, verbose=verbose);
+    verbose && exit(verbose);
+      
+    verbose && enter(verbose, "Extracting the first cell in each unit group");
+    # For each unit and each group, get the index of the first cell.
+    res <- applyCdfGroups(res, function(groups) {
+      # For each group, pull out the first cell.
+      lapply(groups, FUN=function(group) {
+        # group$indices[1] == group[[1]][1] == ...
+        list(indices=.subset(.subset2(group, 1), 1));
+      })
+    });
+    verbose && exit(verbose);
+
+    # Save to cache file
+    verbose && enter(verbose, "Saving results to cache");
+    saveCache(key=key, res);
+    verbose && exit(verbose);
+  }
+
+  # Subset?
+  if (!is.null(units))
+    res <- res[units];
+
+  res;
+}, protected=TRUE)
+
+
+###########################################################################/**
+# @RdocMethod equals
+#
+# @title "Checks if two AffymetrixCdfFile objects are equal"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{other}{The other @see "AffymetrixCdfFile" object to be compared to.}
+#   \item{...}{Additional arguments passed to @see "affxparser::compareCdfs".}
+# }
+#
+# \value{
+#  Returns @TRUE if the two objects are equal, otherwise @FALSE.}
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("equals", "AffymetrixCdfFile", function(this, other, ...) {
+  if (!inherits(other, "AffymetrixCdfFile"))
+    return(FALSE);
+
+  res <- compareCdfs(getPathname(this), getPathname(other), ...);
+
+  res;
+})
+
+
+###########################################################################/**
+# @RdocMethod convert
+#
+# @title "Converts a CDF into the same CDF but with another format"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{chipType}{The chip type of the new CDF.}
+#   \item{suffix}{A suffix added to the chip type of the new CDF.}
+#   \item{sep}{A string separating the chip type and the suffix string.}
+#   \item{path}{The path where to store the new CDF file.}
+#   \item{...}{Additional arguments passed to @see "affxparser::convertCdf".}
+# }
+#
+# \value{
+#  Returns the new CDF as an @see "AffymetrixCdfFile" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   To compare two CDFs, see @seemethod "equals".
+#   Internally @see "affxparser::convertCdf" is used.
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix=NULL, sep="-", path="cdf", ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Create the pathname of the destination CDF
+  name <- paste(c(chipType, suffix), collapse=sep);
+  dest <- sprintf("%s.cdf", name);
+  dest <- Arguments$getWritablePathname(dest, path=path);
+
+  # Convert CDF
+  src <- getPathname(this);
+  verbose2 <- -getThreshold(verbose);
+  res <- convertCdf(src, dest, ..., verbose=verbose2);
+
+  # Return an AffymetrixCdfFile object for the new CDF
+  newInstance(this, dest);
+})
+
+
+
+
+
+setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix="monocell", sep="-", path="cdf", ..., nbrOfCellsPerField=1, nbrOfUnitsPerChunks=5000, verbose=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rearrangeCells <- function(units, offset=0, hasBlocks=TRUE, ...) {
+    rearrangeBlock <- function(block, idxs, ...) {
+      y = (idxs-1) %/% ncols;
+      x = (idxs-1) - ncols*y;
+      block$y <- y;
+      block$x <- x;
+      block$indices <- idxs;
+      block;
+    } # rearrangeBlock()
+
+    nbrOfCells <- lapply(units, FUN=function(unit) unit$ncells);
+    nbrOfCells <- sum(unlist(nbrOfCells, use.names=FALSE));
+
+    cells <- seq(from=offset+1, to=offset+nbrOfCells);
+
+    verbose && printf(verbose, "Units: ");
+    if (hasBlocks) {
+      for (kk in seq(along=units)) {
+        if (verbose) {
+          if (kk %% 1000 == 0) {
+            printf(verbose, "%d, ", kk);
+          } else if (kk %% 100 == 0) {
+            cat(".");
+          }
+        }
+        # blocks <- units[[kk]]$blocks;
+        blocks <- .subset2(.subset2(units, kk), "blocks");
+        for (ll in seq(along=blocks)) {
+          block <- .subset2(blocks, ll);
+          # Number of cells in this block
+          # nindices <- length(block$indices);
+          nindices <- length(.subset2(block, "indices"));
+          head <- 1:nindices;
+          # idxs <- cells[head];
+          idxs <- .subset(cells, head);
+          # cells <- cells[<tail>];
+          cells <- .subset(cells, (nindices+1):length(cells));
+          blocks[[ll]] <- rearrangeBlock(block, idxs);
+        }
+        units[[kk]]$blocks <- blocks;
+      }
+    } else {
+      for (kk in seq(along=units)) {
+        if (verbose) {
+          if (kk %% 1000 == 0) {
+            printf(verbose, "%d, ", kk);
+          } else if (kk %% 100 == 0) {
+            cat(".");
+          }
+        }
+        # block <- units[[kk]]
+        block <- .subset2(units, kk);
+        # Number of cells in this block
+        # nindices <- length(block$indices);
+        nindices <- length(.subset2(block, "indices"));
+        head <- 1:nindices;
+        # idxs <- cells[head];
+        idxs <- .subset(cells, head);
+        # cells <- cells[<tail>];
+        cells <- .subset(cells, (nindices+1):length(cells));
+        block <- rearrangeBlock(block, idxs);
+        units[[kk]] <- block;
+      }
+    }
+    verbose && printf(verbose, "\n");
+
+    units;
+  } # rearrangeCells()
+  
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'nbrOfCellsPerField':
+  nbrOfCellsPerField <- Argument$getIndices(nbrOfCellsPerField);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Get the pathname of the source
+  src <- getPathname(this);
+  src <- Arguments$getReadablePathname(src);
+
+  # Create the pathname of the destination CDF
+  name <- paste(c(chipType, suffix), collapse=sep);
+  dest <- sprintf("%s.cdf", name);
+  dest <- Arguments$getWritablePathname(dest, path=path);
+
+  # Assure source and destination is not identical
+  if (identical(src, dest)) {
+    throw("Cannot not create CDF file. Destination is same as source: ", src);
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fields to be kept
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Number of cells to keep in each block field
+  fidx <- 1:nbrOfCellsPerField;
+
+  verbose && printf(verbose, "Number of cells per block field: %d\n", 
+                                                       nbrOfCellsPerField);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # QC units
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Keep all QC units  
+  destQcUnits <- readCdfQc(src);
+  nbrOfQcUnits <- length(destQcUnits);
+  nbrOfQcCells <- lapply(destQcUnits, FUN=function(unit) unit$ncells);
+  nbrOfQcCells <- sum(unlist(nbrOfQcCells, use.names=FALSE));
+  verbose && printf(verbose, "Number of QC cells: %d in %d QC units\n", 
+                                                nbrOfQcCells, nbrOfQcUnits);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Chip layout
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  unitSizes <- readCdfNbrOfCellsPerUnitGroup(src);
+  unitSizes <- unlist(lapply(unitSizes, FUN=length), use.names=FALSE);
+  unitSizes <- nbrOfCellsPerField * unitSizes;
+  nbrOfCells <- sum(unitSizes);
+
+  totalNbrOfCells <- nbrOfCells + nbrOfQcCells;
+  verbose && printf(verbose, "Total number of cells: %d\n", totalNbrOfCells);
+
+  # Figure out a best fit square layout of this number of cells
+  side <- as.integer(floor(sqrt(totalNbrOfCells)));
+  nrows <- ncols <- side;
+  if (nrows*ncols < totalNbrOfCells) {
+    nrows <- as.integer(nrows + 1);
+    if (nrows*ncols < totalNbrOfCells) {
+      ncols <- as.integer(ncols + 1);
+    }
+  }
+  verbose && printf(verbose, "Best array dimension: %dx%d (=%d cells, i.e. %d left-over cells)\n", nrows, ncols, nrows*ncols, nrows*ncols - totalNbrOfCells);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Units
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+key <- list(method="createMonoCell", class="AffymetrixCdfFile", chipType=chipType);
+if (is.null(destUnits <- loadCache(key=key))) {
+  # Create all new units in chunks
+  nbrOfUnits <- nbrOfUnits(this);
+
+  verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
+
+  unitsToDo <- 1:nbrOfUnits;
+#unitsToDo <- unitsToDo[1:1000];
+  destUnits <- vector("list", nbrOfUnits);
+  nbrOfChunks <- ceiling(nbrOfUnits / nbrOfUnitsPerChunks);
+
+  verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n", 
+                                         nbrOfChunks, nbrOfUnitsPerChunks);
+  head <- 1:nbrOfUnitsPerChunks;
+  verbose && enter(verbose, "Extracting unit data");
+  fields <- c("x", "y", "indices", "pbase", "tbase", "atom", "indexpos");
+  fields <- c("pbase", "tbase", "atom", "indexpos");
+  count <- 1;
+  while (length(unitsToDo) > 0) {
+    if (length(unitsToDo) < nbrOfUnitsPerChunks) {
+      head <- 1:length(unitsToDo);
+    }
+    units <- unitsToDo[head];
+    verbose && printf(verbose, "Chunk #%d of %d (%d units)\n", 
+                                        count, nbrOfChunks, length(units));
+
+    unitsToDo <- unitsToDo[-head];
+
+    srcUnits <- readCdf(src, units=units);
+
+    idxOffset <- 0;
+    srcUnits <- lapply(srcUnits, function(unit) {
+      unit$blocks <- lapply(unit$blocks, function(block) {
+        block[fields] <- lapply(.subset(block, fields), FUN=.subset, fidx);
+        block$natoms <- nbrOfCellsPerField;
+        block$ncellsperatom <- 1;
+        idxs <- idxOffset + 1:nbrOfCellsPerField;
+        y <- (idxs-1) %/% ncols;
+        block$y <- y;
+        block$x <- (idxs-1) - ncols*y;
+        block$indices <- idxs;
+        idxOffset <<- idxOffset + nbrOfCellsPerField;
+        block;
+      })
+      ncells <- length(unit$blocks)*nbrOfCellsPerField;
+      unit$ncells <- ncells;
+      unit$natoms <- ncells;
+      unit$ncellsperatom <- 1;
+      unit;
+    })
+
+    # Store the transformed units
+    destUnits[units] <- srcUnits;
+    names(destUnits)[units] <- names(srcUnits);
+
+    rm(srcUnits, units); # Not needed anymore
+
+    count <- count + 1;
+  } # while (length(unitsToDo) > 0)
+  rm(unitsToDo, head, fields, fidx, count);
+  nbrOfCells <- lapply(destUnits, FUN=function(unit) unit$ncells);
+  nbrOfCells <- sum(unlist(nbrOfCells, use.names=FALSE));
+  verbose && printf(verbose, "Number unit cells extracted: %d\n", nbrOfCells);
+  verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Rearrange cells (x,y).
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##   verbose && enter(verbose, "Validating unit cell indices");
+##   cells <- unlist(lapply(destUnits, FUN=function(unit) unit$blocks[[1]]$indices), use.names=FALSE);
+##   if (unique(diff(cells)) != 1)
+##     throw("Internal CDF error.");
+##   verbose && exit(verbose);
+
+  saveCache(destUnits, key=key);
+} # if (is.null(destUnits <- loadCache(key=key)))
+
+  verbose && enter(verbose, "Rearranging QC unit cell indices");
+  destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, hasBlocks=FALSE, verbose=verbose);
+  verbose && enter(verbose, "Validating QC unit cell indices");
+  cells <- unlist(lapply(destQcUnits, FUN=function(unit) unit$indices), use.names=FALSE);
+  if (unique(diff(cells)) != 1)
+    throw("Internal CDF error.");
+  verbose && exit(verbose);
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # CDF header
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Creaging CDF header with source CDF as template");
+  destHeader <- readCdfHeader(src);
+  destHeader$nrows <- nrows;
+  destHeader$ncols <- ncols;
+  verbose && exit(verbose);
+
+  # Write new CDF
+  verbose && enter(verbose, "Writing new CDF to file");
+  verbose && printf(verbose, "Pathname: %s\n", dest);
+  verbose2 <- as.integer(verbose)-1;
+  verbose2 <- 2;
+  writeCdf(dest, cdfheader=destHeader, cdf=destUnits, 
+                                   cdfqc=destQcUnits, ..., verbose=verbose2);
+  verbose && exit(verbose);
+
+  # Return an AffymetrixCdfFile object for the new CDF
+  newInstance(this, dest);
+})
+
+
+
 ############################################################################
 # HISTORY:
+# 2006-09-10
+# o Simple benchmarking of createMonoCell(): IBM Thinkpad A31 1.8GHz 1GB:
+#   Mapping50K_Hind to mono cells CDF takes ~13 mins.  Again, it is 
+#   writeCdf() that is slow.  KH is working on improving this.
+# 2006-09-08
+# o Added equals() to compare to CDF object.
+# o Added convert() to convert a CDF into another version by convertCdf().
 # 2006-08-25
 # o Added getFirstCellIndices().  This may be used by methods to identify
 #   unit or unit groups for which no probe signals have been assigned yet.
