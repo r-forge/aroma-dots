@@ -41,6 +41,47 @@ setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
 })
 
 
+setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ..., verbose=FALSE) {
+  # Argument 'verbose': 
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Creating CDF for chip effects");
+  verbose && cat(verbose, "Source chip type: ", getChipType(sourceCdf));
+  verbose && cat(verbose, "Source CDF: ", getPathname(sourceCdf));
+
+  # CDF for chip effects
+  chipType <- sprintf("%s-monocell", getChipType(sourceCdf));
+  verbose && cat(verbose, "Chip type for chip effects: ", getChipType(sourceCdf));
+
+  # Search for CDF
+  cdf <- findCdf(chipType);
+  if (is.null(cdf)) {
+    verbose && cat(verbose, "Pathname: Not found!");
+    verbose && cat(verbose, "Will create from the CDF of the dataset. NOTE: This will take several minutes or more!");
+    verbose && enter(verbose, "Creating CDF");
+    cdf <- createMonoCell(sourceCdf, verbose=verbose);
+    verbose && exit(verbose);
+  } else {
+    verbose && cat(verbose, "Pathname: ", cdf);
+    cdf <- AffymetrixCdfFile$fromFile(cdf);
+  }
+  verbose && exit(verbose);
+
+  cdf;
+}, static=TRUE)
+
+setMethodS3("createParamCel", "ChipEffectFile", function(static, df, ..., verbose=FALSE) {
+  # Argument 'df':
+  if (!inherits(df, "AffymetrixCelFile")) {
+    throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
+  }
+
+  # Get CDF for chip effects
+  cdf <- createParamCdf(static, getCdf(df));
+
+}, static=TRUE)
+
+
 setMethodS3("getFirstCellIndices", "ChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
   # Argument 'verbose': 
  verbose <- Arguments$getVerbose(verbose);
@@ -114,6 +155,8 @@ setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL
 
 ############################################################################
 # HISTORY:
+# 2006-09-10
+# o Added createParamCdf().
 # 2006-08-26
 # o Created.  Have to store chip-effect estimates too.  Currently we use
 #   the existing CEL/CDF structure for this, but those are unnecessarily

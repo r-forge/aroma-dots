@@ -405,6 +405,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
 })
 
 
+
+
 ###########################################################################/**
 # @RdocMethod getChipEffects
 #
@@ -432,6 +434,20 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
 # }
 #*/###########################################################################
 setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  createCeCel <- function(df, ..., verbose=FALSE) {
+    verbose && 
+    ceCdf <- ChipEffectSet$createParamCdf(getCdf(this));
+ 
+    pathname <- getPathname(df);
+  
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -452,9 +468,6 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   if (length(ds) == 0)
     throw("Cannot create chip-effect file. The CEL set is empty.");
   
-  # For each CEL file, create a chip-effect file
-  df <- as.list(ds)[[1]];
-
   template <- NULL;  
   chipFiles <- list();
   nFiles <- length(ds);
@@ -470,8 +483,8 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
       # Create an empty template CEL file for quick copy of the others
       if (is.null(template)) {
         verbose && enter(verbose, "Creating template");
-        template <- createFrom(df, filename=".template.CEL", path=getPath(this), 
-                                                               verbose=verbose);
+        template <- createFrom(df, filename=".template.CEL", 
+                                      path=getPath(this), verbose=verbose);
         template <- getPathname(template);
         on.exit(file.remove(template));
         verbose && exit(verbose);

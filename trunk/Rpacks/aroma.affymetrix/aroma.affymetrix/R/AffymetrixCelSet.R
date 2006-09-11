@@ -17,7 +17,7 @@
 #   \item{...}{Not used.}
 # }
 #
-# \section{Fields and Methods}{
+# \Section{fields and Methods}{
 #  @allmethods "public"
 # }
 # 

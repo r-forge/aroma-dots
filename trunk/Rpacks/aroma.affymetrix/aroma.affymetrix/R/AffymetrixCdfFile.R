@@ -1,12 +1,11 @@
-###########################################################################/**
-# @RdocClass AffymetrixCdfFile
+				
 #
 # @title "The AffymetrixCdfFile class"
 #
 # \description{
 #  @classhierarchy
 #
-#  An AffymetrixCdfFile object represents a generic Affymetrix CDF file.
+#  An AffymetrixCdfFile object represents a generic Affymetrix 
 # }
 # 
 # @synopsis
@@ -636,7 +635,7 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
 
 
 ###########################################################################/**
-# @RdocMethod equals
+# @RdocMethod compare
 #
 # @title "Checks if two AffymetrixCdfFile objects are equal"
 #
@@ -663,17 +662,22 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("equals", "AffymetrixCdfFile", function(this, other, ...) {
+setMethodS3("compare", "AffymetrixCdfFile", function(this, other, ...) {
   if (!inherits(other, "AffymetrixCdfFile"))
     return(FALSE);
 
   # Check if it is the same object
-  if (NextMethod("equals", this, other, ...))
+  if (equals(this, other))
     return(TRUE);
 
   res <- compareCdfs(getPathname(this), getPathname(other), ...);
 
   res;
+})
+
+# To be removed.
+setMethodS3("equals", "AffymetrixCdfFile", function(...) {
+  NextMethod("equals", ...);
 })
 
 
@@ -828,7 +832,6 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   if (identical(src, dest)) {
     throw("Cannot not create CDF file. Destination is same as source: ", src);
   }
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fields to be kept
