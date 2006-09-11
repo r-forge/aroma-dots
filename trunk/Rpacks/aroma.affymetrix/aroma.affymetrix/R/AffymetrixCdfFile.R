@@ -814,7 +814,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'nbrOfCellsPerField':
-  nbrOfCellsPerField <- Argument$getIndices(nbrOfCellsPerField);
+  nbrOfCellsPerField <- Arguments$getIndices(nbrOfCellsPerField);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -826,7 +826,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # Create the pathname of the destination CDF
   name <- paste(c(chipType, suffix), collapse=sep);
   dest <- sprintf("%s.cdf", name);
-  dest <- Arguments$getWritablePathname(dest, path=path);
+  dest <- Arguments$getWritablePathname(dest, path=path, mustNotExist=TRUE);
 
   # Assure source and destination is not identical
   if (identical(src, dest)) {
@@ -878,8 +878,6 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Units
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-key <- list(method="createMonoCell", class="AffymetrixCdfFile", chipType=chipType);
-if (is.null(destUnits <- loadCache(key=key))) {
   # Create all new units in chunks
   nbrOfUnits <- nbrOfUnits(this);
 
@@ -953,9 +951,6 @@ if (is.null(destUnits <- loadCache(key=key))) {
 ##     throw("Internal CDF error.");
 ##   verbose && exit(verbose);
 
-  saveCache(destUnits, key=key);
-} # if (is.null(destUnits <- loadCache(key=key)))
-
   verbose && enter(verbose, "Rearranging QC unit cell indices");
   destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, hasBlocks=FALSE, verbose=verbose);
   verbose && enter(verbose, "Validating QC unit cell indices");
@@ -964,7 +959,6 @@ if (is.null(destUnits <- loadCache(key=key))) {
     throw("Internal CDF error.");
   verbose && exit(verbose);
   verbose && exit(verbose);
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # CDF header
@@ -983,6 +977,12 @@ if (is.null(destUnits <- loadCache(key=key))) {
   writeCdf(dest, cdfheader=destHeader, cdf=destUnits, 
                                    cdfqc=destQcUnits, ..., verbose=verbose2);
   verbose && exit(verbose);
+
+  # Verify correctness
+  cells <- readCdfCellIndices(dest);
+  cells <- unlist(cells, use.names=FALSE);
+  if (!identical(unique(diff(cells)), 1:1))
+    throw("Failed to create a valid mono-cell CDF.");
 
   # Return an AffymetrixCdfFile object for the new CDF
   newInstance(this, dest);

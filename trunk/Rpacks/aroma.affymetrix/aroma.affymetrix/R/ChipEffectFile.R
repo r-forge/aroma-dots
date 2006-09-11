@@ -70,48 +70,61 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
   cdf;
 }, static=TRUE)
 
-setMethodS3("createParamCel", "ChipEffectFile", function(static, df, ..., verbose=FALSE) {
+
+setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=sprintf("%s-chipEffects.cel", getName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'df':
   if (!inherits(df, "AffymetrixCelFile")) {
     throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
   }
 
-  # Get CDF for chip effects
-  cdf <- createParamCdf(static, getCdf(df));
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+  if (!isFile(pathname)) {
+    # Get CDF for chip effects
+    if (is.null(cdf))
+      cdf <- createParamCdf(static, getCdf(df), verbose=verbose);
+  
+    # Get CDF header
+    cdfHeader <- getHeader(cdf);
 
-}, static=TRUE)
+    celHeader0 <- readCelHeader(getPathname(df));
+  
+    # Build a valid CEL header
+    celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=name);
 
+    # Add some extra information about what the CEL file is for
+    params <- c(Descripion="This CEL file contains chip-effect estimates from the aroma.affymetrix package.");
+    parameters <- gsub(" ", "_", params);
+    names(parameters) <- names(params);
+    parameters <- paste(names(parameters), parameters, sep=":");
+    parameters <- paste(parameters, collapse=";");
+    parameters <- paste(celHeader$parameters, parameters, "", sep=";");
+    parameters <- gsub(";;", ";", parameters);
+    parameters <- gsub(";$", "", parameters);
+    celHeader$parameters <- parameters;
 
-setMethodS3("getFirstCellIndices", "ChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
-  # Argument 'verbose': 
- verbose <- Arguments$getVerbose(verbose);
+#     celHeader0 <- celHeader;
+#     celHeader$rows <- cdfHeader$rows;
+#     celHeader$cols <- cdfHeader$cols;
+#     celHeader$total <- cdfHeader$total;
+#     celHeader$chiptype <- cdfHeader$chiptype;
 
-  res <- this$.firstCells;
-  if (is.null(res)) {
-    stratifyBy <- switch(this$model, pm="pm");
-    cdf <- getCdf(this);
-    res <- getFirstCellIndices(cdf, units=NULL, ..., stratifyBy=stratifyBy, verbose=verbose);
-    this$.firstCells <- res;
+    # Create the CEL file
+    createCel(pathname, header=celHeader, ..., verbose=verbose);
   }
 
-  # Subset?
-  if (!is.null(units))
-    res <- res[units];
-
-  res;
-}, protected=TRUE)
+  newInstance(static, pathname);
+}, static=TRUE)
 
 
 
 setMethodS3("encodeUnitGroup", "ChipEffectFile", function(static, groupData, ...) {
   theta <- .subset2(groupData, "theta");
-  ncells <- length(theta);
-  stdvs <- rep(1, ncells);
-  pixels <- rep(0, ncells);
+  stdvs <- .subset2(groupData, "sdTheta");
+  outliers <- .subset2(groupData, "thetaOutliers");
+  pixels <- -as.integer(outliers);
+
   list(intensities=theta, stdvs=stdvs, pixels=pixels);
 }, static=TRUE, protected=TRUE)
-
-
 
 
 setMethodS3("decodeUnitGroup", "ChipEffectFile", function(static, groupData, ...) {
@@ -119,32 +132,29 @@ setMethodS3("decodeUnitGroup", "ChipEffectFile", function(static, groupData, ...
   if (!is.null(groupData$intensities))
     res$theta <- groupData$intensities;
   if (!is.null(groupData$stdvs))
-    res$stdvs <- groupData$stdvs;
+    res$sdTheta <- groupData$stdvs;
   if (!is.null(groupData$pixels))
-    res$pixels <- groupData$pixels;
+    res$thetaOutliers <- as.logical(-groupData$pixels);
   res;
 }, static=TRUE, protected=TRUE)
-
 
 
 setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, ...) {
   if (is.null(cdf)) {
     # Use only the first cell in each unit group.
-    cdf <- getFirstCellIndices(this, units=units, ...);
+    cdf <- readCdfCellIndices(getPathname(getCdf(this)), units=units);
   }
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  stratifyBy <- switch(this$model, pm="pm");
-  NextMethod("readUnits", this, cdf=cdf, ..., stratifyBy=stratifyBy);
-});
-
+  NextMethod("readUnits", this, cdf=cdf, ...);
+})
 
 
 setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, data, ...) {
   if (is.null(cdf)) {
     # Use only the first cell in each unit group.
-    cdf <- getFirstCellIndices(this, units=units, ...);
+    cdf <- readCdfCellIndices(getPathname(getCdf(this)), units=units);
   }
 
   # Note that the actually call to the encoding is done in updateUnits()
@@ -153,9 +163,31 @@ setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL
 }, protected=TRUE);
 
 
+setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  idxs <- getCellIndices(getCdf(this), units=NULL);
+  idxs <- applyCdfGroups(idxs, .subset2, 1);
+  idxs <- unlist(idxs, use.names=FALSE);
+
+  # Read one cell from each unit
+  verbose && enter(verbose, "Reading data for these cells");
+  value <- readCel(getPathname(this), indices=idxs, readIntensities=FALSE, 
+                   readStdvs=TRUE, readPixels=FALSE)$stdvs;
+  verbose && str(verbose, value);
+  verbose && exit(verbose);
+
+  # Identify units for which the stdvs <= 0.
+  which(value <= 0);
+})
+
+
 ############################################################################
 # HISTORY:
 # 2006-09-10
+# o Starting to make use of specially design CDFs and CEL files for storing
+#   chip effects.  This make getFirstCellIndices() obsolete.
 # o Added createParamCdf().
 # 2006-08-26
 # o Created.  Have to store chip-effect estimates too.  Currently we use

@@ -98,7 +98,15 @@ setMethodS3("getProbeAffinityClass", "MbeiPlm", function(static, ...) {
 #*/###########################################################################
 setMethodS3("getFitFunction", "MbeiPlm", function(static, ...) {
   liWong <- function(y, ...) {
-    fit.li.wong(t(y));
+    fit <- fit.li.wong(t(y));
+
+    # A fit function must return: theta, sdTheta, thetaOutliers, phi, sdPhi, phiOutliers.
+    names <- names(fit);
+    idxs <- match(c("sigma.theta", "theta.outliers", "sigma.phi", "phi.outliers"), names);
+    names[idxs] <- c("sdTheta", "thetaOutliers", "sdPhi", "phiOutliers");
+    names(fit) <- names;
+
+    fit;
   }
 
   liWong;
@@ -106,48 +114,10 @@ setMethodS3("getFitFunction", "MbeiPlm", function(static, ...) {
 
 
 
-setMethodS3("getChipEffects2", "MbeiPlm", function(this, ..., verbose=FALSE) {
-  chipFiles <- this$.chipFiles;
-  if (!is.null(chipFiles))
-    return(chipFiles);
-
-  # For each of the data files, create a file to store the estimates in
-  path <- getPath(this);
-  ds <- getDataSet(this);
-  cdf <- getCdf(ds);
-  unitSizes <- getUnitSizes(cdf);
-  unitOffsets <- cumsum(unitSizes) - unitSizes[1] + 1;
-  n <- sum(unitSizes);
-
-  chipFiles <- list();
-  for (kk in seq(ds)) {
-    df <- as.list(ds)[[kk]];
-    filename <- sprintf("%s-liwong.apd", getName(df));
-    filename <- filePath(path, filename);
-    if (!isFile(filename)) {
-      X <- FileFloatVector(filename, length=n);
-      X <- FileFloatVector(length=n, appendTo=X);
-      X <- FileByteVector(length=n, appendTo=X);
-      close(X);
-      rm(X);
-    }
-    set <- AbstractFileArray$fromFile(filename);
-    # We have to close the parameter files, because Windows can only
-    # handle ~512 open connections, and we might have more arrays.
-    # Instead we have to open and close the connections each time we
-    # read data.
-    close(as.list(set)[[1]]);
-    chipFiles[[kk]] <- set;
-  } # for (kk in ...)
-
-  this$.chipFiles <- chipFiles;
-
-  chipFiles;
-}, protected=TRUE)
-
-
 ############################################################################
 # HISTORY:
+# 2006-09-10
+# o Updated getFitFunction() to return required fields.
 # 2006-08-24
 # o Added Rdoc comments.
 # 2006-08-23

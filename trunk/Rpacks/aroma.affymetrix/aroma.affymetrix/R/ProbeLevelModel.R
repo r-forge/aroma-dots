@@ -88,6 +88,10 @@ setMethodS3("getChipEffectClass", "ProbeLevelModel", function(static, ...) {
   ChipEffectFile;
 }, static=TRUE, protected=TRUE)
 
+setMethodS3("getChipEffectsClass", "ProbeLevelModel", function(static, ...) {
+  ChipEffectSet;
+}, static=TRUE, protected=TRUE)
+
 
 
 ###########################################################################/**
@@ -242,12 +246,15 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
 
   # Get (and create if missing) the chip-effect files (one per array)
   ces <- getChipEffects(this);
+  cesCdf <- getCdf(ces);
 
+  # Use the same CDF restructor function as the one for the dataset.
+  # [This should actually not be required]
+  setRestructor(cesCdf, getRestructor(cdf));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   # Argument 'units':
   doRemaining <- FALSE;
   if (is.null(units)) {
@@ -359,34 +366,29 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
         fitfcn(y);
       })
     })
+
     verbose && print(verbose, fit[1]);
     y <- NULL; # Not needed anymore (to minimize memory usage)
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Storing chip-effect estimates");
-    firstCells <- getFirstCellIndices(paf, units=units[uu]);
+    cdf2 <- getCellIndices(cesCdf, units=units[uu]);
     if (!is.null(postCdfTransform)) {
-      firstCells <- postCdfTransform(firstCells);
+      cdf2 <- postCdfTransform(cdf2);
     }
-    verbose && print(verbose, firstCells[1]);
-    updateUnits(ces, cdf=firstCells, data=fit, verbose=verbose);
+    verbose && print(verbose, cdf2[1]);
+    updateUnits(ces, cdf=cdf2, data=fit, verbose=verbose);
     verbose && exit(verbose);
-
-#    # Update average chip-effect file?
-#    verbose && enter(verbose, "Updating chip-effect averages");
-#    indices <- unlist(firstCells, use.names=FALSE);
-#    cesAvg <- getAverageFile(ces, indices=indices, force=TRUE);
-#    verbose && exit(verbose);
-    firstCells <- NULL; # Not needed anymore
+    cdf2 <- NULL; # Not needed anymore
 
     # Store the probe-affinities *last* because we use these to 
     # identify which units are already modelled or not.
     verbose && enter(verbose, "Storing probe-affinity estimates");
-    if (!is.null(postCdfTransform)) {
+    if (is.null(postCdfTransform)) {
+      postCdfUnits <- cdfUnits;
+    } else {
       postCdfUnits <- postCdfTransform(cdfUnits);
       verbose && print(verbose, postCdfUnits[1]);
-    } else {
-      postCdfUnits <- cdfUnits;
     }
     updateUnits(paf, cdf=postCdfUnits, data=fit);
     cdfUnits <- fit <- NULL; # Not needed anymore
@@ -435,31 +437,20 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
 #*/###########################################################################
 setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Local functions
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  createCeCel <- function(df, ..., verbose=FALSE) {
-    verbose && 
-    ceCdf <- ChipEffectSet$createParamCdf(getCdf(this));
- 
-    pathname <- getPathname(df);
-  
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  chipFiles <- this$.chipFiles;
-  if (!is.null(chipFiles))
-    return(chipFiles);
+  ces <- this$.ces;
+  if (!is.null(ces))
+    return(ces);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create chip-effect files 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get the probe-affinity class object
-  clazz <- getChipEffectClass(this);
+  # Get the chip-effect class object
+  clazz <- getChipEffectsClass(this);
 
   # Let the parameter object know about the CDF structure, because we 
   # might use a modified version of the one in the CEL header.
@@ -468,47 +459,14 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   if (length(ds) == 0)
     throw("Cannot create chip-effect file. The CEL set is empty.");
   
-  template <- NULL;  
-  chipFiles <- list();
-  nFiles <- length(ds);
-  for (kk in seq(ds)) {
-    df <- as.list(ds)[[kk]];
-    name <- getName(df);
-    verbose && enter(verbose, sprintf("Creating chip-effect file #%d of %d: %s", kk, nFiles, name));
-    filename <- sprintf("%s-chipEffect.CEL", name);
-    pathname <- Arguments$getWritablePathname(filename, path=getPath(this));
+  verbose && enter(verbose, "Getting chip-effect set from dataset");
+  ces <- clazz$fromDataSet(dataset=ds, path=getPath(this), verbose=verbose);
+  verbose && exit(verbose);
 
-    # Use template to create missing files
-    if (!isFile(pathname)) {
-      # Create an empty template CEL file for quick copy of the others
-      if (is.null(template)) {
-        verbose && enter(verbose, "Creating template");
-        template <- createFrom(df, filename=".template.CEL", 
-                                      path=getPath(this), verbose=verbose);
-        template <- getPathname(template);
-        on.exit(file.remove(template));
-        verbose && exit(verbose);
-      }
-  
-      verbose && enter(verbose, "Copying template");
-      file.copy(template, pathname);
-      verbose && exit(verbose);
-    } else {
-      verbose && cat(verbose, "File already exists.");
-    }
+  # Store in cache
+  this$.ces <- ces;
 
-    # Create a chip-effect object
-    chipFile <- newInstance(clazz, pathname, cdf=cdf, model=this$model);
-
-    chipFiles <- c(chipFiles, list(chipFile));
-
-    verbose && exit(verbose);
-  }
-
-  chipFiles <- ChipEffectSet(chipFiles);
-  this$.chipFiles <- chipFiles;
-
-  chipFiles;
+  ces;
 })
 
 
