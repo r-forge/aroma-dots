@@ -143,9 +143,16 @@ setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining
 })
 
 
+setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
+  # Look into the last chip-effect file since that is updated last
+  ce <- getFile(this, length(this));
+  findUnitsTodo(ce, ...);
+})
+
 ############################################################################
 # HISTORY:
 # 2006-09-10
+# o Added findUnitsTodo().
 # o Starting to make use of specially design CDFs and CEL files for storing
 #   chip effects.  This make getFirstCellIndices() obsolete.
 # 2006-08-28
