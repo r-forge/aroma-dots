@@ -86,9 +86,9 @@ setMethodS3("encodeUnitGroup", "MbeiProbeAffinityFile", function(static, groupDa
   # but also output from affy::fit.li.wong().
   names <- names(groupData);
   # Is it an affy:fit.li.wong() structure?
-  if ("sigma.phi" %in% names) {
-    names <- sub("sigma.phi", "stdvs", names);
-    names <- sub("phi.outliers", "outliers", names);
+  if ("sdPhi" %in% names) {
+#    names <- sub("sdPhi", "sdPhi", names);
+#    names <- sub("phiOutliers", "phiOutliers", names);
     names <- sub("iter", "nbrOfIterations", names);
     names <- sub("convergence1", "converged", names);
     names <- sub("convergence2", "convergedOutliers", names);
@@ -96,7 +96,7 @@ setMethodS3("encodeUnitGroup", "MbeiProbeAffinityFile", function(static, groupDa
   }
 
   # Encode outliers as the sign of 'pixels'; -1 = TRUE, +1 = FALSE
-  pixels <- sign(0.5 - as.integer(groupData$outliers));
+  pixels <- sign(0.5 - as.integer(groupData$phiOutliers));
     
   # Note: There are at least two 'pixels', otherwise we can't fit the model.
     
@@ -107,7 +107,7 @@ setMethodS3("encodeUnitGroup", "MbeiProbeAffinityFile", function(static, groupDa
   pixels[2] <- pixels[2] * 
             (1 + 2*groupData$converged + 4*groupData$convergedOutliers);
 
-  list(intensities=groupData$phi, stdvs=groupData$stdvs, pixels=pixels);
+  list(intensities=groupData$phi, stdvs=groupData$sdPhi, pixels=pixels);
 }, static=TRUE, protected=TRUE)
 
 
@@ -115,8 +115,6 @@ setMethodS3("encodeUnitGroup", "MbeiProbeAffinityFile", function(static, groupDa
 
 setMethodS3("decodeUnitGroup", "MbeiProbeAffinityFile", function(static, groupData, ...) {
   attachLocally(groupData);
-
-str(groupData);
 
   pixels <- groupData$pixels;
 
@@ -131,7 +129,7 @@ str(groupData);
   converged <- as.logical(t %% 2 == 1);  t <- t %/% 2;
   convergedOutliers <- as.logical(t %% 2 == 1);
 
-  list(phi=groupData$intensities, stdvs=groupData$stdvs, outliers=outliers, nbrOfIterations=nbrOfIterations, converged=converged, convergedOutliers=convergedOutliers);
+  list(phi=groupData$intensities, sdPhi=groupData$stdvs, phiOutliers=outliers, nbrOfIterations=nbrOfIterations, converged=converged, convergedOutliers=convergedOutliers);
 }, static=TRUE, protected=TRUE)
 
 

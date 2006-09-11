@@ -41,50 +41,51 @@ setConstructorS3("ChipEffectSet", function(..., model=c("pm")) {
 })
 
 
-setMethodS3("createParamCdf", "ChipEffectSet", function(static, ...) {
-  ChipEffectFile$createParamCdf(...);
-})
-
-
-
-setMethodS3("getFirstCellIndices", "ChipEffectSet", function(this, units=NULL, ..., verbose=FALSE) {
-  # Argument 'verbose': 
+setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name=getName(dataset), ..., verbose=FALSE) {
+  # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  res <- this$.firstCells;
-  if (is.null(res)) {
-    stratifyBy <- switch(this$model, pm="pm");
-    cdf <- getCdf(this);
-    res <- getFirstCellIndices(cdf, units=NULL, ..., stratifyBy=stratifyBy, verbose=verbose);
-    this$.firstCells <- res;
+  verbose && enter(verbose, "Creating chip-effect files from dataset");
+  ces <- vector("list", length(dataset));
+  verbose && cat(verbose, "Data set: ", name);
+  cdf <- NULL;
+  for (kk in seq(dataset)) {
+    df <- getFile(dataset, kk);
+    verbose && enter(verbose, sprintf("Creating chip-effect file #%d of %d (%s)", 
+                                                               kk, length(ces), getName(df)));
+    ce <- ChipEffectFile$fromDataFile(df, path=path, name=name, cdf=cdf, ..., verbose=verbose);
+    if (is.null(cdf)) {
+      cdf <- getCdf(ce);
+      # Use the same CDF restructor function as the one for the dataset.
+      setRestructor(cdf, getRestructor(getCdf(dataset)));
+    }
+    ces[[kk]] <- ce;
+    verbose && exit(verbose);
   }
+  verbose && exit(verbose);
 
-  # Subset?
-  if (!is.null(units))
-    res <- res[units];
-
-  res;
-}, protected=TRUE)
+  # Create an ChipEffectSet
+  newInstance(static, ces);
+})
 
 
 
 setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, ...) {
   if (is.null(cdf)) {
     # Use only the first cell in each unit group.
-    cdf <- getFirstCellIndices(this, units=units, ...);
+    cdf <- getCellIndices(getCdf(this), units=units);
   }
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  stratifyBy <- switch(this$model, pm="pm");
-  res <- NextMethod("readUnits", this, units=cdf, ..., stratifyBy=stratifyBy);
+  res <- NextMethod("readUnits", this, units=cdf, ...);
 
   # Get first chip-effect file and use that to decode the read structure
   ce <- as.list(this)[[1]];
   res <- decode(ce, res);
 
   res;
-});
+})
 
 
 setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, data, ..., verbose=FALSE) {
@@ -94,11 +95,12 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
   # Get the CDF structure for all chip-effect files
   if (is.null(cdf)) {
     # Use only the first cell in each unit group.
-    cdf <- getFirstCellIndices(this, units=units, ...);
+    cdf <- getCellIndices(getCdf(this), units=units);
   }
 
   # Update each file one by one
   n <- length(this);
+  verbose && enter(verbose, "Updating ", n, " chip-effect files");
   names <- getNames(this);
   for (kk in seq(this)) {
     verbose && enter(verbose, sprintf("Array #%d of %d: %s", kk, n, names[kk]));
@@ -108,18 +110,24 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
     dataOne <- lapply(data, function(groups) {
       lapply(groups, function(group) {
         # theta = group$theta[kk] = ...
-        # stdvs = 1 (default for now)
-        list(theta=.subset(.subset2(group, "theta"), kk), stdvs=1);
+        # stdvs = group$sdTheta[kk] = ...
+        list(
+          theta=.subset(.subset2(group, "theta"), kk), 
+          sdTheta=.subset(.subset2(group, "sdTheta"), kk),
+          thetaOutliers=.subset(.subset2(group, "thetaOutliers"), kk)
+        );
       })
     })
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Updating file");
-    updateUnits(ce, cdf=cdf, data=dataOne);
+    updateUnits(ce, cdf=cdf, data=dataOne, verbose=verbose);
     verbose && exit(verbose);
     verbose && exit(verbose);
-  }
+  } # for (kk ...)
+  verbose && exit(verbose);
 }, protected=TRUE);
+
 
 
 setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining", ...) {
@@ -127,7 +135,7 @@ setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining
   if (identical(indices, "remaining")) {
   } else if (is.null(indices)) {
     # Update only cells which stores values
-    indices <- getFirstCellIndices(this);
+    indices <- getCellIndices(getCdf(this));
     indices <- unlist(indices, use.names=FALSE);
   }
 
@@ -137,6 +145,9 @@ setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining
 
 ############################################################################
 # HISTORY:
+# 2006-09-10
+# o Starting to make use of specially design CDFs and CEL files for storing
+#   chip effects.  This make getFirstCellIndices() obsolete.
 # 2006-08-28
 # o Added getAverageFile() so that only cells that store actual chip-effect
 #   estimates are averaged.
