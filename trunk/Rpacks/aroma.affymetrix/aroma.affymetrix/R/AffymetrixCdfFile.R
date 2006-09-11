@@ -884,7 +884,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
 
   unitsToDo <- 1:nbrOfUnits;
-#unitsToDo <- unitsToDo[1:1000];
+
   destUnits <- vector("list", nbrOfUnits);
   nbrOfChunks <- ceiling(nbrOfUnits / nbrOfUnitsPerChunks);
 
@@ -895,6 +895,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   fields <- c("x", "y", "indices", "pbase", "tbase", "atom", "indexpos");
   fields <- c("pbase", "tbase", "atom", "indexpos");
   count <- 1;
+  idxOffset <- as.integer(0);
   while (length(unitsToDo) > 0) {
     if (length(unitsToDo) < nbrOfUnitsPerChunks) {
       head <- 1:length(unitsToDo);
@@ -905,9 +906,9 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
     unitsToDo <- unitsToDo[-head];
 
+    # Read CDF structure
     srcUnits <- readCdf(src, units=units);
 
-    idxOffset <- 0;
     srcUnits <- lapply(srcUnits, function(unit) {
       unit$blocks <- lapply(unit$blocks, function(block) {
         block[fields] <- lapply(.subset(block, fields), FUN=.subset, fidx);
@@ -942,21 +943,14 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   verbose && printf(verbose, "Number unit cells extracted: %d\n", nbrOfCells);
   verbose && exit(verbose);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Rearrange cells (x,y).
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##   verbose && enter(verbose, "Validating unit cell indices");
-##   cells <- unlist(lapply(destUnits, FUN=function(unit) unit$blocks[[1]]$indices), use.names=FALSE);
-##   if (unique(diff(cells)) != 1)
-##     throw("Internal CDF error.");
-##   verbose && exit(verbose);
-
   verbose && enter(verbose, "Rearranging QC unit cell indices");
   destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, hasBlocks=FALSE, verbose=verbose);
   verbose && enter(verbose, "Validating QC unit cell indices");
   cells <- unlist(lapply(destQcUnits, FUN=function(unit) unit$indices), use.names=FALSE);
-  if (unique(diff(cells)) != 1)
-    throw("Internal CDF error.");
+  udcells <- unique(diff(cells));
+  if (!identical(udcells, 1:1)) {
+    throw("Internal CDF error: The cell indices for the QC units are not contiguous: ", paste(udcells, collapse=", "));
+  }
   verbose && exit(verbose);
   verbose && exit(verbose);
 
@@ -978,11 +972,23 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
                                    cdfqc=destQcUnits, ..., verbose=verbose2);
   verbose && exit(verbose);
 
-  # Verify correctness
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Verifying the CDF
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Verifying the written CDF");
+  # Checking header
+  header <- readCdfHeader(dest);
+  if ((header$nrows != nrows) || (header$ncols != ncols)) {
+    throw(sprintf("Failed to create a valid mono-cell CDF: The dimension of the written CDF does not match the intended one: (%d,%d) != (%d,%d)", header$nrows, header$ncols, nrows, ncols));
+  }
+
+  # Checking cell indices
   cells <- readCdfCellIndices(dest);
   cells <- unlist(cells, use.names=FALSE);
-  if (!identical(unique(diff(cells)), 1:1))
-    throw("Failed to create a valid mono-cell CDF.");
+  if (!identical(unique(diff(cells)), 1:1)) {
+    throw("Failed to create a valid mono-cell CDF: The cell indices are not contiguous: ", paste(udcells, collapse=", "));
+  }
+  verbose && exit(verbose);
 
   # Return an AffymetrixCdfFile object for the new CDF
   newInstance(this, dest);
@@ -993,6 +999,8 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 ############################################################################
 # HISTORY:
 # 2006-09-10
+# o BUG FIX: createMonoCell() where resetting the cell indices for each
+#   chunk.
 # o Simple benchmarking of createMonoCell(): IBM Thinkpad A31 1.8GHz 1GB:
 #   Mapping50K_Hind to mono cells CDF takes ~13 mins.  Again, it is 
 #   writeCdf() that is slow.  KH is working on improving this.
