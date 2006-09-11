@@ -667,6 +667,10 @@ setMethodS3("equals", "AffymetrixCdfFile", function(this, other, ...) {
   if (!inherits(other, "AffymetrixCdfFile"))
     return(FALSE);
 
+  # Check if it is the same object
+  if (NextMethod("equals", this, other, ...))
+    return(TRUE);
+
   res <- compareCdfs(getPathname(this), getPathname(other), ...);
 
   res;
