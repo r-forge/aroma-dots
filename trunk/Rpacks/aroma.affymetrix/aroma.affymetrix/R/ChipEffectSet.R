@@ -41,6 +41,12 @@ setConstructorS3("ChipEffectSet", function(..., model=c("pm")) {
 })
 
 
+setMethodS3("createParamCdf", "ChipEffectSet", function(static, ...) {
+  ChipEffectFile$createParamCdf(...);
+})
+
+
+
 setMethodS3("getFirstCellIndices", "ChipEffectSet", function(this, units=NULL, ..., verbose=FALSE) {
   # Argument 'verbose': 
   verbose <- Arguments$getVerbose(verbose);
