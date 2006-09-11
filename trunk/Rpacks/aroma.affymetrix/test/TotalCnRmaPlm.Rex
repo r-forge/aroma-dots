@@ -33,7 +33,7 @@ chromosomes <- allChromosomes;
 
 if (!exists("model")) {
   # Specify the model we want to fit
-  model <- AffymetrixTotalCnRmaModel(ds);
+  model <- TotalCnRmaPlm(ds);
   print(model);
   rm(ds);  # Not need anymore
 }
