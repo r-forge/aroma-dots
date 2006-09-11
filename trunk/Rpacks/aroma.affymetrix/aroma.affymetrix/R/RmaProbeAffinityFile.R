@@ -68,9 +68,11 @@ setConstructorS3("RmaProbeAffinityFile", function(...) {
 
 setMethodS3("encodeUnitGroup", "RmaProbeAffinityFile", function(static, groupData, ...) {
   phi <- .subset2(groupData, "phi");
-  ncells <- length(phi);
-  stdvs <- rep(1, ncells);
-  pixels <- rep(0, ncells);
+  stdvs <- .subset2(groupData, "sdPhi");
+
+  # Encode outliers as the sign of 'pixels'; -1 = TRUE, +1 = FALSE
+  pixels <- sign(0.5 - as.integer(groupData$phiOutliers));
+
   list(intensities=phi, stdvs=stdvs, pixels=pixels);
 }, static=TRUE, protected=TRUE)
 
@@ -78,19 +80,23 @@ setMethodS3("encodeUnitGroup", "RmaProbeAffinityFile", function(static, groupDat
 
 
 setMethodS3("decodeUnitGroup", "RmaProbeAffinityFile", function(static, groupData, ...) {
-  res <- list();
-  if (!is.null(groupData$intensities))
-    res$phi <- groupData$intensities;
-  if (!is.null(groupData$stdvs))
-    res$stdvs <- groupData$stdvs;
-  if (!is.null(groupData$pixels))
-    res$pixels <- groupData$pixels;
-  res;
+  pixels <- groupData$pixels;
+
+  # Outliers are encoded by the sign of 'pixels'.
+  outliers <- as.logical(1-sign(pixels));
+
+  list(
+    phi=groupData$intensities, 
+    sdPhi=groupData$stdvs, 
+    phiOutliers=outliers
+  );
 }, static=TRUE, protected=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2006-09-11
+# o Updated the encode- and decode functions to the new format.
 # 2006-08-25
 # o Created.
 ############################################################################

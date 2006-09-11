@@ -121,9 +121,19 @@ setMethodS3("encodeUnitGroup", "ChipEffectFile", function(static, groupData, ...
   theta <- .subset2(groupData, "theta");
   stdvs <- .subset2(groupData, "sdTheta");
   outliers <- .subset2(groupData, "thetaOutliers");
-  pixels <- -as.integer(outliers);
+  pixels <- NULL;
+  if (!is.null(outliers))
+    pixels <- -as.integer(outliers);
 
-  list(intensities=theta, stdvs=stdvs, pixels=pixels);
+  res <- list();
+  if (!is.null(theta))
+    res$intensities <- theta;
+  if (!is.null(stdvs))
+    res$stdvs <- stdvs;
+  if (!is.null(pixels))
+    res$pixels <- pixels;
+
+  res;
 }, static=TRUE, protected=TRUE)
 
 
@@ -167,9 +177,18 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, ..., verbose=FALSE
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+  verbose && enter(verbose, "Identifying non-fitted units in chip-effect file");
+
+  verbose && enter(verbose, "Identifying CDF units");
+  verbose && cat(verbose, "Pathname: ", getPathname(this));
+  verbose && enter(verbose, "Reading CDF cell indices");
   idxs <- getCellIndices(getCdf(this), units=NULL);
+  verbose && exit(verbose);
+  verbose && enter(verbose, "Extracting first CDF block for each unit");
   idxs <- applyCdfGroups(idxs, .subset2, 1);
+  verbose && exit(verbose);
   idxs <- unlist(idxs, use.names=FALSE);
+  verbose && exit(verbose);
 
   # Read one cell from each unit
   verbose && enter(verbose, "Reading data for these cells");
@@ -179,12 +198,22 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, ..., verbose=FALSE
   verbose && exit(verbose);
 
   # Identify units for which the stdvs <= 0.
-  which(value <= 0);
+  value <- which(value <= 0);
+  verbose && str(verbose, value);
+
+  verbose && exit(verbose);
+
+  value;
 })
 
 
 ############################################################################
 # HISTORY:
+# 2006-09-11
+# o Great! Using the specially designed CDFs and CEL files to store 
+#   estimates is much faster and smaller than using the originally 
+#   structured CDF and CEL files.  Now storing the estimates takes a much
+#   smaller part of the overall fitting algorithm.
 # 2006-09-10
 # o Starting to make use of specially design CDFs and CEL files for storing
 #   chip effects.  This make getFirstCellIndices() obsolete.

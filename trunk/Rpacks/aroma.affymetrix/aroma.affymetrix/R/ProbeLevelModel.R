@@ -351,7 +351,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
     verbose && exit(verbose);
 
     # Get the CEL intensities by units
-    verbose && enter(verbose, "Reading probe intensities");
+    verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
     y <- getUnitIntensities(ds, units=cdfUnits, ...);
     verbose && exit(verbose);
     verbose && str(verbose, y[1]);
