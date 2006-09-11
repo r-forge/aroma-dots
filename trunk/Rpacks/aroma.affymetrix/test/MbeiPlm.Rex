@@ -6,7 +6,7 @@ verbose <- Arguments$getVerbose(TRUE);
 # Setup
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the dataset to be used
-path <- "chip_data3/Xba/";
+path <- "chip_data/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
 # Specify the model we want to fit
