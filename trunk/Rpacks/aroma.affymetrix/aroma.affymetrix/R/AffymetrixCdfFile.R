@@ -963,7 +963,9 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   destHeader$ncols <- ncols;
   verbose && exit(verbose);
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Write new CDF
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Writing new CDF to file");
   verbose && printf(verbose, "Pathname: %s\n", dest);
   verbose2 <- as.integer(verbose)-1;
@@ -971,6 +973,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   writeCdf(dest, cdfheader=destHeader, cdf=destUnits, 
                                    cdfqc=destQcUnits, ..., verbose=verbose2);
   verbose && exit(verbose);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Verifying the CDF

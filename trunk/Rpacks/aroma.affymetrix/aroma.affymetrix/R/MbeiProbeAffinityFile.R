@@ -114,8 +114,6 @@ setMethodS3("encodeUnitGroup", "MbeiProbeAffinityFile", function(static, groupDa
 
 
 setMethodS3("decodeUnitGroup", "MbeiProbeAffinityFile", function(static, groupData, ...) {
-  attachLocally(groupData);
-
   pixels <- groupData$pixels;
 
   # Outliers are encoded by the sign of 'pixels'.

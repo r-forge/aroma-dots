@@ -96,10 +96,15 @@ setMethodS3("getFitFunction", "RmaPlm", function(static, ...) {
     theta <- 2^beta;
     phi <- 2^alpha;
 
-#    list(beta=beta, alpha=alpha);
+    # A fit function must return: theta, sdTheta, thetaOutliers, phi, sdPhi, phiOutliers.
+    sdTheta <- rep(1, J);
+    thetaOutliers <- rep(FALSE, J);
+    sdPhi <- rep(1, I);
+    phiOutliers <- rep(FALSE, I);
 
     # Return data on the intensity scale
-    list(theta=theta, phi=phi);   
+    list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
+         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
   }
 
   rmaModel;
@@ -109,6 +114,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-09-11
+# o The fit function now returns all required fields.
 # 2006-08-25
 # o Created from the corresponding Li & Wong model.
 ############################################################################
