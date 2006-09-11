@@ -13,16 +13,12 @@ verbose <- Arguments$getVerbose(TRUE);
 
 verbose && enter(verbose, "Sourcing all *.R files");
 
-# Digest is still broken
-#source("patches/digest.R")
+#source("../../affxparser/affxparser/R/convertCdf.R");
+#source("../../affxparser/affxparser/R/writeCdf.R");
+#source("../../affxparser/affxparser/R/applyCdfBlocks.R");
+#sourceDirectory("../affxparser/affxparser/R/", recursive=FALSE);
 
-# Patching during development
-#source("~/braju.com.R/affxparser/affxparser/R/updateCel.R")
-#source("~/braju.com.R/affxparser/affxparser/R/private.readCelHeaderV4.R")
-
-tryCatch({
-  sourceDirectory("../aroma.affymetrix/R/", recursive=FALSE);
-}, finally = { setwd(opwd) })
+sourceDirectory("../aroma.affymetrix/R/", recursive=FALSE);
 
 verbose && exit(verbose);
 
@@ -37,3 +33,4 @@ imageMagickConvert <- function(srcfile, destfile, format, options=NULL, ...) {
 }
 options(imageConverter=imageMagickConvert);
 
+cdf <- AffymetrixCdfFile$fromChipType("Test3")
