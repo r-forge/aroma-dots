@@ -33,4 +33,3 @@ imageMagickConvert <- function(srcfile, destfile, format, options=NULL, ...) {
 }
 options(imageConverter=imageMagickConvert);
 
-cdf <- AffymetrixCdfFile$fromChipType("Test3")
