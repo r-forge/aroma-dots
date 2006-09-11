@@ -6,12 +6,16 @@ verbose <- Arguments$getVerbose(TRUE);
 # Setup
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the dataset to be used
-path <- "chip_data/Xba/";
+path <- "chip_data3/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
 # Specify the model we want to fit
 model <- MbeiPlm(ds);
 print(model);
+
+ces <- getChipEffects(model);
+paf <- getProbeAffinities(model);
+ce <- getFile(ces, 1);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit the model
@@ -19,17 +23,6 @@ print(model);
 # Fit a few units.  The method is clever such that it will not 
 # estimate the same units if not needed, instead it will read the
 # data from the files where parameter estimates are stored.
-units <- fit(model, units=50000:50010, force=TRUE);
+units <- fit(model, units=55+1:1000, verbose=TRUE);
 cat("Fitted ", length(units), " units.\n");
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Investigated the fitted units
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Work with probe-affinity estimates only.  The object returned
-# inherits from the AffymetrixCelFile class, that is, you can plot
-# probe affinities spatially just as if they were probe signals 
-# and so on.
-paf <- getProbeAffinities(model);
-print(paf);
 
