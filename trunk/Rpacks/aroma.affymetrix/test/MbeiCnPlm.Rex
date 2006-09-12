@@ -21,7 +21,7 @@ print(ces);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit the model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-units <- fit(model, units=56:nbrOfUnits(getCdf(model)), verbose=TRUE);
+units <- fit(model, verbose=TRUE);
 cat("Fitted ", length(units), " units.\n");
 
 
