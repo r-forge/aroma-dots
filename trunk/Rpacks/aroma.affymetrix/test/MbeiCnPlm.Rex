@@ -18,15 +18,10 @@ ces <- getChipEffects(model);
 print(paf);
 print(ces);
 
-units <- findUnitsTodo(model);
-print(summary(units));
-
-stop()
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit the model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-units <- fit(model, units=56, force=TRUE, verbose=TRUE);
+units <- fit(model, verbose=TRUE);
 cat("Fitted ", length(units), " units.\n");
 
 
