@@ -27,7 +27,7 @@ units <- 55+1:300;
 lapply(models, function(model) {
   print(model);
   t <- system.time({
-    uu <- fit(model, units=units, force=FALSE, verbose=TRUE);
+    uu <- fit(model, units=NULL, force=FALSE, verbose=TRUE);
   })
   if (length(uu) > 0)
     print(t / length(uu));
