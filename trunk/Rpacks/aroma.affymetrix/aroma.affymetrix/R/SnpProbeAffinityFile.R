@@ -32,7 +32,7 @@ setConstructorS3("SnpProbeAffinityFile", function(..., mergeStrands=FALSE) {
 setMethodS3("getCellIndices", "SnpProbeAffinityFile", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
 
-  # If merging strands, return only every second group
+  # Merge strands?
   if (this$mergeStrands) {
     cells <- applyCdfGroups(cells, cdfMergeStrands);
   }

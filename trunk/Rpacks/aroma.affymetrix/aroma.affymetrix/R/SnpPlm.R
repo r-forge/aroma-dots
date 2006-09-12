@@ -38,6 +38,7 @@ setConstructorS3("SnpPlm", function(...) {
 setMethodS3("getCellIndices", "SnpPlm", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
 
+  # Merge strands?
   if (this$mergeStrands) {
     cells <- applyCdfGroups(cells, cdfMergeStrands);
   }

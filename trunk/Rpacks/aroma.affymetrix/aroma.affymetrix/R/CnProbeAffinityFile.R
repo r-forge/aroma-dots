@@ -32,10 +32,19 @@ setConstructorS3("CnProbeAffinityFile", function(..., combineAlleles=FALSE) {
 setMethodS3("getCellIndices", "CnProbeAffinityFile", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
 
-  # If merging strands, return only every second group
+  # If combining alleles, return only every second group.
+  # In order to improve readability we merge the names of alleles groups
+  # combined, e.g. groups 'C' and 'G' become group 'CG'.
   if (this$combineAlleles) {
     cells <- applyCdfGroups(cells, function(groups) {
-      groups[seq(from=1, to=length(groups), by=2)];
+      ngroups <- length(groups);
+      odds <- seq(from=1, to=ngroups, by=2);
+      evens <- seq(from=2, to=ngroups, by=2);
+      names <- names(groups);
+      names <- paste(names[odds], names[evens], sep="");
+      groups <- groups[odds];
+      names(groups) <- names;
+      groups;
     })
   }
 

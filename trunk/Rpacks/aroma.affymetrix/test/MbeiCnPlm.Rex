@@ -26,7 +26,7 @@ stop()
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit the model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-units <- fit(model, moreUnits=5, verbose=TRUE);
+units <- fit(model, units=56, force=TRUE, verbose=TRUE);
 cat("Fitted ", length(units), " units.\n");
 
 
