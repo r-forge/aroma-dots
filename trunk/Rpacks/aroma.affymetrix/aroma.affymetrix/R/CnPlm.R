@@ -45,6 +45,16 @@ setConstructorS3("CnPlm", function(...) {
 })
 
 
+setMethodS3("getCellIndices", "CnPlm", function(this, ...) {
+  cells <- NextMethod("getCellIndices", this, ...);
+
+  # If combining alleles, still return all groups as is.
+  # The summing is taken care of by the fitUnit() function.
+  
+  cells;
+})
+
+
 setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Select fit function
@@ -57,14 +67,14 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
     fitUnit <- function(groups, ...) {
       ngroups <- length(groups);
       if (ngroups == 2) {
-        yA <- .subset2(groups, 1);
-        yB <- .subset2(groups, 2);
+        yA <- .subset2(.subset2(groups, 1), 1);
+        yB <- .subset2(.subset2(groups, 2), 1);
         list(fitfcn(yA + yB));
       } else if (ngroups == 4) {
-        yA1 <- .subset2(groups, 1);
-        yB1 <- .subset2(groups, 2);
-        yA2 <- .subset2(groups, 3);
-        yB2 <- .subset2(groups, 4);
+        yA1 <- .subset2(.subset2(groups, 1), 1);
+        yB1 <- .subset2(.subset2(groups, 2), 1);
+        yA2 <- .subset2(.subset2(groups, 3), 1);
+        yB2 <- .subset2(.subset2(groups, 4), 1);
         list(
           fitfcn(yA1 + yB1), 
           fitfcn(yA2 + yB2)
