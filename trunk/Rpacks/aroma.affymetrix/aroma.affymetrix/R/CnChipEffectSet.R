@@ -1,7 +1,7 @@
 ###########################################################################/**
-# @RdocClass CnSnpChipEffectSet
+# @RdocClass CnChipEffectSet
 #
-# @title "The CnSnpChipEffectSet class"
+# @title "The CnChipEffectSet class"
 #
 # \description{
 #  @classhierarchy
@@ -13,8 +13,8 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "SnpChipEffectSet".}
-#   \item{averageAB}{A @logical indicating if the signals from allele A and
-#      allele B are averaged or not.}
+#   \item{combineAlleles}{A @logical indicating if the signals from allele A and
+#      allele B are combined or not.}
 # }
 #
 # \section{Fields and Methods}{
@@ -24,31 +24,31 @@
 # @author
 # 
 #*/###########################################################################
-setConstructorS3("CnSnpChipEffectSet", function(..., averageAB=FALSE) {
-  this <- extend(SnpChipEffectSet(...), "CnSnpChipEffectSet");
-  setAverageAB(this, averageAB);
+setConstructorS3("CnChipEffectSet", function(..., combineAlleles=FALSE) {
+  this <- extend(SnpChipEffectSet(...), "CnChipEffectSet");
+  setCombineAlleles(this, combineAlleles);
   this;
 })
 
-setMethodS3("getChipEffectFileClass", "CnSnpChipEffectSet", function(static, ...) {
-  CnSnpChipEffectFile;
+setMethodS3("getChipEffectFileClass", "CnChipEffectSet", function(static, ...) {
+  CnChipEffectFile;
 }, static=TRUE)
 
 
-setMethodS3("getAverageAB", "CnSnpChipEffectSet", function(this, ...) {
+setMethodS3("getCombineAlleles", "CnChipEffectSet", function(this, ...) {
   if (nbrOfFiles(this) == 0)
     return(FALSE);
   ce <- getFile(this, 1);
-  ce$averageAB;
+  ce$combineAlleles;
 })
 
-setMethodS3("setAverageAB", "CnSnpChipEffectSet", function(this, status, ...) {
+setMethodS3("setCombineAlleles", "CnChipEffectSet", function(this, status, ...) {
   if (nbrOfFiles(this) == 0)
     return(FALSE);
   status <- Arguments$getLogical(status);
-  oldStatus <- getAverageAB(this);
   ce <- getFile(this, 1);
-  ce$averageAB <- status;
+  oldStatus <- ce$ombineAlleles;
+  ce$combineAlleles <- status;
   invisible(oldStatus);
 })
 
