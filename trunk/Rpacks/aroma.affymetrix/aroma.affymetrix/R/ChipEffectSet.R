@@ -70,11 +70,15 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name
 
 
 
+setMethodS3("getCellIndices", "ChipEffectSet", function(this, ...) {
+  ce <- getFile(this, 1);
+  getCellIndices(ce, ...);
+})
+
+
 setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, ...) {
-  if (is.null(cdf)) {
-    # Use only the first cell in each unit group.
-    cdf <- getCellIndices(getCdf(this), units=units);
-  }
+  if (is.null(cdf))
+    cdf <- getCellIndices(this, units=units);
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
@@ -93,10 +97,8 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
   verbose <- Arguments$getVerbose(verbose);
 
   # Get the CDF structure for all chip-effect files
-  if (is.null(cdf)) {
-    # Use only the first cell in each unit group.
-    cdf <- getCellIndices(getCdf(this), units=units);
-  }
+  if (is.null(cdf))
+    cdf <- getCellIndices(this, units=units);
 
   # Update each file one by one
   n <- length(this);

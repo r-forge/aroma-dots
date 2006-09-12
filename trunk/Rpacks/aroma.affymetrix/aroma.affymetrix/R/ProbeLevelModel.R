@@ -174,6 +174,31 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
 setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 
 
+setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  ds <- getDataSet(this);
+  cdf <- getCdf(ds);
+
+  # Get what set of probes to read
+  stratifyBy <- switch(this$model, pm="pm");
+
+  # Get the CDF cell indices
+  verbose && enter(verbose, "Identifying CDF cell indices");
+  cdfUnits <- getCellIndices(cdf, units=units, ..., stratifyBy=stratifyBy);
+  verbose && print(verbose, cdfUnits[1]);
+  verbose && exit(verbose);
+
+  # Get the CEL intensities by units
+  verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
+  y <- getUnitIntensities(ds, units=cdfUnits, ...);
+  verbose && exit(verbose);
+  verbose && str(verbose, y[1]);
+
+  y;
+})
+
 
 
 
@@ -234,7 +259,7 @@ setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., transform=NULL, postCdfTransform=NULL, unitsPerChunk=moreUnits*100000/length(getDataSet(this)), moreUnits=1, force=FALSE, verbose=FALSE) {
+setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., unitsPerChunk=moreUnits*100000/length(getDataSet(this)), moreUnits=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the some basic information about this model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -246,11 +271,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
 
   # Get (and create if missing) the chip-effect files (one per array)
   ces <- getChipEffects(this);
-  cesCdf <- getCdf(ces);
 
   # Use the same CDF restructor function as the one for the dataset.
   # [This should actually not be required]
-  setRestructor(cesCdf, getRestructor(cdf));
+  setRestructor(getCdf(ces), getRestructor(cdf));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -262,23 +286,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
   } else if (identical(units, "remaining")) {
     doRemaining <- TRUE;
-    units <- findUnitsTodo(paf);
+    units <- findUnitsTodo(ces);
   } else {
     throw("Unknown mode of argument 'units': ", mode(units));
-  }
-
-  # Argument 'transform':
-  if (is.null(transform)) {
-  } else if (is.function(transform)) {
-  } else {
-    throw("Argument 'transform' is not a function: ", mode(transform));
-  }
-
-  # Argument 'postCdfTransform':
-  if (is.null(postCdfTransform)) {
-  } else if (is.function(postCdfTransform)) {
-  } else {
-    throw("Argument 'postCdfTransform' is not a function: ", mode(postCdfTransform));
   }
 
   # Argument 'unitsPerChunk':
@@ -310,7 +320,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
     if (force) {
       verbose && printf(verbose, "All of these are forced to be fitted.\n");
     } else {
-      units <- findUnitsTodo(paf, units=units, transform=postCdfTransform);
+      units <- findUnitsTodo(ces, units=units);
       nbrOfUnits <- length(units);
       verbose && printf(verbose, "Out of these, %d units need to be fitted.\n", nbrOfUnits);
     }
@@ -324,9 +334,6 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fit the model in chunks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get what set of probes to read
-  stratifyBy <- switch(this$model, pm="pm");
-
   # Get the model-fit function
   fitfcn <- getFitFunction(this);
 
@@ -344,55 +351,46 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., tra
     uu <- idxs[head];
     verbose && cat(verbose, "Chunk size: ", length(uu));
 
-    # Get the CDF cell indices
-    verbose && enter(verbose, "Identifying CDF cell indices");
-    cdfUnits <- getCellIndices(cdf, units=units[uu], ..., stratifyBy=stratifyBy);
-    verbose && print(verbose, cdfUnits[1]);
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Get the CEL intensities by units
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
+    y <- readUnits(this, units=units[uu], ...);
+    verbose && str(verbose, y[1]);
     verbose && exit(verbose);
 
-    # Get the CEL intensities by units
-    verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
-    y <- getUnitIntensities(ds, units=cdfUnits, ...);
-    verbose && exit(verbose);
-    verbose && str(verbose, y[1]);
   
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Fit the model
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Fitting unit-group model");
     fit <- lapply(y, FUN=function(unit) {
       lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1);
-        if (!is.null(transform))
-          y <- transform(y);
         fitfcn(y);
       })
     })
-
-    verbose && print(verbose, fit[1]);
     y <- NULL; # Not needed anymore (to minimize memory usage)
+    verbose && str(verbose, fit[1]);
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "Storing chip-effect estimates");
-    cdf2 <- getCellIndices(cesCdf, units=units[uu]);
-    if (!is.null(postCdfTransform)) {
-      cdf2 <- postCdfTransform(cdf2);
-    }
-    verbose && print(verbose, cdf2[1]);
-    updateUnits(ces, cdf=cdf2, data=fit, verbose=verbose);
-    verbose && exit(verbose);
-    cdf2 <- NULL; # Not needed anymore
 
-    # Store the probe-affinities *last* because we use these to 
-    # identify which units are already modelled or not.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Store probe affinities
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing probe-affinity estimates");
-    if (is.null(postCdfTransform)) {
-      postCdfUnits <- cdfUnits;
-    } else {
-      postCdfUnits <- postCdfTransform(cdfUnits);
-      verbose && print(verbose, postCdfUnits[1]);
-    }
-    updateUnits(paf, cdf=postCdfUnits, data=fit);
-    cdfUnits <- fit <- NULL; # Not needed anymore
+    updateUnits(paf, units=units[uu], data=fit, verbose=verbose);
     verbose && exit(verbose);
+
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Store chip effects
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Storing chip-effect estimates");
+    updateUnits(ces, units=units[uu], data=fit, verbose=verbose);
+    verbose && exit(verbose);
+
+    fit <- NULL; # Not needed anymore
 
     # Next chunk...
     idxs <- idxs[-head];
