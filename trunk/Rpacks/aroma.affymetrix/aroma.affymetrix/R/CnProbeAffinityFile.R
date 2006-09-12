@@ -39,11 +39,13 @@ setMethodS3("getCellIndices", "CnProbeAffinityFile", function(this, ...) {
     cells <- applyCdfGroups(cells, function(groups) {
       ngroups <- length(groups);
       odds <- seq(from=1, to=ngroups, by=2);
-      evens <- seq(from=2, to=ngroups, by=2);
       names <- names(groups);
-      names <- paste(names[odds], names[evens], sep="");
       groups <- groups[odds];
-      names(groups) <- names;
+      if (ngroups >= 2) {
+        evens <- seq(from=2, to=ngroups, by=2);
+        names <- paste(names[odds], names[evens], sep="");
+        names(groups) <- names;
+      }
       groups;
     })
   }
@@ -59,6 +61,8 @@ setMethodS3("setCombineAlleles", "CnProbeAffinityFile", function(this, status, .
 
 ############################################################################
 # HISTORY:
+# 2006-09-12
+# o Updated.
 # 2006-09-11
 # o Created.
 ############################################################################
