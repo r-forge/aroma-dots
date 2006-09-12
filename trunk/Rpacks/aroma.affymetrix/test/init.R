@@ -1,4 +1,7 @@
-savehistory();
+tryCatch({
+  savehistory();
+}, error = function(ex) {})
+
 closeAllConnections();
 library(R.oo)
 library(R.utils)
