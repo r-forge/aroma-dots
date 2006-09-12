@@ -34,10 +34,42 @@ setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
   # Argument 'model':
   model <- match.arg(model);
 
-  extend(ParameterCelFile(...), "ChipEffectFile",
+  this <- extend(ParameterCelFile(...), "ChipEffectFile",
     "cached:.firstCells" = NULL,
     model = model
   )
+
+  setEncodeFunction(this, function(groupData, ...) {
+    theta <- .subset2(groupData, "theta");
+    stdvs <- .subset2(groupData, "sdTheta");
+    outliers <- .subset2(groupData, "thetaOutliers");
+    pixels <- NULL;
+    if (!is.null(outliers))
+      pixels <- -as.integer(outliers);
+  
+    res <- list();
+    if (!is.null(theta))
+      res$intensities <- theta;
+    if (!is.null(stdvs))
+      res$stdvs <- stdvs;
+    if (!is.null(pixels))
+      res$pixels <- pixels;
+  
+    res;
+  })
+  
+  setDecodeFunction(this, function(groupData, ...) {
+    res <- list();
+    if (!is.null(groupData$intensities))
+      res$theta <- groupData$intensities;
+    if (!is.null(groupData$stdvs))
+      res$sdTheta <- groupData$stdvs;
+    if (!is.null(groupData$pixels))
+      res$thetaOutliers <- as.logical(-groupData$pixels);
+    res;
+  })
+ 
+  this;
 })
 
 
@@ -102,12 +134,6 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
     parameters <- gsub(";$", "", parameters);
     celHeader$parameters <- parameters;
 
-#     celHeader0 <- celHeader;
-#     celHeader$rows <- cdfHeader$rows;
-#     celHeader$cols <- cdfHeader$cols;
-#     celHeader$total <- cdfHeader$total;
-#     celHeader$chiptype <- cdfHeader$chiptype;
-
     # Create the CEL file
     createCel(pathname, header=celHeader, ..., verbose=verbose);
   }
@@ -115,38 +141,6 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
   newInstance(static, pathname);
 }, static=TRUE)
 
-
-
-setMethodS3("encodeUnitGroup", "ChipEffectFile", function(static, groupData, ...) {
-  theta <- .subset2(groupData, "theta");
-  stdvs <- .subset2(groupData, "sdTheta");
-  outliers <- .subset2(groupData, "thetaOutliers");
-  pixels <- NULL;
-  if (!is.null(outliers))
-    pixels <- -as.integer(outliers);
-
-  res <- list();
-  if (!is.null(theta))
-    res$intensities <- theta;
-  if (!is.null(stdvs))
-    res$stdvs <- stdvs;
-  if (!is.null(pixels))
-    res$pixels <- pixels;
-
-  res;
-}, static=TRUE, protected=TRUE)
-
-
-setMethodS3("decodeUnitGroup", "ChipEffectFile", function(static, groupData, ...) {
-  res <- list();
-  if (!is.null(groupData$intensities))
-    res$theta <- groupData$intensities;
-  if (!is.null(groupData$stdvs))
-    res$sdTheta <- groupData$stdvs;
-  if (!is.null(groupData$pixels))
-    res$thetaOutliers <- as.logical(-groupData$pixels);
-  res;
-}, static=TRUE, protected=TRUE)
 
 
 setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, ...) {
@@ -159,19 +153,10 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
 })
 
 
-setMethodS3("getCellIndices", "ChipEffectFile", function(this, units=NULL, ...) {
-  # Use only the first cell in each unit group.
-  cdf <- getCellIndices(getCdf(this), units=units);
+setMethodS3("getCellIndices", "ChipEffectFile", function(this, ...) {
+  getCellIndices(getCdf(this), ...);
+})
 
-  # It might be that more than one cell is returns...
-  if (length(cdf[[1]]$groups[[1]]$indices) > 1) {
-    cdf <- applyCdfGroups(cdf, function(groups) {
-      lapply(groups, function(group) list(indices=.subset(.subset2(group, 1), 1)));
-    })
-  }
-
-  cdf;
-}, protected=TRUE)
 
 setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, data, ...) {
   if (is.null(cdf))
@@ -192,7 +177,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
   verbose && enter(verbose, "Identifying CDF units");
   verbose && cat(verbose, "Pathname: ", getPathname(this));
   verbose && enter(verbose, "Reading CDF cell indices");
-  idxs <- getCellIndices(getCdf(this), units=units);
+  idxs <- getCellIndices(this, units=units);
   verbose && exit(verbose);
   verbose && enter(verbose, "Extracting first CDF block for each unit");
   idxs <- applyCdfGroups(idxs, .subset2, 1);
@@ -210,7 +195,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
   # Identify units for which the stdvs <= 0.
   value <- which(value <= 0);
   if (!is.null(units))
-    units <- units[value];
+    value <- units[value];
   verbose && str(verbose, value);
 
   verbose && exit(verbose);

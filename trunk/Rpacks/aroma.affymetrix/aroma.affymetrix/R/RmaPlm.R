@@ -13,10 +13,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{dataSet}{An @see "AffymetrixCelSet" object.}
-#   \item{path}{The @character string specifying the path to the directory
-#      to contain the parameter-estimate files.}
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
+#   \item{name}{The name of the model, which is also used in the pathname.}
 # }
 #
 # \section{Fields and Methods}{
@@ -50,7 +48,7 @@
 # \references{
 # }
 #*/###########################################################################
-setConstructorS3("RmaPlm", function(..., name="modelRma") {
+setConstructorS3("RmaPlm", function(..., name="modelRmaPlm") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,17 +59,78 @@ setConstructorS3("RmaPlm", function(..., name="modelRma") {
 
 
 
-setMethodS3("getProbeAffinityClass", "RmaPlm", function(static, ...) {
-  RmaProbeAffinityFile;
-}, static=TRUE, protected=TRUE)
+setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the probe affinities (and create files etc)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  paf <- NextMethod("getProbeAffinities", this, ...);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Update the encode and decode functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  setEncodeFunction(paf, function(groupData, ...) {
+    phi <- .subset2(groupData, "phi");
+    stdvs <- .subset2(groupData, "sdPhi");
+    outliers <- .subset2(groupData, "phiOutliers");
+
+    # Encode outliers as the sign of 'pixels'; -1 = TRUE, +1 = FALSE
+    pixels <- sign(0.5 - as.integer(outliers));
+
+    list(intensities=phi, stdvs=stdvs, pixels=pixels);
+  })
+
+  setDecodeFunction(paf,  function(groupData, ...) {
+    intensities <- .subset2(groupData, "intensities");
+    stdvs <- .subset2(groupData, "stdvs");
+    pixels <- .subset2(groupData, "pixels");
+
+    # Outliers are encoded by the sign of 'pixels'.
+    outliers <- as.logical(1-sign(pixels));
+
+    list(
+      phi=intensities, 
+      sdPhi=stdvs, 
+      phiOutliers=outliers
+    );
+  })
+
+  paf;
+})
+  
 
 
-setMethodS3("getFitFunction", "RmaPlm", function(static, ...) {
+###########################################################################/**
+# @RdocMethod getFitFunction
+#
+# @title "Gets the low-level function that fits the PLM"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @function.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   rmaModel <- function(y, psiCode=0, psiK=1.345){
     # Assert right dimensions of 'y'.
     if (length(dim(y)) != 2) {
       str(y);
-      stop("Argument 'y' must have two dimensions: ", paste(dim(y), collapse="x"));
+      stop("Argument 'y' must have two dimensions: ", 
+                                                paste(dim(y), collapse="x"));
     }
 
     # Log-additive model
@@ -96,7 +155,13 @@ setMethodS3("getFitFunction", "RmaPlm", function(static, ...) {
     theta <- 2^beta;
     phi <- 2^alpha;
 
-    # A fit function must return: theta, sdTheta, thetaOutliers, phi, sdPhi, phiOutliers.
+    # The RMA model is fitted with constraint sum(alpha) = 0, that is,
+    # such that prod(phi) = 1.
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # A fit function must return: theta, sdTheta, thetaOutliers, 
+    # phi, sdPhi, phiOutliers.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     sdTheta <- rep(1, J);
     thetaOutliers <- rep(FALSE, J);
     sdPhi <- rep(1, I);
@@ -108,7 +173,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(static, ...) {
   }
 
   rmaModel;
-}, static=TRUE, protected=TRUE)
+}, protected=TRUE)
+
 
 
 

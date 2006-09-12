@@ -10,7 +10,7 @@ path <- "chip_data3/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
 # Specify the model we want to fit
-model <- RmaSnpPlm(ds);
+model <- RmaSnpPlm(ds, mergeStrands=TRUE);
 print(model);
 
 ces <- getChipEffects(model);

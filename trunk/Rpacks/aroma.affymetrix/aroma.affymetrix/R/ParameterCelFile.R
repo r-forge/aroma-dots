@@ -42,71 +42,62 @@
 #
 # @keyword "IO"
 #*/###########################################################################
-setConstructorS3("ParameterCelFile", function(...) {
-  extend(AffymetrixCelFile(...), "ParameterCelFile")
-}, abstract=TRUE)
+setConstructorS3("ParameterCelFile", function(..., encodeFunction=NULL, decodeFunction=NULL) {
+  extend(AffymetrixCelFile(...), "ParameterCelFile",
+    encodeFunction = encodeFunction,
+    decodeFunction = decodeFunction
+  )
+})
 
 
+setMethodS3("setEncodeFunction", "ParameterCelFile", function(this, fcn, ...) {
+  if (is.null(fcn)) {
+  } else if (!is.function(fcn)) {
+    throw("Argument 'fcn' is not a function: ", mode(fcn));
+  }
+  this$encodeFunction <- fcn;
+  invisible(this);
+})
+
+setMethodS3("setDecodeFunction", "ParameterCelFile", function(this, fcn, ...) {
+  if (is.null(fcn)) {
+  } else if (!is.function(fcn)) {
+    throw("Argument 'fcn' is not a function: ", mode(fcn));
+  }
+  this$decodeFunction <- fcn;
+  invisible(this);
+})
 
 
-###########################################################################/**
-# @RdocMethod encodeUnitGroup
-#
-# @title "Returns a unit group with fields as in a CEL file"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a named @list structure with elements \code{intensities},
-#  \code{stdvs}, and \code{pixels}, all of equal length.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-# @keyword IO
-#*/###########################################################################
-setMethodS3("encodeUnitGroup", "ParameterCelFile", abstract=TRUE, static=TRUE, protected=TRUE);
-
-
-
-
-setMethodS3("encodeUnit", "ParameterCelFile", function(static, unit, ...) {
-  lapply(unit, FUN=function(group) encodeUnitGroup(static, group, ...));
+setMethodS3("encodeUnit", "ParameterCelFile", function(this, unit, ...) {
+  encodeUnitGroup <- this$encodeFunction;
+  if (!is.null(encodeUnitGroup)) {
+    unit <- lapply(unit, FUN=encodeUnitGroup, ...);
+  }
+  unit;
 }, protected=TRUE)
 
-setMethodS3("encode", "ParameterCelFile", function(static, units, ...) {
-  lapply(units, FUN=function(unit) encodeUnit(static, unit, ...));
+setMethodS3("encode", "ParameterCelFile", function(this, units, ...) {
+  if (!is.null(this$encodeFunction)) {
+    units <- lapply(units, FUN=function(unit) encodeUnit(this, unit, ...));
+  }
+  units;
 }, protected=TRUE)
 
-setMethodS3("decodeUnitGroup", "ParameterCelFile", function(static, intensities=NULL, stdvs=NULL, pixels=NULL, ...) {
-  res <- list();
-  if (!is.null(intensities))
-    res$intensities <- intensities;
-  if (!is.null(stdvs))
-    res$stdvs <- stdvs;
-  if (!is.null(pixels))
-    res$pixels <- pixels;
-  res;
-}, static=TRUE, protected=TRUE)
 
-setMethodS3("decodeUnit", "ParameterCelFile", function(static, unit, ...) {
-  lapply(unit, FUN=function(group) decodeUnitGroup(static, group, ...));
+setMethodS3("decodeUnit", "ParameterCelFile", function(this, unit, ...) {
+  decodeUnitGroup <- this$decodeFunction;
+  if (!is.null(decodeUnitGroup)) {
+    unit <- lapply(unit, FUN=decodeUnitGroup, ...);
+  }
+  unit;
 }, protected=TRUE)
 
-setMethodS3("decode", "ParameterCelFile", function(static, units, ...) {
-  lapply(units, FUN=function(unit) decodeUnit(static, unit, ...));
+setMethodS3("decode", "ParameterCelFile", function(this, units, ...) {
+  if (!is.null(this$decodeFunction)) {
+    units <- lapply(units, FUN=function(unit) decodeUnit(this, unit, ...));
+  }
+  units;
 }, protected=TRUE)
 
 
@@ -127,6 +118,10 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ..
 
 ############################################################################
 # HISTORY:
+# 2006-09-10
+# o Now the encode and decode functions for a unit group are made into
+#   fields of this class.  This way we don't have to create a special
+#   ParameterCelFile class for each kind of model.
 # 2006-08-27
 # o Moved createFrom() to the AffymetrixCelFile class.
 # 2006-08-26
