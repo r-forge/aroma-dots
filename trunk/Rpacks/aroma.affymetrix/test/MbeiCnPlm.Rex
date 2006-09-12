@@ -1,6 +1,7 @@
 source("init.R")
 
 verbose <- Arguments$getVerbose(TRUE);
+timestampOn(verbose);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Setup
@@ -21,14 +22,16 @@ print(ces);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit the model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-units <- fit(model, verbose=TRUE);
+units <- fit(model, verbose=verbose);
 cat("Fitted ", length(units), " units.\n");
 
+
+stop("Done!")
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Calculate the average copy-number file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-cesAvg <- getAverageFile(ces, verbose=TRUE);
+cesAvg <- getAverageFile(ces, verbose=verbose);
 
 ce <- getFile(ces, 1);
 smoothScatterMvsA(ce, cesAvg, xlim=c(8,16));
