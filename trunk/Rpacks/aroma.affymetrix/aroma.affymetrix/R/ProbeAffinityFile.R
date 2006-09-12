@@ -41,11 +41,16 @@ setConstructorS3("ProbeAffinityFile", function(..., model=c("pm")) {
 })
 
 
+setMethodS3("getCellIndices", "ProbeAffinityFile", function(this, ...) {
+  stratifyBy <- switch(this$model, pm="pm");
+  cdf <- getCdf(this);
+  getCellIndices(cdf, ..., stratifyBy=stratifyBy);
+})
 
 
 setMethodS3("getFirstCellIndices", "ProbeAffinityFile", function(this, units=NULL, ..., verbose=FALSE) {
   # Argument 'verbose': 
- verbose <- Arguments$getVerbose(verbose);
+  verbose <- Arguments$getVerbose(verbose);
 
   res <- this$.firstCells;
   if (is.null(res)) {
@@ -117,20 +122,23 @@ setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, fie
 
 
 
-setMethodS3("readUnits", "ProbeAffinityFile", function(this, ...) {
+setMethodS3("readUnits", "ProbeAffinityFile", function(this, units=NULL, cdf=NULL, ...) {
+  if (is.null(cdf))
+    cdf <- getCellIndices(this, units=units);
+
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  stratifyBy <- switch(this$model, pm="pm");
-  res <- NextMethod("readUnits", this, readStdvs=TRUE, readPixels=TRUE, ..., stratifyBy=stratifyBy);
-  res;
+  NextMethod("readUnits", this, cdf=cdf, readStdvs=TRUE, readPixels=TRUE, ...);
 });
 
 
-setMethodS3("updateUnits", "ProbeAffinityFile", function(this, data, ...) {
+setMethodS3("updateUnits", "ProbeAffinityFile", function(this, units=NULL, cdf=NULL, data, ...) {
+  if (is.null(cdf))
+    cdf <- getCellIndices(this, units=units);
+
   # Note that the actually call to the encoding is done in updateUnits()
   # of the superclass.
-  stratifyBy <- switch(this$model, pm="pm");
-  NextMethod("updateUnits", this, data=data, ..., stratifyBy=stratifyBy);
+  NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
 }, protected=TRUE);
 
 
@@ -152,6 +160,9 @@ setMethodS3("writeSpatial", "ProbeAffinityFile", function(this, ..., transform=N
 
 ############################################################################
 # HISTORY:
+# 2006-09-11
+# o Update read- and updateUnits() to make use of getCellIndices().
+# o Added getCellIndices().
 # 2006-08-26
 # o Added writeSpatial().
 # 2006-08-25

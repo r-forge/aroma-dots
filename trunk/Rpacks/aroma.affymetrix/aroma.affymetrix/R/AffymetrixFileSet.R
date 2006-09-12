@@ -260,6 +260,37 @@ setMethodS3("getNames", "AffymetrixFileSet", function(this, ...) {
 
 
 ###########################################################################/**
+# @RdocMethod getPathnames
+#
+# @title "Gets the pathnames of the files in the file set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getPathnames", "AffymetrixFileSet", function(this, ...) {
+  unlist(lapply(this, FUN=getPathname))
+})
+
+
+
+###########################################################################/**
 # @RdocMethod seq
 #
 # @title "Gets an vector of file indices"
@@ -519,6 +550,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-09-11
+# o Added getPathnames().
 # 2006-08-27
 # o Added getFile() and getFiles().
 # o Made filenames starting with a period reserved for internal use.

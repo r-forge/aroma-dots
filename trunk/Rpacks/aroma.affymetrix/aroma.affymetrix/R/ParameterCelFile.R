@@ -115,9 +115,9 @@ setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE
   decode(this, units);
 });
 
-setMethodS3("updateUnits", "ParameterCelFile", function(this, data, ...) {
+setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ...) {
   data <- encode(this, data);
-  NextMethod("updateUnits", this, data=data, ...);
+  NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
   invisible(data);
 }, protected=TRUE);
 
