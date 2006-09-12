@@ -22,7 +22,7 @@ print(ces);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit the model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-units <- fit(model, verbose=verbose);
+units <- fit(model, moreUnits=5, verbose=verbose);
 cat("Fitted ", length(units), " units.\n");
 
 
