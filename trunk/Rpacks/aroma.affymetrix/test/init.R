@@ -1,3 +1,6 @@
+# Start R with nohup on shadowfax:
+#  echo 'source("models.R")' | nohup R-2.4.0 --save &
+
 tryCatch({
   savehistory();
 }, error = function(ex) {})
