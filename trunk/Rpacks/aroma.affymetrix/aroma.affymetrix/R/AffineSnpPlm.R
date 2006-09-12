@@ -34,7 +34,7 @@
 # }
 #*/###########################################################################
 setConstructorS3("AffineSnpPlm", function(..., name="modelAffineSnpPlm", mergeStrands=FALSE) {
-  extend(AffinePlm(..., name=name), c("AffineSnpPlm", class(SnpPlm())),
+  extend(AffinePlm(..., name=name), c("AffineSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })

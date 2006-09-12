@@ -34,7 +34,7 @@
 # }
 #*/###########################################################################
 setConstructorS3("MbeiSnpPlm", function(..., name="modelMbeiSnpPlm", mergeStrands=FALSE) {
-  extend(MbeiPlm(..., name=name), c("MbeiSnpPlm", class(SnpPlm())),
+  extend(MbeiPlm(..., name=name), c("MbeiSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })

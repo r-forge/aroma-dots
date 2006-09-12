@@ -34,10 +34,12 @@ setConstructorS3("SnpChipEffectFile", function(..., mergeStrands=FALSE) {
 setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
 
-  # If merging strands, return only every second group
+  # If merging strands, we only need half the number of chip-effect 
+  # parameters per unit group.
   if (this$mergeStrands) {
     cells <- applyCdfGroups(cells, function(groups) {
-      groups[seq(from=1, to=length(groups), by=2)];
+      ngroups <- length(groups);
+      groups[1:ceiling(ngroups/2)];
     })
   }
 
@@ -47,6 +49,9 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-09-12
+# o Updated.  Now the names of the groups reflects the allele names as 
+#   expected.
 # 2006-09-11
 # o Created.
 ############################################################################

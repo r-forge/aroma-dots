@@ -1,7 +1,7 @@
 ###########################################################################/**
-# @RdocClass CnSnpPlm
+# @RdocClass CnPlm
 #
-# @title "The CnSnpPlm class"
+# @title "The CnPlm class"
 #
 # \description{
 #  @classhierarchy
@@ -23,33 +23,34 @@
 #   is, i.e. for each allele seperately with or without the strands first
 #   being merged.
 #
-#   For total CNs the probe signals for the two alleles are averaged on the
-#   intensity scale before fitting underlying @see "SnpPlm" model, again
-#   with or without the strands first being merged.
+#   For total CNs the probe signals for the two alleles are combined 
+#   (=summed) on the intensity scale before fitting underlying 
+#   @see "SnpPlm" model, again with or without the strands first being
+#   merged.
 # }
 #
 # \section{Requirments}{
 #   Classes inheriting from this @see "Interface" must provide the following
 #   fields, in addition to the ones according to @see "SnpPlm":
 #   \itemize{
-#    \item{averageAB}{A @logical indicating if total or allele-specific
+#    \item{combineAlleles}{A @logical indicating if total or allele-specific
 #      copy numbers should be estimated according to the above averaging.}
 #   }
 # }
 #
 # @author
 #*/###########################################################################
-setConstructorS3("CnSnpPlm", function(...) {
-  extend(SnpPlm(...), "CnSnpPlm");
+setConstructorS3("CnPlm", function(...) {
+  extend(SnpPlm(...), "CnPlm");
 })
 
 
-setMethodS3("getFitUnitFunction", "CnSnpPlm", function(this, ...) {
+setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Select fit function
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Total copy number of not?
-  if (this$averageAB) {
+  if (this$combineAlleles) {
     # Get the fit function for a single set of intensities
     fitfcn <- getFitFunction(this, ...);
   
@@ -58,15 +59,15 @@ setMethodS3("getFitUnitFunction", "CnSnpPlm", function(this, ...) {
       if (ngroups == 2) {
         yA <- .subset2(groups, 1);
         yB <- .subset2(groups, 2);
-        list(fitfcn((yA + yB)/2));
+        list(fitfcn(yA + yB));
       } else if (ngroups == 4) {
         yA1 <- .subset2(groups, 1);
         yB1 <- .subset2(groups, 2);
         yA2 <- .subset2(groups, 3);
         yB2 <- .subset2(groups, 4);
         list(
-          fitfcn((yA1 + yB1)/2), 
-          fitfcn((yA2 + yB2)/2)
+          fitfcn(yA1 + yB1), 
+          fitfcn(yA2 + yB2)
         );
       } else {
         # For all other cases, fit each group individually
@@ -83,23 +84,27 @@ setMethodS3("getFitUnitFunction", "CnSnpPlm", function(this, ...) {
   fitUnit;
 })
 
-setMethodS3("getChipEffects", "CnSnpPlm", function(this, ...) {
+setMethodS3("getChipEffectSetClass", "CnPlm", function(this, ...) {
+  CnChipEffectSet;
+})
+
+setMethodS3("getChipEffects", "CnPlm", function(this, ...) {
   ces <- NextMethod("getChipEffects", this, ...);
-  setAverageAB(ces, this$averageAB);
+  setCombineAlleles(ces, this$combineAlleles);
   ces;
 })
 
-setMethodS3("getProbeAffinities", "CnSnpPlm", function(this, ..., .class=CnSnpProbeAffinityFile) {
+setMethodS3("getProbeAffinities", "CnPlm", function(this, ..., .class=CnProbeAffinityFile) {
   paf <- NextMethod("getProbeAffinities", this, ..., .class=.class);
-  setAverageAB(paf, this$averageAB);
+  setCombineAlleles(paf, this$combineAlleles);
   paf;
 })
 
-setMethodS3("setAverageAB", "CnSnpPlm", function(this, ...) {
+setMethodS3("setCombineAlleles", "CnPlm", function(this, ...) {
   ces <- getChipEffects(this);
-  setAverageAB(ces, ...);
+  setCombineAlleles(ces, ...);
   paf <- getProbeAffinities(this);
-  setAverageAB(paf, ...);
+  setCombineAlleles(paf, ...);
 })
 
 

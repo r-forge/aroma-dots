@@ -34,7 +34,7 @@
 # }
 #*/###########################################################################
 setConstructorS3("RmaSnpPlm", function(..., name="modelRmaSnpPlm", mergeStrands=FALSE) {
-  extend(RmaPlm(..., name=name), c("RmaSnpPlm", class(SnpPlm())),
+  extend(RmaPlm(..., name=name), c("RmaSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })

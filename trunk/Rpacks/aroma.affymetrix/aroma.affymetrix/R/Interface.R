@@ -36,6 +36,11 @@ setMethodS3("extend", "Interface", function(this, ...className, ...) {
 })
 
 
+setMethodS3("uses", "Interface", function(this, ...) {
+  setdiff(class(this), "Interface");
+})
+
+
 setMethodS3("as.character", "Interface", function(this, ...) {
   # Check if there are class "after" this one
   pos <- which("Interface" == class(this));

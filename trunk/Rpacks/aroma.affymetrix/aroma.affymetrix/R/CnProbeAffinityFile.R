@@ -1,21 +1,18 @@
 ###########################################################################/**
-# @RdocClass CnSnpChipEffectFile
+# @RdocClass CnProbeAffinityFile
 #
-# @title "The CnSnpChipEffectFile class"
+# @title "The CnProbeAffinityFile class"
 #
 # \description{
 #  @classhierarchy
 #
-#  This class represents estimates of chip effects in a copy-number probe-level
-#  models.
+#  This class represents estimates of probe affinities in SNP probe-level models.
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "SnpChipEffectFile".}
-#   \item{averageAB}{A @logical indicating if the signals from allele A and
-#      allele B are averaged or not.}
+#   \item{...}{Arguments passed to @see "SnpProbeAffinityFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -25,17 +22,18 @@
 # @author
 # 
 #*/###########################################################################
-setConstructorS3("CnSnpChipEffectFile", function(..., averageAB=FALSE) {
-  extend(SnpChipEffectFile(...), "CnSnpChipEffectFile",
-    averageAB = averageAB
+setConstructorS3("CnProbeAffinityFile", function(..., combineAlleles=FALSE) {
+  extend(SnpProbeAffinityFile(...), "CnProbeAffinityFile",
+    combineAlleles=combineAlleles
   )
 })
 
-setMethodS3("getCellIndices", "CnSnpChipEffectFile", function(this, ...) {
+
+setMethodS3("getCellIndices", "CnProbeAffinityFile", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
 
   # If merging strands, return only every second group
-  if (this$averageAB) {
+  if (this$combineAlleles) {
     cells <- applyCdfGroups(cells, function(groups) {
       groups[seq(from=1, to=length(groups), by=2)];
     })
@@ -43,6 +41,11 @@ setMethodS3("getCellIndices", "CnSnpChipEffectFile", function(this, ...) {
 
   cells;
 })
+
+setMethodS3("setCombineAlleles", "CnProbeAffinityFile", function(this, status, ...) {
+  this$combineAlleles <- status;
+})
+
 
 
 ############################################################################
