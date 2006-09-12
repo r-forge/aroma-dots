@@ -22,12 +22,18 @@ if (!exists("models", mode="list")) {
   )
 }
 
-units <- 56:60;
+units <- 55+1:300;
+
 lapply(models, function(model) {
   print(model);
-  fit(model, units=units, force=TRUE, verbose=TRUE);
+  t <- system.time({
+    uu <- fit(model, units=units, force=FALSE, verbose=TRUE);
+  })
+  if (length(uu) > 0)
+    print(t / length(uu));
 })
 
+log <- TRUE;
 opar <- par(ask=(length(units) > 1));
 for (unit in units) {
   for (kk in seq(along=models)) {
@@ -38,8 +44,14 @@ for (unit in units) {
     snpName <- names(ceUnit)[1];
     yA <- y[[1]]$theta;
     yB <- y[[2]]$theta;
-    if (kk == 1) {
+    if (log) {
+      yA <- log(yA, base=2);
+      yB <- log(yB, base=2);
+      lim <- c(6, 16);
+    } else {
       lim <- c(0, 2^15);
+    }
+    if (kk == 1) {
       plot(NA, xlim=lim, ylim=lim, xlab="A", ylab="B", main=snpName);
       abline(a=0, b=1, lty=2);
     }
