@@ -1,0 +1,52 @@
+###########################################################################/**
+# @RdocClass SnpProbeAffinityFile
+#
+# @title "The SnpProbeAffinityFile class"
+#
+# \description{
+#  @classhierarchy
+#
+#  This class represents estimates of probe affinities in SNP probe-level models.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Arguments passed to @see "ProbeAffinityFile".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# @author
+# 
+#*/###########################################################################
+setConstructorS3("SnpProbeAffinityFile", function(..., mergeStrands=FALSE) {
+  extend(ProbeAffinityFile(...), "SnpProbeAffinityFile",
+    mergeStrands=mergeStrands
+  )
+})
+
+
+setMethodS3("getCellIndices", "SnpProbeAffinityFile", function(this, ...) {
+  cells <- NextMethod("getCellIndices", this, ...);
+
+  # If merging strands, return only every second group
+  if (this$mergeStrands) {
+    cells <- applyCdfGroups(cells, cdfMergeStrands);
+  }
+
+  cells;
+})
+
+setMethodS3("setMergeStrands", "SnpProbeAffinityFile", function(this, status, ...) {
+  this$mergeStrands <- status;
+})
+
+
+############################################################################
+# HISTORY:
+# 2006-09-11
+# o Created.
+############################################################################

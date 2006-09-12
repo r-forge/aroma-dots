@@ -13,9 +13,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{path}{The @character string specifying the path to the directory
-#      to contain the parameter-estimate files.}
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
+#   \item{name}{The name of the model, which is also used in the pathname.}
 # }
 #
 # \section{Fields and Methods}{
@@ -29,7 +28,7 @@
 #   Li, C. and Wong, W.H. (2001), Proc. Natl. Acad. Sci USA 98, 31-36.\cr
 # }
 #*/###########################################################################
-setConstructorS3("MbeiPlm", function(..., name="modelMbei") {
+setConstructorS3("MbeiPlm", function(..., name="modelMbeiPlm") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,41 +38,74 @@ setConstructorS3("MbeiPlm", function(..., name="modelMbei") {
 })
 
 
-###########################################################################/**
-# @RdocMethod getProbeAffinityClass
-#
-# @title "Static method to get the ProbeAffinityFile Class object"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @see "Class" object.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getProbeAffinityClass", "MbeiPlm", function(static, ...) {
-  MbeiProbeAffinityFile;
-}, static=TRUE, protected=TRUE)
+setMethodS3("getProbeAffinities", "MbeiPlm", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the probe affinities (and create files etc)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  paf <- NextMethod("getProbeAffinities", this, ...);
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Update the encode and decode functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  setEncodeFunction(paf, function(groupData, ...) {
+    # Rename some fields so that we support the structure of this class,
+    # but also output from affy::fit.li.wong().
+    names <- names(groupData);
+    # Is it an affy:fit.li.wong() structure?
+    if ("sdPhi" %in% names) {
+      names <- sub("iter", "nbrOfIterations", names);
+      names <- sub("convergence1", "converged", names);
+      names <- sub("convergence2", "convergedOutliers", names);
+      names(groupData) <- names;
+    }
+  
+    # Encode outliers as the sign of 'pixels'; -1 = TRUE, +1 = FALSE
+    pixels <- sign(0.5 - as.integer(groupData$phiOutliers));
+      
+    # Note: There are at least two 'pixels', otherwise we can't fit the model.
+      
+    # Ecode the number of iterations as the absolute value of the 1st pixel.
+    pixels[1] <- pixels[1]*groupData$nbrOfIterations;
+      
+    # Ecode convergence1/2 as bits in the 2nd pixel.
+    pixels[2] <- pixels[2] * 
+              (1 + 2*groupData$converged + 4*groupData$convergedOutliers);
+  
+    list(intensities=groupData$phi, stdvs=groupData$sdPhi, pixels=pixels);
+  })
+
+  setDecodeFunction(paf,  function(groupData, ...) {
+    pixels <- groupData$pixels;
+  
+    # Outliers are encoded by the sign of 'pixels'.
+    outliers <- as.logical(1-sign(pixels));
+  
+    # Number of iterations is encoded as the absolute value of the 1st pixel.
+    nbrOfIterations <- as.integer(abs(pixels[1])+0.5);
+  
+    # convergence & convergenceOutliers are encoded as bits in the 2nd pixel.
+    t <- pixels[2] %/% 2;
+    converged <- as.logical(t %% 2 == 1);  t <- t %/% 2;
+    convergedOutliers <- as.logical(t %% 2 == 1);
+  
+    list(
+      phi=groupData$intensities, 
+      sdPhi=groupData$stdvs, 
+      phiOutliers=outliers, 
+      nbrOfIterations=nbrOfIterations, 
+      converged=converged, 
+      convergedOutliers=convergedOutliers
+    );
+  })
+
+  paf;
+})
 
 
 ###########################################################################/**
 # @RdocMethod getFitFunction
 #
-# @title "Static method to get the low-level function that fits the PLM"
+# @title "Gets the low-level function that fits the PLM"
 #
 # \description{
 #  @get "title".
@@ -96,21 +128,37 @@ setMethodS3("getProbeAffinityClass", "MbeiPlm", function(static, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "MbeiPlm", function(static, ...) {
+setMethodS3("getFitFunction", "MbeiPlm", function(this, ...) {
+  standardize <- this$standardize;
+
   liWong <- function(y, ...) {
     fit <- fit.li.wong(t(y));
 
-    # A fit function must return: theta, sdTheta, thetaOutliers, phi, sdPhi, phiOutliers.
+    # A fit function must return: theta, sdTheta, thetaOutliers, 
+    # phi, sdPhi, phiOutliers.
     names <- names(fit);
-    idxs <- match(c("sigma.theta", "theta.outliers", "sigma.phi", "phi.outliers"), names);
+    idxs <- match(c("sigma.theta", "theta.outliers", "sigma.phi", 
+                                                   "phi.outliers"), names);
     names[idxs] <- c("sdTheta", "thetaOutliers", "sdPhi", "phiOutliers");
     names(fit) <- names;
+
+    # Rescale such that prod(phi) = 1?
+    if (standardize) {
+      phi <- fit$phi;
+      theta <- fit$theta;
+      I <- length(phi);
+      c <- prod(phi)^(1/I);
+      phi <- phi/c;
+      theta <- theta*c;
+      fit$phi <- phi;
+      fit$theta <- theta;
+    }
 
     fit;
   }
 
   liWong;
-}, static=TRUE, protected=TRUE)
+}, protected=TRUE)
 
 
 

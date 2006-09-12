@@ -10,7 +10,7 @@ path <- "chip_data3/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
 # Specify the model we want to fit
-model <- MbeiSnpPlm(ds, mergeStrands=TRUE);
+model <- AffineSnpPlm(ds, background=FALSE, mergeStrands=TRUE);
 print(model);
 
 ces <- getChipEffects(model);
@@ -25,3 +25,4 @@ ce <- getFile(ces, 1);
 # data from the files where parameter estimates are stored.
 units <- fit(model, units=55+1:10, verbose=TRUE);
 cat("Fitted ", length(units), " units.\n");
+

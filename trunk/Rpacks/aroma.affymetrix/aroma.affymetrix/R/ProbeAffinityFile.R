@@ -40,86 +40,11 @@ setConstructorS3("ProbeAffinityFile", function(..., model=c("pm")) {
   )
 })
 
-
 setMethodS3("getCellIndices", "ProbeAffinityFile", function(this, ...) {
   stratifyBy <- switch(this$model, pm="pm");
   cdf <- getCdf(this);
   getCellIndices(cdf, ..., stratifyBy=stratifyBy);
 })
-
-
-setMethodS3("getFirstCellIndices", "ProbeAffinityFile", function(this, units=NULL, ..., verbose=FALSE) {
-  # Argument 'verbose': 
-  verbose <- Arguments$getVerbose(verbose);
-
-  res <- this$.firstCells;
-  if (is.null(res)) {
-    stratifyBy <- switch(this$model, pm="pm");
-    cdf <- getCdf(this);
-    res <- getFirstCellIndices(cdf, units=NULL, ..., stratifyBy=stratifyBy, verbose=verbose);
-    this$.firstCells <- res;
-  }
-
-  # Subset?
-  if (!is.null(units))
-    res <- res[units];
-
-  res;
-}, protected=TRUE)
-
-
-setMethodS3("findUnitsTodo", "ProbeAffinityFile", function(this, units=NULL, field="stdvs", ..., transform=NULL, verbose=FALSE) {
-  # Argument 'field':
-  field <- match.arg(field);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-
-  # Get the indices of the first cells in each unit group
-  verbose && enter(verbose, "Identifying the first cell index of each unit group");
-  indices <- getFirstCellIndices(this, units=units, ..., verbose=verbose);
-  verbose && exit(verbose);
-
-  # Keep only the first group
-  indices <- applyCdfGroups(indices, .subset, 1);
-  verbose && str(verbose, indices[1]);
-  
-  if (!is.null(transform)) {
-    indices <- transform(indices);
-  }
-
-  # Flatten to get a vector
-  indices <- unlist(indices, use.names=FALSE);
-
-  # Get the 'stdvs' for these cells
-  readIntensities <- FALSE;
-  readStdvs <- FALSE;
-  readPixels <- FALSE;
-  if (field == "intensities") {
-    readIntensities <- TRUE;
-  } else if (field == "stdvs") {
-    readStdvs <- TRUE;
-  } else if (field == "pixels") {
-    readPixels <- TRUE;
-  }
-
-  # Read one cell from each unit
-  verbose && enter(verbose, "Reading data for these cells");
-  value <- readCel(getPathname(this), indices=indices, readIntensities=readIntensities, readStdvs=readStdvs, readPixels=readPixels);
-  value <- value[[field]];
-  verbose && str(verbose, value);
-  verbose && exit(verbose);
-
-  # Identify units for which the stdvs <= 0.
-  todo <- which(value <= 0);
-
-  if (!is.null(units))
-    todo <- units[todo];
-
-  todo;
-})
-
 
 
 setMethodS3("readUnits", "ProbeAffinityFile", function(this, units=NULL, cdf=NULL, ...) {
@@ -142,6 +67,8 @@ setMethodS3("updateUnits", "ProbeAffinityFile", function(this, units=NULL, cdf=N
 }, protected=TRUE);
 
 
+
+
 setMethodS3("writeSpatial", "ProbeAffinityFile", function(this, ..., transform=NULL, zlim=c(0,3)) {
   if (is.null(transform)) {
     transform <- function(x) {
@@ -157,6 +84,8 @@ setMethodS3("writeSpatial", "ProbeAffinityFile", function(this, ..., transform=N
 
   NextMethod("writeSpatial", this, ..., transform=transform, zlim=zlim);
 })
+
+
 
 ############################################################################
 # HISTORY:

@@ -18,12 +18,12 @@
 # @synopsis
 #
 # \arguments{
-#   \item{dataSet}{An @see "AffymetrixCelSet" object.}
-#   \item{path}{The @character string specifying the path to the directory
-#      to contain the parameter-estimate files.}
+#   \item{...}{Arguments passed to @see "UnitGroupsModel".}
+#   \item{name}{The name of the model, which is also used in the pathname.}
 #   \item{model}{A @character string specifying how PM and MM values
 #      should be modelled.  By default only PM signals are used.}
-#   \item{...}{Arguments passed to @see "UnitGroupsModel".}
+#   \item{standardize}{If @TRUE, chip-effect and probe-affinity estimates are
+#      rescaled such that the product of the probe affinities is one.}
 # }
 #
 # \section{Fields and Methods}{
@@ -38,7 +38,7 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm")) {
+setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm"), standardize=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -49,48 +49,16 @@ setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm")
     "cached:.paFile" = NULL,
     "cached:.chipFiles" = NULL,
     "cached:.lastPlotData" = NULL,
-    model = model
+    model = model,
+    standardize=standardize
   )
 }, abstract=TRUE)
 
 
 
-###########################################################################/**
-# @RdocMethod getProbeAffinityClass
-#
-# @title "Static method to get the ProbeAffinityFile Class object"
-#
-# \description{
-#  @get "title".
-#  Any subclass model must provide this method, which should return
-#  a @see "R.oo::Class" that subsets the @see "ProbeAffinityFile" class.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @see "Class" object.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getProbeAffinityClass", "ProbeLevelModel", abstract=TRUE, static=TRUE);
-
-setMethodS3("getChipEffectClass", "ProbeLevelModel", function(static, ...) {
-  ChipEffectFile;
-}, static=TRUE, protected=TRUE)
-
-setMethodS3("getChipEffectsClass", "ProbeLevelModel", function(static, ...) {
+setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
   ChipEffectSet;
-}, static=TRUE, protected=TRUE)
+}, static=TRUE);
 
 
 
@@ -119,13 +87,10 @@ setMethodS3("getChipEffectsClass", "ProbeLevelModel", function(static, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
+setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=ProbeAffinityFile) {
   res <- this$.paFile;
   if (!is.null(res))
     return(res);
-
-  # Get the probe-affinity class object
-  clazz <- getProbeAffinityClass(this);
 
   ds <- getDataSet(this);
   if (length(ds) == 0)
@@ -136,6 +101,7 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
   res <- createFrom(df, filename="probeAffinities.CEL", path=getPath(this), ...);
 
   # Make it into an object of the correct class
+  clazz <- .class;
   res <- newInstance(clazz, getPathname(res), cdf=getCdf(ds), model=this$model);
   this$.paFile <- res;
 
@@ -174,23 +140,71 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
 setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
 
 
+setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
+  # Get the fit function for a single set of intensities
+  fitfcn <- getFitFunction(this, ...);
+
+  # Create the one for all blocks in a unit
+  fitUnit <- function(unit, ...) {
+    lapply(unit, FUN=function(group) {
+      y <- .subset2(group, 1);
+      fitfcn(y);
+    })
+  }
+
+  fitUnit;
+})
+
+
+
+
+
+###########################################################################/**
+# @RdocMethod readUnits
+#
+# @title "Reads data unit by unit"
+#
+# \description{
+#  @get "title" for all or a subset of units (probeset) 
+#  specially structured for this PLM.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{units}{The units to be read. If @NULL, all units are read.}
+#   \item{...}{Arguments passed to \code{getCellIndices()} of the 
+#     @see "AffymetrixCdfFile" class (if \code{cdf} was not specified),
+#     but also to the \code{getUnitIntensities()} method of the 
+#     @see "AffymetrixDataSet" class.}
+# }
+#
+# \value{
+#  Returns the @list structure that \code{getUnitIntensities()} of 
+#  @see "AffymetrixDataSet" returns.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "updateUnits".
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
 setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  ds <- getDataSet(this);
-  cdf <- getCdf(ds);
-
-  # Get what set of probes to read
-  stratifyBy <- switch(this$model, pm="pm");
-
   # Get the CDF cell indices
   verbose && enter(verbose, "Identifying CDF cell indices");
-  cdfUnits <- getCellIndices(cdf, units=units, ..., stratifyBy=stratifyBy);
+  cdfUnits <- getCellIndices(this, units=units, ...);
   verbose && print(verbose, cdfUnits[1]);
   verbose && exit(verbose);
 
   # Get the CEL intensities by units
+  ds <- getDataSet(this);
   verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
   y <- getUnitIntensities(ds, units=cdfUnits, ...);
   verbose && exit(verbose);
@@ -199,6 +213,53 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
   y;
 })
 
+
+setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+  # Get what set of probes to read
+  stratifyBy <- switch(this$model, pm="pm");
+
+  # Get the CDF cell indices
+  ds <- getDataSet(this);
+  cdf <- getCdf(ds);
+  verbose && enter(verbose, "Identifying CDF cell indices");
+  cells <- getCellIndices(cdf, ..., stratifyBy=stratifyBy);
+  verbose && exit(verbose);
+  
+  cells;
+})
+
+
+###########################################################################/**
+# @RdocMethod findUnitsTodo
+#
+# @title "Identifies units for which the PLM has still not been fitted to"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @integer @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   Internally this methods calls the same method for the 
+#   @see "ChipEffectSet" class.
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ...) {
+  ces <- getChipEffects(this);
+  findUnitsTodo(ces, ...);
+})
 
 
 
@@ -266,16 +327,6 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   ds <- getDataSet(this);
   cdf <- getCdf(ds);
 
-  # Get (and create if missing) the probe-affinity file (one per dataset)
-  paf <- getProbeAffinities(this);
-
-  # Get (and create if missing) the chip-effect files (one per array)
-  ces <- getChipEffects(this);
-
-  # Use the same CDF restructor function as the one for the dataset.
-  # [This should actually not be required]
-  setRestructor(getCdf(ces), getRestructor(cdf));
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -286,7 +337,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
   } else if (identical(units, "remaining")) {
     doRemaining <- TRUE;
-    units <- findUnitsTodo(ces);
+    units <- findUnitsTodo(this);
   } else {
     throw("Unknown mode of argument 'units': ", mode(units));
   }
@@ -320,7 +371,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     if (force) {
       verbose && printf(verbose, "All of these are forced to be fitted.\n");
     } else {
-      units <- findUnitsTodo(ces, units=units);
+      units <- findUnitsTodo(this, units=units);
       nbrOfUnits <- length(units);
       verbose && printf(verbose, "Out of these, %d units need to be fitted.\n", nbrOfUnits);
     }
@@ -330,12 +381,17 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   if (nbrOfUnits == 0)
     return(NULL);
 
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fit the model in chunks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the model-fit function
-  fitfcn <- getFitFunction(this);
+  fitUnit <- getFitUnitFunction(this);
+
+  # Get (and create if missing) the probe-affinity file (one per dataset)
+  paf <- getProbeAffinities(this);
+
+  # Get (and create if missing) the chip-effect files (one per array)
+  ces <- getChipEffects(this);
 
   idxs <- 1:nbrOfUnits;
   head <- 1:unitsPerChunk;
@@ -349,7 +405,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
       head <- 1:length(idxs);
     }
     uu <- idxs[head];
-    verbose && cat(verbose, "Chunk size: ", length(uu));
+
+    verbose && cat(verbose, "Units: ");
+    verbose && str(verbose, units[uu]);
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get the CEL intensities by units
@@ -359,17 +417,12 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     verbose && str(verbose, y[1]);
     verbose && exit(verbose);
 
-  
+
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Fit the model
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Fitting unit-group model");
-    fit <- lapply(y, FUN=function(unit) {
-      lapply(unit, FUN=function(group) {
-        y <- .subset2(group, 1);
-        fitfcn(y);
-      })
-    })
+    fit <- lapply(y, FUN=fitUnit);
     y <- NULL; # Not needed anymore (to minimize memory usage)
     verbose && str(verbose, fit[1]);
     verbose && exit(verbose);
@@ -447,17 +500,15 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create chip-effect files 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get the chip-effect class object
-  clazz <- getChipEffectsClass(this);
-
   # Let the parameter object know about the CDF structure, because we 
   # might use a modified version of the one in the CEL header.
-  cdf <- getCdf(this);
   ds <- getDataSet(this);
   if (length(ds) == 0)
     throw("Cannot create chip-effect file. The CEL set is empty.");
   
   verbose && enter(verbose, "Getting chip-effect set from dataset");
+  # Gets the ChipEffects Class object
+  clazz <- getChipEffectSetClass(this);
   ces <- clazz$fromDataSet(dataset=ds, path=getPath(this), verbose=verbose);
   verbose && exit(verbose);
 
@@ -484,6 +535,7 @@ setMethodS3("plotMvsPosition", "ProbeLevelModel", function(this, sample, ..., an
   invisible(res);
 })
 
+
 setMethodS3("highlight", "ProbeLevelModel", function(this, ...) {
   ces <- getChipEffects(this);
   ce <- getFile(ces, this$lastPlotSample);
@@ -491,8 +543,16 @@ setMethodS3("highlight", "ProbeLevelModel", function(this, ...) {
 })
 
 
+
 ############################################################################
 # HISTORY:
+# 2006-09-11
+# o Added argument ProbeLevelModel(..., standardize=TRUE) to make the 
+#   results from different PLMs be on the same scale.
+# 2006-09-10
+# o Added findUnitsTodo().
+# o Update fit() to make use of new ChipEffects and ProbeAffinity classes.
+#   The code is much cleaner now!
 # 2006-08-28
 # o Added plotMvsPosition().
 # 2006-08-26

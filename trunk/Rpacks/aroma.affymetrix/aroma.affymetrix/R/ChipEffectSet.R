@@ -41,9 +41,17 @@ setConstructorS3("ChipEffectSet", function(..., model=c("pm")) {
 })
 
 
+setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
+  ChipEffectFile;
+}, static=TRUE)
+
+
 setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name=getName(dataset), ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+
+  # Get the ChipEffectFile class specific for this set
+  clazz <- getChipEffectFileClass(static);
 
   verbose && enter(verbose, "Creating chip-effect files from dataset");
   ces <- vector("list", length(dataset));
@@ -52,13 +60,10 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name
   for (kk in seq(dataset)) {
     df <- getFile(dataset, kk);
     verbose && enter(verbose, sprintf("Creating chip-effect file #%d of %d (%s)", 
-                                                               kk, length(ces), getName(df)));
-    ce <- ChipEffectFile$fromDataFile(df, path=path, name=name, cdf=cdf, ..., verbose=verbose);
-    if (is.null(cdf)) {
+                                                       kk, length(ces), getName(df)));
+    ce <- clazz$fromDataFile(df, path=path, name=name, cdf=cdf, ..., verbose=verbose);
+    if (is.null(cdf))
       cdf <- getCdf(ce);
-      # Use the same CDF restructor function as the one for the dataset.
-      setRestructor(cdf, getRestructor(getCdf(dataset)));
-    }
     ces[[kk]] <- ce;
     verbose && exit(verbose);
   }
@@ -67,7 +72,6 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name
   # Create an ChipEffectSet
   newInstance(static, ces);
 })
-
 
 
 setMethodS3("getCellIndices", "ChipEffectSet", function(this, ...) {
@@ -137,7 +141,7 @@ setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining
   if (identical(indices, "remaining")) {
   } else if (is.null(indices)) {
     # Update only cells which stores values
-    indices <- getCellIndices(getCdf(this));
+    indices <- getCellIndices(this);
     indices <- unlist(indices, use.names=FALSE);
   }
 

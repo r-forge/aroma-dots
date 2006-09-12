@@ -1,7 +1,7 @@
 ###########################################################################/**
-# @RdocClass RmaSnpPlm
+# @RdocClass AffineSnpPlm
 #
-# @title "The RmaSnpPlm class"
+# @title "The AffineSnpPlm class"
 #
 # \description{
 #  @classhierarchy
@@ -13,7 +13,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "RlmPlm".}
+#   \item{...}{Arguments passed to @see "AffinePlm".}
 #   \item{name}{The name of the model, which is also used in the pathname.}
 #   \item{mergeStrands}{If @TRUE, the sense and the anti-sense strands are
 #      fitted together, otherwise separately.}
@@ -27,14 +27,14 @@
 #
 # \section{Model estimates}{
 #   The estimated probe affinities are represented by the
-#   @see "RmaProbeAffinityFile" class.  
+#   @see "AffineProbeAffinityFile" class.  
 # }
 #
 # \references{
 # }
 #*/###########################################################################
-setConstructorS3("RmaSnpPlm", function(..., name="modelRmaSnpPlm", mergeStrands=FALSE) {
-  extend(RmaPlm(..., name=name), c("RmaSnpPlm", class(SnpPlm())),
+setConstructorS3("AffineSnpPlm", function(..., name="modelAffineSnpPlm", mergeStrands=FALSE) {
+  extend(AffinePlm(..., name=name), c("AffineSnpPlm", class(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })
@@ -43,16 +43,5 @@ setConstructorS3("RmaSnpPlm", function(..., name="modelRmaSnpPlm", mergeStrands=
 ############################################################################
 # HISTORY:
 # 2006-09-11
-# o Simple benchmarking [Thinkpad A31]: Fitting 1000 units (with merged 
-#   strands) across 22 arrays (100K Xba) takes in total 114 sec, that is,
-#   5.1ms/unit/array. 
-#   For all 59015 SNPs it takes ~5.0min/array or ~112min/22 arrays.
-#   4545 units and 22 arrays: 60s to read all data, 50s to fit the model,
-#   30s to store probe affinities, and 120s to store chip-effects. 
-#   In total 274s, that is, 2.7ms/unit/array.
-#   We are still spending [(60+120)/274 =] 65% on I/O.
-#   For all 59015 SNPs it takes ~2.7min/array or ~60min/22 arrays.
-# o The fit function now returns all required fields.
-# 2006-08-25
-# o Created from the corresponding Li & Wong model.
+# o Created from the MbeiSnpPlm.
 ############################################################################
