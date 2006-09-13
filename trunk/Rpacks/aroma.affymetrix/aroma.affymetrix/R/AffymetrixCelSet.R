@@ -612,6 +612,11 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
 })
 
 
+setMethodS3("range", "AffymetrixCelSet", function(this, ...) {
+  range(unlist(lapply(this, FUN=range, ...), use.names=FALSE));
+})
+
+
 
 setMethodS3("applyToUnitIntensities", "AffymetrixCelSet", function(this, units=NULL, FUN, stratifyBy="pm", verbose=FALSE, ...) {
   y <- getUnitIntensities(this, units=units, stratifyBy=stratifyBy, ...);
