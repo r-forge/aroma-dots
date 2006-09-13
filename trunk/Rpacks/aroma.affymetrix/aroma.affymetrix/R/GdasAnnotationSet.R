@@ -4,6 +4,45 @@ setConstructorS3("GdasAnnotationSet", function(...) {
   )
 })
 
+setMethodS3("forDataSet", "GdasAnnotationSet", function(static, dataSet, path="annotations", ..., verbose=FALSE) {
+  # Argument 'path':
+  path <- Arguments$getReadablePath(path, mustExist=TRUE);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Defining a GDAS data set");
+
+  # Get the chip type
+  cdf <- getCdf(dataSet);
+  chipType <- getChipType(cdf);
+  verbose && cat(verbose, "Chip type: ", chipType);
+
+  # Get the full path to the GDAS data for this chip type
+  path <- file.path(path, chipType);
+  path <- Arguments$getReadablePath(path, mustExist=TRUE);
+  verbose && cat(verbose, "Scanning path: ", path);
+
+  # Scan directory for all GDAS files
+  pattern <- "[.]tsv$";
+  pathnames <- findFiles(pattern=pattern, path=path, firstOnly=FALSE);
+  verbose && cat(verbose, "Found ", length(pathnames), " GDAS file(s).");
+  if (length(pathnames) == 0)
+    throw("No files found: ", path);
+
+  verbose && enter(verbose, "Defining GDAS file for each of these");
+  files <- lapply(pathnames, FUN=GdasAnnotationFile);
+  verbose && exit(verbose);
+
+
+  res <- newInstance(static, files);
+  verbose && print(verbose, res);
+
+  verbose && exit(verbose);
+  res;
+}, static=TRUE)
+
+
 setMethodS3("fromFiles", "GdasAnnotationSet", function(static, path="annotations", ...) {
   path <- Arguments$getReadablePath(path, mustExist=TRUE);
 
@@ -16,6 +55,7 @@ setMethodS3("fromFiles", "GdasAnnotationSet", function(static, path="annotations
 
   newInstance(static, files);
 }, static=TRUE)
+
 
 setMethodS3("fromChipType", "GdasAnnotationSet", function(static, chipType, what, ...) {
   files <- vector("list", length(what));

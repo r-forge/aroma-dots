@@ -7,16 +7,16 @@ setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=N
   }
 
   # Argument 'indices':
-  nbrOfUnits <- nbrOfUnits(getCdf(this));
+  nbrOfCells <- nbrOfCells(this);
   if (is.null(indices)) {
   } else {
-    indices <- Arguments$getIndices(indices, range=c(1,nbrOfUnits));
+    indices <- Arguments$getIndices(indices, range=c(1,nbrOfCells));
   }
 
   # Check if the two CEL files are compatible
-  if (nbrOfCells(this) != nbrOfCells(reference)) {
+  if (nbrOfCells != nbrOfCells(reference)) {
     throw("This and the 'reference' CEL file have different number of cells: ", 
-                              nbrOfCells(this), " != ", nbrOfCells(reference));
+                                   nbrOfCells, " != ", nbrOfCells(reference));
   }
 
   # Get the signals for this channel
@@ -85,20 +85,24 @@ setMethodS3("smoothScatterMvsA", "AffymetrixCelFile", function(this, reference, 
 })
 
 
-setMethodS3("stextChipType", "AffymetrixCelFile", function(this, side=4, fmtstr="Chip type: %s", pos=1, cex=0.7, col="darkgray", ...) {
+setMethodS3("stextChipType", "AffymetrixCelFile", function(this, side=4, fmtstr="%s", pos=1, cex=0.7, col="darkgray", ...) {
   stext(side=side, text=sprintf(fmtstr, getChipType(this)), pos=pos, cex=cex, col=col, ...);
 })
 
 
-setMethodS3("plotMvsX", "AffymetrixCelFile", function(this, reference, x, indices=NULL, ylim=c(-1,1)*2, ylab=expression(M==log[2](y1/y2)), ..., what="M", annotate=TRUE) {
+setMethodS3("plotMvsX", "AffymetrixCelFile", function(this, reference, x, indices=NULL, pch=176, ylim=c(-1,1)*2, ylab=expression(M==log[2](y1/y2)), ..., what="M", add=FALSE, annotate=!add) {
   ma <- calcMvsA(this, reference, indices=indices, zeros=TRUE);
   nobs <- nrow(ma);
   if (nobs == 0)
     throw("Cannot plot M vs X because there is not non-zero data.");
 
-  plot(x, ma[,what], ylim=ylim, ylab=ylab, ...);
-  if (annotate)
-    annotateMvsA(this, reference, what=what);
+  if (add) {
+    points(x, ma[,what], pch=pch, ...);
+  } else {
+    plot(x, ma[,what], pch=pch, ylim=ylim, ylab=ylab, ...);
+    if (annotate)
+      annotateMvsA(this, reference, what=what);
+  }
 
   # The first two columns should always be the data plotted
   ma <- cbind(x=x, M=ma[,what], A=ma[,setdiff(colnames(ma),what)]);
@@ -108,6 +112,9 @@ setMethodS3("plotMvsX", "AffymetrixCelFile", function(this, reference, x, indice
 })
 
 setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, chromosome, region=NULL, gdas, ylab=expression(M==log[2](y1/y2)), xlab="Physical position [Mb]", xlim=NULL, ..., what="M", annotate=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'region':
   if (!is.null(region)) {
     if (is.character(region)) {
@@ -116,7 +123,9 @@ setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, ch
     }
   }
 
-  # Select GDAS annotations for the specific chromosome.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get GDAS annotations for the specific chromosome.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   df <- select(gdas, Chromosome=chromosome);
 
   # Get the loci (in Mb)
@@ -125,8 +134,11 @@ setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, ch
 
   # Record genome size
   chrRange <- range(loci, na.rm=TRUE);
-  
-  # Filter out by region of interest
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Filter out by region of interest?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(region)) {
     # Region specified by SNP names?
     if (is.character(region)) {
@@ -155,15 +167,23 @@ setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, ch
       xlim <- c(0,chrRange[2]);
   }
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Re-order by physical position
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   o <- order(loci);
   loci <- loci[o];
   unitNames <- rownames(df)[o];
   
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Remove non-existing data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Make sure all units exists in data too
   cdf <- getCdf(this);
   allUnitNames <- getUnitNames(cdf);
   units <- match(unitNames, allUnitNames);
+
+  # Just in case there are no existing units
   keep <- which(!is.na(units));
   units <- units[keep];
   loci <- loci[keep];
@@ -172,11 +192,21 @@ setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, ch
   if (length(units) == 0)
     throw("Could not identify units for this request.");
  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify the cell indices for these
-  cells <- unlist(getFirstCellIndices(this, units=units), use.names=FALSE);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cells <- unlist(getCellIndices(this, units=units), use.names=FALSE);
   if (length(cells) == 0)
     throw("Could not identify cell indices for this request.");
 
+  # Assert correctness of data dimensions before continuing
+  if (length(cells) != length(loci)) {
+    throw("Internal error: Cannot plot M vs genomic position. The number of cells does not match the number of loci: ", length(cells), " != ", length(loci));
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Plot data against location
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   res <- plotMvsX(this, reference, x=loci, indices=cells, ylab=ylab, xlab=xlab, xlim=xlim, ..., what=what, annotate=annotate);
   if (annotate) {
     stext(side=3, pos=1, sprintf("Chromosome %s", chromosome), cex=0.7);

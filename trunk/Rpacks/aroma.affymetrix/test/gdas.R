@@ -2,14 +2,6 @@ source("init.R");
 
 fig <- 1;
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Setup the GDAS annotation data
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("gdas")) {
-  gdas <- GdasAnnotationSet$fromFiles(path="annotations");
-  join(gdas, orderBy=c("Chromosome", "PhysicalPosition"));
-}
-chromosomes <- c(1:22, "X");
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the dataset to be used
@@ -18,21 +10,18 @@ path <- "chip_data3/Xba/";
 ds <- AffymetrixCelSet$fromFiles(path);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Create a set of models to work with
+# Setup the GDAS annotation data
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("models", mode="list")) {
-  models <- list(
-    liwong = AffymetrixTotalCnLiWongModel(ds),
-    rma    = AffymetrixTotalCnRmaModel(ds),
-    affine = AffymetrixTotalCnAffineModel(ds)
-  )
+if (!exists("gdas")) {
+  gdas <- GdasAnnotationSet$forDataSet(ds);
+  loci <- join(gdas, orderBy=c("Chromosome", "PhysicalPosition"));
 }
+chromosomes <- c(1:22, "X");
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Specify the model we want to fit
+# Create a set of models to work with
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-mm <- 2;
-model <- models[[mm]];
+model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
 print(model);
 
 # Always re-grab the data set, chip effects, and probe affinities.
@@ -40,9 +29,9 @@ ds <- getDataSet(model);
 samples <- seq(ds);
 names <- getNames(ds);
 
-#ces <- getChipEffects(model);
-#print(ces);
-#cesAvg <- getAverageFile(ces, verbose=TRUE);
+ces <- getChipEffects(model);
+print(ces);
+cesAvg <- getAverageFile(ces, verbose=TRUE);
 
 ccs <- 23;
 samples <- 6;
