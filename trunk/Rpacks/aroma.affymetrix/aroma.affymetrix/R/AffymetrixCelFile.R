@@ -558,6 +558,12 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
 }, protected=TRUE);
 
 
+setMethodS3("range", "AffymetrixCelFile", function(this, ..., na.rm=TRUE) {
+  x <- getData(this, ...);
+  range(x, na.rm=na.rm);
+})
+
+
 setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), fields=c("intensities", "stdvs", "pixels"), ...) {
   readCelRectangle(this$.pathname, xrange=xrange, yrange=yrange, readIntensities=("intensities" %in% fields), readStdvs=("stdvs" %in% fields), readPixels=("pixels" %in% fields));
 })

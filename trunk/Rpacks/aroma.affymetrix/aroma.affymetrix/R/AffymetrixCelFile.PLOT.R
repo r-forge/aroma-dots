@@ -1,17 +1,16 @@
-setMethodS3("calcMvsA", "ChipEffectFile", function(this, reference, units=NULL, indices=NULL, ...) {
-  if (is.null(indices)) {
-    indices <- getFirstCellIndices(this, units=units);
-    indices <- unlist(indices, use.names=FALSE);
-  }
-  NextMethod("calcMvsA", this, reference=reference, indices=indices, ..., zeros=TRUE);
-})
-
 
 setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, ..., zeros=FALSE) {
   # Arguments 'reference':
   if (!inherits(reference, "AffymetrixCelFile")) {
     throw("Argument 'reference' is not of class AffymetrixCelFile: ", 
                                                           class(reference)[1]);
+  }
+
+  # Argument 'indices':
+  nbrOfUnits <- nbrOfUnits(getCdf(this));
+  if (is.null(indices)) {
+  } else {
+    indices <- Arguments$getIndices(indices, range=c(1,nbrOfUnits));
   }
 
   # Check if the two CEL files are compatible
@@ -26,7 +25,8 @@ setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=N
   offset <- this$offset;
   if (is.null(offset))
     offset <- 0;
-  cat("Offset: ", offset, "\n");
+  if (offset != 0)
+    cat("Offset: ", offset, "\n", sep="");
 
   # Identify non-zero signals?
   if (!zeros) {
@@ -65,7 +65,7 @@ setMethodS3("annotateMvsA", "AffymetrixCelFile", function(this, reference, ..., 
   stextLabels(this, others=reference);
 }, protected=TRUE)
 
-setMethodS3("plotMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2*log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
+setMethodS3("plotMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2%*%log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
   ma <- calcMvsA(this, reference, indices=indices);
   plot(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
   if (annotate)
@@ -74,7 +74,7 @@ setMethodS3("plotMvsA", "AffymetrixCelFile", function(this, reference, indices=N
   invisible(ma);
 })
 
-setMethodS3("smoothScatterMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2*log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
+setMethodS3("smoothScatterMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2%*%log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
   require(geneplotter) || throw("Package 'geneplotter' not loaded.");
   ma <- calcMvsA(this, reference, indices=indices);
   smoothScatter(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
