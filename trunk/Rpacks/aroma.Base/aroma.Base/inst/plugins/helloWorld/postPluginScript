@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+echo "Running post-plugin script..." > postPluginScript.out
+
+# Copy itself to the working directory
+cp $0 postPluginScript
+
+echo "Call: $0 $*" >> postPluginScript.out
+
+echo "Files available in the working directory:" >> postPluginScript.out
+ls -al >> postPluginScript.out
+
+echo "Running post-plugin script...done" >> postPluginScript.out

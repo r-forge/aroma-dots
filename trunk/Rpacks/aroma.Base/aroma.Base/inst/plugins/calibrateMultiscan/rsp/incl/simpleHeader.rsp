@@ -1,0 +1,5 @@
+<head>
+ <title><%=title%></title>
+ <%@include file="rsp.css.html"%>
+ <%@include file="webcuts.script.html"%>
+</head>

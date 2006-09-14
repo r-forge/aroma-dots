@@ -1,0 +1,26 @@
+BASEfile
+section	plugin
+uniqueName	braju.com/hb/calibrateMultiscan
+versionNumber	0.5.2
+name	aroma/calibrateMultiscan
+descr	Multiscan calibration using R package aroma written by Henrik Bengtsson.\r\n\r\nDESCRIPTION:\r\nMicroarray scanners may introduce significant offset (bias) to the raw signals.  We have estimated the bias to be approximately 15-25 (out of 65535) on both the Axon GenePix 4000B and the Agilent G2505A scanner [1].  This added signal is responsible for a intensity dependent effects among other artifacts and should be calibrated for [2].\r\n\r\n\r\nSCAN PROTOCOL:\r\n1. Scan each array at least twice at different PMT settings.  Do not modify the laser settings and do not wash the array inbetween scan\!  We recommend to scan at three or more PMT voltages in decreasing order.  If possible, keep the array in the scanner inbetween scans in order to minimize image shifts.\r\n2. Do image analysis on the strongest scan first.  Reuse the identified spot map from this first image on the other scans.  Export the signals from all scans to file (typically a GPR file) and import to BASE.\r\n3. When importing data to BASE, name the assays (scans) using the format <array>_<pmt>, e.g. emi1_wt_30pct.\r\n4. Call this plugin.\r\n\r\n\r\nMODEL & CALIBRATION:\r\nConsider multiscan calibration for channel c where there are scans at different PMT settings k=1,2,...,K (K >= 2) available.  Each array has spots i=1,2,...,I.  Let x_{c,i} be the true amount of hybridized DNA in spot i and channel c.  The corresponding quantified signal (after image analysis) for PMT setting/scan k is y_{c,i}^{(k)}, which can be modelled as\r\n\r\n  y_{c,i}^{(k)} = a_{c} + b_{c}^{(k)} x_{c,i} + \\epsilon_{c,i}^{(k)}   (1)\r\n\r\nwhere a_{c} is a PMT-independent offset parameter, b_{c}^{(k)} is the scale factor for scan k, and \r\n\\epsilon_{c,i}^{(k)} are independent noise terms. \r\n\r\nThe above parameters are estimated by an iterative re-weighted principal component analysis (IWPCA) method.  See [1] for details.  The estimated scanner bias a*_{c} and the K estimated scale parameters b*_{c}^{(k)} are reported by this plugin.\r\n\r\nCalibration is done by subtracting the offset, rescaling the signals for each scan, and averaging the signal for each spot across scans.\r\n\r\n  y*_{c,i} = avg_{k}(y_{c,i}^{(k)} - a*_{c}) / b*_{c}^{(k)}  (2)\r\n\r\nThe calibrated signals are y*_{c,i}.  \r\n\r\n\r\nPLUGIN PARAMETERS:\r\n* 'Name pattern of multiscanned assays' - The regular expression pattern used to identify the array and pmt part of the assay (scan) name.  The default value will match <array>_<pmt> where the <array> part may contain '_', but not the <pmt> part, that is, 'emi1_wt_30pct' will be recognized as array 'emi1_wt' and PMT '30pct'.\r\n* 'Part of name pattern to group by' - The part of the above regular expression that corresponds to the array name.  Parts are defined by parentesis.  The default is to match the contents of the first parentesis, i.e. '\\\\1'.\r\n\r\n\r\nMEMORY REQUIREMENTS:\r\nSince each array and each channel is calibrated independently, there is no limit in number of arrays that can be processed by this plugin at each time.  The limiting factor is the number of spots on each array and the number of scans per array, which in practice should be no problem.\r\n\r\n\r\nADDITIONAL HELP:\r\nSee ?calibrateMultiscan.matrix in the aroma.light package for more details and help.\r\n\r\n\r\nREFERENCES:\r\n[1] H. Bengtsson, G. J\366nsson and J. Vallon-Christersson, Calibration and assessment of channel-specific biases in microarray data with extended dynamical range, BMC Bioinformatics, 2004, 5:177. [ http://www.maths.lth.se/bioinformatics/ ]\r\n[2] H. Bengtsson & O. H\366ssjer, Methodological study of affine transformations of gene expression data with proposed normalization method, Preprints in Mathematical Sciences, 2003:38, Mathematical Statistics, Centre for Mathematical Sciences, Lund University, 2003. [ http://www.maths.lth.se/bioinformatics/ ]\r\n[2] A.M. Dudley, J. Aach, M.A. Steffen, G.M: Church: Measuring absolute expression with microarrays with a calibrated reference sample and an extended signal intensity range. Proc Natl Acad Sci USA 2002, 99(11):7554\2269.\r\n
+execName	braju.com/hb/calibrateMultiscan/basePluginDispatcher
+geneAverages	0
+serialFormat	1
+url	http://www.braju.com/R/
+minChannels	1
+maxChannels	0
+leaveStdin	0
+leaveStdout	1
+estimatedTime	60
+defaultMaxRam	134217728
+usedColumns	position\treporter
+usedFields	intensity1
+columns	position	valueType	name	commonName	options	defaultValue	enumOptions	removed
+%
+1	h	section		30	parameters		0
+2	e	method	Method to fit calibration function	30	L1	L1\tRobust fitting in L1	0
+3	t	assayNamePattern	Name pattern of multiscanned assays	15	^(.+)_(.+)$		0
+4	t	groupBy	Part of name pattern to group by	5	\\1		0
+5	e	reports	Reports	30	html	html\tHTML report with figures\tnone\tnone	0
+

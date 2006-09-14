@@ -1,0 +1,7 @@
+BASEfile
+section	parameters
+welcomeMessage		
+internalCommands	copySource
+%
+
+

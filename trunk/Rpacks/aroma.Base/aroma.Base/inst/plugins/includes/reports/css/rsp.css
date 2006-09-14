@@ -1,0 +1,90 @@
+/****************************************************************
+  RSP style sheet
+
+  Author: Henrik Bengtsson, hb@maths.lth.se
+  Date: 2005-08-22
+*****************************************************************/
+
+/****************************************************************
+ Tags
+*****************************************************************/
+address {
+  margin-top: 1ex; 
+  padding-top: 0.5ex; 
+  border-top: #000000 1px solid;
+  color: #666666;
+}
+
+
+
+/****************************************************************
+ Classes
+*****************************************************************/
+.HtmlCode {
+  background   : #ddddff;
+  color        : #000000;
+  border       : medium solid #00000;
+  padding      : 0.5em;
+}
+
+.RspScriptlet {
+  background   : transparent;
+  color        : #0000ff;
+  margin-bottom: 0px;
+  padding      : 0.5em;
+  border       : thin dashed #000000;
+  font-family  : 'Courier New', monospace;
+}
+
+.RspException {
+  background   : #eeeeee;
+  color        : #000000;
+  border       : medium dashed #ff0000;
+  padding      : 0.5em;
+}
+
+.RspExceptionMessage {
+  background   : #eeeeee;
+  color        : #ff0000;
+}
+
+.RspExceptionCode {
+  background   : #eeeeee;
+  color        : #0000ff;
+  font-family  : 'Courier New', monospace;
+}
+
+.RspExceptionTag {
+  background   : #eeeeee;
+  color        : #0000ff;
+  font-family  : 'Courier New', monospace;
+}
+
+.PageInclude {
+  border       : #000000 1px solid;
+  padding      : 0.5em;
+}
+
+/****************************************************************
+ Ids
+*****************************************************************/
+#RspTogglerWidget { 
+  position: absolute;
+  width: auto; 
+  height: auto; 
+  right: 1em; 
+  top: 2em;
+  border: solid; 
+  padding: 2px;
+  border-width: 1px; 
+  border-color: #666666; 
+  background-color: #eeeeee;
+  color: #666666; 
+  font-size: smaller;
+/*  visibility: hidden; */
+}
+
+#RspTogglerWidget a { 
+  color: black; 
+  text-decoration: underline;
+}

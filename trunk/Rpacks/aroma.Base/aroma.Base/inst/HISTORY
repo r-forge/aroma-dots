@@ -1,0 +1,105 @@
+
+Package: aroma.Base
+===================
+
+Version: 0.4.4 [2006-08-06]
+o Added a namespace.
+o Added the MGED8 poster to the documentation.
+o Updated help pages slightly.
+
+Version: 0.4.3 [2006-03-28]
+o Removed deprecated BasePlugin class. Use BasePluginDispatcher instead.
+o Updated broken Rd links.
+o Updated references.
+
+Version: 0.4.2 [2006-02-04]
+o BUG FIX: memory.size() and memory.limit() do only exist on Windows.  
+  Because of this, aroma.Base was giving an error about missing object
+  when run on other platforms.
+
+Version: 0.4.1 [2006-01-21]
+o Added more details on system and locale to the plugin.log file. 
+  Good for troubleshooting. 
+
+Version: 0.4.0 [2005-12-21]
+o Renamed argument 'name[s]' in getSection[s]() of BaseFile to 'type[s]' 
+  to be more consistent with the 'type' argument of the BaseFileSection
+  constructor.
+o Added appendSection() to the BaseFile class.
+o replaceSection(old, new, append=TRUE) in BaseFile would not work if
+  'old' did not exist.  Forgot to set name of new sections to its type.
+  Same problem was also found in writeBaseFileSection(). Thanks to
+  Julien Gagneur at EMBL/HTFG, Heide
+lberg for reporting this.
+o Added setAnnotationColumns() to BaseFileAssays.
+o BUG FIX: When reading data cached to file, data cells containing spaces
+  would generate an error in the internal read.table(). Forgot to specify
+  sep="\t" when reading cached data.
+
+Version: 0.3.7 [2005-10-27]
+o Package requires R.utils v0.6.3 or newer. Trust me!
+o Rebuild package to verify it conforms to the renaming of argument
+  'overwrite' to 'mustNotExist' and 'mustExists' to 'mustExist' in
+  the static methods of the Arguments class.
+o The about Rd page would not compile in LaTeX.
+
+Version: 0.3.6 [2005-09-07]
+o Now withCallingHandlers() is used by BasePluginDispatcher to log
+  warnings and errors immediately whenever they occur.  This will make 
+  it easier to track where warnings were generated.
+o BUG FIX: Now the log is not preprocessing source code output via
+  GStrings in BasePluginDispatcher.
+o Now the 'plugin.progress' is removed if the plugin is successful.
+o Now all copyDirectory() in BasePluginDispatcher is automatically
+  overwriting preexisting files.
+o Now options() are also logged upon startup.
+o Now warnings are printed as soon as they occur.
+o The BASE plugin dispatcher recognized Windows shortcuts (*.lnk). 
+
+Version: 0.3.4 [2005-08-01]
+o Updated all displayCode() calls to be compatible with updated R.utils.
+
+Version: 0.3.3 [2005-07-24]
+o Now readBaseFileSection() looks for the 'count' header when reading
+  data tables. If it exists, it can read all rows at once without having
+  to search for an empty line (indicating end of table). The speed up is
+  approximately 8 times!
+o writeBaseFileSection() adds the header 'count' to 'spots' sections.
+
+Version: 0.3.2 [2005-07-21]
+o Renamed class BasePlugin to BasePluginDispatcher. The startup script
+  was renamed (from runBasePlugin) to basePluginDispatcher.
+o Added support to patch code and packages by source all *.R files in
+  directory <plugin-path>/../patch/ before calling the plugin dispatcher.
+o If an executable script 'postPluginScript' exists in the plugin 
+  directory, it is called after the plugin dispatcher finished. 
+  This makes it possible to post-process plugin output utilizing any
+  language, say via a perl och a bash script.
+o BUG FIX: isSerial() in BaseFile used non-existing 'base' instead of 'this'.
+
+Version: 0.3.1 [2005-07-08]
+o BUG FIX: writeBaseFile() and getData() of BaseFileSection was generating
+  data file names on the fly from the 'assays' header before re-reading
+  data tables, which won't work if 'assays' is modified. Now the data file
+  names are taken from header 'dataFiles'.
+o BaseFilePlugin$main() now asserts that the received data is in a
+  serial format.
+o Added setName() and setParents() to class BaseFileAssays.
+o Added hasColumns(), setColumns() and addColumn() to class BaseFileSection.
+o Added isSerial() and replaceSection() to class BaseFile.
+
+Version: 0.3.0 [2005-06-26]
+o As soon as the plugin 'parameters' section is read, i) additional source
+  files in the directory specified by optional parameter 'sourcePath' are
+  loaded, and then ii) the onParameters() is called making it possible
+  to validate and preprocess plugin parameters.
+
+Version: 0.2.1 [2005-06-23]
+o Updated to support VComments too.
+
+Version: 0.2.0 [2005-06-19]
+o First version that is tested in a live BASE environment.
+
+Version: 0.1.0 [2005-05-24]
+o Created. Package contains functions readBaseFile() and writeBaseFile().
+

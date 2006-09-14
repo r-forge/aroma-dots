@@ -1,0 +1,140 @@
+/****************************************************************
+  BASE v1.2.16 CSS 
+
+  Typist: Henrik Bengtsson, hb@maths.lth.se
+*****************************************************************/
+
+/****************************************************************
+ Tags
+*****************************************************************/
+a:active { 
+ text-decoration: none; 
+ color: #ff5050; 
+}
+
+a:link { 
+ text-decoration: none; 
+ color: #1000d0; 
+}
+
+a:visited { 
+ text-decoration: none; 
+ color: #1000d0; 
+}
+
+a.ext:active { 
+ text-decoration: none; 
+ color: #ff8050; 
+}
+
+a.ext:link { 
+ text-decoration: none; 
+ color: #f05000; 
+}
+
+a.ext:visited { 
+ text-decoration: none; 
+ color: #800000; 
+}
+
+body { 
+ font-family: Helvetica, sans-serif;
+ font-weight: normal;
+}
+
+div { 
+ font-family: Helvetica, sans-serif; 
+ font-weight: normal;
+}
+
+td { 
+ font-family: Helvetica, sans-serif; 
+}
+
+th {
+ font-family: Helvetica, sans-serif;
+ text-align: left;
+ background-color: #D3D3CC;
+ white-space: nowrap;
+}
+
+input { 
+ font-family: Helvetica, sans-serif;
+}
+
+select { 
+ font-family: Helvetica;
+}
+
+select.mono { 
+ font-family: monospace;
+}
+
+
+/****************************************************************
+ Classes
+*****************************************************************/
+.normal { 
+ font-weight: normal;
+}
+
+.large {
+ font-size: larger;
+}
+
+.help { 
+ font-style: italic;
+}
+
+.special { 
+ font-weight: bold;
+}
+
+.pagehead { 
+ text-align: left;
+ background-color: #F8F8F0;
+ font-size: 11pt;
+}
+
+.subhead { 
+ text-align: left;
+ font-size: larger;
+ font-weight: bold;
+}
+
+.subheadact { 
+ text-align: left;
+ font-size: larger;
+ font-weight: bold;
+ background-color: #ffe0c0;;
+}
+
+.red { 
+ color: Red;
+ font-size: larger;
+}
+
+.del { 
+  color: #e00050;
+  font-weight: bold;
+}
+
+a.popup { 
+  color: #007010;
+}
+
+.tiny { 
+  font-size: smaller smaller;
+}
+
+.pink { 
+  background-color: #ffe0c0;
+}
+
+
+/****************************************************************
+HISTORY:
+
+2005-09-04
+o Copied. Removed background colors. Use default! 
+*****************************************************************/

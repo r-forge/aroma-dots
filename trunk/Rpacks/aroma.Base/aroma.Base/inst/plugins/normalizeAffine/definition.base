@@ -1,0 +1,26 @@
+BASEfile
+section	plugin
+uniqueName	braju.com/hb/normalizeAffine
+versionNumber	0.5
+name	Normalization: aroma/normalizeAffine
+descr	Single- or multiarray affine normalization using R package aroma written by Henrik Bengtsson.\r\n\r\nDESCRIPTION:\r\nFitting of the normalization function (a line; two parameters only) and normalization is done in the original non-log (G,R) space.  In order for the parameters in the normalization function to be statistically identifiable, the addition contraint specifying how many negative signals there are in G and R after normalization has been added. \r\n\r\nIf single-array normalization is used, it is conceptual similar to curve-fit ("lowess") normalization, exception that fitting and normalization is done in the non-logarithmic space.\r\n\r\nIf multi-array normalization is used, all channels on all K assays are normalized in the (R1,...,RK,G1,...,GK) space. With this, there is no need to normalize "across" assays.\r\n\r\nDETAILS:\r\nApplies to either 1) the pair of channels on each assay seperately, 2) all channels on all assays together, 3) to each channel across all assays seperately.\r\n\r\nMEMORY REQUIREMENTS:\r\nThe number of assays that can be normalized together in multi-assay normalization is limited by the amount of memory on the processing system. This is because all assays has to be loaded when fitting the normalization method.\r\n\r\nSingle-assay normalization does not have this limitation since only one assay is in memory at any time.\r\n\r\n\r\nTROUBLESHOOTING:\r\nSince, the signal-to-noise ratio is lower for weaker features, a rather strong fan-out effect *should* be seen in the resulting M vs A plot. The more negative signals you allow, the more "background" is subtracted and the stronger this fan-out effect is. Remember that when looking at data in M vs A plots, you are in a logarithm space, which sometimes can be hard to interpret.\r\n\r\nADDITIONAL HELP:\r\nSee ?normalizeAffine.matrix in the aroma.light package for more details and help.\r\n\r\nREFERENCES:\r\n[1] H. Bengtsson & O. H\366ssjer, Methodological study of affine transformations of gene expression data with proposed normalization method, BMC Bioinformatics, 2006, 7:100. [ http://www.maths.lth.se/bioinformatics/ ]\r\n
+execName	braju.com/hb/normalizeAffine/runBasePlugin
+usedColumns	position\treporter
+usedFields	intensity1\tintensity2
+geneAverages	0
+serialFormat	1
+url	http://www.braju.com/R/
+minChannels	2
+maxChannels	0
+leaveStdin	0
+leaveStdout	0
+estimatedTime	60
+defaultMaxRam	134217728
+columns	position	valueType	name	commonName	options	defaultValue	enumOptions	removed
+%
+1	h	section		30	parameters		0
+2	e	method	Method to fit normalization function	30	L1	L1\tRobust fitting in L1	0
+3	f	constraint	Fraction of negative channel signals (0,1] (-1 for default)	5	0.05		0
+4	e	multiassay	Fitting assays seperately or together?	30	singleassay	singleassay\tsingleassay fitting\tmultiassay\tmultiassay fitting\tmultiassayPerChannel\tmultiassay fitting per channel (req. 2 assays or more)\tmultiassayWithReferenceChannel\tmultiassay fitting for reference channel and singleassay for the other	0
+5	e	referenceChannel	Reference channel (not always used)	30	1	1\tChannel 1\t2\tChannel 2	0
+

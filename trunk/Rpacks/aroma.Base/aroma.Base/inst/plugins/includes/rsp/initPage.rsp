@@ -1,0 +1,35 @@
+<%--#######################################################################
+# initPage.rsp
+#
+# Author: Henrik Bengtsson
+#######################################################################--%>
+<%
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Read parameters from file
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+paramFile <- filePath(getPath(response), "reports", ".params.txt");
+if (!isFile(paramFile))
+  throw("Missing internal parameters file: ", paramFile);
+
+params <- System$parseDebian(file=paramFile);
+
+# Split by TABs
+params <- lapply(params, FUN=function(param) {
+  trim(unlist(strsplit(param, split="\t")));
+})
+
+names(params) <- gsub("/", ".", names(params));
+
+# Attach parameters locally
+attachLocally(params);
+rm(params);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Miscellaneous
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (!exists("figurePath"))
+  figurePath <- filePath(getPath(response), "figures");
+
+%>
