@@ -1,0 +1,96 @@
+#!/usr/bin/env sh
+
+###########################################################################
+# USAGE:
+#   basePluginDispatcher [options]
+#
+# OPTIONS:
+#   --pluginPath=`dirname $0`
+#   --logDetails=-100
+#   --parametersSection="parameters$ settings$"
+#
+# 'pluginPath' should be the directory where the path to plugin directory.
+# For conveniency, it may also be a file within the plugin directory. 
+# If the path is invalid, an exception is thrown. Default is to use the 
+# pathname of this script file.
+#
+# 'parametersSection' should give the name of the BASE section where the
+# plugin parameters are. Typically this is the first section, but this
+# script will not assume that for robustness. We recommend to always use
+# the default, but if not, it can be changed here.
+# 
+# The smaller (more negative) 'logDetails' is, the more detailed the log
+# output will be. If zero, no logging will take place.  The log file is
+# specified by 'stdlog'.
+###########################################################################
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Add path to aroma.Base, if missing.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# If aroma.Base and friends are not installed in the system-wide R library
+# path, you can add the path to locally installed package library, here.
+# R_LIBS="$R_LIBS:~hb/plugins/library"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Don't modify anything below!
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Gets the directory of the plugin, i.e. where this script is located.
+## pluginPath=`dirname $0`
+
+# The Rtools for Windows does not have 'dirname', but 'sed';
+pluginPath=`echo $0 | sed -r -e 's#(..*)(/.*)#\1#g'`
+
+# Add $pluginPath/library to R's library path.  This is a perfect place
+# to install aroma.Base, R.oo and friends if you are not "root".
+R_LIBS="$R_LIBS:$pluginPath/../library"
+
+export R_LIBS=$R_LIBS
+
+# Ignore data on standard input, if already available on file.
+if test -f "stdin.txt" && test -f "stdin.txt.lnk"; then
+  echo "WARNING: Ignoring 'stdin.txt.lnk', because 'stdin.txt' exists."
+fi
+
+if test -f "stdin.txt" || test -f "stdin.txt.lnk"; then
+  cat > /dev/null
+else
+  cat > stdin.txt
+fi
+
+echo 'msg <- capture.output({library(aroma.Base); BasePluginDispatcher$patchCode();});  BasePluginDispatcher$main(startupMessages=msg)' | R --slave --no-save --no-restore --args --pluginPath="$pluginPath" $* --stdin="stdin.txt" --stdres="stdout()"
+
+# Run post-plugin script, if exists
+if test -e "$pluginPath/postPluginScript"; then
+  "$pluginPath/postPluginScript" --pluginPath="$pluginPath"
+fi
+
+
+###########################################################################
+# HISTORY:
+# 2005-09-06
+# o Now the script recognized Windows shortcuts (*.lnk) for stdin.txt.
+#   This makes it possible to link to data files on Windows too, instead of
+#   copying them.  This works because the aroma* packages recognizes
+#   Windows shortcuts files.
+# 2005-07-21
+# o Now script sends standard input to /dev/null if file stdin.txt exists.
+#   This will minimize file usage and speed up the process slightly.
+# 2005-07-20
+# o Renamed to basePluginDispatcher from runBasePlugin.
+# o Now *.R files in <plugin-path>/../patch/ are sourced before calling
+#   the plugin dispatcher.  This makes it possible to patch aroma.Base
+#   and other packages without having to rebuild and reinstall them.
+# o Now data (in .outputData.base) is sent to BASE *after* calling the 
+#   post-plugin script.  This makes it possible to post-process also the
+#   data.  Input data (.inputData.base) is also available at this time.
+# o Added support for post-plugin script.
+# 2005-06-26
+# o Removed echoed R prompt to standard output on startup by using
+#   '--slave' instead of '--quiet'.
+# 2005-06-19
+# Now R_LIBS is set so that aroma.Base can be installed locally.
+# 2005-06-16
+# o Now a sh shell script. It works at least on Cygwin.
+# o Created and wrote the help
+###########################################################################

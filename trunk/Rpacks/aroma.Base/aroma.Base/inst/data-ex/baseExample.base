@@ -1,0 +1,16 @@
+BASEfile
+section	assays
+count	30
+columns	id	name	Metastases	opStatus	Resistance	Series
+annotationColumns	Metastases	opStatus	Resistance	Series
+%
+2016	test				3
+2017	Tester #2	yes	gbgbb4		24
+
+section	spots
+columns	position	reporter	assayData
+assayFields	ratio	intensity2	position	quality
+setExtraFloats	quality
+assays	2016	2017	2018
+%
+2971	1001	0.561547	853	2971	1.2	0.909091	352	2971	0.7	1.1	320	2971	1.3

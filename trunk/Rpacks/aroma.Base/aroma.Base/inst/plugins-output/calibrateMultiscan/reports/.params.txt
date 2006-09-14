@@ -1,0 +1,14 @@
+# Parameters needed by reporters
+assays: emi1_wt
+scans: emi1_wt_50pct	emi1_wt_30pct	emi1_wt_100pct
+channels: intensity1	intensity2
+assays/emi1_wt/intensity1/a: 22.2104678340757	21.1544635872414	21.4132805781258
+assays/emi1_wt/intensity1/b: 1	0.596711369335263	1.98492151393979
+assays/emi1_wt/intensity1/adiag: 21.5927373331476	21.5927373331476	21.5927373331476
+assays/emi1_wt/intensity1/converged: TRUE
+assays/emi1_wt/intensity1/nbrOfIterations: 7
+assays/emi1_wt/intensity2/a: 22.2734622950464	22.1133484482537	22.1535898445542
+assays/emi1_wt/intensity2/b: 1	0.589739142911016	2.03223440387776
+assays/emi1_wt/intensity2/adiag: 22.1801335292848	22.1801335292848	22.1801335292848
+assays/emi1_wt/intensity2/converged: TRUE
+assays/emi1_wt/intensity2/nbrOfIterations: 7

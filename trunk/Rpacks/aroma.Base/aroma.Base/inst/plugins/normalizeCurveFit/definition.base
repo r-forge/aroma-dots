@@ -1,0 +1,24 @@
+BASEfile
+section	plugin
+uniqueName	braju.com/hb/normalizeCurveFit
+versionNumber	0.5
+name	Normalization: aroma/normalizeCurveFit
+descr	Paired-channels curve-fit normalization using R package aroma written by Henrik Bengtsson.\r\n\r\nDESCRIPTION:\r\nFour different methods for fitting a smooth curve through data points in (A,M), i.e. the log-ratio vs log-intensity space, namely "lowess", "loess", "smoothing spline", and "robust smoothing spline".\r\n\r\nDETAILS:\r\nApplies to the pair of channels on each assay seperately.\r\n\r\nADDITIONAL HELP:\r\nSee ?normalizeCurveFit.matrix in the aroma.light package for more details and help.\r\n\r\nREFERENCES:\r\n[1] H. Bengtsson & O. H\366ssjer, Methodological study of affine transformations of gene expression data with proposed normalization method, BMC Bioinformatics, 2006, 7:100. [ http://www.maths.lth.se/bioinformatics/ ]\r\n
+execName	braju.com/hb/normalizeCurveFit/runBasePlugin
+usedColumns	position\treporter
+usedFields	intensity1\tintensity2
+geneAverages	0
+serialFormat	1
+url	http://www.braju.com/R/
+minChannels	2
+maxChannels	0
+leaveStdin	0
+leaveStdout	0
+estimatedTime	60
+defaultMaxRam	134217728
+columns	position	valueType	name	commonName	options	defaultValue	enumOptions	removed
+%
+1	h	section		30	parameters		0
+2	e	method	Method to fit normalization function	30	lowess	lowess\tLowess\tloess\tLoess (slow, but more robust)\tspline\tSmoothing spline\trobustSpline\tRobust smoothing spline	0
+3	f	bandwidth	Bandwidth parameter in (0,1] (-1 for default)	5	-1		0
+

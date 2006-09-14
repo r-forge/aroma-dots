@@ -1,0 +1,233 @@
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+        "http://www.w3.org/TR/REC-html40/loose.dtd">
+
+
+
+<html>
+<head>
+ <title>Report on Multiscan Calibration</title>
+ <link media="screen" type="text/css" rel="StyleSheet" href="reports/css/base.css">
+ <link media="screen" type="text/css" rel="StyleSheet" href="reports/css/rsp.css">
+ <link media="screen" type="text/css" rel="StyleSheet" href="reports/css/figures.css">
+ <script type="text/javascript" src="reports/js/Webcuts.js" language="JavaScript1.2"></script>
+ 
+ <script type="text/javascript" src="reports/js/FloatingLayer.js" language="JavaScript1.2"></script>
+ <script type="text/javascript" src="reports/js/RspDynamics.js" language="JavaScript1.2"></script>
+
+
+
+</head>
+
+<body onLoad="annotateAnchors();">
+
+
+
+
+
+
+
+
+
+
+<h1>Report on Multiscan Calibration</h1>
+<p>
+by Henrik Bengtsson 2002-2005.
+</p>
+
+
+<h2>Data</h2>
+<ul>
+ <li>Number of scans: 3 (on average 3 scans per assay)</li>
+ <li>Assays: 
+  
+    <a href="#assay-emi1_wt">emi1_wt</a>
+    
+  
+  (in total 1)
+ </li>
+ <li>Channels: intensity1, intensity2 (in total 2)</li>
+</ul>
+
+
+<h2>Calibration</h2>
+<p>
+</p>
+
+<h3>Results</h3>
+
+<h3>Parameter estimates</h3>
+
+<p>
+
+<center>
+<table class="ResultTable">
+ <tr valign="top">
+  <th rowspan="2">#</th>
+  <th rowspan="2">Assay</th>
+  
+  <th colspan="5">intensity1</th>
+  
+  <th colspan="5">intensity2</th>
+    
+ </tr>
+ <tr valign="top">
+  
+  <th>a</th>
+  <th>A<sub>0</sub></th>
+  <th>b</th>
+  <th>log<sub>2</sub>b</th>
+  <th>#iter</th>
+  
+  <th>a</th>
+  <th>A<sub>0</sub></th>
+  <th>b</th>
+  <th>log<sub>2</sub>b</th>
+  <th>#iter</th>
+    
+ </tr>
+ 
+ <tr valign="top">
+  <td >1</td>
+  <td style="text-align: right;">emi1_wt</td>
+  
+  <td>21.6</td>
+  <td>4.43</td>
+  <td>1, 0.597, 1.98</td>
+  <td>0, -0.745, 0.989</td>
+  <td>7</td>
+  
+  <td>22.2</td>
+  <td>4.47</td>
+  <td>1, 0.59, 2.03</td>
+  <td>0, -0.762, 1.02</td>
+  <td>7</td>
+    
+ </tr>
+   
+</table>
+</center>
+<div class="ResultTableCaption">Table 1: Parameter estimates.  Parameter 'a' is the estimated offset introduced by scanner's PMT and modelled to be equal for all scans of the same array.  'A<sub>0</sub>' equals log<sub>2</sub>a and shows the minimum log-intensity observable, cf. M vs A plots below.  The 'b' parameters are the estimated scale factors for each scan (first scan is always 1).  'log<sub>2</sub>b' gives the relative "log-ratio" shift between scans (first scan is always zero).  The columns '#iter' show how many iterations IWPCA needed in order to converge.
+</p>
+
+
+
+<div id="emi1_wt.0">
+<a name="Assay-emi1_wt"></a>
+<h3>Assay #1 of 1: emi1_wt</h3>
+
+
+
+<div id="intensity1.0">
+<h4>Channel #1 of 2: intensity1</h4>
+<p>
+</p>
+
+
+<div id="MvsA.1">
+<table class="FigureTable">
+ <!-- Between scans M vs A before and after calibration -->
+ <tr class="FigureRow">
+  <td class="FigurePanel" width="50%">
+   <img src="figures//assay-emi1_wt-Ch1-raw-MvsA.png" alt="Figure 1" class="FigureImage">
+  </td>
+  <td class="FigurePanel" width="50%">
+   <img src="figures//assay-emi1_wt-Ch1-multiscan-MvsA.png" alt="Figure 1" class="FigureImage">
+  </td>
+ </tr>
+
+ <tr>
+  <td colspan="2" class="FigureCaption">Figure 1: Between scan log-ratios vs log-intensities for assay 'emi1_wt' and channel 'intensity1' before (left) and after (left) calibration.</td>
+ </tr>
+</table>
+</div>
+
+
+<div id="density.2">
+<table class="FigureTable">
+ <!-- Density plots for within-channel signals before and after calibration -->
+ <tr class="FigureRow">
+  <td class="FigurePanel" width="50%">
+   <img src="figures//assay-emi1_wt-Ch1-raw-density.png" alt="Figure 2" class="FigureImage">
+  </td>
+  <td class="FigurePanel" width="50%">
+   <img src="figures//assay-emi1_wt-Ch1-multiscan-density.png" alt="Figure 2" class="FigureImage">
+  </td>
+ </tr>
+
+ <tr>
+  <td colspan="2" class="FigureCaption">Figure 2: Signal densities for assay 'emi1_wt' and channel 'intensity1' before (left) and after (left) calibration.</td>
+ </tr>
+</table>
+</div>
+
+</div>
+
+
+<div id="intensity2.2">
+<h4>Channel #2 of 2: intensity2</h4>
+<p>
+</p>
+
+
+<div id="MvsA.3">
+<table class="FigureTable">
+ <!-- Between scans M vs A before and after calibration -->
+ <tr class="FigureRow">
+  <td class="FigurePanel" width="50%">
+   <img src="figures//assay-emi1_wt-Ch2-raw-MvsA.png" alt="Figure 3" class="FigureImage">
+  </td>
+  <td class="FigurePanel" width="50%">
+   <img src="figures//assay-emi1_wt-Ch2-multiscan-MvsA.png" alt="Figure 3" class="FigureImage">
+  </td>
+ </tr>
+
+ <tr>
+  <td colspan="2" class="FigureCaption">Figure 3: Between scan log-ratios vs log-intensities for assay 'emi1_wt' and channel 'intensity2' before (left) and after (left) calibration.</td>
+ </tr>
+</table>
+</div>
+
+
+<div id="density.4">
+<table class="FigureTable">
+ <!-- Density plots for within-channel signals before and after calibration -->
+ <tr class="FigureRow">
+  <td class="FigurePanel" width="50%">
+   <img src="figures//assay-emi1_wt-Ch2-raw-density.png" alt="Figure 4" class="FigureImage">
+  </td>
+  <td class="FigurePanel" width="50%">
+   <img src="figures//assay-emi1_wt-Ch2-multiscan-density.png" alt="Figure 4" class="FigureImage">
+  </td>
+ </tr>
+
+ <tr>
+  <td colspan="2" class="FigureCaption">Figure 4: Signal densities for assay 'emi1_wt' and channel 'intensity2' before (left) and after (left) calibration.</td>
+ </tr>
+</table>
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+<address>
+ <div style="float:left; font-size:smaller;">Generated on Tue Sep 06 22:12:22 2005.</div>
+ <div style="float:right; font-size:smaller;" class="WebcutsHide">Powered by <a href="http://www.braju.com/R/">aroma.Base</a>, <a href="http://www.braju.com/R/">R.rsp</a>, and <a href="http://www.maths.lth.se/tools/webcuts/">Webcuts</a>.</div>
+</address>
+
+
+<div id="RspTogglerWidget">
+<strong>Toggler</strong>: <span class="WebcutsHide"><a href="#" onclick="toggler.toggleStitchy(); toggleStitchy();" id="stitchy.toggler">stitchy</a></span><br>
+Plots on/off: <a href="#" onclick="javascript:expandCollapse('MvsA');" id="MvsA.toggler">MvsA</a> | <a href="#" onclick="javascript:expandCollapse('density');" id="density.toggler">density</a><br>
+Assays on/off: <a href="#" onclick="javascript:expandCollapse('emi1_wt');" id="emi1_wt.toggler">emi1_wt</a><br>
+Channels on/off: <a href="#" onclick="javascript:expandCollapse('intensity1');" id="intensity1.toggler">intensity1</a> | <a href="#" onclick="javascript:expandCollapse('intensity2');" id="intensity2.toggler">intensity2</a><br>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<%--#######################################################################
+# RspDynamics.rsp
+#
+# Requirements:
+# This file must be included in the header of the HTML page.
+#
+# Author: Henrik Bengtsson
+#######################################################################--%>
+ <script type="text/javascript" src="reports/js/FloatingLayer.js" language="JavaScript1.2"></script>
+ <script type="text/javascript" src="reports/js/RspDynamics.js" language="JavaScript1.2"></script>
+
+<%
+# Returns an HTML string of "toggles"
+getToggles <- function(names) {
+  s <- paste("<a href=\"#\" ",
+             "onclick=\"javascript:expandCollapse('", names, "');\" ",
+             "id=\"", names, ".toggler\">", names, "</a>", sep="");
+  s <- paste(s, collapse=" | ");
+  s;
+}
+%>

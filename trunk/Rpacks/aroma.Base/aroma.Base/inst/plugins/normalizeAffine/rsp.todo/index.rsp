@@ -1,0 +1,147 @@
+<%@ page contentType="text/html"%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+        "http://www.w3.org/TR/REC-html40/loose.dtd">
+
+<%title="Report on Affine Normalization"%>
+
+<html>
+<head>
+ <title><%=title%></title>
+ <link media="screen" type="text/css" rel="StyleSheet" href="reports/css/base.css">
+ <link media="screen" type="text/css" rel="StyleSheet" href="reports/css/rsp.css">
+ <link media="screen" type="text/css" rel="StyleSheet" href="reports/css/figures.css">
+ <script type="text/javascript" src="reports/js/Webcuts.js" language="JavaScript1.2"></script>
+ <%@include file="../../includes/rsp/RspDynamics.rsp"%>
+</head>
+
+<body onLoad="annotateAnchors();">
+
+<%@include file="../../includes/rsp/initPage.rsp"%>
+
+<%
+nbrOfAssays <- length(assays);
+nbrOfChannels <- length(channels);
+%>
+
+
+<%
+figure <- 0;
+table <- 0;
+%>
+
+<h1><%=title%></h1>
+<p>
+by Henrik Bengtsson 2002-<%=format(Sys.Date(), "%Y")%>.
+</p>
+
+
+<h2>Data</h2>
+<ul>
+ <li>Assays: 
+  <% for (assay in assays) { %>
+    <a href="#assay-<%=assay%>"><%=assay%></a>
+    <% if (assay != assays[length(assays)]) { %>, <% } %>
+  <% } %>
+  (in total <%=nbrOfAssays%>)
+ </li>
+ <li>Channels: <%=paste(channels, collapse=", ")%> (in total <%=nbrOfChannels%>)</li>
+</ul>
+
+
+<h2>Normalization</h2>
+<p>
+</p>
+
+<h3>Results</h3>
+
+<h3>Parameter estimates</h3>
+<%
+keys <- c("a", "b");
+%>
+<p>
+<%table <- table + 1;%>
+<center>
+<table class="ResultTable">
+ <tr valign="top">
+  <th rowspan="2">#</th>
+  <th rowspan="2">Assay</th>
+  <% for (channel in channels) { %>
+  <th colspan="5"><%=channel%></th>
+  <% } # for (cc ...) %>  
+ </tr>
+ <tr valign="top">
+  <% for (channel in channels) { %>
+  <th>a</th>
+  <th>A<sub>0</sub></th>
+  <th>b</th>
+  <th>log<sub>2</sub>b</th>
+  <th>#iter</th>
+  <% } # for (cc ...) %>  
+ </tr>
+ <% for (aa in 1:nbrOfAssays) { 
+      assay <- assays[aa]; %>
+ <tr valign="top">
+  <td ><%=aa%></td>
+  <td style="text-align: right;"><%=assay%></td>
+  <% for (channel in channels) { 
+       prefix <- sprintf("assays.%s.%s", assay, channel);
+       a <- as.double(get(sprintf("%s.a", prefix))[1]);
+       b <- as.double(get(sprintf("%s.b", prefix)));
+       converged <- get(sprintf("%s.converged", prefix));
+       nbrOfIterations <- get(sprintf("%s.nbrOfIterations", prefix)); 
+  %>
+  <td><%=paste(sprintf("%.3g", a), collapse=", ")%></td>
+  <td><%=sprintf("%.3g", mean(log(prod(a), base=2)))%></td>
+  <td><%=paste(sprintf("%.3g", b), collapse=", ")%></td>
+  <td><%=paste(sprintf("%.3g", log(b, base=2)), collapse=", ")%></td>
+  <td><%=nbrOfIterations%></td>
+  <% } # for (cc ...) %>  
+ </tr>
+ <% } # for (aa ...) %>  
+</table>
+</center>
+<div class="ResultTableCaption">Table <%=table%>: Parameter estimates.  Parameters 'a' are the estimated offset in each channel, given the constraint.  'A<sub>0</sub>' equals log<sub>2</sub>(a<sub>1</sub>*...*a<sub>K<sub>) and shows the minimum log-intensity observable, cf. M vs A plots below.  The 'b' parameters are the estimated scale factors for each channel (first channel is always 1).  'log<sub>2</sub>b' gives the relative "log-ratio" shift between channels (first channel is always zero).  The columns '#iter' show how many iterations IWPCA needed in order to converge.
+</p>
+
+<% for (aa in 1:nbrOfAssays) { 
+     assay <- assays[aa]; %>
+
+<div id="<%=assay%>.<%=figure%>">
+<a name="Assay-<%=assay%>"></a>
+<h3>Assay #<%=aa%> of <%=nbrOfAssays%>: <%=assay%></h3>
+
+<%figure <- figure + 1;%>
+<div id="MvsA.<%=figure%>">
+<table class="FigureTable">
+ <!-- M vs A before and after normalization -->
+ <tr class="FigureRow">
+  <td class="FigurePanel" width="50%">
+   <img src="<%=filePath(figurePath, sprintf("assay-%s-raw-MvsA.png", assay, cc))%>" alt="Figure <%=figure%>" class="FigureImage">
+  </td>
+  <td class="FigurePanel" width="50%">
+   <img src="<%=filePath(figurePath, sprintf("assay-%s-normalizeAffine-MvsA.png", assay, cc))%>" alt="Figure <%=figure%>" class="FigureImage">
+  </td>
+ </tr>
+
+ <tr>
+  <td colspan="2" class="FigureCaption">Figure <%=figure%>: Log-ratios vs log-intensities for assay '<%=assay%>' before (left) and after (left) affine normalization.</td>
+ </tr>
+</table>
+</div>
+
+</div>
+<% } # for (assay ...) %>
+
+
+<%@include file="../../includes/rsp/simpleFooter.rsp"%>
+
+<div id="RspTogglerWidget">
+<strong>Toggler</strong>: <span class="WebcutsHide"><a href="#" onclick="toggler.toggleStitchy(); toggleStitchy();" id="stitchy.toggler">stitchy</a></span><br>
+Plots on/off: <%=getToggles(c("MvsA", "density"))%><br>
+Assays on/off: <%=getToggles(assays)%><br>
+Channels on/off: <%=getToggles(channels)%><br>
+</div>
+
+</body>
+</html>
