@@ -1,0 +1,23 @@
+BASE                      Plugin Dispatcher                          R Plugin
+ |                               |                                       |
+ | --       parameters & data -->|                                       |
+ |                               |                                       |
+ |                               | --        onParameters(parameters) -->|
+ |                               |<-- updated parameters              -- |
+ |                               |                                       |
+ |                               | --         onRun(data, parameters) -->|
+ |                               |<-- transformed data                -- |
+ |                               |                                       |
+ |                               | --                     onFinally() -->|
+ |                               |<-- <empty>                         -- |
+ |                               |                                       |
+ |<-- transformed data        -- |                                       |
+ |                               |                                       |
+
+
+\begin{center}
+\resizebox{\linewidth}{!}{
+ \begin{psmatrix}[colsep=0.2,rowsep=0.5]
+ \end{psmatrix}
+}
+\end{center}
