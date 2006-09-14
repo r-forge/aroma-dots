@@ -1,0 +1,175 @@
+J C writes:
+
+> Thinking of writting a plug_in for BASE, but
+> unfortunatly there isn't a whole lot written about
+> this in the mannual.  What I have gathered so far is
+> some of the plug_ins are using the 'jobs' directory to
+> read and write files from, but it is not quite clear
+> as to what should a plug_in expect as input and what
+> kind of information does BASE expect at the end of a
+> process.  Any information on the subject is greatly
+> appreciated.
+
+What a plugin needs to know is this: It's run in a directory where
+it's allowed to create files. Things written to stdout will end up
+in a file called stdout.txt (in the current directory). Errors and
+other information can be written to stderr. On stdin the plugin will
+get the data to be processed (from a file called stdin.txt), in the
+"BASEfile" format. When the plugin has terminated, jobController.php
+will scan the output directory (recursively) and add information
+about all files it finds to the database. If it finds what it
+believes to be valid BASEfiles, additional information about these
+will be stored, and if they contain a few predefined things
+(bioassays, reporter lists) jobController will try to add their
+contents to the database.
+
+
+The BASEfile format(s):
+
+A BASEfile consist of a number of sections separated by one or more
+empty lines.
+
+The first line of the file must be the string "BASEfile". Each section
+contains a set of headers and an optional set of data lines, which
+usually have tab-separated columns. Each header line consists of a
+name, optionally followed by a tab and a value (which may contain
+tabs). If a section has data, it's separated from the headers by a line
+containing only the character "%". All header lines (and the "BASEfile"
+line and the "%") may start with the character "#" which will not count
+as part of the header name. The reason for this behavior is that it
+makes it possible to feed BASEfiles directly into e.g. gnuplot.
+
+The only header required in all sections is called "section", and it
+must have a value. There's no requirement on the order of headers
+within a section, and it's currently assumed that there aren't two
+headers with the same name in a section.
+
+Settings to a plugin are sent as headers in the first section of
+the BASEfile that the plugin gets on stdin. These settings have
+names defined on the 'Edit plugin' page, and values as entered
+there or by the user (depending on the type).
+After that section, the contents of the file are the same that you
+get if you choose to export the BioAssaySet as a custom BASEfile,
+and check the same boxes as defined on the 'Edit plugin' page.
+
+The serial/normal format flag lets you choose whether the data should
+be exported for one bioassay at a time, or with the values for all
+bioassays on the same row, with one reporter or reporter/position pair
+per row.
+I think it's easier for you to play around with the custom BASEfile
+export than for me to explain all the aspects of it, but there are
+a few things that need to be said:
+
+
+BASEfile
+section	assays
+count	30
+columns	id	name	Metastases	opStatus	Resistance	Series
+annotationColumns	Metastases	opStatus	Resistance	Series
+%
+2016	test				3
+2017	Tester #2	yes	gbgbb4		24
+
+The section 'assays' defines a set of BioAssays, and contains some
+information about them. 'count' specifies the number of assays.
+'columns' gives information about the tab-separated columns to be
+found in the data part of the section. It's a tab-separated list
+of column names, some of which are pre-defined and should always
+be there (id & name). The 'annotationColumns' header says what
+columns are user-defined annotations, and this information will
+be useful to a plugin that does something to data based on those
+annotations (supervised clustering could be a example).
+
+Next follows the spots section(s), in this case from a non-serial
+'normal' BASEfile (serial files have multiple 'spots' sections,
+each with a single assay):
+
+section	spots
+columns	position	reporter	assayData
+assayFields	ratio	intensity2	position	quality
+setExtraFloats	quality
+assays	2016	2017	2018
+%
+2971	1001	0.561547	853	2971	1.2	0.909091	352	2971	0.7	1.1	320	2971	1.3
+
+The data in 'spots' sections is arranged in _columns_, and some of
+these are split into multiple _fields_. The column called 'assayData'
+always exists in a 'spots' section, and it expands to the assayFields
+for each of the assays. That is, the data in this example contains:
+position, molecule, ratio_of_assay_2016, intensity2_of_2016,
+position_of_2016, quiality_of_2016, ratio_of_2017, intensity2_of_2017, ...
+(I included the quite redundant position field in this example by
+mistake.) The optional setExtraFloats header is used to tell BASE
+about extra values that will be attached to every spot of the BioAssaySet.
+
+The names of available columns and fields are shown on the plugin
+definiton page and on the custom BASEfile export page. The list of
+available column/fields varies with the number of channels, averaging
+on reporters, and serial/normal format. The assay numbers in the
+'spots' section refer to the 'id' column in the 'assays' section.
+
+If you want to create a transformation plugin, have it output a BASEfile
+with 'spots' sections. It's possible to have multiple sections with one
+bioassay in each, or one section with multiple bioassays, or some
+combination of the two. If the file has an 'assays' section, the values in
+the 'assays' headers of the 'spots' section refer to the corresponding
+bioassays in the 'assays' section (via its 'id' column).
+The 'assays' section can be used to specify the names of the new assays
+(column 'name') and their parent bioassays (column 'parents', multiple
+parents are possible and should be separated by "/"). If there is no
+'assays' section, the parents of new assays are taken to be given
+directly by the 'assays' in the 'spots' section. The names of the new
+sections will be inherited from their parents, if they are not specified
+as described above.
+Each BASEfile output by a plugin will be used to generate exactly one
+BioAssaySet, if it contains at least one 'spots' section. The bioassayset
+itself can be named, if the file contains a section 'bioassaysetinfo'
+with a header 'name'.
+
+The plugin must pass through the columns 'reporter' and 'position', and
+output fields 'intensity1', 'intensity2' and so on up to the number of
+channels in the experiment. As of BASE 1.2.8, a plugin that operates on
+2-channel data may output the M value (log2(int1/int2)) and A value
+(log10(sqrt(int1*int2))) instead of the two intensities. The names of
+the fields must be l2ratio1_2 for M and l10intgmean1_2 for A. You may
+leave out A, in which case a value of 0 will be used for all spots.
+
+The setExtraFloats header is a tab-separated list of columns that are to
+be added as extra values for the spots. The union of all such columns in
+a file is what will be used, and these columns must exist in all 'spots'
+sections in the file. In the example above, the quality value for each
+spot will be saved in the database. The "set" in "setExtraFloat" refers
+to BioAssay*Set* - spots have these extra values on a per-BioAssaySet basis.
+There is a similar header called setExtraStrings, which lets plugins
+attach text strings to spots.
+
+Currectly, there is unfortunately no way to attach values to reporters
+or positions; we have somewhat optimistically postponed that feature until
+BASE 2, in which the position/reporter mess should be cleaned up once and
+for all. In the meantime you will have to make do with duplicating such
+values across all spots.
+
+To have a reporter list created by jobController.php, output a section
+'reporterlist' with columns 'reporterId' and 'score', where the reporterId
+is passed through from the input BASEfile and 'score' is a value to be
+associated with the reporter. If there is no such value, or you just want
+the rank of the reporter (the position in the reporterlist), leave out the
+'score' column altogether. You may also have a header 'name' with the
+name of the new reporter list.
+
+
+The plugin devkit and the BaseFileReader class:
+
+If you're a plugin developer you may want to download the BASE plugin
+devkit, which contains libbase and the template plugin, as well as the
+files needed to compile plugins on a machine where BASE is not installed.
+Both libbase and the template plugin are included in the main BASE
+distribution, so you may not need the devkit.
+libbase currently consists of two parts: Portable functions for determining
+whether a floating point number is Inf or NaN (since finite() etc. aren't
+supported on all platforms), and more importantly a C++ class called
+BaseFileReader. This class does what its name implies: it provides an
+interface for reading files in the BASEfile format. There is some
+documentation for the class in basefile.h (installed in include/cxx from
+src/include), and plenty of examples on how to use it in the source for
+the plugins that ship with BASE.

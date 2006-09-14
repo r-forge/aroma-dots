@@ -1,0 +1,400 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title : A generic R plugin dispatcher for BASE
+% Author: Henrik Bengtsson, hb@maths.lth.se
+% Date  : September 2005
+% Format: A0 poster and A4 handouts
+%
+% Requirements:
+% -------------
+% Note that Sciposter [1] does not come with MikTeX.  Moreover, it depends 
+% on the following packages: a0size, boxedminipage, color, graphics, 
+% ifthen, shadow, times.
+%
+% Generate the report:
+% --------------------
+%
+% 1) Compiling LaTeX to DVI:
+%
+%    foo=BengtssonH_2005-PosterOnAromaBase
+%    latex $foo.tex; latex $foo.tex
+%
+%  A0 Postscript:
+%    dvips $foo.dvi
+%    dvips -ta0 $foo.dvi
+%
+%  A4 Postscript:
+%    psnup -W840mm -H1188mm -pa4 $foo.ps $foo.A4.ps
+%
+%  A0 PDF and Acrobat Reader:
+%    ps2pdf -sPAPERSIZE=a0 $foo.ps
+%
+% Clean up the mess:
+% ------------------
+% rm $foo.aux $foo.bbl $foo.blg $foo.log $foo.out $foo.dvi $foo.fff
+%
+% Troubleshooting:
+% ----------------
+% You may need to add the following to texmf/dvips/config/config.ps:
+%
+%  @ a0 841mm 1189mm 
+%  @+ ! %%DocumentPaperSizes: a0 
+%  @+ %%BeginPaperSize: a0 
+%  @+ a0 
+%  @+ %%EndPaperSize 
+%
+% Requirements:
+% -------------
+% [1] Michael Wilkinson, Sciposter, 2004.
+%     http://www.ctan.org/tex-archive/macros/latex/contrib/sciposter/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[portrait,plainsections]{sciposter}
+
+%%% Document Class Options %%%%
+%portrait        % The default, orients paper in portrait mode
+%landscape       % Orients paper in landscape mode
+%boxedsections   % The default, makes section titles appear in boxes
+%ruledsections   % Makes section titles appear underlined
+%plain sections  % Makes section titles appear plain 
+
+
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{fancybox}  % \shadowbox
+\usepackage{url}       % \url
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% PDF specific hyper markups
+% 
+% Comment: It does not look like one can turn off colored links. The
+% only way is to set all colors to black. 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\usepackage{hyperref} % \hypersetup
+\hypersetup{colorlinks=true, linkcolor=blue, anchorcolor=blue, citecolor=blue, filecolor=blue, menucolor=blue, pagecolor=blue, urlcolor=black}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Graphics
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% The search path (within curly brackets and separated by commas)
+% where to find graphics files
+\graphicspath{{figures/}}
+\DeclareGraphicsRule{}{eps}{.eps.bb}{`gunzip -c #1}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% PSTricks
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\usepackage{pst-all}
+\newpsobject{showgrid}{psgrid}{subgriddiv=1,griddots=10,gridlabels=6pt}
+\catcode`\@=11%
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Colors
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\definecolor{BoxCol}{rgb}{0.9,0.9,1}
+\DefineNamedColor{named}{BoxCol}{rgb}{0.9,0.9,1}
+\definecolor{SectionCol}{cmyk}{1,0.6,0,0.1}
+\definecolor{lublue}{cmyk}{1,0.6,0,0.1}
+\definecolor{lusigill}{cmyk}{0,0.4,1,0.3}
+\definecolor{lubluelight}{cmyk}{0.5,0.3,0,0.05}
+\definecolor{lubrown}{cmyk}{0,0.4,1,0.3}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Layout
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\setlength{\columnseprule}{0pt}
+
+\newcommand{\posterbox}[1]{
+ \shadowbox{%
+  \colorbox{BoxCol}{%
+   \begin{minipage}{\columnwidth}%
+    \hspace{0.05\columnwidth}%
+    \begin{minipage}{0.9\columnwidth}%
+     \vspace{0.8\baselineskip}%
+     #1%
+     \vspace{0.8\baselineskip}%
+    \end{minipage}%
+   \end{minipage}%
+  }%
+ }%
+}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% Document properties
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\newcommand{\docTitle}{A generic R plugin dispatcher for BASE}
+\newcommand{\docAuthors}{Henrik Bengtsson}
+\newcommand{\docAuthorsEmail}{hb@maths.lth.se}
+\newcommand{\docAddressI}{Mathematical Statistics, Centre for Mathematical Sciences,}
+\newcommand{\docAddressII}{Lund University, Sweden}
+\newcommand{\docConference}{MGED 8, 11-13 September 2005, Bergen, Norway}
+\newcommand{\docDate}{}
+\newcommand{\docKeywords}{microarray scanner; bias; dark noise; offset; zero level; affine model; calibration; normalization; dynamic range; photomultiplier tube; digital-to-analogue converter; image analysis; intensity dependent effects; background subtraction}
+\newcommand{\docSubject}{Statistical microarray analysis}
+
+% Set title, author etc. in LaTeX
+\title{\docTitle}
+\author{\docAuthors}
+\institute{\docAddressI\\\docAddressII}
+\email{\docAuthorsEmail}
+\conference{\docConference}
+
+% Set title, author etc. in PDF metadata
+\hypersetup{%
+  pdftitle={\docTitle},
+  pdfauthor={\docAuthors},
+  pdfsubject={\docSubject},
+  pdfkeywords={\docKeywords}
+}%
+
+
+\renewcommand{\titlesize}{\Huge}
+
+%%%%%%%%%% Image Reference For Logos Near Title %%%%%%%%%%
+\leftlogo[0.8]{BengtssonH_2004-PhotoPassport}
+\rightlogo[0.8]{logocLUeng}
+% The following commands can be used to alter the default logo settings
+%\leftlogo[ScaleFactor]{leftlogofilename}  % defines logo to left of title (with numeric scale factor)
+%\rightlogo[ScaleFactor]{rightlogofilename}  % same but on right
+% As with all images, these require presence of files leftlogofilename.eps and  
+% rightlogofilename.eps, or other supported format in the current directory  
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Macros etc
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\newtheorem{Def}{Definition}
+\newlength{\dblcolwidth}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\maketitle
+
+\begin{multicols}{3}                                        % Multiple columns
+
+\setlength{\dblcolwidth}{2\columnwidth}
+\addtolength{\dblcolwidth}{\columnsep}
+
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section*{{\color{lublue}{Abstract}}}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\PARstart{T}{he} BioArray Software Environment (BASE)~\cite{SaalL_etal_2002} is a free  web-based database system for microarray experiements.  It stores and analyses large amounts of data covering everything from array design to statistical analysis.  In addition to built-in methods, BASE utilizes third-party plugin modules to analyze data.  To date, plugins have been written mainly in Perl, C/C++ and Java, but few supportive methods are available to do this in a generic manner.\\
+
+We have developed a plugin dispatcher that ease the effort to develop BASE plugins in R and which provides immediate access to the large CRAN and Bioconductor reprocitories for statistical analysis.  The plugin dispatcher encapsulates common tasks such as parsing BASE file structures passed to the plugin from BASE, loads plugin specific R code, provides rich log methods, calls the plugin specific code with automatic exception handling, and returns data back to BASE.  In addition, reports can easily be generated from R Server Page (RSP) templates.  The actual plugin is defined by a single method that takes the pre-processed assay data, which is accessible via a well-defined application protocol interface (API), as the first argument, and the plugin parameters as the following arguments.  Data returned by the method is interpreted and returned to BASE in correct format by the plugin dispatcher.\\
+
+The platform-independent plugin dispatcher is implemented in the R package aroma.Base available via \url{http://www.maths.lth.se/bioinformatics/}.
+%}
+\end{minipage}
+%}
+\columnbreak
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Schematic overview
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\begin{minipage}{\dblcolwidth}
+~\\[1em]
+ \resizebox{\dblcolwidth}{!}{{\includegraphics[bb=78 545 410 721,clip]{overview}}}
+~\\[0.5ex]
+\emph{Figure~1. Figure illustrating how the plugin dispatcher retrieves plugin parameters and assay data from BASE, wraps them up in standard R objects and passes them on to the R plugin, which is a single method named onRun().  Data returned by onRun() is formatted and send back to BASE together with log files and reports generated from RSP templates.}
+\end{minipage}
+\end{multicols}                                          % Multiple columns
+
+
+
+
+\begin{multicols}{3}                                     % Multiple columns
+~\\[-1ex]
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Introduction}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+In order to correctly analyze microarray data, high-quality and well-tested
+statistical tools that implement peer-reviewed methods must be used.
+The majority of these tools are published on the CRAN and the Bioconductor
+package reprocitories.  Since these packages are written in R, and current
+plugins for BASE have mainly been developed in Perl and C/C++, the recent
+ progress in statistical microarray analysis is de facto \emph{not} 
+available in BASE.\\
+
+By developing an R \emph{plugin dipatcher} for BASE, which can run
+virtually any R code and R packages, we hope that the rich set of 
+statistical methods published soon will be available also in BASE.
+Plugins for aroma~\cite{BengtssonH_2004} are available.
+\end{minipage}
+
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Objectives}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Our objectives has been:\\[-1ex]
+\begin{itemize}
+ \item Use R for statistical microarray analysis in BASE.
+ \item Easy access to Bioconductor and CRAN in BASE.
+ \item Generate reports in HTML and other formats.
+ \item Standardize how BASE plugins are written in R.
+ \item Encapsulate data transfer to and from BASE.
+ \item Preserve memory.
+ \item Simplify exception handling and event logging.
+ \item Simple installation and platform independent.
+ \item Open source.
+\end{itemize}
+\end{minipage}
+
+
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Overview}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+The plugin dispatcher operates inbetween BASE and the R plugin code.
+It supports the R plugin by parsing and loading data file structures 
+send from BASE, evaluates its code, catches exceptions, generates reports 
+and returns updated data to BASE in a valid format.
+See also Figure~1.\\
+
+With this, an R plugin for BASE becomes a single method named onRun() 
+defined in, say, \texttt{onRun.R} put in the plugin directory (see Section~\ref{secHow}). 
+This method has full access to all of R and does \emph{not} have to 
+communicate with BASE directly.  This is taken care of by the dispatcher.
+\end{minipage}
+
+
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Event logging}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Events occuring during startup, running, failure, report generation, and completion are logged in full detail together with system and timing information, and available for troubleshooting.  A progress bar is ready for reporting progress to the BASE user interface.
+\end{minipage}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Smart comments}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Comments is used to improve readability of the plugin's source code.  Why not write these comments to log too?  LComments, a subclass of SmartComments, have format ``\#L*\# $<$comment$>$'' where ``*'' is a single character that controls how the comment is written to log, cf. Figure~2.\\
+
+\begin{minipage}{\columnwidth}
+\vspace{1ex}
+\shadowbox{
+\begin{minipage}{0.41\columnwidth}\tiny
+\begin{verbatim}
+for (array in arrays) {
+  #L+# Calibrating array ${array}
+  ...
+  #Lc# Number of scans: ${nbrOfScans}
+  ...
+  #L-#
+}
+\end{verbatim}
+\vspace{-1.5em} \hfill plugin code (before)
+\end{minipage}}
+\raisebox{2em}{$\Rightarrow$}
+\shadowbox{\begin{minipage}{0.49\columnwidth}\tiny
+\begin{verbatim}
+for (array in arrays) {
+  enter(log, "Calibrating array ${array}")
+  ...
+  cat(log, "Number of scans: ${nbrOfScans}")
+  ...
+  exit(log)
+}
+\end{verbatim}
+\vspace{-1.5em} \hfill internal code (after)
+\end{minipage}}
+~\\[0.1ex]
+\emph{Figure~2. Preprocessing of SmartComments.  \emph{Left}: The plugin developer includes LComments in the code to increase readability and automize logging.  \emph{Right}: The plugin code is preprocessed by the plugin dispatcher so that LComments are expanded to log statements.}
+~\\[1ex]
+
+
+The amount of details logged is controlled by a threshold.  Automatic indentation (``begin-end statements''), various output formats, headers and rulers are available.  Log statements are processed as GStrings, e.g. \texttt{\$\{array\}} expands to the value of \texttt{array}.
+SmartComments has zero overhead if not preprocessed.
+\end{minipage}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Report generator}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Reports in HTML and other formats can be generated from R Server Page (RSP) templates.  An example is shown in Figure~3.  An RSP is similar to a Java Server Page (JSP), and can contain R code snippets to control output.  RSPs are processed by compilers in the R.rsp package.  See also example in Figure~1.\\
+\begin{minipage}{\columnwidth}
+~\\[0.6ex]
+\begin{center}
+ \shadowbox{
+  \resizebox{0.7\columnwidth}{!}{\includegraphics{report1}}
+ }
+\end{center}
+~\\[0.1ex]
+\emph{Figure~3. An example of an HTML report on multiscan calibration~\cite{BengtssonH_etal_2004,BengtssonHossjer_2003}. The result table and the graphs are generated dynamically.  Virtually any output format is supported.}
+\end{minipage}
+
+
+
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Exception handling}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+When an error occurs that is not taken care of by the plugin, the dispatcher catches it, reports it to the log, calls optional plugin method onError(), and returns control to BASE.  Warnings are written to both the log and the plugin message output.
+\end{minipage}
+
+
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Memory optimization}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+When the plugin dispatcher reads data from BASE, it seperates the signals from each assay into a separate object, cf. Figure~1.  The data for each assay is cached to file, and only read into memory when needed.  This procedure is fully taken care of by the object-oriented API built upon the R.oo package~\cite{BengtssonH_2003}.  Thus, there is no limit in the number of arrays plugins for methods such as curve-fit normalization can handle.
+\end{minipage}
+
+
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{How}
+\label{secHow}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\begin{enumerate}
+ \item Create plugin directory, e.g.\\ \url{$user/plugins/calibrateMultiscan/}.
+ \item Copy *.R files to this directory.  One file should define \texttt{onRun(assays, arg1, ...)} where \texttt{assays} is a BaseFile object and \texttt{arg1} etc. are plugin parameters.
+ \item Copy or link shell script \texttt{basePluginDispatcher} into the same directory.  Set executable rights for everyone.
+ \item In BASE, setup a new plugin.  Set executable to 
+       calibrateMultiscan/basePluginDispatcher.  
+       Use \emph{serial} file format.
+ \item Put any RSP report templates in \url{$user/plugins/calibrateMultiscan/rsp/}.
+ \item Test it.
+\end{enumerate}
+
+{\small ~ *) Required R packages, including aroma.Base \& co, can be installed locally in \$user/plugins/library/ without admin rights.}
+\end{minipage}
+
+
+\begin{minipage}{\columnwidth}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\section{Requirements}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\begin{itemize}
+ \item BASE v1.2 or newer*
+ \item R v2.0 or newer
+ \item R packages aroma.Base, R.rsp, R.utils \& R.oo.
+\end{itemize}
+{\small ~ *) Plugins and the dispatcher can run \& tested without BASE.}
+\end{minipage}
+ 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% References
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\small
+\bibliographystyle{plain}
+\bibliography{bioinformatics-journals-abbr,hb-at-maths.lth.se}
+
+\end{multicols}                                          % Multiple columns
+\end{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HISTORY:
+% 2005-09-09
+% o Done. To be presented at MGED 8, Sep 10-13, 2005, Bergen, Norway.
+% 2005-09-04
+% o First draft.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

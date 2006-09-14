@@ -1,0 +1,207 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{pst-all}
+\usepackage{times}
+
+\renewcommand{\familydefault}{\sfdefault} 
+
+%%BoundingBox: 75 555 412 718
+
+% Colors
+%\definecolor{lublue}{cmyk}{1,0.6,0,0.1}
+\definecolor{lubluelight}{cmyk}{0.5,0.3,0,0.05}
+\definecolor{lubrown}{cmyk}{0,0.4,1,0.3}
+
+% PSTricks command
+\newpsobject{showgrid}{psgrid}{subgriddiv=1,griddots=10,gridlabels=6pt}
+
+\catcode`\@=11%
+
+\pagestyle{empty}
+
+\begin{document}
+\TeXtoEPS 
+
+\resizebox{\textwidth}{!}{
+\begin{pspicture}(-2.5,-8)(28,7)
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% BASE plate
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Background
+\psframe[linewidth=0pt,framearc=0.25,fillstyle=gradient,gradangle=60,gradbegin=white,gradend=lubluelight](-2.0,-8.5)(8.5,7.0)
+
+% Plate label
+\rput[c](3.5,-7.50){\pscharpath[fillstyle=solid,linecolor=black,fillcolor=white,linewidth=0.6pt]{\fontsize{3.5em}{3.5em}\selectfont \textbf{BASE}} 
+}
+
+\psset{linewidth=0.6mm}
+
+\psset{fillstyle=solid,fillcolor=white,framearc=0.5}
+\rput[c](1.5,1.0){\psframebox{\parbox{7em}{
+  \centering assays
+  \texttt{\footnotesize
+  \begin{enumerate}
+   \setlength{\itemsep}{-0.5ex}
+   \item emb-t1
+   \item emb-t2
+   \item emb-r1
+   \item emb-r2
+  \end{enumerate}
+  }
+}}}
+
+\rput[c](1.5,3.5){\psframebox{\parbox{17em}{
+  \centering parameters
+  \texttt{\footnotesize
+  \begin{enumerate}
+   \setlength{\itemsep}{-0.5ex}
+   \item method="L1"
+   \item assayNamePattern="\^{}(.+)\_(.+)\$"
+   \item groupBy="$\backslash\backslash$1"
+   \item reports=c("html", "none")
+  \end{enumerate}
+  }
+}}}
+
+\rput[c](3.0,-3.5){\psshadowbox[shadowsize=2pt,framearc=0,fillstyle=solid,fillcolor=white,linewidth=0.3pt,linecolor=black]{\resizebox{7em}{!}{\includegraphics{report1-thumb}}}}
+\rput[ct](3.0,-5.7){\footnotesize HTML page}
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Plugin Dispatcher plate
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Background
+\psframe[linewidth=0pt,framearc=0.25,fillstyle=gradient,gradangle=60,gradbegin=white,gradend=lubluelight](8.75,-8.5)(17.5,7.0) 
+
+% Plate label
+\rput[c](13.25,-7.25){\pscharpath[fillstyle=solid,linecolor=black,fillcolor=white,linewidth=0.6pt]{\fontsize{3.5em}{3.5em}\selectfont \parbox{5.5em}{\textbf{Plugin\\Dispatcher}}} 
+}
+
+
+\psset{linearc=0.05}
+\rput(5.5,3.00){
+  \psline(1,2)(5,2)(5,2.5)(6,1)(5,-0.5)(5,0)(1,0)
+  \rput[l](1.5,1){\parbox{12em}{parameters + assays\\in BASE file format}}
+  \rput[r](0.75,1){\parbox{3em}{join \& format}}
+  \rput[l](6.25,1){\parbox{4em}{parse, separate \& split}}
+}
+
+\psset{linearc=0.05}
+\rput(5.0,-0.75){
+  \psline(6,2)(2,2)(2,2.5)(1,1)(2,-0.5)(2,0)(6,0)
+  \rput[l](2.5,1){\parbox{12em}{updated/new assays\\in BASE file format}}
+  \rput[l](6.25,1){\parbox{3em}{join \& format}}
+}
+
+\psset{linestyle=solid}
+\rput(5.0,-4.5){
+  \psline(6,2)(2,2)(2,2.5)(1,1)(2,-0.5)(2,0)(6,0)
+  \rput[l](2.5,1){\parbox{12em}{reports \& figures,\\log file etc.}}
+}
+
+
+\psset{linestyle=solid}
+
+\rput(14.5,3.5){
+ \multirput(0,0)(-0.1,-0.1){4}{\psframebox{\parbox{5.5em}{
+  \centering parameter\\
+  \texttt{\footnotesize method="L1"}
+ }}}
+ \rput(-0.2,-1){\footnotesize regular R parameters}
+}
+
+\rput(14.5,1.5){
+ \multirput(0,0)(-0.1,-0.1){4}{\psframebox{\parbox{5.5em}{
+  \centering assay\\
+  \texttt{\footnotesize emb-t1}
+ }}}
+ \rput(-0.2,-1){\footnotesize BaseFile objects}
+}
+
+
+\rput(14.5,-2.0){
+ \psframebox[linestyle=solid]{~ ~\parbox{8em}{Logging to file:\\\footnotesize$\bullet$ system details\\$\bullet$ events\\$\bullet$ errors \& warnings\\$\bullet$ SmartComments}}
+}
+
+\rput(14.5,-4.75){
+ \multirput(0,0)(-0.1,-0.1){4}{\psframebox{\parbox{5em}{
+  \centering reports \& figures\\
+ }}}
+}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Plugin plate
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Background
+\psframe[linewidth=0pt,framearc=0.25,fillstyle=gradient,gradangle=60,gradbegin=white,gradend=lubluelight](17.75,-8.5)(27.5,7.0) 
+
+% Plate label
+\rput[c](22.5,-7.50){\pscharpath[fillstyle=solid,linecolor=black,fillcolor=white,linewidth=0.6pt]{\fontsize{3.5em}{3.5em}\selectfont \textbf{R Plugin}}
+}
+
+
+\psset{linestyle=solid}
+\psset{framearc=0,shadowsize=2pt}
+\rput[lt](19.5,5.5){
+\rput[lb](0,0){\psframebox[linewidth=0.3pt]{\footnotesize onParameters.R (optional)}}
+\rput[lt](0,0){\psshadowbox[linewidth=0.3pt]{\parbox{21em}{\setlength{\baselineskip}{-0.5ex}\texttt{\footnotesize
+onParameters(assays, method="L1",\\
+{\color{white}.}assayNamePattern="\^{}(.+)\_(.+)\$",\\
+{\color{white}.}groupBy="$\backslash\backslash$1", reports=c("html", "none")) \{ \\[1em]
+{\color{white}.}[ validate \& preprocess plugin parameters\\
+{\color{white}...}before assay data is loaded ]\\[0.5em]
+\}
+}}}}
+}
+
+\rput[lt](19.5,1.0){
+\rput[lb](0,0){\psframebox[linewidth=0.3pt]{\footnotesize onRun.R (mandatory)}}
+\rput[lt](0,0){\psshadowbox[linewidth=0.3pt]{\parbox{16em}{\setlength{\baselineskip}{-0.5ex}\texttt{\footnotesize
+onRun(assays, method="L1",\\
+{\color{white}.}assayNamePattern="\^{}(.+)\_(.+)\$",\\
+{\color{white}.}groupBy="$\backslash\backslash$1", reports="html") \{ \\[1em]
+{\color{white}.}[ plugin code ]\\[0.5em]
+\}
+}}}}
+}
+
+
+
+\psset{linestyle=solid}
+\psset{framearc=0,shadowsize=2pt}
+\rput[lt](19.5,-3.0){
+\rput[lb](0,0){\psframebox[linewidth=0.3pt]{\footnotesize *.rsp (optional)}}
+\rput[lt](0,0){\psshadowbox[linewidth=0.3pt]{\parbox{15em}{\setlength{\baselineskip}{-0.5ex}\texttt{\footnotesize
+<h1>Multiscan report</h1>\\
+<\% for (assay in assays) \{ \%>\\
+<h2>Assay <\%=assay\%></h2>\\[0.5em]
+{\color{white}.}...\\[0.5em]
+<\% \} \%>\\
+}}}}
+}
+
+\psset{linearc=0.05,linestyle=dashed}
+\rput(16.0,3.75){\pcline{->}(0,0)(3.25,1.0)\aput{:U}(0.5){\parbox{9em}{\footnotesize Call onParameters(),\\if it exists}}}
+\rput(16.0,3.25){\pcline{<-}(0,0)(3.25,1.0)\bput{:U}(0.5){\footnotesize Updated parameters}}
+
+
+\psset{linearc=0.05,linestyle=solid}
+\rput(16.0,1.5){\pcline{->}(0,0)(3.25,-1.25)\aput{:U}(0.5){\footnotesize Call onRun()}}
+\rput(16.0,1.0){\pcline{<-}(0,0)(3.25,-1.25)\bput{:U}(0.5){\footnotesize Updated/new assays}}
+
+
+
+\psset{linearc=0.05,linestyle=dashed}
+\rput(16.0,-4.5){\pcline{->}(0,0)(3.25,1.0)\aput{:U}(0.5){\parbox{8em}{\footnotesize Compile report templates, if they exists}}}
+\rput(16.0,-5.0){\pcline{<-}(0,0)(3.25,1.0)\bput{:U}(0.5){\footnotesize Generated reports}}
+
+
+\end{pspicture}
+
+
+
+}
+
+\endTeXtoEPS
+\end{document}
+
