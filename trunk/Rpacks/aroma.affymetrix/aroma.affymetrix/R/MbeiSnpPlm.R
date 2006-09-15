@@ -5,9 +5,6 @@
 #
 # \description{
 #  @classhierarchy
-#
-#  This class represents the log-additive model used in RMA.
-#  It can be used to fit the model on a @see "AffymetrixCelSet".
 # }
 # 
 # @synopsis
@@ -24,14 +21,6 @@
 # }
 #
 # @author
-#
-# \section{Model estimates}{
-#   The estimated probe affinities are represented by the
-#   @see "MbeiProbeAffinityFile" class.  
-# }
-#
-# \references{
-# }
 #*/###########################################################################
 setConstructorS3("MbeiSnpPlm", function(..., name="modelMbeiSnpPlm", mergeStrands=FALSE) {
   extend(MbeiPlm(..., name=name), c("MbeiSnpPlm", uses(SnpPlm())),

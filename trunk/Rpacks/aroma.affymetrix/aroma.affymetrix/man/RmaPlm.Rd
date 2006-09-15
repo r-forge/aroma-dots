@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\emph{\code{RmaPlm}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{RmaSnpPlm}}, \link[aroma.affymetrix]{TotalCnRmaPlm}\cr
+\emph{\link[aroma.affymetrix]{RmaCnPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}\cr
 
 public abstract static class \bold{RmaPlm}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
@@ -34,25 +34,24 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 
   This class represents the log-additive model used in RMA.
-  It can be used to fit the model on a \code{\link{AffymetrixCelSet}}.
  }
 
- \usage{RmaPlm(..., name="modelRma")}
+ \usage{RmaPlm(..., name="modelRmaPlm")}
 
  \arguments{
-   \item{dataSet}{An \code{\link{AffymetrixCelSet}} object.}
-   \item{path}{The \code{\link[base]{character}} string specifying the path to the directory
-      to contain the parameter-estimate files.}
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
+   \item{name}{The name of the model, which is also used in the pathname.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\emph{No methods defined}.
+\tabular{rll}{
+ \tab \code{getProbeAffinities} \tab  -\cr
+}
 
 
 \bold{Methods inherited from ProbeLevelModel}:\cr
-fit, getChipEffectClass, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass, highlight, plotMvsPosition
+findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
 as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
@@ -64,29 +63,19 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \section{Model}{
-   Consider a specific unit group.  The log-additive model in RMA is:
+   For a single unit group, the log-additive model of RMA is:
 
-    \deqn{log_2(y_{ij})} = \beta_i + \alpha_j + \eps_{ij}
+    \deqn{log_2(y_{ij}) = \beta_i + \alpha_j + \varepsilon_{ij}}
 
    where \eqn{\beta_i} are the chip effects for arrays \eqn{i=1,...,I},
    and \eqn{\alpha_j} are the probe affinities for probes \eqn{j=1,...,J}.
-   The \eqn{\eps_{ij}} are zero-mean noise with equal variance.
+   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
+   The model is constrained such that \eqn{\sum_j{\alpha_j} = 0}.
 
-   To minimize the risk for mistakes, all probe-affinity models return
-   parameter estimates on the intensity scale.  That is, this class
-   returns \eqn{\theta_i = 2^\beta_i} and \eqn{\phi_i = 2^\alpha_i},
-   cf. the multiplicative model of Li & Wong.
-
-   Use \code{\link[aroma.affymetrix:getProbeAffinities.RmaPlm]{*getProbeAffinities}()} to get the probe-affinity estimates.
+   Note that all PLM classes must return parameters on the intensity scale.
+   For this class that means that \eqn{\theta_i = 2^\beta_i} and
+   \eqn{\phi_i = 2^\alpha_i} are returned.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \section{Model estimates}{
-   The estimated probe affinities are represented by the
-   \code{\link{RmaProbeAffinityFile}} class.
- }
-
- \references{
- }
 \keyword{classes}

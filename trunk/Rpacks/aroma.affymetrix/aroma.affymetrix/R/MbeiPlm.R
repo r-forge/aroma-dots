@@ -6,8 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  This class represents the Li \& Wong (2001) model,
-#  see @see "MbeiPlm".
+#  This class represents the Li \& Wong (2001) model.
 # }
 # 
 # @synopsis
@@ -19,6 +18,19 @@
 #
 # \section{Fields and Methods}{
 #  @allmethods "public"
+# }
+#
+# \section{Model}{
+#   For a single unit group, the multiplicative model of dChip is:
+#
+#    \deqn{y_{ij} = \theta_i \phi_j + \varepsilon_{ij}}
+#
+#   where \eqn{\theta_i} are the chip effects for arrays \eqn{i=1,...,I}, 
+#   and \eqn{\phi_j} are the probe affinities for probes \eqn{j=1,...,J}.
+#   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
+#
+#   In addition, we modify th constraint such that it is guaranteed that
+#   \eqn{\prod_j \phi_j = 1}.
 # }
 #
 # @author

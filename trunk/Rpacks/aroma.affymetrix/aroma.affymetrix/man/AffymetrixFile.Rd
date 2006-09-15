@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{GdasAnnotationFile}, \link[aroma.affymetrix]{MbeiProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \link[aroma.affymetrix]{ParameterFile}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{GdasAnnotationFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ParameterFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixFile}\cr
 extends \link[R.oo]{Object}\cr

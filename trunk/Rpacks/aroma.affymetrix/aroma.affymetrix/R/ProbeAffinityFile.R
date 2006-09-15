@@ -13,6 +13,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ParameterCelFile".}
+#   \item{model}{The specific type of model, e.g. \code{"pm"}.}
 # }
 #
 # \section{Fields and Methods}{

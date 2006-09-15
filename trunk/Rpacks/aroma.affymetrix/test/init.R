@@ -10,7 +10,9 @@ library(R.oo)
 library(R.utils)
 library(R.graphics)
 library(R.cache)
+library(aroma.apd)
 library(affxparser)
+library(digest)
 
 #library(aroma.apd)
 #library(aroma.affymetrix)
@@ -18,6 +20,8 @@ library(affxparser)
 verbose <- Arguments$getVerbose(TRUE);
 
 verbose && enter(verbose, "Sourcing all *.R files");
+
+source("../../R.utils/R.utils/R/Verbose.R");
 
 #source("../../affxparser/affxparser/R/convertCdf.R");
 #source("../../affxparser/affxparser/R/writeCdf.R");

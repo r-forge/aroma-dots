@@ -31,7 +31,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
 
-  An AffymetrixCdfFile object represents a generic Affymetrix CDF file.
+  An AffymetrixCdfFile object represents a generic Affymetrix
  }
 
  \usage{AffymetrixCdfFile(...)}
@@ -44,6 +44,10 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{as.character} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:compare.AffymetrixCdfFile]{compare}} \tab Checks if two AffymetrixCdfFile objects are equal.\cr
+ \tab \code{\link[aroma.affymetrix:convert.AffymetrixCdfFile]{convert}} \tab Converts a CDF into the same CDF but with another format.\cr
+ \tab \code{createMonoCell} \tab  -\cr
+ \tab \code{equals} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromChipType.AffymetrixCdfFile]{fromChipType}} \tab Defines an AffymetrixCdfFile object by chip type.\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCdfFile]{fromFile}} \tab Defines an AffymetrixCdfFile object from a CDF file.\cr
  \tab \code{\link[aroma.affymetrix:getCellIndices.AffymetrixCdfFile]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr

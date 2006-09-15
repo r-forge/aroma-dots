@@ -9,10 +9,14 @@
 # }
 #
 # \section{Requirements}{
-#   This package requires the \pkg{aroma.apd} package and 
-#   the \pkg{affxparser} package (Bioconductor).
-#   In turn, these package require packages \pkg{R.oo} [1], 
-#   \pkg{R.utils}, and \pkg{R.huge}.
+#   This package requires quite a few package.  Some like
+#   \pkg{R.oo} [1] and \pkg{R.utils} are on CRAN, others like
+#   \pkg{affxparser} and \pkg{aroma.light} are on Bioconductor,
+#   whereas some like \pkg{R.huge} are only on 
+#   \url{http://www.braju.com/R/}.  The reason that this package
+#   is not at Bioconductor is that it depends on packages that
+#   are in a developmental stage and are therefore not accepted
+#   as is on CRAN or Bioconductor.
 # }
 #
 # \section{Installation and updates}{
@@ -24,10 +28,10 @@
 # \section{To get started}{
 #   To get started, see:
 #   \enumerate{
-#     \item @see "AffymetrixDataset" - Defines a set of Affymetrix 
-#       data files.
-#     \item @see "AffymetrixDataFile" - Defines an Affymetrix data 
-#       file, e.g. CEL or APD.
+#     \item @see "SnpPlm" - 
+#       Contains an example how to fit different allele-specific 
+#       probe-level models (PLMs) to the same data set, and how
+#       to display the estimated (thetaB,thetaA) "chip effects".
 #   }
 # }
 # 
@@ -35,8 +39,8 @@
 #   There is a performance price which we have to pay for not keeping 
 #   data in memory but on file.  However, the performance is still
 #   quite good, because the underlying read methods provided by
-#   the \pkg{affxparser} and the \pkg{aroma.apd} packages have been 
-#   optimized for speed.
+#   the \pkg{affxparser} package that is constantly being optimized
+#   for I/O speed.
 #
 #   Note that it is much faster to access files from a local drive than
 #   over a local network.  Thus, you might want to consider to copy

@@ -1,4 +1,5 @@
-				
+###########################################################################/**
+# @RdocClass AffymetrixCdfFile
 #
 # @title "The AffymetrixCdfFile class"
 #
@@ -15,7 +16,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods "public"
+#  @allmethods "public"  
 # }
 # 
 # @author
@@ -525,7 +526,10 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
   # Argument 'indices':
   if (is.numeric(indices)) {
     getFraction <- (length(indices) == 1 && indices > 0 && indices < 1);
-    if (!getFraction) {
+    if (getFraction) {
+      by <- 1/indices;
+print(by);
+    } else {
       indices <- Arguments$getIntegers(indices, range=c(1, nbrOfCells));
     }
   } else {
@@ -575,7 +579,7 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
   } else {
     if (getFraction) {
       # Get the fraction from the already filtered cell indices
-      indices <- other[seq(from=1, to=length(other), by=1/indices)];
+      indices <- other[seq(from=1, to=length(other), by=by)];
     } else {
       indices <- intersect(indices, other);
     }
@@ -651,7 +655,7 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
 # }
 #
 # \value{
-#  Returns @TRUE if the two objects are equal, otherwise @FALSE.}
+#  Returns @TRUE if the two objects are equal, otherwise @FALSE.
 # }
 #
 # @author
@@ -1001,6 +1005,8 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
 ############################################################################
 # HISTORY:
+# 2006-09-14
+# o BUG FIX: Fractional value of 'indices' of identifyCells().
 # 2006-09-10
 # o BUG FIX: createMonoCell() where resetting the cell indices for each
 #   chunk.

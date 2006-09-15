@@ -12,6 +12,10 @@
 # 
 # @synopsis
 #
+# \arguments{
+#   \item{...}{Arguments passed to @see "SnpPlm".}
+# }
+#
 # \section{Methods}{
 #  @allmethods "public"
 # }

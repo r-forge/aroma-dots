@@ -54,7 +54,10 @@ setMethodS3("as.character", "Interface", function(this, ...) {
 })
 
 
-setMethodS3("print", "Interface", function(this, ...) {
+setMethodS3("print", "Interface", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   print(as.character(this), ...);
 })
 

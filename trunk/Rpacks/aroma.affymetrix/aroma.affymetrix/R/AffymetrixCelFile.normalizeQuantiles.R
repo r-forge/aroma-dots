@@ -14,9 +14,11 @@
 #   \item{outPath}{The path where to save the normalized data files.}
 #   \item{xTarget}{A @numeric @vector.  The empirical distribution
 #     to which all arrays should be normalized to.}
-#   \item{subsetToUpdate}{The probes to be updated.
-#     If @NULL, all probes are updated.}
-#   \item{typesToUpdate}{Types of probes to be updated.}
+#   \item{subsetToUpdate}{The indices of the probes to be updated.
+#     If @NULL, all are updated.}
+#   \item{typesToUpdate}{Types of probes to be updated.  For more details,
+#     see argument \code{types} of \code{identifyCells()} for the
+#     @see "AffymetrixCdfFile" class.}
 #   \item{...}{Additional arguments passed to \code{normalizeQuantile()}.}
 #   \item{overwrite}{If @TRUE, already normalized arrays are overwritten,
 #     unless skipped, otherwise an error is thrown.}
@@ -66,12 +68,13 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelFile", function(this, outPath=fi
   }
 
   # Get all probe signals
-  x <- getData(this, fields="intensities", ..., verbose=verbose);
+  x <- getData(this, fields="intensities", ..., verbose=less(verbose));
+  x <- x$intensities;
 
   # Identify the subset of probes to be updated
   cdf <- getCdf(this);
   subsetToUpdate <- identifyCells(cdf, indices=subsetToUpdate, 
-                                        types=typesToUpdate, verbose=verbose);
+                                types=typesToUpdate, verbose=less(verbose));
 
   # Normalize intensities
   verbose && enter(verbose, "Normalizing to empirical target distribution");
@@ -83,8 +86,12 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelFile", function(this, outPath=fi
   verbose && enter(verbose, "Writing normalized probe signals");
 
   # Copy CEL file and update the copy
+  verbose && enter(verbose, "Copying source CEL file");
   copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  verbose && exit(verbose);
+  verbose && enter(verbose, "Writing normalized intensities");
   updateCel(pathname, intensities=x);
+  verbose && exit(verbose);
   verbose && exit(verbose);
 
   # Return new normalized data file object
@@ -106,8 +113,10 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelFile", function(this, outPath=fi
 #
 # \arguments{
 #   \item{yTarget}{The target probe signals.}
-#   \item{subset}{An optional @numeric @vector specifying a subset of probe
-#      indices used to fit the normalization function.}
+#   \item{subset}{An optional @numeric @vector specifying the indices of the
+#      subset of probes to be used to fit the normalization function.}
+#   \item{spar, nknots}{Control parameters passed to 
+#      @see "stats:smooth.spline".}
 #   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -122,7 +131,7 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelFile", function(this, outPath=fi
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fitQuantileNormFcn", "AffymetrixCelFile", function(this, yTarget, subset=NULL, ..., controlParams=list(spar=NULL, nknots=1024), verbose=FALSE) {
+setMethodS3("fitQuantileNormFcn", "AffymetrixCelFile", function(this, yTarget, subset=NULL, ..., spar=NULL, nknots=1024, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -146,7 +155,7 @@ setMethodS3("fitQuantileNormFcn", "AffymetrixCelFile", function(this, yTarget, s
   verbose && enter(verbose, "Fitting (quantile) normalization function");
 
   # Read the probe intensities
-  y <- getData(this, fields="intensities", verbose=verbose);
+  y <- getData(this, fields="intensities", verbose=less(verbose));
 
   # Sort signals
   verbose && enter(verbose, "Sorting probe signals");
@@ -182,6 +191,8 @@ setMethodS3("fitQuantileNormFcn", "AffymetrixCelFile", function(this, yTarget, s
 
 ############################################################################
 # HISTORY:
+# 2006-09-14
+# o Updated to the new package API.
 # 2006-08-25
 # o Renamed to normalizeQuantiles().
 # o Move to class AffymetrixCelFile and output is now CEL files only.

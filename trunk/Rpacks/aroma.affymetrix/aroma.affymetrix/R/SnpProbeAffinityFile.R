@@ -13,6 +13,8 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeAffinityFile".}
+#   \item{mergeStrands}{Specifies if the strands are merged or not for these
+#      estimates.}
 # }
 #
 # \section{Fields and Methods}{

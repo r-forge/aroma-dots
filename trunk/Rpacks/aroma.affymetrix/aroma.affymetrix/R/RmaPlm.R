@@ -7,7 +7,6 @@
 #  @classhierarchy
 #
 #  This class represents the log-additive model used in RMA.
-#  It can be used to fit the model on a @see "AffymetrixCelSet".
 # }
 # 
 # @synopsis
@@ -22,31 +21,21 @@
 # }
 #
 # \section{Model}{
-#   Consider a specific unit group.  The log-additive model in RMA is:
+#   For a single unit group, the log-additive model of RMA is:
 #
-#    \deqn{log_2(y_{ij})} = \beta_i + \alpha_j + \eps_{ij}
+#    \deqn{log_2(y_{ij}) = \beta_i + \alpha_j + \varepsilon_{ij}}
 #
 #   where \eqn{\beta_i} are the chip effects for arrays \eqn{i=1,...,I}, 
 #   and \eqn{\alpha_j} are the probe affinities for probes \eqn{j=1,...,J}.
-#   The \eqn{\eps_{ij}} are zero-mean noise with equal variance.
+#   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
+#   The model is constrained such that \eqn{\sum_j{\alpha_j} = 0}.
 #
-#   To minimize the risk for mistakes, all probe-affinity models return
-#   parameter estimates on the intensity scale.  That is, this class
-#   returns \eqn{\theta_i = 2^\beta_i} and \eqn{\phi_i = 2^\alpha_i},
-#   cf. the multiplicative model of Li & Wong.
-#
-#   Use @seemethod "getProbeAffinities" to get the probe-affinity estimates.
+#   Note that all PLM classes must return parameters on the intensity scale.
+#   For this class that means that \eqn{\theta_i = 2^\beta_i} and 
+#   \eqn{\phi_i = 2^\alpha_i} are returned.
 # }
 #
 # @author
-#
-# \section{Model estimates}{
-#   The estimated probe affinities are represented by the
-#   @see "RmaProbeAffinityFile" class.  
-# }
-#
-# \references{
-# }
 #*/###########################################################################
 setConstructorS3("RmaPlm", function(..., name="modelRmaPlm") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

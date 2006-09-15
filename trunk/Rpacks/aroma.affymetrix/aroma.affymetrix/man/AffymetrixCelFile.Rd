@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{MbeiProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ParameterCelFile}}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixCelFile}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
@@ -63,6 +63,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{plotMvsA} \tab  -\cr
  \tab \code{plotMvsPosition} \tab  -\cr
  \tab \code{plotMvsX} \tab  -\cr
+ \tab \code{range} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
  \tab \code{smoothScatterMvsA} \tab  -\cr
  \tab \code{stextChipType} \tab  -\cr

@@ -1,5 +1,8 @@
-setMethodS3("print", "GenericSummary", function(object, ..., collapse="\n") {
-  s <- paste(object, collapse=collapse);
+setMethodS3("print", "GenericSummary", function(x, ..., collapse="\n") {
+  # To please R CMD check
+  this <- x;
+
+  s <- paste(this, collapse=collapse);
   cat(s, collapse, sep="");
 })
 

@@ -25,13 +25,13 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\emph{\code{ProbeAffinityFile}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{ProbeAffinityFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{MbeiProbeAffinityFile}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
 
-public abstract static class \bold{ProbeAffinityFile}\cr
-extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
+public static class \bold{ProbeAffinityFile}\cr
+extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 
 
 
@@ -42,22 +42,23 @@ extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
+   \item{model}{The specific type of model, e.g. \code{"pm"}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{findUnitsTodo} \tab  -\cr
+ \tab \code{getCellIndices} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{writeSpatial} \tab  -\cr
 }
 
 
 \bold{Methods inherited from ParameterCelFile}:\cr
-decode, decodeUnit, decodeUnitGroup, encode, encodeUnit, encodeUnitGroup, readUnits, updateUnits
+decode, decodeUnit, encode, encodeUnit, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels

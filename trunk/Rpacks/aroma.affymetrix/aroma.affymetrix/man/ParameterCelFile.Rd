@@ -23,12 +23,12 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\emph{\code{ParameterCelFile}}\cr
+\code{~~~~~~~~~~~~+--}\code{ParameterCelFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineProbeAffinityFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{MbeiProbeAffinityFile}, \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}, \link[aroma.affymetrix]{RmaProbeAffinityFile}\cr
+\link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
 
-public abstract static class \bold{ParameterCelFile}\cr
+public static class \bold{ParameterCelFile}\cr
 extends \link[aroma.affymetrix]{AffymetrixCelFile}\cr
 
 
@@ -36,21 +36,27 @@ extends \link[aroma.affymetrix]{AffymetrixCelFile}\cr
   A ParameterCelFile object represents parameter estimates.
  }
 
- \usage{ParameterCelFile(...)}
+ \usage{ParameterCelFile(..., encodeFunction=NULL, decodeFunction=NULL)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
+   \item{encodeFunction}{A \code{\link[base]{function}} taking a single \code{\link[base]{list}} structure
+      as its argument.}
+   \item{decodeFunction}{A \code{\link[base]{function}} taking a single \code{\link[base]{list}} structure
+      as its argument.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{readUnits} \tab  -\cr
+ \tab \code{setDecodeFunction} \tab  -\cr
+ \tab \code{setEncodeFunction} \tab  -\cr
 }
 
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels

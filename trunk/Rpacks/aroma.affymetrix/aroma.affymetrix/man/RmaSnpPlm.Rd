@@ -25,27 +25,26 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{RmaPlm}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\emph{\code{RmaSnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{SnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\emph{\code{RmaSnpPlm}}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\emph{\link[aroma.affymetrix]{RmaCnPlm}}\cr
 
 public abstract static class \bold{RmaSnpPlm}\cr
-extends \emph{\link[aroma.affymetrix]{RmaPlm}}\cr
+extends \link[aroma.affymetrix]{SnpPlm}\cr
 
 
-
-  This class represents the log-additive model used in RMA.
-  It can be used to fit the model on a \code{\link{AffymetrixCelSet}}.
  }
 
- \usage{RmaSnpPlm(..., name="rmaSnpPlm")}
+ \usage{RmaSnpPlm(..., name="modelRmaSnpPlm", mergeStrands=FALSE)}
 
  \arguments{
-   \item{dataSet}{An \code{\link{AffymetrixCelSet}} object.}
-   \item{path}{The \code{\link[base]{character}} string specifying the path to the directory
-      to contain the parameter-estimate files.}
-   \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
+   \item{...}{Arguments passed to \code{\link{RmaPlm}}.}
+   \item{name}{The name of the model, which is also used in the pathname.}
+   \item{mergeStrands}{If \code{\link[base:logical]{TRUE}}, the sense and the anti-sense strands are
+      fitted together, otherwise separately.}
  }
 
  \section{Fields and Methods}{
@@ -53,11 +52,14 @@ extends \emph{\link[aroma.affymetrix]{RmaPlm}}\cr
 \emph{No methods defined}.
 
 
+\bold{Methods inherited from SnpPlm}:\cr
+getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
+
 \bold{Methods inherited from RmaPlm}:\cr
-getFitFunction, getProbeAffinityClass
+getFitFunction, getProbeAffinities
 
 \bold{Methods inherited from ProbeLevelModel}:\cr
-fit, getChipEffectClass, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass, highlight, plotMvsPosition
+findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
 as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
@@ -69,12 +71,4 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \section{Model estimates}{
-   The estimated probe affinities are represented by the
-   \code{\link{RmaProbeAffinityFile}} class.
- }
-
- \references{
- }
 \keyword{classes}

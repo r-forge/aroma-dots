@@ -15,6 +15,11 @@
 # @synopsis
 #
 # \arguments{
+#   \item{dataSet}{The dataset to which this model should be fitted.}
+#   \item{path}{The pathname of the directory where to store parameter 
+#     estimates.}
+#   \item{name}{The name of the unit-group model, which also will be used as
+#     part of the pathname.}
 #   \item{...}{Not used.}
 # }
 #
@@ -27,7 +32,7 @@
 # \seealso{
 # }
 #*/###########################################################################
-setConstructorS3("UnitGroupsModel", function(dataSet=NULL, name="modelUnitGroups", path=NULL, ..., verbose=FALSE) {
+setConstructorS3("UnitGroupsModel", function(dataSet=NULL, name="modelUnitGroups", path=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -49,23 +54,14 @@ setConstructorS3("UnitGroupsModel", function(dataSet=NULL, name="modelUnitGroups
       throw("Argument 'dataSet' is not an AffymetrixFileSet object: ", class(dataSet));
   }
 
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-
-  # Clone the data set.  Since the CDF is defined in the data set,
-  # models using different CDF structures must not share the same
-  # CDF, thus not the same data set. /HB 2006-08-28
-  if (!is.null(dataSet)) {
-    dataSet <- clone(dataSet, verbose=verbose);
-  }
-
   extend(Object(), "UnitGroupsModel",
     path = path,
     dataSet = dataSet,
     parSet = NULL
   )
 })
+
+
 
 setMethodS3("as.character", "UnitGroupsModel", function(this, ...) {
   s <- NextMethod("as.character", this);
@@ -235,6 +231,10 @@ setMethodS3("setup", "UnitGroupsModel", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2006-09-14
+# o Not cloning the dataset anymore.  Each model is responsible for 
+#   tranforming the data structure their way.  The advantage with this
+#   approach is that we can cache read data in the dataset object.
 # 2006-08-28
 # o Added getLabel(), which defaults to getName(), and setLabel().
 # 2006-08-24

@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\code{ChipEffectSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{ChipEffectSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
@@ -40,21 +40,26 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
+   \item{model}{The specific type of model, e.g. \code{"pm"}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{findUnitsTodo} \tab  -\cr
+ \tab \code{fromDataSet} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
+ \tab \code{getCellIndices} \tab  -\cr
+ \tab \code{getChipEffectFileClass} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
 
 \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, clone, fromFiles, getAverageFile, getCdf, getIntensities, getName, getUnitIntensities, nbrOfArrays, readUnits, setCdf
+[, [[, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, clone, fromFiles, getAverageFile, getCdf, getIntensities, getName, getUnitIntensities, nbrOfArrays, range, readUnits, setCdf
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFileSize, getName, getNames, getPath, lapply, length, nbrOfFiles, seq
+as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

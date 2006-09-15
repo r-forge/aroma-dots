@@ -23,6 +23,9 @@
 #
 # @author
 # 
+# \seealso{
+#   An object of this class is typically part of a @see "SnpChipEffectsSet".
+# }
 #*/###########################################################################
 setConstructorS3("SnpChipEffectFile", function(..., mergeStrands=FALSE) {
   extend(ChipEffectFile(...), "SnpChipEffectFile",
