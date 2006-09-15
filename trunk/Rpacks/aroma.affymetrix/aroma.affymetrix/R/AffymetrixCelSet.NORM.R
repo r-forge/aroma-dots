@@ -1,5 +1,133 @@
 ###########################################################################/**
 # @set "class=AffymetrixCelSet"
+# @RdocMethod normalizeQuantile
+#
+# @title "Normalizes samples to have the same empirical distribution"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{path}{The path where to save the normalized data files. 
+#     If @NULL, a default dataset and chip-type specific path is used.}
+#   \item{name}{The name of the normalized data set, which will also be
+#     part of the default path.}
+#   \item{subsetToUpdate}{The probes to be updated.
+#     If @NULL, all probes are updated.}
+#   \item{typesToUpdate}{Types of probes to be updated.}
+#   \item{xTarget}{A @numeric @vector.  The empirical distribution
+#     to which all arrays should be normalized to.}
+#   \item{subsetToAvg}{The probes to calculate average empirical
+#     distribution over.  If a single @numeric in (0,1), then this
+#     fraction of all probes will be used.  
+#     If @NULL, all probes are considered.}
+#   \item{typesToAvg}{Types of probes to be used when calculating the 
+#     average empirical distribution.  
+#     If \code{"pm"} and \code{"mm"} only perfect-match and mismatch 
+#     probes are used, respectively. If \code{"pmmm"} both types are used.
+#   }
+#   \item{...}{Additional arguments passed to \code{normalizeQuantile()}.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @double @vector.
+# }
+#
+# @examples "../incl/normalizeQuantile.Rex"
+#
+# @author
+#
+# \seealso{
+#   @see "aroma.light::normalizeQuantile.numeric"
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, name="normQuantiles", subsetToUpdate=NULL, typesToUpdate=NULL, xTarget=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cdf <- getCdf(this);
+
+  # Argument 'path':
+  if (is.null(path)) {
+    # Path structure: <data-set name>/<normalization name>/<chip type>/
+    # Compare with  : <data-set name>/chip_data/<chip type>/
+    path <- filePath(getName(this), name, getChipType(cdf));
+  } 
+  if (!is.null(path)) {
+    path <- Arguments$getWritablePath(path);
+  }
+  if (identical(getPath(this), path)) {
+    throw("Cannot calibrate data file. Argument 'path' refers to the same path as the path of the data file to be calibrated: ", path);
+  }
+  mkdirs(path);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Get the average empirical quantiles across all arrays
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (is.null(xTarget)) {
+    filename <- paste(getChipType(cdf), "-quantiles.apq", sep="");
+    pathname <- filePath(path, filename, expandLinks="any");
+    verbose && enter(verbose, "Getting average empirical distribution");
+    if (isFile(pathname)) {
+      verbose && enter(verbose, "Reading saved distribution: ", pathname);
+      xTarget <- readApd(pathname)$quantiles;
+      verbose && exit(verbose);
+    } else {
+      probes <- identifyCells(cdf, indices=subsetToAvg, types=typesToAvg,
+                                                  verbose=less(verbose));
+      verbose && cat(verbose, "Using ", length(probes), " probes");
+      verbose && cat(verbose, "Calculating distribution from data");
+      xTarget <- averageQuantile(this, probes=probes, 
+                                                  verbose=less(verbose));
+      verbose && cat(verbose, "Saving distribution: ", pathname);
+      writeApd(pathname, data=xTarget, name="quantiles");
+    }
+    verbose && exit(verbose);
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify the subset of probes to be updated
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Identifying the probes to be updated");
+  subsetToUpdate <- identifyCells(cdf, indices=subsetToUpdate, 
+                                                     types=typesToUpdate);
+  verbose && exit(verbose);
+
+  verbose && cat(verbose, "Normalizing ", length(subsetToUpdate), " probes");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Normalize each array
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Normalizing ", nbrOfArrays(this), " arrays");
+  dataFiles <- list();
+  for (kk in seq(this)) {
+    verbose && enter(verbose, "Array #", kk);
+    df <- getFile(this, kk);
+    verbose && print(verbose, df);
+    dataFiles[[kk]] <- normalizeQuantile(df, path=path,
+                            subsetToUpdate=subsetToUpdate, typesToUpdate=NULL,
+                                 xTarget=xTarget, ..., verbose=less(verbose));
+    verbose && exit(verbose);
+  }
+  verbose && exit(verbose);
+
+  newInstance(this, dataFiles);
+}) # normalizeQuantile()
+
+
+
+
+###########################################################################/**
+# @set "class=AffymetrixCelSet"
 # @RdocMethod averageQuantile
 #
 # @title "Gets the average empirical distribution across all samples"
@@ -119,119 +247,6 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
 
 
 
-###########################################################################/**
-# @RdocMethod normalizeQuantiles
-#
-# @title "Normalizes samples to have the same empirical distribution"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{outPath}{The path where to save the normalized data files.}
-#   \item{xTarget}{A @numeric @vector.  The empirical distribution
-#     to which all arrays should be normalized to.}
-#   \item{subsetToAvg}{The probes to calculate average empirical
-#     distribution over.  If a single @numeric in (0,1), then this
-#     fraction of all probes will be used.  
-#     If @NULL, all probes are considered.}
-#   \item{typesToAvg}{Types of probes to be used when calculating the 
-#     average empirical distribution.  
-#     If \code{"pm"} and \code{"mm"} only perfect-match and mismatch 
-#     probes are used, respectively. If \code{"pmmm"} both types are used.
-#   }
-#   \item{subsetToUpdate}{The probes to be updated.
-#     If @NULL, all probes are updated.}
-#   \item{typesToUpdate}{Types of probes to be updated.}
-#   \item{...}{Additional arguments passed to \code{normalizeQuantiles()}.}
-#   \item{verbose}{See @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns a @double @vector.
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "aroma.light::normalizeQuantile.numeric"
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("normalizeQuantiles", "AffymetrixCelSet", function(this, outPath=file.path("norm", getChipType(getCdf(this))), xTarget=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, subsetToUpdate=NULL, typesToUpdate=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Argument 'outPath':
-  outPath <- Arguments$getReadablePathname(outPath, mustExist=FALSE);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-
-  # Get the CDF structure
-  cdf <- getCdf(this);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Get the average empirical quantiles across all arrays
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  mkdirs(outPath);
-  if (is.null(xTarget)) {
-    filename <- paste(getChipType(getCdf(this)), "-quantiles.apq", sep="");
-    pathname <- filePath(outPath, filename, expandLinks="any");
-    verbose && enter(verbose, "Getting average empirical distribution");
-    if (isFile(pathname)) {
-      verbose && enter(verbose, "Reading saved distribution: ", pathname);
-      xTarget <- readApd(pathname)$quantiles;
-      verbose && exit(verbose);
-    } else {
-      probes <- identifyCells(cdf, indices=subsetToAvg, types=typesToAvg,
-                                                  verbose=less(verbose));
-      verbose && cat(verbose, "Using ", length(probes), " probes");
-      verbose && cat(verbose, "Calculating distribution from data");
-      xTarget <- averageQuantile(this, probes=probes, 
-                                                  verbose=less(verbose));
-      verbose && cat(verbose, "Saving distribution: ", pathname);
-      writeApd(pathname, data=xTarget, name="quantiles");
-    }
-    verbose && exit(verbose);
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Identify the subset of probes to be updated
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Identifying the probes to be updated");
-  subsetToUpdate <- identifyCells(cdf, indices=subsetToUpdate, 
-                                                     types=typesToUpdate);
-  verbose && exit(verbose);
-
-  verbose && cat(verbose, "Normalizing ", length(subsetToUpdate), " probes");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Normalize each array
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Normalizing ", nbrOfArrays(this), " arrays");
-  dataFiles <- list();
-  for (kk in seq(this)) {
-    verbose && enter(verbose, "Array #", kk);
-    df <- getFile(this, kk);
-    verbose && print(verbose, df);
-    dataFiles[[kk]] <- normalizeQuantiles(df, outPath=outPath, 
-                          xTarget=xTarget, subsetToUpdate=subsetToUpdate, 
-                         typesToUpdate=NULL, ..., verbose=less(verbose));
-    verbose && exit(verbose);
-  }
-  verbose && exit(verbose);
-
-  newInstance(this, dataFiles);
-})
-
-
-
-
 
 setMethodS3("transformAffine", "AffymetrixCelSet", function(this, outPath=file.path("transformed", getChipType(getCdf(this))), offset=0, scale=1, subsetToUpdate=NULL, typesToUpdate=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -281,6 +296,8 @@ setMethodS3("transformAffine", "AffymetrixCelSet", function(this, outPath=file.p
 
 ############################################################################
 # HISTORY:
+# 2006-09-15
+# o Modified some argument names for normalizeQuantile().
 # 2006-09-14
 # o Recreated from old AffymetrixDataSet.NORM.R.
 # 2006-07-27

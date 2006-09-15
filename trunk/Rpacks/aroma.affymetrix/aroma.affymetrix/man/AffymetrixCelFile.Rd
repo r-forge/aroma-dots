@@ -59,7 +59,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{highlight} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{image270}} \tab Displays all or a subset of the data spatially.\cr
  \tab \code{nbrOfCells} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:normalizeQuantiles.AffymetrixCelFile]{normalizeQuantiles}} \tab Normalizes the probe intensities to a target empirical distribution.\cr
+ \tab \code{\link[aroma.affymetrix:normalizeQuantile.AffymetrixCelFile]{normalizeQuantile}} \tab Normalizes the probe intensities to a target empirical distribution.\cr
  \tab \code{plotMvsA} \tab  -\cr
  \tab \code{plotMvsPosition} \tab  -\cr
  \tab \code{plotMvsX} \tab  -\cr
@@ -91,4 +91,8 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+   An object of this class is typically part of an \code{\link{AffymetrixCelSet}}.
+ }
 \keyword{classes}
