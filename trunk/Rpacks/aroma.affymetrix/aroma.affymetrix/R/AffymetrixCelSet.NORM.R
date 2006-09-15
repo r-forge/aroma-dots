@@ -74,7 +74,7 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
 
     verbose && printf(verbose, "reading, ");
     df <- getFile(this, cc);
-    Xcc <- getData(df, indices=probes, fields="intensities", ...);
+    Xcc <- getData(df, indices=probes, fields="intensities", ..., verbose=less(verbose, 2));
     Xcc <- as.vector(Xcc$intensities);
 
     # Order and sort the values
@@ -218,10 +218,10 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelSet", function(this, outPath=fil
   for (kk in seq(this)) {
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(this, kk);
-print(df);
+    verbose && print(verbose, df);
     dataFiles[[kk]] <- normalizeQuantiles(df, outPath=outPath, 
-                     xTarget=xTarget, subsetToUpdate=subsetToUpdate, ..., 
-                                                  verbose=less(verbose));
+                          xTarget=xTarget, subsetToUpdate=subsetToUpdate, 
+                         typesToUpdate=NULL, ..., verbose=less(verbose));
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
