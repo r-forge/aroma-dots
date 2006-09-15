@@ -1,7 +1,7 @@
 for (zzz in 0) {
 
 # Setup verbose output
-verbose <- Arguments$getVerbose(-3)
+verbose <- Arguments$getVerbose(-2)
 timestampOn(verbose)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

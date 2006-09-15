@@ -50,6 +50,18 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelFile", function(this, outPath=fi
     throw("Cannot not normalize data file. Argument 'outPath' refers to the same path as the path of the data file to be normalized: ", outPath);
   }
 
+
+  cdf <- getCdf(this);
+  nbrOfCells <- nbrOfCells(cdf);
+
+  # Argument 'subsetToUpdate':
+  getFraction <- (length(subsetToUpdate) == 1) && 
+                               (subsetToUpdate >= 0) && (subsetToUpdate < 1);
+  if (!getFraction) {
+    subsetToUpdate <- Arguments$getIndices(subsetToUpdate,  
+                                                     range=c(1, nbrOfCells));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -69,16 +81,17 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelFile", function(this, outPath=fi
 
   # Get all probe signals
   verbose && enter(verbose, "Reading probe intensities");
-  x <- getData(this, fields="intensities", ..., verbose=less(verbose));
+  x <- getData(this, fields="intensities", ..., verbose=less(verbose,2));
   x <- x$intensities;
   verbose && exit(verbose);
 
-  # Identify the subset of probes to be updated
-  verbose && enter(verbose, "Identifying probes to be updated");
-  cdf <- getCdf(this);
-  subsetToUpdate <- identifyCells(cdf, indices=subsetToUpdate, 
+  # Identify the subset of probes to be updated?
+  if (getFraction || !is.null(typesToUpdate)) {
+    verbose && enter(verbose, "Identifying probes to be updated");
+    subsetToUpdate <- identifyCells(cdf, indices=subsetToUpdate, 
                                 types=typesToUpdate, verbose=less(verbose));
-  verbose && exit(verbose);
+    verbose && exit(verbose);
+  }
 
   # Normalize intensities
   verbose && enter(verbose, "Normalizing to empirical target distribution");
