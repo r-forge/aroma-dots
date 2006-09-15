@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectSet}\cr
+\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{AffymetrixCelSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
@@ -59,13 +59,14 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
+ \tab \code{range} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelSet]{setCdf}} \tab Sets the CDF structure for this CEL set.\cr
 }
 
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFileSize, getName, getNames, getPath, lapply, length, nbrOfFiles, seq
+as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -73,50 +74,20 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \examples{
-
-for (zzz in 0) {
-
+ \examples{\dontrun{
+   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Define a dataset object based on all CEL files in a directory
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Look for the 100K Hind data directory
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-path <- filePath("cel/Xba/", expandLinks="any")
-if (!isDirectory(path))
-  break
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Define a dataset object for all files therein
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-ds <- AffymetrixDataSet$fromFiles(path=path)
+path <- "MyDataSet/chip_data/Xba/"
+ds <- AffymetrixCelSet$fromFiles(path)
+print(ds)
 
 # Keep at most sex arrays for this example
 ds <- extract(ds, 1:min(6,nbrOfArrays(ds)))
 print(ds)
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Normalization
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-dsQN <- normalizeQuantile(ds, subsetToAvg=0.50,
-                                  typesToUpdate="pm", verbose=TRUE)
-print(dsQN)
 
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Plot densities
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-layout(matrix(1:2, ncol=1))
-xlim <- c(6,16)
-ylim <- c(0,0.40)
-plotDensity(ds, types="pm", xlim=xlim, ylim=ylim, main="Raw data")
-plotDensity(dsQN, types="pm", xlim=xlim, ylim=ylim, main="Normalized data")
-
-# Clean up
-layout(1)
-rm(path, xlim, ylim)
-# rm(ds, dsQN)
-} # for (zzz in 0)
-}
+ }}
 
  \seealso{
    \code{\link{AffymetrixCelFile}}.

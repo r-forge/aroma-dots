@@ -1,0 +1,91 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  RmaCnPlm.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ \name{RmaCnPlm}
+\docType{class}
+\alias{RmaCnPlm}
+
+
+ \title{The RmaCnPlm class}
+
+ \description{
+  Package:  aroma.affymetrix \cr
+\bold{Class RmaCnPlm}\cr
+
+\code{\link[R.oo]{Object}}\cr
+\code{~~|}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{RmaPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{RmaSnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{SnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{CnPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\emph{\code{RmaCnPlm}}\cr
+
+\bold{Directly known subclasses:}\cr
+\cr
+
+public abstract static class \bold{RmaCnPlm}\cr
+extends \link[aroma.affymetrix]{CnPlm}\cr
+
+
+
+  This class represents the log-additive model used in RMA.
+  It can be used to fit the model on a \code{\link{AffymetrixCelSet}}.
+ }
+
+ \usage{RmaCnPlm(..., combineAlleles=FALSE, name="modelCnRmaPlm")}
+
+ \arguments{
+   \item{...}{Arguments passed to \code{\link{RmaSnpPlm}}.}
+   \item{combineAlleles}{If \code{\link[base:logical]{FALSE}}, allele A and allele B are treated
+      seperately, otherwise together.}
+   \item{name}{The name of the PLM, also used as part of the pathname.}
+ }
+
+ \section{Fields and Methods}{
+  \bold{Methods:}\cr
+\emph{No methods defined}.
+
+
+\bold{Methods inherited from CnPlm}:\cr
+getCellIndices, getChipEffects, getChipEffectSetClass, getFitUnitFunction, getProbeAffinities, setCombineAlleles
+
+\bold{Methods inherited from SnpPlm}:\cr
+getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
+
+\bold{Methods inherited from RmaSnpPlm}:\cr
+
+
+\bold{Methods inherited from RmaPlm}:\cr
+getFitFunction, getProbeAffinities
+
+\bold{Methods inherited from ProbeLevelModel}:\cr
+findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
+
+\bold{Methods inherited from UnitGroupsModel}:\cr
+as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
+
+\bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
+
+ }
+
+ \section{Model}{
+   TO DO.
+ }
+
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\keyword{classes}

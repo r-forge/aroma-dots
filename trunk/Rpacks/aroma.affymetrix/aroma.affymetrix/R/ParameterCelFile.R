@@ -13,6 +13,10 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{encodeFunction}{A @function taking a single @list structure
+#      as its argument.}
+#   \item{decodeFunction}{A @function taking a single @list structure
+#      as its argument.}
 # }
 #
 # \section{Fields and Methods}{

@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffineProbeAffinityFile.R
+%  SnpChipEffectFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{AffineProbeAffinityFile}
+ \name{SnpChipEffectFile}
 \docType{class}
-\alias{AffineProbeAffinityFile}
+\alias{SnpChipEffectFile}
 
 
- \title{The AffineProbeAffinityFile class}
+ \title{The SnpChipEffectFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class AffineProbeAffinityFile}\cr
+\bold{Class SnpChipEffectFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -25,41 +25,44 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectFile}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{AffineProbeAffinityFile}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{SnpChipEffectFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\link[aroma.affymetrix]{CnChipEffectFile}\cr
 
-public static class \bold{AffineProbeAffinityFile}\cr
-extends \emph{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
+public static class \bold{SnpChipEffectFile}\cr
+extends \link[aroma.affymetrix]{ChipEffectFile}\cr
 
 
 
-  This class represents estimates of probe affinities in the
-  Bengtsson \& Hössjer (2006) model.
+  This class represents estimates of chip effects in the probe-level models.
  }
 
- \usage{AffineProbeAffinityFile(...)}
+ \usage{SnpChipEffectFile(..., mergeStrands=FALSE)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
+   \item{...}{Arguments passed to \code{\link{ChipEffectFile}}.}
+   \item{mergeStrands}{Specifies if the strands are merged or not for these
+      estimates.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\emph{No methods defined}.
+\tabular{rll}{
+ \tab \code{getCellIndices} \tab  -\cr
+}
 
 
-\bold{Methods inherited from ProbeAffinityFile}:\cr
-findUnitsTodo, getFirstCellIndices, readUnits, updateUnits, writeSpatial
+\bold{Methods inherited from ChipEffectFile}:\cr
+createParamCdf, findUnitsTodo, fromDataFile, getCellIndices, readUnits, updateUnits
 
 \bold{Methods inherited from ParameterCelFile}:\cr
-decode, decodeUnit, decodeUnitGroup, encode, encodeUnit, encodeUnitGroup, readUnits, updateUnits
+decode, decodeUnit, encode, encodeUnit, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels
@@ -71,10 +74,4 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \seealso{
-   An object of this class is typically obtain through the
-   \code{getProbeAffinities()} method for the
-   \code{\link{AffymetrixAffineModel}} class.
- }
 \keyword{classes}

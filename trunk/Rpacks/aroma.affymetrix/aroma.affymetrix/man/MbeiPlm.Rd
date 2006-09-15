@@ -26,32 +26,32 @@
 \code{~~~~~~~~~~~~+--}\emph{\code{MbeiPlm}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{TotalCnMbeiPlm}\cr
+\emph{\link[aroma.affymetrix]{MbeiCnPlm}}, \emph{\link[aroma.affymetrix]{MbeiSnpPlm}}\cr
 
 public abstract static class \bold{MbeiPlm}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 
 
-  This class represents the Li \& Wong (2001) model,
-  see \code{\link{MbeiPlm}}.
+  This class represents the Li \& Wong (2001) model.
  }
 
- \usage{MbeiPlm(..., name="modelMbei")}
+ \usage{MbeiPlm(..., name="modelMbeiPlm")}
 
  \arguments{
-   \item{path}{The \code{\link[base]{character}} string specifying the path to the directory
-      to contain the parameter-estimate files.}
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
+   \item{name}{The name of the model, which is also used in the pathname.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\emph{No methods defined}.
+\tabular{rll}{
+ \tab \code{getProbeAffinities} \tab  -\cr
+}
 
 
 \bold{Methods inherited from ProbeLevelModel}:\cr
-fit, getChipEffectClass, getChipEffects, getFitFunction, getProbeAffinities, getProbeAffinityClass, highlight, plotMvsPosition
+findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
 as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
@@ -60,6 +60,19 @@ as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPa
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
+ }
+
+ \section{Model}{
+   For a single unit group, the multiplicative model of dChip is:
+
+    \deqn{y_{ij} = \theta_i \phi_j + \varepsilon_{ij}}
+
+   where \eqn{\theta_i} are the chip effects for arrays \eqn{i=1,...,I},
+   and \eqn{\phi_j} are the probe affinities for probes \eqn{j=1,...,J}.
+   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
+
+   In addition, we modify th constraint such that it is guaranteed that
+   \eqn{\prod_j \phi_j = 1}.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

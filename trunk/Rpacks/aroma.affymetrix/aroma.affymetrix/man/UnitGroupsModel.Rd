@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{UnitGroupsModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffinePlm}}, \emph{\link[aroma.affymetrix]{MbeiPlm}}, \emph{\link[aroma.affymetrix]{ProbeLevelModel}}, \emph{\link[aroma.affymetrix]{RmaPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}, \link[aroma.affymetrix]{TotalCnAffinePlm}, \link[aroma.affymetrix]{TotalCnMbeiPlm}, \link[aroma.affymetrix]{TotalCnRmaPlm}\cr
+\emph{\link[aroma.affymetrix]{AffinePlm}}, \emph{\link[aroma.affymetrix]{AffineSnpPlm}}, \emph{\link[aroma.affymetrix]{MbeiCnPlm}}, \emph{\link[aroma.affymetrix]{MbeiPlm}}, \emph{\link[aroma.affymetrix]{MbeiSnpPlm}}, \emph{\link[aroma.affymetrix]{ProbeLevelModel}}, \emph{\link[aroma.affymetrix]{RmaCnPlm}}, \emph{\link[aroma.affymetrix]{RmaPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}\cr
 
 public abstract static class \bold{UnitGroupsModel}\cr
 extends \link[R.oo]{Object}\cr
@@ -35,9 +35,14 @@ extends \link[R.oo]{Object}\cr
   the Li & Wong model belongs to this class of models.
  }
 
- \usage{UnitGroupsModel(dataSet=NULL, name="modelUnitGroups", path=NULL, ..., verbose=FALSE)}
+ \usage{UnitGroupsModel(dataSet=NULL, name="modelUnitGroups", path=NULL, ...)}
 
  \arguments{
+   \item{dataSet}{The dataset to which this model should be fitted.}
+   \item{path}{The pathname of the directory where to store parameter
+     estimates.}
+   \item{name}{The name of the unit-group model, which also will be used as
+     part of the pathname.}
    \item{...}{Not used.}
  }
 

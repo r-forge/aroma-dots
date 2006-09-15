@@ -28,10 +28,10 @@
 \code{~~~~~~~~~~~~~~~~~+--}\code{ChipEffectFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 
 public static class \bold{ChipEffectFile}\cr
-extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
+extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 
 
 
@@ -42,21 +42,25 @@ extends \emph{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
+   \item{model}{The specific type of model, e.g. \code{"pm"}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{calcMvsA} \tab  -\cr
+ \tab \code{createParamCdf} \tab  -\cr
+ \tab \code{findUnitsTodo} \tab  -\cr
+ \tab \code{fromDataFile} \tab  -\cr
+ \tab \code{getCellIndices} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
 
 \bold{Methods inherited from ParameterCelFile}:\cr
-decode, decodeUnit, decodeUnitGroup, encode, encodeUnit, encodeUnitGroup, readUnits, updateUnits
+decode, decodeUnit, encode, encodeUnit, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels

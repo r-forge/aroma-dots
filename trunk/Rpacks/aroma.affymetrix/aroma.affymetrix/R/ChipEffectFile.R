@@ -13,6 +13,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ParameterCelFile".}
+#   \item{model}{The specific type of model, e.g. \code{"pm"}.}
 # }
 #
 # \section{Fields and Methods}{
@@ -24,8 +25,8 @@
 # \seealso{
 #   An object of this class is typically obtained through the
 #   \code{getChipEffects()} method for the @see "ProbeLevelModel" class.
+#   An object of this class is typically part of a @see "ChipEffectsSet".
 # }
-#
 #*/###########################################################################
 setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -91,7 +92,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
     verbose && cat(verbose, "Pathname: Not found!");
     verbose && cat(verbose, "Will create from the CDF of the dataset. NOTE: This will take several minutes or more!");
     verbose && enter(verbose, "Creating CDF");
-    cdf <- createMonoCell(sourceCdf, verbose=verbose);
+    cdf <- createMonoCell(sourceCdf, verbose=less(verbose));
     verbose && exit(verbose);
   } else {
     verbose && cat(verbose, "Pathname: ", cdf);
@@ -113,7 +114,7 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
   if (!isFile(pathname)) {
     # Get CDF for chip effects
     if (is.null(cdf))
-      cdf <- createParamCdf(static, getCdf(df), verbose=verbose);
+      cdf <- createParamCdf(static, getCdf(df), verbose=less(verbose));
   
     # Get CDF header
     cdfHeader <- getHeader(cdf);
@@ -135,7 +136,7 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
     celHeader$parameters <- parameters;
 
     # Create the CEL file
-    createCel(pathname, header=celHeader, ..., verbose=verbose);
+    createCel(pathname, header=celHeader, ..., verbose=less(verbose));
   }
 
   newInstance(static, pathname);

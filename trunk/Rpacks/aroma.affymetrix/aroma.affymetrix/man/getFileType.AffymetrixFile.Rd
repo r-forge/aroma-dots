@@ -29,7 +29,7 @@
   Returns a \code{\link[base]{character}} in lower case letters.
 }
 
-\description{
+\details{
   By default, this methods returns the filename extension, but subclasses
   may override this.
 }

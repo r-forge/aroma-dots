@@ -13,8 +13,8 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "SnpChipEffectSet".}
-#   \item{combineAlleles}{A @logical indicating if the signals from allele A and
-#      allele B are combined or not.}
+#   \item{combineAlleles}{A @logical indicating if the signals from
+#      allele A and allele B are combined or not.}
 # }
 #
 # \section{Fields and Methods}{

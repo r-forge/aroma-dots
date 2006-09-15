@@ -29,6 +29,8 @@
 #   }
 # }
 #
+# @examples "../incl/SnpPlm.Rex"
+#
 # @author
 #*/###########################################################################
 setConstructorS3("SnpPlm", function(...) {

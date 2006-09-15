@@ -5,15 +5,12 @@
 #
 # \description{
 #  @classhierarchy
-#
-#  This class represents the log-additive model used in RMA.
-#  It can be used to fit the model on a @see "AffymetrixCelSet".
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "RlmPlm".}
+#   \item{...}{Arguments passed to @see "RmaPlm".}
 #   \item{name}{The name of the model, which is also used in the pathname.}
 #   \item{mergeStrands}{If @TRUE, the sense and the anti-sense strands are
 #      fitted together, otherwise separately.}
@@ -25,13 +22,6 @@
 #
 # @author
 #
-# \section{Model estimates}{
-#   The estimated probe affinities are represented by the
-#   @see "RmaProbeAffinityFile" class.  
-# }
-#
-# \references{
-# }
 #*/###########################################################################
 setConstructorS3("RmaSnpPlm", function(..., name="modelRmaSnpPlm", mergeStrands=FALSE) {
   extend(RmaPlm(..., name=name), c("RmaSnpPlm", uses(SnpPlm())),

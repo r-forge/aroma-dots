@@ -24,7 +24,7 @@
   are stored in array specific files.
  }
 
- \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., transform=NULL, postCdfTransform=NULL, unitsPerChunk=moreUnits * 1e+05/length(getDataSet(this)), moreUnits=1, force=FALSE, verbose=FALSE)}
+ \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., unitsPerChunk=moreUnits * 1e+05/length(getDataSet(this)), moreUnits=1, force=FALSE, verbose=FALSE)}
 
  \arguments{
    \item{...}{Not used.}
@@ -50,8 +50,9 @@
  
    For each array and each unit group, we store:
      1 theta, 1 sd(theta), 1 isOutlier(theta), i.e. (float, float, bit)
-   => For each array and each unit (with G_j groups), we store:
-     G_j theta, G_j sd(theta), G_j isOutlier(theta), i.e. G_j*(float, float, bit)
+   => For each array and each unit (with \eqn{G_j} groups), we store:
+     \eqn{G_j} theta, \eqn{G_j} sd(theta), \eqn{G_j} isOutlier(theta),
+   i.e. \eqn{G_j}*(float, float, bit).
    For optimal access we store all thetas first, then all sd(theta) and the
    all isOutlier(theta).
    To keep track of the number of groups in each unit, we have to have a

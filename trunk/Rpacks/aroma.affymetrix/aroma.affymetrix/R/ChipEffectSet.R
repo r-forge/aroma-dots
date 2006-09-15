@@ -13,6 +13,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ParameterCelFile".}
+#   \item{model}{The specific type of model, e.g. \code{"pm"}.}
 # }
 #
 # \section{Fields and Methods}{
@@ -61,7 +62,7 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name
     df <- getFile(dataset, kk);
     verbose && enter(verbose, sprintf("Creating chip-effect file #%d of %d (%s)", 
                                                        kk, length(ces), getName(df)));
-    ce <- clazz$fromDataFile(df, path=path, name=name, cdf=cdf, ..., verbose=verbose);
+    ce <- clazz$fromDataFile(df, path=path, name=name, cdf=cdf, ..., verbose=less(verbose));
     if (is.null(cdf))
       cdf <- getCdf(ce);
     ces[[kk]] <- ce;
@@ -108,10 +109,12 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
   n <- length(this);
   verbose && enter(verbose, "Updating ", n, " chip-effect files");
   names <- getNames(this);
+  verbose <- less(verbose);
   for (kk in seq(this)) {
     verbose && enter(verbose, sprintf("Array #%d of %d: %s", kk, n, names[kk]));
     ce <- as.list(this)[[kk]];
 
+    verbose <- less(verbose);
     verbose && enter(verbose, "Extracting estimates");
     dataOne <- lapply(data, function(groups) {
       lapply(groups, function(group) {
@@ -127,10 +130,13 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Updating file");
-    updateUnits(ce, cdf=cdf, data=dataOne, verbose=verbose);
+    updateUnits(ce, cdf=cdf, data=dataOne, verbose=less(verbose));
     verbose && exit(verbose);
+    verbose <- more(verbose);
+
     verbose && exit(verbose);
   } # for (kk ...)
+  verbose <- more(verbose);
   verbose && exit(verbose);
 }, protected=TRUE);
 

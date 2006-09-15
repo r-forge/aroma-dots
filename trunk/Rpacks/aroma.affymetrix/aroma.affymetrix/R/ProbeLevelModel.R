@@ -30,6 +30,22 @@
 #  @allmethods "public"
 # }
 #
+# \details{
+#   In order to minimize the risk for mistakes, but also to be able compare
+#   results from different PLMs, all PLM subclasses must return parameter
+#   estimates that meet the following requirements:
+#   \enumerate{
+#     \item All parameter estimates must be (stored and returned) on the
+#       intensity scale, e.g. log-additive models such as @see "RmaPlm"
+#       have to transform the parameters on the log-scale to the intensity
+#       scale.
+#     \item The probe-affinity estimates \eqn{\phi_j} for a unit group
+#       must meet the constraint such that \eqn{\prod_j \phi_j = 1},
+#       or equivalently \eqn{\sum_j \log(\phi_j) = 0}.
+#   }
+#   Note that the above probe-affinity constraint guarantees that the
+#   estimated chip effects across models are on the same scale.
+# }
 # 
 # @author
 #
@@ -175,13 +191,13 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
 #   \item{units}{The units to be read. If @NULL, all units are read.}
 #   \item{...}{Arguments passed to \code{getCellIndices()} of the 
 #     @see "AffymetrixCdfFile" class (if \code{cdf} was not specified),
-#     but also to the \code{getUnitIntensities()} method of the 
-#     @see "AffymetrixDataSet" class.}
+#     but also to the \code{readUnits()} method of the 
+#     @see "AffymetrixCelSet" class.}
 # }
 #
 # \value{
-#  Returns the @list structure that \code{getUnitIntensities()} of 
-#  @see "AffymetrixDataSet" returns.
+#  Returns the @list structure that \code{readUnits()} of 
+#  @see "AffymetrixCelSet" returns.
 # }
 #
 # @author
@@ -206,11 +222,11 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
   # Get the CEL intensities by units
   ds <- getDataSet(this);
   verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
-  y <- getUnitIntensities(ds, units=cdfUnits, ...);
+  res <- getUnitIntensities(ds, units=cdfUnits, ...);
   verbose && exit(verbose);
-  verbose && str(verbose, y[1]);
+  verbose && str(verbose, res[1]);
 
-  y;
+  res;
 })
 
 
@@ -303,8 +319,9 @@ setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ...) {
 #   
 #   For each array and each unit group, we store:
 #     1 theta, 1 sd(theta), 1 isOutlier(theta), i.e. (float, float, bit)
-#   => For each array and each unit (with G_j groups), we store:
-#     G_j theta, G_j sd(theta), G_j isOutlier(theta), i.e. G_j*(float, float, bit)
+#   => For each array and each unit (with \eqn{G_j} groups), we store:
+#     \eqn{G_j} theta, \eqn{G_j} sd(theta), \eqn{G_j} isOutlier(theta), 
+#   i.e. \eqn{G_j}*(float, float, bit).
 #   For optimal access we store all thetas first, then all sd(theta) and the
 #   all isOutlier(theta).
 #   To keep track of the number of groups in each unit, we have to have a
@@ -352,6 +369,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   verbose <- Arguments$getVerbose(verbose);
 
 
+  verbose && enter(verbose, "Fitting model of class ", class(this)[1], ":");
+  verbose && print(verbose, this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify units to be fitted
@@ -388,18 +407,25 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   fitUnit <- getFitUnitFunction(this);
 
   # Get (and create if missing) the probe-affinity file (one per dataset)
-  paf <- getProbeAffinities(this);
+  paf <- getProbeAffinities(this, verbose=less(verbose));
 
   # Get (and create if missing) the chip-effect files (one per array)
-  ces <- getChipEffects(this);
+  ces <- getChipEffects(this, verbose=less(verbose));
 
   idxs <- 1:nbrOfUnits;
   head <- 1:unitsPerChunk;
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
   verbose && cat(verbose, "Number units per chunk: ", unitsPerChunk);
 
+  # Time the fitting.
+  startTime <- Sys.time();
+
+  timers <- list(total=0, read=0, fit=0, writePaf=0, writeCes=0, gc=0);
+
   count <- 1;
   while (length(idxs) > 0) {
+    tTotal <- Sys.time();
+
     verbose && enter(verbose, "Fitting chunk #", count, " of ", nbrOfChunks);
     if (length(idxs) < unitsPerChunk) {
       head <- 1:length(idxs);
@@ -412,8 +438,11 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get the CEL intensities by units
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
-    y <- readUnits(this, units=units[uu], ...);
+    nbrOfArrays <- length(ds);
+    verbose && enter(verbose, "Reading probe intensities from ", nbrOfArrays, " arrays");
+    tRead <- Sys.time();
+    y <- readUnits(this, units=units[uu], ..., verbose=less(verbose));
+    timers$read <- timers$read + (tRead - Sys.time());
     verbose && str(verbose, y[1]);
     verbose && exit(verbose);
 
@@ -422,7 +451,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     # Fit the model
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Fitting unit-group model");
+    tFit <- Sys.time();
     fit <- lapply(y, FUN=fitUnit);
+    timers$fit <- timers$fit + (tFit - Sys.time());
     y <- NULL; # Not needed anymore (to minimize memory usage)
     verbose && str(verbose, fit[1]);
     verbose && exit(verbose);
@@ -432,7 +463,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     # Store probe affinities
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing probe-affinity estimates");
-    updateUnits(paf, units=units[uu], data=fit, verbose=verbose);
+    tWritePaf <- Sys.time();
+    updateUnits(paf, units=units[uu], data=fit, verbose=less(verbose));
+    timers$writePaf <- timers$writePaf + (tWritePaf - Sys.time());
     verbose && exit(verbose);
 
 
@@ -440,7 +473,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     # Store chip effects
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing chip-effect estimates");
-    updateUnits(ces, units=units[uu], data=fit, verbose=verbose);
+    tWriteCes <- Sys.time();
+    updateUnits(ces, units=units[uu], data=fit, verbose=less(verbose));
+    timers$writeCes <- timers$writeCes + (tWriteCes - Sys.time());
     verbose && exit(verbose);
 
     fit <- NULL; # Not needed anymore
@@ -450,9 +485,36 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     count <- count + 1;
 
     # Garbage collection
+    tGc <- Sys.time();
     gc();
+    timers$gc <- timers$gc + (tGc - Sys.time());
+
+    timers$total <- timers$total + (tTotal - Sys.time());
+
     verbose && exit(verbose);
   } # while()
+
+  totalTime <- Sys.time() - startTime;
+  if (verbose) {
+    nunits <- length(units);
+    t <- totalTime;
+    printf(verbose, "Total time for all units across all %d arrays: %.2fs == %.2fmin\n", nbrOfArrays, t, t/60);
+    t <- totalTime/nunits
+    printf(verbose, "Total time per unit across all %d arrays: %.2fs/unit\n", nbrOfArrays, t);
+    t <- totalTime/nunits/nbrOfArrays;
+    printf(verbose, "Total time per unit and array: %.3gms/unit & array\n", 1000*t);
+    t <- nbrOfUnits(cdf)*totalTime/nunits/nbrOfArrays;
+    printf(verbose, "Total time for one array (%d units): %.2fmin = %.2fh\n", nbrOfUnits(cdf), t/60, t/3600);
+    t <- nbrOfUnits(cdf)*totalTime/nunits;
+    printf(verbose, "Total time for complete dataset: %.2fmin = %.2fh\n", t/60, t/3600);
+    # Get distribution of what is spend where
+    timers$write <- timers$writePaf + timers$writeCes;
+    t <- unlist(timers);
+    t <- 100 * t / t["total"];
+    printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%% (of which %.2f%% is for writing chip-effects), Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["write"], 100*t["writeCes"]/t["write"], t["gc"]);
+  }
+
+  verbose && exit(verbose);
 
   invisible(units);
 })
@@ -473,7 +535,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
 #
 # \arguments{
 #   \item{...}{Not used.}
-#   \item{verbose}{A @logical or a @see "Verbose" object.}
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
 # }
 #
 # \value{
@@ -509,7 +571,7 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   verbose && enter(verbose, "Getting chip-effect set from dataset");
   # Gets the ChipEffects Class object
   clazz <- getChipEffectSetClass(this);
-  ces <- clazz$fromDataSet(dataset=ds, path=getPath(this), verbose=verbose);
+  ces <- clazz$fromDataSet(dataset=ds, path=getPath(this), verbose=less(verbose));
   verbose && exit(verbose);
 
   # Store in cache
@@ -546,6 +608,8 @@ setMethodS3("highlight", "ProbeLevelModel", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-09-14
+# o Added detailed timing information to the verbose output of fit().
 # 2006-09-11
 # o Added argument ProbeLevelModel(..., standardize=TRUE) to make the 
 #   results from different PLMs be on the same scale.

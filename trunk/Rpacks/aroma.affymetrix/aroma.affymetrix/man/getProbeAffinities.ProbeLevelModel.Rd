@@ -19,7 +19,7 @@
  Gets the probe affinities for this model.
 }
 
-\usage{\method{getProbeAffinities}{ProbeLevelModel}(this, ...)}
+\usage{\method{getProbeAffinities}{ProbeLevelModel}(this, ..., .class=ProbeAffinityFile)}
 
 \arguments{
   \item{...}{Not used.}

@@ -27,6 +27,9 @@
 # 
 # @author
 #
+# \seealso{
+#   An object of this class is typically part of an @see "AffymetrixFileSet".
+# }
 #*/###########################################################################
 setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -249,7 +252,7 @@ setMethodS3("setLabel", "AffymetrixFile", function(this, label, ...) {
 #   Returns a @character in lower case letters.
 # }
 #
-# \description{
+# \details{
 #   By default, this methods returns the filename extension, but subclasses
 #   may override this.
 # }

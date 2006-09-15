@@ -35,6 +35,10 @@
 # }
 #
 # @author
+#
+# \seealso{
+#   An object of this class is typically part of an @see "AffymetrixCelSet".
+# }
 #*/###########################################################################
 setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
   this <- extend(AffymetrixFile(...), "AffymetrixCelFile",
@@ -135,10 +139,10 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
     return(res);
   }
 
-  res <- copyFile(this, filename=pathname, path=NULL, verbose=verbose);
+  res <- copyFile(this, filename=pathname, path=NULL, verbose=less(verbose));
 
   if (clear) {
-    clearData(res, ..., .forSure=TRUE, verbose=verbose);
+    clearData(res, ..., .forSure=TRUE, verbose=less(verbose));
   }
 
   res;

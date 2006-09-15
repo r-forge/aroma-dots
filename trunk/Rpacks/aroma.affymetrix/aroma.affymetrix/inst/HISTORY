@@ -1,6 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.2.2 [2006-09-14]
+o Package now passes R CMD check.  Some cheating were done though,
+  because methods with missing Rdoc where put as \alias{}:es in
+  one place.
+
 Version: 0.2.1 [2006-09-07]
 o Another big change in how classes are named.
 

@@ -10,18 +10,20 @@
 #  with \emph{identical} chip types.
 # }
 # 
-# @synopsis
+# @synopsis 
 #
 # \arguments{
 #   \item{files}{A @list of @see "AffymetrixCelFile":s.}
 #   \item{...}{Not used.}
 # }
 #
-# \Section{fields and Methods}{
-#  @allmethods "public"
+# \section{Fields and Methods}{
+#  @allmethods "public"  
 # }
 # 
-# @examples "../incl/AffymetrixCelSet.Rex"
+# \examples{\dontrun{
+#   @include "../incl/AffymetrixCelSet.Rex"
+# }}
 #
 # \seealso{
 #   @see "AffymetrixCelFile".
@@ -49,6 +51,8 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
   extend(AffymetrixFileSet(files=files, ...), "AffymetrixCelSet",
     "cached:.intensities" = NULL,
     "cached:.intensitiesIdxs" = NULL,
+    "cached:.unitsCache" = NULL,
+    "cached:.getUnitIntensitiesCache" = NULL,
     "cached:.fileSize" = NULL
   )
 })
@@ -61,7 +65,7 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   verbose && enter(verbose, "Cloning Affymetrix CEL set");
 
   # Clone itself and the files.  The call below will clear the cache!
-  object <- NextMethod("clone", clear=FALSE, ..., verbose=verbose);
+  object <- NextMethod("clone", clear=FALSE, ..., verbose=less(verbose));
 
   # Clone the CDF (this will update the CDF of all file object)
   verbose && enter(verbose, "Cloning CDF");
@@ -356,7 +360,7 @@ setMethodS3("getIntensities", "AffymetrixCelSet", function(this, indices=NULL, v
   for (kk in seq(length=nbrOfArrays)) {
     verbose && enter(verbose, "Array #", kk, " of ", nbrOfArrays);
     dataFile <- this$files[[kk]];
-    res[,kk] <- getIntensities(dataFile, indices=indices, verbose=verbose);
+    res[,kk] <- getIntensities(dataFile, indices=indices, verbose=less(verbose));
 
     verbose && exit(verbose);
   }
@@ -410,6 +414,16 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- digest(list(units=units, ...));
+  res <- this$.getUnitIntensitiesCache[[key]];
+  if (!is.null(res)) {
+    verbose && cat(verbose, "getUnitIntensitiesCache(): Returning cached data");
+    return(res);
+  }
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -429,6 +443,13 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
                                                     readPixels=FALSE, ...);
   }
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Store read units in cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && cat(verbose, "readUnits(): Updating cache");
+  this$.getUnitIntensitiesCache <- list()
+  this$.getUnitIntensitiesCache[[key]] <- res
+
   res;
 })
 
@@ -442,6 +463,16 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., ver
   verbose <- Arguments$getVerbose(verbose);
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- digest(list(units=units, ...));
+  res <- this$.readUnitsCache[[key]];
+  if (!is.null(res)) {
+    verbose && cat(verbose, "readUnits(): Returning cached data");
+    return(res);
+  }
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -449,7 +480,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., ver
   pathnames <- unlist(lapply(this, getPathname), use.names=FALSE);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Cached values
+  # Read data from file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (is.list(units)) {
     res <- readCelUnits(pathnames, cdf=units, ...);
@@ -458,6 +489,13 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., ver
     cdf <- readUnits(getCdf(this), units=units);
     res <- readCelUnits(pathnames, cdf=cdf, ...);
   }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Store read units in cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && cat(verbose, "readUnits(): Updating cache");
+  this$.readUnitsCache <- list()
+  this$.readUnitsCache[[key]] <- res
 
   res;
 })
@@ -525,7 +563,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
   # Create a private filename (with a dot prefix) to make sure it is not
   # identified as a regular CEL file when the directory is scanned for files.
   filename <- sprintf(".%s.CEL", name);
-  res <- createFrom(df, filename=filename, path=getPath(this), verbose=verbose);
+  res <- createFrom(df, filename=filename, path=getPath(this), verbose=less(verbose));
   pathname <- getPathname(res);
 
 
@@ -644,6 +682,8 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-09-14
+# o Added a read-buffer cache to readUnits() and getUnitIntensities().
 # 2006-08-27
 # o Added getAverageFile().
 # 2006-08-26

@@ -13,14 +13,13 @@
 \alias{getFitFunction,MbeiPlm-method}
 
 
-\title{Static method to get the low-level function that fits the PLM}
+\title{Gets the low-level function that fits the PLM}
 
 \description{
- Static method to get the low-level function that fits the PLM.
+ Gets the low-level function that fits the PLM.
 }
 
-\synopsis{getFitFunction.MbeiPlm(static, ...)}
-\usage{MbeiPlm$getFitFunction(...)}
+\usage{\method{getFitFunction}{MbeiPlm}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}

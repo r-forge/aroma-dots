@@ -25,13 +25,6 @@
 #
 # @author
 #
-# \section{Model estimates}{
-#   The estimated probe affinities are represented by the
-#   @see "AffineProbeAffinityFile" class.  
-# }
-#
-# \references{
-# }
 #*/###########################################################################
 setConstructorS3("AffineSnpPlm", function(..., name="modelAffineSnpPlm", mergeStrands=FALSE) {
   extend(AffinePlm(..., name=name), c("AffineSnpPlm", uses(SnpPlm())),
