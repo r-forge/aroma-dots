@@ -17,7 +17,8 @@ library(digest)
 #library(aroma.apd)
 #library(aroma.affymetrix)
 
-verbose <- Arguments$getVerbose(TRUE);
+verbose <- Arguments$getVerbose(-3);
+timestampOn(verbose);
 
 verbose && enter(verbose, "Sourcing all *.R files");
 

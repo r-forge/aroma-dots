@@ -88,7 +88,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
        scale.
      \item The probe-affinity estimates \eqn{\phi_j} for a unit group
        must meet the constraint such that \eqn{\prod_j \phi_j = 1},
-       or equivalently \eqn{\sum_j \log\phi_j = 0}.
+       or equivalently \eqn{\sum_j \log(\phi_j) = 0}.
    }
    Note that the above probe-affinity constraint guarantees that the
    estimated chip effects across models are on the same scale.

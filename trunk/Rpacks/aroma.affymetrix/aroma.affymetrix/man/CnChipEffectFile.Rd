@@ -68,7 +68,7 @@ createParamCdf, findUnitsTodo, fromDataFile, getCellIndices, readUnits, updateUn
 decode, decodeUnit, encode, encodeUnit, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantiles, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantile, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels
@@ -80,4 +80,8 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+   An object of this class is typically part of a \code{\link{CnChipEffectsSet}}.
+ }
 \keyword{classes}

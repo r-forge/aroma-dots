@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixCelFile.normalizeQuantiles.R
+%  AffymetrixCelFile.normalizeQuantile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,12 +19,14 @@
  Fits quantile normalization functions for the arrays in the data set.
 }
 
-\usage{\method{fitQuantileNormFcn}{AffymetrixCelFile}(this, yTarget, subset=NULL, ..., controlParams=list(spar = NULL, nknots = 1024), verbose=FALSE)}
+\usage{\method{fitQuantileNormFcn}{AffymetrixCelFile}(this, yTarget, subset=NULL, ..., spar=NULL, nknots=1024, verbose=FALSE)}
 
 \arguments{
   \item{yTarget}{The target probe signals.}
-  \item{subset}{An optional \code{\link[base]{numeric}} \code{\link[base]{vector}} specifying a subset of probe
-     indices used to fit the normalization function.}
+  \item{subset}{An optional \code{\link[base]{numeric}} \code{\link[base]{vector}} specifying the indices of the
+     subset of probes to be used to fit the normalization function.}
+  \item{spar, nknots}{Control parameters passed to
+     \code{\link{stats:smooth.spline}}.}
   \item{...}{Not used.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }

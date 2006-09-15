@@ -51,6 +51,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixCelSet.AffymetrixCelSet]{as.AffymetrixCelSet}} \tab Coerce an object to an AffymetrixCelSet object.\cr
  \tab \code{\link[aroma.affymetrix:as.character.AffymetrixCelSet]{as.character}} \tab Returns a short string describing the Affymetrix data set.\cr
+ \tab \code{\link[aroma.affymetrix:averageQuantile.AffymetrixCelSet]{averageQuantile}} \tab Gets the average empirical distribution across all samples.\cr
  \tab \code{clone} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
@@ -59,9 +60,11 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
+ \tab \code{\link[aroma.affymetrix:normalizeQuantile.AffymetrixCelSet]{normalizeQuantile}} \tab Normalizes samples to have the same empirical distribution.\cr
  \tab \code{range} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelSet]{setCdf}} \tab Sets the CDF structure for this CEL set.\cr
+ \tab \code{transformAffine} \tab  -\cr
 }
 
 
