@@ -21,7 +21,7 @@ verbose <- Arguments$getVerbose(TRUE);
 
 verbose && enter(verbose, "Sourcing all *.R files");
 
-source("../../R.utils/R.utils/R/Verbose.R");
+source("Verbose.R");
 
 #source("../../affxparser/affxparser/R/convertCdf.R");
 #source("../../affxparser/affxparser/R/writeCdf.R");
