@@ -68,13 +68,17 @@ setMethodS3("normalizeQuantiles", "AffymetrixCelFile", function(this, outPath=fi
   }
 
   # Get all probe signals
+  verbose && enter(verbose, "Reading probe intensities");
   x <- getData(this, fields="intensities", ..., verbose=less(verbose));
   x <- x$intensities;
+  verbose && exit(verbose);
 
   # Identify the subset of probes to be updated
+  verbose && enter(verbose, "Identifying probes to be updated");
   cdf <- getCdf(this);
   subsetToUpdate <- identifyCells(cdf, indices=subsetToUpdate, 
                                 types=typesToUpdate, verbose=less(verbose));
+  verbose && exit(verbose);
 
   # Normalize intensities
   verbose && enter(verbose, "Normalizing to empirical target distribution");
