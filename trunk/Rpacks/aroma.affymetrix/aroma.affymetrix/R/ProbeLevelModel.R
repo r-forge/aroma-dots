@@ -354,7 +354,6 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
   } else if (identical(units, "remaining")) {
     doRemaining <- TRUE;
-    units <- findUnitsTodo(this);
   } else {
     throw("Unknown mode of argument 'units': ", mode(units));
   }
@@ -378,6 +377,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   if (is.null(units)) {
     nbrOfUnits <- nbrOfUnits(cdf);
     units <- 1:nbrOfUnits;
+  } else if (doRemaining) {
+    verbose && enter(verbose, "Identifying non-estimated units")
+    units <- findUnitsTodo(this, verbose=less(verbose));
+    verbose && exit(verbose);
   } else {
     # Fit only unique units
     units <- unique(units);
