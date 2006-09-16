@@ -20,10 +20,10 @@
  Normalizes the probe intensities to a target empirical distribution.
 }
 
-\usage{\method{normalizeQuantile}{AffymetrixCelFile}(this, outPath=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., overwrite=FALSE, skip=!overwrite, verbose=FALSE)}
+\usage{\method{normalizeQuantile}{AffymetrixCelFile}(this, path=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., overwrite=FALSE, skip=!overwrite, verbose=FALSE)}
 
 \arguments{
-  \item{outPath}{The path where to save the normalized data files.}
+  \item{path}{The path where to save the normalized data files.}
   \item{xTarget}{A \code{\link[base]{numeric}} \code{\link[base]{vector}}.  The empirical distribution
     to which all arrays should be normalized to.}
   \item{subsetToUpdate}{The indices of the probes to be updated.

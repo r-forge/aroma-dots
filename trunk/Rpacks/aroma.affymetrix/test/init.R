@@ -37,6 +37,9 @@ timestampOn(verbose);
 verbose && enter(verbose, "Sourcing all *.R files");
 
 source("Verbose.R");
+if (regexpr("[.]berkeley[.]edu$", Sys.getenv("HOST")) == -1) {
+  source("~/braju.com.R/R.utils/R.utils/R/sourceDirectory.R");
+}
 
 #source("../../affxparser/affxparser/R/convertCdf.R");
 #source("../../affxparser/affxparser/R/writeCdf.R");

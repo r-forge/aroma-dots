@@ -85,7 +85,7 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
       probes <- identifyCells(cdf, indices=subsetToAvg, types=typesToAvg,
                                                   verbose=less(verbose));
       verbose && cat(verbose, "Using ", length(probes), " probes");
-      verbose && cat(verbose, "Calculating distribution from data");
+      verbose && cat(verbose, "Calculating target distribution from ", length(this), " arrays");
       xTarget <- averageQuantile(this, probes=probes, 
                                                   verbose=less(verbose));
       verbose && cat(verbose, "Saving distribution: ", pathname);

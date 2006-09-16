@@ -536,8 +536,6 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-print(verbose);
-
   cVerbose <- -(as.numeric(verbose) + 1);
   cel <- readCel(this$.pathname, indices=indices, 
                  readHeader=FALSE, 

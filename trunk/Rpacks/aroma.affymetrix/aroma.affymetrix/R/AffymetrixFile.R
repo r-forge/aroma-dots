@@ -120,7 +120,7 @@ setMethodS3("as.character", "AffymetrixFile", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getPathname", "AffymetrixFile", function(this, ...) {
-  as.character(this$.pathname);
+  this$.pathname;
 })
 
 
