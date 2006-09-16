@@ -29,7 +29,9 @@ print(gi)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Create a CN model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE)
+if (!exists("model")) {
+  model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE)
+}
 print(model)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -40,7 +42,13 @@ units <- getUnitIndices(gi, chromosome=chr)
 cat(sprintf("Fits %d SNPs on chromosome %s.\n", length(units), chr))
 fit(model, units=units, verbose=verbose)
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Get the estimated chip effects
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ces <-getChipEffects(model)
+
+# Array to be investigated
+ce <- getFile(ces, 1)
 
 # Re-calculate the average chip-effect across arrays
 ceAvg <- getAverageFile(ces, force=TRUE, verbose=verbose)
@@ -48,7 +56,6 @@ ceAvg$mergeStrands <- ce$mergeStrands
 ceAvg$combineAlleles <- ce$combineAlleles
 
 yRef <- unlist(ceAvg[units], use.names=FALSE)
-ce <- getFile(ces, 1)
 y <- unlist(ce[units], use.names=FALSE)
 cn <- y/yRef	
 
