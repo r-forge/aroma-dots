@@ -82,7 +82,7 @@ setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types
   })
 
   if (annotate) {
-    stextChipType(this);
+    stextChipType(getCdf(this));
     stextLabels(this);
     stextSize(this, size=length(y));
   }
@@ -154,7 +154,7 @@ setMethodS3("annotateMvsA", "AffymetrixCelFile", function(this, reference, ..., 
   if (identical(what, "M")) {
     abline(h=0, lty=1, col="blue");
   }
-  stextChipType(this);
+  stextChipType(getCdf(this));
   stextLabels(this, others=reference);
 }, protected=TRUE)
 
@@ -258,10 +258,6 @@ setMethodS3("smoothScatterMvsA", "AffymetrixCelFile", function(this, reference, 
   invisible(ma);
 })
 
-
-setMethodS3("stextChipType", "AffymetrixCelFile", function(this, side=4, fmtstr="%s", pos=1, cex=0.7, col="darkgray", ...) {
-  stext(side=side, text=sprintf(fmtstr, getChipType(this)), pos=pos, cex=cex, col=col, ...);
-})
 
 
 

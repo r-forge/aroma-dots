@@ -1002,9 +1002,73 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 })
 
 
+###########################################################################/**
+# @RdocMethod getGenomeInformation
+#
+# @title "Gets genome information for this chip type"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{types}{A @character @vector specifying what type of genome 
+#     information sets to search for.}
+#   \item{...}{Not used.}
+#   \item{force}{If @FALSE, cached information is retrieved, otherwise not.}
+# }
+#
+# \value{
+#  Returns a @see "GenomeInformation" object.
+# }
+#
+# \examples{\dontrun{
+#   @include "../incl/getGenomeInformation.Rex"
+# }}
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c("dChip"), ..., force=FALSE) {
+  chipType <- getChipType(this);
+
+  gi <- this$.gi;
+  if (is.null(gi) || force) {
+    for (type in types) {
+      tryCatch({
+        if (type == "dChip") {
+          gi <- DChipGenomeInformation$fromChipType(chipType);
+        }
+      }, error = function(ex) {})
+    }
+  
+    if (is.null(gi)) {
+      throw("Failed to retrieve genome information for this chip type: ", chipType);
+    }
+
+    this$.gi <- gi;
+  }
+
+  gi;
+})
+
+setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, side=4, fmtstr="%s", pos=1, cex=0.7, col="darkgray", ...) {
+  stext(side=side, text=sprintf(fmtstr, getChipType(this)), pos=pos, cex=cex, col=col, ...);
+})
+
+
 
 ############################################################################
 # HISTORY:
+# 2006-09-16
+# o Added getGenomeInformation() and stextChipType().
 # 2006-09-14
 # o BUG FIX: Fractional value of 'indices' of identifyCells().
 # 2006-09-10

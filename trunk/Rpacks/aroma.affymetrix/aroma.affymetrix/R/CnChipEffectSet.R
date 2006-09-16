@@ -48,7 +48,7 @@ setMethodS3("setCombineAlleles", "CnChipEffectSet", function(this, status, ...) 
   status <- Arguments$getLogical(status);
   ce <- getFile(this, 1);
   oldStatus <- ce$ombineAlleles;
-  lapply(ces, FUN=function(ce) {
+  lapply(this, FUN=function(ce) {
     ce$combineAlleles <- status;
   })
   invisible(oldStatus);

@@ -68,7 +68,6 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{range} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
  \tab \code{\link[aroma.affymetrix:smoothScatterMvsA.AffymetrixCelFile]{smoothScatterMvsA}} \tab Plots log-ratio versus log-intensity in a smooth scatter plot.\cr
- \tab \code{stextChipType} \tab  -\cr
  \tab \code{transformAffine} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:writeSpatial.AffymetrixCelFile]{writeSpatial}} \tab Writes a spatial image of the CEL data to an image file.\cr
 }

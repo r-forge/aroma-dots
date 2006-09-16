@@ -1,3 +1,24 @@
+###########################################################################/**
+# @RdocClass GenomeInformation
+#
+# @title "The GenomeInformation class"
+#
+# \description{
+#  @classhierarchy
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Arguments passed to @see "AffymetrixFile".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"  
+# }
+# 
+# @author
+#*/###########################################################################
 setConstructorS3("GenomeInformation", function(...) {
   this <- extend(AffymetrixFile(...), "GenomeInformation",
     "cached:.data"=NULL
@@ -7,20 +28,139 @@ setConstructorS3("GenomeInformation", function(...) {
   this;
 })
 
-setMethodS3("verify", "GenomeInformation", function(this, ...) TRUE);
+
+###########################################################################/**
+# @RdocMethod verify
+#
+# @title "Verifies the correctness of the underlying file"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns (visibly) @TRUE if the file is valid, otherwise an error is
+#   thrown.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("verify", "GenomeInformation", function(this, ...) {
+  TRUE;
+}, protected=TRUE)
 
 
+
+###########################################################################/**
+# @RdocMethod getChipType
+#
+# @title "Gets the chip type of this genome information set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getChipType", "GenomeInformation", function(this, ...) {
   pathname <- getPathname(this);
   basename(dirname(pathname));
 })
 
+
+###########################################################################/**
+# @RdocMethod fromCdf
+#
+# @title "Static method to define a genome information set from a CDF"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{cdf}{An @see "AffymetrixCdfFile".}
+#  \item{...}{Additional argument passed to @see "fromChipType".}
+# }
+#
+# \value{
+#   Returns a @see "GenomeInformation" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "fromChipType".
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("fromCdf", "GenomeInformation", function(static, cdf, ...) {
   fromChipType(static, getChipType(cdf), ...);
 }, static=TRUE)
 
 
+
+
+###########################################################################/**
+# @RdocMethod fromChipType
+#
+# @title "Static method to define a genome information set by chip type"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @see "GenomeInformation" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "fromCdf".
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("fromChipType", "GenomeInformation", abstract=TRUE);
+
+
+setMethodS3("fromDataSet", "GenomeInformation", function(static, dataSet, ...) {
+  cdf <- getCdf(dataSet);
+  chipType <- getChipType(cdf);
+  fromChipType(static, chipType, ...);
+}, static=TRUE)
+
 
 
 ###########################################################################/**
@@ -46,7 +186,227 @@ setMethodS3("fromChipType", "GenomeInformation", abstract=TRUE);
 #
 # \value{
 #   Returns a @data.frame, where the row names correspond to unit indices
-#   as the are ordered in the CDF.
+#   as defined by the CDF.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getUnitIndices".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c("chromosome", "physicalPosition"), orderBy=NULL, ..., force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  data <- this$.data;
+  if (is.null(data) || force) {
+    verbose && enter(verbose, "Requiring genome information from file");
+
+    # Read the unit names from the corresponding CDF file
+    verbose && enter(verbose, "Reading unit names from CDF file");
+    chipType <- getChipType(this);
+    cdfFile <- findCdf(chipType);
+    if (is.null(cdfFile))
+      throw("Could not located CDF file: ", chipType);
+    targetUnitNames <- readCdfUnitNames(cdfFile);
+    verbose && exit(verbose);
+
+    # Now read the genome information data
+    verbose && enter(verbose, "Reading genome information data");
+    data <- readData(this, verbose=less(verbose));
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Reordering units according to the CDF file");
+    # Reorder genome information data according to CDF file
+    idxs <- match(targetUnitNames, data[,1]);
+    data <- data[idxs,-1];
+    rownames(data) <- 1:nrow(data);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Optimizing default return order");
+    # Default ordering
+    args <- as.list(data[,fields,drop=FALSE]);
+    o <- do.call("order", args=args);
+    data <- data[o,,drop=FALSE];
+    rm(o);
+    verbose && exit(verbose);
+
+    # Store in cache
+    this$.data <- data;
+
+    verbose && exit(verbose);
+  }
+
+  # Subset by unit?
+  if (!is.null(units)) {
+    data <- data[units,,drop=TRUE];
+  }
+
+  # Stratify by field values?
+  args <- list(...);
+  if (length(args) > 0) {
+    for (key in names(args)) {
+      # Get the values to be stratified upon.
+      values <- data[,key];
+
+      # Get the test (value or function)
+      test <- args[[key]];
+      test <- na.omit(test);
+      if (is.function(test)) {
+        keep <- test(values);
+      } else {
+        keep <- (values == test);
+      }
+      data <- data[keep,,drop=FALSE];
+    }
+    rm(keep);
+  }
+
+  # Reorder?
+  if (!is.null(orderBy)) {
+    o <- do.call("order", args=as.list(data[,orderBy]));
+    data <- data[o,,drop=FALSE];
+    rm(o);
+  }
+
+  # Extract a subset of fields?
+  if (!is.null(fields))
+    data <- data[,fields, drop=FALSE];
+
+  data;
+})
+
+
+setMethodS3("readData", "GenomeInformation", abstract=TRUE);
+
+setMethodS3("readTableInternal", "GenomeInformation", function(this, pathname, colClasses=NULL, ..., include=NULL, exclude=NULL, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Reading tabular data from file");
+  pathname <- getPathname(this);
+  verbose && cat(verbose, "Pathname: ", pathname);
+
+  verbose && cat(verbose, "Argument 'include': ", paste(include, collapse=", "));
+  verbose && cat(verbose, "Argument 'exclude': ", paste(exclude, collapse=", "));
+  exclude <- setdiff(exclude, include);
+  verbose && cat(verbose, "exclude\\include: ", paste(exclude, collapse=", "));
+  colClasses[names(colClasses) %in% exclude] <- "NULL";
+  toRead <- names(colClasses)[colClasses != "NULL"];
+  verbose && cat(verbose, "Columns to be read: ", paste(toRead, collapse=", "));
+  
+  df <- readTable(pathname, colClasses=colClasses, header=TRUE, sep="\t", ..., verbose=less(verbose));
+
+  colnames(df) <- toCamelCase(colnames(df));
+  verbose && exit(verbose);
+
+  df;
+}, protected=TRUE);
+
+
+###########################################################################/**
+# @RdocMethod getUnitIndices
+#
+# @title "Gets unit indices ordered along the chromosome"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Arguments passed to @seemethod "getData".}
+#  \item{na.rm}{If @TRUE, non-defined unit indices are excluded, otherwise
+#      not.}
+# }
+#
+# \value{
+#   Returns an @integer @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getData".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRUE) {
+  df <- getData(this, fields="chromosome", ...);
+  df <- rownames(df);
+  suppressWarnings({  # Suppress warnings about NAs
+    df <- as.integer(df);
+  })
+  if (na.rm)
+    df <- df[!is.na(df)];
+  df;
+})
+
+
+###########################################################################/**
+# @RdocMethod getPosition
+#
+# @title "Gets the physical position for a set of units"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Arguments passed to @seemethod "getData".}
+#  \item{na.rm}{If @TRUE, non-defined unit indices are excluded, otherwise
+#      not.}
+# }
+#
+# \value{
+#   Returns an @integer @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getData".
+#   @seemethod "getUnitIndices".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getPosition", "GenomeInformation", function(this, ..., na.rm=TRUE) {
+  df <- getData(this, fields="physicalPosition", ...);
+  suppressWarnings({  # Suppress warnings about NAs
+    df <- as.integer(df[,1]);
+  })
+  if (na.rm)
+    df <- df[!is.na(df)];
+  df;
+})
+
+###########################################################################/**
+# @RdocMethod plotDensity
+#
+# @title "Plots the density of SNPs for a given chromosome"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{chromosome}{The chromsome to be displayed.}
+#  \item{...}{Additional arguments passed to @seemethod "getPosition".}
+#  \item{adjust}{A bandwidth parameter for the density estimator.}
+#  \item{xlab}{The label on the x-axis.  If @NULL, a default will generated.}
+#  \item{main}{The title of the plot.  If @NULL, a default will generated.}
+#  \item{annotate}{If @TRUE, the plot is annotated with extra information.}
+# }
+#
+# \value{
+#   Returns (invisibly) the estimated density.
 # }
 #
 # @author
@@ -55,62 +415,37 @@ setMethodS3("fromChipType", "GenomeInformation", abstract=TRUE);
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c("chromosome", "physicalPosition"), orderBy=fields, ...) {
-  data <- this$.data;
-  if (is.null(data)) {
-    # Read the unit names from the corresponding CDF filex
-    chipType <- getChipType(this);
-    cdfFile <- findCdf(chipType);    
-    targetUnitNames <- readCdfUnitNames(cdfFile);
+setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., adjust=1/20, xlab=NULL, main=NULL, annotate=TRUE) {
+  # Get the positions of these units
+  pos <- getPosition(gi, chromosome=chromosome, ...);
 
-    # Now read the genome information data
-    data <- readHg17(this);
+  # Estimate the SNP density
+  d <- density(pos/10^6, from=0, adjust=adjust);
 
-    # Reorder genome information data according to CDF file
-    idxs <- match(targetUnitNames, data[,1]);
-    data <- data[idxs,-1];
-    this$.data <- data;
+  # Plot the density
+  if (is.null(xlab))
+    xlab <- "Physical position (Mb)";
+  if (is.null(main))
+    main <- sprintf("SNP density on chromsome %s", chromosome);
+  plot(d, lwd=2, xlab=xlab, main=main);
+
+  # Annotate?
+  if (annotate) {
+    stext(sprintf("%d SNPs", d$n), side=3, pos=1, line=-1, cex=0.8);
+    cdf <- AffymetrixCdfFile$fromChipType(getChipType(this));
+    stextChipType(cdf);
   }
 
-  args <- list(...);
-  if (length(args) > 0) {
-    for (key in names(args)) {
-      value <- args[[key]];
-      value <- na.omit(value);
-      if (is.function(value)) {
-        keep <- value(data[,key]);
-      } else {
-        keep <- (data[,key] == value);
-      }
-      data <- data[keep,,drop=FALSE];
-    }
-    rm(keep);
-  }
-
-  if (!is.null(orderBy)) {
-    o <- do.call("order", args=as.list(data[,orderBy]));
-    data <- data[o,,drop=FALSE];
-    rm(o);
-  }
-
-  data <- data[,fields,drop=FALSE];
-  data;
-})
-
-
-setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., orderBy=c("chromosome", "physicalPosition"), na.rm=TRUE) {
-  df <- getData(this, fields="chromosome", orderBy=orderBy, ...);
-  df <- rownames(df);
-  df <- as.integer(df);
-  if (na.rm)
-    df <- df[!is.na(df)];
-  df;
+  invisible(d);
 })
 
 
 ############################################################################
 # HISTORY:
 # 2006-09-15
+# o Added plotDensity() and more.
+# 2006-09-15
+# o Added Rdoc comments.
 # o Created from DChip.R in old(!) aroma.snp.
 # 2005-11-15
 # o Added support for skipping header in readSampleInformationFile().

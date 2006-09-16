@@ -15,40 +15,54 @@ if (is.null(path))
 if (!exists("ds")) {
   ds <- AffymetrixCelSet$fromFiles(path)
 }
-verbose && ruler(verbose)
-verbose && print(verbose, ds)
+print(ds)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Create a set of various PLMs for this dataset
+# Get the genome information for this data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("models", mode="list")) {
-  mergeStrands <- TRUE
-  combineAlleles <- TRUE
-  models <- list(
-    rma = RmaCnPlm(ds, mergeStrands=mergeStrands, 
-                                      combineAlleles=combineAlleles),
-    mbei = MbeiCnPlm(ds, mergeStrands=mergeStrands, 
-                                      combineAlleles=combineAlleles)
-  )
-}
-verbose && ruler(verbose)
-verbose && print(verbose, models)
+cdf <- getCdf(ds)
+gi <- getGenomeInformation(cdf)
+print(gi)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# For each model, fit a few units
-#
-# Note, by fitting the same set of units across models, the internal
-# caching mechanisms of aroma.affymetrix makes sure that the data is
-# only read into memory once. See log for reading speed.
+# Create a CN model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-units <- 55+1:100
+model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE)
+print(model)
 
-for (model in models) {
-  verbose && ruler(verbose)
-  fit(model, units=units, force=TRUE, verbose=verbose)
-}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Fit all units on one chromosome 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+chr <- "15"
+units <- getUnitIndices(gi, chromosome=chr)
+cat(sprintf("Fits %d SNPs on chromosome %s.\n", length(units), chr))
+fit(model, units=units, verbose=verbose)
+
+# Re-calculate the average chip-effect across arrays
+ceAvg <- getAverageFile(ces, force=TRUE, verbose=verbose)
+ceAvg$mergeStrands <- ce$mergeStrands
+ceAvg$combineAlleles <- ce$combineAlleles
+
+yRef <- unlist(ceAvg[units], use.names=FALSE)
+ce <- getFile(ces, 1)
+y <- unlist(ce[units], use.names=FALSE)
+cn <- y/yRef	
+
+x <- getPosition(gi, units=units, na.rm=FALSE)
+x <- x/10^6
+xlab <- "Physical position (Mb)"
+ylab <- expression(log[2](theta[i]/theta[avg]))
+xlim <- range(x, na.rm=TRUE)
+ylim <- c(-1,1)*2
+main <- sprintf("CN estimates for chromosome %s", chr)
+plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main)
+abline(h=0, col="blue")
+abline(h=log(1:4/2, base=2), col="blue", lty=2)
+points(x, log(cn,2), pch=176)
+stext(sprintf("%d SNPs", sum(!is.na(x))), side=3, pos=1, line=-1, cex=0.8)
+stextChipType(cdf)
 
 } # for (zzz in 0)
 rm(zzz)
