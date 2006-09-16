@@ -6,6 +6,18 @@ tryCatch({
 }, error = function(ex) {})
 
 closeAllConnections();
+
+svnUpdate <- function(...) {
+  if (regexpr("[.]berkeley[.]edu$", Sys.getenv("HOST")) == -1)
+    return(FALSE);
+  opwd <- getwd();
+  on.exit(setwd(opwd));
+  system("svn update");
+  setwd("../aroma.affymetrix/R/");
+  system("svn update");
+  TRUE;
+} # svnUpdate()
+
 library(R.oo)
 library(R.utils)
 library(R.graphics)
@@ -16,6 +28,8 @@ library(digest)
 
 #library(aroma.apd)
 #library(aroma.affymetrix)
+
+svnUpdate()
 
 verbose <- Arguments$getVerbose(-3);
 timestampOn(verbose);
