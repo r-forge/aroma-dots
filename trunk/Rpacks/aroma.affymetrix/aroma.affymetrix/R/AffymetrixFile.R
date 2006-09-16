@@ -337,6 +337,10 @@ setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, ov
 })
 
 
+setMethodS3("stextSize", "AffymetrixFile", function(this, side=1, fmtstr="n=%d", size, pos=1, cex=0.7, col="darkgray", ...) {
+  stext(side=side, line=-1, text=sprintf(fmtstr, round(size)), pos=pos, cex=cex, col=col, ...);
+})
+
 setMethodS3("stextLabel", "AffymetrixFile", function(this, side=3, fmtstr="%s", label=getLable(this), pos=0, cex=0.7, col="black", ...) {
   stext(side=side, text=sprintf(fmtstr, label), pos=pos, cex=cex, col=col, ...);
 })
@@ -350,7 +354,10 @@ setMethodS3("stextLabels", "AffymetrixFile", function(this, others=NULL, side=3,
   # Build text labels
   text <- vector("list", length(objects));
   for (kk in seq(along=objects)) {
-    value <- getLabel(objects[[kk]]);
+    object <- objects[[kk]];
+    if (is.null(object))
+      next;
+    value <- getLabel(object);
     str <- NULL;
     tryCatch({ str <- sprintf(fmtstr, value) }, error=function(ex){});
     if (is.null(str))
@@ -369,6 +376,8 @@ setMethodS3("stextLabels", "AffymetrixFile", function(this, others=NULL, side=3,
 
 ############################################################################
 # HISTORY:
+# 2006-09-15
+# o Added stextSize().
 # 2006-08-27
 # o Added stextLabel() and stextLabels(). stext is for "side text", cf. 
 #   mtext for "margin text". stext() is slightly more convenient than mtext

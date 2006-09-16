@@ -183,8 +183,6 @@ setMethodS3("getAllelePairs", "AffymetrixCdfFile", function(this, units=NULL, ..
 #   Returns a named @list.
 # }
 #
-# @examples "../incl/getAllelePairUnitSets.AffymetrixCdfFile.Rex"
-#
 # @author
 #
 # \seealso{
@@ -234,8 +232,6 @@ setMethodS3("getAllelePairUnitSets", "AffymetrixCdfFile", function(this, ...) {
 #   Returns a named @list where each element is a two-column @matrix where
 #   the column names are the nucleotides for the two alleles.
 # }
-#
-# @examples "../incl/getAllelePairUnitSets.AffymetrixCdfFile.Rex"
 #
 # \section{Benchmarking}{
 #   On an IBM Thinkpad A31 with 1.8GHz and 1GB RAM:

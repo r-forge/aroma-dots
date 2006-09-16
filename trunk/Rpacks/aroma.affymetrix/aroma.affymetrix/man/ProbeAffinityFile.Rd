@@ -58,10 +58,10 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 decode, decodeUnit, encode, encodeUnit, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, calcMvsA, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantile, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, calcMvsA, calibrateAllelicCrosstalk, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantile, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, stextChipType, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
-as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels
+as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels, stextSize
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

@@ -1,3 +1,96 @@
+###########################################################################/**
+# @set "class=AffymetrixCelFile"
+# @RdocMethod plotDensity
+#
+# @title "Plots the density of the probe signals on the array"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{subset}{The subset of probes to include.}
+#   \item{types}{The type of probes to include.}
+#   \item{...}{Additional arguments passed to 
+#      \code{identifyCells()} of @see "AffymetrixCdfFile",
+#      , @seemethod "getData", and 
+#      @see "aroma.light::plotDensity.numeric".}
+#   \item{xlab,ylab}{The labels on the x and the y axes.}
+#   \item{log}{If @TRUE, the density of the log (base 2) values are 
+#      used, otherwise the non-logged values.}
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
+# }
+#
+# \value{
+#  Returns nothing.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types=NULL, ..., xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'subset':
+
+  # Argument 'xlab':
+  if (is.null(xlab)) {
+    if (log) {
+      xlab <- expression(log[2](y));
+    } else {
+      xlab <- expression(y);
+    }
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify the subset of probes to be updated
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cdf <- getCdf(this);
+  verbose && enter(verbose, "Identifying subset of probes");
+  suppressWarnings({
+    subset <- identifyCells(cdf, indices=subset, types=types, ...,
+                                                    verbose=less(verbose));
+  })
+  verbose && exit(verbose);
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plot density
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  verbose && enter(verbose, "Plotting the density");
+  verbose && cat(verbose, "Array: ", getName(this));
+  suppressWarnings({
+    verbose && enter(verbose, "Loading probe intensities");
+    y <- getData(this, indices=subset, fields="intensities");
+    y <- y$intensities;
+    verbose && exit(verbose);
+    if (log) {
+      verbose && cat(verbose, "Taking the logarithm (base 2)");
+      y <- log(y, base=2);
+    }
+    verbose && cat(verbose, "Plotting");
+    plotDensity(y, xlab=xlab, ylab=ylab, ...);
+  })
+
+  if (annotate) {
+    stextChipType(this);
+    stextLabels(this);
+    stextSize(this, size=length(y));
+  }
+
+  verbose && exit(verbose);
+})
+
+
 
 setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, ..., zeros=FALSE) {
   # Arguments 'reference':
@@ -65,21 +158,102 @@ setMethodS3("annotateMvsA", "AffymetrixCelFile", function(this, reference, ..., 
   stextLabels(this, others=reference);
 }, protected=TRUE)
 
+
+
+
+###########################################################################/**
+# @RdocMethod plotMvsA
+#
+# @title "Plots log-ratio versus log-intensity in a scatter plot"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{reference}{The reference channel, i.e. the denominator in the
+#     log ratios.}
+#   \item{indices}{Indices of the probe signals to be plotted.}
+#   \item{pch}{The plot symbol.}
+#   \item{xlim,ylim}{The range of the x and the y axes.}
+#   \item{xlab,ylab}{The labels on the x and the y axes.}
+#   \item{...}{Additional arguments passed to @see "graphics::plot".} 
+#   \item{annotate}{If @TRUE, the plot is annotated with information about
+#     the data plotted, otherwise not.}
+# }
+#
+# \value{
+#  Returns (invisibly) a @data.frame with the plotted data in the
+#  first two columns.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "smoothScatterMvsA".
+#   @seemethod "plotMvsX".
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("plotMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2%*%log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
   ma <- calcMvsA(this, reference, indices=indices);
   plot(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
-  if (annotate)
+  if (annotate) {
     annotateMvsA(this, reference);
+    stextSize(this, size=nrow(ma));
+  }
   this$lastPlotData <- ma;
   invisible(ma);
 })
 
+
+
+###########################################################################/**
+# @RdocMethod smoothScatterMvsA
+#
+# @title "Plots log-ratio versus log-intensity in a smooth scatter plot"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{reference}{The reference channel, i.e. the denominator in the
+#     log ratios.}
+#   \item{indices}{Indices of the probe signals to be plotted.}
+#   \item{pch}{The plot symbol.}
+#   \item{xlim,ylim}{The range of the x and the y axes.}
+#   \item{xlab,ylab}{The labels on the x and the y axes.}
+#   \item{...}{Additional arguments passed to @see "graphics::plot".} 
+#   \item{annotate}{If @TRUE, the plot is annotated with information about
+#     the data plotted, otherwise not.}
+# }
+#
+# \value{
+#  Returns (invisibly) a @data.frame with the plotted data in the
+#  first two columns.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "plotMvsA".
+#   Internally @see "geneplotter::smoothScatter" is used.
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("smoothScatterMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2%*%log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
   require(geneplotter) || throw("Package 'geneplotter' not loaded.");
   ma <- calcMvsA(this, reference, indices=indices);
   smoothScatter(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
-  if (annotate)
+  if (annotate) {
     annotateMvsA(this, reference);
+    stextSize(this, size=nrow(ma));
+  }
   this$lastPlotData <- ma;
   invisible(ma);
 })
@@ -90,28 +264,125 @@ setMethodS3("stextChipType", "AffymetrixCelFile", function(this, side=4, fmtstr=
 })
 
 
-setMethodS3("plotMvsX", "AffymetrixCelFile", function(this, reference, x, indices=NULL, pch=176, ylim=c(-1,1)*2, ylab=expression(M==log[2](y1/y2)), ..., what="M", add=FALSE, annotate=!add) {
+
+###########################################################################/**
+# @RdocMethod plotMvsX
+#
+# @title "Plots log-ratio versus another variable in a scatter plot"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{reference}{The reference channel, i.e. the denominator in the
+#     log ratios.}
+#   \item{x}{The other variable.  A @double @vector.}
+#   \item{indices}{Indices of the probe signals to be plotted.}
+#   \item{pch}{The plot symbol.}
+#   \item{xlim,ylim}{The range of the x and the y axes.}
+#   \item{xlab,ylab}{The labels on the x and the y axes.}
+#   \item{...}{Additional arguments passed to @see "graphics::plot".} 
+#   \item{annotate}{If @TRUE, the plot is annotated with information about
+#     the data plotted, otherwise not.}
+# }
+#
+# \value{
+#  Returns (invisibly) a @data.frame with the plotted data in the
+#  first two columns, and remaining data in the following columns.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "plotMvsA".
+#   @seemethod "smoothScatterMvsA".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("plotMvsX", "AffymetrixCelFile", function(this, reference, x, indices=NULL, pch=176, ylim=c(-1,1)*2, ylab=NULL, ..., what=c("M", "A"), add=FALSE, annotate=!add) {
+  # Argument 'what':
+  what <- match.arg(what);
+
+  # Get the log-ratios
   ma <- calcMvsA(this, reference, indices=indices, zeros=TRUE);
   nobs <- nrow(ma);
   if (nobs == 0)
     throw("Cannot plot M vs X because there is not non-zero data.");
 
-  if (add) {
-    points(x, ma[,what], pch=pch, ...);
+  if (nobs != length(x)) {
+    throw("The number of log-ratios does not match the number of elements in argument 'x': ", length(nobs), " != ", length(x));
+  }
+
+  if (what == "M") {
+    ylab <- expression(M==log[2](y1/y2))
   } else {
-    plot(x, ma[,what], pch=pch, ylim=ylim, ylab=ylab, ...);
-    if (annotate)
+    ma <- ma[,2:1];
+    ylab <- expression(A==1/2%*%log[2](y1*y2))
+  }
+
+  if (add) {
+    points(x, ma[,1], pch=pch, ...);
+  } else {
+    plot(x, ma[,1], pch=pch, ylim=ylim, ylab=ylab, ...);
+    if (annotate) {
       annotateMvsA(this, reference, what=what);
+      stextSize(this, size=length(x));
+    }
   }
 
   # The first two columns should always be the data plotted
-  ma <- cbind(x=x, M=ma[,what], A=ma[,setdiff(colnames(ma),what)]);
+  ma <- cbind(x=x, ma);
 
   this$lastPlotData <- ma;
   invisible(ma);
 })
 
-setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, chromosome, region=NULL, gdas, ylab=expression(M==log[2](y1/y2)), xlab="Physical position [Mb]", xlim=NULL, ..., what="M", annotate=TRUE) {
+
+
+###########################################################################/**
+# @RdocMethod plotMvsPosition
+#
+# @title "Plots log-ratio versus physical position in a scatter plot"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{reference}{The reference channel, i.e. the denominator in the
+#     log ratios.}
+#   \item{x}{The other variable.  A @double @vector.}
+#   \item{chromosome}{The chromosome to be plotted.}
+#   \item{region}{The region to be plotted.  If @NULL, the whole chromosome
+#     is plotted.}
+#   \item{pch}{The plot symbol.}
+#   \item{xlim,ylim}{The range of the x and the y axes.}
+#   \item{xlab,ylab}{The labels on the x and the y axes.}
+#   \item{...}{Additional arguments passed to @see "graphics::plot".} 
+#   \item{annotate}{If @TRUE, the plot is annotated with information about
+#     the data plotted, otherwise not.}
+# }
+#
+# \value{
+#  Returns (invisibly) a @data.frame with the plotted data in the
+#  first two columns, and remaining data in the following columns.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "plotMvsX".
+#   @seemethod "plotMvsA".
+#   @seemethod "smoothScatterMvsA".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, chromosome, region=NULL, gdas, ylab=ylab, xlab="Physical position [Mb]", xlim=NULL, ..., what="M", annotate=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -121,6 +392,16 @@ setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, ch
     } else {
       region <- Arguments$getDoubles(region, range=c(0,Inf), length=c(2,2));
     }
+  }
+
+  # Argument 'what':
+  what <- match.arg(what);
+
+  if (what == "M") {
+    ylab <- expression(M==log[2](y1/y2))
+  } else {
+    ma <- ma[,2:1];
+    ylab <- expression(A==1/2%*%log[2](y1*y2))
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -214,6 +495,7 @@ setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, ch
     mad <- mad(x[is.finite(x)]);
     stext(sprintf("MAD: %.3g", mad), side=3, line=-1, pos=1, 
                                                   cex=0.7, col="darkgray");
+    stextSize(this, size=length(cells));
   }
 
   rownames(res) <- unitNames;
@@ -231,10 +513,20 @@ setMethodS3("highlight", "AffymetrixCelFile", function(this, indices=NULL, ...) 
   invisible(data);
 })
 
-# match(c("SNP_A-1737080", "SNP_A-1740686"), rownames(df))
+
 ############################################################################
 # HISTORY:
+# 2006-09-15
+# o Added more Rdoc comments.
+# o Readded plotDensity(). 
+# o Added stextSize() to annotate with "n=1034".
 # 2006-08-27
 # o Added plotMvsX() and plotMvsPosition().
 # o Added calcMvsA(), plotMvsA(), and smoothScatterMvsA().
+# 2006-07-27
+# o Added argument 'verbose' to plotDensity().
+# 2006-05-29
+# o Added Rdoc comments.
+# 2006-05-16
+# o Created.
 ############################################################################

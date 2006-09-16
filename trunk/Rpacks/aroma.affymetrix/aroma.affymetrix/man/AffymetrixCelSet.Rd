@@ -52,6 +52,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixCelSet.AffymetrixCelSet]{as.AffymetrixCelSet}} \tab Coerce an object to an AffymetrixCelSet object.\cr
  \tab \code{\link[aroma.affymetrix:as.character.AffymetrixCelSet]{as.character}} \tab Returns a short string describing the Affymetrix data set.\cr
  \tab \code{\link[aroma.affymetrix:averageQuantile.AffymetrixCelSet]{averageQuantile}} \tab Gets the average empirical distribution across all samples.\cr
+ \tab \code{\link[aroma.affymetrix:calibrateAllelicCrosstalk.AffymetrixCelSet]{calibrateAllelicCrosstalk}} \tab Calibrates probepair signals for crosstalk between allele A and allele B.\cr
  \tab \code{clone} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
@@ -61,6 +62,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
  \tab \code{\link[aroma.affymetrix:normalizeQuantile.AffymetrixCelSet]{normalizeQuantile}} \tab Normalizes samples to have the same empirical distribution.\cr
+ \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelSet]{plotDensity}} \tab Plots the densities of all samples.\cr
  \tab \code{range} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelSet]{setCdf}} \tab Sets the CDF structure for this CEL set.\cr
@@ -78,17 +80,25 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \examples{\dontrun{
-   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   for (zzz in 0) {
+
+# Find any dataset
+path <- findCelSet()
+if (is.null(path))
+  break
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Define a dataset object based on all CEL files in a directory
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-path <- "MyDataSet/chip_data/Xba/"
 ds <- AffymetrixCelSet$fromFiles(path)
 print(ds)
 
-# Keep at most sex arrays for this example
-ds <- extract(ds, 1:min(6,nbrOfArrays(ds)))
+# Keep at most three arrays for this example
+ds <- extract(ds, 1:min(3,nbrOfArrays(ds)))
 print(ds)
 
+} # for (zzz in 0)
+rm(zzz)
 
  }}
 
