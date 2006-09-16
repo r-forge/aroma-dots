@@ -40,6 +40,8 @@ units <- getUnitIndices(gi, chromosome=chr)
 cat(sprintf("Fits %d SNPs on chromosome %s.\n", length(units), chr))
 fit(model, units=units, verbose=verbose)
 
+ces <-getChipEffects(model)
+
 # Re-calculate the average chip-effect across arrays
 ceAvg <- getAverageFile(ces, force=TRUE, verbose=verbose)
 ceAvg$mergeStrands <- ce$mergeStrands
