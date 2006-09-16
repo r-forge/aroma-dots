@@ -15,7 +15,7 @@
 #   \item{subset}{An optional @numeric @vector specifying the indices of the
 #      subset of probes to be used to fit the normalization function.}
 #   \item{spar, nknots}{Control parameters passed to 
-#      @see "stats:smooth.spline".}
+#      @see "stats::smooth.spline".}
 #   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }

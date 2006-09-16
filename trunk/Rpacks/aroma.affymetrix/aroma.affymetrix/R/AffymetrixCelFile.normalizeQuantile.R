@@ -11,7 +11,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{outPath}{The path where to save the normalized data files.}
+#   \item{path}{The path where to save the normalized data files.}
 #   \item{xTarget}{A @numeric @vector.  The empirical distribution
 #     to which all arrays should be normalized to.}
 #   \item{subsetToUpdate}{The indices of the probes to be updated.
@@ -37,17 +37,17 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, outPath=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
+setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
   # Load aroma.light::normalizeQuantile()
   require(aroma.light) || throw("Package aroma.light not loaded."); 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'outPath':
-  outPath <- Arguments$getWritablePathname(outPath);
-  if (identical(getPath(this), outPath)) {
-    throw("Cannot not normalize data file. Argument 'outPath' refers to the same path as the path of the data file to be normalized: ", outPath);
+  # Argument 'path':
+  path <- Arguments$getWritablePathname(path);
+  if (identical(getPath(this), path)) {
+    throw("Cannot not normalize data file. Argument 'path' refers to the same path as the path of the data file to be normalized: ", path);
   }
 
 
@@ -70,7 +70,7 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, outPath=fil
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   filename <- basename(getPathname(this));
-  pathname <- Arguments$getWritablePathname(filename, path=outPath, 
+  pathname <- Arguments$getWritablePathname(filename, path=path, 
                                          mustNotExist=(!overwrite && !skip));
 
   # Already normalized?

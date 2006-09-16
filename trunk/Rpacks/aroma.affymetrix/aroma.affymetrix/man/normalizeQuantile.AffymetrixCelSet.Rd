@@ -70,7 +70,7 @@ print(ds)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-dsQN <- normalizeQuantiles(ds, subsetToAvg=0.50,
+dsQN <- normalizeQuantile(ds, subsetToAvg=0.50,
                                typesToUpdate="pm", verbose=verbose)
 print(dsQN)
 

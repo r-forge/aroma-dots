@@ -41,7 +41,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, path, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, targetAvg=2200, ..., setsOfProbes=NULL, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
+setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, path, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, targetAvg=NULL, ..., setsOfProbes=NULL, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
   require(sfit) || throw("Package 'sfit' not found.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,6 +61,10 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
   }
   mkdirs(path);
 
+  if (!is.null(targetAvg)) {
+    targetAvg <- Arguments$getDouble(targetAvg, range=c(0, Inf));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -78,7 +82,7 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
     return(newInstance(this, pathname));
   }
 
-  verbose && cat(verbose, "Pathname: ", getPathname(df));
+  verbose && cat(verbose, "Pathname: ", getPathname(this));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify the cell indices for each possible allele basepair.
@@ -132,9 +136,12 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
     rm(fit);
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "Rescaling to target average ", targetAvg);
-    yC <- normalizeAverage(yC, targetAvg=targetAvg);
-    verbose && exit(verbose);
+    if (!is.null(targetAvg)) {
+      verbose && enter(verbose, "Rescaling to target average ", targetAvg);
+      yC <- normalizeAverage(yC, targetAvg=targetAvg);
+      verbose && exit(verbose);
+    }
+
     callHooks(sprintf("%s.onUpdated", hookName), df=this, y=y, yC=yC,...);
 #    points(yC, pch=".", col="red");
     rm(y);

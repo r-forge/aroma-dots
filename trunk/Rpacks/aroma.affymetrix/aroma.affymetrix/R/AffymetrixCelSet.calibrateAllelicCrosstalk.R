@@ -14,9 +14,6 @@
 #   \item{outPath}{The path where to save the calibrated data files.}
 #   \item{...}{Additional arguments passed to 
 #     @seemethod "calibrateAllelicCrosstalk".}
-#   \item{setsOfProbes}{A named @list where each item specifies the probe 
-#     indices for each of the four groups; forward and reverse strands 
-#     on allele A and allele B.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -42,7 +39,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path=NULL, name="calibAllelicCrosstalk", ..., setsOfProbes=NULL, verbose=FALSE) {
+setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path=NULL, name="calibAllelicCrosstalk", ..., verbose=FALSE) {
   require(sfit) || throw("Package 'sfit' not found.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -71,12 +68,11 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify the cell indices for each possible allele basepair.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (is.null(setsOfProbes)) {
-    verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
-    setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
-    gc();
-    verbose && exit(verbose);
-  }
+  verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
+  setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+  gc();
+  verbose && exit(verbose);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calibrate each array
@@ -88,7 +84,7 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path
     df <- getFile(this, kk);
     verbose && enter(verbose, "Array #", kk, " (", getName(df), ")");
     df <- calibrateAllelicCrosstalk(df, ..., path=path, 
-                                 setsOfProbes=setsOfProbes, verbose=less(verbose));
+                           setsOfProbes=setsOfProbes, verbose=less(verbose));
     dataFiles[[kk]] <- df;
 
     verbose && exit(verbose);

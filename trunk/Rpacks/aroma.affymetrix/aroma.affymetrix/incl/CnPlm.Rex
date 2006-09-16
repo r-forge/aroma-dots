@@ -47,5 +47,8 @@ units <- 55+1:100
 
 for (model in models) {
   verbose && ruler(verbose)
-  unitsFitted <- fit(model, units=units, force=TRUE, verbose=verbose)
+  fit(model, units=units, force=TRUE, verbose=verbose)
 }
+
+} # for (zzz in 0)
+rm(zzz)

@@ -115,20 +115,6 @@ setMethodS3("readColumnName", "GdasAnnotationFile", function(this, ..., force=FA
   columnName;
 })
 
-setMethodS3("readColumnName", "GdasAnnotationFile", function(this, ..., force=FALSE) {
-  columnName <- this$.columnName;
-  if (!force && !is.null(columnName))
-    return(columnName);
-
-  # Read from file
-  res <- readBlock(this, "ColumnName");
-  columnName <- strsplit(res, split="\t")[[1]];
-
-  # Save to cached field
-  this$.columnName <- columnName;
-
-  columnName;
-})
 
 
 setMethodS3("readData", "GdasAnnotationFile", function(this, colClasses="character", ..., force=FALSE) {
