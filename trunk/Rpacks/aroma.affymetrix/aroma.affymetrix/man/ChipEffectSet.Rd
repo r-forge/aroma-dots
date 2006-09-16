@@ -56,7 +56,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 
 \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, clone, fromFiles, getAverageFile, getCdf, getIntensities, getName, getUnitIntensities, nbrOfArrays, normalizeQuantile, range, readUnits, setCdf, transformAffine
+[, [[, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, calibrateAllelicCrosstalk, clone, fromFiles, getAverageFile, getCdf, getIntensities, getName, getUnitIntensities, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf, transformAffine
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq

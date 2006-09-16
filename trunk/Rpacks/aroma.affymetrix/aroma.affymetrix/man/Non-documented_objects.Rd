@@ -303,12 +303,9 @@
 \alias{nbrOfUnits}
 \alias{nbrOfUnits.AffymetrixCdfFile}
 \alias{normalizeQuantiles}
-\alias{plotMvsA.AffymetrixCelFile}
 \alias{plotMvsPosition}
-\alias{plotMvsPosition.AffymetrixCelFile}
 \alias{plotMvsPosition.ProbeLevelModel}
 \alias{plotMvsX}
-\alias{plotMvsX.AffymetrixCelFile}
 \alias{print.GenericSummary}
 \alias{print.Interface}
 \alias{range.AffymetrixCelFile}
@@ -351,7 +348,6 @@
 \alias{setup}
 \alias{setup.UnitGroupsModel}
 \alias{smoothScatterMvsA}
-\alias{smoothScatterMvsA.AffymetrixCelFile}
 \alias{stext}
 \alias{stext.default}
 \alias{stextChipType}

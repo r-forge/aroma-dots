@@ -50,18 +50,25 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{equals} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromChipType.AffymetrixCdfFile]{fromChipType}} \tab Defines an AffymetrixCdfFile object by chip type.\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCdfFile]{fromFile}} \tab Defines an AffymetrixCdfFile object from a CDF file.\cr
+ \tab \code{\link[aroma.affymetrix:getAllelePairs.AffymetrixCdfFile]{getAllelePairs}} \tab Gets the allele pairs for each unit.\cr
+ \tab \code{\link[aroma.affymetrix:getAllelePairUnitSets.AffymetrixCdfFile]{getAllelePairUnitSets}} \tab Gets the indices of units for all possible allele pairs.\cr
+ \tab \code{\link[aroma.affymetrix:getAlleleProbePairs.AffymetrixCdfFile]{getAlleleProbePairs}} \tab Gets the indices of probepairs with the same pair of SNP nucleotides.\cr
+ \tab \code{getAlleleProbePairs2} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCellIndices.AffymetrixCdfFile]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getDimension} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getHeader.AffymetrixCdfFile]{getHeader}} \tab Gets the header of the CDF file.\cr
+ \tab \code{\link[aroma.affymetrix:getSnpNames.AffymetrixCdfFile]{getSnpNames}} \tab Gets the names of the SNPs in the data set.\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
  \tab \code{\link[aroma.affymetrix:getUnitSizes.AffymetrixCdfFile]{getUnitSizes}} \tab Gets the number of groups in each unit.\cr
  \tab \code{\link[aroma.affymetrix:indexOf.AffymetrixCdfFile]{indexOf}} \tab Gets the indices of units by their names.\cr
  \tab \code{isPm} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:isSnpChip.AffymetrixCdfFile]{isSnpChip}} \tab Static method to check if a chip is a mapping (SNP) chip.\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{nbrOfColumns} \tab  -\cr
  \tab \code{nbrOfQcUnits} \tab  -\cr
  \tab \code{nbrOfRows} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfSnps.AffymetrixCdfFile]{nbrOfSnps}} \tab Gets the number of SNPs in the data set.\cr
  \tab \code{nbrOfUnits} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setRestructor.AffymetrixCdfFile]{setRestructor}} \tab Specifies a function through which.\cr
@@ -69,7 +76,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
 \bold{Methods inherited from AffymetrixFile}:\cr
-as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels
+as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels, stextSize
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

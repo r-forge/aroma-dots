@@ -61,6 +61,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{setLabel} \tab  -\cr
  \tab \code{stextLabel} \tab  -\cr
  \tab \code{stextLabels} \tab  -\cr
+ \tab \code{stextSize} \tab  -\cr
 }
 
 

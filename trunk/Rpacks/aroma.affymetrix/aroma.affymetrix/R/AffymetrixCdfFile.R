@@ -502,7 +502,7 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'type':
+  # Argument 'types':
   if (is.null(types))
     types <- "all";
 
@@ -528,7 +528,6 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
     getFraction <- (length(indices) == 1 && indices > 0 && indices < 1);
     if (getFraction) {
       by <- 1/indices;
-print(by);
     } else {
       indices <- Arguments$getIntegers(indices, range=c(1, nbrOfCells));
     }
@@ -545,37 +544,40 @@ print(by);
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  if ("all" %in% types)
-    return(indices);
-
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Intersect 'indices' and 'type'
+  # Intersect 'indices' and 'types'
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Identifies cells of certain kind");
-  indices <- unlist(getCellIndices(this), use.names=FALSE);
-
-  other <- c();
-  for (type in types) {
-    if (type == "pm") {
-      verbose && cat(verbose, "Using PM only");
-      other <- c(other, indices[isPm(this)]);
-    } else if (type == "mm") {
-      verbose && cat(verbose, "Using MM only");
-      other <- c(other, indices[!isPm(this)]);
-    } else if (type == "pmmm") {
-      verbose && cat(verbose, "Using PM & MM");
-      other <- c(other, indices);
-    } else if (type == "qc") {
-      verbose && cat(verbose, "Using QC cells only");
-      # Get cell indices for all non-regular units, i.e. QCs
-      other <- c(other, setdiff(1:nbrOfCells, indices));
+  if (identical(types, "all")) {
+    other <- 1:nbrOfCells;
+  } else {
+    verbose && enter(verbose, "Identifies cells of certain kind");
+    indices <- unlist(getCellIndices(this), use.names=FALSE);
+  
+    other <- c();
+    for (type in types) {
+      if (type == "pm") {
+        verbose && cat(verbose, "Using PM only");
+        other <- c(other, indices[isPm(this)]);
+      } else if (type == "mm") {
+        verbose && cat(verbose, "Using MM only");
+        other <- c(other, indices[!isPm(this)]);
+      } else if (type == "pmmm") {
+        verbose && cat(verbose, "Using PM & MM");
+        other <- c(other, indices);
+      } else if (type == "qc") {
+        verbose && cat(verbose, "Using QC cells only");
+        # Get cell indices for all non-regular units, i.e. QCs
+        other <- c(other, setdiff(1:nbrOfCells, indices));
+      }
     }
+
+    other <- unique(other);
+    verbose && exit(verbose);
   }
 
-  other <- unique(other);
   if (is.null(indices)) {
     indices <- other;
+    rm(other);
   } else {
     if (getFraction) {
       # Get the fraction from the already filtered cell indices
@@ -587,8 +589,6 @@ print(by);
 
   if (sort)
     indices <- sort(indices);
-
-  verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Save result to cache
