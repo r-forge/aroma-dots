@@ -1,0 +1,66 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  GenomeInformation.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ \name{GenomeInformation}
+\docType{class}
+\alias{GenomeInformation}
+
+
+ \title{The GenomeInformation class}
+
+ \description{
+  Package:  aroma.affymetrix \cr
+\bold{Class GenomeInformation}\cr
+
+\code{\link[R.oo]{Object}}\cr
+\code{~~|}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\emph{\code{GenomeInformation}}\cr
+
+\bold{Directly known subclasses:}\cr
+\link[aroma.affymetrix]{DChipGenomeInformation}\cr
+
+public abstract static class \bold{GenomeInformation}\cr
+extends \link[aroma.affymetrix]{AffymetrixFile}\cr
+
+
+ }
+
+ \usage{GenomeInformation(...)}
+
+ \arguments{
+   \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
+ }
+
+ \section{Fields and Methods}{
+  \bold{Methods:}\cr
+\tabular{rll}{
+ \tab \code{\link[aroma.affymetrix:fromCdf.GenomeInformation]{fromCdf}} \tab Static method to define a genome information set from a CDF.\cr
+ \tab \code{\link[aroma.affymetrix:fromChipType.GenomeInformation]{fromChipType}} \tab Static method to define a genome information set by chip type.\cr
+ \tab \code{fromDataSet} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getChipType.GenomeInformation]{getChipType}} \tab Gets the chip type of this genome information set.\cr
+ \tab \code{\link[aroma.affymetrix:getData.GenomeInformation]{getData}} \tab Gets all or a subset of the genome information data.\cr
+ \tab \code{\link[aroma.affymetrix:getPosition.GenomeInformation]{getPosition}} \tab Gets the physical position for a set of units.\cr
+ \tab \code{\link[aroma.affymetrix:getUnitIndices.GenomeInformation]{getUnitIndices}} \tab Gets unit indices ordered along the chromosome.\cr
+ \tab \code{\link[aroma.affymetrix:plotDensity.GenomeInformation]{plotDensity}} \tab Plots the density of SNPs for a given chromosome.\cr
+ \tab \code{readData} \tab  -\cr
+}
+
+
+\bold{Methods inherited from AffymetrixFile}:\cr
+as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels, stextSize
+
+\bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
+
+ }
+
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\keyword{classes}

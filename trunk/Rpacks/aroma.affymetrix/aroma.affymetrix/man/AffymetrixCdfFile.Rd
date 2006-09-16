@@ -57,6 +57,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:getCellIndices.AffymetrixCdfFile]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getDimension} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getGenomeInformation.AffymetrixCdfFile]{getGenomeInformation}} \tab Gets genome information for this chip type.\cr
  \tab \code{\link[aroma.affymetrix:getHeader.AffymetrixCdfFile]{getHeader}} \tab Gets the header of the CDF file.\cr
  \tab \code{\link[aroma.affymetrix:getSnpNames.AffymetrixCdfFile]{getSnpNames}} \tab Gets the names of the SNPs in the data set.\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
@@ -72,6 +73,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{nbrOfUnits} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setRestructor.AffymetrixCdfFile]{setRestructor}} \tab Specifies a function through which.\cr
+ \tab \code{stextChipType} \tab  -\cr
 }
 
 
