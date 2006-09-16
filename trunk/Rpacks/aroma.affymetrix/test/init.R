@@ -12,7 +12,7 @@ svnUpdate <- function(...) {
   opwd <- getwd();
   on.exit(setwd(opwd));
   system("svn update");
-  setwd("../aroma.affymetrix/R/");
+  setwd("../aroma.affymetrix/");
   system("svn update");
   TRUE;
 } # svnUpdate()
