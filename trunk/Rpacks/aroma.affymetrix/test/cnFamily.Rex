@@ -3,7 +3,7 @@ source("init.R")
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the family of datasets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("raw")) {
+if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
   path <- findCelSet(chipType="Xba", minCount=5);
   ds <- AffymetrixCelSet$fromFiles(path);
@@ -16,7 +16,7 @@ if (!exists("raw")) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Normalize
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("qn")) {
+if (!exists("qn", mode="list")) {
   verbose && enter(verbose, "Normalizing all data sets");
   tmp <- raw;
   for (name in names(raw)) {
