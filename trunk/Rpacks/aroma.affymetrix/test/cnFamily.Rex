@@ -50,10 +50,14 @@ for (kk in seq(along=qn)) {
     models[[kk]] <- model;
   }
   verbose && print(verbose, model);
+
+  verbose && enter(verbose, "Retrieving genome information");
   cdf <- getCdf(model);
   gi <- getGenomeInformation(cdf);
   units <- getUnitIndices(gi, chromosome=chr);
   nunits <- length(units);
+  verbose && exit(verbose);
+
   verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
   uDone <- fit(model, units=units, moreUnits=10, verbose=verbose);
   nDone <- length(uDone);
@@ -77,12 +81,14 @@ for (kk in seq(along=qn)) {
 # Get genome data
 genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
 
+sample <- "NA12802";
+
 xScale <- 1/10^6;
 xlab <- "Physical position (Mb)"
 ylab <- expression(log[2](theta/theta[avg]));
 xlim <- c(0,genome[chr,"nbrOfBases"])*xScale;
 ylim <- c(-1,1)*2;
-main <- sprintf("CN estimates for chromosome %s", chr);
+main <- sprintf("Chromosome %s CN estimates for sample %s", chr, sample);
 
 pch <- 19;
 cex <- 0.8;
@@ -106,6 +112,8 @@ for (kk in seq(along=models)) {
   ds <- getDataSet(model);
   verbose && enter(verbose, "Data set: ", getName(ds));
   ces <- getChipEffects(model);
+
+  verbose && enter(verbose, "Retrieving genome information");
   cdf <- getCdf(model);
   gi <- getGenomeInformation(cdf);
   units <- getUnitIndices(gi, chromosome=chr);
@@ -114,6 +122,7 @@ for (kk in seq(along=models)) {
   # Get the positions of all SNPs
   x <- getPositions(gi, units=units);
   stopifnot(identical(length(x), nunits));
+  verbose && exit(verbose);
 
   # Remove NAs (SNPs for which we have no position information)
   keep <- !is.na(x);
@@ -122,17 +131,21 @@ for (kk in seq(along=models)) {
   nunits <- length(units);
 
   # Get reference (average chip effect)
+  verbose && enter(verbose, "Retrieving reference estimates");
   ceRef <- getAverageFile(ces);
   ceRef$mergeStrands <- model$mergeStrands;
   ceRef$combineAlleles <- model$combineAlleles;
   yRef <- unlist(ceRef[units], use.names=FALSE);
   stopifnot(identical(length(yRef), nunits));
+  verbose && exit(verbose);
 
   # Get sample of interest
-  ss <- grep("NA12802", getNames(ces));
+  verbose && enter(verbose, "Retrieving sample estimates");
+  ss <- grep(sample, getNames(ces));
   ce <- getFile(ces, ss);
   y <- unlist(ce[units], use.names=FALSE);
   stopifnot(identical(length(y), nunits));
+  verbose && exit(verbose);
 
   cn <- y/yRef;
   stopifnot(identical(length(cn), nunits));
