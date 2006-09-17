@@ -69,8 +69,6 @@ cn <- y/yRef
 
 x <- getPositions(gi, units=units, na.rm=FALSE)
 # Make sure to plot in order
-o <- order(x)
-print(unique(diff(o)))
 x <- x/10^6
 xlab <- "Physical position (Mb)"
 ylab <- expression(log[2](theta[i]/theta[avg]))
