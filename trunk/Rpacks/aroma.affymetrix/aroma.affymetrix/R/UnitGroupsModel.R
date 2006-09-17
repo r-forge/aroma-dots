@@ -41,7 +41,12 @@ setConstructorS3("UnitGroupsModel", function(dataSet=NULL, name="modelUnitGroups
     if (!is.null(dataSet)) {
       # Path structure: <data-set name>/<model name>/<chip type>/
       # Compare with  : <data-set name>/chip_data/<chip type>/
-      path <- filePath(getName(dataSet), name, getChipType(getCdf(dataSet)));
+      # <data-set name>/<model name>/<chip type>
+      path <- getPath(dataSet);
+      # <data-set name>/chip_data/
+      path <- getParent(path);
+      path <- getParent(path);
+      path <- filePath(path, name, getChipType(getCdf(dataSet)));
     }
   } 
   if (!is.null(path)) {
