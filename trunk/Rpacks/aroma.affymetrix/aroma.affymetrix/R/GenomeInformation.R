@@ -377,7 +377,7 @@ setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRU
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getPositions", "GenomeInformation", function(this, ..., na.rm=TRUE) {
+setMethodS3("getPositions", "GenomeInformation", function(this, ..., na.rm=FALSE) {
   df <- getData(this, fields="physicalPosition", ...);
   suppressWarnings({  # Suppress warnings about NAs
     df <- as.integer(df[,1]);
@@ -442,22 +442,47 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 })
 
 
-setMethodS3("getChromsomes", "GenomeInformation", function(this, ...) {
-  unique(getData(this, fields="chromosome"));
+setMethodS3("getChromosomes", "GenomeInformation", function(this, ..., force=FALSE) {
+  chromosomes <- this$.chromosomes;
+  if (is.null(chromosomes) || force) {
+    chromosomes <- unique(getData(this, fields="chromosome")[,1]);
+
+    # Sort in order of (1:22,"X","Y")
+    chromosomeMap <- c(1:22,"X","Y", NA);
+    o <- match(chromosomeMap, chromosomes);
+    chromosomes <- chromosomes[o];
+
+    chromosomes <- chromosomes[!is.na(chromosomes)];
+    
+    this$.chromosomes <- chromosomes;
+  }
+  chromosomes;
 })
 
 
-setMethodS3("getChromsomeRanges", "GenomeInformation", function(this, ...) {
-  chr <- getData(this, fields="chromosome");
-  uchr <- unique(chr);
-  rm(chr);
-  
+setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE, ..., force=FALSE) {
+  stats <- this$.chromosomeStats;
+  if (is.null(stats) || force) {
+    chromosomes <- getChromosomes(this);
+    nbrOfChromosomes <- length(chromosomes);
+    stats <- matrix(NA, nrow=nbrOfChromosomes, ncol=3);
+    colnames(stats) <- c("min", "max", "n");
+    rownames(stats) <- chromosomes;
+    for (chr in chromosomes) {
+      pos <- getPositions(this, chromosome=chr);
+      r <- range(pos, na.rm=na.rm);
+      stats[chr,1:2] <- r;
+      stats[chr,3] <- length(pos);
+    }
+    this$.chromosomeStats <- stats;
+  }
+  stats;  
 })
 
 ############################################################################
 # HISTORY:
 # 2006-09-16
-# o Added plotDensity() and more.
+# o Added plotDensity(), getChromosomes(), getChromosomeStats() etc.
 # o Improved getData().  Updated getUnitIndices() and getPositions().
 # 2006-09-15
 # o Added Rdoc comments.
