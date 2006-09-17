@@ -50,6 +50,7 @@ library(R.cache)
 library(aroma.apd)
 library(affxparser)
 library(digest)
+library(RColorBrewer)
 
 #library(aroma.apd)
 #library(aroma.affymetrix)
