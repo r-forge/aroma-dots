@@ -72,7 +72,8 @@ xlim <- c(0,genome[chr,"nbrOfBases"])*xScale;
 ylim <- c(-1,1)*2;
 main <- sprintf("CN estimates for chromosome %s", chr);
 
-pch <- 176;
+pch <- 19;
+cex <- 0.8;
 cols <- rep(c("red", "blue"), length.out=length(qn));
 
 # Create plot
@@ -82,6 +83,10 @@ plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main);
 abline(h=0, col="blue", lwd=2);
 abline(h=log(1:4/2, base=2), col="blue");
 abline(h=c(-1,1)/2, col="blue", lty=2);
+
+chipTypes <- sapply(qn, FUN=function(ds) getChipType(getCdf(ds)));
+str <- paste(chipTypes, collapse=" / ");
+stext(str, side=4, pos=1, line=0, cex=0.8, col="darkgray");
 
 chipTypes <- nbrOfSnps <- c();
 for (kk in seq(along=qn)) {
@@ -120,16 +125,13 @@ for (kk in seq(along=qn)) {
   cn <- y/yRef;
   stopifnot(identical(length(cn), nunits));
 
-  chipTypes <- c(chipTypes, getChipType(cdf));
   nbrOfSnps <- c(nbrOfSnps, nunits);
 
   # Plot CNs
-  points(x*xScale, log(cn,base=2), pch=pch, col=cols[kk]);
+  points(x*xScale, log(cn,base=2), pch=pch, cex=cex, col=cols[kk]);
 
   verbose && exit(verbose);
 }
 str <- paste(nbrOfSnps, collapse="+");
 str <- sprintf("%s=%d SNPs", str, sum(nbrOfSnps));
 stext(str, side=3, pos=1, line=-1, cex=0.8);
-str <- paste(chipTypes, collapse=" / ");
-stext(str, side=4, pos=1, line=1, cex=0.8, col="darkgray");
