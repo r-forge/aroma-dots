@@ -83,12 +83,15 @@ genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="in
 
 sample <- "NA12802";
 
+if (exists("opar"))
+  par(opar);
+opar <- par("mar");
+par(mar=c(5,4,2,2)+0.1);
 xScale <- 1/10^6;
 xlab <- "Physical position (Mb)"
 ylab <- expression(log[2](theta/theta[avg]));
 xlim <- c(0,genome[chr,"nbrOfBases"])*xScale;
 ylim <- c(-1,1)*2;
-main <- sprintf("Chromosome %s CN estimates for sample %s", chr, sample);
 
 pch <- 19;
 cex <- 0.8;
@@ -105,6 +108,8 @@ abline(h=c(-1,1)/2, col="blue", lty=2);
 chipTypes <- sapply(qn, FUN=function(ds) getChipType(getCdf(ds)));
 str <- paste(chipTypes, collapse=" / ");
 stext(str, side=4, pos=1, line=0, cex=0.8, col="darkgray");
+stext(sprintf("Sample: %s", sample), side=3, pos=0, line=0, cex=0.8);
+stext(sprintf("Chromosome %s", chr), side=3, pos=1, line=0, cex=0.8);
 
 chipTypes <- nbrOfSnps <- c();
 for (kk in seq(along=models)) {
@@ -160,3 +165,4 @@ for (kk in seq(along=models)) {
 str <- paste(nbrOfSnps, collapse="+");
 str <- sprintf("%s=%d SNPs", str, sum(nbrOfSnps));
 stext(str, side=3, pos=1, line=-1, cex=0.8);
+par(opar);
