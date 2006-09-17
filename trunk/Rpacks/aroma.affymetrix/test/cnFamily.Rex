@@ -111,7 +111,16 @@ for (kk in seq(along=models)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get relative copy numbers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-sample <- "NA12802";
+# CEPH 100K family where there is a short amplification in father
+# and daughter on Chromosome 8.  See CRLMM poster.
+family <- c(mother=NA, father="NA12814", daughter="NA12802");
+sample <- family["daughter"];
+
+# The fifthteen CEPH samples that are available in both the 100K set
+# (90 samples) and the _public_ 500K set (48 samples)
+# > intersect(substr(getNames(ds2), 1,7), substr(getNames(ds), 1,7))
+commonCEPH <-c("NA10851", "NA10855", "NA10863", "NA11831", "NA11832", "NA12056", "NA12057", "NA12234", "NA12264", "NA12707", "NA12716", "NA12717", "NA12801", "NA12812", "NA12813")
+sample <- commonCEPH[1];
 
 data <- vector("list", length(models));
 names(data) <- names(models);
@@ -149,7 +158,13 @@ for (kk in seq(along=models)) {
   # Get sample of interest
   verbose && enter(verbose, "Retrieving sample estimates");
   ss <- grep(sample, getNames(ces));
+  if (length(ss) == 0)
+    throw("No such sample in this dataset: ", sample);
   ce <- getFile(ces, ss);
+  verbose && cat(verbose, "Sample:");
+  verbose && print(verbose, ce);
+
+
   y <- unlist(ce[units], use.names=FALSE);
   stopifnot(identical(length(y), nunits));
   verbose && exit(verbose);
@@ -172,9 +187,6 @@ name <- grep(sample, getNames(ds), value=TRUE);
 nbrOfBases <- genome[chr,"nbrOfBases"];
 chipTypes <- sapply(qn, FUN=function(ds) getChipType(getCdf(ds)));
 nbrOfSnps <- sapply(data, FUN=function(df) df$nbrOfSnps);
-
-if (exists("opar"))
-  par(opar);
 
 xScale <- 1/10^6;
 xlab <- "Physical position (Mb)"
@@ -226,6 +238,7 @@ for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
     points(x*xScale, log(cn,base=2), pch=pch, cex=cex, col=cols[kk]);
   }
   rm(df, x, cn);
+
   par(opar);
   
   # Close and flush figure
