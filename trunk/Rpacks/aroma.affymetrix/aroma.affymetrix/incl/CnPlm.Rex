@@ -43,6 +43,12 @@ cat(sprintf("Fits %d SNPs on chromosome %s.\n", length(units), chr))
 fit(model, units=units, moreUnits=10, verbose=verbose)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Get some information about this chromsome
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+chrStats <- getChromosomeStats(gi)[chr,]
+print(chrStats)
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get the estimated chip effects
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ces <-getChipEffects(model)
@@ -67,7 +73,7 @@ print(unique(diff(o)))
 x <- x/10^6
 xlab <- "Physical position (Mb)"
 ylab <- expression(log[2](theta[i]/theta[avg]))
-xlim <- range(x, na.rm=TRUE)
+xlim <- c(0,chrStats["max"]);
 ylim <- c(-1,1)*2
 main <- sprintf("CN estimates for chromosome %s", chr)
 plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main)
