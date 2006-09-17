@@ -23,7 +23,7 @@
 
 \arguments{
  \item{chromosome}{The chromsome to be displayed.}
- \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:getPosition.GenomeInformation]{*getPosition}()}.}
+ \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:getPositions.GenomeInformation]{*getPositions}()}.}
  \item{adjust}{A bandwidth parameter for the density estimator.}
  \item{xlab}{The label on the x-axis.  If \code{\link[base]{NULL}}, a default will generated.}
  \item{main}{The title of the plot.  If \code{\link[base]{NULL}}, a default will generated.}

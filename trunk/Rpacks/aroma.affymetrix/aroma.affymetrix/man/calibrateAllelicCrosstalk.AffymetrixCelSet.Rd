@@ -40,7 +40,7 @@
 \section{Benchmarking}{
   On an IBM Thinkpad A31 with 1.8GHz and 1GB RAM:
   \itemize{
-   \item{Mapping50K_Xba240}{58960 SNPs: ~55-60s/array.}
+   \item{Mapping50K\_Xba240}{58960 SNPs: ~55-60s/array.}
   }
 }
 

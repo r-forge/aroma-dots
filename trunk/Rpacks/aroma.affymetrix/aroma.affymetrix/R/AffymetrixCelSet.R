@@ -218,18 +218,15 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="chip_data/",
 
 setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
   # The name of a file set is inferred from the pathname of the directory
-  # of the set, i.e. path/to/<name>/chip_files/<"chip type">/
+  # of the set, i.e. path/to/<data set name>/<something>/<chip type>/
   # Get the path of this file set
   path <- getPath(this);
 
-  while(TRUE) {
-    path <- dirname(path);
-    # If that directory is named 'chip_data' (or 'chipdata') go up on level
-    name <- basename(path);
-    pattern <- "^chip[_]*data$";
-    if (regexpr(pattern, name) == -1)
-      break;
-  }
+  # path/to/<data set name>/<something>/
+  path <- dirname(path);
+
+  # path/to/<data set name>/
+  name <- dirname(path);
   
   name;
 })

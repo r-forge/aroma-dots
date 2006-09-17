@@ -19,8 +19,8 @@
  Defines an AffymetrixCelFile object from a CEL file.
 }
 
-\synopsis{fromFile.AffymetrixCelFile(static, filename, path=NULL, ..., .checkArgs=TRUE)}
-\usage{AffymetrixCelFile$fromFile(filename, path=NULL, ..., .checkArgs=TRUE)}
+\synopsis{fromFile.AffymetrixCelFile(static, filename, path=NULL, ..., verbose=FALSE, .checkArgs=TRUE)}
+\usage{AffymetrixCelFile$fromFile(filename, path=NULL, ..., verbose=FALSE, .checkArgs=TRUE)}
 
 \arguments{
  \item{filename}{The filename of to the file.}

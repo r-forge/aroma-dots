@@ -14,7 +14,7 @@
 #   \item{subset}{The subset of probes to include.}
 #   \item{types}{The type of probes to include.}
 #   \item{...}{Additional arguments passed to 
-#      @see "plotDensity.AffymetrixDataFile".}
+#      @see "plotDensity.AffymetrixCelFile".}
 #   \item{col}{A @vector of colors for each of the arrays.}
 #   \item{lty}{A @vector of line types for each of the arrays.}
 #   \item{lwd}{A @vector of line widths for each of the arrays.}
@@ -78,8 +78,12 @@ setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=1/2, types=
     df <- getFile(this, cc);
     add <- add || (cc > 1);
     plotDensity(df, subset=subset, ..., col=col[cc], lty=lty[cc], 
-           lwd=lwd[cc], annotate=annotate, add=add, verbose=less(verbose));
-    annotate <- FALSE;
+              lwd=lwd[cc], annotate=FALSE, add=add, verbose=less(verbose));
+    if (annotate) {
+      stextChipType(getCdf(this));
+      stextSize(this, size=length(y));
+      annotate <- FALSE;
+    }
   }
 })
 

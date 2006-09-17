@@ -36,7 +36,7 @@
 # @author
 #
 # \seealso{
-#   @see "calibrateAllelicCrosstalk.AffymetrixSnpDataset".
+#   @see "calibrateAllelicCrosstalk.AffymetrixCelSet".
 #   @see "sfit::cfit".
 #   @seeclass
 # }

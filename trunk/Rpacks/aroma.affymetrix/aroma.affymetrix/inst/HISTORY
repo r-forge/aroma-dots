@@ -1,7 +1,9 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.2.2 [2006-09-14]
+Version: 0.2.2 [2006-09-16]
+o Added basic support for dChip genome information.  It is good
+  enough though to work with the 100K and 500K SNP chips.
 o Package now passes R CMD check.  Some cheating were done though,
   because methods with missing Rdoc where put as \alias{}:es in
   one place.

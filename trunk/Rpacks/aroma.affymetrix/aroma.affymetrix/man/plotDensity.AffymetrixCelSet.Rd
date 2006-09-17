@@ -26,7 +26,7 @@
   \item{subset}{The subset of probes to include.}
   \item{types}{The type of probes to include.}
   \item{...}{Additional arguments passed to
-     \code{\link{plotDensity.AffymetrixDataFile}}.}
+     \code{\link{plotDensity.AffymetrixCelFile}}().}
   \item{col}{A \code{\link[base]{vector}} of colors for each of the arrays.}
   \item{lty}{A \code{\link[base]{vector}} of line types for each of the arrays.}
   \item{lwd}{A \code{\link[base]{vector}} of line widths for each of the arrays.}
