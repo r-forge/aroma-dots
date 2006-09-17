@@ -95,7 +95,7 @@ sample <- "NA12802";
 if (exists("opar"))
   par(opar);
 
-name <- gsub("-chipEffects", "", getName(ce));
+name <- grep(sample, getNames(ds), value=TRUE);
 imgName <- sprintf("%s-MvsX.png", name);
 pathname <- filePath(figPath, imgName);
 width <- round(100*(nbrOfBases / 10^6));
