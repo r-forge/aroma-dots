@@ -3,11 +3,13 @@ pngDev <- System$findGraphicsDevice();
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the family of datasets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-path <- findCelSet(chipType="Xba", minCount=5);
+if (!exists("dataPath"))
+  dataPath <- findCelSet(chipType="Xba", minCount=5);
+#  dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", minCount=5);
 
 if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
-  ds <- AffymetrixCelSet$fromFiles(path);
+  ds <- AffymetrixCelSet$fromFiles(dataPath);
   raw <- getSiblings(ds);
   rm(ds);
   verbose && exit(verbose);
