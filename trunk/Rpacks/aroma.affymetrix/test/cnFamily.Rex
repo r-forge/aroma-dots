@@ -30,19 +30,25 @@ if (!exists("qn", mode="list")) {
   verbose && exit(verbose);
 }
 
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit copy number model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 chr <- "8";
+
 if (!exists("models", mode="list")) {
   models <- vector("list", length(qn));
   names(models) <- names(qn);
 }
+
 for (kk in seq(along=qn)) {
   ds <- qn[[kk]];
   verbose && enter(verbose, "Data set: ", getName(ds));
-  model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-  models[[kk]] <- model;
+  model <- models[[kk]];
+  if (is.null(model)) {
+    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+    models[[kk]] <- model;
+  }
   verbose && print(verbose, model);
   cdf <- getCdf(model);
   gi <- getGenomeInformation(cdf);
