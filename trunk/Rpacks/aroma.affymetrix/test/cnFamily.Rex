@@ -1,5 +1,3 @@
-savehistory();
-
 pngDev <- System$findGraphicsDevice();
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
