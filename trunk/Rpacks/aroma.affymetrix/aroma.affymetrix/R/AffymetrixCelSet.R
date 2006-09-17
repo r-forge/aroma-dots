@@ -83,6 +83,66 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
 
 
 ###########################################################################/**
+# @RdocMethod getSiblings
+#
+# @title "Gets the all data sets that refers to the same samples a this one"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a named @list of @see "AffymetrixCdfSet" objects.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("getSiblings", "AffymetrixCelSet", function(this, ...) {
+  # Scan parent directory for all possible data sets.
+  # /path/to/<data set name>/chip_data/<chip type>
+  path <- getPath(this);
+
+  # /path/to/<data set name>/chip_data
+  parent <- getParent(path);
+  # /path/to/<data set name>
+  parent <- getParent(parent);
+
+  # /path/to/
+  dataPath <- getParent(parent);
+
+  # Now scan this file directory tree
+  paths <- findCelSet(name=getName(this), paths=dataPath, firstOnly=FALSE);
+
+  sets <- vector("list", length(paths));
+  names(sets) <- basename(paths);
+  for (kk in seq(along=paths)) {
+    path <- paths[kk];
+    if (identical(path, getPath(this))) {
+      sets[[kk]] <- this;
+    } else {
+      sets[[kk]] <- fromFiles(this, path=path);
+    }
+  }
+  
+  verbose && exit(verbose);
+
+  sets;
+})
+
+
+###########################################################################/**
 # @RdocMethod getCdf
 #
 # @title "Gets the CDF structure for this CEL set"
@@ -222,11 +282,14 @@ setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
   # Get the path of this file set
   path <- getPath(this);
 
-  # path/to/<data set name>/<something>/
+  # path/to/<data set name>/<something>
   path <- dirname(path);
 
-  # path/to/<data set name>/
-  name <- dirname(path);
+  # path/to/<data set name>
+  path <- dirname(path);
+
+  # <data set name>
+  name <- basename(path);
   
   name;
 })
@@ -695,6 +758,9 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-09-16
+# o Added getSiblings() to easily get other data sets for the same
+#   samples.
 # 2006-09-14
 # o Added a read-buffer cache to readUnits() and getUnitIntensities().
 # 2006-08-27
