@@ -166,7 +166,7 @@ cex <- 0.8;
 cols <- brewer.pal(8, "Dark2");
 cols <- rep(cols, length.out=length(qn));
 
-for (zoom in c(1,2,4,8,16,32)) {
+for (zoom in c(1,2,4,8,16,32,64,128)) {
   verbose && enter(verbose, "Plotting zoom x", zoom);
 
   chrIdx <- which(chr == allChromosomes);
