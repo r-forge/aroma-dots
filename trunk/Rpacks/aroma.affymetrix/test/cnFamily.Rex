@@ -92,6 +92,8 @@ for (ds in qn) {
 
   # Get reference (average chip effect)
   ceRef <- getAverageFile(ces);
+  ceRef$mergeStrands <- model$mergeStrands;
+  ceRef$combineAlleles <- model$combineAlleles;
   yRef <- unlist(ceRef[units], use.names=FALSE);
   stopifnot(identical(length(yRef), nunits));
 
