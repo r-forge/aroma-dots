@@ -47,6 +47,7 @@ if (!exists("qn", mode="list")) {
 # Create copy-number models
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("models", mode="list")) {
+  verbose && enter(verbose, "Defining PLM models");
   models <- vector("list", length(qn));
   names(models) <- names(qn);
   for (kk in seq(along=models)) {
@@ -56,6 +57,16 @@ if (!exists("models", mode="list")) {
     models[[kk]] <- model;
   }
   verbose && print(verbose, model);
+
+  verbose && enter(verbose, "Pre-creates probe affinities");
+  paf <- getProbeAffinities(model, verbose=less(verbose));
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Pre-creates chip effects");
+  ces <- getChipEffects(model, verbose=less(verbose));
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -81,12 +92,12 @@ for (kk in seq(along=models)) {
   verbose && exit(verbose);
 
   verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
-  uDone <- fit(model, units=units, moreUnits=10, verbose=verbose);
+  uDone <- fit(model, units=units, moreUnits=1, verbose=verbose);
   nDone <- length(uDone);
 
   # Update average chip effects
   if (nDone > 0) {
-    ces <- getChipEffects(model);
+    ces <- getChipEffects(model, verbose=verbose);
     ceAvg <- getAverageFile(ces, force=TRUE, verbose=less(verbose));
     ceAvg$mergeStrands <- model$mergeStrands;
     ceAvg$combineAlleles <- model$combineAlleles;
