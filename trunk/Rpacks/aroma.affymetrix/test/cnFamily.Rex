@@ -75,7 +75,7 @@ for (ds in qn) {
   verbose && enter(verbose, "Data set: ", getName(ds));
   model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
   ces <- getChipEffects(model);
-  cdf <- getCdf(ces);
+  cdf <- getCdf(model);
   gi <- getGenomeInformation(cdf);
   units <- getUnitIndices(gi, chromosome=chr);
   nunits <- length(units);
