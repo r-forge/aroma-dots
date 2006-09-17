@@ -3,9 +3,10 @@ source("init.R")
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the family of datasets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+path <- findCelSet(chipType="Xba", minCount=5);
+
 if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
-  path <- findCelSet(chipType="Xba", minCount=5);
   ds <- AffymetrixCelSet$fromFiles(path);
   raw <- getSiblings(ds);
   rm(ds);

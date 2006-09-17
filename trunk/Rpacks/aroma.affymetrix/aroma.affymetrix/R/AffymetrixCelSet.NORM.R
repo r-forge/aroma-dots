@@ -46,7 +46,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, name="normQuantiles", subsetToUpdate=NULL, typesToUpdate=NULL, xTarget=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, ..., verbose=FALSE) {
+setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, name="normQuantile", subsetToUpdate=NULL, typesToUpdate=NULL, xTarget=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
