@@ -1,3 +1,8 @@
+figPath <- "figures";
+mkdirs(figPath);
+
+pngDev <- System$findGraphicsDevice();
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the family of datasets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -34,7 +39,14 @@ if (!exists("qn", mode="list")) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit copy number model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-chr <- "8";
+# Get genome data
+genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
+
+
+allChromosomes <- c(1:22, "X");
+allChromosomes <- allChromosomes[8];
+for (chr in allChromosomes) {
+  verbose && enter(verbose, "Chromosome ", chr);
 
 if (!exists("models", mode="list")) {
   models <- vector("list", length(qn));
@@ -78,24 +90,30 @@ for (kk in seq(along=qn)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get relative copy numbers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Get genome data
-genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
-
 sample <- "NA12802";
 
 if (exists("opar"))
   par(opar);
+
+name <- gsub("-chipEffects", "", getName(ce));
+imgName <- sprintf("%s-MvsX.png", name);
+pathname <- filePath(figPath, imgName);
+width <- round(100*(nbrOfBases / 10^6));
+pngDev(pathname, width=width, height=400);
+
 opar <- par("mar");
 par(mar=c(5,4,2,2)+0.1);
 xScale <- 1/10^6;
 xlab <- "Physical position (Mb)"
 ylab <- expression(log[2](theta/theta[avg]));
-xlim <- c(0,genome[chr,"nbrOfBases"])*xScale;
+nbrOfBases <- genome[chr,"nbrOfBases"];
+xlim <- c(0,nbrOfBases)*xScale;
 ylim <- c(-1,1)*2;
 
 pch <- 19;
 cex <- 0.8;
-cols <- rep(c("red", "blue"), length.out=length(qn));
+cols <- brewer.pal(8, "Dark2");
+cols <- rep(cols, length.out=length(qn));
 
 # Create plot
 plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main);
@@ -166,3 +184,10 @@ str <- paste(nbrOfSnps, collapse="+");
 str <- sprintf("%s=%d SNPs", str, sum(nbrOfSnps));
 stext(str, side=3, pos=1, line=-1, cex=0.8);
 par(opar);
+
+# Close and flush figure
+dev.off();
+
+  verbose && exit(verbose);
+} # for (chr in c(1:22, "X"))
+
