@@ -190,7 +190,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
   verbose && enter(verbose, "Identifying CDF units");
   verbose && cat(verbose, "Pathname: ", getPathname(this));
   verbose && enter(verbose, "Reading CDF cell indices");
-  idxs <- getCellIndices(this, units=units);
+  idxs <- getCellIndices(this, units=units, verbose=less(verbose));
   verbose && exit(verbose);
   verbose && enter(verbose, "Extracting first CDF block for each unit");
   idxs <- applyCdfGroups(idxs, .subset2, 1);

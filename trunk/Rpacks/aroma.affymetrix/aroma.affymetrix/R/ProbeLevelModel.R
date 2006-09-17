@@ -272,9 +272,12 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ...) {
-  ces <- getChipEffects(this);
-  findUnitsTodo(ces, ...);
+setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ..., verbose=FALES) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  ces <- getChipEffects(this, verbose=verbose);
+  findUnitsTodo(ces, ..., verbose=verbose);
 })
 
 
@@ -398,7 +401,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     if (force) {
       verbose && printf(verbose, "All of these are forced to be fitted.\n");
     } else {
-      units <- findUnitsTodo(this, units=units);
+      units <- findUnitsTodo(this, units=units, verbose=less(verbose));
       nbrOfUnits <- length(units);
       verbose && printf(verbose, "Out of these, %d units need to be fitted.\n", nbrOfUnits);
     }
