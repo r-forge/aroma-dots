@@ -31,6 +31,7 @@ if (!exists("qn", mode="list")) {
       dsN <- normalizeQuantile(ds, subsetToAvg=1/3, verbose=verbose);
     } else {
       verbose && enter(verbose, "Detected normalized dataset");
+      verbose && cat(verbose, "Pathname: ", path);
       dsN <- fromFiles(ds, path, verbose=less(verbose));
       verbose && exit(verbose);
     }
