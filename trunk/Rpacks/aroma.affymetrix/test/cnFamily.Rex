@@ -62,16 +62,30 @@ for (ds in qn) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get relative copy numbers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-xScale <- 1/10^6;
-xlab <- "Physical position (Mb)"
-ylab <- expression(log[2](theta/theta[avg]));
-ylim <- c(-1,1)*2;
-main <- sprintf("CN estimates for chromosome %s", chr);
-
 # Get genome data
 genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
 
-for (ds in qn) {
+xScale <- 1/10^6;
+xlab <- "Physical position (Mb)"
+ylab <- expression(log[2](theta/theta[avg]));
+xlim <- c(0,genome[chr,"nbrOfBases"])*xScale;
+ylim <- c(-1,1)*2;
+main <- sprintf("CN estimates for chromosome %s", chr);
+
+pch <- 176;
+cols <- rep(c("red", "blue"), length.out=length(qn));
+
+# Create plot
+plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main);
+
+# Annotate plot
+abline(h=0, col="blue", lwd=2);
+abline(h=log(1:4/2, base=2), col="blue");
+abline(h=c(-1,1)/2, col="blue", lty=2);
+
+chipTypes <- nbrOfSnps <- c();
+for (kk in seq(along=qn)) {
+  ds <- qn[[kk]];
   verbose && enter(verbose, "Data set: ", getName(ds));
   model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
   ces <- getChipEffects(model);
@@ -106,19 +120,16 @@ for (ds in qn) {
   cn <- y/yRef;
   stopifnot(identical(length(cn), nunits));
 
-  # Plot CNs
-  xlim <- c(0,genome[chr,"nbrOfBases"])*xScale;
-  plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main);
-
-  # Annotate plot
-  abline(h=0, col="blue", lwd=2);
-  abline(h=log(1:4/2, base=2), col="blue");
-  abline(h=c(-1,1)/2, col="blue", lty=2);
-  stext(sprintf("%d SNPs", nunits), side=3, pos=1, line=-1, cex=0.8);
-  stextChipType(cdf);
+  chipTypes <- c(chipTypes, getChipType(cdf));
+  nbrOfSnps <- c(nbrOfSnps, nunits);
 
   # Plot CNs
-  points(x*xScale, log(cn,base=2), pch=176);
+  points(x*xScale, log(cn,base=2), pch=pch, col=cols[kk]);
 
   verbose && exit(verbose);
 }
+str <- paste(nbrOfSnps, collapse="+");
+str <- sprintf("%s=%d SNPs", str, sum(nbrOfSnps));
+stext(str, side=3, pos=1, line=-1, cex=0.8);
+str <- paste(chipTypes, collapse=" / ");
+stext(str, side=4, pos=1, line=1, cex=0.8, col="darkgray");
