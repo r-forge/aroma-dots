@@ -110,8 +110,14 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
     throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
   }
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
   pathname <- Arguments$getWritablePathname(filename, path=path);
   if (!isFile(pathname)) {
+    verbose && enter(verbose, "Creating chip-effect file");
+    verbose && cat(verbose, "Pathname: ", pathname);
+
     # Get CDF for chip effects
     if (is.null(cdf))
       cdf <- createParamCdf(static, getCdf(df), verbose=less(verbose));
@@ -137,9 +143,15 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
 
     # Create the CEL file
     createCel(pathname, header=celHeader, ..., verbose=less(verbose));
-  }
+    verbose && exit(verbose);
+  } 
 
-  newInstance(static, pathname);
+  verbose && enter(verbose, "Defining chip-effect file");
+  verbose && cat(verbose, "Pathname: ", pathname);
+  res <- newInstance(static, pathname);
+  verbose && exit(verbose);
+
+  res;
 }, static=TRUE)
 
 
