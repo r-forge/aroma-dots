@@ -45,7 +45,7 @@ for (ds in qn) {
   units <- getUnitIndices(gi, chromosome=chr);
   nunits <- length(units);
   verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
-  uDone <- fit(model, units=units, verbose=verbose);
+  uDone <- fit(model, units=units, moreUnits=10, verbose=verbose);
   nDone <- length(uDone);
   verbose && printf(verbose, "Fitted %d SNPs\n", nDone);
   verbose && exit(verbose);
