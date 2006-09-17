@@ -25,7 +25,7 @@ if (!exists("qn", mode="list")) {
   for (name in names(raw)) {
     verbose && enter(verbose, "Data set: ", name);
     ds <- raw[[name]];
-    dsN <- normalizeQuantile(ds, verbose=verbose);
+    dsN <- normalizeQuantile(ds, subsetToAvg=1/3, verbose=verbose);
     print(dsN);
     tmp[[name]] <- dsN;
     verbose && exit(verbose);
