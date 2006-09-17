@@ -31,21 +31,92 @@ if (!exists("qn", mode="list")) {
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Estimate copy numbers
+# Fit copy number model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 chr <- "8";
 for (ds in qn) {
   verbose && enter(verbose, "Data set: ", getName(ds));
   model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);  
   verbose && print(verbose, model);
-  cdf <- getCdf(ds);
+  cdf <- getCdf(model);
   gi <- getGenomeInformation(cdf);
   units <- getUnitIndices(gi, chromosome=chr);
   nunits <- length(units);
   verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
   uDone <- fit(model, units=units, moreUnits=10, verbose=verbose);
   nDone <- length(uDone);
+
+  # Update average chip effects
+  if (nDone > 0) {
+    ces <- getChipEffects(model);
+    ceAvg <- getAverageFile(ces, force=TRUE, verbose=less(verbose));
+    ceAvg$mergeStrands <- model$mergeStrands;
+    ceAvg$combineAlleles <- model$combineAlleles;
+  }
+
   verbose && printf(verbose, "Fitted %d SNPs\n", nDone);
   verbose && exit(verbose);
+  verbose && exit(verbose);
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Get relative copy numbers
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+xScale <- 1/10^6;
+xlab <- "Physical position (Mb)"
+ylab <- expression(log[2](theta/theta[avg]));
+ylim <- c(-1,1)*2;
+main <- sprintf("CN estimates for chromosome %s", chr);
+
+# Get genome data
+genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
+
+for (ds in qn) {
+  verbose && enter(verbose, "Data set: ", getName(ds));
+  model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+  ces <- getChipEffects(model);
+  cdf <- getCdf(ces);
+  gi <- getGenomeInformation(cdf);
+  units <- getUnitIndices(gi, chromosome=chr);
+  nunits <- length(units);
+
+  # Get the positions of all SNPs
+  x <- getPositions(gi, units=units);
+  stopifnot(identical(length(x), nunits));
+
+  # Remove NAs (SNPs for which we have no position information)
+  keep <- !is.na(x);
+  x <- x[keep];
+  units <- units[keep];
+  nunits <- length(units);
+
+  # Get reference (average chip effect)
+  ceRef <- getAverageFile(ces);
+  yRef <- unlist(ceRef[units], use.names=FALSE);
+  stopifnot(identical(length(yRef), nunits));
+
+  # Get sample of interest
+  ss <- grep("NA12802", getNames(ces));
+  ce <- getFile(ces, ss);
+  y <- unlist(ce[units], use.names=FALSE);
+  stopifnot(identical(length(y), nunits));
+
+  cn <- y/yRef;
+  stopifnot(identical(length(cn), nunits));
+
+  # Plot CNs
+  xlim <- c(0,genome[chr,"nbrOfBases"])*xScale;
+  plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main);
+
+  # Annotate plot
+  abline(h=0, col="blue", lwd=2);
+  abline(h=log(1:4/2, base=2), col="blue");
+  abline(h=c(-1,1)/2, col="blue", lty=2);
+  stext(sprintf("%d SNPs", nunits), side=3, pos=1, line=-1, cex=0.8);
+  stextChipType(cdf);
+
+  # Plot CNs
+  points(x*xScale, log(cn,base=2), pch=176);
+
   verbose && exit(verbose);
 }
