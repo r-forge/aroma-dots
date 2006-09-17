@@ -495,7 +495,7 @@ setMethodS3("clearCache", "AffymetrixFileSet", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, pattern=NULL, recursive=TRUE, fileClass="AffymetrixFile", ...) {
+setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, pattern=NULL, recursive=TRUE, fileClass="AffymetrixFile", ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -512,22 +512,32 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   if (!inherits(dfStatic, "AffymetrixFile"))
     throw("Argument 'fileClass' is not refering to a AffymetrixFile class: ", fileClass);
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create AffymetrixFile object from the matching files
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Scan for Affymetrix files
+  verbose && enter(verbose, "Scanning directory for files");
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE, 
                                all.files=FALSE, recursive=recursive, ...);
+  verbose && sprintf("Found %d files.", length(pathnames));
   if (length(pathnames) == 0)
     throw("No files found: ", path);
+  verbose && exit(verbose);
 
   # Sort files in lexicographic order
   pathnames <- sort(pathnames);
 
   files <- list();
   for (kk in seq(along=pathnames)) {
-    df <- fromFile(dfStatic, pathnames[kk]);
+    df <- fromFile(dfStatic, pathnames[kk], verbose=less(verbose));
     files[[kk]] <- df;
     if (kk == 1) {
       clazz <- Class$forName(class(df)[1]);
