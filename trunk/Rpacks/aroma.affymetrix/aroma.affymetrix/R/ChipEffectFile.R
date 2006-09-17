@@ -25,7 +25,7 @@
 # \seealso{
 #   An object of this class is typically obtained through the
 #   \code{getChipEffects()} method for the @see "ProbeLevelModel" class.
-#   An object of this class is typically part of a @see "ChipEffectsSet".
+#   An object of this class is typically part of a @see "ChipEffectSet".
 # }
 #*/###########################################################################
 setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {

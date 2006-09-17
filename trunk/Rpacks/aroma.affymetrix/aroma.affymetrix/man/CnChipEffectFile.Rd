@@ -82,6 +82,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-   An object of this class is typically part of a \code{\link{CnChipEffectsSet}}.
+   An object of this class is typically part of a \code{\link{CnChipEffectSet}}.
  }
 \keyword{classes}

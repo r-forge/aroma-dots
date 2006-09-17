@@ -48,7 +48,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link{calibrateAllelicCrosstalk.AffymetrixSnpDataset}}.
+  \code{\link{calibrateAllelicCrosstalk.AffymetrixCelSet}}().
   \code{\link[sfit]{cfit}}.
   For more information see \code{\link{AffymetrixCelFile}}.
 }

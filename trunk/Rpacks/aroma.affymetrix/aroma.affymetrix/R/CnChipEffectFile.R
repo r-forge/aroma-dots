@@ -25,7 +25,7 @@
 # @author
 # 
 # \seealso{
-#   An object of this class is typically part of a @see "CnChipEffectsSet".
+#   An object of this class is typically part of a @see "CnChipEffectSet".
 # }
 #*/###########################################################################
 setConstructorS3("CnChipEffectFile", function(..., combineAlleles=FALSE) {

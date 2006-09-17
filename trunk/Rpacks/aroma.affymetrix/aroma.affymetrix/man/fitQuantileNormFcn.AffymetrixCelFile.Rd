@@ -1,10 +1,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixCelFile.normalizeQuantile.R
+%  AffymetrixCelFile.fitQuantileNormFcn.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \name{fitQuantileNormFcn.AffymetrixCelFile}
 \alias{fitQuantileNormFcn.AffymetrixCelFile}
@@ -26,7 +27,7 @@
   \item{subset}{An optional \code{\link[base]{numeric}} \code{\link[base]{vector}} specifying the indices of the
      subset of probes to be used to fit the normalization function.}
   \item{spar, nknots}{Control parameters passed to
-     \code{\link{stats:smooth.spline}}.}
+     \code{\link[stats]{smooth.spline}}.}
   \item{...}{Not used.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }

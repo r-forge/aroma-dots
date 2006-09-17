@@ -49,7 +49,7 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
 
 
 \bold{Methods inherited from GenomeInformation}:\cr
-fromCdf, fromChipType, fromDataSet, getChipType, getData, getPosition, getUnitIndices, plotDensity, readData, readTableInternal, verify
+fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, plotDensity, readData, readTableInternal, verify
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels, stextSize
