@@ -99,13 +99,21 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NULL, ..., .checkArgs=TRUE) {
+setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NULL, ..., verbose=FALSE, .checkArgs=TRUE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
   if (.checkArgs) {
     # Argument 'filename' and 'path':
     pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=TRUE);
   } else {
     pathname <- filename;
   }
+
 
   # WORKAROUND: Currently the affxparser code crash R if the file is not
   # a valid CEL file.  The best we can do now is to test against the
@@ -121,6 +129,7 @@ setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NUL
   # Create a new instance of the same class
   newInstance(static, pathname);
 }, static=TRUE)
+
 
 
 setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, clear=TRUE, ..., verbose=TRUE) {

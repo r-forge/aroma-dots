@@ -366,12 +366,11 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
-
-
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
   }
+
 
   verbose && enter(verbose, "Fitting model of class ", class(this)[1], ":");
 

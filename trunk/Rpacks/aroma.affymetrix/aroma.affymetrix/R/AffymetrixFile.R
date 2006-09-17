@@ -275,13 +275,21 @@ setMethodS3("getFileSize", "AffymetrixFile", function(this, ...) {
 });
 
 
-setMethodS3("fromFile", "AffymetrixFile", function(static, filename, path=NULL, ..., .checkArgs=TRUE) {
+setMethodS3("fromFile", "AffymetrixFile", function(static, filename, path=NULL, ..., verbose=FALSE, .checkArgs=TRUE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
   if (.checkArgs) {
     # Argument 'filename' and 'path':
     pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=TRUE);
   } else {
     pathname <- filename;
   }
+
 
   # Get all known subclasses (bottom up)
   clazz <- Class$forName(class(static)[1]);

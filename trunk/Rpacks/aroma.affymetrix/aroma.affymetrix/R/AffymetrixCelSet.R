@@ -201,8 +201,15 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
 })
 
 
-setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="chip_data/", pattern="[.](c|C)(e|E)(l|L)$", ..., fileClass="AffymetrixCelFile") {
-  this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass);
+setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="chip_data/", pattern="[.](c|C)(e|E)(l|L)$", ..., fileClass="AffymetrixCelFile", verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
   # Use the same CDF object for all CEL files.
   setCdf(this, getCdf(this));
   this;
