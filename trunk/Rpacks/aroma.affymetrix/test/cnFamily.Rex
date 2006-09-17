@@ -43,7 +43,7 @@ genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="in
 
 
 allChromosomes <- c(1:22, "X");
-for (chr in allChromosomes[8]) {
+for (chr in rev(allChromosomes)) {
   verbose && enter(verbose, "Chromosome ", chr);
 
 if (!exists("models", mode="list")) {
