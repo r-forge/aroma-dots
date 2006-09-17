@@ -43,8 +43,7 @@ genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="in
 
 
 allChromosomes <- c(1:22, "X");
-allChromosomes <- allChromosomes[8];
-for (chr in allChromosomes) {
+for (chr in allChromosomes[8]) {
   verbose && enter(verbose, "Chromosome ", chr);
 
 if (!exists("models", mode="list")) {
@@ -170,7 +169,8 @@ cols <- rep(cols, length.out=length(qn));
 for (zoom in c(1,2,4,8,16,32)) {
   verbose && enter(verbose, "Plotting zoom x", zoom);
 
-  imgName <- sprintf("%s-MvsX-x%02d.png", name, zoom);
+  chrIdx <- which(chr == allChromosomes);
+  imgName <- sprintf("%s-MvsX-Chr%02d-x%02d.png", name, chrIdx, zoom);
   pathname <- filePath(figPath, imgName);
   width <- round(zoom*5*(nbrOfBases / 10^6));
   height <- 400;
