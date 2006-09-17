@@ -37,7 +37,7 @@ print(model)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit all units on one chromosome 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-chr <- "15"
+chr <- "8"
 units <- getUnitIndices(gi, chromosome=chr)
 cat(sprintf("Fits %d SNPs on chromosome %s.\n", length(units), chr))
 fit(model, units=units, verbose=verbose)
@@ -48,7 +48,8 @@ fit(model, units=units, verbose=verbose)
 ces <-getChipEffects(model)
 
 # Array to be investigated
-ce <- getFile(ces, 1)
+ss <- grep("NA12802", getNames(ds))
+ce <- getFile(ces, ss)
 
 # Re-calculate the average chip-effect across arrays
 ceAvg <- getAverageFile(ces, force=TRUE, verbose=verbose)
@@ -59,7 +60,10 @@ yRef <- unlist(ceAvg[units], use.names=FALSE)
 y <- unlist(ce[units], use.names=FALSE)
 cn <- y/yRef	
 
-x <- getPosition(gi, units=units, na.rm=FALSE)
+x <- getPositions(gi, units=units, na.rm=FALSE)
+# Make sure to plot in order
+o <- order(x)
+print(unique(diff(o)))
 x <- x/10^6
 xlab <- "Physical position (Mb)"
 ylab <- expression(log[2](theta[i]/theta[avg]))

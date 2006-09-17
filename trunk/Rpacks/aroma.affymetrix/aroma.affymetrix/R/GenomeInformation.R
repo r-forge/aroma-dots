@@ -241,7 +241,9 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 
   # Subset by unit?
   if (!is.null(units)) {
-    data <- data[units,,drop=TRUE];
+    # Map the unit indicies to the row names
+    rr <- match(units, rownames(data));
+    data <- data[rr,,drop=TRUE];
   }
 
   # Stratify by field values?
@@ -347,9 +349,9 @@ setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRU
 
 
 ###########################################################################/**
-# @RdocMethod getPosition
+# @RdocMethod getPositions
 #
-# @title "Gets the physical position for a set of units"
+# @title "Gets the physical positions for a set of units"
 #
 # \description{
 #   @get "title".
@@ -375,7 +377,7 @@ setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRU
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getPosition", "GenomeInformation", function(this, ..., na.rm=TRUE) {
+setMethodS3("getPositions", "GenomeInformation", function(this, ..., na.rm=TRUE) {
   df <- getData(this, fields="physicalPosition", ...);
   suppressWarnings({  # Suppress warnings about NAs
     df <- as.integer(df[,1]);
@@ -398,7 +400,7 @@ setMethodS3("getPosition", "GenomeInformation", function(this, ..., na.rm=TRUE) 
 #
 # \arguments{
 #  \item{chromosome}{The chromsome to be displayed.}
-#  \item{...}{Additional arguments passed to @seemethod "getPosition".}
+#  \item{...}{Additional arguments passed to @seemethod "getPositions".}
 #  \item{adjust}{A bandwidth parameter for the density estimator.}
 #  \item{xlab}{The label on the x-axis.  If @NULL, a default will generated.}
 #  \item{main}{The title of the plot.  If @NULL, a default will generated.}
@@ -417,7 +419,7 @@ setMethodS3("getPosition", "GenomeInformation", function(this, ..., na.rm=TRUE) 
 #*/###########################################################################
 setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., adjust=1/20, xlab=NULL, main=NULL, annotate=TRUE) {
   # Get the positions of these units
-  pos <- getPosition(gi, chromosome=chromosome, ...);
+  pos <- getPositions(gi, chromosome=chromosome, ...);
 
   # Estimate the SNP density
   d <- density(pos/10^6, from=0, adjust=adjust);
@@ -442,8 +444,9 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
-# 2006-09-15
+# 2006-09-16
 # o Added plotDensity() and more.
+# o Improved getData().  Updated getUnitIndices() and getPositions().
 # 2006-09-15
 # o Added Rdoc comments.
 # o Created from DChip.R in old(!) aroma.snp.

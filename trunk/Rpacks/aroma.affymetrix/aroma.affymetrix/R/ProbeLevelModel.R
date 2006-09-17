@@ -369,6 +369,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
 
 
   verbose && enter(verbose, "Fitting model of class ", class(this)[1], ":");
+  on.exit({verbose && exit(verbose)});
+
   verbose && print(verbose, this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -516,8 +518,6 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     t <- 100 * t / t["total"];
     printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%% (of which %.2f%% is for writing chip-effects), Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["write"], 100*t["writeCes"]/t["write"], t["gc"]);
   }
-
-  verbose && exit(verbose);
 
   invisible(units);
 })
