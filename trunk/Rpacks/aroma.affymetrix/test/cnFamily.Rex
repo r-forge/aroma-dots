@@ -166,11 +166,11 @@ cex <- 0.8;
 cols <- brewer.pal(8, "Dark2");
 cols <- rep(cols, length.out=length(qn));
 
-for (zoom in c(1,2,4,8,16,32,64,128)) {
+for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
   verbose && enter(verbose, "Plotting zoom x", zoom);
 
   chrIdx <- which(chr == allChromosomes);
-  imgName <- sprintf("%s-MvsX-Chr%02d-x%02d.png", name, chrIdx, zoom);
+  imgName <- sprintf("%s-MvsX-Chr%02d-x%03d.png", name, chrIdx, zoom);
   pathname <- filePath(figPath, imgName);
   width <- round(zoom*5*(nbrOfBases / 10^6));
   height <- 400;
