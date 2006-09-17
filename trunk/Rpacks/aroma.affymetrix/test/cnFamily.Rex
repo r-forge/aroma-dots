@@ -1,8 +1,5 @@
 savehistory();
 
-figPath <- "figures";
-mkdirs(figPath);
-
 pngDev <- System$findGraphicsDevice();
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -148,6 +145,9 @@ if (!exists("data", mode="list")) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Plot data
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+figPath <- filePath(getParent(getPath(models[[1]])), "figures");
+mkdirs(figPath);
+
 name <- grep(sample, getNames(ds), value=TRUE);
 nbrOfBases <- genome[chr,"nbrOfBases"];
 chipTypes <- sapply(qn, FUN=function(ds) getChipType(getCdf(ds)));
@@ -167,7 +167,7 @@ cex <- 0.8;
 cols <- brewer.pal(8, "Dark2");
 cols <- rep(cols, length.out=length(qn));
 
-for (zoom in c(1,2,4,8)) {
+for (zoom in c(1,2,4,8,16,32)) {
   verbose && enter(verbose, "Plotting zoom x", zoom);
 
   imgName <- sprintf("%s-MvsX-x%02d.png", name, zoom);
