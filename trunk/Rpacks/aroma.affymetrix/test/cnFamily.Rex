@@ -34,9 +34,15 @@ if (!exists("qn", mode="list")) {
 # Fit copy number model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 chr <- "8";
-for (ds in qn) {
+if (!exists("models", mode="list")) {
+  models <- vector("list", length(qn));
+  names(models) <- names(qn);
+}
+for (kk in seq(along=qn)) {
+  ds <- qn[[kk]];
   verbose && enter(verbose, "Data set: ", getName(ds));
-  model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);  
+  model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+  models[[kk]] <- model;
   verbose && print(verbose, model);
   cdf <- getCdf(model);
   gi <- getGenomeInformation(cdf);
@@ -89,10 +95,10 @@ str <- paste(chipTypes, collapse=" / ");
 stext(str, side=4, pos=1, line=0, cex=0.8, col="darkgray");
 
 chipTypes <- nbrOfSnps <- c();
-for (kk in seq(along=qn)) {
-  ds <- qn[[kk]];
+for (kk in seq(along=models)) {
+  model <- models[[kk]];
+  ds <- getDataSet(model);
   verbose && enter(verbose, "Data set: ", getName(ds));
-  model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
   ces <- getChipEffects(model);
   cdf <- getCdf(model);
   gi <- getGenomeInformation(cdf);
