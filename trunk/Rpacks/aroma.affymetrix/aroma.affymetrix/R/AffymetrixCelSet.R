@@ -109,7 +109,7 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getSiblings", "AffymetrixCelSet", function(this, ...) {
+setMethodS3("getSiblings", "AffymetrixCelSet", function(this, notSelf=FALSE, ...) {
   # Scan parent directory for all possible data sets.
   # /path/to/<data set name>/chip_data/<chip type>
   path <- getPath(this);
@@ -125,11 +125,14 @@ setMethodS3("getSiblings", "AffymetrixCelSet", function(this, ...) {
   # Now scan this file directory tree
   paths <- findCelSet(name=getName(this), paths=dataPath, firstOnly=FALSE);
 
+  if (notSelf)
+    paths <- paths[(paths != getPath(this))];
+
   sets <- vector("list", length(paths));
   names(sets) <- basename(paths);
   for (kk in seq(along=paths)) {
     path <- paths[kk];
-    if (identical(path, getPath(this))) {
+    if (!notSelf && identical(path, getPath(this))) {
       sets[[kk]] <- this;
     } else {
       sets[[kk]] <- fromFiles(this, path=path);
