@@ -40,7 +40,7 @@ print(model)
 chr <- "8"
 units <- getUnitIndices(gi, chromosome=chr)
 cat(sprintf("Fits %d SNPs on chromosome %s.\n", length(units), chr))
-fit(model, units=units, verbose=verbose)
+fit(model, units=units, moreUnits=10, verbose=verbose)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get the estimated chip effects
