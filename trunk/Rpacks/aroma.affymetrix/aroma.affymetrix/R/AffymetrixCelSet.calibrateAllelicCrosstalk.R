@@ -39,7 +39,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path=NULL, name="calibAllelicCrosstalk", ..., verbose=FALSE) {
+setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path=NULL, name="calibAllelicCT", ..., verbose=FALSE) {
   require(sfit) || throw("Package 'sfit' not found.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -49,17 +49,19 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path
 
   # Argument 'path':
   if (is.null(path)) {
-    # Path structure: <data-set name>/<normalization name>/<chip type>/
-    # Compare with  : <data-set name>/chip_data/<chip type>/
-    path <- filePath(getName(this), name, getChipType(cdf));
+    # Path structure: /calibAllelicCT/<data set name>/chip_data/<chip type>/
+    path <- file.path(name, getName(this), "chip_data", getChipType(cdf));
   } 
   if (!is.null(path)) {
+    # Verify this path (and create if missing)
     path <- Arguments$getWritablePath(path);
   }
-  mkdirs(path);
+
   if (identical(getPath(this), path)) {
     throw("Cannot calibrate data file. Argument 'path' refers to the same path as the path of the data file to be calibrated: ", path);
   }
+  mkdirs(path);
+
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
