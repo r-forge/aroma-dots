@@ -26,7 +26,14 @@ if (!exists("qn", mode="list")) {
   for (name in names(raw)) {
     verbose && enter(verbose, "Data set: ", name);
     ds <- raw[[name]];
-    dsN <- normalizeQuantile(ds, subsetToAvg=1/3, verbose=verbose);
+    path <- findCelSet(name=getName(ds), chipType=getChipType(getCdf(ds)), paths="normQuantile", minCount=length(ds));
+    if (is.null(path)) {
+      dsN <- normalizeQuantile(ds, subsetToAvg=1/3, verbose=verbose);
+    } else {
+      verbose && enter(verbose, "Detected normalized dataset");
+      dsN <- fromFiles(ds, path, verbose=less(verbose));
+      verbose && exit(verbose);
+    }
     print(dsN);
     tmp[[name]] <- dsN;
     verbose && exit(verbose);
