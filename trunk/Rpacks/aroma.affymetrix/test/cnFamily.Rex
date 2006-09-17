@@ -1,3 +1,5 @@
+savehistory();
+
 figPath <- "figures";
 mkdirs(figPath);
 
@@ -98,6 +100,7 @@ if (exists("opar"))
 name <- grep(sample, getNames(ds), value=TRUE);
 imgName <- sprintf("%s-MvsX.png", name);
 pathname <- filePath(figPath, imgName);
+nbrOfBases <- genome[chr,"nbrOfBases"];
 width <- round(100*(nbrOfBases / 10^6));
 pngDev(pathname, width=width, height=400);
 
@@ -106,7 +109,6 @@ par(mar=c(5,4,2,2)+0.1);
 xScale <- 1/10^6;
 xlab <- "Physical position (Mb)"
 ylab <- expression(log[2](theta/theta[avg]));
-nbrOfBases <- genome[chr,"nbrOfBases"];
 xlim <- c(0,nbrOfBases)*xScale;
 ylim <- c(-1,1)*2;
 
