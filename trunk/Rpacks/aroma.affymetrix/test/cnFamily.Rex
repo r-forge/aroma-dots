@@ -32,7 +32,7 @@ if (!exists("qn", mode="list")) {
     } else {
       verbose && enter(verbose, "Detected normalized dataset");
       verbose && cat(verbose, "Pathname: ", path);
-      dsN <- fromFiles(ds, path, verbose=less(verbose));
+      dsN <- fromFiles(ds, path);
       verbose && exit(verbose);
     }
     print(dsN);
