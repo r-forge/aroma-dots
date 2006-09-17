@@ -118,7 +118,7 @@ cols <- brewer.pal(8, "Dark2");
 cols <- rep(cols, length.out=length(qn));
 
 # Create plot
-plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main);
+plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim);
 
 # Annotate plot
 abline(h=0, col="blue", lwd=2);
