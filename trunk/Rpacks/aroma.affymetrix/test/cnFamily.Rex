@@ -34,6 +34,20 @@ if (!exists("qn", mode="list")) {
   verbose && exit(verbose);
 }
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Create copy-number models
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+if (!exists("models", mode="list")) {
+  models <- vector("list", length(qn));
+  names(models) <- names(qn);
+  for (kk in seq(along=models)) {
+    ds <- qn[[kk]];
+    verbose && enter(verbose, "Data set: ", getName(ds));
+    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+    models[[kk]] <- model;
+  }
+  verbose && print(verbose, model);
+}
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit copy number model
@@ -41,25 +55,14 @@ if (!exists("qn", mode="list")) {
 # Get genome data
 genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
 
-
 allChromosomes <- c(1:22, "X");
 for (chr in rev(allChromosomes)) {
   verbose && enter(verbose, "Chromosome ", chr);
 
-if (!exists("models", mode="list")) {
-  models <- vector("list", length(qn));
-  names(models) <- names(qn);
-}
-
-for (kk in seq(along=qn)) {
-  ds <- qn[[kk]];
-  verbose && enter(verbose, "Data set: ", getName(ds));
+for (kk in seq(along=models)) {
   model <- models[[kk]];
-  if (is.null(model)) {
-    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-    models[[kk]] <- model;
-  }
-  verbose && print(verbose, model);
+  ds <- getDataSet(model);
+  verbose && enter(verbose, "Data set: ", getName(ds));
 
   verbose && enter(verbose, "Retrieving genome information");
   cdf <- getCdf(model);
@@ -90,55 +93,53 @@ for (kk in seq(along=qn)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 sample <- "NA12802";
 
-if (!exists("data", mode="list")) {
-  data <- vector("list", length(models));
-  names(data) <- names(models);
-  for (kk in seq(along=models)) {
-    model <- models[[kk]];
-    ds <- getDataSet(model);
-    verbose && enter(verbose, "Data set: ", getName(ds));
-    ces <- getChipEffects(model);
-  
-    verbose && enter(verbose, "Retrieving genome information");
-    cdf <- getCdf(model);
-    gi <- getGenomeInformation(cdf);
-    units <- getUnitIndices(gi, chromosome=chr);
-    nunits <- length(units);
-    # Get the positions of all SNPs
-    x <- getPositions(gi, units=units);
-    stopifnot(identical(length(x), nunits));
-    verbose && exit(verbose);
-  
-    # Remove NAs (SNPs for which we have no position information)
-    keep <- !is.na(x);
-    x <- x[keep];
-    units <- units[keep];
-    nunits <- length(units);
-  
-    # Get reference (average chip effect)
-    verbose && enter(verbose, "Retrieving reference estimates");
-    ceRef <- getAverageFile(ces);
-    ceRef$mergeStrands <- model$mergeStrands;
-    ceRef$combineAlleles <- model$combineAlleles;
-    yRef <- unlist(ceRef[units], use.names=FALSE);
-    stopifnot(identical(length(yRef), nunits));
-    verbose && exit(verbose);
-  
-    # Get sample of interest
-    verbose && enter(verbose, "Retrieving sample estimates");
-    ss <- grep(sample, getNames(ces));
-    ce <- getFile(ces, ss);
-    y <- unlist(ce[units], use.names=FALSE);
-    stopifnot(identical(length(y), nunits));
-    verbose && exit(verbose);
-  
-    cn <- y/yRef;
-    stopifnot(identical(length(cn), nunits));
-  
-    data[[kk]] <- list(x=x, y=y, yRef=yRef, cn=cn, nbrOfSnps=nunits);
-  
-    verbose && exit(verbose);
-  }
+data <- vector("list", length(models));
+names(data) <- names(models);
+for (kk in seq(along=models)) {
+  model <- models[[kk]];
+  ds <- getDataSet(model);
+  verbose && enter(verbose, "Data set: ", getName(ds));
+  ces <- getChipEffects(model);
+
+  verbose && enter(verbose, "Retrieving genome information");
+  cdf <- getCdf(model);
+  gi <- getGenomeInformation(cdf);
+  units <- getUnitIndices(gi, chromosome=chr);
+  nunits <- length(units);
+  # Get the positions of all SNPs
+  x <- getPositions(gi, units=units);
+  stopifnot(identical(length(x), nunits));
+  verbose && exit(verbose);
+
+  # Remove NAs (SNPs for which we have no position information)
+  keep <- !is.na(x);
+  x <- x[keep];
+  units <- units[keep];
+  nunits <- length(units);
+
+  # Get reference (average chip effect)
+  verbose && enter(verbose, "Retrieving reference estimates");
+  ceRef <- getAverageFile(ces);
+  ceRef$mergeStrands <- model$mergeStrands;
+  ceRef$combineAlleles <- model$combineAlleles;
+  yRef <- unlist(ceRef[units], use.names=FALSE);
+  stopifnot(identical(length(yRef), nunits));
+  verbose && exit(verbose);
+
+  # Get sample of interest
+  verbose && enter(verbose, "Retrieving sample estimates");
+  ss <- grep(sample, getNames(ces));
+  ce <- getFile(ces, ss);
+  y <- unlist(ce[units], use.names=FALSE);
+  stopifnot(identical(length(y), nunits));
+  verbose && exit(verbose);
+
+  cn <- y/yRef;
+  stopifnot(identical(length(cn), nunits));
+
+  data[[kk]] <- list(x=x, y=y, yRef=yRef, cn=cn, nbrOfSnps=nunits);
+
+  verbose && exit(verbose);
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -164,7 +165,7 @@ ylim <- c(-1,1)*2;
 pch <- 19;
 cex <- 0.8;
 cols <- brewer.pal(8, "Dark2");
-cols <- rep(cols, length.out=length(qn));
+cols <- rep(cols, length.out=length(data));
 
 for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
   verbose && enter(verbose, "Plotting zoom x", zoom);
@@ -204,6 +205,7 @@ for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
     cn <- df$cn;
     points(x*xScale, log(cn,base=2), pch=pch, cex=cex, col=cols[kk]);
   }
+  rm(df, x, cn);
   par(opar);
   
   # Close and flush figure
@@ -212,6 +214,8 @@ for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
   verbose && exit(verbose);
 } # for (zoom in ...)
 
+rm(data);
+gc();
 
   verbose && exit(verbose);
 } # for (chr in c(1:22, "X"))
