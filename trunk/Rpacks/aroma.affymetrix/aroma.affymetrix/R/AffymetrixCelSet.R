@@ -557,6 +557,13 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
 
 
 
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Calculating average cell intensities across ", length(this), " arrays");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create CEL file to store the average array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -645,6 +652,8 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
     gc();
     verbose && exit(verbose);
   } # while()
+
+  verbose && exit(verbose);
 
   res;  
 })
