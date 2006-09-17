@@ -31,3 +31,23 @@ if (!exists("qn", mode="list")) {
   qn <- tmp;
   verbose && exit(verbose);
 }
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Estimate copy numbers
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+chr <- "8";
+for (ds in qn) {
+  verbose && enter(verbose, "Data set: ", getName(ds));
+  model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);  
+  verbose && print(verbose, model);
+  cdf <- getCdf(ds);
+  gi <- getGenomeInformation(cdf);
+  units <- getUnitIndices(gi, chromosome=chr);
+  nunits <- length(units);
+  verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
+  uDone <- fit(model, units=units, verbose=verbose);
+  nDone <- length(uDone);
+  verbose && printf(verbose, "Fitted %d SNPs\n", nDone);
+  verbose && exit(verbose);
+  verbose && exit(verbose);
+}
