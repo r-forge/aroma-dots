@@ -381,7 +381,11 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   verbose <- Arguments$getVerbose(verbose);
 
   verbose && enter(verbose, "Reading cell indices from CDF file");
-  cdf <- readCdfCellIndices(this$.pathname, units=units, ...);
+  verbose && cat(verbose, "Pathname: ", this$.pathname);
+  verbose && cat(verbose, "Units: ");
+  verbose && str(verbose, units);
+  verbose2 <- -as.integer(verbose)-1;
+  cdf <- readCdfCellIndices(this$.pathname, units=units, ..., verbose=verbose);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Restructuring");
