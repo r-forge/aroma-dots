@@ -59,7 +59,7 @@ ss <- grep("NA12802", getNames(ds))
 ce <- getFile(ces, ss)
 
 # Re-calculate the average chip-effect across arrays
-ceAvg <- getAverageFile(ces, force=(nDone > 0), verbose=verbose)
+ceAvg <- getAverageFile(ces, force=(nDone > 0), moreUnits=10, verbose=verbose)
 ceAvg$mergeStrands <- ce$mergeStrands
 ceAvg$combineAlleles <- ce$combineAlleles
 
