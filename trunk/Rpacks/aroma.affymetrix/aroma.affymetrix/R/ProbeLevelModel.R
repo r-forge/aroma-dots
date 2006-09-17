@@ -372,6 +372,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     pushState(verbose);
     on.exit(popState(verbose));
   }
+
   verbose && enter(verbose, "Fitting model of class ", class(this)[1], ":");
 
   verbose && print(verbose, this);
