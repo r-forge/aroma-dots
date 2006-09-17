@@ -136,8 +136,6 @@ setMethodS3("getSiblings", "AffymetrixCelSet", function(this, ...) {
     }
   }
   
-  verbose && exit(verbose);
-
   sets;
 })
 
