@@ -40,7 +40,8 @@ print(model)
 chr <- "8"
 units <- getUnitIndices(gi, chromosome=chr)
 cat(sprintf("Fits %d SNPs on chromosome %s.\n", length(units), chr))
-fit(model, units=units, moreUnits=10, verbose=verbose)
+unitsDone <- fit(model, units=units, moreUnits=10, verbose=verbose)
+nDone <- length(unitsDone)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get some information about this chromsome
@@ -58,7 +59,7 @@ ss <- grep("NA12802", getNames(ds))
 ce <- getFile(ces, ss)
 
 # Re-calculate the average chip-effect across arrays
-ceAvg <- getAverageFile(ces, force=TRUE, verbose=verbose)
+ceAvg <- getAverageFile(ces, force=(nDone > 0), verbose=verbose)
 ceAvg$mergeStrands <- ce$mergeStrands
 ceAvg$combineAlleles <- ce$combineAlleles
 
@@ -73,7 +74,7 @@ print(unique(diff(o)))
 x <- x/10^6
 xlab <- "Physical position (Mb)"
 ylab <- expression(log[2](theta[i]/theta[avg]))
-xlim <- c(0,chrStats["max"]);
+xlim <- c(0,chrStats["max"]/10^6);
 ylim <- c(-1,1)*2
 main <- sprintf("CN estimates for chromosome %s", chr)
 plot(NA, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, main=main)
