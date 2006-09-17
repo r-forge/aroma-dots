@@ -442,6 +442,18 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 })
 
 
+setMethodS3("getChromsomes", "GenomeInformation", function(this, ...) {
+  unique(getData(this, fields="chromosome"));
+})
+
+
+setMethodS3("getChromsomeRanges", "GenomeInformation", function(this, ...) {
+  chr <- getData(this, fields="chromosome");
+  uchr <- unique(chr);
+  rm(chr);
+  
+})
+
 ############################################################################
 # HISTORY:
 # 2006-09-16
