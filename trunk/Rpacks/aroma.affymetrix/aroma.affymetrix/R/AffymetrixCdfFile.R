@@ -551,7 +551,7 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Intersect 'indices' and 'types'
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (identical(types, "all")) {
+  if ("all" %in% types) {
     other <- 1:nbrOfCells;
   } else {
     verbose && enter(verbose, "Identifies cells of certain kind");

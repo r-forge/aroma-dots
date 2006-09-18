@@ -11,6 +11,9 @@
 \title{Non-documented objects}
 
 
+% The AffymetrixCelSet class
+\alias{getSiblings}
+
 % The AffymetrixDataFile class
 \alias{addTransform}
 \alias{addTransform.AffymetrixDataFile}
