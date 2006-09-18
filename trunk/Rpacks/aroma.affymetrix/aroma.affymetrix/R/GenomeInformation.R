@@ -308,6 +308,18 @@ setMethodS3("readTableInternal", "GenomeInformation", function(this, pathname, c
 }, protected=TRUE);
 
 
+
+
+setMethodS3("nbrOfUnits", "GenomeInformation", function(this, ...) {
+  data <- getData(this, fields=1);
+  nrow(data);
+})
+
+setMethodS3("getFields", "GenomeInformation", function(this, ...) {
+  data <- getData(this);
+  colnames(data);
+})
+
 ###########################################################################/**
 # @RdocMethod getUnitIndices
 #
