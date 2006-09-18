@@ -325,7 +325,7 @@ setMethodS3("readTableInternal", "SnpInformation", function(this, pathname, colC
 }, protected=TRUE);
 
 
-setMethodS3("getFragmentLength", "SnpInformation", function(this, ...) {
+setMethodS3("getFragmentLengths", "SnpInformation", function(this, ...) {
   data <- getData(this, ..., fields="fragmentLength");
   fl <- data[,1];
   fl <- as.integer(fl);
@@ -333,7 +333,7 @@ setMethodS3("getFragmentLength", "SnpInformation", function(this, ...) {
 })
 
 
-setMethodS3("getFragmentStart", "SnpInformation", function(this, ...) {
+setMethodS3("getFragmentStarts", "SnpInformation", function(this, ...) {
   data <- getData(this, ..., fields="start");
   fl <- data[,1];
   fl <- as.integer(fl);
@@ -341,7 +341,7 @@ setMethodS3("getFragmentStart", "SnpInformation", function(this, ...) {
 })
 
 
-setMethodS3("getFragmentStop", "SnpInformation", function(this, ...) {
+setMethodS3("getFragmentStops", "SnpInformation", function(this, ...) {
   data <- getData(this, ..., fields="stop");
   fl <- data[,1];
   fl <- as.integer(fl);
