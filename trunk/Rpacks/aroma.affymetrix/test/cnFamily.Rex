@@ -76,7 +76,7 @@ if (!exists("models", mode="list")) {
 genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
 
 allChromosomes <- c(1:22, "X");
-for (chr in rev(allChromosomes)) {
+for (chr in rev(allChromosomes[1:10])) {
   verbose && enter(verbose, "Chromosome ", chr);
 
 for (kk in seq(along=models)) {
