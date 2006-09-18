@@ -44,7 +44,13 @@
      \item \code{\link{SnpPlm}} -
        Contains an example how to fit different allele-specific
        probe-level models (PLMs) to the same data set, and how
-       to display the estimated (thetaB,thetaA) "chip effects".
+       to display the estimated \eqn{(\theta_B,\theta_A)} "chip effects".
+     \item \code{\link{CnPlm}} -
+       Contains an example how to fit copy-number estimates for
+       a specific chromosome, and how to display the estimates along
+       the chromosome.
+     \item \code{normalizeQuantile()} in \code{\link{AffymetrixCelSet}} -
+       Contains an example how to quantile normalize a set of arrays.
    }
  }
 

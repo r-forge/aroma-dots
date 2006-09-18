@@ -98,7 +98,7 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
 # }
 #
 # \value{
-#  Returns a named @list of @see "AffymetrixCdfSet" objects.
+#  Returns a named @list of @see "AffymetrixCelSet" objects.
 # }
 #
 # @author

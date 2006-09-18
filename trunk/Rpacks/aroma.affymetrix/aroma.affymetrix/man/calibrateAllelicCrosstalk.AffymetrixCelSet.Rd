@@ -20,7 +20,7 @@
  Calibrates probepair signals for crosstalk between allele A and allele B.
 }
 
-\usage{\method{calibrateAllelicCrosstalk}{AffymetrixCelSet}(this, path=NULL, name="calibAllelicCrosstalk", ..., verbose=FALSE)}
+\usage{\method{calibrateAllelicCrosstalk}{AffymetrixCelSet}(this, path=NULL, name="calibAllelicCT", ..., verbose=FALSE)}
 
 \arguments{
   \item{outPath}{The path where to save the calibrated data files.}

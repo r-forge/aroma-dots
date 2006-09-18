@@ -19,7 +19,7 @@
  Identifies units for which the PLM has still not been fitted to.
 }
 
-\usage{\method{findUnitsTodo}{ProbeLevelModel}(this, ...)}
+\usage{\method{findUnitsTodo}{ProbeLevelModel}(this, ..., verbose=FALES)}
 
 \arguments{
   \item{...}{Not used.}
