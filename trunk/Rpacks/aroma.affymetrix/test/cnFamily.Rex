@@ -53,7 +53,8 @@ if (!exists("models", mode="list")) {
   for (kk in seq(along=models)) {
     ds <- qn[[kk]];
     verbose && enter(verbose, "Data set: ", getName(ds));
-    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+#    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
     models[[kk]] <- model;
   }
   verbose && print(verbose, model);
@@ -76,7 +77,7 @@ if (!exists("models", mode="list")) {
 genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
 
 allChromosomes <- c(1:22, "X");
-for (chr in rev(allChromosomes[1:10])) {
+for (chr in rev(allChromosomes)) {
   verbose && enter(verbose, "Chromosome ", chr);
 
 for (kk in seq(along=models)) {

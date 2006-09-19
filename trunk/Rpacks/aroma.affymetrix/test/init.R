@@ -50,6 +50,7 @@ library(R.cache)
 library(aroma.apd)
 library(affxparser)
 library(digest)
+library(geneplotter)
 library(RColorBrewer)
 
 #library(aroma.apd)
@@ -76,4 +77,10 @@ source("Verbose.R");
 sourceDirectory("../aroma.affymetrix/R/", recursive=FALSE);
 
 verbose && exit(verbose);
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Change to a nicer palette
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+cols <- brewer.pal(8, "Dark2");
+palette(cols);
 
