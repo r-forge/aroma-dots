@@ -30,7 +30,7 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("RmaCnPlm", function(..., combineAlleles=FALSE, name="modelCnRmaPlm") {
+setConstructorS3("RmaCnPlm", function(..., combineAlleles=FALSE, name="modelRmaCnPlm") {
   extend(RmaSnpPlm(..., name=name), c("RmaCnPlm", uses(CnPlm())),
     combineAlleles = combineAlleles
   )

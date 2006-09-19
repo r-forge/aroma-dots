@@ -34,8 +34,25 @@ setConstructorS3("CnChipEffectFile", function(..., combineAlleles=FALSE) {
   )
 })
 
-setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ...) {
-  cells <- NextMethod("getCellIndices", this, ...);
+setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- digest(list(units=units, ...));
+  res <- this$.cellIndices[[key]];
+  if (!is.null(res)) {
+    verbose && cat(verbose, "getCellIndices.CnChipEffectFile(): Returning cached data");
+    return(res);
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get and restructure cell indices
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cells <- NextMethod("getCellIndices", this, ..., verbose=verbose);
 
   # If combining alleles, return only every second group.
   # In order to improve readability we merge the names of alleles groups
@@ -55,12 +72,21 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ...) {
     })
   }
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Store read units in cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && cat(verbose, "getCellIndices.CnChipEffectFile(): Updating cache");
+  this$.cellIndices <- list();
+  this$.cellIndices[[key]] <- cells;
+
   cells;
 })
 
 
 ############################################################################
 # HISTORY:
+# 2006-09-17
+# o Added an in-memory cache for getCellIndices().
 # 2006-09-12
 # o Updated and probably working. When combining alleles, the names of the
 #   groups returned consist of the allele A and allele group names.

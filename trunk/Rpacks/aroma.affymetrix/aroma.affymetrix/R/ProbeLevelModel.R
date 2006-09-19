@@ -388,6 +388,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   } else if (doRemaining) {
     verbose && enter(verbose, "Identifying non-estimated units")
     units <- findUnitsTodo(this, verbose=less(verbose));
+    nbrOfUnits <- length(units);
     verbose && exit(verbose);
   } else {
     # Fit only unique units

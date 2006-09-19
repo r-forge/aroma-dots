@@ -231,14 +231,15 @@ setMethodS3("getData", "SnpInformation", function(this, units=NULL, fields=c("fr
     lss <- matrix(lss, ncol=3, byrow=TRUE);
     rownames(lss) <- 1:nrow(lss);
     colnames(lss) <- c("fragmentLength", "start", "stop");
-    data <- cbind(data[,-cc], lss);
+    data <- cbind(data[,-cc,drop=FALSE], lss);
     rm(lss);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Reordering units according to the CDF file");
     idxs <- match(targetUnitNames, data[,1]);
-    data <- data[idxs,-1];
+    data <- data[idxs,];
     rownames(data) <- 1:nrow(data);
+#    data <- data[idxs,-1];
     verbose && exit(verbose);
     # Store in cache
     this$.data <- data;
