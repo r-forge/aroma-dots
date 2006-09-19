@@ -156,13 +156,41 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
 
 
 
-setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, ...) {
-  if (is.null(cdf))
-    cdf <- getCellIndices(this, units=units);
+setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, ..., force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- digest(list(units=units, cdf=cdf, ...));
+  res <- this$.readUnitsCache[[key]];
+  if (!force && !is.null(res)) {
+    verbose && cat(verbose, "readUnits.ChipEffectFile(): Returning cached data");
+    return(res);
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Retrieve the data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(cdf)) {
+    cdf <- getCellIndices(this, units=units, verbose=less(verbose));
+  }
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  NextMethod("readUnits", this, cdf=cdf, ...);
+  res <- NextMethod("readUnits", this, cdf=cdf, ..., verbose=less(verbose));
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Store read units in cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && cat(verbose, "readUnits.ChipEffectFile(): Updating cache");
+  this$.readUnitsCache <- list();
+  this$.readUnitsCache[[key]] <- res;
+
+  res;
 })
 
 

@@ -221,7 +221,8 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
     verbose && enter(verbose, "Reordering units according to the CDF file");
     # Reorder genome information data according to CDF file
     idxs <- match(targetUnitNames, data[,1]);
-    data <- data[idxs,-1];
+    data <- data[idxs,];
+#    data <- data[,-1];
     rownames(data) <- 1:nrow(data);
     verbose && exit(verbose);
 

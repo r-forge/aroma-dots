@@ -48,6 +48,7 @@
 #*/###########################################################################
 setConstructorS3("ParameterCelFile", function(..., encodeFunction=NULL, decodeFunction=NULL) {
   extend(AffymetrixCelFile(...), "ParameterCelFile",
+    "cached:.readUnitsCache" = NULL,
     encodeFunction = encodeFunction,
     decodeFunction = decodeFunction
   )
@@ -89,7 +90,7 @@ setMethodS3("encode", "ParameterCelFile", function(this, units, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("decodeUnit", "ParameterCelFile", function(this, unit, ...) {
+setMethodS3("decodeUnit", "ParameterCelFile", function(this, unit, ..., verbose=FALSE) {
   decodeUnitGroup <- this$decodeFunction;
   if (!is.null(decodeUnitGroup)) {
     unit <- lapply(unit, FUN=decodeUnitGroup, ...);
@@ -105,9 +106,39 @@ setMethodS3("decode", "ParameterCelFile", function(this, units, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE, readPixels=FALSE, stratifyBy=NULL) {
-  units <- NextMethod("readUnits", this, ..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy);
-  decode(this, units);
+setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE, readPixels=FALSE, stratifyBy=NULL, force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- digest(list(..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy));
+  res <- this$.readUnitsCache[[key]];
+  if (!force && !is.null(res)) {
+    verbose && cat(verbose, "readUnits.ParameterCelFile(): Returning cached data");
+    return(res);
+  }
+ 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Retrieve and decoding data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Reading units");
+  units <- NextMethod("readUnits", this, ..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy, verbose=less(verbose));
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Decoding ", length(units), " units");
+  units <- decode(this, units, verbose=less(verbose));
+  verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Store read units in cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && cat(verbose, "readUnits.ParameterCelFile(): Updating cache");
+  this$.readUnitsCache <- list();
+  this$.readUnitsCache[[key]] <- units;
+
+  units;
 });
 
 setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ...) {

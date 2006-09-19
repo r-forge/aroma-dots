@@ -86,13 +86,16 @@ setMethodS3("getCellIndices", "ChipEffectSet", function(this, ...) {
 })
 
 
-setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, ...) {
+setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
   if (is.null(cdf))
-    cdf <- getCellIndices(this, units=units);
+    cdf <- getCellIndices(this, units=units, verbose=less(verbose));
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  res <- NextMethod("readUnits", this, units=cdf, ...);
+  res <- NextMethod("readUnits", this, units=cdf, ..., verbose=less(verbose));
 
   # Get first chip-effect file and use that to decode the read structure
   ce <- as.list(this)[[1]];

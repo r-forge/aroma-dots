@@ -26,6 +26,7 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
     "cached:.header" = NULL,
     "cached:.unitNames" = NULL,
     "cached:.unitSizes" = NULL,
+    "cached:.cellIndices" = NULL,
     "cached:.isPm" = NULL
   )
 })
@@ -380,6 +381,20 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- digest(list(units=units, ...));
+  res <- this$.cellIndices[[key]];
+  if (!is.null(res)) {
+    verbose && cat(verbose, "getCellIndices.AffymetrixCdfFile(): Returning cached data");
+    return(res);
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read from CDF file
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Reading cell indices from CDF file");
   verbose && cat(verbose, "Pathname: ", this$.pathname);
   verbose && cat(verbose, "Units: ");
@@ -391,6 +406,14 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   verbose && enter(verbose, "Restructuring");
   cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
   verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Store read units in cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && cat(verbose, "readUnits.AffymetrixCdfFile(): Updating cache");
+  this$.cellIndices <- list();
+  this$.cellIndices[[key]] <- cdf;
+
   cdf;
 })
 
@@ -1063,6 +1086,31 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
   gi;
 })
 
+
+setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("dChip"), ..., force=FALSE) {
+  chipType <- getChipType(this);
+
+  si <- this$.si;
+  if (is.null(si) || force) {
+    for (type in types) {
+      tryCatch({
+        if (type == "dChip") {
+          si <- DChipSnpInformation$fromChipType(chipType);
+        }
+      }, error = function(ex) {})
+    }
+  
+    if (is.null(si)) {
+      throw("Failed to retrieve snp information for this chip type: ", chipType);
+    }
+
+    this$.si <- si;
+  }
+
+  si;
+})
+
+
 setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, side=4, fmtstr="%s", pos=1, cex=0.7, col="darkgray", ...) {
   stext(side=side, text=sprintf(fmtstr, getChipType(this)), pos=pos, cex=cex, col=col, ...);
 })
@@ -1071,6 +1119,8 @@ setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, side=4, fmtstr=
 
 ############################################################################
 # HISTORY:
+# 2006-09-17
+# o Added an in-memory cache for getCellIndices().
 # 2006-09-16
 # o Added getGenomeInformation() and stextChipType().
 # 2006-09-14

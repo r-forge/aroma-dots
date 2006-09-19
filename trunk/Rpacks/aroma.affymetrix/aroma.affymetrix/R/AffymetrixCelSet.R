@@ -53,6 +53,7 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
     "cached:.intensitiesIdxs" = NULL,
     "cached:.unitsCache" = NULL,
     "cached:.getUnitIntensitiesCache" = NULL,
+    "cached:.averageFiles" = list(),
     "cached:.fileSize" = NULL
   )
 })
@@ -515,8 +516,8 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "readUnits(): Updating cache");
-  this$.getUnitIntensitiesCache <- list()
-  this$.getUnitIntensitiesCache[[key]] <- res
+  this$.getUnitIntensitiesCache <- list();
+  this$.getUnitIntensitiesCache[[key]] <- res;
 
   res;
 })
@@ -622,15 +623,14 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
-
-
-
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Calculating average cell intensities across ", length(this), " arrays");
+
+  verbose && enter(verbose, "Retrieving average cell intensities across ", length(this), " arrays");
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create CEL file to store the average array
@@ -638,9 +638,14 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
   # Create a private filename (with a dot prefix) to make sure it is not
   # identified as a regular CEL file when the directory is scanned for files.
   filename <- sprintf(".%s.CEL", name);
-  res <- createFrom(df, filename=filename, path=getPath(this), verbose=less(verbose));
-  pathname <- getPathname(res);
+  res <- this$.averageFiles[[filename]];
+  if (is.null(res)) {
+    res <- createFrom(df, filename=filename, path=getPath(this), verbose=less(verbose));
+    this$.averageFiles[[filename]] <- res;
+  }
 
+
+  pathname <- getPathname(res);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify which indices to use
@@ -759,6 +764,9 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-09-18
+# o Now references to all requested average files are cached so it can
+#   return the same object instead of creating a new one each time.
 # 2006-09-16
 # o Added getSiblings() to easily get other data sets for the same
 #   samples.

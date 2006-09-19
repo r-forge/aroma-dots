@@ -362,15 +362,23 @@ setMethodS3("getChipType", "AffymetrixCelFile", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NULL, ..., stratifyBy=NULL) {
+setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NULL, ..., stratifyBy=NULL, force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Retrieve data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(cdf)) {
     suppressWarnings({
       cdf <- readUnits(getCdf(this), units=units, stratifyBy=stratifyBy);
     });
   }
+
   suppressWarnings({
-    readCelUnits(this$.pathname, cdf=cdf, ...);
+    res <- readCelUnits(this$.pathname, cdf=cdf, ...);
   })
+
+  res;
 }, protected=TRUE);
 
 
