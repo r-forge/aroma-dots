@@ -8,7 +8,7 @@ if (!exists("dataPath"))
 dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2005-500k_data", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2004-100k_trios-calibACT", minCount=5);
-dataPath <- findCelSet(name="Affymetrix_2005-500k_data-calibACT", minCount=5);
+#dataPath <- findCelSet(name="Affymetrix_2005-500k_data-calibACT", minCount=5);
 
 if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
@@ -55,8 +55,8 @@ if (!exists("models", mode="list")) {
   for (kk in seq(along=models)) {
     ds <- qn[[kk]];
     verbose && enter(verbose, "Data set: ", getName(ds));
-#    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+#    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
     models[[kk]] <- model;
   }
   verbose && print(verbose, model);
@@ -79,7 +79,7 @@ if (!exists("models", mode="list")) {
 genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
 
 allChromosomes <- c(1:22, "X");
-for (chr in rev(allChromosomes)) {
+for (chr in allChromosomes) {
   verbose && enter(verbose, "Chromosome ", chr);
 
 for (kk in seq(along=models)) {

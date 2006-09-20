@@ -8,6 +8,8 @@ if (!exists("dataPath"))
 dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2005-500k_data", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2004-100k_trios", minCount=5);
+dataPath <- findCelSet(name="Affymetrix_2004-100k_trios-calibACT", minCount=5);
+dataPath <- findCelSet(name="Affymetrix_2005-500k_data-calibACT", minCount=5);
 
 if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
@@ -188,8 +190,8 @@ for (kk in seq(along=models)) {
   xlim <- c(0, 2400);
 
   ylim <- range(stats[,"mad"], na.rm=TRUE);
-  ylim[1] <- 0.06; 
-  ylim[2] <- 0.18; 
+  ylim[1] <- 0.10; 
+  ylim[2] <- 0.22; 
 
   if (kk == 1) {
     plot(NA, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab);
