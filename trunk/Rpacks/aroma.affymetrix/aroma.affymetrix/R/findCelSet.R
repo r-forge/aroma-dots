@@ -63,7 +63,7 @@
 # @keyword file
 # @keyword IO
 #*/###########################################################################
-setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths="data", minCount=1, ..., firstOnly=TRUE) {
+setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths="data", minCount=1, ..., firstOnly=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -112,15 +112,22 @@ setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths="d
       chipType <- Arguments$getRegularExpression(chipType);
   }
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
   allPaths <- c();
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Scan each search path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Scanning ", length(paths), " paths");
+  verbose && print(verbose, paths);
   for (path in paths) {
     path <- filePath(path, expandLinks="any");
+    verbose && print(verbose, path);
     if (!isDirectory(path))
       next;
+
     # Retrieve all directories at this path
     dirs <- list.files(path=path, pattern=name, full.names=TRUE);
     if (length(dirs) == 0)
@@ -128,6 +135,8 @@ setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths="d
     dirs <- dirs[sapply(dirs, FUN=isDirectory)];
     if (length(dirs) == 0)
       next;
+    verbose && cat(verbose, "Directories:");
+    verbose && str(verbose, dirs);
   
     # Keep only directories with a chip_data/ subdirectory
     dirs <- dirs[sapply(dirs, FUN=function(dir) {
@@ -137,6 +146,8 @@ setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths="d
     if (length(dirs) == 0)
       next;
 
+    verbose && cat(verbose, "Directories with a chip_data/ subdirectory:");
+    verbose && str(verbose, dirs);
 
     # The path to all such
     dirs <- sapply(dirs, FUN=filePath, "chip_data", expandLinks="any");
@@ -164,6 +175,7 @@ setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths="d
 
     allPaths <- c(allPaths, dirs);
   }
+  verbose && exit(verbose);
 
   allPaths;
 }) # findDataSet()
