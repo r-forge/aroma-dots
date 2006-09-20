@@ -7,7 +7,9 @@ if (!exists("dataPath"))
   dataPath <- findCelSet(chipType="Xba", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2005-500k_data", minCount=5);
-#dataPath <- findCelSet(name="Affymetrix_2004-100k_trios", minCount=5);
+dataPath <- findCelSet(name="Affymetrix_2004-100k_trios", minCount=5);
+dataPath <- findCelSet(name="Affymetrix_2004-100k_trios-calibACT", minCount=5);
+dataPath <- findCelSet(name="Affymetrix_2005-500k_data-calibACT", minCount=5);
 
 if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
@@ -95,12 +97,14 @@ for (kk in seq(along=models)) {
   ds <- getDataSet(model);
   verbose && enter(verbose, "Data set: ", getName(ds));
   ces <- getChipEffects(model);
+  unitsTodo <- findUnitsTodo(ces, verbose=less(verbose));
 
   verbose && enter(verbose, "Retrieving SNP information");
   cdf <- getCdf(model);
   si <- getSnpInformation(cdf);
   fl <- getFragmentLengths(si);
   keep <- which(!is.na(fl));
+  keep <- setdiff(keep, unitsTodo);
   fl <- fl[keep];
   units <- keep;
   nunits <- length(units);
@@ -155,7 +159,8 @@ for (kk in seq(along=models)) {
   # Annotate plot
   stextChipType(cdf, line=0.5);
   stext(getName(ces), side=3, pos=0, cex=0.8);
-  stext(sprintf("%d samples averaged", length(ces)), side=3, pos=1, line=-1.5, cex=0.8);
+  stext(sprintf("%d samples averaged", length(ces)), side=3, pos=0, line=-1.5, cex=0.8);
+  stext(sprintf("%d SNPs", length(y)), side=3, pos=1, line=-1.5, cex=0.8);
 
   # Add density of fragment lengths
   usr <- par("usr");
@@ -164,7 +169,8 @@ for (kk in seq(along=models)) {
   lines(d, col="darkgray", lwd=2);
 
   # Add lowess line
-  l <- lowess(fl, y);
+  ok <- is.finite(y);
+  l <- lowess(fl[ok], y[ok]);
   lines(l, col=2, lwd=10);
 
   dev.off();
