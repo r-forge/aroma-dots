@@ -42,7 +42,7 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FA
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(units=units, ...));
+  key <- digest(list(...));
   res <- this$.cellIndices[[key]];
   if (!is.null(res)) {
     verbose && cat(verbose, "getCellIndices.CnChipEffectFile(): Returning cached data");
@@ -85,6 +85,8 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FA
 
 ############################################################################
 # HISTORY:
+# 2006-09-20
+# o BUG FIX: Typo. Remove an argument but tried to use inside.
 # 2006-09-17
 # o Added an in-memory cache for getCellIndices().
 # 2006-09-12
