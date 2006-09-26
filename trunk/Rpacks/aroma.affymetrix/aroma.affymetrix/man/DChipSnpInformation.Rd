@@ -1,43 +1,43 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  DChipGenomeInformation.R
+%  DChipSnpInformation.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{DChipGenomeInformation}
+ \name{DChipSnpInformation}
 \docType{class}
-\alias{DChipGenomeInformation}
+\alias{DChipSnpInformation}
 
 
- \title{The DChipGenomeInformation class}
+ \title{The DChipSnpInformation class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class DChipGenomeInformation}\cr
+\bold{Class DChipSnpInformation}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{GenomeInformation}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{SnpInformation}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{DChipGenomeInformation}\cr
+\code{~~~~~~~~~~~~+--}\code{DChipSnpInformation}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{DChipGenomeInformation}\cr
-extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
+public static class \bold{DChipSnpInformation}\cr
+extends \emph{\link[aroma.affymetrix]{SnpInformation}}\cr
 
 
  }
 
- \usage{DChipGenomeInformation(...)}
+ \usage{DChipSnpInformation(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{GenomeInformation}}.}
+   \item{...}{Arguments passed to \code{\link{SnpInformation}}.}
  }
 
  \section{Fields and Methods}{
@@ -48,8 +48,8 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
 }
 
 
-\bold{Methods inherited from GenomeInformation}:\cr
-fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getFields, getPositions, getUnitIndices, nbrOfUnits, plotDensity, readData, readTableInternal, verify
+\bold{Methods inherited from SnpInformation}:\cr
+fromCdf, fromChipType, fromDataSet, getChipType, getData, getFields, getFragmentLengths, getFragmentStarts, getFragmentStops, nbrOfUnits, readData, readTableInternal, verify
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels, stextSize

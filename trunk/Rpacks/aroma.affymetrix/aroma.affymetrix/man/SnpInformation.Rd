@@ -1,38 +1,38 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  GenomeInformation.R
+%  SnpInformation.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{GenomeInformation}
+ \name{SnpInformation}
 \docType{class}
-\alias{GenomeInformation}
+\alias{SnpInformation}
 
 
- \title{The GenomeInformation class}
+ \title{The SnpInformation class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class GenomeInformation}\cr
+\bold{Class SnpInformation}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\emph{\code{GenomeInformation}}\cr
+\code{~~~~~~~+--}\emph{\code{SnpInformation}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{DChipGenomeInformation}\cr
+\link[aroma.affymetrix]{DChipSnpInformation}\cr
 
-public abstract static class \bold{GenomeInformation}\cr
+public abstract static class \bold{SnpInformation}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
  }
 
- \usage{GenomeInformation(...)}
+ \usage{SnpInformation(...)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
@@ -41,18 +41,16 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fromCdf.GenomeInformation]{fromCdf}} \tab Static method to define a genome information set from a CDF.\cr
- \tab \code{\link[aroma.affymetrix:fromChipType.GenomeInformation]{fromChipType}} \tab Static method to define a genome information set by chip type.\cr
+ \tab \code{\link[aroma.affymetrix:fromCdf.SnpInformation]{fromCdf}} \tab Static method to define a genome information set from a CDF.\cr
+ \tab \code{\link[aroma.affymetrix:fromChipType.SnpInformation]{fromChipType}} \tab Static method to define a genome information set by chip type.\cr
  \tab \code{fromDataSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipType.GenomeInformation]{getChipType}} \tab Gets the chip type of this genome information set.\cr
- \tab \code{getChromosomes} \tab  -\cr
- \tab \code{getChromosomeStats} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getData.GenomeInformation]{getData}} \tab Gets all or a subset of the genome information data.\cr
+ \tab \code{\link[aroma.affymetrix:getChipType.SnpInformation]{getChipType}} \tab Gets the chip type of this genome information set.\cr
+ \tab \code{\link[aroma.affymetrix:getData.SnpInformation]{getData}} \tab Gets all or a subset of the genome information data.\cr
  \tab \code{getFields} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getPositions.GenomeInformation]{getPositions}} \tab Gets the physical positions for a set of units.\cr
- \tab \code{\link[aroma.affymetrix:getUnitIndices.GenomeInformation]{getUnitIndices}} \tab Gets unit indices ordered along the chromosome.\cr
+ \tab \code{getFragmentLengths} \tab  -\cr
+ \tab \code{getFragmentStarts} \tab  -\cr
+ \tab \code{getFragmentStops} \tab  -\cr
  \tab \code{nbrOfUnits} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:plotDensity.GenomeInformation]{plotDensity}} \tab Plots the density of SNPs for a given chromosome.\cr
  \tab \code{readData} \tab  -\cr
 }
 

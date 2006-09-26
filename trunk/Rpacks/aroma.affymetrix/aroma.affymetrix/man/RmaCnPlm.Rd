@@ -45,7 +45,7 @@ extends \link[aroma.affymetrix]{CnPlm}\cr
   It can be used to fit the model on a \code{\link{AffymetrixCelSet}}.
  }
 
- \usage{RmaCnPlm(..., combineAlleles=FALSE, name="modelCnRmaPlm")}
+ \usage{RmaCnPlm(..., combineAlleles=FALSE, name="modelRmaCnPlm")}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{RmaSnpPlm}}.}

@@ -16,7 +16,7 @@
   Searches for one or several datasets that matches certain criterias.
 }
 
-\usage{\method{findCelSet}{default}(name=NULL, chipType=NULL, paths="data", minCount=1, ..., firstOnly=TRUE)}
+\usage{\method{findCelSet}{default}(name=NULL, chipType=NULL, paths=NULL, minCount=1, ..., firstOnly=TRUE, verbose=FALSE)}
 
 \arguments{
  \item{name}{A regular expression pattern to match the name of the
@@ -30,6 +30,7 @@
  \item{...}{Not used.}
  \item{firstOnly}{If \code{\link[base:logical]{TRUE}}, the first possible match is returned,
    otherwise all matches are returned.}
+  \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{
