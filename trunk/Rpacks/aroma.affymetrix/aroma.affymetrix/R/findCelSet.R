@@ -21,6 +21,7 @@
 #  \item{...}{Not used.}
 #  \item{firstOnly}{If @TRUE, the first possible match is returned, 
 #    otherwise all matches are returned.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{

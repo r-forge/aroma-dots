@@ -59,6 +59,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{getDimension} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getGenomeInformation.AffymetrixCdfFile]{getGenomeInformation}} \tab Gets genome information for this chip type.\cr
  \tab \code{\link[aroma.affymetrix:getHeader.AffymetrixCdfFile]{getHeader}} \tab Gets the header of the CDF file.\cr
+ \tab \code{getSnpInformation} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getSnpNames.AffymetrixCdfFile]{getSnpNames}} \tab Gets the names of the SNPs in the data set.\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
  \tab \code{\link[aroma.affymetrix:getUnitSizes.AffymetrixCdfFile]{getUnitSizes}} \tab Gets the number of groups in each unit.\cr

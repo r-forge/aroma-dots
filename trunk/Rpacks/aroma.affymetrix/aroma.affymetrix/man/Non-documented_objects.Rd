@@ -414,6 +414,28 @@
 \alias{transformAffine.AffymetrixCelSet}
 \alias{verify}
 \alias{verify.DChipGenomeInformation}
+\alias{fromChipType.DChipSnpInformation}
+\alias{fromDataSet.SnpInformation}
+\alias{getFields.GenomeInformation}
+\alias{getFields.SnpInformation}
+\alias{getFragmentLengths}
+\alias{getFragmentLengths.SnpInformation}
+\alias{getFragmentStarts}
+\alias{getFragmentStarts.SnpInformation}
+\alias{getFragmentStops}
+\alias{getFragmentStops.SnpInformation}
+\alias{getSnpInformation}
+\alias{getSnpInformation.AffymetrixCdfFile}
+\alias{nbrOfUnits.GenomeInformation}
+\alias{nbrOfUnits.SnpInformation}
+\alias{read250K}
+\alias{read250K.DChipSnpInformation}
+\alias{read50K}
+\alias{read50K.DChipSnpInformation}
+\alias{readData.DChipSnpInformation}
+\alias{readData.SnpInformation}
+\alias{readTableInternal.SnpInformation}
+\alias{verify.DChipSnpInformation}
 
 \description{
   This page contains aliases for all "non-documented" objects that
