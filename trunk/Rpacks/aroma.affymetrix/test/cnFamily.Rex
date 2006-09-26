@@ -7,7 +7,8 @@ if (!exists("dataPath"))
   dataPath <- findCelSet(chipType="Xba", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2005-500k_data", minCount=5);
-dataPath <- findCelSet(name="Affymetrix_2004-100k_trios-calibACT", minCount=5);
+#dataPath <- findCelSet(name="Affymetrix_2004-100k_trios", minCount=5);
+#dataPath <- findCelSet(name="Affymetrix_2004-100k_trios-calibACT", minCount=5);
 #dataPath <- findCelSet(name="Affymetrix_2005-500k_data-calibACT", minCount=5);
 
 if (!exists("raw", mode="list")) {
@@ -55,8 +56,8 @@ if (!exists("models", mode="list")) {
   for (kk in seq(along=models)) {
     ds <- qn[[kk]];
     verbose && enter(verbose, "Data set: ", getName(ds));
-    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-#    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+#    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
     models[[kk]] <- model;
   }
   verbose && print(verbose, model);
