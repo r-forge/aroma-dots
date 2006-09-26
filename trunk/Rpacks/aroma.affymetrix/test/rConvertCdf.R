@@ -84,6 +84,28 @@ rConvertCdf();
 # Writing CDF structure...
 # 20060925 19:39:49| Time: Mon Sep 25 19:39:49 PDT 2006
 # [top: 4.5g (29.8%) RAM, 99.9% CPU]
+# Writing CDF structure...done
+# 20060925 19:39:49| Time: Mon Sep 25 21:05:21 PDT 2006
+# Comparing CDFs...
+#   CDF 1: /accounts/gen/vis/hb/data/Affymetrix/cdf/HuEx-1_0-st-v2.text.cdf
+#   CDF 2: cdf/HuEx-1_0-st-v2.cdf
+#   Comparing CDF headers...
+#   Comparing CDF headers...done
+#   Comparing QC units...
+# 
+#  *** caught segfault ***
+# address (nil), cause 'memory not mapped'
+# 
+# Traceback:
+#  1: .Call("R_affx_get_cdf_file_qc", filename, as.integer(units),     as.integer(  verbose), returnIndices, returnXY, returnLength,     returnPMInfo, returnBackgro  undInfo, returnType, returnQCNumbers)
+#  2: readCdfQc(pathname, units = uu)
+#  3: compareCdfs(filename, outFilename, verbose = verbose)
+#  4: convertCdf(src, dest, ..., verbose = verbose2)
+#  5: convert.AffymetrixCdfFile(cdf, verbose = verbose)
+#  6: convert(cdf, verbose = verbose)
+#  7: rConvertCdf()
+
+
 
 #
 # HISTORY:
