@@ -69,6 +69,7 @@ if (atHome) {
 }
 source("Verbose.R");
 
+source("../../affxparser/affxparser/R/findCdf.R");
 #source("../../affxparser/affxparser/R/convertCdf.R");
 #source("../../affxparser/affxparser/R/writeCdf.R");
 #source("../../affxparser/affxparser/R/applyCdfBlocks.R");
