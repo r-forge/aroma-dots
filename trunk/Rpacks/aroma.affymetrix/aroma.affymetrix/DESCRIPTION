@@ -1,6 +1,6 @@
 Package: aroma.affymetrix
 Version: 0.2.2
-Date: 2006-09-16
+Date: 2006-09-24
 Title: Basic classes for general Affymetrix data
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
