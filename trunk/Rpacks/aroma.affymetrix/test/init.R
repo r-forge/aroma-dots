@@ -66,10 +66,10 @@ verbose && enter(verbose, "Sourcing all *.R files");
 
 if (atHome) {
   source("~/braju.com.R/R.utils/R.utils/R/sourceDirectory.R");
+  source("../../affxparser/affxparser/R/findCdf.R");
 }
 source("Verbose.R");
 
-source("../../affxparser/affxparser/R/findCdf.R");
 #source("../../affxparser/affxparser/R/convertCdf.R");
 #source("../../affxparser/affxparser/R/writeCdf.R");
 #source("../../affxparser/affxparser/R/applyCdfBlocks.R");
