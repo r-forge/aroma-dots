@@ -63,7 +63,7 @@
 # @keyword file
 # @keyword IO
 #*/###########################################################################
-setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths="data", minCount=1, ..., firstOnly=TRUE, verbose=FALSE) {
+setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths=NULL, minCount=1, ..., firstOnly=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
