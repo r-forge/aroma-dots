@@ -107,7 +107,10 @@ setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
 #  Returns a @function.
 # }
 #
-# @author
+# \authors{
+#   Henrik Bengtsson and Ken Simpson (WEHI) utilizing Ben Bolstad's 
+#   \pkg{affyPLM} package.
+# }
 #
 # \seealso{
 #   @seeclass
