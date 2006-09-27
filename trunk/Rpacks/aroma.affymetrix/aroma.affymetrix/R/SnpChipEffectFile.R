@@ -43,7 +43,7 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., verbose=F
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(units=units, ...));
+  key <- digest(list(...));
   res <- this$.cellIndices[[key]];
   if (!is.null(res)) {
     verbose && cat(verbose, "getCellIndices.SnpChipEffectFile(): Returning cached data");

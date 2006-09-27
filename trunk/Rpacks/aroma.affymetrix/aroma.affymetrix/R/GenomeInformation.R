@@ -216,12 +216,13 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
     # Now read the genome information data
     verbose && enter(verbose, "Reading genome information data");
     data <- readData(this, verbose=less(verbose));
+    verbose && str(verbose, data);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Reordering units according to the CDF file");
     # Reorder genome information data according to CDF file
     idxs <- match(targetUnitNames, data[,1]);
-    data <- data[idxs,];
+    data <- data[idxs,,drop=FALSE];
 #    data <- data[,-1];
     rownames(data) <- 1:nrow(data);
     verbose && exit(verbose);
@@ -232,7 +233,8 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
     o <- do.call("order", args=args);
     data <- data[o,,drop=FALSE];
     rm(o);
-    verbose && exit(verbose);
+    verbose && str(verbose, data);
+	    verbose && exit(verbose);
 
     # Store in cache
     this$.data <- data;
@@ -244,7 +246,7 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
   if (!is.null(units)) {
     # Map the unit indicies to the row names
     rr <- match(units, rownames(data));
-    data <- data[rr,,drop=TRUE];
+    data <- data[rr,,drop=FALSE];
   }
 
   # Stratify by field values?
@@ -252,7 +254,7 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
   if (length(args) > 0) {
     for (key in names(args)) {
       # Get the values to be stratified upon.
-      values <- data[,key];
+      values <- data[,key,drop=FALSE];
 
       # Get the test (value or function)
       test <- args[[key]];
@@ -269,7 +271,7 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 
   # Reorder?
   if (!is.null(orderBy)) {
-    o <- do.call("order", args=as.list(data[,orderBy]));
+    o <- do.call("order", args=as.list(data[,orderBy,drop=FALSE]));
     data <- data[o,,drop=FALSE];
     rm(o);
   }
