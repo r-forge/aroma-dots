@@ -1,0 +1,185 @@
+###########################################################################/**
+# @RdocClass AltRmaPlm
+#
+# @title "The AltRmaPlm class"
+#
+# \description{
+#  @classhierarchy
+#
+#  This class represents the log-additive model used in RMA.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Arguments passed to @see "ProbeLevelModel".}
+#   \item{name}{The name of the model, which is also used in the pathname.}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# \section{Model}{
+#   For a single unit group, the log-additive model of RMA is:
+#
+#    \deqn{log_2(y_{ij}) = \beta_i + \alpha_j + \varepsilon_{ij}}
+#
+#   where \eqn{\beta_i} are the chip effects for arrays \eqn{i=1,...,I}, 
+#   and \eqn{\alpha_j} are the probe affinities for probes \eqn{j=1,...,J}.
+#   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
+#   The model is constrained such that \eqn{\sum_j{\alpha_j} = 0}.
+#
+#   Note that all PLM classes must return parameters on the intensity scale.
+#   For this class that means that \eqn{\theta_i = 2^\beta_i} and 
+#   \eqn{\phi_i = 2^\alpha_i} are returned.
+# }
+#
+# @author
+#*/###########################################################################
+setConstructorS3("AltRmaPlm", function(..., name="modelRmaPlm") {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Load required packages
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  require(affyPLM) || throw("Package 'affyPLM' not loaded.");
+
+  extend(ProbeLevelModel(..., name=name), "AltRmaPlm")
+})
+
+
+
+setMethodS3("getProbeAffinities", "AltRmaPlm", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the probe affinities (and create files etc)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  paf <- NextMethod("getProbeAffinities", this, ...);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Update the encode and decode functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  setEncodeFunction(paf, function(groupData, ...) {
+    phi <- .subset2(groupData, "phi");
+    stdvs <- .subset2(groupData, "sdPhi");
+    outliers <- .subset2(groupData, "phiOutliers");
+
+    # Encode outliers as the sign of 'pixels'; -1 = TRUE, +1 = FALSE
+    pixels <- sign(0.5 - as.integer(outliers));
+
+    list(intensities=phi, stdvs=stdvs, pixels=pixels);
+  })
+
+  setDecodeFunction(paf,  function(groupData, ...) {
+    intensities <- .subset2(groupData, "intensities");
+    stdvs <- .subset2(groupData, "stdvs");
+    pixels <- .subset2(groupData, "pixels");
+
+    # Outliers are encoded by the sign of 'pixels'.
+    outliers <- as.logical(1-sign(pixels));
+
+    list(
+      phi=intensities, 
+      sdPhi=stdvs, 
+      phiOutliers=outliers
+    );
+  })
+
+  paf;
+})
+  
+
+
+###########################################################################/**
+# @RdocMethod getFitFunction
+#
+# @title "Gets the low-level function that fits the PLM"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @function.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getFitFunction", "AltRmaPlm", function(this, ...) {
+  rmaModel <- function(y, constraint.type=list(default="contr.treatment", chip="contr.treatment", probe="contr.sum")){
+    
+    # Assert right dimensions of 'y'.
+    if (length(dim(y)) != 2) {
+      str(y);
+      stop("Argument 'y' must have two dimensions: ", 
+                                                paste(dim(y), collapse="x"));
+    }
+
+    # Log-additive model
+    y <- log(y, base=2)
+
+    # make factor variables for chip and probe
+    nchip <- ncol(y)
+    nprobe <- nrow(y)
+
+    chip <- factor(rep(1:nchip, each=nprobe))
+    probe <- factor(rep(1:nprobe, nchip))
+    X <- model.matrix(~ -1 + chip + probe, contrasts.arg=list(chip=constraint.type$chip, probe=constraint.type$probe))
+
+    # Fit model using affyPLM code
+    fit <- .C("rlm_fit_R", as.double(X), as.double(y), rows=as.integer(nchip*nprobe), cols=as.integer(nchip+nprobe-1), beta=double(nchip+nprobe-1), resids=double(nchip*nprobe), weights=double(nchip*nprobe), PACKAGE="affyPLM")
+
+    # Extract probe affinities and chip estimates
+    J <- ncol(y);
+    I <- nrow(y);
+    est <- fit$beta;
+
+    # Chip effects
+    beta <- est[1:J];
+
+    # Probe affinities
+    alpha <- c(0, est[(J+1):length(est)]);
+    if (constraint.type$probe=="contr.sum") {
+      alpha[1] <- -sum(alpha[2:length(alpha)]);
+    } 
+      
+    # Estimates on the intensity scale
+    theta <- 2^beta;
+    phi <- 2^alpha;
+
+    # The RMA model is fitted with constraint sum(alpha) = 0, that is,
+    # such that prod(phi) = 1.
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # A fit function must return: theta, sdTheta, thetaOutliers, 
+    # phi, sdPhi, phiOutliers.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    sdTheta <- rep(1, J);
+    thetaOutliers <- rep(FALSE, J);
+    sdPhi <- rep(1, I);
+    phiOutliers <- rep(FALSE, I);
+
+    # Return data on the intensity scale
+    list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
+         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
+  }
+
+  rmaModel;
+}, protected=TRUE)
+
+
+
+
+############################################################################
+# HISTORY:
+# 2006-09-20
+# o Created from RmaPlm.R.
+############################################################################
