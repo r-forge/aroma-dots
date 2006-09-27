@@ -241,7 +241,6 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     rmaModel <- rmaModel01
   }, error = function(ex) {})
 
-
   rmaModel;
 }, protected=TRUE)
 
