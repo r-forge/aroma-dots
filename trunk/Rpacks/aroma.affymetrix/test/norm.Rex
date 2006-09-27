@@ -1,13 +1,21 @@
+pngDev <- System$findGraphicsDevice();
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Specify the family of datasets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+paths <- "data";
+
+name <- "Affymetrix_2006-CEPH270";
+name <- "Affymetrix_2005-500k_data";
+name <- "Affymetrix_2004-100k_trios";
+name <- "Affymetrix_2004-100k_trios-calibACT";
+name <- "Affymetrix_2005-500k_data-calibACT";
+name <- "SinclairA_2006-calibACT";
+#name <- "SlaterH_etal_2004-calibACT";
+
 if (!exists("dataPath"))
-  dataPath <- findCelSet(chipType="Xba", minCount=5);
-#dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", minCount=5);
-dataPath <- findCelSet(name="Affymetrix_2005-500k_data", minCount=5);
-dataPath <- findCelSet(name="Affymetrix_2004-100k_trios", minCount=5);
-dataPath <- findCelSet(name="SinclairA_2006", minCount=5);
-#dataPath <- findCelSet(name="SlaterH_etal_2004", minCount=5);
+  dataPath <- findCelSet(name=name, paths=paths, minCount=5);
+print(dataPath);
 
 if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
@@ -16,22 +24,22 @@ if (!exists("raw", mode="list")) {
   rm(ds);
   verbose && exit(verbose);
 }
-
+print(raw);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Normalize
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("qn", mode="list")) {
-  verbose && enter(verbose, "Calibration all data sets");
+  verbose && enter(verbose, "Normalizing all data sets");
   tmp <- raw;
   for (name in names(raw)) {
     verbose && enter(verbose, "Data set: ", name);
     ds <- raw[[name]];
-    path <- findCelSet(name=getName(ds), chipType=getChipType(getCdf(ds)), paths="calibAllelicCT", minCount=length(ds));
+    path <- findCelSet(name=getName(ds), chipType=getChipType(getCdf(ds)), paths="normQuantile", minCount=length(ds));
     if (is.null(path)) {
-      dsN <- calibrateAllelicCrosstalk(ds, verbose=verbose);
+      dsN <- normalizeQuantile(ds, subsetToAvg=1/3, verbose=verbose);
     } else {
-      verbose && enter(verbose, "Detected calibrated dataset");
+      verbose && enter(verbose, "Detected normalized dataset");
       verbose && cat(verbose, "Pathname: ", path);
       dsN <- fromFiles(ds, path);
       verbose && exit(verbose);
@@ -43,3 +51,4 @@ if (!exists("qn", mode="list")) {
   qn <- tmp;
   verbose && exit(verbose);
 }
+print(qn);
