@@ -430,13 +430,13 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   verbose && cat(verbose, "Number units per chunk: ", unitsPerChunk);
 
   # Time the fitting.
-  startTime <- Sys.time();
+  startTime <- processTime();
 
   timers <- list(total=0, read=0, fit=0, writePaf=0, writeCes=0, gc=0);
 
   count <- 1;
   while (length(idxs) > 0) {
-    tTotal <- Sys.time();
+    tTotal <- processTime();
 
     verbose && enter(verbose, "Fitting chunk #", count, " of ", nbrOfChunks);
     if (length(idxs) < unitsPerChunk) {
@@ -452,9 +452,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     nbrOfArrays <- length(ds);
     verbose && enter(verbose, "Reading probe intensities from ", nbrOfArrays, " arrays");
-    tRead <- Sys.time();
+    tRead <- processTime();
     y <- readUnits(this, units=units[uu], ..., verbose=less(verbose));
-    timers$read <- timers$read + (tRead - Sys.time());
+    timers$read <- timers$read + (processTime() - tRead);
     verbose && str(verbose, y[1]);
     verbose && exit(verbose);
 
@@ -463,9 +463,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     # Fit the model
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Fitting unit-group model");
-    tFit <- Sys.time();
+    tFit <- processTime();
     fit <- lapply(y, FUN=fitUnit);
-    timers$fit <- timers$fit + (tFit - Sys.time());
+    timers$fit <- timers$fit + (processTime() - tFit);
     y <- NULL; # Not needed anymore (to minimize memory usage)
     verbose && str(verbose, fit[1]);
     verbose && exit(verbose);
@@ -475,9 +475,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     # Store probe affinities
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing probe-affinity estimates");
-    tWritePaf <- Sys.time();
+    tWritePaf <- processTime();
     updateUnits(paf, units=units[uu], data=fit, verbose=less(verbose));
-    timers$writePaf <- timers$writePaf + (tWritePaf - Sys.time());
+    timers$writePaf <- timers$writePaf + (processTime() - tWritePaf);
     verbose && exit(verbose);
 
 
@@ -485,9 +485,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     # Store chip effects
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing chip-effect estimates");
-    tWriteCes <- Sys.time();
+    tWriteCes <- processTime();
     updateUnits(ces, units=units[uu], data=fit, verbose=less(verbose));
-    timers$writeCes <- timers$writeCes + (tWriteCes - Sys.time());
+    timers$writeCes <- timers$writeCes + (processTime() - tWriteCes);
     verbose && exit(verbose);
 
     fit <- NULL; # Not needed anymore
@@ -497,31 +497,32 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     count <- count + 1;
 
     # Garbage collection
-    tGc <- Sys.time();
+    tGc <- processTime();
     gc();
-    timers$gc <- timers$gc + (tGc - Sys.time());
+    timers$gc <- timers$gc + (processTime() - tGc);
 
-    timers$total <- timers$total + (tTotal - Sys.time());
+    timers$total <- timers$total + (processTime() - tTotal);
 
     verbose && exit(verbose);
   } # while()
 
-  totalTime <- Sys.time() - startTime;
+  totalTime <- processTime() - startTime;
   if (verbose) {
     nunits <- length(units);
-    t <- totalTime;
+    t <- totalTime[3];
     printf(verbose, "Total time for all units across all %d arrays: %.2fs == %.2fmin\n", nbrOfArrays, t, t/60);
-    t <- totalTime/nunits
+    t <- totalTime[3]/nunits
     printf(verbose, "Total time per unit across all %d arrays: %.2fs/unit\n", nbrOfArrays, t);
-    t <- totalTime/nunits/nbrOfArrays;
+    t <- totalTime[3]/nunits/nbrOfArrays;
     printf(verbose, "Total time per unit and array: %.3gms/unit & array\n", 1000*t);
-    t <- nbrOfUnits(cdf)*totalTime/nunits/nbrOfArrays;
+    t <- nbrOfUnits(cdf)*totalTime[3]/nunits/nbrOfArrays;
     printf(verbose, "Total time for one array (%d units): %.2fmin = %.2fh\n", nbrOfUnits(cdf), t/60, t/3600);
-    t <- nbrOfUnits(cdf)*totalTime/nunits;
+    t <- nbrOfUnits(cdf)*totalTime[3]/nunits;
     printf(verbose, "Total time for complete dataset: %.2fmin = %.2fh\n", t/60, t/3600);
     # Get distribution of what is spend where
     timers$write <- timers$writePaf + timers$writeCes;
-    t <- unlist(timers);
+    t <- lapply(timers, FUN=function(timer) unname(timer[3]));
+    t <- unlist(t);
     t <- 100 * t / t["total"];
     printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%% (of which %.2f%% is for writing chip-effects), Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["write"], 100*t["writeCes"]/t["write"], t["gc"]);
   }
@@ -618,6 +619,9 @@ setMethodS3("highlight", "ProbeLevelModel", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-09-26
+# o Fixed the timers for fit(). They only worked so and so before and only
+#   only Windows.  Using processTime()
 # 2006-09-14
 # o Added detailed timing information to the verbose output of fit().
 # 2006-09-11
