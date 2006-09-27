@@ -114,7 +114,12 @@ setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
-  rmaModel <- function(y, psiCode=0, psiK=1.345){
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # rmaModel02()
+  # Author: Henrik Bengtsson, UC Berkeley. 
+  # Requires: affyPLM() by Ben Bolstad.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rmaModel01 <- function(y, psiCode=0, psiK=1.345){
     # Assert right dimensions of 'y'.
     if (length(dim(y)) != 2) {
       str(y);
@@ -147,6 +152,72 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # The RMA model is fitted with constraint sum(alpha) = 0, that is,
     # such that prod(phi) = 1.
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # A fit function must return: theta, sdTheta, thetaOutliers, 
+    # phi, sdPhi, phiOutliers.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    sdTheta <- rep(1, J);
+    thetaOutliers <- rep(FALSE, J);
+    sdPhi <- rep(1, I);
+    phiOutliers <- rep(FALSE, I);
+
+    # Return data on the intensity scale
+    list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
+         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
+  } # rmaModel01()
+  attr(rmaModel01, "name") <- "rmaModel01";
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # rmaModel02().
+  # Author: Ken Simpson, WEHI, 2006-09-26.
+  # Requires: affyPLM() by Ben Bolstad.
+  # Why: The above "R_rlm_rma_default_model" call is not available on all
+  # platforms (yet).  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rmaModel02 <- function(y, constraint.type=list(default="contr.treatment", chip="contr.treatment", probe="contr.sum")) {
+    # Assert right dimensions of 'y'.
+    if (length(dim(y)) != 2) {
+      str(y);
+      stop("Argument 'y' must have two dimensions: ", 
+                                                paste(dim(y), collapse="x"));
+    }
+
+    # Log-additive model
+    y <- log(y, base=2)
+
+    # make factor variables for chip and probe
+    nchip <- ncol(y)
+    nprobe <- nrow(y)
+
+    chip <- factor(rep(1:nchip, each=nprobe))
+    probe <- factor(rep(1:nprobe, nchip))
+    X <- model.matrix(~ -1 + chip + probe, contrasts.arg=list(chip=constraint.type$chip, probe=constraint.type$probe))
+
+    # Fit model using affyPLM code
+    fit <- .C("rlm_fit_R", as.double(X), as.double(y), rows=as.integer(nchip*nprobe), cols=as.integer(nchip+nprobe-1), beta=double(nchip+nprobe-1), resids=double(nchip*nprobe), weights=double(nchip*nprobe), PACKAGE="affyPLM")
+
+    # Extract probe affinities and chip estimates
+    J <- ncol(y);
+    I <- nrow(y);
+    est <- fit$beta;
+
+    # Chip effects
+    beta <- est[1:J];
+
+    # Probe affinities
+    alpha <- c(0, est[(J+1):length(est)]);
+    if (constraint.type$probe=="contr.sum") {
+      alpha[1] <- -sum(alpha[2:length(alpha)]);
+    } 
+      
+    # Estimates on the intensity scale
+    theta <- 2^beta;
+    phi <- 2^alpha;
+
+    # The RMA model is fitted with constraint sum(alpha) = 0, that is,
+    # such that prod(phi) = 1.
+
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # A fit function must return: theta, sdTheta, thetaOutliers, 
     # phi, sdPhi, phiOutliers.
@@ -159,7 +230,17 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
          phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
-  }
+  } # rmaModel02()
+  attr(rmaModel02, "name") <- "rmaModel02";
+
+  # Test which of the above fit functions are available on the current
+  # system, using a dummy set of signals
+  rmaModel <- rmaModel02
+  tryCatch({
+    rmaModel01(matrix(1:6+0.1, ncol=3));
+    rmaModel <- rmaModel01
+  }, error = function(ex) {})
+
 
   rmaModel;
 }, protected=TRUE)
@@ -169,6 +250,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-09-26
+# o Added code to use either of the two RMA fit functions.
+# o Incorporated Ken Simpson's fit function for RMA as an alternative.
 # 2006-09-11
 # o The fit function now returns all required fields.
 # 2006-08-25
