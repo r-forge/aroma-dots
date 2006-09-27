@@ -1065,6 +1065,8 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 #*/###########################################################################
 setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c("dChip"), ..., force=FALSE) {
   chipType <- getChipType(this);
+  # Remove any suffices to get the "main" chip type.
+  chipType <- gsub("-.*", "", chipType);
 
   gi <- this$.gi;
   if (is.null(gi) || force) {
@@ -1089,6 +1091,8 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
 
 setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("dChip"), ..., force=FALSE) {
   chipType <- getChipType(this);
+  # Remove any suffices to get the "main" chip type.
+  chipType <- gsub("-.*", "", chipType);
 
   si <- this$.si;
   if (is.null(si) || force) {
@@ -1119,6 +1123,10 @@ setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, side=4, fmtstr=
 
 ############################################################################
 # HISTORY:
+# 2006-09-26
+# o Now getGenomeInformation() and getSnpInformation() ignores suffices of
+#   the chip-type string. This makes it possible to retrive annotation data
+#   also for custom chips.
 # 2006-09-17
 # o Added an in-memory cache for getCellIndices().
 # 2006-09-16
