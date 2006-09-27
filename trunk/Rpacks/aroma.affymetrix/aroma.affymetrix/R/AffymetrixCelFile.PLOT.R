@@ -92,7 +92,10 @@ setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types
 
 
 
-setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, ..., zeros=FALSE) {
+setMethodS3("getAm", "AffymetrixCelFile", function(this, reference, indices=NULL, ..., zeros=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Arguments 'reference':
   if (!inherits(reference, "AffymetrixCelFile")) {
     throw("Argument 'reference' is not of class AffymetrixCelFile: ", 
@@ -106,22 +109,50 @@ setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=N
     indices <- Arguments$getIndices(indices, range=c(1,nbrOfCells));
   }
 
+#  # Argument 'indices' & 'units':
+#  if (!is.null(indices) && !is.null(units)) {
+#    throw("Arguments 'indices' and 'units' must not be non-NULL at the same time.");
+#  }
+#
+#  # Argument 'units':
+#  cdf <- getCdf(this);
+#  nbrOfUnits <- nbrOfUnits(cdf);
+#  if (is.null(units)) {
+#  } else {
+#    units <- Arguments$getIndices(units, range=c(1,nbrOfUnits));
+#  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Further validation
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Check if the two CEL files are compatible
   if (nbrOfCells != nbrOfCells(reference)) {
     throw("This and the 'reference' CEL file have different number of cells: ", 
                                    nbrOfCells, " != ", nbrOfCells(reference));
   }
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Get signals
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Get the signals for this channel
   y1 <- getData(this, indices=indices, fields="intensities")[,1];
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Offset signals?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   offset <- this$offset;
   if (is.null(offset))
     offset <- 0;
   if (offset != 0)
     cat("Offset: ", offset, "\n", sep="");
 
-  # Identify non-zero signals?
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Remove signals that are zero?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (!zeros) {
     keep <- which(y1 != 0);
     y1 <- y1[keep];
@@ -131,6 +162,10 @@ setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=N
   y1 <- y1 + offset;
   y1 <- log(y1, base=2);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Get reference signals
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (length(y1) == 0) {
     y2 <- y1;
   } else {
@@ -145,10 +180,16 @@ setMethodS3("calcMvsA", "AffymetrixCelFile", function(this, reference, indices=N
     y2 <- log(y2, base=2);
   }
 
-  ma <- matrix(c((y1+y2)/2, y1-y2), ncol=2);
-  colnames(ma) <- c("A", "M");
-  ma;
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Return (A,M)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  am <- matrix(c((y1+y2)/2, y1-y2), ncol=2);
+  colnames(am) <- c("A", "M");
+
+  am;
 })
+
+
 
 setMethodS3("annotateMvsA", "AffymetrixCelFile", function(this, reference, ..., what="M") {
   if (identical(what, "M")) {
@@ -198,7 +239,7 @@ setMethodS3("annotateMvsA", "AffymetrixCelFile", function(this, reference, ..., 
 # }
 #*/###########################################################################
 setMethodS3("plotMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2%*%log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
-  ma <- calcMvsA(this, reference, indices=indices);
+  ma <- getAm(this, reference, indices=indices);
   plot(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
   if (annotate) {
     annotateMvsA(this, reference);
@@ -248,7 +289,7 @@ setMethodS3("plotMvsA", "AffymetrixCelFile", function(this, reference, indices=N
 #*/###########################################################################
 setMethodS3("smoothScatterMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2%*%log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
   require(geneplotter) || throw("Package 'geneplotter' not loaded.");
-  ma <- calcMvsA(this, reference, indices=indices);
+  ma <- getAm(this, reference, indices=indices);
   smoothScatter(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
   if (annotate) {
     annotateMvsA(this, reference);
@@ -303,7 +344,7 @@ setMethodS3("plotMvsX", "AffymetrixCelFile", function(this, reference, x, indice
   what <- match.arg(what);
 
   # Get the log-ratios
-  ma <- calcMvsA(this, reference, indices=indices, zeros=TRUE);
+  ma <- getAm(this, reference, indices=indices, zeros=TRUE);
   nobs <- nrow(ma);
   if (nobs == 0)
     throw("Cannot plot M vs X because there is not non-zero data.");
@@ -512,6 +553,8 @@ setMethodS3("highlight", "AffymetrixCelFile", function(this, indices=NULL, ...) 
 
 ############################################################################
 # HISTORY:
+# 2006-09-26
+# o Renamed calcMvsA() to getAm().
 # 2006-09-15
 # o Added more Rdoc comments.
 # o Readded plotDensity(). 

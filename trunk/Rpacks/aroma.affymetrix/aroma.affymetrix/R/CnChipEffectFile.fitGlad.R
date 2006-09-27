@@ -1,3 +1,13 @@
+# Virtual field 'am'.
+setMethodS3("getAm", "CnChipEffectFile", function(...) {
+  getAM(...);
+})
+
+# Virtual field 'xam'.
+setMethodS3("getXam", "CnChipEffectFile", function(...) {
+  getXAM(...);
+})
+
 setMethodS3("getAM", "CnChipEffectFile", function(this, other, units=NULL, ...) {
   # Argument 'other':
   if (!inherits(other, "CnChipEffectFile")) {
