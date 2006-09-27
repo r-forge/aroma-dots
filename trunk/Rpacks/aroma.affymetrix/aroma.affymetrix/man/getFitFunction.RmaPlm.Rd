@@ -3,6 +3,8 @@
 % 
 %  RmaPlm.R
 % 
+% on Tue Sep 26 17:54:55 2006.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -29,7 +31,10 @@
  Returns a \code{\link[base]{function}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{
+  Henrik Bengtsson and Ken Simpson (WEHI) utilizing Ben Bolstad's
+  \pkg{affyPLM} package.
+}
 
 \seealso{
   For more information see \code{\link{RmaPlm}}.
