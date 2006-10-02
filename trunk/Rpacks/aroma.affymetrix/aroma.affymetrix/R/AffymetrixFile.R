@@ -18,6 +18,8 @@
 # \arguments{
 #   \item{filename}{The filename of the file.}
 #   \item{path}{An optional path to the file.}
+#   \item{mustExist}{If @TRUE, an exception is thrown if the file does
+#     not exists, otherwise not.}
 #   \item{...}{Not used.}
 # }
 #
@@ -31,12 +33,12 @@
 #   An object of this class is typically part of an @see "AffymetrixFileSet".
 # }
 #*/###########################################################################
-setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, ...) {
+setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, mustExist=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(filename)) {
-    pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=TRUE);
+    pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=mustExist);
   } else {
     pathname <- NULL;
   }
