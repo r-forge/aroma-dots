@@ -366,7 +366,8 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  # Retrieve data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Retrieve CDF structure
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(cdf)) {
     suppressWarnings({
@@ -374,6 +375,9 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
     });
   }
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Retrieve data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   suppressWarnings({
     res <- readCelUnits(this$.pathname, cdf=cdf, ...);
   })

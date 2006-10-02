@@ -82,6 +82,46 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
 })
 
 
+###########################################################################/**
+# @RdocMethod as.character
+#
+# @title "Returns a short string describing the Affymetrix data set"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/###########################################################################
+setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
+  s <- sprintf("%s:", class(this)[1]);
+  s <- c(s, sprintf("Name: %s", getName(this)));
+  s <- c(s, sprintf("Path: %s", getPath(this)));
+  s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
+  s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
+  s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  class(s) <- "GenericSummary";
+  s;
+})
+
 
 ###########################################################################/**
 # @RdocMethod getSiblings
@@ -221,46 +261,6 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, ...) {
   invisible(this);
 })
 
-
-###########################################################################/**
-# @RdocMethod as.character
-#
-# @title "Returns a short string describing the Affymetrix data set"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character string.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-# @keyword IO
-# @keyword programming
-#*/###########################################################################
-setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
-  s <- sprintf("%s:", class(this)[1]);
-  s <- c(s, sprintf("Name: %s", getName(this)));
-  s <- c(s, sprintf("Path: %s", getPath(this)));
-  s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
-  s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
-  s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
-  class(s) <- "GenericSummary";
-  s;
-})
 
 
 setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="chip_data/", pattern="[.](c|C)(e|E)(l|L)$", ..., fileClass="AffymetrixCelFile", verbose=FALSE) {
