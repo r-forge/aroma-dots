@@ -46,7 +46,7 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
   # Work around for bug in 'oligo' not accepting filenames with a path.
   opwd <- setwd(getPath(this));
   on.exit(setwd(opwd), add=TRUE);
-  filenames <- basename(getFilenames(this));
+  filenames <- basename(getPathnames(this));
   res <- oligo::read.celfiles(filenames, verbose=as.logical(less(verbose)));
   verbose && exit(verbose);
 
