@@ -38,8 +38,12 @@
 # @keyword programming
 #*/###########################################################################
 setMethodS3("extractAffyBatch", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
+  # Import cleancdfname() and ReadAffy().
   require(affy) || throw("Package not loaded: affy");
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -47,10 +51,12 @@ setMethodS3("extractAffyBatch", "AffymetrixCelSet", function(this, ..., verbose=
     on.exit(popState(verbose));
   }
 
-  # 
   cdf <- getCdf(this);
   cdfPkgName <- cleancdfname(getChipType(cdf));
-  if (!suppressWarnings(require(cdfPkgName, character.only=TRUE))) {
+  suppressWarnings({
+    res <- require(cdfPkgName, character.only=TRUE);
+  });
+  if (!res) {
     warning("CDF enviroment package '", cdfPkgName, "' not installed. The 'affy' package will later try to download from Bioconductor and install it.");
   }
 
@@ -60,6 +66,10 @@ setMethodS3("extractAffyBatch", "AffymetrixCelSet", function(this, ..., verbose=
   sampleNames <- getNames(this);
   verbose && cat(verbose, "Sample names: ", paste(sampleNames, collapse=", "));
 
+  # Specify ReadAffy() of 'affy' to avoid conflicts with the one
+  # in 'oligo'.
+  read.affybatch <- affy::read.affybatch;
+  ReadAffy <- affy::ReadAffy;
   res <- ReadAffy(filenames=filenames, sampleNames=sampleNames, ..., verbose=as.logical(verbose));
 
   verbose && exit(verbose);
