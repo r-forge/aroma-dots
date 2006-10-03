@@ -369,6 +369,58 @@ setMethodS3("as.AffymetrixCelSet", "default", function(object, ...) {
 })
 
 
+setMethodS3("getData", "AffymetrixCelSet", function(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'indices':
+  nbrOfCells <- nbrOfCells(getCdf(this));
+  if (!is.null(indices)) {
+    indices <- Arguments$getIndices(indices, range=c(1, nbrOfCells));
+    nbrOfCells <- length(indices);
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  nbrOfArrays <- nbrOfArrays(this);
+  verbose && enter(verbose, "Getting cell data for ", nbrOfArrays, " arrays.");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Allocating the return structure
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Allocating the return structure");
+  nbrOfFields <- length(fields);
+  res <- vector("list", nbrOfFields);
+  names(res) <- fields;
+  for (field in fields) {
+    res[[field]] <- matrix(NA, nrow=nbrOfCells, ncol=nbrOfArrays);
+  }
+  verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Reading cell signals
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Requiring data from ", nbrOfArrays, " arrays");
+  for (kk in seq(length=nbrOfArrays)) {
+    verbose && enter(verbose, "Array #", kk, " of ", nbrOfArrays);
+    dataFile <- this$files[[kk]];
+    value <- getData(dataFile, indices=indices, fields=fields, verbose=less(verbose));
+    for (field in fields) {
+      res[[field]][,kk] <- value[[field]];
+      value[[field]] <- NULL;
+    }
+    rm(value); gc();
+    verbose && exit(verbose);
+  }
+  verbose && exit(verbose);
+
+
+  verbose && exit(verbose);
+
+  res;
+}) # getData()
+
 
 ###########################################################################/**
 # @RdocMethod getIntensities
@@ -402,42 +454,8 @@ setMethodS3("as.AffymetrixCelSet", "default", function(object, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getIntensities", "AffymetrixCelSet", function(this, indices=NULL, verbose=FALSE, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'indices':
-  nbrOfCells <- nbrOfCells(getCdf(this));
-  if (!is.null(indices)) {
-    indices <- Arguments$getIndices(indices, range=c(1, nbrOfCells));
-    nbrOfCells <- length(indices);
-  }
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-
-  nbrOfArrays <- nbrOfArrays(this);
-  verbose && enter(verbose, "Getting cell signals for ", nbrOfArrays, " arrays.");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Reading cell signals
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Allocating the return matrix
-  res <- matrix(NA, nrow=nbrOfCells, ncol=nbrOfArrays);
-
-  for (kk in seq(length=nbrOfArrays)) {
-    verbose && enter(verbose, "Array #", kk, " of ", nbrOfArrays);
-    dataFile <- this$files[[kk]];
-    res[,kk] <- getIntensities(dataFile, indices=indices, verbose=less(verbose));
-
-    verbose && exit(verbose);
-  }
-
-
-  verbose && exit(verbose);
-
-  res;
+setMethodS3("getIntensities", "AffymetrixCelSet", function(this, ...) {
+  getData(this, ...)$intensities;
 }) # getIntensities()
 
 
@@ -764,6 +782,9 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-10-02
+# o Added getData().  Now getIntensities() works again and is just a wrapper
+#   to getData().
 # 2006-09-18
 # o Now references to all requested average files are cached so it can
 #   return the same object instead of creating a new one each time.
