@@ -551,6 +551,7 @@ setMethodS3("highlight", "AffymetrixCelFile", function(this, indices=NULL, ...) 
 })
 
 
+
 ############################################################################
 # HISTORY:
 # 2006-09-26

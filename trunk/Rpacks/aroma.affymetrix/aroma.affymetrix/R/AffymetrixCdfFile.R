@@ -6,7 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  An AffymetrixCdfFile object represents a generic Affymetrix 
+#  An AffymetrixCdfFile object represents a generic Affymetrix CDF file.
 # }
 # 
 # @synopsis
@@ -73,7 +73,7 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(this, ...) {
 # }
 #
 # \value{
-#  Returns an @see "AffymetrixCdfFile" object.  
+#  Returns an instance of @see "AffymetrixCdfFile" or its subclasses.
 #  If the file is not found or if it is of the wrong file format, an
 #  error is thrown.
 # }
@@ -94,6 +94,18 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 
   # Assert that it is a CDF file
   header <- readCdfHeader(pathname);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Try to define an instance of a subclass traversing bottom up.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  clazz <- Class$forName(class(static)[1]);
+  for (className in rev(getKnownSubclasses(clazz))) {
+    clazz <- Class$forName(className);
+    tryCatch({
+      res <- newInstance(clazz, pathname);
+      return(res);
+    }, error = function(ex) {})
+  }
 
   newInstance(static, pathname);
 }, static=TRUE)
@@ -378,6 +390,9 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -1123,6 +1138,9 @@ setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, side=4, fmtstr=
 
 ############################################################################
 # HISTORY:
+# 2006-09-27
+# o Now fromFile() tries to create an instance of the subclasses (bottom up)
+#   first.  This will make it possible to automatically define SNP CDFs.
 # 2006-09-26
 # o Now getGenomeInformation() and getSnpInformation() ignores suffices of
 #   the chip-type string. This makes it possible to retrive annotation data
