@@ -98,26 +98,58 @@ setMethodS3("decodeUnit", "ParameterCelFile", function(this, unit, ..., verbose=
   unit;
 }, protected=TRUE)
 
-setMethodS3("decode", "ParameterCelFile", function(this, units, ...) {
+setMethodS3("decode", "ParameterCelFile", function(this, units, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  verbose && enter(verbose, "Decoding ", length(units), " units");
+
   if (!is.null(this$decodeFunction)) {
-    units <- lapply(units, FUN=function(unit) decodeUnit(this, unit, ...));
+    # Clever decoding... If three units across the file are not modified
+    # by the decoding method, don't decode the others either.
+    someUnits <- units[seq(from=1,to=length(units),length=3)];
+    someUnits2 <- lapply(someUnits, FUN=function(unit) decodeUnit(this, unit, ...));
+    if (!identical(someUnits, someUnits2)) {
+      units <- lapply(units, FUN=function(unit) decodeUnit(this, unit, ...));
+    } else {
+      verbose && cat(verbose, "Decoding not needed. No changes detected.");
+    }
   }
+  verbose && exit(verbose);
+
   units;
 }, protected=TRUE)
 
 
 setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE, readPixels=FALSE, stratifyBy=NULL, force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Generating hashcode key for cache");
   key <- digest(list(..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy));
-  res <- this$.readUnitsCache[[key]];
-  if (!force && !is.null(res)) {
-    verbose && cat(verbose, "readUnits.ParameterCelFile(): Returning cached data");
-    return(res);
+  verbose && exit(verbose);
+  if (!force) {
+    verbose && enter(verbose, "Trying to obtain cached data");
+    res <- this$.readUnitsCache[[key]];
+    verbose && exit(verbose);
+    if (!is.null(res)) {
+      verbose && cat(verbose, "readUnits.ParameterCelFile(): Returning cached data");
+      return(res);
+    }
   }
  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

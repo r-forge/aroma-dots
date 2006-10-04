@@ -87,9 +87,18 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get M corrections
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Calculate M corrections using fitAffySnpMixture()");
+  verbose && enter(verbose, "Retrieving M corrections");
   # It *looks like* this is robust against SNP reordering /HB 2006-10-03
-  correction <- fitAffySnpMixture(qs, verbose=verbose2);
+  key <- list(method="fitAffySnpMixture", path=getPath(this), 
+                                         sampleNames=getSampleNames(this));
+  correction <- loadCache(key=key);
+  if (is.null(correction)) {
+    verbose && enter(verbose, "Calculating M corrections using fitAffySnpMixture()");
+    correction <- fitAffySnpMixture(qs, verbose=verbose2);
+    verbose && exit(verbose);
+    comment <- paste(unlist(key, use.names=FALSE), collapse=";");
+    saveCache(key=key, correction, comment=comment);
+  }
   verbose && str(verbose, correction);
   verbose && exit(verbose);
 
@@ -274,13 +283,13 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (returnParams) {
     rparams <- as.data.frame(rparams);
-    fD <- new("AnnotatedDataFrame",
+    featureData <- new("AnnotatedDataFrame",
       data=rparams,
       varMetadata=data.frame(labelDescription=colnames(rparams),
                                                 row.names=colnames(rparams))
     )
   } else {
-    fD <- new("AnnotatedDataFrame");
+    featureData <- new("AnnotatedDataFrame");
   }
   rm(rparams); gc(); # Not needed anymore
 
@@ -319,7 +328,7 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Creating SnpCallSetPlus object to return");
   res <- new("SnpCallSetPlus",
-           featureData=fD,
+           featureData=featureData,
            phenoData=phenoData,
            experimentData=experimentData(qs),
            annotation=annotation(qs),

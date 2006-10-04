@@ -1,5 +1,5 @@
 ###########################################################################/**
-# @RdocClass ChipEffectSet
+# @rdocclass chipeffectset			
 #
 # @title "The ChipEffectSet class"
 #
@@ -87,19 +87,35 @@ setMethodS3("getCellIndices", "ChipEffectSet", function(this, ...) {
 
 
 setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
-  if (is.null(cdf))
+  verbose && enter(verbose, "Reading chip effects unit by unit for ", nbrOfArrays(this), " arrays");
+
+  if (is.null(cdf)) {
+    verbose && enter(verbose, "Getting cell indices from CDF");
     cdf <- getCellIndices(this, units=units, verbose=less(verbose));
+    verbose && exit(verbose);
+  }
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
+  verbose && enter(verbose, "Calling readUnits() in superclass");
   res <- NextMethod("readUnits", this, units=cdf, ..., verbose=less(verbose));
+  verbose && exit(verbose);
 
   # Get first chip-effect file and use that to decode the read structure
-  ce <- as.list(this)[[1]];
-  res <- decode(ce, res);
+  ce <- getFile(this, 1);
+  res <- decode(ce, res, verbose=less(verbose));
+
+  verbose && exit(verbose);
 
   res;
 })
