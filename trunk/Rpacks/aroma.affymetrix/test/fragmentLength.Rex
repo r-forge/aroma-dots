@@ -7,9 +7,9 @@ if (!exists("dataPath"))
   dataPath <- findCelSet(chipType="Xba", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2005-500k_data", minCount=5);
-dataPath <- findCelSet(name="Affymetrix_2004-100k_trios", minCount=5);
-dataPath <- findCelSet(name="Affymetrix_2004-100k_trios-calibACT", minCount=5);
-dataPath <- findCelSet(name="Affymetrix_2005-500k_data-calibACT", minCount=5);
+#dataPath <- findCelSet(name="Affymetrix_2004-100k_trios", minCount=5);
+#dataPath <- findCelSet(name="Affymetrix_2004-100k_trios-calibACT", minCount=5);
+#dataPath <- findCelSet(name="Affymetrix_2005-500k_data-calibACT", minCount=5);
 
 if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
@@ -91,6 +91,14 @@ sample <- commonCEPH[1];
 
 figPath <- filePath(getParent(getPath(models[[1]])), "figures");
 mkdirs(figPath);
+ext <- "eps";
+if (ext == "png") {
+  height <- 640;
+  dev <- pngDev;
+} else if (ext == "eps") {
+  height <- 8 / 1.618;
+  dev <- eps;
+}
 
 for (kk in seq(along=models)) {
   model <- models[[kk]];
@@ -145,11 +153,10 @@ for (kk in seq(along=models)) {
 
 
 #  Device$set(kk+1, width="162%", height="108%");
-  imgName <- sprintf("%s-%s_ThetaVsFragLength-2400bp.png", getName(ds), getChipType(cdf));
+  imgName <- sprintf("%s-%s_ThetaVsFragLength-2400bp.%s", getName(ds), getChipType(cdf), ext);
   pathname <- filePath(figPath, imgName);
-  height <- 640;
   width <- 1.618*height / 1.08;
-  pngDev(pathname, width=width, height=height);
+  dev(pathname, width=width, height=height);
   NORMAL <- 1; BOLD <- 2; ITALIC <- 3; BOLDITALIC <- 4;
   par(font=BOLD, font.axis=BOLD, font.lab=BOLD, font.main=BOLD, font.sub=NORMAL, cex=1.1, cex.axis=1.1, cex.lab=1.1, cex.main=1.2, cex.sub=1.1, mar=c(5,5,4,2)+0.2, lwd=2, pch=1, ps=12, mgp=c(3, 1, 0), tcl=0.3);
 
@@ -157,10 +164,10 @@ for (kk in seq(along=models)) {
   smoothScatter(fl, y, pch=176, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim);
 
   # Annotate plot
-  stextChipType(cdf, line=0.5);
+  stextChipType(cdf, line=0);
   stext(getName(ces), side=3, pos=0, cex=0.8);
-  stext(sprintf("%d samples averaged", length(ces)), side=3, pos=0, line=-1.5, cex=0.8);
-  stext(sprintf("%d SNPs", length(y)), side=3, pos=1, line=-1.5, cex=0.8);
+  stext(sprintf("%d samples averaged", length(ces)), side=3, pos=0, line=-1, cex=0.8);
+  stext(sprintf("%d SNPs", length(y)), side=3, pos=1, line=-1, cex=0.8);
 
   # Add density of fragment lengths
   usr <- par("usr");
