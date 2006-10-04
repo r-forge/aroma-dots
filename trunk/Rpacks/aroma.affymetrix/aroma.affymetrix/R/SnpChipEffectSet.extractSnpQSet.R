@@ -33,7 +33,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., verbose=FALSE) {
+setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., force=FALSE, verbose=FALSE) {
   require(oligo) || throw("Package not loaded: oligo");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -59,7 +59,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., verbose=FA
   key <- list(method="extractSnpQSet.SnpChipEffectSet", 
                    path=getPath(this), sampleNames=getSampleNames(this));
   res <- loadCache(key=key);
-  if (!is.null(res)) {
+  if (!force && !is.null(res)) {
     # Just a temporary fix of sample names since I've got cached data on
     # file right now. /HB 2006-10-04
     if (identical(sampleNames(res), getSampleNames(this)))
@@ -92,7 +92,6 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., verbose=FA
   experimentData <- new("MIAME");
   experimentData@preprocessing$filenames <- getPathnames(this);
   experimentData@preprocessing$oligoversion <- packageDescription("oligo")$Version;
-  gc();
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

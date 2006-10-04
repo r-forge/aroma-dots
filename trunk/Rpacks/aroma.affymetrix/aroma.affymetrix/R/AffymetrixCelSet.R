@@ -1,13 +1,4 @@
-###########################################################################/**
-# @RdocClass AffymetrixCelSet
-#
-# @title "The AffymetrixCelSet class"
-#
-# \description{
-#  @classhierarchy
-#
-#  An AffymetrixCelSet object represents a data set of Affymetrix CEL files 
-#  with \emph{identical} chip types.
+
 # }
 # 
 # @synopsis 
@@ -17,7 +8,7 @@
 #   \item{...}{Not used.}
 # }
 #
-# \section{Fields and Methods}{
+# \Section{Fields and Methods}{
 #  @allmethods "public"  
 # }
 # 
@@ -571,47 +562,69 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
 
 
 
-setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
+  verbose && enter(verbose, "readCelUnits() of AffymetrixCelSet");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(units=units, ...));
-  res <- this$.readUnitsCache[[key]];
-  if (!is.null(res)) {
-    verbose && cat(verbose, "readUnits(): Returning cached data");
-    return(res);
+  verbose && enter(verbose, "Generating hashcode key for cache");
+  if (is.list(units)) {
+    key <- digest(list(units=names(units), ...));
+  } else {
+    key <- digest(list(units=units, ...));
+  }
+  verbose && exit(verbose);
+  if (!force) {
+    verbose && enter(verbose, "Trying to obtain cached data");
+    res <- this$.readUnitsCache[[key]];
+    verbose && exit(verbose);
+    if (!is.null(res)) {
+      verbose && cat(verbose, "readUnits(): Returning cached data");
+      return(res);
+    }
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Get the pathnames of all CEL files
-  pathnames <- unlist(lapply(this, getPathname), use.names=FALSE);
+  pathnames <- getPathnames(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read data from file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  verbose && enter(verbose, "Calling readCelUnits() for ", 
+                                              length(pathnames), " files");
   if (is.list(units)) {
     res <- readCelUnits(pathnames, cdf=units, ...);
   } else {
     # Always ask for CDF information from the CDF object!
-    cdf <- readUnits(getCdf(this), units=units);
+     verbose && enter(verbose, "Retrieving CDF unit information");
+    cdf <- readUnits(getCdf(this), units=units, verbose=less(verbose));
+    verbose && exit(verbose);
     res <- readCelUnits(pathnames, cdf=cdf, ...);
   }
+  verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && cat(verbose, "readUnits(): Updating cache");
   this$.readUnitsCache <- list()
   this$.readUnitsCache[[key]] <- res
+  verbose && cat(verbose, "readUnits(): Updated cache");
+
+  verbose && exit(verbose);
 
   res;
 })
