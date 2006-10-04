@@ -17,6 +17,17 @@ svnUpdate <- function(...) {
   TRUE;
 } # svnUpdate()
 
+svnCommit <- function(...) {
+  if (atHome)
+    return(FALSE);
+  opwd <- getwd();
+  on.exit(setwd(opwd));
+  system("svn commit -m \"\"");
+  setwd("../aroma.affymetrix/");
+  system("svn commit -m \"\"");
+  TRUE;
+} # svnCommit()
+
 # Setup up the search path to ImageMagick
 imageMagickConvert <- function(srcfile, destfile, format, options=NULL, ...) {
   pathname <- "C:/Program Files/ImageMagick-6.2.7-Q16/convert";
@@ -42,7 +53,7 @@ closeAllConnections();
 library(R.oo)
 library(R.utils)
 
-verbose <- Arguments$getVerbose(-3);
+verbose <- Arguments$getVerbose(-4);
 timestampOn(verbose);
 
 library(R.graphics)
