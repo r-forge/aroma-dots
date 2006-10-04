@@ -1,11 +1,11 @@
 Package: aroma.affymetrix
-Version: 0.2.2
-Date: 2006-09-24
+Version: 0.2.3
+Date: 2006-10-03
 Title: Basic classes for general Affymetrix data
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Depends: R (>= 2.2.0), R.oo, R.utils, R.cache, affxparser, aroma.light, aroma.apd, digest
-Suggests: affy, affyPLM, R.image
+Suggests: affy, affyPLM, oligo, R.image
 Description: This package implements classes for files and sets of files for various Affymetrix file formats, e.g AffymetrixCdfFile, AffymetrixCelFile, and AffymetrixCelSet.  These are designed to be memory efficient but still being fast. The idea is to work keep all data on file and only read data into memory when needed.  Clever caching mechanisms are used to minimize the overhead of data IO.  All of the above is hidden in the package API and for the developer (and the end user), the is queried as if it lives in memory.  With this design it is only the diskspace that limits what number of arrays can be analyzed, e.g. we have quantile normalized ninety 100K SNP chips using only 150Mb RAM.  Note that the purpose of this package is to provide other developers with a solid foundation for working with Affymetrix data.  It is not intended for analysis by the end user.  Such methods should be implemented in higher-level packages utilizing aroma.affymetrix.
 License: LGPL
 URL: http://www.braju.com/R/

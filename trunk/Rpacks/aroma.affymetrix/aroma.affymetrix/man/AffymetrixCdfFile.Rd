@@ -31,7 +31,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
 
-  An AffymetrixCdfFile object represents a generic Affymetrix
+  An AffymetrixCdfFile object represents a generic Affymetrix CDF file.
  }
 
  \usage{AffymetrixCdfFile(...)}
@@ -45,6 +45,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 \tabular{rll}{
  \tab \code{as.character} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:compare.AffymetrixCdfFile]{compare}} \tab Checks if two AffymetrixCdfFile objects are equal.\cr
+ \tab \code{\link[aroma.affymetrix:computeAffinities.AffymetrixCdfFile]{computeAffinities}} \tab Calculates probe affinities from sequence.\cr
  \tab \code{\link[aroma.affymetrix:convert.AffymetrixCdfFile]{convert}} \tab Converts a CDF into the same CDF but with another format.\cr
  \tab \code{createMonoCell} \tab  -\cr
  \tab \code{equals} \tab  -\cr

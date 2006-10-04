@@ -6,15 +6,14 @@
 #
 # \description{
 #  @get "title".
-# }
 #
-#
-# @synopsis
-#
-# Adapted from @see "gcrma::compute.affinities" in the @see "gcrma" package.
+# Adapted from @see "gcrma::compute.affinities" in the \pkg{gcrma} package.
 # Attempts to find the tab-separated probe sequence file associated with
 # a particular CDF, and matches sequence to probe index in order to assign
 # an affinity to each probe.
+# }
+#
+# @synopsis
 #
 # \arguments{
 #   \item{paths}{A @character variable containing location(s) to look for
@@ -28,12 +27,11 @@
 #  Returns a @numeric @vector of probe affinities, of length equal
 #  to the total number of features on the array.
 # }
-# @author
 #
+# \author{
+#   Ken Simpson (ksimpson[at]wehi.edu.au).
+# }
 #*/###########################################################################
-
-
-
 setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL, ..., verbose=FALSE) {
 
   chipType <- getChipType(this)

@@ -51,7 +51,9 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
  \tab \code{createParamCdf} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataFile} \tab  -\cr
+ \tab \code{getAM} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
+ \tab \code{getXAM} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
@@ -60,7 +62,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 decode, decodeUnit, encode, encodeUnit, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, calcMvsA, calibrateAllelicCrosstalk, clearData, clone, createFrom, fromFile, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantile, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, bgAdjustGcrma, bgAdjustOptical, calibrateAllelicCrosstalk, clearData, clone, createFrom, fromFile, getAm, getCdf, getChipType, getData, getHeader, getRectangle, highlight, image270, nbrOfCells, normalizeQuantile, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getLabel, getName, getPath, getPathname, setLabel, stextLabel, stextLabels, stextSize

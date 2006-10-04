@@ -19,7 +19,7 @@
   Gets cell intensities from a set of cells and a set of arrays.
 }
 
-\usage{\method{getIntensities}{AffymetrixCelSet}(this, indices=NULL, verbose=FALSE, ...)}
+\usage{\method{getIntensities}{AffymetrixCelSet}(this, ...)}
 
 \arguments{
  \item{arrays}{An \code{\link[base]{integer}} index \code{\link[base]{vector}} specifying arrays to be read.

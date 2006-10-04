@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{DChipGenomeInformation}, \link[aroma.affymetrix]{DChipSnpInformation}, \link[aroma.affymetrix]{GdasAnnotationFile}, \emph{\link[aroma.affymetrix]{GenomeInformation}}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ParameterFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \emph{\link[aroma.affymetrix]{SnpInformation}}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
+\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{DChipGenomeInformation}, \link[aroma.affymetrix]{DChipSnpInformation}, \link[aroma.affymetrix]{GdasAnnotationFile}, \emph{\link[aroma.affymetrix]{GenomeInformation}}, \link[aroma.affymetrix]{GenotypeCallFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ParameterFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \emph{\link[aroma.affymetrix]{SnpInformation}}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixFile}\cr
 extends \link[R.oo]{Object}\cr
@@ -36,11 +36,13 @@ extends \link[R.oo]{Object}\cr
   \code{\link[aroma.affymetrix:fromFile.AffymetrixFile]{*fromFile}()} method.
  }
 
- \usage{AffymetrixFile(filename=NULL, path=NULL, ...)}
+ \usage{AffymetrixFile(filename=NULL, path=NULL, mustExist=TRUE, ...)}
 
  \arguments{
    \item{filename}{The filename of the file.}
    \item{path}{An optional path to the file.}
+   \item{mustExist}{If \code{\link[base:logical]{TRUE}}, an exception is thrown if the file does
+     not exists, otherwise not.}
    \item{...}{Not used.}
  }
 

@@ -29,7 +29,7 @@
 }
 
 \value{
- Returns an \code{\link{AffymetrixCdfFile}} object.
+ Returns an instance of \code{\link{AffymetrixCdfFile}} or its subclasses.
  If the file is not found or if it is of the wrong file format, an
  error is thrown.
 }
