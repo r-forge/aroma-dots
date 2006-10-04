@@ -112,6 +112,7 @@ setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, .
   verbose && exit(verbose);
 
   # Get first chip-effect file and use that to decode the read structure
+  # This takes some time for a large number of units /HB 2006-10-04
   ce <- getFile(this, 1);
   res <- decode(ce, res, verbose=less(verbose));
 
