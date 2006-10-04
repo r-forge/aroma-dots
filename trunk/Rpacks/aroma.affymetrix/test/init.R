@@ -53,7 +53,7 @@ closeAllConnections();
 library(R.oo)
 library(R.utils)
 
-verbose <- Arguments$getVerbose(-4);
+verbose <- Arguments$getVerbose(-8);
 timestampOn(verbose);
 
 library(R.graphics)
@@ -81,6 +81,7 @@ if (atHome) {
 }
 source("Verbose.R");
 source("050.Object.R");
+source("readCelUnits.R");
 
 #source("../../affxparser/affxparser/R/convertCdf.R");
 #source("../../affxparser/affxparser/R/writeCdf.R");
