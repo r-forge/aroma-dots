@@ -24,6 +24,7 @@
 #   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
+#   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -34,7 +35,7 @@
 #
 #*/###########################################################################
 
-setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.path("bgOptical", getChipType(this)), minimum=1, subsetToUpdate=NULL, typesToUpdate=NULL, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
+setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.path("bgOptical", getChipType(this)), minimum=1, subsetToUpdate=NULL, typesToUpdate=NULL, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -152,6 +153,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 #   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
+#   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -167,7 +169,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 #
 #*/###########################################################################
 
-setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, overwrite=FALSE, skip=TRUE, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, gsbParameters=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
+setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, gsbParameters=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -303,6 +305,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
 # HISTORY:
 # 2006-10-04
 # o Debugged, tested for consistency with bg.adjust.gcrma(), docs added
+# o BUG FIX: removed duplicated arguments ("overwrite" and "skip")
 # 2006-09-28
 # o Created (based on AffymetrixCelFile.normalizeQuantile.R)
 ############################################################################
