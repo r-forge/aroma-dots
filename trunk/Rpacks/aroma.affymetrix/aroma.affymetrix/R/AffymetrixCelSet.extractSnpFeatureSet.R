@@ -1,3 +1,42 @@
+###########################################################################/**
+# @set "class=AffymetrixCelSet"
+# @RdocMethod extractSnpFeatureSet
+#
+# @title "Extracts an in-memory SnpFeatureSet object from the data set"
+#
+# \description{
+#  @get "title".
+#  Note that any modifications done to the extract object will \emph{not}
+#  be reflected in the original data set.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Argument passed to \code{oligo::read.cellfiles()}.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns an @see "oligo::SnpFeatureSet-class" object.
+# }
+#
+# \details{
+#  Since the \pkg{oligo} package is making use of special CDF environment
+#  packages, this method will warn if the needed package is missing and
+#  explain that \pkg{oligo} will later try to download and install it
+#  automatically.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/###########################################################################
 setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   require(affy) || throw("Package not loaded: affy");
   require(oligo) || throw("Package not loaded: oligo");
@@ -47,7 +86,7 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
   opwd <- setwd(getPath(this));
   on.exit(setwd(opwd), add=TRUE);
   filenames <- basename(getPathnames(this));
-  res <- oligo::read.celfiles(filenames, verbose=as.logical(less(verbose)));
+  res <- oligo::read.celfiles(filenames, ..., verbose=as.logical(less(verbose)));
   verbose && exit(verbose);
 
   verbose && exit(verbose);

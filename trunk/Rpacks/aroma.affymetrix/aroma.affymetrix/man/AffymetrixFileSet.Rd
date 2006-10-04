@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{GenotypeCallSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{AffymetrixFileSet}\cr
 extends \link[R.oo]{Object}\cr

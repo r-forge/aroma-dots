@@ -51,10 +51,12 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 \tabular{rll}{
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
- \tab \code{calcMvsA} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:bgAdjustGcrma.AffymetrixCelFile]{bgAdjustGcrma}} \tab Applies probe sequence based background correction to a CEL file.\cr
+ \tab \code{\link[aroma.affymetrix:bgAdjustOptical.AffymetrixCelFile]{bgAdjustOptical}} \tab Applies optical background correction to a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:calibrateAllelicCrosstalk.AffymetrixCelFile]{calibrateAllelicCrosstalk}} \tab Calibrates probepair signals for allele A allele B crosstalk.\cr
  \tab \code{clone} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr
+ \tab \code{getAm} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
  \tab \code{getRectangle} \tab  -\cr
  \tab \code{highlight} \tab  -\cr

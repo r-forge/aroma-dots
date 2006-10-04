@@ -6,12 +6,11 @@
 #
 # \description{
 #  @get "title".
+#
+# Adapted from @see "gcrma::bg.adjust.optical" in the \pkg{gcrma} package.
 # }
 #
-#
 # @synopsis
-#
-# Adapted from @see "bg.adjust.optical" in the @see "gcrma" package.
 #
 # \arguments{
 #   \item{path}{The location to save the adjusted data files.}
@@ -24,18 +23,18 @@
 #   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
-#   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
 #  Returns the background adjusted @see "AffymetrixCelFile" object.
 # }
-# @author
 #
+# \author{
+#   Ken Simpson (ksimpson[at]wehi.edu.au).
+# }
 #*/###########################################################################
-
-setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.path("bgOptical", getChipType(this)), minimum=1, subsetToUpdate=NULL, typesToUpdate=NULL, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.path("bgOptical", getChipType(this)), minimum=1, subsetToUpdate=NULL, typesToUpdate=NULL, overwrite=FALSE, skip=!overwrite, verbose=FALSE, ...) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -114,19 +113,17 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 
 
 ###########################################################################/**
-# @set "class=AffymetrixCelFile"
 # @RdocMethod bgAdjustGcrma
 #
 # @title "Applies probe sequence based background correction to a CEL file"
 #
 # \description{
 #  @get "title".
+#
+#  Adapted from @see "gcrma::bg.adjust.gcrma" in the \pkg{gcrma} package.
 # }
 #
-#
 # @synopsis
-#
-# Adapted from @see "bg.adjust.gcrma" in the @see "gcrma" package.
 #
 # \arguments{
 #   \item{path}{The path where to save the adjusted data files.}
@@ -138,12 +135,12 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 #       If @NULL and type=="affinities", MMs are used as the negative
 #       controls.}
 #   \item{affinities}{A @numeric @vector of probe affinities, usually as
-#       calculated by \code{computeAffinities()} of the @see
-#       "AffymetrixCdfFile" class.}
+#       calculated by \code{computeAffinities()} of the 
+#       @see "AffymetrixCdfFile" class.}
 #   \item{gsbAdjust}{Should we adjust for specific binding (defaults to
 #        @TRUE)?}
 #   \item{gsbParameters}{Specific binding parameters as estimated by
-#       \code{calculateGsbParameters() for the @see "AffymetrixCelSet"
+#       \code{calculateGsbParameters()} for the @see "AffymetrixCelSet"
 #       class.}
 #   \item{k}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
 #   \item{rho}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
@@ -153,23 +150,23 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 #   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
-#   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
 #  Returns the background adjusted @see "AffymetrixCelFile" object.
 # }
-# @author
 #
-# \seealso {
-# @see "gcrma::bg.adjust.gcrma"
-# @seeclass
+# \author{
+#   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
 #
+# \seealso{
+#  @see "gcrma::bg.adjust.gcrma"
+#  @seeclass
+# }
 #*/###########################################################################
-
-setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, gsbParameters=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, overwrite=FALSE, skip=!overwrite, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, gsbParameters=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, verbose=FALSE, ...) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -305,7 +302,6 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
 # HISTORY:
 # 2006-10-04
 # o Debugged, tested for consistency with bg.adjust.gcrma(), docs added
-# o BUG FIX: removed duplicated arguments ("overwrite" and "skip")
 # 2006-09-28
 # o Created (based on AffymetrixCelFile.normalizeQuantile.R)
 ############################################################################

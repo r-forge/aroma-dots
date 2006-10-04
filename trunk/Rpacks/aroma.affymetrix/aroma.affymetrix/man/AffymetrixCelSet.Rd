@@ -52,11 +52,18 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixCelSet.AffymetrixCelSet]{as.AffymetrixCelSet}} \tab Coerce an object to an AffymetrixCelSet object.\cr
  \tab \code{\link[aroma.affymetrix:as.character.AffymetrixCelSet]{as.character}} \tab Returns a short string describing the Affymetrix data set.\cr
  \tab \code{\link[aroma.affymetrix:averageQuantile.AffymetrixCelSet]{averageQuantile}} \tab Gets the average empirical distribution across all samples.\cr
+ \tab \code{\link[aroma.affymetrix:bgAdjustGcrma.AffymetrixCelSet]{bgAdjustGcrma}} \tab Applies probe sequence based background correction to a set of
+CEL files.\cr
+ \tab \code{\link[aroma.affymetrix:bgAdjustOptical.AffymetrixCelSet]{bgAdjustOptical}} \tab Applies optical background correction to a set of CEL files.\cr
+ \tab \code{\link[aroma.affymetrix:calculateGsbParameters.AffymetrixCelSet]{calculateGsbParameters}} \tab Computes parameters for adjustment of specific binding.\cr
  \tab \code{\link[aroma.affymetrix:calibrateAllelicCrosstalk.AffymetrixCelSet]{calibrateAllelicCrosstalk}} \tab Calibrates probepair signals for crosstalk between allele A and allele B.\cr
  \tab \code{clone} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:extractAffyBatch.AffymetrixCelSet]{extractAffyBatch}} \tab Extracts an in-memory AffyBatch object from the data set.\cr
+ \tab \code{\link[aroma.affymetrix:extractSnpFeatureSet.AffymetrixCelSet]{extractSnpFeatureSet}} \tab Extracts an in-memory SnpFeatureSet object from the data set.\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
+ \tab \code{getData} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getIntensities.AffymetrixCelSet]{getIntensities}} \tab Gets cell intensities from a set of cells and a set of arrays.\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getSiblings.AffymetrixCelSet]{getSiblings}} \tab Gets the all data sets that refers to the same samples a this one.\cr

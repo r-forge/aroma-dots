@@ -1,6 +1,17 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.2.3 [2006-10-xx]
+o Added gcrma background correction.  Contributed by Ken Simpson,
+  WEHI, Melbourne.
+o Added extractAffyBatch() to AffymetrixCelSet extracting data
+  applicable to methods in the affy package.
+o Added extractSnpFeatureSet() to AffymetrixCelSet and 
+  extractSnpQSet() to SnpChipEffectSet extracting data applicable 
+  to methods in the oligo package.
+o Added trial versions of AffymetrixSnpCdfFile, GenotypeCallFile,
+  GenotypeCallSet etc.
+
 Version: 0.2.2 [2006-09-16]
 o Added basic support for dChip genome information.  It is good
   enough though to work with the 100K and 500K SNP chips.

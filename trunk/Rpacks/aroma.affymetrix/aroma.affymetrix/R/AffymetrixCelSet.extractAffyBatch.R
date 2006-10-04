@@ -1,4 +1,5 @@
 ###########################################################################/**
+# @set "class=AffymetrixCelSet"
 # @RdocMethod extractAffyBatch
 #
 # @title "Extracts an in-memory AffyBatch object from the data set"
