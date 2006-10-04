@@ -69,6 +69,7 @@ if (atHome) {
   source("../../affxparser/affxparser/R/findCdf.R");
 }
 source("Verbose.R");
+source("050.Object.R");
 
 #source("../../affxparser/affxparser/R/convertCdf.R");
 #source("../../affxparser/affxparser/R/writeCdf.R");

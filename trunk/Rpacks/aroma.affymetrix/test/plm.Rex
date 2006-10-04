@@ -8,9 +8,9 @@ paths <- "normQuantile";
 name <- "Affymetrix_2006-CEPH270";
 name <- "Affymetrix_2005-500k_data";
 name <- "Affymetrix_2004-100k_trios";
-name <- "Affymetrix_2004-100k_trios-calibACT";
-name <- "Affymetrix_2005-500k_data-calibACT";
-name <- "SinclairA_2006-calibACT";
+#name <- "Affymetrix_2004-100k_trios-calibACT";
+#name <- "Affymetrix_2005-500k_data-calibACT";
+#name <- "SinclairA_2006-calibACT";
 #name <- "SlaterH_etal_2004-calibACT";
 
 if (!exists("dataPath"))
