@@ -1,0 +1,308 @@
+###########################################################################/**
+# @set "class=AffymetrixCelFile"
+# @RdocMethod bgAdjustOptical
+#
+# @title "Applies optical background correction to a CEL file"
+#
+# \description{
+#  @get "title".
+# }
+#
+#
+# @synopsis
+#
+# Adapted from @see "bg.adjust.optical" in the @see "gcrma" package.
+#
+# \arguments{
+#   \item{path}{The location to save the adjusted data files.}
+#   \item{minimum}{The minimum adjusted intensity.  Defaults to 1.}
+#   \item{subsetToUpdate}{The indices of the probes to be updated.
+#     If @NULL, all are updated.}
+#   \item{typesToUpdate}{Types of probes to be updated.  For more details,
+#     see argument \code{types} of \code{identifyCells()} for the
+#     @see "AffymetrixCdfFile" class.}
+#   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
+#     unless skipped, otherwise an error is thrown.}
+#   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns the background adjusted @see "AffymetrixCelFile" object.
+# }
+# @author
+#
+#*/###########################################################################
+
+setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.path("bgOptical", getChipType(this)), minimum=1, subsetToUpdate=NULL, typesToUpdate=NULL, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'path':
+  path <- Arguments$getWritablePathname(path);
+  if (identical(getPath(this), path)) {
+    throw("Cannot background correct data file. Argument 'path' refers to the same path as the path of the data file to be corrected: ", path);
+  }
+
+
+  cdf <- getCdf(this);
+  nbrOfCells <- nbrOfCells(cdf);
+
+  # Argument 'subsetToUpdate':
+  getFraction <- (length(subsetToUpdate) == 1) &&
+                               (subsetToUpdate >= 0) && (subsetToUpdate < 1);
+  if (!getFraction) {
+    subsetToUpdate <- Arguments$getIndices(subsetToUpdate,
+                                           range=c(1, nbrOfCells));
+  }
+  
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Generating output pathname
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  filename <- basename(getPathname(this));
+  pathname <- Arguments$getWritablePathname(filename, path=path,
+                                         mustNotExist=(!overwrite && !skip));
+
+  # Already corrected?
+  if (isFile(pathname) && skip) {
+    verbose && cat(verbose, "Optical background adjusted data file already exists: ", pathname);
+    return(fromFile(this, pathname));
+  }
+
+  # Get all probe signals
+  verbose && enter(verbose, "Reading probe intensities");
+  x <- getData(this, fields="intensities", verbose=less(verbose,2));
+  x <- x$intensities;
+  verbose && exit(verbose);
+
+  # Identify the subset of probes to be updated?
+  if (getFraction || !is.null(typesToUpdate)) {
+    verbose && enter(verbose, "Identifying probes to be updated");
+    subsetToUpdate <- identifyCells(cdf, indices=subsetToUpdate,
+                                types=typesToUpdate, verbose=less(verbose));
+    verbose && exit(verbose);
+  }
+
+  # Subtract optical background from selected probes
+  verbose && enter(verbose, "Adjusting background for optical effect");
+  arrayMinimum <- min(x[subsetToUpdate], na.rm=TRUE);
+  x[subsetToUpdate] <- x[subsetToUpdate] - arrayMinimum + minimum;
+  rm(subsetToUpdate);
+  verbose && exit(verbose);
+
+  # Write adjusted data to file
+  verbose && enter(verbose, "Writing adjusted probe signals");
+
+  # Copy CEL file and update the copy
+  verbose && enter(verbose, "Copying source CEL file");
+  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  verbose && exit(verbose);
+  verbose && enter(verbose, "Writing adjusted intensities");
+  updateCel(pathname, intensities=x);
+  verbose && exit(verbose);
+  verbose && exit(verbose);
+
+  # Return new normalized data file object
+  fromFile(this, pathname);
+})
+
+
+###########################################################################/**
+# @set "class=AffymetrixCelFile"
+# @RdocMethod bgAdjustGcrma
+#
+# @title "Applies probe sequence based background correction to a CEL file"
+#
+# \description{
+#  @get "title".
+# }
+#
+#
+# @synopsis
+#
+# Adapted from @see "bg.adjust.gcrma" in the @see "gcrma" package.
+#
+# \arguments{
+#   \item{path}{The path where to save the adjusted data files.}
+#   \item{type}{The type of background correction.  Currently accepted types
+#       are "fullmodel" (the default, uses MMs) and "affinities" (uses
+#       probe sequence only).}
+#   \item{indicesNegativeControl}{Locations of any negative control
+#       probes (e.g., the anti-genomic controls on the human exon array).
+#       If @NULL and type=="affinities", MMs are used as the negative
+#       controls.}
+#   \item{affinities}{A @numeric @vector of probe affinities, usually as
+#       calculated by \code{computeAffinities()} of the @see
+#       "AffymetrixCdfFile" class.}
+#   \item{gsbAdjust}{Should we adjust for specific binding (defaults to
+#        @TRUE)?}
+#   \item{gsbParameters}{Specific binding parameters as estimated by
+#       \code{calculateGsbParameters() for the @see "AffymetrixCelSet"
+#       class.}
+#   \item{k}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
+#   \item{rho}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
+#   \item{stretch}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
+#   \item{fast}{If @TRUE, an ad hoc transformation of the PM is performed
+#       (\code{gcrma.bg.transformation.fast()}).}
+#   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
+#     unless skipped, otherwise an error is thrown.}
+#   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns the background adjusted @see "AffymetrixCelFile" object.
+# }
+# @author
+#
+# \seealso {
+# @see "gcrma::bg.adjust.gcrma"
+# @seeclass
+# }
+#
+#*/###########################################################################
+
+setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, overwrite=FALSE, skip=TRUE, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, gsbParameters=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'path':
+  path <- Arguments$getWritablePathname(path);
+  if (identical(getPath(this), path)) {
+    throw("Cannot background correct data file. Argument 'path' refers to the same path as the path of the data file to be normalized: ", path);
+  }
+
+  
+  
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Generating output pathname
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  filename <- basename(getPathname(this));
+  pathname <- Arguments$getWritablePathname(filename, path=path,
+                                            mustNotExist=(!overwrite && !skip));
+  
+  # Already corrected?
+  if (isFile(pathname) && skip) {
+    verbose && cat(verbose, "GC-adjusted data file already exists: ", pathname);
+    return(fromFile(this, pathname));
+  }
+  
+  cdf <- getCdf(this);
+
+  if (is.null(affinities)) {
+# try to find APD file containing probe affinities
+
+    paths <- path;
+    paths <- paste(".",
+                   paths,
+                   "data/",
+                   sep=";", collapse=";");
+
+    pattern <- paste(getChipType(getCdf(this)), "-affinities.apa", sep="");
+    affinityFilename <- findFiles(pattern=pattern, paths=paths, firstOnly=TRUE);
+    if (is.null(affinityFilename))
+      throw("Could not locate probe affinities file: ", pattern);
+    affinities <- readApd(affinityFilename)$affinities;
+  }
+
+  verbose && enter(verbose, "Obtaining PM and MM signals and affinities");
+  
+#  mmi <- identifyCells(cdf, types="mm");
+#  pmi <- identifyCells(cdf, types="pm");
+#  this should work, but gives inconsistent results with bg.adjust.gcrma().
+#  Stick with version below for now until we work out what is causing
+#  the inconsistency.
+  
+  indices <- unlist(getCellIndices(cdf))
+  mmi <- indices[!isPm(cdf)]
+  pmi <- indices[isPm(cdf)]
+
+  # PM and MM
+  mm <- getData(this, indices=mmi)$intensities;
+  pm <- getData(this, indices=pmi)$intensities;
+
+  # corresponding affinities
+  apm <- affinities[pmi];
+  amm <- affinities[mmi];
+
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Estimating non-specific binding parameters")
+
+  # affinity and intensity for negative control probes
+  anc <- NULL;
+  ncs <- NULL;
+  
+  if (!is.null(indicesNegativeControl)) {
+    anc <- affinities[indicesNegativeControl]
+    ncs <- getData(this, indices=indicesNegativeControl)$intensities;
+  }
+
+  # adjust background - use original GCRMA functions to avoid errors from
+  # re-coding
+  if (type=="fullmodel") {
+    pm <- bg.adjust.fullmodel(pm, mm, ncs=ncs, apm, amm, anc=anc, index.affinities=1:length(pm), k=k, rho=rho, fast=fast);
+  }
+  else if (type=="affinities") {
+    if (is.null(ncs)) {
+      # use MM as negative controls
+      pm <- bg.adjust.affinities(pm, mm, apm, amm, index.affinities=1:length(pm), k=k, fast=fast);
+    } else {
+      # use specified negative controls
+      pm <- bg.adjust.affinities(pm, ncs, apm, anc, index.affinities=1:length(pm), k=k, fast=fast);
+    }
+  }
+    
+  verbose && exit(verbose);
+
+  # if specific binding correction requested, carry it out
+  if (gsbAdjust && !is.null(gsbParameters)) {
+    verbose && enter(verbose, "Adjusting for specific binding")
+    pm <- 2^(log2(pm) - gsbParameters[2]*apm + mean(gsbParameters[2]*apm));
+    verbose && exit(verbose);
+  }
+
+  # don't understand this, but it was in original bg.adjust.gcrma, so
+  # we will keep it
+  if (stretch != 1) {
+    mu <- mean(log(pm));
+    pm <- exp(mu + stretch * (log(pm) - mu));
+  }
+    
+  
+  # update the PM
+
+  # Write adjusted data to file
+  verbose && enter(verbose, "Writing adjusted probe signals");
+
+  # Copy CEL file and update the copy
+  verbose && enter(verbose, "Copying source CEL file");
+  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  verbose && exit(verbose);
+  verbose && enter(verbose, "Writing adjusted intensities");
+  updateCel(pathname, indices=pmi, intensities=pm);
+  verbose && exit(verbose);
+  verbose && exit(verbose);
+
+  # Return new background corrected data file object
+  fromFile(this, pathname);
+
+})
+
+
+############################################################################
+# HISTORY:
+# 2006-10-04
+# o Debugged, tested for consistency with bg.adjust.gcrma(), docs added
+# 2006-09-28
+# o Created (based on AffymetrixCelFile.normalizeQuantile.R)
+############################################################################
