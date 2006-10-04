@@ -1,19 +1,56 @@
-setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,40,50), ..., verbose=FALSE) {
-  recalibrate <- TRUE;
+###########################################################################/**
+# @set "class=SnpChipEffectSet"
+# @RdocMethod fitCrlmm
+#
+# @title "Fits chip effects to the CRLMM model"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{minLLRforCalls}{A @numeric @vector of length three.}
+#   \item{recalibrate}{If @TRUE, a second round of the fitting is done.}
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @see "oligo::SnpCallSetPlus-class" object.
+# }
+#
+# \details{
+#   Simple benchmarking on shadowfax: 
+#   For 90 CEPH Xba chips it takes ~90 minutes, i.e. 60 s/array.
+# }
+#
+# @author
+#
+# \seealso{
+#   @see "oligo::crlmm".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=50, AB=40, BB=50), recalibrate=TRUE, ..., verbose=FALSE) {
   returnCorrectedM <- TRUE;
   returnParams <- TRUE;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'minLLRforCalls':
+  minLLRforCalls <- Arguments$getDoubles(minLLRforCalls, length=3);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
   }
-
   verbose2 <- as.logical(verbose);
+
 
   verbose && enter(verbose, "Fitting CRLMM");
 
@@ -21,24 +58,18 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
   # Extract chip effects as a SnpQSet object
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Extracting chip effects as a SnpQSet object");
-  qs <- extractSnpQSet(ces, verbose=less(verbose));
+  qs <- extractSnpQSet(this, verbose=less(verbose));
   verbose && exit(verbose);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Dimension of data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   nbrOfSnps <- dim(qs)[1];
   nbrOfSamples <- dim(qs)[2];
-  verbose && printf(verbose, "Number of SNPs: %d", nbrOfSnps);
-  verbose && printf(verbose, "Number of samples: %d", nbrOfSamples);
+  verbose && printf(verbose, "Number of SNPs: %d\n", nbrOfSnps);
+  verbose && printf(verbose, "Number of samples: %d\n", nbrOfSamples);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get M corrections
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Calculate M corrections using fitAffySnpMixture()");
-  correction <- fitAffySnpMixture(qs, verbose=verbose2);
-  verbose && str(verbose, correction);
-  verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get gender
@@ -46,10 +77,20 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
   verbose && enter(verbose, "Retrieving genders");
   if(is.null(qs$gender)){
     verbose && enter(verbose, "Predicting genders from data");
+    # snpGenderCall() is robust against SNP reordering /HB 2006-10-03
     qs$gender <- snpGenderCall(qs);
     verbose && exit(verbose);
   }
   maleIndex <- (qs$gender == "male");
+  verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get M corrections
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Calculate M corrections using fitAffySnpMixture()");
+  # It *looks like* this is robust against SNP reordering /HB 2006-10-03
+  correction <- fitAffySnpMixture(qs, verbose=verbose2);
+  verbose && str(verbose, correction);
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -78,22 +119,24 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
           paste(vars, collapse=", "));
   }
   env <- get(var, mode="environment");
-
+  rm(list=vars); # Not needed anymore
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the indices of SNPs that are not called by the HapMap project 
   # or that were poorly called.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  index <- which(!env$hapmapCallIndex | env$badCallIndex);
-  verbose && cat(verbose, "Among the ", nbrOfSnps, " SNPs, there are ", length(index), " SNPs that were not called by the HapMap project or were poorly called by it.");
+  snpNames <- featureNames(qs);
+  poorCalls <- (!env$hapmapCallIndex[snpNames] | env$badCallIndex[snpNames]);
+  poorCalls <- which(poorCalls);
+  verbose && cat(verbose, "Among the ", nbrOfSnps, " SNPs, there are ", length(poorCalls), " SNPs that were not called by the HapMap project or were poorly called by it.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get initial calls for non-HapMap calls
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting initial calls for non-HapMap calls");
   myCalls <- matrix(NA, nrow=nbrOfSnps, ncol=nbrOfSamples);
-  myCalls[index,] <- getInitialAffySnpCalls(correction, index, 
-                                                         verbose=verbose2);
+  myCalls[poorCalls,] <- getInitialAffySnpCalls(correction, 
+                                       subset=poorCalls, verbose=verbose2);
   verbose && exit(verbose);
   gc();
 
@@ -102,7 +145,7 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting SNP genotype region parameters");
   rparams <- getAffySnpGenotypeRegionParams(qs, myCalls,
-                             correction$fs, subset=index, verbose=verbose2);
+                        correction$fs, subset=poorCalls, verbose=verbose2);
   # Not needed anymore
   rm(myCalls); gc();
   verbose && exit(verbose);
@@ -111,28 +154,29 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
   # Shrink genotype regions toward the priors
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Shrinking genotype regions toward the priors");
-  rparams <- updateAffySnpParams(rparams, env$priors, verbose=verbose2);
+  priors <- env$priors;
+  params <- env$params;
+  rm(env); gc(); # Not needed anymore
+  rparams <- updateAffySnpParams(rparams, priors, verbose=verbose2);
+  params <- replaceAffySnpParams(params, rparams, subset=poorCalls);
   verbose && exit(verbose);
   gc();
   
-  verbose && enter(verbose, "Replacing region parameters");
-  params <- replaceAffySnpParams(env$params, rparams, index)
-  verbose && exit(verbose);
-  gc();
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calculate call distances
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Calculating call distances");
+  # SNPs in qs, params, and correction$fs must be ordered the same.
   myDist <- getAffySnpDistance(qs, params, correction$fs);
   verbose && exit(verbose);
 
+  # getChrXIndex() is robust against SNP reordering /HB 2006-10-03
   XIndex <- getChrXIndex(qs);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Update the calls from the new distances
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Update the calls from the new distances");
+  verbose && enter(verbose, "Updating the calls from the new distances");
   myCalls <- getAffySnpCalls(myDist, XIndex, maleIndex, verbose=verbose2);
   gc();
   verbose && exit(verbose);
@@ -141,8 +185,9 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
   # Calculate log-likehood ratios
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Calculating log-likehood ratios");
-  LLR <- getAffySnpConfidence(myDist, myCalls, XIndex, maleIndex, 
+  llr <- getAffySnpConfidence(myDist, myCalls, XIndex, maleIndex, 
                                                          verbose=verbose2);
+  verbose && str(verbose, llr);
   verbose && exit(verbose);
 
 
@@ -155,16 +200,15 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
     rm(myDist, rparams); gc(); # Not needed anymore
 
     verbose && enter(verbose, "Resetting poor genotype calls");
-    # For each SNP
-    for (ii in 1:nrow(myCalls)) {
-      # For each genotype class
-      for (kk in 1:3) {
-        bad <- which(LLR[ii,] < minLLRforCalls[kk] & myCalls[ii,] == kk);
-        myCalls[ii, bad] <- NA;
-      }
+    # For each genotype class
+    for (kk in 1:3) {
+      bad <- which(myCalls == kk & llr < minLLRforCalls[kk]);
+      myCalls[bad] <- NA;
       rm(bad);
     }
-    rm(LLR); gc(); # Not needed anymore 
+    verbose && cat(verbose, "Number of poor calls: ", sum(is.na(myCalls)),
+                                              " out of ", length(myCalls));
+    rm(llr); gc(); # Not needed anymore
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Getting SNP genotype region parameters");
@@ -173,8 +217,8 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
     rm(myCalls); gc(); # Not needed anymore
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "Update the calls from the new distances");
-    rparams <- updateAffySnpParams(rparams, env$priors);
+    verbose && enter(verbose, "Updating the calls from the new distances");
+    rparams <- updateAffySnpParams(rparams, priors);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Calculating call distances");
@@ -182,12 +226,12 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
                                                           verbose=verbose2);
     verbose && exit(verbose);
     
-    verbose && enter(verbose, "Update the calls from the new distances");
+    verbose && enter(verbose, "Updating the calls from the new distances");
     myCalls <- getAffySnpCalls(myDist, XIndex, maleIndex, verbose=verbose2);
     verbose && exit(verbose);
     
     verbose && enter(verbose, "Calculating log-likehood ratios");
-    LLR <- getAffySnpConfidence(myDist, myCalls, XIndex, maleIndex,
+    llr <- getAffySnpConfidence(myDist, myCalls, XIndex, maleIndex,
                                                          verbose=verbose2);
     verbose && exit(verbose);
 
@@ -198,26 +242,30 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create return structure
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ret <- list(calls=myCalls, llr=LLR);
-  rm(LLR); gc(); # Not needed anymore
+  verbose && enter(verbose, "Creating return structure");
+  ret <- list(calls=myCalls, llr=llr);
+  rm(myCalls, llr); gc(); # Not needed anymore
+  verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Corrected log-ratios
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (returnCorrectedM) {
+    verbose && enter(verbose, "Correcting log-ratios");
     SIGN <- c(+1,0,-1);
     cM <- getM(qs);
     for(ii in 1:nrow(cM)){
       # For the two homozygote groups
       for(kk in c(1,3)) {
-        index <- which(myCalls[ii,] == kk);
+        index <- which(ret$calls[ii,] == kk);
         cM[ii,index,] <- cM[ii,index,] + 
                              SIGN[kk]*(rparams$f0-correction$fs[ii,kk,]);
       }
     }
     ret$M <- cM;
     rm(cM, index, SIGN); gc(); # Not needed anymore
+    verbose && exit(verbose);
   } # if (returnCorrectedM)
 
 
@@ -234,14 +282,16 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
   } else {
     fD <- new("AnnotatedDataFrame");
   }
-  
-  gender <- rep("female", length(maleIndex));
-  gender[maleIndex] <- "male";
-  rm(maleIndex); gc(); # Not needed anymore
+  rm(rparams); gc(); # Not needed anymore
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Phenotype data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Creating phenotype result");
+  gender <- rep("female", nbrOfSamples);
+  gender[maleIndex] <- "male";
+  rm(maleIndex); gc(); # Not needed anymore
   if (is.null(qs$gender)) {
     phenoData <- new("AnnotatedDataFrame",
                         data=cbind(pData(qs),
@@ -261,20 +311,25 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(50,4
                                      row.names=c("crlmmSNR"))))
   }
   rm(correction); gc(); # Not needed anymore
+  verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Return genotype estimates
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Creating SnpCallSetPlus object to return");
   res <- new("SnpCallSetPlus",
-              featureData=fD,
-              phenoData=phenoData,
-              experimentData=experimentData(qs),
-              annotation=annotation(qs),
-              calls=ret$calls,
-              callsConfidence=ret$llr,
-              logRatioAntisense=ret$M[,,"antisense"],
-              logRatioSense=ret$M[,,"sense"]);
+           featureData=fD,
+           phenoData=phenoData,
+           experimentData=experimentData(qs),
+           annotation=annotation(qs),
+           calls=ret$calls,
+           callsConfidence=ret$llr,
+           logRatioAntisense=ret$M[,,"antisense"],
+           logRatioSense=ret$M[,,"sense"]
+         );
+  verbose && exit(verbose);
+
   verbose && exit(verbose);
 
   res;
