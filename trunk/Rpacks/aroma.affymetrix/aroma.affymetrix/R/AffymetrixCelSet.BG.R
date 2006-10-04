@@ -6,12 +6,11 @@
 #
 # \description{
 #  @get "title".
+#
+#  Adapted from @see "gcrma::bg.adjust.optical" in the \pkg{gcrma} package.
 # }
 #
-#
 # @synopsis
-#
-# Adapted from @see "bg.adjust.optical" in the @see "gcrma" package.
 #
 # \arguments{
 #   \item{path}{The location to save the adjusted data files.}
@@ -31,10 +30,11 @@
 # \value{
 #  Returns the background adjusted @see "AffymetrixCelFile" object.
 # }
-# @author
 #
+# \author{
+#   Ken Simpson (ksimpson[at]wehi.edu.au).
+# }
 #*/###########################################################################
-
 setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, name="bgOptical", subsetToUpdate=NULL, typesToUpdate=NULL, minimum=1, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -89,7 +89,6 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
 })
 
 ###########################################################################/**
-# @set "class=AffymetrixCelSet"
 # @RdocMethod calculateGsbParameters
 #
 # @title "Computes parameters for adjustment of specific binding"
@@ -110,13 +109,10 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
 # \value{
 # }
 #
-# @author
-#
-#
+# \author{
+#   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
-#
 #*/###########################################################################
-
 setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPms=25000, affinities=NULL, path=NULL, ..., verbose=FALSE) {
 
   verbose <- Arguments$getVerbose(verbose);
@@ -192,12 +188,11 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
 #
 # \description{
 #  @get "title".
+#
+#  Adapted from @see "gcrma::bg.adjust.gcrma" in the \pkg{gcrma} package.
 # }
 #
-#
 # @synopsis
-#
-# Adapted from @see "bg.adjust.gcrma" in the @see "gcrma" package.
 #
 # \arguments{
 #   \item{path}{The path where to save the adjusted data files.}
@@ -228,16 +223,16 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
 # \value{
 #  Returns the background adjusted @see "AffymetrixCelFile" object.
 # }
-# @author
 #
-# \seealso {
-# @see "gcrma::bg.adjust.gcrma"
-# @seeclass
+# \author{
+#   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
 #
+# \seealso{
+#  @see "gcrma::bg.adjust.gcrma"
+#  @seeclass
+# }
 #*/###########################################################################
-
-
 setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name="bgGcrma", probePath=NULL, affinities=NULL, type="fullmodel",  indicesNegativeControl=NULL, opticalAdjust=TRUE, gsbAdjust=TRUE, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15*fast + (1-fast), fast=TRUE, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
