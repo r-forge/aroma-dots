@@ -134,7 +134,7 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
                    "data/",
                    sep=";", collapse=";");
 
-    pattern <- paste(getChipType(cdf, "-affinities.apa", sep="");
+    pattern <- paste(getChipType(cdf, "-affinities.apa", sep=""));
     affinityFile <- findFiles(pattern=pattern, paths=paths, firstOnly=TRUE);
     if (is.null(affinityFile))
       throw("Could not locate probe affinities file: ", pattern);
