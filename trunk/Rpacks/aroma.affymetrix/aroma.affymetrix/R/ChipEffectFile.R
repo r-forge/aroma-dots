@@ -73,6 +73,11 @@ setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
   this;
 })
 
+setMethodS3("getSampleName", "ChipEffectFile", function(this, ...) {
+  name <- getName(this, ...);
+  name <- gsub("-chipEffects$", "", name);
+  name;
+})
 
 setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ..., verbose=FALSE) {
   # Argument 'verbose': 

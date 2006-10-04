@@ -66,6 +66,10 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
 
 
 
+setMethodS3("getSampleName", "AffymetrixCelFile", function(this, ...) {
+  getName(this, ...);
+})
+
 
 ###########################################################################/**
 # @RdocMethod fromFile

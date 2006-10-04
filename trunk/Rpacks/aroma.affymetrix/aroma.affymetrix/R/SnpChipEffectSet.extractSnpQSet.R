@@ -41,9 +41,30 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., verbose=FA
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
   if (this$mergeStrands) {
     throw("Cannot not extract SnpQSet. Strands are merged.");
+  }
+
+  verbose && enter(verbose, "Extracting chip effects as a SnpQSet for ", 
+                                           nbrOfArrays(this), " arrays");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached results
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- list(method="extractSnpQSet.SnpChipEffectSet", 
+                   path=getPath(this), sampleNames=getSampleNames(this));
+  res <- loadCache(key=key);
+  if (!is.null(res)) {
+    # Just a temporary fix of sample names since I've got cached data on
+    # file right now. /HB 2006-10-04
+    if (identical(sampleNames(res), getSampleNames(this)))
+      sampleNames(res) <- getSampleNames(this);
+    return(res);
   }
 
   cdf <- getCdf(this);
@@ -54,14 +75,14 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., verbose=FA
   snpNames <- getUnitNames(cdf);
   units <- grep("^SNP", snpNames);
   snpNames <- snpNames[units];
-  sampleNames <- getNames(this);
+  fileNames <- getNames(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create necessary objects for SnpQSet
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Creating AnnotatedDataFrame");
   phenoData <- new("AnnotatedDataFrame", 
-     data=data.frame(sample=1:nbrOfSamples, row.names=sampleNames),
+     data=data.frame(sample=1:nbrOfSamples, row.names=fileNames),
      varMetadata=data.frame(labelDescription="arbitrary numbering",
                                                       row.names="sample")
   );
@@ -101,7 +122,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., verbose=FA
     # Make into an JxI matrix
     theta <- matrix(theta, ncol=nbrOfSamples, byrow=TRUE);
     rownames(theta) <- snpNames; 
-    colnames(theta) <- sampleNames; 
+    colnames(theta) <- fileNames; 
     thetas[[kk]] <- theta; 
     rm(theta);
   };
@@ -122,7 +143,18 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., verbose=FA
     experimentData = experimentData,
     annotation = cleanChipType
   );
-  rm(theta); gc();
+  rm(thetas); gc();
+  verbose && exit(verbose);
+
+  # Update the sample names
+  verbose && enter(verbose, "Updating the sample names");
+  sampleNames(res) <- getSampleNames(this);
+  verbose && exit(verbose);
+
+  # Save to cache!
+  comment <- paste(unlist(key, use.names=FALSE), collapse=";");
+  saveCache(key=key, res, comment=comment);
+
   verbose && exit(verbose);
 
   res;

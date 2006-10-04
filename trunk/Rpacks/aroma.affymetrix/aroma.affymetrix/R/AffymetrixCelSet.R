@@ -124,6 +124,35 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
 
 
 ###########################################################################/**
+# @RdocMethod getSampleNames
+#
+# @title "Gets the names of the samples in the file set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getSampleNames", "AffymetrixCelSet", function(this, ...) {
+  unlist(lapply(this, FUN=getSampleName))
+})
+
+###########################################################################/**
 # @RdocMethod getSiblings
 #
 # @title "Gets the all data sets that refers to the same samples a this one"
