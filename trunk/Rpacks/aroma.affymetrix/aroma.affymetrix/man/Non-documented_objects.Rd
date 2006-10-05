@@ -471,7 +471,10 @@
 \alias{readUnits.GenotypeCallSet}
 \alias{updateUnits.GenotypeCallFile}
 \alias{fitCrlmm}
-\alias{fitCrlmm.SnpChipEffectSet}
+\alias{getSampleName}
+\alias{getSampleName.AffymetrixCelFile}
+\alias{getSampleName.ChipEffectFile}
+\alias{getSampleNames}
 
 \description{
   This page contains aliases for all "non-documented" objects that

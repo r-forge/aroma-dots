@@ -66,6 +66,7 @@ CEL files.\cr
  \tab \code{getData} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getIntensities.AffymetrixCelSet]{getIntensities}} \tab Gets cell intensities from a set of cells and a set of arrays.\cr
  \tab \code{getName} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getSampleNames.AffymetrixCelSet]{getSampleNames}} \tab Gets the names of the samples in the file set.\cr
  \tab \code{\link[aroma.affymetrix:getSiblings.AffymetrixCelSet]{getSiblings}} \tab Gets the all data sets that refers to the same samples a this one.\cr
  \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr

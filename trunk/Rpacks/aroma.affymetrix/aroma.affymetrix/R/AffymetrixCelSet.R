@@ -1,4 +1,13 @@
-
+###########################################################################/**
+# @RdocClass AffymetrixCelSet
+#
+# @title "The AffymetrixCelSet class"
+#
+# \description{
+#  @classhierarchy
+#
+#  An AffymetrixCelSet object represents a data set of Affymetrix CEL files 
+#  with \emph{identical} chip types.
 # }
 # 
 # @synopsis 
@@ -8,7 +17,7 @@
 #   \item{...}{Not used.}
 # }
 #
-# \Section{Fields and Methods}{
+# \section{Fields and Methods}{
 #  @allmethods "public"  
 # }
 # 

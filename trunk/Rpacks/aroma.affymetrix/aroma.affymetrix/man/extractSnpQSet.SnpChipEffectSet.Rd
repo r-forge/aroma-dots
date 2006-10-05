@@ -24,7 +24,7 @@
  versa.
 }
 
-\usage{\method{extractSnpQSet}{SnpChipEffectSet}(this, ..., verbose=FALSE)}
+\usage{\method{extractSnpQSet}{SnpChipEffectSet}(this, ..., force=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
@@ -35,8 +35,9 @@
 }
 
 \details{
-  Simple benchmarking on shadowfax: To fit crlmm() on 90 CEPH 50K chips
-  it takes ~100 minutes, i.e. 67 s/array.
+  Simple benchmarking on shadowfax:
+  To extract chip effects for the 90 CEPH Mapping50K\_Xba240 arrays,
+  it takes ~90 seconds, i.e. 1s/array.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

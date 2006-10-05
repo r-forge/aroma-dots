@@ -24,7 +24,7 @@
 #
 # \details{
 #   Simple benchmarking on shadowfax: 
-#   To extract chip effects for the 90 CEPH Mapping50K_Xba240 arrays,
+#   To extract chip effects for the 90 CEPH Mapping50K\_Xba240 arrays,
 #   it takes ~90 seconds, i.e. 1s/array.
 # }
 #
