@@ -326,4 +326,7 @@ readUnits.GenotypeCallFile
 readUnits.GenotypeCallSet
 updateUnits.GenotypeCallFile
 fitCrlmm
-fitCrlmm.SnpChipEffectSet
+getSampleName
+getSampleName.AffymetrixCelFile
+getSampleName.ChipEffectFile
+getSampleNames

@@ -1,5 +1,5 @@
 ###########################################################################/**
-# @rdocclass chipeffectset			
+# @RdocClass ChipEffectSet			
 #
 # @title "The ChipEffectSet class"
 #
