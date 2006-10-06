@@ -115,7 +115,7 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   filename <- sprintf("%sCrlmmInfo.rda", cleanCdfName);
   pathname <- system.file(file.path("data", filename), package=pkgName);
   verbose && cat(verbose, "Pathname: ", pathname);
-  verbose && printf(verbose, "File size: %.2fMb", 
+  verbose && printf(verbose, "File size: %.2fMB\n", 
                                            file.info(pathname)$size/1024^2);
   vars <- load(pathname);
   verbose && cat(verbose, "Loaded variable(s): ", paste(vars, collapse=", "));
