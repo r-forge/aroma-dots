@@ -78,17 +78,13 @@ verbose && enter(verbose, "Sourcing all *.R files");
 if (atHome) {
   source("~/braju.com.R/R.utils/R.utils/R/sourceDirectory.R");
   source("../../affxparser/affxparser/R/findCdf.R");
+} else {
+  options("R.cache.path"="/tmp/hb/.Rcache/");
+  mkdirs(getOption("R.cache.path"));
 }
-source("Verbose.R");
-source("050.Object.R");
-source("readCelUnits.R");
 
-#source("../../affxparser/affxparser/R/convertCdf.R");
-#source("../../affxparser/affxparser/R/writeCdf.R");
-#source("../../affxparser/affxparser/R/applyCdfBlocks.R");
-#sourceDirectory("../affxparser/affxparser/R/", recursive=FALSE);
-
-sourceDirectory("../aroma.affymetrix/R/", recursive=FALSE);
+sourceDirectory("patches/", recursive=FALSE, modifiedOnly=TRUE);
+sourceDirectory("../aroma.affymetrix/R/", recursive=FALSE, modifiedOnly=TRUE);
 
 verbose && exit(verbose);
 
