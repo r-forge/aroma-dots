@@ -17,7 +17,8 @@ setMethodS3("transformAffine", "AffymetrixCelFile", function(this, outPath=file.
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-
+  cdf <- getCdf(this);
+  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,7 +29,10 @@ setMethodS3("transformAffine", "AffymetrixCelFile", function(this, outPath=file.
   # Already shifted?
   if (isFile(pathname) && skip) {
     verbose && cat(verbose, "Transformed data file already exists: ", pathname);
-    return(fromFile(this, pathname));
+    # CDF inheritance
+    res <- fromFile(this, pathname);
+    setCdf(res, cdf);
+    return(res);
   }
 
   # Get probe signals
@@ -37,7 +41,6 @@ setMethodS3("transformAffine", "AffymetrixCelFile", function(this, outPath=file.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify the subset of probes to be updated
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cdf <- getCdf(this);
   subsetToUpdate <- identifyCells(cdf, probes=subsetToUpdate, types=typesToUpdate, verbose=verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -58,13 +61,18 @@ setMethodS3("transformAffine", "AffymetrixCelFile", function(this, outPath=file.
   verbose && exit(verbose);
 
   # Return transformed data file object
-  fromFile(this, pathname);
+  # CDF inheritance
+  res <- fromFile(this, pathname);
+  setCdf(res, cdf);
+  return(res);
 }) # transformAffine()
 
 
 
 ############################################################################
 # HISTORY:
+# 2006-10-06
+# o make sure cdf association is inherited
 # 2006-08-25
 # o Move to class AffymetrixCelFile and output is now CEL files only.
 # 2006-07-28

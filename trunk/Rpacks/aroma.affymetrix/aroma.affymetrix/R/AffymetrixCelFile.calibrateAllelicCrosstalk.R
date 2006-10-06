@@ -79,7 +79,10 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
   # Already calibrated?
   if (isFile(pathname) && skip) {
     verbose && cat(verbose, "Calibrated data file already exists: ", pathname);
-    return(newInstance(this, pathname));
+    # CDF inheritance
+    res <- newInstance(this, pathname);
+    setCdf(res, cdf);
+    return(res);
   }
 
   verbose && cat(verbose, "Pathname: ", getPathname(this));
@@ -180,6 +183,8 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
 
   # Return calibrated data file object
   res <- newInstance(this, pathname);
+  # CDF inheritance
+  setCdf(res, cdf);
 
   callHooks(sprintf("%s.onExit", hookName), df=this, dfC=res, ...);
 
@@ -191,6 +196,8 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
 
 ############################################################################
 # HISTORY:
+# 2006-10-06
+# o make sure CDF association is inherited
 # 2006-07-21
 # o Added calibrateAllelicCrosstalk().
 ############################################################################

@@ -149,6 +149,7 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
   # Don't create if already exists
   if (isFile(pathname)) {
     res <- newInstance(this, pathname);
+    setCdf(res, getCdf(this));
     return(res);
   }
 
@@ -158,6 +159,7 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
     clearData(res, ..., .forSure=TRUE, verbose=less(verbose));
   }
 
+  setCdf(res, getCdf(this));
   res;
 }, protected=TRUE)
 
@@ -817,6 +819,8 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-10-06
+# o make sure cdf association is inherited
 # 2006-08-28
 # o Renamed getFields() to getData() because getFields() is "reserved"
 #   for use in the Object class.

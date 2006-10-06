@@ -121,7 +121,10 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
   }
   verbose && exit(verbose);
 
-  newInstance(this, dataFiles);
+  # CDF inheritance
+  res <- newInstance(this, dataFiles);
+  setCdf(res, cdf);
+  res;
 }) # normalizeQuantile()
 
 
@@ -291,7 +294,10 @@ setMethodS3("transformAffine", "AffymetrixCelSet", function(this, outPath=file.p
   }
   verbose && exit(verbose);
 
-  newInstance(this, dataFiles);
+  # CDF inheritance
+  res <- newInstance(this, dataFiles);
+  setCdf(res, cdf);
+  res;
 }) # transformAffine()
 
 

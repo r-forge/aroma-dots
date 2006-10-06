@@ -28,7 +28,7 @@
 # }
 #
 # \value{
-#  Returns the background adjusted @see "AffymetrixCelFile" object.
+#  Returns the background adjusted @see "AffymetrixCelSet" object.
 # }
 #
 # \author{
@@ -82,9 +82,10 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
   }
   verbose && exit(verbose);
 
-  tmp <- newInstance(this, dataFiles);
-  setCdf(tmp, getCdf(this));
-  return(tmp);
+  # CDF inheritance
+  res <- newInstance(this, dataFiles);
+  setCdf(res, getCdf(this));
+  return(res);
   
 })
 
@@ -314,9 +315,9 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
   }
   verbose && exit(verbose);
 
-  tmp <- newInstance(this, dataFiles);
-  setCdf(tmp, getCdf(this));
-  return(tmp);
+  res <- newInstance(this, dataFiles);
+  setCdf(res, getCdf(this));
+  return(res);
   
 })
 
@@ -324,6 +325,8 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 
 ############################################################################
 # HISTORY:
+# 2006-10-06
+# o make sure cdf association is inherited
 # 2006-10-04
 # o Tested, debugged, docs added.
 # 2006-09-28
