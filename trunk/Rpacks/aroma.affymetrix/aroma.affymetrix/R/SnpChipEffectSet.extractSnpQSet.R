@@ -34,7 +34,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, transform=c("log", "asinh"), ..., force=FALSE, verbose=FALSE) {
   require(oligo) || throw("Package not loaded: oligo");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,6 +51,13 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., force=FALS
     throw("Cannot not extract SnpQSet. Strands are merged.");
   }
 
+  if (is.character(transform)) {
+    transform <- match.arg(transform);
+  } else if (is.function(transform)) {
+  } else {
+    throw("Argument 'transform' must be a character of a function: ", mode(transform));
+  }
+
   verbose && enter(verbose, "Extracting chip effects as a SnpQSet for ", 
                                            nbrOfArrays(this), " arrays");
 
@@ -58,14 +65,19 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., force=FALS
   # Check for cached results
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- list(method="extractSnpQSet.SnpChipEffectSet", 
-                   path=getPath(this), sampleNames=getSampleNames(this));
-  res <- loadCache(key=key);
-  if (!force && !is.null(res)) {
-    # Just a temporary fix of sample names since I've got cached data on
-    # file right now. /HB 2006-10-04
-    if (identical(sampleNames(res), getSampleNames(this)))
-      sampleNames(res) <- getSampleNames(this);
-    return(res);
+              path=getPath(this), sampleNames=getSampleNames(this),
+              transform=transform);
+  if (!force) {
+    verbose && enter(verbose, "Checking cache");
+    res <- loadCache(key=key);
+    verbose && exit(verbose);
+    if (!is.null(res)) {
+      # Just a temporary fix of sample names since I've got cached data on
+      # file right now. /HB 2006-10-04
+      if (identical(sampleNames(res), getSampleNames(this)))
+        sampleNames(res) <- getSampleNames(this);
+      return(res);
+    }
   }
 
   cdf <- getCdf(this);
@@ -112,13 +124,27 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., force=FALS
   gc();
   verbose && exit(verbose);
 
-  verbose && enter(verbose, "Reshaping to (log2) matrices");
+
+  if (is.character(transform)) {
+    if (identical(transform, "log")) {
+      transform <- function(x) { log(x, base=2) }
+    } else if (identical(transform, "asinh")) {
+      # Constant to make arcsinh transform values to be
+      # on the same scale as the log2 transformed ones.
+      C <- log(2^16, base=2)/asinh(2^16);
+      transform <- function(x) { C*asinh(x) }
+    } else {
+      throw("Unknown transform: ", transform);
+    }
+  }
+
+  verbose && enter(verbose, "Reshaping to (transformed) matrices");
   for (kk in seq(along=thetas)) {
     theta <- thetas[[kk]];
     # Extract the vector of chip effects
     theta <- unlist(theta, use.names=FALSE);
     # Chip-effects are stored on the intensity scale.  Take log2.
-    theta <- log(theta, base=2);
+    theta <- transform(theta);
     # Make into an JxI matrix
     theta <- matrix(theta, ncol=nbrOfSamples, byrow=TRUE);
     rownames(theta) <- snpNames; 
@@ -162,6 +188,9 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, ..., force=FALS
 
 ############################################################################
 # HISTORY:
+# 2006-10-05
+# o Added so chip effects can be extracted on the C*arcsinh scale as well 
+#   as the log2 scale.
 # 2006-10-02
 # o Added extractSnpQSet() so that we can run crlmm().
 ############################################################################

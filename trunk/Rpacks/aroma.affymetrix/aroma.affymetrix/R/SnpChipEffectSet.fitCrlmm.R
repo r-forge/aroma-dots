@@ -33,7 +33,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=50, AB=40, BB=50), recalibrate=TRUE, ..., verbose=FALSE) {
+setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=50, AB=40, BB=50), recalibrate=TRUE, transform=c("log", "asinh"), ..., verbose=FALSE) {
   returnCorrectedM <- TRUE;
   returnParams <- TRUE;
 
@@ -58,7 +58,7 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   # Extract chip effects as a SnpQSet object
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Extracting chip effects as a SnpQSet object");
-  qs <- extractSnpQSet(this, verbose=less(verbose));
+  qs <- extractSnpQSet(this, transform=transform, verbose=less(verbose));
   verbose && exit(verbose);
 
 
