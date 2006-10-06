@@ -71,7 +71,10 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
   # Already corrected?
   if (isFile(pathname) && skip) {
     verbose && cat(verbose, "Optical background adjusted data file already exists: ", pathname);
-    return(fromFile(this, pathname));
+    # make sure CDF gets inherited from source object
+    res <- fromFile(this, pathname);
+    setCdf(res, cdf);
+    return(res);
   }
 
   # Get all probe signals
@@ -107,8 +110,12 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
   verbose && exit(verbose);
   verbose && exit(verbose);
 
-  # Return new normalized data file object
-  fromFile(this, pathname);
+  # Return new BG adjusted data file object, making sure CDF is
+  # inherited from unadjusted data
+  res <- fromFile(this, pathname);
+  setCdf(res, cdf);
+  return(res);
+  
 })
 
 
@@ -189,14 +196,17 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
   pathname <- Arguments$getWritablePathname(filename, path=path,
                                             mustNotExist=(!overwrite && !skip));
   
+  cdf <- getCdf(this);
+
   # Already corrected?
   if (isFile(pathname) && skip) {
     verbose && cat(verbose, "GC-adjusted data file already exists: ", pathname);
-    return(fromFile(this, pathname));
+    # inheritance of CDF
+    res <- fromFile(this, pathname);
+    setCdf(res, cdf);
+    return(res);
   }
   
-  cdf <- getCdf(this);
-
   if (is.null(affinities)) {
 # try to find APD file containing probe affinities
 
@@ -293,13 +303,19 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
   verbose && exit(verbose);
 
   # Return new background corrected data file object
-  fromFile(this, pathname);
+
+  # inheritance of CDF
+  res <- fromFile(this, pathname);
+  setCdf(res, cdf);
+  return(res);
 
 })
 
 
 ############################################################################
 # HISTORY:
+# 2006-10-06
+# o make sure cdf association is inherited
 # 2006-10-04
 # o Debugged, tested for consistency with bg.adjust.gcrma(), docs added
 # 2006-09-28

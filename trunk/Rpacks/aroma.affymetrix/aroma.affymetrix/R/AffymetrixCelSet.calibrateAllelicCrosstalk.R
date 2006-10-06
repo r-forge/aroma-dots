@@ -93,12 +93,16 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path
   }
   verbose && exit(verbose);
 
-  newInstance(this, dataFiles);
+  res <- newInstance(this, dataFiles);
+  setCdf(res, cdf);
+  res;
 }) # calibrateAllelicCrosstalk()
 
 
 ############################################################################
 # HISTORY:
+# 2006-10-06
+# o make sure cdf association is inherited
 # 2006-09-15
 # o Adapted to the new aroma.affymetrix class structure.
 # 2006-07-21

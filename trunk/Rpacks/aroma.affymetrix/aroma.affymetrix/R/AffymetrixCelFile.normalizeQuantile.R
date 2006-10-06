@@ -76,7 +76,10 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.p
   # Already normalized?
   if (isFile(pathname) && skip) {
     verbose && cat(verbose, "Normalized data file already exists: ", pathname);
-    return(fromFile(this, pathname));
+    # CDF inheritance
+    res <- fromFile(this, pathname);
+    setCdf(res, cdf);
+    return(res);
   }
 
   # Get all probe signals
@@ -112,13 +115,20 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.p
   verbose && exit(verbose);
 
   # Return new normalized data file object
-  fromFile(this, pathname);
+
+  # CDF inheritance
+  res <- fromFile(this, pathname);
+  setCdf(res, cdf);
+  return(res);
+
 })
 
 
 
 ############################################################################
 # HISTORY:
+# 2006-10-06
+# o make sure cdf association is inherited
 # 2006-09-14
 # o Updated to the new package API.
 # 2006-08-25
