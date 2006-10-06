@@ -145,6 +145,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, transform=c("lo
     theta <- unlist(theta, use.names=FALSE);
     # Chip-effects are stored on the intensity scale.  Take log2.
     theta <- transform(theta);
+    theta[is.na(theta)] <- -5;
     # Make into an JxI matrix
     theta <- matrix(theta, ncol=nbrOfSamples, byrow=TRUE);
     rownames(theta) <- snpNames; 
