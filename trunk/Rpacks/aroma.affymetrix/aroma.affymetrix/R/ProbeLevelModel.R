@@ -54,7 +54,7 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm"), standardize=TRUE) {
+setConstructorS3("ProbeLevelModel", function(..., name="modelPlm", model=c("pm"), standardize=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -69,7 +69,6 @@ setConstructorS3("ProbeLevelModel", function(..., name="modelPLM", model=c("pm")
     standardize=standardize
   )
 }, abstract=TRUE)
-
 
 
 setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
