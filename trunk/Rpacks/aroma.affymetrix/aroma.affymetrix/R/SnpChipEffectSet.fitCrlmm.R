@@ -74,11 +74,14 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get gender
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # getChrXIndex() is robust against SNP reordering /HB 2006-10-03
+  xIndex <- getChrXIndex(qs);
+  
   verbose && enter(verbose, "Retrieving genders");
   if(is.null(qs$gender)){
     verbose && enter(verbose, "Predicting genders from data");
     # snpGenderCall() is robust against SNP reordering /HB 2006-10-03
-    qs$gender <- snpGenderCall(qs);
+    qs$gender <- snpGenderCall(qs, xIndex=xIndex);
     verbose && exit(verbose);
   }
   maleIndex <- (qs$gender == "male");
@@ -94,7 +97,7 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   correction <- loadCache(key=key);
   if (is.null(correction)) {
     verbose && enter(verbose, "Calculating M corrections using fitAffySnpMixture()");
-    correction <- fitAffySnpMixture(qs, verbose=verbose2);
+    correction <- fitAffySnpMixture(qs, xIndex=xIndex, verbose=verbose2);
     verbose && exit(verbose);
     comment <- paste(unlist(key, use.names=FALSE), collapse=";");
     saveCache(key=key, correction, comment=comment);
@@ -119,25 +122,40 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
                                            file.info(pathname)$size/1024^2);
   vars <- load(pathname);
   verbose && cat(verbose, "Loaded variable(s): ", paste(vars, collapse=", "));
-  verbose && exit(verbose);
 
   # Get CRLMM parameters enviroment
   var <- sprintf("%sCrlmm", cleanCdfName);
+  verbose && enter(verbose, "Getting variable '", var, "'");
   if (!var %in% vars) {
     throw("Internal error. Variable '", var, "' was not among the loaded: ",
           paste(vars, collapse=", "));
   }
   env <- get(var, mode="environment");
+  verbose && exit(verbose);
   rm(list=vars); # Not needed anymore
+  verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the indices of SNPs that are not called by the HapMap project 
   # or that were poorly called.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Identifying poor or missing HapMap calls");
   snpNames <- featureNames(qs);
-  poorCalls <- (!env$hapmapCallIndex[snpNames] | env$badCallIndex[snpNames]);
+  verbose && cat(verbose, "Feature names:");
+  verbose && str(verbose, snpNames);
+  value <- !env$hapmapCallIndex;
+  poorCalls <- value[match(snpNames, names(value))];
+  value <- env$badCallIndex;
+  poorCalls <- poorCalls | value[match(snpNames, names(value))];
+  rm(value);
   poorCalls <- which(poorCalls);
   verbose && cat(verbose, "Among the ", nbrOfSnps, " SNPs, there are ", length(poorCalls), " SNPs that were not called by the HapMap project or were poorly called by it.");
+  verbose && exit(verbose);
+
+  # Get rid of large enviroment again
+  priors <- env$priors;
+  params <- env$params;
+  rm(env); gc(); # Not needed anymore
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get initial calls for non-HapMap calls
@@ -163,9 +181,6 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   # Shrink genotype regions toward the priors
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Shrinking genotype regions toward the priors");
-  priors <- env$priors;
-  params <- env$params;
-  rm(env); gc(); # Not needed anymore
   rparams <- updateAffySnpParams(rparams, priors, verbose=verbose2);
   params <- replaceAffySnpParams(params, rparams, subset=poorCalls);
   verbose && exit(verbose);
@@ -176,17 +191,19 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Calculating call distances");
   # SNPs in qs, params, and correction$fs must be ordered the same.
+  # myDist is a JxIx3x2 matrix where J=#SNPs, I=#arrays, with
+  # 3=#genotypes and # 2=#strands.
   myDist <- getAffySnpDistance(qs, params, correction$fs);
   verbose && exit(verbose);
 
-  # getChrXIndex() is robust against SNP reordering /HB 2006-10-03
-  XIndex <- getChrXIndex(qs);
-  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Update the calls from the new distances
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Updating the calls from the new distances");
-  myCalls <- getAffySnpCalls(myDist, XIndex, maleIndex, verbose=verbose2);
+  # This takes time: This is worth optimizing.
+  res <- list(myDist=myDist, xIndex=xIndex, maleIndex=maleIndex);
+  saveCache(key=list("yo"), res);
+  myCalls <- getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
   gc();
   verbose && exit(verbose);
 
@@ -194,7 +211,7 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
   # Calculate log-likehood ratios
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Calculating log-likehood ratios");
-  llr <- getAffySnpConfidence(myDist, myCalls, XIndex, maleIndex, 
+  llr <- getAffySnpConfidence(myDist, myCalls, xIndex, maleIndex, 
                                                          verbose=verbose2);
   verbose && str(verbose, llr);
   verbose && exit(verbose);
@@ -236,11 +253,11 @@ setMethodS3("fitCrlmm", "SnpChipEffectSet", function(this, minLLRforCalls=c(AA=5
     verbose && exit(verbose);
     
     verbose && enter(verbose, "Updating the calls from the new distances");
-    myCalls <- getAffySnpCalls(myDist, XIndex, maleIndex, verbose=verbose2);
+    myCalls <- getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
     verbose && exit(verbose);
     
     verbose && enter(verbose, "Calculating log-likehood ratios");
-    llr <- getAffySnpConfidence(myDist, myCalls, XIndex, maleIndex,
+    llr <- getAffySnpConfidence(myDist, myCalls, xIndex, maleIndex,
                                                          verbose=verbose2);
     verbose && exit(verbose);
 

@@ -59,6 +59,17 @@ setMethodS3("getCellIndices", "CnPlm", function(this, ...) {
 })
 
 
+
+setMethodS3("getSubname", "CnPlm", function(this, ...) {
+  s <- NextMethod("getSubname", this, ...);
+  if (this$combineAlleles) {
+    s <- sprintf("%sTotal", s);
+  } else {
+    s <- sprintf("%sAllelic", s);
+  }
+  s;
+})
+
 setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Select fit function
