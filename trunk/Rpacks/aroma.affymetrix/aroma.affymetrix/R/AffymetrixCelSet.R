@@ -832,7 +832,6 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
 })
 
 ###########################################################################/**
-# @set "class=AffymetrixCelSet"
 # @RdocMethod gcrmaSummary
 #
 # @title "Calculates the GCRMA expression summary"
@@ -887,7 +886,6 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
 #  @seeclass
 # }
 #*/###########################################################################
-
 setMethodS3("gcrmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="gcrma", bgPath=NULL, normPath=NULL, summaryMethod="rlm", probePath=NULL, affinities=NULL, type="fullmodel",  indicesNegativeControl=NULL, opticalAdjust=TRUE, gsbAdjust=TRUE, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15*fast + (1-fast), fast=TRUE, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -948,7 +946,6 @@ setMethodS3("gcrmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="
 
 
 ###########################################################################/**
-# @set "class=AffymetrixCelSet"
 # @RdocMethod rmaSummary
 #
 # @title "Calculates the RMA expression summary"
@@ -985,11 +982,10 @@ setMethodS3("gcrmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="
 # }
 #
 # \seealso{
-#  @see \pkg{affy}
+#  See package \pkg{affy}.
 #  @seeclass
 # }
 #*/###########################################################################
-
 setMethodS3("rmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="rma", bgPath=NULL, normPath=NULL, summaryMethod="rlm", ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

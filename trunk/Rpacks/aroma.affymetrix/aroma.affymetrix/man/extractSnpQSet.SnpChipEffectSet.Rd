@@ -24,7 +24,7 @@
  versa.
 }
 
-\usage{\method{extractSnpQSet}{SnpChipEffectSet}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{extractSnpQSet}{SnpChipEffectSet}(this, transform=c("log", "asinh"), ..., force=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}

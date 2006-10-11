@@ -56,7 +56,7 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 
 
 \bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
+getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, getSubname, setMergeStrands
 
 \bold{Methods inherited from AffinePlm}:\cr
 getFitFunction, getProbeAffinities

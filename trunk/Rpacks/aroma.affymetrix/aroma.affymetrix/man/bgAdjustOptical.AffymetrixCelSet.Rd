@@ -40,7 +40,7 @@
 }
 
 \value{
- Returns the background adjusted \code{\link{AffymetrixCelFile}} object.
+ Returns the background adjusted \code{\link{AffymetrixCelSet}} object.
 }
 
 \author{

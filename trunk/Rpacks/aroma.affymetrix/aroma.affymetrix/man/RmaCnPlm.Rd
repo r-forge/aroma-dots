@@ -60,10 +60,10 @@ extends \link[aroma.affymetrix]{CnPlm}\cr
 
 
 \bold{Methods inherited from CnPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getFitUnitFunction, getProbeAffinities, setCombineAlleles
+getCellIndices, getChipEffects, getChipEffectSetClass, getFitUnitFunction, getProbeAffinities, getSubname, setCombineAlleles
 
 \bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
+getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, getSubname, setMergeStrands
 
 \bold{Methods inherited from RmaSnpPlm}:\cr
 

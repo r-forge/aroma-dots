@@ -25,18 +25,19 @@ a particular CDF, and matches sequence to probe index in order to assign
 an affinity to each probe.
 }
 
-\usage{\method{computeAffinities}{AffymetrixCdfFile}(this, paths=NULL, ..., verbose=FALSE)}
+\usage{\method{computeAffinities}{AffymetrixCdfFile}(this, paths=NULL, force=FALSE, verbose=FALSE, ...)}
 
 \arguments{
   \item{paths}{A \code{\link[base]{character}} variable containing location(s) to look for
    the probe sequence file.  Multiple locations should be separated by
    semi-colons.}
+  \item{force}{If \code{\link[base:logical]{FALSE}}, cached results is returned, if available.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
   \item{...}{Not used.}
 }
 
 \value{
- Returns a \code{\link[base]{numeric}} \code{\link[base]{vector}} of probe affinities, of length equal
+ Returns a \code{\link[base]{numeric}} \code{\link[base]{vector}} of (log2) probe affinities, of length equal
  to the total number of features on the array.
 }
 

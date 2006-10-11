@@ -475,6 +475,12 @@
 \alias{getSampleName.AffymetrixCelFile}
 \alias{getSampleName.ChipEffectFile}
 \alias{getSampleNames}
+\alias{bgAdjustRma}
+\alias{gcrmaSummary}
+\alias{getSubname}
+\alias{getSubname.CnPlm}
+\alias{getSubname.SnpPlm}
+\alias{rmaSummary}
 
 \description{
   This page contains aliases for all "non-documented" objects that
