@@ -545,7 +545,7 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
+setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=c("x", "y", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -312,8 +312,117 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
 })
 
 
+###########################################################################/**
+# @RdocMethod bgAdjustRma
+#
+# @title "Applies normExp background correction to a CEL file"
+#
+# \description{
+#  @get "title".
+#
+#  Calls @see "affy::bg.adjust" from the \pkg{affy} package.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{path}{The path where to save the adjusted data files.}
+#   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
+#     unless skipped, otherwise an error is thrown.}
+#   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns the background adjusted @see "AffymetrixCelFile" object.
+# }
+#
+# \author{
+#   Ken Simpson (ksimpson[at]wehi.edu.au).
+# }
+#
+# \seealso{
+#  @see "rma::bg.adjust"
+#  @seeclass
+# }
+#*/###########################################################################
+setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'path':
+  path <- Arguments$getWritablePathname(path);
+  if (identical(getPath(this), path)) {
+    throw("Cannot background correct data file. Argument 'path' refers to the same path as the path of the data file to be normalized: ", path);
+  }
+
+  
+  
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Generating output pathname
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  filename <- basename(getPathname(this));
+  pathname <- Arguments$getWritablePathname(filename, path=path,
+                                            mustNotExist=(!overwrite && !skip));
+  
+  cdf <- getCdf(this);
+
+  # Already corrected?
+  if (isFile(pathname) && skip) {
+    verbose && cat(verbose, "Background-adjusted data file already exists: ", pathname);
+    # inheritance of CDF
+    res <- fromFile(this, pathname);
+    setCdf(res, cdf);
+    return(res);
+  }
+  
+  verbose && enter(verbose, "Obtaining PM signals");
+  
+  indices <- unlist(getCellIndices(cdf))
+  pmi <- indices[isPm(cdf)]
+  pm <- getData(this, indices=pmi)$intensities;
+
+  verbose && exit(verbose);
+
+  # adjust background - use original affy functions to avoid errors from
+  # re-coding
+  verbose && enter(verbose, "Applying normal+exponential signal model");
+  pm <- bg.adjust(pm);
+  verbose && exit(verbose);
+  
+  # update the PM
+
+  # Write adjusted data to file
+  verbose && enter(verbose, "Writing adjusted probe signals");
+
+  # Copy CEL file and update the copy
+  verbose && enter(verbose, "Copying source CEL file");
+  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  verbose && exit(verbose);
+  verbose && enter(verbose, "Writing adjusted intensities");
+  updateCel(pathname, indices=pmi, intensities=pm);
+  verbose && exit(verbose);
+  verbose && exit(verbose);
+
+  # Return new background corrected data file object
+
+  # inheritance of CDF
+  res <- fromFile(this, pathname);
+  setCdf(res, cdf);
+  return(res);
+
+})
+
+
 ############################################################################
 # HISTORY:
+# 2006-10-10
+# o add RMA background correction
 # 2006-10-06
 # o make sure cdf association is inherited
 # 2006-10-04
