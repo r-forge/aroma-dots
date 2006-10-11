@@ -40,7 +40,7 @@ extends \emph{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
   using Affymetrix CDF terms.
  }
 
- \usage{ProbeLevelModel(..., name="modelPLM", model=c("pm"), standardize=TRUE)}
+ \usage{ProbeLevelModel(..., name="modelPlm", model=c("pm"), standardize=TRUE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{UnitGroupsModel}}.}

@@ -53,6 +53,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:bgAdjustGcrma.AffymetrixCelFile]{bgAdjustGcrma}} \tab Applies probe sequence based background correction to a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:bgAdjustOptical.AffymetrixCelFile]{bgAdjustOptical}} \tab Applies optical background correction to a CEL file.\cr
+ \tab \code{\link[aroma.affymetrix:bgAdjustRma.AffymetrixCelFile]{bgAdjustRma}} \tab Applies normExp background correction to a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:calibrateAllelicCrosstalk.AffymetrixCelFile]{calibrateAllelicCrosstalk}} \tab Calibrates probepair signals for allele A allele B crosstalk.\cr
  \tab \code{clone} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr

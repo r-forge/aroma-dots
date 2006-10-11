@@ -330,3 +330,9 @@ getSampleName
 getSampleName.AffymetrixCelFile
 getSampleName.ChipEffectFile
 getSampleNames
+bgAdjustRma
+gcrmaSummary
+getSubname
+getSubname.CnPlm
+getSubname.SnpPlm
+rmaSummary

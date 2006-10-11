@@ -55,12 +55,15 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{\link[aroma.affymetrix:bgAdjustGcrma.AffymetrixCelSet]{bgAdjustGcrma}} \tab Applies probe sequence based background correction to a set of
 CEL files.\cr
  \tab \code{\link[aroma.affymetrix:bgAdjustOptical.AffymetrixCelSet]{bgAdjustOptical}} \tab Applies optical background correction to a set of CEL files.\cr
+ \tab \code{\link[aroma.affymetrix:bgAdjustRma.AffymetrixCelSet]{bgAdjustRma}} \tab Applies RMA background correction to a set of
+CEL files.\cr
  \tab \code{\link[aroma.affymetrix:calculateGsbParameters.AffymetrixCelSet]{calculateGsbParameters}} \tab Computes parameters for adjustment of specific binding.\cr
  \tab \code{\link[aroma.affymetrix:calibrateAllelicCrosstalk.AffymetrixCelSet]{calibrateAllelicCrosstalk}} \tab Calibrates probepair signals for crosstalk between allele A and allele B.\cr
  \tab \code{clone} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:extractAffyBatch.AffymetrixCelSet]{extractAffyBatch}} \tab Extracts an in-memory AffyBatch object from the data set.\cr
  \tab \code{\link[aroma.affymetrix:extractSnpFeatureSet.AffymetrixCelSet]{extractSnpFeatureSet}} \tab Extracts an in-memory SnpFeatureSet object from the data set.\cr
  \tab \code{fromFiles} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:gcrmaSummary.AffymetrixCelSet]{gcrmaSummary}} \tab Calculates the GCRMA expression summary.\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
  \tab \code{getData} \tab  -\cr
@@ -74,6 +77,7 @@ CEL files.\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelSet]{plotDensity}} \tab Plots the densities of all samples.\cr
  \tab \code{range} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:rmaSummary.AffymetrixCelSet]{rmaSummary}} \tab Calculates the RMA expression summary.\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelSet]{setCdf}} \tab Sets the CDF structure for this CEL set.\cr
  \tab \code{transformAffine} \tab  -\cr
 }

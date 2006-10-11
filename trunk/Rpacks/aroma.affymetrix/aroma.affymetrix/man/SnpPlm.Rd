@@ -46,6 +46,7 @@ extends \link[aroma.affymetrix]{Interface}\cr
  \tab \code{getChipEffects} \tab  -\cr
  \tab \code{getChipEffectSetClass} \tab  -\cr
  \tab \code{getProbeAffinities} \tab  -\cr
+ \tab \code{getSubname} \tab  -\cr
  \tab \code{setMergeStrands} \tab  -\cr
 }
 
