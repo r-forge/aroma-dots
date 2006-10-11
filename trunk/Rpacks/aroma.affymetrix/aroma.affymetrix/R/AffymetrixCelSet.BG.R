@@ -148,15 +148,14 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
 
   # get a random subset of PM to use in parameter estimation
   pmi.random <- sample(pmi, nbrOfPms);
-  rm(pmi);  # Not needed anymore
-
+  rm(pmi);   # Not needed anymore
+  
   # make sure we don't just sample from a single array; avoids problems
   # if we happened to choose a low quality or otherwise aberrant array
   iarray <- sample(1:narray, nbrOfPms, replace=TRUE);
 
   verbose && enter(verbose, "Extracting ", nbrOfPms, " random PM intensities from dataset");
   pm.random <- readCelIntensities(getPathnames(this), indices=pmi.random);
-  rm(pmi.random);  # Not needed anymore
   verbose && exit(verbose);
   
   pm.random2 <- vector("double", nrow(pm.random));
@@ -165,7 +164,7 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
   }
 
   # clean up
-  rm(pm.random, iarray); # Not needed anymore
+  rm(pm.random, iarray);   # Not needed anymore
   gc();
 
   verbose && enter(verbose, "Extracting probe affinities and fitting linear model")
@@ -175,7 +174,7 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
   } else {
     aff <- affinities[pmi.random];
   }
-  rm(pmi.random);
+  rm(pmi.random);  # Not needed anymore
 
   pm.random2 <- log2(pm.random2);  # Minimize memory usage.
   fit1 <- lm(pm.random2 ~ aff);
@@ -329,10 +328,96 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 
 
 
+###########################################################################/**
+# @set "class=AffymetrixCelSet"
+# @RdocMethod bgAdjustRma
+#
+# @title "Applies RMA background correction to a set of
+# CEL files"
+#
+# \description{
+#  @get "title".
+#
+#  Adapted from @see "affy::bg.adjust" in the \pkg{affy} package.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{path}{The path where to save the adjusted data files.}
+#   \item{name}{Name of the data set containing the background corrected
+#        files.}
+#   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
+#     unless skipped, otherwise an error is thrown.}
+#   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns the background adjusted @see "AffymetrixCelFile" object.
+# }
+#
+# \author{
+#   Ken Simpson (ksimpson[at]wehi.edu.au).
+# }
+#
+# \seealso{
+#  @see "affy::bg.adjust"
+#  @seeclass
+# }
+#*/###########################################################################
+setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="bgRma", overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cdf <- getCdf(this);
+
+  # Argument 'path':
+  if (is.null(path)) {
+    # Path structure: /bgGcrma/<data set name>/chip_data/<chip type>/
+    path <- file.path(name, getName(this), "chip_data", getChipType(cdf));
+  }
+  if (!is.null(path)) {
+    # Verify this path (and create if missing)
+    path <- Arguments$getWritablePath(path);
+  }
+
+  if (identical(getPath(this), path)) {
+    throw("Cannot calibrate data file. Argument 'path' refers to the same path as the path of the data file to be calibrated: ", path);
+  }
+  mkdirs(path);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # apply normal+exponential model to each array
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  verbose && enter(verbose, "Adjusting ", nbrOfArrays(this), " arrays");
+  dataFiles <- list();
+  for (kk in seq(this)) {
+    verbose && enter(verbose, "Array #", kk);
+    df <- getFile(this, kk);
+    verbose && print(verbose, df);
+    dataFiles[[kk]] <- bgAdjustRma(df, path=path, ..., verbose=less(verbose));
+    verbose && exit(verbose);
+  }
+  verbose && exit(verbose);
+
+  res <- newInstance(this, dataFiles);
+  setCdf(res, getCdf(this));
+  return(res);
+  
+})
+
+
 ############################################################################
 # HISTORY:
 # 2006-10-10
-# o Made some minor memory optimization to calculateGsbParameters(). /HB
+# o add RMA background correction (normal+exponential)
 # 2006-10-06
 # o make sure cdf association is inherited
 # 2006-10-04
