@@ -148,22 +148,25 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
 
   # get a random subset of PM to use in parameter estimation
   pmi.random <- sample(pmi, nbrOfPms);
+  rm(pmi);  # Not needed anymore
+
   # make sure we don't just sample from a single array; avoids problems
   # if we happened to choose a low quality or otherwise aberrant array
   iarray <- sample(1:narray, nbrOfPms, replace=TRUE);
 
   verbose && enter(verbose, "Extracting ", nbrOfPms, " random PM intensities from dataset");
   pm.random <- readCelIntensities(getPathnames(this), indices=pmi.random);
+  rm(pmi.random);  # Not needed anymore
   verbose && exit(verbose);
   
-  pm.random2 <- vector("double", 25000);
-
+  pm.random2 <- vector("double", nrow(pm.random));
   for (i in 1:nbrOfPms) {
     pm.random2[i] <- pm.random[i, iarray[i]];
   }
 
   # clean up
-  rm(pm.random); gc();
+  rm(pm.random, iarray); # Not needed anymore
+  gc();
 
   verbose && enter(verbose, "Extracting probe affinities and fitting linear model")
 
@@ -172,7 +175,10 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
   } else {
     aff <- affinities[pmi.random];
   }
-  fit1 <- lm(log2(pm.random2) ~ aff);
+  rm(pmi.random);
+
+  pm.random2 <- log2(pm.random2);  # Minimize memory usage.
+  fit1 <- lm(pm.random2 ~ aff);
   verbose && exit(verbose);
   
   return(fit1$coef);
@@ -325,6 +331,8 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 
 ############################################################################
 # HISTORY:
+# 2006-10-10
+# o Made some minor memory optimization to calculateGsbParameters(). /HB
 # 2006-10-06
 # o make sure cdf association is inherited
 # 2006-10-04
