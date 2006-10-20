@@ -64,6 +64,31 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
   object;
 })
 
+setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALSE) {
+  identifier <- this$.identifier;
+  if (force || is.null(identifier)) {
+    # Get header
+    hdr <- getHeader(this);
+    # Get subset of data
+    nbrOfCells <- hdr$total;
+    mid <- nbrOfCells %/% 2;
+    subset <- seq(from=mid - 500, to=mid + 500);
+    data <- getData(this, indices=subset);
+    identifier <- digest(list(hdr=hdr, data=data));
+    this$.identifier <- identifier;
+  }
+  identifier;
+})
+
+setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE) {
+  identifier <- this$.identifier;
+  if (force || is.null(identifier)) {
+    identifiers <- lapply(this, getIdentifier);
+    identifier <- digest(identifiers);
+    this$.identifier <- identifier;
+  }
+  identifier;
+})
 
 
 setMethodS3("getSampleName", "AffymetrixCelFile", function(this, ...) {
@@ -551,7 +576,7 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'indices':
   nbrOfCells <- nbrOfCells(getCdf(this));
-  if (is.null(indices)) { 
+  if (is.null(indices)) {
   } else {
     indices <- Arguments$getIndices(indices, range=c(1,nbrOfCells));
     nbrOfCells <- length(indices);
