@@ -278,8 +278,8 @@ setMethodS3("getCdf", "AffymetrixCelSet", function(this, ...) {
 setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, ...) {
   # Nothing to do?
   oldCdf <- getCdf(this);
-  if (equals(cdf, oldCdf))
-    return(invisible(this));
+#  if (equals(cdf, oldCdf))
+#    return(invisible(this));
 
   # Set the CDF for all CEL files
   lapply(this, setCdf, cdf, ...);

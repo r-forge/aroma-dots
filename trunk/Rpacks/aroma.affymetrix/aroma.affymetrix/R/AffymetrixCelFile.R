@@ -272,8 +272,8 @@ setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ..., .checkArgs=T
 
     # Nothing to do?
     oldCdf <- getCdf(this);
-    if (equals(cdf, oldCdf))
-      return(invisible(this));
+#    if (equals(cdf, oldCdf))
+#      return(invisible(this));
   }
 
   # Have to clear the cache 
