@@ -371,7 +371,8 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, overwr
                                             mustNotExist=(!overwrite && !skip));
   
   cdf <- getCdf(this);
-
+  setCdf(this, cdf);
+  
   # Already corrected?
   if (isFile(pathname) && skip) {
     verbose && cat(verbose, "Background-adjusted data file already exists: ", pathname);
@@ -408,6 +409,10 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, overwr
   updateCel(pathname, indices=pmi, intensities=pm);
   verbose && exit(verbose);
   verbose && exit(verbose);
+
+  # get rid of redundant objects to save space
+  rm(pm); rm(pmi);
+  gc();
 
   # Return new background corrected data file object
 

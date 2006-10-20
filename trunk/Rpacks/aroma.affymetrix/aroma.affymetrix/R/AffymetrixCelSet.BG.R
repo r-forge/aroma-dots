@@ -315,7 +315,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(this, kk);
     verbose && print(verbose, df);
-    dataFiles[[kk]] <- bgAdjustGcrma(df, path=path, gsbAdjust=gsbAdjust, gsbParameters=gsbParameters, type=type, ..., verbose=less(verbose));
+    dataFiles[[kk]] <- bgAdjustGcrma(df, path=path, gsbAdjust=gsbAdjust, gsbParameters=gsbParameters, type=type, indicesNegativeControl=indicesNegativeControl, affinities=affinities, k=k, rho=rho, stretch=stretch, fast=fast, ..., verbose=less(verbose));
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
@@ -403,6 +403,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="b
     df <- getFile(this, kk);
     verbose && print(verbose, df);
     dataFiles[[kk]] <- bgAdjustRma(df, path=path, ..., verbose=less(verbose));
+    gc();
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
