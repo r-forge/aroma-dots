@@ -1,8 +1,8 @@
 Package: aroma.affymetrix
-Version: 0.2.3
-Date: 2006-10-03
+Version: 0.2.4
+Date: 2006-10-24
 Title: Basic classes for general Affymetrix data
-Author: Henrik Bengtsson <henrikb@braju.com>
+Author: Henrik Bengtsson <henrikb@braju.com>, Ken Simpson <ksimpson@wehi.edu.au>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Depends: R (>= 2.2.0), R.oo, R.utils, R.cache, affxparser, aroma.light, aroma.apd, digest
 Suggests: affy, affyPLM, oligo, R.image

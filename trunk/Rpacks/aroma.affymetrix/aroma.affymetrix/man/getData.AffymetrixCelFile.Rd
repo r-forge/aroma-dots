@@ -19,7 +19,7 @@
  Gets all or a subset of the fields in a CEL file for all or a subset of the cells.
 }
 
-\usage{\method{getData}{AffymetrixCelFile}(this, indices=NULL, fields=c("x", "y", "intensities", "stdvs", "pixels"), ..., verbose=FALSE)}
+\usage{\method{getData}{AffymetrixCelFile}(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE)}
 
 \arguments{
   \item{indices}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of cell indices.  If \code{\link[base]{NULL}}, all cells
@@ -33,7 +33,11 @@
  Returns a \code{\link[base]{data.frame}} of the fields requested.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\section{Caching}{
+  Neither in-memory nor on-file caching is done by this method.
+}
+
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   For more information see \code{\link{AffymetrixCelFile}}.

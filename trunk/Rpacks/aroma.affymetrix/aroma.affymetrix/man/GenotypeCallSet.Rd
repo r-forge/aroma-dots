@@ -59,7 +59,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
+append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFiles, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -67,7 +67,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \keyword{classes}
 \keyword{internal}

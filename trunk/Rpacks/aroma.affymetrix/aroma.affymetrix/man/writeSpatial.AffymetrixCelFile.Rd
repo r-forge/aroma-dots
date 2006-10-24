@@ -40,7 +40,7 @@
   \code{options(imageConverter="C:/Program Files/ImageMagick/bin/convert")}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{*image270}()}.

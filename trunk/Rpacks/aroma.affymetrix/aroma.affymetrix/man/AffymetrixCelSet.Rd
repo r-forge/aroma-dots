@@ -47,6 +47,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 \tabular{rll}{
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
+ \tab \code{append} \tab  -\cr
  \tab \code{applyToUnitIntensities} \tab  -\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixCelSet.AffymetrixCelSet]{as.AffymetrixCelSet}} \tab Coerce an object to an AffymetrixCelSet object.\cr
@@ -64,9 +65,10 @@ CEL files.\cr
  \tab \code{\link[aroma.affymetrix:extractSnpFeatureSet.AffymetrixCelSet]{extractSnpFeatureSet}} \tab Extracts an in-memory SnpFeatureSet object from the data set.\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:gcrmaSummary.AffymetrixCelSet]{gcrmaSummary}} \tab Calculates the GCRMA expression summary.\cr
- \tab \code{getAverageFile} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getAverageFile.AffymetrixCelSet]{getAverageFile}} \tab Calculates the mean and the standard deviation cell signal across the data set.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
  \tab \code{getData} \tab  -\cr
+ \tab \code{getIdentifier} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getIntensities.AffymetrixCelSet]{getIntensities}} \tab Gets cell intensities from a set of cells and a set of arrays.\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getSampleNames.AffymetrixCelSet]{getSampleNames}} \tab Gets the names of the samples in the file set.\cr
@@ -84,7 +86,7 @@ CEL files.\cr
 
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
+append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFiles, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -119,5 +121,5 @@ rm(zzz)
    \code{\link{AffymetrixCelFile}}.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 \keyword{classes}

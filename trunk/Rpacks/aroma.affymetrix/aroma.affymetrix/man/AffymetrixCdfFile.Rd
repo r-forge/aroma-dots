@@ -65,7 +65,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
  \tab \code{\link[aroma.affymetrix:getUnitSizes.AffymetrixCdfFile]{getUnitSizes}} \tab Gets the number of groups in each unit.\cr
  \tab \code{\link[aroma.affymetrix:indexOf.AffymetrixCdfFile]{indexOf}} \tab Gets the indices of units by their names.\cr
- \tab \code{isPm} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:isPm.AffymetrixCdfFile]{isPm}} \tab Checks which cells (probes) are PMs and not.\cr
  \tab \code{\link[aroma.affymetrix:isSnpChip.AffymetrixCdfFile]{isSnpChip}} \tab Static method to check if a chip is a mapping (SNP) chip.\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{nbrOfColumns} \tab  -\cr
@@ -73,7 +73,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{nbrOfRows} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:nbrOfSnps.AffymetrixCdfFile]{nbrOfSnps}} \tab Gets the number of SNPs in the data set.\cr
  \tab \code{nbrOfUnits} \tab  -\cr
- \tab \code{readUnits} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:readUnits.AffymetrixCdfFile]{readUnits}} \tab Reads CDF data unit by unit.\cr
  \tab \code{\link[aroma.affymetrix:setRestructor.AffymetrixCdfFile]{setRestructor}} \tab Specifies a function through which.\cr
  \tab \code{stextChipType} \tab  -\cr
 }
@@ -88,5 +88,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 \keyword{classes}

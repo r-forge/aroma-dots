@@ -34,7 +34,7 @@
  Returns a \code{\link[base]{double}} \code{\link[base]{vector}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   \code{\link[aroma.light]{averageQuantile.list}}

@@ -47,6 +47,10 @@ setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
 }, static=TRUE)
 
 
+setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern="-chipEffects[.](c|C)(e|E)(l|L)$", fileClass="ChipEffectFile") {
+  fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
+}, static=TRUE);
+
 setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name=getName(dataset), ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

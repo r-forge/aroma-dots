@@ -40,7 +40,7 @@
   it takes ~90 seconds, i.e. 1s/array.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   For more information see \code{\link{SnpChipEffectSet}}.

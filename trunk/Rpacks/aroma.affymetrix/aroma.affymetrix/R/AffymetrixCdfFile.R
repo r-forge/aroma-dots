@@ -515,6 +515,40 @@ setMethodS3("getRestructor", "AffymetrixCdfFile", function(this, ...) {
 }, protected=TRUE)
 
 
+
+###########################################################################/**
+# @RdocMethod readUnits
+#
+# @title "Reads CDF data unit by unit"
+#
+# \description{
+#  @get "title" for all or a subset of units (probeset).
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{units}{The units to be read. If @NULL, all units are read.}
+#   \item{...}{Additional arguments passed to @see "affxparser::readCdfUnits".}
+# }
+#
+# \value{
+#  Returns the @list structure that @see "affxparser::readCelUnits" returns
+#  (possibly restructured).
+# }
+#
+# \section{Caching}{
+#   CDF data is neither cached in memory nor on file by this method.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
 # NOTE: getUnits() does not work because an S4 class stole it!!!
 setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units, ...) {
   cdf <- readCdfUnits(this$.pathname, units=units, ...);
@@ -523,19 +557,67 @@ setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units, ...) {
 
 
 
-setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, ...) {
+
+###########################################################################/**
+# @RdocMethod isPm
+#
+# @title "Checks which cells (probes) are PMs and not"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{units}{The units to be read. If @NULL, all units are read.}
+#   \item{...}{Additional arguments passed to @see "affxparser::readCdfUnits".}
+#   \item{force}{If @TRUE, cached results are ignored.}
+#   \item{cache}{If @TRUE, results are cached.}
+# }
+#
+# \value{
+#  Returns a @logical @vector of length K, where K equals the total number
+#  of cells in the requested units.  Note that the cells are ordered as
+#  they occur in the units, that is, \emph{not} in incremental order.
+# }
+#
+# \section{Caching}{
+#   This method caches a @logical @vector of length N, when N equals the
+#   number of cells on the array. The size of this vector is approximately
+#   4*N bytes.  The vector indicates if a cell is a PM or not.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE, cache=TRUE, ...) {
   isPm <- this$.isPm;
-  if (is.null(isPm)) {
-    cdf <- readCdfIsPm(this$.pathname);
-    cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
-    isPm <- this$.isPm <- cdf;
+  if (force || is.null(isPm)) {
+    if (cache) {
+      # If caching, read all units
+      cdf <- readCdfIsPm(this$.pathname);
+      cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
+      isPm <- this$.isPm <- cdf;
+    } else {
+      # ...otherwise, read only a subset of units
+      cdf <- readCdfIsPm(this$.pathname, units=units);
+      cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
+    }
   }
 
-  if (!is.null(units)) {
+  if (cache && !is.null(units)) {
     isPm <- isPm[units];
   }
 
+  # Return a vector
   isPm <- unlist(isPm, use.names=FALSE);
+
   isPm;
 })
 

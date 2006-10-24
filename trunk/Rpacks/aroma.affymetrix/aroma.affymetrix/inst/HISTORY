@@ -1,7 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.2.3 [2006-10-xx]
+Version: 0.2.4 [2006-10-xx]
+o Added more Rdoc comments.
+
+Version: 0.2.3 [2006-10-23]
 o Added gcrma background correction.  Contributed by Ken Simpson,
   WEHI, Melbourne.
 o Added extractAffyBatch() to AffymetrixCelSet extracting data

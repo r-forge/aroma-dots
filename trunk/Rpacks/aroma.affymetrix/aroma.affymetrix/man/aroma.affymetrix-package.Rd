@@ -81,7 +81,10 @@
   implemented by downloading the latest "devel" version!
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{
+   Henrik Bengtsson <henrikb@braju.com> with major contributions
+   from Ken Simpson <ksimpson@wehi.edu.au>.
+ }
 
  \section{License}{
    The releases of this package is licensed under

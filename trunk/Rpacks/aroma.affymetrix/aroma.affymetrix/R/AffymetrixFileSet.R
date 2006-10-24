@@ -360,6 +360,106 @@ setMethodS3("getFile", "AffymetrixFileSet", function(this, idx, ...) {
   this$files[[idx]];
 })
 
+setMethodS3("getFiles", "AffymetrixFileSet", function(this, idxs=NULL, ...) {
+  if (is.null(idxs)) {
+    this$files;
+  } else {
+    this$files[idxs];
+  }
+})
+
+
+setMethodS3("appendFiles", "AffymetrixFileSet", function(this, files, clone=TRUE, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Appending ", length(files), " files");
+  # Validate classes
+  verbose && enter(verbose, "Validating file classes");
+  className <- class(this$files[[1]])[1];
+  isValid <- unlist(lapply(files, FUN=inherits, className));
+  if (!all(isValid)) {
+    throw("Some of the elements in argument 'files' are not '", 
+      className, "'");
+  }
+  verbose && exit(verbose);
+
+  # Clone file objects?
+  if (clone) {
+    verbose && enter(verbose, "Cloning files");
+    files <- lapply(files, FUN=function(file) clone(file));    
+    verbose && exit(verbose);
+  }
+
+  # Append
+  this$files <- append(this$files, files);
+
+  verbose && exit(verbose);
+
+  invisible(this);
+})
+
+
+setMethodS3("append", "AffymetrixFileSet", function(x, values, ...) {
+  # To please R CMD check
+  this <- x;
+  other <- values;  
+
+  if (!inherits(other, class(this)[1])) {
+    throw("Argument 'other' is not an ", class(this)[1], " object: ", 
+                                                      class(other)[1]);
+  }
+
+  appendFiles(this, getFiles(other), ...);
+})
+
+setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  if (!inherits(other, class(this)[1])) {
+    throw("Argument 'other' is not an ", class(this)[1], " object: ", 
+                                                      class(other)[1]);
+  }
+
+  verbose && enter(verbose, "Appending CEL set");
+  verbose && print(verbose, other);
+
+  # Validate chip type
+  cdf <- getCdf(this);
+  chipType <- getChipType(cdf);
+  for (file in getFiles(other)) {
+    oCdf <- getCdf(file);
+    oChipType <- getChipType(oCdf);
+    if (!identical(oChipType, chipType)) {
+      throw("Argument 'other' contains a CEL file of different chip type: ",
+                                                oChipType, " != ", chipType);
+    }
+  }
+
+  # Append other
+  this <- NextMethod("append", this, other=other, clone=clone, ...);
+
+  # Set the same CDF for all CEL files
+  verbose && enter(verbose, "Updating the CDF for all files");
+  setCdf(this, cdf);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  this;
+})
+
+
+
 
 ###########################################################################/**
 # @RdocMethod extract
@@ -495,7 +595,7 @@ setMethodS3("clearCache", "AffymetrixFileSet", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, pattern=NULL, recursive=TRUE, fileClass="AffymetrixFile", ..., verbose=FALSE) {
+setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, pattern=NULL, recursive=FALSE, fileClass="AffymetrixFile", ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -519,6 +619,10 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
     on.exit(popState(verbose));
   }
 
+  verbose && enter(verbose, "Defining an ", class(static)[1], " object from files");
+  verbose && cat(verbose, "Path: ", path);
+  verbose && cat(verbose, "Pattern: ", pattern);
+  verbose && cat(verbose, "File class: ", class(dfStatic)[1]);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create AffymetrixFile object from the matching files
@@ -527,7 +631,7 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   verbose && enter(verbose, "Scanning directory for files");
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE, 
                                all.files=FALSE, recursive=recursive, ...);
-  verbose && sprintf("Found %d files.", length(pathnames));
+  verbose && printf(verbose, "Found %d files.\n", length(pathnames));
   if (length(pathnames) == 0)
     throw("No files found: ", path);
   verbose && exit(verbose);
@@ -535,18 +639,24 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   # Sort files in lexicographic order
   pathnames <- sort(pathnames);
 
+  verbose && enter(verbose, "Defining ", length(pathnames), " files");
   files <- list();
   for (kk in seq(along=pathnames)) {
-    df <- fromFile(dfStatic, pathnames[kk], verbose=less(verbose));
+    if (as.logical(verbose)) cat(kk, ", ", sep="");
+    df <- fromFile(dfStatic, pathnames[kk], .checkArgs=FALSE, verbose=less(verbose));
     files[[kk]] <- df;
     if (kk == 1) {
       clazz <- Class$forName(class(df)[1]);
       dfStatic <- getStaticInstance(clazz);
     }
   }
+  if (as.logical(verbose)) cat("\n");
+  verbose && exit(verbose);
 
   # Create the file set object
   set <- newInstance(static, files);
+
+  verbose && exit(verbose);
 
   set;
 }, static=TRUE)
@@ -555,6 +665,9 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-10-22
+# o Now 'recursive' of fromFiles() defaults to FALSE.
+# o Added getFiles() again.
 # 2006-09-11
 # o Added getPathnames().
 # 2006-08-27

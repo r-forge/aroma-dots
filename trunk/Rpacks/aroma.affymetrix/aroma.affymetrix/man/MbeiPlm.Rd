@@ -75,7 +75,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    \eqn{\prod_j \phi_j = 1}.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
  \references{
    Li, C. and Wong, W.H. (2001), Genome Biology 2, 1-11.\cr

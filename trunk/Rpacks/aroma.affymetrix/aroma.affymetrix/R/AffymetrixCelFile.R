@@ -153,7 +153,7 @@ setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NUL
   }
 
   # Try to read the header assuming
-  header <- readCelHeader(pathname);
+#  header <- readCelHeader(pathname);
 
   # Create a new instance of the same class
   newInstance(static, pathname);
@@ -384,6 +384,10 @@ setMethodS3("getChipType", "AffymetrixCelFile", function(this, ...) {
 #  Returns the @list structure that @see "affxparser::readCelUnits" returns.
 # }
 #
+# \section{Caching}{
+#   CEL data is neither cached in memory nor on file by this method.
+# }
+#
 # @author
 #
 # \seealso{
@@ -562,6 +566,10 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 #  Returns a @data.frame of the fields requested.
 # }
 #
+# \section{Caching}{
+#   Neither in-memory nor on-file caching is done by this method.
+# }
+#
 # @author
 #
 # \seealso{
@@ -570,7 +578,7 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=c("x", "y", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
+setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -588,7 +596,11 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  cVerbose <- -(as.numeric(verbose) + 1);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Retrieve data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cVerbose <- -(as.numeric(verbose) + 50);
   cel <- readCel(this$.pathname, indices=indices, 
                  readHeader=FALSE, 
                  readIntensities=("intensities" %in% fields), 
@@ -599,17 +611,27 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
                  readMasked=FALSE,
                  ...,
                  verbose=cVerbose);
-   cel <- as.data.frame(cel, row.names=indices);
-   isXY <- which(fields == "xy");
-   if (length(isXY) > 0) {
-     fields <- as.list(fields);
-     fields[[isXY]] <- c("x", "y");
-     fields <- unlist(fields, use.names=TRUE);
-   }
-   if (!identical(names(cel), fields)) {
-     cel <- cel[,fields];
-   }
-   cel;
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Return data as a data frame
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cel <- as.data.frame(cel, row.names=indices);
+
+  # Split (x,y)
+  isXY <- which(fields == "xy");
+  if (length(isXY) > 0) {
+    fields <- as.list(fields);
+    fields[[isXY]] <- c("x", "y");
+    fields <- unlist(fields, use.names=TRUE);
+  }
+
+  # Keep only requested fields
+  if (!identical(names(cel), fields)) {
+    cel <- cel[,fields];
+  }
+
+  cel;
 }, protected=TRUE);
 
 
@@ -844,6 +866,10 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-10-23
+# o Update default value for argument 'fields' in getData().
+# 2006-10-22
+# o In order to speed up fromFile(), the CEL header is not read anymore.
 # 2006-10-06
 # o make sure cdf association is inherited
 # 2006-08-28

@@ -29,7 +29,7 @@
  Returns a \code{\link[base]{function}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   \code{\link[affy]{fit.li.wong}}.
