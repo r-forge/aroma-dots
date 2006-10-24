@@ -164,5 +164,5 @@ par(opar)
 rm(zzz)
 }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 \keyword{classes}

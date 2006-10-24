@@ -204,7 +204,6 @@
 \alias{GdasAnnotationFile}
 \alias{GdasAnnotationSet}
 \alias{getAverageFile}
-\alias{getAverageFile.AffymetrixCelSet}
 \alias{getAverageFile.ChipEffectSet}
 \alias{getBlockPositions}
 \alias{getBlockPositions.GdasAnnotationFile}
@@ -288,7 +287,6 @@
 \alias{image270}
 \alias{indexOf}
 \alias{isPm}
-\alias{isPm.AffymetrixCdfFile}
 \alias{join}
 \alias{join.GdasAnnotationSet}
 \alias{nbrOfCells}
@@ -320,7 +318,6 @@
 \alias{readData}
 \alias{readData.GdasAnnotationFile}
 \alias{readHeader.GdasAnnotationFile}
-\alias{readUnits.AffymetrixCdfFile}
 \alias{readUnits.AffymetrixCelSet}
 \alias{readUnits.ChipEffectFile}
 \alias{readUnits.ChipEffectSet}
@@ -481,6 +478,18 @@
 \alias{getSubname.CnPlm}
 \alias{getSubname.SnpPlm}
 \alias{rmaSummary}
+\alias{append}
+\alias{append.AffymetrixCelSet}
+\alias{append.AffymetrixFileSet}
+\alias{append.default}
+\alias{appendFiles}
+\alias{appendFiles.AffymetrixFileSet}
+\alias{fromFiles.ChipEffectSet}
+\alias{getFiles}
+\alias{getFiles.AffymetrixFileSet}
+\alias{getIdentifier}
+\alias{getIdentifier.AffymetrixCelFile}
+\alias{getIdentifier.AffymetrixCelSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
@@ -494,7 +503,7 @@
   The rest are deprecated methods.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 
 \keyword{documentation}

@@ -19,8 +19,8 @@
   Defines an AffymetrixFileSet object by searching for Affymetrix files.
 }
 
-\synopsis{fromFiles.AffymetrixFileSet(static, path=NULL, pattern=NULL, recursive=TRUE, fileClass="AffymetrixFile", ..., verbose=FALSE)}
-\usage{AffymetrixFileSet$fromFiles(path=NULL, pattern=NULL, recursive=TRUE, fileClass="AffymetrixFile", ..., verbose=FALSE)}
+\synopsis{fromFiles.AffymetrixFileSet(static, path=NULL, pattern=NULL, recursive=FALSE, fileClass="AffymetrixFile", ..., verbose=FALSE)}
+\usage{AffymetrixFileSet$fromFiles(path=NULL, pattern=NULL, recursive=FALSE, fileClass="AffymetrixFile", ..., verbose=FALSE)}
 
 \arguments{
  \item{path}{The path where to search for Affymetrix files.}
@@ -45,7 +45,7 @@
   directory is scanned we do not want such files to be interpreted as data.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   For more information see \code{\link{AffymetrixFileSet}}.

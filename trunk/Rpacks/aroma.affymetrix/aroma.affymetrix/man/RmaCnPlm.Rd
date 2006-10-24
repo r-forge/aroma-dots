@@ -87,5 +87,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    TO DO.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 \keyword{classes}

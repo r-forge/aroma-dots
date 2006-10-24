@@ -59,7 +59,6 @@ fromFiles.GdasAnnotationSet
 GdasAnnotationFile
 GdasAnnotationSet
 getAverageFile
-getAverageFile.AffymetrixCelSet
 getAverageFile.ChipEffectSet
 getBlockPositions
 getBlockPositions.GdasAnnotationFile
@@ -143,7 +142,6 @@ identifyCells.AffymetrixCdfFile
 image270
 indexOf
 isPm
-isPm.AffymetrixCdfFile
 join
 join.GdasAnnotationSet
 nbrOfCells
@@ -175,7 +173,6 @@ readColumnName.GdasAnnotationFile
 readData
 readData.GdasAnnotationFile
 readHeader.GdasAnnotationFile
-readUnits.AffymetrixCdfFile
 readUnits.AffymetrixCelSet
 readUnits.ChipEffectFile
 readUnits.ChipEffectSet
@@ -336,3 +333,15 @@ getSubname
 getSubname.CnPlm
 getSubname.SnpPlm
 rmaSummary
+append
+append.AffymetrixCelSet
+append.AffymetrixFileSet
+append.default
+appendFiles
+appendFiles.AffymetrixFileSet
+fromFiles.ChipEffectSet
+getFiles
+getFiles.AffymetrixFileSet
+getIdentifier
+getIdentifier.AffymetrixCelFile
+getIdentifier.AffymetrixCelSet

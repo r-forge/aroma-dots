@@ -1,0 +1,70 @@
+<%
+# Input: 
+# 1) ce
+# 2) unitsDone
+
+cdf <- getCdf(ce);
+%>
+
+<html>
+<head>
+ <title>Progress Report</title>
+</head>
+<body>
+<h1>Progress Report</h1>
+<p>
+Data set: <%=getPath(ce)%><br>
+Chip type: <%=getChipType(cdf)%><br>
+</p>
+<center>
+<table border="0" width="80%" cellpadding="0" cellspacing="0">
+<%
+fgCol <- gsub("#", "", palette()[1]);
+maxN <- max(unlist(lapply(unitsDone[-1], FUN=function(set) set$n)));
+%>
+
+<% for (kk in seq(along=unitsDone)) { %>
+
+<%
+  set <- unitsDone[[kk]];
+  print(set$label);
+  progressStr <- sprintf("%.f%%", 100*set$progress);
+  if (kk == 1) {
+    chrWidth <- 1;
+  } else {
+    chrWidth <- set$n/maxN;
+  }
+%>
+
+<tr valign="bottom">
+ <td rowspan="3">
+  <big><%=set$label%></big>&nbsp;&nbsp;
+ </td>
+ <td rowspan="3">
+  <small><small>
+  <%=set$count%> of <%=set$n%>&nbsp;<br>
+  (<%=progressStr%>)
+  </small></small>
+ </td>
+</tr>
+<tr>
+ <td>
+  <div style="width: <%=as.integer(100*chrWidth)%>%; border: 1px solid black; border-bottom: none;">
+  <img src="images/pixel_<%=fgCol%>.png" width="<%=progressStr%>" height="<%=if(kk==1) 5 else 3%>px">
+  </div>
+ </td>
+</tr>
+<tr>
+ <td>
+  <div style="width: <%=as.integer(100*chrWidth)%>%; border: 1px solid black;">
+  <img src="<%=set$image%>" width="100%" height="<%=if(kk==1) 20 else 12%>px">
+  </div>
+ </td>
+</tr>
+<tr><td colspan="2" style="height: <%=if(kk==1) 8 else 2%>px;"></td></tr>
+<% } # for (kk in ...) %>
+</table>
+</center>
+
+</body>
+</html>

@@ -6,9 +6,8 @@ pngDev <- System$findGraphicsDevice();
 # Specify the family of datasets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("dataPath"))
-  dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", chipType="Nsp");
+  dataPath <- findCelSet(name="CarmichaelC_etal_2006-500k", chipType="Nsp");
 print(dataPath)
-
 if (!exists("raw", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
   ds <- AffymetrixCelSet$fromFiles(dataPath);
@@ -17,17 +16,33 @@ if (!exists("raw", mode="list")) {
   rm(ds);
   verbose && exit(verbose);
 }
+raw <- raw["Sty"]
 print(raw);
+
+if (!exists("rawRef", mode="list")) {
+  tmp <- list();
+  verbose && enter(verbose, "Defining all reference data sets");
+  for (cc in names(raw)) {
+    path <- findCelSet(name="Affymetrix_2006-CEPH270", chipType=cc);
+    ds <- AffymetrixCelSet$fromFiles(path);
+    print(ds);
+    tmp[[cc]] <- ds;
+  }
+  rawRef <- tmp; rm(tmp);  
+  verbose && exit(verbose);
+}
+print(rawRef);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Normalize
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("qn", mode="list")) {
-  verbose && enter(verbose, "Normalizing all data sets");
-  tmp <- raw;
-  for (name in names(raw)) {
+if (!exists("qnRef", mode="list")) {
+  verbose && enter(verbose, "Normalizing all reference data sets");
+  tmp <- rawRef;
+  for (name in names(tmp)) {
     verbose && enter(verbose, "Data set: ", name);
-    ds <- raw[[name]];
+    ds <- tmp[[name]];
     path <- findCelSet(name=getName(ds), chipType=getChipType(getCdf(ds)), paths="normQuantile", minCount=length(ds));
     if (is.null(path)) {
       dsN <- normalizeQuantile(ds, subsetToAvg=1/3, verbose=less(verbose));
@@ -38,14 +53,66 @@ if (!exists("qn", mode="list")) {
       verbose && exit(verbose);
     }
     print(dsN);
-    tmp[[name]] <- dsN;
+    tmp[[name]] <- dsN; 
     verbose && exit(verbose);
   }
-  qn <- tmp;
+  qnRef <- tmp;
+  rm(ds, dsN, path, tmp);
   verbose && exit(verbose);
 }
 
-stop()
+
+if (!exists("qnTest", mode="list")) {
+  verbose && enter(verbose, "Normalizing all data sets");
+  tmp <- raw;
+  for (name in names(tmp)) {
+    verbose && enter(verbose, "Data set: ", name);
+    ds <- tmp[[name]];
+    chipType <- getChipType(getCdf(ds));
+    path <- findCelSet(name=getName(ds), chipType=chipType, paths="normQuantile", minCount=length(ds));
+    if (is.null(path)) {
+      # Get the target distribution (from the CEPH 500k dataset)
+      path <- getPath(qnRef[[name]]);
+      filename <- sprintf("%s-quantiles.apq", chipType);
+      pathname <- filePath(path, filename, expandLinks="any");
+      if (!isFile(pathname))
+        throw("Reference data set not normalized.");
+      verbose && enter(verbose, "Reading saved distribution: ", pathname);
+      xTarget <- readApd(pathname)$quantiles;
+      verbose && exit(verbose);
+      dsN <- normalizeQuantile(ds, xTarget=xTarget, verbose=less(verbose));
+    } else {
+      verbose && enter(verbose, "Detected normalized dataset");
+      verbose && cat(verbose, "Pathname: ", path);
+      dsN <- fromFiles(ds, path);
+      verbose && exit(verbose);
+    }
+    print(dsN);
+    tmp[[name]] <- dsN;
+    verbose && exit(verbose);
+  }
+  qnTest <- tmp;
+  rm(ds, dsN, path, tmp, xTarget);
+  verbose && exit(verbose);
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Merge test data set with reference data set
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+if (!exists("qn", mode="list")) {
+  verbose && enter(verbose, "Merge with reference data sets");
+  tmp <- qnTest;
+  for (name in names(qnTest)) {
+    ds <- clone(qnTest[[name]]);
+    append(ds, qnRef[[name]], verbose=verbose);
+    tmp[[name]] <- ds;
+  }
+  qn <- tmp;
+  rm(ds, tmp);
+  verbose && exit(verbose);
+}
+print(qn);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Create copy-number models
@@ -70,7 +137,11 @@ if (!exists("models", mode="list")) {
   verbose && enter(verbose, "Pre-creates chip effects");
   ces <- getChipEffects(model, verbose=less(verbose));
   verbose && exit(verbose);
-
+  tmp <- raw;
+  for (name in names(raw)) {
+    verbose && enter(verbose, "Data set: ", name);
+    ds <- raw[[name]];
+  }
   verbose && exit(verbose);
 }
 
@@ -97,7 +168,7 @@ for (kk in seq(along=models)) {
   verbose && exit(verbose);
 
   verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
-  uDone <- fit(model, units=units, moreUnits=1, verbose=verbose);
+  uDone <- fit(model, units=units, moreUnits=30, verbose=verbose);
   nDone <- length(uDone);
 
   # Update average chip effects
@@ -112,7 +183,10 @@ for (kk in seq(along=models)) {
   verbose && exit(verbose);
   verbose && exit(verbose);
 }
+  verbose && exit(verbose);
+} # for (chr in c(1:22, "X"))
 
+{
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get relative copy numbers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -126,6 +200,8 @@ sample <- family["daughter"];
 # > intersect(substr(getNames(ds2), 1,7), substr(getNames(ds), 1,7))
 commonCEPH <-c("NA10851", "NA10855", "NA10863", "NA11831", "NA11832", "NA12056", "NA12057", "NA12234", "NA12264", "NA12707", "NA12716", "NA12717", "NA12801", "NA12812", "NA12813")
 sample <- commonCEPH[1];
+
+sample <- "1-288 [a-zA-Z]* 500K";
 
 data <- vector("list", length(models));
 names(data) <- names(models);
@@ -182,6 +258,7 @@ for (kk in seq(along=models)) {
   verbose && exit(verbose);
 }
 
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Plot data
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -209,6 +286,7 @@ for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
 
   chrIdx <- which(chr == allChromosomes);
   imgName <- sprintf("%s-MvsX-Chr%02d-x%03d.png", name, chrIdx, zoom);
+  imgName <- gsub(" ", "_", imgName);
   pathname <- filePath(figPath, imgName);
   width <- round(zoom*5*(nbrOfBases / 10^6));
   height <- 400;
@@ -232,7 +310,7 @@ for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
   stext(sprintf("Sample: %s", sample), side=3, pos=0, line=0, cex=0.8);
   stext(sprintf("Chromosome %s", chr), side=3, pos=1, line=0, cex=0.8);
   str <- paste(nbrOfSnps, collapse="+");
-  str <- sprintf("%s=%d SNPs", str, sum(nbrOfSnps));
+  str <- sprintf("%s=%d SNPs", str, sum(unlist(nbrOfSnps)));
   stext(str, side=3, pos=1, line=-1, cex=0.8);
   
   # Plot CNs for all chip types

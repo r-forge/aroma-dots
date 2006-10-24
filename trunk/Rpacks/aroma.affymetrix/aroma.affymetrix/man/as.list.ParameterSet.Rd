@@ -29,7 +29,7 @@
  Returns a \code{\link[base]{list}} of \code{\link{ParameterFile}}s.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   For more information see \code{\link{ParameterSet}}.

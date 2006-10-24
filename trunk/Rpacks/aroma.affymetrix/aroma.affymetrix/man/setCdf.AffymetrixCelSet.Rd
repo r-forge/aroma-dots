@@ -19,7 +19,7 @@
  Sets the CDF structure for this CEL set.  This structures is assigned to all CEL files in the set.
 }
 
-\usage{\method{setCdf}{AffymetrixCelSet}(this, cdf, ...)}
+\usage{\method{setCdf}{AffymetrixCelSet}(this, cdf, verbose=FALSE, ...)}
 
 \arguments{
   \item{cdf}{An \code{\link{AffymetrixCdfFile}} object.}
@@ -30,7 +30,7 @@
  Returns nothing.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{*getCdf}()}.

@@ -77,5 +77,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    \eqn{\phi_i = 2^\alpha_i} are returned.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 \keyword{classes}

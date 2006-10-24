@@ -275,17 +275,33 @@ setMethodS3("getCdf", "AffymetrixCelSet", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, ...) {
+setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Setting CDF for data set");
+  verbose && print(verbose, cdf);
+
   # Nothing to do?
   oldCdf <- getCdf(this);
 #  if (equals(cdf, oldCdf))
 #    return(invisible(this));
 
   # Set the CDF for all CEL files
+  verbose && enter(verbose, "Setting CDF for each data file");
   lapply(this, setCdf, cdf, ...);
+  verbose && exit(verbose);
 
   # Have to clear the cache 
+  verbose && enter(verbose, "Clearing data-set cache");
   clearCache(this);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
 
   invisible(this);
 })
@@ -300,9 +316,17 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="chip_data/",
     on.exit(popState(verbose));
   }
 
+  verbose && enter(verbose, "Defining ", class(static)[1], " from files");
+
   this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+
   # Use the same CDF object for all CEL files.
-  setCdf(this, getCdf(this));
+  verbose && enter(verbose, "Updating the CDF for all files");
+  setCdf(this, getCdf(this), .checkArgs=FALSE);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
   this;
 })
 
@@ -639,6 +663,61 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 })
 
 
+###########################################################################/**
+# @RdocMethod getAverageFile
+#
+# @title "Calculates the mean and the standard deviation cell signal across the data set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{name}{The label of the calculated parameters.
+#    If @NULL, a default name format \code{average-<mean>-<sd>} is used.}
+#  \item{indices}{An @integer @vector specifying which cells to consider.
+#    If \code{"remaining"}, only parameters for cells that have not been
+#    are calculated.
+#    If @NULL, all cells are used.}
+#  \item{mean}{A @character of a @function specifying the function used
+#    to calculate the average.}
+#  \item{sd}{A @character of a @function specifying the function used
+#    to calculate the standard deviation.}
+#  \item{na.rm}{If @TRUE, @NAs are excluded before, otherwise not.}
+#  \item{...}{Not used.}
+#  \item{cellsPerChunk}{A @integer specifying the total number of cells 
+#    (across arrays) read into memory per chunk.}
+#  \item{moreCells}{A @double scalar indicating if more or less cells
+#    should be used per chunk.}
+#  \item{force}{If @TRUE, parameters for cells already calculated are
+#    recalculated, otherwise not.}
+#  \item{verbose}{If @TRUE, progress details are printed, otherwise not.
+#    May also be a @see "R.utils::Verbose" object.}
+# }
+#
+# \value{
+#   Returns an @see "AffymetrixCelSet" of the same class as the data set
+#   averaged.
+# }
+#
+# \details{
+#   The parameter estimates are stored as a CEL file of the same class as
+#   the data files in the data set.  The CEL file is named \code{<name>.cel}
+#   and placed in the directory of the data set.
+#   Currently there is no specific data class for this file, but the average
+#   cell signals are stored as "intensities", the standard deviation of the
+#   cell signals as "stddevs", and the number of data points used for each
+#   estimate is stored as "pixels".
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indices="remaining", mean=c("mean", "median"), sd=c("sd", "mad"), na.rm=FALSE, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -799,6 +878,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
 
   res;  
 })
+
 
 
 setMethodS3("range", "AffymetrixCelSet", function(this, ...) {
@@ -1046,6 +1126,8 @@ setMethodS3("rmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="rm
 
 ############################################################################
 # HISTORY:
+# 2006-10-24
+# o Added Rdoc comments to getAverageFile().
 # 2006-10-10
 # o Renamed rma and gcrma to rmaSummary and gcrmaSummary, to avoid clash
 #   with existing functions.

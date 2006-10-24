@@ -33,7 +33,7 @@
  Returns the new CDF as an \code{\link{AffymetrixCdfFile}} object.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   To compare two CDFs, see \code{\link[aroma.affymetrix:equals.AffymetrixCdfFile]{*equals}()}.

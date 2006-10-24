@@ -48,6 +48,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 \tabular{rll}{
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
+ \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getChipEffectFileClass} \tab  -\cr
@@ -56,10 +57,10 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 
 \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calculateGsbParameters, calibrateAllelicCrosstalk, clone, extractAffyBatch, extractSnpFeatureSet, fromFiles, gcrmaSummary, getAverageFile, getCdf, getData, getIntensities, getName, getSampleNames, getSiblings, getUnitIntensities, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, transformAffine
+[, [[, append, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calculateGsbParameters, calibrateAllelicCrosstalk, clone, extractAffyBatch, extractSnpFeatureSet, fromFiles, gcrmaSummary, getAverageFile, getCdf, getData, getIdentifier, getIntensities, getName, getSampleNames, getSiblings, getUnitIntensities, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, transformAffine
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
+append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFiles, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -67,7 +68,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
  \seealso{
    An object of this class is typically obtained through the

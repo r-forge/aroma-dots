@@ -4,6 +4,7 @@
 colSums <- appendVarArgs(colSums)
 colMeans <- appendVarArgs(colMeans)
 write <- appendVarArgs(write)
+append <- appendVarArgs(append)
 
 
 ############################################################################

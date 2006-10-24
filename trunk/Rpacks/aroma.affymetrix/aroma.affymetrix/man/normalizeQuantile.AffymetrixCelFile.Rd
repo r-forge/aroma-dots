@@ -42,7 +42,7 @@
  Returns the normalized \code{\link{AffymetrixCelFile}} object.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   \code{\link[aroma.light]{normalizeQuantile.numeric}}

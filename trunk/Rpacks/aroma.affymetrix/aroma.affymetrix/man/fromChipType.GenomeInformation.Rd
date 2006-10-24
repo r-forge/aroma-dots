@@ -29,7 +29,7 @@
   Returns a \code{\link{GenomeInformation}} object.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   \code{\link[aroma.affymetrix:fromCdf.GenomeInformation]{*fromCdf}()}.

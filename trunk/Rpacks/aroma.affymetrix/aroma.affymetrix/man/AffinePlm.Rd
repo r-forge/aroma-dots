@@ -83,7 +83,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    error structure, which in turn affects how the model is estimated.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
  \references{
    Bengtsson \& Hössjer (2006). \cr

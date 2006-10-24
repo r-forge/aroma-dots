@@ -34,7 +34,11 @@
  Returns the \code{\link[base]{list}} structure that \code{\link[affxparser]{readCelUnits}} returns.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\section{Caching}{
+  CEL data is neither cached in memory nor on file by this method.
+}
+
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   \code{\link[aroma.affymetrix:updateUnits.AffymetrixCelFile]{*updateUnits}()}.

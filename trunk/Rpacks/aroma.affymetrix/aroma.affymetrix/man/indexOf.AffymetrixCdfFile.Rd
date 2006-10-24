@@ -33,7 +33,7 @@
  in this CDF structure.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
 \seealso{
   \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{*getUnitNames}()}.

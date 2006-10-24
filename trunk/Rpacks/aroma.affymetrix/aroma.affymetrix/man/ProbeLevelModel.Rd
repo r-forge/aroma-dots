@@ -94,7 +94,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    estimated chip effects across models are on the same scale.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 
  \seealso{
    For more details on probe-level models, please see

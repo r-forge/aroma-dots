@@ -43,6 +43,8 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{append} \tab  -\cr
+ \tab \code{appendFiles} \tab  -\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixFileSet.AffymetrixFileSet]{as.AffymetrixFileSet}} \tab Coerce an object to an AffymetrixFileSet object.\cr
  \tab \code{\link[aroma.affymetrix:as.character.AffymetrixFileSet]{as.character}} \tab Returns a short string describing the Affymetrix file set.\cr
@@ -52,6 +54,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:extract.AffymetrixFileSet]{extract}} \tab Extract a subset of the file set.\cr
  \tab \code{\link[aroma.affymetrix:fromFiles.AffymetrixFileSet]{fromFiles}} \tab Defines an AffymetrixFileSet object by searching for Affymetrix files.\cr
  \tab \code{getFile} \tab  -\cr
+ \tab \code{getFiles} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getNames.AffymetrixFileSet]{getNames}} \tab Gets the names of the files in the file set.\cr
@@ -70,5 +73,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
 \keyword{classes}
