@@ -16,9 +16,13 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   verbose && enter(verbose, "Getting (A,M)-transformed chip effects");
-
 
   nunits <- length(units);
 
