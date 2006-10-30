@@ -65,7 +65,10 @@ CEL files.\cr
  \tab \code{\link[aroma.affymetrix:extractSnpFeatureSet.AffymetrixCelSet]{extractSnpFeatureSet}} \tab Extracts an in-memory SnpFeatureSet object from the data set.\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:gcrmaSummary.AffymetrixCelSet]{gcrmaSummary}} \tab Calculates the GCRMA expression summary.\cr
+ \tab \code{getAverage} \tab  -\cr
+ \tab \code{getAverageAsinh} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getAverageFile.AffymetrixCelSet]{getAverageFile}} \tab Calculates the mean and the standard deviation cell signal across the data set.\cr
+ \tab \code{getAverageLog} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
  \tab \code{getData} \tab  -\cr
  \tab \code{getIdentifier} \tab  -\cr

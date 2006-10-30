@@ -57,7 +57,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 
 \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calculateGsbParameters, calibrateAllelicCrosstalk, clone, extractAffyBatch, extractSnpFeatureSet, fromFiles, gcrmaSummary, getAverageFile, getCdf, getData, getIdentifier, getIntensities, getName, getSampleNames, getSiblings, getUnitIntensities, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, transformAffine
+[, [[, append, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calculateGsbParameters, calibrateAllelicCrosstalk, clone, extractAffyBatch, extractSnpFeatureSet, fromFiles, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getIdentifier, getIntensities, getName, getSampleNames, getSiblings, getUnitIntensities, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, transformAffine
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
 append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFiles, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq

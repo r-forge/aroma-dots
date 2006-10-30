@@ -19,11 +19,11 @@
   Calculates the mean and the standard deviation cell signal across the data set.
 }
 
-\usage{\method{getAverageFile}{AffymetrixCelSet}(this, name=NULL, indices="remaining", mean=c("mean", "median"), sd=c("sd", "mad"), na.rm=FALSE, ..., cellsPerChunk=moreCells * 10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE)}
+\usage{\method{getAverageFile}{AffymetrixCelSet}(this, name=NULL, prefix="average", indices="remaining", mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells * 10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE)}
 
 \arguments{
  \item{name}{The label of the calculated parameters.
-   If \code{\link[base]{NULL}}, a default name format \code{average-<mean>-<sd>} is used.}
+   If \code{\link[base]{NULL}}, a default name format \code{<prefix>-<mean>-<sd>} is used.}
  \item{indices}{An \code{\link[base]{integer}} \code{\link[base]{vector}} specifying which cells to consider.
    If \code{"remaining"}, only parameters for cells that have not been
    are calculated.

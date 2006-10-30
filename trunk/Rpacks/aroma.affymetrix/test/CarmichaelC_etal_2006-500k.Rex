@@ -16,14 +16,14 @@ if (!exists("raw", mode="list")) {
   rm(ds);
   verbose && exit(verbose);
 }
-raw <- raw["Sty"]
+#raw <- raw["Nsp"]
 print(raw);
 
 if (!exists("rawRef", mode="list")) {
   tmp <- list();
   verbose && enter(verbose, "Defining all reference data sets");
   for (cc in names(raw)) {
-    path <- findCelSet(name="Affymetrix_2006-CEPH270", chipType=cc);
+    path <- findCelSet(name="Affymetrix_2006-HapMap270", chipType=cc);
     ds <- AffymetrixCelSet$fromFiles(path);
     print(ds);
     tmp[[cc]] <- ds;
@@ -32,7 +32,6 @@ if (!exists("rawRef", mode="list")) {
   verbose && exit(verbose);
 }
 print(rawRef);
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Normalize
@@ -43,56 +42,40 @@ if (!exists("qnRef", mode="list")) {
   for (name in names(tmp)) {
     verbose && enter(verbose, "Data set: ", name);
     ds <- tmp[[name]];
-    path <- findCelSet(name=getName(ds), chipType=getChipType(getCdf(ds)), paths="normQuantile", minCount=length(ds));
-    if (is.null(path)) {
-      dsN <- normalizeQuantile(ds, subsetToAvg=1/3, verbose=less(verbose));
-    } else {
-      verbose && enter(verbose, "Detected normalized dataset");
-      verbose && cat(verbose, "Pathname: ", path);
-      dsN <- fromFiles(ds, path);
-      verbose && exit(verbose);
-    }
+    norm <- QuantileNormalizer(ds, subsetToAvg=1/3);
+    dsN <- process(norm, verbose=less(verbose));
+    dsN$normalizer <- norm;
     print(dsN);
     tmp[[name]] <- dsN; 
     verbose && exit(verbose);
   }
   qnRef <- tmp;
-  rm(ds, dsN, path, tmp);
+  rm(ds, dsN, norm, tmp);
   verbose && exit(verbose);
 }
-
 
 if (!exists("qnTest", mode="list")) {
   verbose && enter(verbose, "Normalizing all data sets");
   tmp <- raw;
   for (name in names(tmp)) {
     verbose && enter(verbose, "Data set: ", name);
+
+    # Use the same target distribution as in the HapMap270 data set.
+    normRef <- qnRef[[name]]$normalizer;
+    yTarget <- getTargetDistribution(normRef, verbose=verbose);
+
+    # Normalize
     ds <- tmp[[name]];
-    chipType <- getChipType(getCdf(ds));
-    path <- findCelSet(name=getName(ds), chipType=chipType, paths="normQuantile", minCount=length(ds));
-    if (is.null(path)) {
-      # Get the target distribution (from the CEPH 500k dataset)
-      path <- getPath(qnRef[[name]]);
-      filename <- sprintf("%s-quantiles.apq", chipType);
-      pathname <- filePath(path, filename, expandLinks="any");
-      if (!isFile(pathname))
-        throw("Reference data set not normalized.");
-      verbose && enter(verbose, "Reading saved distribution: ", pathname);
-      xTarget <- readApd(pathname)$quantiles;
-      verbose && exit(verbose);
-      dsN <- normalizeQuantile(ds, xTarget=xTarget, verbose=less(verbose));
-    } else {
-      verbose && enter(verbose, "Detected normalized dataset");
-      verbose && cat(verbose, "Pathname: ", path);
-      dsN <- fromFiles(ds, path);
-      verbose && exit(verbose);
-    }
+    norm <- QuantileNormalizer(ds, targetDistribution=yTarget);
+    dsN <- process(norm, verbose=less(verbose));
+    dsN$normalizer <- norm;
     print(dsN);
+
     tmp[[name]] <- dsN;
     verbose && exit(verbose);
   }
   qnTest <- tmp;
-  rm(ds, dsN, path, tmp, xTarget);
+  rm(ds, dsN, norm, tmp);
   verbose && exit(verbose);
 }
 
@@ -124,8 +107,8 @@ if (!exists("models", mode="list")) {
   for (kk in seq(along=models)) {
     ds <- qn[[kk]];
     verbose && enter(verbose, "Data set: ", getName(ds));
-    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-#    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+#    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
+    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
     models[[kk]] <- model;
   }
   verbose && print(verbose, model);
@@ -144,6 +127,7 @@ if (!exists("models", mode="list")) {
   }
   verbose && exit(verbose);
 }
+gc()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit copy number model
@@ -152,41 +136,57 @@ if (!exists("models", mode="list")) {
 genome <- readTable("annotations/hgChromosomes.txt", colClasses=c(nbrOfBases="integer", nbrOfGenes="integer"), header=TRUE, row.names=1);
 
 allChromosomes <- c(1:22, "X");
-for (chr in allChromosomes) {
-  verbose && enter(verbose, "Chromosome ", chr);
+fitModels <- TRUE;
+#fitModels <- FALSE;
+if (fitModels) {
+  for (chr in allChromosomes[-(1:9)]) {
+    verbose && enter(verbose, "Chromosome ", chr);
+  
+  for (kk in seq(along=models)) {
+    model <- models[[kk]];
+    ds <- getDataSet(model);
+    verbose && enter(verbose, "Data set: ", getName(ds));
+  
+    verbose && enter(verbose, "Retrieving genome information");
+    cdf <- getCdf(model);
+    gi <- getGenomeInformation(cdf);
+    units <- getUnitIndices(gi, chromosome=chr);
+    nunits <- length(units);
+    verbose && exit(verbose);
+  
+    verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
+    uDone <- fit(model, units=units, moreUnits=30, verbose=verbose);
+    nDone <- length(uDone);
+  
+    # Update average chip effects
+    if (nDone > 0) {
+      ces <- getChipEffects(model, verbose=verbose);
+      ceAvg <- getAverageFile(ces, units=uDone, force=TRUE, verbose=less(verbose));
+      ceAvg$mergeStrands <- model$mergeStrands;
+      ceAvg$combineAlleles <- model$combineAlleles;
+    }
+  
+    verbose && printf(verbose, "Fitted %d SNPs\n", nDone);
+    verbose && exit(verbose);
+    verbose && exit(verbose);
+  }
+    gc();
+    verbose && exit(verbose);
+  } # for (chr in c(1:22, "X"))
+} # if (fitModels)
+
 
 for (kk in seq(along=models)) {
   model <- models[[kk]];
-  ds <- getDataSet(model);
-  verbose && enter(verbose, "Data set: ", getName(ds));
-
-  verbose && enter(verbose, "Retrieving genome information");
-  cdf <- getCdf(model);
-  gi <- getGenomeInformation(cdf);
-  units <- getUnitIndices(gi, chromosome=chr);
-  nunits <- length(units);
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
-  uDone <- fit(model, units=units, moreUnits=30, verbose=verbose);
-  nDone <- length(uDone);
-
-  # Update average chip effects
-  if (nDone > 0) {
-    ces <- getChipEffects(model, verbose=verbose);
-    ceAvg <- getAverageFile(ces, force=TRUE, verbose=less(verbose));
-    ceAvg$mergeStrands <- model$mergeStrands;
-    ceAvg$combineAlleles <- model$combineAlleles;
-  }
-
-  verbose && printf(verbose, "Fitted %d SNPs\n", nDone);
-  verbose && exit(verbose);
-  verbose && exit(verbose);
+  ces <- getChipEffects(model, verbose=verbose);
+#  ceAvg <- getAverageFile(ces, force=TRUE, verbose=less(verbose));
+#  ceAvg$mergeStrands <- model$mergeStrands;
+#  ceAvg$combineAlleles <- model$combineAlleles;
 }
-  verbose && exit(verbose);
-} # for (chr in c(1:22, "X"))
 
-{
+for (chr in allChromosomes) {
+  verbose && enter(verbose, "Chromosome ", chr);
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get relative copy numbers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -201,7 +201,9 @@ sample <- family["daughter"];
 commonCEPH <-c("NA10851", "NA10855", "NA10863", "NA11831", "NA11832", "NA12056", "NA12057", "NA12234", "NA12264", "NA12707", "NA12716", "NA12717", "NA12801", "NA12812", "NA12813")
 sample <- commonCEPH[1];
 
-sample <- "1-288 [a-zA-Z]* 500K";
+#sample <- "1-288 [a-zA-Z]* 500K";
+sample <- "2-437 [a-zA-Z]* 500K";
+#sample <- "3-575 [a-zA-Z]* 500K";
 
 data <- vector("list", length(models));
 names(data) <- names(models);
@@ -228,11 +230,14 @@ for (kk in seq(along=models)) {
   nunits <- length(units);
 
   # Get reference (average chip effect)
-  verbose && enter(verbose, "Retrieving reference estimates");
+  verbose && enter(verbose, "Retrieving average reference estimates");
   ceRef <- getAverageFile(ces);
+#  ceRef <- getFile(ces, 3);
   ceRef$mergeStrands <- model$mergeStrands;
   ceRef$combineAlleles <- model$combineAlleles;
   yRef <- unlist(ceRef[units], use.names=FALSE);
+  sdRef <- readUnits(ceRef, units=units, readIntensities=FALSE, readStdvs=TRUE)
+  sdRef <- unlist(sdRef, use.names=FALSE);
   stopifnot(identical(length(yRef), nunits));
   verbose && exit(verbose);
 
@@ -253,7 +258,7 @@ for (kk in seq(along=models)) {
   cn <- y/yRef;
   stopifnot(identical(length(cn), nunits));
 
-  data[[kk]] <- list(x=x, y=y, yRef=yRef, cn=cn, nbrOfSnps=nunits);
+  data[[kk]] <- list(x=x, y=y, yRef=yRef, sdRef=sdRef, cn=cn, nbrOfSnps=nunits);
 
   verbose && exit(verbose);
 }
@@ -281,11 +286,12 @@ cex <- 0.8;
 cols <- brewer.pal(8, "Dark2");
 cols <- rep(cols, length.out=length(data));
 
-for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
+zooms <- c(1,2,4,8,16,32,64,128,256,512);
+for (zoom in zooms) {
   verbose && enter(verbose, "Plotting zoom x", zoom);
 
   chrIdx <- which(chr == allChromosomes);
-  imgName <- sprintf("%s-MvsX-Chr%02d-x%03d.png", name, chrIdx, zoom);
+  imgName <- sprintf("%s_b-MvsX-Chr%02d-x%03d.png", name, chrIdx, zoom);
   imgName <- gsub(" ", "_", imgName);
   pathname <- filePath(figPath, imgName);
   width <- round(zoom*5*(nbrOfBases / 10^6));
@@ -318,6 +324,9 @@ for (zoom in c(1,2,4,8,16,32,64,128,256,512)) {
     df <- data[[kk]];
     x <- df$x;
     cn <- df$cn;
+    qc <- 1/log2(df$sdRef)^3;
+    qc <- qc / median(qc);
+#    cex <- 0.2*3/2*qc;
     points(x*xScale, log(cn,base=2), pch=pch, cex=cex, col=cols[kk]);
   }
   rm(df, x, cn);
