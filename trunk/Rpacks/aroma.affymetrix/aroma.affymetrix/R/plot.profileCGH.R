@@ -1,0 +1,59 @@
+setMethodS3("plot", "profileCGH", function(this, ylim=c(-1,1)*3, units="Mb", cnLevels=c(1/2,1,3/2), colDAGLAD=NULL, by=1, ...) {
+  # Argument 'units':
+  units <- match.arg(units);
+
+  # Argument 'colDAGLAD':
+  if (is.null(colDAGLAD)) { 
+    colDAGLAD <- brewer.pal(5, "Dark2");
+  }
+
+  # Get the last physical position
+  lastPos <- max(this$profileValues$PosBase);
+
+  # X scale
+  if (units == "Mb") {
+    unit <- 6;
+  }
+  scale <- 10^unit;
+
+  # Rescale
+  lastPos <- lastPos / scale;
+  for (ff in c("profileValues", "profileValuesNA", "BkpInfo")) {
+    this[[ff]]$PosBase <- this[[ff]]$PosBase / scale;
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plot GLAD fit
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  plotProfile(this, unit=unit, Smoothing="Smoothing", Bkp=FALSE, 
+                                 colDAGLAD=colDAGLAD, ylim=ylim);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Add ruler
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  for (kk in 1:3) {
+    at <- seq(from=0, to=lastPos, by=by*c(1,5,10)[kk]);
+    tcl <- c(0.2,0.4,0.6)[kk];
+    lwd <- c(1,1,2)[kk];
+    for (ss in c(1,3))
+      axis(side=ss, at=at, tcl=tcl, lwd=lwd, labels=FALSE);
+  }
+  text(x=at, y=par("usr")[3]-0.1, labels=at, srt=90, 
+                                       adj=1, cex=1, xpd=TRUE);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Add horizontal rulers
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  for (level in cnLevels) {
+    abline(h=log2(level), col="blue", lty=2);
+  }
+})
+
+
+
+############################################################################
+# HISTORY:
+# 2006-10-30
+# o Created from glad.R script from 2006-08-03.
+############################################################################

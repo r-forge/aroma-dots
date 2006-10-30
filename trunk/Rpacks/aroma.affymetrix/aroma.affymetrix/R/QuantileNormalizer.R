@@ -270,6 +270,7 @@ setMethodS3("getTargetDistributionIdentifier", "QuantileNormalizer", function(th
     on.exit(popState(verbose));
   }
 
+
   verbose && enter(verbose, "Getting identifier for target distribution");
 
   ds <- getInputDataSet(this);
@@ -454,12 +455,13 @@ setMethodS3("process", "QuantileNormalizer", function(this, ..., force=FALSE, ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Getting target distribution
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  xTarget <- getTargetDistribution(this, verbose=verbose);
+  yTarget <- getTargetDistribution(this, verbose=verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  names(params) <- gsub(".targetDistribution", "xTarget", names(params));
   args <- c(list(ds, path=outputPath), params, 
                                    list(xTarget=yTarget, verbose=verbose));
   outputDataSet <- do.call("normalizeQuantile", args=args);
