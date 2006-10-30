@@ -40,6 +40,11 @@ imageMagickConvert <- function(srcfile, destfile, format, options=NULL, ...) {
 options(imageConverter=imageMagickConvert);
 
 
+glog2 <- function(x, scale=log2(2^16)/asinh(2^16), ...) {
+  scale*(asinh(x)-asinh(1));
+} # glog2()
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Setup
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

@@ -80,16 +80,6 @@ setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALS
   identifier;
 })
 
-setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE) {
-  identifier <- this$.identifier;
-  if (force || is.null(identifier)) {
-    identifiers <- lapply(this, getIdentifier);
-    identifier <- digest(identifiers);
-    this$.identifier <- identifier;
-  }
-  identifier;
-})
-
 
 setMethodS3("getSampleName", "AffymetrixCelFile", function(this, ...) {
   getName(this, ...);

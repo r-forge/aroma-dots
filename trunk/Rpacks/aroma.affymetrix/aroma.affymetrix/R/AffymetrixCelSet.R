@@ -123,6 +123,20 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
 })
 
 
+setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE) {
+  identifier <- this$.identifier;
+  if (force || is.null(identifier)) {
+    identifier <- NextMethod("getIdentifier");
+    if (is.null(identifier)) {
+      identifiers <- lapply(this, getIdentifier);
+      identifier <- digest(identifiers);
+    }
+    this$.identifier <- identifier;
+  }
+  identifier;
+})
+
+
 ###########################################################################/**
 # @RdocMethod getSampleNames
 #
@@ -676,7 +690,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 #
 # \arguments{
 #  \item{name}{The label of the calculated parameters.
-#    If @NULL, a default name format \code{average-<mean>-<sd>} is used.}
+#    If @NULL, a default name format \code{<prefix>-<mean>-<sd>} is used.}
 #  \item{indices}{An @integer @vector specifying which cells to consider.
 #    If \code{"remaining"}, only parameters for cells that have not been
 #    are calculated.
@@ -718,7 +732,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indices="remaining", mean=c("mean", "median"), sd=c("sd", "mad"), na.rm=FALSE, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
+setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, prefix="average", indices="remaining", mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -726,8 +740,13 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
   if (is.character(mean)) {
     mean <- match.arg(mean);
     meanName <- mean;
-    if (mean == "mean")
+    if (mean == "mean") {
       mean <- base::rowMeans;
+    } else if (mean == "median") {
+      mean <- function(X, ...) {
+        rowMedians(X);
+      }
+    }
   } else if (is.function(mean)) {
     meanName <- "customMean";
   } else {
@@ -738,17 +757,21 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
   if (is.character(sd)) {
     sd <- match.arg(sd);
     sdName <- sd;
-    if (sd == "sd")
+    if (sd == "sd") {
       sd <- rowSds;
+    } else if (sd == "mad") {
+      sd <- rowSds;
+    }
   } else if (is.function(sd)) {
     sdName <- "customSd";
   } else {
-    throw("Argument 'sd' must be either a character or a function: ", mode(sd));
+    throw("Argument 'sd' must be either a character or a function: ", 
+                                                           mode(sd));
   }
 
   # Argument 'name':
   if (is.null(name))
-    name <- sprintf("average-%s-%s", meanName, sdName);
+    name <- sprintf("%s-%s-%s", prefix, meanName, sdName);
 
   # Argument 'indices':
   df <- as.list(this)[[1]];
@@ -846,6 +869,12 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
     X <- readCelIntensities(pathnames, indices=indices[ii]);
     verbose && exit(verbose);
 
+    if (!is.null(g)) {
+      verbose && enter(verbose, "Transforming data using y = g(x)");
+      X <- g(X);
+      verbose && exit(verbose);
+    }
+
     verbose && enter(verbose, "Estimating averages and standard deviations");
     if (na.rm)
       n <- apply(X, MARGIN=1, FUN=function(x) { sum(!is.na(x)) });
@@ -856,6 +885,13 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
     # Calculate the standard deviation of the signals
     sigma <- sd(X, mean=mu, na.rm=na.rm);   # Special sd()!
     verbose && exit(verbose);
+
+    if (!is.null(h)) {
+      verbose && enter(verbose, "Back-transforming estimates using x = h(y)");
+      mu <- h(mu);
+      sigma <- h(sigma);
+      verbose && exit(verbose);
+    }
 
     # Write estimates to result file
     verbose && enter(verbose, "Writing estimates");
@@ -877,6 +913,19 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, indi
   verbose && exit(verbose);
 
   res;  
+})
+
+
+setMethodS3("getAverage", "AffymetrixCelSet", function(this, ...) {
+  getAverageFile(this, ...);
+})
+
+setMethodS3("getAverageLog", "AffymetrixCelSet", function(this, ...) {
+  getAverageFile(this, g=log2, h=function(x) 2^x, ...);
+})
+
+setMethodS3("getAverageAsinh", "AffymetrixCelSet", function(this, ...) {
+  getAverageFile(this, g=asinh, h=sinh, ...);
 })
 
 
@@ -1127,6 +1176,10 @@ setMethodS3("rmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="rm
 ############################################################################
 # HISTORY:
 # 2006-10-24
+# o Added getAverageLog() and getAverageAsinh().
+# o Added transforms and anti-transforms g() and h() to getAverageFile().
+# o Changed the defaults from mean to median, and sd to mad for 
+#   getAverageFile().
 # o Added Rdoc comments to getAverageFile().
 # 2006-10-10
 # o Renamed rma and gcrma to rmaSummary and gcrmaSummary, to avoid clash
