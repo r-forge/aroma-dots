@@ -271,7 +271,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ..., verbose=FALES) {
+setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 

@@ -1,3 +1,37 @@
+###########################################################################/**
+# @set "class=ChipEffectFile"
+# @RdocMethod getAM
+#
+# @title "Gets the log-intensities and log-ratios of chip effects for two arrays"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{other}{The second @see "ChipEffectFile" object used as the reference.}
+#   \item{units}{(The subset of units to be matched.
+#     If @NULL, all units are considered.}
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a Nx2 matrix where N is the number of units returned.  
+#  The names of the columns are A (log-intensities) and M (log-ratios).
+#  The names of the rows are the unit indices (as indexed by the CDF).
+#  The rows are ordered according to \code{units} arguments.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getXAM".
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -38,9 +72,11 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # Get thetas from the other
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving other thetas");
-  # Workaround for now (just in case). /HB 2006-09-26
+
+  # Workaround for now (just in case). /HB 2006-09-26 TODO
   other$mergeStrands <- this$mergeStrands;
   other$combineAlleles <- this$combineAlleles;
+
   # Get the other theta estimates
   thetaRef <- unlist(other[units], use.names=FALSE);
   stopifnot(identical(length(thetaRef), nunits));
@@ -53,6 +89,10 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   A <- log(theta*thetaRef, base=2)/2;
   stopifnot(identical(length(M), nunits));
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create the return matrix
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   am <- matrix(c(A,M), ncol=2)
   colnames(am) <- c("A", "M");
   rownames(am) <- units;
@@ -64,6 +104,41 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
 
 
 
+###########################################################################/**
+# @RdocMethod getXAM
+#
+# @title "Gets the physical position, log-intensities and log-ratios of chip effects for two arrays"
+#
+# \description{
+#  @get "title" of units on a certain chromosome.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{other}{The second @see "ChipEffectFile" object used as the reference.}
+#   \item{chromosome}{(The chromosome for which results should be returned.}
+#   \item{units}{(The subset of units to be matched.
+#     If @NULL, all units are considered.}
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a Nx3 matrix where N is the number of units returned.  
+#  The names of the columns are X (physical position in a given chromosome), 
+#  A (log-intensities) and M (log-ratios).
+#  The names of the rows are the unit indices (as indexed by the CDF).
+#  \emph{Note: The rows are ordered according to chromosomal position.}
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getAM".
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -78,9 +153,13 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   verbose && enter(verbose, "Getting (X,A,M)-transformed chip effects");
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieve genome information, i.e. chromosome positions
@@ -88,11 +167,16 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
   verbose && enter(verbose, "Retrieving genome information");
   cdf <- getCdf(this);
   gi <- getGenomeInformation(cdf);
-  verbose && str(verbose, units);
+
+  # Extract the units from the given chromosome.  Requested units not on
+  # chromosome are ignored.
+  if (!is.null(units))
+    verbose && str(verbose, units);
   units <- getUnitIndices(gi, chromosome=chromosome, units=units, verbose=less(verbose));
   nunits <- length(units);
   if (nunits == 0)
     throw("No SNPs found on requested chromosome: ", chromosome);
+
   # Get the positions of all SNPs
   x <- getPositions(gi, units=units);
   stopifnot(identical(length(x), nunits));
@@ -127,6 +211,8 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
 
 ############################################################################
 # HISTORY:
+# 2006-10-31
+# o Added Rdoc comments.
 # 2006-09-26
 # o Created.
 ############################################################################
