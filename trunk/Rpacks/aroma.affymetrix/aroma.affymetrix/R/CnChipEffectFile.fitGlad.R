@@ -57,10 +57,12 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosome,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached values
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- list(method="fitGlad", sample=getIdentifier(this), reference=getIdentifier(reference), chromosome=chromosome, units=units, ...);
+  key <- list(method="fitGlad", sample=getIdentifier(this), 
+                                          reference=getIdentifier(reference), 
+                                    chromosome=chromosome, units=units, ...);
   fit <- loadCache(key=key);
   if (!is.null(fit) && !force) {
-    verbose && cat(verbose, "Cached in memory.");
+    verbose && cat(verbose, "Cached on file.");
     verbose && exit(verbose);
     return(fit);
   }
@@ -71,7 +73,8 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosome,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get (X, M, A)
   verbose && enter(verbose, "Retrieving relative copy-number estimates");
-  df <- getXAM(this, other=reference, chromosome=chromosome, units=units, verbose=less(verbose));
+  df <- getXAM(this, other=reference, chromosome=chromosome, units=units, 
+                                                      verbose=less(verbose));
   verbose && enter(verbose, "Re-order by physical position");
   df <- df[order(df[,"x"]),];
   verbose && exit(verbose);
@@ -79,11 +82,16 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosome,
   verbose && cat(verbose, sprintf("Extracted data for %d SNPs", nrow(df)));
 
   # Put the data in a format recognized by GLAD
+  cdf <- getCdf(this);
+  chipType <- getChipType(cdf);
   df <- data.frame(
     LogRatio=unname(df[,"M"]), 
     PosOrder=1:nrow(df), 
-    Chromosome=rep(chromosome, nrow(df)), 
-    PosBase=unname(df[,"x"])
+    Chromosome=as.integer(rep(chromosome, nrow(df))), 
+    PosBase=unname(df[,"x"]),
+    # Add (chipType, units) identifiers to be able to backtrack SNP IDs etc.
+    chipType=as.factor(chipType),
+    units=as.integer(rownames(df))
   );
   verbose && str(verbose, df);
   df <- as.profileCGH(df);
@@ -109,6 +117,8 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosome,
 ############################################################################
 # HISTORY:
 # 2006-10-30
+# o Now chip type and (CDF) unit indices are stored in the result too so
+#   that the SNP IDs etc can be backtracked.
 # o Added Rdoc comments.
 # o BUG FIX: glad() requires data points to be order by physical position,
 #   which was not (necessarily) the case.

@@ -1,4 +1,4 @@
-setMethodS3("plot", "profileCGH", function(this, ylim=c(-1,1)*3, units="Mb", cnLevels=c(1/2,1,3/2), colDAGLAD=NULL, by=1, ...) {
+setMethodS3("plot", "profileCGH", function(this, ylim=c(-1,1)*3, units="Mb", Bkp=FALSE, Smoothing="Smoothing", cnLevels=c(1/2,1,3/2), colDAGLAD=NULL, by=1, ...) {
   # Argument 'units':
   units <- match.arg(units);
 
@@ -25,7 +25,7 @@ setMethodS3("plot", "profileCGH", function(this, ylim=c(-1,1)*3, units="Mb", cnL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Plot GLAD fit
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  plotProfile(this, unit=unit, Smoothing="Smoothing", Bkp=FALSE, 
+  plotProfile(this, unit=unit, Bkp=Bkp, Smoothing=Smoothing,
                                  colDAGLAD=colDAGLAD, ylim=ylim);
 
 
