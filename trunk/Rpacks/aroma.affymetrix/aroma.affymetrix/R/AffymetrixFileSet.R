@@ -113,23 +113,162 @@ setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
 })
 
 
-setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
+
+
+###########################################################################/**
+# @RdocMethod getFullName
+#
+# @title "Gets the full name of the file set"
+#
+# \description{
+#   @get "title" including the branches.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{parent}{The number of generations up in the directory tree the
+#    directory name should be retrieved.  By default the current directory
+#    is used.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character.
+# }
+#
+# \value{
+#  By default, the full name of a file set is the name of the directory 
+#  containing all the files, e.g. the name of file set \code{path/to,a,b/*} 
+#  is \code{to,a,b}.
+#  Argument \code{parent=1} specifies that the parent directory should be
+#  used, and so on.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getName".
+#   @seemethod "getBranches".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getFullName", "AffymetrixFileSet", function(this, parent=1, ...) {
+  parent <- Arguments$getInteger(parent, range=c(0,32));
+
   # The name of a file set is inferred from the pathname of the directory
   # of the set assuming path/to/<name>/<something>/<"chip type">/
+
   # Get the path of this file set
   path <- getPath(this);
 
-  # path/to/<name>/<something>
-  path <- dirname(path);
-
-  # path/to/<name>
-  path <- dirname(path);
+  while (parent > 0) {
+    # path/to/<name>/<something>
+    path <- dirname(path);
+    parent <- parent - 1;
+  }
 
   # <name>
   name <- basename(path);
 
   name;
 })
+
+
+###########################################################################/**
+# @RdocMethod getName
+#
+# @title "Gets the name of the file set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Arguments passed to @seemethod "getFullName".}
+# }
+#
+# \value{
+#   Returns a @character.
+# }
+#
+# \value{
+#  The \emph{name} of a file is the part of the \emph{full name} (as returned
+#  by @seemethod "getFullName") that preceeds the first comma, if any.
+#  For instance, the name of the file set named \code{foo,a,b} is \code{foo}.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getFullName".
+#   @seemethod "getBranches".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
+  name <- getFullName(this, ...);
+
+  # Keep anything before the first comma
+  name <- gsub("[,].*$", "", name);
+  
+  name;
+})
+
+
+
+###########################################################################/**
+# @RdocMethod getBranches
+#
+# @title "Gets the branches of the file set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character @vector or @NULL.
+# }
+#
+# \value{
+#  The \emph{branches} of a file set are the comma separated parts of the
+#  \emph{full name} (as returned by @seemethod "getFullName") that follows 
+#  the \emph{name} (as returned by @seemethod "getName").
+#  For instance, the branches of \code{foo,a,b} are \code{a} and \code{b}.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getFullName".
+#   @seemethod "getLabel".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getBranches", "AffymetrixFileSet", function(this, ...) {
+  name <- getFullName(this, ...);
+
+  # Data-set name is anything before the first comma
+  dsName <- gsub("[,].*$", "", name);
+
+  # Keep anything after the data-set name (and the separator).
+  name <- substring(name, nchar(dsName)+1);
+  
+  res <- strsplit(name, split=",")[[1]];
+  if (length(res) == 0)
+    res <- NULL;
+
+  res;
+})
+
 
 
 ###########################################################################/**
@@ -163,6 +302,9 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
+  branches <- getBranches(this);
+  if (!is.null(branches))
+    s <- paste(s, " Branches: ", paste(branches, collapse=","), ".", sep="");
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Number of files: %d", nbrOfFiles(this)));
   s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));

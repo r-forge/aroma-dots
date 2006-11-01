@@ -346,22 +346,11 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="chip_data/",
 
 
 setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
-  # The name of a file set is inferred from the pathname of the directory
-  # of the set, i.e. path/to/<data set name>/<something>/<chip type>/
-  # Get the path of this file set
-  path <- getPath(this);
-
-  # path/to/<data set name>/<something>
-  path <- dirname(path);
-
-  # path/to/<data set name>
-  path <- dirname(path);
-
-  # <data set name>
-  name <- basename(path);
-  
-  name;
+  NextMethod("getName", this, parent=1, ...);
 })
+
+
+
 
 
 ###########################################################################/**
