@@ -27,6 +27,21 @@
 #  @allmethods "public"
 # }
 # 
+# \section{Filename convention}{
+#   This package assumes a special filename structure allowing methods
+#   to infer data-set names, sample names, file types, versions etc from 
+#   the full path name.
+#   
+#   The filename of an \code{AffymetrixFile} is structured as follows:
+#   \itemize{
+#    \item{basename}{\code{"sample001,a,b,c.CEL"} 
+#       (this follows the \R convention (but not the Unix convention)}
+#    \item{name}{\code{"sample001"}}
+#    \item{adjunct names}{\code{c("a", "b", "c")}}
+#    \item{extension}{\code{"CEL"}}
+#   }
+# }
+#
 # @author
 #
 # \seealso{
