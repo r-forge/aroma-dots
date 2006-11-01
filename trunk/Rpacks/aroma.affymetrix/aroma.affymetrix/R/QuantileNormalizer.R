@@ -14,6 +14,8 @@
 #
 # \arguments{
 #   \item{dataSet}{A @see "AffymetrixCelSet".}
+#   \item{label}{A non-empty @character string used to differentiate the 
+#      output from to different normalizations of the data set.}
 #   \item{...}{Not used.}
 # }
 #
@@ -27,8 +29,13 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, rootPath="normQuantile", ...) {
+setConstructorS3("QuantileNormalizer", function(dataSet=NULL, label="", subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, rootPath="normQuantile", ...) {
+  if (!is.null(dataSet)) {
+    label <- Arguments$getCharacter(label, nchar=c(1,Inf));
+  }
+
   extend(Object(), "QuantileNormalizer", 
+    .label = label,
     inputDataSet = dataSet,
     .rootPath = rootPath,
     "cached:outputDataSet" = NULL,
@@ -42,9 +49,12 @@ setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subsetToUpdate=NUL
   )
 })
 
+
+
 setMethodS3("as.character", "QuantileNormalizer", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   ds <- getInputDataSet(this);
+  s <- c(s, sprintf("Label: %s", getLabel(ds)));
   s <- c(s, sprintf("Input data set: %s [%s]", getName(ds), 
                                                    getIdentifier(ds)));
   s <- c(s, sprintf("Number of arrays: %d (%.2fMb)", 
@@ -61,6 +71,11 @@ setMethodS3("as.character", "QuantileNormalizer", function(this, ...) {
   s;
 })
 
+setMethodS3("getLabel", "QuantileNormalizer", function(this, ...) {
+  this$.label;
+})
+
+
 setMethodS3("getRootPath", "QuantileNormalizer", function(this, ...) {
   this$.rootPath;
 })
@@ -68,6 +83,7 @@ setMethodS3("getRootPath", "QuantileNormalizer", function(this, ...) {
 setMethodS3("setRootPath", "QuantileNormalizer", function(this, path, ...) {
   throw("The root path must be set when the object is instanciated.");
 })
+
 
 setMethodS3("getParametersAsString", "QuantileNormalizer", function(this, ...) {
   params <- getParameters(this);
@@ -117,8 +133,10 @@ setMethodS3("getOutputIdentifier", "QuantileNormalizer", function(this, ..., ver
   id;
 }, protected=TRUE)
 
+
 setMethodS3("getOutputName", "QuantileNormalizer", function(this, ...) {
   ds <- getInputDataSet(this);
+  getName(ds);
 }, protected=TRUE)
 
 
@@ -128,8 +146,8 @@ setMethodS3("getOutputPath", "QuantileNormalizer", function(this, ...) {
   name <- getName(ds);
   cdf <- getCdf(ds);
   chipType <- getChipType(cdf);
-  id <- getOutputIdentifier(this, ...);
-  dirname <- file.path(sprintf("%s-%s", name, id), "chip_data", chipType);
+  label <- getLabel(this);
+  dirname <- file.path(sprintf("%s,%s", name, label), "chip_data", chipType);
 
   # Append it to the root path directory tree
   mkdirs(getRootPath(this));

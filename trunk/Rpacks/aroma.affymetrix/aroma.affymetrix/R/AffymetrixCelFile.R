@@ -82,7 +82,12 @@ setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALS
 
 
 setMethodS3("getSampleName", "AffymetrixCelFile", function(this, ...) {
-  getName(this, ...);
+  name <- getName(this, ...);
+
+  # Keep anything before a comma
+  name <- gsub("[,].*$", "", name);
+  
+  name;
 })
 
 
