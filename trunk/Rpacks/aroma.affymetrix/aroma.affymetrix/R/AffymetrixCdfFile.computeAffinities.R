@@ -138,7 +138,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   values <- as.integer(data[idxs]);
 
   # Get the (x,y) CDF data for this unit
-  unitNames <- getUnitNames(cdf);
+  unitNames <- getUnitNames(this);
   unitIdx <- match(unitName, unitNames);
   verbose && printf(verbose, "Unit: #%d (%s)\n", unitIdx, unitName);
   if (length(unitIdx) == 0)
