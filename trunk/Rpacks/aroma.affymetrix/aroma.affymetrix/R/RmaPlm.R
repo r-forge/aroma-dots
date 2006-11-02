@@ -140,6 +140,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     J <- ncol(y);
     I <- nrow(y);
     est <- fit$Estimates;
+    se <- fit$StdErrors;
 
     # Chip effects
     beta <- est[1:J];
@@ -159,9 +160,10 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # A fit function must return: theta, sdTheta, thetaOutliers, 
     # phi, sdPhi, phiOutliers.
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    sdTheta <- rep(1, J);
+
+    sdTheta <- 2^(se[1:J]);
     thetaOutliers <- rep(FALSE, J);
-    sdPhi <- rep(1, I);
+    sdPhi <- 2^(se[(J+1):length(se)]);
     phiOutliers <- rep(FALSE, I);
 
     # Return data on the intensity scale

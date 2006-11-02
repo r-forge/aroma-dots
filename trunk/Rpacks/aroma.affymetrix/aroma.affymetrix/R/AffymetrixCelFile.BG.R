@@ -387,7 +387,8 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, overwr
   indices <- unlist(getCellIndices(cdf))
   pmi <- indices[isPm(cdf)]
   pm <- getData(this, indices=pmi)$intensities;
-
+  clearCache(this);
+  
   verbose && exit(verbose);
 
   # adjust background - use original affy functions to avoid errors from
