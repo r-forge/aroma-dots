@@ -1,0 +1,54 @@
+Filename pattern: <chip type>_annot.csv
+
+> names(df)
+ [1] "Probe.Set.ID"                 "Affy.SNP.ID"
+ [3] "dbSNP.RS.ID"                  "Chromosome"
+ [5] "Genome.Version"               "DB.SNP.Version"
+ [7] "Physical.Position"            "Strand"
+ [9] "ChrX.pseudo.autosomal.region" "Cytoband"
+[11] "Flank"                        "Allele.A"
+[13] "Allele.B"                     "Associated.Gene
+[15] "Genetic.Map"                  "Microsatellite"
+[17] "Fragment.Length.Start.Stop"   "Freq.Asian"
+[19] "Freq.AfAm"                    "Freq.Cauc"
+[21] "Het.Asian"                    "Het.AfAm"
+[23] "Het.Cauc"                     "af.asian.called"
+[25] "af.afam.called"               "af.cauc.called"
+
+Extract and save in a binary format:
+
+Filename pattern: <chip type>_unitInfo.
+For each unit
+ 1. unit index
+ 2. chromosome idx (1 byte)
+ 3. physical position (Mb) on chromosome (3 bytes)
+
+Number of bytes: 1+3 = 4 bytes / unit = 1 float / unit
+
+Example: Mapping50K_Xba: 239440 bytes
+
+R code:
+# Read header
+MAGIC: 4 bytes
+comment: nchar (2 bytes) + nchar * string
+chipType: nchar (2 bytes) + nchar * string
+hiC <- 2^24 (1 float)
+# Read data section
+d <- readBin(con, what=double(), size=4, signed=FALSE, endian="little")
+1 float = 2^32
+d <- (chr * hiC) + pos
+chr <- d %/% hiC
+pos <- d - (chr * hiC)
+
+Filename pattern: <chip type>_snpInfo.
+For each unit
+ 1. unit index
+ 2. flanking sequence (16+(1)+16) = 32(+1) nucleotides (=32/4=8 bytes)
+ 3. allele A/B bases (1 byte)
+ 4. restriction enzyme fragmnt
+   i)  start position (4 bytes)
+   ii) length (2 bytes)
+
+Number of bytes: 8+1+4+2 = 15 bytes / unit
+
+Example: Mapping50K_Xba: 897900 bytes
