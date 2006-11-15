@@ -1,0 +1,56 @@
+<%
+dataSetName <- "SlaterH_etal_2004";
+chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
+%>
+
+<html>
+<head>
+ <title>PCR fragment length effects</title>
+</head>
+<body>
+<h1>PCR fragment length effects</h1>
+<p>
+Data set: <%=dataSetName%><br>
+</p>
+
+<% for (tag in c("a", "b")[1]) { %>
+<h2>Analysis <%=toupper(tag)%><h2>
+<%
+  dataSetName <- sprintf("%s,%s", dataSetName, tag);
+  # Get sample names
+  path <- filePath("pcrFragmentLength", dataSetName, chipTypes[1]);
+  files <- list.files(path=path, pattern=",CnVsFragLength[.]png");
+  samples <- gsub(",CnVsFragLength[.]png$", "", files);
+%>
+<% for (sample in samples) { %>
+<h3><%=sample%></h3>
+<small>
+<a name="<%=sample%>"></a>
+<% for (ss in samples) { %>
+[<a href="#<%=ss%>"><%=ss%></a>]
+<% } %>
+</small><br>
+
+<% for (chipType in chipTypes) { %>
+<table border="1" width="100%" cellpadding="0" cellspacing="0">
+<tr valign="top">
+<%
+  figPath <- filePath("pcrFragmentLength", dataSetName, chipType);
+%>
+<% for (tag2 in c("CnVsFragLength", "ThetaVsFragLength")) { %>
+<%
+  imgName <- sprintf("%s,%s.png", sample, tag2);
+  pathname <- filePath(figPath, imgName);
+%>
+ <td>
+  <a href="<%=pathname%>"><img src="<%=pathname%>" style="width: 100%; border: none;" alt=""></a>
+ </td>
+<% } # for (tag2 ...) %>
+</tr>
+<% } # for (chipType in ...) %>
+</table>
+<% } # for (sample ...) %>
+<% } # for (tag in c("a", "b")) %>
+
+</body>
+</html>

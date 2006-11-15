@@ -68,7 +68,7 @@ library(affxparser)
 library(digest)
 library(geneplotter)
 library(RColorBrewer)
-# 	library(R.rsp)
+library(R.rsp)
 
 #library(aroma.apd)
 #library(aroma.affymetrix)
