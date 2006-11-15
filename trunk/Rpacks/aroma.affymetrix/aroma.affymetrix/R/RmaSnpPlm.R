@@ -29,6 +29,10 @@ setConstructorS3("RmaSnpPlm", function(..., name="modelRmaSnpPlm", mergeStrands=
   )
 })
 
+setMethodS3("getRootPath", "RmaSnpPlm", function(this, ...) {
+  "modelRmaSnpPlm";
+})
+
 
 ############################################################################
 # HISTORY:

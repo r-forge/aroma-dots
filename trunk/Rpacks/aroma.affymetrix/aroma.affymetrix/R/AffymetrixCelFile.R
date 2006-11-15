@@ -78,7 +78,7 @@ setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALS
     this$.identifier <- identifier;
   }
   identifier;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getSampleName", "AffymetrixCelFile", function(this, ...) {
@@ -88,7 +88,7 @@ setMethodS3("getSampleName", "AffymetrixCelFile", function(this, ...) {
   name <- gsub("[,].*$", "", name);
   
   name;
-})
+}, protected=TRUE)
 
 
 ###########################################################################/**

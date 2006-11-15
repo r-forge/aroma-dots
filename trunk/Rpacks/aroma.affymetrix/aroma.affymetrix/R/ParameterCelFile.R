@@ -73,56 +73,77 @@ setMethodS3("setDecodeFunction", "ParameterCelFile", function(this, fcn, ...) {
   invisible(this);
 })
 
-
-setMethodS3("encodeUnit", "ParameterCelFile", function(this, unit, ...) {
+# There was a lot of overhead for calling functions in the previous 
+# encoding/decoding mechanism where encode() called encodeUnit() for
+# every unit individually. Same for decode() and decodeUnits(). The
+# new mechanism skips the uncodeUnit() and decodeUnit() step.
+setMethodS3("encode", "ParameterCelFile", function(this, units, ...) {
   encodeUnitGroup <- this$encodeFunction;
   if (!is.null(encodeUnitGroup)) {
-    unit <- lapply(unit, FUN=encodeUnitGroup, ...);
-  }
-  unit;
-}, protected=TRUE)
-
-setMethodS3("encode", "ParameterCelFile", function(this, units, ...) {
-  if (!is.null(this$encodeFunction)) {
-    units <- lapply(units, FUN=function(unit) encodeUnit(this, unit, ...));
+    units <- lapply(units, FUN=lapply, encodeUnitGroup, ...);
   }
   units;
 }, protected=TRUE)
 
-
-setMethodS3("decodeUnit", "ParameterCelFile", function(this, unit, ..., verbose=FALSE) {
+setMethodS3("decode", "ParameterCelFile", function(this, units, ...) {
   decodeUnitGroup <- this$decodeFunction;
   if (!is.null(decodeUnitGroup)) {
-    unit <- lapply(unit, FUN=decodeUnitGroup, ...);
+    units <- lapply(units, FUN=lapply, decodeUnitGroup, ...);
   }
-  unit;
-}, protected=TRUE)
-
-setMethodS3("decode", "ParameterCelFile", function(this, units, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-
-  verbose && enter(verbose, "Decoding ", length(units), " units");
-
-  if (!is.null(this$decodeFunction)) {
-    # Clever decoding... If three units across the file are not modified
-    # by the decoding method, don't decode the others either.
-    someUnits <- units[seq(from=1,to=length(units),length=3)];
-    someUnits2 <- lapply(someUnits, FUN=function(unit) decodeUnit(this, unit, ...));
-    if (!identical(someUnits, someUnits2)) {
-      units <- lapply(units, FUN=function(unit) decodeUnit(this, unit, ...));
-    } else {
-      verbose && cat(verbose, "Decoding not needed. No changes detected.");
-    }
-  }
-  verbose && exit(verbose);
-
   units;
 }, protected=TRUE)
+
+
+# Previous solutions:
+# setMethodS3("encodeUnit", "ParameterCelFile", function(this, unit, ...) {
+#   encodeUnitGroup <- this$encodeFunction;
+#   if (!is.null(encodeUnitGroup)) {
+#     unit <- lapply(unit, FUN=encodeUnitGroup, ...);
+#   }
+#   unit;
+# }, protected=TRUE)
+# 
+# setMethodS3("encode", "ParameterCelFile", function(this, units, ...) {
+#   if (!is.null(this$encodeFunction)) {
+#     units <- lapply(units, FUN=function(unit) encodeUnit(this, unit, ...));
+#   }
+#   units;
+# }, protected=TRUE)
+#
+# setMethodS3("decodeUnit", "ParameterCelFile", function(this, unit, ..., verbose=FALSE) {
+#   decodeUnitGroup <- this$decodeFunction;
+#   if (!is.null(decodeUnitGroup)) {
+#     unit <- lapply(unit, FUN=decodeUnitGroup, ...);
+#   }
+#   unit;
+# }, protected=TRUE)
+# 
+# setMethodS3("decode", "ParameterCelFile", function(this, units, ..., verbose=FALSE) {
+#   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#   # Validate arguments
+#   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#   # Argument 'verbose':
+#   verbose <- Arguments$getVerbose(verbose);
+# 
+# 
+#   verbose && enter(verbose, "Decoding ", length(units), " units");
+# 
+#   if (!is.null(this$decodeFunction)) {
+#     # Clever decoding... If three units across the file are not modified
+#     # by the decoding method, don't decode the others either.
+#     someUnits <- units[seq(from=1,to=length(units),length=3)];
+#     someUnits2 <- lapply(someUnits, FUN=function(unit) decodeUnit(this, unit, ...));
+#     if (!identical(someUnits, someUnits2)) {
+#       units <- lapply(units, FUN=function(unit) decodeUnit(this, unit, ...));
+#     } else {
+#       verbose && cat(verbose, "Decoding not needed. No changes detected.");
+#     }
+#   }
+#   verbose && exit(verbose);
+# 
+#   units;
+# }, protected=TRUE)
+
 
 
 setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE, readPixels=FALSE, stratifyBy=NULL, force=FALSE, verbose=FALSE) {
@@ -173,9 +194,28 @@ setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE
   units;
 });
 
-setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ...) {
+
+setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Updating units");
+ 
+  verbose && enter(verbose, "Encoding units");
   data <- encode(this, data);
-  NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
+  verbose && exit(verbose);
+
+  NextMethod("updateUnits", this, cdf=cdf, data=data, ..., verbose=less(verbose));
+
+  verbose && exit(verbose);
+
   invisible(data);
 }, protected=TRUE);
 
@@ -185,6 +225,12 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ..
 
 ############################################################################
 # HISTORY:
+# 2006-11-14
+# o Removed encode- and decodeUnit(). It caused a substantial overhead;
+#   it is about 2-3 faster letting encode() call the encode function
+#   directly. I made sure that encode() and decode() gives the same results
+#   before and after the update. /HB
+# o Added 'verbose' to updateUnits().
 # 2006-09-10
 # o Now the encode and decode functions for a unit group are made into
 #   fields of this class.  This way we don't have to create a special

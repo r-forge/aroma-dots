@@ -46,6 +46,51 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
 })
 
 
+###########################################################################/**
+# @RdocMethod as.character
+#
+# @title "Returns a short string describing the Affymetrix file set"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/###########################################################################
+setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
+  s <- sprintf("%s:", class(this)[1]);
+  s <- c(s, sprintf("Name: %s", getName(this)));
+  tags <- getTags(this);
+  if (!is.null(tags)) {
+    s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
+  }
+  s <- c(s, sprintf("Path: %s", getPath(this)));
+  s <- c(s, sprintf("Number of files: %d", nbrOfFiles(this)));
+  s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  class(s) <- "GenericSummary";
+  s;
+})
+
+
+
 setMethodS3("clone", "AffymetrixFileSet", function(this, clear=TRUE, ...) {
   # Clone itself
   object <- NextMethod("clone", this, ...);
@@ -63,6 +108,7 @@ setMethodS3("clone", "AffymetrixFileSet", function(this, clear=TRUE, ...) {
 
   object;
 })
+
 
 
 setMethodS3("getDescription", "AffymetrixFileSet", function(this, ...) {
@@ -110,7 +156,7 @@ setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
   }
 
   res;
-})
+}, protected=TRUE)
 
 
 
@@ -121,7 +167,7 @@ setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
 # @title "Gets the full name of the file set"
 #
 # \description{
-#   @get "title" including the branches.
+#   @get "title", that is the name of the directory without parent directories.
 # }
 #
 # @synopsis
@@ -149,7 +195,7 @@ setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
 #
 # \seealso{
 #   @seemethod "getName".
-#   @seemethod "getBranches".
+#   @seemethod "getTags".
 #   @seeclass
 # }
 #*/###########################################################################
@@ -195,8 +241,8 @@ setMethodS3("getFullName", "AffymetrixFileSet", function(this, parent=1, ...) {
 # }
 #
 # \value{
-#  The \emph{name} of a file is the part of the \emph{full name} (as returned
-#  by @seemethod "getFullName") that preceeds the first comma, if any.
+#  The \emph{name} of a file set is the part of the directory name that 
+#  preceeds the first comma, if any.
 #  For instance, the name of the file set named \code{foo,a,b} is \code{foo}.
 # }
 #
@@ -219,10 +265,11 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 
 
 
+
 ###########################################################################/**
-# @RdocMethod getBranches
+# @RdocMethod getTags
 #
-# @title "Gets the branches of the file set"
+# @title "Gets the tags of the file"
 #
 # \description{
 #   @get "title".
@@ -239,79 +286,49 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 # }
 #
 # \value{
-#  The \emph{branches} of a file set are the comma separated parts of the
-#  \emph{full name} (as returned by @seemethod "getFullName") that follows 
-#  the \emph{name} (as returned by @seemethod "getName").
-#  For instance, the branches of \code{foo,a,b} are \code{a} and \code{b}.
+#  The \emph{tags} of a filename are the comma separated parts of the
+#  filename that follows the the first comma, if any, and that preceeds the
+#  last period (the filename extension).
+#  For instance, the tags of \code{path/to/foo,a.2,b.ext} are 
+#  \code{a.2} and \code{b}.
 # }
 #
 # @author
 #
 # \seealso{
-#   @seemethod "getFullName".
-#   @seemethod "getLabel".
+#   @seemethod "getName".
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getBranches", "AffymetrixFileSet", function(this, ...) {
+setMethodS3("getTags", "AffymetrixFileSet", function(this, ...) {
   name <- getFullName(this, ...);
 
   # Data-set name is anything before the first comma
   dsName <- gsub("[,].*$", "", name);
 
   # Keep anything after the data-set name (and the separator).
-  name <- substring(name, nchar(dsName)+1);
+  name <- substring(name, nchar(dsName)+2);
   
   res <- strsplit(name, split=",")[[1]];
+  tagNames <- c("version", rep("", max(length(res)-1,0)));
+  names(res) <- tagNames[seq(along=res)];
+
   if (length(res) == 0)
     res <- NULL;
 
   res;
 })
 
+setMethodS3("getTag", "AffymetrixFileSet", function(this, which=c("version"), ...) {
+  which <- match.arg(which);
 
+  getTags(this, ...)[which];
+}, protected=TRUE)
 
-###########################################################################/**
-# @RdocMethod as.character
-#
-# @title "Returns a short string describing the Affymetrix file set"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character string.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-# @keyword IO
-# @keyword programming
-#*/###########################################################################
-setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
-  s <- sprintf("%s:", class(this)[1]);
-  s <- c(s, sprintf("Name: %s", getName(this)));
-  branches <- getBranches(this);
-  if (!is.null(branches))
-    s <- paste(s, " Branches: ", paste(branches, collapse=","), ".", sep="");
-  s <- c(s, sprintf("Path: %s", getPath(this)));
-  s <- c(s, sprintf("Number of files: %d", nbrOfFiles(this)));
-  s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
-  class(s) <- "GenericSummary";
-  s;
+setMethodS3("getVersionTag", "AffymetrixFileSet", function(this, ...) {
+  getTag(this, "version", ...);
 })
+
 
 setMethodS3("getFileSize", "AffymetrixFileSet", function(this, ...) {
   if (is.null(fileSize <- this$.fileSize)) {
@@ -320,6 +337,8 @@ setMethodS3("getFileSize", "AffymetrixFileSet", function(this, ...) {
   }
   fileSize;
 })
+
+
 
 ###########################################################################/**
 # @RdocMethod getPath
@@ -855,6 +874,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-11-02
+# o Added getFullName(), getTags() and redefined getName().
 # 2006-10-30
 # o Added getDescription() which search and parse all DESCRIPTION files in
 #   the data-set directory tree.

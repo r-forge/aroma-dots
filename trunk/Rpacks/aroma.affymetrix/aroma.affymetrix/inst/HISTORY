@@ -1,7 +1,19 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.2.4 [2006-10-xx]
+Version: 0.2.5 [2006-11-xx]
+o Made encode() and decode() of ParameterCelFile approx 2-3 times
+  faster by skipping the encode-/decodeUnit() step and instead
+  call the encode and decode functions directly.  This will
+  speed up the updating of chip-effect files about two times.
+o Added R.native to the list of suggested packages. The reason
+  for this is that getAverageFile() of AffymetrixCelSet is
+  using rowMedians(x, na.rm) of R.native.  The version in Biobase
+  does not handle missing values.  In case R.native is not
+  installed, apply() and median() are used.
+o Added SE estimates in RmaPlm from new affyPLM.
+
+Version: 0.2.4 [2006-10-28]
 o Added more Rdoc comments.
 
 Version: 0.2.3 [2006-10-23]

@@ -39,16 +39,15 @@ setConstructorS3("UnitGroupsModel", function(dataSet=NULL, name="modelUnitGroups
   # Argument 'path':
   if (is.null(path)) {
     if (!is.null(dataSet)) {
-      # Path structure: <data-set name>/<model name>/<chip type>/
-      # Compare with  : <data-set name>/chip_data/<chip type>/
-      # <data-set name>/<model name>/<chip type>
-      path <- getPath(dataSet);
-      # <data-set name>/chip_data/
-      path <- getParent(path);
-      path <- getParent(path);
-      path <- filePath(path, name, getChipType(getCdf(dataSet)));
+      # Path structure: <root path>/<data-set name>/<chip type>/
+      rootPath <- name;
+      fullname <- getFullName(dataSet);
+      cdf <- getCdf(dataSet);
+      chipType <- getChipType(cdf);
+      path <- filePath(rootPath, fullname, chipType);
     }
-  } 
+  }
+
   if (!is.null(path)) {
     path <- Arguments$getWritablePath(path);
   }
@@ -75,6 +74,9 @@ setMethodS3("as.character", "UnitGroupsModel", function(this, ...) {
   s <- paste(s, collapse=" ");
   s;
 })
+
+setMethodS3("getRootPath", "UnitGroupsModel", abstract=TRUE);
+
 
 setMethodS3("getName", "UnitGroupsModel", function(this, ...) {
   # Name from pathname structure: <data set>/<name>/<chip type>/

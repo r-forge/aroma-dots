@@ -1,4 +1,4 @@
-setMethodS3("plot", "profileCGH", function(this, ylim=c(-1,1)*3, units="Mb", Bkp=FALSE, Smoothing="Smoothing", cnLevels=c(1/2,1,3/2), colDAGLAD=NULL, by=1, ...) {
+setMethodS3("plot", "profileCGH", function(this, ylim=c(-1,1)*3, units="Mb", Bkp=FALSE, Smoothing="Smoothing", cnLevels=c(1/2,1,3/2), colDAGLAD=NULL, ticksBy=1, ...) {
   # Argument 'units':
   units <- match.arg(units);
 
@@ -26,14 +26,14 @@ setMethodS3("plot", "profileCGH", function(this, ylim=c(-1,1)*3, units="Mb", Bkp
   # Plot GLAD fit
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   plotProfile(this, unit=unit, Bkp=Bkp, Smoothing=Smoothing,
-                                 colDAGLAD=colDAGLAD, ylim=ylim);
+                    colDAGLAD=colDAGLAD, ylim=ylim);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Add ruler
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   for (kk in 1:3) {
-    at <- seq(from=0, to=lastPos, by=by*c(1,5,10)[kk]);
+    at <- seq(from=0, to=lastPos, by=ticksBy*c(1,5,10)[kk]);
     tcl <- c(0.2,0.4,0.6)[kk];
     lwd <- c(1,1,2)[kk];
     for (ss in c(1,3))
