@@ -21,30 +21,170 @@
 #   A named @list structure consisting of ...
 # }
 # 
+# \section{About the CCG file format}{
+#  A CCG file, consists of a "file header", a "generic data header",
+#  and "data" section, as outlined here:
+#  \itemize{
+#   \item File Header
+#   \item Generic Data Header (for the file)
+#    \enumerate{
+#     \item Generic Data Header (for the files 1st parent)
+#      \enumerate{ 
+#       \item Generic Data Header (for the files 1st parents 1st parent)
+#       \item Generic Data Header (for the files 1st parents 2nd parent)
+#       \item ...
+#       \item Generic Data Header (for the files 1st parents Mth parent)
+#      }
+#    \item Generic Data Header (for the files 2nd parent)
+#    \item ...
+#    \item Generic Data Header (for the files Nth parent)
+#   }
+#   \item Data
+#    \enumerate{
+#     \item Data Group \#1
+#      \enumerate{
+#       \item Data Set \#1
+#        \itemize {
+#         \item Parameters
+#         \item Column definitions
+#         \item Matrix of data
+#        }
+#       \item Data Set \#2
+#       \item ...
+#       \item Data Set \#L
+#      }
+#     \item Data Group \#2
+#     \item ...
+#     \item Data Group \#K
+#    }
+#  }
+# }
+#
 # @author
 # 
 #  \seealso{
 #    @see "readCdfUnits".
 #  }
 # 
+# \references{
+#  [1] Affymetrix Inc, Affymetrix GCOS 1.x compatible file formats,
+#      April, 2006.
+#      \url{http://www.affymetrix.com/support/developer/}\cr
+# }
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
-readCcg <- function(pathname, ...) {
+readCcg <- function(pathname, filter=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'filter':
+  hasFilter <- FALSE;
+  if (!is.null(filter)) {
+    if (!is.list(filter)) {
+      throw("Argument 'filter' must be a list: ", mode(filter));
+    }
+    hasFilter <- TRUE;
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Open file
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   con <- file(pathname, open="rb");
   on.exit(close(con));
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Allocate return structure
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ccg <- list();
+ 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read file header
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   fhdr <- readCcgFileHeader(con);
-  dhdr <- readCcgDataHeader(con);
+  if (hasFilter) {
+    if (!identical(filter$header, FALSE))
+      ccg$fileHeader <- fhdr;
+  } else {
+    ccg$fileHeader <- fhdr;
+  }
 
-#str(fhdr);
-#str(dhdr);
 
-  nextDataGroupStart <- fhdr$dataGroupStart;
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read the data header
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ccg$genericDataHeader <- readCcgDataHeader(con, filter=filter$dataHeader);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read the data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  dataGroups <- readCcgDataGroups(con, filter=filter$data, .fileHeader=fhdr);
+  if (hasFilter) {
+    if (!identical(filter$dataGroups, FALSE))
+      ccg$dataGroups <- dataGroups;
+  } else {
+    ccg$dataGroups <- dataGroups;
+  }
+ 
+  ccg;
+} # readCcg()
+
+
+
+readCcgDataGroups <- function(pathname, filter=NULL, .fileHeader=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'pathname':
+  if (inherits(pathname, "connection")) {
+    con <- pathname;
+  } else {
+    if (!file.exists(pathname))
+      stop("File not found: ", pathname);
+    con <- file(pathname, open="rb");
+    on.exit(close(con));
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read file header?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(.fileHeader)) {
+    .fileHeader <- readCcgFileHeader(con);
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read data groups
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  currFilter <- filter;
+  nextDataGroupStart <- .fileHeader$dataGroupStart;
   dataGroups <- list();
-  for (gg in seq(length=fhdr$nbrOfDataGroups)) {
-    dataGroupHeader <- readCcgDataGroupHeader(con, fileOffset=nextDataGroupStart);
+  for (gg in seq(length=.fileHeader$nbrOfDataGroups)) {
+    dataGroupHeader <- readCcgDataGroupHeader(con, 
+                                          fileOffset=nextDataGroupStart);
+    # Next data group
+    nextDataGroupStart <- dataGroupHeader$nextGroupStart;
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Apply filter
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#     if (!is.null(filter)) {
+#       currFilter <- NULL;
+#       if (is.null(names(filter))) {
+#         currFilter <- filter[[gg]];
+#       } else {
+#         pos <- match(dataGroupHeader$name, names(filter));
+#         if (length(pos) > 0)
+#           currFilter <- filter[[pos]];
+#       }
+#     }
+#     str(currFilter);
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Read data sets
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     offset <- dataGroupHeader$dataSetStart; 
     dss <- vector("list", dataGroupHeader$nbrOfDataSets);
     names <- character(dataGroupHeader$nbrOfDataSets);
@@ -61,21 +201,59 @@ readCcg <- function(pathname, ...) {
       dataSets = dss
     );
 
-#str(dataGroup);
-
     dataGroups <- c(dataGroups, list(dataGroup));
-    nextDataGroupStart <- dataGroupHeader$nextGroupStart;
   } # while (nextDataGroupStart != 0)
-  names(dataGroups) <- unlist(lapply(dataGroups, FUN=function(dg) dg$header$name), use.names=FALSE);
+  names(dataGroups) <- unlist(lapply(dataGroups, FUN=function(dg) {
+    dg$header$name
+  }), use.names=FALSE);
 
-  ccg <- list(
-    fileHeader = fhdr,
-    genericDataHeader = dhdr,
-    dataGroups = dataGroups
-  );
- 
-  ccg;
-} # readCcg()
+  dataGroups;
+} # readCcgDataGroups()
+
+
+readCcgHeader <- function(pathname, filter=list(fileHeader=TRUE, dataHeader=TRUE), ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'pathname':
+  if (inherits(pathname, "connection")) {
+    con <- pathname;
+  } else {
+    if (!file.exists(pathname))
+      stop("File not found: ", pathname);
+    con <- file(pathname, open="rb");
+    on.exit(close(con));
+  }
+
+  # Argument 'filter':
+  hasFilter <- FALSE;
+  if (!is.null(filter)) {
+    if (!is.list(filter)) {
+      throw("Argument 'filter' must be a list: ", mode(filter));
+    }
+    hasFilter <- TRUE;
+  }
+
+  header <- list();
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read file header
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  hdr <- readCcgFileHeader(con);
+  if (identical(filter$fileHeader, TRUE) || is.list(filter$fileHeader)) {
+    header$fileHeader <- hdr;
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read the data header
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  hdr <- readCcgDataHeader(con, filter=filter$dataHeader);
+  if (identical(filter$dataHeader, TRUE) || is.list(filter$dataHeader)) {
+    header$dataHeader <- hdr;
+  }
+
+  header;
+} # readCcgHeader()
 
 
 
@@ -95,7 +273,7 @@ readCcg <- function(pathname, ...) {
 #    format. It is currently fixed to 1. [UBYTE]
 # 3 The number of data groups. [INT]
 # 4 File position of the first data group. [UINT]
-readCcgFileHeader <- function(con, ...) {
+readCcgFileHeader <- function(pathname, filter=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -111,14 +289,35 @@ readCcgFileHeader <- function(con, ...) {
     readBin(con, what=integer(), size=4, signed=FALSE, endian="big", n=n);
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'pathname':
+  if (inherits(pathname, "connection")) {
+    con <- pathname;
+  } else {
+    if (!file.exists(pathname))
+      stop("File not found: ", pathname);
+    con <- file(pathname, open="rb");
+    on.exit(close(con));
+  }
+
+  # Argument 'filter':
+  hasFilter <- FALSE;
+  if (!is.null(filter)) {
+    if (!is.list(filter)) {
+      throw("Argument 'filter' must be a list: ", mode(filter));
+    }
+    hasFilter <- TRUE;
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Read
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   magic <- readUByte(con);
+  if (magic != 59)
+    throw("File format error: Not a CCG file. Magic is not 59: ", magic);
+
   version <- readUByte(con);
   nbrOfDataGroups <- readInt(con);
   dataGroupStart <- readUInt(con);
@@ -127,12 +326,12 @@ readCcgFileHeader <- function(con, ...) {
     version = version,
     nbrOfDataGroups = nbrOfDataGroups,
     dataGroupStart = dataGroupStart
-  )  
+  )
 } # readCcgFileHeader()
 
 
 
-readCcgDataHeader <- function(con, ...) {
+readCcgDataHeader <- function(con, filter=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -171,9 +370,19 @@ readCcgDataHeader <- function(con, ...) {
     list(name=readWString(con), value=readString(con), type=readWString(con));
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  hasFilter <- FALSE;
+  if (!is.null(filter)) {
+    hasFilter <- TRUE;
+  }
+
+  # Nothing to do?
+  if (hasFilter) {
+    if (identical(filter, FALSE) || length(filter) == 0)
+      return(NULL);
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Read
@@ -235,6 +444,9 @@ readCcgDataGroupHeader <- function(con, fileOffset=NULL, ...) {
     bfr;
   }
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(fileOffset)) {
     seek(con=con, where=fileOffset, offset="start", rw="read");
   }
