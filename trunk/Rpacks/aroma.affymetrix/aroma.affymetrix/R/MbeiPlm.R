@@ -50,6 +50,11 @@ setConstructorS3("MbeiPlm", function(..., name="modelMbeiPlm") {
 })
 
 
+setMethodS3("getRootPath", "MbeiPlm", function(this, ...) {
+  "modelMbeiPlm";
+})
+
+
 setMethodS3("getProbeAffinities", "MbeiPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the probe affinities (and create files etc)

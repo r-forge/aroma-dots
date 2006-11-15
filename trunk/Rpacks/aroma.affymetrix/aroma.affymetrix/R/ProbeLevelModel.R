@@ -113,7 +113,7 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=
 
   # Create probe-affinity file from CEL file template
   df <- as.list(ds)[[1]];
-  res <- createFrom(df, filename="probeAffinities.CEL", path=getPath(this), ...);
+  res <- createFrom(df, filename="probeAffinities.cel", path=getPath(this), ...);
 
   # Make it into an object of the correct class
   clazz <- .class;

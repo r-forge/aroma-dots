@@ -28,6 +28,10 @@ setConstructorS3("MbeiCnPlm", function(..., combineAlleles=FALSE, name="modelMbe
   )
 })
 
+setMethodS3("getRootPath", "MbeiCnPlm", function(this, ...) {
+  "modelMbeiCnPlm";
+})
+
 
 ############################################################################
 # HISTORY:

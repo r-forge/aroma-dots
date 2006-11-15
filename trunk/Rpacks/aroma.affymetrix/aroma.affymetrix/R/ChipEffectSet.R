@@ -47,7 +47,7 @@ setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
 }, static=TRUE)
 
 
-setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern="-chipEffects[.](c|C)(e|E)(l|L)$", fileClass="ChipEffectFile") {
+setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern=",chipEffects[.](c|C)(e|E)(l|L)$", fileClass="ChipEffectFile") {
   fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
 }, static=TRUE);
 
@@ -143,31 +143,29 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
     verbose && enter(verbose, sprintf("Array #%d of %d: %s", kk, n, names[kk]));
     ce <- as.list(this)[[kk]];
 
-    verbose <- less(verbose);
-    verbose && enter(verbose, "Extracting estimates");
-    dataOne <- lapply(data, function(groups) {
-      lapply(groups, function(group) {
-        # theta = group$theta[kk] = ...
-        # stdvs = group$sdTheta[kk] = ...
-        list(
-          theta=.subset(.subset2(group, "theta"), kk), 
-          sdTheta=.subset(.subset2(group, "sdTheta"), kk),
-          thetaOutliers=.subset(.subset2(group, "thetaOutliers"), kk)
-        );
-      })
-    })
+    verbose <- less(verbose, 50);
+    verbose && enter(verbose, "Extracting estimates");  # 3-4s
+    dataOne <- lapply(data, FUN=lapply, function(group) {
+      # theta = group$theta[kk] = ...
+      # stdvs = group$sdTheta[kk] = ...
+      list(
+        theta=.subset(.subset2(group, "theta"), kk), 
+        sdTheta=.subset(.subset2(group, "sdTheta"), kk),
+        thetaOutliers=.subset(.subset2(group, "thetaOutliers"), kk)
+      );
+    });
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "Updating file");
-    updateUnits(ce, cdf=cdf, data=dataOne, verbose=less(verbose));
+    verbose && enter(verbose, "Updating file");  # 6-7s ~98% in encode()
+    updateUnits(ce, cdf=cdf, data=dataOne, verbose=less(verbose, 50));
     verbose && exit(verbose);
-    verbose <- more(verbose);
+    verbose <- more(verbose, 50);
 
     verbose && exit(verbose);
   } # for (kk ...)
   verbose <- more(verbose);
   verbose && exit(verbose);
-}, protected=TRUE);
+}, protected=TRUE)
 
 
 
@@ -192,6 +190,8 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# o Updated fromFiles() to search for filename with tags 'chipEffects'.
+#   Before files with suffix "-chipEffects' was searched for.
 # 2006-09-10
 # o Added findUnitsTodo().
 # o Starting to make use of specially design CDFs and CEL files for storing

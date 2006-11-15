@@ -48,6 +48,11 @@ setConstructorS3("RmaPlm", function(..., name="modelRmaPlm") {
 
 
 
+setMethodS3("getRootPath", "RmaPlm", function(this, ...) {
+  "modelRmaPlm";
+})
+
+
 setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the probe affinities (and create files etc)
@@ -254,6 +259,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-11-02
+# o Added SE estimates in RmaPlm from Ben's new code.
 # 2006-09-26
 # o Added code to use either of the two RMA fit functions.
 # o Incorporated Ken Simpson's fit function for RMA as an alternative.

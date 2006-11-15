@@ -28,6 +28,9 @@ setConstructorS3("MbeiSnpPlm", function(..., name="modelMbeiSnpPlm", mergeStrand
   )
 })
 
+setMethodS3("getRootPath", "MbeiSnpPlm", function(this, ...) {
+  "modelMbeiSnpPlm";
+})
 
 ############################################################################
 # HISTORY:

@@ -14,8 +14,8 @@
 #
 # \arguments{
 #   \item{dataSet}{A @see "AffymetrixCelSet".}
-#   \item{label}{A non-empty @character string used to differentiate the 
-#      output from to different normalizations of the data set.}
+#   \item{subversionTag}{A @character string appended to the version tag
+#      of the input data set (with a period as a separator).}
 #   \item{...}{Not used.}
 # }
 #
@@ -29,15 +29,16 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("QuantileNormalizer", function(dataSet=NULL, label="", subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, rootPath="normQuantile", ...) {
+setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subversionTag="", subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, ...) {
   if (!is.null(dataSet)) {
-    label <- Arguments$getCharacter(label, nchar=c(1,Inf));
+    subversionTag <- Arguments$getCharacter(subversionTag);
+    if (regexpr("[,.]", subversionTag) != -1)
+      throw("A tag must not contain commas or periods: ", subversionTag);
   }
 
   extend(Object(), "QuantileNormalizer", 
-    .label = label,
+    .subversionTag = subversionTag,
     inputDataSet = dataSet,
-    .rootPath = rootPath,
     "cached:outputDataSet" = NULL,
     .params = list(
        subsetToUpdate = subsetToUpdate,
@@ -54,34 +55,54 @@ setConstructorS3("QuantileNormalizer", function(dataSet=NULL, label="", subsetTo
 setMethodS3("as.character", "QuantileNormalizer", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   ds <- getInputDataSet(this);
-  s <- c(s, sprintf("Label: %s", getLabel(ds)));
-  s <- c(s, sprintf("Input data set: %s [%s]", getName(ds), 
-                                                   getIdentifier(ds)));
+  s <- c(s, sprintf("Input data set: %s", getName(ds)));
+  tags <- paste(getTags(ds), collapse=", ");
+  s <- c(s, sprintf("Input tags: %s", tags));
   s <- c(s, sprintf("Number of arrays: %d (%.2fMb)", 
                            nbrOfArrays(ds), getFileSize(ds)/1024^2));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(ds))));
   params <- paste(getParametersAsString(this), collapse=", ");
   s <- c(s, sprintf("Algorithm parameters: (%s)", params));
-  s <- c(s, sprintf("Root path: %s", getRootPath(this)));
-  s <- c(s, sprintf("Output identifier: %s", getOutputIdentifier(this)));
-  s <- c(s, sprintf("Output path: %s", getOutputPath(this)));
+  s <- c(s, sprintf("Output path: %s", getPath(this)));
   s <- c(s, sprintf("Is done: %s", isDone(this)));
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 })
 
-setMethodS3("getLabel", "QuantileNormalizer", function(this, ...) {
-  this$.label;
+
+setMethodS3("getSubversionTag", "QuantileNormalizer", function(this, ...) {
+  this$.subversionTag;
+})
+
+setMethodS3("getVersionTag", "QuantileNormalizer", function(this, ...) {
+  ds <- getInputDataSet(this);
+  versionTag <- paste(getVersionTag(ds), getSubversionTag(this), sep=".");
+  versionTag <- gsub("^[.]|[.]$", "", versionTag);
+  versionTag;
+})
+
+setMethodS3("getName", "QuantileNormalizer", function(this, ...) {
+  ds <- getInputDataSet(this);
+  getName(ds);
+})
+
+setMethodS3("getTags", "QuantileNormalizer", function(this, ...) {
+  c(getVersionTag(this));
+})
+
+setMethodS3("getFullName", "QuantileNormalizer", function(this, ...) {
+  name <- getName(this);
+  tags <- getTags(this);
+  tags <- paste(tags, collapse=",");
+  fullname <- paste(name, tags, sep=",");
+  fullname <- gsub("[,]$", "", fullname);
+  fullname;
 })
 
 
 setMethodS3("getRootPath", "QuantileNormalizer", function(this, ...) {
-  this$.rootPath;
-})
-
-setMethodS3("setRootPath", "QuantileNormalizer", function(this, path, ...) {
-  throw("The root path must be set when the object is instanciated.");
+  "normQuantile";
 })
 
 
@@ -134,31 +155,28 @@ setMethodS3("getOutputIdentifier", "QuantileNormalizer", function(this, ..., ver
 }, protected=TRUE)
 
 
-setMethodS3("getOutputName", "QuantileNormalizer", function(this, ...) {
-  ds <- getInputDataSet(this);
-  getName(ds);
-}, protected=TRUE)
 
-
-setMethodS3("getOutputPath", "QuantileNormalizer", function(this, ...) {
+setMethodS3("getPath", "QuantileNormalizer", function(this, ...) {
   # Create the (sub-)directory tree for the dataset
+
+  # Root path
+  rootPath <- getRootPath(this);
+  mkdirs(rootPath);
+
+  # Full name
+  fullname <- getFullName(this);
+
+  # Chip type    
   ds <- getInputDataSet(this);
-  name <- getName(ds);
   cdf <- getCdf(ds);
   chipType <- getChipType(cdf);
-  label <- getLabel(this);
-  dirname <- file.path(sprintf("%s,%s", name, label), "chip_data", chipType);
 
-  # Append it to the root path directory tree
-  mkdirs(getRootPath(this));
-  path <- filePath(getRootPath(this), dirname, expandLinks="any");
-
-  # Create the path, if missing
+  # The full path
+  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
   mkdirs(path);
 
   path;
 })
-
 
 
 ###########################################################################/**
@@ -224,7 +242,7 @@ setMethodS3("getOutputDataSet", "QuantileNormalizer", function(this, ..., force=
     if (isDone(this)) {
       ds <- getInputDataSet(this);
       clazz <- Class$forName(class(ds)[1]);
-      outputDataSet <- clazz$fromFiles(path=getOutputPath(this));
+      outputDataSet <- clazz$fromFiles(path=getPath(this));
       this$outputDataSet <- outputDataSet;
     }
   }
@@ -233,7 +251,7 @@ setMethodS3("getOutputDataSet", "QuantileNormalizer", function(this, ..., force=
 
 
 setMethodS3("getOutputFiles", "QuantileNormalizer", function(this, ...) {
-  outPath <- getOutputPath(this);
+  outPath <- getPath(this);
   findFiles(pattern="[.](c|C)(e|E)(l|L)$", paths=outPath, firstOnly=FALSE);
 }, protected=TRUE)
 
@@ -251,7 +269,7 @@ setMethodS3("getTargetDistribution", "QuantileNormalizer", function(this, ..., f
 
   verbose && enter(verbose, "Getting target distribution");
 
-  yTarget <- this$.targetDistribution;
+  yTarget <- this$.params$.targetDistribution;
   if (force || is.null(yTarget)) {
     pathname <- getTargetDistributionPathname(this, verbose=less(verbose));
     verbose && print(verbose, pathname);
@@ -266,7 +284,7 @@ setMethodS3("getTargetDistribution", "QuantileNormalizer", function(this, ..., f
       verbose && exit(verbose);
     }
     attr(yTarget, "identifier") <- getTargetDistributionIdentifier(this);
-    this$.targetDistribution <- yTarget;
+    this$.params$.targetDistribution <- yTarget;
   } else {
     verbose && cat(verbose, "Was cached in-memory.");
   }
@@ -458,6 +476,11 @@ setMethodS3("process", "QuantileNormalizer", function(this, ..., force=FALSE, ve
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Retrieve/calculate the target distribution
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  getTargetDistribution(this, verbose=less(verbose));
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get input dataset
@@ -467,21 +490,14 @@ setMethodS3("process", "QuantileNormalizer", function(this, ..., force=FALSE, ve
   params <- getParameters(this);
 
   # Get the output path
-  outputPath <- getOutputPath(this);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Getting target distribution
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  yTarget <- getTargetDistribution(this, verbose=verbose);
+  outputPath <- getPath(this);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   names(params) <- gsub(".targetDistribution", "xTarget", names(params));
-  args <- c(list(ds, path=outputPath), params, 
-                                   list(xTarget=yTarget, verbose=verbose));
+  args <- c(list(ds, path=outputPath, verbose=verbose), params);
   outputDataSet <- do.call("normalizeQuantile", args=args);
 
   # Update the output dataset

@@ -14,7 +14,7 @@
 #   \item{reference}{The @see "CnChipEffectFile" object used as the 
 #     reference chip effects when calculating the raw (relative) copy-number
 #     estimates..}
-#   \item{chromosome}{The chromosome for which the model should be fitted.}
+#   \item{chromosomes}{The chromosomes for which the model should be fitted.}
 #   \item{units}{(Optional) The subset of units to be matched.}
 #   \item{...}{Not used.}
 #   \item{force}{If @TRUE, any in-memory cached results are ignored.}
@@ -32,7 +32,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosome, units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes=c(1:22,"X"), units=NULL, ..., force=FALSE, verbose=FALSE) {
   require(GLAD) || throw("Package 'GLAD' not loaded.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -52,14 +52,39 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosome,
   }
 
 
+  if (length(chromosomes) > 1) {
+    res <- list();
+    verbose && enter(verbose, "Fitting ", length(chromosomes), " chromosomes");
+    verbose && cat(verbose, "Chromosomes: ", paste(chromosomes, collapse=","));
+    for (cc in chromosomes) {
+      ccStr <- as.character(cc);
+      res[[ccStr]] <- fitGlad(this, reference=reference, chromosomes=cc, 
+                       units=units, ..., force=force, verbose=less(verbose));
+    }
+    verbose && exit(verbose);
+    return(res);
+  }
+
   verbose && enter(verbose, "Fitting GLAD");
+
+  chromosome <- chromosomes[1];
+
+  cdf <- getCdf(this);
+  chipType <- getChipType(cdf);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached values
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- list(method="fitGlad", sample=getIdentifier(this), 
-                                          reference=getIdentifier(reference), 
-                                    chromosome=chromosome, units=units, ...);
+  key <- list(method="fitGlad", 
+              dataset=basename(dirname(getPath(this))),
+              fullname=getFullName(this),
+              refset=basename(dirname(getPath(reference))),
+              reference=getFullName(reference),
+              chipType=chipType,
+              chromosome=chromosome,
+              units=units,
+              ...
+             );
   fit <- loadCache(key=key);
   if (!is.null(fit) && !force) {
     verbose && cat(verbose, "Cached on file.");
@@ -82,12 +107,10 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosome,
   verbose && cat(verbose, sprintf("Extracted data for %d SNPs", nrow(df)));
 
   # Put the data in a format recognized by GLAD
-  cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
   df <- data.frame(
     LogRatio=unname(df[,"M"]), 
     PosOrder=1:nrow(df), 
-    Chromosome=as.integer(rep(chromosome, nrow(df))), 
+    Chromosome=rep(chromosome, nrow(df)), 
     PosBase=unname(df[,"x"]),
     # Add (chipType, units) identifiers to be able to backtrack SNP IDs etc.
     chipType=as.factor(chipType),
@@ -116,6 +139,10 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosome,
 
 ############################################################################
 # HISTORY:
+# 2006-11-06
+# o Now fitGlad() accepts a vector of chromosomes, because due to file 
+#   caching it is probably faster to fit all chromosomes on one file than
+#   across files.
 # 2006-10-30
 # o Now chip type and (CDF) unit indices are stored in the result too so
 #   that the SNP IDs etc can be backtracked.

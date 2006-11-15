@@ -103,9 +103,10 @@ setMethodS3("clone", "AffymetrixFile", function(this, clear=TRUE, ...) {
 setMethodS3("as.character", "AffymetrixFile", function(this, ...) {
   s <- paste(class(this)[1], ":", sep="");
   s <- paste(s, " Name: ", getName(this), ".", sep="");
-  branches <- getBranches(this);
-  if (!is.null(branches))
-    s <- paste(s, " Branches: ", paste(branches, collapse=","), ".", sep="");
+  tags <- getTags(this);
+  if (!is.null(tags)) {
+    s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
+  }
   s <- paste(s, " File type: ", getFileType(this), ".", sep="");
   s <- sprintf("%s Pathname: %s (%.2fMb).", s, getPathname(this), 
                                                    getFileSize(this)/1024^2);
@@ -197,6 +198,12 @@ setMethodS3("getPath", "AffymetrixFile", function(this, ...) {
 #   Returns a @character.
 # }
 #
+# \value{
+#  The filename of a file is the pathname excluding any path.
+#  For instance, the filename of \code{path/to/foo,a.2,b.ext} is 
+#  \code{foo,a.2,b.ext}.
+# }
+#
 # @author
 #
 # \seealso{
@@ -206,6 +213,51 @@ setMethodS3("getPath", "AffymetrixFile", function(this, ...) {
 setMethodS3("getFilename", "AffymetrixFile", function(this, ...) {
   basename(this$.pathname);
 })
+
+
+
+###########################################################################/**
+# @RdocMethod getFullName
+#
+# @title "Gets the full name of the file"
+#
+# \description{
+#   @get "title", that is the filename without the extension.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character.
+# }
+#
+# \value{
+#  The full name of a file is the filename excluding any
+#  extension (and period).
+#  For instance, the full name of \code{path/to/foo,a.2,b.ext} is 
+#  \code{foo,a.2,b}.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getName".
+#   @seemethod "getTags".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getFullName", "AffymetrixFile", function(this, ...) {
+  name <- basename(this$.pathname);
+
+  # Exclude filename extension
+  name <- gsub("[.][a-zA-Z0-9][a-zA-Z0-9]*$", "", name);
+
+  name;
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -228,77 +280,20 @@ setMethodS3("getFilename", "AffymetrixFile", function(this, ...) {
 # }
 #
 # \value{
-#  The name of a file is the basename of the full pathname excluding any
-#  extension (including the period).
-#  For instance, the name of \code{path/to/foo,a,b.ext} is \code{foo,a,b}.
+#  The name of a file is the part of the filename without the extension and
+#  that preceeds any comma.
+#  For instance, the name of \code{path/to/foo,a.2,b.ext} is \code{foo}.
 # }
 #
 # @author
 #
 # \seealso{
-#   @seemethod "getLabel".
-#   @seemethod "getBranches".
+#   @seemethod "getTags".
 #   @seeclass
 # }
 #*/###########################################################################
 setMethodS3("getName", "AffymetrixFile", function(this, ...) {
-  name <- basename(this$.pathname);
-
-  # Exclude filename extension
-  name <- gsub("[.][a-zA-Z0-9][a-zA-Z0-9]*$", "", name);
-
-  name;
-})
-
-
-setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
-  label <- this$label;
-  if (is.null(label))
-    label <- getName(this, ...);
-  label;
-})
-
-setMethodS3("setLabel", "AffymetrixFile", function(this, label, ...) {
-  this$label <- label;
-  invisible(this);
-})
-
-
-###########################################################################/**
-# @RdocMethod getLabel
-#
-# @title "Gets the label of the file"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#   Returns a @character.
-# }
-#
-# \value{
-#  The \emph{label} of a file is the part of the \emph{name} (as returned
-#  by @seemethod "getName") that preceeds the first comma, if any.
-#  For instance, the label of \code{path/to/foo,a,b.ext} is \code{foo}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "getName".
-#   @seemethod "getBranches".
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
-  name <- getName(this, ...);
+  name <- getFullName(this, ...);
 
   # Keep anything before the first comma
   name <- gsub("[,].*$", "", name);
@@ -307,10 +302,12 @@ setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
 })
 
 
+
+
 ###########################################################################/**
-# @RdocMethod getBranches
+# @RdocMethod getTags
 #
-# @title "Gets the branches of the file"
+# @title "Gets the tags of the file"
 #
 # \description{
 #   @get "title".
@@ -327,35 +324,60 @@ setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
 # }
 #
 # \value{
-#  The \emph{branches} of a file are the comma separated parts of the
-#  \emph{name} (as returned by @seemethod "getName") that follows the 
-#  \emph{label} (as returned by @seemethod "getLabel").
-#  For instance, the branches of \code{path/to/foo,a,b.ext} are 
-#  \code{a} and \code{b}.
+#  The \emph{tags} of a filename are the comma separated parts of the
+#  filename that follows the the first comma, if any, and that preceeds the
+#  last period (the filename extension).
+#  For instance, the tags of \code{path/to/foo,a.2,b.ext} are 
+#  \code{a.2} and \code{b}.
 # }
 #
 # @author
 #
 # \seealso{
 #   @seemethod "getName".
-#   @seemethod "getLabel".
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getBranches", "AffymetrixFile", function(this, ...) {
-  name <- getName(this, ...);
+setMethodS3("getTags", "AffymetrixFile", function(this, ...) {
+  name <- getFullName(this, ...);
 
   # Data-set name is anything before the first comma
   dsName <- gsub("[,].*$", "", name);
 
   # Keep anything after the data-set name (and the separator).
-  name <- substring(name, nchar(dsName)+1);
+  name <- substring(name, nchar(dsName)+2);
   
   res <- strsplit(name, split=",")[[1]];
   if (length(res) == 0)
     res <- NULL;
 
   res;
+})
+
+
+setMethodS3("getTag", "AffymetrixFile", function(this, which=c("version"), ...) {
+  which <- match.arg(which);
+
+  getTags(this, ...)[which];
+}, protected=TRUE)
+
+
+setMethodS3("getVersionTag", "AffymetrixFile", function(this, ...) {
+  getTag(this, "version", ...);
+})
+
+
+
+setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
+  label <- this$label;
+  if (is.null(label))
+    label <- getName(this, ...);
+  label;
+})
+
+setMethodS3("setLabel", "AffymetrixFile", function(this, label, ...) {
+  this$label <- label;
+  invisible(this);
 })
 
 
@@ -511,6 +533,8 @@ setMethodS3("stextLabels", "AffymetrixFile", function(this, others=NULL, side=3,
 
 ############################################################################
 # HISTORY:
+# 2006-11-02
+# o Added getFullName(), getTags() and redefined getName().
 # 2006-09-15
 # o Added stextSize().
 # 2006-08-27

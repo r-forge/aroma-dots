@@ -75,7 +75,7 @@ setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
 
 setMethodS3("getSampleName", "ChipEffectFile", function(this, ...) {
   name <- getName(this, ...);
-  name <- gsub("-chipEffects$", "", name);
+  name <- gsub(",chipEffects$", "", name);
   name;
 })
 
@@ -109,7 +109,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
 }, static=TRUE)
 
 
-setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=sprintf("%s-chipEffects.cel", getName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
+setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=sprintf("%s,chipEffects.cel", getName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'df':
   if (!inherits(df, "AffymetrixCelFile")) {
     throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
@@ -252,6 +252,10 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
 
 ############################################################################
 # HISTORY:
+# 2006-10-06
+# o Now chip effect files use filename tag 'chipEffects' with a comma in
+#   front (instead of suffix "-chipEffects').  This way getName() will
+#   return the sample name without any extra endings.
 # 2006-09-11
 # o Great! Using the specially designed CDFs and CEL files to store 
 #   estimates is much faster and smaller than using the originally 

@@ -134,7 +134,7 @@ setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE
     this$.identifier <- identifier;
   }
   identifier;
-})
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -164,7 +164,8 @@ setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE
 #*/###########################################################################
 setMethodS3("getSampleNames", "AffymetrixCelSet", function(this, ...) {
   unlist(lapply(this, FUN=getSampleName))
-})
+}, protected=TRUE)
+
 
 ###########################################################################/**
 # @RdocMethod getSiblings
@@ -345,12 +346,6 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="chip_data/",
 })
 
 
-setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
-  NextMethod("getName", this, parent=1, ...);
-})
-
-
-
 
 
 ###########################################################################/**
@@ -511,7 +506,7 @@ setMethodS3("getData", "AffymetrixCelSet", function(this, indices=NULL, fields=c
 # }
 #*/###########################################################################
 setMethodS3("getIntensities", "AffymetrixCelSet", function(this, ...) {
-  getData(this, ...)$intensities;
+  getData(this, ..., fields="intensities")$intensities;
 }) # getIntensities()
 
 
@@ -723,6 +718,26 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 #*/###########################################################################
 setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, prefix="average", indices="remaining", mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if ("median" %in% mean || "mad" %in% sd) {
+    # rowMedians():
+    if (require(R.native)) {
+      rowMedians <- R.native::rowMedians;
+    } else {
+      # About 3-10 times slower than rowMedians()
+      rowMedians <- function(X, ...) {
+        apply(X, MARGIN=1, FUN=median, ...);
+      }
+    }
+
+    # rowMads():
+    rowMads <- function(X, centers=rowMedians(X, ...), constant=1.4826, ...) {
+      constant * rowMedians(abs(X - centers), ...);
+    }
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'mean':
@@ -732,9 +747,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     if (mean == "mean") {
       mean <- base::rowMeans;
     } else if (mean == "median") {
-      mean <- function(X, ...) {
-        rowMedians(X);
-      }
+      mean <- rowMedians;
     }
   } else if (is.function(mean)) {
     meanName <- "customMean";
@@ -749,7 +762,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     if (sd == "sd") {
       sd <- rowSds;
     } else if (sd == "mad") {
-      sd <- rowSds;
+      sd <- rowMads;
     }
   } else if (is.function(sd)) {
     sdName <- "customSd";
@@ -870,9 +883,9 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
 
     # Calculate the mean signal    
     mu <- mean(X, na.rm=na.rm);          # Special mean()!
-
     # Calculate the standard deviation of the signals
     sigma <- sd(X, mean=mu, na.rm=na.rm);   # Special sd()!
+
     verbose && exit(verbose);
 
     if (!is.null(h)) {
@@ -1162,8 +1175,23 @@ setMethodS3("rmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="rm
 
 
 
+setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
+  NextMethod("getFullName", this, parent=parent, ...);
+})
+
+setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
+  NextMethod("getName", this, ...);
+})
+
+
+
+
+
 ############################################################################
 # HISTORY:
+# 2006-11-07
+# o Now getAverageFile() uses rowMedians() of R.native if available, 
+#   otherwise a local version utilizing apply(). Same for rowMads().
 # 2006-10-24
 # o Added getAverageLog() and getAverageAsinh().
 # o Added transforms and anti-transforms g() and h() to getAverageFile().

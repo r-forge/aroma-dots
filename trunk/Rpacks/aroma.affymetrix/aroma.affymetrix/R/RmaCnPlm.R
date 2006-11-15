@@ -36,6 +36,10 @@ setConstructorS3("RmaCnPlm", function(..., combineAlleles=FALSE, name="modelRmaC
   )
 })
 
+setMethodS3("getRootPath", "RmaCnPlm", function(this, ...) {
+  "modelRmaCnPlm";
+})
+
 
 ############################################################################
 # HISTORY:
