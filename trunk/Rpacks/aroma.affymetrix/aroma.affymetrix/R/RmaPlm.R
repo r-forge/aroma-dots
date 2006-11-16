@@ -166,9 +166,16 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # phi, sdPhi, phiOutliers.
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    sdTheta <- 2^(se[1:J]);
+    if (is.null(se)) {
+      # For affyPLM v1.10.0 (2006-09-26) or older.
+      sdTheta <- rep(1, J);
+      sdPhi <- rep(1, I);
+    } else {
+      # For affyPLM v1.11.6 (2006-11-01) or newer.
+      sdTheta <- 2^(se[1:J]);
+      sdPhi <- 2^(se[(J+1):length(se)]);
+    }
     thetaOutliers <- rep(FALSE, J);
-    sdPhi <- 2^(se[(J+1):length(se)]);
     phiOutliers <- rep(FALSE, I);
 
     # Return data on the intensity scale
@@ -245,10 +252,10 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 
   # Test which of the above fit functions are available on the current
   # system, using a dummy set of signals
-  rmaModel <- rmaModel02
+  rmaModel <- rmaModel02;
   tryCatch({
     rmaModel01(matrix(1:6+0.1, ncol=3));
-    rmaModel <- rmaModel01
+    rmaModel <- rmaModel01;
   }, error = function(ex) {})
 
   rmaModel;
@@ -260,7 +267,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 ############################################################################
 # HISTORY:
 # 2006-11-02
-# o Added SE estimates in RmaPlm from Ben's new code.
+# o Added SE estimates in RmaPlm from Ben's new code. Works with 
+#   affyPLM v1.11.6 or newer. /KS
 # 2006-09-26
 # o Added code to use either of the two RMA fit functions.
 # o Incorporated Ken Simpson's fit function for RMA as an alternative.
