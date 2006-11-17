@@ -32,7 +32,7 @@
 setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subversionTag="", subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, ...) {
   if (!is.null(dataSet)) {
     subversionTag <- Arguments$getCharacter(subversionTag);
-    if (regexpr("[,.]", subversionTag) != -1)
+    if (regexpr("[,]", subversionTag) != -1)
       throw("A tag must not contain commas or periods: ", subversionTag);
   }
 

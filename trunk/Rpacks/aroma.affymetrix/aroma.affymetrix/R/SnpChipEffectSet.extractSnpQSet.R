@@ -71,13 +71,8 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, transform=c("lo
     verbose && enter(verbose, "Checking cache");
     res <- loadCache(key=key);
     verbose && exit(verbose);
-    if (!is.null(res)) {
-      # Just a temporary fix of sample names since I've got cached data on
-      # file right now. /HB 2006-10-04
-      if (identical(sampleNames(res), getSampleNames(this)))
-        sampleNames(res) <- getSampleNames(this);
+    if (!is.null(res))
       return(res);
-    }
   }
 
   cdf <- getCdf(this);

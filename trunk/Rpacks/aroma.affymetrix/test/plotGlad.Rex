@@ -1,4 +1,5 @@
-library(aroma.affymetrix)
+library(aroma.affymetrix);
+source("init.R");
 
 pngDev <- System$findGraphicsDevice();
 
@@ -7,6 +8,7 @@ pngDev <- System$findGraphicsDevice();
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 dataSetName <- "CarmichaelC_etal_2006-500k";
 #dataSetName <- "Affymetrix_2006-HapMap270";
+dataSetName <- "SlaterH_etal_2006";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 
 #dataSetName <- "SlaterH_etal_2004";
@@ -24,16 +26,16 @@ for (chipType in chipTypes) {
     print(ds);
   
 #    ga <- RmaCnAnalyzer(ds); 
-#    preprocess(ga, subversionTag="a", verbose=verbose); 
+#    preprocess(ga, subversionTag="QN", verbose=verbose); 
 
     ga <- MbeiCnAnalyzer(ds); 
-    preprocess(ga, subversionTag="b", verbose=verbose); 
+    preprocess(ga, subversionTag="ACT.QN", verbose=verbose); 
 
     setup(ga, verbose=verbose);
 
     gas[[chipType]] <- ga;
   }
 
-  plotGlad(ga, chromosomes=14, verbose=verbose);
+  plotGlad(ga, verbose=verbose);
 } # for (chipType ...)
 

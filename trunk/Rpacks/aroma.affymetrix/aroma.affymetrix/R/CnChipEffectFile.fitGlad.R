@@ -32,7 +32,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes=c(1:22,"X"), units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes=c(1:22,"X"), units=NULL, useStddvs=TRUE, ..., force=FALSE, verbose=FALSE) {
   require(GLAD) || throw("Package 'GLAD' not loaded.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -100,6 +100,16 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
   verbose && enter(verbose, "Retrieving relative copy-number estimates");
   df <- getXAM(this, other=reference, chromosome=chromosome, units=units, 
                                                       verbose=less(verbose));
+
+  verbose && enter(verbose, "Retrieving stddvs of chip effects");
+  units <- as.integer(rownames(df));
+str(df);
+  sdTheta <- readUnits(this, units=units, readIntensities=FALSE, readStdvs=TRUE, verbose=less(verbose));
+  sdTheta <- unlist(sdTheta, use.names=FALSE);
+  df <- cbind(df, sdTheta);
+  rm(sdTheta);
+  verbose && exit(verbose);
+
   verbose && enter(verbose, "Re-order by physical position");
   df <- df[order(df[,"x"]),];
   verbose && exit(verbose);
@@ -114,7 +124,8 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
     PosBase=unname(df[,"x"]),
     # Add (chipType, units) identifiers to be able to backtrack SNP IDs etc.
     chipType=as.factor(chipType),
-    units=as.integer(rownames(df))
+    units=units,
+    sdTheta=unname(df[,"sdTheta"])
   );
   verbose && str(verbose, df);
   df <- as.profileCGH(df);
