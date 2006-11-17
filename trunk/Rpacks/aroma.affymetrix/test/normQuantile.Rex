@@ -5,11 +5,11 @@ source("init.R")
 # Specify the family of datasets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 dataPath <- "raw";
-#dataPath <- "calibAllelicCT";
+dataPath <- "calibAllelicCT";
 
-chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
 chipTypes <- c("BI_SNP");
+chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 
 for (chipType in chipTypes) {
   if (FALSE) {
@@ -33,12 +33,16 @@ for (chipType in chipTypes) {
   dataSetName <- "CarmichaelC_etal_2006-500k,b";
   dataSetName <- "SlaterH_etal_2004";
   dataSetName <- "Affymetrix_2006b-500k_v2";
+  dataSetName <- "SlaterH_etal_2006,ACT";
   path <- filePath(dataPath, dataSetName, chipType);
+  if (!isDirectory(path))
+    next;
+
   print(path);
   ds <- AffymetrixCelSet$fromFiles(path);
   print(ds);
 
-  norm <- QuantileNormalizer(ds, subversionTag="a", subsetToAvg=1/3, targetDistribution=td);
+  norm <- QuantileNormalizer(ds, subversionTag="QN", subsetToAvg=1/3, targetDistribution=td);
   dsN <- process(norm, verbose=less(verbose));
   print(dsN);
 } # for (chipType ...)
