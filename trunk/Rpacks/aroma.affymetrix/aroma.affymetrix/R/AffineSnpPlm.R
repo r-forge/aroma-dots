@@ -14,7 +14,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "AffinePlm".}
-#   \item{name}{The name of the model, which is also used in the pathname.}
 #   \item{mergeStrands}{If @TRUE, the sense and the anti-sense strands are
 #      fitted together, otherwise separately.}
 # }
@@ -26,8 +25,8 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("AffineSnpPlm", function(..., name="modelAffineSnpPlm", mergeStrands=FALSE) {
-  extend(AffinePlm(..., name=name), c("AffineSnpPlm", uses(SnpPlm())),
+setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE) {
+  extend(AffinePlm(...), c("AffineSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })

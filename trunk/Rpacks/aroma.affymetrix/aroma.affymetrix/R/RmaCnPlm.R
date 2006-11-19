@@ -16,7 +16,6 @@
 #   \item{...}{Arguments passed to @see "RmaSnpPlm".}
 #   \item{combineAlleles}{If @FALSE, allele A and allele B are treated 
 #      seperately, otherwise together.}
-#   \item{name}{The name of the PLM, also used as part of the pathname.}
 # }
 #
 # \section{Fields and Methods}{
@@ -30,14 +29,10 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("RmaCnPlm", function(..., combineAlleles=FALSE, name="modelRmaCnPlm") {
-  extend(RmaSnpPlm(..., name=name), c("RmaCnPlm", uses(CnPlm())),
+setConstructorS3("RmaCnPlm", function(...,  tags=c("RMA", ifelse(mergeStrands, "", "+-"), ifelse(combineAlleles, "", "AB")), mergeStrands=FALSE, combineAlleles=FALSE) {
+  extend(RmaSnpPlm(..., tags=tags, mergeStrands=mergeStrands), c("RmaCnPlm", uses(CnPlm())),
     combineAlleles = combineAlleles
   )
-})
-
-setMethodS3("getRootPath", "RmaCnPlm", function(this, ...) {
-  "modelRmaCnPlm";
 })
 
 

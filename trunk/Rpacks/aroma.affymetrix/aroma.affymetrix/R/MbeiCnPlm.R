@@ -13,7 +13,6 @@
 #   \item{...}{Arguments passed to @see "MbeiSnpPlm".}
 #   \item{combineAlleles}{If @FALSE, allele A and allele B are treated 
 #      seperately, otherwise together.}
-#   \item{name}{The name of the PLM, also used as part of the pathname.}
 # }
 #
 # \section{Fields and Methods}{
@@ -22,15 +21,12 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("MbeiCnPlm", function(..., combineAlleles=FALSE, name="modelMbeiCnPlm") {
-  extend(MbeiSnpPlm(..., name=name), c("MbeiCnPlm", uses(CnPlm())),
+setConstructorS3("MbeiCnPlm", function(..., tags=c("MBEI", ifelse(mergeStrands, "", "+-"), ifelse(combineAlleles, "", "AB")), mergeStrands=FALSE, combineAlleles=FALSE) {
+  extend(MbeiSnpPlm(..., tags=tags), c("MbeiCnPlm", uses(CnPlm())),
     combineAlleles = combineAlleles
   )
 })
 
-setMethodS3("getRootPath", "MbeiCnPlm", function(this, ...) {
-  "modelMbeiCnPlm";
-})
 
 
 ############################################################################

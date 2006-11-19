@@ -17,14 +17,14 @@ for (chipType in chipTypes) {
   verbose && enter(verbose, "Define combined dataset");
 
   # Test set
-  dataSetName <- "CarmichaelC_etal_2006-500k,b";
+  dataSetName <- "CarmichaelC_etal_2006-500k,QN";
   path <- filePath(dataPath, dataSetName, chipType);
   print(path);
   ds <- AffymetrixCelSet$fromFiles(path);
   print(ds);
 
   # Append reference set
-  dataSetName <- "Affymetrix_2006-HapMap270,b";
+  dataSetName <- "Affymetrix_2006-HapMap270,QN";
   path <- filePath(dataPath, dataSetName, chipType);
   print(path);
   dsR <- AffymetrixCelSet$fromFiles(path);

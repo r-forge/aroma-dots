@@ -13,7 +13,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
-#   \item{name}{The name of the model, which is also used in the pathname.}
 # }
 #
 # \section{Fields and Methods}{
@@ -37,20 +36,15 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("RmaPlm", function(..., name="modelRmaPlm") {
+setConstructorS3("RmaPlm", function(..., tags="RMA") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(affyPLM) || throw("Package 'affyPLM' not loaded.");
 
-  extend(ProbeLevelModel(..., name=name), "RmaPlm")
+  extend(ProbeLevelModel(..., tags=tags), "RmaPlm")
 })
 
-
-
-setMethodS3("getRootPath", "RmaPlm", function(this, ...) {
-  "modelRmaPlm";
-})
 
 
 setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {

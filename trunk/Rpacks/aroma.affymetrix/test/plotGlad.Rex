@@ -26,10 +26,10 @@ for (chipType in chipTypes) {
     print(ds);
   
 #    ga <- RmaCnAnalyzer(ds); 
-#    preprocess(ga, subversionTag="QN", verbose=verbose); 
+#    preprocess(ga, verbose=verbose); 
 
     ga <- MbeiCnAnalyzer(ds); 
-    preprocess(ga, subversionTag="ACT.QN", verbose=verbose); 
+    preprocess(ga, verbose=verbose); 
 
     setup(ga, verbose=verbose);
 

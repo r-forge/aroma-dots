@@ -13,7 +13,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
-#   \item{name}{The name of the model, which is also used in the pathname.}
 #   \item{background}{If @TRUE, background is estimate for each unit group,
 #     otherwise not. That is, if @FALSE, a \emph{linear} model without 
 #     offset is fitted, resulting in very similar results as obtained by
@@ -47,13 +46,13 @@
 #   Bengtsson \& Hössjer (2006). \cr
 # }
 #*/###########################################################################
-setConstructorS3("AffinePlm", function(..., name="modelAffinePlm", background=TRUE) {
+setConstructorS3("AffinePlm", function(..., tags="APLM", background=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(aroma.light) || throw("Package 'aroma.light' not loaded.");
 
-  extend(ProbeLevelModel(..., name=name), "AffinePlm",
+  extend(ProbeLevelModel(...), "AffinePlm",
     background = background
   )
 })

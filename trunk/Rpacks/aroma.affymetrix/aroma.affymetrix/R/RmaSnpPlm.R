@@ -11,7 +11,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "RmaPlm".}
-#   \item{name}{The name of the model, which is also used in the pathname.}
 #   \item{mergeStrands}{If @TRUE, the sense and the anti-sense strands are
 #      fitted together, otherwise separately.}
 # }
@@ -23,14 +22,10 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("RmaSnpPlm", function(..., name="modelRmaSnpPlm", mergeStrands=FALSE) {
-  extend(RmaPlm(..., name=name), c("RmaSnpPlm", uses(SnpPlm())),
+setConstructorS3("RmaSnpPlm", function(..., tags=c("RMA", ifelse(mergeStrands, "", "+-")), mergeStrands=FALSE) {
+  extend(RmaPlm(..., tags=tags), c("RmaSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
-})
-
-setMethodS3("getRootPath", "RmaSnpPlm", function(this, ...) {
-  "modelRmaSnpPlm";
 })
 
 
