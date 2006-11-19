@@ -14,7 +14,7 @@ chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 for (chipType in chipTypes) {
   if (FALSE) {
     # Reference set
-    dataSetName <- "Affymetrix_2006-HapMap270,b";
+    dataSetName <- "Affymetrix_2006-HapMap270,ACT";
     path <- filePath(dataPath, dataSetName, chipType);
     print(path);
     ds <- AffymetrixCelSet$fromFiles(path);
@@ -30,7 +30,7 @@ for (chipType in chipTypes) {
   }
 
   # Test set
-  dataSetName <- "CarmichaelC_etal_2006-500k,b";
+  dataSetName <- "CarmichaelC_etal_2006-500k,ACT";
   dataSetName <- "SlaterH_etal_2004";
   dataSetName <- "Affymetrix_2006b-500k_v2";
   dataSetName <- "SlaterH_etal_2006,ACT";
@@ -42,7 +42,7 @@ for (chipType in chipTypes) {
   ds <- AffymetrixCelSet$fromFiles(path);
   print(ds);
 
-  norm <- QuantileNormalizer(ds, subversionTag="QN", subsetToAvg=1/3, targetDistribution=td);
+  norm <- QuantileNormalizer(ds, subsetToAvg=1/3, targetDistribution=td);
   dsN <- process(norm, verbose=less(verbose));
   print(dsN);
 } # for (chipType ...)

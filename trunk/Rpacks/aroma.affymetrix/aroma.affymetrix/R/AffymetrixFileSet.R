@@ -309,24 +309,10 @@ setMethodS3("getTags", "AffymetrixFileSet", function(this, ...) {
   # Keep anything after the data-set name (and the separator).
   name <- substring(name, nchar(dsName)+2);
   
-  res <- strsplit(name, split=",")[[1]];
-  tagNames <- c("version", rep("", max(length(res)-1,0)));
-  names(res) <- tagNames[seq(along=res)];
-
-  if (length(res) == 0)
-    res <- NULL;
-
-  res;
-})
-
-setMethodS3("getTag", "AffymetrixFileSet", function(this, which=c("version"), ...) {
-  which <- match.arg(which);
-
-  getTags(this, ...)[which];
-}, protected=TRUE)
-
-setMethodS3("getVersionTag", "AffymetrixFileSet", function(this, ...) {
-  getTag(this, "version", ...);
+  tags <- strsplit(name, split=",")[[1]];
+  if (length(tags) == 0)
+    tags <- NULL;
+  tags;
 })
 
 

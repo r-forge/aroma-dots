@@ -17,7 +17,7 @@ for (chipType in chipTypes) {
   verbose && enter(verbose, "Define dataset");
 
   # Test set
-  dataSetName <- "SlaterH_etal_2004,b";
+  dataSetName <- "SlaterH_etal_2004,ACT,QN";
   path <- filePath(dataPath, dataSetName, chipType);
   print(path);
   ds <- AffymetrixCelSet$fromFiles(path);

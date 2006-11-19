@@ -19,7 +19,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "UnitGroupsModel".}
-#   \item{name}{The name of the model, which is also used in the pathname.}
 #   \item{model}{A @character string specifying how PM and MM values
 #      should be modelled.  By default only PM signals are used.}
 #   \item{standardize}{If @TRUE, chip-effect and probe-affinity estimates are
@@ -54,14 +53,14 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., name="modelPlm", model=c("pm"), standardize=TRUE) {
+setConstructorS3("ProbeLevelModel", function(..., model=c("pm"), standardize=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'model':
   model <- match.arg(model);
 
-  extend(UnitGroupsModel(..., name=name), "ProbeLevelModel",
+  extend(UnitGroupsModel(...), "ProbeLevelModel",
     "cached:.paFile" = NULL,
     "cached:.chipFiles" = NULL,
     "cached:.lastPlotData" = NULL,

@@ -48,7 +48,7 @@ if (!exists("qnRef", mode="list")) {
   for (name in names(tmp)) {
     verbose && enter(verbose, "Data set: ", name);
     ds <- tmp[[name]];
-    norm <- QuantileNormalizer(ds, subversionTag="a", subsetToAvg=1/3);
+    norm <- QuantileNormalizer(ds, subsetToAvg=1/3);
     dsN <- process(norm, verbose=less(verbose));
     dsN$normalizer <- norm;
     print(dsN);
@@ -72,7 +72,7 @@ if (!exists("qnTest", mode="list")) {
 
     # Normalize
     ds <- tmp[[name]];
-    norm <- QuantileNormalizer(ds, subversionTag="a", targetDistribution=yTarget);
+    norm <- QuantileNormalizer(ds, targetDistribution=yTarget);
     dsN <- process(norm, verbose=less(verbose));
     dsN$normalizer <- norm;
     print(dsN);

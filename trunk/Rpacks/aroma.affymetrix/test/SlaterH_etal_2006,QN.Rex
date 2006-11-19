@@ -32,7 +32,7 @@ for (chipType in chipTypes) {
 
   # Define model
   verbose && enter(verbose, "Define model");
-  model <- RmaCnPlm(ds, mergeStrands=FALSE, combineAlleles=TRUE, name="modelRmaCnPlmByStrand");
+  model <- RmaCnPlm(ds, mergeStrands=FALSE, combineAlleles=TRUE);
 
   verbose && enter(verbose, "Pre-creates probe affinities");
   paf <- getProbeAffinities(model);

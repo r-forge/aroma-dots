@@ -20,7 +20,7 @@ for (chipType in chipTypes) {
   ds <- AffymetrixCelSet$fromFiles(path);
   print(ds);
 
-  calib <- AllelicCrosstalkCalibrator(ds, subversionTag="ACT");
+  calib <- AllelicCrosstalkCalibrator(ds);
   dsC <- process(calib, verbose=less(verbose));
   print(dsC);
 } # for (chipType ...)

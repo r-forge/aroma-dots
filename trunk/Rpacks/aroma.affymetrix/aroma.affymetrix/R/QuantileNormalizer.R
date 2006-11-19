@@ -14,8 +14,8 @@
 #
 # \arguments{
 #   \item{dataSet}{A @see "AffymetrixCelSet".}
-#   \item{subversionTag}{A @character string appended to the version tag
-#      of the input data set (with a period as a separator).}
+#   \item{tags}{A @character @vector of tags to be appended to the tags of
+#      the input data set.}
 #   \item{...}{Not used.}
 # }
 #
@@ -29,15 +29,25 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subversionTag="", subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, ...) {
+setConstructorS3("QuantileNormalizer", function(dataSet=NULL, tags="QN", subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    subversionTag <- Arguments$getCharacter(subversionTag);
-    if (regexpr("[,]", subversionTag) != -1)
-      throw("A tag must not contain commas or periods: ", subversionTag);
+    if (!inherits(dataSet, "AffymetrixCelSet"))
+      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", class(dataSet));
   }
 
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(strsplit(tags, split=",")[[1]]);
+  }
+
+
   extend(Object(), "QuantileNormalizer", 
-    .subversionTag = subversionTag,
+    .tags = tags,
     inputDataSet = dataSet,
     "cached:outputDataSet" = NULL,
     .params = list(
@@ -55,9 +65,10 @@ setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subversionTag="", 
 setMethodS3("as.character", "QuantileNormalizer", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   ds <- getInputDataSet(this);
-  s <- c(s, sprintf("Input data set: %s", getName(ds)));
+  s <- c(s, sprintf("Data set: %s", getName(ds)));
   tags <- paste(getTags(ds), collapse=", ");
   s <- c(s, sprintf("Input tags: %s", tags));
+  s <- c(s, sprintf("Output tags: %s", paste(getTags(this), collapse=",")));
   s <- c(s, sprintf("Number of arrays: %d (%.2fMb)", 
                            nbrOfArrays(ds), getFileSize(ds)/1024^2));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(ds))));
@@ -71,31 +82,98 @@ setMethodS3("as.character", "QuantileNormalizer", function(this, ...) {
 })
 
 
-setMethodS3("getSubversionTag", "QuantileNormalizer", function(this, ...) {
-  this$.subversionTag;
-})
-
-setMethodS3("getVersionTag", "QuantileNormalizer", function(this, ...) {
-  ds <- getInputDataSet(this);
-  versionTag <- paste(getVersionTag(ds), getSubversionTag(this), sep=".");
-  versionTag <- gsub("^[.]|[.]$", "", versionTag);
-  versionTag;
-})
-
+###########################################################################/**
+# @RdocMethod getName
+#
+# @title "Gets the name of the output data set"
+#
+# \description{
+#  @get "title", which is the same as the input data set.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getName", "QuantileNormalizer", function(this, ...) {
   ds <- getInputDataSet(this);
   getName(ds);
 })
 
+
+###########################################################################/**
+# @RdocMethod getTags
+#
+# @title "Gets the tags of the output data set"
+#
+# \description{
+#  @get "title", which equals the tags of the input data set plus the tags
+#  of this normalizer.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getTags", "QuantileNormalizer", function(this, ...) {
-  c(getVersionTag(this));
+  ds <- getInputDataSet(this);
+  c(getTags(ds), this$.tags);
 })
 
+
+###########################################################################/**
+# @RdocMethod getFullName
+#
+# @title "Gets the full name of the output data set"
+#
+# \description{
+#  @get "title", which is the name with comma separated tags.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getFullName", "QuantileNormalizer", function(this, ...) {
   name <- getName(this);
   tags <- getTags(this);
-  tags <- paste(tags, collapse=",");
-  fullname <- paste(name, tags, sep=",");
+  fullname <- paste(c(name, tags), collapse=",");
   fullname <- gsub("[,]$", "", fullname);
   fullname;
 })
@@ -156,6 +234,33 @@ setMethodS3("getOutputIdentifier", "QuantileNormalizer", function(this, ..., ver
 
 
 
+
+###########################################################################/**
+# @RdocMethod getPath
+#
+# @title "Gets the path of the output data set"
+#
+# \description{
+#  @get "title".
+#  If non-existing, then the directory is created.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getPath", "QuantileNormalizer", function(this, ...) {
   # Create the (sub-)directory tree for the dataset
 
@@ -173,7 +278,11 @@ setMethodS3("getPath", "QuantileNormalizer", function(this, ...) {
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
-  mkdirs(path);
+  if (!isDirectory(path)) {
+    mkdirs(path);
+    if (!isDirectory(path))
+      throw("Failed to create output directory: ", path);
+  }
 
   path;
 })
@@ -467,7 +576,9 @@ setMethodS3("process", "QuantileNormalizer", function(this, ..., force=FALSE, ve
 
   verbose && enter(verbose, "Quantile normalizing data set");
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already done?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!force && isDone(this)) {
     verbose && cat(verbose, "Already normalized");
     verbose && exit(verbose);
@@ -489,7 +600,7 @@ setMethodS3("process", "QuantileNormalizer", function(this, ..., force=FALSE, ve
   # Get algorithm parameters
   params <- getParameters(this);
 
-  # Get the output path
+  # Get (and create) the output path
   outputPath <- getPath(this);
 
 
@@ -510,6 +621,10 @@ setMethodS3("process", "QuantileNormalizer", function(this, ..., force=FALSE, ve
 
 ############################################################################
 # HISTORY:
+# 2006-11-18
+# o Removed version and subversion tags, and related functions. 
+#   Now getTags() returns the tags of the input data set plus any tags 
+#   of this instance.
 # 2006-10-30
 # o Created.
 ############################################################################
