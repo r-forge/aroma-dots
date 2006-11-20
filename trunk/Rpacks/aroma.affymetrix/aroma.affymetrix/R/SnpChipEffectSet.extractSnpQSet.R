@@ -15,7 +15,15 @@
 # @synopsis
 #
 # \arguments{
+#   \item{units}{Units to be extracted.  If @NULL, all units are considered.
+#    Non-SNP units are to extracted.}
+#   \item{transform}{A @character string specifying what type of 
+#    transformation should be applied to the chip-effect estimates, which
+#    are on the intensity scale.}
+#   \item{naValue}{A @double value used to replace @NA values.}
 #   \item{...}{Not used.}
+#   \item{force}{If @TRUE, cached values are ignored.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -34,7 +42,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, transform=c("log", "asinh"), ..., force=FALSE, verbose=FALSE) {
+setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, transform=c("log", "asinh"), naValue=-5, ..., force=FALSE, verbose=FALSE) {
   require(oligo) || throw("Package not loaded: oligo");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -80,7 +88,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, transform=c("lo
   chipType <- gsub("-monocell$", "", chipType);
   cleanChipType <- gsub("cdf$", "", cleancdfname(chipType));
   nbrOfSamples <- nbrOfFiles(this);
-  snpNames <- getUnitNames(cdf);
+  snpNames <- getUnitNames(cdf, units=units);
   units <- grep("^SNP", snpNames);
   snpNames <- snpNames[units];
   fileNames <- getNames(this);
@@ -110,11 +118,20 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, transform=c("lo
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Extracting by strand and allele");
+  missingValues <- rep(NA, nbrOfSamples);
+  extractGroup <- function(unit, group) {
+    if (group <= length(unit)) {
+      .subset2(.subset2(unit,group),1);
+    } else {
+      # Handles the 500K case too.
+      missingValues;
+    }
+  }
   thetas <- list(
-    revA=lapply(thetas, FUN=function(unit) unit[[1]][[1]]), 
-    revB=lapply(thetas, FUN=function(unit) unit[[2]][[1]]), 
-    fwdA=lapply(thetas, FUN=function(unit) unit[[3]][[1]]), 
-    fwdB=lapply(thetas, FUN=function(unit) unit[[4]][[1]])
+    revA=lapply(thetas, FUN=extractGroup, group=1),
+    revB=lapply(thetas, FUN=extractGroup, group=2),
+    fwdA=lapply(thetas, FUN=extractGroup, group=3),
+    fwdB=lapply(thetas, FUN=extractGroup, group=4)
   );
   gc();
   verbose && exit(verbose);
@@ -135,18 +152,21 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, transform=c("lo
 
   verbose && enter(verbose, "Reshaping to (transformed) matrices");
   for (kk in seq(along=thetas)) {
+    verbose && enter(verbose, "Group ", names(thetas)[kk]);
     theta <- thetas[[kk]];
     # Extract the vector of chip effects
     theta <- unlist(theta, use.names=FALSE);
     # Chip-effects are stored on the intensity scale.  Take log2.
     theta <- transform(theta);
-    theta[is.na(theta)] <- -5;
+    # Replace NA values
+    theta[is.na(theta)] <- naValue;
     # Make into an JxI matrix
     theta <- matrix(theta, ncol=nbrOfSamples, byrow=TRUE);
     rownames(theta) <- snpNames; 
     colnames(theta) <- fileNames; 
     thetas[[kk]] <- theta; 
     rm(theta);
+    verbose && exit(verbose);
   };
   gc();
   verbose && exit(verbose);
@@ -185,6 +205,8 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, transform=c("lo
 ############################################################################
 # HISTORY:
 # 2006-10-05
+# o BUG FIX: extractSnpQSet() would only work for Mapping50K_* chip types.
+#   Code updated to work with the Mapping250K_* chip types too.
 # o Added so chip effects can be extracted on the C*arcsinh scale as well 
 #   as the log2 scale.
 # 2006-10-02

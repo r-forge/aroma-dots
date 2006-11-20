@@ -1,10 +1,15 @@
+library(aroma.affymetrix);
+source("init.R");
+
+moreUnits <- 30;
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 choices <- c("MBEI,+-", "MBEI,A+B", "RMA,+-", "RMA,A+B");
 ans <- menu(choices=choices, title="Select probe-level model (PLM)")
 model <- choices[ans];
-tags <- unlist(strsplit(model, split=","));
+modelTags <- unlist(strsplit(model, split=","));
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data set
@@ -32,20 +37,44 @@ for (chipType in chipTypes) {
     next;
 
   verbose && enter(verbose, "Defining data set");
+  verbose && cat(verbose, "Path: ", path);
   ds <- AffymetrixCelSet$fromFiles(path);
   print(ds);
   verbose && exit(verbose);
 
+  if (nbrOfArrays(ds) < 6) {
+    verbose && cat(verbose, "WARNING: Too small data set");
+    verbose && enter(verbose, "Appending reference data set");
+
+    verbose && enter(verbose, "Defining reference data set");
+    path <- getParent(getParent(getPath(ds)));
+    refTags <- paste(getTags(ds), collapse=",");
+    refFullName <- paste("Affymetrix_2006-HapMap270", refTags, sep=",");
+    path <- filePath(path, refFullName, chipType);
+    verbose && cat(verbose, "Path: ", path);
+    dsR <- AffymetrixCelSet$fromFiles(path);
+    print(dsR);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Appending");
+    append(ds, dsR);
+    verbose && cat(verbose, "Extended data set:");
+    print(ds);
+    verbose && exit(verbose);
+
+    verbose && exit(verbose);
+  }
+
   verbose && enter(verbose, "Defining PLM model");
-  if ("MBEI" %in% tags) {
+  if ("MBEI" %in% modelTags) {
     plm <- MbeiCnPlm;
-  } else if ("RMA" %in% tags) {
+  } else if ("RMA" %in% modelTags) {
     plm <- RmaCnPlm;
   } else {
-    throw("Unknown PLM: ", paste(tags, collapse=","));
+    throw("Unknown PLM: ", paste(modelTags, collapse=","));
   }
-  mergeStrands <- !("+-" %in% tags);
-  combineAlleles <- ("A+B" %in% tags);
+  mergeStrands <- !("+-" %in% modelTags);
+  combineAlleles <- ("A+B" %in% modelTags);
   model <- plm(ds, mergeStrands=mergeStrands, combineAlleles=combineAlleles);
   print(model);
   verbose && exit(verbose);
@@ -63,7 +92,7 @@ for (chipType in chipTypes) {
     verbose && exit(verbose);
 
     verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
-    uDone <- fit(model, units=units, moreUnits=1, verbose=verbose);
+    uDone <- fit(model, units=units, moreUnits=moreUnits, verbose=verbose);
     nDone <- length(uDone);
   
     verbose && printf(verbose, "Fitted %d SNPs\n", nDone);
