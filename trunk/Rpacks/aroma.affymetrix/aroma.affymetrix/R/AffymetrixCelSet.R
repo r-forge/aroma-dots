@@ -123,6 +123,7 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
 })
 
 
+
 setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE) {
   identifier <- this$.identifier;
   if (force || is.null(identifier)) {

@@ -21,7 +21,24 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("MbeiSnpPlm", function(..., tags=c("MBEI", ifelse(mergeStrands, "", "+-")), mergeStrands=FALSE) {
+setConstructorS3("MbeiSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    idx <- which(tags == "*");
+    if (length(idx) > 0) {
+      if (!mergeStrands)
+        tags <- R.utils::insert.default(tags, idx+1, "+-");
+    }
+  }
+
+
   extend(MbeiPlm(..., tags=tags), c("MbeiSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )

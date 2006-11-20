@@ -1,90 +1,77 @@
-pngDev <- System$findGraphicsDevice();
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Select model
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+choices <- c("MBEI,+-", "MBEI,A+B", "RMA,+-", "RMA,A+B");
+ans <- menu(choices=choices, title="Select probe-level model (PLM)")
+model <- choices[ans];
+tags <- unlist(strsplit(model, split=","));
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Specify the family of datasets
+# Select data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- "normQuantile";
+paths <- c("normQuantile");
+path <- sapply(paths, FUN=filePath, expandLinks="any");
+dataSets <- list.files(pattern="_(199|200)[0-9]", path=path, full.names=TRUE);
+ans <- menu(choices=dataSets, title="Select data set to normalize")
+dataSet <- dataSets[ans];
 
-name <- "Affymetrix_2006-CEPH270";
-name <- "Affymetrix_2005-500k_data";
-name <- "Affymetrix_2004-100k_trios";
-#name <- "Affymetrix_2004-100k_trios-calibACT";
-#name <- "Affymetrix_2005-500k_data-calibACT";
-#name <- "SinclairA_2006-calibACT";
-#name <- "SlaterH_etal_2004-calibACT";
+path <- dataSet;
+pattern <- "^(Mapping|BI_SNP)"
+chipTypes <- list.files(pattern=pattern, path=path);
 
-if (!exists("dataPath"))
-  dataPath <- findCelSet(name=name, paths=paths, minCount=5);
-print(dataPath);
+cat("----------------------------------------------------\n");
+cat("Data set: ", dataSet, "\n", sep="");
+cat("Path: ", path, "\n", sep="");
+cat("Chip types: ", paste(chipTypes, collapse=", "), "\n", sep="");
+cat("\n");
 
-if (!exists("raw", mode="list")) {
-  verbose && enter(verbose, "Defining all data sets");
-  ds <- AffymetrixCelSet$fromFiles(dataPath);
-  # Get both chiptypes in the chip set
-  raw <- getSiblings(ds);
-  rm(ds);
+
+for (chipType in chipTypes) {
+  path <- filePath(dataSet, chipType);
+  if (!isDirectory(path))
+    next;
+
+  verbose && enter(verbose, "Defining data set");
+  ds <- AffymetrixCelSet$fromFiles(path);
+  print(ds);
   verbose && exit(verbose);
-}
-print(raw);
 
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Define copy-number PLM
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("models", mode="list")) {
-  verbose && enter(verbose, "Defining PLM models");
-  models <- vector("list", length(raw));
-  names(models) <- names(raw);
-  for (kk in seq(along=models)) {
-    ds <- raw[[kk]];
-    verbose && enter(verbose, "Data set: ", getName(ds));
-#    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-    models[[kk]] <- model;
+  verbose && enter(verbose, "Defining PLM model");
+  if ("MBEI" %in% tags) {
+    plm <- MbeiCnPlm;
+  } else if ("RMA" %in% tags) {
+    plm <- RmaCnPlm;
+  } else {
+    throw("Unknown PLM: ", paste(tags, collapse=","));
   }
-  verbose && print(verbose, model);
-
-  verbose && enter(verbose, "Pre-creates probe affinities");
-  paf <- getProbeAffinities(model, verbose=less(verbose));
+  mergeStrands <- !("+-" %in% tags);
+  combineAlleles <- ("A+B" %in% tags);
+  model <- plm(ds, mergeStrands=mergeStrands, combineAlleles=combineAlleles);
+  print(model);
   verbose && exit(verbose);
 
-  verbose && enter(verbose, "Pre-creates chip effects");
-  ces <- getChipEffects(model, verbose=less(verbose));
-  verbose && exit(verbose);
+  verbose && enter(verbose, "Fit model");
+  allChromosomes <- c(1:22, "X");
+  for (chr in allChromosomes) {
+    verbose && enter(verbose, "Chromosome ", chr);
 
-  verbose && exit(verbose);
-}
-print(models);
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Fit PLM
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-allChromosomes <- c(1:22, "X");
-for (chr in allChromosomes) {
-  verbose && enter(verbose, "Chromosome ", chr);
-
-  for (kk in seq(along=models)) {
-    model <- models[[kk]];
-    ds <- getDataSet(model);
-    verbose && enter(verbose, "Data set: ", getName(ds));
-  
     verbose && enter(verbose, "Retrieving genome information");
     cdf <- getCdf(model);
     gi <- getGenomeInformation(cdf);
     units <- getUnitIndices(gi, chromosome=chr);
     nunits <- length(units);
     verbose && exit(verbose);
-  
+
     verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
     uDone <- fit(model, units=units, moreUnits=1, verbose=verbose);
     nDone <- length(uDone);
   
     verbose && printf(verbose, "Fitted %d SNPs\n", nDone);
     verbose && exit(verbose);
+
     verbose && exit(verbose);
-  }
-  
+  } # for (chr ...) 
+
   verbose && exit(verbose);
-} # for (chr in c(1:22, "X"))
+}
 

@@ -39,11 +39,24 @@
 #   Li, C. and Wong, W.H. (2001), Proc. Natl. Acad. Sci USA 98, 31-36.\cr
 # }
 #*/###########################################################################
-setConstructorS3("MbeiPlm", function(..., tags="MBEI") {
+setConstructorS3("MbeiPlm", function(..., tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(affy) || throw("Package 'affy' not loaded.");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    tags[tags == "*"] <- "MBEI";
+  }
+
 
   extend(ProbeLevelModel(..., tags=tags), "MbeiPlm")
 })

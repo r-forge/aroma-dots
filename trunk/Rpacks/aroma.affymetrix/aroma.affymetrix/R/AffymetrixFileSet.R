@@ -40,6 +40,7 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
 
+
   extend(Object(), "AffymetrixFileSet",
     files = as.list(files)
   )

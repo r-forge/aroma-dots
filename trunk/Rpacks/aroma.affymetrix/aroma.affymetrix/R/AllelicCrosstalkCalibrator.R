@@ -30,7 +30,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibrator", function(dataSet=NULL, tags="ACT", ...) {
+setConstructorS3("AllelicCrosstalkCalibrator", function(dataSet=NULL, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -43,8 +43,12 @@ setConstructorS3("AllelicCrosstalkCalibrator", function(dataSet=NULL, tags="ACT"
   # Argument 'tags':
   if (!is.null(dataSet)) {
     tags <- Arguments$getCharacters(tags);
-    tags <- trim(strsplit(tags, split=",")[[1]]);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    tags[tags == "*"] <- "ACT";
   }
+
 
   extend(Object(), "AllelicCrosstalkCalibrator", 
     .tags = tags,

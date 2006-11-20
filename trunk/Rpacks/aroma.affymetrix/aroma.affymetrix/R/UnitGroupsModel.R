@@ -43,7 +43,7 @@ setConstructorS3("UnitGroupsModel", function(dataSet=NULL, tags="", ...) {
   # Argument 'tags':
   if (!is.null(dataSet)) {
     tags <- Arguments$getCharacters(tags);
-    tags <- trim(strsplit(tags, split=",")[[1]]);
+    tags <- trim(unlist(strsplit(tags, split=",")));
   }
 
 

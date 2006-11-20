@@ -21,7 +21,24 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("MbeiCnPlm", function(..., tags=c("MBEI", ifelse(mergeStrands, "", "+-"), ifelse(combineAlleles, "", "AB")), mergeStrands=FALSE, combineAlleles=FALSE) {
+setConstructorS3("MbeiCnPlm", function(..., combineAlleles=FALSE, tags="*") {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    idx <- which(tags == "*");
+    if (length(idx) > 0) {
+      if (combineAlleles)
+        tags <- R.utils::insert.default(tags, idx+1, "A+B");
+    }
+  }
+
+
   extend(MbeiSnpPlm(..., tags=tags), c("MbeiCnPlm", uses(CnPlm())),
     combineAlleles = combineAlleles
   )
