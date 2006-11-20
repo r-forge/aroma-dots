@@ -25,8 +25,24 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE) {
-  extend(AffinePlm(...), c("AffineSnpPlm", uses(SnpPlm())),
+setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Find "replacement" tags
+    idx <- which(tags == "*");
+    if (length(idx) > 0) {
+      if (!mergeStrands)
+        tags <- R.utils::insert.default(tags, idx+1, "+-");
+    }
+  }
+
+  extend(AffinePlm(..., tags=tags), c("AffineSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })

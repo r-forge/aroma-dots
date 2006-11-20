@@ -46,13 +46,37 @@
 #   Bengtsson \& Hössjer (2006). \cr
 # }
 #*/###########################################################################
-setConstructorS3("AffinePlm", function(..., tags="APLM", background=TRUE) {
+setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(aroma.light) || throw("Package 'aroma.light' not loaded.");
 
-  extend(ProbeLevelModel(...), "AffinePlm",
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'dataSet':
+  if (!is.null(dataSet)) {
+    if (!inherits(dataSet, "AffymetrixCelSet"))
+      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", class(dataSet));
+  }
+
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    idx <- which(tags == "*");
+    if (length(idx) > 0) {
+      tags[idx] <- "APLM";
+      if (!background)
+        tags <- R.utils::insert.default(tags, idx+1, "linear");
+    }
+  }
+
+
+  extend(ProbeLevelModel(..., tags=tags), "AffinePlm",
     background = background
   )
 })

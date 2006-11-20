@@ -2,20 +2,28 @@ library(aroma.affymetrix)
 source("init.R")
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Specify the family of datasets
+# Select data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-dataPath <- "raw";
-dataPath <- "calibAllelicCT";
+path <- sapply(c("raw", "calibAllelicCT"), FUN=filePath, expandLinks="any");
+dataSets <- list.files(pattern="_(199|200)[0-9]", path=path, full.names=TRUE);
+ans <- menu(choices=dataSets, title="Select data set to normalize")
+dataSet <- dataSets[ans];
 
-chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
-chipTypes <- c("BI_SNP");
-chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
+path <- dataSet;
+pattern <- "^(Mapping|BI_SNP)"
+chipTypes <- list.files(pattern=pattern, path=path);
+
+cat("----------------------------------------------------\n");
+cat("Data set: ", dataSet, "\n", sep="");
+cat("Path: ", path, "\n", sep="");
+cat("Chip types: ", paste(chipTypes, collapse=", "), "\n", sep="");
+cat("\n");
 
 for (chipType in chipTypes) {
   if (FALSE) {
     # Reference set
     dataSetName <- "Affymetrix_2006-HapMap270,ACT";
-    path <- filePath(dataPath, dataSetName, chipType);
+    path <- filePath(dataSet, chipType);
     print(path);
     ds <- AffymetrixCelSet$fromFiles(path);
     print(ds);
@@ -30,11 +38,7 @@ for (chipType in chipTypes) {
   }
 
   # Test set
-  dataSetName <- "CarmichaelC_etal_2006-500k,ACT";
-  dataSetName <- "SlaterH_etal_2004";
-  dataSetName <- "Affymetrix_2006b-500k_v2";
-  dataSetName <- "SlaterH_etal_2006,ACT";
-  path <- filePath(dataPath, dataSetName, chipType);
+  path <- filePath(dataSet, chipType);
   if (!isDirectory(path))
     next;
 

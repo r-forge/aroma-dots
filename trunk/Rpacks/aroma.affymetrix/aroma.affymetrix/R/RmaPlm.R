@@ -36,11 +36,24 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("RmaPlm", function(..., tags="RMA") {
+setConstructorS3("RmaPlm", function(..., tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(affyPLM) || throw("Package 'affyPLM' not loaded.");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    tags[tags == "*"] <- "RMA";
+  }
+
 
   extend(ProbeLevelModel(..., tags=tags), "RmaPlm")
 })

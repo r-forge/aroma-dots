@@ -29,8 +29,25 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("RmaCnPlm", function(...,  tags=c("RMA", ifelse(mergeStrands, "", "+-"), ifelse(combineAlleles, "", "AB")), mergeStrands=FALSE, combineAlleles=FALSE) {
-  extend(RmaSnpPlm(..., tags=tags, mergeStrands=mergeStrands), c("RmaCnPlm", uses(CnPlm())),
+setConstructorS3("RmaCnPlm", function(..., combineAlleles=FALSE, tags="*") {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    idx <- which(tags == "*");
+    if (length(idx) > 0) {
+      if (combineAlleles)
+        tags <- R.utils::insert.default(tags, idx+1, "A+B");
+    }
+  }
+
+
+  extend(RmaSnpPlm(..., tags=tags), c("RmaCnPlm", uses(CnPlm())),
     combineAlleles = combineAlleles
   )
 })

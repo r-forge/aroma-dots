@@ -29,7 +29,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("QuantileNormalizer", function(dataSet=NULL, tags="QN", subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, ...) {
+setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -42,9 +42,11 @@ setConstructorS3("QuantileNormalizer", function(dataSet=NULL, tags="QN", subsetT
   # Argument 'tags':
   if (!is.null(dataSet)) {
     tags <- Arguments$getCharacters(tags);
-    tags <- trim(strsplit(tags, split=",")[[1]]);
-  }
+    tags <- trim(unlist(strsplit(tags, split=",")));
 
+    # Update default tags
+    tags[tags == "*"] <- "QN";
+  }
 
   extend(Object(), "QuantileNormalizer", 
     .tags = tags,
