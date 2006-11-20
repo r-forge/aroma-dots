@@ -58,8 +58,9 @@ setConstructorS3("UnitGroupsModel", function(dataSet=NULL, tags="", ...) {
 
 setMethodS3("as.character", "UnitGroupsModel", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
+  ds <- getDataSet(this);
   s <- c(s, sprintf("Data set: %s", getName(ds)));
-  tags <- paste(getTags(ds), collapse=", ");
+  tags <- paste(getTags(ds), collapse=",");
   s <- c(s, sprintf("Input tags: %s", tags));
   s <- c(s, sprintf("Output tags: %s", paste(getTags(this), collapse=",")));
   s <- c(s, sprintf("Parameters: %s.", paste(as.character(getParameterSet(this)), collapse=". ")));
