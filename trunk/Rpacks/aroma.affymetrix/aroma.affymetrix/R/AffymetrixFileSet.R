@@ -43,12 +43,6 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, tags="*", ...) {
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
 
-  # Argument 'tags':
-  if (!is.null(dataSet)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-  }
-
 
   this <- extend(Object(), "AffymetrixFileSet",
     files = as.list(files),
