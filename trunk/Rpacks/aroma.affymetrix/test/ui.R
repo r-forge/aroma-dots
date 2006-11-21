@@ -97,7 +97,7 @@ selectDataSets <- function(paths="raw", pattern=NULL, ...) {
     ds <- AffymetrixCelSet(files=files);
 
     # When joining several data sets, we have to get a new name.
-    if (length(names) > 0) {
+    if (length(names) > 1) {
       while (identical(name, NA)) {
         ans <- menu(choices=c("<new name>", names), title="Several data sets were joined. Choose the name you want to use for the new data set.");
         if (ans == 1) {
@@ -127,7 +127,7 @@ selectDataSets <- function(paths="raw", pattern=NULL, ...) {
         tags <- unlist(strsplit(tags, split="[ ,]"));
         tags <- trim(tags);
         tags <- unique(tags);
-        if (tags == "")
+        if (identical(tags, ""))
           tags <- NULL;
       }
     }
