@@ -91,8 +91,9 @@ setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
   if (!is.null(tags)) {
     s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
   }
-  s <- c(s, sprintf("Path: %s", getPath(this)));
+  s <- c(s, sprintf("Full name: %s", getFullName(this)));
   s <- c(s, sprintf("Number of files: %d", nbrOfFiles(this)));
+  s <- c(s, sprintf("Path (to the first file): %s", getPath(this)));
   s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
@@ -121,56 +122,6 @@ setMethodS3("clone", "AffymetrixFileSet", function(this, clear=TRUE, ...) {
 
 
 
-setMethodS3("getDescription", "AffymetrixFileSet", function(this, ...) {
-  path <- getPath(this);
-  res <- list();
-  for (kk in 1:3) {
-    pathname <- file.path(path, "DESCRIPTION");
-    if (isFile(pathname)) {
-      tmp <- read.dcf(pathname);
-      tmp <- as.list(as.data.frame(tmp));
-      tmp <- lapply(tmp, FUN=as.character);
-      for (kk in seq(along=tmp)) {
-        key <- names(tmp)[kk];
-        # Already assigned?
-        if (key %in% names(res))
-          next;
-        res[[key]] <- tmp[[key]];
-      }
-      break;
-    }
-    path <- dirname(path);
-  }
-
-  res;
-})
-
-setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
-  path <- getPath(this);
-  res <- NULL;
-  for (kk in 1:3) {
-    pathname <- file.path(path, "IDENTIFIER");
-    if (isFile(pathname)) {
-      res <- readLines(pathname);
-      # Remove comments
-      res <- trim(gsub("#.*", "", trim(res)));
-      # Remove empty lines
-      res <- res[nchar(res) > 0];
-      break;
-    }
-    path <- dirname(path);
-  }
-
-  if (!is.null(res)) {
-    res <- digest(list(res));
-  }
-
-  res;
-}, protected=TRUE)
-
-
-
-
 ###########################################################################/**
 # @RdocMethod getFullName
 #
@@ -193,7 +144,7 @@ setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
 #   Returns a @character.
 # }
 #
-# \value{
+# \details{
 #  By default, the full name of a file set is the name of the directory 
 #  containing all the files, e.g. the name of file set \code{path/to,a,b/*} 
 #  is \code{to,a,b}.
@@ -204,8 +155,6 @@ setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
 # @author
 #
 # \seealso{
-#   @seemethod "getName".
-#   @seemethod "getTags".
 #   @seeclass
 # }
 #*/###########################################################################
@@ -243,14 +192,17 @@ setMethodS3("getFullName", "AffymetrixFileSet", function(this, parent=1, ...) {
 # @synopsis
 #
 # \arguments{
-#  \item{...}{Arguments passed to @seemethod "getFullName".}
+#  \item{...}{Additional arguments passed to @seemethod "getFullName", if
+#    the name is inferred from the pathname.}
 # }
 #
 # \value{
 #   Returns a @character.
 # }
 #
-# \value{
+# \details{
+#  If the name has not been set explicitly, the name is inferred from the
+#  pathname of the file set.
 #  The \emph{name} of a file set is the part of the directory name that 
 #  preceeds the first comma, if any.
 #  For instance, the name of the file set named \code{foo,a,b} is \code{foo}.
@@ -259,6 +211,7 @@ setMethodS3("getFullName", "AffymetrixFileSet", function(this, parent=1, ...) {
 # @author
 #
 # \seealso{
+#   @seemethod "setName".
 #   @seemethod "getFullName".
 #   @seemethod "getBranches".
 #   @seeclass
@@ -278,10 +231,46 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 })
 
 
+
+###########################################################################/**
+# @RdocMethod setName
+#
+# @title "Sets the name of the file set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{name}{A @character string for the new name of the file set.
+#   The name must consists of valid filename characters, and must not
+#   contain commas, which are used to separate tags.
+#   If @NULL, the name will be inferred from the underlying pathname.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns nothing.
+# }
+#
+# \details{
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getName".
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("setName", "AffymetrixFileSet", function(this, name=NULL, ...) {
   # Argument 'name':
   if (!is.null(name)) {
-    name <- Arguments$getCharacter(name);
+    name <- Arguments$getFilename(name);  # Valid filename?
+
+    # Assert that no commas are used.
     if (regexpr("[,]", name) != -1) {
       throw("File-set names must not contain commas: ", name);
     }
@@ -314,7 +303,7 @@ setMethodS3("setName", "AffymetrixFileSet", function(this, name=NULL, ...) {
 #   Returns a @character @vector or @NULL.
 # }
 #
-# \description{
+# \details{
 #  The \emph{tags} of a file set are the comma separated parts of the
 #  filename that follows the the first comma, if any, and that preceeds the
 #  last period (the filename extension).
@@ -952,13 +941,6 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 # o Added support for optional tags.
 # 2006-11-02
 # o Added getFullName(), getTags() and redefined getName().
-# 2006-10-30
-# o Added getDescription() which search and parse all DESCRIPTION files in
-#   the data-set directory tree.
-# o Added getIdentifier() which returns a 32-character long hexadecimal
-#   hashcode for the "Identifier" string returned by getDescription().
-#   If no such string exists, NULL is returned.  This will allow users
-#   to specify their own identifiers.
 # 2006-10-22
 # o Now 'recursive' of fromFiles() defaults to FALSE.
 # o Added getFiles() again.
