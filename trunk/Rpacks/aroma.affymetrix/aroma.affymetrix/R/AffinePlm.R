@@ -55,14 +55,8 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'dataSet':
-  if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "AffymetrixCelSet"))
-      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", class(dataSet));
-  }
-
   # Argument 'tags':
-  if (!is.null(dataSet)) {
+  if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
 

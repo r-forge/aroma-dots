@@ -1,5 +1,6 @@
 library(aroma.affymetrix);
 source("init.R");
+source("ui.R");
 
 moreUnits <- 30;
 
@@ -12,75 +13,50 @@ model <- choices[ans];
 modelTags <- unlist(strsplit(model, split=","));
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Select data set
+# Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 paths <- c("normQuantile");
-path <- sapply(paths, FUN=filePath, expandLinks="any");
-dataSets <- list.files(pattern="_(199|200)[0-9]", path=path, full.names=TRUE);
-ans <- menu(choices=dataSets, title="Select data set to modelled")
-dataSet <- dataSets[ans];
-
-path <- dataSet;
-pattern <- "^(Mapping|BI_SNP)"
-chipTypes <- list.files(pattern=pattern, path=path);
-
-cat("----------------------------------------------------\n");
-cat("Data set: ", dataSet, "\n", sep="");
-cat("Path: ", path, "\n", sep="");
-cat("Chip types: ", paste(chipTypes, collapse=", "), "\n", sep="");
-cat("\n");
-
-if (length(chipTypes) > 1) {
-  ans <- menu(choices=chipTypes, title="Select chip types to be considered (0 for all)");
-  if (ans > 0)
-    chipTypes <- chipTypes[ans];
+pattern <- "_(199|200)[0-9]";
+if (exists("dataSets", mode="list")) {
+  ds <- dataSets[[1]];
+  name <- paste(getName(ds), paste(getTags(ds), collapse=","), sep=",");
+  ans <- menu(c("<new data sets>", name), title="Select data set(s) to process:");
+  if (ans == 1)
+    dataSets <- selectDataSets(paths, pattern=pattern);
+} else {
+  dataSets <- selectDataSets(paths, pattern=pattern);
 }
 
-for (chipType in chipTypes) {
-  path <- filePath(dataSet, chipType);
-  if (!isDirectory(path))
-    next;
 
-  verbose && enter(verbose, "Defining data set");
-  verbose && cat(verbose, "Path: ", path);
-  ds <- AffymetrixCelSet$fromFiles(path);
-  print(ds);
-  verbose && exit(verbose);
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Prepare model class
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+if ("MBEI" %in% modelTags) {
+  Plm <- MbeiCnPlm;
+} else if ("RMA" %in% modelTags) {
+  Plm <- RmaCnPlm;
+} else {
+  throw("Unknown PLM: ", paste(modelTags, collapse=","));
+}
+mergeStrands <- !("+-" %in% modelTags);
+combineAlleles <- ("A+B" %in% modelTags);
 
-  if (nbrOfArrays(ds) < 6) {
-    verbose && cat(verbose, "WARNING: Too small data set");
-    verbose && enter(verbose, "Appending reference data set");
 
-    verbose && enter(verbose, "Defining reference data set");
-    path <- getParent(getParent(getPath(ds)));
-    refTags <- paste(getTags(ds), collapse=",");
-    refFullName <- paste("Affymetrix_2006-HapMap270", refTags, sep=",");
-    path <- filePath(path, refFullName, chipType);
-    verbose && cat(verbose, "Path: ", path);
-    dsR <- AffymetrixCelSet$fromFiles(path);
-    print(dsR);
-    verbose && exit(verbose);
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Process
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+verbose && enter(verbose, "Processing ", length(dataSets), " data sets");
+res <- lapply(dataSets, FUN=function(ds) {
+  verbose && enter(verbose, "Data set ", getName(ds));
 
-    verbose && enter(verbose, "Appending");
-    append(ds, dsR);
-    verbose && cat(verbose, "Extended data set:");
-    print(ds);
-    verbose && exit(verbose);
+  verbose && cat(verbose, "Input data set:");
+  verbose && print(verbose, ds);
 
-    verbose && exit(verbose);
-  }
+  if (nbrOfArrays(ds) < 3)
+    throw("Too few arrays to fit PLM too");
 
   verbose && enter(verbose, "Defining PLM model");
-  if ("MBEI" %in% modelTags) {
-    plm <- MbeiCnPlm;
-  } else if ("RMA" %in% modelTags) {
-    plm <- RmaCnPlm;
-  } else {
-    throw("Unknown PLM: ", paste(modelTags, collapse=","));
-  }
-  mergeStrands <- !("+-" %in% modelTags);
-  combineAlleles <- ("A+B" %in% modelTags);
-  model <- plm(ds, mergeStrands=mergeStrands, combineAlleles=combineAlleles);
+  model <- Plm(ds, mergeStrands=mergeStrands, combineAlleles=combineAlleles);
   print(model);
   verbose && exit(verbose);
 
@@ -107,5 +83,9 @@ for (chipType in chipTypes) {
   } # for (chr ...) 
 
   verbose && exit(verbose);
-}
+
+  res;
+})
+verbose && exit(verbose);
+
 

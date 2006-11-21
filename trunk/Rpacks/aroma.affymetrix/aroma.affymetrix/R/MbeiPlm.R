@@ -49,7 +49,7 @@ setConstructorS3("MbeiPlm", function(..., tags="*") {
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'tags':
-  if (!is.null(dataSet)) {
+  if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
 

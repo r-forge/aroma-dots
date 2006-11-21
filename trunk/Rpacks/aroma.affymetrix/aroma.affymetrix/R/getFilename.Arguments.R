@@ -1,3 +1,21 @@
+#
+# Valid filename characters:
+# * The FTP RFCs require (7-bit) ASCII characters (and presumably not control
+#   characters either). The 95 printable ASCII characters are (note initial 
+#   space):
+# 
+#    !"#$%&'()*+,-./0123456789:;<=>?  (32)
+#   @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_  (32)
+#   `abcdefghijklmnopqrstuvwxyz{|}~   (31)
+# 
+# * On Windows the following 9 characters aren't allowed: \ / : * ? " < > !.  
+#   This leaves us with:
+# 
+#    #$%&'()+,-.0123456789;=          (24)
+#   @ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_   (31)
+#   `abcdefghijklmnopqrstuvwxyz{|}~   (31)
+#
+#
 setMethodS3("getFilename", "Arguments", function(static, filename, nchar=c(1,64), class=c("safe"), ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
