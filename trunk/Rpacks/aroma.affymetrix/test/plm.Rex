@@ -17,7 +17,7 @@ modelTags <- unlist(strsplit(model, split=","));
 paths <- c("normQuantile");
 path <- sapply(paths, FUN=filePath, expandLinks="any");
 dataSets <- list.files(pattern="_(199|200)[0-9]", path=path, full.names=TRUE);
-ans <- menu(choices=dataSets, title="Select data set to normalize")
+ans <- menu(choices=dataSets, title="Select data set to modelled")
 dataSet <- dataSets[ans];
 
 path <- dataSet;
@@ -30,6 +30,11 @@ cat("Path: ", path, "\n", sep="");
 cat("Chip types: ", paste(chipTypes, collapse=", "), "\n", sep="");
 cat("\n");
 
+if (length(chipTypes) > 1) {
+  ans <- menu(choices=chipTypes, title="Select chip types to be considered (0 for all)");
+  if (ans > 0)
+    chipTypes <- chipTypes[ans];
+}
 
 for (chipType in chipTypes) {
   path <- filePath(dataSet, chipType);

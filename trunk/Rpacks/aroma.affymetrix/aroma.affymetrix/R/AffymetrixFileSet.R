@@ -14,6 +14,9 @@
 #
 # \arguments{
 #   \item{files}{A @list of @see "AffymetrixFile":s.}
+#   \item{tags}{A @character @vector of tags to be used for this data set.
+#      The string \code{"*"} indicates that it should be replaced by the
+#      tags part of the data set pathname.}
 #   \item{...}{Not used.}
 # }
 #
@@ -23,7 +26,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
+setConstructorS3("AffymetrixFileSet", function(files=NULL, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -40,10 +43,22 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
 
+  # Argument 'tags':
+  if (!is.null(dataSet)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+  }
 
-  extend(Object(), "AffymetrixFileSet",
-    files = as.list(files)
-  )
+
+  this <- extend(Object(), "AffymetrixFileSet",
+    files = as.list(files),
+    .name = NULL,
+    .tags = NULL
+  );
+
+  setTags(this, tags);
+
+  this;
 })
 
 
@@ -256,12 +271,29 @@ setMethodS3("getFullName", "AffymetrixFileSet", function(this, parent=1, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
-  name <- getFullName(this, ...);
+  name <- this$.name;
 
-  # Keep anything before the first comma
-  name <- gsub("[,].*$", "", name);
+  if (is.null(name)) {
+    name <- getFullName(this, ...);
+
+    # Keep anything before the first comma
+    name <- gsub("[,].*$", "", name);
+  }
   
   name;
+})
+
+
+setMethodS3("setName", "AffymetrixFileSet", function(this, name=NULL, ...) {
+  # Argument 'name':
+  if (!is.null(name)) {
+    name <- Arguments$getCharacter(name);
+    if (regexpr("[,]", name) != -1) {
+      throw("File-set names must not contain commas: ", name);
+    }
+  }
+
+  this$.name <- name;
 })
 
 
@@ -270,10 +302,12 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 ###########################################################################/**
 # @RdocMethod getTags
 #
-# @title "Gets the tags of the file"
+# @title "Gets the tags of the file set"
 #
 # \description{
 #   @get "title".
+#   Any tag equals \code{"*"} is replaced by the comma separated tags part of
+#   the file-set pathname.
 # }
 #
 # @synopsis
@@ -286,8 +320,8 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 #   Returns a @character @vector or @NULL.
 # }
 #
-# \value{
-#  The \emph{tags} of a filename are the comma separated parts of the
+# \description{
+#  The \emph{tags} of a file set are the comma separated parts of the
 #  filename that follows the the first comma, if any, and that preceeds the
 #  last period (the filename extension).
 #  For instance, the tags of \code{path/to/foo,a.2,b.ext} are 
@@ -297,23 +331,81 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 # @author
 #
 # \seealso{
+#   @seemethod "setTags".
 #   @seemethod "getName".
 #   @seeclass
 # }
 #*/###########################################################################
 setMethodS3("getTags", "AffymetrixFileSet", function(this, ...) {
-  name <- getFullName(this, ...);
+  tags <- this$.tags;
 
-  # Data-set name is anything before the first comma
-  dsName <- gsub("[,].*$", "", name);
+  if ("*" %in% tags) {
+    name <- getFullName(this, ...);
 
-  # Keep anything after the data-set name (and the separator).
-  name <- substring(name, nchar(dsName)+2);
+    # Data-set name is anything before the first comma
+    dsName <- gsub("[,].*$", "", name);
+
+    # Keep anything after the data-set name (and the separator).
+    name <- substring(name, nchar(dsName)+2);
   
-  tags <- strsplit(name, split=",")[[1]];
+    filenameTags <- strsplit(name, split=",")[[1]];
+
+    pos <- which("*" == tags);
+    tags <- tags[-pos];
+    if (length(filenameTags) > 0) {
+      if (length(tags) == 0) {
+        tags <- filenameTags;
+      } else {
+        tags <- R.utils::insert.default(tags, pos[1], filenameTags); 
+      }
+    }
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
   tags;
+})
+
+
+###########################################################################/**
+# @RdocMethod setTags
+#
+# @title "Sets the tags of the file set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{tags}{A @character @vector of tags.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns nothing.
+# }
+#
+# \details{
+#   See @seemethod "getTags" for so called \emph{special tags}.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getTags".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("setTags", "AffymetrixFileSet", function(this, tags="*", ...) {
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+  }
+  
+  this$.tags <- tags;
 })
 
 
@@ -861,6 +953,9 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-11-20
+# o Added support to override name of file set.
+# o Added support for optional tags.
 # 2006-11-02
 # o Added getFullName(), getTags() and redefined getName().
 # 2006-10-30

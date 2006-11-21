@@ -40,18 +40,15 @@ setConstructorS3("UnitGroupsModel", function(dataSet=NULL, tags="", ...) {
       throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", class(dataSet));
   }
 
-  # Argument 'tags':
-  if (!is.null(dataSet)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-  }
-
-
-  extend(Object(), "UnitGroupsModel",
+  this <- extend(Object(), "UnitGroupsModel",
     .tags = tags,
     dataSet = dataSet,
     parSet = NULL
-  )
+  );
+
+  setTags(this, tags);
+
+  this;
 }, abstract=TRUE)
 
 
@@ -167,6 +164,16 @@ setMethodS3("getTags", "UnitGroupsModel", function(this, ...) {
   c(getTags(ds), this$.tags);
 })
 
+
+setMethodS3("setTags", "UnitGroupsModel", function(this, tags="*", ...) {
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+  }
+  
+  this$.tags <- tags;
+})
 
 
 ###########################################################################/**
