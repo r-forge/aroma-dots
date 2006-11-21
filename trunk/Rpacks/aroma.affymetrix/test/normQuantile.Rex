@@ -19,6 +19,12 @@ cat("Path: ", path, "\n", sep="");
 cat("Chip types: ", paste(chipTypes, collapse=", "), "\n", sep="");
 cat("\n");
 
+if (length(chipTypes) > 1) {
+  ans <- menu(choices=chipTypes, title="Select chip types to be considered (0 for all)");
+  if (ans > 0)
+    chipTypes <- chipTypes[ans];
+}
+
 for (chipType in chipTypes) {
   if (FALSE) {
     # Reference set

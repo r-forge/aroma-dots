@@ -48,6 +48,7 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
 
+
   extend(AffymetrixFileSet(files=files, ...), "AffymetrixCelSet",
     "cached:.intensities" = NULL,
     "cached:.intensitiesIdxs" = NULL,

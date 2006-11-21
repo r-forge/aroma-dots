@@ -39,16 +39,8 @@ setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subsetToUpdate=NUL
       throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", class(dataSet));
   }
 
-  # Argument 'tags':
-  if (!is.null(dataSet)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
 
-    # Update default tags
-    tags[tags == "*"] <- "QN";
-  }
-
-  extend(Object(), "QuantileNormalizer", 
+  this <- extend(Object(), "QuantileNormalizer", 
     .tags = tags,
     inputDataSet = dataSet,
     "cached:outputDataSet" = NULL,
@@ -59,7 +51,11 @@ setConstructorS3("QuantileNormalizer", function(dataSet=NULL, subsetToUpdate=NUL
        typesToAvg = typesToAvg,
        .targetDistribution = targetDistribution
     )
-  )
+  );
+
+  setTags(this, tags);
+
+  this;
 })
 
 
@@ -142,9 +138,28 @@ setMethodS3("getName", "QuantileNormalizer", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getTags", "QuantileNormalizer", function(this, ...) {
+  tags <- this$.tags;
+
   ds <- getInputDataSet(this);
-  c(getTags(ds), this$.tags);
+  tags <- c(getTags(ds), tags);
+
+  # Update default tags
+  tags[tags == "*"] <- "QN";
+
+  tags;
 })
+
+
+setMethodS3("setTags", "QuantileNormalizer", function(this, tags="*", ...) {
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+  }
+  
+  this$.tags <- tags;
+})
+
 
 
 ###########################################################################/**

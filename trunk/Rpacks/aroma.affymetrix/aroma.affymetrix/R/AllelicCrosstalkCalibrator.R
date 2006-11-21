@@ -40,23 +40,18 @@ setConstructorS3("AllelicCrosstalkCalibrator", function(dataSet=NULL, tags="*", 
       throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", class(dataSet));
   }
 
-  # Argument 'tags':
-  if (!is.null(dataSet)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
 
-    # Update default tags
-    tags[tags == "*"] <- "ACT";
-  }
-
-
-  extend(Object(), "AllelicCrosstalkCalibrator", 
+  this <- extend(Object(), "AllelicCrosstalkCalibrator", 
     .tags = tags,
     inputDataSet = dataSet,
     "cached:outputDataSet" = NULL,
     .params = list(
     )
-  )
+  );
+
+  setTags(this, tags);
+
+  this;
 })
 
 
@@ -139,8 +134,26 @@ setMethodS3("getName", "AllelicCrosstalkCalibrator", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getTags", "AllelicCrosstalkCalibrator", function(this, ...) {
+  tags <- this$.tags;
+
   ds <- getInputDataSet(this);
-  c(getTags(ds), this$.tags);
+  tags <- c(getTags(ds), tags);
+
+  # Update default tags
+  tags[tags == "*"] <- "ACT";
+
+  tags;
+})
+
+
+setMethodS3("setTags", "AllelicCrosstalkCalibrator", function(this, tags="*", ...) {
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+  }
+  
+  this$.tags <- tags;
 })
 
 
