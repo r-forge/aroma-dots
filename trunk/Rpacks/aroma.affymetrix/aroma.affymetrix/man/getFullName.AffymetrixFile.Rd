@@ -1,0 +1,47 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  AffymetrixFile.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\name{getFullName.AffymetrixFile}
+\alias{getFullName.AffymetrixFile}
+\alias{AffymetrixFile.getFullName}
+\alias{getFullName.AffymetrixFile}
+\alias{getFullName,AffymetrixFile-method}
+
+
+\title{Gets the full name of the file}
+
+\description{
+  Gets the full name of the file, that is the filename without the extension.
+}
+
+\usage{\method{getFullName}{AffymetrixFile}(this, ...)}
+
+\arguments{
+ \item{...}{Not used.}
+}
+
+\value{
+  Returns a \code{\link[base]{character}}.
+}
+
+\value{
+ The full name of a file is the filename excluding any
+ extension (and period).
+ For instance, the full name of \code{path/to/foo,a.2,b.ext} is
+ \code{foo,a.2,b}.
+}
+
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+\seealso{
+  \code{\link[aroma.affymetrix:getName.AffymetrixFile]{*getName}()}.
+  \code{\link[aroma.affymetrix:getTags.AffymetrixFile]{*getTags}()}.
+  For more information see \code{\link{AffymetrixFile}}.
+}
+\keyword{internal}
+\keyword{methods}
