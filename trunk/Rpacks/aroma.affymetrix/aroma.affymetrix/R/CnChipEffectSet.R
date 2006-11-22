@@ -30,6 +30,12 @@ setConstructorS3("CnChipEffectSet", function(..., combineAlleles=FALSE) {
   this;
 })
 
+setMethodS3("getAverageFile", "CnChipEffectSet", function(this, ...) {
+  res <- NextMethod("getAverageFile", this, ...);
+  res$combineAlleles <- getCombineAlleles(this);
+  res;
+})
+
 setMethodS3("getChipEffectFileClass", "CnChipEffectSet", function(static, ...) {
   CnChipEffectFile;
 }, static=TRUE)
@@ -57,6 +63,8 @@ setMethodS3("setCombineAlleles", "CnChipEffectSet", function(this, status, ...) 
 
 ############################################################################
 # HISTORY:
+# 2006-11-22
+# o Now getAverageFile() finally sets 'combineAlleles'.
 # 2006-09-11
 # o Created.
 ############################################################################

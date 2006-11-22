@@ -47,9 +47,14 @@ setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
 }, static=TRUE)
 
 
-setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern=",chipEffects[.](c|C)(e|E)(l|L)$", fileClass="ChipEffectFile") {
+setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern=",chipEffects[.](c|C)(e|E)(l|L)$", fileClass=NULL) {
+  # Argument 'fileClass':
+  if (is.null(fileClass))
+    fileClass <- gsub("Set$", "File", class(static)[1]);
+
   fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
 }, static=TRUE);
+
 
 setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name=getName(dataset), ..., verbose=FALSE) {
   # Argument 'verbose':
@@ -190,6 +195,9 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-11-22
+# o Updated fromFiles() so it automagically finds the file class.
+# 2006-10-??
 # o Updated fromFiles() to search for filename with tags 'chipEffects'.
 #   Before files with suffix "-chipEffects' was searched for.
 # 2006-09-10

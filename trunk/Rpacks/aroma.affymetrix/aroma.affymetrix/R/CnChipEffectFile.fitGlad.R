@@ -72,6 +72,14 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
   cdf <- getCdf(this);
   chipType <- getChipType(cdf);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract arguments for glad().
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  args <- list(...);
+  keep <- (names(args) %in% names(formals(glad.profileCGH)));
+  gladArgs <- args[keep];
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached values
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -82,8 +90,7 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
               reference=getFullName(reference),
               chipType=chipType,
               chromosome=chromosome,
-              units=units,
-              ...
+              units=units
              );
   fit <- loadCache(key=key);
   if (!is.null(fit) && !force) {
@@ -133,7 +140,8 @@ str(df);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Calling glad()");
-  fit <- glad(df, ..., verbose=as.logical(verbose));
+  args <- c(list(df), gladArgs, list(verbose=as.logical(verbose)));
+  fit <- do.call("glad", args);
   verbose && exit(verbose);
 
   verbose && exit(verbose);

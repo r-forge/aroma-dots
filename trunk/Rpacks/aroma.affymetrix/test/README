@@ -7,12 +7,12 @@ the package.
 
 
 WHERE TO PUT EXAMPLE DATA
-Note that they all search for data in directory chip_data/<chiptype>/, 
-e.g. chip_data/Hind/.  The CDF files are always found through findCdf()
-in the affxparser package.  
+Note that they all search for raw data in raw/<data set>/<chip type>/, 
+e.g. raw/Affymetrix_2006-500k/Mapping250K_Nsp/. The CDF files are always
+found through findCdf() in the affxparser package.  
 
-On *nix systems you can create a soft link to the chip_data/ directory,
+On *nix systems you can create a soft link to the raw/ directory,
 and on Windows you can use Windows Shortcuts.
 
 
-Henrik 2006-08-25
+Henrik 2006-11-22

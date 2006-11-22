@@ -31,6 +31,14 @@ setConstructorS3("SnpChipEffectSet", function(..., mergeStrands=FALSE) {
 })
 
 
+setMethodS3("getAverageFile", "SnpChipEffectSet", function(this, ...) {
+  res <- NextMethod("getAverageFile", this, ...);
+  res$mergeStrands <- getMergeStrands(this);
+  res;
+})
+
+
+
 setMethodS3("getChipEffectFileClass", "SnpChipEffectSet", function(static, ...) {
   SnpChipEffectFile;
 }, static=TRUE)
@@ -63,6 +71,8 @@ setMethodS3("setMergeStrands", "SnpChipEffectSet", function(this, status, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-11-22
+# o Now getAverageFile() finally sets 'mergeStrands'.
 # 2006-10-02
 # o Added extractSnpQSet() so that we can run crlmm().
 # 2006-09-11
