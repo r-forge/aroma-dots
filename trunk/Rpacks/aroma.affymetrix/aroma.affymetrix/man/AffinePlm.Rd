@@ -36,11 +36,10 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
   This class represents the Bengtsson \& Hössjer (2006) model.
  }
 
- \usage{AffinePlm(..., name="modelAffinePlm", background=TRUE)}
+ \usage{AffinePlm(..., background=TRUE, tags="*")}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
-   \item{name}{The name of the model, which is also used in the pathname.}
    \item{background}{If \code{\link[base:logical]{TRUE}}, background is estimate for each unit group,
      otherwise not. That is, if \code{\link[base:logical]{FALSE}}, a \emph{linear} model without
      offset is fitted, resulting in very similar results as obtained by
@@ -58,7 +57,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
+as.character, fit, getCdf, getDataSet, getFullName, getLabel, getName, getParameterSet, getPath, getRootPath, getTags, setLabel, setTags, setup
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -83,7 +82,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    error structure, which in turn affects how the model is estimated.
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \references{
    Bengtsson \& Hössjer (2006). \cr

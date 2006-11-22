@@ -13,10 +13,10 @@
 \alias{getName,AffymetrixFile-method}
 
 
-\title{Gets the name of the array in the file}
+\title{Gets the name of the file}
 
 \description{
-  Gets the name of the array in the file.
+  Gets the name of the file.
 }
 
 \usage{\method{getName}{AffymetrixFile}(this, ...)}
@@ -29,9 +29,16 @@
   Returns a \code{\link[base]{character}}.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\value{
+ The name of a file is the part of the filename without the extension and
+ that preceeds any comma.
+ For instance, the name of \code{path/to/foo,a.2,b.ext} is \code{foo}.
+}
+
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
+  \code{\link[aroma.affymetrix:getTags.AffymetrixFile]{*getTags}()}.
   For more information see \code{\link{AffymetrixFile}}.
 }
 \keyword{internal}

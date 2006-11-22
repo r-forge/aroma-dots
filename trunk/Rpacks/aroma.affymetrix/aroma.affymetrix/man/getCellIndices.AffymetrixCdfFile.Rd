@@ -32,7 +32,7 @@
  \code{\link[affxparser]{readCdfCellIndices}}.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   See \code{\link[aroma.affymetrix:setRestructor.AffymetrixCdfFile]{*setRestructor}()} to set a default re-constructor for

@@ -29,7 +29,7 @@
   Returns a named \code{\link[base]{list}}.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   \code{\link[aroma.affymetrix:getAllelePairs.AffymetrixCdfFile]{*getAllelePairs}()}.

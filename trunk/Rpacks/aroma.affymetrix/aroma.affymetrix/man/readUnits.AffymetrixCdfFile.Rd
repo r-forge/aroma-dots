@@ -35,7 +35,7 @@
   CDF data is neither cached in memory nor on file by this method.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.

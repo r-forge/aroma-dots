@@ -29,7 +29,13 @@
   Returns a \code{\link[base]{character}}.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\value{
+ The filename of a file is the pathname excluding any path.
+ For instance, the filename of \code{path/to/foo,a.2,b.ext} is
+ \code{foo,a.2,b.ext}.
+}
+
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixFile}}.
