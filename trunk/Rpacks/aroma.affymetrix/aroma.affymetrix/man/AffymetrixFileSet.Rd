@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{GenotypeCallSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{GenotypeCallSet}, \link[aroma.affymetrix]{RelativeCelSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{AffymetrixFileSet}\cr
 extends \link[R.oo]{Object}\cr
@@ -33,10 +33,13 @@ extends \link[R.oo]{Object}\cr
   with \emph{identical} chip types.
  }
 
- \usage{AffymetrixFileSet(files=NULL, ...)}
+ \usage{AffymetrixFileSet(files=NULL, tags="*", ...)}
 
  \arguments{
    \item{files}{A \code{\link[base]{list}} of \code{\link{AffymetrixFile}}:s.}
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be used for this data set.
+      The string \code{"*"} indicates that it should be replaced by the
+      tags part of the data set pathname.}
    \item{...}{Not used.}
  }
 
@@ -56,14 +59,18 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getFile} \tab  -\cr
  \tab \code{getFiles} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
+ \tab \code{getFullName} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getNames.AffymetrixFileSet]{getNames}} \tab Gets the names of the files in the file set.\cr
  \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFileSet]{getPath}} \tab Gets the path (directory) of the file set.\cr
  \tab \code{\link[aroma.affymetrix:getPathnames.AffymetrixFileSet]{getPathnames}} \tab Gets the pathnames of the files in the file set.\cr
+ \tab \code{getTags} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:lapply.AffymetrixFileSet]{lapply}} \tab Applies a function to each of the Affymetrix file files.\cr
  \tab \code{\link[aroma.affymetrix:length.AffymetrixFileSet]{length}} \tab Gets the number of files in the file set.\cr
  \tab \code{nbrOfFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:seq.AffymetrixFileSet]{seq}} \tab Gets an vector of file indices.\cr
+ \tab \code{setName} \tab  -\cr
+ \tab \code{setTags} \tab  -\cr
 }
 
 
@@ -73,5 +80,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 \keyword{classes}

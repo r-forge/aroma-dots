@@ -37,7 +37,7 @@
  Returns the (270-degrees rotated) data \code{\link[base]{matrix}}.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   \code{\link[aroma.affymetrix:updateUnits.AffymetrixCelFile]{*updateUnits}()}.

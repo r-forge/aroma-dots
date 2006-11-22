@@ -60,6 +60,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:getName.AffymetrixFile]{getName}} \tab Gets the name of the array in the file.\cr
  \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFile]{getPath}} \tab Gets the path (directory) of the file.\cr
  \tab \code{\link[aroma.affymetrix:getPathname.AffymetrixFile]{getPathname}} \tab Gets the pathname of the file.\cr
+ \tab \code{getTags} \tab  -\cr
  \tab \code{setLabel} \tab  -\cr
  \tab \code{stextLabel} \tab  -\cr
  \tab \code{stextLabels} \tab  -\cr
@@ -73,7 +74,22 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \section{Filename convention}{
+   This package assumes a special filename structure allowing methods
+   to infer data-set names, sample names, file types, versions etc from
+   the full path name.
+ 
+   The filename of an \code{AffymetrixFile} is structured as follows:
+   \itemize{
+    \item{basename}{\code{"sample001,a,b,c.CEL"}
+       (this follows the \R convention (but not the Unix convention)}
+    \item{name}{\code{"sample001"}}
+    \item{adjunct names}{\code{c("a", "b", "c")}}
+    \item{extension}{\code{"CEL"}}
+   }
+ }
+
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
    An object of this class is typically part of an \code{\link{AffymetrixFileSet}}.

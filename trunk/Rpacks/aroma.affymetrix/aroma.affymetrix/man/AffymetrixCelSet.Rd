@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
+\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{RelativeCelSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{AffymetrixCelSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
@@ -71,10 +71,9 @@ CEL files.\cr
  \tab \code{getAverageLog} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
  \tab \code{getData} \tab  -\cr
- \tab \code{getIdentifier} \tab  -\cr
+ \tab \code{getFullName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getIntensities.AffymetrixCelSet]{getIntensities}} \tab Gets cell intensities from a set of cells and a set of arrays.\cr
  \tab \code{getName} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getSampleNames.AffymetrixCelSet]{getSampleNames}} \tab Gets the names of the samples in the file set.\cr
  \tab \code{\link[aroma.affymetrix:getSiblings.AffymetrixCelSet]{getSiblings}} \tab Gets the all data sets that refers to the same samples a this one.\cr
  \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
@@ -89,7 +88,7 @@ CEL files.\cr
 
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getFile, getFiles, getFileSize, getName, getNames, getPath, getPathnames, lapply, length, nbrOfFiles, seq
+append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, seq, setName, setTags
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -124,5 +123,5 @@ rm(zzz)
    \code{\link{AffymetrixCelFile}}.
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 \keyword{classes}

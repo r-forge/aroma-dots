@@ -37,7 +37,7 @@
   Neither in-memory nor on-file caching is done by this method.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixCelFile}}.

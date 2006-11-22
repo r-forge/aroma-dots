@@ -35,6 +35,11 @@
 # }
 #
 # @author
+#
+# \references{
+#  Irizarry et al. \emph{Summaries of Affymetrix GeneChip probe level data}. 
+#  NAR, 2003, 31, e15.\cr
+# }
 #*/###########################################################################
 setConstructorS3("RmaPlm", function(..., tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

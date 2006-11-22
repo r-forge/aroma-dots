@@ -59,7 +59,7 @@
   estimate is stored as "pixels".
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixCelSet}}.
