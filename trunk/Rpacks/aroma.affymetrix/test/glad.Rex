@@ -67,26 +67,14 @@ res <- lapply(dataSets, FUN=function(ces) {
   glad <- GladModel(ces);
 
   verbose && enter(verbose, "Fitting & plotting GLAD");
-  fit <- plot(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
-  str(fit);
+  plot(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
   verbose && exit(verbose);
 
+  verbose && enter(verbose, "Writing CN regions to file");
   # Filter out regions with only little change
   smoothing <- c(-Inf,-0.15,+0.15,+Inf);
-  regions <- getRegions(glad, arrays=arrays, smoothing=smoothing, verbose=less(verbose));
-
-  # Display regions
-  opt <- options(width=3);
-  print(regions);
-  options(opt);
-
-  # Write regions to file
-  for (kk in seq(along=dfs)) { 
-    filename <- sprintf("%s,regions.xls", names(dfs)[kk]); 
-    pathname <- filePath("chromosomeExplorer", filename, expandLinks="any");
-    write.table(dfs[[kk]], file=pathname, sep="\t", 
-                                              row.names=FALSE, quote=FALSE);
-  }; 
+  writeRegions(glad, arrays=arrays, smoothing=smoothing, verbose=less(verbose));
+  verbose && exit(verbose);
 
   glad;
 })
