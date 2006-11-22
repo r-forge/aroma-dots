@@ -73,7 +73,7 @@ res <- lapply(dataSets, FUN=function(ces) {
   verbose && enter(verbose, "Writing CN regions to file");
   # Filter out regions with only little change
   smoothing <- c(-Inf,-0.15,+0.15,+Inf);
-  writeRegions(glad, arrays=arrays, smoothing=smoothing, verbose=less(verbose));
+  writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, verbose=less(verbose));
   verbose && exit(verbose);
 
   glad;
