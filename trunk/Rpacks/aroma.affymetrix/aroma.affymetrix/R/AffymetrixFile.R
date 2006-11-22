@@ -198,7 +198,7 @@ setMethodS3("getPath", "AffymetrixFile", function(this, ...) {
 #   Returns a @character.
 # }
 #
-# \value{
+# \details{
 #  The filename of a file is the pathname excluding any path.
 #  For instance, the filename of \code{path/to/foo,a.2,b.ext} is 
 #  \code{foo,a.2,b.ext}.
@@ -235,7 +235,7 @@ setMethodS3("getFilename", "AffymetrixFile", function(this, ...) {
 #   Returns a @character.
 # }
 #
-# \value{
+# \details{
 #  The full name of a file is the filename excluding any
 #  extension (and period).
 #  For instance, the full name of \code{path/to/foo,a.2,b.ext} is 
@@ -279,7 +279,7 @@ setMethodS3("getFullName", "AffymetrixFile", function(this, ...) {
 #   Returns a @character.
 # }
 #
-# \value{
+# \details{
 #  The name of a file is the part of the filename without the extension and
 #  that preceeds any comma.
 #  For instance, the name of \code{path/to/foo,a.2,b.ext} is \code{foo}.
@@ -323,7 +323,7 @@ setMethodS3("getName", "AffymetrixFile", function(this, ...) {
 #   Returns a @character @vector or @NULL.
 # }
 #
-# \value{
+# \details{
 #  The \emph{tags} of a filename are the comma separated parts of the
 #  filename that follows the the first comma, if any, and that preceeds the
 #  last period (the filename extension).

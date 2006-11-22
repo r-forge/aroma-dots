@@ -13,10 +13,11 @@
 \alias{getPath,UnitGroupsModel-method}
 
 
-\title{Gets the path (directory) for this model}
+\title{Gets the path of this model}
 
 \description{
-  Gets the path (directory) for this model.
+ Gets the path of this model where the parameter files are stored.
+ If non-existing, then the directory is created.
 }
 
 \usage{\method{getPath}{UnitGroupsModel}(this, ...)}
@@ -26,10 +27,10 @@
 }
 
 \value{
-  Returns a \code{\link[base]{character}}.
+ Returns a \code{\link[base]{character}} string.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{UnitGroupsModel}}.

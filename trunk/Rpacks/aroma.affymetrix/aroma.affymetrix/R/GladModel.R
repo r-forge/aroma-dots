@@ -13,7 +13,8 @@
 #
 # \arguments{
 #   \item{ces}{A @see "CnChipEffectSet".}
-#   \item{...}{Arguments passed to @see "SnpProbeAffinityFile".}
+#   \item{reference}{A @see "CnChipEffectFile".}
+#   \item{...}{Not used.}
 # }
 #
 # \section{Fields and Methods}{
@@ -23,7 +24,7 @@
 # @author
 # 
 # \references{
-#  [1] Hupé P et al. \emph{Analysis of array CGH data: from signal ratio to
+#  [1] Hupe P et al. \emph{Analysis of array CGH data: from signal ratio to
 #      gain and loss of DNA regions}. Bioinformatics, 2004, 20, 3413-3422.\cr
 # }
 #
@@ -58,7 +59,7 @@ setConstructorS3("GladModel", function(ces=NULL, reference=NULL, ...) {
   }
 
 
-  extend(Object(...), "GladModel",
+  extend(Object(), "GladModel",
     .ces = ces,
     .reference = reference
   )
@@ -122,7 +123,8 @@ setMethodS3("getChipType", "GladModel", function(this, ...) {
 # @title "Gets the chromosomes available"
 #
 # \description{
-#  @get "title".# }
+#  @get "title".
+# }
 #
 # @synopsis
 #
@@ -236,7 +238,10 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
 })
 
 
-setMethodS3("plot", "GladModel", function(this, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, skip=TRUE, verbose=FALSE) {
+setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, skip=TRUE, verbose=FALSE) {
+  # To please R CMD check.
+  this <- x;
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

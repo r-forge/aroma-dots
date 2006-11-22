@@ -14,6 +14,7 @@
 # @synopsis
 #
 # \arguments{
+#   \item{dataSet}{A @see "AffymetrixCelSet".}
 #   \item{...}{Arguments passed to @see "SnpProbeAffinityFile".}
 # }
 #
@@ -79,7 +80,8 @@ setMethodS3("getChipType", "GenomeAnalyzer", function(this, ...) {
 # @title "Gets the chromosomes available"
 #
 # \description{
-#  @get "title".# }
+#  @get "title".
+# }
 #
 # @synopsis
 #

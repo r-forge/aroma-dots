@@ -36,7 +36,7 @@
   Returns an \code{\link{ParameterSet}} object.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{ParameterSet}}.

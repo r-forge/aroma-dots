@@ -57,10 +57,10 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFileType.AffymetrixFile]{getFileType}} \tab Gets the file type of a file.\cr
  \tab \code{getLabel} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getName.AffymetrixFile]{getName}} \tab Gets the name of the array in the file.\cr
+ \tab \code{\link[aroma.affymetrix:getName.AffymetrixFile]{getName}} \tab Gets the name of the file.\cr
  \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFile]{getPath}} \tab Gets the path (directory) of the file.\cr
  \tab \code{\link[aroma.affymetrix:getPathname.AffymetrixFile]{getPathname}} \tab Gets the pathname of the file.\cr
- \tab \code{getTags} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFile]{getTags}} \tab Gets the tags of the file.\cr
  \tab \code{setLabel} \tab  -\cr
  \tab \code{stextLabel} \tab  -\cr
  \tab \code{stextLabels} \tab  -\cr

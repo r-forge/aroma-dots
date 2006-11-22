@@ -40,11 +40,10 @@ extends \emph{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
   using Affymetrix CDF terms.
  }
 
- \usage{ProbeLevelModel(..., name="modelPlm", model=c("pm"), standardize=TRUE)}
+ \usage{ProbeLevelModel(..., model=c("pm"), standardize=TRUE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{UnitGroupsModel}}.}
-   \item{name}{The name of the model, which is also used in the pathname.}
    \item{model}{A \code{\link[base]{character}} string specifying how PM and MM values
       should be modelled.  By default only PM signals are used.}
    \item{standardize}{If \code{\link[base:logical]{TRUE}}, chip-effect and probe-affinity estimates are
@@ -69,7 +68,7 @@ extends \emph{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
 
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
+as.character, fit, getCdf, getDataSet, getFullName, getLabel, getName, getParameterSet, getPath, getRootPath, getTags, setLabel, setTags, setup
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -94,7 +93,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    estimated chip effects across models are on the same scale.
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
    For more details on probe-level models, please see

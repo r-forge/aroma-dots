@@ -29,7 +29,7 @@
   Returns a \code{\link[base]{character}}.
 }
 
-\value{
+\details{
  The filename of a file is the pathname excluding any path.
  For instance, the filename of \code{path/to/foo,a.2,b.ext} is
  \code{foo,a.2,b.ext}.

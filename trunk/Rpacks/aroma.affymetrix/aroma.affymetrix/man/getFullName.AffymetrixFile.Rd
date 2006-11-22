@@ -29,7 +29,7 @@
   Returns a \code{\link[base]{character}}.
 }
 
-\value{
+\details{
  The full name of a file is the filename excluding any
  extension (and period).
  For instance, the full name of \code{path/to/foo,a.2,b.ext} is

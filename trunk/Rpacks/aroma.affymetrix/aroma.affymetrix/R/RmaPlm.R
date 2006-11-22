@@ -13,6 +13,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
+#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{

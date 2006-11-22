@@ -24,10 +24,6 @@
 #  @allmethods "public"  
 # }
 # 
-# \examples{\dontrun{
-#   @include "../incl/AllelicCrosstalkCalibrator.Rex"
-# }}
-#
 # @author
 #*/###########################################################################
 setConstructorS3("AllelicCrosstalkCalibrator", function(dataSet=NULL, tags="*", ...) {

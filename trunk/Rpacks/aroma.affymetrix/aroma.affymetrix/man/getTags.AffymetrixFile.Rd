@@ -29,7 +29,7 @@
   Returns a \code{\link[base]{character}} \code{\link[base]{vector}} or \code{\link[base]{NULL}}.
 }
 
-\value{
+\details{
  The \emph{tags} of a filename are the comma separated parts of the
  filename that follows the the first comma, if any, and that preceeds the
  last period (the filename extension).

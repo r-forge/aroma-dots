@@ -19,7 +19,7 @@
  Identifies units for which the PLM has still not been fitted to.
 }
 
-\usage{\method{findUnitsTodo}{ProbeLevelModel}(this, ..., verbose=FALES)}
+\usage{\method{findUnitsTodo}{ProbeLevelModel}(this, ..., verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
@@ -29,7 +29,7 @@
  Returns an \code{\link[base]{integer}} \code{\link[base]{vector}}.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   Internally this methods calls the same method for the

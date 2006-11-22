@@ -16,6 +16,7 @@
 #   \item{...}{Arguments passed to @see "RmaSnpPlm".}
 #   \item{combineAlleles}{If @FALSE, allele A and allele B are treated 
 #      seperately, otherwise together.}
+#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{

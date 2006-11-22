@@ -13,6 +13,7 @@
 # @synopsis
 #
 # \arguments{
+#   \item{dataSet}{A @see "AffymetrixCelSet".}
 #  \item{...}{Arguments passed to the constructor of @see "AffymetrixCelSet".}
 #  \item{reference}{A reference @see "AffymetrixCelFile" object with a
 #    compatible chip type.}

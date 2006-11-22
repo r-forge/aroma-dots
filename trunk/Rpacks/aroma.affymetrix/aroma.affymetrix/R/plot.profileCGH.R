@@ -1,4 +1,7 @@
-setMethodS3("plot", "profileCGH", function(this, ylim=c(-1,1)*3, units="Mb", Bkp=FALSE, Smoothing="Smoothing", cnLevels=c(1/2,1,3/2), colDAGLAD=NULL, ticksBy=1, ...) {
+setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FALSE, Smoothing="Smoothing", cnLevels=c(1/2,1,3/2), colDAGLAD=NULL, ticksBy=1, ...) {
+  # To please R CMD check.
+  this <- x;
+
   # Argument 'units':
   units <- match.arg(units);
 
