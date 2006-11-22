@@ -464,7 +464,7 @@ setMethodS3("updateUnits", "AffymetrixCelFile", function(this, data, ...) {
 # @synopsis
 #
 # \arguments{
-#   \item{fields}{A @characer @vector of fields to be cleared.}
+#   \item{fields}{A @character @vector of fields to be cleared.}
 #   \item{value}{A @numeric value to be written over the data.}
 #   \item{...}{Additional arguments passed to the
 #      @see "affxparser::updateCelUnits" methods.}
