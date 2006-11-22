@@ -65,7 +65,11 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving sample thetas");
   theta <- unlist(this[units], use.names=FALSE);
-  stopifnot(identical(length(theta), nunits));
+  if (!identical(length(theta), nunits)) {
+    verbose && str(verbose, theta);
+    verbose && print(verbose, nunits);
+    throw("The number of chip-effect values is not equal to the number of units requested: ", tength(theta), " != ", nunits);
+  }
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

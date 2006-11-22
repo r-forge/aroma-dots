@@ -38,9 +38,9 @@ selectOrder <- function(choices, title="Select items one by one (0 to keep rest)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data set(s) for with chip type(s) to be combined in one.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-selectDataSets <- function(paths="raw", pattern=NULL, ...) {
+selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ...) {
   paths <- sapply(paths, FUN=filePath, expandLinks="any");
-  paths <- list.files(pattern="_(199|200)[0-9]", path=paths, full.names=TRUE);
+  paths <- list.files(pattern=pattern, path=paths, full.names=TRUE);
   paths <- paths[sapply(paths, FUN=isDirectory)];
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -89,12 +89,12 @@ selectDataSets <- function(paths="raw", pattern=NULL, ...) {
         next;
   
       print(path);
-      ds <- AffymetrixCelSet$fromFiles(path);
+      ds <- class$fromFiles(path);
       names <- c(names, getName(ds));
 
       files <- append(files, as.list(ds));
     }
-    ds <- AffymetrixCelSet(files=files);
+    ds <- class(files=files);
 
     # When joining several data sets, we have to get a new name.
     if (length(names) > 1) {

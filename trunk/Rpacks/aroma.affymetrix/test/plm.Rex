@@ -84,7 +84,7 @@ res <- lapply(dataSets, FUN=function(ds) {
 
   verbose && exit(verbose);
 
-  res;
+  model;
 })
 verbose && exit(verbose);
 

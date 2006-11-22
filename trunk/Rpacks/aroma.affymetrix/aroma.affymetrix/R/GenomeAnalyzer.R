@@ -472,8 +472,11 @@ setMethodS3("fitGlad", "CnPlmAnalyzer", function(this, arrays=1:nbrOfArrays(this
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the model
+  model <- getModel(this);
+
   # Get chip effects
-  ces <- getChipEffects(this, verbose=less(verbose));
+  ces <- getChipEffects(model, verbose=less(verbose));
 
   # Get reference
   ceAvg <- getAverageFile(ces, verbose=less(verbose));
