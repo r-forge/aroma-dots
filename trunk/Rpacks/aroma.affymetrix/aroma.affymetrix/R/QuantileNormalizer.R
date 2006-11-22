@@ -14,6 +14,20 @@
 #
 # \arguments{
 #   \item{dataSet}{A @see "AffymetrixCelSet".}
+#   \item{subsetToUpdate}{The probes to be updated.
+#     If @NULL, all probes are updated.}
+#   \item{typesToUpdate}{Types of probes to be updated.}
+#   \item{targetDistribution}{A @numeric @vector.  The empirical 
+#     distribution to which all arrays should be normalized to.}
+#   \item{subsetToAvg}{The probes to calculate average empirical
+#     distribution over.  If a single @numeric in (0,1), then this
+#     fraction of all probes will be used.  
+#     If @NULL, all probes are considered.}
+#   \item{typesToAvg}{Types of probes to be used when calculating the 
+#     average empirical distribution.  
+#     If \code{"pm"} and \code{"mm"} only perfect-match and mismatch 
+#     probes are used, respectively. If \code{"pmmm"} both types are used.
+#   }
 #   \item{tags}{A @character @vector of tags to be appended to the tags of
 #      the input data set.}
 #   \item{...}{Not used.}

@@ -16,6 +16,7 @@
 #   \item{...}{Arguments passed to @see "AffinePlm".}
 #   \item{mergeStrands}{If @TRUE, the sense and the anti-sense strands are
 #      fitted together, otherwise separately.}
+#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{

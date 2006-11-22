@@ -38,13 +38,13 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 
  }
 
- \usage{RmaSnpPlm(..., name="modelRmaSnpPlm", mergeStrands=FALSE)}
+ \usage{RmaSnpPlm(..., mergeStrands=FALSE, tags="*")}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{RmaPlm}}.}
-   \item{name}{The name of the model, which is also used in the pathname.}
    \item{mergeStrands}{If \code{\link[base:logical]{TRUE}}, the sense and the anti-sense strands are
       fitted together, otherwise separately.}
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{
@@ -62,7 +62,7 @@ getFitFunction, getProbeAffinities
 findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
+as.character, fit, getCdf, getDataSet, getFullName, getLabel, getName, getParameterSet, getPath, getRootPath, getTags, setLabel, setTags, setup
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -70,5 +70,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 \keyword{classes}

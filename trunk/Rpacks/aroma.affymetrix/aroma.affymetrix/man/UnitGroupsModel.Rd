@@ -35,14 +35,12 @@ extends \link[R.oo]{Object}\cr
   the Li & Wong model belongs to this class of models.
  }
 
- \usage{UnitGroupsModel(dataSet=NULL, name="modelUnitGroups", path=NULL, ...)}
+ \usage{UnitGroupsModel(dataSet=NULL, tags="", ...)}
 
  \arguments{
    \item{dataSet}{The dataset to which this model should be fitted.}
-   \item{path}{The pathname of the directory where to store parameter
-     estimates.}
-   \item{name}{The name of the unit-group model, which also will be used as
-     part of the pathname.}
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be appended to the tags of
+      the input data set.}
    \item{...}{Not used.}
  }
 
@@ -53,11 +51,15 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:fit.UnitGroupsModel]{fit}} \tab Estimates the model parameters.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.UnitGroupsModel]{getCdf}} \tab Gets the CDF structure for this model.\cr
  \tab \code{\link[aroma.affymetrix:getDataSet.UnitGroupsModel]{getDataSet}} \tab Gets the data set for this model.\cr
+ \tab \code{\link[aroma.affymetrix:getFullName.UnitGroupsModel]{getFullName}} \tab Gets the full name of the output data set.\cr
  \tab \code{getLabel} \tab  -\cr
- \tab \code{getName} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getName.UnitGroupsModel]{getName}} \tab Gets the name of the output summarized data set.\cr
  \tab \code{getParameterSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getPath.UnitGroupsModel]{getPath}} \tab Gets the path (directory) for this model.\cr
+ \tab \code{\link[aroma.affymetrix:getPath.UnitGroupsModel]{getPath}} \tab Gets the path of this model.\cr
+ \tab \code{\link[aroma.affymetrix:getRootPath.UnitGroupsModel]{getRootPath}} \tab Gets the root path of this model.\cr
+ \tab \code{\link[aroma.affymetrix:getTags.UnitGroupsModel]{getTags}} \tab Gets the tags of the output data set.\cr
  \tab \code{setLabel} \tab  -\cr
+ \tab \code{setTags} \tab  -\cr
  \tab \code{setup} \tab  -\cr
 }
 
@@ -68,7 +70,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
  }

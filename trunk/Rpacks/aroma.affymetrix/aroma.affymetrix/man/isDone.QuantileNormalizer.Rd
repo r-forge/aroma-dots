@@ -29,7 +29,7 @@
  Returns \code{\link[base:logical]{TRUE}} if the data set is normalized, otherwise \code{\link[base:logical]{FALSE}}.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{QuantileNormalizer}}.

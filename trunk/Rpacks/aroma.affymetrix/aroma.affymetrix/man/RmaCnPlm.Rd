@@ -45,13 +45,13 @@ extends \link[aroma.affymetrix]{CnPlm}\cr
   It can be used to fit the model on a \code{\link{AffymetrixCelSet}}.
  }
 
- \usage{RmaCnPlm(..., combineAlleles=FALSE, name="modelRmaCnPlm")}
+ \usage{RmaCnPlm(..., combineAlleles=FALSE, tags="*")}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{RmaSnpPlm}}.}
    \item{combineAlleles}{If \code{\link[base:logical]{FALSE}}, allele A and allele B are treated
       seperately, otherwise together.}
-   \item{name}{The name of the PLM, also used as part of the pathname.}
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{
@@ -75,7 +75,7 @@ getFitFunction, getProbeAffinities
 findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
+as.character, fit, getCdf, getDataSet, getFullName, getLabel, getName, getParameterSet, getPath, getRootPath, getTags, setLabel, setTags, setup
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -87,5 +87,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    TO DO.
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 \keyword{classes}

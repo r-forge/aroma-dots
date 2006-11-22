@@ -31,7 +31,7 @@
   Returns what \code{\link[aroma.affymetrix:extract.ParameterSet]{*extract}()} returns.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   \code{\link[aroma.affymetrix:extract.ParameterSet]{*extract}()}.

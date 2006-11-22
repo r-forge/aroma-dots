@@ -29,7 +29,7 @@
   Returns a \code{\link[base]{character}}.
 }
 
-\value{
+\details{
  The name of a file is the part of the filename without the extension and
  that preceeds any comma.
  For instance, the name of \code{path/to/foo,a.2,b.ext} is \code{foo}.

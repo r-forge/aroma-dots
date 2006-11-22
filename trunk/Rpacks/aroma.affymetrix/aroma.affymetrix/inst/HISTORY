@@ -1,7 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.2.5 [2006-11-xx]
+Version: 0.2.5 [2006-11-22]
+o Package pass R CMD check.
+o Added GladModel.  Now it is fairly simple to estimate total 
+  copy numbers from Affymetrix 10K, 100K and 500K data sets.
+o Added support for tags to most classes.
 o Made encode() and decode() of ParameterCelFile approx 2-3 times
   faster by skipping the encode-/decodeUnit() step and instead
   call the encode and decode functions directly.  This will

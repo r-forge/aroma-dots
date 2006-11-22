@@ -17,6 +17,7 @@
 #     otherwise not. That is, if @FALSE, a \emph{linear} model without 
 #     offset is fitted, resulting in very similar results as obtained by
 #     the @see "MbeiPlm".}
+#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{

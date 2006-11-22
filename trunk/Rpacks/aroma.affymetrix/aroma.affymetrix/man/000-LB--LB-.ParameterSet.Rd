@@ -34,7 +34,7 @@
   one data file was selected.
 }
 
-\author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   \code{\link[aroma.affymetrix:000-LB-.ParameterSet]{*[}()}.

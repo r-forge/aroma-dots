@@ -36,11 +36,11 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
   This class represents the log-additive model used in RMA.
  }
 
- \usage{RmaPlm(..., name="modelRmaPlm")}
+ \usage{RmaPlm(..., tags="*")}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
-   \item{name}{The name of the model, which is also used in the pathname.}
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{
@@ -54,7 +54,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getLabel, getName, getParameterSet, getPath, setLabel, setup
+as.character, fit, getCdf, getDataSet, getFullName, getLabel, getName, getParameterSet, getPath, getRootPath, getTags, setLabel, setTags, setup
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -77,5 +77,10 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    \eqn{\phi_i = 2^\alpha_i} are returned.
  }
 
- \author{Henrik Bengtsson \url{http://www.braju.com/R/}}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \references{
+  Irizarry et al. \emph{Summaries of Affymetrix GeneChip probe level data}.
+  NAR, 2003, 31, e15.\cr
+ }
 \keyword{classes}
