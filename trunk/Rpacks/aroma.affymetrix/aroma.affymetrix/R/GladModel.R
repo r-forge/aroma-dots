@@ -29,7 +29,10 @@
 # }
 #
 #*/###########################################################################
-setConstructorS3("GladModel", function(ces=NULL, reference=NULL, ...) {
+setConstructorS3("GladModel", function(ces=NULL, reference=NULL, ..., tags="*") {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'ces':
   if (!is.null(ces)) {
     if (!inherits(ces, "CnChipEffectSet")) {
@@ -58,6 +61,15 @@ setConstructorS3("GladModel", function(ces=NULL, reference=NULL, ...) {
     }
   }
 
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    tags[tags == "*"] <- "GLAD";
+  }
+
 
   extend(Object(), "GladModel",
     .ces = ces,
@@ -67,6 +79,8 @@ setConstructorS3("GladModel", function(ces=NULL, reference=NULL, ...) {
 
 setMethodS3("as.character", "GladModel", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
+  s <- c(s, paste("Name:", getName(this)));
+  s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
   s <- c(s, "Chip effects:");
   s <- c(s, as.character(getChipEffects(this)));
   s <- c(s, "Reference:");
@@ -106,16 +120,69 @@ setMethodS3("nbrOfArrays", "GladModel", function(this, ...) {
   nbrOfArrays(ces);
 })
 
+
 setMethodS3("getCdf", "GladModel", function(this, ...) {
   ces <- getChipEffects(this);
   getCdf(ces);
 }, protected=TRUE)
+
 
 setMethodS3("getChipType", "GladModel", function(this, ...) {
   cdf <- getCdf(this);
   getChipType(cdf);
 }, protected=TRUE)
 
+
+setMethodS3("getName", "GladModel", function(this, ...) {
+  # Get name of chip-effect set
+  ces <- getChipEffects(this);
+  getName(ces);
+})
+
+
+setMethodS3("getTags", "GladModel", function(this, ...) {
+  ces <- getChipEffects(this);
+  c(getTags(ces), this$.tags);
+})
+
+
+setMethodS3("getFullName", "GladModel", function(this, ...) {
+  name <- getName(this);
+  tags <- getTags(this);
+  fullname <- paste(c(name, tags), collapse=",");
+  fullname <- gsub("[,]$", "", fullname);
+  fullname;
+})
+
+
+setMethodS3("getRootPath", "GladModel", function(this, ...) {
+  "glad";
+})
+
+setMethodS3("getPath", "GladModel", function(this, ...) {
+  # Create the (sub-)directory tree for the dataset
+
+  # Root path
+  rootPath <- getRootPath(this);
+  mkdirs(rootPath);
+
+  # Full name
+  fullname <- getFullName(this);
+
+  # Chip type    
+  cdf <- getCdf(this);
+  chipType <- getChipType(cdf);
+
+  # The full path
+  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+  if (!isDirectory(path)) {
+    mkdirs(path);
+    if (!isDirectory(path))
+      throw("Failed to create output directory: ", path);
+  }
+
+  path;
+})
 
 ###########################################################################/**
 # @RdocMethod getChromosomes
@@ -239,7 +306,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
 })
 
 
-setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, skip=TRUE, verbose=FALSE) {
+setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, skip=TRUE, path=NULL, verbose=FALSE) {
   # To please R CMD check.
   this <- x;
 
@@ -278,22 +345,17 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rootPath <- "chromosomeExplorer";
 
-  # Get name of chip-effect set
-  ces <- getChipEffects(this);
-  fullname <- getFullName(ces);
-
   # Get chip type
-  cdf <- getCdf(ces);
+  cdf <- getCdf(this);
   chipType <- getChipType(cdf);
-
-  # The glad directory
   chipType <- gsub("-monocell", "", chipType);
-  path <- filePath(rootPath, fullname, chipType);
-  mkdirs(path);
 
   # The figure path
-  figPath <- filePath(path);
-  mkdirs(figPath);
+  if (is.null(path)) {
+    path <- filePath(rootPath, getFullName(this), chipType, expandLinks="any");
+    path <- filePath(path, expandLinks="any");
+  }
+  mkdirs(path);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup the PNG device
@@ -328,7 +390,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
     for (zz in seq(along=zooms)) {
       zoom <- zooms[zz];
       imgName <- sprintf("%s,glad,chr%02d,x%04d.%s", fullname, chromosomeIdx, zoom, imgExt);
-      pathname <- filePath(figPath, imgName);
+      pathname <- filePath(path, imgName);
 
       # pngDev() (that is bitmap()) does not accept spaces in pathnames
       pathname <- gsub(" ", "_", pathname);
@@ -428,16 +490,13 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
   }
 
 
-  ces <- getChipEffects(this);
-  dataSetName <- getFullName(ces);
   # Add a "GLAD" tag.
-  dataSetName <- sprintf("%s,GLAD", dataSetName);
-  cdf <- getCdf(ces);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell", "", chipType);
+  dataSetName <- getFullName(this);
+
+  ces <- getChipEffects(this);
   arrayNames <- getNames(ces);
 
-  path <- filePath("glad", dataSetName, chipType, expandLinks="any");
+  path <- getPath(this);
   mkdirs(path);
 
   res <- list();
@@ -470,7 +529,6 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
       for (rr in seq(along=urls)) { 
         urls[rr] <- url(chromosome[rr], start[rr], stop[rr]);
       }
-print(urls);
       df <- cbind(df, url=urls);
     }
 
