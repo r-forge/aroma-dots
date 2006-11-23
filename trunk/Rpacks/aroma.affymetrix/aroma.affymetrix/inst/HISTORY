@@ -1,6 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.2.6 [2006-11-xx]
+o Added trial version of writeWig() to CnChipEffectSet to export
+  log2 copy numbers to the UCSC Genome Browser.
+
 Version: 0.2.5 [2006-11-22]
 o Package pass R CMD check.
 o Added GladModel.  Now it is fairly simple to estimate total 
