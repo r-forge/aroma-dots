@@ -4,7 +4,7 @@ source("ui.R");
 
 pngDev <- System$findGraphicsDevice();
 
-choices <- c("Fit GLAD", "Plot GLAD estimates", "Write GLAD table");
+choices <- c("Get GLAD model", "Fit GLAD", "Plot GLAD estimates", "Write GLAD table");
 methods <- selectMenu(choices=choices, title="Select what you want to do (leave all blank to use all)");
 if (length(methods) == 0) {
   methods <- seq(choices);
@@ -62,7 +62,7 @@ s <- GenericSummary(s);
 print(s);
 
 
-if (all(c(1,2) %in% methods) || all(c(1,3) %in% methods)) {
+if (all(c(2,3) %in% methods) || all(c(2,4) %in% methods)) {
   methods <- setdiff(methods, 1);
 }
 
@@ -79,19 +79,19 @@ res <- lapply(dataSets, FUN=function(ces) {
   # Define the GLAD model
   glad <- GladModel(ces);
 
-  if (1 %in% methods) {
+  if (2 %in% methods) {
     verbose && enter(verbose, "Fitting GLAD");
     fit(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
     verbose && exit(verbose);
   }
 
-  if (2 %in% methods) {
+  if (3 %in% methods) {
     verbose && enter(verbose, "Plotting GLAD (and fitting if not done)");
     plot(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
     verbose && exit(verbose);
   }
 
-  if (3 %in% methods) {
+  if (4 %in% methods) {
     verbose && enter(verbose, "Writing GLAD tables to file");
     # Filter out regions with only little change
     smoothing <- c(-Inf,-0.15,+0.15,+Inf);

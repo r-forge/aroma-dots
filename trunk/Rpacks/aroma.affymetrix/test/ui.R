@@ -41,31 +41,36 @@ selectOrder <- function(choices, title="Select items one by one (0 to keep rest)
 selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ...) {
   paths <- sapply(paths, FUN=filePath, expandLinks="any");
   paths <- list.files(pattern=pattern, path=paths, full.names=TRUE);
+  if (length(paths) == 0) {
+    throw("Cannot select data set. No data sets found matching pattern '", 
+                           pattern, "': ", paste(paths, collapse=", "));
+  }
   paths <- paths[sapply(paths, FUN=isDirectory)];
-  
+  dataSetPaths <- paths;
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Scan for chip types
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  paths <- sapply(paths, FUN=function(path) {
+  paths <- lapply(paths, FUN=function(path) {
     pattern <- "^(Mapping|BI_SNP)"
     list.files(pattern=pattern, path=path);
   })
+  names(paths) <- dataSetPaths;
   keep <- sapply(paths, FUN=function(x) length(x) > 0);
   paths <- paths[keep];
-  print(paths);
   
   uChipTypes <- sort(unique(unlist(paths)));
-  print(uChipTypes);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Select chip type
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   chipTypes <- selectMenu(uChipTypes);
-  
+  if (length(chipTypes) == 0)
+    chipTypes <- uChipTypes;
+
   # Filter out data sets
   keep <- sapply(paths, FUN=function(x) all(chipTypes %in% x));
   paths <- names(paths)[keep];
-  
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Select data sets
