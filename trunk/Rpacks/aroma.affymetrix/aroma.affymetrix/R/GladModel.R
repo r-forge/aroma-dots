@@ -168,7 +168,7 @@ setMethodS3("getGenomeInformation", "GladModel", function(this, ...) {
 })
 
 
-setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), ..., verbose=FALSE) {
+setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), ..., .retResults=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -220,7 +220,8 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
 
       fit <- fitGlad(ce, reference=reference, chromosome=chr, ...,
                                                       verbose=less(verbose));
-      res[[arrayName]][[chr]] <- fit;
+      if (.retResults)
+        res[[arrayName]][[chr]] <- fit;
 
       verbose && enter(verbose, "Calling onFit() hooks");
       callHooks("onFit.fitGlad.GladModel", fit=fit, chromosome=chr, ce=ce);
@@ -364,9 +365,9 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Start fitting and plotting
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  res <- fit(this, ..., verbose=verbose);
+  fit(this, ..., .retResults=FALSE, verbose=verbose);
 
-  invisible(res);
+  invisible();
 })
 
 
@@ -404,12 +405,20 @@ setMethodS3("getRegions", "GladModel", function(this, ..., verbose=FALSE) {
 })
 
 
-setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(this), ext="xls", digits=3, ..., verbose=FALSE) {
+setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(this), ext="xls", digits=3, url="ucsc", margin=10, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
   arrays <- Arguments$getIndices(arrays, range=c(1,nbrOfArrays(this)));
+
+  # Argument 'url':
+  if (identical(url, "ucsc")) {
+    url <- function(chromosome, start, stop) {
+      uri <- "http://genome.ucsc.edu/cgi-bin/hgTracks?clade=vertebrate&org=Human&db=hg18";
+      sprintf("%s&position=chr%s%%3A%d-%d", uri, chromosome, as.integer(start), as.integer(stop));
+    }
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -417,6 +426,7 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
     pushState(verbose);
     on.exit(popState(verbose));
   }
+
 
   ces <- getChipEffects(this);
   dataSetName <- getFullName(ces);
@@ -446,6 +456,24 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
       }
     }
 
+    # Add URL?
+    if (!is.null(url)) {
+      chromosome <- df[,"Chromosome"];
+      start <- df[,"start"];
+      stop <- df[,"stop"];
+      m <- margin*abs(stop-start);
+      start <- start-m;
+      start[start < 0] <- 0;
+      stop <- stop + m;
+      print(data.frame(chromosome, start, stop));
+      urls <- character(nrow(df));
+      for (rr in seq(along=urls)) { 
+        urls[rr] <- url(chromosome[rr], start[rr], stop[rr]);
+      }
+print(urls);
+      df <- cbind(df, url=urls);
+    }
+
     # Writing to file
     filename <- sprintf("%s,GLAD,regions.%s", name, ext); 
     pathname <- filePath(path, filename);
@@ -459,9 +487,18 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
 })
 
 
+setMethodS3("writeWig", "GladModel", function(this, ...) {
+  ces <- getChipEffects(this);
+  reference <- getReference(this);
+  writeWig(ces, reference=reference, ...);
+}) # writeWig()
+
+
 
 ##############################################################################
 # HISTORY:
+# 2006-11-23
+# o Added writeWig().
 # 2006-11-22
 # o Added writeRegions().
 # o Added fit(), plot(), and getRegions().

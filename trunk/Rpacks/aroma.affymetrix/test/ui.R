@@ -141,3 +141,8 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
   dataSets;
 } # selectDataSets()
 
+############################################################################
+# HISTORY: 
+# 2006-11-22
+# o Created.
+############################################################################

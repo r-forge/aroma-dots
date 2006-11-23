@@ -4,6 +4,14 @@ source("ui.R");
 
 pngDev <- System$findGraphicsDevice();
 
+choices <- c("Fit GLAD", "Plot GLAD estimates", "Write GLAD table");
+methods <- selectMenu(choices=choices, title="Select what you want to do (leave all blank to use all)");
+if (length(methods) == 0) {
+  methods <- seq(choices);
+} else {
+  methods <- match(methods, choices);
+} 
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -27,7 +35,7 @@ ces <- dataSets[[1]];
 choices <- getNames(ces);
 arrays <- selectMenu(choices=choices, title="Select the arrays you which to fit (leave all blank to use all)");
 if (length(arrays) == 0) {
-  arrays <- seq(ces);
+  arrays <- seq(choices);
 } else {
   arrays <- match(arrays, choices);
 } 
@@ -53,6 +61,11 @@ s <- c(s, paste("Chromosomes: ", str, sep=""));
 s <- GenericSummary(s);
 print(s);
 
+
+if (all(c(1,2) %in% methods) || all(c(1,3) %in% methods)) {
+  methods <- setdiff(methods, 1);
+}
+
 res <- lapply(dataSets, FUN=function(ces) {
   verbose && enter(verbose, "Chip-effect set ", getName(ces));
 
@@ -66,15 +79,25 @@ res <- lapply(dataSets, FUN=function(ces) {
   # Define the GLAD model
   glad <- GladModel(ces);
 
-  verbose && enter(verbose, "Fitting & plotting GLAD");
-  plot(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
-  verbose && exit(verbose);
+  if (1 %in% methods) {
+    verbose && enter(verbose, "Fitting GLAD");
+    fit(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
+    verbose && exit(verbose);
+  }
 
-  verbose && enter(verbose, "Writing CN regions to file");
-  # Filter out regions with only little change
-  smoothing <- c(-Inf,-0.15,+0.15,+Inf);
-  writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, verbose=less(verbose));
-  verbose && exit(verbose);
+  if (2 %in% methods) {
+    verbose && enter(verbose, "Plotting GLAD (and fitting if not done)");
+    plot(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
+    verbose && exit(verbose);
+  }
+
+  if (3 %in% methods) {
+    verbose && enter(verbose, "Writing GLAD tables to file");
+    # Filter out regions with only little change
+    smoothing <- c(-Inf,-0.15,+0.15,+Inf);
+    writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, verbose=less(verbose));
+    verbose && exit(verbose);
+  }
 
   glad;
 })
