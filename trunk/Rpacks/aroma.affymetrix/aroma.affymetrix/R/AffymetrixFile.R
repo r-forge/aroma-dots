@@ -101,16 +101,16 @@ setMethodS3("clone", "AffymetrixFile", function(this, clear=TRUE, ...) {
 # @keyword programming
 #*/###########################################################################
 setMethodS3("as.character", "AffymetrixFile", function(this, ...) {
-  s <- paste(class(this)[1], ":", sep="");
-  s <- paste(s, " Name: ", getName(this), ".", sep="");
+  s <- sprintf("%s:", class(this)[1]);
+  s <- c(s, sprintf("Name: %s", getName(this)));
   tags <- getTags(this);
   if (!is.null(tags)) {
     s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
   }
-  s <- paste(s, " File type: ", getFileType(this), ".", sep="");
-  s <- sprintf("%s Pathname: %s (%.2fMb).", s, getPathname(this), 
-                                                   getFileSize(this)/1024^2);
-  s <- sprintf("%s RAM: %.2fMb.", s, objectSize(this)/1024^2);
+  s <- c(s, sprintf("Pathname: %s", getPathname(this)));
+  s <- c(s, sprintf("File size: %.2fMb", getFileSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  class(s) <- "GenericSummary";
   s;
 })
 

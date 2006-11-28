@@ -76,7 +76,6 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # For a 100K chip this loads up ~700Mb of the memory.
   require(pdName, character.only=TRUE);
-  gc();
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Read data
@@ -86,6 +85,8 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
   opwd <- setwd(getPath(this));
   on.exit(setwd(opwd), add=TRUE);
   filenames <- basename(getPathnames(this));
+  verbose && cat(verbose, "Current path: ", getwd());
+  verbose && cat(verbose, "Filenames: ", paste(filenames, collapse=", "));
   res <- oligo::read.celfiles(filenames, ..., verbose=as.logical(less(verbose)));
   verbose && exit(verbose);
 

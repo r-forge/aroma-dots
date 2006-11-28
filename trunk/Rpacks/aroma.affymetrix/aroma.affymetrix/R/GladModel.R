@@ -172,6 +172,7 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
   # Chip type    
   cdf <- getCdf(this);
   chipType <- getChipType(cdf);
+  chipType <- gsub("-monocell$", "", chipType);
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
@@ -272,6 +273,8 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
   verbose && cat(verbose, "Using reference:");
   verbose && print(verbose, reference);
 
+  path <- getPath(this);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Chromosome by chromosome
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -281,18 +284,42 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
     arrayName <- getName(ce);
     res[[arrayName]] <- list();
     for (chr in chromosomes) {
+      chrIdx <- match(chr, c(1:22, "X", "Y"));
       verbose && enter(verbose, 
                              sprintf("Array %s (#%d of %d) on chromosome %s", 
                                        arrayName, aa, length(arrays), chr));
 
-      fit <- fitGlad(ce, reference=reference, chromosome=chr, ...,
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Get pathname
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Add tags chrNN,GLAD,<reference tags>
+      tags <- setdiff(getTags(ce), "chipEffects");
+      tags <- c(tags, sprintf("chr%02d", chrIdx));
+      tags <- c(tags, "GLAD", getName(reference), getTags(reference));
+      filename <- sprintf("%s.xdr", paste(c(arrayName, tags), collapse=","));
+      pathname <- filePath(path, filename);
+
+      # Already done?
+      if (isFile(pathname)) {
+        verbose && enter(verbose, "Loading results from file");
+        verbose && cat(verbose, "Pathname: ", pathname);
+        fit <- loadObject(pathname);
+        verbose && exit(verbose);
+      } else {
+        fit <- fitGlad(ce, reference=reference, chromosome=chr, ...,
                                                       verbose=less(verbose));
-      if (.retResults)
-        res[[arrayName]][[chr]] <- fit;
+        verbose && enter(verbose, "Saving to file");
+        verbose && cat(verbose, "Pathname: ", pathname);
+        saveObject(fit, file=pathname);
+        verbose && exit(verbose);
+      }
 
       verbose && enter(verbose, "Calling onFit() hooks");
       callHooks("onFit.fitGlad.GladModel", fit=fit, chromosome=chr, ce=ce);
       verbose && exit(verbose);
+
+      if (.retResults)
+        res[[arrayName]][[chr]] <- fit;
 
       rm(fit);
 
@@ -348,7 +375,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # Get chip type
   cdf <- getCdf(this);
   chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell", "", chipType);
+  chipType <- gsub("-monocell$", "", chipType);
 
   # The figure path
   if (is.null(path)) {
@@ -433,10 +460,52 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
 })
 
 
-setMethodS3("getRegions", "GladModel", function(this, ..., verbose=FALSE) {
+setMethodS3("getLog2Ratios", "GladModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract the regions for each of the GLAD fits (per array)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  suppressWarnings({
+    res <- fit(this, ..., verbose=less(verbose,10));
+  })
+
+  res <- lapply(res, FUN=function(arrayFits) {
+    df <- NULL;
+    for (fit in arrayFits) {
+      suppressWarnings({
+        df0 <- getRegions(fit, ...);
+      })
+      df <- rbind(df, df0);
+    }
+    rownames(df) <- seq(length=nrow(df));
+  })
+
+  res;
+}) # getLog2Ratios()
+
+
+
+setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", margin=10, flat=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'url':
+  if (identical(url, "ucsc")) {
+    url <- function(chromosome, start, stop) {
+      uri <- "http://genome.ucsc.edu/cgi-bin/hgTracks?clade=vertebrate&org=Human&db=hg18";
+      sprintf("%s&position=chr%s%%3A%d-%d", uri, chromosome, as.integer(start), as.integer(stop));
+    }
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -451,6 +520,7 @@ setMethodS3("getRegions", "GladModel", function(this, ..., verbose=FALSE) {
   suppressWarnings({
     res <- fit(this, ..., verbose=less(verbose,10));
   })
+
   res <- lapply(res, FUN=function(arrayFits) {
     df <- NULL;
     for (fit in arrayFits) {
@@ -460,27 +530,49 @@ setMethodS3("getRegions", "GladModel", function(this, ..., verbose=FALSE) {
       df <- rbind(df, df0);
     }
     rownames(df) <- seq(length=nrow(df));
+
+    # Add URL?
+    if (!is.null(url)) {
+      chromosome <- df[,"Chromosome"];
+      start <- df[,"start"];
+      stop <- df[,"stop"];
+      m <- margin*abs(stop-start);
+      start <- start-m;
+      start[start < 0] <- 0;
+      stop <- stop + m;
+      urls <- character(nrow(df));
+      for (rr in seq(along=urls)) { 
+        urls[rr] <- url(chromosome[rr], start[rr], stop[rr]);
+      }
+      df <- cbind(df, url=urls);
+    }
+
     df;
   })
+
+  if (flat) {
+    df <- NULL;
+    for (kk in seq(along=res)) {
+      df <- rbind(df, cbind(sample=names(res)[kk], res[[kk]]));
+      res[[kk]] <- NA;
+    }
+    row.names(df) <- seq(length=nrow(df));
+    res <- df;
+  }  
 
   res;
 })
 
 
-setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(this), ext="xls", digits=3, url="ucsc", margin=10, ..., verbose=FALSE) {
+setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(this), format=c("xls", "wig"), digits=3, ..., oneFile=FALSE, skip=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
   arrays <- Arguments$getIndices(arrays, range=c(1,nbrOfArrays(this)));
 
-  # Argument 'url':
-  if (identical(url, "ucsc")) {
-    url <- function(chromosome, start, stop) {
-      uri <- "http://genome.ucsc.edu/cgi-bin/hgTracks?clade=vertebrate&org=Human&db=hg18";
-      sprintf("%s&position=chr%s%%3A%d-%d", uri, chromosome, as.integer(start), as.integer(stop));
-    }
-  }
+  # Argument 'format':
+  format <- match.arg(format);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -499,6 +591,14 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
   path <- getPath(this);
   mkdirs(path);
 
+  if (oneFile) {
+    filename <- sprintf("%s,GLAD,regions.%s", getFullName(this), format); 
+    pathname <- filePath(path, filename);
+    pathname <- Arguments$getWritablePathname(pathname);
+    if (!skip && isFile(pathname))
+      file.remove(pathname);
+  }
+
   res <- list();
   for (array in arrays) {
     name <- arrayNames[array];
@@ -506,6 +606,52 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
                                              array, length(arrays), name));
     df <- getRegions(this, arrays=array, ..., verbose=less(verbose))[[1]];
     names(df) <- gsub("Smoothing", "log2CN", names(df));
+
+    if (identical(format, "xls")) {
+      # Append column of sample names?
+      if (oneFile)
+        df <- cbind(sample=name, df);
+    } else if (identical(format, "wig")) {
+      # Write a four column WIG/BED table
+      df <- df[,c("Chromosome", "start", "stop", "log2CN")];
+
+      # In the UCSC Genome Browser, the maximum length of one element
+      # is 10,000,000 bases.  Chop up long regions in shorter contigs.
+      verbose && enter(verbose, sprintf("Chopping up too long segment"));
+      MAX.LENGTH = 10e6-1;
+      start <- df[,"start"];
+      stop <- df[,"stop"];
+      len <- stop-start;
+      tooLong <- which(len > MAX.LENGTH);
+      if (length(tooLong) > 0) {
+        dfXtra <- NULL;
+        for (rr in tooLong) {
+          x0 <- start[rr];
+          while (x0 < stop[rr]) {
+            x1 <- min(x0 + MAX.LENGTH, stop[rr]);
+            df1 <- df[rr,];
+            df1[,"start"] <- x0;
+            df1[,"stop"] <- x1;
+            dfXtra <- rbind(dfXtra, df1);          
+            x0 <- x1+1;
+          }
+        }
+        df <- df[-tooLong,];
+        df <- rbind(df, dfXtra);
+        rm(dfXtra);
+        row.names(df) <- seq(length=nrow(df));
+      }
+      verbose && exit(verbose);
+      # Make sure the items are ordered correctly
+      chrIdx <- as.integer(df[,"Chromosome"]);
+      o <- order(chrIdx, df[,"start"]);
+      df <- df[o,];
+
+      # All chromosomes should have prefix 'chr'.
+      chrIdx <- as.integer(df[,"Chromosome"]);
+      df[chrIdx == 23,"Chromosome"] <- "X";
+      df[,"Chromosome"] <- paste("chr", df[,"Chromosome"], sep="");
+    }
 
     # Apply digits
     for (cc in seq(length=ncol(df))) {
@@ -515,28 +661,49 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
       }
     }
 
-    # Add URL?
-    if (!is.null(url)) {
-      chromosome <- df[,"Chromosome"];
-      start <- df[,"start"];
-      stop <- df[,"stop"];
-      m <- margin*abs(stop-start);
-      start <- start-m;
-      start[start < 0] <- 0;
-      stop <- stop + m;
-      print(data.frame(chromosome, start, stop));
-      urls <- character(nrow(df));
-      for (rr in seq(along=urls)) { 
-        urls[rr] <- url(chromosome[rr], start[rr], stop[rr]);
-      }
-      df <- cbind(df, url=urls);
+    if (!oneFile) {
+      savename <- name;
+      filename <- sprintf("%s,GLAD,regions.%s", savename, format); 
+      pathname <- filePath(path, filename);
+      if (!oneFile && !skip && isFile(pathname))
+        file.remove(pathname);
     }
 
     # Writing to file
-    filename <- sprintf("%s,GLAD,regions.%s", name, ext); 
-    pathname <- filePath(path, filename);
     verbose && cat(verbose, "Pathname: ", pathname);
-    write.table(df, file=pathname, sep="\t", row.names=FALSE, quote=FALSE);
+    if (identical(format, "xls")) {
+      col.names <- (array == arrays[1]);
+      write.table(df, file=pathname, sep="\t", col.names=col.names, row.names=FALSE, quote=FALSE, append=oneFile);
+    } else if (identical(format, "wig")) {
+      # Write track control
+      trackAttr <- c(type="wiggle_0");
+      trackAttr <- c(trackAttr, name=sprintf("\"%s\"", name));
+      trackAttr <- c(trackAttr, group="\"GLAD regions\"");
+      trackAttr <- c(trackAttr, priority=array);
+      trackAttr <- c(trackAttr, graphType="bar");
+      trackAttr <- c(trackAttr, visibility="full");
+      trackAttr <- c(trackAttr, maxHeightPixels="128:96:64");
+      trackAttr <- c(trackAttr, yLineOnOff="on");
+# HARD WIRED FOR NOW.  TO DO /hb 2006-11-27
+col <- c("117,112,179", "231,41,138");
+ylim <- c(-1,1);
+      if (!is.null(col)) {
+        trackAttr <- c(trackAttr, color=col[1], altColor=col[2]);
+      }
+      if (!is.null(ylim)) {
+        trackAttr <- c(trackAttr, autoScale="off", 
+              viewLimits=sprintf("%.2f:%.2f ", ylim[1], ylim[2]));
+      }
+      trackAttr <- paste(names(trackAttr), trackAttr, sep="=");
+      trackAttr <- paste(trackAttr, collapse=" ");
+      trackAttr <- paste("track ", trackAttr, "\n", sep="");
+      verbose && str(verbose, trackAttr);
+      cat(file=pathname, trackAttr, append=oneFile);
+
+      # Write data
+      verbose && str(verbose, df);
+      write.table(df, file=pathname, sep="\t", col.names=FALSE, row.names=FALSE, quote=FALSE, append=oneFile);
+    }
     verbose && exit(verbose);
     res[[array]] <- df;
   }
@@ -555,6 +722,11 @@ setMethodS3("writeWig", "GladModel", function(this, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2006-11-27
+# o Added argument 'flat' to getRegions().
+# 2006-11-24
+# o Now the fit() function of GladModel stores the profileCGH object as a
+#   binary XDR file in the default path, see getPath().
 # 2006-11-23
 # o Added writeWig().
 # 2006-11-22

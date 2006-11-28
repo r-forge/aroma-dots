@@ -64,6 +64,15 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
   object;
 })
 
+
+setMethodS3("as.character", "AffymetrixCelFile", function(this, ...) {
+  s <- NextMethod("as.character", ...);
+  s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
+  class(s) <- "GenericSummary";
+  s;
+})
+
+
 setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALSE) {
   identifier <- this$.identifier;
   if (force || is.null(identifier)) {
@@ -392,7 +401,7 @@ setMethodS3("getChipType", "AffymetrixCelFile", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NULL, ..., stratifyBy=NULL, force=FALSE, verbose=FALSE) {
+setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NULL, ..., stratifyBy=NULL, force=FALSE, cache=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -861,6 +870,9 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-11-28
+# o Arguments 'force' and 'cache' has to be in readUnits() to avoid being
+#   passed from calls of subclasses.
 # 2006-10-23
 # o Update default value for argument 'fields' in getData().
 # 2006-10-22
