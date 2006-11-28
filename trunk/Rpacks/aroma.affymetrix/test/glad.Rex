@@ -4,6 +4,9 @@ source("ui.R");
 
 pngDev <- System$findGraphicsDevice();
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Select what to do
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 choices <- c("Get GLAD model", "Fit GLAD", "Plot GLAD estimates", "Write GLAD table", "Write WIG tracks (for the UCSC Genome Browser)");
 methods <- selectMenu(choices=choices, title="Select what you want to do (leave all blank to use all)");
 if (length(methods) == 0) {
@@ -85,7 +88,7 @@ res <- lapply(dataSets, FUN=function(ces) {
 
   if (2 %in% methods) {
     verbose && enter(verbose, "Fitting GLAD");
-    fit(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
+    fit(glad, arrays=arrays, chromosomes=chromosomes, .retResults=FALSE, verbose=less(verbose));
     verbose && exit(verbose);
   }
 

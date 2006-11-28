@@ -61,10 +61,17 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   nunits <- length(units);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get cell map
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Get unit-to-cell map");
+  map <- getCellMap(this, units=units, verbose=less(verbose));
+  verbose && exit(verbose);
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get thetas from the sample
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving sample thetas");
-  theta <- unlist(this[units], use.names=FALSE);
+  theta <- getDataFlat(this, units=map, fields="theta", verbose=less(verbose))[,"theta"];
   if (!identical(length(theta), nunits)) {
     verbose && str(verbose, theta);
     verbose && print(verbose, nunits);
@@ -82,7 +89,7 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   other$combineAlleles <- this$combineAlleles;
 
   # Get the other theta estimates
-  thetaRef <- unlist(other[units], use.names=FALSE);
+  thetaRef <- getDataFlat(other, units=map, fields="theta", verbose=less(verbose))[,"theta"];
   stopifnot(identical(length(thetaRef), nunits));
   verbose && exit(verbose);
 
@@ -215,6 +222,9 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
 
 ############################################################################
 # HISTORY:
+# 2006-11-28
+# o Now getAM() is making use of the new getCellMap() and getDataFlat() 
+#   functions to speed up the reading.
 # 2006-10-31
 # o Added Rdoc comments.
 # 2006-09-26

@@ -247,8 +247,173 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
 })
 
 
+
+setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'units':
+  if (inherits(units, "ChipEffectFileCellMap")) {
+    return(units);
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Retrieving unit-to-cell map");
+
+  # Is 'units' already a CDF list?
+  if (is.list(units)) {
+    # No fancy validation for now.
+    cells <- units;
+    cdf <- getCdf(this);
+    units <- indexOf(cdf, names=names(units));
+    if (any(is.na(units))) {
+      throw("Argument 'units' is of unknown structure.");
+    }
+    verbose && enter(verbose, "Argument 'cells' is already a CDF cell-index structure");
+  } else {
+    verbose && enter(verbose, "Retrieving cell indices for specified units");
+    # Get the cells to read
+    cells <- getCellIndices(this, units=units, verbose=less(verbose));  
+  }
+
+  unitNames <- names(cells);
+  unitSizes <- unlist(lapply(cells, length), use.names=FALSE);
+  cells <- unlist(cells, use.names=FALSE);
+  verbose && exit(verbose);
+  
+  verbose && enter(verbose, "Creating return data frame");
+  uUnitSizes <- unique(unitSizes);
+  units <- rep(units, each=unitSizes);
+
+  # The following is too slow:
+  #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
+
+  # Instead, updated size by size
+  groups <- matrix(NA, nrow=max(uUnitSizes), ncol=length(unitNames));
+  for (size in uUnitSizes) {
+    cc <- which(unitSizes == size);
+    seq <- seq(length=size);
+    groups[seq,cc] <- seq;
+  }
+  groups <- groups[!is.na(groups)];
+  map <- data.frame(unit=units, group=groups, cell=cells);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  class(map) <- c("ChipEffectFileCellMap", class(map));
+
+  map;
+}, protected=TRUE)
+
+
+
+setMethodS3("getDataFlat", "ChipEffectFile", function(this, units=NULL, fields=c("theta", "sdTheta", "outliers"), ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Retrieving data as a flat data frame");
+
+  # Get unit-to-cell map
+  suppressWarnings({
+    map <- getCellMap(this, units=units, ..., verbose=less(verbose));
+  })
+
+  verbose && enter(verbose, "Reading data fields");
+  celFields <- c(theta="intensities", sdTheta="stdvs", outliers="pixels");
+  suppressWarnings({
+    data <- getData(this, indices=map[,"cell"], fields=celFields[fields]);
+  })
+  rownames(data) <- seq(length=nrow(data));  # Work around?!? /HB 2006-11-28
+
+  # Decode
+  names <- colnames(data);
+  names <- gsub("intensities", "theta", names);
+  names <- gsub("stdvs", "sdTheta", names);
+  names <- gsub("pixels", "outliers", names);
+  colnames(data) <- names;
+  verbose && str(verbose, data);
+  if ("outliers" %in% names) {
+    data[,"outliers"] <- as.logical(-data[,"outliers"]);
+  }
+  verbose && exit(verbose);
+
+  len <- sapply(data, FUN=length);
+  keep <- (len == nrow(map));
+  data <- data[keep];
+  data <- as.data.frame(data);
+
+  data <- cbind(map, data);
+
+  verbose && exit(verbose);
+
+  data;
+}, protected=TRUE)
+
+
+
+setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'data':
+  names <- colnames(data);  
+  namesStr <- paste(names, collapse=", ");
+  if (!"cell" %in% names)
+    throw("Argument 'data' must contain a column 'cell'": namesStr);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Storing flat data to file");
+
+  # Encode
+  names <- gsub("theta", "intensities", names);
+  names <- gsub("sdTheta", "stdvs", names);
+  names <- gsub("outliers", "pixels", names);
+  colnames(data) <- names;
+  if ("pixels" %in% names) {
+    data[,"pixels"] <- -as.integer(data[,"pixels"]);
+  }
+
+  verbose && enter(verbose, "Updating file");
+  indices <- data[,"cell"];
+  keep <- (names %in% c("intensities", "stdvs", "pixels"));
+  data <- data[,keep];
+  pathname <- getPathname(this);
+  updateCel(pathname, indices=indices, data, verbose=as.logical(less(verbose,10)));
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+  invisible(data);
+}, protected=TRUE)
+
+
+
 ############################################################################
 # HISTORY:
+# 2006-11-28
+# o Added trial version of updateDataFlat(). Seems to work. Will speed
+#   up a few things.
+# o Added trial versions of getCellMap() and getDataFlat().
 # 2006-11-28
 # o Added argument 'cache' to readUnits() to specify if the result should
 #   be cached or not.
