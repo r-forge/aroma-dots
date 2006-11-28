@@ -14,6 +14,8 @@ if (ext == "png") {
   height <- 8 / 1.618;
   dev <- eps;
 }
+#dev <- NULL; par(ask=TRUE);
+
 NORMAL <- 1; BOLD <- 2; ITALIC <- 3; BOLDITALIC <- 4;
 par(ask=FALSE);
 
@@ -97,20 +99,27 @@ for (kk in seq(along=dataSets)) {
   d$y <- d$y / max(d$y, na.rm=TRUE);
 
   # Plot data only for a subset of the SNPs
-  subset <- 1:10000;
+  subset <- 1:25000;
   units <- units[subset];
   fl <- fl[subset];
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Retrieving unit-to-cell map for all arrays");
+  ce <- getFile(ces, 1);
+  map <- getCellMap(ce, units=units, verbose=less(verbose));
+  verbose && str(verbose, map);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Retrieving reference signals");
   # Get the reference chip effects
   ceR <- getAverage(ces);
-  yR <- readUnits(ceR, units=units);
-  yR <- unlist(yR, use.names=FALSE);
+  yR <- getDataFlat(ceR, units=map, fields="theta")[,"theta"];
   verbose && str(verbose, yR);
   lcR <- log2(yR);
   ok <- is.finite(lcR);
   fitR <- lowess(fl[ok],lcR[ok]);
+  class(fitR) <- "lowess";
+  predictR <- function(x, ...) { predict(fitR, newdata=x, ...) }
   verbose && exit(verbose);
 
   # Get the output path
@@ -142,77 +151,91 @@ for (kk in seq(along=dataSets)) {
     name <- getName(ce);
     verbose && enter(verbose, sprintf("Array #%d (%s)", array, name));
 
-    y <- NULL;
-    for (doRatio in c(FALSE, TRUE)) {
-      tags <- NULL;
-      if (doRatio) {
-        tags <- c(tags, "CnVsFragLength");
-      } else {
-        tags <- c(tags, "ThetaVsFragLength");
-      }
+    verbose && enter(verbose, "Retrieving signals");
+    y <- getDataFlat(ce, units=map, fields="theta")[,"theta"];
+    verbose && str(verbose, y);
+    verbose && exit(verbose);
+    if (length(y) != length(yR)) {
+      throw("BUG: 'y' and 'yR' are of different lengths: ", length(y), " != ", length(yR));
+      next;
+    }
 
-      tags <- paste(tags, collapse=",");
-      imgName <- paste(name, tags, sep=",");
-      filename <- sprintf("%s.%s", imgName, ext);
-      pathname <- filePath(path, filename);
-      if (isFile(pathname)) {
-        verbose && cat(verbose, "Already plotted...skipping");
-        next;
-      }
-
-      verbose && cat(verbose, "Pathname: ", pathname);
-
-      if (is.null(y)) {
-        verbose && enter(verbose, "Retrieving signals");
-        y <- readUnits(ce, units=units);
-        y <- unlist(y, use.names=FALSE);
-        verbose && str(verbose, y);
+    for (norm in c(FALSE, TRUE)) {
+      # Normalize for PCR fragment length effects?
+      if (norm) {
+        verbose && enter(verbose, "Normalizing for PCR fragment length effects");
+        # This requires that 'y' is already available
+        lyN <- normalizeFragmentLength(log2(y), fl, targetFcn=predictR);
+        yN <- 2^lyN;
+        y <- yN;
         verbose && exit(verbose);
+      }
+
+      for (doRatio in c(FALSE, TRUE)) {
+        tags <- NULL;
+        if (norm) {
+          tags <- c(tags, "FLN");
+        }
+        if (doRatio) {
+          tags <- c(tags, "CnVsFragLength");
+        } else {
+          tags <- c(tags, "ThetaVsFragLength");
+        }
   
-        if (length(y) != length(yR)) {
-          throw("BUG: 'y' and 'yR' are of different lengths: ", length(y), " != ", length(yR));
+        tags <- paste(tags, collapse=",");
+        imgName <- paste(name, tags, sep=",");
+        filename <- sprintf("%s.%s", imgName, ext);
+        pathname <- filePath(path, filename);
+        if (isFile(pathname) && !is.null(dev)) {
+          verbose && cat(verbose, "Already plotted...skipping");
           next;
         }
-      }
-
-      if (doRatio) {
-        lc <- log2(y/yR);
-        ylab <- expression(log[2](theta/theta[R]));
-        ylim <- c(-1,1)*4;
-      } else {
-        lc <- log2(y);
-        ylab <- expression(log[2](theta));
-        ylim <- lthetaLim;
-      }
-
-      width <- 1.618*height / 1.08;
-      dev(pathname, width=width, height=height);
-      opar <- par(font=BOLD, font.axis=BOLD, font.lab=BOLD, font.main=BOLD, font.sub=NORMAL, cex=1.1, cex.axis=1.1, cex.lab=1.1, cex.main=1.2, cex.sub=1.1, mar=c(5,5,2,2)+0.2, lwd=2, pch=1, ps=12, mgp=c(3, 1, 0), tcl=0.3);
-
-      plotYvsFragmentLength(fl, lc, xlim=xlim, ylim=ylim, ylab=ylab);
-      stext(sprintf("Sample: %s", name), side=3, pos=0, line=0, cex=0.8);
-      stextChipType(cdf, line=0);
-
-      # Add lowess curves
-      ok <- is.finite(lc) & is.finite(fl);
-      fit <- lowess(fl[ok],lc[ok]);
-      lines(fit, lwd=4, col="red");
-
-      if (doRatio) {
-        abline(h=0, lwd=4, col="purple");
-      } else {
-        lines(fitR, lwd=4, col="purple");
-      }
-
-      # Add the density plot of fragment lengths
-      ylim <- par("usr")[3:4];
-      dd <- d; dd$y <- ylim[1] + dd$y * (diff(ylim) / 10);
-      lines(dd, col="darkgray", lwd=2);
   
-      par(opar);
-      dev.off();
+        verbose && cat(verbose, "Pathname: ", pathname);
 
-    } # for (doRatio in ...)
+        if (doRatio) {
+          lc <- log2(y/yR);
+          ylab <- expression(log[2](theta/theta[R]));
+          ylim <- c(-1,1)*4;
+        } else {
+          lc <- log2(y);
+          ylab <- expression(log[2](theta));
+          ylim <- lthetaLim;
+        }
+
+        width <- 1.618*height / 1.08;
+        if (!is.null(dev))
+          dev(pathname, width=width, height=height);
+        opar <- par(font=BOLD, font.axis=BOLD, font.lab=BOLD, font.main=BOLD, font.sub=NORMAL, cex=1.1, cex.axis=1.1, cex.lab=1.1, cex.main=1.2, cex.sub=1.1, mar=c(5,5,2,2)+0.2, lwd=2, pch=1, ps=12, mgp=c(3, 1, 0), tcl=0.3);
+  
+        plotYvsFragmentLength(fl, lc, xlim=xlim, ylim=ylim, ylab=ylab);
+        stext(sprintf("Sample: %s", name), side=3, pos=0, line=0, cex=0.8);
+        stextChipType(cdf, line=0);
+        if (norm) {
+          stext("Normalized for PCR fragment length", side=3, pos=0, line=-1, cex=0.8);
+        }
+
+        # Add lowess curves
+        ok <- is.finite(lc) & is.finite(fl);
+        fit <- lowess(fl[ok],lc[ok]);
+        lines(fit, lwd=4, col="red");
+  
+        if (doRatio) {
+          abline(h=0, lwd=4, col="purple");
+        } else {
+          lines(fitR, lwd=4, col="purple");
+        }
+  
+        # Add the density plot of fragment lengths
+        ylim <- par("usr")[3:4];
+        dd <- d; dd$y <- ylim[1] + dd$y * (diff(ylim) / 10);
+        lines(dd, col="darkgray", lwd=2);
+    
+        par(opar);
+        if (!is.null(dev))
+          dev.off();
+      } # for (doRatio in ...)
+    } # for (norm in ...)
    
     verbose && exit(verbose);
   } # for (array ...)

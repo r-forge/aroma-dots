@@ -91,8 +91,15 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FA
 
 
 setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
   # Check for cached data
   key <- digest(list(class=class(this), combineAlleles=this$combineAlleles, ...));

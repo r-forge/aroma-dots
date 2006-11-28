@@ -110,9 +110,7 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
 
   verbose && enter(verbose, "Retrieving stddvs of chip effects");
   units <- as.integer(rownames(df));
-str(df);
-  sdTheta <- readUnits(this, units=units, readIntensities=FALSE, readStdvs=TRUE, verbose=less(verbose));
-  sdTheta <- unlist(sdTheta, use.names=FALSE);
+  sdTheta <- getDataFlat(this, units=units, fields="sdTheta", verbose=less(verbose))[,"sdTheta"];
   df <- cbind(df, sdTheta);
   rm(sdTheta);
   verbose && exit(verbose);

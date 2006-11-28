@@ -160,16 +160,22 @@ setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Generating hashcode key for cache");
-  key <- digest(list(..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy));
-  verbose && exit(verbose);
-  if (!force) {
-    verbose && enter(verbose, "Trying to obtain cached data");
-    res <- this$.readUnitsCache[[key]];
+  args <- list(..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy);
+  if (object.size(args) > 1e6) {
+    verbose && cat(verbose, "No caching. Argument list to large: ", object.size(args)/1024^2, "MB");
+    cache <- FALSE;
+  } else {
+    verbose && enter(verbose, "Generating hashcode key for cache");
+    key <- digest(args);
     verbose && exit(verbose);
-    if (!is.null(res)) {
-      verbose && cat(verbose, "readUnits.ParameterCelFile(): Returning cached data");
-      return(res);
+    if (!force) {
+      verbose && enter(verbose, "Trying to obtain cached data");
+      res <- this$.readUnitsCache[[key]];
+      verbose && exit(verbose);
+      if (!is.null(res)) {
+        verbose && cat(verbose, "readUnits.ParameterCelFile(): Returning cached data");
+        return(res);
+      }
     }
   }
  
