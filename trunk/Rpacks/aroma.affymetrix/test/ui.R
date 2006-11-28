@@ -1,30 +1,66 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Generic user interface
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-selectMenu <- function(choices, title="Select/unselect items (0 when done)", ...) {
-  selected <- rep(FALSE, length(choices));
+selectMenu <- function(choices, selected=NULL, title="Select/unselect items", options=c("Select all", "Unselect all", "Toggle all"), header="%s (0 when done)", ...) {
+  if (is.null(selected)) {
+    selected <- rep(FALSE, length=length(choices));
+  } else if (is.logical(selected)) {
+    selected <- rep(selected, length.out=length(choices));
+  } else if (is.numeric(selected)) {
+    idx <- selected;
+    selected <- rep(FALSE, length=length(choices));
+    selected[idx] <- TRUE;
+  } else if (is.character(selected)) {
+    selected <- (choices %in% selected);
+  }
+
+  # Argument 'options':
+  if (!is.null(options)) {
+    names(options) <- options;
+  }
+
+  # Argument 'title' and 'header':
+  title <- sprintf(header, title);
+
+
   ans <- -1;
   while (ans != 0) {
     currChoices <- paste(c("[ ]", "[x]")[as.integer(selected)+1], choices, sep=" ");
-    ans <- menu(choices=currChoices, title=title, ...);
-    if (ans > 0)
+    nbrOfChoices <- length(currChoices);
+    optionIdxs <- nbrOfChoices + seq(along=options);
+    ans <- menu(choices=c(currChoices, options), title=title, ...);
+    if (ans > nbrOfChoices) {
+      opt <- names(options)[ans-nbrOfChoices];
+      if (opt == "Select all") {
+        selected[seq(along=currChoices)] <- TRUE;
+      } else if (opt == "Unselect all") {
+        selected[seq(along=currChoices)] <- FALSE;
+      } else if (opt == "Toggle all") {
+        selected <- !selected;
+      }
+    } else if (ans > 0) {
       selected[ans] <- !selected[ans];
+    }
   }
   choices[selected];
 } # selectMenu()
 
 
-selectOrder <- function(choices, title="Select items one by one (0 to keep rest)", ...) {
+
+selectOrder <- function(choices, header="%s (0 to keep rest)", ...) {
+  # Argument 'title' and 'header':
+  title <- sprintf(header, title);
+
   res <- c();
   while (length(choices) > 1) {
     if (length(res) > 0) {
       msg <- paste(seq(along=res), ": ", res, sep="");
       msg <- paste(msg, collapse=", ");
-      msg <- paste("Currently selected items: ", msg, "\n", title);
+      msg <- paste("Currently selected items: ", msg, "\n", header);
     } else {
-      msg <- title;
+      msg <- header;
     }
-    ans <- menu(choices=choices, title=msg, ...);
+    ans <- menu(choices=choices, header=msg, ...);
     if (ans == 0)
       break;
     res <- c(res, choices[ans]);
@@ -76,7 +112,7 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
   # Select data sets
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   paths <- selectMenu(paths);
-  paths <- selectOrder(paths);
+  paths <- selectOrder(paths, "Select order how data sets should be joined");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Define data sets
@@ -148,6 +184,8 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
 
 ############################################################################
 # HISTORY: 
+# 2006-11-27
+# o Added argument 'selected' to selectMenu().
 # 2006-11-22
 # o Created.
 ############################################################################

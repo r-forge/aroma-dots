@@ -4,7 +4,7 @@ source("ui.R");
 
 pngDev <- System$findGraphicsDevice();
 
-choices <- c("Get GLAD model", "Fit GLAD", "Plot GLAD estimates", "Write GLAD table");
+choices <- c("Get GLAD model", "Fit GLAD", "Plot GLAD estimates", "Write GLAD table", "Write WIG tracks (for the UCSC Genome Browser)");
 methods <- selectMenu(choices=choices, title="Select what you want to do (leave all blank to use all)");
 if (length(methods) == 0) {
   methods <- seq(choices);
@@ -33,7 +33,9 @@ if (exists("dataSets", mode="list") && inherits(dataSets[[1]], "CnChipEffectSet"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ces <- dataSets[[1]];
 choices <- getNames(ces);
-arrays <- selectMenu(choices=choices, title="Select the arrays you which to fit (leave all blank to use all)");
+if (!exists("arrays"))
+  arrays <- NULL;
+arrays <- selectMenu(choices=choices, selected=arrays, title="Select the arrays you which to fit (leave all blank to use all)");
 if (length(arrays) == 0) {
   arrays <- seq(choices);
 } else {
@@ -44,7 +46,9 @@ if (length(arrays) == 0) {
 # Select chromosomes to fit
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 choices <- c(1:22,"X");
-chromosomes <- selectMenu(choices=choices, title="Select the chromosomes you which to fit (leave all blank to use all)");
+if (!exists("chromosomes"))
+  chromosomes <- NULL;
+chromosomes <- selectMenu(choices=choices, selected=chromosomes, title="Select the chromosomes you which to fit (leave all blank to use all)");
 if (length(chromosomes) == 0) {
   chromosomes <- choices;
 }
@@ -92,13 +96,25 @@ res <- lapply(dataSets, FUN=function(ces) {
   }
 
   if (4 %in% methods) {
-    verbose && enter(verbose, "Writing GLAD tables to file");
+    verbose && enter(verbose, "Writing GLAD regions to tabular file");
     # Filter out regions with only little change
     smoothing <- c(-Inf,-0.15,+0.15,+Inf);
-    writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, verbose=less(verbose));
+    writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, oneFile=TRUE, skip=FALSE, verbose=less(verbose));
+    verbose && exit(verbose);
+  }
+
+  if (5 %in% methods) {
+    verbose && enter(verbose, "Writing WIG tracks");
+    writeWig(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
     verbose && exit(verbose);
   }
 
   glad;
 })
 verbose && exit(verbose);
+
+############################################################################
+# HISTORY:
+# 2006-11-xx
+# o Recreated.
+############################################################################

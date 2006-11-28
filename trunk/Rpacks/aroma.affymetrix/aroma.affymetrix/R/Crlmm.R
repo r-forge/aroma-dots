@@ -249,6 +249,7 @@ setMethodS3("getPath", "Crlmm", function(this, ...) {
   ces <- getChipEffects(this);
   cdf <- getCdf(ces);
   chipType <- getChipType(cdf);
+  chipType <- gsub("-monocell$", "", chipType);
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
@@ -420,7 +421,7 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get gender
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # getChrXIndex() is robust against SNP reordering /HB 2006-10-03
+  # getChrXIndex() is robust against SNP reordering /HB 2006-10-03a
   xIndex <- getChrXIndex(qs);
   
   verbose && enter(verbose, "Retrieving genders");

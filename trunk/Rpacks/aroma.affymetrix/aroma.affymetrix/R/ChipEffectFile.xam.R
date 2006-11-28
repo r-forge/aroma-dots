@@ -68,7 +68,7 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   if (!identical(length(theta), nunits)) {
     verbose && str(verbose, theta);
     verbose && print(verbose, nunits);
-    throw("The number of chip-effect values is not equal to the number of units requested: ", tength(theta), " != ", nunits);
+    throw("The number of chip-effect values is not equal to the number of units requested: ", length(theta), " != ", nunits);
   }
   verbose && exit(verbose);
 

@@ -34,6 +34,13 @@ setConstructorS3("CnChipEffectFile", function(..., combineAlleles=FALSE) {
   )
 })
 
+setMethodS3("as.character", "CnChipEffectFile", function(this, ...) {
+  s <- NextMethod("as.character", ...);
+  s <- c(s, sprintf("Combine alleles: %s", this$combineAlleles));
+  class(s) <- "GenericSummary";
+  s;
+})
+
 setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -83,8 +90,37 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FA
 })
 
 
+setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Check for cached data
+  key <- digest(list(class=class(this), combineAlleles=this$combineAlleles, ...));
+  res <- this$.readUnitsCache[[key]];
+  if (!force && !is.null(res)) {
+    verbose && cat(verbose, "readUnits.CnChipEffectFile(): Returning cached data");
+    return(res);
+  }
+
+  # Retrieve the data
+  res <- NextMethod("readUnits", this, ..., force=TRUE, cache=FALSE, verbose=verbose);
+
+
+  # Store read units in cache?
+  if (cache) {
+    verbose && cat(verbose, "readUnits.CnChipEffectFile(): Updating cache");
+    this$.readUnitsCache <- list();
+    this$.readUnitsCache[[key]] <- res;
+  }
+
+  res;
+})
+
+
 ############################################################################
 # HISTORY:
+# 2006-11-28
+# o Added readUnits() to override caching mechanism of superclasses.
 # 2006-09-20
 # o BUG FIX: Typo. Remove an argument but tried to use inside.
 # 2006-09-17

@@ -161,21 +161,18 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
 
 
 
-setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(units=units, cdf=cdf, ...));
+  key <- digest(list(class=class(this), units=units, cdf=cdf, ...));
   res <- this$.readUnitsCache[[key]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "readUnits.ChipEffectFile(): Returning cached data");
     return(res);
   }
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieve the data
@@ -188,12 +185,12 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
   # of the superclass.
   res <- NextMethod("readUnits", this, cdf=cdf, ..., verbose=less(verbose));
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Store read units in cache
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && cat(verbose, "readUnits.ChipEffectFile(): Updating cache");
-  this$.readUnitsCache <- list();
-  this$.readUnitsCache[[key]] <- res;
+  # Store read units in cache?
+  if (cache) {
+    verbose && cat(verbose, "readUnits.ChipEffectFile(): Updating cache");
+    this$.readUnitsCache <- list();
+    this$.readUnitsCache[[key]] <- res;
+  }
 
   res;
 })
@@ -252,6 +249,13 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
 
 ############################################################################
 # HISTORY:
+# 2006-11-28
+# o Added argument 'cache' to readUnits() to specify if the result should
+#   be cached or not.
+# o BUG FIX: The caching mechanism of readUnits() of ChipEffectFile was
+#   not sensitive to the class of the ChipEffectFile object.  Added a
+#   'class' element to the cache key.  Then each subclass must override
+#   this method too.
 # 2006-10-06
 # o Now chip effect files use filename tag 'chipEffects' with a comma in
 #   front (instead of suffix "-chipEffects').  This way getName() will

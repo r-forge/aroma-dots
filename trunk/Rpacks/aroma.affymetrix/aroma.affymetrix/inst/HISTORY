@@ -2,6 +2,9 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.2.6 [2006-11-xx]
+o BUG FIX: The internal cache for readUnits() of ChipEffectFile 
+  classes was not sensitive to neither class nor parameters
+  specific to subclasses.
 o Added trial version of writeWig() to CnChipEffectSet to export
   log2 copy numbers to the UCSC Genome Browser.
 

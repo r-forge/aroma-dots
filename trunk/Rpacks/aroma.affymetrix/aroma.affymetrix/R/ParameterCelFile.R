@@ -146,7 +146,7 @@ setMethodS3("decode", "ParameterCelFile", function(this, units, ...) {
 
 
 
-setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE, readPixels=FALSE, stratifyBy=NULL, force=FALSE, verbose=FALSE) {
+setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE, readPixels=FALSE, stratifyBy=NULL, force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -184,12 +184,12 @@ setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE
   units <- decode(this, units, verbose=less(verbose));
   verbose && exit(verbose);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Store read units in cache
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && cat(verbose, "readUnits.ParameterCelFile(): Updating cache");
-  this$.readUnitsCache <- list();
-  this$.readUnitsCache[[key]] <- units;
+  # Store read units in cache?
+  if (cache) {
+    verbose && cat(verbose, "readUnits.ParameterCelFile(): Updating cache");
+    this$.readUnitsCache <- list();
+    this$.readUnitsCache[[key]] <- units;
+  }
 
   units;
 });
@@ -225,6 +225,8 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ..
 
 ############################################################################
 # HISTORY:
+# 2006-11-28
+# o Added argument 'cache' to readUnits().
 # 2006-11-14
 # o Removed encode- and decodeUnit(). It caused a substantial overhead;
 #   it is about 2-3 faster letting encode() call the encode function

@@ -18,59 +18,6 @@ if (!exists("raw", mode="list")) {
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Normalize
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("qn", mode="list")) {
-  verbose && enter(verbose, "Normalizing all data sets");
-  tmp <- raw;
-  for (name in names(raw)) {
-    verbose && enter(verbose, "Data set: ", name);
-    ds <- raw[[name]];
-    path <- findCelSet(name=getName(ds), chipType=getChipType(getCdf(ds)), paths="normQuantile", minCount=length(ds));
-    if (is.null(path)) {
-      dsN <- normalizeQuantile(ds, subsetToAvg=1/3, verbose=verbose);
-    } else {
-      verbose && enter(verbose, "Detected normalized dataset");
-      verbose && cat(verbose, "Pathname: ", path);
-      dsN <- fromFiles(ds, path);
-      verbose && exit(verbose);
-    }
-    print(dsN);
-    tmp[[name]] <- dsN;
-    verbose && exit(verbose);
-  }
-  qn <- tmp;
-  verbose && exit(verbose);
-}
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Create copy-number models
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-if (!exists("models", mode="list")) {
-  verbose && enter(verbose, "Defining PLM models");
-  models <- vector("list", length(qn));
-  names(models) <- names(qn);
-  for (kk in seq(along=models)) {
-    ds <- qn[[kk]];
-    verbose && enter(verbose, "Data set: ", getName(ds));
-#    model <- MbeiCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-    model <- RmaCnPlm(ds, mergeStrands=TRUE, combineAlleles=TRUE);
-    models[[kk]] <- model;
-  }
-  verbose && print(verbose, model);
-
-  verbose && enter(verbose, "Pre-creates probe affinities");
-  paf <- getProbeAffinities(model, verbose=less(verbose));
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Pre-creates chip effects");
-  ces <- getChipEffects(model, verbose=less(verbose));
-  verbose && exit(verbose);
-
-  verbose && exit(verbose);
-}
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit copy number model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get genome data
