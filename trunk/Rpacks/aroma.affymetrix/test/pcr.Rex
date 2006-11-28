@@ -33,7 +33,7 @@ plotYvsFragmentLength <- function(l,y, xlim=c(0,2400), ylim=NULL, xlab="PCR frag
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- c("modelRmaCnPlm", "modelMbeiCnPlm");
+paths <- c("modelRmaCnPlm", "modelMbeiCnPlm", "normFragmentLength");
 pattern <- ",A[+]B";
 if (exists("dataSets", mode="list") && inherits(dataSets[[1]], "CnChipEffectSet")) {
   ds <- dataSets[[1]];
