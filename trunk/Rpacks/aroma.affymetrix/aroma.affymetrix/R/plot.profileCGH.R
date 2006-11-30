@@ -51,12 +51,22 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
   for (level in cnLevels) {
     abline(h=log2(level), col="blue", lty=2);
   }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Add std dev estimates
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  sdEst <- this$SigmaC$Value;
+  text <- substitute(hat(sigma)==x, list=list(x=sprintf("%.3g", sdEst)));
+  stext(text=text, side=3, pos=0.5, line=-2);
 })
+
 
 
 
 ############################################################################
 # HISTORY:
+# 2006-11-29
+# o Added std dev estimation to plot.
 # 2006-10-30
 # o Created from glad.R script from 2006-08-03.
 ############################################################################
