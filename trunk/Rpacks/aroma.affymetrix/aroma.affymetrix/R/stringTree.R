@@ -60,6 +60,7 @@ setMethodS3("stringTree", "character", function(strs, maxDepth=-1, countRemainin
     prefix <- c(prefix, uHeads);
   } # while(TRUE)
 
+
   if (hasCompleteStrings) {
     # All strings share same prefix (may be empty)
     prefix <- paste(prefix, collapse="");
@@ -122,3 +123,12 @@ setMethodS3("stringTree", "character", function(strs, maxDepth=-1, countRemainin
   
   children;
 })
+
+
+############################################################################
+# HISTORY:
+# 2006-11-30
+# o Not working.
+# 2006-??-??
+# o Created.
+############################################################################
