@@ -2,6 +2,8 @@ library(aroma.affymetrix);
 source("init.R");
 source("ui.R");
 
+skip <- FALSE;
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Setup
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -25,8 +27,8 @@ plotYvsFragmentLength <- function(l,y, xlim=c(0,2400), ylim=NULL, xlab="PCR frag
   l <- l[keep];
   y <- y[keep];
 
-  smoothScatter(l, y, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, main=main);
-  stext(sprintf("%d SNPs", length(y)), side=3, pos=1, line=-1, cex=0.8);
+  smoothScatter(l, y, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, main=main, ...);
+  stext(sprintf("%d SNPs", length(y)), side=3, pos=1, line=-1.4, cex=0.8, col="gray");
 } # plotYvsFragmentLength()
 
 
@@ -178,15 +180,18 @@ for (kk in seq(along=dataSets)) {
         }
         if (doRatio) {
           tags <- c(tags, "CnVsFragLength");
+          col <- c("white", brewer.pal(9, "Greens"));
         } else {
           tags <- c(tags, "ThetaVsFragLength");
+          col <- c("white", brewer.pal(9, "Blues"));
         }
+        colramp <- colorRampPalette(col);
   
         tags <- paste(tags, collapse=",");
         imgName <- paste(name, tags, sep=",");
         filename <- sprintf("%s.%s", imgName, ext);
         pathname <- filePath(path, filename);
-        if (isFile(pathname) && !is.null(dev)) {
+        if (skip && isFile(pathname) && !is.null(dev)) {
           verbose && cat(verbose, "Already plotted...skipping");
           next;
         }
@@ -208,23 +213,23 @@ for (kk in seq(along=dataSets)) {
           dev(pathname, width=width, height=height);
         opar <- par(font=BOLD, font.axis=BOLD, font.lab=BOLD, font.main=BOLD, font.sub=NORMAL, cex=1.1, cex.axis=1.1, cex.lab=1.1, cex.main=1.2, cex.sub=1.1, mar=c(5,5,2,2)+0.2, lwd=2, pch=1, ps=12, mgp=c(3, 1, 0), tcl=0.3);
   
-        plotYvsFragmentLength(fl, lc, xlim=xlim, ylim=ylim, ylab=ylab);
-        stext(sprintf("Sample: %s", name), side=3, pos=0, line=0, cex=0.8);
-        stextChipType(cdf, line=0);
+        plotYvsFragmentLength(fl, lc, xlim=xlim, ylim=ylim, ylab=ylab, colramp=colramp);
+        stext(sprintf("Sample: %s", name), side=3, pos=0, line=0.2, cex=0.8);
+        stext(chipType, side=4, pos=1, line=0.4, cex=0.7, col="gray");
         if (norm) {
-          stext("Normalized for PCR fragment length", side=3, pos=0, line=-1, cex=0.8);
+          stext("Normalized for PCR fragment length", side=3, pos=0, line=-1.4, cex=0.8);
         }
 
+        if (doRatio) {
+          abline(h=0, lwd=4, lty=2, col="purple");
+        } else {
+          lines(fitR, lwd=4, lty=2, col="purple");
+        }
+  
         # Add lowess curves
         ok <- is.finite(lc) & is.finite(fl);
         fit <- lowess(fl[ok],lc[ok]);
         lines(fit, lwd=4, col="red");
-  
-        if (doRatio) {
-          abline(h=0, lwd=4, col="purple");
-        } else {
-          lines(fitR, lwd=4, col="purple");
-        }
   
         # Add the density plot of fragment lengths
         ylim <- par("usr")[3:4];
@@ -245,6 +250,9 @@ verbose && exit(verbose);
 
 ############################################################################
 # HISTORY:
+# 2006-11-30
+# o Now the smooth scatter plot of log2 CNs are in green to be 
+#   differentiated from the log2 chip effects in (default) blue.
 # 2006-11-28
 # o Recreated.
 ############################################################################

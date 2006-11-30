@@ -46,7 +46,10 @@ combineAlleles <- ("A+B" %in% modelTags);
 # Process
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 verbose && enter(verbose, "Processing ", length(dataSets), " data sets");
-res <- lapply(dataSets, FUN=function(ds) {
+res <- list();
+for (kk in seq(along=dataSets)) {
+  ds <- dataSets[[kk]];
+
   verbose && enter(verbose, "Data set ", getName(ds));
 
   verbose && cat(verbose, "Input data set:");
@@ -84,8 +87,8 @@ res <- lapply(dataSets, FUN=function(ds) {
 
   verbose && exit(verbose);
 
-  model;
-})
+  res[[kk]] <- model;
+}
 verbose && exit(verbose);
 
 
