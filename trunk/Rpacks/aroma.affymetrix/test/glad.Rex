@@ -3,6 +3,7 @@ source("init.R");
 source("ui.R");
 
 pngDev <- System$findGraphicsDevice();
+skip <- FALSE;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select what to do
@@ -94,7 +95,7 @@ res <- lapply(dataSets, FUN=function(ces) {
 
   if (3 %in% methods) {
     verbose && enter(verbose, "Plotting GLAD (and fitting if not done)");
-    plot(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
+    plot(glad, arrays=arrays, chromosomes=chromosomes, skip=skip, verbose=less(verbose));
     verbose && exit(verbose);
   }
 

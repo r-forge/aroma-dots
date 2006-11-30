@@ -284,6 +284,15 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 })
 
 
+setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosome="X", ...) {
+  data <- getData(this);
+  keep <- (data[,"chromosome"] == chromosome);
+  units <- rownames(data)[keep];
+  units <- as.integer(units);
+  units;
+})
+
+
 setMethodS3("readData", "GenomeInformation", abstract=TRUE);
 
 setMethodS3("readTableInternal", "GenomeInformation", function(this, pathname, colClasses=NULL, ..., include=NULL, exclude=NULL, verbose=FALSE) {
@@ -496,6 +505,8 @@ setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE
 
 ############################################################################
 # HISTORY:
+# 2006-11-29
+# o Added getUnitsOnChromosome().
 # 2006-09-16
 # o Added plotDensity(), getChromosomes(), getChromosomeStats() etc.
 # o Improved getData().  Updated getUnitIndices() and getPositions().

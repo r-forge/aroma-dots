@@ -412,7 +412,7 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Dimension of data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  nbrOfSnps <- dim(qs)[1];
+
   nbrOfSamples <- dim(qs)[2];
   verbose && printf(verbose, "Number of SNPs: %d\n", nbrOfSnps);
   verbose && printf(verbose, "Number of samples: %d\n", nbrOfSamples);
@@ -422,17 +422,30 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # Get gender
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # getChrXIndex() is robust against SNP reordering /HB 2006-10-03a
-  xIndex <- getChrXIndex(qs);
+  xIndex <- oligo::getChrXIndex(qs);  # As indexed in the SnpQSet!
+
+  # Alternative not requiring PD environment annotations.
+  gi <- getGenomeInformation(cdf);
+  xUnits <- getUnitsOnChromosome(gi, "X");         # As index by the CDF.
+  xUnitNames <- getUnitNames(cdf, units=xUnits);
+  xIndex2 <- match(xUnitNames, featureNames(qs));  # As indexed by the SnpQSet.
+  stopifnot(identical(xIndex2, xIndex));
+
   
   verbose && enter(verbose, "Retrieving genders");
+  # Got gender information?
   if(is.null(qs$gender)){
     verbose && enter(verbose, "Predicting genders from data");
     # snpGenderCall() is robust against SNP reordering /HB 2006-10-03
-    qs$gender <- snpGenderCall(qs, xIndex=xIndex);
+    qs$gender <- oligo::snpGenderCall(qs, xIndex=xIndex);  # Uses 'oligo'
     verbose && exit(verbose);
   }
   maleIndex <- (qs$gender == "male");
+  malesStr <- paste(which(maleIndex), " (", getNames(ces)[maleIndex], ")", sep="");
+  malesStr <- paste(malesStr, collapse=", ");
+  verbose && cat(verbose, "Male (=expected one copy of X) samples: ", malesStr);
   verbose && exit(verbose);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get M corrections
@@ -444,7 +457,7 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   correction <- loadCache(key=key);
   if (is.null(correction)) {
     verbose && enter(verbose, "Calculating M corrections using fitAffySnpMixture()");
-    correction <- fitAffySnpMixture(qs, xIndex=xIndex, verbose=verbose2);
+    correction <- oligo::fitAffySnpMixture(qs, xIndex=xIndex, verbose=verbose2);
     verbose && exit(verbose);
     comment <- paste(unlist(key, use.names=FALSE), collapse=";");
     saveCache(key=key, correction, comment=comment);
@@ -510,7 +523,7 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting initial calls for non-HapMap calls");
   myCalls <- matrix(NA, nrow=nbrOfSnps, ncol=nbrOfSamples);
-  myCalls[poorCalls,] <- getInitialAffySnpCalls(correction, 
+  myCalls[poorCalls,] <- oligo::getInitialAffySnpCalls(correction, 
                                        subset=poorCalls, verbose=verbose2);
   verbose && exit(verbose);
   gc();
@@ -519,7 +532,7 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # Get SNP genotype region parameters
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting SNP genotype region parameters");
-  rparams <- getAffySnpGenotypeRegionParams(qs, myCalls,
+  rparams <- oligo::getAffySnpGenotypeRegionParams(qs, myCalls,
                         correction$fs, subset=poorCalls, verbose=verbose2);
   # Not needed anymore
   rm(myCalls); gc();
@@ -529,8 +542,8 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # Shrink genotype regions toward the priors
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Shrinking genotype regions toward the priors");
-  rparams <- updateAffySnpParams(rparams, priors, verbose=verbose2);
-  params <- replaceAffySnpParams(params, rparams, subset=poorCalls);
+  rparams <- oligo::updateAffySnpParams(rparams, priors, verbose=verbose2);
+  params <- oligo::replaceAffySnpParams(params, rparams, subset=poorCalls);
   verbose && exit(verbose);
   gc();
   
@@ -541,7 +554,7 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # SNPs in qs, params, and correction$fs must be ordered the same.
   # myDist is a JxIx3x2 matrix where J=#SNPs, I=#arrays, with
   # 3=#genotypes and # 2=#strands.
-  myDist <- getAffySnpDistance(qs, params, correction$fs);
+  myDist <- oligo::getAffySnpDistance(qs, params, correction$fs);
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -551,7 +564,7 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # This takes time: This is worth optimizing.
   res <- list(myDist=myDist, xIndex=xIndex, maleIndex=maleIndex);
   saveCache(key=list("yo"), res);
-  myCalls <- getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
+  myCalls <- oligo::getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
   gc();
   verbose && exit(verbose);
 
@@ -559,7 +572,7 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # Calculate log-likehood ratios
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Calculating log-likehood ratios");
-  llr <- getAffySnpConfidence(myDist, myCalls, xIndex, maleIndex, 
+  llr <- oligo::getAffySnpConfidence(myDist, myCalls, xIndex, maleIndex, 
                                                          verbose=verbose2);
   verbose && str(verbose, llr);
   verbose && exit(verbose);
@@ -586,26 +599,26 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Getting SNP genotype region parameters");
-    rparams <- getAffySnpGenotypeRegionParams(qs, myCalls, correction$fs,
+    rparams <- oligo::getAffySnpGenotypeRegionParams(qs, myCalls, correction$fs,
                                                          verbose=verbose2);
     rm(myCalls); gc(); # Not needed anymore
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Updating the calls from the new distances");
-    rparams <- updateAffySnpParams(rparams, priors);
+    rparams <- oligo::updateAffySnpParams(rparams, priors);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Calculating call distances");
-    myDist <- getAffySnpDistance(qs, rparams, correction$fs,
+    myDist <- oligo::getAffySnpDistance(qs, rparams, correction$fs,
                                                           verbose=verbose2);
     verbose && exit(verbose);
     
     verbose && enter(verbose, "Updating the calls from the new distances");
-    myCalls <- getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
+    myCalls <- oligo::getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
     verbose && exit(verbose);
     
     verbose && enter(verbose, "Calculating log-likehood ratios");
-    llr <- getAffySnpConfidence(myDist, myCalls, xIndex, maleIndex,
+    llr <- oligo::getAffySnpConfidence(myDist, myCalls, xIndex, maleIndex,
                                                          verbose=verbose2);
     verbose && exit(verbose);
 
@@ -651,8 +664,8 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
     featureData <- new("AnnotatedDataFrame",
       data=rparams,
       varMetadata=data.frame(labelDescription=colnames(rparams),
-                                                row.names=colnames(rparams))
-    )
+                             row.names=colnames(rparams))
+    );
   } else {
     featureData <- new("AnnotatedDataFrame");
   }
@@ -712,6 +725,11 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
 
 ############################################################################
 # HISTORY:
+# 2006-11-29
+# o Now identification of chromosome X units can also be done using 
+#   aroma.affymetrix GenotypeInformation (e.g. from dChip).  Currently both
+#   the oligo and the aroma.affymetrix methods are used to validate each
+#   other.
 # 2006-11-20
 # o Converted fitCrlmm() for SnpChipEffectSet into a model class.
 # 2006-10-03

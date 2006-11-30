@@ -333,7 +333,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
 })
 
 
-setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, skip=TRUE, path=NULL, verbose=FALSE) {
+setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, imageFormat="png", skip=TRUE, path=NULL, verbose=FALSE) {
   # To please R CMD check.
   this <- x;
 
@@ -387,8 +387,27 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup the PNG device
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  pngDev <- System$findGraphicsDevice();
-  imgExt <- "png";
+  if (is.null(imageFormat)) {
+    imageFormat <- "current";
+  }
+
+  if (identical(imageFormat, "current")) {
+    plotDev <- NULL;
+  } else if (identical(imageFormat, "screen")) {
+    screenDev <- function(pathname, width, height, ..., xpinch=50, ypinch=xpinch) {
+      # Dimensions are in pixels. Rescale to inches
+      width <- width/xpinch;
+      height <- height/ypinch;
+      x11(width=width, height=height, ...);
+    }
+
+    # When plotting to the screen, use only the first zoom
+    zooms <- zooms[1];
+    plotDev <- screenDev;
+  } else if (identical(imageFormat, "png")) {
+    pngDev <- System$findGraphicsDevice();
+    plotDev <- pngDev;
+  }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -404,6 +423,8 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
       on.exit(popState(verbose));
     }
 
+    tryCatch({
+
     # Get full name 
     fullname <- getFullName(ce);
     fullname <- gsub(",chipEffects$", "", fullname);
@@ -416,16 +437,18 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
 
     for (zz in seq(along=zooms)) {
       zoom <- zooms[zz];
-      imgName <- sprintf("%s,glad,chr%02d,x%04d.%s", fullname, chromosomeIdx, zoom, imgExt);
+
+      # Create the pathname to the file
+      imgName <- sprintf("%s,glad,chr%02d,x%04d.%s", fullname, chromosomeIdx, zoom, imageFormat);
       pathname <- filePath(path, imgName);
 
       # pngDev() (that is bitmap()) does not accept spaces in pathnames
       pathname <- gsub(" ", "_", pathname);
-
-      if (skip && isFile(pathname)) {
-        next;
+      if (!imageFormat %in% c("screen", "current")) {
+        if (skip && isFile(pathname)) {
+          next;
+        }
       }
-
       # Calculate Mbs per ticks
       ticksBy <- 10^ceiling(log10(pixelsPerTick / (zoom * pixelsPerMb)));
       width <- as.integer(zoom * widthMb * pixelsPerMb);
@@ -434,20 +457,28 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
       verbose && printf(verbose, "Dimensions: %dx%d\n", width, height);
       verbose && printf(verbose, "Ticks by: %f\n", ticksBy);
 
-      pngDev(pathname, width=width, height=height);
+      if (!is.null(plotDev))
+        plotDev(pathname, width=width, height=height);
       tryCatch({
         verbose && enter(verbose, "Plotting graph");
         opar <- par(xaxs="r");
         plot(fit, ticksBy=ticksBy);
+        stext(chipType, side=4, pos=1, line=0, cex=0.7, col="gray");
         verbose && exit(verbose);
       }, error = function(ex) {
-         print(ex);
+        print(ex);
       }, finally = {
-         par(opar);
-        dev.off();
+        par(opar);
+        if (!imageFormat %in% c("screen", "current"))
+          dev.off();
       });
     } # for (zoom ...)
+
     verbose && exit(verbose);
+    }, error = function(ex) {
+      cat("ERROR caught in onFit.fitGlad.GladModel():\n");
+      print(ex);
+    }) # tryCatch()
   }, action="replace")
 
 
@@ -722,6 +753,8 @@ setMethodS3("writeWig", "GladModel", function(this, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2006-11-29
+# o Added chip type annotation to plot() and option to plot to screen.
 # 2006-11-27
 # o Added argument 'flat' to getRegions().
 # 2006-11-24
