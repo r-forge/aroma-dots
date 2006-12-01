@@ -485,7 +485,8 @@ setMethodS3("nbrOfFiles", "AffymetrixFileSet", function(this, ...) {
 # }
 #
 # \value{
-#   Returns a @list.
+#   Returns a named @list where the names are the names of the date files
+#   according to @seemethod "getNames".
 # }
 #
 # @author
@@ -495,7 +496,9 @@ setMethodS3("nbrOfFiles", "AffymetrixFileSet", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("lapply", "AffymetrixFileSet", function(this, ...) {
-  lapply(this$files, ...);
+  res <- lapply(this$files, ...);
+  names(res) <- unlist(lapply(as.list(this), FUN=getName));
+  res;
 })
 
 
@@ -525,7 +528,8 @@ setMethodS3("lapply", "AffymetrixFileSet", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getNames", "AffymetrixFileSet", function(this, ...) {
-  unlist(lapply(this, FUN=getName))
+  res <- unlist(lapply(this, FUN=getName));
+  unname(res);
 })
 
 
@@ -678,7 +682,7 @@ setMethodS3("appendFiles", "AffymetrixFileSet", function(this, files, clone=TRUE
 setMethodS3("append", "AffymetrixFileSet", function(x, values, ...) {
   # To please R CMD check
   this <- x;
-  other <- values;  
+  other <- values;
 
   if (!inherits(other, class(this)[1])) {
     throw("Argument 'other' is not an ", class(this)[1], " object: ", 
@@ -687,48 +691,6 @@ setMethodS3("append", "AffymetrixFileSet", function(x, values, ...) {
 
   appendFiles(this, getFiles(other), ...);
 })
-
-setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ..., verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  if (!inherits(other, class(this)[1])) {
-    throw("Argument 'other' is not an ", class(this)[1], " object: ", 
-                                                      class(other)[1]);
-  }
-
-  verbose && enter(verbose, "Appending CEL set");
-  verbose && print(verbose, other);
-
-  # Validate chip type
-  cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  for (file in getFiles(other)) {
-    oCdf <- getCdf(file);
-    oChipType <- getChipType(oCdf);
-    if (!identical(oChipType, chipType)) {
-      throw("Argument 'other' contains a CEL file of different chip type: ",
-                                                oChipType, " != ", chipType);
-    }
-  }
-
-  # Append other
-  this <- NextMethod("append", this, other=other, clone=clone, ...);
-
-  # Set the same CDF for all CEL files
-  verbose && enter(verbose, "Updating the CDF for all files");
-  setCdf(this, cdf);
-  verbose && exit(verbose);
-
-  verbose && exit(verbose);
-
-  this;
-})
-
 
 
 
@@ -744,7 +706,8 @@ setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ...,
 # @synopsis
 #
 # \arguments{
-#  \item{files}{File indices.}
+#  \item{files}{An @integer or a @logical @vector indicating which data files
+#    to be extracted.}
 #  \item{...}{Not used.}
 # }
 #
@@ -762,6 +725,8 @@ setMethodS3("extract", "AffymetrixFileSet", function(this, files, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.logical(files))
+    files <- which(files);
   files <- Arguments$getIndices(files, range=range(seq(this)));
 
   res <- clone(this);
@@ -936,6 +901,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-12-01
+# o Now lapply() add data file names to returned list.
 # 2006-11-20
 # o Added support to override name of file set.
 # o Added support for optional tags.

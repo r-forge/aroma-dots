@@ -55,6 +55,7 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
     "cached:.unitsCache" = NULL,
     "cached:.getUnitIntensitiesCache" = NULL,
     "cached:.averageFiles" = list(),
+    "cached:.timestamps" = NULL,
     "cached:.fileSize" = NULL
   )
 })
@@ -81,6 +82,50 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
 
   object;
 })
+
+
+setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  if (!inherits(other, class(this)[1])) {
+    throw("Argument 'other' is not an ", class(this)[1], " object: ", 
+                                                      class(other)[1]);
+  }
+
+  verbose && enter(verbose, "Appending CEL set");
+  verbose && print(verbose, other);
+
+  # Validate chip type
+  cdf <- getCdf(this);
+  chipType <- getChipType(cdf);
+  for (file in getFiles(other)) {
+    oCdf <- getCdf(file);
+    oChipType <- getChipType(oCdf);
+    if (!identical(oChipType, chipType)) {
+      throw("Argument 'other' contains a CEL file of different chip type: ",
+                                                oChipType, " != ", chipType);
+    }
+  }
+
+  # Append other
+  this <- NextMethod("append", this, other=other, clone=clone, ...);
+
+  # Set the same CDF for all CEL files
+  verbose && enter(verbose, "Updating the CDF for all files");
+  setCdf(this, cdf);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  this;
+})
+
+
 
 
 ###########################################################################/**
@@ -117,6 +162,10 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
   s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
+  # Get CEL header timestamps
+  ts <- getTimestamps(this);
+  ts <- format(range(ts), "%Y-%m-%d %H:%M:%S");
+  s <- c(s, sprintf("Time period: %s -- %s", ts[1], ts[2]));
   s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
@@ -124,6 +173,18 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
 })
 
 
+setMethodS3("getTimestamps", "AffymetrixCelSet", function(this, ..., force=FALSE) {
+  ts <- this$.timestamps;
+
+  if (force || is.null(ts)) {
+    # Get CEL header dates
+    ts <- lapply(this, getTimestamp);
+    ts <- do.call("c", args=ts);
+    this$.timestamps <- ts;
+  }
+
+  ts;
+})
 
 setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE) {
   identifier <- this$.identifier;
@@ -420,6 +481,62 @@ setMethodS3("as.AffymetrixCelSet", "list", function(object, ...) {
 setMethodS3("as.AffymetrixCelSet", "default", function(object, ...) {
   throw("Cannot coerce object to an AffymetrixCelSet object: ", mode(object));
 })
+
+
+
+###########################################################################/**
+# @RdocMethod isDuplicated
+#
+# @title "Identifies duplicated data files"
+#
+# \description{
+#   @get "title" by comparing the timestamps in the CEL headers.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @logical @vector of length equal to the number of files
+#   in the data set.
+#   An element with value @TRUE indicates that the corresponding data file
+#   has the same time stamp as another preceeding data file.
+# }
+#
+# \examples{\dontrun{
+#   # The data set of interest
+#   ds <- AffymetrixCelSet$fromFiles(path=...)
+#
+#   # Added other data sets to be used as a reference
+#   for (path in refPaths) {
+#     dsR <- AffymetrixCelSet$fromFiles(path=path)
+#     append(ds, dsR)
+#   }
+#
+#   # Keep only unique arrays
+#   ds <- extract(ds, !isDuplicated(ds))
+# }}
+#
+# @author
+#
+# \seealso{
+#   Internally @see "base::duplicated" is used to compare timestamps.
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("isDuplicated", "AffymetrixCelSet", function(this, ...) {
+  # Get the CEL header timestamp for all files
+  timestamps <- getTimestamps(this);
+
+  dups <- duplicated(timestamps);
+  names(dups) <- getNames(this);
+
+  dups;
+})
+
 
 
 setMethodS3("getData", "AffymetrixCelSet", function(this, indices=NULL, fields=c("x", "y", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
@@ -1191,6 +1308,8 @@ setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-12-01
+# o Now as.character() reports the range of CEL header timestamps.
 # 2006-11-07
 # o Now getAverageFile() uses rowMedians() of R.native if available, 
 #   otherwise a local version utilizing apply(). Same for rowMads().

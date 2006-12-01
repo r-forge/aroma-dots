@@ -222,6 +222,10 @@ for (kk in seq(along=dataSets)) {
 
         if (doRatio) {
           abline(h=0, lwd=4, lty=2, col="purple");
+          sdEst <- mad(lc, na.rm=TRUE);
+          text <- substitute(hat(sigma)==x, 
+                               list=list(x=sprintf("%.3g", sdEst)));
+          stext(text=text, side=3, pos=0.5, line=-2);
         } else {
           lines(fitR, lwd=4, lty=2, col="purple");
         }

@@ -47,20 +47,19 @@ selectMenu <- function(choices, selected=NULL, title="Select/unselect items", op
 
 
 
-selectOrder <- function(choices, header="%s (0 to keep rest)", ...) {
-  # Argument 'title' and 'header':
-  title <- sprintf(header, title);
-
+selectOrder <- function(choices, title="Select order", header="%s (0 to keep rest)", ...) {
   res <- c();
   while (length(choices) > 1) {
     if (length(res) > 0) {
       msg <- paste(seq(along=res), ": ", res, sep="");
       msg <- paste(msg, collapse=", ");
-      msg <- paste("Currently selected items: ", msg, "\n", header);
+      msg <- paste("Currently selected items: ", msg, "\n");
+      msg <- paste(msg, sprintf(header, title), "\n", sep="");
     } else {
-      msg <- header;
+      msg <- sprintf(header, title);
     }
-    ans <- menu(choices=choices, header=msg, ...);
+
+    ans <- menu(choices=choices, title=msg, ...);
     if (ans == 0)
       break;
     res <- c(res, choices[ans]);
@@ -112,7 +111,7 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
   # Select data sets
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   paths <- selectMenu(paths);
-  paths <- selectOrder(paths, "Select order how data sets should be joined");
+  paths <- selectOrder(paths, title="Select order how data sets should be joined");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Define data sets
@@ -137,10 +136,20 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
     }
     ds <- class(files=files);
 
+    # Remove duplicated arrays 
+    if (!inherits(ds, "ChipEffectSet")) {
+      dups <- isDuplicated(ds);
+      if (any(dups)) {
+        cat(sprintf("Removing %d duplicated arrays.\n", sum(dups)));
+        ds <- extract(ds, !dups);
+      }
+    }
+
     # When joining several data sets, we have to get a new name.
-    if (length(names) > 1) {
+    unames <- unique(names);
+    if (length(unames) > 1) {
       while (identical(name, NA)) {
-        ans <- menu(choices=c("<new name>", names), title="Several data sets were joined. Choose the name you want to use for the new data set.");
+        ans <- menu(choices=c("<new name>", unames), title="Several data sets were joined. Choose the name you want to use for the new data set.");
         if (ans == 1) {
           while(TRUE) {
             name <- readline("Enter new name (blank for menu): ");
@@ -156,7 +165,7 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
             }
           } # while(TRUE)
         } else {
-          name <- names[ans-1];
+          name <- unames[ans-1];
         }
       }
       setName(ds, name);
@@ -184,6 +193,11 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
 
 ############################################################################
 # HISTORY: 
+# 2006-12-01
+# o Now selectDataSets() uses only unique data sets names when asking for
+#   a new name when merging several data sets, i.e. if there is only one
+#   unique name, then that is used.
+# o Now selectDataSets() removed duplicated arrays.
 # 2006-11-27
 # o Added argument 'selected' to selectMenu().
 # 2006-11-22
