@@ -95,19 +95,19 @@ while (TRUE) {
       nunits <- length(units);
     
       verbose && enter(verbose, "Fitting GLAD");
-      fit(glad, arrays=testArrays, chromosomes=chromosome, .retResults=FALSE, verbose=verbose);
+      fit(glad, arrays=testArrays, chromosomes=chr, .retResults=FALSE, verbose=verbose);
       verbose && exit(verbose);
     
       verbose && enter(verbose, "Plotting GLAD");
-      plot(glad, arrays=testArrays, chromosomes=chromosome, verbose=verbose);
+      plot(glad, arrays=testArrays, chromosomes=chr, verbose=verbose);
       verbose && exit(verbose);
     
-      verbose && enter(verbose, "Writing GLAD regions to tabular file");
-      # Filter out regions with only little change
-      smoothing <- c(-Inf,-0.15,+0.15,+Inf);
-      writeRegions(glad, arrays=testArrays, chromosomes=chromosome, smoothing=smoothing, 
-                                                            oneFile=TRUE, verbose=verbose);
-      verbose && exit(verbose);
+#      verbose && enter(verbose, "Writing GLAD regions to tabular file");
+#      # Filter out regions with only little change
+#      smoothing <- c(-Inf,-0.15,+0.15,+Inf);
+#      writeRegions(glad, arrays=testArrays, chromosomes=chr, smoothing=smoothing, 
+#                                                            oneFile=TRUE, verbose=verbose);
+#      verbose && exit(verbose);
     
       verbose && exit(verbose);
     }

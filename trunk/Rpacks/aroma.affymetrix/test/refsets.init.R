@@ -84,21 +84,23 @@ setMethodS3("estimateTotalCn", "AffymetrixCelSet", function(ds, ..., verbose=FAL
   verbose && exit(verbose);
 
   # Fit PLM
-  verbose && enter(verbose, "Summarizing probe signals");
+  verbose && enter(verbose, "Summarazing probe signals");
   plm <- RmaCnPlm(dsN, mergeStrands=TRUE, combineAlleles=TRUE);
   verbose && print(verbose, plm);
-  fit(plm, moreUnits=5, verbose=verbose);
+  fit(plm, moreUnits=3, verbose=verbose);
   verbose && exit(verbose);
 
   # Normalize for PCR fragment-length effects
   verbose && enter(verbose, "Normalizing summarized SNP signals");
   ces <- getChipEffects(plm);
+  verbose && print(verbose, ces);
   normFL <- FragmentLengthNormalization(ces, subsetToFit=1/3);
   verbose && print(verbose, normFL);
   cesFL <- process(normFL, verbose=verbose);
+  verbose && print(verbose, cesFL);
   verbose && exit(verbose);
 
   verbose && exit(verbose);
 
   cesFL;
-}) # totalCnRma()
+}) # estimateTotalCn()
