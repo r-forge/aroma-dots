@@ -325,6 +325,97 @@ setMethodS3("getHeader", "AffymetrixCelFile", function(this, ...) {
 }, protected=TRUE)
 
 
+setMethodS3("getHeaderV3", "AffymetrixCelFile", function(this, ...) {
+  # Get the CEL header
+  header <- getHeader(this);
+
+  # Get the CEL v3 header
+  header <- header$header;
+
+  # Parse it
+  header <- unlist(strsplit(header, split="\n"));
+  header <- strsplit(header, split="=");
+  names <- sapply(header, FUN=function(s) s[1]);
+  header <- lapply(header, FUN=function(s) s[-1]);
+  names(header) <- names;
+
+  header;
+}, protected=TRUE)
+
+
+
+###########################################################################/**
+# @RdocMethod getTimestamp
+#
+# @title "Gets the timestamp in the CEL header"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{format}{The default format string for parsing the time stamp.}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a \code{POSIXct} object.
+#  The parsed string containing the timestamp is returned as 
+#  attribute \code{text}.
+# }
+#
+# @author
+#
+# \seealso{
+#   Internally, @see "base::strptime" is used to parse the time stamp.
+#   @see "base::DateTimeClasses" for more information on \code{POSIXct}.
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y %H:%M:%S", ...) {
+  # Argument 'format':
+  format <- Arguments$getCharacter(format);
+
+
+  # Get the CEL v3 header of the CEL header
+  header <- getHeaderV3(this);
+
+  # Get the DAT header
+  header <- header$DatHeader;
+
+  # Find the element with a date. It is part of the same string as the
+  # one containing the chip type.  Get the chip type from the header.
+  chipType <- getHeader(this)$chiptype;
+  pattern <- sprintf(" %s.1sq ", chipType);
+  header <- grep(pattern, header, value=TRUE);
+
+  # Extract the date timestamp
+  # Could use a pattern, but if a different timestamp than the American is 
+  # used, this wont work.  Instead assume a fixed location.
+  # pattern <- ".*([01][0-9]/[0-3][0-9]/[0-9][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]).*";
+  # timestamp <- gsub(pattern, "\\1", header);
+  # From the DAT header specification (Affymetrix Data File Formats, April 2006),
+  # we know that the date and the timestamp is 18 characters long.
+  nTemp <- 7;
+  nPower <- 4;
+  nTimestamp <- 18;
+  # Expected start position
+  pos <- nTemp + 1 + nPower + 1;
+  # ...however, the files we have start at the next position. /HB 2006-12-01
+  pos <- pos + 1;
+  timestamp <- substring(header, first=pos, last=pos+nTimestamp-1);
+  timestamp <- trim(timestamp); # Unnecessary?
+
+  res <- strptime(timestamp, format=format, ...);
+  attr(res, "text") <- timestamp;
+  res;
+}, protected=TRUE)
+
+
 
 setMethodS3("nbrOfCells", "AffymetrixCelFile", function(this, ...) {
   getHeader(this)$total;
@@ -870,6 +961,8 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-12-01
+# o Added getTimestamp().
 # 2006-11-28
 # o Arguments 'force' and 'cache' has to be in readUnits() to avoid being
 #   passed from calls of subclasses.

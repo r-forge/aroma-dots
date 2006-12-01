@@ -345,9 +345,14 @@ setMethodS3("getOutputSet", "FragmentLengthNormalization", function(this, ..., f
   outputSet <- this$outputSet;
   if (force || is.null(outputSet)) {
     if (isDone(this)) {
-      ds <- getInputSet(this);
-      clazz <- Class$forName(class(ds)[1]);
+      inputSet <- getInputSet(this);
+      clazz <- Class$forName(class(inputSet)[1]);
       outputSet <- clazz$fromFiles(path=getPath(this));
+
+      # Ad hoc for now /HB 2006-12-01
+      outputSet$mergeStrands <- inputSet$mergeStrands;
+      outputSet$combineAlleles <- inputSet$combineAlleles;
+
       this$outputSet <- outputSet;
     }
   }
