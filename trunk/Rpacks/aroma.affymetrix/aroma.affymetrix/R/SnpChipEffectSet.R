@@ -32,7 +32,7 @@ setConstructorS3("SnpChipEffectSet", function(..., mergeStrands=FALSE) {
 
 
 setMethodS3("getAverageFile", "SnpChipEffectSet", function(this, ...) {
-  res <- NextMethod("getAverageFile", this, ...);
+  res <- NextMethod(generic="getAverageFile", object=this, ...);
   res$mergeStrands <- getMergeStrands(this);
   res;
 })

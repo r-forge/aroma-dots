@@ -100,3 +100,7 @@ verbose && exit(verbose);
 cols <- brewer.pal(8, "Dark2");
 palette(cols);
 
+NORMAL <- 1; 
+BOLD <- 2; 
+ITALIC <- 3; 
+BOLDITALIC <- 4;

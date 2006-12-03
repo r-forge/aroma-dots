@@ -1,7 +1,39 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Generic user interface
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-selectMenu <- function(choices, selected=NULL, title="Select/unselect items", options=c("Select all", "Unselect all", "Toggle all"), header="%s (0 when done)", ...) {
+textMenu <- function(choices, title="", prompt="Selection: ") {
+  nc <- length(choices);
+  keys <- names(choices);
+  if (is.null(keys))
+    keys <- seq_len(nc);
+  op <- paste(format(keys, justify="right"), ": ", choices, sep="");
+
+  if (nc > 10) {
+    fop <- format(op);
+    nw <- nchar(fop[1], "w") + 2;
+    ncol <- getOption("width") %/% nw;
+    if (ncol > 1) {
+      op <- paste(fop, c(rep("  ", ncol-1), "\n"), sep="", collapse="");
+    }
+  }
+
+  if (length(title) && nchar(title[1]))
+    cat(title[1], "\n");
+  cat("", op, "", sep="\n");
+
+  keys <- trim(keys);
+  repeat{
+    ans <- readline(prompt);
+    ans <- trim(ans);
+    idx <- pmatch(ans, keys);
+    if (is.finite(idx))
+      return(idx);
+    cat(gettext("Enter an item from the menu.\n"))
+  }
+} # textMenu()
+
+
+selectMenu <- function(choices, selected=NULL, title="Select/unselect items", options=c("a!"="Select all", "n!"="Unselect all", "t!"="Toggle all", "q!"="Done"), header="%s (0 when done)", ...) {
   if (is.null(selected)) {
     selected <- rep(FALSE, length=length(choices));
   } else if (is.logical(selected)) {
@@ -15,30 +47,34 @@ selectMenu <- function(choices, selected=NULL, title="Select/unselect items", op
   }
 
   # Argument 'options':
-  if (!is.null(options)) {
-    names(options) <- options;
-  }
+
 
   # Argument 'title' and 'header':
   title <- sprintf(header, title);
 
+  nbrOfChoices <- length(choices);
+  if (is.null(names(choices))) {
+    names(choices) <- seq_len(nbrOfChoices);
+  }
 
-  ans <- -1;
-  while (ans != 0) {
+
+  repeat{
     currChoices <- paste(c("[ ]", "[x]")[as.integer(selected)+1], choices, sep=" ");
-    nbrOfChoices <- length(currChoices);
+    names(currChoices) <- names(choices);
     optionIdxs <- nbrOfChoices + seq(along=options);
-    ans <- menu(choices=c(currChoices, options), title=title, ...);
+    ans <- textMenu(choices=c(currChoices, options), title=title, ...);
     if (ans > nbrOfChoices) {
-      opt <- names(options)[ans-nbrOfChoices];
+      opt <- options[ans-nbrOfChoices];
       if (opt == "Select all") {
         selected[seq(along=currChoices)] <- TRUE;
       } else if (opt == "Unselect all") {
         selected[seq(along=currChoices)] <- FALSE;
       } else if (opt == "Toggle all") {
         selected <- !selected;
+      } else if (opt == "Done") {
+        break;
       }
-    } else if (ans > 0) {
+    } else {
       selected[ans] <- !selected[ans];
     }
   }
@@ -59,8 +95,8 @@ selectOrder <- function(choices, title="Select order", header="%s (0 to keep res
       msg <- sprintf(header, title);
     }
 
-    ans <- menu(choices=choices, title=msg, ...);
-    if (ans == 0)
+    ans <- textMenu(choices=c(choices, "q!"="Done"), title=msg, ...);
+    if (ans == length(choices)+1)
       break;
     res <- c(res, choices[ans]);
     choices <- choices[-ans];
@@ -149,7 +185,7 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
     unames <- unique(names);
     if (length(unames) > 1) {
       while (identical(name, NA)) {
-        ans <- menu(choices=c("<new name>", unames), title="Several data sets were joined. Choose the name you want to use for the new data set.");
+        ans <- textMenu(choices=c("<new name>", unames), title="Several data sets were joined. Choose the name you want to use for the new data set.");
         if (ans == 1) {
           while(TRUE) {
             name <- readline("Enter new name (blank for menu): ");
@@ -193,6 +229,8 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
 
 ############################################################################
 # HISTORY: 
+# 2006-12-02
+# o Added textMenu().
 # 2006-12-01
 # o Now selectDataSets() uses only unique data sets names when asking for
 #   a new name when merging several data sets, i.e. if there is only one

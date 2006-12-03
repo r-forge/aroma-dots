@@ -159,12 +159,16 @@ setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ...,
 setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
+  tags <- getTags(this);
+  tags <- paste(tags, collapse=",");
+  s <- c(s, sprintf("Tags: %s", tags));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
   s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
   # Get CEL header timestamps
   ts <- getTimestamps(this);
-  ts <- format(range(ts), "%Y-%m-%d %H:%M:%S");
+  ts <- range(ts);
+  ts <- format(ts, "%Y-%m-%d %H:%M:%S");  # range() gives strange values?!?
   s <- c(s, sprintf("Time period: %s -- %s", ts[1], ts[2]));
   s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
@@ -891,8 +895,11 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   }
 
   # Argument 'name':
-  if (is.null(name))
-    name <- sprintf("%s-%s-%s", prefix, meanName, sdName);
+  if (is.null(name)) {
+    key <- list(arrays=sort(getNames(this)), meanName=meanName, sdName=sdName);
+    id <- digest(key);
+    name <- sprintf("%s-%s-%s,%s", prefix, meanName, sdName, id);
+  }
 
   # Argument 'indices':
   df <- as.list(this)[[1]];

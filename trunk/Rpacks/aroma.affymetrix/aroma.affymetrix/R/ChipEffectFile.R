@@ -290,6 +290,10 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., verb
   
   verbose && enter(verbose, "Creating return data frame");
   uUnitSizes <- unique(unitSizes);
+  if (is.null(units)) {
+    cdf <- getCdf(this);
+    units <- seq(length=nbrOfUnits(cdf));
+  }
   units <- rep(units, each=unitSizes);
 
   # The following is too slow:
@@ -410,6 +414,8 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 ############################################################################
 # HISTORY:
+# 2006-12-02
+# o BUG FIX: getCellMap(..., units=NULL) did not work.
 # 2006-11-28
 # o Added trial version of updateDataFlat(). Seems to work. Will speed
 #   up a few things.

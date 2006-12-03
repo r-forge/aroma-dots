@@ -502,6 +502,45 @@ setMethodS3("lapply", "AffymetrixFileSet", function(this, ...) {
 })
 
 
+setMethodS3("reorder", "AffymetrixFileSet", function(this, order, ...) {
+  # Argument 'order':
+  if (is.character(order)) {
+    # Assume 'order' contains names
+    names <- getNames(this);
+
+    # Identify special tags and remove them
+    idx <- (order == "*");
+    if (sum(idx) > 1)
+      throw("Argument 'order' contains more than one asterix.");
+    pos <- match(order[!idx], names);
+    if (any(is.na(pos))) {
+      bad <- order[!idx][is.na(pos)];
+      throw("Argument 'order' contains unknown sample names: ", 
+                                                 paste(bad, collapse=", "));
+    }
+    if (sum(idx) == 0) {
+      order <- pos;
+    } else {
+      order <- as.list(order);
+      order[!idx] <- names[pos];
+      order[[which(idx)]] <- setdiff(names, names[pos]);
+      order <- unlist(order, use.names=FALSE);
+      order <- match(order, names);
+    }
+  }
+
+  order <- Arguments$getIndices(order, range=c(1, nbrOfFiles(this)));
+  if (any(duplicated(order))) {
+    bad <- order[duplicated(order)];
+    throw("Argument 'order' contains duplicates: ", 
+                                                 paste(bad, collapse=", "));
+  }
+
+  this$files <- this$files[order];
+  invisible(this);
+})
+
+
 ###########################################################################/**
 # @RdocMethod getNames
 #
@@ -901,6 +940,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-12-02
+# o Added reorder().
 # 2006-12-01
 # o Now lapply() add data file names to returned list.
 # 2006-11-20

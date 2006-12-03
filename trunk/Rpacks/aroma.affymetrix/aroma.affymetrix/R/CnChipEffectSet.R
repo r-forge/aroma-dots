@@ -31,7 +31,7 @@ setConstructorS3("CnChipEffectSet", function(..., combineAlleles=FALSE) {
 })
 
 setMethodS3("getAverageFile", "CnChipEffectSet", function(this, ...) {
-  res <- NextMethod("getAverageFile", this, ...);
+  res <- NextMethod(generic="getAverageFile", object=this, ...);
   res$combineAlleles <- getCombineAlleles(this);
   res;
 })
