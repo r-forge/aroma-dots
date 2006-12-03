@@ -4,11 +4,11 @@ library(aroma.affymetrix);
 source("refsets.init.R");
 
 # Print distribution of dates
-dates <- lapply(dsR, FUN=function(ds) {
-  dates <- format(getTimestamps(ds), "%Y-%m-%d");
-  table(dates);
-})
-print(dates);
+# dates <- lapply(dsR, FUN=function(ds) {
+#   dates <- format(getTimestamps(ds), "%Y-%m-%d");
+#   table(dates);
+# })
+# print(dates);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -22,6 +22,8 @@ tags <- paste(getTags(ds), collapse=",");
 testArrays <- which(getNames(ds) %in% getNames(dsT));
 refArrays <- setdiff(seq(ds), testArrays);
 
+rm(dsT, dsRall);
+gc();
 
 # Chromosomes for which GLAD should be fitted
 allChromosomes <- c(rev(1:22), "X");
@@ -38,6 +40,7 @@ print(nbrOfRefArrays);
 mkdirs("jobs/todo/");
 mkdirs("jobs/running/");
 mkdirs("jobs/done/");
+mkdirs("jobs/progress/");
 
 
 # Check remaining jobs
@@ -67,6 +70,8 @@ while (TRUE) {
     Sys.sleep(4*runif(n=1));
     next;
   }
+#  cat(filerunJob, append=TRUE), " HOST=", System$getHostname());
+  pb <- FileProgressBar(sprintf("jobs/progress/%s.progress", name));
   verbose && exit(verbose);
 
   tryCatch({
@@ -78,29 +83,39 @@ while (TRUE) {
     print(dsSub);
   
     # Quantile normalization, fitting PLM, fragment-length normalization
-    cesFL <- estimateTotalCn(dsSub, verbose=verbose);
+    cesFL <- estimateTotalCn(dsSub, progress=pb, verbose=verbose); # 37 steps
+    rm(dsSub);
   
     # Define the GLAD model
+    increase(pb);
     glad <- GladModel(cesFL);
+    rm(cesFL);
     verbose && print(verbose, glad);
+    increase(pb);
     
     # Get genome information
     cdf <- getCdf(glad);
     gi <- getGenomeInformation(cdf);
+    rm(cdf);
+    increase(pb);
   
+    pbPerChr <- (pb$max - pb$value - 1) / length(allChromosomes);
     for (chr in allChromosomes) {
       verbose && enter(verbose, "Chromosome ", chr);
     
       units <- getUnitIndices(gi, chromosome=chr);
       nunits <- length(units);
-    
+      increase(pb, floor(0.05*pbPerChr));
+ 
       verbose && enter(verbose, "Fitting GLAD");
       fit(glad, arrays=testArrays, chromosomes=chr, .retResults=FALSE, verbose=verbose);
       verbose && exit(verbose);
+      increase(pb, floor(0.70*pbPerChr));
     
       verbose && enter(verbose, "Plotting GLAD");
       plot(glad, arrays=testArrays, chromosomes=chr, verbose=verbose);
       verbose && exit(verbose);
+      increase(pb, floor(0.25*pbPerChr));
     
 #      verbose && enter(verbose, "Writing GLAD regions to tabular file");
 #      # Filter out regions with only little change
@@ -114,6 +129,9 @@ while (TRUE) {
   }, error=function(ex) {
     print(ex);
   })
+  rm(gi,glad);
+  setValue(pb, pb$max);
+  rm(pb);  
 
   verbose && enter(verbose, "Trying to move job (", name, ") to done");
   doneJob <- filePath("jobs/done", name);
@@ -124,5 +142,7 @@ while (TRUE) {
     next;
   }
   verbose && exit(verbose);
+
+  gc();
 } # while(TRUE)
 

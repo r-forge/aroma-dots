@@ -174,7 +174,7 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
 
 
 
-setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining", ...) {
+setMethodS3("getAverageFile", "ChipEffectSet", function(this, ..., indices="remaining") {
   # Argument 'indices':
   if (identical(indices, "remaining")) {
   } else if (is.null(indices)) {
@@ -183,7 +183,7 @@ setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining
     indices <- unlist(indices, use.names=FALSE);
   }
 
-  NextMethod("getAverageFile", this, indices=indices, ...);
+  NextMethod(generic="getAverageFile", object=this, ..., indices=indices);
 })
 
 

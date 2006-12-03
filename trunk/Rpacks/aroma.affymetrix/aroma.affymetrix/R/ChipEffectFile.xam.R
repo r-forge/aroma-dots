@@ -44,8 +44,10 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # Argument 'units':
   cdf <- getCdf(this);
   if (is.null(units)) {
+    nunits <- nbrOfUnits(cdf);
   } else {
     units <- Arguments$getIndices(units, range=c(1,nbrOfUnits(cdf)));
+    nunits <- length(units);
   }
 
   # Argument 'verbose':
@@ -58,7 +60,6 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
 
   verbose && enter(verbose, "Getting (A,M)-transformed chip effects");
 
-  nunits <- length(units);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get cell map
@@ -222,6 +223,8 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
 
 ############################################################################
 # HISTORY:
+# 2006-12-02
+# o BUG FIX: getAM() did not handle units=NULL.
 # 2006-11-28
 # o Now getAM() is making use of the new getCellMap() and getDataFlat() 
 #   functions to speed up the reading.

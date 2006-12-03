@@ -22,7 +22,9 @@ if (!exists("dsRall")) {
     } else {
       append(ds, ds0);
     }
+    rm(ds0);
   }
+  gc();
 
   # Remove duplicates
   ds <- extract(ds, !isDuplicated(ds));
@@ -34,12 +36,13 @@ if (!exists("dsRall")) {
   setName(ds, "AGRFall");
 
   dsRall <- ds;
+  rm(ds); gc();
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Grouped reference sets (by date)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if (!exists("dsR", mode="list")) {
+if (FALSE && !exists("dsR", mode="list")) {
   ds <- dsRall;
 
   # Split into subgroups
@@ -55,17 +58,23 @@ if (!exists("dsR", mode="list")) {
     arrays <- grep(pattern, dates);
     arrays <- arrays[1:9];
     dates[arrays] <- NA;  # Avoid mistakes
-    ds0 <- extract(ds, arrays)
+    ds0 <- extract(ds, arrays);
     setName(ds0, sprintf("AGRF%02d", gg));
     dsR <- c(dsR, list(ds0));
+    rm(ds0);
   }
+  rm(ds);
+  gc();
 }
 
 
-setMethodS3("estimateTotalCn", "AffymetrixCelSet", function(ds, ..., verbose=FALSE) {
+setMethodS3("estimateTotalCn", "AffymetrixCelSet", function(ds, ..., progress, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'progress':
+  pb <- progress;
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -79,24 +88,39 @@ setMethodS3("estimateTotalCn", "AffymetrixCelSet", function(ds, ..., verbose=FAL
   # Normalize
   verbose && enter(verbose, "Normalizing probe signals");
   normQ <- QuantileNormalizer(ds, subsetToAvg=1/3);
+  rm(ds);
   verbose && print(verbose, normQ);
+  increase(pb, 1);
   dsN <- process(normQ, verbose=verbose);
+  rm(normQ); 
+  increase(pb, 10);
+  gc();
   verbose && exit(verbose);
 
   # Fit PLM
   verbose && enter(verbose, "Summarazing probe signals");
   plm <- RmaCnPlm(dsN, mergeStrands=TRUE, combineAlleles=TRUE);
+  increase(pb, 1);
+  rm(dsN);
   verbose && print(verbose, plm);
-  fit(plm, moreUnits=3, verbose=verbose);
+  fit(plm, moreUnits=1, verbose=verbose);
+  increase(pb, 20);
+  ces <- getChipEffects(plm);
+  rm(plm);
+  gc();
   verbose && exit(verbose);
 
   # Normalize for PCR fragment-length effects
   verbose && enter(verbose, "Normalizing summarized SNP signals");
-  ces <- getChipEffects(plm);
   verbose && print(verbose, ces);
   normFL <- FragmentLengthNormalization(ces, subsetToFit=1/3);
+  increase(pb, 1);
+  rm(ces);
   verbose && print(verbose, normFL);
   cesFL <- process(normFL, verbose=verbose);
+  increase(pb, 4);
+  rm(normFL);
+  gc();
   verbose && print(verbose, cesFL);
   verbose && exit(verbose);
 

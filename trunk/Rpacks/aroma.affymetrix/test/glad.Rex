@@ -5,10 +5,12 @@ source("ui.R");
 pngDev <- System$findGraphicsDevice();
 skip <- FALSE;
 
+rm(res, ces);
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select what to do
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-choices <- c("Get GLAD model", "Fit GLAD", "Plot GLAD estimates", "Write GLAD table", "Write WIG tracks (for the UCSC Genome Browser)");
+choices <- c("Get GLAD model", "Fit GLAD", "List SD", "Plot GLAD estimates", "Write GLAD table", "Write WIG tracks (for the UCSC Genome Browser)");
 methods <- selectMenu(choices=choices, title="Select what you want to do (leave all blank to use all)");
 if (length(methods) == 0) {
   methods <- seq(choices);
@@ -25,6 +27,7 @@ if (exists("dataSets", mode="list") && inherits(dataSets[[1]], "CnChipEffectSet"
   ds <- dataSets[[1]];
   name <- paste(getName(ds), paste(getTags(ds), collapse=","), sep=",");
   ans <- menu(c("<new data sets>", name), title="Select data set(s) to process:");
+  rm(ds);
   if (ans == 1)
     dataSets <- selectDataSets(paths, pattern=pattern, class=CnChipEffectSet);
 } else {
@@ -37,6 +40,7 @@ if (exists("dataSets", mode="list") && inherits(dataSets[[1]], "CnChipEffectSet"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ces <- dataSets[[1]];
 choices <- getNames(ces);
+rm(ces);
 if (!exists("arrays"))
   arrays <- NULL;
 arrays <- selectMenu(choices=choices, selected=arrays, title="Select the arrays you which to fit (leave all blank to use all)");
@@ -74,7 +78,10 @@ if (all(c(2,3) %in% methods) || all(c(2,4) %in% methods)) {
   methods <- setdiff(methods, 1);
 }
 
-res <- lapply(dataSets, FUN=function(ces) {
+res <- list();
+for (kk in seq(along=dataSets)) {
+  ces <- dataSets[[kk]];
+
   verbose && enter(verbose, "Chip-effect set ", getName(ces));
 
   verbose && cat(verbose, "Chip-effect set:");
@@ -94,12 +101,25 @@ res <- lapply(dataSets, FUN=function(ces) {
   }
 
   if (3 %in% methods) {
+    verbose && enter(verbose, "Display SD");
+    sds <- list();
+    for (chr in chromosomes) {
+      fit <- fit(glad, arrays=arrays, chromosomes=chr);
+      sdEst <- lapply(fit, function(cc) cc[[1]]$SigmaC$Value);
+      sdEst <- unlist(sdEst);
+      sds[[chr]] <- sdEst;
+    }
+    print(sds);
+    verbose && exit(verbose);
+  }
+
+  if (4 %in% methods) {
     verbose && enter(verbose, "Plotting GLAD (and fitting if not done)");
     plot(glad, arrays=arrays, chromosomes=chromosomes, skip=skip, verbose=less(verbose));
     verbose && exit(verbose);
   }
 
-  if (4 %in% methods) {
+  if (5 %in% methods) {
     verbose && enter(verbose, "Writing GLAD regions to tabular file");
     # Filter out regions with only little change
     smoothing <- c(-Inf,-0.15,+0.15,+Inf);
@@ -107,14 +127,15 @@ res <- lapply(dataSets, FUN=function(ces) {
     verbose && exit(verbose);
   }
 
-  if (5 %in% methods) {
+  if (6 %in% methods) {
     verbose && enter(verbose, "Writing WIG tracks");
     writeWig(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
     verbose && exit(verbose);
   }
 
-  glad;
-})
+  res[[kk]] <- glad;
+}
+gc();
 verbose && exit(verbose);
 
 ############################################################################
