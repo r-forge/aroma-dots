@@ -21,7 +21,7 @@ if (length(methods) == 0) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- c("modelRmaCnPlm", "modelMbeiCnPlm", "normFragmentLength");
+paths <- "plmData";
 pattern <- ",A[+]B";
 if (exists("dataSets", mode="list") && inherits(dataSets[[1]], "CnChipEffectSet")) {
   ds <- dataSets[[1]];

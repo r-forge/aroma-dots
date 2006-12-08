@@ -1,11 +1,12 @@
-library(aroma.affymetrix)
+library(oligo);
+library(aroma.affymetrix);
 source("init.R");
 source("ui.R");
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- c("raw", "probeData");
+paths <- c("raw");
 pattern <- "_(199|200)[0-9]";
 if (exists("dataSets", mode="list")) {
   ds <- dataSets[[1]];
@@ -20,27 +21,17 @@ if (exists("dataSets", mode="list")) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Process
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-verbose && enter(verbose, "Processing ", length(dataSets), " data sets");
 res <- list();
 for (kk in seq(along=dataSets)) {
   ds <- dataSets[[kk]];
-  verbose && enter(verbose, "Data set ", getName(ds));
-
-  verbose && cat(verbose, "Input data set:");
   verbose && print(verbose, ds);
 
-  norm <- QuantileNormalization(ds, subsetToAvg=1/3);
-  dsOut <- process(norm, verbose=less(verbose));
+  sc <- PcrProbeCalibration(ds);
+  print(sc);
 
-  verbose && cat(verbose, "Output data set:");
-  verbose && print(verbose, dsOut);
+  dsC <- process(sc, verbose=verbose);
 
-  res[[kk]] <- dsOut;
+  res[[kk]] <- dsC;
 }
-verbose && exit(verbose);
 
-############################################################################
-# HISTORY:
-# 2006-11-xx
-# o Recreated.
-############################################################################
+

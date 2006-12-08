@@ -146,9 +146,12 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Select data sets
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  paths <- selectMenu(paths);
-  paths <- selectOrder(paths, title="Select order how data sets should be joined");
-
+  names <- sort(basename(paths));
+  names <- selectMenu(names);
+  names <- selectOrder(names, title="Select order how data sets should be joined");
+  idx <- match(names, basename(paths));
+  paths <- paths[idx];
+  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Define data sets
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

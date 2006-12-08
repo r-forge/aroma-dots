@@ -75,6 +75,10 @@ setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
 }, static=TRUE);
 
 
+setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
+  "plmData";
+})
+
 
 ###########################################################################/**
 # @RdocMethod getProbeAffinities

@@ -14,7 +14,7 @@ modelTags <- unlist(strsplit(model, split=","));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- c("normQuantile");
+paths <- c("raw", probeData");
 pattern <- "_(199|200)[0-9]";
 if (exists("dataSets", mode="list")) {
   ds <- dataSets[[1]];
@@ -35,7 +35,7 @@ verbose && print(verbose, ds);
 verbose && enter(verbose, "Reading CEL files");
 snpFSet <- extractSnpFeatureSet(ds, verbose=verbose);
 
-verbose && cat(verbose, "Read data:");
+verbose && cat(verbose, "Data read:");
 verbose && print(verbose, snpFSet);
 verbose && exit(verbose);
 
@@ -47,6 +47,19 @@ verbose && exit(verbose);
 
 verbose && enter(verbose, "Fitting CRLMM");
 fit <- crlmm(snpQSet);
+stop();
+verbose && exit(verbose);
+
+verbose && enter(verbose, "Saving CRLMM fit");
+cdf <- getCdf(ds);
+chipType <- getChipType(cdf);
+chipType <- gsub("-monocell$", "", chipType);
+filename <- sprintf("%s.xdr", getFullName(ds));
+name <- sprintf("%s,CRLMM", getName(ds));
+path <- filePath("modelCrlmm", name, chipType);
+mkdirs(path);
+pathname <- filePath(path, filename);
+saveObject(pathname, fit);
 verbose && exit(verbose);
 
 verbose && exit(verbose);
