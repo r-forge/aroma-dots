@@ -51,6 +51,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{getFields} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getPositions.GenomeInformation]{getPositions}} \tab Gets the physical positions for a set of units.\cr
  \tab \code{\link[aroma.affymetrix:getUnitIndices.GenomeInformation]{getUnitIndices}} \tab Gets unit indices ordered along the chromosome.\cr
+ \tab \code{getUnitsOnChromosome} \tab  -\cr
  \tab \code{nbrOfUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.GenomeInformation]{plotDensity}} \tab Plots the density of SNPs for a given chromosome.\cr
  \tab \code{readData} \tab  -\cr

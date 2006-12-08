@@ -51,6 +51,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 \tabular{rll}{
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
+ \tab \code{as.character} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:bgAdjustGcrma.AffymetrixCelFile]{bgAdjustGcrma}} \tab Applies probe sequence based background correction to a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:bgAdjustOptical.AffymetrixCelFile]{bgAdjustOptical}} \tab Applies optical background correction to a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:bgAdjustRma.AffymetrixCelFile]{bgAdjustRma}} \tab Applies normExp background correction to a CEL file.\cr

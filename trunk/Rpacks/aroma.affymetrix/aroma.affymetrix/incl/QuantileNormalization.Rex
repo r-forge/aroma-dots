@@ -18,7 +18,7 @@ print(ds)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-norm <- QuantileNormalizer(ds, subsetToAvg=1/3)
+norm <- QuantileNormalization(ds, subsetToAvg=1/3)
 dsQN <- process(norm, verbose=verbose)
 print(dsQN)
 

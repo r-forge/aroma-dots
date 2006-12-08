@@ -68,6 +68,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:lapply.AffymetrixFileSet]{lapply}} \tab Applies a function to each of the Affymetrix file files.\cr
  \tab \code{\link[aroma.affymetrix:length.AffymetrixFileSet]{length}} \tab Gets the number of files in the file set.\cr
  \tab \code{nbrOfFiles} \tab  -\cr
+ \tab \code{reorder} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:seq.AffymetrixFileSet]{seq}} \tab Gets an vector of file indices.\cr
  \tab \code{\link[aroma.affymetrix:setName.AffymetrixFileSet]{setName}} \tab Sets the name of the file set.\cr
  \tab \code{\link[aroma.affymetrix:setTags.AffymetrixFileSet]{setTags}} \tab Sets the tags of the file set.\cr

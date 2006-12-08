@@ -1,3 +1,30 @@
+###########################################################################/**
+# @RdocClass PlatformDesign
+#
+# @title "The PlatformDesign class"
+#
+# \description{
+#  @classhierarchy
+#
+#  The PlatformDesign class provides a memory-efficient interface to a
+#  so called platform-design package.  Its method can access a subset of the
+#  data of such packages without having to load the package, which saves
+#  memory.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#  \item{cdf}{An @see "AffymetrixCdfFile".}
+#  \item{...}{Not used.}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+# 
+# @author
+#*/###########################################################################
 setConstructorS3("PlatformDesign", function(cdf=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -79,7 +106,9 @@ setMethodS3("getName", "PlatformDesign", function(this, ...) {
   getChipType(this, clean=TRUE);
 })
 
-setMethodS3("getPackageName", "PlatformDesign", function(this, ...) {
+setMethodS3("getPackageName", "PlatformDesign", function(where, ...) {
+  # To please R CMD check
+  this <- where;
   sprintf("pd%s", getChipType(this, clean=TRUE));
 })
 

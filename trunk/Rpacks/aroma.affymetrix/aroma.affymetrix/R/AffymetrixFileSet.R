@@ -502,7 +502,10 @@ setMethodS3("lapply", "AffymetrixFileSet", function(this, ...) {
 })
 
 
-setMethodS3("reorder", "AffymetrixFileSet", function(this, order, ...) {
+setMethodS3("reorder", "AffymetrixFileSet", function(x, order, ...) {
+  # To please R CMD check
+  this <- x;
+
   # Argument 'order':
   if (is.character(order)) {
     # Assume 'order' contains names

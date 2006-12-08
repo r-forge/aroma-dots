@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AllelicCrosstalkCalibrator.R
+%  Preprocessing.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getOutputDataSet.AllelicCrosstalkCalibrator}
-\alias{getOutputDataSet.AllelicCrosstalkCalibrator}
-\alias{AllelicCrosstalkCalibrator.getOutputDataSet}
-\alias{getOutputDataSet.AllelicCrosstalkCalibrator}
-\alias{getOutputDataSet,AllelicCrosstalkCalibrator-method}
+\name{getOutputDataSet.Preprocessing}
+\alias{getOutputDataSet.Preprocessing}
+\alias{Preprocessing.getOutputDataSet}
+\alias{getOutputDataSet.Preprocessing}
+\alias{getOutputDataSet,Preprocessing-method}
 
 
-\title{Gets the normalized data set}
+\title{Gets the preprocessed data set}
 
 \description{
- Gets the normalized data set, if normalized.
+ Gets the preprocessed data set, if processed.
 }
 
-\usage{\method{getOutputDataSet}{AllelicCrosstalkCalibrator}(this, ..., force=FALSE)}
+\usage{\method{getOutputDataSet}{Preprocessing}(this, ..., force=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
@@ -33,7 +33,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AllelicCrosstalkCalibrator}}.
+  For more information see \code{\link{Preprocessing}}.
 }
 \keyword{internal}
 \keyword{methods}

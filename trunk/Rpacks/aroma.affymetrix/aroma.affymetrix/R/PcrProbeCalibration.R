@@ -31,9 +31,9 @@
 #   is modelled as:
 #   \deqn{
 #     \log_2(PM_{ik}) = \mu_{ik} + g(L_k) + \sum_{t=1}^{25} 
-#                       \sum_{b} h_b(t) I(b_{kt}=b) + \xsi_{ik},
+#                       \sum_{b} h_b(t) I(b_{kt}=b) + \xi_{ik},
 #   }
-#   where  \eqn{\xsi} is \eqn{N(0,\sigma^2)}. 
+#   where  \eqn{\xi} is \eqn{N(0,\sigma^2)}. 
 #   The \eqn{g(L_k)} is the PCR fragment-length effect for a probe in a 
 #   SNP of length \eqn{L_k}.  Thus, all probes in a SNP have the same
 #   fragment-length effect \eqn{g(L_k)} (independ on sample).
@@ -42,7 +42,7 @@
 #   The \eqn{\mu_{ik}} is the signal of interest.
 # }
 #
-# \section{Relationship to the oligo package} {
+# \section{Relationship to the oligo package}{
 #  The methods of class are adopted from the @see "oligo::snprma" function 
 #  in the \pkg{oligo} package. By setting argument 
 #  \code{subsetToFit="asOligo"}, this calibration method produces the same
@@ -207,15 +207,14 @@ setMethodS3("getPmDesignMatrix", "PcrProbeCalibration", function(this, ..., verb
 
 
 setMethodS3("getSubsetToFit", "PcrProbeCalibration", function(this, ...) {
-  # Get the subset of PM probes to fit
-  subsetToFit <- this$subsetToFit;
-
   ds <- getInputDataSet(this);
   cdf <- getCdf(ds);
   pd <- PlatformDesign(cdf);
   pmIdxs <- which(getFeatureInfo(pd, "feature_type") == "PM");
   N <- length(pmIdxs);
 
+  # Get the subset of PM probes to fit
+  subsetToFit <- this$subsetToFit;
   if (identical(subsetToFit, "asOligo")) {
     # From 'oligo': 
     set.seed(1); 

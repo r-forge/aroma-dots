@@ -23,7 +23,7 @@
 \usage{AffymetrixCelFile$clearData(fields=c("intensities", "stdvs", "pixels"), value=0, ..., .forSure=FALSE, verbose=TRUE)}
 
 \arguments{
-  \item{fields}{A @characer \code{\link[base]{vector}} of fields to be cleared.}
+  \item{fields}{A \code{\link[base]{character}} \code{\link[base]{vector}} of fields to be cleared.}
   \item{value}{A \code{\link[base]{numeric}} value to be written over the data.}
   \item{...}{Additional arguments passed to the
      \code{\link[affxparser]{updateCelUnits}} methods.}

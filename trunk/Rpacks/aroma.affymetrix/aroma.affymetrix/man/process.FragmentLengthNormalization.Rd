@@ -1,29 +1,29 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AllelicCrosstalkCalibrator.R
+%  FragmentLengthNormalization.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{process.AllelicCrosstalkCalibrator}
-\alias{process.AllelicCrosstalkCalibrator}
-\alias{AllelicCrosstalkCalibrator.process}
-\alias{process.AllelicCrosstalkCalibrator}
-\alias{process,AllelicCrosstalkCalibrator-method}
+\name{process.FragmentLengthNormalization}
+\alias{process.FragmentLengthNormalization}
+\alias{FragmentLengthNormalization.process}
+\alias{process.FragmentLengthNormalization}
+\alias{process,FragmentLengthNormalization-method}
 
 
-\title{Calibrates the data set}
+\title{Normalizes the data set}
 
 \description{
- Calibrates the data set.
+ Normalizes the data set.
 }
 
-\usage{\method{process}{AllelicCrosstalkCalibrator}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{process}{FragmentLengthNormalization}(this, ..., force=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
-  \item{force}{If \code{\link[base:logical]{TRUE}}, data already calibrated is re-calibrated,
+  \item{force}{If \code{\link[base:logical]{TRUE}}, data already normalized is re-normalized,
       otherwise not.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
@@ -64,7 +64,7 @@ rm(zzz)
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AllelicCrosstalkCalibrator}}.
+  For more information see \code{\link{FragmentLengthNormalization}}.
 }
 \keyword{internal}
 \keyword{methods}

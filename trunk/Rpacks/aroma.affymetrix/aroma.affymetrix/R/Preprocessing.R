@@ -15,7 +15,7 @@
 # @synopsis 
 #
 # \arguments{
-#   \item{dataSet}{An @see "AffymetrixCelSet"; the input data set.}
+#   \item{dataSet}{The input data set as an @see "AffymetrixCelSet".}
 #   \item{tags}{A @character @vector of tags to be appended to the tags of
 #      the input data set.}
 #   \item{...}{Not used.}

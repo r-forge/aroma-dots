@@ -1,38 +1,39 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  GenomeAnalyzer.R
+%  Preprocessing.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getModel.GenomeAnalyzer}
-\alias{getModel.GenomeAnalyzer}
-\alias{GenomeAnalyzer.getModel}
-\alias{getModel.GenomeAnalyzer}
-\alias{getModel,GenomeAnalyzer-method}
+\name{getPath.Preprocessing}
+\alias{getPath.Preprocessing}
+\alias{Preprocessing.getPath}
+\alias{getPath.Preprocessing}
+\alias{getPath,Preprocessing-method}
 
 
-\title{Gets the model used by this analyzer}
+\title{Gets the path of the output data set}
 
 \description{
- Gets the model used by this analyzer.
+ Gets the path of the output data set.
+ If non-existing, then the directory is created.
 }
 
-\usage{\method{getModel}{GenomeAnalyzer}(...)}
+\usage{\method{getPath}{Preprocessing}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}
 }
 
 \value{
- Returns a model.
+ Returns a \code{\link[base]{character}} string.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{GenomeAnalyzer}}.
+  For more information see \code{\link{Preprocessing}}.
 }
 \keyword{internal}
 \keyword{methods}
