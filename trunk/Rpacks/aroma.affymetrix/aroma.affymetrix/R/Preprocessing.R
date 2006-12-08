@@ -1,20 +1,21 @@
 ###########################################################################/**
-# @RdocClass AllelicCrosstalkCalibrator
+# @RdocClass Preprocessing
 #
-# @title "The AllelicCrosstalkCalibrator class"
+# @title "The Preprocessing class"
 #
 # \description{
 #  @classhierarchy
 #
-#  This class represents a calibration function that transforms the 
-#  probe-level signals such that the signals from the two alleles are 
-#  orthogonal.
+#  This abstract class represents a preprocessor that fits a transformation
+#  function and transform the data set accordingly.
+#  A preprocessor has an input data set, which is transformed into an
+#  output data set.
 # }
 # 
 # @synopsis 
 #
 # \arguments{
-#   \item{dataSet}{A @see "AffymetrixCelSet".}
+#   \item{dataSet}{An @see "AffymetrixCelSet"; the input data set.}
 #   \item{tags}{A @character @vector of tags to be appended to the tags of
 #      the input data set.}
 #   \item{...}{Not used.}
@@ -24,9 +25,13 @@
 #  @allmethods "public"  
 # }
 # 
+# \details{
+#   Subclasses must implement the \code{process()} method.
+# }
+#
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibrator", function(dataSet=NULL, tags="*", ...) {
+setConstructorS3("Preprocessing", function(dataSet=NULL, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -37,22 +42,40 @@ setConstructorS3("AllelicCrosstalkCalibrator", function(dataSet=NULL, tags="*", 
   }
 
 
-  this <- extend(Object(), "AllelicCrosstalkCalibrator", 
+  this <- extend(Object(), "Preprocessing", 
     .tags = tags,
     inputDataSet = dataSet,
-    "cached:outputDataSet" = NULL,
-    .params = list(
-    )
+    "cached:outputDataSet" = NULL
   );
 
   setTags(this, tags);
 
   this;
+}, abstract=TRUE)
+
+
+
+setMethodS3("getAsteriskTag", "Preprocessing", function(this, ...) {
+  # Default '*' tag is the abbreviation from upper-case letters only,
+  # e.g. "QuantileNormalization" gives "QN".
+  tag <- class(this)[1];
+  tag <- strsplit(tag, split="")[[1]];
+  tagUC <- toupper(tag);
+  keep <- (tag == tagUC);
+  tag <- tag[keep];
+  tag <- paste(tag, collapse="");
+  tag <- sprintf("%s", tag);
+  tag;
+}, protected=TRUE)
+
+
+setMethodS3("getRootPath", "Preprocessing", function(this, ...) {
+  sprintf("pp%s", capitalize(class(this)[1]));
 })
 
 
 
-setMethodS3("as.character", "AllelicCrosstalkCalibrator", function(this, ...) {
+setMethodS3("as.character", "Preprocessing", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   ds <- getInputDataSet(this);
   s <- c(s, sprintf("Data set: %s", getName(ds)));
@@ -97,7 +120,7 @@ setMethodS3("as.character", "AllelicCrosstalkCalibrator", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getName", "AllelicCrosstalkCalibrator", function(this, ...) {
+setMethodS3("getName", "Preprocessing", function(this, ...) {
   ds <- getInputDataSet(this);
   getName(ds);
 })
@@ -110,7 +133,7 @@ setMethodS3("getName", "AllelicCrosstalkCalibrator", function(this, ...) {
 #
 # \description{
 #  @get "title", which equals the tags of the input data set plus the tags
-#  of this normalizer.
+#  of this preprocessor.
 # }
 #
 # @synopsis
@@ -129,20 +152,20 @@ setMethodS3("getName", "AllelicCrosstalkCalibrator", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "AllelicCrosstalkCalibrator", function(this, ...) {
+setMethodS3("getTags", "Preprocessing", function(this, ...) {
   tags <- this$.tags;
 
   ds <- getInputDataSet(this);
   tags <- c(getTags(ds), tags);
 
   # Update default tags
-  tags[tags == "*"] <- "ACT";
+  tags[tags == "*"] <- getAsteriskTag(this);
 
   tags;
 })
 
 
-setMethodS3("setTags", "AllelicCrosstalkCalibrator", function(this, tags="*", ...) {
+setMethodS3("setTags", "Preprocessing", function(this, tags="*", ...) {
   # Argument 'tags':
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
@@ -179,7 +202,7 @@ setMethodS3("setTags", "AllelicCrosstalkCalibrator", function(this, tags="*", ..
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFullName", "AllelicCrosstalkCalibrator", function(this, ...) {
+setMethodS3("getFullName", "Preprocessing", function(this, ...) {
   name <- getName(this);
   tags <- getTags(this);
   fullname <- paste(c(name, tags), collapse=",");
@@ -188,9 +211,23 @@ setMethodS3("getFullName", "AllelicCrosstalkCalibrator", function(this, ...) {
 })
 
 
-setMethodS3("getRootPath", "AllelicCrosstalkCalibrator", function(this, ...) {
-  "calibAllelicCT";
+
+
+setMethodS3("getParametersAsString", "Preprocessing", function(this, ...) {
+  params <- getParameters(this);
+  params <- trim(capture.output(str(params)))[-1];
+  params <- gsub("^[$][ ]*", "", params);
+  params <- gsub(" [ ]*", " ", params);
+  params <- gsub("[ ]*:", ":", params);
+  params;
+}, protected=TRUE)
+
+
+
+setMethodS3("getParameters", "Preprocessing", function(this, ...) {
+  NULL;
 })
+
 
 
 
@@ -207,7 +244,7 @@ setMethodS3("getRootPath", "AllelicCrosstalkCalibrator", function(this, ...) {
 # @synopsis
 #
 # \arguments{
-#  \item{...}{Not used.}
+#   \item{...}{Not used.}
 # }
 #
 # \value{
@@ -220,7 +257,7 @@ setMethodS3("getRootPath", "AllelicCrosstalkCalibrator", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getPath", "AllelicCrosstalkCalibrator", function(this, ...) {
+setMethodS3("getPath", "Preprocessing", function(this, ...) {
   # Create the (sub-)directory tree for the dataset
 
   # Root path
@@ -234,6 +271,7 @@ setMethodS3("getPath", "AllelicCrosstalkCalibrator", function(this, ...) {
   ds <- getInputDataSet(this);
   cdf <- getCdf(ds);
   chipType <- getChipType(cdf);
+  chipType <- gsub("-monocell$", "", chipType);  # AD HOC? /HB 2006-12-08
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
@@ -247,14 +285,13 @@ setMethodS3("getPath", "AllelicCrosstalkCalibrator", function(this, ...) {
 })
 
 
-
 ###########################################################################/**
 # @RdocMethod getInputDataSet
 #
 # @title "Gets the source data set"
 #
 # \description{
-#  @get "title" that is to be normalized (or has been normalized).
+#  @get "title" that is to be (or has been) preprocessed.
 # }
 #
 # @synopsis
@@ -273,7 +310,7 @@ setMethodS3("getPath", "AllelicCrosstalkCalibrator", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getInputDataSet", "AllelicCrosstalkCalibrator", function(this, ...) {
+setMethodS3("getInputDataSet", "Preprocessing", function(this, ...) {
   this$inputDataSet;
 })
 
@@ -282,10 +319,10 @@ setMethodS3("getInputDataSet", "AllelicCrosstalkCalibrator", function(this, ...)
 ###########################################################################/**
 # @RdocMethod getOutputDataSet
 #
-# @title "Gets the normalized data set"
+# @title "Gets the preprocessed data set"
 #
 # \description{
-#  @get "title", if normalized.
+#  @get "title", if processed.
 # }
 #
 # @synopsis
@@ -305,8 +342,8 @@ setMethodS3("getInputDataSet", "AllelicCrosstalkCalibrator", function(this, ...)
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getOutputDataSet", "AllelicCrosstalkCalibrator", function(this, ..., force=FALSE) {
-  outputDataSet <- this$outputDataSet;
+setMethodS3("getOutputDataSet", "Preprocessing", function(this, ..., force=FALSE) { 
+ outputDataSet <- this$outputDataSet;
   if (force || is.null(outputDataSet)) {
     if (isDone(this)) {
       ds <- getInputDataSet(this);
@@ -319,30 +356,17 @@ setMethodS3("getOutputDataSet", "AllelicCrosstalkCalibrator", function(this, ...
 })
 
 
-setMethodS3("getOutputFiles", "AllelicCrosstalkCalibrator", function(this, ...) {
+setMethodS3("getOutputFiles", "Preprocessing", function(this, ...) {
   outPath <- getPath(this);
   findFiles(pattern="[.](c|C)(e|E)(l|L)$", paths=outPath, firstOnly=FALSE);
 }, protected=TRUE)
 
 
-setMethodS3("getParametersAsString", "AllelicCrosstalkCalibrator", function(this, ...) {
-  params <- getParameters(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, protected=TRUE)
-
-setMethodS3("getParameters", "AllelicCrosstalkCalibrator", function(this, ...) {
-  this$.params;
-})
-
 
 ###########################################################################/**
 # @RdocMethod isDone
 #
-# @title "Checks if the data set is calibrated or not"
+# @title "Checks if the data set is processed or not"
 #
 # \description{
 #  @get "title".
@@ -355,7 +379,7 @@ setMethodS3("getParameters", "AllelicCrosstalkCalibrator", function(this, ...) {
 # }
 #
 # \value{
-#  Returns @TRUE if the data set is calibrated, otherwise @FALSE.
+#  Returns @TRUE if the data set is processed, otherwise @FALSE.
 # }
 #
 # @author
@@ -364,7 +388,7 @@ setMethodS3("getParameters", "AllelicCrosstalkCalibrator", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("isDone", "AllelicCrosstalkCalibrator", function(this, ...) {
+setMethodS3("isDone", "Preprocessing", function(this, ...) {
   pathnames <- getOutputFiles(this);
   if (length(pathnames) == 0)
     return(FALSE);
@@ -381,7 +405,7 @@ setMethodS3("isDone", "AllelicCrosstalkCalibrator", function(this, ...) {
 ###########################################################################/**
 # @RdocMethod process
 #
-# @title "Calibrates the data set"
+# @title "Processes the data set"
 #
 # \description{
 #  @get "title".
@@ -391,7 +415,7 @@ setMethodS3("isDone", "AllelicCrosstalkCalibrator", function(this, ...) {
 #
 # \arguments{
 #   \item{...}{Not used.}
-#   \item{force}{If @TRUE, data already calibrated is re-calibrated, 
+#   \item{force}{If @TRUE, data already processed is re-processed, 
 #       otherwise not.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -400,70 +424,20 @@ setMethodS3("isDone", "AllelicCrosstalkCalibrator", function(this, ...) {
 #  Returns a @double @vector.
 # }
 #
-# @examples "../incl/normalizeQuantile.Rex"
-#
 # @author
 #
 # \seealso{
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("process", "AllelicCrosstalkCalibrator", function(this, ..., force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Calibrates data set for allelic cross talk");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Already done?
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!force && isDone(this)) {
-    verbose && cat(verbose, "Already calibrated");
-    verbose && exit(verbose);
-    outputDataSet <- getOutputDataSet(this);
-    return(invisible(outputDataSet));
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Setup
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get input dataset
-  ds <- getInputDataSet(this);
-
-  # Get algorithm parameters
-  params <- getParameters(this);
-
-  # Get (and create) the output path
-  outputPath <- getPath(this);
+setMethodS3("process", "Preprocessing", abstract=TRUE);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Calibrate
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  args <- c(list(ds, path=outputPath, verbose=verbose), params);
-  outputDataSet <- do.call("calibrateAllelicCrosstalk", args=args);
-
-  # Update the output dataset
-  this$outputDataSet <- outputDataSet;
-
-  verbose && exit(verbose);
-  
-  outputDataSet;
-})
 
 ############################################################################
 # HISTORY:
-# 2006-11-18
-# o Removed version and subversion tags, and related functions. 
-#   Now getTags() returns the tags of the input data set plus any tags 
-#   of this instance.
-# 2006-11-02
+# 2006-12-08
+# o Renamed from PreProcessor.
+# 2006-12-07
 # o Created from QuantileNormalizer.R.
 ############################################################################

@@ -156,7 +156,7 @@ setMethodS3("getFullName", "GladModel", function(this, ...) {
 
 
 setMethodS3("getRootPath", "GladModel", function(this, ...) {
-  "glad";
+  "gladData";
 })
 
 setMethodS3("getPath", "GladModel", function(this, ...) {

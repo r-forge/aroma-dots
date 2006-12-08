@@ -5,7 +5,7 @@ source("init.R");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- c("modelMbeiCnPlm", "modelRmaCnPlm");
+paths <- "plmData";
 path <- sapply(paths, FUN=filePath, expandLinks="any");
 pattern <- ",(MBEI|RMA),[+]-";
 dataSets <- list.files(pattern=pattern, path=path, full.names=TRUE);

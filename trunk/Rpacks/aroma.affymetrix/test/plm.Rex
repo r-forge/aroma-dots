@@ -15,7 +15,7 @@ modelTags <- unlist(strsplit(model, split=","));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- c("normQuantile");
+paths <- "probeData";
 pattern <- "_(199|200)[0-9]";
 if (exists("dataSets", mode="list")) {
   ds <- dataSets[[1]];

@@ -13,15 +13,13 @@
 # @synopsis 
 #
 # \arguments{
-#   \item{ces}{A @see "CnChipEffectSet".}
+#   \item{dataSet}{A @see "CnChipEffectSet".}
+#   \item{...}{Additional arguments passed to the constructor of 
+#     @see "ChipEffectPreprocessing".}
 #   \item{targetFunction}{A @function.  The target function to which all arrays
 #     should be normalized to.}
 #   \item{subsetToFit}{The units from which the normalization curve should
-#     be estimated.
-#     If @NULL, all are considered.}
-#   \item{tags}{A @character @vector of tags to be appended to the tags of
-#      the input data set.}
-#   \item{...}{Not used.}
+#     be estimated.  If @NULL, all are considered.}
 # }
 #
 # \section{Fields and Methods}{
@@ -33,20 +31,20 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("FragmentLengthNormalization", function(ces=NULL, targetFunction=NULL, subsetToFit=NULL, tags="*", ...) {
+setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunction=NULL, subsetToFit=NULL) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'ces':
-  if (!is.null(ces)) {
-    if (!inherits(ces, "CnChipEffectSet"))
-      throw("Argument 'ces' is not an CnChipEffectSet object: ", class(ces));
-
-    if (ces$combineAlleles != TRUE) {
+  # Argument 'dataSet':
+  if (!is.null(dataSet)) {
+    if (!inherits(dataSet, "CnChipEffectSet"))
+      throw("Argument 'dataSet' is not an CnChipEffectSet object: ", class(dataSet));
+g
+    if (dataSet$combineAlleles != TRUE) {
       throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
     }
 
-    if (ces$mergeStrands != TRUE) {
+    if (dataSet$mergeStrands != TRUE) {
       throw("Currently only total copy-number chip effects can be normalized, i.e. 'mergeStrands' must be TRUE");
     }
   }
@@ -57,352 +55,28 @@ setConstructorS3("FragmentLengthNormalization", function(ces=NULL, targetFunctio
     }
   }
 
-  this <- extend(Object(), "FragmentLengthNormalization", 
-    .tags = tags,
-    inputSet = ces,
-    "cached:outputSet" = NULL,
-    .params = list(
-       subsetToFit = subsetToFit,
-       .targetFunction = targetFunction
-    )
-  );
-
-  setTags(this, tags);
-
-  this;
+  extend(ChipEffectPreprocessing(dataSet, ...), "FragmentLengthNormalization", 
+    subsetToFit = subsetToFit,
+    .targetFunction = targetFunction
+  )
 })
 
 
-
-setMethodS3("as.character", "FragmentLengthNormalization", function(this, ...) {
-  s <- sprintf("%s:", class(this)[1]);
-  s <- c(s, sprintf("Name: %s", getName(this)));
-  ces <- getInputSet(this);
-  tags <- paste(getTags(ces), collapse=", ");
-  s <- c(s, sprintf("Input tags: %s", tags));
-  s <- c(s, sprintf("Output tags: %s", paste(getTags(this), collapse=",")));
-  s <- c(s, sprintf("Number of arrays: %d (%.2fMb)", 
-                           nbrOfArrays(ces), getFileSize(ces)/1024^2));
-  s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(ces))));
-  params <- paste(getParametersAsString(this), collapse=", ");
-  s <- c(s, sprintf("Algorithm parameters: (%s)", params));
-  s <- c(s, sprintf("Output path: %s", getPath(this)));
-  s <- c(s, sprintf("Is done: %s", isDone(this)));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
-  class(s) <- "GenericSummary";
-  s;
-})
-
-
-###########################################################################/**
-# @RdocMethod getName
-#
-# @title "Gets the name of the output data set"
-#
-# \description{
-#  @get "title", which is the same as the input data set.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character string.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getName", "FragmentLengthNormalization", function(this, ...) {
-  ces <- getInputSet(this);
-  getName(ces);
-})
-
-
-###########################################################################/**
-# @RdocMethod getTags
-#
-# @title "Gets the tags of the output data set"
-#
-# \description{
-#  @get "title", which equals the tags of the input data set plus the tags
-#  of this normalizer.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character @vector.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getTags", "FragmentLengthNormalization", function(this, ...) {
-  tags <- this$.tags;
-
-  ds <- getInputSet(this);
-  tags <- c(getTags(ds), tags);
-
-  # Update default tags
-  tags[tags == "*"] <- "FLN";
-
-  tags;
-})
-
-
-setMethodS3("setTags", "FragmentLengthNormalization", function(this, tags="*", ...) {
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-  }
-  
-  this$.tags <- tags;
-})
-
-
-
-###########################################################################/**
-# @RdocMethod getFullName
-#
-# @title "Gets the full name of the output data set"
-#
-# \description{
-#  @get "title", which is the name with comma separated tags.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character string.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getFullName", "FragmentLengthNormalization", function(this, ...) {
-  name <- getName(this);
-  tags <- getTags(this);
-  fullname <- paste(c(name, tags), collapse=",");
-  fullname <- gsub("[,]$", "", fullname);
-  fullname;
-})
-
-
-setMethodS3("getRootPath", "FragmentLengthNormalization", function(this, ...) {
-  "normFragmentLength";
-})
-
-
-setMethodS3("getParametersAsString", "FragmentLengthNormalization", function(this, ...) {
-  params <- getParameters(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, protected=TRUE)
 
 setMethodS3("getParameters", "FragmentLengthNormalization", function(this, ...) {
-  this$.params;
-})
+  # Get parameters from super class
+  params <- NextMethod(generic="getParameters", object=this, ...);
 
+  # Get parameters of this class
+  params2 <- list(
+    subsetToFit = this$subsetToFit,
+    .targetFunction = this$.targetFunction
+  );
 
+  # Append the two sets
+  params <- c(params, params2);
 
-###########################################################################/**
-# @RdocMethod getPath
-#
-# @title "Gets the path of the output data set"
-#
-# \description{
-#  @get "title".
-#  If non-existing, then the directory is created.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character string.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getPath", "FragmentLengthNormalization", function(this, ...) {
-  # Create the (sub-)directory tree for the dataset
-
-  # Root path
-  rootPath <- getRootPath(this);
-  mkdirs(rootPath);
-
-  # Full name
-  fullname <- getFullName(this);
-
-  # Chip type    
-  ds <- getInputSet(this);
-  cdf <- getCdf(ds);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell$", "", chipType);
-
-  # The full path
-  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
-  if (!isDirectory(path)) {
-    mkdirs(path);
-    if (!isDirectory(path))
-      throw("Failed to create output directory: ", path);
-  }
-
-  path;
-})
-
-
-###########################################################################/**
-# @RdocMethod getInputSet
-#
-# @title "Gets the source chip effects"
-#
-# \description{
-#  @get "title" that is to be normalized (or has been normalized).
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns an @see "AffymetrixCelSet".
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getInputSet", "FragmentLengthNormalization", function(this, ...) {
-  this$inputSet;
-})
-
-
-
-###########################################################################/**
-# @RdocMethod getOutputSet
-#
-# @title "Gets the normalized data set"
-#
-# \description{
-#  @get "title", if normalized.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-#   \item{force}{If @TRUE, any in-memory cached results are ignored.}
-# }
-#
-# \value{
-#  Returns an @see "AffymetrixCelSet" or @NULL.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getOutputSet", "FragmentLengthNormalization", function(this, ..., force=FALSE) {
-  outputSet <- this$outputSet;
-  if (force || is.null(outputSet)) {
-    if (isDone(this)) {
-      inputSet <- getInputSet(this);
-      clazz <- Class$forName(class(inputSet)[1]);
-      outputSet <- clazz$fromFiles(path=getPath(this));
-
-      # Ad hoc for now /HB 2006-12-01
-      outputSet$mergeStrands <- inputSet$mergeStrands;
-      outputSet$combineAlleles <- inputSet$combineAlleles;
-
-      this$outputSet <- outputSet;
-    }
-  }
-  outputSet;
-})
-
-
-setMethodS3("getOutputFiles", "FragmentLengthNormalization", function(this, ...) {
-  outPath <- getPath(this);
-  findFiles(pattern="[.](c|C)(e|E)(l|L)$", paths=outPath, firstOnly=FALSE);
-}, protected=TRUE)
-
-
-
-###########################################################################/**
-# @RdocMethod isDone
-#
-# @title "Checks if the data set is normalized or not"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns @TRUE if the data set is normalized, otherwise @FALSE.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("isDone", "FragmentLengthNormalization", function(this, ...) {
-  pathnames <- getOutputFiles(this);
-  if (length(pathnames) == 0)
-    return(FALSE);
-
-  ds <- getInputSet(this);  
-  if (length(pathnames) != nbrOfArrays(ds)) {
-    throw("Number of output CEL files does not match the number of CEL files in the input dataset: ", length(pathnames), " != ", nbrOfArrays(ds));
-  }
-  
-  return(TRUE);
+  params;
 })
 
 
@@ -429,7 +103,7 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   units <- units[keep];
 
   # Fit to a subset of the units?
-  subsetToFit <- this$.params$subsetToFit;
+  subsetToFit <- this$subsetToFit;
   if (!is.null(subsetToFit)) {
     # A fraction subset?
     if (length(subsetToFit) == 1 && 0 < subsetToFit && subsetToFit < 1) {
@@ -676,6 +350,9 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2006-12-08
+# o Now this class inherits from the ChipEffectPreprocessing class.
+# o Now this pre-processor output results to plmData/.
 # 2006-11-28
 # o Created from QuantileNormalizer.R.
 ############################################################################

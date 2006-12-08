@@ -18,7 +18,7 @@ if (ext == "png") {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- c("modelRmaCnPlm", "modelMbeiCnPlm");
+paths <- "plmData";
 pattern <- ",A[+]B";
 if (exists("dataSets", mode="list") && inherits(dataSets[[1]], "CnChipEffectSet")) {
   ds <- dataSets[[1]];

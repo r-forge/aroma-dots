@@ -63,8 +63,8 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
   # pdmapping50kxba240. 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Source: http://www.biostat.jhsph.edu/~bcarvalh/old/research.html
-  safeChipType <- gsub("cdf$", "", cleancdfname(chipType));
-  pdName <- sprintf("pd%s", safeChipType);
+  cleanChipType <- gsub("cdf$", "", cleancdfname(chipType));
+  pdName <- sprintf("pd%s", cleanChipType);
   verbose && enter(verbose, "Trying required probe-definition package: ", pdName);
   pkg <- packageDescription(pdName);
   if (identical(pkg, NA))

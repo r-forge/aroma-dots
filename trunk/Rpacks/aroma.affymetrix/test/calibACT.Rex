@@ -27,7 +27,7 @@ dataSets <- lapply(dataSets, FUN=function(ds) {
   verbose && cat(verbose, "Input data set:");
   verbose && print(verbose, ds);
 
-  calib <- AllelicCrosstalkCalibrator(ds);
+  calib <- AllelicCrosstalkCalibration(ds);
   dsOut <- process(calib, verbose=less(verbose));
 
   verbose && cat(verbose, "Output data set:");

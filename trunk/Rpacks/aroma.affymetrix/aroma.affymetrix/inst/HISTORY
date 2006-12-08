@@ -1,7 +1,41 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.2.6 [2006-11-xx]
+Version: 0.3.0 [2006-12-08]
+o Major updates. See below.
+o Change in directory structures.  Now all probe-level data
+  is outputted to probeData/, and all PLM data to plmData/.
+  Data from the GladModel is stored to gladData/.  Data sets
+  with the same name processed in different ways will be 
+  distinguishable by their tags.
+o Pre-processing methods have now been split up in two major
+  classes, the ProbePreprocessing and ChipEffectPreprocessing
+  (both inheriting from the Preprocessing class) to indicate
+  that they operate on probe-level and chip-effect data, 
+  respectively. All ProbePreprocessing classes output data 
+  to the probeData/ directory, and the ChipEffectPreprocessing
+  class to the plmData/ directory.
+o ProbePreprocessing classes:
+  QuantileNormalization replaces QuantileNormalizer. 
+  AlleleCrosstalkCalibration replaces AlleleCrosstalkCalibrator.
+  PcrProbeCalibration corrects for PCR effects due to oligo 
+  sequence and SNP fragment lengths, cf. CRLMM.
+Adapted from oligo.
+o ChipEffectPreprocessing classes:
+  FragmentLengthNormalization to normalize for PCR fragment-
+  length effects after PLM, cf. CNAG.
+o Added the PlatformDesign class which provides an interface to 
+  a platform-design package without loading the package.  This
+  is used for instance by the PcrProbeCalibration class.
+
+Version: 0.2.6 [2006-12-07]
+o The recently added methods below makes it possible to store
+  FeatureSet data to CEL files, which will further simplify 
+  bridging the aroma.affymetrix and the oligo package.
+o Added protected importFeatureSet() to import probe signals
+  from a single-sample oligo::FeatureSet object. 
+o Added static method createBlankSet() to AffymetrixCelSet
+  to create a set of blank CEL files.
 o BUG FIX: The internal cache for readUnits() of ChipEffectFile 
   classes was not sensitive to neither class nor parameters
   specific to subclasses.
