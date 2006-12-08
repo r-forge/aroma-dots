@@ -62,7 +62,7 @@ getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, getSu
 getFitFunction, getProbeAffinities
 
 \bold{Methods inherited from ProbeLevelModel}:\cr
-findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, highlight, plotMvsPosition, readUnits
+findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, getRootPath, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
 as.character, fit, getCdf, getDataSet, getFullName, getLabel, getName, getParameterSet, getPath, getRootPath, getTags, setLabel, setTags, setup

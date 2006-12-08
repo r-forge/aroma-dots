@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AllelicCrosstalkCalibrator.R
+%  Preprocessing.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getInputDataSet.AllelicCrosstalkCalibrator}
-\alias{getInputDataSet.AllelicCrosstalkCalibrator}
-\alias{AllelicCrosstalkCalibrator.getInputDataSet}
-\alias{getInputDataSet.AllelicCrosstalkCalibrator}
-\alias{getInputDataSet,AllelicCrosstalkCalibrator-method}
+\name{getInputDataSet.Preprocessing}
+\alias{getInputDataSet.Preprocessing}
+\alias{Preprocessing.getInputDataSet}
+\alias{getInputDataSet.Preprocessing}
+\alias{getInputDataSet,Preprocessing-method}
 
 
 \title{Gets the source data set}
 
 \description{
- Gets the source data set that is to be normalized (or has been normalized).
+ Gets the source data set that is to be (or has been) preprocessed.
 }
 
-\usage{\method{getInputDataSet}{AllelicCrosstalkCalibrator}(this, ...)}
+\usage{\method{getInputDataSet}{Preprocessing}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AllelicCrosstalkCalibrator}}.
+  For more information see \code{\link{Preprocessing}}.
 }
 \keyword{internal}
 \keyword{methods}

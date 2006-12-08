@@ -26,7 +26,8 @@
 }
 
 \value{
-  Returns a \code{\link[base]{list}}.
+  Returns a named \code{\link[base]{list}} where the names are the names of the date files
+  according to \code{\link[aroma.affymetrix:getNames.AffymetrixFileSet]{*getNames}()}.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

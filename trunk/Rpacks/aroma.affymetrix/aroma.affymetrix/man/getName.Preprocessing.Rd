@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  QuantileNormalizer.R
+%  Preprocessing.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getName.QuantileNormalizer}
-\alias{getName.QuantileNormalizer}
-\alias{QuantileNormalizer.getName}
-\alias{getName.QuantileNormalizer}
-\alias{getName,QuantileNormalizer-method}
+\name{getName.Preprocessing}
+\alias{getName.Preprocessing}
+\alias{Preprocessing.getName}
+\alias{getName.Preprocessing}
+\alias{getName,Preprocessing-method}
 
 
 \title{Gets the name of the output data set}
@@ -19,7 +19,7 @@
  Gets the name of the output data set, which is the same as the input data set.
 }
 
-\usage{\method{getName}{QuantileNormalizer}(this, ...)}
+\usage{\method{getName}{Preprocessing}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{QuantileNormalizer}}.
+  For more information see \code{\link{Preprocessing}}.
 }
 \keyword{internal}
 \keyword{methods}

@@ -14,6 +14,7 @@
 # \arguments{
 #   \item{ces}{A @see "CnChipEffectSet".}
 #   \item{reference}{A @see "CnChipEffectFile".}
+#   \item{tags}{A @character @vector of tags.}
 #   \item{...}{Not used.}
 # }
 #
@@ -29,7 +30,7 @@
 # }
 #
 #*/###########################################################################
-setConstructorS3("GladModel", function(ces=NULL, reference=NULL, ..., tags="*") {
+setConstructorS3("GladModel", function(ces=NULL, reference=NULL, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

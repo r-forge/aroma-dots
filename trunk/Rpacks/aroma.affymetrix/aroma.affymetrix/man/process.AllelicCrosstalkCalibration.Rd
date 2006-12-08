@@ -1,29 +1,29 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  QuantileNormalizer.R
+%  AllelicCrosstalkCalibration.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{process.QuantileNormalizer}
-\alias{process.QuantileNormalizer}
-\alias{QuantileNormalizer.process}
-\alias{process.QuantileNormalizer}
-\alias{process,QuantileNormalizer-method}
+\name{process.AllelicCrosstalkCalibration}
+\alias{process.AllelicCrosstalkCalibration}
+\alias{AllelicCrosstalkCalibration.process}
+\alias{process.AllelicCrosstalkCalibration}
+\alias{process,AllelicCrosstalkCalibration-method}
 
 
-\title{Normalizes the data set}
+\title{Calibrates the data set}
 
 \description{
- Normalizes the data set.
+ Calibrates the data set.
 }
 
-\usage{\method{process}{QuantileNormalizer}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{process}{AllelicCrosstalkCalibration}(this, ..., force=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
-  \item{force}{If \code{\link[base:logical]{TRUE}}, data already normalized is re-normalized,
+  \item{force}{If \code{\link[base:logical]{TRUE}}, data already calibrated is re-calibrated,
       otherwise not.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
@@ -64,7 +64,7 @@ rm(zzz)
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{QuantileNormalizer}}.
+  For more information see \code{\link{AllelicCrosstalkCalibration}}.
 }
 \keyword{internal}
 \keyword{methods}

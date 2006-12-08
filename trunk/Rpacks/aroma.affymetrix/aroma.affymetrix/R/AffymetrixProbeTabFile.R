@@ -7,15 +7,14 @@
 #  @classhierarchy
 #
 #  An AffymetrixProbeTabFile represents an interface to query the data
-#  contained in an Affymetrix probe tab file, e.g. Mapping250K_Nsp_probe_tab.
+#  contained in an Affymetrix probe tab file, e.g. 
+#  \code{Mapping250K_Nsp_probe_tab}.
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{filename}{The filename of the file.}
-#   \item{path}{An optional path to the file.}
-#   \item{...}{Not used.}
+#   \item{...}{Arguments passed to the constructor of @see "AffymetrixFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -28,8 +27,9 @@
 #  in the files, e.g. typically only PM probes are given and MM are 
 #  left to be inferred from the PMs.
 #
-#  The below is an extract of the Mapping250K_Nsp_probe_tab file obtained
-#  from the Affymetrix website.  Note that columns are separated by TABs.
+#  The below is an extract of the \code{Mapping250K_Nsp_probe_tab} file
+#  obtained from the Affymetrix website.  Note that columns are separated
+#  by TABs.
 #  \preformatted{
 #   SNP_A-1780270	1633	2398	3	TTGTTAAGCAAGTGAGTTATTTTAT	f	PM	C
 #   SNP_A-1780270	1633	2399	3	TTGTTAAGCAAGTGACTTATTTTAT	f	PM	G

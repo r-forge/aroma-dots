@@ -1,26 +1,26 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  QuantileNormalizer.R
+%  Preprocessing.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getTags.QuantileNormalizer}
-\alias{getTags.QuantileNormalizer}
-\alias{QuantileNormalizer.getTags}
-\alias{getTags.QuantileNormalizer}
-\alias{getTags,QuantileNormalizer-method}
+\name{getTags.Preprocessing}
+\alias{getTags.Preprocessing}
+\alias{Preprocessing.getTags}
+\alias{getTags.Preprocessing}
+\alias{getTags,Preprocessing-method}
 
 
 \title{Gets the tags of the output data set}
 
 \description{
  Gets the tags of the output data set, which equals the tags of the input data set plus the tags
- of this normalizer.
+ of this preprocessor.
 }
 
-\usage{\method{getTags}{QuantileNormalizer}(this, ...)}
+\usage{\method{getTags}{Preprocessing}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -33,7 +33,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{QuantileNormalizer}}.
+  For more information see \code{\link{Preprocessing}}.
 }
 \keyword{internal}
 \keyword{methods}

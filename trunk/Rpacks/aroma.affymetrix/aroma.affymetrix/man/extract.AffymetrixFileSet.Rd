@@ -22,7 +22,8 @@
 \usage{\method{extract}{AffymetrixFileSet}(this, files, ...)}
 
 \arguments{
- \item{files}{File indices.}
+ \item{files}{An \code{\link[base]{integer}} or a \code{\link[base]{logical}} \code{\link[base]{vector}} indicating which data files
+   to be extracted.}
  \item{...}{Not used.}
 }
 

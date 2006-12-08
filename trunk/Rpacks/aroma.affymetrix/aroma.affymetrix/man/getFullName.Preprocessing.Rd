@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  QuantileNormalizer.R
+%  Preprocessing.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getFullName.QuantileNormalizer}
-\alias{getFullName.QuantileNormalizer}
-\alias{QuantileNormalizer.getFullName}
-\alias{getFullName.QuantileNormalizer}
-\alias{getFullName,QuantileNormalizer-method}
+\name{getFullName.Preprocessing}
+\alias{getFullName.Preprocessing}
+\alias{Preprocessing.getFullName}
+\alias{getFullName.Preprocessing}
+\alias{getFullName,Preprocessing-method}
 
 
 \title{Gets the full name of the output data set}
@@ -19,7 +19,7 @@
  Gets the full name of the output data set, which is the name with comma separated tags.
 }
 
-\usage{\method{getFullName}{QuantileNormalizer}(this, ...)}
+\usage{\method{getFullName}{Preprocessing}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{QuantileNormalizer}}.
+  For more information see \code{\link{Preprocessing}}.
 }
 \keyword{internal}
 \keyword{methods}

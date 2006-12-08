@@ -13,6 +13,7 @@
 # @synopsis 
 #
 # \arguments{
+#   \item{dataSet}{The input data set as an @see "ChipEffectSet".}
 #   \item{...}{Arguments passed to the constructor of @see "Preprocessing".}
 # }
 #

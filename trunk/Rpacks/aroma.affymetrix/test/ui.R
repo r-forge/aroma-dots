@@ -179,7 +179,8 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
     if (!inherits(ds, "ChipEffectSet")) {
       dups <- isDuplicated(ds);
       if (any(dups)) {
-        cat(sprintf("Removing %d duplicated arrays.\n", sum(dups)));
+        cat(sprintf("Removing %d duplicated arrays: %s\n", sum(dups), 
+                               paste(getNames(ds)[dups], collapse=",")));
         ds <- extract(ds, !dups);
       }
     }

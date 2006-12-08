@@ -32,11 +32,12 @@ extends \link[R.oo]{Object}\cr
   This class represents the GLAD [1] model.
  }
 
- \usage{GladModel(ces=NULL, reference=NULL, ...)}
+ \usage{GladModel(ces=NULL, reference=NULL, tags="*", ...)}
 
  \arguments{
    \item{ces}{A \code{\link{CnChipEffectSet}}.}
    \item{reference}{A \code{\link{CnChipEffectFile}}.}
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
    \item{...}{Not used.}
  }
 
@@ -47,13 +48,20 @@ extends \link[R.oo]{Object}\cr
  \tab \code{fit} \tab  -\cr
  \tab \code{getChipEffects} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.GladModel]{getChromosomes}} \tab Gets the chromosomes available.\cr
+ \tab \code{getFullName} \tab  -\cr
  \tab \code{getGenomeInformation} \tab  -\cr
+ \tab \code{getLog2Ratios} \tab  -\cr
+ \tab \code{getName} \tab  -\cr
+ \tab \code{getPath} \tab  -\cr
  \tab \code{getReference} \tab  -\cr
  \tab \code{getRegions} \tab  -\cr
+ \tab \code{getRootPath} \tab  -\cr
+ \tab \code{getTags} \tab  -\cr
  \tab \code{nbrOfArrays} \tab  -\cr
  \tab \code{plot} \tab  -\cr
  \tab \code{setReference} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
+ \tab \code{writeWig} \tab  -\cr
 }
 
 
