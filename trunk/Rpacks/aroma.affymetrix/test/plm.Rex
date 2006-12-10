@@ -3,6 +3,8 @@ source("init.R");
 source("ui.R");
 
 moreUnits <- 30;
+probeModel <- "mm";
+#probeModel <- "pmmm";
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select model
@@ -25,6 +27,18 @@ if (exists("dataSets", mode="list")) {
     dataSets <- selectDataSets(paths, pattern=pattern);
 } else {
   dataSets <- selectDataSets(paths, pattern=pattern);
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Select chromosomes to fit
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+choices <- c(1:22,"X");
+if (!exists("chromosomes"))
+  chromosomes <- NULL;
+chromosomes <- selectMenu(choices=choices, selected=chromosomes, title="Select the chromosomes you which to fit (leave all blank to use all)");
+if (length(chromosomes) == 0) {
+  chromosomes <- choices;
 }
 
 
@@ -59,13 +73,12 @@ for (kk in seq(along=dataSets)) {
     throw("Too few arrays to fit PLM too");
 
   verbose && enter(verbose, "Defining PLM model");
-  model <- Plm(ds, mergeStrands=mergeStrands, combineAlleles=combineAlleles);
+  model <- Plm(ds, mergeStrands=mergeStrands, combineAlleles=combineAlleles, probeModel=probeModel);
   print(model);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Fit model");
-  allChromosomes <- c(1:22, "X");
-  for (chr in allChromosomes) {
+  for (chr in chromosomes) {
     verbose && enter(verbose, "Chromosome ", chr);
 
     verbose && enter(verbose, "Retrieving genome information");
@@ -84,6 +97,7 @@ for (kk in seq(along=dataSets)) {
 
     verbose && exit(verbose);
   } # for (chr ...) 
+
 
   verbose && exit(verbose);
 

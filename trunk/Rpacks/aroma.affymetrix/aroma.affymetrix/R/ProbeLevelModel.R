@@ -19,7 +19,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "UnitGroupsModel".}
-#   \item{model}{A @character string specifying how PM and MM values
+#   \item{probeModel}{A @character string specifying how PM and MM values
 #      should be modelled.  By default only PM signals are used.}
 #   \item{standardize}{If @TRUE, chip-effect and probe-affinity estimates are
 #      rescaled such that the product of the probe affinities is one.}
@@ -53,18 +53,22 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., model=c("pm"), standardize=TRUE) {
+setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", "mm", "pmmm"), standardize=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'model':
-  model <- match.arg(model);
+  # Argument 'probeModel':
+  probeModel <- match.arg(probeModel);
 
-  extend(UnitGroupsModel(...), "ProbeLevelModel",
+  if (probeModel != "pm") {
+    tags <- c(toupper(probeModel), tags);
+  }
+
+  extend(UnitGroupsModel(..., tags=tags), "ProbeLevelModel",
     "cached:.paFile" = NULL,
     "cached:.chipFiles" = NULL,
     "cached:.lastPlotData" = NULL,
-    model = model,
+    probeModel = probeModel,
     standardize=standardize
   )
 }, abstract=TRUE)
@@ -120,7 +124,7 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=
 
   # Make it into an object of the correct class
   clazz <- .class;
-  res <- newInstance(clazz, getPathname(res), cdf=getCdf(ds), model=this$model);
+  res <- newInstance(clazz, getPathname(res), cdf=getCdf(ds), probeModel=this$probeModel);
   this$.paFile <- res;
 
   res;
@@ -234,7 +238,7 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
 
 setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
   # Get what set of probes to read
-  stratifyBy <- switch(this$model, pm="pm");
+  stratifyBy <- switch(this$probeModel, mm="mm", pm="pm", pmmm="pmmm");
 
   # Get the CDF cell indices
   ds <- getDataSet(this);

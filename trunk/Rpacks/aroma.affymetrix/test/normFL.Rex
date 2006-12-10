@@ -52,11 +52,10 @@ s <- paste("Arrays: ", seqToHumanReadable(arrays), sep="");
 s <- GenericSummary(s);
 print(s);
 
-dataSets <- lapply(dataSets, function(ces) {
-  extract(ces, arrays);
-})
+res <- list();
+for (kk in seq(along=dataSets)) {
+  ces <- dataSets[[kk]];
 
-res <- lapply(dataSets, function(ces) {
   verbose && enter(verbose, "Chip-effect set ", getName(ces));
 
   verbose && cat(verbose, "Chip-effect set:");
@@ -73,8 +72,8 @@ res <- lapply(dataSets, function(ces) {
 
   verbose && exit(verbose);
 
-  cesFLN;
-})
+  res[[kk]] <- cesFLN;
+}
 verbose && exit(verbose);
 
 

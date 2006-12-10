@@ -41,8 +41,8 @@ setConstructorS3("UnitGroupsModel", function(dataSet=NULL, tags="", ...) {
   }
 
   this <- extend(Object(), "UnitGroupsModel",
-    .tags = NULL,
     dataSet = dataSet,
+    .tags = NULL,
     parSet = NULL
   );
 

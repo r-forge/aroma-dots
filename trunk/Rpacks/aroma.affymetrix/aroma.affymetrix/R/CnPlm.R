@@ -21,16 +21,16 @@
 # }
 #
 # \details{
-#   Models implementing this copy-number PLM, provides either allele-specific
-#   or total copy-number estimates.  
+#   Models implementing this copy-number PLM, provides either 
+#   allele-specific or total copy-number estimates.  
 #   For allele-specific CNs the underlying @see "SnpPlm" model is fitted as
 #   is, i.e. for each allele seperately with or without the strands first
 #   being merged.
 #
 #   For total CNs the probe signals for the two alleles are combined 
-#   (=summed) on the intensity scale before fitting underlying 
-#   @see "SnpPlm" model, again with or without the strands first being
-#   merged.
+#   (=summed; not averaged) on the intensity scale before fitting 
+#   underlying @see "SnpPlm" model, again with or without the strands 
+#   first being merged.
 # }
 #
 # \section{Requirments}{
@@ -84,15 +84,27 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
       if (ngroups == 2) {
         yA <- .subset2(.subset2(groups, 1), 1);
         yB <- .subset2(.subset2(groups, 2), 1);
-        list(fitfcn(yA + yB));
+        y <- yA + yB;
+        if (length(dim(y)) == 3) {
+          y <- y[1,,] + y[2,,];
+        }
+        list(fitfcn(y));
       } else if (ngroups == 4) {
         yA1 <- .subset2(.subset2(groups, 1), 1);
         yB1 <- .subset2(.subset2(groups, 2), 1);
         yA2 <- .subset2(.subset2(groups, 3), 1);
         yB2 <- .subset2(.subset2(groups, 4), 1);
+        y1 <- yA1 + yB1;
+        y2 <- yA2 + yB2;
+        if (length(dim(y1)) == 3) {
+          y1 <- y1[1,,] + y1[2,,];
+        }
+        if (length(dim(y2)) == 3) {
+          y2 <- y2[1,,] + y2[2,,];
+        }
         list(
-          fitfcn(yA1 + yB1), 
-          fitfcn(yA2 + yB2)
+          fitfcn(y1), 
+          fitfcn(y2)
         );
       } else {
         # For all other cases, fit each group individually
