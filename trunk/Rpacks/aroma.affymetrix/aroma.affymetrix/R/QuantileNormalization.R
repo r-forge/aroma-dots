@@ -42,10 +42,10 @@
 #*/###########################################################################
 setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate) {
   extend(ProbePreprocessing(...), "QuantileNormalization", 
-    subsetToUpdate = subsetToUpdate,
-    typesToUpdate = typesToUpdate,
-    subsetToAvg = subsetToAvg,
-    typesToAvg = typesToAvg,
+    .subsetToUpdate = subsetToUpdate,
+    .typesToUpdate = typesToUpdate,
+    .subsetToAvg = subsetToAvg,
+    .typesToAvg = typesToAvg,
     .targetDistribution = targetDistribution
   )
 })
@@ -57,10 +57,10 @@ setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
 
   # Get parameters of this class
   params2 <- list(
-    subsetToUpdate = this$subsetToUpdate,
-    typesToUpdate = this$typesToUpdate,
-    subsetToAvg = this$subsetToAvg,
-    typesToAvg = this$typesToAvg,
+    subsetToUpdate = this$.subsetToUpdate,
+    typesToUpdate = this$.typesToUpdate,
+    subsetToAvg = this$.subsetToAvg,
+    typesToAvg = this$.typesToAvg,
     .targetDistribution = this$.targetDistribution
   );
 
@@ -85,7 +85,7 @@ setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ...
 
   verbose && enter(verbose, "Getting target distribution");
 
-  yTarget <- this$.params$.targetDistribution;
+  yTarget <- this$.targetDistribution;
   if (force || is.null(yTarget)) {
     pathname <- getTargetDistributionPathname(this, verbose=less(verbose));
     verbose && print(verbose, pathname);
@@ -100,7 +100,7 @@ setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ...
       verbose && exit(verbose);
     }
     attr(yTarget, "identifier") <- getTargetDistributionIdentifier(this);
-    this$.params$.targetDistribution <- yTarget;
+    this$.targetDistribution <- yTarget;
   } else {
     verbose && cat(verbose, "Was cached in-memory.");
   }

@@ -39,7 +39,7 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
   if (!is.null(dataSet)) {
     if (!inherits(dataSet, "CnChipEffectSet"))
       throw("Argument 'dataSet' is not an CnChipEffectSet object: ", class(dataSet));
-g
+
     if (dataSet$combineAlleles != TRUE) {
       throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
     }
@@ -56,7 +56,7 @@ g
   }
 
   extend(ChipEffectPreprocessing(dataSet, ...), "FragmentLengthNormalization", 
-    subsetToFit = subsetToFit,
+    .subsetToFit = subsetToFit,
     .targetFunction = targetFunction
   )
 })
@@ -69,7 +69,7 @@ setMethodS3("getParameters", "FragmentLengthNormalization", function(this, ...) 
 
   # Get parameters of this class
   params2 <- list(
-    subsetToFit = this$subsetToFit,
+    subsetToFit = this$.subsetToFit,
     .targetFunction = this$.targetFunction
   );
 
@@ -81,8 +81,8 @@ setMethodS3("getParameters", "FragmentLengthNormalization", function(this, ...) 
 
 
 setMethodS3("getCdf", "FragmentLengthNormalization", function(this, ...) {
-  inputSet <- getInputSet(this);
-  getCdf(inputSet);
+  inputDataSet <- getInputDataSet(this);
+  getCdf(inputDataSet);
 })
 
 
@@ -103,7 +103,7 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   units <- units[keep];
 
   # Fit to a subset of the units?
-  subsetToFit <- this$subsetToFit;
+  subsetToFit <- this$.subsetToFit;
   if (!is.null(subsetToFit)) {
     # A fraction subset?
     if (length(subsetToFit) == 1 && 0 < subsetToFit && subsetToFit < 1) {
@@ -150,7 +150,7 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
     verbose && enter(verbose, "Estimating target prediction function");
 
     # Get target set
-    ces <- getInputSet(this);
+    ces <- getInputDataSet(this);
     ceR <- getAverageFile(ces, verbose=less(verbose));
 
     # Get units to fit
@@ -253,7 +253,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get input dataset
-  ces <- getInputSet(this);
+  ces <- getInputDataSet(this);
 
   # Get SNP units
   cdf <- getCdf(ces);

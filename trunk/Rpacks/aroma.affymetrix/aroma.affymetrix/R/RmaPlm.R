@@ -149,7 +149,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     }
 
     # Log-additive model
-    y <- log(y, base=2)
+    y <- log(y, base=2);
 
     # Fit model using affyPLM code
     fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE="affyPLM");
