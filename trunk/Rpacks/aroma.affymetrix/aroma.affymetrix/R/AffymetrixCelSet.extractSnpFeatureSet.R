@@ -53,35 +53,28 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
 
   verbose && enter(verbose, "Extracting SnpFeatureSet from data set");
   cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-
-  verbose && printf(verbose, "Chip type: %s\n", chipType);
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Assert that the corresponding PD package is installed, e.g.
   # pdmapping50kxba240. 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Source: http://www.biostat.jhsph.edu/~bcarvalh/old/research.html
-  cleanChipType <- gsub("cdf$", "", cleancdfname(chipType));
-  pdName <- sprintf("pd%s", cleanChipType);
-  verbose && enter(verbose, "Trying required probe-definition package: ", pdName);
-  pkg <- packageDescription(pdName);
-  if (identical(pkg, NA))
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Loading platform-design package");
+  pd <- PlatformDesign(cdf);
+  pdName <- getPackageName(pd);
+  verbose && cat(verbose, "Package: ", pdName);
+  if (!isInstalled(pd))
     throw("Probe-design package required by 'oligo' not installed: ", pdName);
+  # Load platform-design package (a 100K chip requires ~700MB RAM).
+  load(pd);
   verbose && exit(verbose);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Load PD environment
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # For a 100K chip this loads up ~700Mb of the memory.
-  require(pdName, character.only=TRUE);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Read data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Reading SnpFeatureSet");
   # Work around for bug in 'oligo' not accepting filenames with a path.
+  # Note that this requires that all CEL files are in the same directory!
   opwd <- setwd(getPath(this));
   on.exit(setwd(opwd), add=TRUE);
   filenames <- basename(getPathnames(this));
@@ -97,6 +90,8 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
 
 ############################################################################
 # HISTORY:
+# 2006-12-11
+# o extractSnpFeatureSet() is now using of the PlatformDesign class.
 # 2006-10-02
 # o Wow, after quite a few hours troubleshooting on different systems it
 #   turns out that read.celfiles() of oligo (v 0.99.20) does not work with

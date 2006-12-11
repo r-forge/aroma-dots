@@ -60,7 +60,7 @@ setMethodS3("getOligoToCelMap", "AffymetrixCdfFile", function(this, invertMap=FA
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Calculate the map");
-  map <- nbrOfColumns(this)*y+x+1;
+  map <- as.integer(nbrOfColumns(this)*y+x+1);
   rm(x, y);
   if (!invertMap) {
     # This negation is correct. /HB 2006-12-07

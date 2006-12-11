@@ -312,9 +312,113 @@ setMethodS3("getFeatureInfo", "PlatformDesign", function(this, fields, subset=NU
   env;
 })
 
+setMethodS3("getCellIndices", "PlatformDesign", function(this, ...) {
+  # The feature index as indexed by the CDF. Totally redundant with (X,Y).
+  as.integer(getFeatureInfo(this, "order_index", ...));
+})
+
+setMethodS3("getReadMap", "PlatformDesign", function(this, ...) {
+  map <- this$.readMap;
+  if (is.null(map)) {
+    map <- affxparser::invertMap(getCellIndices(this));
+    this$.readMap <- map;
+  }
+  map;
+})
+
+setMethodS3("getWriteMap", "PlatformDesign", function(this, ...) {
+  affxparser::invertMap(getReadMap(this));
+})
+
+setMethodS3("getX", "PlatformDesign", function(this, ...) {
+  as.integer(getFeatureInfo(this, "X", ...)-1);
+})
+
+setMethodS3("getY", "PlatformDesign", function(this, ...) {
+  as.integer(getFeatureInfo(this, "Y", ...)-1);
+})
+
+setMethodS3("getOligoSequences", "PlatformDesign", function(this, ...) {
+  getFeatureInfo(this, "sequence", ...);
+})
+
+setMethodS3("getAlleleAB", "PlatformDesign", function(this, ...) {
+  getFeatureInfo(this, "alleleAB", ...);
+})
+
+setMethodS3("getUnitNames", "PlatformDesign", function(this, ...) {
+  getFeatureInfo(this, "feature_set_name", ...);
+})
+
+setMethodS3("isPm", "PlatformDesign", function(this, ...) {
+  (getFeatureInfo(this, "feature_type", ...) == "PM");
+})
+
+
+setMethodS3("validate", "PlatformDesign", function(this, subset=1/1000, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the units to be validated
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cdf <- getCdf(this);
+  # Currently, AFFX- are non-valid /HB 2006-12-11
+  snpUnits <- indexOf(cdf, pattern="^SNP");
+  if (is.null(subset)) {
+    units <- snpUnits;
+  } else if (length(subset) == 1 && subset < 1) {
+    subset <- seq(from=1, to=length(snpUnits), length=subset*length(snpUnits));
+    subset <- as.integer(subset);
+    units <- snpUnits[subset];
+  } else {
+    units <- subset;
+  }
+
+  # Get the CDF-to-PD cell index map
+  map <- getReadMap(this);
+
+  verbose && enter(verbose, "Validating ", class(this)[1]);
+  verbose && print(verbose, pd);
+  verbose && cat(verbose, "Number of units: ", length(units));
+
+  verbose && enter(verbose, "Validating cell indices");
+  cellsA <- unlist(getCellIndices(cdf, units=units), use.names=FALSE);
+  subset <- map[cellsA];
+  cellsO <- getCellIndices(this, subset=subset);
+  stopifnot(identical(cellsA, cellsO));
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Validating unit names");
+  unitNamesA <- getUnitNames(cdf, units=units);
+  unitNamesO <- getUnitNames(this, subset=subset);
+  unitNamesO <- as.character(unique(unitNamesO));
+  stopifnot(identical(unitNamesA, unitNamesO));
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Validating isPm()");
+  isPmA <- unlist(isPm(cdf, units=units), use.names=FALSE);
+  isPmO <- isPm(this, subset=subset);
+  stopifnot(identical(isPmA, isPmO));
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  invisible(units);
+})
+
 
 ############################################################################
 # HISTORY:
+# 2006-12-11
+# o Added validate() to validate consistency between PD package and CDF.
 # 2006-12-07
 # o getFeatureInfo() now cache to file.  The feature info object is the
 #   definitely the biggest object and we rarely need all in memory at the

@@ -316,8 +316,8 @@ setMethodS3("process", "PcrProbeCalibration", function(this, ..., force=FALSE, v
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   pmIdxs <- which(getFeatureInfo(pd, "feature_type") == "PM");
 
-  # Remap oligo indices to CDF indices
-  map <- getOligoToCelMap(cdf, invertMap=TRUE, verbose=less(verbose));
+  # Remap oligo indices as CDF indices
+  map <- getWriteMap(pd);
   pmIdxs <- map[pmIdxs];
   rm(map);
 

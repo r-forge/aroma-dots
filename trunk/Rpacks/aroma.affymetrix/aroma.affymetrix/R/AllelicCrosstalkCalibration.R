@@ -9,12 +9,15 @@
 #  This class represents a calibration function that transforms the 
 #  probe-level signals such that the signals from the two alleles are 
 #  orthogonal.
+#  The method fits and calibrates PM signals only.  MM signals will not 
+#  affect the model fitting and are unaffected.
 # }
 # 
 # @synopsis 
 #
 # \arguments{
-#   \item{...}{Arguments passed to the constructor of @see "ProbePreprocessing".}
+#   \item{...}{Arguments passed to the constructor of 
+#     @see "ProbePreprocessing".}
 # }
 #
 # \section{Fields and Methods}{

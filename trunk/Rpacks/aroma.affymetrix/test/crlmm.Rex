@@ -1,71 +1,71 @@
 library(oligo);
 library(aroma.affymetrix);
 source("init.R");
+source("ui.R");
+
+moreUnits <- 30;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- "plmData";
-path <- sapply(paths, FUN=filePath, expandLinks="any");
-pattern <- ",(MBEI|RMA),[+]-";
-dataSets <- list.files(pattern=pattern, path=path, full.names=TRUE);
-ans <- menu(choices=dataSets, title="Select data set to normalize")
-dataSet <- dataSets[ans];
-
-path <- dataSet;
-pattern <- "^(Mapping|BI_SNP)"
-chipTypes <- list.files(pattern=pattern, path=path);
-
-cat("----------------------------------------------------\n");
-cat("Data set: ", dataSet, "\n", sep="");
-cat("Path: ", path, "\n", sep="");
-cat("Chip types: ", paste(chipTypes, collapse=", "), "\n", sep="");
-cat("\n");
-
-if (length(chipTypes) > 1) {
-  ans <- menu(choices=chipTypes, title="Select chip types to be considered (0 for all)");
-  if (ans > 0)
-    chipTypes <- chipTypes[ans];
+paths <- "probeData";
+pattern <- "^[a-zA-Z0-9_-]*$";
+pattern <- NULL;
+paths <- "raw";
+pattern <- "^[^,]*$";
+pattern <- "^[a-zA-Z0-9_-]*$";
+if (exists("dataSets", mode="list")) {
+  ds <- dataSets[[1]];
+  name <- paste(getName(ds), paste(getTags(ds), collapse=","), sep=",");
+  ans <- menu(c("<new data sets>", name), title="Select data set(s) to process:");
+  rm(ds);
+  if (ans == 1)
+    dataSets <- selectDataSets(paths, pattern=pattern);
+} else {
+  dataSets <- selectDataSets(paths, pattern=pattern);
 }
 
-for (chipType in chipTypes) {
-  path <- filePath(dataSet, chipType, expandLinks="any");
-  if (!isDirectory(path))
-    next;
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Process
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+verbose && enter(verbose, "Processing ", length(dataSets), " data sets");
 
-  verbose && enter(verbose, "Defining SNP chip-effect set");
-  ces <- SnpChipEffectSet$fromFiles(path);
-  print(ces);
+res <- list()
+for (kk in seq(along=dataSets)) {
+  ds <- dataSets[[kk]];
+  verbose && enter(verbose, sprintf("Data set %d", kk));
+  verbose && print(verbose, ds);
+
+  cdf <- getCdf(ds);
+  pd <- PlatformDesign(cdf);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Calibration of probe signals for PCR effects
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  sc <- PcrProbeCalibration(ds);
+  verbose && print(verbose, sc);
+  dsC <- process(sc, verbose=verbose);
+  verbose && print(verbose, dsC);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Quantile normalization of PMs toward HapMap references
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  hapmapQs <- getReferenceQuantiles(pd);
+  norm <- QuantileNormalization(dsC, typesToUpdate="pm", 
+         targetDistribution=hapmapQs, tags=c("*", "HapMap"));
+  verbose && print(verbose, norm);
+  dsN <- process(norm, verbose=verbose);
+  verbose && print(verbose, dsN);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fit RMA
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  plm <- RmaSnpPlm(dsN, mergeStrands=FALSE);
+  verbose && print(verbose, plm);
+  units <- fit(plm, moreUnits=moreUnits, verbose=verbose);
   verbose && exit(verbose);
 
-  verbose && enter(verbose, "Fitting CRLMM");
-  fit <- fitCrlmm(ces, verbose=verbose);
-  verbose && exit(verbose);
-
-  next;
-
-  verbose && enter(verbose, "Fit CRLMM");
-  allChromosomes <- c(1:22, "X");
-  for (chr in allChromosomes) {
-    verbose && enter(verbose, "Chromosome ", chr);
-
-    verbose && enter(verbose, "Retrieving genome information");
-    cdf <- getCdf(model);
-    gi <- getGenomeInformation(cdf);
-    units <- getUnitIndices(gi, chromosome=chr);
-    nunits <- length(units);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
-    uDone <- fit(model, units=units, moreUnits=1, verbose=verbose);
-    nDone <- length(uDone);
-  
-    verbose && printf(verbose, "Fitted %d SNPs\n", nDone);
-    verbose && exit(verbose);
-
-    verbose && exit(verbose);
-  } # for (chr ...) 
-
-  verbose && exit(verbose);
 }
+
+verbose && exit(verbose);
 

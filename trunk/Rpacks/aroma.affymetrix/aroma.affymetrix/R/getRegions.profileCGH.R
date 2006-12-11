@@ -15,6 +15,7 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
   }
 
   pv <- this$profileValues;
+  stdvs <- this$SigmaC$Value;
 
   hasUnits <- (!is.null(pv$chipType) && !is.null(pv$units));
   if (hasUnits) {
@@ -43,7 +44,7 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
   # Columns
   colClasses <- c(Chromosome="character", start="integer", 
                    stop="integer", length="integer", nbrOfSnps="integer", 
-                                                      Smoothing="double");
+                                       Smoothing="double", SNRtoZero="double");
   if (hasUnits) {
     colClasses <- c(colClasses, firstSnp="character", lastSnp="character");
     if (!is.null(rsIds))
@@ -76,6 +77,9 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
 
     # Smoothing
     df[rr,"Smoothing"] <- pv$Smoothing[idx[1]];
+
+    # Signal-to-noise ratio
+    df[rr,"SNRtoZero"] <- abs(df[rr,"Smoothing"]) / stdvs;
 
     # Gain, normal, or loss?
 #    levels <- c("loss", "normal", "gain");
@@ -122,6 +126,8 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
 
 ##############################################################################
 # HISTORY:
+# 2006-12-11
+# o Added SNR column.
 # 2006-11-22
 # o Created from writeRegions.profileCGH.R from 2006-10-31.
 ##############################################################################
