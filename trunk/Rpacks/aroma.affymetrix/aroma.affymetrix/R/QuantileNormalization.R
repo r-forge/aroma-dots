@@ -52,8 +52,10 @@ setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typ
 
 
 setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
+str(11111)
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);
+str(params)
 
   # Get parameters of this class
   params2 <- list(
@@ -63,10 +65,13 @@ setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
     typesToAvg = this$.typesToAvg,
     .targetDistribution = this$.targetDistribution
   );
+str(params2)
 
   # Append the two sets
   params <- c(params, params2);
+str(params)
 
+str(222222222);
   params;
 })
 
@@ -102,7 +107,7 @@ setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ...
     attr(yTarget, "identifier") <- getTargetDistributionIdentifier(this);
     this$.targetDistribution <- yTarget;
   } else {
-    verbose && cat(verbose, "Was cached in-memory.");
+    verbose && cat(verbose, "Was specified or cached in-memory.");
   }
 
   verbose && exit(verbose);

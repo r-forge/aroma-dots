@@ -68,6 +68,7 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
 setMethodS3("as.character", "AffymetrixCelFile", function(this, ...) {
   s <- NextMethod("as.character", ...);
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
+  s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));
   class(s) <- "GenericSummary";
   s;
 })
@@ -334,6 +335,8 @@ setMethodS3("getHeaderV3", "AffymetrixCelFile", function(this, ...) {
 
   # Parse it
   header <- unlist(strsplit(header, split="\n"));
+  header <- trim(header);
+  header <- header[nchar(header) > 0];
   header <- strsplit(header, split="=");
   names <- sapply(header, FUN=function(s) s[1]);
   header <- lapply(header, FUN=function(s) s[-1]);
@@ -961,6 +964,11 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-12-11
+# o Now the timestamp is also reported for singel CEL files.
+# o BUG FIX: getHeaderV3() would throw an error if there was an empty V3 
+#   header fields.  This was the reason why getTimestamp() gave an error
+#   on some 100K chips.
 # 2006-12-01
 # o Added getTimestamp().
 # 2006-11-28

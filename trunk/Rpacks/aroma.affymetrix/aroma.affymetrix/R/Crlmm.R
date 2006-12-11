@@ -326,6 +326,69 @@ setMethodS3("getCdf", "Crlmm", function(this, ...) {
 })
 
 
+
+
+###########################################################################/**
+# @RdocMethod classifyAsXorXX
+#
+# @title "Classifies the samples to have one or two copies of chromosome X"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @vector of length N, where N is the number of samples.
+# }
+#
+# \details{
+#  This method is adopted from the internal \code{snpGenderCall()} function
+#  in the \pkg{oligo} package.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("classifyAsXorXX", "Crlmm", function(this, ...) {
+  # Setup
+  ds <- getInputDataSet(this);
+  cdf <- getCdf(ds);
+  gi <- getGenomeInformation(cdf);
+
+  # Get the median SNP signal across all chromosomes and arrays
+  A <- getA(object);  # (SNP, sample, strand)
+  medA <- median(A, na.rm=TRUE);
+
+  # Get the median chromosome X signal for each array
+  xUnits <- getUnitsOnChromosome(gi, "X");
+  xUnits <- getChrXIndex(object);
+  A <- A[xUnits,,,drop=FALSE];
+  a <- apply(A, MARGIN=2, FUN=median, na.rm=TRUE);
+
+  # Cluster by K-mean algorithm
+  minA <- min(a, na.rm=TRUE);
+  fit <- kmeans(a, centers=c(minA, medA));
+
+  # Identify class
+  class <- as.integer(kfit$cluster==1) + 1;
+  class <- factor(c("XX","X")[class]);
+
+  # Return
+  class;
+}, protected=TRUE)
+
+
 ###########################################################################/**
 # @RdocMethod fit
 #
@@ -367,17 +430,6 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(oligo) || throw("Package 'oligo' not loaded.");
 
-  # Assert that the PD enviroment package for the CDF is installed
-  cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell$", "", chipType);
-  pkgName <- sprintf("pd%s", cleancdfname(chipType, add=FALSE));
-  if (!pkgName %in% .packages(all.available=TRUE)) {
-    throw("Platform Design Environment (PDEnv) package '", 
-                                              pkgName, "' not available.");
-  }
-
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Default settings
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -399,6 +451,16 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
 
   verbose && enter(verbose, "Fitting CRLMM");
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for platform-design package
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Assert that the PD enviroment package for the CDF is installed
+  cdf <- getCdf(this);
+  pd <- PlatformDesign(cdf);
+  if (!isInstalled(pd)) {
+    throw("Platform-design package not installed: ", getPackageName(pd));
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract chip effects as a SnpQSet object
