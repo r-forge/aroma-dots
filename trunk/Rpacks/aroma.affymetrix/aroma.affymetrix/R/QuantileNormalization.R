@@ -52,10 +52,8 @@ setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typ
 
 
 setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
-str(11111)
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);
-str(params)
 
   # Get parameters of this class
   params2 <- list(
@@ -65,13 +63,10 @@ str(params)
     typesToAvg = this$.typesToAvg,
     .targetDistribution = this$.targetDistribution
   );
-str(params2)
 
   # Append the two sets
   params <- c(params, params2);
-str(params)
 
-str(222222222);
   params;
 })
 

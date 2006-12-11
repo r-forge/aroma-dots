@@ -37,7 +37,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
+setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., .asOligo=FALSE, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
   # Load aroma.light::normalizeQuantile()
   require(aroma.light) || throw("Package aroma.light not loaded."); 
 
@@ -98,7 +98,15 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.p
 
   # Normalize intensities
   verbose && enter(verbose, "Normalizing to empirical target distribution");
-  x[subsetToUpdate] <- normalizeQuantile(x[subsetToUpdate], xTarget=xTarget);
+  if (.asOligo) {
+    verbose && enter(verbose, "Immitating the oligo package");
+str(x[subsetToUpdate]);
+str(xTarget);
+    stop("Not supported yet, because number of PMs in CDF and in oligo differ");
+    x[subsetToUpdate] <- oligo::normalizeToSample(as.matrix(x[subsetToUpdate]), xTarget);
+  } else {
+    x[subsetToUpdate] <- normalizeQuantile(x[subsetToUpdate], xTarget=xTarget);
+  }
   rm(subsetToUpdate);
   verbose && exit(verbose);
 
@@ -115,12 +123,12 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.p
   verbose && exit(verbose);
 
   # Return new normalized data file object
+  res <- fromFile(this, pathname);
 
   # CDF inheritance
-  res <- fromFile(this, pathname);
   setCdf(res, cdf);
-  return(res);
 
+  res;
 })
 
 
@@ -128,7 +136,7 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.p
 ############################################################################
 # HISTORY:
 # 2006-10-06
-# o make sure cdf association is inherited
+# o Made sure cdf association is inherited. /KS
 # 2006-09-14
 # o Updated to the new package API.
 # 2006-08-25
