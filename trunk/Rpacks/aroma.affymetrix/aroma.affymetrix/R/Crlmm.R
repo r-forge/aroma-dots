@@ -104,8 +104,7 @@ setMethodS3("as.character", "Crlmm", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getRootPath", "Crlmm", function(this, ...) {
-  # Default root path
-  paste("model", class(this)[1], sep="");
+  "crlmmData";
 })
 
 
@@ -249,7 +248,7 @@ setMethodS3("getPath", "Crlmm", function(this, ...) {
   ces <- getChipEffects(this);
   cdf <- getCdf(ces);
   chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell$", "", chipType);
+  chipType <- gsub("[,-]monocell$", "", chipType);
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
@@ -401,18 +400,12 @@ setMethodS3("classifyAsXorXX", "Crlmm", function(this, ...) {
 # @synopsis
 #
 # \arguments{
-#   \item{recalibrate}{If @TRUE, a second round of the fitting is done.}
-#   \item{...}{Additional arguments.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{...}{Not used.}
 # }
 #
 # \value{
 #  Returns a @see "oligo::SnpCallSetPlus-class" object.
-# }
-#
-# \details{
-#   Simple benchmarking on shadowfax: 
-#   For 90 CEPH Xba chips it takes ~90 minutes, i.e. 60 s/array.
 # }
 #
 # @author
@@ -424,17 +417,20 @@ setMethodS3("classifyAsXorXX", "Crlmm", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE) {
+setMethodS3("fit", "Crlmm", function(this, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Requirements
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(oligo) || throw("Package 'oligo' not loaded.");
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Default settings
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  returnCorrectedM <- TRUE;
+  recalibrate <- TRUE;
   returnParams <- TRUE;
+
+#  returnParams <- FALSE;
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -451,16 +447,47 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
 
   verbose && enter(verbose, "Fitting CRLMM");
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get output path
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  path <- getPath(this);
+  mkdirs(path);
+
+  paramTags <- NULL;
+  if (recalibrate) {
+    paramTags <- c(paramTags, "recalib");
+  }
+  paramTags <- paste(paramTags, collapse=",");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check if already fitted
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  filename <- sprintf("%s,crlmm%s.xdr", getFullName(this), paramTags);
+  pathname <- filePath(path, filename);
+  if (isFile(pathname)) {
+    verbose && cat(verbose, "Already fitted");
+    verbose && enter(verbose, "Loading results from file");
+    verbose && cat(verbose, "Pathname: ", pathname);
+    fit <- loadObject(pathname);
+    verbose && exit(verbose);
+    verbose && exit(verbose);
+    return(fit);
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for platform-design package
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Assert that the PD enviroment package for the CDF is installed
   cdf <- getCdf(this);
-  pd <- PlatformDesign(cdf);
+  chipType <- getChipType(cdf);
+  chipType <- gsub("[,-]monocell", "", chipType);
+  cdfMain <- AffymetrixCdfFile$fromChipType(chipType);
+  pd <- PlatformDesign(cdfMain);
   if (!isInstalled(pd)) {
     throw("Platform-design package not installed: ", getPackageName(pd));
   }
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract chip effects as a SnpQSet object
@@ -468,44 +495,58 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   verbose && enter(verbose, "Extracting chip effects as a SnpQSet object");
   ces <- getChipEffects(this);
   qs <- extractSnpQSet(ces, transform=this$transform, verbose=less(verbose));
+  snpNames <- featureNames(qs);
+  units <- indexOf(cdf, names=snpNames);  # The units according to the CDF
+  verbose && print(verbose, qs);
   verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Dimension of data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  nbrOfSamples <- dim(qs)[2];
+  nbrOfSnps <- length(snpNames);
+  nbrOfSamples <- nbrOfArrays(ces);
   verbose && printf(verbose, "Number of SNPs: %d\n", nbrOfSnps);
   verbose && printf(verbose, "Number of samples: %d\n", nbrOfSamples);
 
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get gender
+  # Identify units on chromosome X
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Identifying units on chromosome X");
+
   # getChrXIndex() is robust against SNP reordering /HB 2006-10-03a
-  xIndex <- oligo::getChrXIndex(qs);  # As indexed in the SnpQSet!
+  annot <- getAnnotations(pd);
+  annot <- annot[match(snpNames, annot$SNP),];
+  xIndex <- which(annot$Chromosome == "chrX");
 
   # Alternative not requiring PD environment annotations.
   gi <- getGenomeInformation(cdf);
   xUnits <- getUnitsOnChromosome(gi, "X");         # As index by the CDF.
   xUnitNames <- getUnitNames(cdf, units=xUnits);
-  xIndex2 <- match(xUnitNames, featureNames(qs));  # As indexed by the SnpQSet.
+  xIndex2 <- which(snpNames %in% xUnitNames);
   stopifnot(identical(xIndex2, xIndex));
+  verbose && str(verbose, xIndex);
+  verbose && exit(verbose);
 
-  
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get gender
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving genders");
   # Got gender information?
   if(is.null(qs$gender)){
-    verbose && enter(verbose, "Predicting genders from data");
+    verbose && enter(verbose, "Inferring gender from chromosome X signals");
     # snpGenderCall() is robust against SNP reordering /HB 2006-10-03
-    qs$gender <- oligo::snpGenderCall(qs, xIndex=xIndex);  # Uses 'oligo'
+    qs$gender <- oligo::snpGenderCall(qs);  # Uses 'oligo'
     verbose && exit(verbose);
   }
   maleIndex <- (qs$gender == "male");
   malesStr <- paste(which(maleIndex), " (", getNames(ces)[maleIndex], ")", sep="");
   malesStr <- paste(malesStr, collapse=", ");
-  verbose && cat(verbose, "Male (=expected one copy of X) samples: ", malesStr);
+  verbose && cat(verbose, "Samples classified as males (=one copy of X): ", malesStr);
   verbose && exit(verbose);
 
 
@@ -514,100 +555,103 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving M corrections");
   # It *looks like* this is robust against SNP reordering /HB 2006-10-03
-  key <- list(method="fitAffySnpMixture", path=getPath(ces), 
-                                         sampleNames=getSampleNames(ces));
-  correction <- loadCache(key=key);
-  if (is.null(correction)) {
-    verbose && enter(verbose, "Calculating M corrections using fitAffySnpMixture()");
-    correction <- oligo::fitAffySnpMixture(qs, xIndex=xIndex, verbose=verbose2);
+  filename <- sprintf("logRatioCorrections.xdr");
+  pathname <- filePath(path, filename);
+  if (isFile(pathname)) {
+    verbose && enter(verbose, "Correction already available on file");
+    verbose && cat(verbose, "Pathname: ", pathname);
+    correction <- loadObject(pathname);
     verbose && exit(verbose);
-    comment <- paste(unlist(key, use.names=FALSE), collapse=";");
-    saveCache(key=key, correction, comment=comment);
+  } else {
+    verbose && enter(verbose, "Calculating log-ratio corrections using fitAffySnpMixture()");
+    correction <- oligo::fitAffySnpMixture(qs, verbose=verbose2);
+    verbose && exit(verbose);
+    verbose && enter(verbose, "Saving corrections to file");
+    verbose && cat(verbose, "Pathname: ", pathname);
+    saveObject(correction, file=pathname);
+    verbose && exit(verbose);
   }
-  verbose && str(verbose, correction);
   verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load annotation data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cleanCdfName <- annotation(qs);
-  pkgName <- sprintf("pd%s", cleanCdfName);
-  if (identical(packageDescription(pkgName), NA))
-    throw("Package not installed: ", pkgName);
-
-  verbose && enter(verbose, "Loading a priori CRLMM parameters");
-  verbose && cat(verbose, "Source package: ", pkgName);
-  filename <- sprintf("%sCrlmmInfo.rda", cleanCdfName);
-  pathname <- system.file(file.path("data", filename), package=pkgName);
-  verbose && cat(verbose, "Pathname: ", pathname);
-  verbose && printf(verbose, "File size: %.2fMB\n", 
-                                           file.info(pathname)$size/1024^2);
-  vars <- load(pathname);
-  verbose && cat(verbose, "Loaded variable(s): ", paste(vars, collapse=", "));
-
-  # Get CRLMM parameters enviroment
-  var <- sprintf("%sCrlmm", cleanCdfName);
-  verbose && enter(verbose, "Getting variable '", var, "'");
-  if (!var %in% vars) {
-    throw("Internal error. Variable '", var, "' was not among the loaded: ",
-          paste(vars, collapse=", "));
-  }
-  env <- get(var, mode="environment");
+  verbose && enter(verbose, "Loading CRLMM parameters");
+  verbose && cat(verbose, "Package: ", getPackageName(pd));
+  env <- getCrlmmInfo(pd);
   verbose && exit(verbose);
-  rm(list=vars); # Not needed anymore
-  verbose && exit(verbose);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the indices of SNPs that are not called by the HapMap project 
   # or that were poorly called.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Identifying poor or missing HapMap calls");
-  snpNames <- featureNames(qs);
-  verbose && cat(verbose, "Feature names:");
-  verbose && str(verbose, snpNames);
-  value <- !env$hapmapCallIndex;
-  poorCalls <- value[match(snpNames, names(value))];
-  value <- env$badCallIndex;
-  poorCalls <- poorCalls | value[match(snpNames, names(value))];
-  rm(value);
+  verbose && enter(verbose, "Identifying poor (or missing) HapMap calls according to the platform-design package");
+  poorCalls <- (!env$hapmapCallIndex | env$badCallIndex);
+  poorCalls <- poorCalls[match(snpNames, names(env$badRegions))];
   poorCalls <- which(poorCalls);
   verbose && cat(verbose, "Among the ", nbrOfSnps, " SNPs, there are ", length(poorCalls), " SNPs that were not called by the HapMap project or were poorly called by it.");
+  verbose && cat(verbose, "Feature names:");
+  verbose && str(verbose, snpNames[poorCalls]);
   verbose && exit(verbose);
 
   # Get rid of large enviroment again
   priors <- env$priors;
   params <- env$params;
-  rm(env); gc(); # Not needed anymore
+  rm(env); # Not needed anymore
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get initial calls for non-HapMap calls
+  # Get initial calls for poor HapMap calls
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Getting initial calls for non-HapMap calls");
-  myCalls <- matrix(NA, nrow=nbrOfSnps, ncol=nbrOfSamples);
-  myCalls[poorCalls,] <- oligo::getInitialAffySnpCalls(correction, 
+  verbose && enter(verbose, "Getting initial calls for the poor HapMap calls from the corrected M values");
+  calls <- matrix(NA, nrow=nbrOfSnps, ncol=nbrOfSamples);
+  calls[poorCalls,] <- oligo::getInitialAffySnpCalls(correction, 
                                        subset=poorCalls, verbose=verbose2);
   verbose && exit(verbose);
-  gc();
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get SNP genotype region parameters
+  # Get SNP genotype region parameters for poor calls
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Getting SNP genotype region parameters");
-  rparams <- oligo::getAffySnpGenotypeRegionParams(qs, myCalls,
+  verbose && enter(verbose, "Retrieving initial genotype regions for poor calls");
+  # Check for already recalibrated genotype regions
+  filename <- sprintf("genotypeRegions,poorCalls.xdr");
+  pathname <- filePath(path, filename);
+  if (isFile(pathname)) {
+    rm(calls); # Not needed anymore
+    verbose && enter(verbose, "Regions available on file");
+    verbose && cat(verbose, "Pathname: ", pathname);
+    regions <- loadObject(pathname);
+    verbose && exit(verbose);
+  } else {
+    verbose && enter(verbose, "Calculating region parameters");
+
+    verbose && enter(verbose, "Estimate regions from corrected ratios and initial calls");
+    regions <- oligo::getAffySnpGenotypeRegionParams(qs, calls,
                         correction$fs, subset=poorCalls, verbose=verbose2);
-  # Not needed anymore
-  rm(myCalls); gc();
+    rm(calls); # Not needed anymore
+    verbose && exit(verbose);
+
+    # Shrink genotype regions toward the priors
+    verbose && enter(verbose, "Shrinking regions toward the priors");
+    regions <- oligo::updateAffySnpParams(regions, priors, verbose=verbose2);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Saving regions to file");
+    verbose && cat(verbose, "Pathname: ", pathname);
+    saveObject(regions, file=pathname);
+    verbose && exit(verbose);
+
+    verbose && exit(verbose);
+  }
   verbose && exit(verbose);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Shrink genotype regions toward the priors
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Shrinking genotype regions toward the priors");
-  rparams <- oligo::updateAffySnpParams(rparams, priors, verbose=verbose2);
-  params <- oligo::replaceAffySnpParams(params, rparams, subset=poorCalls);
+
+  verbose && enter(verbose, "Update SNP parameters for poor calls using initial genotype regions");
+  params <- oligo::replaceAffySnpParams(params, regions, subset=poorCalls);
+  rm(poorCalls);
   verbose && exit(verbose);
-  gc();
+
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calculate call distances
@@ -619,24 +663,26 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   myDist <- oligo::getAffySnpDistance(qs, params, correction$fs);
   verbose && exit(verbose);
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Update the calls from the new distances
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Updating the calls from the new distances");
   # This takes time: This is worth optimizing.
-  res <- list(myDist=myDist, xIndex=xIndex, maleIndex=maleIndex);
-  saveCache(key=list("yo"), res);
-  myCalls <- oligo::getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
-  gc();
+#  res <- list(myDist=myDist, xIndex=xIndex, maleIndex=maleIndex);
+#  saveCache(key=list("yo"), res);
+  calls <- oligo::getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
+  # A JxI matrix; one call per sample and SNP.
   verbose && exit(verbose);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calculate log-likehood ratios
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Calculating log-likehood ratios");
-  llr <- oligo::getAffySnpConfidence(myDist, myCalls, xIndex, maleIndex, 
+  llr <- oligo::getAffySnpConfidence(myDist, calls, xIndex, maleIndex, 
                                                          verbose=verbose2);
-  verbose && str(verbose, llr);
+  # A JxI matrix; one LLR per sample and SNP.
   verbose && exit(verbose);
 
 
@@ -644,43 +690,63 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # Recalibrate?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (recalibrate) {
+    rm(myDist, regions); # Not needed anymore
+
     verbose && enter(verbose, "Recalibrating");
 
-    rm(myDist, rparams); gc(); # Not needed anymore
+    # Check for already recalibrated genotype regions
+    filename <- sprintf("genotypeRegions,recalib.xdr");
+    pathname <- filePath(path, filename);
+    if (isFile(pathname)) {
+      rm(calls, llr); # Not needed anymore
+      verbose && enter(verbose, "Recalibrated genotype regions available on file");
+      verbose && cat(verbose, "Pathname: ", pathname);
+      regions <- loadObject(pathname);
+      verbose && exit(verbose);
+    } else {
+      verbose && enter(verbose, "Recalibrating genotype regions");
+      verbose && enter(verbose, "Resetting poor genotype calls");
+      # For each genotype class
+      for (kk in 1:3) {
+        bad <- which(calls == kk & llr < this$minLLRforCalls[kk]);
+        calls[bad] <- NA;
+        rm(bad);
+      }
+      verbose && cat(verbose, "Number of poor calls: ", sum(is.na(calls)),
+                                               " out of ", length(calls));
+      rm(llr); # Not needed anymore
+      verbose && exit(verbose);
 
-    verbose && enter(verbose, "Resetting poor genotype calls");
-    # For each genotype class
-    for (kk in 1:3) {
-      bad <- which(myCalls == kk & llr < this$minLLRforCalls[kk]);
-      myCalls[bad] <- NA;
-      rm(bad);
+      verbose && enter(verbose, "Getting SNP genotype region parameters");
+      regions <- oligo::getAffySnpGenotypeRegionParams(qs, calls, 
+                                          correction$fs, verbose=verbose2);
+      rm(calls); # Not needed anymore
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Updating the calls from the new distances");
+      regions <- oligo::updateAffySnpParams(regions, priors);
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Saving recalibrated genotype regions to file");
+      verbose && cat(verbose, "Pathname: ", pathname);
+      saveObject(regions, file=pathname);
+      verbose && exit(verbose);
+
+      verbose && exit(verbose);
     }
-    verbose && cat(verbose, "Number of poor calls: ", sum(is.na(myCalls)),
-                                              " out of ", length(myCalls));
-    rm(llr); gc(); # Not needed anymore
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Getting SNP genotype region parameters");
-    rparams <- oligo::getAffySnpGenotypeRegionParams(qs, myCalls, correction$fs,
-                                                         verbose=verbose2);
-    rm(myCalls); gc(); # Not needed anymore
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Updating the calls from the new distances");
-    rparams <- oligo::updateAffySnpParams(rparams, priors);
-    verbose && exit(verbose);
 
     verbose && enter(verbose, "Calculating call distances");
-    myDist <- oligo::getAffySnpDistance(qs, rparams, correction$fs,
-                                                          verbose=verbose2);
+    myDist <- oligo::getAffySnpDistance(qs, regions, correction$fs,
+                                                         verbose=verbose2);
     verbose && exit(verbose);
     
     verbose && enter(verbose, "Updating the calls from the new distances");
-    myCalls <- oligo::getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
+    calls <- oligo::getAffySnpCalls(myDist, xIndex, maleIndex, 
+                                                         verbose=verbose2);
     verbose && exit(verbose);
     
     verbose && enter(verbose, "Calculating log-likehood ratios");
-    llr <- oligo::getAffySnpConfidence(myDist, myCalls, xIndex, maleIndex,
+    llr <- oligo::getAffySnpConfidence(myDist, calls, xIndex, maleIndex,
                                                          verbose=verbose2);
     verbose && exit(verbose);
 
@@ -689,49 +755,130 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Create return structure
+  # Saving calls, one file per array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Creating return structure");
-  ret <- list(calls=myCalls, llr=llr);
-  rm(myCalls, llr); gc(); # Not needed anymore
+  verbose && enter(verbose, "Saving calls, LLR confidence scores, and all distances to file");
+  sampleNames <- getNames(ces);
+  # Allocate an Ix2 data frame for all units on one array
+  data <- dataFrame(colClasses=c(call="integer", llr="double"), 
+                                                    nrow=nbrOfUnits(cdf));
+  data$llr <- NA; # Default value
+  # Turn the 'call' column into a genotype factor
+  as.GenotypeFactor <- function(x, ...) {
+    # Turn into a factor
+    levels <- c("-"=0, AA=1, AB=2, BB=3, NC=4);
+    factor(x, levels=levels, labels=names(levels), ordered=FALSE);
+  }
+  data$call <- as.GenotypeFactor(data$call);
+
+  # Allocate an Ix3x2 array to hold all distances on one array
+  dim <- c(nbrOfUnits(cdf),3,2);
+  dimnames <- dimnames(myDist[,1,,]);
+  dimnames <- c(list(NULL), dimnames[-1]);
+  dists <- array(NA, dim=dim, dimnames=dimnames);
+
+  # For each array...
+  for (kk in seq(length=nbrOfSamples)) {
+    sampleName <- sampleNames[kk];
+    verbose && enter(verbose, sprintf("Array %d ('%s')", kk, sampleName));
+
+    verbose && enter(verbose, "Calls and LLR confidence scores");
+    filename <- sprintf("%s,calls.xdr", sampleName);
+    pathname <- filePath(path, filename);
+    verbose && cat(verbose, "Pathname: ", pathname);
+    # Populate the data frame (overwriting previous values)
+    data$call[units] <- as.GenotypeFactor(calls[,kk]);
+    data$llr[units] <- llr[,kk];
+    attr(data, "sampleName") <- sampleName;  # Update the sample name
+    saveObject(data, file=pathname);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Distances to all genotype groups");
+    filename <- sprintf("%s,distances.xdr", sampleName);
+    pathname <- filePath(path, filename);
+    verbose && cat(verbose, "Pathname: ", pathname);
+    dists[units,,] <- myDist[,kk,,];
+    attr(dists, "sampleName") <- sampleName;  # Update the sample name
+    saveObject(dists, file=pathname);
+    verbose && exit(verbose);
+
+    verbose && exit(verbose);
+  }
+  rm(data, dists, filename, pathname, as.GenotypeFactor); # Not needed anymore
+  verbose && exit(verbose);
+  rm(myDist); # Not needed anymore
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Calculating corrected log-ratios
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Correcting log-ratios for SNP called to be homozygote");
+  # Allocate for all units in the CDF
+  dimnames <- list(NULL, c("antisense", "sense"));
+  M <- array(NA, dim=c(nbrOfUnits(cdf),2), dimnames=dimnames);
+  SIGN <- c(+1,0,-1);
+  # For each sample j=1,...,J
+  for (jj in seq(length=nbrOfSamples)) {
+    sampleName <- sampleNames[jj];
+    verbose && enter(verbose, sprintf("Array %d ('%s')", jj, sampleName));
+
+    # The the antisense and sense log-ratios
+    # Should ideally be retrieved from the 'ces' object! /HB 2006-12-13
+    Ma <- assayData(qs)$antisenseThetaA[,jj]-assayData(qs)$antisenseThetaB[,jj];
+    Ms <- assayData(qs)$senseThetaA[,jj]-assayData(qs)$senseThetaB[,jj];
+
+    # For the two homozygote groups k=(1,3)=(AA,BB)
+    for(kk in c(1,3)) {
+      sgn <- SIGN[kk];
+      # Identify SNPs with genotype kk
+      iis <- which(calls[,jj] == kk);
+      delta <- sgn*(regions$f0 - correction$fs[iis,jj,1]);
+      Ma[iis] <- Ma[iis] + delta;
+      delta <- sgn*(regions$f0 - correction$fs[iis,jj,2]);
+      Ms[iis] <- Ms[iis] + delta;
+    }
+
+    verbose && enter(verbose, "Saving corrected log ratios to file");
+    filename <- sprintf("%s,cM.xdr", sampleName);
+    pathname <- filePath(path, filename);
+    M[units,1] <- Ma;
+    M[units,2] <- Ms;
+    saveObject(M, file=pathname);
+    verbose && exit(verbose);
+
+    verbose && exit(verbose);
+  }
+  rm(SIGN, sgn, iis, delta, M); # Not needed anymore
   verbose && exit(verbose);
 
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Corrected log-ratios
+  # 
+  # Anything below is actually redundant and can be retrieved/calculated
+  # from the data files stored in the output directory! /HB 2006-12-13
+  # 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (returnCorrectedM) {
-    verbose && enter(verbose, "Correcting log-ratios");
-    SIGN <- c(+1,0,-1);
-    cM <- getM(qs);
-    for(ii in 1:nrow(cM)){
-      # For the two homozygote groups
-      for(kk in c(1,3)) {
-        index <- which(ret$calls[ii,] == kk);
-        cM[ii,index,] <- cM[ii,index,] + 
-                             SIGN[kk]*(rparams$f0-correction$fs[ii,kk,]);
-      }
-    }
-    ret$M <- cM;
-    rm(cM, index, SIGN); gc(); # Not needed anymore
-    verbose && exit(verbose);
-  } # if (returnCorrectedM)
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Feature data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Creating feature-data object");
   if (returnParams) {
-    rparams <- as.data.frame(rparams);
+    regions <- as.data.frame(regions);
     featureData <- new("AnnotatedDataFrame",
-      data=rparams,
-      varMetadata=data.frame(labelDescription=colnames(rparams),
-                             row.names=colnames(rparams))
+      data=regions,
+      varMetadata=data.frame(labelDescription=colnames(regions),
+                             row.names=colnames(regions))
     );
   } else {
     featureData <- new("AnnotatedDataFrame");
   }
-  rm(rparams); gc(); # Not needed anymore
+  rm(regions);  # Not needed anymore
+  verbose && print(verbose, featureData);
+  verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -740,13 +887,13 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   verbose && enter(verbose, "Creating phenotype result");
   gender <- rep("female", nbrOfSamples);
   gender[maleIndex] <- "male";
-  rm(maleIndex); gc(); # Not needed anymore
+  rm(maleIndex);  # Not needed anymore
   if (is.null(qs$gender)) {
     phenoData <- new("AnnotatedDataFrame",
                         data=cbind(pData(qs),
                           data.frame(crlmmSNR=as.numeric(correction$snr),
                                      gender=gender,
-                                     row.names=sampleNames(qs))),
+                                     row.names=getNames(ces))),
                         varMetadata= rbind(varMetadata(qs),
                           data.frame(labelDescription=c("crlmmSNR", "gender"),
                                      row.names=c("crlmmSNR", "gender"))))
@@ -754,12 +901,13 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
     phenoData <- new("AnnotatedDataFrame",
                         data=cbind(pData(qs),
                           data.frame(crlmmSNR=as.numeric(correction$snr),
-                                     row.names=sampleNames(qs))),
+                                     row.names=getNames(ces))),
                         varMetadata= rbind(varMetadata(qs),
                           data.frame(labelDescription=c("crlmmSNR"),
                                      row.names=c("crlmmSNR"))))
   }
-  rm(correction); gc(); # Not needed anymore
+  rm(correction);  # Not needed anymore
+  verbose && print(verbose, phenoData);
   verbose && exit(verbose);
 
 
@@ -767,26 +915,55 @@ setMethodS3("fit", "Crlmm", function(this, recalibrate=TRUE, ..., verbose=FALSE)
   # Return genotype estimates
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Creating SnpCallSetPlus object to return");
-  res <- new("SnpCallSetPlus",
+  fit <- new("SnpCallSetPlus",
            featureData=featureData,
            phenoData=phenoData,
            experimentData=experimentData(qs),
            annotation=annotation(qs),
-           calls=ret$calls,
-           callsConfidence=ret$llr,
-           logRatioAntisense=ret$M[,,"antisense"],
-           logRatioSense=ret$M[,,"sense"]
+           calls=calls,
+           callsConfidence=llr,
+           logRatioAntisense=NULL,
+           logRatioSense=NULL,
          );
   verbose && exit(verbose);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Saving estimates to file
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  filename <- sprintf("%s,crlmm%s.xdr", getFullName(this), paramTags);
+  pathname <- filePath(path, filename);
+  verbose && enter(verbose, "Saving to file");
+  verbose && cat(verbose, "Pathname: ", pathname);
+  saveObject(fit, file=pathname);
   verbose && exit(verbose);
 
-  res;
-})
+  verbose && exit(verbose);
 
+  fit;
+})
 
 ############################################################################
 # HISTORY:
+# 2006-12-13
+# o TO DO: Create GenotypeCallFile and GenotypeCallSet classes.
+# o Now the following are stored to binary (xdr) files:
+#   One file per sample (expanded to one row per CDF unit):
+#    a) calls, confidence scores are stored.
+#    b) distances to all genotype regions for each SNP.
+#    c) corrected log2(thetaA/thetaB) ratios (redundant).
+#   One file per data set:
+#    a) Correction parameters for the log2(A/B) ratios.
+#    b) Parameters for all genotype regions for all SNPs (oligo indices)
+#    c) Estimated SNP regions for SNPs with poor HapMap calls.
+# o Speed up of the code calculating correction log ratios; now the code
+#   is vectorizing the SNPs (and not the samples), or in other words, 
+#   now the code is looping over the samples, which is much faster than
+#   looping over the SNPs (which are typically of order of magnitude more).
+# o It finally works, that is, fit() can now return a valid SnpCallSetPlus.
+# 2006-12-12
+# o Trying to get fit2() to work. Still some problem creating a valid
+#   SNPCallSetPlus object at the end.  Use fit() for now.
 # 2006-11-29
 # o Now identification of chromosome X units can also be done using 
 #   aroma.affymetrix GenotypeInformation (e.g. from dChip).  Currently both

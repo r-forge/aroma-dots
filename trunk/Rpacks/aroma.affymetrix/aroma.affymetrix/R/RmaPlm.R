@@ -14,6 +14,9 @@
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
 #   \item{tags}{A @character @vector of tags.}
+#   \item{flavor}{A @character string specifying what model fitting algorithm
+#     to be used.  This makes it possible to get identical estimates as other
+#     packages.}
 # }
 #
 # \section{Fields and Methods}{
@@ -35,6 +38,26 @@
 #   \eqn{\phi_i = 2^\alpha_i} are returned.
 # }
 #
+# \section{Different flavors of model fitting}{
+#   There are a few differ algorithms available for fitting the same 
+#   probe-level model.  The default method (\code{flavor="affyPLM"}) 
+#   implements in the \pkg{affyPLM} package fits the model parameters 
+#   robustly using an M-estimator.
+#
+#   In addition to the above method, which is the preferred one, additional
+#   algorithms have been ported/interfaced to.  Note that these are often
+#   provided for the purpose of replicating the results of other packages,
+#   but they might not be complete in the sense of what a 
+#   @see "ProbeLevelModel" should return or how the parameters are 
+#   constrained.
+#   The algorithm (\code{flavor="oligo"}) used by the \pkg{oligo} package,
+#   which originates from the \pkg{affy} packages, fits the model using
+#   median polish, which is a non-robust estimator.  Note that this algorithm
+#   does not constraint the probe-effect parameters to multiply to one on
+#   the intensity scale. As a matter of fact, the probe-effect parameters
+#   are not even returned (defaulting to ones).
+# }
+#
 # @author
 #
 # \references{
@@ -42,7 +65,7 @@
 #  NAR, 2003, 31, e15.\cr
 # }
 #*/###########################################################################
-setConstructorS3("RmaPlm", function(..., tags="*") {
+setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,17 +74,31 @@ setConstructorS3("RmaPlm", function(..., tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'flavor':
+  flavor <- match.arg(flavor);
+
   # Argument 'tags':
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
 
+    asteriskTag <- "RMA";
+    # Add flavor tag?
+    if (flavor != "affyPLM")
+      asteriskTag <- paste(asteriskTag, flavor, sep=",");
+
     # Update default tags
-    tags[tags == "*"] <- "RMA";
+    tags[tags == "*"] <- asteriskTag;
+
+    # Split by commas
+    tags <- paste(tags, collapse=",");
+    tags <- unlist(strsplit(tags, split=","));
   }
 
 
-  extend(ProbeLevelModel(..., tags=tags), "RmaPlm")
+  extend(ProbeLevelModel(..., tags=tags), "RmaPlm",
+    .flavor = flavor
+  )
 })
 
 
@@ -136,11 +173,11 @@ setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
 #*/###########################################################################
 setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # rmaModel02()
+  # rmaModelAffyPlm()
   # Author: Henrik Bengtsson, UC Berkeley. 
   # Requires: affyPLM() by Ben Bolstad.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rmaModel01 <- function(y, psiCode=0, psiK=1.345){
+  rmaModelAffyPlm <- function(y, psiCode=0, psiK=1.345){
     # Assert right dimensions of 'y'.
     if (length(dim(y)) != 2) {
       str(y);
@@ -155,8 +192,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE="affyPLM");
 
     # Extract probe affinities and chip estimates
-    J <- ncol(y);
-    I <- nrow(y);
+    J <- ncol(y);  # Number of arrays
+    I <- nrow(y);  # Number of probes
     est <- fit$Estimates;
     se <- fit$StdErrors;
 
@@ -194,18 +231,18 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
          phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
-  } # rmaModel01()
-  attr(rmaModel01, "name") <- "rmaModel01";
+  } # rmaModelAffyPlm()
+  attr(rmaModelAffyPlm, "name") <- "rmaModelAffyPlm";
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # rmaModel02().
+  # rmaModelAffyPlmOld().
   # Author: Ken Simpson, WEHI, 2006-09-26.
   # Requires: affyPLM() by Ben Bolstad.
   # Why: The above "R_rlm_rma_default_model" call is not available on all
   # platforms (yet).  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rmaModel02 <- function(y, constraint.type=list(default="contr.treatment", chip="contr.treatment", probe="contr.sum")) {
+  rmaModelAffyPlmOld <- function(y, constraint.type=list(default="contr.treatment", chip="contr.treatment", probe="contr.sum")) {
     # Assert right dimensions of 'y'.
     if (length(dim(y)) != 2) {
       str(y);
@@ -228,8 +265,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     fit <- .C("rlm_fit_R", as.double(X), as.double(y), rows=as.integer(nchip*nprobe), cols=as.integer(nchip+nprobe-1), beta=double(nchip+nprobe-1), resids=double(nchip*nprobe), weights=double(nchip*nprobe), PACKAGE="affyPLM")
 
     # Extract probe affinities and chip estimates
-    J <- ncol(y);
-    I <- nrow(y);
+    J <- ncol(y);  # Number of arrays
+    I <- nrow(y);  # Number of probes
     est <- fit$beta;
 
     # Chip effects
@@ -260,16 +297,93 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
          phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
-  } # rmaModel02()
-  attr(rmaModel02, "name") <- "rmaModel02";
+  } # rmaModelAffyPlmOld()
+  attr(rmaModelAffyPlmOld, "name") <- "rmaModelAffyPlmOld";
 
-  # Test which of the above fit functions are available on the current
-  # system, using a dummy set of signals
-  rmaModel <- rmaModel02;
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # rmaModelOligo().
+  # Author: Henrik Bengtsson, WEHI, 2006-12-11.
+  # Requires: oligo() by Benilto Carvalho et al.
+  # Why: To fully immitate CRLMM in oligo.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rmaModelOligo <- function(y, ...) {
+    # Assert right dimensions of 'y'.
+    if (length(dim(y)) != 2) {
+      str(y);
+      stop("Argument 'y' must have two dimensions: ", 
+                                                paste(dim(y), collapse="x"));
+    }
+
+    # make factor variables for chip and probe
+    J <- ncol(y); # Number of arrays
+    I <- nrow(y); # Number of probes
+
+    unitNames <- rep("X", I);  # dummy probe names
+    nbrOfUnits <- as.integer(1); # Only one unit group is fitted
+
+    # Each call to fitRma() outputs "Calculating Expression".
+    capture.output({
+      fit <- oligo::fitRma(pmMat=y, mmMat=y, pnVec=unitNames, nProbes=nbrOfUnits, densFunction=NULL, rEnv=NULL, normalize=FALSE, background=FALSE, bgversion=2, destructive=FALSE);
+    })
+
+    # Extract probe affinities and chip estimates
+    est <- fit[1,];  # Only one unit
+
+    # Chip effects
+    beta <- est[1:J];
+
+    # Probe affinities
+    alpha <- rep(0, I);  # Not returned by fitRma()!
+      
+    # Estimates on the intensity scale
+    theta <- 2^beta;
+    phi <- 2^alpha;
+
+    # The RMA model is fitted with constraint sum(alpha) = 0, that is,
+    # such that prod(phi) = 1.
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # A fit function must return: theta, sdTheta, thetaOutliers, 
+    # phi, sdPhi, phiOutliers.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    sdTheta <- rep(1, J);
+    thetaOutliers <- rep(FALSE, J);
+    sdPhi <- rep(1, I);
+    phiOutliers <- rep(FALSE, I);
+
+    # Return data on the intensity scale
+    list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
+         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
+  } # rmaModelOligo()
+  attr(rmaModelOligo, "name") <- "rmaModelOligo";
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the flavor of fitting algorithm for the RMA PLM
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  flavor <- this$.flavor;
+  if (flavor == "affyPLM") {
+    rmaModel <- rmaModelAffyPlm;
+  } else if (flavor == "affyPLMold") {
+    rmaModel <- rmaModelAffyPlmOld;
+  } else if (flavor == "oligo") {
+    require(oligo) || throw("Package not loaded: oligo");
+    rmaModel <- rmaModelOligo;
+  } else {
+    throw("Cannot get fit function for RMA PLM. Unknown flavor: ", flavor);
+  }
+
+  # Test that it works and is available.
+  ok <- FALSE;
   tryCatch({
-    rmaModel01(matrix(1:6+0.1, ncol=3));
-    rmaModel <- rmaModel01;
+    rmaModel(matrix(1:6+0.1, ncol=3));
+    ok <- TRUE;
   }, error = function(ex) {})
+
+  if (!ok) {
+    throw("The fit function for requested RMA PLM flavor failed: ", flavor);
+  }
 
   rmaModel;
 }, protected=TRUE)
@@ -279,6 +393,12 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-12-12
+# o Confirmed that flavor="oligo" replicates the estimates of the oligo 
+#   package perfectly.
+# o Added argument 'flavor' to constructor to make it possible to specify
+#   what model fitting algorithm to be used.  If other than the default 
+#   flavor, a tag is added to indicate what flavor is used.
 # 2006-11-02
 # o Added SE estimates in RmaPlm from Ben's new code. Works with 
 #   affyPLM v1.11.6 or newer. /KS

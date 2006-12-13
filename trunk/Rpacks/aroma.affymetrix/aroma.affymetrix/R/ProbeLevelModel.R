@@ -237,6 +237,9 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
 
 
 setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
   # Get what set of probes to read
   stratifyBy <- switch(this$probeModel, mm="mm", pm="pm", pmmm="pmmm");
 
@@ -244,6 +247,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
   ds <- getDataSet(this);
   cdf <- getCdf(ds);
   verbose && enter(verbose, "Identifying CDF cell indices");
+  verbose && cat(verbose, "Stratify by: ", stratifyBy);
   cells <- getCellIndices(cdf, ..., stratifyBy=stratifyBy);
   verbose && exit(verbose);
   
