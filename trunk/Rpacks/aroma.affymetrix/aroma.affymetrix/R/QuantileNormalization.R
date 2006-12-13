@@ -51,6 +51,11 @@ setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typ
 })
 
 
+setMethodS3("getSubsetToUpdate", "OligoQuantileNormalization", function(this, ...) {
+  this$.subsetToUpdate;
+})
+
+
 setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);

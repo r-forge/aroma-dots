@@ -312,6 +312,11 @@ setMethodS3("getFeatureInfo", "PlatformDesign", function(this, fields, subset=NU
   env;
 })
 
+setMethodS3("getUnitsOnChromosome", "PlatformDesign", function(this, chromosome, ...) {
+  str <- paste("chr", chromosome, sep="");
+  which(getAnnotations(this)$Chromosome == str);
+})
+
 setMethodS3("getCellIndices", "PlatformDesign", function(this, ...) {
   # The feature index as indexed by the CDF. Totally redundant with (X,Y).
   as.integer(getFeatureInfo(this, "order_index", ...));

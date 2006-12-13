@@ -16,9 +16,10 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of @see "ProbePreprocessing".}
 #   \item{subsetToFit}{The fraction of PM probes to be used for fitting
-#     the calibration function. 
-#     If \code{"asOligo"}, the same subset as used in the \pkg{oligo} package
-#     will be used.
+#     the calibration function.}
+#   \item{flavor}{A @character string specifying what method to immitate.
+#     If \code{"oligo"}, the calibration gives identical results to the
+#     \pkg{oligo} package; the \code{subsetToFit} argument is ignored.}
 #   }
 # }
 #
@@ -77,20 +78,24 @@
 #   Phys Rev E Stat Nonlin Soft Matter Phys, 2003, 68.\cr
 # }
 #*/###########################################################################
-setConstructorS3("PcrProbeCalibration", function(..., subsetToFit=1/5) {
+setConstructorS3("PcrProbeCalibration", function(..., subsetToFit=1/5, flavor=c("*", "oligo")) {
+  # Argument 'flavor':
+  flavor <- match.arg(flavor);
+
   extend(ProbePreprocessing(...), "PcrProbeCalibration",
-    subsetToFit = subsetToFit,
+    .subsetToFit = subsetToFit,
+    .flavor = flavor,
     "cached:.coefs" = NULL
   )
 })
 
-setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
+setMethodS3("getParameters", "PcrProbeCalibration", function(this, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);
 
   # Get parameters of this class
   params2 <- list(
-    subsetToFit = this$subsetToFit,
+    subsetToFit = getSubsetToFit(this)
   );
 
   # Append the two sets
@@ -213,13 +218,14 @@ setMethodS3("getSubsetToFit", "PcrProbeCalibration", function(this, ...) {
   pmIdxs <- which(getFeatureInfo(pd, "feature_type") == "PM");
   N <- length(pmIdxs);
 
-  # Get the subset of PM probes to fit
-  subsetToFit <- this$subsetToFit;
-  if (identical(subsetToFit, "asOligo")) {
+  flavor <- this$.flavor;
+  if (flavor == "oligo") {
     # From 'oligo': 
     set.seed(1); 
     subset <- sample(1:N, size=10000);
   } else {
+    # Get the subset of PM probes to fit
+    subsetToFit <- this$.subsetToFit;
     subset <- round(seq(from=1, to=N, length.out=subsetToFit*N));
   }
 
@@ -459,6 +465,8 @@ setMethodS3("plotFit", "PcrProbeCalibration", function(this, ylim=c(-1,1), xlab=
 
 ############################################################################
 # HISTORY:
+# 2006-12-12
+# o Added argument 'flavor' to constructor.
 # 2006-12-08
 # o Now this pre-processor output results to probeData/.
 # 2006-12-07

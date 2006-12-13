@@ -83,6 +83,9 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
   res <- oligo::read.celfiles(filenames, ..., verbose=as.logical(less(verbose)));
   verbose && exit(verbose);
 
+  # Updating the sample names
+  sampleNames(res) <- getNames(this);
+
   verbose && exit(verbose);
 
   res;
@@ -90,6 +93,9 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
 
 ############################################################################
 # HISTORY:
+# 2006-12-12
+# o Now extractSnpFeatureSet() sets the sample names (instead of using the
+#   filenames).
 # 2006-12-11
 # o extractSnpFeatureSet() is now using of the PlatformDesign class.
 # 2006-10-02
