@@ -91,14 +91,6 @@ setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALS
 }, protected=TRUE)
 
 
-setMethodS3("getSampleName", "AffymetrixCelFile", function(this, ...) {
-  name <- getName(this, ...);
-
-  # Keep anything before a comma
-  name <- gsub("[,].*$", "", name);
-  
-  name;
-}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -964,6 +956,8 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-12-14
+# o Removed getSampleName() which gives the same as getName().
 # 2006-12-11
 # o Now the timestamp is also reported for singel CEL files.
 # o BUG FIX: getHeaderV3() would throw an error if there was an empty V3 
