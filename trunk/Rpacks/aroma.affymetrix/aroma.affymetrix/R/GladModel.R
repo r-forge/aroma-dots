@@ -49,7 +49,7 @@ setConstructorS3("GladModel", function(ces=NULL, reference=NULL, tags="*", ...) 
   # Argument 'reference':
   if (!is.null(reference)) {
     if (!inherits(reference, "CnChipEffects")) {
-      throw("Argument 'reference' is not a CnChipEffects object: ", 
+      throw("Argument 'reference' is not a CnChipEffects object: ",
                                                             class(reference));
     }
 
