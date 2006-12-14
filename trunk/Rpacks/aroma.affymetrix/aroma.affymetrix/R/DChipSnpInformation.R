@@ -115,4 +115,3 @@ setMethodS3("read50K", "DChipSnpInformation", function(this, ..., exclude=c("dbS
 # 2006-09-17
 # o Created from DChipGenomeInformation.R.
 ############################################################################  
- 

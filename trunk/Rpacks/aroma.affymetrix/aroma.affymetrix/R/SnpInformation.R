@@ -356,4 +356,3 @@ setMethodS3("getFragmentStops", "SnpInformation", function(this, ...) {
 # 2006-09-17
 # o Created from GenomeInformation.R.
 ############################################################################  
- 

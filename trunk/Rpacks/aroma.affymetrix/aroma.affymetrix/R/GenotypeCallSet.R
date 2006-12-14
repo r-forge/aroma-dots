@@ -6,7 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  An GenotypeCallSet object represents parameter estimates.
+#  The GenotypeCallSet class represents a set of genotype-call files.
 # }
 # 
 # @synopsis
@@ -33,8 +33,6 @@ setConstructorS3("GenotypeCallSet", function(files=NULL, ...) {
       if (!inherits(df, "GenotypeCallFile"))
         throw("Argument 'files' contains a non-GenotypeCallFile object: ", class(df));
     })
-  } else if (inherits(files, "GenotypeCallSet")) {
-    return(as.GenotypeCallSet(files));
   } else {
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
@@ -166,7 +164,7 @@ setMethodS3("setCdf", "GenotypeCallSet", function(this, cdf, ...) {
 
 
 
-setMethodS3("fromFiles", "GenotypeCallSet", function(static, path="calls/", pattern="[.]calls$", ..., fileClass="GenotypeCallFile", verbose=FALSE) {
+setMethodS3("fromFiles", "GenotypeCallSet", function(static, path, pattern="[.]calls$", ..., fileClass="GenotypeCallFile", verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -174,30 +172,20 @@ setMethodS3("fromFiles", "GenotypeCallSet", function(static, path="calls/", patt
     on.exit(popState(verbose));
   }
 
-  this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+  # S3 method dispatch does not work for static methods.
+  ds <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+
   # Use the same CDF object for all CEL files.
-  setCdf(this, getCdf(this));
-  this;
+  setCdf(ds, getCdf(ds));
+
+  ds;
+}, static=TRUE)
+
+
+setMethodS3("getFullName", "GenotypeCallSet", function(this, parent=1, ...) {
+  NextMethod("getFullName", this, parent=parent, ...);
 })
 
-
-setMethodS3("getName", "GenotypeCallSet", function(this, ...) {
-  # The name of a file set is inferred from the pathname of the directory
-  # of the set, i.e. path/to/<data set name>/<something>/<chip type>/
-  # Get the path of this file set
-  path <- getPath(this);
-
-  # path/to/<data set name>/<something>
-  path <- dirname(path);
-
-  # path/to/<data set name>
-  path <- dirname(path);
-
-  # <data set name>
-  name <- basename(path);
-  
-  name;
-})
 
 ###########################################################################/**
 # @RdocMethod nbrOfArrays
@@ -282,16 +270,24 @@ setMethodS3("[[", "GenotypeCallSet", function(this, units=NULL, ...) {
 })
 
 
-setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'units':
   cdf <- getCdf(this);
+  units <- convertUnits(cdf, units=units, keepNULL=TRUE);
   if (is.null(units)) {
-    units <- 1:nbrOfUnits(cdf);
-  } else if (is.character(units)) {
-    units <- indexOf(cdf, units);
+    nbrOfUnits <- nbrOfUnits(cdf);
+  } else {
+    nbrOfUnits <- length(units);
+  }
+
+  # Argument 'arrays':
+  if (is.null(arrays)) {
+    arrays <- seq(this);
+  } else {
+    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfFiles(this)));
   }
 
   # Argument 'verbose':
@@ -301,7 +297,7 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, ..., verb
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(units=units, ...));
+  key <- digest(list(method="readUnits.GenotypeCallSet", units=units, arrays=arrays, ...));
   res <- this$.readUnitsCache[[key]];
   if (!is.null(res)) {
     verbose && cat(verbose, "readUnits(): Returning cached data");
@@ -311,34 +307,41 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, ..., verb
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Get the pathnames of all CEL files
-  pathnames <- unlist(lapply(this, getPathname), use.names=FALSE);
+  # Get the pathnames of all files
+  pathnames <- getPathnames(this)[arrays];
+  nbrOfArrays <- length(arrays);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read data from file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  nunits <- length(units);
-  calls <- vector("list", nbrOfArrays(this));
-  names(calls) <- getNames(this);
+  verbose && enter(verbose, "Retrieving genotype calls for ", nbrOfArrays, " arrays");
 
-  verbose && enter(verbose, "Retrieving genotype calls for ", length(this), " arrays");
-  for (kk in seq(this)) {
-    df <- getFile(this, kk);
-    value <- df[units];
-    levels(value) <- c("NotCalled", "AA", "AB", "BB", "NoCall");
-    calls[[kk]] <- value;
+  calls <- matrix(NA, nrow=nbrOfUnits, ncol=nbrOfArrays);
+
+  for (kk in seq(length=nbrOfArrays)) {
+    array <- arrays[kk];
+    df <- getFile(this, array);
+    value <- readUnits(df, units=units);
+    calls[,kk] <- value;
   }
-  rm(value, df);
-  calls <- as.data.frame(calls);
+  rm(value, df, array);
+
+  # Turn into a factor
+  dim <- dim(calls);  # ...which will drop dimensions
+  levels <- c("-"=1, AA=2, AB=3, BB=4, NC=5);
+  calls <- factor(calls, levels=levels, labels=names(levels), ordered=FALSE);
+  dim(calls) <- dim;
+  colnames(calls) <- getNames(this)[arrays];
   rownames(calls) <- units;
+
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "readUnits(): Updating cache");
-  this$.readUnitsCache <- list()
-  this$.readUnitsCache[[key]] <- calls
+  this$.readUnitsCache <- list();
+  this$.readUnitsCache[[key]] <- calls;
 
   calls;
 })
@@ -441,6 +444,8 @@ setMethodS3("createFromCrlmmFile", "GenotypeCallSet", function(this, filename="c
 
 ############################################################################
 # HISTORY:
+# 2006-12-14
+# o Updated readUnits() to return a matrix of factors instead.
 # 2006-10-01
 # o Can now import a single CRLMM column.
 # o Created.

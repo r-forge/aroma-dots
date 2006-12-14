@@ -669,8 +669,6 @@ setMethodS3("fit", "Crlmm", function(this, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Updating the calls from the new distances");
   # This takes time: This is worth optimizing.
-#  res <- list(myDist=myDist, xIndex=xIndex, maleIndex=maleIndex);
-#  saveCache(key=list("yo"), res);
   calls <- oligo::getAffySnpCalls(myDist, xIndex, maleIndex, verbose=verbose2);
   # A JxI matrix; one call per sample and SNP.
   verbose && exit(verbose);
@@ -946,7 +944,9 @@ setMethodS3("fit", "Crlmm", function(this, verbose=FALSE, ...) {
 ############################################################################
 # HISTORY:
 # 2006-12-13
-# o TO DO: Create GenotypeCallFile and GenotypeCallSet classes.
+# o TO DO: Create GenotypeCallFile and GenotypeCallSet classes, with
+#   subclasses CrlmmGenotypeCallFile etc. Add extractSnpCallSetPlus()
+#   to GenotypeCallSet.
 # o Now the following are stored to binary (xdr) files:
 #   One file per sample (expanded to one row per CDF unit):
 #    a) calls, confidence scores are stored.

@@ -120,4 +120,3 @@ setMethodS3("read50KHg17", "DChipGenomeInformation", function(this, ..., exclude
 # 2005-10-31
 # o Created.
 ############################################################################  
- 

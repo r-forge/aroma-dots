@@ -61,6 +61,7 @@ if (length(chromosomes) == 0) {
   chromosomes <- choices;
 }
 
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Process
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -115,7 +116,18 @@ for (kk in seq(along=dataSets)) {
 
   if (4 %in% methods) {
     verbose && enter(verbose, "Plotting GLAD (and fitting if not done)");
-    plot(glad, arrays=arrays, chromosomes=chromosomes, skip=skip, verbose=less(verbose));
+
+    path <- getPath(ces);
+    path <- gsub("plm", "crlmm", path, fixed=TRUE);
+    path <- gsub(",QN,RMA,A+B,FLN", ",PPC,OQN,RMA,oligo,+-", path, fixed=TRUE);
+    if (isDirectory(path)) {
+      verbose && cat(verbose, "Detected genotype calls");
+      callSet <- GenotypeCallXdrSet$fromFiles(path);
+      verbose && cat(verbose, "Genotype-call set:");
+      verbose && print(verbose, callSet);
+    }
+  
+    plot(glad, arrays=arrays, chromosomes=chromosomes, skip=skip, callSet=callSet, verbose=less(verbose));
     verbose && exit(verbose);
   }
 
