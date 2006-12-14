@@ -6,7 +6,8 @@
 # \description{
 #  @classhierarchy
 #
-#  An GenotypeCallFile object represents parameter estimates.
+#  The abstract GenotypeCallFile class represents a file containing genotype
+#  calls for a given genotype parameter estimates.
 # }
 # 
 # @synopsis
@@ -27,43 +28,37 @@ setConstructorS3("GenotypeCallFile", function(..., cdf=NULL) {
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(cdf)) {
-    if (is.character(cdf)) {
-      cdf <- AffymetrixCdfFile$fromChipType(cdf);
-    }
-
     if (!inherits(cdf, "AffymetrixCdfFile"))
       throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
   }
 
   extend(AffymetrixFile(...), "GenotypeCallFile",
-    cdf = cdf
+    .cdf = cdf
   )
 })
 
-setMethodS3("create", "GenotypeCallFile", function(static, filename, path="calls", cdf, overwrite=FALSE, ...) {
+setMethodS3("create", "GenotypeCallFile", function(static, filename, path=NULL, cdf, overwrite=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (is.character(cdf)) {
-    cdf <- AffymetrixCdfFile$fromChipType(cdf);
-  } else if (!inherits(cdf, "AffymetrixCdfFile")) {
+  # Argument 'filename' & 'path':
+  pathname <- Arguments$getWritablePathname(filename, path=path, 
+                                                    mustNotExist=!overwrite);
+
+  if (!inherits(cdf, "AffymetrixCdfFile")) {
     throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
   }
-  nbrOfUnits <- nbrOfUnits(cdf);
-  nbrOfUnits <- Arguments$getInteger(nbrOfUnits, range=c(1,Inf));
 
-  pathname <- Arguments$getWritablePathname(filename, path=path, mustNotExist=!overwrite);
 
-  calls <- FileByteVector(pathname, length=nbrOfUnits);
+  calls <- FileByteVector(pathname, length=nbrOfUnits(cdf));
   on.exit(close(calls));
 
-  newInstance(static, pathname, cdf=cdf);
+  newInstance(static, pathname, cdf=cdf, ...);
 }, static=TRUE, protected=TRUE)
 
 
-
 setMethodS3("getCdf", "GenotypeCallFile", function(this, ...) {
-  this$cdf;
+  this$.cdf;
 })
 
 setMethodS3("[", "GenotypeCallFile", function(this, i, drop=TRUE, ...) {
@@ -77,36 +72,42 @@ setMethodS3("[<-", "GenotypeCallFile", function(this, i, value) {
   writeUnits(this, units=i, calls=value);
 })
 
+
 setMethodS3("readUnits", "GenotypeCallFile", function(this, units=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'units':
   cdf <- getCdf(this);
-  if (is.null(units)) {
-    units <- 1:nbrOfUnits(cdf);
-  } else if (is.character(units)) {
-    units <- indexOf(cdf, units);
-  }
+  units <- convertUnits(cdf, units=units, keepNULL=TRUE);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Open data file
   pathname <- getPathname(this);
   fdata <- FileByteVector(pathname);
   on.exit(close(fdata));
 
   # Retrieve data
-  calls <- factor(fdata[units], levels=0:4);
-  levels(calls) <- c("NotCalled", "AA", "AB", "BB", "NoCall");
+  calls <- fdata[units];
+
+  # Turn into a factor
+  labels <- c("-", "AA", "AB", "BB", "NC");
+  calls <- factor(calls, levels=0:4, labels=labels);
 
   calls;
 })
 
 
 setMethodS3("updateUnits", "GenotypeCallFile", function(this, units=NULL, calls, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'units':
   cdf <- getCdf(this);
-  if (is.null(units)) {
-    units <- 1:nbrOfUnits(cdf);
-  } else if (is.character(units)) {
-    units <- indexOf(cdf, units);
-  }
+  units <- convertUnits(cdf, units=units);
 
   # Argument 'calls':
   if (is.numeric(calls)) {
@@ -114,14 +115,18 @@ setMethodS3("updateUnits", "GenotypeCallFile", function(this, units=NULL, calls,
   } else if (is.factor(calls)) {
     calls <- as.integer(calls);
   } else if (is.character(calls)) {
-    calls <- match(calls, c("AA", "AB", "BB"));
-    calls[is.na(calls)] <- 0;
+    calls <- match(calls, c("AA", "AB", "BB", "NC"), nomatch=0);
   }
+
   if (length(calls) != length(units)) {
     throw("Argument 'units' and 'calls' are of different lengths: ", 
                                      length(calls), " != ", length(units));
   }
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Update data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Open data file
   pathname <- getPathname(this);
   fdata <- FileByteVector(pathname);
@@ -135,10 +140,12 @@ setMethodS3("updateUnits", "GenotypeCallFile", function(this, units=NULL, calls,
 
 
 setMethodS3("importFromCrlmmFile", "GenotypeCallFile", function(this, filename="calls.txt", path=NULL, sample=getName(this), ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename' and 'path':
   pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=TRUE);
 
-  # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
@@ -147,6 +154,9 @@ setMethodS3("importFromCrlmmFile", "GenotypeCallFile", function(this, filename="
 
 
   verbose && enter(verbose, "Importing genotype calls from CRLMM output file.");
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Parse external genotype call file
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "Pathname: ", pathname);
 
   # Read column header
@@ -206,7 +216,9 @@ setMethodS3("importFromCrlmmFile", "GenotypeCallFile", function(this, filename="
 
   calls <- calls[,1];
 
-  # Update
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Update call file
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   updateUnits(this, units=units, calls=calls, verbose=less(verbose));
 
   verbose && exit(verbose);
@@ -218,6 +230,8 @@ setMethodS3("importFromCrlmmFile", "GenotypeCallFile", function(this, filename="
 
 ############################################################################
 # HISTORY:
+# 2006-12-13
+# o Revived.
 # 2006-10-01
 # o Can now import a single CRLMM column.
 # 2006-09-30

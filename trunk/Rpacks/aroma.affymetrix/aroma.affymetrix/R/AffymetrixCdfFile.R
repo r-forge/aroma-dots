@@ -1218,8 +1218,71 @@ setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, side=4, fmtstr=
 
 
 
+###########################################################################/**
+# @RdocMethod convertUnits
+#
+# @title "Gets and validates unit indices"
+#
+# \description{
+#  @get "title" either by unit names or by a unit indices (validation).
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{units}{Either a @character @vector with unit names, or an @integer
+#     @vector with unit indices to be validated.  
+#     If @NULL, all unit indices are returned.}
+#   \item{keepNULL}{If @TRUE, @NULL returns @NULL.}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @integer @vector with unit indices.
+#  If some units are non existing, an error is thrown.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keepNULL=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'units':
+  if (is.null(units)) {
+    # Return all units
+    if (keepNULL)
+      return(NULL);
+    units <- 1:nbrOfUnits(this);
+  } else if (is.character(units)) {
+    # Identify units by their names
+    unitNames <- units;
+    units <- indexOf(this, names=unitNames);
+    if (any(is.na(units))) {
+      missing <- unitNames[is.na(units)];
+      nmissing <- length(missing);
+      if (nmissing > 10)
+        missing <- c(missing[1:10], "...");
+      throw("Argument 'units' contains ", nmissing, " unknown unit names: ", 
+                                              paste(missing, collapse=", "));
+    }
+  } else {
+    # Validate unit indices
+    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(this)));
+  }
+
+  units;
+})
+
+
 ############################################################################
 # HISTORY:
+# 2006-12-14
+# o Added convertUnits().
 # 2006-09-27
 # o Now fromFile() tries to create an instance of the subclasses (bottom up)
 #   first.  This will make it possible to automatically define SNP CDFs.

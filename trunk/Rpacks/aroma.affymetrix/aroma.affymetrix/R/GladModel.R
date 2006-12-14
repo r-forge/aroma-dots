@@ -281,7 +281,8 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   res <- list();
   for (aa in seq(along=arrays)) {
-    ce <- getFile(ces, arrays[aa]);
+    array <- arrays[aa];
+    ce <- getFile(ces, array);
     arrayName <- getName(ce);
     res[[arrayName]] <- list();
     for (chr in chromosomes) {
@@ -316,7 +317,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
       }
 
       verbose && enter(verbose, "Calling onFit() hooks");
-      callHooks("onFit.fitGlad.GladModel", fit=fit, chromosome=chr, ce=ce);
+      callHooks("onFit.fitGlad.GladModel", fit=fit, chromosome=chr, ce=ce, array=array);
       verbose && exit(verbose);
 
       if (.retResults)
@@ -334,7 +335,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
 })
 
 
-setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, imageFormat="png", skip=TRUE, path=NULL, verbose=FALSE) {
+setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, imageFormat="png", skip=TRUE, path=NULL, callSet=NULL, verbose=FALSE) {
   # To please R CMD check.
   this <- x;
 
@@ -353,6 +354,12 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
 
   # Argument 'height':
   height <- Arguments$getInteger(height, range=c(1,4096));
+
+  # Argument 'callSet':
+  if (!is.null(callSet)) {
+    if (!inherits(callSet, "GenotypeCallSet"))
+      throw("Argument 'callSet' is not a GenotypeCallSet: ", class(callSet)[1]);
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -411,6 +418,9 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   }
 
 
+  callCols <- c("-"="lightgray", AA="red", AB="blue", BB="red", NC="orange");
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Define the plot function
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -418,7 +428,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
     setHook("onFit.fitGlad.GladModel", NULL, action="replace");
   })
 
-  setHook("onFit.fitGlad.GladModel", function(fit, chromosome, ce) {
+  setHook("onFit.fitGlad.GladModel", function(fit, chromosome, ce, array) {
     if (verbose) {
       pushState(verbose);
       on.exit(popState(verbose));
@@ -460,11 +470,31 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
 
       if (!is.null(plotDev))
         plotDev(pathname, width=width, height=height);
+
       tryCatch({
         verbose && enter(verbose, "Plotting graph");
         opar <- par(xaxs="r");
         plot(fit, ticksBy=ticksBy);
         stext(chipType, side=4, pos=1, line=0, cex=0.7, col="gray");
+        verbose && enter(verbose, "Adding genotype calls");
+        pv <- fit$profileValues;
+        units <- pv$units;
+        # Read the calls
+        call <- callSet[units,array];  
+        call <- as.character(call);
+
+        x <- pv$PosBase; 
+        x <- x/1e6;
+        ylim <- par("usr")[3:4];
+        ylim <- ylim + c(+1,-1)*0.04*diff(ylim);
+        ylim <- ylim + c(+1,-1)*0.04*diff(ylim);
+        y <- rep(ylim[1], length(callCols));
+        names(y) <- names(callCols);
+        y["AB"] <- y["AB"] + 0.02*diff(ylim);
+        y <- y[call];
+        points(x,y, pch=".", cex=2, col=callCols[call]);
+
+        verbose && exit(verbose);
         verbose && exit(verbose);
       }, error = function(ex) {
         print(ex);

@@ -51,7 +51,7 @@ setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typ
 })
 
 
-setMethodS3("getSubsetToUpdate", "OligoQuantileNormalization", function(this, ...) {
+setMethodS3("getSubsetToUpdate", "QuantileNormalization", function(this, ...) {
   this$.subsetToUpdate;
 })
 
