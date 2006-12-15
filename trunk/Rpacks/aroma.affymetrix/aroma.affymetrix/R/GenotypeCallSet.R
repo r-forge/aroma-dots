@@ -74,7 +74,7 @@ setMethodS3("as.character", "GenotypeCallSet", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
-  s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
+  s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
   s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
@@ -114,6 +114,13 @@ setMethodS3("as.character", "GenotypeCallSet", function(this, ...) {
 #*/###########################################################################
 setMethodS3("getCdf", "GenotypeCallSet", function(this, ...) {
   getCdf(this$files[[1]], ...);
+})
+
+
+setMethodS3("getChipType", "GenotypeCallSet", function(this, ...) {
+  chipType <- getChipType(getCdf(this));
+  chipType <- gsub("[,-]monocell$", "", chipType);
+  chipType;
 })
 
 

@@ -28,6 +28,8 @@
 # }
 #*/###########################################################################
 setMethodS3("fitGlad", "CnChipEffectSet", function(this, reference=NULL, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), ..., verbose=FALSE) {
+  throw("fitGlad() for CnChipEffectSet is deprecated since 2006-12-15.  Use the GladModel class instead.");
+
   require(GLAD) || throw("Package 'GLAD' not loaded.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -95,11 +97,14 @@ setMethodS3("fitGlad", "CnChipEffectSet", function(this, reference=NULL, arrays=
   verbose && exit(verbose);
 
   res;  
-}) # fitGlad()
+}, deprecated=TRUE) # fitGlad()
 
 
 ############################################################################
 # HISTORY:
+# 2006-12-15
+# o Made fitGlad() for CnChipEffectSet deprecated.  Use the GladModel class
+#   instead.
 # 2006-11-22
 # o Updated fitGlad() so that a subset of chromosomes (and even arrays)
 #   can be fitted.

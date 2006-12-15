@@ -33,6 +33,8 @@
 # }
 #*/###########################################################################
 setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes=c(1:22,"X"), units=NULL, useStddvs=TRUE, ..., force=FALSE, verbose=FALSE) {
+  throw("fitGlad() for CnChipEffectFile is deprecated since 2006-12-15.  Use the GladModel class instead.");
+
   require(GLAD) || throw("Package 'GLAD' not loaded.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -156,6 +158,9 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
 
 ############################################################################
 # HISTORY:
+# 2006-12-15
+# o Made fitGlad() for CnChipEffectFile deprecated.  Use the GladModel class
+#   instead.
 # 2006-11-06
 # o Now fitGlad() accepts a vector of chromosomes, because due to file 
 #   caching it is probably faster to fit all chromosomes on one file than
