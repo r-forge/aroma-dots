@@ -61,6 +61,12 @@ setMethodS3("getCdf", "GenotypeCallFile", function(this, ...) {
   this$.cdf;
 })
 
+setMethodS3("getChipType", "GenotypeCallFile", function(this, ...) {
+  chipType <- getChipType(getCdf(this));
+  chipType <- gsub("[,-]monocell$", "", chipType);
+  chipType;
+})
+
 setMethodS3("[", "GenotypeCallFile", function(this, i, drop=TRUE, ...) {
   res <- readUnits(this, units=i, ...);
   if (drop && length(res) == 1)

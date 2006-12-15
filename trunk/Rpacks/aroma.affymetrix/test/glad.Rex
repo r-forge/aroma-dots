@@ -4,18 +4,24 @@ source("ui.R");
 
 pngDev <- System$findGraphicsDevice();
 skip <- FALSE;
+imageFormat <- "screen";
+imageFormat <- "png";
 
-rm(res, ces);
+suppressWarnings({rm(res)});
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select what to do
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 choices <- c("Get GLAD model", "Fit GLAD", "List SD", "Plot GLAD estimates", "Write GLAD table", "Write WIG tracks (for the UCSC Genome Browser)");
-methods <- selectMenu(choices=choices, title="Select what you want to do (leave all blank to use all)");
+if (!exists("methods", mode="integer"))
+  methods <- NULL;
+methods <- selectMenu(choices=choices, selected=methods, title="Select what you want to do (leave all blank to use all)");
 if (length(methods) == 0) {
   methods <- seq(choices);
+  names(methods) <- choices;
 } else {
   methods <- match(methods, choices);
+  names(methods) <- choices[methods];
 } 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -36,12 +42,27 @@ if (exists("dataSets", mode="list") && inherits(dataSets[[1]], "CnChipEffectSet"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Define GLAD model
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+for (kk in seq(along=dataSets)) {
+  ces <- dataSets[[kk]];
+
+  # Hard wired for now
+  setMergeStrands(ces, TRUE);
+  setCombineAlleles(ces, TRUE);
+
+  dataSets[[kk]] <- ces;
+  rm(ces);
+}
+
+glad <- MultiGladModel(dataSets);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select arrays to fit
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-ces <- dataSets[[1]];
-choices <- getNames(ces);
-rm(ces);
-if (!exists("arrays"))
+choices <- getNames(glad);
+if (!exists("arrays", mode="integer"))
   arrays <- NULL;
 arrays <- selectMenu(choices=choices, selected=arrays, title="Select the arrays you which to fit (leave all blank to use all)");
 if (length(arrays) == 0) {
@@ -53,7 +74,7 @@ if (length(arrays) == 0) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select chromosomes to fit
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-choices <- c(1:22,"X");
+choices <- getChromosomes(glad);
 if (!exists("chromosomes"))
   chromosomes <- NULL;
 chromosomes <- selectMenu(choices=choices, selected=chromosomes, title="Select the chromosomes you which to fit (leave all blank to use all)");
@@ -65,7 +86,10 @@ if (length(chromosomes) == 0) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Process
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-verbose && enter(verbose, "Processing ", length(dataSets), " data sets");
+verbose && enter(verbose, "Fit GLAD to chip effects");
+print(glad);
+
+s <- paste("Chip types: ", paste(getChipTypes(glad), collapse=", "), sep="");
 s <- paste("Arrays: ", seqToHumanReadable(arrays), sep="");
 nas <- is.na(as.integer(chromosomes));
 str <- paste(seqToHumanReadable(chromosomes[!nas]), 
@@ -79,44 +103,33 @@ if (all(c(2,3) %in% methods) || all(c(2,4) %in% methods)) {
   methods <- setdiff(methods, 1);
 }
 
-res <- list();
-for (kk in seq(along=dataSets)) {
-  ces <- dataSets[[kk]];
+if (2 %in% methods) {
+  verbose && enter(verbose, "Fitting GLAD");
+  fit(glad, arrays=arrays, chromosomes=chromosomes, .retResults=FALSE, verbose=less(verbose));
+  verbose && exit(verbose);
+}
 
-  verbose && enter(verbose, "Chip-effect set ", getName(ces));
-
-  verbose && cat(verbose, "Chip-effect set:");
-  verbose && print(verbose, ces);
-
-  # Hard wired for now
-  setMergeStrands(ces, TRUE);
-  setCombineAlleles(ces, TRUE);
-
-  # Define the GLAD model
-  glad <- GladModel(ces);
-
-  if (2 %in% methods) {
-    verbose && enter(verbose, "Fitting GLAD");
-    fit(glad, arrays=arrays, chromosomes=chromosomes, .retResults=FALSE, verbose=less(verbose));
-    verbose && exit(verbose);
+if (3 %in% methods) {
+  verbose && enter(verbose, "Display SD");
+  sds <- list();
+  for (chr in chromosomes) {
+    fit <- fit(glad, arrays=arrays, chromosomes=chr, .retResults=FALSE);
+    sdEst <- lapply(fit, function(cc) cc[[1]]$SigmaC$Value);
+    sdEst <- unlist(sdEst);
+    sds[[chr]] <- sdEst;
   }
+  print(sds);
+  verbose && exit(verbose);
+}
 
-  if (3 %in% methods) {
-    verbose && enter(verbose, "Display SD");
-    sds <- list();
-    for (chr in chromosomes) {
-      fit <- fit(glad, arrays=arrays, chromosomes=chr);
-      sdEst <- lapply(fit, function(cc) cc[[1]]$SigmaC$Value);
-      sdEst <- unlist(sdEst);
-      sds[[chr]] <- sdEst;
-    }
-    print(sds);
-    verbose && exit(verbose);
-  }
+if (4 %in% methods) {
+  verbose && enter(verbose, "Plotting GLAD (and fitting if not done)");
 
-  if (4 %in% methods) {
-    verbose && enter(verbose, "Plotting GLAD (and fitting if not done)");
-
+  # Check for genotype calls
+  callList <- list();
+  cesList <- getListOfChipEffects(glad);
+  for (kk in seq(along=cesList)) {
+    ces <- cesList[[kk]];
     path <- getPath(ces);
     path <- gsub("plm", "crlmm", path, fixed=TRUE);
     path <- gsub(",QN,RMA,A+B,FLN", ",PPC,OQN,RMA,oligo,+-", path, fixed=TRUE);
@@ -125,28 +138,31 @@ for (kk in seq(along=dataSets)) {
       callSet <- GenotypeCallXdrSet$fromFiles(path);
       verbose && cat(verbose, "Genotype-call set:");
       verbose && print(verbose, callSet);
+      callList[[kk]] <- callSet;
+      rm(callSet);
     }
-  
-    plot(glad, arrays=arrays, chromosomes=chromosomes, skip=skip, callSet=callSet, verbose=less(verbose));
-    verbose && exit(verbose);
-  }
+  } # for (kk ...)
+  rm(cesList);
+print(callList);
 
-  if (5 %in% methods) {
-    verbose && enter(verbose, "Writing GLAD regions to tabular file");
-    # Filter out regions with only little change
-    smoothing <- c(-Inf,-0.15,+0.15,+Inf);
-    writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, oneFile=TRUE, skip=FALSE, verbose=less(verbose));
-    verbose && exit(verbose);
-  }
-
-  if (6 %in% methods) {
-    verbose && enter(verbose, "Writing WIG tracks");
-    writeWig(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
-    verbose && exit(verbose);
-  }
-
-  res[[kk]] <- glad;
+  plot(glad, arrays=arrays, chromosomes=chromosomes, skip=skip, callList=callList, imageFormat=imageFormat, verbose=less(verbose));
+  verbose && exit(verbose);
 }
+
+if (5 %in% methods) {
+  verbose && enter(verbose, "Writing GLAD regions to tabular file");
+  # Filter out regions with only little change
+  smoothing <- c(-Inf,-0.15,+0.15,+Inf);
+  writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, oneFile=TRUE, skip=FALSE, verbose=less(verbose));
+  verbose && exit(verbose);
+}
+
+if (6 %in% methods) {
+  verbose && enter(verbose, "Writing WIG tracks");
+  writeWig(glad, arrays=arrays, chromosomes=chromosomes, verbose=less(verbose));
+  verbose && exit(verbose);
+}
+
 gc();
 verbose && exit(verbose);
 
