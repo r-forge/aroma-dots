@@ -142,8 +142,6 @@ if (4 %in% methods) {
       rm(callSet);
     }
   } # for (kk ...)
-  rm(cesList);
-print(callList);
 
   plot(glad, arrays=arrays, chromosomes=chromosomes, skip=skip, callList=callList, imageFormat=imageFormat, verbose=less(verbose));
   verbose && exit(verbose);

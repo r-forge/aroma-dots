@@ -577,7 +577,7 @@ setMethodS3("plot", "MultiGladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0
 
   # Argument 'callList':
   chipTypes <- getChipTypes(this);
-  if (!is.null(callList)) {
+  if (length(callList) > 0) {
     if (!is.list(callList))
       callList <- list(callList);
 
