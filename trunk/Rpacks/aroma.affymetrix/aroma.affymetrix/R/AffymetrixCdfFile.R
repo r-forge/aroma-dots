@@ -868,15 +868,15 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rearrangeCells <- function(units, offset=0, hasBlocks=TRUE, ...) {
-    rearrangeBlock <- function(block, idxs, ...) {
+  rearrangeCells <- function(units, offset=0, hasGroups=TRUE, ...) {
+    rearrangeGroup <- function(group, idxs, ...) {
       y = (idxs-1) %/% ncols;
       x = (idxs-1) - ncols*y;
-      block$y <- y;
-      block$x <- x;
-      block$indices <- idxs;
-      block;
-    } # rearrangeBlock()
+      group$y <- y;
+      group$x <- x;
+      group$indices <- idxs;
+      group;
+    } # rearrangeGroup()
 
     nbrOfCells <- lapply(units, FUN=function(unit) unit$ncells);
     nbrOfCells <- sum(unlist(nbrOfCells, use.names=FALSE));
@@ -884,7 +884,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
     cells <- seq(from=offset+1, to=offset+nbrOfCells);
 
     verbose && printf(verbose, "Units: ");
-    if (hasBlocks) {
+    if (hasGroups) {
       for (kk in seq(along=units)) {
         if (verbose) {
           if (kk %% 1000 == 0) {
@@ -893,21 +893,21 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
             cat(".");
           }
         }
-        # blocks <- units[[kk]]$blocks;
-        blocks <- .subset2(.subset2(units, kk), "blocks");
-        for (ll in seq(along=blocks)) {
-          block <- .subset2(blocks, ll);
-          # Number of cells in this block
-          # nindices <- length(block$indices);
-          nindices <- length(.subset2(block, "indices"));
+        # groups <- units[[kk]]$groups;
+        groups <- .subset2(.subset2(units, kk), "groups");
+        for (ll in seq(along=groups)) {
+          group <- .subset2(groups, ll);
+          # Number of cells in this group
+          # nindices <- length(group$indices);
+          nindices <- length(.subset2(group, "indices"));
           head <- 1:nindices;
           # idxs <- cells[head];
           idxs <- .subset(cells, head);
           # cells <- cells[<tail>];
           cells <- .subset(cells, (nindices+1):length(cells));
-          blocks[[ll]] <- rearrangeBlock(block, idxs);
+          groups[[ll]] <- rearrangeGroup(group, idxs);
         }
-        units[[kk]]$blocks <- blocks;
+        units[[kk]]$groups <- groups;
       }
     } else {
       for (kk in seq(along=units)) {
@@ -918,18 +918,18 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
             cat(".");
           }
         }
-        # block <- units[[kk]]
-        block <- .subset2(units, kk);
-        # Number of cells in this block
-        # nindices <- length(block$indices);
-        nindices <- length(.subset2(block, "indices"));
+        # group <- units[[kk]]
+        group <- .subset2(units, kk);
+        # Number of cells in this group
+        # nindices <- length(group$indices);
+        nindices <- length(.subset2(group, "indices"));
         head <- 1:nindices;
         # idxs <- cells[head];
         idxs <- .subset(cells, head);
         # cells <- cells[<tail>];
         cells <- .subset(cells, (nindices+1):length(cells));
-        block <- rearrangeBlock(block, idxs);
-        units[[kk]] <- block;
+        group <- rearrangeGroup(group, idxs);
+        units[[kk]] <- group;
       }
     }
     verbose && printf(verbose, "\n");
@@ -964,10 +964,10 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fields to be kept
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Number of cells to keep in each block field
+  # Number of cells to keep in each group field
   fidx <- 1:nbrOfCellsPerField;
 
-  verbose && printf(verbose, "Number of cells per block field: %d\n", 
+  verbose && printf(verbose, "Number of cells per group field: %d\n", 
                                                        nbrOfCellsPerField);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1035,22 +1035,30 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
     unitsToDo <- unitsToDo[-head];
 
     # Read CDF structure
-    srcUnits <- readCdf(src, units=units);
+#    srcUnits <- readCdf(src, units=units);
+
+    srcUnits <- readCdf(src, units=units, readGroupDirection=TRUE);    
+# readGroupDirection is needed in order for writeCdf() to work.  /KS 18/12/06
+    
+    # 15/12/06: readCdf() no longer returns a list
+    # with element "blocks"; instead, it returns a list
+    # with element "groups". /KS
 
     srcUnits <- lapply(srcUnits, function(unit) {
-      unit$blocks <- lapply(unit$blocks, function(block) {
-        block[fields] <- lapply(.subset(block, fields), FUN=.subset, fidx);
-        block$natoms <- nbrOfCellsPerField;
-        block$ncellsperatom <- 1;
+      unit$groups <- lapply(unit$groups, function(group) {
+        group[fields] <- lapply(.subset(group, fields), FUN=.subset, fidx);
+        group$natoms <- nbrOfCellsPerField;
+        group$ncellsperatom <- 1;
         idxs <- idxOffset + 1:nbrOfCellsPerField;
         y <- (idxs-1) %/% ncols;
-        block$y <- y;
-        block$x <- (idxs-1) - ncols*y;
-        block$indices <- idxs;
+        group$y <- y;
+        group$x <- (idxs-1) - ncols*y;
+        group$indices <- idxs;
         idxOffset <<- idxOffset + nbrOfCellsPerField;
-        block;
+        group;
       })
-      ncells <- length(unit$blocks)*nbrOfCellsPerField;
+      ncells <- length(unit$groups)*nbrOfCellsPerField;
+    
       unit$ncells <- ncells;
       unit$natoms <- ncells;
       unit$ncellsperatom <- 1;
@@ -1072,7 +1080,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Rearranging QC unit cell indices");
-  destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, hasBlocks=FALSE, verbose=verbose);
+  destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, hasGroups=FALSE, verbose=verbose);
   verbose && enter(verbose, "Validating QC unit cell indices");
   cells <- unlist(lapply(destQcUnits, FUN=function(unit) unit$indices), use.names=FALSE);
   udcells <- unique(diff(cells));
@@ -1085,7 +1093,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # CDF header
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Creaging CDF header with source CDF as template");
+  verbose && enter(verbose, "Creating CDF header with source CDF as template");
   destHeader <- readCdfHeader(src);
   destHeader$nrows <- nrows;
   destHeader$ncols <- ncols;
@@ -1281,8 +1289,13 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+<<<<<<< .mine
+# 2006-12-18 /KS
+# o Made global replacement "block" -> "group".
+=======
 # 2006-12-14
 # o Added convertUnits().
+>>>>>>> .r1300
 # 2006-09-27
 # o Now fromFile() tries to create an instance of the subclasses (bottom up)
 #   first.  This will make it possible to automatically define SNP CDFs.
