@@ -1,8 +1,50 @@
-require(GLAD) || stop("Package GLAD not found");
+setMethodS3("drawCytoBand", "default", function (cytoband, chromosome=1, y=-1, labels=TRUE, height=1, colCytoBand=c("white", "darkblue"), colCentro="red", ...) {
+  opar <- par(xpd=NA);
+  on.exit(opar);
+
+  color <- unique(cytoband$Col);
+  pal <- myPalette(low=colCytoBand[1], high=colCytoBand[2], k=length(color));
+
+  info <- data.frame(Color=color, ColorName=I(pal));
+  cytoband <- merge(cytoband, info, by="Color");
+  rm(info);
+
+  # Extract cytoband information for current chromosome
+  keep <- which(cytoband$Chromosome == chromosome);
+  cytoband <- cytoband[keep, ];
+
+  CytoPos <- 0.5 * (cytoband$Start + cytoband$End);
+  CytoLength <- (cytoband$End - cytoband$Start) + 1;
+  NbCyto <- length(cytoband[, 1]);
+  HeightPlot <- rep(height, NbCyto);
+  sizeCyto <- matrix(c(CytoLength, HeightPlot), nrow=NbCyto, ncol=2);
+
+  # Draw the cytobands
+  y0 <- min(unique(y));
+  yC <- y0+height/2;
+  y1 <- y0+height;
+  symbols(CytoPos, y=rep(yC, NbCyto), rectangles=sizeCyto,
+      inches=FALSE, bg=cytoband$ColorName, add=TRUE, ...);
+
+  # The inverted arrow indicating where the centromere is.
+  idxs <- which(cytoband$Centro == 1);
+  centroPos <- min(cytoband$End[idxs]);
+  arrows(centroPos, y0, centroPos, y1, col=colCentro, code=3, angle=120);
+
+  # Labels, e.g. 20q12
+  if (labels) {
+    labels <- paste(cytoband$Chromosome, cytoband$Band, sep="");
+#    axis(side=3, at=CytoPos, labels=labels, las=2);
+    dy <- par("cxy")[2];
+    text(x=CytoPos, y=y1+dy/2, labels=labels, srt=90, adj=c(0,0.5));
+  }
+})
 
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
 # Added also par(cex=0.8) - see code.
-setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, Smoothing=NULL, GNL="ZoneGNL", Bkp=FALSE, labels=TRUE, plotband=TRUE, unit=0, colDAGLAD=c("black", "blue", "red", "green", "yellow"), pchSymbol=c(20, 13), colCytoBand=c("white", "darkblue"), colCentro="red", text=NULL, main="", ylim=NULL, ...) {
+setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, Smoothing="Smoothing", GNL="ZoneGNL", Bkp=FALSE, cytobandLabels=TRUE, plotband=TRUE, unit=0, colDAGLAD=NULL, pchSymbol=c(20, 4), colCytoBand=c("white", "darkblue"), colCentro="red", xlim=NULL, ylim=c(-1,1)*2.5, xlab="Physical position", ylab=variable, flavor=c("glad", "minimal"), ...) {
+  require(GLAD) || stop("Package GLAD not found");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -25,6 +67,7 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
     throw("Argument 'chromosome' must not contain more than one chromosome: ", paste(chromosome, collapse=", "));
   }
 
+  # Argument 'Smoothing':
   if (!is.null(Smoothing)) {
     if (!Smoothing %in% names(fit$profileValues)) {
       cat("Warning in plotProfile.profileCGH:", Smoothing, " is not available");
@@ -37,139 +80,180 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
       throw("Cannot plot breakpoints: No data available.")
   }
 
+  # Argument 'colDAGLAD':
+  if (is.null(colDAGLAD)) { 
+    colDAGLAD <- RColorBrewer::brewer.pal(5, "Dark2");
+  }
+
+  # Argument 'flavor':
+  flavor <- match.arg(flavor);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Keep only data to be plotted
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Keep only data for the chromosome of interest
-  keep <- (fit$profileValues$Chromosome == chromosome);
-  fit$profileValues <- fit$profileValues[keep,];
+  pv <- fit$profileValues;
 
-  # Extract the data to plot
-  fit$profileValues$VarToPlot <- fit$profileValues[, variable];
+  # Keep only data for the chromosome of interest
+  keep <- (pv$Chromosome == chromosome);
+  pv <- pv[keep,];
+
+  # Keep only finite values based on the variable of interest
+  keep <- is.finite(pv[[variable]]);
+  pv <- pv[keep,];
 
   # Convert the chromosome names to chromosome indices
-  fit$profileValues$Chromosome <- ChrNumeric(fit$profileValues$Chromosome);
-
-  # Keep only finite values
-  keep <- is.finite(fit$profileValues[variable]);
-  fit$profileValues <- fit$profileValues[keep,];
+  pv$Chromosome <- ChrNumeric(pv$Chromosome);
 
   # Make sure the order of the values are increasing
-  o <- order(fit$profileValues$PosOrder);
-  fit$profileValues <- fit$profileValues[o,];
+  o <- order(pv$PosOrder);
+  pv <- pv[o,];
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Cytoband data
+  # Get chromosome lengths
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Load data
   data(cytoband);
-
-  LabelChr <- data.frame(Chromosome=chromosome);
   genomeInfo <- aggregate(cytoband$End, list(Chromosome=cytoband$Chromosome, ChrNumeric=cytoband$ChrNumeric), max, na.rm=TRUE);
   names(genomeInfo) <- c("Chromosome", "ChrNumeric", "Length");
   genomeInfo$Chromosome <- as.character(genomeInfo$Chromosome);
   genomeInfo$ChrNumeric <- as.integer(as.character(genomeInfo$ChrNumeric));
 
+  LabelChr <- data.frame(Chromosome=chromosome);
   LabelChr <- merge(LabelChr, genomeInfo[, c("ChrNumeric", "Length")], by.x="Chromosome", by.y="ChrNumeric", all.x=TRUE);
 
   LabelChr$Length <- 0;
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Get the cytoband details for the chromosome of interest
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   cytobandNew <- subset(cytoband, select=-Chromosome);
   cytobandNew <- merge(LabelChr, cytobandNew, by.x="Chromosome", by.y="ChrNumeric");
 
-  fit$profileValues <- merge(fit$profileValues, LabelChr, by="Chromosome");
-  fit$profileValues$NewPosBase <- fit$profileValues$PosBase + fit$profileValues$Length;
-  par(no.readonly=TRUE);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Update the plot data with cytoband information
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  pv <- merge(pv, LabelChr, by="Chromosome");
 
-  # Plot cytobands
-  if (plotband) {
-    # Rescale x positions according to units
-    cytobandNew$Start <- cytobandNew$Start/(10^unit);
-    cytobandNew$End <- cytobandNew$End/(10^unit);
-    cytobandNew$Start <- cytobandNew$Start + cytobandNew$Length;
-    cytobandNew$End <- cytobandNew$End + cytobandNew$Length;
-  
-    # Plot cytoband and main graph in two panels
-    layout(c(1,2), heights=c(1,4));
-    par(mar=c(0,4,4,2));
-    plot(0, type="n", xlim=c(0, max(cytobandNew$End)), ylim=c(-1.5, 1.5), xaxt="n", yaxt="n", ylab="", xlab="");
-    LabelChrCyto <- unique(cytobandNew$Chromosome);
-opar <- par(cex=0.8); # HB
-    plotCytoBand(cytobandNew, Chromosome=LabelChrCyto[1], 
-      labels=labels, y=0, height=2, colCytoBand=colCytoBand, 
-      colCentro=colCentro);
-par(opar); #HB 
-    par(mar=c(4,4,0,2));
-  }
-
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plot smoothing values?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (!is.null(Smoothing)) {
-    fit$profileValues <- fit$profileValues[order(fit$profileValues$Chromosome, fit$profileValues$PosBase),];
-    NbPos <- length(fit$profileValues[, 1])
-    PosMax <- max(fit$profileValues$NewPosBase) + 1;
-    Pos <- fit$profileValues$NewPosBase[1:(NbPos-1)];
-    PosNext <- fit$profileValues$NewPosBase[2:NbPos];
+    # Order the data points by chromosome and position
+    o <- order(pv$Chromosome, pv$PosBase);
+    pv <- pv[o,];
+
+    n <- length(pv[, 1])
+    PosMax <- max(pv$PosBase) + 1;
+    Pos <- pv$PosBase[1:(n-1)];
+    PosNext <- pv$PosBase[2:n];
     InterPos <- Pos + (PosNext - Pos)/2;
     InterPos <- c(0, InterPos, PosMax);
-    SmtStart <- fit$profileValues[, Smoothing][1];
-    SmtEnd <- fit$profileValues[, Smoothing][NbPos];
-    Smt1 <- fit$profileValues[, Smoothing][1:(NbPos-1)];
+    SmtStart <- pv[, Smoothing][1];
+    SmtEnd <- pv[, Smoothing][n];
+    Smt1 <- pv[, Smoothing][1:(n-1)];
     Smt1 <- c(SmtStart, Smt1, SmtEnd);
-    Smt2 <- fit$profileValues[, Smoothing][2:NbPos];
+    Smt2 <- pv[, Smoothing][2:n];
     Smt2 <- c(SmtStart, Smt2, SmtEnd);
-    datasmt <- data.frame(PosBase=c(InterPos, InterPos), Smoothing=c(Smt1, Smt2));
+    datasmt <- data.frame(
+      PosBase=c(InterPos, InterPos), 
+      Smoothing=c(Smt1, Smt2)
+    );
+    rm(PosNext, SmtStart, SmtEnd, InterPos, Smt1, Smt2); # Not needed anymore
     datasmt <- unique(datasmt);
     datasmt <- datasmt[order(datasmt$PosBase),];
   }
 
-  if (GNL %in% names(fit$profileValues)) {
-    col <- rep(colDAGLAD[5], length(fit$profileValues$PosOrder));
-    gnl <- fit$profileValues[GNL];
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Annotate gains, normals, and losses, as well as outliers?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (GNL %in% names(pv)) {
+    # Setup color vector
+    col <- rep(colDAGLAD[5], length(pv$PosOrder));
+    gnl <- pv[GNL];
     col[gnl ==  -1] <- colDAGLAD[4];
     col[gnl ==   1] <- colDAGLAD[3];
     col[gnl ==   2] <- colDAGLAD[2];
     col[gnl == -10] <- colDAGLAD[1];
-    outliers <- rep(pchSymbol[1], length(fit$profileValues$PosOrder));
-    outliers[fit$profileValues$OutliersTot != 0] <- pchSymbol[2];
 
-    if (plotband) {
-      plot(VarToPlot ~ NewPosBase, data=fit$profileValues, pch=outliers, col=col, xaxt="n", xlab=main, ylab=variable, ylim=ylim, ...);
-    } else {
-      plot(VarToPlot ~ NewPosBase, data=fit$profileValues, pch=outliers, col=col, xaxt="n", xlab="", ylab=variable, ylim=ylim, main=main);
-    }
+    # Setup pch vector
+    pch <- rep(pchSymbol[1], length(pv$PosOrder));
+    pch[pv$OutliersTot != 0] <- pchSymbol[2];
 
-    if (!is.null(Smoothing)) {
-      lines(datasmt$Smoothing ~ datasmt$PosBase, col="black");
-    }
-
-    if (Bkp) {
-      if (is.data.frame(fit$BkpInfo)) {
-        fit$BkpInfo <- merge(fit$BkpInfo, LabelChr, by="Chromosome");
-        fit$BkpInfo$NewPosBase <- fit$BkpInfo$PosBase + fit$BkpInfo$Length;
-        abline(v=fit$BkpInfo$NewPosBase + 0.5, col="red", lty=2);
-      }
-    }
+    colSmoothing <- "black";
   } else {
-    if (plotband) {
-      plot(VarToPlot ~ NewPosBase, data=fit$profileValues, pch=20, xaxt="n", xlab=main, ylab=variable, ylim=ylim, ...);
-    } else {
-      plot(VarToPlot ~ NewPosBase, data=fit$profileValues, pch=20, xaxt="n", xlab="", ylab=variable, ylim=ylim, main=main, ...);
-    }
+    col <- par("col");
+    pch <- 20;
+    colSmoothing <- "red";
+  }
 
-    if (Bkp) {
-      if (is.data.frame(fit$BkpInfo)) {
-        fit$BkpInfo <- merge(fit$BkpInfo, LabelChr, by="Chromosome");
-        fit$BkpInfo$NewPosBase <- fit$BkpInfo$PosBase + fit$BkpInfo$Length;
-        abline(v=fit$BkpInfo$NewPosBase + 0.5, col="red", lty=2);
-      }
-    }
-    if (!is.null(Smoothing)) {
-      lines(datasmt$Smoothing ~ datasmt$PosBase, col="red");
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plotting flavor
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  opar <- par(no.readonly=TRUE);  
+  on.exit(opar);
+
+  if (flavor == "glad") {
+    par(mar=c(3,3,5,3)+0.1, mgp=c(2,0.6,0.3));
+    axes <- TRUE;
+  } else if (flavor == "minimal") {
+    # No margins
+    	par(mar=c(2,0,0.5,0), mgp=c(2,0.6,0.3), xaxs="i");
+    # No axis
+    axes <- FALSE;
+    # No cytobands
+    plotband <- FALSE;
+    # x-range
+    if (is.null(xlim))
+      xlim <- c(0,genomeInfo$Length[chromosome]/(10^unit));
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plot main data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Extract the data to plot
+  y <- pv[, variable];
+  x <- pv$PosBase/(10^unit);
+  plot(x=x, y=y, pch=pch, col=col, xaxt="n", xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, axes=axes, ...);
+#  axis(side=2); axis(side=4);
+   
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plot cytobands?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (plotband) {
+    # Rescale x positions according to units
+    cytobandNew$Start <- cytobandNew$Start/(10^unit);
+    cytobandNew$End <- cytobandNew$End/(10^unit);
+
+    usr <- par("usr");
+    dy <- diff(usr[3:4]);
+
+    drawCytoBand(cytobandNew, chromosome=chromosome, 
+      labels=cytobandLabels, y=usr[4], height=0.03*dy, 
+      colCytoBand=colCytoBand, colCentro=colCentro);
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plot break points?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (Bkp) {
+    if (is.data.frame(fit$BkpInfo)) {
+      fit$BkpInfo <- merge(fit$BkpInfo, LabelChr, by="Chromosome");
+      fit$BkpInfo$NewPosBase <- fit$BkpInfo$PosBase + fit$BkpInfo$Length;
+      abline(v=fit$BkpInfo$NewPosBase + 0.5, col="red", lty=2);
     }
   }
-  if (!is.null(text)) {
-    text(text$x, text$y, labels=text$labels, cex=text$cex);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plot smoothing lines?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (!is.null(Smoothing)) {
+    lines(datasmt$Smoothing ~ datasmt$PosBase, col=colSmoothing);
   }
 }) # plotProfile2()
 

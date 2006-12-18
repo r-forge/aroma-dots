@@ -247,12 +247,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
   ds <- getDataSet(this);
   cdf <- getCdf(ds);
   verbose && enter(verbose, "Identifying CDF cell indices");
-<<<<<<< .mine
-  verbose && cat(verbose, "stratifyBy: ", stratifyBy);
-  verbose && str(verbose, list(...));
-=======
   verbose && cat(verbose, "Stratify by: ", stratifyBy);
->>>>>>> .r1300
   cells <- getCellIndices(cdf, ..., stratifyBy=stratifyBy);
   verbose && exit(verbose);
   
