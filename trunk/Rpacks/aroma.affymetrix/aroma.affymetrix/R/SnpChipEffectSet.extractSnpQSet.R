@@ -88,7 +88,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdf <- getCdf(this);
   chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell$", "", chipType);
+  chipType <- gsub("[,-]monocell$", "", chipType);
   cleanChipType <- cleancdfname(chipType, addcdf=FALSE);
   nbrOfSamples <- nbrOfFiles(this);
   units <- indexOf(cdf, pattern="^SNP");

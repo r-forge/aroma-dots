@@ -90,6 +90,9 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name
 
 
 setMethodS3("getCellIndices", "ChipEffectSet", function(this, ...) {
+  # Use the first chip-effect file to get the CDF structure.
+  # Note: Ideally we want to define a special CDF class doing this
+  # instead of letting the data file do this. /HB 2006-12-18
   ce <- getFile(this, 1);
   getCellIndices(ce, ...);
 })

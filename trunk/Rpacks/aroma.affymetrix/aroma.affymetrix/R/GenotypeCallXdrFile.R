@@ -74,8 +74,7 @@ setMethodS3("readUnits", "GenotypeCallXdrFile", function(this, units=NULL, ...) 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Open data file
   pathname <- getPathname(this);
-  data <- loadObject(pathname);
-  calls <- data$call;
+  calls <- loadObject(pathname);
   if (!is.null(units)) {
     calls <- calls[units];
   }

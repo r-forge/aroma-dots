@@ -11,7 +11,7 @@ setMethodS3("writeRegions" ,"profileCGH", function(this, filename, path=NULL, ap
   hasUnits <- (!is.null(pv$chipType) && !is.null(pv$units));
   if (hasUnits) {
     chipType <- as.character(pv$chipType);
-    chipType <- gsub("-monocell$", "", chipType);
+    chipType <- gsub("[,-]monocell$", "", chipType);
     unitNames <- character(nrow(pv));
     for (cc in unique(chipType)) {
       cdfFile <- findCdf(cc);

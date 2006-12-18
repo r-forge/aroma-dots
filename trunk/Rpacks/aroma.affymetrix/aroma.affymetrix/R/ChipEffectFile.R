@@ -229,18 +229,17 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
   verbose && exit(verbose);
 
   # Read one cell from each unit
-  verbose && enter(verbose, "Reading data for these cells");
+  verbose && enter(verbose, "Reading data for these ", length(idxs), " cells");
   value <- readCel(getPathname(this), indices=idxs, readIntensities=FALSE, 
                    readStdvs=TRUE, readPixels=FALSE)$stdvs;
-  verbose && str(verbose, value);
   verbose && exit(verbose);
 
   # Identify units for which the stdvs <= 0.
   value <- which(value <= 0);
   if (!is.null(units))
     value <- units[value];
+  verbose && cat(verbose, "Looking for stdvs <= 0 indicating non-estimated units:");
   verbose && str(verbose, value);
-
   verbose && exit(verbose);
 
   value;

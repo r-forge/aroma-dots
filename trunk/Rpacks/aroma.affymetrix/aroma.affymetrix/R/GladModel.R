@@ -173,7 +173,7 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
   # Chip type    
   cdf <- getCdf(this);
   chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell$", "", chipType);
+  chipType <- gsub("[,-]monocell$", "", chipType);
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
@@ -383,7 +383,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # Get chip type
   cdf <- getCdf(this);
   chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell$", "", chipType);
+  chipType <- gsub("[,-]monocell$", "", chipType);
 
   # The figure path
   if (is.null(path)) {

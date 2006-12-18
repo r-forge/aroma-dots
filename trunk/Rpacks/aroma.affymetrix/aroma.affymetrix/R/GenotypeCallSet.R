@@ -293,6 +293,13 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NU
   # Argument 'arrays':
   if (is.null(arrays)) {
     arrays <- seq(this);
+  } else if (is.character(arrays)) {
+    arrayNames <- arrays;
+    arrays <- match(arrayNames, getNames(this));
+    if (any(is.na(arrays))) {
+      throw("Argument 'arrays' contains unknown array names: ", 
+                      paste(arrayNames[is.na(arrays)], collapse=", "));
+    }
   } else {
     arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfFiles(this)));
   }
@@ -451,6 +458,8 @@ setMethodS3("createFromCrlmmFile", "GenotypeCallSet", function(this, filename="c
 
 ############################################################################
 # HISTORY:
+# 2006-12-17
+# o BUG FIX: readUnits() would not accept names in the 'arrays' argument.
 # 2006-12-14
 # o Updated readUnits() to return a matrix of factors instead.
 # 2006-10-01

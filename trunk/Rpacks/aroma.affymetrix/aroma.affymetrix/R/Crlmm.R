@@ -757,17 +757,13 @@ setMethodS3("fit", "Crlmm", function(this, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Saving calls, LLR confidence scores, and all distances to file");
   sampleNames <- getNames(ces);
-  # Allocate an Ix2 data frame for all units on one array
-  data <- dataFrame(colClasses=c(call="integer", llr="double"), 
-                                                    nrow=nbrOfUnits(cdf));
-  data$llr <- NA; # Default value
+
   # Turn the 'call' column into a genotype factor
   as.GenotypeFactor <- function(x, ...) {
     # Turn into a factor
     levels <- c("-"=0, AA=1, AB=2, BB=3, NC=4);
     factor(x, levels=levels, labels=names(levels), ordered=FALSE);
   }
-  data$call <- as.GenotypeFactor(data$call);
 
   # Allocate an Ix3x2 array to hold all distances on one array
   dim <- c(nbrOfUnits(cdf),3,2);
@@ -780,13 +776,20 @@ setMethodS3("fit", "Crlmm", function(this, verbose=FALSE, ...) {
     sampleName <- sampleNames[kk];
     verbose && enter(verbose, sprintf("Array %d ('%s')", kk, sampleName));
 
-    verbose && enter(verbose, "Calls and LLR confidence scores");
+    verbose && enter(verbose, "Calls");
     filename <- sprintf("%s,calls.xdr", sampleName);
     pathname <- filePath(path, filename);
     verbose && cat(verbose, "Pathname: ", pathname);
-    # Populate the data frame (overwriting previous values)
-    data$call[units] <- as.GenotypeFactor(calls[,kk]);
-    data$llr[units] <- llr[,kk];
+    data <- as.GenotypeFactor(calls[,kk]);
+    attr(data, "sampleName") <- sampleName;  # Update the sample name
+    saveObject(data, file=pathname);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "LLR confidence scores");
+    filename <- sprintf("%s,llr.xdr", sampleName);
+    pathname <- filePath(path, filename);
+    verbose && cat(verbose, "Pathname: ", pathname);
+    data <- llr[,kk];
     attr(data, "sampleName") <- sampleName;  # Update the sample name
     saveObject(data, file=pathname);
     verbose && exit(verbose);
@@ -943,6 +946,8 @@ setMethodS3("fit", "Crlmm", function(this, verbose=FALSE, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-12-16
+# o Now the calls and the LLRs are stored in seperate files.
 # 2006-12-13
 # o TO DO: Create GenotypeCallFile and GenotypeCallSet classes, with
 #   subclasses CrlmmGenotypeCallFile etc. Add extractSnpCallSetPlus()

@@ -61,6 +61,9 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FA
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cells <- NextMethod("getCellIndices", this, ..., verbose=verbose);
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Combine alleles?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # If combining alleles, return only every second group.
   # In order to improve readability we merge the names of alleles groups
   # combined, e.g. groups 'C' and 'G' become group 'CG'.
@@ -78,6 +81,7 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FA
       groups;
     })
   }
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
