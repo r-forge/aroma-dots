@@ -21,15 +21,15 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
 
   # Rescale
   lastPos <- lastPos / scale;
-  for (ff in c("profileValues", "profileValuesNA", "BkpInfo")) {
-    this[[ff]]$PosBase <- this[[ff]]$PosBase / scale;
-  }
+#  for (ff in c("profileValues", "profileValuesNA", "BkpInfo")) {
+#    this[[ff]]$PosBase <- this[[ff]]$PosBase / scale;
+#  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Plot GLAD fit
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   plotProfile(this, unit=unit, Bkp=Bkp, Smoothing=Smoothing,
-                    colDAGLAD=colDAGLAD, ylim=ylim);
+                    colDAGLAD=colDAGLAD, ylim=ylim, ...);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

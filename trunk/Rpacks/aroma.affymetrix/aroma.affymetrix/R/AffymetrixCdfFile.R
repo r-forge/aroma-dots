@@ -1289,13 +1289,10 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
-<<<<<<< .mine
 # 2006-12-18 /KS
 # o Made global replacement "block" -> "group".
-=======
 # 2006-12-14
 # o Added convertUnits().
->>>>>>> .r1300
 # 2006-09-27
 # o Now fromFile() tries to create an instance of the subclasses (bottom up)
 #   first.  This will make it possible to automatically define SNP CDFs.

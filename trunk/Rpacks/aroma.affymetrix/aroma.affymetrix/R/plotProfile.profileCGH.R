@@ -1,5 +1,3 @@
-require(GLAD) || stop("Package GLAD not found");
-
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
 # Added also par(cex=0.8) - see code.
 plotProfile.profileCGH <- function (profileCGH, variable = "LogRatio", Chromosome = NULL, 
@@ -9,6 +7,8 @@ plotProfile.profileCGH <- function (profileCGH, variable = "LogRatio", Chromosom
         "darkblue"), colCentro = "red", text = NULL, main = "", ylim=NULL,
     ...) 
 {
+    require(GLAD) || stop("Package GLAD not found");
+
     if (length(intersect(names(profileCGH$profileValues), "PosBase")) < 
         1) {
         stop("Error in plotProfile.profileCGH: PosBase is not available")
