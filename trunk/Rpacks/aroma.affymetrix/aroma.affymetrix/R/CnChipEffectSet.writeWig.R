@@ -58,7 +58,7 @@ setMethodS3("writeWig", "CnChipEffectSet", function(this, reference=NULL, arrays
   dataSetName <- getFullName(this);
   cdf <- getCdf(this);
   chipType <- getChipType(cdf);
-  chipType <- gsub("-monocell$", "", chipType);
+  chipType <- gsub("[,-]monocell$", "", chipType);
   arrayNames <- getNames(this);
 
   path <- filePath("glad", dataSetName, chipType, expandLinks="any");

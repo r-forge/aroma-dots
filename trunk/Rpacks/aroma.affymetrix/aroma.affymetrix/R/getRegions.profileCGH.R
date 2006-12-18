@@ -20,7 +20,7 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
   hasUnits <- (!is.null(pv$chipType) && !is.null(pv$units));
   if (hasUnits) {
     chipType <- as.character(pv$chipType);
-    chipType <- gsub("-monocell$", "", chipType);
+    chipType <- gsub("[,-]monocell$", "", chipType);
 
     rsIds <- character(nrow(pv));
     unitNames <- character(nrow(pv));

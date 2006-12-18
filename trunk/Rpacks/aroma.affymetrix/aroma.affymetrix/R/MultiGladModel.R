@@ -434,6 +434,7 @@ setMethodS3("fit", "MultiGladModel", function(this, arrays=1:nbrOfArrays(this), 
 
   # Argument 'chromosomes':
   chromosomes <- Arguments$getCharacters(chromosomes);
+#  chromosomes[chromosomes == "23"] <- "X";
   chromosomes <- intersect(chromosomes, getChromosomes(this));
 
   # Argument 'verbose':
@@ -625,7 +626,8 @@ setMethodS3("plot", "MultiGladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0
 
   # The figure path
   if (is.null(path)) {
-    path <- filePath(rootPath, getFullName(this), chipType, expandLinks="any");
+    modelName <- paste(getTags(this), collapse=",");
+    path <- filePath(rootPath, getName(this), modelName, chipType, expandLinks="any");
     path <- filePath(path, expandLinks="any");
   }
   mkdirs(path);
@@ -680,19 +682,20 @@ setMethodS3("plot", "MultiGladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0
     # Extract the chromsome from the GLAD fit object
     pv <- fit$profileValues;
     chromosome <- unique(pv$Chromosome);  # Should only be one!
+    chromosome[chromosome == "23"] <- "X";
 
     # Infer the length (in bases) of the chromosome
     chromosomeIdx <- match(chromosome, getChromosomes(this));
     nbrOfBases <- genome$nbrOfBases[chromosomeIdx];
     widthMb <- nbrOfBases / 1e6;
 
-    verbose && enter(verbose, sprintf("Plotting %s for chromosome %s (%02d) [%.2fMb]", fullname, chromosome, chromosomeIdx, widthMb));
+    verbose && enter(verbose, sprintf("Plotting %s for chromosome %s (%02d) [%.2fMb]", arrayName, chromosome, chromosomeIdx, widthMb));
 
     for (zz in seq(along=zooms)) {
       zoom <- zooms[zz];
 
       # Create the pathname to the file
-      imgName <- sprintf("%s,glad,chr%02d,x%04d.%s", fullname, chromosomeIdx, zoom, imageFormat);
+      imgName <- sprintf("%s,glad,chr%02d,x%04d.%s", arrayName, chromosomeIdx, zoom, imageFormat);
       pathname <- filePath(path, imgName);
 
       # pngDev() (that is bitmap()) does not accept spaces in pathnames
@@ -740,6 +743,10 @@ setMethodS3("plot", "MultiGladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0
             # Got copy-number estimates for this chip type?
             idxs <- which(pv$chipType == chipType);
             if (length(idxs) == 0)
+              next;
+
+            # Got copy-number estimates for this array?
+            if (!arrayName %in% getNames(callSet))
               next;
 
             # Get the subset of genotype calls for this array and chromosome.
@@ -1041,6 +1048,8 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2006-12-17
+# o BUG FIX: The new fitDone() in plot() choked on chr 23 (should be 'X').
 # 2006-12-15
 # o This class should be considered temporary, because we might design a
 #   ChipEffectSet class that can contain multiple chip types, but treated as

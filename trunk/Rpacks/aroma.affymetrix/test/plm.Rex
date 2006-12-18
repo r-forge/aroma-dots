@@ -2,14 +2,16 @@ library(aroma.affymetrix);
 source("init.R");
 source("ui.R");
 
-moreUnits <- 30;
-probeModel <- "mm";
+moreUnits <- 10;
+probeModel <- "pm";
+#probeModel <- "mm";
 #probeModel <- "pmmm";
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-choices <- c("MBEI,+-", "MBEI,A+B", "RMA,+-", "RMA,A+B");
+choices <- c("MBEI,+-", "MBEI", "MBEI,A+B", 
+             "RMA,+-",  "RMA",  "RMA,A+B");
 ans <- menu(choices=choices, title="Select probe-level model (PLM)")
 model <- choices[ans];
 modelTags <- unlist(strsplit(model, split=","));
@@ -36,7 +38,7 @@ if (exists("dataSets", mode="list")) {
 choices <- c(1:22,"X");
 if (!exists("chromosomes"))
   chromosomes <- NULL;
-chromosomes <- selectMenu(choices=choices, selected=chromosomes, title="Select the chromosomes you which to fit (leave all blank to use all)");
+chromosomes <- selectMenu(choices=choices, selected=chromosomes, title="Select the chromosomes you want to fit (leave all blank to use all)");
 if (length(chromosomes) == 0) {
   chromosomes <- choices;
 }

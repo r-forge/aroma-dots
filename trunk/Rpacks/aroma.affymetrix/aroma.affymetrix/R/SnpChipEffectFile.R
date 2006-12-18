@@ -63,12 +63,23 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., verbose=F
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cells <- NextMethod("getCellIndices", this, ..., verbose=verbose);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Merge strands?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # If merging strands, we only need half the number of chip-effect 
-  # parameters per unit group.
+  # parameters per unit group.  Example:
+  # a) mergeStrands=FALSE:
+  #   Fit by strand and allele:        #groups=4, #chip effects=4
+  #   (same but single-stranded SNP)   #groups=2, #chip effects=2
+  # b) mergeStrands=TRUE:
+  #   Merge strands, fit by allele:    #groups=4, #chip effects=2
+  #   (same but single-stranded SNP)   #groups=2, #chip effects=2
   if (this$mergeStrands) {
     cells <- applyCdfGroups(cells, function(groups) {
       ngroups <- length(groups);
-      groups[1:ceiling(ngroups/2)];
+#      groups[1:ceiling(ngroups/2)];
+      groups[1:round((ngroups+1)/2)];
     })
   }
 
@@ -111,6 +122,10 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
 
 ############################################################################
 # HISTORY:
+# 2006-12-18
+# o BUG FIX: getCellIndices() would return a single group instead of two,
+#   for a single-stranded SNP when mergeStrands=TRUE.  See for instance
+#   unit SNP_A-1780520 in the Mapping250K_Nsp chip.
 # 2006-11-28
 # o Added readUnits() to override caching mechanism of superclasses.
 # 2006-09-17

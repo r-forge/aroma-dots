@@ -66,7 +66,7 @@ if (!exists("arrays", mode="integer"))
   arrays <- NULL;
 arrays <- selectMenu(choices=choices, selected=arrays, title="Select the arrays you which to fit (leave all blank to use all)");
 if (length(arrays) == 0) {
-  arrays <- seq(choices);
+  arrays <- seq(along=choices);
 } else {
   arrays <- match(arrays, choices);
 } 
