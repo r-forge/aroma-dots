@@ -31,6 +31,8 @@
 # }
 #*/###########################################################################
 setConstructorS3("MultiGladModel", function(cesList=NULL, referenceList=NULL, tags="*", ...) {
+  require(GLAD) || throw("Package not loaded: GLAD");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
