@@ -150,8 +150,9 @@ if (4 %in% methods) {
 if (5 %in% methods) {
   verbose && enter(verbose, "Writing GLAD regions to tabular file");
   # Filter out regions with only little change
+  nbrOfSnps <- c(3,Inf);
   smoothing <- c(-Inf,-0.15,+0.15,+Inf);
-  writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, oneFile=TRUE, skip=FALSE, verbose=less(verbose));
+  writeRegions(glad, arrays=arrays, chromosomes=chromosomes, smoothing=smoothing, nbrOfSnps=nbrOfSnps, oneFile=TRUE, skip=FALSE, verbose=less(verbose));
   verbose && exit(verbose);
 }
 
