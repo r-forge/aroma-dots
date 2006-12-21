@@ -28,7 +28,7 @@
 # \seealso{
 # }
 #*/###########################################################################
-setConstructorS3("Crlmm", function(ces=NULL, minLLRforCalls=c(AA=50, AB=40, BB=50), transform=c("log", "asinh"), tags="", ...) {
+setConstructorS3("Crlmm", function(ces=NULL, minLLRforCalls=c(AA=50, AB=40, BB=50), transform=c("log", "asinh"), tags="CRLMM", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -45,7 +45,7 @@ setConstructorS3("Crlmm", function(ces=NULL, minLLRforCalls=c(AA=50, AB=40, BB=5
   transform <- match.arg(transform);
 
   # Argument 'tags':
-  if (!is.null(ces)) {
+  if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
   }
@@ -104,7 +104,7 @@ setMethodS3("as.character", "Crlmm", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getRootPath", "Crlmm", function(this, ...) {
-  "crlmmData";
+  "genotypeData";
 })
 
 
@@ -785,8 +785,8 @@ setMethodS3("fit", "Crlmm", function(this, verbose=FALSE, ...) {
     saveObject(data, file=pathname);
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "LLR confidence scores");
-    filename <- sprintf("%s,llr.xdr", sampleName);
+    verbose && enter(verbose, "Confidence scores");
+    filename <- sprintf("%s,score.xdr", sampleName);
     pathname <- filePath(path, filename);
     verbose && cat(verbose, "Pathname: ", pathname);
     data <- llr[,kk];
@@ -946,6 +946,10 @@ setMethodS3("fit", "Crlmm", function(this, verbose=FALSE, ...) {
 
 ############################################################################
 # HISTORY:
+# 2006-12-20
+# o Added default tag "CRLMM".
+# o Changed the root path from crlmmData/ to genotypeData/.
+# o The filename for LLR confidence scores was changed to *,scores.xdr.
 # 2006-12-16
 # o Now the calls and the LLRs are stored in seperate files.
 # 2006-12-13
