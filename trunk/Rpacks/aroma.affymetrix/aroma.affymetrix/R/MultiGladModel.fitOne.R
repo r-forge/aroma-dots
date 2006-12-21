@@ -52,6 +52,9 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
   chipTypes <- getChipTypes(this);
   arrayNames <- getArrays(this);
 
+  ceNames <- sapply(ceList, FUN=getFullName);
+  refNames <- sapply(refList, FUN=getFullName);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract arguments for glad().
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -59,31 +62,11 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
   keep <- (names(args) %in% names(formals(glad.profileCGH)));
   gladArgs <- args[keep];
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Check for cached values
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- list(method="fitOne", 
-              class=class(this)[1],
-              # Data set keys
-              fullname=fullname,
-              chipTypes=chipTypes,
-              arrayNames=arrayNames,
-              # Array keys
-              array=array,
-              chromosome=chromosome,
-              units=units
-             );
-  fit <- loadCache(key=key);
-  if (!is.null(fit) && !force) {
-    verbose && cat(verbose, "Cached on file.");
-    verbose && exit(verbose);
-    return(fit);
-  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get (x, M, stddev, chiptype, unit) from all chip types
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Retrieving relative copy-number estimates");
+  verbose && enter(verbose, "Retrieving relative chip-effect estimates");
   # Get the chip types as a factor
   chipTypes <- as.factor(chipTypes);
   df <- NULL;
@@ -152,18 +135,16 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
 
   verbose && exit(verbose);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Save cache
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  comment <- paste(unlist(key), collapse=";");
-  saveCache(fit, key=key, comment=comment);
-
   fit;  
 }) # fitOne()
 
 
 ############################################################################
 # HISTORY:
+# 2006-12-21
+# o BUG FIX: Made some updates to fitOne() so that the file-cache key would
+#   be the same for all samples. Removed the caching completely, since fit()
+#   now saves to file anyway.
 # 2006-12-15
 # o Works. Can now fit GLAD for multiple chip types together.
 # o Created from deprecated fitGlad.CnChipEffectFile.R.

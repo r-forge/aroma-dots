@@ -59,17 +59,15 @@ setMethodS3("writeChrXFile", "AffymetrixPowerTools", function(static, cdf, path=
   chipType <- getChipType(cdf);
   filename <- sprintf("%s.chrx", chipType);
   pathname <- filePath(path, filename);
-  pathname <- Arguments$getWritablePath(pathname, mustNotExist=!overwrite);
+  pathname <- Arguments$getWritablePathname(pathname, mustNotExist=!overwrite);
 
   # Get the names of all units on chromosome X
   units <- getUnitsOnChromosome(gi, chromosome="X");
   units <- getUnitNames(cdf, units=units);
-  
-  con <- file(pathname, open="w");
-  on.exit(close(con));
 
-  cat(file="all_chrx_no_par\n");
-  writeLines(con=con, units);
+  # Write to file  
+  lines <- c("all_chrx_no_par", units);
+  writeLines(con=pathname, lines);
 
   invisible(pathname);
 }, static=TRUE)

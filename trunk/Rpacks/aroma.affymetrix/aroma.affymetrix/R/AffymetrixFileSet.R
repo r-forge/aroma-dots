@@ -694,6 +694,7 @@ setMethodS3("appendFiles", "AffymetrixFileSet", function(this, files, clone=TRUE
     on.exit(popState(verbose));
   }
 
+
   verbose && enter(verbose, "Appending ", length(files), " files");
   # Validate classes
   verbose && enter(verbose, "Validating file classes");

@@ -311,7 +311,7 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NU
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(method="readUnits.GenotypeCallSet", units=units, arrays=arrays, ...));
+  key <- digest(list(method="readUnits.GenotypeCallSet", units=units, arrays=arrays));
   res <- this$.readUnitsCache[[key]];
   if (!is.null(res)) {
     verbose && cat(verbose, "readUnits(): Returning cached data");
@@ -330,20 +330,24 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NU
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Retrieving genotype calls for ", nbrOfArrays, " arrays");
 
-  calls <- matrix(NA, nrow=nbrOfUnits, ncol=nbrOfArrays);
+  calls <- matrix("-", nrow=nbrOfUnits, ncol=nbrOfArrays);
 
   for (kk in seq(length=nbrOfArrays)) {
     array <- arrays[kk];
     df <- getFile(this, array);
-    value <- readUnits(df, units=units);
-    calls[,kk] <- value;
+    verbose && enter(verbose, sprintf("Array %s ('%s') ", kk, getName(df)));
+    value <- readUnits(df, units=units, ...);
+    # If more than one column, assume first is the call column
+    if (!is.null(ncol(value)))
+      value <- value[,1];
+    calls[,kk] <- as.character(value);
+    verbose && exit(verbose);
   }
   rm(value, df, array);
 
   # Turn into a factor
   dim <- dim(calls);  # ...which will drop dimensions
-  levels <- c("-"=1, AA=2, AB=3, BB=4, NC=5);
-  calls <- factor(calls, levels=levels, labels=names(levels), ordered=FALSE);
+  calls <- as.factor(calls);
   dim(calls) <- dim;
   colnames(calls) <- getNames(this)[arrays];
   rownames(calls) <- units;

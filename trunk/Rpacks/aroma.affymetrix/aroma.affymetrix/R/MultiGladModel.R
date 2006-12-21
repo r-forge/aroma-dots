@@ -14,8 +14,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{cesList}{A @list of @see "CnChipEffectSet" objects.}
-#   \item{referenceList}{A @see "CnChipEffectFile" objects.}
+#   \item{cesList}{A @list of @see "ChipEffectSet" objects.}
+#   \item{referenceList}{A @see "ChipEffectFile" objects.}
 #   \item{tags}{A @character @vector of tags.}
 #   \item{...}{Not used.}
 # }
@@ -43,13 +43,16 @@ setConstructorS3("MultiGladModel", function(cesList=NULL, referenceList=NULL, ta
     }
 
     for (ces in cesList) {
-      if (!inherits(ces, "CnChipEffectSet")) {
-        throw("Argument 'cesList' contains a non-CnChipEffectSet object: ", class(ces));
+      if (!inherits(ces, "ChipEffectSet")) {
+        throw("Argument 'cesList' contains a non-ChipEffectSet: ", class(ces));
       }
 
-      # Currently only total copy-number estimates are accepted
-      if (!ces$combineAlleles) {
-        throw("Unsupported copy-number chip effects. Currently only total copy-number estimates are supported: ces$combineAlleles == FALSE");
+      # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
+      if (inherits(ces, "CnChipEffectSet")) {
+        # Currently only total copy-number estimates are accepted
+        if (!ces$combineAlleles) {
+          throw("Unsupported copy-number chip effects. Currently only total copy-number estimates are supported: ces$combineAlleles == FALSE");
+        }
       }
     }
   }
@@ -66,20 +69,28 @@ setConstructorS3("MultiGladModel", function(cesList=NULL, referenceList=NULL, ta
 
     # Validate consistency between the chip-effect sets and the reference files
     for (kk in seq(along=cesList)) {
-      ces <- cesList[[kk]];
       ref <- referenceList[[kk]];
-
-      if (!inherits(ref, "CnChipEffects")) {
-        throw("Argument 'referenceList' contains a non-CnChipEffects object: ",
-                                                            class(ref));
+      if (!inherits(ref, "ChipEffectFile")) {
+        throw("Argument 'referenceList' contains a non-ChipEffectFile: ",
+                                                             class(ref));
       }
 
-      if (ref$combineAlleles != ces$combineAlleles) {
-         throw("The reference chip effects are not compatible with the chip-effect set. One is combining the alleles the other is not.");
+      # Assert that the reference is compatible with the chip-effect files
+      ces <- cesList[[kk]];
+      cef <- getFile(ces, 1);
+      if (!inherits(ref, class(cef)[1])) {
+        throw("Argument 'referenceList' contains a ChipEffectFile that is not of the same class as the ChipEffectFile's: ", class(ref)[1], " != ", class(cef)[1]);
       }
 
-      if (ref$mergeStrands != ces$mergeStrands) {
-         throw("The reference chip effects are not compatible with the chip-effect set. One is merging the strands the other is not.");
+      # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
+      if (inherits(ces, "CnChipEffectSet")) {
+        if (ref$combineAlleles != ces$combineAlleles) {
+           throw("The reference chip effects are not compatible with the chip-effect set. One is combining the alleles the other is not.");
+        }
+
+        if (ref$mergeStrands != ces$mergeStrands) {
+           throw("The reference chip effects are not compatible with the chip-effect set. One is merging the strands the other is not.");
+        }
       }
     } # for (kk in ...)
   }
@@ -149,43 +160,6 @@ setMethodS3("getListOfReferences", "MultiGladModel", function(this, ...) {
   res;
 })
 
-setMethodS3("setListOfReferences", "MultiGladModel", function(this, referenceList=NULL, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'referenceList':
-  if (!is.null(referenceList)) {
-    if (!is.list(referenceList)) {
-      referenceList <- list(referenceList);
-    }
-
-    cesList <- getListOfChipEffects(this);
-    if (length(referenceList) != length(cesList)) {
-      throw("The number of reference files does not match the number of chip-effect sets: ", length(cesList), " != ", length(referenceList));
-    }
-
-    # Validate consistency between the chip-effect sets and the reference files
-    for (kk in seq(along=cesList)) {
-      ces <- cesList[[kk]];
-      ref <- referenceList[[kk]];
-
-      if (!inherits(ref, "CnChipEffects")) {
-        throw("Argument 'referenceList' contains a non-CnChipEffects object: ",
-                                                            class(ref));
-      }
-
-      if (ref$combineAlleles != ces$combineAlleles) {
-         throw("The reference chip effects are not compatible with the chip-effect set. One is combining the alleles the other is not.");
-      }
-
-      if (ref$mergeStrands != ces$mergeStrands) {
-         throw("The reference chip effects are not compatible with the chip-effect set. One is merging the strands the other is not.");
-      }
-    } # for (kk in ...)
-  }
-
-  this$.referenceList <- referenceList;
-})
 
 
 setMethodS3("getListOfCdfs", "MultiGladModel", function(this, ...) {
@@ -427,7 +401,7 @@ setMethodS3("getReferenceFiles", "MultiGladModel", function(this, ...) {
 
 
 
-setMethodS3("fit", "MultiGladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), ..., .retResults=TRUE, verbose=FALSE) {
+setMethodS3("fit", "MultiGladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), force=FALSE, ..., .retResults=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -526,14 +500,15 @@ setMethodS3("fit", "MultiGladModel", function(this, arrays=1:nbrOfArrays(this), 
       pathname <- filePath(path, filename);
 
       # Already done?
-      if (isFile(pathname)) {
+      if (!force && isFile(pathname)) {
         verbose && enter(verbose, "Loading results from file");
         verbose && cat(verbose, "Pathname: ", pathname);
         fit <- loadObject(pathname);
+        verbose && str(verbose, fit);
         verbose && exit(verbose);
       } else {
         fit <- fitOne(this, ceList=ceList, refList=refList, chromosome=chr, 
-                                                 ..., verbose=less(verbose));
+                                    force=force, ..., verbose=less(verbose));
         verbose && enter(verbose, "Saving to file");
         verbose && cat(verbose, "Pathname: ", pathname);
         saveObject(fit, file=pathname);
@@ -721,7 +696,9 @@ setMethodS3("plot", "MultiGladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0
       tryCatch({
         verbose && enter(verbose, "Plotting graph");
         opar <- par(xaxs="r");
-        plot(fit, ticksBy=ticksBy);
+        suppressWarnings({
+          plot(fit, ticksBy=ticksBy, ...);
+        });
         stext(chipType, side=4, pos=1, line=0, cex=0.7, col="gray");
 
         if (!is.null(callList)) {
@@ -742,12 +719,12 @@ setMethodS3("plot", "MultiGladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0
             if (is.null(callSet))
               next;
 
-            # Got copy-number estimates for this chip type?
+            # Got chip-effect estimates for this chip type?
             idxs <- which(pv$chipType == chipType);
             if (length(idxs) == 0)
               next;
 
-            # Got copy-number estimates for this array?
+            # Got chip-effect estimates for this array?
             if (!arrayName %in% getNames(callSet))
               next;
 
@@ -941,14 +918,14 @@ setMethodS3("writeRegions", "MultiGladModel", function(this, arrays=1:nbrOfArray
     verbose && enter(verbose, sprintf("Array #%d (of %d) - %s", 
                                              array, length(arrays), name));
     df <- getRegions(this, arrays=array, ..., verbose=less(verbose))[[1]];
-    names(df) <- gsub("Smoothing", "log2CN", names(df));
+    names(df) <- gsub("Smoothing", "log2", names(df));
 
     if (identical(format, "xls")) {
       # Append column with sample names
       df <- cbind(sample=name, df);
     } else if (identical(format, "wig")) {
       # Write a four column WIG/BED table
-      df <- df[,c("Chromosome", "start", "stop", "log2CN")];
+      df <- df[,c("Chromosome", "start", "stop", "log2")];
 
       # In the UCSC Genome Browser, the maximum length of one element
       # is 10,000,000 bases.  Chop up long regions in shorter contigs.
@@ -1050,6 +1027,9 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2006-12-20
+# o Now the class accepts any ChipEffectSet, not only CnChipEffectSet objects.
+#   CnChipEffectSet objects are still validated specially, if used.
 # 2006-12-17
 # o BUG FIX: The new fitDone() in plot() choked on chr 23 (should be 'X').
 # 2006-12-15

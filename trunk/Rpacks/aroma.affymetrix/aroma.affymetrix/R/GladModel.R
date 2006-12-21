@@ -31,6 +31,9 @@
 #
 #*/###########################################################################
 setConstructorS3("GladModel", function(ces=NULL, reference=NULL, tags="*", ...) {
+  if (!is.null(ces))
+    throw("For now, use the MultiGladModel class instead. /HB 2006-12-20");
+
   require(GLAD) || throw("Package not loaded: GLAD");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

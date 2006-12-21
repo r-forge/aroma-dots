@@ -4,7 +4,7 @@ plotProfile.profileCGH <- function (profileCGH, variable = "LogRatio", Chromosom
     Smoothing = NULL, GNL = "ZoneGNL", Bkp = FALSE, labels = TRUE, 
     plotband = TRUE, unit = 0, colDAGLAD = c("black", "blue", 
         "red", "green", "yellow"), pchSymbol = c(20, 13), colCytoBand = c("white", 
-        "darkblue"), colCentro = "red", text = NULL, main = "", ylim=NULL,
+        "darkblue"), colCentro = "red", text = NULL, main = "", xlim=NULL, ylim=NULL,
     ...) 
 {
     require(GLAD) || stop("Package GLAD not found");
@@ -99,8 +99,10 @@ plotProfile.profileCGH <- function (profileCGH, variable = "LogRatio", Chromosom
     if (plotband) {
         layout(c(1, 2), heights = c(1, 4))
         par(mar = c(0, 4, 4, 2))
-        plot(0, type = "n", xlim = c(0, max(cytobandNew$End)), 
-            ylim = c(-1.5, 1.5), xaxt = "n", yaxt = "n", ylab = "", 
+        if (is.null(xlim))
+          xlim <- c(0, max(cytobandNew$End));
+        plot(0, type = "n", xlim = xlim, 
+            ylim = c(-1.5, 1.5), yaxt = "n", ylab = "", 
             xlab = "")
         LabelChrCyto <- unique(cytobandNew$Chromosome)
 opar <- par(cex=0.8); # HB
@@ -148,12 +150,12 @@ par(opar); #HB
         if (plotband) {
             plot(VarToPlot ~ NewPosBase, data = profileCGH$profileValues, 
                 pch = outliers, col = col, xaxt = "n", xlab = main, 
-                ylab = variable, ylim=ylim, ...)
+                ylab = variable, xlim=xlim, ylim=ylim, ...)
         }
         else {
             plot(VarToPlot ~ NewPosBase, data = profileCGH$profileValues, 
                 pch = outliers, col = col, xaxt = "n", xlab = "", 
-                ylab = variable, ylim=ylim, main = main)
+                ylab = variable, xlim=xlim, ylim=ylim, main = main)
         }
         if (!is.null(Smoothing)) {
             lines(datasmt$Smoothing ~ datasmt$PosBase, col = "black")
@@ -172,13 +174,13 @@ par(opar); #HB
     else {
         if (plotband) {
             plot(VarToPlot ~ NewPosBase, data = profileCGH$profileValues, 
-                pch = 20, xaxt = "n", xlab = main, ylab = variable, ylim=ylim,
-                ...)
+                pch = 20, xaxt = "n", xlab = main, ylab = variable, 
+                xlim=xlim, ylim=ylim, ...)
         }
         else {
             plot(VarToPlot ~ NewPosBase, data = profileCGH$profileValues, 
-                pch = 20, xaxt = "n", xlab = "", ylab = variable, ylim=ylim, 
-                main = main, ...)
+                pch = 20, xaxt = "n", xlab = "", ylab = variable, 
+                xlim=xlim, ylim=ylim, main = main, ...)
         }
         if (Bkp) {
             if (is.data.frame(profileCGH$BkpInfo)) {

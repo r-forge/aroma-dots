@@ -7,6 +7,7 @@ skip <- FALSE;
 imageFormat <- "screen";
 imageFormat <- "png";
 
+force <- TRUE;
 suppressWarnings({rm(res)});
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -105,7 +106,7 @@ if (all(c(2,3) %in% methods) || all(c(2,4) %in% methods)) {
 
 if (2 %in% methods) {
   verbose && enter(verbose, "Fitting GLAD");
-  fit(glad, arrays=arrays, chromosomes=chromosomes, .retResults=FALSE, verbose=less(verbose));
+  fit(glad, arrays=arrays, chromosomes=chromosomes, force=force, .retResults=FALSE, verbose=less(verbose));
   verbose && exit(verbose);
 }
 
@@ -113,7 +114,7 @@ if (3 %in% methods) {
   verbose && enter(verbose, "Display SD");
   sds <- list();
   for (chr in chromosomes) {
-    fit <- fit(glad, arrays=arrays, chromosomes=chr, .retResults=FALSE);
+    fit <- fit(glad, arrays=arrays, chromosomes=chr, force=force, .retResults=FALSE);
     sdEst <- lapply(fit, function(cc) cc[[1]]$SigmaC$Value);
     sdEst <- unlist(sdEst);
     sds[[chr]] <- sdEst;

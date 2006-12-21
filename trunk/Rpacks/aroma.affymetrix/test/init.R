@@ -2,6 +2,11 @@
 #  echo 'source("models.R")' | nohup R-2.4.0 --save &
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Setup up search paths
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+options("APT_PATH"="/home/users/lab0605/bengtsson/shared/Bioinformatics/software/AffymetrixPowerTools/bin/linux_x86_64");
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Local functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 atHome <- (Sys.getenv("HOST") == "");

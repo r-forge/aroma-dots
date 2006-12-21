@@ -394,9 +394,8 @@ setMethodS3("isDone", "Preprocessing", function(this, ...) {
     return(FALSE);
 
   ds <- getInputDataSet(this);  
-  if (length(pathnames) != nbrOfArrays(ds)) {
-    throw("Number of output CEL files does not match the number of CEL files in the input dataset: ", length(pathnames), " != ", nbrOfArrays(ds));
-  }
+  if (length(pathnames) != nbrOfArrays(ds))
+    return(FALSE);
   
   return(TRUE);
 })
@@ -436,6 +435,13 @@ setMethodS3("process", "Preprocessing", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2006-12-20
+# o Now isDone() returns FALSE if not all output files are there.  Before
+#   an exception was thrown.  This modification allows you to for instance
+#   remove a quantile normalized output file, and when reprocessing the
+#   data set, only that file will be processed. I made this change after
+#   one file was corrupted in a large data set and I did not want to have
+#   to reprocess the whole data set.
 # 2006-12-08
 # o Renamed from PreProcessor.
 # 2006-12-07
