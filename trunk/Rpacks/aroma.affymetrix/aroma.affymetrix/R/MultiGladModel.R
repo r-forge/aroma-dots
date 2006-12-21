@@ -504,7 +504,6 @@ setMethodS3("fit", "MultiGladModel", function(this, arrays=1:nbrOfArrays(this), 
         verbose && enter(verbose, "Loading results from file");
         verbose && cat(verbose, "Pathname: ", pathname);
         fit <- loadObject(pathname);
-        verbose && str(verbose, fit);
         verbose && exit(verbose);
       } else {
         fit <- fitOne(this, ceList=ceList, refList=refList, chromosome=chr, 
