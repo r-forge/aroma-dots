@@ -3,11 +3,11 @@ source("init.R");
 source("ui.R");
 
 pngDev <- System$findGraphicsDevice();
-skip <- FALSE;
+skip <- TRUE;
 imageFormat <- "screen";
 imageFormat <- "png";
 
-force <- TRUE;
+force <- FALSE;
 suppressWarnings({rm(res)});
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
