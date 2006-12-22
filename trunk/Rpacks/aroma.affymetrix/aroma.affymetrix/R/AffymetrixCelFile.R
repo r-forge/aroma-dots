@@ -773,7 +773,7 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(this)) {
+setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=FALSE, ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(this)) {
   rotate270 <- function(x, ...) {
     x <- t(x)
     nc <- ncol(x)
@@ -792,7 +792,11 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   y <- cel[[field]];
 
   suppressWarnings({
-    image(rotate270(y), col=col, ..., axes=FALSE, main=main);
+    if (takeLog) {
+      image(log2(rotate270(y)), col=col, ..., axes=FALSE, main=main);
+    } else {
+      image(rotate270(y), col=col, ..., axes=FALSE, main=main);
+    }      
   })
 
   if (is.null(xrange)) 
@@ -956,6 +960,9 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 
 ############################################################################
 # HISTORY:
+# 2006-12-18 /KS
+# o Add "takeLog" argument (logical) to image270.  If true, take the log2
+#   before plotting.  Can be more informative than natural scale.
 # 2006-12-14
 # o Removed getSampleName() which gives the same as getName().
 # 2006-12-11
