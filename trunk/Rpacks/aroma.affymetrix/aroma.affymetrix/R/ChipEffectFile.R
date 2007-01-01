@@ -148,6 +148,11 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
 
     # Create the CEL file
     createCel(pathname, header=celHeader, ..., verbose=less(verbose));
+
+##    # Fill with negative values
+##    nbrOfProbes <- celHeader$total;
+##    updateCel(pathname, indices=1:nbrOfProbes, intensities=rep(-1,nbrOfProbes), verbose=less(verbose));
+
     verbose && exit(verbose);
   } 
 
