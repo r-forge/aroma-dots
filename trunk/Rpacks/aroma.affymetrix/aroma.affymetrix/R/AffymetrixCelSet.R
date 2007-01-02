@@ -943,7 +943,6 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     this$.averageFiles[[filename]] <- res;
   }
 
-
   pathname <- getPathname(res);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

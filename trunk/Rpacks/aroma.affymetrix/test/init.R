@@ -59,6 +59,7 @@ tryCatch({
 
 closeAllConnections();
 
+#library(PLASQ500K)
 
 library(R.oo)
 library(R.utils)
@@ -97,7 +98,15 @@ if (atHome) {
 sourceDirectory("patches/", recursive=FALSE, modifiedOnly=TRUE);
 sourceDirectory("../aroma.affymetrix/R/", recursive=FALSE, modifiedOnly=TRUE);
 
+#sourceDirectory("~/braju.com.R/PLAST500K/PLAST500Kb/R/", recursive=FALSE, modifiedOnly=TRUE);
+#sourceDirectory("R2/", recursive=FALSE, modifiedOnly=TRUE);
+#source("R2/ascn.R")
+#source("R2/EMSNP.R")
+#source("R2/getBetas.R")
+#source("R2/getGeno.R")
+
 verbose && exit(verbose);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Change to a nicer palette
