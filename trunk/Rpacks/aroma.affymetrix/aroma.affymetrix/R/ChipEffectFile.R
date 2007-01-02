@@ -109,11 +109,22 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
 }, static=TRUE)
 
 
-setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=sprintf("%s,chipEffects.cel", getName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
+setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename=sprintf("%s,chipEffects.cel", getName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'df':
-  if (!inherits(df, "AffymetrixCelFile")) {
-    throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
+  if (!is.null(df)) {
+    if (!inherits(df, "AffymetrixCelFile"))
+      throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
   }
+
+  # Argument 'cdf':
+  if (is.null(cdf)) {
+    if (is.null(df))
+      throw("Either argument 'df' or 'cdf' must specified.");
+  } else {
+    if (!inherits(cdf, "AffymetrixCdfFile"))
+      throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  }
+
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -130,8 +141,6 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df, filename=spri
     # Get CDF header
     cdfHeader <- getHeader(cdf);
 
-    celHeader0 <- readCelHeader(getPathname(df));
-  
     # Build a valid CEL header
     celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=name);
 
@@ -418,6 +427,8 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 ############################################################################
 # HISTORY:
+# 2007-10-02
+# o TO DO: Static fromDataFile() does not really need argument 'df'.
 # 2006-12-02
 # o BUG FIX: getCellMap(..., units=NULL) did not work.
 # 2006-11-28
