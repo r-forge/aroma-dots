@@ -42,7 +42,9 @@ setMethodS3("drawCytoBand", "default", function (cytoband, chromosome=1, y=-1, l
   # The inverted arrow indicating where the centromere is.
   idxs <- which(cytoband$Centro == 1);
   centroPos <- min(cytoband$End[idxs]);
-  arrows(centroPos, y0, centroPos, y1, col=colCentro, code=3, angle=120);
+  arrows(centroPos, y0, centroPos, y1, col=colCentro, code=2, angle=120, 
+                                                               length=0.1);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Labels, e.g. 20q12
@@ -53,13 +55,13 @@ setMethodS3("drawCytoBand", "default", function (cytoband, chromosome=1, y=-1, l
     dy <- par("cxy")[2];
     text(x=CytoPos, y=y1+dy/2, labels=labels, srt=90, adj=c(0,0.5));
   }
-})
+}, protected=TRUE)
 
 
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
 # Added also par(cex=0.8) - see code.
 setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, Smoothing="Smoothing", GNL="ZoneGNL", Bkp=FALSE, cytobandLabels=TRUE, plotband=TRUE, unit=0, colDAGLAD=NULL, pchSymbol=c(20, 4), colCytoBand=c("white", "darkblue"), colCentro="red", xlim=NULL, ylim=c(-1,1)*2.5, xlab="Physical position", ylab=variable, flavor=c("glad", "minimal"), ...) {
-  require(GLAD) || stop("Package GLAD not found");
+  require(GLAD) || stop("Package not loaded: GLAD");  # data(cytoband)
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -97,7 +99,8 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   }
 
   # Argument 'colDAGLAD':
-  if (is.null(colDAGLAD)) { 
+  if (is.null(colDAGLAD)) {
+    require("RColorBrewer") || throw("Package not loaded: RColorBrewer");
     colDAGLAD <- RColorBrewer::brewer.pal(5, "Dark2");
   }
 
@@ -138,14 +141,16 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Get chromosome lengths
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Load data
-  data(cytoband);
-  genomeInfo <- aggregate(cytoband$End, list(Chromosome=cytoband$Chromosome, ChrNumeric=cytoband$ChrNumeric), max, na.rm=TRUE);
+  data(cytoband);  # Package 'GLAD'
+  genomeInfo <- aggregate(cytoband$End, list(Chromosome=cytoband$Chromosome, 
+                          ChrNumeric=cytoband$ChrNumeric), max, na.rm=TRUE);
   names(genomeInfo) <- c("Chromosome", "ChrNumeric", "Length");
   genomeInfo$Chromosome <- as.character(genomeInfo$Chromosome);
   genomeInfo$ChrNumeric <- as.integer(as.character(genomeInfo$ChrNumeric));
 
   LabelChr <- data.frame(Chromosome=chromosome);
-  LabelChr <- merge(LabelChr, genomeInfo[, c("ChrNumeric", "Length")], by.x="Chromosome", by.y="ChrNumeric", all.x=TRUE);
+  LabelChr <- merge(LabelChr, genomeInfo[, c("ChrNumeric", "Length")], 
+                         by.x="Chromosome", by.y="ChrNumeric", all.x=TRUE);
 
   LabelChr$Length <- 0;
 
@@ -153,7 +158,8 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Get the cytoband details for the chromosome of interest
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   cytobandNew <- subset(cytoband, select=-Chromosome);
-  cytobandNew <- merge(LabelChr, cytobandNew, by.x="Chromosome", by.y="ChrNumeric");
+  cytobandNew <- merge(LabelChr, cytobandNew, by.x="Chromosome", 
+                                                        by.y="ChrNumeric");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Update the plot data with cytoband information
@@ -242,7 +248,8 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Extract the data to plot
   y <- pv[, variable];
   x <- xScale*pv$PosBase;
-  plot(x=x, y=y, pch=pch, col=col, xaxt="n", xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, axes=axes, bty="n", ...);
+  plot(x=x, y=y, pch=pch, col=col, xaxt="n", xlab=xlab, ylab=ylab, 
+                            xlim=xlim, ylim=ylim, axes=axes, bty="n", ...);
 #  axis(side=2); axis(side=4);
    
 
@@ -285,3 +292,12 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   }
 }) # plotProfile2()
 
+
+############################################################################
+# HISTORY:
+# 2007-01-03
+# o Made the highlighting "arrow" for the centromere smaller.
+# 2006-12-20
+# o It is now possible to specify 'xlim' as well as 'ylim'.
+# o Reimplemented, because the cytoband was not displayed correctly.
+############################################################################

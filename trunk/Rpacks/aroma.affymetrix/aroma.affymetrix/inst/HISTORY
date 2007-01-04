@@ -1,7 +1,14 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.3.0 [2006-12-xx]
+Version: 0.3.1 [2007-01-xx]
+o In addition to default "PM only" model, ProbeLevelModel:s now
+  also handles "PM-MM" models.  Note that PM-MM might give a 
+  non-positive value.  The multiplicate MbeiPlm handles this,
+  but also the log-additive RmaPlm where such values become NAs.
+
+
+Version: 0.3.0 [2006-12-20]
 o Made fitGlad() for classes CnChipEffectFile and CnChipEffectSet
   deprecated.  Use the GladModel class instead.
 

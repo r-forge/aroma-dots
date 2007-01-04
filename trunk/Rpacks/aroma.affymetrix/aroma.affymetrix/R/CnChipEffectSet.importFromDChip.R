@@ -51,7 +51,7 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Infer data path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rootPath <- "plmData2";
+  rootPath <- "plmData";
   chipType <- getChipType(cdf);
   currPath <- dirname(pathname);
   while(TRUE) {
@@ -215,8 +215,12 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
     cols <- 1 + nbrOfColsPerSample*(kk-1) + 1:nbrOfColsPerSample;
     verbose && cat(verbose, "Columns: ", seqToHumanReadable(cols));
 
-    verbose && enter(verbose, "Creating chip-effect CEL file");
-    cef <- clazz$fromDataFile(filename=filename, path=outPath, name=sampleName, cdf=ceCdf, verbose=less(verbose));
+    verbose && enter(verbose, "Retrieving chip-effect CEL file");
+    if (isFile(pathname)) {
+      cef <- clazz$fromFile(pathname, verbose=less(verbose));
+    } else {
+      cef <- clazz$fromDataFile(filename=filename, path=outPath, name=sampleName, cdf=ceCdf, verbose=less(verbose));
+    }
     cef$combineAlleles <- combineAlleles;
     cef$mergeStrands <- TRUE;
     verbose && print(verbose, cef);
@@ -260,11 +264,17 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   verbose && exit(verbose);
 
   ces;
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2007-01-03
+# o Now, if 'skip=FALSE' and chip-effect file already exists, a new file
+#   is not created, but instead its contents is updated.
 # 2007-01-02
+# o Verified to work with SNP data modelled as PM=PMA+PMB (combined alleles)
+#   exported from dChip v2006-12-14.  Imports both chip effects and standard
+#   deviations of such, i.e. 'theta' and 'sdTheta'.
 # o Created.
 ############################################################################

@@ -321,7 +321,7 @@ setMethodS3("getDataSet", "UnitModel", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getCdf", "UnitModel", function(this, ...) {
-  getCdf(this$dataSet);
+  getCdf(getDataSet(this));
 })
 
 setMethodS3("getCellIndices", "UnitModel", function(this, ..., verbose=FALSE) {
