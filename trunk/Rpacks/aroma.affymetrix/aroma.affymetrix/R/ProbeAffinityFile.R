@@ -13,7 +13,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ParameterCelFile".}
-#   \item{model}{The specific type of model, e.g. \code{"pm"}.}
+#   \item{probeModel}{The specific type of probe model.}
 # }
 #
 # \section{Fields and Methods}{
@@ -28,21 +28,21 @@
 # }
 #
 #*/###########################################################################
-setConstructorS3("ProbeAffinityFile", function(..., model=c("pm")) {
+setConstructorS3("ProbeAffinityFile", function(..., probeModel=c("pm", "mm", "pm-mm")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'model':
-  model <- match.arg(model);
+  # Argument 'probeModel':
+  probeModel <- match.arg(probeModel);
 
   extend(ParameterCelFile(...), "ProbeAffinityFile",
     "cached:.firstCells" = NULL,
-    model = model
+    probeModel = probeModel
   )
 })
 
 setMethodS3("getCellIndices", "ProbeAffinityFile", function(this, ...) {
-  stratifyBy <- switch(this$model, pm="pm");
+  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pm");
   cdf <- getCdf(this);
   getCellIndices(cdf, ..., stratifyBy=stratifyBy);
 })
@@ -90,6 +90,8 @@ setMethodS3("writeSpatial", "ProbeAffinityFile", function(this, ..., transform=N
 
 ############################################################################
 # HISTORY:
+# 2007-01-03
+# o Renamed constructor argument 'model' to 'probeModel'.
 # 2006-09-11
 # o Update read- and updateUnits() to make use of getCellIndices().
 # o Added getCellIndices().

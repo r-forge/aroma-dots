@@ -53,13 +53,15 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", "mm", "pmmm"), standardize=TRUE) {
+setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm"), standardize=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'probeModel':
   probeModel <- match.arg(probeModel);
 
+  
+  # Add tags
   if (probeModel != "pm") {
     tags <- c(toupper(probeModel), tags);
   }
@@ -76,12 +78,12 @@ setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", 
 
 setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
   ChipEffectSet;
-}, static=TRUE);
+}, static=TRUE, protected=TRUE)
 
 
 setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
   "plmData";
-})
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -124,7 +126,8 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=
 
   # Make it into an object of the correct class
   clazz <- .class;
-  res <- newInstance(clazz, getPathname(res), cdf=getCdf(ds), probeModel=this$probeModel);
+  res <- newInstance(clazz, getPathname(res), cdf=getCdf(ds), 
+                                                  probeModel=this$probeModel);
   this$.paFile <- res;
 
   res;
@@ -159,23 +162,36 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE);
+setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE, protected=TRUE);
+
 
 
 setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
   # Get the fit function for a single set of intensities
   fitfcn <- getFitFunction(this, ...);
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create the one for all blocks in a unit
-  fitUnit <- function(unit, ...) {
-    lapply(unit, FUN=function(group) {
-      y <- .subset2(group, 1);
-      fitfcn(y);
-    })
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (this$probeModel == "pm-mm") {
+    fitUnit <- function(unit, ...) {
+      lapply(unit, FUN=function(group) {
+        y <- .subset2(group, 1); # Get intensities
+        y <- y[1,,] - y[2,,];  # PM-MM
+        fitfcn(y);
+      })
+    }
+  } else {
+    fitUnit <- function(unit, ...) {
+      lapply(unit, FUN=function(group) {
+        y <- .subset2(group, 1); # Get intensities
+        fitfcn(y);
+      })
+    }
   }
 
   fitUnit;
-})
+}, protected=TRUE)
 
 
 
@@ -233,7 +249,7 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
   verbose && str(verbose, res[1]);
 
   res;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
@@ -241,7 +257,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
   verbose <- Arguments$getVerbose(verbose);
 
   # Get what set of probes to read
-  stratifyBy <- switch(this$probeModel, mm="mm", pm="pm", pmmm="pmmm");
+  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pmmm");
 
   # Get the CDF cell indices
   ds <- getDataSet(this);
@@ -252,7 +268,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
   verbose && exit(verbose);
   
   cells;
-})
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -616,19 +632,23 @@ setMethodS3("plotMvsPosition", "ProbeLevelModel", function(this, sample, ..., an
   this$lastPlotSample <- sample;
 
   invisible(res);
-})
+}, protected=TRUE)
 
 
 setMethodS3("highlight", "ProbeLevelModel", function(this, ...) {
   ces <- getChipEffects(this);
   ce <- getFile(ces, this$lastPlotSample);
   highlight(ce, ...);
-})
+}, protected=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2007-01-03
+# o "Protected" several methods to simplify the interface for end users.
+# o Added support from "PM-MM" probe models in addition to the default 
+#   "PM only" model.
 # 2006-09-26
 # o Fixed the timers for fit(). They only worked so and so before and only
 #   only Windows.  Using processTime()
