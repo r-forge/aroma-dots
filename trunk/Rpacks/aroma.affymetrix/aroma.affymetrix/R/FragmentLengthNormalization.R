@@ -162,10 +162,7 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
     fl <- getFragmentLengths(si, units=units);
 
     # Get target log2 signals for SNPs
-str(111);
-str(units);
     yR <- getDataFlat(ceR, units=units, fields="theta", verbose=less(verbose));
-str(yR);
     yR <- yR[,"theta"];
     yR <- log2(yR);
 
@@ -240,7 +237,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   if (!force && isDone(this)) {
     verbose && cat(verbose, "Already normalized");
     verbose && exit(verbose);
-    outputSet <- getOutputSet(this);
+    outputSet <- getOutputDataSet(this);
     return(invisible(outputSet));
   }
 
@@ -313,6 +310,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     subset <- match(subsetToFit, subsetToUpdate);
     yN <- normalizeFragmentLength(log2(y), fragmentLengths=fl, 
                              targetFcn=targetFcn, subsetToFit=subset, ...);
+    rm(y);
     yN <- 2^yN;
     verbose && exit(verbose);
 
@@ -328,7 +326,9 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
     verbose && enter(verbose, "Storing normalized signals");
     data[,"theta"] <- yN;
+    rm(yN);
     updateDataFlat(ceN, data=data, verbose=less(verbose));
+    rm(data);
     verbose && exit(verbose);
 
     res[[kk]] <- ceN;
@@ -350,6 +350,8 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-01-04
+# o BUG FIX: process() gave an error if the data set was already done.
 # 2006-12-08
 # o Now this class inherits from the ChipEffectPreprocessing class.
 # o Now this pre-processor output results to plmData/.

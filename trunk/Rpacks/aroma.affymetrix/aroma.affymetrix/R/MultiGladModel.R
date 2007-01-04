@@ -401,7 +401,7 @@ setMethodS3("getReferenceFiles", "MultiGladModel", function(this, ...) {
 
 
 
-setMethodS3("fit", "MultiGladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), force=FALSE, ..., .retResults=TRUE, verbose=FALSE) {
+setMethodS3("fit", "MultiGladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), force=FALSE, ..., .retResults=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
