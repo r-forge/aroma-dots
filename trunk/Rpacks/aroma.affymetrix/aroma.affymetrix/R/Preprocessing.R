@@ -79,7 +79,7 @@ setMethodS3("as.character", "Preprocessing", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   ds <- getInputDataSet(this);
   s <- c(s, sprintf("Data set: %s", getName(ds)));
-  tags <- paste(getTags(ds), collapse=", ");
+  tags <- paste(getTags(ds), collapse=",");
   s <- c(s, sprintf("Input tags: %s", tags));
   s <- c(s, sprintf("Output tags: %s", paste(getTags(this), collapse=",")));
   s <- c(s, sprintf("Number of arrays: %d (%.2fMb)", 
