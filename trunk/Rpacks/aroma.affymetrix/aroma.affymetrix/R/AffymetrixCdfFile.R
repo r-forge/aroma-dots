@@ -551,7 +551,8 @@ setMethodS3("getRestructor", "AffymetrixCdfFile", function(this, ...) {
 #*/###########################################################################
 # NOTE: getUnits() does not work because an S4 class stole it!!!
 setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units, ...) {
-  cdf <- readCdfUnits(this$.pathname, units=units, ...);
+#  cdf <- readCdfUnits(this$.pathname, units=units, ...);
+  cdf <- doCall("readCdfUnits", filename=this$.pathname, units=units, ...);
   restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
 })
 
