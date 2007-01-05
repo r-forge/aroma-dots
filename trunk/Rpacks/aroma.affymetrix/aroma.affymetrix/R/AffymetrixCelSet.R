@@ -765,7 +765,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
   } else {
     # Always ask for CDF information from the CDF object!
      verbose && enter(verbose, "Retrieving CDF unit information");
-    cdf <- readUnits(getCdf(this), units=units, verbose=less(verbose));
+    suppressWarnings(cdf <- readUnits(getCdf(this), units=units, ..., verbose=less(verbose)));
     verbose && exit(verbose);
     res <- readCelUnits(pathnames, cdf=cdf, ...);
   }
@@ -787,7 +787,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 ###########################################################################/**
 # @RdocMethod getAverageFile
 #
-# @title "Calculates the mean and the standard deviation cell signal across the data set"
+# @title "Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the data set"
 #
 # \description{
 #   @get "title".
@@ -839,7 +839,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, prefix="average", indices="remaining", mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
+setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -863,6 +863,18 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'field':
+  field <- match.arg(field);
+  fieldName <- field;
+  if (field == "intensities") {
+    readIntensities <- TRUE;
+    readStdvs <- FALSE;
+  } 
+  if (field == "stdvs") {
+    readIntensities <- FALSE;
+    readStdvs <- TRUE;
+  } 
+  
   # Argument 'mean':
   if (is.character(mean)) {
     mean <- match.arg(mean);
@@ -896,9 +908,17 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
 
   # Argument 'name':
   if (is.null(name)) {
-    key <- list(arrays=sort(getNames(this)), meanName=meanName, sdName=sdName);
+    key <- list(arrays=sort(getNames(this)), mean=mean, sd=sd);
+    # assign mean and sd to an empty environment so that digest() doesn't
+    # pick up any "promised" objects from the original environment.
+    # A bit ad hoc, but it works for now. /2007-01-03
+    key <- lapply(key, FUN=function(x) {
+      if (is.function(x))
+        environment(x) <- emptyenv();
+      x;
+    })
     id <- digest(key);
-    name <- sprintf("%s-%s-%s,%s", prefix, meanName, sdName, id);
+    name <- sprintf("%s-%s-%s-%s,%s", prefix, fieldName, meanName, sdName, id);
   }
 
   # Argument 'indices':
@@ -928,7 +948,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   }
 
 
-  verbose && enter(verbose, "Retrieving average cell intensities across ", length(this), " arrays");
+  verbose && enter(verbose, "Retrieving average cell signals across ", length(this), " arrays");
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -993,7 +1013,21 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     verbose && cat(verbose, "Chunk size: ", length(ii));
 
     verbose && enter(verbose, "Reading data");
-    X <- readCelIntensities(pathnames, indices=indices[ii]);
+#    X <- readCelIntensities(pathnames, indices=indices[ii]);
+    X <- list()
+    for (kk in 1:length(pathnames)) {
+      X[[kk]] <- readCel(filename = pathnames[kk],
+                         readIntensities = readIntensities,
+                         readHeader = FALSE,
+                         readStdvs = readStdvs,
+                         readPixels = FALSE,
+                         readXY = FALSE,
+                         readOutliers = FALSE,
+                         readMasked = FALSE,
+                         ...,
+                         verbose = (verbose - 1))[[fieldName]]
+    }
+    X <- do.call("cbind", X)
     verbose && exit(verbose);
 
     if (!is.null(g)) {
