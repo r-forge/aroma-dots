@@ -58,7 +58,8 @@ setMethodS3("as.character", "PlatformDesign", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
+
 
 setMethodS3("isInstalled", "PlatformDesign", function(this, ...) {
   path <- getPath(this);
@@ -126,12 +127,12 @@ setMethodS3("getDataFiles", "PlatformDesign", function(this, ...) {
   files <- files[(regexpr("([.]|[.][.])$", files) == -1)];
   files <- file.path(path, files);
   files;
-})
+}, private=TRUE)
 
 setMethodS3("getDataFile", "PlatformDesign", function(this, pattern, ...) {
   path <- file.path(getPath(this), "data");
   list.files(path=path, pattern=pattern, full.names=TRUE);
-})
+}, private=TRUE)
 
 setMethodS3("loadDataFile", "PlatformDesign", function(this, filename, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -160,7 +161,7 @@ setMethodS3("loadDataFile", "PlatformDesign", function(this, filename, ..., verb
   attr(env, "vars") <- vars;
 
   env;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("getAnnotations", "PlatformDesign", function(this, ...) {
@@ -169,7 +170,7 @@ setMethodS3("getAnnotations", "PlatformDesign", function(this, ...) {
   var <- attr(env, "vars");
   env <- env[[var]];
   env;
-})
+}, private=TRUE)
 
 setMethodS3("getCrlmmInfo", "PlatformDesign", function(this, ...) {
   filename <- sprintf("%sCrlmmInfo.rda", getName(this));
@@ -177,7 +178,7 @@ setMethodS3("getCrlmmInfo", "PlatformDesign", function(this, ...) {
   var <- attr(env, "vars");
   env <- env[[var]];
   env;
-})
+}, private=TRUE)
 
 
 setMethodS3("getPlatformDesignObject", "PlatformDesign", function(this, ...) {
@@ -186,7 +187,7 @@ setMethodS3("getPlatformDesignObject", "PlatformDesign", function(this, ...) {
   var <- attr(env, "vars");
   env <- env[[var]];
   env;
-})
+}, private=TRUE)
 
 
 setMethodS3("getReferenceQuantiles", "PlatformDesign", function(this, ...) {
@@ -210,7 +211,7 @@ setMethodS3("getCachePath", "PlatformDesign", function(this, fields, ...) {
   # Get the path to the file cache for this platform design
   path <- filePath(getCachePath(), getName(this));
   path;
-})
+}, private=TRUE)
 
 
 setMethodS3("getCachedFields", "PlatformDesign", function(this, fields, ...) {
@@ -218,7 +219,8 @@ setMethodS3("getCachedFields", "PlatformDesign", function(this, fields, ...) {
   files <- list.files(path=path);
   files <- gsub("[.]rda$", "", files);
   files;
-})
+}, private=TRUE)
+
 
 setMethodS3("clearFileCache", "PlatformDesign", function(this, fields, ...) {
   path <- getCachePath(this);
@@ -229,6 +231,7 @@ setMethodS3("clearFileCache", "PlatformDesign", function(this, fields, ...) {
   }
   invisible(files);
 })
+
 
 setMethodS3("getFeatureInfo", "PlatformDesign", function(this, fields, subset=NULL, drop=TRUE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -329,11 +332,11 @@ setMethodS3("getReadMap", "PlatformDesign", function(this, ...) {
     this$.readMap <- map;
   }
   map;
-})
+}, private=TRUE)
 
 setMethodS3("getWriteMap", "PlatformDesign", function(this, ...) {
   affxparser::invertMap(getReadMap(this));
-})
+}, private=TRUE)
 
 setMethodS3("getX", "PlatformDesign", function(this, ...) {
   as.integer(getFeatureInfo(this, "X", ...)-1);
@@ -417,7 +420,7 @@ setMethodS3("validate", "PlatformDesign", function(this, subset=1/1000, ..., ver
   verbose && exit(verbose);
 
   invisible(units);
-})
+}, private=TRUE)
 
 
 ############################################################################

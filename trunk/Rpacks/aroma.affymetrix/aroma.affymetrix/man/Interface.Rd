@@ -3,6 +3,8 @@
 % 
 %  Interface.R
 % 
+% on Sat Jan 06 01:52:52 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -40,7 +42,6 @@ public class \bold{Interface}\cr
  \section{Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{as.character} \tab  -\cr
  \tab \code{extend} \tab  -\cr
  \tab \code{print} \tab  -\cr
  \tab \code{uses} \tab  -\cr

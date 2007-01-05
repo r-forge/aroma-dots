@@ -20,7 +20,8 @@ setMethodS3("getDescription", "AffymetrixFileSet", function(this, ...) {
   }
 
   res;
-}, protected=TRUE)
+}, private=TRUE)
+
 
 setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
   path <- getPath(this);
@@ -43,7 +44,7 @@ setMethodS3("getIdentifier", "AffymetrixFileSet", function(this, ...) {
   }
 
   res;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ############################################################################

@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelSet.extractSnpFeatureSet.R
 % 
+% on Sat Jan 06 01:47:04 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -14,12 +16,12 @@
 \alias{extractSnpFeatureSet,AffymetrixCelSet-method}
 
 
-\title{Extracts an in-memory SnpFeatureSet object from the data set}
+\title{Extracts an in-memory SnpFeatureSet object from the CEL set}
 
 \description{
- Extracts an in-memory SnpFeatureSet object from the data set.
+ Extracts an in-memory SnpFeatureSet object from the CEL set.
  Note that any modifications done to the extract object will \emph{not}
- be reflected in the original data set.
+ be reflected in the original CEL set.
 }
 
 \usage{\method{extractSnpFeatureSet}{AffymetrixCelSet}(this, ..., verbose=FALSE)}

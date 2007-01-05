@@ -122,7 +122,7 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
   }
 
   df;
-})
+}, private=TRUE)
 
 ##############################################################################
 # HISTORY:

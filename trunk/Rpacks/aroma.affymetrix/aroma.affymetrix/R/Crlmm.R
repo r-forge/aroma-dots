@@ -74,7 +74,7 @@ setMethodS3("as.character", "Crlmm", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -385,7 +385,7 @@ setMethodS3("classifyAsXorXX", "Crlmm", function(this, ...) {
 
   # Return
   class;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ###########################################################################/**

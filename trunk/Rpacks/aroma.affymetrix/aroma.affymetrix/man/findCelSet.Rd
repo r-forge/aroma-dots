@@ -3,6 +3,8 @@
 % 
 %  findCelSet.R
 % 
+% on Sat Jan 06 01:51:19 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -10,10 +12,10 @@
 \alias{findCelSet.default}
 \alias{findCelSet}
 
-\title{Searches for one or several datasets}
+\title{Searches for one or several CEL sets}
 
 \description{
-  Searches for one or several datasets that matches certain criterias.
+  Searches for one or several CEL sets that matches certain criterias.
 }
 
 \usage{\method{findCelSet}{default}(name=NULL, chipType=NULL, paths=NULL, minCount=1, ..., firstOnly=TRUE, verbose=FALSE)}
@@ -34,7 +36,7 @@
 }
 
 \value{
-  Returns \code{\link[base]{character}} \code{\link[base]{vector}} of full pathname to matching dataset.
+  Returns \code{\link[base]{character}} \code{\link[base]{vector}} of full pathname to matching data set.
 }
 
 \details{

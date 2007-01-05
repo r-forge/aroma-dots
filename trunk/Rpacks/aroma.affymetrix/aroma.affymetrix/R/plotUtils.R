@@ -81,4 +81,13 @@ setMethodS3("stext", "default", function(text, side=1, line=0, pos=0.5, margin=c
     }
   }
   mtext(text=text, side=side, line=line, at=at, adj=adj, cex=cex, ..., xpd=TRUE);
-}) # stext()
+}, private=TRUE) # stext()
+
+
+############################################################################
+# HISTORY:
+# 2007-01-05
+# o Need to be documented.
+# 2006-??-??
+# o Created.
+############################################################################

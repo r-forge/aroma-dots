@@ -50,7 +50,7 @@ setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 
   )
 
   fit;
-}) # fitGenotypeCone()
+}, private=TRUE) # fitGenotypeCone()
 
 
 ############################################################################

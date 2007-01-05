@@ -44,7 +44,7 @@ setConstructorS3("ChipEffectSet", function(..., model=c("pm")) {
 
 setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
   ChipEffectFile;
-}, static=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern=",chipEffects[.](c|C)(e|E)(l|L)$", fileClass=NULL) {
@@ -53,7 +53,7 @@ setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern=",chipEf
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
   fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
-}, static=TRUE);
+}, static=TRUE)
 
 
 setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name=getName(dataSet), ..., verbose=FALSE) {

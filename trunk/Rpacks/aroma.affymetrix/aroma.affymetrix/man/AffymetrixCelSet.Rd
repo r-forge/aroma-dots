@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelSet.R
 % 
+% on Sat Jan 06 01:47:24 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -31,7 +33,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
 
 
-  An AffymetrixCelSet object represents a data set of Affymetrix CEL files
+  An AffymetrixCelSet object represents a set of Affymetrix CEL files
   with \emph{identical} chip types.
  }
 
@@ -48,55 +50,39 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{append} \tab  -\cr
- \tab \code{applyToUnitIntensities} \tab  -\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixCelSet.AffymetrixCelSet]{as.AffymetrixCelSet}} \tab Coerce an object to an AffymetrixCelSet object.\cr
- \tab \code{\link[aroma.affymetrix:as.character.AffymetrixCelSet]{as.character}} \tab Returns a short string describing the Affymetrix data set.\cr
- \tab \code{\link[aroma.affymetrix:averageQuantile.AffymetrixCelSet]{averageQuantile}} \tab Gets the average empirical distribution across all samples.\cr
- \tab \code{\link[aroma.affymetrix:bgAdjustGcrma.AffymetrixCelSet]{bgAdjustGcrma}} \tab Applies probe sequence based background correction to a set of
-CEL files.\cr
- \tab \code{\link[aroma.affymetrix:bgAdjustOptical.AffymetrixCelSet]{bgAdjustOptical}} \tab Applies optical background correction to a set of CEL files.\cr
- \tab \code{\link[aroma.affymetrix:bgAdjustRma.AffymetrixCelSet]{bgAdjustRma}} \tab Applies RMA background correction to a set of
-CEL files.\cr
- \tab \code{\link[aroma.affymetrix:calculateGsbParameters.AffymetrixCelSet]{calculateGsbParameters}} \tab Computes parameters for adjustment of specific binding.\cr
- \tab \code{\link[aroma.affymetrix:calibrateAllelicCrosstalk.AffymetrixCelSet]{calibrateAllelicCrosstalk}} \tab Calibrates probepair signals for crosstalk between allele A and allele B.\cr
- \tab \code{clone} \tab  -\cr
  \tab \code{cna} \tab  -\cr
- \tab \code{createBlankSet} \tab  -\cr
- \tab \code{createFromFeatureSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:extractAffyBatch.AffymetrixCelSet]{extractAffyBatch}} \tab Extracts an in-memory AffyBatch object from the data set.\cr
- \tab \code{\link[aroma.affymetrix:extractSnpFeatureSet.AffymetrixCelSet]{extractSnpFeatureSet}} \tab Extracts an in-memory SnpFeatureSet object from the data set.\cr
+ \tab \code{\link[aroma.affymetrix:extractAffyBatch.AffymetrixCelSet]{extractAffyBatch}} \tab Extracts an in-memory AffyBatch object from the CEL set.\cr
+ \tab \code{\link[aroma.affymetrix:extractSnpFeatureSet.AffymetrixCelSet]{extractSnpFeatureSet}} \tab Extracts an in-memory SnpFeatureSet object from the CEL set.\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:gcrmaSummary.AffymetrixCelSet]{gcrmaSummary}} \tab Calculates the GCRMA expression summary.\cr
  \tab \code{getAverage} \tab  -\cr
  \tab \code{getAverageAsinh} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getAverageFile.AffymetrixCelSet]{getAverageFile}} \tab Calculates the mean and the standard deviation cell signal across the data set.\cr
+ \tab \code{\link[aroma.affymetrix:getAverageFile.AffymetrixCelSet]{getAverageFile}} \tab Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set.\cr
  \tab \code{getAverageLog} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
  \tab \code{getData} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getIntensities.AffymetrixCelSet]{getIntensities}} \tab Gets cell intensities from a set of cells and a set of arrays.\cr
  \tab \code{getName} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getSiblings.AffymetrixCelSet]{getSiblings}} \tab Gets the all data sets that refers to the same samples a this one.\cr
  \tab \code{getTimestamps} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
- \tab \code{\link[aroma.affymetrix:isDuplicated.AffymetrixCelSet]{isDuplicated}} \tab Identifies duplicated data files.\cr
+ \tab \code{\link[aroma.affymetrix:isDuplicated.AffymetrixCelSet]{isDuplicated}} \tab Identifies duplicated CEL files.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
- \tab \code{\link[aroma.affymetrix:normalizeQuantile.AffymetrixCelSet]{normalizeQuantile}} \tab Normalizes samples to have the same empirical distribution.\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelSet]{plotDensity}} \tab Plots the densities of all samples.\cr
  \tab \code{range} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:rmaSummary.AffymetrixCelSet]{rmaSummary}} \tab Calculates the RMA expression summary.\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelSet]{setCdf}} \tab Sets the CDF structure for this CEL set.\cr
- \tab \code{transformAffine} \tab  -\cr
 }
 
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, reorder, seq, setName, setTags
+append, appendFiles, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, reorder, seq, setName, setTags
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

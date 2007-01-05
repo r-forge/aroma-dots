@@ -3,6 +3,8 @@
 % 
 %  GenotypeCallFile.R
 % 
+% on Sat Jan 06 01:51:56 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -48,7 +50,6 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{[<-} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
- \tab \code{importFromCrlmmFile} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{updateUnits} \tab  -\cr
 }
@@ -58,7 +59,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getFullName, getLabel, getName, getPath, getPathname, getTags, setLabel, stextLabel, stextLabels, stextSize
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

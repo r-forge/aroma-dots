@@ -45,7 +45,7 @@ setConstructorS3("ChipEffectPreprocessing", function(dataSet=NULL, ...) {
 
 setMethodS3("getRootPath", "ChipEffectPreprocessing", function(this, ...) {
   "plmData";
-})
+}, private=TRUE)
 
 
 

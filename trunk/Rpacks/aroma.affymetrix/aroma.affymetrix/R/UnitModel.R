@@ -64,7 +64,7 @@ setMethodS3("as.character", "UnitModel", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -392,7 +392,7 @@ setMethodS3("readUnits", "UnitModel", function(this, units=NULL, ..., verbose=FA
   res;
 })
 
-setMethodS3("getFitUnitFunction", "UnitModel", abstract=TRUE, protected=TRUE);
+setMethodS3("getFitUnitFunction", "UnitModel", abstract=TRUE, privaet=TRUE);
 
 
 setMethodS3("findUnitsTodo", "UnitModel", abstract=TRUE);

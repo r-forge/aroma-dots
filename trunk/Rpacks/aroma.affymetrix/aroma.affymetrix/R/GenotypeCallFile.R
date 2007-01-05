@@ -54,7 +54,7 @@ setMethodS3("create", "GenotypeCallFile", function(static, filename, path=NULL, 
   on.exit(close(calls));
 
   newInstance(static, pathname, cdf=cdf, ...);
-}, static=TRUE, protected=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 setMethodS3("getCdf", "GenotypeCallFile", function(this, ...) {
@@ -230,7 +230,7 @@ setMethodS3("importFromCrlmmFile", "GenotypeCallFile", function(this, filename="
   verbose && exit(verbose);
 
   invisible(length(units));
-})
+}, private=TRUE)
 
 
 

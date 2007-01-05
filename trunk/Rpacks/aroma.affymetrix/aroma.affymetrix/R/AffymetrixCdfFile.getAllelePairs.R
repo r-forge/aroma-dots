@@ -34,14 +34,14 @@ setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
     return(TRUE);
 
   FALSE;
-})
+}, private=TRUE)
 
 
 
 ###########################################################################/**
 # @RdocMethod getSnpNames
 #
-# @title "Gets the names of the SNPs in the data set"
+# @title "Gets the names of the SNPs"
 #
 # \description{
 #   @get "title".
@@ -70,7 +70,7 @@ setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
 setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, pattern="^SNP_A-", ...) {
   unitNames <- getUnitNames(this, ...);
   grep(pattern=pattern, unitNames, value=TRUE);
-})
+}, private=TRUE)
 
 
 
@@ -78,7 +78,7 @@ setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, pattern="^SNP_A-"
 ###########################################################################/**
 # @RdocMethod nbrOfSnps
 #
-# @title "Gets the number of SNPs in the data set"
+# @title "Gets the number of SNPs"
 #
 # \description{
 #   @get "title".
@@ -104,7 +104,7 @@ setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, pattern="^SNP_A-"
 #*/###########################################################################
 setMethodS3("nbrOfSnps", "AffymetrixCdfFile", function(this, ...) {
   length(getSnpNames(this, ...));
-})
+}, private=TRUE)
 
 
 
@@ -160,7 +160,7 @@ setMethodS3("getAllelePairs", "AffymetrixCdfFile", function(this, units=NULL, ..
   names(forward) <- unitNames;
 
   factor(forward, levels=pairs);
-}) # getAllelePairs()
+}, private=TRUE) # getAllelePairs()
 
 
 
@@ -206,7 +206,7 @@ setMethodS3("getAllelePairUnitSets", "AffymetrixCdfFile", function(this, ...) {
   } # for (pair ...)
 
   res;
-})
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -497,7 +497,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   saveCache(probeSets, key=key, comment=comment);
 
   probeSets;
-}) # getAlleleProbePairs()
+}, private=TRUE) # getAlleleProbePairs()
 
 
 
@@ -591,7 +591,7 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
   verbose && exit(verbose);
 
   probes;
-}) # getAlleleProbePairs2()
+}, private=TRUE) # getAlleleProbePairs2()
 
 
 

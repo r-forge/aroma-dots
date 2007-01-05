@@ -40,8 +40,7 @@ setMethodS3("createFromFeatureSet", "AffymetrixCelSet", function(static, feature
   verbose && exit(verbose);
   
   ds;
-}, static=TRUE);
-
+}, static=TRUE, private=TRUE)
 
 
 

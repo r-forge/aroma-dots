@@ -3,6 +3,8 @@
 % 
 %  PlatformDesign.R
 % 
+% on Sat Jan 06 01:54:57 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -45,31 +47,21 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{as.character} \tab  -\cr
  \tab \code{clearFileCache} \tab  -\cr
  \tab \code{getAlleleAB} \tab  -\cr
- \tab \code{getAnnotations} \tab  -\cr
- \tab \code{getCachedFields} \tab  -\cr
- \tab \code{getCachePath} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
- \tab \code{getCrlmmInfo} \tab  -\cr
- \tab \code{getDataFile} \tab  -\cr
- \tab \code{getDataFiles} \tab  -\cr
  \tab \code{getDescription} \tab  -\cr
  \tab \code{getFeatureInfo} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getOligoSequences} \tab  -\cr
  \tab \code{getPackageName} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
- \tab \code{getPlatformDesignObject} \tab  -\cr
  \tab \code{getProbeEffects} \tab  -\cr
- \tab \code{getReadMap} \tab  -\cr
  \tab \code{getReferenceQuantiles} \tab  -\cr
  \tab \code{getUnitNames} \tab  -\cr
  \tab \code{getUnitsOnChromosome} \tab  -\cr
- \tab \code{getWriteMap} \tab  -\cr
  \tab \code{getX} \tab  -\cr
  \tab \code{getY} \tab  -\cr
  \tab \code{isInstalled} \tab  -\cr
@@ -77,12 +69,11 @@ extends \link[R.oo]{Object}\cr
  \tab \code{isPm} \tab  -\cr
  \tab \code{load} \tab  -\cr
  \tab \code{unload} \tab  -\cr
- \tab \code{validate} \tab  -\cr
 }
 
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

@@ -12,7 +12,7 @@
 #
 # \arguments{
 #   \item{path}{The path where to save the normalized data files. 
-#     If @NULL, a default data set and chip-type specific path is used.}
+#     If @NULL, a default name is used.}
 #   \item{name}{The name of the normalized data set, which will also be
 #     part of the default path.}
 #   \item{subsetToUpdate}{The probes to be updated.
@@ -125,7 +125,7 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
   res <- newInstance(this, dataFiles);
   setCdf(res, cdf);
   res;
-}) # normalizeQuantile()
+}, protected=TRUE) # normalizeQuantile()
 
 
 
@@ -246,7 +246,7 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
   verbose && exit(verbose);
 
   xTarget;
-}) # averageQuantile()
+}, protected=TRUE) # averageQuantile()
 
 
 
@@ -298,7 +298,7 @@ setMethodS3("transformAffine", "AffymetrixCelSet", function(this, outPath=file.p
   res <- newInstance(this, dataFiles);
   setCdf(res, cdf);
   res;
-}) # transformAffine()
+}, private=TRUE) # transformAffine()
 
 
 ############################################################################

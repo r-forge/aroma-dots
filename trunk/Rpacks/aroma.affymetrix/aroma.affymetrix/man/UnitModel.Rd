@@ -3,6 +3,8 @@
 % 
 %  UnitModel.R
 % 
+% on Sat Jan 06 01:58:47 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -36,7 +38,7 @@ extends \link[R.oo]{Object}\cr
  \usage{UnitModel(dataSet=NULL, tags="", ...)}
 
  \arguments{
-   \item{dataSet}{The dataset to which this model should be fitted.}
+   \item{dataSet}{The data set to which this model should be fitted.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be appended to the tags of
       the input data set.}
    \item{...}{Not used.}
@@ -45,12 +47,12 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{as.character} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.UnitModel]{fit}} \tab Estimates the model parameters.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.UnitModel]{getCdf}} \tab Gets the CDF structure for this model.\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getDataSet.UnitModel]{getDataSet}} \tab Gets the data set for this model.\cr
+ \tab \code{getFitUnitFunction} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFullName.UnitModel]{getFullName}} \tab Gets the full name of the output data set.\cr
  \tab \code{\link[aroma.affymetrix:getName.UnitModel]{getName}} \tab Gets the name of the output summarized data set.\cr
  \tab \code{getParameterSet} \tab  -\cr
@@ -63,7 +65,7 @@ extends \link[R.oo]{Object}\cr
 
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

@@ -19,7 +19,8 @@ setMethodS3("normalizeAverage", "list", function(x, baseline=1, avg=median, targ
   }
 
   x;
-})
+}, private=TRUE)
+
 
 setMethodS3("normalizeAverage", "matrix", function(x, baseline=1, avg=median, targetAvg=2200, ...) {
   # Estimate the scale for each channel
@@ -41,7 +42,7 @@ setMethodS3("normalizeAverage", "matrix", function(x, baseline=1, avg=median, ta
   }
 
   x;
-})
+}, private=TRUE)
 
 
 ############################################################################

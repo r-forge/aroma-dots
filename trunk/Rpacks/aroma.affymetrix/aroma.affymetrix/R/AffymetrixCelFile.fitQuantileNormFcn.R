@@ -84,7 +84,7 @@ setMethodS3("fitQuantileNormFcn", "AffymetrixCelFile", function(this, yTarget, s
   verbose && exit(verbose);
 
   fcn;
-}, private=TRUE) #fitQuantileNormFcn()
+}, private=TRUE) # fitQuantileNormFcn()
 
 
 

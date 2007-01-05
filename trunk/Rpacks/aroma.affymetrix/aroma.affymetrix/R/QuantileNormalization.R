@@ -53,7 +53,7 @@ setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typ
 
 setMethodS3("getSubsetToUpdate", "QuantileNormalization", function(this, ...) {
   this$.subsetToUpdate;
-})
+}, private=TRUE)
 
 
 setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
@@ -73,7 +73,7 @@ setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
   params <- c(params, params2);
 
   params;
-})
+}, private=TRUE)
 
 
 
@@ -113,7 +113,7 @@ setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ...
   verbose && exit(verbose);
 
   yTarget;
-})
+}, private=TRUE)
 
 
 setMethodS3("getTargetDistributionIdentifier", "QuantileNormalization", function(this, ..., verbose=FALSE) {
@@ -142,7 +142,7 @@ setMethodS3("getTargetDistributionIdentifier", "QuantileNormalization", function
   verbose && exit(verbose);
 
   id;
-}, protected=TRUE)
+}, private=TRUE)
 
 setMethodS3("getTargetDistributionPathname", "QuantileNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -166,7 +166,8 @@ setMethodS3("getTargetDistributionPathname", "QuantileNormalization", function(t
   verbose && exit(verbose);
 
   pathname;
-}, protected=TRUE)
+}, private=TRUE)
+
 
 setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -202,7 +203,7 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
   verbose && exit(verbose);
 
   invisible(yTarget);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

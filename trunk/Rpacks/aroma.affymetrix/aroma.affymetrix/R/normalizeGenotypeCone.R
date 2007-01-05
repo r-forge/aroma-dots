@@ -3,7 +3,7 @@ setMethodS3("normalizeGenotypeCone", "matrix", function(y, avg=median, targetAvg
   x <- backtransformGenotypeCone(y, fit=fit);
 #  x <- normalizeAverage(x, avg=avg, targetAvg=targetAvg);
   x;
-}) # normalizeGenotypeCone()
+}, private=TRUE) # normalizeGenotypeCone()
 
 
 

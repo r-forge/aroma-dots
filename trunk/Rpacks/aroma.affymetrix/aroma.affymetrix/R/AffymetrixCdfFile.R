@@ -51,7 +51,7 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 
@@ -187,7 +187,7 @@ setMethodS3("getHeader", "AffymetrixCdfFile", function(this, ...) {
   if (is.null(header <- this$.header))
     header <- this$.header <- readCdfHeader(this$.pathname);
   header;
-})
+}, private=TRUE)
 
 setMethodS3("getChipType", "AffymetrixCdfFile", function(this, ...) {
   getHeader(this)$chiptype;
@@ -308,7 +308,7 @@ setMethodS3("getUnitSizes", "AffymetrixCdfFile", function(this, units=NULL, ...)
     sizes <- sizes[units];
 
   sizes;
-})
+}, private=TRUE)
 
 
 
@@ -443,7 +443,7 @@ setMethodS3("restruct", "AffymetrixCdfFile", function(this, cdf, ...) {
   if (!is.null(fcn))
     cdf <- fcn(cdf);
   cdf;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -508,11 +508,11 @@ setMethodS3("setRestructor", "AffymetrixCdfFile", function(this, fcn=NULL, ...) 
     clearCache(this);
   }
   invisible(this);
-})
+}, private=TRUE)
 
 setMethodS3("getRestructor", "AffymetrixCdfFile", function(this, ...) {
   this$.restructor;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -721,7 +721,7 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
   saveCache(indices, key=key, comment=comment);
   
   indices;
-}, protected=TRUE);
+}, private=TRUE);
 
 
 setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NULL, stratifyBy=NULL, ..., force=FALSE, verbose=FALSE) {
@@ -760,7 +760,7 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
     res <- res[units];
 
   res;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -802,12 +802,8 @@ setMethodS3("compare", "AffymetrixCdfFile", function(this, other, ...) {
   res <- compareCdfs(getPathname(this), getPathname(other), ...);
 
   res;
-})
+}, private=TRUE)
 
-# To be removed.
-setMethodS3("equals", "AffymetrixCdfFile", function(...) {
-  NextMethod("equals", ...);
-})
 
 
 ###########################################################################/**
@@ -1132,7 +1128,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
   # Return an AffymetrixCdfFile object for the new CDF
   newInstance(this, dest);
-})
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -1218,13 +1214,7 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("dC
   }
 
   si;
-})
-
-
-setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, side=4, fmtstr="%s", pos=1, cex=0.7, col="darkgray", ...) {
-  stext(side=side, text=sprintf(fmtstr, getChipType(this)), pos=pos, cex=cex, col=col, ...);
-})
-
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -1285,7 +1275,7 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
   }
 
   units;
-})
+}, private=TRUE)
 
 
 ############################################################################

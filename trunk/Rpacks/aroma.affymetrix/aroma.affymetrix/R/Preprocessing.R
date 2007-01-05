@@ -66,12 +66,12 @@ setMethodS3("getAsteriskTag", "Preprocessing", function(this, ...) {
   tag <- paste(tag, collapse="");
   tag <- sprintf("%s", tag);
   tag;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("getRootPath", "Preprocessing", function(this, ...) {
   sprintf("pp%s", capitalize(class(this)[1]));
-})
+}, private=TRUE)
 
 
 
@@ -92,7 +92,7 @@ setMethodS3("as.character", "Preprocessing", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -220,13 +220,13 @@ setMethodS3("getParametersAsString", "Preprocessing", function(this, ...) {
   params <- gsub(" [ ]*", " ", params);
   params <- gsub("[ ]*:", ":", params);
   params;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
 setMethodS3("getParameters", "Preprocessing", function(this, ...) {
   NULL;
-})
+}, private=TRUE)
 
 
 
@@ -359,7 +359,7 @@ setMethodS3("getOutputDataSet", "Preprocessing", function(this, ..., force=FALSE
 setMethodS3("getOutputFiles", "Preprocessing", function(this, ...) {
   outPath <- getPath(this);
   findFiles(pattern="[.](c|C)(e|E)(l|L)$", paths=outPath, firstOnly=FALSE);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

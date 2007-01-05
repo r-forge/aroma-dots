@@ -55,7 +55,7 @@ setMethodS3("drawCytoBand", "default", function (cytoband, chromosome=1, y=-1, l
     dy <- par("cxy")[2];
     text(x=CytoPos, y=y1+dy/2, labels=labels, srt=90, adj=c(0,0.5));
   }
-}, protected=TRUE)
+}, private=TRUE)
 
 
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
@@ -290,7 +290,7 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
     datasmt$PosBase <- xScale * datasmt$PosBase;
     lines(datasmt$Smoothing ~ datasmt$PosBase, col=colSmoothing);
   }
-}) # plotProfile2()
+}, private=TRUE) # plotProfile2()
 
 
 ############################################################################

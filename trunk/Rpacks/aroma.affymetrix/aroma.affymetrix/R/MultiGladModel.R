@@ -141,7 +141,7 @@ setMethodS3("as.character", "MultiGladModel", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 setMethodS3("getListOfChipEffects", "MultiGladModel", function(this, ...) {
   this$.cesList;
@@ -165,7 +165,7 @@ setMethodS3("getListOfReferences", "MultiGladModel", function(this, ...) {
 setMethodS3("getListOfCdfs", "MultiGladModel", function(this, ...) {
   cesList <- getListOfChipEffects(this);
   lapply(cesList, FUN=getCdf);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("getChipTypes", "MultiGladModel", function(this, merge=FALSE, collapse="+", ...) {
@@ -181,7 +181,7 @@ setMethodS3("getChipTypes", "MultiGladModel", function(this, merge=FALSE, collap
   }
 
   chipTypes;
-}, protected=TRUE)
+})
 
 
 setMethodS3("getChipType", "MultiGladModel", function(this, ...) {
@@ -289,7 +289,7 @@ setMethodS3("getFullName", "MultiGladModel", function(this, ...) {
 
 setMethodS3("getRootPath", "MultiGladModel", function(this, ...) {
   "gladData";
-})
+}, private=TRUE)
 
 setMethodS3("getPath", "MultiGladModel", function(this, ...) {
   # Create the (sub-)directory tree for the data set
@@ -804,7 +804,7 @@ setMethodS3("getLog2Ratios", "MultiGladModel", function(this, ..., verbose=FALSE
   })
 
   res;
-}, protected=TRUE) # getLog2Ratios()
+}, private=TRUE) # getLog2Ratios()
 
 
 

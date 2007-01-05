@@ -197,7 +197,7 @@ setMethodS3("annotateMvsA", "AffymetrixCelFile", function(this, reference, ..., 
   }
   stextChipType(getCdf(this));
   stextLabels(this, others=reference);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

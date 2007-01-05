@@ -95,8 +95,9 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path
 
   res <- newInstance(this, dataFiles);
   setCdf(res, cdf);
+
   res;
-}) # calibrateAllelicCrosstalk()
+}, private=TRUE)
 
 
 ############################################################################

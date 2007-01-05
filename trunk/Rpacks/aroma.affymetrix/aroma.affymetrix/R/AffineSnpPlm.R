@@ -5,9 +5,6 @@
 #
 # \description{
 #  @classhierarchy
-#
-#  This class represents the log-additive model used in RMA.
-#  It can be used to fit the model on a @see "AffymetrixCelSet".
 # }
 # 
 # @synopsis

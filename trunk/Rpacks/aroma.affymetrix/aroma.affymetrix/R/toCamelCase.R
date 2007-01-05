@@ -7,10 +7,10 @@ setMethodS3("toCamelCase", "default", function(s, capitalize=FALSE, split="[ \t]
   if (!capitalize)
     s <- decapitalize(s);
   s;
-})
+}, private=TRUE)
 
 ############################################################################
 # HISTORY:
 # 2006-09-15
-# o Created.  Will probably end up in R.utils some day.
+# o Created. Will probably end up in R.utils some day.
 ############################################################################

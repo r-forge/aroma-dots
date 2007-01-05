@@ -28,14 +28,14 @@ setMethodS3("cleanToRealChipType", "AffymetrixCdfFile", function(static, cleanCd
   if (length(cdfNames) == 0)
     cdfNames <- NULL;
   cdfNames;
-}, static=TRUE, protected=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 
 setMethodS3("fromCleanChipType", "AffymetrixCdfFile", function(static, cleanChipType, ...) {
   chipType <- cleanToRealChipType(static, cleanChipType, ...);
   fromChipType(static, chipType);
-}, static=TRUE, protected=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 setMethodS3("getOligoToCelMap", "AffymetrixCdfFile", function(this, invertMap=FALSE, verbose=FALSE, ...) {
@@ -71,7 +71,7 @@ setMethodS3("getOligoToCelMap", "AffymetrixCdfFile", function(this, invertMap=FA
   verbose && exit(verbose);
 
   map;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("getPlatformDesignObject", "AffymetrixCdfFile", function(this, ..., verbose=FALSE) {
@@ -97,7 +97,7 @@ setMethodS3("getPlatformDesignObject", "AffymetrixCdfFile", function(this, ..., 
   attr(pd, "cleanChipType") <- getChipType(pd, clean=TRUE);
 
   pd;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ############################################################################

@@ -129,7 +129,7 @@ str(xTarget);
   setCdf(res, cdf);
 
   res;
-})
+}, private=TRUE)
 
 
 

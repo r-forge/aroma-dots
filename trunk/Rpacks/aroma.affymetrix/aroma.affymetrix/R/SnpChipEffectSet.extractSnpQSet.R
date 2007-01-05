@@ -73,7 +73,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
   # Check for cached results
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- list(method="extractSnpQSet.SnpChipEffectSet", 
-              path=getPath(this), sampleNames=getSampleNames(this),
+              path=getPath(this), sampleNames=getNames(this),
               transform=transform);
   if (!force) {
     verbose && enter(verbose, "Checking cache");
@@ -219,7 +219,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
 
   # Update the sample names
   verbose && enter(verbose, "Updating the sample names");
-#  sampleNames(theta) <- getSampleNames(this);
+#  sampleNames(theta) <- getNames(this);
   verbose && exit(verbose);
 
   # Save to cache!

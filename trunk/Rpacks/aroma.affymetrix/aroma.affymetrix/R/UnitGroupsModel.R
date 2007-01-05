@@ -37,15 +37,15 @@ setMethodS3("getLabel", "UnitGroupsModel", function(this, ...) {
   if (is.null(label))
     label <- getName(this, ...);
   label;
-})
+}, private=TRUE)
 
 setMethodS3("setLabel", "UnitGroupsModel", function(this, label, ...) {
   oldLabel <- this$.label;
   this$.label <- label;
   invisible(oldLabel);
-})
+}, private=TRUE)
 
-setMethodS3("setup", "UnitGroupsModel", abstract=TRUE);
+setMethodS3("setup", "UnitGroupsModel", abstract=TRUE, private=TRUE)
 
 
 ############################################################################

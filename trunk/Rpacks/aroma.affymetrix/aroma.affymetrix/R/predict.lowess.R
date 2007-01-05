@@ -1,6 +1,6 @@
 setMethodS3("predict", "lowess", function(object, newdata=NULL, ties=mean, ...) {
   approx(object, xout=newdata, ties=ties, ...)$y;
-}) # predict()
+}, private=TRUE) # predict()
 
 
 ############################################################################

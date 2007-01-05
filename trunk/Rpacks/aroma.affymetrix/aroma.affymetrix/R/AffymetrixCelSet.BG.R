@@ -85,9 +85,10 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
   # CDF inheritance
   res <- newInstance(this, dataFiles);
   setCdf(res, getCdf(this));
-  return(res);
-  
-})
+
+  res;
+}, private=TRUE)
+
 
 ###########################################################################/**
 # @RdocMethod calculateGsbParameters
@@ -154,7 +155,7 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
   # if we happened to choose a low quality or otherwise aberrant array
   iarray <- sample(1:narray, nbrOfPms, replace=TRUE);
 
-  verbose && enter(verbose, "Extracting ", nbrOfPms, " random PM intensities from data set");
+  verbose && enter(verbose, "Extracting ", nbrOfPms, " random PM intensities across CEL set");
   pm.random <- readCelIntensities(getPathnames(this), indices=pmi.random);
   verbose && exit(verbose);
   
@@ -180,9 +181,8 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
   fit1 <- lm(pm.random2 ~ aff);
   verbose && exit(verbose);
   
-  return(fit1$coef);
-
-})
+  fit1$coef;
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -202,8 +202,7 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
 #
 # \arguments{
 #   \item{path}{The path where to save the adjusted data files.}
-#   \item{name}{Name of the data set containing the background corrected
-#        files.}
+#   \item{name}{Name of the set containing the background corrected files.}
 #   \item{type}{The type of background correction.  Currently accepted types
 #       are "fullmodel" (the default, uses MMs) and "affinities" (uses
 #       probe sequence only).}
@@ -322,9 +321,9 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 
   res <- newInstance(this, dataFiles);
   setCdf(res, getCdf(this));
-  return(res);
-  
-})
+
+  res;
+}, private=TRUE)
 
 
 
@@ -345,8 +344,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 #
 # \arguments{
 #   \item{path}{The path where to save the adjusted data files.}
-#   \item{name}{Name of the data set containing the background corrected
-#        files.}
+#   \item{name}{Name of the set containing the background corrected files.}
 #   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
@@ -410,9 +408,9 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="b
 
   res <- newInstance(this, dataFiles);
   setCdf(res, getCdf(this));
-  return(res);
-  
-})
+
+  res;
+}, private=TRUE)
 
 
 ############################################################################

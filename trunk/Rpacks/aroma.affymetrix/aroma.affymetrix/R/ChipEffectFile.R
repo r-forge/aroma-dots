@@ -73,12 +73,6 @@ setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
   this;
 })
 
-setMethodS3("getSampleName", "ChipEffectFile", function(this, ...) {
-  name <- getName(this, ...);
-  name <- gsub(",chipEffects$", "", name);
-  name;
-})
-
 setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ..., verbose=FALSE) {
   # Argument 'verbose': 
   verbose <- Arguments$getVerbose(verbose);
@@ -95,7 +89,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
   cdf <- findCdf(chipType);
   if (is.null(cdf)) {
     verbose && cat(verbose, "Pathname: Not found!");
-    verbose && cat(verbose, "Will create from the CDF of the data set. NOTE: This will take several minutes or more!");
+    verbose && cat(verbose, "Will create CDF for the chip-effect files from the original CDF. NOTE: This will take several minutes or more!");
     verbose && enter(verbose, "Creating CDF");
     cdf <- createMonoCell(sourceCdf, verbose=less(verbose));
     verbose && exit(verbose);
@@ -106,7 +100,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
   verbose && exit(verbose);
 
   cdf;
-}, static=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename=sprintf("%s,chipEffects.cel", getName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
@@ -171,7 +165,7 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename
   verbose && exit(verbose);
 
   res;
-}, static=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 
@@ -222,7 +216,7 @@ setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL
   # Note that the actually call to the encoding is done in updateUnits()
   # of the superclass.
   NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
-}, protected=TRUE);
+}, private=TRUE);
 
 
 setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
@@ -328,7 +322,7 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., verb
   class(map) <- c("ChipEffectFileCellMap", class(map));
 
   map;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -379,7 +373,7 @@ setMethodS3("getDataFlat", "ChipEffectFile", function(this, units=NULL, fields=c
   verbose && exit(verbose);
 
   data;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -421,12 +415,14 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
   verbose && exit(verbose);
   invisible(data);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2007-01-05
+# o Removed getSampleNames().
 # 2007-10-02
 # o TO DO: Static fromDataFile() does not really need argument 'df'.
 # 2006-12-02

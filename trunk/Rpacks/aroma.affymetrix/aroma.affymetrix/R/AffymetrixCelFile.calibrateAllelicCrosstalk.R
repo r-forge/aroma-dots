@@ -190,7 +190,7 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
 
 
   res;
-}) # calibrateAllelicCrosstalk()
+}, private=TRUE) # calibrateAllelicCrosstalk()
 
 
 

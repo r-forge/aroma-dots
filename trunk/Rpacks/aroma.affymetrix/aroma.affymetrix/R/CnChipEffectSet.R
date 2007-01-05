@@ -38,7 +38,7 @@ setMethodS3("getAverageFile", "CnChipEffectSet", function(this, ...) {
 
 setMethodS3("getChipEffectFileClass", "CnChipEffectSet", function(static, ...) {
   CnChipEffectFile;
-}, static=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 setMethodS3("getCombineAlleles", "CnChipEffectSet", function(this, ...) {

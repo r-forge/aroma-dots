@@ -31,7 +31,7 @@ setMethodS3("getOutputIdentifier", "QuantileNormalization", function(this, ..., 
   verbose && exit(verbose);
 
   id;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

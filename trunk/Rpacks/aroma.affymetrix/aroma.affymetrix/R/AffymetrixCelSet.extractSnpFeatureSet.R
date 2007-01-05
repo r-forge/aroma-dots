@@ -2,12 +2,12 @@
 # @set "class=AffymetrixCelSet"
 # @RdocMethod extractSnpFeatureSet
 #
-# @title "Extracts an in-memory SnpFeatureSet object from the data set"
+# @title "Extracts an in-memory SnpFeatureSet object from the CEL set"
 #
 # \description{
 #  @get "title".
 #  Note that any modifications done to the extract object will \emph{not}
-#  be reflected in the original data set.
+#  be reflected in the original CEL set.
 # }
 #
 # @synopsis
@@ -51,7 +51,7 @@ setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verb
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Extracting SnpFeatureSet from data set");
+  verbose && enter(verbose, "Extracting SnpFeatureSet from CEL set");
   cdf <- getCdf(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

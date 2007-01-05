@@ -1,7 +1,7 @@
 ###########################################################################/**
 # @RdocDefault findCelSet
 #
-# @title "Searches for one or several data sets"
+# @title "Searches for one or several CEL sets"
 #
 # \description{
 #   @get "title" that matches certain criterias.
@@ -179,7 +179,7 @@ setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths=NU
   verbose && exit(verbose);
 
   allPaths;
-}) # findCelSet()
+}, private=TRUE) # findCelSet()
 
 
 ############################################################################

@@ -41,7 +41,7 @@ setMethodS3("getAverageFile", "SnpChipEffectSet", function(this, ...) {
 
 setMethodS3("getChipEffectFileClass", "SnpChipEffectSet", function(static, ...) {
   SnpChipEffectFile;
-}, static=TRUE)
+}, static=TRUE, private=TRUE)
 
 setMethodS3("getMergeStrands", "SnpChipEffectSet", function(this, ...) {
   if (nbrOfFiles(this) == 0)

@@ -3,6 +3,8 @@
 % 
 %  CnPlm.R
 % 
+% on Sat Jan 06 01:50:19 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -46,16 +48,13 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 \tabular{rll}{
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getChipEffects} \tab  -\cr
- \tab \code{getChipEffectSetClass} \tab  -\cr
- \tab \code{getFitUnitFunction} \tab  -\cr
  \tab \code{getProbeAffinities} \tab  -\cr
- \tab \code{getSubname} \tab  -\cr
  \tab \code{setCombineAlleles} \tab  -\cr
 }
 
 
 \bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, getSubname, setMergeStrands
+getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
 
 \bold{Methods inherited from Interface}:\cr
 as.character, extend, print, uses

@@ -38,7 +38,7 @@ setMethodS3("as.character", "AptProbesetGenotype", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 setMethodS3("convertTxtFilesToXdr", "AptProbesetGenotype", function(this, outPath=NULL, ...) {
@@ -211,7 +211,7 @@ setMethodS3("convertTxtFilesToXdr", "AptProbesetGenotype", function(this, outPat
   verbose && exit(verbose);
 
   outPathnames;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -252,7 +252,7 @@ setMethodS3("getGenotypeCallSet", "AptProbesetGenotype", function(this, ...) {
 
 setMethodS3("getRootPath", "AptProbesetGenotype", function(this, ...) {
   "genotypeData";
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("getName", "AptProbesetGenotype", function(this, ...) {
@@ -344,7 +344,7 @@ setMethodS3("getChrXFile", "AptProbesetGenotype", function(this, path=NULL, skip
 
   # Return the pathname
   pathname;
-})
+}, private=TRUE)
 
 
 
@@ -372,7 +372,7 @@ setMethodS3("getPathnamesFile", "AptProbesetGenotype", function(this, ...) {
 
   # Return the pathname
   invisible(pathname);
-})
+}, private=TRUE)
 
 
 setMethodS3("getAptPathnames", "AptProbesetGenotype", function(this, format=c("txt", "chp"), ...) {
@@ -385,7 +385,7 @@ setMethodS3("getAptPathnames", "AptProbesetGenotype", function(this, format=c("t
   filenames <- paste(fullnames, "brlmm", format, sep=".");
   pathnames <- file.path(path, filenames);
   pathnames;
-}, protected=TRUE);
+}, private=TRUE);
 
 
 setMethodS3("isDone", "AptProbesetGenotype", function(this, ...) {
@@ -411,7 +411,7 @@ setMethodS3("readLog", "AptProbesetGenotype", function(this, collapse="\n", ...)
   lines <- readLines(pathname);
   lines <- paste(lines, collapse=collapse);
   lines;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("showLog", "AptProbesetGenotype", function(this, ...) {
@@ -450,7 +450,7 @@ setMethodS3("getExternalCommand", "AptProbesetGenotype", function(this, paths=NU
     throw("Failed to located/run APT binary: ", pathname);
 
   pathname;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("showAptVersion", "AptProbesetGenotype", function(this, ...) {

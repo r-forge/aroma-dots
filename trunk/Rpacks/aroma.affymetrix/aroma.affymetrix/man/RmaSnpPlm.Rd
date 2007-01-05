@@ -3,6 +3,8 @@
 % 
 %  RmaSnpPlm.R
 % 
+% on Sat Jan 06 01:57:00 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -55,7 +57,7 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 
 
 \bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, getSubname, setMergeStrands
+getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
 
 \bold{Methods inherited from RmaPlm}:\cr
 getFitFunction, getProbeAffinities
@@ -70,7 +72,7 @@ getLabel, setLabel, setup
 as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

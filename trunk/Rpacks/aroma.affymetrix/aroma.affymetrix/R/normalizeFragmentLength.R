@@ -51,7 +51,7 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
   y[ok] <- y[ok] - dy[ok];
   
   y;
-})
+}, private=TRUE)
 
 
 ############################################################################

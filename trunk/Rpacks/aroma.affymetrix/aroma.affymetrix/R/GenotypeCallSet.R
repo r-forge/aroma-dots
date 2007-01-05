@@ -80,7 +80,7 @@ setMethodS3("as.character", "GenotypeCallSet", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 
@@ -456,7 +456,7 @@ setMethodS3("createFromCrlmmFile", "GenotypeCallSet", function(this, filename="c
   verbose && exit(verbose);
 
   newInstance(this, files=files);
-})
+}, private=TRUE)
 
 
 

@@ -8,7 +8,7 @@ setMethodS3("dataFrame", "default", function(colClasses, nrow=1, ...) {
   attr(df, "row.names") <- seq(length=nrow);
   class(df) <- "data.frame";
   df;
-})
+}, private=TRUE)
 
 ##############################################################################
 # HISTORY:

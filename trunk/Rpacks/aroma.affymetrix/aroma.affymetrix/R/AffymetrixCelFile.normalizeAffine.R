@@ -65,7 +65,7 @@ setMethodS3("transformAffine", "AffymetrixCelFile", function(this, outPath=file.
   res <- fromFile(this, pathname);
   setCdf(res, cdf);
   return(res);
-}) # transformAffine()
+}, private=TRUE) # transformAffine()
 
 
 

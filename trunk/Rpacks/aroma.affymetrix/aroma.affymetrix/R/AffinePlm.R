@@ -6,7 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  This class represents the Bengtsson \& Hössjer (2006) model.
+#  This class represents affine model in Bengtsson \& Hössjer (2006).
 # }
 # 
 # @synopsis
@@ -179,7 +179,7 @@ setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
   } # affineFit()
 
   affineFit;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

@@ -153,7 +153,7 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
   saveCache(fit, key=key, comment=comment);
 
   fit;  
-}) # fitGlad()
+}, private=TRUE) # fitGlad()
 
 
 ############################################################################

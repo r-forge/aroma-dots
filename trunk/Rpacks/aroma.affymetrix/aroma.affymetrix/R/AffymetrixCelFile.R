@@ -71,7 +71,7 @@ setMethodS3("as.character", "AffymetrixCelFile", function(this, ...) {
   s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALSE) {
@@ -88,7 +88,7 @@ setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALS
     this$.identifier <- identifier;
   }
   identifier;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -183,7 +183,7 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
 
   setCdf(res, getCdf(this));
   res;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -315,7 +315,7 @@ setMethodS3("getHeader", "AffymetrixCelFile", function(this, ...) {
   if (is.null(header))
     header <- this$.header <- readCelHeader(this$.pathname);
   header;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("getHeaderV3", "AffymetrixCelFile", function(this, ...) {
@@ -335,7 +335,7 @@ setMethodS3("getHeaderV3", "AffymetrixCelFile", function(this, ...) {
   names(header) <- names;
 
   header;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -408,7 +408,7 @@ setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y
   res <- strptime(timestamp, format=format, ...);
   attr(res, "text") <- timestamp;
   res;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -446,7 +446,7 @@ setMethodS3("nbrOfCells", "AffymetrixCelFile", function(this, ...) {
 #*/###########################################################################
 setMethodS3("getChipType", "AffymetrixCelFile", function(this, ...) {
   getChipType(getCdf(this));
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -508,7 +508,7 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
   })
 
   res;
-}, protected=TRUE);
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -543,7 +543,7 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
 #*/###########################################################################
 setMethodS3("updateUnits", "AffymetrixCelFile", function(this, data, ...) {
   updateCelUnits(this$.pathname, data=data, ...);
-}, protected=TRUE);
+}, private=TRUE)
 
 
 
@@ -615,7 +615,7 @@ setMethodS3("clearData", "AffymetrixCelFile", function(this, fields=c("intensiti
   verbose && exit(verbose);
 
   invisible(fields);
-}, static=TRUE, protected=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 
@@ -722,18 +722,18 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   }
 
   cel;
-}, protected=TRUE);
+}, private=TRUE)
 
 
 setMethodS3("range", "AffymetrixCelFile", function(this, ..., na.rm=TRUE) {
   x <- getData(this, ...);
   range(x, na.rm=na.rm);
-})
+}, private=TRUE)
 
 
 setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), fields=c("intensities", "stdvs", "pixels"), ...) {
   readCelRectangle(this$.pathname, xrange=xrange, yrange=yrange, readIntensities=("intensities" %in% fields), readStdvs=("stdvs" %in% fields), readPixels=("pixels" %in% fields));
-})
+}, private=TRUE)
 
 
 
@@ -955,7 +955,7 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
   verbose && exit(verbose);
 
   invisible(pathname);
-})
+}, private=TRUE)
 
 
 ############################################################################

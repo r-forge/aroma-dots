@@ -3,6 +3,8 @@
 % 
 %  ChipEffectSet.R
 % 
+% on Sat Jan 06 01:49:17 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -51,19 +53,18 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getChipEffectFileClass} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
 
 \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calculateGsbParameters, calibrateAllelicCrosstalk, clone, cna, createBlankSet, createFromFeatureSet, extractAffyBatch, extractSnpFeatureSet, fromFiles, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIdentifier, getIntensities, getName, getSampleNames, getSiblings, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, transformAffine
+[, [[, append, applyToUnitIntensities, as.AffymetrixCelSet, as.character, averageQuantile, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calculateGsbParameters, calibrateAllelicCrosstalk, clone, cna, createBlankSet, createFromFeatureSet, extractAffyBatch, extractSnpFeatureSet, fromFiles, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIdentifier, getIntensities, getName, getSiblings, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, transformAffine
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, reorder, seq, setName, setTags
+append, appendFiles, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, reorder, seq, setName, setTags
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

@@ -37,15 +37,15 @@ setConstructorS3("SnpPlm", function(...) {
   extend(Interface(), "SnpPlm");
 })
 
-setMethodS3("getSubname", "SnpPlm", function(this, ...) {
-  s <- NextMethod("getSubname", this, ...);
-  if (this$mergeStrands) {
-    s <- sprintf("%sStrandless", s);
-  } else {
-    s <- sprintf("%sStrands", s);
-  }
-  s;
-})
+## setMethodS3("getSubname", "SnpPlm", function(this, ...) {
+##   s <- NextMethod("getSubname", this, ...);
+##   if (this$mergeStrands) {
+##     s <- sprintf("%sStrandless", s);
+##   } else {
+##     s <- sprintf("%sStrands", s);
+##   }
+##   s;
+## })
 
 setMethodS3("getCellIndices", "SnpPlm", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
@@ -60,7 +60,8 @@ setMethodS3("getCellIndices", "SnpPlm", function(this, ...) {
 
 setMethodS3("getChipEffectSetClass", "SnpPlm", function(this, ...) {
   SnpChipEffectSet;
-})
+}, private=TRUE)
+
 
 setMethodS3("getChipEffects", "SnpPlm", function(this, ...) {
   ces <- NextMethod("getChipEffects", this, ...);

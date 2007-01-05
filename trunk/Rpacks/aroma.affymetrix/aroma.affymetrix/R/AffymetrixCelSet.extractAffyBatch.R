@@ -2,12 +2,12 @@
 # @set "class=AffymetrixCelSet"
 # @RdocMethod extractAffyBatch
 #
-# @title "Extracts an in-memory AffyBatch object from the data set"
+# @title "Extracts an in-memory AffyBatch object from the CEL set"
 #
 # \description{
 #  @get "title".
 #  Note that any modifications done to the extract object will \emph{not}
-#  be reflected in the original data set.
+#  be reflected in the original CEL set.
 # }
 #
 # @synopsis

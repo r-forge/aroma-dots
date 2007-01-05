@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCdfFile.getAllelePairs.R
 % 
+% on Sat Jan 06 01:46:23 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -13,10 +15,10 @@
 \alias{nbrOfSnps,AffymetrixCdfFile-method}
 
 
-\title{Gets the number of SNPs in the data set}
+\title{Gets the number of SNPs}
 
 \description{
-  Gets the number of SNPs in the data set.
+  Gets the number of SNPs.
 }
 
 \usage{\method{nbrOfSnps}{AffymetrixCdfFile}(this, ...)}

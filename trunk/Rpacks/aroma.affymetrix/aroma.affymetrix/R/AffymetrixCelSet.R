@@ -6,7 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  An AffymetrixCelSet object represents a data set of Affymetrix CEL files 
+#  An AffymetrixCelSet object represents a set of Affymetrix CEL files 
 #  with \emph{identical} chip types.
 # }
 # 
@@ -81,7 +81,7 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   verbose && exit(verbose);
 
   object;
-})
+}, private=TRUE)
 
 
 setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ..., verbose=FALSE) {
@@ -131,7 +131,7 @@ setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ...,
 ###########################################################################/**
 # @RdocMethod as.character
 #
-# @title "Returns a short string describing the Affymetrix data set"
+# @title "Returns a short string describing the Affymetrix CEL set"
 #
 # \description{
 #  @get "title".
@@ -174,7 +174,7 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 setMethodS3("getTimestamps", "AffymetrixCelSet", function(this, ..., force=FALSE) {
@@ -190,6 +190,7 @@ setMethodS3("getTimestamps", "AffymetrixCelSet", function(this, ..., force=FALSE
   ts;
 })
 
+
 setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE) {
   identifier <- this$.identifier;
   if (force || is.null(identifier)) {
@@ -201,37 +202,9 @@ setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE
     this$.identifier <- identifier;
   }
   identifier;
-}, protected=TRUE)
+}, private=TRUE)
 
 
-###########################################################################/**
-# @RdocMethod getSampleNames
-#
-# @title "Gets the names of the samples in the file set"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#   Returns a @character @vector.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getSampleNames", "AffymetrixCelSet", function(this, ...) {
-  unlist(lapply(this, FUN=getSampleName))
-}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -292,7 +265,7 @@ setMethodS3("getSiblings", "AffymetrixCelSet", function(this, notSelf=FALSE, ...
   }
   
   sets;
-})
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -365,7 +338,7 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Setting CDF for data set");
+  verbose && enter(verbose, "Setting CDF for CEL set");
   verbose && print(verbose, cdf);
 
   # Nothing to do?
@@ -374,7 +347,7 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
 #    return(invisible(this));
 
   # Set the CDF for all CEL files
-  verbose && enter(verbose, "Setting CDF for each data file");
+  verbose && enter(verbose, "Setting CDF for each CEL file");
   lapply(this, setCdf, cdf, ...);
   verbose && exit(verbose);
 
@@ -491,7 +464,7 @@ setMethodS3("as.AffymetrixCelSet", "default", function(object, ...) {
 ###########################################################################/**
 # @RdocMethod isDuplicated
 #
-# @title "Identifies duplicated data files"
+# @title "Identifies duplicated CEL files"
 #
 # \description{
 #   @get "title" by comparing the timestamps in the CEL headers.
@@ -505,9 +478,9 @@ setMethodS3("as.AffymetrixCelSet", "default", function(object, ...) {
 #
 # \value{
 #   Returns a @logical @vector of length equal to the number of files
-#   in the data set.
-#   An element with value @TRUE indicates that the corresponding data file
-#   has the same time stamp as another preceeding data file.
+#   in the set.
+#   An element with value @TRUE indicates that the corresponding CEL file
+#   has the same time stamp as another preceeding CEL file.
 # }
 #
 # \examples{\dontrun{
@@ -787,7 +760,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 ###########################################################################/**
 # @RdocMethod getAverageFile
 #
-# @title "Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the data set"
+# @title "Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set"
 #
 # \description{
 #   @get "title".
@@ -819,14 +792,14 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 # }
 #
 # \value{
-#   Returns an @see "AffymetrixCelSet" of the same class as the data set
+#   Returns an @see "AffymetrixCelSet" of the same class as the CEL set
 #   averaged.
 # }
 #
 # \details{
 #   The parameter estimates are stored as a CEL file of the same class as
-#   the data files in the data set.  The CEL file is named \code{<name>.cel}
-#   and placed in the directory of the data set.
+#   the data files in the set.  The CEL file is named \code{<name>.cel}
+#   and placed in the directory of the set.
 #   Currently there is no specific data class for this file, but the average
 #   cell signals are stored as "intensities", the standard deviation of the
 #   cell signals as "stddevs", and the number of data points used for each
@@ -1107,7 +1080,7 @@ setMethodS3("applyToUnitIntensities", "AffymetrixCelSet", function(this, units=N
     groups;
   })
   y;
-})
+}, private=TRUE)
 
 
 setMethodS3("[", "AffymetrixCelSet", function(this, units=NULL, ..., drop=FALSE) {
@@ -1121,218 +1094,6 @@ setMethodS3("[[", "AffymetrixCelSet", function(this, units=NULL, ...) {
   this[units=units, ..., drop=TRUE];
 })
 
-###########################################################################/**
-# @RdocMethod gcrmaSummary
-#
-# @title "Calculates the GCRMA expression summary"
-#
-# \description{
-#  @get "title".
-#
-# Applies GC-based background correction, followed by quantile normalisation
-# and then a summary by either median polish or robust regression.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{path}{The path to save the expression summaries.}
-#   \item{name}{Name of the data set containing the expression summaries.}
-#   \item{bgPath}{Directory in which to store background-adjusted signals.}
-#   \item{normPath}{Directory in which to store normalised signals.}
-#   \item{summaryMethod}{Either "medianpolish" or "rlm".}
-#   \item{type}{The type of background correction.  Currently accepted types
-#       are "fullmodel" (the default, uses MMs) and "affinities" (uses
-#       probe sequence only).}
-#   \item{indicesNegativeControl}{Locations of any negative control
-#       probes (e.g., the anti-genomic controls on the human exon array).
-#       If @NULL and type=="affinities", MMs are used as the negative
-#       controls.}
-#   \item{opticalAdjust}{If @TRUE, apply correction for optical effect,
-#       as in @see "gcrma::bg.adjust.optical".}
-#   \item{gsbAdjust}{Should we adjust for specific binding (defaults to
-#        @TRUE)?}
-#   \item{k}{Tuning parameter passed to \code{gcrma::bg.adjust.gcrma}.}
-#   \item{rho}{Tuning parameter passed to \code{gcrma::bg.adjust.gcrma}.}
-#   \item{stretch}{Tuning parameter passed to \code{gcrma::bg.adjust.gcrma}.}
-#   \item{fast}{If @TRUE, an ad hoc transformation of the PM is performed
-#       (\code{gcrma::gcrma.bg.transformation.fast}).}
-#   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
-#     unless skipped, otherwise an error is thrown.}
-#   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
-#   \item{verbose}{See @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns an @see "AffymetrixCelSet" containing the expression summaries.
-# }
-#
-# \author{
-#   Ken Simpson (ksimpson[at]wehi.edu.au).
-# }
-#
-# \seealso{
-#  @see "gcrma::bg.adjust.gcrma"
-#  @seeclass
-# }
-#*/###########################################################################
-setMethodS3("gcrmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="gcrma", bgPath=NULL, normPath=NULL, summaryMethod="rlm", probePath=NULL, affinities=NULL, type="fullmodel",  indicesNegativeControl=NULL, opticalAdjust=TRUE, gsbAdjust=TRUE, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15*fast + (1-fast), fast=TRUE, ..., verbose=FALSE) {
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cdf <- getCdf(this);
-
-  # Argument 'path':
-  if (is.null(path)) {
-    # Path structure: /gcrma/<data set name>/chip_data/<chip type>/
-    path <- file.path(name, getName(this), "chip_data", getChipType(cdf));
-  }
-  if (!is.null(path)) {
-    # Verify this path (and create if missing)
-    path <- Arguments$getWritablePath(path);
-  }
-
-  if (identical(getPath(this), path)) {
-    throw("Cannot compute expression summaries. Argument 'path' refers to the same path as the path of the raw probe level data: ", path);
-  }
-  mkdirs(path);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  # do the background correction step
-
-  verbose && enter(verbose, "Performing background correction");
-
-  dsBG <- bgAdjustGcrma(this, path=bgPath, name=name, probePath=probePath, affinities=affinities, type=type,  indicesNegativeControl=indicesNegativeControl, opticalAdjust=opticalAdjust, gsbAdjust=gsbAdjust, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15*fast + (1-fast), fast=fast, ..., verbose=verbose);
-
-  verbose && exit(verbose);
-
-  # normalisation step
-  
-  verbose && enter(verbose, "Normalising");
-                  
-  dsQN <- normalizeQuantile(dsBG, path=normPath, name=name, typesToUpdate="pm", ..., verbose=verbose);
-
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Computing expression summaries");
-  
-  if (summaryMethod=="rlm") {
-    rmaPlm <- RmaPlm(dsQN);
-    fitResult <- fit(rmaPlm, verbose=verbose);
-  } else {
-    throw("Only rlm is currently supported as a summary method");
-  }
-
-  verbose && exit(verbose);
-  
-  res <- AffymetrixCelSet$fromFiles(path=getPath(rmaPlm), pattern="cel$");
-  return(res);
-
-  
-})
-
-
-###########################################################################/**
-# @RdocMethod rmaSummary
-#
-# @title "Calculates the RMA expression summary"
-#
-# \description{
-#  @get "title".
-#
-# Models the observed signal as normal background + exponential signal, then
-# applies quantile normalisation followed by a summary by either median
-# polish or robust regression.
-#
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{path}{The path to save the expression summaries.}
-#   \item{name}{Name of the data set containing the expression summaries.}
-#   \item{bgPath}{Directory in which to store background-adjusted signals.}
-#   \item{normPath}{Directory in which to store normalised signals.}
-#   \item{summaryMethod}{Either "medianpolish" or "rlm".}
-#   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
-#     unless skipped, otherwise an error is thrown.}
-#   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
-#   \item{verbose}{See @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns an @see "AffymetrixCelSet" containing the expression summaries.
-# }
-#
-# \author{
-#   Ken Simpson (ksimpson[at]wehi.edu.au).
-# }
-#
-# \seealso{
-#  See package \pkg{affy}.
-#  @seeclass
-# }
-#*/###########################################################################
-setMethodS3("rmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="rma", bgPath=NULL, normPath=NULL, summaryMethod="rlm", ..., verbose=FALSE) {
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cdf <- getCdf(this);
-
-  # Argument 'path':
-  if (is.null(path)) {
-    # Path structure: /rma/<data set name>/chip_data/<chip type>/
-    path <- file.path(name, getName(this), "chip_data", getChipType(cdf));
-  }
-  if (!is.null(path)) {
-    # Verify this path (and create if missing)
-    path <- Arguments$getWritablePath(path);
-  }
-
-  if (identical(getPath(this), path)) {
-    throw("Cannot compute expression summaries. Argument 'path' refers to the same path as the path of the raw probe level data: ", path);
-  }
-  mkdirs(path);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  # do the background correction step
-
-  verbose && enter(verbose, "Performing background correction");
-
-  dsBG <- bgAdjustRma(this, path=bgPath, name=name, ..., verbose=verbose);
-
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Normalising");
-  
-  dsQN <- normalizeQuantile(dsBG, path=normPath, name=name, typesToUpdate="pm", ..., verbose=verbose);
-
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Computing expression summaries");
-  
-  if (summaryMethod=="rlm") {
-    rmaPlm <- RmaPlm(dsQN);
-    fitResult <- fit(rmaPlm, verbose=verbose);
-  } else {
-    throw("Only rlm is currently supported as a summary method");
-  }
-
-  verbose && exit(verbose);
-  
-  res <- AffymetrixCelSet$fromFiles(path=getPath(rmaPlm), pattern="cel$");
-  return(res);
-
-  
-})
-
-
 
 setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
   NextMethod("getFullName", this, parent=parent, ...);
@@ -1344,10 +1105,10 @@ setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
 
 
 
-
-
 ############################################################################
 # HISTORY:
+# 2007-01-05
+# o Removed getSampleNames().
 # 2006-12-01
 # o Now as.character() reports the range of CEL header timestamps.
 # 2006-11-07
