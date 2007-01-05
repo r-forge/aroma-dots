@@ -63,7 +63,7 @@ setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {
                                                   getPathname(this));
   })
   invisible(TRUE);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
@@ -90,7 +90,7 @@ setMethodS3("read250KHg17", "DChipGenomeInformation", function(this, ..., exclud
     "dbSNP RS ID"="character"
   );
   readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, exclude=exclude, ...);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("read50KHg17", "DChipGenomeInformation", function(this, ..., exclude=c("Genetic Map", "Strand", "Allele A", "dbSNP RS ID", "Freq AfAm", "heterrate")) {
@@ -107,7 +107,7 @@ setMethodS3("read50KHg17", "DChipGenomeInformation", function(this, ..., exclude
   );
 
   readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, exclude=exclude, ...);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

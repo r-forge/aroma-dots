@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCdfFile.getAllelePairs.R
 % 
+% on Sat Jan 06 01:46:23 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -13,10 +15,10 @@
 \alias{getSnpNames,AffymetrixCdfFile-method}
 
 
-\title{Gets the names of the SNPs in the data set}
+\title{Gets the names of the SNPs}
 
 \description{
-  Gets the names of the SNPs in the data set.
+  Gets the names of the SNPs.
 }
 
 \usage{\method{getSnpNames}{AffymetrixCdfFile}(this, pattern="^SNP_A-", ...)}

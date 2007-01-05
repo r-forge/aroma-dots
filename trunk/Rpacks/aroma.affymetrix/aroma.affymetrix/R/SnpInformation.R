@@ -57,7 +57,7 @@ setConstructorS3("SnpInformation", function(...) {
 #*/###########################################################################
 setMethodS3("verify", "SnpInformation", function(this, ...) {
   TRUE;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -323,7 +323,7 @@ setMethodS3("readTableInternal", "SnpInformation", function(this, pathname, colC
   verbose && exit(verbose);
 
   df;
-}, protected=TRUE);
+}, private=TRUE)
 
 
 setMethodS3("getFragmentLengths", "SnpInformation", function(this, ...) {

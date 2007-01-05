@@ -3,6 +3,8 @@
 % 
 %  Preprocessing.R
 % 
+% on Sat Jan 06 01:55:06 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -47,14 +49,11 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{as.character} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFullName.Preprocessing]{getFullName}} \tab Gets the full name of the output data set.\cr
  \tab \code{\link[aroma.affymetrix:getInputDataSet.Preprocessing]{getInputDataSet}} \tab Gets the source data set.\cr
  \tab \code{\link[aroma.affymetrix:getName.Preprocessing]{getName}} \tab Gets the name of the output data set.\cr
  \tab \code{\link[aroma.affymetrix:getOutputDataSet.Preprocessing]{getOutputDataSet}} \tab Gets the preprocessed data set.\cr
- \tab \code{getParameters} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getPath.Preprocessing]{getPath}} \tab Gets the path of the output data set.\cr
- \tab \code{getRootPath} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getTags.Preprocessing]{getTags}} \tab Gets the tags of the output data set.\cr
  \tab \code{\link[aroma.affymetrix:isDone.Preprocessing]{isDone}} \tab Checks if the data set is processed or not.\cr
  \tab \code{\link[aroma.affymetrix:process.Preprocessing]{process}} \tab Processes the data set.\cr
@@ -63,7 +62,7 @@ extends \link[R.oo]{Object}\cr
 
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

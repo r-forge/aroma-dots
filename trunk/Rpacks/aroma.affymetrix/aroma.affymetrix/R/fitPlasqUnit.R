@@ -4,7 +4,7 @@ setMethodS3("readPlasqTypes", "AffymetrixCdfFile", function(this, ..., verbose=F
   cdf <- readCdf(pathname, ..., readUnitDirection=TRUE, readGroupDirection=TRUE, readXY=FALSE, readIndexpos=FALSE, readIsPm=TRUE, readAtoms=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE);
   cdf <- getPlasqTypes(cdf);
   cdf;
-})
+}, private=TRUE)
 
 
 
@@ -387,7 +387,7 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
     converged=converged,
     nbrOfIterations=rr
   );
-}) # fitPlasqUnit()
+}, private=TRUE) # fitPlasqUnit()
 
 
 ############################################################################

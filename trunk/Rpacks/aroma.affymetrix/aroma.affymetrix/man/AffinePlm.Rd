@@ -35,7 +35,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
 
 
-  This class represents the Bengtsson \& Hössjer (2006) model.
+  This class represents affine model in Bengtsson \& Hössjer (2006).
  }
 
  \usage{AffinePlm(..., background=TRUE, tags="*")}
@@ -66,7 +66,7 @@ getLabel, setLabel, setup
 as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

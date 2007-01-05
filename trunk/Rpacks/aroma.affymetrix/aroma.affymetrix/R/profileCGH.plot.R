@@ -67,7 +67,7 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
   sdEst <- this$SigmaC$Value;
   text <- substitute(hat(sigma)==x, list=list(x=sprintf("%.3g", sdEst)));
   stext(text=text, side=3, pos=0.5, line=-2);
-})
+}, private=TRUE)
 
 
 

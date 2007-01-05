@@ -57,7 +57,7 @@ setConstructorS3("GenomeInformation", function(...) {
 #*/###########################################################################
 setMethodS3("verify", "GenomeInformation", function(this, ...) {
   TRUE;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -317,7 +317,7 @@ setMethodS3("readTableInternal", "GenomeInformation", function(this, pathname, c
   verbose && exit(verbose);
 
   df;
-}, protected=TRUE);
+}, private=TRUE)
 
 
 
@@ -411,6 +411,46 @@ setMethodS3("getPositions", "GenomeInformation", function(this, ..., na.rm=FALSE
   df;
 })
 
+
+
+setMethodS3("getChromosomes", "GenomeInformation", function(this, ..., force=FALSE) {
+  chromosomes <- this$.chromosomes;
+  if (is.null(chromosomes) || force) {
+    chromosomes <- unique(getData(this, fields="chromosome")[,1]);
+
+    # Sort in order of (1:22,"X","Y")
+    chromosomeMap <- c(1:22,"X","Y", NA);
+    o <- match(chromosomeMap, chromosomes);
+    chromosomes <- chromosomes[o];
+
+    chromosomes <- chromosomes[!is.na(chromosomes)];
+    
+    this$.chromosomes <- chromosomes;
+  }
+  chromosomes;
+})
+
+
+setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE, ..., force=FALSE) {
+  stats <- this$.chromosomeStats;
+  if (is.null(stats) || force) {
+    chromosomes <- getChromosomes(this);
+    nbrOfChromosomes <- length(chromosomes);
+    stats <- matrix(NA, nrow=nbrOfChromosomes, ncol=3);
+    colnames(stats) <- c("min", "max", "n");
+    rownames(stats) <- chromosomes;
+    for (chr in chromosomes) {
+      pos <- getPositions(this, chromosome=chr);
+      r <- range(pos, na.rm=na.rm);
+      stats[chr,1:2] <- r;
+      stats[chr,3] <- length(pos);
+    }
+    this$.chromosomeStats <- stats;
+  }
+  stats;  
+})
+
+
 ###########################################################################/**
 # @RdocMethod plotDensity
 #
@@ -465,43 +505,6 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
   invisible(d);
 })
 
-
-setMethodS3("getChromosomes", "GenomeInformation", function(this, ..., force=FALSE) {
-  chromosomes <- this$.chromosomes;
-  if (is.null(chromosomes) || force) {
-    chromosomes <- unique(getData(this, fields="chromosome")[,1]);
-
-    # Sort in order of (1:22,"X","Y")
-    chromosomeMap <- c(1:22,"X","Y", NA);
-    o <- match(chromosomeMap, chromosomes);
-    chromosomes <- chromosomes[o];
-
-    chromosomes <- chromosomes[!is.na(chromosomes)];
-    
-    this$.chromosomes <- chromosomes;
-  }
-  chromosomes;
-})
-
-
-setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE, ..., force=FALSE) {
-  stats <- this$.chromosomeStats;
-  if (is.null(stats) || force) {
-    chromosomes <- getChromosomes(this);
-    nbrOfChromosomes <- length(chromosomes);
-    stats <- matrix(NA, nrow=nbrOfChromosomes, ncol=3);
-    colnames(stats) <- c("min", "max", "n");
-    rownames(stats) <- chromosomes;
-    for (chr in chromosomes) {
-      pos <- getPositions(this, chromosome=chr);
-      r <- range(pos, na.rm=na.rm);
-      stats[chr,1:2] <- r;
-      stats[chr,3] <- length(pos);
-    }
-    this$.chromosomeStats <- stats;
-  }
-  stats;  
-})
 
 ############################################################################
 # HISTORY:

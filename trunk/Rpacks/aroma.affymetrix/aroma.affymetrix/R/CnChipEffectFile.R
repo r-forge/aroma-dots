@@ -39,7 +39,7 @@ setMethodS3("as.character", "CnChipEffectFile", function(this, ...) {
   s <- c(s, sprintf("Combine alleles: %s", this$combineAlleles));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':

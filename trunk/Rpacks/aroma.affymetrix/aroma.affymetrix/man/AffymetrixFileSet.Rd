@@ -3,6 +3,8 @@
 % 
 %  AffymetrixFileSet.R
 % 
+% on Sat Jan 06 01:47:51 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -37,9 +39,9 @@ extends \link[R.oo]{Object}\cr
 
  \arguments{
    \item{files}{A \code{\link[base]{list}} of \code{\link{AffymetrixFile}}:s.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be used for this data set.
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be used for this file set.
       The string \code{"*"} indicates that it should be replaced by the
-      tags part of the data set pathname.}
+      tags part of the file set pathname.}
    \item{...}{Not used.}
  }
 
@@ -50,14 +52,11 @@ extends \link[R.oo]{Object}\cr
  \tab \code{appendFiles} \tab  -\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixFileSet.AffymetrixFileSet]{as.AffymetrixFileSet}} \tab Coerce an object to an AffymetrixFileSet object.\cr
- \tab \code{\link[aroma.affymetrix:as.character.AffymetrixFileSet]{as.character}} \tab Returns a short string describing the Affymetrix file set.\cr
  \tab \code{\link[aroma.affymetrix:as.list.AffymetrixFileSet]{as.list}} \tab Returns the files of the Affymetrix file set.\cr
  \tab \code{clearCache} \tab  -\cr
- \tab \code{clone} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:extract.AffymetrixFileSet]{extract}} \tab Extract a subset of the file set.\cr
  \tab \code{\link[aroma.affymetrix:fromFiles.AffymetrixFileSet]{fromFiles}} \tab Defines an AffymetrixFileSet object by searching for Affymetrix files.\cr
  \tab \code{getFile} \tab  -\cr
- \tab \code{getFiles} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFullName.AffymetrixFileSet]{getFullName}} \tab Gets the full name of the file set.\cr
  \tab \code{\link[aroma.affymetrix:getName.AffymetrixFileSet]{getName}} \tab Gets the name of the file set.\cr
@@ -66,9 +65,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:getPathnames.AffymetrixFileSet]{getPathnames}} \tab Gets the pathnames of the files in the file set.\cr
  \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFileSet]{getTags}} \tab Gets the tags of the file set.\cr
  \tab \code{\link[aroma.affymetrix:lapply.AffymetrixFileSet]{lapply}} \tab Applies a function to each of the Affymetrix file files.\cr
- \tab \code{\link[aroma.affymetrix:length.AffymetrixFileSet]{length}} \tab Gets the number of files in the file set.\cr
  \tab \code{nbrOfFiles} \tab  -\cr
- \tab \code{reorder} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:seq.AffymetrixFileSet]{seq}} \tab Gets an vector of file indices.\cr
  \tab \code{\link[aroma.affymetrix:setName.AffymetrixFileSet]{setName}} \tab Sets the name of the file set.\cr
  \tab \code{\link[aroma.affymetrix:setTags.AffymetrixFileSet]{setTags}} \tab Sets the tags of the file set.\cr
@@ -76,7 +73,7 @@ extends \link[R.oo]{Object}\cr
 
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

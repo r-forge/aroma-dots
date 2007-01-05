@@ -3,6 +3,8 @@
 % 
 %  ProbeLevelModel.R
 % 
+% on Sat Jan 06 01:55:41 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -31,11 +33,12 @@
  }
 
  \value{
-  Returns the indices of the units fitted, or \code{\link[base]{NULL}} if no units had to be fitted.
+  Returns the indices of the units fitted, or \code{\link[base]{NULL}} if no units had to
+  be fitted.
  }
 
  \details{
-   Dataset-specific estimates [L = nbr of probes]:
+   Data set specific estimates [L = number of probes]:
     phi [L doubles] (probe affinities), sd(phi) [L doubles],
     isOutlier(phi) [L logicals]
 

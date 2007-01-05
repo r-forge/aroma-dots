@@ -14,9 +14,9 @@
 #
 # \arguments{
 #   \item{files}{A @list of @see "AffymetrixFile":s.}
-#   \item{tags}{A @character @vector of tags to be used for this data set.
+#   \item{tags}{A @character @vector of tags to be used for this file set.
 #      The string \code{"*"} indicates that it should be replaced by the
-#      tags part of the data set pathname.}
+#      tags part of the file set pathname.}
 #   \item{...}{Not used.}
 # }
 #
@@ -98,7 +98,8 @@ setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
+
 
 
 
@@ -118,7 +119,7 @@ setMethodS3("clone", "AffymetrixFileSet", function(this, clear=TRUE, ...) {
     clearCache(object);
 
   object;
-})
+}, private=TRUE)
 
 
 
@@ -325,11 +326,11 @@ setMethodS3("getTags", "AffymetrixFileSet", function(this, ...) {
   if ("*" %in% tags) {
     name <- getFullName(this, ...);
 
-    # Data-set name is anything before the first comma
-    dsName <- gsub("[,].*$", "", name);
+    # File-set name is anything before the first comma
+    fsName <- gsub("[,].*$", "", name);
 
-    # Keep anything after the data-set name (and the separator).
-    name <- substring(name, nchar(dsName)+2);
+    # Keep anything after the file-set name (and the separator).
+    name <- substring(name, nchar(fsName)+2);
   
     filenameTags <- strsplit(name, split=",")[[1]];
 
@@ -461,7 +462,7 @@ setMethodS3("getPath", "AffymetrixFileSet", function(this, ...) {
 #*/###########################################################################
 setMethodS3("length", "AffymetrixFileSet", function(this, ...) {
   length(this$files);
-})
+}, private=TRUE)
 
 setMethodS3("nbrOfFiles", "AffymetrixFileSet", function(this, ...) {
   length(this, ...);
@@ -541,7 +542,7 @@ setMethodS3("reorder", "AffymetrixFileSet", function(x, order, ...) {
 
   this$files <- this$files[order];
   invisible(this);
-})
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -683,7 +684,7 @@ setMethodS3("getFiles", "AffymetrixFileSet", function(this, idxs=NULL, ...) {
   } else {
     this$files[idxs];
   }
-})
+}, private=TRUE)
 
 
 setMethodS3("appendFiles", "AffymetrixFileSet", function(this, files, clone=TRUE, ..., verbose=FALSE) {
@@ -864,8 +865,8 @@ setMethodS3("clearCache", "AffymetrixFileSet", function(this, ...) {
 #   searched for.  The reason for this is that such files are reserved for
 #   internal use of this package.  For instance, the package store average
 #   signals across CEL files in a file named as \code{.average<something>.CEL}
-#   in the same directory as the CEL files of the data set, and when such a
-#   directory is scanned we do not want such files to be interpreted as data.
+#   in the same directory as the CEL files, and when such a directory is
+#   scanned we do not want such files to be interpreted as data.
 # }
 #
 # @author

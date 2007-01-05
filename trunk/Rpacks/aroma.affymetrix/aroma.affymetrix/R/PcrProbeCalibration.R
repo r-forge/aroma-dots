@@ -103,7 +103,7 @@ setMethodS3("getParameters", "PcrProbeCalibration", function(this, ...) {
   params <- c(params, params2);
 
   params;
-})
+}, private=TRUE)
 
 
 setMethodS3("getPmDesignMatrix", "PcrProbeCalibration", function(this, ..., verbose=FALSE) {
@@ -207,7 +207,7 @@ setMethodS3("getPmDesignMatrix", "PcrProbeCalibration", function(this, ..., verb
   verbose && exit(verbose);
 
   D;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -461,7 +461,7 @@ setMethodS3("plotFit", "PcrProbeCalibration", function(this, ylim=c(-1,1), xlab=
     }
   }
   invisible(coefs);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ############################################################################

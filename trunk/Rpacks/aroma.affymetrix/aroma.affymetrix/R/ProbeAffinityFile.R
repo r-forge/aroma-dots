@@ -65,7 +65,7 @@ setMethodS3("updateUnits", "ProbeAffinityFile", function(this, units=NULL, cdf=N
   # Note that the actually call to the encoding is done in updateUnits()
   # of the superclass.
   NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
-}, protected=TRUE);
+}, private=TRUE)
 
 
 
@@ -84,7 +84,7 @@ setMethodS3("writeSpatial", "ProbeAffinityFile", function(this, ..., transform=N
   }
 
   NextMethod("writeSpatial", this, ..., transform=transform, zlim=zlim);
-})
+}, private=TRUE)
 
 
 

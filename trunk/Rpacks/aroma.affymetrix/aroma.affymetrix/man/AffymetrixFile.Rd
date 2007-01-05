@@ -3,6 +3,8 @@
 % 
 %  AffymetrixFile.R
 % 
+% on Sat Jan 06 01:47:37 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -22,7 +24,7 @@
 \code{~~+--}\code{AffymetrixFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \link[aroma.affymetrix]{AffymetrixProbeTabFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{DChipGenomeInformation}, \link[aroma.affymetrix]{DChipSnpInformation}, \link[aroma.affymetrix]{GdasAnnotationFile}, \emph{\link[aroma.affymetrix]{GenomeInformation}}, \link[aroma.affymetrix]{GenotypeCallFile}, \link[aroma.affymetrix]{GenotypeCallXdrFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ParameterFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \emph{\link[aroma.affymetrix]{SnpInformation}}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
+\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \link[aroma.affymetrix]{AffymetrixProbeTabFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{DChipGenomeInformation}, \link[aroma.affymetrix]{DChipSnpInformation}, \link[aroma.affymetrix]{GdasAnnotationFile}, \emph{\link[aroma.affymetrix]{GenomeInformation}}, \link[aroma.affymetrix]{GenotypeCallFile}, \link[aroma.affymetrix]{GenotypeCallXdrFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \emph{\link[aroma.affymetrix]{SnpInformation}}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixFile}\cr
 extends \link[R.oo]{Object}\cr
@@ -49,27 +51,20 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:as.character.AffymetrixFile]{as.character}} \tab Returns a short string describing the Affymetrix file.\cr
- \tab \code{clone} \tab  -\cr
- \tab \code{copyFile} \tab  -\cr
  \tab \code{fromFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFilename.AffymetrixFile]{getFilename}} \tab Gets the filename of the file.\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFileType.AffymetrixFile]{getFileType}} \tab Gets the file type of a file.\cr
- \tab \code{getLabel} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getFullName.AffymetrixFile]{getFullName}} \tab Gets the full name of the file.\cr
  \tab \code{\link[aroma.affymetrix:getName.AffymetrixFile]{getName}} \tab Gets the name of the file.\cr
  \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFile]{getPath}} \tab Gets the path (directory) of the file.\cr
  \tab \code{\link[aroma.affymetrix:getPathname.AffymetrixFile]{getPathname}} \tab Gets the pathname of the file.\cr
  \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFile]{getTags}} \tab Gets the tags of the file.\cr
- \tab \code{setLabel} \tab  -\cr
- \tab \code{stextLabel} \tab  -\cr
- \tab \code{stextLabels} \tab  -\cr
- \tab \code{stextSize} \tab  -\cr
 }
 
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

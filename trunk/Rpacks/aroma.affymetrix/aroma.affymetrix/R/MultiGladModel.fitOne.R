@@ -136,7 +136,7 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
   verbose && exit(verbose);
 
   fit;  
-}) # fitOne()
+}, private=TRUE) # fitOne()
 
 
 ############################################################################

@@ -79,12 +79,12 @@ setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", 
 
 setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
   ChipEffectSet;
-}, static=TRUE, protected=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
   "plmData";
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -163,7 +163,7 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE, protected=TRUE);
+setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE, private=TRUE);
 
 
 
@@ -192,7 +192,7 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
   }
 
   fitUnit;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -250,7 +250,7 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
   verbose && str(verbose, res[1]);
 
   res;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
@@ -269,7 +269,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
   verbose && exit(verbose);
   
   cells;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -330,11 +330,12 @@ setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ..., verbose=FALS
 # }
 #
 # \value{
-#  Returns the indices of the units fitted, or @NULL if no units had to be fitted.
+#  Returns the indices of the units fitted, or @NULL if no units had to
+#  be fitted.
 # }
 #
 # \details{
-#   Data set specific estimates [L = nbr of probes]:
+#   Data set specific estimates [L = number of probes]:
 #    phi [L doubles] (probe affinities), sd(phi) [L doubles], 
 #    isOutlier(phi) [L logicals]
 #
@@ -617,32 +618,6 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
 
   ces;
 })
-
-
-
-setMethodS3("plotMvsPosition", "ProbeLevelModel", function(this, sample, ..., annotate=TRUE) {
-  ces <- getChipEffects(this);
-  ce <- getFile(ces, sample);
-  cesAvg <- getAverageFile(ces);
-  res <- plotMvsPosition(ce, reference=cesAvg, ..., annotate=annotate);  
-  if (annotate) {
-    stext(getLabel(this), side=1, pos=1, line=-1, cex=0.7, col="darkgrey");
-  }
-
-  this$lastPlotData <- res;
-  this$lastPlotSample <- sample;
-
-  invisible(res);
-}, protected=TRUE)
-
-
-setMethodS3("highlight", "ProbeLevelModel", function(this, ...) {
-  ces <- getChipEffects(this);
-  ce <- getFile(ces, this$lastPlotSample);
-  highlight(ce, ...);
-}, protected=TRUE)
-
-
 
 ############################################################################
 # HISTORY:

@@ -29,7 +29,7 @@ setMethodS3("loadToEnv", "default", function(...) {
   env <- new.env()
   base::load(..., env=env)
   env
-}) # loadToEnv()
+}, private=TRUE) # loadToEnv()
 
 
 ##############################################################################

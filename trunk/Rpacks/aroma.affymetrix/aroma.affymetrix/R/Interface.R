@@ -27,7 +27,7 @@ setConstructorS3("Interface", function(core=NA, ...) {
   this <- core;
   class(this) <- "Interface";
   this;
-})
+}, private=TRUE)
 
 
 setMethodS3("extend", "Interface", function(this, ...className, ...) {
@@ -51,7 +51,7 @@ setMethodS3("as.character", "Interface", function(this, ...) {
     s <- NextMethod("as.character", this, ...);
   }
   s;
-})
+}, private=TRUE)
 
 
 setMethodS3("print", "Interface", function(x, ...) {

@@ -114,9 +114,9 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
   # inherited from unadjusted data
   res <- fromFile(this, pathname);
   setCdf(res, cdf);
-  return(res);
-  
-})
+
+  res;
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -307,9 +307,9 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
   # inheritance of CDF
   res <- fromFile(this, pathname);
   setCdf(res, cdf);
-  return(res);
 
-})
+  res;
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -420,9 +420,9 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, overwr
   # inheritance of CDF
   res <- fromFile(this, pathname);
   setCdf(res, cdf);
-  return(res);
 
-})
+  res;
+}, private=TRUE)
 
 
 ############################################################################

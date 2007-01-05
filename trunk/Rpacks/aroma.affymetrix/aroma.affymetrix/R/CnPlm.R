@@ -60,15 +60,16 @@ setMethodS3("getCellIndices", "CnPlm", function(this, ...) {
 
 
 
-setMethodS3("getSubname", "CnPlm", function(this, ...) {
-  s <- NextMethod("getSubname", this, ...);
-  if (this$combineAlleles) {
-    s <- sprintf("%sTotal", s);
-  } else {
-    s <- sprintf("%sAllelic", s);
-  }
-  s;
-})
+## setMethodS3("getSubname", "CnPlm", function(this, ...) {
+##   s <- NextMethod("getSubname", this, ...);
+##   if (this$combineAlleles) {
+##     s <- sprintf("%sTotal", s);
+##   } else {
+##     s <- sprintf("%sAllelic", s);
+##   }
+##   s;
+## }, private=TRUE)
+
 
 setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -119,11 +120,13 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
   }
 
   fitUnit;
-})
+}, private=TRUE)
+
 
 setMethodS3("getChipEffectSetClass", "CnPlm", function(this, ...) {
   CnChipEffectSet;
-})
+}, private=TRUE)
+
 
 setMethodS3("getChipEffects", "CnPlm", function(this, ...) {
   ces <- NextMethod("getChipEffects", this, ...);

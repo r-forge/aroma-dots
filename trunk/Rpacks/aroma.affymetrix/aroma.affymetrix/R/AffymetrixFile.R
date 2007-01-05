@@ -69,7 +69,7 @@ setMethodS3("clone", "AffymetrixFile", function(this, clear=TRUE, ...) {
   if (clear)
     clearCache(object);
   object;
-})
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -112,7 +112,8 @@ setMethodS3("as.character", "AffymetrixFile", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
+
 
 
 ###########################################################################/**
@@ -257,7 +258,7 @@ setMethodS3("getFullName", "AffymetrixFile", function(this, ...) {
   name <- gsub("[.][a-zA-Z0-9][a-zA-Z0-9]*$", "", name);
 
   name;
-}, protected=TRUE)
+})
 
 
 ###########################################################################/**
@@ -359,12 +360,12 @@ setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
   if (is.null(label))
     label <- getName(this, ...);
   label;
-})
+}, private=TRUE)
 
 setMethodS3("setLabel", "AffymetrixFile", function(this, label, ...) {
   this$label <- label;
   invisible(this);
-})
+}, private=TRUE)
 
 
 
@@ -402,12 +403,12 @@ setMethodS3("getFileType", "AffymetrixFile", function(this, ...) {
   pattern <- "(.*)[.]([a-zA-Z0-9][a-zA-Z0-9]*)$";
   ext <- gsub(pattern, "\\2", this$.pathname);
   tolower(ext);
-});
+})
 
 
 setMethodS3("getFileSize", "AffymetrixFile", function(this, ...) {
   file.info(this$.pathname)$size;
-});
+})
 
 
 setMethodS3("fromFile", "AffymetrixFile", function(static, filename, path=NULL, ..., verbose=FALSE, .checkArgs=TRUE) {
@@ -477,44 +478,8 @@ setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, ov
   res <- newInstance(this, pathname);
 
   res;
-})
+}, private=TRUE)
 
-
-setMethodS3("stextSize", "AffymetrixFile", function(this, side=1, fmtstr="n=%d", size, pos=1, cex=0.7, col="darkgray", ...) {
-  stext(side=side, line=-1, text=sprintf(fmtstr, round(size)), pos=pos, cex=cex, col=col, ...);
-})
-
-setMethodS3("stextLabel", "AffymetrixFile", function(this, side=3, fmtstr="%s", label=getLable(this), pos=0, cex=0.7, col="black", ...) {
-  stext(side=side, text=sprintf(fmtstr, label), pos=pos, cex=cex, col=col, ...);
-})
-
-setMethodS3("stextLabels", "AffymetrixFile", function(this, others=NULL, side=3, fmtstr="%d) %s. ", pos=0, cex=0.7, col="black", ...) {
-  # Build list of AffymetrixFile objects
-  if (!is.list(others))
-    others <- list(others);
-  objects <- c(list(this), others);
-
-  # Build text labels
-  text <- vector("list", length(objects));
-  for (kk in seq(along=objects)) {
-    object <- objects[[kk]];
-    if (is.null(object))
-      next;
-    value <- getLabel(object);
-    str <- NULL;
-    tryCatch({ str <- sprintf(fmtstr, value) }, error=function(ex){});
-    if (is.null(str))
-      str <- sprintf(fmtstr, kk, value);
-    text[[kk]] <- str;
-  }
-
-  # Combine the into one
-  text <- unlist(text, use.names=FALSE);
-  text <- paste(text, collapse="");
-
-  # Display it
-  stext(side=side, text=text, pos=pos, cex=cex, col=col, ...);
-})
 
 
 ############################################################################

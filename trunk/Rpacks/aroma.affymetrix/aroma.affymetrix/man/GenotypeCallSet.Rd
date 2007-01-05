@@ -3,6 +3,8 @@
 % 
 %  GenotypeCallSet.R
 % 
+% on Sat Jan 06 01:52:10 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -45,10 +47,8 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 \tabular{rll}{
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:as.character.GenotypeCallSet]{as.character}} \tab Returns a short string describing the genotype call set.\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.GenotypeCallSet.GenotypeCallSet]{as.GenotypeCallSet}} \tab Coerce an object to an GenotypeCallSet object.\cr
- \tab \code{createFromCrlmmFile} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.GenotypeCallSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
  \tab \code{getChipType} \tab  -\cr
@@ -60,10 +60,10 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, reorder, seq, setName, setTags
+append, appendFiles, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, reorder, seq, setName, setTags
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

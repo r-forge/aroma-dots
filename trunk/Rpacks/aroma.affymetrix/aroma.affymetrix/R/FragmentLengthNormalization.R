@@ -77,7 +77,7 @@ setMethodS3("getParameters", "FragmentLengthNormalization", function(this, ...) 
   params <- c(params, params2);
 
   params;
-})
+}, private=TRUE)
 
 
 setMethodS3("getCdf", "FragmentLengthNormalization", function(this, ...) {
@@ -130,7 +130,7 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   this$.units <- units;
 
   units;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -184,7 +184,7 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
   }
 
   fcn;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

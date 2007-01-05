@@ -3,6 +3,8 @@
 % 
 %  Crlmm.R
 % 
+% on Sat Jan 06 01:50:48 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -45,7 +47,6 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{as.character} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.Crlmm]{fit}} \tab Fits the model.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.Crlmm]{getCdf}} \tab Gets the CDF structure for this model.\cr
  \tab \code{\link[aroma.affymetrix:getChipEffects.Crlmm]{getChipEffects}} \tab Gets the chip effects for this model.\cr
@@ -58,7 +59,7 @@ extends \link[R.oo]{Object}\cr
 
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

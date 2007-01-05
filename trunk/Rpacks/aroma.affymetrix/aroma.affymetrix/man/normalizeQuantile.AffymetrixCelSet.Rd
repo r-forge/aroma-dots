@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelSet.NORM.R
 % 
+% on Sat Jan 06 01:47:05 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -24,7 +26,7 @@
 
 \arguments{
   \item{path}{The path where to save the normalized data files.
-    If \code{\link[base]{NULL}}, a default dataset and chip-type specific path is used.}
+    If \code{\link[base]{NULL}}, a default name is used.}
   \item{name}{The name of the normalized data set, which will also be
     part of the default path.}
   \item{subsetToUpdate}{The probes to be updated.

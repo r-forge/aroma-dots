@@ -54,7 +54,7 @@ setMethodS3("getFilename", "Arguments", function(static, filename, nchar=c(1,64)
   }
 
   filename;
-}, static=TRUE, protected=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 ############################################################################

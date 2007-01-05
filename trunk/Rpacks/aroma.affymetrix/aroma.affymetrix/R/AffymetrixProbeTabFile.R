@@ -62,7 +62,7 @@ setMethodS3("as.character", "AffymetrixProbeTabFile", function(this, ...) {
   s <- c(s, as.character(cdf));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 setMethodS3("getChipType", "AffymetrixProbeTabFile", function(this, ...) {
   getChipType(getCdf(this));
@@ -160,7 +160,7 @@ setMethodS3("getIndexToRowMap", "AffymetrixProbeTabFile", function(this, ..., fo
   }
 
   map;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 
@@ -187,7 +187,7 @@ str(1)
 df <- NULL;
   }
   df;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ############################################################################

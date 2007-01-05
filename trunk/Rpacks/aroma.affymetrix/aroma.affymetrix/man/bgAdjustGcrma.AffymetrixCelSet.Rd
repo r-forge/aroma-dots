@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelSet.BG.R
 % 
+% on Sat Jan 06 01:47:02 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -28,8 +30,7 @@ CEL files.
 
 \arguments{
   \item{path}{The path where to save the adjusted data files.}
-  \item{name}{Name of the data set containing the background corrected
-       files.}
+  \item{name}{Name of the set containing the background corrected files.}
   \item{type}{The type of background correction.  Currently accepted types
       are "fullmodel" (the default, uses MMs) and "affinities" (uses
       probe sequence only).}

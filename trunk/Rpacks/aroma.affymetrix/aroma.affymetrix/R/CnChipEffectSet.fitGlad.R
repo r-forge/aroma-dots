@@ -5,7 +5,7 @@
 # @title "Fits the GLAD model to copy-number estimates"
 #
 # \description{
-#  @get "title" of all files in the data set for a certain chromosome.
+#  @get "title" of the files in the data set for a certain chromosome.
 # }
 #
 # @synopsis
@@ -97,7 +97,7 @@ setMethodS3("fitGlad", "CnChipEffectSet", function(this, reference=NULL, arrays=
   verbose && exit(verbose);
 
   res;  
-}, deprecated=TRUE) # fitGlad()
+}, private=TRUE, deprecated=TRUE) # fitGlad()
 
 
 ############################################################################

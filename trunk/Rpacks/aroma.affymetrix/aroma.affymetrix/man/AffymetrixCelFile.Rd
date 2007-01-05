@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelFile.R
 % 
+% on Sat Jan 06 01:46:59 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -51,29 +53,19 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 \tabular{rll}{
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
- \tab \code{as.character} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:bgAdjustGcrma.AffymetrixCelFile]{bgAdjustGcrma}} \tab Applies probe sequence based background correction to a CEL file.\cr
- \tab \code{\link[aroma.affymetrix:bgAdjustOptical.AffymetrixCelFile]{bgAdjustOptical}} \tab Applies optical background correction to a CEL file.\cr
- \tab \code{\link[aroma.affymetrix:bgAdjustRma.AffymetrixCelFile]{bgAdjustRma}} \tab Applies normExp background correction to a CEL file.\cr
- \tab \code{\link[aroma.affymetrix:calibrateAllelicCrosstalk.AffymetrixCelFile]{calibrateAllelicCrosstalk}} \tab Calibrates probepair signals for allele A allele B crosstalk.\cr
  \tab \code{clone} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr
  \tab \code{getAm} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
- \tab \code{getRectangle} \tab  -\cr
  \tab \code{highlight} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{image270}} \tab Displays all or a subset of the data spatially.\cr
  \tab \code{nbrOfCells} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:normalizeQuantile.AffymetrixCelFile]{normalizeQuantile}} \tab Normalizes the probe intensities to a target empirical distribution.\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelFile]{plotDensity}} \tab Plots the density of the probe signals on the array.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsA.AffymetrixCelFile]{plotMvsA}} \tab Plots log-ratio versus log-intensity in a scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsPosition.AffymetrixCelFile]{plotMvsPosition}} \tab Plots log-ratio versus physical position in a scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsX.AffymetrixCelFile]{plotMvsX}} \tab Plots log-ratio versus another variable in a scatter plot.\cr
- \tab \code{range} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
  \tab \code{\link[aroma.affymetrix:smoothScatterMvsA.AffymetrixCelFile]{smoothScatterMvsA}} \tab Plots log-ratio versus log-intensity in a smooth scatter plot.\cr
- \tab \code{transformAffine} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:writeSpatial.AffymetrixCelFile]{writeSpatial}} \tab Writes a spatial image of the CEL data to an image file.\cr
 }
 
 
@@ -81,7 +73,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getFullName, getLabel, getName, getPath, getPathname, getTags, setLabel, stextLabel, stextLabels, stextSize
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

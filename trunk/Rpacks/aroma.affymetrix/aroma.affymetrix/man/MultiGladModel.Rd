@@ -3,6 +3,8 @@
 % 
 %  MultiGladModel.R
 % 
+% on Sat Jan 06 01:53:52 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -46,12 +48,11 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{as.character} \tab  -\cr
  \tab \code{fit} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:fitOne.MultiGladModel]{fitOne}} \tab Fits the GLAD model for one chromosome in one sample.\cr
  \tab \code{getArrays} \tab  -\cr
  \tab \code{getChipEffectFiles} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
+ \tab \code{getChipTypes} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.MultiGladModel]{getChromosomes}} \tab Gets the chromosomes available.\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getListOfChipEffects} \tab  -\cr
@@ -63,7 +64,6 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getReferenceFiles} \tab  -\cr
  \tab \code{getReferenceName} \tab  -\cr
  \tab \code{getRegions} \tab  -\cr
- \tab \code{getRootPath} \tab  -\cr
  \tab \code{getTableOfArrays} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
  \tab \code{nbrOfArrays} \tab  -\cr
@@ -74,7 +74,7 @@ extends \link[R.oo]{Object}\cr
 
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

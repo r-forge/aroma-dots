@@ -557,7 +557,7 @@ as.character.MultiGladModel as.character.UnitModel classifyAsXorXX
 cna cna.AffymetrixCelSet convertTxtFilesToXdr
 convertTxtFilesToXdr.AptProbesetGenotype convertUnits drawCytoBand
 drawCytoBand.default findUnitsTodo.UnitModel fit.MultiGladModel
-fitGlad.CnChipEffectSet fitOne fitPlasqUnit fitPlasqUnit.matrix
+fitOne fitPlasqUnit fitPlasqUnit.matrix
 fromFile.GenotypeCallXdrFile fromFiles.GenotypeCallXdrSet getAlleleAB
 getAlleleAB.PlatformDesign getAptPathnames
 getAptPathnames.AptProbesetGenotype getArrays
@@ -613,3 +613,7 @@ updateUnits.GenotypeCallXdrFile validate.PlatformDesign writeChrXFile
 writeChrXFile.AffymetrixPowerTools writeGraphs
 writeGraphs.ChromosomeExplorer writeRegions.ChromosomeExplorer
 writeRegions.MultiGladModel
+as.character.QcInfo fitGlad.CnChipEffectSet getCdf.QcInfo
+getChipEffects.QcInfo getFullName.QcInfo getName.QcInfo
+getPath.QcInfo getPlm getPlm.QcInfo getResiduals getResiduals.QcInfo
+getRootPath.QcInfo getTags.QcInfo nbrOfArrays.QcInfo

@@ -61,7 +61,7 @@ setMethodS3("as.character", "ChromosomeExplorer", function(this, ...) {
   s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 setMethodS3("getModel", "ChromosomeExplorer", function(this, ...) {
@@ -106,7 +106,8 @@ setMethodS3("getFullName", "ChromosomeExplorer", function(this, ...) {
 
 setMethodS3("getRootPath", "ChromosomeExplorer", function(this, ...) {
   "ce";
-})
+}, private=TRUE)
+
 
 setMethodS3("getPath", "ChromosomeExplorer", function(this, ...) {
   # Create the (sub-)directory tree for the data set
@@ -178,12 +179,12 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, ...) {
   plot(model, path=path, imageFormat="png", ...);
 
   invisible(path);
-}, protected=TRUE)
+}, private=TRUE)
 
 setMethodS3("writeRegions", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
   writeRegions(model, ...);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("process", "ChromosomeExplorer", function(this, ...) {

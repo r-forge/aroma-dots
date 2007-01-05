@@ -28,7 +28,7 @@ setConstructorS3("PlasqModel", function(...) {
 
 setMethodS3("getRootPath", "PlasqModel", function(this, ...) {
   "plasqData";
-})
+}, private=TRUE)
 
 setMethodS3("getProbeParameters", "PlasqModel", function(this, ...) {
   filename <- "probeParamaters.FloatMatrix";
@@ -111,7 +111,7 @@ setMethodS3("getFitUnitFunction", "PlasqModel", function(this, ...) {
   } # fitUnit()
 
   fitUnit;
-})
+}, private=TRUE)
 
 
 ###########################################################################/**

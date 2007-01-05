@@ -33,7 +33,7 @@ setConstructorS3("ProbePreprocessing", function(...) {
 
 setMethodS3("getRootPath", "ProbePreprocessing", function(this, ...) {
   "probeData";
-})
+}, private=TRUE)
 
 
 

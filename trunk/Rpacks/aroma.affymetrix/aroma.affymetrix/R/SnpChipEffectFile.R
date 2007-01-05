@@ -40,7 +40,7 @@ setMethodS3("as.character", "SnpChipEffectFile", function(this, ...) {
   s <- c(s, sprintf("Merge strands: %s", this$mergeStrands));
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 
 setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., verbose=FALSE) {

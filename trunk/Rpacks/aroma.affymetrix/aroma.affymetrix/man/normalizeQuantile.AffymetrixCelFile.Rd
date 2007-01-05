@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelFile.normalizeQuantile.R
 % 
+% on Sat Jan 06 01:46:42 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

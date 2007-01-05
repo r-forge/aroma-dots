@@ -256,7 +256,7 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   }
   verbose && exit(verbose);
 
-  # Define chip-effect data set
+  # Define chip-effect set
   ces <- fromFiles(static, path=outPath);
   ces$combineAlleles <- combineAlleles;
   ces$mergeStrands <- TRUE;
@@ -264,7 +264,7 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   verbose && exit(verbose);
 
   ces;
-}, static=TRUE, protected=TRUE)
+}, static=TRUE, private=TRUE)
 
 
 ############################################################################

@@ -1,7 +1,7 @@
 setConstructorS3("GenericSummary", function(s="", ...) {
   class(s) <- "GenericSummary";
   s;
-})
+}, private=TRUE)
 
 setMethodS3("print", "GenericSummary", function(x, ..., collapse="\n") {
   # To please R CMD check
@@ -9,7 +9,8 @@ setMethodS3("print", "GenericSummary", function(x, ..., collapse="\n") {
 
   s <- paste(this, collapse=collapse);
   cat(s, collapse, sep="");
-})
+}, private=TRUE)
+
 
 
 ############################################################################

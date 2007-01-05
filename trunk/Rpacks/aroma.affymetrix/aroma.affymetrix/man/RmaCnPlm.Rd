@@ -3,6 +3,8 @@
 % 
 %  RmaCnPlm.R
 % 
+% on Sat Jan 06 01:56:29 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -42,9 +44,6 @@ public abstract static class \bold{RmaCnPlm}\cr
 extends \link[aroma.affymetrix]{CnPlm}\cr
 
 
-
-  This class represents the log-additive model used in RMA.
-  It can be used to fit the model on a \code{\link{AffymetrixCelSet}}.
  }
 
  \usage{RmaCnPlm(..., combineAlleles=FALSE, tags="*")}
@@ -62,10 +61,10 @@ extends \link[aroma.affymetrix]{CnPlm}\cr
 
 
 \bold{Methods inherited from CnPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getFitUnitFunction, getProbeAffinities, getSubname, setCombineAlleles
+getCellIndices, getChipEffects, getChipEffectSetClass, getFitUnitFunction, getProbeAffinities, setCombineAlleles
 
 \bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, getSubname, setMergeStrands
+getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
 
 \bold{Methods inherited from RmaSnpPlm}:\cr
 
@@ -83,7 +82,7 @@ getLabel, setLabel, setup
 as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

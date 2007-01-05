@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelSet.R
 % 
+% on Sat Jan 06 01:47:26 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -13,13 +15,13 @@
 \alias{getAverageFile,AffymetrixCelSet-method}
 
 
-\title{Calculates the mean and the standard deviation cell signal across the data set}
+\title{Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set}
 
 \description{
-  Calculates the mean and the standard deviation cell signal across the data set.
+  Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set.
 }
 
-\usage{\method{getAverageFile}{AffymetrixCelSet}(this, name=NULL, prefix="average", indices="remaining", mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells * 10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE)}
+\usage{\method{getAverageFile}{AffymetrixCelSet}(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells * 10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE)}
 
 \arguments{
  \item{name}{The label of the calculated parameters.
@@ -45,14 +47,14 @@
 }
 
 \value{
-  Returns an \code{\link{AffymetrixCelSet}} of the same class as the data set
+  Returns an \code{\link{AffymetrixCelSet}} of the same class as the CEL set
   averaged.
 }
 
 \details{
   The parameter estimates are stored as a CEL file of the same class as
-  the data files in the data set.  The CEL file is named \code{<name>.cel}
-  and placed in the directory of the data set.
+  the data files in the set.  The CEL file is named \code{<name>.cel}
+  and placed in the directory of the set.
   Currently there is no specific data class for this file, but the average
   cell signals are stored as "intensities", the standard deviation of the
   cell signals as "stddevs", and the number of data points used for each

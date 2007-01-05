@@ -3,6 +3,8 @@
 % 
 %  ChipEffectFile.R
 % 
+% on Sat Jan 06 01:48:44 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -48,12 +50,9 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{createParamCdf} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
- \tab \code{fromDataFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getAM.ChipEffectFile]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getSampleName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectFile]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{readUnits} \tab  -\cr
 }
@@ -63,13 +62,13 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 decode, encode, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, as.character, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calibrateAllelicCrosstalk, clearData, clone, createFrom, fromFile, getAm, getCdf, getChipType, getData, getHeader, getHeaderV3, getIdentifier, getRectangle, getTimestamp, highlight, image270, importFeatureSet, nbrOfCells, normalizeQuantile, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, as.character, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calibrateAllelicCrosstalk, clearData, clone, createFrom, fitQuantileNormFcn, fromFile, getAm, getCdf, getChipType, getData, getHeader, getHeaderV3, getIdentifier, getRectangle, getTimestamp, highlight, image270, importFeatureSet, nbrOfCells, normalizeQuantile, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getFullName, getLabel, getName, getPath, getPathname, getTags, setLabel, stextLabel, stextLabels, stextSize
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

@@ -29,4 +29,4 @@ setMethodS3("whatDataType", "default", function(type, ...) {
   }
 
   list(what=what, size=size);
-}, protected=TRUE)
+}, private=TRUE)

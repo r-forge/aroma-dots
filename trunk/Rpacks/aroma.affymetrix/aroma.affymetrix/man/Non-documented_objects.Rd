@@ -712,7 +712,6 @@
 \alias{drawCytoBand.default}
 \alias{findUnitsTodo.UnitModel}
 \alias{fit.MultiGladModel}
-\alias{fitGlad.CnChipEffectSet}
 \alias{fitOne}
 \alias{fitPlasqUnit}
 \alias{fitPlasqUnit.matrix}
@@ -838,6 +837,20 @@
 \alias{writeGraphs.ChromosomeExplorer}
 \alias{writeRegions.ChromosomeExplorer}
 \alias{writeRegions.MultiGladModel}
+\alias{as.character.QcInfo}
+\alias{fitGlad.CnChipEffectSet}
+\alias{getCdf.QcInfo}
+\alias{getChipEffects.QcInfo}
+\alias{getFullName.QcInfo}
+\alias{getName.QcInfo}
+\alias{getPath.QcInfo}
+\alias{getPlm}
+\alias{getPlm.QcInfo}
+\alias{getResiduals}
+\alias{getResiduals.QcInfo}
+\alias{getRootPath.QcInfo}
+\alias{getTags.QcInfo}
+\alias{nbrOfArrays.QcInfo}
 
 \description{
   This page contains aliases for all "non-documented" objects that

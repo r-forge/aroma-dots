@@ -6,7 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  This class represents the Li \& Wong (2001) model.
+#  This class represents the multiplicative model in Li \& Wong (2001).
 # }
 # 
 # @synopsis

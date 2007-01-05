@@ -7,6 +7,7 @@ setConstructorS3("GdasAnnotationFile", function(...) {
   )
 })
 
+
 setMethodS3("fromChipType", "GdasAnnotationFile", function(static, chipType, what, path="annotations", ...) {
   # Argument 'chipType':
   if (inherits(chipType, "AffymetrixCdfFile")) {
@@ -44,7 +45,7 @@ setMethodS3("getBlockPositions", "GdasAnnotationFile", function(this, ..., force
   this$.blockPositions <- pos;
 
   pos;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("readBlock", "GdasAnnotationFile", function(this, name, ...) {
@@ -66,7 +67,8 @@ setMethodS3("readBlock", "GdasAnnotationFile", function(this, name, ...) {
   lines <- readLines(con, n=diff(pos)+1);
 
   lines;
-}, protected=TRUE)
+}, private=TRUE)
+
 
 setMethodS3("readHeader", "GdasAnnotationFile", function(this, ...) {
   header <- this$.header;
@@ -97,6 +99,7 @@ setMethodS3("readHeader", "GdasAnnotationFile", function(this, ...) {
 
   header;
 })
+
 
 setMethodS3("readColumnName", "GdasAnnotationFile", function(this, ..., force=FALSE) {
   columnName <- this$.columnName;

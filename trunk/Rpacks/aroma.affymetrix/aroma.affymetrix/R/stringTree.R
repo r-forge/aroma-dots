@@ -122,13 +122,13 @@ setMethodS3("stringTree", "character", function(strs, maxDepth=-1, countRemainin
   }
   
   children;
-})
+}, private=TRUE)
 
 
 ############################################################################
 # HISTORY:
 # 2006-11-30
-# o Not working.
+# o Not working. Broken.
 # 2006-??-??
 # o Created.
 ############################################################################

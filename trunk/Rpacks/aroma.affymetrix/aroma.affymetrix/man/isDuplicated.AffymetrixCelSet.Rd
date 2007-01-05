@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelSet.R
 % 
+% on Sat Jan 06 01:47:26 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -13,10 +15,10 @@
 \alias{isDuplicated,AffymetrixCelSet-method}
 
 
-\title{Identifies duplicated data files}
+\title{Identifies duplicated CEL files}
 
 \description{
-  Identifies duplicated data files by comparing the timestamps in the CEL headers.
+  Identifies duplicated CEL files by comparing the timestamps in the CEL headers.
 }
 
 \usage{\method{isDuplicated}{AffymetrixCelSet}(this, ...)}
@@ -27,9 +29,9 @@
 
 \value{
   Returns a \code{\link[base]{logical}} \code{\link[base]{vector}} of length equal to the number of files
-  in the data set.
-  An element with value \code{\link[base:logical]{TRUE}} indicates that the corresponding data file
-  has the same time stamp as another preceeding data file.
+  in the set.
+  An element with value \code{\link[base:logical]{TRUE}} indicates that the corresponding CEL file
+  has the same time stamp as another preceeding CEL file.
 }
 
 \examples{\dontrun{

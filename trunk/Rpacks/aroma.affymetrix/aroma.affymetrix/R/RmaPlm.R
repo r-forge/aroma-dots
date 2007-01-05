@@ -6,7 +6,8 @@
 # \description{
 #  @classhierarchy
 #
-#  This class represents the log-additive model used in RMA.
+#  This class represents the log-additive model part of the Robust Multichip
+#  Analysis (RMA) method described in Irizarry et al (2003).
 # }
 # 
 # @synopsis
@@ -386,7 +387,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   }
 
   rmaModel;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

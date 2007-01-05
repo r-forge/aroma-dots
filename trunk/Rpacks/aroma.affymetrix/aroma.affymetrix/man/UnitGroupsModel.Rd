@@ -3,6 +3,8 @@
 % 
 %  UnitGroupsModel.R
 % 
+% on Sat Jan 06 01:58:36 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -45,18 +47,14 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\tabular{rll}{
- \tab \code{getLabel} \tab  -\cr
- \tab \code{setLabel} \tab  -\cr
- \tab \code{setup} \tab  -\cr
-}
+\emph{No methods defined}.
 
 
 \bold{Methods inherited from UnitModel}:\cr
 as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
 
 \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
 
 
  }

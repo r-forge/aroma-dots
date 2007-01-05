@@ -286,8 +286,8 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
   verbose && exit(verbose);
   
-  return(affinities);
-})
+  affinities;
+}, private=TRUE)
 
 ############################################################################
 # HISTORY:

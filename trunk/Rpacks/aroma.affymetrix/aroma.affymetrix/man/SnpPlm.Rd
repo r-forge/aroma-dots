@@ -3,6 +3,8 @@
 % 
 %  SnpPlm.R
 % 
+% on Sat Jan 06 01:58:04 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -44,9 +46,7 @@ extends \link[aroma.affymetrix]{Interface}\cr
 \tabular{rll}{
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getChipEffects} \tab  -\cr
- \tab \code{getChipEffectSetClass} \tab  -\cr
  \tab \code{getProbeAffinities} \tab  -\cr
- \tab \code{getSubname} \tab  -\cr
  \tab \code{setMergeStrands} \tab  -\cr
 }
 

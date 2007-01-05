@@ -66,7 +66,7 @@ setMethodS3("importFeatureSet", "AffymetrixCelFile", function(this, featureSet, 
   verbose && exit(verbose);
 
   invisible(.map);  
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

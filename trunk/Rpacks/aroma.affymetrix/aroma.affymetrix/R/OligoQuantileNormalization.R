@@ -35,7 +35,7 @@ setMethodS3("getSubsetToUpdate", "OligoQuantileNormalization", function(this, ..
   subset <- which(isPm(pd));
   cells <- getCellIndices(pd, subset=subset);
   cells;
-})
+}, private=TRUE)
 
 
 setMethodS3("getTargetDistribution", "OligoQuantileNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
@@ -65,7 +65,7 @@ setMethodS3("getTargetDistribution", "OligoQuantileNormalization", function(this
   verbose && exit(verbose);
 
   yTarget;
-})
+}, private=TRUE)
 
 
 

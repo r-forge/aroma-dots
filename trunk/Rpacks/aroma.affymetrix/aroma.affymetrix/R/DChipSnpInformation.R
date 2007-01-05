@@ -63,7 +63,7 @@ setMethodS3("verify", "DChipSnpInformation", function(this, ...) {
                                                   getPathname(this));
   })
   invisible(TRUE);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 setMethodS3("readData", "DChipSnpInformation", function(this, ...) {
@@ -94,7 +94,7 @@ setMethodS3("read250K", "DChipSnpInformation", function(this, ..., exclude=c("db
     "FreqCauc"="double"
   );
   readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, exclude=exclude, ...);
-}, protected=TRUE)
+}, private=TRUE)
 
 setMethodS3("read50K", "DChipSnpInformation", function(this, ..., exclude=c("dbSNP RS ID", "Flank", "FreqAsian", "FreqAfAm", "FreqCauc")) {
   colClasses <- c(
@@ -107,7 +107,7 @@ setMethodS3("read50K", "DChipSnpInformation", function(this, ..., exclude=c("dbS
     "FreqCauc"="double"
   );
   readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, exclude=exclude, ...);
-}, protected=TRUE)
+}, private=TRUE)
 
 
 ############################################################################
