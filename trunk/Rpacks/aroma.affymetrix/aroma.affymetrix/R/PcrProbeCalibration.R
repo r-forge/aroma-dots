@@ -14,12 +14,13 @@
 # @synopsis 
 #
 # \arguments{
-#   \item{...}{Arguments passed to the constructor of @see "ProbePreprocessing".}
+#   \item{...}{Arguments passed to the constructor of
+#      @see "ProbePreprocessing".}
 #   \item{subsetToFit}{The fraction of PM probes to be used for fitting
 #     the calibration function.}
 #   \item{flavor}{A @character string specifying what method to immitate.
 #     If \code{"oligo"}, the calibration gives identical results to the
-#     \pkg{oligo} package; the \code{subsetToFit} argument is ignored.}
+#     \pkg{oligo} package; the \code{subsetToFit} argument is ignored.
 #   }
 # }
 #
@@ -302,7 +303,7 @@ setMethodS3("process", "PcrProbeCalibration", function(this, ..., force=FALSE, v
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get input dataset
+  # Get input data set
   ds <- getInputDataSet(this);
   cdf <- getCdf(ds);
   pd <- PlatformDesign(cdf);
@@ -422,7 +423,7 @@ setMethodS3("process", "PcrProbeCalibration", function(this, ..., force=FALSE, v
 
   rm(D);
 
-  # Update the output dataset
+  # Update the output data set
   outputDataSet <- getOutputDataSet(this);
   setCdf(outputDataSet, cdf);
   this$outputDataSet <- outputDataSet;

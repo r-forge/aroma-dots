@@ -11,7 +11,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{model}{A @see "CopyNumberModel" object.}
+#   \item{model}{A @see "MultiGladModel" object.}
+#   \item{tags}{A @character @vector of tags to be added to the output path.}
 #   \item{...}{Not used.}
 # }
 #
@@ -108,7 +109,7 @@ setMethodS3("getRootPath", "ChromosomeExplorer", function(this, ...) {
 })
 
 setMethodS3("getPath", "ChromosomeExplorer", function(this, ...) {
-  # Create the (sub-)directory tree for the dataset
+  # Create the (sub-)directory tree for the data set
 
   # Root path
   rootPath <- getRootPath(this);

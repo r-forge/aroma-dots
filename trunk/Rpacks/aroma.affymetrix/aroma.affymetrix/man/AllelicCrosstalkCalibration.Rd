@@ -36,12 +36,15 @@ extends \emph{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
   This class represents a calibration function that transforms the
   probe-level signals such that the signals from the two alleles are
   orthogonal.
+  The method fits and calibrates PM signals only.  MM signals will not
+  affect the model fitting and are unaffected.
  }
 
  \usage{AllelicCrosstalkCalibration(...)}
 
  \arguments{
-   \item{...}{Arguments passed to the constructor of \code{\link{ProbePreprocessing}}.}
+   \item{...}{Arguments passed to the constructor of
+     \code{\link{ProbePreprocessing}}.}
  }
 
  \section{Fields and Methods}{

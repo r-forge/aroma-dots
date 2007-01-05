@@ -292,7 +292,7 @@ setMethodS3("getRootPath", "MultiGladModel", function(this, ...) {
 })
 
 setMethodS3("getPath", "MultiGladModel", function(this, ...) {
-  # Create the (sub-)directory tree for the dataset
+  # Create the (sub-)directory tree for the data set
 
   # Root path
   rootPath <- getRootPath(this);

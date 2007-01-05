@@ -24,14 +24,14 @@
 \code{~~~~~~~+--}\code{GenotypeCallSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\link[aroma.affymetrix]{GenotypeCallXdrSet}\cr
 
 public static class \bold{GenotypeCallSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
 
 
-  An GenotypeCallSet object represents parameter estimates.
+  The GenotypeCallSet class represents a set of genotype-call files.
  }
 
  \usage{GenotypeCallSet(files=NULL, ...)}
@@ -51,7 +51,8 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{createFromCrlmmFile} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.GenotypeCallSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
- \tab \code{getName} \tab  -\cr
+ \tab \code{getChipType} \tab  -\cr
+ \tab \code{getFullName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.GenotypeCallSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setCdf.GenotypeCallSet]{setCdf}} \tab Sets the CDF structure for this genotype call set.\cr

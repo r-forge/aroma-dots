@@ -235,7 +235,7 @@ setMethodS3("getFullName", "Crlmm", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getPath", "Crlmm", function(this, ...) {
-  # Create the (sub-)directory tree for the dataset
+  # Create the (sub-)directory tree for the data set
 
   # Root path
   rootPath <- getRootPath(this);

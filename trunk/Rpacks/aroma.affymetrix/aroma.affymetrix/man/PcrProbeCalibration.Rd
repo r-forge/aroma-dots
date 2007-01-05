@@ -38,20 +38,23 @@ extends \emph{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
   and PCR fragment lengths, cf. Carvalho et al (2006).
  }
 
- \usage{PcrProbeCalibration(..., subsetToFit=1/5)}
+ \usage{PcrProbeCalibration(..., subsetToFit=1/5, flavor=c("*", "oligo"))}
 
  \arguments{
-   \item{...}{Arguments passed to the constructor of \code{\link{ProbePreprocessing}}.}
+   \item{...}{Arguments passed to the constructor of
+      \code{\link{ProbePreprocessing}}.}
    \item{subsetToFit}{The fraction of PM probes to be used for fitting
-     the calibration function.
-     If \code{"asOligo"}, the same subset as used in the \pkg{oligo} package
-     will be used.
+     the calibration function.}
+   \item{flavor}{A \code{\link[base]{character}} string specifying what method to immitate.
+     If \code{"oligo"}, the calibration gives identical results to the
+     \pkg{oligo} package; the \code{subsetToFit} argument is ignored.
    }
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{getParameters} \tab  -\cr
  \tab \code{process} \tab  -\cr
 }
 

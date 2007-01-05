@@ -19,9 +19,11 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\emph{\code{ProbeLevelModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\emph{\code{ProbeLevelModel}}\cr
 
 \bold{Directly known subclasses:}\cr
 \emph{\link[aroma.affymetrix]{AffinePlm}}, \emph{\link[aroma.affymetrix]{AffineSnpPlm}}, \emph{\link[aroma.affymetrix]{MbeiCnPlm}}, \emph{\link[aroma.affymetrix]{MbeiPlm}}, \emph{\link[aroma.affymetrix]{MbeiSnpPlm}}, \emph{\link[aroma.affymetrix]{RmaCnPlm}}, \emph{\link[aroma.affymetrix]{RmaPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}\cr
@@ -40,11 +42,12 @@ extends \emph{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
   using Affymetrix CDF terms.
  }
 
- \usage{ProbeLevelModel(..., model=c("pm"), standardize=TRUE)}
+ \usage{ProbeLevelModel(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm"), standardize=TRUE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{UnitGroupsModel}}.}
-   \item{model}{A \code{\link[base]{character}} string specifying how PM and MM values
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be added.}
+   \item{probeModel}{A \code{\link[base]{character}} string specifying how PM and MM values
       should be modelled.  By default only PM signals are used.}
    \item{standardize}{If \code{\link[base:logical]{TRUE}}, chip-effect and probe-affinity estimates are
       rescaled such that the product of the probe affinities is one.}
@@ -55,21 +58,16 @@ extends \emph{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:findUnitsTodo.ProbeLevelModel]{findUnitsTodo}} \tab Identifies units for which the PLM has still not been fitted to.\cr
  \tab \code{\link[aroma.affymetrix:fit.ProbeLevelModel]{fit}} \tab Fits a unit groups (probeset) model.\cr
- \tab \code{getCellIndices} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChipEffects.ProbeLevelModel]{getChipEffects}} \tab Gets the chip-effect files for this model.\cr
- \tab \code{getChipEffectSetClass} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getFitFunction.ProbeLevelModel]{getFitFunction}} \tab Static method to get the low-level function that fits the PLM.\cr
- \tab \code{getFitUnitFunction} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinities.ProbeLevelModel]{getProbeAffinities}} \tab Gets the probe affinities for this model.\cr
- \tab \code{getRootPath} \tab  -\cr
- \tab \code{highlight} \tab  -\cr
- \tab \code{plotMvsPosition} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:readUnits.ProbeLevelModel]{readUnits}} \tab Reads data unit by unit.\cr
 }
 
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getFullName, getLabel, getName, getParameterSet, getPath, getRootPath, getTags, setLabel, setTags, setup
+getLabel, setLabel, setup
+
+\bold{Methods inherited from UnitModel}:\cr
+as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

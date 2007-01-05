@@ -12,7 +12,7 @@
 #
 # \arguments{
 #   \item{path}{The path where to save the normalized data files. 
-#     If @NULL, a default dataset and chip-type specific path is used.}
+#     If @NULL, a default data set and chip-type specific path is used.}
 #   \item{name}{The name of the normalized data set, which will also be
 #     part of the default path.}
 #   \item{subsetToUpdate}{The probes to be updated.

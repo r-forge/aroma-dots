@@ -166,7 +166,7 @@ setMethodS3("getRootPath", "GladModel", function(this, ...) {
 })
 
 setMethodS3("getPath", "GladModel", function(this, ...) {
-  # Create the (sub-)directory tree for the dataset
+  # Create the (sub-)directory tree for the data set
 
   # Root path
   rootPath <- getRootPath(this);

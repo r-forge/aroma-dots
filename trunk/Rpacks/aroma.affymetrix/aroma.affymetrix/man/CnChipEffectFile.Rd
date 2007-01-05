@@ -71,7 +71,7 @@ createParamCdf, findUnitsTodo, fromDataFile, getAM, getCellIndices, getCellMap, 
 decode, encode, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
 
 \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, as.character, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calibrateAllelicCrosstalk, clearData, clone, createFrom, fromFile, getAm, getCdf, getChipType, getData, getHeader, getHeaderV3, getIdentifier, getRectangle, getSampleName, getTimestamp, highlight, image270, importFeatureSet, nbrOfCells, normalizeQuantile, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, transformAffine, updateUnits, writeSpatial
+[, [[, annotateMvsA, as.character, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calibrateAllelicCrosstalk, clearData, clone, createFrom, fromFile, getAm, getCdf, getChipType, getData, getHeader, getHeaderV3, getIdentifier, getRectangle, getTimestamp, highlight, image270, importFeatureSet, nbrOfCells, normalizeQuantile, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, transformAffine, updateUnits, writeSpatial
 
 \bold{Methods inherited from AffymetrixFile}:\cr
 as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getFullName, getLabel, getName, getPath, getPathname, getTags, setLabel, stextLabel, stextLabels, stextSize

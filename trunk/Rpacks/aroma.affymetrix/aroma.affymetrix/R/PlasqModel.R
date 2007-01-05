@@ -12,31 +12,13 @@
 # @synopsis 
 #
 # \arguments{
-#   \item{...}{Arguments passed to the constructor of @see "ProbePreprocessing".}
-#   \item{subsetToUpdate}{The probes to be updated.
-#     If @NULL, all probes are updated.}
-#   \item{typesToUpdate}{Types of probes to be updated.}
-#   \item{targetDistribution}{A @numeric @vector.  The empirical 
-#     distribution to which all arrays should be normalized to.}
-#   \item{subsetToAvg}{The probes to calculate average empirical
-#     distribution over.  If a single @numeric in (0,1), then this
-#     fraction of all probes will be used.  
-#     If @NULL, all probes are considered.}
-#   \item{typesToAvg}{Types of probes to be used when calculating the 
-#     average empirical distribution.  
-#     If \code{"pm"} and \code{"mm"} only perfect-match and mismatch 
-#     probes are used, respectively. If \code{"pmmm"} both types are used.
-#   }
+#   \item{...}{Arguments passed to the constructor of @see "UnitModel".}
 # }
 #
 # \section{Fields and Methods}{
 #  @allmethods "public"  
 # }
 # 
-# \examples{\dontrun{
-#   @include "../incl/PlasqModel.Rex"
-# }}
-#
 # @author
 #*/###########################################################################
 setConstructorS3("PlasqModel", function(...) {
@@ -81,8 +63,8 @@ setMethodS3("getChipEffects", "PlasqModel", function(this, ..., verbose=FALSE) {
   if (length(ds) == 0)
     throw("Cannot create chip-effect file. The CEL set is empty.");
   
-  verbose && enter(verbose, "Getting copy-number chip-effect set from dataset");
-  ces <- CnChipEffectSet$fromDataSet(dataset=ds, path=getPath(this), verbose=less(verbose));
+  verbose && enter(verbose, "Getting copy-number chip-effect set from data set");
+  ces <- CnChipEffectSet$fromDataSet(dataSet=ds, path=getPath(this), verbose=less(verbose));
   setMergeStrands(ces, TRUE);
   verbose && exit(verbose);
 
@@ -399,7 +381,7 @@ setMethodS3("fit", "PlasqModel", function(this, units="remaining", ..., unitsPer
     t <- nbrOfUnits(cdf)*totalTime[3]/nunits/nbrOfArrays;
     printf(verbose, "Total time for one array (%d units): %.2fmin = %.2fh\n", nbrOfUnits(cdf), t/60, t/3600);
     t <- nbrOfUnits(cdf)*totalTime[3]/nunits;
-    printf(verbose, "Total time for complete dataset: %.2fmin = %.2fh\n", t/60, t/3600);
+    printf(verbose, "Total time for complete data set: %.2fmin = %.2fh\n", t/60, t/3600);
     # Get distribution of what is spend where
     timers$write <- timers$writePaf + timers$writeCes;
     t <- lapply(timers, FUN=function(timer) unname(timer[3]));

@@ -1,7 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.3.1 [2007-01-xx]
+Version: 0.3.1 [2007-01-05]
+o Package pass R CMD check v2.4.0 (with one warning I suspect
+  is a bug in R CMD check).
+o Some code was moved to 'affxparser' (v1.7.3) so it is 
+  recommended to update to that as soon as it is available
+  on the Bioconductor servers.
+o Added initial code for PLASQ, but more is still needed.
 o In addition to default "PM only" model, ProbeLevelModel:s now
   also handles "PM-MM" models.  Note that PM-MM might give a 
   non-positive value.  The multiplicate MbeiPlm handles this,

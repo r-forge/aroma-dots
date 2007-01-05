@@ -20,7 +20,7 @@
  Normalizes the probe intensities to a target empirical distribution.
 }
 
-\usage{\method{normalizeQuantile}{AffymetrixCelFile}(this, path=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., overwrite=FALSE, skip=!overwrite, verbose=FALSE)}
+\usage{\method{normalizeQuantile}{AffymetrixCelFile}(this, path=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., .asOligo=FALSE, overwrite=FALSE, skip=!overwrite, verbose=FALSE)}
 
 \arguments{
   \item{path}{The path where to save the normalized data files.}

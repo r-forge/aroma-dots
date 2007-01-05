@@ -51,7 +51,6 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fitGlad.CnChipEffectSet]{fitGlad}} \tab Fits the GLAD model to copy-number estimates.\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getChipEffectFileClass} \tab  -\cr
  \tab \code{getCombineAlleles} \tab  -\cr
@@ -67,7 +66,7 @@ extractSnpQSet, getAverageFile, getChipEffectFileClass, getMergeStrands, setMerg
 findUnitsTodo, fromDataSet, fromFiles, getAverageFile, getCellIndices, getChipEffectFileClass, readUnits, updateUnits
 
 \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calculateGsbParameters, calibrateAllelicCrosstalk, clone, createBlankSet, createFromFeatureSet, extractAffyBatch, extractSnpFeatureSet, fromFiles, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIdentifier, getIntensities, getName, getSampleNames, getSiblings, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, transformAffine
+[, [[, append, applyToUnitIntensities, as, as.AffymetrixCelSet, as.character, averageQuantile, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calculateGsbParameters, calibrateAllelicCrosstalk, clone, cna, createBlankSet, createFromFeatureSet, extractAffyBatch, extractSnpFeatureSet, fromFiles, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIdentifier, getIntensities, getName, getSampleNames, getSiblings, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, transformAffine
 
 \bold{Methods inherited from AffymetrixFileSet}:\cr
 append, appendFiles, as, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, reorder, seq, setName, setTags
@@ -79,4 +78,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\keyword{internal}
+\keyword{methods}
 \keyword{classes}

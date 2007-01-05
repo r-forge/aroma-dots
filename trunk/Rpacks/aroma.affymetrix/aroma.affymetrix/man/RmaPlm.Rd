@@ -19,11 +19,13 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\emph{\code{RmaPlm}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\emph{\code{RmaPlm}}\cr
 
 \bold{Directly known subclasses:}\cr
 \emph{\link[aroma.affymetrix]{RmaCnPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}\cr
@@ -36,11 +38,14 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
   This class represents the log-additive model used in RMA.
  }
 
- \usage{RmaPlm(..., tags="*")}
+ \usage{RmaPlm(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo"))}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
+   \item{flavor}{A \code{\link[base]{character}} string specifying what model fitting algorithm
+     to be used.  This makes it possible to get identical estimates as other
+     packages.}
  }
 
  \section{Fields and Methods}{
@@ -54,7 +59,10 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, getRootPath, highlight, plotMvsPosition, readUnits
 
 \bold{Methods inherited from UnitGroupsModel}:\cr
-as.character, fit, getCdf, getDataSet, getFullName, getLabel, getName, getParameterSet, getPath, getRootPath, getTags, setLabel, setTags, setup
+getLabel, setLabel, setup
+
+\bold{Methods inherited from UnitModel}:\cr
+as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
 
 \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -75,6 +83,26 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    Note that all PLM classes must return parameters on the intensity scale.
    For this class that means that \eqn{\theta_i = 2^\beta_i} and
    \eqn{\phi_i = 2^\alpha_i} are returned.
+ }
+
+ \section{Different flavors of model fitting}{
+   There are a few differ algorithms available for fitting the same
+   probe-level model.  The default method (\code{flavor="affyPLM"})
+   implements in the \pkg{affyPLM} package fits the model parameters
+   robustly using an M-estimator.
+
+   In addition to the above method, which is the preferred one, additional
+   algorithms have been ported/interfaced to.  Note that these are often
+   provided for the purpose of replicating the results of other packages,
+   but they might not be complete in the sense of what a
+   \code{\link{ProbeLevelModel}} should return or how the parameters are
+   constrained.
+   The algorithm (\code{flavor="oligo"}) used by the \pkg{oligo} package,
+   which originates from the \pkg{affy} packages, fits the model using
+   median polish, which is a non-robust estimator.  Note that this algorithm
+   does not constraint the probe-effect parameters to multiply to one on
+   the intensity scale. As a matter of fact, the probe-effect parameters
+   are not even returned (defaulting to ones).
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

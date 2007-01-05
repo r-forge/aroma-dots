@@ -258,7 +258,7 @@ setMethodS3("getParameters", "Preprocessing", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getPath", "Preprocessing", function(this, ...) {
-  # Create the (sub-)directory tree for the dataset
+  # Create the (sub-)directory tree for the data set
 
   # Root path
   rootPath <- getRootPath(this);

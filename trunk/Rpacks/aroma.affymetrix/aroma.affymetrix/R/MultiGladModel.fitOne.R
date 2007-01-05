@@ -1,5 +1,5 @@
 ###########################################################################/**
-# @set "class=GladModel"
+# @set "class=MultiGladModel"
 # @RdocMethod fitOne
 #
 # @title "Fits the GLAD model for one chromosome in one sample"

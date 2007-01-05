@@ -19,21 +19,15 @@
  Fits the model.
 }
 
-\usage{\method{fit}{Crlmm}(this, recalibrate=TRUE, ..., verbose=FALSE)}
+\usage{\method{fit}{Crlmm}(this, verbose=FALSE, ...)}
 
 \arguments{
-  \item{recalibrate}{If \code{\link[base:logical]{TRUE}}, a second round of the fitting is done.}
-  \item{...}{Additional arguments.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
+  \item{...}{Not used.}
 }
 
 \value{
  Returns a \code{\link[oligo]{SnpCallSetPlus-class}} object.
-}
-
-\details{
-  Simple benchmarking on shadowfax:
-  For 90 CEPH Xba chips it takes ~90 minutes, i.e. 60 s/array.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
