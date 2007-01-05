@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{Preprocessing}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \emph{\link[aroma.affymetrix]{ChipEffectPreprocessing}}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{PcrProbeCalibration}, \emph{\link[aroma.affymetrix]{ProbePreprocessing}}, \link[aroma.affymetrix]{QuantileNormalization}\cr
+\link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \emph{\link[aroma.affymetrix]{ChipEffectPreprocessing}}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{OligoQuantileNormalization}, \link[aroma.affymetrix]{PcrProbeCalibration}, \emph{\link[aroma.affymetrix]{ProbePreprocessing}}, \link[aroma.affymetrix]{QuantileNormalization}\cr
 
 public abstract static class \bold{Preprocessing}\cr
 extends \link[R.oo]{Object}\cr

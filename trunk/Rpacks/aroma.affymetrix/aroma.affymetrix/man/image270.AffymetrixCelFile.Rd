@@ -19,7 +19,7 @@
  Displays all or a subset of the data spatially.
 }
 
-\usage{\method{image270}{AffymetrixCelFile}(this, xrange=c(0, Inf), yrange=c(0, Inf), ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(this))}
+\usage{\method{image270}{AffymetrixCelFile}(this, xrange=c(0, Inf), yrange=c(0, Inf), takeLog=FALSE, ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(this))}
 
 \arguments{
   \item{xrange}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of length two giving the left and right

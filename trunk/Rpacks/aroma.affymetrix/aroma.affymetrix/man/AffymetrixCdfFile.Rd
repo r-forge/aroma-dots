@@ -47,6 +47,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:compare.AffymetrixCdfFile]{compare}} \tab Checks if two AffymetrixCdfFile objects are equal.\cr
  \tab \code{\link[aroma.affymetrix:computeAffinities.AffymetrixCdfFile]{computeAffinities}} \tab Calculates probe affinities from sequence.\cr
  \tab \code{\link[aroma.affymetrix:convert.AffymetrixCdfFile]{convert}} \tab Converts a CDF into the same CDF but with another format.\cr
+ \tab \code{\link[aroma.affymetrix:convertUnits.AffymetrixCdfFile]{convertUnits}} \tab Gets and validates unit indices.\cr
  \tab \code{createMonoCell} \tab  -\cr
  \tab \code{equals} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromChipType.AffymetrixCdfFile]{fromChipType}} \tab Defines an AffymetrixCdfFile object by chip type.\cr
@@ -73,6 +74,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{nbrOfRows} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:nbrOfSnps.AffymetrixCdfFile]{nbrOfSnps}} \tab Gets the number of SNPs in the data set.\cr
  \tab \code{nbrOfUnits} \tab  -\cr
+ \tab \code{readPlasqTypes} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:readUnits.AffymetrixCdfFile]{readUnits}} \tab Reads CDF data unit by unit.\cr
  \tab \code{\link[aroma.affymetrix:setRestructor.AffymetrixCdfFile]{setRestructor}} \tab Specifies a function through which.\cr
  \tab \code{stextChipType} \tab  -\cr

@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\emph{\code{ProbePreprocessing}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \link[aroma.affymetrix]{PcrProbeCalibration}, \link[aroma.affymetrix]{QuantileNormalization}\cr
+\link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \link[aroma.affymetrix]{OligoQuantileNormalization}, \link[aroma.affymetrix]{PcrProbeCalibration}, \link[aroma.affymetrix]{QuantileNormalization}\cr
 
 public abstract static class \bold{ProbePreprocessing}\cr
 extends \emph{\link[aroma.affymetrix]{Preprocessing}}\cr

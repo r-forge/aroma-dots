@@ -1,7 +1,7 @@
 ###########################################################################/**
 # @RdocDefault findCelSet
 #
-# @title "Searches for one or several datasets"
+# @title "Searches for one or several data sets"
 #
 # \description{
 #   @get "title" that matches certain criterias.
@@ -25,7 +25,7 @@
 # }
 #
 # \value{
-#   Returns @character @vector of full pathname to matching dataset.
+#   Returns @character @vector of full pathname to matching data set.
 # }
 #
 # \details{
@@ -179,12 +179,12 @@ setMethodS3("findCelSet", "default", function(name=NULL, chipType=NULL, paths=NU
   verbose && exit(verbose);
 
   allPaths;
-}) # findDataSet()
+}) # findCelSet()
 
 
 ############################################################################
 # HISTORY:
 # 2006-09-15
-# o Created.  This will simplify retrieving Affymetrix datasets, but it will
-#   also standardize how datasets are stored.
+# o Created.  This will simplify retrieving Affymetrix data sets, but it 
+#   will also standardize how data sets are stored.
 ############################################################################

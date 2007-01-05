@@ -24,14 +24,15 @@
 \code{~~~~~~~+--}\code{GenotypeCallFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\link[aroma.affymetrix]{GenotypeCallXdrFile}\cr
 
 public static class \bold{GenotypeCallFile}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
 
-  An GenotypeCallFile object represents parameter estimates.
+  The abstract GenotypeCallFile class represents a file containing genotype
+  calls for a given genotype parameter estimates.
  }
 
  \usage{GenotypeCallFile(..., cdf=NULL)}
@@ -46,6 +47,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{[} \tab  -\cr
  \tab \code{[<-} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
+ \tab \code{getChipType} \tab  -\cr
  \tab \code{importFromCrlmmFile} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
  \tab \code{updateUnits} \tab  -\cr

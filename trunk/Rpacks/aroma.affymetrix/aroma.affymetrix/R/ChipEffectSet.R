@@ -56,19 +56,19 @@ setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern=",chipEf
 }, static=TRUE);
 
 
-setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataset, path, name=getName(dataset), ..., verbose=FALSE) {
+setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name=getName(dataSet), ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
   # Get the ChipEffectFile class specific for this set
   clazz <- getChipEffectFileClass(static);
 
-  verbose && enter(verbose, "Retrieving chip-effects from dataset");
-  ces <- vector("list", length(dataset));
+  verbose && enter(verbose, "Retrieving chip-effects from data set");
+  ces <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", name);
   cdf <- NULL;
-  for (kk in seq(dataset)) {
-    df <- getFile(dataset, kk);
+  for (kk in seq(dataSet)) {
+    df <- getFile(dataSet, kk);
     verbose && enter(verbose, 
                            sprintf("Retrieving chip-effect #%d of %d (%s)",
                                                kk, length(ces), getName(df)));

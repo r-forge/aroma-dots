@@ -13,8 +13,8 @@
 # @synopsis 
 #
 # \arguments{
-#   \item{...}{Arguments passed to the constructor of @see "QuantileNormalization".}
-#   }
+#   \item{...}{Arguments passed to the constructor of 
+#       @see "QuantileNormalization".}
 # }
 #
 # \section{Fields and Methods}{
@@ -123,7 +123,7 @@ setMethodS3("process", "OligoQuantileNormalization", function(this, ..., force=F
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get input dataset
+  # Get input data set
   ds <- getInputDataSet(this);
 
   cdf <- getCdf(ds);
@@ -196,7 +196,7 @@ setMethodS3("process", "OligoQuantileNormalization", function(this, ..., force=F
   outputDataSet <- newInstance(ds, dataFiles);
   setCdf(outputDataSet, cdf);
 
-  # Update the output dataset
+  # Update the output data set
   this$outputDataSet <- outputDataSet;
 
   verbose && exit(verbose);

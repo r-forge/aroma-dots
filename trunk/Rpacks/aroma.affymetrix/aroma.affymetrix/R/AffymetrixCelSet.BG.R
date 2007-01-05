@@ -154,7 +154,7 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
   # if we happened to choose a low quality or otherwise aberrant array
   iarray <- sample(1:narray, nbrOfPms, replace=TRUE);
 
-  verbose && enter(verbose, "Extracting ", nbrOfPms, " random PM intensities from dataset");
+  verbose && enter(verbose, "Extracting ", nbrOfPms, " random PM intensities from data set");
   pm.random <- readCelIntensities(getPathnames(this), indices=pmi.random);
   verbose && exit(verbose);
   

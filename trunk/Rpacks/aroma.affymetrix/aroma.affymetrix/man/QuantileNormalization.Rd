@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\code{QuantileNormalization}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\link[aroma.affymetrix]{OligoQuantileNormalization}\cr
 
 public static class \bold{QuantileNormalization}\cr
 extends \emph{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
@@ -61,6 +61,7 @@ extends \emph{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{getParameters} \tab  -\cr
+ \tab \code{getSubsetToUpdate} \tab  -\cr
  \tab \code{getTargetDistribution} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:process.QuantileNormalization]{process}} \tab Normalizes the data set.\cr
 }

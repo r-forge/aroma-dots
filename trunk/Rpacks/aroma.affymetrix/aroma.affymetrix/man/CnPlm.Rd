@@ -64,16 +64,16 @@ as.character, extend, print, uses
  }
 
  \details{
-   Models implementing this copy-number PLM, provides either allele-specific
-   or total copy-number estimates.
+   Models implementing this copy-number PLM, provides either
+   allele-specific or total copy-number estimates.
    For allele-specific CNs the underlying \code{\link{SnpPlm}} model is fitted as
    is, i.e. for each allele seperately with or without the strands first
    being merged.
 
    For total CNs the probe signals for the two alleles are combined
-   (=summed) on the intensity scale before fitting underlying
-   \code{\link{SnpPlm}} model, again with or without the strands first being
-   merged.
+   (=summed; not averaged) on the intensity scale before fitting
+   underlying \code{\link{SnpPlm}} model, again with or without the strands
+   first being merged.
  }
 
  \section{Requirments}{

@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{RelativeCelSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
+\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{AffymetrixCelSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
@@ -61,6 +61,7 @@ CEL files.\cr
  \tab \code{\link[aroma.affymetrix:calculateGsbParameters.AffymetrixCelSet]{calculateGsbParameters}} \tab Computes parameters for adjustment of specific binding.\cr
  \tab \code{\link[aroma.affymetrix:calibrateAllelicCrosstalk.AffymetrixCelSet]{calibrateAllelicCrosstalk}} \tab Calibrates probepair signals for crosstalk between allele A and allele B.\cr
  \tab \code{clone} \tab  -\cr
+ \tab \code{cna} \tab  -\cr
  \tab \code{createBlankSet} \tab  -\cr
  \tab \code{createFromFeatureSet} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:extractAffyBatch.AffymetrixCelSet]{extractAffyBatch}} \tab Extracts an in-memory AffyBatch object from the data set.\cr

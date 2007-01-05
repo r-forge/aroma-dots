@@ -24,7 +24,7 @@
 #   \item{cnm}{A @character string describing what copy-number model (CNM)
 #     to fit to identify copy-number regions.}
 #   \item{...}{Not used.}
-#   \item{rma}{A @double in (0,Inf) specifying if more or less (RAM) 
+#   \item{ram}{A @double in (0,Inf) specifying if more or less (RAM) 
 #     memory than default should be used.  The smaller the value is, 
 #     the more memory conservative the analysis will be.}
 #   \item{verbose}{Specifies how much details should be outputted while
@@ -33,7 +33,7 @@
 #
 # @author
 #*/###########################################################################
-setMethodS3("cna", "list", function(dataSets, pres="qn", plm=c("rma","mbei"), posts="fln", cnm="glad", ..., ram=1, verbose=-2) {
+setMethodS3("cna", "list", function(dataSets, pres="QN", plm=c("RMA", "MBEI"), posts="FLN", cnm="glad", ..., ram=1, verbose=-2) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -65,7 +65,11 @@ setMethodS3("cna", "list", function(dataSets, pres="qn", plm=c("rma","mbei"), po
   ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
+  if (inherits(verbose, "Verbose")) {
+  } else {
+    verbose <- Arguments$getVerbose(verbose);
+    setTimestampOn(verbose);
+  }
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
@@ -83,9 +87,9 @@ setMethodS3("cna", "list", function(dataSets, pres="qn", plm=c("rma","mbei"), po
   for (kk in seq(along=dataSets)) {
     probeData <- listOfProbeData[[kk]];
     for (pre in pres) {
-      if (pre == "act") {
+      if (pre == "ACT") {
         model <- AllelicCrosstalkNormalization(probeData);
-      } else if (pre == "qn") {
+      } else if (pre == "QN") {
         model <- QuantileNormalization(probeData);
       }
       print(model);
@@ -107,11 +111,12 @@ setMethodS3("cna", "list", function(dataSets, pres="qn", plm=c("rma","mbei"), po
   listOfCes <- list();
   for (kk in seq(along=dataSets)) {
     probeData <- listOfProbeData[[kk]];
-    if (plm == "rma") {
-      model <- RmaCnPlm(probeData, combineAlleles=TRUE, mergeStrands=TRUE);
-    } else if (plm == "mbei") {
-      model <- MbeiCnPlm(probeData, combineAlleles=TRUE, mergeStrands=TRUE);
+    if (plm == "RMA") {
+      Plm <- RmaCnPlm;
+    } else if (plm == "MBEI") {
+      Plm <- MbeiCnPlm;
     }
+    model <- Plm(probeData, combineAlleles=TRUE, mergeStrands=TRUE);
     rm(probeData);
     listOfProbeData[[kk]] <- NULL;
     gc();
@@ -133,7 +138,7 @@ setMethodS3("cna", "list", function(dataSets, pres="qn", plm=c("rma","mbei"), po
     ces <- listOfCes[[kk]];
 
     for (post in posts) {
-      if (post == "fln") {
+      if (post == "FLN") {
         model <- FragmentLengthNormalization(ces);
       }
       print(model);

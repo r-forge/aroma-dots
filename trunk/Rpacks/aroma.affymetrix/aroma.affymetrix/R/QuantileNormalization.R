@@ -268,7 +268,7 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get input dataset
+  # Get input data set
   ds <- getInputDataSet(this);
 
   # Get algorithm parameters
@@ -285,7 +285,7 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
   args <- c(list(ds, path=outputPath, verbose=verbose), params);
   outputDataSet <- do.call("normalizeQuantile", args=args);
 
-  # Update the output dataset
+  # Update the output data set
   this$outputDataSet <- outputDataSet;
 
   verbose && exit(verbose);

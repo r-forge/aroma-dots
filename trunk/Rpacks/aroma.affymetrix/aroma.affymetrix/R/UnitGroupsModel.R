@@ -56,9 +56,9 @@ setMethodS3("setup", "UnitGroupsModel", abstract=TRUE);
 # o Started to modify methods of this class to work similar to the
 #   QuantileNormalizer and AllelicCrosstalkCalibrator classes.
 # 2006-09-14
-# o Not cloning the dataset anymore.  Each model is responsible for 
+# o Not cloning the data set anymore.  Each model is responsible for 
 #   tranforming the data structure their way.  The advantage with this
-#   approach is that we can cache read data in the dataset object.
+#   approach is that we can cache read data in the data set object.
 # 2006-08-28
 # o Added getLabel(), which defaults to getName(), and setLabel().
 # 2006-08-24

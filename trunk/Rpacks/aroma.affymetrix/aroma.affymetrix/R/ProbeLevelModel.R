@@ -19,6 +19,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "UnitGroupsModel".}
+#   \item{tags}{A @character @vector of tags to be added.}
 #   \item{probeModel}{A @character string specifying how PM and MM values
 #      should be modelled.  By default only PM signals are used.}
 #   \item{standardize}{If @TRUE, chip-effect and probe-affinity estimates are
@@ -333,7 +334,7 @@ setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ..., verbose=FALS
 # }
 #
 # \details{
-#   Dataset-specific estimates [L = nbr of probes]:
+#   Data set specific estimates [L = nbr of probes]:
 #    phi [L doubles] (probe affinities), sd(phi) [L doubles], 
 #    isOutlier(phi) [L logicals]
 #
@@ -444,7 +445,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   # Get the model-fit function
   fitUnit <- getFitUnitFunction(this);
 
-  # Get (and create if missing) the probe-affinity file (one per dataset)
+  # Get (and create if missing) the probe-affinity file (one per data set)
   paf <- getProbeAffinities(this, verbose=less(verbose));
 
   # Get (and create if missing) the chip-effect files (one per array)
@@ -544,7 +545,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     t <- nbrOfUnits(cdf)*totalTime[3]/nunits/nbrOfArrays;
     printf(verbose, "Total time for one array (%d units): %.2fmin = %.2fh\n", nbrOfUnits(cdf), t/60, t/3600);
     t <- nbrOfUnits(cdf)*totalTime[3]/nunits;
-    printf(verbose, "Total time for complete dataset: %.2fmin = %.2fh\n", t/60, t/3600);
+    printf(verbose, "Total time for complete data set: %.2fmin = %.2fh\n", t/60, t/3600);
     # Get distribution of what is spend where
     timers$write <- timers$writePaf + timers$writeCes;
     t <- lapply(timers, FUN=function(timer) unname(timer[3]));
@@ -605,10 +606,10 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   if (length(ds) == 0)
     throw("Cannot create chip-effect file. The CEL set is empty.");
   
-  verbose && enter(verbose, "Getting chip-effect set from dataset");
+  verbose && enter(verbose, "Getting chip-effect set from data set");
   # Gets the ChipEffects Class object
   clazz <- getChipEffectSetClass(this);
-  ces <- clazz$fromDataSet(dataset=ds, path=getPath(this), verbose=less(verbose));
+  ces <- clazz$fromDataSet(dataSet=ds, path=getPath(this), verbose=less(verbose));
   verbose && exit(verbose);
 
   # Store in cache

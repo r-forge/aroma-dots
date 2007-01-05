@@ -95,7 +95,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
   cdf <- findCdf(chipType);
   if (is.null(cdf)) {
     verbose && cat(verbose, "Pathname: Not found!");
-    verbose && cat(verbose, "Will create from the CDF of the dataset. NOTE: This will take several minutes or more!");
+    verbose && cat(verbose, "Will create from the CDF of the data set. NOTE: This will take several minutes or more!");
     verbose && enter(verbose, "Creating CDF");
     cdf <- createMonoCell(sourceCdf, verbose=less(verbose));
     verbose && exit(verbose);

@@ -13,7 +13,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{dataSet}{The dataset to which this model should be fitted.}
+#   \item{dataSet}{The data set to which this model should be fitted.}
 #   \item{tags}{A @character @vector of tags to be appended to the tags of
 #      the input data set.}
 #   \item{...}{Not used.}
@@ -236,7 +236,7 @@ setMethodS3("getFullName", "UnitModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getPath", "UnitModel", function(this, ...) {
-  # Create the (sub-)directory tree for the dataset
+  # Create the (sub-)directory tree for the data set
 
   # Root path
   rootPath <- getRootPath(this);

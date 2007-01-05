@@ -30,7 +30,7 @@ extends \link[R.oo]{Object}\cr
 
  }
 
- \usage{Crlmm(ces=NULL, minLLRforCalls=c(AA = 50, AB = 40, BB = 50), transform=c("log", "asinh"), tags="", ...)}
+ \usage{Crlmm(ces=NULL, minLLRforCalls=c(AA = 50, AB = 40, BB = 50), transform=c("log", "asinh"), tags="CRLMM", ...)}
 
  \arguments{
    \item{ces}{A \code{\link{SnpChipEffectSet}} to which this model should

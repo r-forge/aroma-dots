@@ -249,7 +249,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get input dataset
+  # Get input data set
   ces <- getInputDataSet(this);
 
   # Get SNP units
@@ -340,7 +340,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   outputSet <- clone(ces);
   outputSet$files <- res;
 
-  # Update the output dataset
+  # Update the output data set
   this$outputSet <- outputSet;
 
   verbose && exit(verbose);
