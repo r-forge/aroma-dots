@@ -3,8 +3,6 @@
 % 
 %  loadToEnv.R
 % 
-% on Sat Jan 06 01:52:52 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -34,5 +32,7 @@
   See also \code{\link[base]{load}}().
 }
 
-\keyword{IO}
 
+
+\keyword{IO}
+\keyword{internal}

@@ -6,19 +6,19 @@
 # \description{
 #  @classhierarchy
 #
-#  This abstract class represents any probe-level model (PLM).
-#  To quote the \pkg{affyPLM} package:
+#  This abstract class represents a probe-level model (PLM) as defined
+#  by the \pkg{affyPLM} package:
 #    "A [...] PLM is a model that is fit to probe-intensity data. 
 #     More specifically, it is where we fit a model with probe level
 #     and chip level parameters on a probeset by probeset basis",
-#  where the more general case for a probeset is a unit group
-#  using Affymetrix CDF terms.
+#  where the more general case for a probeset is a \emph{unit group}
+#  in Affymetrix CDF terms.
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "UnitGroupsModel".}
+#   \item{...}{Arguments passed to @see "UnitModel".}
 #   \item{tags}{A @character @vector of tags to be added.}
 #   \item{probeModel}{A @character string specifying how PM and MM values
 #      should be modelled.  By default only PM signals are used.}
@@ -32,15 +32,15 @@
 #
 # \details{
 #   In order to minimize the risk for mistakes, but also to be able compare
-#   results from different PLMs, all PLM subclasses must return parameter
-#   estimates that meet the following requirements:
+#   results from different PLMs, all PLM subclasses must meet the following
+#   criteria:
 #   \enumerate{
 #     \item All parameter estimates must be (stored and returned) on the
 #       intensity scale, e.g. log-additive models such as @see "RmaPlm"
 #       have to transform the parameters on the log-scale to the intensity
 #       scale.
 #     \item The probe-affinity estimates \eqn{\phi_j} for a unit group
-#       must meet the constraint such that \eqn{\prod_j \phi_j = 1},
+#       must be constrained such that \eqn{\prod_j \phi_j = 1},
 #       or equivalently \eqn{\sum_j \log(\phi_j) = 0}.
 #   }
 #   Note that the above probe-affinity constraint guarantees that the
@@ -67,7 +67,7 @@ setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", 
     tags <- c(toupper(probeModel), tags);
   }
 
-  extend(UnitGroupsModel(..., tags=tags), "ProbeLevelModel",
+  extend(UnitModel(..., tags=tags), "ProbeLevelModel",
     "cached:.paFile" = NULL,
     "cached:.chipFiles" = NULL,
     "cached:.lastPlotData" = NULL,
@@ -100,6 +100,7 @@ setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
 #
 # \arguments{
 #   \item{...}{Not used.}
+#   \item{.class}{A @see "ProbeAffinityFile" \emph{class}.}
 # }
 #
 # \value{
@@ -119,19 +120,82 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=
 
   ds <- getDataSet(this);
   if (length(ds) == 0)
-    throw("Cannot create probe-affinity file. The CEL set is empty.");
+    throw("Cannot create probe-affinity file. There are no CEL files in the data set.");
 
   # Create probe-affinity file from CEL file template
   df <- as.list(ds)[[1]];
   res <- createFrom(df, filename="probeAffinities.cel", path=getPath(this), ...);
 
   # Make it into an object of the correct class
-  clazz <- .class;
-  res <- newInstance(clazz, getPathname(res), cdf=getCdf(ds), 
+  res <- newInstance(.class, getPathname(res), cdf=getCdf(ds), 
                                                   probeModel=this$probeModel);
+
   this$.paFile <- res;
 
   res;
+})
+
+
+
+
+###########################################################################/**
+# @RdocMethod getChipEffects
+#
+# @title "Gets the set of chip effects for this model"
+#
+# \description{
+#  @get "title".
+#  There is one chip-effect file per array.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @see "ChipEffectSet" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  ces <- this$.ces;
+  if (!is.null(ces))
+    return(ces);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create chip-effect files 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Let the parameter object know about the CDF structure, because we 
+  # might use a modified version of the one in the CEL header.
+  ds <- getDataSet(this);
+  if (length(ds) == 0)
+    throw("Cannot create chip-effect file. The CEL set is empty.");
+  
+  verbose && enter(verbose, "Getting chip-effect set from data set");
+  # Gets the ChipEffects Class object
+  clazz <- getChipEffectSetClass(this);
+  ces <- clazz$fromDataSet(dataSet=ds, path=getPath(this), 
+                                                    verbose=less(verbose));
+  verbose && exit(verbose);
+
+  # Store in cache
+  this$.ces <- ces;
+
+  ces;
 })
 
 
@@ -275,7 +339,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
 ###########################################################################/**
 # @RdocMethod findUnitsTodo
 #
-# @title "Identifies units for which the PLM has still not been fitted to"
+# @title "Identifies non-fitted units"
 #
 # \description{
 #  @get "title".
@@ -288,7 +352,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
 # }
 #
 # \value{
-#  Returns an @integer @vector.
+#  Returns an @integer @vector of unit indices.
 # }
 #
 # @author
@@ -299,42 +363,52 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  ces <- getChipEffects(this, verbose=verbose);
-  findUnitsTodo(ces, ..., verbose=verbose);
-})
+setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ...) {
+  ces <- getChipEffects(this);
+  findUnitsTodo(ces, ...);
+}, private=TRUE)
 
 
 
 ###########################################################################/**
 # @RdocMethod fit
 #
-# @title "Fits a unit groups (probeset) model"
+# @title "Estimates the model parameters"
 #
 # \description{
-#  @get "title" to all or to a subset of the units.
-#  All estimates are stored to file.
-#  The non-array specific parameter estimates together with standard deviation
-#  estimates and convergence information are stored in one file.
-#  The parameter estimates specific to each array, typically "chip effects", 
-#  are stored in array specific files.
+#  @get "title" for all or a subset of the units.
 # }
 #
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Not used.}
+#   \item{units}{The units to be fitted.
+#     If @NULL, all units are considered.
+#     If \code{remaining}, only non-fitted units are considered.
+#   }
+#   \item{...}{Arguments passed to @seemethod "readUnits".}
+#   \item{force}{If @TRUE, already fitted units are re-fitted, and
+#     cached data is re-read.}
+#   \item{ram}{A @double indicating if more or less units should
+#     be loaded into memory at the same time.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{moreUnits}{Deprected. Use \code{ram} instead.}
 # }
 #
 # \value{
-#  Returns the indices of the units fitted, or @NULL if no units had to
-#  be fitted.
+#  Returns an @integer @vector of indices of the units fitted, 
+#  or @NULL if no units was (had to be) fitted.
 # }
 #
 # \details{
+#  All estimates are stored to file.
+#
+#  The non-array specific parameter estimates together with standard deviation
+#  estimates and convergence information are stored in one file.
+#
+#  The parameter estimates specific to each array, typically "chip effects", 
+#  are stored in array specific files.
+#
 #   Data set specific estimates [L = number of probes]:
 #    phi [L doubles] (probe affinities), sd(phi) [L doubles], 
 #    isOutlier(phi) [L logicals]
@@ -368,7 +442,7 @@ setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ..., verbose=FALS
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., unitsPerChunk=moreUnits*100000/length(getDataSet(this)), moreUnits=1, force=FALSE, verbose=FALSE) {
+setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., force=FALSE, ram=moreUnits, verbose=FALSE, moreUnits=1) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the some basic information about this model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -389,11 +463,11 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     throw("Unknown mode of argument 'units': ", mode(units));
   }
 
-  # Argument 'unitsPerChunk':
-  unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
-
   # Argument 'force':
   force <- Arguments$getLogical(force);
+
+  # Argument 'ram':
+  ram <- Arguments$getDouble(ram, range=c(1e-3,Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -452,6 +526,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
   # Get (and create if missing) the chip-effect files (one per array)
   ces <- getChipEffects(this, verbose=less(verbose));
 
+  # Number of units to load into memory and fit at the same time
+  unitsPerChunk <- ram*100000/length(getDataSet(this));
+
   idxs <- 1:nbrOfUnits;
   head <- 1:unitsPerChunk;
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
@@ -481,7 +558,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
     nbrOfArrays <- length(ds);
     verbose && enter(verbose, "Reading probe intensities from ", nbrOfArrays, " arrays");
     tRead <- processTime();
-    y <- readUnits(this, units=units[uu], ..., verbose=less(verbose));
+    y <- readUnits(this, units=units[uu], ..., force=force, verbose=less(verbose));
     timers$read <- timers$read + (processTime() - tRead);
     verbose && str(verbose, y[1]);
     verbose && exit(verbose);
@@ -520,7 +597,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
 
     fit <- NULL; # Not needed anymore
 
-    # Next chunk...
+    # Next chunk
     idxs <- idxs[-head];
     count <- count + 1;
 
@@ -561,66 +638,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., uni
 
 
 
-###########################################################################/**
-# @RdocMethod getChipEffects
-#
-# @title "Gets the chip-effect files for this model"
-#
-# \description{
-#  @get "title".  There is one chip-effect file per array.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-#   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
-# }
-#
-# \value{
-#  Returns a @see "ChipEffectSet" object.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  ces <- this$.ces;
-  if (!is.null(ces))
-    return(ces);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Create chip-effect files 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Let the parameter object know about the CDF structure, because we 
-  # might use a modified version of the one in the CEL header.
-  ds <- getDataSet(this);
-  if (length(ds) == 0)
-    throw("Cannot create chip-effect file. The CEL set is empty.");
-  
-  verbose && enter(verbose, "Getting chip-effect set from data set");
-  # Gets the ChipEffects Class object
-  clazz <- getChipEffectSetClass(this);
-  ces <- clazz$fromDataSet(dataSet=ds, path=getPath(this), verbose=less(verbose));
-  verbose && exit(verbose);
-
-  # Store in cache
-  this$.ces <- ces;
-
-  ces;
-})
-
 ############################################################################
 # HISTORY:
+# 2007-01-06
+# o Now ProbeLevelModel inherits directly from UnitModel.
 # 2007-01-03
 # o "Protected" several methods to simplify the interface for end users.
 # o Added support from "PM-MM" probe models in addition to the default 

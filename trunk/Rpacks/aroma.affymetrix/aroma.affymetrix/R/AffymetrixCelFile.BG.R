@@ -343,7 +343,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
 # }
 #
 # \seealso{
-#  @see "rma::bg.adjust"
+#  @see "affy::bg.adjust"
 #  @seeclass
 # }
 #*/###########################################################################

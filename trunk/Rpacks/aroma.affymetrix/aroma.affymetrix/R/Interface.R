@@ -22,6 +22,7 @@
 # }
 #
 # @author
+# @keyword internal
 #*/###########################################################################
 setConstructorS3("Interface", function(core=NA, ...) {
   this <- core;

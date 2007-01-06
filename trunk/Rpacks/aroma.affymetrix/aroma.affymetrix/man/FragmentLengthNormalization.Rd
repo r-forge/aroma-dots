@@ -3,8 +3,6 @@
 % 
 %  FragmentLengthNormalization.R
 % 
-% on Sat Jan 06 01:51:29 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,9 +19,9 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{Preprocessing}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectPreprocessing}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{FragmentLengthNormalization}\cr
 
@@ -31,7 +29,7 @@
 \cr
 
 public static class \bold{FragmentLengthNormalization}\cr
-extends \emph{\link[aroma.affymetrix]{ChipEffectPreprocessing}}\cr
+extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
 
 
 
@@ -44,7 +42,7 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectPreprocessing}}\cr
  \arguments{
    \item{dataSet}{A \code{\link{CnChipEffectSet}}.}
    \item{...}{Additional arguments passed to the constructor of
-     \code{\link{ChipEffectPreprocessing}}.}
+     \code{\link{ChipEffectTransform}}.}
    \item{targetFunction}{A \code{\link[base]{function}}.  The target function to which all arrays
      should be normalized to.}
    \item{subsetToFit}{The units from which the normalization curve should
@@ -59,14 +57,11 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectPreprocessing}}\cr
 }
 
 
-\bold{Methods inherited from ChipEffectPreprocessing}:\cr
-getRootPath
+ \bold{Methods inherited from Transform}:\cr
+getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags
 
-\bold{Methods inherited from Preprocessing}:\cr
-as.character, getAsteriskTag, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getParameters, getParametersAsString, getPath, getRootPath, getTags, isDone, process, setTags
-
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

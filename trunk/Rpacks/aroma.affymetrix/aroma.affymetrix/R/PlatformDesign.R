@@ -39,7 +39,7 @@ setConstructorS3("PlatformDesign", function(cdf=NULL, ...) {
   extend(Object(), "PlatformDesign",
     .cdf = cdf
   )
-})
+}, private=TRUE)
 
 
 setMethodS3("as.character", "PlatformDesign", function(this, ...) {

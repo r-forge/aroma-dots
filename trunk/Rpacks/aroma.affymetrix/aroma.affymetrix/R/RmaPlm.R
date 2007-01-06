@@ -41,22 +41,17 @@
 #
 # \section{Different flavors of model fitting}{
 #   There are a few differ algorithms available for fitting the same 
-#   probe-level model.  The default method (\code{flavor="affyPLM"}) 
-#   implements in the \pkg{affyPLM} package fits the model parameters 
-#   robustly using an M-estimator.
+#   probe-level model.  The default and recommended method
+#   (\code{flavor="affyPLM"}) uses the implementation in the \pkg{affyPLM}
+#   package which fits the model parameters robustly using an M-estimator.
 #
-#   In addition to the above method, which is the preferred one, additional
-#   algorithms have been ported/interfaced to.  Note that these are often
-#   provided for the purpose of replicating the results of other packages,
-#   but they might not be complete in the sense of what a 
-#   @see "ProbeLevelModel" should return or how the parameters are 
-#   constrained.
+#   Alternatively, other model-fitting algorithms are available.
 #   The algorithm (\code{flavor="oligo"}) used by the \pkg{oligo} package,
 #   which originates from the \pkg{affy} packages, fits the model using
 #   median polish, which is a non-robust estimator.  Note that this algorithm
 #   does not constraint the probe-effect parameters to multiply to one on
-#   the intensity scale. As a matter of fact, the probe-effect parameters
-#   are not even returned (defaulting to ones).
+#   the intensity scale.  Since the internal function does not return these
+#   estimates, we can neither rescale them.
 # }
 #
 # @author
@@ -140,7 +135,7 @@ setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
   })
 
   paf;
-})
+}, private=TRUE)
   
 
 

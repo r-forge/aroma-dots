@@ -28,9 +28,8 @@
 #   where \eqn{\theta_i} are the chip effects for arrays \eqn{i=1,...,I}, 
 #   and \eqn{\phi_j} are the probe affinities for probes \eqn{j=1,...,J}.
 #   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
-#
-#   In addition, we modify th constraint such that it is guaranteed that
-#   \eqn{\prod_j \phi_j = 1}.
+#   To make to parameters identifiable, the constraint 
+#   \eqn{\prod_j \phi_j = 1} is added.
 # }
 #
 # @author
@@ -145,7 +144,8 @@ setMethodS3("getProbeAffinities", "MbeiPlm", function(this, ...) {
   })
 
   paf;
-})
+}, private=TRUE)
+
 
 
 ###########################################################################/**
@@ -217,7 +217,7 @@ setMethodS3("getFitFunction", "MbeiPlm", function(this, ...) {
   }
 
   liWong;
-}, protected=TRUE)
+}, private=TRUE)
 
 
 

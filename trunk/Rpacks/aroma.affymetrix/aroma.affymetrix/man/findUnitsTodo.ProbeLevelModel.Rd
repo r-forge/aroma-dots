@@ -3,8 +3,6 @@
 % 
 %  ProbeLevelModel.R
 % 
-% on Sat Jan 06 01:55:41 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,20 +13,20 @@
 \alias{findUnitsTodo,ProbeLevelModel-method}
 
 
-\title{Identifies units for which the PLM has still not been fitted to}
+\title{Identifies non-fitted units}
 
 \description{
- Identifies units for which the PLM has still not been fitted to.
+ Identifies non-fitted units.
 }
 
-\usage{\method{findUnitsTodo}{ProbeLevelModel}(this, ..., verbose=FALSE)}
+\usage{\method{findUnitsTodo}{ProbeLevelModel}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}
 }
 
 \value{
- Returns an \code{\link[base]{integer}} \code{\link[base]{vector}}.
+ Returns an \code{\link[base]{integer}} \code{\link[base]{vector}} of unit indices.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

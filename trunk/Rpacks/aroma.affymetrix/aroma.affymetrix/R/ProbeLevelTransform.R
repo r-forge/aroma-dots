@@ -1,0 +1,44 @@
+###########################################################################/**
+# @RdocClass ProbeLevelTransform
+#
+# @title "The ProbeLevelTransform class"
+#
+# \description{
+#  @classhierarchy
+#
+#  This abstract class represents a transformation methods that transforms
+#  probe-level signals, typically intensities.
+# }
+# 
+# @synopsis 
+#
+# \arguments{
+#   \item{...}{Arguments passed to the constructor of @see "Transform".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"  
+# }
+# 
+# \details{
+#   Subclasses must implement the \code{process()} method.
+# }
+#
+# @author
+#*/###########################################################################
+setConstructorS3("ProbeLevelTransform", function(...) {
+  extend(Transform(...), "ProbeLevelTransform")
+}, abstract=TRUE)
+
+
+setMethodS3("getRootPath", "ProbeLevelTransform", function(this, ...) {
+  "probeData";
+}, private=TRUE)
+
+
+
+############################################################################
+# HISTORY:
+# 2006-12-08
+# o Created.
+############################################################################

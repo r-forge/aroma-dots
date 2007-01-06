@@ -15,7 +15,7 @@
 # \arguments{
 #   \item{dataSet}{A @see "CnChipEffectSet".}
 #   \item{...}{Additional arguments passed to the constructor of 
-#     @see "ChipEffectPreprocessing".}
+#     @see "ChipEffectTransform".}
 #   \item{targetFunction}{A @function.  The target function to which all arrays
 #     should be normalized to.}
 #   \item{subsetToFit}{The units from which the normalization curve should
@@ -55,7 +55,7 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
     }
   }
 
-  extend(ChipEffectPreprocessing(dataSet, ...), "FragmentLengthNormalization", 
+  extend(ChipEffectTransform(dataSet, ...), "FragmentLengthNormalization", 
     .subsetToFit = subsetToFit,
     .targetFunction = targetFunction
   )

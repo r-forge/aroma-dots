@@ -3,8 +3,6 @@
 % 
 %  MbeiCnPlm.R
 % 
-% on Sat Jan 06 01:53:10 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,9 +19,9 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Model}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
@@ -35,12 +33,12 @@
 \code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{CnPlm}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\emph{\code{MbeiCnPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{MbeiCnPlm}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public abstract static class \bold{MbeiCnPlm}\cr
+public static class \bold{MbeiCnPlm}\cr
 extends \link[aroma.affymetrix]{CnPlm}\cr
 
 
@@ -60,29 +58,23 @@ extends \link[aroma.affymetrix]{CnPlm}\cr
 \emph{No methods defined}.
 
 
-\bold{Methods inherited from CnPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getFitUnitFunction, getProbeAffinities, setCombineAlleles
+ \bold{Methods inherited from CnPlm}:\cr
+getCellIndices, getChipEffects, getProbeAffinities, setCombineAlleles
 
-\bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
+ \bold{Methods inherited from SnpPlm}:\cr
+getCellIndices, getChipEffects, getProbeAffinities, setMergeStrands
 
-\bold{Methods inherited from MbeiSnpPlm}:\cr
+ \bold{Methods inherited from ProbeLevelModel}:\cr
+fit, getChipEffects, getProbeAffinities
 
+ \bold{Methods inherited from UnitModel}:\cr
+findUnitsTodo, getCellIndices, readUnits
 
-\bold{Methods inherited from MbeiPlm}:\cr
-getFitFunction, getProbeAffinities
+ \bold{Methods inherited from Model}:\cr
+fit, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setTags
 
-\bold{Methods inherited from ProbeLevelModel}:\cr
-findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, getRootPath, highlight, plotMvsPosition, readUnits
-
-\bold{Methods inherited from UnitGroupsModel}:\cr
-getLabel, setLabel, setup
-
-\bold{Methods inherited from UnitModel}:\cr
-as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
-
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

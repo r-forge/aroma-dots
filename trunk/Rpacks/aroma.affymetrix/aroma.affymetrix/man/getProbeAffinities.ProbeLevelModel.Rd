@@ -3,8 +3,6 @@
 % 
 %  ProbeLevelModel.R
 % 
-% on Sat Jan 06 01:55:40 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -25,6 +23,7 @@
 
 \arguments{
   \item{...}{Not used.}
+  \item{.class}{A \code{\link{ProbeAffinityFile}} \emph{class}.}
 }
 
 \value{

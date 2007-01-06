@@ -3,8 +3,6 @@
 % 
 %  QcInfo.R
 % 
-% on Sat Jan 06 01:56:01 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -36,8 +34,7 @@ extends \link[R.oo]{Object}\cr
 \usage{QcInfo(plm=NULL, tags="*", ...)}
 
 \arguments{
-  \item{cesList}{A \code{\link[base]{list}} of \code{\link{ChipEffectSet}} objects.}
-  \item{referenceList}{A \code{\link{ChipEffectFile}} objects.}
+  \item{plm}{A \code{\link{ProbeLevelModel}}.}
   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
   \item{...}{Not used.}
 }
@@ -57,8 +54,8 @@ extends \link[R.oo]{Object}\cr
 }
 
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
 }

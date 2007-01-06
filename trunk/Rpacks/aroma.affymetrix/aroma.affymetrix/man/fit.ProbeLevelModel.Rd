@@ -3,8 +3,6 @@
 % 
 %  ProbeLevelModel.R
 % 
-% on Sat Jan 06 01:55:41 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,29 +13,42 @@
 \alias{fit,ProbeLevelModel-method}
 
 
- \title{Fits a unit groups (probeset) model}
+ \title{Estimates the model parameters}
 
  \description{
-  Fits a unit groups (probeset) model to all or to a subset of the units.
-  All estimates are stored to file.
-  The non-array specific parameter estimates together with standard deviation
-  estimates and convergence information are stored in one file.
-  The parameter estimates specific to each array, typically "chip effects",
-  are stored in array specific files.
+  Estimates the model parameters for all or a subset of the units.
  }
 
- \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., unitsPerChunk=moreUnits * 1e+05/length(getDataSet(this)), moreUnits=1, force=FALSE, verbose=FALSE)}
+ \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., force=FALSE, ram=moreUnits, verbose=FALSE, moreUnits=1)}
 
  \arguments{
-   \item{...}{Not used.}
+   \item{units}{The units to be fitted.
+     If \code{\link[base]{NULL}}, all units are considered.
+     If \code{remaining}, only non-fitted units are considered.
+   }
+   \item{...}{Arguments passed to \code{\link[aroma.affymetrix:readUnits.ProbeLevelModel]{*readUnits}()}.}
+   \item{force}{If \code{\link[base:logical]{TRUE}}, already fitted units are re-fitted, and
+     cached data is re-read.}
+   \item{ram}{A \code{\link[base]{double}} indicating if more or less units should
+     be loaded into memory at the same time.}
+   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
+   \item{moreUnits}{Deprected. Use \code{ram} instead.}
  }
 
  \value{
-  Returns the indices of the units fitted, or \code{\link[base]{NULL}} if no units had to
-  be fitted.
+  Returns an \code{\link[base]{integer}} \code{\link[base]{vector}} of indices of the units fitted,
+  or \code{\link[base]{NULL}} if no units was (had to be) fitted.
  }
 
  \details{
+  All estimates are stored to file.
+
+  The non-array specific parameter estimates together with standard deviation
+  estimates and convergence information are stored in one file.
+
+  The parameter estimates specific to each array, typically "chip effects",
+  are stored in array specific files.
+
    Data set specific estimates [L = number of probes]:
     phi [L doubles] (probe affinities), sd(phi) [L doubles],
     isOutlier(phi) [L logicals]

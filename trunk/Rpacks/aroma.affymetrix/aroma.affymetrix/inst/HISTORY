@@ -1,6 +1,15 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.3.2 [2007-01-06]
+o Major changes.
+o Renamed all Preprocessing classes to Transform classes.
+o Introduced trial version of a top-level Model class in 
+  order to minimize repeated code.
+o Made several methods "private" in order to hide them
+  form the HTML help tables.  Developers should rely on
+  source code and Rdoc comments for now.
+
 Version: 0.3.1 [2007-01-05]
 o Package pass R CMD check v2.4.0 (with one warning I suspect
   is a bug in R CMD check).

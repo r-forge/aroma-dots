@@ -23,7 +23,8 @@
 #   See also @see "base::load".
 # }
 #
-# \keyword{IO}
+# @keyword IO
+# @keyword internal
 #*/###########################################################################
 setMethodS3("loadToEnv", "default", function(...) {
   env <- new.env()

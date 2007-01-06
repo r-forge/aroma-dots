@@ -3,8 +3,6 @@
 % 
 %  CnPlm.R
 % 
-% on Sat Jan 06 01:50:19 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -26,7 +24,7 @@
 \code{~~~~~~~+--}\code{CnPlm}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{MbeiCnPlm}}, \emph{\link[aroma.affymetrix]{RmaCnPlm}}\cr
+\link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{RmaCnPlm}\cr
 
 public class \bold{CnPlm}\cr
 extends \link[aroma.affymetrix]{SnpPlm}\cr
@@ -53,11 +51,11 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 }
 
 
-\bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
+ \bold{Methods inherited from SnpPlm}:\cr
+getCellIndices, getChipEffects, getProbeAffinities, setMergeStrands
 
-\bold{Methods inherited from Interface}:\cr
-as.character, extend, print, uses
+ \bold{Methods inherited from Interface}:\cr
+extend, print, uses
 
 
  }
