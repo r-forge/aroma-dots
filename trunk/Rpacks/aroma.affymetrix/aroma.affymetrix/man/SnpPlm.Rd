@@ -3,8 +3,6 @@
 % 
 %  SnpPlm.R
 % 
-% on Sat Jan 06 01:58:04 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -24,7 +22,7 @@
 \code{~~+--}\code{SnpPlm}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffineSnpPlm}}, \link[aroma.affymetrix]{CnPlm}, \emph{\link[aroma.affymetrix]{MbeiCnPlm}}, \emph{\link[aroma.affymetrix]{MbeiSnpPlm}}, \emph{\link[aroma.affymetrix]{RmaCnPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}\cr
+\link[aroma.affymetrix]{AffineSnpPlm}, \link[aroma.affymetrix]{CnPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
 
 public class \bold{SnpPlm}\cr
 extends \link[aroma.affymetrix]{Interface}\cr
@@ -51,8 +49,8 @@ extends \link[aroma.affymetrix]{Interface}\cr
 }
 
 
-\bold{Methods inherited from Interface}:\cr
-as.character, extend, print, uses
+ \bold{Methods inherited from Interface}:\cr
+extend, print, uses
 
 
  }

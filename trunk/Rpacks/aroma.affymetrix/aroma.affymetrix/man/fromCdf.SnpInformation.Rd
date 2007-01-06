@@ -3,8 +3,6 @@
 % 
 %  SnpInformation.R
 % 
-% on Sat Jan 06 01:57:59 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -26,7 +24,7 @@
 
 \arguments{
  \item{cdf}{An \code{\link{AffymetrixCdfFile}}.}
- \item{...}{Additional argument passed to \code{\link{fromChipType}}().}
+ \item{...}{Additional argument passed to \code{\link[aroma.affymetrix:fromChipType.SnpInformation]{*fromChipType}()}.}
 }
 
 \value{

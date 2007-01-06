@@ -3,8 +3,6 @@
 % 
 %  RmaPlm.R
 % 
-% on Sat Jan 06 01:56:44 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,19 +19,19 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Model}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\emph{\code{RmaPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{RmaPlm}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{RmaCnPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}\cr
+\link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
 
-public abstract static class \bold{RmaPlm}\cr
-extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+public static class \bold{RmaPlm}\cr
+extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
 
 
 
@@ -53,22 +51,20 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\tabular{rll}{
- \tab \code{getProbeAffinities} \tab  -\cr
-}
+\emph{No methods defined}.
 
 
-\bold{Methods inherited from ProbeLevelModel}:\cr
-findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, getRootPath, highlight, plotMvsPosition, readUnits
+ \bold{Methods inherited from ProbeLevelModel}:\cr
+fit, getChipEffects, getProbeAffinities
 
-\bold{Methods inherited from UnitGroupsModel}:\cr
-getLabel, setLabel, setup
+ \bold{Methods inherited from UnitModel}:\cr
+findUnitsTodo, getCellIndices, readUnits
 
-\bold{Methods inherited from UnitModel}:\cr
-as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
+ \bold{Methods inherited from Model}:\cr
+fit, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setTags
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }
@@ -90,22 +86,17 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  \section{Different flavors of model fitting}{
    There are a few differ algorithms available for fitting the same
-   probe-level model.  The default method (\code{flavor="affyPLM"})
-   implements in the \pkg{affyPLM} package fits the model parameters
-   robustly using an M-estimator.
+   probe-level model.  The default and recommended method
+   (\code{flavor="affyPLM"}) uses the implementation in the \pkg{affyPLM}
+   package which fits the model parameters robustly using an M-estimator.
 
-   In addition to the above method, which is the preferred one, additional
-   algorithms have been ported/interfaced to.  Note that these are often
-   provided for the purpose of replicating the results of other packages,
-   but they might not be complete in the sense of what a
-   \code{\link{ProbeLevelModel}} should return or how the parameters are
-   constrained.
+   Alternatively, other model-fitting algorithms are available.
    The algorithm (\code{flavor="oligo"}) used by the \pkg{oligo} package,
    which originates from the \pkg{affy} packages, fits the model using
    median polish, which is a non-robust estimator.  Note that this algorithm
    does not constraint the probe-effect parameters to multiply to one on
-   the intensity scale. As a matter of fact, the probe-effect parameters
-   are not even returned (defaulting to ones).
+   the intensity scale.  Since the internal function does not return these
+   estimates, we can neither rescale them.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

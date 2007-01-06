@@ -40,13 +40,15 @@
 # }
 #
 # @author
+#
+# @keyword internal
 #*/###########################################################################
 setConstructorS3("AffymetrixProbeTabFile", function(...) {
   extend(AffymetrixFile(..., mustExist=TRUE), "AffymetrixProbeTabFile",
     ".cdf" = NULL,
     "cached:.indexToRowMap" = NULL
   )
-})
+}, private=TRUE)
 
 setMethodS3("as.character", "AffymetrixProbeTabFile", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);

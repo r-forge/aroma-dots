@@ -105,7 +105,7 @@ setMethodS3("getChipType", "GenomeInformation", function(this, ...) {
 #
 # \arguments{
 #  \item{cdf}{An @see "AffymetrixCdfFile".}
-#  \item{...}{Additional argument passed to @see "fromChipType".}
+#  \item{...}{Additional argument passed to @seemethod "fromChipType".}
 # }
 #
 # \value{

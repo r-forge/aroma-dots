@@ -3,8 +3,6 @@
 % 
 %  GenotypeCallSet.R
 % 
-% on Sat Jan 06 01:52:10 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -59,11 +57,11 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 }
 
 
-\bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as.AffymetrixFileSet, as.character, as.list, clearCache, clone, extract, fromFiles, getDescription, getFile, getFiles, getFileSize, getFullName, getIdentifier, getName, getNames, getPath, getPathnames, getTags, lapply, length, nbrOfFiles, reorder, seq, setName, setTags
+ \bold{Methods inherited from AffymetrixFileSet}:\cr
+append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, extract, fromFiles, getFile, getFileSize, getFullName, getName, getNames, getPath, getPathnames, getTags, lapply, nbrOfFiles, seq, setName, setTags
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

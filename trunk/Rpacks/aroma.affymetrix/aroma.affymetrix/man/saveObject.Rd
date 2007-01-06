@@ -3,8 +3,6 @@
 % 
 %  saveObject.R
 % 
-% on Sat Jan 06 01:57:00 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -41,6 +39,9 @@
   Internally \code{\link[base]{save}}() is used.
 }
 
+
+
+
 \keyword{programming}
 \keyword{IO}
-
+\keyword{internal}

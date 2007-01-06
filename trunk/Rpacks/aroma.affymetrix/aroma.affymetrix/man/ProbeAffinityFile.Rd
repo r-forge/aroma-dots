@@ -3,8 +3,6 @@
 % 
 %  ProbeAffinityFile.R
 % 
-% on Sat Jan 06 01:55:27 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -55,17 +53,17 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 }
 
 
-\bold{Methods inherited from ParameterCelFile}:\cr
-decode, encode, readUnits, setDecodeFunction, setEncodeFunction, updateUnits
+ \bold{Methods inherited from ParameterCelFile}:\cr
+readUnits
 
-\bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, annotateMvsA, as.character, bgAdjustGcrma, bgAdjustOptical, bgAdjustRma, calibrateAllelicCrosstalk, clearData, clone, createFrom, fitQuantileNormFcn, fromFile, getAm, getCdf, getChipType, getData, getHeader, getHeaderV3, getIdentifier, getRectangle, getTimestamp, highlight, image270, importFeatureSet, nbrOfCells, normalizeQuantile, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, range, readUnits, setCdf, smoothScatterMvsA, transformAffine, updateUnits, writeSpatial
+ \bold{Methods inherited from AffymetrixCelFile}:\cr
+[, [[, clone, fromFile, getAm, getCdf, highlight, image270, nbrOfCells, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, setCdf, smoothScatterMvsA
 
-\bold{Methods inherited from AffymetrixFile}:\cr
-as.character, clone, copyFile, fromFile, getFilename, getFileSize, getFileType, getFullName, getLabel, getName, getPath, getPathname, getTags, setLabel, stextLabel, stextLabels, stextSize
+ \bold{Methods inherited from AffymetrixFile}:\cr
+fromFile, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

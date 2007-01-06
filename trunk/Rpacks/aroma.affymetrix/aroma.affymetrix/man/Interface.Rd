@@ -3,8 +3,6 @@
 % 
 %  Interface.R
 % 
-% on Sat Jan 06 01:52:52 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -52,4 +50,6 @@ public class \bold{Interface}\cr
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
 \keyword{classes}
+\keyword{internal}

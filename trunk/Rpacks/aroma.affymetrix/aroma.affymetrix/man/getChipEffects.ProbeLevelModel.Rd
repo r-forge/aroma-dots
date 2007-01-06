@@ -3,8 +3,6 @@
 % 
 %  ProbeLevelModel.R
 % 
-% on Sat Jan 06 01:55:41 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,17 +13,18 @@
 \alias{getChipEffects,ProbeLevelModel-method}
 
 
-\title{Gets the chip-effect files for this model}
+\title{Gets the set of chip effects for this model}
 
 \description{
- Gets the chip-effect files for this model.  There is one chip-effect file per array.
+ Gets the set of chip effects for this model.
+ There is one chip-effect file per array.
 }
 
 \usage{\method{getChipEffects}{ProbeLevelModel}(this, ..., verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
-  \item{verbose}{A \code{\link[base]{logical}} or a \code{\link[R.utils]{Verbose}} object.}
+  \item{verbose}{A \code{\link[base]{logical}} or a \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

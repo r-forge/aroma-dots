@@ -13,7 +13,8 @@
 # @synopsis 
 #
 # \arguments{
-#   \item{...}{Arguments passed to the constructor of @see "ProbePreprocessing".}
+#   \item{...}{Arguments passed to the constructor of 
+#     @see "ProbeLevelTransform".}
 #   \item{subsetToUpdate}{The probes to be updated.
 #     If @NULL, all probes are updated.}
 #   \item{typesToUpdate}{Types of probes to be updated.}
@@ -41,7 +42,7 @@
 # @author
 #*/###########################################################################
 setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typesToUpdate=NULL, targetDistribution=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate) {
-  extend(ProbePreprocessing(...), "QuantileNormalization", 
+  extend(ProbeLevelTransform(...), "QuantileNormalization", 
     .subsetToUpdate = subsetToUpdate,
     .typesToUpdate = typesToUpdate,
     .subsetToAvg = subsetToAvg,

@@ -11,8 +11,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{cesList}{A @list of @see "ChipEffectSet" objects.}
-#   \item{referenceList}{A @see "ChipEffectFile" objects.}
+#   \item{plm}{A @see "ProbeLevelModel".}
 #   \item{tags}{A @character @vector of tags.}
 #   \item{...}{Not used.}
 # }

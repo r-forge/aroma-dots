@@ -3,8 +3,6 @@
 % 
 %  ProbeLevelModel.R
 % 
-% on Sat Jan 06 01:55:40 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,33 +19,33 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Model}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\emph{\code{ProbeLevelModel}}\cr
+\code{~~~~~~~~~~~~+--}\code{ProbeLevelModel}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffinePlm}}, \emph{\link[aroma.affymetrix]{AffineSnpPlm}}, \emph{\link[aroma.affymetrix]{MbeiCnPlm}}, \emph{\link[aroma.affymetrix]{MbeiPlm}}, \emph{\link[aroma.affymetrix]{MbeiSnpPlm}}, \emph{\link[aroma.affymetrix]{RmaCnPlm}}, \emph{\link[aroma.affymetrix]{RmaPlm}}, \emph{\link[aroma.affymetrix]{RmaSnpPlm}}\cr
+\link[aroma.affymetrix]{AffinePlm}, \link[aroma.affymetrix]{AffineSnpPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
 
-public abstract static class \bold{ProbeLevelModel}\cr
-extends \emph{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+public static class \bold{ProbeLevelModel}\cr
+extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
 
 
-  This abstract class represents any probe-level model (PLM).
-  To quote the \pkg{affyPLM} package:
+  This abstract class represents a probe-level model (PLM) as defined
+  by the \pkg{affyPLM} package:
     "A [...] PLM is a model that is fit to probe-intensity data.
      More specifically, it is where we fit a model with probe level
      and chip level parameters on a probeset by probeset basis",
-  where the more general case for a probeset is a unit group
-  using Affymetrix CDF terms.
+  where the more general case for a probeset is a \emph{unit group}
+  in Affymetrix CDF terms.
  }
 
  \usage{ProbeLevelModel(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm"), standardize=TRUE)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{UnitGroupsModel}}.}
+   \item{...}{Arguments passed to \code{\link{UnitModel}}.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be added.}
    \item{probeModel}{A \code{\link[base]{character}} string specifying how PM and MM values
       should be modelled.  By default only PM signals are used.}
@@ -58,36 +56,35 @@ extends \emph{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:findUnitsTodo.ProbeLevelModel]{findUnitsTodo}} \tab Identifies units for which the PLM has still not been fitted to.\cr
- \tab \code{\link[aroma.affymetrix:fit.ProbeLevelModel]{fit}} \tab Fits a unit groups (probeset) model.\cr
- \tab \code{\link[aroma.affymetrix:getChipEffects.ProbeLevelModel]{getChipEffects}} \tab Gets the chip-effect files for this model.\cr
+ \tab \code{\link[aroma.affymetrix:fit.ProbeLevelModel]{fit}} \tab Estimates the model parameters.\cr
+ \tab \code{\link[aroma.affymetrix:getChipEffects.ProbeLevelModel]{getChipEffects}} \tab Gets the set of chip effects for this model.\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinities.ProbeLevelModel]{getProbeAffinities}} \tab Gets the probe affinities for this model.\cr
 }
 
 
-\bold{Methods inherited from UnitGroupsModel}:\cr
-getLabel, setLabel, setup
+ \bold{Methods inherited from UnitModel}:\cr
+findUnitsTodo, getCellIndices, readUnits
 
-\bold{Methods inherited from UnitModel}:\cr
-as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
+ \bold{Methods inherited from Model}:\cr
+fit, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setTags
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }
 
  \details{
    In order to minimize the risk for mistakes, but also to be able compare
-   results from different PLMs, all PLM subclasses must return parameter
-   estimates that meet the following requirements:
+   results from different PLMs, all PLM subclasses must meet the following
+   criteria:
    \enumerate{
      \item All parameter estimates must be (stored and returned) on the
        intensity scale, e.g. log-additive models such as \code{\link{RmaPlm}}
        have to transform the parameters on the log-scale to the intensity
        scale.
      \item The probe-affinity estimates \eqn{\phi_j} for a unit group
-       must meet the constraint such that \eqn{\prod_j \phi_j = 1},
+       must be constrained such that \eqn{\prod_j \phi_j = 1},
        or equivalently \eqn{\sum_j \log(\phi_j) = 0}.
    }
    Note that the above probe-affinity constraint guarantees that the

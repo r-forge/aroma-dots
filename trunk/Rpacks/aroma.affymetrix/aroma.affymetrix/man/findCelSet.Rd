@@ -3,8 +3,6 @@
 % 
 %  findCelSet.R
 % 
-% on Sat Jan 06 01:51:19 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -91,5 +89,7 @@ print(path)
 
 
 
+
 \keyword{file}
 \keyword{IO}
+\keyword{internal}

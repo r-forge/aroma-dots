@@ -3,8 +3,6 @@
 % 
 %  OligoQuantileNormalization.R
 % 
-% on Sat Jan 06 01:54:05 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,9 +19,9 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{Preprocessing}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{QuantileNormalization}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
@@ -55,17 +53,14 @@ extends \link[aroma.affymetrix]{QuantileNormalization}\cr
 }
 
 
-\bold{Methods inherited from QuantileNormalization}:\cr
-calculateTargetDistribution, getOutputIdentifier, getParameters, getSubsetToUpdate, getTargetDistribution, getTargetDistributionIdentifier, getTargetDistributionPathname, process
+ \bold{Methods inherited from QuantileNormalization}:\cr
+process
 
-\bold{Methods inherited from ProbePreprocessing}:\cr
-getRootPath
+ \bold{Methods inherited from Transform}:\cr
+getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags
 
-\bold{Methods inherited from Preprocessing}:\cr
-as.character, getAsteriskTag, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getParameters, getParametersAsString, getPath, getRootPath, getTags, isDone, process, setTags
-
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

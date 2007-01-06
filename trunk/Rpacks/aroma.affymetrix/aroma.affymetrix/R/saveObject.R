@@ -30,8 +30,9 @@
 #   Internally @see "base::save" is used.
 # }
 #
-# \keyword{programming}
-# \keyword{IO}
+# @keyword programming
+# @keyword IO
+# @keyword internal
 #*/###########################################################################
 setMethodS3("saveObject", "default", function(object, file=NULL, path=NULL, compress=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -92,8 +93,9 @@ setMethodS3("saveObject", "default", function(object, file=NULL, path=NULL, comp
 #   Internally @see "base::load" is used.
 # }
 #
-# \keyword{programming}
-# \keyword{IO}
+# @keyword programming
+# @keyword IO
+# @keyword internal
 #*/###########################################################################
 setMethodS3("loadObject", "default", function(file, path=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

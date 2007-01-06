@@ -17,7 +17,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of 
-#     @see "ProbePreprocessing".}
+#     @see "ProbeLevelTransform".}
 # }
 #
 # \section{Fields and Methods}{
@@ -27,7 +27,7 @@
 # @author
 #*/###########################################################################
 setConstructorS3("AllelicCrosstalkCalibration", function(...) {
-  extend(ProbePreprocessing(...), "AllelicCrosstalkCalibration")
+  extend(ProbeLevelTransform(...), "AllelicCrosstalkCalibration")
 })
 
 

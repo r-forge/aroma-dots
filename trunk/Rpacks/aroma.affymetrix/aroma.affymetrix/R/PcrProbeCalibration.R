@@ -15,7 +15,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of
-#      @see "ProbePreprocessing".}
+#      @see "ProbeLevelTransform".}
 #   \item{subsetToFit}{The fraction of PM probes to be used for fitting
 #     the calibration function.}
 #   \item{flavor}{A @character string specifying what method to immitate.
@@ -83,7 +83,7 @@ setConstructorS3("PcrProbeCalibration", function(..., subsetToFit=1/5, flavor=c(
   # Argument 'flavor':
   flavor <- match.arg(flavor);
 
-  extend(ProbePreprocessing(...), "PcrProbeCalibration",
+  extend(ProbeLevelTransform(...), "PcrProbeCalibration",
     .subsetToFit = subsetToFit,
     .flavor = flavor,
     "cached:.coefs" = NULL

@@ -26,7 +26,7 @@ setConstructorS3("AptProbesetGenotype", function(dataSet=NULL, tags=c("APT", "BR
     .dataSet = dataSet,
     .tags = tags
   )
-})
+}, private=TRUE)
 
 
 setMethodS3("as.character", "AptProbesetGenotype", function(this, ...) {
@@ -270,7 +270,7 @@ setMethodS3("getFullName", "AptProbesetGenotype", function(this, ...) {
 
 setMethodS3("getPath", "AptProbesetGenotype", function(this, ...) {
   path <- filePath(getRootPath(this), getFullName(this), 
-                         getChipType(this), ".apt", expandLinks="any");
+                getChipType(getCdf(this)), ".apt", expandLinks="any");
   path;
 })
 
@@ -284,10 +284,6 @@ setMethodS3("nbrOfArrays", "AptProbesetGenotype", function(this, ...) {
 
 setMethodS3("getCdf", "AptProbesetGenotype", function(this, ...) {
   getCdf(getDataSet(this));
-})
-
-setMethodS3("getChipType", "AptProbesetGenotype", function(this, ...) {
-  getChipType(getCdf(this));
 })
 
 setMethodS3("getTags", "AptProbesetGenotype", function(this, ...) {
@@ -589,6 +585,8 @@ setMethodS3("process", "AptProbesetGenotype", function(this, force=FALSE, ..., v
 
 ############################################################################
 # HISTORY:
+# 2007-01-06
+# o Removed getChipType(). Use getCdf() first.
 # 2006-12-20
 # o For now, in case we will need it in the future, we output as much as
 #   possible (except residuals) from APT.

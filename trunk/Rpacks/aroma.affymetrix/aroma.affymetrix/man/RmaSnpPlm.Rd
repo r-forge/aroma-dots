@@ -3,8 +3,6 @@
 % 
 %  RmaSnpPlm.R
 % 
-% on Sat Jan 06 01:57:00 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,9 +19,9 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Model}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitGroupsModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
@@ -31,12 +29,12 @@
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{SnpPlm}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\emph{\code{RmaSnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{RmaSnpPlm}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{RmaCnPlm}}\cr
+\link[aroma.affymetrix]{RmaCnPlm}\cr
 
-public abstract static class \bold{RmaSnpPlm}\cr
+public static class \bold{RmaSnpPlm}\cr
 extends \link[aroma.affymetrix]{SnpPlm}\cr
 
 
@@ -56,23 +54,20 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 \emph{No methods defined}.
 
 
-\bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getChipEffectSetClass, getProbeAffinities, setMergeStrands
+ \bold{Methods inherited from SnpPlm}:\cr
+getCellIndices, getChipEffects, getProbeAffinities, setMergeStrands
 
-\bold{Methods inherited from RmaPlm}:\cr
-getFitFunction, getProbeAffinities
+ \bold{Methods inherited from ProbeLevelModel}:\cr
+fit, getChipEffects, getProbeAffinities
 
-\bold{Methods inherited from ProbeLevelModel}:\cr
-findUnitsTodo, fit, getCellIndices, getChipEffects, getChipEffectSetClass, getFitFunction, getFitUnitFunction, getProbeAffinities, getRootPath, highlight, plotMvsPosition, readUnits
+ \bold{Methods inherited from UnitModel}:\cr
+findUnitsTodo, getCellIndices, readUnits
 
-\bold{Methods inherited from UnitGroupsModel}:\cr
-getLabel, setLabel, setup
+ \bold{Methods inherited from Model}:\cr
+fit, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setTags
 
-\bold{Methods inherited from UnitModel}:\cr
-as.character, findUnitsTodo, fit, getCdf, getCellIndices, getDataSet, getFitUnitFunction, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, readUnits, setTags
-
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

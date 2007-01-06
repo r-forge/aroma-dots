@@ -35,12 +35,14 @@
 #      \url{http://www.affymetrix.com/support/developer/powertools/index.affx}
 #      \cr
 # }
+#
+# @keyword internal
 #*/###########################################################################
 setConstructorS3("AffymetrixPowerTools", function(...) {
   extend(Object(), "AffymetrixPowerTools",
     ...
   )
-})
+}, private=TRUE)
 
 
 setMethodS3("writeChrXFile", "AffymetrixPowerTools", function(static, cdf, path=NULL, overwrite=FALSE, ...) {

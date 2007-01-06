@@ -3,8 +3,6 @@
 % 
 %  PcrProbeCalibration.R
 % 
-% on Sat Jan 06 01:54:34 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,9 +19,9 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{Preprocessing}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{PcrProbeCalibration}\cr
 
@@ -31,7 +29,7 @@
 \cr
 
 public static class \bold{PcrProbeCalibration}\cr
-extends \emph{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
+extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
 
 
 
@@ -44,7 +42,7 @@ extends \emph{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
 
  \arguments{
    \item{...}{Arguments passed to the constructor of
-      \code{\link{ProbePreprocessing}}.}
+      \code{\link{ProbeLevelTransform}}.}
    \item{subsetToFit}{The fraction of PM probes to be used for fitting
      the calibration function.}
    \item{flavor}{A \code{\link[base]{character}} string specifying what method to immitate.
@@ -60,14 +58,11 @@ extends \emph{\link[aroma.affymetrix]{ProbePreprocessing}}\cr
 }
 
 
-\bold{Methods inherited from ProbePreprocessing}:\cr
-getRootPath
+ \bold{Methods inherited from Transform}:\cr
+getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags
 
-\bold{Methods inherited from Preprocessing}:\cr
-as.character, getAsteriskTag, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getParameters, getParametersAsString, getPath, getRootPath, getTags, isDone, process, setTags
-
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getInternalAddress, getStaticInstance, hasField, hashCode, isReferable, ll, load, names, newInstance, novirtual, objectSize, print, save, staticCode
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

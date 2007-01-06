@@ -1099,10 +1099,6 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
   NextMethod("getFullName", this, parent=parent, ...);
 })
 
-setMethodS3("getName", "AffymetrixCelSet", function(this, ...) {
-  NextMethod("getName", this, ...);
-})
-
 
 
 ############################################################################
