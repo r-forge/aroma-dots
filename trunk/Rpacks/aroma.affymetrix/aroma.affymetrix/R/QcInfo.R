@@ -96,6 +96,10 @@ setMethodS3("getRootPath", "QcInfo", function(this, ...) {
   "qcData";
 })
 
+setMethodS3("getDataSet", "QcInfo", function(this, ...) {
+  getDataSet(getPlm(this), ...);
+})
+
 setMethodS3("getPath", "QcInfo", function(this, ...) {
   # Create the (sub-)directory tree for the dataset
 
@@ -123,12 +127,34 @@ setMethodS3("getPath", "QcInfo", function(this, ...) {
 })
 
 
-setMethodS3("getResiduals", "QcInfo", function(this, unitsPerChunk=moreUnits*100000/length(getDataSet(getPlm(this))), moreUnits=1, ...) {
+setMethodS3("getResiduals", "QcInfo", function(this, path=NULL, tags="*", unitsPerChunk=moreUnits*100000/length(getDataSet(getPlm(this))), moreUnits=1, force=FALSE, ...) {
+
+  # Argument 'path':
+  
+  
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    # Update default tags
+    tags[tags == "*"] <- "residuals";
+  }
 
   # Argument 'unitsPerChunk':
   unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
 
-  ds <- getDataSet(getPlm(this));
+  # If residuals already calculated, and if force==FALSE, just return
+  # a CelSet with the previous calculations
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Generating output pathname
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  filenames <- basename(getPathnames(getDataSet(this)));
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+  
+  
+  ds <- getDataSet(this);
   ces <- getChipEffects(this);
   paf <- getProbeAffinities(getPlm(this));
 
@@ -162,17 +188,19 @@ setMethodS3("getResiduals", "QcInfo", function(this, unitsPerChunk=moreUnits*100
 
     resFcn <- function(kk) {
       rawData <- rawDataList[[kk]][[1]]$intensities;
-      str(rawData)
       ce <- chipEffectList[[kk]][[1]]$theta[1,];
-      str(ce)
       pa <- probeAffinityList[[kk]][[1]]$phi;
-      str(pa)
       fittedData <- outer(pa, ce, FUN="+");
-      str(fittedData)
       return(rawData - fittedData);
     }
     
     residualsList <- c(residualsList, lapply(head, FUN=resFcn));
+
+# update output files
+    
+    cdf <- getCdfCellIndices(ds, units=units, stratifyBy="pm", ...);
+  
+    
     
     unitsToDo <- unitsToDo[-head];
     count <- count + 1;
