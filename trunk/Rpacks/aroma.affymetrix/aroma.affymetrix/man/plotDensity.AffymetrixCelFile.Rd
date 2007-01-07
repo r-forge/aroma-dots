@@ -20,7 +20,7 @@
  Plots the density of the probe signals on the array.
 }
 
-\usage{\method{plotDensity}{AffymetrixCelFile}(this, subset=1/2, types=NULL, ..., xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE)}
+\usage{\method{plotDensity}{AffymetrixCelFile}(this, subset=1/2, types=NULL, ..., xlim=c(0, 16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE)}
 
 \arguments{
   \item{subset}{The subset of probes to include.}
@@ -29,6 +29,7 @@
      \code{identifyCells()} of \code{\link{AffymetrixCdfFile}},
      , \code{\link[aroma.affymetrix:getData.AffymetrixCelFile]{*getData}()}, and
      \code{\link[aroma.light]{plotDensity.numeric}}.}
+  \item{xlim}{The range on the x axis.}
   \item{xlab,ylab}{The labels on the x and the y axes.}
   \item{log}{If \code{\link[base:logical]{TRUE}}, the density of the log (base 2) values are
      used, otherwise the non-logged values.}

@@ -702,6 +702,12 @@
 \alias{setup.ChromosomeExplorer}
 \alias{updateSamplesFile}
 \alias{updateSamplesFile.ChromosomeExplorer}
+\alias{hasTag}
+\alias{hasTag.AffymetrixFile}
+\alias{hasTag.AffymetrixFileSet}
+\alias{hasTags}
+\alias{hasTags.AffymetrixFile}
+\alias{hasTags.AffymetrixFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
