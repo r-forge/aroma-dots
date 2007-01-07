@@ -31,8 +31,8 @@
 }
 
 \details{
- If the name has not been set explicitly, the name is inferred from the
- pathname of the file set.
+ If a name alias has not been set explicitly, the name is inferred from
+ the pathname of the file set.
  The \emph{name} of a file set is the part of the directory name that
  preceeds the first comma, if any.
  For instance, the name of the file set named \code{foo,a,b} is \code{foo}.
@@ -41,9 +41,9 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:setName.AffymetrixFileSet]{*setName}()}.
+  \code{\link[aroma.affymetrix:getAlias.AffymetrixFileSet]{*getAlias}()}.
   \code{\link[aroma.affymetrix:getFullName.AffymetrixFileSet]{*getFullName}()}.
-  \code{\link[aroma.affymetrix:getBranches.AffymetrixFileSet]{*getBranches}()}.
+  \code{\link[aroma.affymetrix:getTags.AffymetrixFileSet]{*getTags}()}.
   For more information see \code{\link{AffymetrixFileSet}}.
 }
 \keyword{internal}

@@ -59,7 +59,8 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
 
 
   extend(Object(), "ChromosomeExplorer",
-    .model = model
+    .model = model,
+    .setupDone = FALSE
   )
 })
 
@@ -181,6 +182,145 @@ setMethodS3("getChromosomes", "ChromosomeExplorer", function(this, ...) {
 })
 
 
+setMethodS3("getTemplatePath", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Locating template files for ChromosomeExplorer");
+  # Search for template files
+  path <- filePath("ce/.template", expandLinks="any");
+  if (!isDirectory(path)) {
+    path <- system.file("chromosomeExplorer", "includes", 
+                                            package="aroma.affymetrix");
+  }
+  verbose && exit(verbose);
+
+  path;
+}, private=TRUE)
+
+
+setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
+  require(R.rsp) || throw("Package not loaded: R.rsp");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  path <- getPath(this);
+  parentPath <- getParent(path);
+
+  verbose && enter(verbose, "Compiling samples.js");
+  srcPath <- getTemplatePath(this);
+  pathname <- filePath(srcPath, "rsp", "samples.js.rsp");
+  verbose && cat(verbose, "Source: ", pathname);
+  outFile <- gsub("[.]rsp$", "", basename(pathname));
+  outPath <- getParent(parentPath);
+  verbose && cat(verbose, "Output path: ", outPath);
+
+
+  verbose && enter(verbose, "Scanning directories for available chip types");
+  # Find all directories matching these
+  dirs <- list.files(path=parentPath, full.names=TRUE);
+  dirs <- dirs[sapply(dirs, FUN=isDirectory)];
+
+  # Get possible chip types
+  model <- getModel(this);
+  chipTypes <- c(getChipType(model), getChipTypes(model));
+  chipTypes <- intersect(chipTypes, basename(dirs));
+  verbose && cat(verbose, "Detected chip types: ", 
+                                           paste(chipTypes, collapse=", "));
+  verbose && exit(verbose);
+
+  # Get available zooms
+  verbose && enter(verbose, "Scanning image files for available zooms");
+  pattern <- ".*,x([0-9][0-9]*)[.]png$";
+  zooms <- list.files(path=path, pattern=pattern);
+  zooms <- gsub(pattern, "\\1", zooms);
+  zooms <- gsub("^0*", "", zooms);
+  zooms <- unique(zooms);
+  zooms <- as.integer(zooms);
+  zooms <- sort(zooms);
+  verbose && cat(verbose, "Detected zooms: ", paste(zooms, collapse=", "));
+  verbose && exit(verbose);
+
+  # Compile RSP file
+  verbose && enter(verbose, "Compiling RSP");
+  env <- new.env();
+  env$chipTypes <- chipTypes;
+  env$samples <- getArrays(model);
+  env$zooms <- zooms;
+  pathname <- rspToHtml(pathname, path=NULL, 
+                        outFile=outFile, outPath=outPath, 
+                        overwrite=TRUE, envir=env);
+  verbose && exit(verbose);
+
+
+  verbose && exit(verbose);
+  
+  invisible(pathname);
+}, private=TRUE)
+
+
+setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., overwrite=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Setting up ChromsomeExplorer report files");
+
+  srcPath <- getTemplatePath(this);
+
+  destPath <- filePath(getRootPath(this), "includes");
+  if (!isDirectory(destPath)) {
+    verbose && enter(verbose, "Copying template files");
+    verbose && cat(verbose, "Source path: ", srcPath);
+    verbose && cat(verbose, "Destination path: ", destPath);
+    pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE);
+    verbose && exit(verbose);
+  }
+
+  verbose && enter(verbose, "Copying index.html");
+  srcPathname <- filePath(srcPath, "html", "index.html");
+  outPath <- getParent(getPath(this));
+  outPathname <- filePath(outPath, "index.html");
+  verbose && cat(verbose, "Source pathname: ", srcPathname);
+  verbose && cat(verbose, "Destination pathname: ", outPathname);
+  file.copy(srcPathname, outPathname, overwrite=overwrite);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+}, private=TRUE)
+
+
+setMethodS3("setup", "ChromosomeExplorer", function(this, ..., force=FALSE) {
+  if (force || !this$.setupDone) {
+    addIncludes(this, ...);
+    updateSamplesFile(this, ...);
+    this$.setupDone <- TRUE;
+  }
+}, private=TRUE)
+
+
 setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, ...) {
   # To please R CMD check.
   this <- x;
@@ -192,22 +332,36 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, ...) {
   invisible(path);
 }, private=TRUE)
 
+
 setMethodS3("writeRegions", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
 #  writeRegions(model, ...);
 }, private=TRUE)
 
 
+
 setMethodS3("process", "ChromosomeExplorer", function(this, ...) {
+  # Setup HTML, CSS, Javascript files first
+  setup(this, ...);
+
+  # First the model, just in case
   model <- getModel(this);
   fit(model, ...);
+
+  # Generate bitmap images
   writeGraphs(this, ...);
+
+  # Update samples.js
+  updateSamplesFile(this, ...);
+
   writeRegions(this, ...);
 })
 
 
 ##############################################################################
 # HISTORY:
+# 2007-01-07
+# o Now all HTML, CSS, and Javascript files are created too.
 # 2007-01-04
 # o Created.
 ##############################################################################

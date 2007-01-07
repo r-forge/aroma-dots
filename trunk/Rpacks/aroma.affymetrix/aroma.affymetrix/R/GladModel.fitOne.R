@@ -159,6 +159,7 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
   stdout <- capture.output({
     fit <- do.call("glad", args);
   })
+  stdout <- paste(stdout, collapse="\n");
   verbose && print(verbose, stdout);
 
   verbose && exit(verbose);

@@ -33,13 +33,15 @@ extends \link[R.oo]{Object}\cr
   with \emph{identical} chip types.
  }
 
- \usage{AffymetrixFileSet(files=NULL, tags="*", ...)}
+ \usage{AffymetrixFileSet(files=NULL, tags="*", alias=NULL, ...)}
 
  \arguments{
    \item{files}{A \code{\link[base]{list}} of \code{\link{AffymetrixFile}}:s.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be used for this file set.
       The string \code{"*"} indicates that it should be replaced by the
       tags part of the file set pathname.}
+   \item{alias}{A \code{\link[base]{character}} string specifying a name alias overriding the
+      name inferred from the pathname.}
    \item{...}{Not used.}
  }
 
@@ -54,6 +56,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{clearCache} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:extract.AffymetrixFileSet]{extract}} \tab Extract a subset of the file set.\cr
  \tab \code{\link[aroma.affymetrix:fromFiles.AffymetrixFileSet]{fromFiles}} \tab Defines an AffymetrixFileSet object by searching for Affymetrix files.\cr
+ \tab \code{\link[aroma.affymetrix:getAlias.AffymetrixFileSet]{getAlias}} \tab Gets the alias of the file set.\cr
  \tab \code{getFile} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFullName.AffymetrixFileSet]{getFullName}} \tab Gets the full name of the file set.\cr
@@ -65,7 +68,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:lapply.AffymetrixFileSet]{lapply}} \tab Applies a function to each of the Affymetrix file files.\cr
  \tab \code{nbrOfFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:seq.AffymetrixFileSet]{seq}} \tab Gets an vector of file indices.\cr
- \tab \code{\link[aroma.affymetrix:setName.AffymetrixFileSet]{setName}} \tab Sets the name of the file set.\cr
+ \tab \code{\link[aroma.affymetrix:setAlias.AffymetrixFileSet]{setAlias}} \tab Sets the alias of the file set.\cr
  \tab \code{\link[aroma.affymetrix:setTags.AffymetrixFileSet]{setTags}} \tab Sets the tags of the file set.\cr
 }
 

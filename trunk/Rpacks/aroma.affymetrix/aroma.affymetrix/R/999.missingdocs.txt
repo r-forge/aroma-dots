@@ -274,3 +274,7 @@
  getParametersAsString.ChipEffectSet getReferenceFiles.GladModel
  getReferenceName.GladModel getTableOfArrays.GladModel
  nbrOfChipTypes.GladModel
+  addIncludes addIncludes.ChromosomeExplorer getAlias getTemplatePath
+  getTemplatePath.ChromosomeExplorer setAlias setup
+  setup.ChromosomeExplorer updateSamplesFile
+  updateSamplesFile.ChromosomeExplorer

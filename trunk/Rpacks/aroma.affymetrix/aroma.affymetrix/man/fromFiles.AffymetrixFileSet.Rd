@@ -29,7 +29,8 @@
     of the abstract \code{\link{AffymetrixFile}} class are search for.}
  \item{recursive}{If \code{\link[base:logical]{TRUE}}, subdirectories are search recursively,
     otherwise not.}
- \item{...}{Other arguments passed to \code{\link[base]{list.files}}()}
+ \item{...}{Optional arguments passed to the constructor of the
+    static (calling) class.}
 }
 
 \value{
