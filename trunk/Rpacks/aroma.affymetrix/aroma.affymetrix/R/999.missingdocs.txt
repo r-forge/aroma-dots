@@ -278,3 +278,5 @@
   getTemplatePath.ChromosomeExplorer setAlias setup
   setup.ChromosomeExplorer updateSamplesFile
   updateSamplesFile.ChromosomeExplorer
+  hasTag hasTag.AffymetrixFile hasTag.AffymetrixFileSet hasTags
+  hasTags.AffymetrixFile hasTags.AffymetrixFileSet

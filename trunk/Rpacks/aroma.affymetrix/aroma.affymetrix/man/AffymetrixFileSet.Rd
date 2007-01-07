@@ -65,6 +65,8 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFileSet]{getPath}} \tab Gets the path (directory) of the file set.\cr
  \tab \code{\link[aroma.affymetrix:getPathnames.AffymetrixFileSet]{getPathnames}} \tab Gets the pathnames of the files in the file set.\cr
  \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFileSet]{getTags}} \tab Gets the tags of the file set.\cr
+ \tab \code{hasTag} \tab  -\cr
+ \tab \code{hasTags} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:lapply.AffymetrixFileSet]{lapply}} \tab Applies a function to each of the Affymetrix file files.\cr
  \tab \code{nbrOfFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:seq.AffymetrixFileSet]{seq}} \tab Gets an vector of file indices.\cr

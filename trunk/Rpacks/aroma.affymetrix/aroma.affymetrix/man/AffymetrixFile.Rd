@@ -58,6 +58,8 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFile]{getPath}} \tab Gets the path (directory) of the file.\cr
  \tab \code{\link[aroma.affymetrix:getPathname.AffymetrixFile]{getPathname}} \tab Gets the pathname of the file.\cr
  \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFile]{getTags}} \tab Gets the tags of the file.\cr
+ \tab \code{hasTag} \tab  -\cr
+ \tab \code{hasTags} \tab  -\cr
 }
 
 
