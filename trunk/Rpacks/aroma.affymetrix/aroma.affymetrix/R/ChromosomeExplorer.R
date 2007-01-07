@@ -59,8 +59,7 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
 
 
   extend(Object(), "ChromosomeExplorer",
-    .model = model,
-    .setupDone = FALSE
+    .model = model
   )
 })
 
@@ -313,11 +312,14 @@ setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., overwrite=F
 
 
 setMethodS3("setup", "ChromosomeExplorer", function(this, ..., force=FALSE) {
-  if (force || !this$.setupDone) {
+  # Setup includes/?
+  path <- filePath(getRootPath(this), "includes");
+  if (force || !isDirectory(path)) {
     addIncludes(this, ...);
-    updateSamplesFile(this, ...);
-    this$.setupDone <- TRUE;
   }
+
+  # Setup samples.js?
+  updateSamplesFile(this, ...);
 }, private=TRUE)
 
 
@@ -333,34 +335,63 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, ...) {
 }, private=TRUE)
 
 
-setMethodS3("writeRegions", "ChromosomeExplorer", function(this, ...) {
+setMethodS3("writeRegions", "ChromosomeExplorer", function(this, nbrOfSnps=c(3,Inf), smoothing=c(-Inf,-0.15, +0.15,+Inf), ...) {
+  # Extract and write regions
   model <- getModel(this);
-#  writeRegions(model, ...);
+  pathname <- writeRegions(model, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE);
+
+  dest <- filePath(getPath(this), "regions.xls");
+  res <- file.copy(pathname, dest, overwrite=TRUE);
+  if (!res)
+    dest <- NULL;
+  invisible(dest);
 }, private=TRUE)
 
 
 
-setMethodS3("process", "ChromosomeExplorer", function(this, ...) {
+setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromosomes=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'arrays':
+
+  # Argument 'chromosomes':
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Generating ChromosomeExplorer report");
+
   # Setup HTML, CSS, Javascript files first
   setup(this, ...);
 
   # First the model, just in case
   model <- getModel(this);
-  fit(model, ...);
+  fit(model, arrays=arrays, chromosomes=chromosomes, ...);
 
   # Generate bitmap images
-  writeGraphs(this, ...);
+  writeGraphs(this, arrays=arrays, chromosomes=chromosomes, ...);
 
   # Update samples.js
   updateSamplesFile(this, ...);
 
-  writeRegions(this, ...);
+  # Write regions file
+  writeRegions(this, arrays=arrays, chromosomes=chromosomes, ...);
+
+  verbose && exit(verbose);
 })
 
 
 ##############################################################################
 # HISTORY:
 # 2007-01-07
+# o TODO: The region filter for writeRegions() is hardwired for now.
+# o Update to include regions.xls file on the CE output page too.
 # o Now all HTML, CSS, and Javascript files are created too.
 # 2007-01-04
 # o Created.
