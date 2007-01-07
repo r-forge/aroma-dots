@@ -354,6 +354,15 @@ setMethodS3("getTags", "AffymetrixFile", function(this, ...) {
   tags;
 })
 
+setMethodS3("hasTags", "AffymetrixFile", function(this, tags, ...) {
+  all(tags %in% getTags(this));
+})
+
+setMethodS3("hasTag", "AffymetrixFile", function(this, tag, ...) {
+  hasTags(this, tags=tag, ...);
+})
+
+
 
 setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
   label <- this$label;
@@ -484,6 +493,8 @@ setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, ov
 
 ############################################################################
 # HISTORY:
+# 2007-01-07
+# o Added hasTags() and hasTag().
 # 2006-11-02
 # o Added getFullName(), getTags() and redefined getName().
 # 2006-09-15

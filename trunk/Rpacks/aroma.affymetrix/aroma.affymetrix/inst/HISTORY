@@ -17,6 +17,15 @@ o Replaced old GladModel with new MultiGladModel, which
 o Added AffineCnPlm for completeness.
 o The ChromosomeExplorer class now generates a complete
   working ChromosomeExplorer web page.
+o WORKAROUND: If 'affy' is loaded after aroma.affymetrix,
+  which happens when loading 'affyPLM', affy will overload
+  the generic function plotDensity() with a regular function
+  breaking that method in aroma.affymetrix. The solution
+  is to make sure 'affy' is always loaded before, which was done
+  by adding 'affy' to 'Depends:' in DESCRIPTION.  We have the
+  same problem with the 'oligo' package, which is required by
+  the CrlmmModel class.  However, for now, we leave that package
+  under 'Suggests:'.
 
 Version: 0.3.2 [2007-01-06]
 o Major changes.
