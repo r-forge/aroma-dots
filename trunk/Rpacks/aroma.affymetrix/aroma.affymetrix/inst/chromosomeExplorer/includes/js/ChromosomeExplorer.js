@@ -38,6 +38,7 @@ var navAreaWidth = 0;
 var navAreaX = 0;
 var imageUrl = null;
 var bookmarkUrl = null;
+var cnrUrl = null;
 
 function findPosX(obj) {
   var pos = 0;
@@ -104,15 +105,24 @@ function locatorUpdated() {
   var tag = (xPx-55)+'px='+Math.round(100*xMb)/100+'Mb';
   updateText(panelLocatorTag, tag);
 
+  var url;
+
   /* Update shortcut link */
-  var args = "'" + chipType + "', '" + sample + "', '" + chromosome + "', " + panel.scrollLeft + ", " + scale;
-  var url = 'javascript:jumpTo(' + args + ');';
-  var url = 'x:"' + args + '",';
-	/*
-  url = 'javascript:addToFavorites("' + url + '", "sss")';
-	*/
-  bookmarkUrl.href = url;
-  updateText(bookmarkUrl, url);
+  if (bookmarkUrl != null) {
+    var args = "'" + chipType + "', '" + sample + "', '" + chromosome + "', " + panel.scrollLeft + ", " + scale;
+    url = 'javascript:jumpTo(' + args + ');';
+    url = 'x:"' + args + '",';
+  	/* url = 'javascript:addToFavorites("' + url + '", "sss")';	*/
+    bookmarkUrl.href = url;
+    updateText(bookmarkUrl, url);
+  }
+
+  /* Update CNR link */
+  if (cnrUrl != null) {
+    url = chipType + '/' + 'regions.xls';
+    cnrUrl.href = url;
+    updateText(cnrUrl, url);
+  }
 }
 
 function jumpTo(newChipType, newSample, newChromosome, newPanelOffset, newZoom) {
@@ -419,6 +429,7 @@ function startChromosomeExplorer() {
 
   imageUrl = document.getElementById('imageUrl');
   bookmarkUrl = document.getElementById('bookmarkUrl');
+  cnrUrl = document.getElementById('cnrUrl');
 
   /*******************************************************
    * chromosomePanel

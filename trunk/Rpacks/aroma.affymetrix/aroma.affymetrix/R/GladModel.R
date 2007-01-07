@@ -455,12 +455,18 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
-  arrays <- Arguments$getIndices(arrays, range=c(1,nbrOfArrays(this)));
+  if (identical(arrays, "fitted")) {
+  } else {
+    arrays <- Arguments$getIndices(arrays, range=c(1,nbrOfArrays(this)));
+  }
 
   # Argument 'chromosomes':
-  chromosomes <- Arguments$getCharacters(chromosomes);
-#  chromosomes[chromosomes == "23"] <- "X";
-  chromosomes <- intersect(chromosomes, getChromosomes(this));
+  if (identical(chromosomes, "fitted")) {
+  } else {
+    chromosomes <- Arguments$getCharacters(chromosomes);
+  #  chromosomes[chromosomes == "23"] <- "X";
+    chromosomes <- intersect(chromosomes, getChromosomes(this));
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -847,7 +853,7 @@ setMethodS3("getLog2Ratios", "GladModel", function(this, ..., verbose=FALSE) {
   # Extract the regions for each of the GLAD fits (per array)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   suppressWarnings({
-    res <- fit(this, ..., verbose=less(verbose,10));
+    res <- fit(this, ..., .retResults=TRUE, verbose=less(verbose,10));
   })
 
   res <- lapply(res, FUN=function(arrayFits) {
@@ -890,7 +896,7 @@ setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", margin=10
   # Extract the regions for each of the GLAD fits (per array)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   suppressWarnings({
-    res <- fit(this, ..., verbose=less(verbose,10));
+    res <- fit(this, ..., .retResults=TRUE, verbose=less(verbose,10));
   })
 
   res <- lapply(res, FUN=function(arrayFits) {
@@ -965,8 +971,9 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
     filename <- sprintf("%s,GLAD,regions.%s", fullname, format); 
     pathname <- filePath(path, filename);
     pathname <- Arguments$getWritablePathname(pathname);
-    if (!skip && isFile(pathname))
+    if (!skip && isFile(pathname)) {
       file.remove(pathname);
+    }
   }
 
   res <- list();
@@ -1077,7 +1084,7 @@ ylim <- c(-1,1);
     res[[array]] <- df;
   }
 
-  invisible(res);
+  invisible(pathname);
 })
 
 

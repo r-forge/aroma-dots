@@ -50,7 +50,7 @@ for (var kk=0; kk < zooms.length; kk++) {
 <small>
 <script type="text/javascript" language="JavaScript1.2">
 if (chipTypes.length > 1) {
-  document.write('Change chiptype:\n');
+  document.write('Chiptype:\n');
   for (var kk=0; kk < chipTypes.length; kk++) {
     var chipType = chipTypes[kk];
     document.write('[<span id="chipType' + chipType + '"><a href="javascript:changeChipType(' + kk + ');">' + chipType + '</a></span>]');
@@ -58,7 +58,7 @@ if (chipTypes.length > 1) {
   document.write('<br>\n');
 }
 </script>
-Change sample:
+Sample:
 <script type="text/javascript" language="JavaScript1.2">
 for (var kk=0; kk < samples.length; kk++) {
   var sample = samples[kk];
@@ -74,7 +74,7 @@ Step:&nbsp;[<a href="javascript:gotoNextSample(-1);">prev</a>][<a href="javascri
 &nbsp;
 Play:&nbsp;[<a href="javascript:playAlongSamples('start');">start</a>][<a href="javascript:playAlongSamples('stop');">stop</a>]&nbsp;(<a href="javascript:{playDelay=playDelay*2; return true;}">slower</a>,<a href="javascript:{playDelay=playDelay/2; return true;}">faster</a>)
 <br>
-Change chromosome: 
+Chromosome: 
 <script type="text/javascript" language="JavaScript1.2">
 for (var kk=0; kk < chromosomes.length; kk++) {
   var chr = chromosomes[kk];
@@ -139,7 +139,11 @@ if (shortcuts.length > 0) {
 <td align="left">
 </small></small>
 <small><small>
+Identified regions: <a id="cnrUrl" href=""></a>
+<!--
 Shortcut to this location: <a id="bookmarkUrl" href=""></a>
+-->
+</small></small>
  </td>
 <td align="right">
 <small><small>

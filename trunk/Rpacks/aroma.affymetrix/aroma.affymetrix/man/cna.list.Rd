@@ -42,4 +42,7 @@
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+
 \keyword{methods}
+\keyword{internal}

@@ -32,6 +32,8 @@
 # }
 #
 # @author
+#
+# @keyword internal
 #*/###########################################################################
 setMethodS3("cna", "list", function(dataSets, pres="QN", plm=c("RMA", "MBEI"), posts="FLN", cnm="glad", ..., ram=1, verbose=-2) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
