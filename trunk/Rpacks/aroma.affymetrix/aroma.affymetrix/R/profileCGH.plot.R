@@ -7,7 +7,7 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
 
   # Argument 'colDAGLAD':
   if (is.null(colDAGLAD)) { 
-    colDAGLAD <- brewer.pal(5, "Dark2");
+    colDAGLAD <- RColorBrewer::brewer.pal(5, "Dark2");
   }
 
   # Get the last physical position

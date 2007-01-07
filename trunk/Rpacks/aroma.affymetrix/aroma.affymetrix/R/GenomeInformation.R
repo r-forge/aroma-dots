@@ -234,11 +234,15 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
     data <- data[o,,drop=FALSE];
     rm(o);
     verbose && str(verbose, data);
-	    verbose && exit(verbose);
+    verbose && exit(verbose);
 
     # Store in cache
     this$.data <- data;
 
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+    
     verbose && exit(verbose);
   }
 

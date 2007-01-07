@@ -1,6 +1,21 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.3.2 [2007-01-07]
+o Package pass R CMD check v2.4.0.
+o Tested the package from scratch analysis 19 Mapping250K_Nsp
+  and 16 Mapping250K_Sty (15 in common) for total copy-number
+  analysis. Steps involved: quantile normalization, RMA 
+  probe-level modelling, PCR fragment-length normalization,
+  and combined GLAD modelling.  This was done in WinXP Pro
+  on an IBM X61 with 1.5GB RAM.  Memory usage peaked at
+  approximately 1GB.
+o Some optimization of what is cached in memory and what
+  is cached on file.  Only for some data classes for now.
+o Replaced old GladModel with new MultiGladModel, which
+  is now named GladModel.
+o Added AffineCnPlm for completeness.
+
 Version: 0.3.2 [2007-01-06]
 o Major changes.
 o Renamed all Preprocessing classes to Transform classes.

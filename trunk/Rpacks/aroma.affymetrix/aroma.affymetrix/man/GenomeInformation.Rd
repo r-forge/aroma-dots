@@ -48,7 +48,6 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{getChromosomes} \tab  -\cr
  \tab \code{getChromosomeStats} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getData.GenomeInformation]{getData}} \tab Gets all or a subset of the genome information data.\cr
- \tab \code{getFields} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getPositions.GenomeInformation]{getPositions}} \tab Gets the physical positions for a set of units.\cr
  \tab \code{\link[aroma.affymetrix:getUnitIndices.GenomeInformation]{getUnitIndices}} \tab Gets unit indices ordered along the chromosome.\cr
  \tab \code{getUnitsOnChromosome} \tab  -\cr

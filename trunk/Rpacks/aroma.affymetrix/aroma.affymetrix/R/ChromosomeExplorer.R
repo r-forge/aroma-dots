@@ -5,19 +5,30 @@
 #
 # \description{
 #  @classhierarchy
-#
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{model}{A @see "MultiGladModel" object.}
+#   \item{model}{A @see "GladModel" object.}
 #   \item{tags}{A @character @vector of tags to be added to the output path.}
 #   \item{...}{Not used.}
 # }
 #
 # \section{Fields and Methods}{
 #  @allmethods "public"
+# }
+#
+# \section{Generating PNG images}{
+#   In order to get better looking graphs, but also to be able to generate
+#   bitmap images on systems without direct bitmap support, which is the case
+#   when running R in batch mode or on Unix without X11 support, images are
+#   created using the @see "R.utils::png2" device (a wrapper for 
+#   \code{bitmap()} immitating \code{png()}).  The \code{png()} is only
+#   used if \code{png2()}, which requires Ghostscript, does not.
+#   Note, when images are created using \code{png2()}, the images does
+#   not appear immediately, although the function call is completed,
+#   so be patient.
 # }
 #
 # @author
@@ -32,8 +43,8 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'model':
   if (!is.null(model)) {
-    if (!inherits(model, "MultiGladModel")) {
-        throw("Argument 'model' is not a 'MultiGladModel': ", class(model));
+    if (!inherits(model, "GladModel")) {
+      throw("Argument 'model' is not a 'GladModel': ", class(model));
     }
   }
 
@@ -58,7 +69,7 @@ setMethodS3("as.character", "ChromosomeExplorer", function(this, ...) {
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
   s <- c(s, sprintf("Path: %s", getPath(this)));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -79,9 +90,9 @@ setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
 })
 
 
-setMethodS3("getName", "ChromosomeExplorer", function(this, collapse="+", ...) {
+setMethodS3("getName", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
-  getName(model);
+  getName(model, ...);
 })
 
 
@@ -183,7 +194,7 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, ...) {
 
 setMethodS3("writeRegions", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
-  writeRegions(model, ...);
+#  writeRegions(model, ...);
 }, private=TRUE)
 
 

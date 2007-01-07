@@ -43,7 +43,7 @@ setMethodS3("writeWig", "CnChipEffectSet", function(this, reference=NULL, arrays
 
   # Argument 'col':
   if (is.null(col))
-    col <- brewer.pal(5, "Dark2")[3:4];
+    col <- RColorBrewer::brewer.pal(5, "Dark2")[3:4];
   col <- col2rgb(col);
   col <- apply(col, MARGIN=2, FUN=paste, collapse=",");
   col <- rep(col, length.out=2);

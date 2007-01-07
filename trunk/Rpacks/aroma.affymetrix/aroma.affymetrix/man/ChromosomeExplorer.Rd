@@ -28,13 +28,12 @@ public static class \bold{ChromosomeExplorer}\cr
 extends \link[R.oo]{Object}\cr
 
 
-
  }
 
  \usage{ChromosomeExplorer(model=NULL, tags="*", ...)}
 
  \arguments{
-   \item{model}{A \code{\link{MultiGladModel}} object.}
+   \item{model}{A \code{\link{GladModel}} object.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be added to the output path.}
    \item{...}{Not used.}
  }

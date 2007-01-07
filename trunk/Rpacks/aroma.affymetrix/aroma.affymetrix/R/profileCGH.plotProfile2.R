@@ -100,7 +100,6 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
 
   # Argument 'colDAGLAD':
   if (is.null(colDAGLAD)) {
-    require("RColorBrewer") || throw("Package not loaded: RColorBrewer");
     colDAGLAD <- RColorBrewer::brewer.pal(5, "Dark2");
   }
 

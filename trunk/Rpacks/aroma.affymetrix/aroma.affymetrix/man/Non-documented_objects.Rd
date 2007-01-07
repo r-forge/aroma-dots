@@ -43,10 +43,9 @@
 \alias{as.character.ChromosomeExplorer}
 \alias{as.character.CnChipEffectFile}
 \alias{as.character.CrlmmModel}
-\alias{as.character.GladModel}
 \alias{as.character.Interface}
 \alias{as.character.Model}
-\alias{as.character.MultiGladModel}
+\alias{as.character.GladModel}
 \alias{as.character.PlatformDesign}
 \alias{as.character.QcInfo}
 \alias{as.character.SnpChipEffectFile}
@@ -117,7 +116,6 @@
 \alias{findUnitsTodo.ChipEffectSet}
 \alias{fit}
 \alias{fit.GladModel}
-\alias{fit.MultiGladModel}
 \alias{fit.PcrProbeCalibration}
 \alias{fitGenotypeCone}
 \alias{fitGenotypeCone.matrix}
@@ -174,7 +172,7 @@
 \alias{getAptPathnames.AptProbesetGenotype}
 \alias{getArrays}
 \alias{getArrays.ChromosomeExplorer}
-\alias{getArrays.MultiGladModel}
+\alias{getArrays.GladModel}
 \alias{getAsteriskTag}
 \alias{getAsteriskTag.Transform}
 \alias{getAverage}
@@ -221,7 +219,7 @@
 \alias{getChipEffectFileClass.CnChipEffectSet}
 \alias{getChipEffectFileClass.SnpChipEffectSet}
 \alias{getChipEffectFiles}
-\alias{getChipEffectFiles.MultiGladModel}
+\alias{getChipEffectFiles.GladModel}
 \alias{getChipEffects}
 \alias{getChipEffects.CnPlm}
 \alias{getChipEffects.GladModel}
@@ -672,7 +670,28 @@
 \alias{writeSpatial.ProbeAffinityFile}
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
-\alias{writeWig.GladModel}
+\alias{as.character.ChipEffectFile}
+\alias{as.character.ChipEffectSet}
+\alias{digest}
+\alias{getChipTypes.GladModel}
+\alias{getDataColumns}
+\alias{getDataColumns.GenomeInformation}
+\alias{getListOfCdfs.GladModel}
+\alias{getListOfChipEffects.GladModel}
+\alias{getListOfGenomeInformations.GladModel}
+\alias{getListOfReferences.GladModel}
+\alias{getNames.GladModel}
+\alias{getOutputDataSet.FragmentLengthNormalization}
+\alias{getParameters.ChipEffectFile}
+\alias{getParameters.ChipEffectSet}
+\alias{getParameters.CnChipEffectFile}
+\alias{getParameters.SnpChipEffectFile}
+\alias{getParametersAsString.ChipEffectFile}
+\alias{getParametersAsString.ChipEffectSet}
+\alias{getReferenceFiles.GladModel}
+\alias{getReferenceName.GladModel}
+\alias{getTableOfArrays.GladModel}
+\alias{nbrOfChipTypes.GladModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

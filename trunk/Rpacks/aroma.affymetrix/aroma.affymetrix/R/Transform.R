@@ -43,8 +43,8 @@ setConstructorS3("Transform", function(dataSet=NULL, tags="*", ...) {
 
   this <- extend(Object(), "Transform", 
     .tags = tags,
-    inputDataSet = dataSet,
-    "cached:outputDataSet" = NULL
+    .inputDataSet = dataSet,
+    "cached:.outputDataSet" = NULL
   );
 
   setTags(this, tags);
@@ -81,14 +81,14 @@ setMethodS3("as.character", "Transform", function(this, ...) {
   tags <- paste(getTags(ds), collapse=",");
   s <- c(s, sprintf("Input tags: %s", tags));
   s <- c(s, sprintf("Output tags: %s", paste(getTags(this), collapse=",")));
-  s <- c(s, sprintf("Number of arrays: %d (%.2fMb)", 
+  s <- c(s, sprintf("Number of arrays: %d (%.2fMB)", 
                            nbrOfArrays(ds), getFileSize(ds)/1024^2));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(ds))));
   params <- paste(getParametersAsString(this), collapse=", ");
   s <- c(s, sprintf("Algorithm parameters: (%s)", params));
   s <- c(s, sprintf("Output path: %s", getPath(this)));
   s <- c(s, sprintf("Is done: %s", isDone(this)));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -310,7 +310,7 @@ setMethodS3("getPath", "Transform", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getInputDataSet", "Transform", function(this, ...) {
-  this$inputDataSet;
+  this$.inputDataSet;
 })
 
 
@@ -342,13 +342,13 @@ setMethodS3("getInputDataSet", "Transform", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) { 
- outputDataSet <- this$outputDataSet;
+ outputDataSet <- this$.outputDataSet;
   if (force || is.null(outputDataSet)) {
     if (isDone(this)) {
       ds <- getInputDataSet(this);
       clazz <- Class$forName(class(ds)[1]);
       outputDataSet <- clazz$fromFiles(path=getPath(this));
-      this$outputDataSet <- outputDataSet;
+      this$.outputDataSet <- outputDataSet;
     }
   }
   outputDataSet;
@@ -357,7 +357,7 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) {
 
 setMethodS3("getOutputFiles", "Transform", function(this, ...) {
   outPath <- getPath(this);
-  findFiles(pattern="[.](c|C)(e|E)(l|L)$", paths=outPath, firstOnly=FALSE);
+  findFiles(pattern="^[^.].*[.](c|C)(e|E)(l|L)$", paths=outPath, firstOnly=FALSE);
 }, private=TRUE)
 
 
@@ -434,6 +434,10 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-01-07
+# o BUG FIX: getOutputFiles() would return "private" (prefix '.') files too.
+#   This caused for instance FragmentLengthNormalization to return FALSE
+#   for isDone() after being average, because one too many files was found.
 # 2007-01-06
 # o Renamed to Transform (from Preprocessing).
 # 2006-12-20

@@ -50,7 +50,7 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
     }
 
     if (dataSet$mergeStrands != TRUE) {
-      throw("Currently only total copy-number chip effects can be normalized, i.e. 'mergeStrands' must be TRUE");
+      throw("Currently only non-strands specific copy-number chip effects can be normalized, i.e. 'mergeStrands' must be TRUE");
     }
   }
 
@@ -90,6 +90,21 @@ setMethodS3("getCdf", "FragmentLengthNormalization", function(this, ...) {
   getCdf(inputDataSet);
 })
 
+
+setMethodS3("getOutputDataSet", "FragmentLengthNormalization", function(this, ...) {
+  res <- NextMethod(generic="getOutputDataSet", object=this, ...);
+
+  # Carry over parameters too.  AD HOC for now. /HB 2007-01-07
+  if (inherits(res, "SnpChipEffectSet")) {
+    ces <- getInputDataSet(this);
+    res$mergeStrands <- ces$mergeStrands;
+    if (inherits(res, "CnChipEffectSet")) {
+      res$combineAlleles <- ces$combineAlleles;
+    }
+  }
+
+  res;
+})
 
 setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, force=FALSE, ...) {
   # Cached?
@@ -261,10 +276,6 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     return(invisible(outputSet));
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Retrieve/calculate the target function
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  targetFcn <- getTargetFunction(this, verbose=less(verbose));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
@@ -276,16 +287,15 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   cdf <- getCdf(ces);
   subsetToUpdate <- indexOf(cdf, "^SNP");
 
-  verbose && enter(verbose, "Retrieving PCR fragment lengths");
+  verbose && enter(verbose, "Retrieving SNP information annotations");
   cdf <- getCdf(this);
   si <- getSnpInformation(cdf);
-
-  # Get PCR fragment lengths for the subset to be fitted
-  fl <- getFragmentLengths(si, units=subsetToUpdate);
   verbose && exit(verbose);
 
+  verbose && enter(verbose, "Identifying the subset to be fitted");
   # Get subset to fit
   subsetToFit <- getSubsetToFit(this, verbose=less(verbose));
+  verbose && exit(verbose);
 
   # Get (and create) the output path
   path <- getPath(this);
@@ -295,29 +305,54 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  fl <- NULL;
+  targetFcn <- NULL;
   map <- NULL;
   res <- vector("list", nbrOfArrays(ces));
   for (kk in seq(length=nbrOfArrays(ces))) {
     ce <- getFile(ces, kk);
     verbose && enter(verbose, sprintf("Array #%d (%s)", kk, getName(ce)));
 
+    filename <- getFilename(ce);
+    pathname <- filePath(path, filename);
+    if (isFile(pathname)) {
+      verbose && cat(verbose, "Already normalized. Skipping.");
+      ceN <- fromFile(ce, pathname);
+
+      # Carry over parameters too.  AD HOC for now. /HB 2007-01-07
+      if (inherits(ce, "SnpChipEffectFile")) {
+        ceN$mergeStrands <- ce$mergeStrands;
+        if (inherits(ce, "CnChipEffectFile")) {
+          ceN$combineAlleles <- ce$combineAlleles;
+        }
+      }
+
+      # CDF inheritance
+      setCdf(ceN, cdf);
+
+      res[[kk]] <- ceN;
+      verbose && exit(verbose);
+      next;
+    }
+
+    # Get unit-to-cell (for optimized reading)?
     if (is.null(map)) {
+      # Only loaded if really needed.
       verbose && enter(verbose, "Retrieving unit-to-cell map for all arrays");
       map <- getCellMap(ce, units=subsetToUpdate, verbose=less(verbose));
       verbose && str(verbose, map);
       verbose && exit(verbose);
     }
 
-    filename <- getFilename(ce);
-    pathname <- filePath(path, filename);
-    if (isFile(pathname)) {
-      verbose && cat(verbose, "Already normalized. Skipping.");
-      ceN <- fromFile(ce, pathname);
-      # CDF inheritance
-      setCdf(ceN, cdf);
-      res[[kk]] <- ceN;
-      verbose && exit(verbose);
-      next;
+    if (is.null(targetFcn)) {
+      # Only loaded if really needed.
+      # Retrieve/calculate the target function
+      targetFcn <- getTargetFunction(this, verbose=less(verbose));
+    }
+
+    if (is.null(fl)) {
+      # Get PCR fragment lengths for the subset to be fitted
+      fl <- getFragmentLengths(si, units=subsetToUpdate);
     }
 
     # Get target log2 signals for all SNPs to be updated
@@ -342,6 +377,15 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
     # Defining normalized object
     ceN <- fromFile(ce, pathname);
+
+    # Carry over parameters too.  AD HOC for now. /HB 2007-01-07
+    if (inherits(ce, "SnpChipEffectFile")) {
+      ceN$mergeStrands <- ce$mergeStrands;
+      if (inherits(ce, "CnChipEffectFile")) {
+        ceN$combineAlleles <- ce$combineAlleles;
+      }
+    }
+
     # CDF inheritance
     setCdf(ceN, cdf);
 
@@ -376,6 +420,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 ############################################################################
 # HISTORY:
 # 2007-01-07
+# o Now chip-effect parameters are carried over to the output set too.
 # o BUG FIX: process(): Forgot to skip to next array in for loop if an 
 #   array was detected to be already normalized. Generated a "file already
 #   exists" error.

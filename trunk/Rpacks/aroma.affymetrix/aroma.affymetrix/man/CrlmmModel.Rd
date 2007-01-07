@@ -30,6 +30,8 @@ public static class \bold{CrlmmModel}\cr
 extends \emph{\link[aroma.affymetrix]{Model}}\cr
 
 
+
+  This class represents the CRLMM model of Carvalho et al. (2006).
  }
 
  \usage{CrlmmModel(ces=NULL, minLLRforCalls=c(AA = 50, AB = 40, BB = 50), transform=c("log", "asinh"), tags="CRLMM", ...)}
@@ -61,8 +63,19 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
+ \section{Requirments}{
+ 
+   This implementation is partly adopted from and partly makes use of
+   the implementation available in the \pkg{oligo} package.
+   It was implemented so it can give identical results to the \pkg{oligo}
+   implementation.
+ }
+
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
- \seealso{
+ \references{
+  Carvalho B, Bengtsson H, Speed TP, and Irizarry RA. \emph{Exploration,
+  Normalization, and Genotype Calls of High Density Oligonucleotide SNP
+  Array Data}, Biostatistics, 2006.\cr
  }
 \keyword{classes}

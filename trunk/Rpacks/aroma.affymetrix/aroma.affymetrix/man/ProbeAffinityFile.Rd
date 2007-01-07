@@ -38,7 +38,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
   This class represents estimates of probe affinities in probe-level models.
  }
 
- \usage{ProbeAffinityFile(..., probeModel=c("pm", "mm", "pm-mm"))}
+ \usage{ProbeAffinityFile(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)"))}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
