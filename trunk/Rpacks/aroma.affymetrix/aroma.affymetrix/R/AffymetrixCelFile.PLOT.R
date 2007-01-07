@@ -17,6 +17,7 @@
 #      \code{identifyCells()} of @see "AffymetrixCdfFile",
 #      , @seemethod "getData", and 
 #      @see "aroma.light::plotDensity.numeric".}
+#   \item{xlim}{The range on the x axis.}
 #   \item{xlab,ylab}{The labels on the x and the y axes.}
 #   \item{log}{If @TRUE, the density of the log (base 2) values are 
 #      used, otherwise the non-logged values.}
@@ -33,7 +34,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types=NULL, ..., xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE) {
+setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types=NULL, ..., xlim=c(0,16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -78,7 +79,7 @@ setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types
       y <- log(y, base=2);
     }
     verbose && cat(verbose, "Plotting");
-    plotDensity(y, xlab=xlab, ylab=ylab, ...);
+    plotDensity(y, xlim=xlim, xlab=xlab, ylab=ylab, ...);
   })
 
   if (annotate) {

@@ -391,6 +391,17 @@ setMethodS3("getTags", "AffymetrixFileSet", function(this, ...) {
 })
 
 
+setMethodS3("hasTags", "AffymetrixFileSet", function(this, tags, ...) {
+  all(tags %in% getTags(this));
+})
+
+
+setMethodS3("hasTag", "AffymetrixFileSet", function(this, tag, ...) {
+  hasTags(this, tags=tag, ...);
+})
+
+
+
 ###########################################################################/**
 # @RdocMethod setTags
 #
@@ -987,6 +998,7 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 ############################################################################
 # HISTORY:
 # 2006-01-07
+# o Added hasTags() and hasTag().
 # o Now arguments '...' in fromFiles() are passed to the constructor of
 #   the static class, i.e. via newInstance(static, ...).  Requested by KS.
 # o Added argument 'alias' to constructor.

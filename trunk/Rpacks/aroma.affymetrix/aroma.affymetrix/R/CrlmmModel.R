@@ -246,7 +246,7 @@ setMethodS3("fit", "CrlmmModel", function(this, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Requirements
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  require(oligo) || throw("Package 'oligo' not loaded.");
+  require(oligo) || throw("Package not loaded: oligo");
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
