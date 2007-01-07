@@ -64,13 +64,20 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., force=FALS
   }
 
   if (!force) {
+    # In memory?
     res <- this$.cellIndices[[key]];
-    if (identical(res, "on-file")) {
-      verbose && cat(verbose, "Cached on file");
+    # On file?
+    if (is.null(res)) {
       res <- loadCache(list(key));
+      if (!is.null(res))
+        where <- "on file";
+    } else {
+      where <- "in memory";
     }
     if (!is.null(res)) {
-      verbose && cat(verbose, "Returning cached value");
+      size <- object.size(res);
+      verbose && printf(verbose, "Returning value cached %s: %.1fMB\n", 
+                                                   where, size/1024^2);
       verbose && exit(verbose);
       return(res);
     }
@@ -132,8 +139,8 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., force=FALS
       # Keep, in-memory cache.
       if (!is.list(this$.cellIndices))
         this$.cellIndices <- list();
+      this$.cellIndices[[key]] <- NULL;
       saveCache(cells, key=list(key));
-      this$.cellIndices[[key]] <- "on-file";
       verbose && cat(verbose, "Result cached to file");
     }
   }
