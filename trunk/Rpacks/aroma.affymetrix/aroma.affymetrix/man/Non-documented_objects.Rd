@@ -692,6 +692,16 @@
 \alias{getReferenceName.GladModel}
 \alias{getTableOfArrays.GladModel}
 \alias{nbrOfChipTypes.GladModel}
+\alias{addIncludes}
+\alias{addIncludes.ChromosomeExplorer}
+\alias{getAlias}
+\alias{getTemplatePath}
+\alias{getTemplatePath.ChromosomeExplorer}
+\alias{setAlias}
+\alias{setup}
+\alias{setup.ChromosomeExplorer}
+\alias{updateSamplesFile}
+\alias{updateSamplesFile.ChromosomeExplorer}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -1,6 +1,6 @@
 savehistory();
 library(aroma.affymetrix);
-#source("init.R");
+source("init.R");
 
 dataSetName <- "SinclairA_etal_2006";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
@@ -8,7 +8,7 @@ cesList <- list();
 for (chipType in chipTypes) {
   # Create a log file
   logFile <- sprintf("%s,%s.log", dataSetName, chipType);
-  log <- Verbose(logFile, threshold=-8, removeFile=FALSE);
+  log <- Verbose(logFile, threshold=-5, removeFile=FALSE);
   timestampOn(log);
 
   path <- file.path("rawData", dataSetName, chipType);
@@ -48,8 +48,8 @@ timestampOn(log);
 
 glad <- GladModel(cesList);
 print(glad);
-fit(glad, arrays=8, chromosome=21, verbose=log);
-
 ce <- ChromosomeExplorer(glad);
 print(ce);
-process(ce, arrays=8, chromosome=21, verbose=verbose);
+
+#fit(glad, arrays=8, chromosome=21, verbose=log);
+process(ce, arrays=8, chromosome=20, verbose=log);
