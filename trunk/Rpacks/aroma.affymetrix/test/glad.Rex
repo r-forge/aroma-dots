@@ -56,7 +56,7 @@ for (kk in seq(along=dataSets)) {
   rm(ces);
 }
 
-glad <- MultiGladModel(dataSets);
+glad <- GladModel(dataSets);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

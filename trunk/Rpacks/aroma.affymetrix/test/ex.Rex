@@ -51,5 +51,4 @@ print(glad);
 ce <- ChromosomeExplorer(glad);
 print(ce);
 
-#fit(glad, arrays=8, chromosome=21, verbose=log);
-process(ce, arrays=8, chromosome=20, verbose=log);
+process(ce, arrays=8, chromosome=c(7,20:22), verbose=log);
