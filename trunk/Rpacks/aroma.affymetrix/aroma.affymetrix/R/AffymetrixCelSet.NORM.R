@@ -86,9 +86,12 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
       probes <- identifyCells(cdf, indices=subsetToAvg, types=typesToAvg,
                                                   verbose=less(verbose));
       verbose && cat(verbose, "Using ", length(probes), " probes");
-      verbose && cat(verbose, "Calculating target distribution from ", length(this), " arrays");
+      verbose && cat(verbose, "Calculating target distribution from ", 
+                                                length(this), " arrays");
+
       xTarget <- averageQuantile(this, probes=probes, 
                                                   verbose=less(verbose));
+      rm(probes);
       verbose && cat(verbose, "Saving distribution: ", pathname);
       writeApd(pathname, data=xTarget, name="quantiles");
     }
@@ -117,6 +120,10 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
     dataFiles[[kk]] <- normalizeQuantile(df, path=path,
                             subsetToUpdate=subsetToUpdate, typesToUpdate=NULL,
                                  xTarget=xTarget, ..., verbose=less(verbose));
+
+    # Garbage collect
+    gc();
+
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
@@ -209,9 +216,15 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
     Xcc <- getData(df, indices=probes, fields="intensities", ..., verbose=less(verbose, 2));
     Xcc <- as.vector(Xcc$intensities);
 
+    # Garbage collect
+    gc();
+
     # Order and sort the values
     verbose && printf(verbose, "sorting, ");
     Scc <- sort(Xcc);
+
+    # Garbage collect
+    gc();
 
     # The number of non-NA observations
     nobs <- length(Scc);
@@ -237,6 +250,9 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
     verbose && printf(verbose, "summing.");
     xTarget <- xTarget + Scc;
     rm(Scc);
+
+    # Garbage collect
+    gc();
 
     verbose && exit(verbose);
   }

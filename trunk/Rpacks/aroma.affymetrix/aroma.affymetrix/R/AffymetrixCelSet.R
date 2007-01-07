@@ -641,7 +641,7 @@ setMethodS3("getIntensities", "AffymetrixCelSet", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -653,7 +653,7 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- digest(list(units=units, ...));
   res <- this$.getUnitIntensitiesCache[[key]];
-  if (!is.null(res)) {
+  if (!force && !is.null(res)) {
     verbose && cat(verbose, "getUnitIntensitiesCache(): Returning cached data");
     return(res);
   }
@@ -838,15 +838,6 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'field':
   field <- match.arg(field);
-  fieldName <- field;
-  if (field == "intensities") {
-    readIntensities <- TRUE;
-    readStdvs <- FALSE;
-  } 
-  if (field == "stdvs") {
-    readIntensities <- FALSE;
-    readStdvs <- TRUE;
-  } 
   
   # Argument 'mean':
   if (is.character(mean)) {
@@ -891,7 +882,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
       x;
     })
     id <- digest(key);
-    name <- sprintf("%s-%s-%s-%s,%s", prefix, fieldName, meanName, sdName, id);
+    name <- sprintf("%s-%s-%s-%s,%s", prefix, field, meanName, sdName, id);
   }
 
   # Argument 'indices':
@@ -954,6 +945,8 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   if (nbrOfIndices == 0)
     return(res);
 
+  verbose && cat(verbose, "Number of cells to be updated: ", nbrOfIndices);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Estimate the mean and standard deviation
@@ -969,16 +962,17 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   # Get the pathnames of all CEL files to average
   pathnames <- lapply(this, getPathname);
   pathnames <- unlist(pathnames, use.names=FALSE);
+  nbrOfArrays <- length(pathnames);
 
   if (!na.rm)
-    n <- rep(length(this), length=cellsPerChunk);
+    n <- rep(nbrOfArrays, length=cellsPerChunk);
   count <- 1;
   while (length(idxs) > 0) {
     verbose && enter(verbose, "Fitting chunk #", count, " of ", nbrOfChunks);
     if (length(idxs) < cellsPerChunk) {
       head <- 1:length(idxs);
       if (!na.rm)
-        n <- rep(length(pathnames), length=length(idxs));
+        n <- rep(nbrOfArrays, length=length(idxs));
     }
 
     # The indices to be used in this chunk
@@ -987,20 +981,25 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
 
     verbose && enter(verbose, "Reading data");
 #    X <- readCelIntensities(pathnames, indices=indices[ii]);
-    X <- list()
-    for (kk in 1:length(pathnames)) {
-      X[[kk]] <- readCel(filename = pathnames[kk],
-                         readIntensities = readIntensities,
-                         readHeader = FALSE,
-                         readStdvs = readStdvs,
-                         readPixels = FALSE,
-                         readXY = FALSE,
-                         readOutliers = FALSE,
-                         readMasked = FALSE,
-                         ...,
-                         verbose = (verbose - 1))[[fieldName]]
+    readIntensities <- (field == "intensities");
+    readStdvs <- (field == "stdvs");
+    # TODO: Ideally, affxparser::readCel() should support 
+    # multiple filenames turning every data fields into a 
+    # matrix. /HB 2007-01-07
+    X <- matrix(NA, nrow=length(ii), ncol=nbrOfArrays);
+    for (kk in seq(length=nbrOfArrays)) {
+      X[,kk] <- readCel(filename = pathnames[kk],
+                        indices = ii,
+                        readIntensities = readIntensities,
+                        readHeader = FALSE,
+                        readStdvs = readStdvs,
+                        readPixels = FALSE,
+                        readXY = FALSE,
+                        readOutliers = FALSE,
+                        readMasked = FALSE,
+                        ...,
+                        verbose = (verbose - 1))[[field]];
     }
-    X <- do.call("cbind", X)
     verbose && exit(verbose);
 
     if (!is.null(g)) {
@@ -1103,6 +1102,11 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-01-07
+# o BUG FIX: In KS's update of getAverageFile() to support averaging
+#   over other fields than intensities, argument 'indices' was missing
+#   in the readCel() call making the function fail when processed chunk
+#   by chunk. /HB
 # 2007-01-05
 # o Removed getSampleNames().
 # 2006-12-01

@@ -200,7 +200,7 @@ setMethodS3("getData", "SnpInformation", function(this, units=NULL, fields=c("fr
   verbose <- Arguments$getVerbose(verbose);
 
   data <- this$.data;
-  if (is.null(data) || force) {
+  if (force || is.null(data)) {
     verbose && enter(verbose, "Requiring SNP information from file");
 
     # Read the unit names from the corresponding CDF file
@@ -215,6 +215,9 @@ setMethodS3("getData", "SnpInformation", function(this, units=NULL, fields=c("fr
     # Now read the SNP information data
     verbose && enter(verbose, "Reading SNP information data");
     data <- readData(this, verbose=less(verbose));
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Splitting up the fragment length, start & stop details");
@@ -253,6 +256,7 @@ setMethodS3("getData", "SnpInformation", function(this, units=NULL, fields=c("fr
     rr <- match(units, rownames(data));
     data <- data[rr,,drop=TRUE];
   }
+
   # Stratify by field values?
   args <- list(...);
   if (length(args) > 0) {
@@ -300,6 +304,7 @@ setMethodS3("getFields", "SnpInformation", function(this, ...) {
 
 
 setMethodS3("readData", "SnpInformation", abstract=TRUE);
+
 
 setMethodS3("readTableInternal", "SnpInformation", function(this, pathname, colClasses=NULL, ..., include=NULL, exclude=NULL, verbose=FALSE) {
   # Argument 'verbose':

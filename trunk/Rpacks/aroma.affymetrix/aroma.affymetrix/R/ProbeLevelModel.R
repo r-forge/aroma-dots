@@ -54,7 +54,7 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm"), standardize=TRUE) {
+setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)"), standardize=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -246,6 +246,15 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
         fitfcn(y);
       })
     }
+  } else if (this$probeModel == "min1(pm-mm)") {
+    fitUnit <- function(unit, ...) {
+      lapply(unit, FUN=function(group) {
+        y <- .subset2(group, 1); # Get intensities
+        y <- y[1,,] - y[2,,];  # PM-MM
+        y[y < 1] <- 1;         # min1(PM-MM)=min(PM-MM,1)
+        fitfcn(y);
+      })
+    }
   } else {
     fitUnit <- function(unit, ...) {
       lapply(unit, FUN=function(group) {
@@ -322,7 +331,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
   verbose <- Arguments$getVerbose(verbose);
 
   # Get what set of probes to read
-  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pmmm");
+  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pmmm", "min1(pm-mm)"="pmmm");
 
   # Get the CDF cell indices
   ds <- getDataSet(this);
@@ -448,6 +457,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ds <- getDataSet(this);
   cdf <- getCdf(ds);
+  nbrOfArrays <- length(ds);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -527,7 +537,11 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   ces <- getChipEffects(this, verbose=less(verbose));
 
   # Number of units to load into memory and fit at the same time
-  unitsPerChunk <- ram*100000/length(getDataSet(this));
+  bytesPerChunk <- 100e6;       # 100Mb
+  bytesPerUnitAndArray <- 200;  # Just a rough number; good enough.
+  bytesPerUnit <- nbrOfArrays * bytesPerUnitAndArray;
+  unitsPerChunk <- ram * bytesPerChunk / bytesPerUnit;
+  unitsPerChunk <- as.integer(max(unitsPerChunk,1));
 
   idxs <- 1:nbrOfUnits;
   head <- 1:unitsPerChunk;
@@ -555,7 +569,6 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get the CEL intensities by units
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    nbrOfArrays <- length(ds);
     verbose && enter(verbose, "Reading probe intensities from ", nbrOfArrays, " arrays");
     tRead <- processTime();
     y <- readUnits(this, units=units[uu], ..., force=force, verbose=less(verbose));
@@ -603,13 +616,15 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
     # Garbage collection
     tGc <- processTime();
-    gc();
+    gc <- gc();
+    verbose && print(verbose, gc);
     timers$gc <- timers$gc + (processTime() - tGc);
 
     timers$total <- timers$total + (processTime() - tTotal);
 
     verbose && exit(verbose);
-  } # while()
+  } # while(length(idxs) > 0)
+
 
   totalTime <- processTime() - startTime;
   if (verbose) {
@@ -641,6 +656,11 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 ############################################################################
 # HISTORY:
 # 2007-01-06
+# o Now gc() memory information is outputted after each chunk.
+# o Updated the formula for calculating the number of units per chunk in
+#   fit(). Gives roughly the same number of units though.
+# o Added probe model 'min1(PM-MM)' for modelling y = min(PM-MM,1), which
+#   is how dChip v2006-12-14 is doing it.
 # o Now ProbeLevelModel inherits directly from UnitModel.
 # 2007-01-03
 # o "Protected" several methods to simplify the interface for end users.

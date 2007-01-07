@@ -102,7 +102,13 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   # Calibrate
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   args <- c(list(ds, path=outputPath, verbose=verbose), params);
+  rm(params);
+
   outputDataSet <- do.call("calibrateAllelicCrosstalk", args=args);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   # Update the output data set
   this$outputDataSet <- outputDataSet;

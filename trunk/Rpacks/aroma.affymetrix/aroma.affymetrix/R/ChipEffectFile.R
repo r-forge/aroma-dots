@@ -73,6 +73,33 @@ setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
   this;
 })
 
+
+setMethodS3("as.character", "ChipEffectFile", function(this, ...) {
+  s <- NextMethod(generic="as.character", object=this, ...);
+  params <- paste(getParametersAsString(this), collapse=", ");
+  s <- c(s, sprintf("Parameters: (%s)", params));
+  class(s) <- "GenericSummary";
+  s;
+}, private=TRUE)
+
+
+setMethodS3("getParameters", "ChipEffectFile", function(this, ...) {
+  params <- list(
+    probeModel = this$model
+  );
+  params;
+})
+
+setMethodS3("getParametersAsString", "ChipEffectFile", function(this, ...) {
+  params <- getParameters(this);
+  params <- trim(capture.output(str(params)))[-1];
+  params <- gsub("^[$][ ]*", "", params);
+  params <- gsub(" [ ]*", " ", params);
+  params <- gsub("[ ]*:", ":", params);
+  params;
+}, private=TRUE)
+
+
 setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ..., verbose=FALSE) {
   # Argument 'verbose': 
   verbose <- Arguments$getVerbose(verbose);
@@ -191,7 +218,7 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  res <- NextMethod("readUnits", this, cdf=cdf, ..., verbose=less(verbose));
+  res <- NextMethod("readUnits", this, cdf=cdf, ..., force=force, verbose=less(verbose));
 
   # Store read units in cache?
   if (cache) {
@@ -204,7 +231,7 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
 })
 
 
-setMethodS3("getCellIndices", "ChipEffectFile", function(this, ...) {
+setMethodS3("getCellIndices", "ChipEffectFile", function(this, ..., .cache=TRUE) {
   getCellIndices(getCdf(this), ...);
 })
 
@@ -219,22 +246,50 @@ setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL
 }, private=TRUE);
 
 
-setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
+
+setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+
   verbose && enter(verbose, "Identifying non-fitted units in chip-effect file");
 
-  verbose && enter(verbose, "Identifying CDF units");
   verbose && cat(verbose, "Pathname: ", getPathname(this));
-  verbose && enter(verbose, "Reading CDF cell indices");
-  idxs <- getCellIndices(this, units=units, verbose=less(verbose));
-  verbose && exit(verbose);
-  verbose && enter(verbose, "Extracting first CDF block for each unit");
-  idxs <- applyCdfGroups(idxs, .subset2, 1);
-  verbose && exit(verbose);
-  idxs <- unlist(idxs, use.names=FALSE);
-  verbose && exit(verbose);
+
+
+  idxs <- NULL;
+  if (is.null(units)) {
+    cdf <- getCdf(this);
+    key <- list(chipType=getChipType(cdf), params=getParameters(this));
+    if (!force) {
+      idxs <- loadCache(key);
+      if (!is.null(idxs))
+        verbose && cat(verbose, "Found indices cached on file");
+    }
+  }
+
+  if (is.null(idxs)) {
+    verbose && enter(verbose, "Identifying CDF units");
+  
+    verbose && enter(verbose, "Reading CDF cell indices");
+    idxs <- getCellIndices(this, units=units, verbose=less(verbose));
+    verbose && exit(verbose);
+  
+    verbose && enter(verbose, "Extracting first CDF block for each unit");
+    idxs <- applyCdfGroups(idxs, .subset2, 1);
+    verbose && exit(verbose);
+  
+    idxs <- unlist(idxs, use.names=FALSE);
+
+    if (is.null(units)) {
+      verbose && enter(verbose, "Saving to file cache");
+      saveCache(idxs, key=key);
+      verbose && exit(verbose);
+    }
+
+    verbose && exit(verbose);
+  }
+
 
   # Read one cell from each unit
   verbose && enter(verbose, "Reading data for these ", length(idxs), " cells");
@@ -242,12 +297,14 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
                    readStdvs=TRUE, readPixels=FALSE)$stdvs;
   verbose && exit(verbose);
 
+
   # Identify units for which the stdvs <= 0.
   value <- which(value <= 0);
   if (!is.null(units))
     value <- units[value];
   verbose && cat(verbose, "Looking for stdvs <= 0 indicating non-estimated units:");
   verbose && str(verbose, value);
+
   verbose && exit(verbose);
 
   value;
@@ -255,7 +312,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., v
 
 
 
-setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -287,7 +344,7 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., verb
   } else {
     verbose && enter(verbose, "Retrieving cell indices for specified units");
     # Get the cells to read
-    cells <- getCellIndices(this, units=units, verbose=less(verbose));  
+    cells <- getCellIndices(this, units=units, force=force, verbose=less(verbose));
   }
 
   unitNames <- names(cells);
@@ -421,6 +478,11 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 ############################################################################
 # HISTORY:
+# 2007-01-07
+# o TO DO: Speed up getCellMap(), e.g. using more clever file caching.
+# 2007-01-06
+# o findUnitsTodo() cache cell-index vector to file if all units are to
+#   be scanned.
 # 2007-01-05
 # o Removed getSampleNames().
 # 2007-10-02

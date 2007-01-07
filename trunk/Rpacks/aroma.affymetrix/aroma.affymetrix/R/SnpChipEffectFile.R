@@ -35,33 +35,51 @@ setConstructorS3("SnpChipEffectFile", function(..., mergeStrands=FALSE) {
 })
 
 
-setMethodS3("as.character", "SnpChipEffectFile", function(this, ...) {
-  s <- NextMethod("as.character", ...);
-  s <- c(s, sprintf("Merge strands: %s", this$mergeStrands));
-  class(s) <- "GenericSummary";
-  s;
-}, private=TRUE)
+setMethodS3("getParameters", "SnpChipEffectFile", function(this, ...) {
+  params <- NextMethod(generic="getParameters", object=this, ...);
+  params$mergeStrands <- this$mergeStrands;
+  params;
+})
 
 
-setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., verbose=FALSE) {
+setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FALSE, .cache=TRUE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
+  verbose && enter(verbose, "getCellIndices.SnpChipEffectFile()");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(...));
-  res <- this$.cellIndices[[key]];
-  if (!is.null(res)) {
-    verbose && cat(verbose, "getCellIndices.SnpChipEffectFile(): Returning cached data");
-    return(res);
+  if (!force || .cache) {
+    chipType <- getChipType(getCdf(this));
+    params <- getParameters(this);
+    key <- list(chipType=chipType, params=params, ...);
+    key <- digest(key);
+  }
+
+  if (!force) {
+    res <- this$.cellIndices[[key]];
+    if (identical(res, "on-file")) {
+      verbose && cat(verbose, "Cached on file");
+      res <- loadCache(list(key));
+    }
+    if (!is.null(res)) {
+      verbose && cat(verbose, "Returning cached value");
+      verbose && exit(verbose);
+      return(res);
+    }
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get and restructure cell indices
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cells <- NextMethod("getCellIndices", this, ..., verbose=verbose);
+  cells <- NextMethod("getCellIndices", this, ..., force=force, 
+                                          .cache=FALSE, verbose=verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -76,19 +94,44 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., verbose=F
   #   Merge strands, fit by allele:    #groups=4, #chip effects=2
   #   (same but single-stranded SNP)   #groups=2, #chip effects=2
   if (this$mergeStrands) {
+    verbose && enter(verbose, "Merging strands");
     cells <- applyCdfGroups(cells, function(groups) {
       ngroups <- length(groups);
-#      groups[1:ceiling(ngroups/2)];
-      groups[1:round((ngroups+1)/2)];
+      if (ngroups == 4) {
+        .subset(groups, c(1,2));
+      } else if (ngroups == 2) {
+        .subset(groups, c(1,2));
+      } else if (ngroups == 1) {
+        .subset(groups, 1);
+      } else {
+        # groups[1:ceiling(ngroups/2)];
+        # groups[1:round((ngroups+1)/2)];
+        .subset(groups, 1:round((ngroups+1)/2));
+      }
     })
+    verbose && exit(verbose);
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && cat(verbose, "getCellIndices.SnpChipEffectFile(): Updating cache");
-  this$.cellIndices <- list();
-  this$.cellIndices[[key]] <- cells;
+  if (.cache) {
+    # In-memory or on-file cache?
+    if (object.size(cells) < 10e6) { 
+      # In-memory cache for objects < 10Mb.
+      this$.cellIndices <- list();
+      this$.cellIndices[[key]] <- cells;
+      verbose && cat(verbose, "Cached in memory");
+    } else {
+      # On-file cache
+  #    this$.cellIndices <- list();  # Keep, in-memory cache.
+      saveCache(cells, key=list(key));
+      this$.cellIndices[[key]] <- "on-file";
+      verbose && cat(verbose, "Cached to file");
+    }
+  }
+
+  verbose && exit(verbose);
 
   cells;
 })
@@ -122,6 +165,8 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
 
 ############################################################################
 # HISTORY:
+# 2007-01-07
+# o Now getCellIndices() caches large objects to file and small in memory.
 # 2006-12-18
 # o BUG FIX: getCellIndices() would return a single group instead of two,
 #   for a single-stranded SNP when mergeStrands=TRUE.  See for instance

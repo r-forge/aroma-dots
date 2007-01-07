@@ -372,6 +372,7 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 #   \item{units}{The units of interest. If @NULL, all units are considered.}
 #   \item{...}{Additional arguments passed to 
 #      @see "affxparser::readCdfCellIndices".}
+#   \item{force}{If @TRUE, cached values are ignored.}
 # }
 #
 # \value{
@@ -389,7 +390,7 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -402,7 +403,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- digest(list(units=units, ...));
   res <- this$.cellIndices[[key]];
-  if (!is.null(res)) {
+  if (!force && !is.null(res)) {
     verbose && cat(verbose, "getCellIndices.AffymetrixCdfFile(): Returning cached data");
     return(res);
   }
@@ -425,15 +426,14 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && cat(verbose, "readUnits.AffymetrixCdfFile(): Updating cache");
-  this$.cellIndices <- list();
-  this$.cellIndices[[key]] <- cdf;
+  if (object.size(cdf) < 10e6) { # Cache only objects < 10Mb.
+    verbose && cat(verbose, "readUnits.AffymetrixCdfFile(): Updating cache");
+    this$.cellIndices <- list();
+    this$.cellIndices[[key]] <- cdf;
+  }
 
   cdf;
 })
-
-
-
 
 
 
@@ -624,29 +624,24 @@ setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE,
 
 
 setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, from=1, to=nbrOfCells(this), ..., types=c("all", "pmmm", "pm", "mm", "qc"), sort=TRUE, .force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'types':
   if (is.null(types))
     types <- "all";
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # Arguments 'from' and 'to':
   nbrOfCells <- nbrOfCells(this);
   from <- Arguments$getInteger(from, range=c(1, nbrOfCells));
   to <- Arguments$getInteger(to, range=c(1, nbrOfCells));
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Check for cached results
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Create a cache key (already here)
-  key <- list(method=sprintf("identifyCells(<%s>)", class(this)[1]), chipType=getChipType(this), indices=indices, from=from, to=to, types=types, sort=sort);
-  comment <- sprintf("%s: %s", key$method, key$chipType);
-
-  if (!.force) {
-    cache <- loadCache(key=key);
-    if (!is.null(cache))
-      return(cache);
-  }
 
   # Argument 'indices':
   if (is.numeric(indices)) {
@@ -660,21 +655,37 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
     getFraction <- FALSE;
   }
 
+  if ("all" %in% types) {
+    other <- 1:nbrOfCells;
+  } else {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Check for cached results (already here)
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Create a cache key (already here)
+    verbose && enter(verbose, "Checking cache");
+    key <- list(method=sprintf("identifyCells(<%s>)", class(this)[1]), chipType=getChipType(this), indices=indices, from=from, to=to, types=types, sort=sort);
+    comment <- sprintf("%s: %s", key$method, key$chipType);
+    if (!.force) {
+      cache <- loadCache(key=key);
+      if (!is.null(cache)) {
+        verbose && exit(verbose, suffix="found cached value");
+        return(cache);
+      }
+    }
+    verbose && exit(verbose);
+  }
+
   # Argument 'from':
   if (is.null(indices)) {
     indices <- seq(from=from, to=to, ...);
     indices <- as.integer(indices+0.5);
   }
 
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Intersect 'indices' and 'types'
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if ("all" %in% types) {
-    other <- 1:nbrOfCells;
-  } else {
+  if (!"all" %in% types) {
     verbose && enter(verbose, "Identifies cells of certain kind");
     indices <- unlist(getCellIndices(this), use.names=FALSE);
   
@@ -707,7 +718,7 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
     if (getFraction) {
       # Get the fraction from the already filtered cell indices
       indices <- other[seq(from=1, to=length(other), by=by)];
-    } else {
+    } else if (!"all" %in% types) {
       indices <- intersect(indices, other);
     }
   }
@@ -718,7 +729,9 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Save result to cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  saveCache(indices, key=key, comment=comment);
+  if (!"all" %in% types) {
+    saveCache(indices, key=key, comment=comment);
+  }
   
   indices;
 }, private=TRUE);
@@ -1280,6 +1293,10 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-01-06
+# o Added argument 'force' to getCellIndices().
+# o Now getCellIndices() only caches object < 10 Mb RAM.
+# o Optimized identifyCells() to only cache data in rare cases.
 # 2006-12-18 /KS
 # o Made global replacement "block" -> "group".
 # 2006-12-14
