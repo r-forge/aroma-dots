@@ -42,6 +42,30 @@ setConstructorS3("ChipEffectSet", function(..., model=c("pm")) {
 })
 
 
+setMethodS3("as.character", "ChipEffectSet", function(this, ...) {
+  s <- NextMethod(generic="as.character", object=this, ...);
+  params <- paste(getParametersAsString(this), collapse=", ");
+  s <- c(s, sprintf("Parameters: (%s)", params));
+  class(s) <- "GenericSummary";
+  s;
+}, private=TRUE)
+
+
+setMethodS3("getParameters", "ChipEffectSet", function(this, ...) {
+  ce <- getFile(this, 1);
+  getParameters(ce, ...);
+})
+
+setMethodS3("getParametersAsString", "ChipEffectSet", function(this, ...) {
+  params <- getParameters(this);
+  params <- trim(capture.output(str(params)))[-1];
+  params <- gsub("^[$][ ]*", "", params);
+  params <- gsub(" [ ]*", " ", params);
+  params <- gsub("[ ]*:", ":", params);
+  params;
+}, private=TRUE)
+
+
 setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
   ChipEffectFile;
 }, static=TRUE, private=TRUE)
@@ -177,16 +201,16 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
 
 
 
-setMethodS3("getAverageFile", "ChipEffectSet", function(this, ..., indices="remaining") {
+setMethodS3("getAverageFile", "ChipEffectSet", function(this, ..., verbose=FALSE, indices="remaining") {
   # Argument 'indices':
   if (identical(indices, "remaining")) {
   } else if (is.null(indices)) {
     # Update only cells which stores values
-    indices <- getCellIndices(this);
+    indices <- getCellIndices(this, verbose=verbose);
     indices <- unlist(indices, use.names=FALSE);
   }
 
-  NextMethod(generic="getAverageFile", object=this, ..., indices=indices);
+  NextMethod(generic="getAverageFile", object=this, ..., indices=indices, verbose=verbose);
 })
 
 

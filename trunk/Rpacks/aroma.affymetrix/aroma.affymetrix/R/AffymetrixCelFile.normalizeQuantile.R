@@ -37,7 +37,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., .asOligo=FALSE, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
+setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.path("normQuantile", getChipType(this)), xTarget, subsetToUpdate=NULL, typesToUpdate=NULL, ..., overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
   # Load aroma.light::normalizeQuantile()
   require(aroma.light) || throw("Package aroma.light not loaded."); 
 
@@ -98,15 +98,7 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.p
 
   # Normalize intensities
   verbose && enter(verbose, "Normalizing to empirical target distribution");
-  if (.asOligo) {
-    verbose && enter(verbose, "Immitating the oligo package");
-str(x[subsetToUpdate]);
-str(xTarget);
-    stop("Not supported yet, because number of PMs in CDF and in oligo differ");
-    x[subsetToUpdate] <- oligo::normalizeToSample(as.matrix(x[subsetToUpdate]), xTarget);
-  } else {
-    x[subsetToUpdate] <- normalizeQuantile(x[subsetToUpdate], xTarget=xTarget);
-  }
+  x[subsetToUpdate] <- normalizeQuantile(x[subsetToUpdate], xTarget=xTarget);
   rm(subsetToUpdate);
   verbose && exit(verbose);
 

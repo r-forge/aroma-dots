@@ -34,32 +34,53 @@ setConstructorS3("CnChipEffectFile", function(..., combineAlleles=FALSE) {
   )
 })
 
-setMethodS3("as.character", "CnChipEffectFile", function(this, ...) {
-  s <- NextMethod("as.character", ...);
-  s <- c(s, sprintf("Combine alleles: %s", this$combineAlleles));
-  class(s) <- "GenericSummary";
-  s;
-}, private=TRUE)
+setMethodS3("getParameters", "CnChipEffectFile", function(this, ...) {
+  params <- NextMethod(generic="getParameters", object=this, ...);
+  params$combineAlleles <- this$combineAlleles;
+  params;
+})
 
-setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FALSE) {
+
+setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., force=FALSE, .cache=TRUE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "getCellIndices.CnChipEffectFile()");
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(...));
-  res <- this$.cellIndices[[key]];
-  if (!is.null(res)) {
-    verbose && cat(verbose, "getCellIndices.CnChipEffectFile(): Returning cached data");
-    return(res);
+  if (!force || .cache) {
+    chipType <- getChipType(getCdf(this));
+    params <- getParameters(this);
+    key <- list(chipType=chipType, params=params, ...);
+    key <- digest(key);
+  }
+
+  if (!force) {
+    res <- this$.cellIndices[[key]];
+    if (identical(res, "on-file")) {
+      verbose && cat(verbose, "Cached on file");
+      res <- loadCache(list(key));
+    }
+    if (!is.null(res)) {
+      verbose && cat(verbose, "Returning cached value");
+      verbose && exit(verbose);
+      return(res);
+    }
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get and restructure cell indices
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cells <- NextMethod("getCellIndices", this, ..., verbose=verbose);
+  cells <- NextMethod("getCellIndices", this, ..., force=force, 
+                                          .cache=FALSE, verbose=verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Combine alleles?
@@ -68,27 +89,56 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., verbose=FA
   # In order to improve readability we merge the names of alleles groups
   # combined, e.g. groups 'C' and 'G' become group 'CG'.
   if (this$combineAlleles) {
+    verbose && enter(verbose, "Combining alleles");
+    # Hard-wiring 1, 2 & 4 groups speed up things 3 times!
     cells <- applyCdfGroups(cells, function(groups) {
       ngroups <- length(groups);
-      odds <- seq(from=1, to=ngroups, by=2);
       names <- names(groups);
-      groups <- groups[odds];
-      if (ngroups >= 2) {
+      if (ngroups == 4) {
+        groups <- .subset(groups, c(1,3));
+        names <- paste(.subset(names, c(1,3)), .subset(names, c(2,4)), sep="");
+      } else if (ngroups == 2) {
+        groups <- .subset(groups, 1);
+        names <- paste(.subset(names, 1), .subset(names, 2), sep="");
+      } else if (ngroups == 1) {
+        groups <- .subset(groups, 1);
+      } else {
+        groups <- .subset(groups, odds);
+        odds <- seq(from=1, to=ngroups, by=2);
         evens <- seq(from=2, to=ngroups, by=2);
-        names <- paste(names[odds], names[evens], sep="");
-        names(groups) <- names;
+        names <- paste(.subset(names, odds), .subset(names, evens), sep="");
       }
+      names(groups) <- names;
       groups;
     })
+    verbose && exit(verbose);
   }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && cat(verbose, "getCellIndices.CnChipEffectFile(): Updating cache");
-  this$.cellIndices <- list();
-  this$.cellIndices[[key]] <- cells;
+  if (.cache) {
+    # In-memory or on-file cache?
+    size <- object.size(cells);
+      verbose && printf(verbose, "Object size: %.1fMB\n", size/1024^2);
+    if (size < 10e6) { 
+      # In-memory cache for objects < 10Mb.
+      this$.cellIndices <- list();
+      this$.cellIndices[[key]] <- cells;
+      verbose && cat(verbose, "Result cached in memory");
+    } else {
+      # On-file cache
+      # Keep, in-memory cache.
+      if (!is.list(this$.cellIndices))
+        this$.cellIndices <- list();
+      saveCache(cells, key=list(key));
+      this$.cellIndices[[key]] <- "on-file";
+      verbose && cat(verbose, "Result cached to file");
+    }
+  }
+
+  verbose && exit(verbose);
 
   cells;
 })
@@ -130,6 +180,9 @@ setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, ca
 
 ############################################################################
 # HISTORY:
+# 2007-01-06
+# o Now getCellIndices() caches large objects to file and small in memory.
+# o Made getCellIndices() three times faster by some hardwired code.
 # 2006-11-28
 # o Added readUnits() to override caching mechanism of superclasses.
 # 2006-09-20

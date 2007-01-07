@@ -72,7 +72,8 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
   setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
-  gc();
+  gc <- gc();
+  verbose && print(verbose, gc);
   verbose && exit(verbose);
 
 

@@ -508,6 +508,11 @@ setMethodS3("fit", "MultiGladModel", function(this, arrays=1:nbrOfArrays(this), 
       } else {
         fit <- fitOne(this, ceList=ceList, refList=refList, chromosome=chr, 
                                     force=force, ..., verbose=less(verbose));
+
+        # Garbage collection
+        gc <- gc();
+        verbose && print(verbose, gc);
+
         verbose && enter(verbose, "Saving to file");
         verbose && cat(verbose, "Pathname: ", pathname);
         saveObject(fit, file=pathname);

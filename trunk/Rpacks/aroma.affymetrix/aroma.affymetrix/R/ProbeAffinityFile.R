@@ -28,7 +28,7 @@
 # }
 #
 #*/###########################################################################
-setConstructorS3("ProbeAffinityFile", function(..., probeModel=c("pm", "mm", "pm-mm")) {
+setConstructorS3("ProbeAffinityFile", function(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -42,7 +42,7 @@ setConstructorS3("ProbeAffinityFile", function(..., probeModel=c("pm", "mm", "pm
 })
 
 setMethodS3("getCellIndices", "ProbeAffinityFile", function(this, ...) {
-  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pm");
+  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pm", "min1(pm-mm)"="pm");
   cdf <- getCdf(this);
   getCellIndices(cdf, ..., stratifyBy=stratifyBy);
 })

@@ -89,6 +89,7 @@ setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ...
     on.exit(popState(verbose));
   }
 
+
   verbose && enter(verbose, "Getting target distribution");
 
   yTarget <- this$.targetDistribution;
@@ -158,10 +159,10 @@ setMethodS3("getTargetDistributionPathname", "QuantileNormalization", function(t
 
   verbose && enter(verbose, "Getting pathname for target distribution");
 
-  id <- getTargetDistributionIdentifier(this, verbose=less(verbose));
   ds <- getInputDataSet(this);
-  filename <- sprintf(".averageQuantile-%s.apq", id);
   path <- getPath(ds);
+  id <- getTargetDistributionIdentifier(this, verbose=less(verbose));
+  filename <- sprintf(".averageQuantile-%s.apq", id);
   pathname <- filePath(path, filename, expandLinks="any");
 
   verbose && exit(verbose);
@@ -190,16 +191,22 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
   params <- getParameters(this);
   probes <- identifyCells(cdf, indices=params$subsetToAvg, 
                          types=params$typesToAvg, verbose=less(verbose));
+  rm(params);
   verbose && cat(verbose, "Using ", length(probes), " probes");
   verbose && cat(verbose, "Calculating target distribution from the ", length(ds), " arrays in the input data set");
 
   # Calculate the average quantile
   yTarget <- averageQuantile(ds, probes=probes, verbose=less(verbose));
+  rm(probes);
 
   # Write the result to file
   pathname <- getTargetDistributionPathname(this, verbose=less(verbose));
   verbose && cat(verbose, "Saving distribution: ", pathname);
   writeApd(pathname, data=yTarget, name="quantiles");
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   verbose && exit(verbose);
 
@@ -265,7 +272,9 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieve/calculate the target distribution
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Retrieving target distribution");
   getTargetDistribution(this, verbose=less(verbose));
+  verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
@@ -273,19 +282,31 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
   # Get input data set
   ds <- getInputDataSet(this);
 
-  # Get algorithm parameters
+  # Get algorithm parameters (including the target distribution)
   params <- getParameters(this);
 
-  # Get (and create) the output path
+  # Get the output path
   outputPath <- getPath(this);
+  mkdir(outputPath);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Normalizing data towards target distribution");
   names(params) <- gsub(".targetDistribution", "xTarget", names(params));
   args <- c(list(ds, path=outputPath, verbose=verbose), params);
+
+  # Garbage collect
+  rm(params); gc();
+
   outputDataSet <- do.call("normalizeQuantile", args=args);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
 
   # Update the output data set
   this$outputDataSet <- outputDataSet;

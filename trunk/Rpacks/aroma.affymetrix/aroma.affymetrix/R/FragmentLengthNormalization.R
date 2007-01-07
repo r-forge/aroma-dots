@@ -26,6 +26,11 @@
 #  @allmethods "public"  
 # }
 # 
+# \section{Requirements}{
+#   This class requires a SNP information annotation file for the 
+#   chip type to be normalized.
+# }
+#
 # \examples{\dontrun{
 # }}
 #
@@ -118,6 +123,7 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
 
     # Now filter
     units <- units[keep];
+    rm(keep);
   }
 
   # Sort units
@@ -145,13 +151,20 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
     on.exit(popState(verbose));
   }
 
+
   fcn <- this$.targetFunction;
   if (is.null(fcn) || force) {
     verbose && enter(verbose, "Estimating target prediction function");
 
     # Get target set
     ces <- getInputDataSet(this);
-    ceR <- getAverageFile(ces, verbose=less(verbose));
+    verbose && enter(verbose, "Get average signal across arrays");
+    ceR <- getAverageFile(ces, indices=NULL, force=force, verbose=less(verbose));
+    verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
 
     # Get units to fit
     units <- getSubsetToFit(this);
@@ -172,11 +185,18 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
     fit <- lowess(fl[ok], yR[ok]);
     class(fit) <- "lowess";
 
+    # Remove as many promises as possible
+    rm(fcn, ces, ceR, units, cdf, si, fl, yR, ok);
+
     # Create target prediction function
     fcn <- function(x, ...) {
       predict(fit, x, ...);  # Dispatched predict.lowess().
     }
     verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
 
     verbose && exit(verbose);
 
@@ -297,6 +317,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
       setCdf(ceN, cdf);
       res[[kk]] <- ceN;
       verbose && exit(verbose);
+      next;
     }
 
     # Get target log2 signals for all SNPs to be updated
@@ -331,6 +352,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     rm(data);
     verbose && exit(verbose);
 
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
     res[[kk]] <- ceN;
 
     verbose && exit(verbose);
@@ -350,6 +375,11 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-01-07
+# o BUG FIX: process(): Forgot to skip to next array in for loop if an 
+#   array was detected to be already normalized. Generated a "file already
+#   exists" error.
+# o Added garbage collection after each array been normalized.
 # 2007-01-04
 # o BUG FIX: process() gave an error if the data set was already done.
 # 2006-12-08

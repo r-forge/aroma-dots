@@ -327,10 +327,11 @@ setMethodS3("nbrOfUnits", "GenomeInformation", function(this, ...) {
   nrow(data);
 })
 
-setMethodS3("getFields", "GenomeInformation", function(this, ...) {
+setMethodS3("getDataColumns", "GenomeInformation", function(this, ...) {
   data <- getData(this);
   colnames(data);
-})
+}, private=TRUE)
+
 
 ###########################################################################/**
 # @RdocMethod getUnitIndices
@@ -508,6 +509,8 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-01-06
+# o Renamed getFields() to getDataColumns().
 # 2006-11-29
 # o Added getUnitsOnChromosome().
 # 2006-09-16
