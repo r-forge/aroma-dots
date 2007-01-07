@@ -1064,7 +1064,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
         group$y <- y;
         group$x <- (idxs-1) - ncols*y;
         group$indices <- idxs;
-        idxOffset <- idxOffset + nbrOfCellsPerField;
+        idxOffset <<- idxOffset + nbrOfCellsPerField;
         group;
       })
       ncells <- length(unit$groups)*nbrOfCellsPerField;
