@@ -55,7 +55,7 @@ setMethodS3("as.character", "PlatformDesign", function(this, ...) {
   } else {
     s <- c(s, "WARNING: Package is not installed!");
   }
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -153,7 +153,7 @@ setMethodS3("loadDataFile", "PlatformDesign", function(this, filename, ..., verb
 
   verbose && printf(verbose, "Pathname: %s\n", pathname);
   filesize <- file.info(pathname)$size;
-  verbose && printf(verbose, "File size: %.1fMb\n", filesize/1024^2);
+  verbose && printf(verbose, "File size: %.1fMB\n", filesize/1024^2);
 
   env <- new.env();  
   vars <- base::load(file=pathname, envir=env);

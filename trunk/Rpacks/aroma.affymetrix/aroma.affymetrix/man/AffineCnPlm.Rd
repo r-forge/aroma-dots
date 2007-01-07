@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffineSnpPlm.R
+%  AffineCnPlm.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{AffineSnpPlm}
+ \name{AffineCnPlm}
 \docType{class}
-\alias{AffineSnpPlm}
+\alias{AffineCnPlm}
 
 
- \title{The AffineSnpPlm class}
+ \title{The AffineCnPlm class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class AffineSnpPlm}\cr
+\bold{Class AffineCnPlm}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -27,25 +27,29 @@
 \code{~~~~~~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffinePlm}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{SnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffineSnpPlm}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{AffineSnpPlm}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{SnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{CnPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{AffineCnPlm}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineCnPlm}\cr
+\cr
 
-public static class \bold{AffineSnpPlm}\cr
-extends \link[aroma.affymetrix]{SnpPlm}\cr
+public static class \bold{AffineCnPlm}\cr
+extends \link[aroma.affymetrix]{CnPlm}\cr
 
 
  }
 
- \usage{AffineSnpPlm(..., mergeStrands=FALSE, tags="*")}
+ \usage{AffineCnPlm(..., combineAlleles=FALSE, tags="*")}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AffinePlm}}.}
-   \item{mergeStrands}{If \code{\link[base:logical]{TRUE}}, the sense and the anti-sense strands are
-      fitted together, otherwise separately.}
+   \item{...}{Arguments passed to \code{\link{AffineSnpPlm}}.}
+   \item{combineAlleles}{If \code{\link[base:logical]{FALSE}}, allele A and allele B are treated
+      seperately, otherwise together.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
@@ -53,6 +57,9 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
   \bold{Methods:}\cr
 \emph{No methods defined}.
 
+
+ \bold{Methods inherited from CnPlm}:\cr
+getCellIndices, getChipEffects, getProbeAffinities, setCombineAlleles
 
  \bold{Methods inherited from SnpPlm}:\cr
 getCellIndices, getChipEffects, getProbeAffinities, setMergeStrands

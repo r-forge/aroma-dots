@@ -17,6 +17,8 @@
 #   \item{tags}{A @character @vector of tags to be used for this file set.
 #      The string \code{"*"} indicates that it should be replaced by the
 #      tags part of the file set pathname.}
+#   \item{alias}{A @character string specifying a name alias overriding the
+#      name inferred from the pathname.}
 #   \item{...}{Not used.}
 # }
 #
@@ -26,7 +28,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AffymetrixFileSet", function(files=NULL, tags="*", ...) {
+setConstructorS3("AffymetrixFileSet", function(files=NULL, tags="*", alias=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -46,11 +48,12 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, tags="*", ...) {
 
   this <- extend(Object(), "AffymetrixFileSet",
     files = as.list(files),
-    .name = NULL,
+    .alias = NULL,
     .tags = NULL
   );
 
   setTags(this, tags);
+  setAlias(this, alias);
 
   this;
 })
@@ -94,8 +97,8 @@ setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
   s <- c(s, sprintf("Full name: %s", getFullName(this)));
   s <- c(s, sprintf("Number of files: %d", nbrOfFiles(this)));
   s <- c(s, sprintf("Path (to the first file): %s", getPath(this)));
-  s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -202,8 +205,8 @@ setMethodS3("getFullName", "AffymetrixFileSet", function(this, parent=1, ...) {
 # }
 #
 # \details{
-#  If the name has not been set explicitly, the name is inferred from the
-#  pathname of the file set.
+#  If a name alias has not been set explicitly, the name is inferred from 
+#  the pathname of the file set.
 #  The \emph{name} of a file set is the part of the directory name that 
 #  preceeds the first comma, if any.
 #  For instance, the name of the file set named \code{foo,a,b} is \code{foo}.
@@ -212,16 +215,17 @@ setMethodS3("getFullName", "AffymetrixFileSet", function(this, parent=1, ...) {
 # @author
 #
 # \seealso{
-#   @seemethod "setName".
+#   @seemethod "getAlias".
 #   @seemethod "getFullName".
-#   @seemethod "getBranches".
+#   @seemethod "getTags".
 #   @seeclass
 # }
 #*/###########################################################################
 setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
-  name <- this$.name;
-
+  # Use name alias, if specified
+  name <- getAlias(this);
   if (is.null(name)) {
+    # ...otherwise, infer from pathname.
     name <- getFullName(this, ...);
 
     # Keep anything before the first comma
@@ -234,9 +238,9 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod setName
+# @RdocMethod getAlias
 #
-# @title "Sets the name of the file set"
+# @title "Gets the alias of the file set"
 #
 # \description{
 #   @get "title".
@@ -245,10 +249,45 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 # @synopsis
 #
 # \arguments{
-#  \item{name}{A @character string for the new name of the file set.
-#   The name must consists of valid filename characters, and must not
-#   contain commas, which are used to separate tags.
-#   If @NULL, the name will be inferred from the underlying pathname.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character, or @NULL if no alias is set.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "setAlias".
+#   @seemethod "getName".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getAlias", "AffymetrixFileSet", function(this, ...) {
+  this$.alias;
+})
+
+
+
+###########################################################################/**
+# @RdocMethod setAlias
+#
+# @title "Sets the alias of the file set"
+#
+# \description{
+#   @get "title".
+#   If specified, the alias overrides the name inferred from the pathname
+#   of the file set.  This can be used in order to use another name of the
+#   output data set than the input data set of many transforms and models.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{alias}{A @character string for the new alias of the file set.
+#   The alias must consists of valid filename characters, and must not
+#   contain commas, which are used to separate tags.}
 #  \item{...}{Not used.}
 # }
 #
@@ -262,22 +301,23 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 # @author
 #
 # \seealso{
+#   @seemethod "getAlias".
 #   @seemethod "getName".
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("setName", "AffymetrixFileSet", function(this, name=NULL, ...) {
-  # Argument 'name':
-  if (!is.null(name)) {
-    name <- Arguments$getFilename(name);  # Valid filename?
+setMethodS3("setAlias", "AffymetrixFileSet", function(this, alias=NULL, ...) {
+  # Argument 'alias':
+  if (!is.null(alias)) {
+    alias <- Arguments$getFilename(alias);  # Valid filename?
 
     # Assert that no commas are used.
-    if (regexpr("[,]", name) != -1) {
-      throw("File-set names must not contain commas: ", name);
+    if (regexpr("[,]", alias) != -1) {
+      throw("File-set aliases (names) must not contain commas: ", alias);
     }
   }
 
-  this$.name <- name;
+  this$.alias <- alias;
 })
 
 
@@ -853,7 +893,8 @@ setMethodS3("clearCache", "AffymetrixFileSet", function(this, ...) {
 #     of the abstract @see "AffymetrixFile" class are search for.}
 #  \item{recursive}{If @TRUE, subdirectories are search recursively,
 #     otherwise not.}
-#  \item{...}{Other arguments passed to @see "base::list.files"}
+#  \item{...}{Optional arguments passed to the constructor of the
+#     static (calling) class.}
 # }
 #
 # \value{
@@ -910,7 +951,7 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   # Scan for Affymetrix files
   verbose && enter(verbose, "Scanning directory for files");
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE, 
-                               all.files=FALSE, recursive=recursive, ...);
+                                   all.files=FALSE, recursive=recursive);
   verbose && printf(verbose, "Found %d files.\n", length(pathnames));
   if (length(pathnames) == 0)
     throw("No files found: ", path);
@@ -934,7 +975,7 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   verbose && exit(verbose);
 
   # Create the file set object
-  set <- newInstance(static, files);
+  set <- newInstance(static, files, ...);
 
   verbose && exit(verbose);
 
@@ -945,6 +986,11 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2006-01-07
+# o Now arguments '...' in fromFiles() are passed to the constructor of
+#   the static class, i.e. via newInstance(static, ...).  Requested by KS.
+# o Added argument 'alias' to constructor.
+# o Added getAlias() and setAlias(), where the latter replaces setName().
 # 2006-12-02
 # o Added reorder().
 # 2006-12-01

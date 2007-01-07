@@ -170,8 +170,8 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
   ts <- range(ts);
   ts <- format(ts, "%Y-%m-%d %H:%M:%S");  # range() gives strange values?!?
   s <- c(s, sprintf("Time period: %s -- %s", ts[1], ts[2]));
-  s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)

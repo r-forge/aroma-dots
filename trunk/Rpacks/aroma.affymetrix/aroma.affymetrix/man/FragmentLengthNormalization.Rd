@@ -53,6 +53,7 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{getCdf} \tab  -\cr
+ \tab \code{getOutputDataSet} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:process.FragmentLengthNormalization]{process}} \tab Normalizes the data set.\cr
 }
 
@@ -64,6 +65,11 @@ getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDon
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
+ }
+
+ \section{Requirements}{
+   This class requires a SNP information annotation file for the
+   chip type to be normalized.
  }
 
  \examples{\dontrun{

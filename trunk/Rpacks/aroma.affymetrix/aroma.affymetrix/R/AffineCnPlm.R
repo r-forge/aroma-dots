@@ -1,7 +1,7 @@
 ###########################################################################/**
-# @RdocClass AffineSnpPlm
+# @RdocClass AffineCnPlm
 #
-# @title "The AffineSnpPlm class"
+# @title "The AffineCnPlm class"
 #
 # \description{
 #  @classhierarchy
@@ -10,9 +10,9 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffinePlm".}
-#   \item{mergeStrands}{If @TRUE, the sense and the anti-sense strands are
-#      fitted together, otherwise separately.}
+#   \item{...}{Arguments passed to @see "AffineSnpPlm".}
+#   \item{combineAlleles}{If @FALSE, allele A and allele B are treated 
+#      seperately, otherwise together.}
 #   \item{tags}{A @character @vector of tags.}
 # }
 #
@@ -21,9 +21,8 @@
 # }
 #
 # @author
-#
 #*/###########################################################################
-setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
+setConstructorS3("AffineCnPlm", function(..., combineAlleles=FALSE, tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,19 +34,21 @@ setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
     # Update default tags
     idx <- which(tags == "*");
     if (length(idx) > 0) {
-      if (!mergeStrands)
-        tags <- R.utils::insert.default(tags, idx+1, "+-");
+      if (combineAlleles)
+        tags <- R.utils::insert.default(tags, idx+1, "A+B");
     }
   }
 
-  extend(AffinePlm(..., tags=tags), c("AffineSnpPlm", uses(SnpPlm())),
-    mergeStrands = mergeStrands
+
+  extend(AffineSnpPlm(..., tags=tags), c("AffineCnPlm", uses(CnPlm())),
+    combineAlleles = combineAlleles
   )
 })
 
 
+
 ############################################################################
 # HISTORY:
-# 2006-09-11
-# o Created from the MbeiSnpPlm.
+# 2007-01-07
+# o Created from MbeiCnPlm.R.
 ############################################################################

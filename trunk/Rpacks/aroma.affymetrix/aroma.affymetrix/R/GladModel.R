@@ -6,14 +6,17 @@
 # \description{
 #  @classhierarchy
 #
-#  This class represents the GLAD [1] model.
+#  This class represents the Gain and Loss Analysis of DNA regions 
+#  (GLAD) model [1].
+#  This class can model chip-effect estimates obtained from multiple
+#  chip types, and not all samples have to be available on all chip types.
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{ces}{A @see "CnChipEffectSet".}
-#   \item{reference}{A @see "CnChipEffectFile".}
+#   \item{cesList}{A @list of @see "ChipEffectSet" objects.}
+#   \item{referenceList}{A @see "ChipEffectFile" objects.}
 #   \item{tags}{A @character @vector of tags.}
 #   \item{...}{Not used.}
 # }
@@ -22,49 +25,103 @@
 #  @allmethods "public"
 # }
 #
+# \details{
+#   Data from multiple chip types are combined "as is".  This is based
+#   on the assumption that the relative chip effect estimates are
+#   non-biased (or at the equally biased across chip types).
+#   Note that in GLAD there is no way to down weight certain data points,
+#   which is why we can control for differences in variance across
+#   chip types.
+# }
+#
+# \section{Benchmarking}{
+#   In high-density copy numbers analysis, the most time consuming step
+#   is fitting the GLAD model.  The complexity of the model grows 
+#   more than linearly (squared? exponentially?) with the number of data
+#   points in the chromosome and sample being fitted.  This is why it
+#   take much more than twice the time to fit two chip types together 
+#   than separately.
+# }
+#
+# \section{Requirements}{
+#   This class requires genome information annotation files for 
+#   every chip type.
+# }
+#
 # @author
 # 
+# \seealso{
+#  @see "GladModel".
+# }
+#
 # \references{
 #  [1] Hupe P et al. \emph{Analysis of array CGH data: from signal ratio to
 #      gain and loss of DNA regions}. Bioinformatics, 2004, 20, 3413-3422.\cr
 # }
-#
 #*/###########################################################################
-setConstructorS3("GladModel", function(ces=NULL, reference=NULL, tags="*", ...) {
-  if (!is.null(ces))
-    throw("For now, use the MultiGladModel class instead. /HB 2006-12-20");
-
+setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*", ...) {
   require(GLAD) || throw("Package not loaded: GLAD");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'ces':
-  if (!is.null(ces)) {
-    if (!inherits(ces, "CnChipEffectSet")) {
-      throw("Argument 'ces' is not a CnChipEffectSet object: ", class(ces));
+  # Argument 'cesList':
+  if (!is.null(cesList)) {
+    if (!is.list(cesList)) {
+      cesList <- list(cesList);
     }
 
-    # Currently only total copy-number estimates are accepted
-    if (!ces$combineAlleles) {
-      throw("Unsupported copy-number chip effects. Currently only total copy-number estimates are supported: ces$combineAlleles == FALSE");
+    for (ces in cesList) {
+      if (!inherits(ces, "ChipEffectSet")) {
+        throw("Argument 'cesList' contains a non-ChipEffectSet: ", class(ces));
+      }
+
+      # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
+      if (inherits(ces, "CnChipEffectSet")) {
+        # Currently only total copy-number estimates are accepted
+        if (!ces$combineAlleles) {
+          throw("Unsupported copy-number chip effects. Currently only total copy-number estimates are supported: ces$combineAlleles == FALSE");
+        }
+      }
     }
   }
 
-  # Argument 'reference':
-  if (!is.null(reference)) {
-    if (!inherits(reference, "CnChipEffects")) {
-      throw("Argument 'reference' is not a CnChipEffects object: ",
-                                                            class(reference));
+  # Argument 'referenceList':
+  if (!is.null(referenceList)) {
+    if (!is.list(referenceList)) {
+      referenceList <- list(referenceList);
     }
 
-    if (reference$combineAlleles != ces$combineAlleles) {
-       throw("The reference chip effects are not compatible with the chip-effect set. One is combining the alleles the other is not.");
+    if (length(referenceList) != length(cesList)) {
+      throw("The number of reference files does not match the number of chip-effect sets: ", length(cesList), " != ", length(referenceList));
     }
 
-    if (reference$mergeStrands != ces$mergeStrands) {
-       throw("The reference chip effects are not compatible with the chip-effect set. One is merging the strands the other is not.");
-    }
+    # Validate consistency between the chip-effect sets and the reference files
+    for (kk in seq(along=cesList)) {
+      ref <- referenceList[[kk]];
+      if (!inherits(ref, "ChipEffectFile")) {
+        throw("Argument 'referenceList' contains a non-ChipEffectFile: ",
+                                                             class(ref));
+      }
+
+      # Assert that the reference is compatible with the chip-effect files
+      ces <- cesList[[kk]];
+      cef <- getFile(ces, 1);
+      if (!inherits(ref, class(cef)[1])) {
+        throw("Argument 'referenceList' contains a ChipEffectFile that is not of the same class as the ChipEffectFile's: ", class(ref)[1], " != ", class(cef)[1]);
+      }
+
+      # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
+      if (inherits(ces, "CnChipEffectSet")) {
+        if (ref$combineAlleles != ces$combineAlleles) {
+           throw("The reference chip effects are not compatible with the chip-effect set. One is combining the alleles the other is not.");
+        }
+
+        if (ref$mergeStrands != ces$mergeStrands) {
+           throw("The reference chip effects are not compatible with the chip-effect set. One is merging the strands the other is not.");
+        }
+      }
+    } # for (kk in ...)
   }
 
   # Argument 'tags':
@@ -77,80 +134,176 @@ setConstructorS3("GladModel", function(ces=NULL, reference=NULL, tags="*", ...) 
   }
 
 
+  
+
   extend(Object(), "GladModel",
-    .ces = ces,
-    .reference = reference
+    .cesList = cesList,
+    .referenceList = referenceList
   )
-}, private=TRUE)
+})
 
 
 setMethodS3("as.character", "GladModel", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
-  s <- c(s, "Chip effects:");
-  s <- c(s, as.character(getChipEffects(this)));
-  s <- c(s, "Reference:");
-  if (is.null(getReference(this))) {
-    s <- c(s, "<average across arrays>");
-  } else {
-    s <- c(s, as.character(getReference(this)));
+  s <- c(s, sprintf("Path: %s", getPath(this)));
+  nbrOfChipTypes <- nbrOfChipTypes(this);
+  s <- c(s, sprintf("Number of chip types: %d", nbrOfChipTypes));
+  s <- c(s, "Chip-effect set & reference file pairs:");
+  cesList <- getListOfChipEffects(this);
+  refList <- getListOfReferences(this);
+  for (kk in seq(length=nbrOfChipTypes)) {
+    s <- c(s, sprintf("Pair #%d:", kk));
+    s <- c(s, "Chip-effect set:");
+    ces <- cesList[[kk]];
+    ref <- refList[[kk]];
+    s <- c(s, as.character(ces));
+    s <- c(s, "Reference file:");
+    if (is.null(ref)) {
+      s <- c(s, "<average across arrays>");
+    } else {
+      s <- c(s, as.character(ref));
+    }
   }
-  s <- c(s, "Genome information:", as.character(getGenomeInformation(this)));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+#  s <- c(s, "Genome information:", as.character(getGenomeInformation(this)));
+  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
 
-
-setMethodS3("getChipEffects", "GladModel", function(this, ...) {
-  this$.ces;
+setMethodS3("getListOfChipEffects", "GladModel", function(this, ...) {
+  this$.cesList;
 })
 
-setMethodS3("getReference", "GladModel", function(this, ...) {
-  this$.reference;
+
+setMethodS3("nbrOfChipTypes", "GladModel", function(this, ...) {
+  length(getListOfChipEffects(this, ...));
 })
 
-setMethodS3("setReference", "GladModel", function(this, reference=NULL, ...) {
-  # Argument 'reference':
-  if (!is.null(reference)) {
-    if (!inherits(reference, "CnChipEffects")) {
-      throw("Argument 'reference' is not a CnChipEffects object: ", 
-                                                            class(reference));
-    }
+setMethodS3("getListOfReferences", "GladModel", function(this, ...) {
+  res <- this$.referenceList;
+  if (is.null(res)) {
+    res <- vector("list", nbrOfChipTypes(this));
+  }
+  res;
+})
+
+
+
+setMethodS3("getListOfCdfs", "GladModel", function(this, ...) {
+  cesList <- getListOfChipEffects(this);
+  lapply(cesList, FUN=getCdf);
+}, private=TRUE)
+
+
+setMethodS3("getChipTypes", "GladModel", function(this, merge=FALSE, collapse="+", ...) {
+  cdfList <- getListOfCdfs(this);
+  chipTypes <- sapply(cdfList, FUN=getChipType);
+
+  chipTypes <- sapply(chipTypes, FUN=function(s) {
+    gsub("[,-]monocell", "", s);
+  })
+
+  if (merge) {
+    chipTypes <- mergeByCommonTails(chipTypes, collapse=collapse);
   }
 
-  this$.reference <- reference;
+  chipTypes;
 })
-
-setMethodS3("nbrOfArrays", "GladModel", function(this, ...) {
-  ces <- getChipEffects(this);
-  nbrOfArrays(ces);
-})
-
-
-setMethodS3("getCdf", "GladModel", function(this, ...) {
-  ces <- getChipEffects(this);
-  getCdf(ces);
-}, protected=TRUE)
 
 
 setMethodS3("getChipType", "GladModel", function(this, ...) {
-  cdf <- getCdf(this);
-  getChipType(cdf);
-}, protected=TRUE)
-
-
-setMethodS3("getName", "GladModel", function(this, ...) {
-  # Get name of chip-effect set
-  ces <- getChipEffects(this);
-  getName(ces);
+  getChipTypes(this, merge=TRUE, ...);
 })
 
 
+setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
+  cesList <- getListOfChipEffects(this);
+
+  # Get all chip types for this data set
+  chipTypes <- getChipTypes(this);
+  nbrOfChipTypes <- length(cesList);
+
+  # Get array names
+  arrayNames <- lapply(cesList, FUN=getNames);
+  names(arrayNames) <- chipTypes;
+
+  # Get all unique array names
+  allNames <- unlist(arrayNames, use.names=FALSE);
+  allNames <- unique(allNames);
+
+  # Create table of arrays
+  nbrOfArrays <- length(allNames);
+  X <- matrix(NA, nrow=nbrOfArrays, ncol=nbrOfChipTypes);
+  dimnames(X) <- list(allNames, chipTypes);
+  for (chipType in chipTypes) {
+    names <- arrayNames[[chipType]];
+    idx <- match(names, allNames);
+    X[idx,chipType] <- seq(along=idx);
+  }
+
+  X;
+})
+
+setMethodS3("getNames", "GladModel", function(this, ...) {
+  rownames(getTableOfArrays(this, ...));
+})
+
+setMethodS3("getArrays", "GladModel", function(this, ...) {
+  getNames(this, ...);
+})
+
+setMethodS3("nbrOfArrays", "GladModel", function(this, ...) {
+  length(getNames(this, ...));
+})
+
+
+setMethodS3("getName", "GladModel", function(this, collapse="+", ...) {
+  # Get name of chip-effect sets
+  cesList <- getListOfChipEffects(this);
+
+  # Get names
+  names <- lapply(cesList, FUN=getName);
+  names <- unlist(names, use.names=FALSE);
+
+  # Merge names
+  names <- mergeByCommonTails(names, collapse=collapse);
+
+  names;
+})
+
+
+setMethodS3("getReferenceName", "GladModel", function(this, collapse="+", ...) {
+  # Get name of the reference files
+  refList <- getListOfReferences(this);
+
+  # Get names
+  names <- lapply(refList, FUN=function(file) {
+    if (is.null(file)) NULL else getName(file);
+  });
+  names <- unlist(names, use.names=FALSE);
+
+  # Merge names
+  names <- mergeByCommonTails(names, collapse=collapse);
+
+  names;
+}, private=TRUE)
+
+
 setMethodS3("getTags", "GladModel", function(this, ...) {
-  ces <- getChipEffects(this);
-  c(getTags(ces), this$.tags);
+  # Get tags of chip-effect set
+  cesList <- getListOfChipEffects(this);
+
+  # Get data set tags
+  tags <- lapply(cesList, FUN=getTags);
+
+  # Keep unique tags
+  tags <- unlist(tags, use.names=FALSE);
+  tags <- unique(tags);
+
+  # Add model tags
+  c(tags, this$.tags);
 })
 
 
@@ -165,7 +318,7 @@ setMethodS3("getFullName", "GladModel", function(this, ...) {
 
 setMethodS3("getRootPath", "GladModel", function(this, ...) {
   "gladData";
-})
+}, private=TRUE)
 
 setMethodS3("getPath", "GladModel", function(this, ...) {
   # Create the (sub-)directory tree for the data set
@@ -178,9 +331,7 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
   fullname <- getFullName(this);
 
   # Chip type    
-  cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell$", "", chipType);
+  chipType <- getChipType(this);
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
@@ -224,7 +375,7 @@ setMethodS3("getChromosomes", "GladModel", function(static, ...) {
 
 
 
-setMethodS3("getGenomeInformation", "GladModel", function(this, ...) {
+setMethodS3("getListOfGenomeInformations", "GladModel", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -236,15 +387,70 @@ setMethodS3("getGenomeInformation", "GladModel", function(this, ...) {
   }
 
   verbose && enter(verbose, "Retrieving genome informations");
-  cdf <- getCdf(this);
-  gi <- getGenomeInformation(cdf);
+  cdfList <- getListOfCdfs(this);
+  giList <- lapply(cdfList, getGenomeInformation, verbose=less(verbose));
   verbose && exit(verbose);
 
-  gi;
+  giList;
 })
 
 
-setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), ..., .retResults=TRUE, verbose=FALSE) {
+setMethodS3("getChipEffectFiles", "GladModel", function(this, array, ...) {
+  cesList <- getListOfChipEffects(this);
+  arrayTable <- getTableOfArrays(this);
+  chipTypes <- colnames(arrayTable);
+  idxs <- arrayTable[array,];
+  res <- vector("list", length(chipTypes));
+  for (kk in seq(along=cesList)) {
+    idx <- idxs[kk];
+    if (is.na(idx))
+      next;
+    ces <- cesList[[kk]];
+    res[[kk]] <- getFile(ces, idx);
+  }
+  names(res) <- chipTypes;
+  res;
+})
+
+setMethodS3("getReferenceFiles", "GladModel", function(this, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Retrieving reference data files");
+
+  cesList <- getListOfChipEffects(this);
+  refList <- getListOfReferences(this);
+  for (kk in seq(length=nbrOfChipTypes(this))) {
+    ces <- cesList[[kk]];
+    ref <- refList[[kk]];
+    if (force || is.null(ref)) {
+      if (force) {
+        verbose && cat(verbose, "Forced recalculation requested.");
+      } else {
+        verbose && cat(verbose, "No reference available.");
+      }
+      verbose && enter(verbose, "Calculating average chip effects");
+      ref <- getAverageFile(ces, force=force, verbose=less(verbose));
+      verbose && exit(verbose);
+      refList[[kk]] <- ref;
+    }
+  }
+  verbose && exit(verbose);
+
+  refList;
+})
+
+
+
+setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), force=FALSE, ..., .retResults=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -253,6 +459,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
 
   # Argument 'chromosomes':
   chromosomes <- Arguments$getCharacters(chromosomes);
+#  chromosomes[chromosomes == "23"] <- "X";
   chromosomes <- intersect(chromosomes, getChromosomes(this));
 
   # Argument 'verbose':
@@ -262,61 +469,99 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
     on.exit(popState(verbose));
   }
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Setup
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  path <- getPath(this);
+  mkdirs(path);
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieving chip effects
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get chip effects
-  ces <- getChipEffects(this);
+  cesList <- getListOfChipEffects(this);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieving reference chip effects
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  reference <- getReference(this);
-  if (is.null(reference)) {
-    verbose && enter(verbose, "No reference specified. Calculating average chip effects");
-    reference <- getAverageFile(ces, verbose=less(verbose));
-    verbose && exit(verbose);
-  }
-  verbose && cat(verbose, "Using reference:");
-  verbose && print(verbose, reference);
+  refList <- getReferenceFiles(this);
+  verbose && cat(verbose, "Using references:");
+  verbose && print(verbose, refList);
 
-  path <- getPath(this);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get reference annotations
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get reference tags across chip types
+  tags <- lapply(refList, FUN=function(file) {
+    if (is.null(file)) NULL else getTags(file);
+  });
+  tags <- unlist(tags, use.names=FALSE);
+  tags <- unique(tags);
+  # Exclude unwanted tags
+  refTags <- setdiff(tags, "chipEffects");
+
+  # Add combined reference name
+  refName <- getReferenceName(this);
+  refTags <- c(refName, refTags);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Chromosome by chromosome
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   res <- list();
-  for (aa in seq(along=arrays)) {
+  arrayNames <- getArrays(this)[arrays];
+  nbrOfArrays <- length(arrayNames);
+  for (aa in seq(length=nbrOfArrays)) {
     array <- arrays[aa];
-    ce <- getFile(ces, array);
-    arrayName <- getName(ce);
+    arrayName <- arrayNames[aa];
+
+    ceList <- getChipEffectFiles(this, array=array);
+
+    # Get chip-effect tags across chip types
+    tags <- lapply(ceList, FUN=function(file) {
+      if (is.null(file)) NULL else getTags(file);
+    });
+    tags <- unlist(tags, use.names=FALSE);
+    tags <- unique(tags);
+    # Exclude unwanted tags
+    ceTags <- setdiff(tags, "chipEffects");
+
+
     res[[arrayName]] <- list();
     for (chr in chromosomes) {
       chrIdx <- match(chr, c(1:22, "X", "Y"));
       verbose && enter(verbose, 
                              sprintf("Array %s (#%d of %d) on chromosome %s", 
-                                       arrayName, aa, length(arrays), chr));
+                                           arrayName, aa, nbrOfArrays, chr));
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Get pathname
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Add tags chrNN,GLAD,<reference tags>
-      tags <- setdiff(getTags(ce), "chipEffects");
-      tags <- c(tags, sprintf("chr%02d", chrIdx));
-      tags <- c(tags, "GLAD", getName(reference), getTags(reference));
-      filename <- sprintf("%s.xdr", paste(c(arrayName, tags), collapse=","));
+      # Add tags chrNN,glad,<reference tags>
+      tags <- c(ceTags, sprintf("chr%02d", chrIdx));
+      tags <- c(tags, "glad", refTags);
+      fullname <- paste(c(arrayName, tags), collapse=",");
+      filename <- sprintf("%s.xdr", fullname);
       pathname <- filePath(path, filename);
 
       # Already done?
-      if (isFile(pathname)) {
+      if (!force && isFile(pathname)) {
         verbose && enter(verbose, "Loading results from file");
         verbose && cat(verbose, "Pathname: ", pathname);
         fit <- loadObject(pathname);
         verbose && exit(verbose);
       } else {
-        fit <- fitGlad(ce, reference=reference, chromosome=chr, ...,
-                                                      verbose=less(verbose));
+        fit <- fitOne(this, ceList=ceList, refList=refList, chromosome=chr, 
+                                    force=force, ..., verbose=less(verbose));
+
+        # Garbage collection
+        gc <- gc();
+        verbose && print(verbose, gc);
+
         verbose && enter(verbose, "Saving to file");
         verbose && cat(verbose, "Pathname: ", pathname);
         saveObject(fit, file=pathname);
@@ -324,7 +569,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
       }
 
       verbose && enter(verbose, "Calling onFit() hooks");
-      callHooks("onFit.fitGlad.GladModel", fit=fit, chromosome=chr, ce=ce, array=array);
+      callHooks("onFit.fitGlad.GladModel", fit=fit, fullname=fullname);
       verbose && exit(verbose);
 
       if (.retResults)
@@ -334,15 +579,14 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
 
       verbose && exit(verbose);
     } # for (chr in ...)
-
-    rm(ce, arrayName);
   } # for (aa in ...)
 
   invisible(res);
 })
 
 
-setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, imageFormat="png", skip=TRUE, path=NULL, callSet=NULL, verbose=FALSE) {
+
+setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, imageFormat="current", skip=TRUE, path=NULL, callList=NULL, verbose=FALSE) {
   # To please R CMD check.
   this <- x;
 
@@ -362,10 +606,30 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # Argument 'height':
   height <- Arguments$getInteger(height, range=c(1,4096));
 
-  # Argument 'callSet':
-  if (!is.null(callSet)) {
-    if (!inherits(callSet, "GenotypeCallSet"))
-      throw("Argument 'callSet' is not a GenotypeCallSet: ", class(callSet)[1]);
+  # Argument 'callList':
+  chipTypes <- getChipTypes(this);
+  if (length(callList) > 0) {
+    if (!is.list(callList))
+      callList <- list(callList);
+
+    if (length(callList) != length(chipTypes)) {
+      throw("Number of elements in argument 'callList' does not match the number of chip types: ", length(callList), " != ", length(chipTypes));
+    }
+
+    if (is.null(names(callList)))
+      names(callList) <- chipTypes;
+
+    for (chipType in chipTypes) {
+      callSet <- callList[[chipType]];
+      if (!is.null(callSet)) {
+        if (!inherits(callSet, "GenotypeCallSet"))
+          throw("Argument 'callList' contains a non-GenotypeCallSet: ", class(callSet)[1]);
+
+        if (getChipType(callSet) != chipType) {
+          throw("Argument 'callList' contains a GenotypeCallSet for a different chip type than the corresponding chip-effect set: ", getChipType(callSet), " != ", chipType);
+        }
+      }
+    }
   }
 
   # Argument 'verbose':
@@ -388,13 +652,12 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   rootPath <- "chromosomeExplorer";
 
   # Get chip type
-  cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell$", "", chipType);
+  chipType <- getChipType(this);
 
   # The figure path
   if (is.null(path)) {
-    path <- filePath(rootPath, getFullName(this), chipType, expandLinks="any");
+    modelName <- paste(getTags(this), collapse=",");
+    path <- filePath(rootPath, getName(this), modelName, chipType, expandLinks="any");
     path <- filePath(path, expandLinks="any");
   }
   mkdirs(path);
@@ -408,6 +671,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
 
   if (identical(imageFormat, "current")) {
     plotDev <- NULL;
+    zooms <- zooms[1];
   } else if (identical(imageFormat, "screen")) {
     screenDev <- function(pathname, width, height, ..., xpinch=50, ypinch=xpinch) {
       # Dimensions are in pixels. Rescale to inches
@@ -435,87 +699,126 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
     setHook("onFit.fitGlad.GladModel", NULL, action="replace");
   })
 
-  setHook("onFit.fitGlad.GladModel", function(fit, chromosome, ce, array) {
+  setHook("onFit.fitGlad.GladModel", function(fit, fullname) {
     if (verbose) {
       pushState(verbose);
       on.exit(popState(verbose));
     }
 
     tryCatch({
-
-    # Get full name 
-    fullname <- getFullName(ce);
-    fullname <- gsub(",chipEffects$", "", fullname);
-
-    chromosomeIdx <- match(chromosome, getChromosomes(this));
-    nbrOfBases <- genome$nbrOfBases[chromosomeIdx];
-    widthMb <- nbrOfBases / 1e6;
-
-    verbose && enter(verbose, sprintf("Plotting %s for chromosome %s (%02d) [%.2fMb]", fullname, chromosome, chromosomeIdx, widthMb));
-
-    for (zz in seq(along=zooms)) {
-      zoom <- zooms[zz];
-
-      # Create the pathname to the file
-      imgName <- sprintf("%s,glad,chr%02d,x%04d.%s", fullname, chromosomeIdx, zoom, imageFormat);
-      pathname <- filePath(path, imgName);
-
-      # pngDev() (that is bitmap()) does not accept spaces in pathnames
-      pathname <- gsub(" ", "_", pathname);
-      if (!imageFormat %in% c("screen", "current")) {
-        if (skip && isFile(pathname)) {
-          next;
+      # Extract the array name from the full name
+      arrayName <- gsub("^([^,]*).*$", "\\1", fullname);
+  
+      # Extract the chromsome from the GLAD fit object
+      pv <- fit$profileValues;
+      chromosome <- unique(pv$Chromosome);  # Should only be one!
+      chromosome[chromosome == "23"] <- "X";
+  
+      # Infer the length (in bases) of the chromosome
+      chromosomeIdx <- match(chromosome, getChromosomes(this));
+      nbrOfBases <- genome$nbrOfBases[chromosomeIdx];
+      widthMb <- nbrOfBases / 1e6;
+  
+      verbose && enter(verbose, sprintf("Plotting %s for chromosome %s (%02d) [%.2fMB]", arrayName, chromosome, chromosomeIdx, widthMb));
+  
+      for (zz in seq(along=zooms)) {
+        zoom <- zooms[zz];
+  
+        # Create the pathname to the file
+        imgName <- sprintf("%s,glad,chr%02d,x%04d.%s", 
+                             arrayName, chromosomeIdx, zoom, imageFormat);
+        pathname <- filePath(path, imgName);
+  
+        # pngDev() (that is bitmap()) does not accept spaces in pathnames
+        pathname <- gsub(" ", "_", pathname);
+        if (!imageFormat %in% c("screen", "current")) {
+          if (skip && isFile(pathname)) {
+            next;
+          }
         }
-      }
-      # Calculate Mbs per ticks
-      ticksBy <- 10^ceiling(log10(pixelsPerTick / (zoom * pixelsPerMb)));
-      width <- as.integer(zoom * widthMb * pixelsPerMb);
-      # Plot to PNG file
-      verbose && printf(verbose, "Pathname: %s\n", pathname);
-      verbose && printf(verbose, "Dimensions: %dx%d\n", width, height);
-      verbose && printf(verbose, "Ticks by: %f\n", ticksBy);
-
-      if (!is.null(plotDev))
-        plotDev(pathname, width=width, height=height);
-
-      tryCatch({
-        verbose && enter(verbose, "Plotting graph");
-        opar <- par(xaxs="r");
-        plot(fit, ticksBy=ticksBy);
-        stext(chipType, side=4, pos=1, line=0, cex=0.7, col="gray");
-        verbose && enter(verbose, "Adding genotype calls");
-        pv <- fit$profileValues;
-        units <- pv$units;
-        # Read the calls
-        call <- callSet[units,array];  
-        call <- as.character(call);
-
-        x <- pv$PosBase; 
-        x <- x/1e6;
-        ylim <- par("usr")[3:4];
-        ylim <- ylim + c(+1,-1)*0.04*diff(ylim);
-        ylim <- ylim + c(+1,-1)*0.04*diff(ylim);
-        y <- rep(ylim[1], length(callCols));
-        names(y) <- names(callCols);
-        y["AB"] <- y["AB"] + 0.02*diff(ylim);
-        y <- y[call];
-        points(x,y, pch=".", cex=2, col=callCols[call]);
-
-        verbose && exit(verbose);
-        verbose && exit(verbose);
-      }, error = function(ex) {
-        print(ex);
-      }, finally = {
-        par(opar);
-        if (!imageFormat %in% c("screen", "current"))
-          dev.off();
-      });
-    } # for (zoom ...)
-
-    verbose && exit(verbose);
+        # Calculate MBs per ticks
+        ticksBy <- 10^ceiling(log10(pixelsPerTick / (zoom * pixelsPerMb)));
+        width <- as.integer(zoom * widthMb * pixelsPerMb);
+        # Plot to PNG file
+        verbose && printf(verbose, "Pathname: %s\n", pathname);
+        verbose && printf(verbose, "Dimensions: %dx%d\n", width, height);
+        verbose && printf(verbose, "Ticks by: %f\n", ticksBy);
+  
+        if (!is.null(plotDev))
+          plotDev(pathname, width=width, height=height);
+  
+        tryCatch({
+          verbose && enter(verbose, "Plotting graph");
+          opar <- par(xaxs="r");
+          suppressWarnings({
+            plot(fit, ticksBy=ticksBy, ...);
+          });
+          stext(chipType, side=4, pos=1, line=0, cex=0.7, col="gray");
+  
+          if (!is.null(callList)) {
+            verbose && enter(verbose, "Adding genotype calls");
+  
+            # Get (chip type, unit) information
+            chipType <- pv$chipType;
+            unit <- pv$unit;
+  
+            # Figure out where to put the genotype track
+            ylim <- par("usr")[3:4];
+            ylim <- ylim + c(+1,-1)*0.04*diff(ylim);
+            ylim <- ylim + c(+1,-1)*0.04*diff(ylim);
+  
+            for (chipType in chipTypes) {
+              # Got genotype calls for this chip type?
+              callSet <- callList[[chipType]];
+              if (is.null(callSet))
+                next;
+  
+              # Got chip-effect estimates for this chip type?
+              idxs <- which(pv$chipType == chipType);
+              if (length(idxs) == 0)
+                next;
+  
+              # Got genotype calls for this array?
+              if (!arrayName %in% getNames(callSet))
+                next;
+  
+              # Get subset of genotype calls for this array & chromosome.
+              units <- pv$unit[idxs];
+              call <- callSet[units, arrayName];
+              call <- as.character(call);
+              # Get the positions of these calls
+              x <- pv$PosBase[idxs]; 
+              x <- x/1e6;
+  
+              # Plot the homozygote/heterozygote genotype tracks
+              y <- rep(ylim[1], length(callCols));
+              names(y) <- names(callCols);
+              y["AB"] <- y["AB"] + 0.02*diff(ylim);
+              y <- y[call];
+              points(x,y, pch=".", cex=2, col=callCols[call]);
+   
+              rm(idxs, call, callSet, units, x, y);  # Not needed anymore
+            } # for (chipType ...)
+            verbose && exit(verbose);
+          } # if (!is.null(callList))
+  
+          verbose && exit(verbose);
+        }, error = function(ex) {
+          print(ex);
+        }, finally = {
+          par(opar);
+          if (!imageFormat %in% c("screen", "current"))
+            dev.off();
+        });
+      } # for (zz in ...)
     }, error = function(ex) {
       cat("ERROR caught in onFit.fitGlad.GladModel():\n");
       print(ex);
+    }, finally = {
+      # Garbage collect
+      gc <- gc();
+      verbose && print(verbose, gc);
+      verbose && exit(verbose);
     }) # tryCatch()
   }, action="replace")
 
@@ -559,7 +862,7 @@ setMethodS3("getLog2Ratios", "GladModel", function(this, ..., verbose=FALSE) {
   })
 
   res;
-}) # getLog2Ratios()
+}, private=TRUE) # getLog2Ratios()
 
 
 
@@ -633,7 +936,7 @@ setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", margin=10
 })
 
 
-setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(this), format=c("xls", "wig"), digits=3, ..., oneFile=FALSE, skip=TRUE, verbose=FALSE) {
+setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(this), format=c("xls", "wig"), digits=3, ..., oneFile=TRUE, skip=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -651,17 +954,15 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
   }
 
 
-  # Add a "GLAD" tag.
-  dataSetName <- getFullName(this);
-
-  ces <- getChipEffects(this);
-  arrayNames <- getNames(ces);
+  # Setup
+  fullname <- getFullName(this);
+  arrayNames <- getArrays(this);
 
   path <- getPath(this);
   mkdirs(path);
 
   if (oneFile) {
-    filename <- sprintf("%s,GLAD,regions.%s", getFullName(this), format); 
+    filename <- sprintf("%s,GLAD,regions.%s", fullname, format); 
     pathname <- filePath(path, filename);
     pathname <- Arguments$getWritablePathname(pathname);
     if (!skip && isFile(pathname))
@@ -674,15 +975,14 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
     verbose && enter(verbose, sprintf("Array #%d (of %d) - %s", 
                                              array, length(arrays), name));
     df <- getRegions(this, arrays=array, ..., verbose=less(verbose))[[1]];
-    names(df) <- gsub("Smoothing", "log2CN", names(df));
+    names(df) <- gsub("Smoothing", "log2", names(df));
 
     if (identical(format, "xls")) {
-      # Append column of sample names?
-      if (oneFile)
-        df <- cbind(sample=name, df);
+      # Append column with sample names
+      df <- cbind(sample=name, df);
     } else if (identical(format, "wig")) {
       # Write a four column WIG/BED table
-      df <- df[,c("Chromosome", "start", "stop", "log2CN")];
+      df <- df[,c("Chromosome", "start", "stop", "log2")];
 
       # In the UCSC Genome Browser, the maximum length of one element
       # is 10,000,000 bases.  Chop up long regions in shorter contigs.
@@ -781,16 +1081,23 @@ ylim <- c(-1,1);
 })
 
 
-setMethodS3("writeWig", "GladModel", function(this, ...) {
-  ces <- getChipEffects(this);
-  reference <- getReference(this);
-  writeWig(ces, reference=reference, ...);
-}) # writeWig()
-
-
 
 ##############################################################################
 # HISTORY:
+# 2007-01-07
+# o Renamed MultiGladModel to GladModel fully replacing the older class.
+# 2006-12-20
+# o Now the class accepts any ChipEffectSet, not only CnChipEffectSet objects.
+#   CnChipEffectSet objects are still validated specially, if used.
+# 2006-12-17
+# o BUG FIX: The new fitDone() in plot() choked on chr 23 (should be 'X').
+# 2006-12-15
+# o This class should be considered temporary, because we might design a
+#   ChipEffectSet class that can contain multiple chip types, but treated as
+#   if it contained one chip type, so it can be passed to the current 
+#   GladModel class.  However, such a class design will require multiple 
+#   inheritance etc, which will take time to develope.
+# o Created from GladModel.R with history as below:
 # 2006-11-29
 # o Added chip type annotation to plot() and option to plot to screen.
 # 2006-11-27

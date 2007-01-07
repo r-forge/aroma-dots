@@ -36,7 +36,7 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Filename: %s", getFilename(this)));
-  s <- c(s, sprintf("Filesize: %.2fMb", getFileSize(this)/1024^2));
+  s <- c(s, sprintf("Filesize: %.2fMB", getFileSize(this)/1024^2));
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Dimension: %s", paste(getDimension(this), collapse="x")));
   s <- c(s, sprintf("Number of cells: %d", nbrOfCells(this)));
@@ -48,7 +48,7 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(this, ...) {
   # Requires that unit names are read:
 #  s <- c(s, sprintf("Number of AFFX- units: %d", length(indexOf(this, "^AFFX-"))));
   s <- c(s, sprintf("Number of QC units: %d", nbrOfQcUnits(this)));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -426,7 +426,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (object.size(cdf) < 10e6) { # Cache only objects < 10Mb.
+  if (object.size(cdf) < 10e6) { # Cache only objects < 10MB.
     verbose && cat(verbose, "readUnits.AffymetrixCdfFile(): Updating cache");
     this$.cellIndices <- list();
     this$.cellIndices[[key]] <- cdf;
@@ -1295,7 +1295,7 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 # HISTORY:
 # 2007-01-06
 # o Added argument 'force' to getCellIndices().
-# o Now getCellIndices() only caches object < 10 Mb RAM.
+# o Now getCellIndices() only caches object < 10 MB RAM.
 # o Optimized identifyCells() to only cache data in rare cases.
 # 2006-12-18 /KS
 # o Made global replacement "block" -> "group".

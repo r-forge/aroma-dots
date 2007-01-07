@@ -10,8 +10,8 @@
   as.character.AffymetrixPowerTools as.character.AffymetrixProbeTabFile
   as.character.AptProbesetGenotype as.character.ChromosomeExplorer
   as.character.CnChipEffectFile as.character.CrlmmModel
-  as.character.GladModel as.character.Interface as.character.Model
-  as.character.MultiGladModel as.character.PlatformDesign
+  as.character.Interface as.character.Model
+  as.character.GladModel as.character.PlatformDesign
   as.character.QcInfo as.character.SnpChipEffectFile
   as.character.Transform as.GenotypeCallSet backtransformGenotypeCone
   backtransformGenotypeCone.matrix bgAdjustGcrma bgAdjustOptical
@@ -36,7 +36,7 @@
   encode.ParameterCelFile extend.Interface extractAffyBatch
   extractSnpFeatureSet extractSnpQSet findUnitsTodo
   findUnitsTodo.ChipEffectFile findUnitsTodo.ChipEffectSet fit
-  fit.GladModel fit.MultiGladModel fit.PcrProbeCalibration
+  fit.GladModel fit.PcrProbeCalibration
   fitGenotypeCone fitGenotypeCone.matrix fitGlad
   fitGlad.CnChipEffectSet fitOne fitPlasqUnit fitPlasqUnit.matrix
   fitQuantileNormFcn forDataSet forDataSet.GdasAnnotationSet fromCdf
@@ -57,7 +57,7 @@
   getAlleleProbePairs2.AffymetrixCdfFile getAm getAM
   getAm.AffymetrixCelFile getAnnotations getAnnotations.PlatformDesign
   getAptPathnames getAptPathnames.AptProbesetGenotype getArrays
-  getArrays.ChromosomeExplorer getArrays.MultiGladModel getAsteriskTag
+  getArrays.ChromosomeExplorer getArrays.GladModel getAsteriskTag
   getAsteriskTag.Transform getAverage getAverage.AffymetrixCelSet
   getAverageAsinh getAverageAsinh.AffymetrixCelSet getAverageFile
   getAverageFile.ChipEffectSet getAverageFile.CnChipEffectSet
@@ -79,7 +79,7 @@
   getChipEffectFileClass.ChipEffectSet
   getChipEffectFileClass.CnChipEffectSet
   getChipEffectFileClass.SnpChipEffectSet getChipEffectFiles
-  getChipEffectFiles.MultiGladModel getChipEffects getChipEffects.CnPlm
+  getChipEffectFiles.GladModel getChipEffects getChipEffects.CnPlm
   getChipEffects.GladModel getChipEffects.PlasqModel
   getChipEffects.QcInfo getChipEffects.SnpPlm getChipEffectSetClass
   getChipEffectSetClass.CnPlm getChipEffectSetClass.ProbeLevelModel
@@ -261,4 +261,16 @@
   writeRegions.ChromosomeExplorer writeRegions.GladModel
   writeRegions.MultiGladModel writeRegions.profileCGH writeSpatial
   writeSpatial.ProbeAffinityFile writeWig writeWig.CnChipEffectSet
-  writeWig.GladModel
+ as.character.ChipEffectFile as.character.ChipEffectSet digest
+ getArrays.GladModel getChipEffectFiles.GladModel
+ getChipTypes.GladModel getDataColumns
+ getDataColumns.GenomeInformation getListOfCdfs.GladModel
+ getListOfChipEffects.GladModel getListOfGenomeInformations.GladModel
+ getListOfReferences.GladModel getNames.GladModel
+ getOutputDataSet.FragmentLengthNormalization
+ getParameters.ChipEffectFile getParameters.ChipEffectSet
+ getParameters.CnChipEffectFile getParameters.SnpChipEffectFile
+ getParametersAsString.ChipEffectFile
+ getParametersAsString.ChipEffectSet getReferenceFiles.GladModel
+ getReferenceName.GladModel getTableOfArrays.GladModel
+ nbrOfChipTypes.GladModel

@@ -76,8 +76,8 @@ setMethodS3("as.character", "GenotypeCallSet", function(this, ...) {
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
-  s <- c(s, sprintf("Total file size: %.2fMb", getFileSize(this)/1024^2));
-  s <- c(s, sprintf("RAM: %.2fMb", objectSize(this)/1024^2));
+  s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
+  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)

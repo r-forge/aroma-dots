@@ -28,7 +28,7 @@
 \code{~~~~~~~~~~~~~~~~~+--}\code{AffinePlm}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineSnpPlm}\cr
+\link[aroma.affymetrix]{AffineCnPlm}, \link[aroma.affymetrix]{AffineSnpPlm}\cr
 
 public static class \bold{AffinePlm}\cr
 extends \link[aroma.affymetrix]{ProbeLevelModel}\cr

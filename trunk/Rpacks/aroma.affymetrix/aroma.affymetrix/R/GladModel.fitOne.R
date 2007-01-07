@@ -1,5 +1,5 @@
 ###########################################################################/**
-# @set "class=MultiGladModel"
+# @set "class=GladModel"
 # @RdocMethod fitOne
 #
 # @title "Fits the GLAD model for one chromosome in one sample"
@@ -11,8 +11,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{ceList}{A @list of @see "CnChipEffectFile" objects.}
-#   \item{refList}{A @list of @see "CnChipEffectFile" objects.}
+#   \item{ceList}{A @list of @see "ChipEffectFile" objects.}
+#   \item{refList}{A @list of @see "ChipEffectFile" objects.}
 #   \item{chromosome}{The chromosome for which the model should be fitted.}
 #   \item{units}{(Optional) The subset of units to be matched.}
 #   \item{useStdvs}{If @TRUE, standard deviations estimates for the 
@@ -34,7 +34,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromosome, units=NULL, useStddvs=TRUE, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, units=NULL, useStddvs=TRUE, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -79,6 +79,16 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
       df0 <- getXAM(ce, other=ref, chromosome=chromosome, units=units, verbose=less(verbose));
       df0 <- df0[,c("x", "M")];
       verbose && cat(verbose, "Number of units: ", nrow(df0));
+
+      verbose && enter(verbose, "Scanning for non-finite values");
+      n <- sum(!is.finite(df0[,"M"]));
+      fraction <- n / nrow(df0);
+      verbose && printf(verbose, "Number of non-finite values: %d (%.1f%%)\n", 
+                                                             n, 100*fraction);
+      if (fraction > 0.1) {
+        throw(sprintf("Something is wrong with the data. Too many non-finite values: %d (%.1f%% > 10%)", n, 100*fraction));
+      }
+      verbose && exit(verbose);
   
       verbose && enter(verbose, "Retrieving stddvs of chip effects");
       units0 <- as.integer(rownames(df0));
@@ -95,20 +105,28 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
     } else {
       verbose && cat(verbose, "No chip-effect estimates available sample: ", arrayNames[kk]);
     }
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+    
     verbose && exit(verbose);
-  }
+  } # for (kk in ...)
   
+
   verbose && enter(verbose, "Re-order by physical position");
   df <- df[order(df[,"x"]),];
   rownames(df) <- NULL;
   nbrOfUnits <- nrow(df);
   verbose && exit(verbose);
   verbose && cat(verbose, sprintf("Extracted data for %d SNPs", nbrOfUnits));
+  verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fit GLAD
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Setting up GLAD data structure");
   # Put the data in a format recognized by GLAD
   df <- data.frame(
     LogRatio=df[,"M"], 
@@ -121,6 +139,7 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
     # Add SD estimates
     sdTheta=df[,"sdTheta"]
   );
+
   df <- as.profileCGH(df);
   verbose && str(verbose, df);
   verbose && exit(verbose);
@@ -130,7 +149,18 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
   verbose && cat(verbose, "Chip types: ", paste(chipTypes, collapse=", "));
   verbose && cat(verbose, "Total number of units: ", nbrOfUnits);
   args <- c(list(df), gladArgs, list(verbose=as.logical(verbose)));
-  fit <- do.call("glad", args);
+  rm(df, gladArgs);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  # glad() writes to stdout; capture it and send it to the verbose object.
+  stdout <- capture.output({
+    fit <- do.call("glad", args);
+  })
+  verbose && print(verbose, stdout);
+
   verbose && exit(verbose);
 
   verbose && exit(verbose);
@@ -141,6 +171,12 @@ setMethodS3("fitOne", "MultiGladModel", function(this, ceList, refList, chromoso
 
 ############################################################################
 # HISTORY:
+# 2007-01-07
+# o Renamed MultiGladModel to GladModel fully replacing the older class.
+# o Added explicit garbage collection to minimize memory usage.
+# o Added test against too (>10%) many non-finite values, which indicates
+#   something is wrong with the theta estimates for either the sample or
+#   the reference.
 # 2006-12-21
 # o BUG FIX: Made some updates to fitOne() so that the file-cache key would
 #   be the same for all samples. Removed the caching completely, since fit()
