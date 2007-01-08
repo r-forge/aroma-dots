@@ -130,7 +130,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
 }, static=TRUE, private=TRUE)
 
 
-setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename=sprintf("%s,chipEffects.cel", getName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
+setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename=sprintf("%s,chipEffects.cel", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'df':
   if (!is.null(df)) {
     if (!inherits(df, "AffymetrixCelFile"))
@@ -478,6 +478,9 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 ############################################################################
 # HISTORY:
+# 2007-01-09
+# o Now fromDataFile() generates a file with the full name (name + tags) of
+#   the input file and not just the name.
 # 2007-01-07
 # o TO DO: Speed up getCellMap(), e.g. using more clever file caching.
 # 2007-01-06
