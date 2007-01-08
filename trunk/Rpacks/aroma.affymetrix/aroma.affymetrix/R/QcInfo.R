@@ -127,6 +127,37 @@ setMethodS3("getPath", "QcInfo", function(this, ...) {
 })
 
 
+
+###########################################################################/**
+# @RdocMethod getResiduals
+#
+# @title "Calculates the residuals from a probe-level model"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{}{}
+# }
+#
+# \value{
+#   Returns an @see "AffymetrixCelSet".
+# }
+#
+# \details{
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+
+
 setMethodS3("getResiduals", "QcInfo", function(this, path=NULL, tags="*", unitsPerChunk=moreUnits*100000/length(getDataSet(getPlm(this))), moreUnits=1, force=FALSE, ...) {
 
   # Argument 'path':
@@ -210,3 +241,115 @@ setMethodS3("getResiduals", "QcInfo", function(this, path=NULL, tags="*", unitsP
   
 })
 
+setMethodS3("plotNuse", "QcInfo", function(this, subset=NULL, verbose=FALSE, ...) {
+
+# ... : additional arguments to bxp().
+
+  verbose <- Arguments$getVerbose(verbose);
+  
+  plm <- getPlm(this);
+  ces <- getChipEffects(plm);
+  cdfMono <- getCdf(ces);
+  nbrOfUnits <- nbrOfUnits(cdfMono);
+  
+  if (!(is.null(subset))) {
+    getFraction <- (length(subset) == 1) && (subset >= 0) && (subset < 1);
+    if (!getFraction) {
+      units <- Arguments$getIndices(subset, range=c(1, nbrOfUnits));
+    }
+  } else {
+    units <- 1:nbrOfUnits;
+  }
+
+  # get the vector of median stdvs
+  verbose && enter(verbose, "Extracting standard errors");
+  avg <- getAverageLog(getChipEffects(plm), field="stdvs", indices=units, verbose=verbose)
+  verbose && exit(verbose);
+  medianSE <- getData(avg, indices=units, "intensities")$intensities;
+  medianSE <- log2(medianSE);
+
+  verbose && enter(verbose, "Calculating summaries for ", nbrOfArrays(this), " arrays");
+  
+  # for each file, sweep through and calculate statistics for boxplot.
+  boxplotStats <- list();
+  for (kk in seq(ces)) {
+    stdvs <- getData(getFile(ces, kk), indices=units, "stdvs")$stdvs;
+    stdvs <- log2(stdvs);
+    boxplotStats[[kk]] <- boxplot.stats(stdvs/medianSE);
+  }
+  rm(avg);
+  rm(stdvs);    # not needed any more
+
+  verbose && exit(verbose);
+  
+  # make a new list from boxplotStats which has correct structure to
+  # pass to bxp().
+
+  bxpStats <- list();
+
+  elementNames <- names(boxplotStats[[1]]);
+
+  for (name in elementNames) {
+    suppressWarnings(bxpStats[[name]] <- do.call("cbind", lapply(boxplotStats, function(x){x[[name]]})));
+  }
+  
+  bxp(bxpStats, ...);
+  
+})
+
+
+setMethodS3("plotRle", "QcInfo", function(this, subset=NULL, verbose=FALSE, ...) {
+
+# ... : additional arguments to bxp().
+  
+  verbose <- Arguments$getVerbose(verbose);
+
+  plm <- getPlm(this);
+  ces <- getChipEffects(plm);
+  cdfMono <- getCdf(ces);
+  nbrOfUnits <- nbrOfUnits(cdfMono);
+  
+  if (!(is.null(subset))) {
+    getFraction <- (length(subset) == 1) && (subset >= 0) && (subset < 1);
+    if (!getFraction) {
+      units <- Arguments$getIndices(subset, range=c(1, nbrOfUnits));
+    }
+  } else {
+    units <- 1:nbrOfUnits;
+  }
+
+  # get the vector of median stdvs
+  verbose && enter(verbose, "Extracting chip effects");
+  avg <- getAverageLog(getChipEffects(plm), field="intensities", indices=units, verbose=verbose)
+  verbose && exit(verbose);
+  medianLE <- getData(avg, indices=units, "intensities")$intensities;
+  medianLE <- log2(medianLE);
+
+  verbose && enter(verbose, "Calculating summaries for ", nbrOfArrays(this), " arrays");
+  
+  # for each file, sweep through and calculate statistics for boxplot.
+  boxplotStats <- list();
+  for (kk in seq(ces)) {
+    chipEffects <- getData(getFile(ces, kk), indices=units, "intensities")$intensities;
+    chipEffects <- log2(chipEffects);
+    boxplotStats[[kk]] <- boxplot.stats(chipEffects/medianLE);
+  }
+  rm(avg);
+  rm(chipEffects);    # not needed any more
+
+  verbose && exit(verbose);
+  
+  # make a new list from boxplotStats which has correct structure to
+  # pass to bxp().
+
+  bxpStats <- list();
+
+  elementNames <- names(boxplotStats[[1]]);
+
+  for (name in elementNames) {
+    suppressWarnings(bxpStats[[name]] <- do.call("cbind", lapply(boxplotStats, function(x){x[[name]]})));
+  }
+  
+  bxp(bxpStats, ...);
+  
+})
