@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.3.2 [2007-01-07]
+Version: 0.3.2 [2007-01-08]
 o Package pass R CMD check v2.4.0.
 o Tested the package from scratch analysis 19 Mapping250K_Nsp
   and 16 Mapping250K_Sty (15 in common) for total copy-number

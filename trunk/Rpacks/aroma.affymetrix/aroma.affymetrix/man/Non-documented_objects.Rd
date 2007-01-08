@@ -708,6 +708,8 @@
 \alias{hasTags}
 \alias{hasTags.AffymetrixFile}
 \alias{hasTags.AffymetrixFileSet}
+\alias{display}
+\alias{display.ChromosomeExplorer}
 
 \description{
   This page contains aliases for all "non-documented" objects that

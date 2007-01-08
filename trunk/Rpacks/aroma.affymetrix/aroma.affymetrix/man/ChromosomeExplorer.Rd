@@ -41,6 +41,7 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{display} \tab  -\cr
  \tab \code{getArrays} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.ChromosomeExplorer]{getChromosomes}} \tab Gets the chromosomes available.\cr
  \tab \code{getFullName} \tab  -\cr
