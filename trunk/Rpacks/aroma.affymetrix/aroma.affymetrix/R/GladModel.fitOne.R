@@ -86,7 +86,7 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
       verbose && printf(verbose, "Number of non-finite values: %d (%.1f%%)\n", 
                                                              n, 100*fraction);
       if (fraction > 0.1) {
-        throw(sprintf("Something is wrong with the data. Too many non-finite values: %d (%.1f%% > 10%)", n, 100*fraction));
+        throw(sprintf("Something is wrong with the data. Too many non-finite values: %d (%.1f%% > 10%%)", as.integer(n), 100*fraction));
       }
       verbose && exit(verbose);
   

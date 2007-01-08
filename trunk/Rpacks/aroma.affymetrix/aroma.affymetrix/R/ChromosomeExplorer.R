@@ -386,9 +386,50 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   verbose && exit(verbose);
 })
 
+setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Opening ChromosomeExplorer");
+
+  # The path to the explorer HTML document
+  path <- getPath(this);
+  path <- getParent(path);
+  pathname <- filePath(path, "index.html", expandLinks="any");
+
+  # Just in case, is setup needed?
+  if (!isFile(pathname)) {
+    setup(this, verbose=less(verbose));
+    if (!isFile(pathname)) {
+      throw("Cannot open ChromosomeExplorer. No such file: ", pathname);
+    }
+  }
+
+
+  pathname <- getAbsolutePath(pathname);
+  pathname <- chartr("/", "\\", pathname);
+
+  verbose && cat(verbose, "Pathname: ", pathname);
+  res <- browseURL(pathname, ...);
+
+  verbose && exit(verbose);
+
+  invisible(res);
+})
+
 
 ##############################################################################
 # HISTORY:
+# 2007-01-08
+# o Added display().
 # 2007-01-07
 # o TODO: The region filter for writeRegions() is hardwired for now.
 # o Update to include regions.xls file on the CE output page too.

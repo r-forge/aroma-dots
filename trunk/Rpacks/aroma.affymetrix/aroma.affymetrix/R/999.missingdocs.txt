@@ -280,3 +280,4 @@
   updateSamplesFile.ChromosomeExplorer
   hasTag hasTag.AffymetrixFile hasTag.AffymetrixFileSet hasTags
   hasTags.AffymetrixFile hasTags.AffymetrixFileSet
+  display display.ChromosomeExplorer
