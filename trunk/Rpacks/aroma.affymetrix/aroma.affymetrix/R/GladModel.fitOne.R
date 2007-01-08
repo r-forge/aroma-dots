@@ -47,13 +47,10 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
 
   verbose && enter(verbose, "Fitting GLAD");
 
-
-  fullname <- getFullName(this);
+  # Data set attributes
   chipTypes <- getChipTypes(this);
   arrayNames <- getArrays(this);
 
-  ceNames <- sapply(ceList, FUN=getFullName);
-  refNames <- sapply(refList, FUN=getFullName);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract arguments for glad().
