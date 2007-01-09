@@ -2,10 +2,9 @@ library(aroma.affymetrix);
 source("init.R");
 source("ui.R");
 
+force <- FALSE;
+#force <- TRUE;
 moreUnits <- 10;
-probeModel <- "pm";
-#probeModel <- "mm";
-#probeModel <- "pmmm";
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select model
@@ -15,6 +14,14 @@ choices <- c("MBEI,+-", "MBEI", "MBEI,A+B",
 ans <- menu(choices=choices, title="Select probe-level model (PLM)")
 model <- choices[ans];
 modelTags <- unlist(strsplit(model, split=","));
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Select probe model
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+choices <- c("PM only", "PM-MM");
+ans <- menu(choices=choices, title="Select probe model")
+probeModel <- choices[ans];
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
@@ -57,6 +64,11 @@ if ("MBEI" %in% modelTags) {
 mergeStrands <- !("+-" %in% modelTags);
 combineAlleles <- ("A+B" %in% modelTags);
 
+if (probeModel == "PM only") {
+  probeModel <- "pm";
+} else {
+  probeModel <- tolower(probeModel);
+}
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Process
@@ -91,7 +103,7 @@ for (kk in seq(along=dataSets)) {
     verbose && exit(verbose);
 
     verbose && enter(verbose, sprintf("Fitting %d chromsome %s SNPs (%s)", nunits, chr, getChipType(cdf)));
-    uDone <- fit(model, units=units, moreUnits=moreUnits, verbose=verbose);
+    uDone <- fit(model, units=units, moreUnits=moreUnits, force=force, verbose=verbose);
     nDone <- length(uDone);
   
     verbose && printf(verbose, "Fitted %d SNPs\n", nDone);

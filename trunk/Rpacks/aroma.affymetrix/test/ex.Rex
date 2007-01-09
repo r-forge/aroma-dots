@@ -2,7 +2,7 @@ savehistory();
 library(aroma.affymetrix);
 source("init.R");
 
-dataSetName <- "SinclairA_etal_2006";
+dataSetName <- "SinclairA_2006";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 cesList <- list();
 for (chipType in chipTypes) {

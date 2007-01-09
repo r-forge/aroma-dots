@@ -7,14 +7,19 @@ rootPath <- "dChipData";
 mergeStrands <- TRUE;
 combineAlleles <- TRUE;
 
-cdf <- AffymetrixCdfFile$fromChipType("Mapping250K_Nsp");
+dataSet <- list();
+for (chipType in c("Mapping250K_Nsp", "Mapping250K_Sty")) {
+  cdf <- AffymetrixCdfFile$fromChipType(chipType);
 
-path <- filePath(rootPath, "SinclairA_etal_2006,QN,MBEI,PM-MM,A+B", getChipType(cdf));
+  path <- filePath(rootPath, "SinclairA_etal_2006,QN,MBEI,PM-MM,A+B", getChipType(cdf));
 
-filenames <- list.files(path=path, pattern=".* expression[.]xls$");
-filename <- filenames[1];
+  filenames <- list.files(path=path, pattern=".* expression[.]xls$");
+  filename <- filenames[1];
 
-ces <- CnChipEffectSet$importFromDChip(filename, path=path, combineAlleles=TRUE, cdf=cdf, skip=FALSE, verbose=verbose);
+  ces <- CnChipEffectSet$importFromDChip(filename, path=path, combineAlleles=TRUE, cdf=cdf, skip=FALSE, verbose=verbose);
+
+  dataSet[[chipType]] <- ces;
+}
 
 
 ############################################################################
