@@ -62,6 +62,7 @@
 setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*", ...) {
   require(GLAD) || throw("Package not loaded: GLAD");
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -649,7 +650,14 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get genome annotation data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  genome <- readTable("annotations/hgChromosomes.txt", header=TRUE, 
+  # Check for user specific annotation file
+  pathname <- "annotations/hgChromosomes.txt";
+  if (!isFile(pathname)) {
+    # If not found, fall back to the one in the package.
+    pathname <- system.file("annotations", "hgChromosomes.txt", 
+                                                 package="aroma.affymetrix");
+  }
+  genome <- readTable(pathname, header=TRUE, 
                             colClasses=c(nbrOfBases="integer"), row.names=1);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1091,6 +1099,9 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-01-10
+# o Now plot() of GladModel is search for 'hgChromosomes.txt' in both
+#   annotations/ and the package installation directory.
 # 2007-01-07
 # o Renamed MultiGladModel to GladModel fully replacing the older class.
 # 2006-12-20

@@ -373,6 +373,7 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 #   \item{...}{Additional arguments passed to 
 #      @see "affxparser::readCdfCellIndices".}
 #   \item{force}{If @TRUE, cached values are ignored.}
+#   \item{verbose}{A @logical or @see "Verbose".}
 # }
 #
 # \value{
@@ -836,6 +837,7 @@ setMethodS3("compare", "AffymetrixCdfFile", function(this, other, ...) {
 #   \item{sep}{A string separating the chip type and the suffix string.}
 #   \item{path}{The path where to store the new CDF file.}
 #   \item{...}{Additional arguments passed to @see "affxparser::convertCdf".}
+#   \item{verbose}{A @logical or @see "Verbose".}
 # }
 #
 # \value{
@@ -874,11 +876,61 @@ setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(
 
 
 
-setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix="monocell", sep="-", path="cdf", ..., nbrOfCellsPerField=1, nbrOfUnitsPerChunks=5000, verbose=TRUE) {
+###########################################################################/**
+# @RdocMethod createMonoCell
+#
+# @title "Creates a mono-cell version of the CDF"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{chipType}{The chip type of the new CDF.}
+#   \item{suffix}{A suffix added to the chip type of the new CDF.}
+#   \item{sep}{A string separating the chip type and the suffix string.}
+#   \item{path}{The path where to store the new CDF file.}
+#   \item{nbrOfCellsPerField}{Number of cells per group field the new CDF
+#      should have.}
+#   \item{...}{Additional arguments passed to @see "affxparser::writeCdf".}
+#   \item{nbrOfUnitsPerChunks}{Number of units converted per chunk.}
+#   \item{verbose}{A @logical or @see "Verbose".}
+# }
+#
+# \value{
+#  Returns the monocell CDF as an @see "AffymetrixCdfFile" object.
+# }
+#
+# \section{Memory requirements}{
+#   This method is implemented such that data is read in chunks, and cells
+#   to be kept are extracted, and stored in an object, which eventually
+#   will hold the complete output CDF @list structure.  Thus, this method
+#   requires at least as much memory as the size of the object returned by
+#   @see "affxparser::readCdf" for the created CDF file.
+#
+#   For instance, a \code{Mapping250K\_Nsp} monocell CDF, this means
+#   approximately 1.8GB, although the CDF file it self is only about
+#   120MB.
+#
+#   The large memory overhead of this method will/might cause problem on 
+#   Windows XP 32-bit machines where maximum memory is typically 2GB for \R.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix="monocell", sep="-", path="cdf", nbrOfCellsPerField=1, ..., nbrOfUnitsPerChunks=5000, verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rearrangeCells <- function(units, offset=0, hasGroups=TRUE, ...) {
+  rearrangeCells <- function(units, offset=0, hasGroups=TRUE, ncols, ...) {
     rearrangeGroup <- function(group, idxs, ...) {
       y = (idxs-1) %/% ncols;
       x = (idxs-1) - ncols*y;
@@ -956,6 +1008,15 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Creating mono-cell CDF");
+
+  verbose && cat(verbose, "Chip type:", getChipType(this));
 
   # Get the pathname of the source
   src <- getPathname(this);
@@ -966,19 +1027,43 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   dest <- sprintf("%s.cdf", name);
   dest <- Arguments$getWritablePathname(dest, path=path, mustNotExist=TRUE);
 
+  verbose && cat(verbose, "Output pathname:", dest);
+
   # Assure source and destination is not identical
   if (identical(src, dest)) {
     throw("Cannot not create CDF file. Destination is same as source: ", src);
   }
 
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fields to be kept
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Number of cells to keep in each group field
-  fidx <- 1:nbrOfCellsPerField;
+  fIdxs <- 1:nbrOfCellsPerField;
 
   verbose && printf(verbose, "Number of cells per group field: %d\n", 
                                                        nbrOfCellsPerField);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Figure out the number of (regular) unit cells in the output
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the number of groups per units
+  unitSizes <- readCdfGroupNames(src);
+  names(unitSizes) <- NULL;
+  unitSizes <- sapply(unitSizes, FUN=length);
+
+  # Get the number of cells per unit
+  unitSizes <- unitSizes * nbrOfCellsPerField;
+
+  # Total number of cells
+  nbrOfCells <- sum(unitSizes);
+
+  # Number of units
+  nbrOfUnits <- length(unitSizes);
+
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # QC units
@@ -986,19 +1071,16 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # Keep all QC units  
   destQcUnits <- readCdfQc(src);
   nbrOfQcUnits <- length(destQcUnits);
-  nbrOfQcCells <- lapply(destQcUnits, FUN=function(unit) unit$ncells);
+  nbrOfQcCells <- lapply(destQcUnits, FUN=.subset2, "ncells");
   nbrOfQcCells <- sum(unlist(nbrOfQcCells, use.names=FALSE));
-  verbose && printf(verbose, "Number of QC cells: %d in %d QC units\n", 
-                                                nbrOfQcCells, nbrOfQcUnits);
+  verbose && printf(verbose, 
+                        "Number of QC cells: %d in %d QC units (%.1fMB)\n", 
+              nbrOfQcCells, nbrOfQcUnits, object.size(destQcUnits)/1024^2);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Chip layout
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  unitSizes <- readCdfNbrOfCellsPerUnitGroup(src);
-  unitSizes <- unlist(lapply(unitSizes, FUN=length), use.names=FALSE);
-  unitSizes <- nbrOfCellsPerField * unitSizes;
-  nbrOfCells <- sum(unitSizes);
-
   totalNbrOfCells <- nbrOfCells + nbrOfQcCells;
   verbose && printf(verbose, "Total number of cells: %d\n", totalNbrOfCells);
 
@@ -1013,92 +1095,12 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   }
   verbose && printf(verbose, "Best array dimension: %dx%d (=%d cells, i.e. %d left-over cells)\n", nrows, ncols, nrows*ncols, nrows*ncols - totalNbrOfCells);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Units
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Create all new units in chunks
-  nbrOfUnits <- nbrOfUnits(this);
-
-  verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
-
-  unitsToDo <- 1:nbrOfUnits;
-
-  destUnits <- vector("list", nbrOfUnits);
-  nbrOfChunks <- ceiling(nbrOfUnits / nbrOfUnitsPerChunks);
-
-  verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n", 
-                                         nbrOfChunks, nbrOfUnitsPerChunks);
-  head <- 1:nbrOfUnitsPerChunks;
-  verbose && enter(verbose, "Extracting unit data");
-  fields <- c("x", "y", "indices", "pbase", "tbase", "atom", "indexpos");
-  fields <- c("pbase", "tbase", "atom", "indexpos");
-  count <- 1;
-  idxOffset <- as.integer(0);
-  while (length(unitsToDo) > 0) {
-    if (length(unitsToDo) < nbrOfUnitsPerChunks) {
-      head <- 1:length(unitsToDo);
-    }
-    units <- unitsToDo[head];
-    verbose && printf(verbose, "Chunk #%d of %d (%d units)\n", 
-                                        count, nbrOfChunks, length(units));
-
-    unitsToDo <- unitsToDo[-head];
-
-    # Read CDF structure
-#    srcUnits <- readCdf(src, units=units);
-
-    srcUnits <- readCdf(src, units=units, readGroupDirection=TRUE);    
-# readGroupDirection is needed in order for writeCdf() to work.  /KS 18/12/06
-    
-    # 15/12/06: readCdf() no longer returns a list
-    # with element "blocks"; instead, it returns a list
-    # with element "groups". /KS
-
-    srcUnits <- lapply(srcUnits, function(unit) {
-      unit$groups <- lapply(unit$groups, function(group) {
-        group[fields] <- lapply(.subset(group, fields), FUN=.subset, fidx);
-        group$natoms <- nbrOfCellsPerField;
-        group$ncellsperatom <- 1;
-        idxs <- idxOffset + 1:nbrOfCellsPerField;
-        y <- (idxs-1) %/% ncols;
-        group$y <- y;
-        group$x <- (idxs-1) - ncols*y;
-        group$indices <- idxs;
-        idxOffset <<- idxOffset + nbrOfCellsPerField;
-        group;
-      })
-      ncells <- length(unit$groups)*nbrOfCellsPerField;
-    
-      unit$ncells <- ncells;
-      unit$natoms <- ncells;
-      unit$ncellsperatom <- 1;
-      unit;
-    })
-
-    # Store the transformed units
-    destUnits[units] <- srcUnits;
-    names(destUnits)[units] <- names(srcUnits);
-
-    rm(srcUnits, units); # Not needed anymore
-
-    count <- count + 1;
-  } # while (length(unitsToDo) > 0)
-  rm(unitsToDo, head, fields, fidx, count);
-  nbrOfCells <- lapply(destUnits, FUN=function(unit) unit$ncells);
-  nbrOfCells <- sum(unlist(nbrOfCells, use.names=FALSE));
-  verbose && printf(verbose, "Number unit cells extracted: %d\n", nbrOfCells);
-  verbose && exit(verbose);
 
   verbose && enter(verbose, "Rearranging QC unit cell indices");
-  destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, hasGroups=FALSE, verbose=verbose);
-  verbose && enter(verbose, "Validating QC unit cell indices");
-  cells <- unlist(lapply(destQcUnits, FUN=function(unit) unit$indices), use.names=FALSE);
-  udcells <- unique(diff(cells));
-  if (!identical(udcells, 1:1)) {
-    throw("Internal CDF error: The cell indices for the QC units are not contiguous: ", paste(udcells, collapse=", "));
-  }
+  destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, ncols=ncols,
+                                         hasGroups=FALSE, verbose=verbose);
   verbose && exit(verbose);
-  verbose && exit(verbose);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # CDF header
@@ -1109,16 +1111,130 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   destHeader$ncols <- ncols;
   verbose && exit(verbose);
 
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Write new CDF
+  # Units
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create all new units in chunks
+
+  verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
+
+  nbrOfChunks <- ceiling(nbrOfUnits / nbrOfUnitsPerChunks);
+  verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n", 
+                                         nbrOfChunks, nbrOfUnitsPerChunks);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Reading and extracting unit data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Extracting unit data");
+  # Allocate CDF list structure
+  destUnits <- vector("list", nbrOfUnits);
+
+#  fields <- c("x", "y", "indices", "pbase", "tbase", "atom", "indexpos");
+  fields <- c("pbase", "tbase", "atom", "indexpos");
+  head <- 1:nbrOfUnitsPerChunks;
+  count <- 1;
+  idxOffset <- as.integer(0);
+  unitsToDo <- 1:nbrOfUnits;
+  while (length(unitsToDo) > 0) {
+    if (length(unitsToDo) < nbrOfUnitsPerChunks) {
+      head <- 1:length(unitsToDo);
+    }
+    units <- unitsToDo[head];
+    verbose && printf(verbose, "Chunk #%d of %d (%d units)", 
+                                        count, nbrOfChunks, length(units));
+
+    unitsToDo <- unitsToDo[-head];
+
+    # Read CDF structure
+#    srcUnits <- readCdf(src, units=units);
+
+# readGroupDirection is needed in order for writeCdf() to work. /KS 18/12/06
+    srcUnits <- readCdf(src, units=units, readGroupDirection=TRUE);
+    if (verbose && isVisible(verbose)) {
+      cat(sprintf(" => RAM: %.fMB\n", object.size(srcUnits)/1024^2));
+    }
+    
+    # 15/12/06: readCdf() no longer returns a list
+    # with element "blocks"; instead, it returns a list
+    # with element "groups". /KS
+
+    # Precalculate
+    srcUnits <- lapply(srcUnits, function(unit) {
+      groups <- .subset2(unit, "groups");
+      groups <- lapply(groups, function(group) {
+        group[fields] <- lapply(.subset(group, fields), FUN=.subset, fIdxs);
+        group$natoms <- nbrOfCellsPerField;
+        group$ncellsperatom <- as.integer(1);
+        idxs <- idxOffset + fIdxs;
+        idxs1 <- as.integer(idxs-1);  # Makes sure x & y are integers.
+        y <-  idxs1 %/% ncols;
+        group$y <- y;
+        group$x <- idxs1 - ncols*y;
+#        group$indices <- idxs; # Not needed (saves ~225Mb for 250K Nsp!)
+        idxOffset <<- idxOffset + nbrOfCellsPerField;
+        group;
+      })
+      ncells <- length(groups)*nbrOfCellsPerField;
+      unit$groups <- groups;
+      unit$ncells <- ncells;
+      unit$natoms <- ncells;
+      unit$ncellsperatom <- as.integer(1);
+      unit;
+    })
+
+#    verbose && str(verbose, srcUnits[1]);
+
+    # Store the transformed units
+    destUnits[units] <- srcUnits;
+    names(destUnits)[units] <- names(srcUnits);
+
+    rm(srcUnits, units); # Not needed anymore
+
+    count <- count + 1;
+
+    if (count %% 10 == 0) {
+      # Garbage collect
+      gc <- gc();
+      verbose && print(verbose, gc);
+      verbose && printf(verbose, "Monocell CDF structure: %.1fMB", 
+                                                object.size(destUnits)/1024^2);
+    }
+  } # while (length(unitsToDo) > 0)
+  rm(unitsToDo, head, fields, fIdxs, count);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && printf(verbose, 
+                       "Number of cells extracted: %d in %d units (%.1fMB)\n", 
+                       nbrOfCells, nbrOfUnits, object.size(destUnits)/1024^2);
+  verbose && exit(verbose);
+
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Writing new CDF
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Writing new CDF to file");
   verbose && printf(verbose, "Pathname: %s\n", dest);
   verbose2 <- as.integer(verbose)-1;
   verbose2 <- 2;
   writeCdf(dest, cdfheader=destHeader, cdf=destUnits, 
-                                   cdfqc=destQcUnits, ..., verbose=verbose2);
+                                 cdfqc=destQcUnits, ..., verbose=verbose2);
+  rm(destHeader, destUnits, destQcUnits); # Not needed anymore
   verbose && exit(verbose);
+
+  verbose && cat(verbose, "CDF file created:");
+  verbose && print(verbose, file.info(dest));
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1134,9 +1250,17 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # Checking cell indices
   cells <- readCdfCellIndices(dest);
   cells <- unlist(cells, use.names=FALSE);
-  if (!identical(unique(diff(cells)), 1:1)) {
+  udcells <- as.integer(unique(diff(cells)));
+  if (!identical(udcells, 1:1)) {
     throw("Failed to create a valid mono-cell CDF: The cell indices are not contiguous: ", paste(udcells, collapse=", "));
   }
+  rm(cells, udcells);
+  verbose && exit(verbose);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   verbose && exit(verbose);
 
   # Return an AffymetrixCdfFile object for the new CDF
@@ -1280,7 +1404,7 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
       if (nmissing > 10)
         missing <- c(missing[1:10], "...");
       throw("Argument 'units' contains ", nmissing, " unknown unit names: ", 
-                                              paste(missing, collapse=", "));
+                                             paste(missing, collapse=", "));
     }
   } else {
     # Validate unit indices
@@ -1293,6 +1417,20 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-01-10
+# o Reordered internally in createMonoCell() preparing for code to read 
+#   *and* write monocell CDFs in chunks.  It should not be too hard.
+#   We need to update affxparser with writeCdfHeader(), writeCdfQcUnits()
+#   and writeCdfUnits(), and are basically already in there, but as
+#   private functions.
+# o Removed some unnecessary group fields in 'destUnits' saving us approx
+#   220-230Mb out of 1.9GB for the Mapping250K_Nsp.  Still need to find
+#   another solution to get down below 1GB. One thing that takes up a lot
+#   of memory is that the unit and group directions are stored as character
+#   strings and not integers.
+# o BUG FIX: The most recent createMonoCell() would create CDFs with all
+#   cell indices being equal to one.  Added more verbose output and some
+#   garbage collection to this function too.
 # 2007-01-06
 # o Added argument 'force' to getCellIndices().
 # o Now getCellIndices() only caches object < 10 MB RAM.
