@@ -8,6 +8,7 @@ imageFormat <- "screen";
 imageFormat <- "png";
 
 force <- FALSE;
+force <- TRUE;
 suppressWarnings({rm(res)});
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
