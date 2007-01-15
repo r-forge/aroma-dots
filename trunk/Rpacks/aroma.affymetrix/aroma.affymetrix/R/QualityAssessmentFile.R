@@ -1,0 +1,76 @@
+
+###########################################################################/**
+# @RdocClass QualityAssessmentFile
+#
+# @title "The QualityAssessmentFile class"
+#
+# \description{
+#  @classhierarchy
+#
+#  This class represents probe-level QC information (residuals, weights, etc.)
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Arguments passed to @see "AffymetrixCelFile".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+# 
+# \seealso{
+#   An object of this class is typically part of a @see "QcSet".
+# }
+#*/###########################################################################
+setConstructorS3("QualityAssessmentFile", function(...) {
+
+  this <- extend(AffymetrixCelFile(...), "QualityAssessmentFile",
+    "cached:.firstCells" = NULL
+  )
+
+  this;
+})
+
+setMethodS3("findUnitsTodo", "QualityAssessmentFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Identifying non-assigned units in QC file");
+
+  verbose && cat(verbose, "Pathname: ", getPathname(this));
+  if (is.null(units)) {
+    units <- 1:nbrOfUnits(getCdf(this));
+  }
+
+  verbose && exit(verbose);
+  
+  # Read pixels from each unit
+  verbose && enter(verbose, "Reading data for these ", length(units), " units");
+  value <- readCelUnits(getPathname(this), units=units, readIntensities=FALSE, 
+                        readStdvs=FALSE, readPixels=TRUE);
+
+  # Identify units for which all pixels == 0.
+
+  allZeroPixels <- sapply(value, function(x) {all(x[[1]][[1]]==0)}, USE.NAMES=FALSE);
+
+  value <- which(allZeroPixels);
+  if (!is.null(units))
+    value <- units[value];
+  verbose && cat(verbose, "Looking for pixels == 0 indicating non-assigned units:");
+  verbose && str(verbose, value);
+
+  verbose && exit(verbose);
+
+  value;
+})
+
+
+############################################################################
+# HISTORY:
+# 2007-01-12
+# o Created.
+############################################################################
