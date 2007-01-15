@@ -552,9 +552,456 @@ setMethodS3("highlight", "AffymetrixCelFile", function(this, indices=NULL, ...) 
 })
 
 
+###########################################################################/**
+# @RdocMethod image270
+#
+# @title "Displays all or a subset of the data spatially"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{xrange}{A @numeric @vector of length two giving the left and right
+#          coordinates of the cells to be returned.}
+#   \item{yrange}{A @numeric @vector of length two giving the top and bottom
+#          coordinates of the cells to be returned.}
+#   \item{...}{Additional arguments passed to @seemethod "readRectangle",
+#      but also @see "graphics::image".}
+#   \item{field}{The data field to be displayed.}
+#   \item{col}{The color map to be used.}
+#   \item{main}{The main title of the plot.}
+# }
+#
+# \value{
+#  Returns the (270-degrees rotated) data @matrix.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "updateUnits".
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, ..., field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), main=getName(this)) {
+  rotate270 <- function(x, ...) {
+    x <- t(x)
+    nc <- ncol(x)
+    if (nc < 2) return(x)
+    x[,nc:1,drop=FALSE]
+  }
+
+  # Argument 'field':
+  field <- match.arg(field);
+
+  suppressWarnings({
+    cel <- getRectangle(this, xrange=xrange, yrange=yrange, fields=field, ...);
+  })
+
+  # Display the rectangle
+  y <- cel[[field]];
+
+  # if only PM locations have signal, add a fake row
+
+  nr <- nrow(y);
+  if (interleaved) {
+    idxEven <- which((1:nr) %% 2 == 0);
+    y[idxEven-1,] <- y[idxEven,];
+  }
+  
+  suppressWarnings({
+    if (takeLog) {
+      image(log2(rotate270(y)), col=col, ..., axes=FALSE, main=main);
+    } else {
+      image(rotate270(y), col=col, ..., axes=FALSE, main=main);
+    }      
+  })
+
+  if (is.null(xrange) || xrange[2] == Inf) 
+    xrange <- c(0,ncol(y)-1);
+  if (is.null(yrange) || yrange[2] == Inf) 
+    yrange <- c(0,nrow(y)-1);
+
+  cdf <- getCdf(this);
+  dim <- paste(getDimension(cdf), collapse="x");
+  label <- sprintf("Chip type: %s [%s]", getChipType(cdf), dim);
+  text(x=0, y=0, labels=label, adj=c(0,1.2), cex=0.8, xpd=TRUE)
+  label <- sprintf("(%d,%d)", as.integer(xrange[1]), as.integer(yrange[1]));
+  text(x=0, y=1, labels=label, adj=c(0,-0.7), cex=0.8, xpd=TRUE)
+  label <- sprintf("(%d,%d)", as.integer(xrange[2]), as.integer(yrange[2]));
+  text(x=1, y=0, labels=label, adj=c(1,1.2), cex=0.8, xpd=TRUE)
+
+  # Return the plotted data.
+  invisible(y);
+})
+
+
+
+
+###########################################################################/**
+# @RdocMethod writeSpatial
+#
+# @title "Writes a spatial image of the CEL data to an image file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{filename}{The filename of the image file.}
+#   \item{path}{The path to the image file.}
+#   \item{...}{Additional arguments passed to @seemethod "readRectangle".}
+#   \item{field}{The data field to be displayed.}
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
+# }
+#
+# \value{
+#   Returns (invisibly) the pathname of the generated image file.
+# }
+#
+# \section{Details}{
+#   If any other image format than the pixmap *.pgm format is requested,
+#   an external image coverted is used to convert from the PGM format.
+#   You may specify the absolute pathname to such an image converted by:
+#   \code{options(imageConverter="C:/Program Files/ImageMagick/bin/convert")}.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "image270".
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf(fmtstr, getName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), transform=sqrt, zlim=NULL, verbose=FALSE) {
+  require(R.image) || throw("Package R.image not loaded.");
+
+  # Argument 'field':
+  field <- match.arg(field);
+
+  # Argument 'transform':
+  if (is.null(transform)) {
+  } else if (is.function(transform)) {
+  } else {
+    throw("Argument 'transform' is not a function: ", mode(transform));
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Argument 'filename' and 'path':
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  verbose && enter(verbose, "Reading CEL data");
+  suppressWarnings({
+    cel <- getRectangle(this, fields=field, ...);
+  })
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Creating an in-memory image");
+  # Get the image
+  img <- cel[[field]];
+
+  if (!is.null(transform)) {
+    verbose && enter(verbose, "Custom transformation of data");
+    img <- transform(img);
+    verbose && exit(verbose);
+  }
+
+  # zlim?
+  if (is.null(zlim)) {
+    zlim <- range(img, na.rm=TRUE);
+  } else {
+    # Truncating to zlim
+    img[(img < zlim[1])] <- zlim[1];
+    img[(img > zlim[2])] <- zlim[2];
+
+    # Rescale to zlim
+    img <- img - zlim[1];
+    img <- img / diff(zlim);
+  }
+
+  verbose && printf(verbose, "zlim = [%g,%g]\n", zlim[1], zlim[2]);
+
+  rimg <- range(img, na.rm=TRUE);
+  verbose && printf(verbose, "range = [%g,%g]\n", rimg[1], rimg[2]);
+
+  # Rescale to 256-levels gray-scale image
+  img <- (255/max(img, na.rm=TRUE)) * img;
+
+  rimg <- range(img, na.rm=TRUE);
+  verbose && printf(verbose, "new range = [%g,%g]\n", rimg[1], rimg[2]);
+
+  # Truncate again just in case (but it should not be necessary)
+  img[img < 0] <- 0;
+  img[img > 255] <- 255;
+  img <- GrayImage(img);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Write image to temporary PGM file");
+  pgmfile <- paste(pathname, ".pgm", sep="");
+  on.exit({
+    # Remove the PGM file if the final file was successfully create.
+    if (isFile(pathname))
+      file.remove(pgmfile)
+  });
+  write(img, pgmfile);
+  verbose && exit(verbose);
+
+  # Done?
+  if (regexpr("[.]pgm$", pathname) != -1)
+    return(invisible(pathname));
+
+  # Convert PGM to final image format using ImageMagick
+  verbose && enter(verbose, "Convert to final file using ImageMagick");
+  converter <- getOption("imageConverter");
+  if (is.character(converter)) {
+    converter <- function(srcfile, destfile, format, options=NULL, ...) {
+      res <- system(paste(converter, options, pgmfile, pathname));
+      (res == 0);
+    }
+  }
+
+  suppressWarnings({
+    converter(pgmfile, pathname, ...);
+  })
+
+  verbose && exit(verbose);
+
+  invisible(pathname);
+}, private=TRUE)
+
+
+###########################################################################/**
+# @RdocMethod getImage
+#
+# @title "Creates an RGB Image object from a CEL file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{}{}
+# }
+#
+# \value{
+#   Returns an Image object.
+# }
+#
+# \section{Details}{
+# }
+#
+# \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, lim=c(-Inf, Inf), field=c("intensities", "stdvs", "pixels"), col=NULL, outlierCol="white", main=getName(this)) {
+
+  require(EBImage) || throw("Package not loaded: 'EBImage'.");
+
+  if (is.null(col)) {
+    col <- gray.colors(256);
+  }
+  
+  field <- match.arg(field);
+  
+  suppressWarnings({
+    cel <- getRectangle(this, xrange=xrange, yrange=yrange, fields=field, ...);
+  })
+
+  # Display the rectangle
+  y <- cel[[field]];
+
+  # if only PM locations have signal, add a fake row
+
+  nr <- nrow(y);
+  if (interleaved) {
+    idxEven <- which((1:nr) %% 2 == 0);
+    y[idxEven-1,] <- y[idxEven,];
+  }
+
+  if (takeLog) {
+    y <- log2(y);
+  }
+
+  y <- t(y);
+  
+  if (lim[1] == -Inf) {
+    lim[1] <- min(y, na.rm=TRUE);
+  }
+  if (lim[2] == Inf) {
+    lim[2] <- max(y, na.rm=TRUE);
+  }
+
+  img <- Image(data=y, dim=dim(y));
+  img <- rgbTransform(img, palette=col, lim=lim, outlierCol=outlierCol);
+  return(img);
+  
+})
+
+
+
+setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf), outlierCol="white") {
+  # given an input Image, transform to new RGB image based
+  # on list of colours given in argument 'palette' and lower and
+  # upper bounds given in 'lim'.  TOFIX: THIS IS CURRENTLY TOO SLOW
+
+  if (lim[1]==-Inf) {
+    lim[1] <- min(this@.Data);
+  }
+  if (lim[2]==Inf) {
+    lim[2] <- max(this@.Data);
+  }
+
+  col2rgbComposite <- function(color) {
+    rgbvec <- col2rgb(color);
+    if (length(color)==1) {
+      return(rgbvec[3]*256^2 + rgbvec[2]*256 + rgbvec[1]);
+    } else {
+      return(apply(rgbvec,2,function(x){x[3]*256^2+x[2]*256+x[1]}));
+    }
+  }
+  
+  rgbBin <- function(x, bin, binValue) {
+# x is a vector
+    res <- vector("integer", length(x));
+    res[x<bin[1]] <- col2rgbComposite(outlierCol);
+    for (i in 2:length(bin)) {
+      res[x<bin[i] & x>bin[i-1]] <- binValue[i];
+    }
+    res[x>bin[length(bin)]] <- col2rgbComposite(outlierCol);
+    return(res);
+  }
+
+  bin <- seq(lim[1], lim[2], length.out=length(palette));
+  binValue <- col2rgbComposite(palette);
+
+  res <- rgbBin(this@.Data, bin, binValue);
+  return(Image(res, dim(this@.Data), rgb=TRUE));
+  
+})
+
+
+
+###########################################################################/**
+# @RdocMethod plotImage
+#
+# @title "Opens an ImageMagick window with a spatial plot of a CEL file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{}{}
+# }
+#
+# \value{
+#   Returns nothing.
+# }
+#
+# \section{Details}{
+# }
+#
+# \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), outlierCol="white", xSize=1000, ySize=1000, main=getName(this)) {
+
+  require(EBImage) || throw("Package not loaded: 'EBImage'.");
+
+  field <- match.arg(field);
+
+  img <- getImage(this, xrange=xrange, yrange=yrange, takeLog=takeLog, interleaved=interleaved, field=field, col=col, xSize=xSize, ySize=ySize, main=main, outlierCol=outlierCol);
+  display(zoom.image(img, 1000,1000));
+  
+})
+
+
+###########################################################################/**
+# @RdocMethod plotImageToFile
+#
+# @title "Creates an spatial plot of a CEL file and writes to file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{}{}
+# }
+#
+# \value{
+#   Returns nothing.
+# }
+#
+# \section{Details}{
+# }
+#
+# \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("plotImageToFile", "AffymetrixCelFile", function(this, outputFile=NULL, path=NULL, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), outlierCol="white", xSize=1000, ySize=1000, main=getName(this), ...) {
+
+  if (is.null(path)) {
+    path <- file.path("images");
+  }
+  
+  if (!is.null(path)) {
+    path <- Arguments$getWritablePath(path);
+  }
+  
+  if (is.null(outputFile)) {
+    outputFile <- sprintf("%s.jpg", paste(getName(this), getTags(this), collapse=","));
+    outputFile <- Arguments$getWritablePathname(outputFile, path=path);
+  }
+  
+  require(EBImage) || throw("Package not loaded: 'EBImage'.");
+
+  img <- getImage(this, xrange=xrange, yrange=yrange, takeLog=TRUE, interleaved=interleaved, field=field, col=col, main=main, outlierCol=outlierCol);
+  
+  write.image(zoom.image(img, xSize, ySize), file=outputFile);
+  
+})
+
+
 
 ############################################################################
 # HISTORY:
+# 2007-01-12 /KS
+# o Added getImage(), plotImage() and plotImageToFile(), which use
+#   EBImage functionality.
+# o Moved image270() and writeSpatial() from AffymetrixCelFile.R.
 # 2006-09-26
 # o Renamed calcMvsA() to getAm().
 # 2006-09-15
@@ -571,3 +1018,9 @@ setMethodS3("highlight", "AffymetrixCelFile", function(this, indices=NULL, ...) 
 # 2006-05-16
 # o Created.
 ############################################################################
+# TODO: (KS 12/01/07)
+#
+# o image methods needed for AffymetrixCelSets?  Or just use lapply?
+# o annotation of plots generated by EBImage.
+#
+###########################################################################
