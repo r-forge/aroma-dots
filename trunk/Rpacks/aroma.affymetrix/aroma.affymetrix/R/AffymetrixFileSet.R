@@ -45,6 +45,13 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, tags="*", alias=NULL,
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
 
+  # Arguments '...':
+  args <- list(...);
+  if (length(args) > 0) {
+    argsStr <- paste(names(args), collapse=", ");
+    throw("Unknown arguments: ", argsStr);
+  }
+
 
   this <- extend(Object(), "AffymetrixFileSet",
     files = as.list(files),
@@ -95,7 +102,13 @@ setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
     s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
   }
   s <- c(s, sprintf("Full name: %s", getFullName(this)));
-  s <- c(s, sprintf("Number of files: %d", nbrOfFiles(this)));
+  n <- nbrOfFiles(this);
+  s <- c(s, sprintf("Number of files: %d", n));
+  names <- getNames(this);
+  if (n >= 5)
+    names <- c(names[1:2], "...", names[n]);
+  names <- paste(names, collapse=", ");
+  s <- c(s, sprintf("Names: %s", names));
   s <- c(s, sprintf("Path (to the first file): %s", getPath(this)));
   s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
@@ -997,6 +1010,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2007-01-14
+# o Added a test for "unknown" (=unused) arguments to constructor.
 # 2006-01-07
 # o Added hasTags() and hasTag().
 # o Now arguments '...' in fromFiles() are passed to the constructor of

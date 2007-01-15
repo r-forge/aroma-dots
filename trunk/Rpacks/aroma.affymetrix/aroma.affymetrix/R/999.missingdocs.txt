@@ -1,18 +1,19 @@
   [.AffymetrixCelFile [.AffymetrixCelSet [.GdasAnnotationFile
-  [.GdasAnnotationSet [.GenotypeCallFile [.GenotypeCallSet
-  [[.AffymetrixCelFile [[.AffymetrixCelSet [[.GenotypeCallSet
-  [<-.GenotypeCallFile annotateMvsA annotateMvsA.AffymetrixCelFile
-  append append.AffymetrixCelSet append.AffymetrixFileSet
-  append.default appendFiles appendFiles.AffymetrixFileSet
-  applyToUnitIntensities applyToUnitIntensities.AffymetrixCelSet
-  AptProbesetGenotype as.AffymetrixCelSet as.AffymetrixFileSet
+  [.GdasAnnotationSet [[.AffymetrixCelFile [[.AffymetrixCelSet
+  addIncludes addIncludes.ChromosomeExplorer addIndexFile
+  addIndexFile.ChromosomeExplorer annotateMvsA
+  annotateMvsA.AffymetrixCelFile append append.AffymetrixCelSet
+  append.AffymetrixFileSet append.default appendFiles
+  appendFiles.AffymetrixFileSet applyToUnitIntensities
+  applyToUnitIntensities.AffymetrixCelSet AptProbesetGenotype
+  as.AffymetrixCelSet as.AffymetrixFileSet
   as.character.AffymetrixCdfFile as.character.AffymetrixCelFile
   as.character.AffymetrixPowerTools as.character.AffymetrixProbeTabFile
-  as.character.AptProbesetGenotype as.character.ChromosomeExplorer
-  as.character.CnChipEffectFile as.character.CrlmmModel
-  as.character.Interface as.character.Model
-  as.character.GladModel as.character.PlatformDesign
-  as.character.QcInfo as.character.SnpChipEffectFile
+  as.character.AptProbesetGenotype as.character.ChipEffectFile
+  as.character.ChipEffectSet as.character.ChromosomeExplorer
+  as.character.CrlmmModel as.character.GenotypeCallFile
+  as.character.GladModel as.character.Interface as.character.Model
+  as.character.PlatformDesign as.character.QualityAssessmentModel
   as.character.Transform as.GenotypeCallSet backtransformGenotypeCone
   backtransformGenotypeCone.matrix bgAdjustGcrma bgAdjustOptical
   bgAdjustRma calculateGsbParameters calculateTargetDistribution
@@ -24,19 +25,17 @@
   clone.AffymetrixFileSet cna cna.AffymetrixCelSet colMeans colSums
   compare computeAffinities convert convertTable convertTable.default
   convertTxtFilesToXdr convertTxtFilesToXdr.AptProbesetGenotype
-  convertUnits copyFile copyFile.AffymetrixFile create
-  create.GenotypeCallFile createBlankSet
+  convertUnits copyFile copyFile.AffymetrixFile create createBlankSet
   createBlankSet.AffymetrixCelSet createFrom
   createFrom.AffymetrixCelFile createFromCrlmmFile
   createFromCrlmmFile.GenotypeCallSet createFromFeatureSet
-  createFromFeatureSet.AffymetrixCelSet createMonoCell
-  createMonoCell.AffymetrixCdfFile createParamCdf
+  createFromFeatureSet.AffymetrixCelSet createMonoCell createParamCdf
   createParamCdf.ChipEffectFile dataFrame dataFrame.default decode
-  decode.ParameterCelFile drawCytoBand drawCytoBand.default encode
-  encode.ParameterCelFile extend.Interface extractAffyBatch
-  extractSnpFeatureSet extractSnpQSet findUnitsTodo
-  findUnitsTodo.ChipEffectFile findUnitsTodo.ChipEffectSet fit
-  fit.GladModel fit.PcrProbeCalibration
+  decode.ParameterCelFile digest display drawCytoBand
+  drawCytoBand.default encode encode.ParameterCelFile extend.Interface
+  extractAffyBatch extractSnpFeatureSet extractSnpQSet findUnitsTodo
+  findUnitsTodo.ChipEffectFile findUnitsTodo.ChipEffectSet
+  findUnitsTodo.QualityAssessmentFile fit fit.PcrProbeCalibration
   fitGenotypeCone fitGenotypeCone.matrix fitGlad
   fitGlad.CnChipEffectSet fitOne fitPlasqUnit fitPlasqUnit.matrix
   fitQuantileNormFcn forDataSet forDataSet.GdasAnnotationSet fromCdf
@@ -49,17 +48,17 @@
   fromDataSet.GenomeInformation fromDataSet.SnpInformation fromFile
   fromFile.AffymetrixFile fromFile.GenotypeCallXdrFile fromFiles
   fromFiles.AffymetrixCelSet fromFiles.ChipEffectSet
-  fromFiles.GdasAnnotationSet fromFiles.GenotypeCallSet
-  fromFiles.GenotypeCallXdrSet gcrmaSummary GdasAnnotationFile
-  GdasAnnotationSet GenericSummary getAlleleAB
-  getAlleleAB.PlatformDesign getAllelePairs getAllelePairUnitSets
-  getAlleleProbePairs getAlleleProbePairs2
+  fromFiles.CnChipEffectSet fromFiles.GdasAnnotationSet
+  fromFiles.GenotypeCallXdrSet fromFiles.SnpChipEffectSet gcrmaSummary
+  GdasAnnotationFile GdasAnnotationSet GenericSummary getAlias
+  getAlleleAB getAlleleAB.PlatformDesign getAllelePairs
+  getAllelePairUnitSets getAlleleProbePairs getAlleleProbePairs2
   getAlleleProbePairs2.AffymetrixCdfFile getAm getAM
   getAm.AffymetrixCelFile getAnnotations getAnnotations.PlatformDesign
   getAptPathnames getAptPathnames.AptProbesetGenotype getArrays
-  getArrays.ChromosomeExplorer getArrays.GladModel getAsteriskTag
-  getAsteriskTag.Transform getAverage getAverage.AffymetrixCelSet
-  getAverageAsinh getAverageAsinh.AffymetrixCelSet getAverageFile
+  getAsteriskTag getAsteriskTag.Transform getAverage
+  getAverage.AffymetrixCelSet getAverageAsinh
+  getAverageAsinh.AffymetrixCelSet getAverageFile
   getAverageFile.ChipEffectSet getAverageFile.CnChipEffectSet
   getAverageFile.SnpChipEffectSet getAverageLog
   getAverageLog.AffymetrixCelSet getBlockPositions
@@ -67,8 +66,8 @@
   getCachedFields.PlatformDesign getCachePath.PlatformDesign getCdf
   getCdf.AffymetrixProbeTabFile getCdf.AptProbesetGenotype
   getCdf.FragmentLengthNormalization getCdf.GdasAnnotationSet
-  getCdf.GenotypeCallFile getCdf.GenotypeCallXdrFile getCdf.GladModel
-  getCdf.PlatformDesign getCdf.QcInfo getCellIndices
+  getCdf.GenotypeCallXdrFile getCdf.PlatformDesign
+  getCdf.QualityAssessmentModel getCellIndices
   getCellIndices.ChipEffectFile getCellIndices.ChipEffectSet
   getCellIndices.CnChipEffectFile getCellIndices.CnPlm
   getCellIndices.CnProbeAffinityFile getCellIndices.PlatformDesign
@@ -80,32 +79,32 @@
   getChipEffectFileClass.CnChipEffectSet
   getChipEffectFileClass.SnpChipEffectSet getChipEffectFiles
   getChipEffectFiles.GladModel getChipEffects getChipEffects.CnPlm
-  getChipEffects.GladModel getChipEffects.PlasqModel
-  getChipEffects.QcInfo getChipEffects.SnpPlm getChipEffectSetClass
+  getChipEffects.PlasqModel getChipEffects.QualityAssessmentModel
+  getChipEffects.SnpPlm getChipEffectSetClass
   getChipEffectSetClass.CnPlm getChipEffectSetClass.ProbeLevelModel
   getChipEffectSetClass.SnpPlm getChipType
   getChipType.AffymetrixCdfFile getChipType.AffymetrixProbeTabFile
-  getChipType.GdasAnnotationSet getChipType.GenotypeCallFile
-  getChipType.GenotypeCallSet getChipType.GladModel
-  getChipType.MultiGladModel getChipType.PlatformDesign getChipTypes
-  getChipTypes.MultiGladModel getChromosomes
+  getChipType.GdasAnnotationSet getChipType.PlatformDesign getChipTypes
+  getChipTypes.GladModel getChromosomes
   getChromosomes.GenomeInformation getChromosomeStats
   getChromosomeStats.GenomeInformation getChrXFile
   getChrXFile.AptProbesetGenotype getCombineAlleles
   getCombineAlleles.CnChipEffectSet getCommonPrefix getCrlmmInfo
   getCrlmmInfo.PlatformDesign getData.AffymetrixCelSet
-  getData.AffymetrixProbeTabFile getDataFile getDataFile.PlatformDesign
-  getDataFiles getDataFiles.PlatformDesign getDataFlat
-  getDataFlat.ChipEffectFile getDataSet getDataSet.AptProbesetGenotype
+  getData.AffymetrixProbeTabFile getDataColumns
+  getDataColumns.GenomeInformation getDataFile
+  getDataFile.PlatformDesign getDataFiles getDataFiles.PlatformDesign
+  getDataFlat getDataFlat.ChipEffectFile getDataSet
+  getDataSet.AptProbesetGenotype getDataSet.QualityAssessmentModel
   getDescription.AffymetrixFileSet getDescription.PlatformDesign
   getDimension getDimension.AffymetrixCdfFile getExternalCommand
   getExternalCommand.AptProbesetGenotype getFeatureInfo
-  getFeatureInfo.PlatformDesign getFields.GenomeInformation
-  getFields.SnpInformation getFile getFile.AffymetrixFileSet
-  getFilename getFilename.Arguments getFiles getFiles.AffymetrixFileSet
-  getFileSize.AffymetrixFile getFileSize.AffymetrixFileSet getFileType
-  getFirstCellIndices getFirstCellIndices.AffymetrixCdfFile
-  getFitFunction getFitUnitFunction getFitUnitFunction.CnPlm
+  getFeatureInfo.PlatformDesign getFields.SnpInformation getFile
+  getFile.AffymetrixFileSet getFilename getFilename.Arguments getFiles
+  getFiles.AffymetrixFileSet getFileSize.AffymetrixFile
+  getFileSize.AffymetrixFileSet getFileType getFirstCellIndices
+  getFirstCellIndices.AffymetrixCdfFile getFitFunction
+  getFitUnitFunction getFitUnitFunction.CnPlm
   getFitUnitFunction.PlasqModel getFitUnitFunction.ProbeLevelModel
   getFitUnitFunction.UnitModel getFragmentLengths
   getFragmentLengths.SnpInformation getFragmentStarts
@@ -113,107 +112,109 @@
   getFragmentStops.SnpInformation getFullName
   getFullName.AffymetrixCelSet getFullName.AptProbesetGenotype
   getFullName.ChromosomeExplorer getFullName.GenotypeCallSet
-  getFullName.GladModel getFullName.MultiGladModel getFullName.QcInfo
-  getGenomeInformation getGenomeInformation.GladModel
-  getGenotypeCallSet getGenotypeCallSet.AptProbesetGenotype getHeader
+  getFullName.GladModel getFullName.QualityAssessmentModel
+  getGenomeInformation getGenotypeCallSet
+  getGenotypeCallSet.AptProbesetGenotype getHeader.GenotypeCallFile
   getHeaderV3 getHeaderV3.AffymetrixCelFile getIdentifier
   getIdentifier.AffymetrixCelFile getIdentifier.AffymetrixCelSet
-  getIdentifier.AffymetrixFileSet getIndexToRowMap
+  getIdentifier.AffymetrixFileSet getImage getIndexToRowMap
   getIndexToRowMap.AffymetrixProbeTabFile getInputDataSet
   getIntensities getLabel.AffymetrixFile getLabel.Model getListOfCdfs
-  getListOfCdfs.MultiGladModel getListOfChipEffects
-  getListOfChipEffects.MultiGladModel getListOfGenomeInformations
-  getListOfGenomeInformations.MultiGladModel getListOfReferences
-  getListOfReferences.MultiGladModel getLog2Ratios
-  getLog2Ratios.GladModel getLog2Ratios.MultiGladModel getMergeStrands
-  getMergeStrands.SnpChipEffectSet getModel getModel.ChromosomeExplorer
-  getName.AffymetrixCelSet getName.AptProbesetGenotype
-  getName.ChromosomeExplorer getName.GladModel getName.MultiGladModel
-  getName.PlatformDesign getName.QcInfo getNames
-  getNames.MultiGladModel getOligoSequences
-  getOligoSequences.PlatformDesign getOligoToCelMap
-  getOligoToCelMap.AffymetrixCdfFile getOutputDataSet getOutputFiles
+  getListOfCdfs.GladModel getListOfChipEffects
+  getListOfChipEffects.GladModel getListOfGenomeInformations
+  getListOfGenomeInformations.GladModel getListOfReferences
+  getListOfReferences.GladModel getLog2Ratios getLog2Ratios.GladModel
+  getMergeStrands getMergeStrands.SnpChipEffectSet getModel
+  getName.AptProbesetGenotype getName.GladModel getName.PlatformDesign
+  getName.QualityAssessmentModel getNames getNames.GladModel
+  getOligoSequences getOligoSequences.PlatformDesign getOligoToCelMap
+  getOligoToCelMap.AffymetrixCdfFile getOutputDataSet
+  getOutputDataSet.FragmentLengthNormalization getOutputFiles
   getOutputFiles.Transform getOutputIdentifier
   getOutputIdentifier.QuantileNormalization getPackageName
-  getPackageName.default getPackageName.PlatformDesign getParameters
+  getPackageName.default getPackageName.PlatformDesign
+  getParameters.ChipEffectFile getParameters.ChipEffectSet
+  getParameters.CnChipEffectFile
   getParameters.FragmentLengthNormalization
   getParameters.PcrProbeCalibration getParameters.QuantileNormalization
-  getParameters.Transform getParametersAsString
-  getParametersAsString.Transform getParameterSet getParameterSet.Model
-  getPath.AptProbesetGenotype getPath.ChromosomeExplorer
-  getPath.GladModel getPath.MultiGladModel getPath.PlatformDesign
-  getPath.QcInfo getPathnames getPathnamesFile
+  getParameters.SnpChipEffectFile getParameters.Transform
+  getParametersAsString getParametersAsString.ChipEffectFile
+  getParametersAsString.ChipEffectSet getParametersAsString.Transform
+  getParameterSet getParameterSet.Model getPath.AptProbesetGenotype
+  getPath.ChromosomeExplorer getPath.GladModel getPath.PlatformDesign
+  getPath.QualityAssessmentModel getPathnames getPathnamesFile
   getPathnamesFile.AptProbesetGenotype getPlasqTypes
   getPlatformDesignObject getPlatformDesignObject.AffymetrixCdfFile
-  getPlatformDesignObject.PlatformDesign getPlm getPlm.QcInfo
-  getPmDesignMatrix getPmDesignMatrix.PcrProbeCalibration getPositions
-  getProbeAffinities getProbeAffinities.AffinePlm
-  getProbeAffinities.CnPlm getProbeAffinities.MbeiPlm
-  getProbeAffinities.RmaPlm getProbeAffinities.SnpPlm getProbeEffects
+  getPlatformDesignObject.PlatformDesign getPlm
+  getPlm.QualityAssessmentModel getPmDesignMatrix
+  getPmDesignMatrix.PcrProbeCalibration getPositions getProbeAffinities
+  getProbeAffinities.AffinePlm getProbeAffinities.CnPlm
+  getProbeAffinities.MbeiPlm getProbeAffinities.RmaPlm
+  getProbeAffinities.SnpPlm getProbeEffects
   getProbeEffects.PlatformDesign getProbeParameters
   getProbeParameters.PlasqModel getReadMap getReadMap.PlatformDesign
-  getRectangle getRectangle.AffymetrixCelFile getReference
-  getReference.GladModel getReferenceFiles
-  getReferenceFiles.MultiGladModel getReferenceName
-  getReferenceName.MultiGladModel getReferenceQuantiles
+  getRectangle getRectangle.AffymetrixCelFile getReferenceFiles
+  getReferenceFiles.GladModel getReferenceName
+  getReferenceName.GladModel getReferenceQuantiles
   getReferenceQuantiles.PlatformDesign getRegions getRegions.GladModel
-  getRegions.MultiGladModel getRegions.profileCGH getResiduals
-  getResiduals.QcInfo getRestructor getRestructor.AffymetrixCdfFile
-  getRootPath getRootPath.AptProbesetGenotype
-  getRootPath.ChipEffectTransform getRootPath.ChromosomeExplorer
-  getRootPath.GladModel getRootPath.MultiGladModel
+  getRegions.profileCGH getResiduals getRestructor
+  getRestructor.AffymetrixCdfFile getRootPath
+  getRootPath.AptProbesetGenotype getRootPath.ChipEffectTransform
+  getRootPath.ChromosomeExplorer getRootPath.GladModel
   getRootPath.PlasqModel getRootPath.ProbeLevelModel
-  getRootPath.ProbeLevelTransform getRootPath.QcInfo
+  getRootPath.ProbeLevelTransform getRootPath.QualityAssessmentModel
   getRootPath.Transform getSiblings getSnpInformation
   getSnpInformation.AffymetrixCdfFile getSnpNames getSubsetToFit
   getSubsetToFit.FragmentLengthNormalization
   getSubsetToFit.PcrProbeCalibration getSubsetToUpdate
   getSubsetToUpdate.OligoQuantileNormalization
-  getSubsetToUpdate.QuantileNormalization getTableOfArrays
-  getTableOfArrays.MultiGladModel getTags getTags.AptProbesetGenotype
-  getTags.ChromosomeExplorer getTags.GladModel getTags.MultiGladModel
-  getTags.QcInfo getTargetDistribution
+  getSubsetToUpdate.QuantileNormalization getTableOfArrays getTags
+  getTags.AptProbesetGenotype getTags.GladModel
+  getTags.QualityAssessmentModel getTargetDistribution
   getTargetDistribution.OligoQuantileNormalization
   getTargetDistribution.QuantileNormalization
   getTargetDistributionIdentifier
   getTargetDistributionIdentifier.QuantileNormalization
   getTargetDistributionPathname
   getTargetDistributionPathname.QuantileNormalization getTargetFunction
-  getTargetFunction.FragmentLengthNormalization getTimestamp
-  getTimestamps getTimestamps.AffymetrixCelSet getUnitIndices
+  getTargetFunction.FragmentLengthNormalization getTemplatePath
+  getTemplatePath.ChromosomeExplorer getTimestamp getTimestamps
+  getTimestamps.AffymetrixCelSet getUnitIndices
   getUnitIndices.GdasAnnotationSet getUnitIntensities getUnitNames
   getUnitNames.PlatformDesign getUnitSizes getUnitsOnChromosome
   getUnitsOnChromosome.GenomeInformation
-  getUnitsOnChromosome.PlatformDesign getWriteMap
+  getUnitsOnChromosome.PlatformDesign getWeights getWriteMap
   getWriteMap.PlatformDesign getX getX.PlatformDesign getXAM getY
-  getY.PlatformDesign highlight highlight.AffymetrixCelFile
+  getY.PlatformDesign hasTag hasTag.AffymetrixFile
+  hasTag.AffymetrixFileSet hasTags hasTags.AffymetrixFile
+  hasTags.AffymetrixFileSet highlight highlight.AffymetrixCelFile
   highlight.ProbeLevelModel identifyCells
   identifyCells.AffymetrixCdfFile image270 importFeatureSet
   importFeatureSet.AffymetrixCelFile importFromCrlmmFile
-  importFromCrlmmFile.GenotypeCallFile importFromDChip
-  importFromDChip.CnChipEffectSet indexOf isDone.AptProbesetGenotype
+  importFromDChip importFromDChip.CnChipEffectSet indexOf
+  inferParameters inferParameters.CnChipEffectSet
+  inferParameters.SnpChipEffectSet isDone.AptProbesetGenotype
   isDuplicated isInstalled isInstalled.PlatformDesign
   isLoaded.PlatformDesign isPm isPm.PlatformDesign isSnpChip join
   join.GdasAnnotationSet lapply lapply.default load.PlatformDesign
   loadDataFile loadDataFile.PlatformDesign mergeByCommonTails
   nbrOfArrays nbrOfArrays.AptProbesetGenotype
-  nbrOfArrays.ChromosomeExplorer nbrOfArrays.GladModel
-  nbrOfArrays.MultiGladModel nbrOfArrays.QcInfo nbrOfCells
+  nbrOfArrays.QualityAssessmentModel nbrOfCells
   nbrOfCells.AffymetrixCdfFile nbrOfCells.AffymetrixCelFile
-  nbrOfChipTypes nbrOfChipTypes.MultiGladModel nbrOfColumns
-  nbrOfColumns.AffymetrixCdfFile nbrOfFiles nbrOfQcUnits
-  nbrOfQcUnits.AffymetrixCdfFile nbrOfRows nbrOfRows.AffymetrixCdfFile
-  nbrOfSnps nbrOfUnits nbrOfUnits.AffymetrixCdfFile
-  nbrOfUnits.GenomeInformation nbrOfUnits.SnpInformation
-  normalizeAverage normalizeAverage.list normalizeAverage.matrix
-  normalizeFragmentLength normalizeFragmentLength.default
-  normalizeGenotypeCone normalizeGenotypeCone.matrix plot.GladModel
-  plot.MultiGladModel plot.profileCGH plotFit
-  plotFit.PcrProbeCalibration plotMvsPosition
-  plotMvsPosition.ProbeLevelModel plotMvsX plotProfile2
-  plotProfile2.profileCGH predict.lowess print.GenericSummary
-  print.Interface process process.AptProbesetGenotype
-  process.ChromosomeExplorer process.PcrProbeCalibration
+  nbrOfChipTypes nbrOfColumns nbrOfColumns.AffymetrixCdfFile nbrOfFiles
+  nbrOfQcUnits nbrOfQcUnits.AffymetrixCdfFile nbrOfRows
+  nbrOfRows.AffymetrixCdfFile nbrOfSnps nbrOfUnits
+  nbrOfUnits.AffymetrixCdfFile nbrOfUnits.GenomeInformation
+  nbrOfUnits.SnpInformation normalizeAverage normalizeAverage.list
+  normalizeAverage.matrix normalizeFragmentLength
+  normalizeFragmentLength.default normalizeGenotypeCone
+  normalizeGenotypeCone.matrix plasqGaussian plot.GladModel
+  plot.profileCGH plotFit plotFit.PcrProbeCalibration plotImage
+  plotImageToFile plotMvsPosition plotMvsPosition.ProbeLevelModel
+  plotMvsX plotNuse plotNuse.QualityAssessmentModel plotProfile2
+  plotProfile2.profileCGH plotRle plotRle.QualityAssessmentModel
+  predict.lowess print.GenericSummary print.Interface process
+  process.AptProbesetGenotype process.PcrProbeCalibration
   range.AffymetrixCelFile range.AffymetrixCelSet read250K
   read250K.DChipSnpInformation read250KHg17
   read250KHg17.DChipGenomeInformation read50K
@@ -229,29 +230,31 @@
   readTableInternal.GenomeInformation readTableInternal.SnpInformation
   readUnits readUnits.AffymetrixCelSet readUnits.ChipEffectFile
   readUnits.ChipEffectSet readUnits.CnChipEffectFile
-  readUnits.GenotypeCallFile readUnits.GenotypeCallSet
-  readUnits.GenotypeCallXdrFile readUnits.ParameterCelFile
-  readUnits.ProbeAffinityFile readUnits.SnpChipEffectFile
-  reorder.AffymetrixFileSet restruct restruct.AffymetrixCdfFile
-  rmaSummary rowSds rowVars select select.GdasAnnotationSet setCdf
-  setCombineAlleles setCombineAlleles.CnChipEffectSet
-  setCombineAlleles.CnPlm setCombineAlleles.CnProbeAffinityFile
-  setDecodeFunction setDecodeFunction.ParameterCelFile
-  setEncodeFunction setEncodeFunction.ParameterCelFile
-  setLabel.AffymetrixFile setLabel.Model setMergeStrands
-  setMergeStrands.SnpChipEffectSet setMergeStrands.SnpPlm
-  setMergeStrands.SnpProbeAffinityFile setName setReference
-  setReference.GladModel setRestructor setTags setTags.Transform
-  showAptVersion showAptVersion.AptProbesetGenotype showLog
+  readUnits.GenotypeCallSet readUnits.GenotypeCallXdrFile
+  readUnits.ParameterCelFile readUnits.ProbeAffinityFile
+  readUnits.SnpChipEffectFile reorder.AffymetrixFileSet restruct
+  restruct.AffymetrixCdfFile rgbTransform rgbTransform.Image rmaSummary
+  rowSds rowVars select select.GdasAnnotationSet setAlias setCdf
+  setCdf.GenotypeCallFile setCombineAlleles
+  setCombineAlleles.CnChipEffectSet setCombineAlleles.CnPlm
+  setCombineAlleles.CnProbeAffinityFile setCytoband
+  setCytoband.ChromosomeExplorer setDecodeFunction
+  setDecodeFunction.ParameterCelFile setEncodeFunction
+  setEncodeFunction.ParameterCelFile setLabel.AffymetrixFile
+  setLabel.Model setMergeStrands setMergeStrands.SnpChipEffectSet
+  setMergeStrands.SnpPlm setMergeStrands.SnpProbeAffinityFile
+  setRestructor setTags setTags.Transform setup
+  setup.ChromosomeExplorer showAptVersion
+  showAptVersion.AptProbesetGenotype showLog
   showLog.AptProbesetGenotype smoothScatterMvsA splitByCommonTails
   stext stext.default stextChipType stextChipType.AffymetrixCdfFile
   stextLabel stextLabel.AffymetrixFile stextLabels
   stextLabels.AffymetrixFile stextSize stextSize.AffymetrixFile
-  stringTree stringTree.character toCamelCase toCamelCase.default
-  transformAffine transformAffine.AffymetrixCelFile
-  transformAffine.AffymetrixCelSet unload.PlatformDesign updateDataFlat
-  updateDataFlat.ChipEffectFile updateUnits updateUnits.ChipEffectFile
-  updateUnits.ChipEffectSet updateUnits.GenotypeCallFile
+  stringTree stringTree.character transformAffine
+  transformAffine.AffymetrixCelFile transformAffine.AffymetrixCelSet
+  unload.PlatformDesign updateDataFlat updateDataFlat.ChipEffectFile
+  updateSamplesFile updateSamplesFile.ChromosomeExplorer updateUnits
+  updateUnits.ChipEffectFile updateUnits.ChipEffectSet
   updateUnits.GenotypeCallXdrFile updateUnits.ParameterCelFile
   updateUnits.ProbeAffinityFile uses uses.Interface
   validate.PlatformDesign verify verify.DChipGenomeInformation
@@ -259,25 +262,6 @@
   writeChrXFile writeChrXFile.AffymetrixPowerTools writeGraphs
   writeGraphs.ChromosomeExplorer writeRegions
   writeRegions.ChromosomeExplorer writeRegions.GladModel
-  writeRegions.MultiGladModel writeRegions.profileCGH writeSpatial
-  writeSpatial.ProbeAffinityFile writeWig writeWig.CnChipEffectSet
- as.character.ChipEffectFile as.character.ChipEffectSet digest
- getArrays.GladModel getChipEffectFiles.GladModel
- getChipTypes.GladModel getDataColumns
- getDataColumns.GenomeInformation getListOfCdfs.GladModel
- getListOfChipEffects.GladModel getListOfGenomeInformations.GladModel
- getListOfReferences.GladModel getNames.GladModel
- getOutputDataSet.FragmentLengthNormalization
- getParameters.ChipEffectFile getParameters.ChipEffectSet
- getParameters.CnChipEffectFile getParameters.SnpChipEffectFile
- getParametersAsString.ChipEffectFile
- getParametersAsString.ChipEffectSet getReferenceFiles.GladModel
- getReferenceName.GladModel getTableOfArrays.GladModel
- nbrOfChipTypes.GladModel
-  addIncludes addIncludes.ChromosomeExplorer getAlias getTemplatePath
-  getTemplatePath.ChromosomeExplorer setAlias setup
-  setup.ChromosomeExplorer updateSamplesFile
-  updateSamplesFile.ChromosomeExplorer
-  hasTag hasTag.AffymetrixFile hasTag.AffymetrixFileSet hasTags
-  hasTags.AffymetrixFile hasTags.AffymetrixFileSet
-  display display.ChromosomeExplorer
+  writeRegions.profileCGH writeSpatial writeSpatial.ProbeAffinityFile
+  writeWig writeWig.CnChipEffectSet
+

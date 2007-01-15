@@ -12,10 +12,10 @@ tolerance <- .Machine$float.eps^0.5;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-path <- "raw/Test100K/Mapping50K_Hind240";  # Works! 2006-12-13
-path <- "raw/Test500K/Mapping250K_Nsp";
+path <- "rawData/Test100K/Mapping50K_Hind240";  # Works! 2006-12-13
+path <- "rawData/Test500K/Mapping250K_Nsp";
 
-path <- "raw/SinclairA_etal_2006/Mapping250K_Sty";
+path <- "rawData/SinclairA_etal_2006/Mapping250K_Sty";
 
 ds <- AffymetrixCelSet$fromFiles(path);
 print(ds);

@@ -50,6 +50,7 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:extractSnpQSet.SnpChipEffectSet]{extractSnpQSet}} \tab Extracts chip effects as a SnpQSet.\cr
+ \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getMergeStrands} \tab  -\cr
  \tab \code{setMergeStrands} \tab  -\cr

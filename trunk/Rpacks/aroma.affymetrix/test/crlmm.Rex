@@ -11,7 +11,7 @@ moreUnits <- 30;
 paths <- "probeData";
 pattern <- "^[a-zA-Z0-9_-]*$";
 pattern <- NULL;
-paths <- "raw";
+paths <- "rawData";
 pattern <- "^[^,]*$";
 pattern <- "^[a-zA-Z0-9_-]*$";
 if (exists("dataSets", mode="list")) {

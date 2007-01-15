@@ -161,6 +161,8 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
   dataSets <- list();
   for (kk in seq(along=chipTypes)) {
     chipType <- chipTypes[[kk]];
+
+    ds <- NULL;
     files <- list();
     for (path in paths) {
       path <- filePath(path, chipType, expandLinks="any");
@@ -168,12 +170,15 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
         next;
   
       print(path);
-      ds <- class$fromFiles(path);
-      names <- c(names, getName(ds));
+      ds0 <- class$fromFiles(path);
+      names <- c(names, getName(ds0));
 
-      files <- append(files, as.list(ds));
+      if (is.null(ds)) {
+        ds <- ds0;
+      } else {
+        ds <- append(ds, as.list(ds));
+      }
     }
-    ds <- class(files=files);
 
     # Remove duplicated arrays 
     if (!inherits(ds, "ChipEffectSet")) {
@@ -199,7 +204,7 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
               break;
             } else {
               tryCatch({
-                setName(ds, name);
+                setAlias(ds, name);
                 break;
               }, error=function(ex) {});
             }
@@ -208,7 +213,7 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
           name <- unames[ans-1];
         }
       }
-      setName(ds, name);
+      setAlias(ds, name);
 
       # Give the option to add tags to joined data sets
       if (kk == 1) {
@@ -233,6 +238,10 @@ selectDataSets <- function(paths="raw", pattern=NULL, class=AffymetrixCelSet, ..
 
 ############################################################################
 # HISTORY: 
+# 2007-01-11
+# o One year aniversary of aroma.affymetrix!
+# o Now mergeStrands and combineAlleles is automagically inferred when
+#   defining a new CnChipEffectSet.
 # 2006-12-02
 # o Added textMenu().
 # 2006-12-01

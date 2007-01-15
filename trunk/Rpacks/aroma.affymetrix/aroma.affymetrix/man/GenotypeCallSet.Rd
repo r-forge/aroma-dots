@@ -37,19 +37,19 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \usage{GenotypeCallSet(files=NULL, ...)}
 
  \arguments{
+   \item{files}{A \code{\link[base]{list}} of \code{\link{GenotypeCallFile}}:s.}
    \item{...}{Arguments passed to \code{\link{AffymetrixFileSet}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{[} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:000-LB-.GenotypeCallSet]{[}} \tab Gets the genotype calls.\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.GenotypeCallSet.GenotypeCallSet]{as.GenotypeCallSet}} \tab Coerce an object to an GenotypeCallSet object.\cr
- \tab \code{fromFiles} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fromFiles.GenotypeCallSet]{fromFiles}} \tab Static method defining a set of genotype call files.\cr
  \tab \code{\link[aroma.affymetrix:getCdf.GenotypeCallSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
- \tab \code{getChipType} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.GenotypeCallSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
  \tab \code{readUnits} \tab  -\cr

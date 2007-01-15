@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
+\link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{QualityAssessmentFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
 
 public static class \bold{AffymetrixCelFile}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
@@ -55,10 +55,13 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr
  \tab \code{getAm} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
+ \tab \code{\link[aroma.affymetrix:getImage.AffymetrixCelFile]{getImage}} \tab Creates an RGB Image object from a CEL file.\cr
  \tab \code{highlight} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{image270}} \tab Displays all or a subset of the data spatially.\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelFile]{plotDensity}} \tab Plots the density of the probe signals on the array.\cr
+ \tab \code{\link[aroma.affymetrix:plotImage.AffymetrixCelFile]{plotImage}} \tab Opens an ImageMagick window with a spatial plot of a CEL file.\cr
+ \tab \code{\link[aroma.affymetrix:plotImageToFile.AffymetrixCelFile]{plotImageToFile}} \tab Creates an spatial plot of a CEL file and writes to file.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsA.AffymetrixCelFile]{plotMvsA}} \tab Plots log-ratio versus log-intensity in a scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsPosition.AffymetrixCelFile]{plotMvsPosition}} \tab Plots log-ratio versus physical position in a scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsX.AffymetrixCelFile]{plotMvsX}} \tab Plots log-ratio versus another variable in a scatter plot.\cr

@@ -27,6 +27,7 @@
   \item{sep}{A string separating the chip type and the suffix string.}
   \item{path}{The path where to store the new CDF file.}
   \item{...}{Additional arguments passed to \code{\link[affxparser]{convertCdf}}.}
+  \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

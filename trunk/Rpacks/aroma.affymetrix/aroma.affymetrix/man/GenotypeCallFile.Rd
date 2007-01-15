@@ -44,12 +44,13 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{[} \tab  -\cr
- \tab \code{[<-} \tab  -\cr
- \tab \code{getCdf} \tab  -\cr
- \tab \code{getChipType} \tab  -\cr
- \tab \code{readUnits} \tab  -\cr
- \tab \code{updateUnits} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:000-LB-.GenotypeCallFile]{[}} \tab Gets the genotype calls.\cr
+ \tab \code{\link[aroma.affymetrix:000-LB-LT_-.GenotypeCallFile]{[<-}} \tab Sets the genotype calls.\cr
+ \tab \code{\link[aroma.affymetrix:fromFile.GenotypeCallFile]{fromFile}} \tab Static method defining a genotype call file object.\cr
+ \tab \code{\link[aroma.affymetrix:getCdf.GenotypeCallFile]{getCdf}} \tab Gets the CDF.\cr
+ \tab \code{\link[aroma.affymetrix:readUnits.GenotypeCallFile]{readUnits}} \tab Gets the genotype calls.\cr
+ \tab \code{setCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:updateUnits.GenotypeCallFile]{updateUnits}} \tab Updates the genotype calls.\cr
 }
 
 
@@ -62,7 +63,13 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
+ \section{File format}{
+  A GenotypeCallFile object is stored to file as a
+  \code{\link[R.huge]{FileByteVector}}.
+ }
+
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
 
 \keyword{classes}
 \keyword{internal}

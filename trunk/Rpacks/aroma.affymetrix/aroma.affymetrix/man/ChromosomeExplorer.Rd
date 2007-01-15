@@ -41,16 +41,18 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{display} \tab  -\cr
- \tab \code{getArrays} \tab  -\cr
+ \tab \code{addIncludes} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:display.ChromosomeExplorer]{display}} \tab Displays the explorer in the default browser.\cr
+ \tab \code{\link[aroma.affymetrix:getArrays.ChromosomeExplorer]{getArrays}} \tab Gets the names of the arrays.\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.ChromosomeExplorer]{getChromosomes}} \tab Gets the chromosomes available.\cr
  \tab \code{getFullName} \tab  -\cr
- \tab \code{getModel} \tab  -\cr
- \tab \code{getName} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getModel.ChromosomeExplorer]{getModel}} \tab Gets the model.\cr
+ \tab \code{\link[aroma.affymetrix:getName.ChromosomeExplorer]{getName}} \tab Gets the name of the explorer.\cr
  \tab \code{getPath} \tab  -\cr
- \tab \code{getTags} \tab  -\cr
- \tab \code{nbrOfArrays} \tab  -\cr
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getTags.ChromosomeExplorer]{getTags}} \tab Gets the tags of the explorer.\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.ChromosomeExplorer]{nbrOfArrays}} \tab Gets the total number of arrays.\cr
+ \tab \code{\link[aroma.affymetrix:process.ChromosomeExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
+ \tab \code{setCytoband} \tab  -\cr
 }
 
 

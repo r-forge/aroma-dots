@@ -2,8 +2,12 @@ savehistory();
 library(aroma.affymetrix);
 source("init.R");
 
-dataSetName <- "SinclairA_2006";
+dataSetName <- "SinclairA_etal_2006";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
+
+dataSetName <- "SlaterH_etal_2004";
+chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
+
 cesList <- list();
 for (chipType in chipTypes) {
   # Create a log file

@@ -12,6 +12,7 @@
 # @synopsis
 #
 # \arguments{
+#   \item{files}{A @list of @see "GenotypeCallFile":s.}
 #   \item{...}{Arguments passed to @see "AffymetrixFileSet".}
 # }
 #
@@ -74,9 +75,11 @@ setMethodS3("as.character", "GenotypeCallSet", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
-  s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
   s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
+  s <- c(s, "CDF:");
+  cdf <- getCdf(this);
+  s <- c(s, as.character(cdf));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
@@ -117,11 +120,11 @@ setMethodS3("getCdf", "GenotypeCallSet", function(this, ...) {
 })
 
 
-setMethodS3("getChipType", "GenotypeCallSet", function(this, ...) {
-  chipType <- getChipType(getCdf(this));
-  chipType <- gsub("[,-]monocell$", "", chipType);
-  chipType;
-})
+# setMethodS3("getChipType", "GenotypeCallSet", function(this, ...) {
+#   chipType <- getChipType(getCdf(this));
+#   chipType <- gsub("[,-]monocell$", "", chipType);
+#   chipType;
+# })
 
 
 ###########################################################################/**
@@ -171,6 +174,38 @@ setMethodS3("setCdf", "GenotypeCallSet", function(this, cdf, ...) {
 
 
 
+###########################################################################/**
+# @RdocMethod fromFiles
+#
+# @title "Static method defining a set of genotype call files"
+#
+# \description{
+#  @get "title" in a directory.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{path}{The directory where the call files are.}
+#   \item{patttern}{The filename pattern used to identify call files.}
+#   \item{...}{Arguments passed to \code{fromFiles()} of 
+#      @see "AffymetrixFileSet".}
+#   \item{fileClass}{The @see "R.oo::Class" of each genotype file.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @see "GenotypeCallSet".
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
 setMethodS3("fromFiles", "GenotypeCallSet", function(static, path, pattern="[.]calls$", ..., fileClass="GenotypeCallFile", verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -187,6 +222,7 @@ setMethodS3("fromFiles", "GenotypeCallSet", function(static, path, pattern="[.]c
 
   ds;
 }, static=TRUE)
+
 
 
 setMethodS3("getFullName", "GenotypeCallSet", function(this, parent=1, ...) {
@@ -265,8 +301,44 @@ setMethodS3("as.GenotypeCallSet", "default", function(object, ...) {
 })
 
 
-setMethodS3("[", "GenotypeCallSet", function(this, units=NULL, ..., drop=FALSE) {
-  res <- readUnits(this, units=units, ...);
+
+###########################################################################/**
+# @RdocMethod "["
+# @aliasmethod "[["
+#
+# @title "Gets the genotype calls"
+#
+# \description{
+#  @get "title" for a subset of units and a subset of arrays.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{i}{An @integer @vector specifying the subset of units to query.
+#     If @NULL, all units are considered.}
+#   \item{j}{An @integer @vector specifying the subset of arrays to query.
+#     If @NULL, all arrays are considered.}
+#   \item{...}{Additional arguments passed to @seemethod "readUnits".}
+#   \item{drop}{If @TRUE, single dimensions are dropped.}
+# }
+#
+# \value{
+#  Returns a @factor @matrix (@vector) 
+#  with levels \code{-}, \code{AA}, \code{AB}, \code{BB}, and \code{NC}.
+# }
+#
+# @author
+#
+# \seealso{
+#   Internally @seemethod "readUnits" is used.
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("[", "GenotypeCallSet", function(this, i=NULL, j=NULL, ..., drop=FALSE) {
+  res <- readUnits(this, units=i, arrays=j, ...);
   if (drop && length(res) == 1)
     res <- res[[1]];
   res;
@@ -311,8 +383,10 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NU
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(method="readUnits.GenotypeCallSet", units=units, arrays=arrays));
-  res <- this$.readUnitsCache[[key]];
+  key <- list(method="readUnits", class=class(this)[1], units=units, 
+                                                            arrays=arrays);
+  id <- digest(key);
+  res <- this$.readUnitsCache[[id]];
   if (!is.null(res)) {
     verbose && cat(verbose, "readUnits(): Returning cached data");
     return(res);
@@ -359,7 +433,7 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NU
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "readUnits(): Updating cache");
   this$.readUnitsCache <- list();
-  this$.readUnitsCache[[key]] <- calls;
+  this$.readUnitsCache[[id]] <- calls;
 
   calls;
 })

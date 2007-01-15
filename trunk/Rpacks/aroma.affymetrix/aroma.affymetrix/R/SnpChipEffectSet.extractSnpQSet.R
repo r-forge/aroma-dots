@@ -72,7 +72,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached results
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- list(method="extractSnpQSet.SnpChipEffectSet", 
+  key <- list(method="extractSnpQSet", class=class(this)[1], 
               path=getPath(this), sampleNames=getNames(this),
               transform=transform);
   if (!force) {

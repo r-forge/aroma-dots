@@ -1,4 +1,4 @@
- ###########################################################################/**
+###########################################################################/**
 # @RdocClass QualityAssessmentSet
 #
 # @title "The QualityAssessmentSet class"
@@ -11,7 +11,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{plm}{A @see "ProbeLevelModel".}
+#   \item{files}{A @list of @see "QualityAssessmentFile":s.}
 #   \item{tags}{A @character @vector of tags.}
 #   \item{...}{Not used.}
 # }

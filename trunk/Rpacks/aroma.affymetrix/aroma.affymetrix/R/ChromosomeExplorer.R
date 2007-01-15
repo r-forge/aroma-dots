@@ -59,7 +59,8 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
 
 
   extend(Object(), "ChromosomeExplorer",
-    .model = model
+    .model = model,
+    .plotCytoband = TRUE
   )
 })
 
@@ -75,21 +76,131 @@ setMethodS3("as.character", "ChromosomeExplorer", function(this, ...) {
 }, private=TRUE)
 
 
+setMethodS3("setCytoband", "ChromosomeExplorer", function(this, status=TRUE, ...) {
+  # Argument 'status':
+  status <- Arguments$getLogical(status);
+
+  this$.plotCytoband <- status;
+})
+
+
+###########################################################################/**
+# @RdocMethod getModel
+#
+# @title "Gets the model"
+#
+# \description{
+#  @get "title" for which the explorer is displaying it results.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @see "GladModel".
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getModel", "ChromosomeExplorer", function(this, ...) {
   this$.model;
 })
 
+
+###########################################################################/**
+# @RdocMethod nbrOfArrays
+#
+# @title "Gets the total number of arrays"
+#
+# \description{
+#  @get "title" available in the model.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @integer.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("nbrOfArrays", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
   nbrOfArrays(model);
 })
 
+
+###########################################################################/**
+# @RdocMethod getArrays
+#
+# @title "Gets the names of the arrays"
+#
+# \description{
+#  @get "title" available in the model.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
   getArrays(model, ...);
 })
 
 
+###########################################################################/**
+# @RdocMethod getName
+#
+# @title "Gets the name of the explorer"
+#
+# \description{
+#  @get "title", which is the same as the name of the model.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getName", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
   getName(model, ...);
@@ -97,6 +208,31 @@ setMethodS3("getName", "ChromosomeExplorer", function(this, ...) {
 
 
 
+###########################################################################/**
+# @RdocMethod getTags
+#
+# @title "Gets the tags of the explorer"
+#
+# \description{
+#  @get "title", which are the tags of the model plus additional tags.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getTags", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
   tags <- getTags(model);
@@ -274,7 +410,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 }, private=TRUE)
 
 
-setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., overwrite=FALSE, verbose=FALSE) {
+setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -290,7 +426,7 @@ setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., overwrite=F
   srcPath <- getTemplatePath(this);
 
   destPath <- filePath(getRootPath(this), "includes");
-  if (!isDirectory(destPath)) {
+  if (force || !isDirectory(destPath)) {
     verbose && enter(verbose, "Copying template files");
     verbose && cat(verbose, "Source path: ", srcPath);
     verbose && cat(verbose, "Destination path: ", destPath);
@@ -298,25 +434,42 @@ setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., overwrite=F
     verbose && exit(verbose);
   }
 
-  verbose && enter(verbose, "Copying index.html");
+  verbose && exit(verbose);
+})
+
+setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  srcPath <- getTemplatePath(this);
   srcPathname <- filePath(srcPath, "html", "index.html");
   outPath <- getParent(getPath(this));
   outPathname <- filePath(outPath, "index.html");
-  verbose && cat(verbose, "Source pathname: ", srcPathname);
-  verbose && cat(verbose, "Destination pathname: ", outPathname);
-  file.copy(srcPathname, outPathname, overwrite=overwrite);
-  verbose && exit(verbose);
 
-  verbose && exit(verbose);
+  if (force || !isFile(outPathname)) {
+    verbose && enter(verbose, "Copying index.html");
+    verbose && cat(verbose, "Source pathname: ", srcPathname);
+    verbose && cat(verbose, "Destination pathname: ", outPathname);
+    file.copy(srcPathname, outPathname, overwrite=TRUE);
+    verbose && exit(verbose);
+  }
 }, private=TRUE)
 
 
 setMethodS3("setup", "ChromosomeExplorer", function(this, ..., force=FALSE) {
   # Setup includes/?
-  path <- filePath(getRootPath(this), "includes");
-  if (force || !isDirectory(path)) {
-    addIncludes(this, ...);
-  }
+  addIncludes(this, ..., force=force);
+
+  # Setup index.html
+  addIndexFile(this, ..., force=force);
 
   # Setup samples.js?
   updateSamplesFile(this, ...);
@@ -329,7 +482,8 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, ...) {
 
   path <- getPath(this);
   model <- getModel(this);
-  plot(model, path=path, imageFormat="png", ...);
+  plotband <- this$.plotCytoband;  # Plot cytoband?
+  plot(model, path=path, imageFormat="png", plotband=plotband, ...);
 
   invisible(path);
 }, private=TRUE)
@@ -349,6 +503,36 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, nbrOfSnps=c(3,I
 
 
 
+###########################################################################/**
+# @RdocMethod process
+#
+# @title "Generates image files, scripts and dynamic pages for the explorer"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{arrays}{A @vector of array indices specifying which arrays to
+#    be considered.  If @NULL, all are processed.}
+#   \item{chromosome}{A @vector of chromosomes indices specifying which
+#     chromosomes to be considered.  If @NULL, all are processed.}
+#   \item{...}{Not used.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns nothing.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromosomes=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -370,10 +554,6 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   # Setup HTML, CSS, Javascript files first
   setup(this, ...);
 
-  # First the model, just in case
-  model <- getModel(this);
-  fit(model, arrays=arrays, chromosomes=chromosomes, ...);
-
   # Generate bitmap images
   writeGraphs(this, arrays=arrays, chromosomes=chromosomes, ...);
 
@@ -386,6 +566,33 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   verbose && exit(verbose);
 })
 
+
+###########################################################################/**
+# @RdocMethod display
+#
+# @title "Displays the explorer in the default browser"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns nothing.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -428,6 +635,10 @@ setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) 
 
 ##############################################################################
 # HISTORY:
+# 2007-01-15
+# o Added some more Rdoc comments.
+# 2007-01-10
+# o BUG FIX: setup() would only add index.html if includes/ were missing.
 # 2007-01-08
 # o Added display().
 # 2007-01-07

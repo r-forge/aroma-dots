@@ -40,6 +40,13 @@ setConstructorS3("Transform", function(dataSet=NULL, tags="*", ...) {
       throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", class(dataSet));
   }
 
+  # Arguments '...':
+  args <- list(...);
+  if (length(args) > 0) {
+    argsStr <- paste(names(args), collapse=", ");
+    throw("Unknown arguments: ", argsStr);
+  }
+
 
   this <- extend(Object(), "Transform", 
     .tags = tags,
@@ -434,6 +441,8 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-01-14
+# o Added a test for "unknown" (=unused) arguments to constructor.
 # 2007-01-07
 # o BUG FIX: getOutputFiles() would return "private" (prefix '.') files too.
 #   This caused for instance FragmentLengthNormalization to return FALSE

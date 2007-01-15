@@ -26,6 +26,7 @@
   \item{...}{Additional arguments passed to
      \code{\link[affxparser]{readCdfCellIndices}}.}
   \item{force}{If \code{\link[base:logical]{TRUE}}, cached values are ignored.}
+  \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

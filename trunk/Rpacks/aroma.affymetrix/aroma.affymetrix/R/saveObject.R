@@ -40,7 +40,7 @@ setMethodS3("saveObject", "default", function(object, file=NULL, path=NULL, comp
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'file':
   if (is.null(file)) {
-    require("digest") || throw("Package 'digest' not loaded.");
+    require("digest") || throw("Package not loaded: digest");
     file <- digest(as.list(object));  # Might be slow.
     file <- sprintf("%s.xdr", file);
   } 

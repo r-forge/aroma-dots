@@ -1,0 +1,475 @@
+###########################################################################/**
+# @set "class=AffymetrixCdfFile"
+# @RdocMethod createMonoCell
+#
+# @title "Creates a mono-cell version of the CDF"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{chipType}{The chip type of the new CDF.}
+#   \item{suffix}{A suffix added to the chip type of the new CDF.}
+#   \item{sep}{A string separating the chip type and the suffix string.}
+#   \item{path}{The path where to store the new CDF file.}
+#   \item{nbrOfCellsPerField}{Number of cells per group field the new CDF
+#      should have.}
+#   \item{...}{Additional arguments passed to @see "affxparser::writeCdf".}
+#   \item{ram}{A @double saying if more or less units should be converted
+#      per chunk.  A smaller value uses less memory.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns the monocell CDF as an @see "AffymetrixCdfFile" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix="monocell", sep="-", path="cdf", nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rearrangeCells <- function(units, offset=0, hasGroups=TRUE, ncols, ...) {
+    rearrangeGroup <- function(group, idxs, ...) {
+      y = (idxs-1) %/% ncols;
+      x = (idxs-1) - ncols*y;
+      group$y <- y;
+      group$x <- x;
+      group$indices <- idxs;
+      group;
+    } # rearrangeGroup()
+
+    nbrOfCells <- lapply(units, FUN=function(unit) unit$ncells);
+    nbrOfCells <- sum(unlist(nbrOfCells, use.names=FALSE));
+
+    cells <- seq(from=offset+1, to=offset+nbrOfCells);
+
+    verbose && printf(verbose, "Units: ");
+    if (hasGroups) {
+      for (kk in seq(along=units)) {
+        if (verbose) {
+          if (kk %% 1000 == 0) {
+            printf(verbose, "%d, ", kk);
+          } else if (kk %% 100 == 0) {
+            cat(".");
+          }
+        }
+        # groups <- units[[kk]]$groups;
+        groups <- .subset2(.subset2(units, kk), "groups");
+        for (ll in seq(along=groups)) {
+          group <- .subset2(groups, ll);
+          # Number of cells in this group
+          # nindices <- length(group$indices);
+          nindices <- length(.subset2(group, "indices"));
+          head <- 1:nindices;
+          # idxs <- cells[head];
+          idxs <- .subset(cells, head);
+          # cells <- cells[<tail>];
+          cells <- .subset(cells, (nindices+1):length(cells));
+          groups[[ll]] <- rearrangeGroup(group, idxs);
+        }
+        units[[kk]]$groups <- groups;
+      }
+    } else {
+      for (kk in seq(along=units)) {
+        if (verbose) {
+          if (kk %% 1000 == 0) {
+            printf(verbose, "%d, ", kk);
+          } else if (kk %% 100 == 0) {
+            cat(".");
+          }
+        }
+        # group <- units[[kk]]
+        group <- .subset2(units, kk);
+        # Number of cells in this group
+        # nindices <- length(group$indices);
+        nindices <- length(.subset2(group, "indices"));
+        head <- 1:nindices;
+        # idxs <- cells[head];
+        idxs <- .subset(cells, head);
+        # cells <- cells[<tail>];
+        cells <- .subset(cells, (nindices+1):length(cells));
+        group <- rearrangeGroup(group, idxs);
+        units[[kk]] <- group;
+      }
+    }
+    verbose && printf(verbose, "\n");
+
+    units;
+  } # rearrangeCells()
+  
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'nbrOfCellsPerField':
+  nbrOfCellsPerField <- Arguments$getIndices(nbrOfCellsPerField);
+
+  # Argument 'ram':
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+  verbose2 <- as.integer(verbose)-1;  # For 'affxparser' calls.
+  verbose2 <- 2;
+
+  # Number of units per chunk
+  nbrOfUnitsPerChunks <- ram * 5000;
+
+  verbose && enter(verbose, "Creating mono-cell CDF");
+
+  verbose && cat(verbose, "Chip type: ", getChipType(this));
+
+  # Get the pathname of the source
+  src <- getPathname(this);
+  src <- Arguments$getReadablePathname(src);
+
+  # Create the pathname of the destination CDF
+  name <- paste(c(chipType, suffix), collapse=sep);
+  dest <- sprintf("%s.cdf", name);
+  dest <- Arguments$getWritablePathname(dest, path=path, mustNotExist=TRUE);
+
+  verbose && cat(verbose, "Output pathname: ", dest);
+
+  # Assure source and destination is not identical
+  if (identical(src, dest)) {
+    throw("Cannot not create CDF file. Destination is same as source: ", src);
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fields to be kept
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Number of cells to keep in each group field
+  fIdxs <- 1:nbrOfCellsPerField;
+
+  verbose && printf(verbose, "Number of cells per group field: %d\n", 
+                                                       nbrOfCellsPerField);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Figure out the number of (regular) unit cells in the output
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the number of groups per units
+  nbrOfGroupsPerUnit <- readCdfGroupNames(src);
+  names(nbrOfGroupsPerUnit) <- NULL;
+
+  # Get the number of groups per unit
+  nbrOfGroupsPerUnit <- sapply(nbrOfGroupsPerUnit, FUN=length);
+
+  # Get the number of cells per unit
+  nbrOfCellsPerUnit <- nbrOfGroupsPerUnit * nbrOfCellsPerField;
+
+  # Total number of cells
+  nbrOfCells <- sum(nbrOfCellsPerUnit);
+
+  # Number of units
+  nbrOfUnits <- length(nbrOfCellsPerUnit);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # QC units
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Keep all QC units  
+  destQcUnits <- readCdfQc(src);
+  nbrOfQcUnits <- length(destQcUnits);
+  nbrOfCellsPerQcUnit <- lapply(destQcUnits, FUN=.subset2, "ncells");
+  nbrOfCellsPerQcUnit <- unlist(nbrOfCellsPerQcUnit, use.names=FALSE);
+  nbrOfQcCells <- sum(nbrOfCellsPerQcUnit);
+  verbose && printf(verbose, 
+                        "Number of QC cells: %d in %d QC units (%.1fMB)\n", 
+              nbrOfQcCells, nbrOfQcUnits, object.size(destQcUnits)/1024^2);
+
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Chip layout
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  totalNbrOfCells <- nbrOfCells + nbrOfQcCells;
+  verbose && printf(verbose, "Total number of cells: %d\n", totalNbrOfCells);
+
+  # Figure out a best fit square layout of this number of cells
+  side <- as.integer(floor(sqrt(totalNbrOfCells)));
+  nrows <- ncols <- side;
+  if (nrows*ncols < totalNbrOfCells) {
+    nrows <- as.integer(nrows + 1);
+    if (nrows*ncols < totalNbrOfCells) {
+      ncols <- as.integer(ncols + 1);
+    }
+  }
+  verbose && printf(verbose, "Best array dimension: %dx%d (=%d cells, i.e. %d left-over cells)\n", nrows, ncols, nrows*ncols, nrows*ncols - totalNbrOfCells);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create CDF header
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Creating CDF header with source CDF as template");
+
+  verbose && enter(verbose, "Setting up header");
+
+  # Get template header
+  destHeader <- readCdfHeader(src);
+  destHeader$nrows <- nrows;
+  destHeader$ncols <- ncols;
+
+  # Get unit names
+  unitNames <- readCdfUnitNames(src);
+
+  if (nbrOfUnits > 0) {
+    # Number of bytes per unit: 
+    #  = 20 + (18+64)*nbrOfGroupsPerUnit + 14*nbrOfCellsPerUnit bytes
+    unitLengths <- 20 + 82*nbrOfGroupsPerUnit + 14*nbrOfCellsPerUnit;
+  } else {
+    unitLengths <- NULL;
+  }
+
+  # Number of bytes per QC unit:
+  if (nbrOfQcUnits > 0) {
+    # Start positions for QC units
+    # Number of bytes per QC unit: 
+    #  = 6 + 7*nbrOfCellsPerQcUnit bytes
+    qcUnitLengths <- 6 + 7*nbrOfCellsPerQcUnit;
+  } else {
+    qcUnitLengths <- NULL;
+  }
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Writing");
+  # Open output connection
+  con <- file(dest, open = "wb");
+  on.exit({
+    if (!is.null(con))
+      close(con);
+    con <- NULL;
+  });
+  writeCdfHeader(con=con, destHeader, unitNames=unitNames, 
+                    qcUnitLengths=qcUnitLengths, unitLengths=unitLengths, 
+                                                        verbose=verbose2);
+  # Not needed anymore
+  rm(destHeader, unitNames, qcUnitLengths, unitLengths);
+
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Restructure QC units
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Writing QC units");
+  verbose && enter(verbose, "Rearranging QC unit cell indices");
+  destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, ncols=ncols,
+                                         hasGroups=FALSE, verbose=verbose);
+  verbose && exit(verbose);
+
+  # Write QC units
+  writeCdfQcUnits(con=con, destQcUnits, verbose=verbose2);
+  rm(destQcUnits); # Not needed anymore
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Units
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create all new units in chunks
+
+  verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
+
+  nbrOfChunks <- ceiling(nbrOfUnits / nbrOfUnitsPerChunks);
+  verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n", 
+                                         nbrOfChunks, nbrOfUnitsPerChunks);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Reading and extracting unit data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Reading, extracting, and writing units");
+
+#  fields <- c("x", "y", "indices", "pbase", "tbase", "atom", "indexpos");
+  fields <- c("pbase", "tbase", "atom", "indexpos");
+  head <- 1:nbrOfUnitsPerChunks;
+  count <- 1;
+  idxOffset <- as.integer(0);
+  unitsToDo <- 1:nbrOfUnits;
+  while (length(unitsToDo) > 0) {
+    if (length(unitsToDo) < nbrOfUnitsPerChunks) {
+      head <- 1:length(unitsToDo);
+    }
+    units <- unitsToDo[head];
+    verbose && printf(verbose, "Chunk #%d of %d (%d units)", 
+                                        count, nbrOfChunks, length(units));
+
+    unitsToDo <- unitsToDo[-head];
+
+    # Read CDF structure
+#    srcUnits <- readCdf(src, units=units);
+
+# readGroupDirection is needed in order for writeCdf() to work. /KS 18/12/06
+    srcUnits <- readCdf(src, units=units, readGroupDirection=TRUE);
+    if (verbose && isVisible(verbose)) {
+      cat(sprintf(" => RAM: %.fMB\n", object.size(srcUnits)/1024^2));
+    }
+    
+    # 15/12/06: readCdf() no longer returns a list
+    # with element "blocks"; instead, it returns a list
+    # with element "groups". /KS
+
+    # Precalculate
+    srcUnits <- lapply(srcUnits, function(unit) {
+      groups <- .subset2(unit, "groups");
+      groups <- lapply(groups, function(group) {
+        group[fields] <- lapply(.subset(group, fields), FUN=.subset, fIdxs);
+        group$natoms <- nbrOfCellsPerField;
+        group$ncellsperatom <- as.integer(1);
+        idxs <- idxOffset + fIdxs;
+        idxs1 <- as.integer(idxs-1);  # Makes sure x & y are integers.
+        y <-  idxs1 %/% ncols;
+        group$y <- y;
+        group$x <- idxs1 - ncols*y;
+#        group$indices <- idxs; # Not needed (saves ~225Mb for 250K Nsp!)
+        idxOffset <<- idxOffset + nbrOfCellsPerField;
+        group;
+      })
+      ncells <- length(groups)*nbrOfCellsPerField;
+      unit$groups <- groups;
+      unit$ncells <- ncells;
+      unit$natoms <- ncells;
+      unit$ncellsperatom <- as.integer(1);
+      unit;
+    })
+
+#    verbose && str(verbose, srcUnits[1]);
+
+    # Write regular units
+    writeCdfUnits(con=con, srcUnits, verbose=verbose2);
+    rm(srcUnits, units); # Not needed anymore
+
+    count <- count + 1;
+  } # while (length(unitsToDo) > 0)
+  rm(unitsToDo, head, fields, fIdxs, count);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
+
+  # Close the connection
+  close(con); 
+  con <- NULL;
+
+  verbose && cat(verbose, "CDF file created:");
+  verbose && print(verbose, file.info(dest));
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Verifying the CDF
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Verifying the written CDF");
+  # Checking header
+  header <- readCdfHeader(dest);
+  if ((header$nrows != nrows) || (header$ncols != ncols)) {
+    throw(sprintf("Failed to create a valid mono-cell CDF: The dimension of the written CDF does not match the intended one: (%d,%d) != (%d,%d)", header$nrows, header$ncols, nrows, ncols));
+  }
+
+  # Checking cell indices
+  cells <- readCdfCellIndices(dest);
+  cells <- unlist(cells, use.names=FALSE);
+  udcells <- as.integer(unique(diff(cells)));
+  if (!identical(udcells, 1:1)) {
+    throw("Failed to create a valid mono-cell CDF: The cell indices are not contiguous: ", paste(udcells, collapse=", "));
+  }
+  rm(cells, udcells);
+  verbose && exit(verbose);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
+
+  # Return an AffymetrixCdfFile object for the new CDF
+  newInstance(this, dest);
+}, private=TRUE)
+
+
+
+############################################################################
+# HISTORY:
+# 2007-01-10
+# o Now createMonoCell() create the CDF in chunks, that is, in constant
+#   memory.
+# o Reordered internally in createMonoCell() preparing for code to read 
+#   *and* write monocell CDFs in chunks.  It should not be too hard.
+#   We need to update affxparser with writeCdfHeader(), writeCdfQcUnits()
+#   and writeCdfUnits(), and are basically already in there, but as
+#   private functions.
+# o Removed some unnecessary group fields in 'destUnits' saving us approx
+#   220-230Mb out of 1.9GB for the Mapping250K_Nsp.  Still need to find
+#   another solution to get down below 1GB. One thing that takes up a lot
+#   of memory is that the unit and group directions are stored as character
+#   strings and not integers.
+# o BUG FIX: The most recent createMonoCell() would create CDFs with all
+#   cell indices being equal to one.  Added more verbose output and some
+#   garbage collection to this function too.
+# 2007-01-06
+# o Added argument 'force' to getCellIndices().
+# o Now getCellIndices() only caches object < 10 MB RAM.
+# o Optimized identifyCells() to only cache data in rare cases.
+# 2006-12-18 /KS
+# o Made global replacement "block" -> "group".
+# 2006-12-14
+# o Added convertUnits().
+# 2006-09-27
+# o Now fromFile() tries to create an instance of the subclasses (bottom up)
+#   first.  This will make it possible to automatically define SNP CDFs.
+# 2006-09-26
+# o Now getGenomeInformation() and getSnpInformation() ignores suffices of
+#   the chip-type string. This makes it possible to retrive annotation data
+#   also for custom chips.
+# 2006-09-17
+# o Added an in-memory cache for getCellIndices().
+# 2006-09-16
+# o Added getGenomeInformation() and stextChipType().
+# 2006-09-14
+# o BUG FIX: Fractional value of 'indices' of identifyCells().
+# 2006-09-10
+# o BUG FIX: createMonoCell() where resetting the cell indices for each
+#   chunk.
+# o Simple benchmarking of createMonoCell(): IBM Thinkpad A31 1.8GHz 1GB:
+#   Mapping50K_Hind to mono cells CDF takes ~13 mins.  Again, it is 
+#   writeCdf() that is slow.  KH is working on improving this.
+# 2006-09-08
+# o Added equals() to compare to CDF object.
+# o Added convert() to convert a CDF into another version by convertCdf().
+# 2006-08-25
+# o Added getFirstCellIndices().  This may be used by methods to identify
+#   unit or unit groups for which no probe signals have been assigned yet.
+# 2006-08-24
+# o Added reconstruct().
+# o Added Rdoc comments.
+# 2006-08-19
+# o Added getUnitSizes().  Useful in order to store parameter estimates
+#   of probeset-summary models.
+# 2006-08-11
+# o Created.
+############################################################################

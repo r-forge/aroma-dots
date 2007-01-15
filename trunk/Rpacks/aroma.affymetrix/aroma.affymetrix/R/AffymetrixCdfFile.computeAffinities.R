@@ -55,7 +55,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   verbose && enter(verbose, "Computing GCRMA probe affinities for ", nbrOfUnits(this), " units");
 
   # Check cache
-  key <- list(method="computeAffinities.AffymetrixCdfFile", chipType=chipType);
+  key <- list(method="computeAffinities", class=class(this)[1], chipType=chipType);
   if (!force) {
     res <- loadCache(key=key);
     if (!is.null(res))
