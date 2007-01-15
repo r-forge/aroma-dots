@@ -51,6 +51,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getCombineAlleles} \tab  -\cr
  \tab \code{setCombineAlleles} \tab  -\cr
@@ -59,7 +60,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 
  \bold{Methods inherited from SnpChipEffectSet}:\cr
-extractSnpQSet, getAverageFile, getMergeStrands, setMergeStrands
+extractSnpQSet, fromFiles, getAverageFile, getMergeStrands, setMergeStrands
 
  \bold{Methods inherited from ChipEffectSet}:\cr
 findUnitsTodo, fromDataSet, fromFiles, getAverageFile, getCellIndices, getParameters, readUnits, updateUnits

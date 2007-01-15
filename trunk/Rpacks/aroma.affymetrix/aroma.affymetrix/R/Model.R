@@ -39,6 +39,14 @@ setConstructorS3("Model", function(dataSet=NULL, tags=NULL, ...) {
                                                            class(dataSet));
   }
 
+  # Arguments '...':
+  args <- list(...);
+  if (length(args) > 0) {
+    argsStr <- paste(names(args), collapse=", ");
+    throw("Unknown arguments: ", argsStr);
+  }
+
+
   this <- extend(Object(), "Model",
     .dataSet = dataSet,
     .tags = NULL,
@@ -421,6 +429,10 @@ setMethodS3("setLabel", "Model", function(this, label, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-01-14
+# o Added a test for unknown arguments to constructor.  This was added 
+#   after long troubleshooting to find a call to MbeiPlm(mergeStrands=TRUE,
+#   combineAlleles=TRUE) instead of MbeiCnPlm(...).
 # 2007-01-06
 # o Extracted from UnitModel.R.  Intended to cover all types of models,
 #   e.g. RmaPlm, GladModel, PlasqModel etc.

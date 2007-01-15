@@ -58,16 +58,17 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
   if (!force || .cache) {
     chipType <- getChipType(getCdf(this));
     params <- getParameters(this);
-    key <- list(chipType=chipType, params=params, ...);
-    key <- digest(key);
+    key <- list(method="getCellIndices", class=class(this)[1], 
+                                  chipType=chipType, params=params, ...);
+    id <- digest(key);
   }
 
   if (!force) {
     # In memory?
-    res <- this$.cellIndices[[key]];
+    res <- this$.cellIndices[[id]];
     # On file?
     if (is.null(res)) {
-      res <- loadCache(list(key));
+      res <- loadCache(list(id));
       if (!is.null(res))
         where <- "on file";
     } else {
@@ -127,15 +128,15 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
     if (object.size(cells) < 10e6) { 
       # In-memory cache for objects < 10Mb.
       this$.cellIndices <- list();
-      this$.cellIndices[[key]] <- cells;
+      this$.cellIndices[[id]] <- cells;
       verbose && cat(verbose, "Cached in memory");
     } else {
       # On-file cache
       # Keep, in-memory cache.
       if (!is.list(this$.cellIndices))
         this$.cellIndices <- list();
-      this$.cellIndices[[key]] <- NULL;
-      saveCache(cells, key=list(key));
+      this$.cellIndices[[id]] <- NULL;
+      saveCache(cells, key=list(id));
       verbose && cat(verbose, "Cached to file");
     }
   }
@@ -151,8 +152,10 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
   verbose <- Arguments$getVerbose(verbose);
 
   # Check for cached data
-  key <- digest(list(class=class(this), mergeStrands=this$mergeStrands, ...));
-  res <- this$.readUnitsCache[[key]];
+  key <- list(method="readUnits", class=class(this)[1], 
+                                        mergeStrands=this$mergeStrands, ...);
+  id <- digest(key);
+  res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "readUnits.SnpChipEffectFile(): Returning cached data");
     return(res);
@@ -165,7 +168,7 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
   if (cache) {
     verbose && cat(verbose, "readUnits.SnpChipEffectFile(): Updating cache");
     this$.readUnitsCache <- list();
-    this$.readUnitsCache[[key]] <- res;
+    this$.readUnitsCache[[id]] <- res;
   }
 
   res;

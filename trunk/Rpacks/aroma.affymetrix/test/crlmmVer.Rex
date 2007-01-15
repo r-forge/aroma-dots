@@ -14,9 +14,9 @@ moreUnits <- 30;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-path <- "raw/Test500K/Mapping250K_Nsp";
+path <- "rawData/Test500K/Mapping250K_Nsp";
 
-path <- "raw/Test100K/Mapping50K_Hind240";
+path <- "rawData/Test100K/Mapping50K_Hind240";
 
 ds <- AffymetrixCelSet$fromFiles(path);
 print(ds);

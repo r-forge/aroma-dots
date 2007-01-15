@@ -8,7 +8,7 @@ if (!exists("dataPath"))
 dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", minCount=5);
 dataPath <- findCelSet(name="Affymetrix_2005-500k_data", minCount=5);
 
-if (!exists("raw", mode="list")) {
+if (!exists("rawData", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
   ds <- AffymetrixCelSet$fromFiles(dataPath);
   raw <- getSiblings(ds);

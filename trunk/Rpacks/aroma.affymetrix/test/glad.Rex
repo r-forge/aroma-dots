@@ -46,19 +46,8 @@ if (exists("dataSets", mode="list") && inherits(dataSets[[1]], "CnChipEffectSet"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Define GLAD model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-for (kk in seq(along=dataSets)) {
-  ces <- dataSets[[kk]];
-
-  # Hard wired for now
-  setMergeStrands(ces, TRUE);
-  setCombineAlleles(ces, TRUE);
-
-  dataSets[[kk]] <- ces;
-  rm(ces);
-}
-
 glad <- GladModel(dataSets);
-
+print(glad);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select arrays to fit

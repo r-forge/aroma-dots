@@ -164,7 +164,13 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
   s <- c(s, sprintf("Tags: %s", tags));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
-  s <- c(s, sprintf("Number of arrays: %d", nbrOfArrays(this)));
+  n <- nbrOfArrays(this);
+  s <- c(s, sprintf("Number of arrays: %d", n));
+  names <- getNames(this);
+  if (n >= 5)
+    names <- c(names[1:2], "...", names[n]);
+  names <- paste(names, collapse=", ");
+  s <- c(s, sprintf("Names: %s", names));
   # Get CEL header timestamps
   ts <- getTimestamps(this);
   ts <- range(ts);
@@ -651,8 +657,9 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- digest(list(units=units, ...));
-  res <- this$.getUnitIntensitiesCache[[key]];
+  key <- list(method="getUnitIntensities", class=class(this)[1], units=units, ...);
+  id <- digest(key);
+  res <- this$.getUnitIntensitiesCache[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "getUnitIntensitiesCache(): Returning cached data");
     return(res);
@@ -682,7 +689,7 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "readUnits(): Updating cache");
   this$.getUnitIntensitiesCache <- list();
-  this$.getUnitIntensitiesCache[[key]] <- res;
+  this$.getUnitIntensitiesCache[[id]] <- res;
 
   res;
 })
@@ -706,15 +713,17 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Generating hashcode key for cache");
+  key <- list(method="readUnits", class=class(this)[1]);
   if (is.list(units)) {
-    key <- digest(list(units=names(units), ...));
+    key <- c(key, units=names(units), ...);
   } else {
-    key <- digest(list(units=units, ...));
+    key <- c(key, units=units, ...);
   }
+  id <- digest(key);
   verbose && exit(verbose);
   if (!force) {
     verbose && enter(verbose, "Trying to obtain cached data");
-    res <- this$.readUnitsCache[[key]];
+    res <- this$.readUnitsCache[[id]];
     verbose && exit(verbose);
     if (!is.null(res)) {
       verbose && cat(verbose, "readUnits(): Returning cached data");
@@ -747,8 +756,8 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  this$.readUnitsCache <- list()
-  this$.readUnitsCache[[key]] <- res
+  this$.readUnitsCache <- list();
+  this$.readUnitsCache[[id]] <- res;
   verbose && cat(verbose, "readUnits(): Updated cache");
 
   verbose && exit(verbose);
@@ -872,7 +881,8 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
 
   # Argument 'name':
   if (is.null(name)) {
-    key <- list(arrays=sort(getNames(this)), mean=mean, sd=sd);
+    key <- list(method="getAverageFile", class=class(this)[1], 
+                arrays=sort(getNames(this)), mean=mean, sd=sd);
     # assign mean and sd to an empty environment so that digest() doesn't
     # pick up any "promised" objects from the original environment.
     # A bit ad hoc, but it works for now. /2007-01-03
@@ -1102,6 +1112,8 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-01-15
+# o Added 'classes=class(this)' to all "digest" keys.
 # 2007-01-07
 # o BUG FIX: In KS's update of getAverageFile() to support averaging
 #   over other fields than intensities, argument 'indices' was missing

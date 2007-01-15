@@ -1,14 +1,15 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.3.3 [2007-01-10xxx]
+Version: 0.3.3 [2007-01-16xxx]
+o Added classes QualityAssessmentModel, QualityAssessmentSet,
+  and QualityAssessmentFile.
+o Now createMonoCell() create the CDF in chunks, that is, 
+  in constant memory.
 o Now plot() of GladModel gets the default 'hgChromosomes.txt' 
   of the package if it can't be found in annotations/.
 o BUG FIX: createMonoCell() of AffymetrixCdfFile would give
   an errounous mono-cell CDF file due to a recent change.
-  The function was also updated to use less memory, but it
-  is still quite memory hungry for chip types with many
-  units and unit groups. See help for more comments.
 
 Version: 0.3.2 [2007-01-07]
 o Package pass R CMD check v2.4.0.

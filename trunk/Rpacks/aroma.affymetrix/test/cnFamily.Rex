@@ -9,7 +9,7 @@ if (!exists("dataPath"))
   dataPath <- findCelSet(name="Affymetrix_2006-CEPH270", chipType="Nsp");
 print(dataPath)
 
-if (!exists("raw", mode="list")) {
+if (!exists("rawData", mode="list")) {
   verbose && enter(verbose, "Defining all data sets");
   ds <- AffymetrixCelSet$fromFiles(dataPath);
   print(ds);

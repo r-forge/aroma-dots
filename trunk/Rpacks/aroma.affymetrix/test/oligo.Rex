@@ -14,7 +14,7 @@ modelTags <- unlist(strsplit(model, split=","));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- c("raw", probeData");
+paths <- c("rawData", probeData");
 pattern <- "_(199|200)[0-9]";
 if (exists("dataSets", mode="list")) {
   ds <- dataSets[[1]];

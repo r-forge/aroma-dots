@@ -33,13 +33,18 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
 
 
-  This class represents the PLASQ model.
+  This class represents the Probe-Level Allele-Specific Quantitation (PLASQ)
+  model by LaFramboise et al. (2006).
  }
 
  \usage{PlasqModel(...)}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of \code{\link{UnitModel}}.}
+ }
+
+ \details{
+   The PLASQ model is allele but not strand specific.
  }
 
  \section{Fields and Methods}{
@@ -65,4 +70,10 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \references{
+   LaFramboise T, Harrington D, and Weir BA. \emph{PLASQ: A Generalized
+   Linear Model-Based Procedure to Determine Allelic Dosage in Cancer
+   Cells from SNP Array Data}. Biostatistics, 2006.\cr
+ }
 \keyword{classes}

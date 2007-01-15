@@ -8,60 +8,62 @@ setMethodS3("readPlasqTypes", "AffymetrixCdfFile", function(this, ..., verbose=F
 
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Local functions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Redefine gaussian to allow for exponential link.
+plasqGaussian <- function(link="exponential") {
+  linktemp <- substitute(link);
+  if (!is.character(linktemp)) {
+    linktemp <- deparse(linktemp);
+    if (linktemp == "link")
+      linktemp <- eval(link);
+  }
+
+  if (linktemp == "exponential") {
+    stats <- list(
+      linkfun = function(mu) exp(mu),
+      linkinv = function(eta) log(eta),
+      mu.eta = function(eta) 1/eta,
+      valideta = function(eta) all(eta > 0)
+    );
+  }
+
+ structure(list(
+   family = "gaussian", 
+   link = linktemp, 
+   linkfun = stats$linkfun,
+   linkinv = stats$linkinv,
+   variance = function(mu) {
+     rep.int(1, length(mu))
+   }, 
+   dev.resids = function(y, mu, wt) {
+     wt * ((y - mu)^2)
+   }, 
+   aic = function(y, n, mu, wt, dev) {
+     sum(wt) * (log(dev/sum(wt) * 2 * pi) + 1) + 2
+   }, 
+   mu.eta = stats$mu.eta,
+   initialize = expression({
+     n <- rep.int(1, nobs)
+     mustart <- y
+   }), 
+   validmu = function(mu) TRUE
+ ), class = "family");
+} # plasqGaussian()
+
 
 # Adopted and optimized from EMSNP() in PLASQ500K.
-setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1, ..., .digits=NULL) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Local functions
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ### Redefine gaussian to allow for exponential link.
-  gaussian <- function (link = "exponential") {
-    linktemp <- substitute(link);
-    if (!is.character(linktemp)) {
-      linktemp <- deparse(linktemp);
-      if (linktemp == "link")
-        linktemp <- eval(link);
-    }
-
-    if (linktemp == "exponential") {
-      stats <- list(
-        linkfun = function(mu) exp(mu),
-        linkinv = function(eta) log(eta),
-        mu.eta = function(eta) 1/eta,
-        valideta = function(eta) all(eta > 0)
-      );
-    }
-
-   structure(list(
-     family = "gaussian", 
-     link = linktemp, 
-     linkfun = stats$linkfun,
-     linkinv = stats$linkinv,
-     variance = function(mu) {
-       rep.int(1, length(mu))
-     }, 
-     dev.resids = function(y, mu, wt) {
-       wt * ((y - mu)^2)
-     }, 
-     aic = function(y, n, mu, wt, dev) {
-       sum(wt) * (log(dev/sum(wt) * 2 * pi) + 1) + 2
-     }, 
-     mu.eta = stats$mu.eta,
-     initialize = expression({
-       n <- rep.int(1, nobs)
-       mustart <- y
-     }), 
-     validmu = function(mu) TRUE
-   ), class = "family");
-  } # gaussian()
+setMethodS3("fitPlasqUnit", "matrix", function(ly, ptype, maxIter=1000, acc=0.1, ..., glmFamily=plasqGaussian("exponential"), .digits=NULL) {
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Main
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  dim <- dim(mat);
+  dim <- dim(ly);
   nbrOfProbes <- dim[1];
   nbrOfSamples <- dim[2];
+  sampleNames <- colnames(ly);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Indices of different probe types:
@@ -126,7 +128,6 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
   sigmaIdxs <- paramIndMat2[,4];
   rm(paramIndMat, paramIndMat2);
 
-  glmFamily <- gaussian("exponential");
   iis <- seq(length=nbrOfSamples);
   offsets <- nbrOfProbes*(iis-1);
 
@@ -140,32 +141,28 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
   # z_il = E[Z_il]
 
   # Note: here we use z_li, not z_il.
-  zs <- matrix(0, nrow=3, ncol=nbrOfSamples);
-  for (ii in iis) {
-    if(is.na(mat[1,ii])) {
-      zs[,ii] <- NA;
+  zs <- matrix(NA, nrow=3, ncol=nbrOfSamples);
+  ok <- !is.na(ly[1,]);
+  for (ii in iis[ok]) {
+    # H0: muA > muB
+    # H1: muA <= muB
+    lyA <- ly[pmA, ii];
+    lyB <- ly[pmB, ii];
+
+    # P value
+    p <- t.test(lyA, lyB, "greater")$p.value;
+
+    if (p > 0.5) {
+      zs[,ii] <- c((3*p-1)/2, 1-p, (1-p)/2);
     } else {
-      # H0: muA > muB, H1: muA <= muB
-      yA <- log(mat[pmA, ii]);
-      yB <- log(mat[pmB, ii]);
-
-      # P value
-      p <- t.test(yA, yB, "greater")$p.value;
-
-      if (p > 0.5) {
-        zs[,ii] <- c((3*p-1)/2, 1-p, (1-p)/2);
-      } else {
-        zs[,ii] <- c(p/2, p, 1-3*p/2);
-      }
+      zs[,ii] <- c(p/2, p, 1-3*p/2);
     }
   } # for (ii in ...)
-
 #  verfy(zs, key=list("zs"));
 
 
-  # Work on the log-scale
-  ys <- as.vector(mat);
-  ys <- log(ys);
+  # Vectorize
+  ly <- as.vector(ly);
 
   # Intial parameter estimates
   betasF <- c(0,0,0,0,0);
@@ -234,7 +231,7 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
 #    verfy(X, key=list(iter=rr, "X", "sub"));
 
       if (hasFwd) {
-        fit <- glm(ys[fIdxs] ~ X[fIdxs,], family=glmFamily,
+        fit <- glm(ly[fIdxs] ~ X[fIdxs,], family=glmFamily,
                                                        na.action=na.omit);
         betasF <- coef(fit)[c(1,2,2,3,3)];
         sigF <- sqrt(sum(residuals(fit, "deviance")^2)/(nbrOfFwd-3));
@@ -244,7 +241,7 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
       }
 
       if (hasRev) {
-        fit <- glm(ys[rIdxs] ~ X[rIdxs,], family=glmFamily,
+        fit <- glm(ly[rIdxs] ~ X[rIdxs,], family=glmFamily,
                                                          na.action=na.omit);
         betasR <- coef(fit)[c(1,2,2,3,3)];
         sigR <- sqrt(sum(residuals(fit, "deviance")^2)/(nbrOfRev-3));
@@ -254,7 +251,7 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
       }
     } else {
       if (hasFwd) {
-        fit <- glm(ys[fIdxs] ~ X[fIdxs,], family=glmFamily,
+        fit <- glm(ly[fIdxs] ~ X[fIdxs,], family=glmFamily,
                                                          na.action=na.omit);
         betasF <- coef(fit)
         sigF <- sqrt(sum(residuals(fit, "response")^2)/(nbrOfFwd-5));
@@ -264,7 +261,7 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
       }
 
       if (hasRev) {
-        fit <- glm(ys[rIdxs] ~ X[rIdxs,], family=glmFamily,
+        fit <- glm(ly[rIdxs] ~ X[rIdxs,], family=glmFamily,
                                                         na.action=na.omit);
         betasR <- coef(fit);
         sigR <- sqrt(sum(residuals(fit, "response")^2)/(nbrOfRev-5));
@@ -333,7 +330,7 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
     for (ii in iis) {
       if (!is.na(zs[1,ii])) {
         offset <- offsets[ii];
-        yy <- ys[offset + 1:nbrOfProbes];
+        yy <- ly[offset + 1:nbrOfProbes];
 
         # Appendix p16: f_0(.), f_1(.), f_2(.).
         for (kk in 1:3)
@@ -364,7 +361,7 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
 
   # Genotypes
   rownames(zs) <- c("P[BB]", "P[AB]", "P[AA]");
-  colnames(zs) <- colnames(mat);
+  colnames(zs) <- sampleNames;
 
   # CA =          Z_i1 + 2*Z_i2; i=1,2,...,N
   # CB = 2*Z_i0 + Z_i1         ; i=1,2,...,N
@@ -392,6 +389,8 @@ setMethodS3("fitPlasqUnit", "matrix", function(mat, ptype, maxIter=1000, acc=0.1
 
 ############################################################################
 # HISTORY:
+# 2007-01-11
+# o Replaces argument 'mat' (on intensity scale) with 'ly' (on log scale).
 # 2007-01-01
 # o Verified that this implementation gives identical results to 
 #   PLASQ500K::EMSNP().

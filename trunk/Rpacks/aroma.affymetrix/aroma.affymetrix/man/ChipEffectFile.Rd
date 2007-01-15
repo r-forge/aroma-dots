@@ -61,7 +61,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, clone, fromFile, getAm, getCdf, highlight, image270, nbrOfCells, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, setCdf, smoothScatterMvsA
+[, [[, clone, fromFile, getAm, getCdf, getImage, highlight, image270, nbrOfCells, plotDensity, plotImage, plotImageToFile, plotMvsA, plotMvsPosition, plotMvsX, setCdf, smoothScatterMvsA
 
  \bold{Methods inherited from AffymetrixFile}:\cr
 fromFile, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags

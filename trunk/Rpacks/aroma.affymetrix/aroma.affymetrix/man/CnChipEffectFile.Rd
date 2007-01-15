@@ -47,8 +47,8 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{SnpChipEffectFile}}.}
-   \item{combineAlleles}{A \code{\link[base]{logical}} indicating if the signals from allele A and
-      allele B are combined or not.}
+   \item{combineAlleles}{A \code{\link[base]{logical}} indicating if the signals from allele A
+     and allele B are combined or not.}
  }
 
  \section{Fields and Methods}{
@@ -70,7 +70,7 @@ findUnitsTodo, getAM, getCellIndices, getParameters, getXAM, readUnits
 readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, clone, fromFile, getAm, getCdf, highlight, image270, nbrOfCells, plotDensity, plotMvsA, plotMvsPosition, plotMvsX, setCdf, smoothScatterMvsA
+[, [[, clone, fromFile, getAm, getCdf, getImage, highlight, image270, nbrOfCells, plotDensity, plotImage, plotImageToFile, plotMvsA, plotMvsPosition, plotMvsX, setCdf, smoothScatterMvsA
 
  \bold{Methods inherited from AffymetrixFile}:\cr
 fromFile, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags

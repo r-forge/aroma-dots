@@ -15,8 +15,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{cesList}{A @list of @see "ChipEffectSet" objects.}
-#   \item{referenceList}{A @see "ChipEffectFile" objects.}
+#   \item{cesList}{A single or @list of @see "ChipEffectSet":s.}
+#   \item{referenceList}{A single or a @list of @see "ChipEffectFile":s.}
 #   \item{tags}{A @character @vector of tags.}
 #   \item{...}{Not used.}
 # }
@@ -178,9 +178,35 @@ setMethodS3("getListOfChipEffects", "GladModel", function(this, ...) {
 })
 
 
+###########################################################################/**
+# @RdocMethod nbrOfChipTypes
+#
+# @title "Gets the number of chip types"
+#
+# \description{
+#  @get "title" used in the model.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @integer.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("nbrOfChipTypes", "GladModel", function(this, ...) {
   length(getListOfChipEffects(this, ...));
 })
+
 
 setMethodS3("getListOfReferences", "GladModel", function(this, ...) {
   res <- this$.referenceList;
@@ -214,11 +240,65 @@ setMethodS3("getChipTypes", "GladModel", function(this, merge=FALSE, collapse="+
 })
 
 
+###########################################################################/**
+# @RdocMethod getChipType
+#
+# @title "Gets a label for all chip types merged"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getChipType", "GladModel", function(this, ...) {
   getChipTypes(this, merge=TRUE, ...);
 })
 
 
+###########################################################################/**
+# @RdocMethod getTableOfArrays
+#
+# @title "Gets a table of arrays"
+#
+# \description{
+#  @get "title" showing their availability across chip types.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a \eqn{NxK} @matrix of @integers where \eqn{N} is the total number 
+#  of arrays and \eqn{K} is the number of chip types in the model.  The row 
+#  names are the names of the arrays, and the column names are the chip types.
+#  If data is available for array \eqn{n} and chip type \eqn{k}, cell 
+#  \eqn{(n,k)} has value \eqn{n}, otherwise @NA.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
   cesList <- getListOfChipEffects(this);
 
@@ -247,14 +327,67 @@ setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
   X;
 })
 
+
 setMethodS3("getNames", "GladModel", function(this, ...) {
   rownames(getTableOfArrays(this, ...));
 })
 
+
+###########################################################################/**
+# @RdocMethod getArrays
+#
+# @title "Gets the names of the arrays"
+#
+# \description{
+#  @get "title" available in the model.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("getArrays", "GladModel", function(this, ...) {
   getNames(this, ...);
 })
 
+
+###########################################################################/**
+# @RdocMethod nbrOfArrays
+#
+# @title "Gets the number of arrays"
+#
+# \description{
+#  @get "title" used in the model.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @integer.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("nbrOfArrays", "GladModel", function(this, ...) {
   length(getNames(this, ...));
 })
@@ -451,6 +584,40 @@ setMethodS3("getReferenceFiles", "GladModel", function(this, ..., force=FALSE, v
 
 
 
+###########################################################################/**
+# @RdocMethod fit
+#
+# @title "Fits the model"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{arrays}{A @vector of array indices specifying which arrays to
+#    be considered.  If @NULL, all are processed.}
+#   \item{chromosome}{A @vector of chromosomes indices specifying which
+#     chromosomes to be considered.  If @NULL, all are processed.}
+#   \item{force}{If @FALSE, the model will not be fitted again if it was
+#     already fitted.}
+#   \item{...}{Not used.}
+#   \item{.retResults}{If @TRUE, GLAD fit structures are returned for each
+#     fitted array and chromosome.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a named @list of named @lists.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), force=FALSE, ..., .retResults=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -494,7 +661,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieving reference chip effects
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  refList <- getReferenceFiles(this);
+  refList <- getReferenceFiles(this, force=force);
   verbose && cat(verbose, "Using references:");
   verbose && print(verbose, refList);
 
@@ -1099,6 +1266,9 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-01-15
+# o Now fit(..., force=TRUE) also calls getReferenceFiles(..., force=force).
+# o Added some more Rdoc comments.
 # 2007-01-10
 # o Now plot() of GladModel is search for 'hgChromosomes.txt' in both
 #   annotations/ and the package installation directory.

@@ -1,37 +1,37 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  QcInfo.R
+%  QualityAssessmentModel.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{QcInfo}
+\name{QualityAssessmentModel}
 \docType{class}
-\alias{QcInfo}
+\alias{QualityAssessmentModel}
 
 
-\title{The QcInfo class}
+\title{The QualityAssessmentModel class}
 
 \description{
  Package:  aroma.affymetrix \cr
-\bold{Class QcInfo}\cr
+\bold{Class QualityAssessmentModel}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{QcInfo}\cr
+\code{~~+--}\code{QualityAssessmentModel}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{QcInfo}\cr
+public static class \bold{QualityAssessmentModel}\cr
 extends \link[R.oo]{Object}\cr
 
 
 
 }
 
-\usage{QcInfo(plm=NULL, tags="*", ...)}
+\usage{QualityAssessmentModel(plm=NULL, tags="*", ...)}
 
 \arguments{
   \item{plm}{A \code{\link{ProbeLevelModel}}.}
@@ -43,14 +43,18 @@ extends \link[R.oo]{Object}\cr
  \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{getChipEffects} \tab  -\cr
+ \tab \code{getDataSet} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
  \tab \code{getPlm} \tab  -\cr
- \tab \code{getResiduals} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getResiduals.QualityAssessmentModel]{getResiduals}} \tab Calculates the residuals from a probe-level model.\cr
  \tab \code{getRootPath} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getWeights.QualityAssessmentModel]{getWeights}} \tab Calculates the weights from the robust fit to a probe-level model.\cr
  \tab \code{nbrOfArrays} \tab  -\cr
+ \tab \code{plotNuse} \tab  -\cr
+ \tab \code{plotRle} \tab  -\cr
 }
 
 

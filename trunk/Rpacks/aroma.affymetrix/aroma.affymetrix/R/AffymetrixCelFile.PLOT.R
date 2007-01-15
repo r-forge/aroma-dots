@@ -811,7 +811,7 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, lim=c(-Inf, Inf), field=c("intensities", "stdvs", "pixels"), col=NULL, outlierCol="white", main=getName(this)) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, lim=c(-Inf, Inf), field=c("intensities", "stdvs", "pixels"), col=NULL, outlierCol="white", main=getName(this), ...) {
 
   require(EBImage) || throw("Package not loaded: 'EBImage'.");
 
@@ -857,7 +857,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 
 
 
-setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf), outlierCol="white") {
+setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf), outlierCol="white", ...) {
   # given an input Image, transform to new RGB image based
   # on list of colours given in argument 'palette' and lower and
   # upper bounds given in 'lim'.  TOFIX: THIS IS CURRENTLY TOO SLOW
@@ -929,7 +929,7 @@ setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), outlierCol="white", xSize=1000, ySize=1000, main=getName(this)) {
+setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), outlierCol="white", xSize=1000, ySize=1000, main=getName(this), ...) {
 
   require(EBImage) || throw("Package not loaded: 'EBImage'.");
 

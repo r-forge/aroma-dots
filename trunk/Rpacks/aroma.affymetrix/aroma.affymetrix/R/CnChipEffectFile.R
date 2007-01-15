@@ -14,8 +14,8 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "SnpChipEffectFile".}
-#   \item{combineAlleles}{A @logical indicating if the signals from allele A and
-#      allele B are combined or not.}
+#   \item{combineAlleles}{A @logical indicating if the signals from allele A 
+#     and allele B are combined or not.}
 # }
 #
 # \section{Fields and Methods}{
@@ -59,16 +59,17 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., force=FALS
   if (!force || .cache) {
     chipType <- getChipType(getCdf(this));
     params <- getParameters(this);
-    key <- list(chipType=chipType, params=params, ...);
-    key <- digest(key);
+    key <- list(method="getCellIndices", class=class(this)[1], 
+                chipType=chipType, params=params, ...);
+    id <- digest(key);
   }
 
   if (!force) {
     # In memory?
-    res <- this$.cellIndices[[key]];
+    res <- this$.cellIndices[[id]];
     # On file?
     if (is.null(res)) {
-      res <- loadCache(list(key));
+      res <- loadCache(list(id));
       if (!is.null(res))
         where <- "on file";
     } else {
@@ -132,15 +133,15 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., force=FALS
     if (size < 10e6) { 
       # In-memory cache for objects < 10Mb.
       this$.cellIndices <- list();
-      this$.cellIndices[[key]] <- cells;
+      this$.cellIndices[[id]] <- cells;
       verbose && cat(verbose, "Result cached in memory");
     } else {
       # On-file cache
       # Keep, in-memory cache.
       if (!is.list(this$.cellIndices))
         this$.cellIndices <- list();
-      this$.cellIndices[[key]] <- NULL;
-      saveCache(cells, key=list(key));
+      this$.cellIndices[[id]] <- NULL;
+      saveCache(cells, key=list(id));
       verbose && cat(verbose, "Result cached to file");
     }
   }
@@ -163,8 +164,10 @@ setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, ca
   }
 
   # Check for cached data
-  key <- digest(list(class=class(this), combineAlleles=this$combineAlleles, ...));
-  res <- this$.readUnitsCache[[key]];
+  key <- list(method="readUnits", class=class(this)[1],
+                                 combineAlleles=this$combineAlleles, ...);
+  id <- digest(key);
+  res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "readUnits.CnChipEffectFile(): Returning cached data");
     return(res);
@@ -178,7 +181,7 @@ setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, ca
   if (cache) {
     verbose && cat(verbose, "readUnits.CnChipEffectFile(): Updating cache");
     this$.readUnitsCache <- list();
-    this$.readUnitsCache[[key]] <- res;
+    this$.readUnitsCache[[id]] <- res;
   }
 
   res;

@@ -2,7 +2,7 @@ library(aroma.affymetrix);
 source("init.R");
 source("ui.R");
 
-dataSets <- selectDataSets(c("raw", "probeData"));
+dataSets <- selectDataSets(c("rawData", "probeData"));
 cna(dataSets, pre=NULL);
 
 ############################################################################

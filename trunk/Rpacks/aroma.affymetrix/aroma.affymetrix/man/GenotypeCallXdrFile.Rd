@@ -54,7 +54,7 @@ extends \link[aroma.affymetrix]{GenotypeCallFile}\cr
 
 
  \bold{Methods inherited from GenotypeCallFile}:\cr
-[, [<-, getCdf, getChipType, readUnits, updateUnits
+[, [<-, fromFile, getCdf, readUnits, setCdf, updateUnits
 
  \bold{Methods inherited from AffymetrixFile}:\cr
 fromFile, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags

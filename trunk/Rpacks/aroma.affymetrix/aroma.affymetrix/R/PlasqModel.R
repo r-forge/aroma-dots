@@ -6,7 +6,8 @@
 # \description{
 #  @classhierarchy
 #
-#  This class represents the PLASQ model.
+#  This class represents the Probe-Level Allele-Specific Quantitation (PLASQ)
+#  model by LaFramboise et al. (2006).
 # }
 # 
 # @synopsis 
@@ -15,11 +16,22 @@
 #   \item{...}{Arguments passed to the constructor of @see "UnitModel".}
 # }
 #
+# \details{
+#   The PLASQ model is allele but not strand specific.
+# }
+#
 # \section{Fields and Methods}{
 #  @allmethods "public"  
 # }
 # 
 # @author
+#
+# \references{
+#   LaFramboise T, Harrington D, and Weir BA. \emph{PLASQ: A Generalized 
+#   Linear Model-Based Procedure to Determine Allelic Dosage in Cancer 
+#   Cells from SNP Array Data}. Biostatistics, 2006.\cr
+# }
+#
 #*/###########################################################################
 setConstructorS3("PlasqModel", function(...) {
   extend(UnitModel(...), "PlasqModel");
@@ -30,8 +42,9 @@ setMethodS3("getRootPath", "PlasqModel", function(this, ...) {
   "plasqData";
 }, private=TRUE)
 
+
 setMethodS3("getProbeParameters", "PlasqModel", function(this, ...) {
-  filename <- "probeParamaters.FloatMatrix";
+  filename <- "probeParameters.FloatMatrix";
   pathname <- filePath(getPath(this), filename);
   if (isFile(pathname)) {
     res <- FileFloatMatrix(pathname);
@@ -77,6 +90,8 @@ setMethodS3("getChipEffects", "PlasqModel", function(this, ..., verbose=FALSE) {
 
 
 setMethodS3("getFitUnitFunction", "PlasqModel", function(this, ...) {
+  glmFamily <- plasqGaussian("exponential");
+
   fitUnit <- function(y, type, ...) {
     # This method corresponds to EMSNP() in PLASQ500K.
     nbrOfGroups <- length(y);
@@ -101,10 +116,11 @@ setMethodS3("getFitUnitFunction", "PlasqModel", function(this, ...) {
       throw("Internal error: Number of rows in 'yMat' and number of elements in 'typeVec' does not match: ", nrow(yMat), " != ", length(typeVec));
     }
   
-    # Fit PLASQ 
+    # Fit PLASQ on the log scale
 #    fit <- PLASQ::EMSNP(mat=yMat, ptype=typeVec, ...);
-    fit <- fitPlasqUnit(yMat, typeVec, ...);
 #    fit <- EMSNP(mat=yMat, ptype=typeVec, ...);
+    yMat <- log(yMat);
+    fit <- fitPlasqUnit(yMat, typeVec, ..., glmFamily=glmFamily);
   
     # Return
     fit;
@@ -392,7 +408,6 @@ setMethodS3("fit", "PlasqModel", function(this, units="remaining", ..., unitsPer
 
   invisible(units);
 })
-
 
 
 

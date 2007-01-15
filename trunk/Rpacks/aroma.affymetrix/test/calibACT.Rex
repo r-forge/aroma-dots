@@ -5,7 +5,7 @@ source("ui.R");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-paths <- "raw";
+paths <- "rawData";
 pattern <- "_(199|200)[0-9]";
 if (exists("dataSets", mode="list")) {
   ds <- dataSets[[1]];

@@ -115,11 +115,11 @@ setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE
     cache <- FALSE;
   } else {
     verbose && enter(verbose, "Generating hashcode key for cache");
-    key <- digest(args);
+    id <- digest(args);
     verbose && exit(verbose);
     if (!force) {
       verbose && enter(verbose, "Trying to obtain cached data");
-      res <- this$.readUnitsCache[[key]];
+      res <- this$.readUnitsCache[[id]];
       verbose && exit(verbose);
       if (!is.null(res)) {
         verbose && cat(verbose, "readUnits.ParameterCelFile(): Returning cached data");
@@ -143,7 +143,7 @@ setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE
   if (cache) {
     verbose && cat(verbose, "readUnits.ParameterCelFile(): Updating cache");
     this$.readUnitsCache <- list();
-    this$.readUnitsCache[[key]] <- units;
+    this$.readUnitsCache[[id]] <- units;
   }
 
   units;

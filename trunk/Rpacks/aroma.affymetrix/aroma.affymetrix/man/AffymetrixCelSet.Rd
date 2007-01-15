@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
+\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{AffymetrixCelSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr

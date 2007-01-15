@@ -151,6 +151,30 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename
   verbose <- Arguments$getVerbose(verbose);
 
   pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Backward compatibility patch for now. Before chip effect files
+  # only carried on the sample name, but not the tags. If such a 
+  # file is detected, it is renamed. 
+  # This should be removed in future versions. /HB 2007-01-10
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!isFile(pathname)) {
+    filenameOld <- sprintf("%s,chipEffects.cel", getName(df));
+    pathnameOld <- Arguments$getWritablePathname(filenameOld, path=path);
+    if (isFile(pathnameOld)) {
+      verbose && enter(verbose, "Renaming chip-effect file using old style file format");
+      verbose && cat(verbose, "Source: ", pathnameOld);
+      verbose && cat(verbose, "Destination: ", pathname);
+      file.rename(pathnameOld, pathname);
+      if (!isFile(pathname)) {
+        throw("Failed to rename chip-effect from old to new filename format: ", pathnameOld);
+      }
+      verbose && exit(verbose);
+    }
+    rm(filenameOld, pathnameOld);
+  }
+
+
   if (!isFile(pathname)) {
     verbose && enter(verbose, "Creating chip-effect file");
     verbose && cat(verbose, "Pathname: ", pathname);
@@ -202,8 +226,10 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
 
 
   # Check for cached data
-  key <- digest(list(class=class(this), units=units, cdf=cdf, ...));
-  res <- this$.readUnitsCache[[key]];
+  key <- list(method="readUnits", class=class(this)[1], units=units, 
+                                                           cdf=cdf, ...);
+  id <- digest(key);
+  res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "readUnits.ChipEffectFile(): Returning cached data");
     return(res);
@@ -224,7 +250,7 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
   if (cache) {
     verbose && cat(verbose, "readUnits.ChipEffectFile(): Updating cache");
     this$.readUnitsCache <- list();
-    this$.readUnitsCache[[key]] <- res;
+    this$.readUnitsCache[[id]] <- res;
   }
 
   res;
@@ -260,7 +286,8 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
   idxs <- NULL;
   if (is.null(units)) {
     cdf <- getCdf(this);
-    key <- list(chipType=getChipType(cdf), params=getParameters(this));
+    key <- list(method="findUnitsTodo", class=class(this)[1], 
+                chipType=getChipType(cdf), params=getParameters(this));
     if (!force) {
       idxs <- loadCache(key);
       if (!is.null(idxs))
@@ -478,6 +505,10 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 ############################################################################
 # HISTORY:
+# 2007-01-10
+# o Now fromDataFile() looks for chip effect files named using the "sample
+#   name" only (not tags) file format, and renames it to the full name
+#   format.  This is a "patch" so we don't have to reestimate old data sets.
 # 2007-01-09
 # o Now fromDataFile() generates a file with the full name (name + tags) of
 #   the input file and not just the name.

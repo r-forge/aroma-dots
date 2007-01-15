@@ -86,6 +86,7 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
   # Check for cached values
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- list(method="fitGlad", 
+              class=class(this)[1],
               dataSet=basename(dirname(getPath(this))),
               fullname=getFullName(this),
               refset=basename(dirname(getPath(reference))),

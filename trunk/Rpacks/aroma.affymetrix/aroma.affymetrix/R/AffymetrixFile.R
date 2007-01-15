@@ -58,6 +58,14 @@ setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, mustExist=
     pathname <- NULL;
   }
 
+  # Arguments '...':
+  args <- list(...);
+  if (length(args) > 0) {
+    argsStr <- paste(names(args), collapse=", ");
+    throw("Unknown arguments: ", argsStr);
+  }
+
+
   extend(Object(), "AffymetrixFile",
     .pathname = pathname
   )
@@ -493,6 +501,8 @@ setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, ov
 
 ############################################################################
 # HISTORY:
+# 2007-01-14
+# o Added a test for "unknown" (=unused) arguments to constructor.
 # 2007-01-07
 # o Added hasTags() and hasTag().
 # 2006-11-02

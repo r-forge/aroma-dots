@@ -23,7 +23,7 @@
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 # 
 # \seealso{
-#   An object of this class is typically part of a @see "QcSet".
+#   An object of this class is typically part of a @see "QualityAssessmentSet".
 # }
 #*/###########################################################################
 setConstructorS3("QualityAssessmentFile", function(...) {

@@ -249,8 +249,6 @@ setMethodS3("getAllelePairUnitSets", "AffymetrixCdfFile", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NULL, ignoreOrder=TRUE, force=FALSE, verbose=FALSE, ...) {
-  methodName <- "getAlleleProbePairs.AffymetrixCdfFile";
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -266,7 +264,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # Check for cached results?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   chipType <- getChipType(this);
-  key <- list(method=methodName, chipType=chipType, units=units, ignoreOrder=ignoreOrder);
+  key <- list(method="getAlleleProbePairs", class=class(this)[1], chipType=chipType, units=units, ignoreOrder=ignoreOrder);
   if (!force) {
     probeSets <- loadCache(key=key);
     if (!is.null(probeSets))
@@ -493,7 +491,9 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   verbose && exit(verbose);
 
   # Save cache to file
-  comment <- sprintf("%s: chipType=%s", methodName, chipType);
+  comment <- key[c("method", "class", "chipType")];
+  comment <- paste(names(comment), comment, sep="=");
+  comment <- paste(comment, collapse=", ");
   saveCache(probeSets, key=key, comment=comment);
 
   probeSets;
