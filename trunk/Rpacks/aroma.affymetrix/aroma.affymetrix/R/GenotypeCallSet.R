@@ -383,8 +383,8 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NU
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- list(method="readUnits", class=class(this)[1], units=units, 
-                                                            arrays=arrays);
+  key <- list(method="readUnits", class=class(this)[1], 
+              units=units, arrays=arrays);
   id <- digest(key);
   res <- this$.readUnitsCache[[id]];
   if (!is.null(res)) {

@@ -238,8 +238,9 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
 
 
   # Check for cached data
-  key <- list(method="readUnits", class=class(this)[1], units=units, 
-                                                           cdf=cdf, ...);
+  key <- list(method="readUnits", class=class(this)[1], 
+              pathname=getPathname(this),
+              cdf=cdf, units=units, ...);
   id <- digest(key);
   res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
@@ -299,6 +300,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
   if (is.null(units)) {
     cdf <- getCdf(this);
     key <- list(method="findUnitsTodo", class=class(this)[1], 
+                pathname=getPathname(this),
                 chipType=getChipType(cdf), params=getParameters(this));
     if (!force) {
       idxs <- loadCache(key);

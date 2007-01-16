@@ -29,6 +29,11 @@
  Returns a \code{\link[base]{character}} string.
 }
 
+\details{
+ If a name alias has not been set explicitly, the name of the model will
+ used.
+}
+
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{

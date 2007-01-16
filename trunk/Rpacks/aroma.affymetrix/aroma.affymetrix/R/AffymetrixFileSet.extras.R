@@ -8,11 +8,11 @@ setMethodS3("getDescription", "AffymetrixFileSet", function(this, ...) {
       tmp <- as.list(as.data.frame(tmp));
       tmp <- lapply(tmp, FUN=as.character);
       for (kk in seq(along=tmp)) {
-        key <- names(tmp)[kk];
+        name <- names(tmp)[kk];
         # Already assigned?
-        if (key %in% names(res))
+        if (name %in% names(res))
           next;
-        res[[key]] <- tmp[[key]];
+        res[[name]] <- tmp[[name]];
       }
       break;
     }

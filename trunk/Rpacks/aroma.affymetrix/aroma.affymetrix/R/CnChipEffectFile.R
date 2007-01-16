@@ -165,7 +165,8 @@ setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, ca
 
   # Check for cached data
   key <- list(method="readUnits", class=class(this)[1],
-                                 combineAlleles=this$combineAlleles, ...);
+              pathname=getPathname(this),
+              combineAlleles=this$combineAlleles, ...);
   id <- digest(key);
   res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
