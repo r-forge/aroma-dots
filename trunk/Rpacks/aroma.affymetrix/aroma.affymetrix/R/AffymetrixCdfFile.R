@@ -414,7 +414,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- list(method="getCellIndices", class=class(this)[1], units=units, ...);
+  key <- list(method="getCellIndices", class=class(this)[1], chipType=getChipType(this), units=units, ...);
   id <- digest(key);
   res <- this$.cellIndices[[id]];
   if (!force && !is.null(res)) {
@@ -1037,6 +1037,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-01-16
+# o Now all keys contains method name, class name, and chip type.
 # 2007-01-10
 # o Reordered internally in createMonoCell() preparing for code to read 
 #   *and* write monocell CDFs in chunks.  It should not be too hard.

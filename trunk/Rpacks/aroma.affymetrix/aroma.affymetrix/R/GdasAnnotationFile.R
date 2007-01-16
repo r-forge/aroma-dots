@@ -98,11 +98,11 @@ setMethodS3("readHeader", "GdasAnnotationFile", function(this, ...) {
     value <- res[kk];
     value <- trim(value);
     pos <- regexpr("=", value)[1];
-    key <- substring(value, 1, pos-1);
-    key <- trim(key);
+    name <- substring(value, 1, pos-1);
+    name <- trim(name);
     value <- substring(value, pos+1);
     value <- trim(value);
-    names[kk] <- key;
+    names[kk] <- name;
     header[[kk]] <- value;
   }
   names(header) <- names;

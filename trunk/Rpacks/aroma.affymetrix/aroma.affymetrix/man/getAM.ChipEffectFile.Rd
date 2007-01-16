@@ -23,7 +23,8 @@
 \usage{\method{getAM}{ChipEffectFile}(this, other, units=NULL, ..., verbose=FALSE)}
 
 \arguments{
-  \item{other}{The second \code{\link{ChipEffectFile}} object used as the reference.}
+  \item{other}{The second \code{\link{ChipEffectFile}} object used as the
+    reference.}
   \item{units}{(The subset of units to be matched.
     If \code{\link[base]{NULL}}, all units are considered.}
   \item{...}{Not used.}

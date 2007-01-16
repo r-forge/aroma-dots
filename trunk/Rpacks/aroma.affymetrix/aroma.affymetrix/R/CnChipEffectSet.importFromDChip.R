@@ -9,9 +9,9 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
       if (line == "[Data]")
         break;
       line <- strsplit(line, split="=")[[1]];
-      key <- line[1];
+      name <- line[1];
       value <- paste(line[-1], collapse="=");
-      res[[key]] <- value;
+      res[[name]] <- value;
     }
     
     res;    

@@ -43,6 +43,7 @@ extends \link[R.oo]{Object}\cr
 \tabular{rll}{
  \tab \code{addIncludes} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:display.ChromosomeExplorer]{display}} \tab Displays the explorer in the default browser.\cr
+ \tab \code{getAlias} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getArrays.ChromosomeExplorer]{getArrays}} \tab Gets the names of the arrays.\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.ChromosomeExplorer]{getChromosomes}} \tab Gets the chromosomes available.\cr
  \tab \code{getFullName} \tab  -\cr
@@ -52,6 +53,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:getTags.ChromosomeExplorer]{getTags}} \tab Gets the tags of the explorer.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.ChromosomeExplorer]{nbrOfArrays}} \tab Gets the total number of arrays.\cr
  \tab \code{\link[aroma.affymetrix:process.ChromosomeExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
+ \tab \code{setAlias} \tab  -\cr
  \tab \code{setCytoband} \tab  -\cr
 }
 

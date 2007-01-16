@@ -72,7 +72,8 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
     chipType <- getChipType(getCdf(this));
     params <- getParameters(this);
     key <- list(method="getCellIndices", class=class(this)[1], 
-                                  chipType=chipType, params=params, ...);
+                pathname=getPathname(this),
+                chipType=chipType, params=params, ...);
     id <- digest(key);
   }
 
@@ -166,7 +167,7 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
 
   # Check for cached data
   key <- list(method="readUnits", class=class(this)[1], 
-                                        mergeStrands=this$mergeStrands, ...);
+              mergeStrands=this$mergeStrands, ...);
   id <- digest(key);
   res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
