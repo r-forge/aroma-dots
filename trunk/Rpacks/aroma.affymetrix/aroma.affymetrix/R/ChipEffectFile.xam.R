@@ -11,7 +11,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{other}{The second @see "ChipEffectFile" object used as the reference.}
+#   \item{other}{The second @see "ChipEffectFile" object used as the
+#     reference.}
 #   \item{units}{(The subset of units to be matched.
 #     If @NULL, all units are considered.}
 #   \item{...}{Not used.}
@@ -37,8 +38,8 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'other':
-  if (!inherits(other, "CnChipEffectFile")) {
-    throw("Argument 'other' is not an CnChipEffectFile: ", class(other));
+  if (!inherits(other, "ChipEffectFile")) {
+    throw("Argument 'other' is not an ChipEffectFile: ", class(other)[1]);
   }
 
   # Argument 'units':
@@ -86,8 +87,12 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   verbose && enter(verbose, "Retrieving other thetas");
 
   # Workaround for now (just in case). /HB 2006-09-26 TODO
-  other$mergeStrands <- this$mergeStrands;
-  other$combineAlleles <- this$combineAlleles;
+  if (inherits(other, "SnpChipEffectFile")) {
+    other$mergeStrands <- this$mergeStrands;
+    if (inherits(other, "CnChipEffectFile")) {
+      other$combineAlleles <- this$combineAlleles;
+    }
+  }
 
   # Get the other theta estimates
   thetaRef <- getDataFlat(other, units=map, fields="theta", verbose=less(verbose))[,"theta"];
@@ -128,7 +133,8 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
 # @synopsis
 #
 # \arguments{
-#   \item{other}{The second @see "ChipEffectFile" object used as the reference.}
+#   \item{other}{The second @see "ChipEffectFile" object used as the 
+#     reference.}
 #   \item{chromosome}{(The chromosome for which results should be returned.}
 #   \item{units}{(The subset of units to be matched.
 #     If @NULL, all units are considered.}
@@ -156,8 +162,8 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'other':
-  if (!inherits(other, "CnChipEffectFile")) {
-    throw("Argument 'other' is not an CnChipEffectFile: ", class(other));
+  if (!inherits(other, "ChipEffectFile")) {
+    throw("Argument 'other' is not an ChipEffectFile: ", class(other)[1]);
   }
 
   # Argument 'chromosome':
@@ -223,6 +229,9 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
 
 ############################################################################
 # HISTORY:
+# 2007-01-16
+# o BUG FIX: getAM() and getXAM() required that argument 'other' was an
+#   CnChipEffectFile; ChipEffectFile is enough.
 # 2006-12-02
 # o BUG FIX: getAM() did not handle units=NULL.
 # 2006-11-28

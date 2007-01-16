@@ -3,6 +3,9 @@ library(aroma.affymetrix);
 source("init.R");
 
 dataSetName <- "SinclairA_etal_2006";
+
+dataSetName <- "AGRF_2007a-Anonymous";
+
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 
 #dataSetName <- "SlaterH_etal_2004";
@@ -10,14 +13,15 @@ chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 
 cesList <- list();
 for (chipType in chipTypes) {
-  # Create a log file
-  logFile <- sprintf("%s,%s.log", dataSetName, chipType);
-  log <- Verbose(logFile, threshold=-4, removeFile=FALSE);
-  timestampOn(log);
-
   path <- file.path("rawData", dataSetName, chipType);
   ds <- AffymetrixCelSet$fromFiles(path);
+#  setAlias(ds, "SinclairA_2006b");
   print(ds);
+
+  # Create a log file
+  logFile <- sprintf("%s,%s.log", getName(ds), chipType);
+  log <- Verbose(logFile, threshold=-4, removeFile=FALSE);
+  timestampOn(log);
 
   cdf <- getCdf(ds);
   print(cdf);

@@ -113,7 +113,7 @@ setMethodS3("as.character", "AffymetrixFile", function(this, ...) {
   s <- c(s, sprintf("Name: %s", getName(this)));
   tags <- getTags(this);
   if (!is.null(tags)) {
-    s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
+    s <- c(s, sprintf("Tags: %s", paste(tags, collapse=",")));
   }
   s <- c(s, sprintf("Pathname: %s", getPathname(this)));
   s <- c(s, sprintf("File size: %.2fMB", getFileSize(this)/1024^2));
