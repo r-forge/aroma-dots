@@ -264,4 +264,11 @@
   writeRegions.ChromosomeExplorer writeRegions.GladModel
   writeRegions.profileCGH writeSpatial writeSpatial.ProbeAffinityFile
   writeWig writeWig.CnChipEffectSet
-
+  clearCache.AffymetrixCdfFile clearCache.AffymetrixCelFile
+  clearCache.AffymetrixCelSet clearCache.AffymetrixProbeTabFile
+  clearCache.ChipEffectFile clearCache.ChipEffectSet
+  clearCache.GdasAnnotationFile clearCache.GenomeInformation
+  clearCache.ParameterCelFile clearCache.PcrProbeCalibration
+  clearCache.ProbeAffinityFile clearCache.ProbeLevelModel
+  clearCache.QualityAssessmentFile clearCache.SnpChipEffectFile
+  clearCache.SnpInformation clearCache.Transform

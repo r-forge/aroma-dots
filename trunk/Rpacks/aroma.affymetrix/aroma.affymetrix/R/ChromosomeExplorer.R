@@ -489,15 +489,31 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, ...) {
 }, private=TRUE)
 
 
-setMethodS3("writeRegions", "ChromosomeExplorer", function(this, nbrOfSnps=c(3,Inf), smoothing=c(-Inf,-0.15, +0.15,+Inf), ...) {
+setMethodS3("writeRegions", "ChromosomeExplorer", function(this, nbrOfSnps=c(3,Inf), smoothing=c(-Inf,-0.15, +0.15,+Inf), ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Writing CN regions");
+
   # Extract and write regions
   model <- getModel(this);
-  pathname <- writeRegions(model, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE);
+  pathname <- writeRegions(model, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
 
   dest <- filePath(getPath(this), "regions.xls");
   res <- file.copy(pathname, dest, overwrite=TRUE);
   if (!res)
     dest <- NULL;
+
+  verbose && exit(verbose);
+
   invisible(dest);
 }, private=TRUE)
 
@@ -552,16 +568,16 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   verbose && enter(verbose, "Generating ChromosomeExplorer report");
 
   # Setup HTML, CSS, Javascript files first
-  setup(this, ...);
+  setup(this, ..., verbose=less(verbose));
 
   # Generate bitmap images
-  writeGraphs(this, arrays=arrays, chromosomes=chromosomes, ...);
+  writeGraphs(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
 
   # Update samples.js
-  updateSamplesFile(this, ...);
+  updateSamplesFile(this, ..., verbose=less(verbose));
 
   # Write regions file
-  writeRegions(this, arrays=arrays, chromosomes=chromosomes, ...);
+  writeRegions(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
 
   verbose && exit(verbose);
 })

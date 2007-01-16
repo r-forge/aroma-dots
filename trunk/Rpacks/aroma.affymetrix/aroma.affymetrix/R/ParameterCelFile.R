@@ -55,6 +55,18 @@ setConstructorS3("ParameterCelFile", function(..., encodeFunction=NULL, decodeFu
 })
 
 
+setMethodS3("clearCache", "ParameterCelFile", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".readUnitsCache")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 setMethodS3("setEncodeFunction", "ParameterCelFile", function(this, fcn, ...) {
   if (is.null(fcn)) {
   } else if (!is.function(fcn)) {

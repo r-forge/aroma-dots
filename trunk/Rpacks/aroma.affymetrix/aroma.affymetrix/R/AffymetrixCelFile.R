@@ -53,6 +53,18 @@ setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
   this;
 })
 
+setMethodS3("clearCache", "AffymetrixCelFile", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".header", ".lastPlotData")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
   # Clone itself (and clear the cached fields)
   object <- NextMethod("clone", clear=TRUE, ...);

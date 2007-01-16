@@ -408,6 +408,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   # Create the output set (ad hoc for now so that we keep parameter too)
   outputSet <- clone(ces);
   outputSet$files <- res;
+  clearCache(outputSet);
 
   # Update the output data set
   this$outputSet <- outputSet;
@@ -419,6 +420,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-01-16
+# o BUG FIX: Forgot to clear the cache after cloning data set in process().
+#   This would cause getAverage() to return a cached averaged from the
+#   non-normalized data set.
 # 2007-01-07
 # o Now chip-effect parameters are carried over to the output set too.
 # o BUG FIX: process(): Forgot to skip to next array in for loop if an 

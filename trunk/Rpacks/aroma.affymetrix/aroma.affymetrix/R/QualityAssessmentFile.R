@@ -35,6 +35,19 @@ setConstructorS3("QualityAssessmentFile", function(...) {
   this;
 })
 
+setMethodS3("clearCache", "QualityAssessmentFile", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".firstCells")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
+
 setMethodS3("findUnitsTodo", "QualityAssessmentFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

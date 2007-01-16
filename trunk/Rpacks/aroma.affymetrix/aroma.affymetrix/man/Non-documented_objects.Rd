@@ -671,6 +671,22 @@
 \alias{writeSpatial.ProbeAffinityFile}
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
+\alias{clearCache.AffymetrixCdfFile}
+\alias{clearCache.AffymetrixCelFile}
+\alias{clearCache.AffymetrixCelSet}
+\alias{clearCache.AffymetrixProbeTabFile}
+\alias{clearCache.ChipEffectFile}
+\alias{clearCache.ChipEffectSet}
+\alias{clearCache.GdasAnnotationFile}
+\alias{clearCache.GenomeInformation}
+\alias{clearCache.ParameterCelFile}
+\alias{clearCache.PcrProbeCalibration}
+\alias{clearCache.ProbeAffinityFile}
+\alias{clearCache.ProbeLevelModel}
+\alias{clearCache.QualityAssessmentFile}
+\alias{clearCache.SnpChipEffectFile}
+\alias{clearCache.SnpInformation}
+\alias{clearCache.Transform}
 
 \description{
   This page contains aliases for all "non-documented" objects that

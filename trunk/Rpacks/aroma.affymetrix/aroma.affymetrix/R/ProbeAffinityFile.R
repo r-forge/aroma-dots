@@ -41,6 +41,18 @@ setConstructorS3("ProbeAffinityFile", function(..., probeModel=c("pm", "mm", "pm
   )
 })
 
+setMethodS3("clearCache", "ProbeAffinityFile", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".firstCells")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 setMethodS3("getCellIndices", "ProbeAffinityFile", function(this, ...) {
   stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pm", "min1(pm-mm)"="pm");
   cdf <- getCdf(this);

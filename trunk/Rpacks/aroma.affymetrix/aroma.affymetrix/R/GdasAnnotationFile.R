@@ -8,6 +8,19 @@ setConstructorS3("GdasAnnotationFile", function(...) {
 })
 
 
+setMethodS3("clearCache", "GdasAnnotationFile", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".blockPositions", ".header", ".columnName", ".data")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
+
 setMethodS3("fromChipType", "GdasAnnotationFile", function(static, chipType, what, path="annotations", ...) {
   # Argument 'chipType':
   if (inherits(chipType, "AffymetrixCdfFile")) {

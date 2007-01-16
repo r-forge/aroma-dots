@@ -28,6 +28,18 @@ setConstructorS3("SnpInformation", function(...) {
   this;
 })
 
+setMethodS3("clearCache", "SnpInformation", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".data")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 
 ###########################################################################/**
 # @RdocMethod verify
