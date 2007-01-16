@@ -322,6 +322,9 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+  ds <- getDataSet(this);
+  verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
+
   # Get the CDF cell indices
   verbose && enter(verbose, "Identifying CDF cell indices");
   cdfUnits <- getCellIndices(this, units=units, ...);
@@ -329,11 +332,9 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
   verbose && exit(verbose);
 
   # Get the CEL intensities by units
-  ds <- getDataSet(this);
-  verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
   res <- getUnitIntensities(ds, units=cdfUnits, ...);
-  verbose && exit(verbose);
   verbose && str(verbose, res[1]);
+  verbose && exit(verbose);
 
   res;
 }, private=TRUE)
@@ -582,12 +583,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get the CEL intensities by units
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    verbose && enter(verbose, "Reading probe intensities from ", nbrOfArrays, " arrays");
     tRead <- processTime();
     y <- readUnits(this, units=units[uu], ..., force=force, verbose=less(verbose));
     timers$read <- timers$read + (processTime() - tRead);
-    verbose && str(verbose, y[1]);
-    verbose && exit(verbose);
+
 
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

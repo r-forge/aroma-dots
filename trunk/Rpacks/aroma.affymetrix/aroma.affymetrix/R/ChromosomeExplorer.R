@@ -59,6 +59,7 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
 
 
   extend(Object(), "ChromosomeExplorer",
+    .alias = NULL,
     .model = model,
     .plotCytoband = TRUE
   )
@@ -177,6 +178,88 @@ setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
 
 
 ###########################################################################/**
+# @RdocMethod getAlias
+#
+# @title "Gets the alias of the output set"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character, or @NULL if no alias is set.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "setAlias".
+#   @seemethod "getName".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getAlias", "ChromosomeExplorer", function(this, ...) {
+  this$.alias;
+})
+
+
+
+###########################################################################/**
+# @RdocMethod setAlias
+#
+# @title "Sets the alias of the output set"
+#
+# \description{
+#   @get "title".
+#   If specified, the alias overrides the model name, which is used by 
+#   default.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{alias}{A @character string for the new alias of the output set.
+#   The alias must consists of valid filename characters, and must not
+#   contain commas, which are used to separate tags.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns nothing.
+# }
+#
+# \details{
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getAlias".
+#   @seemethod "getName".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("setAlias", "ChromosomeExplorer", function(this, alias=NULL, ...) {
+  # Argument 'alias':
+  if (!is.null(alias)) {
+    alias <- Arguments$getFilename(alias);  # Valid filename?
+
+    # Assert that no commas are used.
+    if (regexpr("[,]", alias) != -1) {
+      throw("Output-set aliases (names) must not contain commas: ", alias);
+    }
+  }
+
+  this$.alias <- alias;
+})
+
+###########################################################################/**
 # @RdocMethod getName
 #
 # @title "Gets the name of the explorer"
@@ -195,6 +278,11 @@ setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
 #  Returns a @character string.
 # }
 #
+# \details{
+#  If a name alias has not been set explicitly, the name of the model will
+#  used.
+# }
+#
 # @author
 #
 # \seealso{
@@ -202,8 +290,12 @@ setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getName", "ChromosomeExplorer", function(this, ...) {
-  model <- getModel(this);
-  getName(model, ...);
+  name <- getAlias(this);
+  if (is.null(name)) {
+    model <- getModel(this);
+    name <- getName(model, ...);
+  }
+  name;
 })
 
 
@@ -651,6 +743,10 @@ setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) 
 
 ##############################################################################
 # HISTORY:
+# 2007-01-16
+# o Added getAlias() and setAlias(), and updated getName() accordingly.
+#   This makes it easy to change the name of output set for subsets of
+#   arrays.
 # 2007-01-15
 # o Added some more Rdoc comments.
 # 2007-01-10
