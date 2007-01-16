@@ -61,6 +61,20 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
 })
 
 
+setMethodS3("clearCache", "AffymetrixCelSet", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".intensities", ".intensitiesIdxs", ".unitsCache", 
+           ".getUnitIntensitiesCache", ".timestamps", ".fileSize")) {
+    this[[ff]] <- NULL;
+  }
+  this$.averageFiles <- list();
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -68,7 +82,8 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   verbose && enter(verbose, "Cloning Affymetrix CEL set");
 
   # Clone itself and the files.  The call below will clear the cache!
-  object <- NextMethod("clone", clear=FALSE, ..., verbose=less(verbose));
+  object <- NextMethod("clone", clear=TRUE, ..., verbose=less(verbose));
+  clearCache(object);
 
   # Clone the CDF (this will update the CDF of all file object)
   verbose && enter(verbose, "Cloning CDF");
@@ -931,6 +946,8 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   # Create a private filename (with a dot prefix) to make sure it is not
   # identified as a regular CEL file when the directory is scanned for files.
   filename <- sprintf(".%s.CEL", name);
+  if (is.null(this$.averageFiles))
+    this$.averageFiles <- list();
   res <- this$.averageFiles[[filename]];
   if (is.null(res)) {
     res <- createFrom(df, filename=filename, path=getPath(this), verbose=less(verbose));

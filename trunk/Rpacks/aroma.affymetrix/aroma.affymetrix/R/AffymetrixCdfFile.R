@@ -32,6 +32,18 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
 })
 
 
+setMethodS3("clearCache", "AffymetrixCdfFile", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".header", ".unitNames", ".unitSizes", ".cellIndices", ".isPm")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 setMethodS3("as.character", "AffymetrixCdfFile", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Path: %s", getPath(this)));

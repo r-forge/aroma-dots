@@ -2,6 +2,14 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.3.3 [2007-01-16xxx]
+o Passes R CMD check on v2.4.0.
+o BUG FIX: For some reason does clearCache() of Object not
+  clear out all cached fields. Until I've figured out what
+  is wrong, I've added explicit clearCache() to classes using
+  cached fields.
+o The FragmentLengthNormalization class forgot to clear cache
+  after cloning input data set.  This caused the output data
+  set to get the same average file as the input data set.
 o Added classes QualityAssessmentModel, QualityAssessmentSet,
   and QualityAssessmentFile.
 o Now createMonoCell() create the CDF in chunks, that is, 

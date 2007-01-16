@@ -74,6 +74,18 @@ setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
 })
 
 
+setMethodS3("clearCache", "ChipEffectFile", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".firstCells")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 setMethodS3("as.character", "ChipEffectFile", function(this, ...) {
   s <- NextMethod(generic="as.character", object=this, ...);
   params <- paste(getParametersAsString(this), collapse=", ");
@@ -478,6 +490,8 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
     on.exit(popState(verbose));
   }
 
+  verbose2 <- -as.integer(verbose)-2;
+
   verbose && enter(verbose, "Storing flat data to file");
 
   # Encode
@@ -494,7 +508,7 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
   keep <- (names %in% c("intensities", "stdvs", "pixels"));
   data <- data[,keep];
   pathname <- getPathname(this);
-  updateCel(pathname, indices=indices, data, verbose=as.logical(less(verbose,10)));
+  updateCel(pathname, indices=indices, data, verbose=verbose2);
   verbose && exit(verbose);
 
   verbose && exit(verbose);

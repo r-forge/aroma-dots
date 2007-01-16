@@ -77,6 +77,19 @@ setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", 
 }, abstract=TRUE)
 
 
+setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".paFile", ".chipFiles", ".lastPlotData")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
+
 setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
   ChipEffectSet;
 }, static=TRUE, private=TRUE)
@@ -580,7 +593,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Fit the model
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    verbose && enter(verbose, "Fitting unit-group model");
+    verbose && enter(verbose, "Fitting probe-level model");
     tFit <- processTime();
     fit <- lapply(y, FUN=fitUnit);
     timers$fit <- timers$fit + (processTime() - tFit);

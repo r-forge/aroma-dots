@@ -42,6 +42,18 @@ setConstructorS3("ChipEffectSet", function(..., model=c("pm")) {
 })
 
 
+setMethodS3("clearCache", "ChipEffectSet", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".firstCells")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 setMethodS3("as.character", "ChipEffectSet", function(this, ...) {
   s <- NextMethod(generic="as.character", object=this, ...);
   params <- paste(getParametersAsString(this), collapse=", ");

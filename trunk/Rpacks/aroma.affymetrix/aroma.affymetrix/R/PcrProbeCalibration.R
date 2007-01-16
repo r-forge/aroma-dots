@@ -90,6 +90,18 @@ setConstructorS3("PcrProbeCalibration", function(..., subsetToFit=1/5, flavor=c(
   )
 })
 
+setMethodS3("clearCache", "PcrProbeCalibration", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".coefs")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 setMethodS3("getParameters", "PcrProbeCalibration", function(this, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);

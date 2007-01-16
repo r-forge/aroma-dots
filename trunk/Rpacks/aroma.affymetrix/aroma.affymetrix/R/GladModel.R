@@ -661,7 +661,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chrom
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieving reference chip effects
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  refList <- getReferenceFiles(this, force=force);
+  refList <- getReferenceFiles(this, force=force, verbose=verbose);
   verbose && cat(verbose, "Using references:");
   verbose && print(verbose, refList);
 
@@ -1159,58 +1159,60 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(thi
     df <- getRegions(this, arrays=array, ..., verbose=less(verbose))[[1]];
     names(df) <- gsub("Smoothing", "log2", names(df));
 
-    if (identical(format, "xls")) {
-      # Append column with sample names
-      df <- cbind(sample=name, df);
-    } else if (identical(format, "wig")) {
-      # Write a four column WIG/BED table
-      df <- df[,c("Chromosome", "start", "stop", "log2")];
-
-      # In the UCSC Genome Browser, the maximum length of one element
-      # is 10,000,000 bases.  Chop up long regions in shorter contigs.
-      verbose && enter(verbose, sprintf("Chopping up too long segment"));
-      MAX.LENGTH = 10e6-1;
-      start <- df[,"start"];
-      stop <- df[,"stop"];
-      len <- stop-start;
-      tooLong <- which(len > MAX.LENGTH);
-      if (length(tooLong) > 0) {
-        dfXtra <- NULL;
-        for (rr in tooLong) {
-          x0 <- start[rr];
-          while (x0 < stop[rr]) {
-            x1 <- min(x0 + MAX.LENGTH, stop[rr]);
-            df1 <- df[rr,];
-            df1[,"start"] <- x0;
-            df1[,"stop"] <- x1;
-            dfXtra <- rbind(dfXtra, df1);          
-            x0 <- x1+1;
+    if (nrow(df) > 0) {
+      if (identical(format, "xls")) {
+        # Append column with sample names
+        df <- cbind(sample=name, df);
+      } else if (identical(format, "wig")) {
+        # Write a four column WIG/BED table
+        df <- df[,c("Chromosome", "start", "stop", "log2")];
+  
+        # In the UCSC Genome Browser, the maximum length of one element
+        # is 10,000,000 bases.  Chop up long regions in shorter contigs.
+        verbose && enter(verbose, sprintf("Chopping up too long segment"));
+        MAX.LENGTH = 10e6-1;
+        start <- df[,"start"];
+        stop <- df[,"stop"];
+        len <- stop-start;
+        tooLong <- which(len > MAX.LENGTH);
+        if (length(tooLong) > 0) {
+          dfXtra <- NULL;
+          for (rr in tooLong) {
+            x0 <- start[rr];
+            while (x0 < stop[rr]) {
+              x1 <- min(x0 + MAX.LENGTH, stop[rr]);
+              df1 <- df[rr,];
+              df1[,"start"] <- x0;
+              df1[,"stop"] <- x1;
+              dfXtra <- rbind(dfXtra, df1);          
+              x0 <- x1+1;
+            }
           }
+          df <- df[-tooLong,];
+          df <- rbind(df, dfXtra);
+          rm(dfXtra);
+          row.names(df) <- seq(length=nrow(df));
         }
-        df <- df[-tooLong,];
-        df <- rbind(df, dfXtra);
-        rm(dfXtra);
-        row.names(df) <- seq(length=nrow(df));
+        verbose && exit(verbose);
+        # Make sure the items are ordered correctly
+        chrIdx <- as.integer(df[,"Chromosome"]);
+        o <- order(chrIdx, df[,"start"]);
+        df <- df[o,];
+  
+        # All chromosomes should have prefix 'chr'.
+        chrIdx <- as.integer(df[,"Chromosome"]);
+        df[chrIdx == 23,"Chromosome"] <- "X";
+        df[,"Chromosome"] <- paste("chr", df[,"Chromosome"], sep="");
       }
-      verbose && exit(verbose);
-      # Make sure the items are ordered correctly
-      chrIdx <- as.integer(df[,"Chromosome"]);
-      o <- order(chrIdx, df[,"start"]);
-      df <- df[o,];
-
-      # All chromosomes should have prefix 'chr'.
-      chrIdx <- as.integer(df[,"Chromosome"]);
-      df[chrIdx == 23,"Chromosome"] <- "X";
-      df[,"Chromosome"] <- paste("chr", df[,"Chromosome"], sep="");
-    }
-
-    # Apply digits
-    for (cc in seq(length=ncol(df))) {
-      value <- df[,cc];
-      if (is.double(value)) {
-        df[,cc] <- round(value, digits=digits);
+  
+      # Apply digits
+      for (cc in seq(length=ncol(df))) {
+        value <- df[,cc];
+        if (is.double(value)) {
+          df[,cc] <- round(value, digits=digits);
+        }
       }
-    }
+    } # if (nrow(df) > 0)
 
     if (!oneFile) {
       savename <- name;
@@ -1266,6 +1268,8 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-01-16
+# o BUG FIX: writeRegions() would give an error if no regions was found.
 # 2007-01-15
 # o Now fit(..., force=TRUE) also calls getReferenceFiles(..., force=force).
 # o Added some more Rdoc comments.

@@ -60,6 +60,18 @@ setConstructorS3("Transform", function(dataSet=NULL, tags="*", ...) {
 }, abstract=TRUE)
 
 
+setMethodS3("clearCache", "Transform", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".outputDataSet")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
 
 setMethodS3("getAsteriskTag", "Transform", function(this, ...) {
   # Default '*' tag is the abbreviation from upper-case letters only,
