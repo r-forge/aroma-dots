@@ -61,6 +61,7 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
   extend(Object(), "ChromosomeExplorer",
     .alias = NULL,
     .model = model,
+    .arrays = NULL,
     .plotCytoband = TRUE
   )
 })
@@ -116,43 +117,12 @@ setMethodS3("getModel", "ChromosomeExplorer", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod nbrOfArrays
-#
-# @title "Gets the total number of arrays"
-#
-# \description{
-#  @get "title" available in the model.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns an @integer.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("nbrOfArrays", "ChromosomeExplorer", function(this, ...) {
-  model <- getModel(this);
-  nbrOfArrays(model);
-})
-
-
-###########################################################################/**
 # @RdocMethod getArrays
 #
 # @title "Gets the names of the arrays"
 #
 # \description{
-#  @get "title" available in the model.
+#  @get "title" in the explorer.
 # }
 #
 # @synopsis
@@ -172,9 +142,89 @@ setMethodS3("nbrOfArrays", "ChromosomeExplorer", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
-  model <- getModel(this);
-  getArrays(model, ...);
+  arrays <- this$.arrays;
+  if (is.null(arrays)) {
+    model <- getModel(this);
+    arrays <- getArrays(model);
+  }
+  arrays;
 })
+
+
+
+###########################################################################/**
+# @RdocMethod setArrays
+#
+# @title "Sets the arrays"
+#
+# \description{
+#  @get "title" to be processed by the explorer.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{arrays}{A @character (or @integer) @vector of arrays used in the
+#      model.  If @NULL, all arrays of the model are considered.}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("setArrays", "ChromosomeExplorer", function(this, arrays=NULL, ...) {
+
+  # Argument 'arrays':
+  if (!is.null(arrays)) {
+    model <- getModel(this);
+    arrays <- indexOfArrays(model, arrays=arrays);
+    arrays <- getArrays(model)[arrays];
+  }
+
+  this$.arrays <- arrays;
+})
+
+
+
+
+
+###########################################################################/**
+# @RdocMethod nbrOfArrays
+#
+# @title "Gets the total number of arrays"
+#
+# \description{
+#  @get "title" considered by the explorer.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @integer.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("nbrOfArrays", "ChromosomeExplorer", function(this, ...) {
+  arrays <- getArrays(this);
+  length(arrays);
+})
+
 
 
 ###########################################################################/**
@@ -433,6 +483,34 @@ setMethodS3("getTemplatePath", "ChromosomeExplorer", function(this, ..., verbose
 }, private=TRUE)
 
 
+
+
+###########################################################################/**
+# @RdocMethod updateSamplesFile
+#
+# @title "Updates the samples.js file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns (invisibly) the pathname to the samples.js file.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
   require(R.rsp) || throw("Package not loaded: R.rsp");
 
@@ -488,7 +566,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   verbose && enter(verbose, "Compiling RSP");
   env <- new.env();
   env$chipTypes <- chipTypes;
-  env$samples <- getArrays(model);
+  env$samples <- getArrays(this);
   env$zooms <- zooms;
   pathname <- rspToHtml(pathname, path=NULL, 
                         outFile=outFile, outPath=outPath, 
@@ -500,6 +578,8 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   
   invisible(pathname);
 }, private=TRUE)
+
+
 
 
 setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., force=FALSE, verbose=FALSE) {
@@ -556,6 +636,8 @@ setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, ..., force=FALS
 }, private=TRUE)
 
 
+
+
 setMethodS3("setup", "ChromosomeExplorer", function(this, ..., force=FALSE) {
   # Setup includes/?
   addIncludes(this, ..., force=force);
@@ -568,23 +650,40 @@ setMethodS3("setup", "ChromosomeExplorer", function(this, ..., force=FALSE) {
 }, private=TRUE)
 
 
-setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, ...) {
+
+setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, arrays=NULL, ...) {
   # To please R CMD check.
   this <- x;
 
-  path <- getPath(this);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'arrays':
+  if (is.null(arrays))
+    arrays <- getArrays(this);
+
+
+
+  # Get the model
   model <- getModel(this);
+
+  path <- getPath(this);
   plotband <- this$.plotCytoband;  # Plot cytoband?
-  plot(model, path=path, imageFormat="png", plotband=plotband, ...);
+  plot(model, path=path, imageFormat="png", plotband=plotband, arrays=arrays, ...);
 
   invisible(path);
 }, private=TRUE)
 
 
-setMethodS3("writeRegions", "ChromosomeExplorer", function(this, nbrOfSnps=c(3,Inf), smoothing=c(-Inf,-0.15, +0.15,+Inf), ..., verbose=FALSE) {
+
+setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nbrOfSnps=c(3,Inf), smoothing=c(-Inf,-0.15, +0.15,+Inf), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'arrays':
+  if (is.null(arrays)) 
+    arrays <- getArrays(this);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -597,7 +696,7 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, nbrOfSnps=c(3,I
 
   # Extract and write regions
   model <- getModel(this);
-  pathname <- writeRegions(model, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
+  pathname <- writeRegions(model, arrays=arrays, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
 
   dest <- filePath(getPath(this), "regions.xls");
   res <- file.copy(pathname, dest, overwrite=TRUE);
@@ -623,9 +722,9 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, nbrOfSnps=c(3,I
 # @synopsis
 #
 # \arguments{
-#   \item{arrays}{A @vector of array indices specifying which arrays to
+#   \item{arrays}{A @vector of arrays specifying which arrays to
 #    be considered.  If @NULL, all are processed.}
-#   \item{chromosome}{A @vector of chromosomes indices specifying which
+#   \item{chromosome}{A @vector of chromosomes specifying which
 #     chromosomes to be considered.  If @NULL, all are processed.}
 #   \item{...}{Not used.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
@@ -646,6 +745,8 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
+  if (is.null(arrays))
+    arrays <- getArrays(this);
 
   # Argument 'chromosomes':
 
@@ -656,7 +757,7 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
     on.exit(popState(verbose));
   }
 
-
+  
   verbose && enter(verbose, "Generating ChromosomeExplorer report");
 
   # Setup HTML, CSS, Javascript files first
@@ -743,6 +844,10 @@ setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) 
 
 ##############################################################################
 # HISTORY:
+# 2007-01-17
+# o Now all 'arrays' arguments can contain array names.
+# o Added getArrays() and setArrays() in order to focus on a subset of the
+#   arrays in the model.
 # 2007-01-16
 # o Added getAlias() and setAlias(), and updated getName() accordingly.
 #   This makes it easy to change the name of output set for subsets of

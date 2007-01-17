@@ -61,11 +61,12 @@
 #  NAR, 2003, 31, e15.\cr
 # }
 #*/###########################################################################
-setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo")) {
+setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo"), force=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   require(affyPLM) || throw("Package 'affyPLM' not loaded.");
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -211,7 +212,6 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # A fit function must return: theta, sdTheta, thetaOutliers, 
     # phi, sdPhi, phiOutliers.
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
     if (is.null(se)) {
       # For affyPLM v1.10.0 (2006-09-26) or older.
       sdTheta <- rep(1, J);
