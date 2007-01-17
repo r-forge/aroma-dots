@@ -253,7 +253,7 @@
   stringTree stringTree.character transformAffine
   transformAffine.AffymetrixCelFile transformAffine.AffymetrixCelSet
   unload.PlatformDesign updateDataFlat updateDataFlat.ChipEffectFile
-  updateSamplesFile updateSamplesFile.ChromosomeExplorer updateUnits
+  updateSamplesFile updateUnits
   updateUnits.ChipEffectFile updateUnits.ChipEffectSet
   updateUnits.GenotypeCallXdrFile updateUnits.ParameterCelFile
   updateUnits.ProbeAffinityFile uses uses.Interface
@@ -272,3 +272,4 @@
   clearCache.ProbeAffinityFile clearCache.ProbeLevelModel
   clearCache.QualityAssessmentFile clearCache.SnpChipEffectFile
   clearCache.SnpInformation clearCache.Transform
+  indexOfArrays setArrays

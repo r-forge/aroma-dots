@@ -22,9 +22,9 @@
 \usage{\method{process}{ChromosomeExplorer}(this, arrays=NULL, chromosomes=NULL, ..., verbose=FALSE)}
 
 \arguments{
-  \item{arrays}{A \code{\link[base]{vector}} of array indices specifying which arrays to
+  \item{arrays}{A \code{\link[base]{vector}} of arrays specifying which arrays to
    be considered.  If \code{\link[base]{NULL}}, all are processed.}
-  \item{chromosome}{A \code{\link[base]{vector}} of chromosomes indices specifying which
+  \item{chromosome}{A \code{\link[base]{vector}} of chromosomes specifying which
     chromosomes to be considered.  If \code{\link[base]{NULL}}, all are processed.}
   \item{...}{Not used.}
   \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
