@@ -643,7 +643,6 @@
 \alias{updateDataFlat}
 \alias{updateDataFlat.ChipEffectFile}
 \alias{updateSamplesFile}
-\alias{updateSamplesFile.ChromosomeExplorer}
 \alias{updateUnits}
 \alias{updateUnits.ChipEffectFile}
 \alias{updateUnits.ChipEffectSet}
@@ -687,6 +686,8 @@
 \alias{clearCache.SnpChipEffectFile}
 \alias{clearCache.SnpInformation}
 \alias{clearCache.Transform}
+\alias{indexOfArrays}
+\alias{setArrays}
 
 \description{
   This page contains aliases for all "non-documented" objects that

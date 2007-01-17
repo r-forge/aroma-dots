@@ -1,21 +1,13 @@
 savehistory();
 library(aroma.affymetrix);
-source("init.R");
 
 dataSetName <- "SinclairA_etal_2006";
-
-dataSetName <- "AGRF_2007a-Anonymous";
-
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
-
-#dataSetName <- "SlaterH_etal_2004";
-#chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
 
 cesList <- list();
 for (chipType in chipTypes) {
   path <- file.path("rawData", dataSetName, chipType);
   ds <- AffymetrixCelSet$fromFiles(path);
-#  setAlias(ds, "SinclairA_2006b");
   print(ds);
 
   # Create a log file
@@ -59,4 +51,8 @@ print(glad);
 ce <- ChromosomeExplorer(glad);
 print(ce);
 
+# Analyze a subset of the data
+process(ce, arrays=8, chromosomes=c(7,20:22), verbose=log);
+
+# Whole genome analysis - takes many many hours!
 process(ce, arrays=8, chromosomes=c(7,20:22), verbose=log);

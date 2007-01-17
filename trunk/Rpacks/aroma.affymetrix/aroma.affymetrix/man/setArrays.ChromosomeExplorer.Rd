@@ -6,22 +6,24 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getArrays.ChromosomeExplorer}
-\alias{getArrays.ChromosomeExplorer}
-\alias{ChromosomeExplorer.getArrays}
-\alias{getArrays.ChromosomeExplorer}
-\alias{getArrays,ChromosomeExplorer-method}
+\name{setArrays.ChromosomeExplorer}
+\alias{setArrays.ChromosomeExplorer}
+\alias{ChromosomeExplorer.setArrays}
+\alias{setArrays.ChromosomeExplorer}
+\alias{setArrays,ChromosomeExplorer-method}
 
 
-\title{Gets the names of the arrays}
+\title{Sets the arrays}
 
 \description{
- Gets the names of the arrays in the explorer.
+ Sets the arrays to be processed by the explorer.
 }
 
-\usage{\method{getArrays}{ChromosomeExplorer}(this, ...)}
+\usage{\method{setArrays}{ChromosomeExplorer}(this, arrays=NULL, ...)}
 
 \arguments{
+  \item{arrays}{A \code{\link[base]{character}} (or \code{\link[base]{integer}}) \code{\link[base]{vector}} of arrays used in the
+     model.  If \code{\link[base]{NULL}}, all arrays of the model are considered.}
   \item{...}{Not used.}
 }
 

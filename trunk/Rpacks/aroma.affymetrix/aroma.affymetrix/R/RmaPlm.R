@@ -61,7 +61,7 @@
 #  NAR, 2003, 31, e15.\cr
 # }
 #*/###########################################################################
-setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo"), force=FALSE) {
+setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

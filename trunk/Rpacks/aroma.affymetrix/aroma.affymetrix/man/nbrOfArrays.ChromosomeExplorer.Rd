@@ -16,7 +16,7 @@
 \title{Gets the total number of arrays}
 
 \description{
- Gets the total number of arrays available in the model.
+ Gets the total number of arrays considered by the explorer.
 }
 
 \usage{\method{nbrOfArrays}{ChromosomeExplorer}(this, ...)}
