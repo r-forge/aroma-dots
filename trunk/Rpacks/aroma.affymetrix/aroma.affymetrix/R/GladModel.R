@@ -363,6 +363,56 @@ setMethodS3("getArrays", "GladModel", function(this, ...) {
 })
 
 
+
+###########################################################################/**
+# @RdocMethod indexOfArrays
+#
+# @title "Gets the indices of the arrays"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{arrays}{A @character @vector of arrays names.
+#     If @NULL, all arrays are considered.}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @integer @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("indexOfArrays", "GladModel", function(this, arrays=NULL, ...) {
+  allArrays <- getArrays(this);
+
+  # Argument 'arrays':
+  if (is.null(arrays)) {
+    arrays <- seq(along=allArrays);
+  } else if (is.numeric(arrays)) {
+    arrays <- Arguments$getIndices(arrays, range=c(1,length(allArrays)));
+  } else {
+    missing <- which(!(arrays %in% allArrays));
+    if (length(missing) > 0) {
+      missing <- paste(arrays[missing], collapse=", ");
+      throw("Argument 'arrays' contains unknown arrays: ", missing);
+    }
+    arrays <- match(arrays, allArrays);
+  }
+
+  arrays;
+}, private=TRUE)
+
+
+
 ###########################################################################/**
 # @RdocMethod nbrOfArrays
 #
@@ -618,18 +668,20 @@ setMethodS3("getReferenceFiles", "GladModel", function(this, ..., force=FALSE, v
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fit", "GladModel", function(this, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), force=FALSE, ..., .retResults=FALSE, verbose=FALSE) {
+setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChromosomes(this), force=FALSE, ..., .retResults=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
   if (identical(arrays, "fitted")) {
   } else {
-    arrays <- Arguments$getIndices(arrays, range=c(1,nbrOfArrays(this)));
+    arrays <- indexOfArrays(this, arrays=arrays);
   }
 
   # Argument 'chromosomes':
   if (identical(chromosomes, "fitted")) {
+  } else if (is.null(chromosomes)) {
+    chromosomes <- getChromosomes(this);
   } else {
     chromosomes <- Arguments$getCharacters(chromosomes);
   #  chromosomes[chromosomes == "23"] <- "X";
@@ -1117,12 +1169,12 @@ setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", margin=10
 })
 
 
-setMethodS3("writeRegions", "GladModel", function(this, arrays=1:nbrOfArrays(this), format=c("xls", "wig"), digits=3, ..., oneFile=TRUE, skip=TRUE, verbose=FALSE) {
+setMethodS3("writeRegions", "GladModel", function(this, arrays=NULL, format=c("xls", "wig"), digits=3, ..., oneFile=TRUE, skip=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
-  arrays <- Arguments$getIndices(arrays, range=c(1,nbrOfArrays(this)));
+  arrays <- indexOfArrays(this, arrays=arrays);
 
   # Argument 'format':
   format <- match.arg(format);
@@ -1268,7 +1320,13 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-01-17
+# o Now argument 'arrays' can be either a vector of indices or array names,
+#   or NULL.
+# o Added indexOfArrays().
 # 2007-01-16
+# o Now NULL values for arguments 'arrays' and 'chromosomes' of fit() defaults
+#   to all arrays and all chromosomes, respectively.
 # o BUG FIX: writeRegions() would give an error if no regions was found.
 # 2007-01-15
 # o Now fit(..., force=TRUE) also calls getReferenceFiles(..., force=force).
