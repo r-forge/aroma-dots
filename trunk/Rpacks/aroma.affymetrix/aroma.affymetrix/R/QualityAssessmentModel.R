@@ -196,14 +196,15 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, path=NULL, 
   paf <- getProbeAffinities(getPlm(this));
   
   nbrOfUnits <- nbrOfUnits(getCdf(ces));
-
+  nbrOfArrays <- nbrOfArrays(this);
+  
   verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
 
 # find number of units to do; first check whether last file in list
 # exists
 
   if (isFile(pathname[nbrOfFiles])) {
-    unitsToDo <- findUnitsTodo(QcFile$fromFile(pathname[nbrOfFiles]));
+    unitsToDo <- findUnitsTodo(QualityAssessmentFile$fromFile(pathname[nbrOfFiles]), ...);
   } else {
     unitsToDo <- 1:nbrOfUnits;
   }
@@ -226,9 +227,12 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, path=NULL, 
     verbose && printf(verbose, "Chunk #%d of %d (%d units)\n",
                                         count, nbrOfChunks, length(units));
 
-    rawDataList <- readUnits(ds, units=units, transforms=list(log2), verbose=less(verbose), stratifyBy="pm");
-    chipEffectList <- readUnits(ces, units=units, transforms=list(log2), verbose=less(verbose));
-    probeAffinityList <- readUnits(paf, units=units, transforms=list(log2), verbose=verbose);
+    transforms <- rep(list("log2"), nbrOfArrays);
+    transforms <- lapply(transforms, get);
+    
+    rawDataList <- readUnits(ds, units=units, transforms=transforms, verbose=less(verbose), stratifyBy="pm");
+    chipEffectList <- readUnits(ces, units=units, transforms=transforms, verbose=less(verbose));
+    probeAffinityList <- readUnits(paf, units=units, transforms=transforms[1], verbose=verbose);
 
     resFcn <- function(kk) {
       rawData <- rawDataList[[kk]][[1]]$intensities;
@@ -238,13 +242,20 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, path=NULL, 
       return(rawData - fittedData);
     }
     
- #   residualsList <- c(residualsList, lapply(head, FUN=resFcn));
-   residualsList <- lapply(head, FUN=resFcn);
+    verbose && enter(verbose, "Calculating residuals");
 
+    residualsList <- lapply(head, FUN=resFcn);
+    
+    verbose && exit(verbose);
+    
 # update output files
     
+    verbose && enter(verbose, "Getting cell indices");
+
     cdf <- getCellIndices(getCdf(ds), units=units, stratifyBy="pm", ...);
-  
+
+    verbose && exit(verbose);
+    
     for (kk in seq(pathname)) {
       if (!isFile(pathname[kk])) {
         cdfHeader <- getHeader(getCdf(ds));
@@ -252,7 +263,9 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, path=NULL, 
         createCel(pathname[kk], header=celHeader, verbose=less(verbose));
       }
       data <- lapply(residualsList, function(x){nrow <- nrow(x); list(list(intensities=2^x[,kk], stdvs=rep(1, nrow), pixels=rep(1, nrow)))})
+      verbose && enter(verbose, "updating file #", kk);
       updateCelUnits(pathname[kk], cdf=cdf, data=data);
+      verbose && exit(verbose);
     }
     
     unitsToDo <- unitsToDo[-head];
@@ -345,7 +358,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
 # exists
 
   if (isFile(pathname[nbrOfFiles])) {
-    unitsToDo <- findUnitsTodo(QcFile$fromFile(pathname[nbrOfFiles]));
+    unitsToDo <- findUnitsTodo(QualityAssessmentFile$fromFile(pathname[nbrOfFiles]));
   } else {
     unitsToDo <- 1:nbrOfUnits;
   }
@@ -410,7 +423,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
 
 
 
-setMethodS3("plotNuse", "QualityAssessmentModel", function(this, subset=NULL, verbose=FALSE, ylim=c(0.9, 1.2), main="NUSE", ...) {
+setMethodS3("plotNuse", "QualityAssessmentModel", function(this, subset=NULL, verbose=FALSE, main="NUSE", ...) {
 
 # ... : additional arguments to bxp().
 
@@ -425,6 +438,8 @@ setMethodS3("plotNuse", "QualityAssessmentModel", function(this, subset=NULL, ve
     getFraction <- (length(subset) == 1) && (subset >= 0) && (subset < 1);
     if (!getFraction) {
       units <- Arguments$getIndices(subset, range=c(1, nbrOfUnits));
+    } else {
+      units <- identifyCells(cdfMono, indices=subset, verbose=less(verbose));
     }
   } else {
     units <- 1:nbrOfUnits;
@@ -462,12 +477,12 @@ setMethodS3("plotNuse", "QualityAssessmentModel", function(this, subset=NULL, ve
     suppressWarnings(bxpStats[[name]] <- do.call("cbind", lapply(boxplotStats, function(x){x[[name]]})));
   }
   
-  bxp(bxpStats, ylim=ylim, main=main, ...);
+  bxp(bxpStats, main=main, ...);
   
 })
 
 
-setMethodS3("plotRle", "QualityAssessmentModel", function(this, subset=NULL, verbose=FALSE, ylim=c(-1,1), main="RLE", ...) {
+setMethodS3("plotRle", "QualityAssessmentModel", function(this, subset=NULL, verbose=FALSE, main="RLE", ...) {
 
 # ... : additional arguments to bxp().
   
@@ -482,6 +497,8 @@ setMethodS3("plotRle", "QualityAssessmentModel", function(this, subset=NULL, ver
     getFraction <- (length(subset) == 1) && (subset >= 0) && (subset < 1);
     if (!getFraction) {
       units <- Arguments$getIndices(subset, range=c(1, nbrOfUnits));
+    } else {
+      units <- identifyCells(cdfMono, indices=subset, verbose=less(verbose));
     }
   } else {
     units <- 1:nbrOfUnits;
@@ -519,7 +536,7 @@ setMethodS3("plotRle", "QualityAssessmentModel", function(this, subset=NULL, ver
     suppressWarnings(bxpStats[[name]] <- do.call("cbind", lapply(boxplotStats, function(x){x[[name]]})));
   }
   
-  bxp(bxpStats, ylim=ylim, main=main, ...);
+  bxp(bxpStats, main=main, ...);
   
 })
 
