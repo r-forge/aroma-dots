@@ -231,17 +231,21 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
 #  Stick with version below for now until we work out what is causing
 #  the inconsistency.
   
-  indices <- unlist(getCellIndices(cdf))
-  mmi <- indices[!isPm(cdf)]
-  pmi <- indices[isPm(cdf)]
-
+  key <- list(chipType=getChipType(this), source="gcrma");
+  indices <- loadCache(key=key);
+  if (is.null(indices)) {
+    indices <- unlist(getCellIndices(cdf), use.names=FALSE);
+  }
+    
+  saveCache(key=key, indices);
+  
   # PM and MM
-  mm <- getData(this, indices=mmi)$intensities;
-  pm <- getData(this, indices=pmi)$intensities;
+  mm <- getData(this, indices=indices[!isPm(cdf)])$intensities;
+  pm <- getData(this, indices=indices[isPm(cdf)])$intensities;
 
   # corresponding affinities
-  apm <- affinities[pmi];
-  amm <- affinities[mmi];
+  apm <- affinities[indices[!isPm(cdf)]];
+  amm <- affinities[indices[isPm(cdf)]];
 
   verbose && exit(verbose);
 
@@ -298,7 +302,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
   copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
   verbose && exit(verbose);
   verbose && enter(verbose, "Writing adjusted intensities");
-  updateCel(pathname, indices=pmi, intensities=pm);
+  updateCel(pathname, indices=indices[isPm(cdf)], intensities=pm);
   verbose && exit(verbose);
   verbose && exit(verbose);
 
@@ -347,7 +351,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -381,12 +385,27 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, overwr
     setCdf(res, cdf);
     return(res);
   }
+
+
+  if (pmonly) {
+    verbose && cat(verbose, "Adjusting PM signals only");
+  }
   
-  verbose && enter(verbose, "Obtaining PM signals");
+  verbose && enter(verbose, "Obtaining signals");
   
-  indices <- unlist(getCellIndices(cdf))
-  pmi <- indices[isPm(cdf)]
-  pm <- getData(this, indices=pmi)$intensities;
+  if (pmonly) {
+    key <- list(chipType=getChipType(this));
+    pmi <- loadCache(key=key);
+    if (is.null(pmi)) {
+      indices <- unlist(getCellIndices(cdf), use.names=FALSE);
+      pmi <- indices[isPm(cdf)];
+    }
+    saveCache(key=key, pmi);
+  } else {
+    pmi <- NULL;
+  }
+  
+  pm <- getData(this, indices=pmi, "intensities")$intensities;
   clearCache(this);
   
   verbose && exit(verbose);

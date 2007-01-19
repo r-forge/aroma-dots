@@ -365,7 +365,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="bgRma", overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="bgRma", pmonly=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -400,7 +400,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="b
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(this, kk);
     verbose && print(verbose, df);
-    dataFiles[[kk]] <- bgAdjustRma(df, path=path, ..., verbose=less(verbose));
+    dataFiles[[kk]] <- bgAdjustRma(df, path=path, pmonly=pmonly, ..., verbose=less(verbose));
     gc();
     verbose && exit(verbose);
   }
