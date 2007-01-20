@@ -43,7 +43,10 @@ setConstructorS3("MbeiPlm", function(..., tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  require(affy) || throw("Package 'affy' not loaded.");
+  args <- list(...);
+  if (length(args) > 0 && !is.null(args[[1]])) {
+    require(affy) || throw("Package 'affy' not loaded.");
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

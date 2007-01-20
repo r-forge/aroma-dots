@@ -159,7 +159,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, chipType, ...) {
   pathname <- findCdf(chipType);
   if (is.null(pathname)) {
-    throw("Could not create ", class(static), " object. No CDF file with that chip type found: ", chipType);
+    throw("Could not create ", class(static)[1], " object. No CDF file with that chip type found: ", chipType);
   }
 
   fromFile(static, filename=pathname, path=NULL, ...);

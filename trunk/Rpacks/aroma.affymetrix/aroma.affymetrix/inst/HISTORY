@@ -1,7 +1,14 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.3.3 [2007-01-17xxx]
+Version: 0.3.4 [2007-01-20]
+o Passes R CMD check on v2.4.1.
+o BUG FIX: When trying to load CDFs (and in some other cases
+  too), the GLAD package (and some other packages) wer loaded
+  although they are only "suggested" packages.  This was due
+  to how the constructor of some classes were implemented.
+
+Version: 0.3.3 [2007-01-17]
 o Passes R CMD check on v2.4.0.
 o BUG FIX: For some reason does clearCache() of Object not
   clear out all cached fields. Until I've figured out what

@@ -60,8 +60,12 @@
 # }
 #*/###########################################################################
 setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*", ...) {
-  require(GLAD) || throw("Package not loaded: GLAD");
-
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Load required packages
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!is.null(cesList)) {
+    require(GLAD) || throw("Package not loaded: GLAD");
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
