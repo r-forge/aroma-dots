@@ -63,12 +63,6 @@
 #*/###########################################################################
 setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Load required packages
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  require(affyPLM) || throw("Package 'affyPLM' not loaded.");
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'flavor':

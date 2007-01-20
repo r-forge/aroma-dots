@@ -1,3 +1,23 @@
+######################################################################
+# Name:
+# cn500K.Rex
+#
+# Description:
+# This script will:
+#  1) For each chip type separately:
+#   a) normalize probe-level data, 
+#   b) fit a log-additive PLM to PM=PMA+PMB, and
+#   c) normalize chip effects for PCR fragment-length effects.
+#  2) Identify CNRs with chip types combined by:
+#   b) fit the GLAD model, and
+#   c) display the results in the Chromosome Explorer.
+#
+# Author:
+# Henrik Bengtsson, hb@stat.berkeley.edu
+#
+# Date:
+# 2007-01-17
+######################################################################
 savehistory();
 library(aroma.affymetrix);
 
@@ -14,12 +34,6 @@ for (chipType in chipTypes) {
   logFile <- sprintf("%s,%s.log", getName(ds), chipType);
   log <- Verbose(logFile, threshold=-4, removeFile=FALSE);
   timestampOn(log);
-
-  cdf <- getCdf(ds);
-  print(cdf);
-
-  gi <- getGenomeInformation(cdf);
-  print(gi);
 
   qn <- QuantileNormalization(ds);
   print(qn);
@@ -55,4 +69,4 @@ print(ce);
 process(ce, arrays=8, chromosomes=c(7,20:22), verbose=log);
 
 # Whole genome analysis - takes many many hours!
-process(ce, arrays=8, chromosomes=c(7,20:22), verbose=log);
+process(ce, verbose=log);
