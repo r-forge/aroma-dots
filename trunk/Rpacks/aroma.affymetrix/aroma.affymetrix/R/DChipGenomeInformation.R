@@ -36,7 +36,7 @@ setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType,
     version <- ".*";
 
   # Create a filename pattern
-  pattern <- sprintf("^%s genome info %s[.]txt$", chipType, version);
+  pattern <- sprintf("^.*( |_)genome( |_)info( |_).*%s[.](txt|xls)$", version);
 
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
   nfiles <- length(pathnames);
@@ -44,6 +44,7 @@ setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType,
     throw("Could not find dChip genome information: ", chipType);
   }
 
+  # More than one match?
   if (nfiles > 1) {
     pathnames <- sort(pathnames);
     warning("Found more than one matching dChip genome information file, but returning only the last one: ", paste(pathnames, collapse=", "));
@@ -67,14 +68,43 @@ setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {
 
 
 setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
+  readFcns <- list(
+    "^Mapping10K" = read50KHg17,
+    "^Mapping50K" = read50KHg17,
+    "^Mapping250K" = read250KHg17
+  );
+
   chipType <- getChipType(this);
-  if (regexpr("^Mapping50K", chipType) != -1) {
-    read50KHg17(this, ...);
-  } else if (regexpr("^Mapping250K", chipType) != -1) {
-    read250KHg17(this, ...);
-  } else {
+
+  # First, try to read with the designated read function.
+  res <- NULL;
+  for (kk in seq(along=readFcns)) {
+    pattern <- names(readFcns)[kk];
+    if (regexpr(pattern, chipType) != -1) {
+      readFcn <- readFcns[[kk]];
+      tryCatch({
+        res <- readFcn(this, ...);
+      }, error=function(ex) {})
+    }
+  }
+
+  # Second, re-try using all read functions?
+  if (is.null(res)) {
+    for (kk in seq(along=readFcns)) {
+      readFcn <- readFcns[[kk]];
+      tryCatch({
+        res <- readFcn(this, ...);
+      }, error=function(ex) {})
+      if (!is.null(res))
+        break;
+    }
+  }
+
+  if (is.null(res)) {
     throw("Cannot read dChip annotation data.  No predefined read function available for this chip type: ", chipType);
   }
+
+  res;
 })
 
 
@@ -113,6 +143,15 @@ setMethodS3("read50KHg17", "DChipGenomeInformation", function(this, ..., exclude
 
 ############################################################################
 # HISTORY:
+# 2007-01-22
+# o Made fromChipType() identify genome information files more robustly, 
+#   e.g. the exact chip type does not have to be part of the prefix.
+#   Indeed, it now accepts the default dChip filenames for the 10K, the
+#   50K and the 250K SNP chips.
+# o Made readData() to support also unknown chip types. That is, if a chip
+#   type is not among the hardwired ones, the method will still try to read
+#   it using one of the known read functions.  For instance, the genome info
+#   file for 10K chips have the same format as the one for the 100K chips.
 # 2006-09-15
 # o Created from DChip.R in old(!) aroma.snp.
 # 2005-11-15

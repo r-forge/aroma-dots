@@ -71,6 +71,7 @@ setMethodS3("as.character", "ChromosomeExplorer", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
+  s <- c(s, paste("Number of arrays:", nbrOfArrays(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";

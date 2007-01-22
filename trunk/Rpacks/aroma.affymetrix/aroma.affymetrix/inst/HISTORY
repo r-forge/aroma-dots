@@ -1,6 +1,17 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.3.5 [2007-01-22]
+o BUG FIX: Somehow hgChromosomes.txt disappeared from the last
+  versions of the package. Readded.
+o Now fromChipType() of DChipGenomeInformation recognized 
+  the Mapping10K_Xba142 genotype information files too, meaning
+  getGenotypeInformation() of AffymetrixCdfFile will also 
+  recognize it.
+o Now the default sample of the ChromosomeExplorer is the first
+  sample (and not the 8th, which was left in there while I was
+  debugging).  The default chromosome is 1 (not 21st).
+
 Version: 0.3.4 [2007-01-20]
 o Passes R CMD check on v2.4.1.
 o BUG FIX: When trying to load CDFs (and in some other cases

@@ -16,8 +16,10 @@ if (!exists("defNavigatorZoomIdx"))
   defNavigatorZoomIdxs <- min(2, length(zooms));
 if (!exists("defZoom"))
   defZoom <- min(2, length(zooms));
-defChromosome <- 21;
-defSample <- 8;
+if (!exists("defChromosome"))
+  defChromosome <- 1;
+if (!exists("defSample"))
+  defSample <- 1;
 %>
 /* Detected zooms */
 zooms = new Array(<%=paste(zooms, collapse=", ")%>);
