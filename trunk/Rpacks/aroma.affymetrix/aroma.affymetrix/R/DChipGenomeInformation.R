@@ -36,7 +36,7 @@ setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType,
     version <- ".*";
 
   # Create a filename pattern
-  pattern <- sprintf("^.*( |_)genome( |_)info( |_).*%s[.](txt|xls)$", version);
+  pattern <- sprintf("^.*( |_)genome( |_)info(| |_).*%s[.](txt|xls)$", version);
 
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
   nfiles <- length(pathnames);
@@ -76,7 +76,7 @@ setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
 
   chipType <- getChipType(this);
 
-  # First, try to read with the designated read function.
+  # Try to read with the designated read function.
   res <- NULL;
   for (kk in seq(along=readFcns)) {
     pattern <- names(readFcns)[kk];
@@ -88,7 +88,7 @@ setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
     }
   }
 
-  # Second, re-try using all read functions?
+  # If failed, re-try using all read functions.
   if (is.null(res)) {
     for (kk in seq(along=readFcns)) {
       readFcn <- readFcns[[kk]];
