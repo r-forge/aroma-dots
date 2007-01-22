@@ -36,7 +36,7 @@ setMethodS3("fromChipType", "DChipSnpInformation", function(static, chipType, pa
     version <- ".*";
 
   # Create a filename pattern
-  pattern <- sprintf("^%s snp info[.]txt$", chipType, version);
+  pattern <- sprintf("^.*( |_)snp( |_)info(| |_).*%s[.](txt|xls)$", version);
 
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
   nfiles <- length(pathnames);
@@ -67,14 +67,43 @@ setMethodS3("verify", "DChipSnpInformation", function(this, ...) {
 
 
 setMethodS3("readData", "DChipSnpInformation", function(this, ...) {
+  readFcns <- list(
+    "^Mapping10K" = read10K,
+    "^Mapping50K" = read50K,
+    "^Mapping250K" = read250K
+  );
+
   chipType <- getChipType(this);
-  if (regexpr("^Mapping50K", chipType) != -1) {
-    read50K(this, ...);
-  } else if (regexpr("^Mapping250K", chipType) != -1) {
-    read250K(this, ...);
-  } else {
+
+  # Try to read with the designated read function.
+  res <- NULL;
+  for (kk in seq(along=readFcns)) {
+    pattern <- names(readFcns)[kk];
+    if (regexpr(pattern, chipType) != -1) {
+      readFcn <- readFcns[[kk]];
+      tryCatch({
+        res <- readFcn(this, ...);
+      }, error=function(ex) {})
+    }
+  }
+
+  # If failed, re-try using all read functions.
+  if (is.null(res)) {
+    for (kk in seq(along=readFcns)) {
+      readFcn <- readFcns[[kk]];
+      tryCatch({
+        res <- readFcn(this, ...);
+      }, error=function(ex) {})
+      if (!is.null(res))
+        break;
+    }
+  }
+
+  if (is.null(res)) {
     throw("Cannot read dChip SNP information file.  No predefined read function available for this chip type: ", chipType);
   }
+
+  res;
 })
 
 
@@ -109,9 +138,29 @@ setMethodS3("read50K", "DChipSnpInformation", function(this, ..., exclude=c("dbS
   readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, exclude=exclude, ...);
 }, private=TRUE)
 
+setMethodS3("read10K", "DChipSnpInformation", function(this, ..., exclude=c("dbSNP RS ID", "Flank", "Freq Asian", "Freq AfAm", "Freq Cauc"), fill=TRUE) {
+  colClasses <- c(
+    "Probe Set ID"="character", 
+    "dbSNP RS ID"="character",
+    "Flank"="character",	
+    "Fragment Length Start Stop"="character",	
+    "Freq Asian"="double",
+    "Freq AfAm"="double",
+    "Freq Cauc"="double"
+  );
+  readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, exclude=exclude, fill=fill, ...);
+}, private=TRUE)
+
 
 ############################################################################
 # HISTORY:
+# 2007-01-22
+# o Just like for genome information file, fromChipType() and readData()
+#   were updated to better locate and read dChip SNP information files.
+# o Made readData() to support also unknown chip types. That is, if a chip
+#   type is not among the hardwired ones, the method will still try to read
+#   it using one of the known read functions.  For instance, the genome info
+#   file for 10K chips have the same format as the one for the 100K chips.
 # 2006-09-17
 # o Created from DChipGenomeInformation.R.
 ############################################################################  

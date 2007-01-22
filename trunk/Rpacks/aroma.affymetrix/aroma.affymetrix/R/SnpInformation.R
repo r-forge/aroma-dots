@@ -235,12 +235,15 @@ setMethodS3("getData", "SnpInformation", function(this, units=NULL, fields=c("fr
     verbose && enter(verbose, "Splitting up the fragment length, start & stop details");
     cc <- which("fragmentLengthStartStop" == colnames(data));
     lss <- data[,cc,drop=TRUE];
-    nas <- (lss == "---");
+    nas <- ((lss == "---") | (lss == ""));
     lss[nas] <- "-//-//-";
     lss <- strsplit(lss, split="//");
     len <- sapply(lss, FUN=length);
-    if (any(len != 3))
-      throw("Internal error: Unrecognized FLSS.");
+    if (any(len != 3)) {
+      ulen <- unique(len);
+      throw("Internal error: Unrecognized length of FLSS: ", 
+                                           paste(ulen, collapse=", "));
+    }
     lss <- unlist(lss, use.names=FALSE);
     lss <- as.integer(lss);
     lss <- matrix(lss, ncol=3, byrow=TRUE);
@@ -370,6 +373,10 @@ setMethodS3("getFragmentStops", "SnpInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-01-22
+# o BUG FIX: getData() did not support the dChip SNP information file for
+#   the Mapping10K_Xba142 chip type, because yet again it used a slightly
+#   different format compared with the 100K and the 500K files.
 # 2006-09-17
 # o Created from GenomeInformation.R.
 ############################################################################  

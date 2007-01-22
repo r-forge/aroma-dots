@@ -7,7 +7,8 @@ o BUG FIX: Somehow hgChromosomes.txt disappeared from the last
 o Now fromChipType() of DChipGenomeInformation recognized 
   the Mapping10K_Xba142 genotype information files too, meaning
   getGenotypeInformation() of AffymetrixCdfFile will also 
-  recognize it.
+  recognize it.  Same updates were done for dChip SNP 
+  information files.
 o Now the default sample of the ChromosomeExplorer is the first
   sample (and not the 8th, which was left in there while I was
   debugging).  The default chromosome is 1 (not 21st).
