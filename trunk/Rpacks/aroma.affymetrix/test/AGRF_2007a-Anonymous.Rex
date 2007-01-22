@@ -1,6 +1,7 @@
 savehistory();
 library(aroma.affymetrix);
 source("init.R");
+source("ui.R");
 
 dataSetName <- "AGRF_2007a-Anonymous";
 

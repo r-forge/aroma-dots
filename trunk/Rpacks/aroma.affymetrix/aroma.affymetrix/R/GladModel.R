@@ -874,12 +874,16 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # Get genome annotation data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for user specific annotation file
-  pathname <- "annotations/hgChromosomes.txt";
+  filename <- "hgChromosomes.txt";
+  pathname <- file.path("annotations", filename);
   if (!isFile(pathname)) {
     # If not found, fall back to the one in the package.
-    pathname <- system.file("annotations", "hgChromosomes.txt", 
+    pathname <- system.file("annotations", filename, 
                                                  package="aroma.affymetrix");
+    if (!isFile(pathname))
+      throw("Failed to locate file: ", filename);
   }
+
   genome <- readTable(pathname, header=TRUE, 
                             colClasses=c(nbrOfBases="integer"), row.names=1);
 
@@ -1324,6 +1328,8 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-01-21
+# o Added a better error message when plot() fails to locate hgChromsomes.txt.
 # 2007-01-17
 # o Now argument 'arrays' can be either a vector of indices or array names,
 #   or NULL.
