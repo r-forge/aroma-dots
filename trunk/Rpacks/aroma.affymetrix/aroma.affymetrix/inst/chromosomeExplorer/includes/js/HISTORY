@@ -1,6 +1,9 @@
 ChromosomeExplorer
 ==================
 
+2007-01-07
+o Added link to regions.xls file in the browser.
+
 2006-11-06
 o BUG FIX: Drag of navigator and panel did not work on Firefox on *nix.
   Forgot to retrieve mouse position in onmousemove(). For some reason
