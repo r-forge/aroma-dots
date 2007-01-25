@@ -351,7 +351,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -385,6 +385,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
     setCdf(res, cdf);
     return(res);
   }
+sourceDirectory("/home/users/lab0605/ksimpson/projects/affy/devel/aroma.affymetrix/R", modifiedOnly=TRUE, recursive=FALSE)
 
 
   if (pmonly) {
@@ -406,6 +407,9 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
   }
   
   pm <- getData(this, indices=pmi, "intensities")$intensities;
+  if (addJitter) {
+    pm <- pm + rnorm(length(pm), mean=0, sd=jitterSd);
+  }
   clearCache(this);
   
   verbose && exit(verbose);
