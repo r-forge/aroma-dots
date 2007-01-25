@@ -843,16 +843,18 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   y <- t(y);
   
   if (lim[1] == -Inf) {
-    lim[1] <- min(y, na.rm=TRUE);
+    lim[1] <- min(y[y != -Inf], na.rm=TRUE);
   }
   if (lim[2] == Inf) {
-    lim[2] <- max(y, na.rm=TRUE);
+    lim[2] <- max(y[y != Inf], na.rm=TRUE);
   }
 
+  
   img <- Image(data=y, dim=dim(y));
   img <- rgbTransform(img, palette=col, lim=lim, outlierCol=outlierCol);
   return(img);
   
+
 })
 
 
@@ -863,10 +865,10 @@ setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf
   # upper bounds given in 'lim'.  TOFIX: THIS IS CURRENTLY TOO SLOW
 
   if (lim[1]==-Inf) {
-    lim[1] <- min(this@.Data);
+    lim[1] <- min(this@.Data[this@.Data != -Inf]);
   }
   if (lim[2]==Inf) {
-    lim[2] <- max(this@.Data);
+    lim[2] <- max(this@.Data[this@.Data != Inf]);
   }
 
   col2rgbComposite <- function(color) {
@@ -893,7 +895,7 @@ setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf
   binValue <- col2rgbComposite(palette);
 
   res <- rgbBin(this@.Data, bin, binValue);
-  return(Image(res, dim(this@.Data), rgb=TRUE));
+  return(Image(res, dim(this@.Data), colormode=TrueColor));
   
 })
 
@@ -929,14 +931,25 @@ setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), outlierCol="white", xSize=1000, ySize=1000, main=getName(this), ...) {
+setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(24), outlierCol="white", width=NULL, height=NULL, main=getName(this), ...) {
 
   require(EBImage) || throw("Package not loaded: 'EBImage'.");
 
   field <- match.arg(field);
 
-  img <- getImage(this, xrange=xrange, yrange=yrange, takeLog=takeLog, interleaved=interleaved, field=field, col=col, xSize=xSize, ySize=ySize, main=main, outlierCol=outlierCol);
-  display(zoom.image(img, 1000,1000));
+  if (is.null(width)) {
+    width <- length(xrange);
+  }
+  if (is.null(height)) {
+    height <- length(yrange);
+  }
+  
+  img <- getImage(this, xrange=xrange, yrange=yrange, takeLog=takeLog, interleaved=interleaved, field=field, col=col, main=main, outlierCol=outlierCol, ...);
+  if (!(height==length(yrange) & width==length(xrange))) {
+    img <- resize(img, width, height);
+  }
+
+  display(img);
   
 })
 
@@ -971,7 +984,7 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yr
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("plotImageToFile", "AffymetrixCelFile", function(this, outputFile=NULL, path=NULL, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), outlierCol="white", xSize=1000, ySize=1000, main=getName(this), ...) {
+setMethodS3("plotImageToFile", "AffymetrixCelFile", function(this, outputFile=NULL, path=NULL, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(24), outlierCol="white", width=NULL, height=NULL, main=getName(this), ...) {
 
   if (is.null(path)) {
     path <- file.path("images");
@@ -988,9 +1001,19 @@ setMethodS3("plotImageToFile", "AffymetrixCelFile", function(this, outputFile=NU
   
   require(EBImage) || throw("Package not loaded: 'EBImage'.");
 
-  img <- getImage(this, xrange=xrange, yrange=yrange, takeLog=TRUE, interleaved=interleaved, field=field, col=col, main=main, outlierCol=outlierCol);
+  if (is.null(width)) {
+    width <- length(xrange);
+  }
+  if (is.null(height)) {
+    height <- length(yrange);
+  }
   
-  write.image(zoom.image(img, xSize, ySize), file=outputFile);
+  img <- getImage(this, xrange=xrange, yrange=yrange, takeLog=takeLog, interleaved=interleaved, field=field, col=col, main=main, outlierCol=outlierCol, ...);
+  if (height==length(yrange) & width==length(xrange)) {
+    img <- resize(img, width, height);
+  }
+  
+  write.image(img, file=outputFile);
   
 })
 
