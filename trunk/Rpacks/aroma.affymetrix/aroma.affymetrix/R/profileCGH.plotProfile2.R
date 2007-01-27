@@ -60,7 +60,7 @@ setMethodS3("drawCytoBand", "default", function (cytoband, chromosome=1, y=-1, l
 
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
 # Added also par(cex=0.8) - see code.
-setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, Smoothing="Smoothing", GNL="ZoneGNL", Bkp=FALSE, cytobandLabels=TRUE, plotband=TRUE, unit=0, colDAGLAD=NULL, pchSymbol=c(20, 4), colCytoBand=c("white", "darkblue"), colCentro="red", xlim=NULL, ylim=c(-1,1)*2.5, xlab="Physical position", ylab=variable, flavor=c("glad", "minimal"), ...) {
+setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, Smoothing="Smoothing", GNL="ZoneGNL", Bkp=FALSE, cytobandLabels=TRUE, plotband=TRUE, unit=0, colDAGLAD=NULL, pchSymbol=c(20, 4), colCytoBand=c("white", "darkblue"), colCentro="red", xlim=NULL, ylim=c(-1,1)*2.5, xlab="Physical position", ylab=variable, flavor=c("glad", "ce", "minimal"), xmargin=c(50,50), resScale=1, ...) {
   require(GLAD) || stop("Package not loaded: GLAD");  # data(cytoband)
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -229,6 +229,20 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
     axes <- TRUE;
     if (is.null(xlim))
       xlim <- c(0, xScale*genomeInfo$Length[chromosome]);
+  } else if (flavor == "ce") {
+    # Margins in pixels-to-inches
+
+    par(mar=c(3,3,5,3)+0.1, mgp=c(2,0.6,0.3), xaxs="i");
+
+    # Set the horizontal margins to 'xmargin'.
+    dim <- getDeviceResolution(resScale) * par("din");
+    plt <- par("plt");    
+    plt[1:2] <- c(xmargin[1], dim[1]-xmargin[2]) / dim[1];
+    par("plt"=plt);
+
+    axes <- TRUE;
+    if (is.null(xlim))
+      xlim <- c(0, xScale*genomeInfo$Length[chromosome]);
   } else if (flavor == "minimal") {
     # No margins
     	par(mar=c(2,0,0.5,0), mgp=c(2,0.6,0.3), xaxs="i");
@@ -248,7 +262,8 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   y <- pv[, variable];
   x <- xScale*pv$PosBase;
   plot(x=x, y=y, pch=pch, col=col, xaxt="n", xlab=xlab, ylab=ylab, 
-                            xlim=xlim, ylim=ylim, axes=axes, bty="n", ...);
+#                            xlim=xlim, ylim=ylim, axes=axes, bty="n", ...);
+                            xlim=xlim, ylim=ylim, axes=axes, ...);
 #  axis(side=2); axis(side=4);
    
 

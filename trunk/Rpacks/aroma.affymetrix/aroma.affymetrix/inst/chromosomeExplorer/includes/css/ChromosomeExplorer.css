@@ -86,7 +86,7 @@ body {
   cursor: move;
   font-size: 70%;
   color: #000066;
-  visibility: hidden;
+  visibility: hidden; 
 }
 
 #sampleLabel {

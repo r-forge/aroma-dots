@@ -74,6 +74,7 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
     key <- list(method="getCellIndices", class=class(this)[1], 
                 pathname=getPathname(this),
                 chipType=chipType, params=params, ...);
+    dirs <- c("aroma.affymetrix", chipType);
     id <- digest(key);
   }
 
@@ -82,7 +83,7 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
     res <- this$.cellIndices[[id]];
     # On file?
     if (is.null(res)) {
-      res <- loadCache(list(id));
+      res <- loadCache(key=list(id), dirs=dirs);
       if (!is.null(res))
         where <- "on file";
     } else {
@@ -150,7 +151,7 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
       if (!is.list(this$.cellIndices))
         this$.cellIndices <- list();
       this$.cellIndices[[id]] <- NULL;
-      saveCache(cells, key=list(id));
+      saveCache(cells, key=list(id), dirs=dirs);
       verbose && cat(verbose, "Cached to file");
     }
   }
