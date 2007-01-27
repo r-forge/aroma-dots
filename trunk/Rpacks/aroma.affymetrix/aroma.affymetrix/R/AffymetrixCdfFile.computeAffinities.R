@@ -56,8 +56,9 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
   # Check cache
   key <- list(method="computeAffinities", class=class(this)[1], chipType=chipType);
+  dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
-    res <- loadCache(key=key);
+    res <- loadCache(key=key, dirs=dirs);
     if (!is.null(res))
       return(res);
   }
@@ -282,7 +283,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
   # Saving to cache
   comment <- paste(unlist(key, use.names=FALSE), collapse=";");
-  saveCache(key=key, affinities, comment=comment);
+  saveCache(key=key, affinities, comment=comment, dirs=dirs);
 
   verbose && exit(verbose);
   

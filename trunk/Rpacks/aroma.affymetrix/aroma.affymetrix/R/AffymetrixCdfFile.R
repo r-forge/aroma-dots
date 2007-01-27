@@ -679,8 +679,9 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
     verbose && enter(verbose, "Checking cache");
     key <- list(method="identifyCells", class=class(this)[1], chipType=getChipType(this), indices=indices, from=from, to=to, types=types, sort=sort);
     comment <- sprintf("%s: %s", key$method, key$chipType);
+    dirs <- c("aroma.affymetrix", chipType);
     if (!.force) {
-      cache <- loadCache(key=key);
+      cache <- loadCache(key=key, dirs=dirs);
       if (!is.null(cache)) {
         verbose && exit(verbose, suffix="found cached value");
         return(cache);
@@ -744,7 +745,7 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
   # Save result to cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (!"all" %in% types) {
-    saveCache(indices, key=key, comment=comment);
+    saveCache(indices, key=key, comment=comment, dirs=dirs);
   }
   
   indices;
@@ -757,7 +758,12 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
 
   verbose && enter(verbose, "Trying to load cached results");
   key <- list(method="getFirstCellIndices", class=class(this)[1], chipType=getChipType(this), stratifyBy=stratifyBy, restructor=body(this$.restructor));
-  res <- if (force) NULL else loadCache(key=key);
+  dirs <- c("aroma.affymetrix", chipType);
+  res <- if (force) {
+    NULL;
+  } else {
+    loadCache(key=key, dirs=dirs);
+  }
   verbose && exit(verbose);
 
   if (is.null(res)) {
@@ -778,7 +784,7 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
 
     # Save to cache file
     verbose && enter(verbose, "Saving results to cache");
-    saveCache(key=key, res);
+    saveCache(res, key=key, dirs=dirs);
     verbose && exit(verbose);
   }
 

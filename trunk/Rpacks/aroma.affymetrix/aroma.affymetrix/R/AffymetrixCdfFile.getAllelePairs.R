@@ -265,8 +265,9 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   chipType <- getChipType(this);
   key <- list(method="getAlleleProbePairs", class=class(this)[1], chipType=chipType, units=units, ignoreOrder=ignoreOrder);
+  dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
-    probeSets <- loadCache(key=key);
+    probeSets <- loadCache(key=key, dirs=dirs);
     if (!is.null(probeSets))
       return(probeSets);
   }
@@ -494,7 +495,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   comment <- key[c("method", "class", "chipType")];
   comment <- paste(names(comment), comment, sep="=");
   comment <- paste(comment, collapse=", ");
-  saveCache(probeSets, key=key, comment=comment);
+  saveCache(probeSets, key=key, comment=comment, dirs=dirs);
 
   probeSets;
 }, private=TRUE) # getAlleleProbePairs()
