@@ -100,9 +100,10 @@ function panelMove(relOffset) {
 
 function locatorUpdated() {
   /* Update locator tag */
+  var pixelsPerMb = 3; /* /1.0014; */
   var xPx = findPosX(panelLocator) - findPosX(panelImage) + parseFloat(panel.scrollLeft);
-  var xMb = getMouseMb(xPx, chromosome, zoom);
-  var tag = (xPx-55)+'px='+Math.round(100*xMb)/100+'Mb';
+  var xMb = (xPx-50)/(scale*pixelsPerMb);
+  var tag = Math.round(100*xMb)/100 + 'Mb';
   updateText(panelLocatorTag, tag);
 
   var url;

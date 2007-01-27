@@ -552,6 +552,8 @@
 \alias{read250KHg17}
 \alias{read250KHg17.DChipGenomeInformation}
 \alias{read50K}
+\alias{read10K}
+\alias{read10K.DChipSnpInformation}
 \alias{read50K.DChipSnpInformation}
 \alias{read50KHg17}
 \alias{read50KHg17.DChipGenomeInformation}

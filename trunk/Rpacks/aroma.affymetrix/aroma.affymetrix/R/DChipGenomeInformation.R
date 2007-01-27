@@ -5,6 +5,9 @@
 #
 # \description{
 #  @classhierarchy
+#
+#  This class represents dChip genome information files, which typically
+#  contains information about chromosomal locations of the units.
 # }
 # 
 # @synopsis
@@ -17,6 +20,20 @@
 #  @allmethods "public"  
 # }
 # 
+# \details{
+#   The dChip genome information files for various chip types can be 
+#   downloaded from \url{http://www.dchip.org/}.  Put each file in a
+#   directory named identically as the corresponding chip type under the
+#   \emph{annotations/} directory, e.g.  
+#   \emph{annotations/Mapping50K_Hind240/50k hind genome info AfAm 
+#   june 05 hg17.xls}.  
+#   Note that dChip changes the filename and file format slightly between
+#   chip types, but currently the @seemethod "fromChipType" basically searches
+#   for files with names consisting of \code{"genome info"} or
+#   \code{"genome_info"}.  At least for the most common chip types, there
+#   is no need to rename the files in order for this class to recognize them.
+# }
+#
 # @author
 #*/###########################################################################
 setConstructorS3("DChipGenomeInformation", function(...) {
@@ -26,9 +43,46 @@ setConstructorS3("DChipGenomeInformation", function(...) {
   this;
 })
 
-setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType, path="annotations", version=NULL, ...) {
-  # Argument 'path' & 'chipType':
-  path <- filePath(path, chipType, expandLinks="any");
+###########################################################################/**
+# @RdocMethod fromChipType
+#
+# @title "Defines a DChipGenomeInformation object by chip type"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{chipType}{A @character string.}
+#  \item{rootPath}{A @character string specifying the root path, i.e.
+#    the annotation directory.}
+#  \item{version}{An optional @character string specifying the version
+#    string, if more than one version is available.}
+#  \item{pattern}{An optional filename pattern used to locate the 
+#    dChip genome file.  If @NULL, a default pattern is used.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @see "DChipGenomeInformation" object.  
+#  If no file was not found, an error is thrown.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/###########################################################################
+setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType, rootPath="annotations", version=NULL, pattern=NULL, ...) {
+  # Argument 'rootPath' & 'chipType':
+  rootPath <- Arguments$getReadablePath(rootPath, mustExist=TRUE);
+  path <- filePath(rootPath, chipType, expandLinks="any");
   path <- Arguments$getReadablePath(path, mustExist=TRUE);
 
   # Search for genome information files
@@ -36,7 +90,10 @@ setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType,
     version <- ".*";
 
   # Create a filename pattern
-  pattern <- sprintf("^.*( |_)genome( |_)info(| |_).*%s[.](txt|xls)$", version);
+  if (is.null(pattern)) {
+    pattern <- sprintf("^.*( |_)genome( |_)info(| |_).*%s[.](txt|xls)$",
+                                                               version);
+  }
 
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
   nfiles <- length(pathnames);
@@ -144,6 +201,8 @@ setMethodS3("read50KHg17", "DChipGenomeInformation", function(this, ..., exclude
 ############################################################################
 # HISTORY:
 # 2007-01-22
+# o Rename argument 'path' to 'rootPath' and added argument 'pattern' to
+#   method fromChipType().
 # o Made fromChipType() identify genome information files more robustly, 
 #   e.g. the exact chip type does not have to be part of the prefix.
 #   Indeed, it now accepts the default dChip filenames for the 10K, the

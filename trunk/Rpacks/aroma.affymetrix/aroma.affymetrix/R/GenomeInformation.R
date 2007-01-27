@@ -312,7 +312,7 @@ setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromoso
 
 setMethodS3("readData", "GenomeInformation", abstract=TRUE);
 
-setMethodS3("readTableInternal", "GenomeInformation", function(this, pathname, colClasses=NULL, ..., include=NULL, exclude=NULL, verbose=FALSE) {
+setMethodS3("readTableInternal", "GenomeInformation", function(this, pathname, colClasses=NULL, ..., include=NULL, exclude=NULL, fill=TRUE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -328,7 +328,7 @@ setMethodS3("readTableInternal", "GenomeInformation", function(this, pathname, c
   toRead <- names(colClasses)[colClasses != "NULL"];
   verbose && cat(verbose, "Columns to be read: ", paste(toRead, collapse=", "));
   
-  df <- readTable(pathname, colClasses=colClasses, header=TRUE, sep="\t", ..., verbose=less(verbose));
+  df <- readTable(pathname, colClasses=colClasses, header=TRUE, sep="\t", fill=fill, ..., verbose=less(verbose));
 
   colnames(df) <- toCamelCase(colnames(df));
   verbose && exit(verbose);
@@ -526,6 +526,8 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-01-25
+# o BUG FIX: Added 'fill=TRUE' to readTableInternal().
 # 2007-01-06
 # o Renamed getFields() to getDataColumns().
 # 2006-11-29

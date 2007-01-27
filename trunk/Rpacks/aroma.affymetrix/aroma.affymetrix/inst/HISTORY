@@ -1,6 +1,17 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.3.6 [2007-01-26xx]
+o Now the file cache is organized into subdirectories starting
+  with "aroma.affymetrix/".  This makes it easier clear the
+  cache.
+o Trial: Added SampleAnnotationFile class. File format is not
+  settled yet.
+o Trial: Removed the 4% left and right extension of xlim from the 
+  plots and enforced 50px margins outside on both sides.  This 
+  will make it easier to map the horizontal location in pixels 
+  to megabases.  
+
 Version: 0.3.5 [2007-01-22]
 o BUG FIX: Somehow hgChromosomes.txt disappeared from the last
   versions of the package. Readded.

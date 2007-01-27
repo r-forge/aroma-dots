@@ -85,17 +85,19 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached values
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  fullName <- getFullName(this);
   key <- list(method="fitGlad", 
               class=class(this)[1],
               dataSet=basename(dirname(getPath(this))),
-              fullname=getFullName(this),
+              fullname=fullName,
               refset=basename(dirname(getPath(reference))),
               reference=getFullName(reference),
               chipType=chipType,
               chromosome=chromosome,
               units=units
              );
-  fit <- loadCache(key=key);
+  dirs <- c("aroma.affymetrix", fullName);
+  fit <- loadCache(key=key, dirs=dirs);
   if (!is.null(fit) && !force) {
     verbose && cat(verbose, "Cached on file.");
     verbose && exit(verbose);
@@ -151,7 +153,7 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
   # Save cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   comment <- paste(unlist(key), collapse=";");
-  saveCache(fit, key=key, comment=comment);
+  saveCache(fit, key=key, comment=comment, dirs=dirs);
 
   fit;  
 }, private=TRUE) # fitGlad()

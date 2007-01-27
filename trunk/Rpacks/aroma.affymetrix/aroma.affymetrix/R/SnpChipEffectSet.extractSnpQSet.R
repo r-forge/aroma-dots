@@ -72,12 +72,14 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached results
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  path <- getPath(this);
   key <- list(method="extractSnpQSet", class=class(this)[1], 
-              path=getPath(this), sampleNames=getNames(this),
+              path=path, sampleNames=getNames(this),
               transform=transform);
+  dirs <- c("aroma.affymetrix", path);
   if (!force) {
     verbose && enter(verbose, "Checking cache");
-    res <- loadCache(key=key);
+    res <- loadCache(key=key, dirs=dirs);
     verbose && exit(verbose);
     if (!is.null(res))
       return(res);
@@ -224,7 +226,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
 
   # Save to cache!
   comment <- paste(unlist(key, use.names=FALSE), collapse=";");
-  saveCache(key=key, res, comment=comment);
+  saveCache(key=key, res, comment=comment, dirs=dirs);
 
   verbose && exit(verbose);
 

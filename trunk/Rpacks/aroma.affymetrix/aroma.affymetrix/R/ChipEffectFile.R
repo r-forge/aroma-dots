@@ -299,11 +299,13 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
   idxs <- NULL;
   if (is.null(units)) {
     cdf <- getCdf(this);
+    pathname <- getPathname(this);
     key <- list(method="findUnitsTodo", class=class(this)[1], 
-                pathname=getPathname(this),
+                pathname=pathname,
                 chipType=getChipType(cdf), params=getParameters(this));
+    dirs <- c("aroma.affymetrix", pathname);
     if (!force) {
-      idxs <- loadCache(key);
+      idxs <- loadCache(key, dirs=dirs);
       if (!is.null(idxs))
         verbose && cat(verbose, "Found indices cached on file");
     }
@@ -324,7 +326,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
 
     if (is.null(units)) {
       verbose && enter(verbose, "Saving to file cache");
-      saveCache(idxs, key=key);
+      saveCache(idxs, key=key, dirs=dirs);
       verbose && exit(verbose);
     }
 

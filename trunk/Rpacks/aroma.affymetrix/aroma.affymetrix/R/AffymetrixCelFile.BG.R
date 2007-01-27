@@ -231,13 +231,14 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
 #  Stick with version below for now until we work out what is causing
 #  the inconsistency.
   
-  key <- list(chipType=getChipType(this), source="gcrma");
-  indices <- loadCache(key=key);
+  chipType <- getChipType(this);
+  key <- list(method="bgAdjustGcrma", class=class(this)[1], chipType=chipType, source="gcrma");
+  dirs <- c("aroma.affymetrix", chipType);
+  indices <- loadCache(key=key, dirs=dirs);
   if (is.null(indices)) {
     indices <- unlist(getCellIndices(cdf), use.names=FALSE);
   }
-    
-  saveCache(key=key, indices);
+  saveCache(indices, key=key, dirs=dirs);
   
   # PM and MM
   mm <- getData(this, indices=indices[!isPm(cdf)])$intensities;
@@ -395,13 +396,15 @@ sourceDirectory("/home/users/lab0605/ksimpson/projects/affy/devel/aroma.affymetr
   verbose && enter(verbose, "Obtaining signals");
   
   if (pmonly) {
-    key <- list(chipType=getChipType(this));
-    pmi <- loadCache(key=key);
+    chipType <- getChipType(this);
+    key <- list(method="bgAdjustRma", class=class(this)[1], chipType=chipType);
+    dirs <- c("aroma.affymetrix", chipType);
+    pmi <- loadCache(key=key, dirs=dirs);
     if (is.null(pmi)) {
       indices <- unlist(getCellIndices(cdf), use.names=FALSE);
       pmi <- indices[isPm(cdf)];
     }
-    saveCache(key=key, pmi);
+    saveCache(pmi, key=key, dirs=dirs);
   } else {
     pmi <- NULL;
   }

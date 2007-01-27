@@ -41,7 +41,6 @@
   fitQuantileNormFcn forDataSet forDataSet.GdasAnnotationSet fromCdf
   fromCdf.AffymetrixProbeTabFile fromChipType
   fromChipType.AffymetrixProbeTabFile
-  fromChipType.DChipGenomeInformation fromChipType.DChipSnpInformation
   fromChipType.GdasAnnotationFile fromChipType.GdasAnnotationSet
   fromCleanChipType fromCleanChipType.AffymetrixCdfFile fromDataFile
   fromDataFile.ChipEffectFile fromDataSet fromDataSet.ChipEffectSet
@@ -218,6 +217,7 @@
   range.AffymetrixCelFile range.AffymetrixCelSet read250K
   read250K.DChipSnpInformation read250KHg17
   read250KHg17.DChipGenomeInformation read50K
+  read10K read10K.DChipSnpInformation
   read50K.DChipSnpInformation read50KHg17
   read50KHg17.DChipGenomeInformation readBlock
   readBlock.GdasAnnotationFile readCdfGroupStrands readColumnName

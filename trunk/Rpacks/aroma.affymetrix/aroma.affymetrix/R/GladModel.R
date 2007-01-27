@@ -816,7 +816,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
 
 
 
-setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, imageFormat="current", skip=TRUE, path=NULL, callList=NULL, verbose=FALSE) {
+setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, xmargin=c(50,50), imageFormat="current", skip=TRUE, path=NULL, callList=NULL, verbose=FALSE) {
   # To please R CMD check.
   this <- x;
 
@@ -890,7 +890,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Output path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rootPath <- "chromosomeExplorer";
+  rootPath <- "ce";
 
   # Get chip type
   chipType <- getChipType(this);
@@ -910,6 +910,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
     imageFormat <- "current";
   }
 
+  resScale <- 1;
   if (identical(imageFormat, "current")) {
     plotDev <- NULL;
     zooms <- zooms[1];
@@ -927,6 +928,8 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   } else if (identical(imageFormat, "png")) {
     pngDev <- System$findGraphicsDevice();
     plotDev <- pngDev;
+    if (identical(pngDev, png2))
+      resScale <- 2;
   }
 
 
@@ -979,7 +982,8 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
         }
         # Calculate MBs per ticks
         ticksBy <- 10^ceiling(log10(pixelsPerTick / (zoom * pixelsPerMb)));
-        width <- as.integer(zoom * widthMb * pixelsPerMb);
+        xlimDiff <- (zoom * widthMb * pixelsPerMb);
+        width <- round(zoom * widthMb * pixelsPerMb + sum(xmargin));
         # Plot to PNG file
         verbose && printf(verbose, "Pathname: %s\n", pathname);
         verbose && printf(verbose, "Dimensions: %dx%d\n", width, height);
@@ -992,7 +996,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
           verbose && enter(verbose, "Plotting graph");
           opar <- par(xaxs="r");
           suppressWarnings({
-            plot(fit, ticksBy=ticksBy, ...);
+            plot(fit, ticksBy=ticksBy, ..., xmargin=xmargin, resScale=resScale, flavor="ce");
           });
           stext(chipType, side=4, pos=1, line=0, cex=0.7, col="gray");
   
@@ -1328,6 +1332,10 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-01-25
+# o Added so that plot() generates fixed sized horizontal margins (50px),
+#   so that we can infer the relative genomic location from the horisontal
+#   pixel location.
 # 2007-01-21
 # o Added a better error message when plot() fails to locate hgChromsomes.txt.
 # 2007-01-17
