@@ -1,3 +1,8 @@
+/****************************************************************
+ * ArrayExplorer()
+ *
+ * Author: Henrik Bengtson, hb@stat.berkeley.edu
+ ****************************************************************/
 function ArrayExplorer() {
   this.showIndicator = function(state) {
     var statusImage = document.getElementById('statusImage');
@@ -218,7 +223,7 @@ function ArrayExplorer() {
     this.setupEventHandlers();
 
     /* Default settings */
-    this.setScales(new Array('1', '2', '4', '8', '16'));
+    this.setScales(new Array('1', '2', '4', '8', '16', '32'));
     this.setColorMaps(new Array('gray'));
 
     this.onLoad();
@@ -232,3 +237,8 @@ function ArrayExplorer() {
   }
 } /* ArrayExplorer() */
 
+/****************************************************************
+ HISTORY:
+ 2007-01-27
+ o Created.
+ ****************************************************************/
