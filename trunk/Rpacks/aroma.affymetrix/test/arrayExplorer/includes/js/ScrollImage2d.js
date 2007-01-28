@@ -177,8 +177,8 @@ function Scrollbar2d(id) {
     this.yOffset = pos.y;
     var w = this.getImageWidth();
     var h = this.getImageHeight();
-    this.marker.style.width = Math.round(w*this.width) + "px";
-    this.marker.style.height = Math.round(h*this.height) + "px";
+    this.marker.style.width = Math.round(w*this.width-0.5) + "px";
+    this.marker.style.height = Math.round(h*this.height-0.5) + "px";
     this.marker.style.left = Math.round(this.xOffset + w*this.x) + "px";
     this.marker.style.top = Math.round(this.yOffset + h*this.y) + "px";
     this.marker.style.border = 'solid; black; 2px';
