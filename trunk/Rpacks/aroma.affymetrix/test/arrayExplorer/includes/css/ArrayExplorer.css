@@ -1,0 +1,58 @@
+body { 
+  margin: 0px;
+  padding: 1em;
+  padding-top: 0em;
+}
+
+#statusImage { 
+  visibility: visible;
+}
+
+#nav2d {
+  float: right;
+  margin: 0px;
+  padding: 0px; 
+  border: none;
+  width: 100px;
+  cursor: crosshair;
+}
+
+#nav2dImage {
+  margin: 0px;
+  padding: 0px; 
+  border: none;
+  width: 100%;
+  filter: alpha(opacity=50);
+  opacity: 0.50;
+  cursor: crosshair;
+}
+
+#nav2dMarker {
+  position: absolute; 
+  margin: 0px;
+  padding: 0px; 
+  border: 0px;
+  background: #000066;
+  filter: alpha(opacity=30);
+  opacity: 0.30;
+  cursor: default;
+}
+
+#panel {
+  padding: 0px; 
+  border: none;
+  overflow: hidden;
+  cursor: default;
+}
+
+#panelImage {
+  padding: 0px; 
+  border: none;
+  cursor: default;
+  filter: alpha(opacity=50);
+  opacity: 0.50;
+}
+
+#sampleLabel {
+  font-size: 200%;
+}
