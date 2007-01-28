@@ -24,5 +24,7 @@ function changeColorMap(map) {
 }
 
 function changeZoom(scale) {
-  explorer.setScale(scale);
+  if (explorer.setScale(scale))
+    explorer.updateImage();
 }
+
