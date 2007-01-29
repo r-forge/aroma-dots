@@ -8,10 +8,16 @@ function ScrollImage2d(id) {
   this.setImage = function(url) {
     var owner = this;
 
+    /* Image loader to get the size of the (non-rescaled) image */
+    var myImage = new Image();
+    myImage.onload = function() {
+      owner.imageWidth = this.width;
+      owner.imageHeight = this.height;
+    }
+    myImage.src = url;
+
     /* Define onload() function */
     this.image.onload = function() {
-      owner.imageWidth = this.width/owner.width;
-      owner.imageHeight = this.height/owner.height;
       owner.onLoad();
       owner.update();
       owner.imageIsLoaded = true;
@@ -41,6 +47,10 @@ function ScrollImage2d(id) {
   	return(this.image.height);
 	}
 
+  this.getAspectRatio = function() {
+    return (this.container.clientWidth / this.container.clientHeight);
+  }
+
   this.update = function() {
     this.container.scrollLeft = this.x * this.container.scrollWidth;
     this.container.scrollTop = this.y * this.container.scrollHeight;
@@ -52,8 +62,12 @@ function ScrollImage2d(id) {
     this.image.style.left = Math.round(this.xOffset + w*this.x) + "px";
     this.image.style.top = Math.round(this.yOffset + h*this.y) + "px";
     this.image.width = this.width * this.container.clientWidth;
-    this.image.height = this.height * this.container.clientHeight;
-    this.container.style.height = this.container.clientWidth;
+    var dim = this.getImageDimension();
+    var aspect = this.width / this.height;
+    this.image.height = aspect * this.height * this.container.clientWidth;
+		/*
+    this.container.style.height = winAspect*this.container.clientWidth;
+		*/
   }
 
   this.getXY = function() {
@@ -173,6 +187,9 @@ function ScrollImage2d(id) {
   this.setupEventHandlers();
 } /* ScrollImage2d() */
 
+
+
+
 function Scrollbar2d(id) {
   this.setImage = function(url) {
     var owner = this;
@@ -214,6 +231,15 @@ function Scrollbar2d(id) {
     this.marker.style.border = 'solid; black; 2px';
   }
 
+  this.getRegion = function() {
+    var res = Object();
+    res.x0 = this.x;
+    res.y0 = this.y;
+    res.x1 = this.x + this.width;
+    res.y1 = this.y + this.height;
+    return res;
+  }
+
   this.setRelXY = function(x,y) {
     x = Math.max(0, x);
     x = Math.min(x, 1-this.width);
@@ -224,20 +250,19 @@ function Scrollbar2d(id) {
   }
 
   this.setSize = function(scale) {
-    var xMid = this.x + this.width/2;
-    var yMid = this.y + this.height/2;
     this.setRelDimension(scale, scale);
-    this.setRelXY(xMid - this.width/2, yMid - this.height/2);
-    this.update();
   }
 
   this.setRelDimension = function(width, height) {
+    var xMid = this.x + this.width/2;
+    var yMid = this.y + this.height/2;
     width = Math.max(0, width);
     height = Math.max(0, height);
     width = Math.min(width, 1);
     height = Math.min(height, 1);
     this.width = width;
     this.height = height;
+    this.setRelXY(xMid - this.width/2, yMid - this.height/2);
   }
 
   this.setCursor = function(status) {
