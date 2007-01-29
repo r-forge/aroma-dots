@@ -32,6 +32,10 @@ public static class \bold{DChipSnpInformation}\cr
 extends \emph{\link[aroma.affymetrix]{SnpInformation}}\cr
 
 
+
+  This class represents dChip genome information files, which typically
+  contains information on nucleotide sequences and fragment lengths
+  of the units.
  }
 
  \usage{DChipSnpInformation(...)}
@@ -58,6 +62,20 @@ fromFile, getFilename, getFileSize, getFileType, getFullName, getName, getPath, 
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
+ }
+
+ \details{
+   The dChip SNP information files for various chip types can be
+   downloaded from \url{http://www.dchip.org/}.  Put each file in a
+   directory named identically as the corresponding chip type under the
+   \emph{annotations/} directory, e.g.
+   \emph{annotations/Mapping50K_Hind240/50k hind snp info AfAm
+   june 05 hg17.xls}.
+   Note that dChip changes the filename and file format slightly between
+   chip types, but currently the \code{\link[aroma.affymetrix:fromChipType.DChipSnpInformation]{*fromChipType}()} basically searches
+   for files with names consisting of \code{"snp info"} or
+   \code{"snp_info"}.  At least for the most common chip types, there
+   is no need to rename the files in order for this class to recognize them.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

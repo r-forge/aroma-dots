@@ -132,8 +132,6 @@
 \alias{fromCdf.AffymetrixProbeTabFile}
 \alias{fromChipType}
 \alias{fromChipType.AffymetrixProbeTabFile}
-\alias{fromChipType.DChipGenomeInformation}
-\alias{fromChipType.DChipSnpInformation}
 \alias{fromChipType.GdasAnnotationFile}
 \alias{fromChipType.GdasAnnotationSet}
 \alias{fromCleanChipType}
