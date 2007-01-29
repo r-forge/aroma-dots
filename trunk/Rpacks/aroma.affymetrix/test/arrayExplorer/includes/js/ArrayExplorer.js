@@ -201,8 +201,8 @@ function ArrayExplorer() {
       var res = new Object();
       res.x0 = Math.round(w*r.x0);
       res.y0 = Math.round(w*r.y0);
-      res.x1 = Math.round(w*r.x1);
-      res.y1 = Math.round(w*r.y1);
+      res.x1 = Math.round(w*r.x1)-1;
+      res.y1 = Math.round(w*r.y1)-1;
       return res;
     }
 
