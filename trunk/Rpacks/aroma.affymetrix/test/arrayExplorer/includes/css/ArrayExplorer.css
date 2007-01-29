@@ -38,7 +38,7 @@ body {
   cursor: default;
 }
 
-#panel {
+#image2d {
   margin: 0px; 
   padding: 0px; 
   border: none;
@@ -46,12 +46,39 @@ body {
   cursor: default;
 }
 
-#panelImage {
+#image2dImage {
   padding: 0px; 
   border: none;
   cursor: default;
   filter: alpha(opacity=50);
   opacity: 0.50;
+}
+
+
+#image2dInfoTL {
+  position: absolute; 
+  padding: 0px; 
+  border: none;
+  background: #000060;
+  color: #ffffff;
+  font-size: x-small;
+  cursor: default;
+  filter: alpha(opacity=70);
+  opacity: 0.70;
+  visibility: hidden;
+}
+
+#image2dInfoBR {
+  position: absolute; 
+  padding: 0px; 
+  border: none;
+  background: #000060;
+  color: #ffffff;
+  font-size: x-small;
+  cursor: default;
+  filter: alpha(opacity=70);
+  opacity: 0.70;
+  visibility: hidden;
 }
 
 #sampleLabel {

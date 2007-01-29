@@ -138,7 +138,7 @@ function ScrollImage2d(id) {
       var y = owner.container.scrollTop + e.clientY;
       owner.setCursor("move");
       owner.image.onmousemove = null;
-      owner.onScrollBegin();
+      owner.onmousedown();
   
       document.onmousemove = function() {
         var e = arguments[0] || event;
@@ -146,7 +146,7 @@ function ScrollImage2d(id) {
         var dy = (e.clientY - yStart)/h;
         owner.setRelXY(x0-dx, y0-dy);
         owner.update();
-        owner.onScroll();
+        owner.onmousemove();
         return false;
       }
   
@@ -154,7 +154,7 @@ function ScrollImage2d(id) {
         document.onmousemove = null;
         owner.image.onmousemove = null;
         owner.setCursor("default");
-        owner.onScrollEnd();
+        owner.onmouseup();
         return false;
       }
   
@@ -163,9 +163,9 @@ function ScrollImage2d(id) {
   }
 
   this.onLoad = function() {}
-  this.onScrollBegin = function() {}
-  this.onScroll = function() {}
-  this.onScrollEnd = function() {}
+  this.onmousedown = function() {}
+  this.onmousemove = function() {}
+  this.onmouseup = function() {}
 
 
   /* Initialize */
@@ -295,7 +295,7 @@ function Scrollbar2d(id) {
       var xStart = e.clientX;
       var yStart = e.clientY;
       owner.setCursor('move');
-      owner.onScrollBegin();
+      owner.onmousedown();
   
       document.onmousemove = function() {
         var e = arguments[0] || event;
@@ -303,14 +303,14 @@ function Scrollbar2d(id) {
         var dy = (e.clientY - yStart)/h;
         owner.setRelXY(x0+dx, y0+dy);
         owner.update();
-        owner.onScroll();
+        owner.onmousemove();
         return false;
       }
   
       document.onmouseup = function() {
         document.onmousemove = null;
         owner.setCursor('default');
-        owner.onScrollEnd();
+        owner.onmouseup();
         return false;
       }
   
@@ -319,9 +319,9 @@ function Scrollbar2d(id) {
   }
 
   this.onLoad = function() {}
-  this.onScrollBegin = function() {}
-  this.onScroll = function() {}
-  this.onScrollEnd = function() {}
+  this.onmousedown = function() {}
+  this.onmousemove = function() {}
+  this.onmouseup = function() {}
 
 
   /* Initialize */
