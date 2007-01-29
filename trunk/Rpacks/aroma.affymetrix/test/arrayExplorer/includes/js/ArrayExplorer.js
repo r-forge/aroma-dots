@@ -228,6 +228,12 @@ function ArrayExplorer() {
   }
 
   this.update = function() {
+    var y = findXY(this.image2d.image).y;
+    var h = document.body.clientHeight;
+    h = (h - y - 16) + 'px';
+    this.image2d.container.style.height = h;
+    var ar = this.image2d.getAspectRatio();
+    this.nav2d.setRelDimension(1/this.scale, 1/this.scale/ar);
     this.updateImage();
   }
 
