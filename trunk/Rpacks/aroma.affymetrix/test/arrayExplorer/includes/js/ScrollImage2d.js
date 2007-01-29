@@ -10,6 +10,8 @@ function ScrollImage2d(id) {
 
     /* Define onload() function */
     this.image.onload = function() {
+      owner.imageWidth = this.width/owner.width;
+      owner.imageHeight = this.height/owner.height;
       owner.onLoad();
       owner.update();
       owner.imageIsLoaded = true;
@@ -22,6 +24,13 @@ function ScrollImage2d(id) {
 
     /* Start loading image */
     this.image.src = url;
+  }
+
+  this.getImageDimension = function() {
+    var res = Object();
+    res.width = this.imageWidth;
+    res.height = this.imageHeight;
+    return(res);
   }
 
   this.getImageWidth = function() {
@@ -51,8 +60,27 @@ function ScrollImage2d(id) {
     var w = this.getImageWidth()/this.width;
     var h = this.getImageHeight()/this.height;
     var res = Object();
-    res.x = w*this.x;
-    res.y = w*this.y;
+    res.x = Math.round(w*this.x);
+    res.y = Math.round(w*this.y);
+    return(res);
+  }
+
+  this.getDimension = function() {
+    var res = Object();
+    var dim = this.getImageDimension();
+    res.width = Math.round(dim.width);
+    res.height = Math.round(dim.height);
+    return(res);
+  }
+
+  this.getRegion = function() {
+    var xy = this.getXY();
+    var dim = this.getDimension();
+    var res = Object();
+    res.x0 = xy.x;
+    res.y0 = xy.y;
+    res.x1 = xy.x + dim.width;
+    res.y1 = xy.y + dim.height;
     return(res);
   }
 
@@ -138,6 +166,8 @@ function ScrollImage2d(id) {
   
   this.container = document.getElementById(id);
   this.image = document.getElementById(id + 'Image');
+  this.imageWidth = 0;
+  this.imageHeight = 0;
   this.imageIsLoaded = false;
 
   this.setupEventHandlers();

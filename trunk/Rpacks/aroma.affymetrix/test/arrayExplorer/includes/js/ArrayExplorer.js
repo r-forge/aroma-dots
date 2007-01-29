@@ -194,19 +194,24 @@ function ArrayExplorer() {
       owner.decreaseLoadCount();
     }
 
+    this.getRegion = function() {
+    }
+
     this.nav2d.onScroll = function() {
 	  	owner.image2d.setRelXY(this.x, this.y);
-      var pos = owner.image2d.getXY();
-      updateLabel('nav2dInfo', '('+Math.round(pos.x)+','+Math.round(pos.y)+')');
 		  owner.image2d.update();
+      var r = owner.image2d.getRegion();
+      var s = '('+r.x0+','+r.y0+')-('+r.x1+','+r.y1+')';
+      updateLabel('nav2dInfo', s);
       return(false);    
 	  }
 
     this.image2d.onScroll = function() {
-      var pos = this.getXY();
-      updateLabel('nav2dInfo', '('+Math.round(pos.x)+','+Math.round(pos.y)+')');
       owner.nav2d.setRelXY(this.x, this.y);
       owner.nav2d.update();
+      var r = owner.image2d.getRegion();
+      var s = '('+r.x0+','+r.y0+')-('+r.x1+','+r.y1+')';
+      updateLabel('nav2dInfo', s);
       return(false);    
 	  }
   }
