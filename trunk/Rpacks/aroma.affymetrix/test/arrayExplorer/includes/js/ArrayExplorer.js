@@ -38,11 +38,6 @@ function ArrayExplorer() {
     this.nav2d.setImage(pathname);
     this.image2d.setImage(pathname);
 
-    /* Update the image link */
-    var imageUrl = document.getElementById('imageUrl');
-    imageUrl.href = pathname;
-    updateText(imageUrl, pathname);
-
     /* Update the title of the page */
     var title = location.href;
     title = title.substring(0, title.lastIndexOf('\/'));
@@ -97,8 +92,11 @@ function ArrayExplorer() {
 
     clearById('zoom' + this.scale);
     this.scale = scale;
-    this.nav2d.setSize(1/scale);
-    this.image2d.setSize(scale);
+    var ar = this.image2d.getAspectRatio();
+    this.nav2d.setRelDimension(1/scale, 1/scale/ar);
+    this.image2d.setRelDimension(scale, scale);
+    this.nav2d.update();
+    this.image2d.update();
     highlightById('zoom' + scale);
     return(true);
   }
@@ -178,7 +176,7 @@ function ArrayExplorer() {
   this.scales = new Array();
 
   this.loadCount = 0;
-  this.scale = 1;
+  this.scale = 0;
   this.sample = '';
   this.chipType = '';
   this.colorMap = '';
@@ -188,32 +186,45 @@ function ArrayExplorer() {
 
     this.nav2d.onLoad = function() {
       owner.decreaseLoadCount();
+      owner.updateInfo();
     }
 
     this.image2d.onLoad = function() {
       owner.decreaseLoadCount();
+      owner.updateInfo();
     }
 
     this.getRegion = function() {
+      var r = this.nav2d.getRegion();
+      var w = this.image2d.imageWidth;
+      var h = this.image2d.imageHeight;
+      var res = new Object();
+      res.x0 = Math.round(w*r.x0);
+      res.y0 = Math.round(w*r.y0);
+      res.x1 = Math.round(w*r.x1);
+      res.y1 = Math.round(w*r.y1);
+      return res;
     }
 
     this.nav2d.onScroll = function() {
 	  	owner.image2d.setRelXY(this.x, this.y);
 		  owner.image2d.update();
-      var r = owner.image2d.getRegion();
-      var s = '('+r.x0+','+r.y0+')-('+r.x1+','+r.y1+')';
-      updateLabel('nav2dInfo', s);
+      owner.updateInfo();
       return(false);    
 	  }
 
     this.image2d.onScroll = function() {
       owner.nav2d.setRelXY(this.x, this.y);
       owner.nav2d.update();
-      var r = owner.image2d.getRegion();
-      var s = '('+r.x0+','+r.y0+')-('+r.x1+','+r.y1+')';
-      updateLabel('nav2dInfo', s);
+      owner.updateInfo();
       return(false);    
 	  }
+  }
+
+  this.updateInfo = function() {
+    var r = this.getRegion();
+    var s = '('+r.x0+','+r.x1+')x('+r.y0+','+r.y1+')';
+    updateLabel('nav2dInfo', s);
   }
 
   this.update = function() {
@@ -230,6 +241,11 @@ function ArrayExplorer() {
     /* Default settings */
     this.setScales(new Array('1', '2', '4', '8', '16', '32'));
     this.setColorMaps(new Array('gray'));
+
+    var y = findXY(this.image2d.image).y;
+   	var h = document.body.clientHeight;
+    h = (h - y - 12) + 'px';
+	  this.image2d.container.style.height = h;
 
     this.onLoad();
 

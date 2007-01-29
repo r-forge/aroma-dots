@@ -15,11 +15,20 @@
 
 <body onLoad="onLoad();">
 <table width="100%" border="0" cellpadding="2" cellspacing="0" style="margin: 0px; border: none; border-bottom: 2px solid black;">
-<tr valign="bottom">
-<td align="left"><big>Array Explorer</big></td>
+<tr>
+<td align="left">
+<big>Array Explorer</big>
+<small><small>by Henrik Bengtsson</small></small>
+</td>
 <td align="right">
+ <span style="float:right; font-size:smaller;">
+ <a href="../../includes/html/help.html">Help</a> |
+ <a href="../../includes/html/about.html">About</a>
+ </span>
+</td>
+<td align="right" width="20px">
 <div id="statusImage" style="float: right;">
- <img src="../../includes/images/indicator_medium.gif" alt="Wait..." title="indicator">
+ <img src="../../includes/images/indicator.gif" alt="Wait..." title="indicator">
 </div>
 </td>
 </tr>
@@ -35,51 +44,35 @@ Sample:
 </small>
 </td>
 <td align="right">
-  <div id="nav2d" style="float: right;">
-   <div id="nav2dMarker" title="Drag"></div>
-   <img id="nav2dImage" src="../../includes/images/indicator.gif" alt="Navigator" title="Move">
-  </div>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr valign="top">
+<td align="right">
+ <div id="nav2d">
+  <div id="nav2dMarker" title="Drag"></div>
+  <img id="nav2dImage" src="../../includes/images/indicator.gif" alt="Navigator" title="Move">
+ </div>
 </td>
-<td align="left" style="float: right;">
+<td style="width:0.5em;">
+</td>
+<td align="left">
 <small>
-Image URL: <a id="imageUrl" href="" target="otherWindow"></a><br>
-<br>
 <span id="zoomLabel">?</span>
 <span id="colorMapLabel">?</span>
-<br>
-Region: <span id="nav2dInfo">(0,0)</span>
+<!--
+<a id="imageUrl" href="" target="otherWindow">Full image</a><br>
+-->
+Region: <span id="nav2dInfo">?</span>
 </small>
 </td>
 </tr>
 </table>
-
-<table width="100%" cellpadding="1" cellspacing="0" style="border: solid 1px #000000;">
-<tr valign="top">
- <td colspan="3" width="95%" style="border: solid 1px #000000;">
-  <div id="panel">
-   <div id="panelLocator"><div id="panelLocatorTag"></div></div>
-   <img id="panelImage" src="../../includes/images/indicator.gif" alt="Panel" title="Drag">
-  </div>
- </td>
+</td>
 </tr>
 </table>
-<table width="100%" border="0" cellpadding="2" cellspacing="0">
-<tr valign="top">
-<td align="left">
-</small></small>
-<small><small>
-</small></small>
- </td>
-<td align="right">
-<small><small>
-</small></small>
- </td>
-</tr>
-</table>
-<div style="margin-top: 1ex; padding-top: 0.5ex; border-top: #000000 1px solid;">
- <div style="float:left; font-size:smaller;">Array Explorer by Henrik Bengtsson (<a href="http://www.braju.com/R/">www.braju.com/R/</a>), 2007. <small>(Tested on IE6.0 &amp; Firefox 1.5/2.0)</small></div>
- <div style="float:right; font-size:smaller;" class="WebcutsHide">Powered by <a href="http://www.maths.lth.se/tools/webcuts/">Webcuts</a></div>
+<div style="border: solid 1px #000000; padding: 1px;">
+<div id="panel" style="border: solid 1px #000000;">
+ <img id="panelImage" src="../../includes/images/indicator.gif" alt="Panel" title="Drag">
 </div>
-
+</div>
 </body>
 </html>
