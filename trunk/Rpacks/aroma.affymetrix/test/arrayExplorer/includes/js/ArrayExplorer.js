@@ -206,14 +206,28 @@ function ArrayExplorer() {
       return res;
     }
 
-    this.nav2d.onScroll = function() {
+    this.image2d.onmousedown = this.nav2d.onmousedown = function() {
+      var info = document.getElementById('image2dInfoTL');
+      info.style.visibility = 'visible';
+      info = document.getElementById('image2dInfoBR');
+      info.style.visibility = 'visible';
+    }
+
+    this.image2d.onmouseup = this.nav2d.onmouseup = function() {
+      var info = document.getElementById('image2dInfoTL');
+      info.style.visibility = 'hidden';
+      info = document.getElementById('image2dInfoBR');
+      info.style.visibility = 'hidden';
+    }
+
+    this.nav2d.onmousemove = function() {
 	  	owner.image2d.setRelXY(this.x, this.y);
 		  owner.image2d.update();
       owner.updateInfo();
       return(false);    
 	  }
 
-    this.image2d.onScroll = function() {
+    this.image2d.onmousemove = function() {
       owner.nav2d.setRelXY(this.x, this.y);
       owner.nav2d.update();
       owner.updateInfo();
@@ -223,25 +237,34 @@ function ArrayExplorer() {
 
   this.updateInfo = function() {
     var r = this.getRegion();
-    var s = '('+r.x0+','+r.x1+')x('+r.y0+','+r.y1+')';
-    updateLabel('nav2dInfo', s);
+    var s = '('+r.x0+','+r.y0+')';
+    updateLabel('image2dInfoTL', s);
+    var s = '('+r.x1+','+r.y1+')';
+    updateLabel('image2dInfoBR', s);
+    var infoBR = document.getElementById('image2dInfoBR');
+    var lh = infoBR.offsetHeight;
+    var lw = infoBR.offsetWidth;
+    var xy = findXY(this.image2d.container);
+		infoBR.style.left = xy.x+this.image2d.container.clientWidth-lw;
+		infoBR.style.top = xy.y+this.image2d.container.clientHeight-lh;
   }
 
   this.update = function() {
     var y = findXY(this.image2d.image).y;
-    var h = document.body.clientHeight;
-    h = (h - y - 16) + 'px';
+    var dh = document.body.clientHeight;
+    var h = (dh - y - 16) + 'px';
     this.image2d.container.style.height = h;
     var ar = this.image2d.getAspectRatio();
     this.nav2d.setRelDimension(1/this.scale, 1/this.scale/ar);
     this.updateImage();
+    this.updateInfo();
   }
 
   this.onLoad = function() { }
 
   this.start = function() {
     this.nav2d = new Scrollbar2d("nav2d");
-    this.image2d = new ScrollImage2d("panel");
+    this.image2d = new ScrollImage2d("image2d");
     this.setupEventHandlers();
 
     /* Default settings */
@@ -249,8 +272,8 @@ function ArrayExplorer() {
     this.setColorMaps(new Array('gray'));
 
     var y = findXY(this.image2d.image).y;
-   	var h = document.body.clientHeight;
-    h = (h - y - 12) + 'px';
+   	var dh = document.body.clientHeight;
+    var h = (dh - y - 12) + 'px';
 	  this.image2d.container.style.height = h;
 
     this.onLoad();
