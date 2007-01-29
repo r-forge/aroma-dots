@@ -1,10 +1,6 @@
 var explorer = new ArrayExplorer();
 
 window.onresize = function() {
-  var y = findXY(explorer.image2d.image).y;
-	var h = document.body.clientHeight;
-  h = (h - y - 16) + 'px';
-	explorer.image2d.container.style.height = h;
   explorer.update();
 }
 
