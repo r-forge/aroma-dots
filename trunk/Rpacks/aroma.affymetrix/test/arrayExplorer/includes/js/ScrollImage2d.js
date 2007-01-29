@@ -20,7 +20,6 @@ function ScrollImage2d(id) {
     this.image.onload = function() {
       owner.onLoad();
       owner.update();
-      owner.imageIsLoaded = true;
     }
 
     /* Define onload() function */
@@ -182,7 +181,6 @@ function ScrollImage2d(id) {
   this.image = document.getElementById(id + 'Image');
   this.imageWidth = 0;
   this.imageHeight = 0;
-  this.imageIsLoaded = false;
 
   this.setupEventHandlers();
 } /* ScrollImage2d() */
@@ -198,7 +196,6 @@ function Scrollbar2d(id) {
     this.image.onload = function() {
       owner.onLoad();
       owner.update();
-      owner.imageIsLoaded = true;
     }
 
     /* Define onload() function */
@@ -337,7 +334,6 @@ function Scrollbar2d(id) {
   
   this.container = document.getElementById(id);
   this.image = document.getElementById(id + 'Image');
-  this.imageIsLoaded = false;
   this.marker = document.getElementById(id + 'Marker');
 
   this.setupEventHandlers();
