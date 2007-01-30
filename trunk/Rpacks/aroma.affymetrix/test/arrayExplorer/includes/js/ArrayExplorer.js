@@ -268,7 +268,7 @@ function ArrayExplorer() {
     this.setupEventHandlers();
 
     /* Default settings */
-    this.setScales(new Array('1', '2', '4', '8', '16', '32'));
+    this.setScales(new Array('0.5', '1', '2', '4', '8', '16', '32'));
     this.setColorMaps(new Array('gray'));
 
     var y = findXY(this.image2d.image).y;
