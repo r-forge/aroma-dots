@@ -688,6 +688,17 @@
 \alias{clearCache.Transform}
 \alias{indexOfArrays}
 \alias{setArrays}
+\alias{getAlias.SampleAnnotationFile}
+\alias{getData.SampleAnnotationFile}
+\alias{getDataByName}
+\alias{getDataByName.SampleAnnotationFile}
+\alias{getDeviceResolution}
+\alias{getDeviceResolution.default}
+\alias{getNbrOfChrX}
+\alias{getNbrOfChrX.SampleAnnotationFile}
+\alias{readData.SampleAnnotationFile}
+\alias{SampleAnnotationFile}
+\alias{writeImage}
 
 \description{
   This page contains aliases for all "non-documented" objects that

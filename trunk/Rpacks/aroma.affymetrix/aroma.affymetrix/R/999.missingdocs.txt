@@ -273,3 +273,8 @@
   clearCache.QualityAssessmentFile clearCache.SnpChipEffectFile
   clearCache.SnpInformation clearCache.Transform
   indexOfArrays setArrays
+  getAlias.SampleAnnotationFile getData.SampleAnnotationFile
+  getDataByName getDataByName.SampleAnnotationFile getDeviceResolution
+  getDeviceResolution.default getNbrOfChrX
+  getNbrOfChrX.SampleAnnotationFile readData.SampleAnnotationFile
+  SampleAnnotationFile writeImage

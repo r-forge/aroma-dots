@@ -21,7 +21,7 @@
  Calls \code{\link[affy]{bg.adjust}} from the \pkg{affy} package.
 }
 
-\usage{\method{bgAdjustRma}{AffymetrixCelFile}(this, path=NULL, pmonly=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE)}
+\usage{\method{bgAdjustRma}{AffymetrixCelFile}(this, path=NULL, pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE)}
 
 \arguments{
   \item{path}{The path where to save the adjusted data files.}

@@ -28,7 +28,6 @@ public static class \bold{QualityAssessmentModel}\cr
 extends \link[R.oo]{Object}\cr
 
 
-
 }
 
 \usage{QualityAssessmentModel(plm=NULL, tags="*", ...)}
