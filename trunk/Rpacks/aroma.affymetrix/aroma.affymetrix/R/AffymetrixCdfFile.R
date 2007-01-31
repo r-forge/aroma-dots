@@ -677,7 +677,8 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     # Create a cache key (already here)
     verbose && enter(verbose, "Checking cache");
-    key <- list(method="identifyCells", class=class(this)[1], chipType=getChipType(this), indices=indices, from=from, to=to, types=types, sort=sort);
+    chipType <- getChipType(this);
+    key <- list(method="identifyCells", class=class(this)[1], chipType=chipType, indices=indices, from=from, to=to, types=types, sort=sort);
     comment <- sprintf("%s: %s", key$method, key$chipType);
     dirs <- c("aroma.affymetrix", chipType);
     if (!.force) {
@@ -757,7 +758,8 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
   verbose <- Arguments$getVerbose(verbose);
 
   verbose && enter(verbose, "Trying to load cached results");
-  key <- list(method="getFirstCellIndices", class=class(this)[1], chipType=getChipType(this), stratifyBy=stratifyBy, restructor=body(this$.restructor));
+  chipType <- getChipType(this);
+  key <- list(method="getFirstCellIndices", class=class(this)[1], chipType=chipType, stratifyBy=stratifyBy, restructor=body(this$.restructor));
   dirs <- c("aroma.affymetrix", chipType);
   res <- if (force) {
     NULL;
@@ -1044,7 +1046,7 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 ############################################################################
 # HISTORY:
 # 2007-01-16
-# o Now all keys contains method name, class name, and chip type.
+# o Now all cache keys contains method name, class name, and chip type.
 # 2007-01-10
 # o Reordered internally in createMonoCell() preparing for code to read 
 #   *and* write monocell CDFs in chunks.  It should not be too hard.
