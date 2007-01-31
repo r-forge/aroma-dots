@@ -44,7 +44,7 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
   # Argument 'model':
   if (!is.null(model)) {
     if (!inherits(model, "GladModel")) {
-      throw("Argument 'model' is not a 'GladModel': ", class(model));
+      throw("Argument 'model' is not a 'GladModel': ", class(model)[1]);
     }
   }
 
@@ -473,7 +473,8 @@ setMethodS3("getTemplatePath", "ChromosomeExplorer", function(this, ..., verbose
 
   verbose && enter(verbose, "Locating template files for ChromosomeExplorer");
   # Search for template files
-  path <- filePath("ce/.template", expandLinks="any");
+  rootPath <- getRootPath(this);
+  path <- filePath(rootPath, ".template", expandLinks="any");
   if (!isDirectory(path)) {
     path <- system.file("chromosomeExplorer", "includes", 
                                             package="aroma.affymetrix");
@@ -594,7 +595,7 @@ setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., force=FALSE
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Setting up ChromsomeExplorer report files");
+  verbose && enter(verbose, "Setting up ", class(this)[1], " report files");
 
   srcPath <- getTemplatePath(this);
 

@@ -793,7 +793,15 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 # @synopsis
 #
 # \arguments{
-#   \item{}{}
+#   \item{xrange, yrange}{}
+#   \item{field}{}
+#   \item{transform}{}
+#   \item{interleaved}{}
+#   \item{col}{}
+#   \item{outlierCol}{}
+#   \item{main}{}
+#   \item{...}{Additional arguments passed to @seemethod "getRectangle".}
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
 # }
 #
 # \value{
@@ -806,105 +814,103 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #
 # \seealso{
+#   @see "EBImage::Image".
 #   @seeclass
 # }
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, lim=c(-Inf, Inf), field=c("intensities", "stdvs", "pixels"), col=NULL, outlierCol="white", main=getName(this), ...) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., width=NULL, height=NULL, verbose=FALSE) {
+  require(EBImage) || throw("Package not loaded: EBImage.");
 
-  require(EBImage) || throw("Package not loaded: 'EBImage'.");
-
-  if (is.null(col)) {
-    col <- gray.colors(256);
-  }
-  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'field':
   field <- match.arg(field);
   
-  suppressWarnings({
-    cel <- getRectangle(this, xrange=xrange, yrange=yrange, fields=field, ...);
-  })
+  # Argument 'transform':
+  if (is.null(transform)) {
+  } else if (is.function(transform)) {
+  } else {
+    throw("Argument 'transform' must be a function or NULL: ", 
+                                                   class(transform)[1]);
+  }
 
-  # Display the rectangle
-  y <- cel[[field]];
+  # Argument 'interleaved':
+  interleaved <- Arguments$getLogical(interleaved);
+
+  # Argument 'width' and 'height':
+  if (!is.null(width)) {
+    if (is.character(width)) {
+      width <- gsub(
+    } else {
+      width <- Arguments$getInteger(width, range=c(1,Inf));
+  }
+
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Read data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  verbose && enter(verbose, "Getting CEL image");
+
+  verbose && enter(verbose, "Reading CEL image");
+  suppressWarnings({
+    y <- getRectangle(this, xrange=xrange, yrange=yrange, fields=field, ...);
+  });
+  y <- y[[field]];
+  verbose && str(verbose, y);
+  verbose && printf(verbose, "RAM: %.1fMB\n", object.size(y)/1024^2);
+  verbose && exit(verbose);
 
   # if only PM locations have signal, add a fake row
-
-  nr <- nrow(y);
   if (interleaved) {
-    idxEven <- which((1:nr) %% 2 == 0);
+    idxEven <- seq(from=1, to=nrow(y), by=2);
     y[idxEven-1,] <- y[idxEven,];
   }
 
-  if (takeLog) {
-    y <- log2(y);
+  # Transform signals?
+  if (is.function(transform)) {
+    y <- transform(y);
   }
 
+  # Create an EBImage Image object
   y <- t(y);
-  
-  if (lim[1] == -Inf) {
-    lim[1] <- min(y[y != -Inf], na.rm=TRUE);
-  }
-  if (lim[2] == Inf) {
-    lim[2] <- max(y[y != Inf], na.rm=TRUE);
-  }
-
-  
   img <- Image(data=y, dim=dim(y));
-  img <- rgbTransform(img, palette=col, lim=lim, outlierCol=outlierCol);
-  return(img);
-  
 
+  verbose && enter(verbose, "Transforming image");
+  img <- rgbTransform(img, ...);
+  verbose && exit(verbose);
+
+  # Zoom?
+  if (!is.null(zoom)) {
+    verbose && enter(verbose, "Resizing image");
+    # Rescaling by keeping aspect ratio
+    img <- resize(img, w=zoom*dim(img)[1], blur=FALSE);
+    verbose && exit(verbose);
+  }
+
+  verbose && exit(verbose);
+
+  # Return the 'field'
+  attr(img, "field") <- field;
+
+  img;
 })
 
 
 
-setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf), outlierCol="white", ...) {
-  # given an input Image, transform to new RGB image based
-  # on list of colours given in argument 'palette' and lower and
-  # upper bounds given in 'lim'.  TOFIX: THIS IS CURRENTLY TOO SLOW
-
-  if (lim[1]==-Inf) {
-    lim[1] <- min(this@.Data[this@.Data != -Inf]);
-  }
-  if (lim[2]==Inf) {
-    lim[2] <- max(this@.Data[this@.Data != Inf]);
-  }
-
-  col2rgbComposite <- function(color) {
-    rgbvec <- col2rgb(color);
-    if (length(color)==1) {
-      return(rgbvec[3]*256^2 + rgbvec[2]*256 + rgbvec[1]);
-    } else {
-      return(apply(rgbvec,2,function(x){x[3]*256^2+x[2]*256+x[1]}));
-    }
-  }
-  
-  rgbBin <- function(x, bin, binValue) {
-# x is a vector
-    res <- vector("integer", length(x));
-    res[x<bin[1]] <- col2rgbComposite(outlierCol);
-    for (i in 2:length(bin)) {
-      res[x<bin[i] & x>bin[i-1]] <- binValue[i];
-    }
-    res[x>bin[length(bin)]] <- col2rgbComposite(outlierCol);
-    return(res);
-  }
-
-  bin <- seq(lim[1], lim[2], length.out=length(palette));
-  binValue <- col2rgbComposite(palette);
-
-  res <- rgbBin(this@.Data, bin, binValue);
-  return(Image(res, dim(this@.Data), colormode=TrueColor));
-  
-})
 
 
 
 ###########################################################################/**
 # @RdocMethod plotImage
 #
-# @title "Opens an ImageMagick window with a spatial plot of a CEL file"
+# @title "Displays a spatial plot of a CEL file"
 #
 # \description{
 #  @get "title".
@@ -913,11 +919,11 @@ setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf
 # @synopsis
 #
 # \arguments{
-#   \item{}{}
+#   \item{...}{Arguments passed to @seemethod "getImage".}
 # }
 #
 # \value{
-#   Returns nothing.
+#   Returns (invisibly) the image displayed.
 # }
 #
 # \section{Details}{
@@ -931,33 +937,21 @@ setMethodS3("rgbTransform", "Image", function(this, palette=NULL, lim=c(-Inf,Inf
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(24), outlierCol="white", width=NULL, height=NULL, main=getName(this), ...) {
+setMethodS3("plotImage", "AffymetrixCelFile", function(this, ...) {
+  # Get the image
+  img <- getImage(this, ...);
 
-  require(EBImage) || throw("Package not loaded: 'EBImage'.");
+  # Display image
+  EBImage::display(img);
 
-  field <- match.arg(field);
-
-  if (is.null(width)) {
-    width <- length(xrange);
-  }
-  if (is.null(height)) {
-    height <- length(yrange);
-  }
-  
-  img <- getImage(this, xrange=xrange, yrange=yrange, takeLog=takeLog, interleaved=interleaved, field=field, col=col, main=main, outlierCol=outlierCol, ...);
-  if (!(height==length(yrange) & width==length(xrange))) {
-    img <- resize(img, width, height);
-  }
-
-  display(img);
-  
+  invisible(img);
 })
 
 
 ###########################################################################/**
-# @RdocMethod plotImageToFile
+# @RdocMethod writeImage
 #
-# @title "Creates an spatial plot of a CEL file and writes to file"
+# @title "Writes a spatial image of the signals in the CEL file"
 #
 # \description{
 #  @get "title".
@@ -966,15 +960,23 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yr
 # @synopsis
 #
 # \arguments{
-#   \item{}{}
+#   \item{...}{Arguments passed to @seemethod "getImage".}
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
 # }
 #
 # \value{
-#   Returns nothing.
+#   Returns (invisibly) the Image written.
 # }
 #
-# \section{Details}{
-# }
+# \examples{\dontrun{
+#   df <- getFile(ds, 1)
+#   writeImage(df, tags="gray", palette=gray.colors(256), xrange=c(0,200))
+#   writeImage(df, tags="heat", palette=heat.colors(256), xrange=c(0,200))
+#   writeImage(df, tags="terrain", palette=terrain.colors(256), xrange=c(0,200))
+#   writeImage(df, tags="topo", palette=topo.colors(256), xrange=c(0,200))
+#   writeImage(df, tags="cm", palette=cm.colors(256), xrange=c(0,200))
+#   writeImage(df, tags="rainbow", palette=rainbow(256), xrange=c(0,200))
+# }}
 #
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #
@@ -984,44 +986,63 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yr
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("plotImageToFile", "AffymetrixCelFile", function(this, outputFile=NULL, path=NULL, xrange=c(0,Inf), yrange=c(0,Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(24), outlierCol="white", width=NULL, height=NULL, main=getName(this), ...) {
-
+setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, fullname=getFullName(this), tags=c("*", "gray"), imgFormat="png", path=NULL, ..., verbose=FALSE) {
+  # Argument 'path':
   if (is.null(path)) {
-    path <- file.path("images");
+    rootPath <- "images";
+    cdf <- getCdf(this);
+    chipType <- getChipType(cdf);
+    path <- filePath(rootPath, chipType, expandLinks="any");
   }
-  
-  if (!is.null(path)) {
-    path <- Arguments$getWritablePath(path);
-  }
-  
-  if (is.null(outputFile)) {
-    outputFile <- sprintf("%s.jpg", paste(getName(this), getTags(this), collapse=","));
-    outputFile <- Arguments$getWritablePathname(outputFile, path=path);
-  }
-  
-  require(EBImage) || throw("Package not loaded: 'EBImage'.");
+  path <- Arguments$getWritablePath(path);
 
-  if (is.null(width)) {
-    width <- length(xrange);
-  }
-  if (is.null(height)) {
-    height <- length(yrange);
-  }
+  # Argument 'tags':
+  tags <- Arguments$getCharacters(tags);
   
-  img <- getImage(this, xrange=xrange, yrange=yrange, takeLog=takeLog, interleaved=interleaved, field=field, col=col, main=main, outlierCol=outlierCol, ...);
-  if (height==length(yrange) & width==length(xrange)) {
-    img <- resize(img, width, height);
+  # Argument 'filename':
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  verbose && enter(verbose, "Writing CEL image to file");
+
+  # Get the image
+  img <- getImage(this, ..., verbose=less(verbose));
+  # Update asterisk tags?
+  if ("*" %in% tags) {
+    idx <- match("*", tags);
+    tags[idx] <- attr(img, "field");
+    tags <- unique(tags);
   }
-  
-  write.image(img, file=outputFile);
-  
+
+  verbose && enter(verbose, "Writing image");
+  # Generate the pathname
+  fullname <- paste(c(fullname, tags), collapse=",");
+  if (is.null(filename))
+    filename <- sprintf("%s.%s", fullname, imgFormat);
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+  verbose && cat(verbose, "Pathname: ", pathname);  
+  write.image(img, file=pathname);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  invisible(img);
 })
 
 
 
 ############################################################################
 # HISTORY:
+# 2007-01-30 /HB
+# o Image functions tested with EBImage v1.9.23 on WinXP.
+# o Changed the default transform to sqrt().
+# o Added 'tags' to writeImage().
+# o Renamed plotImageToFile() to writeImage().
 # 2007-01-12 /KS
+# o TODO? Image methods needed for AffymetrixCelSets?  Or just use lapply?
+# o TODO: Annotation of plots generated by EBImage. (are tags enough? /HB)
 # o Added getImage(), plotImage() and plotImageToFile(), which use
 #   EBImage functionality.
 # o Moved image270() and writeSpatial() from AffymetrixCelFile.R.
@@ -1041,9 +1062,3 @@ setMethodS3("plotImageToFile", "AffymetrixCelFile", function(this, outputFile=NU
 # 2006-05-16
 # o Created.
 ############################################################################
-# TODO: (KS 12/01/07)
-#
-# o image methods needed for AffymetrixCelSets?  Or just use lapply?
-# o annotation of plots generated by EBImage.
-#
-###########################################################################
