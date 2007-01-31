@@ -170,6 +170,19 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rmaModelAffyPlm <- function(y, psiCode=0, psiK=1.345){
     # Assert right dimensions of 'y'.
+
+    # If input data are dimensionless, return NAs. /KS 2006-01-30
+    if (is.null(dim(y))) {
+      nbrOfArrays <- nbrOfArrays(getDataSet(this));
+      return(list(theta=rep(NA, nbrOfArrays),
+                  sdTheta=rep(NA, nbrOfArrays),
+                  thetaOutliers=rep(NA, nbrOfArrays), 
+                  phi=c(), 
+                  sdPhi=c(), 
+                  phiOutliers=c()));
+      
+    }
+
     if (length(dim(y)) != 2) {
       str(y);
       stop("Argument 'y' must have two dimensions: ", 
