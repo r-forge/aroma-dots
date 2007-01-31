@@ -19,7 +19,7 @@
   Calculates the weights from the robust fit to a probe-level model.
 }
 
-\usage{\method{getWeights}{QualityAssessmentModel}(this, path=NULL, name="qcData", tags="*", unitsPerChunk=moreUnits * 1e+05/length(getDataSet(getPlm(this))), moreUnits=1, force=FALSE, verbose=FALSE, ...)}
+\usage{\method{getWeights}{QualityAssessmentModel}(this, path=NULL, name="qcData", tags="*", ram=1, force=FALSE, verbose=FALSE, ...)}
 
 \arguments{
  \item{}{}

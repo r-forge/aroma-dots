@@ -19,10 +19,18 @@
  Creates an RGB Image object from a CEL file.
 }
 
-\usage{\method{getImage}{AffymetrixCelFile}(this, xrange=c(0, Inf), yrange=c(0, Inf), takeLog=TRUE, interleaved=FALSE, lim=c(-Inf, Inf), field=c("intensities", "stdvs", "pixels"), col=NULL, outlierCol="white", main=getName(this), ...)}
+\usage{\method{getImage}{AffymetrixCelFile}(this, xrange=c(0, Inf), yrange=xrange, field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., zoom=NULL, verbose=FALSE)}
 
 \arguments{
-  \item{}{}
+  \item{xrange, yrange}{}
+  \item{field}{}
+  \item{transform}{}
+  \item{interleaved}{}
+  \item{col}{}
+  \item{outlierCol}{}
+  \item{main}{}
+  \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:getRectangle.AffymetrixCelFile]{*getRectangle}()}.}
+  \item{verbose}{A \code{\link[base]{logical}} or a \code{\link[R.utils]{Verbose}} object.}
 }
 
 \value{
@@ -35,6 +43,7 @@
 \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 
 \seealso{
+  \code{\link[EBImage]{Image}}.
   For more information see \code{\link{AffymetrixCelFile}}.
 }
 

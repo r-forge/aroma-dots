@@ -13,20 +13,20 @@
 \alias{plotImage,AffymetrixCelFile-method}
 
 
-\title{Opens an ImageMagick window with a spatial plot of a CEL file}
+\title{Displays a spatial plot of a CEL file}
 
 \description{
- Opens an ImageMagick window with a spatial plot of a CEL file.
+ Displays a spatial plot of a CEL file.
 }
 
-\usage{\method{plotImage}{AffymetrixCelFile}(this, xrange=c(0, Inf), yrange=c(0, Inf), takeLog=TRUE, interleaved=FALSE, field=c("intensities", "stdvs", "pixels"), col=gray.colors(256), outlierCol="white", xSize=1000, ySize=1000, main=getName(this), ...)}
+\usage{\method{plotImage}{AffymetrixCelFile}(this, ...)}
 
 \arguments{
-  \item{}{}
+  \item{...}{Arguments passed to \code{\link[aroma.affymetrix:getImage.AffymetrixCelFile]{*getImage}()}.}
 }
 
 \value{
-  Returns nothing.
+  Returns (invisibly) the image displayed.
 }
 
 \section{Details}{

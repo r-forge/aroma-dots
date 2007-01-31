@@ -63,7 +63,7 @@ getCellIndices, readUnits
 readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, clone, fromFile, getAm, getCdf, getImage, highlight, image270, nbrOfCells, plotDensity, plotImage, plotImageToFile, plotMvsA, plotMvsPosition, plotMvsX, setCdf, smoothScatterMvsA
+[, [[, clone, fromFile, getAm, getCdf, getImage, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsPosition, plotMvsX, setCdf, smoothScatterMvsA, writeImage
 
  \bold{Methods inherited from AffymetrixFile}:\cr
 fromFile, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags

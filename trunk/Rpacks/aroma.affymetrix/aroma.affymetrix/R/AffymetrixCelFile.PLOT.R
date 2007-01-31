@@ -797,10 +797,8 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 #   \item{field}{}
 #   \item{transform}{}
 #   \item{interleaved}{}
-#   \item{col}{}
-#   \item{outlierCol}{}
-#   \item{main}{}
 #   \item{...}{Additional arguments passed to @seemethod "getRectangle".}
+#   \item{zoom}{}
 #   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
 # }
 #
@@ -955,6 +953,15 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, ...) {
 # @synopsis
 #
 # \arguments{
+#   \item{filename}{A @character string specifying the filename of
+#     the output file.}
+#   \item{fullname}{A @character string specifying the full name of
+#     the output file.}
+#   \item{tags}{A @character @vector of optional tags added to the
+#     already existing tags of the CEL file.}
+#   \item{imgFormat}{A @character string specifying the filename extension
+#     which also defines the image file format.}
+#   \item{path}{The path where the image file is stored.}
 #   \item{...}{Arguments passed to @seemethod "getImage".}
 #   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
 # }

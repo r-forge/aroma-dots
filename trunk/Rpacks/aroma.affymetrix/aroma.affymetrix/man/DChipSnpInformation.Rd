@@ -47,7 +47,7 @@ extends \emph{\link[aroma.affymetrix]{SnpInformation}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{fromChipType} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fromChipType.DChipSnpInformation]{fromChipType}} \tab Defines a DChipSnpInformation object by chip type.\cr
  \tab \code{readData} \tab  -\cr
 }
 
@@ -69,7 +69,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    downloaded from \url{http://www.dchip.org/}.  Put each file in a
    directory named identically as the corresponding chip type under the
    \emph{annotations/} directory, e.g.
-   \emph{annotations/Mapping50K_Hind240/50k hind snp info AfAm
+   \emph{annotations/Mapping50K\_Hind240/50k hind snp info AfAm
    june 05 hg17.xls}.
    Note that dChip changes the filename and file format slightly between
    chip types, but currently the \code{\link[aroma.affymetrix:fromChipType.DChipSnpInformation]{*fromChipType}()} basically searches

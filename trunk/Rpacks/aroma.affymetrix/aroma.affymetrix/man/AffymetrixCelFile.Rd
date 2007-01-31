@@ -60,13 +60,13 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:image270.AffymetrixCelFile]{image270}} \tab Displays all or a subset of the data spatially.\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelFile]{plotDensity}} \tab Plots the density of the probe signals on the array.\cr
- \tab \code{\link[aroma.affymetrix:plotImage.AffymetrixCelFile]{plotImage}} \tab Opens an ImageMagick window with a spatial plot of a CEL file.\cr
- \tab \code{\link[aroma.affymetrix:plotImageToFile.AffymetrixCelFile]{plotImageToFile}} \tab Creates an spatial plot of a CEL file and writes to file.\cr
+ \tab \code{\link[aroma.affymetrix:plotImage.AffymetrixCelFile]{plotImage}} \tab Displays a spatial plot of a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsA.AffymetrixCelFile]{plotMvsA}} \tab Plots log-ratio versus log-intensity in a scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsPosition.AffymetrixCelFile]{plotMvsPosition}} \tab Plots log-ratio versus physical position in a scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsX.AffymetrixCelFile]{plotMvsX}} \tab Plots log-ratio versus another variable in a scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
  \tab \code{\link[aroma.affymetrix:smoothScatterMvsA.AffymetrixCelFile]{smoothScatterMvsA}} \tab Plots log-ratio versus log-intensity in a smooth scatter plot.\cr
+ \tab \code{\link[aroma.affymetrix:writeImage.AffymetrixCelFile]{writeImage}} \tab Writes a spatial image of the signals in the CEL file.\cr
 }
 
 
