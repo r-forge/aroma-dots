@@ -271,7 +271,11 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
   } else {
     fitUnit <- function(unit, ...) {
       lapply(unit, FUN=function(group) {
-        y <- .subset2(group, 1); # Get intensities
+        if (length(group) > 0) {
+          y <- .subset2(group, 1); # Get intensities
+        } else {
+          y <- NULL;
+        }
         fitfcn(y);
       })
     }
