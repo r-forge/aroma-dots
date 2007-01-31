@@ -820,7 +820,7 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., width=NULL, height=NULL, verbose=FALSE) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., zoom=NULL, verbose=FALSE) {
   require(EBImage) || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -840,14 +840,9 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   # Argument 'interleaved':
   interleaved <- Arguments$getLogical(interleaved);
 
-  # Argument 'width' and 'height':
-  if (!is.null(width)) {
-    if (is.character(width)) {
-      width <- gsub(
-    } else {
-      width <- Arguments$getInteger(width, range=c(1,Inf));
-  }
-
+  # Argument 'zoom':
+  if (!is.null(zoom))
+    zoom <- Arguments$getDouble(zoom, range=c(0,Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
