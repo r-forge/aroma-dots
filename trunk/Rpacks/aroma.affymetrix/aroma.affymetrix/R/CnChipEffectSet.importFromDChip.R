@@ -1,3 +1,38 @@
+###########################################################################/**
+# @set "class=CnChipEffectSet"
+# @RdocMethod importFromDChip
+#
+# @title "Imports copy-number estimates from a dChip result file"
+#
+# \description{
+#  @get "title".
+#  Currently only total copy-number estimates can be imported, that is
+#  if dChip fitted the PLM with allele A and allele B combined.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{filename}{The filename of the dChip result file.}
+#   \item{path}{An optional path to the file.}
+#   \item{combineAlleles}{If @TRUE, .}
+#   \item{cdf}{An @see "AffymetrixCdfFile" object.}
+#   \item{...}{Not used.}
+#   \item{skip}{If @TRUE, already imported chip effects will not be imported
+#     again.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns an @see "CnChipEffectSet".
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, path=NULL, combineAlleles=TRUE, cdf, ..., skip=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
@@ -269,6 +304,8 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
 
 ############################################################################
 # HISTORY:
+# 2007-02-03
+# o Added Rdoc comments.
 # 2007-01-03
 # o Now, if 'skip=FALSE' and chip-effect file already exists, a new file
 #   is not created, but instead its contents is updated.

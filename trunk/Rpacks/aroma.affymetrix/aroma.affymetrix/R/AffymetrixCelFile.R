@@ -281,7 +281,7 @@ setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ..., .checkArgs=T
     }
 
     # Nothing to do?
-    oldCdf <- getCdf(this);
+#    oldCdf <- getCdf(this);
 #    if (equals(cdf, oldCdf))
 #      return(invisible(this));
   }
@@ -402,22 +402,27 @@ setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y
   header <- grep(pattern, header, value=TRUE);
 
   # Extract the date timestamp
+  pattern <- ".*([01][0-9]/[0-3][0-9]/[0-9][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]).*";
+  timestamp <- gsub(pattern, "\\1", header);
+  print(timestamp);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Alternative:
   # Could use a pattern, but if a different timestamp than the American is 
   # used, this wont work.  Instead assume a fixed location.
-  # pattern <- ".*([01][0-9]/[0-3][0-9]/[0-9][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]).*";
-  # timestamp <- gsub(pattern, "\\1", header);
-  # From the DAT header specification (Affymetrix Data File Formats, April 2006),
-  # we know that the date and the timestamp is 18 characters long.
-  nTemp <- 7;
-  nPower <- 4;
-  nTimestamp <- 18;
-  # Expected start position
-  pos <- nTemp + 1 + nPower + 1;
-  # ...however, the files we have start at the next position. /HB 2006-12-01
-  pos <- pos + 1;
-  timestamp <- substring(header, first=pos, last=pos+nTimestamp-1);
-  timestamp <- trim(timestamp); # Unnecessary?
+  # From the DAT header specification (Affymetrix Data File Formats, April
+  # 2006), we know that the date and the timestamp is 18 characters long.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##   nTemp <- 7;
+##   nPower <- 4;
+##   nTimestamp <- 18;
+##   # Expected start position
+##   pos <- nTemp + 1 + nPower + 1;
+##   # ...however, the files we have start at the next position. /HB 2006-12-01
+##   pos <- pos + 1;
+##   timestamp <- substring(header, first=pos, last=pos+nTimestamp-1);
 
+  timestamp <- trim(timestamp); # Unnecessary?
   res <- strptime(timestamp, format=format, ...);
   attr(res, "text") <- timestamp;
   res;
@@ -751,6 +756,10 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 
 ############################################################################
 # HISTORY:
+# 2007-02-03
+# o BUG FIX: getTimestamp() assumed a fix location in the CEL v3 header,
+#   but that did not work for dChip exported CEL files.  Now, a US date
+#   pattern is assumed and searched for.
 # 2007-01-12 /KS
 # o Moved image270() and writeSpatial() to AffymetrixCelFile.PLOT.R.
 # 2006-12-18 /KS

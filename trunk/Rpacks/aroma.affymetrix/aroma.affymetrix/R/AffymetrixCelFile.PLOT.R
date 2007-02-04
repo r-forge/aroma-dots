@@ -35,6 +35,8 @@
 # }
 #*/###########################################################################
 setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types=NULL, ..., xlim=c(0,16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE) {
+  require(aroma.light) || throw("Package not loaded: aroma.light");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1037,7 +1039,9 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
-# 2007-01-30 /HB
+# 2007-02-03
+# o plotDensity() now make sure aroma.light is loaded.
+# 2007-01-30
 # o Image functions tested with EBImage v1.9.23 on WinXP.
 # o Changed the default transform to sqrt().
 # o Added 'tags' to writeImage().
