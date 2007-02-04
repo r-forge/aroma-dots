@@ -363,7 +363,7 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
   verbose && print(verbose, cdf);
 
   # Nothing to do?
-  oldCdf <- getCdf(this);
+#  oldCdf <- getCdf(this);
 #  if (equals(cdf, oldCdf))
 #    return(invisible(this));
 
