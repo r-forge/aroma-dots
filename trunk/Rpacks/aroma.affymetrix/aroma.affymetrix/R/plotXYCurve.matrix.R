@@ -72,6 +72,8 @@ setMethodS3("plotXYCurve", "matrix", function(X, Y, col=1:nrow(X), lwd=NULL, xli
     plotXYCurve(X[,kk], Y[,kk], col=col[kk], xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, ..., add=add || (kk > 1));
   }
 
+  box();
+
   invisible();
 }) # plotXYCurve.matrix()
 

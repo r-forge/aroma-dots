@@ -23,6 +23,7 @@
 #   \item{rotateBack}{If @TRUE, the dChip-rotated array data is rotated
 #     back. If @NA, this is inferred from the chip type name.}
 #   \item{...}{Not used.}
+#   \item{skip}{If @TRUE, already converted files are not re-converted.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -43,7 +44,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=NULL, tags="dChip", rootPath="probeData", rotateBack=NA, ..., verbose=FALSE) {
+setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=NULL, tags="dChip", rootPath="probeData", rotateBack=NA, ..., skip=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -141,9 +142,14 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
     verbose && cat(verbose, "Source pathname: ", src);
     verbose && cat(verbose, "Destination pathname: ", dest);
 
+    if (!skip || !isFile(dest)) {
+      # Convert ASCII CEL file to binary CEL with possible rotation
+      convertCel(src, dest, readMap=readMap);
 
-    # Convert ASCII CEL file to binary CEL with possible rotation
-    convertCel(src, dest, readMap=readMap);    
+      # Garbage collect
+      gc();
+    }
+
     verbose && exit(verbose);
   }
 

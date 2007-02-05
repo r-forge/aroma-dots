@@ -48,7 +48,8 @@ setConstructorS3("TransformReport", function(inSet=NULL, outSet=NULL, ...) {
 
   extend(Object(), "TransformReport", 
     .inSet = inSet,
-    .outSet = outSet
+    .outSet = outSet,
+    .alias = NULL
   )
 }, abstract=TRUE)
 
@@ -67,6 +68,7 @@ setMethodS3("clearCache", "TransformReport", function(this, ...) {
 
 setMethodS3("getRootPath", "TransformReport", function(this, ...) {
   sprintf("pp%s", capitalize(class(this)[1]));
+  "reports";
 }, private=TRUE)
 
 
@@ -111,8 +113,21 @@ setMethodS3("as.character", "TransformReport", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getName", "TransformReport", function(this, ...) {
-  ds <- getOutputDataSet(this);
-  getName(ds);
+  name <- getAlias(this);
+  if (is.null(name)) {
+    ds <- getOutputDataSet(this);
+    name <- getName(ds);
+  }
+  name;
+})
+
+setMethodS3("getAlias", "TransformReport", function(this, ...) {
+  this$.alias;
+})
+
+setMethodS3("setAlias", "TransformReport", function(this, alias, ...) {
+  alias <- Arguments$getCharacter(alias, nchar=c(1,Inf));
+  this$.alias <- alias;
 })
 
 
@@ -241,6 +256,7 @@ setMethodS3("getPath", "TransformReport", function(this, ...) {
 })
 
 
+
 ###########################################################################/**
 # @RdocMethod getInputDataSet
 #
@@ -302,6 +318,20 @@ setMethodS3("getOutputDataSet", "TransformReport", function(this, ...) {
 })
 
 
+setMethodS3("getCdf", "TransformReport", function(this, ...) { 
+  getCdf(getOutputDataSet(this));
+})
+
+
+setMethodS3("nbrOfArrays", "TransformReport", function(this, ...) { 
+  nbrOfArrays(getOutputDataSet(this));
+})
+
+setMethodS3("seq", "TransformReport", function(this, ...) { 
+  seq(length=nbrOfArrays(this));
+})
+
+
 setMethodS3("getYY", "TransformReport", function(this, array, transform=NULL, subset=1/8, field="intensities", ...) {
   inSet <- getInputDataSet(this);
 
@@ -319,11 +349,9 @@ setMethodS3("getYY", "TransformReport", function(this, array, transform=NULL, su
   df1 <- getFile(inSet, array);
   df2 <- getFile(outSet, array);
   res <- list(
-    y1 = getData(df1, indices=indices, ..., fields=field)[[field]],
-    y2 = getData(df2, indices=indices, ..., fields=field)[[field]],
     array = array,
-    df1 = df1,
-    df2 = df2
+    y1 = getData(df1, indices=indices, ..., fields=field)[[field]],
+    y2 = getData(df2, indices=indices, ..., fields=field)[[field]]
   );
 
   if (!is.null(transform)) {
@@ -336,41 +364,81 @@ setMethodS3("getYY", "TransformReport", function(this, array, transform=NULL, su
 
 
 
-setMethodS3("plotYYSpline", "TransformReport", function(this, xlim=c(0,65535), xlab=expression(y), ylab=expression(tilde(y)==h(y)), dcol="#cccccc", main=NULL, ...) {
-  suppressWarnings({
-    yy <- getYY(this, ...);
-  })
+setMethodS3("plotXYCurve", "TransformReport", function(this, arrays=seq(this), lwd=2, col=arrays, xlim=c(0,65535), xlab=expression(y[1]), ylab=expression(y[2]), main=NULL, ..., add=FALSE, verbose=FALSE) {
 
-  if (is.null(main)) {
-    main <- getName(yy$df2);
+  nbrOfArrays <- nbrOfArrays(this);
+  if (is.null(col)) {
+    col <- seq(length=nbrOfArrays);
+  } else {
+    col <- rep(col, length.out=nbrOfArrays);
   }
 
+  outSet <- getOutputDataSet(this);
+  cdf <- getCdf(this);
+  for (kk in seq(along=arrays)) {
+    array <- arrays[kk];
 
-  suppressWarnings({
-    fit <- plotXYSpline(yy$y1, yy$y2, lwd=4, dcol=dcol, xlim=xlim, xlab=xlab, ylab=ylab, ...);
-  })
+    df <- getFile(outSet, array);
+    name <- getName(df);
 
-  cdf <- getCdf(yy$df2);
-  stextChipType(cdf, line=-1);
-  stextSize(yy$df2, size=length(yy$y1));
+    verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, name));
+    
+    verbose && enter(verbose, "Retrieving data");
+    suppressWarnings({
+      yy <- getYY(this, array=array, ...);
+    })
+    verbose && str(verbose, yy);
+    verbose && exit(verbose);
+  
+    if (is.null(main))
+      main <- name;
+  
+    verbose && enter(verbose, "Plotting smooth (X,Y) curve");
+    suppressWarnings({
+      fit <- plotXYCurve(yy$y1, yy$y2, lwd=lwd, col=col[kk], xlim=xlim, xlab=xlab, ylab=ylab, ..., add=add);
+    })
+    verbose && exit(verbose);
+  
+    if (!add)
+      stextChipType(cdf, line=-1);
 
-  invisible(fit);
+    if (length(arrays) == 1)
+      stextSize(df, size=length(yy$y1));
+
+    add <- TRUE;
+
+    rm(yy);
+
+    # Garbage collect
+    gc();
+
+    verbose && exit(verbose);
+  } # for (array in ...)
+
+  box();
+
+  invisible();
 })
 
-setMethodS3("plotYYSplineLog2", "TransformReport", function(this, xlim=c(0,16), xlab=expression(log[2](y)), ylab=expression(log[2]*tilde(y)==log[2]*h(y)), ...) {
-  plotYYSpline(this, transform=log2, xlim=xlim, xlab=xlab, ylab=ylab, ...);
+
+setMethodS3("plotXYCurveLog2", "TransformReport", function(this, xlim=c(0,16), xlab=expression(log[2](y[1])), ylab=expression(log[2]*(y[2])), ...) {
+  plotXYCurve(this, transform=log2, xlim=xlim, xlab=xlab, ylab=ylab, ...);
 })
 
 
 
-setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=640, height=width, ..., skip=TRUE, verbose=FALSE) {
+setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=800, height=width, ..., skip=TRUE, verbose=FALSE) {
   pngDev <- System$findGraphicsDevice();
  
+  cdf <- getCdf(this);
+  chipType <- getChipType(cdf);
+  chipType <- gsub("[,-]monocell$", "", chipType);
   rootPath <- getRootPath(this);
   name <- getName(this);
   tags <- getTags(this);
   tags <- paste(tags, collapse=",");
-  path <- file.path(rootPath, name, tags);
+  figSet <- class(this)[1];
+  path <- file.path(rootPath, name, tags, chipType, figSet);
   path <- Arguments$getWritablePath(path);
 
   outSet <- getOutputDataSet(this);
@@ -385,22 +453,6 @@ setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=64
     fullname <- getFullName(df);
     verbose && enter(verbose, "Output CEL file: ", fullname);
 
-    # Plot (y,y)
-    tags <- c("YvY");
-    imgname <- paste(c(fullname, tags), collapse=",");
-    filename <- sprintf("%s.png", imgname);
-    pathname <- file.path(path, filename);
-
-    verbose && cat(verbose, "Image pathname: ", pathname);
-    if (!skip || !isFile(pathname)) {
-      pngDev(pathname, width=width, height=height);
-      tryCatch({
-        plotYYSpline(this, array=kk, ...);
-      }, finally = {
-        dev.off();
-      })
-    }
-
     # Plot (log2(y),log2(y))
     tags <- c("YvY,log2");
     imgname <- paste(c(fullname, tags), collapse=",");
@@ -411,7 +463,7 @@ setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=64
     if (!skip || !isFile(pathname)) {
       pngDev(pathname, width=width, height=height);
       tryCatch({
-        plotYYSplineLog2(this, array=kk, ...);
+        plotXYCurveLog2(this, array=kk, dcol="#cccccc", ...);
       }, finally = {
         dev.off();
       })
@@ -422,6 +474,52 @@ setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=64
       verbose && print(verbose, gc());
 
     verbose && exit(verbose);
+  }
+
+  # Garbage collection
+  verbose && print(verbose, gc());
+
+  verbose && exit(verbose);
+})
+
+
+
+
+setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, width=800, height=width, ..., skip=TRUE, verbose=FALSE) {
+  pngDev <- System$findGraphicsDevice();
+ 
+  cdf <- getCdf(this);
+  chipType <- getChipType(cdf);
+  chipType <- gsub("[,-]monocell$", "", chipType);
+  rootPath <- getRootPath(this);
+  name <- getName(this);
+  tags <- getTags(this);
+  tags <- paste(tags, collapse=",");
+  figSet <- class(this)[1];
+  path <- file.path(rootPath, name, tags, chipType, figSet);
+  path <- Arguments$getWritablePath(path);
+
+  outSet <- getOutputDataSet(this);
+  nbrOfArrays <- nbrOfArrays(outSet);
+
+  verbose && enter(verbose, "Writing combined image for ", nbrOfArrays, " arrays");
+
+  verbose && printf(verbose, "Image dimension: %.0fx%.0f\n", width, height);
+
+  # Plot (log2(y),log2(y))
+  tags <- c("YvY,log2");
+  imgname <- paste(c("all", tags), collapse=",");
+  filename <- sprintf("%s.png", imgname);
+  pathname <- file.path(path, filename);
+
+  verbose && cat(verbose, "Image pathname: ", pathname);
+  if (!skip || !isFile(pathname)) {
+    pngDev(pathname, width=width, height=height);
+    tryCatch({
+      plotXYCurveLog2(this, ..., verbose=less(verbose));
+    }, finally = {
+      dev.off();
+    })
   }
 
   # Garbage collection
