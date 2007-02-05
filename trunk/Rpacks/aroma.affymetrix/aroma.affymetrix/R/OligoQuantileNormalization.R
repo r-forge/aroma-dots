@@ -108,7 +108,7 @@ setMethodS3("process", "OligoQuantileNormalization", function(this, ..., force=F
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Quantile normalizing data set");
+  verbose && enter(verbose, "Quantile normalizing (immitating oligo) data set");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already done?
