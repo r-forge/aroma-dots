@@ -73,15 +73,21 @@ setMethodS3("plotXYCurve", "numeric", function(x, y, lwd=2, col=1, dlwd=1, dcol=
   }
 
   # Estimate and draw smooth function
-  fit <- curveFit(x, y); 
   suppressWarnings({
+    fit <- doCall("smooth.spline", x=x, y=y, ...); 
     lines(fit, col=col, lwd=lwd, ...);
   })
 
-  rx <- range(x);
-  ry <- range(y);
-
   usr <- par("usr");
+
+  # Limit the density plot to the plot region and data range
+  rx <- range(x);
+  rx[1] <- max(rx[1], usr[1]);
+  rx[2] <- min(rx[2], usr[2]);
+
+  ry <- range(y);
+  ry[1] <- max(ry[1], usr[3]);
+  ry[2] <- min(ry[2], usr[4]);
 
   # Estimate density of x
   d <- density(x, from=rx[1], to=rx[2]);
