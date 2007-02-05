@@ -708,7 +708,8 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   # Retrieve data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cVerbose <- -(as.numeric(verbose) + 50);
-  cel <- readCel(this$.pathname, indices=indices, 
+  cel <- doCall("readCel", 
+                 filename=this$.pathname, indices=indices, 
                  readHeader=FALSE, 
                  readIntensities=("intensities" %in% fields), 
                  readStdvs=("stdvs" %in% fields), 
@@ -755,6 +756,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 
 ############################################################################
 # HISTORY:
+# 2007-02-04
+# o Now getData() is call readCel() using doCall() so that unused arguments
+#   in '...' are ignored.
 # 2007-02-03
 # o BUG FIX: getTimestamp() assumed a fix location in the CEL v3 header,
 #   but that did not work for dChip exported CEL files.  Now, a US date

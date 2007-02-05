@@ -45,9 +45,9 @@ setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typ
   extend(ProbeLevelTransform(...), "QuantileNormalization", 
     .subsetToUpdate = subsetToUpdate,
     .typesToUpdate = typesToUpdate,
+    .targetDistribution = targetDistribution,
     .subsetToAvg = subsetToAvg,
-    .typesToAvg = typesToAvg,
-    .targetDistribution = targetDistribution
+    .typesToAvg = typesToAvg
   )
 })
 
@@ -93,7 +93,16 @@ setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ...
   verbose && enter(verbose, "Getting target distribution");
 
   yTarget <- this$.targetDistribution;
-  if (force || is.null(yTarget)) {
+  if (inherits(yTarget, "AffymetrixCelFile")) {
+    df <- yTarget;
+    verbose && enter(verbose, "Reading distribution from baseline array");
+    verbose && cat(verbose, "Array: ", getFullName(df));
+    yTarget <- getData(df, field="intensities")$intensities;
+    yTarget <- sort(yTarget);
+    verbose && str(verbose, yTarget);
+    this$.targetDistribution <- yTarget;
+    verbose && exit(verbose);
+  } else if (force || is.null(yTarget)) {
     pathname <- getTargetDistributionPathname(this, verbose=less(verbose));
     verbose && print(verbose, pathname);
 
@@ -318,6 +327,9 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
 
 ############################################################################
 # HISTORY:
+# 2007-02-04
+# o Now QuantileNormalization() takes an AffymetrixCelFile as a target
+#   distribution too, cf argument 'targetDistribution'.
 # 2006-12-08
 # o Now this class inherits from the ProbePreprocessor class.
 # o Now this pre-processor output results to probeData/.

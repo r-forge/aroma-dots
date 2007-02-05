@@ -36,8 +36,10 @@ setConstructorS3("Transform", function(dataSet=NULL, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "AffymetrixCelSet"))
-      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", class(dataSet));
+    if (!inherits(dataSet, "AffymetrixCelSet")) {
+      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", 
+                                                          class(dataSet)[1]);
+    }
   }
 
   # Arguments '...':
