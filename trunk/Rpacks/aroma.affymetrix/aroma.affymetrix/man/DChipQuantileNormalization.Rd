@@ -1,0 +1,69 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  DChipQuantileNormalization.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ \name{DChipQuantileNormalization}
+\docType{class}
+\alias{DChipQuantileNormalization}
+
+
+ \title{The DChipQuantileNormalization class}
+
+ \description{
+  Package:  aroma.affymetrix \cr
+\bold{Class DChipQuantileNormalization}\cr
+
+\code{\link[R.oo]{Object}}\cr
+\code{~~|}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{QuantileNormalization}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{DChipQuantileNormalization}\cr
+
+\bold{Directly known subclasses:}\cr
+\cr
+
+public static class \bold{DChipQuantileNormalization}\cr
+extends \link[aroma.affymetrix]{QuantileNormalization}\cr
+
+
+
+  This class represents a special \code{\link{QuantileNormalization}} that immitates
+  the quantile normalization in the dChip software.
+ }
+
+ \usage{DChipQuantileNormalization(...)}
+
+ \arguments{
+   \item{...}{Arguments passed to the constructor of
+       \code{\link{QuantileNormalization}}.}
+ }
+
+ \section{Fields and Methods}{
+  \bold{Methods:}\cr
+\tabular{rll}{
+ \tab \code{\link[aroma.affymetrix:process.DChipQuantileNormalization]{process}} \tab Normalizes the data set.\cr
+}
+
+
+ \bold{Methods inherited from QuantileNormalization}:\cr
+process
+
+ \bold{Methods inherited from Transform}:\cr
+getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags
+
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
+
+ }
+
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\keyword{classes}

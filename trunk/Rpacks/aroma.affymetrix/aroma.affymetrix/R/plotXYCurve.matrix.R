@@ -12,7 +12,6 @@
 #
 # \arguments{
 #   \item{X, Y}{Two @numeric NxK @matrix.}
-#   \item{lwd}{The width of the curve.}
 #   \item{col}{A @vector of colors to be used for each of columns.}
 #   \item{lwd}{A @vector of line widths to be used for each of columns.}
 #   \item{xlim, ylim}{The x and y plotting limits.}

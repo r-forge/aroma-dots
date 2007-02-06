@@ -190,7 +190,7 @@
   highlight.ProbeLevelModel identifyCells
   identifyCells.AffymetrixCdfFile image270 importFeatureSet
   importFeatureSet.AffymetrixCelFile importFromCrlmmFile
-  importFromDChip importFromDChip.CnChipEffectSet indexOf
+  importFromDChip indexOf
   inferParameters inferParameters.CnChipEffectSet
   inferParameters.SnpChipEffectSet isDone.AptProbesetGenotype
   isDuplicated isInstalled isInstalled.PlatformDesign
@@ -278,3 +278,12 @@
   getDeviceResolution.default getNbrOfChrX
   getNbrOfChrX.SampleAnnotationFile readData.SampleAnnotationFile
   SampleAnnotationFile writeImage
+  as.character.TransformReport clearCache.TransformReport
+  getAlias.TransformReport getCdf.TransformReport getIncludePath
+  getIncludePath.ChromosomeExplorer getRootPath.TransformReport getYY
+  getYY.TransformReport nbrOfArrays.TransformReport
+  normalizeQuantileSpline plotXYCurve plotXYCurve.TransformReport
+  plotXYCurveLog2 plotXYCurveLog2.TransformReport seq.TransformReport
+  setAlias.TransformReport writeImageCombined
+  writeImageCombined.TransformReport writeImages
+  writeImages.TransformReport

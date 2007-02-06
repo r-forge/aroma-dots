@@ -1,7 +1,15 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.3.6 [2007-02-05xx]
+Version: 0.3.7 [2007-02-06xxx]
+o From now on all reporters and explorer utilizes the root path
+  reports/, and the path to an image file should be 
+  reports/<dataSetName>/<tags>/<chipType>/<set>/.
+  The latter subdirectory was added to avoid potential naming
+  conflicts for different reporter or explorer classes.
+o Remove package dir doc/.  Not used.
+
+Version: 0.3.6 [2007-02-05]
 o Added support to import dChip-exported CEL files.  See
   importFromDChip() in AffymetrixCelSet.
 o Now QuantileNormalization() takes an AffymetrixCelFile as a 

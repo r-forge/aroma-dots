@@ -521,8 +521,11 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
   # Chip type    
   chipType <- getChipType(this);
 
+  # Set type    
+  set <- "glad";
+
   # The full path
-  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+  path <- filePath(rootPath, fullname, chipType, set, expandLinks="any");
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))
@@ -771,9 +774,9 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Get pathname
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Add tags chrNN,glad,<reference tags>
+      # Add tags chrNN,<reference tags>
       tags <- c(ceTags, sprintf("chr%02d", chrIdx));
-      tags <- c(tags, "glad", refTags);
+      tags <- c(tags, refTags);
       fullname <- paste(c(arrayName, tags), collapse=",");
       filename <- sprintf("%s.xdr", fullname);
       pathname <- filePath(path, filename);
@@ -890,15 +893,23 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Output path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rootPath <- "ce";
+  rootPath <- "reports";
 
   # Get chip type
   chipType <- getChipType(this);
 
+  # Data set name
+  name <- getName(this);
+
+  # Data set tags
+  tags <- paste(getTags(this), collapse=",");
+
+  # Image set
+  set <- "glad";
+
   # The figure path
   if (is.null(path)) {
-    modelName <- paste(getTags(this), collapse=",");
-    path <- filePath(rootPath, getName(this), modelName, chipType, expandLinks="any");
+    path <- filePath(rootPath, name, tags, chipType, set, expandLinks="any");
     path <- filePath(path, expandLinks="any");
   }
   mkdirs(path);
@@ -1207,7 +1218,7 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=NULL, format=c("x
   mkdirs(path);
 
   if (oneFile) {
-    filename <- sprintf("%s,GLAD,regions.%s", fullname, format); 
+    filename <- sprintf("%s,regions.%s", fullname, format); 
     pathname <- filePath(path, filename);
     pathname <- Arguments$getWritablePathname(pathname);
     if (!skip && isFile(pathname)) {
@@ -1280,7 +1291,7 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=NULL, format=c("x
 
     if (!oneFile) {
       savename <- name;
-      filename <- sprintf("%s,GLAD,regions.%s", savename, format); 
+      filename <- sprintf("%s,regions.%s", savename, format); 
       pathname <- filePath(path, filename);
       if (!oneFile && !skip && isFile(pathname))
         file.remove(pathname);
@@ -1332,6 +1343,8 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-02-06
+# o Updated the path to <rootPath>/<dataSetName>/<tags>/<chipType>/<set>/.
 # 2007-01-25
 # o Added so that plot() generates fixed sized horizontal margins (50px),
 #   so that we can infer the relative genomic location from the horisontal

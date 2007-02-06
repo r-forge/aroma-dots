@@ -13,7 +13,10 @@
 # \arguments{
 #   \item{x}{a @numeric @vector of length \eqn{N}.}
 #   \item{xTarget}{a @numeric @vector of length \eqn{M}.}
+#   \item{sort}{If @TRUE, argument \code{xTarget} is sorted.}
 #   \item{...}{Not used.}
+#   \item{robust}{If @TRUE, the normalization function is 
+#      estimated robustly.}
 # }
 #
 # \value{
