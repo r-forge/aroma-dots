@@ -78,6 +78,4 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-\keyword{internal}
-\keyword{methods}
 \keyword{classes}

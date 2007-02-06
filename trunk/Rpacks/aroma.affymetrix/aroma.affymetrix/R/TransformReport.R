@@ -67,7 +67,6 @@ setMethodS3("clearCache", "TransformReport", function(this, ...) {
 
 
 setMethodS3("getRootPath", "TransformReport", function(this, ...) {
-  sprintf("pp%s", capitalize(class(this)[1]));
   "reports";
 }, private=TRUE)
 
@@ -244,8 +243,11 @@ setMethodS3("getPath", "TransformReport", function(this, ...) {
   chipType <- getChipType(cdf);
   chipType <- gsub("[,-]monocell$", "", chipType);  # AD HOC? /HB 2006-12-08
 
+  # Image set
+  set <- "transform";
+
   # The full path
-  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+  path <- filePath(rootPath, fullname, chipType, set, expandLinks="any");
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))
@@ -533,6 +535,8 @@ setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, w
 
 ############################################################################
 # HISTORY:
+# 2007-02-06
+# o Updated the path to <rootPath>/<dataSetName>/<tags>/<chipType>/<set>/.
 # 2007-02-04
 # o Created.
 ############################################################################

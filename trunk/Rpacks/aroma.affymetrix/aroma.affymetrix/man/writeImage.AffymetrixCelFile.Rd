@@ -22,6 +22,15 @@
 \usage{\method{writeImage}{AffymetrixCelFile}(this, filename=NULL, fullname=getFullName(this), tags=c("*", "gray"), imgFormat="png", path=NULL, ..., verbose=FALSE)}
 
 \arguments{
+  \item{filename}{A \code{\link[base]{character}} string specifying the filename of
+    the output file.}
+  \item{fullname}{A \code{\link[base]{character}} string specifying the full name of
+    the output file.}
+  \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of optional tags added to the
+    already existing tags of the CEL file.}
+  \item{imgFormat}{A \code{\link[base]{character}} string specifying the filename extension
+    which also defines the image file format.}
+  \item{path}{The path where the image file is stored.}
   \item{...}{Arguments passed to \code{\link[aroma.affymetrix:getImage.AffymetrixCelFile]{*getImage}()}.}
   \item{verbose}{A \code{\link[base]{logical}} or a \code{\link[R.utils]{Verbose}} object.}
 }

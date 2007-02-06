@@ -993,10 +993,27 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, ...) {
 setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, fullname=getFullName(this), tags=c("*", "gray"), imgFormat="png", path=NULL, ..., verbose=FALSE) {
   # Argument 'path':
   if (is.null(path)) {
-    rootPath <- "images";
+    rootPath <- "reports";
+
+    # Infer the data set name and the tags from the path
+    path <- getPath(this);
+    parent <- getParent(path); # chip type
+    parent <- getParent(path); # data set
+    parts <- unlist(strsplit(basename(parent), split=","));
+    dataSet <- parts[1];
+    dataSetTags <- parts[-1];
+    if (length(dataSetTags) == 0)
+      dataSetTags <- "raw";
+
+    # chip type
     cdf <- getCdf(this);
     chipType <- getChipType(cdf);
-    path <- filePath(rootPath, chipType, expandLinks="any");
+    chipType <- gsub("[,-]monocell$", "", chipType);
+
+    # image set
+    set <- "spatial";
+
+    path <- filePath(rootPath, dataSet, dataSetTags, chipType, set, expandLinks="any");
   }
   path <- Arguments$getWritablePath(path);
 
@@ -1032,6 +1049,9 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
   verbose && exit(verbose);
 
+  # Return pathname too
+  attr(img, "pathname") <- pathname;
+
   invisible(img);
 })
 
@@ -1039,6 +1059,9 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2007-02-06
+# o Now writeImage() writes image files to 
+#   <rootPath>/<dataSet>/<tags>/<chipType>/<set>/.
 # 2007-02-03
 # o plotDensity() now make sure aroma.light is loaded.
 # 2007-01-30

@@ -26,10 +26,8 @@
   \item{field}{}
   \item{transform}{}
   \item{interleaved}{}
-  \item{col}{}
-  \item{outlierCol}{}
-  \item{main}{}
   \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:getRectangle.AffymetrixCelFile]{*getRectangle}()}.}
+  \item{zoom}{}
   \item{verbose}{A \code{\link[base]{logical}} or a \code{\link[R.utils]{Verbose}} object.}
 }
 

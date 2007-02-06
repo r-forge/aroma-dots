@@ -1,0 +1,54 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  normalizeQuantileSpline.numeric.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\name{normalizeQuantileSpline.numeric}
+\alias{normalizeQuantileSpline.numeric}
+\alias{normalizeQuantileSpline.numeric}
+
+
+\title{Normalizes the empirical distribution of a single sample to a target distribution}
+
+\usage{\method{normalizeQuantileSpline}{numeric}(x, xTarget, sort=TRUE, ..., robust=TRUE)}
+
+\description{
+  Normalizes the empirical distribution of a single sample to a target distribution.
+}
+
+\arguments{
+  \item{x}{a \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{N}.}
+  \item{xTarget}{a \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{M}.}
+  \item{sort}{If \code{\link[base:logical]{TRUE}}, argument \code{xTarget} is sorted.}
+  \item{...}{Not used.}
+  \item{robust}{If \code{\link[base:logical]{TRUE}}, the normalization function is
+     estimated robustly.}
+}
+
+\value{
+  Returns a \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{N}.
+}
+
+\section{Missing values}{
+  Both argument \code{X} and \code{xTarget} may contain non-finite values.
+  These values do not affect the estimation of the normalization function.
+  Non-finite values in \code{X}, remain in the output.
+}
+
+\seealso{
+  \code{\link{normalizeQuantileSpline.matrix}}().
+}
+
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+
+
+
+\keyword{methods}
+\keyword{nonparametric}
+\keyword{multivariate}
+\keyword{robust}

@@ -120,7 +120,7 @@ function locatorUpdated() {
 
   /* Update CNR link */
   if (cnrUrl != null) {
-    url = chipType + '/' + 'regions.xls';
+    url = chipType + '/glad/' + 'regions.xls';
     cnrUrl.href = url;
     updateText(cnrUrl, url);
   }
@@ -343,7 +343,7 @@ function getImagePathname(chipType, sample, chromosome, zoom) {
 
 function getImagePathname(chipType, sample, chromosome, zoom) {
   imgName = sample + ",glad" + ",chr" + padWidthZeros(chromosome, 2) + ",x" + padWidthZeros(zoom, 4) + ".png";
-  var pathname = chipType + '/' + imgName;
+  var pathname = chipType + '/glad/' + imgName;
   return(pathname);
 }
 

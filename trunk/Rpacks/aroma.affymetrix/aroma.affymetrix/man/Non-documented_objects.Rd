@@ -474,7 +474,6 @@
 \alias{importFeatureSet.AffymetrixCelFile}
 \alias{importFromCrlmmFile}
 \alias{importFromDChip}
-\alias{importFromDChip.CnChipEffectSet}
 \alias{indexOf}
 \alias{inferParameters}
 \alias{inferParameters.CnChipEffectSet}
@@ -699,6 +698,27 @@
 \alias{readData.SampleAnnotationFile}
 \alias{SampleAnnotationFile}
 \alias{writeImage}
+\alias{as.character.TransformReport}
+\alias{clearCache.TransformReport}
+\alias{getAlias.TransformReport}
+\alias{getCdf.TransformReport}
+\alias{getIncludePath}
+\alias{getIncludePath.ChromosomeExplorer}
+\alias{getRootPath.TransformReport}
+\alias{getYY}
+\alias{getYY.TransformReport}
+\alias{nbrOfArrays.TransformReport}
+\alias{normalizeQuantileSpline}
+\alias{plotXYCurve}
+\alias{plotXYCurve.TransformReport}
+\alias{plotXYCurveLog2}
+\alias{plotXYCurveLog2.TransformReport}
+\alias{seq.TransformReport}
+\alias{setAlias.TransformReport}
+\alias{writeImageCombined}
+\alias{writeImageCombined.TransformReport}
+\alias{writeImages}
+\alias{writeImages.TransformReport}
 
 \description{
   This page contains aliases for all "non-documented" objects that

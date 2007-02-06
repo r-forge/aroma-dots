@@ -18,7 +18,7 @@
 #   \item{dcol}{The fill color of the interior of the density curves.}
 #   \item{xlim, ylim}{The x and y plotting limits.}
 #   \item{xlab, ylab}{The x and y labels.}
-#   \item{curveFcn}{The @function used to fit the curve.  The two first
+#   \item{curveFit}{The @function used to fit the curve.  The two first
 #     arguments of the function must take \code{x} and \code{y}, and the
 #     function must return a @list with fitted elements \code{x} and 
 #     \code{y}.}

@@ -395,7 +395,7 @@ setMethodS3("getFullName", "ChromosomeExplorer", function(this, ...) {
 
 
 setMethodS3("getRootPath", "ChromosomeExplorer", function(this, ...) {
-  "ce";
+  "reports";
 }, private=TRUE)
 
 
@@ -417,8 +417,11 @@ setMethodS3("getPath", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
   chipType <- getChipType(model);
 
+  # Image set
+  set <- "glad";
+
   # The full path
-  path <- filePath(rootPath, name, tags, chipType, expandLinks="any");
+  path <- filePath(rootPath, name, tags, chipType, set, expandLinks="any");
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))
@@ -474,11 +477,30 @@ setMethodS3("getTemplatePath", "ChromosomeExplorer", function(this, ..., verbose
   verbose && enter(verbose, "Locating template files for ChromosomeExplorer");
   # Search for template files
   rootPath <- getRootPath(this);
-  path <- filePath(rootPath, ".template", expandLinks="any");
+  path <- filePath(rootPath, "templates", expandLinks="any");
   if (!isDirectory(path)) {
-    path <- system.file("chromosomeExplorer", "includes", 
-                                            package="aroma.affymetrix");
+    path <- system.file("reports", "templates", package="aroma.affymetrix");
   }
+  verbose && exit(verbose);
+
+  path;
+}, private=TRUE)
+
+
+setMethodS3("getIncludePath", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Locating include files for ChromosomeExplorer");
+  # Search for include files
+  path <- system.file("reports", "includes", package="aroma.affymetrix");
   verbose && exit(verbose);
 
   path;
@@ -532,7 +554,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 
   verbose && enter(verbose, "Compiling samples.js");
   srcPath <- getTemplatePath(this);
-  pathname <- filePath(srcPath, "rsp", "samples.js.rsp");
+  pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "samples.js.rsp");
   verbose && cat(verbose, "Source: ", pathname);
   outFile <- gsub("[.]rsp$", "", basename(pathname));
   outPath <- getParent(parentPath);
@@ -597,11 +619,10 @@ setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., force=FALSE
 
   verbose && enter(verbose, "Setting up ", class(this)[1], " report files");
 
-  srcPath <- getTemplatePath(this);
-
   destPath <- filePath(getRootPath(this), "includes");
   if (force || !isDirectory(destPath)) {
     verbose && enter(verbose, "Copying template files");
+    srcPath <- getIncludePath(this);
     verbose && cat(verbose, "Source path: ", srcPath);
     verbose && cat(verbose, "Destination path: ", destPath);
     pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE);
@@ -624,7 +645,7 @@ setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, ..., force=FALS
 
 
   srcPath <- getTemplatePath(this);
-  srcPathname <- filePath(srcPath, "html", "index.html");
+  srcPathname <- filePath(srcPath, "html", "ChromosomeExplorer", "index.html");
   outPath <- getParent(getPath(this));
   outPathname <- filePath(outPath, "index.html");
 
@@ -821,6 +842,7 @@ setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) 
   # The path to the explorer HTML document
   path <- getPath(this);
   path <- getParent(path);
+  path <- getParent(path);
   pathname <- filePath(path, "index.html", expandLinks="any");
 
   # Just in case, is setup needed?
@@ -846,6 +868,9 @@ setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) 
 
 ##############################################################################
 # HISTORY:
+# 2007-02-06
+# o Now templates are in reports/templates/ and includes in reports/includes/.
+# o Updated the path to <rootPath>/<dataSetName>/<tags>/<chipType>/<set>/.
 # 2007-01-17
 # o Now all 'arrays' arguments can contain array names.
 # o Added getArrays() and setArrays() in order to focus on a subset of the
