@@ -63,6 +63,7 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, xTarget, sort=TRUE
   ok <- (is.finite(xx) & is.finite(xTarget));
   xx <- xx[ok];
   xTarget <- xTarget[ok];
+  rm(ok); # Not needed anymore
 
   if (robust) {
     fit <- smooth.spline(x=xx, y=xTarget, ...);
@@ -70,12 +71,14 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, xTarget, sort=TRUE
     fit <- robustSmoothSpline(x=xx, y=xTarget, ...);
   }
 
-  # Get the normalized data
-  xN <- x;
-  ok <- is.finite(x);
-  xN[ok] <- predict(fit, x=x[ok])$y;
+  # Not needed anymore
+  rm(xx, xTarget);
 
-  xN;
+  # Normalize the data
+  ok <- is.finite(x);
+  x[ok] <- predict(fit, x=x[ok])$y;
+
+  x;
 }) # normalizeQuantileSpline.numeric()
 
 
