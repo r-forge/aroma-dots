@@ -411,6 +411,7 @@ sourceDirectory("/home/users/lab0605/ksimpson/projects/affy/devel/aroma.affymetr
   
   pm <- getData(this, indices=pmi, "intensities")$intensities;
   if (addJitter) {
+    set.seed(6022007);
     pm <- pm + rnorm(length(pm), mean=0, sd=jitterSd);
   }
   clearCache(this);
