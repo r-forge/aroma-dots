@@ -119,22 +119,7 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get paths to search
-  settings <- getOption("aroma.affymetrix.settings");
-  paths <- settings$paths$annotationData;
-  if (is.null(paths)) {
-    paths <- "annotationData";
-  } else {
-    # Split path strings by semicolons.
-    paths <- unlist(strsplit(paths, split=";"));
-  }
-
-  # Expand any file system links
-  paths <- file.path(paths, "chipTypes", chipType);
-  paths <- sapply(paths, FUN=filePath, expandLinks="any");
-
-  # Search recursively for all matching files
-  pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+  pathname <- findAnnotationDataByChipType(chipType, pattern);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # As a backup, search "old" style (code by Ken Simpson)

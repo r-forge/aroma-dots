@@ -20,7 +20,7 @@
  Creates a mono-cell version of the CDF.
 }
 
-\usage{\method{createMonoCell}{AffymetrixCdfFile}(this, chipType=getChipType(this), suffix="monocell", sep="-", path="cdf", nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE)}
+\usage{\method{createMonoCell}{AffymetrixCdfFile}(this, chipType=getChipType(this), suffix="monocell", sep="-", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE)}
 
 \arguments{
   \item{chipType}{The chip type of the new CDF.}

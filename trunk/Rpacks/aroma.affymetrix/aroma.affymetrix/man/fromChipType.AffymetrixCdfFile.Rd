@@ -16,7 +16,7 @@
 \title{Defines an AffymetrixCdfFile object by chip type}
 
 \description{
- Defines an AffymetrixCdfFile object by chip type utilizing the \code{\link[affxparser]{findCdf}} method.
+ Defines an AffymetrixCdfFile object by chip type.
 }
 
 \synopsis{fromChipType.AffymetrixCdfFile(static, chipType, ...)}

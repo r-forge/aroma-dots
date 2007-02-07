@@ -19,7 +19,7 @@
  Defines a DChipSnpInformation object by chip type.
 }
 
-\usage{\method{fromChipType}{DChipSnpInformation}(static, chipType, rootPath="annotations", version=NULL, pattern=NULL, ...)}
+\usage{\method{fromChipType}{DChipSnpInformation}(static, chipType, version=NULL, ...)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}

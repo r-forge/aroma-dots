@@ -439,8 +439,8 @@ setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=80
   name <- getName(this);
   tags <- getTags(this);
   tags <- paste(tags, collapse=",");
-  figSet <- class(this)[1];
-  path <- file.path(rootPath, name, tags, chipType, figSet);
+  set <- "transform";
+  path <- file.path(rootPath, name, tags, chipType, set);
   path <- Arguments$getWritablePath(path);
 
   outSet <- getOutputDataSet(this);
@@ -497,8 +497,8 @@ setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, w
   name <- getName(this);
   tags <- getTags(this);
   tags <- paste(tags, collapse=",");
-  figSet <- class(this)[1];
-  path <- file.path(rootPath, name, tags, chipType, figSet);
+  set <- "transform";
+  path <- file.path(rootPath, name, tags, chipType, set);
   path <- Arguments$getWritablePath(path);
 
   outSet <- getOutputDataSet(this);
