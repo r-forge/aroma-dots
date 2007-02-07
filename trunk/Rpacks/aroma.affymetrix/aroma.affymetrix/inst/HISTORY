@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.3.7 [2007-02-06xxx]
+Version: 0.4.0 [2007-02-06xxx]
 o Now any annotation file for chip type <chipType> may be located 
   under annotationData/chipTypes/<chipType>/. This directory 
   structure is preferred, because this will allow you to collect 
