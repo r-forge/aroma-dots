@@ -43,7 +43,7 @@ setMethodS3("forDataSet", "GdasAnnotationSet", function(static, dataSet, path="a
 }, static=TRUE)
 
 
-setMethodS3("fromFiles", "GdasAnnotationSet", function(static, path="annotations", ...) {
+setMethodS3("fromFiles", "GdasAnnotationSet", function(static, path, ...) {
   path <- Arguments$getReadablePath(path, mustExist=TRUE);
 
   pattern <- "[.]tsv$";

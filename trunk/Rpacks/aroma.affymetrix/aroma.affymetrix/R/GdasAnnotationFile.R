@@ -21,19 +21,49 @@ setMethodS3("clearCache", "GdasAnnotationFile", function(this, ...) {
 
 
 
-setMethodS3("fromChipType", "GdasAnnotationFile", function(static, chipType, what, path="annotations", ...) {
-  # Argument 'chipType':
-  if (inherits(chipType, "AffymetrixCdfFile")) {
-    chipType <- getChipType(chipType);
-  } else if (is.character(chipType)) {
+setMethodS3("findByChipType", "GdasAnnotationFile", function(static, chipType, what, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search in annotationData/chipTypes/<chipType>/
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get paths to search
+  settings <- getOption("aroma.affymetrix.settings");
+  paths <- settings$paths$annotationData;
+  if (is.null(paths)) {
+    paths <- "annotationData";
   } else {
-    throw("Argument 'chipType' must be a character string or an AffymetrixCdfFile object: ", class(chipType)[1]);
+    # Split path strings by semicolons.
+    paths <- unlist(strsplit(paths, split=";"));
   }
 
-  fullname <- sprintf("%s_%s", chipType, what);
-  filename <- sprintf("%s.tsv", fullname);
+  # Expand any file system links
+  paths <- file.path(paths, "chipTypes", chipType);
+  paths <- sapply(paths, FUN=filePath, expandLinks="any");
 
-  newInstance(static, filename=filename, path=path, ...);
+  # Search recursively for all CDF files
+  pattern <- sprintf("^%s_%s[.]tsv$", chipType, what);
+  pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # As a backup, search using "old" style
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(pathname)) {
+    path <- "annotations";
+    fullname <- sprintf("%s_%s", chipType, what);
+    filename <- sprintf("%s.tsv", fullname);
+    pathname <- filePath(path, filename, expandLinks="any");
+    if (!isFile(pathname))
+      pathname <- NULL;
+  }
+
+  pathname;
+})
+
+
+setMethodS3("fromChipType", "GdasAnnotationFile", function(static, chipType, what, ...) {
+  # Search for GDAS annotation file
+  pathname <- static$findByChipType(chipType, what=what);
+
+  newInstance(static, pathname, ...);
 }, static=TRUE)
 
 
