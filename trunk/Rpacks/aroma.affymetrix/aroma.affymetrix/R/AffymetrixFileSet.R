@@ -1016,6 +1016,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2007-02-07
+# o Added sapply().
 # 2007-01-14
 # o Added a test for "unknown" (=unused) arguments to constructor.
 # 2006-01-07
