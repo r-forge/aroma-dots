@@ -383,8 +383,56 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
 })
 
 
+setMethodS3("findByName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, paths=c("rawData", "probeData"), ...) {
+  # Look only in existing directories
+  paths <- sapply(paths, FUN=filePath, expandLinks="any");
+  paths <- paths[sapply(paths, FUN=isDirectory)];
+  if (length(paths) == 0) {
+    throw("None of the data directories exist: ", 
+                                           paste(paths, collapse=", "));
+  }
 
-setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="chip_data/", pattern="[.](c|C)(e|E)(l|L)$", ..., fileClass="AffymetrixCelFile", verbose=FALSE) {
+  # The full name of the data set
+  fullname <- paste(c(name, tags), collapse=",");
+
+  # Look for matching data sets
+  paths <- file.path(paths, fullname);
+  paths <- paths[sapply(paths, FUN=isDirectory)];
+  if (length(paths) == 0)
+    return(NULL);
+
+  # Look for matching chip type sets?
+  if (!is.null(chipType)) {
+    paths <- file.path(paths, chipType);
+    paths <- paths[sapply(paths, FUN=isDirectory)];
+    if (length(paths) == 0)
+      return(NULL);
+  }
+
+  if (length(paths) > 1) {
+    warning("Found duplicated data set: ", paste(paths, collapse=", "));
+    paths <- paths[1];
+  }
+  
+  paths;
+}, static=TRUE)
+
+
+setMethodS3("fromName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType, ...) {
+  suppressWarnings({
+    path <- static$findByName(name, tags=tags, chipType=chipType, ...);
+  })
+  if (is.null(path)) {
+    path <- file.path(paste(c(name, tags), collapse=","), chipType);
+    throw("Cannot create AffymetrixCelSet.  No such directory: ", path);
+  }
+
+  suppressWarnings({
+    static$fromFiles(path, ...);
+  })
+}, static=TRUE)
+
+setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", ..., fileClass="AffymetrixCelFile", verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -1129,6 +1177,8 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-02-06
+# o Added static method findByName() and fromName().
 # 2007-01-15
 # o Added 'classes=class(this)' to all "digest" keys.
 # 2007-01-07

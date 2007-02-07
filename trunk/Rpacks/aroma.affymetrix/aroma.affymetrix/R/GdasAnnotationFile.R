@@ -25,23 +25,8 @@ setMethodS3("findByChipType", "GdasAnnotationFile", function(static, chipType, w
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get paths to search
-  settings <- getOption("aroma.affymetrix.settings");
-  paths <- settings$paths$annotationData;
-  if (is.null(paths)) {
-    paths <- "annotationData";
-  } else {
-    # Split path strings by semicolons.
-    paths <- unlist(strsplit(paths, split=";"));
-  }
-
-  # Expand any file system links
-  paths <- file.path(paths, "chipTypes", chipType);
-  paths <- sapply(paths, FUN=filePath, expandLinks="any");
-
-  # Search recursively for all CDF files
   pattern <- sprintf("^%s_%s[.]tsv$", chipType, what);
-  pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+  pathname <- findAnnotationDataByChipType(chipType, pattern);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # As a backup, search using "old" style

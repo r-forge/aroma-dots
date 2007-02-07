@@ -54,23 +54,8 @@ setMethodS3("findByChipType", "DChipSnpInformation", function(static, chipType, 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get paths to search
-  settings <- getOption("aroma.affymetrix.settings");
-  paths <- settings$paths$annotationData;
-  if (is.null(paths)) {
-    paths <- "annotationData";
-  } else {
-    # Split path strings by semicolons.
-    paths <- unlist(strsplit(paths, split=";"));
-  }
-
-  # Expand any file system links
-  paths <- file.path(paths, "chipTypes", chipType);
-  paths <- sapply(paths, FUN=filePath, expandLinks="any");
-
-  # Search recursively for the dChip genome information file
   pattern <- sprintf("^.*( |_)snp( |_)info(| |_).*%s[.](txt|xls)$", version);
-  pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+  pathname <- findAnnotationDataByChipType(chipType, pattern);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
