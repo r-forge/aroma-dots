@@ -535,10 +535,71 @@ setMethodS3("writeChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE
   invisible(outPathname);
 })
 
+
+setMethodS3("readChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  pathname <- getPathname(this);
+  outPathname <- sprintf("%s.md5", pathname);
+
+  verbose && enter(verbose, "Reading checksum");
+  checksum <- readLines(outPathname, warn=FALSE);
+  verbose && exit(verbose);
+
+  checksum;
+})
+
+
+setMethodS3("compareChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  pathname <- getPathname(this);
+  outPathname <- sprintf("%s.md5", pathname);
+
+  verbose && enter(verbose, "Comparing checksum");
+  checksum <- getChecksum(this, verbose=less(verbose));
+  checksum2 <- readLines(outPathname, warn=FALSE);
+  verbose && exit(verbose);
+
+  (checksum == checksum2);
+})
+
+
+setMethodS3("validateChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Validating checksum");
+  pathname <- getPathname(this);
+  if (compareChecksum(this, ..., verbose=less(verbose))) {
+    throw("The calculated checksum and the checksum store on file do not match: ", pathname);
+  }
+  verbose && exit(verbose);
+
+  invisible();
+})
+
 ############################################################################
 # HISTORY:
 # 2007-02-07
-# o Added getChecksum() and writeChecksum().
+# o Added getChecksum(), writeChecksum(), readChecksum(), and 
+#   compareChecksum() and validateChecksum(). I did this because I noticed 
+#   by chance that some of my CEL files transferred via an external HDD got
+#   corrupt probe signals.
 # 2007-01-14
 # o Added a test for "unknown" (=unused) arguments to constructor.
 # 2007-01-07
