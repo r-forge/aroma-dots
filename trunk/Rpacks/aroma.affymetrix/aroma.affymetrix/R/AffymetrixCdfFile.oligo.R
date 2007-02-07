@@ -13,7 +13,7 @@ setMethodS3("cleanToRealChipType", "AffymetrixCdfFile", function(static, cleanCd
   # We have to turn to an ad hoc solution.
 
   #  1) Find all unique known CDF files
-  cdfFiles <- findCdf(firstOnly=FALSE);
+  cdfFiles <- static$findByChipType(firstOnly=FALSE);
   cdfNames <- basename(cdfFiles);
   cdfNames <- gsub("[.](c|C)(d|D)(f|F)$", "", cdfNames);
   cdfNames <- gsub("[.]text$", "", cdfNames);

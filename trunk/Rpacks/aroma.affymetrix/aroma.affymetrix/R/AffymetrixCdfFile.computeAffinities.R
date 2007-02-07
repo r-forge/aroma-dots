@@ -49,7 +49,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
     on.exit(popState(verbose));
   }
 
-  chipType <- getChipType(this)
+  chipType <- getChipType(this);
 
 
   verbose && enter(verbose, "Computing GCRMA probe affinities for ", nbrOfUnits(this), " units");
@@ -64,27 +64,13 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # try to find probe sequence file
+  # Locate find probe sequence file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Searching for probe sequence file");
-  if (is.null(paths)) {
-    paths <- paste(".",
-                   getOption("AFFX_SEQUENCE_PATH"),
-                   Sys.getenv("AFFX_SEQUENCE_PATH"),
-                   "sequence/", "data/sequence/",
-                   getOption("AFFX_CDF_PATH"),
-                   Sys.getenv("AFFX_CDF_PATH"),
-                   "cdf/", "data/cdf/",
-                   sep=";", collapse=";");
-  }
-
-  pattern <- paste(chipType, "_probe_tab", sep="");
-  verbose && cat(verbose, "Filename pattern: ", pattern);
-
-  psFile <- findFiles(pattern=pattern, paths=paths, firstOnly=TRUE);
+  psFile <- AffymetrixProbeTabFile$findByChipType(chipType=getChipType(this), 
+                                         paths=paths, verbose=less(verbose));
   if (is.null(psFile)) 
     throw("Could not locate probe sequence file: ", pattern);
-  verbose && cat(verbose, "Pathname: ", psFile);
+  verbose && cat(verbose, "Probe-sequence pathname: ", psFile);
   verbose && exit(verbose);
 
   
@@ -292,6 +278,9 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 ############################################################################
 # HISTORY:
+# 2007-02-06
+# o Now computeAffinities() is locating the Affymetrix' probe-sequence file
+#   using AffymetrixProbeTabFile$findByChipType().
 # 2006-10-09
 # o Added caching to file.
 # o Now default probe affinity is NA (for non estimated probes).

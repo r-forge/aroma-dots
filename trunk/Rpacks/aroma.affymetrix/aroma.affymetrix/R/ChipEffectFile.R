@@ -125,7 +125,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
   verbose && cat(verbose, "Chip type for chip effects: ", getChipType(sourceCdf));
 
   # Search for CDF
-  cdf <- findCdf(chipType);
+  cdf <- AffymetrixCdfFile$findByChipType(chipType);
   if (is.null(cdf)) {
     verbose && cat(verbose, "Pathname: Not found!");
     verbose && cat(verbose, "Will create CDF for the chip-effect files from the original CDF. NOTE: This will take several minutes or more!");

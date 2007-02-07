@@ -131,7 +131,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 # @title "Defines an AffymetrixCdfFile object by chip type"
 #
 # \description{
-#  @get "title" utilizing the @see "affxparser::findCdf" method.
+#  @get "title".
 # }
 #
 # @synopsis
@@ -157,13 +157,82 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 # @keyword programming
 #*/###########################################################################
 setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, chipType, ...) {
-  pathname <- findCdf(chipType);
+  pathname <- static$findByChipType(chipType);
   if (is.null(pathname)) {
     throw("Could not create ", class(static)[1], " object. No CDF file with that chip type found: ", chipType);
   }
 
   fromFile(static, filename=pathname, path=NULL, ...);
 }, static=TRUE)
+
+
+
+
+###########################################################################/**
+# @RdocMethod findByChipType
+#
+# @title "Locates a CDF file from its chip type"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{chipType}{A @character string.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a pathname as a @character string to the first CDF file found.
+#  If non CDF with requested chip type was found, @NULL is returned.
+# }
+#
+# @author
+#
+# \details{
+# }
+#
+# \seealso{
+#   @seemethod "fromChipType".
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/###########################################################################
+setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search in annotationData/chipTypes/<chipType>/
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get paths to search
+  settings <- getOption("aroma.affymetrix.settings");
+  paths <- settings$paths$annotationData;
+  if (is.null(paths)) {
+    paths <- "annotationData";
+  } else {
+    # Split path strings by semicolons.
+    paths <- unlist(strsplit(paths, split=";"));
+  }
+
+  # Expand any file system links
+  paths <- file.path(paths, "chipTypes", chipType);
+  paths <- sapply(paths, FUN=filePath, expandLinks="any");
+
+  # Search recursively for all CDF files
+  pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
+  pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # As a backup, search using affxparser
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(pathname)) {
+    pathname <- findCdf(chipType);
+  }
+
+  pathname;
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -1045,6 +1114,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-02-06
+# o Added findByChipType().
 # 2007-01-16
 # o Now all cache keys contains method name, class name, and chip type.
 # 2007-01-10

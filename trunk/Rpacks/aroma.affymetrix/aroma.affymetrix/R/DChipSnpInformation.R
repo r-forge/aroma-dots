@@ -44,6 +44,56 @@ setConstructorS3("DChipSnpInformation", function(...) {
   this;
 })
 
+
+
+setMethodS3("findByChipType", "DChipSnpInformation", function(static, chipType, version=NULL, ...) {
+  # Argument 'version':
+  if (is.null(version))
+    version <- ".*";
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search in annotationData/chipTypes/<chipType>/
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get paths to search
+  settings <- getOption("aroma.affymetrix.settings");
+  paths <- settings$paths$annotationData;
+  if (is.null(paths)) {
+    paths <- "annotationData";
+  } else {
+    # Split path strings by semicolons.
+    paths <- unlist(strsplit(paths, split=";"));
+  }
+
+  # Expand any file system links
+  paths <- file.path(paths, "chipTypes", chipType);
+  paths <- sapply(paths, FUN=filePath, expandLinks="any");
+
+  # Search recursively for the dChip genome information file
+  pattern <- sprintf("^.*( |_)snp( |_)info(| |_).*%s[.](txt|xls)$", version);
+  pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # As a backup search the "old" style
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(pathname)) {
+    path <- filePath("annotations", chipType, expandLinks="any");
+    if (isDirectory(path)) {
+      pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
+      nfiles <- length(pathnames);
+      if (nfiles > 1) {
+        pathnames <- sort(pathnames);
+        warning("Found more than one matching dChip genome information file, but returning only the last one: ", paste(pathnames, collapse=", "));
+        pathnames <- rev(pathnames);
+        pathname <- pathnames[1];
+      }
+    }
+  }
+
+  pathname;
+}, static=TRUE, protected=TRUE)
+
+
 ###########################################################################/**
 # @RdocMethod fromChipType
 #
@@ -80,34 +130,11 @@ setConstructorS3("DChipSnpInformation", function(...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromChipType", "DChipSnpInformation", function(static, chipType, rootPath="annotations", version=NULL, pattern=NULL, ...) {
-  # Argument 'rootPath' & 'chipType':
-  rootPath <- Arguments$getReadablePath(rootPath, mustExist=TRUE);
-  path <- filePath(rootPath, chipType, expandLinks="any");
-  path <- Arguments$getReadablePath(path, mustExist=TRUE);
-
-  # Search for SNP information files
-  if (is.null(version))
-    version <- ".*";
-
-  # Create a filename pattern
-  if (is.null(pattern)) {
-    pattern <- sprintf("^.*( |_)snp( |_)info(| |_).*%s[.](txt|xls)$", version);
-  }
-
-  pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
-  nfiles <- length(pathnames);
-  if (nfiles == 0) {
-    throw("Could not find dChip SNP information: ", chipType);
-  }
-
-  if (nfiles > 1) {
-    pathnames <- sort(pathnames);
-    warning("Found more than one matching dChip SNP information file, but returning only the last one: ", paste(pathnames, collapse=", "));
-    pathnames <- rev(pathnames);
-  }
-  pathname <- pathnames[1];
-   
+setMethodS3("fromChipType", "DChipSnpInformation", function(static, chipType, version=NULL, ...) {
+  # Search for the genome information file
+  pathname <- static$findByChipType(chipType, version=version, ...);
+  if (is.null(pathname))
+    throw("Failed to located dChip genome information: ", chipType);
   newInstance(static, pathname);
 })
 

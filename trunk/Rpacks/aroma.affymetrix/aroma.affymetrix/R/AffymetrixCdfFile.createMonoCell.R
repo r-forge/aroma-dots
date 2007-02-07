@@ -35,7 +35,7 @@
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix="monocell", sep="-", path="cdf", nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE) {
+setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix="monocell", sep="-", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -139,6 +139,9 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   src <- Arguments$getReadablePathname(src);
 
   # Create the pathname of the destination CDF
+  if (is.null(path)) {
+    path <- filePath("annotationData", "chipTypes", chipType, expandLinks=TRUE);
+  }
   name <- paste(c(chipType, suffix), collapse=sep);
   dest <- sprintf("%s.cdf", name);
   dest <- Arguments$getWritablePathname(dest, path=path, mustNotExist=TRUE);
@@ -415,6 +418,8 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
 ############################################################################
 # HISTORY:
+# 2007-02-06
+# o Now monocell CDF are stored under annotationData/chipTypes/<chipType>/.
 # 2007-01-10
 # o Now createMonoCell() create the CDF in chunks, that is, in constant
 #   memory.

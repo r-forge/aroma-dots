@@ -311,7 +311,7 @@ setMethodS3("getChrXFile", "AptProbesetGenotype", function(this, path=NULL, skip
 
   # Default output path
   if (is.null(path)) {
-    path <- filePath("annotations", chipType, expandLinks="any");    
+    path <- filePath("annotationData", "chipTypes", chipType, expandLinks="any");    
   }
 
   # Output pathname

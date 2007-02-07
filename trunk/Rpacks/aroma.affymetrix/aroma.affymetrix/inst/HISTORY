@@ -2,6 +2,12 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.3.7 [2007-02-06xxx]
+o Now any annotation file for chip type <chipType> may be located 
+  under annotationData/chipTypes/<chipType>/. This directory 
+  structure is preferred, because this will allow you to collect 
+  all your annotation files specific to one particular chip type 
+  in one place.  You may even put the in subdirectories, e.g. 
+  Affymetrix/, dChip/ etc.
 o From now on all reporters and explorer utilizes the root path
   reports/, and the path to an image file should be 
   reports/<dataSetName>/<tags>/<chipType>/<set>/.

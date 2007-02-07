@@ -43,6 +43,56 @@ setConstructorS3("DChipGenomeInformation", function(...) {
   this;
 })
 
+
+setMethodS3("findByChipType", "DChipGenomeInformation", function(static, chipType, version=NULL, ...) {
+  # Argument 'version':
+  if (is.null(version))
+    version <- ".*";
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search in annotationData/chipTypes/<chipType>/
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get paths to search
+  settings <- getOption("aroma.affymetrix.settings");
+  paths <- settings$paths$annotationData;
+  if (is.null(paths)) {
+    paths <- "annotationData";
+  } else {
+    # Split path strings by semicolons.
+    paths <- unlist(strsplit(paths, split=";"));
+  }
+
+  # Expand any file system links
+  paths <- file.path(paths, "chipTypes", chipType);
+  paths <- sapply(paths, FUN=filePath, expandLinks="any");
+
+  # Search recursively for the dChip genome information file
+  pattern <- sprintf("^.*( |_)genome( |_)info(| |_).*%s[.](txt|xls)$", 
+                                                               version);
+  pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # As a backup search the "old" style
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(pathname)) {
+    path <- filePath("annotations", chipType, expandLinks="any");
+    if (isDirectory(path)) {
+      pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
+      nfiles <- length(pathnames);
+      if (nfiles > 1) {
+        pathnames <- sort(pathnames);
+        warning("Found more than one matching dChip genome information file, but returning only the last one: ", paste(pathnames, collapse=", "));
+        pathnames <- rev(pathnames);
+        pathname <- pathnames[1];
+      }
+    }
+  }
+
+  pathname;
+}, static=TRUE, protected=TRUE)
+
+
 ###########################################################################/**
 # @RdocMethod fromChipType
 #
@@ -56,12 +106,8 @@ setConstructorS3("DChipGenomeInformation", function(...) {
 #
 # \arguments{
 #  \item{chipType}{A @character string.}
-#  \item{rootPath}{A @character string specifying the root path, i.e.
-#    the annotation directory.}
 #  \item{version}{An optional @character string specifying the version
 #    string, if more than one version is available.}
-#  \item{pattern}{An optional filename pattern used to locate the 
-#    dChip genome file.  If @NULL, a default pattern is used.}
 #  \item{...}{Not used.}
 # }
 #
@@ -79,36 +125,11 @@ setConstructorS3("DChipGenomeInformation", function(...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType, rootPath="annotations", version=NULL, pattern=NULL, ...) {
-  # Argument 'rootPath' & 'chipType':
-  rootPath <- Arguments$getReadablePath(rootPath, mustExist=TRUE);
-  path <- filePath(rootPath, chipType, expandLinks="any");
-  path <- Arguments$getReadablePath(path, mustExist=TRUE);
-
-  # Search for genome information files
-  if (is.null(version))
-    version <- ".*";
-
-  # Create a filename pattern
-  if (is.null(pattern)) {
-    pattern <- sprintf("^.*( |_)genome( |_)info(| |_).*%s[.](txt|xls)$",
-                                                               version);
-  }
-
-  pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
-  nfiles <- length(pathnames);
-  if (nfiles == 0) {
-    throw("Could not find dChip genome information: ", chipType);
-  }
-
-  # More than one match?
-  if (nfiles > 1) {
-    pathnames <- sort(pathnames);
-    warning("Found more than one matching dChip genome information file, but returning only the last one: ", paste(pathnames, collapse=", "));
-    pathnames <- rev(pathnames);
-  }
-  pathname <- pathnames[1];
-   
+setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType, version=NULL, ...) {
+  # Search for the genome information file
+  pathname <- static$findByChipType(chipType, version=version, ...);
+  if (is.null(pathname))
+    throw("Failed to located dChip genome information: ", chipType);
   newInstance(static, pathname);
 })
 
