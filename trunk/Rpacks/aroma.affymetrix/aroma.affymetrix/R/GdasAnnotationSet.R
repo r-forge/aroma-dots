@@ -116,7 +116,7 @@ setMethodS3("getChipType", "GdasAnnotationSet", function(this, ...) {
   chipType <- hdr$ArrayName;
 
   # Check if we can find a CDF for this chip type
-  cdfFile <- findCdf(chipType);
+  cdfFile <- AffymetrixCdfFile$findChipType(chipType);
   if (is.null(cdfFile))
     warning("Could not find a CDF file for inferred chip type: ", chipType);
     

@@ -14,7 +14,7 @@ setMethodS3("writeRegions" ,"profileCGH", function(this, filename, path=NULL, ap
     chipType <- gsub("[,-]monocell$", "", chipType);
     unitNames <- character(nrow(pv));
     for (cc in unique(chipType)) {
-      cdfFile <- findCdf(cc);
+      cdfFile <- AffymetrixCdfFile$findByChipType(cc);
       if (is.null(cdfFile))
         throw("Cannot located CDF file for chip type: ", cc);
       idxs <- which(chipType == cc);

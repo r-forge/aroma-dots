@@ -218,7 +218,7 @@ setMethodS3("getData", "SnpInformation", function(this, units=NULL, fields=c("fr
     # Read the unit names from the corresponding CDF file
     verbose && enter(verbose, "Reading unit names from CDF file");
     chipType <- getChipType(this);
-    cdfFile <- findCdf(chipType);
+    cdfFile <- AffymetrixCdfFile$findByChipType(chipType);
     if (is.null(cdfFile))
       throw("Could not located CDF file: ", chipType);
     targetUnitNames <- readCdfUnitNames(cdfFile);

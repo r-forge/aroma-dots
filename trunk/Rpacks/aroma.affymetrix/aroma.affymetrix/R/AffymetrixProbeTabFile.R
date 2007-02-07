@@ -88,8 +88,7 @@ setMethodS3("getCdf", "AffymetrixProbeTabFile", function(this, ...) {
   if (is.null(cdf)) {
     pattern <- sprintf("_probe_tab$");
     chipType <- gsub(pattern, "", getName(this));
-    pattern <- sprintf("^%s.*", chipType);
-    pathname <- findCdf(pattern);
+    pathname <- AffymetrixCdfFile$findByChipType(chipType);
     if (is.null(pathname)) {
       throw("Could not located CDF file for chip type pattern: ", pattern);
     }
@@ -100,6 +99,108 @@ setMethodS3("getCdf", "AffymetrixProbeTabFile", function(this, ...) {
 })
 
 
+setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipType, paths=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Searching for probe sequence file");
+  verbose && cat(verbose, "Chip type: ", chipType);
+
+  pattern <- paste("_probe_tab$", sep="");
+  verbose && cat(verbose, "Filename pattern: ", pattern);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search in annotationData/chipTypes/<chipType>/
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get paths to search
+  settings <- getOption("aroma.affymetrix.settings");
+  paths <- settings$paths$annotationData;
+  if (is.null(paths)) {
+    paths <- "annotationData";
+  } else {
+    # Split path strings by semicolons.
+    paths <- unlist(strsplit(paths, split=";"));
+  }
+
+  # Expand any file system links
+  paths <- file.path(paths, "chipTypes", chipType);
+  paths <- sapply(paths, FUN=filePath, expandLinks="any");
+
+  # Search recursively for all matching files
+  pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # As a backup, search "old" style (code by Ken Simpson)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(pathname)) {
+    # Default paths
+    paths <- paste(".",
+                   getOption("AFFX_SEQUENCE_PATH"),
+                   Sys.getenv("AFFX_SEQUENCE_PATH"),
+                   "sequence/", "data/sequence/",
+                   getOption("AFFX_CDF_PATH"),
+                   Sys.getenv("AFFX_CDF_PATH"),
+                   "cdf/", "data/cdf/",
+                   sep=";", collapse=";");
+    pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # As a backup, search using "old" style v2
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(pathname)) {
+    paths <- "annotations";
+  
+    # First to an exact search
+    pattern <- sprintf("^%s_probe_tab$", chipType);
+    pathname <- findFiles(pattern=pattern, paths=paths, recursive=TRUE);
+    if (length(pathname) == 0) {
+      # Since Affymetrix is not naming their probe tab files consistently,
+      # it might be that they chop of the end of the chip type string.
+  
+      # 1. Find all probe tab files
+      pattern <- sprintf("_probe_tab$");
+      pathnames <- findFiles(pattern=pattern, paths=paths, 
+                                              firstOnly=FALSE, recursive=TRUE);
+    
+      # 2. Extract the part of the filenames containing chip type names
+      names <- gsub(pattern, "", basename(pathnames));
+    
+      # 3. Create patterns out of these
+      patterns <- paste("^", names, sep="");
+  
+      # 4. Keep only those files that match the prefix of the chip type
+      keep <- sapply(patterns, function(pattern) {
+        (regexpr(pattern, chipType) != -1);
+      });
+      pathnames <- pathnames[keep];
+  
+      # 4b. If more than one match was found, keep the longest one
+      if (length(pathnames) > 1) {
+        names <- names[keep];
+        keep <- which.max(nchar(names));
+        pathnames <- pathnames[keep];
+      }
+  
+      pathname <- pathnames[1];
+    }
+  }
+
+  verbose && cat(verbose, "Pathname: ", pathname);
+
+  verbose && exit(verbose);
+
+  pathname;
+}, static=TRUE, protected=TRUE)
+
+
 setMethodS3("fromCdf", "AffymetrixProbeTabFile", function(static, cdf, ...) {
   res <- fromChipType(static, getChipType(cdf));
   res$.cdf <- cdf;
@@ -108,46 +209,9 @@ setMethodS3("fromCdf", "AffymetrixProbeTabFile", function(static, cdf, ...) {
 
 
 setMethodS3("fromChipType", "AffymetrixProbeTabFile", function(static, chipType, ...) {
-  paths <- "annotations";
-
-  # First to an exact search
-  pattern <- sprintf("^%s_probe_tab$", chipType);
-  pathname <- findFiles(pattern=pattern, paths=paths, recursive=TRUE);
-  if (length(pathname) == 0) {
-    # Since Affymetrix is not naming their probe tab files consistently,
-    # it might be that they chop of the end of the chip type string.
-
-    # 1. Find all probe tab files
-    pattern <- sprintf("_probe_tab$");
-    pathnames <- findFiles(pattern=pattern, paths=paths, 
-                                            firstOnly=FALSE, recursive=TRUE);
-  
-    # 2. Extract the part of the filenames containing chip type names
-    names <- gsub(pattern, "", basename(pathnames));
-  
-    # 3. Create patterns out of these
-    patterns <- paste("^", names, sep="");
-
-    # 4. Keep only those files that match the prefix of the chip type
-    keep <- sapply(patterns, function(pattern) {
-      (regexpr(pattern, chipType) != -1);
-    });
-    pathnames <- pathnames[keep];
-
-    # 4b. If more than one match was found, keep the longest one
-    if (length(pathnames) > 1) {
-      names <- names[keep];
-      keep <- which.max(nchar(names));
-      pathnames <- pathnames[keep];
-    }
-
-    pathname <- pathnames[1];
-  }
-
-  if (length(pathname) == 0) {
-    throw("Failed to located an Affymetrix probe tab file: ", chipType);
-  }
-
+  pathname <- AffymetrixProbeTabFile$findByChipType(chipType);
+  if (length(pathname) == 0)
+    throw("Failed to located the Affymetrix probe tab file: ", chipType);
   newInstance(static, pathname, ...);
 }, static=TRUE)
 
