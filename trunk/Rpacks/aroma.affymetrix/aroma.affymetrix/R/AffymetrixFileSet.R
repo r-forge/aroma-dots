@@ -562,7 +562,13 @@ setMethodS3("nbrOfFiles", "AffymetrixFileSet", function(this, ...) {
 #*/###########################################################################
 setMethodS3("lapply", "AffymetrixFileSet", function(this, ...) {
   res <- lapply(this$files, ...);
-  names(res) <- unlist(lapply(as.list(this), FUN=getName));
+  names(res) <- unlist(lapply(as.list(this), FUN=getFullName));
+  res;
+})
+
+setMethodS3("sapply", "AffymetrixFileSet", function(this, ...) {
+  res <- sapply(this$files, ...);
+  names(res) <- unlist(lapply(as.list(this), FUN=getFullName));
   res;
 })
 

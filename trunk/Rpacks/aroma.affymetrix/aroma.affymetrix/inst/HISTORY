@@ -14,6 +14,11 @@ o From now on all reporters and explorer utilizes the root path
   The latter subdirectory was added to avoid potential naming
   conflicts for different reporter or explorer classes.
 o Remove package dir doc/.  Not used.
+o Added writeChecksum() and validateChecksum() to AffymetrixFile
+  to write a checksum file, which later can be validated to the
+  content of the file.  This is useful to make sure that 
+  transferred files have not been corrected (which happend to 
+  HB while transferring via external HDD).
 
 Version: 0.3.6 [2007-02-05]
 o Added support to import dChip-exported CEL files.  See
