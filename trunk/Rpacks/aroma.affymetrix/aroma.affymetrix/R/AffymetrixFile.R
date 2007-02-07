@@ -498,9 +498,47 @@ setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, ov
 }, private=TRUE)
 
 
+setMethodS3("getChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Calculating checksum");
+  pathname <- getPathname(this);
+  checksum <- digest(pathname, file=TRUE);
+  verbose && exit(verbose);
+
+  checksum;
+})
+
+
+setMethodS3("writeChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  pathname <- getPathname(this);
+  outPathname <- sprintf("%s.md5", pathname);
+
+  verbose && enter(verbose, "Writing checksum");
+  checksum <- getChecksum(this, verbose=less(verbose));
+  cat(checksum, file=outPathname);
+  verbose && exit(verbose);
+
+  invisible(outPathname);
+})
 
 ############################################################################
 # HISTORY:
+# 2007-02-07
+# o Added getChecksum() and writeChecksum().
 # 2007-01-14
 # o Added a test for "unknown" (=unused) arguments to constructor.
 # 2007-01-07

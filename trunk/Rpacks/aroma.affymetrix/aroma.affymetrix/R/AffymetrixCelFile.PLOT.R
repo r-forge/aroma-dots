@@ -820,7 +820,7 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., zoom=NULL, verbose=FALSE) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,65535), field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., zoom=NULL, verbose=FALSE) {
   require(EBImage) || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -878,7 +878,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   img <- Image(data=y, dim=dim(y));
 
   verbose && enter(verbose, "Transforming image");
-  img <- rgbTransform(img, ...);
+  img <- rgbTransform(img, lim=zrange, ...);
   verbose && exit(verbose);
 
   # Zoom?
@@ -990,7 +990,7 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, fullname=getFullName(this), tags=c("*", "gray"), imgFormat="png", path=NULL, ..., verbose=FALSE) {
+setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, fullname=getFullName(this), tags=c("*", "sqrt", "gray"), imgFormat="png", path=NULL,  field=c("intensities", "stdvs", "pixels"), ..., skip=TRUE, verbose=FALSE) {
   # Argument 'path':
   if (is.null(path)) {
     rootPath <- "reports";
@@ -1026,33 +1026,35 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
   verbose <- Arguments$getVerbose(verbose);
 
 
-  verbose && enter(verbose, "Writing CEL image to file");
-
-  # Get the image
-  img <- getImage(this, ..., verbose=less(verbose));
   # Update asterisk tags?
   if ("*" %in% tags) {
     idx <- match("*", tags);
-    tags[idx] <- attr(img, "field");
+    tags[idx] <- field;
     tags <- unique(tags);
   }
 
-  verbose && enter(verbose, "Writing image");
+  verbose && enter(verbose, "Writing CEL image to file");
+
   # Generate the pathname
   fullname <- paste(c(fullname, tags), collapse=",");
   if (is.null(filename))
     filename <- sprintf("%s.%s", fullname, imgFormat);
   pathname <- Arguments$getWritablePathname(filename, path=path);
   verbose && cat(verbose, "Pathname: ", pathname);  
-  write.image(img, file=pathname);
-  verbose && exit(verbose);
+
+  if (!skip || !isFile(pathname)) {
+    # Get the image
+    img <- getImage(this, ..., verbose=less(verbose));
+  
+    verbose && enter(verbose, "Writing image");
+    write.image(img, file=pathname);
+    verbose && exit(verbose);
+  }
 
   verbose && exit(verbose);
 
-  # Return pathname too
-  attr(img, "pathname") <- pathname;
-
-  invisible(img);
+  # Return pathname
+  invisible(pathname);
 })
 
 
