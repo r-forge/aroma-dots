@@ -4,7 +4,7 @@ window.onresize = function() {
   explorer.update();
 }
 
-includeDom("../samples.js");
+includeDom("../ArrayExplorer.onLoad.js");
 includeDom("extras.js");
 
 function onLoad() {
