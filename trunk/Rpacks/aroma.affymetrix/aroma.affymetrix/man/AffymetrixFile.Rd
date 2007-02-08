@@ -49,7 +49,9 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{compareChecksum} \tab  -\cr
  \tab \code{fromFile} \tab  -\cr
+ \tab \code{getChecksum} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFilename.AffymetrixFile]{getFilename}} \tab Gets the filename of the file.\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFileType.AffymetrixFile]{getFileType}} \tab Gets the file type of a file.\cr
@@ -60,6 +62,9 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFile]{getTags}} \tab Gets the tags of the file.\cr
  \tab \code{hasTag} \tab  -\cr
  \tab \code{hasTags} \tab  -\cr
+ \tab \code{readChecksum} \tab  -\cr
+ \tab \code{validateChecksum} \tab  -\cr
+ \tab \code{writeChecksum} \tab  -\cr
 }
 
 

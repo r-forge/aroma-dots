@@ -53,7 +53,9 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{cna} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:extractAffyBatch.AffymetrixCelSet]{extractAffyBatch}} \tab Extracts an in-memory AffyBatch object from the CEL set.\cr
  \tab \code{\link[aroma.affymetrix:extractSnpFeatureSet.AffymetrixCelSet]{extractSnpFeatureSet}} \tab Extracts an in-memory SnpFeatureSet object from the CEL set.\cr
+ \tab \code{findByName} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
+ \tab \code{fromName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:gcrmaSummary.AffymetrixCelSet]{gcrmaSummary}} \tab Calculates the GCRMA expression summary.\cr
  \tab \code{getAverage} \tab  -\cr
  \tab \code{getAverageAsinh} \tab  -\cr
@@ -76,7 +78,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, lapply, nbrOfFiles, seq, setAlias, setTags
+append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

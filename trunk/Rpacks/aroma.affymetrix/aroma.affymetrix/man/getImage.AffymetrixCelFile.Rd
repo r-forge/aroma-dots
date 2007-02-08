@@ -19,7 +19,7 @@
  Creates an RGB Image object from a CEL file.
 }
 
-\usage{\method{getImage}{AffymetrixCelFile}(this, xrange=c(0, Inf), yrange=xrange, field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., zoom=NULL, verbose=FALSE)}
+\usage{\method{getImage}{AffymetrixCelFile}(this, xrange=c(0, Inf), yrange=xrange, zrange=c(0, 65535), field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., zoom=NULL, verbose=FALSE)}
 
 \arguments{
   \item{xrange, yrange}{}
