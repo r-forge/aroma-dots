@@ -19,7 +19,7 @@
  Writes a spatial image of the signals in the CEL file.
 }
 
-\usage{\method{writeImage}{AffymetrixCelFile}(this, filename=NULL, fullname=getFullName(this), tags=c("*", "gray"), imgFormat="png", path=NULL, ..., verbose=FALSE)}
+\usage{\method{writeImage}{AffymetrixCelFile}(this, filename=NULL, fullname=getFullName(this), tags=c("*", "sqrt", "gray"), imgFormat="png", path=NULL, field=c("intensities", "stdvs", "pixels"), ..., skip=TRUE, verbose=FALSE)}
 
 \arguments{
   \item{filename}{A \code{\link[base]{character}} string specifying the filename of
@@ -40,8 +40,10 @@
 }
 
 \examples{\dontrun{
+  yellow.colors <- function(n) { hsv(h=0.15, v=0:(n-1)/(n-1)) }
   df <- getFile(ds, 1)
   writeImage(df, tags="gray", palette=gray.colors(256), xrange=c(0,200))
+  writeImage(df, tags="yellow", palette=yellow.colors(256), xrange=c(0,200))
   writeImage(df, tags="heat", palette=heat.colors(256), xrange=c(0,200))
   writeImage(df, tags="terrain", palette=terrain.colors(256), xrange=c(0,200))
   writeImage(df, tags="topo", palette=topo.colors(256), xrange=c(0,200))

@@ -287,3 +287,20 @@
   setAlias.TransformReport writeImageCombined
   writeImageCombined.TransformReport writeImages
   writeImages.TransformReport
+  addColorMap addColorMap.ArrayExplorer addIncludes.ArrayExplorer
+  addIndexFile.ArrayExplorer as.character.ArrayExplorer compareChecksum
+  compareChecksum.AffymetrixFile findAnnotationDataByChipType
+  findAnnotationDataByChipType.default findByChipType
+  findByChipType.AffymetrixProbeTabFile
+  findByChipType.DChipGenomeInformation
+  findByChipType.DChipSnpInformation findByChipType.GdasAnnotationFile
+  findByName findByName.AffymetrixCelSet fromName
+  fromName.AffymetrixCelSet getChecksum getChecksum.AffymetrixFile
+  getColorMaps getColorMaps.ArrayExplorer getFullName.ArrayExplorer
+  getIncludePath.ArrayExplorer getPath.ArrayExplorer
+  getRootPath.ArrayExplorer getTemplatePath.ArrayExplorer readChecksum
+  readChecksum.AffymetrixFile sapply sapply.AffymetrixFileSet
+  sapply.default setColorMaps setColorMaps.ArrayExplorer
+  setup.ArrayExplorer validateChecksum validateChecksum.AffymetrixFile
+  writeChecksum writeChecksum.AffymetrixFile writeImages.ArrayExplorer
+  yellow.colors
