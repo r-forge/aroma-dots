@@ -108,8 +108,8 @@ function ArrayExplorer() {
       for (var kk=0; kk < samples.length; kk++) {
         var sample = samples[kk];
         var name = sample;
-        if (this.aliases != null)
-          name = this.aliases[kk];
+        if (this.sampleAliases != null)
+          name = this.sampleAliases[kk];
         s = s + '[<span id="sample' + sample + '"><a href="javascript:changeSample(\'' + sample + '\');">' + name + '</a></span>]<span style="font-size:1%"> </span>';
       }
       s = s + ' ';
@@ -117,8 +117,12 @@ function ArrayExplorer() {
     }
   }
 
-  this.setAliases = function(aliases) {
-    this.aliases = aliases;
+  this.setSampleAliases = function(aliases) {
+    this.sampleAliases = aliases;
+  }
+
+  this.setColorMapAliases = function(aliases) {
+    this.colorMapAliases = aliases;
   }
 
   this.setChipTypes = function(chipTypes) {
@@ -158,11 +162,14 @@ function ArrayExplorer() {
   this.setColorMaps = function(colorMaps) {
     this.colorMaps = colorMaps;
 
-    if (colorMaps.length > 1) {
+    if (colorMaps.length > 0) {
       var s = 'Color map: ';
       for (var kk=0; kk < colorMaps.length; kk++) {
         var colorMap = colorMaps[kk];
-        s = s + '[<span id="colorMap' + colorMap + '"><a href="javascript:changeColorMap(\'' + colorMap + '\');">' + colorMap + '</a></span>]'; 
+        var name = colorMap;
+        if (this.colorMapAliases != null)
+          name = this.colorMapAliases[kk];
+        s = s + '[<span id="colorMap' + colorMap + '"><a href="javascript:changeColorMap(\'' + colorMap + '\');">' + name + '</a></span>]'; 
       }
       s = s + '<br>';
       updateLabel('colorMapLabel', s);
@@ -170,9 +177,10 @@ function ArrayExplorer() {
   }
 
   this.samples = new Array();
-  this.aliases = null;
+  this.sampleAliases = null;
   this.chipTypes = new Array();
   this.colorMaps = new Array();
+  this.colorMapAliases = null;
   this.scales = new Array();
 
   this.loadCount = 0;
