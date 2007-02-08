@@ -528,6 +528,7 @@ setMethodS3("writeChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE
   outPathname <- sprintf("%s.md5", pathname);
 
   verbose && enter(verbose, "Writing checksum");
+  verbose && cat(verbose, "Pathname: ", outPathname);
   checksum <- getChecksum(this, verbose=less(verbose));
   cat(checksum, file=outPathname);
   verbose && exit(verbose);
@@ -567,11 +568,19 @@ setMethodS3("compareChecksum", "AffymetrixFile", function(this, ..., verbose=FAL
   outPathname <- sprintf("%s.md5", pathname);
 
   verbose && enter(verbose, "Comparing checksum");
+  verbose && cat(verbose, "Pathname: ", outPathname);
+
   checksum <- getChecksum(this, verbose=less(verbose));
-  checksum2 <- readLines(outPathname, warn=FALSE);
+  if (isFile(outPathname)) {
+    checksum2 <- readLines(outPathname, warn=FALSE);
+  } else {
+    checksum2 <- NA;
+  }
+  res <- (checksum == checksum2);
+
+  verbose && cat(verbose, res);
   verbose && exit(verbose);
 
-  (checksum == checksum2);
 })
 
 
@@ -585,12 +594,13 @@ setMethodS3("validateChecksum", "AffymetrixFile", function(this, ..., verbose=FA
 
   verbose && enter(verbose, "Validating checksum");
   pathname <- getPathname(this);
-  if (compareChecksum(this, ..., verbose=less(verbose))) {
+  res <- compareChecksum(this, ..., verbose=less(verbose));
+  if (!res) {
     throw("The calculated checksum and the checksum store on file do not match: ", pathname);
   }
   verbose && exit(verbose);
 
-  invisible();
+  invisible(res);
 })
 
 ############################################################################
