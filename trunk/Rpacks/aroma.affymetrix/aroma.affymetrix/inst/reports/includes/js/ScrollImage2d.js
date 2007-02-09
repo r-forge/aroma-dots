@@ -264,8 +264,10 @@ function Scrollbar2d(id) {
 
   this.setCursor = function(status) {
     this.marker.style.cursor = status;
+		/*
     this.container.style.cursor = status;
     this.image.style.cursor = status;
+		*/
   }
 
   this.setupEventHandlers = function() {

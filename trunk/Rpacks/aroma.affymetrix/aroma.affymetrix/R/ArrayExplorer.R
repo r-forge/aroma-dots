@@ -58,7 +58,7 @@ setMethodS3("as.character", "ArrayExplorer", function(this, ...) {
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
   s <- c(s, paste("Number of arrays:", nbrOfArrays(this)));
-  s <- c(s, paste("Color maps:", paste(getColorMaps(this), collapse=",")));
+  s <- c(s, paste("Color maps:", paste(getColorMaps(this), collapse="; ")));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";

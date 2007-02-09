@@ -106,8 +106,7 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   # Get CDF for chip effects
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving CDF for chip effects");
-  ceChipType <- sprintf("%s-monocell", chipType);
-  verbose && cat(verbose, "Chip type: ", ceChipType);
+  verbose && printf(verbose, "Chip type: %s,monocell\n", chipType);
    # Get the ChipEffectFile class specific for this set
   clazz <- getChipEffectFileClass(static);
   ceCdf <- clazz$createParamCdf(cdf);
