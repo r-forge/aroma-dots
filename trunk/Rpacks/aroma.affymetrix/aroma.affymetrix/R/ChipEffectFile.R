@@ -120,21 +120,39 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
   verbose && cat(verbose, "Source chip type: ", getChipType(sourceCdf));
   verbose && cat(verbose, "Source CDF: ", getPathname(sourceCdf));
 
-  # CDF for chip effects
-  chipType <- sprintf("%s-monocell", getChipType(sourceCdf));
-  verbose && cat(verbose, "Chip type for chip effects: ", getChipType(sourceCdf));
+  # Search for existing monocell CDF
+  for (sep in c(",", "-")) {
+    chipType <- paste(getChipType(sourceCdf), "monocell", sep=sep);
+    pathname <- AffymetrixCdfFile$findByChipType(chipType);
+    if (!is.null(pathname))
+      break;
+  }
 
-  # Search for CDF
-  cdf <- AffymetrixCdfFile$findByChipType(chipType);
-  if (is.null(cdf)) {
+  # Warn about deprecated filname <chipType>-monocell.
+  if (!is.null(pathname) && (sep == "-")) {
+    msg <- paste("Deprecated filename of monocell CDF detected (uses dash instead of comma): ", pathname);
+    warning(msg);
+    verbose && cat(verbose, msg);
+    verbose && enter(verbose, "Renaming (old-style) monocell CDF");
+    verbose && cat(verbose, "Source: ", pathname);
+    dest <- gsub("-monocell[.]", ",monocell.", pathname);
+    verbose && cat(verbose, "Destination: ", dest);
+    res <- file.rename(pathname, dest);
+    if (!res)
+      throw("Failed to rename monocell CDF file: ", pathname, " -> ", dest);
+    pathname <- dest;
+    verbose && exit(verbose, msg);
+  }
+
+  if (is.null(pathname)) {
     verbose && cat(verbose, "Pathname: Not found!");
     verbose && cat(verbose, "Will create CDF for the chip-effect files from the original CDF. NOTE: This will take several minutes or more!");
     verbose && enter(verbose, "Creating CDF");
     cdf <- createMonoCell(sourceCdf, verbose=less(verbose));
     verbose && exit(verbose);
   } else {
-    verbose && cat(verbose, "Pathname: ", cdf);
-    cdf <- AffymetrixCdfFile$fromFile(cdf);
+    verbose && cat(verbose, "Pathname: ", pathname);
+    cdf <- AffymetrixCdfFile$fromFile(pathname);
   }
   verbose && exit(verbose);
 
@@ -298,12 +316,12 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
 
   idxs <- NULL;
   if (is.null(units)) {
+    # Look up chip-type and parameter specific but data set independent data
     cdf <- getCdf(this);
-    pathname <- getPathname(this);
+    chipType <- getChipType(cdf);
     key <- list(method="findUnitsTodo", class=class(this)[1], 
-                pathname=pathname,
-                chipType=getChipType(cdf), params=getParameters(this));
-    dirs <- c("aroma.affymetrix", pathname);
+                chipType=chipType, params=getParameters(this));
+    dirs <- c("aroma.affymetrix", chipType);
     if (!force) {
       idxs <- loadCache(key, dirs=dirs);
       if (!is.null(idxs))
@@ -523,6 +541,8 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 ############################################################################
 # HISTORY:
+# 2007-02-09
+# o Updated the file cache sub directory.
 # 2007-01-10
 # o Now fromDataFile() looks for chip effect files named using the "sample
 #   name" only (not tags) file format, and renames it to the full name

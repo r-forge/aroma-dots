@@ -556,7 +556,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
   # Number of units to load into memory and fit at the same time
   bytesPerChunk <- 100e6;       # 100Mb
-  bytesPerUnitAndArray <- 200;  # Just a rough number; good enough.
+  bytesPerUnitAndArray <- 500;  # Just a rough number; good enough?
   bytesPerUnit <- nbrOfArrays * bytesPerUnitAndArray;
   unitsPerChunk <- ram * bytesPerChunk / bytesPerUnit;
   unitsPerChunk <- as.integer(max(unitsPerChunk,1));
@@ -604,6 +604,11 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     verbose && str(verbose, fit[1]);
     verbose && exit(verbose);
 
+    # Garbage collection
+    tGc <- processTime();
+    gc <- gc();
+    verbose && print(verbose, gc);
+    timers$gc <- timers$gc + (processTime() - tGc);
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Store probe affinities
@@ -671,6 +676,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-02-09
+# o Added an additional garbage collection after fitting the PLM, but 
+#   before storing parameter estimates.
 # 2007-01-06
 # o Now gc() memory information is outputted after each chunk.
 # o Updated the formula for calculating the number of units per chunk in

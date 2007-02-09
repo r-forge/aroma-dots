@@ -206,8 +206,30 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
-  pathname <- findAnnotationDataByChipType(chipType, pattern);
+  # Handle deprecated <chipType>-monocell CDFs specially
+  pattern <- "-monocell$";
+  if (regexpr(pattern, chipType) != -1) {
+    newChipType <- gsub("-monocell$", ",monocell", chipType);
+    parentChipType <- gsub(pattern, "", chipType);
+
+    # First, see if there is a new monocell, then use that
+    pattern <- paste("^", newChipType, "[.](c|C)(d|D)(f|F)$", sep="");
+    pathname <- findAnnotationDataByChipType(parentChipType, pattern);
+
+    # Second, see if the old-named monocell is there
+    if (is.null(pathname)) {
+      pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
+      pathname <- findAnnotationDataByChipType(parentChipType, pattern);
+      if (!is.null(pathname)) {
+        msg <- paste("Deprecated filename of monocell CDF detected. Rename CDF file by replacing dash ('-') with a comma (','): ", pathname, sep="");
+        warning(msg);
+      }
+    }
+  } else {
+    pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
+    chipType <- gsub(",.*$", "", chipType);  # Remove tags
+    pathname <- findAnnotationDataByChipType(chipType, pattern);
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # As a backup, search using affxparser
@@ -1099,6 +1121,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-02-08
+# o Now findByChipType() handles monocell CDFs specially; monocell CDFs can
+#   still be put in the same directory as the parent CDF.
 # 2007-02-06
 # o Added findByChipType().
 # 2007-01-16

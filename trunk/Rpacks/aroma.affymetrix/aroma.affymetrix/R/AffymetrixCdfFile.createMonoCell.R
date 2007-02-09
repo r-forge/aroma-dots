@@ -12,8 +12,8 @@
 #
 # \arguments{
 #   \item{chipType}{The chip type of the new CDF.}
-#   \item{suffix}{A suffix added to the chip type of the new CDF.}
-#   \item{sep}{A string separating the chip type and the suffix string.}
+#   \item{tags}{Tags added to the chip type of the new CDF.}
+#   \item{sep}{A string separating the chip type and the tags string.}
 #   \item{path}{The path where to store the new CDF file.}
 #   \item{nbrOfCellsPerField}{Number of cells per group field the new CDF
 #      should have.}
@@ -35,7 +35,7 @@
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix="monocell", sep="-", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE) {
+setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), tags="monocell", sep=",", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -140,9 +140,9 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
   # Create the pathname of the destination CDF
   if (is.null(path)) {
-    path <- filePath("annotationData", "chipTypes", chipType, expandLinks=TRUE);
+    path <- filePath("annotationData", "chipTypes", chipType, expandLinks="any");
   }
-  name <- paste(c(chipType, suffix), collapse=sep);
+  name <- paste(c(chipType, tags), collapse=sep);
   dest <- sprintf("%s.cdf", name);
   dest <- Arguments$getWritablePathname(dest, path=path, mustNotExist=TRUE);
 
@@ -418,6 +418,10 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
 ############################################################################
 # HISTORY:
+# 2007-02-08
+# o Now monocell CDF are names <chipType>,monocell.cdf.  Before a dash was
+#   used instead of a comma. This new style is more in line with the
+#   <name>,<tags> naming convention used elsewhere in the package.
 # 2007-02-06
 # o Now monocell CDF are stored under annotationData/chipTypes/<chipType>/.
 # 2007-01-10

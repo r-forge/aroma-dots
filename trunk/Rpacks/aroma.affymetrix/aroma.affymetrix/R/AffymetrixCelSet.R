@@ -809,10 +809,15 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
     res <- readCelUnits(pathnames, cdf=units, ...);
   } else {
     # Always ask for CDF information from the CDF object!
-     verbose && enter(verbose, "Retrieving CDF unit information");
-    suppressWarnings(cdf <- readUnits(getCdf(this), units=units, ..., verbose=less(verbose)));
+    verbose && enter(verbose, "Retrieving CDF unit information");
+    suppressWarnings({
+      cdf <- readUnits(getCdf(this), units=units, ..., verbose=less(verbose));
+    });
+    verbose && str(verbose, cdf[1]);
     verbose && exit(verbose);
+    verbose && enter(verbose, "Retrieving CEL units across samples");
     res <- readCelUnits(pathnames, cdf=cdf, ...);
+    verbose && exit(verbose);
   }
   verbose && exit(verbose);
 

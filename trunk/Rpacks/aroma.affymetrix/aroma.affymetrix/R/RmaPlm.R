@@ -163,6 +163,10 @@ setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
+  # This should not be need, but for some reason is the package not loaded
+  # although it is listed in DESCRIPTION. /HB 2007-02-09
+  require(affyPLM) || throw("Package not loaded: affyPLM");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # rmaModelAffyPlm()
   # Author: Henrik Bengtsson, UC Berkeley. 
@@ -382,7 +386,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   tryCatch({
     rmaModel(matrix(1:6+0.1, ncol=3));
     ok <- TRUE;
-  }, error = function(ex) {})
+  }, error = function(ex) {
+    print(ex);
+  })
 
   if (!ok) {
     throw("The fit function for requested RMA PLM flavor failed: ", flavor);

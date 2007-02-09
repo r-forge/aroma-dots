@@ -231,8 +231,8 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
 setMethodS3("getCdf", "AffymetrixCelFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
-    chiptype <- getHeader(this)$chiptype;
-    cdf <- this$.cdf <- AffymetrixCdfFile$fromChipType(chiptype);
+    chipType <- getHeader(this)$chiptype;
+    cdf <- this$.cdf <- AffymetrixCdfFile$fromChipType(chipType);
   }
   cdf;
 })
