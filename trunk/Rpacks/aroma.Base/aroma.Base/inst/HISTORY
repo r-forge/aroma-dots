@@ -2,6 +2,12 @@
 Package: aroma.Base
 ===================
 
+Version: 0.4.5 [2007-02-13]
+o BUG FIX: When temporarily overriding base::capabilities(), we
+  now have to unlock the binding first.
+o BUG FIX: Removed the namespace again; too many problems were 
+  introduced.
+
 Version: 0.4.4 [2006-08-06]
 o Added a namespace.
 o Added the MGED8 poster to the documentation.

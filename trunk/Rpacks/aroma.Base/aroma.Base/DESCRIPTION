@@ -1,6 +1,6 @@
 Package: aroma.Base
-Version: 0.4.4
-Date: 2006-08-06
+Version: 0.4.5
+Date: 2007-02-13
 Title: A generic R plugin dispatcher for BASE
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>

@@ -135,7 +135,7 @@ setMethodS3("patchCode", "BasePluginDispatcher", function(static, pluginPath=NUL
   # If plugin path is not specified, get it from the command-line arguments.
   # If still not given, the current directory will be assumed.
   if (is.null(pluginPath)) {
-    commandArgs <- commandArgs(asValue=TRUE, excludeReserved=TRUE)[-1];
+    commandArgs <- R.utils::commandArgs(asValue=TRUE, excludeReserved=TRUE)[-1];
     pluginPath <- commandArgs[["pluginPath"]];
   }
 
@@ -545,8 +545,9 @@ setMethodS3("main", "BasePluginDispatcher", function(static, pluginPath=NULL, lo
     # 'Xlib: connection to "<host>:0.0" refused by server'; we do not 
     # need "iconv" here.
     orgCapabilities <- base::capabilities;
-    assign("capabilities", function(...) FALSE, 
-                                      pos=which(search() == "package:base"));
+    env <- as.environment("package:base");
+    unlockBinding("capabilities", env=env);
+    assign("capabilities", function(...) FALSE, envir=env);
   
     tryCatch({
       # Set preprocessing hooks
@@ -576,8 +577,8 @@ setMethodS3("main", "BasePluginDispatcher", function(static, pluginPath=NULL, lo
       setHook("sourceTo/onPreprocess", oldHooks, action="replace");
   
       # Remove above workaround
-      assign("capabilities", orgCapabilities, 
-                                      pos=which(search() == "package:base"));
+      assign("capabilities", orgCapabilities, envir=env);
+      lockBinding("capabilities", env=env);
     })
   } # loadPluginSource()
 
@@ -811,7 +812,7 @@ setMethodS3("main", "BasePluginDispatcher", function(static, pluginPath=NULL, lo
   # local environment.  This means that if the very given
   # at the command line, the will override the arguments
   # passed when calling main().
-  commandArgs <- commandArgs(asValue=TRUE, excludeReserved=TRUE)[-1];
+  commandArgs <- R.utils::commandArgs(asValue=TRUE, excludeReserved=TRUE)[-1];
   attachLocally(commandArgs);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1390,6 +1391,10 @@ setMethodS3("main", "BasePluginDispatcher", function(static, pluginPath=NULL, lo
 
 ###########################################################################
 # HISTORY:
+# 2007-02-13
+# o BUG FIX: With recent R versions, we got "Error in commandArgs(asValue =
+#   TRUE, excludeReserved = TRUE) : unused argument(s) (asValue = TRUE, 
+#   excludeReserved = TRUE)".  Now calling R.utils::commandArgs().
 # 2006-02-04
 # o BUG FIX: memory.size() and memory.limit() do only exist on Windows.  
 #   Gave an error about missing function on other platforms.
