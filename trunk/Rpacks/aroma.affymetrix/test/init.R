@@ -88,8 +88,8 @@ if (!atHome)
 verbose && enter(verbose, "Sourcing all *.R files");
 
 if (atHome) {
-  source("~/braju.com.R/R.utils/R.utils/R/sourceDirectory.R");
-  source("../../affxparser/affxparser/R/findCdf.R");
+#  source("~/braju.com.R/R.utils/R.utils/R/sourceDirectory.R");
+#  source("../../affxparser/affxparser/R/findCdf.R");
 } else {
   options("R.cache.path"="/tmp/hb/.Rcache/");
   mkdirs(getOption("R.cache.path"));
@@ -107,11 +107,11 @@ sourceDirectory("../aroma.affymetrix/R/", recursive=FALSE, modifiedOnly=TRUE);
 
 verbose && exit(verbose);
 
-source("../../affxparser/affxparser/R/writeCdf.private.R");
-source("../../affxparser/affxparser/R/writeCdfHeader.R");
-source("../../affxparser/affxparser/R/writeCdfQcUnits.R");
-source("../../affxparser/affxparser/R/writeCdfUnits.R");
-source("../../affxparser/affxparser/R/writeCdf.R");
+#source("../../affxparser/affxparser/R/writeCdf.private.R");
+#source("../../affxparser/affxparser/R/writeCdfHeader.R");
+#source("../../affxparser/affxparser/R/writeCdfQcUnits.R");
+#source("../../affxparser/affxparser/R/writeCdfUnits.R");
+#source("../../affxparser/affxparser/R/writeCdf.R");
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Change to a nicer palette
