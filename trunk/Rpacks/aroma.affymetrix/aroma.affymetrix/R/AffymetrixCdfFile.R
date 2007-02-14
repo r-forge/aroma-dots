@@ -212,7 +212,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
   pattern <- "-monocell$";
   if (regexpr(pattern, chipType) != -1) {
     newChipType <- gsub("-monocell$", ",monocell", chipType);
-    parentChipType <- gsub(pattern, "", chipType);
+    parentChipType <- gsub("-monocell$", "", chipType);  # Remove tags
 
     # First, see if there is a new monocell, then use that
     pattern <- paste("^", newChipType, "[.](c|C)(d|D)(f|F)$", sep="");
@@ -229,16 +229,16 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
     }
   } else {
     pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
-    chipType <- gsub(",.*$", "", chipType);  # Remove tags
-    pathname <- findAnnotationDataByChipType(chipType, pattern);
+    parentChipType <- gsub(",.*$", "", chipType);  # Remove tags
+    pathname <- findAnnotationDataByChipType(parentChipType, pattern);
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # As a backup, search using affxparser
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (is.null(pathname) && .useAffxparser) {
-    pathname <- findCdf(chipType);
-  }
+#  if (is.null(pathname) && .useAffxparser) {
+#    pathname <- findCdf(chipType);
+#  }
 
   pathname;
 }, static=TRUE, protected=TRUE)
