@@ -387,12 +387,17 @@ setMethodS3("getParameterSet", "Model", function(this, ...) {
   this$parSet;
 }, private=TRUE)
 
+setMethodS3("getParameters", "Model", function(this, ...) {
+  getParameterSet(this, ...);
+}, private=TRUE)
+
 setMethodS3("getParametersAsString", "Model", function(this, ...) {
   params <- getParameterSet(this);
   params <- trim(capture.output(str(params)))[-1];
   params <- gsub("^[$][ ]*", "", params);
   params <- gsub(" [ ]*", " ", params);
   params <- gsub("[ ]*:", ":", params);
+  params <- paste(params, collapse="; ");
   params;
 }, private=TRUE)
 

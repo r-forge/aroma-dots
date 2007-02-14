@@ -93,6 +93,13 @@ setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMo
 })
 
 
+setMethodS3("getParameterSet", "RmaPlm", function(this, ...) {
+  params <- NextMethod("getParameterSet", this, ...);
+  params$flavor <- this$.flavor;
+  params;
+}, private=TRUE)
+
+
 
 setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
