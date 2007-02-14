@@ -12,8 +12,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "ParameterCelFile".}
-#   \item{model}{The specific type of model, e.g. \code{"pm"}.}
+#   \item{...}{Arguments passed to @see "AffymetrixCelSet".}
+#   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
 # }
 #
 # \section{Fields and Methods}{
@@ -28,16 +28,16 @@
 # }
 #
 #*/###########################################################################
-setConstructorS3("ChipEffectSet", function(..., model=c("pm")) {
+setConstructorS3("ChipEffectSet", function(..., probeModel=c("pm")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'model':
-  model <- match.arg(model);
+  # Argument 'probeModel':
+  probeModel <- match.arg(probeModel);
 
   extend(AffymetrixCelSet(...), "ChipEffectSet",
     "cached:.firstCells" = NULL,
-    model = model
+    probeModel = probeModel
   )
 })
 
@@ -185,7 +185,7 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
   verbose <- less(verbose);
   for (kk in seq(this)) {
     verbose && enter(verbose, sprintf("Array #%d of %d: %s", kk, n, names[kk]));
-    ce <- as.list(this)[[kk]];
+    ce <- getFile(this, kk);
 
     verbose <- less(verbose, 50);
     verbose && enter(verbose, "Extracting estimates");  # 3-4s

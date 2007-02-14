@@ -1,16 +1,23 @@
-setMethodS3("findAnnotationDataByChipType", "default", function(chipType, pattern=chipType, ...) {
+setMethodS3("findAnnotationDataByChipType", "default", function(chipType, pattern=chipType, ..., paths=NULL) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Search in annotationData/chipTypes/<chipType>/
+  # Get search paths
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get paths to search
-  settings <- getOption("aroma.affymetrix.settings");
-  paths <- settings$paths$annotationData;
+  if (is.null(paths)) {
+    settings <- getOption("aroma.affymetrix.settings");
+    paths <- settings$paths$annotationData;
+  }
+
   if (is.null(paths)) {
     paths <- "annotationData";
   } else {
     # Split path strings by semicolons.
     paths <- unlist(strsplit(paths, split=";"));
   }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search in annotationData/chipTypes/<chipType>/
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   # Expand any file system links
   paths <- file.path(paths, "chipTypes", chipType);

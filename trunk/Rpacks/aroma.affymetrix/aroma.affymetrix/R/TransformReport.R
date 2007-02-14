@@ -240,8 +240,7 @@ setMethodS3("getPath", "TransformReport", function(this, ...) {
   # Chip type    
   ds <- getOutputDataSet(this);
   cdf <- getCdf(ds);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell$", "", chipType);  # AD HOC? /HB 2006-12-08
+  chipType <- getChipType(cdf, fullname=FALSE);
 
   # Image set
   set <- "transform";
@@ -433,8 +432,7 @@ setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=80
   pngDev <- System$findGraphicsDevice();
  
   cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell$", "", chipType);
+  chipType <- getChipType(cdf, fullname=FALSE);
   rootPath <- getRootPath(this);
   name <- getName(this);
   tags <- getTags(this);
@@ -491,8 +489,7 @@ setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, w
   pngDev <- System$findGraphicsDevice();
  
   cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell$", "", chipType);
+  chipType <- getChipType(cdf, fullname=FALSE);
   rootPath <- getRootPath(this);
   name <- getName(this);
   tags <- getTags(this);

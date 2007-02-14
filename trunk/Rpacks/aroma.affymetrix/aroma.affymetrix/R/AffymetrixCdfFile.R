@@ -182,6 +182,8 @@ setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, chipType, ...)
 # \arguments{
 #  \item{chipType}{A @character string.}
 #  \item{...}{Not used.}
+#  \item{.useAffxparser}{If @TRUE, @see "affxparser::findCdf" is used if
+#    the CDF could not be located.}
 # }
 #
 # \value{
@@ -202,7 +204,7 @@ setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, chipType, ...)
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ...) {
+setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..., .useAffxparser=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -234,7 +236,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # As a backup, search using affxparser
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (is.null(pathname)) {
+  if (is.null(pathname) && .useAffxparser) {
     pathname <- findCdf(chipType);
   }
 
@@ -277,8 +279,26 @@ setMethodS3("getHeader", "AffymetrixCdfFile", function(this, ...) {
   header;
 }, private=TRUE)
 
-setMethodS3("getChipType", "AffymetrixCdfFile", function(this, ...) {
-  getHeader(this)$chiptype;
+setMethodS3("getChipType", "AffymetrixCdfFile", function(this, fullname=TRUE, ...) {
+  chipType <- getHeader(this)$chiptype;
+
+  # Get the main chip type?
+  if (!fullname) {
+    # Handle '-monocell' specially
+    pattern <- "^(.*)-(monocell)$";
+    if (regexpr(pattern, chipType) != -1) {
+      chipType <- gsub(pattern, "\\1", chipType);
+      tags <- "monocell";
+    } else {    
+      pattern <- "^([^,]*)[,](.*)$";
+      tags <- gsub(pattern, "\\2", chipType);
+      tags <- strsplit(tags, split=",")[[1]];
+      chipType <- gsub(pattern, "\\1", chipType);
+    }
+    attr(chipType, "tags") <- tags;
+  }
+
+  chipType;
 })
 
 setMethodS3("getDimension", "AffymetrixCdfFile", function(this, ...) {
@@ -397,6 +417,22 @@ setMethodS3("getUnitSizes", "AffymetrixCdfFile", function(this, units=NULL, ...)
 
   sizes;
 }, private=TRUE)
+
+
+## setMethodS3("getUnitGroupSizes", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE, ...) {
+##   sizes <- this$.unitGroupSizes;
+##   if (force || is.null(sizes)) {
+##     sizes <- readCdfNbrOfCellsPerUnitGroup(this$.pathname);
+##     sizes <- restruct(this, sizes);
+##     this$.unitGroupSizes <- sizes;
+##   }
+## 
+##   if (!is.null(units))
+##     sizes <- sizes[units];
+## 
+##   sizes;
+## }, private=TRUE)
+
 
 
 
@@ -623,7 +659,7 @@ setMethodS3("getRestructor", "AffymetrixCdfFile", function(this, ...) {
 # }
 #
 # \value{
-#  Returns the @list structure that @see "affxparser::readCelUnits" returns
+#  Returns the @list structure that @see "affxparser::readCdfUnits" returns
 #  (possibly restructured).
 # }
 #
@@ -1121,6 +1157,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-02-12
+# o Added argument 'main' to getChipType().
 # 2007-02-08
 # o Now findByChipType() handles monocell CDFs specially; monocell CDFs can
 #   still be put in the same directory as the parent CDF.

@@ -515,7 +515,7 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
     suppressWarnings({
       cdf <- readUnits(getCdf(this), units=units, stratifyBy=stratifyBy);
     });
-  }
+  } 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieve data
@@ -708,24 +708,26 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   # Retrieve data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cVerbose <- -(as.numeric(verbose) + 50);
-  cel <- doCall("readCel", 
-                 filename=this$.pathname, indices=indices, 
-                 readHeader=FALSE, 
-                 readIntensities=("intensities" %in% fields), 
-                 readStdvs=("stdvs" %in% fields), 
-                 readPixels=("pixels" %in% fields), 
-                 readXY=("xy" %in% fields), 
-                 readOutliers=FALSE, 
-                 readMasked=FALSE,
-                 ...,
-                 verbose=cVerbose);
-
-
+  args <- list(
+    filename=this$.pathname, indices=indices, 
+    readHeader=FALSE, 
+    readIntensities=("intensities" %in% fields), 
+    readStdvs=("stdvs" %in% fields), 
+    readPixels=("pixels" %in% fields), 
+    readXY=("xy" %in% fields), 
+    readOutliers=FALSE, 
+    readMasked=FALSE,
+    ...,
+    verbose=cVerbose
+  );
+  fcn <- get("readCel", mode="function");
+  keep <- intersect(names(args), names(formals(fcn)));
+  args <- args[keep];
+  cel <- do.call("readCel", args=args);
+ 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Return data as a data frame
+  # Clean up
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cel <- as.data.frame(cel, row.names=indices);
-
   # Split (x,y)
   isXY <- which(fields == "xy");
   if (length(isXY) > 0) {
@@ -736,8 +738,12 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
 
   # Keep only requested fields
   if (!identical(names(cel), fields)) {
-    cel <- cel[,fields];
+    cel <- cel[fields];
   }
+
+  # Return as data frame
+  attr(cel, "row.names") <- seq_len(length(cel[[1]]));
+  class(cel) <- "data.frame";
 
   cel;
 }, private=TRUE)
@@ -756,6 +762,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 
 ############################################################################
 # HISTORY:
+# 2007-02-12
+# o Now getData() is using do.call() because it is faster. Unused arguments
+#   are still ignored.
 # 2007-02-04
 # o Now getData() is call readCel() using doCall() so that unused arguments
 #   in '...' are ignored.

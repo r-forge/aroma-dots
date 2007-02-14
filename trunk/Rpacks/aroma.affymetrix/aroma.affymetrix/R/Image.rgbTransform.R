@@ -35,7 +35,11 @@ setMethodS3("rgbTransform", "Image", function(this, palette=gray.colors(256), li
 
   # Standardize to [0,1]
   r <- range(x, na.rm=TRUE);
+  verbose && cat(verbose, "Before:");
+  verbose && print(verbose, summary(as.vector(x)));
   x <- (x - r[1])/(r[2]-r[1]);
+  verbose && cat(verbose, "After:");
+  verbose && print(verbose, summary(as.vector(x)));
 
   # Standardize to [0,n] where n is number of bins
   n <- length(palette);

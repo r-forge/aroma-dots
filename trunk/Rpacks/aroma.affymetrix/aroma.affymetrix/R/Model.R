@@ -28,7 +28,7 @@
 # \seealso{
 # }
 #*/###########################################################################
-setConstructorS3("Model", function(dataSet=NULL, tags=NULL, ...) {
+setConstructorS3("Model", function(dataSet=NULL, tags=NULL, parSet=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,7 +50,7 @@ setConstructorS3("Model", function(dataSet=NULL, tags=NULL, ...) {
   this <- extend(Object(), "Model",
     .dataSet = dataSet,
     .tags = NULL,
-    parSet = NULL
+    parSet = parSet
   );
 
   # Interpret and append tags
@@ -66,11 +66,9 @@ setMethodS3("as.character", "Model", function(this, ...) {
   ds <- getDataSet(this);
   s <- c(s, sprintf("Data set: %s", getName(ds)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(ds))));
-  tags <- paste(getTags(ds), collapse=",");
-  s <- c(s, sprintf("Input tags: %s", tags));
-  s <- c(s, sprintf("Output tags: %s", paste(getTags(this), collapse=",")));
-  s <- c(s, sprintf("Parameters: %s.", 
-                  paste(as.character(getParameterSet(this)), collapse=". ")));
+  s <- c(s, sprintf("Input tags: %s", getTags(ds, collapse=",")));
+  s <- c(s, sprintf("Output tags: %s", getTags(this, collapse=",")));
+  s <- c(s, sprintf("Parameters: (%s).", getParametersAsString(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
@@ -156,6 +154,8 @@ setMethodS3("getName", "Model", function(this, ...) {
 # @synopsis
 #
 # \arguments{
+#  \item{collapse}{A @character string used to concatenate the tags. 
+#     If @NULL, the tags are not concatenated.}
 #  \item{...}{Not used.}
 # }
 #
@@ -170,9 +170,15 @@ setMethodS3("getName", "Model", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "Model", function(this, ...) {
+setMethodS3("getTags", "Model", function(this, collapse=NULL, ...) {
   ds <- getDataSet(this);
-  c(getTags(ds), this$.tags);
+  tags <- c(getTags(ds), this$.tags);
+  if (length(tags) == 0) {
+    tags <- NULL;
+  } else {
+    tags <- paste(tags, collapse=collapse);
+  }
+  tags;
 })
 
 
@@ -296,8 +302,7 @@ setMethodS3("getPath", "Model", function(this, mkdirs=TRUE, ...) {
   # Chip type    
   ds <- getDataSet(this);
   cdf <- getCdf(ds);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell$", "", chipType);
+  chipType <- getChipType(cdf, fullname=FALSE);
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
@@ -380,6 +385,15 @@ setMethodS3("getCdf", "Model", function(this, ...) {
 
 setMethodS3("getParameterSet", "Model", function(this, ...) {
   this$parSet;
+}, private=TRUE)
+
+setMethodS3("getParametersAsString", "Model", function(this, ...) {
+  params <- getParameterSet(this);
+  params <- trim(capture.output(str(params)))[-1];
+  params <- gsub("^[$][ ]*", "", params);
+  params <- gsub(" [ ]*", " ", params);
+  params <- gsub("[ ]*:", ":", params);
+  params;
 }, private=TRUE)
 
 

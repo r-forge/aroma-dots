@@ -290,8 +290,7 @@ setMethodS3("getPath", "Transform", function(this, ...) {
   # Chip type    
   ds <- getInputDataSet(this);
   cdf <- getCdf(ds);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell$", "", chipType);  # AD HOC? /HB 2006-12-08
+  chipType <- getChipType(cdf, fullname=FALSE);
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");

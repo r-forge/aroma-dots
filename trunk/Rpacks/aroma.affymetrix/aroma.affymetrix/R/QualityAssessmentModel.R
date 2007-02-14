@@ -69,7 +69,7 @@ setMethodS3("getPlm", "QualityAssessmentModel", function(this, ...) {
 })
 
 setMethodS3("getChipEffects", "QualityAssessmentModel", function(this, ...) {
-  getChipEffects(this$.plm);
+  getChipEffects(getPlm(this));
 })
 
 setMethodS3("nbrOfArrays", "QualityAssessmentModel", function(this, ...) {
@@ -115,8 +115,7 @@ setMethodS3("getPath", "QualityAssessmentModel", function(this, ...) {
 
   # Chip type    
   cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell$", "", chipType);
+  chipType <- getChipType(cdf, fullname=FALSE);
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
@@ -159,24 +158,41 @@ setMethodS3("getPath", "QualityAssessmentModel", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getResiduals", "QualityAssessmentModel", function(this, path=NULL, name="qcData", tags="*", ram=1, force=FALSE, verbose=FALSE, ...) {
+setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL, path=NULL, name="qcData", tags="*", ram=1, force=FALSE, verbose=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  resFcn <- function(kk) {
+    yL <- .subset2(rawDataList, kk);
+    thetaL <- .subset2(chipEffectList, kk);
+    phiL <- .subset2(probeAffinityList, kk);
+    nbrOfGroups <- length(yL);
+    res <- lapply(seq_len(nbrOfGroups), FUN=function(gg) {
+      y <- .subset2(.subset2(yL, gg), "intensities");
+      theta <- .subset2(.subset2(thetaL, gg), "theta")[1,];
+      phi <- .subset2(.subset2(phiL, gg), "phi");
+      yhat <- outer(phi, theta, FUN="*");
+      eps <- (y - yhat);
+      list(eps=eps);
+    })
+    names(res) <- names(yL);
+    res;
+  } # resFcn()
+    
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'path':
   if (is.null(path)) {
     cdf <- getCdf(this);
-    chipType <- getChipType(cdf);
-    chipType <- gsub("[,-]monocell$", "", chipType);
+    chipType <- getChipType(cdf, fullname=FALSE);
     path <- file.path(name, getName(this), "residuals", chipType);
   }
   if (!is.null(path)) {
     path <- Arguments$getWritablePath(path);
   }
 
-  mkdirs(path);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  
   # Argument 'tags':
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
@@ -186,49 +202,72 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, path=NULL, 
     tags[tags == "*"] <- "residuals";
   }
 
-  # Argument 'unitsPerChunk':
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+  
   unitsPerChunk <- ram * 100000/nbrOfArrays(this);
   unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
 
   # If residuals already calculated, and if force==FALSE, just return
   # a CelSet with the previous calculations
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Generating output pathname
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  filenames <- getNames(getChipEffects(this));
-  pathname <- sapply(filenames, function(filename){Arguments$getWritablePathname(sprintf("%s,residuals.cel", filename), path=path)});
-  nbrOfFiles <- length(pathname);
-  
-  ds <- getDataSet(this);
-  ces <- getChipEffects(this);
-  paf <- getProbeAffinities(getPlm(this));
-  
-  nbrOfUnits <- nbrOfUnits(getCdf(ces));
-  nbrOfArrays <- nbrOfArrays(this);
-  
-  verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
+  verbose && enter(verbose, "Calculating PLM residuals");
 
-# find number of units to do; first check whether last file in list
-# exists
 
-  if (isFile(pathname[nbrOfFiles])) {
-    qaf <- QualityAssessmentFile$fromFile(pathname[nbrOfFiles]);
-    unitsToDo <- findUnitsTodo(qaf, ...);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get data and parameter objects
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  plm <- getPlm(this);
+  ds <- getDataSet(plm);
+  ces <- getChipEffects(plm);
+  paf <- getProbeAffinities(plm);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Generating output pathnames
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  mkdirs(path);
+  filenames <- getNames(ces);
+  pathnames <- sapply(filenames, function(filename) {
+    filename <- sprintf("%s,residuals.cel", filename);
+    Arguments$getWritablePathname(filename, path=path);
+  });
+  nbrOfFiles <- length(pathnames);
+  
+
+  nbrOfArrays <- nbrOfArrays(ds);
+  cdf <- getCdf(ds);
+  cdfHeader <- getHeader(cdf);  # Might be used later
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # find units to do; first check whether last file in list exists
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (isFile(pathnames[nbrOfFiles])) {
+    qaf <- QualityAssessmentFile$fromFile(pathnames[nbrOfFiles]);
+    unitsToDo <- findUnitsTodo(qaf, units=units, ..., verbose=less(verbose));
   } else {
-    unitsToDo <- 1:nbrOfUnits;
+    if (is.null(units)) {
+      unitsToDo <- units;
+    } else {
+      unitsToDo <- seq(length=nbrOfUnits);
+    }
   }
 
+  nbrOfUnits <- length(unitsToDo);
+  verbose && printf(verbose, "Number of units to do: %d\n", nbrOfUnits);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Calculate residuals in chunks
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
   verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n",
                     nbrOfChunks, unitsPerChunk);
-  head <- 1:unitsPerChunk;
-  verbose && enter(verbose, "Extracting unit data");
+  head <- seq(length=unitsPerChunk);
   count <- 1;
-  idxOffset <- as.integer(0);
-
-#  residualsList <- list();
-  
   while (length(unitsToDo) > 0) {
     if (length(unitsToDo) < unitsPerChunk) {
       head <- 1:length(unitsToDo);
@@ -237,54 +276,67 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, path=NULL, 
     verbose && printf(verbose, "Chunk #%d of %d (%d units)\n",
                                         count, nbrOfChunks, length(units));
 
-    transforms <- rep(list("log2"), nbrOfArrays);
-    transforms <- lapply(transforms, get);
-    
-    rawDataList <- readUnits(ds, units=units, transforms=transforms, verbose=less(verbose), stratifyBy="pm");
-    chipEffectList <- readUnits(ces, units=units, transforms=transforms, verbose=less(verbose));
-    probeAffinityList <- readUnits(paf, units=units, transforms=transforms[1], verbose=verbose);
-
-    resFcn <- function(kk) {
-      rawData <- rawDataList[[kk]][[1]]$intensities;
-      ce <- chipEffectList[[kk]][[1]]$theta[1,];
-      pa <- probeAffinityList[[kk]][[1]]$phi;
-      fittedData <- outer(pa, ce, FUN="+");
-      return(rawData - fittedData);
-    }
-    
-    verbose && enter(verbose, "Calculating residuals");
-
-    residualsList <- lapply(head, FUN=resFcn);
-    
-    verbose && exit(verbose);
-    
-# update output files
-    
     verbose && enter(verbose, "Getting cell indices");
-
-    cdf <- getCellIndices(getCdf(ds), units=units, stratifyBy="pm", ...);
-
+    cdfList <- getCellIndices(cdf, units=units, stratifyBy="pm", ...);
+    verbose && str(verbose, cdfList[[1]]);
     verbose && exit(verbose);
     
-    for (kk in seq(pathname)) {
-      if (!isFile(pathname[kk])) {
-        cdfHeader <- getHeader(getCdf(ds));
-        celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=getName(getFile(ds,kk)));
-        createCel(pathname[kk], header=celHeader, verbose=less(verbose));
-      }
-      data <- lapply(residualsList, function(x){nrow <- nrow(x); list(list(intensities=2^x[,kk], stdvs=rep(1, nrow), pixels=rep(1, nrow)))})
-      verbose && enter(verbose, "updating file #", kk);
-      updateCelUnits(pathname[kk], cdf=cdf, data=data);
+    verbose && enter(verbose, "Retrieving raw data");
+    rawDataList <- readUnits(ds, units=units, stratifyBy="pm", verbose=less(verbose));
+    verbose && str(verbose, rawDataList[[1]]);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Retrieving chip-effect estimates");
+    chipEffectList <- readUnits(ces, units=units, verbose=less(verbose));
+    verbose && str(verbose, chipEffectList[[1]]);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Retrieving probe-affinity estimates");
+    probeAffinityList <- readUnits(paf, units=units, verbose=less(verbose));
+    verbose && str(verbose, probeAffinityList[[1]]);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Calculating residuals");
+    residualsList <- lapply(head, FUN=resFcn);
+    verbose && str(verbose, residualsList[[1]]);
+    verbose && exit(verbose);
+    
+    # Store residuals
+    for (kk in seq(along=pathnames)) {
+      # Back-transform data to intensity scale and encode as CEL structure
+      verbose && enter(verbose, "Encode as CEL structure");
+      data <- lapply(residualsList, FUN=function(groups) {
+        lapply(groups, FUN=function(group) {
+          eps <- .subset2(group, "eps")[,kk];
+          ones <- rep(1, length=length(eps));
+          list(intensities=eps, stdvs=ones, pixels=ones);
+        })
+      })
+      verbose && str(verbose, data[[1]]);
       verbose && exit(verbose);
-    }
+
+      pathname <- pathnames[kk];
+      if (!isFile(pathname)) {
+        df <- getFile(ds, kk);
+        celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=getName(df));
+        createCel(pathname, header=celHeader, verbose=less(verbose));
+      }
+
+      verbose && enter(verbose, "updating file #", kk);
+      updateCelUnits(pathname, cdf=cdfList, data=data);
+      verbose && exit(verbose);
+    } # for (kk ...)
     
     unitsToDo <- unitsToDo[-head];
     count <- count + 1;
-  }
+  } # while (length(unitsToDo) > 0)
 
+  # Return residual set
   res <- QualityAssessmentSet$fromFiles(path=path, pattern=",residuals.[cC][eE][lL]$");
-  return(res);
-  
+
+  verbose && exit(verbose);
+
+  res;
 })
 
 
@@ -318,12 +370,34 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, path=NULL, 
 # }
 #*/###########################################################################
 setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, name="qcData", tags="*", ram=1, force=FALSE, verbose=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  resFcn <- function(kk) {
+    yL <- .subset2(rawDataList, kk);
+    thetaL <- .subset2(chipEffectList, kk);
+    phiL <- .subset2(probeAffinityList, kk);
+    nbrOfGroups <- length(yL);
+    res <- lapply(nbrOfGroups, FUN=function(gg) {
+      y <- .subset2(.subset2(yL, gg), "intensities");
+      theta <- .subset2(.subset2(thetaL, gg), "theta")[1,];
+      phi <- .subset2(.subset2(phiL, gg), "phi");
+      yhat <- outer(phi, theta, FUN="+");
+      eps <- (y - yhat);
+      mad <- 1.4826 * median(abs(yhat));
+      matrix(psi.huber(yhat/mad), ncol=ncol(y));
+    })
+    res;
+  } # resFcn()
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'path':
   if (is.null(path)) {
     cdf <- getCdf(this);
-    chipType <- getChipType(cdf);
-    chipType <- gsub("[,-]monocell$", "", chipType);
+    chipType <- getChipType(cdf, fullname=FALSE);
     path <- file.path(name, getName(this), "weights", chipType);
   }
   if (!is.null(path)) {
@@ -385,8 +459,6 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
   head <- 1:unitsPerChunk;
   verbose && enter(verbose, "Extracting unit data");
   count <- 1;
-  idxOffset <- as.integer(0);
-
   while (length(unitsToDo) > 0) {
     if (length(unitsToDo) < unitsPerChunk) {
       head <- 1:length(unitsToDo);
@@ -399,14 +471,6 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
     chipEffectList <- readUnits(ces, units=units, transforms=list(log2), verbose=less(verbose));
     probeAffinityList <- readUnits(paf, units=units, transforms=list(log2), verbose=verbose);
 
-    resFcn <- function(kk) {
-      rawData <- rawDataList[[kk]][[1]]$intensities;
-      ce <- chipEffectList[[kk]][[1]]$theta[1,];
-      pa <- probeAffinityList[[kk]][[1]]$phi;
-      fittedData <- outer(pa, ce, FUN="+");
-      scale <- median(abs(rawData-fittedData))/0.6745;
-      return(matrix(psi.huber((rawData - fittedData)/scale), ncol=nbrOfArrays(ds)));
-    } # resFcn()
     
    weightsList <- lapply(head, FUN=resFcn);
 

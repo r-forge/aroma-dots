@@ -305,8 +305,7 @@ setMethodS3("fit", "CrlmmModel", function(this, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Assert that the PD enviroment package for the CDF is installed
   cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  chipType <- gsub("[,-]monocell", "", chipType);
+  chipType <- getChipType(cdf, fullname=FALSE);
   cdfMain <- AffymetrixCdfFile$fromChipType(chipType);
   pd <- PlatformDesign(cdfMain);
   if (!isInstalled(pd)) {

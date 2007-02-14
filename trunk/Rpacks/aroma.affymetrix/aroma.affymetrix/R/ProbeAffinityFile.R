@@ -41,6 +41,32 @@ setConstructorS3("ProbeAffinityFile", function(..., probeModel=c("pm", "mm", "pm
   )
 })
 
+setMethodS3("as.character", "ProbeAffinityFile", function(this, ...) {
+  s <- NextMethod(generic="as.character", object=this, ...);
+  params <- paste(getParametersAsString(this), collapse=", ");
+  s <- c(s, sprintf("Parameters: (%s)", params));
+  class(s) <- "GenericSummary";
+  s;
+}, private=TRUE)
+
+setMethodS3("getParameters", "ProbeAffinityFile", function(this, ...) {
+  params <- list(
+    probeModel = this$probeModel
+  );
+  params;
+})
+
+
+setMethodS3("getParametersAsString", "ProbeAffinityFile", function(this, ...) {
+  params <- getParameters(this);
+  params <- trim(capture.output(str(params)))[-1];
+  params <- gsub("^[$][ ]*", "", params);
+  params <- gsub(" [ ]*", " ", params);
+  params <- gsub("[ ]*:", ":", params);
+  params;
+}, private=TRUE)
+
+
 setMethodS3("clearCache", "ProbeAffinityFile", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16

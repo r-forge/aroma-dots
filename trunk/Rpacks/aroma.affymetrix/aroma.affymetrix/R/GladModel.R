@@ -230,11 +230,7 @@ setMethodS3("getListOfCdfs", "GladModel", function(this, ...) {
 
 setMethodS3("getChipTypes", "GladModel", function(this, merge=FALSE, collapse="+", ...) {
   cdfList <- getListOfCdfs(this);
-  chipTypes <- sapply(cdfList, FUN=getChipType);
-
-  chipTypes <- sapply(chipTypes, FUN=function(s) {
-    gsub("[,-]monocell", "", s);
-  })
+  chipTypes <- sapply(cdfList, FUN=getChipType, fullname=FALSE);
 
   if (merge) {
     chipTypes <- mergeByCommonTails(chipTypes, collapse=collapse);
@@ -519,7 +515,7 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
   fullname <- getFullName(this);
 
   # Chip type    
-  chipType <- getChipType(this);
+  chipType <- getChipType(cdf, fullname=FALSE);
 
   # Set type    
   set <- "glad";
@@ -896,7 +892,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   rootPath <- "reports";
 
   # Get chip type
-  chipType <- getChipType(this);
+  chipType <- getChipType(cdf, fullname=FALSE);
 
   # Data set name
   name <- getName(this);

@@ -111,9 +111,9 @@ setMethodS3("clone", "AffymetrixFile", function(this, clear=TRUE, ...) {
 setMethodS3("as.character", "AffymetrixFile", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
-  tags <- getTags(this);
+  tags <- getTags(this, collapse=",");
   if (!is.null(tags)) {
-    s <- c(s, sprintf("Tags: %s", paste(tags, collapse=",")));
+    s <- c(s, sprintf("Tags: %s", tags));
   }
   s <- c(s, sprintf("Pathname: %s", getPathname(this)));
   s <- c(s, sprintf("File size: %.2fMB", getFileSize(this)/1024^2));
@@ -325,6 +325,8 @@ setMethodS3("getName", "AffymetrixFile", function(this, ...) {
 # @synopsis
 #
 # \arguments{
+#  \item{collapse}{A @character string used to concatenate the tags. 
+#     If @NULL, the tags are not concatenated.}
 #  \item{...}{Not used.}
 # }
 #
@@ -347,7 +349,7 @@ setMethodS3("getName", "AffymetrixFile", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "AffymetrixFile", function(this, ...) {
+setMethodS3("getTags", "AffymetrixFile", function(this, collapse=NULL, ...) {
   name <- getFullName(this, ...);
 
   # Data-set name is anything before the first comma
@@ -357,8 +359,11 @@ setMethodS3("getTags", "AffymetrixFile", function(this, ...) {
   name <- substring(name, nchar(dsName)+2);
   
   tags <- strsplit(name, split=",")[[1]];
-  if (length(tags) == 0)
+  if (length(tags) == 0) {
     tags <- NULL;
+  } else {
+    tags <- paste(tags, collapse=collapse);
+  }
   tags;
 })
 

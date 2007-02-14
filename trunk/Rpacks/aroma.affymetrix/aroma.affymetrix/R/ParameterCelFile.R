@@ -123,7 +123,7 @@ setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   args <- list(..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy);
   if (object.size(args) > 1e6) {
-    verbose && cat(verbose, "No caching. Argument list to large: ", object.size(args)/1024^2, "MB");
+    verbose && printf(verbose, "No caching. Argument list to large: %.2fMB\n", object.size(args)/1024^2);
     cache <- FALSE;
   } else {
     verbose && enter(verbose, "Generating hashcode key for cache");

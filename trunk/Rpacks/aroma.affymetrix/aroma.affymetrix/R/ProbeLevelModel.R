@@ -67,20 +67,29 @@ setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", 
     tags <- c(toupper(probeModel), tags);
   }
 
-  extend(UnitModel(..., tags=tags), "ProbeLevelModel",
-    "cached:.paFile" = NULL,
-    "cached:.chipFiles" = NULL,
+  extend(UnitModel(..., tags=tags, parSet=list(probeModel=probeModel)), "ProbeLevelModel",
+    "cached:.paf" = NULL,
+    "cached:.ces" = NULL,
+    "cached:.rs" = NULL,
     "cached:.lastPlotData" = NULL,
     probeModel = probeModel,
     standardize=standardize
   )
 }, abstract=TRUE)
 
+setMethodS3("getParameterSet", "Model", function(this, ...) {
+  this$parSet;
+}, private=TRUE)
+
+setMethodS3("getParameters", "Model", function(this, ...) {
+  getParameterSet(this, ...);
+})
+
 
 setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".paFile", ".chipFiles", ".lastPlotData")) {
+  for (ff in c(".paf", ".ces", ".rs", ".lastPlotData")) {
     this[[ff]] <- NULL;
   }
 
@@ -89,10 +98,6 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
 }, private=TRUE)
 
 
-
-setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
-  ChipEffectSet;
-}, static=TRUE, private=TRUE)
 
 
 setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
@@ -127,25 +132,25 @@ setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=ProbeAffinityFile) {
-  res <- this$.paFile;
-  if (!is.null(res))
-    return(res);
+  paf <- this$.paf;
+  if (!is.null(paf))
+    return(paf);
 
   ds <- getDataSet(this);
   if (length(ds) == 0)
     throw("Cannot create probe-affinity file. There are no CEL files in the data set.");
 
   # Create probe-affinity file from CEL file template
-  df <- as.list(ds)[[1]];
-  res <- createFrom(df, filename="probeAffinities.cel", path=getPath(this), ...);
+  df <- getFile(ds, 1);
+  paf <- createFrom(df, filename="probeAffinities.cel", path=getPath(this), ...);
 
   # Make it into an object of the correct class
-  res <- newInstance(.class, getPathname(res), cdf=getCdf(ds), 
+  paf <- newInstance(.class, getPathname(paf), cdf=getCdf(ds), 
                                                   probeModel=this$probeModel);
 
-  this$.paFile <- res;
+  this$.paf <- paf;
 
-  res;
+  paf;
 })
 
 
@@ -196,7 +201,7 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   # might use a modified version of the one in the CEL header.
   ds <- getDataSet(this);
   if (length(ds) == 0)
-    throw("Cannot create chip-effect file. The CEL set is empty.");
+    throw("Cannot create chip-effect set. The CEL set is empty.");
   
   verbose && enter(verbose, "Getting chip-effect set from data set");
   # Gets the ChipEffects Class object
@@ -211,6 +216,49 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   ces;
 })
 
+
+setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
+  ChipEffectSet;
+}, static=TRUE, private=TRUE)
+
+
+
+setMethodS3("getResidualSet", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  rs <- this$.rs;
+  if (!is.null(rs))
+    return(rs);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create residuals files 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Let the parameter object know about the CDF structure, because we 
+  # might use a modified version of the one in the CEL header.
+  ds <- getDataSet(this);
+  if (length(ds) == 0)
+    throw("Cannot create residuals set. The data set is empty.");
+  
+  verbose && enter(verbose, "Getting chip-effect set from data set");
+  # Gets the ResidualSet Class object
+  clazz <- getResidualSetClass(this);
+  rs <- clazz$fromDataSet(dataSet=ds, path=getPath(this), 
+                                                     verbose=less(verbose));
+  verbose && exit(verbose);
+
+  # Store in cache
+  this$.rs <- rs;
+
+  rs;
+})
+
+setMethodS3("getResidualSetClass", "ProbeLevelModel", function(static, ...) {
+  ResidualSet;
+}, static=TRUE, private=TRUE)
 
 
 ###########################################################################/**
@@ -342,6 +390,7 @@ setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verb
 
   res;
 }, private=TRUE)
+
 
 
 setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FALSE) {

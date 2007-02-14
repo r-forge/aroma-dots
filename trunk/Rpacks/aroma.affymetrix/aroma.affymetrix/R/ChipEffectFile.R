@@ -13,7 +13,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ParameterCelFile".}
-#   \item{model}{The specific type of model, e.g. \code{"pm"}.}
+#   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
 # }
 #
 # \section{Fields and Methods}{
@@ -28,16 +28,16 @@
 #   An object of this class is typically part of a @see "ChipEffectSet".
 # }
 #*/###########################################################################
-setConstructorS3("ChipEffectFile", function(..., model=c("pm")) {
+setConstructorS3("ChipEffectFile", function(..., probeModel=c("pm")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'model':
-  model <- match.arg(model);
+  # Argument 'probeModel':
+  probeModel <- match.arg(probeModel);
 
   this <- extend(ParameterCelFile(...), "ChipEffectFile",
     "cached:.firstCells" = NULL,
-    model = model
+    probeModel = probeModel
   )
 
   setEncodeFunction(this, function(groupData, ...) {
@@ -97,7 +97,7 @@ setMethodS3("as.character", "ChipEffectFile", function(this, ...) {
 
 setMethodS3("getParameters", "ChipEffectFile", function(this, ...) {
   params <- list(
-    probeModel = this$model
+    probeModel = this$probeModel
   );
   params;
 })

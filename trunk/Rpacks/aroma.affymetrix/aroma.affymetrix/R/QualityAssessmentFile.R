@@ -56,25 +56,25 @@ setMethodS3("findUnitsTodo", "QualityAssessmentFile", function(this, units=NULL,
 
   verbose && cat(verbose, "Pathname: ", getPathname(this));
   if (is.null(units)) {
-    units <- 1:nbrOfUnits(getCdf(this));
+    units <- seq(length=nbrOfUnits(getCdf(this)));
   }
-
-  verbose && exit(verbose);
   
-  # Read pixels from each unit
+  # Read 'pixels' from each unit
   verbose && enter(verbose, "Reading data for these ", length(units), " units");
   value <- readCelUnits(getPathname(this), units=units, readIntensities=FALSE, 
                         readStdvs=FALSE, readPixels=TRUE);
+  verbose && exit(verbose);
 
+  verbose && enter(verbose, "Looking for pixels == 0 indicating non-assigned units");
   # Identify units for which all pixels == 0.
-
-  allZeroPixels <- sapply(value, function(x) {all(x[[1]][[1]]==0)}, USE.NAMES=FALSE);
-
+  allZeroPixels <- sapply(value, function(x) {
+    all(x[[1]][[1]]==0)
+  }, USE.NAMES=FALSE);
   value <- which(allZeroPixels);
   if (!is.null(units))
     value <- units[value];
-  verbose && cat(verbose, "Looking for pixels == 0 indicating non-assigned units:");
   verbose && str(verbose, value);
+  verbose && exit(verbose);
 
   verbose && exit(verbose);
 
@@ -84,6 +84,8 @@ setMethodS3("findUnitsTodo", "QualityAssessmentFile", function(this, units=NULL,
 
 ############################################################################
 # HISTORY:
+# 2007-02-12 /HB
+# o Updated the verbose output for findUnitsTodo().
 # 2007-01-12
 # o Created.
 ############################################################################
