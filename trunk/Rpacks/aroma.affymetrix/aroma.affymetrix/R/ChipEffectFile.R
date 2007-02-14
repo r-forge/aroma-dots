@@ -123,11 +123,13 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
   # Search for existing monocell CDF
   for (sep in c(",", "-")) {
     chipType <- paste(getChipType(sourceCdf), "monocell", sep=sep);
+    verbose && cat(verbose, "Looking for chip type: ", chipType);
     pathname <- AffymetrixCdfFile$findByChipType(chipType);
-    if (!is.null(pathname))
+    if (!is.null(pathname)) {
+      verbose && cat(verbose, "Found: ", pathname);
       break;
+    }
   }
-
   # Warn about deprecated filname <chipType>-monocell.
   if (!is.null(pathname) && (sep == "-")) {
     msg <- paste("Deprecated filename of monocell CDF detected (uses dash instead of comma): ", pathname);
