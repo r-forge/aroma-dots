@@ -121,8 +121,8 @@ setMethodS3("getCdf", "GenotypeCallSet", function(this, ...) {
 
 
 # setMethodS3("getChipType", "GenotypeCallSet", function(this, ...) {
-#   chipType <- getChipType(getCdf(this));
-#   chipType <- gsub("[,-]monocell$", "", chipType);
+#   cdf <- getCdf(this);
+#   chipType <- getChipType(cdf, fullname=FALSE);
 #   chipType;
 # })
 
@@ -439,7 +439,7 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NU
 })
 
 
-setMethodS3("createFromCrlmmFile", "GenotypeCallSet", function(this, filename="calls.txt", path=NULL, outPath=filePath("calls", getChipType(cdf)), cdf, ..., verbose=FALSE) {
+setMethodS3("createFromCrlmmFile", "GenotypeCallSet", function(this, filename="calls.txt", path=NULL, outPath=filePath("calls", getChipType(cdf, fullname=FALSE)), cdf, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

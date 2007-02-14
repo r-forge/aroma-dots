@@ -643,58 +643,89 @@ setMethodS3("addColorMap", "ArrayExplorer", function(this, colorMap, ...) {
   # Argument 'colorMap':
   colorMap <- Arguments$getCharacter(colorMap, nchar=c(1,Inf));
 
-  parts <- strsplit(colorMap, split=",")[[1]];
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Parser argument 'colorMap'
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  tags <- colorMap;
+  parts <- strsplit(tags, split=",")[[1]];
   n <- length(parts);
-  if (n > 3) {
-    throw("Argument 'colorMap' must not contain more than three tags: ", 
-                                                                 colorMap);
+  if (n > 2) {
+    throw("Argument 'colorMap' must not contain more than two tags: ", tags);
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Validate color map
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (n == 1) {
-    transform <- "sqrt";
+    transform <- NULL;
     palette <- parts[1];
-    ncols <- 256;
   } else if (n == 2) {
     transform <- parts[1];
     palette <- parts[2];
-    ncols <- 256;
-  } else if (n == 3) {
-    transform <- parts[1];
-    palette <- parts[2];
-    ncols <- as.integer(parts[3]);
-  } 
+  }
 
-  # Check transform
-  if (!exists(transform, mode="function")) {
-    throw("Argument 'colorMap' specifies an unknown transform function ('",
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Setup color map
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (is.null(transform)) {
+    transform <- sqrt;
+  } else if (is.character(transform)) {
+    # Check transform
+    if (!exists(transform, mode="function")) {
+      throw("Argument 'colorMap' specifies an unknown transform function ('",
                                                transform, "'): ", colorMap);
-  }
-
-  # Check palette
-  name <- palette;
-  if (!exists(name, mode="function")) {
-    name <- sprintf("%s.colors", palette);
-    if (!exists(name, mode="function")) {
-      throw("Argument 'colorMap' specifies an unknown palette function ('", 
-                                                   name, "'): ", colorMap);
     }
+    transform <- get(transform, mode="function");
+  } else if (!is.function(transform)) {
+    throw("Argument 'colorMap' specifies an invalid transform: ", 
+                                                           mode(transform));
   }
 
-  if (is.na(ncols)) {
+  if (is.null(nbrOfColors)) {
+    nbrOfColors <- 256;
+  } else if (is.na(nbrOfColors)) {
     throw("Argument 'colorMap' specifies an invalid number of colors ('", 
                                                    ncol, "'): ", colorMap);
   }
 
+  if (is.null(palette)) {
+    palette <- gray.colors(256);
+  } else if (is.function(palette)) {
+    palette <- palette(256);
+  } else if (is.character(palette)) {
+    # Parse color palette tag
+    pattern <- "^([^_]*)(|[_][0-9]*)$";
+    name <- gsub(pattern, "\\1", palette);
+    nbrOfColors <- gsub(pattern, "\\2", palette);
+    nbrOfColors <- gsub("[_]", "", nbrOfColors);
+    nbrOfColors <- as.integer(nbrOfColors);
+    if (is.na(nbrOfColors))
+      nbrOfColors <- 256;
+
+    # Search for function <palette>() and then <palette>.colors()
+    if (!exists(name, mode="function")) {
+      name <- sprintf("%s.colors", palette);
+      if (!exists(name, mode="function")) {
+        throw("Argument 'colorMap' specifies an unknown palette function ('", 
+                                                   name, "'): ", colorMap);
+      }
+    }
+    fcn <- get(name, mode="function");
+    palette <- fcn(nbrOfColors);
+  }
+  
+
+  map <- list(list(
+    tags = tags,
+    transform = transform,
+    palette = palette
+  ));
+  names(map) <- map$tags;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Add color map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   colorMaps <- this$.colorMaps;
-  colorMaps <- c(colorMaps, colorMap);
-  colorMaps <- unique(colorMaps);
+  if (is.null(colorMaps))
+    colorMaps <- list();  
+  colorMaps <- c(colorMaps, map);
   this$.colorMaps <- colorMaps;
 })
 
@@ -709,45 +740,8 @@ setMethodS3("setColorMaps", "ArrayExplorer", function(this, colorMaps=c("sqrt,ye
 setMethodS3("getColorMaps", "ArrayExplorer", function(this, parsed=FALSE, ...) {
   colorMaps <- this$.colorMaps;
 
-  # Parse the color maps?
-  if (parsed) {
-    names <- colorMaps;
-    colorMaps <- strsplit(colorMaps, split=",");
-    for (kk in seq(along=colorMaps)) {
-      parts <- colorMaps[[kk]];
-      n <- length(parts);
-      if (n == 1) {
-        transform <- "sqrt";
-        palette <- parts[1];
-        ncols <- 256;
-      } else if (n == 2) {
-        transform <- parts[1];
-        palette <- parts[2];
-        ncols <- 256;
-      } else if (n == 3) {
-        transform <- parts[1];
-        palette <- parts[2];
-        ncols <- as.integer(parts[3]);
-      } 
-  
-      # Parse transforms
-      transform <- get(transform, mode="function");
-  
-      # Parse palettes
-      # Search for function <palette>() and then <palette>.colors()
-      name <- palette;
-      if (!exists(name, mode="function")) {
-        name <- sprintf("%s.colors", palette);
-      }
-      fcn <- get(name, mode="function");
-
-      # Generate color map palette
-      palette <- fcn(ncols);
-  
-      colorMaps[[kk]] <- list(transform=transform, palette=palette);
-    }
-    names(colorMaps) <- names;
-  }
+  if (!parsed)
+    colorMaps <- sapply(colorMaps, .subset2, "tags");
 
   colorMaps;
 })
@@ -785,11 +779,12 @@ setMethodS3("writeImages", "ArrayExplorer", function(this, arrays=NULL, ...) {
     df <- getFile(cs, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
     # For each color map...
-    names <- names(colorMaps);
     for (ll in seq(along=colorMaps)) {
-      tags <- names[ll];
       colorMap <- colorMaps[[ll]];
+      tags <- colorMap$tags;
       verbose && enter(verbose, sprintf("Color map #%d ('%s')", ll, tags));
+#      verbose && str(verbose, colorMap$transform);
+#      verbose && str(verbose, colorMap$palette);
       writeImage(df, path=path, transform=colorMap$transform, 
                                    palette=colorMap$palette, tags=tags, ...);
       verbose && exit(verbose);

@@ -684,7 +684,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf(fmtstr, getName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), transform=sqrt, zlim=NULL, verbose=FALSE) {
+setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf(fmtstr, getFullName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), transform=sqrt, zlim=NULL, verbose=FALSE) {
   require(R.image) || throw("Package R.image not loaded.");
 
   # Argument 'field':
@@ -820,8 +820,15 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,65535), field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=FALSE, ..., zoom=NULL, verbose=FALSE) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=c("auto", "h", "v", "none") , ..., zoom=NULL, verbose=FALSE) {
   require(EBImage) || throw("Package not loaded: EBImage.");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  safeMeans <- function(x) {
+    mean(x[is.finite(x)]);
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
@@ -838,7 +845,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   }
 
   # Argument 'interleaved':
-  interleaved <- Arguments$getLogical(interleaved);
+  interleaved <- match.arg(interleaved);
 
   # Argument 'zoom':
   if (!is.null(zoom))
@@ -859,13 +866,52 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   });
   y <- y[[field]];
   verbose && str(verbose, y);
+  verbose && summary(verbose, as.vector(y[is.finite(y) & (y != 0)]));
   verbose && printf(verbose, "RAM: %.1fMB\n", object.size(y)/1024^2);
   verbose && exit(verbose);
 
   # if only PM locations have signal, add a fake row
-  if (interleaved) {
-    idxEven <- seq(from=1, to=nrow(y), by=2);
-    y[idxEven-1,] <- y[idxEven,];
+  if (interleaved == "auto") {
+    verbose && enter(verbose, "Infering horizontal, vertical, or no interleaving");
+    n <- 2*(nrow(y) %/% 2);
+    idxOdd <- seq(from=1, to=n, by=2);
+    hOdd <- safeMeans(abs(y[idxOdd,]));
+    hEven <- safeMeans(abs(y[idxOdd+1,]));
+    hRatio <- log(hOdd/hEven);
+
+    n <- 2*(ncol(y) %/% 2);
+    n <- max(n, 40);
+    idxOdd <- seq(from=1, to=n, by=2);
+    vOdd <- safeMeans(abs(y[,idxOdd]));
+    vEven <- safeMeans(abs(y[,idxOdd+1]));
+    vRatio <- log(vOdd/vEven);
+
+    interleaved <- "none";
+    if (abs(vRatio) > abs(hRatio)) {
+      if (abs(vRatio) > 0.1) {
+        if (vRatio > 0)
+          interleaved <- "v"
+        else
+          interleaved <- "v";
+      }
+    } else {
+      if (abs(hRatio) > 0.1) {
+        if (hRatio > 0)
+          interleaved <- "h"
+        else
+          interleaved <- "h";
+      }
+    }
+    verbose && cat(verbose, "interleaved: ", interleaved);
+    verbose && exit(verbose);
+  }
+
+  if (interleaved == "h") {
+    idxOdd <- seq(from=1, to=2*(nrow(y) %/% 2), by=2);
+    y[idxOdd,] <- y[idxOdd+1,];
+  } else if (interleaved == "v") {
+    idxOdd <- seq(from=1, to=2*(ncol(y) %/% 2), by=2);
+    y[,idxOdd] <- y[,idxOdd+1];
   }
 
   # Transform signals?
@@ -875,7 +921,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 
   # Create an EBImage Image object
   y <- t(y);
-  img <- Image(data=y, dim=dim(y));
+  img <- Image(data=y, dim=dim(y), colormode=Grayscale);
 
   verbose && enter(verbose, "Transforming image");
   img <- rgbTransform(img, lim=zrange, ...);
@@ -969,7 +1015,7 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, ...) {
 # }
 #
 # \value{
-#   Returns (invisibly) the Image written.
+#   Returns the pathname to the image file created.
 # }
 #
 # \examples{\dontrun{
@@ -1004,13 +1050,15 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
     parts <- unlist(strsplit(basename(parent), split=","));
     dataSet <- parts[1];
     dataSetTags <- parts[-1];
-    if (length(dataSetTags) == 0)
+    if (length(dataSetTags) == 0) {
       dataSetTags <- "raw";
+    } else {
+      dataSetTags <- paste(dataSetTags, collapse=",");
+    }
 
     # chip type
     cdf <- getCdf(this);
-    chipType <- getChipType(cdf);
-    chipType <- gsub("[,-]monocell$", "", chipType);
+    chipType <- getChipType(cdf, fullname=FALSE);
 
     # image set
     set <- "spatial";
@@ -1056,7 +1104,7 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
   verbose && exit(verbose);
 
   # Return pathname
-  invisible(pathname);
+  pathname;
 })
 
 

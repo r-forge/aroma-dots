@@ -254,8 +254,7 @@ setMethodS3("setCdf", "GenotypeCallFile", function(this, cdf, ...) {
 
 # setMethodS3("getChipType", "GenotypeCallFile", function(this, ...) {
 #   cdf <- getCdf(this);
-#   chipType <- getChipType(cdf);
-#   chipType <- gsub("[,-]monocell$", "", chipType);
+#   chipType <- getChipType(cdf, fullname=FALSE);
 #   chipType;
 # })
 

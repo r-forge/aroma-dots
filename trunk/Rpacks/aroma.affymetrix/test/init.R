@@ -123,3 +123,5 @@ NORMAL <- 1;
 BOLD <- 2; 
 ITALIC <- 3; 
 BOLDITALIC <- 4;
+
+.setupAromaAffymetrix();

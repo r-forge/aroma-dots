@@ -97,9 +97,9 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, tags="*", alias=NULL,
 setMethodS3("as.character", "AffymetrixFileSet", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
-  tags <- getTags(this);
+  tags <- getTags(this, collapse=",");
   if (!is.null(tags)) {
-    s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
+    s <- paste(s, " Tags: ", tags, ".", sep="");
   }
   s <- c(s, sprintf("Full name: %s", getFullName(this)));
   n <- nbrOfFiles(this);
@@ -350,6 +350,8 @@ setMethodS3("setAlias", "AffymetrixFileSet", function(this, alias=NULL, ...) {
 # @synopsis
 #
 # \arguments{
+#  \item{collapse}{A @character string used to concatenate the tags. 
+#     If @NULL, the tags are not concatenated.}
 #  \item{...}{Not used.}
 # }
 #
@@ -373,7 +375,7 @@ setMethodS3("setAlias", "AffymetrixFileSet", function(this, alias=NULL, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "AffymetrixFileSet", function(this, ...) {
+setMethodS3("getTags", "AffymetrixFileSet", function(this, collapse=NULL, ...) {
   tags <- this$.tags;
 
   if ("*" %in% tags) {
@@ -398,8 +400,12 @@ setMethodS3("getTags", "AffymetrixFileSet", function(this, ...) {
     }
   }
 
-  if (length(tags) == 0)
+  if (length(tags) == 0) {
     tags <- NULL;
+  } else {
+    tags <- paste(tags, collapse=collapse);
+  }
+
   tags;
 })
 
