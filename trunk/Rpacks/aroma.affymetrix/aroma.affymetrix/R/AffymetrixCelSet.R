@@ -432,7 +432,10 @@ setMethodS3("fromName", "AffymetrixCelSet", function(static, name, tags=NULL, ch
   })
 }, static=TRUE)
 
-setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", ..., fileClass="AffymetrixCelFile", verbose=FALSE) {
+setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
+  # Argument 'onDuplicates':
+  onDuplicates <- match.arg(onDuplicates);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -443,6 +446,24 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   verbose && enter(verbose, "Defining ", class(static)[1], " from files");
 
   this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+
+  if (onDuplicates %in% c("exclude", "error")) {
+    dups <- isDuplicated(this);
+    ndups <- sum(dups);
+    if (ndups > 0) {
+      dupsStr <- paste(getNames(this)[dups], collapse=", ");
+      if (onDuplicates == "error") {
+        msg <- paste("Detected ", ndups, " duplicated CEL files (same datestamp): ", dupsStr, sep="");
+        verbose && cat(verbose, "ERROR: ", msg);
+        throw(msg);
+      } else if (onDuplicates == "exclude") {
+        this <- extract(this, !dups);
+        msg <- paste("Excluding ", ndups, " duplicated CEL files (same datestamp): ", dupsStr, sep="");
+        verbose && cat(verbose, "WARNING: ", msg);
+        warning(msg);
+      }
+    }
+  }
 
   # Use the same CDF object for all CEL files.
   verbose && enter(verbose, "Updating the CDF for all files");
@@ -1182,6 +1203,9 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-02-14
+# o Added argument 'onDuplicates' to fromFiles() so it is possible to 
+#   exclude duplicated CEL files.
 # 2007-02-06
 # o Added static method findByName() and fromName().
 # 2007-01-15
