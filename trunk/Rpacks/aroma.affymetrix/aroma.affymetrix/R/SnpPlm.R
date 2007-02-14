@@ -47,6 +47,7 @@ setConstructorS3("SnpPlm", function(...) {
 ##   s;
 ## })
 
+
 setMethodS3("getCellIndices", "SnpPlm", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
 

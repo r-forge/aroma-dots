@@ -50,6 +50,12 @@ setConstructorS3("RmaCnPlm", function(..., combineAlleles=FALSE, tags="*") {
   )
 })
 
+setMethodS3("getParameterSet", "RmaCnPlm", function(this, ...) {
+  params <- NextMethod("getParameterSet", this, ...);
+  params$combineAlleles <- this$combineAlleles;
+  params;
+}, private=TRUE)
+
 
 ############################################################################
 # HISTORY:
