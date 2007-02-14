@@ -77,15 +77,6 @@ setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", 
   )
 }, abstract=TRUE)
 
-setMethodS3("getParameterSet", "Model", function(this, ...) {
-  this$parSet;
-}, private=TRUE)
-
-setMethodS3("getParameters", "Model", function(this, ...) {
-  getParameterSet(this, ...);
-})
-
-
 setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
@@ -97,6 +88,12 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
   NextMethod(generic="clearCache", object=this, ...);
 }, private=TRUE)
 
+
+setMethodS3("getParameterSet", "ProbeLevelModel", function(this, ...) {
+  params <- NextMethod("getParameterSet", this, ...);
+  params$probeModel <- this$probeModel;
+  params;
+}, private=TRUE)
 
 
 
