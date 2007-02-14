@@ -1,0 +1,153 @@
+setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  ces <- getChipEffects(this);
+  paf <- getProbeAffinities(this);
+  rs <- getResidualSet(this);
+  nbrOfArrays <- nbrOfArrays(ces);
+
+  # If residuals already calculated, and if force==FALSE, just return
+  # a CelSet with the previous calculations
+
+  verbose && enter(verbose, "Calculating PLM residuals");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get data and parameter objects
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ds <- getDataSet(this);
+  if (is.null(ds)) {
+    throw("No data set specified for PLM: ", getFullName(this));
+  }
+
+  cdf <- getCdf(ds);
+  if (is.null(units)) {
+    nbrOfUnits <- nbrOfUnits(cdf);
+  } else {
+    nbrOfUnits <- length(units);
+  }
+  verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
+
+  cdfData <- NULL;
+  chipType <- getChipType(cdf);
+  key <- list(method="calculateResiduals", class=class(this)[1], 
+              chipType=chipType, params=getParameters(this),
+              units=units);
+  dirs <- c("aroma.affymetrix", chipType);
+  if (!force) {
+    cdfData <- loadCache(key, dirs=dirs);
+    if (!is.null(cdfData))
+      verbose && cat(verbose, "Found indices cached on file");
+  }
+
+  if (is.null(cdfData)) {
+    verbose && enter(verbose, "Retrieving CDF cell indices");
+    cdfUnits <- getCellIndices(this, units=units, verbose=less(verbose));
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Calculate group sizes");
+    unitGroupSizes <- applyCdfGroups(cdfUnits, lapply, FUN=function(group) {
+      length(.subset2(group, 1));
+    });
+    unitGroupSizes <- unlist(unitGroupSizes, use.names=FALSE);
+    verbose && exit(verbose);
+
+    cells <- unlist(cdfUnits, use.names=FALSE);
+
+    verbose && enter(verbose, "Retrieving CDF cell indices for chip effects");
+    cdfUnits <- getCellIndices(ces, units=units, verbose=less(verbose));
+    cells2 <- unlist(cdfUnits, use.names=FALSE);
+    verbose && exit(verbose);
+
+    rm(cdfUnits); # Not needed anymore
+
+    cdfData <- list(unitGroupSizes=unitGroupSizes, cells=cells, cells2=cells2);
+    verbose && enter(verbose, "Saving to file cache");
+    saveCache(cdfData, key=key, dirs=dirs);
+    verbose && exit(verbose);
+  } else {
+    unitGroupSizes <- cdfData$unitGroupSizes;
+    cells <- cdfData$cells;
+    cells2 <- cdfData$cells2;
+    rm(cdfData);
+  }
+
+  # Optimized reading order
+  o <- .Internal(qsort(cells, TRUE));
+  cells <- o$x;
+  o <- o$ix;
+  oinv <- .Internal(qsort(o, TRUE))$ix;
+  
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && enter(verbose, "Retrieving probe-affinity estimates");
+  phi <- getData(paf, indices=cells, fields="intensities")$intensities[oinv];
+  verbose && exit(verbose);
+
+  for (kk in seq(ds)) {
+    df <- getFile(ds, kk);
+    cef <- getFile(ces, kk);
+    rf <- getFile(rs, kk);
+
+    verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
+
+    verbose && enter(verbose, "Retrieving probe intensity data");
+    y <- getData(df, indices=cells, fields="intensities")$intensities[oinv];
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Retrieving chip-effect estimates");
+    theta <- getData(cef, indices=cells2, fields="intensities")$intensities;
+    theta <- rep(theta, times=unitGroupSizes);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Calculating residuals");
+    yhat <- phi * theta;
+    eps <- (y-yhat);
+    verbose && str(verbose, eps);
+    verbose && exit(verbose);
+    rm(y, yhat, theta);
+
+    verbose && enter(verbose, "Storing residuals");
+    updateCel(getPathname(rf), indices=cells, intensities=eps[o]);
+    verbose && exit(verbose);
+
+#    verbose && enter(verbose, "Verifying");
+#    eps2 <- getData(rf, indices=cells, fields="intensities")$intensities[oinv];
+#    stopifnot(all.equal(eps, eps2, tolerance=.Machine$double.eps^0.25));
+#    verbose && exit(verbose);
+#    rm(eps2);
+
+    rm(eps);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    verbose && exit(verbose);
+  } # for (kk ...)
+  rm(cells, phi, unitGroupSizes);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
+
+  invisible(rs);
+})
+
+
+##########################################################################
+# HISTORY:
+# 2007-02-12 HB
+# o Rewritten from KS:s code.
+##########################################################################
