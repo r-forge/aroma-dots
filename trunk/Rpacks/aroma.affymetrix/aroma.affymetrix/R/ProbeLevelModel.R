@@ -71,6 +71,7 @@ setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", 
     "cached:.paf" = NULL,
     "cached:.ces" = NULL,
     "cached:.rs" = NULL,
+    "cached:.ws" = NULL,
     "cached:.lastPlotData" = NULL,
     probeModel = probeModel,
     standardize=standardize
@@ -245,6 +246,8 @@ setMethodS3("getResidualSet", "ProbeLevelModel", function(this, ..., verbose=FAL
   clazz <- getResidualSetClass(this);
   rs <- clazz$fromDataSet(dataSet=ds, path=getPath(this), 
                                                      verbose=less(verbose));
+  # make sure CDF is inherited
+  setCdf(rs, getCdf(ds));
   verbose && exit(verbose);
 
   # Store in cache
@@ -255,6 +258,46 @@ setMethodS3("getResidualSet", "ProbeLevelModel", function(this, ..., verbose=FAL
 
 setMethodS3("getResidualSetClass", "ProbeLevelModel", function(static, ...) {
   ResidualSet;
+}, static=TRUE, private=TRUE)
+
+
+setMethodS3("getWeightsSet", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  ws <- this$.ws;
+  if (!is.null(ws))
+    return(ws);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create weights files 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Let the parameter object know about the CDF structure, because we 
+  # might use a modified version of the one in the CEL header.
+  ds <- getDataSet(this);
+  if (length(ds) == 0)
+    throw("Cannot create weights set. The data set is empty.");
+  
+  verbose && enter(verbose, "Getting chip-effect set from data set");
+  # Gets the WeightsSet Class object
+  clazz <- getWeightsSetClass(this);
+  ws <- clazz$fromDataSet(dataSet=ds, path=getPath(this), 
+                                                     verbose=less(verbose));
+  # make sure CDF is inherited
+  setCdf(ws, getCdf(ds));
+  verbose && exit(verbose);
+
+  # Store in cache
+  this$.ws <- ws;
+
+  ws;
+})
+
+setMethodS3("getWeightsSetClass", "ProbeLevelModel", function(static, ...) {
+  WeightsSet;
 }, static=TRUE, private=TRUE)
 
 

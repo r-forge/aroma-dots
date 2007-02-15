@@ -125,8 +125,10 @@ setMethodS3("fromDataFile", "ResidualFile", function(static, df=NULL, filename=s
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "Pathname: ", pathname);
   rf <- createFrom(df, filename=pathname, ...);
-
+  cdf <- getCdf(rf);
+  
   rf <- fromFile(static, pathname);
+  setCdf(rf, cdf);
 
   rf;
 }, static=TRUE, private=TRUE)
