@@ -1,3 +1,10 @@
+setMethodS3("getCalculateResidualsFunction", "ProbeLevelModel", function(static, ...) {
+  function(y, yhat) {
+    y-yhat;
+  }
+}, static=TRUE, protected=TRUE)
+
+
 setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -26,6 +33,10 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
   if (is.null(ds)) {
     throw("No data set specified for PLM: ", getFullName(this));
   }
+
+  # Get the function how to calculate residuals.
+  # Default is eps = y - yhat, but for instance RMA uses eps = y/yhat.
+  calculateEps <- getCalculateResidualsFunction(this);
 
   cdf <- getCdf(ds);
   if (is.null(units)) {
@@ -111,7 +122,7 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
     verbose && enter(verbose, "Calculating residuals");
     yhat <- phi * theta;
-    eps <- (y-yhat);
+    eps <- calculateEps(y, yhat);  # Model class specific.
     verbose && str(verbose, eps);
     verbose && exit(verbose);
     rm(y, yhat, theta);
@@ -148,6 +159,9 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
 ##########################################################################
 # HISTORY:
+# 2007-02-14 HB + KS
+# o Now residuals can be calculated differently for different PLM classes.
+#   This is done by overriding static getCalculateResidualsFunction().
 # 2007-02-12 HB
 # o Rewritten from KS:s code.
 ##########################################################################
