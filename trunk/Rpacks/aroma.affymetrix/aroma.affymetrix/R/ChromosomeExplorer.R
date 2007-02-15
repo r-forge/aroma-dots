@@ -658,6 +658,8 @@ setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, ..., force=FALS
     verbose && enter(verbose, "Copying index.html");
     verbose && cat(verbose, "Source pathname: ", srcPathname);
     verbose && cat(verbose, "Destination pathname: ", outPathname);
+    if (!isFile(srcPathname))
+      throw("Source file does not exist");
     file.copy(srcPathname, outPathname, overwrite=TRUE);
     verbose && exit(verbose);
   }
