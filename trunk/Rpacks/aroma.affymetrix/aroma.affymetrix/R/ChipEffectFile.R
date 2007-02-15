@@ -410,8 +410,15 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., forc
     cells <- getCellIndices(this, units=units, force=force, verbose=less(verbose));
   }
 
+  # Get the unit names
   unitNames <- names(cells);
-  unitSizes <- unlist(lapply(cells, length), use.names=FALSE);
+  
+  # Get the number of groups per unit
+  unitSizes <- lapply(cells, FUN=function(unit) {
+    length(.subset2(unit, "groups"));
+  });
+  unitSizes <- unlist(unitSizes, use.names=FALSE);
+  
   cells <- unlist(cells, use.names=FALSE);
   verbose && exit(verbose);
   
