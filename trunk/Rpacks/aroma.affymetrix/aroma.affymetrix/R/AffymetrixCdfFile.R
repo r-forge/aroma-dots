@@ -1067,6 +1067,7 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
 
 
 setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("dChip"), ..., force=FALSE) {
+  # Remove any suffices to get the "main" chip type.
   chipType <- getChipType(this, fullname=FALSE);
 
   si <- this$.si;
@@ -1080,7 +1081,7 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("dC
     }
   
     if (is.null(si)) {
-      throw("Failed to retrieve snp information for this chip type: ", chipType);
+      throw("Failed to retrieve SNP information for this chip type: ", chipType);
     }
 
     this$.si <- si;
