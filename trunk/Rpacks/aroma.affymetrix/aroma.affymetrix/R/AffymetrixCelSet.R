@@ -478,9 +478,9 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   cdf <- getCdf(this);
   chipType <- getChipType(cdf);
   path <- getPath(this);
-  dirChipType <- basename(dirname(path));
+  dirChipType <- basename(path);
   if (!identical(chipType, dirChipType)) {
-    throw("Invalid name of directory containing CEL files. The name of the directory must be the same as the chip type (", chipType, ") of the CEL files: ", path);
+    throw("Invalid name of directory containing CEL files. The name of the directory must be the same as the chip type (", chipType, " != ", dirChipType, ") of the CEL files: ", path);
   }
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
