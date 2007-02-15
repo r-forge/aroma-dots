@@ -104,12 +104,25 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
   phi <- getData(paf, indices=cells, fields="intensities")$intensities[oinv];
   verbose && exit(verbose);
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Generating output pathname
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  path <- getPath(this);
+
   for (kk in seq(ds)) {
     df <- getFile(ds, kk);
     cef <- getFile(ces, kk);
     rf <- getFile(rs, kk);
 
     verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
+
+    filename <- sprintf("%s,residuals.cel", getFullName(df));
+    pathname <- Arguments$getWritablePathname(filename, path=path);
+    verbose && cat(verbose, "Pathname: ", pathname);
+    if (!force && isFile(pathname)) {
+      verbose && cat(verbose, "Already calculated.");
+      verbose && exit(verbose);
+    }
 
     verbose && enter(verbose, "Retrieving probe intensity data");
     y <- getData(df, indices=cells, fields="intensities")$intensities[oinv];
@@ -128,7 +141,21 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
     rm(y, yhat, theta);
 
     verbose && enter(verbose, "Storing residuals");
-    updateCel(getPathname(rf), indices=cells, intensities=eps[o]);
+    tryCatch({
+      # Copy CEL file and update the copy
+      verbose && enter(verbose, "Copying source CEL file");
+      copyCel(from=getPathname(df), to=pathname, overwrite=force);
+      verbose && exit(verbose);
+      verbose && enter(verbose, "Writing normalized intensities");
+      updateCel(getPathname(rf), indices=cells, intensities=eps[o]);
+      verbose && exit(verbose);
+    }, interrupt = function(intr) {
+      verbose && print(verbose, intr);
+      file.remove(pathname);
+    }, error = function(ex) {
+      verbose && print(verbose, ex);
+      file.remove(pathname);
+    })
     verbose && exit(verbose);
 
 #    verbose && enter(verbose, "Verifying");
