@@ -1043,9 +1043,7 @@ setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c("dChip"), ..., force=FALSE) {
-  chipType <- getChipType(this);
-  # Remove any suffices to get the "main" chip type.
-  chipType <- gsub("-.*", "", chipType);
+  chipType <- getChipType(this, fullname=FALSE);
 
   gi <- this$.gi;
   if (is.null(gi) || force) {
@@ -1069,9 +1067,7 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
 
 
 setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("dChip"), ..., force=FALSE) {
-  chipType <- getChipType(this);
-  # Remove any suffices to get the "main" chip type.
-  chipType <- gsub("-.*", "", chipType);
+  chipType <- getChipType(this, fullname=FALSE);
 
   si <- this$.si;
   if (is.null(si) || force) {
@@ -1157,6 +1153,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-02-14
+# o BUG FIX: When "tagifying" monocell, getSnpInformation() and
+#   getGenomeInformation() was looking for the incorrect chip type.
 # 2007-02-12
 # o Added argument 'main' to getChipType().
 # 2007-02-08
