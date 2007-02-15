@@ -295,10 +295,14 @@ setMethodS3("getCellMap", "ResidualFile", function(this, units=NULL, ..., force=
     cells <- getCellIndices(this, units=units, force=force, verbose=less(verbose));
   }
 
+  # Get the unit names
   unitNames <- names(cells);
-  unitSizes <- unlist(lapply(cells, length), use.names=FALSE);
-  cells <- unlist(cells, use.names=FALSE);
-  verbose && exit(verbose);
+  
+  # Get the number of groups per unit
+  unitSizes <- lapply(cells, FUN=function(unit) {
+    length(.subset2(unit, "groups"));
+  });
+  unitSizes <- unlist(unitSizes, use.names=FALSE);
   
   verbose && enter(verbose, "Creating return data frame");
   uUnitSizes <- unique(unitSizes);
@@ -436,6 +440,8 @@ setMethodS3("writeImage", "ResidualFile", function(this, ..., tags=c("*", "log2"
 
 ############################################################################
 # HISTORY:
+# 2007-02-15 /KS
+# o BUG FIX: getCellMap() did not handle units with other than one group.
 # 2007-02-13
 # o Now findUnitsTodo() looks for the first cell in the first group in each
 #   unit, i.e. only one value is read for each unit.
