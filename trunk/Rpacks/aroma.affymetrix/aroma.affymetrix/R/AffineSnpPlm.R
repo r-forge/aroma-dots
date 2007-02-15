@@ -46,6 +46,8 @@ setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
 })
 
 
+
+
 ############################################################################
 # HISTORY:
 # 2006-09-11

@@ -359,11 +359,11 @@ setMethodS3("getTags", "AffymetrixFile", function(this, collapse=NULL, ...) {
   name <- substring(name, nchar(dsName)+2);
   
   tags <- strsplit(name, split=",")[[1]];
-  if (length(tags) == 0) {
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
     tags <- NULL;
-  } else {
-    tags <- paste(tags, collapse=collapse);
-  }
+
   tags;
 })
 

@@ -156,11 +156,15 @@ setMethodS3("setAlias", "TransformReport", function(this, alias, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "TransformReport", function(this, ...) {
+setMethodS3("getTags", "TransformReport", function(this, collapse=NULL, ...) {
   tags <- this$.tags;
 
   ds <- getOutputDataSet(this);
   tags <- getTags(ds);
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
+    tags <- NULL;
 
   tags;
 })

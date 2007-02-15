@@ -46,6 +46,7 @@ setConstructorS3("MbeiSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
 })
 
 
+
 ############################################################################
 # HISTORY:
 # 2006-09-11

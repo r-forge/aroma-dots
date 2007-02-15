@@ -86,9 +86,15 @@ setMethodS3("getName", "QualityAssessmentModel", function(this, ...) {
   getName(this$.plm);
 })
 
-setMethodS3("getTags", "QualityAssessmentModel", function(this, ...) {
+setMethodS3("getTags", "QualityAssessmentModel", function(this, collapse=NULL, ...) {
   ces <- getChipEffects(this);
-  c(getTags(ces), this$.tags);
+  tags <- c(getTags(ces), this$.tags);
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
+    tags <- NULL;
+
+  tags;
 })
 
 setMethodS3("getFullName", "QualityAssessmentModel", function(this, ...) {

@@ -47,6 +47,7 @@ setConstructorS3("MbeiCnPlm", function(..., combineAlleles=FALSE, tags="*") {
 
 
 
+
 ############################################################################
 # HISTORY:
 # 2006-09-12

@@ -400,11 +400,9 @@ setMethodS3("getTags", "AffymetrixFileSet", function(this, collapse=NULL, ...) {
     }
   }
 
-  if (length(tags) == 0) {
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
     tags <- NULL;
-  } else {
-    tags <- paste(tags, collapse=collapse);
-  }
 
   tags;
 })

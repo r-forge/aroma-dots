@@ -46,13 +46,6 @@ setConstructorS3("RmaSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
   )
 })
 
-setMethodS3("getParameterSet", "RmaSnpPlm", function(this, ...) {
-  params <- NextMethod("getParameterSet", this, ...);
-  params$mergeStrands <- this$mergeStrands;
-  params;
-}, private=TRUE)
-
-
 
 ############################################################################
 # HISTORY:

@@ -172,7 +172,7 @@ setMethodS3("getName", "Transform", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "Transform", function(this, ...) {
+setMethodS3("getTags", "Transform", function(this, collapse=NULL, ...) {
   tags <- this$.tags;
 
   ds <- getInputDataSet(this);
@@ -180,6 +180,10 @@ setMethodS3("getTags", "Transform", function(this, ...) {
 
   # Update default tags
   tags[tags == "*"] <- getAsteriskTag(this);
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
+    tags <- NULL;
 
   tags;
 })
