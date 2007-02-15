@@ -550,6 +550,8 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 ############################################################################
 # HISTORY:
+# 2007-02-15 /KS
+# o BUG FIX: getCellMap() did not handle units with other than one group.
 # 2007-02-09
 # o Updated the file cache sub directory.
 # 2007-01-10
