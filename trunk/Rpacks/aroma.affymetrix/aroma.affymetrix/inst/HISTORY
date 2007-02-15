@@ -1,7 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.0 [2007-02-06xxx]
+Version: 0.4.0 [2007-02-14xxx]
+o Added test for correct directory structure to fromFiles().  This will
+  enforce users to use the correct structure so that for instance the
+  name of the data set is correctly inferred.
+o Added calculateResiduals() to ProbeLevelModel and the ResidualSet
+  and ResidualFile classes.
 o Now monocell CDF are names <chipType>,monocell.cdf.  Before a dash
   was used instead of a comma. This new style is more in line with
   the <name>,<tags> naming convention used elsewhere in the package.

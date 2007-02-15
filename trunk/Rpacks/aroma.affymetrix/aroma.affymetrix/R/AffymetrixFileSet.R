@@ -250,6 +250,7 @@ setMethodS3("getName", "AffymetrixFileSet", function(this, ...) {
 
 
 
+
 ###########################################################################/**
 # @RdocMethod getAlias
 #
@@ -649,6 +650,11 @@ setMethodS3("getNames", "AffymetrixFileSet", function(this, ...) {
   unname(res);
 })
 
+setMethodS3("getFullNames", "AffymetrixFileSet", function(this, ...) {
+  res <- unlist(lapply(this, FUN=getFullName));
+  unname(res);
+})
+
 
 
 ###########################################################################/**
@@ -1020,6 +1026,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2007-02-15
+# o Added getFullNames().
 # 2007-02-07
 # o Added sapply().
 # 2007-01-14

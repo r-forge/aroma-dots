@@ -5,6 +5,7 @@
 
 /* Samples */
 samples = new Array(<%=paste("'", samples, "'", sep="", collapse=", ")%>);
+sampleLabels = new Array(<%=paste("'", gsub("[,].*$", "", samples), "'", sep="", collapse=", ")%>);
 
 /* Detected chip types */
 chipTypes = new Array(<%=paste("'", chipTypes, "'", sep="", collapse=", ")%>);
@@ -17,8 +18,8 @@ if (!exists("defNavigatorZoomIdx"))
   defNavigatorZoomIdxs <- min(2, length(zooms));
 if (!exists("defZoom"))
   defZoom <- min(2, length(zooms));
-defChromosome <- 21;
-defSample <- 8;
+defChromosome <- 22;
+defSample <- 1;
 %>
 
 zooms = new Array(<%=paste(zooms, collapse=", ")%>);

@@ -433,6 +433,9 @@ setMethodS3("fromName", "AffymetrixCelSet", function(static, name, tags=NULL, ch
 }, static=TRUE)
 
 setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'onDuplicates':
   onDuplicates <- match.arg(onDuplicates);
 
@@ -443,10 +446,14 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
     on.exit(popState(verbose));
   }
 
+  
   verbose && enter(verbose, "Defining ", class(static)[1], " from files");
 
   this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Handle duplicates
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (onDuplicates %in% c("exclude", "error")) {
     dups <- isDuplicated(this);
     ndups <- sum(dups);
@@ -465,9 +472,22 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
     }
   }
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Assert directory structure
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  cdf <- getCdf(this);
+  chipType <- getChipType(cdf);
+  path <- getPath(this);
+  dirChipType <- basename(dirname(path));
+  if (!identical(chipType, dirChipType)) {
+    throw("Invalid name of directory containing CEL files. The name of the directory must be the same as the chip type (", chipType, ") of the CEL files: ", path);
+  }
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Use the same CDF object for all CEL files.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Updating the CDF for all files");
-  setCdf(this, getCdf(this), .checkArgs=FALSE);
+  setCdf(this, cdf, .checkArgs=FALSE);
   verbose && exit(verbose);
 
   verbose && exit(verbose);
@@ -1204,6 +1224,9 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 ############################################################################
 # HISTORY:
 # 2007-02-14
+# o Added test for correct directory structure to fromFiles().  This will
+#   enforce users to use the correct structure so that for instance the
+#   name of the data set is correctly inferred.
 # o Added argument 'onDuplicates' to fromFiles() so it is possible to 
 #   exclude duplicated CEL files.
 # 2007-02-06
