@@ -18,7 +18,6 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
   ces <- getChipEffects(this);
   paf <- getProbeAffinities(this);
-  rs <- getResidualSet(this);
   nbrOfArrays <- nbrOfArrays(ces);
 
   # If residuals already calculated, and if force==FALSE, just return
@@ -112,7 +111,6 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
   for (kk in seq(ds)) {
     df <- getFile(ds, kk);
     cef <- getFile(ces, kk);
-    rf <- getFile(rs, kk);
 
     verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
 
@@ -147,7 +145,7 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
       copyCel(from=getPathname(df), to=pathname, overwrite=force);
       verbose && exit(verbose);
       verbose && enter(verbose, "Writing normalized intensities");
-      updateCel(getPathname(rf), indices=cells, intensities=eps[o]);
+      updateCel(pathname, indices=cells, intensities=eps[o]);
       verbose && exit(verbose);
     }, interrupt = function(intr) {
       verbose && print(verbose, intr);
@@ -177,6 +175,9 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
   # Garbage collect
   gc <- gc();
   verbose && print(verbose, gc);
+
+  # Define residual set
+  rs <- ResidualSet$fromFiles(path);
 
   verbose && exit(verbose);
 
