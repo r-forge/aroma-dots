@@ -178,7 +178,9 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
   # Define residual set
   rs <- ResidualSet$fromFiles(path);
-
+  # needed to keep custom CDF since fromFiles() takes CDF name from header
+  setCdf(rs, getCdf(ds));
+  
   verbose && exit(verbose);
 
   invisible(rs);
