@@ -173,11 +173,9 @@ setMethodS3("getName", "Model", function(this, ...) {
 setMethodS3("getTags", "Model", function(this, collapse=NULL, ...) {
   ds <- getDataSet(this);
   tags <- c(getTags(ds), this$.tags);
-  if (length(tags) == 0) {
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
     tags <- NULL;
-  } else {
-    tags <- paste(tags, collapse=collapse);
-  }
   tags;
 })
 

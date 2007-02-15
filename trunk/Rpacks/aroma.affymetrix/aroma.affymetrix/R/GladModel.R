@@ -475,7 +475,7 @@ setMethodS3("getReferenceName", "GladModel", function(this, collapse="+", ...) {
 }, private=TRUE)
 
 
-setMethodS3("getTags", "GladModel", function(this, ...) {
+setMethodS3("getTags", "GladModel", function(this, collapse=NULL, ...) {
   # Get tags of chip-effect set
   cesList <- getListOfChipEffects(this);
 
@@ -487,7 +487,13 @@ setMethodS3("getTags", "GladModel", function(this, ...) {
   tags <- unique(tags);
 
   # Add model tags
-  c(tags, this$.tags);
+  tags <- c(tags, this$.tags);
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
+    tags <- NULL;
+
+  tags;
 })
 
 

@@ -48,6 +48,13 @@ setConstructorS3("SnpPlm", function(...) {
 ## })
 
 
+setMethodS3("getParameterSet", "SnpPlm", function(this, ...) {
+  params <- NextMethod("getParameterSet", this, ...);
+  params$mergeStrands <- this$mergeStrands;
+  params;
+}, private=TRUE)
+
+
 setMethodS3("getCellIndices", "SnpPlm", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
 

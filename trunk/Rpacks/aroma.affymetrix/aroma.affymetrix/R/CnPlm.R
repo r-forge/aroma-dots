@@ -49,6 +49,13 @@ setConstructorS3("CnPlm", function(...) {
 })
 
 
+setMethodS3("getParameterSet", "CnPlm", function(this, ...) {
+  params <- NextMethod("getParameterSet", this, ...);
+  params$combineAlleles <- this$combineAlleles;
+  params;
+}, private=TRUE)
+
+
 setMethodS3("getCellIndices", "CnPlm", function(this, ...) {
   cells <- NextMethod("getCellIndices", this, ...);
 

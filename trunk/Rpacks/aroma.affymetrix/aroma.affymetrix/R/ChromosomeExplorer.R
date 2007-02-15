@@ -376,11 +376,16 @@ setMethodS3("getName", "ChromosomeExplorer", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "ChromosomeExplorer", function(this, ...) {
+setMethodS3("getTags", "ChromosomeExplorer", function(this, collapse=NULL, ...) {
   model <- getModel(this);
   tags <- getTags(model);
   tags <- c(tags, this$.tags);
   tags <- unique(tags);
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
+    tags <- NULL;
+
   tags;
 })
 

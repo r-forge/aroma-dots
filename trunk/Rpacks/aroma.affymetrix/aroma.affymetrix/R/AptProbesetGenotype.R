@@ -286,10 +286,15 @@ setMethodS3("getCdf", "AptProbesetGenotype", function(this, ...) {
   getCdf(getDataSet(this));
 })
 
-setMethodS3("getTags", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getTags", "AptProbesetGenotype", function(this, collapse=NULL, ...) {
   ds <- getDataSet(this);
   tags <- c(getTags(ds), this$.tags);
   tags <- unique(tags);
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
+    tags <- NULL;
+
   tags;
 })
 

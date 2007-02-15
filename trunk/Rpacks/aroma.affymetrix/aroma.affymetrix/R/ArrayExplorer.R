@@ -356,11 +356,16 @@ setMethodS3("getName", "ArrayExplorer", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "ArrayExplorer", function(this, ...) {
+setMethodS3("getTags", "ArrayExplorer", function(this, collapse=NULL, ...) {
   celSet <- getDataSet(this);
   tags <- getTags(celSet);
   tags <- c(tags, this$.tags);
   tags <- unique(tags);
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
+    tags <- NULL;
+
   tags;
 })
 
