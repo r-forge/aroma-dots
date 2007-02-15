@@ -158,7 +158,7 @@ setMethodS3("getFullNames", "ChromosomeExplorer", function(this, ...) {
 })
 
 setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
-  getNames(this, ...);
+  getFullNames(this, ...);
 })
 
 
@@ -232,7 +232,7 @@ setMethodS3("setArrays", "ChromosomeExplorer", function(this, arrays=NULL, ...) 
 # }
 #*/###########################################################################
 setMethodS3("nbrOfArrays", "ChromosomeExplorer", function(this, ...) {
-  arrays <- getArrays(this);
+  arrays <- getFullNames(this);
   length(arrays);
 })
 
@@ -702,7 +702,7 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, arrays=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
   if (is.null(arrays))
-    arrays <- getArrays(this);
+    arrays <- getFullNames(this);
 
 
 
@@ -724,7 +724,7 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
   if (is.null(arrays)) 
-    arrays <- getArrays(this);
+    arrays <- getFullNames(this);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -788,7 +788,7 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'arrays':
   if (is.null(arrays))
-    arrays <- getArrays(this);
+    arrays <- getFullNames(this);
 
   # Argument 'chromosomes':
 
