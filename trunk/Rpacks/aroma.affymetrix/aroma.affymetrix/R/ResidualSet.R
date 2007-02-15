@@ -148,7 +148,7 @@ setMethodS3("readUnits", "ResidualSet", function(this, units=NULL, cdf=NULL, ...
 
   if (is.null(cdf)) {
     verbose && enter(verbose, "Getting cell indices from CDF");
-    cdf <- getCellIndices(this, units=units, verbose=less(verbose));
+    cdf <- getCellIndices(this, units=units, ..., verbose=less(verbose));
     verbose && exit(verbose);
   }
 
