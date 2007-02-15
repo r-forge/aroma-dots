@@ -152,6 +152,7 @@ setMethodS3("as.character", "GladModel", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
+  s <- c(s, paste("Chip type (virtual):", getChipType(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   nbrOfChipTypes <- nbrOfChipTypes(this);
   s <- c(s, sprintf("Number of chip types: %d", nbrOfChipTypes));
@@ -307,7 +308,10 @@ setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
   nbrOfChipTypes <- length(cesList);
 
   # Get array names
-  arrayNames <- lapply(cesList, FUN=getNames);
+  arrayNames <- lapply(cesList, FUN=getFullNames);
+  arrayNames <- lapply(arrayNames, FUN=function(names) {
+    gsub(",chipEffects.*", "", names);
+  });
   names(arrayNames) <- chipTypes;
 
   # Get all unique array names
@@ -328,8 +332,14 @@ setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
 })
 
 
-setMethodS3("getNames", "GladModel", function(this, ...) {
+setMethodS3("getFullNames", "GladModel", function(this, ...) {
   rownames(getTableOfArrays(this, ...));
+})
+
+setMethodS3("getNames", "GladModel", function(this, ...) {
+  fullnames <- getFullNames(this, ...);
+  names <- gsub(",.*$", "", fullnames);
+  names;
 })
 
 
@@ -364,6 +374,7 @@ setMethodS3("getArrays", "GladModel", function(this, ...) {
 
 
 
+
 ###########################################################################/**
 # @RdocMethod indexOfArrays
 #
@@ -392,20 +403,20 @@ setMethodS3("getArrays", "GladModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("indexOfArrays", "GladModel", function(this, arrays=NULL, ...) {
-  allArrays <- getArrays(this);
+  allFullNames <- getFullNames(this);
 
   # Argument 'arrays':
   if (is.null(arrays)) {
-    arrays <- seq(along=allArrays);
+    arrays <- seq(along=allFullNames);
   } else if (is.numeric(arrays)) {
-    arrays <- Arguments$getIndices(arrays, range=c(1,length(allArrays)));
+    arrays <- Arguments$getIndices(arrays, range=c(1,length(allFullNames)));
   } else {
-    missing <- which(!(arrays %in% allArrays));
+    missing <- which(!(arrays %in% allFullNames));
     if (length(missing) > 0) {
       missing <- paste(arrays[missing], collapse=", ");
       throw("Argument 'arrays' contains unknown arrays: ", missing);
     }
-    arrays <- match(arrays, allArrays);
+    arrays <- match(arrays, allFullNames);
   }
 
   arrays;
@@ -520,14 +531,14 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
   # Full name
   fullname <- getFullName(this);
 
-  # Chip type    
-  chipType <- getChipType(cdf, fullname=FALSE);
+  # Chip type
+  chipType <- getChipType(this);
 
-  # Set type    
-  set <- "glad";
+#  # Set type    
+#  set <- "glad";
 
   # The full path
-  path <- filePath(rootPath, fullname, chipType, set, expandLinks="any");
+  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))
@@ -770,8 +781,8 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
     for (chr in chromosomes) {
       chrIdx <- match(chr, c(1:22, "X", "Y"));
       verbose && enter(verbose, 
-                             sprintf("Array %s (#%d of %d) on chromosome %s", 
-                                           arrayName, aa, nbrOfArrays, chr));
+                          sprintf("Array #%d ('%s') of %d on chromosome %s", 
+                                           aa, arrayName, nbrOfArrays, chr));
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Get pathname
@@ -819,6 +830,27 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
   invisible(res);
 })
 
+
+setMethodS3("getReportPath", "GladModel", function(this, ...) {
+  rootPath <- "reports";
+
+  # Data set name
+  name <- getName(this);
+
+  # Data set tags
+  tags <- getTags(this, collapse=",");
+
+  # Get chip type
+  chipType <- getChipType(this);
+
+  # Image set
+  set <- "glad";
+
+  # The report path
+  path <- filePath(rootPath, name, tags, chipType, set, expandLinks="any");
+
+  path;
+}, protected=TRUE)
 
 
 setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, xmargin=c(50,50), imageFormat="current", skip=TRUE, path=NULL, callList=NULL, verbose=FALSE) {
@@ -895,25 +927,9 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Output path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rootPath <- "reports";
-
-  # Get chip type
-  chipType <- getChipType(cdf, fullname=FALSE);
-
-  # Data set name
-  name <- getName(this);
-
-  # Data set tags
-  tags <- paste(getTags(this), collapse=",");
-
-  # Image set
-  set <- "glad";
-
-  # The figure path
-  if (is.null(path)) {
-    path <- filePath(rootPath, name, tags, chipType, set, expandLinks="any");
-    path <- filePath(path, expandLinks="any");
-  }
+  # The report path
+  if (is.null(path))
+    path <- getReportPath(this);
   mkdirs(path);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -948,6 +964,8 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
 
   callCols <- c("-"="lightgray", AA="red", AB="blue", BB="red", NC="orange");
 
+  # Get chip type (used to annotate the plot)
+  chipType <- getChipType(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Define the plot function
@@ -964,7 +982,8 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
 
     tryCatch({
       # Extract the array name from the full name
-      arrayName <- gsub("^([^,]*).*$", "\\1", fullname);
+      arrayFullName <- gsub("^(.*),chr[0-9][0-9].*$", "\\1", fullname);
+      arrayName <- gsub("^([^,]*).*$", "\\1", arrayFullName);
   
       # Extract the chromsome from the GLAD fit object
       pv <- fit$profileValues;
@@ -982,8 +1001,8 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
         zoom <- zooms[zz];
   
         # Create the pathname to the file
-        imgName <- sprintf("%s,glad,chr%02d,x%04d.%s", 
-                             arrayName, chromosomeIdx, zoom, imageFormat);
+        imgName <- sprintf("%s,chr%02d,x%04d.%s", 
+                          arrayFullName, chromosomeIdx, zoom, imageFormat);
         pathname <- filePath(path, imgName);
   
         # pngDev() (that is bitmap()) does not accept spaces in pathnames
@@ -1229,10 +1248,11 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=NULL, format=c("x
   }
 
   res <- list();
-  for (array in arrays) {
+  for (aa in seq(along=arrays)) {
+    array <- arrays[aa];
     name <- arrayNames[array];
-    verbose && enter(verbose, sprintf("Array #%d (of %d) - %s", 
-                                             array, length(arrays), name));
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
+                                               aa, name, length(arrays)));
     df <- getRegions(this, arrays=array, ..., verbose=less(verbose))[[1]];
     names(df) <- gsub("Smoothing", "log2", names(df));
 
@@ -1345,6 +1365,10 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-02-15
+# o Added getReportPath().
+# o Path is now back to <rootPath>/<data set>,<tags>/<chipType>/.
+# o Reports are written to reports/<data set>/<tags>/<chipType>/glad/.
 # 2007-02-06
 # o Updated the path to <rootPath>/<dataSetName>/<tags>/<chipType>/<set>/.
 # 2007-01-25

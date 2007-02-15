@@ -67,6 +67,7 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
       length(.subset2(group, 1));
     });
     unitGroupSizes <- unlist(unitGroupSizes, use.names=FALSE);
+    verbose && str(verbose, unitGroupSizes);
     verbose && exit(verbose);
 
     cells <- unlist(cdfUnits, use.names=FALSE);
@@ -83,9 +84,16 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
     saveCache(cdfData, key=key, dirs=dirs);
     verbose && exit(verbose);
   } else {
+    verbose && cat(verbose, "CDF related data cached on file:");
     unitGroupSizes <- cdfData$unitGroupSizes;
+    verbose && cat(verbose, "unitGroupSizes:");
+    verbose && str(verbose, unitGroupSizes);
     cells <- cdfData$cells;
+    verbose && cat(verbose, "cells:");
+    verbose && str(verbose, cells);
     cells2 <- cdfData$cells2;
+    verbose && cat(verbose, "cells2:");
+    verbose && str(verbose, cells2);
     rm(cdfData);
   }
 

@@ -29,6 +29,14 @@ setConstructorS3("GenomeInformation", function(...) {
 })
 
 
+setMethodS3("as.character", "GenomeInformation", function(this, ...) {
+  s <- NextMethod("as.character", this, ...);
+  s <- c(s, sprintf("Chip type: %s", getChipType(this)));
+  class(s) <- "GenericSummary";
+  s;
+}, private=TRUE)
+
+
 setMethodS3("clearCache", "GenomeInformation", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
@@ -100,8 +108,21 @@ setMethodS3("verify", "GenomeInformation", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getChipType", "GenomeInformation", function(this, ...) {
+  # Infer chip type from the first parent directory that has the same name
+  # as the chip type of an existing CDF file.
   pathname <- getPathname(this);
-  basename(dirname(pathname));
+  lastPath <- pathname;
+  while (TRUE) {
+    path <- dirname(lastPath);
+    if (path == lastPath)
+      break;
+    chipType <- basename(path);
+    dummy <- AffymetrixCdfFile$findByChipType(chipType);
+    if (!is.null(dummy))
+      return(chipType)
+    lastPath <- path;
+  }
+  throw("Failed to infer the chip type from the pathname of the genome information file: ", pathname);
 })
 
 

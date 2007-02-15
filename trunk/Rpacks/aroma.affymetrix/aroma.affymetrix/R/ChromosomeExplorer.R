@@ -142,13 +142,23 @@ setMethodS3("getModel", "ChromosomeExplorer", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
+setMethodS3("getNames", "ChromosomeExplorer", function(this, ...) {
+  arrays <- getFullNames(this, ...);
+  arrays <- gsub("[,].*$", "", arrays);
+  arrays;
+})
+
+setMethodS3("getFullNames", "ChromosomeExplorer", function(this, ...) {
   arrays <- this$.arrays;
   if (is.null(arrays)) {
     model <- getModel(this);
-    arrays <- getArrays(model);
+    arrays <- getFullNames(model);
   }
   arrays;
+})
+
+setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
+  getNames(this, ...);
 })
 
 
@@ -186,7 +196,7 @@ setMethodS3("setArrays", "ChromosomeExplorer", function(this, arrays=NULL, ...) 
   if (!is.null(arrays)) {
     model <- getModel(this);
     arrays <- indexOfArrays(model, arrays=arrays);
-    arrays <- getArrays(model)[arrays];
+    arrays <- getFullNames(model)[arrays];
   }
 
   this$.arrays <- arrays;
@@ -415,8 +425,7 @@ setMethodS3("getPath", "ChromosomeExplorer", function(this, ...) {
   name <- getName(this);
 
   # Tags
-  tags <- getTags(this);
-  tags <- paste(tags, collapse=",");
+  tags <- getTags(this, collapse=",");
 
   # Chip type    
   model <- getModel(this);
@@ -556,19 +565,21 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 
   path <- getPath(this);
   parentPath <- getParent(path);
+  parent2Path <- getParent(parentPath);
+  parent3Path <- getParent(parent2Path);
 
   verbose && enter(verbose, "Compiling samples.js");
   srcPath <- getTemplatePath(this);
   pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "samples.js.rsp");
   verbose && cat(verbose, "Source: ", pathname);
   outFile <- gsub("[.]rsp$", "", basename(pathname));
-  outPath <- getParent(parentPath);
+  outPath <- parent3Path;
   verbose && cat(verbose, "Output path: ", outPath);
 
 
   verbose && enter(verbose, "Scanning directories for available chip types");
   # Find all directories matching these
-  dirs <- list.files(path=parentPath, full.names=TRUE);
+  dirs <- list.files(path=parent2Path, full.names=TRUE);
   dirs <- dirs[sapply(dirs, FUN=isDirectory)];
 
   # Get possible chip types
@@ -595,7 +606,8 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   verbose && enter(verbose, "Compiling RSP");
   env <- new.env();
   env$chipTypes <- chipTypes;
-  env$samples <- getArrays(this);
+  env$samples <- getFullNames(this);
+  env$sampleAliases <- getNames(this);  # To support
   env$zooms <- zooms;
   pathname <- rspToHtml(pathname, path=NULL, 
                         outFile=outFile, outPath=outPath, 
@@ -651,7 +663,7 @@ setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, ..., force=FALS
 
   srcPath <- getTemplatePath(this);
   srcPathname <- filePath(srcPath, "html", "ChromosomeExplorer", "index.html");
-  outPath <- getParent(getPath(this));
+  outPath <- getParent(getParent(getPath(this)));
   outPathname <- filePath(outPath, "index.html");
 
   if (force || !isFile(outPathname)) {
@@ -862,7 +874,8 @@ setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) 
 
 
   pathname <- getAbsolutePath(pathname);
-  pathname <- chartr("/", "\\", pathname);
+  if (.Platform$OS.type == "windows")
+    pathname <- chartr("/", "\\", pathname);
 
   verbose && cat(verbose, "Pathname: ", pathname);
   res <- browseURL(pathname, ...);
