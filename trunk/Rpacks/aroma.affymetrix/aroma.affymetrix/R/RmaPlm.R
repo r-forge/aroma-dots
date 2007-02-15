@@ -405,10 +405,18 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 }, private=TRUE)
 
 
+setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
+  function(y, yhat) {
+    y/yhat;
+  }
+}, static=TRUE, protected=TRUE)
+
 
 
 ############################################################################
 # HISTORY:
+# 2007-02-14
+# o Added getCalculateResidualsFunction().
 # 2006-12-12
 # o Confirmed that flavor="oligo" replicates the estimates of the oligo 
 #   package perfectly.
