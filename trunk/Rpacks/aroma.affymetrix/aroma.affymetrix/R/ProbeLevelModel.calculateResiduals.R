@@ -128,6 +128,7 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
     if (!force && isFile(pathname)) {
       verbose && cat(verbose, "Already calculated.");
       verbose && exit(verbose);
+      next;
     }
 
     verbose && enter(verbose, "Retrieving probe intensity data");
@@ -148,10 +149,12 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
     verbose && enter(verbose, "Storing residuals");
     tryCatch({
-      # Copy CEL file and update the copy
-      verbose && enter(verbose, "Copying source CEL file");
-      copyCel(from=getPathname(df), to=pathname, overwrite=force);
-      verbose && exit(verbose);
+      if (!isFile(pathname)) {
+        # Copy CEL file and update the copy
+        verbose && enter(verbose, "Copying source CEL file");
+        copyCel(from=getPathname(df), to=pathname, overwrite=force);
+        verbose && exit(verbose);
+      }
       verbose && enter(verbose, "Writing normalized intensities");
       updateCel(pathname, indices=cells, intensities=eps[o]);
       verbose && exit(verbose);
@@ -197,6 +200,9 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
 ##########################################################################
 # HISTORY:
+# 2007-02-16
+# o BUG FIX: Already calculated residuals would be recalculated and 
+#   end up as an empty file.
 # 2007-02-14 HB + KS
 # o Now residuals can be calculated differently for different PLM classes.
 #   This is done by overriding static getCalculateResidualsFunction().
