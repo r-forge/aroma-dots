@@ -878,6 +878,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
     hOdd <- safeMeans(abs(y[idxOdd,]));
     hEven <- safeMeans(abs(y[idxOdd+1,]));
     hRatio <- log(hOdd/hEven);
+    verbose && printf(verbose, "hRatio=%.2g\n", hRatio);
 
     n <- 2*(ncol(y) %/% 2);
     n <- max(n, 40);
@@ -885,17 +886,18 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
     vOdd <- safeMeans(abs(y[,idxOdd]));
     vEven <- safeMeans(abs(y[,idxOdd+1]));
     vRatio <- log(vOdd/vEven);
+    verbose && printf(verbose, "vRatio=%.2g\n", vRatio);
 
     interleaved <- "none";
     if (abs(vRatio) > abs(hRatio)) {
-      if (abs(vRatio) > 0.1) {
+      if (abs(vRatio) > 0.25) {
         if (vRatio > 0)
           interleaved <- "v"
         else
           interleaved <- "v";
       }
     } else {
-      if (abs(hRatio) > 0.1) {
+      if (abs(hRatio) > 0.25) {
         if (hRatio > 0)
           interleaved <- "h"
         else
@@ -1111,6 +1113,8 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2007-02-16
+# o Increased the threshold to detect empty rows/columns in getImage().
 # 2007-02-06
 # o Now writeImage() writes image files to 
 #   <rootPath>/<dataSet>/<tags>/<chipType>/<set>/.
