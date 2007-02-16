@@ -28,7 +28,7 @@
 \code{~~~~~~~~~~~~~~~~~+--}\code{RmaPlm}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
+\link[aroma.affymetrix]{ExonRmaPlm}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
 
 public static class \bold{RmaPlm}\cr
 extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
@@ -55,7 +55,7 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
 
 
  \bold{Methods inherited from ProbeLevelModel}:\cr
-calculateResiduals, fit, getCalculateResidualsFunction, getChipEffects, getProbeAffinities, getResidualSet, getWeightsSet
+calculateResiduals, calculateWeights, fit, getCalculateResidualsFunction, getChipEffects, getProbeAffinities, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getCellIndices, readUnits

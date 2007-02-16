@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ProbeAffinityFile.R
+%  ExonProbeAffinityFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{ProbeAffinityFile}
+ \name{ExonProbeAffinityFile}
 \docType{class}
-\alias{ProbeAffinityFile}
+\alias{ExonProbeAffinityFile}
 
 
- \title{The ProbeAffinityFile class}
+ \title{The ExonProbeAffinityFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class ProbeAffinityFile}\cr
+\bold{Class ExonProbeAffinityFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -25,34 +25,40 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{ProbeAffinityFile}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{ExonProbeAffinityFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
+\cr
 
-public static class \bold{ProbeAffinityFile}\cr
-extends \link[aroma.affymetrix]{ParameterCelFile}\cr
+public static class \bold{ExonProbeAffinityFile}\cr
+extends \link[aroma.affymetrix]{ProbeAffinityFile}\cr
 
 
 
-  This class represents estimates of probe affinities in probe-level models.
+  This class represents estimates of probe affinities in exon array
+  probe-level models.
  }
 
- \usage{ProbeAffinityFile(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)"))}
+ \usage{ExonProbeAffinityFile(..., mergeGroups=FALSE)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
-   \item{probeModel}{The specific type of probe model.}
+   \item{...}{Arguments passed to \code{\link{ProbeAffinityFile}}.}
+   \item{mergeGroups}{Specifies if the groups (exons) are merged or not for
+      these estimates.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getParameters} \tab  -\cr
- \tab \code{readUnits} \tab  -\cr
+ \tab \code{setMergeGroups} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from ProbeAffinityFile}:\cr
+getCellIndices, getParameters, readUnits
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 readUnits
@@ -70,9 +76,4 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \seealso{
-   An object of this class is typically obtained through the
-   \code{getProbeAffinities()} method for the \code{\link{ProbeLevelModel}} class.
- }
 \keyword{classes}

@@ -11,9 +11,8 @@
 # @synopsis
 #
 # \arguments{
-#   \item{files}{A @list of @see "FirmaFile":s.}
+#   \item{...}{Arguments passed to constructor of @see "AffymetrixCelSet".}
 #   \item{tags}{A @character @vector of tags.}
-#   \item{...}{Not used.}
 # }
 #
 # \section{Fields and Methods}{

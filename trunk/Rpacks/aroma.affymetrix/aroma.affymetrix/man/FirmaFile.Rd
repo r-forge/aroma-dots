@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ProbeAffinityFile.R
+%  FirmaFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{ProbeAffinityFile}
+ \name{FirmaFile}
 \docType{class}
-\alias{ProbeAffinityFile}
+\alias{FirmaFile}
 
 
- \title{The ProbeAffinityFile class}
+ \title{The FirmaFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class ProbeAffinityFile}\cr
+\bold{Class FirmaFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -25,31 +25,30 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{ProbeAffinityFile}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{FirmaFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
+\cr
 
-public static class \bold{ProbeAffinityFile}\cr
+public static class \bold{FirmaFile}\cr
 extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 
 
 
-  This class represents estimates of probe affinities in probe-level models.
+  This class represents scores calculated by the FIRMA algorithm.
  }
 
- \usage{ProbeAffinityFile(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)"))}
+ \usage{FirmaFile(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
-   \item{probeModel}{The specific type of probe model.}
+   \item{...}{Arguments passed to \code{\link{AffymetrixCelFile}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getParameters} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
@@ -69,10 +68,9 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 
  \seealso{
-   An object of this class is typically obtained through the
-   \code{getProbeAffinities()} method for the \code{\link{ProbeLevelModel}} class.
+   An object of this class is typically part of a \code{\link{FirmaSet}}.
  }
 \keyword{classes}

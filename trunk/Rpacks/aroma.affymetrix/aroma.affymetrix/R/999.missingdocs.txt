@@ -304,3 +304,70 @@
   setup.ArrayExplorer validateChecksum validateChecksum.AffymetrixFile
   writeChecksum writeChecksum.AffymetrixFile writeImages.ArrayExplorer
   yellow.colors
+  as.character.GenomeInformation as.character.ProbeAffinityFile
+  as.character.ResidualFile as.character.ResidualSet
+  as.character.SnpInformation calculateResiduals
+  calculateResiduals.ProbeLevelModel clearCache.ResidualFile
+  clearCache.ResidualSet findCdf.patch findUnitsTodo.ResidualFile
+  findUnitsTodo.ResidualSet fromDataFile.ResidualFile
+  fromDataSet.ResidualSet fromFiles.ResidualSet
+  getAverageFile.ResidualSet getCalculateResidualsFunction
+  getCalculateResidualsFunction.ProbeLevelModel
+  getCalculateResidualsFunction.RmaPlm getCellIndices.ResidualFile
+  getCellIndices.ResidualSet getCellMap.ResidualFile
+  getDataFlat.ResidualFile getFullNames getFullNames.AffymetrixFileSet
+  getFullNames.ChromosomeExplorer getFullNames.GladModel
+  getImage.ResidualFile getNames.ChromosomeExplorer getParameters.Model
+  getParameters.ProbeAffinityFile getParameters.ResidualFile
+  getParameters.ResidualSet getParametersAsString.Model
+  getParametersAsString.ProbeAffinityFile
+  getParametersAsString.ResidualFile getParametersAsString.ResidualSet
+  getParameterSet.CnPlm getParameterSet.ProbeLevelModel
+  getParameterSet.RmaPlm getParameterSet.SnpPlm getReportPath
+  getReportPath.GladModel getResidualFileClass
+  getResidualFileClass.ResidualSet getResidualSet
+  getResidualSet.ProbeLevelModel getResidualSetClass
+  getResidualSetClass.ProbeLevelModel getWeightsSet
+  getWeightsSet.ProbeLevelModel getWeightsSetClass
+  getWeightsSetClass.ProbeLevelModel lapplyInChunks
+  lapplyInChunks.numeric log2abs log2neg log2pos readUnits.ResidualFile
+  readUnits.ResidualSet setCustomFindCdf sqrtabs sqrtneg sqrtpos
+  updateDataFlat.ResidualFile updateUnits.ResidualFile
+  updateUnits.ResidualSet writeImage.ResidualFile
+ as.character.FirmaModel as.character.WeightsFile
+  as.character.WeightsSet calculateWeights calculateWeights.ExonRmaPlm
+  calculateWeights.FirmaModel calculateWeights.ProbeLevelModel
+  cdfMergeGroups clearCache.ExonChipEffectFile clearCache.FirmaFile
+  clearCache.FirmaModel clearCache.FirmaSet clearCache.WeightsFile
+  clearCache.WeightsSet createParamCdf.FirmaFile
+  findUnitsTodo.ExonChipEffectFile findUnitsTodo.ExonChipEffectSet
+  findUnitsTodo.ExonRmaPlm findUnitsTodo.FirmaFile
+  findUnitsTodo.FirmaSet findUnitsTodo.WeightsFile
+  findUnitsTodo.WeightsSet fromDataFile.FirmaFile
+  fromDataFile.WeightsFile fromDataSet.FirmaSet fromDataSet.WeightsSet
+  fromFiles.ExonChipEffectSet fromFiles.FirmaSet fromFiles.WeightsSet
+  getAverageFile.ExonChipEffectSet getAverageFile.WeightsSet
+  getCdf.FirmaModel getCellIndices.ExonChipEffectFile
+  getCellIndices.ExonProbeAffinityFile getCellIndices.ExonRmaPlm
+  getCellIndices.FirmaFile getCellIndices.FirmaSet
+  getCellIndices.WeightsFile getCellIndices.WeightsSet
+  getCellMap.FirmaFile getCellMap.WeightsFile
+  getChipEffectFileClass.ExonChipEffectSet getChipEffects.ExonRmaPlm
+  getChipEffectSetClass.ExonRmaPlm getDataFlat.FirmaFile
+  getDataFlat.WeightsFile getDataSet.FirmaModel getFileClass
+  getFileClass.FirmaSet getFileSetClass getFileSetClass.FirmaModel
+  getFirmaScores getFirstCellPerUnitIndices
+  getFirstCellPerUnitIndices.ExonChipEffectSet
+  getFitUnitFunction.FirmaModel getImage.WeightsFile getMergeGroups
+  getMergeGroups.ExonChipEffectSet getName.FirmaModel
+  getParameters.ExonChipEffectFile getParameters.WeightsFile
+  getParameters.WeightsSet getParametersAsString.WeightsFile
+  getParametersAsString.WeightsSet getPlm.FirmaModel
+  getProbeAffinities.ExonRmaPlm getRootPath.FirmaModel
+  getTags.FirmaModel getWeightsFileClass getWeightsFileClass.WeightsSet
+  readUnits.ExonChipEffectFile readUnits.FirmaFile readUnits.FirmaSet
+  readUnits.WeightsFile readUnits.WeightsSet setMergeGroups
+  setMergeGroups.ExonChipEffectSet setMergeGroups.ExonProbeAffinityFile
+  setMergeGroups.ExonRmaPlm updateDataFlat.FirmaFile
+  updateDataFlat.WeightsFile updateUnits.FirmaFile updateUnits.FirmaSet
+  updateUnits.WeightsFile updateUnits.WeightsSet writeImage.WeightsFile

@@ -15,6 +15,8 @@
 #
 # \arguments{
 #   \item{rmaPlm}{An @RmaPlm object.}
+#   \item{summaryMethod}{}
+#   \item{tags}{}
 #   \item{...}{Not used.}
 # }
 #

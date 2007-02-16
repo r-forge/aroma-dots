@@ -28,7 +28,7 @@
 \code{~~~~~~~~~~~~~~~~~+--}\code{ChipEffectFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{SnpChipEffectFile}\cr
+\link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{ExonChipEffectFile}, \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 
 public static class \bold{ChipEffectFile}\cr
 extends \link[aroma.affymetrix]{ParameterCelFile}\cr

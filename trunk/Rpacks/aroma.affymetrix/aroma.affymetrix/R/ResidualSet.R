@@ -12,7 +12,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "ParameterCelSet".}
+#   \item{...}{Arguments passed to @see "AffymetrixCelSet".}
 #   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
 # }
 #

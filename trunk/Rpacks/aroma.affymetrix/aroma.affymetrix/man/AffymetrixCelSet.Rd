@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\code{AffymetrixCelSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
+\link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
 
 public static class \bold{AffymetrixCelSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
@@ -90,7 +90,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    for (zzz in 0) {
 
 # Find any dataset
-path <- findCelSet()
+path <- NULL
 if (is.null(path))
   break
 

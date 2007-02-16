@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ResidualSet.R
+%  FirmaSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{ResidualSet}
+\name{FirmaSet}
 \docType{class}
-\alias{ResidualSet}
+\alias{FirmaSet}
 
 
- \title{The ResidualSet class}
+\title{The FirmaSet class}
 
- \description{
-  Package:  aroma.affymetrix \cr
-\bold{Class ResidualSet}\cr
+\description{
+ Package:  aroma.affymetrix \cr
+\bold{Class FirmaSet}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -23,35 +23,32 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{ResidualSet}\cr
+\code{~~~~~~~~~~~~+--}\code{FirmaSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{ResidualSet}\cr
+public static class \bold{FirmaSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 
 
-  This class represents probe-level residuals from probe-level models.
- }
+}
 
- \usage{ResidualSet(..., probeModel=c("pm"))}
+\usage{FirmaSet(..., tags="*")}
 
- \arguments{
-   \item{...}{Arguments passed to \code{\link{AffymetrixCelSet}}.}
-   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
- }
+\arguments{
+  \item{...}{Arguments passed to constructor of \code{\link{AffymetrixCelSet}}.}
+  \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
+}
 
- \section{Fields and Methods}{
-  \bold{Methods:}\cr
+\section{Fields and Methods}{
+ \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
- \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getParameters} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
@@ -66,12 +63,9 @@ append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, extract, fro
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
- }
+}
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \seealso{
-   An object of this class is typically obtained through the
-   \code{getResidualSet()} method for the \code{\link{ProbeLevelModel}} class.
- }
+\author{
+  Ken Simpson (ksimpson[at]wehi.edu.au).
+}
 \keyword{classes}

@@ -85,7 +85,7 @@ timestampOn(verbose)
 # Define an example dataset
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Find any dataset
-path <- findCelSet(minCount=5)
+path <- NULL
 if (is.null(path))
   break
 
