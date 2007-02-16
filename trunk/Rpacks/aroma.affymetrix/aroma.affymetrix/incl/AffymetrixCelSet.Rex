@@ -1,7 +1,7 @@
 for (zzz in 0) {
 
 # Find any dataset
-path <- findCelSet()
+path <- NULL
 if (is.null(path))
   break
 

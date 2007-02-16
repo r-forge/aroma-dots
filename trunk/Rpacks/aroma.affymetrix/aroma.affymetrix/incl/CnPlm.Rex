@@ -8,7 +8,7 @@ timestampOn(verbose)
 # Define an example dataset using this path
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Find any SNP dataset
-path <- findCelSet(chipType="(Hind|Xba|Nsp|Sty)", minCount=5)
+path <- NULL
 if (is.null(path))
   break
 

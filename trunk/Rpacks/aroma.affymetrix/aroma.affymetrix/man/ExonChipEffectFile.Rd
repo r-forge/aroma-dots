@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ProbeAffinityFile.R
+%  ExonChipEffectFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{ProbeAffinityFile}
+ \name{ExonChipEffectFile}
 \docType{class}
-\alias{ProbeAffinityFile}
+\alias{ExonChipEffectFile}
 
 
- \title{The ProbeAffinityFile class}
+ \title{The ExonChipEffectFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class ProbeAffinityFile}\cr
+\bold{Class ExonChipEffectFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -25,34 +25,41 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{ProbeAffinityFile}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectFile}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{ExonChipEffectFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
+\cr
 
-public static class \bold{ProbeAffinityFile}\cr
-extends \link[aroma.affymetrix]{ParameterCelFile}\cr
+public static class \bold{ExonChipEffectFile}\cr
+extends \link[aroma.affymetrix]{ChipEffectFile}\cr
 
 
 
-  This class represents estimates of probe affinities in probe-level models.
+  This class represents estimates of chip effects in the probe-level models.
  }
 
- \usage{ProbeAffinityFile(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)"))}
+ \usage{ExonChipEffectFile(..., mergeGroups=FALSE)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
-   \item{probeModel}{The specific type of probe model.}
+   \item{...}{Arguments passed to \code{\link{ChipEffectFile}}.}
+   \item{mergeGroups}{Specifies if the groups are merged or not for these
+      estimates.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from ChipEffectFile}:\cr
+findUnitsTodo, getAM, getCellIndices, getParameters, getXAM, readUnits
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 readUnits
@@ -72,7 +79,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-   An object of this class is typically obtained through the
-   \code{getProbeAffinities()} method for the \code{\link{ProbeLevelModel}} class.
+   An object of this class is typically part of a \code{\link{ExonChipEffectSet}}.
  }
 \keyword{classes}

@@ -16,6 +16,7 @@
 #   \item{dataSet}{The data set to which this model should be fitted.}
 #   \item{tags}{A @character @vector of tags to be appended to the tags of
 #      the input data set.}
+#   \item{parSet}{A named @list of parameters.}
 #   \item{...}{Not used.}
 # }
 #

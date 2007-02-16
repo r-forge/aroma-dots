@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ResidualSet.R
+%  WeightsSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{ResidualSet}
+ \name{WeightsSet}
 \docType{class}
-\alias{ResidualSet}
+\alias{WeightsSet}
 
 
- \title{The ResidualSet class}
+ \title{The WeightsSet class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class ResidualSet}\cr
+\bold{Class WeightsSet}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -23,20 +23,20 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{ResidualSet}\cr
+\code{~~~~~~~~~~~~+--}\code{WeightsSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{ResidualSet}\cr
+public static class \bold{WeightsSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 
 
-  This class represents probe-level residuals from probe-level models.
+  This class represents probe-level weights.
  }
 
- \usage{ResidualSet(..., probeModel=c("pm"))}
+ \usage{WeightsSet(..., probeModel=c("pm"))}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AffymetrixCelSet}}.}
@@ -72,6 +72,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  \seealso{
    An object of this class is typically obtained through the
-   \code{getResidualSet()} method for the \code{\link{ProbeLevelModel}} class.
+   \code{getWeightsSet()} method for the \code{\link{ProbeLevelModel}} class.
  }
 \keyword{classes}

@@ -1,7 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.0 [2007-02-14xxx]
+Version: 0.4.0 [2007-02-16]
+o Package passes R CMD check on R v2.4.1 (many empty help pages though).
+o Verified that the current version works on total copy number analysis
+  for combined Nsp & Sty chips.  See the aroma.affymetrix group page
+  for the example.
+o Added trial version of ExonRmaPlm().
+o Added trial versions of ResidualSet() and WeightSet().
 o Added test for correct directory structure to fromFiles().  This will
   enforce users to use the correct structure so that for instance the
   name of the data set is correctly inferred.

@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\code{ChipEffectSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
+\link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{ChipEffectSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr

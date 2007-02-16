@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ResidualSet.R
+%  ExonChipEffectSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{ResidualSet}
+ \name{ExonChipEffectSet}
 \docType{class}
-\alias{ResidualSet}
+\alias{ExonChipEffectSet}
 
 
- \title{The ResidualSet class}
+ \title{The ExonChipEffectSet class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class ResidualSet}\cr
+\bold{Class ExonChipEffectSet}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -23,38 +23,44 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{ResidualSet}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectSet}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{ExonChipEffectSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{ResidualSet}\cr
-extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
+public static class \bold{ExonChipEffectSet}\cr
+extends \link[aroma.affymetrix]{ChipEffectSet}\cr
 
 
 
-  This class represents probe-level residuals from probe-level models.
+  This class represents estimates of chip effects in the probe-level models.
  }
 
- \usage{ResidualSet(..., probeModel=c("pm"))}
+ \usage{ExonChipEffectSet(..., mergeGroups=TRUE)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AffymetrixCelSet}}.}
-   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
+   \item{...}{Arguments passed to \code{\link{ChipEffectSet}}.}
+   \item{mergeGroups}{Specifies if groups (individual exons in a CDF
+        file) are merged or not for these estimates, i.e. whether
+        transcript-level expression is to be estimated.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{findUnitsTodo} \tab  -\cr
- \tab \code{fromDataSet} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
- \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getParameters} \tab  -\cr
- \tab \code{readUnits} \tab  -\cr
+ \tab \code{getFirstCellPerUnitIndices} \tab  -\cr
+ \tab \code{getMergeGroups} \tab  -\cr
+ \tab \code{setMergeGroups} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from ChipEffectSet}:\cr
+findUnitsTodo, fromDataSet, fromFiles, getAverageFile, getCellIndices, getParameters, readUnits, updateUnits
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
 [, [[, append, as, as.AffymetrixCelSet, averageQuantile, cna, extractAffyBatch, extractSnpFeatureSet, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf
@@ -69,9 +75,4 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \seealso{
-   An object of this class is typically obtained through the
-   \code{getResidualSet()} method for the \code{\link{ProbeLevelModel}} class.
- }
 \keyword{classes}
