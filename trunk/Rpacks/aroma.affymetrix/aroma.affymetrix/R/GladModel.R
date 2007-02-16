@@ -233,6 +233,9 @@ setMethodS3("getChipTypes", "GladModel", function(this, merge=FALSE, collapse="+
   cdfList <- getListOfCdfs(this);
   chipTypes <- sapply(cdfList, FUN=getChipType, fullname=FALSE);
 
+  # Invariant for order
+  chipTypes <- sort(chipTypes);
+
   if (merge) {
     chipTypes <- mergeByCommonTails(chipTypes, collapse=collapse);
   }
@@ -702,9 +705,14 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
   if (identical(chromosomes, "fitted")) {
   } else if (is.null(chromosomes)) {
     chromosomes <- getChromosomes(this);
-  } else {
+  } else if (is.numeric(chromosomes)) {
+    chromosomes <- Arguments$getIndices(chromosomes, range=c(1,24));
+    chromosomes <- as.character(chromosomes);
+    chromosomes[chromosomes == "23"] <- "X";
+    chromosomes <- intersect(chromosomes, getChromosomes(this));
+  } else if (is.character(chromosomes)) {
     chromosomes <- Arguments$getCharacters(chromosomes);
-  #  chromosomes[chromosomes == "23"] <- "X";
+    chromosomes[chromosomes == "23"] <- "X";
     chromosomes <- intersect(chromosomes, getChromosomes(this));
   }
 
@@ -1366,6 +1374,9 @@ ylim <- c(-1,1);
 ##############################################################################
 # HISTORY:
 # 2007-02-15
+# o Now getChipTypes() sorts the chip types in lexicographic order before
+#   merging.  This guarantees the same result regardsless of order of the
+#   input list.
 # o Added getReportPath().
 # o Path is now back to <rootPath>/<data set>,<tags>/<chipType>/.
 # o Reports are written to reports/<data set>/<tags>/<chipType>/glad/.
