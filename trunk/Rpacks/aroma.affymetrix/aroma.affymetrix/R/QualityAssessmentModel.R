@@ -390,8 +390,9 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
       phi <- .subset2(.subset2(phiL, gg), "phi");
       yhat <- outer(phi, theta, FUN="+");
       eps <- (y - yhat);
-      mad <- 1.4826 * median(abs(yhat));
-      matrix(psi.huber(yhat/mad), ncol=ncol(y));
+#      mad <- 1.4826 * median(abs(yhat));
+      mad <- 1.4826 * median(abs(eps));      
+      matrix(psi.huber(eps/mad), ncol=ncol(y));
     })
     res;
   } # resFcn()
