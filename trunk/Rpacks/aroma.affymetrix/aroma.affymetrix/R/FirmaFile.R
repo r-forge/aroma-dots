@@ -1,0 +1,418 @@
+###########################################################################/**
+# @RdocClass FirmaFile
+#
+# @title "The FirmaFile class"
+#
+# \description{
+#  @classhierarchy
+#
+#  This class represents scores calculated by the FIRMA algorithm.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Arguments passed to @see "AffymetrixCelFile".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+# 
+# \seealso{
+#   An object of this class is typically part of a @see "FirmaSet".
+# }
+#
+#*/###########################################################################
+setConstructorS3("FirmaFile", function(...) {
+
+  this <- extend(ParameterCelFile(...), "FirmaFile");
+
+  setEncodeFunction(this, function(groupData, ...) {
+    groupData;
+  })
+
+  setDecodeFunction(this, function(groupData, ...) {
+    groupData;
+  })
+
+  this;
+})
+
+setMethodS3("clearCache", "FirmaFile", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c(".firstCells")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
+
+
+setMethodS3("findUnitsTodo", "FirmaFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Identifying non-assigned units in QC file");
+
+  verbose && cat(verbose, "Pathname: ", getPathname(this));
+  if (is.null(units)) {
+    units <- 1:nbrOfUnits(getCdf(this));
+  }
+
+  verbose && exit(verbose);
+  
+  # Read pixels from each unit
+  verbose && enter(verbose, "Reading data for these ", length(units), " units");
+#  value <- readCelUnits(getPathname(this), units=units, readIntensities=FALSE, 
+#                        readStdvs=FALSE, readPixels=TRUE);
+
+  value <- readUnits(this, units=units, readIntensities=FALSE, 
+                        readStdvs=FALSE, readPixels=TRUE);
+  
+  # Identify units for which all pixels == 0.
+
+  allZeroPixels <- sapply(value, function(x) {all(x[[1]][[1]]==0)}, USE.NAMES=FALSE);
+
+  value <- which(allZeroPixels);
+  if (!is.null(units))
+    value <- units[value];
+  verbose && cat(verbose, "Looking for pixels == 0 indicating non-assigned units:");
+  verbose && str(verbose, value);
+
+  verbose && exit(verbose);
+
+  value;
+})
+
+
+setMethodS3("createParamCdf", "FirmaFile", function(static, sourceCdf, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Creating CDF for FIRMA results");
+  verbose && cat(verbose, "Source chip type: ", getChipType(sourceCdf));
+  verbose && cat(verbose, "Source CDF: ", getPathname(sourceCdf));
+
+  # Search for existing monocell CDF
+  for (sep in c(",", "-")) {
+    chipType <- paste(getChipType(sourceCdf), "monocell", sep=sep);
+    verbose && cat(verbose, "Looking for chip type: ", chipType);
+    pathname <- AffymetrixCdfFile$findByChipType(chipType);
+    if (!is.null(pathname)) {
+      verbose && cat(verbose, "Found: ", pathname);
+      break;
+    }
+  }
+
+  # Warn about deprecated filname <chipType>-monocell.
+  if (!is.null(pathname) && (sep == "-")) {
+    msg <- paste("Deprecated filename of monocell CDF detected (uses dash instead of comma): ", pathname);
+    warning(msg);
+    verbose && cat(verbose, msg);
+    verbose && enter(verbose, "Renaming (old-style) monocell CDF");
+    verbose && cat(verbose, "Source: ", pathname);
+    dest <- gsub("-monocell[.]", ",monocell.", pathname);
+    verbose && cat(verbose, "Destination: ", dest);
+    res <- file.rename(pathname, dest);
+    if (!res)
+      throw("Failed to rename monocell CDF file: ", pathname, " -> ", dest);
+    pathname <- dest;
+    verbose && exit(verbose, msg);
+  }
+
+  if (is.null(pathname)) {
+    verbose && cat(verbose, "Pathname: Not found!");
+    verbose && cat(verbose, "Will create CDF for the FIRMA results files from the
+original CDF. NOTE: This will take several minutes or more!");
+    verbose && enter(verbose, "Creating CDF");
+    cdf <- createMonoCell(sourceCdf, verbose=less(verbose));
+    verbose && exit(verbose);
+  } else {
+    verbose && cat(verbose, "Pathname: ", pathname);
+    cdf <- AffymetrixCdfFile$fromFile(pathname);
+  }
+  verbose && exit(verbose);
+
+  cdf;
+}, static=TRUE, private=TRUE)
+
+
+
+setMethodS3("readUnits", "FirmaFile", function(this, units=NULL, cdf=NULL,
+..., force=FALSE, cache=TRUE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Check for cached data
+  key <- list(method="readUnits", class=class(this)[1],
+              pathname=getPathname(this),
+              cdf=cdf, units=units, ...);
+  id <- digest(key);
+  res <- this$.readUnitsCache[[id]];
+  if (!force && !is.null(res)) {
+    verbose && cat(verbose, "readUnits.FirmaFile(): Returning cached data");
+    return(res);
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Retrieve the data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(cdf)) {
+    cdf <- getCellIndices(this, units=units, verbose=less(verbose));
+  }
+
+  # Note that the actually call to the decoding is done in readUnits()
+  # of the superclass.
+  res <- NextMethod("readUnits", this, cdf=cdf, ..., force=force, verbose=less(verbose));
+
+  # Store read units in cache?
+  if (cache) {
+    verbose && cat(verbose, "readUnits.FirmaFile(): Updating cache");
+    this$.readUnitsCache <- list();
+    this$.readUnitsCache[[id]] <- res;
+  }
+
+  res;
+})
+
+setMethodS3("getCellIndices", "FirmaFile", function(this, ..., .cache=TRUE) {
+  getCellIndices(getCdf(this), ...);
+})
+
+
+
+
+setMethodS3("updateUnits", "FirmaFile", function(this, units=NULL, cdf=NULL, data, ...) {
+  if (is.null(cdf))
+    cdf <- getCellIndices(this, units=units);
+
+  NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
+}, private=TRUE);
+
+
+setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=sprintf("%s,FIRMAresults.cel", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
+
+  # Argument 'df':
+  if (!is.null(df)) {
+    if (!inherits(df, "AffymetrixCelFile"))
+      throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
+  }
+
+  # Argument 'cdf':
+  if (is.null(cdf)) {
+    if (is.null(df))
+      throw("Either argument 'df' or 'cdf' must specified.");
+  } else {
+    if (!inherits(cdf, "AffymetrixCdfFile"))
+      throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  }
+
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  if (!isFile(pathname)) {
+    verbose && enter(verbose, "Creating FIRMA results file");
+    verbose && cat(verbose, "Pathname: ", pathname);
+
+    # Get CDF for chip effects
+    if (is.null(cdf))
+      cdf <- createParamCdf(static, getCdf(df), verbose=less(verbose));
+
+    # Get CDF header
+    cdfHeader <- getHeader(cdf);
+
+    # Build a valid CEL header
+    celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=name);
+
+    # Add some extra information about what the CEL file is for
+    params <- c(Description="This CEL file contains FIRMA results calculated by the aroma.affymetrix package.");
+    parameters <- gsub(" ", "_", params);
+    names(parameters) <- names(params);
+    parameters <- paste(names(parameters), parameters, sep=":");
+    parameters <- paste(parameters, collapse=";");
+    parameters <- paste(celHeader$parameters, parameters, "", sep=";");
+    parameters <- gsub(";;", ";", parameters);
+    parameters <- gsub(";$", "", parameters);
+    celHeader$parameters <- parameters;
+
+    # Create the CEL file
+    createCel(pathname, header=celHeader, ..., verbose=less(verbose));
+
+    verbose && exit(verbose);
+  }
+
+  verbose && enter(verbose, "Defining FIRMA results file");
+  verbose && cat(verbose, "Pathname: ", pathname);
+  res <- newInstance(static, pathname);
+  verbose && exit(verbose);
+
+  res;
+}, static=TRUE, private=TRUE)
+
+
+setMethodS3("getCellMap", "FirmaFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'units':
+  if (inherits(units, "ChipEffectFileCellMap")) {
+    return(units);
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Retrieving unit-to-cell map");
+
+  # Is 'units' already a CDF list?
+  if (is.list(units)) {
+    # No fancy validation for now.
+    cells <- units;
+    cdf <- getCdf(this);
+    units <- indexOf(cdf, names=names(units));
+    if (any(is.na(units))) {
+      throw("Argument 'units' is of unknown structure.");
+    }
+    verbose && enter(verbose, "Argument 'cells' is already a CDF cell-index structure");
+  } else {
+    verbose && enter(verbose, "Retrieving cell indices for specified units");
+    # Get the cells to read
+    cells <- getCellIndices(this, units=units, force=force, verbose=less(verbose));
+  }
+
+  unitNames <- names(cells);
+# BUG!  Fix this in ChipEffectFile.R
+#  unitSizes <- unlist(lapply(cells, length), use.names=FALSE);
+  unitSizes <- unlist(lapply(cells, FUN=function(unit){length(.subset2(unit,"groups"))}), use.names=FALSE);  
+  cells <- unlist(cells, use.names=FALSE);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Creating return data frame");
+  uUnitSizes <- unique(unitSizes);
+  if (is.null(units)) {
+    cdf <- getCdf(this);
+    units <- seq(length=nbrOfUnits(cdf));
+  }
+
+# BUG!  Fix this in ChipEffectFile.R
+#  units <- rep(units, each=unitSizes);
+  units <- rep(units, unitSizes);  
+
+  # The following is too slow:
+  #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
+
+  # Instead, updated size by size
+  groups <- matrix(NA, nrow=max(uUnitSizes), ncol=length(unitNames));
+  for (size in uUnitSizes) {
+    cc <- which(unitSizes == size);
+    seq <- seq(length=size);
+    groups[seq,cc] <- seq;
+  }
+  groups <- groups[!is.na(groups)];
+  map <- data.frame(unit=units, group=groups, cell=cells);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  class(map) <- c("ChipEffectFileCellMap", class(map));
+
+  map;
+}, private=TRUE)
+
+
+setMethodS3("getDataFlat", "FirmaFile", function(this, units=NULL, fields=c("intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Retrieving data as a flat data frame");
+
+  # Get unit-to-cell map
+  suppressWarnings({
+    map <- getCellMap(this, units=units, ..., verbose=less(verbose));
+  })
+
+  verbose && enter(verbose, "Reading data fields");
+  celFields <- c(intensities="intensities", stdvs="stdvs", pixels="pixels");
+  suppressWarnings({
+    data <- getData(this, indices=map[,"cell"], fields=celFields[fields]);
+  })
+  rownames(data) <- seq(length=nrow(data));  # Work around?!? /HB 2006-11-28
+
+  verbose && str(verbose, data);
+
+  verbose && exit(verbose);
+
+  len <- sapply(data, FUN=length);
+  keep <- (len == nrow(map));
+  data <- data[keep];
+  data <- as.data.frame(data);
+  data <- cbind(map, data);
+
+  verbose && exit(verbose);
+
+  data;
+}, private=TRUE)
+
+
+setMethodS3("updateDataFlat", "FirmaFile", function(this, data, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'data':
+  names <- colnames(data);
+  namesStr <- paste(names, collapse=", ");
+  if (!"cell" %in% names)
+    throw("Argument 'data' must contain a column 'cell'": namesStr);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose2 <- -as.integer(verbose)-2;
+
+  verbose && enter(verbose, "Storing flat data to file");
+
+  colnames(data) <- names;
+
+  verbose && enter(verbose, "Updating file");
+  indices <- data[,"cell"];
+  keep <- (names %in% c("intensities", "stdvs", "pixels"));
+  data <- data[,keep];
+  pathname <- getPathname(this);
+  updateCel(pathname, indices=indices, data, verbose=verbose2);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+  invisible(data);
+}, private=TRUE)
+
+
+############################################################################
+# HISTORY:
+# 2007-02-09
+# o Created (based on ChipEffectFile.R).
+############################################################################
