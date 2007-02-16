@@ -55,7 +55,7 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
 
 
  \bold{Methods inherited from ProbeLevelModel}:\cr
-fit, getChipEffects, getProbeAffinities
+calculateResiduals, fit, getCalculateResidualsFunction, getChipEffects, getProbeAffinities, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getCellIndices, readUnits

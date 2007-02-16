@@ -19,7 +19,7 @@
  Gets the tags of the explorer, which are the tags of the data set plus additional tags.
 }
 
-\usage{\method{getTags}{ArrayExplorer}(this, ...)}
+\usage{\method{getTags}{ArrayExplorer}(this, collapse=NULL, ...)}
 
 \arguments{
   \item{...}{Not used.}

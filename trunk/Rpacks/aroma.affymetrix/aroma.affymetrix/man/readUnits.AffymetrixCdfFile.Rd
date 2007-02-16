@@ -27,7 +27,7 @@
 }
 
 \value{
- Returns the \code{\link[base]{list}} structure that \code{\link[affxparser]{readCelUnits}} returns
+ Returns the \code{\link[base]{list}} structure that \code{\link[affxparser]{readCdfUnits}} returns
  (possibly restructured).
 }
 

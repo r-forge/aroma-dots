@@ -38,11 +38,11 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
   This class represents estimates of chip effects in the probe-level models.
  }
 
- \usage{ChipEffectFile(..., model=c("pm"))}
+ \usage{ChipEffectFile(..., probeModel=c("pm"))}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
-   \item{model}{The specific type of model, e.g. \code{"pm"}.}
+   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
  }
 
  \section{Fields and Methods}{

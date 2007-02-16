@@ -64,8 +64,11 @@ getCellIndices, getChipEffects, getProbeAffinities, setCombineAlleles
  \bold{Methods inherited from SnpPlm}:\cr
 getCellIndices, getChipEffects, getProbeAffinities, setMergeStrands
 
+ \bold{Methods inherited from RmaPlm}:\cr
+getCalculateResidualsFunction
+
  \bold{Methods inherited from ProbeLevelModel}:\cr
-fit, getChipEffects, getProbeAffinities
+calculateResiduals, fit, getCalculateResidualsFunction, getChipEffects, getProbeAffinities, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getCellIndices, readUnits

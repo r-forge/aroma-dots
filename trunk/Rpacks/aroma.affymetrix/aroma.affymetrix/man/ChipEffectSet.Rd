@@ -36,11 +36,11 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
   This class represents estimates of chip effects in the probe-level models.
  }
 
- \usage{ChipEffectSet(..., model=c("pm"))}
+ \usage{ChipEffectSet(..., probeModel=c("pm"))}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
-   \item{model}{The specific type of model, e.g. \code{"pm"}.}
+   \item{...}{Arguments passed to \code{\link{AffymetrixCelSet}}.}
+   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
  }
 
  \section{Fields and Methods}{
@@ -60,7 +60,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 [, [[, append, as, as.AffymetrixCelSet, averageQuantile, cna, extractAffyBatch, extractSnpFeatureSet, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
+append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

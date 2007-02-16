@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  CnProbeAffinityFile.R
+%  ResidualFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{CnProbeAffinityFile}
+ \name{ResidualFile}
 \docType{class}
-\alias{CnProbeAffinityFile}
+\alias{ResidualFile}
 
 
- \title{The CnProbeAffinityFile class}
+ \title{The ResidualFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class CnProbeAffinityFile}\cr
+\bold{Class ResidualFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -25,44 +25,37 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeAffinityFile}}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{SnpProbeAffinityFile}}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{CnProbeAffinityFile}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{ResidualFile}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{CnProbeAffinityFile}\cr
-extends \link[aroma.affymetrix]{SnpProbeAffinityFile}\cr
+public static class \bold{ResidualFile}\cr
+extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 
 
 
-  This class represents estimates of probe affinities in SNP probe-level models.
+  This class represents estimates of residuals in the probe-level models.
  }
 
- \usage{CnProbeAffinityFile(..., combineAlleles=FALSE)}
+ \usage{ResidualFile(..., probeModel=c("pm"))}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{SnpProbeAffinityFile}}.}
-   \item{combineAlleles}{If \code{\link[base:logical]{FALSE}}, allele A and allele B are treated
-      seperately, otherwise together.}
+   \item{...}{Arguments passed to \code{\link{ParameterCelFile}}.}
+   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{setCombineAlleles} \tab  -\cr
+ \tab \code{getImage} \tab  -\cr
+ \tab \code{getParameters} \tab  -\cr
+ \tab \code{readUnits} \tab  -\cr
+ \tab \code{writeImage} \tab  -\cr
 }
 
-
- \bold{Methods inherited from SnpProbeAffinityFile}:\cr
-getCellIndices, setMergeStrands
-
- \bold{Methods inherited from ProbeAffinityFile}:\cr
-getCellIndices, getParameters, readUnits
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 readUnits
@@ -80,4 +73,10 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+   An object of this class is typically obtained through the
+   \code{getResidualSet()} method for the \code{\link{ProbeLevelModel}} class.
+   An object of this class is typically part of a \code{\link{ResidualSet}}.
+ }
 \keyword{classes}

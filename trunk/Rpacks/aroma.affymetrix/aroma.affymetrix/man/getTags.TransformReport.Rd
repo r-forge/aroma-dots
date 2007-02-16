@@ -20,7 +20,7 @@
  of this transformation.
 }
 
-\usage{\method{getTags}{TransformReport}(this, ...)}
+\usage{\method{getTags}{TransformReport}(this, collapse=NULL, ...)}
 
 \arguments{
  \item{...}{Not used.}

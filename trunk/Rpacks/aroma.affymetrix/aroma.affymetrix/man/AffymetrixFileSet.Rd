@@ -22,7 +22,7 @@
 \code{~~+--}\code{AffymetrixFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{GenotypeCallSet}, \link[aroma.affymetrix]{GenotypeCallXdrSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{GenotypeCallSet}, \link[aroma.affymetrix]{GenotypeCallXdrSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{AffymetrixFileSet}\cr
 extends \link[R.oo]{Object}\cr
@@ -60,6 +60,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getFile} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFullName.AffymetrixFileSet]{getFullName}} \tab Gets the full name of the file set.\cr
+ \tab \code{getFullNames} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getName.AffymetrixFileSet]{getName}} \tab Gets the name of the file set.\cr
  \tab \code{\link[aroma.affymetrix:getNames.AffymetrixFileSet]{getNames}} \tab Gets the names of the files in the file set.\cr
  \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFileSet]{getPath}} \tab Gets the path (directory) of the file set.\cr

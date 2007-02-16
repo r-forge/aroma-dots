@@ -47,8 +47,10 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:getArrays.ChromosomeExplorer]{getArrays}} \tab Gets the names of the arrays.\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.ChromosomeExplorer]{getChromosomes}} \tab Gets the chromosomes available.\cr
  \tab \code{getFullName} \tab  -\cr
+ \tab \code{getFullNames} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getModel.ChromosomeExplorer]{getModel}} \tab Gets the model.\cr
  \tab \code{\link[aroma.affymetrix:getName.ChromosomeExplorer]{getName}} \tab Gets the name of the explorer.\cr
+ \tab \code{getNames} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getTags.ChromosomeExplorer]{getTags}} \tab Gets the tags of the explorer.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.ChromosomeExplorer]{nbrOfArrays}} \tab Gets the total number of arrays.\cr
