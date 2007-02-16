@@ -54,6 +54,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getChipTypes} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.GladModel]{getChromosomes}} \tab Gets the chromosomes available.\cr
  \tab \code{getFullName} \tab  -\cr
+ \tab \code{getFullNames} \tab  -\cr
  \tab \code{getListOfChipEffects} \tab  -\cr
  \tab \code{getListOfGenomeInformations} \tab  -\cr
  \tab \code{getListOfReferences} \tab  -\cr

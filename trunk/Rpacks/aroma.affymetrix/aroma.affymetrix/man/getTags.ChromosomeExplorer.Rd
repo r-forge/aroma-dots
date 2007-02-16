@@ -19,7 +19,7 @@
  Gets the tags of the explorer, which are the tags of the model plus additional tags.
 }
 
-\usage{\method{getTags}{ChromosomeExplorer}(this, ...)}
+\usage{\method{getTags}{ChromosomeExplorer}(this, collapse=NULL, ...)}
 
 \arguments{
   \item{...}{Not used.}

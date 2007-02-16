@@ -19,7 +19,7 @@
  Writes a spatial image of the CEL data to an image file.
 }
 
-\usage{\method{writeSpatial}{AffymetrixCelFile}(this, filename=sprintf(fmtstr, getName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="\%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), transform=sqrt, zlim=NULL, verbose=FALSE)}
+\usage{\method{writeSpatial}{AffymetrixCelFile}(this, filename=sprintf(fmtstr, getFullName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="\%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), transform=sqrt, zlim=NULL, verbose=FALSE)}
 
 \arguments{
   \item{filename}{The filename of the image file.}

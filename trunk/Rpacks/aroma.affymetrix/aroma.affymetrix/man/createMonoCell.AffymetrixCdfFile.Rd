@@ -20,12 +20,12 @@
  Creates a mono-cell version of the CDF.
 }
 
-\usage{\method{createMonoCell}{AffymetrixCdfFile}(this, chipType=getChipType(this), suffix="monocell", sep="-", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE)}
+\usage{\method{createMonoCell}{AffymetrixCdfFile}(this, chipType=getChipType(this), tags="monocell", sep=",", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE)}
 
 \arguments{
   \item{chipType}{The chip type of the new CDF.}
-  \item{suffix}{A suffix added to the chip type of the new CDF.}
-  \item{sep}{A string separating the chip type and the suffix string.}
+  \item{tags}{Tags added to the chip type of the new CDF.}
+  \item{sep}{A string separating the chip type and the tags string.}
   \item{path}{The path where to store the new CDF file.}
   \item{nbrOfCellsPerField}{Number of cells per group field the new CDF
      should have.}

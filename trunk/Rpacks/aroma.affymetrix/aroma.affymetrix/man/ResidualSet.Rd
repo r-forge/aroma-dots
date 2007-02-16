@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  QualityAssessmentSet.R
+%  ResidualSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{QualityAssessmentSet}
+ \name{ResidualSet}
 \docType{class}
-\alias{QualityAssessmentSet}
+\alias{ResidualSet}
 
 
-\title{The QualityAssessmentSet class}
+ \title{The ResidualSet class}
 
-\description{
- Package:  aroma.affymetrix \cr
-\bold{Class QualityAssessmentSet}\cr
+ \description{
+  Package:  aroma.affymetrix \cr
+\bold{Class ResidualSet}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -23,29 +23,37 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{QualityAssessmentSet}\cr
+\code{~~~~~~~~~~~~+--}\code{ResidualSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{QualityAssessmentSet}\cr
+public static class \bold{ResidualSet}\cr
 extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 
 
+  This class represents probe-level residuals from probe-level models.
+ }
+
+ \usage{ResidualSet(..., probeModel=c("pm"))}
+
+ \arguments{
+   \item{...}{Arguments passed to \code{\link{ParameterCelSet}}.}
+   \item{probeModel}{The specific type of model, e.g. \code{"pm"}.}
+ }
+
+ \section{Fields and Methods}{
+  \bold{Methods:}\cr
+\tabular{rll}{
+ \tab \code{findUnitsTodo} \tab  -\cr
+ \tab \code{fromDataSet} \tab  -\cr
+ \tab \code{fromFiles} \tab  -\cr
+ \tab \code{getAverageFile} \tab  -\cr
+ \tab \code{getCellIndices} \tab  -\cr
+ \tab \code{getParameters} \tab  -\cr
+ \tab \code{readUnits} \tab  -\cr
 }
-
-\usage{QualityAssessmentSet(files=NULL, tags="*", ...)}
-
-\arguments{
-  \item{files}{A \code{\link[base]{list}} of \code{\link{QualityAssessmentFile}}:s.}
-  \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
-  \item{...}{Not used.}
-}
-
-\section{Fields and Methods}{
- \bold{Methods:}\cr
-\emph{No methods defined}.
 
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
@@ -58,9 +66,12 @@ append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, extract, fro
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
-}
+ }
 
-\author{
-  Ken Simpson (ksimpson[at]wehi.edu.au).
-}
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+   An object of this class is typically obtained through the
+   \code{getResidualSet()} method for the \code{\link{ProbeLevelModel}} class.
+ }
 \keyword{classes}

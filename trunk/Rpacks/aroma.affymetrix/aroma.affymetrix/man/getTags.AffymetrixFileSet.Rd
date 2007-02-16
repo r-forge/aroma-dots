@@ -21,9 +21,11 @@
   the file-set pathname.
 }
 
-\usage{\method{getTags}{AffymetrixFileSet}(this, ...)}
+\usage{\method{getTags}{AffymetrixFileSet}(this, collapse=NULL, ...)}
 
 \arguments{
+ \item{collapse}{A \code{\link[base]{character}} string used to concatenate the tags.
+    If \code{\link[base]{NULL}}, the tags are not concatenated.}
  \item{...}{Not used.}
 }
 

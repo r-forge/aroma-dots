@@ -36,7 +36,7 @@
 }
 
 \value{
-  Returns (invisibly) the Image written.
+  Returns the pathname to the image file created.
 }
 
 \examples{\dontrun{

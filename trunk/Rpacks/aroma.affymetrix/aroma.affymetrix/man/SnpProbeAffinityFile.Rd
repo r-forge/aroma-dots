@@ -57,7 +57,7 @@ extends \link[aroma.affymetrix]{ProbeAffinityFile}\cr
 
 
  \bold{Methods inherited from ProbeAffinityFile}:\cr
-getCellIndices, readUnits
+getCellIndices, getParameters, readUnits
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 readUnits
