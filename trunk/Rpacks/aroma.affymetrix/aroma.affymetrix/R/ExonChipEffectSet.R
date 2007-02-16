@@ -87,6 +87,14 @@ setMethodS3("getFirstCellPerUnitIndices", "ExonChipEffectSet", function(this, ..
 })
 
 
+setMethodS3("findUnitsTodo", "ExonChipEffectSet", function(this, ...) {
+  # Look into the last chip-effect file since that is updated last
+  ece <- getFile(this, length(this));
+  findUnitsTodo(ece, ...);
+})
+
+
+
 ############################################################################
 # HISTORY:
 # 2007-02-08

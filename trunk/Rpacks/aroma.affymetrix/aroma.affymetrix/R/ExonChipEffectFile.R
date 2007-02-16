@@ -171,6 +171,78 @@ setMethodS3("readUnits", "ExonChipEffectFile", function(this, ..., force=FALSE, 
 })
 
 
+setMethodS3("findUnitsTodo", "ExonChipEffectFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  verbose && enter(verbose, "Identifying non-fitted units in chip-effect file");
+  verbose && cat(verbose, "Pathname: ", getPathname(this));
+
+
+  idxs <- NULL;
+  if (is.null(units)) {
+    # Look up chip-type and parameter specific but data set independent data
+    cdf <- getCdf(this);
+    chipType <- getChipType(cdf);
+    key <- list(method="findUnitsTodo", class=class(this)[1],
+                chipType=chipType, params=getParameters(this));
+    dirs <- c("aroma.affymetrix", chipType);
+    if (!force) {
+      idxs <- loadCache(key, dirs=dirs);
+      if (!is.null(idxs))
+        verbose && cat(verbose, "Found indices cached on file");
+    }
+  }
+
+  if (is.null(idxs)) {
+    verbose && enter(verbose, "Identifying CDF units");
+
+    verbose && enter(verbose, "Reading CDF cell indices");
+    idxs <- getCellIndices(this, units=units, verbose=less(verbose));
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Extracting first CDF block for each unit");
+    idxs <- applyCdfGroups(idxs, .subset2, 1);
+    if (this$mergeGroups) {
+      # do a further round of reduction
+      idxs <- applyCdfGroups(idxs, .subset2, 1);
+    }
+    verbose && exit(verbose);
+
+    idxs <- unlist(idxs, use.names=FALSE);
+
+    if (is.null(units)) {
+      verbose && enter(verbose, "Saving to file cache");
+      saveCache(idxs, key=key, dirs=dirs);
+      verbose && exit(verbose);
+    }
+
+    verbose && exit(verbose);
+  }
+
+
+  # Read one cell from each unit
+  verbose && enter(verbose, "Reading data for these ", length(idxs), " cells");
+  value <- readCel(getPathname(this), indices=idxs, readIntensities=FALSE,
+                   readStdvs=TRUE, readPixels=FALSE)$stdvs;
+  verbose && exit(verbose);
+
+
+  # Identify units for which the stdvs <= 0.
+  value <- which(value <= 0);
+
+  if (!is.null(units))
+    value <- units[value];
+  verbose && cat(verbose, "Looking for stdvs <= 0 indicating non-estimated units:");
+  verbose && str(verbose, value);
+
+  verbose && exit(verbose);
+
+  value;
+})
+
+
 ############################################################################
 # HISTORY:
 # 2007-02-08 /KS
