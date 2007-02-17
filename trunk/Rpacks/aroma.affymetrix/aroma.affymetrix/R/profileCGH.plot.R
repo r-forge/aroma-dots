@@ -59,7 +59,7 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
   # Add number of data points
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   n <- nrow(this$profileValues);
-  stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.7, col="lightgray");
+  stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8, col="lightgray");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Add std dev estimates
