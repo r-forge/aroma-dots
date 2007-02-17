@@ -310,15 +310,9 @@ setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
   chipTypes <- getChipTypes(this);
   nbrOfChipTypes <- length(cesList);
 
-  # Get full sample names
-  fullnames <- lapply(cesList, FUN=getFullNames);
-  fullnames <- lapply(fullnames, FUN=function(names) {
-    gsub(",chipEffects.*", "", names);
-  });
-  names(fullnames) <- chipTypes;
-
-  # Get (short) sample names
-  names <- gsub("[,].*$", "", fullnames);
+  # Get all sample names
+  names <- lapply(cesList, FUN=getNames);
+  names(names) <- chipTypes;
 
   # Get all unique sample names
   allNames <- unlist(names, use.names=FALSE);
@@ -338,15 +332,10 @@ setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
 })
 
 
-setMethodS3("getFullNames", "GladModel", function(this, ...) {
+setMethodS3("getNames", "GladModel", function(this, ...) {
   rownames(getTableOfArrays(this, ...));
 })
 
-setMethodS3("getNames", "GladModel", function(this, ...) {
-  fullnames <- getFullNames(this, ...);
-  names <- gsub(",.*$", "", fullnames);
-  names;
-})
 
 
 ###########################################################################/**
@@ -409,20 +398,20 @@ setMethodS3("getArrays", "GladModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("indexOfArrays", "GladModel", function(this, arrays=NULL, ...) {
-  allFullNames <- getFullNames(this);
+  allNames <- getNames(this);
 
   # Argument 'arrays':
   if (is.null(arrays)) {
-    arrays <- seq(along=allFullNames);
+    arrays <- seq(along=allNames);
   } else if (is.numeric(arrays)) {
-    arrays <- Arguments$getIndices(arrays, range=c(1,length(allFullNames)));
+    arrays <- Arguments$getIndices(arrays, range=c(1,length(allNames)));
   } else {
-    missing <- which(!(arrays %in% allFullNames));
+    missing <- which(!(arrays %in% allNames));
     if (length(missing) > 0) {
       missing <- paste(arrays[missing], collapse=", ");
       throw("Argument 'arrays' contains unknown arrays: ", missing);
     }
-    arrays <- match(arrays, allFullNames);
+    arrays <- match(arrays, allNames);
   }
 
   arrays;
@@ -770,7 +759,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
   # Chromosome by chromosome
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   res <- list();
-  arrayNames <- getArrays(this)[arrays];
+  arrayNames <- getNames(this)[arrays];
   nbrOfArrays <- length(arrayNames);
   for (aa in seq(length=nbrOfArrays)) {
     array <- arrays[aa];
@@ -786,7 +775,6 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
     tags <- unique(tags);
     # Exclude unwanted tags
     ceTags <- setdiff(tags, "chipEffects");
-
 
     res[[arrayName]] <- list();
     for (chr in chromosomes) {
@@ -1041,7 +1029,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
           suppressWarnings({
             plot(fit, ticksBy=ticksBy, ..., xmargin=xmargin, resScale=resScale, flavor="ce");
           });
-          stext(chipType, side=4, pos=1, line=0, cex=0.7, col="gray");
+          stext(chipType, side=4, pos=1, line=0, cex=0.8, col="gray");
   
           if (!is.null(callList)) {
             verbose && enter(verbose, "Adding genotype calls");
@@ -1244,7 +1232,7 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=NULL, format=c("x
 
   # Setup
   fullname <- getFullName(this);
-  arrayNames <- getArrays(this);
+  arrayNames <- getNames(this);
 
   path <- getPath(this);
   mkdirs(path);
