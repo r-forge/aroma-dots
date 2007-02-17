@@ -371,3 +371,4 @@
   setMergeGroups.ExonRmaPlm updateDataFlat.FirmaFile
   updateDataFlat.WeightsFile updateUnits.FirmaFile updateUnits.FirmaSet
   updateUnits.WeightsFile updateUnits.WeightsSet writeImage.WeightsFile
+  getCommonListElements
