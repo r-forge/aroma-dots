@@ -310,15 +310,18 @@ setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
   chipTypes <- getChipTypes(this);
   nbrOfChipTypes <- length(cesList);
 
-  # Get array names
-  arrayNames <- lapply(cesList, FUN=getFullNames);
-  arrayNames <- lapply(arrayNames, FUN=function(names) {
+  # Get full sample names
+  fullnames <- lapply(cesList, FUN=getFullNames);
+  fullnames <- lapply(fullnames, FUN=function(names) {
     gsub(",chipEffects.*", "", names);
   });
-  names(arrayNames) <- chipTypes;
+  names(fullnames) <- chipTypes;
 
-  # Get all unique array names
-  allNames <- unlist(arrayNames, use.names=FALSE);
+  # Get (short) sample names
+  names <- gsub("[,].*$", "", fullnames);
+
+  # Get all unique sample names
+  allNames <- unlist(names, use.names=FALSE);
   allNames <- unique(allNames);
 
   # Create table of arrays
@@ -326,8 +329,8 @@ setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
   X <- matrix(NA, nrow=nbrOfArrays, ncol=nbrOfChipTypes);
   dimnames(X) <- list(allNames, chipTypes);
   for (chipType in chipTypes) {
-    names <- arrayNames[[chipType]];
-    idx <- match(names, allNames);
+    names0 <- names[[chipType]];
+    idx <- match(names0, allNames);
     X[idx,chipType] <- seq(along=idx);
   }
 
