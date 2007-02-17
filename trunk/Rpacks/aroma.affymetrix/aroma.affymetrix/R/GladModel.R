@@ -1151,15 +1151,15 @@ setMethodS3("getLog2Ratios", "GladModel", function(this, ..., verbose=FALSE) {
 
 
 
-setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", margin=10, flat=FALSE, verbose=FALSE) {
+setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", organism="Human", hgVersion="hg17", margin=10, flat=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'url':
   if (identical(url, "ucsc")) {
     url <- function(chromosome, start, stop) {
-      uri <- "http://genome.ucsc.edu/cgi-bin/hgTracks?clade=vertebrate&org=Human&db=hg18";
-      sprintf("%s&position=chr%s%%3A%d-%d", uri, chromosome, as.integer(start), as.integer(stop));
+      uri <- "http://genome.ucsc.edu/cgi-bin/hgTracks?clade=vertebrate";
+      sprintf("%s&org=%s&db=%s&position=chr%s%%3A%d-%d", uri, organism, hgVersion, chromosome, as.integer(start), as.integer(stop));
     }
   }
 
@@ -1373,6 +1373,13 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-02-16
+# o Now the default version of the human genome is 'hg17' and not 'hg18'.
+#   The reason for this is that the dChip annotation files are 'hg17'. We
+#   still have to figure out a way to do version control for this in the
+#   package.  Maybe it won't be a problem as soon as we start using the
+#   annotation packages of Bioconductor.  On the to do list...
+# o Added arguments 'organism' and 'db' to getRegions().
 # 2007-02-15
 # o Now getChipTypes() sorts the chip types in lexicographic order before
 #   merging.  This guarantees the same result regardsless of order of the
