@@ -742,9 +742,11 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
   # Get reference annotations
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get reference tags *common* across chip types
-  refTags <- unlist(getCommonListElements(refList), use.names=FALSE);
-  # Exclude unwanted tags
-  refTags <- setdiff(refTags, "chipEffects");
+  tags <- lapply(refList, getTags);
+  tags <- getCommonListElements(tags);
+  tags <- unlist(tags, use.names=FALSE);
+  tags <- setdiff(tags, "chipEffects");
+  refTags <- tags;
 
   # Add combined reference name
   refName <- getReferenceName(this);
@@ -764,9 +766,11 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
     ceList <- getChipEffectFiles(this, array=array);
 
     # Get chip-effect tags *common* across chip types
-    ceTags <- unlist(getCommonListElements(ceList), use.names=FALSE);
-    # Exclude unwanted tags
-    ceTags <- setdiff(ceTags, "chipEffects");
+    tags <- lapply(ceList, getTags);
+    tags <- getCommonListElements(tags);
+    tags <- unlist(tags, use.names=FALSE);
+    tags <- setdiff(tags, "chipEffects");
+    ceTags <- tags;
 
     res[[arrayName]] <- list();
     for (chr in chromosomes) {
