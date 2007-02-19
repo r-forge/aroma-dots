@@ -188,13 +188,15 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
     return(res);
   }
 
+  originalCdf <- getCdf(this);
+  
   res <- copyFile(this, filename=pathname, path=NULL, verbose=less(verbose));
 
   if (clear) {
     clearData(res, ..., .forSure=TRUE, verbose=less(verbose));
   }
 
-  setCdf(res, getCdf(this));
+  setCdf(res, originalCdf);
   res;
 }, private=TRUE)
 
