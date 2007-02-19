@@ -13,7 +13,10 @@ setMethodS3("calculateWeights", "ExonRmaPlm", function(this, units=NULL, ram=1, 
     res <- lapply(1:nbrOfGroups, FUN=function(gg) {
       y <- .subset2(.subset2(unit, gg), "eps");
       y <- log2(y);
-      mad <- 1.4826 * median(abs(y));      
+      mad <- 1.4826 * median(abs(y));
+      if (mad==0) {
+        return(matrix(data=1, nrow=nrow(y), ncol=ncol(y)));        
+      }
       if (mergeGroups) {
         return(matrix(MASS::psi.huber(y/madMerged), ncol=ncol(y)));
       } else {
@@ -54,13 +57,13 @@ setMethodS3("calculateWeights", "ExonRmaPlm", function(this, units=NULL, ram=1, 
   cdf <- getCdf(ds);
   if (is.null(units)) {
     nbrOfUnits <- nbrOfUnits(cdf);
+    unitsToDo <- findUnitsTodo(ws);
   } else {
     nbrOfUnits <- length(units);
+    unitsToDo <- units;
   }
   verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
 
-  unitsToDo <- findUnitsTodo(ws);
-  
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
   verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n",
                     nbrOfChunks, unitsPerChunk);
