@@ -30,6 +30,7 @@ setConstructorS3("SnpChipEffectSet", function(..., mergeStrands=FALSE) {
   this;
 })
 
+  
 setMethodS3("fromFiles", "SnpChipEffectSet", function(static, ..., mergeStrands="auto") {
   fromFiles.ChipEffectSet(static, ..., mergeStrands=mergeStrands);
 }, static=TRUE)
@@ -62,7 +63,7 @@ setMethodS3("setMergeStrands", "SnpChipEffectSet", function(this, status, ...) {
   oldStatus <- getMergeStrands(this);
 
   if (identical(status, "auto"))
-    status <- inferParameters(this)$mergeStrands;
+    status <- inferParameters(this, ...)$mergeStrands;
 
   # Argument 'status':
   status <- Arguments$getLogical(status);
@@ -76,7 +77,17 @@ setMethodS3("setMergeStrands", "SnpChipEffectSet", function(this, status, ...) {
 })
 
 
-setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ...) {
+setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Infer parameters from stored data in quartet units in CEL set");
+  
   # Identify units with quartets
   cdf <- getCdf(this);
   cdfPathname <- getPathname(cdf);
@@ -85,6 +96,8 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ...) {
 
   ce <- getFile(this, 1);
   cePathname <- getPathname(ce);
+
+  verbose && cat(verbose, "Pathname: ", cePathname);
 
   mergeStrands <- NA;
   while(length(allUnits) > 0) {
@@ -97,18 +110,27 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ...) {
     names(unitSizes) <- NULL;
     unitSizes <- sapply(unitSizes, FUN=length);
     units <- units[unitSizes == 4];
+    verbose && cat(verbose, "Scanning units:");
+    verbose && str(verbose, units);
 
     # Infer parameters from 'stdvs'
     stdvs <- readCelUnits(cePathname, units=units, 
                                     readIntensities=FALSE, readStdvs=TRUE);
+    # Put quartets by columns
     stdvs <- matrix(unlist(stdvs, use.names=FALSE), nrow=4);
-    stdvs <- stdvs[,(colSums(stdvs) > 0),drop=FALSE];
+    # Keep only estimated units without NAs
+    csums <- colSums(stdvs);
+    stdvs <- stdvs[,is.finite(csums) & (csums > 0),drop=FALSE];
+    verbose && cat(verbose, "Stdvs quartets:");
+    verbose && print(verbose, stdvs[,seq_len(min(ncol(stdvs),6)),drop=FALSE]);
     if (ncol(stdvs) > 0) {
       t <- rowMeans(stdvs);
-      isZero <- isZero(t);
-      if (!all(isZero)) {
-        mergeStrands <- isZero[3] && isZero[4];
-        break;
+      if (length(t) > 0) {
+        isZero <- isZero(t);
+        if (!all(isZero)) {
+          mergeStrands <- isZero[3] && isZero[4];
+          break;
+        }
       }
     }
   } # while(...)
@@ -117,13 +139,24 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ...) {
     throw("Failed to infer parameter 'mergeStrands' from chip-effect file: ", cePathname);
   }
 
-  list(mergeStrands=mergeStrands);
+  res <- list(mergeStrands=mergeStrands);
+
+  verbose && str(verbose, res);
+  verbose && exit(verbose);
+
+  res;
 }, private=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2007-02-20
+# o BUG FIX: inferParameters() would give an error if some estimates were
+#   NAs.
+# 2007-02-19
+# o BUG FIX: If inferParameters() where called on a chip-effect set where
+#   some units where not yet estimated, an error would be generated.
 # 2007-01-11
 # o Added fromFiles() which now infers 'mergeStrands' from the files.
 # o Added inferParameters().

@@ -83,12 +83,21 @@ setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
 }, static=TRUE, private=TRUE)
 
 
-setMethodS3("fromFiles", "ChipEffectSet", function(static, ..., pattern=",chipEffects[.](c|C)(e|E)(l|L)$", fileClass=NULL) {
+setMethodS3("findByName", "ChipEffectSet", function(static, ..., paths="plmData/") {
+
+  # Unfortunately does method dispatching not work here.
+  path <- findByName.AffymetrixCelSet(static, ..., paths=paths);
+  
+  path;
+}, static=TRUE)
+
+setMethodS3("fromFiles", "ChipEffectSet", function(static, path="plmData/", pattern=",chipEffects[.](c|C)(e|E)(l|L)$", ..., fileClass=NULL) {
   # Argument 'fileClass':
   if (is.null(fileClass))
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
-  fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
+  # Unfortunately does method dispatching not work here.
+  fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass);
 }, static=TRUE)
 
 
@@ -234,6 +243,8 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-02-19
+# o Added findByName() and fromName().
 # 2006-11-22
 # o Updated fromFiles() so it automagically finds the file class.
 # 2006-10-??

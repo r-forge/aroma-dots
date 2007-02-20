@@ -49,9 +49,9 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
       throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
     }
 
-    if (dataSet$mergeStrands != TRUE) {
-      throw("Currently only non-strands specific copy-number chip effects can be normalized, i.e. 'mergeStrands' must be TRUE");
-    }
+#    if (dataSet$mergeStrands != TRUE) {
+#      throw("Currently only non-strands specific copy-number chip effects can be normalized, i.e. 'mergeStrands' must be TRUE");
+#    }
   }
 
   if (!is.null(targetFunction)) {
@@ -171,9 +171,15 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
   if (is.null(fcn) || force) {
     verbose && enter(verbose, "Estimating target prediction function");
 
+    # Get the SNP information annotation
+    cdf <- getCdf(this);
+    si <- getSnpInformation(cdf);
+
     # Get target set
     ces <- getInputDataSet(this);
     verbose && enter(verbose, "Get average signal across arrays");
+    # When averaging with 'indices=NULL' all cells storing chip effects
+    # are used, cf. getCellIndices(). /HB 2007-02-20
     ceR <- getAverageFile(ces, indices=NULL, force=force, verbose=less(verbose));
     verbose && exit(verbose);
 
@@ -184,15 +190,22 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
     # Get units to fit
     units <- getSubsetToFit(this);
 
-    # Get PCR fragment lengths for these
-    cdf <- getCdf(this);
-    si <- getSnpInformation(cdf);
-    fl <- getFragmentLengths(si, units=units);
-
     # Get target log2 signals for SNPs
-    yR <- getDataFlat(ceR, units=units, fields="theta", verbose=less(verbose));
-    yR <- yR[,"theta"];
+    data <- getDataFlat(ceR, units=units, fields="theta", verbose=less(verbose));
+    units <- data[,"unit"];
+    verbose && cat(verbose, "Units:");
+    verbose && str(verbose, units);
+
+    yR <- data[,"theta"];
+    rm(data); # Not needed anymore
     yR <- log2(yR);
+    verbose && cat(verbose, "Signals:");
+    verbose && str(verbose, yR);
+    
+    # Get PCR fragment lengths for these
+    fl <- getFragmentLengths(si, units=units);
+    verbose && cat(verbose, "Fragment lengths:");
+    verbose && str(verbose, fl);
 
     # Fit lowess function
     verbose && enter(verbose, "Fitting target prediction function");
@@ -288,7 +301,6 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   subsetToUpdate <- indexOf(cdf, "^SNP");
 
   verbose && enter(verbose, "Retrieving SNP information annotations");
-  cdf <- getCdf(this);
   si <- getSnpInformation(cdf);
   verbose && exit(verbose);
 
@@ -302,6 +314,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   mkdirs(path);
 
 
+  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -344,15 +357,22 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
       verbose && exit(verbose);
     }
 
+    if (is.null(fl)) {
+      # Get PCR fragment lengths for the subset to be fitted
+      fl <- getFragmentLengths(si, units=map[,"unit"]);
+
+      # Get the index in the data vector of subset to be fitted.
+      # Note: match() only returns first match, which is why we do
+      # it this way.
+      subset <- match(map[,"unit"], subsetToFit);
+      subset <- subset[!is.na(subset)];
+      subset <- match(subsetToFit[subset], map[,"unit"]);
+    }
+
     if (is.null(targetFcn)) {
       # Only loaded if really needed.
       # Retrieve/calculate the target function
       targetFcn <- getTargetFunction(this, verbose=less(verbose));
-    }
-
-    if (is.null(fl)) {
-      # Get PCR fragment lengths for the subset to be fitted
-      fl <- getFragmentLengths(si, units=subsetToUpdate);
     }
 
     # Get target log2 signals for all SNPs to be updated
@@ -360,14 +380,14 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     data <- getDataFlat(ce, units=map, fields="theta", verbose=less(verbose));
     verbose && exit(verbose);
 
+
     # Extract the values to fit the normalization function
     verbose && enter(verbose, "Normalizing log2 signals");
-    y <- data[,"theta"];
-    subset <- match(subsetToFit, subsetToUpdate);
-    yN <- normalizeFragmentLength(log2(y), fragmentLengths=fl, 
+    y <- log2(data[,"theta"]);
+    rm(data); # Not needed anymore
+    y <- normalizeFragmentLength(y, fragmentLengths=fl, 
                              targetFcn=targetFcn, subsetToFit=subset, ...);
-    rm(y);
-    yN <- 2^yN;
+    y <- 2^y;
     verbose && exit(verbose);
 
     # Copy CEL file and update the copy
@@ -390,8 +410,8 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     setCdf(ceN, cdf);
 
     verbose && enter(verbose, "Storing normalized signals");
-    data[,"theta"] <- yN;
-    rm(yN);
+    data[,"theta"] <- y;
+    rm(y);
     updateDataFlat(ceN, data=data, verbose=less(verbose));
     rm(data);
     verbose && exit(verbose);
@@ -420,6 +440,9 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-02-20
+# o Now FragmentLengthNormalization should handle cases with more than one
+#   chip effect per unit, e.g. when mergeStrands=FALSE.
 # 2007-01-16
 # o BUG FIX: Forgot to clear the cache after cloning data set in process().
 #   This would cause getAverage() to return a cached averaged from the

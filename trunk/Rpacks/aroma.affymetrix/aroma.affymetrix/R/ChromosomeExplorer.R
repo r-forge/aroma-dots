@@ -155,6 +155,13 @@ setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
   arrays;
 })
 
+setMethodS3("getFullNames", "ChromosomeExplorer", function(this, ...) {
+  model <- getModel(this);
+  arrays <- getArrays(this);
+  idx <- match(arrays, getNames(model));
+  fullnames <- getFullNames(model, arrays=idx);
+  fullnames;
+})
 
 
 ###########################################################################/**
@@ -600,7 +607,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   verbose && enter(verbose, "Compiling RSP");
   env <- new.env();
   env$chipTypes <- chipTypes;
-  env$samples <- getNames(this);
+  env$samples <- getFullNames(this);
   env$zooms <- zooms;
   pathname <- rspToHtml(pathname, path=NULL, 
                         outFile=outFile, outPath=outPath, 

@@ -375,15 +375,62 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
 
 
 
-setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+###########################################################################/**
+# @RdocMethod getCellMap
+#
+# @title "Gets a (unit, group) to cell index map"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{units}{The units for which the map should be returned.
+#      If @NULL, all units are considered.}
+#   \item{force}{If @TRUE, cached cell indices are ignored.}
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @data.frame with @integer columns \code{unit}, \code{group},
+#  and \code{cell}.
+# }
+#
+# \examples{\dontrun{
+#      unit group cell
+#   1    20     1   20
+#   2    21     1   21
+#   3    22     1   22
+#   4    23     1   23
+#   5    24     1   24
+#   6    25     1   25
+#   7    25     2   27
+#   8    26     1   29
+#   9    26     2   31
+# }}
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'units':
   if (inherits(units, "ChipEffectFileCellMap")) {
     return(units);
+  } else if (is.null(units)) {
+  } else if (is.list(units)) {
+  } else {
+    units <- Arguments$getIndices(units);
   }
-
+             
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -418,7 +465,6 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., forc
     length(.subset2(unit, "groups"));
   });
   unitSizes <- unlist(unitSizes, use.names=FALSE);
-  
   cells <- unlist(cells, use.names=FALSE);
   verbose && exit(verbose);
   
@@ -428,20 +474,25 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, ..., forc
     cdf <- getCdf(this);
     units <- seq(length=nbrOfUnits(cdf));
   }
-  units <- rep(units, each=unitSizes);
 
   # The following is too slow:
   #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
 
   # Instead, updated size by size
-  groups <- matrix(NA, nrow=max(uUnitSizes), ncol=length(unitNames));
+  units2 <- groups <- matrix(NA, nrow=max(uUnitSizes), ncol=length(unitNames));
   for (size in uUnitSizes) {
+    # Identify units with a certain number of groups
     cc <- which(unitSizes == size);
-    seq <- seq(length=size);
+    # Assign group indices to the groups
+    seq <- seq_len(size);
     groups[seq,cc] <- seq;
+    # Assign unit indices to ditto
+    units2[seq,cc] <- rep(units[cc], each=size);
   }
-  groups <- groups[!is.na(groups)];
-  map <- data.frame(unit=units, group=groups, cell=cells);
+  keep <- !is.na(groups);
+  groups <- groups[keep];
+  units2 <- units2[keep];
+  map <- data.frame(unit=units2, group=groups, cell=cells);
   verbose && exit(verbose);
 
   verbose && exit(verbose);
@@ -550,6 +601,9 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 ############################################################################
 # HISTORY:
+# 2007-02-19 /HB
+# o BUG FIX: getCellMap() did not handle units with different number of
+#   groups.
 # 2007-02-15 /KS
 # o BUG FIX: getCellMap() did not handle units with other than one group.
 # 2007-02-09
