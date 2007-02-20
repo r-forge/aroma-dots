@@ -28,5 +28,5 @@ timestampOn(log);
 
 print(log, glad);
 print(log, ce);
-#process(ce, verbose=log);
-process(ce, arrays=24, chromosomes=c(3:8,22), verbose=log);
+process(ce, verbose=log);
+
