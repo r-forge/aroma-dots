@@ -1404,7 +1404,9 @@ ylim <- c(-1,1);
 ##############################################################################
 # HISTORY:
 # 2007-02-20
-# o Added getFullNames().
+# o Added getFullNames(), which for each tuple (across chip types) returns the
+#   sample name of the tuple, together with all *common* tags across all
+#   chip types.  Tags existing in only some of the chip types are ignored.
 # 2007-02-16
 # o Now the default version of the human genome is 'hg17' and not 'hg18'.
 #   The reason for this is that the dChip annotation files are 'hg17'. We
