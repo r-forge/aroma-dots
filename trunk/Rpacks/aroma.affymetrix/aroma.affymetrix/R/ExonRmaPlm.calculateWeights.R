@@ -57,11 +57,16 @@ setMethodS3("calculateWeights", "ExonRmaPlm", function(this, units=NULL, ram=1, 
   cdf <- getCdf(ds);
   if (is.null(units)) {
     nbrOfUnits <- nbrOfUnits(cdf);
-    unitsToDo <- findUnitsTodo(ws);
   } else {
     nbrOfUnits <- length(units);
-    unitsToDo <- units;
   }
+
+  if (force) {
+    unitsToDo <- units;
+  } else {
+    unitsToDo <- findUnitsTodo(ws, units=units);
+  }
+  
   verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
 
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);

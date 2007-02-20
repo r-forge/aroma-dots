@@ -198,10 +198,15 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ...) {
     # Chip effects
     beta <- est[1:J];
 
-    # Probe affinities
-    alpha <- est[(J+1):length(est)];
-    alpha[length(alpha)] <- -sum(alpha[1:(length(alpha)-1)]);
-
+    # Probe affinities.  If only one probe, must have affinity=1 since
+    # sum constraint => affinities sum to zero (on log scale)
+    if (I==1) {
+      alpha <- 0;
+    } else {
+      alpha <- est[(J+1):length(est)];
+      alpha[length(alpha)] <- -sum(alpha[1:(length(alpha)-1)]);
+    }
+      
     # Estimates on the intensity scale
     theta <- 2^beta;
     phi <- 2^alpha;
