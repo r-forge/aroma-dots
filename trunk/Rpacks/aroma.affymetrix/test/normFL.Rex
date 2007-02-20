@@ -61,10 +61,6 @@ for (kk in seq(along=dataSets)) {
   verbose && cat(verbose, "Chip-effect set:");
   verbose && print(verbose, ces);
 
-  # Hard wired for now
-  setMergeStrands(ces, TRUE);
-  setCombineAlleles(ces, TRUE);
-
   norm <- FragmentLengthNormalization(ces, subsetToFit=1/3);
   verbose && print(verbose, norm);
 

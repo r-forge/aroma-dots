@@ -9,8 +9,8 @@ moreUnits <- 10;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Select model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-choices <- c("MBEI,+-", "MBEI", "MBEI,A+B", 
-             "RMA,+-",  "RMA",  "RMA,A+B");
+choices <- c("MBEI,+-", "MBEI", "MBEI,+-,A+B", "MBEI,A+B", 
+             "RMA,+-",  "RMA",  "RMA,+-,A+B", "RMA,A+B");
 ans <- menu(choices=choices, title="Select probe-level model (PLM)")
 model <- choices[ans];
 modelTags <- unlist(strsplit(model, split=","));
