@@ -54,7 +54,8 @@ glog2 <- function(x, scale=log2(2^16)/asinh(2^16), ...) {
 # Setup
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 tryCatch({
-  savehistory();
+  if (interactive())
+    savehistory();
 }, error = function(ex) {})
 
 closeAllConnections();
