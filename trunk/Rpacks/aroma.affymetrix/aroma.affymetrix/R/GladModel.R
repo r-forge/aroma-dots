@@ -336,6 +336,43 @@ setMethodS3("getNames", "GladModel", function(this, ...) {
   rownames(getTableOfArrays(this, ...));
 })
 
+setMethodS3("getFullNames", "GladModel", function(this, arrays=NULL, ...) {
+  getFullNameOfTuple <- function(ceList) {
+    # Get sample name
+    name <- getName(ceList[[1]]);
+  
+    # Get chip-effect tags *common* across chip types
+    tags <- lapply(ceList, FUN=function(ce) {
+      if (is.null(ce)) NULL else getTags(ce);
+    });
+    tags <- lapply(tags, setdiff, "chipEffects");
+    tags <- getCommonListElements(tags);
+    tags <- unlist(tags, use.names=FALSE);
+    tags <- unique(tags);
+    
+    fullname <- paste(c(name, tags), collapse=",");
+    
+    fullname;
+  } # getFullNameOfTuple()
+
+
+  # Argument 'arrays':
+  if (is.null(arrays)) {
+    arrays <- seq_len(nbrOfArrays(this));
+} else {
+    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfArrays(this)));
+  }
+  
+  fullnames <- c();
+  for (kk in arrays) {
+    ceList <- getChipEffectFiles(this, array=kk, ...);
+    fullname <- getFullNameOfTuple(ceList);
+    fullnames <- c(fullnames, fullname);
+  }
+
+  fullnames;
+})
+
 
 
 ###########################################################################/**
@@ -741,16 +778,21 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get reference annotations
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get reference tags *common* across chip types
+  # Get reference tags across chip types
   tags <- lapply(refList, getTags);
-  tags <- getCommonListElements(tags);
+  # HB 2007-02-19 To fix: Should the name and the tags of average files
+  # be replaced?!? We do not get the same names if we specify the average
+  # files explicitly or indirectly.
+  #  tags <- getCommonListElements(tags);
   tags <- unlist(tags, use.names=FALSE);
   tags <- setdiff(tags, "chipEffects");
   refTags <- tags;
+#  verbose && cat(verbose, "Reference tags: ", paste(refTags, collapse=","));
 
   # Add combined reference name
   refName <- getReferenceName(this);
   refTags <- c(refName, refTags);
+  verbose && cat(verbose, "Reference tags: ", paste(refTags, collapse=","));
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -771,6 +813,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
     tags <- unlist(tags, use.names=FALSE);
     tags <- setdiff(tags, "chipEffects");
     ceTags <- tags;
+    verbose && cat(verbose, "Chip-effect tags: ", paste(ceTags, collapse=","));
 
     res[[arrayName]] <- list();
     for (chr in chromosomes) {
@@ -1360,6 +1403,8 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-02-20
+# o Added getFullNames().
 # 2007-02-16
 # o Now the default version of the human genome is 'hg17' and not 'hg18'.
 #   The reason for this is that the dChip annotation files are 'hg17'. We

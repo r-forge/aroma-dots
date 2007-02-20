@@ -74,10 +74,11 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving sample thetas");
   theta <- getDataFlat(this, units=map, fields="theta", verbose=less(verbose))[,"theta"];
-  if (!identical(length(theta), nunits)) {
+  nTheta <- length(theta);
+  if (!identical(nTheta, nrow(map))) {
     verbose && str(verbose, theta);
     verbose && print(verbose, nunits);
-    throw("The number of chip-effect values is not equal to the number of units requested: ", length(theta), " != ", nunits);
+    throw("Internal error: The number of chip-effect values is not equal to the number of units requested: ", nTheta, " != ", nunits);
   }
   verbose && exit(verbose);
 
@@ -96,7 +97,7 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
 
   # Get the other theta estimates
   thetaRef <- getDataFlat(other, units=map, fields="theta", verbose=less(verbose))[,"theta"];
-  stopifnot(identical(length(thetaRef), nunits));
+  stopifnot(identical(length(thetaRef), nTheta));
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -104,7 +105,7 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   M <- log(theta/thetaRef, base=2);
   A <- log(theta*thetaRef, base=2)/2;
-  stopifnot(identical(length(M), nunits));
+  stopifnot(identical(length(M), nTheta));
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -112,7 +113,7 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   am <- matrix(c(A,M), ncol=2)
   colnames(am) <- c("A", "M");
-  rownames(am) <- units;
+  rownames(am) <- map[,"unit"];
 
   verbose && exit(verbose);
 
@@ -195,9 +196,17 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
   if (nunits == 0)
     throw("No SNPs found on requested chromosome: ", chromosome);
 
-  # Get the positions of all SNPs
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the relative copy-number estimates
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  am <- getAM(this, other=other, units=units, verbose=less(verbose));
+
+  # Get the unit indices for all unit groups
+  units <- as.integer(rownames(am));
+  
+  # Get the positions of all unit groups
   x <- getPositions(gi, units=units);
-  stopifnot(identical(length(x), nunits));
   verbose && exit(verbose);
 
 
@@ -207,19 +216,15 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
   keep <- which(!is.na(x));
   nexcl <- length(x) - length(keep);
   if (nexcl > 0) {
-    msg <- sprintf("Could not find position information on %d SNPs: ", nexcl);
+    msg <- sprintf("Could not find position information on %d unit groups: ", nexcl);
     verbose && cat(verbose, msg);
     warning(msg);
     x <- x[keep];
     units <- units[keep];
   }
 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get the relative copy-number estimates
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  am <- getAM(this, other=other, units=units, verbose=less(verbose));
-  xam <- cbind(x=x, am[,c("M","A"), drop=FALSE]);
+  am <- am[,c("M","A"), drop=FALSE]; # Ad hoc /HB 2007-02-19
+  xam <- cbind(x=x, am);
 
   verbose && exit(verbose);
 

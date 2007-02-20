@@ -424,11 +424,11 @@ setMethodS3("fromName", "AffymetrixCelSet", function(static, name, tags=NULL, ch
   })
   if (is.null(path)) {
     path <- file.path(paste(c(name, tags), collapse=","), chipType);
-    throw("Cannot create AffymetrixCelSet.  No such directory: ", path);
+    throw("Cannot create ", class(static)[1], ".  No such directory: ", path);
   }
 
   suppressWarnings({
-    static$fromFiles(path, ...);
+    static$fromFiles(path=path, ...);
   })
 }, static=TRUE)
 
