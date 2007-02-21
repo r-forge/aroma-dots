@@ -190,8 +190,16 @@ setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, ca
 })
 
 
+setMethodS3("mergeStrands", "CnChipEffectFile", function(this, ...) {
+  cfM <- NextMethod("mergeStrands", this, ...);
+  cfM$combineAlleles <- this$combineAlleles;
+  cfM;
+})
+
 ############################################################################
 # HISTORY:
+# 2007-01-20
+# o Added mergeStrands().
 # 2007-01-06
 # o Now getCellIndices() caches large objects to file and small in memory.
 # o Made getCellIndices() three times faster by some hardwired code.
