@@ -1,7 +1,7 @@
 /****************************************************************
  * ArrayExplorer()
  *
- * Author: Henrik Bengtson, hb@stat.berkeley.edu
+ * Author: Henrik Bengtsson, hb@stat.berkeley.edu
  ****************************************************************/
 function ArrayExplorer() {
   this.showIndicator = function(state) {
