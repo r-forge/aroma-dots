@@ -193,7 +193,8 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
   names <- getNames(this);
   verbose <- less(verbose);
   for (kk in seq(this)) {
-    verbose && enter(verbose, sprintf("Array #%d of %d: %s", kk, n, names[kk]));
+    verbose && enter(verbose, sprintf("Array #%d of %d ('%s')",
+                                                      kk, n, names[kk]));
     ce <- getFile(this, kk);
 
     verbose <- less(verbose, 50);
@@ -202,7 +203,7 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
       # theta = group$theta[kk] = ...
       # stdvs = group$sdTheta[kk] = ...
       list(
-        theta=.subset(.subset2(group, "theta"), kk), 
+        theta=.subset(.subset2(group, "theta"), kk),
         sdTheta=.subset(.subset2(group, "sdTheta"), kk),
         thetaOutliers=.subset(.subset2(group, "thetaOutliers"), kk)
       );
@@ -222,16 +223,16 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
 
 
 
-setMethodS3("getAverageFile", "ChipEffectSet", function(this, ..., verbose=FALSE, indices="remaining") {
+setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining", ..., verbose=FALSE) {
   # Argument 'indices':
   if (identical(indices, "remaining")) {
   } else if (is.null(indices)) {
-    # Update only cells which stores values
-    indices <- getCellIndices(this, verbose=verbose);
-    indices <- unlist(indices, use.names=FALSE);
+#    # Update only cells which stores values
+#    indices <- getCellIndices(this, verbose=verbose);
+#    indices <- unlist(indices, use.names=FALSE);
   }
-
-  NextMethod(generic="getAverageFile", object=this, ..., indices=indices, verbose=verbose);
+ 
+   NextMethod(generic="getAverageFile", object=this, indices=indices, ..., verbose=verbose);
 })
 
 
