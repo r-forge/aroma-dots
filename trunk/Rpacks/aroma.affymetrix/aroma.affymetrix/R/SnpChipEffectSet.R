@@ -62,8 +62,9 @@ setMethodS3("setMergeStrands", "SnpChipEffectSet", function(this, status, ...) {
 
   oldStatus <- getMergeStrands(this);
 
-  if (identical(status, "auto"))
+  if (identical(status, "auto")) {
     status <- inferParameters(this, ...)$mergeStrands;
+  }
 
   # Argument 'status':
   status <- Arguments$getLogical(status);

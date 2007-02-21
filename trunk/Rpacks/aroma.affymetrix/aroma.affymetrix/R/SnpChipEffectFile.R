@@ -162,6 +162,36 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
 })
 
 
+setMethodS3("mergeStrands", "SnpChipEffectFile", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  mergeStrandsMatrix <- function(y, ...) {
+    n <- nrow(y);
+    if (n == 2) {
+      y[1,] <- colMeans(y[1:2,,drop=FALSE], na.rm=TRUE);
+      y[2,] <- NA;
+      attr(y, "groups") <- 1;
+    } else if (n == 4) {
+      y[1,] <- colMeans(y[1:2,,drop=FALSE], na.rm=TRUE);
+      y[3,] <- colMeans(y[3:4,,drop=FALSE], na.rm=TRUE);
+      y[c(2,4),] <- NA;
+    }
+    y;
+  }
+
+  if (this$mergeStrands) {
+    throw("Strands have already been merged for this ", class(this)[1]);
+  }
+
+  cfM <- mergeGroups(this, fcn=mergeStrandsMatrix, ...);
+  cfM$mergeStrands <- TRUE;
+  
+  cfM;
+}, protected=TRUE)
+
+
+
 setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -192,6 +222,8 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
 
 ############################################################################
 # HISTORY:
+# 2007-01-20
+# o Added mergeStrands().
 # 2007-01-07
 # o Now getCellIndices() caches large objects to file and small in memory.
 # 2006-12-18

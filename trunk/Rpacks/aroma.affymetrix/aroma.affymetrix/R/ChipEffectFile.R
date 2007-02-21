@@ -599,8 +599,110 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
 
 
+setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta", "sdTheta"), ..., pathname, overwrite=FALSE, verbose=FALSE) {
+  # Argument 'fcn':
+  if (!is.function(fcn)) {
+    throw("Argument 'fcn' is not a function: ", class(fcn)[1]);
+  }
+
+  # Argument 'pathname':
+  pathname <- Arguments$getWritablePathname(pathname, mustNotExist=!overwrite);
+  
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Merging groups");
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Test 'fcn':
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Testing merge function");
+  for (size in 1:10) {
+    y <- matrix(1000+1:(size*4), nrow=size);
+    yOut <- fcn(y);
+    if (!identical(dim(yOut), dim(y))) {
+      throw("Function 'fcn' must not change the dimension of the data: ",
+                                  paste(dim(yOut), collapse="x"), " != ",
+                                            paste(dim(y), collapse="x"));
+    }
+  }
+  verbose && exit(verbose);
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get flat (unit,group) to cell map
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  map <- getCellMap(cf, verbose=less(verbose));
+  verbose && str(verbose, map);
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Merge data for each unit size separately (in reverse order!)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get all possible unit sizes (number of groups per unit)
+  uSizes <- sort(unique(data[,"group"]));
+  verbose && cat(verbose, "Different number of groups per unit identified:");
+  verbose && print(verbose, uSizes);
+
+  data <- getDataFlat(cf, units=map, ..., verbose=less(verbose));
+  verbose && str(verbose, data);
+
+  for (size in rev(uSizes)) {
+    verbose && enter(verbose, "Unit size ", size);
+    # Identify the units of that size
+    idxs <- which(data[,"group"] == size);
+    unitsS <- data[idxs, "unit"];
+
+    # Get the subset of the data for such units
+    idxs <- which(data[,"unit"] %in% unitsS);
+
+    for (field in fields) {
+      # Extract signals as a matrix where each column is one unit
+      y <- data[idxs, field];
+      y <- matrix(y, nrow=size);
+      verbose && str(verbose, y);
+      y <- fcn(y);
+      verbose && str(verbose, y);
+
+      # Update data table 
+      data[idxs, field] <- as.vector(y);
+    }
+
+    # Get the cells where to store the merged data
+    verbose && exit(verbose);
+  }
+
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Copy CEL file and update the copy
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Storing merged data");
+  verbose && cat(verbose, "Pathname: ", pathname);
+  
+  verbose && enter(verbose, "Copying source CEL file");
+  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  cfN <- fromFile(this, pathname);
+  verbose && print(verbose, cfN);
+  verbose && exit(verbose);
+  verbose && enter(verbose, "Writing merged data");
+  updateDataFlat(cfN, data=data, verbose=less(verbose));
+  verbose && exit(verbose);
+  verbose && exit(verbose);
+  
+  
+  verbose && exit(verbose);
+
+  cfN;
+}, protected=TRUE)
+
+
 ############################################################################
 # HISTORY:
+# 2007-02-20
+# o Added mergeGroups().
 # 2007-02-19 /HB
 # o BUG FIX: getCellMap() did not handle units with different number of
 #   groups.
