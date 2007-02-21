@@ -3,6 +3,7 @@ source("init.R");
 
 dataSetName <- "AGRF_2007a";
 tags <- "QN,RMA,A+B,FLN";
+tags <- "QN,RMA,+-,A+B,F+R,g,FLN";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 
 cesList <- list();
