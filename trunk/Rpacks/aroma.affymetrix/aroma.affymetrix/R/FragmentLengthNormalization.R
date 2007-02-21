@@ -178,9 +178,7 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
     # Get target set
     ces <- getInputDataSet(this);
     verbose && enter(verbose, "Get average signal across arrays");
-    # When averaging with 'indices=NULL' all cells storing chip effects
-    # are used, cf. getCellIndices(). /HB 2007-02-20
-    ceR <- getAverageFile(ces, indices=NULL, force=force, verbose=less(verbose));
+    ceR <- getAverageFile(ces, force=force, verbose=less(verbose));
     verbose && exit(verbose);
 
     # Garbage collect
@@ -321,10 +319,12 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   fl <- NULL;
   targetFcn <- NULL;
   map <- NULL;
-  res <- vector("list", nbrOfArrays(ces));
-  for (kk in seq(length=nbrOfArrays(ces))) {
+  nbrOfArrays <- nbrOfArrays(ces);
+  res <- vector("list", nbrOfArrays);
+  for (kk in seq_len(nbrOfArrays)) {
     ce <- getFile(ces, kk);
-    verbose && enter(verbose, sprintf("Array #%d (%s)", kk, getName(ce)));
+    verbose && enter(verbose, sprintf("Array #%d of %d ('%s')",
+                                            kk, nbrOfArrays, getName(ce)));
 
     filename <- getFilename(ce);
     pathname <- filePath(path, filename);
@@ -384,7 +384,6 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     # Extract the values to fit the normalization function
     verbose && enter(verbose, "Normalizing log2 signals");
     y <- log2(data[,"theta"]);
-    rm(data); # Not needed anymore
     y <- normalizeFragmentLength(y, fragmentLengths=fl, 
                              targetFcn=targetFcn, subsetToFit=subset, ...);
     y <- 2^y;

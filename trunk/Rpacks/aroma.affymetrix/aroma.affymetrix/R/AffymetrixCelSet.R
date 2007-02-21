@@ -1044,9 +1044,14 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     this$.averageFiles <- list();
   res <- this$.averageFiles[[filename]];
   if (is.null(res)) {
+    verbose && enter(verbose, "Creating CEL file to store average signals");
+    verbose && cat(verbose, "Pathname: ", file.path(getPath(this), filename));
     res <- createFrom(df, filename=filename, path=getPath(this), verbose=less(verbose));
+    verbose && exit(verbose);
     this$.averageFiles[[filename]] <- res;
   }
+
+  verbose && print(verbose, res);
 
   pathname <- getPathname(res);
 
