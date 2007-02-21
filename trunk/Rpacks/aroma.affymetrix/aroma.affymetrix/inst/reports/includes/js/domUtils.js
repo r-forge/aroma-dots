@@ -82,8 +82,18 @@ function addToFavorites(url, title) {
   }
 }
 
+
+function padWidthZeros(x, width) {
+  var str = "" + x;
+  while (width - str.length > 0)
+    str = "0" + str;
+  return(str);
+}
+
 /****************************************************************
  HISTORY:
+ 2007-02-20
+ o Added padWidthZeros().
  2007-02-06
  o Moved addToFavorites() from ChromsomeExplorer.js to here.
  2007-01-27
