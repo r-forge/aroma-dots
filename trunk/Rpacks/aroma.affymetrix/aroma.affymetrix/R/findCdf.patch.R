@@ -6,6 +6,7 @@ findCdf.patch <- function(chipType=NULL, paths=NULL, pattern="[.](c|C)(d|D)(f|F)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   findFcn <- settings$methods$findCdf;
   if (!is.null(findFcn)) {
+    pattern <- paste(chipType, pattern, sep="");
     pathnames <- findFcn(chipType=chipType, paths=paths, pattern=pattern, ...);
     if (!is.null(pathnames))
       return(pathnames);

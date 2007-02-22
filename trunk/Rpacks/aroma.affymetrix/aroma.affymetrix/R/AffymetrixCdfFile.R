@@ -229,7 +229,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
     }
   } else {
     pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
-    pathname <- findAnnotationDataByChipType(chipType, pattern, ...);
+    pathname <- findAnnotationDataByChipType(chipType, pattern=pattern, ...);
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -1,3 +1,27 @@
+###########################################################################/**
+# @RdocDefault findAnnotationDataByChipType
+#
+# @title "Locates an annotation data file by its chip type"
+#
+# \description{
+#  @get "title".
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{chipType}{A @list of @see "AffymetrixCelSet".}
+#   \item{pattern}{A filename pattern to search for.}
+#   \item{...}{Arguments passed to @see "affxparser::findFiles".}
+#   \item{paths}{A @character @vector of paths to search.
+#     If @NULL, default paths are used.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
+# }
+#
+# @author
+#
+# @keyword internal
+#*/###########################################################################
 setMethodS3("findAnnotationDataByChipType", "default", function(chipType, pattern=chipType, ..., paths=NULL, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -45,7 +69,7 @@ setMethodS3("findAnnotationDataByChipType", "default", function(chipType, patter
   verbose && cat(verbose, "Paths (final): ", paste(paths, collapse=", "));
 
   # Search recursively for all CDF files
-  pathname <- findFiles(pattern, paths=paths, recursive=TRUE, ...);
+  pathname <- doCall("findFiles", pattern=pattern, paths=paths, recursive=TRUE, ...);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # If not found, look for aliased chip types
@@ -106,6 +130,7 @@ setMethodS3("findAnnotationDataByChipType", "default", function(chipType, patter
 ############################################################################
 # HISTORY:
 # 2007-02-21
+# o Added Rdoc comments.
 # o Added verbose.
 # o Added support for aliases.
 # o Changed settings$paths$annotationData to settings$annotationData$paths.
