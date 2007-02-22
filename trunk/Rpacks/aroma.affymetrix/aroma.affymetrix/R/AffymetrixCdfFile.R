@@ -229,8 +229,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
     }
   } else {
     pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
-    parentChipType <- gsub(",.*$", "", chipType);  # Remove tags
-    pathname <- findAnnotationDataByChipType(parentChipType, pattern);
+    pathname <- findAnnotationDataByChipType(chipType, pattern, ...);
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1154,6 +1153,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-02-21
+# o Now findByChipType() passes '...' to underlying function.
 # 2007-02-14
 # o BUG FIX: When "tagifying" monocell, getSnpInformation() and
 #   getGenomeInformation() was looking for the incorrect chip type.

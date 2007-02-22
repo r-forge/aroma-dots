@@ -18,7 +18,6 @@ findCdf.patch <- function(chipType=NULL, paths=NULL, pattern="[.](c|C)(d|D)(f|F)
   if (is.null(paths)) {
     paths <- paste(".", 
                    "cdf/", "data/cdf/", 
-                   settings$paths$annotationData$cdf,
                    getOption("AFFX_CDF_PATH"), 
                    Sys.getenv("AFFX_CDF_PATH"),
              sep=";", collapse=";");
