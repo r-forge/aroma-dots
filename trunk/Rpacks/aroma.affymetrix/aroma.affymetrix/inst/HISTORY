@@ -1,7 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.1 [2007-02-17]
+Version: 0.4.1 [2007-02-21]
+o BUG FIX: When creating a monocell, the output did not strip of the tags
+  from the chip type, e.g. annotationData/Foo,core/For,core,monocell.cdf
+  instead of annotationData/Foo/For,core,monocell.cdf. 
 o BUG FIX: An update to the GladModel class added to previous version
   would not recognize CEL files with same sample name but different
   tags to belong to the same sample.

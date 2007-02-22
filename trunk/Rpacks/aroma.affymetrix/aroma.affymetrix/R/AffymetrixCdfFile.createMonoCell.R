@@ -140,7 +140,8 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
   # Create the pathname of the destination CDF
   if (is.null(path)) {
-    path <- filePath("annotationData", "chipTypes", chipType, expandLinks="any");
+    mainChipType <- gsub("[,].*", "", chipType);
+    path <- filePath("annotationData", "chipTypes", mainChipType, expandLinks="any");
   }
   name <- paste(c(chipType, tags), collapse=sep);
   dest <- sprintf("%s.cdf", name);
@@ -418,6 +419,10 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
 ############################################################################
 # HISTORY:
+# 2007-02-21 /HB + KS
+# o BUG FIX: When creating a monocell, the output did not strip of the tags
+#   from the chip type, e.g. annotationData/Foo,core/For,core,monocell.cdf
+#   instead of annotationData/Foo/For,core,monocell.cdf. 
 # 2007-02-08
 # o Now monocell CDF are names <chipType>,monocell.cdf.  Before a dash was
 #   used instead of a comma. This new style is more in line with the
