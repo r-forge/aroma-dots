@@ -5,7 +5,7 @@ colSums <- appendVarArgs(base::colSums)
 colMeans <- appendVarArgs(base::colMeans)
 write <- appendVarArgs(base::write)
 append <- appendVarArgs(base::append)
-getPackageName <- appendVarArgs(base::getPackageName)
+getPackageName <- appendVarArgs(methods::getPackageName)
 
 
 ############################################################################

@@ -434,11 +434,11 @@ setMethodS3("fromName", "AffymetrixCelSet", function(static, name, tags=NULL, ch
   }
 
   suppressWarnings({
-    static$fromFiles(path=path, chipType=chipType, ...);
+    static$fromFiles(path=path, ...);
   })
 }, static=TRUE)
 
-setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", chipType=NULL, ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
+setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", checkChipType=TRUE, ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -482,8 +482,9 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # Scan all CEL files for possible chip types
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Chip type according to the directory structure
-  dirChipType <- basename(getPath(this));
-  verbose && cat(verbose, "The chip type according to the directory is: ", dirChipType);
+  chipType <- basename(getPath(this));
+  verbose && cat(verbose, "The chip type according to the directory is: ", 
+                                                                chipType);
 
   verbose && enter(verbose, "Scanning CEL set for used chip types");
   chipTypes <- sapply(this, FUN=function(file) {
@@ -494,25 +495,29 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   nbrOfChipTypes <- length(tChipTypes);
   verbose && exit(verbose);
 
-  if (is.null(chipType)) {
-    # No "enforced" chip type specified, ...
-    if (nbrOfChipTypes > 1) {
-      # ..., then an error.
-      throw("Detected ", nbrOfChipTypes, " different chip types in CEL set. Use argument 'chipType' to specify the chip type to be used: ", paste(names(tChipTypes), collapse=", "));
-    }
-  
-    verbose && cat(verbose, "Detected ", nbrOfChipTypes, " different chip types in CEL set. Using chip type specified by argument 'chipType': ", chipType);
+  if (nbrOfChipTypes > 1) {
+    verbose && cat(verbose, "Detected ", nbrOfChipTypes, 
+                                    " different chip types in CEL set: ",
+                                paste(names(tChipTypes), collapse=", "));
   } else {
-    verbose && cat(verbose, "All CEL files use the same chip type: ", names(tChipTypes));
-    if (!identical(names(tChipTypes), chipType))
-      verbose && cat(verbose, "Overriding chip type according to argument 'chipType': ", chipType);
+    verbose && cat(verbose, "All CEL files use the same chip type: ", 
+                                                      names(tChipTypes));
   }
-    
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Validate that the directory name matches the chip type
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (!identical(chipType, dirChipType)) {
-    throw("Invalid name of directory containing CEL files. The name of the directory must be the same as the chip type (", dirChipType, " != ", chipType, ") of the CEL files: ", path);
+
+  # Let the directory name specify the chip type?
+  if (checkChipType) {
+    # If chip type is taken from CEL headers and there are more than
+    # one chip type in the set, then it is an error.
+    if (nbrOfChipTypes > 1) {
+      throw("Detected ", nbrOfChipTypes, " different chip types in CEL set. Use argument 'checkChipType=FALSE' to let the directory name of the CEL set specify the chip type instead: ", paste(names(tChipTypes), collapse=", "));
+    } 
+
+    # Validate that the directory name matches the chip type
+    if (!identical(names(tChipTypes), chipType)) {
+      throw("Invalid name of directory containing CEL files. The name of the directory (", chipType, ") must be the same as the chip type used for the CEL files (", names(tChipTypes), "): ", path);
+    }
+  } else {
+    verbose && cat(verbose, "Since 'checkChipType=FALSE', then the chip type specified by the directory name is used: ", chipType);
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
