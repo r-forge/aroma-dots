@@ -153,6 +153,10 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=
 
 
 
+setMethodS3("getProbeAffinityFile", "ProbeLevelModel", function(this, ...) {
+  getProbeAffinities(this, ...);
+})
+
 
 ###########################################################################/**
 # @RdocMethod getChipEffects
@@ -212,6 +216,10 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   this$.ces <- ces;
 
   ces;
+})
+
+setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ...) {
+  getChipEffects(this, ...);
 })
 
 
@@ -765,6 +773,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-02-22
+# o Added getChipEffectSet() and getProbeAffinityFile() to replace 
+#   getChipEffects() and getProbeAffinites() in some future version.
 # 2007-02-09
 # o Added an additional garbage collection after fitting the PLM, but 
 #   before storing parameter estimates.

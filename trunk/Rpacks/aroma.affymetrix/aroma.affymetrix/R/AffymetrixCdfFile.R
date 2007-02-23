@@ -208,6 +208,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   # Handle deprecated <chipType>-monocell CDFs specially
   pattern <- "-monocell$";
   if (regexpr(pattern, chipType) != -1) {
@@ -221,23 +222,35 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
     # Second, see if the old-named monocell is there
     if (is.null(pathname)) {
       pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
-      pathname <- findAnnotationDataByChipType(parentChipType, pattern);
+      pathname <- findAnnotationDataByChipType(parentChipType, pattern=pattern);
       if (!is.null(pathname)) {
         msg <- paste("Deprecated filename of monocell CDF detected. Rename CDF file by replacing dash ('-') with a comma (','): ", pathname, sep="");
         warning(msg);
       }
     }
-  } else {
-    pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
-    pathname <- findAnnotationDataByChipType(chipType, pattern=pattern, ...);
+
+    return(pathname);
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # As a backup, search using affxparser
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#  if (is.null(pathname) && .useAffxparser) {
-#    pathname <- findCdf(chipType);
-#  }
+  pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
+  args <- list(chipType=chipType, ...);
+  args$pattern <- pattern;
+  pathname <- do.call("findAnnotationDataByChipType", args=args);
+
+  # If not found, look for Windows shortcuts
+  if (is.null(pathname)) {
+    # Search for a Windows shortcut
+    pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)[.]lnk$", sep="");
+    args <- list(chipType=chipType, ...);
+    args$pattern <- pattern;
+    pathname <- do.call("findAnnotationDataByChipType", args=args);
+    if (!is.null(pathname)) {
+      # ..and expand it
+      pathname <- filePath(pathname, expandLinks="any");
+      if (!isFile(pathname))
+        pathname <- NULL;
+    }
+  }
 
   pathname;
 }, static=TRUE, protected=TRUE)
@@ -1153,6 +1166,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-02-22
+# o Now findByChipType() recognizes Windows shortcuts too.
 # 2007-02-21
 # o Now findByChipType() passes '...' to underlying function.
 # 2007-02-14

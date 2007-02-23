@@ -1,7 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.1 [2007-02-21]
+Version: 0.4.1 [2007-02-22]
+o Added support for using Windows shortcuts for CDF files, that is, you
+  can use a Windows Shortcut annotationData/chipTypes/Foo/Foo.cdf.lnk
+  to link to annotationData/chipTypes/Bar/Bar.cdf, and whenever using
+  AffymetrixCdfFile to locate the CDF for chip type 'Foo' you will get
+  the CDF for chip type 'Bar', e.g. AffymetrixCdfFile$fromChipType('Foo').
 o BUG FIX: When creating a monocell, the output did not strip of the tags
   from the chip type, e.g. annotationData/Foo,core/For,core,monocell.cdf
   instead of annotationData/Foo/For,core,monocell.cdf. 
