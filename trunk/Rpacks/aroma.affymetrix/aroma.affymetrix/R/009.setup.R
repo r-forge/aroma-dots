@@ -19,8 +19,6 @@
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Package settings (settings might change)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  env <- as.environment("package:aroma.affymetrix");
-
   # Load
   settings <- getOption("aroma.affymetrix.settings");	
   if (is.null(settings))
