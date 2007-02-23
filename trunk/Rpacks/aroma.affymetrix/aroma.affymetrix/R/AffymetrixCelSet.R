@@ -188,7 +188,13 @@ setMethodS3("as.character", "AffymetrixCelSet", function(this, ...) {
   s <- c(s, sprintf("Names: %s", names));
   # Get CEL header timestamps
   ts <- getTimestamps(this);
-  ts <- range(ts);
+  # Note: If ts <- range(ts) is used and the different timestamps uses
+  # tifferent 'tzone' attributes, e.g. if some files where scanning during
+  # daylight savings time and some not, we will get a warning saying:
+  # "'tzone' attributes are inconsistent".  By doing the below, we avoid
+  # this warning (which confuses users). 
+  ts <- sort(ts);
+  ts <- ts[c(1,n)];
   ts <- format(ts, "%Y-%m-%d %H:%M:%S");  # range() gives strange values?!?
   s <- c(s, sprintf("Time period: %s -- %s", ts[1], ts[2]));
   s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
@@ -428,11 +434,11 @@ setMethodS3("fromName", "AffymetrixCelSet", function(static, name, tags=NULL, ch
   }
 
   suppressWarnings({
-    static$fromFiles(path=path, ...);
+    static$fromFiles(path=path, chipType=chipType, ...);
   })
 }, static=TRUE)
 
-setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
+setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", chipType=NULL, ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -473,20 +479,48 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Assert directory structure
+  # Scan all CEL files for possible chip types
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  cdf <- getCdf(this);
-  chipType <- getChipType(cdf);
-  path <- getPath(this);
-  dirChipType <- basename(path);
-  if (!identical(chipType, dirChipType)) {
-    throw("Invalid name of directory containing CEL files. The name of the directory must be the same as the chip type (", chipType, " != ", dirChipType, ") of the CEL files: ", path);
-  }
+  # Chip type according to the directory structure
+  dirChipType <- basename(getPath(this));
+  verbose && cat(verbose, "The chip type according to the directory is: ", dirChipType);
+
+  verbose && enter(verbose, "Scanning CEL set for used chip types");
+  chipTypes <- sapply(this, FUN=function(file) {
+    readCelHeader(getPathname(file))$chiptype;
+  })
+  tChipTypes <- table(chipTypes);
+  verbose && print(verbose, tChipTypes);
+  nbrOfChipTypes <- length(tChipTypes);
+  verbose && exit(verbose);
+
+  if (is.null(chipType)) {
+    # No "enforced" chip type specified, ...
+    if (nbrOfChipTypes > 1) {
+      # ..., then an error.
+      throw("Detected ", nbrOfChipTypes, " different chip types in CEL set. Use argument 'chipType' to specify the chip type to be used: ", paste(names(tChipTypes), collapse=", "));
+    }
   
+    verbose && cat(verbose, "Detected ", nbrOfChipTypes, " different chip types in CEL set. Using chip type specified by argument 'chipType': ", chipType);
+  } else {
+    verbose && cat(verbose, "All CEL files use the same chip type: ", names(tChipTypes));
+    if (!identical(names(tChipTypes), chipType))
+      verbose && cat(verbose, "Overriding chip type according to argument 'chipType': ", chipType);
+  }
+    
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate that the directory name matches the chip type
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (!identical(chipType, dirChipType)) {
+    throw("Invalid name of directory containing CEL files. The name of the directory must be the same as the chip type (", dirChipType, " != ", chipType, ") of the CEL files: ", path);
+  }
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Use the same CDF object for all CEL files.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Updating the CDF for all files");
+  verbose && cat(verbose, "Chip type: ", chipType);
+  cdf <- AffymetrixCdfFile$fromChipType(chipType);
   setCdf(this, cdf, .checkArgs=FALSE);
   verbose && exit(verbose);
 
@@ -1228,6 +1262,13 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-02-22
+# o Fixed the warning about "'tzone' attributes are inconsistent". See
+#   code of as.character() for explanation.
+# o Now fromFiles() accepts argument 'chipType' to override any chip type
+#   specified in the CEL headers. This is useful in case different CEL files
+#   refers to different chip types, which can be the case for mixed 
+#   generations of CEL files.  Also added a scan of chip types.
 # 2007-02-14
 # o Added test for correct directory structure to fromFiles().  This will
 #   enforce users to use the correct structure so that for instance the

@@ -56,15 +56,16 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 \tabular{rll}{
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
+ \tab \code{mergeStrands} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
 
  \bold{Methods inherited from SnpChipEffectFile}:\cr
-getCellIndices, getParameters, readUnits
+getCellIndices, getParameters, mergeStrands, readUnits
 
  \bold{Methods inherited from ChipEffectFile}:\cr
-findUnitsTodo, getAM, getCellIndices, getParameters, getXAM, readUnits
+findUnitsTodo, getAM, getCellIndices, getParameters, getXAM, mergeGroups, readUnits
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 readUnits
