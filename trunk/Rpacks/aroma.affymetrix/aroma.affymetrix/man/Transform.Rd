@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{Transform}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \emph{\link[aroma.affymetrix]{ChipEffectTransform}}, \link[aroma.affymetrix]{DChipQuantileNormalization}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{OligoQuantileNormalization}, \link[aroma.affymetrix]{PcrProbeCalibration}, \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}, \link[aroma.affymetrix]{QuantileNormalization}\cr
+\link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \link[aroma.affymetrix]{ChipEffectGroupMerge}, \emph{\link[aroma.affymetrix]{ChipEffectTransform}}, \link[aroma.affymetrix]{DChipQuantileNormalization}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{OligoQuantileNormalization}, \link[aroma.affymetrix]{PcrProbeCalibration}, \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}, \link[aroma.affymetrix]{QuantileNormalization}, \link[aroma.affymetrix]{SnpChipEffectGroupMerge}\cr
 
 public abstract static class \bold{Transform}\cr
 extends \link[R.oo]{Object}\cr

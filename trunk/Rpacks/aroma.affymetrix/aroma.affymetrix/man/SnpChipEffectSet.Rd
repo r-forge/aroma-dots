@@ -58,7 +58,7 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
 
 
  \bold{Methods inherited from ChipEffectSet}:\cr
-findUnitsTodo, fromDataSet, fromFiles, getAverageFile, getCellIndices, getParameters, readUnits, updateUnits
+findByName, findUnitsTodo, fromDataSet, fromFiles, getAverageFile, getCellIndices, getParameters, readUnits, updateUnits
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
 [, [[, append, as, as.AffymetrixCelSet, averageQuantile, cna, extractAffyBatch, extractSnpFeatureSet, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf

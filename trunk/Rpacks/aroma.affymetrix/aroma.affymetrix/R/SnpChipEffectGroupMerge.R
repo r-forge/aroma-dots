@@ -16,6 +16,8 @@
 #   \item{...}{Arguments passed to the constructor of
 #        @see "ChipEffectGroupMerge".}
 #   \item{mergeStrands}{If @TRUE, group strands are merged.}
+#   \item{mean}{A @character string specifying what type of averaging
+#        should be applied.}
 # }
 #
 # \section{Fields and Methods}{
@@ -23,6 +25,8 @@
 # }
 # 
 # @author
+#
+# @keyword "internal"
 #*/###########################################################################
 setConstructorS3("SnpChipEffectGroupMerge", function(..., mergeStrands=FALSE, mean=c("arithmetic", "geometric")) {
   # Argument 'mean':

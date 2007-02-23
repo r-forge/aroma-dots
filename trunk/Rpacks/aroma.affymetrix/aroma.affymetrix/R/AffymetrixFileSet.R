@@ -971,7 +971,7 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   clazz <- Class$forName(fileClass);
   dfStatic <- getStaticInstance(clazz);
   if (!inherits(dfStatic, "AffymetrixFile"))
-    throw("Argument 'fileClass' is not refering to a AffymetrixFile class: ", fileClass);
+    throw("Argument 'fileClass' is not refering to an AffymetrixFile class: ", fileClass);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -980,13 +980,14 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
     on.exit(popState(verbose));
   }
 
+
   verbose && enter(verbose, "Defining an ", class(static)[1], " object from files");
   verbose && cat(verbose, "Path: ", path);
   verbose && cat(verbose, "Pattern: ", pattern);
   verbose && cat(verbose, "File class: ", class(dfStatic)[1]);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Create AffymetrixFile object from the matching files
+  # Create set of AffymetrixFile objects from matching files
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Scan for Affymetrix files
   verbose && enter(verbose, "Scanning directory for files");
@@ -1007,6 +1008,10 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
     df <- fromFile(dfStatic, pathnames[kk], .checkArgs=FALSE, verbose=less(verbose));
     files[[kk]] <- df;
     if (kk == 1) {
+      # Update the static class instance.  The reason for this is
+      # that if the second file cannot be instanciated with the same
+      # class as the first one, then the files are incompatible.
+      # Note that 'df' might be of a subclass of 'dfStatic'.
       clazz <- Class$forName(class(df)[1]);
       dfStatic <- getStaticInstance(clazz);
     }

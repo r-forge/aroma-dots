@@ -159,11 +159,8 @@ setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NUL
   # filename.
   isCel <- (regexpr("[.](c|C)(e|E)(l|L)$", pathname) != -1);
   if (!isCel) {
-    throw("Could not read CEL file. File format error: ", pathname);
+    throw("Could not read CEL file. Filename format error: ", pathname);
   }
-
-  # Try to read the header assuming
-#  header <- readCelHeader(pathname);
 
   # Create a new instance of the same class
   newInstance(static, pathname);
@@ -234,7 +231,8 @@ setMethodS3("getCdf", "AffymetrixCelFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
     chipType <- getHeader(this)$chiptype;
-    cdf <- this$.cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    this$.cdf <- cdf;
   }
   cdf;
 })

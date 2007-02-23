@@ -14,6 +14,7 @@
 #
 # \arguments{
 #   \item{dataSet}{A @see "ChipEffectSet".}
+#   \item{fcn}{A @function used to "merge" groups.}
 #   \item{...}{Additional arguments passed to the constructor of 
 #     @see "ChipEffectTransform".}
 # }
@@ -23,6 +24,8 @@
 # }
 # 
 # @author
+#
+# @keyword "internal"
 #*/###########################################################################
 setConstructorS3("ChipEffectGroupMerge", function(dataSet=NULL, fcn=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

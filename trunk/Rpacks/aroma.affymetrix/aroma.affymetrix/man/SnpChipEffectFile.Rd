@@ -58,7 +58,7 @@ extends \link[aroma.affymetrix]{ChipEffectFile}\cr
 
 
  \bold{Methods inherited from ChipEffectFile}:\cr
-findUnitsTodo, getAM, getCellIndices, getParameters, getXAM, readUnits
+findUnitsTodo, getAM, getCellIndices, getParameters, getXAM, mergeGroups, readUnits
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 readUnits

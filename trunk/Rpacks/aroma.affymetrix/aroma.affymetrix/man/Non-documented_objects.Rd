@@ -210,7 +210,6 @@
 \alias{getCellIndices.SnpPlm}
 \alias{getCellIndices.SnpProbeAffinityFile}
 \alias{getCellMap}
-\alias{getCellMap.ChipEffectFile}
 \alias{getChipEffectFileClass}
 \alias{getChipEffectFileClass.ChipEffectSet}
 \alias{getChipEffectFileClass.CnChipEffectSet}
@@ -726,8 +725,6 @@
 \alias{as.character.ArrayExplorer}
 \alias{compareChecksum}
 \alias{compareChecksum.AffymetrixFile}
-\alias{findAnnotationDataByChipType}
-\alias{findAnnotationDataByChipType.default}
 \alias{findByChipType}
 \alias{findByChipType.AffymetrixProbeTabFile}
 \alias{findByChipType.DChipGenomeInformation}
@@ -914,6 +911,26 @@
 \alias{updateUnits.WeightsFile}
 \alias{updateUnits.WeightsSet}
 \alias{writeImage.WeightsFile}
+\alias{getCommonListElements}
+\alias{findByName.ChipEffectSet}
+\alias{getAsteriskTag.SnpChipEffectGroupMerge}
+\alias{getCdf.ChipEffectGroupMerge}
+\alias{getChipEffectSet}
+\alias{getChipEffectSet.ProbeLevelModel}
+\alias{getMergeFunction}
+\alias{getMergeFunction.ChipEffectGroupMerge}
+\alias{getMergeFunction.SnpChipEffectGroupMerge}
+\alias{getParameters.ChipEffectGroupMerge}
+\alias{getParameters.SnpChipEffectGroupMerge}
+\alias{getProbeAffinityFile}
+\alias{getProbeAffinityFile.ProbeLevelModel}
+\alias{mergeGroups}
+\alias{mergeGroups.ChipEffectFile}
+\alias{mergeStrands}
+\alias{mergeStrands.CnChipEffectFile}
+\alias{mergeStrands.SnpChipEffectFile}
+\alias{setMergeFunction}
+\alias{setMergeFunction.ChipEffectGroupMerge}
 
 \description{
   This page contains aliases for all "non-documented" objects that

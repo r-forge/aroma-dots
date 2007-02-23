@@ -73,7 +73,7 @@
   getCellIndices.ProbeAffinityFile getCellIndices.ProbeLevelModel
   getCellIndices.SnpChipEffectFile getCellIndices.SnpPlm
   getCellIndices.SnpProbeAffinityFile getCellMap
-  getCellMap.ChipEffectFile getChipEffectFileClass
+  getChipEffectFileClass
   getChipEffectFileClass.ChipEffectSet
   getChipEffectFileClass.CnChipEffectSet
   getChipEffectFileClass.SnpChipEffectSet getChipEffectFiles
@@ -289,8 +289,7 @@
   writeImages.TransformReport
   addColorMap addColorMap.ArrayExplorer addIncludes.ArrayExplorer
   addIndexFile.ArrayExplorer as.character.ArrayExplorer compareChecksum
-  compareChecksum.AffymetrixFile findAnnotationDataByChipType
-  findAnnotationDataByChipType.default findByChipType
+  compareChecksum.AffymetrixFile findByChipType
   findByChipType.AffymetrixProbeTabFile
   findByChipType.DChipGenomeInformation
   findByChipType.DChipSnpInformation findByChipType.GdasAnnotationFile
@@ -372,3 +371,14 @@
   updateDataFlat.WeightsFile updateUnits.FirmaFile updateUnits.FirmaSet
   updateUnits.WeightsFile updateUnits.WeightsSet writeImage.WeightsFile
   getCommonListElements
+  findByName.ChipEffectSet getAsteriskTag.SnpChipEffectGroupMerge
+  getCdf.ChipEffectGroupMerge getChipEffectSet
+  getChipEffectSet.ProbeLevelModel getMergeFunction
+  getMergeFunction.ChipEffectGroupMerge
+  getMergeFunction.SnpChipEffectGroupMerge
+  getParameters.ChipEffectGroupMerge
+  getParameters.SnpChipEffectGroupMerge getProbeAffinityFile
+  getProbeAffinityFile.ProbeLevelModel mergeGroups
+  mergeGroups.ChipEffectFile mergeStrands mergeStrands.CnChipEffectFile
+  mergeStrands.SnpChipEffectFile setMergeFunction
+  setMergeFunction.ChipEffectGroupMerge

@@ -46,6 +46,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{findByName} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
