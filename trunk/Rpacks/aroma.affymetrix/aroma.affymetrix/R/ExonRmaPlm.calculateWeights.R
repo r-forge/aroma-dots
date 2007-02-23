@@ -40,7 +40,7 @@ setMethodS3("calculateWeights", "ExonRmaPlm", function(this, units=NULL, ram=1, 
     on.exit(popState(verbose));
   }
 
-  rs <- getResidualSet(this, verbose=verbose);
+  rs <- calculateResiduals(this, verbose=verbose);
   ws <- getWeightsSet(this, verbose=verbose);
   nbrOfArrays <- nbrOfArrays(rs);
 

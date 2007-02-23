@@ -49,6 +49,10 @@ setConstructorS3("ExonRmaPlm", function(..., tags="*", mergeGroups=TRUE) {
     # Update default tags
     tags[tags == "*"] <- asteriskTag;
 
+    if (mergeGroups) {
+      tags <- c(tags, "merged");
+    }
+    
     # Split by commas
     tags <- paste(tags, collapse=",");
     tags <- unlist(strsplit(tags, split=","));
