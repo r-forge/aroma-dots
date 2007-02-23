@@ -35,7 +35,7 @@ setMethodS3("findAnnotationDataByChipType", "default", function(chipType, patter
   verbose && cat(verbose, "Filename pattern: ", pattern);
   verbose && cat(verbose, "Paths (from argument): ", paste(paths, collapse=", "));
 
-  settings <- getOption("aroma.affymetrix.settings");
+  settings <- getOption("aroma.affymetrix settings");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get search paths
@@ -71,55 +71,55 @@ setMethodS3("findAnnotationDataByChipType", "default", function(chipType, patter
   # Search recursively for all CDF files
   pathname <- doCall("findFiles", pattern=pattern, paths=paths, recursive=TRUE, ...);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # If not found, look for aliased chip types
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (is.null(pathname)) {
-    verbose && cat(verbose, "No matching annotation file found");
-
-    settings <- getOption("aroma.affymetrix.settings");
-    aliases <- settings$annotationData$aliases;
-    verbose && cat(verbose, "settings$annotationData$aliases:");
-    verbose && print(verbose, aliases);
-
-    if (!is.null(aliases)) {
-      verbose && enter(verbose, "Looking for aliased chip types");
-
-      aliases <- as.character(aliases);
-      keys <- names(aliases);
-      if (is.null(keys)) {
-        # Assume format "foo=val1;bar=val2".
-        # Turn into a named character vector.
-        parts <- unlist(strsplit(aliases, split=";"));
-        parts <- strsplit(parts, split="=");
-        keys <- unlist(lapply(parts, FUN=function(x) x[1]), use.names=FALSE);
-        aliases <- unlist(lapply(parts, FUN=function(x) x[2]), use.names=FALSE);
-        names(aliases) <- keys;
-      }
-      verbose && cat(verbose, "Parsed aliases:");
-      verbose && print(verbose, aliases);
-
-      # Get the aliased chip type
-      realChipType <- aliases[chipType];
-      if (!is.null(realChipType) && !is.na(realChipType)) {
-        verbose && cat(verbose, "Aliased chip type:");
-        verbose && print(verbose, realChipType);
-        
-        # AD HOC: Replace all occurances of <chipType> in the pattern 
-        # with <realChipType>.
-        pattern <- gsub(chipType, realChipType, pattern, fixed=TRUE);
-        verbose && cat(verbose, "Filename pattern (updated): ", pattern);
-        verbose && enter(verbose, "Searching for aliased chip type instead");
-        pathname <- findAnnotationDataByChipType(realChipType, 
-                                     pattern=pattern, ..., paths=paths0);
-        verbose && exit(verbose);
-      } else {
-        verbose && cat(verbose, "No alias available: ", chipType);
-      }
-
-      verbose && exit(verbose);
-    } # if (!is.null(aliases))
-  }
+##   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##   # If not found, look for aliased chip types
+##   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##   if (is.null(pathname)) {
+##     verbose && cat(verbose, "No matching annotation file found");
+## 
+##     settings <- getOption("aroma.affymetrix.settings");
+##     aliases <- settings$annotationData$aliases;
+##     verbose && cat(verbose, "settings$annotationData$aliases:");
+##     verbose && print(verbose, aliases);
+## 
+##     if (!is.null(aliases)) {
+##       verbose && enter(verbose, "Looking for aliased chip types");
+## 
+##       aliases <- as.character(aliases);
+##       keys <- names(aliases);
+##       if (is.null(keys)) {
+##         # Assume format "foo=val1;bar=val2".
+##         # Turn into a named character vector.
+##         parts <- unlist(strsplit(aliases, split=";"));
+##         parts <- strsplit(parts, split="=");
+##         keys <- unlist(lapply(parts, FUN=function(x) x[1]), use.names=FALSE);
+##         aliases <- unlist(lapply(parts, FUN=function(x) x[2]), use.names=FALSE);
+##         names(aliases) <- keys;
+##       }
+##       verbose && cat(verbose, "Parsed aliases:");
+##       verbose && print(verbose, aliases);
+## 
+##       # Get the aliased chip type
+##       realChipType <- aliases[chipType];
+##       if (!is.null(realChipType) && !is.na(realChipType)) {
+##         verbose && cat(verbose, "Aliased chip type:");
+##         verbose && print(verbose, realChipType);
+##         
+##         # AD HOC: Replace all occurances of <chipType> in the pattern 
+##         # with <realChipType>.
+##         pattern <- gsub(chipType, realChipType, pattern, fixed=TRUE);
+##         verbose && cat(verbose, "Filename pattern (updated): ", pattern);
+##         verbose && enter(verbose, "Searching for aliased chip type instead");
+##         pathname <- findAnnotationDataByChipType(realChipType, 
+##                                      pattern=pattern, ..., paths=paths0);
+##         verbose && exit(verbose);
+##       } else {
+##         verbose && cat(verbose, "No alias available: ", chipType);
+##       }
+## 
+##       verbose && exit(verbose);
+##     } # if (!is.null(aliases))
+##   }
 
   verbose && cat(verbose, "Pathname: ", pathname);
   verbose && exit(verbose);
