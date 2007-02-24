@@ -69,7 +69,11 @@ setMethodS3("findAnnotationDataByChipType", "default", function(chipType, patter
   verbose && cat(verbose, "Paths (final): ", paste(paths, collapse=", "));
 
   # Search recursively for all CDF files
-  pathname <- doCall("findFiles", pattern=pattern, paths=paths, recursive=TRUE, ...);
+  args <- list(...);
+  args$pattern <- pattern;
+  args$paths <- paths;
+  args$recursive <-TRUE;
+  pathname <- do.call("findFiles", args=args);
 
 ##   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##   # If not found, look for aliased chip types
@@ -125,10 +129,13 @@ setMethodS3("findAnnotationDataByChipType", "default", function(chipType, patter
   verbose && exit(verbose);
 
   pathname;
-}, protected=TRUE)
+}, protected=TRUE)  # findAnnotationDataByChipType()
 
 ############################################################################
 # HISTORY:
+# 2007-02-23
+# o BUG FIX: Latest updated of findAnnotationDataByChipType() would not 
+#   search recursively.
 # 2007-02-21
 # o Added Rdoc comments.
 # o Added verbose.
