@@ -77,6 +77,16 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
       df0 <- df0[,c("x", "M")];
       verbose && cat(verbose, "Number of units: ", nrow(df0));
 
+      # Estimate the std dev of the raw log2(CN).  [only if ref is average across arrays]
+      units0 <- as.integer(rownames(df0));
+      # Get (mu, sigma) of theta (estimated across all arrays).
+      data <- getDataFlat(ref, units=units0, verbose=less(verbose));
+      # Number of arrays (for each unit)
+      n <- readCel(getPathname(ref), indices=data$cell, readIntensities=FALSE, readPixels=TRUE)$pixels;
+      # Use Gauss' approximation (since mu and sigma are on the intensity scale)
+      sdM <- log2(exp(1)) * sqrt(1+1/n) * data$sdTheta / data$theta;
+      rm(n);
+
       verbose && enter(verbose, "Scanning for non-finite values");
       n <- sum(!is.finite(df0[,"M"]));
       fraction <- n / nrow(df0);
@@ -87,14 +97,9 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
       }
       verbose && exit(verbose);
   
-      verbose && enter(verbose, "Retrieving stddvs of chip effects");
-      units0 <- as.integer(rownames(df0));
-      sdTheta <- getDataFlat(ce, units=units0, fields="sdTheta", verbose=less(verbose))[,"sdTheta"];
-      verbose && exit(verbose);
-  
       # Append SD, chip type, and CDF units.
-      df0 <- cbind(df0, sdTheta, chipType=rep(chipType, length=length(units0)), unit=units0);
-      rm(sdTheta);
+      df0 <- cbind(df0, sdTheta=data$sdTheta, sdM=sdM, chipType=rep(chipType, length=length(units0)), unit=units0);
+      rm(data);
   
       df <- rbind(df, df0);
       colnames(df) <- colnames(df0);
@@ -119,7 +124,11 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
   verbose && cat(verbose, sprintf("Extracted data for %d SNPs", nbrOfUnits));
   verbose && exit(verbose);
 
+  
+  # Add T = M/sd (for future support to model (x,T) instead. /HB 2007-02-26)
+  df <- cbind(df, T=df[,"M"]/df[,"sdM"]);
 
+  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fit GLAD
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -127,6 +136,7 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
   # Put the data in a format recognized by GLAD
   df <- data.frame(
     LogRatio=df[,"M"], 
+#   LogRatio=df[,"T"], 
     PosOrder=1:nbrOfUnits, 
     Chromosome=rep(chromosome, nbrOfUnits),
     PosBase=df[,"x"],
@@ -134,7 +144,8 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
     chipType=chipTypes[df[,"chipType"]],
     unit=df[,"unit"],
     # Add SD estimates
-    sdTheta=df[,"sdTheta"]
+    sdTheta=df[,"sdTheta"],
+    sdM=df[,"sdM"]
   );
 
   df <- as.profileCGH(df);
