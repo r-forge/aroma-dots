@@ -1,6 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.4.2 [2007-02-27xx]
+o BUG FIX: process() of ChromosomeExplorer would give an error saying
+  'Error in file(file, ifelse(append, "a", "w")) ... cannot open file
+   /*****************...'.
+
 Version: 0.4.1 [2007-02-22]
 o Fixed the warning about "'tzone' attributes are inconsistent". See
   code of as.character() for explanation.
