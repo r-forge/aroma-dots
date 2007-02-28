@@ -372,6 +372,7 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) {
       ds <- getInputDataSet(this);
       clazz <- Class$forName(class(ds)[1]);
       outputDataSet <- clazz$fromFiles(path=getPath(this));
+      setCdf(outputDataSet, getCdf(ds));
       this$.outputDataSet <- outputDataSet;
     }
   }
@@ -458,6 +459,8 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-02-28
+# o Now getOutputData() of Transform make sure to pass down the CDF too.
 # 2007-01-14
 # o Added a test for "unknown" (=unused) arguments to constructor.
 # 2007-01-07

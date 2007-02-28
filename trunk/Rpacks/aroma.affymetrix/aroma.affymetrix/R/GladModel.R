@@ -78,7 +78,8 @@ setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*
 
     for (ces in cesList) {
       if (!inherits(ces, "ChipEffectSet")) {
-        throw("Argument 'cesList' contains a non-ChipEffectSet: ", class(ces));
+        throw("Argument 'cesList' contains a non-ChipEffectSet: ", 
+                                                            class(ces)[1]);
       }
 
       # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
@@ -106,7 +107,7 @@ setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*
       ref <- referenceList[[kk]];
       if (!inherits(ref, "ChipEffectFile")) {
         throw("Argument 'referenceList' contains a non-ChipEffectFile: ",
-                                                             class(ref));
+                                                             class(ref)[1]);
       }
 
       # Assert that the reference is compatible with the chip-effect files
