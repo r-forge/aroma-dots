@@ -2,6 +2,12 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.4.2 [2007-02-27xx]
+o BUG FIX: The output data set as returned by getOutputDataSet() or
+  process() of QuantileNormalization lost the any CDF overridden in
+  the input data set.  The only time it did pass down the CDF was
+  when process() was called the first time (so that it actually
+  normalized the arrays).  The fix was to make getOutputDataSet() in
+  Transform to pass down the CDF too.
 o BUG FIX: process() of ChromosomeExplorer would give an error saying
   'Error in file(file, ifelse(append, "a", "w")) ... cannot open file
    /*****************...'.
