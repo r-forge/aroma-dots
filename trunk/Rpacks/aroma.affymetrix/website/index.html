@@ -12,71 +12,11 @@
 
 <h1>The aroma.affymetrix package</h1>
 <p>
-<small>by Henrik Bengtsson, 2007-01-17.</small>
+<small>by Henrik Bengtsson, 2007-02-28.</small>
 </p>
-
-<h2>Introduction</h2>
 <p>
-Currently this package is for share with collaborators.  It is very much in a beta version.
+The aroma.affymetrix package is under early beta testing and currently available for collaborators.  The plan is to go public no later than May June 2007. Please check.
 </p>
-
-<h2>Example scripts</h2>
-<p>
-For example scripts, see <a href="examples/">examples/</a> directory.
-</p>
-
-
-<h2>Help</h2>
-<p>
-Please, always turn to the package help when you get stuck, i.e.
-</p>
-<pre>
-help.start()
-</pre>
-
-<h2>Installation</h2>
-<p>
-To install this package do:
-</p>
-<pre>
-# Loads hbLite() and biocLite()
-source("http://www.braju.com/R/hbLite.R")
-
-# Required CRAN packages
-install.packages(c("digest", "RColorBrewer"))
-
-# Required Bioconductor packages
-biocLite()
-
-# Required Bioconductor packages (developer versions)
-biocLite(c("affxparser", "affyPLM"), rver="2.5.0")
-
-# Aroma.affymetrix and other packages of mine
-hbLite("aroma.affymetrix")
-</pre>
-
-<h3>Additional package</h3>
-<p>
-In addition to the above, the following packages is required for some methods of the package to work.  The package will given an error noting you about non-installed packages whenever they are required.
-<pre>
-# Fitting the GLAD model for copy-number analysis etc.
-biocLite("GLAD")
-
-# Add some support for generating spatial plots
-# (EBImage will replace this in the future)
-hbLite("R.image")
-</pre>
-
-<h4>Developers extensions</h4>
-<pre>
-# EBImage might not install out of the box on all platforms. 
-# See http://www.ebi.ac.uk/~osklyar/EBImage/ for more help!
-biocLite("EBImage", rver="2.5.0")
-
-# Fitting the CRLMM model
-biocLite("oligo", rver="2.5.0")
-</pre>
-
 
 
 <!-- ===================  P A G E   F O O T E R  ================== -->
