@@ -38,12 +38,13 @@ setMethodS3("patchPackage", "default", function(pkgName, paths="patches", delete
       return(c());
     }
 
-    verbose && enter(verbose, "Root path: ", path);
+    verbose && enter(verbose, "Root path: ", rootPath);
   
     # Search for patch directories
     pattern <- "20[0-9][0-9][01][0-9][0-3][0-9](|[a-z])";
     paths <- list.files(path=rootPath, pattern=pattern, full.names=TRUE);
-    paths <- paths[sapply(paths, FUN=isDirectory)];
+    if (length(paths) > 0)
+      paths <- paths[sapply(paths, FUN=isDirectory)];
     if (length(paths) == 0) {
       verbose && cat(verbose, "No patch directory found in root path: ", rootPath);
       return(c());
@@ -56,8 +57,6 @@ setMethodS3("patchPackage", "default", function(pkgName, paths="patches", delete
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  require(pkgName, character.only=TRUE) || throw("Package not loaded: ", pkgName);
-
   # Argument 'deleteOld':
   deleteOld <- Arguments$getVerbose(deleteOld);
 
@@ -68,6 +67,9 @@ setMethodS3("patchPackage", "default", function(pkgName, paths="patches", delete
   # Main
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Patching package ", pkgName);
+
+#  require(pkgName, character.only=TRUE) || throw("Package not loaded: ", pkgName);
+
 
   # 1. Scan for patch directories
   paths <- lapply(paths, FUN=function(path) {
