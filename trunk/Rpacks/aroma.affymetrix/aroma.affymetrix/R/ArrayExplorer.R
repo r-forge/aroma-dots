@@ -683,13 +683,6 @@ setMethodS3("addColorMap", "ArrayExplorer", function(this, colorMap, ...) {
                                                            mode(transform));
   }
 
-  if (is.null(nbrOfColors)) {
-    nbrOfColors <- 256;
-  } else if (is.na(nbrOfColors)) {
-    throw("Argument 'colorMap' specifies an invalid number of colors ('", 
-                                                   ncol, "'): ", colorMap);
-  }
-
   if (is.null(palette)) {
     palette <- gray.colors(256);
   } else if (is.function(palette)) {
@@ -716,6 +709,12 @@ setMethodS3("addColorMap", "ArrayExplorer", function(this, colorMap, ...) {
     palette <- fcn(nbrOfColors);
   }
   
+  if (is.null(nbrOfColors)) {
+    nbrOfColors <- 256;
+  } else if (is.na(nbrOfColors)) {
+    throw("Argument 'colorMap' specifies an invalid number of colors ('", 
+                                                   ncol, "'): ", colorMap);
+  }
 
   map <- list(list(
     tags = tags,
@@ -931,6 +930,9 @@ setMethodS3("display", "ArrayExplorer", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2007-02-28
+# o BUG FIX: setColorMaps() gave "Error in addColorMap.ArrayExplorer(this, 
+#   colorMap, ...) : object "nbrOfColors" not found".
 # 2007-02-08
 # o Created from ChromosomeExplorer.R.
 ##############################################################################
