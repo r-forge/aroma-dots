@@ -5,6 +5,8 @@ Version: 0.4.2 [2007-02-28]
 o Now patches in patches/aroma.affymetrix/<date>/ are sourced
   when the package is loaded.  To download the latest patches,
   see the package's group page.
+o BUG FIX: setColorMaps() gave "Error in addColorMap.ArrayExplorer(
+  this, colorMap, ...) : object "nbrOfColors" not found".
 o BUG FIX: The output data set as returned by getOutputDataSet() or
   process() of QuantileNormalization lost the any CDF overridden in
   the input data set.  The only time it did pass down the CDF was
