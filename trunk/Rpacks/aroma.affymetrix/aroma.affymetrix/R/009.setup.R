@@ -34,6 +34,12 @@
     settings$annotationData$paths <- list();
 
   options("aroma.affymetrix.settings"=settings);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Apply downloaded patches
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  patchPackage("aroma.affymetrix");
 } # .setupAromaAffymetrix()
 
 ############################################################################
