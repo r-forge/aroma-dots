@@ -112,9 +112,9 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., force=FALS
       } else if (ngroups == 1) {
         groups <- .subset(groups, 1);
       } else {
-        groups <- .subset(groups, odds);
         odds <- seq(from=1, to=ngroups, by=2);
         evens <- seq(from=2, to=ngroups, by=2);
+        groups <- .subset(groups, odds);
         names <- paste(.subset(names, odds), .subset(names, evens), sep="");
       }
       names(groups) <- names;
@@ -198,6 +198,10 @@ setMethodS3("mergeStrands", "CnChipEffectFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-01
+# o BUG FIX: getCellIndices() would give "Error in fcn(.subset2(unit, 
+#   "groups"), ...) : object "odds" not found" for units with other than
+#   1, 2, or 4 groups.
 # 2007-01-20
 # o Added mergeStrands().
 # 2007-01-06
