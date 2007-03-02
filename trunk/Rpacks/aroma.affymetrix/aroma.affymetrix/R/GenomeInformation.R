@@ -322,11 +322,35 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 })
 
 
-setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosome="X", ...) {
+setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosome="X", region=NULL, ...) {
+  # Argument 'region':
+  if (!is.null(region)) {
+    region <- Arguments$getNumerics(region);
+    if (length(region) != 2) {
+      throw("Argument 'region' must be a numeric vector of length 2: ", 
+                                                         length(region));
+    }
+    if (region[1] > region[2]) {
+      throw("Argument 'region' is not ordered: c(", 
+                                      paste(region, collapse=", "), ")");
+    }
+  }
+
   data <- getData(this);
   keep <- (data[,"chromosome"] == chromosome);
-  units <- rownames(data)[keep];
+  data <- data[keep,,drop=FALSE];
+
+  # Stratify by physical position?
+  if (!is.null(region)) {
+    pos <- data[,"physicalPosition"];
+    keep <- (!is.na(pos) & (region[1] <= pos & pos <= region[2]));
+    data <- data[keep,,drop=FALSE];
+  }
+
+  # Extract the units
+  units <- rownames(data);
   units <- as.integer(units);
+
   units;
 })
 
@@ -547,6 +571,8 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-02-28
+# o Added argument 'region' to getUnitsOnChromosome().
 # 2007-01-25
 # o BUG FIX: Added 'fill=TRUE' to readTableInternal().
 # 2007-01-06
