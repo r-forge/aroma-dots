@@ -126,3 +126,6 @@ ITALIC <- 3;
 BOLDITALIC <- 4;
 
 .setupAromaAffymetrix();
+
+# Patches aroma.affymetrix v0.4.1
+write <- function(...) UseMethod("write")
