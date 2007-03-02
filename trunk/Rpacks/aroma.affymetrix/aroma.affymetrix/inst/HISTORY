@@ -1,10 +1,17 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.4.3 [2007-03-01xx]
+o BUG FIX: getCellIndices() in CnChipEffectFile would give 
+  "Error in fcn(.subset2(unit, "groups"), ...) : object "odds"
+  not found" for units with other than 1, 2, or 4 groups.
+
 Version: 0.4.2 [2007-02-28]
 o Now patches in patches/aroma.affymetrix/<date>/ are sourced
   when the package is loaded.  To download the latest patches,
   see the package's group page.
+o Added argument 'region' to getUnitsOnChromosome() of the
+  GenomeInformation class.
 o BUG FIX: setColorMaps() gave "Error in addColorMap.ArrayExplorer(
   this, colorMap, ...) : object "nbrOfColors" not found".
 o BUG FIX: The output data set as returned by getOutputDataSet() or
