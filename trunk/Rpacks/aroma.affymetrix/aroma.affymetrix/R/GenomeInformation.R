@@ -337,7 +337,7 @@ setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromoso
   }
 
   data <- getData(this);
-  keep <- (data[,"chromosome"] == chromosome);
+  keep <- (data[,"chromosome"] %in% chromosome);
   data <- data[keep,,drop=FALSE];
 
   # Stratify by physical position?
