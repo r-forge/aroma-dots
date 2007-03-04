@@ -2,7 +2,7 @@ setConstructorS3("AromaUgpFile", function(...) {
   extend(AromaGenomePositionFile(...), "AromaUgpFile")
 })
 
-setMethodS3("getFilenameExtension", "AromaGenomePositionFile", function(static, ...) {
+setMethodS3("getFilenameExtension", "AromaUgpFile", function(static, ...) {
   "ugp";
 }, static=TRUE)
 
@@ -22,9 +22,9 @@ setMethodS3("getCdf", "AromaUgpFile", function(this, ...) {
   cdf;
 })
 
-setMethodS3("createFromCdf", "AromaUgpFile", function(static, cdf, ...) {
+setMethodS3("createFromCdf", "AromaUgpFile", function(static, cdf, path=getPath(cdf), ...) {
   chipType <- getChipType(cdf);
-  create(static, chipType=chipType, nbrOfElements=nbrOfUnits(cdf), ...);
+  create(static, chipType=chipType, nbrOfElements=nbrOfUnits(cdf), path=path, ...);
 }, static=TRUE)
 
 
@@ -35,9 +35,10 @@ setMethodS3("indexOfElements", "AromaUgpFile", function(this, names, ...) {
   idxs;
 }, protected=TRUE)
 
+
 setMethodS3("getUnitsAt", "AromaUgpFile", function(this, ...) {
   getElementsAt(this, ...);
-})
+}, protected=TRUE)
 
 
 setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..., verbose=FALSE) {
@@ -63,7 +64,7 @@ setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..
     pos <- as.integer(pos);
   })
 
-  updateData(this, chromosome=chr, physicalPosition=pos);
+  updateData(this, chromosome=chr, position=pos);
 })
 
 
@@ -82,6 +83,8 @@ setMethodS3("createFromGenomeInformation", "AromaUgpFile", function(static, gi, 
 
 ############################################################################
 # HISTORY:
+# 2007-03-04
+# o Now the default path for createFromCdf() is the same as for the CDF.
 # 2007-03-03
 # o Now inherits from generic AromaGenomePositionFile.
 # 2007-03-02
