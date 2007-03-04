@@ -5,11 +5,17 @@ setConstructorS3("AromaGenomePositionFile", function(...) {
 setMethodS3("getFilenameExtension", "AromaGenomePositionFile", abstract=TRUE, protected=TRUE);
 
 
-setMethodS3("readDataHeader", "AromaGenomePositionFile", function(this, ...) {
+setMethodS3("readHeader", "AromaGenomePositionFile", function(this, ...) {
   # Open file
   pathname <- getPathname(this);
   con <- file(pathname, open="rb");
   on.exit(close(con));
+
+  # Number of bytes in file header
+  H <- readBin(con=con, what=integer(), size=4, signed=FALSE);
+
+  # Skip file header
+  seek(con=con, where=H, origin="current", rw="r");
 
   # Number of elements
   J <- readBin(con=con, what=integer(), size=4, signed=FALSE);
@@ -29,15 +35,15 @@ setMethodS3("readDataHeader", "AromaGenomePositionFile", function(this, ...) {
   }
 
   if (!P %in% c(1,2,4)) {
-    throw("Genome position file format error: Number of bytes per physical position value is not in {1,2,4}: ", P);
+    throw("Genome position file format error: Number of bytes per position value is not in {1,2,4}: ", P);
   }
 
- list(nbrOfElements=J, bytesPerChromosome=C, bytesPerPosition=P);
+ list(nbrOfBytesInHeader=H, nbrOfElements=J, bytesPerChromosome=C, bytesPerPosition=P);
 }, private=TRUE)
 
 
 setMethodS3("nbrOfElements", "AromaGenomePositionFile", function(this, ...) {
-  hdr <- readDataHeader(this);
+  hdr <- readHeader(this);
   hdr$nbrOfElements;
 }, protected=TRUE)
 
@@ -58,6 +64,9 @@ setMethodS3("create", "AromaGenomePositionFile", function(static, chipType, tags
   # Argument 'path':
   path <- Arguments$getWritablePath(path);
 
+  # Number of bytes in file header (for now always an empty file header)
+  H <- as.integer(0);
+
   J <- nbrOfElements;
   C <- as.integer(1);
   P <- as.integer(4);
@@ -71,6 +80,10 @@ setMethodS3("create", "AromaGenomePositionFile", function(static, chipType, tags
   con <- file(pathname, open="wb");
   on.exit(close(con));
 
+  # Write file header
+  writeBin(con=con, H, size=4, endian="little");
+  seek(con=con, where=H, origin="current", rw="w");
+
   # Write data header
   writeBin(con=con, J, size=4, endian="little");
   writeBin(con=con, C, size=1, endian="little");
@@ -82,7 +95,7 @@ setMethodS3("create", "AromaGenomePositionFile", function(static, chipType, tags
   value <- rep(naValue, J);
   writeBin(con=con, value, size=C, endian="little");
   
-  # Phyiscal position: Write NAs
+  # Position: Write NAs
   suppressWarnings({
     # For P == 4, this will return NA, but that's ok.
     naValue <- as.integer(256^P-1);
@@ -96,9 +109,10 @@ setMethodS3("create", "AromaGenomePositionFile", function(static, chipType, tags
 
 
 
-setMethodS3("readData", "AromaGenomePositionFile", function(this, idxs=NULL, fields=c("chromosome", "physicalPosition"), ..., verbose=FALSE) {
+setMethodS3("readData", "AromaGenomePositionFile", function(this, idxs=NULL, fields=c("chromosome", "position"), ..., verbose=FALSE) {
   # Data header
-  hdr <- readDataHeader(this);
+  hdr <- readHeader(this);
+  H <- hdr$nbrOfBytesInHeader;
   J <- hdr$nbrOfElements;
   C <- hdr$bytesPerChromosome;
   P <- hdr$bytesPerPosition;
@@ -107,6 +121,8 @@ setMethodS3("readData", "AromaGenomePositionFile", function(this, idxs=NULL, fie
   pathname <- getPathname(this);
   con <- file(pathname, open="rb");
   on.exit(close(con));
+
+  dataOffset <- 10+H;
 
   # Argument 'idxs':
   if (is.null(idxs)) {
@@ -118,13 +134,14 @@ setMethodS3("readData", "AromaGenomePositionFile", function(this, idxs=NULL, fie
     idxs <- Arguments$getIndices(idxs, range=c(1, J));
   }
 
-  data <- matrix(NA, nrow=length(idxs), ncol=length(fields));
-  colnames(data) <- fields;
-  rownames(data) <- idxs;
+  colClasses <- rep("integer", 1+length(fields));
+  names(colClasses) <- c("index", fields);
+  data <- dataFrame(colClasses=colClasses, nrow=length(idxs));
+  data$index <- idxs;
   
   # Chromosome indices
   if ("chromosome" %in% fields) {
-    offset <- 6;
+    offset <- dataOffset;
     seek(con=con, where=offset, rw="r");
     values <- readBin(con=con, n=J, what=integer(), size=C, signed=FALSE, endian="little");
     values <- values[idxs];
@@ -134,15 +151,15 @@ setMethodS3("readData", "AromaGenomePositionFile", function(this, idxs=NULL, fie
     rm(values);
   }
   
-  # Physical positions
-  if ("physicalPosition" %in% fields) {
-    offset <- 6 + J*C;
+  # Positions
+  if ("position" %in% fields) {
+    offset <- dataOffset + J*C;
     seek(con=con, where=offset, rw="r");
     values <- readBin(con=con, n=J, what=integer(), size=P, signed=FALSE, endian="little");
     values <- values[idxs];
     naValue <- 256^P - 1;
     values[values == naValue] <- NA;
-    data[,"physicalPosition"] <- values;
+    data[,"position"] <- values;
     rm(values);
   }
   
@@ -150,9 +167,10 @@ setMethodS3("readData", "AromaGenomePositionFile", function(this, idxs=NULL, fie
 }, protected=TRUE)
 
 
-setMethodS3("updateData", "AromaGenomePositionFile", function(this, idxs=NULL, chromosome=NULL, physicalPosition=NULL, ..., verbose=FALSE) {
+setMethodS3("updateData", "AromaGenomePositionFile", function(this, idxs=NULL, chromosome=NULL, position=NULL, ..., verbose=FALSE) {
   # Data header
-  hdr <- readDataHeader(this);
+  hdr <- readHeader(this);
+  H <- hdr$nbrOfBytesInHeader;
   J <- hdr$nbrOfElements;
   C <- hdr$bytesPerChromosome;
   P <- hdr$bytesPerPosition;
@@ -161,6 +179,8 @@ setMethodS3("updateData", "AromaGenomePositionFile", function(this, idxs=NULL, c
   pathname <- getPathname(this);
   con <- file(pathname, open="r+b");
   on.exit(close(con));
+
+  dataOffset <- 10+H;
 
   # Argument 'idxs':
   if (is.null(idxs)) {
@@ -175,16 +195,16 @@ setMethodS3("updateData", "AromaGenomePositionFile", function(this, idxs=NULL, c
     chromosome <- rep(chromosome, length.out=length(idxs));
   }
   
-  # Argument' physicalPosition':
-  if (!is.null(physicalPosition)) {
-    physicalPosition <- Arguments$getIndices(physicalPosition, range=c(0, 256^P-1), disallow=c("NaN"));
-    physicalPosition <- rep(physicalPosition, length.out=length(idxs));
+  # Argument' position':
+  if (!is.null(position)) {
+    position <- Arguments$getIndices(position, range=c(0, 256^P-1), disallow=c("NaN"));
+    position <- rep(position, length.out=length(idxs));
   }
   
   
   # Chromosome indices
   if (!is.null(chromosome)) {
-    offset <- 6;
+    offset <- dataOffset;
     seek(con=con, where=offset, origin="start", rw="r");
     values <- readBin(con=con, n=J, what=integer(), size=C, signed=FALSE, endian="little");
     values[idxs] <- chromosome;
@@ -200,12 +220,12 @@ setMethodS3("updateData", "AromaGenomePositionFile", function(this, idxs=NULL, c
     rm(values);
   }
   
-  # Physical positions
-  if (!is.null(physicalPosition)) {
-    offset <- 6 + J*C;
+  # Positions
+  if (!is.null(position)) {
+    offset <- dataOffset + J*C;
     seek(con=con, where=offset, origin="start", rw="r");
     values <- readBin(con=con, n=J, what=integer(), size=P, signed=FALSE, endian="little");
-    values[idxs] <- physicalPosition;
+    values[idxs] <- position;
     # Update NAs
     naValue <- 256^P - 1;
     values[is.na(values)] <- naValue;
@@ -242,8 +262,8 @@ setMethodS3("[", "AromaGenomePositionFile", function(this, i=NULL, j=1:2, drop=F
     fields <- j;
   }
   
-  if (is.integer(j)) {
-    fields <- c("chromosome", "physicalPosition")[j];
+  if (is.numeric(j)) {
+    fields <- c("chromosome", "position")[j];
   }
   
   # Read data
@@ -257,6 +277,11 @@ setMethodS3("[", "AromaGenomePositionFile", function(this, i=NULL, j=1:2, drop=F
 })
 
 
+setMethodS3("subset", "AromaGenomePositionFile", function(this, ...) {
+  data <- readData(this);
+  subset(data, ...);
+})
+
 setMethodS3("getElementsAt", "AromaGenomePositionFile", function(this, chromosome, range=NULL, ..., verbose=FALSE) {
   # Stratify by chromosome
   data <- readData(this, fields="chromosome");
@@ -265,7 +290,7 @@ setMethodS3("getElementsAt", "AromaGenomePositionFile", function(this, chromosom
   idxs <- which(keep);
 
   if (!is.null(range)) {
-    data <- readData(this, idxs=idxs, fields="physicalPosition");
+    data <- readData(this, idxs=idxs, fields="position");
     keep <- !is.na(data);
     keep <- keep & (range[1] <= data & data <= range[2]);
     idxs <- idxs[keep];
@@ -278,6 +303,11 @@ setMethodS3("getElementsAt", "AromaGenomePositionFile", function(this, chromosom
 
 ############################################################################
 # HISTORY:
+# 2007-03-04
+# o Now readData() returns a data frame. 
+# o Added subset().
+# o Added file header, that is, reserved a slot in the file format for 
+#   future support of a file header.
 # 2007-03-03
 # o Created. Can import genome information data.
 ############################################################################
