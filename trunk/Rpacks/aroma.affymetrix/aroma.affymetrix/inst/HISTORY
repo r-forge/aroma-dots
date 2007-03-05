@@ -1,7 +1,9 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.3 [2007-03-01xx]
+Version: 0.4.3 [2007-03-04xx]
+o BUG FIX: extractSnpQSet() would give "Error: object "cleancdfname" not 
+  found" if the 'affy' package was not loaded.
 o BUG FIX: getCellIndices() in CnChipEffectFile would give 
   "Error in fcn(.subset2(unit, "groups"), ...) : object "odds"
   not found" for units with other than 1, 2, or 4 groups.

@@ -134,10 +134,10 @@ setMethodS3("readData", "AromaGenomePositionFile", function(this, idxs=NULL, fie
     idxs <- Arguments$getIndices(idxs, range=c(1, J));
   }
 
-  colClasses <- rep("integer", 1+length(fields));
-  names(colClasses) <- c("index", fields);
+  colClasses <- rep("integer", length(fields));
+  names(colClasses) <- fields;
   data <- dataFrame(colClasses=colClasses, nrow=length(idxs));
-  data$index <- idxs;
+  rownames(data) <- make.unique(as.character(idxs));
   
   # Chromosome indices
   if ("chromosome" %in% fields) {
@@ -284,13 +284,12 @@ setMethodS3("subset", "AromaGenomePositionFile", function(this, ...) {
 
 setMethodS3("getElementsAt", "AromaGenomePositionFile", function(this, chromosome, range=NULL, ..., verbose=FALSE) {
   # Stratify by chromosome
-  data <- readData(this, fields="chromosome");
-  keep <- !is.na(data);
-  keep <- keep & (data %in% chromosome);
+  data <- readData(this, fields="chromosome")[[1]];
+  keep <- !is.na(data) & (data %in% chromosome);
   idxs <- which(keep);
 
   if (!is.null(range)) {
-    data <- readData(this, idxs=idxs, fields="position");
+    data <- readData(this, idxs=idxs, fields="position")[[1]];
     keep <- !is.na(data);
     keep <- keep & (range[1] <= data & data <= range[2]);
     idxs <- idxs[keep];
