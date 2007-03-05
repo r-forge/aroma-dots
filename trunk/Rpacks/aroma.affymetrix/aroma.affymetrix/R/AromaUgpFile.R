@@ -11,6 +11,52 @@ setMethodS3("nbrOfUnits", "AromaUgpFile", function(this, ...) {
 })
 
 
+setMethodS3("findByChipType", "AromaUgpFile", function(static, chipType, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search in annotationData/chipTypes/<chipType>/
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Exclude all chip type tags
+  chipType <- gsub(",.*", "", chipType);
+
+  pattern <- paste("^", chipType, "(,[.]*)*", "[.](ugp|UGP)$", sep="");
+  args <- list(chipType=chipType, ...);
+  args$pattern <- pattern;
+  pathname <- do.call("findAnnotationDataByChipType", args=args);
+
+  # If not found, look for Windows shortcuts
+  if (is.null(pathname)) {
+    # Search for a Windows shortcut
+    pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)[.]lnk$", sep="");
+    args <- list(chipType=chipType, ...);
+    args$pattern <- pattern;
+    pathname <- do.call("findAnnotationDataByChipType", args=args);
+    if (!is.null(pathname)) {
+      # ..and expand it
+      pathname <- filePath(pathname, expandLinks="any");
+      if (!isFile(pathname))
+        pathname <- NULL;
+    }
+  }
+
+  pathname;
+}, static=TRUE, protected=TRUE)
+
+
+setMethodS3("fromChipType", "AromaUgpFile", function(static, chipType, ...) {
+  # Locate UGP file
+  pathname <- findByChipType(static, chipType=chipType, ...);
+  if (is.null(pathname)) {
+    throw("Could not locate UGP file for this chip type: ", chipType);
+  }
+
+  # Create object
+  AromaUgpFile(pathname);
+}, static=TRUE)
+
+setMethodS3("fromCdf", "AromaUgpFile", function(static, cdf, ...) {
+  fromChipType(static, getChipType(cdf));
+})
+
 setMethodS3("getCdf", "AromaUgpFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
@@ -84,6 +130,7 @@ setMethodS3("createFromGenomeInformation", "AromaUgpFile", function(static, gi, 
 ############################################################################
 # HISTORY:
 # 2007-03-04
+# o Added findByChipType() and fromChipType().
 # o Now the default path for createFromCdf() is the same as for the CDF.
 # 2007-03-03
 # o Now inherits from generic AromaGenomePositionFile.

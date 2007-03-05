@@ -90,7 +90,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdf <- getCdf(this);
   chipType <- getChipType(cdf, fullname=FALSE);
-  cleanChipType <- cleancdfname(chipType, addcdf=FALSE);
+  cleanChipType <- affy::cleancdfname(chipType, addcdf=FALSE);
   nbrOfSamples <- nbrOfFiles(this);
   units <- indexOf(cdf, pattern="^SNP");
   nbrOfUnits <- length(units);
@@ -234,6 +234,9 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
 
 ############################################################################
 # HISTORY:
+# 2007-03-04
+# o BUG FIX: extractSnpQSet() would give "Error: object "cleancdfname" not 
+#   found" if the 'affy' package was not loaded.
 # 2006-12-12
 # o Updated so that the strandiness for each SNP is correct (I think).
 # 2006-10-05
