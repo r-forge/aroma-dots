@@ -25,9 +25,15 @@
 # 
 #*/###########################################################################
 setConstructorS3("SnpProbeAffinityFile", function(..., mergeStrands=FALSE) {
-  extend(ProbeAffinityFile(...), "SnpProbeAffinityFile",
+  this <- extend(ProbeAffinityFile(...), "SnpProbeAffinityFile",
     mergeStrands=mergeStrands
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

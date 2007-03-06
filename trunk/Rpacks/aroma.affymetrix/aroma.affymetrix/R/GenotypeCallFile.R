@@ -38,9 +38,15 @@ setConstructorS3("GenotypeCallFile", function(..., cdf=NULL) {
       throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
   }
 
-  extend(AffymetrixFile(...), "GenotypeCallFile",
+  this <- extend(AffymetrixFile(...), "GenotypeCallFile",
     .cdf = cdf
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

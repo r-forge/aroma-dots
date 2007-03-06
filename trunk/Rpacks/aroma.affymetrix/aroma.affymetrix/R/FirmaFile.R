@@ -27,7 +27,6 @@
 #
 #*/###########################################################################
 setConstructorS3("FirmaFile", function(...) {
-
   this <- extend(ParameterCelFile(...), "FirmaFile");
 
   setEncodeFunction(this, function(groupData, ...) {
@@ -37,6 +36,10 @@ setConstructorS3("FirmaFile", function(...) {
   setDecodeFunction(this, function(groupData, ...) {
     groupData;
   })
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
 
   this;
 })

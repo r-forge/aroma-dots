@@ -97,12 +97,6 @@ setMethodS3("extractDataFrame", "ChipEffectSet", function(this, ..., units=NULL,
   df;
 }) # extractDataFrame()
 
-setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., units=NULL, field=c("theta", "sdTheta"), verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'units':
-  cdf <- getCdf(this);
 
 ############################################################################
 # HISTORY:

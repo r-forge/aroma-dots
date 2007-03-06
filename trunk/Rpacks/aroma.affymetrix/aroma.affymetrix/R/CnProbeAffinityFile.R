@@ -25,9 +25,14 @@
 # 
 #*/###########################################################################
 setConstructorS3("CnProbeAffinityFile", function(..., combineAlleles=FALSE) {
-  extend(SnpProbeAffinityFile(...), "CnProbeAffinityFile",
+  this <- extend(SnpProbeAffinityFile(...), "CnProbeAffinityFile",
     combineAlleles=combineAlleles
-  )
+  );
+
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

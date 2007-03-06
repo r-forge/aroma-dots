@@ -69,7 +69,11 @@ setConstructorS3("ChipEffectFile", function(..., probeModel=c("pm")) {
       res$thetaOutliers <- as.logical(-groupData$pixels);
     res;
   })
- 
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
   this;
 })
 

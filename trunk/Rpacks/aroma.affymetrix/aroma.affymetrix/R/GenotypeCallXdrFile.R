@@ -24,7 +24,13 @@
 # @visibility "private"
 #*/###########################################################################
 setConstructorS3("GenotypeCallXdrFile", function(...) {
-  extend(GenotypeCallFile(...), "GenotypeCallXdrFile")
+  this <- extend(GenotypeCallFile(...), "GenotypeCallXdrFile");
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 setMethodS3("getCdf", "GenotypeCallXdrFile", function(this, ...) {

@@ -62,7 +62,11 @@ setConstructorS3("WeightsFile", function(..., probeModel=c("pm")) {
       res$wtsStdvs <- groupData$stdvs;
     res;
   })
- 
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
   this;
 })
 

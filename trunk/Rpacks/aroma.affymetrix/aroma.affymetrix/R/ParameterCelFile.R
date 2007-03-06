@@ -47,11 +47,17 @@
 # @keyword "IO"
 #*/###########################################################################
 setConstructorS3("ParameterCelFile", function(..., encodeFunction=NULL, decodeFunction=NULL) {
-  extend(AffymetrixCelFile(...), "ParameterCelFile",
+  this <- extend(AffymetrixCelFile(...), "ParameterCelFile",
     "cached:.readUnitsCache" = NULL,
     encodeFunction = encodeFunction,
     decodeFunction = decodeFunction
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

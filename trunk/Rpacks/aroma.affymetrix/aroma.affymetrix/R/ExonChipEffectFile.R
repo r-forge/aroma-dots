@@ -28,10 +28,16 @@
 # }
 #*/###########################################################################
 setConstructorS3("ExonChipEffectFile", function(..., mergeGroups=FALSE) {
-  extend(ChipEffectFile(...), "ExonChipEffectFile",
+  this <- extend(ChipEffectFile(...), "ExonChipEffectFile",
     "cached:.cellIndices" = NULL,
     mergeGroups = mergeGroups
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

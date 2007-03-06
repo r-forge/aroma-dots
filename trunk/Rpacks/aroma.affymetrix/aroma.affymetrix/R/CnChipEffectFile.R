@@ -29,9 +29,15 @@
 # }
 #*/###########################################################################
 setConstructorS3("CnChipEffectFile", function(..., combineAlleles=FALSE) {
-  extend(SnpChipEffectFile(...), "CnChipEffectFile",
+  this <- extend(SnpChipEffectFile(...), "CnChipEffectFile",
     combineAlleles = combineAlleles
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 setMethodS3("getParameters", "CnChipEffectFile", function(this, ...) {
