@@ -22,13 +22,19 @@
 # @author
 #*/###########################################################################
 setConstructorS3("AffymetrixCdfFile", function(...) {
-  extend(AffymetrixFile(...), "AffymetrixCdfFile",
+  this <- extend(AffymetrixFile(...), "AffymetrixCdfFile",
     "cached:.header" = NULL,
     "cached:.unitNames" = NULL,
     "cached:.unitSizes" = NULL,
     "cached:.cellIndices" = NULL,
     "cached:.isPm" = NULL
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

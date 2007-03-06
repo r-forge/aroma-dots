@@ -1,5 +1,10 @@
 setConstructorS3("AromaCgpFile", function(...) {
-  extend(AromaGenomePositionFile(...), "AromaCgpFile")
+  this <- extend(AromaGenomePositionFile(...), "AromaCgpFile");
+
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 setMethodS3("getFilenameExtension", "AromaGenomePositionFile", function(static, ...) {

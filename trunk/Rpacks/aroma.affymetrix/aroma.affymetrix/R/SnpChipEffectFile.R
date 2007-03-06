@@ -28,10 +28,16 @@
 # }
 #*/###########################################################################
 setConstructorS3("SnpChipEffectFile", function(..., mergeStrands=FALSE) {
-  extend(ChipEffectFile(...), "SnpChipEffectFile",
+  this <- extend(ChipEffectFile(...), "SnpChipEffectFile",
     "cached:.cellIndices" = NULL,
     mergeStrands = mergeStrands
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

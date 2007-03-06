@@ -1,5 +1,11 @@
 setConstructorS3("AromaGenomePositionFile", function(...) {
-  extend(AffymetrixFile(...), "AromaGenomePositionFile")
+  this <- extend(AffymetrixFile(...), "AromaGenomePositionFile");
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 }, abstract=TRUE)
 
 setMethodS3("getFilenameExtension", "AromaGenomePositionFile", abstract=TRUE, protected=TRUE);

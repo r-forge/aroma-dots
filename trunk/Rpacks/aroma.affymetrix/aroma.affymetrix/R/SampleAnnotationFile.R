@@ -2,9 +2,15 @@
 # sa <- SampleAnnotationFile("sampleAnnotation.xls", path=path);
 
 setConstructorS3("SampleAnnotationFile", function(...) {
-  extend(AffymetrixFile(...), "SampleAnnotationFile",
+  this <- extend(AffymetrixFile(...), "SampleAnnotationFile",
     "cached:.data" = NULL
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

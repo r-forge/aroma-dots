@@ -27,10 +27,13 @@
 # }
 #*/###########################################################################
 setConstructorS3("QualityAssessmentFile", function(...) {
-
   this <- extend(AffymetrixCelFile(...), "QualityAssessmentFile",
     "cached:.firstCells" = NULL
-  )
+  );
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
 
   this;
 })

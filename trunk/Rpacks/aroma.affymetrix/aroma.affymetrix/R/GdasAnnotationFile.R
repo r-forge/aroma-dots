@@ -1,10 +1,15 @@
 setConstructorS3("GdasAnnotationFile", function(...) {
-  extend(AffymetrixFile(...), "GdasAnnotationFile",
+  this <- extend(AffymetrixFile(...), "GdasAnnotationFile",
     "cached:.blockPositions" = NULL,
     "cached:.header" = NULL,
     "cached:.columnName" = NULL,
     "cached:.data" = NULL
-  )
+  );
+
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 

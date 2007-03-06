@@ -1,5 +1,11 @@
 setConstructorS3("AromaUgpFile", function(...) {
-  extend(AromaGenomePositionFile(...), "AromaUgpFile")
+  this <- extend(AromaGenomePositionFile(...), "AromaUgpFile");
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 })
 
 setMethodS3("getFilenameExtension", "AromaUgpFile", function(static, ...) {

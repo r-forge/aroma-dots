@@ -66,9 +66,16 @@ setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, mustExist=
   }
 
 
-  extend(Object(), "AffymetrixFile",
-    .pathname = pathname
+  this <- extend(Object(), "AffymetrixFile",
+    .pathname = pathname,
+    .attributes = list()
   )
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    parseTagsAsAttributes(this);
+
+  this;
 }, abstract=TRUE)
 
 
@@ -260,7 +267,11 @@ setMethodS3("getFilename", "AffymetrixFile", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getFullName", "AffymetrixFile", function(this, ...) {
-  name <- basename(this$.pathname);
+  pathname <- this$.pathname;
+  if (is.null(pathname))
+    return("");
+
+  name <- basename(pathname);
 
   # Exclude filename extension
   name <- gsub("[.][a-zA-Z0-9][a-zA-Z0-9]*$", "", name);
@@ -325,6 +336,8 @@ setMethodS3("getName", "AffymetrixFile", function(this, ...) {
 # @synopsis
 #
 # \arguments{
+#  \item{pattern}{An optional regular expression used to filter out tags.
+#     If @NULL, all tags are returned.}
 #  \item{collapse}{A @character string used to concatenate the tags. 
 #     If @NULL, the tags are not concatenated.}
 #  \item{...}{Not used.}
@@ -349,7 +362,7 @@ setMethodS3("getName", "AffymetrixFile", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTags", "AffymetrixFile", function(this, collapse=NULL, ...) {
+setMethodS3("getTags", "AffymetrixFile", function(this, pattern=NULL, collapse=NULL, ...) {
   name <- getFullName(this, ...);
 
   # Data-set name is anything before the first comma
@@ -359,6 +372,10 @@ setMethodS3("getTags", "AffymetrixFile", function(this, collapse=NULL, ...) {
   name <- substring(name, nchar(dsName)+2);
   
   tags <- strsplit(name, split=",")[[1]];
+
+  # Keep only those matching a regular expression?
+  if (!is.null(pattern))
+    tags <- grep(pattern, tags, value=TRUE);
 
   tags <- paste(tags, collapse=collapse);
   if (length(tags) == 0)
@@ -374,7 +391,6 @@ setMethodS3("hasTags", "AffymetrixFile", function(this, tags, ...) {
 setMethodS3("hasTag", "AffymetrixFile", function(this, tag, ...) {
   hasTags(this, tags=tag, ...);
 })
-
 
 
 setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
@@ -608,8 +624,92 @@ setMethodS3("validateChecksum", "AffymetrixFile", function(this, ..., verbose=FA
   invisible(res);
 })
 
+setMethodS3("getAttributes", "AffymetrixFile", function(this, ...) {
+  attrs <- this$.attributes;
+  if (is.null(attrs))
+    attrs <- list();
+  attrs;
+})
+
+setMethodS3("setAttributes", "AffymetrixFile", function(this, ...) {
+  # Argument '...':
+  args <- list(...);
+  names <- names(args);
+  if (is.null(names)) {
+    throw("No named arguments specified.");
+  }
+  
+  # Update the attributes.
+  attrs <- this$.attributes;
+  attrs[names] <- args;
+  this$.attributes <- attrs;
+
+  invisible(args);
+})
+
+setMethodS3("getAttribute", "AffymetrixFile", function(this, name, defaultValue=NULL, ...) {
+  attrs <- this$.attributes;
+  if (name %in% names(attrs)) {
+    value <- attrs[[name]];
+  } else {
+    value <- defaultValue;
+  }
+  value;
+})
+
+setMethodS3("setAttribute", "AffymetrixFile", function(this, name, value, ...) {
+  attrs <- this$.attributes;
+  attrs[[name]] <- value;
+  this$.attributes <- attrs;
+
+  invisible(attrs[name]);
+})
+
+setMethodS3("testAttributes", "AffymetrixFile", function(this, select, ...) {
+  # Get the attributes to be tested
+  attrs <- getAttributes(this);
+  expr <- substitute(select);
+  res <- eval(expr, envir=attrs, enclos=parent.frame());
+  res;
+})
+
+setMethodS3("parseTagsAsAttributes", "AffymetrixFile", function(this, ...) {
+  newAttrs <- list();
+
+  # Get all <name>=<value> tags
+  pattern <- "^([A-z][A-z0-9]*)=(.*)$";
+  tags <- getTags(this, pattern=pattern);
+  for (kk in seq(along=tags)) {
+    tag <- tags[[kk]];
+    key <- gsub(pattern, "\\1", tag);
+    value <- gsub(pattern, "\\2", tag);
+
+    # Try to coerce:
+    suppressWarnings({
+      value2 <- as.integer(value);
+      if (!identical(value2 == value, TRUE)) {
+        value2 <- as.double(value);
+        if (!identical(value2 == value, TRUE)) {
+          value2 <- as.character(value);
+        }
+      }
+      value <- value2;
+    })
+
+    newAttrs <- c(newAttrs, setAttribute(this, key, value));
+  }
+
+  # Return updated attributes
+  invisible(newAttrs);
+})
+
+
+
 ############################################################################
 # HISTORY:
+# 2007-03-05
+# o Added parseTagsAsAttributes(), which now also tries to coerce values.
+# o Added support for (in-memory) attributes.
 # 2007-02-07
 # o Added getChecksum(), writeChecksum(), readChecksum(), and 
 #   compareChecksum() and validateChecksum(). I did this because I noticed 
