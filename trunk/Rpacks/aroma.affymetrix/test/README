@@ -16,3 +16,9 @@ and on Windows you can use Windows Shortcuts.
 
 
 Henrik 2006-11-22
+
+
+Utils:
+
+# Search replace in multiple files
+for ff in *.R; do  sed 's|parseTagsAsAttributes|setAttributesByTags|g' $ff > $ff.tmp && mv $ff.tmp $ff; done

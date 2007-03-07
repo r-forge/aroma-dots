@@ -24,6 +24,7 @@ setMethodS3("readData", "SampleAnnotationFile", function(this, rows=NULL, force=
   
     # Parse these as a DCF
     db <- read.dcf(textConnection(bfr));
+    db <- gsub("[\n\r]", "", db);
     rm(bfr); # Not needed anymore
   
     this$.db <- db;
@@ -42,7 +43,7 @@ setMethodS3("getPatterns", "SampleAnnotationFile", function(this, ...) {
   db <- readData(this, ...);
 
   # Get sample name pattern
-  patterns <- sprintf("^%s$", db[,"sample"]);
+  patterns <- sprintf("^%s$", db[,"name"]);
   patterns <- gsub("\\^\\^", "^", patterns);
   patterns <- gsub("\\$\\$", "$", patterns);
 
@@ -73,7 +74,7 @@ setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ...) {
   patterns <- names(res);
   rows <- match(patterns, allPatterns);
   db <- readData(this, rows=rows);
-  cc <- setdiff(colnames(db), "sample");
+  cc <- setdiff(colnames(db), "name");
   db <- db[,cc,drop=FALSE];
 
   for (kk in seq(along=res)) {
