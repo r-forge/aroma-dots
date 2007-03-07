@@ -166,7 +166,7 @@ setMethodS3("getAM", "ChipEffectSet", function(this, other, units=NULL, ..., ver
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=NULL, ..., verbose=FALSE) {
+setMethodS3("getXAM", "ChipEffectSet", function(this, other, chromosome, units=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

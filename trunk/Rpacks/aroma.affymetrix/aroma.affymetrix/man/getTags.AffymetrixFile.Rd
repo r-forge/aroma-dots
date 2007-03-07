@@ -19,9 +19,11 @@
   Gets the tags of the file.
 }
 
-\usage{\method{getTags}{AffymetrixFile}(this, collapse=NULL, ...)}
+\usage{\method{getTags}{AffymetrixFile}(this, pattern=NULL, collapse=NULL, ...)}
 
 \arguments{
+ \item{pattern}{An optional regular expression used to filter out tags.
+    If \code{\link[base]{NULL}}, all tags are returned.}
  \item{collapse}{A \code{\link[base]{character}} string used to concatenate the tags.
     If \code{\link[base]{NULL}}, the tags are not concatenated.}
  \item{...}{Not used.}

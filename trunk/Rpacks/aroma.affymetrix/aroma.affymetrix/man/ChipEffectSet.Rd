@@ -46,19 +46,23 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{\link[aroma.affymetrix:extractDataFrame.ChipEffectSet]{extractDataFrame}} \tab Extract data as a data frame for a set of arrays.\cr
+ \tab \code{\link[aroma.affymetrix:extractMatrix.ChipEffectSet]{extractMatrix}} \tab Extract data as a matrix for a set of arrays.\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getAM.ChipEffectSet]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects of the set relative to a reference chip effect file.\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectSet]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, cna, extractAffyBatch, extractSnpFeatureSet, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf
+[, [[, append, as, as.AffymetrixCelSet, averageQuantile, cna, extractAffyBatch, extractSnpFeatureSet, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setCdf, setSampleAttributesByTags
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
 append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, lapply, nbrOfFiles, sapply, seq, setAlias, setTags

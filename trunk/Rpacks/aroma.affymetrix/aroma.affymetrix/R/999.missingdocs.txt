@@ -382,3 +382,42 @@
   mergeGroups.ChipEffectFile mergeStrands mergeStrands.CnChipEffectFile
   mergeStrands.SnpChipEffectFile setMergeFunction
   setMergeFunction.ChipEffectGroupMerge
+  [.AromaGenomePositionFile AffymetrixCsvGenomeInformation
+  AromaAffymetrix AromaCgpFile AromaGenomePositionFile AromaUgpFile
+  create.AromaGenomePositionFile createFromCdf
+  createFromCdf.AromaCgpFile createFromCdf.AromaUgpFile
+  createFromGenomeInformation createFromGenomeInformation.AromaUgpFile
+  extractDataFrame extractMatrix
+  findByChipType.AffymetrixCsvGenomeInformation
+  findByChipType.AromaUgpFile fixSearchPath
+  fixSearchPath.AromaAffymetrix fromCdf.AromaUgpFile
+  fromChipType.AffymetrixCsvGenomeInformation fromChipType.AromaUgpFile
+  getAttribute getAttribute.AffymetrixFile getAttributes
+  getAttributes.AffymetrixFile getAttributeXY
+  getAttributeXY.AffymetrixCelFile getCdf.AromaUgpFile getCellsAt
+  getCellsAt.AromaCgpFile getChipType.AromaGenomePositionFile
+  getChromosome getChromosome.Arguments getChromosomes.Arguments
+  getElementsAt getElementsAt.AromaGenomePositionFile
+  getFilenameExtension getFilenameExtension.AromaGenomePositionFile
+  getFilenameExtension.AromaUgpFile getGenomeVersion
+  getGenomeVersion.AromaGenomePositionFile getPloidy
+  getPloidy.AffymetrixCelFile getUnitsAt getUnitsAt.AromaUgpFile
+  hasAttributeXY hasAttributeXY.AffymetrixCelFile
+  importFromAffymetrixCsvFile importFromAffymetrixCsvFile.AromaCgpFile
+  importFromGenomeInformation importFromGenomeInformation.AromaUgpFile
+  indexOfElements indexOfElements.AromaGenomePositionFile
+  indexOfElements.AromaUgpFile nbrOfCells.AromaCgpFile nbrOfElements
+  nbrOfElements.AromaGenomePositionFile nbrOfUnits.AromaUgpFile
+  readData.AffymetrixCsvGenomeInformation
+  readData.AromaGenomePositionFile readHeader.AromaGenomePositionFile
+  setAttribute setAttribute.AffymetrixFile setAttributes
+  setAttributes.AffymetrixFile setAttributesByTags
+  setAttributesByTags.AffymetrixCelFile
+  setAttributesByTags.AffymetrixFile setAttributeXY
+  setAttributeXY.AffymetrixCelFile setSampleAttributesByTags
+  setSampleAttributesByTags.AffymetrixCelSet
+  subset.AromaGenomePositionFile testAttributes
+  testAttributes.AffymetrixFile updateData
+  updateData.AromaGenomePositionFile
+  verify.AffymetrixCsvGenomeInformation
+  library require

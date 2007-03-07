@@ -283,7 +283,10 @@ setMethodS3("[", "AromaGenomePositionFile", function(this, i=NULL, j=1:2, drop=F
 })
 
 
-setMethodS3("subset", "AromaGenomePositionFile", function(this, ...) {
+setMethodS3("subset", "AromaGenomePositionFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   data <- readData(this);
   subset(data, ...);
 })

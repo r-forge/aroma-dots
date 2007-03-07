@@ -755,6 +755,9 @@ setMethodS3("as.list", "AffymetrixFileSet", function(x, ...) {
 })
 
 setMethodS3("getFile", "AffymetrixFileSet", function(this, idx, ...) {
+  if (length(idx) != 1)
+    throw("Argument 'idx' must be a single index.");
+  idx <- Arguments$getIndex(idx, range=c(1, nbrOfArrays(this)));
   this$files[[idx]];
 })
 
@@ -762,6 +765,7 @@ setMethodS3("getFiles", "AffymetrixFileSet", function(this, idxs=NULL, ...) {
   if (is.null(idxs)) {
     this$files;
   } else {
+    idxs <- Arguments$getIndices(idxs, range=c(1, nbrOfArrays(this)));
     this$files[idxs];
   }
 }, private=TRUE)

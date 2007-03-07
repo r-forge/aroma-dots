@@ -763,50 +763,6 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
   readCelRectangle(this$.pathname, xrange=xrange, yrange=yrange, readIntensities=("intensities" %in% fields), readStdvs=("stdvs" %in% fields), readPixels=("pixels" %in% fields));
 }, private=TRUE)
 
-setMethodS3("setAttributeXY", "AffymetrixCelFile", function(this, value, ...) {
-  # Argument 'value':
-  if (is.null(value)) {
-    # Nothing todo?
-    return();
-  }
-
-  pattern <- "^(X*)(Y*)$";
-  if (regexpr(pattern, value) == -1) {
-    throw("The value of argument 'value' is unrecognized: ", value);
-  }
-
-  # Parse and count
-  n23 <- gsub(pattern, "\\1", value);
-  n24 <- gsub(pattern, "\\2", value);
-  n23 <- nchar(n23);
-  n24 <- nchar(n24);
-  setAttributes(this, n23=n23, n24=n24);
-})
-
-setMethodS3("getAttributeXY", "AffymetrixCelFile", function(this, ...) {
-  n23 <- getAttribute(this, "n23", 0);
-  n24 <- getAttribute(this, "n24", 0);
-  xyTag <- paste(c(rep("X", n23), rep("Y", n24)), collapse="");
-  xyTag;
-})
-
-setMethodS3("hasAttributeXY", "AffymetrixCelFile", function(this, values, ...) {
-   xyTag <- getAttributeXY(this);
-   (xyTag %in% values);
-})
-
-
-setMethodS3("parseTagsAsAttributes", "AffymetrixCelFile", function(this, ...) {
-  newAttrs <- NextMethod("parseTagsAsAttributes", this, ...);
-
-  # Get all XY, XX, XXX etc tags
-  tags <- getTags(this, pattern="^X*Y*$");
-  newAttrs <- c(newAttrs, setAttributeXY(this, tags));
-
-  # Return nothing
-  invisible(newAttrs);
-})
-
 
 
 ############################################################################
