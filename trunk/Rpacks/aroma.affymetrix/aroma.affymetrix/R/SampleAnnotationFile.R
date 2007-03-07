@@ -1,6 +1,3 @@
-# path <- getParent(getPath(cs))
-# sa <- SampleAnnotationFile("sampleAnnotation.dcf", path=path);
-
 setConstructorS3("SampleAnnotationFile", function(...) {
   this <- extend(AffymetrixFile(...), "SampleAnnotationFile",
     "cached:.db" = NULL
@@ -12,6 +9,17 @@ setConstructorS3("SampleAnnotationFile", function(...) {
 
   this;
 })
+
+
+setMethodS3("fromPath", "SampleAnnotationFile", function(static, path, pattern="[.](saf|SAF)$", ...) {
+#  pathnames <- findSAFs(static, path=path, pattern=pattern, ...);
+  pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE, ...);
+  if (length(pathnames) == 0)
+    return(NULL);
+  pathname <- pathnames[1];
+  newInstance(static, pathname);
+}, static=TRUE, protected=TRUE)
+
 
 setMethodS3("readData", "SampleAnnotationFile", function(this, rows=NULL, force=FALSE, ...) {
   db <- this$.db;
@@ -53,11 +61,12 @@ setMethodS3("getPatterns", "SampleAnnotationFile", function(this, ...) {
 setMethodS3("match", "SampleAnnotationFile", function(this, names, trim=FALSE, ...) {
   # Scan vector of names for matching patterns
   patterns <- getPatterns(this, ...);
-  res <- sapply(patterns, FUN=function(pattern) { 
+  res <- lapply(patterns, FUN=function(pattern) { 
     idxs <- grep(pattern, names);
     names(idxs) <- names[idxs];
     idxs;
   });
+  names(res) <- patterns; # In case length(res) == 1 /HB 2007-03-06
 
   if (trim) {
     keep <- (sapply(res, FUN=length) > 0);
@@ -70,12 +79,25 @@ setMethodS3("match", "SampleAnnotationFile", function(this, names, trim=FALSE, .
 
 setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ...) {
   allPatterns <- getPatterns(this, ...);
+
   res <- match(this, names, trim=TRUE);
+  # Nothing do to?
+  if (length(res) == 0)
+    return(invisible());
+
   patterns <- names(res);
   rows <- match(patterns, allPatterns);
+  # Nothing do to?
+  if (length(rows) == 0)
+    return(invisible());
+
   db <- readData(this, rows=rows);
   cc <- setdiff(colnames(db), "name");
   db <- db[,cc,drop=FALSE];
+
+  # Nothing do to?
+  if (nrow(db) == 0 || ncol(db) == 0)
+    return(invisible());
 
   for (kk in seq(along=res)) {
     record <- db[kk,,drop=TRUE];
@@ -91,10 +113,12 @@ setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ...) {
     args <- c(args, list(...));
     do.call("FUN", args=args);
   }
-})
+}, protected=TRUE)
 
 ############################################################################
 # HISTORY:
+# 2007-03-06
+# o Total make over.
 # 2007-01-26
 # o Created.
 ############################################################################

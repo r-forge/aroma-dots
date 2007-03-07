@@ -885,6 +885,8 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
     idxOdd <- seq(from=1, to=n, by=2);
     vOdd <- safeMeans(abs(y[,idxOdd]));
     vEven <- safeMeans(abs(y[,idxOdd+1]));
+    verbose && printf(verbose, "vOdd=%.2g\n", vOdd);
+    verbose && printf(verbose, "vEven=%.2g\n", vEven);
     vRatio <- log(vOdd/vEven);
     verbose && printf(verbose, "vRatio=%.2g\n", vRatio);
 

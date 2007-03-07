@@ -608,6 +608,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   env <- new.env();
   env$chipTypes <- chipTypes;
   env$samples <- getFullNames(this);
+  env$sampleLabels <- getNames(this);
   env$zooms <- zooms;
   pathname <- rspToHtml(pathname, path=NULL, 
                         outFile=outFile, outPath=outPath, 
