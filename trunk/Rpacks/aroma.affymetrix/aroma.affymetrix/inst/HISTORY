@@ -2,6 +2,9 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.4.3 [2007-03-06xx]
+o Added trial code for in-memory attributes to AffymetrixFile object.
+  Certain filename tags are interpreted as attributes which are
+  set when the AffymetrixFile object is instantiated.
 o Now the package tries to keep the search path of packages in
   such an order that any package known to cause problems to
   aroma.affymetrix if loaded after aroma.affymetrix, will be
