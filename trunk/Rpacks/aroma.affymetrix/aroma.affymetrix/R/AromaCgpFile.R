@@ -2,7 +2,7 @@ setConstructorS3("AromaCgpFile", function(...) {
   this <- extend(AromaGenomePositionFile(...), "AromaCgpFile");
 
   if (!is.null(this$.pathname))
-    parseTagsAsAttributes(this);
+    setAttributesByTags(this);
 
   this;
 })

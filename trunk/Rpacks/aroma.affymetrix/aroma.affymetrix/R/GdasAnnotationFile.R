@@ -7,7 +7,7 @@ setConstructorS3("GdasAnnotationFile", function(...) {
   );
 
   if (!is.null(this$.pathname))
-    parseTagsAsAttributes(this);
+    setAttributesByTags(this);
 
   this;
 })

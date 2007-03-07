@@ -32,6 +32,12 @@ setMethodS3("hasAttributeXY", "AffymetrixCelFile", function(this, values, ...) {
 
 
 setMethodS3("setAttributesByTags", "AffymetrixCelFile", function(this, tags=getTags(this), ...) {
+  # Split tags
+  if (length(tags) > 0) {
+    tags <- unlist(strsplit(tags, split=","), use.names=FALSE);
+    tags <- trim(tags);
+  }
+
   newAttrs <- NextMethod("setAttributesByTags", this, tags=tags, ...);
 
   # Parse XY, XX, XXX etc tags
@@ -71,7 +77,7 @@ setMethodS3("getPloidy", "AffymetrixCelFile", function(this, chromosome, default
 ############################################################################
 # HISTORY:
 # 2007-03-05
-# o Added parseTagsAsAttributes().
+# o Added setAttributesByTags().
 # o Added setAttributeXY(), getAttributeXY(), and hasAttributeXY().
 # 2007-02-12
 # o Now getData() is using do.call() because it is faster. Unused arguments
