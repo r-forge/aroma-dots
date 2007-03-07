@@ -40,10 +40,27 @@
   # Apply downloaded patches
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   patchPackage("aroma.affymetrix");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fix the search path every time a package is loaded
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  setHook("base::library:onLoad", function(...) {
+    # Fix the search path
+    pkgs <- fixSearchPath(aroma.affymetrix);
+    if (length(pkgs) > 0) {
+      warning("Packages reordered in search path: ", 
+                                            paste(pkgs, collapse=", "));
+    }
+  }, action="append");
 } # .setupAromaAffymetrix()
+
 
 ############################################################################
 # HISTORY:
+# 2007-03-06
+# o Added onLoad hook function for library() and require() to call
+#   fixSearchPath() of the package, which reorders the search path so that
+#   problematic packages are after this package in the search path.
 # 2007-02-22
 # o Added default settings stubs.
 # 2007-02-12
