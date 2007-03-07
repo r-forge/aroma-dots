@@ -482,7 +482,8 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # Scan all CEL files for possible chip types
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Chip type according to the directory structure
-  chipType <- basename(getPath(this));
+  path <- getPath(this);
+  chipType <- basename(path);
   verbose && cat(verbose, "The chip type according to the directory is: ", 
                                                                 chipType);
 
@@ -527,6 +528,21 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   verbose && cat(verbose, "Chip type: ", chipType);
   cdf <- AffymetrixCdfFile$fromChipType(chipType);
   setCdf(this, cdf, .checkArgs=FALSE);
+  verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Scan for SAF files and apply them
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  verbose && enter(verbose, "Scanning for and apply annotation files");
+  sas <- SampleAnnotationSet$fromPath(path);
+  if (nbrOfFiles(sas) == 0) {
+    verbose && cat(verbose, "No annotation files found.");
+  } else {
+    verbose && print(verbose, sas);
+    setAttributesBy(this, sas);
+  }
+  # Store the SAFs for now.
+  this$.sas <- sas;
   verbose && exit(verbose);
 
   verbose && exit(verbose);
@@ -1267,6 +1283,8 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-06
+# o Now attributes are set from SAF files in fromFiles().
 # 2007-02-22
 # o Fixed the warning about "'tzone' attributes are inconsistent". See
 #   code of as.character() for explanation.

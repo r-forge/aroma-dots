@@ -122,6 +122,13 @@ function ChromosomeExplorer() {
     this.updateGlobals();
   }
 
+  this.update = function() {
+    this.updateGlobals();
+		this.updatePanel();
+  	this.updateNavigator();
+		this.updateNavigatorWidth();
+  }
+
   this.updateGlobals = function() {
     panelWidth = panel.clientWidth;
     panelMaxWidth = panel.scrollWidth;
@@ -469,7 +476,7 @@ function ChromosomeExplorer() {
     title = title + '/' + pathname;
     document.title = title;
   }
-  
+
   this.updateNavigator = function() {
     var owner = this;
 
@@ -505,6 +512,8 @@ function ChromosomeExplorer() {
 
 /****************************************************************
  HISTORY:
+ 2007-03-06
+ o BUG FIX: Missing update() method.
  2007-02-20
  o Updated to <rootPath>/<dataSet>/<tags>/<chipType>/<set>/.
  o Created from old ChromosomeExplorer.js making it more of the

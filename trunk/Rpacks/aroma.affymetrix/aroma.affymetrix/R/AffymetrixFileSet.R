@@ -183,6 +183,8 @@ setMethodS3("getFullName", "AffymetrixFileSet", function(this, parent=1, ...) {
 
   # Get the path of this file set
   path <- getPath(this);
+  if (is.na(path))
+    return(NA);
 
   while (parent > 0) {
     # path/to/<name>/<something>
@@ -498,7 +500,10 @@ setMethodS3("getFileSize", "AffymetrixFileSet", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getPath", "AffymetrixFileSet", function(this, ...) {
-  getPath(this$files[[1]]);
+  files <- getFiles(this);
+  if (length(files) == 0)
+    return(NA);
+  getPath(files[[1]]);
 })
 
 
@@ -656,6 +661,30 @@ setMethodS3("getFullNames", "AffymetrixFileSet", function(this, ...) {
 })
 
 
+setMethodS3("indexOf", "AffymetrixFileSet", function(this, patterns, ...) {
+  names <- getNames(this);
+  fullnames <- getFullNames(this);
+
+  patterns0 <- patterns;
+  res <- sapply(patterns, FUN=function(pattern) {
+    pattern <- sprintf("^%s$", pattern);
+    pattern <- gsub("\\^\\^", "^", pattern);
+    pattern <- gsub("\\$\\$", "$", pattern);
+
+    # Specifying tags?
+    if (regexpr(",", pattern) != -1) {
+      idxs <- grep(pattern, fullnames);
+    } else {
+      idxs <- grep(pattern, names);
+    }
+    if (length(idxs) == 0)
+      idxs <- NA;
+    idxs;
+  });
+  names(res) <- patterns0;
+  res;
+})
+
 
 ###########################################################################/**
 # @RdocMethod getPathnames
@@ -757,7 +786,7 @@ setMethodS3("as.list", "AffymetrixFileSet", function(x, ...) {
 setMethodS3("getFile", "AffymetrixFileSet", function(this, idx, ...) {
   if (length(idx) != 1)
     throw("Argument 'idx' must be a single index.");
-  idx <- Arguments$getIndex(idx, range=c(1, nbrOfArrays(this)));
+  idx <- Arguments$getIndex(idx, range=c(1, nbrOfFiles(this)));
   this$files[[idx]];
 })
 
@@ -765,7 +794,7 @@ setMethodS3("getFiles", "AffymetrixFileSet", function(this, idxs=NULL, ...) {
   if (is.null(idxs)) {
     this$files;
   } else {
-    idxs <- Arguments$getIndices(idxs, range=c(1, nbrOfArrays(this)));
+    idxs <- Arguments$getIndices(idxs, range=c(1, nbrOfFiles(this)));
     this$files[idxs];
   }
 }, private=TRUE)
@@ -1035,6 +1064,8 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 
 ############################################################################
 # HISTORY:
+# 2007-03-06
+# o Added indexOf().
 # 2007-02-15
 # o Added getFullNames().
 # 2007-02-07

@@ -17,6 +17,11 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
   }
 
   ces <- getChipEffects(this);
+  if (inherits(ces, "CnChipEffectSet")) {
+    if (ces$combineAlleles) {
+      throw("calculateResiduals() does not yet support chip effects for which allele A and allele B have been combined.");
+    }
+  }
   paf <- getProbeAffinities(this);
   nbrOfArrays <- nbrOfArrays(ces);
 
@@ -51,7 +56,7 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
               chipType=chipType, params=getParameters(this),
               units=units);
   dirs <- c("aroma.affymetrix", chipType);
-  if (!force) {
+  if (TRUE) {
     cdfData <- loadCache(key, dirs=dirs);
     if (!is.null(cdfData))
       verbose && cat(verbose, "Found indices cached on file");
@@ -200,6 +205,10 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
 ##########################################################################
 # HISTORY:
+# 2007-03-06
+# o Now calculateResiduals(), for which chip effects where allele A and B 
+#   have been combined, gives an error, explaining that the feature is
+#   still to be implemented.
 # 2007-02-16
 # o BUG FIX: Already calculated residuals would be recalculated and 
 #   end up as an empty file.

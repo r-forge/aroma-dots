@@ -1,11 +1,30 @@
 setMethodS3("setAttributesBy", "AffymetrixCelSet", function(this, object, ...) {
   methodName <- sprintf("setAttributesBy%s", class(object)[1]);
+  if (!exists(methodName, mode="function")) {
+    throw("No set function found: ", methodName);
+  }
+  
+  fcn <- get(methodName, mode="function");
   tryCatch({
-    fcn <- get(methodName, mode="function");
     fcn(this, object, ...);
   }, error = function(ex) {
+    print(ex);
     throw("Failed to apply attributes by object of class: ", class(object)[1]);
   })
+}, protected=TRUE)
+
+
+setMethodS3("setAttributesBySampleAnnotationSet", "AffymetrixCelSet", function(this, sas, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  res <- lapply(sas, FUN=function(saf) {
+    verbose && enter(verbose, "Applying sample annotations");
+    on.exit({verbose && exit(verbose)});
+
+    setAttributesBy(this, saf, ..., verbose=less(verbose));
+  });
+  invisible(res);
 }, protected=TRUE)
 
 
