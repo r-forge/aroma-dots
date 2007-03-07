@@ -73,7 +73,7 @@ setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, mustExist=
 
   # Parse attributes (all subclasses must call this in the constructor).
   if (!is.null(this$.pathname))
-    parseTagsAsAttributes(this);
+    setAttributesByTags(this);
 
   this;
 }, abstract=TRUE)
@@ -629,7 +629,7 @@ setMethodS3("validateChecksum", "AffymetrixFile", function(this, ..., verbose=FA
 ############################################################################
 # HISTORY:
 # 2007-03-05
-# o Added parseTagsAsAttributes(), which now also tries to coerce values.
+# o Added setAttributesByTags(), which now also tries to coerce values.
 # o Added support for (in-memory) attributes.
 # 2007-02-07
 # o Added getChecksum(), writeChecksum(), readChecksum(), and 

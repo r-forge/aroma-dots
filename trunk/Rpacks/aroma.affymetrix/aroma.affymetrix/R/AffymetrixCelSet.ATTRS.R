@@ -1,25 +1,78 @@
-setMethodS3("setSampleAttributesByTags", "AffymetrixCelSet", function(this, sampleName, tags, ...) {
-  # Argument 'sampleName':
-  sampleName <- Arguments$getCharacter(sampleName);
+setMethodS3("setAttributesBy", "AffymetrixCelSet", function(this, object, ...) {
+  methodName <- sprintf("setAttributesBy%s", class(object)[1]);
+  tryCatch({
+    fcn <- get(methodName, mode="function");
+    fcn(this, object, ...);
+  }, error = function(ex) {
+    throw("Failed to apply attributes by object of class: ", class(object)[1]);
+  })
+}, protected=TRUE)
 
-  # Identify all files that refers to this sample
-  idxs <- which(sampleName == getNames(this));
-  if (length(idxs) == 0)
-    return();
 
-  # Set the attribute for all such files
-  newAttrs <- list();
-  for (idx in idxs) {
-    cf <- getFile(cs, idx);
-    newAttrs <- c(newAttrs, setAttributesByTags(cf, tags, ...));
+setMethodS3("setAttributesBySampleAnnotationFile", "AffymetrixCelSet", function(this, saf, force=FALSE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  setAttrs <- function(appliesTo, tags=NULL, ..., verbose=FALSE) { 
+    verbose && enter(verbose, "Applying sample annotations");
+    on.exit({verbose && exit(verbose)});
+
+    nargs <- 0;
+
+    if (!is.null(tags)) {
+      tags <- tags[!is.na(tags)];
+      tags <- tags[nchar(tags) > 0];
+      if (length(tags) == 0)
+        tags <- NULL;
+    }
+
+    if (!is.null(tags)) {
+      # Split tags
+      tags <- unlist(strsplit(tags, split=","), use.names=FALSE);
+      tags <- trim(tags);
+      verbose && cat(verbose, "Tags: ", paste(tags, collapse=", "));
+      nargs <- nargs + 1;
+    }
+
+    # Nothing to do?
+    if (nargs == 0)
+      return();
+
+    verbose && cat(verbose, "Applies to ", length(appliesTo), " sample(s).");
+    for (kk in seq(along=appliesTo)) { 
+      idx <- appliesTo[kk];
+      verbose && cat(verbose, "Sample: ", names(appliesTo)[kk]);
+
+      # Get the CEL file
+      cf <- getFile(this, idx);
+      if (!is.null(tags)) {
+        setAttributesByTags(cf, tags);
+      }
+    };
+  } # setAttrs()
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'saf':
+  if (!inherits(saf, "SampleAnnotationFile")) {
+    throw("Argument 'saf' is not a SampleAnnotationFile: ", class(saf)[1]);
   }
 
-  invisible(newAttrs);
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  names <- getNames(this);
+  res <- apply(saf, names, FUN=setAttrs, force=force, verbose=verbose);
+
+  invisible(res);
 }, protected=TRUE)
+
 
 ############################################################################
 # HISTORY:
 # 2007-03-06
-# o Added setSampleAttributesByTags().
+# o Added setAttributesBy().
+# o Added setAttributesBySampleAnnotationFile().
 # o Created.
 ############################################################################

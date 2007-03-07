@@ -1,101 +1,96 @@
-# path <- file.path("rawData", getName(ds));
-# sa <- SampleAnnotationFile("sampleAnnotation.xls", path=path);
+# path <- getParent(getPath(cs))
+# sa <- SampleAnnotationFile("sampleAnnotation.dcf", path=path);
 
 setConstructorS3("SampleAnnotationFile", function(...) {
   this <- extend(AffymetrixFile(...), "SampleAnnotationFile",
-    "cached:.data" = NULL
+    "cached:.db" = NULL
   );
 
   # Parse attributes (all subclasses must call this in the constructor).
   if (!is.null(this$.pathname))
-    parseTagsAsAttributes(this);
+    setAttributesByTags(this);
 
   this;
 })
 
-
-
-setMethodS3("getAlias", "SampleAnnotationFile", function(this, ...) {
-  # Get the records of interest.
-  data <- getDataByName(this, ...);
-  names <- rownames(data);
-  data <- data[,"alias"];
-
-  # Non-listed samples
-  nas <- which(is.na(data));
-  data[nas] <- names[nas];
-
-  data;
-})
-
-
-
-setMethodS3("getNbrOfChrX", "SampleAnnotationFile", function(this, ...) {
-  # Get the records of interest.
-  data <- getDataByName(this, ...);
-  data <- data[,"nbrOfChrX"];
-
-  # Convert to numeric
-  data <- as.double(data);
-
-  data;
-})
-
-
-
-setMethodS3("getDataByName", "SampleAnnotationFile", function(this, names=NULL, ...) {
-  # Argument 'names':
-  names <- Arguments$getCharacters(names);
-
-  # Get all annotation data
-  data <- getData(this);
-
-  if (is.null(names))
-    return(data);
-
-  # Locate the rows for each of the requested samples
-  patterns <- paste("^", rownames(data), "$", sep="");
-  matches <- sapply(patterns, FUN=grep, names, value=TRUE);
-
-  # Find each of the samples
-  rr <- integer(length(names));
-  for (kk in seq(along=names)) {
-    name <- names[kk];
-    idxs <- lapply(matches, FUN=function(xs) { name %in% xs });
-    idxs <- which(unlist(idxs, use.names=FALSE));
-    rr[kk] <- idxs[1];
+setMethodS3("readData", "SampleAnnotationFile", function(this, rows=NULL, force=FALSE, ...) {
+  db <- this$.db;
+  if (force || is.null(db)) {
+    pathname <- getPathname(this);
+  
+    # Read all non-commented lines
+    bfr <- readLines(pathname); 
+    bfr <- bfr[-grep("^[ ]*#", bfr)];
+  
+    # Parse these as a DCF
+    db <- read.dcf(textConnection(bfr));
+    rm(bfr); # Not needed anymore
+  
+    this$.db <- db;
   }
 
-  data <- data[rr,,drop=FALSE];
-  rownames(data) <- names;
+  colnames(db) <- toCamelCase(colnames(db));
 
-  data;
-}, private=TRUE)
+  if (!is.null(rows))
+    db <- db[rows,,drop=FALSE];
+
+  db;
+}, protected=TRUE)
 
 
+setMethodS3("getPatterns", "SampleAnnotationFile", function(this, ...) {
+  db <- readData(this, ...);
 
-setMethodS3("getData", "SampleAnnotationFile", function(this, ...) {
-  data <- this$.data;
-  if (is.null(data)) {
-    data <- readData(this);
-    this$.data <- data;
+  # Get sample name pattern
+  patterns <- sprintf("^%s$", db[,"sample"]);
+  patterns <- gsub("\\^\\^", "^", patterns);
+  patterns <- gsub("\\$\\$", "$", patterns);
+
+  patterns;
+}, protected=TRUE)
+
+setMethodS3("match", "SampleAnnotationFile", function(this, names, trim=FALSE, ...) {
+  # Scan vector of names for matching patterns
+  patterns <- getPatterns(this, ...);
+  res <- sapply(patterns, FUN=function(pattern) { 
+    idxs <- grep(pattern, names);
+    names(idxs) <- names[idxs];
+    idxs;
+  });
+
+  if (trim) {
+    keep <- (sapply(res, FUN=length) > 0);
+    res <- res[keep];
   }
-  data;
+
+  res;
+}, protected=TRUE)
+
+
+setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ...) {
+  allPatterns <- getPatterns(this, ...);
+  res <- match(this, names, trim=TRUE);
+  patterns <- names(res);
+  rows <- match(patterns, allPatterns);
+  db <- readData(this, rows=rows);
+  cc <- setdiff(colnames(db), "sample");
+  db <- db[,cc,drop=FALSE];
+
+  for (kk in seq(along=res)) {
+    record <- db[kk,,drop=TRUE];
+
+    # Nothing to do?
+    if (all(is.na(record)))
+      next;
+
+    args <- list(
+      appliesTo = res[[kk]]
+    );
+    args <- c(args, as.list(record));
+    args <- c(args, list(...));
+    do.call("FUN", args=args);
+  }
 })
-
-
-
-setMethodS3("readData", "SampleAnnotationFile", function(this, ...) {
-  pathname <- getPathname(this);
-  df <- readTable(pathname, header=TRUE, na.strings=c("NA", "", "-"), ...);
-
-  cc <- match("name", colnames(df));
-  rownames(df) <- df[,cc];
-  df <- df[,-cc,drop=FALSE];
-
-  df;
-}, private=TRUE)
-
 
 ############################################################################
 # HISTORY:

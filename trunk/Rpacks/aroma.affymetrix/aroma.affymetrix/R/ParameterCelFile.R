@@ -55,7 +55,7 @@ setConstructorS3("ParameterCelFile", function(..., encodeFunction=NULL, decodeFu
 
   # Parse attributes (all subclasses must call this in the constructor).
   if (!is.null(this$.pathname))
-    parseTagsAsAttributes(this);
+    setAttributesByTags(this);
 
   this;
 })

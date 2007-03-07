@@ -52,7 +52,7 @@ setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
 
   # Parse attributes (all subclasses must call this in the constructor).
   if (!is.null(this$.pathname))
-    parseTagsAsAttributes(this);
+    setAttributesByTags(this);
 
   this;
 })
@@ -768,7 +768,7 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 ############################################################################
 # HISTORY:
 # 2007-03-05
-# o Added parseTagsAsAttributes().
+# o Added setAttributesByTags().
 # o Added setAttributeXY(), getAttributeXY(), and hasAttributeXY().
 # 2007-02-12
 # o Now getData() is using do.call() because it is faster. Unused arguments

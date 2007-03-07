@@ -52,7 +52,23 @@ setMethodS3("testAttributes", "AffymetrixFile", function(this, select, ...) {
   res;
 }, protected=TRUE)
 
+
+setMethodS3("setAttributesBy", "AffymetrixFile", function(this, object, ...) {
+  if (inherits(object, "character")) {
+    setAttributesByTags(this, object, ...);
+  } else {
+    throw("Unknown type on argument 'object': ", class(object)[1]);
+  }
+}, protected=TRUE)
+
+
 setMethodS3("setAttributesByTags", "AffymetrixFile", function(this, tags=getTags(this), ...) {
+  # Split tags
+  if (length(tags) > 0) {
+    tags <- unlist(strsplit(tags, split=","), use.names=FALSE);
+    tags <- trim(tags);
+  }
+
   newAttrs <- list();
 
   # Get all <name>=<value> tags
@@ -86,8 +102,10 @@ setMethodS3("setAttributesByTags", "AffymetrixFile", function(this, tags=getTags
 
 ############################################################################
 # HISTORY:
+# 2007-03-06
+# o Added setAttributesBy().
 # 2007-03-05
-# o Added parseTagsAsAttributes(), which now also tries to coerce values.
+# o Added setAttributesByTags(), which now also tries to coerce values.
 # o Added support for (in-memory) attributes.
 # 2007-02-07
 # o Added getChecksum(), writeChecksum(), readChecksum(), and 
