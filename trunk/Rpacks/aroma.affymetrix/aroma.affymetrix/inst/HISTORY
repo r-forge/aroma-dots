@@ -11,6 +11,9 @@ o Now the package tries to keep the search path of packages in
   inserted behind aroma.affymetrix in the search path. For example,
   loading the EBImage package after aroma.affymetrix used to cause
   complaints when calling display() on an ArrayExplorer.
+o WORKAROUND: The generated hashcode for a cache filename was 
+  different depending on the version of R. We are now patching
+  the internal digest() to overcome this inconsistency.
 o BUG FIX: extractSnpQSet() would give "Error: object "cleancdfname"
   not found" if the 'affy' package was not loaded.
 o BUG FIX: getCellIndices() in CnChipEffectFile would give 
