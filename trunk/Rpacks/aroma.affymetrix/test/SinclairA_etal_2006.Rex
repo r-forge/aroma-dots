@@ -1,6 +1,6 @@
 savehistory();
 library(aroma.affymetrix);
-#source("init.R");
+source("init.R");
 #source("ui.R");
 
 # Main data set
