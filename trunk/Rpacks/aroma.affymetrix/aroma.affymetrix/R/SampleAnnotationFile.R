@@ -58,7 +58,7 @@ setMethodS3("getPatterns", "SampleAnnotationFile", function(this, ...) {
   patterns;
 }, protected=TRUE)
 
-setMethodS3("match", "SampleAnnotationFile", function(this, names, trim=FALSE, ...) {
+setMethodS3("matchPatterns", "SampleAnnotationFile", function(this, names, trim=FALSE, ...) {
   # Scan vector of names for matching patterns
   patterns <- getPatterns(this, ...);
   res <- lapply(patterns, FUN=function(pattern) { 
@@ -80,7 +80,7 @@ setMethodS3("match", "SampleAnnotationFile", function(this, names, trim=FALSE, .
 setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ...) {
   allPatterns <- getPatterns(this, ...);
 
-  res <- match(this, names, trim=TRUE);
+  res <- matchPatterns(this, names, trim=TRUE);
   # Nothing do to?
   if (length(res) == 0)
     return(invisible());

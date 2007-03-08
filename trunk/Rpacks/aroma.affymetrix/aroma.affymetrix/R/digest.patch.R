@@ -5,10 +5,15 @@ digest <- function(object, algo=c("md5", "sha1", "crc32"), serialize=TRUE, file=
 
   if (serialize && !file) {
     object <- serialize(object, connection=NULL, ascii=TRUE);
+
     # Exclude serialization header (non-data dependent bytes but R version
-    # specific).  From testing with "random" objects, I now know that the
-    # header is at most 18 bytes long.
-    object <- object[-(1:18)];
+    # specific).  In ASCII, the header consists of for rows ending with
+    # a newline ('\n').  We remove these.
+    # The end of 4th row should be within the first 30 bytes (typically 18).
+    nHeader <- which(object[1:30] == as.raw(10))[4];
+    # Remove header
+    object <- object[-(1:nHeader)];
+
     object <- rawToChar(object);
   } else if (!is.character(object)) {
     stop("Argument object must be of type character if serialize is FALSE");
@@ -47,6 +52,10 @@ digest <- function(object, algo=c("md5", "sha1", "crc32"), serialize=TRUE, file=
 
 ############################################################################
 # HISTORY:
+# 2007-03-08
+# o Thanks to Luke Tierney's reply on my r-devel question of the serialize
+#   header, we now look for the 4th newline, which is more robust to do
+#   when serializing to ASCII.
 # 2007-03-07
 # o Added .assertDigest().
 # o BUG FIX: serialize() gives different results depending on R version.
