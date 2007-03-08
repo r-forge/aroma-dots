@@ -52,11 +52,19 @@
                                             paste(pkgs, collapse=", "));
     }
   }, action="append");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Assert that digest() gives a consistent result across R versions
+  # and platforms.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  .assertDigest("error");
 } # .setupAromaAffymetrix()
 
 
 ############################################################################
 # HISTORY:
+# 2007-03-07
+# o Added test for consistency of digest().
 # 2007-03-06
 # o Added onLoad hook function for library() and require() to call
 #   fixSearchPath() of the package, which reorders the search path so that
