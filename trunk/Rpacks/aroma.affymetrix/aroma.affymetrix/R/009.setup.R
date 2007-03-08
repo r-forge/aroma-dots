@@ -57,7 +57,8 @@
   # Assert that digest() gives a consistent result across R versions
   # and platforms.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  .assertDigest("error");
+if (!identical(getOption("aroma.affymetrix::assertDigest"), FALSE))
+    .assertDigest("error");
 } # .setupAromaAffymetrix()
 
 

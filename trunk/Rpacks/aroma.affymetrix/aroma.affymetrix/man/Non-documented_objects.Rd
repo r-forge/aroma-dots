@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Thu Mar 08 08:46:03 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1011,6 +1013,28 @@
 \alias{verify.AffymetrixCsvGenomeInformation}
 \alias{library}
 \alias{require}
+\alias{apply}
+\alias{apply.default}
+\alias{apply.SampleAnnotationFile}
+\alias{findSAFs}
+\alias{findSAFs.SampleAnnotationSet}
+\alias{fromPath}
+\alias{fromPath.SampleAnnotationFile}
+\alias{fromPath.SampleAnnotationSet}
+\alias{getPatterns}
+\alias{getPatterns.SampleAnnotationFile}
+\alias{indexOf.AffymetrixFileSet}
+\alias{matchPatterns}
+\alias{matchPatterns.default}
+\alias{matchPatterns.SampleAnnotationFile}
+\alias{SampleAnnotationSet}
+\alias{setAttributesBy}
+\alias{setAttributesBy.AffymetrixCelSet}
+\alias{setAttributesBy.AffymetrixFile}
+\alias{setAttributesBySampleAnnotationFile}
+\alias{setAttributesBySampleAnnotationFile.AffymetrixCelSet}
+\alias{setAttributesBySampleAnnotationSet}
+\alias{setAttributesBySampleAnnotationSet.AffymetrixCelSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

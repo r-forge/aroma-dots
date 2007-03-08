@@ -421,3 +421,13 @@
   updateData.AromaGenomePositionFile
   verify.AffymetrixCsvGenomeInformation
   library require
+  apply apply.default apply.SampleAnnotationFile findSAFs
+  findSAFs.SampleAnnotationSet fromPath fromPath.SampleAnnotationFile
+  fromPath.SampleAnnotationSet getPatterns
+  getPatterns.SampleAnnotationFile indexOf.AffymetrixFileSet matchPatterns
+  matchPatterns.default matchPatterns.SampleAnnotationFile SampleAnnotationSet
+  setAttributesBy setAttributesBy.AffymetrixCelSet
+  setAttributesBy.AffymetrixFile setAttributesBySampleAnnotationFile
+  setAttributesBySampleAnnotationFile.AffymetrixCelSet
+  setAttributesBySampleAnnotationSet
+  setAttributesBySampleAnnotationSet.AffymetrixCelSet
