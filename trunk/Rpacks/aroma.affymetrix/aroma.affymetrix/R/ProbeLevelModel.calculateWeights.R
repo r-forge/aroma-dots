@@ -106,7 +106,12 @@ setMethodS3("calculateWeights", "ProbeLevelModel", function(this, units=NULL, ra
     count <- count + 1;
   }
 
-  rm(residualsList, weightsList);
+  if (exists("residualsList")) {
+    rm(residualsList);
+  }
+  if (exists("weightsList")) {
+    rm(weightsList);
+  }
   
   # Garbage collect
   gc <- gc();

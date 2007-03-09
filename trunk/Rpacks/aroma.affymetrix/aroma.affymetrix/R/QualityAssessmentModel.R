@@ -392,7 +392,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
       eps <- (y - yhat);
 #      mad <- 1.4826 * median(abs(yhat));
       mad <- 1.4826 * median(abs(eps));      
-      matrix(psi.huber(eps/mad), ncol=ncol(y));
+      matrix(MASS::psi.huber(eps/mad), ncol=ncol(y));
     })
     res;
   } # resFcn()
@@ -474,12 +474,15 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
     verbose && printf(verbose, "Chunk #%d of %d (%d units)\n",
                                         count, nbrOfChunks, length(units));
 
-    rawDataList <- readUnits(ds, units=units, transforms=list(log2), verbose=less(verbose), stratifyBy="pm");
-    chipEffectList <- readUnits(ces, units=units, transforms=list(log2), verbose=less(verbose));
+    logTransform <- rep(list(log2), nbrOfArrays(this));
+
+    rawDataList <- readUnits(ds, units=units, transforms=logTransform, verbose=less(verbose), stratifyBy="pm");
+    chipEffectList <- readUnits(ces, units=units, transforms=logTransform, verbose=less(verbose));
     probeAffinityList <- readUnits(paf, units=units, transforms=list(log2), verbose=verbose);
 
     
    weightsList <- lapply(head, FUN=resFcn);
+   weightsList <- lapply(weightsList, .subset2, 1);
 
 # update output files
     
