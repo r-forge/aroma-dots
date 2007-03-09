@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Thu Mar 08 08:46:03 2007.
+% on Thu Mar 08 16:18:01 2007.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1035,6 +1035,10 @@
 \alias{setAttributesBySampleAnnotationFile.AffymetrixCelSet}
 \alias{setAttributesBySampleAnnotationSet}
 \alias{setAttributesBySampleAnnotationSet.AffymetrixCelSet}
+\alias{getMonoCell}
+\alias{getMonoCell.AffymetrixCdfFile}
+\alias{getUnitGroupCellMap}
+\alias{getUnitGroupCellMap.AffymetrixCdfFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

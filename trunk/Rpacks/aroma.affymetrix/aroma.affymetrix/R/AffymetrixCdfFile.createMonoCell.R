@@ -416,9 +416,15 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 }, private=TRUE)
 
 
+setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ...) {
+  chipType <- sprintf("%s,monocell", getChipType(this));
+  fromChipType(this, chipType=chipType, ...);
+}, protected=TRUE)
 
 ############################################################################
 # HISTORY:
+# 2007-03-08
+# o Added getMonoCell().
 # 2007-02-21 /HB + KS
 # o BUG FIX: When creating a monocell, the output did not strip of the tags
 #   from the chip type, e.g. annotationData/Foo,core/For,core,monocell.cdf
