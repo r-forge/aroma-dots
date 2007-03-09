@@ -433,3 +433,4 @@
   setAttributesBySampleAnnotationSet.AffymetrixCelSet
   getMonoCell getMonoCell.AffymetrixCdfFile getUnitGroupCellMap
   getUnitGroupCellMap.AffymetrixCdfFile
+  digest.fix023

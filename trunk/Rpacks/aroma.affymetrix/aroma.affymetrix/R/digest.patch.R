@@ -40,7 +40,7 @@
 
 # If using digest v0.2.3 or before, we need to use the above fix.
 # In digest v0.2.4 this is the default behavior.
-if (compareVersions(packageDescription("digest")$Version, "0.2.3") <= 0) {
+if (compareVersion(packageDescription("digest")$Version, "0.2.3") <= 0) {
   digest <- .digest.fix023;
 } else {
   digest <- digest::digest;
