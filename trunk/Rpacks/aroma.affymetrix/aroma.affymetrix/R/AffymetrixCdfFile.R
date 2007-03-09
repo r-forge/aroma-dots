@@ -539,12 +539,17 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- list(method="getCellIndices", class=class(this)[1], chipType=getChipType(this), units=units, ...);
+  key <- list(method="getCellIndices", class=class(this)[1], 
+                           chipType=getChipType(this), units=units, ...);
   id <- digest(key);
   res <- this$.cellIndices[[id]];
   if (!force && !is.null(res)) {
@@ -884,8 +889,15 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
 
 
 setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NULL, stratifyBy=NULL, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
   verbose && enter(verbose, "Trying to load cached results");
   chipType <- getChipType(this);
@@ -1006,8 +1018,16 @@ setMethodS3("compare", "AffymetrixCdfFile", function(this, other, ...) {
 # @keyword IO
 #*/###########################################################################
 setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(this), suffix=NULL, sep="-", path="cdf", ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   # Create the pathname of the destination CDF
   name <- paste(c(chipType, suffix), collapse=sep);

@@ -431,3 +431,5 @@
   setAttributesBySampleAnnotationFile.AffymetrixCelSet
   setAttributesBySampleAnnotationSet
   setAttributesBySampleAnnotationSet.AffymetrixCelSet
+  getMonoCell getMonoCell.AffymetrixCdfFile getUnitGroupCellMap
+  getUnitGroupCellMap.AffymetrixCdfFile
