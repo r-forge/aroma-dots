@@ -56,7 +56,7 @@ setMethodS3("getFileClass", "FirmaSet", function(static, ...) {
   FirmaFile;
 }, static=TRUE, private=TRUE)
 
-setMethodS3("fromFiles", "FirmaSet", function(static, ..., pattern=",FIRMAresults[.](c|C)(e|E)(l|L)$", fileClass=NULL) {
+setMethodS3("fromFiles", "FirmaSet", function(static, ..., pattern=",FIRMAscores[.](c|C)(e|E)(l|L)$", fileClass=NULL) {
   # Argument 'fileClass':
   if (is.null(fileClass))
     fileClass <- gsub("Set$", "File", class(static)[1]);

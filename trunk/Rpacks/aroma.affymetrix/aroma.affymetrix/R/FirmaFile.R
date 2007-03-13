@@ -199,7 +199,7 @@ setMethodS3("updateUnits", "FirmaFile", function(this, units=NULL, cdf=NULL, dat
 }, private=TRUE);
 
 
-setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=sprintf("%s,FIRMAresults.cel", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
+setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=sprintf("%s,FIRMAscores.cel", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
 
   # Argument 'df':
   if (!is.null(df)) {
