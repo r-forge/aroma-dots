@@ -6,13 +6,14 @@ setConstructorS3("SampleAnnotationSet", function(...) {
 
 setMethodS3("findSAFs", "SampleAnnotationSet", function(static, path, pattern="[.](saf|SAF)$", ...) {
   # Search all paths to the root path
-  pathnames <- c();
+  pathnames <- list();
   lastPath <- NA;
   depth <- 10;
   while(depth > 0 && !is.null(path) && !identical(path, lastPath)) {
     lastPath <- path;
     pathnames0 <- list.files(path=path, pattern=pattern, full.names=TRUE);
-    pathnames <- c(pathnames, pathnames0);
+    pathnames0 <- sort(pathnames0);
+    pathnames <- c(pathnames, list(pathnames0));
 #    path <- getParent(path);
     path <- dirname(path);
     depth <- depth - 1;
@@ -21,6 +22,8 @@ setMethodS3("findSAFs", "SampleAnnotationSet", function(static, path, pattern="[
   # Return from top to bottom
   pathnames <- rev(pathnames);
 
+  pathnames <- unlist(pathnames, use.names=FALSE);
+  
   pathnames;
 }, static=TRUE, private=TRUE)
 

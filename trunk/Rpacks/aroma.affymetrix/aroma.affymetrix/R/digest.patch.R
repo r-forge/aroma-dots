@@ -40,10 +40,12 @@
 
 # If using digest v0.2.3 or before, we need to use the above fix.
 # In digest v0.2.4 this is the default behavior.
-if (compareVersion(packageDescription("digest")$Version, "0.2.3") <= 0) {
-  digest <- .digest.fix023;
+if (compareVersion(packageDescription("digest")$Version, "0.3.0") >= 0) {
+  digest <- function(..., skip="auto", ascii=FALSE) {
+    digest::digest(..., skip=skip, ascii=ascii);
+  }
 } else {
-  digest <- digest::digest;
+  digest <- .digest.fix023;
 }
 
 
@@ -55,9 +57,9 @@ if (compareVersion(packageDescription("digest")$Version, "0.2.3") <= 0) {
   d1 <- digest(0);
   # Get the "truth" 
   ver <- packageDescription("digest")$Version;
-  if (identical(ver, "0.2.3")) {
+  if (compareVersion(ver, "0.2.3") <= 0) {
     d0 <- "78a10a7e5929f8c605f71823203c0dc5";
-  } else if (identical(ver, "0.2.4")) {
+  } else if (compareVersion(ver, "0.3.0") >= 0) {
     d0 <- "908d1fd10b357ed0ceaaec823abf81bc";
   } else {
     warning(sprintf("No assertion rule available for digest v%s. Names of aroma.affymetrix cache files might differ between R version and platforms.", ver));
@@ -82,8 +84,8 @@ if (compareVersion(packageDescription("digest")$Version, "0.2.3") <= 0) {
 # HISTORY:
 # 2007-03-08
 # o Prepared the digest() patch and .assertDigest() for the upcoming
-#   digest v0.2.4.  This will make the package work with both digest
-#   v0.2.3 and v0.2.4, which is needed until everyone upgrade.
+#   digest v0.3.0.  This will make the package work with both digest
+#   v0.2.3 and v0.3.0, which is needed until everyone upgrade.
 # o Thanks to Luke Tierney's reply on my r-devel question of the serialize
 #   header, we now look for the 4th newline, which is more robust to do
 #   when serializing to ASCII.
