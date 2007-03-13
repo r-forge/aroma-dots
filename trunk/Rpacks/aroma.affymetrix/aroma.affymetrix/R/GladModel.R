@@ -340,7 +340,8 @@ setMethodS3("getNames", "GladModel", function(this, ...) {
 setMethodS3("getFullNames", "GladModel", function(this, arrays=NULL, ...) {
   getFullNameOfTuple <- function(ceList) {
     # Get sample name
-    name <- getName(ceList[[1]]);
+    first <- which(!sapply(ceList, FUN=is.null))[1];
+    name <- getName(ceList[[first]]);
   
     # Get chip-effect tags *common* across chip types
     tags <- lapply(ceList, FUN=function(ce) {
@@ -809,7 +810,9 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
     ceList <- getChipEffectFiles(this, array=array);
 
     # Get chip-effect tags *common* across chip types
-    tags <- lapply(ceList, getTags);
+    tags <- lapply(ceList, FUN=function(ce) {
+      if (is.null(ce)) NULL else getTags(ce);
+    });
     tags <- getCommonListElements(tags);
     tags <- unlist(tags, use.names=FALSE);
     tags <- setdiff(tags, "chipEffects");
@@ -1404,6 +1407,13 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-03-12
+# o BUG FIX: getFullNames() of GladModel would give 'Error in getName(ceList[[
+#   1]]) : no applicable method for "getName"' if there was not hybridization
+#   for the *first* chip type in a set of multiple chip types.
+# o BUG FIX: fit() of GladModel would give 'Error in FUN(X[[2]], ...) : no
+#   applicable method for "getTags"' if there were not data files for all
+#   chip types.
 # 2007-02-20
 # o Added getFullNames(), which for each tuple (across chip types) returns the
 #   sample name of the tuple, together with all *common* tags across all

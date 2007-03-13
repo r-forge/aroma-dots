@@ -51,9 +51,9 @@ setMethodS3("getPatterns", "SampleAnnotationFile", function(this, ...) {
   db <- readData(this, ...);
 
   # Get sample name pattern
-  patterns <- sprintf("^%s$", db[,"name"]);
+  patterns <- sprintf("^%s.*$", db[,"name"]);
   patterns <- gsub("\\^\\^", "^", patterns);
-  patterns <- gsub("\\$\\$", "$", patterns);
+  patterns <- gsub("\\$\\.\\*\\$", "$", patterns);
 
   patterns;
 }, protected=TRUE)
@@ -77,19 +77,27 @@ setMethodS3("matchPatterns", "SampleAnnotationFile", function(this, names, trim=
 }, protected=TRUE)
 
 
-setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ...) {
-  allPatterns <- getPatterns(this, ...);
+setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ..., verbose=FALSE) {
+  verbose <- Arguments$getVerbose(verbose);
+  
+  allPatterns <- getPatterns(this, ..., verbose=verbose);
 
   res <- matchPatterns(this, names, trim=TRUE);
   # Nothing do to?
   if (length(res) == 0)
     return(invisible());
 
+  verbose && print(verbose, res);
+  
   patterns <- names(res);
+  verbose && print(verbose, patterns);
+  verbose && print(verbose, allPatterns);
   rows <- match(patterns, allPatterns);
   # Nothing do to?
   if (length(rows) == 0)
     return(invisible());
+
+  verbose && print(verbose, rows);
 
   db <- readData(this, rows=rows);
   cc <- setdiff(colnames(db), "name");
@@ -117,6 +125,8 @@ setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-13
+# o getPatterns() and matchPatterns() now matches full names.
 # 2007-03-06
 # o Total make over.
 # 2007-01-26

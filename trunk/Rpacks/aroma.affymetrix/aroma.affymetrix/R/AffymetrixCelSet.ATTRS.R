@@ -81,7 +81,7 @@ setMethodS3("setAttributesBySampleAnnotationFile", "AffymetrixCelSet", function(
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  names <- getNames(this);
+  names <- getFullNames(this);
   res <- apply(saf, names, FUN=setAttrs, force=force, verbose=verbose);
 
   invisible(res);
