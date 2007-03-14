@@ -16,6 +16,9 @@ o BUG FIX: extractSnpQSet() would give "Error: object "cleancdfname"
 o BUG FIX: getCellIndices() in CnChipEffectFile would give 
   "Error in fcn(.subset2(unit, "groups"), ...) : object "odds"
   not found" for units with other than 1, 2, or 4 groups.
+o MEMORY OPTIMIZATION: Further optimized memory usage in:
+  calculateResiduals() of ProbeLevelModel.
+
 WORK IN PROGRESS (no guarantees):
 o Added getUnitGroupCellMap() to AffymetrixCdfFile.
 o Added code for in-memory attributes to AffymetrixFile object.
