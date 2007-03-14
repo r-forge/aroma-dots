@@ -425,6 +425,7 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
   verbose && printf(verbose, "Getting FIRMA results for %d units.\n", nbrOfUnits);
 
   # Identify which of the requested units have *not* already been estimated
+  # for all arrays
   if (!doRemaining) {
     if (force) {
       verbose && printf(verbose, "All of these are forced to be fitted.\n");
@@ -460,74 +461,95 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
   verbose && cat(verbose, "Units: ");
   verbose && str(verbose, units);
 
+  unitsFull <- units;
+  
   for (kk in seq(ws)) {
 
+    units <- unitsFull;
+    
     tTotal <- processTime();
 
     ff <- getFile(fs, kk);
     wf <- getFile(ws, kk);
+
+    # check which units need to be fitted, for each file, to avoid having
+    # to re-calculate in the event of a crash.
+
+    verbose && enter(verbose, "Array #", kk, ": ", getName(wf));
+    
+    if (!force) {
+      units <- findUnitsTodo(ff, units=units, force=TRUE, verbose=less(verbose));
+      nbrOfUnits <- length(units);
+      verbose && printf(verbose, "%d of the requested units need to be fitted.\n", nbrOfUnits);
+    }
+
+    if (length(units) > 0) {
     
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get the weights by unit
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    tRead <- processTime();
+      tRead <- processTime();
 
-    y <- readUnits(wf, units=units, stratifyBy="pm", ..., force=force, verbose=less(verbose));
-    timers$read <- timers$read + (processTime() - tRead);
+      y <- readUnits(wf, units=units, stratifyBy="pm", ..., force=force, verbose=less(verbose));
+      timers$read <- timers$read + (processTime() - tRead);
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Calculate FIRMA scores
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    verbose && enter(verbose, "Calculating FIRMA results");
-    tFit <- processTime();
-    fit <- lapply(y, FUN=fitUnit);
-    timers$fit <- timers$fit + (processTime() - tFit);
-    y <- NULL; # Not needed anymore (to minimize memory usage)
-    verbose && str(verbose, fit[1]);
-    verbose && exit(verbose);
+      tFit <- processTime();
+      fit <- lapply(y, FUN=fitUnit);
+      timers$fit <- timers$fit + (processTime() - tFit);
+      y <- NULL; # Not needed anymore (to minimize memory usage)
+      verbose && str(verbose, fit[1]);
+      verbose && exit(verbose);
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Store results
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    verbose && enter(verbose, "Storing FIRMA results");
-    tWriteFs <- processTime();
+      verbose && enter(verbose, "Storing FIRMA results");
+      tWriteFs <- processTime();
 
-    suppressWarnings({
-      map <- getCellMap(ff, units=units, ..., verbose=less(verbose));
-    })
-    intensities <- unlist(lapply(fit, function(unit) {
-      lapply(unit, function(group) {
-        .subset2(group, "intensities");
+      suppressWarnings({
+        map <- getCellMap(ff, units=units, ..., verbose=less(verbose));
       })
-    }), use.names=FALSE)
-    stdvs <- unlist(lapply(fit, function(unit) {
-      lapply(unit, function(group) {
-        .subset2(group, "stdvs");
-      })
-    }), use.names=FALSE)
-    pixels <- unlist(lapply(fit, function(unit) {
-      lapply(unit, function(group) {
-        .subset2(group, "pixels");
-      })
-    }), use.names=FALSE)
-    data <- data.frame(intensities=intensities, stdvs=stdvs, pixels=pixels, cell=map[,"cell"]);
+      intensities <- unlist(lapply(fit, function(unit) {
+        lapply(unit, function(group) {
+          .subset2(group, "intensities");
+        })
+      }), use.names=FALSE)
+      stdvs <- unlist(lapply(fit, function(unit) {
+        lapply(unit, function(group) {
+          .subset2(group, "stdvs");
+        })
+      }), use.names=FALSE)
+      pixels <- unlist(lapply(fit, function(unit) {
+        lapply(unit, function(group) {
+          .subset2(group, "pixels");
+        })
+      }), use.names=FALSE)
+      data <- data.frame(intensities=intensities, stdvs=stdvs, pixels=pixels, cell=map[,"cell"]);
     
-    updateDataFlat(ff, units=units, data=data, verbose=less(verbose));
-    timers$writeFs <- timers$writeFs + (processTime() - tWriteFs);
-    verbose && exit(verbose);
+      updateDataFlat(ff, units=units, data=data, verbose=less(verbose));
+      timers$writeFs <- timers$writeFs + (processTime() - tWriteFs);
+      verbose && exit(verbose);
 
-    fit <- NULL; # Not needed anymore
-    intensities <- stdvs <- pixels <- NULL;
+      fit <- NULL; # Not needed anymore
+      intensities <- stdvs <- pixels <- NULL;
     
     # Garbage collection
-    tGc <- processTime();
-    gc <- gc();
-    verbose && print(verbose, gc);
-    timers$gc <- timers$gc + (processTime() - tGc);
-    
-    timers$total <- timers$total + (processTime() - tTotal);
-    
+      tGc <- processTime();
+      gc <- gc();
+      verbose && print(verbose, gc);
+      timers$gc <- timers$gc + (processTime() - tGc);
+      
+      timers$total <- timers$total + (processTime() - tTotal);
+
+    } # end of if (length(units) > 0)
+    else {
+      verbose && exit(verbose);
+    }
+      
   } # end of loop over arrays
 
 
