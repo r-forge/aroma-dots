@@ -72,10 +72,18 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
       length(.subset2(group, 1));
     });
     unitGroupSizes <- unlist(unitGroupSizes, use.names=FALSE);
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
     verbose && str(verbose, unitGroupSizes);
     verbose && exit(verbose);
 
     cells <- unlist(cdfUnits, use.names=FALSE);
+
+    rm(cdfUnits);
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
 
     verbose && enter(verbose, "Retrieving CDF cell indices for chip effects");
     cdfUnits <- getCellIndices(ces, units=units, verbose=less(verbose));
@@ -83,10 +91,17 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
     verbose && exit(verbose);
 
     rm(cdfUnits); # Not needed anymore
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
 
     cdfData <- list(unitGroupSizes=unitGroupSizes, cells=cells, cells2=cells2);
     verbose && enter(verbose, "Saving to file cache");
     saveCache(cdfData, key=key, dirs=dirs);
+    rm(cdfData);
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
     verbose && exit(verbose);
   } else {
     verbose && cat(verbose, "CDF related data cached on file:");
@@ -100,6 +115,9 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
     verbose && cat(verbose, "cells2:");
     verbose && str(verbose, cells2);
     rm(cdfData);
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
   }
 
   # Optimized reading order
@@ -122,7 +140,10 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
   path <- getPath(this);
 
   for (kk in seq(ds)) {
+    # Get probe-level signals
     df <- getFile(ds, kk);
+
+    # Get chip effect estimates
     cef <- getFile(ces, kk);
 
     verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
@@ -152,6 +173,12 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
     verbose && exit(verbose);
     rm(y, yhat, theta);
 
+    # Memory optimization: One less copy of 'eps'.
+    eps <- eps[o];
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
     verbose && enter(verbose, "Storing residuals");
     tryCatch({
       if (!isFile(pathname)) {
@@ -161,7 +188,7 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
         verbose && exit(verbose);
       }
       verbose && enter(verbose, "Writing normalized intensities");
-      updateCel(pathname, indices=cells, intensities=eps[o]);
+      updateCel(pathname, indices=cells, intensities=eps);
       verbose && exit(verbose);
     }, interrupt = function(intr) {
       verbose && print(verbose, intr);
@@ -205,6 +232,8 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
 ##########################################################################
 # HISTORY:
+# 2007-03-14
+# o Optimized memory usage in calculateResiduals() further.
 # 2007-03-06
 # o Now calculateResiduals(), for which chip effects where allele A and B 
 #   have been combined, gives an error, explaining that the feature is

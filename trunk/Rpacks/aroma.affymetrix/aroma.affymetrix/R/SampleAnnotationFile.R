@@ -28,7 +28,9 @@ setMethodS3("readData", "SampleAnnotationFile", function(this, rows=NULL, force=
   
     # Read all non-commented lines
     bfr <- readLines(pathname); 
-    bfr <- bfr[-grep("^[ ]*#", bfr)];
+    excl <- grep("^[ ]*#", bfr);
+    if (length(excl) > 0)
+      bfr <- bfr[-excl];
   
     # Parse these as a DCF
     db <- read.dcf(textConnection(bfr));

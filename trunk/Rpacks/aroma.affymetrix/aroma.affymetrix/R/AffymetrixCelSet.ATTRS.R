@@ -36,8 +36,8 @@ setMethodS3("setAttributesBySampleAnnotationFile", "AffymetrixCelSet", function(
     verbose && enter(verbose, "Applying sample annotations");
     on.exit({verbose && exit(verbose)});
 
-    nargs <- 0;
-
+    args <- list(...);
+    nargs <- length(args);
     if (!is.null(tags)) {
       tags <- tags[!is.na(tags)];
       tags <- tags[nchar(tags) > 0];
@@ -57,6 +57,7 @@ setMethodS3("setAttributesBySampleAnnotationFile", "AffymetrixCelSet", function(
     if (nargs == 0)
       return();
 
+    # Typically the below only applies to one sample
     verbose && cat(verbose, "Applies to ", length(appliesTo), " sample(s).");
     for (kk in seq(along=appliesTo)) { 
       idx <- appliesTo[kk];
@@ -64,6 +65,11 @@ setMethodS3("setAttributesBySampleAnnotationFile", "AffymetrixCelSet", function(
 
       # Get the CEL file
       cf <- getFile(this, idx);
+
+      # Apply the attributes
+      setAttributes(cf, ...);
+
+      # Apply the tags
       if (!is.null(tags)) {
         setAttributesByTags(cf, tags);
       }
@@ -90,6 +96,8 @@ setMethodS3("setAttributesBySampleAnnotationFile", "AffymetrixCelSet", function(
 
 ############################################################################
 # HISTORY:
+# 2007-03-14
+# o Now setAttributesBySampleAnnotationFile() also set attributes.
 # 2007-03-06
 # o Added setAttributesBy().
 # o Added setAttributesBySampleAnnotationFile().
