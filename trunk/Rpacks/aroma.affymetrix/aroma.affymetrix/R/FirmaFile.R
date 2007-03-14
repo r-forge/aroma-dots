@@ -61,7 +61,7 @@ setMethodS3("findUnitsTodo", "FirmaFile", function(this, units=NULL, ..., force=
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  verbose && enter(verbose, "Identifying non-assigned units in QC file");
+  verbose && enter(verbose, "Identifying non-assigned units in FIRMA file");
 
   verbose && cat(verbose, "Pathname: ", getPathname(this));
   if (is.null(units)) {
@@ -76,7 +76,7 @@ setMethodS3("findUnitsTodo", "FirmaFile", function(this, units=NULL, ..., force=
 #                        readStdvs=FALSE, readPixels=TRUE);
 
   value <- readUnits(this, units=units, readIntensities=FALSE, 
-                        readStdvs=FALSE, readPixels=TRUE);
+                        readStdvs=FALSE, readPixels=TRUE, force=force);
   
   # Identify units for which all pixels == 0.
 
