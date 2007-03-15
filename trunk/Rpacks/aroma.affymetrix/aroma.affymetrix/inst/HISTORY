@@ -2,6 +2,13 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.4.3 [2007-03-15]
+o Updated the GladModel to only work with chromosome indices (integers).
+o Now the GladModel infers the set of possible chromosomes from the
+  GenomeInformation file.
+o Updated GenomeInformation to return chromosomes as indices and never
+  with 'X' and 'Y' regardless of source.  This is part of a moving the
+  package to handle chromosomes as indices so that it will work with
+  any genome not just the human.
 o Fixed fit() for FirmaModel so that it checks array-by-array
   whether units have been fitted.
 o Names of cache files are now made more consistent between
@@ -13,6 +20,8 @@ o Now the package tries to keep the search path of packages in
   inserted behind aroma.affymetrix in the search path. For example,
   loading the EBImage package after aroma.affymetrix used to cause
   complaints when calling display() on an ArrayExplorer.
+o BUG FIX: plotNuse() and plotRle() did not handle outliers
+  correctly.
 o BUG FIX: Changed default filenames for FIRMA scores to 
   "%s,FIRMAscores.CEL" rather than "%s,FIRMAresults.CEL" for 
   consistency with FirmaModel.

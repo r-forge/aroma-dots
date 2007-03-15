@@ -270,6 +270,18 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
     verbose && str(verbose, data);
     verbose && exit(verbose);
 
+    if ("chromosome" %in% fields) {
+      verbose && enter(verbose, "Replacing 'X' and 'Y' with 23 and 24");
+      chr <- data[,"chromosome"];
+      chr[chr == "X"] <- 23;
+      chr[chr == "Y"] <- 24;
+      chr <- as.integer(chr);
+      data[,"chromosome"] <- chr;
+      rm(chr);
+      verbose && str(verbose, data);
+      verbose && exit(verbose);
+    }
+
     # Store in cache
     this$.data <- data;
 
@@ -322,7 +334,12 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 })
 
 
-setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosome="X", region=NULL, ...) {
+setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosome=23, region=NULL, ...) {
+  allChromosomes <- getChromosomes(this);
+
+  # Argument 'chromosome':
+  chromosome <- Arguments$getChromosome(chromosome, range=range(allChromosomes), ...);
+
   # Argument 'region':
   if (!is.null(region)) {
     region <- Arguments$getNumerics(region);
@@ -480,13 +497,13 @@ setMethodS3("getChromosomes", "GenomeInformation", function(this, ..., force=FAL
   chromosomes <- this$.chromosomes;
   if (is.null(chromosomes) || force) {
     chromosomes <- unique(getData(this, fields="chromosome")[,1]);
+    chromosomes <- sort(chromosomes);
 
-    # Sort in order of (1:22,"X","Y")
-    chromosomeMap <- c(1:22,"X","Y", NA);
-    o <- match(chromosomeMap, chromosomes);
-    chromosomes <- chromosomes[o];
-
-    chromosomes <- chromosomes[!is.na(chromosomes)];
+##    # Sort in order of (1:22,"X","Y")
+##    chromosomeMap <- c(1:22,"X","Y", NA);
+##    o <- match(chromosomeMap, chromosomes);
+##    chromosomes <- chromosomes[o];
+##    chromosomes <- chromosomes[!is.na(chromosomes)];
     
     this$.chromosomes <- chromosomes;
   }
@@ -571,6 +588,11 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-03-15
+# o Updated GenomeInformation to return chromosomes as indices and never
+#   with 'X' and 'Y' regardless of source.  This is part of a moving the
+#   package to handle chromosomes as indices so that it will work with
+#   any genome.
 # 2007-02-28
 # o Added argument 'region' to getUnitsOnChromosome().
 # 2007-01-25
