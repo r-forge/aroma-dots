@@ -211,7 +211,7 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
   for (cc in 1:nbrOfChannels) {
     verbose && enter(verbose, "Array #", cc);
 
-    verbose && printf(verbose, "reading, ");
+    verbose && printf(verbose, "reading...\n");
     df <- getFile(this, cc);
     Xcc <- getData(df, indices=probes, fields="intensities", ..., verbose=less(verbose, 2));
     Xcc <- as.vector(Xcc$intensities);
@@ -220,7 +220,7 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
     gc();
 
     # Order and sort the values
-    verbose && printf(verbose, "sorting, ");
+    verbose && printf(verbose, "sorting...\n");
     Scc <- sort(Xcc);
 
     # Garbage collect
@@ -247,7 +247,7 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
     }
 
     # Incremental mean
-    verbose && printf(verbose, "summing.");
+    verbose && printf(verbose, "summing...\n");
     xTarget <- xTarget + Scc;
     rm(Scc);
 

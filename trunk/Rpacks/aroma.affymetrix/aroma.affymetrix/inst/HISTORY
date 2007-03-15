@@ -1,7 +1,9 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.3 [2007-03-08]
+Version: 0.4.3 [2007-03-15]
+o Fixed fit() for FirmaModel so that it checks array-by-array
+  whether units have been fitted.
 o Names of cache files are now made more consistent between
   R versions (and platforms) resulting in more cache hits 
   and therefore faster processing.
@@ -11,6 +13,9 @@ o Now the package tries to keep the search path of packages in
   inserted behind aroma.affymetrix in the search path. For example,
   loading the EBImage package after aroma.affymetrix used to cause
   complaints when calling display() on an ArrayExplorer.
+o BUG FIX: Changed default filenames for FIRMA scores to 
+  "%s,FIRMAscores.CEL" rather than "%s,FIRMAresults.CEL" for 
+  consistency with FirmaModel.
 o BUG FIX: extractSnpQSet() would give "Error: object "cleancdfname"
   not found" if the 'affy' package was not loaded.
 o BUG FIX: getCellIndices() in CnChipEffectFile would give 
@@ -30,6 +35,7 @@ o Added the AromaGenomePositionFile class and subclasses
 o Added extractMatrix() for ChipEffectSet.
 o Lines of code: grep -v "#" *.R | wc -l => 23211
 
+
 Version: 0.4.2 [2007-02-28]
 o Now patches in patches/aroma.affymetrix/<date>/ are sourced
   when the package is loaded.  To download the latest patches,
@@ -47,6 +53,7 @@ o BUG FIX: The output data set as returned by getOutputDataSet() or
 o BUG FIX: process() of ChromosomeExplorer would give an error saying
   'Error in file(file, ifelse(append, "a", "w")) ... cannot open file
    /*****************...'.
+
 
 Version: 0.4.1 [2007-02-22]
 o Fixed the warning about "'tzone' attributes are inconsistent". See
