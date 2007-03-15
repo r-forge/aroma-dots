@@ -55,13 +55,23 @@ setMethodS3("getParameterSet", "SnpPlm", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getCellIndices", "SnpPlm", function(this, ...) {
-  cells <- NextMethod("getCellIndices", this, ...);
+setMethodS3("getCellIndices", "SnpPlm", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  verbose && enter(verbose, "Identifying cell indices for a SnpPlm");
+
+  cells <- NextMethod("getCellIndices", this, ..., verbose=verbose);
 
   # Merge strands?
   if (this$mergeStrands) {
+    verbose && enter(verbose, "Merging strands");
     cells <- applyCdfGroups(cells, cdfMergeStrands);
+    verbose && exit(verbose);
   }
+
+  verbose && exit(verbose);
   
   cells;
 })

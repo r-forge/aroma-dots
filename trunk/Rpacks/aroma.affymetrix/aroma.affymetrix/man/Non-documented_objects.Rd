@@ -1038,6 +1038,8 @@
 \alias{getUnitGroupCellMap}
 \alias{getUnitGroupCellMap.AffymetrixCdfFile}
 \alias{digest.fix023}
+\alias{calculateResidualSet}
+\alias{calculateResidualSet.ProbeLevelModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

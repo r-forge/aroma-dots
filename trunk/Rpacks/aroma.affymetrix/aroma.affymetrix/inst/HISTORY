@@ -20,6 +20,10 @@ o Now the package tries to keep the search path of packages in
   inserted behind aroma.affymetrix in the search path. For example,
   loading the EBImage package after aroma.affymetrix used to cause
   complaints when calling display() on an ArrayExplorer.
+o Replaced argument 'moreCells' with 'ram' and removed argument
+  'cellsPerChunk' in getAverageFile() of AffymetrixCelSet.
+o BUG FIX: calculateResiduals() of ProbeLevelModel would give 
+  non-zero residuals for cells not fitted by the PLM. 
 o BUG FIX: plotNuse() and plotRle() did not handle outliers
   correctly.
 o BUG FIX: Changed default filenames for FIRMA scores to 
