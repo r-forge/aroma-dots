@@ -16,12 +16,14 @@ setMethodS3("getChromosomes", "Arguments", function(static, chromosomes, range=c
 
 
 setMethodS3("getChromosome", "Arguments", function(static, chromosome, ..., length=1) {
-  getChromosomes(static, chromosomes=chromosome, length=length);
+  getChromosomes(static, chromosomes=chromosome, length=length, ...);
 }, static=TRUE, protected=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2007-03-15
+# o BUG FIX: Forgot to pass '...' down in getChromosome().
 # 2007-03-06
 # o Added getChromosome() and getChromosomes().
 # o Created.

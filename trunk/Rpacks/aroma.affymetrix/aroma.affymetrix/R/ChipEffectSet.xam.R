@@ -176,7 +176,7 @@ setMethodS3("getXAM", "ChipEffectSet", function(this, other, chromosome, units=N
   }
 
   # Argument 'chromosome':
-  chromosome <- Arguments$getCharacter(chromosome);
+  chromosome <- Arguments$getChromosome(chromosome);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -202,7 +202,7 @@ setMethodS3("getXAM", "ChipEffectSet", function(this, other, chromosome, units=N
   units <- getUnitIndices(gi, chromosome=chromosome, units=units, verbose=less(verbose));
   nunits <- length(units);
   if (nunits == 0)
-    throw("No SNPs found on requested chromosome: ", chromosome);
+    throw("No units found on requested chromosome: ", chromosome);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

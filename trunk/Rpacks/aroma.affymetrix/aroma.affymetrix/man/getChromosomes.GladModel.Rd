@@ -19,8 +19,7 @@
  Gets the chromosomes available.
 }
 
-\synopsis{getChromosomes.GladModel(static, ...)}
-\usage{GladModel$getChromosomes(...)}
+\usage{\method{getChromosomes}{GladModel}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}

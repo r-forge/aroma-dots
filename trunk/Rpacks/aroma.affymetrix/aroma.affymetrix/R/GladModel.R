@@ -143,6 +143,7 @@ setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*
   
 
   extend(Object(), "GladModel",
+    .chromosomes = NULL,
     .cesList = cesList,
     .referenceList = referenceList
   )
@@ -607,10 +608,13 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getChromosomes", "GladModel", function(static, ...) {
-  c(1:22, "X");
-}, static=TRUE)
-
+setMethodS3("getChromosomes", "GladModel", function(this, ...) {
+  gis <- getListOfGenomeInformations(this);
+  chromosomes <- lapply(gis, getChromosomes);
+  chromosomes <- unlist(chromosomes, use.names=TRUE);
+  chromosomes <- sort(unique(chromosomes));
+  chromosomes;
+})
 
 
 setMethodS3("getListOfGenomeInformations", "GladModel", function(this, ...) {
@@ -732,18 +736,22 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
     arrays <- indexOfArrays(this, arrays=arrays);
   }
 
+  allChromosomes <- getChromosomes(this);
+
   # Argument 'chromosomes':
   if (identical(chromosomes, "fitted")) {
   } else if (is.null(chromosomes)) {
     chromosomes <- getChromosomes(this);
   } else if (is.numeric(chromosomes)) {
-    chromosomes <- Arguments$getIndices(chromosomes, range=c(1,24));
-    chromosomes <- as.character(chromosomes);
-    chromosomes[chromosomes == "23"] <- "X";
-    chromosomes <- intersect(chromosomes, getChromosomes(this));
+    chromosomes <- Arguments$getChromosomes(chromosomes,
+                                                range=range(allChromosomes));
+##    chromosomes <- as.character(chromosomes);  ## TODO
+##    chromosomes[chromosomes == "23"] <- "X";   ## TODO
+    chromosomes <- intersect(chromosomes, allChromosomes);
   } else if (is.character(chromosomes)) {
-    chromosomes <- Arguments$getCharacters(chromosomes);
-    chromosomes[chromosomes == "23"] <- "X";
+    chromosomes <- Arguments$getChromosomes(chromosomes, 
+                                                range=range(allChromosomes));
+##    chromosomes[chromosomes == "23"] <- "X";   ## TODO
     chromosomes <- intersect(chromosomes, getChromosomes(this));
   }
 
@@ -821,7 +829,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
 
     res[[arrayName]] <- list();
     for (chr in chromosomes) {
-      chrIdx <- match(chr, c(1:22, "X", "Y"));
+##      chrIdx <- match(chr, c(1:22, "X", "Y"));
       verbose && enter(verbose, 
                           sprintf("Array #%d ('%s') of %d on chromosome %s", 
                                            aa, arrayName, nbrOfArrays, chr));
@@ -830,7 +838,7 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
       # Get pathname
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Add tags chrNN,<reference tags>
-      tags <- c(ceTags, sprintf("chr%02d", chrIdx));
+      tags <- c(ceTags, sprintf("chr%02d", chr));
       tags <- c(tags, refTags);
       fullname <- paste(c(arrayName, tags), collapse=",");
       filename <- sprintf("%s.xdr", fullname);
@@ -1027,24 +1035,24 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
       arrayFullName <- gsub("^(.*),chr[0-9][0-9].*$", "\\1", fullname);
       arrayName <- gsub("^([^,]*).*$", "\\1", arrayFullName);
   
-      # Extract the chromsome from the GLAD fit object
+      # Extract the chromosome from the GLAD fit object
       pv <- fit$profileValues;
       chromosome <- unique(pv$Chromosome);  # Should only be one!
-      chromosome[chromosome == "23"] <- "X";
+##      chromosome[chromosome == "23"] <- "X";  # TODO
   
       # Infer the length (in bases) of the chromosome
-      chromosomeIdx <- match(chromosome, getChromosomes(this));
-      nbrOfBases <- genome$nbrOfBases[chromosomeIdx];
+##      chromosomeIdx <- match(chromosome, getChromosomes(this));
+      nbrOfBases <- genome$nbrOfBases[chromosome];
       widthMb <- nbrOfBases / 1e6;
   
-      verbose && enter(verbose, sprintf("Plotting %s for chromosome %s (%02d) [%.2fMB]", arrayName, chromosome, chromosomeIdx, widthMb));
+      verbose && enter(verbose, sprintf("Plotting %s for chromosome %02d [%.2fMB]", arrayName, chromosome, widthMb));
   
       for (zz in seq(along=zooms)) {
         zoom <- zooms[zz];
   
         # Create the pathname to the file
         imgName <- sprintf("%s,chr%02d,x%04d.%s", 
-                          arrayFullName, chromosomeIdx, zoom, imageFormat);
+                          arrayFullName, chromosome, zoom, imageFormat);
         pathname <- filePath(path, imgName);
   
         # pngDev() (that is bitmap()) does not accept spaces in pathnames
@@ -1191,6 +1199,8 @@ setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", organism=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'url':
   if (identical(url, "ucsc")) {
+    # The UCSC browser accepts chromsomes either 'X' or 23.  In other words,
+    # we can stick with integers to be more general.
     url <- function(chromosome, start, stop) {
       uri <- "http://genome.ucsc.edu/cgi-bin/hgTracks?clade=vertebrate";
       sprintf("%s&org=%s&db=%s&position=chr%s%%3A%d-%d", uri, organism, hgVersion, chromosome, as.integer(start), as.integer(stop));
@@ -1340,7 +1350,7 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=NULL, format=c("x
   
         # All chromosomes should have prefix 'chr'.
         chrIdx <- as.integer(df[,"Chromosome"]);
-        df[chrIdx == 23,"Chromosome"] <- "X";
+        ## df[chrIdx == 23,"Chromosome"] <- "X"; ## REMOVED 2007-03-15
         df[,"Chromosome"] <- paste("chr", df[,"Chromosome"], sep="");
       }
   
@@ -1407,6 +1417,10 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-03-15
+# o Updated the GladModel to only work with chromosome indices (integers).
+# o Now the GladModel infers the set of possible chromosomes from the
+#   GenomeInformation file.
 # 2007-03-12
 # o BUG FIX: getFullNames() of GladModel would give 'Error in getName(ceList[[
 #   1]]) : no applicable method for "getName"' if there was not hybridization
@@ -1439,7 +1453,7 @@ ylim <- c(-1,1);
 #   so that we can infer the relative genomic location from the horisontal
 #   pixel location.
 # 2007-01-21
-# o Added a better error message when plot() fails to locate hgChromsomes.txt.
+# o Added a better error message when plot() fails to locate hgChromosomes.txt.
 # 2007-01-17
 # o Now argument 'arrays' can be either a vector of indices or array names,
 #   or NULL.

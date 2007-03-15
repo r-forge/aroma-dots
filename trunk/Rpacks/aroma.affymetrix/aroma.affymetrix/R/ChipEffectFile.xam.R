@@ -194,7 +194,7 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
   units <- getUnitIndices(gi, chromosome=chromosome, units=units, verbose=less(verbose));
   nunits <- length(units);
   if (nunits == 0)
-    throw("No SNPs found on requested chromosome: ", chromosome);
+    throw("No units found on requested chromosome: ", chromosome);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -211,7 +211,7 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Remove SNPs for which we have no position information
+  # Remove units for which we have no position information
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   keep <- which(!is.na(x));
   nexcl <- length(x) - length(keep);
@@ -234,6 +234,8 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
 
 ############################################################################
 # HISTORY:
+# 2007-03-15
+# o Replaced "SNPs" with "units" in error messages.
 # 2007-01-16
 # o BUG FIX: getAM() and getXAM() required that argument 'other' was an
 #   CnChipEffectFile; ChipEffectFile is enough.
