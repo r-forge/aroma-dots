@@ -828,7 +828,7 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # Read signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Get the pathnames of all CEL files
-  pathnames <- unlist(lapply(this, getPathname), use.names=FALSE);
+  pathnames <- getPathnames(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Cached values
@@ -953,15 +953,13 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 #  \item{sd}{A @character of a @function specifying the function used
 #    to calculate the standard deviation.}
 #  \item{na.rm}{If @TRUE, @NAs are excluded before, otherwise not.}
-#  \item{...}{Not used.}
-#  \item{cellsPerChunk}{A @integer specifying the total number of cells 
-#    (across arrays) read into memory per chunk.}
-#  \item{moreCells}{A @double scalar indicating if more or less cells
+#  \item{ram}{A @double scalar indicating if more or less cells
 #    should be used per chunk.}
 #  \item{force}{If @TRUE, parameters for cells already calculated are
 #    recalculated, otherwise not.}
 #  \item{verbose}{If @TRUE, progress details are printed, otherwise not.
 #    May also be a @see "R.utils::Verbose" object.}
+#  \item{...}{Not used.}
 # }
 #
 # \value{
@@ -985,7 +983,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
+setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ram=1, force=FALSE, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1075,8 +1073,8 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     indices <- Arguments$getIndices(indices, range=c(1, nbrOfCells));
   }
 
-  # Argument 'cellsPerChunk':
-  cellsPerChunk <- Arguments$getInteger(cellsPerChunk, range=c(1,Inf));
+  # Argument 'ram':
+  ram <- Arguments$getDouble(ram, range=c(1e-3, 1024));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -1135,14 +1133,14 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   # Since we might want to do this robustly, but also because we want to
   # estimate the standard deviation, for each cell we need all data across 
   # arrays at once.  In order to this efficiently, we do this in chunks
+  cellsPerChunk <- ram * 10^7 / nbrOfArrays(this);
   idxs <- 1:nbrOfIndices;
   head <- 1:cellsPerChunk;
   nbrOfChunks <- ceiling(nbrOfIndices / cellsPerChunk);
   verbose && cat(verbose, "Number cells per chunk: ", cellsPerChunk);
 
   # Get the pathnames of all CEL files to average
-  pathnames <- lapply(this, getPathname);
-  pathnames <- unlist(pathnames, use.names=FALSE);
+  pathnames <- getPathnames(this);
   nbrOfArrays <- length(pathnames);
 
   if (!na.rm)
@@ -1283,6 +1281,9 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-15
+# o Replaced argument 'moreCells' with 'ram' and removed argument
+#   'cellsPerChunk' in getAverageFile() of AffymetrixCelSet.
 # 2007-03-06
 # o Now attributes are set from SAF files in fromFiles().
 # 2007-02-22

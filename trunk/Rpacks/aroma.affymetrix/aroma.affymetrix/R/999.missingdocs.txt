@@ -434,3 +434,4 @@
   getMonoCell getMonoCell.AffymetrixCdfFile getUnitGroupCellMap
   getUnitGroupCellMap.AffymetrixCdfFile
   digest.fix023
+  calculateResidualSet calculateResidualSet.ProbeLevelModel

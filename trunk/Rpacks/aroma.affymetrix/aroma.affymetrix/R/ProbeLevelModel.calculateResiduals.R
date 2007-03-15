@@ -5,7 +5,11 @@ setMethodS3("getCalculateResidualsFunction", "ProbeLevelModel", function(static,
 }, static=TRUE, protected=TRUE)
 
 
-setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
+setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
+  calculateResidualSet(this, ...);
+})
+
+setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -184,7 +188,8 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
       if (!isFile(pathname)) {
         # Copy CEL file and update the copy
         verbose && enter(verbose, "Copying source CEL file");
-        copyCel(from=getPathname(df), to=pathname, overwrite=force);
+        createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
+##        copyCel(from=getPathname(df), to=pathname, overwrite=force);
         verbose && exit(verbose);
       }
       verbose && enter(verbose, "Writing normalized intensities");
@@ -232,6 +237,10 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, units=NULL, 
 
 ##########################################################################
 # HISTORY:
+# 2007-03-15
+# o Renamed calculateResiduals() to calculateResidualSet().
+# o BUG FIX: calculateResiduals() of ProbeLevelModel would give non-zero
+#   residuals for cells not fitted by the PLM. 
 # 2007-03-14
 # o Optimized memory usage in calculateResiduals() further.
 # 2007-03-06
