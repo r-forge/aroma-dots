@@ -706,7 +706,6 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, arrays=NULL, ...) {
     arrays <- getNames(this);
 
 
-
   # Get the model
   model <- getModel(this);
 

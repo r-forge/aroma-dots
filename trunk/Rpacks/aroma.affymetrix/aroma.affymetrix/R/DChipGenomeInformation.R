@@ -132,9 +132,10 @@ setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {
 
 setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
   readFcns <- list(
-    "^Mapping10K" = read50KHg17,
-    "^Mapping50K" = read50KHg17,
-    "^Mapping250K" = read250KHg17
+                   "^Mapping10K" = read50KHg17,
+                   "^Mapping50K" = read50KHg17,
+                   "^Mapping250K" = read250KHg17,
+                   "^Mouse430" = readMouse430,
   );
 
   chipType <- getChipType(this);
@@ -200,6 +201,27 @@ setMethodS3("read50KHg17", "DChipGenomeInformation", function(this, ..., exclude
   );
 
   readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, exclude=exclude, ...);
+}, private=TRUE)
+
+
+setMethodS3("readMouse430", "DChipGenomeInformation", function(this, ...) {
+  colClasses <- c(
+    "Probe Set"="character", 
+    "chromosome"="character",	
+    "Physical Position"="integer",
+    "End"="integer",
+    "Strand"="character",
+    "Cytoband"="character"
+  );
+
+  tableData <- readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, ...);
+
+  # ad hoc fix: remove "chr" from chromosome
+
+  tableData[,"chromosome"] <- gsub("chr","",tableData[,"chromosome"]);
+  tableData[,"chromosome"] <- gsub("random","",tableData[,"chromosome"]);
+  tableData;
+  
 }, private=TRUE)
 
 
