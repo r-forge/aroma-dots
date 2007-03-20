@@ -51,6 +51,7 @@ extends \link[R.oo]{Object}\cr
 \tabular{rll}{
  \tab \code{compareChecksum} \tab  -\cr
  \tab \code{fromFile} \tab  -\cr
+ \tab \code{getAlias} \tab  -\cr
  \tab \code{getChecksum} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFilename.AffymetrixFile]{getFilename}} \tab Gets the filename of the file.\cr
  \tab \code{getFileSize} \tab  -\cr
@@ -63,6 +64,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{hasTag} \tab  -\cr
  \tab \code{hasTags} \tab  -\cr
  \tab \code{readChecksum} \tab  -\cr
+ \tab \code{setAlias} \tab  -\cr
  \tab \code{validateChecksum} \tab  -\cr
  \tab \code{writeChecksum} \tab  -\cr
 }
