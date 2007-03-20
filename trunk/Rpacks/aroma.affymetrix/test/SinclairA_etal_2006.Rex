@@ -1,6 +1,6 @@
 #savehistory();
 library(aroma.affymetrix);
-source("init.R");
+#source("init.R");
 #source("ui.R");
 
 # Main data set
@@ -72,10 +72,17 @@ for (chipType in chipTypes) {
   cesList[[chipType]] <- cesN;
 } # for (chipType ...)
 
+# Set attributes (manually for now)
+saf <- SampleAnnotationSet$fromPath("rawData");
+cesList <- lapply(cesList, FUN=function(ces) {
+  setAttributesBy(ces, saf);
+  ces;
+})
+
 glad <- GladModel(cesList);
 
 ce <- ChromosomeExplorer(glad);
-setArrays(ce, patients);
+setArrays(ce, gsub(",.*", "", c(patients, controls)));
 print(ce);
 
 logFile <- sprintf("%s.log", getName(ce));
@@ -83,4 +90,4 @@ log <- Verbose(logFile, threshold=-4, removeFile=FALSE);
 timestampOn(log);
 
 print(log, ce);
-process(ce, verbose=log);
+#process(ce, verbose=log);

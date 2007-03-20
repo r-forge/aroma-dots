@@ -1,9 +1,9 @@
 library(aroma.affymetrix);
-source("init.R");
+#source("init.R");
 
 dataSetName <- "AGRF_2007a";
 tags <- "QN,RMA,A+B,FLN";
-tags <- "QN,RMA,+-,A+B,F+R,g,FLN";
+#tags <- "QN,RMA,+-,A+B,F+R,g,FLN";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 
 cesList <- list();
@@ -20,7 +20,7 @@ print(glad);
 
 ce <- ChromosomeExplorer(glad);
 setAlias(ce, "ScottH_etal_2007");
-setArrays(ce, c("1-288", "2-437", "3-575", "414-VA"));
+setArrays(ce, c("1-288", "2-437", "3-575", "414-VA", "606-VA", "617-VA", "609-PW", "614-NB"));
 print(ce);
 
 logFile <- sprintf("%s.log", getName(ce));

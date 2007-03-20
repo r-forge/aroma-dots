@@ -92,8 +92,7 @@ if (atHome) {
 #  source("~/braju.com.R/R.utils/R.utils/R/sourceDirectory.R");
 #  source("../../affxparser/affxparser/R/findCdf.R");
 } else {
-  options("R.cache.path"="/tmp/hb/.Rcache/");
-  mkdirs(getOption("R.cache.path"));
+  setCacheRootPath("~/.Rcache/");
 }
 
 sourceDirectory("patches/", recursive=FALSE, modifiedOnly=TRUE);
