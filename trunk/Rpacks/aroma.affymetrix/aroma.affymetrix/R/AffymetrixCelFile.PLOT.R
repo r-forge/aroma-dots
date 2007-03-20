@@ -1093,10 +1093,9 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
   # Generate the pathname
   if (is.null(fullname)) {
-    name <- getAlias(this);
-    if (is.null(name))
-      name <- getName(this);
-    fullname <- paste(c(name, getTags(this)), collapse=",");
+    fullname <- getAlias(this);
+    if (is.null(fullname))
+      fullname <- getFullName(this);
   }
   fullname <- paste(c(fullname, tags), collapse=",");
   if (is.null(filename)) {
