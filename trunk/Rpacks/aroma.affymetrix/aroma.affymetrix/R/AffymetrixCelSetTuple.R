@@ -57,7 +57,6 @@ setConstructorS3("AffymetrixCelSetTuple", function(csList=NULL, tags="*", ..., .
 
 
 setMethodS3("byPath", "AffymetrixCelSetTuple", function(static, path, ..., verbose=FALSE) {
-str(1)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
