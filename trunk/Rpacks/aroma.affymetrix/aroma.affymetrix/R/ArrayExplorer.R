@@ -74,6 +74,19 @@ setMethodS3("getListOfReporters", "ArrayExplorer", function(this, ...) {
 }, protected=TRUE);
 
 
+setMethodS3("setAlias", "ArrayExplorer", function(this, ...) {
+  NextMethod("setAlias", this, ...);
+  reporters <- getListOfReporters(this);
+  lapply(reporters, FUN=setAlias, ...);
+  invisible(this);
+})
+
+setMethodS3("getAlias", "ArrayExplorer", function(this, ...) {
+  reporters <- getListOfReporters(this);
+  getAlias(reporters[[1]], ...);
+})
+
+
 setMethodS3("getAsteriskTags", "ArrayExplorer", function(this, ...) {
   "";
 })
@@ -310,7 +323,7 @@ setMethodS3("addColorMap", "ArrayExplorer", function(this, ...) {
 })
 
 
-setMethodS3("setColorMaps", "ArrayExplorer", function(this, colorMaps=c("sqrt,yellow", "sqrt,rainbow"), ...) {
+setMethodS3("setColorMaps", "ArrayExplorer", function(this, ...) {
   reporters <- getListOfReporters(this);
   res <- lapply(reporters, FUN=setColorMaps, ...);
   invisible(res);
@@ -389,6 +402,9 @@ setMethodS3("process", "ArrayExplorer", function(this, arrays=NULL, ..., verbose
 
 ##############################################################################
 # HISTORY:
+# 2007-03-20
+# o Added setAlias() which also sets the alias on the reporters.
+# o Added getAlias() to inherit the alias from the reporters.
 # 2007-03-19
 # o Class can now handle multiple chip types.
 # o Class is now making use of the SpatialReporter class.
