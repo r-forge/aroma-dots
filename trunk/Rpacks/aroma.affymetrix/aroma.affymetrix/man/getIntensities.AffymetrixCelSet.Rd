@@ -22,18 +22,12 @@
 \usage{\method{getIntensities}{AffymetrixCelSet}(this, ...)}
 
 \arguments{
- \item{arrays}{An \code{\link[base]{integer}} index \code{\link[base]{vector}} specifying arrays to be read.
-   If \code{\link[base]{NULL}}, all arrays are read.}
- \item{indices}{An \code{\link[base]{integer}} index \code{\link[base]{vector}} specifying cells to be read.
-   If \code{\link[base]{NULL}}, all cells are read.}
- \item{verbose}{If \code{\link[base:logical]{TRUE}}, progress details are printed, otherwise not.
-   May also be a \code{\link[R.utils]{Verbose}} object.}
- \item{...}{Not used.}
+ \item{...}{Passed to \code{\link[aroma.affymetrix:getData.AffymetrixCelSet]{*getData}()}.}
 }
 
 \value{
   Returns a \code{\link[base]{numeric}} \eqn{NxK} matrix, where \eqn{N} is the number of
-  cells read, and \eqn{K} is the number of arrays read.
+  cells read, and \eqn{K} is the number of arrays in the data set.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

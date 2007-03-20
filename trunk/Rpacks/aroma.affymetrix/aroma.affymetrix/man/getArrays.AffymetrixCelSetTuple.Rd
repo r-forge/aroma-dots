@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ChromosomeExplorer.R
+%  AffymetrixCelSetTuple.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getArrays.ChromosomeExplorer}
-\alias{getArrays.ChromosomeExplorer}
-\alias{ChromosomeExplorer.getArrays}
-\alias{getArrays.ChromosomeExplorer}
-\alias{getArrays,ChromosomeExplorer-method}
+\name{getArrays.AffymetrixCelSetTuple}
+\alias{getArrays.AffymetrixCelSetTuple}
+\alias{AffymetrixCelSetTuple.getArrays}
+\alias{getArrays.AffymetrixCelSetTuple}
+\alias{getArrays,AffymetrixCelSetTuple-method}
 
 
 \title{Gets the names of the arrays}
 
 \description{
- Gets the names of the arrays in the explorer.
+ Gets the names of the arrays available in the model.
 }
 
-\usage{\method{getArrays}{ChromosomeExplorer}(this, ...)}
+\usage{\method{getArrays}{AffymetrixCelSetTuple}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{ChromosomeExplorer}}.
+  For more information see \code{\link{AffymetrixCelSetTuple}}.
 }
 \keyword{internal}
 \keyword{methods}

@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ArrayExplorer.R
+%  AffymetrixFileSetReporter.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{setAlias.ArrayExplorer}
-\alias{setAlias.ArrayExplorer}
-\alias{ArrayExplorer.setAlias}
-\alias{setAlias.ArrayExplorer}
-\alias{setAlias,ArrayExplorer-method}
+\name{setAlias.AffymetrixFileSetReporter}
+\alias{setAlias.AffymetrixFileSetReporter}
+\alias{AffymetrixFileSetReporter.setAlias}
+\alias{setAlias.AffymetrixFileSetReporter}
+\alias{setAlias,AffymetrixFileSetReporter-method}
 
 
 \title{Sets the alias of the output set}
@@ -21,7 +21,7 @@
   default.
 }
 
-\usage{\method{setAlias}{ArrayExplorer}(this, alias=NULL, ...)}
+\usage{\method{setAlias}{AffymetrixFileSetReporter}(this, alias=NULL, ...)}
 
 \arguments{
  \item{alias}{A \code{\link[base]{character}} string for the new alias of the output set.
@@ -40,9 +40,9 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:getAlias.ArrayExplorer]{*getAlias}()}.
-  \code{\link[aroma.affymetrix:getName.ArrayExplorer]{*getName}()}.
-  For more information see \code{\link{ArrayExplorer}}.
+  \code{\link[aroma.affymetrix:getAlias.AffymetrixFileSetReporter]{*getAlias}()}.
+  \code{\link[aroma.affymetrix:getName.AffymetrixFileSetReporter]{*getName}()}.
+  For more information see \code{\link{AffymetrixFileSetReporter}}.
 }
 \keyword{internal}
 \keyword{methods}

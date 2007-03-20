@@ -1,10 +1,20 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.4.4 [2007-03-19]
+o The ArrayExplorer class now handles multiple chip types.
+
+WORK IN PROGRESS (no guarantees):
+o Added AffymetrixCelSetTuple.
+o Added the SpatialReporter class.
+o Added the abstract Explorer class.
+
+
 Version: 0.4.3 [2007-03-15]
 o Updated the GladModel to only work with chromosome indices (integers).
 o Now the GladModel infers the set of possible chromosomes from the
-  GenomeInformation file.
+  GenomeInformation file.  This means it handles other genomes than
+  the human genome better.
 o Updated GenomeInformation to return chromosomes as indices and never
   with 'X' and 'Y' regardless of source.  This is part of a moving the
   package to handle chromosomes as indices so that it will work with
@@ -22,6 +32,10 @@ o Now the package tries to keep the search path of packages in
   complaints when calling display() on an ArrayExplorer.
 o Replaced argument 'moreCells' with 'ram' and removed argument
   'cellsPerChunk' in getAverageFile() of AffymetrixCelSet.
+o BUG FIX: getAverageFile() of AffymetrixCelSet would average the wrong
+  set of cells if argument 'indices' was different from NULL.
+o BUG FIX: Argument '...' to plotDensity() of AffymetrixCelFile and
+  AffymetrixCelSet are no longer passed to identifyCells().
 o BUG FIX: calculateResiduals() of ProbeLevelModel would give 
   non-zero residuals for cells not fitted by the PLM. 
 o BUG FIX: plotNuse() and plotRle() did not handle outliers
@@ -36,6 +50,7 @@ o BUG FIX: getCellIndices() in CnChipEffectFile would give
   not found" for units with other than 1, 2, or 4 groups.
 o MEMORY OPTIMIZATION: Further optimized memory usage in:
   calculateResiduals() of ProbeLevelModel.
+o Lines of code: grep -v "#" *.R | wc -l => 24106
 
 WORK IN PROGRESS (no guarantees):
 o Added getUnitGroupCellMap() to AffymetrixCdfFile.
@@ -46,7 +61,6 @@ o Added code for in-memory attributes to AffymetrixFile object.
 o Added the AromaGenomePositionFile class and subclasses
   AromaUgpFile and AromaCgpFile.
 o Added extractMatrix() for ChipEffectSet.
-o Lines of code: grep -v "#" *.R | wc -l => 23211
 
 
 Version: 0.4.2 [2007-02-28]

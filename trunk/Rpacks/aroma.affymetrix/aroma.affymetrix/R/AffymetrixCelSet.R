@@ -746,18 +746,12 @@ setMethodS3("getData", "AffymetrixCelSet", function(this, indices=NULL, fields=c
 # @synopsis
 #
 # \arguments{
-#  \item{arrays}{An @integer index @vector specifying arrays to be read.
-#    If @NULL, all arrays are read.}
-#  \item{indices}{An @integer index @vector specifying cells to be read. 
-#    If @NULL, all cells are read.}
-#  \item{verbose}{If @TRUE, progress details are printed, otherwise not.
-#    May also be a @see "R.utils::Verbose" object.}
-#  \item{...}{Not used.}
+#  \item{...}{Passed to @seemethod "getData".}
 # }
 #
 # \value{
 #   Returns a @numeric \eqn{NxK} matrix, where \eqn{N} is the number of 
-#   cells read, and \eqn{K} is the number of arrays read.
+#   cells read, and \eqn{K} is the number of arrays in the data set.
 # }
 #
 # @author
@@ -784,14 +778,11 @@ setMethodS3("getIntensities", "AffymetrixCelSet", function(this, ...) {
 # @synopsis
 #
 # \arguments{
-#  \item{arrays}{An @integer index @vector specifying arrays to be read.
-#    If @NULL, all arrays are read.}
 #  \item{units}{An @integer index @vector specifying units to be read. 
 #    If @NULL, all units are read.}
-#  \item{readMap}{An @integer @vector specifying a read map used to read the
-#    cell signals.}
 #  \item{...}{Arguments passed to the low-level function for read units, 
 #    e.g. @see "affxparser::readCelUnits" or @see "aroma.apd::readApdUnits".}
+#  \item{force}{If @TRUE, cached values are ignored.}
 #  \item{verbose}{If @TRUE, progress details are printed, otherwise not.
 #    May also be a @see "R.utils::Verbose" object.}
 # }
@@ -828,7 +819,7 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # Read signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Get the pathnames of all CEL files
-  pathnames <- getPathnames(this);
+  pathnames <- unlist(lapply(this, getPathname), use.names=FALSE);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Cached values
@@ -953,13 +944,15 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 #  \item{sd}{A @character of a @function specifying the function used
 #    to calculate the standard deviation.}
 #  \item{na.rm}{If @TRUE, @NAs are excluded before, otherwise not.}
-#  \item{ram}{A @double scalar indicating if more or less cells
+#  \item{...}{Not used.}
+#  \item{cellsPerChunk}{A @integer specifying the total number of cells 
+#    (across arrays) read into memory per chunk.}
+#  \item{moreCells}{A @double scalar indicating if more or less cells
 #    should be used per chunk.}
 #  \item{force}{If @TRUE, parameters for cells already calculated are
 #    recalculated, otherwise not.}
 #  \item{verbose}{If @TRUE, progress details are printed, otherwise not.
 #    May also be a @see "R.utils::Verbose" object.}
-#  \item{...}{Not used.}
 # }
 #
 # \value{
@@ -983,7 +976,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ram=1, force=FALSE, verbose=FALSE, ...) {
+setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1073,8 +1066,8 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     indices <- Arguments$getIndices(indices, range=c(1, nbrOfCells));
   }
 
-  # Argument 'ram':
-  ram <- Arguments$getDouble(ram, range=c(1e-3, 1024));
+  # Argument 'cellsPerChunk':
+  cellsPerChunk <- Arguments$getInteger(cellsPerChunk, range=c(1,Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -1133,14 +1126,14 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   # Since we might want to do this robustly, but also because we want to
   # estimate the standard deviation, for each cell we need all data across 
   # arrays at once.  In order to this efficiently, we do this in chunks
-  cellsPerChunk <- ram * 10^7 / nbrOfArrays(this);
   idxs <- 1:nbrOfIndices;
   head <- 1:cellsPerChunk;
   nbrOfChunks <- ceiling(nbrOfIndices / cellsPerChunk);
   verbose && cat(verbose, "Number cells per chunk: ", cellsPerChunk);
 
   # Get the pathnames of all CEL files to average
-  pathnames <- getPathnames(this);
+  pathnames <- lapply(this, getPathname);
+  pathnames <- unlist(pathnames, use.names=FALSE);
   nbrOfArrays <- length(pathnames);
 
   if (!na.rm)
@@ -1168,7 +1161,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     X <- matrix(NA, nrow=length(ii), ncol=nbrOfArrays);
     for (kk in seq(length=nbrOfArrays)) {
       X[,kk] <- readCel(filename = pathnames[kk],
-                        indices = ii,
+                        indices = indices[ii],
                         readIntensities = readIntensities,
                         readHeader = FALSE,
                         readStdvs = readStdvs,
@@ -1281,9 +1274,9 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
-# 2007-03-15
-# o Replaced argument 'moreCells' with 'ram' and removed argument
-#   'cellsPerChunk' in getAverageFile() of AffymetrixCelSet.
+# 2007-03-16
+# o BUG FIX: getAverageFile() of AffymetrixCelSet would average the wrong
+#   set of cells if argument 'indices' was different from NULL.
 # 2007-03-06
 # o Now attributes are set from SAF files in fromFiles().
 # 2007-02-22

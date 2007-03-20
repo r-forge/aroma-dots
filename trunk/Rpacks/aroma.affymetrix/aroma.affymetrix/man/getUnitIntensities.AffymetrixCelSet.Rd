@@ -22,14 +22,11 @@
 \usage{\method{getUnitIntensities}{AffymetrixCelSet}(this, units=NULL, ..., force=FALSE, verbose=FALSE)}
 
 \arguments{
- \item{arrays}{An \code{\link[base]{integer}} index \code{\link[base]{vector}} specifying arrays to be read.
-   If \code{\link[base]{NULL}}, all arrays are read.}
  \item{units}{An \code{\link[base]{integer}} index \code{\link[base]{vector}} specifying units to be read.
    If \code{\link[base]{NULL}}, all units are read.}
- \item{readMap}{An \code{\link[base]{integer}} \code{\link[base]{vector}} specifying a read map used to read the
-   cell signals.}
  \item{...}{Arguments passed to the low-level function for read units,
    e.g. \code{\link[affxparser]{readCelUnits}} or \code{\link[aroma.apd]{readApdUnits}}.}
+ \item{force}{If \code{\link[base:logical]{TRUE}}, cached values are ignored.}
  \item{verbose}{If \code{\link[base:logical]{TRUE}}, progress details are printed, otherwise not.
    May also be a \code{\link[R.utils]{Verbose}} object.}
 }

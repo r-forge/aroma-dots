@@ -1,27 +1,29 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ArrayExplorer.R
+%  Explorer.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{display.ArrayExplorer}
-\alias{display.ArrayExplorer}
-\alias{ArrayExplorer.display}
-\alias{display.ArrayExplorer}
-\alias{display,ArrayExplorer-method}
+\name{process.Explorer}
+\alias{process.Explorer}
+\alias{Explorer.process}
+\alias{process.Explorer}
+\alias{process,Explorer-method}
 
 
-\title{Displays the explorer in the default browser}
+\title{Generates image files, scripts and dynamic pages for the explorer}
 
 \description{
- Displays the explorer in the default browser.
+ Generates image files, scripts and dynamic pages for the explorer.
 }
 
-\usage{\method{display}{ArrayExplorer}(this, ..., verbose=FALSE)}
+\usage{\method{process}{Explorer}(...)}
 
 \arguments{
+  \item{arrays}{A \code{\link[base]{vector}} of arrays specifying which arrays to
+   be considered.  If \code{\link[base]{NULL}}, all are processed.}
   \item{...}{Not used.}
   \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
@@ -33,7 +35,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{ArrayExplorer}}.
+  For more information see \code{\link{Explorer}}.
 }
 \keyword{internal}
 \keyword{methods}

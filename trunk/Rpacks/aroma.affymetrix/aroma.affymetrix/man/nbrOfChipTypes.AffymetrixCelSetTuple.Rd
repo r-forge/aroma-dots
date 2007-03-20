@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ChromosomeExplorer.R
+%  AffymetrixCelSetTuple.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{nbrOfArrays.ChromosomeExplorer}
-\alias{nbrOfArrays.ChromosomeExplorer}
-\alias{ChromosomeExplorer.nbrOfArrays}
-\alias{nbrOfArrays.ChromosomeExplorer}
-\alias{nbrOfArrays,ChromosomeExplorer-method}
+\name{nbrOfChipTypes.AffymetrixCelSetTuple}
+\alias{nbrOfChipTypes.AffymetrixCelSetTuple}
+\alias{AffymetrixCelSetTuple.nbrOfChipTypes}
+\alias{nbrOfChipTypes.AffymetrixCelSetTuple}
+\alias{nbrOfChipTypes,AffymetrixCelSetTuple-method}
 
 
-\title{Gets the total number of arrays}
+\title{Gets the number of chip types}
 
 \description{
- Gets the total number of arrays considered by the explorer.
+ Gets the number of chip types used in the model.
 }
 
-\usage{\method{nbrOfArrays}{ChromosomeExplorer}(this, ...)}
+\usage{\method{nbrOfChipTypes}{AffymetrixCelSetTuple}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{ChromosomeExplorer}}.
+  For more information see \code{\link{AffymetrixCelSetTuple}}.
 }
 \keyword{internal}
 \keyword{methods}

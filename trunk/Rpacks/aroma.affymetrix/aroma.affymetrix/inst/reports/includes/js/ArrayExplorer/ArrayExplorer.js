@@ -81,8 +81,18 @@ function ArrayExplorer() {
 
     clearById('sample' + this.sample);
     highlightById('sample' + sample);
-    updateLabel('sampleLabel', sample);
+
     this.sample = sample;
+
+    var pos = sample.indexOf(',');
+    var tags = "";
+    if (pos != -1) {
+      tags = sample.substring(pos+1);
+      sample = sample.substring(0, pos);
+    }
+    updateLabel('sampleLabel', sample);
+    updateLabel('sampleTags', tags);
+
     return(true);
   }
 
@@ -297,6 +307,8 @@ function ArrayExplorer() {
 
 /****************************************************************
  HISTORY:
+ 2007-03-19
+ o Now the sample tags are written to their own label.
  2007-02-06
  o Updated to <rootPath>/<dataSet>/<tags>/<chipType>/<set>/.
  2007-01-27

@@ -19,47 +19,43 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{ChromosomeExplorer}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Explorer}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\code{ChromosomeExplorer}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
 public static class \bold{ChromosomeExplorer}\cr
-extends \link[R.oo]{Object}\cr
+extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
 
 
  }
 
- \usage{ChromosomeExplorer(model=NULL, tags="*", ...)}
+ \usage{ChromosomeExplorer(model=NULL, ...)}
 
  \arguments{
    \item{model}{A \code{\link{GladModel}} object.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be added to the output path.}
    \item{...}{Not used.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{addIncludes} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:display.ChromosomeExplorer]{display}} \tab Displays the explorer in the default browser.\cr
- \tab \code{\link[aroma.affymetrix:getAlias.ChromosomeExplorer]{getAlias}} \tab Gets the alias of the output set.\cr
- \tab \code{\link[aroma.affymetrix:getArrays.ChromosomeExplorer]{getArrays}} \tab Gets the names of the arrays.\cr
+ \tab \code{display} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.ChromosomeExplorer]{getChromosomes}} \tab Gets the chromosomes available.\cr
- \tab \code{getFullName} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getModel.ChromosomeExplorer]{getModel}} \tab Gets the model.\cr
- \tab \code{\link[aroma.affymetrix:getName.ChromosomeExplorer]{getName}} \tab Gets the name of the explorer.\cr
  \tab \code{getNames} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getTags.ChromosomeExplorer]{getTags}} \tab Gets the tags of the explorer.\cr
- \tab \code{\link[aroma.affymetrix:nbrOfArrays.ChromosomeExplorer]{nbrOfArrays}} \tab Gets the total number of arrays.\cr
  \tab \code{\link[aroma.affymetrix:process.ChromosomeExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
- \tab \code{\link[aroma.affymetrix:setAlias.ChromosomeExplorer]{setAlias}} \tab Sets the alias of the output set.\cr
  \tab \code{\link[aroma.affymetrix:setArrays.ChromosomeExplorer]{setArrays}} \tab Sets the arrays.\cr
  \tab \code{setCytoband} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from Explorer}:\cr
+addIncludes, addIndexFile, display, getAlias, getArrays, getAsteriskTags, getFullName, getIncludePath, getMainPath, getName, getNameOfInput, getPath, getTags, getTagsOfInput, getTemplatePath, nbrOfArrays, process, setAlias, setArrays, setup
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

@@ -11,7 +11,6 @@
 #
 # \arguments{
 #   \item{model}{A @see "GladModel" object.}
-#   \item{tags}{A @character @vector of tags to be added to the output path.}
 #   \item{...}{Not used.}
 # }
 #
@@ -37,7 +36,7 @@
 #  @see "GladModel".
 # }
 #*/###########################################################################
-setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
+setConstructorS3("ChromosomeExplorer", function(model=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,18 +47,7 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, tags="*", ...) {
     }
   }
 
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    tags[tags == "*"] <- "";
-  }
-
-
-  extend(Object(), "ChromosomeExplorer",
-    .alias = NULL,
+  extend(Explorer(...), "ChromosomeExplorer",
     .model = model,
     .arrays = NULL,
     .plotCytoband = TRUE
@@ -117,43 +105,15 @@ setMethodS3("getModel", "ChromosomeExplorer", function(this, ...) {
 })
 
 
-###########################################################################/**
-# @RdocMethod getArrays
-#
-# @title "Gets the names of the arrays"
-#
-# \description{
-#  @get "title" in the explorer.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character @vector.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
 setMethodS3("getNames", "ChromosomeExplorer", function(this, ...) {
   getArrays(this, ...);
 })
 
-setMethodS3("getArrays", "ChromosomeExplorer", function(this, ...) {
-  arrays <- this$.arrays;
-  if (is.null(arrays)) {
-    model <- getModel(this);
-    arrays <- getNames(model, ...);
-  }
-  arrays;
-})
+setMethodS3("getArraysOfInput", "ChromosomeExplorer", function(this, ...) {
+  model <- getModel(this);
+  getNames(model, ...);
+}, protected=TRUE)
+
 
 setMethodS3("getFullNames", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
@@ -192,241 +152,36 @@ setMethodS3("getFullNames", "ChromosomeExplorer", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("setArrays", "ChromosomeExplorer", function(this, arrays=NULL, ...) {
-
   # Argument 'arrays':
   if (!is.null(arrays)) {
-    model <- getModel(this);
-    arrays <- indexOfArrays(model, arrays=arrays);
-    arrays <- getNames(model)[arrays];
+    setTuple <- getSetTuple(this);
+    arrays <- indexOfArrays(setTuple, arrays);
+    arrays <- getArrays(setTuple)[arrays];
   }
 
   this$.arrays <- arrays;
 })
 
-
-
-
-
-###########################################################################/**
-# @RdocMethod nbrOfArrays
-#
-# @title "Gets the total number of arrays"
-#
-# \description{
-#  @get "title" considered by the explorer.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns an @integer.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("nbrOfArrays", "ChromosomeExplorer", function(this, ...) {
-  arrays <- getNames(this);
-  length(arrays);
-})
-
-
-
-###########################################################################/**
-# @RdocMethod getAlias
-#
-# @title "Gets the alias of the output set"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#   Returns a @character, or @NULL if no alias is set.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "setAlias".
-#   @seemethod "getName".
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getAlias", "ChromosomeExplorer", function(this, ...) {
-  this$.alias;
-})
-
-
-
-###########################################################################/**
-# @RdocMethod setAlias
-#
-# @title "Sets the alias of the output set"
-#
-# \description{
-#   @get "title".
-#   If specified, the alias overrides the model name, which is used by 
-#   default.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{alias}{A @character string for the new alias of the output set.
-#   The alias must consists of valid filename characters, and must not
-#   contain commas, which are used to separate tags.}
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#   Returns nothing.
-# }
-#
-# \details{
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "getAlias".
-#   @seemethod "getName".
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("setAlias", "ChromosomeExplorer", function(this, alias=NULL, ...) {
-  # Argument 'alias':
-  if (!is.null(alias)) {
-    alias <- Arguments$getFilename(alias);  # Valid filename?
-
-    # Assert that no commas are used.
-    if (regexpr("[,]", alias) != -1) {
-      throw("Output-set aliases (names) must not contain commas: ", alias);
-    }
-  }
-
-  this$.alias <- alias;
-})
-
-###########################################################################/**
-# @RdocMethod getName
-#
-# @title "Gets the name of the explorer"
-#
-# \description{
-#  @get "title", which is the same as the name of the model.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character string.
-# }
-#
-# \details{
-#  If a name alias has not been set explicitly, the name of the model will
-#  used.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getName", "ChromosomeExplorer", function(this, ...) {
-  name <- getAlias(this);
-  if (is.null(name)) {
-    model <- getModel(this);
-    name <- getName(model, ...);
-  }
-  name;
-})
-
-
-
-###########################################################################/**
-# @RdocMethod getTags
-#
-# @title "Gets the tags of the explorer"
-#
-# \description{
-#  @get "title", which are the tags of the model plus additional tags.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character @vector.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getTags", "ChromosomeExplorer", function(this, collapse=NULL, ...) {
+setMethodS3("getSetTuple", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
-  tags <- getTags(model);
-  tags <- c(tags, this$.tags);
-  tags <- unique(tags);
-
-  tags <- paste(tags, collapse=collapse);
-  if (length(tags) == 0)
-    tags <- NULL;
-
-  tags;
-})
+  getSetTuple(model);
+}, protected=TRUE)
 
 
-setMethodS3("getFullName", "ChromosomeExplorer", function(this, ...) {
-  name <- getName(this);
-  tags <- getTags(this);
-  fullname <- paste(c(name, tags), collapse=",");
-  fullname <- gsub("[,]$", "", fullname);
-  fullname;
-})
+setMethodS3("getNameOfInput", "ChromosomeExplorer", function(this, ...) {
+  model <- getModel(this);
+  getName(model, ...);
+}, protected=TRUE)
 
 
-setMethodS3("getRootPath", "ChromosomeExplorer", function(this, ...) {
-  "reports";
-}, private=TRUE)
+setMethodS3("getTagsOfInput", "ChromosomeExplorer", function(this, ...) {
+  model <- getModel(this);
+  getTags(model);
+}, protected=TRUE)
 
 
 setMethodS3("getPath", "ChromosomeExplorer", function(this, ...) {
-  # Create the (sub-)directory tree for the data set
-
-  # Root path
-  rootPath <- getRootPath(this);
-  mkdirs(rootPath);
-
-  # Full name
-  name <- getName(this);
-
-  # Tags
-  tags <- getTags(this, collapse=",");
+  mainPath <- getMainPath(this);
 
   # Chip type    
   model <- getModel(this);
@@ -436,7 +191,7 @@ setMethodS3("getPath", "ChromosomeExplorer", function(this, ...) {
   set <- "glad";
 
   # The full path
-  path <- filePath(rootPath, name, tags, chipType, set, expandLinks="any");
+  path <- filePath(mainPath, chipType, set, expandLinks="any");
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))
@@ -477,49 +232,6 @@ setMethodS3("getChromosomes", "ChromosomeExplorer", function(this, ...) {
   getChromosomes(model);
 })
 
-
-setMethodS3("getTemplatePath", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Locating template files for ChromosomeExplorer");
-  # Search for template files
-  rootPath <- getRootPath(this);
-  path <- filePath(rootPath, "templates", expandLinks="any");
-  if (!isDirectory(path)) {
-    path <- system.file("reports", "templates", package="aroma.affymetrix");
-  }
-  verbose && exit(verbose);
-
-  path;
-}, private=TRUE)
-
-
-setMethodS3("getIncludePath", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Locating include files for ChromosomeExplorer");
-  # Search for include files
-  path <- system.file("reports", "includes", package="aroma.affymetrix");
-  verbose && exit(verbose);
-
-  path;
-}, private=TRUE)
 
 
 
@@ -623,60 +335,9 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 
 
 
-
-setMethodS3("addIncludes", "ChromosomeExplorer", function(this, ..., force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Setting up ", class(this)[1], " report files");
-
-  destPath <- filePath(getRootPath(this), "includes");
-  if (force || !isDirectory(destPath)) {
-    verbose && enter(verbose, "Copying template files");
-    srcPath <- getIncludePath(this);
-    verbose && cat(verbose, "Source path: ", srcPath);
-    verbose && cat(verbose, "Destination path: ", destPath);
-    pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE);
-    verbose && exit(verbose);
-  }
-
-  verbose && exit(verbose);
-})
-
-setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, ..., force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  srcPath <- getTemplatePath(this);
-  srcPathname <- filePath(srcPath, "html", "ChromosomeExplorer", "index.html");
-  outPath <- getParent(getParent(getPath(this)));
-  outPathname <- filePath(outPath, "index.html");
-
-  if (force || !isFile(outPathname)) {
-    verbose && enter(verbose, "Copying index.html");
-    verbose && cat(verbose, "Source pathname: ", srcPathname);
-    verbose && cat(verbose, "Destination pathname: ", outPathname);
-    if (!isFile(srcPathname))
-      throw("Source file does not exist");
-    file.copy(srcPathname, outPathname, overwrite=TRUE);
-    verbose && exit(verbose);
-  }
-}, private=TRUE)
+setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename="index.html", ...) {
+  NextMethod("addIndexFile", this, filename=filename, ...);
+}, protected=TRUE)
 
 
 
@@ -818,76 +479,15 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
 })
 
 
-###########################################################################/**
-# @RdocMethod display
-#
-# @title "Displays the explorer in the default browser"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns nothing.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("display", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  verbose && enter(verbose, "Opening ChromosomeExplorer");
-
-  # The path to the explorer HTML document
-  path <- getPath(this);
-  path <- getParent(path);
-  path <- getParent(path);
-  pathname <- filePath(path, "index.html", expandLinks="any");
-
-  # Just in case, is setup needed?
-  if (!isFile(pathname)) {
-    setup(this, verbose=less(verbose));
-    if (!isFile(pathname)) {
-      throw("Cannot open ChromosomeExplorer. No such file: ", pathname);
-    }
-  }
-
-
-  pathname <- getAbsolutePath(pathname);
-  if (.Platform$OS.type == "windows")
-    pathname <- chartr("/", "\\", pathname);
-
-  verbose && cat(verbose, "Pathname: ", pathname);
-  res <- browseURL(pathname, ...);
-
-  verbose && exit(verbose);
-
-  invisible(res);
+setMethodS3("display", "ChromosomeExplorer", function(this, filename="index.html", ...) {
+  NextMethod("display", this, filename=filename, ...);
 })
 
 
 ##############################################################################
 # HISTORY:
+# 2007-03-19
+# o Now ChromosomeExplorer extends Explorer.
 # 2007-02-06
 # o Now templates are in reports/templates/ and includes in reports/includes/.
 # o Updated the path to <rootPath>/<dataSetName>/<tags>/<chipType>/<set>/.

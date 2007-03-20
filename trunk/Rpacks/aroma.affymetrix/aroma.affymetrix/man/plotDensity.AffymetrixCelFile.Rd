@@ -26,9 +26,7 @@
   \item{subset}{The subset of probes to include.}
   \item{types}{The type of probes to include.}
   \item{...}{Additional arguments passed to
-     \code{identifyCells()} of \code{\link{AffymetrixCdfFile}},
-     , \code{\link[aroma.affymetrix:getData.AffymetrixCelFile]{*getData}()}, and
-     \code{\link[aroma.light]{plotDensity.numeric}}.}
+             \code{\link[aroma.light]{plotDensity.numeric}}.}
   \item{xlim}{The range on the x axis.}
   \item{xlab,ylab}{The labels on the x and the y axes.}
   \item{log}{If \code{\link[base:logical]{TRUE}}, the density of the log (base 2) values are

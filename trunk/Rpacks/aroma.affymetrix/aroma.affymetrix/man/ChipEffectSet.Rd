@@ -46,6 +46,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{\link[aroma.affymetrix:calculateBaseline.ChipEffectSet]{calculateBaseline}} \tab Estimates the baseline signal chromosome by chromosome.\cr
  \tab \code{\link[aroma.affymetrix:extractDataFrame.ChipEffectSet]{extractDataFrame}} \tab Extract data as a data frame for a set of arrays.\cr
  \tab \code{\link[aroma.affymetrix:extractMatrix.ChipEffectSet]{extractMatrix}} \tab Extract data as a matrix for a set of arrays.\cr
  \tab \code{findByName} \tab  -\cr

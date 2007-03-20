@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ChromosomeExplorer.R
+%  AffymetrixFileSetReporter.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getName.ChromosomeExplorer}
-\alias{getName.ChromosomeExplorer}
-\alias{ChromosomeExplorer.getName}
-\alias{getName.ChromosomeExplorer}
-\alias{getName,ChromosomeExplorer-method}
+\name{getName.AffymetrixFileSetReporter}
+\alias{getName.AffymetrixFileSetReporter}
+\alias{AffymetrixFileSetReporter.getName}
+\alias{getName.AffymetrixFileSetReporter}
+\alias{getName,AffymetrixFileSetReporter-method}
 
 
 \title{Gets the name of the explorer}
 
 \description{
- Gets the name of the explorer, which is the same as the name of the model.
+ Gets the name of the explorer, which is the same as the name of the data set.
 }
 
-\usage{\method{getName}{ChromosomeExplorer}(this, ...)}
+\usage{\method{getName}{AffymetrixFileSetReporter}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -30,14 +30,14 @@
 }
 
 \details{
- If a name alias has not been set explicitly, the name of the model will
+ If a name alias has not been set explicitly, the name of the data set will
  used.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{ChromosomeExplorer}}.
+  For more information see \code{\link{AffymetrixFileSetReporter}}.
 }
 \keyword{internal}
 \keyword{methods}

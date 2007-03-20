@@ -65,7 +65,7 @@ setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=1/2, types=
   cdf <- getCdf(this);
   verbose && enter(verbose, "Identifying subset of probes");
   suppressWarnings({
-    subset <- identifyCells(cdf, indices=subset, types=types, ...,
+    subset <- identifyCells(cdf, indices=subset, types=types,
                                                     verbose=less(verbose));
   })
   verbose && exit(verbose);
