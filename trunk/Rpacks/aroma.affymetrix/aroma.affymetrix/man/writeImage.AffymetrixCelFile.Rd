@@ -19,7 +19,7 @@
  Writes a spatial image of the signals in the CEL file.
 }
 
-\usage{\method{writeImage}{AffymetrixCelFile}(this, filename=NULL, fullname=getFullName(this), tags=c("*", "sqrt", "gray"), imgFormat="png", path=NULL, field=c("intensities", "stdvs", "pixels"), ..., skip=TRUE, verbose=FALSE)}
+\usage{\method{writeImage}{AffymetrixCelFile}(this, filename=NULL, fullname=NULL, tags=c("*", "sqrt", "gray"), imgFormat="png", path=NULL, field=c("intensities", "stdvs", "pixels"), ..., skip=TRUE, verbose=FALSE)}
 
 \arguments{
   \item{filename}{A \code{\link[base]{character}} string specifying the filename of
