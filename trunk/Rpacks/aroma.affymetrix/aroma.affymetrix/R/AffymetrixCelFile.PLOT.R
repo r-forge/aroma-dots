@@ -1093,6 +1093,7 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
   # Generate the pathname
   if (is.null(fullname)) {
+    # Ad hoc. /HB 2007-03-20
     fullname <- getAlias(this);
     if (is.null(fullname))
       fullname <- getFullName(this);
