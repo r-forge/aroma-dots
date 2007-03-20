@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ArrayExplorer.R
+%  Explorer.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getArrays.ArrayExplorer}
-\alias{getArrays.ArrayExplorer}
-\alias{ArrayExplorer.getArrays}
-\alias{getArrays.ArrayExplorer}
-\alias{getArrays,ArrayExplorer-method}
+\name{getTags.Explorer}
+\alias{getTags.Explorer}
+\alias{Explorer.getTags}
+\alias{getTags.Explorer}
+\alias{getTags,Explorer-method}
 
 
-\title{Gets the names of the arrays}
+\title{Gets the tags of the explorer}
 
 \description{
- Gets the names of the arrays in the explorer.
+ Gets the tags of the explorer, which are the tags of the data set plus additional tags.
 }
 
-\usage{\method{getArrays}{ArrayExplorer}(this, ...)}
+\usage{\method{getTags}{Explorer}(this, collapse=NULL, ...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{ArrayExplorer}}.
+  For more information see \code{\link{Explorer}}.
 }
 \keyword{internal}
 \keyword{methods}

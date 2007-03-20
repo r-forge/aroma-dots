@@ -13,10 +13,8 @@
 # \arguments{
 #   \item{subset}{The subset of probes to include.}
 #   \item{types}{The type of probes to include.}
-#   \item{...}{Additional arguments passed to 
-#      \code{identifyCells()} of @see "AffymetrixCdfFile",
-#      , @seemethod "getData", and 
-#      @see "aroma.light::plotDensity.numeric".}
+#   \item{...}{Additional arguments passed to
+#              @see "aroma.light::plotDensity.numeric".}
 #   \item{xlim}{The range on the x axis.}
 #   \item{xlab,ylab}{The labels on the x and the y axes.}
 #   \item{log}{If @TRUE, the density of the log (base 2) values are 
@@ -61,7 +59,7 @@ setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types
   cdf <- getCdf(this);
   verbose && enter(verbose, "Identifying subset of probes");
   suppressWarnings({
-    subset <- identifyCells(cdf, indices=subset, types=types, ...,
+    subset <- identifyCells(cdf, indices=subset, types=types, 
                                                     verbose=less(verbose));
   })
   verbose && exit(verbose);
@@ -684,17 +682,19 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf(fmtstr, getFullName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), transform=sqrt, zlim=NULL, verbose=FALSE) {
+setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf(fmtstr, getFullName(this)), path=filePath("figures", getChipType(getCdf(this))), fmtstr="%s-spatial.png", ..., field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), zlim=NULL, verbose=FALSE) {
   require(R.image) || throw("Package R.image not loaded.");
 
   # Argument 'field':
   field <- match.arg(field);
 
-  # Argument 'transform':
-  if (is.null(transform)) {
-  } else if (is.function(transform)) {
-  } else {
-    throw("Argument 'transform' is not a function: ", mode(transform));
+  # Argument 'transforms':
+  transforms <- as.list(transforms);
+  for (transform in transforms) {
+    if (!is.function(transform)) {
+      throw("Argument 'transforms' contains a non-function: ", 
+                                                              mode(transform));
+    }
   }
 
   # Argument 'verbose':
@@ -713,11 +713,12 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
   # Get the image
   img <- cel[[field]];
 
-  if (!is.null(transform)) {
-    verbose && enter(verbose, "Custom transformation of data");
+  # Transform signals?
+  verbose && enter(verbose, "Custom transformation of data");
+  for (transform in transforms) {
     img <- transform(img);
-    verbose && exit(verbose);
   }
+  verbose && exit(verbose);
 
   # zlim?
   if (is.null(zlim)) {
@@ -797,7 +798,7 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 # \arguments{
 #   \item{xrange, yrange}{}
 #   \item{field}{}
-#   \item{transform}{}
+#   \item{transforms}{A @list of transform functions.}
 #   \item{interleaved}{}
 #   \item{...}{Additional arguments passed to @seemethod "getRectangle".}
 #   \item{zoom}{}
@@ -820,7 +821,7 @@ setMethodS3("writeSpatial", "AffymetrixCelFile", function(this, filename=sprintf
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transform=sqrt, interleaved=c("auto", "h", "v", "none") , ..., zoom=NULL, verbose=FALSE) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("auto", "h", "v", "none") , ..., zoom=NULL, verbose=FALSE) {
   require(EBImage) || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -836,12 +837,13 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   # Argument 'field':
   field <- match.arg(field);
   
-  # Argument 'transform':
-  if (is.null(transform)) {
-  } else if (is.function(transform)) {
-  } else {
-    throw("Argument 'transform' must be a function or NULL: ", 
-                                                   class(transform)[1]);
+  # Argument 'transforms':
+  transforms <- as.list(transforms);
+  for (transform in transforms) {
+    if (!is.function(transform)) {
+      throw("Argument 'transforms' contains a non-function: ", 
+                                                              mode(transform));
+    }
   }
 
   # Argument 'interleaved':
@@ -919,7 +921,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   }
 
   # Transform signals?
-  if (is.function(transform)) {
+  for (transform in transforms) {
     y <- transform(y);
   }
 
@@ -1115,6 +1117,11 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2007-03-19
+# o Now getImage() and writeSpatial() accepts a list of transform functions.
+# 2007-03-15
+# o Argument '...' to plotDensity() of AffymetrixCelFile and
+#   AffymetrixCelSet are no longer passed to identifyCells().
 # 2007-02-16
 # o Increased the threshold to detect empty rows/columns in getImage().
 # 2007-02-06

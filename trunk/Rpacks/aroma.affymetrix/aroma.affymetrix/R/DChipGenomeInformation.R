@@ -132,10 +132,10 @@ setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {
 
 setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
   readFcns <- list(
-                   "^Mapping10K" = read50KHg17,
-                   "^Mapping50K" = read50KHg17,
-                   "^Mapping250K" = read250KHg17,
-                   "^Mouse430" = readMouse430,
+    "^Mapping10K"  = read50KHg17,
+    "^Mapping50K"  = read50KHg17,
+    "^Mapping250K" = read250KHg17,
+    "^Mouse430"    = readMouse430
   );
 
   chipType <- getChipType(this);
@@ -214,20 +214,23 @@ setMethodS3("readMouse430", "DChipGenomeInformation", function(this, ...) {
     "Cytoband"="character"
   );
 
-  tableData <- readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, ...);
+  tableData <- readTableInternal(this, pathname=getPathname(this), 
+                                                colClasses=colClasses, ...);
 
   # ad hoc fix: remove "chr" from chromosome
+  tableData[,"chromosome"] <- gsub("chr", "", tableData[,"chromosome"]);
+  tableData[,"chromosome"] <- gsub("random", "", tableData[,"chromosome"]);
 
-  tableData[,"chromosome"] <- gsub("chr","",tableData[,"chromosome"]);
-  tableData[,"chromosome"] <- gsub("random","",tableData[,"chromosome"]);
   tableData;
-  
 }, private=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2007-03-19 [KS]
+# o Added private readMouse430() to the list of read methods that readData()
+#   is using to parse DChip genome information files.
 # 2007-01-22
 # o Rename argument 'path' to 'rootPath' and added argument 'pattern' to
 #   method fromChipType().

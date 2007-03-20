@@ -117,7 +117,8 @@ setMethodS3("getRootPath", "Model", function(this, ...) {
 # @title "Gets the name of the output data set"
 #
 # \description{
-#  @get "title", which is the same as the name of the input data set.
+#  @get "title", which is the same as the name of the input data set, unless
+#  an alias is set.
 # }
 #
 # @synopsis
@@ -133,13 +134,99 @@ setMethodS3("getRootPath", "Model", function(this, ...) {
 # @author
 #
 # \seealso{
+#   @seemethod "getAlias"
 #   @seeclass
 # }
 #*/###########################################################################
 setMethodS3("getName", "Model", function(this, ...) {
-  ds <- getDataSet(this);
-  getName(ds);
+  name <- getAlias(this);
+
+  if (is.null(name)) {
+    ds <- getDataSet(this);
+    name <- getName(ds);
+  }
+
+  name;
 })
+
+
+###########################################################################/**
+# @RdocMethod getAlias
+#
+# @title "Gets the name alias for the model"
+#
+# \description{
+#  @get "title", if set.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @character string, or @NULL.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getName"
+#   @seemethod "setAlias"
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getAlias", "Model", function(this, ...) {
+  this$.alias;
+})
+
+
+
+###########################################################################/**
+# @RdocMethod setAlias
+#
+# @title "Sets the name alias for the model"
+#
+# \description{
+#  @get "title", if set.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{alias}{A @character string, or @NULL.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns nothing.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getAlias"
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("setAlias", "Model", function(this, alias=NULL, ...) {
+  # Argument 'alias':
+  if (!is.null(alias)) {
+    # An alias must be a valid filename
+    alias <- Arguments$getFilename(alias);
+
+    # Assert that no commas are used.
+    if (regexpr("[,]", alias) != -1) {
+      throw("Aliases (names) must not contain commas: ", alias);
+    }
+  }
+
+  this$.alias <- alias;
+
+  invisible(this);
+})
+
 
 
 ###########################################################################/**
@@ -447,6 +534,8 @@ setMethodS3("setLabel", "Model", function(this, label, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-19
+# o Added getAlias() and setAlias().
 # 2007-01-14
 # o Added a test for unknown arguments to constructor.  This was added 
 #   after long troubleshooting to find a call to MbeiPlm(mergeStrands=TRUE,

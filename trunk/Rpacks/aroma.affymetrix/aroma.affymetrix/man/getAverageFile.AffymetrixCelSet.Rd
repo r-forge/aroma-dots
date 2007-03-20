@@ -19,7 +19,7 @@
   Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set.
 }
 
-\usage{\method{getAverageFile}{AffymetrixCelSet}(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ram=1, force=FALSE, verbose=FALSE, ...)}
+\usage{\method{getAverageFile}{AffymetrixCelSet}(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells * 10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE)}
 
 \arguments{
  \item{name}{The label of the calculated parameters.
@@ -33,13 +33,15 @@
  \item{sd}{A \code{\link[base]{character}} of a \code{\link[base]{function}} specifying the function used
    to calculate the standard deviation.}
  \item{na.rm}{If \code{\link[base:logical]{TRUE}}, \code{\link[base]{NA}}s are excluded before, otherwise not.}
- \item{ram}{A \code{\link[base]{double}} scalar indicating if more or less cells
+ \item{...}{Not used.}
+ \item{cellsPerChunk}{A \code{\link[base]{integer}} specifying the total number of cells
+   (across arrays) read into memory per chunk.}
+ \item{moreCells}{A \code{\link[base]{double}} scalar indicating if more or less cells
    should be used per chunk.}
  \item{force}{If \code{\link[base:logical]{TRUE}}, parameters for cells already calculated are
    recalculated, otherwise not.}
  \item{verbose}{If \code{\link[base:logical]{TRUE}}, progress details are printed, otherwise not.
    May also be a \code{\link[R.utils]{Verbose}} object.}
- \item{...}{Not used.}
 }
 
 \value{

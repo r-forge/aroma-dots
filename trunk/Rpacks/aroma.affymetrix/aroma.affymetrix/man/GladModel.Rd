@@ -35,10 +35,10 @@ extends \link[R.oo]{Object}\cr
   chip types, and not all samples have to be available on all chip types.
  }
 
- \usage{GladModel(cesList=NULL, referenceList=NULL, tags="*", ...)}
+ \usage{GladModel(cesTuple=NULL, referenceList=NULL, tags="*", ...)}
 
  \arguments{
-   \item{cesList}{A single or \code{\link[base]{list}} of \code{\link{ChipEffectSet}}:s.}
+   \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
    \item{referenceList}{A single or a \code{\link[base]{list}} of \code{\link{ChipEffectFile}}:s.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
    \item{...}{Not used.}
@@ -48,6 +48,7 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:fit.GladModel]{fit}} \tab Fits the model.\cr
+ \tab \code{getAlias} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getArrays.GladModel]{getArrays}} \tab Gets the names of the arrays.\cr
  \tab \code{getChipEffectFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChipType.GladModel]{getChipType}} \tab Gets a label for all chip types merged.\cr
@@ -63,11 +64,13 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getPath} \tab  -\cr
  \tab \code{getReferenceFiles} \tab  -\cr
  \tab \code{getRegions} \tab  -\cr
+ \tab \code{getSetTuple} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getTableOfArrays.GladModel]{getTableOfArrays}} \tab Gets a table of arrays.\cr
  \tab \code{getTags} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.GladModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.GladModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
  \tab \code{plot} \tab  -\cr
+ \tab \code{setAlias} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
 

@@ -772,7 +772,7 @@ setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE,
 })
 
 
-setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, from=1, to=nbrOfCells(this), ..., types=c("all", "pmmm", "pm", "mm", "qc"), sort=TRUE, .force=FALSE, verbose=FALSE) {
+setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, from=1, to=nbrOfCells(this), types=c("all", "pmmm", "pm", "mm", "qc"), ..., sort=TRUE, .force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

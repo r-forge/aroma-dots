@@ -15,7 +15,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{cesList}{A single or @list of @see "ChipEffectSet":s.}
+#   \item{cesTuple}{A @see "ChipEffectSetTuple".}
 #   \item{referenceList}{A single or a @list of @see "ChipEffectFile":s.}
 #   \item{tags}{A @character @vector of tags.}
 #   \item{...}{Not used.}
@@ -59,29 +59,24 @@
 #      gain and loss of DNA regions}. Bioinformatics, 2004, 20, 3413-3422.\cr
 # }
 #*/###########################################################################
-setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*", ...) {
+setConstructorS3("GladModel", function(cesTuple=NULL, referenceList=NULL, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!is.null(cesList)) {
+  if (!is.null(cesTuple)) {
     require(GLAD) || throw("Package not loaded: GLAD");
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'cesList':
-  if (!is.null(cesList)) {
-    if (!is.list(cesList)) {
-      cesList <- list(cesList);
+  # Argument 'cesTuple':
+  if (!is.null(cesTuple)) {
+    if (!inherits(cesTuple, "ChipEffectSetTuple")) {
+      cesTuple <- ChipEffectSetTuple(cesTuple);
     }
 
-    for (ces in cesList) {
-      if (!inherits(ces, "ChipEffectSet")) {
-        throw("Argument 'cesList' contains a non-ChipEffectSet: ", 
-                                                            class(ces)[1]);
-      }
-
+    for (ces in getListOfSets(cesTuple)) {
       # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
       if (inherits(ces, "CnChipEffectSet")) {
         # Currently only total copy-number estimates are accepted
@@ -98,11 +93,12 @@ setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*
       referenceList <- list(referenceList);
     }
 
-    if (length(referenceList) != length(cesList)) {
-      throw("The number of reference files does not match the number of chip-effect sets: ", length(cesList), " != ", length(referenceList));
+    if (length(referenceList) != nbrOfChipTypes(cesTuple)) {
+      throw("The number of reference files does not match the number of chip-effect sets: ", length(referenceList), " != ", nbrOfChipTypes(cesTuple));
     }
 
     # Validate consistency between the chip-effect sets and the reference files
+    cesList <- getListOfSets(cesTuple);
     for (kk in seq(along=cesList)) {
       ref <- referenceList[[kk]];
       if (!inherits(ref, "ChipEffectFile")) {
@@ -134,17 +130,12 @@ setConstructorS3("GladModel", function(cesList=NULL, referenceList=NULL, tags="*
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    tags[tags == "*"] <- "GLAD";
   }
 
 
-  
-
   extend(Object(), "GladModel",
+    .cesTuple = cesTuple,
     .chromosomes = NULL,
-    .cesList = cesList,
     .referenceList = referenceList
   )
 })
@@ -180,8 +171,15 @@ setMethodS3("as.character", "GladModel", function(this, ...) {
   s;
 }, private=TRUE)
 
+
+setMethodS3("getSetTuple", "GladModel", function(this, ...) {
+  this$.cesTuple;
+})
+
+
 setMethodS3("getListOfChipEffects", "GladModel", function(this, ...) {
-  this$.cesList;
+  cesTuple <- getSetTuple(this);
+  getListOfSets(cesTuple);
 })
 
 
@@ -211,7 +209,7 @@ setMethodS3("getListOfChipEffects", "GladModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("nbrOfChipTypes", "GladModel", function(this, ...) {
-  length(getListOfChipEffects(this, ...));
+  nbrOfChipTypes(getSetTuple(this), ...);
 })
 
 
@@ -226,23 +224,12 @@ setMethodS3("getListOfReferences", "GladModel", function(this, ...) {
 
 
 setMethodS3("getListOfCdfs", "GladModel", function(this, ...) {
-  cesList <- getListOfChipEffects(this);
-  lapply(cesList, FUN=getCdf);
+  getListOfCdfs(getSetTuple(this), ...);
 }, private=TRUE)
 
 
-setMethodS3("getChipTypes", "GladModel", function(this, merge=FALSE, collapse="+", ...) {
-  cdfList <- getListOfCdfs(this);
-  chipTypes <- sapply(cdfList, FUN=getChipType, fullname=FALSE);
-
-  # Invariant for order
-  chipTypes <- sort(chipTypes);
-
-  if (merge) {
-    chipTypes <- mergeByCommonTails(chipTypes, collapse=collapse);
-  }
-
-  chipTypes;
+setMethodS3("getChipTypes", "GladModel", function(this, ...) {
+  getChipTypes(getSetTuple(this), ...);
 })
 
 
@@ -306,31 +293,7 @@ setMethodS3("getChipType", "GladModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getTableOfArrays", "GladModel", function(this, ...) {
-  cesList <- getListOfChipEffects(this);
-
-  # Get all chip types for this data set
-  chipTypes <- getChipTypes(this);
-  nbrOfChipTypes <- length(cesList);
-
-  # Get all sample names
-  names <- lapply(cesList, FUN=getNames);
-  names(names) <- chipTypes;
-
-  # Get all unique sample names
-  allNames <- unlist(names, use.names=FALSE);
-  allNames <- unique(allNames);
-
-  # Create table of arrays
-  nbrOfArrays <- length(allNames);
-  X <- matrix(NA, nrow=nbrOfArrays, ncol=nbrOfChipTypes);
-  dimnames(X) <- list(allNames, chipTypes);
-  for (chipType in chipTypes) {
-    names0 <- names[[chipType]];
-    idx <- match(names0, allNames);
-    X[idx,chipType] <- seq(along=idx);
-  }
-
-  X;
+  getTableOfArrays(getSetTuple(this), ...);
 })
 
 
@@ -338,42 +301,9 @@ setMethodS3("getNames", "GladModel", function(this, ...) {
   rownames(getTableOfArrays(this, ...));
 })
 
-setMethodS3("getFullNames", "GladModel", function(this, arrays=NULL, ...) {
-  getFullNameOfTuple <- function(ceList) {
-    # Get sample name
-    first <- which(!sapply(ceList, FUN=is.null))[1];
-    name <- getName(ceList[[first]]);
-  
-    # Get chip-effect tags *common* across chip types
-    tags <- lapply(ceList, FUN=function(ce) {
-      if (is.null(ce)) NULL else getTags(ce);
-    });
-    tags <- lapply(tags, setdiff, "chipEffects");
-    tags <- getCommonListElements(tags);
-    tags <- unlist(tags, use.names=FALSE);
-    tags <- unique(tags);
-    
-    fullname <- paste(c(name, tags), collapse=",");
-    
-    fullname;
-  } # getFullNameOfTuple()
 
-
-  # Argument 'arrays':
-  if (is.null(arrays)) {
-    arrays <- seq_len(nbrOfArrays(this));
-} else {
-    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfArrays(this)));
-  }
-  
-  fullnames <- c();
-  for (kk in arrays) {
-    ceList <- getChipEffectFiles(this, array=kk, ...);
-    fullname <- getFullNameOfTuple(ceList);
-    fullnames <- c(fullnames, fullname);
-  }
-
-  fullnames;
+setMethodS3("getFullNames", "GladModel", function(this, ...) {
+  getFullNames(getSetTuple(this), ...);
 })
 
 
@@ -438,23 +368,7 @@ setMethodS3("getArrays", "GladModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("indexOfArrays", "GladModel", function(this, arrays=NULL, ...) {
-  allNames <- getNames(this);
-
-  # Argument 'arrays':
-  if (is.null(arrays)) {
-    arrays <- seq(along=allNames);
-  } else if (is.numeric(arrays)) {
-    arrays <- Arguments$getIndices(arrays, range=c(1,length(allNames)));
-  } else {
-    missing <- which(!(arrays %in% allNames));
-    if (length(missing) > 0) {
-      missing <- paste(arrays[missing], collapse=", ");
-      throw("Argument 'arrays' contains unknown arrays: ", missing);
-    }
-    arrays <- match(arrays, allNames);
-  }
-
-  arrays;
+  indexOfArrays(getSetTuple(this), ...);
 }, private=TRUE)
 
 
@@ -490,17 +404,24 @@ setMethodS3("nbrOfArrays", "GladModel", function(this, ...) {
 
 
 setMethodS3("getName", "GladModel", function(this, collapse="+", ...) {
-  # Get name of chip-effect sets
-  cesList <- getListOfChipEffects(this);
+  name <- getAlias(this);
 
-  # Get names
-  names <- lapply(cesList, FUN=getName);
-  names <- unlist(names, use.names=FALSE);
+  if (is.null(name))
+    name <- getName(getSetTuple(this), ...);
 
-  # Merge names
-  names <- mergeByCommonTails(names, collapse=collapse);
+  name;
+})
 
-  names;
+setMethodS3("getAlias", "GladModel", function(this, ...) {
+  this$.alias;
+})
+
+
+setMethodS3("setAlias", "GladModel", function(this, alias=NULL, ...) {
+  # Argument 'alias':
+  alias <- Arguments$getCharacter(alias);
+  this$.alias <- alias;
+  invisible(this);
 })
 
 
@@ -521,19 +442,25 @@ setMethodS3("getReferenceName", "GladModel", function(this, collapse="+", ...) {
 }, private=TRUE)
 
 
+setMethodS3("getAsteriskTag", "GladModel", function(this, ...) {
+  "GLAD";
+}, protected=TRUE)
+
+
 setMethodS3("getTags", "GladModel", function(this, collapse=NULL, ...) {
-  # Get tags of chip-effect set
-  cesList <- getListOfChipEffects(this);
-
-  # Get data set tags
-  tags <- lapply(cesList, FUN=getTags);
-
-  # Keep unique tags
-  tags <- unlist(tags, use.names=FALSE);
-  tags <- unique(tags);
+  tags <- getTags(getSetTuple(this), ...);
 
   # Add model tags
   tags <- c(tags, this$.tags);
+
+  # Update default tags
+  tags[tags == "*"] <- getAsteriskTag(this);
+
+  # Keep non-empty tags
+  tags <- tags[nchar(tags) > 0];
+
+  # Get unique tags
+  tags <- unique(tags);
 
   tags <- paste(tags, collapse=collapse);
   if (length(tags) == 0)
@@ -555,6 +482,7 @@ setMethodS3("getFullName", "GladModel", function(this, ...) {
 setMethodS3("getRootPath", "GladModel", function(this, ...) {
   "gladData";
 }, private=TRUE)
+
 
 setMethodS3("getPath", "GladModel", function(this, ...) {
   # Create the (sub-)directory tree for the data set
@@ -637,22 +565,11 @@ setMethodS3("getListOfGenomeInformations", "GladModel", function(this, ...) {
 })
 
 
-setMethodS3("getChipEffectFiles", "GladModel", function(this, array, ...) {
-  cesList <- getListOfChipEffects(this);
-  arrayTable <- getTableOfArrays(this);
-  chipTypes <- colnames(arrayTable);
-  idxs <- arrayTable[array,];
-  res <- vector("list", length(chipTypes));
-  for (kk in seq(along=cesList)) {
-    idx <- idxs[kk];
-    if (is.na(idx))
-      next;
-    ces <- cesList[[kk]];
-    res[[kk]] <- getFile(ces, idx);
-  }
-  names(res) <- chipTypes;
-  res;
+setMethodS3("getChipEffectFiles", "GladModel", function(this, ...) {
+  setTuple <- getSetTuple(this);
+  getTuple(setTuple, ...);
 })
+
 
 setMethodS3("getReferenceFiles", "GladModel", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -768,14 +685,6 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   path <- getPath(this);
   mkdirs(path);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Retrieving chip effects
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get chip effects
-  cesList <- getListOfChipEffects(this);
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieving reference chip effects
@@ -1417,6 +1326,12 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-03-19
+# o Now asterisk tags are handles dynamically, and not by the constructor.
+# o Added getAsteriskTags().
+# o Now the constructor expects a ChipEffectSetTuple instead of a list of
+#   ChipEffectSet:s.
+# o Updated code to internally make use of the ChipEffectSetTuple class.
 # 2007-03-15
 # o Updated the GladModel to only work with chromosome indices (integers).
 # o Now the GladModel infers the set of possible chromosomes from the

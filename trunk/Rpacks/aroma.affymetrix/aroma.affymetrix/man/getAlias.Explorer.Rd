@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ArrayExplorer.R
+%  Explorer.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getAlias.ArrayExplorer}
-\alias{getAlias.ArrayExplorer}
-\alias{ArrayExplorer.getAlias}
-\alias{getAlias.ArrayExplorer}
-\alias{getAlias,ArrayExplorer-method}
+\name{getAlias.Explorer}
+\alias{getAlias.Explorer}
+\alias{Explorer.getAlias}
+\alias{getAlias.Explorer}
+\alias{getAlias,Explorer-method}
 
 
 \title{Gets the alias of the output set}
@@ -19,7 +19,7 @@
   Gets the alias of the output set.
 }
 
-\usage{\method{getAlias}{ArrayExplorer}(this, ...)}
+\usage{\method{getAlias}{Explorer}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -32,9 +32,9 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:setAlias.ArrayExplorer]{*setAlias}()}.
-  \code{\link[aroma.affymetrix:getName.ArrayExplorer]{*getName}()}.
-  For more information see \code{\link{ArrayExplorer}}.
+  \code{\link[aroma.affymetrix:setAlias.Explorer]{*setAlias}()}.
+  \code{\link[aroma.affymetrix:getName.Explorer]{*getName}()}.
+  For more information see \code{\link{Explorer}}.
 }
 \keyword{internal}
 \keyword{methods}

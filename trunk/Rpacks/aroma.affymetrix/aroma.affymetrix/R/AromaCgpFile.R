@@ -7,7 +7,7 @@ setConstructorS3("AromaCgpFile", function(...) {
   this;
 })
 
-setMethodS3("getFilenameExtension", "AromaGenomePositionFile", function(static, ...) {
+setMethodS3("getFilenameExtension", "AromaCgpFile", function(static, ...) {
   "cgp";
 }, static=TRUE)
 

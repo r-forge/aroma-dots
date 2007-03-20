@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ChromosomeExplorer.R
+%  SpatialReporter.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{display.ChromosomeExplorer}
-\alias{display.ChromosomeExplorer}
-\alias{ChromosomeExplorer.display}
-\alias{display.ChromosomeExplorer}
-\alias{display,ChromosomeExplorer-method}
+\name{process.SpatialReporter}
+\alias{process.SpatialReporter}
+\alias{SpatialReporter.process}
+\alias{process.SpatialReporter}
+\alias{process,SpatialReporter-method}
 
 
-\title{Displays the explorer in the default browser}
+\title{Generates image files, scripts and dynamic pages for the explorer}
 
 \description{
- Displays the explorer in the default browser.
+ Generates image files, scripts and dynamic pages for the explorer.
 }
 
-\usage{\method{display}{ChromosomeExplorer}(this, ..., verbose=FALSE)}
+\usage{\method{process}{SpatialReporter}(this, ..., verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
@@ -33,7 +33,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{ChromosomeExplorer}}.
+  For more information see \code{\link{SpatialReporter}}.
 }
 \keyword{internal}
 \keyword{methods}

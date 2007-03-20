@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ArrayExplorer.R
+%  AffymetrixCelSetTuple.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{nbrOfArrays.ArrayExplorer}
-\alias{nbrOfArrays.ArrayExplorer}
-\alias{ArrayExplorer.nbrOfArrays}
-\alias{nbrOfArrays.ArrayExplorer}
-\alias{nbrOfArrays,ArrayExplorer-method}
+\name{nbrOfArrays.AffymetrixCelSetTuple}
+\alias{nbrOfArrays.AffymetrixCelSetTuple}
+\alias{AffymetrixCelSetTuple.nbrOfArrays}
+\alias{nbrOfArrays.AffymetrixCelSetTuple}
+\alias{nbrOfArrays,AffymetrixCelSetTuple-method}
 
 
-\title{Gets the total number of arrays}
+\title{Gets the number of arrays}
 
 \description{
- Gets the total number of arrays considered by the explorer.
+ Gets the number of arrays used in the model.
 }
 
-\usage{\method{nbrOfArrays}{ArrayExplorer}(this, ...)}
+\usage{\method{nbrOfArrays}{AffymetrixCelSetTuple}(this, ...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{ArrayExplorer}}.
+  For more information see \code{\link{AffymetrixCelSetTuple}}.
 }
 \keyword{internal}
 \keyword{methods}

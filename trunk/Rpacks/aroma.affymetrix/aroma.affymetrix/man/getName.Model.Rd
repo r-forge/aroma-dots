@@ -16,7 +16,8 @@
 \title{Gets the name of the output data set}
 
 \description{
- Gets the name of the output data set, which is the same as the name of the input data set.
+ Gets the name of the output data set, which is the same as the name of the input data set, unless
+ an alias is set.
 }
 
 \usage{\method{getName}{Model}(this, ...)}
@@ -32,6 +33,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
+  \code{\link[aroma.affymetrix:getAlias.Model]{*getAlias}()}
   For more information see \code{\link{Model}}.
 }
 \keyword{internal}

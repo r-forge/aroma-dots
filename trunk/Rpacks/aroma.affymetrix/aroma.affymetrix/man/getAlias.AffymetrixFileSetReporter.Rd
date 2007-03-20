@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  ChromosomeExplorer.R
+%  AffymetrixFileSetReporter.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getAlias.ChromosomeExplorer}
-\alias{getAlias.ChromosomeExplorer}
-\alias{ChromosomeExplorer.getAlias}
-\alias{getAlias.ChromosomeExplorer}
-\alias{getAlias,ChromosomeExplorer-method}
+\name{getAlias.AffymetrixFileSetReporter}
+\alias{getAlias.AffymetrixFileSetReporter}
+\alias{AffymetrixFileSetReporter.getAlias}
+\alias{getAlias.AffymetrixFileSetReporter}
+\alias{getAlias,AffymetrixFileSetReporter-method}
 
 
 \title{Gets the alias of the output set}
@@ -19,7 +19,7 @@
   Gets the alias of the output set.
 }
 
-\usage{\method{getAlias}{ChromosomeExplorer}(this, ...)}
+\usage{\method{getAlias}{AffymetrixFileSetReporter}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -32,9 +32,9 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:setAlias.ChromosomeExplorer]{*setAlias}()}.
-  \code{\link[aroma.affymetrix:getName.ChromosomeExplorer]{*getName}()}.
-  For more information see \code{\link{ChromosomeExplorer}}.
+  \code{\link[aroma.affymetrix:setAlias.AffymetrixFileSetReporter]{*setAlias}()}.
+  \code{\link[aroma.affymetrix:getName.AffymetrixFileSetReporter]{*getName}()}.
+  For more information see \code{\link{AffymetrixFileSetReporter}}.
 }
 \keyword{internal}
 \keyword{methods}

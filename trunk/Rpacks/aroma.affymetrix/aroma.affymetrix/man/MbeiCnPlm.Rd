@@ -71,7 +71,7 @@ calculateResiduals, calculateResidualSet, calculateWeights, fit, getCalculateRes
 findUnitsTodo, getCellIndices, readUnits
 
  \bold{Methods inherited from Model}:\cr
-fit, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setTags
+fit, getAlias, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
