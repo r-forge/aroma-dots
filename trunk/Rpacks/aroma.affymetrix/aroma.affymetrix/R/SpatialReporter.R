@@ -149,15 +149,19 @@ setMethodS3("getColorMaps", "SpatialReporter", function(this, parsed=FALSE, ...)
 })
 
 
-setMethodS3("writeImages", "SpatialReporter", function(this, ...) {
+setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ...) {
+  # Get the CEL set of interest
+  cs <- getDataSet(this);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!is.null(aliases)) {
+    aliases <- Arguments$getCharacters(aliases, length=nbrOfArrays(cs));
+  }
+  
   # Get the path to the image directory
   path <- getPath(this);
-
-  # Get the CEL set of interest
-  cs <- getDataSet(this);
 
   # Get the color maps to be generated
   colorMaps <- getColorMaps(this, parsed=TRUE);
@@ -169,7 +173,9 @@ setMethodS3("writeImages", "SpatialReporter", function(this, ...) {
   # For each array...
   for (kk in seq(cs)) {
     df <- getFile(cs, kk);
+    setAlias(df, aliases[kk]);
     verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
+    verbose && cat(verbose, "Alias: ", getAlias(df));
     # For each color map...
     for (ll in seq(along=colorMaps)) {
       colorMap <- colorMaps[[ll]];

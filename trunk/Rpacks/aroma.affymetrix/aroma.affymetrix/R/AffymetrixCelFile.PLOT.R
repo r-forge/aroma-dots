@@ -1044,7 +1044,7 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, fullname=getFullName(this), tags=c("*", "sqrt", "gray"), imgFormat="png", path=NULL,  field=c("intensities", "stdvs", "pixels"), ..., skip=TRUE, verbose=FALSE) {
+setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, fullname=NULL, tags=c("*", "sqrt", "gray"), imgFormat="png", path=NULL,  field=c("intensities", "stdvs", "pixels"), ..., skip=TRUE, verbose=FALSE) {
   # Argument 'path':
   if (is.null(path)) {
     rootPath <- "reports";
@@ -1092,9 +1092,16 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
   verbose && enter(verbose, "Writing CEL image to file");
 
   # Generate the pathname
+  if (is.null(fullname)) {
+    name <- getAlias(this);
+    if (is.null(name))
+      name <- getName(this);
+    fullname <- paste(c(name, getTags(this)), collapse=",");
+  }
   fullname <- paste(c(fullname, tags), collapse=",");
-  if (is.null(filename))
+  if (is.null(filename)) {
     filename <- sprintf("%s.%s", fullname, imgFormat);
+  }
   pathname <- Arguments$getWritablePathname(filename, path=path);
   verbose && cat(verbose, "Pathname: ", pathname);  
 
@@ -1117,6 +1124,8 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2007-03-20
+# o Now writeImage() uses the file alias as the name if it exists.
 # 2007-03-19
 # o Now getImage() and writeSpatial() accepts a list of transform functions.
 # 2007-03-15

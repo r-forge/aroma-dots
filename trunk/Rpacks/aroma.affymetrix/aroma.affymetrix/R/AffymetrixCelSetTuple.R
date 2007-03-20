@@ -534,9 +534,10 @@ setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL,
 # }
 #*/###########################################################################
 setMethodS3("getArrays", "AffymetrixCelSetTuple", function(this, ...) {
-  getNames(this, ...);
+  arrays <- getNames(this, ...);
+  names(arrays) <- getFullNames(this);
+  arrays;
 })
-
 
 
 
@@ -685,6 +686,9 @@ setMethodS3("getTuple", "AffymetrixCelSetTuple", function(this, array, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2007-03-20
+# o Now getArrays() returns a named list where the names are the result from
+#   getFullNames().
 # 2007-03-19
 # o TODO: Handle replicated sample names. It is not clear how this should be
 #   done.

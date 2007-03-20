@@ -348,8 +348,6 @@ setMethodS3("getColorMaps", "ArrayExplorer", function(this, parsed=FALSE, ...) {
 # @synopsis
 #
 # \arguments{
-#   \item{arrays}{A @vector of arrays specifying which arrays to
-#    be considered.  If @NULL, all are processed.}
 #   \item{...}{Not used.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
@@ -364,14 +362,10 @@ setMethodS3("getColorMaps", "ArrayExplorer", function(this, parsed=FALSE, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("process", "ArrayExplorer", function(this, arrays=NULL, ..., verbose=FALSE) {
+setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'arrays':
-  if (is.null(arrays))
-    arrays <- getArrays(this);
-
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -388,7 +382,7 @@ setMethodS3("process", "ArrayExplorer", function(this, arrays=NULL, ..., verbose
   # Generate bitmap images
   reporters <- getListOfReporters(this);
   res <- lapply(reporters, FUN=function(reporter) {
-    writeImages(reporter, arrays=arrays, ..., verbose=less(verbose));
+    writeImages(reporter, aliases=names(getArrays(this)), ..., verbose=less(verbose));
   });
 
   # Update samples.js
@@ -403,6 +397,7 @@ setMethodS3("process", "ArrayExplorer", function(this, arrays=NULL, ..., verbose
 ##############################################################################
 # HISTORY:
 # 2007-03-20
+# o Removed argument arrays from process().
 # o Added setAlias() which also sets the alias on the reporters.
 # o Added getAlias() to inherit the alias from the reporters.
 # 2007-03-19

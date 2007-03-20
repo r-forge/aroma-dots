@@ -67,6 +67,7 @@ setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, mustExist=
 
 
   this <- extend(Object(), "AffymetrixFile",
+    .alias = NULL,
     .pathname = pathname,
     .attributes = list()
   )
@@ -322,6 +323,18 @@ setMethodS3("getName", "AffymetrixFile", function(this, ...) {
 })
 
 
+setMethodS3("getAlias", "AffymetrixFile", function(this, ...) {
+  this$.alias;
+})
+
+setMethodS3("setAlias", "AffymetrixFile", function(this, alias=NULL, ...) {
+  if (!is.null(alias)) {
+    alias <- Arguments$getFilename(alias);
+  }
+  
+  this$.alias <- alias;
+  invisible(this);
+})
 
 
 ###########################################################################/**
@@ -628,6 +641,9 @@ setMethodS3("validateChecksum", "AffymetrixFile", function(this, ..., verbose=FA
 
 ############################################################################
 # HISTORY:
+# 2007-03-20
+# o Added getAlias() and setAlias().  Note, getName() etc are still
+#   unaffected by these.
 # 2007-03-05
 # o Added setAttributesByTags(), which now also tries to coerce values.
 # o Added support for (in-memory) attributes.
