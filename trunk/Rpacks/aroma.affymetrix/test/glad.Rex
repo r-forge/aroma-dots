@@ -1,5 +1,5 @@
 library(aroma.affymetrix);
-source("init.R");
+#source("init.R");
 source("ui.R");
 
 pngDev <- System$findGraphicsDevice();
