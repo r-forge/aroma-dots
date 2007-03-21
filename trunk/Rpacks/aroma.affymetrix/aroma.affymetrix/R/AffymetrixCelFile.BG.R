@@ -386,8 +386,6 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
     setCdf(res, cdf);
     return(res);
   }
-sourceDirectory("/home/users/lab0605/ksimpson/projects/affy/devel/aroma.affymetrix/R", modifiedOnly=TRUE, recursive=FALSE)
-
 
   if (pmonly) {
     verbose && cat(verbose, "Adjusting PM signals only");
