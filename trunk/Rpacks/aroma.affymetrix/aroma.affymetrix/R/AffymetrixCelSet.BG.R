@@ -365,7 +365,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="bgRma", pmonly=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="probeData", tags="RmaBC", pmonly=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -374,8 +374,8 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="b
 
   # Argument 'path':
   if (is.null(path)) {
-    # Path structure: /bgGcrma/<data set name>/chip_data/<chip type>/
-    path <- file.path(name, getName(this), "chip_data", getChipType(cdf));
+    # Path structure: /bgRma/<data set name>/chip_data/<chip type>/
+    path <- file.path(name, paste(getName(this),tags,sep=","), getChipType(cdf));
   }
   if (!is.null(path)) {
     # Verify this path (and create if missing)
