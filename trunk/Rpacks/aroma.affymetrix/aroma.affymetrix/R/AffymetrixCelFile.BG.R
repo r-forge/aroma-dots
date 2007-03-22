@@ -146,8 +146,8 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 #       @see "AffymetrixCdfFile" class.}
 #   \item{gsbAdjust}{Should we adjust for specific binding (defaults to
 #        @TRUE)?}
-#   \item{gsbParameters}{Specific binding parameters as estimated by
-#       \code{calculateGsbParameters()} for the @see "AffymetrixCelSet"
+#   \item{parametersGsb}{Specific binding parameters as estimated by
+#       \code{calculateParametersGsb()} for the @see "AffymetrixCelSet"
 #       class.}
 #   \item{k}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
 #   \item{rho}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
@@ -173,7 +173,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, overwrite=FALSE, skip=!overwrite, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, gsbParameters=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, verbose=FALSE, ...) {
+setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, parametersGsb=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -279,9 +279,9 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, over
   verbose && exit(verbose);
 
   # if specific binding correction requested, carry it out
-  if (gsbAdjust && !is.null(gsbParameters)) {
+  if (gsbAdjust && !is.null(parametersGsb)) {
     verbose && enter(verbose, "Adjusting for specific binding")
-    pm <- 2^(log2(pm) - gsbParameters[2]*apm + mean(gsbParameters[2]*apm));
+    pm <- 2^(log2(pm) - parametersGsb[2]*apm + mean(parametersGsb[2]*apm));
     verbose && exit(verbose);
   }
 
@@ -452,6 +452,10 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
 
 ############################################################################
 # HISTORY:
+# 2007-03-22
+# o rename gsbParameters to parametersGsb to avoid clash of arguments
+#   in bgAdjustGcrma.AffymetrixCelFile().  Not sure why gsbAdjust and
+#   gsbParameters are being matched, but there you go.
 # 2006-10-10
 # o add RMA background correction
 # 2006-10-06

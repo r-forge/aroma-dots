@@ -45,7 +45,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
   # Argument 'path':
   if (is.null(path)) {
     # Path structure: /bgOptical/<data set name>/chip_data/<chip type>/
-    path <- file.path(name, getName(this), "chip_data", getChipType(cdf));
+    path <- file.path("probeData", paste(getName(this),getTags(this),sep=","), getChipType(cdf));
   }
   if (!is.null(path)) {
     # Verify this path (and create if missing)
@@ -91,7 +91,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
 
 
 ###########################################################################/**
-# @RdocMethod calculateGsbParameters
+# @RdocMethod calculateParametersGsb
 #
 # @title "Computes parameters for adjustment of specific binding"
 #
@@ -115,7 +115,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
 #   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
 #*/###########################################################################
-setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPms=25000, affinities=NULL, path=NULL, ..., verbose=FALSE) {
+setMethodS3("calculateParametersGsb", "AffymetrixCelSet", function(this, nbrOfPms=25000, affinities=NULL, path=NULL, ..., verbose=FALSE) {
 
   verbose <- Arguments$getVerbose(verbose);
 
@@ -238,7 +238,7 @@ setMethodS3("calculateGsbParameters", "AffymetrixCelSet", function(this, nbrOfPm
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name="bgGcrma", probePath=NULL, affinities=NULL, type="fullmodel",  indicesNegativeControl=NULL, opticalAdjust=TRUE, gsbAdjust=TRUE, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15*fast + (1-fast), fast=TRUE, ..., verbose=FALSE) {
+setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name="bgGcrma", probePath=NULL, affinities=NULL, type="fullmodel",  indicesNegativeControl=NULL, opticalAdjust=TRUE, gsbAdjust=TRUE, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15*fast + (1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -247,8 +247,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 
   # Argument 'path':
   if (is.null(path)) {
-    # Path structure: /bgGcrma/<data set name>/chip_data/<chip type>/
-    path <- file.path(name, getName(this), "chip_data", getChipType(cdf));
+    path <- file.path("probeData", paste(getName(this),getTags(this),sep=","), getChipType(cdf));
   }
   if (!is.null(path)) {
     # Verify this path (and create if missing)
@@ -276,7 +275,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
       affinities <- readApd(pathname)$affinities;
       verbose && exit(verbose);
     } else {
-      affinities <- cdf$computeAffinities(paths=probePath);
+      affinities <- computeAffinities(cdf, paths=probePath);
       verbose && cat(verbose, "Saving affinities: ", pathname);
       writeApd(pathname, data=affinities, name="affinities");
     }
@@ -288,9 +287,9 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   if (opticalAdjust) {
-    opticalPath <- filePath(path, "optical");
-    dsOptical <- bgAdjustOptical(this, path=opticalPath, typesToUpdate="pmmm", ..., verbose=verbose);
-    this <- dsOptical;
+    OBG <- OpticalBackgroundCorrection(this);
+    dsOBG <- process(OBG, ..., verbose=verbose);
+    this <- dsOBG;
   }
 
   
@@ -300,7 +299,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
   
   if (gsbAdjust) {
     verbose && enter(verbose, "Estimating specific binding parameters");
-    gsbParameters <- calculateGsbParameters(this, affinities=affinities, path=path, ..., verbose=verbose);
+    parametersGsb <- calculateParametersGsb(this, affinities=affinities, path=path, ..., verbose=verbose);
     verbose && exit(verbose);
   }
   
@@ -314,7 +313,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(this, kk);
     verbose && print(verbose, df);
-    dataFiles[[kk]] <- bgAdjustGcrma(df, path=path, gsbAdjust=gsbAdjust, gsbParameters=gsbParameters, type=type, indicesNegativeControl=indicesNegativeControl, affinities=affinities, k=k, rho=rho, stretch=stretch, fast=fast, ..., verbose=less(verbose));
+    dataFiles[[kk]] <- bgAdjustGcrma(df, path=path, type=type, indicesNegativeControl=indicesNegativeControl, affinities=affinities, gsbAdjust=gsbAdjust, parametersGsb=parametersGsb, k=k, rho=rho, stretch=stretch, fast=fast, overwrite=overwrite, skip=skip, ..., verbose=less(verbose));    
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
@@ -365,7 +364,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="probeData", tags="RmaBC", pmonly=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="RBC", pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -375,7 +374,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="p
   # Argument 'path':
   if (is.null(path)) {
     # Path structure: /bgRma/<data set name>/chip_data/<chip type>/
-    path <- file.path(name, paste(getName(this),tags,sep=","), getChipType(cdf));
+    path <- file.path("probeData", paste(getName(this),tags,sep=","), getChipType(cdf));
   }
   if (!is.null(path)) {
     # Verify this path (and create if missing)
@@ -400,7 +399,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="p
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(this, kk);
     verbose && print(verbose, df);
-    dataFiles[[kk]] <- bgAdjustRma(df, path=path, pmonly=pmonly, ..., verbose=less(verbose));
+    dataFiles[[kk]] <- bgAdjustRma(df, path=path, pmonly=pmonly, addJitter=addJitter, jitterSd=jitterSd, overwrite=overwrite, skip=skip, ..., verbose=less(verbose));
     gc();
     verbose && exit(verbose);
   }
@@ -415,6 +414,10 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, name="p
 
 ############################################################################
 # HISTORY:
+# 2007-03-22
+# o rename gsbParameters to parametersGsb to avoid clash of arguments
+#   in bgAdjustGcrma.AffymetrixCelFile().  Not sure why gsbAdjust and
+#   gsbParameters are being matched, but there you go.
 # 2006-10-10
 # o add RMA background correction (normal+exponential)
 # 2006-10-06
