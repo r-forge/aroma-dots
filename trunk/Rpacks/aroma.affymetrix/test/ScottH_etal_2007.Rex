@@ -1,21 +1,34 @@
 library(aroma.affymetrix);
 #source("init.R");
 
+verbose <- Arguments$getVerbose(-5);
+
 dataSetName <- "AGRF_2007a";
 tags <- "QN,RMA,A+B,FLN";
 #tags <- "QN,RMA,+-,A+B,F+R,g,FLN";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 
-cesList <- list();
+# Sample annotation data (attributes)
+saf <- SampleAnnotationSet$fromPath("rawData");
+
+cesList <- refList <- list();
 for (chipType in chipTypes) {
   ces <- CnChipEffectSet$fromName(dataSetName, tags=tags, chipType=chipType);
+  # Added sample annotation data as attributes
+  setAttributesBy(ces, saf);
   print(ces);
+
+  # Get baseline
+  ref <- calculateBaseline(ces, defaultPloidy=2, verbose=verbose);
+  print(ref);
+
   cesList[[chipType]] <- ces;
+  refList[[chipType]] <- ref;
 } # for (chipType ...)
 
 
 # Create a log file
-glad <- GladModel(cesList);
+glad <- GladModel(cesList, refList);
 print(glad);
 
 ce <- ChromosomeExplorer(glad);

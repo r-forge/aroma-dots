@@ -2,9 +2,10 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.4.4 [2007-03-23]
-o Added BackgroundCorrection classes RmaBackgroundCorrection
-  and GcRmaBackgroundCorrection.  These replaces methods
-  bgAdjustRma() and bgAdjustRcRma(), which are now deprecated.
+o Added BackgroundCorrection classes RmaBackgroundCorrection,
+  GcRmaBackgroundCorrection, and OpticalBackgroundCorrection.  
+  These replaces methods bgAdjustRma(), bgAdjustRcRma(), and
+  bgAdjustOptical() which are now deprecated.
 o The ArrayExplorer class now handles multiple chip types.
 
 WORK IN PROGRESS (no guarantees):
@@ -12,6 +13,7 @@ o Added AffymetrixCelSetTuple.
 o Added the SpatialReporter class.
 o Added the abstract Explorer class.
 o Added calculateBaseline() to ChipEffectSet.
+o Lines of code: grep -v "#" *.R | wc -l => 25008
 
 
 Version: 0.4.3 [2007-03-15]

@@ -24,7 +24,7 @@ CEL files.
  Adapted from \code{\link[affy]{bg.adjust}} in the \pkg{affy} package.
 }
 
-\usage{\method{bgAdjustRma}{AffymetrixCelSet}(this, path=NULL, name="bgRma", pmonly=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE)}
+\usage{\method{bgAdjustRma}{AffymetrixCelSet}(this, path=NULL, tags="RBC", pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE)}
 
 \arguments{
   \item{path}{The path where to save the adjusted data files.}

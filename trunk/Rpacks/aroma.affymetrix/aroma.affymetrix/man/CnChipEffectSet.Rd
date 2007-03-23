@@ -53,6 +53,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 \tabular{rll}{
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
+ \tab \code{getBaseline} \tab  -\cr
  \tab \code{getCombineAlleles} \tab  -\cr
  \tab \code{setCombineAlleles} \tab  -\cr
  \tab \code{writeWig} \tab  -\cr
@@ -60,10 +61,10 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 
  \bold{Methods inherited from SnpChipEffectSet}:\cr
-extractSnpQSet, fromFiles, getAverageFile, getMergeStrands, setMergeStrands
+extractSnpQSet, fromFiles, getAverageFile, getBaseline, getMergeStrands, setMergeStrands
 
  \bold{Methods inherited from ChipEffectSet}:\cr
-calculateBaseline, extractDataFrame, extractMatrix, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAverageFile, getCellIndices, getParameters, getXAM, readUnits, updateUnits
+calculateBaseline, extractDataFrame, extractMatrix, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, readUnits, updateUnits
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
 [, [[, append, as, as.AffymetrixCelSet, averageQuantile, cna, extractAffyBatch, extractSnpFeatureSet, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf

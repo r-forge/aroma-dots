@@ -1096,6 +1096,29 @@
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
 \alias{yellow.colors}
+\alias{addExclCells}
+\alias{addExclCells.DChipQuantileNormalization}
+\alias{AptCopyNumberPipeline}
+\alias{calculateParametersGsb}
+\alias{excludeChrXFromFit}
+\alias{excludeChrXFromFit.DChipQuantileNormalization}
+\alias{getAlias.AffymetrixFile}
+\alias{getAlias.ArrayExplorer}
+\alias{getBaseline}
+\alias{getBaseline.CnChipEffectSet}
+\alias{getBaseline.SnpChipEffectSet}
+\alias{getExclCells}
+\alias{getExclCells.DChipQuantileNormalization}
+\alias{getParameters.BackgroundCorrection}
+\alias{getParameters.GcRmaBackgroundCorrection}
+\alias{getParameters.OpticalBackgroundCorrection}
+\alias{getParameters.RmaBackgroundCorrection}
+\alias{getSubsetToUpdate.BackgroundCorrection}
+\alias{readMouse430KenHardwired}
+\alias{readMouse430KenHardwired.DChipGenomeInformation}
+\alias{setAlias.AffymetrixFile}
+\alias{setAlias.ArrayExplorer}
+\alias{BrlmmModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

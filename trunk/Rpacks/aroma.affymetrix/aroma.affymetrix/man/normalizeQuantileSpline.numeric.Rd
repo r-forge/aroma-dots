@@ -24,7 +24,9 @@
   \item{x}{a \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{N}.}
   \item{xTarget}{a \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{M}.}
   \item{sort}{If \code{\link[base:logical]{TRUE}}, argument \code{xTarget} is sorted.}
-  \item{...}{Not used.}
+  \item{...}{Arguments passed to (\code{\link[stats]{smooth.spline}}
+     or \code{\link[aroma.light]{robustSmoothSpline}}), e.g. \code{w}
+     for weights.}
   \item{robust}{If \code{\link[base:logical]{TRUE}}, the normalization function is
      estimated robustly.}
 }
@@ -40,6 +42,8 @@
 }
 
 \seealso{
+  Internally either \code{\link[aroma.light]{robustSmoothSpline}} or
+  \code{\link[stats]{smooth.spline}} is used.
   \code{\link{normalizeQuantileSpline.matrix}}().
 }
 

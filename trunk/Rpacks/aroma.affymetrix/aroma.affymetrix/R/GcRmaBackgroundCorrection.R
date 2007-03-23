@@ -14,9 +14,13 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of
-#     @see "ProbeLevelTransform".}
-#   \item{addJitter}{}
-#   \item{jitterSd}{}
+#      @see "ProbeLevelTransform".}
+#   \item{indicesNegativeControl}{}
+#   \item{affinities}{}
+#   \item{type}{}
+#   \item{opticalAdjust}{}
+#   \item{gsbAdjust}{}
+#   \item{gsbParameters}{}
 # }
 #
 # \section{Fields and Methods}{

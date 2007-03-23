@@ -21,7 +21,7 @@
  Adapted from \code{\link[gcrma]{bg.adjust.gcrma}} in the \pkg{gcrma} package.
 }
 
-\usage{\method{bgAdjustGcrma}{AffymetrixCelFile}(this, path=NULL, overwrite=FALSE, skip=!overwrite, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, gsbParameters=NULL, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15 * fast + 1 * (1 - fast), fast=TRUE, verbose=FALSE, ...)}
+\usage{\method{bgAdjustGcrma}{AffymetrixCelFile}(this, path=NULL, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, parametersGsb=NULL, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15 * fast + 1 * (1 - fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE)}
 
 \arguments{
   \item{path}{The path where to save the adjusted data files.}
@@ -37,8 +37,8 @@
       \code{\link{AffymetrixCdfFile}} class.}
   \item{gsbAdjust}{Should we adjust for specific binding (defaults to
        \code{\link[base:logical]{TRUE}})?}
-  \item{gsbParameters}{Specific binding parameters as estimated by
-      \code{calculateGsbParameters()} for the \code{\link{AffymetrixCelSet}}
+  \item{parametersGsb}{Specific binding parameters as estimated by
+      \code{calculateParametersGsb()} for the \code{\link{AffymetrixCelSet}}
       class.}
   \item{k}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
   \item{rho}{Tuning parameter passed to \code{bg.adjust.gcrma}.}
