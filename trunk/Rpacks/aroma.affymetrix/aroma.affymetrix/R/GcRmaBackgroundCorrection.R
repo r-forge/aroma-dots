@@ -106,7 +106,7 @@ setMethodS3("process", "GcRmaBackgroundCorrection", function(this, ..., force=FA
   # Get input data set
   ds <- getInputDataSet(this);
 
-  # Get algorithm parameters (including the target distribution)
+  # Get algorithm parameters
   params <- getParameters(this);
 
   # Get the output path
@@ -124,7 +124,7 @@ setMethodS3("process", "GcRmaBackgroundCorrection", function(this, ..., force=FA
   verbose && exit(verbose);
 
   # Update the output data set
-  this$outputDataSet <- outputDataSet;
+  this$.outputDataSet <- outputDataSet;
 
   verbose && exit(verbose);
   

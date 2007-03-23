@@ -1,7 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.4 [2007-03-19]
+Version: 0.4.4 [2007-03-23]
+o Added BackgroundCorrection classes RmaBackgroundCorrection
+  and GcRmaBackgroundCorrection.  These replaces methods
+  bgAdjustRma() and bgAdjustRcRma(), which are now deprecated.
 o The ArrayExplorer class now handles multiple chip types.
 
 WORK IN PROGRESS (no guarantees):
