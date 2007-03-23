@@ -16,8 +16,11 @@
 #     If @NULL, all chromosomes are considered.}
 #   \item{ploidy}{An @integer specifying the ploidy that the baseline
 #     should have.}
-#   \item{...}{Not used.}
+#   \item{defaultPloidy}{An @integer specifying the default ploidy of 
+#     chromosomes that have not explicitly been allocated one.}
+#   \item{force}{If @TRUE, the CEL file that stores the is recreated.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{...}{Not used.}
 # }
 #
 # \value{
@@ -26,10 +29,11 @@
 # @author
 #
 # \seealso{
+#   @see "getAverage".
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NULL, ploidy=2, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NULL, ploidy=2, defaultPloidy=NA, force=FALSE, verbose=FALSE, ...) {
   cdf <- getCdf(this);
   gi <- getGenomeInformation(cdf);
   allChromosomes <- getChromosomes(gi);
@@ -58,41 +62,22 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
 
   verbose && enter(verbose, "Estimating the baseline signals for each chromosome");
 
+
+  verbose && enter(verbose, "Getting CEL file to store baseline signals");
+  csBaseline <- getBaseline(this, force=force, verbose=less(verbose));
+  verbose && exit(verbose);
+
   n <- nbrOfArrays(this);
   for (chromosome in chromosomes) {
     verbose && enter(verbose, "Chromosome ", chromosome);
 
-    verbose && enter(verbose, "Extracting the two sets of samples");
-    isBaseline <- (sapply(this, getPloidy, chromosome) == ploidy);
-    nB <- sum(isBaseline);
-    verbose && printf(verbose, "Number of samples with ploidy %d: %d\n",
-                                                              ploidy, nB);
-    if (nB == 0) {
-      throw("Cannot estimate baseline signals. No samples with ploidy ", ploidy, " available.");
-    }
-
-    nM <- n - nB;
-    
-    # Baseline samples
-    csB <- extract(this, which( isBaseline));
-    verbose && printf(verbose, "Baseline samples (with ploidy %d):\n", ploidy);
-    verbose && print(verbose, csB);
-
-    if (nM > 0) {
-      # Mixed samples
-      csM <- extract(this, which(!isBaseline));
-      verbose && cat(verbose, "All other samples:");
-      verbose && print(verbose, csM);
-      verbose && exit(verbose);
-    }
-    
     verbose && enter(verbose, "Identifying units on chromosome");
     units <- getUnitsOnChromosome(gi, chromosome=chromosome);
     verbose && cat(verbose, "Units:");
     verbose && str(verbose, units);
     verbose && exit(verbose);
 
-   verbose && enter(verbose, "Identifying ucells for these units");
+    verbose && enter(verbose, "Identifying cells for these units");
     cells <- getCellIndices(this, units=units);
     rm(units);
     cells <- unlist(cells, use.names=FALSE);
@@ -101,58 +86,142 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
     verbose && str(verbose, cells);
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "Calculating average of baseline samples");
+    if (!force) {
+      verbose && enter(verbose, "Checking for non-estimated loci");
+      muBs <- getData(csBaseline, indices=cells, fields="intensities", verbose=less(verbose))$intensities;
+      keep <- which(isZero(muBs));
+      cells <- cells[keep];
+      rm(muBs, keep);
+
+      nkeep <- length(keep);
+      verbose && printf(verbose, "Found %d (%.1f%%) non-estimated loci.\n", 
+                                              nkeep, 100*nkeep/length(cells));
+      verbose && exit(verbose);
+      if (nkeep == 0) {
+        verbose && cat(verbose, "Baseline averages already exist for all loci on this chromosome.");
+        verbose && exit(verbose);
+        rm(cells);        
+        next;
+      }
+
+    }
+
+    verbose && enter(verbose, "Identifying samples that have the baseline ploidy and those that have not");
+    isBaseline <- (sapply(this, FUN=function(cf) {
+      getPloidy(cf, chromosome=chromosome, defaultValue=defaultPloidy);
+    }) == ploidy);
+    nB <- sum(isBaseline, na.rm=TRUE);
+    # Number of samples with non-baseline ploidies.
+    nM <- n - nB;
+    verbose && printf(verbose, "Number of samples with ploidy %d: %d\n",
+                                                              ploidy, nB);
+    verbose && printf(verbose, "Number of other samples: %d\n", nM);
+
+    # Assert that there are samples with the baseline ploidy
+    if (nB == 0) {
+      throw("Cannot estimate baseline signals. No samples with ploidy ", ploidy, " available.");
+    }
+    verbose && exit(verbose);
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Baseline samples 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    verbose && enter(verbose, "Processing samples with baseline ploidy");
+
+    verbose && enter(verbose, "Extracting subset of samples");
+    # Baseline samples
+    csB <- extract(this, which( isBaseline));
+    verbose && printf(verbose, "Baseline samples (with ploidy %d):\n", ploidy);
+    verbose && print(verbose, csB);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Calculating average");
     csBavg <- getAverageFile(csB, indices=cells, force=force, verbose=less(verbose));
     verbose && exit(verbose);
 
-    if (nM > 0) {
-      verbose && enter(verbose, "Calculating average of all other samples");
-      csMavg <- getAverageFile(csM, indices=cells, force=force, verbose=less(verbose));
-      verbose && exit(verbose);
-    }
-
-    verbose && enter(verbose, "Calculating differences of the means");
+    verbose && enter(verbose, "Reading the average signals");
     muBs <- getData(csBavg, indices=cells, fields="intensities", verbose=less(verbose))$intensities;
     rm(csBavg);
     verbose && str(verbose, muBs);
-    
-    verbose && cat(verbose, "Summary of log2(mu2s)");
-    verbose && print(verbose, summary(log2(muBs)));
-      
+#    verbose && cat(verbose, "Summary of log2(mu2s)");
+#    verbose && print(verbose, summary(log2(muBs)));
+    verbose && exit(verbose);
+
+    verbose && exit(verbose);
+
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Other samples?
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     if (nM > 0) {
+      verbose && enter(verbose, "Processing samples with non-baseline ploidies");
+      verbose && enter(verbose, "Extracting subset of samples");
+      csM <- extract(this, which(!isBaseline));
+      verbose && cat(verbose, "All other samples:");
+      verbose && print(verbose, csM);
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Calculating average");
+      csMavg <- getAverageFile(csM, indices=cells, force=force, verbose=less(verbose));
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Reading the average signals");
       muMs <- getData(csMavg, indices=cells, fields="intensities", verbose=less(verbose))$intensities;
       rm(csMavg);
       verbose && str(verbose, muMs);
-      
-      # On the log scale, it would have been a difference
+      verbose && exit(verbose);
+
+      verbose && exit(verbose);
+
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      # Estimating the shift
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      # Note, all of this is on the intensity and not the log scale.
+
+      verbose && enter(verbose, "Estimating the baseline bias correction");
+
+      # 1) Get the differences the two groups for each locus.      
       cs <- (muBs / muMs);
       verbose && str(verbose, cs);
       verbose && cat(verbose, "Summary of log2(cs*)");
       verbose && print(verbose, summary(log2(cs)));
       
+      # 2) Get the average difference across all loci.
       c <- median(cs, na.rm=TRUE);
       rm(cs);
-      verbose && printf(verbose, "log2(c*) = %.3f\n", log2(c));
+      verbose && printf(verbose, "Bias correction: log2(c*)=%.3f\n", log2(c));
       verbose && exit(verbose);
       
       verbose && cat(verbose, "Summary of log2(mu1s)");
-      muBs2 <- muMs * c;
-      rm(muMs);
       verbose && print(verbose, summary(log2(muBs2)));
 
+
+      # 3) Weighted average of the two groups
+      verbose && enter(verbose, "Estimating the weighted average of the two groups at each locus");
+
+      # The estimate of the baseline according to the non-baseline samples
+      muBs2 <- muMs * c;
+      rm(muMs);
+
+      # The weights for the two groups
       wB <- nB/n;
       wM <- 1-wB;
 
-      verbose && cat(verbose, "Summary of log2(ds)");
       ds <- wB*muBs + wM*muBs2;
       rm(muBs, muBs2);
+      verbose && exit(verbose);
     } else {
       ds <- muBs;
+      verbose && cat(verbose, "All samples have baseline ploidy and are used to estimate the baseline signals.");
     }
+
+    verbose && cat(verbose, "Summary of baseline signals log2(ds)");
     verbose && print(verbose, summary(log2(ds)));
 
-    verbose && enter(verbose, "Updating baseline signals");
-    # TO DO
+    verbose && enter(verbose, "Storing baseline signals");
+    ds <- cbind(intensities=ds, cell=cells);
+    muBs <- updateDataFlat(csBaseline, data=ds, verbose=less(verbose));
     rm(ds);
     verbose && exit(verbose);
 
@@ -163,17 +232,26 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
     verbose && print(verbose, gc);
     
     verbose && exit(verbose);
-  }
-
+  } # for (chromosome ...)
 
   verbose && exit(verbose);
 
-  res;
+  csBaseline;
 }) # calculateBaseline()
+
+
 
 
 ############################################################################
 # HISTORY:
+# 2007-03-22
+# o TO DO: Estimate standard errors just like getAverage() does.
+# o Unless 'force=TRUE', only cells for which the average has not already
+#   been estimate are estimated.  This way calculateBaseline() is faster
+#   if called multiple times.
+# o Added getBaseline().
+# o First working version of calculateBaseline(). Method now creates a CEL
+#   files to store the estimates.
 # 2007-03-16
 # o Created.  See ploidy4.ps paper.
 ############################################################################

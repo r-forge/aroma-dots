@@ -543,7 +543,10 @@ setMethodS3("process", "AptProbesetGenotype", function(this, force=FALSE, ..., v
   opts <- c(opts, sprintf("--summaries"));
 
   # Probe-affinity estimates
-  opts <- c(opts, sprintf("--feat-effects"));
+  opts <- c(opts, sprintf("--feat-effects"))
+
+  # Residuals
+#  opts <- c(opts, sprintf("--residuals"));
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

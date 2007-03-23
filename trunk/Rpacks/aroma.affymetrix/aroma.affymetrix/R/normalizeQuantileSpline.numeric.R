@@ -14,7 +14,9 @@
 #   \item{x}{a @numeric @vector of length \eqn{N}.}
 #   \item{xTarget}{a @numeric @vector of length \eqn{M}.}
 #   \item{sort}{If @TRUE, argument \code{xTarget} is sorted.}
-#   \item{...}{Not used.}
+#   \item{...}{Arguments passed to (@see "stats::smooth.spline"
+#      or @see "aroma.light::robustSmoothSpline"), e.g. \code{w} 
+#      for weights.}
 #   \item{robust}{If @TRUE, the normalization function is 
 #      estimated robustly.}
 # }
@@ -30,6 +32,8 @@
 # }
 #
 # \seealso{
+#   Internally either @see "aroma.light::robustSmoothSpline" or
+#   @see "stats::smooth.spline" is used.
 #   @see "normalizeQuantileSpline.matrix".
 # }
 #
@@ -88,6 +92,8 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, xTarget, sort=TRUE
 
 ##############################################################################
 # HISTORY:
+# 2007-03-22
+# o Updated the Rdocs slightly.
 # 2007-02-05
 # o Now normalizeQuantileSpline() handles NAs too.
 # 2007-02-04
