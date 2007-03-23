@@ -1,14 +1,3 @@
-setMethodS3("getCalculateResidualsFunction", "ProbeLevelModel", function(static, ...) {
-  function(y, yhat) {
-    y-yhat;
-  }
-}, static=TRUE, protected=TRUE)
-
-
-setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
-  calculateResidualSet(this, ...);
-}, private=TRUE)
-
 setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -139,7 +128,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Generating output pathname
+  # Calculate residuals for each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   path <- getPath(this);
 
@@ -185,13 +174,11 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
 
     verbose && enter(verbose, "Storing residuals");
     tryCatch({
-      if (!isFile(pathname)) {
-        # Copy CEL file and update the copy
-        verbose && enter(verbose, "Copying source CEL file");
-        createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
-##        copyCel(from=getPathname(df), to=pathname, overwrite=force);
-        verbose && exit(verbose);
-      }
+      # Create CEL file to store results, if missing
+      verbose && enter(verbose, "Creating CEL file for results, if missing");
+      createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
+      verbose && exit(verbose);
+
       verbose && enter(verbose, "Writing normalized intensities");
       updateCel(pathname, indices=cells, intensities=eps);
       verbose && exit(verbose);
@@ -233,6 +220,19 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
 
   invisible(rs);
 })
+
+
+setMethodS3("getCalculateResidualsFunction", "ProbeLevelModel", function(static, ...) {
+  function(y, yhat) {
+    y-yhat;
+  }
+}, static=TRUE, protected=TRUE)
+
+
+setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
+  calculateResidualSet(this, ...);
+}, private=TRUE)
+
 
 
 ##########################################################################

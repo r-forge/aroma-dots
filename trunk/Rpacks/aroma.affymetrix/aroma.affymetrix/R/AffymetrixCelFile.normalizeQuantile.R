@@ -105,10 +105,11 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.p
   # Write normalized data to file
   verbose && enter(verbose, "Writing normalized probe signals");
 
-  # Copy CEL file and update the copy
-  verbose && enter(verbose, "Copying source CEL file");
-  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  # Create CEL file to store results, if missing
+  verbose && enter(verbose, "Creating CEL file for results, if missing");
+  createFrom(this, filename=pathname, path=NULL, verbose=less(verbose));
   verbose && exit(verbose);
+
   verbose && enter(verbose, "Writing normalized intensities");
   updateCel(pathname, intensities=x);
   verbose && exit(verbose);

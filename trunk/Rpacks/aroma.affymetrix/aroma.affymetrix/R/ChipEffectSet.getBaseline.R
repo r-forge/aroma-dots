@@ -47,19 +47,12 @@ setMethodS3("getBaseline", "ChipEffectSet", function(this, force=FALSE, verbose=
   # Get a template CEL file
   df <- getFile(this, 1);
 
-  if (!force && isFile(pathname)) {
-    verbose && enter(verbose, "Retrieving existing CEL file");
-    res <- fromFile(df, filename=pathname, path=NULL, 
+  verbose && enter(verbose, "Retrieving CEL file");
+  res <- createFrom(df, filename=pathname, path=NULL, force=force,
                                                   verbose=less(verbose));
-    verbose && exit(verbose);
-  } else {
-    verbose && enter(verbose, "Creating empty CEL file");
-    # Create new empty file from this one
-    res <- createFrom(df, filename=pathname, path=NULL, 
-                                                  verbose=less(verbose));
-    verbose && exit(verbose);
-  }
   verbose && print(verbose, res);
+  verbose && exit(verbose);
+
   rm(df);
   verbose && exit(verbose);
 

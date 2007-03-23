@@ -389,13 +389,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     y <- 2^y;
     verbose && exit(verbose);
 
-    # Copy CEL file and update the copy
-    verbose && enter(verbose, "Copying source CEL file");
-    copyCel(from=getPathname(ce), to=pathname);
+    # Create CEL file to store results, if missing
+    verbose && enter(verbose, "Creating CEL file for results, if missing");
+    ceN <- createFrom(ce, filename=pathname, path=NULL, verbose=less(verbose));
     verbose && exit(verbose);
-
-    # Defining normalized object
-    ceN <- fromFile(ce, pathname);
 
     # Carry over parameters too.  AD HOC for now. /HB 2007-01-07
     if (inherits(ce, "SnpChipEffectFile")) {

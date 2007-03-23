@@ -419,10 +419,12 @@ setMethodS3("process", "PcrProbeCalibration", function(this, ..., force=FALSE, v
     filename <- sprintf("%s.cel", getFullName(df));
     pathname <- filePath(outputPath, filename);
     verbose && cat(verbose, "Pathname: ", pathname);
-    # Copy CEL file and update the copy
-    verbose && enter(verbose, "Copying source CEL file");
-    copyCel(from=getPathname(df), to=pathname, overwrite=force);
+
+    # Create CEL file to store results, if missing
+    verbose && enter(verbose, "Creating CEL file for results, if missing");
+    createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
     verbose && exit(verbose);
+
     # Updating CEL
     verbose && enter(verbose, "Writing calibrated PM intensities");
     updateCel(pathname, indices=pmIdxs, intensities=y);
