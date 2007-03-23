@@ -8,6 +8,7 @@ WORK IN PROGRESS (no guarantees):
 o Added AffymetrixCelSetTuple.
 o Added the SpatialReporter class.
 o Added the abstract Explorer class.
+o Added calculateBaseline() to ChipEffectSet.
 
 
 Version: 0.4.3 [2007-03-15]

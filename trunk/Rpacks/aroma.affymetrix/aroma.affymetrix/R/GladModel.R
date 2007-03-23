@@ -368,7 +368,7 @@ setMethodS3("getArrays", "GladModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("indexOfArrays", "GladModel", function(this, arrays=NULL, ...) {
-  indexOfArrays(getSetTuple(this), ...);
+  indexOfArrays(getSetTuple(this), arrays=arrays, ...);
 }, private=TRUE)
 
 

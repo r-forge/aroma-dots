@@ -24,10 +24,34 @@
 # @author
 #*/###########################################################################
 setConstructorS3("DChipQuantileNormalization", function(...) {
-  extend(QuantileNormalization(...), "DChipQuantileNormalization");
+  extend(QuantileNormalization(...), "DChipQuantileNormalization",
+    .exclCells = NULL
+  );
 })
 
 
+setMethodS3("getExclCells", "DChipQuantileNormalization", function(this, ..., verbose=FALSE) {
+  this$.exclCells;
+}, protected=TRUE)
+
+
+setMethodS3("addExclCells", "DChipQuantileNormalization", function(this, cells, ..., verbose=FALSE) {
+  cells <- c(this$.exclCells, cells);
+  cells <- unique(cells);
+  cells <- sort(cells);
+  this$.exclCells <- cells;
+}, protected=TRUE)
+
+
+setMethodS3("excludeChrXFromFit", "DChipQuantileNormalization", function(this, ..., verbose=FALSE) {
+  ds <- getInputDataSet(this);
+  cdf <- getCdf(ds);
+  gi <- getGenomeInformation(cdf);
+  xUnits <- getUnitsOnChromosome(gi, "X");
+  cells <- getCellIndices(cdf, units=xUnits);
+  cells <- unlist(cells, use.names=FALSE);
+  addExclCells(this, cells);
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -42,7 +66,7 @@ setConstructorS3("DChipQuantileNormalization", function(...) {
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Not used.}
+#   \item{...}{Arguments passed to @see "normalizeQuantileSpline.numeric".}
 #   \item{force}{If @TRUE, data already normalized is re-normalized, 
 #       otherwise not.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
@@ -99,6 +123,16 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   # Get algorithm parameters
   subsetToUpdate <- getSubsetToUpdate(this);
 
+  # Exclude certain cells when *fitting* the normalization function
+  excl <- getExclCells(this);
+  if (length(excl) > 0) {
+    w <- rep(1, length(subsetToUpdate));
+    w[excl] <- 0;
+    rm(excl);
+  } else {
+    w <- NULL;
+  }
+
   # Garbage collection
   gc <- gc();
   verbose && print(verbose, gc);
@@ -131,7 +165,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     verbose && str(verbose, x);
     verbose && exit(verbose);
   
-    x <- normalizeQuantileSpline(x, yTarget, sort=FALSE, ...);
+    x <- normalizeQuantileSpline(x, yTarget, sort=FALSE, w=w, ...);
 
     # Write normalized data to file
     verbose && enter(verbose, "Writing normalized probe signals");
@@ -174,6 +208,17 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
 
 ############################################################################
 # HISTORY:
+# 2007-03-22
+# o Added test code for excluding some cells by giving them weight zero
+#   when fitting the normalization function.
+# o TO DO: Add code to exclude non-diploid data points from the estimation
+#   of the normalization function, e.g. male chromosome X signals should
+#   not included if the target distribution was calculated for females only.
+#   To simplify it, we could exclude all chromosome X signals regardless
+#   of ploidy.  In that we don't have to know the ploidy. The those should
+#   also be excluded when estimating the target distribution.
+#   Potential problems: If the majority of the signals are from chrX, then
+#   it does not work.
 # 2006-12-11
 # o Created to immitate the oligo package.
 ############################################################################
