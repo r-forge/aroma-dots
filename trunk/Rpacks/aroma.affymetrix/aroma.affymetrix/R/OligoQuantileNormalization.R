@@ -175,10 +175,12 @@ setMethodS3("process", "OligoQuantileNormalization", function(this, ..., force=F
 
     # Write normalized data to file
     verbose && enter(verbose, "Writing normalized probe signals");
-    # Copy CEL file and update the copy
-    verbose && enter(verbose, "Copying source CEL file");
-    copyCel(from=getPathname(df), to=pathname, overwrite=!skip);
+
+    # Create CEL file to store results, if missing
+    verbose && enter(verbose, "Creating CEL file for results, if missing");
+    createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
     verbose && exit(verbose);
+
     verbose && enter(verbose, "Writing normalized intensities");
     updateCel(pathname, indices=subsetToUpdate, intensities=x);
     rm(x);

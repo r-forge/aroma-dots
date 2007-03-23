@@ -101,10 +101,11 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
   # Write adjusted data to file
   verbose && enter(verbose, "Writing adjusted probe signals");
 
-  # Copy CEL file and update the copy
-  verbose && enter(verbose, "Copying source CEL file");
-  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  # Create CEL file to store results, if missing
+  verbose && enter(verbose, "Creating CEL file for results, if missing");
+  createFrom(this, filename=pathname, path=NULL, verbose=less(verbose));
   verbose && exit(verbose);
+
   verbose && enter(verbose, "Writing adjusted intensities");
   updateCel(pathname, intensities=x);
   verbose && exit(verbose);
@@ -298,10 +299,11 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   # Write adjusted data to file
   verbose && enter(verbose, "Writing adjusted probe signals");
 
-  # Copy CEL file and update the copy
-  verbose && enter(verbose, "Copying source CEL file");
-  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  # Create CEL file to store results, if missing
+  verbose && enter(verbose, "Creating CEL file for results, if missing");
+  createFrom(this, filename=pathname, path=NULL, verbose=less(verbose));
   verbose && exit(verbose);
+
   verbose && enter(verbose, "Writing adjusted intensities");
   updateCel(pathname, indices=indices[isPm(cdf)], intensities=pm);
   verbose && exit(verbose);
@@ -427,10 +429,11 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
   # Write adjusted data to file
   verbose && enter(verbose, "Writing adjusted probe signals");
 
-  # Copy CEL file and update the copy
-  verbose && enter(verbose, "Copying source CEL file");
-  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  # Create CEL file to store results, if missing
+  verbose && enter(verbose, "Creating CEL file for results, if missing");
+  createFrom(this, filename=pathname, path=NULL, verbose=less(verbose));
   verbose && exit(verbose);
+
   verbose && enter(verbose, "Writing adjusted intensities");
   updateCel(pathname, indices=pmi, intensities=pm);
   verbose && exit(verbose);
@@ -452,6 +455,9 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
 
 ############################################################################
 # HISTORY:
+# 2007-03-23
+# o Replaced all usage of copyCel() with createFrom().  This allow us to 
+#   later update createFrom() to create CEL files of different versions.
 # 2007-03-22
 # o rename gsbParameters to parametersGsb to avoid clash of arguments
 #   in bgAdjustGcrma.AffymetrixCelFile().  Not sure why gsbAdjust and

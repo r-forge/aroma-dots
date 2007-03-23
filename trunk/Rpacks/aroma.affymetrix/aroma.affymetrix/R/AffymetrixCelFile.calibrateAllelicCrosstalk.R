@@ -173,9 +173,13 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
   # Storing data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Storing calibrated data");
+
+  # Create CEL file to store results, if missing
+  verbose && enter(verbose, "Creating CEL file for results, if missing");
+  createFrom(this, filename=pathname, path=NULL, verbose=less(verbose));
+  verbose && exit(verbose);
+
   # Write calibrated data to file
-  # Copy CEL file and update the copy
-  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
   verbose2 <- -as.integer(verbose)-2;
   updateCel(pathname, intensities=yAll, verbose=verbose2);
   rm(yAll);

@@ -267,11 +267,13 @@ setMethodS3("process", "ChipEffectGroupMerge", function(this, ..., force=FALSE, 
     verbose && enter(verbose, "Storing merged data");
     verbose && cat(verbose, "Pathname: ", pathname);
     tryCatch({
-      verbose && enter(verbose, "Copying source CEL file");
-      copyCel(from=getPathname(ce), to=pathname, overwrite=overwrite);
-      ceOut <- fromFile(ce, pathname);
-      verbose && print(verbose, ceOut);
+      # Create CEL file to store results, if missing
+      verbose && enter(verbose, "Creating CEL file for results, if missing");
+      ceOut <- createFrom(ce, filename=pathname, path=NULL,
+                                                     verbose=less(verbose));
       verbose && exit(verbose);
+
+      verbose && print(verbose, ceOut);
       verbose && enter(verbose, "Writing merged data");
       updateDataFlat(ceOut, data=data, verbose=less(verbose));
       verbose && exit(verbose);

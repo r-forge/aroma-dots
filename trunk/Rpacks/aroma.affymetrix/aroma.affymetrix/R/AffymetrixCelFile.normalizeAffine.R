@@ -54,8 +54,11 @@ setMethodS3("transformAffine", "AffymetrixCelFile", function(this, outPath=file.
   # Write normalized data to file
   verbose && enter(verbose, "Writing transformed probe signals");
 
-  # Copy CEL file and update the copy
-  copyCel(from=getPathname(this), to=pathname, overwrite=overwrite);
+  # Create CEL file to store results, if missing
+  verbose && enter(verbose, "Creating CEL file for results, if missing");
+  createFrom(this, filename=pathname, path=NULL, verbose=less(verbose));
+  verbose && exit(verbose);
+
   updateCel(pathname, intensities=x);
 
   verbose && exit(verbose);
