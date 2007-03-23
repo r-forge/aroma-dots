@@ -453,3 +453,17 @@
   writeRegions.ChromosomeExplorer writeRegions.GladModel
   writeRegions.profileCGH writeSpatial writeSpatial.ProbeAffinityFile
   writeWig writeWig.CnChipEffectSet yellow.colors
+  addExclCells addExclCells.DChipQuantileNormalization
+  AptCopyNumberPipeline calculateParametersGsb excludeChrXFromFit
+  excludeChrXFromFit.DChipQuantileNormalization getAlias.AffymetrixFile
+  getAlias.ArrayExplorer getBaseline getBaseline.CnChipEffectSet
+  getBaseline.SnpChipEffectSet getExclCells
+  getExclCells.DChipQuantileNormalization
+  getParameters.BackgroundCorrection
+  getParameters.GcRmaBackgroundCorrection
+  getParameters.OpticalBackgroundCorrection
+  getParameters.RmaBackgroundCorrection
+  getSubsetToUpdate.BackgroundCorrection readMouse430KenHardwired
+  readMouse430KenHardwired.DChipGenomeInformation
+  setAlias.AffymetrixFile setAlias.ArrayExplorer
+  BrlmmModel

@@ -1,4 +1,4 @@
-setConstructorS3("AptProbesetGenotype", function(..., tags=c("APT", "BRLMM")) {
+setConstructorS3("BrlmmModel", function(..., tags=c("APT", "BRLMM")) {
   extend(AptProbesetGenotype(..., tags=tags), "BrlmmModel")
 }, private=TRUE)
 

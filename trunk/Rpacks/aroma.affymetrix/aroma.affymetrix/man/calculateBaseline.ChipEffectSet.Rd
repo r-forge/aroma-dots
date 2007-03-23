@@ -20,7 +20,7 @@
  Estimates the baseline signal chromosome by chromosome.
 }
 
-\usage{\method{calculateBaseline}{ChipEffectSet}(this, chromosomes=NULL, ploidy=2, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{calculateBaseline}{ChipEffectSet}(this, chromosomes=NULL, ploidy=2, defaultPloidy=NA, force=FALSE, verbose=FALSE, ...)}
 
 \arguments{
   \item{chromosomes}{An \code{\link[base]{integer}} \code{\link[base]{vector}} specifying for which chromsosomes
@@ -28,8 +28,11 @@
     If \code{\link[base]{NULL}}, all chromosomes are considered.}
   \item{ploidy}{An \code{\link[base]{integer}} specifying the ploidy that the baseline
     should have.}
-  \item{...}{Not used.}
+  \item{defaultPloidy}{An \code{\link[base]{integer}} specifying the default ploidy of
+    chromosomes that have not explicitly been allocated one.}
+  \item{force}{If \code{\link[base:logical]{TRUE}}, the CEL file that stores the is recreated.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
+  \item{...}{Not used.}
 }
 
 \value{
@@ -38,6 +41,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
+  \code{\link{getAverage}}().
   For more information see \code{\link{ChipEffectSet}}.
 }
 \keyword{internal}

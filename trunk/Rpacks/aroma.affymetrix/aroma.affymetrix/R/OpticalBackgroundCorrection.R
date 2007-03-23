@@ -113,7 +113,7 @@ setMethodS3("process", "OpticalBackgroundCorrection", function(this, ..., force=
   verbose && exit(verbose);
 
   # Update the output data set
-  this$outputDataSet <- outputDataSet;
+  this$.outputDataSet <- outputDataSet;
 
   verbose && exit(verbose);
   

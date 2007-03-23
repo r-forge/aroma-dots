@@ -7,7 +7,7 @@ setMethodS3("getCalculateResidualsFunction", "ProbeLevelModel", function(static,
 
 setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
   calculateResidualSet(this, ...);
-})
+}, private=TRUE)
 
 setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

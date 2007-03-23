@@ -135,7 +135,8 @@ setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
     "^Mapping10K"  = read50KHg17,
     "^Mapping50K"  = read50KHg17,
     "^Mapping250K" = read250KHg17,
-    "^Mouse430"    = readMouse430
+    "^Mouse430"    = readMouse430,
+    "^Mouse430KS"  = readMouse430KenHardwired
   );
 
   chipType <- getChipType(this);
@@ -204,7 +205,7 @@ setMethodS3("read50KHg17", "DChipGenomeInformation", function(this, ..., exclude
 }, private=TRUE)
 
 
-setMethodS3("readMouse430", "DChipGenomeInformation", function(this, ...) {
+setMethodS3("readMouse430KenHardwired", "DChipGenomeInformation", function(this, ...) {
   colClasses <- c(
     "Probe Set"="character", 
     "chromosome"="character",	
@@ -224,10 +225,39 @@ setMethodS3("readMouse430", "DChipGenomeInformation", function(this, ...) {
   tableData;
 }, private=TRUE)
 
+setMethodS3("readMouse430", "DChipGenomeInformation", function(this, ...) {
+  colClasses <- c(
+    "Probe Set"="character", 
+    "chromosome"="character",	
+    "Start"="integer",
+    "End"="integer",
+    "Strand"="character",
+    "Cytoband"="character"
+  );
+
+  tableData <- readTableInternal(this, pathname=getPathname(this), 
+                                                colClasses=colClasses, ...);
+  colnames <- colnames(tableData);
+  colnames <- gsub("^Start", "Physical Position", colnames);
+  colnames(tableData) <- colnames;
+
+  # Remove the "chr" prefix from the "chromosome" elements /KS
+  chr <- tableData[,"chromosome"];
+  chr <- gsub("chr", "", chr);
+  # Ad hoc fix: exclude all chrN_random items /KS
+  chr[grep("_random$", chr)] <- NA;
+  tableData[,"chromosome"] <- chr;
+
+  tableData;
+}, private=TRUE)
+
 
 
 ############################################################################
 # HISTORY:
+# 2007-03-23
+# o It turns out that KS's readMouse430() was a bit too hardwired.  I've
+#   updated it according to his explanations, but I have not tested.
 # 2007-03-19 [KS]
 # o Added private readMouse430() to the list of read methods that readData()
 #   is using to parse DChip genome information files.
