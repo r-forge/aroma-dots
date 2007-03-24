@@ -149,7 +149,7 @@ setMethodS3("getColorMaps", "SpatialReporter", function(this, parsed=FALSE, ...)
 })
 
 
-setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ...) {
+setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., verbose=FALSE) {
   # Get the CEL set of interest
   cs <- getDataSet(this);
 
@@ -159,6 +159,14 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ...) 
   if (!is.null(aliases)) {
     aliases <- Arguments$getCharacters(aliases, length=nbrOfArrays(cs));
   }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
   
   # Get the path to the image directory
   path <- getPath(this);
