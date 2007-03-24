@@ -1,11 +1,13 @@
 library(aroma.affymetrix);
-source("init.R");
+source("../test/init.R");
 verbose <- Arguments$getVerbose(-5);
 timestampOn(verbose);
+
 
 name <- "Affymetrix_2006-HapMap270";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 
+cesList <- list();
 for (chipType in chipTypes) {
   path <- filePath("rawData", name, chipType, expandLinks="any");
   cs0 <- AffymetrixCelSet$fromFiles(path);
@@ -31,4 +33,19 @@ for (chipType in chipTypes) {
   fln <- FragmentLengthNormalization(ces);
   cesN <- process(fln, verbose=verbose);
   print(cesN);
+
+  cesList[[chipType]] <- cesN;
 }
+
+# Set sample annotation attributes
+saf <- SampleAnnotationSet$fromPath("rawData");
+cesList <- lapply(cesList, setAttributesBy, saf);
+
+# Calculate baseline according to Bengtsson H (2007).
+refList <- lapply(cesList, calculateBaseline, defaultPloidy=2, verbose=verbose)
+
+glad <- GladModel(cesList, refList);
+
+ce <- ChromosomeExplorer(glad);
+process(ce, chromosome=23, verbose=verbose);
+
