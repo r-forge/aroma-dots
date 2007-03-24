@@ -114,18 +114,20 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=F
     verbose && cat(verbose, "Scanning units:");
     verbose && str(verbose, units);
 
-    # Infer parameters from 'stdvs'
-    stdvs <- readCelUnits(cePathname, units=units, 
-                                    readIntensities=FALSE, readStdvs=TRUE);
+    # Infer parameters from 'intensities'
+    values <- readCelUnits(cePathname, units=units, 
+                                  readIntensities=TRUE, readStdvs=FALSE);
+
     # Put quartets by columns
-    stdvs <- matrix(unlist(stdvs, use.names=FALSE), nrow=4);
+    values <- matrix(unlist(values, use.names=FALSE), nrow=4);
+    
     # Keep only estimated units without NAs
-    csums <- colSums(stdvs);
-    stdvs <- stdvs[,is.finite(csums) & (csums > 0),drop=FALSE];
-    verbose && cat(verbose, "Stdvs quartets:");
-    verbose && print(verbose, stdvs[,seq_len(min(ncol(stdvs),6)),drop=FALSE]);
-    if (ncol(stdvs) > 0) {
-      t <- rowMeans(stdvs);
+    csums <- colSums(values);
+    values <- values[,is.finite(csums) & (csums > 0),drop=FALSE];
+    verbose && cat(verbose, "Values quartets:");
+    verbose && print(verbose, values[,seq_len(min(ncol(values),6)),drop=FALSE]);
+    if (ncol(values) > 0) {
+      t <- rowMeans(values);
       if (length(t) > 0) {
         isZero <- isZero(t);
         if (!all(isZero)) {
@@ -152,6 +154,10 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=F
 
 ############################################################################
 # HISTORY:
+# 2007-03-23
+# o Now inferParameters() are looking at the 'intensity' (==theta) field
+#   instead of 'stdvs'.  The reason for this is that 'stdvs' might be all
+#   zeros, e.g. after a fragment-length normalization.
 # 2007-02-20
 # o BUG FIX: inferParameters() would give an error if some estimates were
 #   NAs.
