@@ -18,6 +18,8 @@
 #     should have.}
 #   \item{defaultPloidy}{An @integer specifying the default ploidy of 
 #     chromosomes that have not explicitly been allocated one.}
+#   \item{all}{If @TRUE, signals are averaged also for cells that are not
+#     on the genome.}
 #   \item{force}{If @TRUE, the CEL file that stores the is recreated.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 #   \item{...}{Not used.}
@@ -33,7 +35,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NULL, ploidy=2, defaultPloidy=NA, force=FALSE, verbose=FALSE, ...) {
+setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NULL, ploidy=2, defaultPloidy=NA, all=FALSE, force=FALSE, verbose=FALSE, ...) {
   cdf <- getCdf(this);
   gi <- getGenomeInformation(cdf);
   allChromosomes <- getChromosomes(gi);
@@ -67,6 +69,21 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
   csBaseline <- getBaseline(this, force=force, verbose=less(verbose));
   verbose && exit(verbose);
 
+  verbose && enter(verbose, "Checking for non-estimated cells");
+  ds <- getData(csBaseline, fields="intensities", verbose=less(verbose))$intensities;
+  ncells <- length(ds);
+  todo <- which(isZero(ds));
+  ntodo <- length(todo);
+  rm(ds);
+  
+  verbose && printf(verbose, "Found %d (%.1f%%) non-estimated cells.\n", 
+                                                  ntodo, 100*ntodo/ncells);
+  verbose && exit(verbose);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+  
   n <- nbrOfArrays(this);
   for (chromosome in chromosomes) {
     verbose && enter(verbose, "Chromosome ", chromosome);
@@ -82,20 +99,20 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
     rm(units);
     cells <- unlist(cells, use.names=FALSE);
     cells <- sort(cells);
+    ncells <- length(cells);
     verbose && cat(verbose, "Cells:");
     verbose && str(verbose, cells);
     verbose && exit(verbose);
 
     if (!force) {
       verbose && enter(verbose, "Checking for non-estimated loci");
-      muBs <- getData(csBaseline, indices=cells, fields="intensities", verbose=less(verbose))$intensities;
-      keep <- which(isZero(muBs));
+      keep <- intersect(cells, todo);
+      nkeep <- length(keep);
       cells <- cells[keep];
       rm(muBs, keep);
 
-      nkeep <- length(keep);
       verbose && printf(verbose, "Found %d (%.1f%%) non-estimated loci.\n", 
-                                              nkeep, 100*nkeep/length(cells));
+                                              nkeep, 100*nkeep/ncells);
       verbose && exit(verbose);
       if (nkeep == 0) {
         verbose && cat(verbose, "Baseline averages already exist for all loci on this chromosome.");
@@ -103,7 +120,6 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
         rm(cells);        
         next;
       }
-
     }
 
     verbose && enter(verbose, "Identifying samples that have the baseline ploidy and those that have not");
@@ -193,9 +209,6 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
       verbose && printf(verbose, "Bias correction: log2(c*)=%.3f\n", log2(c));
       verbose && exit(verbose);
       
-      verbose && cat(verbose, "Summary of log2(mu1s)");
-      verbose && print(verbose, summary(log2(muBs2)));
-
 
       # 3) Weighted average of the two groups
       verbose && enter(verbose, "Estimating the weighted average of the two groups at each locus");
@@ -203,6 +216,8 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
       # The estimate of the baseline according to the non-baseline samples
       muBs2 <- muMs * c;
       rm(muMs);
+      verbose && cat(verbose, "Summary of log2(muBs*)");
+      verbose && print(verbose, summary(log2(muBs2)));
 
       # The weights for the two groups
       wB <- nB/n;
@@ -225,6 +240,9 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
     rm(ds);
     verbose && exit(verbose);
 
+    # Mark cells as done
+    todo <- setdiff(todo, cells);
+    
     rm(cells);
 
     # Garbage collect
@@ -233,6 +251,42 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
     
     verbose && exit(verbose);
   } # for (chromosome ...)
+
+
+  if (all) {
+    verbose && enter(verbose, "Calculate the average signal for all cells not on a chromosome");
+    cells <- todo;
+    rm(todo);
+    ncells <- length(cells);
+    verbose && cat(verbose, "Number of remaining cells: ", length(cells));
+    if (ncells > 0) {
+      verbose && enter(verbose, "Checking for non-estimated cells");
+      keep <- todo[cells];
+      nkeep <- length(keep);
+      cells <- cells[keep];
+      rm(muRs, keep);
+  
+      verbose && printf(verbose, "Found %d (%.1f%%) non-estimated loci.\n", 
+                                                  nkeep, 100*nkeep/ncells);
+      verbose && exit(verbose);
+  
+      if (nkeep > 0) {
+        csRavg <- getAverageFile(this, indices=cells, force=force, verbose=less(verbose));
+    
+        verbose && enter(verbose, "Reading the average signals");
+        ds <- getData(csRavg, indices=cells, fields="intensities", verbose=less(verbose))$intensities;
+        rm(csRavg);
+        verbose && str(verbose, ds);
+        verbose && exit(verbose);
+    
+        verbose && enter(verbose, "Storing baseline signals");
+        ds <- cbind(intensities=ds, cell=cells);
+        muBs <- updateDataFlat(csBaseline, data=ds, verbose=less(verbose));
+        rm(ds);
+        verbose && exit(verbose);
+      } # if (nkeep > 0)
+    } # if (ncells > 0)
+  } # if (all)
 
   verbose && exit(verbose);
 
@@ -244,6 +298,10 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
 
 ############################################################################
 # HISTORY:
+# 2007-03-24
+# o Now the average of non-genomic cells are also calculated if 'all=TRUE'.
+#   Thus, if all samples have baseline ploidy, calculateBaseline() and
+#   getAverage() should give the same results.
 # 2007-03-22
 # o TO DO: Estimate standard errors just like getAverage() does.
 # o Unless 'force=TRUE', only cells for which the average has not already
