@@ -274,6 +274,7 @@ setMethodS3("updateSamplesFile", "ArrayExplorer", function(this, ..., verbose=FA
 #     pattern <- sprintf("^%s,", array);
 #     colorMaps <- gsub(pattern, "", colorMaps);
 #   }
+  colorMaps <- unlist(colorMaps);
   colorMaps <- unique(colorMaps);
   colorMaps <- sort(colorMaps);
   verbose && cat(verbose, "Detected color maps: ", paste(colorMaps, collapse=", "));
