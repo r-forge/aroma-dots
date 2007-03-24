@@ -36,7 +36,7 @@
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), method=c("create", "copy"), clear=TRUE, ..., verbose=TRUE) {
+setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), method=c("copy", "create"), clear=FALSE, ..., verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -140,8 +140,10 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
 ############################################################################
 # HISTORY:
 # 2007-03-24
-# o Now argument 'method' defaults to "create" instead of "copy", which
-#   is much faster.
+# o Argument 'method' still defaults to "copy" altough "create" is much
+#   faster.  Argument 'clear' now defaults to FALSE.  The reason for this 
+#   is that we want in most cases want to "inherit" some of the fields
+#   from the source, e.g. we don't want to change stdvs in normalization.
 # o Added code to create CEL files from scratch by adopting the code in
 #   createBlankSet() of AffymetrixCelSet.
 # o Moved to its own file.

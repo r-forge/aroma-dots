@@ -18,8 +18,7 @@ o Added the SpatialReporter class.
 o Added the abstract Explorer class.
 o Added calculateBaseline() to ChipEffectSet.
 o Replaced all occurances of affxparser::copyCel() with createFrom()
-  in AffymetrixCelFile, which is by default creating CEL files from
-  scratch using affxparser::createCel().
+  in AffymetrixCelFile.
 o Lines of code: grep -v "#" *.R | wc -l => 24902
 
 
