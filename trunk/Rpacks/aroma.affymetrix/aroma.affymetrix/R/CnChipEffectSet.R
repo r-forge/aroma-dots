@@ -74,7 +74,7 @@ setMethodS3("setCombineAlleles", "CnChipEffectSet", function(this, status, ...) 
 })
 
 
-setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=TRUE) {
+setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
