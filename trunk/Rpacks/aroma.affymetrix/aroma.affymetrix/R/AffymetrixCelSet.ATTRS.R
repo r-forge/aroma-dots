@@ -11,6 +11,8 @@ setMethodS3("setAttributesBy", "AffymetrixCelSet", function(this, object, ...) {
     print(ex);
     throw("Failed to apply attributes by object of class: ", class(object)[1]);
   })
+
+  invisible(this);
 }, protected=TRUE)
 
 
@@ -24,7 +26,8 @@ setMethodS3("setAttributesBySampleAnnotationSet", "AffymetrixCelSet", function(t
 
     setAttributesBy(this, saf, ..., verbose=less(verbose));
   });
-  invisible(res);
+
+  invisible(this);
 }, protected=TRUE)
 
 
@@ -90,12 +93,14 @@ setMethodS3("setAttributesBySampleAnnotationFile", "AffymetrixCelSet", function(
   names <- getFullNames(this);
   res <- apply(saf, names, FUN=setAttrs, force=force, verbose=verbose);
 
-  invisible(res);
+  invisible(this);
 }, protected=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2007-03-24
+# o Now the setAttributeByNnn() methods return itself invisibly.
 # 2007-03-14
 # o Now setAttributesBySampleAnnotationFile() also set attributes.
 # 2007-03-06
