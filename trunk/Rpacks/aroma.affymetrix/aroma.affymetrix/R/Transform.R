@@ -263,6 +263,7 @@ setMethodS3("getParameters", "Transform", function(this, ...) {
 # \description{
 #  @get "title".
 #  If non-existing, then the directory is created.
+#  Windows Shortcut links are recognized.
 # }
 #
 # @synopsis
@@ -286,7 +287,6 @@ setMethodS3("getPath", "Transform", function(this, ...) {
 
   # Root path
   rootPath <- getRootPath(this);
-  mkdirs(rootPath);
 
   # Full name
   fullname <- getFullName(this);
@@ -298,6 +298,8 @@ setMethodS3("getPath", "Transform", function(this, ...) {
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+
+  # Create path
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))
@@ -459,6 +461,9 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-03-24
+# o BUG FIX: getPath() created the root path before trying to expand
+#   Windows shortcuts.
 # 2007-02-28
 # o Now getOutputData() of Transform make sure to pass down the CDF too.
 # 2007-01-14

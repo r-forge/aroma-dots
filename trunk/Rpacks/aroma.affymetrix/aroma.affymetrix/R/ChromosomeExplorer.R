@@ -192,6 +192,8 @@ setMethodS3("getPath", "ChromosomeExplorer", function(this, ...) {
 
   # The full path
   path <- filePath(mainPath, chipType, set, expandLinks="any");
+
+  # Create path?
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))

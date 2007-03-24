@@ -125,6 +125,8 @@ setMethodS3("getPath", "QualityAssessmentModel", function(this, ...) {
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+
+  # Create path?
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))

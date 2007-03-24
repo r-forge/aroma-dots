@@ -257,7 +257,6 @@ setMethodS3("getMainPath", "AffymetrixFileSetReporter", function(this, ...) {
 
   # Root path
   rootPath <- getRootPath(this);
-  mkdirs(rootPath);
 
   # Full name
   name <- getName(this);
@@ -317,6 +316,9 @@ setMethodS3("process", "AffymetrixFileSetReporter", abstract=TRUE);
 
 ##############################################################################
 # HISTORY:
+# 2007-03-24
+# o BUG FIX: getPath() created the root path before trying to expand
+#   Windows shortcuts.
 # 2007-03-19
 # o Created from Explorer.R.
 ##############################################################################

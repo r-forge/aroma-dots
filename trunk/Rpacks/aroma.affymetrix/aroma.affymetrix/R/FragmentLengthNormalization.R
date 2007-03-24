@@ -309,8 +309,6 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
   # Get (and create) the output path
   path <- getPath(this);
-  mkdirs(path);
-
 
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

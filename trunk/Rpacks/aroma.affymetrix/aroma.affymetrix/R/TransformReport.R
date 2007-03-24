@@ -236,7 +236,6 @@ setMethodS3("getPath", "TransformReport", function(this, ...) {
 
   # Root path
   rootPath <- getRootPath(this);
-  mkdirs(rootPath);
 
   # Full name
   fullname <- getFullName(this);
@@ -251,6 +250,8 @@ setMethodS3("getPath", "TransformReport", function(this, ...) {
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, set, expandLinks="any");
+
+  # Create path?
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))
@@ -536,6 +537,9 @@ setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, w
 
 ############################################################################
 # HISTORY:
+# 2007-03-24
+# o BUG FIX: getPath() created the root path before trying to expand
+#   Windows shortcuts.
 # 2007-02-06
 # o Updated the path to <rootPath>/<dataSetName>/<tags>/<chipType>/<set>/.
 # 2007-02-04

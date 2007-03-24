@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.4 [2007-03-23]
+Version: 0.4.4 [2007-03-24]
 o Added BackgroundCorrection classes RmaBackgroundCorrection,
   GcRmaBackgroundCorrection, and OpticalBackgroundCorrection.  
   These replaces methods bgAdjustRma(), bgAdjustRcRma(), and
@@ -18,13 +18,8 @@ o Added the SpatialReporter class.
 o Added the abstract Explorer class.
 o Added calculateBaseline() to ChipEffectSet.
 o Replaced all occurances of affxparser::copyCel() with createFrom()
-  in AffymetrixCelFile.  The current implementation of createFrom()
-  utilizes affxparser::copyCel() and the clear the fields.  Thus,
-  the difference is that the fields are cleared, and the price we
-  pay is that it takes time to clear the fields.  If the file already
-  exists and is of the correct file format version, nothing is done.
-  Future implementation of createFrom() will create a CEL file
-  from scratch with options to set the CEL header etc.
+  in AffymetrixCelFile, which is by default creating CEL files from
+  scratch using affxparser::createCel().
 o Lines of code: grep -v "#" *.R | wc -l => 24902
 
 
