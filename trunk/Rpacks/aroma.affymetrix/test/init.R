@@ -19,6 +19,8 @@ svnUpdate <- function(...) {
   system("svn update");
   setwd("../aroma.affymetrix/");
   system("svn update");
+  setwd("../test2/");
+  system("svn update");
   TRUE;
 } # svnUpdate()
 
@@ -29,6 +31,8 @@ svnCommit <- function(...) {
   on.exit(setwd(opwd));
   system("svn commit -m \"\"");
   setwd("../aroma.affymetrix/");
+  system("svn commit -m \"\"");
+  setwd("../test2/");
   system("svn commit -m \"\"");
   TRUE;
 } # svnCommit()
