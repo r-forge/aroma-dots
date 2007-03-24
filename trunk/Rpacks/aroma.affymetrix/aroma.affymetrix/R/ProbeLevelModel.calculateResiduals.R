@@ -179,7 +179,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
       createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
       verbose && exit(verbose);
 
-      verbose && enter(verbose, "Writing normalized intensities");
+      verbose && enter(verbose, "Writing residuals");
       updateCel(pathname, indices=cells, intensities=eps);
       verbose && exit(verbose);
     }, interrupt = function(intr) {
