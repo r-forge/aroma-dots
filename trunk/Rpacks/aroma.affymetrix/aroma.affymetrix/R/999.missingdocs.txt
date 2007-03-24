@@ -59,7 +59,7 @@
   convertTxtFilesToXdr.AptProbesetGenotype convertUnits copyFile
   copyFile.AffymetrixFile create create.AromaGenomePositionFile
   createBlankSet createBlankSet.AffymetrixCelSet createFrom
-  createFrom.AffymetrixCelFile createFromCdf createFromCdf.AromaCgpFile
+  createFromCdf createFromCdf.AromaCgpFile
   createFromCdf.AromaUgpFile createFromCrlmmFile
   createFromCrlmmFile.GenotypeCallSet createFromFeatureSet
   createFromFeatureSet.AffymetrixCelSet createFromGenomeInformation
@@ -156,7 +156,7 @@
   getChipEffectFiles.GladModel getChipEffects getChipEffects.CnPlm
   getChipEffects.ExonRmaPlm getChipEffects.PlasqModel
   getChipEffects.QualityAssessmentModel getChipEffects.SnpPlm
-  getChipEffectSet getChipEffectSet.ProbeLevelModel
+  getChipEffectSet 
   getChipEffectSetClass getChipEffectSetClass.CnPlm
   getChipEffectSetClass.ExonRmaPlm
   getChipEffectSetClass.ProbeLevelModel getChipEffectSetClass.SnpPlm
@@ -274,7 +274,7 @@
   getProbeAffinities.CnPlm getProbeAffinities.ExonRmaPlm
   getProbeAffinities.MbeiPlm getProbeAffinities.RmaPlm
   getProbeAffinities.SnpPlm getProbeAffinityFile
-  getProbeAffinityFile.ProbeLevelModel getProbeEffects
+  getProbeEffects
   getProbeEffects.PlatformDesign getProbeParameters
   getProbeParameters.PlasqModel getReadMap getReadMap.PlatformDesign
   getRectangle getRectangle.AffymetrixCelFile getReferenceFiles

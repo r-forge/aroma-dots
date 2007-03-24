@@ -159,7 +159,6 @@
 \alias{createBlankSet}
 \alias{createBlankSet.AffymetrixCelSet}
 \alias{createFrom}
-\alias{createFrom.AffymetrixCelFile}
 \alias{createFromCdf}
 \alias{createFromCdf.AromaCgpFile}
 \alias{createFromCdf.AromaUgpFile}
@@ -389,7 +388,6 @@
 \alias{getChipEffects.QualityAssessmentModel}
 \alias{getChipEffects.SnpPlm}
 \alias{getChipEffectSet}
-\alias{getChipEffectSet.ProbeLevelModel}
 \alias{getChipEffectSetClass}
 \alias{getChipEffectSetClass.CnPlm}
 \alias{getChipEffectSetClass.ExonRmaPlm}
@@ -649,7 +647,6 @@
 \alias{getProbeAffinities.RmaPlm}
 \alias{getProbeAffinities.SnpPlm}
 \alias{getProbeAffinityFile}
-\alias{getProbeAffinityFile.ProbeLevelModel}
 \alias{getProbeEffects}
 \alias{getProbeEffects.PlatformDesign}
 \alias{getProbeParameters}

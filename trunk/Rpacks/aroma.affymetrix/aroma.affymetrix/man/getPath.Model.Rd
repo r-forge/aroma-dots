@@ -17,12 +17,12 @@
 
 \description{
  Gets the path of this model where the parameter files are located.
+ The directory is created, if missing.
 }
 
-\usage{\method{getPath}{Model}(this, mkdirs=TRUE, ...)}
+\usage{\method{getPath}{Model}(this, ...)}
 
 \arguments{
- \item{mkdirs}{If \code{\link[base:logical]{TRUE}}, the directory is created, if missing.}
  \item{...}{Not used.}
 }
 

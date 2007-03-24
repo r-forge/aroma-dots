@@ -20,7 +20,7 @@
  Estimates the baseline signal chromosome by chromosome.
 }
 
-\usage{\method{calculateBaseline}{ChipEffectSet}(this, chromosomes=NULL, ploidy=2, defaultPloidy=NA, force=FALSE, verbose=FALSE, ...)}
+\usage{\method{calculateBaseline}{ChipEffectSet}(this, chromosomes=NULL, ploidy=2, defaultPloidy=NA, all=FALSE, force=FALSE, verbose=FALSE, ...)}
 
 \arguments{
   \item{chromosomes}{An \code{\link[base]{integer}} \code{\link[base]{vector}} specifying for which chromsosomes
@@ -30,6 +30,8 @@
     should have.}
   \item{defaultPloidy}{An \code{\link[base]{integer}} specifying the default ploidy of
     chromosomes that have not explicitly been allocated one.}
+  \item{all}{If \code{\link[base:logical]{TRUE}}, signals are averaged also for cells that are not
+    on the genome.}
   \item{force}{If \code{\link[base:logical]{TRUE}}, the CEL file that stores the is recreated.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
   \item{...}{Not used.}

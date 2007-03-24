@@ -6,8 +6,12 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getChipEffects.ProbeLevelModel}
-\alias{getChipEffects.ProbeLevelModel}
+\name{getChipEffectSet.ProbeLevelModel}
+\alias{getChipEffectSet.ProbeLevelModel}
+\alias{ProbeLevelModel.getChipEffectSet}
+\alias{getChipEffectSet.ProbeLevelModel}
+\alias{getChipEffectSet,ProbeLevelModel-method}
+
 \alias{ProbeLevelModel.getChipEffects}
 \alias{getChipEffects.ProbeLevelModel}
 \alias{getChipEffects,ProbeLevelModel-method}
@@ -20,7 +24,7 @@
  There is one chip-effect file per array.
 }
 
-\usage{\method{getChipEffects}{ProbeLevelModel}(this, ..., verbose=FALSE)}
+\usage{\method{getChipEffectSet}{ProbeLevelModel}(this, ..., verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
