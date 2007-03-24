@@ -545,7 +545,7 @@ setMethodS3("getChromosomes", "GladModel", function(this, ...) {
 })
 
 
-setMethodS3("getListOfGenomeInformations", "GladModel", function(this, ...) {
+setMethodS3("getListOfGenomeInformations", "GladModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
