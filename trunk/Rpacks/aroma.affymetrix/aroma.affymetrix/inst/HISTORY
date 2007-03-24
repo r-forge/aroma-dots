@@ -7,6 +7,10 @@ o Added BackgroundCorrection classes RmaBackgroundCorrection,
   These replaces methods bgAdjustRma(), bgAdjustRcRma(), and
   bgAdjustOptical() which are now deprecated.
 o The ArrayExplorer class now handles multiple chip types.
+o Now inferParameters() of the ChipEffectSet classes is looking
+  at the 'intensity' (==theta) field instead of 'stdvs'.  The 
+  reason for this is that 'stdvs' might be all zeros, e.g. after
+  a fragment-length normalization.
 
 WORK IN PROGRESS (no guarantees):
 o Added AffymetrixCelSetTuple.
