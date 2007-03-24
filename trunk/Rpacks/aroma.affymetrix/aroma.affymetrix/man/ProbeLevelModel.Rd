@@ -56,14 +56,11 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{calculateResiduals} \tab  -\cr
  \tab \code{calculateResidualSet} \tab  -\cr
  \tab \code{calculateWeights} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.ProbeLevelModel]{fit}} \tab Estimates the model parameters.\cr
- \tab \code{\link[aroma.affymetrix:getChipEffects.ProbeLevelModel]{getChipEffects}} \tab Gets the set of chip effects for this model.\cr
  \tab \code{getChipEffectSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getProbeAffinities.ProbeLevelModel]{getProbeAffinities}} \tab Gets the probe affinities for this model.\cr
- \tab \code{getProbeAffinityFile} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getProbeAffinityFile.ProbeLevelModel]{getProbeAffinityFile}} \tab Gets the probe affinities for this model.\cr
  \tab \code{getResidualSet} \tab  -\cr
  \tab \code{getWeightsSet} \tab  -\cr
 }

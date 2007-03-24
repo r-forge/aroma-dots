@@ -18,6 +18,7 @@
 \description{
  Gets the path of the output data set.
  If non-existing, then the directory is created.
+ Windows Shortcut links are recognized.
 }
 
 \usage{\method{getPath}{Transform}(this, ...)}

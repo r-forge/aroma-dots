@@ -105,6 +105,7 @@ setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
 
 ###########################################################################/**
 # @RdocMethod getProbeAffinityFile
+# @aliasmethod getProbeAffinities
 #
 # @title "Gets the probe affinities for this model"
 #
@@ -160,7 +161,8 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getChipEffects
+# @RdocMethod getChipEffectSet
+# @aliasmethod getChipEffects
 #
 # @title "Gets the set of chip effects for this model"
 #
@@ -489,7 +491,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
 # }
 #*/###########################################################################
 setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ...) {
-  ces <- getChipEffects(this);
+  ces <- getChipEffectSet(this);
   findUnitsTodo(ces, ...);
 }, private=TRUE)
 
@@ -647,10 +649,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   fitUnit <- getFitUnitFunction(this);
 
   # Get (and create if missing) the probe-affinity file (one per data set)
-  paf <- getProbeAffinities(this, verbose=less(verbose));
+  paf <- getProbeAffinityFile(this, verbose=less(verbose));
 
   # Get (and create if missing) the chip-effect files (one per array)
-  ces <- getChipEffects(this, verbose=less(verbose));
+  ces <- getChipEffectSet(this, verbose=less(verbose));
 
   # Number of units to load into memory and fit at the same time
   bytesPerChunk <- 100e6;       # 100Mb
