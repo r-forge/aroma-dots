@@ -352,12 +352,12 @@ setMethodS3("getFullName", "Model", function(this, ...) {
 #
 # \description{
 #  @get "title" where the parameter files are located.
+#  The directory is created, if missing.
 # }
 #
 # @synopsis
 #
 # \arguments{
-#  \item{mkdirs}{If @TRUE, the directory is created, if missing.}
 #  \item{...}{Not used.}
 # }
 #
@@ -375,12 +375,11 @@ setMethodS3("getFullName", "Model", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getPath", "Model", function(this, mkdirs=TRUE, ...) {
+setMethodS3("getPath", "Model", function(this, ...) {
   # Create the (sub-)directory tree for the data set
 
   # Root path
   rootPath <- getRootPath(this);
-  mkdirs(rootPath);
 
   # Full name
   fullname <- getFullName(this);
@@ -394,12 +393,10 @@ setMethodS3("getPath", "Model", function(this, mkdirs=TRUE, ...) {
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
 
   # Create directory?
-  if (mkdirs) {
-    if (!isDirectory(path)) {
-      mkdirs(path);
-      if (!isDirectory(path))
-        throw("Failed to create output directory: ", path);
-    }
+  if (!isDirectory(path)) {
+    mkdirs(path);
+    if (!isDirectory(path))
+      throw("Failed to create output directory: ", path);
   }
 
   path;
@@ -534,6 +531,9 @@ setMethodS3("setLabel", "Model", function(this, label, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-24
+# o BUG FIX: getPath() created the root path before trying to expand
+#   Windows shortcuts.
 # 2007-03-19
 # o Added getAlias() and setAlias().
 # 2007-01-14
@@ -558,5 +558,4 @@ setMethodS3("setLabel", "Model", function(this, label, ...) {
 # o Added some Rdoc comments.
 # 2006-08-17
 # o Created.
-
 ############################################################################

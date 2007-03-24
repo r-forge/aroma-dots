@@ -353,7 +353,6 @@ setMethodS3("getMainPath", "Explorer", function(this, ...) {
 
   # Root path
   rootPath <- getRootPath(this);
-  mkdirs(rootPath);
 
   # Full name
   name <- getName(this);
@@ -579,6 +578,9 @@ setMethodS3("display", "Explorer", function(this, filename=sprintf("%s.html", cl
 
 ##############################################################################
 # HISTORY:
+# 2007-03-24
+# o BUG FIX: getPath() created the root path before trying to expand
+#   Windows shortcuts.
 # 2007-03-19
 # o Created from ChromosomeExplorer.R.
 ##############################################################################

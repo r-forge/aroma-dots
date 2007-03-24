@@ -172,51 +172,6 @@ setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NUL
 
 
 
-setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, version=c("4", "3"), clear=TRUE, ..., verbose=TRUE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'filename' and 'path':
-  pathname <- Arguments$getWritablePathname(filename, path=path);
-
-  # Argument 'version':
-  version <- match.arg(version);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  # Don't create if already exists
-  if (isFile(pathname)) {
-    res <- newInstance(this, pathname);
-    ver <- getHeader(res)$version;
-    if (ver != version) {
-      throw("Cannot not retrieve CEL file of version ", version, 
-         ". The existing CEL file has version ", ver, ": ", pathname);
-    }
-    setCdf(res, getCdf(this));
-    return(res);
-  }
-
-  # Check version of template CEL file
-  ver <- getHeader(this)$version;
-  if (ver != version) {
-    throw("Cannot not create CEL file of version ", version, 
-           "(", pathname, "). Template CEL file has version ", 
-                                 ver, ": ", getPathname(this));
-  }
-
-  originalCdf <- getCdf(this);
-  
-  res <- copyFile(this, filename=pathname, path=NULL, verbose=less(verbose));
-
-  if (clear) {
-    clearData(res, ..., .forSure=TRUE, verbose=less(verbose));
-  }
-
-  setCdf(res, originalCdf);
-  res;
-}, private=TRUE)
-
 
 
 ###########################################################################/**
@@ -784,9 +739,6 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 ############################################################################
 # HISTORY:
 # 2007-03-23
-# o Added argument 'version' to createFrom(), which defaults to CEL file
-#   format version 4.  Now it is asserted that the template CEL file is
-#   of the same version.
 # o BUG FIX: Called non-existing readHeader() instead of getHeader().
 # 2007-03-05
 # o Added setAttributesByTags().

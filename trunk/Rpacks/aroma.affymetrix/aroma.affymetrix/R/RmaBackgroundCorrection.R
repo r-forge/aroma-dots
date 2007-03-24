@@ -110,7 +110,6 @@ setMethodS3("process", "RmaBackgroundCorrection", function(this, ..., force=FALS
 
   # Get the output path
   outputPath <- getPath(this);
-  mkdirs(outputPath);
 
   args <- c(list(ds, path=outputPath, verbose=verbose, overwrite=force), params);
 

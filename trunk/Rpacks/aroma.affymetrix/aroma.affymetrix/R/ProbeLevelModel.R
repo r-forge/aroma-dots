@@ -104,7 +104,7 @@ setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getProbeAffinities
+# @RdocMethod getProbeAffinityFile
 #
 # @title "Gets the probe affinities for this model"
 #
@@ -129,7 +129,7 @@ setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=ProbeAffinityFile) {
+setMethodS3("getProbeAffinityFile", "ProbeLevelModel", function(this, ..., .class=ProbeAffinityFile) {
   paf <- this$.paf;
   if (!is.null(paf))
     return(paf);
@@ -153,9 +153,9 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ..., .class=
 
 
 
-setMethodS3("getProbeAffinityFile", "ProbeLevelModel", function(this, ...) {
-  getProbeAffinities(this, ...);
-})
+setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
+  getProbeAffinityFile(this, ...);
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -185,7 +185,7 @@ setMethodS3("getProbeAffinityFile", "ProbeLevelModel", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -218,9 +218,9 @@ setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ..., verbose=FAL
   ces;
 })
 
-setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ...) {
-  getChipEffects(this, ...);
-})
+setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ...) {
+  getChipEffectSet(this, ...);
+}, protected=TRUE)
 
 
 setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {

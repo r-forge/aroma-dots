@@ -296,7 +296,6 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
 
   # Get the output path
   outputPath <- getPath(this);
-  mkdirs(outputPath);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -489,7 +489,6 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
 
   # Root path
   rootPath <- getRootPath(this);
-  mkdirs(rootPath);
 
   # Full name
   fullname <- getFullName(this);
@@ -502,6 +501,8 @@ setMethodS3("getPath", "GladModel", function(this, ...) {
 
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+
+  # Create path?
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))
@@ -1326,6 +1327,9 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-03-24
+# o BUG FIX: getPath() created the root path before trying to expand
+#   Windows shortcuts.
 # 2007-03-19
 # o Now asterisk tags are handles dynamically, and not by the constructor.
 # o Added getAsteriskTags().

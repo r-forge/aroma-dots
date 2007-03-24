@@ -100,7 +100,6 @@ setMethodS3("process", "OpticalBackgroundCorrection", function(this, ..., force=
 
   # Get the output path
   outputPath <- getPath(this);
-  mkdirs(outputPath);
 
   args <- c(list(ds, path=outputPath, verbose=verbose, overwrite=force), params);
 
