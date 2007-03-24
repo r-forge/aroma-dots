@@ -129,11 +129,7 @@ setMethodS3("fromDataFile", "ResidualFile", function(static, df=NULL, filename=s
   # This should be removed in future versions. /HB 2007-01-10
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "Pathname: ", pathname);
-  rf <- createFrom(df, filename=pathname, ...);
-  cdf <- getCdf(rf);
-  
-  rf <- fromFile(static, pathname);
-  setCdf(rf, cdf);
+  rf <- createFrom(df, filename=pathname, method="create", ...);
 
   rf;
 }, static=TRUE, private=TRUE)

@@ -269,7 +269,7 @@ setMethodS3("process", "ChipEffectGroupMerge", function(this, ..., force=FALSE, 
     tryCatch({
       # Create CEL file to store results, if missing
       verbose && enter(verbose, "Creating CEL file for results, if missing");
-      ceOut <- createFrom(ce, filename=pathname, path=NULL,
+      ceOut <- createFrom(ce, filename=pathname, path=NULL, method="create",
                                                      verbose=less(verbose));
       verbose && exit(verbose);
 

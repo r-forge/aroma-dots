@@ -175,8 +175,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     verbose && enter(verbose, "Storing residuals");
     tryCatch({
       # Create CEL file to store results, if missing
-      verbose && enter(verbose, "Creating CEL file for results, if missing");
-      createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
+      verbose && enter(verbose, "Creating empty CEL file for results, if missing");
+      createFrom(df, filename=pathname, path=NULL, method="create", verbose=less(verbose));
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Writing residuals");

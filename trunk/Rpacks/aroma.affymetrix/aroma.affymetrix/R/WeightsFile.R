@@ -129,9 +129,7 @@ setMethodS3("fromDataFile", "WeightsFile", function(static, df=NULL, filename=sp
   # This should be removed in future versions. /HB 2007-01-10
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "Pathname: ", pathname);
-  rf <- createFrom(df, filename=pathname, ...);
-
-  rf <- fromFile(static, pathname);
+  rf <- createFrom(df, filename=pathname, method="create", ...);
 
   rf;
 }, static=TRUE, private=TRUE)
