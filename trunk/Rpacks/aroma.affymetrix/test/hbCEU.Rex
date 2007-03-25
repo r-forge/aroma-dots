@@ -47,5 +47,5 @@ refList <- lapply(cesList, calculateBaseline, defaultPloidy=2, verbose=verbose)
 glad <- GladModel(cesList, refList);
 
 ce <- ChromosomeExplorer(glad);
-process(ce, chromosome=23, verbose=verbose);
+process(ce, chromosome=22:1, verbose=verbose);
 
