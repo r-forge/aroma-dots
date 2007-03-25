@@ -690,7 +690,9 @@ setMethodS3("fit", "GladModel", function(this, arrays=NULL, chromosomes=getChrom
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieving reference chip effects
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  refList <- getReferenceFiles(this, force=force, verbose=verbose);
+  # Note: Do *not* pass done 'force' to getReferenceFiles(), because then
+  # it will calculate the average regardless of reference. /HB 2007-03-24
+  refList <- getReferenceFiles(this, verbose=verbose);
   verbose && cat(verbose, "Using references:");
   verbose && print(verbose, refList);
 
