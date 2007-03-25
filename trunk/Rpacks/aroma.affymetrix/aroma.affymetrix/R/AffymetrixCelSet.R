@@ -534,7 +534,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # Scan for SAF files and apply them
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Scanning for and apply annotation files");
-  sas <- SampleAnnotationSet$fromPath(path);
+  sas <- SampleAnnotationSet$fromPath(path, verbose=less(verbose));
   if (nbrOfFiles(sas) == 0) {
     verbose && cat(verbose, "No annotation files found.");
   } else {
