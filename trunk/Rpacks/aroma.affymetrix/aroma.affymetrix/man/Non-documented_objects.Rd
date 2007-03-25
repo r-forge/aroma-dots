@@ -1116,6 +1116,30 @@
 \alias{setAlias.AffymetrixFile}
 \alias{setAlias.ArrayExplorer}
 \alias{BrlmmModel}
+\alias{as.character.AptCopyNumberPipeline}
+\alias{convertTxtFilesToXdr.AptCopyNumberPipeline}
+\alias{getAptPathnames.AptCopyNumberPipeline}
+\alias{getCdf.AptCopyNumberPipeline}
+\alias{getChipEffectSet.CnPlm}
+\alias{getChipEffectSet.SnpPlm}
+\alias{getChrXFile.AptCopyNumberPipeline}
+\alias{getDataSet.AptCopyNumberPipeline}
+\alias{getExternalCommand.AptCopyNumberPipeline}
+\alias{getFullName.AptCopyNumberPipeline}
+\alias{getGenotypeCallSet.AptCopyNumberPipeline}
+\alias{getName.AptCopyNumberPipeline}
+\alias{getPath.AptCopyNumberPipeline}
+\alias{getPathnamesFile.AptCopyNumberPipeline}
+\alias{getProbeAffinityFile.CnPlm}
+\alias{getProbeAffinityFile.SnpPlm}
+\alias{getRootPath.AptCopyNumberPipeline}
+\alias{getTags.AptCopyNumberPipeline}
+\alias{isDone.AptCopyNumberPipeline}
+\alias{nbrOfArrays.AptCopyNumberPipeline}
+\alias{process.AptCopyNumberPipeline}
+\alias{readLog.AptCopyNumberPipeline}
+\alias{showAptVersion.AptCopyNumberPipeline}
+\alias{showLog.AptCopyNumberPipeline}
 
 \description{
   This page contains aliases for all "non-documented" objects that

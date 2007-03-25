@@ -467,3 +467,18 @@
   readMouse430KenHardwired.DChipGenomeInformation
   setAlias.AffymetrixFile setAlias.ArrayExplorer
   BrlmmModel
+  as.character.AptCopyNumberPipeline
+  convertTxtFilesToXdr.AptCopyNumberPipeline
+  getAptPathnames.AptCopyNumberPipeline getCdf.AptCopyNumberPipeline
+  getChipEffectSet.CnPlm getChipEffectSet.SnpPlm
+  getChrXFile.AptCopyNumberPipeline getDataSet.AptCopyNumberPipeline
+  getExternalCommand.AptCopyNumberPipeline
+  getFullName.AptCopyNumberPipeline
+  getGenotypeCallSet.AptCopyNumberPipeline
+  getName.AptCopyNumberPipeline getPath.AptCopyNumberPipeline
+  getPathnamesFile.AptCopyNumberPipeline getProbeAffinityFile.CnPlm
+  getProbeAffinityFile.SnpPlm getRootPath.AptCopyNumberPipeline
+  getTags.AptCopyNumberPipeline isDone.AptCopyNumberPipeline
+  nbrOfArrays.AptCopyNumberPipeline process.AptCopyNumberPipeline
+  readLog.AptCopyNumberPipeline showAptVersion.AptCopyNumberPipeline
+  showLog.AptCopyNumberPipeline
