@@ -11,6 +11,8 @@ o Now inferParameters() of the ChipEffectSet classes is looking
   at the 'intensity' (==theta) field instead of 'stdvs'.  The 
   reason for this is that 'stdvs' might be all zeros, e.g. after
   a fragment-length normalization.
+o BUG FIX: clearCache() of AffymetrixCelSet did not clear the 
+  .readUnitsCache field.
 
 WORK IN PROGRESS (no guarantees):
 o Added AffymetrixCelSetTuple.
