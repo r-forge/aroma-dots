@@ -135,14 +135,14 @@ setMethodS3("getChipEffectSetClass", "CnPlm", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getChipEffects", "CnPlm", function(this, ...) {
-  ces <- NextMethod("getChipEffects", this, ...);
+setMethodS3("getChipEffectSet", "CnPlm", function(this, ...) {
+  ces <- NextMethod("getChipEffectSet", this, ...);
   setCombineAlleles(ces, this$combineAlleles);
   ces;
 })
 
-setMethodS3("getProbeAffinities", "CnPlm", function(this, ..., .class=CnProbeAffinityFile) {
-  paf <- NextMethod("getProbeAffinities", this, ..., .class=.class);
+setMethodS3("getProbeAffinityFile", "CnPlm", function(this, ..., .class=CnProbeAffinityFile) {
+  paf <- NextMethod("getProbeAffinityFile", this, ..., .class=.class);
   setCombineAlleles(paf, this$combineAlleles);
   paf;
 })

@@ -81,14 +81,14 @@ setMethodS3("getChipEffectSetClass", "SnpPlm", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getChipEffects", "SnpPlm", function(this, ...) {
-  ces <- NextMethod("getChipEffects", this, ...);
+setMethodS3("getChipEffectSet", "SnpPlm", function(this, ...) {
+  ces <- NextMethod("getChipEffectSet", this, ...);
   setMergeStrands(ces, this$mergeStrands);
   ces;
 })
 
-setMethodS3("getProbeAffinities", "SnpPlm", function(this, ..., .class=SnpProbeAffinityFile) {
-  paf <- NextMethod("getProbeAffinities", this, ..., .class=.class);
+setMethodS3("getProbeAffinityFile", "SnpPlm", function(this, ..., .class=SnpProbeAffinityFile) {
+  paf <- NextMethod("getProbeAffinityFile", this, ..., .class=.class);
   setMergeStrands(paf, this$mergeStrands);
   paf;
 })
