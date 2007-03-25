@@ -29,7 +29,7 @@ setConstructorS3("AptCopyNumberPipeline", function(dataSet=NULL, tags=c("APT", "
 }, private=TRUE)
 
 
-setMethodS3("as.character", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("as.character", "AptCopyNumberPipeline", function(this, ...) {
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Tags: %s", paste(getTags(this), collapse=",")));
@@ -41,7 +41,7 @@ setMethodS3("as.character", "AptProbesetGenotype", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("convertTxtFilesToXdr", "AptProbesetGenotype", function(this, outPath=NULL, ...) {
+setMethodS3("convertTxtFilesToXdr", "AptCopyNumberPipeline", function(this, outPath=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -215,7 +215,7 @@ setMethodS3("convertTxtFilesToXdr", "AptProbesetGenotype", function(this, outPat
 
 
 
-setMethodS3("getGenotypeCallSet", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getGenotypeCallSet", "AptCopyNumberPipeline", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -250,17 +250,17 @@ setMethodS3("getGenotypeCallSet", "AptProbesetGenotype", function(this, ...) {
 })
 
 
-setMethodS3("getRootPath", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getRootPath", "AptCopyNumberPipeline", function(this, ...) {
   "genotypeData";
 }, private=TRUE)
 
 
-setMethodS3("getName", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getName", "AptCopyNumberPipeline", function(this, ...) {
   ds <- getDataSet(this);
   getName(ds);
 })
 
-setMethodS3("getFullName", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getFullName", "AptCopyNumberPipeline", function(this, ...) {
   name <- getName(this);
   tags <- getTags(this);
   fullname <- paste(c(name, tags), collapse=",");
@@ -268,25 +268,25 @@ setMethodS3("getFullName", "AptProbesetGenotype", function(this, ...) {
 })
 
 
-setMethodS3("getPath", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getPath", "AptCopyNumberPipeline", function(this, ...) {
   path <- filePath(getRootPath(this), getFullName(this), 
                 getChipType(getCdf(this)), ".apt", expandLinks="any");
   path;
 })
 
-setMethodS3("getDataSet", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getDataSet", "AptCopyNumberPipeline", function(this, ...) {
   this$.dataSet;
 })
 
-setMethodS3("nbrOfArrays", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("nbrOfArrays", "AptCopyNumberPipeline", function(this, ...) {
   nbrOfArrays(getDataSet(this));
 })
 
-setMethodS3("getCdf", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getCdf", "AptCopyNumberPipeline", function(this, ...) {
   getCdf(getDataSet(this));
 })
 
-setMethodS3("getTags", "AptProbesetGenotype", function(this, collapse=NULL, ...) {
+setMethodS3("getTags", "AptCopyNumberPipeline", function(this, collapse=NULL, ...) {
   ds <- getDataSet(this);
   tags <- c(getTags(ds), this$.tags);
   tags <- unique(tags);
@@ -299,7 +299,7 @@ setMethodS3("getTags", "AptProbesetGenotype", function(this, collapse=NULL, ...)
 })
 
 
-setMethodS3("getChrXFile", "AptProbesetGenotype", function(this, path=NULL, skip=TRUE, ...) {
+setMethodS3("getChrXFile", "AptCopyNumberPipeline", function(this, path=NULL, skip=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -349,7 +349,7 @@ setMethodS3("getChrXFile", "AptProbesetGenotype", function(this, path=NULL, skip
 
 
 
-setMethodS3("getPathnamesFile", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("getPathnamesFile", "AptCopyNumberPipeline", function(this, ...) {
   # Get the data set
   ds <- getDataSet(this);
 
@@ -376,7 +376,7 @@ setMethodS3("getPathnamesFile", "AptProbesetGenotype", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getAptPathnames", "AptProbesetGenotype", function(this, format=c("txt", "chp"), ...) {
+setMethodS3("getAptPathnames", "AptCopyNumberPipeline", function(this, format=c("txt", "chp"), ...) {
   # Argument 'format':
   format <- match.arg(format);
 
@@ -389,7 +389,7 @@ setMethodS3("getAptPathnames", "AptProbesetGenotype", function(this, format=c("t
 }, private=TRUE);
 
 
-setMethodS3("isDone", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("isDone", "AptCopyNumberPipeline", function(this, ...) {
   path <- getPath(this);
   path <- filePath(path, "chp");
   if (!isDirectory(path))
@@ -403,7 +403,7 @@ setMethodS3("isDone", "AptProbesetGenotype", function(this, ...) {
 })
 
 
-setMethodS3("readLog", "AptProbesetGenotype", function(this, collapse="\n", ...) {
+setMethodS3("readLog", "AptCopyNumberPipeline", function(this, collapse="\n", ...) {
   filename <- "apt-probeset-genotype.log";
   pathname <- filePath(getPath(this), filename);
   if (!isFile(pathname))
@@ -415,13 +415,13 @@ setMethodS3("readLog", "AptProbesetGenotype", function(this, collapse="\n", ...)
 }, private=TRUE)
 
 
-setMethodS3("showLog", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("showLog", "AptCopyNumberPipeline", function(this, ...) {
   log <- readLog(this, ...);
   displayCode(code=log);
 })
 
 
-setMethodS3("getExternalCommand", "AptProbesetGenotype", function(this, paths=NULL, ...) {
+setMethodS3("getExternalCommand", "AptCopyNumberPipeline", function(this, paths=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Locate Affymetrix Power Tools
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -454,14 +454,14 @@ setMethodS3("getExternalCommand", "AptProbesetGenotype", function(this, paths=NU
 }, private=TRUE)
 
 
-setMethodS3("showAptVersion", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("showAptVersion", "AptCopyNumberPipeline", function(this, ...) {
   res <- getExternalCommand(this, ...);
   invisible(res);
 })
 
 
 
-setMethodS3("process", "AptProbesetGenotype", function(this, force=FALSE, ..., verbose=FALSE) {
+setMethodS3("process", "AptCopyNumberPipeline", function(this, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -590,15 +590,6 @@ setMethodS3("process", "AptProbesetGenotype", function(this, force=FALSE, ..., v
 
 ############################################################################
 # HISTORY:
-# 2007-01-06
-# o Removed getChipType(). Use getCdf() first.
-# 2006-12-20
-# o For now, in case we will need it in the future, we output as much as
-#   possible (except residuals) from APT.
-# o Returned GenotypeCallSet is now compatible with what Crlmm is returning
-#   in the sense that there is one *,calls.xdr and one *,scores.xdr file
-#   per sample in both cases.
-# o Default tags is not "APT,BRLMM".
-# o Can now run APT and return a GenotypeCallSet.
-# o Created.
+# 2007-03-22
+# o Created from AptProbesetGenotype.R.
 ############################################################################

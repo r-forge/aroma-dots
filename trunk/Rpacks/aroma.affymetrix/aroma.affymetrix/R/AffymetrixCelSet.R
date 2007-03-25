@@ -52,7 +52,7 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
   extend(AffymetrixFileSet(files=files, ...), "AffymetrixCelSet",
     "cached:.intensities" = NULL,
     "cached:.intensitiesIdxs" = NULL,
-    "cached:.unitsCache" = NULL,
+    "cached:.readUnitsCache" = NULL,
     "cached:.getUnitIntensitiesCache" = NULL,
     "cached:.averageFiles" = list(),
     "cached:.timestamps" = NULL,
@@ -64,7 +64,7 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
 setMethodS3("clearCache", "AffymetrixCelSet", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".intensities", ".intensitiesIdxs", ".unitsCache", 
+  for (ff in c(".intensities", ".intensitiesIdxs", ".readUnitsCache", 
            ".getUnitIntensitiesCache", ".timestamps", ".fileSize")) {
     this[[ff]] <- NULL;
   }
@@ -1274,6 +1274,8 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-24
+# o BUG FIX: clearCache() did not clear the .readUnitsCache field.
 # 2007-03-16
 # o BUG FIX: getAverageFile() of AffymetrixCelSet would average the wrong
 #   set of cells if argument 'indices' was different from NULL.
