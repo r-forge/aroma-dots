@@ -45,14 +45,14 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getChipEffects} \tab  -\cr
- \tab \code{getProbeAffinities} \tab  -\cr
+ \tab \code{getChipEffectSet} \tab  -\cr
+ \tab \code{getProbeAffinityFile} \tab  -\cr
  \tab \code{setCombineAlleles} \tab  -\cr
 }
 
 
  \bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffects, getProbeAffinities, setMergeStrands
+getCellIndices, getChipEffectSet, getProbeAffinityFile, setMergeStrands
 
  \bold{Methods inherited from Interface}:\cr
 extend, print, uses

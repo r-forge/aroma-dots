@@ -43,8 +43,8 @@ extends \link[aroma.affymetrix]{Interface}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getChipEffects} \tab  -\cr
- \tab \code{getProbeAffinities} \tab  -\cr
+ \tab \code{getChipEffectSet} \tab  -\cr
+ \tab \code{getProbeAffinityFile} \tab  -\cr
  \tab \code{setMergeStrands} \tab  -\cr
 }
 
