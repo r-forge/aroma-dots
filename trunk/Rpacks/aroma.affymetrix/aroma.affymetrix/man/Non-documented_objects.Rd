@@ -185,7 +185,6 @@
 \alias{encode.ParameterCelFile}
 \alias{extend.Interface}
 \alias{extractAffyBatch}
-\alias{extractDataFrame}
 \alias{extractMatrix}
 \alias{extractSnpFeatureSet}
 \alias{extractSnpQSet}

@@ -30,14 +30,14 @@
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #*/###########################################################################
 setConstructorS3("GcRmaBackgroundCorrection", function(..., indicesNegativeControl=NULL, affinities=NULL, type="fullmodel", opticalAdjust=TRUE, gsbAdjust=TRUE, gsbParameters=NULL) {
-  extend(BackgroundCorrection(..., typesToUpdate="pm"),
-         "GcRmaBackgroundCorrection",
-         .indicesNegativeControl=indicesNegativeControl,
-         .affinities=affinities,
-         .type=type,
-         .opticalAdjust=opticalAdjust,
-         .gsbAdjust=gsbAdjust,
-         .gsbParameters=gsbParameters);
+  extend(BackgroundCorrection(..., typesToUpdate="pm"), "GcRmaBackgroundCorrection",
+    .indicesNegativeControl=indicesNegativeControl,
+    .affinities=affinities,
+    .type=type,
+    .opticalAdjust=opticalAdjust,
+    .gsbAdjust=gsbAdjust,
+    .gsbParameters=gsbParameters
+  );
 })
 
 
@@ -129,8 +129,6 @@ setMethodS3("process", "GcRmaBackgroundCorrection", function(this, ..., force=FA
   # Update the output data set
   this$.outputDataSet <- outputDataSet;
 
-  verbose && exit(verbose);
-  
   outputDataSet;
 })
 

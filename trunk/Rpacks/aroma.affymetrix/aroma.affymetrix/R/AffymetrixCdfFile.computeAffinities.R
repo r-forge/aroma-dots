@@ -158,6 +158,8 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
     throw("Could not identify matching (X,Y) in CDF.");
   xyCdf <- xyCdf[rr,];
 
+  rm(xySeq, xyCdf, rr); # Never used?!? /HB 2007-03-26
+
   verbose && printf(verbose, "(X,Y,sequence) columns: (%d,%d,%d)\n", 
                                                       xcol, ycol, seqcol);
   verbose && exit(verbose);
@@ -183,6 +185,8 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
   # TODO: Reorder units according to CDF
   units <- match(sequenceInfo$name, unitNames);
+  # Never used?!? /HB 2007-03-26
+  rm(units, unitNames);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Get CDF cell indices for all units");
@@ -204,59 +208,69 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 # assume that MM has same x-coordinate as PM, but y-coordinate larger by 1
   indexPm <- sequenceInfo$y * dimension[1] + sequenceInfo$x + 1
-  indexMmPutative <- indexPm + dimension[1]
+  indexMmPutative <- indexPm + dimension[1];
+
 
 # match up putative MM with actual list of MMs from CDF
-  matches <- match(indexMmPutative, indices[isMm])
-  indexMm <- indices[isMm][matches]
-  notNA <- which(!is.na(indexMm))
-  indexMm <- indexMm[notNA]
+  matches <- match(indexMmPutative, indices[isMm]);
+  indexMm <- indices[isMm][matches];
+  notNA <- which(!is.na(indexMm));
+  indexMm <- indexMm[notNA];
+
+  rm(indexMmPutative, matches); # Not needed anymore
 
 # now calculate affinities - code reused from compute.affinities() in
 # gcrma
   verbose && enter(verbose, "Calculating probe affinities");
 
-  data(affinity.spline.coefs)
+  data(affinity.spline.coefs); # A tiny object from 'gcrma'.
 
-  affinity.basis.matrix <- ns(1:25, df = length(affinity.spline.coefs)/3)
+  affinity.basis.matrix <- ns(1:25, df=length(affinity.spline.coefs)/3);
 
-  A13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[1:5])
-  T13 <- 0
-  C13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[6:10])
-  G13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[11:15])
+  A13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[1:5]);
+  T13 <- 0;
+  C13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[6:10]);
+  G13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[11:15]);
 
   apm <- vector("double", nbrOfSequences);
   amm <- vector("double", nbrOfSequences);
 
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   if (verbose) {
-    cat(verbose, "Progress: ");
+    cat(verbose, "Progress (counting to 100): ");
     pb <- ProgressBar(stepLength=100/(nbrOfSequences/1000));
     reset(pb);
   }
+
   for (i in seq(along = apm)) {
     if (verbose && i %% 1000 == 0)
       increase(pb);
     # Get a 4x25 matrix with rows A, C, G, and T.
-    charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[i], PACKAGE = "gcrma")
+    charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[i], 
+                                                       PACKAGE="gcrma");
 
     A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
                charMtrx[2, ] %*% affinity.basis.matrix, 
-               charMtrx[3, ] %*% affinity.basis.matrix)
-    apm[i] <- A %*% affinity.spline.coefs
+               charMtrx[3, ] %*% affinity.basis.matrix);
+    apm[i] <- A %*% affinity.spline.coefs;
     if (charMtrx[1, 13] == 1) {
-      amm[i] <- apm[i] + T13 - A13
+      amm[i] <- apm[i] + T13 - A13;
     } else {
       if (charMtrx[4, 13] == 1) {
-        amm[i] <- apm[i] + A13 - T13
+        amm[i] <- apm[i] + A13 - T13;
       } else {
         if (charMtrx[3, 13]) {
-          amm[i] <- apm[i] + C13 - G13
+          amm[i] <- apm[i] + C13 - G13;
         } else {
-          amm[i] <- apm[i] + G13 - C13
+          amm[i] <- apm[i] + G13 - C13;
         }
       }
     }
   }
+  rm(charMtrx, A); # Not needed anymore
   verbose && cat(verbose, "");
 
   # create a vector to hold affinities and assign values to the appropriate
@@ -264,8 +278,12 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   affinities <- rep(NA, dimension[1]*dimension[2]);
   affinities[indexPm] <- apm;
   affinities[indexMm] <- amm[notNA];
-
   verbose && exit(verbose);
+  rm(dimension, indexPm, indexMm, apm, amm, notNA); # Not needed anymore
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   # Saving to cache
   comment <- paste(unlist(key, use.names=FALSE), collapse=";");

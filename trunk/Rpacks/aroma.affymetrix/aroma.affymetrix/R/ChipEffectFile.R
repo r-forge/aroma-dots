@@ -194,7 +194,7 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename
   # file is detected, it is renamed. 
   # This should be removed in future versions. /HB 2007-01-10
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!isFile(pathname)) {
+  if (!isFile(pathname) && !is.null(df)) {
     filenameOld <- sprintf("%s,chipEffects.cel", getName(df));
     pathnameOld <- Arguments$getWritablePathname(filenameOld, path=path);
     if (isFile(pathnameOld)) {

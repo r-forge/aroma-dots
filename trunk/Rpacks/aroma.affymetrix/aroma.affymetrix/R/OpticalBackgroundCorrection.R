@@ -7,7 +7,6 @@
 #  @classhierarchy
 #
 #  This class represents "optical" background adjustment.
-#
 # }
 #
 # @synopsis
@@ -15,7 +14,7 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of
 #     @see "ProbeLevelTransform".}
-#   \item{minimum}{The minimum adjusted signal.}
+#   \item{minimum}{The minimum signal allowed after adjustment.}
 # }
 #
 # \section{Fields and Methods}{
@@ -26,8 +25,9 @@
 #*/###########################################################################
 setConstructorS3("OpticalBackgroundCorrection", function(..., minimum=1) {
   extend(BackgroundCorrection(..., typesToUpdate="pmmm"),
-         "OpticalBackgroundCorrection",
-         .minimum = minimum);
+    "OpticalBackgroundCorrection",
+    .minimum = minimum
+  )
 })
 
 
@@ -45,6 +45,8 @@ setMethodS3("getParameters", "OpticalBackgroundCorrection", function(this, ...) 
 
   params;
 }, private=TRUE)
+
+
 
 ###########################################################################/**
 # @RdocMethod process
@@ -114,8 +116,6 @@ setMethodS3("process", "OpticalBackgroundCorrection", function(this, ..., force=
   # Update the output data set
   this$.outputDataSet <- outputDataSet;
 
-  verbose && exit(verbose);
-  
   outputDataSet;
 })
 
@@ -126,4 +126,3 @@ setMethodS3("process", "OpticalBackgroundCorrection", function(this, ..., force=
 # 2007-03-22
 # o Created.
 ############################################################################
-

@@ -254,13 +254,14 @@ setMethodS3("process", "ChipEffectGroupMerge", function(this, ..., force=FALSE, 
         rm(y);
       }
 
-
       # Not needed anymore
       rm(idxs);
       
       verbose && exit(verbose);
     } # for (size in ...)
-  
+      # Not needed anymore
+    rm(excl);
+
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Copy CEL file and update the copy
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -277,12 +278,12 @@ setMethodS3("process", "ChipEffectGroupMerge", function(this, ..., force=FALSE, 
       verbose && enter(verbose, "Writing merged data");
       updateDataFlat(ceOut, data=data, verbose=less(verbose));
       verbose && exit(verbose);
-    }, condition = function(cond) {
-      verbose && enter(verbose, "Error or warning detected while saving, removing data file again");
+    }, error = function(cond) {
+      verbose && enter(verbose, "Error detected while saving, removing data file again");
       verbose && print(verbose, cond);
       verbose && cat(verbose, "Pathname: ", pathname);
       verbose && exit(verbose);
-      signalCondition(cond);
+      throw(cond$message);
     })
     verbose && exit(verbose);
 
@@ -299,7 +300,7 @@ setMethodS3("process", "ChipEffectGroupMerge", function(this, ..., force=FALSE, 
     res[[kk]] <- ceOut;
 
     verbose && exit(verbose);
-  }
+  } # for (kk in ...)
 
   # Create the output set by re-reading it from files
   outputSet <- fromFiles(ces, path);
