@@ -20,12 +20,15 @@
  Extract data as a matrix for a set of arrays.
 }
 
-\usage{\method{extractMatrix}{ChipEffectSet}(this, ..., units=NULL, field=c("theta", "sdTheta"), verbose=FALSE)}
+\usage{\method{extractMatrix}{ChipEffectSet}(this, units=NULL, ..., field=c("theta", "sdTheta"), returnUgcMap=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{units}{(The subset of units to be matched.
     If \code{\link[base]{NULL}}, all units are considered.}
   \item{...}{Not used.}
+  \item{field}{The field to be extracted.}
+  \item{returnUgcMap}{If \code{\link[base:logical]{TRUE}}, the (unit, group, cell) map is returned
+    as an attribute.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 

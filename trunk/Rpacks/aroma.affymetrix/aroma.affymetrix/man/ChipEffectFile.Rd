@@ -48,7 +48,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:extractDataFrame.ChipEffectFile]{extractDataFrame}} \tab Extract data as a data frame.\cr
+ \tab \code{extractDataFrame} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getAM.ChipEffectFile]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{getCellIndices} \tab  -\cr

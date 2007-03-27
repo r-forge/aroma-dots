@@ -71,14 +71,21 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
   # optical effect correction for each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  verbose && enter(verbose, "Adjusting ", nbrOfArrays(this), " arrays");
+  nbrOfArrays <- nbrOfArrays(this);
+  verbose && enter(verbose, "Adjusting ", nbrOfArrays, " arrays");
   dataFiles <- list();
   for (kk in seq(this)) {
-    verbose && enter(verbose, "Array #", kk);
+    verbose && enter(verbose, sprintf("Array #%d of %d", kk, nbrOfArrays));
     df <- getFile(this, kk);
     verbose && print(verbose, df);
-    dataFiles[[kk]] <- bgAdjustOptical(df, path=path, subsetToUpdate=subsetToUpdate, typesToUpdate=NULL, minimum=1, verbose=less(verbose));
+    dataFiles[[kk]] <- bgAdjustOptical(df, path=path, subsetToUpdate=subsetToUpdate, typesToUpdate=NULL, minimum=minimum, verbose=less(verbose));
     verbose && exit(verbose);
+
+    rm(df);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
   }
   verbose && exit(verbose);
 
@@ -106,6 +113,10 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
 #   \item{affinities}{A @numeric @vector of probe affinities.}
 #   \item{path}{If an affinities vector is not specified,
 #      gives the path to a file storing the affinities.}
+# }
+#
+# \details{
+#   This method is not constant in memory! /HB 2007-03-26
 # }
 #
 # \value{
@@ -139,34 +150,68 @@ setMethodS3("calculateParametersGsb", "AffymetrixCelSet", function(this, nbrOfPm
   }
 
   verbose && enter(verbose, "Extracting PM indices");
-  pmi <- unlist(getCellIndices(cdf, stratifyBy="pm", verbose=less(verbose, 2)));  verbose && exit(verbose);
-  
+  cells <- getCellIndices(cdf, verbose=less(verbose,2));
+  cells <- unlist(cells, use.names=FALSE);
+  pmi <- cells[isPm(cdf, cache=FALSE)];
+  rm(cells);
+#  pmi <- getCellIndices(cdf, stratifyBy="pm", verbose=less(verbose,2));
+#  pmi <- unlist(pmi, use.names=FALSE);
+  pmi <- sort(pmi);
+  verbose && exit(verbose);
+
   narray <- length(this);
 
 #  set.seed(1);
 #  was present in original gcrma code; left in here to allow for consistency
 #  check between old and new versions
 
-  # get a random subset of PM to use in parameter estimation
+  # get a sorted random subset of PM to use in parameter estimation
   pmi.random <- sample(pmi, nbrOfPms);
+  pmi.random <- sort(pmi.random);
   rm(pmi);   # Not needed anymore
   
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && enter(verbose, "Extracting ", nbrOfPms, " random PM intensities across CEL set");
   # make sure we don't just sample from a single array; avoids problems
   # if we happened to choose a low quality or otherwise aberrant array
   iarray <- sample(1:narray, nbrOfPms, replace=TRUE);
 
-  verbose && enter(verbose, "Extracting ", nbrOfPms, " random PM intensities across CEL set");
-  pm.random <- readCelIntensities(getPathnames(this), indices=pmi.random);
-  verbose && exit(verbose);
-  
-  pm.random2 <- vector("double", nrow(pm.random));
-  for (i in 1:nbrOfPms) {
-    pm.random2[i] <- pm.random[i, iarray[i]];
+  # For each array, read the signals randomized for that array
+  # Confirmed to give identical results. /HB 2007-03-26
+  pathnames <- getPathnames(this);
+  pm.random2 <- vector("double", nbrOfPms);
+  for (aa in 1:narray) {
+    verbose && enter(verbose, sprintf("Array #%d of %d", aa, narray));
+    # Cells to be read for this array
+    idxs <- which(iarray == aa);
+    cells <- pmi.random[idxs];
+    pm.random2[idxs] <- readCel(pathnames[aa], indices=cells, 
+                       readIntensities=TRUE, readStdvs=FALSE)$intensities;
+    rm(idxs, cells);
+    verbose && exit(verbose);
   }
+  rm(iarray, pathnames);
 
-  # clean up
-  rm(pm.random, iarray);   # Not needed anymore
-  gc();
+##   pm.random22 <- pm.random2;
+##   # TO DO: Don't read all probes from all arrays
+##   pm.random <- readCelIntensities(getPathnames(this), indices=pmi.random);
+##   pm.random2 <- vector("double", nrow(pm.random));
+##   for (i in 1:nbrOfPms) {
+##     pm.random2[i] <- pm.random[i, iarray[i]];
+##   }
+##   verbose && exit(verbose);
+##   # clean up
+##   rm(pm.random, iarray);   # Not needed anymore
+##   stopifnot(identical(pm.random2, pm.random22))
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
 
   verbose && enter(verbose, "Extracting probe affinities and fitting linear model")
 
@@ -177,12 +222,24 @@ setMethodS3("calculateParametersGsb", "AffymetrixCelSet", function(this, nbrOfPm
   }
   rm(pmi.random);  # Not needed anymore
 
+  # Work on the log2 scale
   pm.random2 <- log2(pm.random2);  # Minimize memory usage.
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && enter(verbose, "Fitting the GCRMA background linear model");
+  verbose && str(verbose, pm.random2);
+  verbose && str(verbose, aff);
   fit1 <- lm(pm.random2 ~ aff);
+  verbose && print(verbose, fit1);
+  verbose && exit(verbose);
+
   verbose && exit(verbose);
   
   fit1$coef;
 }, private=TRUE)
+
 
 
 ###########################################################################/**
@@ -275,10 +332,13 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
       affinities <- readApd(pathname)$affinities;
       verbose && exit(verbose);
     } else {
-      affinities <- computeAffinities(cdf, paths=probePath);
+      affinities <- computeAffinities(cdf, paths=probePath, 
+                                                   verbose=less(verbose));
       verbose && cat(verbose, "Saving affinities: ", pathname);
       writeApd(pathname, data=affinities, name="affinities");
     }
+    verbose && printf(verbose, "RAM: %.2fMB\n", 
+                                         object.size(affinities)/1024^2);
     verbose && exit(verbose);
   }
 
@@ -289,6 +349,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
   if (opticalAdjust) {
     OBG <- OpticalBackgroundCorrection(this);
     dsOBG <- process(OBG, ..., verbose=verbose);
+    rm(OBG);
     this <- dsOBG;
   }
 
@@ -307,13 +368,21 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
   # NSB correction for each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  verbose && enter(verbose, "Adjusting ", nbrOfArrays(this), " arrays");
+  nbrOfArrays <- nbrOfArrays(this);
+  verbose && enter(verbose, "Adjusting ", nbrOfArrays, " arrays");
   dataFiles <- list();
   for (kk in seq(this)) {
-    verbose && enter(verbose, "Array #", kk);
+    verbose && enter(verbose, sprintf("Array #%d of %d", kk, nbrOfArrays));
     df <- getFile(this, kk);
     verbose && print(verbose, df);
     dataFiles[[kk]] <- bgAdjustGcrma(df, path=path, type=type, indicesNegativeControl=indicesNegativeControl, affinities=affinities, gsbAdjust=gsbAdjust, parametersGsb=parametersGsb, k=k, rho=rho, stretch=stretch, fast=fast, overwrite=overwrite, skip=skip, ..., verbose=less(verbose));    
+
+    rm(df);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
@@ -393,14 +462,21 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="R
   # apply normal+exponential model to each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  verbose && enter(verbose, "Adjusting ", nbrOfArrays(this), " arrays");
+  nbrOfArrays <- nbrOfArrays(this);
+  verbose && enter(verbose, "Adjusting ", nbrOfArrays, " arrays");
   dataFiles <- list();
   for (kk in seq(this)) {
-    verbose && enter(verbose, "Array #", kk);
+    verbose && enter(verbose, sprintf("Array #%d of %d", kk, nbrOfArrays));
     df <- getFile(this, kk);
     verbose && print(verbose, df);
     dataFiles[[kk]] <- bgAdjustRma(df, path=path, pmonly=pmonly, addJitter=addJitter, jitterSd=jitterSd, overwrite=overwrite, skip=skip, ..., verbose=less(verbose));
-    gc();
+
+    rm(df);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
@@ -414,6 +490,15 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="R
 
 ############################################################################
 # HISTORY:
+# 2007-03-26
+# o Speed up: Using isPm(cdf) instead of readCdfCellIndices() etc.
+# o Memory optimization: Found an unlist() without use.names=FALSE.  Saves
+#   about 95% of the object, or 250MB of RAM.
+# o TO DO: Store GCRMA affinities under annotationData/ and not use the
+#   data set paths. /HB
+# o Tried to make calculateParametersGsb() constant in memory. Before it 
+#   read all data for all arrays and then subsampled! /HB
+# o BUG FIX: Argument 'minimum' was not used but forced to equal 1.
 # 2007-03-22
 # o rename gsbParameters to parametersGsb to avoid clash of arguments
 #   in bgAdjustGcrma.AffymetrixCelFile().  Not sure why gsbAdjust and

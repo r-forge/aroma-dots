@@ -94,7 +94,11 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
   # Subtract optical background from selected probes
   verbose && enter(verbose, "Adjusting background for optical effect");
   arrayMinimum <- min(x[subsetToUpdate], na.rm=TRUE);
-  x[subsetToUpdate] <- x[subsetToUpdate] - arrayMinimum + minimum;
+  verbose && printf(verbose, "Array minimum: %.2f\n", arrayMinimum);
+  xdiff <- (arrayMinimum - minimum);
+  verbose && printf(verbose, "Correction: -(%.2f-%.2f) = %+.2f\n", 
+                                         arrayMinimum, minimum, xdiff);
+  x[subsetToUpdate] <- x[subsetToUpdate] - xdiff;
   rm(subsetToUpdate);
   verbose && exit(verbose);
 
@@ -437,11 +441,15 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
   verbose && enter(verbose, "Writing adjusted intensities");
   updateCel(pathname, indices=pmi, intensities=pm);
   verbose && exit(verbose);
+
   verbose && exit(verbose);
 
   # get rid of redundant objects to save space
   rm(pm); rm(pmi);
-  gc();
+
+  # Garbage collection
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   # Return new background corrected data file object
 
@@ -455,6 +463,8 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
 
 ############################################################################
 # HISTORY:
+# 2007-03-26
+# o Added verbose output about estimated background.
 # 2007-03-23
 # o Replaced all usage of copyCel() with createFrom().  This allow us to 
 #   later update createFrom() to create CEL files of different versions.

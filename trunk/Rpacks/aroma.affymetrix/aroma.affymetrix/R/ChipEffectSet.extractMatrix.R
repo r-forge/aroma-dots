@@ -14,6 +14,9 @@
 #   \item{units}{(The subset of units to be matched.
 #     If @NULL, all units are considered.}
 #   \item{...}{Not used.}
+#   \item{field}{The field to be extracted.}
+#   \item{returnUgcMap}{If @TRUE, the (unit, group, cell) map is returned
+#     as an attribute.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -31,7 +34,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., units=NULL, field=c("theta", "sdTheta"), verbose=FALSE) {
+setMethodS3("extractMatrix", "ChipEffectSet", function(this, units=NULL, ..., field=c("theta", "sdTheta"), returnUgcMap=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -60,13 +63,13 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., units=NULL, fi
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get cell map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Get unit-to-cell map");
+  verbose && enter(verbose, "Getting unit-to-cell map");
   cf <- getFile(this, 1);
-  map <- getCellMap(cf, units=units, verbose=less(verbose));
-  map <- subset(map, ...);
+  ugcMap <- getCellMap(cf, units=units, verbose=less(verbose));
+  ugcMap <- subset(ugcMap, ...);
   verbose && exit(verbose);
 
-  if (nrow(map) == 0)
+  if (nrow(ugcMap) == 0)
     throw("Nothing to return.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -74,23 +77,34 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., units=NULL, fi
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   arrayNames <- getNames(this);
   nbrOfArrays <- length(arrayNames);
-  df <- matrix(NA, nrow=nrow(map), ncol=3+nbrOfArrays);
-  colnames(df) <- c(colnames(map), arrayNames);
-  df[,1:3] <- as.matrix(map);
+  df <- matrix(NA, nrow=nrow(ugcMap), ncol=nbrOfArrays);
+  colnames(df) <- arrayNames;
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get thetas from the samples
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving sample thetas");
   for (aa in seq_len(nbrOfArrays)) {
+    verbose && printf(verbose, "Array %d,\n", aa);
     cf <- getFile(this, aa);
-    values <- getDataFlat(cf, units=map, fields=field, verbose=less(verbose))[,field];
-    df[,3+aa] <- values;
-    rm(values);
+    df[,aa] <- getDataFlat(cf, units=ugcMap, fields=field, 
+                                            verbose=less(verbose))[,field];
+    if (aa %% 10 == 0) {
+      # Garbage collect
+      gc <- gc();
+      verbose && print(verbose, gc);
+    }
   } # for (aa in ...)
   verbose && exit(verbose);
 
   verbose && exit(verbose);
+
+  if (returnUgcMap)
+    attr(df, "unitGroupCellMap") <- ugcMap;
 
   df;
 }) # extractMatrix()

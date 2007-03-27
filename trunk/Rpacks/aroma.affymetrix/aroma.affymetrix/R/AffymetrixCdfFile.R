@@ -297,6 +297,7 @@ setMethodS3("getHeader", "AffymetrixCdfFile", function(this, ...) {
   header;
 }, private=TRUE)
 
+
 setMethodS3("getChipType", "AffymetrixCdfFile", function(this, fullname=TRUE, ...) {
   chipType <- getHeader(this)$chiptype;
 
@@ -433,6 +434,8 @@ setMethodS3("getUnitSizes", "AffymetrixCdfFile", function(this, units=NULL, ...)
   if (!is.null(units))
     sizes <- sizes[units];
 
+#  gc <- gc();
+
   sizes;
 }, private=TRUE)
 
@@ -568,9 +571,18 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   cdf <- readCdfCellIndices(this$.pathname, units=units, ..., verbose=verbose);
   verbose && exit(verbose);
 
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   verbose && enter(verbose, "Restructuring");
   cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
   verbose && exit(verbose);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
@@ -758,6 +770,7 @@ setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE,
       # ...otherwise, read only a subset of units
       cdf <- readCdfIsPm(this$.pathname, units=units);
       cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
+      isPm <- cdf;
     }
   }
 
@@ -876,6 +889,10 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
 
   if (sort)
     indices <- sort(indices);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Save result to cache
@@ -1192,6 +1209,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-03-26
+# o Added a few more gc().
+# o BUG FIX: isPm() did not work when querying a subset of the units.
 # 2007-02-22
 # o Now findByChipType() recognizes Windows shortcuts too.
 # 2007-02-21

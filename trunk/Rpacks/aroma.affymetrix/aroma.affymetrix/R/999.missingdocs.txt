@@ -68,7 +68,7 @@
   dataFrame dataFrame.default decode decode.ParameterCelFile digest
   display display.ChromosomeExplorer drawCytoBand drawCytoBand.default
   encode encode.ParameterCelFile extend.Interface extractAffyBatch
-  extractDataFrame extractMatrix extractSnpFeatureSet extractSnpQSet
+  extractMatrix extractSnpFeatureSet extractSnpQSet
   findByChipType findByChipType.AffymetrixCsvGenomeInformation
   findByChipType.AffymetrixProbeTabFile findByChipType.AromaUgpFile
   findByChipType.DChipGenomeInformation

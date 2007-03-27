@@ -53,6 +53,53 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   } # readMbeiHeader()
 
 
+  importUnits <- function(con, cdf, verbose=FALSE, ...) {
+    verbose && enter(verbose, "Reading unit names (only)");
+    seek(con, where=dataOffset, rw="read");
+    # Skip the last empty column (due to the extra tab outputted by dChip)
+    colClasses <- rep("NULL", nbrOfColumns+1);
+    colClasses[1] <- "character";
+    unitNames <- read.table(file=con, colClasses=colClasses, sep=sep, header=FALSE);
+    unitNames <- unlist(unitNames, use.names=FALSE);
+
+    nbrOfUnits <- length(unitNames);
+    verbose && cat(verbose, "Number of units: ", nbrOfUnits);
+    verbose && cat(verbose, "Unit names: ");
+    verbose && str(verbose, unitNames);
+    verbose && exit(verbose);
+
+    # Get the dChip-to-CDF unit map
+    verbose && enter(verbose, "Validating unit names towards the chip type");
+    cdfUnitNames <- getUnitNames(cdf);
+    units <- match(unitNames, cdfUnitNames);
+    rm(cdfUnitNames);
+
+    unknown <- which(is.na(units));
+    nbrOfUnknown <- length(unknown);
+    verbose && cat(verbose, "Number of unknown unit names: ", nbrOfUnknown);
+    if (nbrOfUnknown == length(units)) {
+      throw("Non of the read unit names belongs to the '", chipType, "' CDF file: ", pathname);
+    } 
+
+    if (nbrOfUnknown > 0) {
+      msg <- sprintf("Data file contains %d unknown unit names: %s", nbrOfUnknown, paste(unitNames[unknown], collapse=", "));
+      throw(msg);
+    }
+    rm(unitNames, unknown);
+
+    # Store only known units
+    keep <- !is.na(units);
+    units <- units[keep];
+    verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    list(units=units, keep=keep);
+  } # importUnits()
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -75,7 +122,6 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
     pushState(verbose);
     on.exit(popState(verbose));
   }
-
 
 
   ces <- NULL;
@@ -109,7 +155,9 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   verbose && printf(verbose, "Chip type: %s,monocell\n", chipType);
    # Get the ChipEffectFile class specific for this set
   clazz <- getChipEffectFileClass(static);
-  ceCdf <- clazz$createParamCdf(cdf);
+  monocellCdf <- clazz$createParamCdf(cdf);
+  rm(cdf);
+  verbose && print(verbose, monocellCdf);
   verbose && exit(verbose);
 
 
@@ -134,7 +182,8 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   verbose && str(verbose, header);
 
   if (tolower(header$ModelMethod) != tolower("Model-based expression")) {
-    throw("dChip data file does not contain MBEI estimates: ", header$ModelMethod);
+    throw("dChip data file does not contain MBEI estimates: ", 
+                                                        header$ModelMethod);
   }
 
   isLog <- (regexpr("^no", tolower(header$LogTransformed)) == -1);
@@ -150,7 +199,6 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   # Read column names
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   colNames <- readLines(con, n=1);
-
   # Guess column separator
   if (regexpr("\t", colNames) != -1) {
     sep <- "\t";
@@ -161,86 +209,51 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   }
 
   colNames <- unlist(strsplit(colNames, split=sep));
-  verbose && cat(verbose, "Column names: ", paste(colNames, collapse=", "));
+  nbrOfColumns <- length(colNames);
+  verbose && printf(verbose, "Column names [%d]: %s\n", nbrOfColumns,
+                                           paste(colNames, collapse=", "));
 
-  nbrOfColsPerSample <- ifelse(hasStddev, 3, 2);
-  sampleNames <- colNames[seq(from=2, to=length(colNames), by=nbrOfColsPerSample)];
+  # Infer sample names
+  sampleNames <- gsub(" (call|SD)$", "", colNames[-1]);
+  sampleNames <- unique(sampleNames);
   nbrOfSamples <- length(sampleNames);
-  verbose && cat(verbose, "Number of samples: ", nbrOfSamples);
-  verbose && cat(verbose, "Sample names: ", paste(sampleNames, collapse=", "));
+  verbose && printf(verbose, "Sample names [%d]: %s\n", nbrOfSamples, paste(sampleNames, collapse=", "));
+
+
+  nbrOfColsPerSample <- (nbrOfColumns-1)/nbrOfSamples;
+  hasCalls <- any(regexpr(" call$", colNames[-1]) != -1);
+  hasSDs <- any(regexpr(" SD$", colNames[-1]) != -1);
+  verbose && printf(verbose, "Has calls: %s\n", hasCalls);
+  verbose && printf(verbose, "Has SDs: %s\n", hasSDs);
+  verbose && printf(verbose, "Columns per sample: %d\n", nbrOfColsPerSample);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Prepare to read data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  nbrOfColumns <- length(colNames);
-  colClasses <- rep("double", nbrOfColumns);
-  # First column contains probeset names
-  colClasses[1] <- "character";
-  # Call column contains strings
-  colClasses[grep("call", colNames)] <- "character";
-  verbose && cat(verbose, "Column classes: ", paste(colClasses, collapse=", "));
-  # Skip the last empty column (due to the extra tab outputted by dChip)
-  colClasses <- c(colClasses, "NULL");
-
   # Record the current file position
   dataOffset <- seek(con, rw="read");
   verbose && cat(verbose, "Data file offset: ", dataOffset);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Read unit names
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Reading unit names");
-  seek(con, where=dataOffset, rw="read");
-  # Skip the last empty column (due to the extra tab outputted by dChip)
-  colClasses <- rep("NULL", nbrOfColumns+1);
-  colClasses[1] <- "character";
-  unitNames <- read.table(file=con, colClasses=colClasses, sep=sep, header=FALSE);
-  unitNames <- unlist(unitNames, use.names=FALSE);
-
-  nbrOfUnits <- length(unitNames);
-  verbose && cat(verbose, "Number of units: ", nbrOfUnits);
-  verbose && cat(verbose, "Unit names: ");
-  verbose && str(verbose, unitNames);
-  verbose && exit(verbose);
-
-  # Get the dChip-to-CDF unit map
-  cdfUnitNames <- getUnitNames(cdf);
-  units <- match(unitNames, cdfUnitNames);
-  unknown <- which(is.na(units));
-  nbrOfUnknown <- length(unknown);
-  verbose && cat(verbose, "Number of unknown unit names: ", nbrOfUnknown);
-  if (nbrOfUnknown == length(units)) {
-    throw("Non of the read unit names belongs to the '", chipType, "' CDF file: ", pathname);
-  } 
-
-  if (nbrOfUnknown > 0) {
-    msg <- sprintf("Data file contains %d unknown unit names: %s", nbrOfUnknown, paste(unitNames[unknown], collapse=", "));
-    throw(msg);
-  }
-
-  # Store only known units
-  keep <- !is.na(units);
-  units <- units[keep];
-  nbrOfUnits <- length(units);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Import each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # (signal, call, sd)
   sampleColClasses <- c("double", "NULL", "double")[1:nbrOfColsPerSample];
   cells <- NULL;
 
   verbose && enter(verbose, "Importing ", nbrOfSamples, " samples");
   for (kk in seq(length=nbrOfSamples)) {
     sampleName <- sampleNames[kk];
-    verbose && enter(verbose, sprintf("Sample #%d (%s)", kk, sampleName));
+    verbose && enter(verbose, sprintf("Sample #%d (%s) of %d", 
+                                            kk, sampleName, nbrOfSamples));
 
     # Create output filename
     filename <- sprintf("%s,chipEffects.cel", sampleName);
     pathname <- file.path(outPath, filename);
     verbose && cat(verbose, "Output pathname: ", pathname);
 
-    if (isFile(pathname) && skip) {
+    if (skip && isFile(pathname)) {
       verbose && cat(verbose, "Already imported");
       verbose && exit(verbose);
       next;
@@ -250,10 +263,11 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
     verbose && cat(verbose, "Columns: ", seqToHumanReadable(cols));
 
     verbose && enter(verbose, "Retrieving chip-effect CEL file");
+    verbose && cat(verbose, "Class: ", getName(clazz));
     if (isFile(pathname)) {
       cef <- clazz$fromFile(pathname, verbose=less(verbose));
     } else {
-      cef <- clazz$fromDataFile(filename=filename, path=outPath, name=sampleName, cdf=ceCdf, verbose=less(verbose));
+      cef <- clazz$fromDataFile(filename=filename, path=outPath, name=sampleName, cdf=monocellCdf, verbose=less(verbose));
     }
     cef$combineAlleles <- combineAlleles;
     cef$mergeStrands <- TRUE;
@@ -261,6 +275,10 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
     verbose && exit(verbose);
 
     if (is.null(cells)) {
+      res <- importUnits(con, cdf=monocellCdf, verbose=verbose);
+      units <- res$units;
+      keep <- res$keep;
+      rm(res);
       verbose && enter(verbose, "Getting CDF cell indices");
       cells <- getCellIndices(cef, units=units);
       verbose && cat(verbose, "CDF cell indices:");
@@ -269,31 +287,45 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
       verbose && cat(verbose, "Number of cells: ", length(cells));
       verbose && str(verbose, cells);
       verbose && exit(verbose);
+      # Garbage collect
+      gc <- gc();
+      verbose && print(verbose, gc);
     }
 
-    verbose && enter(verbose, "Reading");
+    verbose && enter(verbose, "Reading data");
     colClasses <- rep("NULL", nbrOfColumns+1);
     colClasses[cols] <- sampleColClasses;
     seek(con, where=dataOffset, rw="read");
     data <- read.table(file=con, colClasses=colClasses, sep=sep, header=FALSE);
-    data <- as.matrix(data[keep,]);
+    data <- as.matrix(data[keep,,drop=FALSE]);
     dimnames(data) <- NULL;
     verbose && str(verbose, data);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Storing chip effects");
     pathname <- getPathname(cef);
-    updateCel(pathname, indices=cells, intensities=data[,1], stdvs=data[,2]);
+    rm(cef);
+
+    if (hasSDs) {
+      stdvs <- data[,2];
+    } else {
+      stdvs <- NULL;
+    }
+    updateCel(pathname, indices=cells, intensities=data[,1], stdvs=stdvs);
+    rm(data, stdvs);
     verbose && exit(verbose);
 
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+    
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
 
   # Define chip-effect set
   ces <- fromFiles(static, path=outPath);
-  ces$combineAlleles <- combineAlleles;
-  ces$mergeStrands <- TRUE;
+  setCdf(ces, monocellCdf);
 
   verbose && exit(verbose);
 
@@ -303,6 +335,9 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
 
 ############################################################################
 # HISTORY:
+# 2007-03-25
+# o Made importFromDChip() more robust in identifying what columns goes with
+#   what sample etc.
 # 2007-02-03
 # o Added Rdoc comments.
 # 2007-01-03

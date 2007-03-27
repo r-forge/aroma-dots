@@ -27,9 +27,10 @@
 #*/###########################################################################
 setConstructorS3("RmaBackgroundCorrection", function(..., addJitter=FALSE, jitterSd=0.2) {
   extend(BackgroundCorrection(..., typesToUpdate="pm"),
-         "RmaBackgroundCorrection",
-         .addJitter=addJitter,
-         .jitterSd=jitterSd);
+    "RmaBackgroundCorrection",
+    .addJitter=addJitter,
+    .jitterSd=jitterSd
+  );
 })
 
 
@@ -37,17 +38,13 @@ setMethodS3("getParameters", "RmaBackgroundCorrection", function(this, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);
 
-  if (this$.typesToUpdate=="pm") {
-    pmonly <- TRUE;
-  } else {
-    pmonly <- FALSE;
-  }
+  pmOnly <- (this$.typesToUpdate=="pm");
   
   # Get parameters of this class
   params2 <- list(
     addJitter = this$.addJitter,
     jitterSd = this$.jitterSd,
-    pmonly = pmonly
+    pmonly = pmOnly
   );
 
   # Append the two sets
@@ -55,6 +52,8 @@ setMethodS3("getParameters", "RmaBackgroundCorrection", function(this, ...) {
 
   params;
 }, private=TRUE)
+
+
 
 ###########################################################################/**
 # @RdocMethod process
@@ -124,8 +123,6 @@ setMethodS3("process", "RmaBackgroundCorrection", function(this, ..., force=FALS
   # Update the output data set
   this$.outputDataSet <- outputDataSet;
 
-  verbose && exit(verbose);
-  
   outputDataSet;
 })
 

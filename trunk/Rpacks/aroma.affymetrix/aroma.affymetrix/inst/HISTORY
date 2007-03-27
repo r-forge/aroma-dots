@@ -1,7 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.4 [2007-03-24]
+Version: 0.4.5 [2007-03-27xx]
+o BUG FIX: ChipEffectGroupMerge would catch warnings (like errors)
+  when create output CEL files, e.g. when getRelativePath() gave
+  an unimportant warning.
+
+Version: 0.4.4 [2007-03-26]
 o Added BackgroundCorrection classes RmaBackgroundCorrection,
   GcRmaBackgroundCorrection, and OpticalBackgroundCorrection.  
   These replaces methods bgAdjustRma(), bgAdjustRcRma(), and
