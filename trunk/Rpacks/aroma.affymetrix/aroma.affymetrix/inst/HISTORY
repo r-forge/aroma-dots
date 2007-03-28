@@ -8,6 +8,8 @@ o BUG FIX: ChipEffectGroupMerge would catch warnings (like errors)
 o BUG FIX: getFitUnitFunction() for CnPlm was broken for PM-MM 
   probe models for single group units, e.g. AFFX units, resulting 
   in an error "Argument 'y' must have two dimensions: 3".
+o BUG FIX: getFitUnitFunction() of CnPlm did not handle probe
+  model "min1(pm-mm)".
 
 Version: 0.4.4 [2007-03-26]
 o Added BackgroundCorrection classes RmaBackgroundCorrection,

@@ -87,45 +87,116 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
     # Get the fit function for a single set of intensities
     fitfcn <- getFitFunction(this, ...);
   
-    fitUnit <- function(groups, ...) {
-      ngroups <- length(groups);
-      if (ngroups == 2) {
-        yA <- .subset2(.subset2(groups, 1), 1);
-        yB <- .subset2(.subset2(groups, 2), 1);
-        y <- yA + yB;
-        if (length(dim(y)) == 3) {
-          y <- y[1,,] + y[2,,];
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Create the one for all blocks in a unit
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (this$probeModel == "pm-mm") {
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # (combineAlleles=TRUE, probeModel="pm-mm")
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      fitUnit <- function(groups, ...) {
+        ngroups <- length(groups);
+        if (ngroups == 2) {
+          yA <- .subset2(.subset2(groups, 1), 1);
+          yB <- .subset2(.subset2(groups, 2), 1);
+          y <- yA + yB;
+          y <- y[1,,] - y[2,,];  # PM-MM
+          list(fitfcn(y));
+        } else if (ngroups == 4) {
+          yA1 <- .subset2(.subset2(groups, 1), 1);
+          yB1 <- .subset2(.subset2(groups, 2), 1);
+          yA2 <- .subset2(.subset2(groups, 3), 1);
+          yB2 <- .subset2(.subset2(groups, 4), 1);
+          y1 <- yA1 + yB1;
+          y2 <- yA2 + yB2;
+          y1 <- y1[1,,] - y1[2,,];  # PM-MM
+          y2 <- y2[1,,] - y2[2,,];  # PM-MM
+          list(
+            fitfcn(y1), 
+            fitfcn(y2)
+          );
+        } else {
+          # For all other cases, fit each group individually
+          lapply(groups, FUN=function(group) {
+            y <- .subset2(group, 1);
+            y <- y[1,,] - y[2,,];  # PM-MM
+            fitfcn(y);
+          })
         }
-        list(fitfcn(y));
-      } else if (ngroups == 4) {
-        yA1 <- .subset2(.subset2(groups, 1), 1);
-        yB1 <- .subset2(.subset2(groups, 2), 1);
-        yA2 <- .subset2(.subset2(groups, 3), 1);
-        yB2 <- .subset2(.subset2(groups, 4), 1);
-        y1 <- yA1 + yB1;
-        y2 <- yA2 + yB2;
-        if (length(dim(y1)) == 3) {
-          y1 <- y1[1,,] + y1[2,,];
+      } # fitUnit()
+    } else if (this$probeModel == "min1(pm-mm)") {
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # (combineAlleles=TRUE, probeModel="min1(pm-mm)")
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      fitUnit <- function(groups, ...) {
+        ngroups <- length(groups);
+        if (ngroups == 2) {
+          yA <- .subset2(.subset2(groups, 1), 1);
+          yB <- .subset2(.subset2(groups, 2), 1);
+          y <- yA + yB;
+          y <- y[1,,] - y[2,,];  # PM-MM
+          y[y < 1] <- 1;         # min1(PM-MM)=min(PM-MM,1)
+          list(fitfcn(y));
+        } else if (ngroups == 4) {
+          yA1 <- .subset2(.subset2(groups, 1), 1);
+          yB1 <- .subset2(.subset2(groups, 2), 1);
+          yA2 <- .subset2(.subset2(groups, 3), 1);
+          yB2 <- .subset2(.subset2(groups, 4), 1);
+          y1 <- yA1 + yB1;
+          y2 <- yA2 + yB2;
+          y1 <- y1[1,,] - y1[2,,];  # PM-MM
+          y2 <- y2[1,,] - y2[2,,];  # PM-MM
+          y1[y1 < 1] <- 1;          # min1(PM-MM)=min(PM-MM,1)
+          y2[y2 < 1] <- 1;          # min1(PM-MM)=min(PM-MM,1)
+          list(
+            fitfcn(y1), 
+            fitfcn(y2)
+          );
+        } else {
+          # For all other cases, fit each group individually
+          lapply(groups, FUN=function(group) {
+            y <- .subset2(group, 1);
+            y <- y[1,,] - y[2,,];  # PM-MM
+            y[y < 1] <- 1;         # min1(PM-MM)=min(PM-MM,1)
+            fitfcn(y);
+          })
         }
-        if (length(dim(y2)) == 3) {
-          y2 <- y2[1,,] + y2[2,,];
+      } # fitUnit()
+    } else {
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # (combineAlleles=TRUE, probeModel="pm")
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      fitUnit <- function(groups, ...) {
+        ngroups <- length(groups);
+        if (ngroups == 2) {
+          yA <- .subset2(.subset2(groups, 1), 1);
+          yB <- .subset2(.subset2(groups, 2), 1);
+          y <- yA + yB;
+          list(fitfcn(y));
+        } else if (ngroups == 4) {
+          yA1 <- .subset2(.subset2(groups, 1), 1);
+          yB1 <- .subset2(.subset2(groups, 2), 1);
+          yA2 <- .subset2(.subset2(groups, 3), 1);
+          yB2 <- .subset2(.subset2(groups, 4), 1);
+          y1 <- yA1 + yB1;
+          y2 <- yA2 + yB2;
+          list(
+            fitfcn(y1), 
+            fitfcn(y2)
+          );
+        } else {
+          # For all other cases, fit each group individually
+          lapply(groups, FUN=function(group) {
+            y <- .subset2(group, 1);
+            fitfcn(y);
+          })
         }
-        list(
-          fitfcn(y1), 
-          fitfcn(y2)
-        );
-      } else {
-        # For all other cases, fit each group individually
-        lapply(groups, FUN=function(group) {
-          y <- .subset2(group, 1);
-          if (length(dim(y)) == 3) {
-            y <- y[1,,] + y[2,,];
-          }
-          fitfcn(y);
-        })
-      }
-    }
+      } # fitUnit()
+    } # if (this$probeModel == ...)
   } else {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # (combineAlleles=FALSE, probeModel=*)
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     fitUnit <- NextMethod("getFitUnitFunction", this, ...);
   }
 
@@ -161,8 +232,10 @@ setMethodS3("setCombineAlleles", "CnPlm", function(this, ...) {
 ############################################################################
 # HISTORY:
 # 2007-03-28
-# o BUG FIX: getFitUnitFunction() was broken for PM-MM probe models for
-#   single group units, e.g. AFFX units, resulting in an error
+# o BUG FIX: getFitUnitFunction() of CnPlm did not handle probe
+#   model "min1(pm-mm)".
+# o BUG FIX: getFitUnitFunction() of CnPlm was broken for PM-MM probe 
+#   models for single group units, e.g. AFFX units, resulting in an error
 #   "Argument 'y' must have two dimensions: 3".
 # 2006-12-10
 # o Added support to fit PLM to MM or (PM+MM).
