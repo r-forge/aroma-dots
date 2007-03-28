@@ -1,3 +1,33 @@
+###########################################################################/**
+# @RdocDefault normalizeFragmentLength
+#
+# @title "Normalizes signals for PCR fragment-length effects"
+#
+# \description{
+#  @get "title". Some or all signals are used to estimated the 
+#  normalization function.  All signals are normalized.
+# }
+# 
+# @synopsis 
+#
+# \arguments{
+#   \item{y}{A @numeric @vector of length K of signals to be normalized}
+#   \item{fragmentLengths}{An @integer @vector of length K of fragment lengths.}
+#   \item{targetFcn}{}
+#   \item{subsetToFit}{The subset of data points used to fit the 
+#      normalization function.
+#      If @NULL, all data points are considered.}
+#   \item{...}{Additional arguments passed to @see "stats::lowess".}
+# }
+#
+# \value{
+#   Returns a @numeric @vector of the normalized signals.
+# }
+#
+# @author
+#
+# @keyword internal
+#*/###########################################################################
 setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, targetFcn=NULL, subsetToFit=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

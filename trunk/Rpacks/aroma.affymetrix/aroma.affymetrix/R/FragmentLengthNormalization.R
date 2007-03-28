@@ -302,9 +302,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   si <- getSnpInformation(cdf);
   verbose && exit(verbose);
 
-  verbose && enter(verbose, "Identifying the subset to be fitted");
+  verbose && enter(verbose, "Identifying the subset used to fit normalization function");
   # Get subset to fit
   subsetToFit <- getSubsetToFit(this, verbose=less(verbose));
+  verbose && str(verbose, subsetToFit);
   verbose && exit(verbose);
 
   # Get (and create) the output path
@@ -417,7 +418,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     res[[kk]] <- ceN;
 
     verbose && exit(verbose);
-  }
+  } # for (kk in ...)
 
   # Create the output set (ad hoc for now so that we keep parameter too)
   outputSet <- clone(ces);
