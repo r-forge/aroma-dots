@@ -22,7 +22,7 @@
 #   \item{rootPath}{The root path where to store the data set.}
 #   \item{rotateBack}{If @TRUE, the dChip-rotated array data is rotated
 #     back. If @NA, this is inferred from the chip type name.}
-#   \item{...}{Not used.}
+#   \item{...}{Additional arguments passed to @seemethod "fromFiles".}
 #   \item{skip}{If @TRUE, already converted files are not re-converted.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -75,7 +75,7 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
   # Get the dChip CEL set
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting the dChip CEL set");
-  cs <- fromFiles(static, path=path, verbose=less(verbose));
+  cs <- fromFiles(static, path=path, ..., verbose=less(verbose));
   verbose && cat(verbose, "Number of arrays: ", nbrOfArrays(cs));  
   verbose && exit(verbose);
 
@@ -104,9 +104,14 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
     x <- rep(1:ncol, each=nrow);
     writeMap <- as.vector(y*ncol + x);
     readMap <- invertMap(writeMap);
+    rm(x, y, h, nrow, ncol, writeMap);
   } else {
     readMap <- NULL;
   }
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -147,11 +152,18 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
       convertCel(src, dest, readMap=readMap);
 
       # Garbage collect
-      gc();
+      gc <- gc();
+      verbose && print(verbose, gc);
     }
 
     verbose && exit(verbose);
   }
+
+  rm(readMap);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   verbose && exit(verbose);
 
@@ -165,6 +177,8 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
 
 ############################################################################
 # HISTORY:
+# 2007-03-28
+# o Further memory optimization.
 # 2007-02-03
 # o Verified for Mapping250K_Nsp arrays.
 # o Created.

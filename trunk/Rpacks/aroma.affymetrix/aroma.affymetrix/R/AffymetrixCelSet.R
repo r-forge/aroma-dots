@@ -487,26 +487,27 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   verbose && cat(verbose, "The chip type according to the directory is: ", 
                                                                 chipType);
 
-  verbose && enter(verbose, "Scanning CEL set for used chip types");
-  chipTypes <- sapply(this, FUN=function(file) {
-    readCelHeader(getPathname(file))$chiptype;
-  })
-  tChipTypes <- table(chipTypes);
-  verbose && print(verbose, tChipTypes);
-  nbrOfChipTypes <- length(tChipTypes);
-  verbose && exit(verbose);
-
-  if (nbrOfChipTypes > 1) {
-    verbose && cat(verbose, "Detected ", nbrOfChipTypes, 
-                                    " different chip types in CEL set: ",
-                                paste(names(tChipTypes), collapse=", "));
-  } else {
-    verbose && cat(verbose, "All CEL files use the same chip type: ", 
-                                                      names(tChipTypes));
-  }
-
   # Let the directory name specify the chip type?
   if (checkChipType) {
+    verbose && enter(verbose, "Scanning CEL set for used chip types");
+    # This takes time if the CEL files are ASCII files.
+    chipTypes <- sapply(this, FUN=function(file) {
+      readCelHeader(getPathname(file))$chiptype;
+    })
+    tChipTypes <- table(chipTypes);
+    verbose && print(verbose, tChipTypes);
+    nbrOfChipTypes <- length(tChipTypes);
+    verbose && exit(verbose);
+  
+    if (nbrOfChipTypes > 1) {
+      verbose && cat(verbose, "Detected ", nbrOfChipTypes, 
+                                      " different chip types in CEL set: ",
+                                  paste(names(tChipTypes), collapse=", "));
+    } else {
+      verbose && cat(verbose, "All CEL files use the same chip type: ", 
+                                                        names(tChipTypes));
+    }
+  
     # If chip type is taken from CEL headers and there are more than
     # one chip type in the set, then it is an error.
     if (nbrOfChipTypes > 1) {

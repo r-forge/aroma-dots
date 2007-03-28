@@ -56,7 +56,8 @@ setMethodS3("normalizeQuantileSpline", "matrix", function(X, xTarget, ...) {
 
   # Normalize each of the columns towards the target distribution
   for (cc in seq(length=ncol(X))) {
-    X[,cc] <- normalizeQuantileSpline(X[,cc], xTarget=xTarget, sort=FALSE, ...);
+    X[,cc] <- normalizeQuantileSpline(X[,cc], xTarget=xTarget, 
+                                                      sortTarget=FALSE, ...);
   }
 
   X;
