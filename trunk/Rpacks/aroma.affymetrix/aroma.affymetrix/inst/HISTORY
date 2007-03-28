@@ -1,10 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.5 [2007-03-27xx]
+Version: 0.4.5 [2007-03-28xx]
 o BUG FIX: ChipEffectGroupMerge would catch warnings (like errors)
   when create output CEL files, e.g. when getRelativePath() gave
   an unimportant warning.
+o BUG FIX: getFitUnitFunction() for CnPlm was broken for PM-MM 
+  probe models for single group units, e.g. AFFX units, resulting 
+  in an error "Argument 'y' must have two dimensions: 3".
 
 Version: 0.4.4 [2007-03-26]
 o Added BackgroundCorrection classes RmaBackgroundCorrection,

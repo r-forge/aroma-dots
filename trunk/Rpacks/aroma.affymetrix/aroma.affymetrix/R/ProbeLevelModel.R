@@ -363,7 +363,7 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
       lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1); # Get intensities
         y <- y[1,,] - y[2,,];  # PM-MM
-        y[y < 1] <- 1;         # min1(PM-MM)=min(PM-MM,1)
+        y[y < 1] <- 1;       # min1(PM-MM)=min(PM-MM,1)
         fitfcn(y);
       })
     }

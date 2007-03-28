@@ -118,6 +118,9 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
         # For all other cases, fit each group individually
         lapply(groups, FUN=function(group) {
           y <- .subset2(group, 1);
+          if (length(dim(y)) == 3) {
+            y <- y[1,,] + y[2,,];
+          }
           fitfcn(y);
         })
       }
@@ -157,6 +160,10 @@ setMethodS3("setCombineAlleles", "CnPlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-28
+# o BUG FIX: getFitUnitFunction() was broken for PM-MM probe models for
+#   single group units, e.g. AFFX units, resulting in an error
+#   "Argument 'y' must have two dimensions: 3".
 # 2006-12-10
 # o Added support to fit PLM to MM or (PM+MM).
 # 2006-09-11
