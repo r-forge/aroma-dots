@@ -30,6 +30,17 @@ setConstructorS3("DChipQuantileNormalization", function(...) {
 })
 
 
+setMethodS3("as.character", "DChipQuantileNormalization", function(this, ...) {
+  s <- NextMethod("as.character", this, ...);
+  nExcl <- length(getExclCells(this));
+  n <- nbrOfCells(getCdf(getInputDataSet(this)));
+  s <- c(s, sprintf("Number of cells excluded (when fitting): %d (%.1f%%)", 
+                                                         nExcl, 100*nExcl/n));
+  class(s) <- "GenericSummary";
+  s;
+}, private=TRUE)
+
+
 setMethodS3("getExclCells", "DChipQuantileNormalization", function(this, ..., verbose=FALSE) {
   this$.exclCells;
 }, protected=TRUE)
@@ -40,16 +51,20 @@ setMethodS3("addExclCells", "DChipQuantileNormalization", function(this, cells, 
   cells <- unique(cells);
   cells <- sort(cells);
   this$.exclCells <- cells;
+  invisible(this);
 }, protected=TRUE)
 
 
 setMethodS3("excludeChrXFromFit", "DChipQuantileNormalization", function(this, ..., verbose=FALSE) {
+  # Identify cells on chromosome X
   ds <- getInputDataSet(this);
   cdf <- getCdf(ds);
   gi <- getGenomeInformation(cdf);
-  xUnits <- getUnitsOnChromosome(gi, "X");
-  cells <- getCellIndices(cdf, units=xUnits);
+  units <- getUnitsOnChromosome(gi, 23);
+  cells <- getCellIndices(cdf, units=units);
   cells <- unlist(cells, use.names=FALSE);
+
+  # Add them to the list of cells to be excluded
   addExclCells(this, cells);
 }, protected=TRUE)
 
@@ -108,6 +123,9 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fit non-robustly (faster and more memory efficient).
+  robust <- FALSE;
+
   # Get input data set
   ds <- getInputDataSet(this);
 
@@ -126,12 +144,26 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   # Exclude certain cells when *fitting* the normalization function
   excl <- getExclCells(this);
   if (length(excl) > 0) {
-    w <- rep(1, length(subsetToUpdate));
+    verbose && enter(verbose, "Excluded some cells when fitting normalization function");
+    w <- rep(1, nbrOfCells(cdf));
     w[excl] <- 0;
-    rm(excl);
+
+    if (!is.null(subsetToUpdate)) {
+      w <- w[subsetToUpdate];
+    }
+
+    # Standardize weithts to sum to one.
+    w <- w / sum(w, na.rm=TRUE);
+    verbose && printf(verbose, "Cell weights (sum = %.2f):\n", 
+                                                     sum(w, na.rm=TRUE));
+    verbose && summary(verbose, w);
+    verbose && exit(verbose);
   } else {
     w <- NULL;
   }
+
+  # Not needed anymore
+  rm(excl);
 
   # Garbage collection
   gc <- gc();
@@ -152,7 +184,8 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   
     # Already normalized?
     if (isFile(pathname) && skip) {
-      verbose && cat(verbose, "Normalized data file already exists: ", pathname);
+      verbose && cat(verbose, "Normalized data file already exists: ",
+                                                                   pathname);
       # CDF inheritance
       dataFiles[[kk]] <- fromFile(df, pathname);
       verbose && exit(verbose);
@@ -161,11 +194,21 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   
     # Get all probe signals
     verbose && enter(verbose, "Reading probe intensities");
-    x <- getData(df, indices=subsetToUpdate, fields="intensities", verbose=less(verbose,2))$intensities;
+    x <- getData(df, indices=subsetToUpdate, fields="intensities",
+                                        verbose=less(verbose,2))$intensities;
     verbose && str(verbose, x);
     verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
   
-    x <- normalizeQuantileSpline(x, yTarget, sort=FALSE, w=w, ...);
+    x <- normalizeQuantileSpline(x, w=w, xTarget=yTarget, 
+                                       sortTarget=FALSE, robust=robust, ...);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
 
     # Write normalized data to file
     verbose && enter(verbose, "Writing normalized probe signals");
@@ -178,7 +221,10 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     verbose && enter(verbose, "Writing normalized intensities");
     updateCel(pathname, indices=subsetToUpdate, intensities=x);
 
+    # Not needed anymore
     rm(x);
+
+    # Garbage collect
     gc <- gc();
     verbose && print(verbose, gc);
 
@@ -189,8 +235,11 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     dataFiles[[kk]] <- fromFile(df, pathname);
     
     verbose && exit(verbose);
-  }
+  } # for (kk in seq(ds))
   verbose && exit(verbose);
+
+  # Not needed anymore
+  rm(w); 
 
   # Garbage collection
   gc <- gc();

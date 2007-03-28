@@ -12,8 +12,9 @@
 #
 # \arguments{
 #   \item{x}{a @numeric @vector of length \eqn{N}.}
-#   \item{xTarget}{a @numeric @vector of length \eqn{M}.}
-#   \item{sort}{If @TRUE, argument \code{xTarget} is sorted.}
+#   \item{w}{an optional @numeric @vector of length \eqn{N} of weights.}
+#   \item{xTarget}{a @numeric @vector of length \eqn{N}.}
+#   \item{sortTarget}{If @TRUE, argument \code{xTarget} is sorted.}
 #   \item{...}{Arguments passed to (@see "stats::smooth.spline"
 #      or @see "aroma.light::robustSmoothSpline"), e.g. \code{w} 
 #      for weights.}
@@ -43,43 +44,78 @@
 # @keyword "multivariate"
 # @keyword "robust"
 #*/###########################################################################
-setMethodS3("normalizeQuantileSpline", "numeric", function(x, xTarget, sort=TRUE, ..., robust=TRUE) {
+setMethodS3("normalizeQuantileSpline", "numeric", function(x, w=NULL, xTarget, sortTarget=TRUE, ..., robust=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   n <- length(x);
 
+  # Argument 'w':
+  if (!is.numeric(w)) {
+    throw("Argument 'w' is not numeric: ", mode(w));
+  }
+  if (length(w) != n) {
+    throw("Argument 'w' is of different length than 'x': ", 
+                                                     length(w), " != ", n);
+  }
+
   # Argument 'xTarget':
   if (!is.numeric(xTarget)) {
     throw("Argument 'xTarget' is not numeric: ", mode(xTarget));
   }
-
   if (length(xTarget) != n) {
     throw("Argument 'xTarget' is of different length than 'x': ", 
                                                length(xTarget), " != ", n);
   }
 
+
   # Sort signals to be normalized
-  xx <- sort(x, na.last=TRUE);
+  o <- order(x, na.last=TRUE);
+  x <- x[o];
+  if (!is.null(w))
+    w <- w[o];
+
+  # Not needed anymore
+  rm(o);
+
+  # Garbage collect
+  gc();
 
   # Sort target distribution?
-  if (sort)
+  if (sortTarget) {
     xTarget <- sort(xTarget, na.last=TRUE);
+  }
 
   # Keep only finite values
   ok <- (is.finite(xx) & is.finite(xTarget));
+  # ...and exclude data points with zero weight
+  if (!is.null(w))
+    ok <- (ok & w > 0);
   xx <- xx[ok];
+  if (!is.null(w))
+    w <- w[ok];
   xTarget <- xTarget[ok];
-  rm(ok); # Not needed anymore
+
+  # Not needed anymore
+  rm(ok);
+
+  # Garbage collect
+  gc <- gc();
 
   if (robust) {
-    fit <- smooth.spline(x=xx, y=xTarget, ...);
+    fit <- robustSmoothSpline(x=xx, w=w, y=xTarget, keep.data=FALSE, ...);
   } else {
-    fit <- robustSmoothSpline(x=xx, y=xTarget, ...);
+    fit <- smooth.spline(x=xx, w=w, y=xTarget, keep.data=FALSE, ...);
   }
 
   # Not needed anymore
   rm(xx, xTarget);
+
+  # Not needed below
+  fit[c("x", "y", "w", "yin", "call")] <- NULL;  # Saves < 1MB, though.
+
+  # Garbage collect
+  gc <- gc();
 
   # Normalize the data
   ok <- is.finite(x);
@@ -92,6 +128,11 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, xTarget, sort=TRUE
 
 ##############################################################################
 # HISTORY:
+# 2007-03-28
+# o BUG FIX: Weights 'w' are now correctly ordered.
+# o BUG FIX: Due to an incorrect if(), TRUE & FALSE was swapped for 'robust'.
+# o Memory optimization; now the fitting is not keeping the data.
+# o Renamed argument 'sort' to 'sortTarget'.
 # 2007-03-22
 # o Updated the Rdocs slightly.
 # 2007-02-05

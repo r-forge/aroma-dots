@@ -15,7 +15,6 @@ findCdf.patch <- function(chipType=NULL, paths=NULL, pattern="[.](c|C)(d|D)(f|F)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup search path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'paths':
   if (is.null(paths)) {
     paths <- paste(".", 
                    "cdf/", "data/cdf/", 
@@ -35,6 +34,9 @@ findCdf.patch <- function(chipType=NULL, paths=NULL, pattern="[.](c|C)(d|D)(f|F)
     pattern <- paste(chipType, pattern, sep="");
   }
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   findFiles(pattern=pattern, paths=paths, ...);
 }
 
