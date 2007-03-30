@@ -146,6 +146,7 @@ setMethodS3("getTargetDistributionIdentifier", "QuantileNormalization", function
   ds <- getInputDataSet(this);
   cdf <- getCdf(ds);
   params <- getParameters(this);
+
   # Get the parameters used for averaging
   indices <- params$subsetToAvg;
 
