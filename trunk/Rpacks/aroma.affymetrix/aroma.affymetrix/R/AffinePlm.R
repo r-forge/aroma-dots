@@ -14,9 +14,9 @@
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
 #   \item{background}{If @TRUE, background is estimate for each unit group,
-#     otherwise not. That is, if @FALSE, a \emph{linear} model without 
-#     offset is fitted, resulting in very similar results as obtained by
-#     the @see "MbeiPlm".}
+#     otherwise not. That is, if @FALSE, a \emph{linear} (proportional) 
+#     model without offset is fitted, resulting in very similar results as 
+#     obtained by the @see "MbeiPlm".}
 #   \item{tags}{A @character @vector of tags.}
 # }
 #
@@ -69,7 +69,7 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
     if (length(idx) > 0) {
       tags[idx] <- "APLM";
       if (!background)
-        tags <- R.utils::insert.default(tags, idx+1, "linear");
+        tags <- R.utils::insert.default(tags, idx+1, "lin");
     }
   }
 
@@ -149,10 +149,17 @@ setMethodS3("getProbeAffinities", "AffinePlm", function(this, ...) {
 setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
   standardize <- this$standardize;
   center <- this$background;
+  shift <- this$shift;
+  if (is.null(shift))
+    shift <- 0;
 
   affineFit <- function(y, ...) {
+    # Add shift
+    y <- y + shift;
+
     # NOTE: If center=FALSE => constraint a=0 /HB 2006-09-11
-    f <- calibrateMultiscan(t(y), center=center, project=TRUE);
+    y <- t(y);
+    f <- calibrateMultiscan(y, center=center, project=TRUE);
     theta <- as.vector(f);
     phi <- as.vector(attr(f, "modelFit")$b);
 
@@ -188,6 +195,8 @@ setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-29
+# o Changed tag 'linear' to 'lin'.
 # 2006-09-11
 # o Added argument 'background' to fit background or not.
 # 2006-08-28

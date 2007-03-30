@@ -69,9 +69,18 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, w=NULL, xTarget, s
   }
 
 
-  # Sort signals to be normalized
+  # Sort target distribution?
+  if (sortTarget) {
+    xTarget <- sort(xTarget, na.last=TRUE);
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # A) Fit normalization function
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Sort signals (w/ weights) to be normalized
   o <- order(x, na.last=TRUE);
-  x <- x[o];
+  xx <- x[o];
   if (!is.null(w))
     w <- w[o];
 
@@ -81,16 +90,13 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, w=NULL, xTarget, s
   # Garbage collect
   gc();
 
-  # Sort target distribution?
-  if (sortTarget) {
-    xTarget <- sort(xTarget, na.last=TRUE);
-  }
-
   # Keep only finite values
   ok <- (is.finite(xx) & is.finite(xTarget));
-  # ...and exclude data points with zero weight
+
+  # Exclude data points with zero weight
   if (!is.null(w))
     ok <- (ok & w > 0);
+
   xx <- xx[ok];
   if (!is.null(w))
     w <- w[ok];
@@ -117,9 +123,13 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, w=NULL, xTarget, s
   # Garbage collect
   gc <- gc();
 
-  # Normalize the data
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # B) Normalize the data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ok <- is.finite(x);
   x[ok] <- predict(fit, x=x[ok])$y;
+
 
   x;
 }) # normalizeQuantileSpline.numeric()

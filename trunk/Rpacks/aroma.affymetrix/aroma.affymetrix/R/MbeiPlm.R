@@ -179,8 +179,14 @@ setMethodS3("getProbeAffinities", "MbeiPlm", function(this, ...) {
 #*/###########################################################################
 setMethodS3("getFitFunction", "MbeiPlm", function(this, ...) {
   standardize <- this$standardize;
+  shift <- this$shift;
+  if (is.null(shift))
+    shift <- 0;
 
   liWong <- function(y, ...) {
+    # Add shift
+    y <- y + shift;
+
     # Enough of probes?
     if (nrow(y) > 1) {
       fit <- fit.li.wong(t(y));

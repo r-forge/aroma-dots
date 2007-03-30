@@ -518,6 +518,7 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 #   \item{...}{Additional arguments passed to 
 #      @see "affxparser::readCdfCellIndices".}
 #   \item{force}{If @TRUE, cached values are ignored.}
+#   \item{cache}{If @TRUE, results are cached, if not too large.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
 #
@@ -536,7 +537,7 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -587,7 +588,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (object.size(cdf) < 10e6) { # Cache only objects < 10MB.
+  if (cache && object.size(cdf) < 10e6) { # Cache only objects < 10MB.
     verbose && cat(verbose, "readUnits.AffymetrixCdfFile(): Updating cache");
     this$.cellIndices <- list();
     this$.cellIndices[[id]] <- cdf;
@@ -1209,6 +1210,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-03-28
+# o Added argument 'cache=TRUE' to getCellIndices().
 # 2007-03-26
 # o Added a few more gc().
 # o BUG FIX: isPm() did not work when querying a subset of the units.

@@ -41,6 +41,27 @@ setMethodS3("as.character", "DChipQuantileNormalization", function(this, ...) {
 }, private=TRUE)
 
 
+setMethodS3("getParameters", "DChipQuantileNormalization", function(this, ...) {
+  # Get parameters from super class
+  params <- NextMethod(generic="getParameters", object=this, ...);
+
+  exclCells <- getExclCells(this);
+  if (!is.null(exclCells)) {
+    subsetToAvg <- params$subsetToAvg;
+    if (is.null(subsetToAvg)) {
+      ds <- getInputDataSet(this);
+      cdf <- getCdf(ds);
+      subsetToAvg <- seq_len(nbrOfCells(cdf));
+      subsetToAvg <- setdiff(subsetToAvg, exclCells);
+      subsetToAvg <- sort(subsetToAvg);
+    }
+    params$subsetToAvg <- subsetToAvg;
+  }
+
+  params;
+}, private=TRUE)
+
+
 setMethodS3("getExclCells", "DChipQuantileNormalization", function(this, ..., verbose=FALSE) {
   this$.exclCells;
 }, protected=TRUE)
@@ -135,11 +156,13 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   outputPath <- getPath(this);
 
   # Retrieve/calculate the target distribution
-  yTarget <- getTargetDistribution(this, verbose=less(verbose));
-  yTarget <- sort(yTarget, na.last=TRUE);
+  xTarget <- getTargetDistribution(this, verbose=less(verbose));
+  xTarget <- sort(xTarget, na.last=TRUE);
 
   # Get algorithm parameters
   subsetToUpdate <- getSubsetToUpdate(this);
+  verbose && cat("subsetToUpdate: ");
+  verbose && str(subsetToUpdate);
 
   # Exclude certain cells when *fitting* the normalization function
   excl <- getExclCells(this);
@@ -148,6 +171,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     w <- rep(1, nbrOfCells(cdf));
     w[excl] <- 0;
 
+    # If not all cells, get weights in the same order as the data points 'x'.
     if (!is.null(subsetToUpdate)) {
       w <- w[subsetToUpdate];
     }
@@ -161,6 +185,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   } else {
     w <- NULL;
   }
+
 
   # Not needed anymore
   rm(excl);
@@ -203,7 +228,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     gc <- gc();
     verbose && print(verbose, gc);
   
-    x <- normalizeQuantileSpline(x, w=w, xTarget=yTarget, 
+    x <- normalizeQuantileSpline(x, w=w, xTarget=xTarget, 
                                        sortTarget=FALSE, robust=robust, ...);
 
     # Garbage collect
@@ -259,6 +284,9 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
 
 ############################################################################
 # HISTORY:
+# 2007-03-28
+# o Added getParameters() so that excluded cells are also excluded when
+#   the target distribution is calculated by the average.
 # 2007-03-22
 # o Added test code for excluding some cells by giving them weight zero
 #   when fitting the normalization function.
