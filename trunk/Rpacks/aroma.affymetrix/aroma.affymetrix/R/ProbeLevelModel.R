@@ -74,7 +74,8 @@ setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", 
     "cached:.ws" = NULL,
     "cached:.lastPlotData" = NULL,
     probeModel = probeModel,
-    standardize=standardize
+    standardize = standardize,
+    shift = 0
   )
 }, abstract=TRUE)
 
@@ -93,6 +94,7 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
 setMethodS3("getParameterSet", "ProbeLevelModel", function(this, ...) {
   params <- NextMethod("getParameterSet", this, ...);
   params$probeModel <- this$probeModel;
+  params$shift <- this$shift;
   params;
 }, private=TRUE)
 
