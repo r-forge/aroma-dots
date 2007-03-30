@@ -33,6 +33,13 @@
 #  Returns the calibrated @see "AffymetrixCelFile" object.
 # }
 #
+# \section{Hook functions}{
+#   This method call hook functions \code{*.onBegin}, \code{*.onData}, 
+#   \code{*.onFit}, \code{*.onUpdated}, \code{*.onEnd}, and \code{*.onExit}
+#   where \code{*} is \code{calibrateAllelicCrosstalk.AffymetrixCelFile}.
+#   See code for more details.
+# }
+#
 # @author
 #
 # \seealso{
@@ -200,8 +207,10 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
 
 ############################################################################
 # HISTORY:
+# 2007-03-29
+# o Added Rdoc comments about hook functions.
 # 2006-10-06
-# o make sure CDF association is inherited
+# o Made sure CDF association is inherited.
 # 2006-07-21
 # o Added calibrateAllelicCrosstalk().
 ############################################################################

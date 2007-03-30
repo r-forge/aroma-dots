@@ -1,8 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.5 [2007-03-28xx]
+Version: 0.4.5 [2007-03-29xx]
+o Now AllelicCrosstalkCalibration rescales by default allele A and 
+  allele B signals such  that the get the same averages.
 o Added ETA to verbose output of fit() for the ProbeLevelModel.
+o BUG FIX: Probe-affinities was not save, resulting in all zeroes.
+  This was due to renaming getProbeAffinites() to getProbeAffinityFile().
 o BUG FIX: ChipEffectGroupMerge would catch warnings (like errors)
   when create output CEL files, e.g. when getRelativePath() gave
   an unimportant warning.
@@ -11,6 +15,12 @@ o BUG FIX: getFitUnitFunction() for CnPlm was broken for PM-MM
   in an error "Argument 'y' must have two dimensions: 3".
 o BUG FIX: getFitUnitFunction() of CnPlm did not handle probe
   model "min1(pm-mm)".
+
+WORK IN PROGRESS (no guarantees):
+o Now RmaPlm:s can handle non-positive signals either by setting the
+  to a small number or to ignore them when fitting the PLM.  See code
+  of fit function(s) for more details.
+
 
 Version: 0.4.4 [2007-03-26]
 o Added BackgroundCorrection classes RmaBackgroundCorrection,

@@ -101,11 +101,11 @@ setMethodS3("getParameterSet", "RmaPlm", function(this, ...) {
 
 
 
-setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
+setMethodS3("getProbeAffinityFile", "RmaPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the probe affinities (and create files etc)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  paf <- NextMethod("getProbeAffinities", this, ...);
+  paf <- NextMethod("getProbeAffinityFile", this, ...);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Update the encode and decode functions
@@ -170,9 +170,15 @@ setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
+  # Shift signals?
   shift <- this$shift;
   if (is.null(shift))
     shift <- 0;
+
+  # Handle non-positive signals?
+  treatNAsAs <- this$treatNAsAs;
+  if (is.null(treatNAsAs))
+    treatNAsAs <- "ignore";
 
   # This should not be need, but for some reason is the package not loaded
   # although it is listed in DESCRIPTION. /HB 2007-02-09
@@ -184,9 +190,6 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   # Requires: affyPLM() by Ben Bolstad.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rmaModelAffyPlm <- function(y, psiCode=0, psiK=1.345){
-    # Add shift
-    y <- y + shift;
-
     # Assert right dimensions of 'y'.
 
     # If input data are dimensionless, return NAs. /KS 2006-01-30
@@ -197,8 +200,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
                   thetaOutliers=rep(NA, nbrOfArrays), 
                   phi=c(), 
                   sdPhi=c(), 
-                  phiOutliers=c()));
-      
+                  phiOutliers=c()
+                 )
+            );
     }
 
     if (length(dim(y)) != 2) {
@@ -207,8 +211,42 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
                                                 paste(dim(y), collapse="x"));
     }
 
+    # Add shift
+    y <- y + shift;
+
     # Log-additive model
     y <- log(y, base=2);
+
+    # Look for cells that have NAs in at least one sample?
+    if (treatNAsAs == "ignore") {
+      hasNAs <- FALSE;
+    } else {
+      isNA <- is.na(y);
+      hasNAs <- any(isNA);
+      if (hasNAs) {
+        if (treatNAsAs == "0") {
+          y[isNA] <- 0;
+          hasNAs <- FALSE;
+        } else if (treatNAsAs == "NA") {
+          I0 <- nrow(y);  # Number of cells
+          J <- ncol(y);  # Number of arrays
+          okCells <- !apply(isNA, MARGIN=1, FUN=any);
+          # Analyze only valid cells
+          y <- y[okCells,,drop=FALSE];
+          # No valid cells left?
+          if (nrow(y) == 0) {
+            return(list(theta=rep(NA, J),
+                        sdTheta=rep(NA, J),
+                        thetaOutliers=rep(NA, J), 
+                        phi=rep(NA, I0), 
+                        sdPhi=rep(NA, I0), 
+                        phiOutliers=rep(NA, I0)
+                       )
+                  );
+          }
+        }
+      } # if (hasNAs)
+    }
 
     # Fit model using affyPLM code
     fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE="affyPLM");
@@ -246,6 +284,22 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
       sdTheta <- 2^(se[1:J]);
       sdPhi <- 2^(se[(J+1):length(se)]);
     }
+
+    # Handle NAs?
+    if (hasNAs) {
+      if (treatNAsAs == "NA") {
+        phi0 <- rep(NA, I0);
+        phi0[okCells] <- phi;
+        phi <- phi0;
+  
+        sdPhi0 <- rep(NA, I0);
+        sdPhi0[okCells] <- sdPhi;
+        sdPhi <- sdPhi0;
+  
+        I <- I0;
+      }
+    }
+
     thetaOutliers <- rep(FALSE, J);
     phiOutliers <- rep(FALSE, I);
 

@@ -185,8 +185,8 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ..
   data <- encode(this, data);
   verbose && exit(verbose);
 
-#  verbose && str(verbose, cdf);
-#  verbose && str(verbose, data);
+  verbose && str(verbose, cdf[1]);
+  verbose && str(verbose, data[1]);
 
   NextMethod("updateUnits", this, cdf=cdf, data=data, ..., verbose=less(verbose));
 

@@ -83,9 +83,11 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path
   verbose && enter(verbose, "Calibrating ", nbrOfArrays(this), " arrays");
   verbose && enter(verbose, "Path: ", path);
   dataFiles <- list();
-  for (kk in seq(this)) {
+  nbrOfArrays <- nbrOfArrays(this);
+  for (kk in seq_len(nbrOfArrays)) {
     df <- getFile(this, kk);
-    verbose && enter(verbose, "Array #", kk, " (", getName(df), ")");
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
+                                              kk, getName(df), nbrOfArrays));
     df <- calibrateAllelicCrosstalk(df, ..., path=path, 
                            setsOfProbes=setsOfProbes, verbose=less(verbose));
     dataFiles[[kk]] <- df;
