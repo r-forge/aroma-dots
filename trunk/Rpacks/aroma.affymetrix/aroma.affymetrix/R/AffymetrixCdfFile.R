@@ -833,7 +833,7 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
     if (!.force) {
       cache <- loadCache(key=key, dirs=dirs);
       if (!is.null(cache)) {
-        verbose && exit(verbose, suffix="found cached value");
+        verbose && exit(verbose, suffix="...hit");
         return(cache);
       }
     }

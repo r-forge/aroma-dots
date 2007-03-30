@@ -18,6 +18,9 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform".}
+#   \item{targetAvg}{The signal that average allele A and average allele B
+#     signals should have after calibration.}
+#   \item{alpha}{The signal that average allele A and average allele B
 # }
 #
 # \section{Fields and Methods}{
@@ -26,10 +29,29 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(...) {
-  extend(ProbeLevelTransform(...), "AllelicCrosstalkCalibration")
+setConstructorS3("AllelicCrosstalkCalibration", function(..., targetAvg=2200, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+  extend(ProbeLevelTransform(...), "AllelicCrosstalkCalibration",
+    .targetAvg = targetAvg,
+    .alpha = alpha,
+    .q = q,
+    .Q = Q
+  )
 })
 
+
+
+setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, ...) {
+  # Get parameters from super class
+  params <- NextMethod(generic="getParameters", object=this, ...);
+
+  defaults <- formals(calibrateAllelicCrosstalk.AffymetrixCelFile);
+  params$targetAvg <- this$.targetAvg;
+  params$alpha <- this$.alpha;
+  params$q <- this$.q;
+  params$Q <- this$.Q;
+
+  params;
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -120,6 +142,12 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-03-29
+# o Now 'targetAvg' defaults to 2200 so that allele A and allele B signals
+#   are rescaled to be one the same scale.  If so,  it does not make sense
+#   to do background correction afterwards.
+# o Added getParameters().
+# o Added support for arguments 'targetAvg', 'alpha', 'q', and 'Q'.
 # 2006-12-08
 # o Now this class inherits from the ProbePreprocessing class.
 # o Now this pre-processor output results to probeData/.

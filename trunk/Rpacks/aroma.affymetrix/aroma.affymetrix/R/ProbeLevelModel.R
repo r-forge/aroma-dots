@@ -808,6 +808,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-02-29
+# o BUG FIX: Probe-affinities was not save, resulting in all zeroes.
+#   This was due to renaming getProbeAffinites() to getProbeAffinityFile().
 # 2007-02-28
 # o Added ETA to verbose output of fit() for the ProbeLevelModel.
 # o Memory optimization: Further memory optimization by clearing the

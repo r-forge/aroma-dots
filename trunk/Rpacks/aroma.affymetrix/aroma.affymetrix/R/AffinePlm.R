@@ -80,11 +80,11 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
 })
 
 
-setMethodS3("getProbeAffinities", "AffinePlm", function(this, ...) {
+setMethodS3("getProbeAffinityFile", "AffinePlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the probe affinities (and create files etc)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  paf <- NextMethod("getProbeAffinities", this, ...);
+  paf <- NextMethod("getProbeAffinityFile", this, ...);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Update the encode and decode functions

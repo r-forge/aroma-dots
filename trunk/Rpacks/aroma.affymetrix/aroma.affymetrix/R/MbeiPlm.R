@@ -66,11 +66,11 @@ setConstructorS3("MbeiPlm", function(..., tags="*") {
 
 
 
-setMethodS3("getProbeAffinities", "MbeiPlm", function(this, ...) {
+setMethodS3("getProbeAffinityFile", "MbeiPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the probe affinities (and create files etc)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  paf <- NextMethod("getProbeAffinities", this, ...);
+  paf <- NextMethod("getProbeAffinityFile", this, ...);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Update the encode and decode functions
