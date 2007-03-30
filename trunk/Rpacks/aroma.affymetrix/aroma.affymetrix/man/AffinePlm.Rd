@@ -43,16 +43,16 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
  \arguments{
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
    \item{background}{If \code{\link[base:logical]{TRUE}}, background is estimate for each unit group,
-     otherwise not. That is, if \code{\link[base:logical]{FALSE}}, a \emph{linear} model without
-     offset is fitted, resulting in very similar results as obtained by
-     the \code{\link{MbeiPlm}}.}
+     otherwise not. That is, if \code{\link[base:logical]{FALSE}}, a \emph{linear} (proportional)
+     model without offset is fitted, resulting in very similar results as
+     obtained by the \code{\link{MbeiPlm}}.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{getProbeAffinities} \tab  -\cr
+ \tab \code{getProbeAffinityFile} \tab  -\cr
 }
 
 

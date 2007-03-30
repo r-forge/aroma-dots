@@ -19,13 +19,14 @@
  Gets the cell indices unit by unit of all or a subset of the units.
 }
 
-\usage{\method{getCellIndices}{AffymetrixCdfFile}(this, units=NULL, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{getCellIndices}{AffymetrixCdfFile}(this, units=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE)}
 
 \arguments{
   \item{units}{The units of interest. If \code{\link[base]{NULL}}, all units are considered.}
   \item{...}{Additional arguments passed to
      \code{\link[affxparser]{readCdfCellIndices}}.}
   \item{force}{If \code{\link[base:logical]{TRUE}}, cached values are ignored.}
+  \item{cache}{If \code{\link[base:logical]{TRUE}}, results are cached, if not too large.}
   \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
 

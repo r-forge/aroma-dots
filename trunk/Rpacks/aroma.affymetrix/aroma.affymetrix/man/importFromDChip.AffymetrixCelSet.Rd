@@ -35,7 +35,7 @@
   \item{rootPath}{The root path where to store the data set.}
   \item{rotateBack}{If \code{\link[base:logical]{TRUE}}, the dChip-rotated array data is rotated
     back. If \code{\link[base]{NA}}, this is inferred from the chip type name.}
-  \item{...}{Not used.}
+  \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:fromFiles.AffymetrixCelSet]{*fromFiles}()}.}
   \item{skip}{If \code{\link[base:logical]{TRUE}}, already converted files are not re-converted.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }

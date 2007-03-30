@@ -51,12 +51,14 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, w=NULL, xTarget, s
   n <- length(x);
 
   # Argument 'w':
-  if (!is.numeric(w)) {
-    throw("Argument 'w' is not numeric: ", mode(w));
-  }
-  if (length(w) != n) {
-    throw("Argument 'w' is of different length than 'x': ", 
-                                                     length(w), " != ", n);
+  if (!is.null(w)) {
+    if (!is.numeric(w)) {
+      throw("Argument 'w' is not numeric: ", mode(w));
+    }
+    if (length(w) != n) {
+      throw("Argument 'w' is of different length than 'x': ", 
+                                                       length(w), " != ", n);
+    }
   }
 
   # Argument 'xTarget':

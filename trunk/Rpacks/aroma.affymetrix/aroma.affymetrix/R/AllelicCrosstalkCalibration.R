@@ -20,7 +20,7 @@
 #     @see "ProbeLevelTransform".}
 #   \item{targetAvg}{The signal that average allele A and average allele B
 #     signals should have after calibration.}
-#   \item{alpha}{The signal that average allele A and average allele B
+#   \item{alpha, q, Q}{}
 # }
 #
 # \section{Fields and Methods}{

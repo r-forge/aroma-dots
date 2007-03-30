@@ -14,7 +14,7 @@
 
 \title{Normalizes the empirical distribution of a single sample to a target distribution}
 
-\usage{\method{normalizeQuantileSpline}{numeric}(x, xTarget, sort=TRUE, ..., robust=TRUE)}
+\usage{\method{normalizeQuantileSpline}{numeric}(x, w=NULL, xTarget, sortTarget=TRUE, ..., robust=TRUE)}
 
 \description{
   Normalizes the empirical distribution of a single sample to a target distribution.
@@ -22,8 +22,9 @@
 
 \arguments{
   \item{x}{a \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{N}.}
-  \item{xTarget}{a \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{M}.}
-  \item{sort}{If \code{\link[base:logical]{TRUE}}, argument \code{xTarget} is sorted.}
+  \item{w}{an optional \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{N} of weights.}
+  \item{xTarget}{a \code{\link[base]{numeric}} \code{\link[base]{vector}} of length \eqn{N}.}
+  \item{sortTarget}{If \code{\link[base:logical]{TRUE}}, argument \code{xTarget} is sorted.}
   \item{...}{Arguments passed to (\code{\link[stats]{smooth.spline}}
      or \code{\link[aroma.light]{robustSmoothSpline}}), e.g. \code{w}
      for weights.}

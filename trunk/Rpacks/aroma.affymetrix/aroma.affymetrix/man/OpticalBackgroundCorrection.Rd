@@ -36,7 +36,6 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 
 
  This class represents "optical" background adjustment.
-
 }
 
 \usage{OpticalBackgroundCorrection(..., minimum=1)}
@@ -44,7 +43,7 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 \arguments{
   \item{...}{Arguments passed to the constructor of
     \code{\link{ProbeLevelTransform}}.}
-  \item{minimum}{The minimum adjusted signal.}
+  \item{minimum}{The minimum signal allowed after adjustment.}
 }
 
 \section{Fields and Methods}{
