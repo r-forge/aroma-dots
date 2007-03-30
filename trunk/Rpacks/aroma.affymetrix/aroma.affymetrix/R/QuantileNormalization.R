@@ -78,7 +78,7 @@ setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
 
 
 
-setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, sort=TRUE, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -98,8 +98,6 @@ setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ...
     verbose && enter(verbose, "Reading distribution from baseline array");
     verbose && cat(verbose, "Array: ", getFullName(df));
     yTarget <- getData(df, field="intensities")$intensities;
-    yTarget <- sort(yTarget);
-    verbose && str(verbose, yTarget);
     this$.targetDistribution <- yTarget;
     verbose && exit(verbose);
   } else if (force || is.null(yTarget)) {
@@ -120,6 +118,10 @@ setMethodS3("getTargetDistribution", "QuantileNormalization", function(this, ...
   } else {
     verbose && cat(verbose, "Was specified or cached in-memory.");
   }
+
+  if (sort)
+    yTarget <- sort(yTarget);
+  verbose && str(verbose, yTarget);
 
   verbose && exit(verbose);
 
@@ -142,11 +144,20 @@ setMethodS3("getTargetDistributionIdentifier", "QuantileNormalization", function
   verbose && enter(verbose, "Getting identifier for target distribution");
 
   ds <- getInputDataSet(this);
+  cdf <- getCdf(ds);
   params <- getParameters(this);
   # Get the parameters used for averaging
+  indices <- params$subsetToAvg;
+
+  # Speed up for digest() in case there are many indices
+  nbrOfCells <- nbrOfCells(cdf);
+  if (length(indices) > nbrOfCells/2) {
+    indices <- -setdiff(1:nbrOfCells, indices);
+  }
+
   key <- list(
     identifier=getIdentifier(ds), 
-    indices=params$subsetToAvg, 
+    indices=indices,
     types=params$typesToAvg
   );
   id <- digest(key);
@@ -195,6 +206,8 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
   verbose && enter(verbose, "Calculating target distribution");
   verbose && cat(verbose, "Method: average empirical distribution");
 
+  pathname <- getTargetDistributionPathname(this, verbose=less(verbose));
+
   ds <- getInputDataSet(this);
   cdf <- getCdf(ds);
   params <- getParameters(this);
@@ -209,7 +222,6 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
   rm(probes);
 
   # Write the result to file
-  pathname <- getTargetDistributionPathname(this, verbose=less(verbose));
   verbose && cat(verbose, "Saving distribution: ", pathname);
   writeApd(pathname, data=yTarget, name="quantiles");
 

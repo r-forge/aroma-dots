@@ -798,7 +798,7 @@ setMethodS3("getIntensities", "AffymetrixCelSet", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -838,16 +838,18 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && cat(verbose, "readUnits(): Updating cache");
-  this$.getUnitIntensitiesCache <- list();
-  this$.getUnitIntensitiesCache[[id]] <- res;
+  if (cache) {
+    this$.getUnitIntensitiesCache <- list();
+    this$.getUnitIntensitiesCache[[id]] <- res;
+    verbose && cat(verbose, "readUnits(): Updated cache");
+  }
 
   res;
 })
 
 
 
-setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -912,9 +914,11 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  this$.readUnitsCache <- list();
-  this$.readUnitsCache[[id]] <- res;
-  verbose && cat(verbose, "readUnits(): Updated cache");
+  if (cache) {
+    this$.readUnitsCache <- list();
+    this$.readUnitsCache[[id]] <- res;
+    verbose && cat(verbose, "readUnits(): Updated cache");
+  }
 
   verbose && exit(verbose);
 
@@ -1275,6 +1279,8 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-03-28
+# o Added argument 'cache=TRUE' to getUnitIntensities() and readUnits().
 # 2007-03-24
 # o BUG FIX: clearCache() did not clear the .readUnitsCache field.
 # 2007-03-16

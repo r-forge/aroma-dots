@@ -573,9 +573,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the some basic information about this model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ds <- getDataSet(this);
-  cdf <- getCdf(ds);
-  nbrOfArrays <- length(ds);
+  cs <- getDataSet(this);
+  cdf <- getCdf(cs);
+  nbrOfArrays <- length(cs);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -666,6 +666,17 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
   verbose && cat(verbose, "Number units per chunk: ", unitsPerChunk);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Garbage collect
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  clearCache(cs);
+  clearCache(paf);
+  clearCache(ces);
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+
   # Time the fitting.
   startTime <- processTime();
 
@@ -688,7 +699,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     # Get the CEL intensities by units
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     tRead <- processTime();
-    y <- readUnits(this, units=units[uu], ..., force=force, verbose=less(verbose));
+    y <- readUnits(this, units=units[uu], ..., force=force, cache=FALSE, 
+                                                    verbose=less(verbose));
     timers$read <- timers$read + (processTime() - tRead);
 
 
@@ -743,6 +755,26 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
     timers$total <- timers$total + (processTime() - tTotal);
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # ETA
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (verbose) {
+      # Fraction left
+      fLeft <- length(idxs) / nbrOfUnits;
+      # Time this far
+      lapTime <- processTime() - startTime;
+      t <- Sys.time() - lapTime[3];
+      printf(verbose, "Started: %s\n", format(t, "%Y%m%d %H:%M:%S"));
+      # Estimated time left
+      fDone <- 1-fLeft;
+      timeLeft <- fLeft/fDone * lapTime;
+      t <- timeLeft[3];
+      printf(verbose, "Estimated time left: %.2fmin\n", t/60);
+      # Estimate time to arrivale
+      eta <- Sys.time() + t;
+      printf(verbose, "ETA: %s\n", format(eta, "%Y%m%d %H:%M:%S"));
+    }
+
     verbose && exit(verbose);
   } # while(length(idxs) > 0)
 
@@ -752,7 +784,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     nunits <- length(units);
     t <- totalTime[3];
     printf(verbose, "Total time for all units across all %d arrays: %.2fs == %.2fmin\n", nbrOfArrays, t, t/60);
-    t <- totalTime[3]/nunits
+    t <- totalTime[3]/nunits;
     printf(verbose, "Total time per unit across all %d arrays: %.2fs/unit\n", nbrOfArrays, t);
     t <- totalTime[3]/nunits/nbrOfArrays;
     printf(verbose, "Total time per unit and array: %.3gms/unit & array\n", 1000*t);
@@ -776,6 +808,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-02-28
+# o Added ETA to verbose output of fit() for the ProbeLevelModel.
+# o Memory optimization: Further memory optimization by clearing the
+#   cache of the 'cs', the 'paf', and the 'ces', before fitting.
 # 2007-02-22
 # o Added getChipEffectSet() and getProbeAffinityFile() to replace 
 #   getChipEffects() and getProbeAffinites() in some future version.

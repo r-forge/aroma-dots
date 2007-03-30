@@ -2,6 +2,7 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.4.5 [2007-03-28xx]
+o Added ETA to verbose output of fit() for the ProbeLevelModel.
 o BUG FIX: ChipEffectGroupMerge would catch warnings (like errors)
   when create output CEL files, e.g. when getRelativePath() gave
   an unimportant warning.

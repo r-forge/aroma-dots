@@ -170,6 +170,10 @@ setMethodS3("getProbeAffinities", "RmaPlm", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
+  shift <- this$shift;
+  if (is.null(shift))
+    shift <- 0;
+
   # This should not be need, but for some reason is the package not loaded
   # although it is listed in DESCRIPTION. /HB 2007-02-09
   require(affyPLM) || throw("Package not loaded: affyPLM");
@@ -180,6 +184,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   # Requires: affyPLM() by Ben Bolstad.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rmaModelAffyPlm <- function(y, psiCode=0, psiK=1.345){
+    # Add shift
+    y <- y + shift;
+
     # Assert right dimensions of 'y'.
 
     # If input data are dimensionless, return NAs. /KS 2006-01-30
@@ -257,6 +264,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   # platforms (yet).  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rmaModelAffyPlmOld <- function(y, constraint.type=list(default="contr.treatment", chip="contr.treatment", probe="contr.sum")) {
+    # Add shift
+    y <- y + shift;
+
     # Assert right dimensions of 'y'.
     if (length(dim(y)) != 2) {
       str(y);
@@ -322,6 +332,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   # Why: To fully immitate CRLMM in oligo.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rmaModelOligo <- function(y, ...) {
+    # Add shift
+    y <- y + shift;
+
     # Assert right dimensions of 'y'.
     if (length(dim(y)) != 2) {
       str(y);
