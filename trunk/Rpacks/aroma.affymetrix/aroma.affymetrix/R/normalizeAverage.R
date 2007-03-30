@@ -1,6 +1,7 @@
 ###########################################################################/**
 # @set "class=matrix"
 # @RdocMethod normalizeAverage
+# @alias normalizeAverage.list
 #
 # @title "Rescales channel vectors to get the same average"
 #

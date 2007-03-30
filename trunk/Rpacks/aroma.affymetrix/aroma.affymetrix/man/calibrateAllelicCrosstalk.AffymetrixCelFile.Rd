@@ -45,6 +45,13 @@
  Returns the calibrated \code{\link{AffymetrixCelFile}} object.
 }
 
+\section{Hook functions}{
+  This method call hook functions \code{*.onBegin}, \code{*.onData},
+  \code{*.onFit}, \code{*.onUpdated}, \code{*.onEnd}, and \code{*.onExit}
+  where \code{*} is \code{calibrateAllelicCrosstalk.AffymetrixCelFile}.
+  See code for more details.
+}
+
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{

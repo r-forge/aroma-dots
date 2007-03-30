@@ -28,6 +28,10 @@
      gives the path to a file storing the affinities.}
 }
 
+\details{
+  This method is not constant in memory! /HB 2007-03-26
+}
+
 \value{
 }
 

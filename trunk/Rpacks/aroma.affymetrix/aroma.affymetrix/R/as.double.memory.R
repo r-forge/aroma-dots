@@ -14,11 +14,11 @@ setMethodS3("as.integer", "integer", function(x, ...) {
  }
 })
 
-setMethodS3("as.raw", "raw", function(x, ...) {
+setMethodS3("as.raw", "raw", function(x) {
  if (is.null(attributes(x))) {
    x;
  } else {
-   NextMethod("as.raw", x, ...);
+   NextMethod("as.raw", x);
  }
 })
 

@@ -355,9 +355,7 @@
   nbrOfQcUnits.AffymetrixCdfFile nbrOfRows nbrOfRows.AffymetrixCdfFile
   nbrOfSnps nbrOfUnits nbrOfUnits.AffymetrixCdfFile
   nbrOfUnits.AromaUgpFile nbrOfUnits.GenomeInformation
-  nbrOfUnits.SnpInformation normalizeAverage normalizeAverage.list
-  normalizeAverage.matrix normalizeFragmentLength
-  normalizeFragmentLength.default normalizeGenotypeCone
+  nbrOfUnits.SnpInformation normalizeAverage normalizeGenotypeCone
   normalizeGenotypeCone.matrix normalizeQuantileSpline plasqGaussian
   plot.GladModel plot.profileCGH plotFit plotFit.PcrProbeCalibration
   plotImage plotMvsPosition plotMvsPosition.ProbeLevelModel plotMvsX
@@ -482,3 +480,10 @@
   nbrOfArrays.AptCopyNumberPipeline process.AptCopyNumberPipeline
   readLog.AptCopyNumberPipeline showAptVersion.AptCopyNumberPipeline
   showLog.AptCopyNumberPipeline
+  as.character.character as.character.DChipQuantileNormalization
+  as.complex.complex as.double.double as.integer.integer
+  as.logical.logical as.raw as.raw.default as.raw.raw
+  getParameters.AllelicCrosstalkCalibration
+  getParameters.DChipQuantileNormalization
+  getProbeAffinityFile.AffinePlm getProbeAffinityFile.MbeiPlm
+  getProbeAffinityFile.RmaPlm

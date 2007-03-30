@@ -40,11 +40,14 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   affect the model fitting and are unaffected.
  }
 
- \usage{AllelicCrosstalkCalibration(...)}
+ \usage{AllelicCrosstalkCalibration(..., targetAvg=2200, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of
      \code{\link{ProbeLevelTransform}}.}
+   \item{targetAvg}{The signal that average allele A and average allele B
+     signals should have after calibration.}
+   \item{alpha, q, Q}{}
  }
 
  \section{Fields and Methods}{
