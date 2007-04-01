@@ -18,8 +18,7 @@
 #   \item{combineAlleles}{If @TRUE, .}
 #   \item{cdf}{An @see "AffymetrixCdfFile" object.}
 #   \item{...}{Not used.}
-#   \item{skip}{If @TRUE, already imported chip effects will not be imported
-#     again.}
+#   \item{skip}{If @TRUE, already imported arrays will be skipped.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -78,7 +77,8 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
     nbrOfUnknown <- length(unknown);
     verbose && cat(verbose, "Number of unknown unit names: ", nbrOfUnknown);
     if (nbrOfUnknown == length(units)) {
-      throw("Non of the read unit names belongs to the '", chipType, "' CDF file: ", pathname);
+      throw("None of the read unit names belongs to the '", getChipType(cdf),
+                                                   "' CDF file: ", pathname);
     } 
 
     if (nbrOfUnknown > 0) {
