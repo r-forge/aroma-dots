@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.5 [2007-03-29xx]
+Version: 0.4.5 [2007-03-30]
 o Now AllelicCrosstalkCalibration rescales by default allele A and 
   allele B signals such  that the get the same averages.
 o Added ETA to verbose output of fit() for the ProbeLevelModel.

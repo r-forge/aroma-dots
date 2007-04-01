@@ -846,10 +846,6 @@
 \alias{nbrOfUnits.GenomeInformation}
 \alias{nbrOfUnits.SnpInformation}
 \alias{normalizeAverage}
-\alias{normalizeAverage.list}
-\alias{normalizeAverage.matrix}
-\alias{normalizeFragmentLength}
-\alias{normalizeFragmentLength.default}
 \alias{normalizeGenotypeCone}
 \alias{normalizeGenotypeCone.matrix}
 \alias{normalizeQuantileSpline}
@@ -1139,6 +1135,17 @@
 \alias{readLog.AptCopyNumberPipeline}
 \alias{showAptVersion.AptCopyNumberPipeline}
 \alias{showLog.AptCopyNumberPipeline}
+\alias{as.character.character}
+\alias{as.character.DChipQuantileNormalization}
+\alias{as.complex.complex}
+\alias{as.double.double}
+\alias{as.integer.integer}
+\alias{as.logical.logical}
+\alias{getParameters.AllelicCrosstalkCalibration}
+\alias{getParameters.DChipQuantileNormalization}
+\alias{getProbeAffinityFile.AffinePlm}
+\alias{getProbeAffinityFile.MbeiPlm}
+\alias{getProbeAffinityFile.RmaPlm}
 
 \description{
   This page contains aliases for all "non-documented" objects that

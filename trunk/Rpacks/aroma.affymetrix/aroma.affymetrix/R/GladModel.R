@@ -985,7 +985,6 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
   
         if (!is.null(plotDev))
           plotDev(pathname, width=width, height=height);
-  
         tryCatch({
           verbose && enter(verbose, "Plotting graph");
           opar <- par(xaxs="r");
@@ -993,7 +992,6 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
             plot(fit, ticksBy=ticksBy, ..., xmargin=xmargin, resScale=resScale, flavor="ce");
           });
           stext(chipType, side=4, pos=1, line=0, cex=0.8, col="gray");
-  
           if (!is.null(callList)) {
             verbose && enter(verbose, "Adding genotype calls");
   

@@ -14,14 +14,6 @@ setMethodS3("as.integer", "integer", function(x, ...) {
  }
 })
 
-setMethodS3("as.raw", "raw", function(x) {
- if (is.null(attributes(x))) {
-   x;
- } else {
-   NextMethod("as.raw", x);
- }
-})
-
 setMethodS3("as.complex", "complex", function(x, ...) {
  if (is.null(attributes(x))) {
    x;
@@ -45,6 +37,14 @@ setMethodS3("as.character", "character", function(x, ...) {
    NextMethod("as.character", x, ...);
  }
 })
+
+## setMethodS3("as.raw", "raw", function(x) {
+##  if (is.null(attributes(x))) {
+##    x;
+##  } else {
+##    NextMethod("as.raw", x);
+##  }
+## })
 
 
 ############################################################################

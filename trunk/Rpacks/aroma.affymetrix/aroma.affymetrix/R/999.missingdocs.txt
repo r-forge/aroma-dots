@@ -482,7 +482,7 @@
   showLog.AptCopyNumberPipeline
   as.character.character as.character.DChipQuantileNormalization
   as.complex.complex as.double.double as.integer.integer
-  as.logical.logical as.raw as.raw.default as.raw.raw
+  as.logical.logical 
   getParameters.AllelicCrosstalkCalibration
   getParameters.DChipQuantileNormalization
   getProbeAffinityFile.AffinePlm getProbeAffinityFile.MbeiPlm
