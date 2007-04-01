@@ -106,10 +106,8 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
 
     if (!force) {
       verbose && enter(verbose, "Checking for non-estimated loci");
-      keep <- intersect(cells, todo);
-      nkeep <- length(keep);
-      cells <- cells[keep];
-      rm(muBs, keep);
+      cells <- intersect(cells, todo);
+      nkeep <- length(cells);
 
       verbose && printf(verbose, "Found %d (%.1f%%) non-estimated loci.\n", 
                                               nkeep, 100*nkeep/ncells);
@@ -298,6 +296,8 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
 
 ############################################################################
 # HISTORY:
+# 2007-03-30
+# o BUG FIX: Sometimes cell indices would become NAs.
 # 2007-03-24
 # o Now the average of non-genomic cells are also calculated if 'all=TRUE'.
 #   Thus, if all samples have baseline ploidy, calculateBaseline() and

@@ -111,8 +111,10 @@ setMethodS3("normalizeQuantileSpline", "numeric", function(x, w=NULL, xTarget, s
   gc <- gc();
 
   if (robust) {
-    fit <- robustSmoothSpline(x=xx, w=w, y=xTarget, keep.data=FALSE, ...);
+    # robustSmoothSpline() does not return 'data'.
+    fit <- robustSmoothSpline(x=xx, w=w, y=xTarget, ...);
   } else {
+    # smooth.spline() returns 'data' by default.
     fit <- smooth.spline(x=xx, w=w, y=xTarget, keep.data=FALSE, ...);
   }
 
