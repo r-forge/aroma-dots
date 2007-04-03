@@ -58,6 +58,7 @@ setMethodS3("normalizeQuantileSpline", "matrix", function(X, xTarget, ...) {
   for (cc in seq(length=ncol(X))) {
     X[,cc] <- normalizeQuantileSpline(X[,cc], xTarget=xTarget, 
                                                       sortTarget=FALSE, ...);
+    gc <- gc();
   }
 
   X;
