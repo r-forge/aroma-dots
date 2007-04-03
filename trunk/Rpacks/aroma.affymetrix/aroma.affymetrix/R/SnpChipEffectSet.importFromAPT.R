@@ -285,13 +285,14 @@ setMethodS3("importFromAPT", "SnpChipEffectSet", function(static, filename, path
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Import data to tempory FileMatrix?
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Note, CEL files only hold floats.
     if (is.null(data)) {
       tmpFile <- tempfile("aroma.affymetrix.importFromAPT");
       if (isFile(tmpFile)) {
-        data <- FileDoubleMatrix(tmpFile);
+        data <- FileFloatMatrix(tmpFile);
       } else {
       colClasses <- c("NULL", rep("double", nbrOfSamples));
-      data <- FileDoubleMatrix$importFromTable(tmpFile, 
+      data <- FileFloatMatrix$importFromTable(tmpFile, 
                          srcPathname=srcPathname, colClasses=colClasses, 
                             header=FALSE, skip=skip, nrows=length(cells), 
                                                   verbose=less(verbose));

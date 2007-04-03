@@ -41,8 +41,9 @@ setMethodS3("exportToAPT", "SnpChipEffectSet", function(this, filename=sprintf("
     on.exit(popState(verbose));
   }
 
-  if (is.null(sampleNames))
-    sampleNames <- getNames(this);
+  if (is.null(sampleNames)) {
+    sampleNames <- sapply(this, getFileName);
+  }
 
   if (!this$mergeStrands) {
     throw("Cannot export chip effects to an APT summary file, because the strands are not merged, which is required by the APT applications.");

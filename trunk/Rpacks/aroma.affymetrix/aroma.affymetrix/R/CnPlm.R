@@ -162,9 +162,43 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
           })
         }
       } # fitUnit()
+    } else if (this$probeModel == "pm+mm") {
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # (combineAlleles=TRUE, probeModel="pm+mm")
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      fitUnit <- function(groups, ...) {
+        ngroups <- length(groups);
+        if (ngroups == 2) {
+          yA <- .subset2(.subset2(groups, 1), 1);
+          yB <- .subset2(.subset2(groups, 2), 1);
+          y <- yA + yB;
+          y <- y[1,,] + y[2,,];  # PM+MM
+          list(fitfcn(y));
+        } else if (ngroups == 4) {
+          yA1 <- .subset2(.subset2(groups, 1), 1);
+          yB1 <- .subset2(.subset2(groups, 2), 1);
+          yA2 <- .subset2(.subset2(groups, 3), 1);
+          yB2 <- .subset2(.subset2(groups, 4), 1);
+          y1 <- yA1 + yB1;
+          y2 <- yA2 + yB2;
+          y1 <- y1[1,,] + y1[2,,];  # PM+MM
+          y2 <- y2[1,,] + y2[2,,];  # PM+MM
+          list(
+            fitfcn(y1), 
+            fitfcn(y2)
+          );
+        } else {
+          # For all other cases, fit each group individually
+          lapply(groups, FUN=function(group) {
+            y <- .subset2(group, 1);
+            y <- y[1,,] + y[2,,];  # PM+MM
+            fitfcn(y);
+          })
+        }
+      } # fitUnit()
     } else {
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # (combineAlleles=TRUE, probeModel="pm")
+      # (combineAlleles=TRUE, probeModel="pm" or "mm")
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       fitUnit <- function(groups, ...) {
         ngroups <- length(groups);

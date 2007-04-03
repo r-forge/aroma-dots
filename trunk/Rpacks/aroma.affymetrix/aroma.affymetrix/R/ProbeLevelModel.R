@@ -54,7 +54,7 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)"), standardize=TRUE) {
+setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), standardize=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -369,6 +369,14 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
         fitfcn(y);
       })
     }
+  } else if (this$probeModel == "pm+mm") {
+    fitUnit <- function(unit, ...) {
+      lapply(unit, FUN=function(group) {
+        y <- .subset2(group, 1); # Get intensities
+        y <- y[1,,] + y[2,,];  # PM+MM
+        fitfcn(y);
+      })
+    }
   } else {
     fitUnit <- function(unit, ...) {
       lapply(unit, FUN=function(group) {
@@ -451,7 +459,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
   verbose <- Arguments$getVerbose(verbose);
 
   # Get what set of probes to read
-  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pmmm", "min1(pm-mm)"="pmmm");
+  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pmmm", "min1(pm-mm)"="pmmm", "pm+mm"="pmmm");
 
   # Get the CDF cell indices
   ds <- getDataSet(this);
@@ -810,6 +818,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-04-02
+# o Added support for the "pm+mm" probe model.
 # 2007-02-29
 # o BUG FIX: Probe-affinities was not save, resulting in all zeroes.
 #   This was due to renaming getProbeAffinites() to getProbeAffinityFile().
