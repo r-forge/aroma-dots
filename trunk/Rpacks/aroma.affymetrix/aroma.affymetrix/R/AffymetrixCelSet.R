@@ -534,8 +534,9 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Scan for SAF files and apply them
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Scanning for and apply annotation files");
-  sas <- SampleAnnotationSet$fromPath(path, verbose=less(verbose));
+  verbose && enter(verbose, "Scanning for and applying annotation files");
+  sasPath <- "annotationData/samples/";
+  sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
   if (nbrOfFiles(sas) == 0) {
     verbose && cat(verbose, "No annotation files found.");
   } else {
@@ -1279,6 +1280,8 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-04-02
+# o Now sample annotation files are searched for in annotationData/samples/.
 # 2007-03-28
 # o Added argument 'cache=TRUE' to getUnitIntensities() and readUnits().
 # 2007-03-24
