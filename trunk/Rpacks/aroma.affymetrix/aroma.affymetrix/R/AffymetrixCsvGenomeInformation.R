@@ -38,17 +38,84 @@ setMethodS3("verify", "AffymetrixCsvGenomeInformation", function(this, ...) {
 }, private=TRUE)
 
 setMethodS3("readData", "AffymetrixCsvGenomeInformation", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Reading Affymetrix *annot.csv file");
+
   pathname <- getPathname(this);
-  hdr <- scan(pathname, what=character(0), nlines=1, sep=",", quote="\"", quiet=TRUE);
+
+  verbose && cat(verbose, "Pathname: ", pathname);
+
+  hdr <- scan(pathname, what=character(0), nlines=1, sep=",", 
+                                           quote="\"", quiet=TRUE);
   nbrOfColumns <- length(hdr);
+
+  verbose && printf(verbose, "Columns [%d]:\n", nbrOfColumns);
+  verbose && print(verbose, hdr);
+
   colClasses <- rep("NULL", nbrOfColumns);
   names(colClasses) <- hdr;
-  colClasses["Probe Set ID"] <- "character";
-  colClasses["Chromosome"] <- "character";
-  colClasses["Physical Position"] <- "character";
+
+  fields <- c("Probe Set ID", "PROBESET_ID");
+  cc <- na.omit(match(fields, names(colClasses)));
+  colClasses[cc] <- "character";
+
+  fields <- c("Chromosome", "CHROMOSOME");
+  cc <- na.omit(match(fields, names(colClasses)));
+  colClasses[cc] <- "character";
+
+  fields <- c("Physical Position", "PROBE_START_POSITION");
+  cc <- na.omit(match(fields, names(colClasses)));
+  colClasses[cc] <- "character";
+
+  verbose && printf(verbose, "colClasses [%d]:\n", length(colClasses));
+  verbose && str(verbose, as.list(colClasses));
+
+  # Make sure we haven't added or removed columns
+  stopifnot(length(colClasses) == nbrOfColumns);
+
+  # Read the data table
   df <- read.table(pathname, colClasses=colClasses, header=TRUE, sep=",", quote="\"", fill=TRUE, check.names=FALSE, na.strings=c("---"), ...);
-  df[["Physical Position"]] <- as.integer(df[["Physical Position"]]);
-  colnames(df) <- toCamelCase(colnames(df));
+
+  # Update the column names
+  colnames <- colnames(df);
+
+  fields <- c("Probe Set ID", "PROBESET_ID");
+  cc <- na.omit(match(fields, colnames));
+  colnames[cc] <- fields[1];
+
+  fields <- c("Chromosome", "CHROMOSOME");
+  cc <- na.omit(match(fields, colnames));
+  colnames[cc] <- fields[1];
+
+  fields <- c("Physical Position", "PROBE_START_POSITION");
+  cc <- na.omit(match(fields, colnames));
+  colnames[cc] <- fields[1];
+
+  colnames <- toCamelCase(colnames);
+  colnames(df) <- colnames;
+
+  # Chromosome
+  chr <- df[["chromosome"]];
+  chr[chr == "X"] <- 23;
+  chr[chr == "Y"] <- 24;
+  chr <- as.integer(chr);
+  df[["chromosome"]] <- chr;
+  rm(chr);
+
+  # Coerce to integers
+  df[["physicalPosition"]] <- as.integer(df[["physicalPosition"]]);
+
+  verbose && exit(verbose);
   
   df;
 })

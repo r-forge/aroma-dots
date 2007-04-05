@@ -97,7 +97,7 @@ setMethodS3("fromFiles", "ChipEffectSet", function(static, path="plmData/", patt
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
   # Unfortunately does method dispatching not work here.
-  fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass);
+  fromFiles.AffymetrixCelSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, checkChipType=FALSE);
 }, static=TRUE)
 
 
@@ -244,6 +244,9 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-04-03
+# o BUG FIX: Static fromFiles() did not call ditto in the super class but
+#   instead in the grand-parent super class.
 # 2007-02-19
 # o Added findByName() and fromName().
 # 2006-11-22

@@ -61,7 +61,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 
  \bold{Methods inherited from SnpChipEffectSet}:\cr
-extractSnpQSet, fromFiles, getAverageFile, getBaseline, getMergeStrands, setMergeStrands
+exportToAPT, extractSnpQSet, fromFiles, getAverageFile, getBaseline, getMergeStrands, setMergeStrands
 
  \bold{Methods inherited from ChipEffectSet}:\cr
 calculateBaseline, extractMatrix, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, readUnits, updateUnits

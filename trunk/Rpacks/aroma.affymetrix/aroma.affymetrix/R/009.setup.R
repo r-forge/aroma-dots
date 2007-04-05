@@ -5,6 +5,9 @@
   # Patch some of the affxparser function (for now)
   .patchAffxparser();
 
+  # Patch digest()
+  .patchDigest();
+
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Customize affxparser
@@ -53,17 +56,22 @@
     }
   }, action="append");
 
+
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Assert that digest() gives a consistent result across R versions
   # and platforms.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if (!identical(getOption("aroma.affymetrix::assertDigest"), FALSE))
+  if (!identical(getOption("aroma.affymetrix::assertDigest"), FALSE))
     .assertDigest("error");
 } # .setupAromaAffymetrix()
 
 
 ############################################################################
 # HISTORY:
+# 2007-04-04
+# o Moved the patch of digest() here.
 # 2007-03-07
 # o Added test for consistency of digest().
 # 2007-03-06

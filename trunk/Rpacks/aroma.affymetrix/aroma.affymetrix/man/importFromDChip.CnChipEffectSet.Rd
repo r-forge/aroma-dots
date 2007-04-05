@@ -31,8 +31,7 @@
   \item{combineAlleles}{If \code{\link[base:logical]{TRUE}}, .}
   \item{cdf}{An \code{\link{AffymetrixCdfFile}} object.}
   \item{...}{Not used.}
-  \item{skip}{If \code{\link[base:logical]{TRUE}}, already imported chip effects will not be imported
-    again.}
+  \item{skip}{If \code{\link[base:logical]{TRUE}}, already imported arrays will be skipped.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 

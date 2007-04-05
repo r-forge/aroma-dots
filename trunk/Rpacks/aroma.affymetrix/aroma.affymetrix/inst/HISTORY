@@ -1,11 +1,25 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.5 [2007-03-30]
+Version: 0.4.6 [2007-04-04]
+o BUG FIX: Loading aroma.affymetrix v0.4.5 (and v0.4.4?) on Windows
+  would give: "Error in digest::digest(..., skip = skip, ascii = 
+  ascii) : unused argument(s) (skip = "auto", ascii = FALSE)".
+o BUG FIX: Static fromFiles() in ChipEffectSet did not call ditto in
+  super class AffymetrixCelSet but instead the one in grand-parent 
+  super class AffymetrixFileSet.
+o Now fromFiles() in AffymetrixCelSet verifies that the CDF being
+  assigned to the data set is compatible with the CEL files, i.e.
+  have the same number of cells.  The default is to infer the
+  chip type from the name of the parent directory of the CEL files,
+  but if that chip type is not compatible the chip type according
+  to the the first CEL file will be used for the set.
+
+Version: 0.4.5 [2007-04-03]
 o Now AllelicCrosstalkCalibration rescales by default allele A and 
   allele B signals such  that the get the same averages.
 o Added ETA to verbose output of fit() for the ProbeLevelModel.
-o BUG FIX: Probe-affinities was not save, resulting in all zeroes.
+o BUG FIX: Probe-affinities were not save, resulting in all zeroes.
   This was due to renaming getProbeAffinites() to getProbeAffinityFile().
 o BUG FIX: ChipEffectGroupMerge would catch warnings (like errors)
   when create output CEL files, e.g. when getRelativePath() gave
@@ -20,6 +34,8 @@ WORK IN PROGRESS (no guarantees):
 o Now RmaPlm:s can handle non-positive signals either by setting the
   to a small number or to ignore them when fitting the PLM.  See code
   of fit function(s) for more details.
+o Added AffymetrixTsvFile to read the CNAT v4 "covariate" files.
+o Added GcContentNormalization.
 
 
 Version: 0.4.4 [2007-03-26]

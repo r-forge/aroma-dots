@@ -42,7 +42,7 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
   in Affymetrix CDF terms.
  }
 
- \usage{ProbeLevelModel(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)"), standardize=TRUE)}
+ \usage{ProbeLevelModel(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), standardize=TRUE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{UnitModel}}.}
