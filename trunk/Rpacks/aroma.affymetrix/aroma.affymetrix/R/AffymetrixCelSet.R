@@ -485,7 +485,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   path <- getPath(this);
   chipType <- basename(path);
   verbose && cat(verbose, "The chip type according to the directory is: ", 
-                                                                chipType);
+                                                              chipType);
 
   # Let the directory name specify the chip type?
   if (checkChipType) {
@@ -528,6 +528,12 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   verbose && enter(verbose, "Updating the CDF for all files");
   verbose && cat(verbose, "Chip type: ", chipType);
   cdf <- AffymetrixCdfFile$fromChipType(chipType);
+  cf <- getFile(this, 1);
+  if (nbrOfCells(cdf) != nbrOfCells(cf)) {
+    cdf <- getCdf(cf);
+    chipType <- getChipType(cdf);
+    verbose && cat(verbose, "Chip type: ", chipType);
+  }
   setCdf(this, cdf, .checkArgs=FALSE);
   verbose && exit(verbose);
 
@@ -1280,6 +1286,9 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-04-03
+# o Now fromFiles() verifies that the set CDF is compatible with the CEL
+#   files, otherwise the CDF of the first CEL file is used.
 # 2007-04-02
 # o Now sample annotation files are searched for in annotationData/samples/.
 # 2007-03-28

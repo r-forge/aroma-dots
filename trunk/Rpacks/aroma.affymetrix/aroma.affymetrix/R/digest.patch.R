@@ -38,17 +38,6 @@
 
 
 
-# If using digest v0.2.3 or before, we need to use the above fix.
-# In digest v0.2.4 this is the default behavior.
-if (compareVersion(packageDescription("digest")$Version, "0.3.0") >= 0) {
-  digest <- function(..., skip="auto", ascii=FALSE) {
-    digest::digest(..., skip=skip, ascii=ascii);
-  }
-} else {
-  digest <- .digest.fix023;
-}
-
-
 .assertDigest <- function(onDiff=c("error", "warning", "message"), ...) {
   # Argument 'onDiff':
   onDiff <- match.arg(onDiff);
@@ -82,6 +71,11 @@ if (compareVersion(packageDescription("digest")$Version, "0.3.0") >= 0) {
 
 ############################################################################
 # HISTORY:
+# 2007-04-04
+# o BUG FIX: The test for version of digest and the assignment of the 
+#   conditional patch must be done in .First.lib() and not here.  Anything
+#   put there such as if() statements will be evaluated during the build
+#   of the package.
 # 2007-03-08
 # o Prepared the digest() patch and .assertDigest() for the upcoming
 #   digest v0.3.0.  This will make the package work with both digest

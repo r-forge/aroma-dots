@@ -1146,6 +1146,32 @@
 \alias{getProbeAffinityFile.AffinePlm}
 \alias{getProbeAffinityFile.MbeiPlm}
 \alias{getProbeAffinityFile.RmaPlm}
+\alias{AffymetrixTsvFile}
+\alias{clearCache.AffymetrixTsvFile}
+\alias{exportToAPT}
+\alias{findByChipType.AffymetrixTsvFile}
+\alias{fromChipType.AffymetrixTsvFile}
+\alias{getCdf.AffymetrixTsvFile}
+\alias{getCdf.GcContentNormalization}
+\alias{getChipType.AffymetrixTsvFile}
+\alias{getData.AffymetrixTsvFile}
+\alias{getField}
+\alias{getField.AffymetrixTsvFile}
+\alias{getFragmentLengths.AffymetrixTsvFile}
+\alias{getGc}
+\alias{getGc.AffymetrixTsvFile}
+\alias{getOutputDataSet.GcContentNormalization}
+\alias{getParameters.GcContentNormalization}
+\alias{getPosition.AffymetrixTsvFile}
+\alias{getSubsetToFit.GcContentNormalization}
+\alias{getTargetFunction.GcContentNormalization}
+\alias{importFromAPT}
+\alias{importFromTable}
+\alias{importFromTable.FileMatrix}
+\alias{isEof}
+\alias{isEof.connection}
+\alias{readData.AffymetrixTsvFile}
+\alias{verify.AffymetrixTsvFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

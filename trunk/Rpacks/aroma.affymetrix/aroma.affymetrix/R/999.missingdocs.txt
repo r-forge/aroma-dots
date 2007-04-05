@@ -487,3 +487,15 @@
   getParameters.DChipQuantileNormalization
   getProbeAffinityFile.AffinePlm getProbeAffinityFile.MbeiPlm
   getProbeAffinityFile.RmaPlm
+  AffymetrixTsvFile clearCache.AffymetrixTsvFile exportToAPT
+  findByChipType.AffymetrixTsvFile fromChipType.AffymetrixTsvFile
+  getCdf.AffymetrixTsvFile getCdf.GcContentNormalization
+  getChipType.AffymetrixTsvFile getData.AffymetrixTsvFile getField
+  getField.AffymetrixTsvFile getFragmentLengths.AffymetrixTsvFile getGc
+  getGc.AffymetrixTsvFile getOutputDataSet.GcContentNormalization
+  getParameters.GcContentNormalization getPosition.AffymetrixTsvFile
+  getSubsetToFit.GcContentNormalization
+  getTargetFunction.GcContentNormalization importFromAPT
+  importFromTable importFromTable.FileMatrix isEof isEof.connection
+  readData.AffymetrixTsvFile verify.AffymetrixTsvFile
+
