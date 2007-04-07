@@ -1,6 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.4.7 [2007-04-06x]
+o BUG FIX: fromFiles() of AffymetrixCelSet would give error "Exception: 
+  Pathname not found: annotationData/samples" if that directory was 
+  missing.  Now it is instead created.
+
 Version: 0.4.6 [2007-04-04]
 o BUG FIX: Loading aroma.affymetrix v0.4.5 (and v0.4.4?) on Windows
   would give: "Error in digest::digest(..., skip = skip, ascii = 

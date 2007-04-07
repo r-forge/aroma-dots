@@ -300,8 +300,10 @@ setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ..., .checkArgs=T
 #*/###########################################################################
 setMethodS3("getHeader", "AffymetrixCelFile", function(this, ...) {
   header <- this$.header;
-  if (is.null(header))
-    header <- this$.header <- readCelHeader(this$.pathname);
+  if (is.null(header)) {
+    header <- readCelHeader(this$.pathname);
+    this$.header <- header;
+  }
   header;
 }, private=TRUE)
 
