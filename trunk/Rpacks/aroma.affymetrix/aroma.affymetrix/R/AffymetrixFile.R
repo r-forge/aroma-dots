@@ -498,12 +498,16 @@ setMethodS3("fromFile", "AffymetrixFile", function(static, filename, path=NULL, 
 }, static=TRUE)
 
 
-setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, overwrite=FALSE, ..., verbose=TRUE) {
+setMethodS3("copyFile", "AffymetrixFile", function(this, ...) {
+  copyTo(this, ...);
+}, private=TRUE)
+
+setMethodS3("copyTo", "AffymetrixFile", function(this, filename=getFilename(this), path=NULL, overwrite=FALSE, ..., verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename' and 'path':
-  pathname <- Arguments$getWritablePathname(filename, path=path, mustNotExist=!overwrite);
+  pathname <- Arguments$getWritablePathname(filename, path=path);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -512,6 +516,9 @@ setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, ov
   if (identical(pathname, getPathname(this)))
     throw("Cannot copy Affymetrix file. Source and destination are identical: ", pathname);
 
+  # Assert that file is not overwritten by mistake.
+  pathname <- Arguments$getWritablePathname(pathname, mustNotExist=!overwrite);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Copy
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -519,7 +526,8 @@ setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, ov
   verbose && cat(verbose, "Source: ", getPathname(this));
   verbose && cat(verbose, "Destination: ", pathname);
   # Get the pathname for the CEL file
-  file.copy(getPathname(this), pathname, overwrite=overwrite);
+  res <- file.copy(getPathname(this), pathname, overwrite=overwrite);
+  verbose && cat(verbose, "Result from copy: ", res);
   verbose && exit(verbose);
 
 
@@ -529,7 +537,7 @@ setMethodS3("copyFile", "AffymetrixFile", function(this, filename, path=NULL, ov
   res <- newInstance(this, pathname);
 
   res;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE) {

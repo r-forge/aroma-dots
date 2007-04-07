@@ -40,7 +40,8 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
   } else if (is.list(files)) {
     lapply(files, FUN=function(df) {
       if (!inherits(df, "AffymetrixCelFile"))
-        throw("Argument 'files' contains a non-AffymetrixCelFile object: ", class(df));
+        throw("Argument 'files' contains a non-AffymetrixCelFile object: ", 
+                                                              class(df)[1]);
     })
   } else if (inherits(files, "AffymetrixCelSet")) {
     return(as.AffymetrixCelSet(files));
@@ -542,6 +543,9 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Scanning for and applying annotation files");
   sasPath <- "annotationData/samples/";
+  sasPath <- filePath(sasPath, expandLinks="any");
+  mkdirs(sasPath);
+
   sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
   if (nbrOfFiles(sas) == 0) {
     verbose && cat(verbose, "No annotation files found.");
@@ -1286,6 +1290,10 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-04-06
+# o BUG FIX: fromFiles() of AffymetrixCelSet would give error "Exception: 
+#   Pathname not found: annotationData/samples" if that directory was 
+#   missing.  Now it is instead created.
 # 2007-04-03
 # o Now fromFiles() verifies that the set CDF is compatible with the CEL
 #   files, otherwise the CDF of the first CEL file is used.

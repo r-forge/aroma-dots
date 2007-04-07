@@ -1061,6 +1061,39 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
 }, static=TRUE)
 
 
+setMethodS3("copyTo", "AffymetrixFileSet", function(this, path=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'path':
+  path <- Arguments$getWritablePath(path);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  nbrOfFiles <- nbrOfFiles(this);
+  verbose && enter(verbose, sprintf("Copying %d files", nbrOfFiles));
+  verbose && cat(verbose, "Output path for files: ", path);
+
+  for (kk in seq_len(nbrOfFiles)) {
+    verbose && enter(verbose, sprintf("File %d of %d", kk, nbrOfFiles));
+    cf <- getFile(this, kk);
+    cfCopy <- copyTo(cf, path=path, ..., verbose=less(verbose));
+    verbose && exit(verbose);
+  }
+
+  # Return new instance
+  res <- fromFiles(this, path=path);
+
+  verbose && exit(verbose);
+
+  res;
+}, protected=TRUE)
 
 ############################################################################
 # HISTORY:
