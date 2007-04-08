@@ -1,4 +1,4 @@
-setMethodS3("readCfnUnits", "default", function(pathname, snps=NULL, ..., verbose=FALSE) {
+setMethodS3("readCfnUnits", "default", function(pathname, cnagId=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6,8 +6,8 @@ setMethodS3("readCfnUnits", "default", function(pathname, snps=NULL, ..., verbos
   pathname <- Arguments$getReadablePathname(pathname, mustExist=TRUE);
 
   # Argument 'units':
-  if (!is.null(snps))
-    snps <- Arguments$getIndices(snps);
+  if (!is.null(cnagId))
+    cnagId <- Arguments$getIndices(cnagId);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -17,7 +17,7 @@ setMethodS3("readCfnUnits", "default", function(pathname, snps=NULL, ..., verbos
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieve file header
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  hdr <- readCfnHeader(pathname);
+  hdr <- readCfhHeader(pathname);
   verbose && cat(verbose, "Header:");
   verbose && str(verbose, hdr);
   nbrOfBytes <- hdr$nbrOfBytes;
@@ -25,15 +25,18 @@ setMethodS3("readCfnUnits", "default", function(pathname, snps=NULL, ..., verbos
   bytesPerSnp <- hdr$bytesPerSnp;
 
   # Validating units
-  if (!is.null(snps))
-    snps <- Arguments$getIndices(snps, range=c(1, nbrOfSnps));
+  if (!is.null(cnagId)) {
+    cnagId <- Arguments$getIndices(cnagId, range=hdr$cnagIdRange);
+  }
 
   map <- matrix(1:(bytesPerSnp*nbrOfSnps), nrow=bytesPerSnp);
-  map <- map + hdr$dataOffset;
+  map <- map + hdr$dataOffset - bytesPerSnp;
 
   # Read subset of SNPs?
-  if (!is.null(snps))
-    map <- map[,snps,drop=FALSE];
+  if (!is.null(cnagId)) {
+    rr <- cnagId - hdr$cnagIdRange[1] + 1;
+    map <- map[,rr,drop=FALSE];
+  }
   
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -46,14 +49,13 @@ setMethodS3("readCfnUnits", "default", function(pathname, snps=NULL, ..., verbos
   rrM <- 13:16;
   # Bytes 17:20 contains (C) as integers
   rrC <- 17:20;
-  rr <- setdiff(5:12, c(rrM, rrC));
-#  rr <- c(4:19);
+  rr <- 1:12;
 rr <- rrM;
-  ncol <- length(rrM) / 4;
-  map <- map[rrM,,drop=FALSE];
+  ncol <- length(rr) / 4;
+  map <- map[rr,,drop=FALSE];
   theta <- readBin(raw[map], what="double", size=4, endian="little", 
-                                                           n=ncol*ncol(map));
 #  theta <- readBin(raw[map], what="integer", size=4, endian="little", 
+                                                           n=ncol*ncol(map));
   theta <- matrix(theta, ncol=ncol, byrow=TRUE);
 
 #  colnames(theta) <- c("A", "B");

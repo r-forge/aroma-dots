@@ -852,7 +852,11 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (!"all" %in% types) {
     verbose && enter(verbose, "Identifies cells of certain kind");
-    indices <- unlist(getCellIndices(this), use.names=FALSE);
+    verbose && cat(verbose, "Indices:");
+    verbose && str(verbose, indices);
+
+    indices <- unlist(getCellIndices(this, verbose=less(verbose)), use.names=FALSE);
+
   
     other <- c();
     for (type in types) {

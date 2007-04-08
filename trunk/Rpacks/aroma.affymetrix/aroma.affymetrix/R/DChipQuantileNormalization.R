@@ -23,8 +23,12 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("DChipQuantileNormalization", function(...) {
+setConstructorS3("DChipQuantileNormalization", function(..., robust=FALSE) {
+  # Arguments 'robust':
+  robust <- Arguments$getLogical(robust);
+
   extend(QuantileNormalization(...), "DChipQuantileNormalization",
+    .robust = robust
     .exclCells = NULL
   );
 })
@@ -45,9 +49,11 @@ setMethodS3("getParameters", "DChipQuantileNormalization", function(this, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);
 
+  params$robust <- this$.robust;
+  subsetToAvg <- params$subsetToAvg;
+
   exclCells <- getExclCells(this);
   if (!is.null(exclCells)) {
-    subsetToAvg <- params$subsetToAvg;
     if (is.null(subsetToAvg)) {
       ds <- getInputDataSet(this);
       cdf <- getCdf(ds);
@@ -55,10 +61,22 @@ setMethodS3("getParameters", "DChipQuantileNormalization", function(this, ...) {
       subsetToAvg <- setdiff(subsetToAvg, exclCells);
       subsetToAvg <- sort(subsetToAvg);
     }
-    params$subsetToAvg <- subsetToAvg;
   }
+  params$subsetToAvg <- subsetToAvg;
 
   params;
+}, private=TRUE)
+
+
+setMethodS3("getSubsetToUpdate", "DChipQuantileNormalization", function(this, ...) {
+  subsetToUpdate <- this$.subsetToUpdate;
+  if (is.null(subsetToUpdate)) {
+    if (is.null(this$.typesToUpdate)) {
+    } else if (this$.typesToUpdate == "pm") {
+    }
+    this$.subsetToUpdate <- subsetToUpdate;
+  }
+  subsetToUpdate;
 }, private=TRUE)
 
 
@@ -145,7 +163,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fit non-robustly (faster and more memory efficient).
-  robust <- FALSE;
+  robust <- this$.robust;
 
   # Get input data set
   ds <- getInputDataSet(this);
@@ -155,19 +173,26 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   # Get (and create) the output path
   outputPath <- getPath(this);
 
+  params <- getParameters(this);
+
   # Retrieve/calculate the target distribution
   xTarget <- getTargetDistribution(this, verbose=less(verbose));
   xTarget <- sort(xTarget, na.last=TRUE);
 
   # Get algorithm parameters
-  subsetToUpdate <- getSubsetToUpdate(this);
-  verbose && cat("subsetToUpdate: ");
-  verbose && str(subsetToUpdate);
+  verbose && cat(verbose, "typesToUpdate: ");
+  verbose && str(verbose, this$.typesToUpdate);
+  verbose && cat(verbose, "subsetToUpdate: ");
+  verbose && str(verbose, this$.subsetToUpdate);
+  subsetToUpdate <- identifyCells(cdf, indices=this$.subsetToUpdate, 
+                         types=this$.typesToUpdate, verbose=less(verbose));
+  verbose && str(verbose, subsetToUpdate);
 
   # Exclude certain cells when *fitting* the normalization function
   excl <- getExclCells(this);
   if (length(excl) > 0) {
     verbose && enter(verbose, "Excluded some cells when fitting normalization function");
+
     w <- rep(1, nbrOfCells(cdf));
     w[excl] <- 0;
 
@@ -249,13 +274,13 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     # Not needed anymore
     rm(x);
 
+    verbose && exit(verbose);
+    verbose && exit(verbose);
+
     # Garbage collect
     gc <- gc();
     verbose && print(verbose, gc);
 
-    verbose && exit(verbose);
-    verbose && exit(verbose);
-  
     # Return new normalized data file object
     dataFiles[[kk]] <- fromFile(df, pathname);
     
@@ -282,8 +307,11 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   outputDataSet;
 })
 
+
 ############################################################################
 # HISTORY:
+# 2007-04-08
+# o Added argument 'robust' to the constructor.
 # 2007-03-28
 # o Added getParameters() so that excluded cells are also excluded when
 #   the target distribution is calculated by the average.
