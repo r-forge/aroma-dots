@@ -134,8 +134,17 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
   verbose && cat(verbose, "Dummy 4: ", paste(dummy4, collapse=", "));
 
   # Integers
-  ints1 <- readInt(con, n=4);
+  ints1 <- readInt(con, n=1);
   verbose && cat(verbose, "Ints 1: ", paste(ints1, collapse=", "));
+
+  # CNAG probeset ID (an id to differentiate the two chip types,
+  # and which is order by chip type, chromosome, and physical position)
+  cnagIdRange <- readInt(con, n=2);
+  verbose && cat(verbose, "CNAG ID range: ", paste(cnagIdRange, collapse=", "));
+
+  # Integers
+  lastAutosomalId <- readInt(con, n=1);
+  verbose && cat(verbose, "CNAG ID for last autosomal: ", paste(lastAutosomalId, collapse=", "));
 
   # Unknown
   dummy5 <- readRaw(con, n=14);
@@ -154,15 +163,26 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
   verbose && cat(verbose, "References: ");
   verbose && print(verbose, references);
 
+  # Unknown
+#  dummy6 <- readRaw(con, n=103);
+#  verbose && cat(verbose, "Dummy 6: ", paste(dummy6, collapse=", "));
+#  print(rawToChar(dummy6))
 
-  # Infer number of SNPs from CDF file
-  cdfPathname <- findCdf(chipType);
-  if (is.null(cdfPathname))
-    throw("Could not locate CDF for this chip type: ", chipType);
-  isSnp <- (regexpr("^SNP", readCdfUnitNames(cdfPathname)) != -1);
-  nbrOfSnps <- sum(isSnp);
-  rm(isSnp);
-  verbose && cat(verbose, "Number of SNPs (from CDF file): ", nbrOfSnps);
+  # String
+#  str1 <- readString(con);
+#  verbose && cat(verbose, "String 1: ", paste(str1, collapse=", "));
+
+##   # Infer number of SNPs from CDF file
+##   cdfPathname <- findCdf(chipType);
+##   if (is.null(cdfPathname))
+##     throw("Could not locate CDF for this chip type: ", chipType);
+##   isSnp <- (regexpr("^SNP", readCdfUnitNames(cdfPathname)) != -1);
+##   nbrOfSnps <- sum(isSnp);
+##   rm(isSnp);
+##   verbose && cat(verbose, "Number of SNPs (from CDF file): ", nbrOfSnps);
+
+  nbrOfSnps <- cnagIdRange[2]-cnagIdRange[1]+1;
+  verbose && cat(verbose, "Number of SNPs: ", nbrOfSnps);
 
   dataOffset <- nbrOfBytes %% nbrOfSnps;
   verbose && cat(verbose, "File position of data section: ", dataOffset);
@@ -173,6 +193,7 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
   raw <- readBin(con, what="raw", n=dataOffset - currPos);
 
   hdr <- list(
+    pathname = pathname,
     nbrOfBytes = nbrOfBytes,
     magic = magic,
     sampleName = sampleName,
@@ -188,9 +209,13 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
     selfBaseRange = selfBaseRange,
     dummy4 = dummy4,
     ints1 = ints1,
+    cnagIdRange = cnagIdRange,
+    lastAutosomalId = lastAutosomalId,
     dummy5 = dummy5,
     nbrOfNonSelfReferences = nbrOfReferences,
     nonSelfReferences = references,
+#    dummy6 = dummy6,
+#    str1 = str1,
     dataOffset = dataOffset,
     raw = raw,
     rawAsChar = rawToChar(raw),

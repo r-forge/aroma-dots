@@ -63,7 +63,7 @@ setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
 
   # Get parameters of this class
   params2 <- list(
-    subsetToUpdate = this$.subsetToUpdate,
+    subsetToUpdate = getSubsetToUpdate(this),
     typesToUpdate = this$.typesToUpdate,
     subsetToAvg = this$.subsetToAvg,
     typesToAvg = this$.typesToAvg,
