@@ -28,7 +28,7 @@ setConstructorS3("DChipQuantileNormalization", function(..., robust=FALSE) {
   robust <- Arguments$getLogical(robust);
 
   extend(QuantileNormalization(...), "DChipQuantileNormalization",
-    .robust = robust
+    .robust = robust,
     .exclCells = NULL
   );
 })
