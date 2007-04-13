@@ -162,9 +162,10 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
 # }
 # 
 # \section{Missing values}{
-#   If @NAs are detected in a sample, these are excluded and the @see
-#   "stats::approx" function is used to "expand" the @vector of the 
-#   remaining values so that the sorted @vector (still) have length N.
+#   If @NAs are detected in a sample, these are excluded and the 
+#   \code{approx()} function (@see "stats::approx") is used to "expand" 
+#   the @vector of the remaining values so that the sorted @vector 
+#   (still) have length N.
 # }
 #
 # @author

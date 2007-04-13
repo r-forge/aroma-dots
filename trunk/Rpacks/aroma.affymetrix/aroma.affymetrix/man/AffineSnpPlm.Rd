@@ -58,16 +58,16 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 getCellIndices, getChipEffectSet, getProbeAffinityFile, setMergeStrands
 
  \bold{Methods inherited from AffinePlm}:\cr
-getProbeAffinityFile
+getAsteriskTag, getProbeAffinityFile
 
  \bold{Methods inherited from ProbeLevelModel}:\cr
-calculateResidualSet, calculateWeights, fit, getCalculateResidualsFunction, getChipEffects, getChipEffectSet, getProbeAffinities, getProbeAffinityFile, getResidualSet, getWeightsSet
+calculateResidualSet, calculateWeights, fit, getAsteriskTag, getCalculateResidualsFunction, getChipEffects, getChipEffectSet, getProbeAffinities, getProbeAffinityFile, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getCellIndices, readUnits
 
  \bold{Methods inherited from Model}:\cr
-fit, getAlias, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
+fit, getAlias, getAsteriskTag, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

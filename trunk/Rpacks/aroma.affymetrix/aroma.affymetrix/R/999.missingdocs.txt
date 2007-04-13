@@ -498,4 +498,23 @@
   getTargetFunction.GcContentNormalization importFromAPT
   importFromTable importFromTable.FileMatrix isEof isEof.connection
   readData.AffymetrixTsvFile verify.AffymetrixTsvFile
-
+  [.CnagCfhFile [.CnagCfhSet [[.CnagCfhFile [[.CnagCfhSet
+  append.CnagCfhSet as.character.CnagCfhFile as.CnagCfhSet
+  clearCache.CnagCfhFile clearCache.CnagCfhSet
+  clearCache.QuantileNormalization clone.CnagCfhFile clone.CnagCfhSet
+  copyTo copyTo.AffymetrixFile copyTo.AffymetrixFileSet
+  findByName.CnagCfhSet fromFiles.CnagCfhSet fromName.CnagCfhSet
+  gaussianSmoothing gaussianSmoothing.matrix gaussianSmoothing.numeric
+  getAsteriskTag.AffinePlm getAsteriskTag.MbeiPlm getAsteriskTag.Model
+  getAsteriskTag.ProbeLevelModel getAsteriskTag.RmaPlm
+  getAverage.CnagCfhSet getAverageAsinh.CnagCfhSet
+  getAverageLog.CnagCfhSet getData.CnagCfhSet getFullName.CnagCfhSet
+  getHeaderLength getHeaderLength.CnagCfhFile getIdentifier.CnagCfhFile
+  getIdentifier.CnagCfhSet getParameters.ParameterCelFile
+  getSubsetToAvg getSubsetToAvg.QuantileNormalization
+  getSubsetToUpdate.DChipQuantileNormalization getTimestamp.CnagCfhFile
+  getTimestamps.CnagCfhSet movingMedian movingMedian.matrix
+  nbrOfCells.CnagCfhFile nbrOfSnps.CnagCfhFile range.CnagCfhFile
+  range.CnagCfhSet readCfhHeader readCfhHeader.default readCfhUnits
+  readCfhUnits.default readCfnHeader readCfnHeader.default readCfnUnits
+  readCfnUnits.default readUnits.CnagCfhSet

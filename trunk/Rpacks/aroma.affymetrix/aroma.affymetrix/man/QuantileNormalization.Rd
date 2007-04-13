@@ -61,6 +61,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{clearCache} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:process.QuantileNormalization]{process}} \tab Normalizes the data set.\cr
 }
 
