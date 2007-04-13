@@ -35,15 +35,17 @@ extends \link[aroma.affymetrix]{QuantileNormalization}\cr
 
 
 
-  This class represents a special \code{\link{QuantileNormalization}} that immitates
-  the quantile normalization in the dChip software.
+  This class represents a special \code{\link{QuantileNormalization}}
+  using smooth-splines.
  }
 
- \usage{DChipQuantileNormalization(...)}
+ \usage{DChipQuantileNormalization(..., robust=FALSE)}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of
        \code{\link{QuantileNormalization}}.}
+   \item{robust}{If \code{\link[base:logical]{TRUE}}, the normalization function is estimated
+       robustly, otherwise not.}
  }
 
  \section{Fields and Methods}{
@@ -54,7 +56,7 @@ extends \link[aroma.affymetrix]{QuantileNormalization}\cr
 
 
  \bold{Methods inherited from QuantileNormalization}:\cr
-process
+clearCache, process
 
  \bold{Methods inherited from Transform}:\cr
 getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags

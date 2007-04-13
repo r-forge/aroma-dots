@@ -1,57 +1,57 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  SnpInformation.R
+%  CnagCfhFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{SnpInformation}
+ \name{CnagCfhFile}
 \docType{class}
-\alias{SnpInformation}
+\alias{CnagCfhFile}
 
 
- \title{The SnpInformation class}
+ \title{The CnagCfhFile class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class SnpInformation}\cr
+\bold{Class CnagCfhFile}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\emph{\code{SnpInformation}}\cr
+\code{~~~~~~~+--}\code{CnagCfhFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{DChipSnpInformation}\cr
+\cr
 
-public abstract static class \bold{SnpInformation}\cr
+public static class \bold{CnagCfhFile}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
+
+  A CnagCfhFile object represents a single CNAG CFH file.
  }
 
- \usage{SnpInformation(...)}
+ \usage{CnagCfhFile(..., cdf=NULL)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
+   \item{cdf}{An optional \code{\link{AffymetrixCdfFile}}}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fromCdf.SnpInformation]{fromCdf}} \tab Static method to define a genome information set from a CDF.\cr
- \tab \code{\link[aroma.affymetrix:fromChipType.SnpInformation]{fromChipType}} \tab Static method to define a genome information set by chip type.\cr
- \tab \code{fromDataSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipType.SnpInformation]{getChipType}} \tab Gets the chip type of this genome information set.\cr
- \tab \code{\link[aroma.affymetrix:getData.SnpInformation]{getData}} \tab Gets all or a subset of the genome information data.\cr
- \tab \code{getFields} \tab  -\cr
- \tab \code{getFragmentLengths} \tab  -\cr
- \tab \code{getFragmentStarts} \tab  -\cr
- \tab \code{getFragmentStops} \tab  -\cr
- \tab \code{nbrOfUnits} \tab  -\cr
- \tab \code{readData} \tab  -\cr
+ \tab \code{[} \tab  -\cr
+ \tab \code{[[} \tab  -\cr
+ \tab \code{clone} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fromFile.CnagCfhFile]{fromFile}} \tab Defines an CnagCfhFile object from a CFH file.\cr
+ \tab \code{\link[aroma.affymetrix:getCdf.CnagCfhFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
+ \tab \code{nbrOfCells} \tab  -\cr
+ \tab \code{nbrOfSnps} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:setCdf.CnagCfhFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
 }
 
 
@@ -65,4 +65,8 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+   An object of this class is typically part of an \code{\link{CnagCfhSet}}.
+ }
 \keyword{classes}

@@ -319,7 +319,7 @@ setMethodS3("setCdf", "CnagCfhSet", function(this, cdf, verbose=FALSE, ...) {
 })
 
 
-setMethodS3("findByName", "CnagCfhSet", function(static, name, tags=NULL, chipType=NULL, paths=c("cnagData", ...)) {
+setMethodS3("findByName", "CnagCfhSet", function(static, name, tags=NULL, chipType=NULL, paths=c("cnagData", ...), ...) {
   # Look only in existing directories
   paths <- sapply(paths, FUN=filePath, expandLinks="any");
   paths <- paths[sapply(paths, FUN=isDirectory)];

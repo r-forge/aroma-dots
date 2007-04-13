@@ -54,7 +54,7 @@ extends \link[aroma.affymetrix]{QuantileNormalization}\cr
 
 
  \bold{Methods inherited from QuantileNormalization}:\cr
-process
+clearCache, process
 
  \bold{Methods inherited from Transform}:\cr
 getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags

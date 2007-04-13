@@ -15,6 +15,8 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of 
 #       @see "QuantileNormalization".}
+#   \item{robust}{If @TRUE, the normalization function is estimated 
+#       robustly, otherwise not.}
 # }
 #
 # \section{Fields and Methods}{
