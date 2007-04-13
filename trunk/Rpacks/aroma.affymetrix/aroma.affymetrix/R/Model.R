@@ -228,6 +228,23 @@ setMethodS3("setAlias", "Model", function(this, alias=NULL, ...) {
 })
 
 
+setMethodS3("getAsteriskTag", "Model", function(this, ...) {
+  name <- class(this)[1];
+
+  name <- capitalize(name);
+
+  # Vectorize
+  name <- strsplit(name, split="")[[1]];
+
+  # Identify upper case
+  name <- name[(toupper(name) == name)];
+
+  # Paste
+  name <- paste(name, collapse="");
+
+  name;
+})
+
 
 ###########################################################################/**
 # @RdocMethod getTags
@@ -531,6 +548,8 @@ setMethodS3("setLabel", "Model", function(this, label, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-04-12
+# o Added default getAsteriskTag().
 # 2007-03-24
 # o BUG FIX: getPath() created the root path before trying to expand
 #   Windows shortcuts.

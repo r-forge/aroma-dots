@@ -131,6 +131,10 @@ setMethodS3("fromDataFile", "WeightsFile", function(static, df=NULL, filename=sp
   verbose && cat(verbose, "Pathname: ", pathname);
   rf <- createFrom(df, filename=pathname, method="create", ...);
 
+  # Don't forget to return a ResidualFile object  
+  rf <- fromFile(static, filename=pathname, verbose=less(verbose));
+  verbose && print(verbose, rf);
+
   rf;
 }, static=TRUE, private=TRUE)
 
@@ -437,6 +441,12 @@ setMethodS3("writeImage", "WeightsFile", function(this, ..., tags=c("*", "log2",
 
 ############################################################################
 # HISTORY:
+# 2007-04-12
+# o BUG FIX: fromDataFile() of ResidualFile returned an AffymetrixCelFile
+#   but not a ResidualFile.  This caused getResidualSet() of ProbeLevelModel
+#   to return a ResidualSet containing AffymetrixCelFile:s.  The same
+#   bug was found for the WeightFile class.  This problem was reported on 
+#   the mailing list on 2007-04-06.
 # 2007-02-15
 # o Created from ResidualFile.R.
 ############################################################################

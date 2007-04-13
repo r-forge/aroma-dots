@@ -80,6 +80,12 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
 })
 
 
+setMethodS3("getAsteriskTag", "AffinePlm", function(this, ...) {
+  name <- "APLM";
+  name;
+})
+
+
 setMethodS3("getProbeAffinityFile", "AffinePlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the probe affinities (and create files etc)

@@ -48,7 +48,13 @@ setMethodS3("as.character", "ArrayExplorer", function(this, ...) {
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
   s <- c(s, sprintf("Number of chip types: %d", nbrOfChipTypes(this)));
   s <- c(s, paste("Number of arrays:", nbrOfArrays(this)));
-  s <- c(s, paste("Color maps:", paste(getColorMaps(this), collapse="; ")));
+  colorMaps <- getColorMaps(this);
+  if (length(colorMaps) == 0) {
+    colorMaps <- "<not specified>";
+  } else {
+    colorMaps <- paste(colorMaps, collapse="; ")
+  }
+  s <- c(s, paste("Color maps:", colorMaps));
   s <- c(s, sprintf("Main path: %s", getMainPath(this)));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";

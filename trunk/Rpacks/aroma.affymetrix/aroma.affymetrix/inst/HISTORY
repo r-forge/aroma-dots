@@ -1,10 +1,20 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.7 [2007-04-06x]
+Version: 0.4.7 [2007-04-12x]
 o BUG FIX: fromFiles() of AffymetrixCelSet would give error "Exception: 
   Pathname not found: annotationData/samples" if that directory was 
   missing.  Now it is instead created.
+o BUG FIX: readData() of SampleAnnotationFile would open a text 
+  connection without closing it.  This would eventually given an
+  error about too many open connections.
+o BUG FIX: There was a if (TRUE) {} statement in calculateResidualSet() 
+  that was supposed to be if (!fource) {} in the release version.
+o BUG FIX: fromDataFile() of ResidualFile returned an AffymetrixCelFile
+  but not a ResidualFile.  This caused getResidualSet() of ProbeLevelModel
+  to return a ResidualSet containing AffymetrixCelFile:s.  The same
+  bug was found for the WeightFile class.
+
 
 Version: 0.4.6 [2007-04-04]
 o BUG FIX: Loading aroma.affymetrix v0.4.5 (and v0.4.4?) on Windows
@@ -19,6 +29,7 @@ o Now fromFiles() in AffymetrixCelSet verifies that the CDF being
   chip type from the name of the parent directory of the CEL files,
   but if that chip type is not compatible the chip type according
   to the the first CEL file will be used for the set.
+
 
 Version: 0.4.5 [2007-04-03]
 o Now AllelicCrosstalkCalibration rescales by default allele A and 

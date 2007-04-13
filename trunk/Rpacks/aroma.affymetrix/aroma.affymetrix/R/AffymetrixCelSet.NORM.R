@@ -158,7 +158,13 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
 # }
 #
 # \value{
-#  Returns a @double @vector.
+#  Returns a @double @vector of length N.
+# }
+# 
+# \section{Missing values}{
+#   If @NAs are detected in a sample, these are excluded and the @see
+#   "stats::approx" function is used to "expand" the @vector of the 
+#   remaining values so that the sorted @vector (still) have length N.
 # }
 #
 # @author
@@ -168,14 +174,15 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, ..., verbose=FALSE) {
+setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, excludeCells=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdf <- getCdf(this);
 
   # Argument 'probes':
-  probes <- identifyCells(cdf, indices=probes);  # TODO!
+  probes <- identifyCells(cdf, indices=probes);  # TODO! 
+  # "TODO" since when? ;) /HB 2007-04-11
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -215,6 +222,11 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
     df <- getFile(this, cc);
     Xcc <- getData(df, indices=probes, fields="intensities", ..., verbose=less(verbose, 2));
     Xcc <- as.vector(Xcc$intensities);
+#    verbose && str(verbose, Xcc);
+
+    # Exclude cells? 
+    if (!is.null(excludeCells))
+      Xcc[excludeCells] <- NA;
 
     # Garbage collect
     gc();
@@ -222,6 +234,7 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
     # Order and sort the values
     verbose && printf(verbose, "sorting...\n");
     Scc <- sort(Xcc);
+#    verbose && str(verbose, Scc);
 
     # Garbage collect
     gc();
@@ -230,8 +243,10 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, .
     nobs <- length(Scc);
 
     # Has NAs?
-    if(nobs < nbrOfObservations) {
-      verbose && printf(verbose, "NAs, ");
+    nbrOfNAs <- (nbrOfObservations - nobs);
+    if(nbrOfNAs > 0) {
+      verbose && printf(verbose, "Detected %d NAs (%.2f%%),\n", 
+                           nbrOfNAs, 100*nbrOfNAs/nbrOfObservations);
       tt <- !is.na(Xcc);  # TODO?!? /HB 2006-07-22
       rm(Xcc, tt);
 
@@ -319,6 +334,9 @@ setMethodS3("transformAffine", "AffymetrixCelSet", function(this, outPath=file.p
 
 ############################################################################
 # HISTORY:
+# 2007-04-11
+# o Added more verbose output to averageQuantile() in the case when NAs
+#   are detected.  Added some Rdoc comments on how NAs are handles.
 # 2006-09-15
 # o Modified some argument names for normalizeQuantile().
 # 2006-09-14

@@ -6,8 +6,8 @@
 # \description{
 #  @classhierarchy
 #
-#  This class represents a special @see "QuantileNormalization" that immitates
-#  the quantile normalization in the dChip software.
+#  This class represents a special @see "QuantileNormalization" 
+#  using smooth-splines.
 # }
 # 
 # @synopsis 
@@ -69,7 +69,7 @@ setMethodS3("getParameters", "DChipQuantileNormalization", function(this, ...) {
 
 
 setMethodS3("getSubsetToUpdate", "DChipQuantileNormalization", function(this, ...) {
-  subsetToUpdate <- this$.subsetToUpdate;
+  subsetToUpdate <- NextMethod("getSubsetToUpdate", this, ...);
   if (is.null(subsetToUpdate)) {
     if (is.null(this$.typesToUpdate)) {
     } else if (this$.typesToUpdate == "pm") {
@@ -147,7 +147,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Quantile normalizing (immitating dChip) data set");
+  verbose && enter(verbose, "Quantile normalizing (using smooth splines) data set");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already done?
@@ -178,14 +178,16 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   # Retrieve/calculate the target distribution
   xTarget <- getTargetDistribution(this, verbose=less(verbose));
   xTarget <- sort(xTarget, na.last=TRUE);
+  verbose && cat(verbose, "Target distribution: ");
+  verbose && str(verbose, xTarget);
 
   # Get algorithm parameters
   verbose && cat(verbose, "typesToUpdate: ");
-  verbose && str(verbose, this$.typesToUpdate);
+  verbose && str(verbose, params$typesToUpdate);
   verbose && cat(verbose, "subsetToUpdate: ");
-  verbose && str(verbose, this$.subsetToUpdate);
-  subsetToUpdate <- identifyCells(cdf, indices=this$.subsetToUpdate, 
-                         types=this$.typesToUpdate, verbose=less(verbose));
+  verbose && str(verbose, params$subsetToUpdate);
+  subsetToUpdate <- identifyCells(cdf, indices=params$subsetToUpdate, 
+                         types=params$typesToUpdate, verbose=less(verbose));
   verbose && str(verbose, subsetToUpdate);
 
   # Exclude certain cells when *fitting* the normalization function
@@ -201,7 +203,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
       w <- w[subsetToUpdate];
     }
 
-    # Standardize weithts to sum to one.
+    # Standardize weights to sum to one.
     w <- w / sum(w, na.rm=TRUE);
     verbose && printf(verbose, "Cell weights (sum = %.2f):\n", 
                                                      sum(w, na.rm=TRUE));
@@ -253,6 +255,9 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     gc <- gc();
     verbose && print(verbose, gc);
   
+    # TO DO: Add function to "expand" 'xTarget' if of different length
+    # than 'x'.  /HB 2007-04-11
+
     x <- normalizeQuantileSpline(x, w=w, xTarget=xTarget, 
                                        sortTarget=FALSE, robust=robust, ...);
 

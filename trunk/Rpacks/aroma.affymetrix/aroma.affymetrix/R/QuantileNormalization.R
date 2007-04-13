@@ -45,16 +45,129 @@ setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typ
   extend(ProbeLevelTransform(...), "QuantileNormalization", 
     .subsetToUpdate = subsetToUpdate,
     .typesToUpdate = typesToUpdate,
-    .targetDistribution = targetDistribution,
+    "cached:.targetDistribution" = targetDistribution,
     .subsetToAvg = subsetToAvg,
     .typesToAvg = typesToAvg
   )
 })
 
 
-setMethodS3("getSubsetToUpdate", "QuantileNormalization", function(this, ...) {
-  this$.subsetToUpdate;
+setMethodS3("clearCache", "QuantileNormalization", function(this, ...) {
+  # Clear all cached values
+  for (ff in c(".targetDistribution")) {
+    this[[ff]] <- NULL;
+  }
+  NextMethod("clearCache", this, ...);
+})
+
+setMethodS3("getSubsetToUpdate", "QuantileNormalization", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  subsetToUpdate <- this$.subsetToUpdate;
+
+  # Done?
+  if (identical(attr(subsetToUpdate, "adjusted"), TRUE))
+    return(subsetToUpdate);
+
+  # Ad hoc solution for ChipEffectSet:s for now. /HB 2007-04-11
+  ds <- getInputDataSet(this);
+  if (inherits(ds, "ChipEffectSet")) {
+    verbose && enter(verbose, "Identifying possible cells in ", class(ds)[1]);
+    df <- getFile(ds, 1);
+    possibleCells <- getCellIndices(df, verbose=less(verbose));
+    possibleCells <- unlist(possibleCells, use.names=FALSE);
+    possibleCells <- sort(possibleCells);
+    verbose && str(verbose, possibleCells);
+
+    verbose && cat(verbose, "'subsetToUpdate' (before): ");
+    verbose && str(verbose, subsetToUpdate);
+
+    if (is.null(subsetToUpdate)) {
+      subsetToUpdate <- possibleCells;
+    } else {
+      subsetToUpdate <- intersect(subsetToUpdate, possibleCells);
+    }
+    rm(possibleCells);
+    verbose && cat(verbose, "'subsetToUpdate' (after): ");
+    verbose && str(verbose, subsetToUpdate);
+
+    attr(subsetToUpdate, "adjusted") <- TRUE;
+    this$.subsetToUpdate <- subsetToUpdate;
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+    verbose && exit(verbose);
+  }
+
+  subsetToUpdate;
 }, private=TRUE)
+
+
+
+
+setMethodS3("getSubsetToAvg", "QuantileNormalization", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  subsetToAvg <- this$.subsetToAvg;
+
+  # Done?
+  if (identical(attr(subsetToAvg, "adjusted"), TRUE))
+    return(subsetToAvg);
+
+  # Ad hoc solution for ChipEffectSet:s for now. /HB 2007-04-11
+  ds <- getInputDataSet(this);
+  if (inherits(ds, "ChipEffectSet")) {
+    verbose && enter(verbose, "Identifying possible cells in ", class(ds)[1]);
+    df <- getFile(ds, 1);
+    possibleCells <- getCellIndices(df, verbose=less(verbose));
+    possibleCells <- unlist(possibleCells, use.names=FALSE);
+    possibleCells <- sort(possibleCells);
+    verbose && str(verbose, possibleCells);
+
+    verbose && cat(verbose, "'subsetToAvg' (before): ");
+    verbose && str(verbose, subsetToAvg);
+
+    if (is.null(subsetToAvg)) {
+      subsetToAvg <- possibleCells;
+    } else {
+      subsetToAvg <- intersect(subsetToAvg, possibleCells);
+    }
+    rm(possibleCells);
+    verbose && cat(verbose, "'subsetToAvg' (after): ");
+    verbose && str(verbose, subsetToAvg);
+
+    attr(subsetToAvg, "adjusted") <- TRUE;
+    this$.subsetToAvg <- subsetToAvg;
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+    verbose && exit(verbose);
+  }
+
+  subsetToAvg;
+}, private=TRUE)
+
+
 
 
 setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
@@ -65,7 +178,7 @@ setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
   params2 <- list(
     subsetToUpdate = getSubsetToUpdate(this),
     typesToUpdate = this$.typesToUpdate,
-    subsetToAvg = this$.subsetToAvg,
+    subsetToAvg = getSubsetToAvg(this),
     typesToAvg = this$.typesToAvg,
     .targetDistribution = this$.targetDistribution
   );
@@ -212,14 +325,28 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
   ds <- getInputDataSet(this);
   cdf <- getCdf(ds);
   params <- getParameters(this);
-  probes <- identifyCells(cdf, indices=params$subsetToAvg, 
-                         types=params$typesToAvg, verbose=less(verbose));
-  rm(params);
-  verbose && cat(verbose, "Using ", length(probes), " probes");
-  verbose && cat(verbose, "Calculating target distribution from the ", length(ds), " arrays in the input data set");
 
+  cellsToSearch <- params$subsetToAvg;
+  probes <- identifyCells(cdf, indices=cellsToSearch,
+                         types=params$typesToAvg, verbose=less(verbose));
+  rm(params, cellsToSearch);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && cat(verbose, "Using ", length(probes), " probes");
+
+  # Exclude certain cells when *fitting* the normalization function?
+  # If so, exclude them also when calculating the average distribution
+  excl <- getExclCells(this);
+  verbose && cat(verbose, "Excluding some cells when calculating the average distribution");
+  verbose && str(verbose, excl);
+
+  verbose && cat(verbose, "Calculating target distribution from the ", 
+                            length(ds), " arrays in the input data set");
   # Calculate the average quantile
-  yTarget <- averageQuantile(ds, probes=probes, verbose=less(verbose));
+  yTarget <- averageQuantile(ds, probes=probes, excludeCells=excl, verbose=less(verbose));
   rm(probes);
 
   # Write the result to file
@@ -304,7 +431,7 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
   # Get input data set
   ds <- getInputDataSet(this);
 
-  # Get algorithm parameters (including the target distribution)
+  # Get algorithm parameters (including the target distribution above)
   params <- getParameters(this);
 
   # Get the output path
@@ -339,6 +466,8 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
 
 ############################################################################
 # HISTORY:
+# 2007-04-11
+# o Added clearCache() for this class.
 # 2007-02-04
 # o Now QuantileNormalization() takes an AffymetrixCelFile as a target
 #   distribution too, cf argument 'targetDistribution'.

@@ -97,6 +97,8 @@ setMethodS3("fromDataSet", "ResidualSet", function(static, dataSet, path, fullna
 
   # Get the ResidualFile class specific for this set
   clazz <- getResidualFileClass(static);
+  
+  verbose && cat(verbose, "ResidualFile class: ", getName(clazz));
 
   verbose && enter(verbose, "Retrieving probe-level residuals from data set");
   rs <- vector("list", length(dataSet));
@@ -107,8 +109,13 @@ setMethodS3("fromDataSet", "ResidualSet", function(static, dataSet, path, fullna
     verbose && enter(verbose, 
                            sprintf("Retrieving residual file #%d of %d (%s)",
                                                kk, length(rs), getName(df)));
+    verbose && cat(verbose, "Data file class: ", class(df)[1]);
     rf <- clazz$fromDataFile(df, path=path, name=fullname, cdf=cdf, ..., 
                                                        verbose=less(verbose));
+    verbose && cat(verbose, "Residual file class: ", class(rf)[1]);
+    # Assert correctness
+    stopifnot(inherits(rf, "ResidualFile"));
+
     if (is.null(cdf)) {
       verbose && enter(verbose, "Retrieving the CDF for the residual file");
       cdf <- getCdf(rf);

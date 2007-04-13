@@ -91,6 +91,13 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
 }, private=TRUE)
 
 
+
+setMethodS3("getAsteriskTag", "ProbeLevelModel", function(this, ...) {
+  name <- "PLM";
+  name;
+})
+
+
 setMethodS3("getParameterSet", "ProbeLevelModel", function(this, ...) {
   params <- NextMethod("getParameterSet", this, ...);
   params$probeModel <- this$probeModel;
@@ -234,7 +241,7 @@ setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
 
 
 
-setMethodS3("getResidualSet", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
+setMethodS3("getResidualSet", "ProbeLevelModel", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -242,7 +249,7 @@ setMethodS3("getResidualSet", "ProbeLevelModel", function(this, ..., verbose=FAL
   verbose <- Arguments$getVerbose(verbose);
 
   rs <- this$.rs;
-  if (!is.null(rs))
+  if (!force && !is.null(rs))
     return(rs);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -769,6 +776,9 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     # ETA
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (verbose) {
+      # Clarifies itself once in a while (in case running two in parallel).
+      print(this);
+
       # Fraction left
       fLeft <- length(idxs) / nbrOfUnits;
       # Time this far
@@ -779,7 +789,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
       fDone <- 1-fLeft;
       timeLeft <- fLeft/fDone * lapTime;
       t <- timeLeft[3];
-      printf(verbose, "Estimated time left: %.2fmin\n", t/60);
+      printf(verbose, "Estimated time left: %.1fmin\n", t/60);
       # Estimate time to arrivale
       eta <- Sys.time() + t;
       printf(verbose, "ETA: %s\n", format(eta, "%Y%m%d %H:%M:%S"));
@@ -818,6 +828,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-04-12
+# o Added 'force' argument to getResidualSet().
 # 2007-04-02
 # o Added support for the "pm+mm" probe model.
 # 2007-02-29

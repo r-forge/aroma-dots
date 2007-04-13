@@ -33,7 +33,9 @@ setMethodS3("readData", "SampleAnnotationFile", function(this, rows=NULL, force=
       bfr <- bfr[-excl];
   
     # Parse these as a DCF
-    db <- read.dcf(textConnection(bfr));
+    con <- textConnection(bfr);
+    on.exit(close(con));
+    db <- read.dcf(con);
     db <- gsub("[\n\r]", "", db);
     rm(bfr); # Not needed anymore
   
@@ -127,6 +129,9 @@ setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2007-04-12
+# o BUG FIX: readData() of SampleAnnotationFile would open a text connection
+#   without closing it.
 # 2007-03-13
 # o getPatterns() and matchPatterns() now matches full names.
 # 2007-03-06
