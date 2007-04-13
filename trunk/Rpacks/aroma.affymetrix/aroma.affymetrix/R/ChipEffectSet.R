@@ -208,10 +208,19 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
         thetaOutliers=.subset(.subset2(group, "thetaOutliers"), kk)
       );
     });
+    verbose && str(verbose, dataOne[1]);
     verbose && exit(verbose);
 
+    # Assert correct lengths  /HB 2007-04-12
+    if (length(cdf) != length(dataOne)) {
+      throw("Internal error: Lengths of 'cdf' and 'dataOne' differ: ",
+                                    length(cdf), " != ", length(dataOne));
+    }
+
     verbose && enter(verbose, "Updating file");  # 6-7s ~98% in encode()
-    updateUnits(ce, cdf=cdf, data=dataOne, verbose=less(verbose, 50));
+    verbose && printf(verbose, "class(ce)[1]: %s\n", class(ce)[1]);
+#    updateUnits(ce, cdf=cdf, data=dataOne, verbose=less(verbose, 50));
+    updateUnits(ce, cdf=cdf, data=dataOne, verbose=verbose);
     verbose && exit(verbose);
     verbose <- more(verbose, 50);
 

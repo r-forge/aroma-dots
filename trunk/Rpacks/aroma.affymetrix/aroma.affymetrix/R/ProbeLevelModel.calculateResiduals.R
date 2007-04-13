@@ -49,7 +49,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
               chipType=chipType, params=getParameters(this),
               units=units);
   dirs <- c("aroma.affymetrix", chipType);
-  if (TRUE) {
+  if (!force) {
     cdfData <- loadCache(key, dirs=dirs);
     if (!is.null(cdfData))
       verbose && cat(verbose, "Found indices cached on file");
@@ -154,15 +154,41 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     y <- getData(df, indices=cells, fields="intensities")$intensities[oinv];
     verbose && exit(verbose);
 
+    # Assert that there is the correct number of signals 
+    if (length(y) != length(phi)) {
+      throw("Internal error: 'y' and 'phi' differ in lengths: ", 
+                                           length(y), " != ", length(phi));
+    }
+
     verbose && enter(verbose, "Retrieving chip-effect estimates");
     theta <- getData(cef, indices=cells2, fields="intensities")$intensities;
     theta <- rep(theta, times=unitGroupSizes);
     verbose && exit(verbose);
 
+    # Assert that there is the correct number of (expanded) chip effects
+    if (length(theta) != length(phi)) {
+      throw("Internal error: 'theta' and 'phi' differ in lengths: ", 
+                                       length(theta), " != ", length(phi));
+    }
+
     verbose && enter(verbose, "Calculating residuals");
     yhat <- phi * theta;
+
+    # Assert that there is the correct number of "predicted" signals 
+    if (length(yhat) != length(y)) {
+      throw("Internal error: 'yhat' and 'y' differ in lengths: ", 
+                                           length(yhat), " != ", length(y));
+    }
+
     eps <- calculateEps(y, yhat);  # Model class specific.
     verbose && str(verbose, eps);
+
+    # Assert that there is the correct number of residuals
+    if (length(eps) != length(y)) {
+      throw("Internal error: 'eps' and 'y' differ in lengths: ", 
+                                           length(eps), " != ", length(y));
+    }
+
     verbose && exit(verbose);
     rm(y, yhat, theta);
 
@@ -237,6 +263,9 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
 
 ##########################################################################
 # HISTORY:
+# 2007-04-12
+# o BUG FIX: There was a if (TRUE) {} statement in calculateResidualSet() 
+#   that was supposed to be if (!fource) {} in the release version.
 # 2007-03-15
 # o Renamed calculateResiduals() to calculateResidualSet().
 # o BUG FIX: calculateResiduals() of ProbeLevelModel would give non-zero

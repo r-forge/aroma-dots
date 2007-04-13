@@ -65,6 +65,11 @@ setConstructorS3("MbeiPlm", function(..., tags="*") {
 })
 
 
+setMethodS3("getAsteriskTag", "MbeiPlm", function(this, ...) {
+  name <- "MBEI";
+  name;
+})
+
 
 setMethodS3("getProbeAffinityFile", "MbeiPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

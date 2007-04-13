@@ -60,6 +60,10 @@ setConstructorS3("ParameterCelFile", function(..., encodeFunction=NULL, decodeFu
   this;
 })
 
+setMethodS3("getParameters", "ParameterCelFile", function(this, ...) {
+  list();
+}, protected=TRUE)
+
 
 setMethodS3("clearCache", "ParameterCelFile", function(this, ...) {
   # Clear all cached values.
@@ -110,7 +114,6 @@ setMethodS3("decode", "ParameterCelFile", function(this, units, ...) {
   }
   units;
 }, private=TRUE)
-
 
 
 setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE, readPixels=FALSE, stratifyBy=NULL, force=FALSE, cache=TRUE, verbose=FALSE) {
