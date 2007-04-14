@@ -1,7 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.7 [2007-04-12x]
+Version: 0.4.8 [2007-04-13xx]
+o BUG FIX: getChipEffectSet() and getProbeAffinityFile() of the
+  ExonRmaPlm class did not set the 'mergeStrands' parameter.  
+  Thanks Elizabeth Purdom for the fix.
+
+
+Version: 0.4.7 [2007-04-12]
 o BUG FIX: fromFiles() of AffymetrixCelSet would give error "Exception: 
   Pathname not found: annotationData/samples" if that directory was 
   missing.  Now it is instead created.

@@ -59,7 +59,7 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
   # Add number of data points
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   n <- nrow(this$profileValues);
-  stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8, col="lightgray");
+  stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Add std dev estimates
@@ -74,6 +74,9 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
 
 ############################################################################
 # HISTORY:
+# 2007-04-12
+# o Updated plot() of profileCGH class to write the text 'n=%d' in the 
+#   lower-right corner of the graph in black and not lightgray as before.
 # 2006-12-20
 # o Now it is possible to specify the 'xlim' as well as 'ylim' when plotting
 #   GLAD data.  This allows us to zoom in are certain data points for high
