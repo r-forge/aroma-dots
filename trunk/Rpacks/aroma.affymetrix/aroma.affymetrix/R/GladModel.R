@@ -991,7 +991,7 @@ setMethodS3("plot", "GladModel", function(x, ..., pixelsPerMb=3, zooms=2^(0:7), 
           suppressWarnings({
             plot(fit, ticksBy=ticksBy, ..., xmargin=xmargin, resScale=resScale, flavor="ce");
           });
-          stext(chipType, side=4, pos=1, line=0, cex=0.8, col="gray");
+          stext(chipType, side=4, pos=1, line=0, cex=0.8);
           if (!is.null(callList)) {
             verbose && enter(verbose, "Adding genotype calls");
   
@@ -1327,6 +1327,9 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-04-12
+# o Now plot() of the GladModel writes the chip type annotation in black and
+#   not in gray as before.
 # 2007-03-24
 # o BUG FIX: getPath() created the root path before trying to expand
 #   Windows shortcuts.

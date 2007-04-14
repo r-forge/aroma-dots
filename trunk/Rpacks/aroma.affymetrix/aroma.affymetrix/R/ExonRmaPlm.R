@@ -96,17 +96,29 @@ setMethodS3("getChipEffectSetClass", "ExonRmaPlm", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getChipEffects", "ExonRmaPlm", function(this, ...) {
-  ces <- NextMethod("getChipEffects", this, ...);
+setMethodS3("getChipEffectSet", "ExonRmaPlm", function(this, ...) {
+  ces <- NextMethod("getChipEffectSet", this, ...);
   setMergeGroups(ces, this$mergeGroups);
   ces;
 })
 
-setMethodS3("getProbeAffinities", "ExonRmaPlm", function(this, ..., .class=ExonProbeAffinityFile) {
-  paf <- NextMethod("getProbeAffinities", this, ..., .class=.class);
+setMethodS3("getChipEffects", "ExonRmaPlm", function(this, ...) {
+  getChipEffectSet(this, ...);
+})
+
+
+
+setMethodS3("getProbeAffinityFile", "ExonRmaPlm", function(this, ..., .class=ExonProbeAffinityFile) {
+  paf <- NextMethod("ProbeAffinityFile", this, ...);
   setMergeGroups(paf, this$mergeGroups);
   paf;
 })
+
+
+setMethodS3("getProbeAffinities", "ExonRmaPlm", function(this, ...) {
+  getProbeAffinityFile(this, ...);
+})
+
 
 setMethodS3("setMergeGroups", "ExonRmaPlm", function(this, ...) {
   ces <- getChipEffects(this);
@@ -249,3 +261,13 @@ setMethodS3("findUnitsTodo", "ExonRmaPlm", function(this, ...) {
   findUnitsTodo(eces, ...);
 }, private=TRUE)
 
+
+
+##############################################################################
+# HISTORY:
+# 2007-04-13 /HB+EP
+# o BUG FIX: getChipEffectSet() and getProbeAffinityFile() did not set the
+#   'mergeStrands' parameter.  Thanks Elizabeth Purdom for the fix.
+# 2006-??-??
+# o Created by Ken Simpson, WEHI.
+##############################################################################
