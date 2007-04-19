@@ -1,7 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.4.8 [2007-04-13xx]
+Version: 0.4.8 [2007-04-15xx]
+o Now non-positive signals are given weight zero when being fitted
+  in the IWLS algorithm for the log-additive model of RmaPlm. 
+  This requires affyPLM v1.11.14.  Thanks Ben Bolstad for adding
+  support for weights.
 o BUG FIX: getChipEffectSet() and getProbeAffinityFile() of the
   ExonRmaPlm class did not set the 'mergeStrands' parameter.  
   Thanks Elizabeth Purdom for the fix.

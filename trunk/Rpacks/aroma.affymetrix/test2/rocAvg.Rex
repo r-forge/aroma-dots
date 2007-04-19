@@ -344,6 +344,11 @@ print(c);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Average in non-overlapping blocks 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+for (R in seq(from=1, to=10, by=0.5)) {
+  if (R == 1)
+    next;
+print(R);
+
 idxs <- getBlockAverageMap(n=nrow(truth), h=R);
 Rapprox <- attr(idxs, "hApprox");
 
@@ -364,8 +369,13 @@ for (kk in seq(along=sets)) {
     next;
 
   newName <- sprintf("%s,R=%.3f", name, R);
-  if (newName %in% names(sets))
+  pathname <- filePath(dataPath, sprintf("%s.RData", newName));
+  if (isFile(pathname))
     next;
+  print(pathname);
+#  if (newName %in% names(sets))
+#    next;
+
 
   verbose && enter(verbose, sprintf("Set #%d ('%s') of %d", 
                                                    kk, name, length(sets)));
@@ -383,8 +393,13 @@ for (kk in seq(along=sets)) {
   set$theta <- NULL;
   set$name <- sprintf("%s,R=%.3f", set$name, R);
 
+  cat("Saving...\n");
+  saveObject(set, pathname);
+  cat("Saving...ok\n");
 
-  sets[[newName]] <- set;
+#  sets[[newName]] <- set;
 
   verbose && exit(verbose);
 } # for (kk in ...)
+
+} # for (R in ...)

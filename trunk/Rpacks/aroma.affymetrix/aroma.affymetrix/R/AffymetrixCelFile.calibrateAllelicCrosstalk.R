@@ -130,7 +130,7 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
     y <- matrix(yAll[idx], ncol=2);
     verbose && exit(verbose);
 
-    callHooks(sprintf("%s.onData", hookName), df=this, y=y, ...);
+    callHooks(sprintf("%s.onData", hookName), df=this, y=y, basepair=basepair, ...);
 #    lab <- basepair;
 #    plot(y, pch=".", xlab=lab[1], ylab=lab[2], xlim=c(-200,65535/2), ylim=c(-200,65535/2)); abline(a=0,b=1, lty=2);
 
@@ -138,12 +138,12 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
 
     verbose && enter(verbose, "Fitting");
     fit <- fitGenotypeCone(y, alpha=alpha, q=q, Q=Q);
+    verbose && print(verbose, fit);
     verbose && exit(verbose);
     callHooks(sprintf("%s.onFit", hookName), df=this, fit=fit, ...);
 
     verbose && enter(verbose, "Backtransforming");
     yC <- backtransformGenotypeCone(y, fit=fit);
-    rm(fit);
     verbose && exit(verbose);
 
     if (!is.null(targetAvg)) {
@@ -152,9 +152,9 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
       verbose && exit(verbose);
     }
 
-    callHooks(sprintf("%s.onUpdated", hookName), df=this, y=y, yC=yC,...);
+    callHooks(sprintf("%s.onUpdated", hookName), df=this, y=y, basepair=basepair, fit=fit, yC=yC,...);
 #    points(yC, pch=".", col="red");
-    rm(y);
+    rm(fit, y);
 
     # Update data
     yAll[idx] <- yC;

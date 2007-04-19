@@ -3,31 +3,31 @@ library(aroma.affymetrix);
 library(R.graphics);
 library(R.native);  # rowMedians(..., na.rm=TRUE)
 source("fitRoc.R");
+source("plotCumulativeDensity.list.R");
 
 imgFormat <- "screen";
-imgFormat <- "eps";
+#imgFormat <- "eps";
 
 # Smoothing parameter (zero == no smoothing)
 sd <- 1e3;  # in units of 1bp
 sd <- 0;
 
 mavgR <- 1;
-mavgR <- 2;
-mavgR <- 5;
-mavgR <- 1;
 
   d <- 1; by <- 0.05
   d <- 0.50; by <- 0.05;
-#  d <- 0.25; by <- 0.05;
-#  d <- 0.15; by <- 0.01;
-#  d <- 0.10; by <- 0.01;
+  d <- 0.25; by <- 0.05;
+  d <- 0.15; by <- 0.01;
+  d <- 0.12; by <- 0.01;
+  d <- 0.10; by <- 0.01;
+#  d <- 0.06; by <- 0.01;
 #  d <- 0.05; by <- 0.01;
 #  d <- 0.025; by <- 0.001;
 #  d <- 0.01; by <- 0.001;
 
 case <- "optimal";
-#case <- "ACC";
 #case <- "steps";
+case <- "allVdiploid";
 
 # Classification
 group <- c("male"=0, "female"=1);
@@ -64,12 +64,14 @@ if (!exists("sets", mode="list")) {
     );
   } else if (case == "optimal") {
     sets <- list(
-     "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
-     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
+     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="CRMA"),
+#     "ACC,+300,RMA,A+B,FLN,-X,SN" = list(col=niceCols[5], name="CRMA,SN"),
+#     "ACC,+300,RMA,A+B,FLN,-X,GCN,-X" = list(col=niceCols[5], name="CRMA,GC"),
+#     "dChip,ISN,MBEI,A+B,00,xport" = list(col=niceCols[1], name="dChip,no-outliers"),
      "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
 #     "dChip,QN,MBEI,A+B,xport" = list(col=niceCols[1], name="dChip,QN"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="CRMA"),
-#     "ACC,+300,RMA,A+B,FLN,-X,GCN,-X" = list(col=niceCols[5], name="CRMA,GC"),
+     "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
+     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
     );
   } else if (case == "MTV") {
     sets <- list(
@@ -123,9 +125,18 @@ if (!exists("sets", mode="list")) {
     );
   } else if (case == "steps") {
     sets <- list(
-     "QN,RMA,A+B" = list(col=niceCols[2], name="QN"),
-     "ACC,+300,RMA,A+B" = list(col=niceCols[4], name="ACC"),
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC+FLN"),
+     "ACC,+300,RMA,A+B" = list(col=niceCols[4], name="ACC"),
+     "QN,RMA,A+B" = list(col=niceCols[10], name="QN"),
+    );
+  } else if (case == "allVdiploid") {
+    sets <- list(
+     "ACC,+300,RMA,A+B,FLN,-X;all" = list(col=niceCols[6], name="CRMA,all"),
+     "ACC,+300,RMA,A+B,FLN,-X;mean" = list(col=niceCols[7], name="CRMA,mean"),
+     "ACC,+300,RMA,A+B,FLN,-X;adj" = list(col=niceCols[5], name="CRMA,adj"),
+     "ACC,+300,RMA,A+B,FLN,-X;diploid" = list(col=niceCols[10], name="CRMA,diploid"),
+#     "dChip,ISN,MBEI,A+B,xport;adj" = list(col=niceCols[1], name="dChip,adj"),
+#     "dChip,ISN,MBEI,A+B,xport;diploid" = list(col=niceCols[2], name="dChip,diploid"),
     );
   } else if (case == "CQN") {
     sets <- list(
@@ -160,14 +171,6 @@ if (!exists("sets", mode="list")) {
      "QN,MBEI,A+B,FLN,-X" = list(col=niceCols[2], name="QN,MBEI,FLN,-X"),
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,+300,RMA,FLN,-X"),
      "ACC,+300,MBEI,A+B,FLN,-X" = list(col=niceCols[2], name="ACC,+300,MBEI,FLN,-X"),
-    );
-  } else if (case == "allVdiploid") {
-    sets <- list(
-     "ACC,+300,RMA,A+B,FLN,-X;all" = list(col=niceCols[6], name="CRMA,all"),
-     "ACC,+300,RMA,A+B,FLN,-X;adj" = list(col=niceCols[7], name="CRMA,adj"),
-     "ACC,+300,RMA,A+B,FLN,-X;diploid" = list(col=niceCols[5], name="CRMA,diploid"),
-     "dChip,ISN,MBEI,A+B,xport;adj" = list(col=niceCols[1], name="dChip,adj"),
-     "dChip,ISN,MBEI,A+B,xport;diploid" = list(col=niceCols[2], name="dChip,diploid"),
     );
   } else if (case == 2) {
   } else {
@@ -230,21 +233,33 @@ for (kk in seq(along=sets)) {
     if (!is.null(set$theta)) {
       # Calculate average theta, and (A,M).
       refMethod <- gsub("^.*;", "", name);
+      print(refMethod);
       if (refMethod == "all") {
+        print("ALL");
         thetaRefs <- set$theta;
-        set$thetaR <- apply(thetaRefs, MARGIN=1, FUN=median, na.rm=TRUE);
+        set$thetaR <- rowMedians.matrix(thetaRefs, na.rm=TRUE);
+      } else if (refMethod == "diploid") {
+        print("ALL");
+        thetaRefs <- set$theta[,females];
+        set$thetaR <- rowMedians.matrix(thetaRefs, na.rm=TRUE);
       } else if (refMethod == "adj") {
-        thetaRm <- apply(set$theta[,males], MARGIN=1, FUN=median, na.rm=TRUE);
-        thetaRf <- apply(set$theta[,females], MARGIN=1, FUN=median, na.rm=TRUE);
+        print("ADJUSTED");
+        thetaRm <- rowMedians.matrix(set$theta[,males], na.rm=TRUE);
+        thetaRf <- rowMedians.matrix(set$theta[,females], na.rm=TRUE);
         c <- median(thetaRf, na.rm=TRUE) / median(thetaRm, na.rm=TRUE);
 print(c);
         thetaRm <- thetaRm * c;
         w <- c(females=length(females), males=length(males));
         w <- w / sum(w);
         set$thetaR <- w[1] * thetaRf + w[2] * thetaRm;
-      } else {
+      } else if (refMethod == "mean") {
+        print("MEAN; ALL or DIPLOID");
         thetaRefs <- set$theta[,references];
-        set$thetaR <- apply(thetaRefs, MARGIN=1, FUN=median, na.rm=TRUE);
+        set$thetaR <- rowMeans(thetaRefs, na.rm=TRUE);
+      } else {
+        print("ALL or DIPLOID");
+        thetaRefs <- set$theta[,references];
+        set$thetaR <- rowMedians.matrix(thetaRefs, na.rm=TRUE);
       }
       str(thetaRefs);
 
@@ -400,7 +415,7 @@ if (!Device$isOpen(fig <- fig + 1)) {
     filename <- sprintf("%s.eps", imgName);
     eps(filename, width=5, height=5);
     par(mar=c(4,5,1,1)+0.1);
-    par(cex=0.7, mgp=c(2.7,0.7,0));
+    par(cex=1, mgp=c(2.7,0.7,0));
   } else if (imgFormat == "screen") {
     par(mar=c(5,5,2,1)+0.1);
     par(cex=1, mgp=c(2.5,0.2,0));
@@ -410,21 +425,24 @@ if (!Device$isOpen(fig <- fig + 1)) {
   plot(NA, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, las=1);
   abline(h=seq(0,1,by=by), lty=3, lwd=1);
   abline(v=seq(0,1,by=by), lty=3, lwd=1);
-  legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
+#  legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
   for (kk in seq(along=sets)) {
     print(labels[kk]);
   
     set <- sets[[kk]];
     roc <- set$roc;
-    plot(roc, line=TRUE, lwd=4, lty=ltys[kk], col=cols[kk], add=TRUE);
+    plot(roc, line=TRUE, lwd=3, lty=ltys[kk], col=cols[kk], add=TRUE);
   } # for (kk in ...)
-  legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
+#  legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
+  legend("topleft", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
 
-  if (imgFormat == "eps") {
+  if (imgFormat != "screen") {
     dev.off();
   }
 }
 
+
+stop()
 
 if (case != "optimal")
   stop();
@@ -536,68 +554,6 @@ if (doROCone && !Device$isOpen(fig <- fig + 1)) {
   }
 }
 
-jj <- setdiff(jj999, 1:100)[1];
-print(jj);
-
-if (!Device$isOpen(fig <- fig + 1)) {
-  Device$set(fig);
-
-  Device$setStyle("PowerPoint");
-
-  snpName <- getUnitNames(cdf)[jj];
-
-  if (imgFormat == "eps") {
-    imgName <- sprintf("ROC,%s,%s", case, snpName);
-    filename <- sprintf("%s.%s", imgName, imgFormat);
-    eps(filename, width=6, height=6);
-    par(mar=c(4,5,1,1)+0.1);
-    par(cex=0.7, mgp=c(2.7,0.7,0));
-  } else if (imgFormat == "screen") {
-    par(mar=c(5,5,2,1)+0.1);
-    par(cex=1, mgp=c(2.5,0.2,0));
-  }
-
-  par(cex.axis=1, cex.lab=1, font.lab=2);
-  par(xaxs="i", yaxs="i");
-
-  names <- sapply(sets, FUN=function(set) set$name);
-  
-  # Create labels
-  labels <- names;
-
-  plot(NA, xlim=c(0,1), ylim=c(0,1), xlab=xlab, ylab=ylab, las=1);
-  title(main=snpName);
-  by <- 0.1;
-  abline(h=seq(0,1,by=by), lty=3, lwd=1);
-  abline(v=seq(0,1,by=by), lty=3, lwd=1);
-  legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
-
-  cols <- seq(along=sets2);
-  for (kk in seq(along=sets2)) {
-    print(kk);
-    name <- names(sets)[kk];
-
-    # Get data for one SNP
-    M <- sets2[[name]]$M;
-  
-    # Get data for one SNP
-    Mj <- M[jj,];
-    tj <- unname(truth[jj,]);
-    n <- length(Mj);
-
-    # Get data for one SNP
-    roc <- fitRoc(tj, Mj, call=toCall, ncuts=600);
-    plot(roc, line=TRUE, lwd=4, col=cols[kk], add=TRUE);
-
-#    roc <- fitRoc(tj, Mj, call=toCall, ncuts=11);
-#    plot(roc, pch=19, cex=1.2, show.thresh=TRUE, add=TRUE);
-  }
-  box();
-
-  if (imgFormat != "screen") {
-    dev.off();
-  }
-}
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -612,7 +568,9 @@ if (!Device$isOpen(fig <- fig + 1)) {
   fpRate <- 1*fpStep;
   fpRate <- 2*fpStep;
   fpRate <- 3*fpStep;
-  
+
+  cols <- sapply(sets, FUN=function(set) set$col);
+ 
   for (fpRate in c(1,2,3)*fpStep/2) {
     print(fpRate);
   
@@ -650,9 +608,9 @@ if (!Device$isOpen(fig <- fig + 1)) {
     
     
     xlabTp <- "TP rates (%)";
-    plotDensity(100*D, from=0, to=100, xlab=xlabTp, lwd=2);
+    plotDensity(100*D, from=0, to=100, xlab=xlabTp, lwd=2, col=cols);
     stext(side=4, pos=0, sprintf("FP rates %.2f%%", 100*fpRate), cex=0.7);
-    legend("topleft", legend=colnames(D), col=1:4, pch=19);
+    legend("topleft", legend=colnames(D), col=cols, pch=19);
     
     if (imgFormat != "screen") {
       dev.off();
@@ -671,9 +629,9 @@ if (!Device$isOpen(fig <- fig + 1)) {
       par(cex=1, mgp=c(2.5,0.2,0));
     }
 
-    plotCumulativeDensity(100*D, spar=0.5, xlab=xlabTp, lwd=2)
+    plotCumulativeDensity(100*D, spar=0.5, xlab=xlabTp, lwd=2, col=cols);
     stext(side=4, pos=0, sprintf("FP rates %.2f%%", 100*fpRate), cex=0.7);
-    legend("topleft", legend=colnames(D), col=1:4, pch=19);
+    legend("topleft", legend=colnames(D), col=cols, pch=19);
     
     if (imgFormat != "screen") {
       dev.off();
@@ -692,13 +650,13 @@ if (!Device$isOpen(fig <- fig + 1)) {
       par(cex=1, mgp=c(2.5,0.2,0));
     }
     
-    plotCumulativeDensity(100*(1-D), spar=0.5, xlab=xlabTp, lwd=2, axes=FALSE);
+    plotCumulativeDensity(100*(1-D), spar=0.5, xlab=xlabTp, lwd=2, col=cols, axes=FALSE);
     box();
     axis(side=2);
     at <- seq(0,100,by=20);
     axis(side=1, at=at, label=100-at);
     stext(side=4, pos=0, sprintf("FP rates %.2f%%", 100*fpRate), cex=0.7);
-    legend("topleft", legend=colnames(D), col=1:4, pch=19);
+    legend("topleft", legend=colnames(D), col=cols, pch=19);
     
     if (imgFormat != "screen") {
       dev.off();
@@ -721,6 +679,75 @@ jj800 <- which(0.79 <= Dm & Dm <= 0.81);
 
 # A SNP with 95% TP rate
 jj999 <- which(Dm >= 0.999);
+
+
+jj <- jj800;
+jj <- setdiff(jj, 1:100)[1];
+
+unitNames <- getUnitNames(cdf);
+jj <- which(unitNames == "SNP_A-1884486");  # POOR
+jj <- which(unitNames == "SNP_A-1790385");  # MODERATE
+snpName <- unitNames[jj];
+print(c(jj, snpName));
+
+if (!Device$isOpen(fig <- fig + 1)) {
+  Device$set(fig);
+
+  Device$setStyle("PowerPoint");
+
+  if (imgFormat == "eps") {
+    imgName <- sprintf("ROC,%s,%s", case, snpName);
+    filename <- sprintf("%s.%s", imgName, imgFormat);
+    eps(filename, width=6, height=6);
+    par(mar=c(4,5,1,1)+0.1);
+    par(cex=1, mgp=c(2.7,0.7,0));
+  } else if (imgFormat == "screen") {
+    par(mar=c(5,5,2,1)+0.1);
+    par(cex=1, mgp=c(2.5,0.2,0));
+  }
+
+  par(cex.axis=1, cex.lab=1, font.lab=2);
+  par(xaxs="i", yaxs="i");
+
+  names <- sapply(sets, FUN=function(set) set$name);
+  
+  # Create labels
+  labels <- names;
+
+  cols <- sapply(sets2, FUN=function(set) set$col);
+  plot(NA, xlim=c(0,1), ylim=c(0,1), xlab=xlab, ylab=ylab, las=1);
+  title(main=snpName);
+  by <- 0.1;
+  abline(h=seq(0,1,by=by), lty=3, lwd=1);
+  abline(v=seq(0,1,by=by), lty=3, lwd=1);
+  legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
+
+  for (kk in seq(along=sets2)) {
+    print(kk);
+    name <- names(sets)[kk];
+
+    # Get data for one SNP
+    set <- sets2[[name]];
+    M <- set$M;
+  
+    # Get data for one SNP
+    Mj <- M[jj,cc];
+    tj <- unname(truth[jj,cc]);
+    n <- length(Mj);
+
+    # Get data for one SNP
+    roc <- fitRoc(tj, Mj, call=toCall, ncuts=600);
+    plot(roc, line=TRUE, lwd=4, col=cols[kk], add=TRUE);
+
+#    roc <- fitRoc(tj, Mj, call=toCall, ncuts=11);
+#    plot(roc, pch=19, cex=1.2, show.thresh=TRUE, add=TRUE);
+  }
+  box();
+
+  if (imgFormat != "screen") {
+    dev.off();
+  }
+}
 
 stop();
 
