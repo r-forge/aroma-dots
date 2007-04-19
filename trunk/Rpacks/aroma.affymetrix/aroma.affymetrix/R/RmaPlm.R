@@ -224,22 +224,30 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # Log-additive model
     y <- log(y, base=2);
 
+    J <- ncol(y);  # Number of arrays
+    I <- nrow(y);  # Number of probes
+
     # Look for cells that have NAs in at least one sample?
+    w <- NULL;
     if (treatNAsAs == "ignore") {
       hasNAs <- FALSE;
     } else {
       isNA <- is.na(y);
       hasNAs <- any(isNA);
       if (hasNAs) {
-        if (treatNAsAs == "0") {
+        if (treatNAsAs == "weights") {
+          w <- matrix(1, nrow=I, ncol=J);
+          w[isNA] <- 0;
+          y[isNA] <- 0;
+        } else if (treatNAsAs == "0") {
           y[isNA] <- 0;
           hasNAs <- FALSE;
         } else if (treatNAsAs == "NA") {
-          I0 <- nrow(y);  # Number of cells
-          J <- ncol(y);  # Number of arrays
+          I0 <- I;  # Number of cells
           okCells <- !apply(isNA, MARGIN=1, FUN=any);
           # Analyze only valid cells
           y <- y[okCells,,drop=FALSE];
+
           # No valid cells left?
           if (nrow(y) == 0) {
             return(list(theta=rep(NA, J),
@@ -256,11 +264,13 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     }
 
     # Fit model using affyPLM code
-    fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE="affyPLM");
+    if (!is.null(w)) {
+      fit <- .Call("R_wrlm_rma_default_model", y, psiCode, psiK, w, PACKAGE="affyPLM");
+    } else {
+      fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE="affyPLM");
+    }
 
     # Extract probe affinities and chip estimates
-    J <- ncol(y);  # Number of arrays
-    I <- nrow(y);  # Number of probes
     est <- fit$Estimates;
     se <- fit$StdErrors;
 
@@ -312,7 +322,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
-         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
+         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);
   } # rmaModelAffyPlm()
   attr(rmaModelAffyPlm, "name") <- "rmaModelAffyPlm";
 
@@ -442,7 +452,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
-         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
+         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);
   } # rmaModelOligo()
   attr(rmaModelOligo, "name") <- "rmaModelOligo";
 
@@ -489,6 +499,9 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-04-15
+# o Added first support for weights in fit function.  This requires 
+#   affyPLM v1.11.14.  Thanks Ben Bolstad for this.
 # 2007-02-14
 # o Added getCalculateResidualsFunction().
 # 2006-12-12

@@ -74,16 +74,21 @@ setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=1/2, types=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Plot densities
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  for (cc in seq(length=nbrOfArrays)) {
-    df <- getFile(this, cc);
-    add <- add || (cc > 1);
-    plotDensity(df, subset=subset, ..., col=col[cc], lty=lty[cc], 
-              lwd=lwd[cc], annotate=FALSE, add=add, verbose=less(verbose));
+  for (kk in seq(length=nbrOfArrays)) {
+    df <- getFile(this, kk);
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, 
+                                                getName(df), nbrOfArrays));
+
+    add <- add || (kk > 1);
+    plotDensity(df, subset=subset, ..., col=col[kk], lty=lty[kk], 
+              lwd=lwd[kk], annotate=FALSE, add=add, verbose=less(verbose));
     if (annotate) {
       stextChipType(getCdf(this));
       stextSize(df, size=length(subset));
       annotate <- FALSE;
     }
+
+    verbose && exit(verbose);
   }
 })
 
@@ -91,6 +96,8 @@ setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=1/2, types=
 
 ############################################################################
 # HISTORY:
+# 2007-04-16
+# o Added more verbose output.
 # 2006-05-16
 # o Created.
 ############################################################################
