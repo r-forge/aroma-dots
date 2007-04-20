@@ -114,6 +114,10 @@ setMethodS3("getSubsetToUpdate", "QuantileNormalization", function(this, ..., ve
 
 
 
+setMethodS3("getExclCells", "QuantileNormalization", function(this, ...) {
+  NULL;
+}, private=TRUE)
+
 
 setMethodS3("getSubsetToAvg", "QuantileNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -466,6 +470,9 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
 
 ############################################################################
 # HISTORY:
+# 2007-04-19
+# o BUG FIX: Added missing getExclCells() to QuantileNormalization.
+#   Thanks Elizabeth Purdom for the report.
 # 2007-04-11
 # o Added clearCache() for this class.
 # 2007-02-04
