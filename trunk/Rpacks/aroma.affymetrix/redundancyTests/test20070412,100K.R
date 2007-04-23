@@ -5,7 +5,7 @@ timestampOn(log);
 
 dataSetName <- "Affymetrix_2004-100k_trios,testSet";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
-#chipTypes <- chipTypes[1];
+chipTypes <- chipTypes[1];
 
 # Expected sample names
 sampleNames <- c("NA06985", "NA06991", "NA06993", 
