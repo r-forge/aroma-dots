@@ -1,0 +1,6 @@
+REDUNDANCY TESTING
+
+This directory contains scripts for redundancy testing.  The purpose of a redunadancy test is to assert that a method generates the same results between updates.
+
+
+
