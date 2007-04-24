@@ -59,7 +59,9 @@ extends \link[aroma.affymetrix]{RmaPlm}\cr
  \tab \code{calculateWeights} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getChipEffects} \tab  -\cr
+ \tab \code{getChipEffectSet} \tab  -\cr
  \tab \code{getProbeAffinities} \tab  -\cr
+ \tab \code{getProbeAffinityFile} \tab  -\cr
  \tab \code{setMergeGroups} \tab  -\cr
 }
 
