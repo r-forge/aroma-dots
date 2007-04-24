@@ -518,3 +518,7 @@
   range.CnagCfhSet readCfhHeader readCfhHeader.default readCfhUnits
   readCfhUnits.default readCfnHeader readCfnHeader.default readCfnUnits
   readCfnUnits.default readUnits.CnagCfhSet
+ getChipEffectSet.ExonRmaPlm getExclCells.QuantileNormalization
+ getParameters.ScaleNormalization getProbeAffinityFile.ExonRmaPlm
+ getSubsetToAvg.ScaleNormalization
+ getSubsetToUpdate.ScaleNormalization

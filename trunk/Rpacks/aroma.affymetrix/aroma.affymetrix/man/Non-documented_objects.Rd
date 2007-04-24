@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Sun Apr 22 21:18:15 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1228,6 +1230,12 @@
 \alias{readCfnUnits}
 \alias{readCfnUnits.default}
 \alias{readUnits.CnagCfhSet}
+\alias{getChipEffectSet.ExonRmaPlm}
+\alias{getExclCells.QuantileNormalization}
+\alias{getParameters.ScaleNormalization}
+\alias{getProbeAffinityFile.ExonRmaPlm}
+\alias{getSubsetToAvg.ScaleNormalization}
+\alias{getSubsetToUpdate.ScaleNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that
