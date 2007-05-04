@@ -1,3 +1,5 @@
+library(R.oo);
+
 myPlotDensity <- function(cs, ...) {
   if (imgFormat == "eps") {
     imgName <- sprintf("%s,plotDensity", getFullName(cs));
@@ -18,7 +20,7 @@ myPlotDensity <- function(cs, ...) {
 } # myPlotDensity()
 
 
-setMethodS3("plotAllelicCrosstalk", "AffymetrixCelFile", function(this, pch=NA, lwd=4, col="red", xlim=c(-2^9,2^13), ylim=xlim, xaxs="r", yaxs=xaxs, transformation=function(x) x^0.14, imgFormat=c("screen", "eps"), ...) {
+setMethodS3("plotAllelicCrosstalk", "AffymetrixCelFile", function(this, pch=NA, lwd=4, col="red", xlim=c(-2^9,2^12), ylim=xlim, xaxs="r", yaxs=xaxs, transformation=function(x) x^0.18, imgFormat=c("screen", "eps"), ...) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local function
@@ -26,9 +28,11 @@ setMethodS3("plotAllelicCrosstalk", "AffymetrixCelFile", function(this, pch=NA, 
   myPlotAllelicCrosstalk <- function(y, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, basepair=c("A", "B"), tags=NULL, ...) {
     if (is.null(xlab)) {
       xlab <- substitute(y[A], list=list(A=basepair[1]));
+      xlab <- substitute(PM[A], list=list(A=basepair[1]));
     }
     if (is.null(ylab)) {
       ylab <- substitute(y[B], list=list(B=basepair[2]));
+      ylab <- substitute(PM[B], list=list(B=basepair[2]));
     }
   
     y[y < xlim[1]-0.1*diff(xlim) | y > xlim[2] + 0.1*diff(xlim)] <- NA;
@@ -47,7 +51,8 @@ setMethodS3("plotAllelicCrosstalk", "AffymetrixCelFile", function(this, pch=NA, 
       Device$set(2, height="61.8%");
       Device$setStyle("PowerPoint");
       par(mar=c(4,5,1,1)+0.1);
-      par(cex=1, mgp=c(2.5,0.2,0));
+      par(cex=1);
+      par(cex.lab=1.8, mgp=c(2.5,0.2,0));
     }
 
     smoothScatter(y, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, ...);
@@ -137,6 +142,8 @@ print(idxs);
     n23 <- as.integer(sapply(cs, FUN=getAttribute, "n23"));
   }
   print(cs);
+
+stop()
 
 # Plot density  
 #    myPlotDensity(cs);

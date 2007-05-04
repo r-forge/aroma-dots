@@ -27,7 +27,7 @@ mavgR <- 1;
 
 case <- "optimal";
 #case <- "steps";
-case <- "allVdiploid";
+#case <- "allVdiploid";
 
 # Classification
 group <- c("male"=0, "female"=1);
@@ -442,8 +442,6 @@ if (!Device$isOpen(fig <- fig + 1)) {
 }
 
 
-stop()
-
 if (case != "optimal")
   stop();
 
@@ -564,10 +562,10 @@ if (!Device$isOpen(fig <- fig + 1)) {
   C <- truth[,cc];
   nbrOfFemales <- sum(truth[1,cc]);
   fpStep <- 1/nbrOfFemales;
-  fpRate <- 0.01;
+#  fpRate <- 0.01;
   fpRate <- 1*fpStep;
-  fpRate <- 2*fpStep;
-  fpRate <- 3*fpStep;
+#  fpRate <- 2*fpStep;
+#  fpRate <- 3*fpStep;
 
   cols <- sapply(sets, FUN=function(set) set$col);
  
@@ -615,7 +613,9 @@ if (!Device$isOpen(fig <- fig + 1)) {
     if (imgFormat != "screen") {
       dev.off();
     }
-    
+
+stop()
+next;    
     
     if (imgFormat == "eps") {
       imgName <- sprintf("ROC,%s,TPcdf,fpRate%.4f", case, fpRate);
