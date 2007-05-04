@@ -1,6 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.5.0 [2007-04-24xx]
+o getProbeAffinityFile() of ExonRmaPlm did not return the correct subclass.
+
+
 Version: 0.4.9 [2007-04-22]
 o BUG FIX: Added missing getExclCells() to QuantileNormalization.
   Thanks Elizabeth Purdom for the report.

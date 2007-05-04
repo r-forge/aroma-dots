@@ -37,8 +37,6 @@
 #  NAR, 2003, 31, e15.\cr
 # }
 #*/###########################################################################
-
-
 setConstructorS3("ExonRmaPlm", function(..., tags="*", mergeGroups=TRUE) {
   # Argument 'tags':
   if (!is.null(tags)) {
@@ -59,9 +57,8 @@ setConstructorS3("ExonRmaPlm", function(..., tags="*", mergeGroups=TRUE) {
   }
 
   extend(RmaPlm(..., tags=tags), "ExonRmaPlm",
-         mergeGroups=mergeGroups
-         )
-  
+    mergeGroups=mergeGroups
+  )
 })
 
 # utility function - keep here for now
@@ -109,7 +106,7 @@ setMethodS3("getChipEffects", "ExonRmaPlm", function(this, ...) {
 
 
 setMethodS3("getProbeAffinityFile", "ExonRmaPlm", function(this, ..., .class=ExonProbeAffinityFile) {
-  paf <- NextMethod("ProbeAffinityFile", this, ...);
+  paf <- NextMethod("getProbeAffinityFile", this, ..., .class=.class);
   setMergeGroups(paf, this$mergeGroups);
   paf;
 })
@@ -265,6 +262,8 @@ setMethodS3("findUnitsTodo", "ExonRmaPlm", function(this, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2007-04-24 /HB+EP
+# o getProbeAffinityFile() of ExonRmaPlm did not return the correct subclass.
 # 2007-04-13 /HB+EP
 # o BUG FIX: getChipEffectSet() and getProbeAffinityFile() did not set the
 #   'mergeStrands' parameter.  Thanks Elizabeth Purdom for the fix.
