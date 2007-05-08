@@ -79,7 +79,7 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  filename <- sprintf("%s.cel", getName(this));
+  filename <- sprintf("%s.CEL", getFullName(this));
   pathname <- Arguments$getWritablePathname(filename, path=path, 
                                          mustNotExist=(!overwrite && !skip));
 
@@ -207,6 +207,11 @@ setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, pat
 
 ############################################################################
 # HISTORY:
+# 2007-05-07
+# o Now output files are saved as *.CEL and not *.cel.  This is because
+#   some software assume upper case filename extension.
+# o BUG FIX: calibrateAllelicCrosstalk() for AffymetrixCelFile would output
+#   filenames containing only the name but not the tags.
 # 2007-03-29
 # o Added Rdoc comments about hook functions.
 # 2006-10-06
