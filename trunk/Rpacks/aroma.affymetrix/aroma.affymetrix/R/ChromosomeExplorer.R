@@ -311,10 +311,14 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   zooms <- list.files(path=path, pattern=pattern);
   zooms <- gsub(pattern, "\\1", zooms);
   zooms <- gsub("^0*", "", zooms);
+  if (length(zooms) == 0) {
+    # Default zooms
+    zooms <- c(1, 2, 4, 8, 16, 32, 64, 128);
+  }
   zooms <- unique(zooms);
   zooms <- as.integer(zooms);
   zooms <- sort(zooms);
-  verbose && cat(verbose, "Detected zooms: ", paste(zooms, collapse=", "));
+  verbose && cat(verbose, "Detected (or default) zooms: ", paste(zooms, collapse=", "));
   verbose && exit(verbose);
 
   # Compile RSP file
@@ -488,6 +492,9 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="index.html
 
 ##############################################################################
 # HISTORY:
+# 2007-05-08
+# o Added default zoom levels to updateSamplesFile() for ChromosomeExplorer.  
+#   This is applies the first time process() is called.
 # 2007-03-19
 # o Now ChromosomeExplorer extends Explorer.
 # 2007-02-06

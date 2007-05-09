@@ -1,8 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.5.0 [2007-05-07xx]
+Version: 0.5.0 [2007-05-08xx]
 o getProbeAffinityFile() of ExonRmaPlm did not return the correct subclass.
+o Added default zoom levels to updateSamplesFile() for ChromosomeExplorer.  
+  This is applies the first time process() is called.
 o BUG FIX: calibrateAllelicCrosstalk() for AffymetrixCelFile would output
   filenames containing only the name but not the tags.
 
