@@ -85,7 +85,10 @@ setConstructorS3("BaseFileSection", function(section=NULL, type=NULL, ...) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("as.character", "BaseFileSection", function(this, ...) {
+setMethodS3("as.character", "BaseFileSection", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(class(this)[1], ":", sep="");
   s <- paste(s, " Type: ", getType(this), ".", sep="");
   s <- paste(s, " Number of headers: ", nbrOfHeaders(this), ".", sep="");

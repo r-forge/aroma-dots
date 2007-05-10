@@ -50,7 +50,10 @@ setConstructorS3("BaseFileAssays", function(...) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("as.character", "BaseFileAssays", function(this, ...) {
+setMethodS3("as.character", "BaseFileAssays", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(class(this)[1], ":", sep="");
   s <- paste(s, " Type: ", getType(this), sep="");
   assays <- getName(this);
