@@ -51,7 +51,10 @@ setConstructorS3("BaseFileSpots", function(...) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("as.character", "BaseFileSpots", function(this, ...) {
+setMethodS3("as.character", "BaseFileSpots", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(class(this)[1], ":", sep="");
 
   s <- paste(s, " Type: ", getType(this), sep="");

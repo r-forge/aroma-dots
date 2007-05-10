@@ -84,7 +84,10 @@ setConstructorS3("BaseFile", function(sections=NULL, ...) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("as.character", "BaseFile", function(this, ...) {
+setMethodS3("as.character", "BaseFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(class(this)[1], ":", sep="");
   s <- paste(s, " Number of sections: ", nbrOfSections(this), sep="");
   s;
@@ -196,9 +199,12 @@ setMethodS3("nbrOfSections", "BaseFile", function(this, ...) {
   length(this$sections);
 })
 
-setMethodS3("length", "BaseFile", function(this, ...) {
+setMethodS3("length", "BaseFile", function(x) {
+  # To please R CMD check
+  this <- x;
+
   length(this$sections);
-})
+}, appendVarArgs=FALSE)
 
 
 

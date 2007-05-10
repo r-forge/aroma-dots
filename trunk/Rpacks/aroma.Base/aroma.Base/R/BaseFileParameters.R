@@ -80,7 +80,10 @@ setConstructorS3("BaseFileParameters", function(section=NULL, ...) {
 #   @seeclass
 # }
 #*/#########################################################################  
-setMethodS3("as.character", "BaseFileParameters", function(this, ...) {
+setMethodS3("as.character", "BaseFileParameters", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(class(this)[1], ": BASE section '", this$type, "'.", sep="");
   if (nbrOfParameters(this) > 0) {
     s <- paste(s, " ", nbrOfParameters(this), " parameters: ", paste(names(getParameters(this)), collapse=", "), ".", sep="");
