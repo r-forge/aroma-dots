@@ -449,7 +449,7 @@
   writeImageCombined.TransformReport writeImages
   writeImages.SpatialReporter writeImages.TransformReport writeRegions
   writeRegions.ChromosomeExplorer writeRegions.GladModel
-  writeRegions.profileCGH writeSpatial writeSpatial.ProbeAffinityFile
+  writeRegions.profileCGH 
   writeWig writeWig.CnChipEffectSet yellow.colors
   addExclCells addExclCells.DChipQuantileNormalization
   AptCopyNumberPipeline calculateParametersGsb excludeChrXFromFit

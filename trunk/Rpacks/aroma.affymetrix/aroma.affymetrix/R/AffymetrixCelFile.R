@@ -81,7 +81,10 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
 })
 
 
-setMethodS3("as.character", "AffymetrixCelFile", function(this, ...) {
+setMethodS3("as.character", "AffymetrixCelFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod("as.character", ...);
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
   s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));
@@ -346,7 +349,7 @@ setMethodS3("getHeaderV3", "AffymetrixCelFile", function(this, ...) {
 # }
 #
 # \value{
-#  Returns a \code{POSIXct} object.
+#  Returns a \code{POSIXct} object.  
 #  The parsed string containing the timestamp is returned as 
 #  attribute \code{text}.
 # }
@@ -370,13 +373,13 @@ setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y
   header <- getHeaderV3(this);
 
   # Get the DAT header
-  header <- header$DatHeader;
+  headerDAT <- header$DatHeader;
 
   # Find the element with a date. It is part of the same string as the
   # one containing the chip type.  Get the chip type from the header.
   chipType <- getHeader(this)$chiptype;
   pattern <- sprintf(" %s.1sq ", chipType);
-  header <- grep(pattern, header, value=TRUE);
+  header <- grep(pattern, headerDAT, value=TRUE);
 
   # Extract the date timestamp
   pattern <- ".*([01][0-9]/[0-3][0-9]/[0-9][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]).*";
@@ -399,8 +402,19 @@ setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y
 ##   timestamp <- substring(header, first=pos, last=pos+nTimestamp-1);
 
   timestamp <- trim(timestamp); # Unnecessary?
+
+  # Parse the identified timestamp into POSIXct
   res <- strptime(timestamp, format=format, ...);
+
+  # If no valid timestamp was found, return NA.
+  if (length(res) == 0)
+    res <- as.POSIXct(NA);
+
+  # Keep the non-parsed timetstamp etc for debugging.
   attr(res, "text") <- timestamp;
+  attr(res, "header") <- header;
+  attr(res, "headerDAT") <- headerDAT;
+
   res;
 }, private=TRUE)
 
@@ -740,6 +754,11 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 
 ############################################################################
 # HISTORY:
+# 2007-05-09
+# o BUG FIX: If no valid timestamp was identified in the CEL header by
+#   getTimestamp() of AffymetrixCelFile, then as.character() would give
+#   "Error in sprintf(fmt, ...) : zero-length argument".  Now it returns
+#   NA instead as a fall back if no valid timestamp is found.
 # 2007-03-23
 # o BUG FIX: Called non-existing readHeader() instead of getHeader().
 # 2007-03-05

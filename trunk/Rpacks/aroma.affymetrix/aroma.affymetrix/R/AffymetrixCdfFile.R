@@ -50,7 +50,10 @@ setMethodS3("clearCache", "AffymetrixCdfFile", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("as.character", "AffymetrixCdfFile", function(this, ...) {
+setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Filename: %s", getFilename(this)));

@@ -114,7 +114,10 @@ setMethodS3("byPath", "AffymetrixCelSetTuple", function(static, path, ..., verbo
 
 
 
-setMethodS3("as.character", "AffymetrixCelSetTuple", function(this, ...) {
+setMethodS3("as.character", "AffymetrixCelSetTuple", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));

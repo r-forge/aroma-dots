@@ -19,7 +19,7 @@
  Returns a short string describing the Affymetrix file set.
 }
 
-\usage{\method{as.character}{AffymetrixFileSet}(this, ...)}
+\usage{\method{as.character}{AffymetrixFileSet}(x, ...)}
 
 \arguments{
   \item{...}{Not used.}

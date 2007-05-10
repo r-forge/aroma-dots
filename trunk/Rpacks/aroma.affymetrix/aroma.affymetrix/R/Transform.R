@@ -95,7 +95,10 @@ setMethodS3("getRootPath", "Transform", function(this, ...) {
 
 
 
-setMethodS3("as.character", "Transform", function(this, ...) {
+setMethodS3("as.character", "Transform", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   ds <- getInputDataSet(this);
   s <- c(s, sprintf("Data set: %s", getName(ds)));

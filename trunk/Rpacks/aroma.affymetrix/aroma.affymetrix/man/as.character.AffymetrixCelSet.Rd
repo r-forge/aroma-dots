@@ -19,7 +19,7 @@
  Returns a short string describing the Affymetrix CEL set.
 }
 
-\usage{\method{as.character}{AffymetrixCelSet}(this, ...)}
+\usage{\method{as.character}{AffymetrixCelSet}(x, ...)}
 
 \arguments{
   \item{...}{Not used.}

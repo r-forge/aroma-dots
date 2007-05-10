@@ -53,8 +53,11 @@ setMethodS3("clearCache", "WeightsSet", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("as.character", "WeightsSet", function(this, ...) {
-  s <- NextMethod(generic="as.character", object=this, ...);
+setMethodS3("as.character", "WeightsSet", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
+  s <- NextMethod(generic="as.character", this, ...);
   params <- paste(getParametersAsString(this), collapse=", ");
   s <- c(s, sprintf("Parameters: (%s)", params));
   class(s) <- "GenericSummary";

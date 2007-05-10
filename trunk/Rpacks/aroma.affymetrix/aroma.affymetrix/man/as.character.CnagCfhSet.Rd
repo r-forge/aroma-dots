@@ -19,7 +19,7 @@
  Returns a short string describing the CNAG CFH set.
 }
 
-\usage{\method{as.character}{CnagCfhSet}(this, ...)}
+\usage{\method{as.character}{CnagCfhSet}(x, ...)}
 
 \arguments{
   \item{...}{Not used.}

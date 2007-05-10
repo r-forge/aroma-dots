@@ -63,7 +63,10 @@ setMethodS3("clearCache", "AffymetrixProbeTabFile", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("as.character", "AffymetrixProbeTabFile", function(this, ...) {
+setMethodS3("as.character", "AffymetrixProbeTabFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   tags <- getTags(this);

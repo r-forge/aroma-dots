@@ -42,7 +42,10 @@ setMethodS3("uses", "Interface", function(this, ...) {
 })
 
 
-setMethodS3("as.character", "Interface", function(this, ...) {
+setMethodS3("as.character", "Interface", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   # Check if there are class "after" this one
   pos <- which("Interface" == class(this));
   isLast <- (pos == length(class(this)));

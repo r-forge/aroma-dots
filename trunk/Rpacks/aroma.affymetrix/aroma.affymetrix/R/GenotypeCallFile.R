@@ -50,8 +50,11 @@ setConstructorS3("GenotypeCallFile", function(..., cdf=NULL) {
 })
 
 
-setMethodS3("as.character", "GenotypeCallFile", function(this, ...) {
-  s <- NextMethod("as.character");
+setMethodS3("as.character", "GenotypeCallFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
+  s <- NextMethod("as.character", this, ...);
   s <- c(s, "CDF:");
   cdf <- getCdf(this);
   s <- c(s, as.character(cdf));

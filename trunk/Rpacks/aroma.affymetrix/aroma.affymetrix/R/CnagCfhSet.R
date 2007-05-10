@@ -158,7 +158,10 @@ setMethodS3("append", "CnagCfhSet", function(this, other, clone=TRUE, ..., verbo
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("as.character", "CnagCfhSet", function(this, ...) {
+setMethodS3("as.character", "CnagCfhSet", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   tags <- getTags(this);

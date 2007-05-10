@@ -36,7 +36,10 @@ setConstructorS3("DChipQuantileNormalization", function(..., robust=FALSE) {
 })
 
 
-setMethodS3("as.character", "DChipQuantileNormalization", function(this, ...) {
+setMethodS3("as.character", "DChipQuantileNormalization", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod("as.character", this, ...);
   nExcl <- length(getExclCells(this));
   n <- nbrOfCells(getCdf(getInputDataSet(this)));

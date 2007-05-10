@@ -23,10 +23,9 @@
   Gets the number of files in the file set.
 }
 
-\usage{\method{length}{AffymetrixFileSet}(this, ...)}
+\usage{\method{length}{AffymetrixFileSet}(x)}
 
 \arguments{
- \item{...}{Not used.}
 }
 
 \value{

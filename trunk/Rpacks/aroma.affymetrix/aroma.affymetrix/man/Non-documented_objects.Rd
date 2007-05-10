@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Sun Apr 22 21:18:15 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1085,8 +1083,6 @@
 \alias{writeRegions.ChromosomeExplorer}
 \alias{writeRegions.GladModel}
 \alias{writeRegions.profileCGH}
-\alias{writeSpatial}
-\alias{writeSpatial.ProbeAffinityFile}
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
 \alias{yellow.colors}

@@ -41,7 +41,10 @@ setConstructorS3("ProbeAffinityFile", function(..., probeModel=c("pm", "mm", "pm
   )
 })
 
-setMethodS3("as.character", "ProbeAffinityFile", function(this, ...) {
+setMethodS3("as.character", "ProbeAffinityFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod(generic="as.character", object=this, ...);
   params <- paste(getParametersAsString(this), collapse=", ");
   s <- c(s, sprintf("Parameters: (%s)", params));
@@ -108,26 +111,12 @@ setMethodS3("updateUnits", "ProbeAffinityFile", function(this, units=NULL, cdf=N
 
 
 
-setMethodS3("writeSpatial", "ProbeAffinityFile", function(this, ..., transform=NULL, zlim=c(0,3)) {
-  if (is.null(transform)) {
-    transform <- function(x) {
-      # Probe-affinities are in (0,Inf]
-      nok <- (x == 0);
-      # Truncate zeros to smallest strictly positive value
-      x[nok] <- min(x[!nok], na.rm=TRUE);
-
-#      x <- log(x, base=2);
-      x;
-    }
-  }
-
-  NextMethod("writeSpatial", this, ..., transform=transform, zlim=zlim);
-}, private=TRUE)
-
 
 
 ############################################################################
 # HISTORY:
+# 2007-05-09
+# o Removed writeSpatial().
 # 2007-01-03
 # o Renamed constructor argument 'model' to 'probeModel'.
 # 2006-09-11

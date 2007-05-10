@@ -1,12 +1,22 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.5.0 [2007-05-08xx]
+Version: 0.5.0 [2007-05-10]
 o getProbeAffinityFile() of ExonRmaPlm did not return the correct subclass.
 o Added default zoom levels to updateSamplesFile() for ChromosomeExplorer.  
   This is applies the first time process() is called.
+o Removed dependency of the R.image package by removing writeSpatial()
+  for the AffymetrixCelFile class.  Use writeImage() instead.
+o Now patchPackage(..., deleteOld=TRUE) removes not only old patches, but
+  also patches that are older than the package itself.  Thus, when loading
+  the package, all old patches are automatically removed.
 o BUG FIX: calibrateAllelicCrosstalk() for AffymetrixCelFile would output
   filenames containing only the name but not the tags.
+o BUG FIX: If no valid timestamp was identified in the CEL header by
+  getTimestamp() of AffymetrixCelFile, then as.character() would give
+  "Error in sprintf(fmt, ...) : zero-length argument".  Now it returns
+  NA instead as a fall back if no valid timestamp is found.  Thanks
+  Mark Robinson, WEHI, for reporting this.
 
 
 Version: 0.4.9 [2007-04-22]

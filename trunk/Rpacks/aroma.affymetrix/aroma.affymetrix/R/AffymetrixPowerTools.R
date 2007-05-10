@@ -75,7 +75,10 @@ setMethodS3("writeChrXFile", "AffymetrixPowerTools", function(static, cdf, path=
 }, static=TRUE)
 
 
-setMethodS3("as.character", "AffymetrixPowerTools", function(this, ...) {
+setMethodS3("as.character", "AffymetrixPowerTools", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
