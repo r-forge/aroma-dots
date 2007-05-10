@@ -1,0 +1,383 @@
+###########################################################################/**
+# @RdocClass ScaleNormalization
+#
+# @title "The ScaleNormalization class"
+#
+# \description{
+#  @classhierarchy
+#
+#  This class represents a normalization function that transforms the 
+#  probe-level signals towards the same scale.
+# }
+# 
+# @synopsis 
+#
+# \arguments{
+#   \item{...}{Arguments passed to the constructor of 
+#     @see "ProbeLevelTransform".}
+#   \item{targetAvg}{A @numeric value.}
+#   \item{subsetToUpdate}{The probes to be updated.
+#     If @NULL, all probes are updated.}
+#   \item{typesToUpdate}{Types of probes to be updated.}
+#   \item{subsetToAvg}{The probes to calculate average signal over.
+#     If a single @numeric in (0,1), then this
+#     fraction of all probes will be used.  
+#     If @NULL, all probes are considered.}
+#   \item{typesToAvg}{Types of probes to be used when calculating the 
+#     average signal.  
+#     If \code{"pm"} and \code{"mm"} only perfect-match and mismatch 
+#     probes are used, respectively. If \code{"pmmm"} both types are used.
+#   }
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"  
+# }
+# 
+# \examples{\dontrun{
+# }}
+#
+# @author
+#*/###########################################################################
+setConstructorS3("ScaleNormalization", function(..., targetAvg=2200, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate) {
+  # Argument 'targetAvg':
+  targetAvg <- Arguments$getDouble(targetAvg, range=c(1,Inf));
+
+  extend(ProbeLevelTransform(...), "ScaleNormalization", 
+    .subsetToUpdate = subsetToUpdate,
+    .typesToUpdate = typesToUpdate,
+    .targetAvg = targetAvg,
+    .subsetToAvg = subsetToAvg,
+    .typesToAvg = typesToAvg
+  )
+})
+
+
+setMethodS3("getSubsetToUpdate", "ScaleNormalization", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  subsetToUpdate <- this$.subsetToUpdate;
+
+  # Done?
+  if (identical(attr(subsetToUpdate, "adjusted"), TRUE))
+    return(subsetToUpdate);
+
+  # Ad hoc solution for ChipEffectSet:s for now. /HB 2007-04-11
+  ds <- getInputDataSet(this);
+  if (inherits(ds, "ChipEffectSet")) {
+    verbose && enter(verbose, "Identifying possible cells in ", class(ds)[1]);
+    df <- getFile(ds, 1);
+    possibleCells <- getCellIndices(df, verbose=less(verbose));
+    possibleCells <- unlist(possibleCells, use.names=FALSE);
+    possibleCells <- sort(possibleCells);
+    verbose && str(verbose, possibleCells);
+
+    verbose && cat(verbose, "'subsetToUpdate' (before): ");
+    verbose && str(verbose, subsetToUpdate);
+
+    if (is.null(subsetToUpdate)) {
+      subsetToUpdate <- possibleCells;
+    } else {
+      subsetToUpdate <- intersect(subsetToUpdate, possibleCells);
+    }
+    rm(possibleCells);
+    verbose && cat(verbose, "'subsetToUpdate' (after): ");
+    verbose && str(verbose, subsetToUpdate);
+
+    attr(subsetToUpdate, "adjusted") <- TRUE;
+    this$.subsetToUpdate <- subsetToUpdate;
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+    verbose && exit(verbose);
+  }
+
+  subsetToUpdate;
+}, private=TRUE)
+
+
+
+
+setMethodS3("getSubsetToAvg", "ScaleNormalization", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  subsetToAvg <- this$.subsetToAvg;
+
+  # Done?
+  if (identical(attr(subsetToAvg, "adjusted"), TRUE))
+    return(subsetToAvg);
+
+  # Ad hoc solution for ChipEffectSet:s for now. /HB 2007-04-11
+  ds <- getInputDataSet(this);
+  if (inherits(ds, "ChipEffectSet")) {
+    verbose && enter(verbose, "Identifying possible cells in ", class(ds)[1]);
+    df <- getFile(ds, 1);
+    possibleCells <- getCellIndices(df, verbose=less(verbose));
+    possibleCells <- unlist(possibleCells, use.names=FALSE);
+    possibleCells <- sort(possibleCells);
+    verbose && str(verbose, possibleCells);
+
+    verbose && cat(verbose, "'subsetToAvg' (before): ");
+    verbose && str(verbose, subsetToAvg);
+
+    if (is.null(subsetToAvg)) {
+      subsetToAvg <- possibleCells;
+    } else {
+      subsetToAvg <- intersect(subsetToAvg, possibleCells);
+    }
+    rm(possibleCells);
+    verbose && cat(verbose, "'subsetToAvg' (after): ");
+    verbose && str(verbose, subsetToAvg);
+
+    attr(subsetToAvg, "adjusted") <- TRUE;
+    this$.subsetToAvg <- subsetToAvg;
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+    verbose && exit(verbose);
+  }
+
+  subsetToAvg;
+}, private=TRUE)
+
+
+
+
+setMethodS3("getParameters", "ScaleNormalization", function(this, ...) {
+  # Get parameters from super class
+  params <- NextMethod(generic="getParameters", object=this, ...);
+
+  # Get parameters of this class
+  params2 <- list(
+    subsetToUpdate = getSubsetToUpdate(this),
+    typesToUpdate = this$.typesToUpdate,
+    subsetToAvg = getSubsetToAvg(this),
+    typesToAvg = this$.typesToAvg,
+    targetAvg = this$.targetAvg
+  );
+
+  # Append the two sets
+  params <- c(params, params2);
+
+  params;
+}, private=TRUE)
+
+
+
+
+###########################################################################/**
+# @RdocMethod process
+#
+# @title "Normalizes the data set"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{force}{If @TRUE, data already normalized is re-normalized, 
+#       otherwise not.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @double @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Scale normalizing data set");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Already done?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!force && isDone(this)) {
+    verbose && cat(verbose, "Already normalized");
+    verbose && exit(verbose);
+    outputDataSet <- getOutputDataSet(this);
+    return(invisible(outputDataSet));
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Setup
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get input data set
+  ds <- getInputDataSet(this);
+  cdf <- getCdf(ds);
+
+  # Get algorithm parameters
+  params <- getParameters(this);
+  targetAvg <- params$targetAvg;
+
+  subsetToAvg <- identifyCells(cdf, indices=params$subsetToAvg, 
+                          types=params$typesToAvg, verbose=less(verbose));
+  verbose && cat(verbose, "subsetToAvg:");
+  verbose && str(verbose, subsetToAvg);
+
+  subsetToUpdate <- identifyCells(cdf, indices=params$subsetToUpdate, 
+                       types=params$typesToUpdate, verbose=less(verbose));
+  verbose && cat(verbose, "subsetToUpdate:");
+  verbose && str(verbose, subsetToUpdate);
+
+  # Get the output path
+  outputPath <- getPath(this);
+
+
+  # Garbage collection
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Normalize each array
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Normalizing ", nbrOfArrays(ds), " arrays");
+  dataFiles <- list();
+  for (kk in seq(ds)) {
+    verbose && enter(verbose, "Array #", kk);
+    df <- getFile(ds, kk);
+    verbose && print(verbose, df);
+
+    filename <- basename(getPathname(df));
+    pathname <- Arguments$getWritablePathname(filename, path=outputPath);
+  
+    # Already normalized?
+    if (isFile(pathname) && skip) {
+      verbose && cat(verbose, "Normalized data file already exists: ",
+                                                                   pathname);
+      # CDF inheritance
+      dataFiles[[kk]] <- fromFile(df, pathname);
+      verbose && exit(verbose);
+      next;
+    }
+  
+    # Get probe signals
+    verbose && enter(verbose, "Reading probe intensities for fitting");
+    x <- getData(df, fields="intensities", indices=subsetToAvg, verbose=less(verbose,2))$intensities;
+    verbose && str(verbose, x);
+    verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    # Estimating scale
+    verbose && enter(verbose, "Estimating scale");
+    xM <- median(x, na.rm=TRUE);
+    rm(x); # Not needed anymore
+    verbose && printf(verbose, "Median before: %.2f\n", xM);
+    verbose && printf(verbose, "Target avg: %.2f\n", targetAvg);
+    s <- targetAvg / xM;
+    verbose && printf(verbose, "Scale: %.2f\n", s);
+    verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    # Get probe signals
+    verbose && enter(verbose, "Reading probe intensities to be updated");
+    x <- getData(df, fields="intensities", indices=subsetToUpdate, verbose=less(verbose,2))$intensities;
+    verbose && str(verbose, x);
+    verbose && exit(verbose);
+
+    # Rescale
+    verbose && enter(verbose, "Rescaling");
+    x <- s*x;
+    verbose && str(verbose, x);
+    xM <- median(x, na.rm=TRUE);
+    verbose && printf(verbose, "Median after: %.2f\n", xM);
+    verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    # Write normalized data to file
+    verbose && enter(verbose, "Writing normalized probe signals");
+
+    # Create CEL file to store results, if missing
+    verbose && enter(verbose, "Creating CEL file for results, if missing");
+    createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
+    verbose && exit(verbose);
+
+
+    verbose && enter(verbose, "Writing normalized intensities");
+    updateCel(pathname, indices=subsetToUpdate, intensities=x);
+
+    # Not needed anymore
+    rm(x);
+
+    verbose && exit(verbose);
+    verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    # Return new normalized data file object
+    dataFiles[[kk]] <- fromFile(df, pathname);
+    
+    verbose && exit(verbose);
+  } # for (kk in seq(ds))
+  verbose && exit(verbose);
+
+  # Garbage collection
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  # Create result set
+  outputDataSet <- newInstance(ds, dataFiles);
+  setCdf(outputDataSet, cdf);
+
+  # Update the output data set
+  this$outputDataSet <- outputDataSet;
+
+  verbose && exit(verbose);
+  
+  outputDataSet;
+})
+
+############################################################################
+# HISTORY:
+# 2007-04-16
+# o Created.
+############################################################################
