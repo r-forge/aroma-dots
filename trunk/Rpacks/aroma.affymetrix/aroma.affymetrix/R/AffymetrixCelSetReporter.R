@@ -30,7 +30,10 @@ setConstructorS3("AffymetrixCelSetReporter", function(..., .setClass="Affymetrix
 
 
 
-setMethodS3("as.character", "AffymetrixCelSetReporter", function(this, ...) {
+setMethodS3("as.character", "AffymetrixCelSetReporter", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));

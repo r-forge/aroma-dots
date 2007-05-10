@@ -42,7 +42,10 @@ setConstructorS3("PlatformDesign", function(cdf=NULL, ...) {
 }, private=TRUE)
 
 
-setMethodS3("as.character", "PlatformDesign", function(this, ...) {
+setMethodS3("as.character", "PlatformDesign", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));

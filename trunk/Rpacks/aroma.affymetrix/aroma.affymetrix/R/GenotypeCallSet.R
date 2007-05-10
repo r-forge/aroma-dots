@@ -71,7 +71,10 @@ setConstructorS3("GenotypeCallSet", function(files=NULL, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("as.character", "GenotypeCallSet", function(this, ...) {
+setMethodS3("as.character", "GenotypeCallSet", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));

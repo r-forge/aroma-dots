@@ -83,8 +83,11 @@ setMethodS3("clearCache", "WeightsFile", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("as.character", "WeightsFile", function(this, ...) {
-  s <- NextMethod(generic="as.character", object=this, ...);
+setMethodS3("as.character", "WeightsFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
+  s <- NextMethod(generic="as.character", this, ...);
   params <- paste(getParametersAsString(this), collapse=", ");
   s <- c(s, sprintf("Parameters: (%s)", params));
   class(s) <- "GenericSummary";

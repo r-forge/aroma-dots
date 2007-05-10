@@ -43,7 +43,10 @@ setConstructorS3("Explorer", function(tags="*", ...) {
 
 
 
-setMethodS3("as.character", "Explorer", function(this, ...) {
+setMethodS3("as.character", "Explorer", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));

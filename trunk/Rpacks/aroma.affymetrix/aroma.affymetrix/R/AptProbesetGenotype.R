@@ -29,7 +29,10 @@ setConstructorS3("AptProbesetGenotype", function(dataSet=NULL, tags=c("APT", "BR
 }, private=TRUE)
 
 
-setMethodS3("as.character", "AptProbesetGenotype", function(this, ...) {
+setMethodS3("as.character", "AptProbesetGenotype", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Tags: %s", paste(getTags(this), collapse=",")));

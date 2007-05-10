@@ -83,7 +83,10 @@ setMethodS3("clearCache", "ResidualFile", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("as.character", "ResidualFile", function(this, ...) {
+setMethodS3("as.character", "ResidualFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod(generic="as.character", object=this, ...);
   params <- paste(getParametersAsString(this), collapse=", ");
   s <- c(s, sprintf("Parameters: (%s)", params));

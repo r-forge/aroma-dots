@@ -66,7 +66,10 @@ setMethodS3("clone", "CnagCfhFile", function(this, ..., verbose=TRUE) {
 })
 
 
-setMethodS3("as.character", "CnagCfhFile", function(this, ...) {
+setMethodS3("as.character", "CnagCfhFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod("as.character", ...);
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
   s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));

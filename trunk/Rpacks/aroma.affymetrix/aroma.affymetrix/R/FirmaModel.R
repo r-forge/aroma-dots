@@ -81,7 +81,10 @@ setMethodS3("getTags", "FirmaModel", function(this, ...) {
   this$.tags;
 })
 
-setMethodS3("as.character", "FirmaModel", function(this, ...) {
+setMethodS3("as.character", "FirmaModel", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   ds <- getDataSet(this);
   s <- c(s, sprintf("Data set: %s", getName(ds)));

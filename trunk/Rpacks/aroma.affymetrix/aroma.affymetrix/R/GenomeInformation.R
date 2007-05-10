@@ -29,7 +29,10 @@ setConstructorS3("GenomeInformation", function(...) {
 })
 
 
-setMethodS3("as.character", "GenomeInformation", function(this, ...) {
+setMethodS3("as.character", "GenomeInformation", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod("as.character", this, ...);
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   class(s) <- "GenericSummary";

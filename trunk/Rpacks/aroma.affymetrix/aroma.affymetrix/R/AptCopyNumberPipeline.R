@@ -29,7 +29,10 @@ setConstructorS3("AptCopyNumberPipeline", function(dataSet=NULL, tags=c("APT", "
 }, private=TRUE)
 
 
-setMethodS3("as.character", "AptCopyNumberPipeline", function(this, ...) {
+setMethodS3("as.character", "AptCopyNumberPipeline", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Tags: %s", paste(getTags(this), collapse=",")));

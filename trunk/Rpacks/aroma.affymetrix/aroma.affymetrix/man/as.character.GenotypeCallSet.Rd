@@ -19,7 +19,7 @@
  Returns a short string describing the genotype call set.
 }
 
-\usage{\method{as.character}{GenotypeCallSet}(this, ...)}
+\usage{\method{as.character}{GenotypeCallSet}(x, ...)}
 
 \arguments{
   \item{...}{Not used.}

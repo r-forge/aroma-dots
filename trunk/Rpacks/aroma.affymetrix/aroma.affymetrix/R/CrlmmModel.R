@@ -72,7 +72,10 @@ setConstructorS3("CrlmmModel", function(ces=NULL, minLLRforCalls=c(AA=50, AB=40,
 
 
 
-setMethodS3("as.character", "CrlmmModel", function(this, ...) {
+setMethodS3("as.character", "CrlmmModel", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, sprintf("SNP chip-effect set: %s", getName(this)));
   ces <- getChipEffects(this);

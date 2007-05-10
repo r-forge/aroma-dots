@@ -42,7 +42,10 @@ setConstructorS3("ArrayExplorer", function(csTuple=NULL, ...) {
 
 
 
-setMethodS3("as.character", "ArrayExplorer", function(this, ...) {
+setMethodS3("as.character", "ArrayExplorer", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));

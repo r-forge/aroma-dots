@@ -54,7 +54,10 @@ setMethodS3("clearCache", "ChipEffectSet", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("as.character", "ChipEffectSet", function(this, ...) {
+setMethodS3("as.character", "ChipEffectSet", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod(generic="as.character", object=this, ...);
   params <- paste(getParametersAsString(this), collapse=", ");
   s <- c(s, sprintf("Parameters: (%s)", params));
