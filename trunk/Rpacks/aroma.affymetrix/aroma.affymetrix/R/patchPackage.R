@@ -13,6 +13,7 @@
 #   \item{pkgName}{The name of the package to be patched."}
 #   \item{paths}{A @character @vector of paths containing package patches.}
 #   \item{deleteOld}{If @TRUE, old patch directories are deleted.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
 #   \item{...}{Not used.}
 # }
 #
@@ -21,6 +22,10 @@
 # }
 #
 # @author
+#
+# \seealso{
+#   @see "downloadPackagePatch"
+# }
 #
 # @keyword internal
 #*/###########################################################################

@@ -22,6 +22,7 @@
    \item{pkgName}{The name of the package to be patched."}
    \item{paths}{A \code{\link[base]{character}} \code{\link[base]{vector}} of paths containing package patches.}
    \item{deleteOld}{If \code{\link[base:logical]{TRUE}}, old patch directories are deleted.}
+   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
    \item{...}{Not used.}
  }
 
@@ -30,6 +31,10 @@
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+   \code{\link{downloadPackagePatch}}()
+ }
 
 
 \keyword{internal}
