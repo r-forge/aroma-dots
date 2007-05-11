@@ -1086,20 +1086,31 @@ setMethodS3("getLog2Ratios", "GladModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract the regions for each of the GLAD fits (per array)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Obtaining GLAD fits (or fit if missing)");
   suppressWarnings({
     res <- fit(this, ..., .retResults=TRUE, verbose=less(verbose,10));
   })
+  verbose && exit(verbose);
 
+
+  verbose && enter(verbose, "Extracting regions from all fits");
   res <- lapply(res, FUN=function(arrayFits) {
     df <- NULL;
-    for (fit in arrayFits) {
-      suppressWarnings({
-        df0 <- getRegions(fit, ...);
-      })
-      df <- rbind(df, df0);
+    # For each chromosome
+    for (kk in seq(along=arrayFits)) {
+      fit <- arrayFits[[kk]];
+      if (!is.null(fit)) {
+        verbose && enter(verbose, "Extracting regions for chromosome #", kk);
+        suppressWarnings({
+          df0 <- getRegions(fit, ...);
+        })
+        df <- rbind(df, df0);
+        verbose && exit(verbose);
+      }
     }
     rownames(df) <- seq(length=nrow(df));
   })
+  verbose && exit(verbose);
 
   res;
 }, private=TRUE) # getLog2Ratios()
@@ -1131,17 +1142,26 @@ setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", organism=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract the regions for each of the GLAD fits (per array)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Obtaining GLAD fits (or fit if missing)");
   suppressWarnings({
     res <- fit(this, ..., .retResults=TRUE, verbose=less(verbose,10));
   })
+  verbose && exit(verbose);
 
+  verbose && enter(verbose, "Extracting regions from all fits");
   res <- lapply(res, FUN=function(arrayFits) {
     df <- NULL;
-    for (fit in arrayFits) {
-      suppressWarnings({
-        df0 <- getRegions(fit, ...);
-      })
-      df <- rbind(df, df0);
+    # For each chromosome
+    for (kk in seq(along=arrayFits)) {
+      fit <- arrayFits[[kk]];
+      if (!is.null(fit)) {
+        verbose && enter(verbose, "Extracting regions for chromosome #", kk);
+        suppressWarnings({
+          df0 <- getRegions(fit, ...);
+        })
+        df <- rbind(df, df0);
+        verbose && exit(verbose);
+      }
     }
     rownames(df) <- seq(length=nrow(df));
 
@@ -1163,6 +1183,7 @@ setMethodS3("getRegions", "GladModel", function(this, ..., url="ucsc", organism=
 
     df;
   })
+  verbose && exit(verbose);
 
   if (flat) {
     df <- NULL;
@@ -1330,6 +1351,10 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-05-10
+# o BUG FIX: getRegions() and getLog2Ratios() would give an error if a subset
+#   of the chromosomes where queried.
+# o Added more verbose output to getRegions().
 # 2007-04-12
 # o Now plot() of the GladModel writes the chip type annotation in black and
 #   not in gray as before.

@@ -30,6 +30,7 @@
  \item{pattern}{An optional filename pattern used to locate the
    dChip genome file.  If \code{\link[base]{NULL}}, a default pattern is used.}
  \item{...}{Not used.}
+ \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

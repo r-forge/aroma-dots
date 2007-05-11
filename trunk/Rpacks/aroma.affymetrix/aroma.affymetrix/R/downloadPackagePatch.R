@@ -5,6 +5,7 @@
 #
 # \description{
 #  @get "title" from the package online reprocitory.
+#  By default, the patches are applied after being downloaded.
 # }
 # 
 # @synopsis 
@@ -13,6 +14,9 @@
 #   \item{pkgName}{The name of the package to be patched."}
 #   \item{version}{A @character string.}
 #   \item{url}{The root URL from where to download the patch.}
+#   \item{apply}{If @TRUE, the patches are applied immediately after
+#      being downloaded.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
 #   \item{...}{Not used.}
 # }
 #
@@ -22,9 +26,13 @@
 #
 # @author
 #
+# \seealso{
+#   @see "patchPackage"
+# }
+#
 # @keyword internal
 #*/###########################################################################
-setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, url=NULL, verbose=FALSE, ...) {
+setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, ...) {
   require(R.utils) || stop("Package not loaded: R.utils");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,6 +43,10 @@ setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, u
   
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -97,12 +109,19 @@ setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, u
   }
   pathnames <- file.path(path, files);
 
+  if (apply) {
+    patchPackage(pkgName);
+  }
+
   invisible(pathnames);
 }) # downloadPackagePatch()
 
 
 ############################################################################
 # HISTORY:
+# 2007-05-10
+# o Added argument 'apply=TRUE' to downloadPackagePatch() so that downloaded
+#   patches are applied immediately after being downloaded.
 # 2007-02-28
 # o Created.
 ############################################################################

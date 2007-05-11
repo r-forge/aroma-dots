@@ -407,8 +407,9 @@ setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y
   res <- strptime(timestamp, format=format, ...);
 
   # If no valid timestamp was found, return NA.
-  if (length(res) == 0)
+  if (length(as.character(res)) == 0) {
     res <- as.POSIXct(NA);
+  }
 
   # Keep the non-parsed timetstamp etc for debugging.
   attr(res, "text") <- timestamp;

@@ -14,14 +14,18 @@
 
  \description{
   Download a package patch from the package online reprocitory.
+  By default, the patches are applied after being downloaded.
  }
 
- \usage{\method{downloadPackagePatch}{default}(pkgName, version=NULL, url=NULL, verbose=FALSE, ...)}
+ \usage{\method{downloadPackagePatch}{default}(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, ...)}
 
  \arguments{
    \item{pkgName}{The name of the package to be patched."}
    \item{version}{A \code{\link[base]{character}} string.}
    \item{url}{The root URL from where to download the patch.}
+   \item{apply}{If \code{\link[base:logical]{TRUE}}, the patches are applied immediately after
+      being downloaded.}
+   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
    \item{...}{Not used.}
  }
 
@@ -30,6 +34,10 @@
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+   \code{\link{patchPackage}}()
+ }
 
 
 \keyword{internal}

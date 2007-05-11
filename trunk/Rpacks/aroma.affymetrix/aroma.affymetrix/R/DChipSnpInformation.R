@@ -99,6 +99,7 @@ setMethodS3("findByChipType", "DChipSnpInformation", function(static, chipType, 
 #  \item{pattern}{An optional filename pattern used to locate the 
 #    dChip genome file.  If @NULL, a default pattern is used.}
 #  \item{...}{Not used.}
+#  \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -116,11 +117,35 @@ setMethodS3("findByChipType", "DChipSnpInformation", function(static, chipType, 
 # @keyword programming
 #*/###########################################################################
 setMethodS3("fromChipType", "DChipSnpInformation", function(static, chipType, version=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Defining ", class(static)[1], " from chip type");
+  verbose && cat(verbose, "Chip type: ", chipType);
+  verbose && cat(verbose, "Version: ", version);
+
   # Search for the genome information file
-  pathname <- static$findByChipType(chipType, version=version, ...);
+  pathname <- static$findByChipType(chipType, version=version, ..., verbose=verbose);
+  verbose && cat(verbose, "Located pathname: ", pathname);
+
   if (is.null(pathname))
     throw("Failed to located dChip genome information: ", chipType);
-  newInstance(static, pathname);
+
+  verbose && enter(verbose, "Instantiating ", class(static)[1]);
+  res <- newInstance(static, pathname);
+  verbose && print(verbose, res);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  res;
 })
 
 
@@ -128,8 +153,8 @@ setMethodS3("verify", "DChipSnpInformation", function(this, ...) {
   tryCatch({
     df <- readData(this, nrow=10);
   }, error = function(ex) {
-    throw("File format error of the dChip SNP information file: ", 
-                                                  getPathname(this));
+    throw("File format error of the dChip SNP information file (", 
+                                 ex$message, "): ", getPathname(this));
   })
   invisible(TRUE);
 }, private=TRUE)

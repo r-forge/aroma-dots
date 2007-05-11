@@ -19,13 +19,14 @@
  Defines a DChipGenomeInformation object by chip type.
 }
 
-\usage{\method{fromChipType}{DChipGenomeInformation}(static, chipType, version=NULL, ...)}
+\usage{\method{fromChipType}{DChipGenomeInformation}(static, chipType, version=NULL, ..., verbose=FALSE)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}
  \item{version}{An optional \code{\link[base]{character}} string specifying the version
    string, if more than one version is available.}
  \item{...}{Not used.}
+ \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

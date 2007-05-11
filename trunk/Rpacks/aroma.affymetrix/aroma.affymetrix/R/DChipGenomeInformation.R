@@ -94,6 +94,7 @@ setMethodS3("findByChipType", "DChipGenomeInformation", function(static, chipTyp
 #  \item{version}{An optional @character string specifying the version
 #    string, if more than one version is available.}
 #  \item{...}{Not used.}
+#  \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -110,12 +111,36 @@ setMethodS3("findByChipType", "DChipGenomeInformation", function(static, chipTyp
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType, version=NULL, ...) {
+setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType, version=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Defining ", class(static)[1], " from chip type");
+  verbose && cat(verbose, "Chip type: ", chipType);
+  verbose && cat(verbose, "Version: ", version);
+
   # Search for the genome information file
-  pathname <- static$findByChipType(chipType, version=version, ...);
+  pathname <- static$findByChipType(chipType, version=version, ..., verbose=verbose);
+  verbose && cat(verbose, "Located pathname: ", pathname);
+
   if (is.null(pathname))
     throw("Failed to located dChip genome information: ", chipType);
-  newInstance(static, pathname);
+
+  verbose && enter(verbose, "Instantiating ", class(static)[1]);
+  res <- newInstance(static, pathname);
+  verbose && print(verbose, res);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  res;
 })
 
 
@@ -123,8 +148,8 @@ setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {
   tryCatch({
     df <- readData(this, nrow=10);
   }, error = function(ex) {
-    throw("File format error of the dChip genome information file: ", 
-                                                  getPathname(this));
+    throw("File format error of the dChip genome information file (", 
+                                 ex$message, "): ", getPathname(this));
   })
   invisible(TRUE);
 }, private=TRUE)
@@ -149,7 +174,9 @@ setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
       readFcn <- readFcns[[kk]];
       tryCatch({
         res <- readFcn(this, ...);
-      }, error=function(ex) {})
+      }, error=function(ex) {
+        print(ex);
+      })
     }
   }
 
@@ -159,7 +186,9 @@ setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
       readFcn <- readFcns[[kk]];
       tryCatch({
         res <- readFcn(this, ...);
-      }, error=function(ex) {})
+      }, error=function(ex) {
+        print(ex);
+      })
       if (!is.null(res))
         break;
     }
