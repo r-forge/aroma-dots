@@ -1,0 +1,17 @@
+readCdfCells <- function(pathname, units=NULL, ..., indexOffset=0) {
+  # Argument 'indexOffset':
+  indexOffset <- as.integer(indexOffset);
+
+  cdf <- readCdfUnits(cdfFile, units=units, readXY=FALSE, readCells=TRUE, 
+                      readBases=FALSE, readDirection=FALSE, readExpos=FALSE,
+                                                       readType=FALSE, ...);
+  cells <- unlist(cdf, use.names=FALSE);
+  if (indexOffset == 1)
+    cells <- cells + as.integer(1);
+  cells;
+}
+
+############################################################################
+# HISTORY:
+# 2006-03-18
+############################################################################
