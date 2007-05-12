@@ -1,0 +1,33 @@
+#########################################################################/**
+# @RdocFunction readCdfNbrOfCellsPerUnitGroup
+#
+# @title "Gets the number of cells (probes) that each group of each unit in a CDF file"
+#
+# @synopsis 
+# 
+# \description{
+# }
+# 
+# \arguments{
+#   \item{filename}{The filename of the CDF file.}
+#   \item{units}{An @integer @vector of (zero-based) unit indices 
+#     specifying which units to be read.  If @NULL, all units are read.}
+#   \item{verbose}{An @integer specifying the verbose level. If 0, the 
+#     file is parsed quietly.  The higher numbers, the more details.}
+# }
+# 
+# \value{
+#   A named @list of named @integer vectors.  The name of the list elements
+#   are unit names and the names of the integer vector are group names.
+# }
+# 
+# \examples{\dontrun{@include "readCdfNbrOfCellsPerUnitGroup.Rex"}}
+#
+# \author{Henrik Bengtsson, \email{hb@maths.lth.se}.}
+# 
+# \seealso{
+# }
+# 
+# @keyword "file"
+# @keyword "IO"
+#*/#########################################################################

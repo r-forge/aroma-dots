@@ -1,0 +1,23 @@
+Package: aroma.affxparser
+=========================
+
+Version: 0.1.3 [2006-06-19]
+o Forgot to use autoload("setMethodS3", package="R.oo") etc.
+  Packaged would not install on Linux.
+
+Version: 0.1.2 [2006-03-18]
+o Added updateApdUnits(). 
+o Now all probe indices are not longer zero-based but one-based.
+  However, there is still an option to change this to zero-based
+  indices again by using argument 'indexOffset=0'.  This option
+  might be remove in the future, because zero-based indices are
+  really confusing in R.
+
+Version: 0.1.1 [2006-03-14]
+o There is now a quite large set of methods to process APD files.
+o All of the methods to re-arrange CDF structures and to create
+  cell-index maps have been moved to the affxparser package.
+
+Version: 0.1.0 [2006-02-23]
+o Created.
+
