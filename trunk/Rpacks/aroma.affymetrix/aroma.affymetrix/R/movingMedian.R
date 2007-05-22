@@ -1,3 +1,6 @@
+# \seealso{
+#   @see "stats:runmed".
+# }
 setMethodS3("movingMedian", "matrix", function(Y, x, w=NULL, h=1, na.rm=FALSE, ...) {
   # Argument 'Y'
   n <- nrow(Y);
@@ -47,6 +50,8 @@ setMethodS3("movingMedian", "matrix", function(Y, x, w=NULL, h=1, na.rm=FALSE, .
 
 ############################################################################
 # HISTORY:
+# 2007-05-14
+# o NOTE: Currently argument 'x' is not used.
 # 2007-04-08
 # o Added Gaussian smoothing for columns in a matrix.
 # 2007-04-02
