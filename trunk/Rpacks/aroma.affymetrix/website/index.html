@@ -12,10 +12,44 @@
 
 <h1>The aroma.affymetrix package</h1>
 <p>
-<small>by Henrik Bengtsson, 2007-02-28.</small>
+The aroma.affymetrix package is under beta testing and currently available for collaborators.  The plan is to go public in summer 2007. Please check back again.  In the meantime, here are some peek previews:
+<ul>
+ <li>
+  Copy-number variations displayed by the <a href="http://www.stat.berkeley.edu/hb/aroma.affymetrix/demo/reports/HapMap500K/QN,RMA,A+B,FLN/">ChromsomeExplorer</a> (requires Firefox).
+ </li>
+ <li>
+  Spatial representation of probe-level modelling residuals displayed by the <a href="http://www.stat.berkeley.edu/hb/aroma.affymetrix/demo/reports/HapMap500K/QN,RMA/ArrayExplorer.html">ArrayExplorer</a> (requires Firefox).
+ </li>
+</ul>
+...and some of its features:
+<ul>
+<li>Number of arrays: <strong>unlimited</strong>.
+<li>System requirements: <strong>~1.5GB RAM, any operating system (easy to install)</strong>.
+<li>Chip types: <strong>all Affymetrix chip types</strong> with a CDF, e.g. SNP, exon, and gene expression.
+<li>File formats: Works directly with <strong>CEL and CDF files</strong>.
+<li>Persistent memory: Final and intermediate results and estimates are stored on file.
+<li>Robustness: Analysis picks up were last interrupted.
+<li>Export to/Import from: Bioconductor, CNAG, CNAT, dChip, Affymetrix Power Tools.
+<li>Pre-processing: Background correction, allelic cross-talk calibration, quantile normalization etc.
+<li>Probe-level modelling: RMA, MBEI, affine.
+<li>Post-processing: PCR fragment-length normalization.
+<li>Copy-number analysis: GLAD.  Possible to combine data from multiple chip types.
+<li>Genotyping: Interfacing to BRLMM and CRLMM (a bit out of date).
+<li>Alternative splicing: FIRMA (under development).
+<li>Dynamic HTML reports: ArrayExplorer, ChromosomeExplorer.
+<li>Design goals: <strong>usability, quality &amp; extentability</strong>.
+<li>Online documentation: <a href="http://groups.google.com/group/aroma-affymetrix/">aroma.affymetrix Google Group</a> (will go public with the package)
+</ul>
 </p>
 <p>
-The aroma.affymetrix package is under early beta testing and currently available for collaborators.  The plan is to go public no later than May June 2007. Please check.
+A some what outdated talk showing some scripts:<br>
+Henrik Bengtsson. <em>Using aroma.affymetrix for copy-number analysis</em>, WEHI January 8, 2007 (<a href="http://www.braju.com/R/aroma.affymetrix/docs/BengtssonH_20070108-UsingAromaAffymetrix-online.pdf">pdf</a>).
+</p>
+<p>
+Cheers<br>
+<br>
+Henrik Bengtsson<br>
+(2007-05-24)
 </p>
 
 
