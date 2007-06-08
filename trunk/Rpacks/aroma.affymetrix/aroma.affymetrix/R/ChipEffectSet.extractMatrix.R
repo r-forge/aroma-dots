@@ -21,10 +21,10 @@
 # }
 #
 # \value{
-#  Returns an Jx(3+K) @double @matrix where J is the number of units, 
+#  Returns an JxK @double @matrix where J is the number of units, 
 #  and K is the number of arrays.
-#  The names of the columns (after the 3rd) are the names of the arrays.
-#  The names of the rows are the unit indices (as indexed by the CDF).
+#  The names of the columns are the names of the arrays.
+#  No names are set for the rows.
 #  The rows are ordered according to \code{units} arguments.
 # }
 #
@@ -112,6 +112,8 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, units=NULL, ..., fi
 
 ############################################################################
 # HISTORY:
+# 2007-05-26
+# o Updated the Rdocs.
 # 2007-03-04
 # o Created.
 ############################################################################

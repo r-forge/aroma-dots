@@ -1,6 +1,18 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.5.1 [2007-06-08x]
+o Moved normalizeAverage() to aroma.light.
+o BUG FIX: When argument 'transforms' to getImage() of AffymetrixCelFile
+  wasn't a list, then "Error: argument "transform" is missing, with no
+  default" was thrown.  Thanks Karen Vranizan, UC Berkeley for reporting
+  this problem.
+o BUG FIX: If an Affymetrix probe tab file is not found for the chip type,
+  computeAffinitities() of AffymetrixCdfFile would throw "Error in 
+  paste(..., sep = sep, collapse = collapse): object "pattern" not found"
+  instead of an intended and more information error.
+
+
 Version: 0.5.0 [2007-05-10]
 o Package passes R CMD check on Rv2.5.0 (and R v2.4.1).
 o Package pass redundancy tests on R v2.5.0 (and R v2.4.1). This was

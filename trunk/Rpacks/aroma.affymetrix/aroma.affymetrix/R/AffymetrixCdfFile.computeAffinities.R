@@ -66,17 +66,17 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Locate find probe sequence file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  psFile <- AffymetrixProbeTabFile$findByChipType(chipType=getChipType(this), 
+  psFile <- AffymetrixProbeTabFile$findByChipType(chipType=chipType, 
                                          paths=paths, verbose=less(verbose));
-  if (is.null(psFile)) 
-    throw("Could not locate probe sequence file: ", pattern);
-  verbose && cat(verbose, "Probe-sequence pathname: ", psFile);
-  verbose && exit(verbose);
+  if (is.null(psFile))
+    throw("Could not locate probe sequence file for chip type: ", chipType);
+
+  verbose && cat(verbose, "Pathname of located probe-tab file: ", psFile);
 
   
 # read in probe sequence data
 
-  dimension <- getDimension(this)
+  dimension <- getDimension(this);
 
 #  con <- file(psFile, open="r")
 #  on.exit({
@@ -90,6 +90,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   # Note: Not all probe sequence tab files have column headers
   oLevel <- setDefaultLevel(verbose, -50);
   on.exit(setDefaultLevel(verbose, oLevel));
+
   verbose && enter(verbose, "Identifying first data row");
   lines <- readLines(psFile, n=2);
   hasHeader <- (regexpr("[Pp]robe.*[Ss]equence", lines[1]));
@@ -245,31 +246,33 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
     reset(pb);
   }
 
-  for (i in seq(along = apm)) {
-    if (verbose && i %% 1000 == 0)
+  T13A13 <- T13 - A13;
+  C13G13 <- C13 - G13;
+  for (ii in seq(along = apm)) {
+    if (verbose && ii %% 1000 == 0)
       increase(pb);
     # Get a 4x25 matrix with rows A, C, G, and T.
-    charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[i], 
+    charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
                                                        PACKAGE="gcrma");
 
     A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
                charMtrx[2, ] %*% affinity.basis.matrix, 
                charMtrx[3, ] %*% affinity.basis.matrix);
-    apm[i] <- A %*% affinity.spline.coefs;
+    apm[ii] <- A %*% affinity.spline.coefs;
     if (charMtrx[1, 13] == 1) {
-      amm[i] <- apm[i] + T13 - A13;
+      amm[ii] <- apm[ii] + T13A13;  # + T13 - A13
     } else {
       if (charMtrx[4, 13] == 1) {
-        amm[i] <- apm[i] + A13 - T13;
+        amm[ii] <- apm[ii] - T13A13;  # + A13 - T13
       } else {
         if (charMtrx[3, 13]) {
-          amm[i] <- apm[i] + C13 - G13;
+          amm[ii] <- apm[ii] + C13G13;  # + C13 - G13
         } else {
-          amm[i] <- apm[i] + G13 - C13;
+          amm[ii] <- apm[ii] - C13G13;  # + G13 - C13
         }
       }
     }
-  }
+  } # for (ii in ...)
   rm(charMtrx, A); # Not needed anymore
   verbose && cat(verbose, "");
 
@@ -296,6 +299,11 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 ############################################################################
 # HISTORY:
+# 2007-06-07
+# o BUG FIX: If an Affymetrix probe tab file is not found for the chip type,
+#   computeAffinitities() of AffymetrixCdfFile would throw "Error in 
+#   paste(..., sep = sep, collapse = collapse): object "pattern" not found"
+#   instead of an intended and more information error.
 # 2007-02-06
 # o Now computeAffinities() is locating the Affymetrix' probe-sequence file
 #   using AffymetrixProbeTabFile$findByChipType().

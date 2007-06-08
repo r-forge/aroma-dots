@@ -33,10 +33,10 @@
 }
 
 \value{
- Returns an Jx(3+K) \code{\link[base]{double}} \code{\link[base]{matrix}} where J is the number of units,
+ Returns an JxK \code{\link[base]{double}} \code{\link[base]{matrix}} where J is the number of units,
  and K is the number of arrays.
- The names of the columns (after the 3rd) are the names of the arrays.
- The names of the rows are the unit indices (as indexed by the CDF).
+ The names of the columns are the names of the arrays.
+ No names are set for the rows.
  The rows are ordered according to \code{units} arguments.
 }
 

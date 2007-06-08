@@ -150,6 +150,8 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
     pattern <- sprintf("^%s_probe_tab$", chipType);
     pathname <- findFiles(pattern=pattern, paths=paths, recursive=TRUE);
     if (length(pathname) == 0) {
+      pathname <- NULL;
+
       # Since Affymetrix is not naming their probe tab files consistently,
       # it might be that they chop of the end of the chip type string.
   
@@ -157,24 +159,27 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
       pattern <- sprintf("_probe_tab$");
       pathnames <- findFiles(pattern=pattern, paths=paths, 
                                               firstOnly=FALSE, recursive=TRUE);
+
+      # Found any files?
+      if (length(pathnames) > 0) {
+        # 2. Extract the part of the filenames containing chip type names
+        names <- gsub(pattern, "", basename(pathnames));
+      
+        # 3. Create patterns out of these
+        patterns <- paste("^", names, sep="");
     
-      # 2. Extract the part of the filenames containing chip type names
-      names <- gsub(pattern, "", basename(pathnames));
-    
-      # 3. Create patterns out of these
-      patterns <- paste("^", names, sep="");
-  
-      # 4. Keep only those files that match the prefix of the chip type
-      keep <- sapply(patterns, function(pattern) {
-        (regexpr(pattern, chipType) != -1);
-      });
-      pathnames <- pathnames[keep];
-  
-      # 4b. If more than one match was found, keep the longest one
-      if (length(pathnames) > 1) {
-        names <- names[keep];
-        keep <- which.max(nchar(names));
+        # 4. Keep only those files that match the prefix of the chip type
+        keep <- sapply(patterns, function(pattern) {
+          (regexpr(pattern, chipType) != -1);
+        });
         pathnames <- pathnames[keep];
+    
+        # 4b. If more than one match was found, keep the longest one
+        if (length(pathnames) > 1) {
+          names <- names[keep];
+          keep <- which.max(nchar(names));
+          pathnames <- pathnames[keep];
+        }
       }
   
       pathname <- pathnames[1];
@@ -259,6 +264,10 @@ df <- NULL;
 
 ############################################################################
 # HISTORY:
+# 2007-06-07
+# o When there are no annotation files, findByChipType() of 
+#   AffymetrixProbeTabFile would throw "Error in basename(path) : a 
+#   character vector argument expected".  Not it returns NULL.
 # 2006-12-06
 # o Can read probe-tab data from file.  However, for probes not in the file
 #   NAs are returned, which typically means that data only for PMs will be
