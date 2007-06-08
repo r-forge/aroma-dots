@@ -81,7 +81,7 @@
   findUnitsTodo.FirmaSet findUnitsTodo.QualityAssessmentFile
   findUnitsTodo.ResidualFile findUnitsTodo.ResidualSet
   findUnitsTodo.WeightsFile findUnitsTodo.WeightsSet fit
-  fit.PcrProbeCalibration fitGenotypeCone fitGenotypeCone.matrix
+  fit.PcrProbeCalibration fitGenotypeCone
   fitGlad fitGlad.CnChipEffectSet fitOne fitPlasqUnit
   fitPlasqUnit.matrix fitQuantileNormFcn fixSearchPath
   fixSearchPath.AromaAffymetrix forDataSet forDataSet.GdasAnnotationSet
@@ -172,7 +172,7 @@
   getColorMaps.ArrayExplorer getColorMaps.SpatialReporter
   getCombineAlleles getCombineAlleles.CnChipEffectSet
   getCommonListElements getCommonPrefix getCrlmmInfo
-  getCrlmmInfo.PlatformDesign getData.AffymetrixCelSet
+  getCrlmmInfo.PlatformDesign getData getData.AffymetrixCelSet
   getData.AffymetrixProbeTabFile getDataColumns
   getDataColumns.GenomeInformation getDataFile
   getDataFile.PlatformDesign getDataFiles getDataFiles.PlatformDesign
@@ -355,7 +355,7 @@
   nbrOfQcUnits.AffymetrixCdfFile nbrOfRows nbrOfRows.AffymetrixCdfFile
   nbrOfSnps nbrOfUnits nbrOfUnits.AffymetrixCdfFile
   nbrOfUnits.AromaUgpFile nbrOfUnits.GenomeInformation
-  nbrOfUnits.SnpInformation normalizeAverage normalizeGenotypeCone
+  nbrOfUnits.SnpInformation normalizeGenotypeCone
   normalizeGenotypeCone.matrix normalizeQuantileSpline plasqGaussian
   plot.GladModel plot.profileCGH plotFit plotFit.PcrProbeCalibration
   plotImage plotMvsPosition plotMvsPosition.ProbeLevelModel plotMvsX

@@ -67,5 +67,10 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
 }
 
+\details{
+  Internally \code{\link[affy]{bg.adjust}} is used to background correct the
+  probe signals.  The default is to background correct PM signals only.
+}
+
 \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 \keyword{classes}

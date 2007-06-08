@@ -23,6 +23,11 @@
 #  @allmethods "public"
 # }
 #
+# \details{
+#   Internally @see "affy::bg.adjust" is used to background correct the
+#   probe signals.  The default is to background correct PM signals only.
+# }
+#
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #*/###########################################################################
 setConstructorS3("RmaBackgroundCorrection", function(..., addJitter=FALSE, jitterSd=0.2) {
@@ -130,7 +135,8 @@ setMethodS3("process", "RmaBackgroundCorrection", function(this, ..., force=FALS
 
 ############################################################################
 # HISTORY:
+# 2007-05-26
+# o Updated the Rdocs.
 # 2007-03-21
 # o Created.
 ############################################################################
-

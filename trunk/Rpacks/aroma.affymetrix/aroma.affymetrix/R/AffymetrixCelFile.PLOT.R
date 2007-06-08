@@ -697,11 +697,12 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   field <- match.arg(field);
   
   # Argument 'transforms':
-  transforms <- as.list(transforms);
+  if (!is.list(transforms))
+    transforms <- list(transforms);
   for (transform in transforms) {
     if (!is.function(transform)) {
       throw("Argument 'transforms' contains a non-function: ", 
-                                                              mode(transform));
+                                                        mode(transform));
     }
   }
 
@@ -716,7 +717,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   verbose <- Arguments$getVerbose(verbose);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Getting CEL image");
@@ -983,6 +984,11 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2007-06-07
+# o BUG FIX: When argument 'transforms' to getImage() of AffymetrixCelFile
+#   wasn't a list, then "Error: argument "transform" is missing, with no
+#   default" was thrown.  Thanks Karen Vranizan, UC Berkeley for reporting
+#   this problem.
 # 2007-03-20
 # o Now writeImage() uses the file alias as the name if it exists.
 # 2007-03-19

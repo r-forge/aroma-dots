@@ -34,6 +34,7 @@
  Returns an JxK \code{\link[base]{double}} \code{\link[base]{matrix}} where J is the number of units,
  and K is the number of arrays.
  The names of the columns are the names of the arrays.
+ No names are set for the rows.
  The rows are ordered according to \code{cells} argument.
 }
 

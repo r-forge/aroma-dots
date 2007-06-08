@@ -217,7 +217,6 @@
 \alias{fit}
 \alias{fit.PcrProbeCalibration}
 \alias{fitGenotypeCone}
-\alias{fitGenotypeCone.matrix}
 \alias{fitGlad}
 \alias{fitGlad.CnChipEffectSet}
 \alias{fitOne}
@@ -419,6 +418,7 @@
 \alias{getCommonPrefix}
 \alias{getCrlmmInfo}
 \alias{getCrlmmInfo.PlatformDesign}
+\alias{getData}
 \alias{getData.AffymetrixCelSet}
 \alias{getData.AffymetrixProbeTabFile}
 \alias{getDataColumns}
@@ -845,7 +845,6 @@
 \alias{nbrOfUnits.AromaUgpFile}
 \alias{nbrOfUnits.GenomeInformation}
 \alias{nbrOfUnits.SnpInformation}
-\alias{normalizeAverage}
 \alias{normalizeGenotypeCone}
 \alias{normalizeGenotypeCone.matrix}
 \alias{normalizeQuantileSpline}
