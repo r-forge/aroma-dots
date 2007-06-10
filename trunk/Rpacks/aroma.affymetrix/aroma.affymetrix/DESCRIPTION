@@ -11,4 +11,4 @@ Description: This package implements classes for files and sets of files for var
 License: Private for now (LGPL to come)
 URL: http://www.braju.com/R/
 LazyLoad: TRUE
-biocViews: Microarray, OneChannel, DataImport, Preprocessing, DNACopyNumber
+biocViews: Infrastructure, Microarray, OneChannel, DataImport, Preprocessing, DNACopyNumber
