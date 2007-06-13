@@ -416,7 +416,8 @@ setMethodS3("readUnits", "CnagCfhFile", function(this, units=NULL, ..., verbose=
   offset <- getHeaderLength(this);
   nbrOfSnps <- nbrOfSnps(this);
   bytesPerSnp <- 13;
-  map <- offset + matrix(1:(bytesPerSnp*nbrOfSnps), nrow=bytesPerSnp);
+  nbrOfBytes <- bytesPerSnp*nbrOfSnps;
+  map <- offset + matrix(1:nbrOfBytes, nrow=bytesPerSnp);
 
   # Read subset of units
   if (!is.null(units)) {
@@ -477,6 +478,9 @@ setMethodS3("range", "CnagCfhFile", function(this, ..., na.rm=TRUE) {
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: readUnits() of CnagCfhFile was broken because it used the
+#   non-existing variable 'nbrOfBytes'.
 # 2007-04-05
 # o Created.
 ############################################################################

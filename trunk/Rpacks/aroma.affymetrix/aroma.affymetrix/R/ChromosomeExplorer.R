@@ -268,7 +268,7 @@ setMethodS3("getChromosomes", "ChromosomeExplorer", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbose=FALSE) {
-  require(R.rsp) || throw("Package not loaded: R.rsp");
+  require("R.rsp") || throw("Package not loaded: R.rsp");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

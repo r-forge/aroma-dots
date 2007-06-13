@@ -513,7 +513,7 @@
   getIdentifier.CnagCfhSet getParameters.ParameterCelFile
   getSubsetToAvg getSubsetToAvg.QuantileNormalization
   getSubsetToUpdate.DChipQuantileNormalization getTimestamp.CnagCfhFile
-  getTimestamps.CnagCfhSet movingMedian movingMedian.matrix
+  getTimestamps.CnagCfhSet 
   nbrOfCells.CnagCfhFile nbrOfSnps.CnagCfhFile range.CnagCfhFile
   range.CnagCfhSet readCfhHeader readCfhHeader.default readCfhUnits
   readCfhUnits.default readCfnHeader readCfnHeader.default readCfnUnits

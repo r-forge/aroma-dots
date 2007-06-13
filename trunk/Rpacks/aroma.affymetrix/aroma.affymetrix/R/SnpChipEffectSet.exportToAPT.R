@@ -42,7 +42,7 @@ setMethodS3("exportToAPT", "SnpChipEffectSet", function(this, filename=sprintf("
   }
 
   if (is.null(sampleNames)) {
-    sampleNames <- sapply(this, getFileName);
+    sampleNames <- sapply(this, getFilename);
   }
 
   if (!this$mergeStrands) {
@@ -173,6 +173,9 @@ setMethodS3("exportToAPT", "SnpChipEffectSet", function(this, filename=sprintf("
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: Used getFileName() instead of getFilename() in exportToAPT()
+#   of SnpChipEffectSet.
 # 2007-04-01
 # o Created.
 ############################################################################

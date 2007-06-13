@@ -25,7 +25,7 @@
 # }
 #
 # \value{
-#   Returns a named @list with elements:
+#   Returns the parameter estimates as a named @list with elements:
 #   \itemize{
 #    \item{M}{An estimate of the three vertices defining the genotype
 #      triangle.  These three vertices are describes as an 2x3 @matrix
@@ -51,16 +51,15 @@
 # @keyword internal
 #*/###########################################################################
 setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ...) {
-  require(sfit) || throw("Package 'sfit' not found.");
+  require("sfit") || throw("Package 'sfit' not found.");
 
   # Fit simplex of (y_A,y_B)
-  fit <- cfit(y, alpha=alpha, q=q, Q=Q, ...);
+  fit <- sfit::cfit(y, alpha=alpha, q=q, Q=Q, ...);
   M <- fit$M;
   colnames(M) <- c("A", "B");
   clazz <- class(M);
 
   # Re-arrange vertices in the order (origin, AA, BB)
-  M <- fit$M
   idxOrigin <- which.min(apply(M, MARGIN=1, FUN=function(u) sum(u^2)));
   origin <- M[idxOrigin,];
   M <- M[-idxOrigin,];
@@ -89,10 +88,11 @@ setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 
   fit$W <- W;
   fit$Winv <- Winv;
 
-  # Re-arrange X too
-  if (!is.null(fit$X)) {
-    fit$X <- fit$X[,oB];
-  }
+##  Excluded. /HB 2007-06-12
+##  # Re-arrange X too
+##  if (!is.null(fit$X)) {
+##    fit$X <- fit$X[,oB];  ### 'oB'??? HB 2007-06-11
+##  }
 
   fit$params <- list(
     alpha=alpha,
@@ -108,6 +108,11 @@ setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 
 
 ############################################################################
 # HISTORY:
+# 2007-06-12
+# o Commented the code for re-arranging fit$X (only if retX=TRUE).
+#   Code not really needed since backtransformGenotypeCone() is used.
+# 2007-06-11
+# o Calls sfit::cfit() explicitly.
 # 2007-06-04
 # o Added Rdoc comments.
 # 2006-05-08

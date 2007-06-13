@@ -30,7 +30,7 @@
 setMethodS3("fitGlad", "CnChipEffectSet", function(this, reference=NULL, arrays=1:nbrOfArrays(this), chromosomes=getChromosomes(this), ..., verbose=FALSE) {
   throw("fitGlad() for CnChipEffectSet is deprecated since 2006-12-15.  Use the GladModel class instead.");
 
-  require(GLAD) || throw("Package 'GLAD' not loaded.");
+  require("GLAD") || throw("Package 'GLAD' not loaded.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -76,7 +76,7 @@ setMethodS3("fitGlad", "CnChipEffectSet", function(this, reference=NULL, arrays=
     # Array by array
     for (aa in seq(along=arrays)) {
       array <- arrays[aa];
-      ce <- getFile(ces, array);
+      ce <- getFile(this, array);
       verbose && enter(verbose, sprintf("Array %s (#%d of %d) on chromosome %s", 
                                       getName(ce), aa, length(arrays), chr));
 
@@ -102,6 +102,9 @@ setMethodS3("fitGlad", "CnChipEffectSet", function(this, reference=NULL, arrays=
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: Called getFile(ces, ...) instead of  getFile(this, ...) in
+#   fitGlad() of CnChipEffectSet.
 # 2006-12-15
 # o Made fitGlad() for CnChipEffectSet deprecated.  Use the GladModel class
 #   instead.

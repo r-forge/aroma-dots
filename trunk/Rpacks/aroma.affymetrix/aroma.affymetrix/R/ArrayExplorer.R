@@ -233,7 +233,7 @@ setMethodS3("setArrays", "ArrayExplorer", function(this, arrays=NULL, ...) {
 # }
 #*/###########################################################################
 setMethodS3("updateSamplesFile", "ArrayExplorer", function(this, ..., verbose=FALSE) {
-  require(R.rsp) || throw("Package not loaded: R.rsp");
+  require("R.rsp") || throw("Package not loaded: R.rsp");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

@@ -30,7 +30,7 @@
 # @keyword internal
 #*/###########################################################################
 setMethodS3("patchPackage", "default", function(pkgName, paths="patches", deleteOld=TRUE, verbose=FALSE, ...) {
-  require(R.utils) || stop("Package not loaded: R.utils");
+  require("R.utils") || stop("Package not loaded: R.utils");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions

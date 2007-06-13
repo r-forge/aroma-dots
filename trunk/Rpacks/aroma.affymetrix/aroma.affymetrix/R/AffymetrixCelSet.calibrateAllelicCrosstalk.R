@@ -40,7 +40,7 @@
 # }
 #*/###########################################################################
 setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelSet", function(this, path=NULL, name="calibAllelicCT", ..., verbose=FALSE) {
-  require(sfit) || throw("Package 'sfit' not found.");
+  require("sfit") || throw("Package 'sfit' not found.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

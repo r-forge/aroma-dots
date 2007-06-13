@@ -35,7 +35,7 @@
 setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes=c(1:22,"X"), units=NULL, useStddvs=TRUE, ..., force=FALSE, verbose=FALSE) {
   throw("fitGlad() for CnChipEffectFile is deprecated since 2006-12-15.  Use the GladModel class instead.");
 
-  require(GLAD) || throw("Package 'GLAD' not loaded.");
+  require("GLAD") || throw("Package 'GLAD' not loaded.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -79,7 +79,7 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
   # Extract arguments for glad().
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   args <- list(...);
-  keep <- (names(args) %in% names(formals(glad.profileCGH)));
+  keep <- (names(args) %in% names(formals(GLAD::glad.profileCGH)));
   gladArgs <- args[keep];
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -139,7 +139,7 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
     sdTheta=unname(df[,"sdTheta"])
   );
   verbose && str(verbose, df);
-  df <- as.profileCGH(df);
+  df <- GLAD::as.profileCGH(df);
   verbose && str(verbose, df);
   verbose && exit(verbose);
 
@@ -162,6 +162,9 @@ setMethodS3("fitGlad", "CnChipEffectFile", function(this, reference, chromosomes
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o Made explicit calls to GLAD::as.profileCGH() and GLAD::glad.profileCGH()
+#   in fitGlad() of ChChipEffectFile.
 # 2006-12-15
 # o Made fitGlad() for CnChipEffectFile deprecated.  Use the GladModel class
 #   instead.

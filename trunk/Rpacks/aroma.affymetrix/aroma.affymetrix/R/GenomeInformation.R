@@ -566,7 +566,7 @@ setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE
 #*/###########################################################################
 setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., adjust=1/20, xlab=NULL, main=NULL, annotate=TRUE) {
   # Get the positions of these units
-  pos <- getPositions(gi, chromosome=chromosome, ...);
+  pos <- getPositions(this, chromosome=chromosome, ...);
 
   # Estimate the SNP density
   d <- density(pos/10^6, from=0, adjust=adjust);
@@ -591,6 +591,9 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: Used non-existing 'gi' instead of 'this' in plotDensity() of
+#   GenomeInformation.
 # 2007-03-15
 # o Updated GenomeInformation to return chromosomes as indices and never
 #   with 'X' and 'Y' regardless of source.  This is part of a moving the

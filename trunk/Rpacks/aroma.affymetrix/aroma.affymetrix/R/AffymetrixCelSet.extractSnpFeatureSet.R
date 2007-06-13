@@ -38,8 +38,8 @@
 # @keyword programming
 #*/###########################################################################
 setMethodS3("extractSnpFeatureSet", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
-  require(affy) || throw("Package not loaded: affy");
-  require(oligo) || throw("Package not loaded: oligo");
+  require("affy") || throw("Package not loaded: affy");
+  require("oligo") || throw("Package not loaded: oligo");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

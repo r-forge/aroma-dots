@@ -40,7 +40,7 @@
 #*/###########################################################################
 setMethodS3("extractAffyBatch", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   # Import cleancdfname() and ReadAffy().
-  require(affy) || throw("Package not loaded: affy");
+  require("affy") || throw("Package not loaded: affy");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

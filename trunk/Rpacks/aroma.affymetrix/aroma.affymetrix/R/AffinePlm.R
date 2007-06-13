@@ -53,7 +53,7 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   args <- list(...);
   if (length(args) > 0 && !is.null(args[[1]])) {
-    require(aroma.light) || throw("Package not loaded: aroma.light");
+    require("aroma.light") || throw("Package not loaded: aroma.light");
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

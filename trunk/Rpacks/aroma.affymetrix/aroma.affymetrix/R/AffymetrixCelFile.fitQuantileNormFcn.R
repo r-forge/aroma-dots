@@ -47,8 +47,8 @@ setMethodS3("fitQuantileNormFcn", "AffymetrixCelFile", function(this, yTarget, s
   }
 
   # Argument 'controlParams':
-  spar <- controlParams$spar;
-  nknots <- controlParams$nknots;
+#  spar <- controlParams$spar;
+#  nknots <- controlParams$nknots;
 
 
   verbose && enter(verbose, "Fitting (quantile) normalization function");
@@ -90,6 +90,10 @@ setMethodS3("fitQuantileNormFcn", "AffymetrixCelFile", function(this, yTarget, s
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: Parameters 'spar' and 'nknots' where retrieved as
+#   'controlParams$spar' and 'controlParams$nknots' but 'controlParams'
+#   was non-existing.
 # 2006-09-14
 # o Updated to the new package API.
 # 2006-08-25

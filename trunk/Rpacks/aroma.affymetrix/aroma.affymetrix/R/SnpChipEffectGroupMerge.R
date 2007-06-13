@@ -43,7 +43,7 @@ setMethodS3("getMergeFunction", "SnpChipEffectGroupMerge", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  mergeStrandsMatrix <- function(y, g=function(x) x, h=function(x) x...) {
+  mergeStrandsMatrix <- function(y, g=function(x) x, h=function(x) x, ...) {
     n <- nrow(y);
     if (n %in% c(2,4)) {
       yy <- y[1:2,,drop=FALSE];
@@ -108,6 +108,9 @@ setMethodS3("getParameters", "SnpChipEffectGroupMerge", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: getMergeFunction() of SnpChipEffectGroupMerge used non-existing
+#   'x...' instead of 'x'.
 # 2007-02-20
 # o Created.
 ############################################################################

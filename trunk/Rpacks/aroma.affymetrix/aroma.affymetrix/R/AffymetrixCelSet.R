@@ -239,67 +239,6 @@ setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE
 
 
 ###########################################################################/**
-# @RdocMethod getSiblings
-#
-# @title "Gets the all data sets that refers to the same samples a this one"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a named @list of @see "AffymetrixCelSet" objects.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-# @keyword IO
-#*/###########################################################################
-setMethodS3("getSiblings", "AffymetrixCelSet", function(this, notSelf=FALSE, ...) {
-  # Scan parent directory for all possible data sets.
-  # /path/to/<data set name>/chip_data/<chip type>
-  path <- getPath(this);
-
-  # /path/to/<data set name>/chip_data
-  parent <- getParent(path);
-  # /path/to/<data set name>
-  parent <- getParent(parent);
-
-  # /path/to/
-  dataPath <- getParent(parent);
-
-  # Now scan this file directory tree
-  paths <- findCelSet(name=getName(this), paths=dataPath, firstOnly=FALSE);
-
-  if (notSelf)
-    paths <- paths[(paths != getPath(this))];
-
-  sets <- vector("list", length(paths));
-  names(sets) <- basename(paths);
-  for (kk in seq(along=paths)) {
-    path <- paths[kk];
-    if (!notSelf && identical(path, getPath(this))) {
-      sets[[kk]] <- this;
-    } else {
-      sets[[kk]] <- fromFiles(this, path=path);
-    }
-  }
-  
-  sets;
-}, private=TRUE)
-
-
-###########################################################################/**
 # @RdocMethod getCdf
 #
 # @title "Gets the CDF structure for this CEL set"
@@ -1001,7 +940,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if ("median" %in% mean || "mad" %in% sd) {
     # rowMedians():
-    if (require(R.native)) {
+    if (require("R.native")) {
       rowMedians <- R.native::rowMedians;
     } else {
       # About 3-10 times slower than rowMedians()

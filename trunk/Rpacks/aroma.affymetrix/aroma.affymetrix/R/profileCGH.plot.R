@@ -65,7 +65,7 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
   # Add std dev estimates
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   sdEst <- this$SigmaC$Value;
-  text <- substitute(hat(sigma)==x, list=list(x=sprintf("%.3g", sdEst)));
+  text <- substitute(hat(sigma)==x, list(x=sprintf("%.3g", sdEst)));
   stext(text=text, side=3, pos=0.5, line=-2);
 }, private=TRUE)
 
@@ -74,6 +74,8 @@ setMethodS3("plot", "profileCGH", function(x, ylim=c(-1,1)*3, units="Mb", Bkp=FA
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o Called substitute() with non-existing argument 'list'.
 # 2007-04-12
 # o Updated plot() of profileCGH class to write the text 'n=%d' in the 
 #   lower-right corner of the graph in black and not lightgray as before.

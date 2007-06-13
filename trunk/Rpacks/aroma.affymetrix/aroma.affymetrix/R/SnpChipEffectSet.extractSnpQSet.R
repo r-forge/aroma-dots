@@ -43,7 +43,7 @@
 # }
 #*/###########################################################################
 setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, transform=c("log", "asinh"), naValue=-5, ..., force=FALSE, verbose=FALSE) {
-  require(oligo) || throw("Package not loaded: oligo");
+  require("oligo") || throw("Package not loaded: oligo");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

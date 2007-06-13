@@ -262,7 +262,7 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
       keep <- todo[cells];
       nkeep <- length(keep);
       cells <- cells[keep];
-      rm(muRs, keep);
+      rm(keep);
   
       verbose && printf(verbose, "Found %d (%.1f%%) non-estimated loci.\n", 
                                                   nkeep, 100*nkeep/ncells);
@@ -296,6 +296,8 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o Removed never used 'muRs'.
 # 2007-03-30
 # o BUG FIX: Sometimes cell indices would become NAs.
 # 2007-03-24

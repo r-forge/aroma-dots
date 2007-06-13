@@ -65,7 +65,7 @@ setMethodS3("rgbTransform", "Image", function(this, palette=gray.colors(256), li
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Create a new Image object
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  img <- Image(x, dim(this@.Data), colormode=TrueColor);
+  img <- EBImage::Image(x, dim(this@.Data), colormode=EBImage::TrueColor);
 
   verbose && exit(verbose);
 
@@ -75,6 +75,8 @@ setMethodS3("rgbTransform", "Image", function(this, palette=gray.colors(256), li
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o Explicit calls to EBImage::Image() etc.
 # 2007-01-30 /HB
 # o Improved the speed even further by dirt simple binning.
 # o Move to Image.rgbTransform.R.

@@ -45,7 +45,7 @@ setConstructorS3("MbeiPlm", function(..., tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   args <- list(...);
   if (length(args) > 0 && !is.null(args[[1]])) {
-    require(affy) || throw("Package 'affy' not loaded.");
+    require("affy") || throw("Package 'affy' not loaded.");
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
