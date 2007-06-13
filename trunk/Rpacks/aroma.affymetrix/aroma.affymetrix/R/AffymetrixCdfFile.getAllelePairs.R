@@ -574,7 +574,7 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
     
     verbose && cat(verbose, "Located in ", length(unique(gIdx)), " group(s).");
     
-    idx <- lapply(groupNames, FUN=identical, name);
+    idx <- lapply(groupNames, FUN=identical, basepair);
     idx <- which(unlist(idx, use.names=FALSE));
     cdf <- cdfAll[idx];
 
@@ -598,6 +598,9 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: getAlleleProbePairs2() used non-existing object 'name' instead
+#   of 'basepair'.  getAlleleProbePairs2() is currently not used anyway.
 # 2006-09-15
 # o Adopted to the new aroma.affymetrix structure.
 # 2006-07-21

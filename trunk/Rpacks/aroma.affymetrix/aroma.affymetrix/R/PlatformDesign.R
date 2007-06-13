@@ -279,7 +279,7 @@ setMethodS3("getFeatureInfo", "PlatformDesign", function(this, fields, subset=NU
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Load missing data
     env <- getPlatformDesignObject(this, verbose=verbose);
-    env <- featureInfo(env);
+    env <- oligo::featureInfo(env);
 
     verbose && enter(verbose, "Store all new fields in file cache");
     # Store new fields to the file cache 
@@ -397,7 +397,7 @@ setMethodS3("validate", "PlatformDesign", function(this, subset=1/1000, ..., ver
   map <- getReadMap(this);
 
   verbose && enter(verbose, "Validating ", class(this)[1]);
-  verbose && print(verbose, pd);
+  verbose && print(verbose, this);
   verbose && cat(verbose, "Number of units: ", length(units));
 
   verbose && enter(verbose, "Validating cell indices");
@@ -428,6 +428,9 @@ setMethodS3("validate", "PlatformDesign", function(this, subset=1/1000, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o validate() of PlatformDesign was broken if verbose was active; used
+#   non-existing variable 'pd' instead of 'this'.
 # 2006-12-11
 # o Added validate() to validate consistency between PD package and CDF.
 # 2006-12-07

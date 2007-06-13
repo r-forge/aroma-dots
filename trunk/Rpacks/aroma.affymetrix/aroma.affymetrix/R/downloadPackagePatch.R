@@ -33,7 +33,7 @@
 # @keyword internal
 #*/###########################################################################
 setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, ...) {
-  require(R.utils) || stop("Package not loaded: R.utils");
+  require("R.utils") || stop("Package not loaded: R.utils");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

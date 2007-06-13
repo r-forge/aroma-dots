@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.5.1 [2007-06-08x]
+Version: 0.5.1 [2007-06-12]
 o Moved normalizeAverage() to aroma.light.
 o BUG FIX: When argument 'transforms' to getImage() of AffymetrixCelFile
   wasn't a list, then "Error: argument "transform" is missing, with no
@@ -11,6 +11,16 @@ o BUG FIX: If an Affymetrix probe tab file is not found for the chip type,
   computeAffinitities() of AffymetrixCdfFile would throw "Error in 
   paste(..., sep = sep, collapse = collapse): object "pattern" not found"
   instead of an intended and more information error.
+o BUG FIX: getSiblings() for AffymetrixCelSet was broken.
+o BUG FIX: Called getFile(ces, ...) instead of  getFile(this, ...) in
+  fitGlad() of CnChipEffectSet.  If the GladModel was used to fit the
+  GLAD model this bug has not affected the modelling.
+o BUG FIX: Used getFileName() instead of getFilename() in exportToAPT()
+  of SnpChipEffectSet.
+o Replaced all require(<pkgname>) with require("<pkgname>").
+o Package passes R CMD check on Rv2.6.0 devel.  This new version of
+  R CMD check does a lot more validation on the code and several 
+  potential problems were found this way.
 
 
 Version: 0.5.0 [2007-05-10]

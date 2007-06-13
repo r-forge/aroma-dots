@@ -1,4 +1,4 @@
-setMethodS3("drawCytoBand", "default", function (cytoband, chromosome=1, y=-1, labels=TRUE, height=1, colCytoBand=c("white", "darkblue"), colCentro="red", ...) {
+setMethodS3("drawCytoBand", "default", function(cytoband, chromosome=1, y=-1, labels=TRUE, height=1, colCytoBand=c("white", "darkblue"), colCentro="red", ...) {
   opar <- par(xpd=NA);
   on.exit(par(opar));
 
@@ -6,7 +6,7 @@ setMethodS3("drawCytoBand", "default", function (cytoband, chromosome=1, y=-1, l
   # Cytoband colors
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   color <- unique(cytoband$Col);
-  pal <- myPalette(low=colCytoBand[1], high=colCytoBand[2], k=length(color));
+  pal <- GLAD::myPalette(low=colCytoBand[1], high=colCytoBand[2], k=length(color));
 
   info <- data.frame(Color=color, ColorName=I(pal));
   cytoband <- merge(cytoband, info, by="Color");
@@ -61,7 +61,7 @@ setMethodS3("drawCytoBand", "default", function (cytoband, chromosome=1, y=-1, l
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
 # Added also par(cex=0.8) - see code.
 setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, Smoothing="Smoothing", GNL="ZoneGNL", Bkp=FALSE, cytobandLabels=TRUE, plotband=TRUE, unit=0, colDAGLAD=NULL, pchSymbol=c(20, 4), colCytoBand=c("white", "darkblue"), colCentro="red", xlim=NULL, ylim=c(-1,1)*2.5, xlab="Physical position", ylab=variable, flavor=c("glad", "ce", "minimal"), xmargin=c(50,50), resScale=1, ...) {
-  require(GLAD) || stop("Package not loaded: GLAD");  # data(cytoband)
+  require("GLAD") || stop("Package not loaded: GLAD");  # data(cytoband)
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -129,7 +129,7 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   pv <- pv[keep,];
 
   # Convert the chromosome names to chromosome indices
-  pv$Chromosome <- ChrNumeric(pv$Chromosome);
+  pv$Chromosome <- GLAD::ChrNumeric(pv$Chromosome);
 
   # Make sure the order of the values are increasing
   o <- order(pv$PosOrder);
@@ -140,6 +140,7 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Get chromosome lengths
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Load data
+  cytoband <- NULL; rm(cytoband); # To please R CMD check R v2.6.0 dev.
   data(cytoband);  # Package 'GLAD'
   genomeInfo <- aggregate(cytoband$End, list(Chromosome=cytoband$Chromosome, 
                           ChrNumeric=cytoband$ChrNumeric), max, na.rm=TRUE);
@@ -156,7 +157,12 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Get the cytoband details for the chromosome of interest
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  cytobandNew <- subset(cytoband, select=-Chromosome);
+  # Drop column 'Chromosome'
+  ## Gives a NOTE in R CMD check R v2.6.0, which is nothing, but will use 
+  ## the work around below to get a clean result. /HB 2007-06-12
+  cytobandNew <- subset(cytoband, select=-Chromosome); 
+##  cytobandNew <- cytoband[,setdiff(names(cytoband), "Chromosome"),drop=FALSE];
+
   cytobandNew <- merge(LabelChr, cytobandNew, by.x="Chromosome", 
                                                         by.y="ChrNumeric");
 
@@ -309,6 +315,8 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o Added explicit call to GLAD::myPalette() to please R CMD check R v2.6.0.
 # 2007-01-03
 # o Made the highlighting "arrow" for the centromere smaller.
 # 2006-12-20

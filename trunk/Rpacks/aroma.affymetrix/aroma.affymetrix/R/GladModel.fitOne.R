@@ -19,6 +19,10 @@
 #      chip effects are passed along and returned.  However, note that
 #      GLAD is not making use of these estimates.}
 #   \item{...}{Not used.}
+#   \item{maxNAFraction}{A @numeric in [0,1] specifying the maximum fraction
+#      of non-finite values allowed.  
+#      If more are detected, this is interpreted as something has gone wrong
+#      in the preprocessing and an error is thrown.}
 #   \item{force}{If @TRUE, any in-memory cached results are ignored.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -34,7 +38,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, units=NULL, useStddvs=TRUE, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, units=NULL, useStddvs=TRUE, ..., maxNAFraction=1/8, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -56,7 +60,7 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
   # Extract arguments for glad().
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   args <- list(...);
-  keep <- (names(args) %in% names(formals(glad.profileCGH)));
+  keep <- (names(args) %in% names(formals(GLAD::glad.profileCGH)));
   gladArgs <- args[keep];
 
 
@@ -92,8 +96,8 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
       fraction <- n / nrow(df0);
       verbose && printf(verbose, "Number of non-finite values: %d (%.1f%%)\n", 
                                                              n, 100*fraction);
-      if (fraction > 0.1) {
-        throw(sprintf("Something is wrong with the data. Too many non-finite values: %d (%.1f%% > 10%%)", as.integer(n), 100*fraction));
+      if (fraction > maxNAFraction) {
+        throw(sprintf("Something is wrong with the data. Too many non-finite values: %d (%.1f%% > %.1f%%)", as.integer(n), 100*fraction, 100*maxNAFraction));
       }
       verbose && exit(verbose);
   
@@ -148,7 +152,7 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
     sdM=df[,"sdM"]
   );
 
-  df <- as.profileCGH(df);
+  df <- GLAD::as.profileCGH(df);
   verbose && str(verbose, df);
   verbose && exit(verbose);
 
@@ -180,6 +184,11 @@ setMethodS3("fitOne", "GladModel", function(this, ceList, refList, chromosome, u
 
 ############################################################################
 # HISTORY:
+# 2007-06-12
+# o Added argument 'maxNAFraction=1/8' to fitOne() of GladModel.
+# 2007-06-11
+# o Made explicit calls to GLAD::as.profileCGH() and GLAD::glad.profileCGH()
+#   in fitOne() of GladModel.
 # 2007-01-07
 # o Renamed MultiGladModel to GladModel fully replacing the older class.
 # o Added explicit garbage collection to minimize memory usage.

@@ -89,7 +89,7 @@ setMethodS3("getPlatformDesignObject", "AffymetrixCdfFile", function(this, ..., 
   pd <- PlatformDesign(this);
 
   verbose && enter(verbose, "Retrieves the platform-design object");
-  pdo <- getPlatformDesign(pd);
+  pdo <- getPlatformDesignObject(pd);
   verbose && exit(verbose);
 
   attr(pd, "name") <- getPackageName(pd);
@@ -102,6 +102,10 @@ setMethodS3("getPlatformDesignObject", "AffymetrixCdfFile", function(this, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: Called getPlatformDesign() instead of getPlatformDesignObject()
+#   for a PlatformDesign object in getPlatformDesignObject() of 
+#   AffymetrixCdfFile.
 # 2006-12-07
 # o Added getOligoToCelMap() and getPlatformDesign().
 # 2006-12-06

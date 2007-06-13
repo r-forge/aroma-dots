@@ -643,7 +643,7 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get flat (unit,group) to cell map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  map <- getCellMap(cf, verbose=less(verbose));
+  map <- getCellMap(this, verbose=less(verbose));
   verbose && str(verbose, map);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -654,7 +654,7 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
   verbose && cat(verbose, "Different number of groups per unit identified:");
   verbose && print(verbose, uSizes);
 
-  data <- getDataFlat(cf, units=map, ..., verbose=less(verbose));
+  data <- getDataFlat(this, units=map, ..., verbose=less(verbose));
   verbose && str(verbose, data);
 
   for (size in rev(uSizes)) {
@@ -709,6 +709,9 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: Called non-existing 'cf' instead of 'this' in mergeGroups()
+#   of ChipEffectFile.  This function was never used anyway.
 # 2007-02-20
 # o Added mergeGroups().
 # 2007-02-19 /HB

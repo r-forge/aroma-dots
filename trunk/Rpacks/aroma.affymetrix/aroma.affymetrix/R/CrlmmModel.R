@@ -193,13 +193,16 @@ setMethodS3("classifyAsXorXX", "CrlmmModel", function(this, ...) {
   cdf <- getCdf(ds);
   gi <- getGenomeInformation(cdf);
 
+
   # Get the median SNP signal across all chromosomes and arrays
-  A <- getA(object);  # (SNP, sample, strand)
+  snpQSet <- extractSnpQSet(ds);
+  A <- oligo:::getA(snpQSet);  # (SNP, sample, strand)
+  rm(snpQSet); gc();
   medA <- median(A, na.rm=TRUE);
 
   # Get the median chromosome X signal for each array
   xUnits <- getUnitsOnChromosome(gi, "X");
-  xUnits <- getChrXIndex(object);
+#  xUnits <- oligo:::getChrXIndex(snpQSet);
   A <- A[xUnits,,,drop=FALSE];
   a <- apply(A, MARGIN=2, FUN=median, na.rm=TRUE);
 
@@ -208,7 +211,7 @@ setMethodS3("classifyAsXorXX", "CrlmmModel", function(this, ...) {
   fit <- kmeans(a, centers=c(minA, medA));
 
   # Identify class
-  class <- as.integer(kfit$cluster==1) + 1;
+  class <- as.integer(fit$cluster == 1) + 1;
   class <- factor(c("XX","X")[class]);
 
   # Return
@@ -249,7 +252,7 @@ setMethodS3("fit", "CrlmmModel", function(this, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Requirements
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  require(oligo) || throw("Package not loaded: oligo");
+  require("oligo") || throw("Package not loaded: oligo");
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -773,6 +776,9 @@ setMethodS3("fit", "CrlmmModel", function(this, verbose=FALSE, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o BUG FIX: Referred to non-existing 'object' (instead of 'this') in
+#   classifyAsXorXX() of CrlmmModel.  Same with 'kfit' (should be 'fit').
 # 2007-01-06
 # o CrlmmModel now inherits from Model.
 # o Renamed to CrlmmModel (from Crlmm).

@@ -90,9 +90,10 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
       # Get the SNP names
       df[rr,c("firstSnp", "lastSnp")] <- unitNames[idx];
 
-      # Get the rsIDs
-      if (!is.null(rsIds))
-        df[rr,c("firstRsId", "lastRsId")] <- allRsIds[subset[idx]];
+      # Get the rsIds 
+#      if (!is.null(rsIds))
+#        df[rr,c("firstRsId", "lastRsId")] <- allRsIds[subset[idx]];
+# 'allRsIds', 'subset'?!? /HB 2007-06-11
     }
   }
 
@@ -126,6 +127,8 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
 
 ##############################################################################
 # HISTORY:
+# 2007-06-11
+# o RS IDs are currently not returned/supported.
 # 2006-12-11
 # o Added SNR column.
 # 2006-11-22

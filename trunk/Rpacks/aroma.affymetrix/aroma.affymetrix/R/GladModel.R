@@ -64,7 +64,7 @@ setConstructorS3("GladModel", function(cesTuple=NULL, referenceList=NULL, tags="
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(cesTuple)) {
-    require(GLAD) || throw("Package not loaded: GLAD");
+    require("GLAD") || throw("Package not loaded: GLAD");
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

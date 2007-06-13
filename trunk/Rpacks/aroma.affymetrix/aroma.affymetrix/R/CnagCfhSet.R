@@ -814,7 +814,7 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if ("median" %in% mean || "mad" %in% sd) {
     # rowMedians():
-    if (require(R.native)) {
+    if (require("R.native")) {
       rowMedians <- R.native::rowMedians;
     } else {
       # About 3-10 times slower than rowMedians()

@@ -189,7 +189,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 
   # This should not be need, but for some reason is the package not loaded
   # although it is listed in DESCRIPTION. /HB 2007-02-09
-  require(affyPLM) || throw("Package not loaded: affyPLM");
+  require("affyPLM") || throw("Package not loaded: affyPLM");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # rmaModelAffyPlm()
@@ -466,7 +466,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   } else if (flavor == "affyPLMold") {
     rmaModel <- rmaModelAffyPlmOld;
   } else if (flavor == "oligo") {
-    require(oligo) || throw("Package not loaded: oligo");
+    require("oligo") || throw("Package not loaded: oligo");
     rmaModel <- rmaModelOligo;
   } else {
     throw("Cannot get fit function for RMA PLM. Unknown flavor: ", flavor);

@@ -33,7 +33,7 @@
 # }
 #*/###########################################################################
 setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types=NULL, ..., xlim=c(0,16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE) {
-  require(aroma.light) || throw("Package not loaded: aroma.light");
+  require("aroma.light") || throw("Package not loaded: aroma.light");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
@@ -289,9 +289,10 @@ setMethodS3("plotMvsA", "AffymetrixCelFile", function(this, reference, indices=N
 # }
 #*/###########################################################################
 setMethodS3("smoothScatterMvsA", "AffymetrixCelFile", function(this, reference, indices=NULL, pch=176, xlim=c(0,16), ylim=c(-1,1)*diff(xlim), xlab=expression(A==1/2%*%log[2](y[1]*y[2])), ylab=expression(M==log[2](y[1]/y[2])), ..., annotate=TRUE) {
-  require(geneplotter) || throw("Package 'geneplotter' not loaded.");
+  require("geneplotter") || throw("Package 'geneplotter' not loaded.");
+
   ma <- getAm(this, reference, indices=indices);
-  smoothScatter(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
+  geneplotter::smoothScatter(ma, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, ...);
   if (annotate) {
     annotateMvsA(this, reference);
     stextSize(this, size=nrow(ma));
@@ -681,7 +682,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("auto", "h", "v", "none") , ..., zoom=NULL, verbose=FALSE) {
-  require(EBImage) || throw("Package not loaded: EBImage.");
+  require("EBImage") || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
@@ -787,7 +788,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 
   # Create an EBImage Image object
   y <- t(y);
-  img <- Image(data=y, dim=dim(y), colormode=Grayscale);
+  img <- EBImage::Image(data=y, dim=dim(y), colormode=EBImage::Grayscale);
 
   verbose && enter(verbose, "Transforming image");
   img <- rgbTransform(img, lim=zrange, ...);
@@ -797,7 +798,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   if (!is.null(zoom)) {
     verbose && enter(verbose, "Resizing image");
     # Rescaling by keeping aspect ratio
-    img <- resize(img, w=zoom*dim(img)[1], blur=FALSE);
+    img <- EBImage::resize(img, w=zoom*dim(img)[1], blur=FALSE);
     verbose && exit(verbose);
   }
 
@@ -970,7 +971,7 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
     img <- getImage(this, ..., verbose=less(verbose));
   
     verbose && enter(verbose, "Writing image");
-    write.image(img, file=pathname);
+    EBImage::write.image(img, file=pathname);
     verbose && exit(verbose);
   }
 
@@ -984,6 +985,8 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2007-06-11
+# o Explicit calls to geneplotter::smoothScatter() & EBImage::write.image().
 # 2007-06-07
 # o BUG FIX: When argument 'transforms' to getImage() of AffymetrixCelFile
 #   wasn't a list, then "Error: argument "transform" is missing, with no

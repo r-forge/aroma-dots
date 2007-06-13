@@ -35,9 +35,9 @@
 #*/###########################################################################
 setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL, force=FALSE, verbose=FALSE, ...) {
   # Try to load all required package first
-  require(gcrma, quietly=TRUE) || throw("Package not loaded: gcrma");
-  require(splines, quietly=TRUE) || throw("Package not loaded: splines");
-  require(matchprobes, quietly=TRUE) || throw("Package not loaded: matchprobes");
+  require("gcrma", quietly=TRUE) || throw("Package not loaded: gcrma");
+  require("splines", quietly=TRUE) || throw("Package not loaded: splines");
+  require("matchprobes", quietly=TRUE) || throw("Package not loaded: matchprobes");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -224,6 +224,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 # gcrma
   verbose && enter(verbose, "Calculating probe affinities");
 
+  affinity.spline.coefs <- NULL; # To please R CMD check R v2.6.0 dev.
   data(affinity.spline.coefs); # A tiny object from 'gcrma'.
 
   affinity.basis.matrix <- ns(1:25, df=length(affinity.spline.coefs)/3);

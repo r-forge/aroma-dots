@@ -156,7 +156,7 @@ setMethodS3("setMergeGroups", "ExonRmaPlm", function(this, ...) {
 setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ...) {
   # This should not be need, but for some reason is the package not loaded
   # although it is listed in DESCRIPTION. /HB 2007-02-09
-  require(affyPLM) || throw("Package not loaded: affyPLM");
+  require("affyPLM") || throw("Package not loaded: affyPLM");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # rmaModelAffyPlm()

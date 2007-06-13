@@ -11,11 +11,11 @@ setMethodS3("writeWig", "CnChipEffectSet", function(this, reference=NULL, arrays
                                                             class(reference));
     }
 
-    if (reference$combineAlleles != ces$combineAlleles) {
+    if (reference$combineAlleles != this$combineAlleles) {
        throw("The reference chip effects are not compatible with the chip-effect set. One is combining the alleles the other is not.");
     }
 
-    if (reference$mergeStrands != ces$mergeStrands) {
+    if (reference$mergeStrands != this$mergeStrands) {
        throw("The reference chip effects are not compatible with the chip-effect set. One is merging the strands the other is not.");
     }
   }
@@ -188,6 +188,8 @@ setMethodS3("writeWig", "CnChipEffectSet", function(this, reference=NULL, arrays
 
 ##############################################################################
 # HISTORY:
+# 2007-06-11
+# o writeWig() of CnChipEffectSet used non-existing 'ces' (instead of 'this').
 # 2006-11-27
 # o BUG FIX: writeWig() would write NAs, but the UCSC Genome Browser does not
 #   accept missing values.

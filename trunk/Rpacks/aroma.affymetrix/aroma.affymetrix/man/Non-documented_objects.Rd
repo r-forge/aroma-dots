@@ -1210,8 +1210,6 @@
 \alias{getSubsetToUpdate.DChipQuantileNormalization}
 \alias{getTimestamp.CnagCfhFile}
 \alias{getTimestamps.CnagCfhSet}
-\alias{movingMedian}
-\alias{movingMedian.matrix}
 \alias{nbrOfCells.CnagCfhFile}
 \alias{nbrOfSnps.CnagCfhFile}
 \alias{range.CnagCfhFile}

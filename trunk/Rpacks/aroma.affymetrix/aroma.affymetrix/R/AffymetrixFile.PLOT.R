@@ -3,7 +3,7 @@ setMethodS3("stextSize", "AffymetrixFile", function(this, side=1, fmtstr="n=%d",
 }, private=TRUE)
 
 
-setMethodS3("stextLabel", "AffymetrixFile", function(this, side=3, fmtstr="%s", label=getLable(this), pos=0, cex=0.7, col="black", ...) {
+setMethodS3("stextLabel", "AffymetrixFile", function(this, side=3, fmtstr="%s", label=getLabel(this), pos=0, cex=0.7, col="black", ...) {
   stext(side=side, text=sprintf(fmtstr, label), pos=pos, cex=cex, col=col, ...);
 }, private=TRUE)
 
@@ -38,6 +38,9 @@ setMethodS3("stextLabels", "AffymetrixFile", function(this, others=NULL, side=3,
 
 ############################################################################
 # HISTORY:
+# 2006-07-11
+# o BUG FIX: stextLabel() of AffymetrixFile called getLable() instead of 
+#   getLabel().
 # 2006-09-15
 # o Added stextSize().
 # 2006-08-27

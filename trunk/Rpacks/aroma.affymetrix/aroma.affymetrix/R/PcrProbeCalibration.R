@@ -119,7 +119,7 @@ setMethodS3("getParameters", "PcrProbeCalibration", function(this, ...) {
 
 
 setMethodS3("getPmDesignMatrix", "PcrProbeCalibration", function(this, ..., verbose=FALSE) {
-  require(oligo) || throw("Package not loaded: oligo"); # gcrma_getSeq2()
+  require("oligo") || throw("Package not loaded: oligo"); # gcrma_getSeq2()
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments

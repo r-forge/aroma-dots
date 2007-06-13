@@ -49,7 +49,7 @@
 # }
 #*/###########################################################################
 setMethodS3("calibrateAllelicCrosstalk", "AffymetrixCelFile", function(this, path, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, targetAvg=NULL, ..., setsOfProbes=NULL, overwrite=FALSE, skip=!overwrite, verbose=FALSE) {
-  require(sfit) || throw("Package 'sfit' not found.");
+  require("sfit") || throw("Package 'sfit' not found.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # For hooks
