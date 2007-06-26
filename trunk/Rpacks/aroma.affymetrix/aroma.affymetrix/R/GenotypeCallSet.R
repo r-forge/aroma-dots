@@ -190,7 +190,7 @@ setMethodS3("setCdf", "GenotypeCallSet", function(this, cdf, ...) {
 #
 # \arguments{
 #   \item{path}{The directory where the call files are.}
-#   \item{patttern}{The filename pattern used to identify call files.}
+#   \item{pattern}{The filename pattern used to identify call files.}
 #   \item{...}{Arguments passed to \code{fromFiles()} of 
 #      @see "AffymetrixFileSet".}
 #   \item{fileClass}{The @see "R.oo::Class" of each genotype file.}
@@ -218,7 +218,8 @@ setMethodS3("fromFiles", "GenotypeCallSet", function(static, path, pattern="[.]c
   }
 
   # S3 method dispatch does not work for static methods.
-  ds <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+  ds <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, 
+                             ..., fileClass=fileClass, verbose=less(verbose));
 
   # Use the same CDF object for all CEL files.
   setCdf(ds, getCdf(ds));

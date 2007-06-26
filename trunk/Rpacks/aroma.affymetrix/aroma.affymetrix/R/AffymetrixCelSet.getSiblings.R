@@ -11,7 +11,9 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Not used.}
+#   \item{notSelf}{If @TRUE, the current data set is not returned, just
+#      its siblings.}
+#   \item{...}{Additional arguments passed to @seemethods "fromFiles".}
 # }
 #
 # \value{
@@ -57,7 +59,7 @@ setMethodS3("getSiblings", "AffymetrixCelSet", function(this, notSelf=FALSE, ...
     if (!notSelf && identical(path, getPath(this))) {
       sets[[kk]] <- this;
     } else {
-      sets[[kk]] <- fromFiles(this, path=path);
+      sets[[kk]] <- fromFiles(this, path=path, ...);
     }
   }
   
@@ -69,6 +71,8 @@ setMethodS3("getSiblings", "AffymetrixCelSet", function(this, notSelf=FALSE, ...
 
 ############################################################################
 # HISTORY:
+# 2007-06-25
+# o Now '...' are passed to fromFiles() in getSiblings().
 # 2007-06-12
 # o BUG FIX: getSiblings() for AffymetrixCelSet was broken.
 # o Moved into its own *.R file.

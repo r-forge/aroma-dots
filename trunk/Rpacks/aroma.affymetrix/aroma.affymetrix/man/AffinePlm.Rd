@@ -6,7 +6,7 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{AffinePlm}
+\name{AffinePlm}
 \docType{class}
 \alias{AffinePlm}
 
@@ -35,7 +35,7 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
 
 
 
-  This class represents affine model in Bengtsson \& Hössjer (2006).
+  This class represents affine model in Bengtsson \& \enc{Hössjer}{Hossjer} (2006).
  }
 
  \usage{AffinePlm(..., background=TRUE, tags="*")}
@@ -92,6 +92,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \references{
-   Bengtsson \& Hössjer (2006). \cr
+   Bengtsson \& \enc{Hössjer}{Hossjer} (2006). \cr
  }
 \keyword{classes}

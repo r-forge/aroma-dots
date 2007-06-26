@@ -14,7 +14,7 @@
 # \arguments{
 #   \item{filename}{The filename of the dChip result file.}
 #   \item{path}{An optional path to the file.}
-#   \item{...}{Not used.}
+#   \item{...}{Additional arguments passed to @seemethod "fromFiles".}
 #   \item{skip}{If @TRUE, already imported arrays will be skipped.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -344,7 +344,7 @@ setMethodS3("importFromAPT", "SnpChipEffectSet", function(static, filename, path
   }
 
   # Define chip-effect set
-  ces <- fromFiles(static, path=outPath);
+  ces <- fromFiles(static, path=outPath, ...);
   setCdf(ces, monocellCdf);
 
   verbose && exit(verbose);

@@ -370,13 +370,14 @@ setMethodS3("getInputDataSet", "Transform", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) { 
- outputDataSet <- this$.outputDataSet;
+setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) {  outputDataSet <- this$.outputDataSet;
+
   if (force || is.null(outputDataSet)) {
     if (isDone(this)) {
       ds <- getInputDataSet(this);
       clazz <- Class$forName(class(ds)[1]);
-      outputDataSet <- clazz$fromFiles(path=getPath(this));
+      outputDataSet <- clazz$fromFiles(path=getPath(this), 
+                                                         checkChipType=FALSE);
       setCdf(outputDataSet, getCdf(ds));
       this$.outputDataSet <- outputDataSet;
     }
@@ -464,6 +465,12 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-06-25
+# o BUG FIX: When getOutputDataSet() retrieved the output data set, the chip
+#   type of the CEL files would be validated against the path name, also when
+#   then CDF of the input set was overriden.  Now the output data set is
+#   setup using 'checkChipType=FALSE'.  Thanks Mark Robinson for 
+#   troubleshooting this.
 # 2007-03-24
 # o BUG FIX: getPath() created the root path before trying to expand
 #   Windows shortcuts.

@@ -1,12 +1,14 @@
 ###########################################################################/**
 # @RdocClass AffinePlm
+# \encoding{latin1}
 #
 # @title "The AffinePlm class"
 #
 # \description{
 #  @classhierarchy
 #
-#  This class represents affine model in Bengtsson \& Hössjer (2006).
+#  This class represents affine model in Bengtsson \& 
+#  \enc{Hössjer}{Hossjer} (2006).
 # }
 # 
 # @synopsis
@@ -44,7 +46,7 @@
 # @author
 #
 # \references{
-#   Bengtsson \& Hössjer (2006). \cr
+#   Bengtsson \& \enc{Hössjer}{Hossjer} (2006). \cr
 # }
 #*/###########################################################################
 setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {

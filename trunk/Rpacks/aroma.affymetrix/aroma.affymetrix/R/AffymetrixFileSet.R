@@ -1093,7 +1093,7 @@ setMethodS3("copyTo", "AffymetrixFileSet", function(this, path=NULL, ..., verbos
   }
 
   # Return new instance
-  res <- fromFiles(this, path=path);
+  res <- fromFiles(this, path=path, ...);
 
   verbose && exit(verbose);
 
