@@ -1,6 +1,14 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.5.2 [2007-06-25]
+o BUG FIX: When getOutputDataSet() retrieved the output data set, the chip
+  type of the CEL files would be validated against the path name, also when
+  then CDF of the input set was overriden.  Now the output data set is
+  setup using 'checkChipType=FALSE'.  Thanks Mark Robinson for 
+  troubleshooting this.
+
+
 Version: 0.5.1 [2007-06-12]
 o Moved normalizeAverage() to aroma.light.
 o BUG FIX: When argument 'transforms' to getImage() of AffymetrixCelFile

@@ -24,6 +24,7 @@
 #   \item{overwrite}{If @TRUE, already adjusted arrays are overwritten,
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
+#   \item{...}{Additional arguments passed to some of the internal functions.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -90,7 +91,7 @@ setMethodS3("rmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="rm
 
   verbose && exit(verbose);
   
-  res <- this$fromFiles(path=getPath(rmaPlm), pattern="cel$");
+  res <- this$fromFiles(path=getPath(rmaPlm), pattern="cel$", ...);
 
   res;
 })

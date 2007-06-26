@@ -459,7 +459,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
 
     # Validate that the directory name matches the chip type
     if (!identical(names(tChipTypes), chipType)) {
-      throw("Invalid name of directory containing CEL files. The name of the directory (", chipType, ") must be the same as the chip type used for the CEL files (", names(tChipTypes), "): ", path);
+      throw("Invalid name of directory containing CEL files. The name of the directory (", chipType, ") must be the same as the chip type used for the CEL files (", names(tChipTypes), ") unless using argument 'checkChipType=FALSE': ", path);
     }
   } else {
     verbose && cat(verbose, "Since 'checkChipType=FALSE', then the chip type specified by the directory name is used: ", chipType);
