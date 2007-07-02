@@ -35,7 +35,10 @@
 #   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, name="bgOptical", subsetToUpdate=NULL, typesToUpdate=NULL, minimum=1, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, name="bgOptical", subsetToUpdate=NULL, typesToUpdate=NULL, minimum=1, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE, .deprecated=TRUE) {
+  if (.deprecated) {
+    throw("bgAdjustOptical() is deprecated.  Please use the OpticalBackgroundCorrection class");
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -78,7 +81,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
     verbose && enter(verbose, sprintf("Array #%d of %d", kk, nbrOfArrays));
     df <- getFile(this, kk);
     verbose && print(verbose, df);
-    dataFiles[[kk]] <- bgAdjustOptical(df, path=path, subsetToUpdate=subsetToUpdate, typesToUpdate=NULL, minimum=minimum, verbose=less(verbose));
+    dataFiles[[kk]] <- bgAdjustOptical(df, path=path, subsetToUpdate=subsetToUpdate, typesToUpdate=NULL, minimum=minimum, verbose=less(verbose), .deprecated=.deprecated);
     verbose && exit(verbose);
 
     rm(df);
@@ -295,7 +298,10 @@ setMethodS3("calculateParametersGsb", "AffymetrixCelSet", function(this, nbrOfPm
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name="bgGcrma", probePath=NULL, affinities=NULL, type="fullmodel",  indicesNegativeControl=NULL, opticalAdjust=TRUE, gsbAdjust=TRUE, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15*fast + (1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name="bgGcrma", probePath=NULL, affinities=NULL, type="fullmodel",  indicesNegativeControl=NULL, opticalAdjust=TRUE, gsbAdjust=TRUE, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15*fast + (1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE, .deprecated=TRUE) {
+  if (.deprecated) {
+    throw("bgAdjustGcrma() is deprecated.  Please use the GcRmaBackgroundCorrection class");
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -375,7 +381,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
     verbose && enter(verbose, sprintf("Array #%d of %d", kk, nbrOfArrays));
     df <- getFile(this, kk);
     verbose && print(verbose, df);
-    dataFiles[[kk]] <- bgAdjustGcrma(df, path=path, type=type, indicesNegativeControl=indicesNegativeControl, affinities=affinities, gsbAdjust=gsbAdjust, parametersGsb=parametersGsb, k=k, rho=rho, stretch=stretch, fast=fast, overwrite=overwrite, skip=skip, ..., verbose=less(verbose));    
+    dataFiles[[kk]] <- bgAdjustGcrma(df, path=path, type=type, indicesNegativeControl=indicesNegativeControl, affinities=affinities, gsbAdjust=gsbAdjust, parametersGsb=parametersGsb, k=k, rho=rho, stretch=stretch, fast=fast, overwrite=overwrite, skip=skip, ..., verbose=less(verbose), .deprecated=.deprecated);
 
     rm(df);
 
@@ -433,7 +439,10 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="RBC", pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="RBC", pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE, .deprecated=TRUE) {
+  if (.deprecated) {
+    throw("bgAdjustRma() is deprecated.  Please use the RmaBackgroundCorrection class");
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -469,7 +478,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="R
     verbose && enter(verbose, sprintf("Array #%d of %d", kk, nbrOfArrays));
     df <- getFile(this, kk);
     verbose && print(verbose, df);
-    dataFiles[[kk]] <- bgAdjustRma(df, path=path, pmonly=pmonly, addJitter=addJitter, jitterSd=jitterSd, overwrite=overwrite, skip=skip, ..., verbose=less(verbose));
+    dataFiles[[kk]] <- bgAdjustRma(df, path=path, pmonly=pmonly, addJitter=addJitter, jitterSd=jitterSd, overwrite=overwrite, skip=skip, ..., verbose=less(verbose), .deprecated=.deprecated);
 
     rm(df);
 
@@ -490,6 +499,8 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="R
 
 ############################################################################
 # HISTORY:
+# 2007-06-30
+# o Added .deprecated=TRUE to all methods.
 # 2007-03-26
 # o Speed up: Using isPm(cdf) instead of readCdfCellIndices() etc.
 # o Memory optimization: Found an unlist() without use.names=FALSE.  Saves

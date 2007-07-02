@@ -15,12 +15,22 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of
 #     @see "ProbeLevelTransform".}
-#   \item{addJitter}{}
-#   \item{jitterSd}{}
+#   \item{addJitter}{If @TRUE, Zero-mean gaussian noise is added to the
+#     signals before being background corrected.}
+#   \item{jitterSd}{Standard deviation of the jitter noise added.}
 # }
 #
 # \section{Fields and Methods}{
 #  @allmethods "public"
+# }
+#
+# \section{Jitter noise}{
+#   The fitting algorithm of the RMA background correction model may not
+#   converge if there too many small and discrete signals.  To overcome
+#   this problem, a small amount of noise may be added to the signals
+#   before fitting the model.  This is an ad hoc solution that seems to
+#   work.
+#   However, add Gaussian noise may generate non-positive signals.
 # }
 #
 # \details{
@@ -115,7 +125,7 @@ setMethodS3("process", "RmaBackgroundCorrection", function(this, ..., force=FALS
   # Get the output path
   outputPath <- getPath(this);
 
-  args <- c(list(ds, path=outputPath, verbose=verbose, overwrite=force), params);
+  args <- c(list(ds, path=outputPath, verbose=verbose, overwrite=force), params, .deprecated=FALSE);
 
   outputDataSet <- do.call("bgAdjustRma", args=args);
   
@@ -135,6 +145,8 @@ setMethodS3("process", "RmaBackgroundCorrection", function(this, ..., force=FALS
 
 ############################################################################
 # HISTORY:
+# 2007-06-30
+# o Added Rdoc comments about jitter.
 # 2007-05-26
 # o Updated the Rdocs.
 # 2007-03-21

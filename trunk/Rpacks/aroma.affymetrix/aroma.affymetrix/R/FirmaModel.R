@@ -106,7 +106,7 @@ setMethodS3("calculateWeights", "FirmaModel", function(this, ...) {
 setMethodS3("clearCache", "FirmaModel", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".paFile", ".chipFiles", ".lastPlotData")) {
+  for (ff in c(".fs", ".paFile", ".chipFiles", ".lastPlotData")) {
     this[[ff]] <- NULL;
   }
 
@@ -467,7 +467,6 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
   unitsFull <- units;
   
   for (kk in seq(ws)) {
-
     units <- unitsFull;
     
     tTotal <- processTime();
@@ -481,25 +480,24 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
     verbose && enter(verbose, "Array #", kk, ": ", getName(wf));
     
     if (!force) {
-      units <- findUnitsTodo(ff, units=units, force=TRUE, verbose=less(verbose));
+      units <- findUnitsTodo(ff, units=units, force=TRUE, cache=FALSE, verbose=less(verbose));
       nbrOfUnits <- length(units);
       verbose && printf(verbose, "%d of the requested units need to be fitted.\n", nbrOfUnits);
     }
 
     if (length(units) > 0) {
-    
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Get the weights by unit
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Get the weights by unit
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       tRead <- processTime();
 
-      y <- readUnits(wf, units=units, stratifyBy="pm", ..., force=force, verbose=less(verbose));
+      y <- readUnits(wf, units=units, stratifyBy="pm", ..., force=force, 
+                                                      verbose=less(verbose));
       timers$read <- timers$read + (processTime() - tRead);
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Calculate FIRMA scores
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Calculate FIRMA scores
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       tFit <- processTime();
       fit <- lapply(y, FUN=fitUnit);
       timers$fit <- timers$fit + (processTime() - tFit);
@@ -507,40 +505,56 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
       verbose && str(verbose, fit[1]);
       verbose && exit(verbose);
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Store results
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Store results
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Storing FIRMA results");
       tWriteFs <- processTime();
 
-      suppressWarnings({
-        map <- getCellMap(ff, units=units, ..., verbose=less(verbose));
-      })
       intensities <- unlist(lapply(fit, function(unit) {
         lapply(unit, function(group) {
           .subset2(group, "intensities");
         })
-      }), use.names=FALSE)
+      }), use.names=FALSE);
+
       stdvs <- unlist(lapply(fit, function(unit) {
         lapply(unit, function(group) {
           .subset2(group, "stdvs");
         })
-      }), use.names=FALSE)
+      }), use.names=FALSE);
+
       pixels <- unlist(lapply(fit, function(unit) {
         lapply(unit, function(group) {
           .subset2(group, "pixels");
         })
-      }), use.names=FALSE)
-      data <- data.frame(intensities=intensities, stdvs=stdvs, pixels=pixels, cell=map[,"cell"]);
+      }), use.names=FALSE);
+      rm(fit);   # Not needed anymore
+
+      # Garbage collection
+      tGc <- processTime();
+      gc <- gc();
+      verbose && print(verbose, gc);
+      timers$gc <- timers$gc + (processTime() - tGc);
+
+      suppressWarnings({
+        map <- getCellMap(ff, units=units, ..., verbose=less(verbose));
+      });
+
+      data <- data.frame(
+        intensities=intensities, 
+        stdvs=stdvs, 
+        pixels=pixels, 
+        cell=map[,"cell"]
+      );
+      rm(intensities, stdvs, pixels, map);   # Not needed anymore
     
       updateDataFlat(ff, units=units, data=data, verbose=less(verbose));
+      rm(data);   # Not needed anymore
+
       timers$writeFs <- timers$writeFs + (processTime() - tWriteFs);
       verbose && exit(verbose);
 
-      fit <- NULL; # Not needed anymore
-      intensities <- stdvs <- pixels <- NULL;
-    
-    # Garbage collection
+      # Garbage collection
       tGc <- processTime();
       gc <- gc();
       verbose && print(verbose, gc);
@@ -548,12 +562,17 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
       
       timers$total <- timers$total + (processTime() - tTotal);
 
-    } # end of if (length(units) > 0)
-    else {
+      # end of if (length(units) > 0)
+    } else {
       verbose && exit(verbose);
     }
-      
-  } # end of loop over arrays
+
+    # Clear cache
+    clearCache(ff);
+    clearCache(wf);
+
+    rm(ff, wf);  # Not needed anymore.
+  } # for (kk in ...), i.e. end of loop over arrays
 
 
   totalTime <- processTime() - startTime;
@@ -583,6 +602,11 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
 
 ############################################################################
 # HISTORY:
+# 2007-07-01 [HB]
+# o Added 'cache=FALSE' to findUnitsTodo() in fit() so that the results are 
+#   not stored in memory for every file.
+# o Now clearCache() clears the private field '.fs'.
+# o Added more code to fit() to better clean up the memory.
 # 2007-02-09
 # o Created (based largely on ProbeLevelModel.R).
 ############################################################################
