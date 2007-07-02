@@ -34,7 +34,10 @@
 #   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.path("bgOptical", getChipType(this)), minimum=1, subsetToUpdate=NULL, typesToUpdate=NULL, overwrite=FALSE, skip=!overwrite, verbose=FALSE, ...) {
+setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.path("bgOptical", getChipType(this)), minimum=1, subsetToUpdate=NULL, typesToUpdate=NULL, overwrite=FALSE, skip=!overwrite, verbose=FALSE, ..., .deprecated=TRUE) {
+  if (.deprecated) {
+    throw("bgAdjustOptical() is deprecated.  Please use the OpticalBackgroundCorrection class");
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -178,7 +181,10 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, parametersGsb=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, parametersGsb=NULL, k=6*fast + 0.5*(1-fast), rho=0.7, stretch=1.15*fast + 1*(1-fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE, .deprecated=TRUE) {
+  if (.deprecated) {
+    throw("bgAdjustGcrma() is deprecated.  Please use the GcRmaBackgroundCorrection class");
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -358,7 +364,10 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
 #  @seeclass
 # }
 #*/###########################################################################
-setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE) {
+setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE, .deprecated=TRUE) {
+  if (.deprecated) {
+    throw("bgAdjustRma() is deprecated.  Please use the RmaBackgroundCorrection class");
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -463,6 +472,8 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
 
 ############################################################################
 # HISTORY:
+# 2007-06-30
+# o Added .deprecated=TRUE to all methods.
 # 2007-03-26
 # o Added verbose output about estimated background.
 # 2007-03-23

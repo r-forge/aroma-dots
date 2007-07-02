@@ -47,7 +47,7 @@ setConstructorS3("FirmaFile", function(...) {
 setMethodS3("clearCache", "FirmaFile", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".firstCells")) {
+  for (ff in c()) {
     this[[ff]] <- NULL;
   }
 
@@ -300,7 +300,9 @@ setMethodS3("getCellMap", "FirmaFile", function(this, units=NULL, ..., force=FAL
   unitNames <- names(cells);
 # BUG!  Fix this in ChipEffectFile.R
 #  unitSizes <- unlist(lapply(cells, length), use.names=FALSE);
-  unitSizes <- unlist(lapply(cells, FUN=function(unit){length(.subset2(unit,"groups"))}), use.names=FALSE);  
+  unitSizes <- unlist(lapply(cells, FUN=function(unit){
+    length(.subset2(unit,"groups"));
+  }), use.names=FALSE);  
   cells <- unlist(cells, use.names=FALSE);
   verbose && exit(verbose);
 

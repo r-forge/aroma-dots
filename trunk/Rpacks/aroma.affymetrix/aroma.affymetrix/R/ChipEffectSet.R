@@ -94,13 +94,13 @@ setMethodS3("findByName", "ChipEffectSet", function(static, ..., paths="plmData/
   path;
 }, static=TRUE)
 
-setMethodS3("fromFiles", "ChipEffectSet", function(static, path="plmData/", pattern=",chipEffects[.](c|C)(e|E)(l|L)$", ..., fileClass=NULL) {
+setMethodS3("fromFiles", "ChipEffectSet", function(static, path="plmData/", pattern=",chipEffects[.](c|C)(e|E)(l|L)$", checkChipType=FALSE, ..., fileClass=NULL) {
   # Argument 'fileClass':
   if (is.null(fileClass))
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
-  # Unfortunately does method dispatching not work here.
-  fromFiles.AffymetrixCelSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, checkChipType=FALSE);
+  # Unfortunately, method dispatching does not work here.
+  fromFiles.AffymetrixCelSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, checkChipType=checkChipType);
 }, static=TRUE)
 
 
@@ -256,6 +256,13 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-07-01
+# o BUG FIX: getOutputDataSet() of Transform would give "Error in 
+#   fromFiles.AffymetrixCelSet(static, path = path, pattern = pattern,:
+#   formal argument "checkChipType" matched by multiple actual arguments".
+#   This was due to the recent adding of 'checkChipType=FALSE'.  Fixed
+#   by adding 'checkChipType=FALSE' to fromFiles() of ChipEffectSet.
+#   Thanks Jeremy Silver at WEHI for report and troubleshooting this.
 # 2007-04-03
 # o BUG FIX: Static fromFiles() did not call ditto in the super class but
 #   instead in the grand-parent super class.
