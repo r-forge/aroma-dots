@@ -22,7 +22,7 @@
  Adapted from \code{\link[gcrma]{bg.adjust.optical}} in the \pkg{gcrma} package.
 }
 
-\usage{\method{bgAdjustOptical}{AffymetrixCelSet}(this, path=NULL, name="bgOptical", subsetToUpdate=NULL, typesToUpdate=NULL, minimum=1, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE)}
+\usage{\method{bgAdjustOptical}{AffymetrixCelSet}(this, path=NULL, name="bgOptical", subsetToUpdate=NULL, typesToUpdate=NULL, minimum=1, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE, .deprecated=TRUE)}
 
 \arguments{
   \item{path}{The location to save the adjusted data files.}
@@ -37,6 +37,7 @@
     unless skipped, otherwise an error is thrown.}
   \item{skip}{If \code{\link[base:logical]{TRUE}}, the array is not normalized if it already exists.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
+  \item{.deprecated}{Internal argument.}
 }
 
 \value{

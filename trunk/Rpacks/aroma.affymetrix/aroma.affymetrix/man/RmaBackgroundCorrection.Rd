@@ -44,8 +44,9 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 \arguments{
   \item{...}{Arguments passed to the constructor of
     \code{\link{ProbeLevelTransform}}.}
-  \item{addJitter}{}
-  \item{jitterSd}{}
+  \item{addJitter}{If \code{\link[base:logical]{TRUE}}, Zero-mean gaussian noise is added to the
+    signals before being background corrected.}
+  \item{jitterSd}{Standard deviation of the jitter noise added.}
 }
 
 \section{Fields and Methods}{
@@ -65,6 +66,15 @@ getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDon
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
+}
+
+\section{Jitter noise}{
+  The fitting algorithm of the RMA background correction model may not
+  converge if there too many small and discrete signals.  To overcome
+  this problem, a small amount of noise may be added to the signals
+  before fitting the model.  This is an ad hoc solution that seems to
+  work.
+  However, add Gaussian noise may generate non-positive signals.
 }
 
 \details{

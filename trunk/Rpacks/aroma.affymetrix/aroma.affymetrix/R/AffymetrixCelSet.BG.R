@@ -25,6 +25,7 @@
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{.deprecated}{Internal argument.}
 # }
 #
 # \value{
@@ -283,6 +284,7 @@ setMethodS3("calculateParametersGsb", "AffymetrixCelSet", function(this, nbrOfPm
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{.deprecated}{Internal argument.}
 # }
 #
 # \value{
@@ -424,6 +426,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 #   \item{...}{Not used.}
+#   \item{.deprecated}{Internal argument.}
 # }
 #
 # \value{
