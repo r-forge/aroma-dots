@@ -23,7 +23,9 @@
 \usage{\method{getSiblings}{AffymetrixCelSet}(this, notSelf=FALSE, ...)}
 
 \arguments{
-  \item{...}{Not used.}
+  \item{notSelf}{If \code{\link[base:logical]{TRUE}}, the current data set is not returned, just
+     its siblings.}
+  \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:s.AffymetrixCelSet]{*s}()} "fromFiles".}
 }
 
 \value{

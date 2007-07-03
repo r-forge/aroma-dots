@@ -36,6 +36,7 @@ polish or robust regression.
   \item{overwrite}{If \code{\link[base:logical]{TRUE}}, already adjusted arrays are overwritten,
     unless skipped, otherwise an error is thrown.}
   \item{skip}{If \code{\link[base:logical]{TRUE}}, the array is not normalized if it already exists.}
+  \item{...}{Additional arguments passed to some of the internal functions.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 

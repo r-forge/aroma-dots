@@ -22,7 +22,8 @@
 \usage{\method{getResiduals}{QualityAssessmentModel}(this, units=NULL, path=NULL, name="qcData", tags="*", ram=1, force=FALSE, verbose=FALSE, ...)}
 
 \arguments{
- \item{}{}
+ \item{...}{Additional arguments passed \code{fromFiles()} of
+    \code{\link{QualityAssessmentSet}}.}
 }
 
 \value{

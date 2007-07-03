@@ -24,6 +24,7 @@
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{.deprecated}{Internal argument.}
 # }
 #
 # \value{
@@ -166,6 +167,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 #     unless skipped, otherwise an error is thrown.}
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{.deprecated}{Internal argument.}
 # }
 #
 # \value{
@@ -349,6 +351,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
 #   \item{skip}{If @TRUE, the array is not normalized if it already exists.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 #   \item{...}{Not used.}
+#   \item{.deprecated}{Internal argument.}
 # }
 #
 # \value{

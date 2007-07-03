@@ -24,7 +24,7 @@
 
 \arguments{
   \item{path}{The directory where the call files are.}
-  \item{patttern}{The filename pattern used to identify call files.}
+  \item{pattern}{The filename pattern used to identify call files.}
   \item{...}{Arguments passed to \code{fromFiles()} of
      \code{\link{AffymetrixFileSet}}.}
   \item{fileClass}{The \code{\link[R.oo]{Class}} of each genotype file.}

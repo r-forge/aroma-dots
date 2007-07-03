@@ -21,7 +21,7 @@
  Adapted from \code{\link[gcrma]{bg.adjust.gcrma}} in the \pkg{gcrma} package.
 }
 
-\usage{\method{bgAdjustGcrma}{AffymetrixCelFile}(this, path=NULL, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, parametersGsb=NULL, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15 * fast + 1 * (1 - fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE)}
+\usage{\method{bgAdjustGcrma}{AffymetrixCelFile}(this, path=NULL, type="fullmodel", indicesNegativeControl=NULL, affinities=NULL, gsbAdjust=TRUE, parametersGsb=NULL, k=6 * fast + 0.5 * (1 - fast), rho=0.7, stretch=1.15 * fast + 1 * (1 - fast), fast=TRUE, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE, .deprecated=TRUE)}
 
 \arguments{
   \item{path}{The path where to save the adjusted data files.}
@@ -49,6 +49,7 @@
     unless skipped, otherwise an error is thrown.}
   \item{skip}{If \code{\link[base:logical]{TRUE}}, the array is not normalized if it already exists.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
+  \item{.deprecated}{Internal argument.}
 }
 
 \value{

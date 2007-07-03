@@ -21,7 +21,7 @@
  Calls \code{\link[affy]{bg.adjust}} from the \pkg{affy} package.
 }
 
-\usage{\method{bgAdjustRma}{AffymetrixCelFile}(this, path=NULL, pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE)}
+\usage{\method{bgAdjustRma}{AffymetrixCelFile}(this, path=NULL, pmonly=TRUE, addJitter=FALSE, jitterSd=0.2, overwrite=FALSE, skip=!overwrite, ..., verbose=FALSE, .deprecated=TRUE)}
 
 \arguments{
   \item{path}{The path where to save the adjusted data files.}
@@ -30,6 +30,7 @@
   \item{skip}{If \code{\link[base:logical]{TRUE}}, the array is not normalized if it already exists.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
   \item{...}{Not used.}
+  \item{.deprecated}{Internal argument.}
 }
 
 \value{

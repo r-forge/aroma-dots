@@ -27,7 +27,7 @@
 \arguments{
   \item{filename}{The filename of the dChip result file.}
   \item{path}{An optional path to the file.}
-  \item{...}{Not used.}
+  \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:fromFiles.SnpChipEffectSet]{*fromFiles}()}.}
   \item{skip}{If \code{\link[base:logical]{TRUE}}, already imported arrays will be skipped.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
