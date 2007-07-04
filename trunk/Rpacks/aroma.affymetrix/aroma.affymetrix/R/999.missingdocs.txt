@@ -65,7 +65,7 @@
   createFromFeatureSet.AffymetrixCelSet createFromGenomeInformation
   createFromGenomeInformation.AromaUgpFile createMonoCell
   createParamCdf createParamCdf.ChipEffectFile createParamCdf.FirmaFile
-  dataFrame dataFrame.default decode decode.ParameterCelFile digest
+  dataFrame dataFrame.default decode decode.ParameterCelFile
   display display.ChromosomeExplorer drawCytoBand drawCytoBand.default
   encode encode.ParameterCelFile extend.Interface extractAffyBatch
   extractMatrix extractSnpFeatureSet extractSnpQSet
@@ -522,3 +522,4 @@
  getParameters.ScaleNormalization getProbeAffinityFile.ExonRmaPlm
  getSubsetToAvg.ScaleNormalization
  getSubsetToUpdate.ScaleNormalization
+ matrix.patch

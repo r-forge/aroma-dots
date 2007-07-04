@@ -5,6 +5,12 @@ Version: 0.5.3 [2007-07-01]
 o Made bgAdjustOptical(), bgAdjustRma(), and bgAdjustGcRma() deprecated.
   If used, an error will be thrown.  Use the Optical-, Rma-, and 
   GcRmaBackgroundCorrection classes instead.
+o Includes a patch to base::matrix() that does not create an extra
+  copy when assigned a new value to a cell, e.g. the 2nd statement in
+  the following would force a new copy of the matrix:
+  x <- matrix(0, 5000,5000); x[1,1] <- 1;  Thanks to Luke Tierney for
+  troubleshooting and suggesting a patch; there are no immediate plans
+  to include this patch in 'base' though.
 o BUG FIX: The memory usage of fit() of the FirmaModel would increase
   linearly with the number of arrays processed.  This was because 
   read results where cached for each of the FirmaFile:s.  Thanks Mark
