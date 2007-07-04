@@ -2,11 +2,11 @@
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Patches
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Patch some of the affxparser function (for now)
-  .patchAffxparser();
+  # Patch base::matrix()
+  reassignInPackage("matrix", "base", matrix.patch);
 
-  # Patch digest()
-  .patchDigest();
+  # Patch affxparser::findCdf()
+  reassignInPackage("findCdf", "affxparser", findCdf.patch);
 
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -70,6 +70,9 @@
 
 ############################################################################
 # HISTORY:
+# 2007-07-04
+# o Removed the patch for digest(); digest v0.3.0 solved the problem.
+# o Added a patch of functions in 'base', e.g. matrix().
 # 2007-04-04
 # o Moved the patch of digest() here.
 # 2007-03-07

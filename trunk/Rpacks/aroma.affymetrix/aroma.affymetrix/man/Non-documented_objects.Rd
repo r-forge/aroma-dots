@@ -176,7 +176,6 @@
 \alias{dataFrame.default}
 \alias{decode}
 \alias{decode.ParameterCelFile}
-\alias{digest}
 \alias{display}
 \alias{display.ChromosomeExplorer}
 \alias{drawCytoBand}
@@ -1229,6 +1228,7 @@
 \alias{getProbeAffinityFile.ExonRmaPlm}
 \alias{getSubsetToAvg.ScaleNormalization}
 \alias{getSubsetToUpdate.ScaleNormalization}
+\alias{matrix.patch}
 
 \description{
   This page contains aliases for all "non-documented" objects that
