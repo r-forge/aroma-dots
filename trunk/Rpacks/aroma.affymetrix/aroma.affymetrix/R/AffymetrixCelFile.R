@@ -81,11 +81,30 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
 })
 
 
+setMethodS3("getFileFormat", "AffymetrixCelFile", function(this, ...) {
+  pathname <- getPathname(this);
+
+  # Read CEL header
+  raw <- readBin(pathname, what="raw", n=10);
+
+  if (raw[1] == 59)
+    return("v5 (binary; CC)");
+
+  if (raw[1] == 64)
+    return("v4 (binary; XDA)");
+
+  if (rawToChar(raw[1:5]) == "[CEL]")
+    return("v3 (text; ASCII)");
+
+  return(NA);
+})
+
 setMethodS3("as.character", "AffymetrixCelFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
   s <- NextMethod("as.character", ...);
+  s <- c(s, sprintf("File format: %s", getFileFormat(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
   s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));
   class(s) <- "GenericSummary";
@@ -755,6 +774,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 
 ############################################################################
 # HISTORY:
+# 2007-07-09
+# o Added getFileFormat() to AffymetrixCelFile.  This is also reported
+#   by the print() method.
 # 2007-05-09
 # o BUG FIX: If no valid timestamp was identified in the CEL header by
 #   getTimestamp() of AffymetrixCelFile, then as.character() would give

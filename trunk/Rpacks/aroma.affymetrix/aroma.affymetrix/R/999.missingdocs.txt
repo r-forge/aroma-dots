@@ -523,3 +523,5 @@
  getSubsetToAvg.ScaleNormalization
  getSubsetToUpdate.ScaleNormalization
  matrix.patch
+ getFileFormat getFileFormat.AffymetrixCdfFile
+ getFileFormat.AffymetrixCelFile

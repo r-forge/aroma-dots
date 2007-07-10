@@ -50,6 +50,25 @@ setMethodS3("clearCache", "AffymetrixCdfFile", function(this, ...) {
 }, private=TRUE)
 
 
+setMethodS3("getFileFormat", "AffymetrixCdfFile", function(this, ...) {
+  pathname <- getPathname(this);
+
+  # Read CDF header
+  raw <- readBin(pathname, what="raw", n=10);
+
+  if (raw[1] == 59)
+    return("v5 (binary; CC)");
+
+  if (raw[1] == 67)
+    return("v4 (binary; XDA)");
+
+  if (rawToChar(raw[1:5]) == "[CDF]")
+    return("v3 (text; ASCII)");
+
+  return(NA);
+})
+
+
 setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
   # To please R CMD check
   this <- x;
@@ -58,6 +77,7 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Filename: %s", getFilename(this)));
   s <- c(s, sprintf("Filesize: %.2fMB", getFileSize(this)/1024^2));
+  s <- c(s, sprintf("File format: %s", getFileFormat(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Dimension: %s", paste(getDimension(this), collapse="x")));
   s <- c(s, sprintf("Number of cells: %d", nbrOfCells(this)));
@@ -1217,6 +1237,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-07-09
+# o Added getFileFormat() to AffymetrixCdfFile.  This is also reported
+#   by the print() method.
 # 2007-03-28
 # o Added argument 'cache=TRUE' to getCellIndices().
 # 2007-03-26
