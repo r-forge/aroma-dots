@@ -49,6 +49,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:getCellIndices.AffymetrixCdfFile]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getDimension} \tab  -\cr
+ \tab \code{getFileFormat} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getGenomeInformation.AffymetrixCdfFile]{getGenomeInformation}} \tab Gets genome information for this chip type.\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
  \tab \code{\link[aroma.affymetrix:indexOf.AffymetrixCdfFile]{indexOf}} \tab Gets the indices of units by their names.\cr

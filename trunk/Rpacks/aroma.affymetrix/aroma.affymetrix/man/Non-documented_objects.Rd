@@ -1229,6 +1229,9 @@
 \alias{getSubsetToAvg.ScaleNormalization}
 \alias{getSubsetToUpdate.ScaleNormalization}
 \alias{matrix.patch}
+\alias{getFileFormat}
+\alias{getFileFormat.AffymetrixCdfFile}
+\alias{getFileFormat.AffymetrixCelFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
