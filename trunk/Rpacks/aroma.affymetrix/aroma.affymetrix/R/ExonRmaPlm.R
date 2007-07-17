@@ -253,15 +253,12 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("findUnitsTodo", "ExonRmaPlm", function(this, ...) {
-  eces <- getChipEffects(this);
-  findUnitsTodo(eces, ...);
-}, private=TRUE)
-
 
 
 ##############################################################################
 # HISTORY:
+# 2007-07-13 /HB
+# o Removed findUnitsTodo() of ExonRmaPlm; it just replicated the superclass.
 # 2007-04-24 /HB+EP
 # o getProbeAffinityFile() of ExonRmaPlm did not return the correct subclass.
 # 2007-04-13 /HB+EP

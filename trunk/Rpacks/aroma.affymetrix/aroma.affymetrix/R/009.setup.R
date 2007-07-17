@@ -8,6 +8,9 @@
   # Patch affxparser::findCdf()
   reassignInPackage("findCdf", "affxparser", findCdf.patch);
 
+  # Patch affxparser::.initializeCdf()
+  reassignInPackage(".initializeCdf", "affxparser", .initializeCdf.patch);
+
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Customize affxparser

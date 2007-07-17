@@ -35,19 +35,22 @@ setMethodS3("reassignInPackage", "default", function(name, pkgName, value, keepO
   envName <- sprintf("package:%s", pkgName);
   if (!envName %in% search())
     throw("Package not loaded: ", pkgName);
-  env <- as.environment(envName);
-
-  # Argument 'name':    
-  if (!exists(name, envir=env)) {
-    throw("Argument 'name' does not refere to an existing object: ", name);
-  }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Patch
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the object to be replaced
-  oldValue <- get(name, envir=env);
+
+  # Workaround for the fact that getAnywhere() is not accepting a string!  
+  expr <- substitute(getAnywhere(name), list(name=name));
+  obj <- eval(expr);
+
+  pos <- which(obj$where == sprintf("namespace:%s", pkgName));
+  if (length(pos) == 0) {
+    throw("Argument 'name' does not refere to an existing object: ", name);
+  }
+  oldValue <- obj$objs[[pos]];
 
   # Get environment of this object
   env <- environment(oldValue);
@@ -69,6 +72,9 @@ setMethodS3("reassignInPackage", "default", function(name, pkgName, value, keepO
 
 ############################################################################
 # HISTORY:
+# 2007-07-13
+# o Now reassignInPackage() can reassign non-exported values by using
+#   getAnywhere() instead of get().
 # 2007-07-04
 # o This function might end up in the R.utils package later.
 # o Added Rdoc comments.

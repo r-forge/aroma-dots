@@ -203,6 +203,11 @@ setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ..., verbose=F
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   ces <- this$.ces;
   if (!is.null(ces))
@@ -492,6 +497,7 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
 # @synopsis
 #
 # \arguments{
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose".}
 #   \item{...}{Not used.}
 # }
 #
@@ -507,9 +513,9 @@ setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FAL
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, ...) {
-  ces <- getChipEffectSet(this);
-  findUnitsTodo(ces, ...);
+setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, verbose=FALSE, ...) {
+  ces <- getChipEffectSet(this, verbose=verbose);
+  findUnitsTodo(ces, verbose=verbose, ...);
 }, private=TRUE)
 
 

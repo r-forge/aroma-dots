@@ -127,10 +127,9 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   verbose2 <- as.integer(verbose)-1;  # For 'affxparser' calls.
   verbose2 <- 2;
 
-  # Number of units per chunk
-  nbrOfUnitsPerChunks <- ram * 5000;
 
-  verbose && enter(verbose, "Creating mono-cell CDF");
+
+  verbose && enter(verbose, "Creating monocell CDF");
 
   verbose && cat(verbose, "Chip type: ", getChipType(this));
 
@@ -143,14 +142,19 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
     mainChipType <- gsub("[,].*", "", chipType);
     path <- filePath("annotationData", "chipTypes", mainChipType, expandLinks="any");
   }
+
+  # Write to a temporary file first, and rename it when we know i's complete
   name <- paste(c(chipType, tags), collapse=sep);
   dest <- sprintf("%s.cdf", name);
   dest <- Arguments$getWritablePathname(dest, path=path, mustNotExist=TRUE);
 
-  verbose && cat(verbose, "Output pathname: ", dest);
+  tmpDest <- sprintf("%s.tmp", dest);
+  tmpDest <- Arguments$getWritablePathname(tmpDest, mustNotExist=TRUE);
+
+  verbose && cat(verbose, "Output pathname (temporary): ", tmpDest);
 
   # Assure source and destination is not identical
-  if (identical(src, dest)) {
+  if (identical(src, tmpDest)) {
     throw("Cannot not create CDF file. Destination is same as source: ", src);
   }
 
@@ -168,14 +172,27 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # Figure out the number of (regular) unit cells in the output
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the number of groups per units
+  verbose && enter(verbose, "Reading CDF group names");
   nbrOfGroupsPerUnit <- readCdfGroupNames(src);
+  verbose && exit(verbose);
+
   names(nbrOfGroupsPerUnit) <- NULL;
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   # Get the number of groups per unit
   nbrOfGroupsPerUnit <- sapply(nbrOfGroupsPerUnit, FUN=length);
 
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   # Get the number of cells per unit
   nbrOfCellsPerUnit <- nbrOfGroupsPerUnit * nbrOfCellsPerField;
+  verbose && cat(verbose, "Number of cells per unit:");
+  verbose && summary(verbose, nbrOfCellsPerUnit);
 
   # Total number of cells
   nbrOfCells <- sum(nbrOfCellsPerUnit);
@@ -188,7 +205,9 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # QC units
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Keep all QC units  
+  verbose && enter(verbose, "Reading CDF QC units");
   destQcUnits <- readCdfQc(src);
+  verbose && exit(verbose);
   nbrOfQcUnits <- length(destQcUnits);
   nbrOfCellsPerQcUnit <- lapply(destQcUnits, FUN=.subset2, "ncells");
   nbrOfCellsPerQcUnit <- unlist(nbrOfCellsPerQcUnit, use.names=FALSE);
@@ -205,9 +224,11 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   totalNbrOfCells <- nbrOfCells + nbrOfQcCells;
   verbose && printf(verbose, "Total number of cells: %d\n", totalNbrOfCells);
 
-  # Figure out a best fit square layout of this number of cells
+  # Figure out a best fit square(!) layout of this number of cells
   side <- as.integer(floor(sqrt(totalNbrOfCells)));
   nrows <- ncols <- side;
+
+  # If not big enough, increase the nbr of rows, then nbr of column
   if (nrows*ncols < totalNbrOfCells) {
     nrows <- as.integer(nrows + 1);
     if (nrows*ncols < totalNbrOfCells) {
@@ -225,17 +246,23 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   verbose && enter(verbose, "Setting up header");
 
   # Get template header
+  verbose && enter(verbose, "Reading CDF header");
   destHeader <- readCdfHeader(src);
+  verbose && exit(verbose);
+
   destHeader$nrows <- nrows;
   destHeader$ncols <- ncols;
 
   # Get unit names
+  verbose && enter(verbose, "Reading CDF unit names");
   unitNames <- readCdfUnitNames(src);
+  verbose && exit(verbose);
 
   if (nbrOfUnits > 0) {
     # Number of bytes per unit: 
     #  = 20 + (18+64)*nbrOfGroupsPerUnit + 14*nbrOfCellsPerUnit bytes
     unitLengths <- 20 + 82*nbrOfGroupsPerUnit + 14*nbrOfCellsPerUnit;
+    avgUnitLength <- mean(unitLengths);
   } else {
     unitLengths <- NULL;
   }
@@ -252,8 +279,21 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Writing");
+  verbose && cat(verbose, "destHeader:");
+  verbose && str(verbose, destHeader);
+  verbose && cat(verbose, "unitNames:");
+  verbose && str(verbose, unitNames);
+  verbose && cat(verbose, "qcUnitLengths:");
+  verbose && str(verbose, qcUnitLengths);
+  verbose && cat(verbose, "unitLengths:");
+  verbose && str(verbose, unitLengths);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   # Open output connection
-  con <- file(dest, open = "wb");
+  con <- file(tmpDest, open = "wb");
   on.exit({
     if (!is.null(con))
       close(con);
@@ -264,6 +304,10 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
                                                         verbose=verbose2);
   # Not needed anymore
   rm(destHeader, unitNames, qcUnitLengths, unitLengths);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   verbose && exit(verbose);
 
@@ -278,11 +322,18 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   verbose && enter(verbose, "Rearranging QC unit cell indices");
   destQcUnits <- rearrangeCells(destQcUnits, offset=nbrOfCells, ncols=ncols,
                                          hasGroups=FALSE, verbose=verbose);
+  # Garbage collect
+  gc <- gc();
   verbose && exit(verbose);
 
   # Write QC units
   writeCdfQcUnits(con=con, destQcUnits, verbose=verbose2);
   rm(destQcUnits); # Not needed anymore
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   verbose && exit(verbose);
 
 
@@ -293,9 +344,23 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
   verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits);
 
-  nbrOfChunks <- ceiling(nbrOfUnits / nbrOfUnitsPerChunks);
+  verbose && printf(verbose, "Argument 'ram': %f\n", ram);
+
+  verbose && printf(verbose, "Average unit length: %f bytes\n", avgUnitLength);
+
+  # Scale (not used)
+  if (nbrOfUnits > 0) {
+    scale <- 200/avgUnitLength;
+  } else {
+    scale <- 1;
+  }
+
+  # Number of units per chunk
+  nbrOfUnitsPerChunk <- as.integer(ram * scale * 20000);
+
+  nbrOfChunks <- ceiling(nbrOfUnits / nbrOfUnitsPerChunk);
   verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n", 
-                                         nbrOfChunks, nbrOfUnitsPerChunks);
+                                         nbrOfChunks, nbrOfUnitsPerChunk);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -305,16 +370,16 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
 #  fields <- c("x", "y", "indices", "pbase", "tbase", "atom", "indexpos");
   fields <- c("pbase", "tbase", "atom", "indexpos");
-  head <- 1:nbrOfUnitsPerChunks;
+  head <- 1:nbrOfUnitsPerChunk;
   count <- 1;
   idxOffset <- as.integer(0);
   unitsToDo <- 1:nbrOfUnits;
   while (length(unitsToDo) > 0) {
-    if (length(unitsToDo) < nbrOfUnitsPerChunks) {
+    if (length(unitsToDo) < nbrOfUnitsPerChunk) {
       head <- 1:length(unitsToDo);
     }
     units <- unitsToDo[head];
-    verbose && printf(verbose, "Chunk #%d of %d (%d units)", 
+    verbose && printf(verbose, "Chunk #%d of %d (%d units)\n", 
                                         count, nbrOfChunks, length(units));
 
     unitsToDo <- unitsToDo[-head];
@@ -323,9 +388,23 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 #    srcUnits <- readCdf(src, units=units);
 
 # readGroupDirection is needed in order for writeCdf() to work. /KS 18/12/06
+    verbose && enter(verbose, "Reading CDF list structure");
     srcUnits <- readCdf(src, units=units, readGroupDirection=TRUE);
+    verbose && exit(verbose);
+    if (is.null(srcUnits)) {
+      throw(sprintf("Failed to read %d units from CDF file.  This could be because you are running out of memory.  Try decreasing argument 'ram': %s", length(units), src));
+    }
+
+    if (length(srcUnits) != length(units)) {
+      throw("Number of read CDF units does not equal number of requested units: ", length(srcUnits), " != ", length(units));
+    }
+
     if (verbose && isVisible(verbose)) {
       cat(sprintf(" => RAM: %.fMB\n", object.size(srcUnits)/1024^2));
+    }
+
+    if (length(srcUnits) == 0) {
+      throw("Internal error: While creating monocell, an empty list of CDF units was read.");
     }
     
     # 15/12/06: readCdf() no longer returns a list
@@ -356,6 +435,10 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
       unit;
     })
 
+    if (length(srcUnits) == 0) {
+      throw("Internal error: While creating monocell, an empty list of CDF units is requested to be written.");
+    }
+
 #    verbose && str(verbose, srcUnits[1]);
 
     # Write regular units
@@ -376,8 +459,9 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   close(con); 
   con <- NULL;
 
-  verbose && cat(verbose, "CDF file created:");
-  verbose && print(verbose, file.info(dest));
+  verbose && cat(verbose, "Temporary CDF file created:");
+  verbose && cat(verbose, "Output pathname: ", tmpDest);
+  verbose && print(verbose, file.info(tmpDest));
 
   # Garbage collect
   gc <- gc();
@@ -390,30 +474,46 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Verifying the written CDF");
   # Checking header
-  header <- readCdfHeader(dest);
+  header <- readCdfHeader(tmpDest);
   if ((header$nrows != nrows) || (header$ncols != ncols)) {
     throw(sprintf("Failed to create a valid mono-cell CDF: The dimension of the written CDF does not match the intended one: (%d,%d) != (%d,%d)", header$nrows, header$ncols, nrows, ncols));
   }
 
   # Checking cell indices
-  cells <- readCdfCellIndices(dest);
-  cells <- unlist(cells, use.names=FALSE);
-  udcells <- as.integer(unique(diff(cells)));
-  if (!identical(udcells, 1:1)) {
-    throw("Failed to create a valid mono-cell CDF: The cell indices are not contiguous: ", paste(udcells, collapse=", "));
+  # Check CDF file in chunks
+  nbrOfUnits <- header$probesets;
+  chunkSize <- 100000;
+  nbrOfChunks <- ceiling(nbrOfUnits / chunkSize);
+  for (kk in 1:nbrOfChunks) {
+    verbose && printf(verbose, "Chunk %d of %d\n", kk, nbrOfChunks);
+    from <- (kk-1)*chunkSize+1;
+    to <- min(from+chunkSize, nbrOfUnits);
+    cells <- readCdfCellIndices(tmpDest, units=from:to);
+    cells <- unlist(cells, use.names=FALSE);
+    udcells <- as.integer(unique(diff(cells)));
+    if (!identical(udcells, 1:1)) {
+      throw("Failed to create a valid mono-cell CDF: The cell indices are not contiguous: ", paste(udcells, collapse=", "));
+    }
+    rm(cells, udcells);
   }
-  rm(cells, udcells);
   verbose && exit(verbose);
 
   # Garbage collect
   gc <- gc();
   verbose && print(verbose, gc);
 
+  verbose && enter(verbose, "Renaming the temporary file");
+  res <- file.rename(tmpDest, dest);
+  verbose && cat(verbose, "Result: ", res);
+  verbose && cat(verbose, "File pathname: ", dest);
+  verbose && print(verbose, file.info(dest));
+  verbose && exit(verbose);
+
   verbose && exit(verbose);
 
   # Return an AffymetrixCdfFile object for the new CDF
   newInstance(this, dest);
-}, private=TRUE)
+}, private=TRUE) # createMonoCell()
 
 
 setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ...) {
@@ -423,6 +523,9 @@ setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-07-13
+# o Now the createMonoCell() first writes a temporary CDF named *.cdf.tmp,
+#   and then rename it to *.cdf when it has been validated.
 # 2007-03-08
 # o Added getMonoCell().
 # 2007-02-21 /HB + KS

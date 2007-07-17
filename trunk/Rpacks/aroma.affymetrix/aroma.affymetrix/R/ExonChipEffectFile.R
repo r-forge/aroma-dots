@@ -122,6 +122,9 @@ setMethodS3("getCellIndices", "ExonChipEffectFile", function(this, ..., force=FA
     verbose && exit(verbose);
   }
 
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -180,6 +183,10 @@ setMethodS3("readUnits", "ExonChipEffectFile", function(this, ..., force=FALSE, 
 setMethodS3("findUnitsTodo", "ExonChipEffectFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
 
   verbose && enter(verbose, "Identifying non-fitted units in chip-effect file");
