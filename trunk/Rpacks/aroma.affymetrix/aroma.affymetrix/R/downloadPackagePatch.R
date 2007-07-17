@@ -54,7 +54,7 @@ setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, u
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(url)) {
     desc <- packageDescription(pkgName);
-    for (field in c("URL", "ContribURL", "DevelURL")) {
+    for (field in c("PatchURL", "URL", "ContribURL", "DevelURL")) {
       url <- desc[[field]];
       if (!is.null(url))
         break;

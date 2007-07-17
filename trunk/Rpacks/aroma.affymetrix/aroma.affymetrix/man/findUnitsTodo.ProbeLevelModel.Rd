@@ -19,9 +19,10 @@
  Identifies non-fitted units.
 }
 
-\usage{\method{findUnitsTodo}{ProbeLevelModel}(this, ...)}
+\usage{\method{findUnitsTodo}{ProbeLevelModel}(this, verbose=FALSE, ...)}
 
 \arguments{
+  \item{verbose}{A \code{\link[base]{logical}} or a \code{\link[R.utils]{Verbose}}.}
   \item{...}{Not used.}
 }
 

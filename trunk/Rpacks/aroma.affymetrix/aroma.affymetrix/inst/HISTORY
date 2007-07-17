@@ -1,18 +1,34 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.5.3 [2007-07-09]
-o Added getFileFormat() to AffymetrixCdfFile and AffymetrixCelFile.  
+Version: 0.5.3 [2007-07-13]
+o Package passes R CMD check on Rv2.5.1 (and R v2.6.0 devel).
+o Package passes all (#1 and #2) redundancy test sets available on
+  the group page.  This was confirmed on R v2.5.1 on WinXP (1.5GB RAM).
+o Now more verbose output is generated when a monocell CDF is created
+  in the background.
+o Added getFileFormat() to AffymetrixCdfFile and AffymetrixCelFile.
   These are also reported by the corresponding print() method.
 o Made bgAdjustOptical(), bgAdjustRma(), and bgAdjustGcRma() deprecated.
   If used, an error will be thrown.  Use the Optical-, Rma-, and 
   GcRmaBackgroundCorrection classes instead.
-o Includes a patch to base::matrix() that does not create an extra
-  copy when assigned a new value to a cell, e.g. the 2nd statement in
-  the following would force a new copy of the matrix:
+o MEMORY OPTIMIZATION:  Includes a patch to affxparser:::.initializeCdf()
+  to make it much more memory efficient, e.g. when writing the CDF
+  header unit names, it could consume >1.5GB RAM, whereas now it is
+  in the order of 100-200MB.  This patch will go away as soon as 
+  the affxparser package incorporates it.
+o MEMORY OPTIMIZATION:  Includes a patch to base::matrix() that does not
+  create an extra copy when assigned a new value to a cell, e.g. the 2nd 
+  statement in the following would force a new copy of the matrix:
   x <- matrix(0, 5000,5000); x[1,1] <- 1;  Thanks to Luke Tierney for
   troubleshooting and suggesting a patch; there are no immediate plans
   to include this patch in 'base' though.
+o BUG FIX: Now (private) createMonoCell() of AffymetrixCdfFile will
+  build the monocell CDF to a temporary filename, and only when it is
+  done, rename it to the final *,monocell.cdf filename.  This will
+  lower the risk for creating an invalid CDF, which for instance can
+  happen if we run out of memory.  Reading invalid CDFs will core 
+  dump R due to the affxparser and the Fusion SDK package.
 o BUG FIX: The memory usage of fit() of the FirmaModel would increase
   linearly with the number of arrays processed.  This was because 
   read results where cached for each of the FirmaFile:s.  Thanks Mark
