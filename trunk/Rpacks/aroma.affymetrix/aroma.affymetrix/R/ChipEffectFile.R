@@ -485,7 +485,11 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Creating return data frame");
-  uUnitSizes <- unique(unitSizes);
+  uUnitSizes <- sort(unique(unitSizes));
+  verbose && cat("Unique number of groups per unit: ", 
+                                        paste(uUnitSizes, collapse=","));
+  verbose && cat("Number of units: ", length(unitNames));
+
   if (is.null(units)) {
     cdf <- getCdf(this);
     units <- seq(length=nbrOfUnits(cdf));
@@ -495,6 +499,8 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
   #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
 
   # Instead, updated size by size
+  verbose && printf("Allocating matrix of size %dx%d.\n", 
+                                     max(uUnitSizes), length(unitNames));
   units2 <- groups <- matrix(NA, nrow=max(uUnitSizes), ncol=length(unitNames));
   for (size in uUnitSizes) {
     # Identify units with a certain number of groups
@@ -718,6 +724,8 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2007-07-19
+# o Added more verbose output to getCellMap().
 # 2007-06-11
 # o BUG FIX: Called non-existing 'cf' instead of 'this' in mergeGroups()
 #   of ChipEffectFile.  This function was never used anyway.
