@@ -525,3 +525,5 @@
  matrix.patch
  getFileFormat getFileFormat.AffymetrixCdfFile
  getFileFormat.AffymetrixCelFile
+  byChipType byName byName.AffymetrixCelSet
+fromChipType.AffymetrixCdfFile

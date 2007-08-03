@@ -1,6 +1,23 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.5.5 [2007-08-03]
+o MISC: Keeping the normalizeAverage() that was moved to aroma.light,
+  so that the the package works with aroma.light v1.4.x that comes
+  with the BioC release.  This means that it is only 'aroma.affymetrix', 
+  'aroma.apd', and (optional) 'R.native' that are not on CRAN/BioC.
+
+
+Version: 0.5.4 [2007-08-02]
+o Renamed static fromName() of AffymetrixCelSet to byName().
+o Renamed fromChipType() of AffymetrixCdfFile to byChipType().
+o Some of the dependencies were to weak in the DESCRIPTION file.
+  Added explicit version dependencies also for Suggests and Imports
+  packages.
+o BUG FIX: getCellMap() of ChipEffectFile would give an error if
+  verbose output was on.
+
+
 Version: 0.5.3 [2007-07-13]
 o Package passes R CMD check on Rv2.5.1 (and R v2.6.0 devel).
 o Package passes all (#1 and #2) redundancy test sets available on

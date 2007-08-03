@@ -122,7 +122,7 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
 # @author
 #
 # \seealso{
-#   @seemethod "fromChipType".
+#   @seemethod "byChipType".
 #   @seeclass
 # }
 #
@@ -155,7 +155,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 
 
 ###########################################################################/**
-# @RdocMethod fromChipType
+# @RdocMethod byChipType
 #
 # @title "Defines an AffymetrixCdfFile object by chip type"
 #
@@ -185,7 +185,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, chipType, ...) {
+setMethodS3("byChipType", "AffymetrixCdfFile", function(static, chipType, ...) {
   pathname <- static$findByChipType(chipType);
   if (is.null(pathname)) {
     throw("Could not create ", class(static)[1], " object. No CDF file with that chip type found: ", chipType);
@@ -193,6 +193,11 @@ setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, chipType, ...)
 
   fromFile(static, filename=pathname, path=NULL, ...);
 }, static=TRUE)
+
+setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE)
+
 
 
 
@@ -226,7 +231,7 @@ setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, chipType, ...)
 # }
 #
 # \seealso{
-#   @seemethod "fromChipType".
+#   @seemethod "byChipType".
 #   @seeclass
 # }
 #
@@ -1237,6 +1242,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-08-02
+# o Renamed fromChipType() of AffymetrixCdfFile to byChipType().
 # 2007-07-09
 # o Added getFileFormat() to AffymetrixCdfFile.  This is also reported
 #   by the print() method.

@@ -40,7 +40,7 @@
 }
 
 \seealso{
-  \code{\link[aroma.affymetrix:fromChipType.AffymetrixCdfFile]{*fromChipType}()}.
+  \code{\link[aroma.affymetrix:byChipType.AffymetrixCdfFile]{*byChipType}()}.
   For more information see \code{\link{AffymetrixCdfFile}}.
 }
 

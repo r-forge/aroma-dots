@@ -25,7 +25,7 @@ setMethodS3("fromChipType", "AffymetrixCsvGenomeInformation", function(static, c
   if (is.null(pathname))
     throw("Failed to located Affymetrix CSV annotation file: ", chipType);
   newInstance(static, pathname);
-})
+}, static=TRUE)
 
 setMethodS3("verify", "AffymetrixCsvGenomeInformation", function(this, ...) {
   tryCatch({
@@ -123,6 +123,8 @@ setMethodS3("readData", "AffymetrixCsvGenomeInformation", function(this, ..., ve
 
 ############################################################################
 # HISTORY:
+# 2007-08-03
+# o BUG FIX: Declared fromChipType() static.
 # 2007-03-02
 # o Created.
 ############################################################################

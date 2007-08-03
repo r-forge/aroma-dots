@@ -1232,6 +1232,10 @@
 \alias{getFileFormat}
 \alias{getFileFormat.AffymetrixCdfFile}
 \alias{getFileFormat.AffymetrixCelFile}
+\alias{byChipType}
+\alias{byName}
+\alias{byName.AffymetrixCelSet}
+\alias{fromChipType.AffymetrixCdfFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
