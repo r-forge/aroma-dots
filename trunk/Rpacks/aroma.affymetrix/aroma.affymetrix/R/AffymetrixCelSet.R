@@ -367,7 +367,11 @@ setMethodS3("findByName", "AffymetrixCelSet", function(static, name, tags=NULL, 
 }, static=TRUE)
 
 
-setMethodS3("fromName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType, ...) {
+setMethodS3("fromName", "AffymetrixCelSet", function(static, ...) {
+  byName(static, ...);
+}, static=TRUE)
+
+setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType, ...) {
   suppressWarnings({
     path <- static$findByName(name, tags=tags, chipType=chipType, ...);
   })
@@ -1232,6 +1236,8 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-08-01
+# o Renamed static fromName() of AffymetrixCelSet to byName().
 # 2007-04-06
 # o BUG FIX: fromFiles() of AffymetrixCelSet would give error "Exception: 
 #   Pathname not found: annotationData/samples" if that directory was 

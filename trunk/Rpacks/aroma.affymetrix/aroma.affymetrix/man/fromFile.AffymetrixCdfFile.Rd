@@ -37,7 +37,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:fromChipType.AffymetrixCdfFile]{*fromChipType}()}.
+  \code{\link[aroma.affymetrix:byChipType.AffymetrixCdfFile]{*byChipType}()}.
   For more information see \code{\link{AffymetrixCdfFile}}.
 }
 
