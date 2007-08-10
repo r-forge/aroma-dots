@@ -249,8 +249,13 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
                                             kk, sampleName, nbrOfSamples));
 
     # Create output filename
-    filename <- sprintf("%s,chipEffects.cel", sampleName);
+    filename <- sprintf("%s,chipEffects.CEL", sampleName);
     pathname <- file.path(outPath, filename);
+
+    # Rename lower-case *.cel to *.CEL, if that is the case.  Old versions
+    # of the package generated lower-case CEL files. /HB 2007-08-09
+    pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
+
     verbose && cat(verbose, "Output pathname: ", pathname);
 
     if (skip && isFile(pathname)) {
@@ -335,6 +340,10 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o CnChipEffectSet$importFromDChip() now creates CEL files with upper-case
+#   filename extension "*.CEL", not "*.cel".  The reason for this is that
+#   some software don't recognize lower case filename extensions :( 
 # 2007-03-25
 # o Made importFromDChip() more robust in identifying what columns goes with
 #   what sample etc.

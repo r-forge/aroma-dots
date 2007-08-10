@@ -114,7 +114,7 @@ setMethodS3("getParametersAsString", "ResidualFile", function(this, ...) {
 
 
 
-setMethodS3("fromDataFile", "ResidualFile", function(static, df=NULL, filename=sprintf("%s,residuals.cel", getFullName(df)), path, ..., verbose=FALSE) {
+setMethodS3("fromDataFile", "ResidualFile", function(static, df=NULL, filename=sprintf("%s,residuals.CEL", getFullName(df)), path, ..., verbose=FALSE) {
   # Argument 'df':
   if (!is.null(df)) {
     if (!inherits(df, "AffymetrixCelFile"))
@@ -450,6 +450,10 @@ setMethodS3("writeImage", "ResidualFile", function(this, ..., tags=c("*", "log2"
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o ResidualFile$fromDataFile() now creates CEL files with upper-case
+#   filename extension "*.CEL", not "*.cel".  The reason for this is that
+#   some software don't recognize lower case filename extensions :(  
 # 2007-04-12
 # o BUG FIX: fromDataFile() of ResidualFile returned an AffymetrixCelFile
 #   but not a ResidualFile.  This caused getResidualSet() of ProbeLevelModel

@@ -145,8 +145,10 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
   # Write to a temporary file first, and rename it when we know i's complete
   name <- paste(c(chipType, tags), collapse=sep);
-  dest <- sprintf("%s.cdf", name);
-  dest <- Arguments$getWritablePathname(dest, path=path, mustNotExist=TRUE);
+  dest <- sprintf("%s.CDF", name);
+  dest <- Arguments$getWritablePathname(dest, path=path);
+  dest <- AffymetrixFile$renameToUpperCaseExt(dest);
+  dest <- Arguments$getWritablePathname(dest, mustNotExist=TRUE);
 
   tmpDest <- sprintf("%s.tmp", dest);
   tmpDest <- Arguments$getWritablePathname(tmpDest, mustNotExist=TRUE);

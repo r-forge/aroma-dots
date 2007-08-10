@@ -205,34 +205,60 @@ setMethodS3("setArrays", "ArrayExplorer", function(this, arrays=NULL, ...) {
 
 
 
+setMethodS3("updateOnChipTypeJS", "ArrayExplorer", function(this, ..., verbose=FALSE) {
+  require("R.rsp") || throw("Package not loaded: R.rsp");
 
-###########################################################################/**
-# @RdocMethod updateSamplesFile
-#
-# @title "Updates the samples.js file"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns (invisibly) the pathname to the samples.js file.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("updateSamplesFile", "ArrayExplorer", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Setup
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  mainPath <- getMainPath(this);
+  setTuple <- getSetTuple(this);
+
+  outFile <- sprintf("%s.onChipType.js", class(this)[1]);
+  filename <- sprintf("%s.rsp", outFile);
+  verbose && enter(verbose, "Updating ", outFile);
+  srcPath <- getTemplatePath(this);
+  pathname <- filePath(srcPath, "rsp", class(this)[1], filename);
+  verbose && cat(verbose, "Source: ", pathname);
+
+  outPath <- mainPath;
+  verbose && cat(verbose, "Output path: ", outPath);
+
+  # For each SpatialReporters
+  reporters <- getListOfReporters(this);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Compile RSP file
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Compiling RSP");
+  env <- new.env();
+  env$reporters <- reporters;
+  pathname <- rspToHtml(pathname, path=NULL, 
+                        outFile=outFile, outPath=outPath, 
+                        overwrite=TRUE, envir=env);
+  verbose && exit(verbose);
+
+
+  verbose && exit(verbose);
+  
+  invisible(pathname);
+}, private=TRUE)
+
+
+
+
+
+setMethodS3("updateOnLoadJS", "ArrayExplorer", function(this, ..., verbose=FALSE) {
   require("R.rsp") || throw("Package not loaded: R.rsp");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -254,58 +280,29 @@ setMethodS3("updateSamplesFile", "ArrayExplorer", function(this, ..., verbose=FA
 
   outFile <- sprintf("%s.onLoad.js", class(this)[1]);
   filename <- sprintf("%s.rsp", outFile);
-  verbose && enter(verbose, "Compiling ", outFile);
+
+  verbose && enter(verbose, "Updating ", outFile);
   srcPath <- getTemplatePath(this);
   pathname <- filePath(srcPath, "rsp", class(this)[1], filename);
   verbose && cat(verbose, "Source: ", pathname);
-  outPath <- getParent(mainPath);
+
+  outPath <- mainPath;
   verbose && cat(verbose, "Output path: ", outPath);
-
-
-  verbose && enter(verbose, "Scanning directories for available chip types");
-  # Get possible chip types
-  chipTypes <- getChipTypes(setTuple);
-#  # Find all directories matching these
-#  dirs <- list.files(path=mainPath, full.names=TRUE);
-#  dirs <- dirs[sapply(dirs, FUN=isDirectory)];
-#  chipTypes <- intersect(chipTypes, basename(dirs));
-  verbose && cat(verbose, "Detected chip types: ", 
-                                           paste(chipTypes, collapse=", "));
-  verbose && exit(verbose);
-
-  # Get available color maps
-  verbose && enter(verbose, "Scanning image files for available color maps");
-  colorMaps <- getColorMaps(this);
-#   pattern <- "[^,]*,.*[.]png$";
-#   colorMaps <- list.files(path=path, pattern=pattern);
-#   colorMaps <- gsub("[.]png$", "", colorMaps);
-#   for (array in arrays) {
-#     pattern <- sprintf("^%s,", array);
-#     colorMaps <- gsub(pattern, "", colorMaps);
-#   }
-  colorMaps <- unlist(colorMaps);
-  colorMaps <- unique(colorMaps);
-  colorMaps <- sort(colorMaps);
-  verbose && cat(verbose, "Detected color maps: ", paste(colorMaps, collapse=", "));
-  verbose && exit(verbose);
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Compile RSP file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  chipTypes <- getChipTypes(setTuple);
+  verbose && cat(verbose, "Detected chip types: ", 
+                                           paste(chipTypes, collapse=", "));
   verbose && enter(verbose, "Compiling RSP");
   env <- new.env();
   env$chipTypes <- chipTypes;
   arrays <- getFullNames(setTuple);
-  env$aliases <- gsub(",.*", "", arrays);
-#  env$aliases <- arrays;
-  env$samples <- arrays; 
-  env$colorMaps <- colorMaps;
   pathname <- rspToHtml(pathname, path=NULL, 
                         outFile=outFile, outPath=outPath, 
                         overwrite=TRUE, envir=env);
   verbose && exit(verbose);
-
 
   verbose && exit(verbose);
   
@@ -315,14 +312,15 @@ setMethodS3("updateSamplesFile", "ArrayExplorer", function(this, ..., verbose=FA
 
 
 setMethodS3("setup", "ArrayExplorer", function(this, ..., force=FALSE) {
-  # Setup includes/?
+  # Setup includes/
   addIncludes(this, ..., force=force);
 
-  # Setup index.html
+  # Setup HTML explorer page
   addIndexFile(this, ..., force=force);
 
-  # Setup samples.js?
-  updateSamplesFile(this, ...);
+  # Update Javascript files
+  updateOnChipTypeJS(this, ...);
+  updateOnLoadJS(this, ...);
 }, private=TRUE)
 
 
@@ -395,8 +393,9 @@ setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
     writeImages(reporter, aliases=names(getArrays(this)), ..., verbose=less(verbose));
   });
 
-  # Update samples.js
-  updateSamplesFile(this, ..., verbose=less(verbose));
+  # Update Javascript files
+  updateOnChipTypeJS(this, ..., verbose=less(verbose));
+  updateOnLoadJS(this, ..., verbose=less(verbose));
 
   verbose && exit(verbose);
 })
@@ -406,6 +405,9 @@ setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2007-08-09
+# o Renamed updateSampleFile() to updateOnLoadJS().
+# o Added updateOnChipTypeJS().
 # 2007-03-20
 # o Removed argument arrays from process().
 # o Added setAlias() which also sets the alias on the reporters.

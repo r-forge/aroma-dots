@@ -5,6 +5,8 @@ window.onresize = function() {
 }
 
 includeDom("../ArrayExplorer.onLoad.js");
+includeDom("ArrayExplorer.onChipType.js");
+includeDom("ArrayExplorer.onLoad.js");
 includeDom("extras.js");
 
 function onLoad() {
@@ -32,3 +34,16 @@ function changeZoom(scale) {
     explorer.updateImage();
 }
 
+
+/****************************************************************
+ HISTORY:
+ 2007-08-09
+ o Now ArrayExplorer.onChipType.js and ArrayExplorer.onLoad.js
+   in the current directory are called.
+ 2007-03-19
+ o Now the sample tags are written to their own label.
+ 2007-02-06
+ o Updated to <rootPath>/<dataSet>/<tags>/<chipType>/<set>/.
+ 2007-01-27
+ o Created.
+ ****************************************************************/ 

@@ -245,8 +245,12 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
   mkdirs(path);
   filenames <- getNames(ces);
   pathnames <- sapply(filenames, function(filename) {
-    filename <- sprintf("%s,residuals.cel", filename);
-    Arguments$getWritablePathname(filename, path=path);
+    filename <- sprintf("%s,residuals.CEL", filename);
+    pathname <- Arguments$getWritablePathname(filename, path=path);
+    # Rename lower-case *.cel to *.CEL, if that is the case.  Old versions
+    # of the package generated lower-case CEL files. /HB 2007-08-09
+    pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
+    pathname;
   });
   nbrOfFiles <- length(pathnames);
   
@@ -444,8 +448,11 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   names <- getNames(getChipEffects(this));
   pathname <- sapply(names, function(name) {
-    filename <- sprintf("%s,weights.cel", name);
-    Arguments$getWritablePathname(filename, path=path)
+    filename <- sprintf("%s,weights.CEL", name);
+    pathname <- Arguments$getWritablePathname(filename, path=path);
+    # Rename lower-case *.cel to *.CEL, if that is the case.  Old versions
+    # of the package generated lower-case CEL files. /HB 2007-08-09
+    pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
   });
   nbrOfFiles <- length(pathname);
   
@@ -657,6 +664,11 @@ setMethodS3("plotRle", "QualityAssessmentModel", function(this, subset=NULL, ver
 
 ##########################################################################
 # HISTORY:
+# 2007-08-09
+# o getResiduals() and getWeights() of QualityAssessmentModel now creates 
+#   CEL files with upper-case filename extension "*.CEL", not "*.cel".  
+#   The reason for this is that some software don't recognize lower-case
+#   filename extensions :(  
 # 2007-01-31 /HB
 # o Removed any argument 'unitsPerChunk' and renamed 'moreUnits' to 'ram'.
 # o Replaced the usage of getDataSet() with other alternatives, in order

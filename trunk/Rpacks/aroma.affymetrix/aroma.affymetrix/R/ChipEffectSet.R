@@ -221,7 +221,7 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
     }
 
     verbose && enter(verbose, "Updating file");  # 6-7s ~98% in encode()
-    verbose && printf(verbose, "class(ce)[1]: %s\n", class(ce)[1]);
+#    verbose && printf(verbose, "class(ce)[1]: %s\n", class(ce)[1]);
 #    updateUnits(ce, cdf=cdf, data=dataOne, verbose=less(verbose, 50));
     updateUnits(ce, cdf=cdf, data=dataOne, verbose=verbose);
     verbose && exit(verbose);

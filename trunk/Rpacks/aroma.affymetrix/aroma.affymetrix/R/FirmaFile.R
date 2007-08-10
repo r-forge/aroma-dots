@@ -199,7 +199,7 @@ setMethodS3("updateUnits", "FirmaFile", function(this, units=NULL, cdf=NULL, dat
 }, private=TRUE);
 
 
-setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=sprintf("%s,FIRMAscores.cel", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
+setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=sprintf("%s,FIRMAscores.CEL", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
 
   # Argument 'df':
   if (!is.null(df)) {
@@ -221,6 +221,10 @@ setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=spri
   verbose <- Arguments$getVerbose(verbose);
 
   pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  # Rename lower-case *.cel to *.CEL, if that is the case.  Old versions
+  # of the package generated lower-case CEL files. /HB 2007-08-09
+  pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
 
   if (!isFile(pathname)) {
     verbose && enter(verbose, "Creating FIRMA results file");
@@ -418,6 +422,10 @@ setMethodS3("updateDataFlat", "FirmaFile", function(this, data, ..., verbose=FAL
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o FirmaFile$fromDataFile() now creates CEL files with upper-case
+#   filename extension "*.CEL", not "*.cel".  The reason for this is that
+#   some software don't recognize lower case filename extensions :(  
 # 2007-02-09
 # o Created (based on ChipEffectFile.R).
 ############################################################################

@@ -37,7 +37,7 @@ setMethodS3("createBlankSet", "AffymetrixCelSet", function(static, name, tags=NU
   pathnames <- c();
   nbrOfFiles <- length(sampleNames);
   for (kk in seq(length=nbrOfFiles)) {
-    filename <- sprintf("%s.cel", sampleNames[kk]);
+    filename <- sprintf("%s.CEL", sampleNames[kk]);
     pathname <- Arguments$getWritablePathname(filename, path=path,
                                                   mustNotExist=!overwrite);
     pathnames[kk] <- pathname;
@@ -77,7 +77,8 @@ setMethodS3("createBlankSet", "AffymetrixCelSet", function(static, name, tags=NU
 
     # Create an empty CEL file
     verbose && enter(verbose, "Creating empty CEL file");
-    createCel(pathname, header=celHeader, overwrite=overwrite, ..., verbose=less(verbose));
+    createCel(pathname, header=celHeader, overwrite=overwrite, ..., 
+                                                     verbose=less(verbose));
     rm(celHeader);
     verbose && exit(verbose);
 
@@ -92,6 +93,15 @@ setMethodS3("createBlankSet", "AffymetrixCelSet", function(static, name, tags=NU
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o AffymetrixCelSet$createBlankSet() now creates CEL files with upper-case
+#   filename extension "*.CEL", not "*.cel".  The reason for this is that
+#   some software don't recognize lower case filename extensions :(
+#   Note: The above modification is not safe in the sense that if CEL files
+#   in lower-case already exists, the above method will not detect those
+#   on case-sensitive file systems (e.g. Unix), and create a new set.
+#   However, that should be fine because this functions has in practice not
+#   been used by anyone.
 # 2006-12-06
 # o Created.
 ############################################################################

@@ -1081,7 +1081,7 @@ setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(
 
   # Create the pathname of the destination CDF
   name <- paste(c(chipType, suffix), collapse=sep);
-  dest <- sprintf("%s.cdf", name);
+  dest <- sprintf("%s.CDF", name);
   dest <- Arguments$getWritablePathname(dest, path=path);
 
   # Convert CDF
@@ -1242,6 +1242,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o Now convertCdf() generates a CDF file upper-case extension *.CDF.
 # 2007-08-02
 # o Renamed fromChipType() of AffymetrixCdfFile to byChipType().
 # 2007-07-09

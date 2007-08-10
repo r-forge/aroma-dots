@@ -4,6 +4,102 @@
  * Author: Henrik Bengtsson, hb@stat.berkeley.edu
  ****************************************************************/
 function ArrayExplorer() {
+  /************************************************************************
+   * Methods for setting up chip types, samples, color maps & scales
+   ************************************************************************/
+  this.setChipTypes = function(chipTypes) {
+    this.chipTypes = chipTypes;
+
+    if (chipTypes.length > 1) {
+      var s = 'Chip types: ';
+      for (var kk=0; kk < chipTypes.length; kk++) {
+        var chipType = chipTypes[kk];
+        s = s + '[<span id="chipType' + chipType + '"><a href="javascript:changeChipType(\'' + chipType + '\');">' + chipType + '</a></span>]'; 
+      }
+      s = s + '<br>';
+      updateLabel('chipTypeLabel', s);
+    }
+  }
+
+
+  this.setSamples = function(samples) {
+    this.samples = samples;
+    if (samples.length > 1) {
+      var s = 'Samples: ';
+      for (var kk=0; kk < samples.length; kk++) {
+        var sample = samples[kk];
+        var name = sample;
+        if (this.sampleAliases != null)
+          name = this.sampleAliases[kk];
+        s = s + '[<span id="sample' + sample + '"><a href="javascript:changeSample(\'' + sample + '\');">' + name + '</a></span>]<span style="font-size:1%"> </span>';
+      }
+      s = s + ' ';
+      updateLabel('samplesLabel', s);
+
+      var sample = this.sample;
+      this.sample = null;
+      this.setSample(sample);
+    }
+  }
+
+  this.setSampleAliases = function(aliases) {
+    this.sampleAliases = aliases;
+  }
+
+
+  this.setColorMaps = function(colorMaps) {
+    this.colorMaps = colorMaps;
+
+    if (colorMaps.length > 0) {
+      var s = 'Color map: ';
+      for (var kk=0; kk < colorMaps.length; kk++) {
+        var colorMap = colorMaps[kk];
+        var name = colorMap;
+        if (this.colorMapAliases != null)
+          name = this.colorMapAliases[kk];
+        s = s + '[<span id="colorMap' + colorMap + '"><a href="javascript:changeColorMap(\'' + colorMap + '\');">' + name + '</a></span>]'; 
+      }
+      s = s + '<br>';
+      updateLabel('colorMapLabel', s);
+
+      var colorMap = this.colorMap;
+      this.colorMap = null;
+      this.setColorMap(colorMap);
+    }
+  }
+
+  this.setColorMapAliases = function(aliases) {
+    this.colorMapAliases = aliases;
+  }
+
+
+  this.setScales = function(scales) {
+    function padWidthZeros(x, width) {
+      var str = "" + x;
+      while (width - str.length > 0)
+        str = "0" + str;
+      return(str);
+    }
+   
+    this.scales = scales;
+    var zWidth = Math.round(Math.log(Math.max(scales)) / Math.log(10) + 0.5);
+    var s = 'Zoom: ';
+    for (var kk=0; kk < scales.length; kk++) {
+      var scale = scales[kk];
+      s = s + '[<span id="zoom' + scale + '"><a href="javascript:changeZoom(' + scale + ');">x' + padWidthZeros(scale, zWidth) + '</a></span>]'; 
+    }
+    s = s + '<br>';
+    updateLabel('zoomLabel', s);
+
+    var scale = this.scale;
+    this.scale = null;
+    this.setScale(scale);
+  }
+
+
+  /************************************************************************
+   * Methods for updating the display
+   ************************************************************************/
   this.showIndicator = function(state) {
     var statusImage = document.getElementById('statusImage');
     if (state) {
@@ -54,6 +150,9 @@ function ArrayExplorer() {
     }
   }
 
+  /************************************************************************
+   * Methods for changing chip type, sample, color map & scale
+   ************************************************************************/
   this.setColorMap = function(map) {
     if (this.colorMap == map)
       return(false);
@@ -69,9 +168,12 @@ function ArrayExplorer() {
     if (this.chipType == chipType)
       return(false);
 
+    this.onChipType(chipType);
+
     clearById('chipType' + this.chipType);
     highlightById('chipType' + chipType);
     this.chipType = chipType;
+
     return(true);
   }
 
@@ -111,81 +213,10 @@ function ArrayExplorer() {
     return(true);
   }
 
-  this.setSamples = function(samples) {
-    this.samples = samples;
-    if (samples.length > 1) {
-      var s = 'Samples: ';
-      for (var kk=0; kk < samples.length; kk++) {
-        var sample = samples[kk];
-        var name = sample;
-        if (this.sampleAliases != null)
-          name = this.sampleAliases[kk];
-        s = s + '[<span id="sample' + sample + '"><a href="javascript:changeSample(\'' + sample + '\');">' + name + '</a></span>]<span style="font-size:1%"> </span>';
-      }
-      s = s + ' ';
-      updateLabel('samplesLabel', s);
-    }
-  }
 
-  this.setSampleAliases = function(aliases) {
-    this.sampleAliases = aliases;
-  }
-
-  this.setColorMapAliases = function(aliases) {
-    this.colorMapAliases = aliases;
-  }
-
-  this.setChipTypes = function(chipTypes) {
-    this.chipTypes = chipTypes;
-
-    if (chipTypes.length > 1) {
-      var s = 'Chip types: ';
-      for (var kk=0; kk < chipTypes.length; kk++) {
-        var chipType = chipTypes[kk];
-        s = s + '[<span id="chipType' + chipType + '"><a href="javascript:changeChipType(\'' + chipType + '\');">' + chipType + '</a></span>]'; 
-      }
-      s = s + '<br>';
-      updateLabel('chipTypeLabel', s);
-    }
-  }
-
-
-  this.setScales = function(scales) {
-    function padWidthZeros(x, width) {
-      var str = "" + x;
-      while (width - str.length > 0)
-        str = "0" + str;
-      return(str);
-    }
-   
-    this.scales = scales;
-    var zWidth = Math.round(Math.log(Math.max(scales)) / Math.log(10) + 0.5);
-    var s = 'Zoom: ';
-    for (var kk=0; kk < scales.length; kk++) {
-      var scale = scales[kk];
-      s = s + '[<span id="zoom' + scale + '"><a href="javascript:changeZoom(' + scale + ');">x' + padWidthZeros(scale, zWidth) + '</a></span>]'; 
-    }
-    s = s + '<br>';
-    updateLabel('zoomLabel', s);
-  }
-
-  this.setColorMaps = function(colorMaps) {
-    this.colorMaps = colorMaps;
-
-    if (colorMaps.length > 0) {
-      var s = 'Color map: ';
-      for (var kk=0; kk < colorMaps.length; kk++) {
-        var colorMap = colorMaps[kk];
-        var name = colorMap;
-        if (this.colorMapAliases != null)
-          name = this.colorMapAliases[kk];
-        s = s + '[<span id="colorMap' + colorMap + '"><a href="javascript:changeColorMap(\'' + colorMap + '\');">' + name + '</a></span>]'; 
-      }
-      s = s + '<br>';
-      updateLabel('colorMapLabel', s);
-    }
-  }
-
+  /************************************************************************
+   * Main
+   ************************************************************************/
   this.samples = new Array();
   this.sampleAliases = null;
   this.chipTypes = new Array();
@@ -295,10 +326,10 @@ function ArrayExplorer() {
 	  this.image2d.container.style.height = h;
 
     this.onLoad();
+    this.setChipType(this.chipTypes[0]);
 
     this.setSample(this.samples[0]);
     this.setScale(this.scales[0]);
-    this.setChipType(this.chipTypes[0]);
     this.setColorMap(this.colorMaps[0]);
 
     this.update();
@@ -307,6 +338,8 @@ function ArrayExplorer() {
 
 /****************************************************************
  HISTORY:
+ 2007-08-09
+ o Now setChipType() calls onChipType() too.
  2007-03-19
  o Now the sample tags are written to their own label.
  2007-02-06

@@ -20,6 +20,30 @@ stopifnot(identical(getNames(cs), sampleNames));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Spatial intensity plots
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ae <- ArrayExplorer(cs);
+setColorMaps(ae, "sqrt,yellow");
+print(ae);
+process(ae, verbose=log);
+stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Spatial residual plots test
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+plm <- RmaPlm(cs);
+print(plm);
+fit(plm, verbose=log);
+rs <- calculateResidualSet(plm, verbose=log);
+ae <- ArrayExplorer(rs);
+setColorMaps(ae, c("log2,log2neg,rainbow", "log2,log2pos,rainbow"));
+print(ae);
+process(ae, verbose=log);
+stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 acc <- AllelicCrosstalkCalibration(cs);
@@ -52,6 +76,8 @@ stopifnot(identical(getNames(ces), getNames(cs)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 theta <- extractMatrix(ces, verbose=log);
 print(summary(theta));
+
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fragment-length normalization test

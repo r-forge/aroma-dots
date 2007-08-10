@@ -141,8 +141,13 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
 
     verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
 
-    filename <- sprintf("%s,residuals.cel", getFullName(df));
+    filename <- sprintf("%s,residuals.CEL", getFullName(df));
     pathname <- Arguments$getWritablePathname(filename, path=path);
+
+    # Rename lower-case *.cel to *.CEL, if that is the case.  Old versions
+    # of the package generated lower-case CEL files. /HB 2007-08-09
+    pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
+
     verbose && cat(verbose, "Pathname: ", pathname);
     if (!force && isFile(pathname)) {
       verbose && cat(verbose, "Already calculated.");
@@ -261,8 +266,12 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
 
 
 
-##########################################################################
+############################################################################
 # HISTORY:
+# 2007-08-09
+# o calculateResidualSet() of ProbeLevelModel now creates CEL files with 
+#   upper-case filename extension "*.CEL", not "*.cel".  The reason for this
+#   is that some software don't recognize lower case filename extensions :(  
 # 2007-04-12
 # o BUG FIX: There was a if (TRUE) {} statement in calculateResidualSet() 
 #   that was supposed to be if (!fource) {} in the release version.
@@ -284,4 +293,4 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
 #   This is done by overriding static getCalculateResidualsFunction().
 # 2007-02-12 HB
 # o Rewritten from KS:s code.
-##########################################################################
+############################################################################

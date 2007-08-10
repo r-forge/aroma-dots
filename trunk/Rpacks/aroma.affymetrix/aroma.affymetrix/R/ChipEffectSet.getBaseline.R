@@ -41,7 +41,9 @@ setMethodS3("getBaseline", "ChipEffectSet", function(this, force=FALSE, verbose=
   path <- getPath(this);
   key <- list(dataset=getFullName(this), samples=getNames(this));
   id <- digest(key);
-  filename <- sprintf(".baseline,%s.cel", id);
+
+  # Generate output pathname
+  filename <- sprintf(".baseline,%s.CEL", id);
   pathname <- Arguments$getWritablePathname(filename, path=path);
 
   # Get a template CEL file
@@ -78,6 +80,10 @@ setMethodS3("getBaseline", "CnChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o getBaseLine() of CnChipEffectSet now creates CEL files with upper-case
+#   filename extension "*.CEL", not "*.cel".  The reason for this is that
+#   some software don't recognize lower case filename extensions :(
 # 2007-03-22
 # o TO DO: Estimate standard errors just like getAverage() does.
 # o Added getBaseline().

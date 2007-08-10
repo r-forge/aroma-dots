@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Fri Aug 10 11:55:09 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1039,6 +1041,10 @@
 \alias{updateDataFlat.ResidualFile}
 \alias{updateDataFlat.WeightsFile}
 \alias{updateSamplesFile}
+\alias{updateOnChipTypeJS.ArrayExplorer}
+\alias{updateOnLoadJS.ArrayExplorer}
+\alias{updateOnChipTypeJS}
+\alias{updateOnLoadJS}
 \alias{updateUnits}
 \alias{updateUnits.ChipEffectFile}
 \alias{updateUnits.ChipEffectSet}
@@ -1236,6 +1242,9 @@
 \alias{byName}
 \alias{byName.AffymetrixCelSet}
 \alias{fromChipType.AffymetrixCdfFile}
+\alias{normalizeAverage}
+\alias{renameToUpperCaseExt}
+\alias{renameToUpperCaseExt.AffymetrixFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

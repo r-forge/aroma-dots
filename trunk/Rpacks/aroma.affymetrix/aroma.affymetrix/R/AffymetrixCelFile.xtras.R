@@ -41,8 +41,13 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename' and 'path':
-  pathname <- Arguments$getWritablePathname(filename, path=path, 
-                                       mustNotExist=(!overwrite && !skip));
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  # Rename lower-case *.cel to *.CEL, if that is the case.  Old versions
+  # of the package generated lower-case CEL files. /HB 2007-08-09
+  pathname <- AffymetrixFile$renameToUpperCaseExt(pathname); 
+
+  pathname <- Arguments$getWritablePathname(pathname, mustNotExist=(!overwrite && !skip));
 
   # Argument 'version':
   version <- match.arg(version);
