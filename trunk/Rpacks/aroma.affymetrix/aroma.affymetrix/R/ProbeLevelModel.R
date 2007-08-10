@@ -150,7 +150,7 @@ setMethodS3("getProbeAffinityFile", "ProbeLevelModel", function(this, ..., .clas
 
   # Create probe-affinity file from CEL file template
   df <- getFile(ds, 1);
-  paf <- createFrom(df, filename="probeAffinities.cel", path=getPath(this), 
+  paf <- createFrom(df, filename="probeAffinities.CEL", path=getPath(this), 
                                                          method="create", ...);
 
   # Make it into an object of the correct class
@@ -834,6 +834,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o getProbeAffinityFile() of ProbeLevelModel now creates CEL files with 
+#   upper-case filename extension "*.CEL", not "*.cel".  The reason for this
+#   is that some software don't recognize lower case filename extensions :(  
 # 2007-04-12
 # o Added 'force' argument to getResidualSet().
 # 2007-04-02

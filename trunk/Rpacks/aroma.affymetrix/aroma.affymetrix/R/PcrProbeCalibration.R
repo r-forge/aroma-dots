@@ -416,7 +416,7 @@ setMethodS3("process", "PcrProbeCalibration", function(this, ..., force=FALSE, v
     # Storing the calibrated data
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing data");
-    filename <- sprintf("%s.cel", getFullName(df));
+    filename <- sprintf("%s.CEL", getFullName(df));
     pathname <- filePath(outputPath, filename);
     verbose && cat(verbose, "Pathname: ", pathname);
 
@@ -480,6 +480,10 @@ setMethodS3("plotFit", "PcrProbeCalibration", function(this, ylim=c(-1,1), xlab=
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o process() of PcrProbeCalibration now creates CEL files with upper-case
+#   filename extension "*.CEL", not "*.cel".  The reason for this is that
+#   some software don't recognize lower case filename extensions :(  
 # 2006-12-12
 # o Added argument 'flavor' to constructor.
 # 2006-12-08

@@ -433,7 +433,10 @@
   unload.PlatformDesign updateData updateData.AromaGenomePositionFile
   updateDataFlat updateDataFlat.ChipEffectFile updateDataFlat.FirmaFile
   updateDataFlat.ResidualFile updateDataFlat.WeightsFile
-  updateSamplesFile updateUnits updateUnits.ChipEffectFile
+  updateSamplesFile
+  updateOnChipTypeJS.ArrayExplorer updateOnLoadJS.ArrayExplorer
+  updateOnChipTypeJS updateOnLoadJS
+  updateUnits updateUnits.ChipEffectFile
   updateUnits.ChipEffectSet updateUnits.FirmaFile updateUnits.FirmaSet
   updateUnits.GenotypeCallXdrFile updateUnits.ParameterCelFile
   updateUnits.ProbeAffinityFile updateUnits.ResidualFile
@@ -527,3 +530,5 @@
  getFileFormat.AffymetrixCelFile
   byChipType byName byName.AffymetrixCelSet
 fromChipType.AffymetrixCdfFile
+  normalizeAverage renameToUpperCaseExt
+  renameToUpperCaseExt.AffymetrixFile 

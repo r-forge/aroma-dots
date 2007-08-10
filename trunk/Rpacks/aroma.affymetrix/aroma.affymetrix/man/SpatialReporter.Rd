@@ -32,6 +32,9 @@ public abstract static class \bold{SpatialReporter}\cr
 extends \emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
 
 
+
+  A SpatialReporter generates image files of spatial representations of
+  cell signals for each of the arrays in the input set.
  }
 
  \usage{SpatialReporter(...)}

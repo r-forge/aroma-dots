@@ -169,7 +169,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
 }, static=TRUE, private=TRUE)
 
 
-setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename=sprintf("%s,chipEffects.cel", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
+setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename=sprintf("%s,chipEffects.CEL", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'df':
   if (!is.null(df)) {
     if (!inherits(df, "AffymetrixCelFile"))
@@ -189,7 +189,13 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+  # Argument 'filename' and 'path':
   pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  # Rename lower-case *.cel to *.CEL, if that is the case.  Older versions
+  # of the package generated lower-case CEL files. /HB 2007-08-09
+  pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Backward compatibility patch for now. Before chip effect files
@@ -724,6 +730,13 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o ChipEffectFile$fromDataFile() now creates CEL files with upper-case
+#   filename extension "*.CEL", not "*.cel".  The reason for this is that
+#   some software don't recognize lower case filename extensions :(
+#   Note: The above modification is safe because the above method first
+#   renames filename extensions in lower case to be in upper case, if
+#   they exist.
 # 2007-08-02
 # o BUG FIX: getCellMap() would give 'Error in verbose && cat("Unique number
 #   of groups per unit: ", paste(uUnitSizes,...', if verbose was on.

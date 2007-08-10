@@ -649,9 +649,66 @@ setMethodS3("validateChecksum", "AffymetrixFile", function(this, ..., verbose=FA
 })
 
 
+setMethodS3("renameToUpperCaseExt", "AffymetrixFile", function(static, pathname, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # isFileCase() is a case-sensitive isFile() for Windows
+  isFileCase <- function(pathname, ...) {
+    # Non-case sensitive check
+    if (!isFile(pathname))
+      return(FALSE);
+
+    # There can still be a case-difference
+    path <- dirname(pathname);
+    filename <- basename(pathname);
+    filenames <- list.files(path=path, all.files=TRUE);
+    res <- grep(filename, filenames, fixed=TRUE);
+    res <- (length(res) >= 1);
+    res;
+  }
+
+
+  # Identify the filename extension
+  ext <- gsub("^.*[.]", "", pathname);
+
+  # No filename extension?  Do nothing.
+  if (identical(ext, pathname))
+    return(pathname);
+
+  # Generate the pathname with lower- and upper-case extensions
+  extL <- tolower(ext);
+  pathnameL <- gsub(sprintf("[.]%s$", ext), sprintf(".%s", extL), pathname);
+
+  extU <- toupper(ext);
+  pathnameU <- gsub(sprintf("[.]%s$", ext), sprintf(".%s", extU), pathname);
+
+  # Does a lower-case filename exist? If not, nothing to do.
+  if (!isFileCase(pathnameL))
+    return(pathnameU);
+
+  # Can we rename it?
+  if (identical(pathname, pathnameL) && isFileCase(pathnameU)) {
+    throw("Cannot rename pathname to have upper-case filename extension, because such a file already exists: ", pathnameU);
+  }
+
+  # Try to rename the file
+  res <- file.rename(pathnameL, pathnameU);
+  if (res) {
+    msg <- paste("Renamed file to have an upper-case filename extension:", pathname);
+    warning(msg);
+  } else {
+    throw("Failed to rename file such that it gets an upper-case filename extension (try to rename the file manually): ", pathname);
+  }
+
+  pathnameU;
+}, static=TRUE, protected=TRUE)
+
 
 ############################################################################
 # HISTORY:
+# 2007-08-09
+# o Added static renameToUpperCaseExt().
 # 2007-03-20
 # o Added getAlias() and setAlias().  Note, getName() etc are still
 #   unaffected by these.

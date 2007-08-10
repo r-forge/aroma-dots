@@ -5,6 +5,9 @@
 #
 # \description{
 #  @classhierarchy
+#
+#  A SpatialReporter generates image files of spatial representations of
+#  cell signals for each of the arrays in the input set.
 # }
 # 
 # @synopsis
@@ -146,8 +149,13 @@ setMethodS3("setColorMaps", "SpatialReporter", function(this, colorMaps=c("sqrt,
 
 setMethodS3("getColorMaps", "SpatialReporter", function(this, parsed=FALSE, ...) {
   colorMaps <- this$.colorMaps;
-  if (!parsed)
+  if (!parsed) {
     colorMaps <- sapply(colorMaps, .subset2, "tags");
+    colorMaps <- unlist(colorMaps);
+    colorMaps <- unique(colorMaps);
+    colorMaps <- sort(colorMaps);
+  }
+
   colorMaps;
 })
 
@@ -182,10 +190,12 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
   }
 
   # For each array...
-  for (kk in seq(cs)) {
+  nbrOfArrays <- nbrOfArrays(cs);
+  for (kk in seq(length=nbrOfArrays)) {
     df <- getFile(cs, kk);
     setAlias(df, aliases[kk]);
-    verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
+    verbose && enter(verbose, sprintf("Array #%d of %d ('%s')", 
+                                             kk, nbrOfArrays, getName(df)));
     verbose && cat(verbose, "Alias: ", getAlias(df));
     # For each color map...
     for (ll in seq(along=colorMaps)) {
@@ -255,6 +265,8 @@ setMethodS3("process", "SpatialReporter", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2007-08-09
+# o Now getColorMaps(parsed=FALSE) returns a unique sorted set of color maps.
 # 2007-03-19
 # o Updated addColorMap() to accept multiple transforms.
 # o Created from ArrayExplorer.R.
