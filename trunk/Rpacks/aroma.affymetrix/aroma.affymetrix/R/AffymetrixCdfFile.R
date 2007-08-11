@@ -969,7 +969,7 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
     # For each unit and each group, get the index of the first cell.
     res <- applyCdfGroups(res, function(groups) {
       # For each group, pull out the first cell.
-      lapply(groups, FUN=function(group) {
+      base::lapply(groups, FUN=function(group) {
         # group$indices[1] == group[[1]][1] == ...
         list(indices=.subset(.subset2(group, 1), 1));
       })

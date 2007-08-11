@@ -58,6 +58,14 @@ setConstructorS3("ChipEffectFile", function(..., probeModel=c("pm")) {
   
     res;
   })
+
+
+  setEncodeFunction(this, function(groupData, ...) {
+    groupData[[3]] <- -as.integer(.subset2(groupData, 3));
+    names(groupData) <- c("intensities", "stdvs", "pixels");
+    groupData;
+  })
+
   
   setDecodeFunction(this, function(groupData, ...) {
     res <- list();
@@ -483,7 +491,7 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
   unitNames <- names(cells);
   
   # Get the number of groups per unit
-  unitSizes <- lapply(cells, FUN=function(unit) {
+  unitSizes <- base::lapply(cells, FUN=function(unit) {
     length(.subset2(unit, "groups"));
   });
   unitSizes <- unlist(unitSizes, use.names=FALSE);

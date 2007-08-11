@@ -102,7 +102,7 @@ setMethodS3("setDecodeFunction", "ParameterCelFile", function(this, fcn, ...) {
 setMethodS3("encode", "ParameterCelFile", function(this, units, ...) {
   encodeUnitGroup <- this$encodeFunction;
   if (!is.null(encodeUnitGroup)) {
-    units <- lapply(units, FUN=lapply, encodeUnitGroup, ...);
+    units <- base::lapply(units, FUN=base::lapply, encodeUnitGroup);
   }
   units;
 }, private=TRUE)
@@ -110,7 +110,7 @@ setMethodS3("encode", "ParameterCelFile", function(this, units, ...) {
 setMethodS3("decode", "ParameterCelFile", function(this, units, ...) {
   decodeUnitGroup <- this$decodeFunction;
   if (!is.null(decodeUnitGroup)) {
-    units <- lapply(units, FUN=lapply, decodeUnitGroup, ...);
+    units <- base::lapply(units, FUN=base::lapply, decodeUnitGroup);
   }
   units;
 }, private=TRUE)
@@ -204,6 +204,12 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ..
 
 ############################################################################
 # HISTORY:
+# 2007-08-10
+# o Now all lapply() calls are done to base::lapply() explicitly to avoid
+#   method dispatching, because lapply() is made into a generic function
+#   by aroma.affymetrix.
+# o In order to optimize the performance, arguments '...' to encode() and
+#   decode() are *no longer* passed down.
 # 2006-11-28
 # o Added argument 'cache' to readUnits().
 # 2006-11-14

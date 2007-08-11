@@ -198,7 +198,7 @@ setMethodS3("updateUnits", "ResidualSet", function(this, units=NULL, cdf=NULL, d
 
     verbose <- less(verbose, 50);
     verbose && enter(verbose, "Extracting estimates");  # 3-4s
-    dataOne <- lapply(data, FUN=lapply, function(group) {
+    dataOne <- base::lapply(data, FUN=base::lapply, function(group) {
       # eps = group$eps[,kk] = ...
       list(
         eps=.subset(.subset2(group, "eps"), kk)

@@ -949,7 +949,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     } else {
       # About 3-10 times slower than rowMedians()
       rowMedians <- function(X, ...) {
-        apply(X, MARGIN=1, FUN=median, ...);
+        base::apply(X, MARGIN=1, FUN=median, ...);
       }
     }
 
@@ -1144,7 +1144,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
 
     verbose && enter(verbose, "Estimating averages and standard deviations");
     if (na.rm)
-      n <- apply(X, MARGIN=1, FUN=function(x) { sum(!is.na(x)) });
+      n <- base::apply(X, MARGIN=1, FUN=function(x) { sum(!is.na(x)) });
 
     # Calculate the mean signal    
     mu <- mean(X, na.rm=na.rm);          # Special mean()!
@@ -1206,8 +1206,8 @@ setMethodS3("range", "AffymetrixCelSet", function(this, ...) {
 setMethodS3("applyToUnitIntensities", "AffymetrixCelSet", function(this, units=NULL, FUN, stratifyBy="pm", verbose=FALSE, ...) {
   y <- getUnitIntensities(this, units=units, stratifyBy=stratifyBy, ...);
 
-  y <- lapply(y, FUN=function(unit) {
-    groups <- lapply(unit, FUN=function(group) {
+  y <- base::lapply(y, FUN=function(unit) {
+    groups <- base::lapply(unit, FUN=function(group) {
       FUN(group[[1]], ...)
     })
     groups;

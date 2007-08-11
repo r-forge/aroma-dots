@@ -2,6 +2,12 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.5.6 [2007-08-10]
+o Package passes R CMD check on R v2.5.1 and R v2.6.0 devel.
+o AffymetrixFileSet class defines lapply(), which causes lapply()
+  to redefined as a generic function, which in turn gives some 
+  overhead to "standard" lapply() calls due to method dispatching.
+  All standard lapply() calls are now called as base::lapply().
+  Benchmarking: This changes makes fit() on SNP 10K roughly 10% faster.
 o Now all generated CEL files are written with upper-case filename
   extension (*.CEL).  The main reason for this is that some other
   software don't recognize CEL files with lower-case extension (*.cel).

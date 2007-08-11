@@ -80,7 +80,7 @@ setMethodS3("getFirstCellPerUnitIndices", "ExonChipEffectSet", function(this, ..
 
   cdf <- getCdf(this);
   idx <- getFirstCellIndices(cdf, ...);
-  idx <- lapply(lapply(idx, .subset2, 1), .subset2, 1);
+  idx <- base::lapply(base::lapply(idx, .subset2, 1), .subset2, 1);
   idx <- unlist(idx, use.names=FALSE);
   return(idx);
   

@@ -366,7 +366,7 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (this$probeModel == "pm-mm") {
     fitUnit <- function(unit, ...) {
-      lapply(unit, FUN=function(group) {
+      base::lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1); # Get intensities
         y <- y[1,,] - y[2,,];  # PM-MM
         fitfcn(y);
@@ -374,7 +374,7 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
     }
   } else if (this$probeModel == "min1(pm-mm)") {
     fitUnit <- function(unit, ...) {
-      lapply(unit, FUN=function(group) {
+      base::lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1); # Get intensities
         y <- y[1,,] - y[2,,];  # PM-MM
         y[y < 1] <- 1;       # min1(PM-MM)=min(PM-MM,1)
@@ -383,7 +383,7 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
     }
   } else if (this$probeModel == "pm+mm") {
     fitUnit <- function(unit, ...) {
-      lapply(unit, FUN=function(group) {
+      base::lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1); # Get intensities
         y <- y[1,,] + y[2,,];  # PM+MM
         fitfcn(y);
@@ -391,7 +391,7 @@ setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
     }
   } else {
     fitUnit <- function(unit, ...) {
-      lapply(unit, FUN=function(group) {
+      base::lapply(unit, FUN=function(group) {
         if (length(group) > 0) {
           y <- .subset2(group, 1); # Get intensities
         } else {
@@ -733,7 +733,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Fitting probe-level model");
     tFit <- processTime();
-    fit <- lapply(y, FUN=fitUnit);
+    fit <- base::lapply(y, FUN=fitUnit);
     timers$fit <- timers$fit + (processTime() - tFit);
     y <- NULL; # Not needed anymore (to minimize memory usage)
     verbose && str(verbose, fit[1]);
@@ -823,7 +823,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     t <- lapply(timers, FUN=function(timer) unname(timer[3]));
     t <- unlist(t);
     t <- 100 * t / t["total"];
-    printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%% (of which %.2f%% is for writing chip-effects), Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["write"], 100*t["writeCes"]/t["write"], t["gc"]);
+    printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%% (of which %.2f%% is for encoding/writing chip-effects), Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["write"], 100*t["writeCes"]/t["write"], t["gc"]);
   }
 
   invisible(units);

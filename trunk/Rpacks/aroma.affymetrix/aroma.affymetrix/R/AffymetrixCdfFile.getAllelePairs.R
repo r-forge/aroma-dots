@@ -154,7 +154,7 @@ setMethodS3("getAllelePairs", "AffymetrixCdfFile", function(this, units=NULL, ..
   
   # Build a table of allele pairs on the forward strand.  The alleles
   # on the reverse strand are complementary, if that strand exists.
-  forward <- lapply(bases, FUN=function(n) paste(n[1:2], collapse=""));
+  forward <- base::lapply(bases, FUN=function(n) paste(n[1:2], collapse=""));
   unitNames <- names(forward);
   forward <- unlist(forward, use.names=FALSE);
   names(forward) <- unitNames;
@@ -305,7 +305,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # Save memory by converting to integers. [44Mb -> 11Mb]
   levels <- as.integer(1:4);
   names(levels) <- c("A", "C", "G", "T");
-  groupNames <- lapply(groupNames, FUN=function(s) { 
+  groupNames <- base::lapply(groupNames, FUN=function(s) { 
     s <- levels[s];
     names(s) <- NULL;
     s;
@@ -336,10 +336,10 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
 
   # Save memory by flattening structure. [298Mb -> 51Mb(!)]
   # TODO: Add support to do this already in affxparser?! /HB 2006-07-22
-  cdfAll <- lapply(cdfAll, FUN=function(unit) {
+  cdfAll <- base::lapply(cdfAll, FUN=function(unit) {
     groups <- .subset2(unit, 1);
     names(groups) <- NULL;
-    lapply(groups, FUN=.subset2, 1);
+    base::lapply(groups, FUN=.subset2, 1);
   });
   gc();
   verbose && exit(verbose);
@@ -355,7 +355,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
     basepair <- paste(names(levels)[name[1:2]], collapse="");
     verbose && enter(verbose, "Allele basepair ", basepair);
 
-    idx <- lapply(groupNames, FUN=identical, name);
+    idx <- base::lapply(groupNames, FUN=identical, name);
     idx <- which(unlist(idx, use.names=FALSE));
     cdf <- cdfAll[idx];
     cdfAll[idx] <- NA;  # Not needed anymore
@@ -363,7 +363,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
 
     cdf0 <- vector("list", length=length(name));
     for (gg in 1:length(name)) {
-      cdf0[[gg]] <- unlist(lapply(cdf, FUN=.subset2, gg), use.names=FALSE);
+      cdf0[[gg]] <- unlist(base::lapply(cdf, FUN=.subset2, gg), use.names=FALSE);
     }
     rm(cdf);
     probeSets[[kk]] <- cdf0;
@@ -424,7 +424,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   if (ignoreOrder) {
     verbose && enter(verbose, "Putting AB and BA groups together");
     pairs <- strsplit(names(probeSets2), split="");
-    pairs <- lapply(pairs, FUN=function(x) paste(sort(x), collapse=""));
+    pairs <- base::lapply(pairs, FUN=function(x) paste(sort(x), collapse=""));
     pairs <- unlist(pairs);
     uPairs <- sort(unique(pairs));
     probeSets <- list();
@@ -522,7 +522,7 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
   uGroupNames <- unique(groupNames);
   verbose && exit(verbose);
 
-  uGroupNames0 <- lapply(uGroupNames, FUN=function(x) {
+  uGroupNames0 <- base::lapply(uGroupNames, FUN=function(x) {
     x <- matrix(x, nrow=2)
     if (ncol(x) == 2) {
       # Take the complement bases for the reverse strand
@@ -532,12 +532,12 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
 
   })
 
-  uBasepairs0 <- lapply(uGroupNames0, FUN=function(x) {
-    apply(x, MARGIN=2, FUN=sort);
+  uBasepairs0 <- base::lapply(uGroupNames0, FUN=function(x) {
+    base::apply(x, MARGIN=2, FUN=sort);
   })
 
-  uBasepairs1 <- lapply(uBasepairs0, FUN=function(x) {
-    apply(x, MARGIN=2, FUN=paste, collapse="");
+  uBasepairs1 <- base::lapply(uBasepairs0, FUN=function(x) {
+    base::apply(x, MARGIN=2, FUN=paste, collapse="");
   })
 
   # Get all unique allele basepairs
@@ -574,7 +574,7 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
     
     verbose && cat(verbose, "Located in ", length(unique(gIdx)), " group(s).");
     
-    idx <- lapply(groupNames, FUN=identical, basepair);
+    idx <- base::lapply(groupNames, FUN=identical, basepair);
     idx <- which(unlist(idx, use.names=FALSE));
     cdf <- cdfAll[idx];
 

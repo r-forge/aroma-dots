@@ -819,7 +819,7 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
     } else {
       # About 3-10 times slower than rowMedians()
       rowMedians <- function(X, ...) {
-        apply(X, MARGIN=1, FUN=median, ...);
+        base::apply(X, MARGIN=1, FUN=median, ...);
       }
     }
 
@@ -1014,7 +1014,7 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
 
     verbose && enter(verbose, "Estimating averages and standard deviations");
     if (na.rm)
-      n <- apply(X, MARGIN=1, FUN=function(x) { sum(!is.na(x)) });
+      n <- base::apply(X, MARGIN=1, FUN=function(x) { sum(!is.na(x)) });
 
     # Calculate the mean signal    
     mu <- mean(X, na.rm=na.rm);          # Special mean()!
@@ -1092,6 +1092,8 @@ setMethodS3("getFullName", "CnagCfhSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-08-10
+# o Now getAverageFile() utilizes Biobase::rowMedians(), if available.
 # 2007-04-06
 # o Created from AffymetrixCelSet.R
 ############################################################################

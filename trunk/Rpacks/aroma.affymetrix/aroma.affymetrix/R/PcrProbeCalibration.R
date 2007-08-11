@@ -198,7 +198,7 @@ setMethodS3("getPmDesignMatrix", "PcrProbeCalibration", function(this, ..., verb
   verbose && print(verbose, summary(fragLengths));
   # Gets the basis matrix for natural cubic splines
   cc <- 1+3*oligoLength+1:3;
-  D[,cc] <- ns(fragLengths, df=3);
+  D[,cc] <- splines::ns(fragLengths, df=3);
   rm(fragLengths);
   verbose && exit(verbose);
 

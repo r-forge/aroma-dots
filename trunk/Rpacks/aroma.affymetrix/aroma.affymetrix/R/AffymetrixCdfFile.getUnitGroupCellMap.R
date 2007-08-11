@@ -6,7 +6,7 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCdfFile", function(this, units=NUL
     # Returning indices or names?
     if (!retNames) {
       verbose && enter(verbose, "Renaming group names to group indices");
-      cells <- lapply(cells, FUN=function(unit) {
+      cells <- base::lapply(cells, FUN=function(unit) {
         groups <- .subset2(unit, 1);
         names(groups) <- seq_len(length(groups));
         list(groups=groups);

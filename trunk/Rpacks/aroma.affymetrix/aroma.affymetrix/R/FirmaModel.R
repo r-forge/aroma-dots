@@ -249,7 +249,7 @@ setMethodS3("getFitUnitFunction", "FirmaModel", function(this, ...) {
   # Function to fit all groups (exons) within a unit
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   fitUnit <- function(unit, ...) {
-    lapply(unit, FUN=function(group) {
+    base::lapply(unit, FUN=function(group) {
       if (length(group) > 0) {
         y <- .subset2(group, 1); # Get intensities
       } else {
@@ -499,7 +499,7 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
       # Calculate FIRMA scores
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       tFit <- processTime();
-      fit <- lapply(y, FUN=fitUnit);
+      fit <- base::lapply(y, FUN=fitUnit);
       timers$fit <- timers$fit + (processTime() - tFit);
       y <- NULL; # Not needed anymore (to minimize memory usage)
       verbose && str(verbose, fit[1]);
@@ -511,20 +511,20 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
       verbose && enter(verbose, "Storing FIRMA results");
       tWriteFs <- processTime();
 
-      intensities <- unlist(lapply(fit, function(unit) {
-        lapply(unit, function(group) {
+      intensities <- unlist(base::lapply(fit, function(unit) {
+        base::lapply(unit, function(group) {
           .subset2(group, "intensities");
         })
       }), use.names=FALSE);
 
-      stdvs <- unlist(lapply(fit, function(unit) {
-        lapply(unit, function(group) {
+      stdvs <- unlist(base::lapply(fit, function(unit) {
+        base::lapply(unit, function(group) {
           .subset2(group, "stdvs");
         })
       }), use.names=FALSE);
 
-      pixels <- unlist(lapply(fit, function(unit) {
-        lapply(unit, function(group) {
+      pixels <- unlist(base::lapply(fit, function(unit) {
+        base::lapply(unit, function(group) {
           .subset2(group, "pixels");
         })
       }), use.names=FALSE);

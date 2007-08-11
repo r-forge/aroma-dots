@@ -36,7 +36,6 @@
 setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL, force=FALSE, verbose=FALSE, ...) {
   # Try to load all required package first
   require("gcrma", quietly=TRUE) || throw("Package not loaded: gcrma");
-  require("splines", quietly=TRUE) || throw("Package not loaded: splines");
   require("matchprobes", quietly=TRUE) || throw("Package not loaded: matchprobes");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -227,7 +226,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   affinity.spline.coefs <- NULL; # To please R CMD check R v2.6.0 dev.
   data(affinity.spline.coefs); # A tiny object from 'gcrma'.
 
-  affinity.basis.matrix <- ns(1:25, df=length(affinity.spline.coefs)/3);
+  affinity.basis.matrix <- splines::ns(1:25, df=length(affinity.spline.coefs)/3);
 
   A13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[1:5]);
   T13 <- 0;

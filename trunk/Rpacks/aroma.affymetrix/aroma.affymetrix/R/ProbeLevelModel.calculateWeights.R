@@ -5,7 +5,7 @@ setMethodS3("calculateWeights", "ProbeLevelModel", function(this, units=NULL, ra
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   resFcn <- function(unit) {
     nbrOfGroups <- length(unit);
-    res <- lapply(1:nbrOfGroups, FUN=function(gg) {
+    res <- base::lapply(1:nbrOfGroups, FUN=function(gg) {
       y <- .subset2(.subset2(unit, gg), "eps");
       y <- log2(y);
       mad <- 1.4826 * median(abs(y));      
@@ -70,7 +70,7 @@ setMethodS3("calculateWeights", "ProbeLevelModel", function(this, units=NULL, ra
     residualsList <- readUnits(rs, units=units, verbose=less(verbose), stratifyBy="pm");
 
     verbose && enter(verbose, "Calculating weights");
-    weightsList <- lapply(residualsList, FUN=resFcn);
+    weightsList <- base::lapply(residualsList, FUN=resFcn);
     verbose && exit(verbose);
     
 # update output files
@@ -84,8 +84,8 @@ setMethodS3("calculateWeights", "ProbeLevelModel", function(this, units=NULL, ra
 
       verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(wf)));
 
-      data <- lapply(weightsList, function(unit){
-        lapply(unit, function(group) {
+      data <- base::lapply(weightsList, function(unit){
+        base::lapply(unit, function(group) {
           nrow <- nrow(group); 
           list(
                intensities=2^group[,kk], 
