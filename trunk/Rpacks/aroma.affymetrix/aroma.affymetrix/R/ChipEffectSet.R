@@ -202,7 +202,7 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
 
     verbose <- less(verbose, 50);
     verbose && enter(verbose, "Extracting estimates");  # 3-4s
-    dataOne <- lapply(data, FUN=lapply, function(group) {
+    dataOne <- base::lapply(data, FUN=base::lapply, function(group) {
       # theta = group$theta[kk] = ...
       # stdvs = group$sdTheta[kk] = ...
       list(

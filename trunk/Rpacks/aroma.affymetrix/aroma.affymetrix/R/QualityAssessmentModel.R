@@ -179,7 +179,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
     thetaL <- .subset2(chipEffectList, kk);
     phiL <- .subset2(probeAffinityList, kk);
     nbrOfGroups <- length(yL);
-    res <- lapply(seq_len(nbrOfGroups), FUN=function(gg) {
+    res <- base::lapply(seq_len(nbrOfGroups), FUN=function(gg) {
       y <- .subset2(.subset2(yL, gg), "intensities");
       theta <- .subset2(.subset2(thetaL, gg), "theta")[1,];
       phi <- .subset2(.subset2(phiL, gg), "phi");
@@ -322,7 +322,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
       # Back-transform data to intensity scale and encode as CEL structure
       verbose && enter(verbose, "Encode as CEL structure");
       data <- lapply(residualsList, FUN=function(groups) {
-        lapply(groups, FUN=function(group) {
+        base::lapply(groups, FUN=function(group) {
           eps <- .subset2(group, "eps")[,kk];
           ones <- rep(1, length=length(eps));
           list(intensities=eps, stdvs=ones, pixels=ones);
@@ -395,7 +395,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
     thetaL <- .subset2(chipEffectList, kk);
     phiL <- .subset2(probeAffinityList, kk);
     nbrOfGroups <- length(yL);
-    res <- lapply(nbrOfGroups, FUN=function(gg) {
+    res <- base::lapply(nbrOfGroups, FUN=function(gg) {
       y <- .subset2(.subset2(yL, gg), "intensities");
       theta <- .subset2(.subset2(thetaL, gg), "theta")[1,];
       phi <- .subset2(.subset2(phiL, gg), "phi");

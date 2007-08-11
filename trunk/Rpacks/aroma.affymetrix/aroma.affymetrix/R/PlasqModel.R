@@ -339,7 +339,7 @@ setMethodS3("fit", "PlasqModel", function(this, units="remaining", ..., unitsPer
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing probe-parameter estimates");
     tWritePaf <- processTime();
-    data <- lapply(fit, FUN=function(unit) {
+    data <- base::lapply(fit, FUN=function(unit) {
       coeffsF <- .subset2(unit, "coeffsF");
       coeffsR <- .subset2(unit, "coeffsR");
       sigs <- .subset2(unit, "sigs");
@@ -357,7 +357,7 @@ setMethodS3("fit", "PlasqModel", function(this, units="remaining", ..., unitsPer
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing copy-number estimates");
     tWriteCes <- processTime();
-    data <- lapply(fit, FUN=function(unit) {
+    data <- base::lapply(fit, FUN=function(unit) {
       cn <- .subset2(unit, "CN");
       sdTheta <- rep(1, ncol(cn));
       list(

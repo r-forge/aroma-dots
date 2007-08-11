@@ -158,8 +158,9 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Get the cytoband details for the chromosome of interest
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Drop column 'Chromosome'
-  ## Gives a NOTE in R CMD check R v2.6.0, which is nothing, but will use 
-  ## the work around below to get a clean result. /HB 2007-06-12
+  ## Gives a NOTE in R CMD check R v2.6.0, which is nothing, but we'll
+  ## use a workaround to get a clean result. /HB 2007-06-12
+  Chromosome <- NULL; # dummy
   cytobandNew <- subset(cytoband, select=-Chromosome); 
 ##  cytobandNew <- cytoband[,setdiff(names(cytoband), "Chromosome"),drop=FALSE];
 

@@ -105,7 +105,7 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
     # Identify units that are quartets
     unitSizes <- readCdfGroupNames(cdfPathname, units=units);
     names(unitSizes) <- NULL;
-    unitSizes <- sapply(unitSizes, FUN=length);
+    unitSizes <- base::sapply(unitSizes, FUN=length);
     units <- units[unitSizes == 4];
 
     # Infer parameters from 'intensities'

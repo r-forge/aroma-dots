@@ -128,6 +128,27 @@ setMethodS3("getProbeAffinityFile", "RmaPlm", function(this, ...) {
     list(intensities=phi, stdvs=stdvs, pixels=pixels);
   })
 
+  setEncodeFunction(paf, function(groupData, ...) {
+    list(
+      intensities = .subset2(groupData, "phi"),
+      stdvs = .subset2(groupData, "sdPhi"),
+      # Encode outliers as the sign of 'pixels'; -1 = TRUE, +1 = FALSE
+      pixels = ifelse(.subset2(groupData, "phiOutliers"), -1, +1)
+    );
+  })
+
+##  setEncodeFunction(paf, function(groupData, ...) {
+##    groupData[[3]] <- ifelse(.subset2(groupData, "phiOutliers"), -1, +1);
+##    names(groupData) <- c("phi", "sdPhi", "pixels");
+##    groupData;
+##  })
+##
+##  setEncodeFunction(paf, function(groupData, ...) {
+##    groupData[[3]] <- -1*.subset2(groupData, 3);
+##    names(groupData) <- c("phi", "sdPhi", "pixels");
+##    groupData;
+##  })
+
   setDecodeFunction(paf,  function(groupData, ...) {
     intensities <- .subset2(groupData, "intensities");
     stdvs <- .subset2(groupData, "stdvs");

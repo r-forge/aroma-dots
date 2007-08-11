@@ -304,7 +304,7 @@ setMethodS3("getCellMap", "WeightsFile", function(this, units=NULL, ..., force=F
   }
 
   unitNames <- names(cells);
-  unitSizes <- unlist(lapply(cells, length), use.names=FALSE);
+  unitSizes <- unlist(base::lapply(cells, length), use.names=FALSE);
   cells <- unlist(cells, use.names=FALSE);
   verbose && exit(verbose);
   

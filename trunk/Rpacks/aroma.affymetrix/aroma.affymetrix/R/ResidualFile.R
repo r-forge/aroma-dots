@@ -309,7 +309,7 @@ setMethodS3("getCellMap", "ResidualFile", function(this, units=NULL, ..., force=
   unitNames <- names(cells);
   
   # Get the number of groups per unit
-  unitSizes <- lapply(cells, FUN=function(unit) {
+  unitSizes <- base::lapply(cells, FUN=function(unit) {
     length(.subset2(unit, "groups"));
   });
   unitSizes <- unlist(unitSizes, use.names=FALSE);

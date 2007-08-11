@@ -6,11 +6,11 @@ setMethodS3("calculateWeights", "ExonRmaPlm", function(this, units=NULL, ram=1, 
   resFcn <- function(unit, mergeGroups) {
     nbrOfGroups <- length(unit);
     if (mergeGroups) {
-      y <- do.call("rbind", lapply(unit, .subset2, "eps"));
+      y <- do.call("rbind", base::lapply(unit, .subset2, "eps"));
       y <- log2(y);
       madMerged <- 1.4826 * median(abs(y));
     }
-    res <- lapply(1:nbrOfGroups, FUN=function(gg) {
+    res <- base::lapply(1:nbrOfGroups, FUN=function(gg) {
       y <- .subset2(.subset2(unit, gg), "eps");
       y <- log2(y);
       mad <- 1.4826 * median(abs(y));
@@ -87,7 +87,7 @@ setMethodS3("calculateWeights", "ExonRmaPlm", function(this, units=NULL, ram=1, 
     residualsList <- readUnits(rs, units=units, verbose=less(verbose), stratifyBy="pm");
 
     verbose && enter(verbose, "Calculating weights");
-    weightsList <- lapply(residualsList, FUN=resFcn, mergeGroups=this$mergeGroups);
+    weightsList <- base::lapply(residualsList, FUN=resFcn, mergeGroups=this$mergeGroups);
     verbose && exit(verbose);
     
 # update output files
@@ -101,8 +101,8 @@ setMethodS3("calculateWeights", "ExonRmaPlm", function(this, units=NULL, ram=1, 
 
       verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(wf)));
 
-      data <- lapply(weightsList, function(unit){
-        lapply(unit, function(group) {
+      data <- base::lapply(weightsList, function(unit) {
+        base::lapply(unit, function(group) {
           nrow <- nrow(group); 
           list(
                intensities=2^group[,kk], 

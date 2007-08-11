@@ -148,8 +148,8 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
 
   # 1) Reverse all (sense, sense, antisense, antisense) units
   value <- c("sense", "sense", "antisense", "antisense");
-  idxs <- unlist(lapply(gs, FUN=identical, value), use.names=FALSE);
-  thetas[idxs] <- lapply(thetas[idxs], FUN=function(groups) groups[c(3,4,1,2)]);
+  idxs <- unlist(base::lapply(gs, FUN=identical, value), use.names=FALSE);
+  thetas[idxs] <- base::lapply(thetas[idxs], FUN=function(groups) groups[c(3,4,1,2)]);
 
   # 2) Add empty (filled with NAs) groups for single-stranded SNPs
   missingValues <- rep(NA, nbrOfSamples);
@@ -157,13 +157,13 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
 
   # 2a) Add missing 'antisense' groups
   value <- c("sense", "sense");
-  idxs <- unlist(lapply(gs, FUN=identical, value), use.names=FALSE);
-  thetas[idxs] <- lapply(thetas[idxs], FUN=function(groups) c(missingGroups, groups));
+  idxs <- unlist(base::lapply(gs, FUN=identical, value), use.names=FALSE);
+  thetas[idxs] <- base::lapply(thetas[idxs], FUN=function(groups) c(missingGroups, groups));
 
   # 2b) Add missing 'sense' groups
   value <- c("antisense", "antisense");
-  idxs <- unlist(lapply(gs, FUN=identical, value), use.names=FALSE);
-  thetas[idxs] <- lapply(thetas[idxs], FUN=function(groups) c(groups, missingGroups));
+  idxs <- unlist(base::lapply(gs, FUN=identical, value), use.names=FALSE);
+  thetas[idxs] <- base::lapply(thetas[idxs], FUN=function(groups) c(groups, missingGroups));
 
   rm(gs); # Not needed anymore
   verbose && exit(verbose);

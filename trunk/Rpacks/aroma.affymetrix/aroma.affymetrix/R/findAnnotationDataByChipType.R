@@ -96,8 +96,8 @@ setMethodS3("findAnnotationDataByChipType", "default", function(chipType, patter
 ##         # Turn into a named character vector.
 ##         parts <- unlist(strsplit(aliases, split=";"));
 ##         parts <- strsplit(parts, split="=");
-##         keys <- unlist(lapply(parts, FUN=function(x) x[1]), use.names=FALSE);
-##         aliases <- unlist(lapply(parts, FUN=function(x) x[2]), use.names=FALSE);
+##         keys <- unlist(base::lapply(parts, FUN=function(x) x[1]), use.names=FALSE);
+##         aliases <- unlist(base::lapply(parts, FUN=function(x) x[2]), use.names=FALSE);
 ##         names(aliases) <- keys;
 ##       }
 ##       verbose && cat(verbose, "Parsed aliases:");
