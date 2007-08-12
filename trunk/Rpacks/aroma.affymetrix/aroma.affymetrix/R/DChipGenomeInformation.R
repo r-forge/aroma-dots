@@ -157,14 +157,20 @@ setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {
 
 setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
   readFcns <- list(
-    "^Mapping10K"  = read50KHg17,
-    "^Mapping50K"  = read50KHg17,
-    "^Mapping250K" = read250KHg17,
-    "^Mouse430"    = readMouse430,
-    "^Mouse430KS"  = readMouse430KenHardwired
+    "^GenomeWideSNP"  = readGenomeWideSNP,
+    "^Mapping10K"     = read50KHg17,
+    "^Mapping50K"     = read50KHg17,
+    "^Mapping250K"    = read250KHg17,
+    "^Mouse430"       = readMouse430,
+    "^Mouse430KS"     = readMouse430KenHardwired
   );
 
-  chipType <- getChipType(this);
+  # Get the chip type; this requires that there is a CDF too.
+  tryCatch({
+    chipType <- getChipType(this);
+  }, error = function(ex) {
+    print(ex);
+  })
 
   # Try to read with the designated read function.
   res <- NULL;
@@ -186,7 +192,7 @@ setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
       readFcn <- readFcns[[kk]];
       tryCatch({
         res <- readFcn(this, ...);
-      }, error=function(ex) {
+      }, error = function(ex) {
         print(ex);
       })
       if (!is.null(res))
@@ -202,6 +208,18 @@ setMethodS3("readData", "DChipGenomeInformation", function(this, ...) {
 })
 
 
+
+setMethodS3("readGenomeWideSNP", "DChipGenomeInformation", function(this, ..., exclude=c("^Strand$", "^dbSNP RS ID$")) {
+  colClasses <- c(
+    "^Probe Set ID$"="character", 
+    "^Chromosome$"="character",	
+    "^Physical Position$"="integer",
+    "^Strand$"="character",
+    "^dbSNP RS ID$"="character",
+    "^$"="NULL"   # Remove empty columns
+  );
+  readTableInternal(this, pathname=getPathname(this), colClasses=colClasses, exclude=exclude, isPatterns=TRUE, na.strings=c("", "---"), ...);
+}, private=TRUE)
 
 
 setMethodS3("read250KHg17", "DChipGenomeInformation", function(this, ..., exclude=c("Expr1002", "Allele A", "dbSNP RS ID")) {
@@ -284,6 +302,9 @@ setMethodS3("readMouse430", "DChipGenomeInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-08-12
+# o Added support for dChip's 'snp6.0 genome info hg18.txt' file.  Note,
+#   this only contains informations for SNPs, not CN probes.
 # 2007-03-23
 # o It turns out that KS's readMouse430() was a bit too hardwired.  I've
 #   updated it according to his explanations, but I have not tested.

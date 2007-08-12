@@ -43,7 +43,7 @@ setMethodS3("as.character", "GenomeInformation", function(x, ...) {
 setMethodS3("clearCache", "GenomeInformation", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".data")) {
+  for (ff in c(".data", ".chromosomeStats")) {
     this[[ff]] <- NULL;
   }
 
@@ -316,6 +316,7 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
         keep <- test(values);
       } else {
         keep <- (values == test);
+        keep <- (keep & !is.na(keep));
       }
       data <- data[keep,,drop=FALSE];
     }
@@ -514,7 +515,12 @@ setMethodS3("getChromosomes", "GenomeInformation", function(this, ..., force=FAL
 })
 
 
-setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE, ..., force=FALSE) {
+setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE, ..., force=FALSE, verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  verbose && enter(verbose, "Retrieving chromosome statistics");
+
   stats <- this$.chromosomeStats;
   if (is.null(stats) || force) {
     chromosomes <- getChromosomes(this);
@@ -523,13 +529,21 @@ setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE
     colnames(stats) <- c("min", "max", "n");
     rownames(stats) <- chromosomes;
     for (chr in chromosomes) {
+      verbose && enter(verbose, sprintf("Chromosome %d of %d", 
+                                               chr, length(chromosomes)));
       pos <- getPositions(this, chromosome=chr);
       r <- range(pos, na.rm=na.rm);
       stats[chr,1:2] <- r;
       stats[chr,3] <- length(pos);
+      verbose && exit(verbose);
     }
     this$.chromosomeStats <- stats;
+  } else {
+    verbose && cat(verbose, "Found cached results");
   }
+
+  verbose && exit(verbose);
+
   stats;  
 })
 
@@ -591,6 +605,10 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-08-12
+# o BUG GIX: clearCache() would not clear the genome stats cache.
+# o BUG FIX: Subsetting with getData(..., chromosome=...) would return NAs
+#   for units with missing information.
 # 2007-06-11
 # o BUG FIX: Used non-existing 'gi' instead of 'this' in plotDensity() of
 #   GenomeInformation.
