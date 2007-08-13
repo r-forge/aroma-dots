@@ -532,3 +532,4 @@
 fromChipType.AffymetrixCdfFile
   normalizeAverage renameToUpperCaseExt
   renameToUpperCaseExt.AffymetrixFile 
+  readGenomeWideSNP readGenomeWideSNP.DChipGenomeInformation
