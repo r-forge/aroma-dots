@@ -88,7 +88,7 @@ setMethodS3("getFileFormat", "AffymetrixCelFile", function(this, ...) {
   raw <- readBin(pathname, what="raw", n=10);
 
   if (raw[1] == 59)
-    return("v5 (binary; CC)");
+    return("v1 (binary; CC)");
 
   if (raw[1] == 64)
     return("v4 (binary; XDA)");
