@@ -277,6 +277,10 @@ readCcgFileHeader <- function(pathname, filter=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  readByte <- function(con, n=1, ...) {
+    readBin(con, what=integer(), size=1, signed=TRUE, endian="big", n=n);
+  }
+
   readUByte <- function(con, n=1, ...) {
     readBin(con, what=integer(), size=1, signed=FALSE, endian="big", n=n);
   }
@@ -335,6 +339,10 @@ readCcgDataHeader <- function(con, filter=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  readByte <- function(con, n=1, ...) {
+    readBin(con, what=integer(), size=1, signed=TRUE, endian="big", n=n);
+  }
+
   readUByte <- function(con, n=1, ...) {
     readBin(con, what=integer(), size=1, signed=FALSE, endian="big", n=n);
   }
@@ -358,17 +366,82 @@ readCcgDataHeader <- function(con, filter=NULL, ...) {
     nchars <- readInt(con);
     if (nchars == 0)
       return("");
-    bfr <- readBin(con, what=raw(), n=2*nchars);
-    bfr <- bfr[seq(from=2, to=length(bfr), by=2)];
-    bfr <- as.integer(bfr);
-    bfr <- intToChar(bfr);
-    bfr <- paste(bfr, collapse="");
-    bfr;
+    raw <- readBin(con, what=raw(), n=2*nchars);
+    raw <- raw[seq(from=2, to=length(raw), by=2)];
+    value <- rawToChar(raw);
+    paste(value, collapse="");  # Terminate string at first '\0'.
+  }
+
+  readRaw <- function(con, ...) {
+    n <- readInt(con);
+    if (n == 0)
+      return(raw(0));
+    readBin(con, what=raw(0), n=n);
   }
 
   readWVT <- function(con, ...) {
-    list(name=readWString(con), value=readString(con), type=readWString(con));
-  }
+    name <- readWString(con);
+    param <- readRaw(con);
+    type <- readWString(con);
+
+    # Update data types
+    # * text/x-calvin-integer-8
+    # * text/x-calvin-unsigned-integer-8
+    # * text/x-calvin-integer-16
+    # * text/x-calvin-unsigned-integer-16
+    # * text/x-calvin-integer-32
+    # * text/x-calvin-unsigned-integer-32
+    # * text/x-calvin-float
+    # * text/plain
+    n <- length(raw);
+    value <- switch(type, 
+      "text/ascii" = {
+        rawToChar(raw);
+      },
+
+      "text/plain" = {
+        # Unicode/UTF-16?!?
+        raw <- matrix(raw, ncol=2, byrow=TRUE);
+        raw <- raw[,2];
+        value <- rawToChar(raw);
+        paste(value);  # Terminate string at first '\0'.
+      },
+
+      "text/x-calvin-integer-8" = {
+        readBin(raw, what=integer(0), endian="big", size=1, signed=TRUE, n=n);
+      },
+
+      "text/x-calvin-unsigned-integer-8" = {
+        readBin(raw, what=integer(0), endian="big", size=1, signed=FALSE, n=n);
+      },
+
+      "text/x-calvin-integer-16" = {
+        readBin(raw, what=integer(0), endian="big", size=2, signed=TRUE, n=n/2);
+      },
+
+      "text/x-calvin-unsigned-integer-16" = {
+        readBin(raw, what=integer(0), endian="big", size=2, signed=FALSE, n=n/2);
+      },
+
+      "text/x-calvin-integer-32" = {
+        readBin(raw, what=integer(0), endian="big", size=4, signed=TRUE, n=n/4);
+      },
+
+      "text/x-calvin-unsigned-integer-32" = {
+        readBin(raw, what=integer(0), endian="big", size=4, signed=FALSE, n=n/4);
+      },
+
+      "text/x-calvin-float" = {
+        readBin(raw, what=double(0), endian="big", size=4, n=n/4);
+      },
+
+      {
+        raw;
+      }
+    ) # switch()
+
+    list(name=name, value=value, raw=raw, type=type);
+  } # readWVT()
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -402,6 +475,7 @@ readCcgDataHeader <- function(con, filter=NULL, ...) {
     wvt <- readWVT(con);
     names[kk] <- wvt$name;
     value <- wvt$value;
+#    attr(value, "raw") <- wvt$raw;
     attr(value, "mimeType") <- wvt$type;
     params[[kk]] <- value;
   }
@@ -442,6 +516,13 @@ readCcgDataGroupHeader <- function(con, fileOffset=NULL, ...) {
     bfr <- intToChar(bfr);
     bfr <- paste(bfr, collapse="");
     bfr;
+  }
+
+  readRaw <- function(con, ...) {
+    n <- readInt(con);
+    if (n == 0)
+      return(raw(0));
+    readBin(con, what=raw(0), n=n);
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -517,6 +598,13 @@ readCcgDataSet <- function(con, fileOffset=NULL, ...) {
     readBin(con, what=integer(), size=4, signed=FALSE, endian="big", n=n);
   }
 
+  readString <- function(con, ...) {
+    nchars <- readInt(con);
+    if (nchars == 0)
+      return("");
+    readChar(con, nchars=nchars);
+  }
+
   readWString <- function(con, ...) {
     nchars <- readInt(con);
     if (nchars == 0)
@@ -529,16 +617,76 @@ readCcgDataSet <- function(con, fileOffset=NULL, ...) {
     bfr;
   }
 
-  readString <- function(con, ...) {
-    nchars <- readInt(con);
-    if (nchars == 0)
-      return("");
-    readChar(con, nchars=nchars);
+  readRaw <- function(con, ...) {
+    n <- readInt(con);
+    if (n == 0)
+      return(raw(0));
+    readBin(con, what=raw(0), n=n);
   }
 
   readWVT <- function(con, ...) {
-    list(name=readWString(con), value=readString(con), type=readWString(con));
-  }
+    name <- readWString(con);
+    param <- readRaw(con);
+    type <- readWString(con);
+
+    # Update data types
+    # * text/x-calvin-integer-8
+    # * text/x-calvin-unsigned-integer-8
+    # * text/x-calvin-integer-16
+    # * text/x-calvin-unsigned-integer-16
+    # * text/x-calvin-integer-32
+    # * text/x-calvin-unsigned-integer-32
+    # * text/x-calvin-float
+    # * text/plain
+    n <- length(raw);
+    value <- switch(type, 
+      "text/ascii" = {
+        rawToChar(raw);
+      },
+
+      "text/plain" = {
+        # Unicode/UTF-16?!?
+        raw <- matrix(raw, ncol=2, byrow=TRUE);
+        raw <- raw[,2];
+        value <- rawToChar(raw);
+        paste(value);  # Terminate string at first '\0'.
+      },
+
+      "text/x-calvin-integer-8" = {
+        readBin(raw, what=integer(0), endian="big", size=1, signed=TRUE, n=n);
+      },
+
+      "text/x-calvin-unsigned-integer-8" = {
+        readBin(raw, what=integer(0), endian="big", size=1, signed=FALSE, n=n);
+      },
+
+      "text/x-calvin-integer-16" = {
+        readBin(raw, what=integer(0), endian="big", size=2, signed=TRUE, n=n/2);
+      },
+
+      "text/x-calvin-unsigned-integer-16" = {
+        readBin(raw, what=integer(0), endian="big", size=2, signed=FALSE, n=n/2);
+      },
+
+      "text/x-calvin-integer-32" = {
+        readBin(raw, what=integer(0), endian="big", size=4, signed=TRUE, n=n/4);
+      },
+
+      "text/x-calvin-unsigned-integer-32" = {
+        readBin(raw, what=integer(0), endian="big", size=4, signed=FALSE, n=n/4);
+      },
+
+      "text/x-calvin-float" = {
+        readBin(raw, what=double(0), endian="big", size=4, n=n/4);
+      },
+
+      {
+        raw;
+      }
+    ) # switch()
+
+    list(name=name, value=value, raw=raw, type=type);
+  } # readWVT()
 
   readWBI <- function(con, ...) {
     list(name=readWString(con), type=readByte(con), size=readInt(con));
@@ -662,6 +810,11 @@ readCcgDataSet <- function(con, fileOffset=NULL, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-08-16
+# o Now the read data is converted according to the mime type.  See internal
+#   readWVT() function.  The code is still ad hoc, so it is not generic.
+#   For instance, it basically assumes that Unicode strings only contain
+#   ASCII/ASCII-8 characters.
 # 2006-11-06
 # o Tested on Test3-1-121502.calvin.CEL and Test3-1-121502.calvin.CDF.
 # o Created.  
