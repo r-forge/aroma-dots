@@ -23,6 +23,12 @@
 #   \item{alpha, q, Q}{}
 # }
 #
+# \section{What probe signals are updated}{ 
+#    Calibration for crosstalk between allele signals applies by definition
+#    only SNP units.
+#    Note that, non-calibrated signals will be saved in the output files.
+# }
+#
 # \section{Fields and Methods}{
 #  @allmethods "public"  
 # }

@@ -924,7 +924,8 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
   if (is.null(res)) {
     verbose && enter(verbose, "Creating CFH file to store average signals");
     verbose && cat(verbose, "Pathname: ", file.path(getPath(this), filename));
-    res <- createFrom(df, filename=filename, path=getPath(this), method="create", verbose=less(verbose));
+    res <- createFrom(df, filename=filename, path=getPath(this), 
+                        methods="create", clear=TRUE, verbose=less(verbose));
     verbose && exit(verbose);
     this$.averageFiles[[filename]] <- res;
   }

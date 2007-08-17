@@ -397,6 +397,9 @@ setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
   updateOnChipTypeJS(this, ..., verbose=less(verbose));
   updateOnLoadJS(this, ..., verbose=less(verbose));
 
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   verbose && exit(verbose);
 })
 

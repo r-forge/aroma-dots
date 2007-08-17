@@ -30,7 +30,7 @@ setMethodS3("lapplyInChunks", "numeric", function(idxs, fcn, ..., chunkSize=1, u
   # Allocate return structure
   res <- vector("list", n);
 
-  verbose && cat(verbose, "Number elements per chunk: ", chunkSize);
+  verbose && cat(verbose, "Number of elements per chunk: ", chunkSize);
 
   count <- 1;
   while (length(remaining) > 0) {
@@ -66,8 +66,27 @@ setMethodS3("lapplyInChunks", "numeric", function(idxs, fcn, ..., chunkSize=1, u
 }) # lapplyInChunks()
 
 
+setMethodS3("splitInChunks", "numeric", function(idxs, chunkSize=1, ...) {
+  n <- length(idxs);
+  nbrOfChunks <- ceiling(n / chunkSize);
+  res <- vector("list", nbrOfChunks);
+  head <- seq(length=chunkSize);
+  pos <- 1;
+  while (length(idxs) > 0) {
+    if (length(idxs) < chunkSize)
+      head <- seq(length=length(idxs));
+    res[[pos]] <- idxs[head];
+    idxs <- idxs[-head];
+    pos <- pos + 1;
+  }
+  res;
+}) # splitInChunks()
+
+
 ############################################################################
 # HISTORY:
+# 2007-08-17
+# o Added splitInChunks().
 # 2007-02-12
 # o Created. 
 ############################################################################

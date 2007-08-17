@@ -45,6 +45,11 @@
  Returns the calibrated \code{\link{AffymetrixCelFile}} object.
 }
 
+\section{Non-SNP units}{
+  It is only SNP units that are calibrated.
+  The signals of the non-SNP units remain the same.
+}
+
 \section{Hook functions}{
   This method call hook functions \code{*.onBegin}, \code{*.onData},
   \code{*.onFit}, \code{*.onUpdated}, \code{*.onEnd}, and \code{*.onExit}

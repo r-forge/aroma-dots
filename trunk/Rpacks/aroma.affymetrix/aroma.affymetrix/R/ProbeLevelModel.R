@@ -151,7 +151,7 @@ setMethodS3("getProbeAffinityFile", "ProbeLevelModel", function(this, ..., .clas
   # Create probe-affinity file from CEL file template
   df <- getFile(ds, 1);
   paf <- createFrom(df, filename="probeAffinities.CEL", path=getPath(this), 
-                                                         method="create", ...);
+                                          methods="create", clear=TRUE, ...);
 
   # Make it into an object of the correct class
   paf <- newInstance(.class, getPathname(paf), cdf=getCdf(ds), 

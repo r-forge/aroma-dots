@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Fri Aug 10 11:55:09 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -805,6 +803,8 @@
 \alias{lapply.default}
 \alias{lapplyInChunks}
 \alias{lapplyInChunks.numeric}
+\alias{splitInChunks}
+\alias{splitInChunks.numeric}
 \alias{library}
 \alias{load.PlatformDesign}
 \alias{loadDataFile}
@@ -1245,6 +1245,8 @@
 \alias{normalizeAverage}
 \alias{renameToUpperCaseExt}
 \alias{renameToUpperCaseExt.AffymetrixFile}
+\alias{readGenomeWideSNP}
+\alias{readGenomeWideSNP.DChipGenomeInformation}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -206,6 +206,7 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
 #      verbose && str(verbose, colorMap$palette);
       writeImage(df, path=path, transforms=colorMap$transforms, 
                                    palette=colorMap$palette, tags=tags, ...);
+      gc <- gc();
       verbose && exit(verbose);
     }
     verbose && exit(verbose);

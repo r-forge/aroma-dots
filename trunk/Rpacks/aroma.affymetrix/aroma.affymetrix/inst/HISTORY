@@ -1,11 +1,36 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.5.7 [2007-08-12]
+Version: 0.6.0 [2007-08-17xx]
+o Now calculateResidualSet() of ProbeLevelModel only loads probe-affinity
+  estimates if needed, i.e. if residuals are already calculated this 
+  function will return faster now.
+o Now createFrom(..., methods="create", clear=FALSE) of AffymetrixCelFile 
+  will first create an empty file, and then copy all CEL data to the
+  new file.  This way createFrom(..., methods="create", clear=FALSE)
+  and createFrom(..., methods="copy", clear=FALSE) should give CEL
+  files containing the same data.
+o Renamed argument 'method' in createFrom() of AffymetrixCelFile to
+  'methods' to reflect the fact that it can take multiple alternatives.
 o Added support for dChip's 'snp6.0 genome info hg18.txt' file.  Note,
   this only contains informations for SNPs, not CN probes.
+o MEMORY OPTIMIZATION: calculateResidualSet() of ProbeLevelModel does
+  part of the work in chunks.
+o MEMORY OPTIMIZATION: Made getCellIndices() of AffymetrixCdfFile more
+  memory effiencent by reading and transforming data in chunks.
+o MEMORY OPTIMIZATION: Made findUnitsTodo() of ChipEffectFile scan
+  for units in chunks.  This would bring done memory usage to about
+  5% of what is used to consume.
+o MEMORY OPTIMIZATION: Now getAlleleProbePairs() of AffymetrixCdfFile 
+  processes the CDF in chunks in order to save memory.  Before, 
+  processing the GenomeWideSNP_6.CDF would consume 1.5-2.0GB RAM, but 
+  now it is using less than 500MB.
+o MEMORY OPTIMIZATION: ArrayExplorer now garbage collects after each
+  image written.  That save a few hundred MB.
 o BUG FIX: Removed internal trial encoding function added by mistake 
   to the previous version.
+o CLEAN UP: Removed findUnitsTodo() from ExonChipEffectFile, because it 
+  gave the same result as the one in super class ChipEffectFile. 
 
 
 Version: 0.5.6 [2007-08-10]

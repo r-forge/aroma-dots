@@ -20,17 +20,17 @@
  Creates a CEL file using another as a template.
 }
 
-\usage{\method{createFrom}{AffymetrixCelFile}(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), method=c("copy", "create"), clear=FALSE, ..., verbose=TRUE)}
+\usage{\method{createFrom}{AffymetrixCelFile}(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), methods=c("copy", "create"), clear=FALSE, ..., verbose=TRUE)}
 
 \arguments{
- \item{filename, path}{The filename and path of to the CEL file to
-                                                             be created.}
+ \item{filename, path}{The filename and path of to the CEL
+    file to be created.}
  \item{version}{The file-format version of the CEL file to be created.}
- \item{method}{If \code{"copy"}, the new file is created as a copy of the
+ \item{methods}{If \code{"copy"}, the new file is created as a copy of the
     template file.  If \code{"create"}, the new file is created from
     scratch from the template file.}
- \item{clear}{If \code{\link[base:logical]{TRUE}}, the fields of the CEL file are cleared.
-    Only applicable when \code{method="copy"}.}
+ \item{clear}{If \code{\link[base:logical]{TRUE}}, the fields of the CEL file are cleared (zeroed),
+    otherwise they contain the same information as the source file.}
  \item{...}{Not used.}
  \item{verbose}{See "R.utils::Verbose".}
 }
