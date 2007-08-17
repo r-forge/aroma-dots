@@ -11,14 +11,14 @@
 # @synopsis
 #
 # \arguments{
-#  \item{filename, path}{The filename and path of to the CEL file to 
-#                                                              be created.}
+#  \item{filename, path}{The filename and path of to the CEL 
+#     file to be created.}
 #  \item{version}{The file-format version of the CEL file to be created.}
-#  \item{method}{If \code{"copy"}, the new file is created as a copy of the
+#  \item{methods}{If \code{"copy"}, the new file is created as a copy of the
 #     template file.  If \code{"create"}, the new file is created from
 #     scratch from the template file.}
-#  \item{clear}{If @TRUE, the fields of the CEL file are cleared.
-#     Only applicable when \code{method="copy"}.}
+#  \item{clear}{If @TRUE, the fields of the CEL file are cleared (zeroed),
+#     otherwise they contain the same information as the source file.}
 #  \item{...}{Not used.}
 #  \item{verbose}{See "R.utils::Verbose".}
 # }
@@ -36,7 +36,7 @@
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), method=c("copy", "create"), clear=FALSE, ..., verbose=TRUE) {
+setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), methods=c("copy", "create"), clear=FALSE, ..., verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -52,13 +52,17 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
   # Argument 'version':
   version <- match.arg(version);
 
-  # Argument 'method':
-  method <- match.arg(method);
+  # Argument 'methods':
+  if (!all(methods %in% c("copy", "create"))) {
+    throw("Unknown value of argument 'methods': ", paste(methods, collapse=", "));
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
-
-
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
   # Get the CDF of the template CEL file
   cdf <- getCdf(this);
@@ -66,7 +70,6 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
   verbose && enter(verbose, "Creating CEL file");
   verbose && cat(verbose, "Chip type: ", getChipType(cdf));
   verbose && cat(verbose, "Pathname: ", pathname);
-  verbose && cat(verbose, "Method: ", method);
 
   # Nothing to do?
   if (skip && isFile(pathname)) {
@@ -83,55 +86,104 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
   }
 
 
-  if (method == "copy") {
-    # Check version of template CEL file
-    ver <- getHeader(this)$version;
-    if (ver != version) {
-      throw("Cannot create CEL file of version ", version, 
-             "(", pathname, "). Template CEL file has version ", 
-                                   ver, ": ", getPathname(this));
+  msgs <- list();
+  res <- NULL;
+  for (method in methods) {
+    verbose && enter(verbose, "Method '", method, "'");
+
+    if (method == "copy") {
+      # Check version of template CEL file
+      ver <- getHeader(this)$version;
+      if (ver != version) {
+        msgs[[method]] <- paste("Cannot create CEL file of version ", version,
+           " (", pathname, "). Template CEL file is of version ", 
+           ver, ": ", getPathname(this), sep="");
+        verbose && cat(verbose, msgs[[method]]);
+        verbose && exit(verbose);
+        next;
+      }
+    
+      res <- copyFile(this, filename=pathname, path=NULL,
+                                                       verbose=less(verbose));
+    
+      if (clear)
+        clearData(res, ..., .forSure=TRUE, verbose=less(verbose));
     }
   
-    res <- copyFile(this, filename=pathname, path=NULL, verbose=less(verbose));
+    if (method == "create") {
+      if (version != "4") {
+        msgs[[method]] <- paste(
+          "Can only create binary CEL files (version 4) from scratch, ",
+          "not files of version ", version, ": ", pathname, sep="");
+        verbose && cat(verbose, msgs[[method]]);
+        verbose && exit(verbose);
+        next;
+      }
   
-    if (clear)
-      clearData(res, ..., .forSure=TRUE, verbose=less(verbose));
-  } else if (method == "create") {
-    if (version != "4") {
-      throw("Can only create binary CEL files (version 4) from scratch, ",
-                           "not files of version ", version, ": ", pathname);
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Setting up CEL header
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      fullname <- getFullName(this);
+      celHeader <- cdfHeaderToCelHeader(getHeader(cdf), sampleName=fullname);
+    
+      # Add some extra information about what the CEL file is for
+      params <- c(Descripion=sprintf("This CEL file contains data saved by the aroma.affymetrix v%s package.", getVersion(aroma.affymetrix)));
+      parameters <- gsub(" ", "_", params);
+      names(parameters) <- names(params);
+      parameters <- paste(names(parameters), parameters, sep=":");
+      parameters <- paste(parameters, collapse=";");
+      parameters <- paste(celHeader$parameters, parameters, "", sep=";");
+      parameters <- gsub(";;", ";", parameters);
+      parameters <- gsub(";$", "", parameters);
+      celHeader$parameters <- parameters;
+      rm(params, parameters);
+    
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Creating empty CEL file
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      verbose && enter(verbose, "Creating empty CEL file");
+      createCel(pathname, header=celHeader, overwrite=overwrite, ...,
+                                                        verbose=less(verbose));
+      rm(celHeader);
+      verbose && exit(verbose);
+
+      if (!clear) {
+        verbose && enter(verbose, "Copying CEL data");
+        cells <- seq(length=nbrOfCells(this));
+        lapplyInChunks(cells, function(cells) {
+          verbose && enter(verbose, "Reading subset of data from source CEL file");
+          data <- readCel(getPathname(this), indices=cells, readIntensities=TRUE, readStdvs=TRUE, readPixels=TRUE);
+          verbose && str(verbose, data, level=-50);
+          verbose && printf(verbose, "RAM: %.2fMB\n", object.size(data)/1024^2, level=-40);
+          verbose && exit(verbose);
+          gc <- gc();
+
+          verbose && enter(verbose, "Writing data to new CEL file");
+          updateCel(pathname, indices=cells, intensities=data);
+          verbose && exit(verbose);
+
+          rm(data);
+          gc <- gc();
+          verbose && print(verbose, gc);
+        }, chunkSize=500e3, verbose=verbose);
+
+        verbose && exit(verbose);
+      }
+  
+      res <- newInstance(this, pathname);
     }
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    # Setting up CEL header
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    fullname <- getFullName(this);
-    celHeader <- cdfHeaderToCelHeader(getHeader(cdf), sampleName=fullname);
-  
-    # Add some extra information about what the CEL file is for
-    params <- c(Descripion="This CEL file contains data saved by the aroma.affymetrix package.");
-    parameters <- gsub(" ", "_", params);
-    names(parameters) <- names(params);
-    parameters <- paste(names(parameters), parameters, sep=":");
-    parameters <- paste(parameters, collapse=";");
-    parameters <- paste(celHeader$parameters, parameters, "", sep=";");
-    parameters <- gsub(";;", ";", parameters);
-    parameters <- gsub(";$", "", parameters);
-    celHeader$parameters <- parameters;
-    rm(params, parameters);
-  
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Creating empty CEL file
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    verbose && enter(verbose, "Creating empty CEL file");
-    createCel(pathname, header=celHeader, overwrite=overwrite, ...,
-                                                      verbose=less(verbose));
-    rm(celHeader);
     verbose && exit(verbose);
+  } # for (method ...)
 
-    res <- newInstance(this, pathname);
+  if (is.null(res)) {
+    msgs <- unlist(msgs);
+    msgs <- paste(names(msgs), msgs, sep=": ");
+    msgs <- paste(msgs, collapse="; ");
+    msg <- paste("Failed to create CEL file. Error messages: ", msgs);
+    verbose && cat(verbose, "Error: ", msg);
+    throw(msg);
   }
-
 
   # Make sure the CDF is carried down
   setCdf(res, cdf);
@@ -144,6 +196,15 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
 
 ############################################################################
 # HISTORY:
+# 2007-08-16
+# o Renamed argument 'method' in createFrom() of AffymetrixCelSet to
+#   'methods' to reflect the fact that it can take multiple values.
+#   The default is not that createFrom() first tries to copy, and if that
+#   fails/is not possible, it tries to create the CEL file from scratch.
+#   For instance, calling createFrom() on an binary XDA CEL file, will copy
+#   it, but calling it on a Calvin CEL file, will create a binary XDA CEL
+#   file (because aroma.affymetrix/affxparser do not support updating 
+#   Calvin CEL file so we do not support "creating" them.
 # 2007-03-24
 # o Argument 'method' still defaults to "copy" altough "create" is much
 #   faster.  Argument 'clear' now defaults to FALSE.  The reason for this 

@@ -50,8 +50,8 @@ setMethodS3("getBaseline", "ChipEffectSet", function(this, force=FALSE, verbose=
   df <- getFile(this, 1);
 
   verbose && enter(verbose, "Retrieving CEL file");
-  res <- createFrom(df, filename=pathname, path=NULL, method="create",
-                                  force=force, verbose=less(verbose));
+  res <- createFrom(df, filename=pathname, path=NULL, methods="create",
+                         clear=TRUE, force=force, verbose=less(verbose));
   verbose && print(verbose, res);
   verbose && exit(verbose);
 

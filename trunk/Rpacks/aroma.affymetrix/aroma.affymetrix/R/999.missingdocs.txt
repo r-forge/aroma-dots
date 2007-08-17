@@ -340,8 +340,10 @@
   inferParameters.SnpChipEffectSet isDone.AptProbesetGenotype
   isDuplicated isInstalled isInstalled.PlatformDesign
   isLoaded.PlatformDesign isPm isPm.PlatformDesign isSnpChip join
-  join.GdasAnnotationSet lapply lapply.default lapplyInChunks
-  lapplyInChunks.numeric library load.PlatformDesign loadDataFile
+  join.GdasAnnotationSet lapply lapply.default 
+  lapplyInChunks lapplyInChunks.numeric
+  splitInChunks splitInChunks.numeric
+  library load.PlatformDesign loadDataFile
   loadDataFile.PlatformDesign log2abs log2neg log2pos matchPatterns
   matchPatterns.SampleAnnotationFile mergeByCommonTails mergeGroups
   mergeGroups.ChipEffectFile mergeStrands mergeStrands.CnChipEffectFile

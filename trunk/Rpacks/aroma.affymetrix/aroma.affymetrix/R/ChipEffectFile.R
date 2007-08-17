@@ -59,12 +59,12 @@ setConstructorS3("ChipEffectFile", function(..., probeModel=c("pm")) {
     res;
   })
 
-
-  setEncodeFunction(this, function(groupData, ...) {
-    groupData[[3]] <- -as.integer(.subset2(groupData, 3));
-    names(groupData) <- c("intensities", "stdvs", "pixels");
-    groupData;
-  })
+  ## Not safe, at least not what I know of. /HB 2007-08-17
+##   setEncodeFunction(this, function(groupData, ...) {
+##     groupData[[3]] <- -as.integer(.subset2(groupData, 3));
+##     names(groupData) <- c("intensities", "stdvs", "pixels");
+##     groupData;
+##   })
 
   
   setDecodeFunction(this, function(groupData, ...) {
@@ -328,8 +328,15 @@ setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL
 
 
 setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
 
   verbose && enter(verbose, "Identifying non-fitted units in chip-effect file");
@@ -355,25 +362,47 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
   if (is.null(idxs)) {
     verbose && enter(verbose, "Identifying CDF units");
   
-    verbose && enter(verbose, "Reading CDF cell indices");
-    idxs <- getCellIndices(this, units=units, verbose=less(verbose));
-    verbose && exit(verbose);
+    units0 <- units;
+    if (is.null(units)) {
+      cdf <- getCdf(this);
+      units <- seq(length=nbrOfUnits(cdf));
+    }
+    nbrOfUnits <- length(units);
 
-    gc <- gc();
-    verbose && print(verbose, gc);
-  
-    verbose && enter(verbose, "Extracting first CDF block for each unit");
-    idxs <- applyCdfGroups(idxs, .subset2, 1);
-    verbose && exit(verbose);
+    idxs <- lapplyInChunks(units, function(unitsChunk, ...) {
+      verbose && enter(verbose, "Reading CDF cell indices");
+      idxsChunk <- getCellIndices(this, units=unitsChunk, force=TRUE, verbose=less(verbose));
+      # Save memory 100% -> 94%
+      names(idxsChunk) <- NULL;
+      verbose && exit(verbose);
 
-    gc <- gc();
-    verbose && print(verbose, gc);
-  
+      verbose && enter(verbose, "Extracting first CDF group for each unit");
+      # Save memory 100% -> 94% -> 5% (all the nested named lists costs!)
+      idxsChunk <- base::lapply(idxsChunk, FUN=function(unit) {
+        groups <- .subset2(unit, "groups");
+        fields <- .subset2(groups, 1);
+        .subset2(fields, 1);
+      })
+      verbose && exit(verbose);
+
+      gc <- gc();
+ 
+      idxsChunk;
+    }, chunkSize=100e3, useNames=FALSE, verbose=verbose);
+
+    # Not needed anymore
+    units <- units0;
+    rm(units0);
+
     idxs <- unlist(idxs, use.names=FALSE);
-
     gc <- gc();
     verbose && print(verbose, gc);
 
+    # Verify correctness
+    if (length(idxs) != nbrOfUnits) {
+      throw("Internal error: Expected ", nbrOfUnits, " cell indices, but got ", length(idxs), ".");
+    }
+    
     if (is.null(units)) {
       verbose && enter(verbose, "Saving to file cache");
       saveCache(idxs, key=key, dirs=dirs);
@@ -720,7 +749,7 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
   
   # Create CEL file to store results, if missing
   verbose && enter(verbose, "Creating CEL file for results, if missing");
-  cfN <- createFrom(this, filename=pathname, path=NULL, method="create", verbose=less(verbose));
+  cfN <- createFrom(this, filename=pathname, path=NULL, methods="create", clear=TRUE, verbose=less(verbose));
   verbose && print(verbose, cfN);
   verbose && exit(verbose);
 
@@ -738,6 +767,10 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2007-08-16
+# o Made findUnitsTodo() on ChipEffectFile much more memory efficient.
+#   Before it could consume 1-2GB for the GenomeWideSNP_6 chip, but now
+#   it is consuming ~100MB.  This was done by using lapplyInChunks().
 # 2007-08-09
 # o ChipEffectFile$fromDataFile() now creates CEL files with upper-case
 #   filename extension "*.CEL", not "*.cel".  The reason for this is that

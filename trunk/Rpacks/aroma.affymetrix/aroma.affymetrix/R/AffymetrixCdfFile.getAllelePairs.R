@@ -268,8 +268,12 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
     probeSets <- loadCache(key=key, dirs=dirs);
-    if (!is.null(probeSets))
+    if (!is.null(probeSets)) {
+      verbose && cat(verbose, "Loaded from file cache");
+      gc <- gc();
+      verbose && print(verbose, gc);
       return(probeSets);
+    }
   }
 
   cdfFile <- getPathname(this);
@@ -283,7 +287,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   unitNames <- readCdfUnitNames(cdfFile);
   unitsAll <- which(regexpr("^SNP", unitNames) != -1);
   rm(unitNames);
-  gc();
+  gc <- gc();
 
   # Operate only on a subset of probes?
   if (!is.null(units)) {
@@ -293,7 +297,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   rm(unitsAll);
   nunits <- length(units);
 
-  verbose && cat(verbose, "Number of units to query: ", nunits);
+  verbose && cat(verbose, "Number of units (SNPs) to query: ", nunits);
   if (nunits == 0)
     return(NULL);
 
@@ -311,7 +315,11 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
     s;
   });
   uGroupNames <- unique(groupNames);
-  gc();
+  gc <- gc();
+  verbose && print(verbose, gc);
+  
+  verbose && cat(verbose, "Unique group names:");
+  verbose && str(verbose, lapply(uGroupNames, FUN=function(x) names(levels[x])));
   verbose && exit(verbose);
   verbose && exit(verbose);
 
@@ -320,30 +328,69 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # Read all of the CDF file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Loading cell indices for probepairs for requested units");
-  cdfAll <- readCdfCellIndices(cdfFile, units=units, stratifyBy="pm");
-  # Save memory by removing names. [309Mb -> 298Mb]
-  names(cdfAll) <- NULL;
+  nbrOfUnitsPerChunk <- 100e3;
+#  nbrOfUnitsPerChunk <- 6000;
+  nunits <- length(units);
+  nbrOfChunks <- ceiling(nunits / nbrOfUnitsPerChunk);
+  uu <- 1:nbrOfUnitsPerChunk;
+  unitsTodo <- units;
+  count <- 1;
+  cells0 <- list();
+  cdfAll <- list();
+  while (length(unitsTodo) > 0) {
+    verbose && enter(verbose, sprintf("Chunk #%d of %d", count, nbrOfChunks));
+    if (length(unitsTodo) <= nbrOfUnitsPerChunk)
+      uu <- 1:length(unitsTodo);
 
-  cells0 <- unlist(cdfAll, use.names=FALSE);
-  nbrOfCells <- length(cells0);
-  verbose && printf(verbose, "Identified %d (PM_A,PM_B) pairs in %d units\n", 
-                                                round(nbrOfCells/2), nunits);
-  cells0 <- sort(cells0);
+    verbose && cat(verbose, "Units: ");
+    verbose && str(verbose, unitsTodo[uu]);
+
+    cdfAll0 <- readCdfCellIndices(cdfFile, units=unitsTodo[uu], stratifyBy="pm");
+    unitsTodo <- unitsTodo[-uu];
+
+    # Save memory by removing names. [309Mb -> 298Mb]
+    names(cdfAll0) <- NULL;
+
+    cells0[[count]] <- unlist(cdfAll0, use.names=FALSE);
+
+    # Save memory by flattening structure. [298Mb -> 51Mb(!)]
+    # TODO: Add support to do this already in affxparser?! /HB 2006-07-22
+    cdfAll0 <- base::lapply(cdfAll0, FUN=function(unit) {
+      groups <- .subset2(unit, 1);
+      names(groups) <- NULL;
+      base::lapply(groups, FUN=.subset2, 1);
+    });
+
+    gc <- gc();
+
+    cdfAll <- c(cdfAll, cdfAll0);
+
+    rm(cdfAll0);
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    count <- count + 1;
+    verbose && exit(verbose);
+  } # while(...)
 
   # Not needed anymore
-  rm(units);
-  gc();
+  rm(units, unitsTodo, uu);
+  gc <- gc();
+  verbose && print(verbose, gc);
 
-  # Save memory by flattening structure. [298Mb -> 51Mb(!)]
-  # TODO: Add support to do this already in affxparser?! /HB 2006-07-22
-  cdfAll <- base::lapply(cdfAll, FUN=function(unit) {
-    groups <- .subset2(unit, 1);
-    names(groups) <- NULL;
-    base::lapply(groups, FUN=.subset2, 1);
-  });
-  gc();
+  cells0 <- unlist(cells0, use.names=FALSE);
+  gc <- gc();
+  cells0 <- sort(cells0);
+  gc <- gc();
+
+  nbrOfCells <- length(cells0);
+  verbose && printf(verbose, "Identified %d (PM_A,PM_B) pairs in %d units, i.e. on average %.2g probe pairs/units\n", round(nbrOfCells/2), nunits, (nbrOfCells/2)/nunits);
+
+  if (length(cdfAll) != nunits) {
+    throw("Internal error: Expected ", nunits, " units, but got ", length(cdfAll));
+  }
+
   verbose && exit(verbose);
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Group all units with the same allele basepairs
@@ -355,11 +402,12 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
     basepair <- paste(names(levels)[name[1:2]], collapse="");
     verbose && enter(verbose, "Allele basepair ", basepair);
 
-    idx <- base::lapply(groupNames, FUN=identical, name);
-    idx <- which(unlist(idx, use.names=FALSE));
+    idx <- base::sapply(groupNames, FUN=identical, name);
+    idx <- which(idx);
     cdf <- cdfAll[idx];
-    cdfAll[idx] <- NA;  # Not needed anymore
+    cdfAll[idx] <- NA;  # Not needed anymore (save memory)
     rm(idx);
+    gc <- gc();
 
     cdf0 <- vector("list", length=length(name));
     for (gg in 1:length(name)) {
@@ -370,19 +418,24 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
     rm(cdf0);
     names(probeSets)[kk] <- basepair;
 
+    gc <- gc();
+    verbose && print(verbose, gc);
+
     verbose && exit(verbose);
   }
   rm(cdfAll);
+  gc <- gc();
+  verbose && print(verbose, gc);
   verbose && exit(verbose);
 
   # Assert correctness
   verbose && enter(verbose, "Asserting correctness part I", level=-20);
   nbrOfCells2 <- length(unlist(probeSets, use.names=FALSE));
   if (nbrOfCells2 != nbrOfCells) {
-    throw("Internal error1: Excepted ", nbrOfCells, " indices: ", nbrOfCells2);
+    throw("Internal error: Excepted ", nbrOfCells, " indices: ", nbrOfCells2);
   }
   if (!identical(sort(unlist(probeSets, use.names=FALSE)), cells0)) {
-    throw("Internal error1: Mismatching probes.");
+    throw("Internal error: Mismatching probes.");
   }
   verbose && exit(verbose);
 
@@ -395,38 +448,47 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   for (kk in 1:length(probeSets)) {
     bp <- names(probeSets)[kk];
     value <- probeSets[[kk]];
-    for (ll in 0:(1*(length(value) > 2))) {
+
+    nbrOfPairs <- length(value)/2;
+    for (ll in seq(length=nbrOfPairs)) {
       value2 <- probeSets2[[bp]];
       if (is.null(value2))
         value2 <- vector("list", length=2);
       value2[[1]] <- c(value2[[1]], value[[1]]);
       value2[[2]] <- c(value2[[2]], value[[2]]);
       probeSets2[[bp]] <- value2;
+      rm(value2);
       bp <- strsplit(bp, split="")[[1]];
       bp <- c(A="T", C="G", G="C", T="A")[bp];
       bp <- paste(bp, collapse="");
       value <- value[3:4];
     }
   }
+  verbose && cat(verbose, "Probe pairs: ", 
+                                  paste(names(probeSets2), collapse=", "));
   verbose && exit(verbose);
 
   # Assert correctness
   verbose && enter(verbose, "Asserting correctness part II", level=-20);
   nbrOfCells2 <- length(unlist(probeSets, use.names=FALSE));
   if (nbrOfCells2 != nbrOfCells) {
-    throw("Internal error2: Excepted ", nbrOfCells, " indices: ", nbrOfCells2);
+    throw("Internal error: Excepted ", nbrOfCells, " indices: ", nbrOfCells2);
   }
   if (!identical(sort(unlist(probeSets, use.names=FALSE)), cells0)) {
-    throw("Internal error1: Mismatching probes.");
+    throw("Internal error: Mismatching probes.");
   }
   verbose && exit(verbose);
 
   if (ignoreOrder) {
     verbose && enter(verbose, "Putting AB and BA groups together");
+    rm(probeSets);
+    gc <- gc();
     pairs <- strsplit(names(probeSets2), split="");
     pairs <- base::lapply(pairs, FUN=function(x) paste(sort(x), collapse=""));
     pairs <- unlist(pairs);
     uPairs <- sort(unique(pairs));
+    verbose && cat(verbose, "Probe pairs (ignoring order): ", 
+                                                paste(uPairs, collapse=", "));
     probeSets <- list();
     for (pair in uPairs) {
       idx <- which(pairs == pair);
@@ -440,12 +502,14 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
     # Join AB with BA.
     for (kk in 1:length(probeSets)) {
       values <- probeSets[[kk]];
-      if (length(values) > 1) {
+      if (length(values) == 1) {
+        values <- values[[1]];
+      } else {
         values[[1]][[1]] <- c(values[[1]][[1]], values[[2]][[2]]);
         values[[1]][[2]] <- c(values[[1]][[2]], values[[2]][[1]]);
         values <- values[[1]];
-        probeSets[[kk]] <- values;
       }
+      probeSets[[kk]] <- values;
     }
     rm(values);
     verbose && exit(verbose);
@@ -458,24 +522,28 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   verbose && enter(verbose, "Asserting correctness part III", level=-20);
   nbrOfCells2 <- length(unlist(probeSets, use.names=FALSE));
   if (nbrOfCells2 != nbrOfCells) {
-    throw("Internal error3: Excepted ", nbrOfCells, " indices: ", nbrOfCells2);
+    throw("Internal error: Excepted ", nbrOfCells, " indices: ", nbrOfCells2);
   }
   if (!identical(sort(unlist(probeSets, use.names=FALSE)), cells0)) {
-    throw("Internal error1: Mismatching probes.");
+    throw("Internal error: Mismatching probes.");
   }
+  gc <- gc();
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Reformatting to matrices");
   # Order indices by allele A (just for beauty)
   for (kk in 1:length(probeSets)) {
+    verbose && enter(verbose, sprintf("Group #%d of %d", kk, length(probeSets)));
     values <- probeSets[[kk]];
     values <- matrix(c(values[[1]], values[[2]]), ncol=2);
     colnames(values) <- strsplit(names(probeSets)[kk], split="")[[1]];
     o <- order(values[,1]);
     values <- values[o,];
     probeSets[[kk]] <- values;
+    verbose && exit(verbose);
   }
-  rm(values);
+  rm(values, o);
+  gc <- gc();
   if (isVisible(verbose, level=-20))
     verbose && str(verbose, probeSets, level=-20);
   verbose && exit(verbose);
@@ -598,6 +666,10 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2007-08-16
+# o Now getAlleleProbePairs() of AffymetrixCdfFile processes the CDF in
+#   chunks in order to save memory.  Before the GenomeWideSNP_6 CDF would
+#   consume 1.5-2.0GB RAM, but now it is using less than 500MB.
 # 2007-06-11
 # o BUG FIX: getAlleleProbePairs2() used non-existing object 'name' instead
 #   of 'basepair'.  getAlleleProbePairs2() is currently not used anyway.

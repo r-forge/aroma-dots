@@ -51,66 +51,110 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
     cdfData <- loadCache(key, dirs=dirs);
+    names(cdfData) <- gsub("cells2", "ceCells", names(cdfData), fixed=TRUE);
     if (!is.null(cdfData))
       verbose && cat(verbose, "Found indices cached on file");
   }
 
   if (is.null(cdfData)) {
-    verbose && enter(verbose, "Retrieving CDF cell indices");
-    cdfUnits <- getCellIndices(this, units=units, verbose=less(verbose));
-    verbose && exit(verbose);
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Identifying (unitGroupSizes, cells, ceCells)
+    #
+    # Note: This will take several minutes, but results will be save to 
+    # file cache, so it is basically only done once.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    units0 <- units;
+    if (is.null(units)) {
+      units <- seq(length=nbrOfUnits(cdf));
+    }
+    nbrOfUnits <- length(units);
 
-    verbose && enter(verbose, "Calculate group sizes");
-    unitGroupSizes <- applyCdfGroups(cdfUnits, lapply, FUN=function(group) {
-      length(.subset2(group, 1));
-    });
-    unitGroupSizes <- unlist(unitGroupSizes, use.names=FALSE);
+    # Memory optimization: Do things in chunks
+    unitChunks <- splitInChunks(units, chunkSize=100e3);
+    cdfData <- list(unitGroupSizes=NULL, cells=NULL, ceCells=NULL);
+    for (kk in seq(along=unitChunks)) {
+      verbose && enter(verbose, sprintf("Chunk #%d of %d", kk, length(unitChunks)));
+      units <- unitChunks[[kk]];
+      verbose && enter(verbose, "Retrieving CDF cell indices");
+      cdfUnits <- getCellIndices(this, units=units, verbose=less(verbose));
+      names(cdfUnits) <- NULL;  # Saves memory.
+      gc <- gc();
+      verbose && exit(verbose);
+      verbose && enter(verbose, "Calculate group sizes");
+      unitGroupSizes <- applyCdfGroups(cdfUnits, base::lapply, FUN=function(group) {
+        length(.subset2(group, 1));
+      });
+      unitGroupSizes <- unlist(unitGroupSizes, use.names=FALSE);
+      verbose && str(verbose, unitGroupSizes);
+
+      # Garbage collect
+      gc <- gc();
+      verbose && print(verbose, gc);
+      verbose && exit(verbose);
+
+      cells <- unlist(cdfUnits, use.names=FALSE);
+
+      rm(cdfUnits);
+      # Garbage collect
+      gc <- gc();
+
+      verbose && enter(verbose, "Retrieving CDF cell indices for chip effects");
+      cdfUnits <- getCellIndices(ces, units=units, verbose=less(verbose));
+      ceCells <- unlist(cdfUnits, use.names=FALSE);
+      verbose && exit(verbose);
+
+      rm(cdfUnits); # Not needed anymore
+
+      # Store
+      cdfData$unitGroupSizes <- c(cdfData$unitGroupSizes, unitGroupSizes);
+      cdfData$cells <- c(cdfData$cells, cells);
+      cdfData$ceCells <- c(cdfData$ceCells, ceCells);
+
+      verbose && str(verbose, cdfData);
+
+      rm(unitGroupSizes, cells, ceCells);
+
+      # Garbage collect
+      gc <- gc();
+      verbose && print(verbose, gc);
+
+      verbose && exit(verbose);
+    } # for (kk in ...)
+
     # Garbage collect
     gc <- gc();
     verbose && print(verbose, gc);
-    verbose && str(verbose, unitGroupSizes);
-    verbose && exit(verbose);
 
-    cells <- unlist(cdfUnits, use.names=FALSE);
+    units <- units0;
+    rm(units0);
 
-    rm(cdfUnits);
-    # Garbage collect
-    gc <- gc();
-    verbose && print(verbose, gc);
-
-    verbose && enter(verbose, "Retrieving CDF cell indices for chip effects");
-    cdfUnits <- getCellIndices(ces, units=units, verbose=less(verbose));
-    cells2 <- unlist(cdfUnits, use.names=FALSE);
-    verbose && exit(verbose);
-
-    rm(cdfUnits); # Not needed anymore
-    # Garbage collect
-    gc <- gc();
-    verbose && print(verbose, gc);
-
-    cdfData <- list(unitGroupSizes=unitGroupSizes, cells=cells, cells2=cells2);
     verbose && enter(verbose, "Saving to file cache");
     saveCache(cdfData, key=key, dirs=dirs);
-    rm(cdfData);
+
     # Garbage collect
     gc <- gc();
     verbose && print(verbose, gc);
     verbose && exit(verbose);
-  } else {
-    verbose && cat(verbose, "CDF related data cached on file:");
-    unitGroupSizes <- cdfData$unitGroupSizes;
-    verbose && cat(verbose, "unitGroupSizes:");
-    verbose && str(verbose, unitGroupSizes);
-    cells <- cdfData$cells;
-    verbose && cat(verbose, "cells:");
-    verbose && str(verbose, cells);
-    cells2 <- cdfData$cells2;
-    verbose && cat(verbose, "cells2:");
-    verbose && str(verbose, cells2);
-    rm(cdfData);
-    # Garbage collect
-    gc <- gc();
-    verbose && print(verbose, gc);
+  }
+
+  verbose && cat(verbose, "CDF related data cached on file:");
+  unitGroupSizes <- cdfData$unitGroupSizes;
+  verbose && cat(verbose, "unitGroupSizes:");
+  verbose && str(verbose, unitGroupSizes);
+  cells <- cdfData$cells;
+  verbose && cat(verbose, "cells:");
+  verbose && str(verbose, cells);
+  ceCells <- cdfData$ceCells;
+  verbose && cat(verbose, "ceCells:");
+  verbose && str(verbose, ceCells);
+  rm(cdfData);
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  # Validate correctness
+  if (!identical(length(unitGroupSizes), length(ceCells))) {
+    throw("Internal error: 'unitGroupSizes' and 'ceCells' are of different lengths: ", length(unitGroupSizes), " != ", length(ceCells));
   }
 
   # Optimized reading order
@@ -123,15 +167,11 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   gc <- gc();
   verbose && print(verbose, gc);
 
-  verbose && enter(verbose, "Retrieving probe-affinity estimates");
-  phi <- getData(paf, indices=cells, fields="intensities")$intensities[oinv];
-  verbose && exit(verbose);
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calculate residuals for each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   path <- getPath(this);
-
+  phi <- NULL;
   for (kk in seq(ds)) {
     # Get probe-level signals
     df <- getFile(ds, kk);
@@ -159,6 +199,12 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     y <- getData(df, indices=cells, fields="intensities")$intensities[oinv];
     verbose && exit(verbose);
 
+    if (is.null(phi)) {
+      verbose && enter(verbose, "Retrieving probe-affinity estimates");
+      phi <- getData(paf, indices=cells, fields="intensities")$intensities[oinv];
+      verbose && exit(verbose);
+    }
+
     # Assert that there is the correct number of signals 
     if (length(y) != length(phi)) {
       throw("Internal error: 'y' and 'phi' differ in lengths: ", 
@@ -166,7 +212,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     }
 
     verbose && enter(verbose, "Retrieving chip-effect estimates");
-    theta <- getData(cef, indices=cells2, fields="intensities")$intensities;
+    theta <- getData(cef, indices=ceCells, fields="intensities")$intensities;
     theta <- rep(theta, times=unitGroupSizes);
     verbose && exit(verbose);
 
@@ -207,7 +253,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     tryCatch({
       # Create CEL file to store results, if missing
       verbose && enter(verbose, "Creating empty CEL file for results, if missing");
-      createFrom(df, filename=pathname, path=NULL, method="create", verbose=less(verbose));
+      createFrom(df, filename=pathname, path=NULL, 
+                     methods="create", clear=TRUE, verbose=less(verbose));
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Writing residuals");
@@ -268,6 +315,12 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-08-17
+# o Now calculateResidualSet() of ProbeLevelModel only loads probe-affinity
+#   estimates if needed, i.e. if residuals are already calculated this 
+#   function will return faster now.
+# o MEMORY OPTIMIZATION: calculateResidualSet() of ProbeLevelModel does
+#   part of the work in chunks.
 # 2007-08-09
 # o calculateResidualSet() of ProbeLevelModel now creates CEL files with 
 #   upper-case filename extension "*.CEL", not "*.cel".  The reason for this

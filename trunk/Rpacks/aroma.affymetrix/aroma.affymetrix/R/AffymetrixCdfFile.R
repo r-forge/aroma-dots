@@ -597,16 +597,37 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   verbose && cat(verbose, "Units: ");
   verbose && str(verbose, units);
   verbose2 <- -as.integer(verbose)-1;
-  cdf <- readCdfCellIndices(this$.pathname, units=units, ..., verbose=verbose);
+
+  units0 <- units;
+  if (is.null(units))
+    units <- seq(length=nbrOfUnits(this));
+  nbrOfUnits <- length(units);
+
+#  cdf <- readCdfCellIndices(this$.pathname, units=units, ..., verbose=verbose);
+
+
+  cdf <- lapplyInChunks(units, function(unitsChunk) {
+    verbose && enter(verbose, "Querying CDF file");
+    cdfChunk <- readCdfCellIndices(this$.pathname, units=unitsChunk, ..., verbose=verbose);
+    verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+
+    verbose && enter(verbose, "Restructuring");
+    cdfChunk <- restruct(this, cdfChunk);  # Always call restruct() after a readCdfNnn()!
+    verbose && exit(verbose);
+
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    cdfChunk;
+  }, chunkSize=100e3, verbose=verbose);
+
   verbose && exit(verbose);
 
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
-
-  verbose && enter(verbose, "Restructuring");
-  cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
-  verbose && exit(verbose);
+  units <- units0;
+  rm(units0);
 
   # Garbage collect
   gc <- gc();
@@ -1242,6 +1263,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-08-17
+# o Made getCellIndices() of AffymetrixCdfFile more memory effiencent by
+#   reading and transforming data in chunks.
 # 2007-08-09
 # o Now convertCdf() generates a CDF file upper-case extension *.CDF.
 # 2007-08-02
