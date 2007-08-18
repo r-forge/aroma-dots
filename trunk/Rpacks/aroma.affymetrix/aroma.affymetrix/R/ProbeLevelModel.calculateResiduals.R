@@ -51,9 +51,10 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
     cdfData <- loadCache(key, dirs=dirs);
-    names(cdfData) <- gsub("cells2", "ceCells", names(cdfData), fixed=TRUE);
-    if (!is.null(cdfData))
+    if (!is.null(cdfData)) {
+      names(cdfData) <- gsub("cells2", "ceCells", names(cdfData), fixed=TRUE);
       verbose && cat(verbose, "Found indices cached on file");
+    }
   }
 
   if (is.null(cdfData)) {
