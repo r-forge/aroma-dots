@@ -20,6 +20,18 @@ stopifnot(identical(getNames(cs), sampleNames));
 cdf <- getCdf(cs);
 print(cdf);
 
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Spatial intensity plots
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ae <- ArrayExplorer(cs);
+setColorMaps(ae, c("sqrt,yellow", "log2,yellow"));
+print(ae);
+process(ae, verbose=log);
+
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Quantile normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
