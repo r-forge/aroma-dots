@@ -681,7 +681,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("auto", "h", "v", "none") , ..., zoom=NULL, verbose=FALSE) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("none", "h", "v", "auto") , ..., zoom=NULL, verbose=FALSE) {
   require("EBImage") || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
