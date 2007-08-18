@@ -14,6 +14,15 @@ o Now createFrom(..., methods="create", clear=FALSE) of AffymetrixCelFile
   files containing the same data.  createFrom() also accepts a vector
   of options in 'methods' (renamed from 'method') which will be tried
   in order until success.
+o Now getImage() of AffymetrixCelFile defaults to no interleaving, 
+  i.e. argument defaults to interleaved="none".  The reason for this
+  is that the previous default "auto" did not work too well and 
+  sometimes turned on interleaving although not needed.  So, now
+  one has to use interleaved="auto" ("v" or "h") when for instance
+  getting images for spatial PLM residuals where an PM-only fit was
+  done to a chip with MMs (otherwise every 2nd line will be blank).
+  This also affects the ArrayExplorer; you pass the 'interleaved'
+  argument via the process() call.
 o Added support for dChip's 'snp6.0 genome info hg18.txt' file.  Note,
   this only contains informations for SNPs, not CN probes.
 o MEMORY OPTIMIZATION: calculateResidualSet() of ProbeLevelModel does
