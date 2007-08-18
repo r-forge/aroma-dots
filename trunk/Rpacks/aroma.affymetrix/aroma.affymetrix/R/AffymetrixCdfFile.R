@@ -609,7 +609,6 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   cdf <- lapplyInChunks(units, function(unitsChunk) {
     verbose && enter(verbose, "Querying CDF file");
     cdfChunk <- readCdfCellIndices(this$.pathname, units=unitsChunk, ..., verbose=verbose);
-str(names(cdfChunk))
     verbose && exit(verbose);
 
     # Garbage collect
@@ -622,10 +621,8 @@ str(names(cdfChunk))
     gc <- gc();
     verbose && print(verbose, gc);
 
-str(names(cdfChunk))
     cdfChunk;
   }, chunkSize=100e3, verbose=verbose);
-str(names(cdf))
 
   verbose && exit(verbose);
 
