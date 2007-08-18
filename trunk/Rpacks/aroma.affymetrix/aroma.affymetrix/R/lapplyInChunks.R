@@ -29,6 +29,8 @@ setMethodS3("lapplyInChunks", "numeric", function(idxs, fcn, ..., chunkSize=1, u
 
   # Allocate return structure
   res <- vector("list", n);
+  if (useNames)
+    names <- vector("character", n);
 
   verbose && cat(verbose, "Number of elements per chunk: ", chunkSize);
 
@@ -49,6 +51,9 @@ setMethodS3("lapplyInChunks", "numeric", function(idxs, fcn, ..., chunkSize=1, u
     resChunk <- fcn(idxs[ii], ...);
     res[ii] <- resChunk;
 
+    if (useNames)
+      names[ii] <- names(resChunk);
+
     # Next chunk
     remaining <- remaining[-chunk];
     count <- count + 1;
@@ -58,7 +63,7 @@ setMethodS3("lapplyInChunks", "numeric", function(idxs, fcn, ..., chunkSize=1, u
 
   # Add names?
   if (useNames)
-    names(res) <- names(idxs);
+    names(res) <- names;
 
   verbose && exit(verbose);
 

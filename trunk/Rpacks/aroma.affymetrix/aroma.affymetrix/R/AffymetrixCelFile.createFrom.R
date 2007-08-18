@@ -108,6 +108,10 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
     
       if (clear)
         clearData(res, ..., .forSure=TRUE, verbose=less(verbose));
+
+      # Break out of the methods loop
+      verbose && exit(verbose);
+      break;
     }
   
     if (method == "create") {
@@ -171,6 +175,10 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
       }
   
       res <- newInstance(this, pathname);
+
+      # Break out of the methods loop
+      verbose && exit(verbose);
+      break;
     }
 
     verbose && exit(verbose);
