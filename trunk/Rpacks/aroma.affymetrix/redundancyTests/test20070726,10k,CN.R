@@ -105,4 +105,4 @@ fit(glad, arrays=1, chromosomes=19, verbose=log);
 ce <- ChromosomeExplorer(glad);
 print(ce);
 process(ce, chromosomes=19:23, verbose=log);
-process(ce, verbose=log);
+## process(ce, verbose=log);
