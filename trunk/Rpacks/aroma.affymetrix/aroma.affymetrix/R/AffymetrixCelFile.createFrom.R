@@ -169,7 +169,7 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
           rm(data);
           gc <- gc();
           verbose && print(verbose, gc);
-        }, chunkSize=500e3, verbose=verbose);
+        }, chunkSize=1e6, verbose=verbose);
 
         verbose && exit(verbose);
       }

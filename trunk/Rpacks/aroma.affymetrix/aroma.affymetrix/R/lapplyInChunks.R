@@ -29,8 +29,7 @@ setMethodS3("lapplyInChunks", "numeric", function(idxs, fcn, ..., chunkSize=1, u
 
   # Allocate return structure
   res <- vector("list", n);
-  if (useNames)
-    names <- vector("character", n);
+  names <- NULL;
 
   verbose && cat(verbose, "Number of elements per chunk: ", chunkSize);
 
@@ -51,8 +50,14 @@ setMethodS3("lapplyInChunks", "numeric", function(idxs, fcn, ..., chunkSize=1, u
     resChunk <- fcn(idxs[ii], ...);
     res[ii] <- resChunk;
 
-    if (useNames)
+    if (useNames && is.character(names(resChunk))) {
+      if (is.null(names))
+        names <- vector("character", n);
       names[ii] <- names(resChunk);
+    }
+
+    # Not needed anymore   
+    rm(resChunk, ii);
 
     # Next chunk
     remaining <- remaining[-chunk];
@@ -61,8 +66,11 @@ setMethodS3("lapplyInChunks", "numeric", function(idxs, fcn, ..., chunkSize=1, u
     verbose && exit(verbose);
   } # while(length(idxs) > 0)
 
+  # Not needed anymore   
+  rm(chunk);
+
   # Add names?
-  if (useNames)
+  if (!is.null(names))
     names(res) <- names;
 
   verbose && exit(verbose);

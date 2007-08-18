@@ -2,6 +2,8 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.6.0 [2007-08-17xx]
+o Steps have been taken to support working with Calvin CEL files.  This 
+  is still in testing, but form first tests it looks like it is working.
 o Now calculateResidualSet() of ProbeLevelModel only loads probe-affinity
   estimates if needed, i.e. if residuals are already calculated this 
   function will return faster now.
@@ -9,9 +11,9 @@ o Now createFrom(..., methods="create", clear=FALSE) of AffymetrixCelFile
   will first create an empty file, and then copy all CEL data to the
   new file.  This way createFrom(..., methods="create", clear=FALSE)
   and createFrom(..., methods="copy", clear=FALSE) should give CEL
-  files containing the same data.
-o Renamed argument 'method' in createFrom() of AffymetrixCelFile to
-  'methods' to reflect the fact that it can take multiple alternatives.
+  files containing the same data.  createFrom() also accepts a vector
+  of options in 'methods' (renamed from 'method') which will be tried
+  in order until success.
 o Added support for dChip's 'snp6.0 genome info hg18.txt' file.  Note,
   this only contains informations for SNPs, not CN probes.
 o MEMORY OPTIMIZATION: calculateResidualSet() of ProbeLevelModel does
@@ -32,6 +34,7 @@ o BUG FIX: Removed internal trial encoding function added by mistake
 o CLEAN UP: Removed findUnitsTodo() from ExonChipEffectFile, because it 
   gave the same result as the one in super class ChipEffectFile. 
 o Package passes R CMD check on R v2.5.1 and R v2.6.0 devel.
+o Package passes all redundancy tests.
 
 
 Version: 0.5.6 [2007-08-10]
