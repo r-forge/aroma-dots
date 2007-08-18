@@ -27,7 +27,7 @@ print(plm);
 
 pathname <- "test20060810,profiling.Rprof";
 #Rprof(pathname, interval=0.02);
-fit(plm, units=1:nbrOfUnits(getCdf(cs)), force=TRUE, verbose=log);
+#fit(plm, units=1:nbrOfUnits(getCdf(cs)), force=TRUE, verbose=log);
 #Rprof(NULL);
 #summaryRprof(pathname);
 #displayCode(code=capture.output(summaryRprof(pathname)), wrap=120);
