@@ -1,9 +1,16 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.6.0 [2007-08-17xx]
+Version: 0.6.1 [2007-08-20]
+o Added support for fitting copy-number regions using the (fast)
+  Circular Binary Segmentation (CBS) method of Venkatraman et al. (2007).
+  The method is implemented by the new CbsModel class.  Consider this
+  class to be very much in a beta version.
+
+
+Version: 0.6.0 [2007-08-17]
 o Steps have been taken to support working with Calvin CEL files.  This 
-  is still in testing, but form first tests it looks like it is working.
+  is still in testing, but from first tests it looks like it is working.
 o Now calculateResidualSet() of ProbeLevelModel only loads probe-affinity
   estimates if needed, i.e. if residuals are already calculated this 
   function will return faster now.

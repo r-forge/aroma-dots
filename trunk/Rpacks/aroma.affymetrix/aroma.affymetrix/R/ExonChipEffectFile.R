@@ -113,7 +113,7 @@ setMethodS3("getCellIndices", "ExonChipEffectFile", function(this, ..., force=FA
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Merge groups?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # If merging groups, we only need one chip-effect parameter per unit group
+  # If merging groups, we only need one chip-effect parameter per unit
   if (this$mergeGroups) {
     verbose && enter(verbose, "Merging groups");
     cells <- applyCdfGroups(cells, function(groups) {
@@ -213,15 +213,30 @@ setMethodS3("readUnits", "ExonChipEffectFile", function(this, ..., force=FALSE, 
 ## 
 ##     verbose && enter(verbose, "Reading CDF cell indices");
 ##     idxs <- getCellIndices(this, units=units, verbose=less(verbose));
+##     # Example:
+##     #  $ 2315554:List of 1
+##     #   ..$ groups:List of 1
+##     #   .. ..$ groupA:List of 1
+##     #   .. .. ..$ indices: int 1
+##     #   .. ..$ groupB:List of 1
+##     #   .. .. ..$ indices: int 23
 ##     verbose && exit(verbose);
 ## 
 ##     verbose && enter(verbose, "Extracting first CDF block for each unit");
 ##     idxs <- applyCdfGroups(idxs, .subset2, 1);
+##     # Example:
+##     #  $ 2315554:List of 1
+##     #   ..$ groups:List of 1
+##     #   .. ..$ indices: int 1
 ##     ## The below makes no difference.  Thus, this function give exactly
-##     ## the same result as the one in the super class. /HB 2007-08-17
+##     ## the same result as the one in the super class. Note, mergeGroups
+##     ## has already been taken care of inside getCellIndices() /HB 2007-08-17
 ##     if (this$mergeGroups) {
 ##       # do a further round of reduction
 ##       idxs <- applyCdfGroups(idxs, .subset2, 1);
+##       # Example:
+##       #  $ 2315554:List of 1
+##       #   ..$ groups: int 1
 ##     }
 ##     verbose && exit(verbose);
 ## 
