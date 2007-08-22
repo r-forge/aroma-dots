@@ -116,6 +116,7 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
 
   xScale <- 1/(10^unit);
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Keep only data to be plotted
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   pv <- fit$profileValues;
@@ -171,35 +172,6 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Update the plot data with cytoband information
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   pv <- merge(pv, LabelChr, by="Chromosome");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Plot smoothing values?
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (!is.null(Smoothing)) {
-    # Order the data points by chromosome and position
-    o <- order(pv$Chromosome, pv$PosBase);
-    pv <- pv[o,];
-
-    n <- length(pv[, 1])
-    PosMax <- max(pv$PosBase) + 1;
-    Pos <- pv$PosBase[1:(n-1)];
-    PosNext <- pv$PosBase[2:n];
-    InterPos <- Pos + (PosNext - Pos)/2;
-    InterPos <- c(0, InterPos, PosMax);
-    SmtStart <- pv[, Smoothing][1];
-    SmtEnd <- pv[, Smoothing][n];
-    Smt1 <- pv[, Smoothing][1:(n-1)];
-    Smt1 <- c(SmtStart, Smt1, SmtEnd);
-    Smt2 <- pv[, Smoothing][2:n];
-    Smt2 <- c(SmtStart, Smt2, SmtEnd);
-    datasmt <- data.frame(
-      PosBase=c(InterPos, InterPos), 
-      Smoothing=c(Smt1, Smt2)
-    );
-    rm(PosNext, SmtStart, SmtEnd, InterPos, Smt1, Smt2); # Not needed anymore
-    datasmt <- unique(datasmt);
-    datasmt <- datasmt[order(datasmt$PosBase),];
-  }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -305,17 +277,18 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Plot smoothing lines?
+  # Plot smoothing values?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (!is.null(Smoothing)) {
-    datasmt$PosBase <- xScale * datasmt$PosBase;
-    lines(datasmt$Smoothing ~ datasmt$PosBase, col=colSmoothing);
+    drawCnRegions(fit, ..., col=colSmoothing, xScale=xScale);
   }
 }, private=TRUE) # plotProfile2()
 
 
 ############################################################################
 # HISTORY:
+# 2007-08-22
+# o Update plotProfile2() to utilizes drawCnRegions().
 # 2007-06-11
 # o Added explicit call to GLAD::myPalette() to please R CMD check R v2.6.0.
 # 2007-01-03

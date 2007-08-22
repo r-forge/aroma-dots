@@ -1,4 +1,4 @@
-setMethodS3("drawCnRegions", "profileCGH", function(this, xscale=1, ...) {
+setMethodS3("drawCnRegions", "profileCGH", function(this, xScale=1, ...) {
   # Get data
   pv <- this$profileValues;
 
@@ -24,7 +24,7 @@ setMethodS3("drawCnRegions", "profileCGH", function(this, xscale=1, ...) {
   datasmt <- data.frame(posBase=c(interPos, interPos), smoothing=c(smt1, smt2));
   datasmt <- unique(datasmt);
   datasmt <- datasmt[order(datasmt$posBase), ];
-#  posBase <- xscale * datasmt$posBase;
+#  posBase <- xScale * datasmt$posBase;
 
   lines(datasmt$smoothing ~ datasmt$posBase, ...);
 })
