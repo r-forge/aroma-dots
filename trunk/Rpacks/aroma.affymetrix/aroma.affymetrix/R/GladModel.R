@@ -15,6 +15,7 @@
 # @synopsis
 #
 # \arguments{
+#   \item{cesTuple}{A @see "ChipEffectSetTuple".}
 #   \item{...}{Arguments passed to the constructor of 
 #              @see "CopyNumberSegmentationModel".}
 # }

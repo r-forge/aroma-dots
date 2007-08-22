@@ -535,3 +535,33 @@ fromChipType.AffymetrixCdfFile
   normalizeAverage renameToUpperCaseExt
   renameToUpperCaseExt.AffymetrixFile 
   readGenomeWideSNP readGenomeWideSNP.DChipGenomeInformation
+  as.character.CopyNumberSegmentationModel
+  fitOne.CopyNumberSegmentationModel
+  getAlias.CopyNumberSegmentationModel getAsteriskTag.CbsModel
+  getAsteriskTag.CopyNumberSegmentationModel
+  getChipEffectFiles.CopyNumberSegmentationModel
+  getChipTypes.CopyNumberSegmentationModel
+  getFullName.CopyNumberSegmentationModel
+  getFullNames.CopyNumberSegmentationModel getGenomeData
+  getGenomeData.CopyNumberSegmentationModel
+  getListOfCdfs.CopyNumberSegmentationModel
+  getListOfChipEffects.CopyNumberSegmentationModel
+  getListOfGenomeInformations.CopyNumberSegmentationModel
+  getListOfReferences.CopyNumberSegmentationModel
+  getLog2Ratios.CopyNumberSegmentationModel
+  getName.CopyNumberSegmentationModel
+  getNames.CopyNumberSegmentationModel
+  getPath.CopyNumberSegmentationModel getRawCnData
+  getRawCnData.CopyNumberSegmentationModel
+  getReferenceFiles.CopyNumberSegmentationModel
+  getReferenceName.CopyNumberSegmentationModel
+  getRegions.CopyNumberSegmentationModel
+  getReportPath.CopyNumberSegmentationModel
+  getRootPath.CopyNumberSegmentationModel
+  getSetTuple.CopyNumberSegmentationModel
+  getTags.CopyNumberSegmentationModel plot.CbsModel
+  plot.CopyNumberSegmentationModel setAlias.CopyNumberSegmentationModel
+  writeRegions.CopyNumberSegmentationModel
+drawCnRegions
+drawCnRegions.profileCGH
+drawCnRegions.DNAcopy

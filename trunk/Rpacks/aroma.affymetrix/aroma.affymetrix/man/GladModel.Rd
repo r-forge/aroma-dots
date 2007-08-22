@@ -19,13 +19,15 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{GladModel}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\code{GladModel}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
 public static class \bold{GladModel}\cr
-extends \link[R.oo]{Object}\cr
+extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
 
 
 
@@ -35,45 +37,25 @@ extends \link[R.oo]{Object}\cr
   chip types, and not all samples have to be available on all chip types.
  }
 
- \usage{GladModel(cesTuple=NULL, referenceList=NULL, tags="*", ...)}
+ \usage{GladModel(cesTuple=NULL, ...)}
 
  \arguments{
    \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
-   \item{referenceList}{A single or a \code{\link[base]{list}} of \code{\link{ChipEffectFile}}:s.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
-   \item{...}{Not used.}
+   \item{...}{Arguments passed to the constructor of
+              \code{\link{CopyNumberSegmentationModel}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fit.GladModel]{fit}} \tab Fits the model.\cr
- \tab \code{getAlias} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getArrays.GladModel]{getArrays}} \tab Gets the names of the arrays.\cr
- \tab \code{getChipEffectFiles} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipType.GladModel]{getChipType}} \tab Gets a label for all chip types merged.\cr
- \tab \code{getChipTypes} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChromosomes.GladModel]{getChromosomes}} \tab Gets the chromosomes available.\cr
- \tab \code{getFullName} \tab  -\cr
- \tab \code{getFullNames} \tab  -\cr
- \tab \code{getListOfChipEffects} \tab  -\cr
- \tab \code{getListOfGenomeInformations} \tab  -\cr
- \tab \code{getListOfReferences} \tab  -\cr
- \tab \code{getName} \tab  -\cr
- \tab \code{getNames} \tab  -\cr
- \tab \code{getPath} \tab  -\cr
- \tab \code{getReferenceFiles} \tab  -\cr
  \tab \code{getRegions} \tab  -\cr
- \tab \code{getSetTuple} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getTableOfArrays.GladModel]{getTableOfArrays}} \tab Gets a table of arrays.\cr
- \tab \code{getTags} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:nbrOfArrays.GladModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
- \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.GladModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
  \tab \code{plot} \tab  -\cr
- \tab \code{setAlias} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
+as.character, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenomeData, getListOfChipEffects, getListOfGenomeInformations, getListOfReferences, getName, getNames, getPath, getRawCnData, getReferenceFiles, getRegions, getReportPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, plot, setAlias, writeRegions
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
@@ -99,15 +81,10 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    than separately.
  }
 
- \section{Requirements}{
-   This class requires genome information annotation files for
-   every chip type.
- }
-
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-  \code{\link{GladModel}}.
+  \code{\link{CopyNumberSegmentationModel}}.
  }
 
  \references{
