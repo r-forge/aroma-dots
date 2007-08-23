@@ -2,9 +2,6 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'gnl':
-#  gnl <- Arguments$getCharacters(gnl);
-
   # Argument 'nbrOfSnps':
   if (length(nbrOfSnps) == 1)
     nbrOfSnps <- c(nbrOfSnps,Inf);
