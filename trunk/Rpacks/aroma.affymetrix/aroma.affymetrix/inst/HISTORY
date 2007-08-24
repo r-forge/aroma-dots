@@ -1,11 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.6.1 [2007-08-20]
+Version: 0.6.1 [2007-08-23]
 o Added support for fitting copy-number regions using the (fast)
   Circular Binary Segmentation (CBS) method of Venkatraman et al. (2007).
   The method is implemented by the new CbsModel class.  Consider this
   class to be very much in a beta version.
+o CLEAN UP: Deleted obsolete /inst/chromosomeExplorer/ from source.
 
 
 Version: 0.6.0 [2007-08-17]
