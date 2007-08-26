@@ -277,15 +277,15 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   # adjust background - use original GCRMA functions to avoid errors from
   # re-coding
   if (type=="fullmodel") {
-    pm <- bg.adjust.fullmodel(pm, mm, ncs=ncs, apm, amm, anc=anc, index.affinities=1:length(pm), k=k, rho=rho, fast=fast);
+    pm <- gcrma::bg.adjust.fullmodel(pm, mm, ncs=ncs, apm, amm, anc=anc, index.affinities=1:length(pm), k=k, rho=rho, fast=fast);
   }
   else if (type=="affinities") {
     if (is.null(ncs)) {
       # use MM as negative controls
-      pm <- bg.adjust.affinities(pm, mm, apm, amm, index.affinities=1:length(pm), k=k, fast=fast);
+      pm <- gcrma::bg.adjust.affinities(pm, mm, apm, amm, index.affinities=1:length(pm), k=k, fast=fast);
     } else {
       # use specified negative controls
-      pm <- bg.adjust.affinities(pm, ncs, apm, anc, index.affinities=1:length(pm), k=k, fast=fast);
+      pm <- gcrma::bg.adjust.affinities(pm, ncs, apm, anc, index.affinities=1:length(pm), k=k, fast=fast);
     }
   }
     

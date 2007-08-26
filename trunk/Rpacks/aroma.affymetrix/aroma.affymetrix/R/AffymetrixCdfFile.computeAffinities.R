@@ -135,6 +135,10 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   y <- applyCdfGroups(unitInfo, cdfGetFields, "y");
   x <- unlist(x, use.names=FALSE);
   y <- unlist(y, use.names=FALSE);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
   
   # Scan for x coordinate
   idxs <- which(values %in% x);
@@ -162,6 +166,9 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
   verbose && printf(verbose, "(X,Y,sequence) columns: (%d,%d,%d)\n", 
                                                       xcol, ycol, seqcol);
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
   verbose && exit(verbose);
 
   # read everybody in using read.table() with column classes specified
@@ -181,6 +188,10 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   verbose && printf(verbose, "Loaded %d PM sequences", nbrOfSequences);
   verbose && str(verbose, sequenceInfo);
 
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   setDefaultLevel(verbose, oLevel);
 
   # TODO: Reorder units according to CDF
@@ -193,6 +204,9 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   indices <- unlist(getCellIndices(this), use.names=FALSE);
   verbose && exit(verbose);
 
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
 
 # probe sequence tab-separated files generally only contain the PM
 # sequence (since we know that MM sequence always has base 13 complemented).
@@ -223,8 +237,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 # gcrma
   verbose && enter(verbose, "Calculating probe affinities");
 
-  affinity.spline.coefs <- NULL; # To please R CMD check R v2.6.0 dev.
-  data(affinity.spline.coefs); # A tiny object from 'gcrma'.
+  data("affinity.spline.coefs"); # A tiny object from 'gcrma'.
 
   affinity.basis.matrix <- splines::ns(1:25, df=length(affinity.spline.coefs)/3);
 
@@ -233,12 +246,12 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   C13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[6:10]);
   G13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[11:15]);
 
-  apm <- vector("double", nbrOfSequences);
-  amm <- vector("double", nbrOfSequences);
-
   # Garbage collect
   gc <- gc();
   verbose && print(verbose, gc);
+
+  apm <- vector("double", nbrOfSequences);
+  amm <- vector("double", nbrOfSequences);
 
   if (verbose) {
     cat(verbose, "Progress (counting to 100): ");

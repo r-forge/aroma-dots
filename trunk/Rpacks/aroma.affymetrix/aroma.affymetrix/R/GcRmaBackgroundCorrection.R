@@ -116,7 +116,7 @@ setMethodS3("process", "GcRmaBackgroundCorrection", function(this, ..., force=FA
   # Get the output path
   outputPath <- getPath(this);
 
-  args <- c(list(ds, path=outputPath, verbose=verbose, overwrite=force), params);
+  args <- c(list(ds, path=outputPath, verbose=verbose, overwrite=force), params, .deprecated=FALSE);
 
   outputDataSet <- do.call("bgAdjustGcrma", args=args);
   
@@ -136,6 +136,9 @@ setMethodS3("process", "GcRmaBackgroundCorrection", function(this, ..., force=FA
 
 ############################################################################
 # HISTORY:
+# 2007-08-24
+# o BUG FIX: Forgot to pass argument '.deprecated=FALSE' to bgAdjustGcrma()
+#   because the latter is deprecated at the user-API level.
 # 2007-03-21
 # o Created.
 ############################################################################

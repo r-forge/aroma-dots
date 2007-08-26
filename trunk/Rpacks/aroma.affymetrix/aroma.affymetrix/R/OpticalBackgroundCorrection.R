@@ -85,7 +85,7 @@ setMethodS3("process", "OpticalBackgroundCorrection", function(this, ..., force=
   verbose && enter(verbose, "Background correcting data set");
 
   if (!force && isDone(this)) {
-    verbose && cat(verbose, "Already background corrected");
+    verbose && cat(verbose, "Already background corrected for \"optical\" effects");
     verbose && exit(verbose);
     outputDataSet <- getOutputDataSet(this);
     return(invisible(outputDataSet));
@@ -103,7 +103,7 @@ setMethodS3("process", "OpticalBackgroundCorrection", function(this, ..., force=
   # Get the output path
   outputPath <- getPath(this);
 
-  args <- c(list(ds, path=outputPath, verbose=verbose, overwrite=force), params);
+  args <- c(list(ds, path=outputPath, verbose=verbose, overwrite=force), params, .deprecated=FALSE);
 
   outputDataSet <- do.call("bgAdjustOptical", args=args);
   
@@ -123,6 +123,9 @@ setMethodS3("process", "OpticalBackgroundCorrection", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-08-24
+# o BUG FIX: Forgot to pass argument '.deprecated=FALSE' to bgAdjustGcrma()
+#   because the latter is deprecated at the user-API level.
 # 2007-03-22
 # o Created.
 ############################################################################
