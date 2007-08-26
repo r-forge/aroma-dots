@@ -7,6 +7,12 @@ o Added support for fitting copy-number regions using the (fast)
   The method is implemented by the new CbsModel class.  Consider this
   class to be very much in a beta version.
 o CLEAN UP: Deleted obsolete /inst/chromosomeExplorer/ from source.
+o BUG FIX: When calling process() on a GcRmaBackgroundCorrection,
+  an exception would be thrown with "bgAdjustGcrma() is deprecated.
+  Please use the GcRmaBackgroundCorrection class".  The same happend
+  with OpticalBackgroundCorrection.  This was due to a typo introduced
+  in v0.5.3 when making the underlying functions deprecated.  Thanks
+  Jeremy Silver for troubleshooting and reporting this.
 
 
 Version: 0.6.0 [2007-08-17]

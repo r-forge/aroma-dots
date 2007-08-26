@@ -84,7 +84,7 @@ setMethodS3("pointsRawCNs", "profileCGH", function(fit, variable="LogRatio", chr
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
 # Added also par(cex=0.8) - see code.
 setMethodS3("plotRawCNs", "profileCGH", function(fit, chromosome=NULL, unit=0, xlim=NULL, ylim=c(-1,1)*2.5, xlab="Physical position", ylab="Relative copy-number", flavor=c("glad", "ce", "minimal"), xmargin=c(50,50), resScale=1, ..., add=FALSE) {
-  require("GLAD") || stop("Package not loaded: GLAD");  # data(cytoband)
+  require("GLAD") || stop("Package not loaded: GLAD");  # data("cytoband")
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -112,8 +112,7 @@ setMethodS3("plotRawCNs", "profileCGH", function(fit, chromosome=NULL, unit=0, x
   # Get chromosome lengths
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Load data
-  cytoband <- NULL; rm(cytoband); # To please R CMD check R v2.6.0 dev.
-  data(cytoband);  # Package 'GLAD'
+  data("cytoband");  # Package 'GLAD'
   genomeInfo <- aggregate(cytoband$End, list(Chromosome=cytoband$Chromosome, 
                           ChrNumeric=cytoband$ChrNumeric), max, na.rm=TRUE);
   names(genomeInfo) <- c("Chromosome", "ChrNumeric", "Length");
