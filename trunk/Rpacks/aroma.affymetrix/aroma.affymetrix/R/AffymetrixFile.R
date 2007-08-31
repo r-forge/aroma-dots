@@ -554,7 +554,7 @@ setMethodS3("getChecksum", "AffymetrixFile", function(this, ..., verbose=FALSE) 
 
   verbose && enter(verbose, "Calculating checksum");
   pathname <- getPathname(this);
-  checksum <- digest(pathname, file=TRUE);
+  checksum <- digest2(pathname, file=TRUE);
   verbose && exit(verbose);
 
   checksum;

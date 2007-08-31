@@ -141,6 +141,8 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Get chromosome lengths
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Load data
+  # To please R CMD check on R v2.6.0
+  cytoband <- NULL; rm(cytoband);
   data("cytoband");  # Package 'GLAD'
   genomeInfo <- aggregate(cytoband$End, list(Chromosome=cytoband$Chromosome, 
                           ChrNumeric=cytoband$ChrNumeric), max, na.rm=TRUE);

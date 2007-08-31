@@ -238,7 +238,7 @@ setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..., .useAffxparser=TRUE) {
+setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, pattern=NULL, ..., .useAffxparser=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -255,7 +255,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
 
     # Second, see if the old-named monocell is there
     if (is.null(pathname)) {
-      pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
+      pattern <- sprintf("^%s[.](c|C)(d|D)(f|F)$", chipType);
       pathname <- findAnnotationDataByChipType(parentChipType, pattern=pattern);
       if (!is.null(pathname)) {
         msg <- paste("Deprecated filename of monocell CDF detected. Rename CDF file by replacing dash ('-') with a comma (','): ", pathname, sep="");
@@ -266,17 +266,22 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ..
     return(pathname);
   }
 
-  pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)$", sep="");
-  args <- list(chipType=chipType, ...);
-  args$pattern <- pattern;
+
+  args <- list(
+    chipType=chipType, 
+    pattern=sprintf("^%s[.](c|C)(d|D)(f|F)$", chipType),
+    ...
+  );
   pathname <- do.call("findAnnotationDataByChipType", args=args);
 
   # If not found, look for Windows shortcuts
   if (is.null(pathname)) {
     # Search for a Windows shortcut
-    pattern <- paste("^", chipType, "[.](c|C)(d|D)(f|F)[.]lnk$", sep="");
-    args <- list(chipType=chipType, ...);
-    args$pattern <- pattern;
+    args <- list(
+      chipType=chipType, 
+      pattern=sprintf("^%s[.](c|C)(d|D)(f|F)[.]lnk$", chipType),
+      ...
+    );
     pathname <- do.call("findAnnotationDataByChipType", args=args);
     if (!is.null(pathname)) {
       # ..and expand it
@@ -582,7 +587,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- list(method="getCellIndices", class=class(this)[1], 
                            chipType=getChipType(this), units=units, ...);
-  id <- digest(key);
+  id <- digest2(key);
   res <- this$.cellIndices[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "getCellIndices.AffymetrixCdfFile(): Returning cached data");

@@ -68,7 +68,7 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, ..., force=FALS
     key <- list(method="getCellIndices", class=class(this)[1], 
                 chipType=chipType, params=params, ...);
     dirs <- c("aroma.affymetrix", chipType);
-    id <- digest(key);
+    id <- digest2(key);
   }
 
   if (!force) {
@@ -174,7 +174,7 @@ setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, ca
   key <- list(method="readUnits", class=class(this)[1],
               pathname=getPathname(this),
               combineAlleles=this$combineAlleles, ...);
-  id <- digest(key);
+  id <- digest2(key);
   res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "readUnits.CnChipEffectFile(): Returning cached data");

@@ -393,7 +393,8 @@
   readUnits.SnpChipEffectFile readUnits.WeightsFile
   readUnits.WeightsSet reorder.AffymetrixFileSet require restruct
   restruct.AffymetrixCdfFile rgbTransform rgbTransform.Image rmaSummary
-  rowSds rowVars SampleAnnotationFile SampleAnnotationSet sapply
+  rowSds rowVars rowMads
+  SampleAnnotationFile SampleAnnotationSet sapply
   sapply.AffymetrixFileSet sapply.default select
   select.GdasAnnotationSet seq.TransformReport setAlias
   setAlias.AffymetrixCelSetTuple setAlias.GladModel
@@ -565,3 +566,22 @@ fromChipType.AffymetrixCdfFile
 drawCnRegions
 drawCnRegions.profileCGH
 drawCnRegions.DNAcopy
+Undocumented code objects:
+  applyRegions applyRegions.CopyNumberRegions
+  as.character.CopyNumberRegions as.character.RawCopyNumbers
+  as.data.frame.CopyNumberRegions as.data.frame.RawCopyNumbers
+  CopyNumberRegions drawLevels drawLevels.CopyNumberRegions extractCNRs
+  extractCNRs.default extractCopyNumberRegions
+  extractCopyNumberRegions.DNAcopy extractCopyNumberRegions.profileCGH
+  extractRawCNs extractRawCNs.default extractRawCopyNumbers
+  extractRawCopyNumbers.DNAcopy extractRawCopyNumbers.profileCGH
+  gaussianSmoothing.RawCopyNumbers getCNs getCNs.RawCopyNumbers
+  getLociFields getLociFields.RawCopyNumbers getPhysicalPositions
+  getPhysicalPositions.RawCopyNumbers getXY getXY.RawCopyNumbers
+  lines.CopyNumberRegions lines.RawCopyNumbers nbrOfLoci
+  nbrOfLoci.RawCopyNumbers nbrOfRegions nbrOfRegions.CopyNumberRegions
+  newPlot newPlot.profileCGH plot.RawCopyNumbers plotRawCNs
+  plotRawCNs.profileCGH points.RawCopyNumbers pointsRawCNs
+  pointsRawCNs.profileCGH RawCopyNumbers sort.RawCopyNumbers
+  summary.RawCopyNumbers
+digest2

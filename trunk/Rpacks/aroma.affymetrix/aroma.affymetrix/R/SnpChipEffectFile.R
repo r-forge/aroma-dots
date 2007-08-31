@@ -81,7 +81,7 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
                 pathname=getPathname(this),
                 chipType=chipType, params=params, ...);
     dirs <- c("aroma.affymetrix", chipType);
-    id <- digest(key);
+    id <- digest2(key);
   }
 
   if (!force) {
@@ -205,7 +205,7 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
   # Check for cached data
   key <- list(method="readUnits", class=class(this)[1], 
               mergeStrands=this$mergeStrands, ...);
-  id <- digest(key);
+  id <- digest2(key);
   res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "readUnits.SnpChipEffectFile(): Returning cached data");

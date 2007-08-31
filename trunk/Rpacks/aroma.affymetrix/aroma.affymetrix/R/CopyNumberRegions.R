@@ -30,7 +30,10 @@ setMethodS3("nbrOfRegions", "CopyNumberRegions", function(this, ...) {
 })
 
 
-setMethodS3("as.data.frame", "CopyNumberRegions", function(this, ...) {
+setMethodS3("as.data.frame", "CopyNumberRegions", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   data <- cbind(start=this$start, stop=this$stop, mean=this$mean, count=this$count, call=this$call);
   data;
 })
@@ -63,7 +66,10 @@ setMethodS3("drawLevels", "CopyNumberRegions", function(this, col="red", lwd=2, 
 
 
 
-setMethodS3("lines", "CopyNumberRegions", function(this, col="red", lwd=2, ...) {
+setMethodS3("lines", "CopyNumberRegions", function(x, col="red", lwd=2, ...) {
+  # To please R CMD check.
+  this <- x;
+
   data <- as.data.frame(this);
   o <- order(data[,"start"]);
   data <- data[o,];

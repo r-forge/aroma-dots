@@ -218,7 +218,7 @@ setMethodS3("getIdentifier", "CnagCfhSet", function(this, ..., force=FALSE) {
     identifier <- NextMethod("getIdentifier");
     if (is.null(identifier)) {
       identifiers <- lapply(this, getIdentifier);
-      identifier <- digest(identifiers);
+      identifier <- digest2(identifiers);
     }
     this$.identifier <- identifier;
   }
@@ -699,7 +699,7 @@ setMethodS3("readUnits", "CnagCfhSet", function(this, units=NULL, ..., force=FAL
   } else {
     key <- c(key, units=units, ...);
   }
-  id <- digest(key);
+  id <- digest2(key);
   verbose && exit(verbose);
   if (!force) {
     verbose && enter(verbose, "Trying to obtain cached data");
@@ -810,26 +810,6 @@ setMethodS3("readUnits", "CnagCfhSet", function(this, units=NULL, ..., force=FAL
 #*/###########################################################################
 setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells*10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Local functions
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if ("median" %in% mean || "mad" %in% sd) {
-    # rowMedians():
-    if (require("R.native")) {
-      rowMedians <- R.native::rowMedians;
-    } else {
-      # About 3-10 times slower than rowMedians()
-      rowMedians <- function(X, ...) {
-        base::apply(X, MARGIN=1, FUN=median, ...);
-      }
-    }
-
-    # rowMads():
-    rowMads <- function(X, centers=rowMedians(X, ...), constant=1.4826, ...) {
-      constant * rowMedians(abs(X - centers), ...);
-    }
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'field':
@@ -869,16 +849,16 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
   # Argument 'name':
   if (is.null(name)) {
     key <- list(method="getAverageFile", class=class(this)[1], 
-                arrays=sort(getNames(this)), mean=mean, sd=sd);
+                arrays=sort(getNames(this)), mean=meanName, sd=sdName);
     # assign mean and sd to an empty environment so that digest() doesn't
     # pick up any "promised" objects from the original environment.
     # A bit ad hoc, but it works for now. /2007-01-03
-    key <- lapply(key, FUN=function(x) {
+    key <- base::lapply(key, FUN=function(x) {
       if (is.function(x))
         environment(x) <- emptyenv();
       x;
     })
-    id <- digest(key);
+    id <- digest2(key);
     name <- sprintf("%s-%s-%s-%s,%s", prefix, field, meanName, sdName, id);
   }
 

@@ -123,7 +123,7 @@ setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALS
     subset <- seq(from=mid - 500, to=mid + 500);
     data <- getData(this, indices=subset);
     key <- list(hdr=hdr, data=data);
-    id <- digest(key);
+    id <- digest2(key);
     this$.identifier <- id;
   }
   identifier;

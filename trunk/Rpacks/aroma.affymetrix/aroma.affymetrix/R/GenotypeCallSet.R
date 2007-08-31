@@ -389,7 +389,7 @@ setMethodS3("readUnits", "GenotypeCallSet", function(this, units=NULL, arrays=NU
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- list(method="readUnits", class=class(this)[1], 
               units=units, arrays=arrays);
-  id <- digest(key);
+  id <- digest2(key);
   res <- this$.readUnitsCache[[id]];
   if (!is.null(res)) {
     verbose && cat(verbose, "readUnits(): Returning cached data");

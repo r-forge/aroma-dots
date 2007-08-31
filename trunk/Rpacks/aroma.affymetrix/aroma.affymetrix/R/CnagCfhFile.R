@@ -82,7 +82,7 @@ setMethodS3("getIdentifier", "CnagCfhFile", function(this, ..., force=FALSE) {
   identifier <- this$.identifier;
   if (force || is.null(identifier)) {
     pathname <- getPathname(this);
-    id <- digest(pathname, file=TRUE);
+    id <- digest2(pathname, file=TRUE);
     this$.identifier <- id;
   }
   identifier;

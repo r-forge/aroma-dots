@@ -67,11 +67,17 @@ setMethodS3("getCNs", "RawCopyNumbers", function(this, ...) {
   this$cn;
 })
 
-setMethodS3("as.data.frame", "RawCopyNumbers", function(this, ...) {
+setMethodS3("as.data.frame", "RawCopyNumbers", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   data.frame(x=this$x, cn=this$cn);
 })
 
-setMethodS3("summary", "RawCopyNumbers", function(this, ...) {
+setMethodS3("summary", "RawCopyNumbers", function(object, ...) {
+  # To please R CMD check
+  this <- object;
+
   summary(as.data.frame(this));
 })
 
@@ -80,7 +86,10 @@ setMethodS3("getLociFields", "RawCopyNumbers", function(this, ...) {
   c("cn", "x");
 })
 
-setMethodS3("sort", "RawCopyNumbers", function(this, ...) {
+setMethodS3("sort", "RawCopyNumbers", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   res <- clone(this);
   o <- order(res$x);
   for (field in getLociFields(res)) {
@@ -96,16 +105,25 @@ setMethodS3("getXY", "RawCopyNumbers", function(this, sort=TRUE, ...) {
   xy;
 })
 
-setMethodS3("plot", "RawCopyNumbers", function(this, xlab="Physical position", ylab="Relative copy number", ylim=c(-3,3), [ch=20, ...) {
+setMethodS3("plot", "RawCopyNumbers", function(x, xlab="Physical position", ylab="Relative copy number", ylim=c(-3,3), pch=20, ...) {
+  # To please R CMD check
+  this <- x;
+
   plot(this$x, this$cn, ylim=ylim, xlab=xlab, ylab=ylab, pch=pch, ...);
 })
 
 
-setMethodS3("points", "RawCopyNumbers", function(this, pch=20, ...) {
+setMethodS3("points", "RawCopyNumbers", function(x, pch=20, ...) {
+  # To please R CMD check
+  this <- x;
+
   points(this$x, this$cn, pch=pch, ...);
 })
 
-setMethodS3("lines", "RawCopyNumbers", function(this, ...) {
+setMethodS3("lines", "RawCopyNumbers", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   x <- this$x;
   o <- order(x);
   x <- x[o];
