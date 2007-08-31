@@ -156,7 +156,7 @@ setMethodS3("readUnits", "FirmaFile", function(this, units=NULL, cdf=NULL,
   key <- list(method="readUnits", class=class(this)[1],
               pathname=getPathname(this),
               cdf=cdf, units=units, ...);
-  id <- digest(key);
+  id <- digest2(key);
   res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "readUnits.FirmaFile(): Returning cached data");

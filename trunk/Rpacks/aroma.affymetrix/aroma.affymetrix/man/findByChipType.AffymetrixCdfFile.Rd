@@ -19,8 +19,8 @@
  Locates a CDF file from its chip type.
 }
 
-\synopsis{findByChipType.AffymetrixCdfFile(static, chipType, ..., .useAffxparser=TRUE)}
-\usage{AffymetrixCdfFile$findByChipType(chipType, ..., .useAffxparser=TRUE)}
+\synopsis{findByChipType.AffymetrixCdfFile(static, chipType, pattern=NULL, ..., .useAffxparser=TRUE)}
+\usage{AffymetrixCdfFile$findByChipType(chipType, pattern=NULL, ..., .useAffxparser=TRUE)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}

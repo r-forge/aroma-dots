@@ -91,7 +91,7 @@ setMethodS3("rmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="rm
 
   verbose && exit(verbose);
   
-  res <- this$fromFiles(path=getPath(rmaPlm), pattern="cel$", ...);
+  res <- this$fromFiles(path=getPath(rmaPlm), pattern="[.](cel|CEL)$", ...);
 
   res;
 })

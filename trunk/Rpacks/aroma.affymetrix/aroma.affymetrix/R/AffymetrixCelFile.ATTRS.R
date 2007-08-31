@@ -52,7 +52,7 @@ setMethodS3("setAttributesByTags", "AffymetrixCelFile", function(this, tags=getT
     values <- gsub("^tri", "", values);
     chromosomes <- Arguments$getChromosomes(values);
     keys <- sprintf("n%02d", chromosomes);
-    newAttrs <- c(newAttrs, lapply(keys, FUN=function(key) {
+    newAttrs <- c(newAttrs, base::lapply(keys, FUN=function(key) {
       setAttribute(this, key, 3);
     }));
   }

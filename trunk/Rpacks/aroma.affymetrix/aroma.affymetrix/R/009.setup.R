@@ -2,16 +2,20 @@
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Patches
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Patch base::matrix()
-  reassignInPackage("matrix", "base", matrix.patch);
+  # Patch base::matrix() to be more memory efficient when 'dimnames==NULL'.
+  .patchMatrix();
+
+  # Package as.<basic data type>()? (for memory efficiencies)
+  .patchAsDataTypes();
+
+  # Make sure there is rowMedians() supporting missing values
+  .patchRowMedians();
 
   # Patch affxparser::findCdf()
   reassignInPackage("findCdf", "affxparser", findCdf.patch);
 
-  # Patch affxparser::.initializeCdf()
-  reassignInPackage(".initializeCdf", "affxparser", .initializeCdf.patch);
 
-  
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Customize affxparser
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -73,6 +77,9 @@
 
 ############################################################################
 # HISTORY:
+# 2007-08-30
+# o Added "patch" to make sure that there is rowMedians() supporting 
+#   missing values.
 # 2007-07-04
 # o Removed the patch for digest(); digest v0.3.0 solved the problem.
 # o Added a patch of functions in 'base', e.g. matrix().

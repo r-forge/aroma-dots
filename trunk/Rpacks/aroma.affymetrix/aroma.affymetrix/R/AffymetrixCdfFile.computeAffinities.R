@@ -237,6 +237,8 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 # gcrma
   verbose && enter(verbose, "Calculating probe affinities");
 
+  # To please R CMD check on R v2.6.0
+  affinity.spline.coefs <- NULL; rm(affinity.spline.coefs);
   data("affinity.spline.coefs"); # A tiny object from 'gcrma'.
 
   affinity.basis.matrix <- splines::ns(1:25, df=length(affinity.spline.coefs)/3);

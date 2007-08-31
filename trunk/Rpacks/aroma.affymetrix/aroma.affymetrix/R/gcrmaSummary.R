@@ -106,7 +106,7 @@ setMethodS3("gcrmaSummary", "AffymetrixCelSet", function(this, path=NULL, name="
 
   verbose && exit(verbose);
   
-  res <- this$fromFiles(path=getPath(rmaPlm), pattern="cel$", ...);
+  res <- this$fromFiles(path=getPath(rmaPlm), pattern="[.](cel|CEL)$", ...);
 
   res;
 })

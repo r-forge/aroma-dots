@@ -40,7 +40,7 @@ setMethodS3("getBaseline", "ChipEffectSet", function(this, force=FALSE, verbose=
   verbose && enter(verbose, "Getting CEL file to store baseline signals");
   path <- getPath(this);
   key <- list(dataset=getFullName(this), samples=getNames(this));
-  id <- digest(key);
+  id <- digest2(key);
 
   # Generate output pathname
   filename <- sprintf(".baseline,%s.CEL", id);
