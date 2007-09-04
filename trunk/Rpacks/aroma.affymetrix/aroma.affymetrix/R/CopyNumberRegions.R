@@ -2,6 +2,13 @@ setConstructorS3("CopyNumberRegions", function(start=NULL, stop=NULL, mean=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!is.null(start)) {
+    start <- as.numeric(start);
+    stop <- as.numeric(stop);
+    mean <- as.numeric(mean);
+    count <- as.numeric(count);
+  }
+
   extend(Object(), "CopyNumberRegions", 
     start = start,
     stop = stop,
@@ -34,48 +41,57 @@ setMethodS3("as.data.frame", "CopyNumberRegions", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  data <- cbind(start=this$start, stop=this$stop, mean=this$mean, count=this$count, call=this$call);
+  fields <- c("start", "stop", "mean", "count", "call");
+  data <- lapply(fields, FUN=function(field) this[[field]]);
+  names(data) <- fields;
+  data <- data[!sapply(data, is.null)];
+  data <- as.data.frame(data);
   data;
 })
 
 
-setMethodS3("applyRegions", "CopyNumberRegions", function(this, FUN, ...) {
+setMethodS3("applyRows", "CopyNumberRegions", function(this, FUN, ...) {
   data <- as.data.frame(this);
   o <- order(data[,"start"]);
-  data <- data[o,];
-  apply(data, MARGIN=1, FUN=FUN);
+  data <- data[o,,drop=FALSE];
+
+  res <- vector("list", nrow(data));
+  for (kk in seq(length=nrow(data))) {  
+    res[[kk]] <- FUN(data[kk,,drop=FALSE], ...);
+  }
+  res;
 })
 
 
-setMethodS3("drawLevels", "CopyNumberRegions", function(this, col="red", lwd=2, lty=1, ...) {
+setMethodS3("drawLevels", "CopyNumberRegions", function(this, col="red", lwd=2, lty=1, xScale=1, yScale=1, ...) {
   col0 <- col;
   lwd0 <- lwd;
   lty0 <- lty;
-  applyRegions(this, FUN=function(cnr) {
-    x <- c(cnr["start"], cnr["stop"]);
-    y <- rep(cnr["mean"], times=2);
+  applyRows(this, FUN=function(cnr) {
+    x <- c(cnr[["start"]], cnr[["stop"]]);
+    y <- rep(cnr[["mean"]], times=2);
     if (is.function(col0))
       col <- col0(cnr);
     if (is.function(lwd0))
       lwd <- lwd0(cnr);
     if (is.function(lty0))
       lty <- lty0(cnr);
-    lines(x=x, y=y, col=col, lwd=lwd, lty=lty, ...);
+    lines(x=xScale*x, y=yScale*y, col=col, lwd=lwd, lty=lty, ...);
   })
 })
 
 
 
-setMethodS3("lines", "CopyNumberRegions", function(x, col="red", lwd=2, ...) {
+setMethodS3("lines", "CopyNumberRegions", function(x, col="red", lwd=2, xScale=1, yScale=1, ...) {
   # To please R CMD check.
   this <- x;
 
   data <- as.data.frame(this);
   o <- order(data[,"start"]);
-  data <- data[o,];
-  xx <- t(data[,c("start", "stop")]);
+  data <- data[o,,drop=FALSE];
+  xx <- t(data[,c("start", "stop"),drop=FALSE]);
   yy <- rep(this$mean[o], each=2);
-  lines(x=xx, y=yy, col=col, lwd=lwd, ...);
+  lines(x=xScale*xx, y=yScale*yy, col=col, lwd=lwd, ...);
 })
 
 
@@ -160,6 +176,9 @@ setMethodS3("extractCopyNumberRegions", "DNAcopy", function(object, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-04
+# o BUG FIX: as.data.frame() gave an error if some optional fields were
+#   NULL.
 # 2007-08-22
 # o Created.  Need a generic container for holding copy number regions and
 #   to plot them nicely.

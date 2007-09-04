@@ -1,6 +1,21 @@
+setMethodS3("pointsRawCNs", "default", function(fit, pchSymbol=c(20, 4), unit=6, col=NULL, ...) {
+  rawCns <- extractRawCopyNumbers(fit);
+  verbose && print(verbose, rawCns, level=-50);
+
+  if (is.null(col)) {
+    # TO DO: Bring in colors into a generic framework. /HB 2007-09-04
+    cols <- RColorBrewer::brewer.pal(5, "Dark2");
+    col <- cols[5];
+  }
+
+  points(rawCns, xScale=1/10^unit, pch=pchSymbol[1], col=col);
+}, protected=FALSE);
+
+
+
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
 # Added also par(cex=0.8) - see code.
-setMethodS3("pointsRawCNs", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, GNL="ZoneGNL", colDAGLAD=NULL, pchSymbol=c(20, 4), unit=0, ...) {
+setMethodS3("pointsRawCNs", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, GNL="ZoneGNL", colDAGLAD=NULL, pchSymbol=c(20, 4), unit=6, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -77,7 +92,7 @@ setMethodS3("pointsRawCNs", "profileCGH", function(fit, variable="LogRatio", chr
   x <- xScale*pv$PosBase;
 
   points(x=x, y=y, pch=pch, col=col, ...);
-}) # pointsRawCns()
+}) # pointsRawCNs()
 
 
 
@@ -114,7 +129,7 @@ setMethodS3("plotRawCNs", "profileCGH", function(fit, chromosome=NULL, unit=0, x
   # Load data
   # To please R CMD check on R v2.6.0
   cytoband <- NULL; rm(cytoband);
-  data("cytoband");  # Package 'GLAD'
+  data("cytoband", envir=sys.frame(sys.nframe()));  # Package 'GLAD'
   genomeInfo <- aggregate(cytoband$End, list(Chromosome=cytoband$Chromosome, 
                           ChrNumeric=cytoband$ChrNumeric), max, na.rm=TRUE);
   names(genomeInfo) <- c("Chromosome", "ChrNumeric", "Length");
@@ -168,11 +183,13 @@ setMethodS3("plotRawCNs", "profileCGH", function(fit, chromosome=NULL, unit=0, x
 
   # Plot raw CN data
   pointsRawCNs(fit, chromosome=chromosome, unit=unit, ...);
-}) # plotRawCns()
+}) # plotRawCNs()
 
 
 ############################################################################
 # HISTORY:
+# 2007-09-04
+# o Added a default pointsRawCNs().
 # 2007-08-22
 # o Created from plotProfile2().
 ############################################################################

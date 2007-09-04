@@ -703,7 +703,41 @@ setMethodS3("getRawCnData", "CopyNumberSegmentationModel", function(this, ceList
 
 
 
-setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
+
+###########################################################################/**
+# @RdocMethod fitOne
+#
+# @title "Fits the copy-number segmentation model for one chromosome in one sample"
+#
+# \description{
+#  @get "title".
+#
+#  \emph{This is an abstract method that has to be implemented in a subclass.}
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{data}{A @data.frame with columns \code{M} (log-ratio) and 
+#      \code{x} (locus position).
+#   }
+#   \item{chromosome}{An @integer specifying the index of the chromosome to
+#      be fitted.}
+#   \item{...}{Additional arguments passed down to the internal fit function.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns an object returned by internal fit function.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/########################################################################### setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
+
 
 
 ###########################################################################/**
@@ -871,6 +905,14 @@ print(colnames(data));
         fit <- fitOne(this, data=data, chromosome=chr, ..., verbose=less(verbose));
         verbose && cat(verbose, "Class of fitted object: ", class(fit)[1]);
 
+        verbose && enter(verbose, "Validate that it can be coerced");
+        rawCns <- extractRawCopyNumbers(fit);
+        verbose && print(verbose, rawCns);
+        cnRegions <- extractCopyNumberRegions(fit);
+        verbose && print(verbose, cnRegions);
+        verbose && exit(verbose);
+
+
         # Garbage collection
         gc <- gc();
         verbose && print(verbose, gc);
@@ -881,9 +923,9 @@ print(colnames(data));
         verbose && exit(verbose);
       }
 
-      hookName <- sprintf("onFit.%s", class(this)[1]);
+      hookName <- "onFit.CopyNumberSegmentationModel";
       verbose && enter(verbose, sprintf("Calling %s() hooks", hookName));
-      callHooks(hookName, fit=fit, fullname=fullname);
+      callHooks(hookName, fit=fit, chromosome=chr, fullname=fullname);
       verbose && exit(verbose);
 
       if (.retResults)
@@ -1205,6 +1247,10 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-09-04
+# o Now plot() is fully implemented CopyNumberSegmentationModel.  Subclasses
+#   pretty much only have to implement pointsRawCNs() if wanted extra 
+#   features, e.g. colors and outliers.
 # 2007-08-20
 # o It was actually not much that was hardwired to the GLAD model.
 #   Note that most methods, including fit(), are generic enough to be 
