@@ -98,6 +98,7 @@ setMethodS3("sort", "RawCopyNumbers", function(x, ...) {
   res;
 })
 
+
 setMethodS3("getXY", "RawCopyNumbers", function(this, sort=TRUE, ...) {
   xy <- data.frame(x=this$x, y=this$cnl);
   if (sort)
@@ -105,19 +106,19 @@ setMethodS3("getXY", "RawCopyNumbers", function(this, sort=TRUE, ...) {
   xy;
 })
 
-setMethodS3("plot", "RawCopyNumbers", function(x, xlab="Physical position", ylab="Relative copy number", ylim=c(-3,3), pch=20, ...) {
+setMethodS3("plot", "RawCopyNumbers", function(x, xlab="Physical position", ylab="Relative copy number", ylim=c(-3,3), pch=20, xScale=1, yScale=1, ...) {
   # To please R CMD check
   this <- x;
 
-  plot(this$x, this$cn, ylim=ylim, xlab=xlab, ylab=ylab, pch=pch, ...);
+  plot(xScale*this$x, yScale*this$cn, ylim=ylim, xlab=xlab, ylab=ylab, pch=pch, ...);
 })
 
 
-setMethodS3("points", "RawCopyNumbers", function(x, pch=20, ...) {
+setMethodS3("points", "RawCopyNumbers", function(x, pch=20, xScale=1, yScale=1, ...) {
   # To please R CMD check
   this <- x;
 
-  points(this$x, this$cn, pch=pch, ...);
+  points(xScale*this$x, yScale*this$cn, pch=pch, ...);
 })
 
 setMethodS3("lines", "RawCopyNumbers", function(x, ...) {

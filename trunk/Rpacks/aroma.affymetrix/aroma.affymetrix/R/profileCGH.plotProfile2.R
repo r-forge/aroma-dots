@@ -1,63 +1,3 @@
-setMethodS3("drawCytoBand", "default", function(cytoband, chromosome=1, y=-1, labels=TRUE, height=1, colCytoBand=c("white", "darkblue"), colCentro="red", ...) {
-  opar <- par(xpd=NA);
-  on.exit(par(opar));
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Cytoband colors
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  color <- unique(cytoband$Col);
-  pal <- GLAD::myPalette(low=colCytoBand[1], high=colCytoBand[2], k=length(color));
-
-  info <- data.frame(Color=color, ColorName=I(pal));
-  cytoband <- merge(cytoband, info, by="Color");
-  rm(info);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Extract cytoband information for current chromosome
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  keep <- which(cytoband$Chromosome == chromosome);
-  cytoband <- cytoband[keep, ];
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Cytoband positions
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  CytoPos <- 0.5 * (cytoband$Start + cytoband$End);
-  CytoLength <- (cytoband$End - cytoband$Start);
-  NbCyto <- length(cytoband[, 1]);
-  HeightPlot <- rep(height, NbCyto);
-  sizeCyto <- matrix(c(CytoLength, HeightPlot), nrow=NbCyto, ncol=2);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Draw cytobands
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  y0 <- min(unique(y));
-  yC <- y0+height/2;
-  y1 <- y0+height;
-  symbols(x=CytoPos, y=rep(yC, NbCyto), rectangles=sizeCyto,
-      inches=FALSE, bg=cytoband$ColorName, add=TRUE, ...);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Highlight the centromere
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # The inverted arrow indicating where the centromere is.
-  idxs <- which(cytoband$Centro == 1);
-  centroPos <- min(cytoband$End[idxs]);
-  arrows(centroPos, y0, centroPos, y1, col=colCentro, code=2, angle=120, 
-                                                               length=0.1);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Labels, e.g. 20q12
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (labels) {
-    labels <- paste(cytoband$Chromosome, cytoband$Band, sep="");
-#    axis(side=3, at=CytoPos, labels=labels, las=2);
-    dy <- par("cxy")[2];
-    text(x=CytoPos, y=y1+dy/2, labels=labels, srt=90, adj=c(0,0.5));
-  }
-}, private=TRUE)
-
-
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
 # Added also par(cex=0.8) - see code.
 setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chromosome=NULL, Smoothing="Smoothing", GNL="ZoneGNL", Bkp=FALSE, cytobandLabels=TRUE, plotband=TRUE, unit=0, colDAGLAD=NULL, pchSymbol=c(20, 4), colCytoBand=c("white", "darkblue"), colCentro="red", xlim=NULL, ylim=c(-1,1)*2.5, xlab="Physical position", ylab=variable, flavor=c("glad", "ce", "minimal"), xmargin=c(50,50), resScale=1, ...) {
@@ -110,10 +50,6 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Reset graphical parameters when done
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  opar <- par();
-  on.exit(par(opar));
-
-
   xScale <- 1/(10^unit);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -143,9 +79,10 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Load data
   # To please R CMD check on R v2.6.0
   cytoband <- NULL; rm(cytoband);
-  data("cytoband");  # Package 'GLAD'
-  genomeInfo <- aggregate(cytoband$End, list(Chromosome=cytoband$Chromosome, 
-                          ChrNumeric=cytoband$ChrNumeric), max, na.rm=TRUE);
+  data("cytoband", envir=sys.frame(sys.nframe()));  # Package 'GLAD'
+  genomeInfo <- aggregate(cytoband$End, 
+    by=list(Chromosome=cytoband$Chromosome, ChrNumeric=cytoband$ChrNumeric), 
+    FUN=max, na.rm=TRUE);
   names(genomeInfo) <- c("Chromosome", "ChrNumeric", "Length");
   genomeInfo$Chromosome <- as.character(genomeInfo$Chromosome);
   genomeInfo$ChrNumeric <- as.integer(as.character(genomeInfo$ChrNumeric));
@@ -156,23 +93,29 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
 
   LabelChr$Length <- 0;
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Get the cytoband details for the chromosome of interest
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Drop column 'Chromosome'
-  ## Gives a NOTE in R CMD check R v2.6.0, which is nothing, but we'll
-  ## use a workaround to get a clean result. /HB 2007-06-12
-  Chromosome <- NULL; rm(Chromosome); # dummy
-  cytobandNew <- subset(cytoband, select=-Chromosome); 
-##  cytobandNew <- cytoband[,setdiff(names(cytoband), "Chromosome"),drop=FALSE];
-
-  cytobandNew <- merge(LabelChr, cytobandNew, by.x="Chromosome", 
-                                                        by.y="ChrNumeric");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Update the plot data with cytoband information
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   pv <- merge(pv, LabelChr, by="Chromosome");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plotting flavor
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (flavor == "glad") {
+  } else if (flavor == "ce") {
+  } else if (flavor == "minimal") {
+    # No cytobands
+    plotband <- FALSE;
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Create empty plot figure
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  newPlot(fit, unit=unit, xlim=xlim, ylim=ylim, flavor=flavor, ...);
+#  plot(NA, xlim=xlim, ylim=ylim, xaxt="n", xlab=xlab, ylab=ylab, bty="n");
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -199,68 +142,24 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Plotting flavor
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  opar <- par(no.readonly=TRUE);  
-  on.exit(opar);
-
-  if (flavor == "glad") {
-    par(mar=c(3,3,5,3)+0.1, mgp=c(2,0.6,0.3));
-    axes <- TRUE;
-    if (is.null(xlim))
-      xlim <- c(0, xScale*genomeInfo$Length[chromosome]);
-  } else if (flavor == "ce") {
-    # Margins in pixels-to-inches
-
-    par(mar=c(3,3,5,3)+0.1, mgp=c(2,0.6,0.3), xaxs="i");
-
-    # Set the horizontal margins to 'xmargin'.
-    dim <- getDeviceResolution(resScale) * par("din");
-    plt <- par("plt");    
-    plt[1:2] <- c(xmargin[1], dim[1]-xmargin[2]) / dim[1];
-    par("plt"=plt);
-
-    axes <- TRUE;
-    if (is.null(xlim))
-      xlim <- c(0, xScale*genomeInfo$Length[chromosome]);
-  } else if (flavor == "minimal") {
-    # No margins
-    	par(mar=c(2,0,0.5,0), mgp=c(2,0.6,0.3), xaxs="i");
-    # No axis
-    axes <- FALSE;
-    # No cytobands
-    plotband <- FALSE;
-    # x-range
-    if (is.null(xlim))
-      xlim <- c(0, xScale*genomeInfo$Length[chromosome]);
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Plot main data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Extract the data to plot
   y <- pv[, variable];
   x <- xScale*pv$PosBase;
-  plot(x=x, y=y, pch=pch, col=col, xaxt="n", xlab=xlab, ylab=ylab, 
-#                            xlim=xlim, ylim=ylim, axes=axes, bty="n", ...);
-                            xlim=xlim, ylim=ylim, axes=axes, ...);
-#  axis(side=2); axis(side=4);
-   
+
+#   plot(x=x, y=y, pch=pch, col=col, xlim=xlim, ylim=ylim, xaxt="n", xlab=xlab, ylab=ylab, bty="n");
+
+#  points(x=x, y=y, pch=pch, col=col, ...);
+  pointsRawCNs(fit, unit=unit, ...);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Plot cytobands?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (plotband) {
-    # Rescale x positions according to units
-    cytobandNew$Start <- xScale*cytobandNew$Start;
-    cytobandNew$End <- xScale*cytobandNew$End;
-
-    usr <- par("usr");
-    dy <- diff(usr[3:4]);
-
-    drawCytoBand(cytobandNew, chromosome=chromosome, 
-      labels=cytobandLabels, y=usr[4]+0.02*dy, height=0.03*dy, 
-      colCytoBand=colCytoBand, colCentro=colCentro);
+    drawCytoBand(fit, chromosome=chromosome, cytobandLabels=TRUE, 
+           colCytoBand=colCytoBand, colCentro=colCentro, unit=unit);
   }
 
 
@@ -288,6 +187,8 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
 
 ############################################################################
 # HISTORY:
+# 2007-09-04
+# o Now data("cytoband") is loaded to the local environment.
 # 2007-08-22
 # o Update plotProfile2() to utilizes drawCnRegions().
 # 2007-06-11
