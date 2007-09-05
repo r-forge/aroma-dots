@@ -1359,6 +1359,8 @@
 \alias{onFitAddGenotypeCalls.default}
 \alias{onFitAddGenotypeCalls.GladModel}
 \alias{pointsRawCNs.default}
+\alias{migrateTool}
+\alias{migrateTool.CopyNumberSegmentationModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

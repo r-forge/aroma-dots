@@ -19,7 +19,7 @@
   Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set.
 }
 
-\usage{\method{getAverageFile}{AffymetrixCelSet}(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=FALSE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells * 10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE)}
+\usage{\method{getAverageFile}{AffymetrixCelSet}(this, name=NULL, prefix="average", indices="remaining", field=c("intensities", "stdvs"), mean=c("median", "mean"), sd=c("mad", "sd"), na.rm=TRUE, g=NULL, h=NULL, ..., cellsPerChunk=moreCells * 10^7/length(this), moreCells=1, force=FALSE, verbose=FALSE)}
 
 \arguments{
  \item{name}{The label of the calculated parameters.
