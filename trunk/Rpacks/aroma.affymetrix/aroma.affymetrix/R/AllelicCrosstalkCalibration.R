@@ -20,13 +20,21 @@
 #     @see "ProbeLevelTransform".}
 #   \item{targetAvg}{The signal that average allele A and average allele B
 #     signals should have after calibration.}
+#   \item{subsetTargetAvg}{The probes to calculate average empirical
+#     distribution over.  If a single @numeric in (0,1), then this
+#     fraction of all probes will be used.  
+#     If @NULL, all probes are considered.}
 #   \item{alpha, q, Q}{}
 # }
 #
-# \section{What probe signals are updated}{ 
-#    Calibration for crosstalk between allele signals applies by definition
-#    only SNP units.
-#    Note that, non-calibrated signals will be saved in the output files.
+# \section{What probe signals are updated?}{ 
+#   Calibration for crosstalk between allele signals applies by definition
+#   only SNP units.  It is only PM probes that will be calibrated.
+#   Note that, non-calibrated signals will be saved in the output files.
+# }
+#
+# \section{What probe signals are used to fit model?}{
+#   By default, all PM probe pairs are used to fit the crosstalk model.
 # }
 #
 # \section{Fields and Methods}{
@@ -116,6 +124,8 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  require("sfit") || throw("Package not loaded: sfit.");
+
   # Get input data set
   ds <- getInputDataSet(this);
 
@@ -126,28 +136,60 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   outputPath <- getPath(this);
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify the cell indices for each possible allele basepair.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
+  cdf <- getCdf(ds);
+  setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+  gc <- gc();
+  verbose && print(verbose, gc);
+  verbose && exit(verbose);
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Calibrate
+  # Setup call
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  args <- c(list(ds, path=outputPath, verbose=verbose), params);
+  dfArgs <- c(list(setsOfProbes=setsOfProbes, path=outputPath, verbose=verbose), params);
   rm(params);
 
-  outputDataSet <- do.call("calibrateAllelicCrosstalk", args=args);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Calibrate each array
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  nbrOfArrays <- nbrOfArrays(ds);
+  verbose && enter(verbose, "Calibrating ", nbrOfArrays, " arrays");
+  verbose && enter(verbose, "Path: ", path);
+  dataFiles <- list();
+  for (kk in seq_len(nbrOfArrays)) {
+    df <- getFile(ds, kk);
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
+                                              kk, getName(df), nbrOfArrays));
+    args <- c(list(df), dfArgs);
+    outputDataSet <- do.call("calibrateAllelicCrosstalk", args=args);
+    dataFiles[[kk]] <- df;
+
+    verbose && exit(verbose);
+  }
+  verbose && exit(verbose);
 
   # Garbage collect
+  rm(dataFiles, ds, df, args, dfArgs);
   gc <- gc();
   verbose && print(verbose, gc);
 
-  # Update the output data set
-  this$outputDataSet <- outputDataSet;
+  outputDataSet <- getOutputDataSet(this, force=TRUE);
 
   verbose && exit(verbose);
   
-  outputDataSet;
+  invisible(outputDataSet);
 })
+
 
 ############################################################################
 # HISTORY:
+# 2007-09-05
+# o CLEAN UP: Now calibrateAllelicCrosstalk() are called directly to the 
+#   file objects and not the file set object.  
 # 2007-03-29
 # o Now 'targetAvg' defaults to 2200 so that allele A and allele B signals
 #   are rescaled to be one the same scale.  If so,  it does not make sense
