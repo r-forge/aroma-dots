@@ -302,6 +302,12 @@ setMethodS3("getPath", "Transform", function(this, ...) {
   # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
 
+  # Verify that it is not the same as the input path
+  inPath <- getPath(getInputDataSet(this));
+  if (getAbsolutePath(path) == getAbsolutePath(inPath)) {
+    throw("The generated output data path equals the input data path: ", path, " == ", inPath);
+  }
+
   # Create path
   if (!isDirectory(path)) {
     mkdirs(path);
@@ -370,7 +376,8 @@ setMethodS3("getInputDataSet", "Transform", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) {  outputDataSet <- this$.outputDataSet;
+setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) {
+  outputDataSet <- this$.outputDataSet;
 
   if (force || is.null(outputDataSet)) {
     if (isDone(this)) {
@@ -382,6 +389,7 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) { 
       this$.outputDataSet <- outputDataSet;
     }
   }
+
   outputDataSet;
 })
 
@@ -465,6 +473,9 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-09-05
+# o Added test against generating an output path that is the same as the
+#   path of the input data set.
 # 2007-06-25
 # o BUG FIX: When getOutputDataSet() retrieved the output data set, the chip
 #   type of the CEL files would be validated against the path name, also when
