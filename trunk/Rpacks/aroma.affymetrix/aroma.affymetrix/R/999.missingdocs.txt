@@ -597,3 +597,4 @@ digest2
   nbrOfRegions.CopyNumberOutliers newPlot.CopyNumberSegmentationModel
   onFitAddGenotypeCalls onFitAddGenotypeCalls.default
   onFitAddGenotypeCalls.GladModel pointsRawCNs.default
+migrateTool migrateTool.CopyNumberSegmentationModel

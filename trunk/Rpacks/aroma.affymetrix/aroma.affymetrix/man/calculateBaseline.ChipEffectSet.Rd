@@ -43,7 +43,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link{getAverage}}().
+  \code{\link{getAverageFile}}().
   For more information see \code{\link{ChipEffectSet}}.
 }
 \keyword{internal}

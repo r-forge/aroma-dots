@@ -32,7 +32,7 @@ extends \link[R.oo]{Object}\cr
   This \emph{abstract} class represents a copy-number segmentation model.
  }
 
- \usage{CopyNumberSegmentationModel(cesTuple=NULL, referenceList=NULL, tags="*", ...)}
+ \usage{CopyNumberSegmentationModel(cesTuple=NULL, referenceList=NULL, tags="", ...)}
 
  \arguments{
    \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
@@ -65,6 +65,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getSetTuple} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getTableOfArrays.CopyNumberSegmentationModel]{getTableOfArrays}} \tab Gets a table of arrays.\cr
  \tab \code{getTags} \tab  -\cr
+ \tab \code{migrateTool} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.CopyNumberSegmentationModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.CopyNumberSegmentationModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
  \tab \code{plot} \tab  -\cr
