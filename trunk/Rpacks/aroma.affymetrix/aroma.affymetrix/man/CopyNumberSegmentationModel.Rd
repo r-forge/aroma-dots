@@ -45,7 +45,7 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:fit.CopyNumberSegmentationModel]{fit}} \tab Fits the model.\cr
- \tab \code{fitOne} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{fitOne}} \tab Fits the copy-number segmentation model for one chromosome in one sample.\cr
  \tab \code{getAlias} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getArrays.CopyNumberSegmentationModel]{getArrays}} \tab Gets the names of the arrays.\cr
  \tab \code{getChipEffectFiles} \tab  -\cr

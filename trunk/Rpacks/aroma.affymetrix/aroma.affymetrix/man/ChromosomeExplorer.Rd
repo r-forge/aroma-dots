@@ -35,7 +35,7 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
  \usage{ChromosomeExplorer(model=NULL, ...)}
 
  \arguments{
-   \item{model}{A \code{\link{GladModel}} object.}
+   \item{model}{A \code{\link{CopyNumberSegmentationModel}} object.}
    \item{...}{Not used.}
  }
 
@@ -78,6 +78,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-  \code{\link{GladModel}}.
+  \code{\link{CopyNumberSegmentationModel}}.
  }
 \keyword{classes}

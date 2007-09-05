@@ -1,11 +1,16 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.6.1 [2007-08-31]
+Version: 0.6.1 [2007-09-04]
 o Added support for fitting copy-number regions using the (fast)
   Circular Binary Segmentation (CBS) method of Venkatraman et al. (2007).
   The method is implemented by the new CbsModel class.  Consider this
   class to be very much in a beta version.
+o Added super class CopyNumberSegmentationModel, which provides most of
+  the framework to fit and plot segmentation models. By subclassing
+  this class, new segmentation methods can be added. Current subclasses
+  are GladModel and CbsModel.  ChromosomeExplorer was updated to handle
+  multiple segmentation methods.
 o Now the startup message when loading the package is generated with
   packageStartupMessage() so that it can be suppressed.
 o Put more effort in generating more consistent hash codes that becomes

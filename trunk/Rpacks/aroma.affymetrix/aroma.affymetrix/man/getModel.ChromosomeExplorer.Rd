@@ -26,7 +26,7 @@
 }
 
 \value{
- Returns a \code{\link{GladModel}}.
+ Returns a \code{\link{CopyNumberSegmentationModel}}.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

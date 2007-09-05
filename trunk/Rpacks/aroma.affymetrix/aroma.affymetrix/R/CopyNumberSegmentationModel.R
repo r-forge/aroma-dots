@@ -736,7 +736,8 @@ setMethodS3("getRawCnData", "CopyNumberSegmentationModel", function(this, ceList
 # \seealso{
 #   @seeclass
 # }
-#*/########################################################################### setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
+#*/###########################################################################
+setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
 
 
 
@@ -941,6 +942,10 @@ print(colnames(data));
 })
 
 
+setMethodS3("getSetTag", "CopyNumberSegmentationModel", function(this, ...) {
+  tolower(getAsteriskTag(this));
+}, private=TRUE)
+
 setMethodS3("getReportPath", "CopyNumberSegmentationModel", function(this, ...) {
   rootPath <- "reports";
 
@@ -954,7 +959,7 @@ setMethodS3("getReportPath", "CopyNumberSegmentationModel", function(this, ...) 
   chipType <- getChipType(this);
 
   # Image set
-  set <- tolower(getAsteriskTag(this));
+  set <- getSetTag(this);
 
   # The report path
   path <- filePath(rootPath, name, tags, chipType, set, expandLinks="any");
@@ -962,9 +967,6 @@ setMethodS3("getReportPath", "CopyNumberSegmentationModel", function(this, ...) 
   path;
 }, protected=TRUE)
 
-
-
-setMethodS3("plot", "CopyNumberSegmentationModel", abstract=TRUE);
 
 
 setMethodS3("getLog2Ratios", "CopyNumberSegmentationModel", function(this, ..., verbose=FALSE) {
@@ -978,15 +980,16 @@ setMethodS3("getLog2Ratios", "CopyNumberSegmentationModel", function(this, ..., 
     on.exit(popState(verbose));
   }
 
+  verbose && enter(verbose, "getLog2Ratios()");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Extract the regions for each of the CBS fits (per array)
+  # Extract the regions for each of the fits (per array)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Obtaining CBS fits (or fit if missing)");
+  verbose && enter(verbose, "Obtaining fits (or fit if missing)");
   suppressWarnings({
     res <- fit(this, ..., .retResults=TRUE, verbose=less(verbose,10));
   })
   verbose && exit(verbose);
-
 
   verbose && enter(verbose, "Extracting regions from all fits");
   res <- lapply(res, FUN=function(arrayFits) {
@@ -1004,7 +1007,10 @@ setMethodS3("getLog2Ratios", "CopyNumberSegmentationModel", function(this, ..., 
       }
     }
     rownames(df) <- seq(length=nrow(df));
+    df;
   })
+  verbose && exit(verbose);
+
   verbose && exit(verbose);
 
   res;
@@ -1034,16 +1040,17 @@ setMethodS3("getRegions", "CopyNumberSegmentationModel", function(this, ..., url
   }
 
 
+  verbose && enter(verbose, "Extracting regions from all fits");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Extract the regions for each of the CBS fits (per array)
+  # Extract the regions for each of the CN model fits (per array)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Obtaining CBS fits (or fit if missing)");
+  verbose && enter(verbose, "Obtaining CN model fits (or fit if missing)");
   suppressWarnings({
     res <- fit(this, ..., .retResults=TRUE, verbose=less(verbose,10));
   })
   verbose && exit(verbose);
 
-  verbose && enter(verbose, "Extracting regions from all fits");
   res <- lapply(res, FUN=function(arrayFits) {
     df <- NULL;
     # For each chromosome
@@ -1052,7 +1059,9 @@ setMethodS3("getRegions", "CopyNumberSegmentationModel", function(this, ..., url
       if (!is.null(fit)) {
         verbose && enter(verbose, "Extracting regions for chromosome #", kk);
         suppressWarnings({
-          df0 <- getRegions(fit, ...);
+#          df0 <- getRegions(fit, ...);
+          cnr <- extractCopyNumberRegions(fit, ...);
+          df0 <- as.data.frame(cnr);
         })
         df <- rbind(df, df0);
         verbose && exit(verbose);
@@ -1060,9 +1069,12 @@ setMethodS3("getRegions", "CopyNumberSegmentationModel", function(this, ..., url
     }
     rownames(df) <- seq(length=nrow(df));
 
+    verbose && cat(verbose, "Extracted regions:");
+    verbose && str(verbose, df);
+
     # Add URL?
     if (!is.null(url)) {
-      chromosome <- df[,"Chromosome"];
+      chromosome <- df[,"chromosome"];
       start <- df[,"start"];
       stop <- df[,"stop"];
       m <- margin*abs(stop-start);
@@ -1143,7 +1155,7 @@ setMethodS3("writeRegions", "CopyNumberSegmentationModel", function(this, arrays
         df <- cbind(sample=name, df);
       } else if (identical(format, "wig")) {
         # Write a four column WIG/BED table
-        df <- df[,c("Chromosome", "start", "stop", "log2")];
+        df <- df[,c("chromosome", "start", "stop", "log2")];
   
         # In the UCSC Genome Browser, the maximum length of one element
         # is 10,000,000 bases.  Chop up long regions in shorter contigs.
@@ -1173,14 +1185,14 @@ setMethodS3("writeRegions", "CopyNumberSegmentationModel", function(this, arrays
         }
         verbose && exit(verbose);
         # Make sure the items are ordered correctly
-        chrIdx <- as.integer(df[,"Chromosome"]);
+        chrIdx <- as.integer(df[,"chromosome"]);
         o <- order(chrIdx, df[,"start"]);
         df <- df[o,];
   
         # All chromosomes should have prefix 'chr'.
-        chrIdx <- as.integer(df[,"Chromosome"]);
-        ## df[chrIdx == 23,"Chromosome"] <- "X"; ## REMOVED 2007-03-15
-        df[,"Chromosome"] <- paste("chr", df[,"Chromosome"], sep="");
+        chrIdx <- as.integer(df[,"chromosome"]);
+        ## df[chrIdx == 23,"chromosome"] <- "X"; ## REMOVED 2007-03-15
+        df[,"chromosome"] <- paste("chr", df[,"chromosome"], sep="");
       }
   
       # Apply digits

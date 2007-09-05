@@ -4,15 +4,14 @@ window.onresize = function() {
   explorer.update();
 }
 
+includeDom("ChromosomeExplorer.onLoad.js");
 includeDom("../ChromosomeExplorer.onLoad.js");
 includeDom("../samples.js");
 includeDom("extras.js");
 
 function onLoad() {
+  explorer.onLoad();
   explorer.start();
-  explorer.setChromosome(chromosomeIdx);
-  explorer.setSample(sampleIdx);
-	/*  explorer.setZoom(zoomIdx); */
   webcutsOptions['numberLinks'] = false;
 }
 
@@ -25,7 +24,11 @@ function changeChromosome(idx) {
 }
 
 function changeZoom(idx) {
-  explorer.setZoom(idx);
+  explorer.setScale(idx);
+}
+
+function changeSet(idx) {
+  explorer.setSet(idx);
 }
 
 function changeSample(idx) {
@@ -42,12 +45,14 @@ var chipTypes = null;
 
 var chromosomeIdx = 22;
 var sampleIdx = 0;
+var setIdx = 0;
 var zoomIdx = 0;
 
 var samples = new Array();
 var sampleLabels = null;
 
 var zooms = new Array(1);
+var sets = new Array();
 
 var navigatorZoom = -1;
 

@@ -1,26 +1,27 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  GladModel.fitOne.R
+%  CopyNumberSegmentationModel.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\name{fitOne.CopyNumberSegmentationModel}
+\alias{fitOne.CopyNumberSegmentationModel}
+\alias{CopyNumberSegmentationModel.fitOne}
+\alias{fitOne.CopyNumberSegmentationModel}
+\alias{fitOne,CopyNumberSegmentationModel-method}
 
-\name{fitOne.GladModel}
-\alias{fitOne.GladModel}
-\alias{GladModel.fitOne}
-\alias{fitOne.GladModel}
-\alias{fitOne,GladModel-method}
 
-
-\title{Fits the GLAD model for one chromosome in one sample}
+\title{Fits the copy-number segmentation model for one chromosome in one sample}
 
 \description{
- Fits the GLAD model for one chromosome in one sample.
+ Fits the copy-number segmentation model for one chromosome in one sample.
+
+ \emph{This is an abstract method that has to be implemented in a subclass.}
 }
 
-\usage{\method{fitOne}{GladModel}(this, data, chromosome, ..., verbose=FALSE)}
+\usage{\method{fitOne}{CopyNumberSegmentationModel}(...)}
 
 \arguments{
   \item{data}{A \code{\link[base]{data.frame}} with columns \code{M} (log-ratio) and
@@ -33,14 +34,13 @@
 }
 
 \value{
- Returns the \code{\link[GLAD]{profileCGH}} object returned by \code{\link[GLAD]{glad}}.
+ Returns an object returned by internal fit function.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  Internally \code{\link[GLAD]{glad}} is used.
-  For more information see \code{\link{GladModel}}.
+  For more information see \code{\link{CopyNumberSegmentationModel}}.
 }
 \keyword{internal}
 \keyword{methods}
