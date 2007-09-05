@@ -31,7 +31,7 @@
 # @author
 #
 # \seealso{
-#   @see "getAverage".
+#   @see "getAverageFile".
 #   @seeclass
 # }
 #*/###########################################################################

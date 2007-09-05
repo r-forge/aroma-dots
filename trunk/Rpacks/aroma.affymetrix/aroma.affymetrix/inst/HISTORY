@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.6.1 [2007-09-04]
+Version: 0.6.1 [2007-09-05]
 o Added support for fitting copy-number regions using the (fast)
   Circular Binary Segmentation (CBS) method of Venkatraman et al. (2007).
   The method is implemented by the new CbsModel class.  Consider this
@@ -27,9 +27,12 @@ o Added a "patch" to make sure that there is rowMedians() supporting
   be regenerated.
 o PACKAGE DEPENDENCIES: Made R.native an "Supports" package, since it
   is only used for rowMedians() in case the right Biobase version is 
-  not availble.  R.native is optional.
+  not availble.  R.native is now optional.
 o CLEAN UP: Deleted obsolete /inst/chromosomeExplorer/ from source.
 o CLEAN UP: Removed some obsolete affxparser patches.
+o BUG FIX: getAverageFile() of AffymetrixCelSet had 'na.rm=FALSE'
+  by default, which caused a lot of missing values in the average.
+  In turn, this cause for instance raw CNs to become missing values.
 o BUG FIX: When calling process() on a GcRmaBackgroundCorrection,
   an exception would be thrown with "bgAdjustGcrma() is deprecated.
   Please use the GcRmaBackgroundCorrection class".  The same happend
