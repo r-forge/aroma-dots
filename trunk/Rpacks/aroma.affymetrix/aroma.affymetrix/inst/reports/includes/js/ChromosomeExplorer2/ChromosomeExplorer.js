@@ -44,6 +44,7 @@ function ChromosomeExplorer() {
 
   this.setSampleAliases = function(aliases) {
     this.sampleAliases = aliases;
+    this.setSamples(this.samples);
   }
  
   this.setScales = function(scales) {
@@ -118,9 +119,9 @@ function ChromosomeExplorer() {
   this.updateInfo = function() {
     updateLabel('chromosomeLabel', this.chromosomes[this.chromosomeIdx]);
     var label = this.samples[this.sampleIdx];
-    if (this.sampleLabels != null) {
-      if (this.sampleLabels[this.sampleIdx] != label) {
-        label = this.sampleLabels[this.sampleIdx] + ' (' + label + ')';
+    if (this.sampleAliases != null) {
+      if (this.sampleAliases[this.sampleIdx] != label) {
+        label = this.sampleAliases[this.sampleIdx] + ' (' + label + ')';
       }
     }
     updateLabel('sampleLabel', label);
@@ -332,7 +333,7 @@ function ChromosomeExplorer() {
 
   this.chromosomes = new Array('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y');
   this.samples = new Array();
-  this.sampleLabels = null;
+  this.sampleAliases = null;
   this.chipTypes = null;
   this.scales = new Array(1);
   this.sets = new Array();

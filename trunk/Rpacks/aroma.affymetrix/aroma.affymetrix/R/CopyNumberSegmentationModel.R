@@ -29,7 +29,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenceList=NULL, tags="*", ...) {
+setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenceList=NULL, tags="", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -99,7 +99,8 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenc
   extend(Object(), "CopyNumberSegmentationModel",
     .cesTuple = cesTuple,
     .chromosomes = NULL,
-    .referenceList = referenceList
+    .referenceList = referenceList,
+    .tags = tags
   )
 })
 
@@ -410,7 +411,7 @@ setMethodS3("getReferenceName", "CopyNumberSegmentationModel", function(this, co
 
 setMethodS3("getAsteriskTag", "CopyNumberSegmentationModel", function(this, ...) {
   # Default '*' tag is the abbreviation from upper-case letters only,
-  # e.g. "CBSModel" gives "CBS". 
+  # e.g. "FooHooMooModel" gives "FHM". 
   tag <- class(this)[1];
   tag <- gsub("Model$", "", tag);
   tag <- strsplit(tag, split="")[[1]];
@@ -473,7 +474,7 @@ setMethodS3("getPath", "CopyNumberSegmentationModel", function(this, ...) {
   # Chip type
   chipType <- getChipType(this);
 
-  # The full path
+	  # The full path
   path <- filePath(rootPath, fullname, chipType, expandLinks="any");
 
   # Create path?
@@ -1259,6 +1260,12 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2007-09-05
+# o Was thinking to add a default asterisk tag to the output data set name.
+#   However, although this works beautifully, the care has to be taken to
+#   redesign ChromosomeExplorer, e.g. do you want to treat GLAD and CBS data
+#   as totally different data sets?!? Possibly, because it is more consistent
+#   with everything else, but for now we leave it as it since that works well.
 # 2007-09-04
 # o Now plot() is fully implemented CopyNumberSegmentationModel.  Subclasses
 #   pretty much only have to implement pointsRawCNs() if wanted extra 
