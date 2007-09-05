@@ -10,7 +10,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{model}{A @see "GladModel" object.}
+#   \item{model}{A @see "CopyNumberSegmentationModel" object.}
 #   \item{...}{Not used.}
 # }
 #
@@ -33,7 +33,7 @@
 # @author
 # 
 # \seealso{
-#  @see "GladModel".
+#  @see "CopyNumberSegmentationModel".
 # }
 #*/###########################################################################
 setConstructorS3("ChromosomeExplorer", function(model=NULL, ...) {
@@ -42,8 +42,9 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'model':
   if (!is.null(model)) {
-    if (!inherits(model, "GladModel")) {
-      throw("Argument 'model' is not a 'GladModel': ", class(model)[1]);
+    if (!inherits(model, "CopyNumberSegmentationModel")) {
+      throw("Argument 'model' is not a 'CopyNumberSegmentationModel': ", 
+                                                            class(model)[1]);
     }
   }
 
@@ -94,7 +95,7 @@ setMethodS3("setCytoband", "ChromosomeExplorer", function(this, status=TRUE, ...
 # }
 #
 # \value{
-#  Returns a @see "GladModel".
+#  Returns a @see "CopyNumberSegmentationModel".
 # }
 #
 # @author
@@ -191,7 +192,7 @@ setMethodS3("getPath", "ChromosomeExplorer", function(this, ...) {
   chipType <- getChipType(model);
 
   # Image set
-  set <- "glad";
+  set <- getSetTag(model);
 
   # The full path
   path <- filePath(mainPath, chipType, set, expandLinks="any");
@@ -286,12 +287,13 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   parent2Path <- getParent(parentPath);
   parent3Path <- getParent(parent2Path);
 
-  verbose && enter(verbose, "Compiling samples.js");
   srcPath <- getTemplatePath(this);
-  pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "samples.js.rsp");
+  pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "ChromosomeExplorer.onLoad.js.rsp");
+#  pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "samples.js.rsp");
+  verbose && enter(verbose, "Compiling ", basename(pathname));
   verbose && cat(verbose, "Source: ", pathname);
   outFile <- gsub("[.]rsp$", "", basename(pathname));
-  outPath <- parent3Path;
+  outPath <- parent2Path;
   verbose && cat(verbose, "Output path: ", outPath);
 
 
@@ -324,6 +326,23 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   verbose && cat(verbose, "Detected (or default) zooms: ", paste(zooms, collapse=", "));
   verbose && exit(verbose);
 
+  # Get available sets
+  verbose && enter(verbose, "Scanning directory for \"set\" directories");
+  sets <- list.files(path=parentPath, full.names=TRUE);
+  # Keep only directories
+  sets <- sets[sapply(sets, FUN=isDirectory)];
+  if (length(sets) == 0) {
+    sets <- c("glad", "cbs");
+    warning("No 'set' directories detected. Using defauls: ", paste(sets, collapse=", "));
+  } else {
+    sets <- basename(sets);
+  }
+  sets <- sort(unique(sets));
+  verbose && cat(verbose, "Detected (or default) sets: ", paste(sets, collapse=", "));
+  verbose && exit(verbose);
+
+
+
   # Compile RSP file
   verbose && enter(verbose, "Compiling RSP");
   env <- new.env();
@@ -331,6 +350,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   env$samples <- getFullNames(this);
   env$sampleLabels <- getNames(this);
   env$zooms <- zooms;
+  env$sets <- sets;
   pathname <- rspToHtml(pathname, path=NULL, 
                         outFile=outFile, outPath=outPath, 
                         overwrite=TRUE, envir=env);
@@ -495,6 +515,8 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="index.html
 
 ##############################################################################
 # HISTORY:
+# 2007-09-04
+# o Now ChromosomeExplorer recognizes CopyNumberSegmentationModel:s.
 # 2007-05-08
 # o Added default zoom levels to updateSamplesFile() for ChromosomeExplorer.  
 #   This is applies the first time process() is called.

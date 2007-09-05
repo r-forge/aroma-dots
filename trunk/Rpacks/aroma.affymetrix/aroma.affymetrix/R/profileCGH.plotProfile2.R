@@ -158,7 +158,7 @@ setMethodS3("plotProfile2", "profileCGH", function(fit, variable="LogRatio", chr
   # Plot cytobands?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (plotband) {
-    drawCytoBand(fit, chromosome=chromosome, cytobandLabels=TRUE, 
+    drawCytoband(fit, chromosome=chromosome, cytobandLabels=TRUE, 
            colCytoBand=colCytoBand, colCentro=colCentro, unit=unit);
   }
 

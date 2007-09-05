@@ -938,8 +938,8 @@
 \alias{rgbTransform.Image}
 \alias{rmaSummary}
 \alias{rowSds}
-\alias{rowMads}
 \alias{rowVars}
+\alias{rowMads}
 \alias{SampleAnnotationFile}
 \alias{SampleAnnotationSet}
 \alias{sapply}
@@ -1249,7 +1249,6 @@
 \alias{readGenomeWideSNP}
 \alias{readGenomeWideSNP.DChipGenomeInformation}
 \alias{as.character.CopyNumberSegmentationModel}
-\alias{fitOne.CopyNumberSegmentationModel}
 \alias{getAlias.CopyNumberSegmentationModel}
 \alias{getAsteriskTag.CbsModel}
 \alias{getAsteriskTag.CopyNumberSegmentationModel}
@@ -1332,6 +1331,34 @@
 \alias{sort.RawCopyNumbers}
 \alias{summary.RawCopyNumbers}
 \alias{digest2}
+\alias{applyRegions.CopyNumberOutliers}
+\alias{applyRows}
+\alias{applyRows.CopyNumberRegions}
+\alias{as.character.CopyNumberOutliers}
+\alias{as.data.frame.CopyNumberOutliers}
+\alias{CopyNumberOutliers}
+\alias{drawCytoband}
+\alias{drawCytoband.CopyNumberSegmentationModel}
+\alias{drawCytoband.default}
+\alias{drawCytoband.profileCGH}
+\alias{drawCytoband2}
+\alias{drawCytoband2.default}
+\alias{drawExtraAnnotations}
+\alias{drawExtraAnnotations.default}
+\alias{drawExtraAnnotations.profileCGH}
+\alias{drawLevels.CopyNumberOutliers}
+\alias{extractCopyNumberOutliers}
+\alias{extractCopyNumberOutliers.DNAcopy}
+\alias{extractCopyNumberOutliers.profileCGH}
+\alias{getSetTag}
+\alias{getSetTag.CopyNumberSegmentationModel}
+\alias{lines.CopyNumberOutliers}
+\alias{nbrOfRegions.CopyNumberOutliers}
+\alias{newPlot.CopyNumberSegmentationModel}
+\alias{onFitAddGenotypeCalls}
+\alias{onFitAddGenotypeCalls.default}
+\alias{onFitAddGenotypeCalls.GladModel}
+\alias{pointsRawCNs.default}
 
 \description{
   This page contains aliases for all "non-documented" objects that

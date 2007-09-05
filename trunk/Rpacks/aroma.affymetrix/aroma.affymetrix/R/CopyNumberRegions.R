@@ -1,8 +1,9 @@
-setConstructorS3("CopyNumberRegions", function(start=NULL, stop=NULL, mean=NULL, count=NULL, call=NULL, ...) {
+setConstructorS3("CopyNumberRegions", function(chromosome=NULL, start=NULL, stop=NULL, mean=NULL, count=NULL, call=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!is.null(start)) {
+  if (!is.null(chromosome)) {
+    chromosome <- as.integer(chromosome);
     start <- as.numeric(start);
     stop <- as.numeric(stop);
     mean <- as.numeric(mean);
@@ -10,6 +11,7 @@ setConstructorS3("CopyNumberRegions", function(start=NULL, stop=NULL, mean=NULL,
   }
 
   extend(Object(), "CopyNumberRegions", 
+    chromosome = chromosome,
     start = start,
     stop = stop,
     mean = mean,
@@ -41,7 +43,7 @@ setMethodS3("as.data.frame", "CopyNumberRegions", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  fields <- c("start", "stop", "mean", "count", "call");
+  fields <- c("chromosome", "start", "stop", "mean", "count", "call");
   data <- lapply(fields, FUN=function(field) this[[field]]);
   names(data) <- fields;
   data <- data[!sapply(data, is.null)];
@@ -52,7 +54,7 @@ setMethodS3("as.data.frame", "CopyNumberRegions", function(x, ...) {
 
 setMethodS3("applyRows", "CopyNumberRegions", function(this, FUN, ...) {
   data <- as.data.frame(this);
-  o <- order(data[,"start"]);
+  o <- order(data[,"chromosome"], data[,"start"]);
   data <- data[o,,drop=FALSE];
 
   res <- vector("list", nrow(data));
@@ -149,8 +151,8 @@ setMethodS3("extractCopyNumberRegions", "profileCGH", function(object, ...) {
     df[rr,"call"] <- c("loss", "neutral", "gain")[pv$ZoneGNL[idx1]+2];
   }
 
-
   CopyNumberRegions(
+    chromosome=df$chromosome,
     start=df$start, 
     stop=df$stop, 
     mean=df$mean, 
@@ -164,6 +166,7 @@ setMethodS3("extractCopyNumberRegions", "DNAcopy", function(object, ...) {
   output <- object$output;
 
   CopyNumberRegions(
+    chromosome=output[["chrom"]], 
     start=output[["loc.start"]], 
     stop=output[["loc.end"]], 
     mean=output[["seg.mean"]],
@@ -177,6 +180,7 @@ setMethodS3("extractCopyNumberRegions", "DNAcopy", function(object, ...) {
 ############################################################################
 # HISTORY:
 # 2007-09-04
+# o Now CopyNumberRegions also contains an 'chromosome' field.
 # o BUG FIX: as.data.frame() gave an error if some optional fields were
 #   NULL.
 # 2007-08-22

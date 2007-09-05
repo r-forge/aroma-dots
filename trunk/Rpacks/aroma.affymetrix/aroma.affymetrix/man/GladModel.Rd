@@ -48,14 +48,12 @@ extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{getRegions} \tab  -\cr
- \tab \code{plot} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
 
 
  \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
-as.character, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenomeData, getListOfChipEffects, getListOfGenomeInformations, getListOfReferences, getName, getNames, getPath, getRawCnData, getReferenceFiles, getRegions, getReportPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, plot, setAlias, writeRegions
+as.character, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenomeData, getListOfChipEffects, getListOfGenomeInformations, getListOfReferences, getName, getNames, getPath, getRawCnData, getReferenceFiles, getRegions, getReportPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, newPlot, plot, setAlias, writeRegions
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

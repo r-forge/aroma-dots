@@ -537,7 +537,6 @@ fromChipType.AffymetrixCdfFile
   renameToUpperCaseExt.AffymetrixFile 
   readGenomeWideSNP readGenomeWideSNP.DChipGenomeInformation
   as.character.CopyNumberSegmentationModel
-  fitOne.CopyNumberSegmentationModel
   getAlias.CopyNumberSegmentationModel getAsteriskTag.CbsModel
   getAsteriskTag.CopyNumberSegmentationModel
   getChipEffectFiles.CopyNumberSegmentationModel
@@ -585,3 +584,16 @@ Undocumented code objects:
   pointsRawCNs.profileCGH RawCopyNumbers sort.RawCopyNumbers
   summary.RawCopyNumbers
 digest2
+  applyRegions.CopyNumberOutliers applyRows applyRows.CopyNumberRegions
+  as.character.CopyNumberOutliers as.data.frame.CopyNumberOutliers
+  CopyNumberOutliers drawCytoband
+  drawCytoband.CopyNumberSegmentationModel drawCytoband.default
+  drawCytoband.profileCGH drawCytoband2 drawCytoband2.default
+  drawExtraAnnotations drawExtraAnnotations.default
+  drawExtraAnnotations.profileCGH drawLevels.CopyNumberOutliers
+  extractCopyNumberOutliers extractCopyNumberOutliers.DNAcopy
+  extractCopyNumberOutliers.profileCGH getSetTag
+  getSetTag.CopyNumberSegmentationModel lines.CopyNumberOutliers
+  nbrOfRegions.CopyNumberOutliers newPlot.CopyNumberSegmentationModel
+  onFitAddGenotypeCalls onFitAddGenotypeCalls.default
+  onFitAddGenotypeCalls.GladModel pointsRawCNs.default
