@@ -1,17 +1,31 @@
-files <- c(
-# "test20070726,10k,CN.R",
-# "test20070810,10k,profiling.R",
-# "u133.test.mark.R",
-# "test20070412,100K.R",
-# "test20070412,100K,QN.R",
-# "test20070412,100K,CN.R",
-# "test20070625,100K,customCDF.R",
-# "test20070809,100K,spatial.R",
- "test20070816,6.0.R"
-)
+savehistory();
+library(aroma.affymetrix);
 
-for (file in files) {
-  source(file, echo=TRUE);
-  rm(list=setdiff(ls(), c("file", "files")));
-  gc();
+path <- "testScripts/system/chipTypes";
+path <- Arguments$getReadablePath(path, mustExist=TRUE);
+paths <- sort(list.files(path=path, full.names=TRUE));
+
+..pathnames <- lapply(paths, FUN=list.files, pattern="[.]R$", full.names=TRUE);
+names(..pathnames) <- basename(paths);
+
+.chipTypes <- c("Test3", "Mapping10K_Xba142", "Mapping50K_Hind240,Xba240", "HG-U133_Plus_2", "GenomeWideSNP6.0");
+
+pathname <- ..pathnames[[5]][6];
+
+..chipTypes <- ..chipTypes[-(1:3)];
+
+#..chipTypes <- c("GenomeWideSNP6.0");
+#..chipTypes <- c("Mapping10K_Xba142");
+
+for (..chipType in ..chipTypes) {
+  nbrOfTests <- length(..pathnames[[..chipType]]);
+  for (kk in seq(length=nbrOfTests)) {
+#    source("../aroma.affymetrix/R/digest2.R");
+#    source("../aroma.affymetrix/R/AffymetrixCelSet.R");
+    pathname <- ..pathnames[[..chipType]][[kk]];
+    source(pathname, echo=TRUE);
+    rm(list=setdiff(ls(), 
+        c("kk", "..chipType", "..chipTypes", "pathname", "..pathnames")));
+    gc();
+  }
 }
