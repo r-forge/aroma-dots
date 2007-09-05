@@ -1,6 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.6.2 [2007-09-05]
+o Updated AllelicCrosstalkCalibration to store the model parameter
+  estimates to file.
+o CLEAN UP: All calibrateAllelicCrosstalk() methods are now removed.
+  Use the AllelicCrosstalkCalibration class instead.
+
+
 Version: 0.6.1 [2007-09-05]
 o Added support for fitting copy-number regions using the (fast)
   Circular Binary Segmentation (CBS) method of Venkatraman et al. (2007).

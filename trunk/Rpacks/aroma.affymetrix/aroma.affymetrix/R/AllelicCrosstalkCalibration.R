@@ -44,6 +44,10 @@
 # @author
 #*/###########################################################################
 setConstructorS3("AllelicCrosstalkCalibration", function(..., targetAvg=2200, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+  if (!is.null(targetAvg)) {
+    targetAvg <- Arguments$getDouble(targetAvg, range=c(0, Inf));
+  }
+
   extend(ProbeLevelTransform(...), "AllelicCrosstalkCalibration",
     .targetAvg = targetAvg,
     .alpha = alpha,
@@ -90,8 +94,6 @@ setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, ...) 
 #  Returns a @double @vector.
 # }
 #
-# @examples "../incl/normalizeQuantile.Rex"
-#
 # @author
 #
 # \seealso{
@@ -131,31 +133,25 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
 
   # Get algorithm parameters
   params <- getParameters(this);
+  attachLocally(params);
+  rm(params);
 
   # Get (and create) the output path
   outputPath <- getPath(this);
 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Identify the cell indices for each possible allele basepair.
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
-  cdf <- getCdf(ds);
-  setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
-  gc <- gc();
-  verbose && print(verbose, gc);
-  verbose && exit(verbose);
-
+  # To be retrieved when needed.
+  setsOfProbes <- NULL;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Setup call
+  # For hooks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  dfArgs <- c(list(setsOfProbes=setsOfProbes, path=outputPath, verbose=verbose), params);
-  rm(params);
+  hookName <- "process.AllelicCrosstalkCalibration";
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calibrate each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cdf <- getCdf(ds);
   nbrOfArrays <- nbrOfArrays(ds);
   verbose && enter(verbose, "Calibrating ", nbrOfArrays, " arrays");
   verbose && enter(verbose, "Path: ", path);
@@ -164,16 +160,179 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
     df <- getFile(ds, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                               kk, getName(df), nbrOfArrays));
-    args <- c(list(df), dfArgs);
-    outputDataSet <- do.call("calibrateAllelicCrosstalk", args=args);
-    dataFiles[[kk]] <- df;
+
+    fullname <- getFullName(df);
+    filename <- sprintf("%s.CEL", fullname);
+    pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
+
+    # Already calibrated?
+    if (!force && isFile(pathname)) {
+      verbose && cat(verbose, "Calibrated data file already exists: ", pathname);
+    } else {
+      if (is.null(setsOfProbes)) {
+        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        # Identify the cell indices for each possible allele basepair.
+        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
+        setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+        gc <- gc();
+        verbose && print(verbose, gc);
+        verbose && exit(verbose);
+      }
+  
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Reading data
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      verbose && enter(verbose, "Reading all probe intensities");
+      yAll <- getData(df, fields="intensities", ...)$intensities;
+      verbose && exit(verbose);
+    
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Calibrating
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#      callHooks(sprintf("%s.onBegin", hookName), df=df, setsOfProbes=setsOfProbes, ...);
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Fitting
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      nbrOfPairs <- length(setsOfProbes);
+      fits <- vector("list", nbrOfPairs);
+      names(fits) <- names(setsOfProbes);
+      verbose && enter(verbose, "Fitting calibration model");
+      for (kk in seq_len(nbrOfPairs)) {
+        name <- names(setsOfProbes)[kk];
+        verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+        basepair <- unlist(strsplit(name, split=""));
+        idx <- setsOfProbes[[name]];
+    
+        verbose && enter(verbose, "Fitting");
+        y <- matrix(yAll[idx], ncol=2);
+#        callHooks(sprintf("%s.onData", hookName), df=df, y=y, basepair=basepair, ...);
+        fits[[kk]] <- fitGenotypeCone(y, alpha=alpha, q=q, Q=Q);
+        verbose && print(verbose, fits[[kk]], level=-5);
+        verbose && exit(verbose);
+
+        rm(y, idx); # Not needed anymore
+        gc <- gc();
+
+#        callHooks(sprintf("%s.onFit", hookName), df=df, fit=fits[[kk]], ...);
+        verbose && exit(verbose);
+      } # for (kk in ...)
+      verbose && exit(verbose);
+
+
+      # Store fit and parameters (in case someone are interested in looking
+      # at them later; no promises of backward compatibility though).
+      filename <- sprintf("%s,fit.RData", fullname);
+      fitPathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
+      modelFit <- list(
+        params=getParameters(this),
+        fits=fits
+      );
+      saveObject(modelFit, file=fitPathname);
+      verbose && str(verbose, modelFit, level=-50);
+      rm(modelFit);
+
+      gc <- gc();
+      verbose && print(verbose, gc);
+    
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Harmonizing parameter estimates?
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Here we can harmonize the estimates, e.g. make all offset estimates
+      # the same.  This might be useful if we want to correct other probes
+      # not included above such as CN probes on SNP 6.0. /HB 2007-09-05
+
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Backtransforming (calibrating)
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      verbose && enter(verbose, "Backtransforming (calibrating) data");
+      for (kk in seq_len(nbrOfPairs)) {
+        name <- names(setsOfProbes)[kk];
+        verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+
+        idx <- setsOfProbes[[name]];
+        y <- matrix(yAll[idx], ncol=2);
+        yC <- backtransformGenotypeCone(y, fit=fits[[kk]]);
+        yAll[idx] <- yC;
+    
+#        callHooks(sprintf("%s.onUpdated", hookName), df=df, y=y, basepair=basepair, fit=fits[[kk]], yC=yC,...);
+        rm(idx, y, yC);
+        gc <- gc();
+
+        verbose && exit(verbose);
+      } # for (kk in ...)
+      verbose && exit(verbose);
+
+      # Not needed anymore
+      rm(fits);
+      gc <- gc();
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Rescaling toward target average?
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      if (!is.null(targetAvg)) {
+        verbose && enter(verbose, "Rescaling toward target average");
+        verbose && printf(verbose, "Target average: %.2f\n", targetAvg);
+        for (kk in seq_len(nbrOfPairs)) {
+          name <- names(setsOfProbes)[kk];
+          verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+
+          idx <- setsOfProbes[[name]];
+          yC <- matrix(yAll[idx], ncol=2);
+          yCS <- normalizeAverage(yC, targetAvg=targetAvg);
+          yAll[idx] <- yCS;
+
+          rm(idx, yC, yCS);
+
+          verbose && exit(verbose);
+        } # for (kk in ...)
+        verbose && exit(verbose);
+      } # if (!is.null(targetAvg))
+
+
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Storing data
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      verbose && enter(verbose, "Storing calibrated data");
+    
+      # Create CEL file to store results, if missing
+      verbose && enter(verbose, "Creating CEL file for results, if missing");
+      createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
+      verbose && exit(verbose);
+
+      # Write calibrated data to file
+      verbose2 <- -as.integer(verbose)-2;
+      updateCel(pathname, intensities=yAll, verbose=verbose2);
+
+      rm(yAll, verbose2);
+      gc <- gc();
+      verbose && print(verbose, gc);
+      verbose && exit(verbose);
+    }
+
+    # Retrieving calibrated data file
+    dfC <- newInstance(df, pathname);
+
+    # CDF inheritance
+    setCdf(dfC, cdf);
+
+#    callHooks(sprintf("%s.onExit", hookName), df=df, dfC=dfC, ...);
+
+    # Record
+    dataFiles[[kk]] <- dfC;
+
+    rm(df, dfC);
 
     verbose && exit(verbose);
-  }
+  } # for (kk in ...)
   verbose && exit(verbose);
 
   # Garbage collect
-  rm(dataFiles, ds, df, args, dfArgs);
+  rm(dataFiles, ds, setsOfProbes);
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -185,11 +344,21 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
 })
 
 
+
+
 ############################################################################
 # HISTORY:
 # 2007-09-05
-# o CLEAN UP: Now calibrateAllelicCrosstalk() are called directly to the 
-#   file objects and not the file set object.  
+# o Now process() stores the crosstalk settings and estimated parameters
+#   to file. May be useful if one wants to go back and look at the details.
+#   One day we might get around to store this information in the CEL file
+#   headers.
+# o Now process() first fits the crosstalk model for all basepairs, then
+#   backtransform the signals, then optional rescale signals to target
+#   average, then saves the calibrated signals.
+# o SPEED UP: Now getAlleleProbePairs() is only called if data needs to be
+#   calibrated, i.e. if already calibrated it is not loaded.
+# o CLEAN UP: Now the code of calibrateAllelicCrosstalk() is included here.
 # 2007-03-29
 # o Now 'targetAvg' defaults to 2200 so that allele A and allele B signals
 #   are rescaled to be one the same scale.  If so,  it does not make sense
