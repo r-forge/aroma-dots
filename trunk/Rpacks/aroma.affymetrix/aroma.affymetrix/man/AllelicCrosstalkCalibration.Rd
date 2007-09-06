@@ -40,20 +40,31 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   affect the model fitting and are unaffected.
  }
 
- \usage{AllelicCrosstalkCalibration(..., targetAvg=2200, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
+ \usage{AllelicCrosstalkCalibration(..., targetAvg=c(2200, 2200), subsetToAvg=NULL, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of
      \code{\link{ProbeLevelTransform}}.}
-   \item{targetAvg}{The signal that average allele A and average allele B
-     signals should have after calibration.}
+   \item{targetAvg}{The signal(s) that either the average of the sum
+     (if one target value) or the average of each of the alleles
+     (if two target values) should have after calibration.}
+   \item{subsetToAvg}{The indices of the cells (taken as the intersect of
+     existing indices) used to calculate average in order to rescale to
+     the target average. If \code{\link[base]{NULL}}, all probes are considered.}
    \item{alpha, q, Q}{}
  }
 
- \section{What probe signals are updated}{
-    Calibration for crosstalk between allele signals applies by definition
-    only SNP units.
-    Note that, non-calibrated signals will be saved in the output files.
+ \section{What probe signals are updated?}{
+   Calibration for crosstalk between allele signals applies by definition
+   only SNP units.  It is only PM probes that will be calibrated.
+   Note that, non-calibrated signals will be saved in the output files.
+ }
+
+ \section{What probe signals are used to fit model?}{
+   All PM probe pairs are used to fit the crosstalk model.
+   In the second step where signals are rescaled to a target average,
+   it is possible to specify the set of cells that should be included
+   when estimating the target average.
  }
 
  \section{Fields and Methods}{

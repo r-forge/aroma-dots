@@ -301,6 +301,14 @@ setMethodS3("getCdf", "AffymetrixCelSet", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'cdf':
+  if (!inherits(cdf, "AffymetrixCdfFile")) {
+    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -308,8 +316,26 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
     on.exit(popState(verbose));
   }
 
+
+
   verbose && enter(verbose, "Setting CDF for CEL set");
   verbose && print(verbose, cdf);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # ASCII CDFs are only allowed if explicited accepted in the rules.
+  # To change, do:
+  #  settings <- getOption("aroma.affymetrix.settings");
+  #  settings$rules <- list(allowAsciiCdfs=FALSE);
+  #  options("aroma.affymetrix.settings"=settings);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rules <- getOption("aroma.affymetrix.settings")$rules;	
+  if (!identical(rules$allowAsciiCdfs, TRUE)) {
+    # ASCII CDF are *not* allowed
+    ff <- getFileFormat(cdf);
+    if (regexpr("ASCII", ff) != -1) {
+      throw("Cannot set CDF for data set. The given CDF is in ASCII format, which is protected against by default. It is much faster and more memory efficient to work with binary CDF files. Use affxparser::convertCdf() to convert a CDF into another format.  Set option 'aroma.affymetrix.settings$rules$allowAsciiCdfs' to TRUE to allow ASCII CDFs. For more details, see the online help pages. Details on the CDF file: ", getPathname(cdf), " [", ff, "].");
+    }
+  }
 
   # Nothing to do?
 #  oldCdf <- getCdf(this);
@@ -1222,6 +1248,10 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-06
+# o Now setCdf() throws an (informative) error message whenever one tries
+#   to use an ASCII CDF file. This behavior can be changed by setting
+#   rule 'aroma.affymetrix.settings$rules$allowAsciiCdfs' in the options.
 # 2007-08-01
 # o Renamed static fromName() of AffymetrixCelSet to byName().
 # 2007-04-06
