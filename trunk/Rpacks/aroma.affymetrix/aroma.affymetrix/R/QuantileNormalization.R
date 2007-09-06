@@ -130,7 +130,6 @@ setMethodS3("getSubsetToAvg", "QuantileNormalization", function(this, ..., verbo
     on.exit(popState(verbose));
   }
 
-
   subsetToAvg <- this$.subsetToAvg;
 
   # Done?

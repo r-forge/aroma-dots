@@ -18,12 +18,12 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform".}
-#   \item{targetAvg}{The signal that average allele A and average allele B
-#     signals should have after calibration.}
-#   \item{subsetTargetAvg}{The probes to calculate average empirical
-#     distribution over.  If a single @numeric in (0,1), then this
-#     fraction of all probes will be used.  
-#     If @NULL, all probes are considered.}
+#   \item{targetAvg}{The signal(s) that either the average of the sum
+#     (if one target value) or the average of each of the alleles
+#     (if two target values) should have after calibration.}
+#   \item{subsetToAvg}{The indices of the cells (taken as the intersect of
+#     existing indices) used to calculate average in order to rescale to
+#     the target average. If @NULL, all probes are considered.}
 #   \item{alpha, q, Q}{}
 # }
 #
@@ -34,7 +34,10 @@
 # }
 #
 # \section{What probe signals are used to fit model?}{
-#   By default, all PM probe pairs are used to fit the crosstalk model.
+#   All PM probe pairs are used to fit the crosstalk model.
+#   In the second step where signals are rescaled to a target average,
+#   it is possible to specify the set of cells that should be included
+#   when estimating the target average.
 # }
 #
 # \section{Fields and Methods}{
@@ -43,13 +46,17 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(..., targetAvg=2200, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+setConstructorS3("AllelicCrosstalkCalibration", function(..., targetAvg=c(2200, 2200), subsetToAvg=NULL, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
   if (!is.null(targetAvg)) {
-    targetAvg <- Arguments$getDouble(targetAvg, range=c(0, Inf));
+    targetAvg <- Arguments$getDoubles(targetAvg, range=c(0, Inf));
+    if (!length(targetAvg) %in% 1:2) {
+      throw("Argument 'targetAvg' must be of length one or two: ", length(targetAvg));
+    }
   }
 
   extend(ProbeLevelTransform(...), "AllelicCrosstalkCalibration",
     .targetAvg = targetAvg,
+    .subsetToAvg = subsetToAvg,
     .alpha = alpha,
     .q = q,
     .Q = Q
@@ -57,19 +64,220 @@ setConstructorS3("AllelicCrosstalkCalibration", function(..., targetAvg=2200, al
 })
 
 
+setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  subsetToAvg <- this$.subsetToAvg;
+  if (FALSE) {
+    this$.subsetToAvg <- subsetToAvg;
+  }
+
+  subsetToAvg;
+}, protected=TRUE);
+
+
 
 setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);
 
-  defaults <- formals(calibrateAllelicCrosstalk.AffymetrixCelFile);
-  params$targetAvg <- this$.targetAvg;
-  params$alpha <- this$.alpha;
-  params$q <- this$.q;
-  params$Q <- this$.Q;
+  params <- c(params, list(
+    targetAvg = this$.targetAvg,
+    subsetToAvg = getSubsetToAvg(this),
+    alpha = this$.alpha,
+    q = this$.q,
+    Q = this$.Q
+  ));
 
   params;
 }, private=TRUE)
+
+
+setMethodS3("rescale", "AllelicCrosstalkCalibration", function(this, yAll, params, setsOfProbes, ..., verbose=FALSE) {
+  nbrOfPairs <- length(setsOfProbes);
+  nt <- length(params$targetAvg);
+  if (nt == 1) {
+    method <- "sum";
+  } else if (nt == 2) {
+    method <- "allele";
+  }
+
+  if (verbose) {
+    enter(verbose, "Rescaling toward target average");
+    cat(verbose, "Target average(s): %s", paste(params$targetAvg, collapse=", "));
+    printf(verbose, "Method: %s\n", method);
+    if (!is.null(params$subsetToAvg)) {
+      cat(verbose, "Using subset of cells for estimate of target average:");
+      str(verbose, params$subsetToAvg);
+    }
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Rescale based on y = yA+yB
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (method == "sum") {
+    for (kk in seq_len(nbrOfPairs)) {
+      name <- names(setsOfProbes)[kk];
+      verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+  
+      # Get data pairs
+      idxAB <- setsOfProbes[[name]];
+      idxAB <- matrix(idxAB, ncol=2);
+
+      # Sum y=yA+yB
+      y <- yAll[idxAB[,1]]+yAll[idxAB[,2]];
+      n <- length(y);
+      n0 <- n;
+    
+      # Calculate current average
+      yAvg <- median(y, na.rm=TRUE);
+      yAvg0 <- yAvg;
+      rm(y);
+    
+      if (!is.null(params$subsetToAvg)) {
+        keep <- matrix((idxAB %in% params$subsetToAvg), ncol=2);
+        keep <- (keep[,1] & keep[,2]);
+        idxAB <- idxAB[keep,,drop=FALSE];
+        rm(keep);
+
+        # Sum y=yA+yB
+        y <- yAll[idxAB[,1]]+yAll[idxAB[,2]];
+        n <- length(y);
+    
+        if (n == 0) {
+          throw("Cannot rescale to target average. After taking the intersect of the subset of cells to be used, there are no cells left.");
+        }
+    
+        yAvg <- median(y, na.rm=TRUE);
+        rm(y);
+    
+        verbose && printf(verbose, "yAvg (using %d/%.1f%% summed pairs): %.2f of %.2f (%.1f%%)\n", n, 100*n/n0, yAvg, yAvg0, 100*yAvg/yAvg0);
+      } else {
+        verbose && printf(verbose, "yAvg (100%%): %.2f\n", yAvg);
+      }
+    
+      if (!is.finite(yAvg))
+        throw("Cannot rescale to target average. Signal average is non-finite: ", yAvg);
+    
+      # Rescale
+      b <- params$targetAvg/yAvg;
+      verbose && printf(verbose, "scale factor: %.2f\n", b);
+    
+      idxAB <- setsOfProbes[[name]];
+      yAll[idxAB] <- b*yAll[idxAB];
+  
+      rm(idx);
+      verbose && exit(verbose);
+    } # for (kk in ...)
+    verbose && exit(verbose);
+  } # if (method == "sum")
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Rescale based on (yA,yB)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (method == "allele") {
+    for (kk in seq_len(nbrOfPairs)) {
+      name <- names(setsOfProbes)[kk];
+      verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+  
+      # Get data pairs
+      idxAB <- setsOfProbes[[name]];
+      idxAB <- matrix(idxAB, ncol=2);
+
+      # For each allele
+      for (cc in 1:2) {
+        idx <- idxAB[,cc];
+        y <- yAll[idx];
+        n <- length(y);
+        n0 <- n;
+    
+        # Calculate current average
+        yAvg <- median(y, na.rm=TRUE);
+        yAvg0 <- yAvg;
+        rm(y);
+    
+        if (!is.null(params$subsetToAvg)) {
+          idx <- idxAB[,cc];
+          idx <- intersect(idx, params$subsetToAvg);
+          y <- yAll[idx];
+          n <- length(y);
+    
+          if (n == 0) {
+            throw("Cannot rescale to target average. After taking the intersect of the subset of cells to be used, there are no cells left.");
+          }
+    
+          yAvg <- median(y, na.rm=TRUE);
+          rm(y);
+    
+          verbose && printf(verbose, "yAvg (using %d/%.1f%% pairs): %.2f of %.2f (%.1f%%)\n", n, 100*n/n0, yAvg, yAvg0, 100*yAvg/yAvg0);
+        } else {
+          verbose && printf(verbose, "yAvg (100%%): %.2f\n", yAvg);
+        }
+    
+        if (!is.finite(yAvg))
+          throw("Cannot rescale to target average. Signal average is non-finite: ", yAvg);
+    
+        # Rescale
+        b <- params$targetAvg[cc]/yAvg;
+        verbose && printf(verbose, "scale factor: %.2f\n", b);
+    
+        idx <- idxAB[,cc];
+        yAll[idx] <- b*yAll[idx];
+  
+        rm(idx);
+      } # for (cc ...)
+      verbose && exit(verbose);
+    } # for (kk in ...)
+    verbose && exit(verbose);
+  } # if (method == "allelic")
+
+  yAll;
+}, protected=TRUE)
+
+
+setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array, cs=NULL, ..., verbose=FALSE) {
+  if (is.null(cs)) {
+    cs <- getInputDataSet(this);
+  }
+  cdf <- getCdf(cs);
+
+  verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
+  setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+  verbose && print(verbose, gc);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Reading all probe intensities");
+  cf <- getFile(cs, array);
+  yAll <- getData(cf, fields="intensities", ...)$intensities;
+  verbose && exit(verbose);
+
+  nbrOfPairs <- length(setsOfProbes);
+  res <- vector("list", nbrOfPairs);
+  names(res) <- names(setsOfProbes);
+
+  verbose && enter(verbose, "Extracting data pairs");
+  for (kk in seq_len(nbrOfPairs)) {
+    name <- names(setsOfProbes)[kk];
+    basepair <- unlist(strsplit(name, split=""));
+    idx <- setsOfProbes[[name]];
+    y <- matrix(yAll[idx], ncol=2);
+    colnames(y) <- c("A", "B");
+    res[[kk]] <- y;
+    rm(y);
+  }
+  verbose && exit(verbose);
+
+  res;
+}, protected=TRUE);
 
 
 ###########################################################################/**
@@ -133,8 +341,6 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
 
   # Get algorithm parameters
   params <- getParameters(this);
-  attachLocally(params);
-  rm(params);
 
   # Get (and create) the output path
   outputPath <- getPath(this);
@@ -154,7 +360,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   cdf <- getCdf(ds);
   nbrOfArrays <- nbrOfArrays(ds);
   verbose && enter(verbose, "Calibrating ", nbrOfArrays, " arrays");
-  verbose && enter(verbose, "Path: ", path);
+  verbose && enter(verbose, "Path: ", outputPath);
   dataFiles <- list();
   for (kk in seq_len(nbrOfArrays)) {
     df <- getFile(ds, kk);
@@ -208,7 +414,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         verbose && enter(verbose, "Fitting");
         y <- matrix(yAll[idx], ncol=2);
 #        callHooks(sprintf("%s.onData", hookName), df=df, y=y, basepair=basepair, ...);
-        fits[[kk]] <- fitGenotypeCone(y, alpha=alpha, q=q, Q=Q);
+        fits[[kk]] <- fitGenotypeCone(y, alpha=params$alpha, q=params$q, Q=params$Q);
         verbose && print(verbose, fits[[kk]], level=-5);
         verbose && exit(verbose);
 
@@ -273,24 +479,9 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Rescaling toward target average?
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      if (!is.null(targetAvg)) {
-        verbose && enter(verbose, "Rescaling toward target average");
-        verbose && printf(verbose, "Target average: %.2f\n", targetAvg);
-        for (kk in seq_len(nbrOfPairs)) {
-          name <- names(setsOfProbes)[kk];
-          verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
-
-          idx <- setsOfProbes[[name]];
-          yC <- matrix(yAll[idx], ncol=2);
-          yCS <- normalizeAverage(yC, targetAvg=targetAvg);
-          yAll[idx] <- yCS;
-
-          rm(idx, yC, yCS);
-
-          verbose && exit(verbose);
-        } # for (kk in ...)
-        verbose && exit(verbose);
-      } # if (!is.null(targetAvg))
+      if (!is.null(params$targetAvg)) {
+        yAll <- rescale(this, yAll=yAll, params=params, setsOfProbes=setsOfProbes, verbose=less(verbose));
+      }
 
 
 
@@ -349,6 +540,9 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
 ############################################################################
 # HISTORY:
 # 2007-09-05
+# o Now the rescaling can be done either on (yA,yB) separately or on 
+#   y=yA+yB.  If targetAvg has two values the former, otherwise the latter.
+# o Now AllelicCrosstalkCalibration recognizes argument 'subsetToAvg'.
 # o Now process() stores the crosstalk settings and estimated parameters
 #   to file. May be useful if one wants to go back and look at the details.
 #   One day we might get around to store this information in the CEL file
