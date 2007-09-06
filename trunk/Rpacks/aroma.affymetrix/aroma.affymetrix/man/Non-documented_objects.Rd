@@ -1361,6 +1361,13 @@
 \alias{pointsRawCNs.default}
 \alias{migrateTool}
 \alias{migrateTool.CopyNumberSegmentationModel}
+\alias{calculateChromosomeStatistics}
+\alias{calculateChromosomeStatistics.CopyNumberSegmentationModel}
+\alias{getDataPairs}
+\alias{getDataPairs.AllelicCrosstalkCalibration}
+\alias{getSubsetToAvg.AllelicCrosstalkCalibration}
+\alias{rescale}
+\alias{rescale.AllelicCrosstalkCalibration}
 
 \description{
   This page contains aliases for all "non-documented" objects that

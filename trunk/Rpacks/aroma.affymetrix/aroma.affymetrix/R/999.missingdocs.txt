@@ -598,3 +598,8 @@ digest2
   onFitAddGenotypeCalls onFitAddGenotypeCalls.default
   onFitAddGenotypeCalls.GladModel pointsRawCNs.default
 migrateTool migrateTool.CopyNumberSegmentationModel
+  calculateChromosomeStatistics
+  calculateChromosomeStatistics.CopyNumberSegmentationModel
+  getDataPairs getDataPairs.AllelicCrosstalkCalibration
+  getSubsetToAvg.AllelicCrosstalkCalibration rescale
+  rescale.AllelicCrosstalkCalibration
