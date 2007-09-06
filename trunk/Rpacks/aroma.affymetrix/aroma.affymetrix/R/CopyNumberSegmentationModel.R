@@ -1257,6 +1257,91 @@ ylim <- c(-1,1);
 })
 
 
+setMethodS3("calculateChromosomeStatistics", "CopyNumberSegmentationModel", function(this, arrays=NULL, chromosomes=getChromosomes(this), ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  allChromosomes <- getChromosomes(this);
+
+  # Argument 'arrays':
+  arrays <- indexOfArrays(this, arrays=arrays);
+
+  # Argument 'chromosomes':
+  if (is.null(chromosomes)) {
+    chromosomes <- allChromosomes;
+  } else {
+    unknown <- chromosomes[!(chromosomes %in% allChromosomes)];
+    if (length(unknown) > 0) {
+      throw("Argument 'chromosomes' contains unknown values: ", paste(unknown, collapse=", "));
+    }
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+
+  verbose && enter(verbose, "Estimating number of copies per chromosome");
+  nbrOfChromosomes <- length(chromosomes);
+  verbose && printf(verbose, "Chromosomes (%d): %s", nbrOfChromosomes, paste(chromosomes, collapse=", "));
+
+  refList <- getReferenceFiles(this, verbose=verbose);
+  verbose && cat(verbose, "Using references:");
+  verbose && print(verbose, refList);
+
+  res <- list();
+  arrayNames <- getNames(this)[arrays];
+  nbrOfArrays <- length(arrayNames);
+
+  for (aa in seq(length=nbrOfArrays)) {
+    array <- arrays[aa];
+    arrayName <- arrayNames[aa];
+
+    ceList <- getChipEffectFiles(this, array=array);
+
+    res[[arrayName]] <- list();
+    for (chr in chromosomes) {
+      verbose && enter(verbose, 
+                          sprintf("Array #%d ('%s') of %d on chromosome %s", 
+                                           aa, arrayName, nbrOfArrays, chr));
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Get (x, M, stddev, chiptype, unit) data from all chip types
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      data <- getRawCnData(this, ceList=ceList, refList=refList, chromosome=chr, ..., verbose=less(verbose));
+      M <- data[,"M"];
+      rm(data);
+
+      fit <- list(
+        mean = mean(M, na.rm=TRUE),
+        sd = sd(M, na.rm=TRUE),
+        median = median(M, na.rm=TRUE),
+        mad = mad(M, na.rm=TRUE),
+        quantiles = quantile(M, probs=seq(0,1,by=0.01), na.rm=TRUE),
+        nbrOfLoci = length(M),
+        nbrOfNAs = sum(is.na(M))
+      );
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Estimate
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Garbage collection
+      gc <- gc();
+      verbose && print(verbose, gc);
+
+      res[[arrayName]][[chr]] <- fit;
+      verbose && exit(verbose);
+    } # for (chr in ...)
+  } # for (aa in ...)
+  verbose && exit(verbose);
+
+  res;
+}, protected=TRUE)  # calculateChromosomeStatistics()
+
 
 ##############################################################################
 # HISTORY:
