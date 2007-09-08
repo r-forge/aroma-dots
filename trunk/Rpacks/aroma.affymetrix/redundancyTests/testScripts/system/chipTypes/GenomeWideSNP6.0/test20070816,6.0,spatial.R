@@ -28,4 +28,5 @@ print(cdf);
 ae <- ArrayExplorer(cs);
 setColorMaps(ae, c("sqrt,yellow", "log2,yellow"));
 print(ae);
-process(ae, verbose=log);
+if (interactive())
+  process(ae, verbose=log);

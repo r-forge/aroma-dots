@@ -88,8 +88,9 @@ for (chipType in names(plmList)) {
 ae <- ArrayExplorer(rsList);
 setColorMaps(ae, c("log2,log2neg,rainbow", "log2,log2pos,rainbow"));
 print(ae);
-process(ae, interleaved="auto", verbose=log);
 stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
+if (interactive())
+  process(ae, interleaved="auto", verbose=log);
 
 
 
