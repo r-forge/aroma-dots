@@ -1,18 +1,24 @@
 savehistory();
 library(aroma.affymetrix);
+source("../aroma.affymetrix/R/AffymetrixCelSet.R");
+
 
 path <- "testScripts/system/chipTypes";
 path <- Arguments$getReadablePath(path, mustExist=TRUE);
-paths <- sort(list.files(path=path, full.names=TRUE));
+paths <- list.files(path=path, full.names=TRUE);
 
 ..pathnames <- lapply(paths, FUN=list.files, pattern="[.]R$", full.names=TRUE);
 names(..pathnames) <- basename(paths);
+..pathnames <- ..pathnames[names(..pathnames)];
 
-.chipTypes <- c("Test3", "Mapping10K_Xba142", "Mapping50K_Hind240,Xba240", "HG-U133_Plus_2", "GenomeWideSNP6.0");
+..chipTypes <- c("Test3", "Mapping10K_Xba142", "Mapping50K_Hind240,Xba240", "HG-U133_Plus_2", "GenomeWideSNP6.0");
 
-pathname <- ..pathnames[[5]][6];
+pathname <- ..pathnames[[1]][1];
+#source(pathname, echo=TRUE);
+stop();
 
-..chipTypes <- ..chipTypes[-(1:3)];
+..chipTypes <- ..chipTypes[3];
+
 
 #..chipTypes <- c("GenomeWideSNP6.0");
 #..chipTypes <- c("Mapping10K_Xba142");
