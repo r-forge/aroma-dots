@@ -1,0 +1,286 @@
+###########################################################################/**
+# @RdocClass AvgPlm
+#
+# @title "The AvgPlm class"
+#
+# \description{
+#  @classhierarchy
+#
+#  This class represents a PLM where the probe intensities are averaged
+#  assuming identical probe affinities.  
+#  For instance, one may assume that replicated probes with identical 
+#  sequences have the same probe affinities, cf. the GenomeWideSNP\_6
+#  chip type.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Arguments passed to @see "ProbeLevelModel".}
+#   \item{tags}{A @character @vector of tags.}
+#   \item{flavor}{A @character string specifying what model fitting algorithm
+#     to be used.  This makes it possible to get identical estimates as other
+#     packages.}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# \section{Model}{
+#   For a single unit group, the averaging PLM of K probes is:
+#
+#    \deqn{y_{ik) = \theta_i + \varepsilon_{ik}}
+#
+#   where \eqn{\theta_i} are the chip effects for arrays \eqn{i=1,...,I}.
+#   The \eqn{\varepsilon_{ik}} are zero-mean noise with equal variance.
+# }
+#
+# \section{Different flavors of model fitting}{
+#   The above model can be fitted in two ways, either robustly or 
+#   non-robustly.
+#   Use argument \code{flavor="mean"} to fit the model non-robustly, i.e.
+#
+#    \deqn{\hat{\theta}_{i) = 1/K \sum_k y_{ik}}.
+#   
+#   Use argument \code{flavor="median"} to fit the model robustly, i.e.
+#
+#    \deqn{\hat{\theta}_{i) = median_k y_{ik}}.
+#
+#   Missing values are always excluded.
+# }
+#
+# @author
+#
+#*/###########################################################################
+setConstructorS3("AvgPlm", function(..., tags="*", flavor=c("median", "mean")) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'flavor':
+  flavor <- match.arg(flavor);
+
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+
+    asteriskTag <- "AVG";
+    # Add flavor tag?
+    if (flavor != "median")
+      asteriskTag <- paste(asteriskTag, flavor, sep=",");
+
+    # Update default tags
+    tags[tags == "*"] <- asteriskTag;
+
+    # Split by commas
+    tags <- paste(tags, collapse=",");
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
+
+  extend(ProbeLevelModel(..., tags=tags), "AvgPlm",
+    .flavor = flavor
+  )
+})
+
+
+setMethodS3("getAsteriskTag", "AvgPlm", function(this, ...) {
+  "AVG";
+})
+
+
+setMethodS3("getParameterSet", "AvgPlm", function(this, ...) {
+  params <- NextMethod("getParameterSet", this, ...);
+  params$flavor <- this$.flavor;
+  params;
+}, private=TRUE)
+
+
+
+setMethodS3("getProbeAffinityFile", "AvgPlm", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the probe affinities (and create files etc)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  paf <- NextMethod("getProbeAffinityFile", this, ...);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Update the encode and decode functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  setEncodeFunction(paf, function(groupData, ...) {
+    phi <- .subset2(groupData, "phi");
+    stdvs <- .subset2(groupData, "sdPhi");
+    outliers <- .subset2(groupData, "phiOutliers");
+
+    # Encode outliers as the sign of 'pixels'; -1 = TRUE, +1 = FALSE
+    pixels <- sign(0.5 - as.integer(outliers));
+
+    list(intensities=phi, stdvs=stdvs, pixels=pixels);
+  })
+
+  setEncodeFunction(paf, function(groupData, ...) {
+    list(
+      intensities = .subset2(groupData, "phi"),
+      stdvs = .subset2(groupData, "sdPhi"),
+      # Encode outliers as the sign of 'pixels'; -1 = TRUE, +1 = FALSE
+      pixels = ifelse(.subset2(groupData, "phiOutliers"), -1, +1)
+    );
+  })
+
+  setDecodeFunction(paf,  function(groupData, ...) {
+    intensities <- .subset2(groupData, "intensities");
+    stdvs <- .subset2(groupData, "stdvs");
+    pixels <- .subset2(groupData, "pixels");
+
+    # Outliers are encoded by the sign of 'pixels'.
+    outliers <- as.logical(1-sign(pixels));
+
+    list(
+      phi=intensities, 
+      sdPhi=stdvs, 
+      phiOutliers=outliers
+    );
+  })
+
+  paf;
+}, private=TRUE)
+  
+
+
+###########################################################################/**
+# @RdocMethod getFitFunction
+#
+# @title "Gets the low-level function that fits the PLM"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @function.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
+  # Shift signals?
+  shift <- this$shift;
+  if (is.null(shift))
+    shift <- 0;
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # avgModel()
+  # Author: Henrik Bengtsson, UC Berkeley. 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  avgPlmModel <- function(y, ...){
+    # Assert right dimensions of 'y'.
+
+    # If input data are dimensionless, return NAs.
+    if (is.null(dim(y))) {
+      nbrOfArrays <- nbrOfArrays(getDataSet(this));
+      return(list(theta=rep(NA, nbrOfArrays),
+                  sdTheta=rep(NA, nbrOfArrays),
+                  thetaOutliers=rep(NA, nbrOfArrays), 
+                  phi=c(), 
+                  sdPhi=c(), 
+                  phiOutliers=c()
+                 )
+            );
+    }
+
+    if (length(dim(y)) != 2) {
+      str(y);
+      stop("Argument 'y' must have two dimensions: ", 
+                                                paste(dim(y), collapse="x"));
+    }
+
+    # Add shift
+    y <- y + shift;
+
+    J <- ncol(y);  # Number of arrays
+    I <- nrow(y);  # Number of probes
+
+    # Fit model 
+    y <- t(y);
+    if (flavor == "median") {
+      theta <- rowMedians(y, na.rm=TRUE);
+      sdTheta <- rowMads(y, centers=theta, na.rm=TRUE);
+    } else if (flavor == "mean") {
+      theta <- rowMeans(y, na.rm=TRUE);
+      sdTheta <- rowMad(y, mean=theta, na.rm=TRUE);
+    }
+
+    # Should we store std deviations or std errors?!? /HB 2007-09-08
+#    sdTheta <- sdTheta/sqrt(I);
+
+    # Probe affinities are all identical (==ones)
+    phi <- rep(1, I);
+    sdPhi <- rep(1, I);  # Default, we not estimated (should we store NAs?!?)
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # A fit function must return: theta, sdTheta, thetaOutliers, 
+    # phi, sdPhi, phiOutliers.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    thetaOutliers <- rep(FALSE, J);
+    phiOutliers <- rep(FALSE, I);
+
+    # Return data on the intensity scale
+    list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
+         phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);
+  } # avgPlmModel()
+  attr(avgPlmModel, "name") <- "avgPlmModel";
+
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the flavor of fitting algorithm for the RMA PLM
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  flavor <- this$.flavor;
+  if (flavor == "median") {
+    fitFcn <- avgPlmModel;
+  } else if (flavor == "mean") {
+    fitFcn <- avgPlmModel;
+  } else {
+    throw("Cannot get fit function for AvgPlm. Unknown flavor: ", flavor);
+  }
+
+  # Test that it works and is available.
+  ok <- FALSE;
+  tryCatch({
+    fitFcn(matrix(1:6+0.1, ncol=3));
+    ok <- TRUE;
+  }, error = function(ex) {
+    print(ex);
+  })
+
+  if (!ok) {
+    throw("The fit function for requested AvgPlm flavor failed: ", flavor);
+  }
+
+  fitFcn;
+}, private=TRUE)
+
+
+setMethodS3("getCalculateResidualsFunction", "AvgPlm", function(static, ...) {
+  function(y, yhat) {
+    y - yhat;
+  }
+}, static=TRUE, protected=TRUE)
+
+
+
+############################################################################
+# HISTORY:
+# 2007-09-08
+# o Created from RmaPlm.R.
+############################################################################
