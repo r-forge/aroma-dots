@@ -105,8 +105,7 @@ setMethodS3("excludeChrXFromFit", "DChipQuantileNormalization", function(this, .
   cdf <- getCdf(ds);
   gi <- getGenomeInformation(cdf);
   units <- getUnitsOnChromosome(gi, 23);
-  cells <- getCellIndices(cdf, units=units);
-  cells <- unlist(cells, use.names=FALSE);
+  cells <- getCellIndices(cdf, units=units, useNames=FALSE, unlist=TRUE);
 
   # Add them to the list of cells to be excluded
   addExclCells(this, cells);
@@ -320,6 +319,9 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
 
 ############################################################################
 # HISTORY:
+# 2007-09-06
+# o Made excludeChrXFromFit() more memory efficient, because it's using
+#   the new unlist feature in getCellIndices() of AffymetrixCdfFile.
 # 2007-04-08
 # o Added argument 'robust' to the constructor.
 # 2007-03-28

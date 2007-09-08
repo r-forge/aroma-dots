@@ -249,7 +249,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   dirs <- c("aroma.affymetrix", chipType);
   indices <- loadCache(key=key, dirs=dirs);
   if (is.null(indices)) {
-    indices <- unlist(getCellIndices(cdf), use.names=FALSE);
+    indices <- getCellIndices(cdf, useNames=FALSE, unlist=TRUE);
   }
   saveCache(indices, key=key, dirs=dirs);
   
@@ -417,7 +417,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
     dirs <- c("aroma.affymetrix", chipType);
     pmi <- loadCache(key=key, dirs=dirs);
     if (is.null(pmi)) {
-      indices <- unlist(getCellIndices(cdf), use.names=FALSE);
+      indices <- getCellIndices(cdf, useNames=FALSE, unlist=TRUE);
       pmi <- indices[isPm(cdf)];
     }
     saveCache(pmi, key=key, dirs=dirs);

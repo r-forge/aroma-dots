@@ -515,7 +515,7 @@ setMethodS3("plotMvsPosition", "AffymetrixCelFile", function(this, reference, ch
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify the cell indices for these
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cells <- unlist(getCellIndices(this, units=units), use.names=FALSE);
+  cells <- getCellIndices(this, units=units, useNames=FALSE, unlist=TRUE);
   if (length(cells) == 0)
     throw("Could not identify cell indices for this request.");
 

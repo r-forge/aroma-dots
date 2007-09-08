@@ -401,7 +401,7 @@ setMethodS3("validate", "PlatformDesign", function(this, subset=1/1000, ..., ver
   verbose && cat(verbose, "Number of units: ", length(units));
 
   verbose && enter(verbose, "Validating cell indices");
-  cellsA <- unlist(getCellIndices(cdf, units=units), use.names=FALSE);
+  cellsA <- getCellIndices(cdf, units=units, useNames=FALSE, unlist=TRUE);
   subset <- map[cellsA];
   cellsO <- getCellIndices(this, subset=subset);
   stopifnot(identical(cellsA, cellsO));
