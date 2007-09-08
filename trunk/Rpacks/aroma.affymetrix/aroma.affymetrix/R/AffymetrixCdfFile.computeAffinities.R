@@ -132,8 +132,8 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
     throw("Unit '", unitName, "' not found in CDF: ", getPathname(this));
   unitInfo <- readUnits(this, units=unitIdx);
   x <- applyCdfGroups(unitInfo, cdfGetFields, "x");
-  y <- applyCdfGroups(unitInfo, cdfGetFields, "y");
   x <- unlist(x, use.names=FALSE);
+  y <- applyCdfGroups(unitInfo, cdfGetFields, "y");
   y <- unlist(y, use.names=FALSE);
 
   # Garbage collect
@@ -201,7 +201,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Get CDF cell indices for all units");
-  indices <- unlist(getCellIndices(this), use.names=FALSE);
+  indices <- getCellIndices(this, useNames=FALSE, unlist=TRUE);
   verbose && exit(verbose);
 
   # Garbage collect
@@ -314,6 +314,9 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 ############################################################################
 # HISTORY:
+# 2007-09-06
+# o Made computeAffinities() more memory efficient since it is using the
+#   new getCellIndices(cdf, useNames=FALSE, unlist=TRUE).
 # 2007-06-07
 # o BUG FIX: If an Affymetrix probe tab file is not found for the chip type,
 #   computeAffinitities() of AffymetrixCdfFile would throw "Error in 

@@ -154,12 +154,10 @@ setMethodS3("calculateParametersGsb", "AffymetrixCelSet", function(this, nbrOfPm
   }
 
   verbose && enter(verbose, "Extracting PM indices");
-  cells <- getCellIndices(cdf, verbose=less(verbose,2));
-  cells <- unlist(cells, use.names=FALSE);
+  cells <- getCellIndices(cdf, useNames=FALSE, unlist=TRUE, verbose=less(verbose,2));
   pmi <- cells[isPm(cdf, cache=FALSE)];
   rm(cells);
-#  pmi <- getCellIndices(cdf, stratifyBy="pm", verbose=less(verbose,2));
-#  pmi <- unlist(pmi, use.names=FALSE);
+#  pmi <- getCellIndices(cdf, stratifyBy="pm", useNames=FALSE, unlist=TRUE, verbose=less(verbose,2));
   pmi <- sort(pmi);
   verbose && exit(verbose);
 
@@ -502,6 +500,9 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="R
 
 ############################################################################
 # HISTORY:
+# 2007-09-06
+# o Made calculateParametersGsb() more memory efficient, because it's using
+#   the new unlist feature in getCellIndices() of AffymetrixCdfFile.
 # 2007-06-30
 # o Added .deprecated=TRUE to all methods.
 # 2007-03-26

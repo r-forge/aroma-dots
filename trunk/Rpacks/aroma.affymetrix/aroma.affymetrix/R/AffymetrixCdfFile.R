@@ -550,6 +550,10 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 #   \item{units}{The units of interest. If @NULL, all units are considered.}
 #   \item{...}{Additional arguments passed to 
 #      @see "affxparser::readCdfCellIndices".}
+#   \item{useNames}{If @TRUE, element names are returned, otherwise not.}
+#   \item{unlist}{If @TRUE, the unlisted result is returned. Using this
+#      argument is more memory efficient that calling @see "base::unlist"
+#      afterwards.}
 #   \item{force}{If @TRUE, cached values are ignored.}
 #   \item{cache}{If @TRUE, results are cached, if not too large.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
@@ -558,6 +562,12 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 # \value{
 #  Returns the @list structure returned by 
 #  @see "affxparser::readCdfCellIndices".
+# }
+#
+# \details{
+#  Note, that it is much more memory efficient to do
+#  \code{getCellIndices(cdf, useNames=FALSE, unlist=TRUE)}
+#  compare with \code{unlist(getCellIndices(cdf), use.names=FALSE)}.
 # }
 #
 # @author
@@ -570,7 +580,28 @@ setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=N
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., useNames=TRUE,unlist=FALSE, force=FALSE, cache=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  getCellIndicesChunk <- function(pathname, ..., verbose=FALSE) {
+    verbose && enter(verbose, "Querying CDF file");
+    cdfChunk <- readCdfCellIndices(pathname, ...);
+    verbose && exit(verbose);
+
+    # Garbage collect
+    gc <- gc();
+
+    verbose && enter(verbose, "Restructuring");
+    cdfChunk <- restruct(this, cdfChunk);  # Always call restruct() after a readCdfNnn()!
+    verbose && exit(verbose);
+
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    cdfChunk;
+  } # getCellIndicesChunk()
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -586,7 +617,8 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # Check for cached data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- list(method="getCellIndices", class=class(this)[1], 
-                           chipType=getChipType(this), units=units, ...);
+             chipType=getChipType(this), units=units, ...,
+             useNames=useNames, unlist=unlist);
   id <- digest2(key);
   res <- this$.cellIndices[[id]];
   if (!force && !is.null(res)) {
@@ -611,23 +643,20 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
 #  cdf <- readCdfCellIndices(this$.pathname, units=units, ..., verbose=verbose);
 
 
-  cdf <- lapplyInChunks(units, function(unitsChunk) {
-    verbose && enter(verbose, "Querying CDF file");
-    cdfChunk <- readCdfCellIndices(this$.pathname, units=unitsChunk, ..., verbose=verbose);
-    verbose && exit(verbose);
+  if (unlist) {
+    cdf <- lapplyInChunks(units, function(unitsChunk) {
+      cdfChunk <- getCellIndicesChunk(this$.pathname, units=unitsChunk, ..., verbose=verbose);
+      res <- vector("list", length(unitsChunk));
+      res[[1]] <- unlist(cdfChunk, use.names=useNames);
+      res;
+    }, chunkSize=100e3, useNames=useNames, verbose=verbose);
+    cdf <- unlist(cdf, use.names=useNames);
+  } else {  
+    cdf <- lapplyInChunks(units, function(unitsChunk) {
+      getCellIndicesChunk(this$.pathname, units=unitsChunk, ..., verbose=verbose);
+    }, chunkSize=100e3, useNames=useNames, verbose=verbose);
+  }
 
-    # Garbage collect
-    gc <- gc();
-
-    verbose && enter(verbose, "Restructuring");
-    cdfChunk <- restruct(this, cdfChunk);  # Always call restruct() after a readCdfNnn()!
-    verbose && exit(verbose);
-
-    gc <- gc();
-    verbose && print(verbose, gc);
-
-    cdfChunk;
-  }, chunkSize=100e3, verbose=verbose);
 
   verbose && exit(verbose);
 
@@ -909,8 +938,8 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
     verbose && cat(verbose, "Indices:");
     verbose && str(verbose, indices);
 
-    indices <- unlist(getCellIndices(this, verbose=less(verbose)), use.names=FALSE);
-
+    indices <- getCellIndices(this, useNames=FALSE, unlist=TRUE, 
+                                            verbose=less(verbose));
   
     other <- c();
     for (type in types) {
@@ -1268,6 +1297,10 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-09-06
+# o Now identifyCells() utilized the below to save memory.
+# o Added argument 'useNames=TRUE' and 'unlist=FALSE' to getCellIndicies()
+#   of AffymetrixCdfFile.  These can be use to save memory.
 # 2007-08-17
 # o Made getCellIndices() of AffymetrixCdfFile more memory effiencent by
 #   reading and transforming data in chunks.

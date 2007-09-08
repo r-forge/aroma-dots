@@ -1,17 +1,24 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.6.2 [2007-09-06]
+Version: 0.6.2 [2007-09-07]
 o Now setCdf() of AffymetrixCelSet throws an (informative) error message 
   whenever one tries to use an ASCII CDF file. This behavior can be 
   changed by setting rule 'aroma.affymetrix.settings$rules$allowAsciiCdfs'
-  in the options. The reason is that working with ASCII CDF files is 
-  extremely slow and memory inefficient. Use affxparser::convertCdf() 
+  to TRUE in the options. The reason is that working with ASCII CDF files
+  is extremely slow and memory inefficient. Use affxparser::convertCdf() 
   to convert a CDF into a binary format.
-o Updated AllelicCrosstalkCalibration to store the model parameter
-  estimates to file.
+o Updated AllelicCrosstalkCalibration internally.  It now also stores 
+  the model parameter estimates to file (using a plain save() file format).
+o MEMORY OPTIMIZATION: Instead of doing unlist(getCellIndices(cdf, ...), 
+  use.names=FALSE), we can now do getCellIndices(cdf, useNames=FALSE, 
+  unlist=TRUE), which is much more memory efficient, e.g. for the
+  GenomeWideSNP_6 chip the former uses 25x more memory, which means
+  that instead of using 1.4GB we can get away with 60MB.
 o CLEAN UP: All calibrateAllelicCrosstalk() methods are now removed.
   Use the AllelicCrosstalkCalibration class instead.
+o Package passes R CMD check on R v2.5.1 and R v2.6.0 devel on Windows.
+  All redundancy tests works on Linux.
 
 
 Version: 0.6.1 [2007-09-05]
