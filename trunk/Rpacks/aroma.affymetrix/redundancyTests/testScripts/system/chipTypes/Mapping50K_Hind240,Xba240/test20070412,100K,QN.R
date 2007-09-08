@@ -37,8 +37,3 @@ for (chipType in names(csList)) {
   stopifnot(identical(getNames(csQn), getNames(cs)));
   csQnList[[chipType]] <- csQn;
 }
-
-
-
-
-
