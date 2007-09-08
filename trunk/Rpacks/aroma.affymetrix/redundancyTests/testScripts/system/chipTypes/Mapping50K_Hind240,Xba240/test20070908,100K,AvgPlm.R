@@ -1,7 +1,5 @@
-library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+library(aroma.affymetrix);
+log <- Verbose(threshold=-4, timestamp=TRUE);
 
 dataSetName <- "Affymetrix_2004-100k_trios,testSet";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
@@ -54,11 +52,8 @@ csList <- csAccList;
 cesCnList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
-  plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, 
-                                              tags=c("+300", "*", "w"));
+  plm <- AvgCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, tags=c("+300", "*"));
   plm$shift <- +300;
-  plm$treatNAsAs <- "NA";
-  plm$treatNAsAs <- "weighted";
   print(plm);
   fit(plm, ram=1/2, verbose=log);
   ces <- getChipEffectSet(plm);
