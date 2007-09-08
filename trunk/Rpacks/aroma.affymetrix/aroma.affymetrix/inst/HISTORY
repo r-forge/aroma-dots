@@ -1,6 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.6.3 [2007-09-08xx]
+o ALPHA STUFF: Added trial versions of AvgPlm, AvgSnpPlm, and AvgCnPlm.
+  This is just a note of what's under development; don't rely on it.
+
+
 Version: 0.6.2 [2007-09-07]
 o Now setCdf() of AffymetrixCelSet throws an (informative) error message 
   whenever one tries to use an ASCII CDF file. This behavior can be 
