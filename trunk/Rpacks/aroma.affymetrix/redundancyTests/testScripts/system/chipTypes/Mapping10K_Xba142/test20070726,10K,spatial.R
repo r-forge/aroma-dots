@@ -28,8 +28,9 @@ stopifnot(identical(getNames(cs), sampleNames));
 ae <- ArrayExplorer(cs);
 setColorMaps(ae, "sqrt,yellow");
 print(ae);
-process(ae, verbose=log);
 stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
+if (interactive())
+  process(ae, verbose=log);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -42,5 +43,6 @@ rs <- calculateResidualSet(plm, verbose=log);
 ae <- ArrayExplorer(rs);
 setColorMaps(ae, c("log2,log2neg,rainbow", "log2,log2pos,rainbow"));
 print(ae);
-process(ae, interleaved="auto", verbose=log);
 stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
+if (interactive())
+  process(ae, interleaved="auto", verbose=log);
