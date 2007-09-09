@@ -15,7 +15,7 @@ names(..pathnames) <- basename(paths);
 
 pathname <- ..pathnames[[1]][1];
 #source(pathname, echo=TRUE);
-stop();
+#stop();
 
 ..chipTypes <- ..chipTypes[3];
 
