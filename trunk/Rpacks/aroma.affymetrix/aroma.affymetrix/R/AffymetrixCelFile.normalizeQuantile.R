@@ -74,8 +74,10 @@ setMethodS3("normalizeQuantile", "AffymetrixCelFile", function(this, path=file.p
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   filename <- basename(getPathname(this));
+  filename <- gsub("[.]cel$", ".CEL", filename);  # Only output upper case!
   pathname <- Arguments$getWritablePathname(filename, path=path, 
                                          mustNotExist=(!overwrite && !skip));
+  pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
 
   # Already normalized?
   if (isFile(pathname) && skip) {

@@ -277,7 +277,9 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
     verbose && print(verbose, df);
 
     filename <- basename(getPathname(df));
+    filename <- gsub("[.]cel$", ".CEL", filename);  # Only output upper case!
     pathname <- Arguments$getWritablePathname(filename, path=outputPath);
+    pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
   
     # Already normalized?
     if (isFile(pathname) && skip) {

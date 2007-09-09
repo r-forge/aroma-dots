@@ -153,7 +153,9 @@ setMethodS3("process", "OligoQuantileNormalization", function(this, ..., force=F
     verbose && print(verbose, df);
 
     filename <- basename(getPathname(df));
+    filename <- gsub("[.]cel$", ".CEL", filename);  # Only output upper case!
     pathname <- Arguments$getWritablePathname(filename, path=outputPath);
+    pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
   
     # Already normalized?
     if (isFile(pathname) && skip) {
