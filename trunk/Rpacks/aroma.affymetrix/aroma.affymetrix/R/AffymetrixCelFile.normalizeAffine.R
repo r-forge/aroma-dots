@@ -23,8 +23,10 @@ setMethodS3("transformAffine", "AffymetrixCelFile", function(this, outPath=file.
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   filename <- basename(getPathname(this));
+  filename <- gsub("[.]cel$", ".CEL", filename);  # Only output upper case!
   pathname <- Arguments$getWritablePathname(filename, path=outPath, 
                                          mustNotExist=(!overwrite && !skip));
+  pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
 
   # Already shifted?
   if (isFile(pathname) && skip) {

@@ -69,8 +69,10 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   filename <- basename(getPathname(this));
+  filename <- gsub("[.]cel$", ".CEL", filename);  # Only output upper case!
   pathname <- Arguments$getWritablePathname(filename, path=path,
                                          mustNotExist=(!overwrite && !skip));
+  pathname <- AffymetrixFile$renameToUpperCaseExt(pathname);
 
   # Already corrected?
   if (isFile(pathname) && skip) {
@@ -206,6 +208,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   filename <- basename(getPathname(this));
+  filename <- gsub("[.]cel$", ".CEL", filename);  # Only output upper case!
   pathname <- Arguments$getWritablePathname(filename, path=path,
                                             mustNotExist=(!overwrite && !skip));
   
@@ -390,6 +393,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   filename <- basename(getPathname(this));
+  filename <- gsub("[.]cel$", ".CEL", filename);  # Only output upper case!
   pathname <- Arguments$getWritablePathname(filename, path=path,
                                             mustNotExist=(!overwrite && !skip));
   

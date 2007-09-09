@@ -221,7 +221,7 @@ setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
     }
 
     # Should we store std deviations or std errors?!? /HB 2007-09-08
-#    sdTheta <- sdTheta/sqrt(I);
+    sdTheta <- sdTheta/sqrt(I);
 
     # Probe affinities are all identical (==ones)
     phi <- rep(1, I);
