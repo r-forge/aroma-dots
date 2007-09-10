@@ -30,7 +30,7 @@
 # \section{Model}{
 #   For a single unit group, the averaging PLM of K probes is:
 #
-#    \deqn{y_{ik) = \theta_i + \varepsilon_{ik}}
+#    \deqn{y_{ik} = \theta_i + \varepsilon_{ik}}
 #
 #   where \eqn{\theta_i} are the chip effects for arrays \eqn{i=1,...,I}.
 #   The \eqn{\varepsilon_{ik}} are zero-mean noise with equal variance.
@@ -41,11 +41,11 @@
 #   non-robustly.
 #   Use argument \code{flavor="mean"} to fit the model non-robustly, i.e.
 #
-#    \deqn{\hat{\theta}_{i) = 1/K \sum_k y_{ik}}.
+#    \deqn{\hat{\theta}_{i} = 1/K \sum_k y_{ik}}.
 #   
 #   Use argument \code{flavor="median"} to fit the model robustly, i.e.
 #
-#    \deqn{\hat{\theta}_{i) = median_k y_{ik}}.
+#    \deqn{\hat{\theta}_{i} = median_k y_{ik}}.
 #
 #   Missing values are always excluded.
 # }
@@ -217,7 +217,7 @@ setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
       sdTheta <- rowMads(y, centers=theta, na.rm=TRUE);
     } else if (flavor == "mean") {
       theta <- rowMeans(y, na.rm=TRUE);
-      sdTheta <- rowMad(y, mean=theta, na.rm=TRUE);
+      sdTheta <- rowSds(y, mean=theta, na.rm=TRUE);
     }
 
     # Should we store std deviations or std errors?!? /HB 2007-09-08

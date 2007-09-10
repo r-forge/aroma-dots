@@ -376,7 +376,12 @@ setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromoso
 })
 
 
-setMethodS3("readData", "GenomeInformation", abstract=TRUE);
+#setMethodS3("readData", "GenomeInformation", abstract=TRUE);
+
+setMethodS3("readData", "GenomeInformation", function(this, ...) {
+  readTableInternal(this, ...);
+}, protected=TRUE);
+
 
 setMethodS3("readTableInternal", "GenomeInformation", function(this, pathname, colClasses=NULL, ..., include=NULL, exclude=NULL, fill=TRUE, verbose=FALSE) {
   # Argument 'verbose':
@@ -605,6 +610,10 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-09-10
+# o Now readData() in GenomeInformation is no longer abstract, but tries
+#   naively to read data using readTableInternal() as is.  That will make
+#   it slightly easier to add new genome information files.
 # 2007-08-12
 # o BUG GIX: clearCache() would not clear the genome stats cache.
 # o BUG FIX: Subsetting with getData(..., chromosome=...) would return NAs

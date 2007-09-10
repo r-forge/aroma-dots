@@ -53,7 +53,6 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{getUnitsOnChromosome} \tab  -\cr
  \tab \code{nbrOfUnits} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.GenomeInformation]{plotDensity}} \tab Plots the density of SNPs for a given chromosome.\cr
- \tab \code{readData} \tab  -\cr
 }
 
 

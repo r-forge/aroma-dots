@@ -604,3 +604,5 @@ migrateTool migrateTool.CopyNumberSegmentationModel
   getSubsetToAvg.AllelicCrosstalkCalibration rescale
   rescale.AllelicCrosstalkCalibration
 plotBasepair plotBasepair.AllelicCrosstalkCalibration
+  getAsteriskTag.AvgPlm getCalculateResidualsFunction.AvgPlm
+  getParameterSet.AvgPlm getProbeAffinityFile.AvgPlm
