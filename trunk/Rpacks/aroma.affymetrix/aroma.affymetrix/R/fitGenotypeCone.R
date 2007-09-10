@@ -37,6 +37,7 @@
 #    \item{Winv}{The inverse of \code{W}.}
 #    \item{params}{The parameters used for the fit, i.e. 
 #       \code{alpha}, \code{q}, \code{Q}, and  those passed in \code{...}.}
+#    \item{dimData}{The dimension of the input data.}
 #   }
 # }
 #
@@ -99,7 +100,9 @@ setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 
     q=q,
     Q=Q,
     ...
-  )
+  );
+
+  fit$dimData <- dim(y);
 
   fit;
 }, private=TRUE) # fitGenotypeCone()
@@ -108,6 +111,8 @@ setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 
 
 ############################################################################
 # HISTORY:
+# 2007-09-08
+# o Added 'dimData' to the return structure.
 # 2007-06-12
 # o Commented the code for re-arranging fit$X (only if retX=TRUE).
 #   Code not really needed since backtransformGenotypeCone() is used.
