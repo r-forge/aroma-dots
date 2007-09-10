@@ -1,6 +1,8 @@
 library(aroma.affymetrix)
 
-log <- Verbose(threshold=-50, timestamp=TRUE);
+log <- Arguments$getVerbose(-50);
+timestampOn(log);
+.Machine$float.eps <- sqrt(.Machine$double.eps);
 
 dataSetName <- "HapMap6.0-testSet";
 chipType <- "GenomeWideSNP_6";
@@ -36,19 +38,3 @@ print(acc);
 csC <- process(acc, verbose=log);
 print(csC);
 stopifnot(identical(getNames(csC), getNames(cs)));
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Averaging probe-level model
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE);
-print(plm);
-fit(plm, verbose=log);
-
-
-ces <- getChipEffectSet(plm);
-theta <- extractMatrix(ces, units=1000:1002);
-
-fln <- FragmentLengthNormalization(ces);
-cesFln <- process(fln, verbose=log);
-print(cesFln);
