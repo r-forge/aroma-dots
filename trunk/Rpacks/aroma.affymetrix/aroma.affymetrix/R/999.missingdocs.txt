@@ -603,3 +603,4 @@ migrateTool migrateTool.CopyNumberSegmentationModel
   getDataPairs getDataPairs.AllelicCrosstalkCalibration
   getSubsetToAvg.AllelicCrosstalkCalibration rescale
   rescale.AllelicCrosstalkCalibration
+plotBasepair plotBasepair.AllelicCrosstalkCalibration
