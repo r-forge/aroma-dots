@@ -22,7 +22,7 @@
 \code{~~+--}\code{SnpPlm}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineCnPlm}, \link[aroma.affymetrix]{AffineSnpPlm}, \link[aroma.affymetrix]{CnPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
+\link[aroma.affymetrix]{AffineCnPlm}, \link[aroma.affymetrix]{AffineSnpPlm}, \link[aroma.affymetrix]{AvgCnPlm}, \link[aroma.affymetrix]{AvgSnpPlm}, \link[aroma.affymetrix]{CnPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
 
 public class \bold{SnpPlm}\cr
 extends \link[aroma.affymetrix]{Interface}\cr

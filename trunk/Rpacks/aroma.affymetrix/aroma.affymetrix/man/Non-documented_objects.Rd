@@ -1368,6 +1368,12 @@
 \alias{getSubsetToAvg.AllelicCrosstalkCalibration}
 \alias{rescale}
 \alias{rescale.AllelicCrosstalkCalibration}
+\alias{plotBasepair}
+\alias{plotBasepair.AllelicCrosstalkCalibration}
+\alias{getAsteriskTag.AvgPlm}
+\alias{getCalculateResidualsFunction.AvgPlm}
+\alias{getParameterSet.AvgPlm}
+\alias{getProbeAffinityFile.AvgPlm}
 
 \description{
   This page contains aliases for all "non-documented" objects that

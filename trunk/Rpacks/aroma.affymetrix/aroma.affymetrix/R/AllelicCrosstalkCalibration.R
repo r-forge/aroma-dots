@@ -759,7 +759,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
   if (what == "before") {
     fullname <- getFullName(cf);
     filename <- sprintf("%s,fit.RData", fullname);
-    pathname <- Arguments$getWritablePathname(filename, path=getPath(acc), ...);
+    pathname <- Arguments$getWritablePathname(filename, path=getPath(this), ...);
     if (!isFile(pathname)) {
       throw("File containing parameter estimates not found: ", pathname);
     }

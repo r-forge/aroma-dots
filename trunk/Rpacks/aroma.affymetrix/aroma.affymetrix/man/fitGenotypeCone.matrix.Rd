@@ -47,6 +47,7 @@
     \item{Winv}{The inverse of \code{W}.}
     \item{params}{The parameters used for the fit, i.e.
        \code{alpha}, \code{q}, \code{Q}, and  those passed in \code{...}.}
+    \item{dimData}{The dimension of the input data.}
    }
  }
 
