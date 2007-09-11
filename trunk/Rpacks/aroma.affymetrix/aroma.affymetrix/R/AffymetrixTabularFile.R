@@ -12,7 +12,10 @@ setConstructorS3("AffymetrixTabularFile", function(..., sep=c("\t", ","), quote=
 })
 
 
-setMethodS3("as.character", "AffymetrixTabularFile", function(this, ...) {
+setMethodS3("as.character", "AffymetrixTabularFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod("as.character", this, ...);
   class <- class(s);
   header <- getHeader(this);

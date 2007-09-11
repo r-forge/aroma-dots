@@ -13,6 +13,8 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "GenomeInformation".}
+#   \item{.ugp}{For internal use only.}
+#   \item{.verify}{For internal use only.}
 # }
 #
 # \section{Fields and Methods}{
@@ -36,7 +38,7 @@ setConstructorS3("UgpGenomeInformation", function(..., .ugp=NULL, .verify=TRUE) 
 setMethodS3("getAromaUgpFile", "UgpGenomeInformation", function(this, ..., force=FALSE) {
   ugp <- this$.ugp;
   if (force || is.null(ugp)) {
-    ugp <- AromaUgpFile(getPathame(this), ...);
+    ugp <- AromaUgpFile(getPathname(this), ...);
     this$.ugp <- ugp;
   }
   ugp;

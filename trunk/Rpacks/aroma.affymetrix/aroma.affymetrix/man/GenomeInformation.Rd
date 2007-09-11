@@ -3,6 +3,8 @@
 % 
 %  GenomeInformation.R
 % 
+% on Tue Sep 11 13:36:31 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -36,6 +38,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
+   \item{.verify}{For internal use only.}
  }
 
  \section{Fields and Methods}{

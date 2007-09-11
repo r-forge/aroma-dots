@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Tue Sep 11 13:36:33 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1374,6 +1376,32 @@
 \alias{getCalculateResidualsFunction.AvgPlm}
 \alias{getParameterSet.AvgPlm}
 \alias{getProbeAffinityFile.AvgPlm}
+\alias{AffymetrixCsvFile}
+\alias{AffymetrixNetAffxCsvFile}
+\alias{AffymetrixTabularFile}
+\alias{as.character.AffymetrixTabularFile}
+\alias{findByChipType.AffymetrixCsvFile}
+\alias{findByChipType.AffymetrixNetAffxCsvFile}
+\alias{findByChipType.AffymetrixTabularFile}
+\alias{findByChipType.UgpGenomeInformation}
+\alias{fromChipType.AffymetrixTabularFile}
+\alias{getAromaUgpFile}
+\alias{getAromaUgpFile.UgpGenomeInformation}
+\alias{getChromosomes.UgpGenomeInformation}
+\alias{getData.UgpGenomeInformation}
+\alias{getDataColumns.UgpGenomeInformation}
+\alias{getHeader.AffymetrixTabularFile}
+\alias{getReadArguments}
+\alias{getReadArguments.AffymetrixTabularFile}
+\alias{importFromAffymetrixNetAffxCsvFile}
+\alias{importFromAffymetrixNetAffxCsvFile.AromaUgpFile}
+\alias{readData.AffymetrixTabularFile}
+\alias{readData.UgpGenomeInformation}
+\alias{readDataUnitChromosomePosition}
+\alias{readDataUnitChromosomePosition.AffymetrixNetAffxCsvFile}
+\alias{readHeader.AffymetrixTabularFile}
+\alias{verify.AffymetrixTabularFile}
+\alias{verify.UgpGenomeInformation}
 
 \description{
   This page contains aliases for all "non-documented" objects that
