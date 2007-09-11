@@ -206,7 +206,7 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
   units <- as.integer(rownames(am));
   
   # Get the positions of all unit groups
-  x <- getPositions(gi, units=units);
+  x <- getPositions(gi, units=units, verbose=less(verbose));
   verbose && exit(verbose);
 
 

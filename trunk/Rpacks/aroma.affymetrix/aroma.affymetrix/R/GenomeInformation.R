@@ -19,12 +19,14 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("GenomeInformation", function(...) {
+setConstructorS3("GenomeInformation", function(..., .verify=TRUE) {
   this <- extend(AffymetrixFile(...), "GenomeInformation",
     "cached:.data"=NULL
   );
-  if (!is.null(getPathname(this)))
-    verify(this);
+  if (.verify) {
+    if (!is.null(getPathname(this)))
+      verify(this);
+  }
   this;
 })
 
@@ -239,7 +241,7 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 
   data <- this$.data;
   if (is.null(data) || force) {
-    verbose && enter(verbose, "Requiring genome information from file");
+    verbose && enter(verbose, "Retrieving genome information from file");
 
     # Read the unit names from the corresponding CDF file
     verbose && enter(verbose, "Reading unit names from CDF file");

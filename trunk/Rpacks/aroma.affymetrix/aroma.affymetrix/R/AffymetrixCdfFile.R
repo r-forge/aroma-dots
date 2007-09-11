@@ -1185,15 +1185,19 @@ setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c("dChip"), ..., force=FALSE) {
+setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c("UGP", "dChip"), ..., force=FALSE) {
   chipType <- getChipType(this, fullname=FALSE);
 
   gi <- this$.gi;
   if (is.null(gi) || force) {
     for (type in types) {
       tryCatch({
-        if (type == "dChip") {
+        if (type == "UGP") {
+          gi <- UgpGenomeInformation$fromChipType(chipType);
+          break;
+        } else if (type == "dChip") {
           gi <- DChipGenomeInformation$fromChipType(chipType);
+          break;
         }
       }, error = function(ex) {})
     }
@@ -1297,6 +1301,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-09-10
+# o Now getGenomeInformation() of AffymetrixCdfFile recognizes UGP files
+#   as well and before dChip genome information files.
 # 2007-09-06
 # o Now identifyCells() utilized the below to save memory.
 # o Added argument 'useNames=TRUE' and 'unlist=FALSE' to getCellIndicies()

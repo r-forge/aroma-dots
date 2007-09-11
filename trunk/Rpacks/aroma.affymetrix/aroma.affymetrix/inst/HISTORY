@@ -1,12 +1,16 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.6.3 [2007-09-08xx]
+Version: 0.6.3 [2007-09-11xx]
 o Now AllelicCrosstalkCalibration corrects also non-SNP PM cells by 
   substracting a global offset and rescaling towards target average.
   The global offset is calculated as the weighted average of all
   allelic offsets.
-o ALPHA STUFF: Added trial versions of AvgPlm, AvgSnpPlm, and AvgCnPlm.
+o Added importFromAffymetrixNetAffxCsvFile() to AromaUgpFile.
+o Added class AffymetrixNetAffxCsvFile for easier reading of Affymetrix
+  NetAffx CSV annotation files.
+o Added trial version of an UgpGenomeInformation class.
+o Added trial versions of AvgPlm, AvgSnpPlm, and AvgCnPlm.
   This is just a note of what's under development; don't rely on it.
 o BUG FIX: Now more effort is made to ensure that all CEL files are
   generated with an upper-case filename extension (*.CEL) and not (*.cel).

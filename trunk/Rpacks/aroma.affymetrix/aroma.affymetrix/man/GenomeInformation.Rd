@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\emph{\code{GenomeInformation}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCsvGenomeInformation}, \link[aroma.affymetrix]{DChipGenomeInformation}\cr
+\link[aroma.affymetrix]{AffymetrixCsvGenomeInformation}, \link[aroma.affymetrix]{DChipGenomeInformation}, \link[aroma.affymetrix]{UgpGenomeInformation}\cr
 
 public abstract static class \bold{GenomeInformation}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
@@ -32,7 +32,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
  }
 
- \usage{GenomeInformation(...)}
+ \usage{GenomeInformation(..., .verify=TRUE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
