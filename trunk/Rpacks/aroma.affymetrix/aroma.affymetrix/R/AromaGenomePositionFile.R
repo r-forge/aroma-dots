@@ -63,51 +63,53 @@ setMethodS3("getGenomeVersion", "AromaGenomePositionFile", function(this, ...) {
   tags;
 }, protected=TRUE)
 
-setMethodS3("create", "AromaGenomePositionFile", function(static, chipType, tags=NULL, nbrOfElements, path=NULL, ...) {
+setMethodS3("create", "AromaGenomePositionFile", function(static, chipType, tags=NULL, nbrOfElements, path=NULL, overwrite=FALSE, ...) {
   # Argument 'nbrOfElements':
   nbrOfElements <- Arguments$getInteger(nbrOfElements, range=c(0,100e6));
 
   # Argument 'path':
   path <- Arguments$getWritablePath(path);
 
-  # Number of bytes in file header (for now always an empty file header)
-  H <- as.integer(0);
-
-  J <- nbrOfElements;
-  C <- as.integer(1);
-  P <- as.integer(4);
-  
   # Generate pathname
   fullname <- paste(c(chipType, tags), collapse=",");
   filename <- sprintf("%s.%s", fullname, getFilenameExtension(static));
   pathname <- Arguments$getWritablePathname(filename, path=path);
 
-  # Open file
-  con <- file(pathname, open="wb");
-  on.exit(close(con));
-
-  # Write file header
-  writeBin(con=con, H, size=4, endian="little");
-  seek(con=con, where=H, origin="current", rw="w");
-
-  # Write data header
-  writeBin(con=con, J, size=4, endian="little");
-  writeBin(con=con, C, size=1, endian="little");
-  writeBin(con=con, P, size=1, endian="little");
-
-  # Write empty data
-  # Chromosome index: Write NAs
-  naValue <- as.integer(256^C-1);
-  value <- rep(naValue, J);
-  writeBin(con=con, value, size=C, endian="little");
+  if (overwrite || !isFile(pathname)) {
+    # Number of bytes in file header (for now always an empty file header)
+    H <- as.integer(0);
   
-  # Position: Write NAs
-  suppressWarnings({
-    # For P == 4, this will return NA, but that's ok.
-    naValue <- as.integer(256^P-1);
-  })
-  value <- rep(naValue, nbrOfElements);
-  writeBin(con=con, value, size=P, endian="little");
+    J <- nbrOfElements;
+    C <- as.integer(1);
+    P <- as.integer(4);
+    
+    # Open file
+    con <- file(pathname, open="wb");
+    on.exit(close(con));
+  
+    # Write file header
+    writeBin(con=con, H, size=4, endian="little");
+    seek(con=con, where=H, origin="current", rw="w");
+  
+    # Write data header
+    writeBin(con=con, J, size=4, endian="little");
+    writeBin(con=con, C, size=1, endian="little");
+    writeBin(con=con, P, size=1, endian="little");
+  
+    # Write empty data
+    # Chromosome index: Write NAs
+    naValue <- as.integer(256^C-1);
+    value <- rep(naValue, J);
+    writeBin(con=con, value, size=C, endian="little");
+    
+    # Position: Write NAs
+    suppressWarnings({
+      # For P == 4, this will return NA, but that's ok.
+      naValue <- as.integer(256^P-1);
+    })
+    value <- rep(naValue, nbrOfElements);
+    writeBin(con=con, value, size=P, endian="little");
+  }
 
   # Return
   newInstance(static, pathname);
