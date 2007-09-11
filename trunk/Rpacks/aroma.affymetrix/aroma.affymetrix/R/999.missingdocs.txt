@@ -606,3 +606,20 @@ migrateTool migrateTool.CopyNumberSegmentationModel
 plotBasepair plotBasepair.AllelicCrosstalkCalibration
   getAsteriskTag.AvgPlm getCalculateResidualsFunction.AvgPlm
   getParameterSet.AvgPlm getProbeAffinityFile.AvgPlm
+  AffymetrixCsvFile AffymetrixNetAffxCsvFile AffymetrixTabularFile
+  as.character.AffymetrixTabularFile findByChipType.AffymetrixCsvFile
+  findByChipType.AffymetrixNetAffxCsvFile
+  findByChipType.AffymetrixTabularFile
+  findByChipType.UgpGenomeInformation
+  fromChipType.AffymetrixTabularFile getAromaUgpFile
+  getAromaUgpFile.UgpGenomeInformation
+  getChromosomes.UgpGenomeInformation getData.UgpGenomeInformation
+  getDataColumns.UgpGenomeInformation getHeader.AffymetrixTabularFile
+  getReadArguments getReadArguments.AffymetrixTabularFile
+  importFromAffymetrixNetAffxCsvFile
+  importFromAffymetrixNetAffxCsvFile.AromaUgpFile
+  readData.AffymetrixTabularFile readData.UgpGenomeInformation
+  readDataUnitChromosomePosition
+  readDataUnitChromosomePosition.AffymetrixNetAffxCsvFile
+  readHeader.AffymetrixTabularFile verify.AffymetrixTabularFile
+  verify.UgpGenomeInformation

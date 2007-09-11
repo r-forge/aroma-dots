@@ -11,6 +11,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{.verify}{For internal use only.}
 # }
 #
 # \section{Fields and Methods}{
