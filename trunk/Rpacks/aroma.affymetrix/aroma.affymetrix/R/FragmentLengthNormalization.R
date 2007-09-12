@@ -282,8 +282,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!force && isDone(this)) {
     verbose && cat(verbose, "Already normalized");
-    verbose && exit(verbose);
+    verbose && enter(verbose, "Getting output data set");
     outputSet <- getOutputDataSet(this);
+    verbose && exit(verbose);
+    verbose && exit(verbose);
     return(invisible(outputSet));
   }
 
