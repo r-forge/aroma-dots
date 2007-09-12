@@ -1058,7 +1058,17 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, path=NULL, patter
   verbose && exit(verbose);
 
   # Create the file set object
+  if (inherits(static, "Class")) {
+    className <- getName(static);
+  } else {
+    className <- class(static)[1];
+  }
+  verbose && enter(verbose, "Allocating a new ", className, " instance");
+  verbose && cat(verbose, "Arguments:");
+  verbose && cat(verbose, "Number of files:", length(files));
+  verbose && str(verbose, list(...));
   set <- newInstance(static, files, ...);
+  verbose && exit(verbose);
 
   verbose && exit(verbose);
 

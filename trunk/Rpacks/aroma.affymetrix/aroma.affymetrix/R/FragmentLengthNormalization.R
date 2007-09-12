@@ -91,17 +91,49 @@ setMethodS3("getCdf", "FragmentLengthNormalization", function(this, ...) {
 })
 
 
-setMethodS3("getOutputDataSet", "FragmentLengthNormalization", function(this, ...) {
-  res <- NextMethod(generic="getOutputDataSet", object=this, ...);
+setMethodS3("getOutputDataSet", "FragmentLengthNormalization", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Getting input data set");
+  ces <- getInputDataSet(this);
+  verbose && cat(verbose, "Class: ", class(ces)[1]);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Getting output data set for ", class(this)[1]);
+
+  args <- list(generic="getOutputDataSet", object=this, ...);
+  if (inherits(ces, "CnChipEffectSet"))
+    args$combineAlleles <- ces$combineAlleles;
+  if (inherits(ces, "SnpChipEffectSet"))
+    args$mergeStrands <- ces$mergeStrands;
+
+  verbose && cat(verbose, "Calling NextMethod() with arguments:");
+  verbose && str(verbose, args);
+
+  args$verbose <- less(verbose);
+  res <- do.call("NextMethod", args);
 
   # Carry over parameters too.  AD HOC for now. /HB 2007-01-07
   if (inherits(res, "SnpChipEffectSet")) {
-    ces <- getInputDataSet(this);
+    verbose && enter(verbose, "Carrying down parameters for ", class(res)[1]);
+
     res$mergeStrands <- ces$mergeStrands;
     if (inherits(res, "CnChipEffectSet")) {
       res$combineAlleles <- ces$combineAlleles;
     }
+    verbose && exit(verbose);
   }
+
+  verbose && exit(verbose);
 
   res;
 })
@@ -283,7 +315,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   if (!force && isDone(this)) {
     verbose && cat(verbose, "Already normalized");
     verbose && enter(verbose, "Getting output data set");
-    outputSet <- getOutputDataSet(this);
+    outputSet <- getOutputDataSet(this, verbose=less(verbose));
     verbose && exit(verbose);
     verbose && exit(verbose);
     return(invisible(outputSet));
@@ -437,6 +469,11 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-09-12
+# o Now getOutputDataSet() of FragmentLengthNormalization set and pass down
+#   'mergeStrands' and 'combineAlleles' to ditto of the super class, if
+#   applicable.  This way we avoid having to infer those arguments from
+#   the contents of the files.
 # 2007-02-20
 # o Now FragmentLengthNormalization should handle cases with more than one
 #   chip effect per unit, e.g. when mergeStrands=FALSE.

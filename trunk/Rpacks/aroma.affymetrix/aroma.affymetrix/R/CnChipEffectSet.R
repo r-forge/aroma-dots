@@ -61,7 +61,7 @@ setMethodS3("setCombineAlleles", "CnChipEffectSet", function(this, status, ...) 
     return(FALSE);
 
   ce <- getFile(this, 1);
-  oldStatus <- ce$ombineAlleles;
+  oldStatus <- ce$combineAlleles;
 
   if (identical(status, "auto"))
     status <- inferParameters(this, ...)$combineAlleles;
@@ -148,6 +148,9 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
 
 ############################################################################
 # HISTORY:
+# 2007-09-12
+# o BUG FIX: A typo in setCombineAlleles() cause the function to always
+#   return NULL instead of the last value.
 # 2007-03-23
 # o Now inferParameters() are looking at the 'intensity' (==theta) field
 #   instead of 'stdvs'.  The reason for this is that 'stdvs' might be all

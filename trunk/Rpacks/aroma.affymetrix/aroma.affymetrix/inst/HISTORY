@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.6.3 [2007-09-11xx]
+Version: 0.6.3 [2007-09-12xx]
 o Now AllelicCrosstalkCalibration corrects also non-SNP PM cells by 
   substracting a global offset and rescaling towards target average.
   The global offset is calculated as the weighted average of all
@@ -9,6 +9,15 @@ o Now AllelicCrosstalkCalibration corrects also non-SNP PM cells by
 o Added trial versions the following classes: AffymetrixNetAffxCsvFile,
   AromaUflFile, AvgPlm, AvgSnpPlm, AvgCnPlm, UflSnpInformation, and
   UgpGenomeInformation.
+o SPEED UP: Now getCellMap() of ChipEffectFile caches (large) results 
+  to file.
+o SPEED UP: Now getOutputDataSet() of FragmentLengthNormalization set 
+  and pass down 'mergeStrands' and 'combineAlleles' to ditto of the 
+  super class, if applicable.  This way we avoid having to infer those
+  arguments from the contents of the files.  This gives an significant
+  speed up for large chip types.
+o ROBUSTNESS: Now isDone() of Transform throws an error if too many 
+  output files are found. Before it used to return FALSE.
 o WORKAROUND: If there is only one probe, then fit function of AvgPlm
   would return theta=y:s, and sdTheta=0:s.  However, when searching 
   for units to do, we test (sdTheta <= 0).  The workaround is to store 

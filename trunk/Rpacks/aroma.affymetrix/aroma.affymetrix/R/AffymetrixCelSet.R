@@ -79,6 +79,11 @@ setMethodS3("clearCache", "AffymetrixCelSet", function(this, ...) {
 setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   verbose && enter(verbose, "Cloning Affymetrix CEL set");
 
@@ -430,11 +435,13 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
 
   this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
 
+  verbose && enter(verbose, "Retrieved files: ", nbrOfFiles(res));
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Handle duplicates
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (onDuplicates %in% c("exclude", "error")) {
-    dups <- isDuplicated(this);
+    dups <- isDuplicated(this, verbose=less(verbose));
     ndups <- sum(dups);
     if (ndups > 0) {
       dupsStr <- paste(getNames(this)[dups], collapse=", ");
@@ -623,6 +630,8 @@ setMethodS3("as.AffymetrixCelSet", "default", function(object, ...) {
 #
 # \arguments{
 #  \item{...}{Not used.}
+#  \item{verbose}{If @TRUE, progress details are printed, otherwise not.
+#    May also be a @see "R.utils::Verbose" object.}
 # }
 #
 # \value{
@@ -653,12 +662,38 @@ setMethodS3("as.AffymetrixCelSet", "default", function(object, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("isDuplicated", "AffymetrixCelSet", function(this, ...) {
+setMethodS3("isDuplicated", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Scanning for duplicated data files");
+
+  verbose && enter(verbose, "Reading the timestamp of all files");
   # Get the CEL header timestamp for all files
   timestamps <- getTimestamps(this);
+  verbose && exit(verbose);
 
+  verbose && enter(verbose, "Identifying duplicated timestamps");
   dups <- duplicated(timestamps);
   names(dups) <- getNames(this);
+  verbose && exit(verbose);
+
+  if (verbose) {
+    if (any(dups)) {
+      cat(verbose, "Duplicated files:", paste(names(dups), collapse=", "));
+    } else {
+      cat(verbose, "Duplicated files: none.");
+    }
+  }
+
+  verbose && exit(verbose);
 
   dups;
 })
@@ -678,6 +713,11 @@ setMethodS3("getData", "AffymetrixCelSet", function(this, indices=NULL, fields=c
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   nbrOfArrays <- nbrOfArrays(this);
   verbose && enter(verbose, "Getting cell data for ", nbrOfArrays, " arrays.");
@@ -787,6 +827,11 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached data
