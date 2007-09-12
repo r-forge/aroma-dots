@@ -60,6 +60,11 @@ setMethodS3("verify", "AffymetrixTabularFile", function(this, ..., verbose=FALSE
 }, private=TRUE)
 
 
+setMethodS3("colnames", "AffymetrixTabularFile", function(this, ...) {
+  getHeader(this, ...)$columns;
+})
+
+
 setMethodS3("getHeader", "AffymetrixTabularFile", function(this, ..., force=FALSE) {
   header <- this$.header;
   if (force || is.null(header)) {
