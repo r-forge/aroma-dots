@@ -67,6 +67,17 @@ setMethodS3("fromChipType", "AromaUflFile", function(static, chipType, ...) {
 
 
 
+setMethodS3("readData", "AromaUflFile", function(this, ...) {
+  data <- NextMethod("readData", this, ...);
+  # Interpret zeros as NAs
+  if (ncol(data) > 0) {
+    nas <- (data[,1] == 0);
+    data[nas,1] <- NA;
+  }
+  data;
+})
+
+
 setMethodS3("range", "AromaUflFile", function(this, ...) {
   lapply(this, FUN=range, ...)[[1]];
 })
