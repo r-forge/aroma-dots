@@ -63,16 +63,6 @@ setMethodS3("fromCdf", "AromaUgpFile", function(static, cdf, ...) {
   fromChipType(static, getChipType(cdf));
 })
 
-setMethodS3("getCdf", "AromaUgpFile", function(this, ...) {
-  cdf <- this$.cdf;
-  if (is.null(cdf)) {
-    chipType <- getChipType(this);
-    cdf <- AffymetrixCdfFile$fromChipType(chipType);
-    this$.cdf <- cdf;
-  }
-  
-  cdf;
-})
 
 setMethodS3("createFromCdf", "AromaUgpFile", function(static, cdf, path=getPath(cdf), ...) {
   chipType <- getChipType(cdf);

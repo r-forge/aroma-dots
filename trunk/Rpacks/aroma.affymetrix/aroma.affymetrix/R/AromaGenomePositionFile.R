@@ -57,6 +57,17 @@ setMethodS3("getChipType", "AromaGenomePositionFile", function(this, ...) {
   getName(this, ...);
 })
 
+setMethodS3("getCdf", "AromaGenomePositionFile", function(this, ...) {
+  cdf <- this$.cdf;
+  if (is.null(cdf)) {
+    chipType <- getChipType(this);
+    cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    this$.cdf <- cdf;
+  }
+  
+  cdf;
+})
+
 setMethodS3("getGenomeVersion", "AromaGenomePositionFile", function(this, ...) {
   tags <- getTags(this, ...);
   tags <- grep("^hg", tags, value=TRUE);
@@ -313,6 +324,8 @@ setMethodS3("getElementsAt", "AromaGenomePositionFile", function(this, chromosom
 
 ############################################################################
 # HISTORY:
+# 2007-09-11
+# o Moved getCdf() from AromaUgpFile to AromaGenomePositionFile.
 # 2007-03-04
 # o Now readData() returns a data frame. 
 # o Added subset().
