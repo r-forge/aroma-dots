@@ -364,6 +364,7 @@ setMethodS3("getInputDataSet", "Transform", function(this, ...) {
 # \arguments{
 #   \item{...}{Not used.}
 #   \item{force}{If @TRUE, any in-memory cached results are ignored.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -376,19 +377,45 @@ setMethodS3("getInputDataSet", "Transform", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE) {
+setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Getting output data set for ", class(this)[1]);
+
   outputDataSet <- this$.outputDataSet;
 
   if (force || is.null(outputDataSet)) {
-    if (isDone(this)) {
+    verbose && enter(verbose, "Checking to see if data set is \"done\"");
+    isDone <- isDone(this, verbose=less(verbose));
+    verbose && exit(verbose);
+
+    if (isDone) {
+      verbose && enter(verbose, "Retrieving input data set");
       ds <- getInputDataSet(this);
+      verbose && exit(verbose);
+      verbose && enter(verbose, "Retrieving files for ", class(ds)[1], " output data set");
       clazz <- Class$forName(class(ds)[1]);
-      outputDataSet <- clazz$fromFiles(path=getPath(this), 
-                                                         checkChipType=FALSE);
+      outputDataSet <- clazz$fromFiles(path=getPath(this), ...,
+                             checkChipType=FALSE, verbose=less(verbose));
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Updating the CDF for the output data set");
       setCdf(outputDataSet, getCdf(ds));
+      verbose && exit(verbose);
+
       this$.outputDataSet <- outputDataSet;
     }
   }
+  verbose && exit(verbose);
 
   outputDataSet;
 })
@@ -414,6 +441,7 @@ setMethodS3("getOutputFiles", "Transform", function(this, ...) {
 #
 # \arguments{
 #   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -426,15 +454,44 @@ setMethodS3("getOutputFiles", "Transform", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("isDone", "Transform", function(this, ...) {
+setMethodS3("isDone", "Transform", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Checking if data set is \"done\"");
+
   pathnames <- getOutputFiles(this);
-  if (length(pathnames) == 0)
+  if (length(pathnames) == 0) {
+    verbose && cat(verbose, "NOT done. No output files found.");
     return(FALSE);
+  }
 
   ds <- getInputDataSet(this);  
-  if (length(pathnames) != nbrOfArrays(ds))
+
+  if (length(pathnames) < nbrOfArrays(ds)) {
+    verbose && cat(verbose, "NOT done. Too few output files: ", 
+                                   length(pathnames), " < ", nbrOfArrays(ds));
     return(FALSE);
-  
+  }
+
+  if (length(pathnames) > nbrOfArrays(ds)) {
+    throw("Too many output files found: ", 
+                                  length(pathnames), " > ", nbrOfArrays(ds));
+  }
+
+  verbose && cat(verbose, "Done. All output files are there: ", 
+                                                          length(pathnames));
+
+  verbose && exit(verbose);
+
   return(TRUE);
 })
 
@@ -473,6 +530,11 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-09-12
+# o Now getOutputDataSet() of Transform passes down '...'static
+#   fromFiles() of the AffymetrixCelSet class being setup.
+# o Now isDone() of Transform throws an error if too many output files are
+#   found.  Before it used to return FALSE.
 # 2007-09-05
 # o Added test against generating an output path that is the same as the
 #   path of the input data set.

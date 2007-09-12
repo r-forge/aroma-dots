@@ -500,11 +500,38 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
 
   verbose && enter(verbose, "Retrieving unit-to-cell map");
 
+  # Get the CDF
+  cdf <- getCdf(this);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  useFileCache <- (is.null(units) || (!is.list(units) && length(units) > 10000));
+  if (useFileCache) {
+    chipType <- getChipType(cdf);
+    # Look up chip-type and parameter specific but data set independent data
+    key <- list(method="getCellMap", class=class(this)[1], 
+                chipType=chipType, params=getParameters(this),
+                units=units);
+    dirs <- c("aroma.affymetrix", chipType);
+    if (!force) {
+      map <- loadCache(key, dirs=dirs);
+      if (!is.null(map)) {
+        verbose && cat(verbose, "Found (unit,group,cell) map cached on file");
+        verbose && exit(verbose);
+        return(map);
+      }
+    }
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Main
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Is 'units' already a CDF list?
   if (is.list(units)) {
     # No fancy validation for now.
     cells <- units;
-    cdf <- getCdf(this);
     units <- indexOf(cdf, names=names(units));
     if (any(is.na(units))) {
       throw("Argument 'units' is of unknown structure.");
@@ -534,7 +561,6 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
   verbose && cat(verbose, "Number of units: ", length(unitNames));
 
   if (is.null(units)) {
-    cdf <- getCdf(this);
     units <- seq(length=nbrOfUnits(cdf));
   }
 
@@ -563,6 +589,12 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
   verbose && exit(verbose);
 
   class(map) <- c("ChipEffectFileCellMap", class(map));
+
+  if (useFileCache) {
+    verbose && enter(verbose, "Saving to file cache");
+    saveCache(map, key=key, dirs=dirs);
+    verbose && exit(verbose);
+  }
 
   map;
 }, private=TRUE)
@@ -699,7 +731,7 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
   verbose && exit(verbose);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get flat (unit,group) to cell map
+  # Get flat (unit, group, cell) map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   map <- getCellMap(this, verbose=less(verbose));
   verbose && str(verbose, map);
@@ -767,6 +799,8 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2007-09-12
+# o Now getCellMap() of ChipEffectFile caches (large) results to file.
 # 2007-08-16
 # o Made findUnitsTodo() on ChipEffectFile much more memory efficient.
 #   Before it could consume 1-2GB for the GenomeWideSNP_6 chip, but now
