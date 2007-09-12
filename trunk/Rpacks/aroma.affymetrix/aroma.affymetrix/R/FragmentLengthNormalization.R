@@ -119,7 +119,7 @@ setMethodS3("getOutputDataSet", "FragmentLengthNormalization", function(this, ..
   verbose && cat(verbose, "Calling NextMethod() with arguments:");
   verbose && str(verbose, args);
 
-  args$verbose <- less(verbose);
+  args$verbose <- less(verbose, 10);
   res <- do.call("NextMethod", args);
 
   # Carry over parameters too.  AD HOC for now. /HB 2007-01-07
@@ -315,7 +315,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   if (!force && isDone(this)) {
     verbose && cat(verbose, "Already normalized");
     verbose && enter(verbose, "Getting output data set");
-    outputSet <- getOutputDataSet(this, verbose=less(verbose));
+    outputSet <- getOutputDataSet(this, verbose=less(verbose, 10));
     verbose && exit(verbose);
     verbose && exit(verbose);
     return(invisible(outputSet));
