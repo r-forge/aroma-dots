@@ -623,3 +623,29 @@ plotBasepair plotBasepair.AllelicCrosstalkCalibration
   readDataUnitChromosomePosition.AffymetrixNetAffxCsvFile
   readHeader.AffymetrixTabularFile verify.AffymetrixTabularFile
   verify.UgpGenomeInformation
+  [.AromaAnnotationFile [[.AromaAnnotationFile [<-.AromaAnnotationFile
+  AromaAnnotationFile AromaUflFile as.character.AromaAnnotationFile
+  colMeans.AromaAnnotationFile colMeans.default colMedians
+  colMedians.AromaAnnotationFile colnames.AffymetrixTabularFile
+  colStats colStats.AromaAnnotationFile colSums.AromaAnnotationFile
+  colSums.default create.AromaAnnotationFile createFromCdf.AromaUflFile
+  dim.AromaAnnotationFile findByChipType.AromaUflFile
+  findByChipType.UflSnpInformation fromChipType.AromaUflFile
+  fromChipType.UflSnpInformation getAromaUflFile
+  getAromaUflFile.UflSnpInformation getCdf.AromaGenomePositionFile
+  getCdf.AromaUflFile getChipType.AromaUflFile getColClasses
+  getColClasses.AromaAnnotationFile getData.UflSnpInformation
+  getDataColumns.UflSnpInformation getFields.UflSnpInformation
+  getFragmentStarts.UflSnpInformation
+  getFragmentStops.UflSnpInformation
+  importFromAffymetrixNetAffxCsvFile.AromaUflFile
+  lapply.AromaAnnotationFile nbrOfUnits.AromaUflFile
+  nbrOfUnits.UflSnpInformation ncol.AromaAnnotationFile
+  nrow.AromaAnnotationFile range.AromaUflFile
+  readData.AromaAnnotationFile readData.UflSnpInformation
+  readDataUnitFragmentLength
+  readDataUnitFragmentLength.AffymetrixNetAffxCsvFile
+  readHeader.AromaAnnotationFile subset.AromaAnnotationFile
+  summary.AromaAnnotationFile UflSnpInformation
+  updateData.AromaAnnotationFile updateDataColumn
+  updateDataColumn.AromaAnnotationFile verify.UflSnpInformation

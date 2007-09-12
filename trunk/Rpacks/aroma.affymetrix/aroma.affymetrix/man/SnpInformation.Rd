@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\emph{\code{SnpInformation}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{DChipSnpInformation}\cr
+\link[aroma.affymetrix]{DChipSnpInformation}, \link[aroma.affymetrix]{UflSnpInformation}\cr
 
 public abstract static class \bold{SnpInformation}\cr
 extends \link[aroma.affymetrix]{AffymetrixFile}\cr
