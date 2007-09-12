@@ -173,6 +173,10 @@ setMethodS3("getProbeAffinityFile", "AvgPlm", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
+  # Float precision
+#  .Machine$float.eps <- sqrt(.Machine$double.eps);
+  floatEps <- sqrt(.Machine$double.eps);
+
   # Shift signals?
   shift <- this$shift;
   if (is.null(shift))
@@ -210,14 +214,21 @@ setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
     J <- ncol(y);  # Number of arrays
     I <- nrow(y);  # Number of probes
 
-    # Fit model 
-    y <- t(y);
-    if (flavor == "median") {
-      theta <- rowMedians(y, na.rm=TRUE);
-      sdTheta <- rowMads(y, centers=theta, na.rm=TRUE);
-    } else if (flavor == "mean") {
-      theta <- rowMeans(y, na.rm=TRUE);
-      sdTheta <- rowSds(y, mean=theta, na.rm=TRUE);
+    # Fit model
+    if (J == 1) {
+      theta <- y;
+      # Hmm..., when searching for "units todo", we use
+      # (sdTheta <= 0).
+      sdTheta <- rep(0, I) + floatEps;
+    } else {
+      y <- t(y);
+      if (flavor == "median") {
+        theta <- rowMedians(y, na.rm=TRUE);
+        sdTheta <- rowMads(y, centers=theta, na.rm=TRUE);
+      } else if (flavor == "mean") {
+        theta <- rowMeans(y, na.rm=TRUE);
+        sdTheta <- rowSds(y, mean=theta, na.rm=TRUE);
+      }
     }
 
     # Should we store std deviations or std errors?!? /HB 2007-09-08
@@ -281,6 +292,11 @@ setMethodS3("getCalculateResidualsFunction", "AvgPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-12
+# o WORKAROUND: If there is only one probe, the fit function will return
+#   theta=y:s, and sdTheta=0:s.  However, when searching for units to do,
+#   we test (sdTheta <= 0).  The workaround is to store the smallest 
+#   float available instead of zero.
 # 2007-09-08
 # o Created from RmaPlm.R.
 ############################################################################

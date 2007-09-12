@@ -437,7 +437,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
 ###########################################################################/**
 # @RdocMethod getCellMap
 #
-# @title "Gets a (unit, group) to cell index map"
+# @title "Gets a (unit, group, cell) index map"
 #
 # \description{
 #  @get "title".
