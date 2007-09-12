@@ -19,10 +19,12 @@
   Identifies duplicated CEL files by comparing the timestamps in the CEL headers.
 }
 
-\usage{\method{isDuplicated}{AffymetrixCelSet}(this, ...)}
+\usage{\method{isDuplicated}{AffymetrixCelSet}(this, ..., verbose=FALSE)}
 
 \arguments{
  \item{...}{Not used.}
+ \item{verbose}{If \code{\link[base:logical]{TRUE}}, progress details are printed, otherwise not.
+   May also be a \code{\link[R.utils]{Verbose}} object.}
 }
 
 \value{

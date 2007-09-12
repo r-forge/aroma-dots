@@ -13,10 +13,10 @@
 \alias{getCellMap,ChipEffectFile-method}
 
 
-\title{Gets a (unit, group) to cell index map}
+\title{Gets a (unit, group, cell) index map}
 
 \description{
- Gets a (unit, group) to cell index map.
+ Gets a (unit, group, cell) index map.
 }
 
 \usage{\method{getCellMap}{ChipEffectFile}(this, units=NULL, force=FALSE, ..., verbose=FALSE)}

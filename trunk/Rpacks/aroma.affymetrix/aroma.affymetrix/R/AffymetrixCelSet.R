@@ -435,7 +435,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
 
   this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
 
-  verbose && enter(verbose, "Retrieved files: ", nbrOfFiles(res));
+  verbose && enter(verbose, "Retrieved files: ", nbrOfFiles(this));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Handle duplicates
