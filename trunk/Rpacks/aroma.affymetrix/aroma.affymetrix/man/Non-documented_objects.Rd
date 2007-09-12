@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Tue Sep 11 13:36:33 2007.
+% on Wed Sep 12 00:06:28 2007.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1402,6 +1402,59 @@
 \alias{readHeader.AffymetrixTabularFile}
 \alias{verify.AffymetrixTabularFile}
 \alias{verify.UgpGenomeInformation}
+\alias{[.AromaAnnotationFile}
+\alias{[[.AromaAnnotationFile}
+\alias{[<-.AromaAnnotationFile}
+\alias{AromaAnnotationFile}
+\alias{AromaUflFile}
+\alias{as.character.AromaAnnotationFile}
+\alias{colMeans.AromaAnnotationFile}
+\alias{colMeans.default}
+\alias{colMedians}
+\alias{colMedians.AromaAnnotationFile}
+\alias{colnames.AffymetrixTabularFile}
+\alias{colStats}
+\alias{colStats.AromaAnnotationFile}
+\alias{colSums.AromaAnnotationFile}
+\alias{colSums.default}
+\alias{create.AromaAnnotationFile}
+\alias{createFromCdf.AromaUflFile}
+\alias{dim.AromaAnnotationFile}
+\alias{findByChipType.AromaUflFile}
+\alias{findByChipType.UflSnpInformation}
+\alias{fromChipType.AromaUflFile}
+\alias{fromChipType.UflSnpInformation}
+\alias{getAromaUflFile}
+\alias{getAromaUflFile.UflSnpInformation}
+\alias{getCdf.AromaGenomePositionFile}
+\alias{getCdf.AromaUflFile}
+\alias{getChipType.AromaUflFile}
+\alias{getColClasses}
+\alias{getColClasses.AromaAnnotationFile}
+\alias{getData.UflSnpInformation}
+\alias{getDataColumns.UflSnpInformation}
+\alias{getFields.UflSnpInformation}
+\alias{getFragmentStarts.UflSnpInformation}
+\alias{getFragmentStops.UflSnpInformation}
+\alias{importFromAffymetrixNetAffxCsvFile.AromaUflFile}
+\alias{lapply.AromaAnnotationFile}
+\alias{nbrOfUnits.AromaUflFile}
+\alias{nbrOfUnits.UflSnpInformation}
+\alias{ncol.AromaAnnotationFile}
+\alias{nrow.AromaAnnotationFile}
+\alias{range.AromaUflFile}
+\alias{readData.AromaAnnotationFile}
+\alias{readData.UflSnpInformation}
+\alias{readDataUnitFragmentLength}
+\alias{readDataUnitFragmentLength.AffymetrixNetAffxCsvFile}
+\alias{readHeader.AromaAnnotationFile}
+\alias{subset.AromaAnnotationFile}
+\alias{summary.AromaAnnotationFile}
+\alias{UflSnpInformation}
+\alias{updateData.AromaAnnotationFile}
+\alias{updateDataColumn}
+\alias{updateDataColumn.AromaAnnotationFile}
+\alias{verify.UflSnpInformation}
 
 \description{
   This page contains aliases for all "non-documented" objects that

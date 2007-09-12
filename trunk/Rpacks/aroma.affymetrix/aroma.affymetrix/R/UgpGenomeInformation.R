@@ -87,7 +87,6 @@ setMethodS3("fromChipType", "UgpGenomeInformation", function(static, ..., verbos
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-
   ugp <- AromaUgpFile$fromChipType(...);
   pathname <- getPathname(ugp);
 
@@ -108,7 +107,7 @@ setMethodS3("verify", "UgpGenomeInformation", function(this, ...) {
   tryCatch({
     df <- readData(this, nrow=10);
   }, error = function(ex) {
-    throw("File format error of the dChip genome information file (", 
+    throw("File format error of the UGP genome information file (", 
                                  ex$message, "): ", getPathname(this));
   })
   invisible(TRUE);
@@ -123,7 +122,7 @@ setMethodS3("readData", "UgpGenomeInformation", function(this, nrow=NULL, ..., v
 
   if (is.null(nrow)) {
     verbose && cat(verbose, "Reading all ", nbrOfUnits(ugp), " units");
-    res <- ugp[];
+    res <- ugp[,,drop=FALSE];
   } else {
     units <- 1:nrow;
     verbose && cat(verbose, "Reading ", length(units), " units");
@@ -141,7 +140,7 @@ setMethodS3("getDataColumns", "UgpGenomeInformation", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getData", "UgpGenomeInformation", function(this, units=NULL, fields=c("chromosome", "physicalPosition"), orderBy=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getData", "UgpGenomeInformation", function(this, units=NULL, fields=getDataColumns(this), orderBy=NULL, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -158,7 +157,7 @@ setMethodS3("getData", "UgpGenomeInformation", function(this, units=NULL, fields
     }
   
     verbose && enter(verbose, "Reading genome information data");
-    data <- ugp[];
+    data <- ugp[,,drop=FALSE];
     colnames(data) <- getDataColumns(this);
     verbose && str(verbose, data);
     verbose && exit(verbose);

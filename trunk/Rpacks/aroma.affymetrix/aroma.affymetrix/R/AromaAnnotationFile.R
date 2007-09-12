@@ -415,7 +415,7 @@ setMethodS3("updateData", "AromaAnnotationFile", function(this, rows=NULL, colum
     }
   } else if (is.list(values)) {
     if (length(values) != nbrOfColumns) {
-      throw("Number of elements in list 'values' does not match the number of specified columns: ", length(values), " != ", nbrOfColumns);l
+      throw("Number of elements in list 'values' does not match the number of specified columns: ", length(values), " != ", nbrOfColumns);
     }
   }
 
@@ -660,9 +660,9 @@ setMethodS3("subset", "AromaAnnotationFile", function(x, ...) {
 })
 
 
-setMethodS3("summary", "AromaAnnotationFile", function(x, ...) {
+setMethodS3("summary", "AromaAnnotationFile", function(object, ...) {
   # To please R CMD check
-  this <- x;
+  this <- object;
 
   nbrOfColumns <- ncol(this);
 

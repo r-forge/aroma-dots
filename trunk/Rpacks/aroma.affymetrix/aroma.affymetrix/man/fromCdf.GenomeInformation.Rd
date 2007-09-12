@@ -3,8 +3,6 @@
 % 
 %  GenomeInformation.R
 % 
-% on Tue Sep 11 13:36:31 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
