@@ -1455,6 +1455,7 @@
 \alias{updateDataColumn}
 \alias{updateDataColumn.AromaAnnotationFile}
 \alias{verify.UflSnpInformation}
+\alias{readData.AromaUflFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -649,3 +649,4 @@ plotBasepair plotBasepair.AllelicCrosstalkCalibration
   summary.AromaAnnotationFile UflSnpInformation
   updateData.AromaAnnotationFile updateDataColumn
   updateDataColumn.AromaAnnotationFile verify.UflSnpInformation
+readData.AromaUflFile
