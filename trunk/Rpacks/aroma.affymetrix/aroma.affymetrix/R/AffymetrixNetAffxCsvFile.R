@@ -12,7 +12,7 @@ setMethodS3("findByChipType", "AffymetrixNetAffxCsvFile", function(static, chipT
 
 
 
-setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probeSetID$"="character", "^(physicalPosition|chromosomeStart)$"="character"), con=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probeSetID$"="character", "^chromosome$"="character", "^(physicalPosition|chromosomeStart)$"="character"), con=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -26,9 +26,11 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
   verbose && enter(verbose, "Reading (unitName, fragmentLength) from file");
 
   data <- readData(this, colClassPatterns=colClassPatterns, camelCaseNames=TRUE, ..., verbose=less(verbose));
-
   # Convert chromosome strings to integers
   cc <- grep("^chr", colnames(data))[1];
+  if (length(cc) == 0 || is.na(cc)) {
+    throw("Failed to locate chromosome column.");
+  }
   map <- c(X=23, Y=24, Z=25);
   for (kk in seq(along=map)) {
     data[[cc]] <- gsub(names(map)[kk], map[kk], data[[cc]]);
@@ -36,13 +38,17 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
   data[[cc]] <- as.integer(data[[cc]]);
   gc <- gc();
 
+
   # Convert positions to integers
   cc <- grep("(p|P)os", colnames(data));
   if (length(cc) == 0)
     cc <- grep("(s|S)tart", colnames(data));
+  if (length(cc) == 0 || is.na(cc))
+    throw("Failed to locate position column.");
   data[[cc]] <- as.integer(data[[cc]]);
   gc <- gc();
 
+  attr(data, "importNames") <- colnames(data);
   colnames(data) <- c("unitName", "chromosome", "position");
   attr(data, "header") <- NULL;
 

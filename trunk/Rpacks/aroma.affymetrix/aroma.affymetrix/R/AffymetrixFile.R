@@ -80,6 +80,10 @@ setConstructorS3("AffymetrixFile", function(filename=NULL, path=NULL, mustExist=
 }, abstract=TRUE)
 
 
+setMethodS3("setAttributesByTags", "AffymetrixFile", function(this, ...) {
+  # Does nothing.
+}, protected=TRUE)
+
 setMethodS3("clone", "AffymetrixFile", function(this, clear=TRUE, ...) {
   object <- NextMethod("clone", this, ...);
   if (clear)
@@ -707,6 +711,8 @@ setMethodS3("renameToUpperCaseExt", "AffymetrixFile", function(static, pathname,
 
 ############################################################################
 # HISTORY:
+# 2007-09-13
+# o Added missing setAttributesByTags() to AffymetrixFile.
 # 2007-08-09
 # o Added static renameToUpperCaseExt().
 # 2007-03-20
