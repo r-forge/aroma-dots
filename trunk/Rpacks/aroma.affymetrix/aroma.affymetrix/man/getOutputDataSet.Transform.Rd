@@ -19,11 +19,12 @@
  Gets the transformed data set, if processed.
 }
 
-\usage{\method{getOutputDataSet}{Transform}(this, ..., force=FALSE)}
+\usage{\method{getOutputDataSet}{Transform}(this, ..., force=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
   \item{force}{If \code{\link[base:logical]{TRUE}}, any in-memory cached results are ignored.}
+  \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

@@ -1,5 +1,5 @@
-setConstructorS3("AromaAnnotationFile", function(...) {
-  this <- extend(AffymetrixFile(...), "AromaAnnotationFile");
+setConstructorS3("AromaTabularBinaryFile", function(...) {
+  this <- extend(AffymetrixFile(...), "AromaTabularBinaryFile");
 
   # Parse attributes (all subclasses must call this in the constructor).
   if (!is.null(this$.pathname))
@@ -8,7 +8,7 @@ setConstructorS3("AromaAnnotationFile", function(...) {
   this;
 })
 
-setMethodS3("as.character", "AromaAnnotationFile", function(x, ...) {
+setMethodS3("as.character", "AromaTabularBinaryFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
@@ -16,16 +16,19 @@ setMethodS3("as.character", "AromaAnnotationFile", function(x, ...) {
   s <- c(s, sprintf("Dimensions: %dx%d", nrow(this), ncol(this)));
   s <- c(s, sprintf("Column classes: %s", 
                          paste(getColClasses(this), collapse=", ")));
+  s <- c(s, sprintf("Number of bytes per column: %s", 
+                         paste(getBytesPerColumn(this), collapse=", ")));
   class(s) <- "GenericSummary";
   s;
 })
 
 
-setMethodS3("readHeader", "AromaAnnotationFile", function(this, con=NULL, ...) {
+
+setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ..., force=FALSE) {
   if (is.null(con)) {
     # Look for cached results
     hdr <- this$.hdr;
-    if (!is.null(hdr))
+    if (!force && !is.null(hdr))
       return(hdr);
   }
 
@@ -35,16 +38,22 @@ setMethodS3("readHeader", "AromaAnnotationFile", function(this, con=NULL, ...) {
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   readBytes <- function(con, n=1, ...) {
-    readBin(con=con, what=integer(), size=1, n=n, signed=FALSE);
+    readBin(con=con, what=integer(), size=1, n=n, signed=FALSE, endian="little");
   }
 
   readShorts <- function(con, n=1, ...) {
-    readBin(con=con, what=integer(), size=2, n=n, signed=FALSE);
+    readBin(con=con, what=integer(), size=2, n=n, signed=FALSE, endian="little");
   }
 
   readInts <- function(con, n=1, ...) {
-    readBin(con=con, what=integer(), size=4, n=n, signed=FALSE);
+    readBin(con=con, what=integer(), size=4, n=n, signed=FALSE, endian="little");
   }
+
+  readString <- function(con, ...) {
+    nbrOfBytes <- readInts(con);
+    nbrOfBytes <- Arguments$getInteger(nbrOfBytes, range=c(0,2^20));
+    readChar(con=con, nchar=nbrOfBytes);
+  }	
 
   readDataHeader <- function(con, ...) {
     # Number of elements (rows)
@@ -77,6 +86,12 @@ setMethodS3("readHeader", "AromaAnnotationFile", function(this, con=NULL, ...) {
     nbrOfBytes <- nbrOfRows*sizes;
     dataOffsets <- c(0, cumsum(nbrOfBytes[-length(nbrOfBytes)]));
 
+    dataOffset <- seek(con=con, rw="r");
+
+    # Offset to the footer, which follows immediately after the data
+    # section.
+    footerOffset <- dataOffset + dataOffsets[nbrOfColumns] + 
+                                                 nbrOfBytes[nbrOfColumns];
     list(
       nbrOfRows=nbrOfRows, 
       nbrOfColumns=nbrOfColumns, 
@@ -85,7 +100,8 @@ setMethodS3("readHeader", "AromaAnnotationFile", function(this, con=NULL, ...) {
       signeds=signeds,
       nbrOfBytes=nbrOfBytes,
       dataOffsets=dataOffsets,
-      dataOffset=seek(con=con, rw="r")
+      dataOffset=dataOffset,
+      footerOffset=footerOffset
     );
   } # readDataHeader()
 
@@ -111,7 +127,7 @@ setMethodS3("readHeader", "AromaAnnotationFile", function(this, con=NULL, ...) {
   }
 
   # File version
-  version <- readBin(con=con, what=integer(), size=4, signed=FALSE);
+  version <- readBin(con=con, what=integer(), size=4, signed=FALSE, endian="little");
   if (version < 0) {
     throw("File format error. Negative file version: ", version);
   }
@@ -120,12 +136,13 @@ setMethodS3("readHeader", "AromaAnnotationFile", function(this, con=NULL, ...) {
   }
 
   if (version >= 1 && version <= 1) {
+    comment <- readString(con=con);
     dataHeader <- readDataHeader(con=con);
   } else {
     throw("Unknown file format version: ", version);
   }
 
-  hdr <- list(dataHeader=dataHeader);
+  hdr <- list(comment=comment, dataHeader=dataHeader);
 
   # Cache result
   this$.hdr <- hdr;
@@ -134,8 +151,43 @@ setMethodS3("readHeader", "AromaAnnotationFile", function(this, con=NULL, ...) {
 }, protected=TRUE)
 
 
+setMethodS3("readFooter", "AromaTabularBinaryFile", function(this, con=NULL, .hdr=NULL, ...) {
+  readInts <- function(con, n=1, ...) {
+    readBin(con=con, what=integer(), size=4, n=n, signed=FALSE, endian="little");
+  }
 
-setMethodS3("readData", "AromaAnnotationFile", function(this, rows=NULL, columns=NULL, ..., verbose=FALSE) {
+  if (is.null(con)) {
+    # Look for cached results
+    ftr <- this$.ftr;
+    if (!is.null(ftr))
+      return(ftr);
+  }
+
+  # Open file?
+  if (is.null(con)) {
+    pathname <- getPathname(this);
+    con <- file(pathname, open="rb");
+    on.exit(close(con));
+  }
+
+  hdr <- readHeader(this, con=con, ...);
+
+  # Move to the footer
+  seek(con=con, where=hdr$footerOffset, origin="start", rw="r");
+  nbrOfBytes <- readInts(con=con, size=4);
+
+  raw <- readBin(con=con, what="raw", n=nbrOfBytes);
+
+  res <- list(
+    nbrOfBytes=nbrOfBytes,
+    raw=raw
+  );
+
+  res;
+})
+
+
+setMethodS3("readData", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, ..., verbose=FALSE) {
   # Open file
   pathname <- getPathname(this);
   con <- file(pathname, open="rb");
@@ -246,7 +298,7 @@ setMethodS3("readData", "AromaAnnotationFile", function(this, rows=NULL, columns
 
 
 
-setMethodS3("updateDataColumn", "AromaAnnotationFile", function(this, rows=NULL, column, values, .con=NULL, .hdr=NULL, .validateArgs=TRUE, ..., verbose=FALSE) {
+setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NULL, column, values, .con=NULL, .hdr=NULL, .validateArgs=TRUE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -323,9 +375,38 @@ setMethodS3("updateDataColumn", "AromaAnnotationFile", function(this, rows=NULL,
   values <- values[o];
   rm(o);
 
+  type <- hdr$types[column];
+  size <- hdr$sizes[column];
+  signed <- hdr$signeds[column];
+
+  # Censor integer data
+  if (type == "integer") {
+    # FYI: intNA <- as.integer(2^31);
+    if (signed) {
+      range <- c(1-2^(8*size-1), 2^(8*size-1));
+    } else {
+      range <- c(0, 2^(8*size)-1);
+    }
+
+    censored <- FALSE;
+    idxs <- which(values < range[1]);
+    if (length(idxs) > 0) {
+      values[idxs] <- range[1];
+      censored <- TRUE;
+    }
+    idxs <- which(values > range[2]);
+    if (length(idxs) > 0) {
+      values[idxs] <- range[2];
+      censored <- TRUE;
+    }
+
+    if (censored) {
+      warning(sprintf("Values to be assigned were out of range [%.0f,%.0f] and therefore censored to fit the range.", range[1], range[2]));
+    }
+  }
+
   # Coerce data
   # Data type information
-  type <- hdr$types[column];
   storage.mode(values) <- type;
 
   verbose && cat(verbose, "Rows and values:");
@@ -343,7 +424,6 @@ setMethodS3("updateDataColumn", "AromaAnnotationFile", function(this, rows=NULL,
   nbrOfRows <- rows[length(rows)];
 
   # Calculate the offset of the first element to read/write
-  size <- hdr$sizes[column];
   dataOffset <- hdr$dataOffset + hdr$dataOffsets[column] + (firstRow-1)*size;
 
   # 1) Read existing data
@@ -374,7 +454,7 @@ setMethodS3("updateDataColumn", "AromaAnnotationFile", function(this, rows=NULL,
 
 
 
-setMethodS3("updateData", "AromaAnnotationFile", function(this, rows=NULL, columns=NULL, values, ..., verbose=FALSE) {
+setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, values, ..., verbose=FALSE) {
   # Open file
   pathname <- getPathname(this);
   con <- file(pathname, open="r+b");
@@ -461,7 +541,7 @@ setMethodS3("updateData", "AromaAnnotationFile", function(this, rows=NULL, colum
 
 
 
-setMethodS3("create", "AromaAnnotationFile", function(static, filename, path=NULL, nbrOfRows, types, sizes, signeds=FALSE, overwrite=FALSE, skip=FALSE, ...) {
+setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, ..., verbose=FALSE) {
   knownDataTypes <- c("integer"=1, "double"=2);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -490,6 +570,11 @@ setMethodS3("create", "AromaAnnotationFile", function(static, filename, path=NUL
   writeDoubles <- function(con, values, ...) {
     values <- as.double(values);
     writeBin(con=con, values, size=8, endian="little");
+  }
+
+  writeString <- function(con, value, ...) {
+    writeInts(con, nchar(value));  # Note, it is NOT an zero-terminated string
+    writeChar(con=con, value, nchars=nchar(value), eos=NULL);
   }
 
 
@@ -533,17 +618,39 @@ setMethodS3("create", "AromaAnnotationFile", function(static, filename, path=NUL
   ok <- (sizes %in% c(1,2,4,8));
   if (any(!ok)) {
     cc <- which(!ok);
-    throw("Cannot create file. Detect one or more columns with invalid byte sizes, i.e. not in {1,2,4,8}: ", paste(paste(cc, sizes[cc], sep=":"), collapse=", "));
+    throw("Cannot allocate/create file. Detect one or more columns with invalid byte sizes, i.e. not in {1,2,4,8}: ", paste(paste(cc, sizes[cc], sep=":"), collapse=", "));
   }
   sizes <- rep(sizes, length.out=nbrOfColumns);
+
+  # Check (types, sizes)
+  if (any(types == "integer" & sizes > 4)) {
+    throw("Integers can only be stored as 1, 2 or 4 bytes, not 8.");
+  }
+  if (any(types == "integer" & sizes == 4 & !signeds)) {
+    throw("Integers stored in 4 bytes must be signed.");
+  }
 
   # Argument 'signeds':
   signeds <- Arguments$getLogicals(signeds);
   signeds <- rep(signeds, length.out=nbrOfColumns);
 
+  # Argument 'comment':
+  if (is.null(comment)) {
+    pkg <- "aroma.affymetrix";
+    ver <- packageDescription(pkg)$Version;
+    comment <- sprintf("Created by the %s (v%s) package.", pkg, ver);
+  }
+
   # Argument 'path':
   path <- Arguments$getWritablePath(path);
 
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -551,6 +658,7 @@ setMethodS3("create", "AromaAnnotationFile", function(static, filename, path=NUL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   pathname <- Arguments$getWritablePathname(filename, path=path, 
                                          mustNotExist=(!overwrite && !skip));
+  verbose && cat(verbose, "Pathname: ", pathname);
 
   if (isFile(pathname)) {
     if (skip) {
@@ -558,10 +666,15 @@ setMethodS3("create", "AromaAnnotationFile", function(static, filename, path=NUL
       # TODO: We might retrieve an incompatible file.  Validate!
       return(res);
     } else if (!overwrite) {
-      throw("Cannot not create file.  File already exists: ", pathname);
+      throw("Cannot allocate/create file.  File already exists: ", pathname);
     }
   }
 
+  verbose && cat(verbose, "nbrOfRows: ", nbrOfRows);
+  verbose && cat(verbose, "nbrOfColumns: ", nbrOfColumns);
+  verbose && cat(verbose, "types: ", paste(types, collapse=", "));
+  verbose && cat(verbose, "sizes: ", paste(sizes, collapse=", "));
+  verbose && cat(verbose, "signed: ", paste(signeds, collapse=", "));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create empty file
@@ -578,6 +691,9 @@ setMethodS3("create", "AromaAnnotationFile", function(static, filename, path=NUL
   version <- 1;
   writeInts(con=con, version);
 
+  # Write comment
+  writeString(con=con, comment);
+
   # Write data header
   writeDataHeader(con=con, nbrOfRows=nbrOfRows, types=types, sizes=sizes, signeds=signeds);
 
@@ -589,6 +705,11 @@ setMethodS3("create", "AromaAnnotationFile", function(static, filename, path=NUL
     writeBin(con=con, value, size=size, endian="little");
     rm(value);
   }
+
+  # Write empty footer (this may be used to add extra meta data)
+  # Write size of footer
+  size <- 0;
+  writeInts(con=con, size);
   
   # Return
   newInstance(static, pathname);
@@ -596,13 +717,18 @@ setMethodS3("create", "AromaAnnotationFile", function(static, filename, path=NUL
 
 
 
-setMethodS3("getColClasses", "AromaAnnotationFile", function(this, ...) {
+setMethodS3("getColClasses", "AromaTabularBinaryFile", function(this, ...) {
   hdr <- readHeader(this)$dataHeader;
   hdr$types;
 })
 
+setMethodS3("getBytesPerColumn", "AromaTabularBinaryFile", function(this, ...) {
+  hdr <- readHeader(this)$dataHeader;
+  hdr$sizes;
+})
 
-setMethodS3("dim", "AromaAnnotationFile", function(x, ...) {
+
+setMethodS3("dim", "AromaTabularBinaryFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
@@ -610,30 +736,43 @@ setMethodS3("dim", "AromaAnnotationFile", function(x, ...) {
   c(hdr$nbrOfRows, hdr$nbrOfColumns);
 })
 
-setMethodS3("nrow", "AromaAnnotationFile", function(x, ...) {
+setMethodS3("nbrOfRows", "AromaTabularBinaryFile", function(x, ...) {
   dim(x)[1];
 })
 
-setMethodS3("ncol", "AromaAnnotationFile", function(x, ...) {
+setMethodS3("nbrOfColumns", "AromaTabularBinaryFile", function(x, ...) {
+  dim(x)[2];
+})
+
+setMethodS3("nrow", "AromaTabularBinaryFile", function(x, ...) {
+  dim(x)[1];
+})
+
+setMethodS3("ncol", "AromaTabularBinaryFile", function(x, ...) {
   dim(x)[2];
 })
 
 
 
 
-setMethodS3("[", "AromaAnnotationFile", function(this, i=NULL, j=NULL, drop=FALSE) {
+setMethodS3("[", "AromaTabularBinaryFile", function(this, i=NULL, j=NULL, drop=FALSE) {
   # Read data
   data <- readData(this, rows=i, columns=j);
 
   # Drop dimensions?
-  if (drop && length(dim(data)))
-    data <- drop(data);
+  if (drop) {
+    if (ncol(data) == 1) {
+      data <- data[,1];
+    } else if (nrow(data) == 1) {
+      data <- data[1,];
+    }
+  }
   
   data;
 })
 
 
-setMethodS3("[[", "AromaAnnotationFile", function(this, i) {
+setMethodS3("[[", "AromaTabularBinaryFile", function(this, i) {
   if (!is.numeric(i))
     throw("Argument 'i' must be numeric: ", i);
 
@@ -645,13 +784,13 @@ setMethodS3("[[", "AromaAnnotationFile", function(this, i) {
 
 
 
-setMethodS3("[<-", "AromaAnnotationFile", function(this, i=NULL, j=NULL, value) {
-  updateData(this, rows=i, columns=j, values=value, verbose=-20);
+setMethodS3("[<-", "AromaTabularBinaryFile", function(this, i=NULL, j=NULL, value) {
+  updateData(this, rows=i, columns=j, values=value);
   invisible(this);
 })
 
 
-setMethodS3("subset", "AromaAnnotationFile", function(x, ...) {
+setMethodS3("subset", "AromaTabularBinaryFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
@@ -660,14 +799,23 @@ setMethodS3("subset", "AromaAnnotationFile", function(x, ...) {
 })
 
 
-setMethodS3("summary", "AromaAnnotationFile", function(object, ...) {
+setMethodS3("summary", "AromaTabularBinaryFile", function(object, ...) {
   # To please R CMD check
   this <- object;
 
   nbrOfColumns <- ncol(this);
 
+  # Get the summaries (as matrices; less work for us, more for R)
   res <- lapply(seq(length=nbrOfColumns), FUN=function(cc) {
     s <- summary(this[,cc,drop=FALSE], ...);
+  })
+
+  if (nbrOfColumns == 1) {
+    return(res[[1]]);
+  }
+
+  # Get the summaries (as matrices; less work for us, more for R)
+  res <- lapply(res, FUN=function(s) {
     dimnames(s) <- NULL;
     s <- strsplit(s, split=":");
     names <- lapply(s, FUN=function(str) str[1]);
@@ -676,8 +824,12 @@ setMethodS3("summary", "AromaAnnotationFile", function(object, ...) {
     values;
   })
 
-  names <- sapply(res, FUN=function(s) names(s));
+print(res);
+
+  names <- lapply(res, FUN=function(s) names(s));
+print(names);
   unames <- unique(unlist(names, use.names=FALSE));
+print(unames);
   emptyName <- paste(rep(" ", nchar(unames[1])+1), collapse="");
 
   for (kk in seq(along=res)) {
@@ -693,8 +845,10 @@ setMethodS3("summary", "AromaAnnotationFile", function(object, ...) {
     s <- paste(thisNames, s, sep="");
     res[[kk]] <- s;
   }
+print(res);
 
   res <- matrix(unlist(res, use.names=FALSE), ncol=nbrOfColumns);
+print(res);
   rownames(res) <- rep("", nrow(res));
   colnames(res) <- seq(length=ncol(res));
   class(res) <- "table";
@@ -703,7 +857,7 @@ setMethodS3("summary", "AromaAnnotationFile", function(object, ...) {
 })
 
 
-setMethodS3("lapply", "AromaAnnotationFile", function(X, FUN, ...) {
+setMethodS3("lapply", "AromaTabularBinaryFile", function(X, FUN, ...) {
   # To please R CMD check
   this <- X;
 
@@ -716,27 +870,34 @@ setMethodS3("lapply", "AromaAnnotationFile", function(X, FUN, ...) {
 })
 
 
-setMethodS3("colStats", "AromaAnnotationFile", function(this, FUN, ...) {
+setMethodS3("colStats", "AromaTabularBinaryFile", function(this, FUN, ...) {
   res <- lapply(this, FUN=FUN, ...);
   res <- unlist(res, use.names=FALSE);
   res;
 })
 
-setMethodS3("colSums", "AromaAnnotationFile", function(x, ...) {
+setMethodS3("colSums", "AromaTabularBinaryFile", function(x, ...) {
   colStats(x, FUN=sum, ...);
 })
 
-setMethodS3("colMeans", "AromaAnnotationFile", function(x, ...) {
+setMethodS3("colMeans", "AromaTabularBinaryFile", function(x, ...) {
   colStats(x, FUN=mean, ...);
 })
 
-setMethodS3("colMedians", "AromaAnnotationFile", function(x, ...) {
+setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
   colStats(x, FUN=median, ...);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2007-09-14
+# o Renamed static method create() to allocate().
+# 2007-09-13
+# o Added a file footer to the file format, which comes after the data
+#   section.  This way we can append any amount of meta data to the file
+#   after it has been created/allocated.
+# o Now integers out of range are censored to the limits with a warning.
 # 2007-09-11
 # o Added colStats(), colSums(), colMeans(), and colMedians().
 # o Added dim(), nrow(), ncol() and a memory efficient lapply().

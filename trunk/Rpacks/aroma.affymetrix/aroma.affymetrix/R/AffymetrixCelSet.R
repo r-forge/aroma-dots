@@ -50,7 +50,7 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
   }
 
 
-  extend(AffymetrixFileSet(files=files, ...), "AffymetrixCelSet",
+  this <- extend(AffymetrixFileSet(files=files, ...), "AffymetrixCelSet",
     "cached:.intensities" = NULL,
     "cached:.intensitiesIdxs" = NULL,
     "cached:.readUnitsCache" = NULL,
@@ -58,7 +58,17 @@ setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
     "cached:.averageFiles" = list(),
     "cached:.timestamps" = NULL,
     "cached:.fileSize" = NULL
-  )
+  );
+
+  if (length(this$files) > 0) {
+    # Make sure the set name is non-empty
+    name <- getName(this);
+    if (nchar(name) == 0) {
+      throw("An ", class(this)[1], " must have a name of at least length one: ", this$.pathname);
+    }
+  }
+
+  this;
 })
 
 
@@ -415,6 +425,7 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
     static$fromFiles(path=path, ...);
   })
 }, static=TRUE)
+
 
 setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", checkChipType=TRUE, ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1293,6 +1304,9 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-13
+# o Added validate that the 'name' of an AffymetrixCelSet and 
+#   AffymetrixCelFile is of at least length one.
 # 2007-09-06
 # o Now setCdf() throws an (informative) error message whenever one tries
 #   to use an ASCII CDF file. This behavior can be changed by setting

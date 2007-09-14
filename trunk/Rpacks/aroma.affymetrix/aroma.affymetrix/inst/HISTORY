@@ -16,6 +16,8 @@ o SPEED UP: Now getOutputDataSet() of FragmentLengthNormalization set
   super class, if applicable.  This way we avoid having to infer those
   arguments from the contents of the files.  This gives an significant
   speed up for large chip types.
+o ROBUSTNESS: Added validate that the 'name' of an AffymetrixCelSet 
+  and AffymetrixCelFile is of at least length one.
 o ROBUSTNESS: Now isDone() of Transform throws an error if too many 
   output files are found. Before it used to return FALSE.
 o WORKAROUND: If there is only one probe, then fit function of AvgPlm

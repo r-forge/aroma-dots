@@ -1,94 +1,47 @@
 setConstructorS3("AromaUflFile", function(...) {
-  extend(AromaAnnotationFile(...), "AromaUflFile",
-    .cdf = NULL
-  );
+  this <- extend(AromaUnitTabularBinaryFile(...), "AromaUflFile");
+
+  # Parse attributes (all subclasses must call this in the constructor).
+  if (!is.null(this$.pathname))
+    setAttributesByTags(this);
+
+  this;
 })
 
 
-setMethodS3("getChipType", "AromaUflFile", function(this, ...) {
-  getName(this, ...);
+setMethodS3("getFilenameExtension", "AromaUflFile", function(static, ...) {
+  "ufl";
+}, static=TRUE, protected=TRUE);
+
+
+setMethodS3("nbrOfEnzymes", "AromaUflFile", function(this, ...) {
+  nbrOfColumns(this, ...);
 })
-
-setMethodS3("getCdf", "AromaUflFile", function(this, ...) {
-  cdf <- this$.cdf;
-  if (is.null(cdf)) {
-    chipType <- getChipType(this);
-    cdf <- AffymetrixCdfFile$fromChipType(chipType);
-    this$.cdf <- cdf;
-  }
-  cdf;
-})
-
-setMethodS3("nbrOfUnits", "AromaUflFile", function(this, ...) {
-  nrow(this, ...);
-})
-
-setMethodS3("findByChipType", "AromaUflFile", function(static, chipType, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Search in annotationData/chipTypes/<chipType>/
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Exclude all chip type tags
-  chipType <- gsub(",.*", "", chipType);
-
-  pattern <- paste("^", chipType, "(,[.]*)*", "[.](ufl|UFL)$", sep="");
-  args <- list(chipType=chipType, ...);
-  args$pattern <- pattern;
-  pathname <- do.call("findAnnotationDataByChipType", args=args);
-
-  # If not found, look for Windows shortcuts
-  if (is.null(pathname)) {
-    # Search for a Windows shortcut
-    pattern <- paste("^", chipType, "[.](ufl|UFL)[.]lnk$", sep="");
-    args <- list(chipType=chipType, ...);
-    args$pattern <- pattern;
-    pathname <- do.call("findAnnotationDataByChipType", args=args);
-    if (!is.null(pathname)) {
-      # ..and expand it
-      pathname <- filePath(pathname, expandLinks="any");
-      if (!isFile(pathname))
-        pathname <- NULL;
-    }
-  }
-
-  pathname;
-}, static=TRUE, protected=TRUE)
-
-
-setMethodS3("fromChipType", "AromaUflFile", function(static, chipType, ...) {
-  # Locate UGP file
-  pathname <- findByChipType(static, chipType=chipType, ...);
-  if (is.null(pathname)) {
-    throw("Could not locate UFL file for this chip type: ", chipType);
-  }
-
-  # Create object
-  AromaUflFile(pathname);
-}, static=TRUE)
-
 
 
 setMethodS3("readData", "AromaUflFile", function(this, ...) {
   data <- NextMethod("readData", this, ...);
+
   # Interpret zeros as NAs
   if (ncol(data) > 0) {
     nas <- (data[,1] == 0);
     data[nas,1] <- NA;
   }
+
   data;
 })
 
+setMethodS3("allocateFromCdf", "AromaUflFile", function(static, cdf, nbrOfEnzymes=1, ...) {
+  # Argument 'nbrOfEnzymes':
+  nbrOfEnzymes <- Arguments$getInteger(nbrOfEnzymes, range=c(1,10));
 
-setMethodS3("range", "AromaUflFile", function(this, ...) {
-  lapply(this, FUN=range, ...)[[1]];
-})
+  types <- rep("integer", nbrOfEnzymes);
+  sizes <- rep(2, nbrOfEnzymes);
 
-
-setMethodS3("createFromCdf", "AromaUflFile", function(static, cdf, path=getPath(cdf), tags=NULL, ...) {
-  chipType <- getChipType(cdf);
-  fullname <- paste(c(chipType, tags), collapse=",");
-  filename <- sprintf("%s.ufl", fullname);
-  create(static, filename=filename, path=path, nbrOfRows=nbrOfUnits(cdf), types="integer", sizes=2, ...);
+  # NextMethod() not supported here.
+  allocateFromCdf.AromaUnitTabularBinaryFile(static, cdf=cdf, types=types, sizes=sizes, ...);
 }, static=TRUE)
+
 
 
 setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this, csv, ..., verbose=FALSE) {
@@ -147,6 +100,9 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
 
 ############################################################################
 # HISTORY:
+# 2007-09-14
+# o Added support for multiple fragment lengths, in case multiple enzymes
+#   were used for the same assay.
 # 2007-09-11
 # o Created.
 ############################################################################

@@ -19,10 +19,11 @@
  Checks if the data set is processed or not.
 }
 
-\usage{\method{isDone}{Transform}(this, ...)}
+\usage{\method{isDone}{Transform}(this, ..., verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
+  \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

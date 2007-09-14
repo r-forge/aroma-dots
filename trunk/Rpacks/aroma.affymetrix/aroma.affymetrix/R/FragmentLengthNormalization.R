@@ -144,9 +144,9 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   if (!is.null(units) && !force)
     return(units);
 
-  # Identify all SNP units
+  # Identify all SNP and CN units
   cdf <- getCdf(this);
-  units <- indexOf(cdf, "^SNP");
+  units <- indexOf(cdf, "^(SNP|CN)");
 
   # Keep only those for which we have PCR fragmenth-length information
   si <- getSnpInformation(cdf);
@@ -330,7 +330,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
   # Get SNP units
   cdf <- getCdf(ces);
-  subsetToUpdate <- indexOf(cdf, "^SNP");
+  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
 
   verbose && enter(verbose, "Retrieving SNP information annotations");
   si <- getSnpInformation(cdf);
@@ -470,6 +470,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 ############################################################################
 # HISTORY:
 # 2007-09-12
+# o BUG FIX: getSubsetToFit() of FragmentLengthNormalization would only
+#   return SNP units, but not CN units which are available on the newer
+#   chip types.  Similarly, process() would only update SNPs, but not
+#   CN units.
 # o Now getOutputDataSet() of FragmentLengthNormalization set and pass down
 #   'mergeStrands' and 'combineAlleles' to ditto of the super class, if
 #   applicable.  This way we avoid having to infer those arguments from

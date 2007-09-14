@@ -279,8 +279,9 @@ setMethodS3("rescale", "AllelicCrosstalkCalibration", function(this, yAll, param
   rm(y);
   if (!is.finite(yAvg)) 
     throw("Cannot rescale to target average. Signal average is non-finite: ", yAvg);
-  # Rescale
-  b <- params$targetAvg[cc]/yAvg;
+  # Rescale (to half of the allele target averages)
+  targetAvg <- mean(params$targetAvg)/2;
+  b <- targetAvg /yAvg;
   verbose && printf(verbose, "scale factor: %.2f\n", b);
   yAll[idx] <- b*yAll[idx];
   rm(idx);
@@ -830,6 +831,9 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2007-09-14
+# o BUG FIX: Now the target average of non-SNP probes is half of the target
+#   average of alleles.
 # 2007-09-09
 # o Added alpha version of plotBasepair() to AllelicCrosstalkCalibration.
 # 2007-09-08
