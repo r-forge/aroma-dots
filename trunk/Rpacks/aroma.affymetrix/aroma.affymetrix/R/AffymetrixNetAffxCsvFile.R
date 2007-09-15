@@ -135,7 +135,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
   names <- c("fragmentLength", rep(c("fragmentLength"), nbrOfEnzymes-1));
   if (nbrOfEnzymes > 1)
-    names[-1] <- sprintf("%s,%02d", names[-1], 2:nbrOfEnzymes);
+    names[-1] <- sprintf("%s.%02d", names[-1], 2:nbrOfEnzymes);
 
   data <- data.frame(unitName=data[[1]], fln);
   colnames(data) <- c("unitName", names);

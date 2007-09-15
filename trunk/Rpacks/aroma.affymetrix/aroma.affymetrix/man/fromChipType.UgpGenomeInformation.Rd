@@ -19,7 +19,8 @@
  Defines a UgpGenomeInformation object by chip type.
 }
 
-\usage{\method{fromChipType}{UgpGenomeInformation}(static, ..., verbose=FALSE)}
+\synopsis{fromChipType.UgpGenomeInformation(static, chipType, ..., verbose=FALSE)}
+\usage{UgpGenomeInformation$fromChipType(chipType, ..., verbose=FALSE)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}

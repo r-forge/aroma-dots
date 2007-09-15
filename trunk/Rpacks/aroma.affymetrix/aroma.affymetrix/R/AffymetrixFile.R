@@ -139,6 +139,13 @@ setMethodS3("as.character", "AffymetrixFile", function(x, ...) {
 
 
 
+setMethodS3("equals", "AffymetrixFile", function(this, other, ...) {
+  if (getPathname(this) == getPathname(other))
+    return(TRUE);
+  FALSE;
+})
+
+
 ###########################################################################/**
 # @RdocMethod getPathname
 #

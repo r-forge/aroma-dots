@@ -1,6 +1,7 @@
 # Added '...' to some base functions. These will later be
 # turned into default functions by setMethodS3().
 
+"colnames<-" <- appendVarArgs(get("colnames<-"))
 colSums <- appendVarArgs(colSums)
 colMeans <- appendVarArgs(colMeans)
 write <- appendVarArgs(write)

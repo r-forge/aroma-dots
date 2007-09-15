@@ -121,7 +121,15 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUnitTabularBinaryFile", abs
 
 setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUnitTabularBinaryFile", abstract=TRUE, protected=TRUE);
 
-setMethodS3("importFromDChipGenomeInformation", "AromaUnitTabularBinaryFile", abstract=TRUE, protected=TRUE);
+setMethodS3("importFromDChipGenomeInformation", "AromaUnitTabularBinaryFile", function(this, gi, ...) {
+  # Argument 'gi':
+  if (!inherits(gi, "DChipGenomeInformation")) {
+    throw("Argument 'gi' is not a DChipGenomeInformation file: ", class(gi)[1]);
+  }
+
+  importFromGenomeInformation(this, gi, ...);
+})
+
 
 setMethodS3("importFromGenomeInformation", "AromaUnitTabularBinaryFile", abstract=TRUE, protected=TRUE);
 

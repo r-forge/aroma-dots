@@ -19,6 +19,17 @@ setMethodS3("nbrOfEnzymes", "AromaUflFile", function(this, ...) {
 })
 
 
+setMethodS3("colnames", "AromaUflFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+  nbrOfColumns <- nbrOfColumns(this);
+  names <- rep("length", nbrOfColumns);
+  tags <- sprintf(".%02d", 1:nbrOfColumns);
+  tags[1] <- "";
+  names <- paste(names, tags, sep="");
+  names;
+})
+
 setMethodS3("readData", "AromaUflFile", function(this, ...) {
   data <- NextMethod("readData", this, ...);
 

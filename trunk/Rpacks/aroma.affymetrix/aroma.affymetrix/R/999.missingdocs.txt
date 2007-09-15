@@ -650,3 +650,41 @@ plotBasepair plotBasepair.AllelicCrosstalkCalibration
   updateData.AromaAnnotationFile updateDataColumn
   updateDataColumn.AromaAnnotationFile verify.UflSnpInformation
 readData.AromaUflFile
+  [.AromaTabularBinaryFile [[.AromaTabularBinaryFile
+  [<-.AromaTabularBinaryFile allocate allocate.AromaTabularBinaryFile
+  allocateFromCdf allocateFromCdf.AromaUflFile
+  allocateFromCdf.AromaUgpFile
+  allocateFromCdf.AromaUnitTabularBinaryFile AromaTabularBinaryFile
+  AromaUnitTabularBinaryFile as.character.AromaTabularBinaryFile
+  colMeans.AromaTabularBinaryFile colMedians.AromaTabularBinaryFile
+  colnames.AromaTabularBinaryFile colnames.AromaUflFile
+  colnames.AromaUgpFile colnames<- colnames<-.AromaTabularBinaryFile
+  colnames<-.default colStats.AromaTabularBinaryFile
+  colSums.AromaTabularBinaryFile dim.AromaTabularBinaryFile
+  equals.AffymetrixFile findByChipType.AromaUnitTabularBinaryFile
+  fromChipType.AromaUnitTabularBinaryFile getBytesPerColumn
+  getBytesPerColumn.AromaTabularBinaryFile
+  getCdf.AromaUnitTabularBinaryFile
+  getChipType.AromaUnitTabularBinaryFile getChromosomes.AromaUgpFile
+  getCnNames getColClasses.AromaTabularBinaryFile
+  getFilenameExtension.AromaUflFile
+  getFilenameExtension.AromaUnitTabularBinaryFile
+  getGenomeVersion.AromaUgpFile
+  getUnitsOnChromosome.UgpGenomeInformation importFrom
+  importFrom.AromaUnitTabularBinaryFile
+  importFromAffymetrixNetAffxCsvFile.AromaUnitTabularBinaryFile
+  importFromAffymetrixTabularFile
+  importFromAffymetrixTabularFile.AromaUgpFile
+  importFromAffymetrixTabularFile.AromaUnitTabularBinaryFile
+  importFromDChipGenomeInformation
+  importFromDChipGenomeInformation.AromaUnitTabularBinaryFile
+  importFromGenomeInformation.AromaUnitTabularBinaryFile indexOfUnits
+  indexOfUnits.AromaUnitTabularBinaryFile lapply.AromaTabularBinaryFile
+  nbrOfColumns.AromaTabularBinaryFile nbrOfEnzymes
+  nbrOfEnzymes.AromaUflFile nbrOfRows.AromaTabularBinaryFile
+  nbrOfUnits.AromaUnitTabularBinaryFile ncol.AromaTabularBinaryFile
+  nrow.AromaTabularBinaryFile readData.AromaTabularBinaryFile
+  readData.AromaUgpFile readFooter readFooter.AromaTabularBinaryFile
+  readHeader.AromaTabularBinaryFile subset.AromaTabularBinaryFile
+  summary.AromaTabularBinaryFile updateData.AromaTabularBinaryFile
+  updateDataColumn.AromaTabularBinaryFile
