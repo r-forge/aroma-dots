@@ -293,7 +293,9 @@ setMethodS3("readData", "AffymetrixTabularFile", function(this, con=NULL, camelC
 
   # Read the data table
   verbose && enter(verbose, "Calling read.table()");
+  verbose && str(verbose, args);
   data <- do.call("read.table", args=args);
+
   rownames(data) <- NULL;
   if (ncol(data) != length(columns)) {
     throw("Number of read data columns does not match the number of column headers: ", ncol(data), " !=", length(columns));

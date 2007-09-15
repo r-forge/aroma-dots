@@ -59,10 +59,17 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
 
 
 
-setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probeSetID$"="character", "^fragmentLength.*"="character"), con=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probeSetID$"="character", "^fragmentLength.*"="character"), enzymes=1, con=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'nbrOfEnzymes':
+  enzymes <- Arguments$getIndices(enzymes, range=c(1,10));
+  if (any(duplicated(enzymes))) {
+    throw("Argument 'enzymes' contains duplicated values: ", 
+                                          paste(enzymes, collapse=", "));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -70,7 +77,10 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Reading (unitName, fragmentLength) from file");
+
+  nbrOfEnzymes <- length(enzymes);
+
+  verbose && enter(verbose, "Reading (unitName, fragmentLength+) from file");
 
   data <- readData(this, colClassPatterns=colClassPatterns, camelCaseNames=TRUE, ..., verbose=less(verbose));
 
@@ -79,27 +89,59 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
   cc <- grep("^fragmentLength", colnames(data))[1];
   fln <- data[[cc]];
+  data[[cc]] <- NULL;
   if (isVisible(verbose, level=-50))
-    verbose && str(verbose, fln, level=-50);
-  fln <- strsplit(fln, split="//", fixed=TRUE);
-  if (isVisible(verbose, level=-50))
-    verbose && str(verbose, fln, level=-50);
-  fln <- sapply(fln, FUN=.subset, 1);
-  if (isVisible(verbose, level=-50))
-    verbose && str(verbose, fln, level=-50);
-  fln <- trim(fln);
-  if (isVisible(verbose, level=-50))
-    verbose && str(verbose, fln, level=-50);
-  fln <- as.integer(fln);
-  if (isVisible(verbose, level=-50))
-    verbose && str(verbose, fln, level=-50);
-  data[[cc]] <- fln;
-  verbose && exit(verbose);
-
+    verbose && str(verbose, fln[1:min(10,length(fln))], level=-50);
   gc <- gc();
 
-  colnames(data) <- c("unitName", "fragmentLength");
+  # Split by enzymes first
+  fln <- strsplit(fln, split="///", fixed=TRUE);
+  if (isVisible(verbose, level=-50))
+    verbose && str(verbose, fln[1:min(10,length(fln))], level=-50);
+  gc <- gc();
+
+  # Keep only requested enzymes
+  fln <- base::lapply(fln, FUN=.subset, enzymes);
+  gc <- gc();
+
+  # Extract the fragment length for each enzyme
+  fln <- base::lapply(fln, FUN=function(unit) {
+    parts <- strsplit(unit, split="//", fixed=TRUE);
+    value <- base::sapply(parts, FUN=.subset, 1, USE.NAMES=FALSE);
+    value <- trim(value);
+    value;
+  })
+  if (isVisible(verbose, level=-50))
+    verbose && str(verbose, fln[1:min(10,length(fln))], level=-50);
+  gc <- gc();
+
+  # Turn into an integer matrix
+  fln <- unlist(fln, use.names=FALSE);
+  fln <- as.integer(fln);
+  gc <- gc();
+  fln <- matrix(fln, ncol=nbrOfEnzymes, byrow=TRUE);
+  gc <- gc();
+
+  if (isVisible(verbose, level=-10))
+    verbose && str(verbose, fln, level=-10);
+
+  # Sanity check
+  if (nrow(fln) != nrow(data)) {
+    throw("Internal error. nrow(fln) != nrow(data): ", 
+                                       nrow(fln), " != ", nrow(data));
+  }
+
+  verbose && exit(verbose);
+
+  names <- c("fragmentLength", rep(c("fragmentLength"), nbrOfEnzymes-1));
+  if (nbrOfEnzymes > 1)
+    names[-1] <- sprintf("%s,%02d", names[-1], 2:nbrOfEnzymes);
+
+  data <- data.frame(unitName=data[[1]], fln);
+  colnames(data) <- c("unitName", names);
   attr(data, "header") <- NULL;
+
+  gc <- gc();
 
   verbose && exit(verbose);
 
@@ -110,6 +152,8 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2007-09-14
+# o Added support to read fragment lengths for each enzyme.
 # 2007-09-11
 # o Added readDataUnitFragmentLength().
 # 2007-09-10

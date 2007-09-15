@@ -421,7 +421,7 @@ setMethodS3("readUnits", "CnagCfhFile", function(this, units=NULL, ..., verbose=
 
   # Read subset of units
   if (!is.null(units)) {
-    snps <- grep("^SNP", getUnitNames(cdf));
+    snps <- indexOf(cdf, "SNP_");
     # Map unit indices to CNAG SNP indices
     idxs <- match(units, snps);
     idxs <- na.omit(idxs);

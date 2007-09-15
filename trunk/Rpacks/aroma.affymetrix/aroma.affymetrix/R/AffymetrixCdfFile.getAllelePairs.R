@@ -33,6 +33,9 @@ setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
   if (regexpr("^Cent(Hind|Xba).*$", chipType) != -1)
     return(TRUE);
 
+  if (regexpr("^GenomeWideSNP_.*$", chipType) != -1)
+    return(TRUE);
+
   FALSE;
 }, private=TRUE)
 
@@ -41,7 +44,7 @@ setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
 ###########################################################################/**
 # @RdocMethod getSnpNames
 #
-# @title "Gets the names of the SNPs"
+# @title "Gets the names of the SNP units"
 #
 # \description{
 #   @get "title".
@@ -61,13 +64,52 @@ setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
 # @author
 #
 # \seealso{
+#   @seemethod "getCnNames".
 #   Internally, @seemethod "getUnitNames".
 #   is used.
 #
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, pattern="^SNP_A-", ...) {
+setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, pattern="SNP_", ...) {
+  unitNames <- getUnitNames(this, ...);
+  grep(pattern=pattern, unitNames, value=TRUE);
+}, private=TRUE)
+
+
+
+
+###########################################################################/**
+# @RdocMethod getCnNames
+#
+# @title "Gets the names of the CN units"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{pattern}{A regular expression to identify unit that are CN units.}
+#  \item{...}{Not used.}
+# }
+#
+# \value{
+#   Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getSnpNames".
+#   Internally, @seemethod "getUnitNames".
+#   is used.
+#
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getCnNames", "AffymetrixCdfFile", function(this, pattern="CN_", ...) {
   unitNames <- getUnitNames(this, ...);
   grep(pattern=pattern, unitNames, value=TRUE);
 }, private=TRUE)
@@ -284,9 +326,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Loading all possible allele basepairs");
   # Use only units that are SNPs
-  unitNames <- readCdfUnitNames(cdfFile);
-  unitsAll <- which(regexpr("^SNP", unitNames) != -1);
-  rm(unitNames);
+  unitsAll <- indexOf(this, "SNP_");
   gc <- gc();
 
   # Operate only on a subset of probes?
@@ -581,9 +621,7 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
   # Identify all possible allele pairs
   verbose && enter(verbose, "Loading all possible allele basepairs");
   # Use only units that are SNPs
-  unitNames <- readCdfUnitNames(cdfFile);
-  units <- which(regexpr("^SNP", unitNames) != -1);
-  rm(unitNames);
+  units <- indexOf(this, "SNP_");
 
   # Read group names for the SNPs
   groupNames <- readCdfGroupNames(cdfFile, units=units);
@@ -666,6 +704,10 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2007-09-14
+# o Added getCnNames().
+# o Updated isSnpChip() to recognize 5.0 and 6.0 chips.
+# o Update regular expression for getSnpNames().
 # 2007-08-16
 # o Now getAlleleProbePairs() of AffymetrixCdfFile processes the CDF in
 #   chunks in order to save memory.  Before the GenomeWideSNP_6 CDF would

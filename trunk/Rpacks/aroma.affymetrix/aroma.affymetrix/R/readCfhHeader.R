@@ -172,15 +172,6 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
 #  str1 <- readString(con);
 #  verbose && cat(verbose, "String 1: ", paste(str1, collapse=", "));
 
-##   # Infer number of SNPs from CDF file
-##   cdfPathname <- findCdf(chipType);
-##   if (is.null(cdfPathname))
-##     throw("Could not locate CDF for this chip type: ", chipType);
-##   isSnp <- (regexpr("^SNP", readCdfUnitNames(cdfPathname)) != -1);
-##   nbrOfSnps <- sum(isSnp);
-##   rm(isSnp);
-##   verbose && cat(verbose, "Number of SNPs (from CDF file): ", nbrOfSnps);
-
   nbrOfSnps <- cnagIdRange[2]-cnagIdRange[1]+1;
   verbose && cat(verbose, "Number of SNPs: ", nbrOfSnps);
 
