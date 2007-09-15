@@ -2,7 +2,7 @@ library(aroma.affymetrix)
 
 log <- Verbose(threshold=-50, timestamp=TRUE);
 
-dataSetName <- "HapMap270,100K,CEU,testSet";
+dataSetName <- "HapMap270,6.0,CEU,testSet";
 chipType <- "GenomeWideSNP_6";
 
 # Expected sample names
@@ -49,10 +49,9 @@ fit(plm, verbose=log);
 ces <- getChipEffectSet(plm);
 theta <- extractMatrix(ces, units=1000:1002);
 
-# fln <- FragmentLengthNormalization(ces);
-# cesFln <- process(fln, verbose=log);
-# print(cesFln);
-cesFln <- ces;
+fln <- FragmentLengthNormalization(ces);
+cesFln <- process(fln, verbose=log);
+print(cesFln);
 
 cnr <- CbsModel(cesFln);
 print(cnr);
