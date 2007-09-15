@@ -3,7 +3,7 @@ log <- Arguments$getVerbose(-4);
 timestampOn(log);
 .Machine$float.eps <- sqrt(.Machine$double.eps);
 
-dataSetName <- "Affymetrix_2004-100k_trios,testSet";
+dataSetName <- "HapMap270,100K,CEU,testSet";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
 #chipTypes <- chipTypes[2];
 

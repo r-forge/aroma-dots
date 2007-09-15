@@ -1,16 +1,8 @@
 library(aroma.affymetrix)
 
-# source("../aroma.affymetrix/R/CopyNumberSegmentationModel.R");
-# source("../aroma.affymetrix/R/GladModel.R");
-# source("../aroma.affymetrix/R/CbsModel.R");
-# source("../aroma.affymetrix/R/profileCGH.drawCnRegions.R");
-# source("../aroma.affymetrix/R/DNAcopy.drawCnRegions.R");
-# source("../aroma.affymetrix/R/CopyNumberRegions.R");
-# source("../aroma.affymetrix/R/RawCopyNumbers.R");
-
 log <- Verbose(threshold=-4, timestamp=TRUE);
 
-dataSetName <- "Affymetrix_2004-100k_trios,testSet";
+dataSetName <- "HapMap270,100K,CEU,testSet";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
 #chipTypes <- chipTypes[2];
 
