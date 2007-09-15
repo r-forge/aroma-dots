@@ -49,7 +49,7 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
       group;
     } # rearrangeGroup()
 
-    nbrOfCells <- lapply(units, FUN=function(unit) .subset2(unit, "ncells"));
+    nbrOfCells <- base::lapply(units, FUN=function(unit) .subset2(unit, "ncells"));
     nbrOfCells <- sum(unlist(nbrOfCells, use.names=FALSE));
 
     cells <- seq(from=offset+1, to=offset+nbrOfCells);

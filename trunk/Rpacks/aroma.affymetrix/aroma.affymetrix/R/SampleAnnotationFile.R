@@ -65,7 +65,7 @@ setMethodS3("getPatterns", "SampleAnnotationFile", function(this, ...) {
 setMethodS3("matchPatterns", "SampleAnnotationFile", function(this, names, trim=FALSE, ...) {
   # Scan vector of names for matching patterns
   patterns <- getPatterns(this, ...);
-  res <- lapply(patterns, FUN=function(pattern) { 
+  res <- base::lapply(patterns, FUN=function(pattern) { 
     idxs <- grep(pattern, names);
     names(idxs) <- names[idxs];
     idxs;

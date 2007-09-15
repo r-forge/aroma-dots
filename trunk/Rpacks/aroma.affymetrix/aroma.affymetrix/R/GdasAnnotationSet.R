@@ -31,7 +31,7 @@ setMethodS3("forDataSet", "GdasAnnotationSet", function(static, dataSet, path="a
     throw("No files found: ", path);
 
   verbose && enter(verbose, "Defining GDAS file for each of these");
-  files <- lapply(pathnames, FUN=GdasAnnotationFile);
+  files <- base::lapply(pathnames, FUN=GdasAnnotationFile);
   verbose && exit(verbose);
 
 
@@ -51,7 +51,7 @@ setMethodS3("fromFiles", "GdasAnnotationSet", function(static, path, ...) {
   if (length(pathnames) == 0)
     throw("No files found: ", path);
 
-  files <- lapply(pathnames, FUN=GdasAnnotationFile);
+  files <- base::lapply(pathnames, FUN=GdasAnnotationFile);
 
   newInstance(static, files);
 }, static=TRUE)

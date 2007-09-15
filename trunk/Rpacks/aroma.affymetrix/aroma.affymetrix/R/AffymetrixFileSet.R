@@ -576,7 +576,7 @@ setMethodS3("nbrOfFiles", "AffymetrixFileSet", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("lapply", "AffymetrixFileSet", function(this, ...) {
-  res <- lapply(this$files, ...);
+  res <- base::lapply(this$files, ...);
   names(res) <- unlist(lapply(as.list(this), FUN=getFullName));
   res;
 })
@@ -828,7 +828,7 @@ setMethodS3("appendFiles", "AffymetrixFileSet", function(this, files, clone=TRUE
   # Clone file objects?
   if (clone) {
     verbose && enter(verbose, "Cloning files");
-    files <- lapply(files, FUN=function(file) clone(file));    
+    files <- base::lapply(files, FUN=function(file) clone(file));    
     verbose && exit(verbose);
   }
 

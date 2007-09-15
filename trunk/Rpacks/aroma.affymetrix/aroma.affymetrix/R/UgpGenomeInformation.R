@@ -83,24 +83,29 @@ setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromChipType", "UgpGenomeInformation", function(static, ..., verbose=FALSE) {
+setMethodS3("fromChipType", "UgpGenomeInformation", function(static, chipType, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
-  ugp <- AromaUgpFile$fromChipType(...);
+
+  ugp <- AromaUgpFile$fromChipType(chipType, ...);
   pathname <- getPathname(ugp);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
   verbose && cat(verbose, "Pathname: ", pathname);
+  verbose && cat(verbose, "Arguments:");
+  verbose && str(verbose, list(...));
 
-  res <- newInstance(static, filename=pathname, path=NULL, .ugp=ugp);
+  res <- newInstance(static, filename=pathname, path=NULL, .ugp=ugp, ...);
   verbose && print(verbose, res);
   verbose && exit(verbose);
 
-  verbose && exit(verbose);
-
   res;
-})
+}, static=TRUE)
 
 
 setMethodS3("verify", "UgpGenomeInformation", function(this, ...) {
@@ -115,21 +120,31 @@ setMethodS3("verify", "UgpGenomeInformation", function(this, ...) {
 
 
 setMethodS3("readData", "UgpGenomeInformation", function(this, nrow=NULL, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
   verbose && enter(verbose, "Reading data from UGP file");
 
   ugp <- getAromaUgpFile(this);
   verbose && print(verbose, ugp, level=-20);
 
   if (is.null(nrow)) {
-    verbose && cat(verbose, "Reading all ", nbrOfUnits(ugp), " units");
+    verbose && enter(verbose, "Reading all ", nbrOfUnits(ugp), " units");
     res <- ugp[,,drop=FALSE];
+    verbose && exit(verbose);
   } else {
     units <- 1:nrow;
-    verbose && cat(verbose, "Reading ", length(units), " units");
+    verbose && enter(verbose, "Reading ", length(units), " units");
     res <- ugp[units,,drop=FALSE];
+    verbose && exit(verbose);
   }
 
   colnames(res) <- c("chromosome", "physicalPosition");
+  verbose && str(verbose, res);
   verbose && exit(verbose);
 
   res;
@@ -143,6 +158,11 @@ setMethodS3("getDataColumns", "UgpGenomeInformation", function(this, ...) {
 setMethodS3("getData", "UgpGenomeInformation", function(this, units=NULL, fields=getDataColumns(this), orderBy=NULL, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   data <- this$.data;
   if (is.null(data) || force) {

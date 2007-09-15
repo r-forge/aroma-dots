@@ -84,7 +84,7 @@ setMethodS3("addColorMap", "SpatialReporter", function(this, colorMap, ...) {
   if (length(transforms) == 0) {
     transforms <- list(sqrt);
   } else {
-    transforms <- lapply(transforms, FUN=function(transform) {
+    transforms <- base::lapply(transforms, FUN=function(transform) {
       # Check transform
       if (!exists(transform, mode="function")) {
         throw("Argument 'colorMap' specifies an unknown transform function ('",
