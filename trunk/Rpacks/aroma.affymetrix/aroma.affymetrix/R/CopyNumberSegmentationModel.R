@@ -1028,8 +1028,12 @@ setMethodS3("getRegions", "CopyNumberSegmentationModel", function(this, ..., url
     # The UCSC browser accepts chromsomes either 'X' or 23.  In other words,
     # we can stick with integers to be more general.
     url <- function(chromosome, start, stop) {
+      suppressWarnings({
+        start <- as.integer(start);
+        stop <- as.integer(stop);
+      })
       uri <- "http://genome.ucsc.edu/cgi-bin/hgTracks?clade=vertebrate";
-      sprintf("%s&org=%s&db=%s&position=chr%s%%3A%d-%d", uri, organism, hgVersion, chromosome, as.integer(start), as.integer(stop));
+      sprintf("%s&org=%s&db=%s&position=chr%s%%3A%d-%d", uri, organism, hgVersion, chromosome, start, stop);
     }
   }
 
@@ -1217,7 +1221,9 @@ setMethodS3("writeRegions", "CopyNumberSegmentationModel", function(this, arrays
     verbose && cat(verbose, "Pathname: ", pathname);
     if (identical(format, "xls")) {
       col.names <- (array == arrays[1]);
-      write.table(df, file=pathname, sep="\t", col.names=col.names, row.names=FALSE, quote=FALSE, append=oneFile);
+      suppressWarnings({
+        write.table(df, file=pathname, sep="\t", col.names=col.names, row.names=FALSE, quote=FALSE, append=oneFile);
+      })
     } else if (identical(format, "wig")) {
       # Write track control
       trackAttr <- c(type="wiggle_0");

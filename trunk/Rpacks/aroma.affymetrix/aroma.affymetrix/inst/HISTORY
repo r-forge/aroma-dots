@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.7.0 [2007-09-14xx]
+Version: 0.7.0 [2007-09-15xx]
 o Now AllelicCrosstalkCalibration corrects also non-SNP PM cells by 
   substracting a global offset and rescaling towards target average.
   The global offset is calculated as the weighted average of all
@@ -15,6 +15,9 @@ o SPEED UP: Now getOutputDataSet() of FragmentLengthNormalization set
   super class, if applicable.  This way we avoid having to infer those
   arguments from the contents of the files.  This gives an significant
   speed up for large chip types.
+o ROBUSTNESS: Now the RmaPlm fit function detects cases where a probe 
+  get weight zero all arrays. In such (rare) cases, parameter estimates
+  equals NAs. Before an LAPACK error was thrown.
 o ROBUSTNESS: Added validate that the 'name' of an AffymetrixCelSet 
   and AffymetrixCelFile is of at least length one.
 o ROBUSTNESS: Now isDone() of Transform throws an error if too many 

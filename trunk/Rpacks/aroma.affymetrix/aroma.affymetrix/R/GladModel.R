@@ -182,7 +182,9 @@ setMethodS3("writeRegions", "GladModel", function(this, arrays=NULL, format=c("x
     verbose && cat(verbose, "Pathname: ", pathname);
     if (identical(format, "xls")) {
       col.names <- (array == arrays[1]);
-      write.table(df, file=pathname, sep="\t", col.names=col.names, row.names=FALSE, quote=FALSE, append=oneFile);
+      suppressWarnings({
+        write.table(df, file=pathname, sep="\t", col.names=col.names, row.names=FALSE, quote=FALSE, append=oneFile);
+      })
     } else if (identical(format, "wig")) {
       # Write track control
       trackAttr <- c(type="wiggle_0");

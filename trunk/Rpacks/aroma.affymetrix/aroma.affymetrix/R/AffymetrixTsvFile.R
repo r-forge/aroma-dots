@@ -96,7 +96,9 @@ setMethodS3("readData", "AffymetrixTsvFile", function(this, ..., verbose=FALSE) 
   chr <- df[["chromosome"]];
   chr[chr == "X"] <- 23;
   chr[chr == "Y"] <- 24;
-  chr <- as.integer(chr);
+  suppressWarnings({
+    chr <- as.integer(chr);
+  })
   df[["chromosome"]] <- chr;
   rm(chr);
 
