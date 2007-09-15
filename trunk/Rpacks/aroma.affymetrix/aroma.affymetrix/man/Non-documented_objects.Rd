@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Sat Sep 15 13:27:59 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1268,6 +1266,7 @@
 \alias{setAttributesByTags.AffymetrixCelFile}
 \alias{setAttributesByTags.AffymetrixFile}
 \alias{setAttributeXY}
+\alias{setAttributesByTags.AromaTabularBinaryFile}
 \alias{setAttributeXY.AffymetrixCelFile}
 \alias{setCdf}
 \alias{setCdf.GenotypeCallFile}
@@ -1412,6 +1411,9 @@
 \alias{getGenomeFile.CopyNumberSegmentationModel}
 \alias{setGenome}
 \alias{setGenome.CopyNumberSegmentationModel}
+\alias{importFromGenericTabularFile}
+\alias{importFromGenericTabularFile.AromaUgpFile}
+\alias{importFromGenericTabularFile.AromaUnitTabularBinaryFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

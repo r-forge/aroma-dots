@@ -23,6 +23,11 @@ setMethodS3("as.character", "AromaTabularBinaryFile", function(x, ...) {
 })
 
 
+setMethodS3("setAttributesByTags", "AromaTabularBinaryFile", function(this, ...) {
+  # Does nothing.
+}, protected=TRUE)
+
+ 
 setMethodS3("colnames", "AromaTabularBinaryFile", function(x, ...) {
   # To please R CMD check
   this <- x;
