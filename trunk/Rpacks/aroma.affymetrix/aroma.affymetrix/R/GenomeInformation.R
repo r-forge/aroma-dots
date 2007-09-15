@@ -21,14 +21,9 @@
 # @author
 #*/###########################################################################
 setConstructorS3("GenomeInformation", function(..., .verify=TRUE) {
-  this <- extend(AffymetrixFile(...), "GenomeInformation",
+  extend(AffymetrixFile(...), "GenomeInformation",
     "cached:.data"=NULL
   );
-  if (.verify) {
-    if (!is.null(getPathname(this)))
-      verify(this);
-  }
-  this;
 })
 
 
@@ -192,7 +187,7 @@ setMethodS3("fromCdf", "GenomeInformation", function(static, cdf, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fromChipType", "GenomeInformation", abstract=TRUE);
+setMethodS3("fromChipType", "GenomeInformation", static=TRUE, abstract=TRUE);
 
 
 setMethodS3("fromDataSet", "GenomeInformation", function(static, dataSet, ...) {

@@ -5,7 +5,7 @@ getCommonPrefix <- function(strs, suffix=FALSE, ...) {
 
   # Asked for the suffix?
   if (suffix) {
-    chars <- lapply(chars, FUN=rev);
+    chars <- base::lapply(chars, FUN=rev);
   }
 
   # Put the characters into a matrix
@@ -56,7 +56,7 @@ splitByCommonTails <- function(strs, ...) {
     suffix <- "";
   }
 
-  strs <- lapply(body, FUN=function(s) {
+  strs <- base::lapply(body, FUN=function(s) {
     c(prefix, s, suffix);
   })
 

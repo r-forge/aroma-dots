@@ -81,7 +81,7 @@ setMethodS3("patchPackage", "default", function(pkgName, paths="patches", delete
 
 
   # 1. Scan for patch directories
-  paths <- lapply(paths, FUN=function(path) {
+  paths <- base::lapply(paths, FUN=function(path) {
     findPatchDirectories(pkgName, path=path, verbose=verbose);
   })
   paths <- unlist(paths, use.names=FALSE);

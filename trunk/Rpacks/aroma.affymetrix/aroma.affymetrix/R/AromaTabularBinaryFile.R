@@ -806,7 +806,7 @@ setMethodS3("summary", "AromaTabularBinaryFile", function(object, ...) {
   nbrOfColumns <- ncol(this);
 
   # Get the summaries (as matrices; less work for us, more for R)
-  res <- lapply(seq(length=nbrOfColumns), FUN=function(cc) {
+  res <- base::lapply(seq(length=nbrOfColumns), FUN=function(cc) {
     s <- summary(this[,cc,drop=FALSE], ...);
   })
 
@@ -815,21 +815,17 @@ setMethodS3("summary", "AromaTabularBinaryFile", function(object, ...) {
   }
 
   # Get the summaries (as matrices; less work for us, more for R)
-  res <- lapply(res, FUN=function(s) {
+  res <- base::lapply(res, FUN=function(s) {
     dimnames(s) <- NULL;
     s <- strsplit(s, split=":");
-    names <- lapply(s, FUN=function(str) str[1]);
-    values <- lapply(s, FUN=function(str) str[2]);
+    names <- base::lapply(s, FUN=function(str) str[1]);
+    values <- base::lapply(s, FUN=function(str) str[2]);
     names(values) <- names;
     values;
   })
 
-print(res);
-
-  names <- lapply(res, FUN=function(s) names(s));
-print(names);
+  names <- base::lapply(res, FUN=function(s) names(s));
   unames <- unique(unlist(names, use.names=FALSE));
-print(unames);
   emptyName <- paste(rep(" ", nchar(unames[1])+1), collapse="");
 
   for (kk in seq(along=res)) {
@@ -862,7 +858,7 @@ setMethodS3("lapply", "AromaTabularBinaryFile", function(X, FUN, ...) {
   this <- X;
 
   nbrOfColumns <- ncol(this);
-  res <- lapply(seq(length=nbrOfColumns), FUN=function(cc) {
+  res <- base::lapply(seq(length=nbrOfColumns), FUN=function(cc) {
     FUN(this[[cc]], ...);
   });
 

@@ -26,11 +26,16 @@ setMethodS3("as.character", "AffymetrixTabularFile", function(x, ...) {
 })
 
 
-setMethodS3("findByChipType", "AffymetrixTabularFile", function(static, chipType, pattern=sprintf("^%s.*[.]...$", chipType), ...) {
+setMethodS3("findByChipType", "AffymetrixTabularFile", function(static, chipType, tags=NULL, pattern=NULL, ...) {
+  if (is.null(pattern)) {
+    name <- paste(c(chipType, tags), collapse=",");
+    pattern <- sprintf("^%s.*[.]...$", name);
+  }
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  pathname <- findAnnotationDataByChipType(chipType, pattern);
+  pathname <- findAnnotationDataByChipType(chipType, pattern, ...);
   pathname;
 }, static=TRUE, protected=TRUE)
 
@@ -122,7 +127,7 @@ setMethodS3("readHeader", "AffymetrixTabularFile", function(this, con=NULL, ...,
     verbose && enter(verbose, "Identifying the separator that returns most columns");
     verbose && cat(verbose, "Separators:");
     verbose && str(verbose, sep);
-    columns <- lapply(sep, FUN=function(split) {
+    columns <- base::lapply(sep, FUN=function(split) {
       strsplit(line, split=split)[[1]];
     });
     nbrOfColumns <- sapply(columns, FUN=length);

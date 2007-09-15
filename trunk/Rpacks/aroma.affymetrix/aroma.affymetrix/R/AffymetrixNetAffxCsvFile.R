@@ -121,7 +121,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
   gc <- gc();
   fln <- matrix(fln, ncol=nbrOfEnzymes, byrow=TRUE);
   gc <- gc();
-
+	
   if (isVisible(verbose, level=-10))
     verbose && str(verbose, fln, level=-10);
 

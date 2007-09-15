@@ -459,7 +459,7 @@ setMethodS3("getUnitSizes", "AffymetrixCdfFile", function(this, units=NULL, ...)
   if (is.null(sizes)) {
     sizes <- readCdfGroupNames(this$.pathname);
     sizes <- restruct(this, sizes);
-    sizes <- lapply(sizes, FUN=length);
+    sizes <- base::lapply(sizes, FUN=length);
     sizes <- unlist(sizes, use.names=FALSE);
     this$.unitSizes <- sizes;
   }
@@ -1193,7 +1193,8 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
   chipType <- getChipType(this, fullname=FALSE);
 
   gi <- this$.gi;
-  if (is.null(gi) || force) {
+  if (force || is.null(gi)) {
+    gi <- NULL;
     for (type in types) {
       tryCatch({
         if (type == "ugp") {
@@ -1227,7 +1228,8 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UF
   chipType <- getChipType(this, fullname=FALSE);
 
   si <- this$.si;
-  if (is.null(si) || force) {
+  if (force || is.null(si)) {
+    gi <- NULL;
     for (type in types) {
       tryCatch({
         if (type == "ufl") {

@@ -6,7 +6,7 @@ setMethodS3("getDescription", "AffymetrixFileSet", function(this, ...) {
     if (isFile(pathname)) {
       tmp <- read.dcf(pathname);
       tmp <- as.list(as.data.frame(tmp));
-      tmp <- lapply(tmp, FUN=as.character);
+      tmp <- base::lapply(tmp, FUN=as.character);
       for (kk in seq(along=tmp)) {
         name <- names(tmp)[kk];
         # Already assigned?

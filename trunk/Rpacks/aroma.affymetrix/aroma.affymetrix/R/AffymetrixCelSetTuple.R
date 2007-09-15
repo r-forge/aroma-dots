@@ -474,7 +474,7 @@ setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL,
     tags <- lapply(cfList, FUN=function(ce) {
       if (is.null(ce)) NULL else getTags(ce);
     });
-    tags <- lapply(tags, setdiff, exclude);
+    tags <- base::lapply(tags, setdiff, exclude);
     tags <- getCommonListElements(tags);
     tags <- unlist(tags, use.names=FALSE);
     tags <- unique(tags);

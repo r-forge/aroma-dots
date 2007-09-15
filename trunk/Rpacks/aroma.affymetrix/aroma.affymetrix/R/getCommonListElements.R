@@ -34,7 +34,7 @@ getCommonListElements <- function(lst, ignoreEmpty=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # 2. Keep only common elements
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  lst <- lapply(lst, FUN=intersect, common);
+  lst <- base::lapply(lst, FUN=intersect, common);
 
   lst;
 } # getCommonListElements()
