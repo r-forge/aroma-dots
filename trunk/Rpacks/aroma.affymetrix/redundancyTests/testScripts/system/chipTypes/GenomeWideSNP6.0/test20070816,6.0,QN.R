@@ -4,7 +4,7 @@ log <- Arguments$getVerbose(-50);
 timestampOn(log);
 .Machine$float.eps <- sqrt(.Machine$double.eps);
 
-dataSetName <- "HapMap6.0-testSet";
+dataSetName <- "HapMap270,100K,CEU,testSet";
 chipType <- "GenomeWideSNP_6";
 
 # Expected sample names
