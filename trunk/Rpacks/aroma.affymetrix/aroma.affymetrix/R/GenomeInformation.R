@@ -276,7 +276,10 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
       chr <- data[,"chromosome"];
       chr[chr == "X"] <- 23;
       chr[chr == "Y"] <- 24;
-      chr <- as.integer(chr);
+      chr[chr == "Z"] <- 25;
+      suppressWarnings({
+        chr <- as.integer(chr);
+      })
       data[,"chromosome"] <- chr;
       rm(chr);
       verbose && str(verbose, data);

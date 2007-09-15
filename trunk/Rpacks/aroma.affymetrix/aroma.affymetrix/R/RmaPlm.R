@@ -88,7 +88,8 @@ setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMo
 
 
   extend(ProbeLevelModel(..., tags=tags), "RmaPlm",
-    .flavor = flavor
+    .flavor = flavor,
+    treatNAsAs = "weights"
   )
 })
 
@@ -257,6 +258,17 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
       hasNAs <- any(isNA);
       if (hasNAs) {
         if (treatNAsAs == "weights") {
+          badCells <- apply(isNA, MARGIN=2, FUN=all);
+          if (any(badCells)) {
+            return(list(theta=rep(NA, J),
+                        sdTheta=rep(NA, J),
+                        thetaOutliers=rep(NA, J), 
+                        phi=rep(NA, I), 
+                        sdPhi=rep(NA, I), 
+                        phiOutliers=rep(NA, I)
+                       )
+                  );
+          }
           w <- matrix(1, nrow=I, ncol=J);
           w[isNA] <- 0;
           y[isNA] <- 0;
@@ -520,6 +532,9 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-15
+# o Now the RmaPlm fit function detects cases where a probe get weight zero 
+#   for all arrays. In such (rare) cases, parameter estimates equals NAs.
 # 2007-04-15
 # o Added first support for weights in fit function.  This requires 
 #   affyPLM v1.11.14.  Thanks Ben Bolstad for this.

@@ -552,6 +552,7 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
   });
   unitSizes <- unlist(unitSizes, use.names=FALSE);
   cells <- unlist(cells, use.names=FALSE);
+  gc <- gc();
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Creating return data frame");
@@ -579,10 +580,16 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
     groups[seq,cc] <- seq;
     # Assign unit indices to ditto
     units2[seq,cc] <- rep(units[cc], each=size);
+    rm(seq);
+    gc <- gc();
   }
   keep <- !is.na(groups);
   groups <- groups[keep];
+  gc <- gc();
   units2 <- units2[keep];
+  rm(keep);
+  gc <- gc();
+
   map <- data.frame(unit=units2, group=groups, cell=cells);
   verbose && exit(verbose);
 
