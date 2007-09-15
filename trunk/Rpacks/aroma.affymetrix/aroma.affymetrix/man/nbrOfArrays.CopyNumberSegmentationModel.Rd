@@ -3,6 +3,8 @@
 % 
 %  CopyNumberSegmentationModel.R
 % 
+% on Sat Sep 15 13:21:17 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -15,6 +15,7 @@
 #   \item{cesTuple}{A @see "ChipEffectSetTuple".}
 #   \item{referenceList}{A single or a @list of @see "ChipEffectFile":s.}
 #   \item{tags}{A @character @vector of tags.}
+#   \item{genome}{A @character string specifying what genome is process.}
 #   \item{...}{Not used.}
 # }
 #
@@ -29,7 +30,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenceList=NULL, tags="", ...) {
+setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenceList=NULL, tags="", genome="Human", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -96,12 +97,21 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenc
   }
 
 
-  extend(Object(), "CopyNumberSegmentationModel",
+  this <- extend(Object(), "CopyNumberSegmentationModel",
     .cesTuple = cesTuple,
     .chromosomes = NULL,
     .referenceList = referenceList,
-    .tags = tags
-  )
+    .tags = tags,
+    .genome = genome
+  );
+
+  # Validate?
+  if (!is.null(this$.cesTuple)) {
+    # Validate genome
+    pathname <- getGenomeFile(this);
+  }
+
+  this;
 })
 
 
@@ -584,26 +594,121 @@ setMethodS3("getReferenceFiles", "CopyNumberSegmentationModel", function(this, .
 })
 
 
-setMethodS3("getGenomeData", "CopyNumberSegmentationModel", function(static, ..., verbose=FALSE) {
+setMethodS3("getGenome", "CopyNumberSegmentationModel", function(this, ...) {
+  this$.genome;
+})
+
+
+setMethodS3("getGenomeFile", "CopyNumberSegmentationModel", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  fullname <- getGenome(this);
+  pattern <- sprintf("^%s.*,chromosomes.txt$", fullname);
+
+  # 1. Search in the regular places
+  pathname <- findAnnotationData(name=fullname, set="genomes", 
+                            pattern=pattern, ..., verbose=less(verbose, 10));
+
+  # 2. As a backup, search in the <pkg>/annotationData/ directory
+  if (is.null(pathname)) {
+    verbose && enter(verbose, "Search among package's annotationData/");
+    path <- system.file("annotationData", package="aroma.affymetrix");
+    verbose && cat(verbose, "Path: ", path);
+    pathname <- findAnnotationData(name=fullname, set="genomes", 
+                pattern=pattern, ..., paths=path, verbose=less(verbose, 10));
+    verbose && exit(verbose);
+  }
+
+  if (is.null(pathname)) {
+    throw("Failed to locate a genome annotation data file: ", fullname);
+  }
+
+  pathname;
+}, protected=TRUE)
+
+
+setMethodS3("setGenome", "CopyNumberSegmentationModel", function(this, genome, tags=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'genome':
+  genome <- Arguments$getCharacter(genome);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  oldGenome <- this$.genome;
+
+  fullname <- paste(c(genome, tags), collapse=",");
+  verbose && cat(verbose, "Fullname: ", fullname);
+
+  # Verify that there is an existing genome file
+  tryCatch({
+    this$.genome <- fullname;
+    pathname <- getGenomeFile(this, verbose=less(verbose, 10));
+  }, error = function(ex) {
+    this$.genome <- oldGenome;
+    throw(ex$message);
+  })
+
+  invisible(oldGenome);
+})
+
+
+
+setMethodS3("getGenomeData", "CopyNumberSegmentationModel", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Reading genome chromosome annotation file");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get genome annotation data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Check for user specific annotation file
-  filename <- "hgChromosomes.txt";
-  pathname <- file.path("annotations", filename);
-  if (!isFile(pathname)) {
-    # If not found, fall back to the one in the package.
-    pathname <- system.file("annotations", filename, 
-                                                 package="aroma.affymetrix");
-    if (!isFile(pathname))
-      throw("Failed to locate file: ", filename);
-  }
+  verbose && enter(verbose, "Searching for the file");
+  # Search annotationData/genomes/
+  pathname <- getGenomeFile(this, verbose=less(verbose, 10));
+  verbose && exit(verbose);
 
-  genome <- readTable(pathname, header=TRUE, 
+  verbose && enter(verbose, "Reading data file");
+  verbose && cat(verbose, "Pathname: ", pathname);
+  data <- readTable(pathname, header=TRUE, 
                             colClasses=c(nbrOfBases="integer"), row.names=1);
+  verbose && exit(verbose);
 
-  genome;
-}, static=TRUE, protected=TRUE)
+  verbose && enter(verbose, "Translating chromosome names");
+  chromosomes <- row.names(data);
+  map <- c("X"=23, "Y"=24, "Z"=25);
+  for (kk in seq(along=map)) {
+    chromosomes <- gsub(names(map)[kk], map[kk], chromosomes, fixed=TRUE);
+  }
+  row.names(data) <- chromosomes;
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  data;
+}, protected=TRUE)
 
 
 setMethodS3("getRawCnData", "CopyNumberSegmentationModel", function(this, ceList, refList, chromosome, units=NULL, reorder=TRUE, ..., maxNAFraction=1/8, force=FALSE, verbose=FALSE) {
@@ -1351,6 +1456,13 @@ setMethodS3("calculateChromosomeStatistics", "CopyNumberSegmentationModel", func
 
 ##############################################################################
 # HISTORY:
+# 2007-09-15
+# o Added getGenome() and setGenome().  Now, getGenomeData() searches for a
+#   matching <genome>(,<tags)*,chromosomes.txt in 
+#   annotationData/genomes/<genome>/. As a backup it also searches in the
+#   corrsponding package directory(ies).
+#   hgChromosomes.txt is no longer used.
+# o BUG FIX: getGenomeData() was declared static, but it wasn't used that way.
 # 2007-09-05
 # o Was thinking to add a default asterisk tag to the output data set name.
 #   However, although this works beautifully, the care has to be taken to

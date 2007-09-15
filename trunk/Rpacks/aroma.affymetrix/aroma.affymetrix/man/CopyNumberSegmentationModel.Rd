@@ -3,6 +3,8 @@
 % 
 %  CopyNumberSegmentationModel.R
 % 
+% on Sat Sep 15 13:21:17 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -32,12 +34,13 @@ extends \link[R.oo]{Object}\cr
   This \emph{abstract} class represents a copy-number segmentation model.
  }
 
- \usage{CopyNumberSegmentationModel(cesTuple=NULL, referenceList=NULL, tags="", ...)}
+ \usage{CopyNumberSegmentationModel(cesTuple=NULL, referenceList=NULL, tags="", genome="Human", ...)}
 
  \arguments{
    \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
    \item{referenceList}{A single or a \code{\link[base]{list}} of \code{\link{ChipEffectFile}}:s.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
+   \item{genome}{A \code{\link[base]{character}} string specifying what genome is process.}
    \item{...}{Not used.}
  }
 
@@ -54,6 +57,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:getChromosomes.CopyNumberSegmentationModel]{getChromosomes}} \tab Gets the chromosomes available.\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
+ \tab \code{getGenome} \tab  -\cr
  \tab \code{getListOfChipEffects} \tab  -\cr
  \tab \code{getListOfGenomeInformations} \tab  -\cr
  \tab \code{getListOfReferences} \tab  -\cr
@@ -70,6 +74,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.CopyNumberSegmentationModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
  \tab \code{plot} \tab  -\cr
  \tab \code{setAlias} \tab  -\cr
+ \tab \code{setGenome} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
 
