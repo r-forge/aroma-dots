@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Sat Sep 15 13:27:59 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1404,6 +1406,12 @@
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
 \alias{yellow.colors}
+\alias{getGenome}
+\alias{getGenome.CopyNumberSegmentationModel}
+\alias{getGenomeFile}
+\alias{getGenomeFile.CopyNumberSegmentationModel}
+\alias{setGenome}
+\alias{setGenome.CopyNumberSegmentationModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

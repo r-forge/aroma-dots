@@ -48,7 +48,7 @@ extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
 
 
  \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
-as.character, calculateChromosomeStatistics, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenomeData, getListOfChipEffects, getListOfGenomeInformations, getListOfReferences, getName, getNames, getPath, getRawCnData, getReferenceFiles, getRegions, getReportPath, getSetTuple, getTableOfArrays, getTags, migrateTool, nbrOfArrays, nbrOfChipTypes, newPlot, plot, setAlias, writeRegions
+as.character, calculateChromosomeStatistics, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffects, getListOfGenomeInformations, getListOfReferences, getName, getNames, getPath, getRawCnData, getReferenceFiles, getRegions, getReportPath, getSetTuple, getTableOfArrays, getTags, migrateTool, nbrOfArrays, nbrOfChipTypes, newPlot, plot, setAlias, setGenome, writeRegions
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

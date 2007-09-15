@@ -8,9 +8,16 @@ setMethodS3("drawCytoband", "CopyNumberSegmentationModel", function(this, chromo
     throw("Argument 'chromosome' must be a single chromosome: ", paste(chromosome, collapse=", "));
   }
 
+  # Do we know how to plot the genome?
+  genome <- getGenome(this);
+  name <- gsub(",.*", "", genome);
+  if (name != "Human") {
+    warning("Cannot draw cytoband. Unsupported genome: ", genome);
+    return();
+  }
+
 
   xScale <- 1/(10^unit);
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Get chromosome lengths
@@ -87,21 +94,10 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
 
 
   getChromosomeLength <- function(chromosome) {
-    # For now, we need the genome information data available
-    # in the 'GLAD' package.
-    require("GLAD") || stop("Package not loaded: GLAD"); # data("cytoband")
-    
-    # Get chromosome lengths
-    # Load data
-    # To please R CMD check on R v2.6.0
-    cytoband <- NULL; rm(cytoband);
-    data("cytoband", envir=sys.frame(sys.nframe()));  # Package 'GLAD'
-    genomeInfo <- aggregate(cytoband$End, 
-      by=list(Chromosome=cytoband$Chromosome, ChrNumeric=cytoband$ChrNumeric),
-      FUN=max, na.rm=TRUE);
-    names(genomeInfo) <- c("Chromosome", "ChrNumeric", "Length");
-    nbrOfBases <- genomeInfo$Length[chromosome];
-    nbrOfBases;
+    data <- getGenomeData(this);
+    if (!chromosome %in% row.names(data))
+      throw("Cannot infer number of bases in chromosome. No such chromosome: ", chromosome);
+    data[chromosome,"nbrOfBases"];
   } # getChromosomeLength()
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -351,6 +347,9 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
 
 ##############################################################################
 # HISTORY:
+# 2007-09-15
+# o Now the cytoband is only drawn for some genomes, which currently is
+#   hardwired to the "Human" genome. 
 # 2007-09-04
 # o Finally, now plot() works pretty much the same for GladModel as for
 #   the new CbsModel.

@@ -1,7 +1,22 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.7.0 [2007-09-15xx]
+Version: 0.7.0 [2007-09-15]
+o Now it is possible to specify the genome used for segmentation and
+  plotting. This can be done either via argument 'genome' in the
+  constructor or by setGenome() of CopyNumberSegmentationModel.
+  A corresponding <genome>(,<tags>)*,chromosomes.txt file should be
+  put in annotationData/genomes/<genome>/. If not found there, the
+  file is searched for in the annotationData/ directory installed
+  with the package. If the file is not found, setGenome() will give
+  an error.  If not specified, the genome defaults to "Human".  
+  The above file specifies the number of bases per chromosome, 
+  which is used when plotting chromosomal data.  The previous file
+  'hgChromosomes.txt' is now deprecated and obsolete.
+o Now CopyNumberSegmentationModel only adds cytobands to genomes
+  for which cytoband information is available.  Currently this is
+  hardwired only the "Human" genome. For all other genomes, there
+  will be no cytoband.
 o Now AllelicCrosstalkCalibration corrects also non-SNP PM cells by 
   substracting a global offset and rescaling towards target average.
   The global offset is calculated as the weighted average of all
@@ -16,8 +31,8 @@ o SPEED UP: Now getOutputDataSet() of FragmentLengthNormalization set
   arguments from the contents of the files.  This gives an significant
   speed up for large chip types.
 o ROBUSTNESS: Now the RmaPlm fit function detects cases where a probe 
-  get weight zero all arrays. In such (rare) cases, parameter estimates
-  equals NAs. Before an LAPACK error was thrown.
+  get zero weight for all arrays. In such (rare) cases, parameter 
+  estimates equals NAs. Before an LAPACK error was thrown.
 o ROBUSTNESS: Added validate that the 'name' of an AffymetrixCelSet 
   and AffymetrixCelFile is of at least length one.
 o ROBUSTNESS: Now isDone() of Transform throws an error if too many 
@@ -35,7 +50,7 @@ o BETA: Added AvgPlm, AvgSnpPlm, AvgCnPlm.
 o BUG FIX: Now more effort is made to ensure that all CEL files are
   generated with an upper-case filename extension (*.CEL) and not (*.cel).
   Thanks Jeremy Silver for reporting problems on this.
-o Package passes R CMD check on R v2.6.0alpha on Windows XP.
+o Package passes R CMD check on R v2.5.1pat & R v2.6.0alpha on Windows XP.
   It also passes all redundancy tests on Linux.
 
 

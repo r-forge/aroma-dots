@@ -622,4 +622,6 @@ writeRegions.ChromosomeExplorer
 writeRegions.CopyNumberSegmentationModel writeRegions.GladModel
 writeRegions.profileCGH writeWig writeWig.CnChipEffectSet
 yellow.colors
-
+  getGenome getGenome.CopyNumberSegmentationModel getGenomeFile
+  getGenomeFile.CopyNumberSegmentationModel setGenome
+  setGenome.CopyNumberSegmentationModel
