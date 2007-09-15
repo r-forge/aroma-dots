@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Fri Sep 14 21:17:30 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1454,6 +1456,71 @@
 \alias{updateDataColumn.AromaAnnotationFile}
 \alias{verify.UflSnpInformation}
 \alias{readData.AromaUflFile}
+\alias{[.AromaTabularBinaryFile}
+\alias{[[.AromaTabularBinaryFile}
+\alias{[<-.AromaTabularBinaryFile}
+\alias{allocate}
+\alias{allocate.AromaTabularBinaryFile}
+\alias{allocateFromCdf}
+\alias{allocateFromCdf.AromaUflFile}
+\alias{allocateFromCdf.AromaUgpFile}
+\alias{allocateFromCdf.AromaUnitTabularBinaryFile}
+\alias{AromaTabularBinaryFile}
+\alias{AromaUnitTabularBinaryFile}
+\alias{as.character.AromaTabularBinaryFile}
+\alias{colMeans.AromaTabularBinaryFile}
+\alias{colMedians.AromaTabularBinaryFile}
+\alias{colnames.AromaTabularBinaryFile}
+\alias{colnames.AromaUflFile}
+\alias{colnames.AromaUgpFile}
+\alias{colnames<-}
+\alias{colnames<-.AromaTabularBinaryFile}
+\alias{colnames<-.default}
+\alias{colStats.AromaTabularBinaryFile}
+\alias{colSums.AromaTabularBinaryFile}
+\alias{dim.AromaTabularBinaryFile}
+\alias{equals.AffymetrixFile}
+\alias{findByChipType.AromaUnitTabularBinaryFile}
+\alias{fromChipType.AromaUnitTabularBinaryFile}
+\alias{getBytesPerColumn}
+\alias{getBytesPerColumn.AromaTabularBinaryFile}
+\alias{getCdf.AromaUnitTabularBinaryFile}
+\alias{getChipType.AromaUnitTabularBinaryFile}
+\alias{getChromosomes.AromaUgpFile}
+\alias{getCnNames}
+\alias{getColClasses.AromaTabularBinaryFile}
+\alias{getFilenameExtension.AromaUflFile}
+\alias{getFilenameExtension.AromaUnitTabularBinaryFile}
+\alias{getGenomeVersion.AromaUgpFile}
+\alias{getUnitsOnChromosome.UgpGenomeInformation}
+\alias{importFrom}
+\alias{importFrom.AromaUnitTabularBinaryFile}
+\alias{importFromAffymetrixNetAffxCsvFile.AromaUnitTabularBinaryFile}
+\alias{importFromAffymetrixTabularFile}
+\alias{importFromAffymetrixTabularFile.AromaUgpFile}
+\alias{importFromAffymetrixTabularFile.AromaUnitTabularBinaryFile}
+\alias{importFromDChipGenomeInformation}
+\alias{importFromDChipGenomeInformation.AromaUnitTabularBinaryFile}
+\alias{importFromGenomeInformation.AromaUnitTabularBinaryFile}
+\alias{indexOfUnits}
+\alias{indexOfUnits.AromaUnitTabularBinaryFile}
+\alias{lapply.AromaTabularBinaryFile}
+\alias{nbrOfColumns.AromaTabularBinaryFile}
+\alias{nbrOfEnzymes}
+\alias{nbrOfEnzymes.AromaUflFile}
+\alias{nbrOfRows.AromaTabularBinaryFile}
+\alias{nbrOfUnits.AromaUnitTabularBinaryFile}
+\alias{ncol.AromaTabularBinaryFile}
+\alias{nrow.AromaTabularBinaryFile}
+\alias{readData.AromaTabularBinaryFile}
+\alias{readData.AromaUgpFile}
+\alias{readFooter}
+\alias{readFooter.AromaTabularBinaryFile}
+\alias{readHeader.AromaTabularBinaryFile}
+\alias{subset.AromaTabularBinaryFile}
+\alias{summary.AromaTabularBinaryFile}
+\alias{updateData.AromaTabularBinaryFile}
+\alias{updateDataColumn.AromaTabularBinaryFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

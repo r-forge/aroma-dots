@@ -78,11 +78,7 @@ setMethodS3("readData", "UflSnpInformation", function(this, nrow=NULL, ..., verb
 
 setMethodS3("getDataColumns", "UflSnpInformation", function(this, ...) {
   ufl <- getAromaUflFile(this);
-  nbrOfColumns <- nbrOfColumns(ufl);
-  names <- c("fragmentLength", rep(c("fragmentLength"), nbrOfColumns-1));
-  if (nbrOfColumns > 1)
-    names[-1] <- sprintf("%s,%02d", names[-1], 2:nbrOfColumns);
-  names;
+  colnames(ufl);
 }, private=TRUE)
 
 setMethodS3("getFields", "UflSnpInformation", function(this, ...) {

@@ -6,23 +6,23 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getSnpNames.AffymetrixCdfFile}
-\alias{getSnpNames.AffymetrixCdfFile}
-\alias{AffymetrixCdfFile.getSnpNames}
-\alias{getSnpNames.AffymetrixCdfFile}
-\alias{getSnpNames,AffymetrixCdfFile-method}
+\name{getCnNames.AffymetrixCdfFile}
+\alias{getCnNames.AffymetrixCdfFile}
+\alias{AffymetrixCdfFile.getCnNames}
+\alias{getCnNames.AffymetrixCdfFile}
+\alias{getCnNames,AffymetrixCdfFile-method}
 
 
-\title{Gets the names of the SNP units}
+\title{Gets the names of the CN units}
 
 \description{
-  Gets the names of the SNP units.
+  Gets the names of the CN units.
 }
 
-\usage{\method{getSnpNames}{AffymetrixCdfFile}(this, pattern="SNP_", ...)}
+\usage{\method{getCnNames}{AffymetrixCdfFile}(this, pattern="CN_", ...)}
 
 \arguments{
- \item{pattern}{A regular expression to identify unit that are SNPs.}
+ \item{pattern}{A regular expression to identify unit that are CN units.}
  \item{...}{Not used.}
 }
 
@@ -33,7 +33,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:getCnNames.AffymetrixCdfFile]{*getCnNames}()}.
+  \code{\link[aroma.affymetrix:getSnpNames.AffymetrixCdfFile]{*getSnpNames}()}.
   Internally, \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{*getUnitNames}()}.
   is used.
 

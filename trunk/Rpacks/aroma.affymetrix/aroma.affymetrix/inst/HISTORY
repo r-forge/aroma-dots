@@ -1,15 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.6.3 [2007-09-14xx]
+Version: 0.7.0 [2007-09-14xx]
 o Now AllelicCrosstalkCalibration corrects also non-SNP PM cells by 
   substracting a global offset and rescaling towards target average.
   The global offset is calculated as the weighted average of all
-  allelic offsets.
-o Added trial versions the following classes: AffymetrixNetAffxCsvFile,
-  AromaUflFile, AvgPlm, AvgSnpPlm, AvgCnPlm, UflSnpInformation, and
-  UgpGenomeInformation.
-o Updated all places with SNP regular expression "^SNP" to "SNP_".
+  allelic offsets. SNP probes are calibrated in the same way as before.
+o Updated all places with SNP regular expression "^SNP" to "SNP_" in
+  order to also match units named "AFFX-SNP_...".
 o SPEED UP: Now getCellMap() of ChipEffectFile caches (large) results 
   to file.
 o SPEED UP: Now getOutputDataSet() of FragmentLengthNormalization set 
@@ -25,6 +23,11 @@ o WORKAROUND: If there is only one probe, then fit function of AvgPlm
   would return theta=y:s, and sdTheta=0:s.  However, when searching 
   for units to do, we test (sdTheta <= 0).  The workaround is to store 
   the smallest float available instead of zero.
+o BETA: Added AffymetrixTabularFile, AffymetrixNetAffxCsvFile, 
+  AromaUgpFile, and AromaUflFile.
+o BETA: Added UflSnpInformation and UgpGenomeInformation 
+  interfacing to UGP and UFL files.
+o BETA: Added AvgPlm, AvgSnpPlm, AvgCnPlm.
 o BUG FIX: Now more effort is made to ensure that all CEL files are
   generated with an upper-case filename extension (*.CEL) and not (*.cel).
   Thanks Jeremy Silver for reporting problems on this.

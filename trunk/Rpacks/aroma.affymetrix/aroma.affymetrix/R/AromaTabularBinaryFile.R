@@ -23,6 +23,19 @@ setMethodS3("as.character", "AromaTabularBinaryFile", function(x, ...) {
 })
 
 
+setMethodS3("colnames", "AromaTabularBinaryFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+  as.character(seq(length=nbrOfColumns(this)));
+})
+
+setMethodS3("colnames<-", "AromaTabularBinaryFile", function(x, ..., value) {
+  # To please R CMD check
+  this <- x;
+
+  throw("Column names of an ", class(this)[1], " are read only.");
+})
+
 
 setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ..., force=FALSE) {
   if (is.null(con)) {
@@ -293,6 +306,9 @@ setMethodS3("readData", "AromaTabularBinaryFile", function(this, rows=NULL, colu
   }
   verbose && exit(verbose);
   
+  # Add column names.
+  colnames(data) <- colnames(this)[columns];
+
   data;
 }, protected=TRUE)
 
@@ -841,12 +857,10 @@ setMethodS3("summary", "AromaTabularBinaryFile", function(object, ...) {
     s <- paste(thisNames, s, sep="");
     res[[kk]] <- s;
   }
-print(res);
 
   res <- matrix(unlist(res, use.names=FALSE), ncol=nbrOfColumns);
-print(res);
   rownames(res) <- rep("", nrow(res));
-  colnames(res) <- seq(length=ncol(res));
+  colnames(res) <- colnames(this);
   class(res) <- "table";
 
   res;

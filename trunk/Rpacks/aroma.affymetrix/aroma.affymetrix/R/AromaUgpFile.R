@@ -28,6 +28,11 @@ setMethodS3("getFilenameExtension", "AromaUgpFile", function(static, ...) {
   "ugp";
 }, static=TRUE)
 
+setMethodS3("colnames", "AromaUgpFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+  c("chromosome", "position");
+})
 
 setMethodS3("readData", "AromaUgpFile", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':
@@ -66,7 +71,7 @@ setMethodS3("allocateFromCdf", "AromaUgpFile", function(static, ...) {
 
 
 
-setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosome, range=NULL, ..., verbose=FALSE) {
+setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosome, region=NULL, ..., verbose=FALSE) {
   # Stratify by chromosome
   data <- this[,1,drop=TRUE];
 
@@ -76,10 +81,10 @@ setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosome, range=NULL,
   keep <- !is.na(data) & (data %in% chromosome);
   idxs <- which(keep);
 
-  if (!is.null(range)) {
+  if (!is.null(region)) {
     data <- this[idxs,2,drop=TRUE];
     keep <- !is.na(data);
-    keep <- keep & (range[1] <= data & data <= range[2]);
+    keep <- keep & (region[1] <= data & data <= region[2]);
     idxs <- idxs[keep];
   }
   
@@ -110,6 +115,10 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this,
   }
 
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Main
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Importing (unit name, chromosome, position) data from ", class(csv)[1]);
 
   # Query CDF
@@ -186,6 +195,11 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUgpFile", function(this, sr
     on.exit(popState(verbose));
   }
 
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Main
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Importing (unitName, chromosome, position) from ", class(src)[1], " file");
 
   data <- readData(src, colClassPatterns=colClassPatterns, camelCaseNames=TRUE, ..., verbose=less(verbose));
@@ -203,7 +217,7 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUgpFile", function(this, sr
   keep <- which(!is.na(cdfUnits));
   cdfUnits <- cdfUnits[keep];
   if (length(cdfUnits) == 0) {
-    warning("None of the imported unit names match the ones in the CDF ('", getPathname(cdf), "'). Is the correct file ('", getPathname(csv), "'), being imported?");
+    warning("None of the imported unit names match the ones in the CDF ('", getPathname(cdf), "'). Is the correct file ('", getPathname(src), "'), being imported?");
   }
 
   # Assume 'chromosome' is in 2nd column, and 'position' in 3rd.

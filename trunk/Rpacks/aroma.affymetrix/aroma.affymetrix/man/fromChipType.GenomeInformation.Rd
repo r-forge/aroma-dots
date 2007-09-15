@@ -19,7 +19,8 @@
   Static method to define a genome information set by chip type.
 }
 
-\usage{\method{fromChipType}{GenomeInformation}(...)}
+\synopsis{fromChipType.GenomeInformation(...)}
+\usage{GenomeInformation$fromChipType()}
 
 \arguments{
  \item{...}{Not used.}

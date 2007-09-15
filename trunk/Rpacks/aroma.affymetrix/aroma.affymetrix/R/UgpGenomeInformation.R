@@ -235,24 +235,14 @@ setMethodS3("getData", "UgpGenomeInformation", function(this, units=NULL, fields
 
 
 setMethodS3("getChromosomes", "UgpGenomeInformation", function(this, force=FALSE, ...) {
-  chromosomes <- this$.chromosomes;
-
-  if (is.null(chromosomes) || force) {
-    ugp <- getAromaUgpFile(this);
-    chromosomes <- ugp[,1];
-    gc <- gc();
-    chromosomes <- unique(chromosomes);
-    gc <- gc();
-    chromosomes[chromosomes == 0] <- NA;
-    chromosomes <- chromosomes[!is.na(chromosomes)];
-    chromosomes <- sort(chromosomes);
-    chromosomes <- as.integer(chromosomes);
-    this$.chromosomes <- chromosomes;
-  }
-
-  chromosomes;
+  ugp <- getAromaUgpFile(this);
+  getChromosomes(ugp, force=force, ...);
 })
 
+setMethodS3("getUnitsOnChromosome", "UgpGenomeInformation", function(this, ...) {
+  ugp <- getAromaUgpFile(this);
+  getUnitsAt(ugp, ...);
+})
 
 ############################################################################
 # HISTORY:

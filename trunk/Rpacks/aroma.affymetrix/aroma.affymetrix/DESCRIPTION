@@ -1,5 +1,5 @@
 Package: aroma.affymetrix
-Version: 0.6.3
+Version: 0.7.0
 Date: 2007-09-14
 Title: Analysis of large Affymetrix microarray data sets
 Author: Henrik Bengtsson <henrikb@braju.com>, Ken Simpson <ksimpson@wehi.edu.au>
