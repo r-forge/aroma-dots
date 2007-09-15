@@ -102,32 +102,43 @@ setMethodS3("allocateFromCdf", "AromaUnitTabularBinaryFile", function(static, cd
 
 
 
-setMethodS3("importFrom", "AromaUnitTabularBinaryFile", function(this, object, ...) {
-  if (inherits(object, "AffymetrixNetAffxCsvFile")) {
-    importFromAffymetrixNetAffxCsvFile(this, object, ...);
-  } else if (inherits(object, "DChipGenomeInformation")) {
-    importFromDChipGenomeInformation(this, object, ...);
-  } else if (inherits(object, "GenomeInformation")) {
-    importFromGenomeInformation(this, object, ...);
-  } else if (inherits(object, "AffymetrixTabularFile")) {
-    importFromAffymetrixTabularFile(this, object, ...);
+setMethodS3("importFrom", "AromaUnitTabularBinaryFile", function(this, src, ...) {
+  if (inherits(src, "AffymetrixNetAffxCsvFile")) {
+    importFromAffymetrixNetAffxCsvFile(this, src, ...);
+  } else if (inherits(src, "DChipGenomeInformation")) {
+    importFromDChipGenomeInformation(this, src, ...);
+  } else if (inherits(src, "GenomeInformation")) {
+    importFromGenomeInformation(this, src, ...);
+  } else if (inherits(src, "AffymetrixTabularFile")) {
+    importFromAffymetrixTabularFile(this, src, ...);
+  } else if (inherits(src, "GenericTabularFile")) {
+    importFromGenericTabularFile(this, src, ...);
   } else {
-    throw("Do not know how to import from an object of class ", 
-                                                          class(object)[1]);
+    throw("Do not know how to import from an src of class ", class(src)[1]);
   }
 })
 
-setMethodS3("importFromAffymetrixTabularFile", "AromaUnitTabularBinaryFile", abstract=TRUE, protected=TRUE);
+
+setMethodS3("importFromGenericTabularFile", "AromaUnitTabularBinaryFile", abstract=TRUE);
+
+setMethodS3("importFromAffymetrixTabularFile", "AromaUnitTabularBinaryFile", function(this, src, ...) {
+  # Argument 'src':
+  if (!inherits(src, "AffymetrixTabularFile")) {
+    throw("Argument 'src' is not a AffymetrixTabularFile file: ", class(src)[1]);
+  }
+
+  importFromGenomeInformation(this, src, ...);
+});
 
 setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUnitTabularBinaryFile", abstract=TRUE, protected=TRUE);
 
-setMethodS3("importFromDChipGenomeInformation", "AromaUnitTabularBinaryFile", function(this, gi, ...) {
-  # Argument 'gi':
-  if (!inherits(gi, "DChipGenomeInformation")) {
-    throw("Argument 'gi' is not a DChipGenomeInformation file: ", class(gi)[1]);
+setMethodS3("importFromDChipGenomeInformation", "AromaUnitTabularBinaryFile", function(this, src, ...) {
+  # Argument 'src':
+  if (!inherits(src, "DChipGenomeInformation")) {
+    throw("Argument 'src' is not a DChipGenomeInformation file: ", class(src)[1]);
   }
 
-  importFromGenomeInformation(this, gi, ...);
+  importFromGenomeInformation(this, src, ...);
 })
 
 

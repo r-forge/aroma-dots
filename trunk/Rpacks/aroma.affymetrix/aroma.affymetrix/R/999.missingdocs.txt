@@ -566,6 +566,7 @@ setAttributesBySampleAnnotationSet
 setAttributesBySampleAnnotationSet.AffymetrixCelSet
 setAttributesByTags setAttributesByTags.AffymetrixCelFile
 setAttributesByTags.AffymetrixFile setAttributeXY
+setAttributesByTags.AromaTabularBinaryFile
 setAttributeXY.AffymetrixCelFile setCdf setCdf.GenotypeCallFile
 setColorMaps setColorMaps.ArrayExplorer setColorMaps.SpatialReporter
 setCombineAlleles setCombineAlleles.CnChipEffectSet
@@ -625,3 +626,6 @@ yellow.colors
   getGenome getGenome.CopyNumberSegmentationModel getGenomeFile
   getGenomeFile.CopyNumberSegmentationModel setGenome
   setGenome.CopyNumberSegmentationModel
+  importFromGenericTabularFile
+  importFromGenericTabularFile.AromaUgpFile
+  importFromGenericTabularFile.AromaUnitTabularBinaryFile

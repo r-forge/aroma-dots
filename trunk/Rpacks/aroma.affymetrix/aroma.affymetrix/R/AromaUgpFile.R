@@ -175,12 +175,28 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this,
 
 
 
-setMethodS3("importFromAffymetrixTabularFile", "AromaUgpFile", function(this, src, colClassPatterns=c("*"="NULL", "^probeSetID$"="character", "^chromosome$"="character", "^(physicalPosition|position)$"="character"), colOrder=NULL, shift=0, con=NULL, ..., verbose=FALSE) {
+setMethodS3("importFromAffymetrixTabularFile", "AromaUgpFile", function(this, src, colClassPatterns=c("*"="NULL", "^probeSetID$"="character", "^chromosome$"="character", "^(physicalPosition|position)$"="character"), ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!inherits(src, "AffymetrixTabularFile")) {
     throw("Argument 'src' is not an AffymetrixTabularFile: ", class(src)[1]);
+  }
+
+  units <- importFromGenericTabularFile(this, src=src, 
+            colClassPatterns=colClassPatterns, camelCaseNames=TRUE, ...);
+
+  invisible(units);
+}, protected=TRUE);
+
+
+
+setMethodS3("importFromGenericTabularFile", "AromaUgpFile", function(this, src, colClassPatterns=c("*"="NULL", "^Probe Set ID$"="character", "^Chromosome$"="character", "^Physical Position$"="character"), colOrder=NULL, shift=0, con=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!inherits(src, "GenericTabularFile")) {
+    throw("Argument 'src' is not an GenericTabularFile: ", class(src)[1]);
   }
 
   # Argument 'colOrder':
@@ -196,13 +212,12 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUgpFile", function(this, sr
   }
 
 
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Main
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Importing (unitName, chromosome, position) from ", class(src)[1], " file");
 
-  data <- readData(src, colClassPatterns=colClassPatterns, camelCaseNames=TRUE, ..., verbose=less(verbose));
+  data <- readData(src, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
 
   # Rearrange columns (optional)
   if (!is.null(colOrder))
@@ -227,23 +242,27 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUgpFile", function(this, sr
   rm(keep);
   gc <- gc();
 
-
   # Convert chromosome strings to integers
-  map <- c(X=23, Y=24, Z=25);
-  for (kk in seq(along=map)) {
-    data[,1] <- gsub(names(map)[kk], map[kk], data[,1]);
+  if (!is.integer(data[,1])) {
+    map <- c(X=23, Y=24, Z=25);
+    for (kk in seq(along=map)) {
+      data[,1] <- gsub(names(map)[kk], map[kk], data[,1]);
+    }
+    suppressWarnings({
+      data[,1] <- as.integer(data[,1]);
+    })
+    gc <- gc();
   }
-  suppressWarnings({
-    data[,1] <- as.integer(data[,1]);
-  })
-  gc <- gc();
 
   # Convert positions to integers
-  suppressWarnings({
-    data[,2] <- as.integer(data[,2]);
-  })
-  gc <- gc();
+  if (!is.integer(data[,2])) {
+    suppressWarnings({
+      data[,2] <- as.integer(data[,2]);
+    })
+    gc <- gc();
+  }
 
+  # Shift positions?
   if (shift != 0) {
     verbose && printf(verbose, "Shifting positions %d steps.", shift);
     data[,2] <- data[,2] + as.integer(shift);
