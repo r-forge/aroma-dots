@@ -381,8 +381,8 @@ setMethodS3("validate", "PlatformDesign", function(this, subset=1/1000, ..., ver
   # Get the units to be validated
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdf <- getCdf(this);
-  # Currently, AFFX- are non-valid /HB 2006-12-11
-  snpUnits <- indexOf(cdf, pattern="^SNP");
+  # Currently, non-SNP units are non-valid /HB 2006-12-11
+  snpUnits <- indexOf(cdf, pattern="SNP_");
   if (is.null(subset)) {
     units <- snpUnits;
   } else if (length(subset) == 1 && subset < 1) {

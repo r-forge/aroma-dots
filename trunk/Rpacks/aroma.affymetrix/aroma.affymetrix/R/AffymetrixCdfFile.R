@@ -1186,16 +1186,20 @@ setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c("UGP", "dChip"), ..., force=FALSE) {
+  # Argument 'types':
+  types <- Arguments$getCharacters(types);
+  types <- tolower(types);
+
   chipType <- getChipType(this, fullname=FALSE);
 
   gi <- this$.gi;
   if (is.null(gi) || force) {
     for (type in types) {
       tryCatch({
-        if (type == "UGP") {
+        if (type == "ugp") {
           gi <- UgpGenomeInformation$fromChipType(chipType);
           break;
-        } else if (type == "dChip") {
+        } else if (type == "dchip") {
           gi <- DChipGenomeInformation$fromChipType(chipType);
           break;
         }
@@ -1213,7 +1217,12 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
 })
 
 
-setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("ufl", "dChip"), ..., force=FALSE) {
+setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UFL", "dChip"), ..., force=FALSE) {
+  # Argument 'types':
+  types <- Arguments$getCharacters(types);
+  types <- tolower(types);
+
+
   # Remove any suffices to get the "main" chip type.
   chipType <- getChipType(this, fullname=FALSE);
 
@@ -1224,7 +1233,7 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("uf
         if (type == "ufl") {
           si <- UflSnpInformation$fromChipType(chipType);
           break;
-        } else if (type == "dChip") {
+        } else if (type == "dchip") {
           si <- DChipSnpInformation$fromChipType(chipType);
           break;
         }

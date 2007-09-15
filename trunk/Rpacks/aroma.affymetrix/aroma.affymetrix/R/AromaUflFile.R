@@ -23,9 +23,9 @@ setMethodS3("readData", "AromaUflFile", function(this, ...) {
   data <- NextMethod("readData", this, ...);
 
   # Interpret zeros as NAs
-  if (ncol(data) > 0) {
-    nas <- (data[,1] == 0);
-    data[nas,1] <- NA;
+  for (cc in seq(length=ncol(data))) {
+    nas <- (data[,cc] == 0);
+    data[nas,cc] <- NA;
   }
 
   data;
@@ -44,7 +44,7 @@ setMethodS3("allocateFromCdf", "AromaUflFile", function(static, cdf, nbrOfEnzyme
 
 
 
-setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this, csv, ..., verbose=FALSE) {
+setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this, csv, enzymes=1:nbrOfEnzymes(this), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,17 +61,17 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
   }
 
 
-  verbose && enter(verbose, "Importing (unit name, fragment length) data from ", class(csv)[1]);
+  verbose && enter(verbose, "Importing (unit name, fragment length+) data from ", class(csv)[1]);
 
   # Query CDF
   cdf <- getCdf(this);
   cdfUnitNames <- getUnitNames(cdf);
 
   # Read data
-  data <- readDataUnitFragmentLength(csv, ..., verbose=less(verbose));
+  data <- readDataUnitFragmentLength(csv, enzymes=enzymes, ..., verbose=less(verbose));
 
   # Map to CDF unit names
-  cdfUnits <- match(data[[1]], cdfUnitNames);
+  cdfUnits <- match(data[,1,drop=TRUE], cdfUnitNames);
 
   # Exclude units that are not in the CDF
   keep <- which(!is.na(cdfUnits));
@@ -79,14 +79,14 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
   if (length(cdfUnits) == 0) {
     warning("None of the imported unit names match the ones in the CDF ('", getPathname(cdf), "'). Is the correct file ('", getPathname(csv), "'), being imported?");
   }
-  data <- data[keep,2,drop=TRUE];
+  data <- data[keep,-1,drop=FALSE];
  
   # Garbage collect
   gc <- gc();
   verbose && print(verbose, gc, level=-10);
 
   # Update
-  this[cdfUnits,1] <- data;
+  this[cdfUnits,] <- data;
   rm(data);
 
   gc <- gc();

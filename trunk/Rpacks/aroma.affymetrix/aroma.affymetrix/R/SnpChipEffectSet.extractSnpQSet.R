@@ -92,7 +92,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, tra
   chipType <- getChipType(cdf, fullname=FALSE);
   cleanChipType <- affy::cleancdfname(chipType, addcdf=FALSE);
   nbrOfSamples <- nbrOfFiles(this);
-  units <- indexOf(cdf, pattern="^SNP");
+  units <- indexOf(cdf, pattern="SNP_");
   nbrOfUnits <- length(units);
   snpNames <- getUnitNames(cdf, units=units);
   sampleNames <- getNames(this);
