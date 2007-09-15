@@ -19,7 +19,7 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFileSet}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{GenotypeCallSet}\cr
 
@@ -27,7 +27,7 @@
 \link[aroma.affymetrix]{GenotypeCallXdrSet}\cr
 
 public static class \bold{GenotypeCallSet}\cr
-extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
+extends \link[aroma.affymetrix]{GenericDataFileSet}\cr
 
 
 
@@ -38,7 +38,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
  \arguments{
    \item{files}{A \code{\link[base]{list}} of \code{\link{GenotypeCallFile}}:s.}
-   \item{...}{Arguments passed to \code{\link{AffymetrixFileSet}}.}
+   \item{...}{Arguments passed to \code{\link{GenericDataFileSet}}.}
  }
 
  \section{Fields and Methods}{
@@ -57,8 +57,8 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 }
 
 
- \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
+ \bold{Methods inherited from GenericDataFileSet}:\cr
+append, appendFiles, as, as.GenericDataFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

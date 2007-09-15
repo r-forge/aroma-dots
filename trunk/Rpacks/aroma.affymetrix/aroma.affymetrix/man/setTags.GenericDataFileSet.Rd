@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{setTags.AffymetrixFileSet}
-\alias{setTags.AffymetrixFileSet}
-\alias{AffymetrixFileSet.setTags}
-\alias{setTags.AffymetrixFileSet}
-\alias{setTags,AffymetrixFileSet-method}
+\name{setTags.GenericDataFileSet}
+\alias{setTags.GenericDataFileSet}
+\alias{GenericDataFileSet.setTags}
+\alias{setTags.GenericDataFileSet}
+\alias{setTags,GenericDataFileSet-method}
 
 
 \title{Sets the tags of the file set}
@@ -19,7 +19,7 @@
   Sets the tags of the file set.
 }
 
-\usage{\method{setTags}{AffymetrixFileSet}(this, tags="*", ...)}
+\usage{\method{setTags}{GenericDataFileSet}(this, tags="*", ...)}
 
 \arguments{
  \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
@@ -31,14 +31,14 @@
 }
 
 \details{
-  See \code{\link[aroma.affymetrix:getTags.AffymetrixFileSet]{*getTags}()} for so called \emph{special tags}.
+  See \code{\link[aroma.affymetrix:getTags.GenericDataFileSet]{*getTags}()} for so called \emph{special tags}.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:getTags.AffymetrixFileSet]{*getTags}()}.
-  For more information see \code{\link{AffymetrixFileSet}}.
+  \code{\link[aroma.affymetrix:getTags.GenericDataFileSet]{*getTags}()}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFile.R
+%  GenericDataFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getPathname.AffymetrixFile}
-\alias{getPathname.AffymetrixFile}
-\alias{AffymetrixFile.getPathname}
-\alias{getPathname.AffymetrixFile}
-\alias{getPathname,AffymetrixFile-method}
+\name{getPathname.GenericDataFile}
+\alias{getPathname.GenericDataFile}
+\alias{GenericDataFile.getPathname}
+\alias{getPathname.GenericDataFile}
+\alias{getPathname,GenericDataFile-method}
 
 
 \title{Gets the pathname of the file}
@@ -19,7 +19,7 @@
   Gets the pathname of the file.
 }
 
-\usage{\method{getPathname}{AffymetrixFile}(this, ...)}
+\usage{\method{getPathname}{GenericDataFile}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFile}}.
+  For more information see \code{\link{GenericDataFile}}.
 }
 \keyword{internal}
 \keyword{methods}

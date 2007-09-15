@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getFullName.AffymetrixFileSet}
-\alias{getFullName.AffymetrixFileSet}
-\alias{AffymetrixFileSet.getFullName}
-\alias{getFullName.AffymetrixFileSet}
-\alias{getFullName,AffymetrixFileSet-method}
+\name{getFullName.GenericDataFileSet}
+\alias{getFullName.GenericDataFileSet}
+\alias{GenericDataFileSet.getFullName}
+\alias{getFullName.GenericDataFileSet}
+\alias{getFullName,GenericDataFileSet-method}
 
 
 \title{Gets the full name of the file set}
@@ -19,7 +19,7 @@
   Gets the full name of the file set, that is the name of the directory without parent directories.
 }
 
-\usage{\method{getFullName}{AffymetrixFileSet}(this, parent=1, ...)}
+\usage{\method{getFullName}{GenericDataFileSet}(this, parent=1, ...)}
 
 \arguments{
  \item{parent}{The number of generations up in the directory tree the
@@ -43,7 +43,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFileSet}}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

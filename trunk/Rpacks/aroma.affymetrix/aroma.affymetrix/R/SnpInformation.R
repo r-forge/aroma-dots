@@ -10,7 +10,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{...}{Arguments passed to @see "GenericDataFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -20,7 +20,7 @@
 # @author
 #*/###########################################################################
 setConstructorS3("SnpInformation", function(...) {
-  this <- extend(AffymetrixFile(...), "SnpInformation",
+  this <- extend(GenericDataFile(...), "SnpInformation",
     "cached:.data"=NULL
   );
   if (!is.null(getPathname(this)))

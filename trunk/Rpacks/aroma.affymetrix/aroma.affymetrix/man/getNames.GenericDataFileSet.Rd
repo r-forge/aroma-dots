@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getNames.AffymetrixFileSet}
-\alias{getNames.AffymetrixFileSet}
-\alias{AffymetrixFileSet.getNames}
-\alias{getNames.AffymetrixFileSet}
-\alias{getNames,AffymetrixFileSet-method}
+\name{getNames.GenericDataFileSet}
+\alias{getNames.GenericDataFileSet}
+\alias{GenericDataFileSet.getNames}
+\alias{getNames.GenericDataFileSet}
+\alias{getNames,GenericDataFileSet-method}
 
 
 \title{Gets the names of the files in the file set}
@@ -19,7 +19,7 @@
   Gets the names of the files in the file set.
 }
 
-\usage{\method{getNames}{AffymetrixFileSet}(this, ...)}
+\usage{\method{getNames}{GenericDataFileSet}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFileSet}}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

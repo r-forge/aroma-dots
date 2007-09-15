@@ -26,7 +26,7 @@
   \item{path}{The directory where the call files are.}
   \item{pattern}{The filename pattern used to identify call files.}
   \item{...}{Arguments passed to \code{fromFiles()} of
-     \code{\link{AffymetrixFileSet}}.}
+     \code{\link{GenericDataFileSet}}.}
   \item{fileClass}{The \code{\link[R.oo]{Class}} of each genotype file.}
   \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }

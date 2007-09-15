@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{setAlias.AffymetrixFileSet}
-\alias{setAlias.AffymetrixFileSet}
-\alias{AffymetrixFileSet.setAlias}
-\alias{setAlias.AffymetrixFileSet}
-\alias{setAlias,AffymetrixFileSet-method}
+\name{setAlias.GenericDataFileSet}
+\alias{setAlias.GenericDataFileSet}
+\alias{GenericDataFileSet.setAlias}
+\alias{setAlias.GenericDataFileSet}
+\alias{setAlias,GenericDataFileSet-method}
 
 
 \title{Sets the alias of the file set}
@@ -22,7 +22,7 @@
   output data set than the input data set of many transforms and models.
 }
 
-\usage{\method{setAlias}{AffymetrixFileSet}(this, alias=NULL, ...)}
+\usage{\method{setAlias}{GenericDataFileSet}(this, alias=NULL, ...)}
 
 \arguments{
  \item{alias}{A \code{\link[base]{character}} string for the new alias of the file set.
@@ -41,9 +41,9 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:getAlias.AffymetrixFileSet]{*getAlias}()}.
-  \code{\link[aroma.affymetrix:getName.AffymetrixFileSet]{*getName}()}.
-  For more information see \code{\link{AffymetrixFileSet}}.
+  \code{\link[aroma.affymetrix:getAlias.GenericDataFileSet]{*getAlias}()}.
+  \code{\link[aroma.affymetrix:getName.GenericDataFileSet]{*getName}()}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

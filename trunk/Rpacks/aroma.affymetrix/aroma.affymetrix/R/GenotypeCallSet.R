@@ -13,7 +13,7 @@
 #
 # \arguments{
 #   \item{files}{A @list of @see "GenotypeCallFile":s.}
-#   \item{...}{Arguments passed to @see "AffymetrixFileSet".}
+#   \item{...}{Arguments passed to @see "GenericDataFileSet".}
 # }
 #
 # \section{Fields and Methods}{
@@ -38,7 +38,7 @@ setConstructorS3("GenotypeCallSet", function(files=NULL, ...) {
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
 
-  extend(AffymetrixFileSet(files=files, ...), "GenotypeCallSet"
+  extend(GenericDataFileSet(files=files, ...), "GenotypeCallSet"
   )
 })
 
@@ -192,7 +192,7 @@ setMethodS3("setCdf", "GenotypeCallSet", function(this, cdf, ...) {
 #   \item{path}{The directory where the call files are.}
 #   \item{pattern}{The filename pattern used to identify call files.}
 #   \item{...}{Arguments passed to \code{fromFiles()} of 
-#      @see "AffymetrixFileSet".}
+#      @see "GenericDataFileSet".}
 #   \item{fileClass}{The @see "R.oo::Class" of each genotype file.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
@@ -218,7 +218,7 @@ setMethodS3("fromFiles", "GenotypeCallSet", function(static, path, pattern="[.]c
   }
 
   # S3 method dispatch does not work for static methods.
-  ds <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, 
+  ds <- fromFiles.GenericDataFileSet(static, path=path, pattern=pattern, 
                              ..., fileClass=fileClass, verbose=less(verbose));
 
   # Use the same CDF object for all CEL files.

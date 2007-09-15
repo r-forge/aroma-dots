@@ -1,6 +1,5 @@
 setConstructorS3("SampleAnnotationSet", function(...) {
-  extend(AffymetrixFileSet(...), "SampleAnnotationSet"
-  )
+  extend(AffymetrixFileSet(...), "SampleAnnotationSet")
 })
 
 
@@ -42,8 +41,8 @@ setMethodS3("fromPath", "SampleAnnotationSet", function(static, path, pattern="[
   # Argument 'fileClass':
   clazz <- Class$forName(fileClass);
   dfStatic <- getStaticInstance(clazz);
-  if (!inherits(dfStatic, "AffymetrixFile"))
-    throw("Argument 'fileClass' is not refering to an AffymetrixFile class: ", fileClass);
+  if (!inherits(dfStatic, "SampleAnnotationFile"))
+    throw("Argument 'fileClass' is not refering to an SampleAnnotationFile class: ", paste(class(dfStatic), collapse=", "));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

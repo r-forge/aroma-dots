@@ -27,7 +27,7 @@
 # }
 #*/###########################################################################
 setConstructorS3("CnagCfhFile", function(..., cdf=NULL) {
-  this <- extend(AffymetrixFile(...), "CnagCfhFile",
+  this <- extend(GenericDataFile(...), "CnagCfhFile",
     "cached:.header" = NULL,
     .cdf = NULL
   )

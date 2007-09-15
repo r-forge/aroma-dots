@@ -19,8 +19,8 @@
   Defines an AffymetrixFileSet object by searching for Affymetrix files.
 }
 
-\synopsis{fromFiles.AffymetrixFileSet(static, path=NULL, pattern=NULL, recursive=FALSE, fileClass="AffymetrixFile", ..., verbose=FALSE)}
-\usage{AffymetrixFileSet$fromFiles(path=NULL, pattern=NULL, recursive=FALSE, fileClass="AffymetrixFile", ..., verbose=FALSE)}
+\synopsis{fromFiles.AffymetrixFileSet(static, ..., fileClass="AffymetrixFile")}
+\usage{AffymetrixFileSet$fromFiles(..., fileClass="AffymetrixFile")}
 
 \arguments{
  \item{path}{The path where to search for Affymetrix files.}

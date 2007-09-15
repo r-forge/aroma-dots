@@ -1,20 +1,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{length.AffymetrixFileSet}
-\alias{length.AffymetrixFileSet}
-\alias{AffymetrixFileSet.length}
-\alias{length.AffymetrixFileSet}
-\alias{length,AffymetrixFileSet-method}
+\name{length.GenericDataFileSet}
+\alias{length.GenericDataFileSet}
+\alias{GenericDataFileSet.length}
+\alias{length.GenericDataFileSet}
+\alias{length,GenericDataFileSet-method}
 
-\alias{AffymetrixFileSet.nbrOfFiles}
-\alias{nbrOfFiles.AffymetrixFileSet}
-\alias{nbrOfFiles,AffymetrixFileSet-method}
+\alias{GenericDataFileSet.nbrOfFiles}
+\alias{nbrOfFiles.GenericDataFileSet}
+\alias{nbrOfFiles,GenericDataFileSet-method}
 
 
 \title{Gets the number of files in the file set}
@@ -23,7 +23,7 @@
   Gets the number of files in the file set.
 }
 
-\usage{\method{length}{AffymetrixFileSet}(x)}
+\usage{\method{length}{GenericDataFileSet}(x)}
 
 \arguments{
 }
@@ -35,7 +35,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFileSet}}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

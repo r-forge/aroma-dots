@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{as.character.AffymetrixFileSet}
-\alias{as.character.AffymetrixFileSet}
-\alias{AffymetrixFileSet.as.character}
-\alias{as.character.AffymetrixFileSet}
-\alias{as.character,AffymetrixFileSet-method}
+\name{as.character.GenericDataFileSet}
+\alias{as.character.GenericDataFileSet}
+\alias{GenericDataFileSet.as.character}
+\alias{as.character.GenericDataFileSet}
+\alias{as.character,GenericDataFileSet-method}
 
 
-\title{Returns a short string describing the Affymetrix file set}
+\title{Returns a short string describing the file set}
 
 \description{
- Returns a short string describing the Affymetrix file set.
+ Returns a short string describing the file set.
 }
 
-\usage{\method{as.character}{AffymetrixFileSet}(x, ...)}
+\usage{\method{as.character}{GenericDataFileSet}(x, ...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFileSet}}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 
 
