@@ -23,6 +23,7 @@ o WORKAROUND: If there is only one probe, then fit function of AvgPlm
   would return theta=y:s, and sdTheta=0:s.  However, when searching 
   for units to do, we test (sdTheta <= 0).  The workaround is to store 
   the smallest float available instead of zero.
+o BETA: Added GenericDataFile, GenericDataFileSet, and GenericTabularFile.
 o BETA: Added AffymetrixTabularFile, AffymetrixNetAffxCsvFile, 
   AromaUgpFile, and AromaUflFile.
 o BETA: Added UflSnpInformation and UgpGenomeInformation 
