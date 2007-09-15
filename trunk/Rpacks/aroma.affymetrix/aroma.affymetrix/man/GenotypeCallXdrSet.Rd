@@ -19,7 +19,7 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFileSet}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{GenotypeCallSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
@@ -56,8 +56,8 @@ extends \link[aroma.affymetrix]{GenotypeCallSet}\cr
  \bold{Methods inherited from GenotypeCallSet}:\cr
 [, [[, as, as.GenotypeCallSet, fromFiles, getCdf, getFullName, nbrOfArrays, readUnits, setCdf
 
- \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
+ \bold{Methods inherited from GenericDataFileSet}:\cr
+append, appendFiles, as, as.GenericDataFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

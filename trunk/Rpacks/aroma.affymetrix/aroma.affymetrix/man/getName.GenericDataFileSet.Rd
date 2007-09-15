@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getName.AffymetrixFileSet}
-\alias{getName.AffymetrixFileSet}
-\alias{AffymetrixFileSet.getName}
-\alias{getName.AffymetrixFileSet}
-\alias{getName,AffymetrixFileSet-method}
+\name{getName.GenericDataFileSet}
+\alias{getName.GenericDataFileSet}
+\alias{GenericDataFileSet.getName}
+\alias{getName.GenericDataFileSet}
+\alias{getName,GenericDataFileSet-method}
 
 
 \title{Gets the name of the file set}
@@ -19,10 +19,10 @@
   Gets the name of the file set.
 }
 
-\usage{\method{getName}{AffymetrixFileSet}(this, ...)}
+\usage{\method{getName}{GenericDataFileSet}(this, ...)}
 
 \arguments{
- \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:getFullName.AffymetrixFileSet]{*getFullName}()}, if
+ \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:getFullName.GenericDataFileSet]{*getFullName}()}, if
    the name is inferred from the pathname.}
 }
 
@@ -41,10 +41,10 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:getAlias.AffymetrixFileSet]{*getAlias}()}.
-  \code{\link[aroma.affymetrix:getFullName.AffymetrixFileSet]{*getFullName}()}.
-  \code{\link[aroma.affymetrix:getTags.AffymetrixFileSet]{*getTags}()}.
-  For more information see \code{\link{AffymetrixFileSet}}.
+  \code{\link[aroma.affymetrix:getAlias.GenericDataFileSet]{*getAlias}()}.
+  \code{\link[aroma.affymetrix:getFullName.GenericDataFileSet]{*getFullName}()}.
+  \code{\link[aroma.affymetrix:getTags.GenericDataFileSet]{*getTags}()}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

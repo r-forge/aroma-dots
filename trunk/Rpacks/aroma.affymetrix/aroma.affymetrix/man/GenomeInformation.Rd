@@ -19,7 +19,7 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\emph{\code{GenomeInformation}}\cr
 
@@ -27,7 +27,7 @@
 \link[aroma.affymetrix]{AffymetrixCsvGenomeInformation}, \link[aroma.affymetrix]{DChipGenomeInformation}, \link[aroma.affymetrix]{UgpGenomeInformation}\cr
 
 public abstract static class \bold{GenomeInformation}\cr
-extends \link[aroma.affymetrix]{AffymetrixFile}\cr
+extends \link[aroma.affymetrix]{GenericDataFile}\cr
 
 
  }
@@ -35,7 +35,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \usage{GenomeInformation(..., .verify=TRUE)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
+   \item{...}{Arguments passed to \code{\link{GenericDataFile}}.}
    \item{.verify}{For internal use only.}
  }
 
@@ -57,8 +57,8 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 }
 
 
- \bold{Methods inherited from AffymetrixFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, readChecksum, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
+ \bold{Methods inherited from GenericDataFile}:\cr
+compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, readChecksum, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

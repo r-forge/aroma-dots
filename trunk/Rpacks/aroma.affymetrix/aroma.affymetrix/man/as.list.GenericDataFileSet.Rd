@@ -1,38 +1,38 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{as.list.AffymetrixFileSet}
-\alias{as.list.AffymetrixFileSet}
-\alias{AffymetrixFileSet.as.list}
-\alias{as.list.AffymetrixFileSet}
-\alias{as.list,AffymetrixFileSet-method}
+\name{as.list.GenericDataFileSet}
+\alias{as.list.GenericDataFileSet}
+\alias{GenericDataFileSet.as.list}
+\alias{as.list.GenericDataFileSet}
+\alias{as.list,GenericDataFileSet-method}
 
 
-\title{Returns the files of the Affymetrix file set}
+\title{Returns the files of the file set}
 
 \description{
- Returns the files of the Affymetrix file set.
+ Returns the files of the file set.
 }
 
-\usage{\method{as.list}{AffymetrixFileSet}(x, ...)}
+\usage{\method{as.list}{GenericDataFileSet}(x, ...)}
 
 \arguments{
   \item{...}{Not used.}
 }
 
 \value{
- Returns a \code{\link[base]{list}} of \code{\link{AffymetrixFile}}s.
+ Returns a \code{\link[base]{list}} of \code{\link{GenericDataFile}}s.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFileSet}}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 
 

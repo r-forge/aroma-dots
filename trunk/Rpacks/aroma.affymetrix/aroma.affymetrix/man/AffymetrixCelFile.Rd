@@ -19,9 +19,11 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{AffymetrixCelFile}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\code{AffymetrixCelFile}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ExonChipEffectFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{FirmaFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{QualityAssessmentFile}, \link[aroma.affymetrix]{ResidualFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}, \link[aroma.affymetrix]{WeightsFile}\cr
@@ -72,7 +74,10 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 
 
  \bold{Methods inherited from AffymetrixFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, readChecksum, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
+getAttribute, getAttributes, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes
+
+ \bold{Methods inherited from GenericDataFile}:\cr
+compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, readChecksum, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

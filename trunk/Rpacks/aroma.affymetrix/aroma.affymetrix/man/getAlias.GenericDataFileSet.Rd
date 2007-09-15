@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getAlias.AffymetrixFileSet}
-\alias{getAlias.AffymetrixFileSet}
-\alias{AffymetrixFileSet.getAlias}
-\alias{getAlias.AffymetrixFileSet}
-\alias{getAlias,AffymetrixFileSet-method}
+\name{getAlias.GenericDataFileSet}
+\alias{getAlias.GenericDataFileSet}
+\alias{GenericDataFileSet.getAlias}
+\alias{getAlias.GenericDataFileSet}
+\alias{getAlias,GenericDataFileSet-method}
 
 
 \title{Gets the alias of the file set}
@@ -19,7 +19,7 @@
   Gets the alias of the file set.
 }
 
-\usage{\method{getAlias}{AffymetrixFileSet}(this, ...)}
+\usage{\method{getAlias}{GenericDataFileSet}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -32,9 +32,9 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:setAlias.AffymetrixFileSet]{*setAlias}()}.
-  \code{\link[aroma.affymetrix:getName.AffymetrixFileSet]{*getName}()}.
-  For more information see \code{\link{AffymetrixFileSet}}.
+  \code{\link[aroma.affymetrix:setAlias.GenericDataFileSet]{*setAlias}()}.
+  \code{\link[aroma.affymetrix:getName.GenericDataFileSet]{*getName}()}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

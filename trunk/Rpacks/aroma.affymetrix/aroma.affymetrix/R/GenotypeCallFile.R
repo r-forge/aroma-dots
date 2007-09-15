@@ -13,7 +13,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{...}{Arguments passed to @see "GenericDataFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -38,7 +38,7 @@ setConstructorS3("GenotypeCallFile", function(..., cdf=NULL) {
       throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
   }
 
-  this <- extend(AffymetrixFile(...), "GenotypeCallFile",
+  this <- extend(GenericDataFile(...), "GenotypeCallFile",
     .cdf = cdf
   );
 

@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{lapply.AffymetrixFileSet}
-\alias{lapply.AffymetrixFileSet}
-\alias{AffymetrixFileSet.lapply}
-\alias{lapply.AffymetrixFileSet}
-\alias{lapply,AffymetrixFileSet-method}
+\name{lapply.GenericDataFileSet}
+\alias{lapply.GenericDataFileSet}
+\alias{GenericDataFileSet.lapply}
+\alias{lapply.GenericDataFileSet}
+\alias{lapply,GenericDataFileSet-method}
 
 
-\title{Applies a function to each of the Affymetrix file files}
+\title{Applies a function to each of the data files}
 
 \description{
-  Applies a function to each of the Affymetrix file files.
+  Applies a function to each of the data files.
 }
 
-\usage{\method{lapply}{AffymetrixFileSet}(this, ...)}
+\usage{\method{lapply}{GenericDataFileSet}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -27,13 +27,13 @@
 
 \value{
   Returns a named \code{\link[base]{list}} where the names are the names of the date files
-  according to \code{\link[aroma.affymetrix:getNames.AffymetrixFileSet]{*getNames}()}.
+  according to \code{\link[aroma.affymetrix:getNames.GenericDataFileSet]{*getNames}()}.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFileSet}}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

@@ -280,8 +280,25 @@ setMethodS3("rescale", "AllelicCrosstalkCalibration", function(this, yAll, param
   if (!is.finite(yAvg)) 
     throw("Cannot rescale to target average. Signal average is non-finite: ", yAvg);
   # Rescale (to half of the allele target averages)
-  targetAvg <- mean(params$targetAvg)/2;
-  b <- targetAvg /yAvg;
+  #  AA : P(2A,0B)=0.25
+  #  AB : P(1A,1B)=0.50
+  #  BB : P(0A,2B)=0.25
+  # => P(A=0)=0.25, P(A=1)=0.5, P(A=2)=0.25, ...
+  # => E[A] = 0*0.25 + 1*0.5 + 2*0.25 = 1
+  #    E[B] = 0*0.25 + 1*0.5 + 2*0.25 = 1
+  # => E[cA] = 1c, E[dB] = 1d
+  # => E[cA+cB] = c+d
+  # => E[A+B] = E[A]+E[B] = 2
+  # => E[c(A+B)] = 2c
+  if (method == "allele") {
+    #  c = targetAvg[1], d = targetAvg[2]
+    #  => (c+d) = sum(targetAvg)
+    targetAvg <- sum(params$targetAvg);
+  } else if (method == "sum") {
+    #  2c = targetAvg
+    targetAvg <- params$targetAvg;
+  }
+  b <- targetAvg/yAvg;
   verbose && printf(verbose, "scale factor: %.2f\n", b);
   yAll[idx] <- b*yAll[idx];
   rm(idx);

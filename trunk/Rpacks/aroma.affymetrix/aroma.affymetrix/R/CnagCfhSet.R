@@ -44,7 +44,7 @@ setConstructorS3("CnagCfhSet", function(files=NULL, ...) {
   }
 
 
-  extend(AffymetrixFileSet(files=files, ...), "CnagCfhSet",
+  extend(GenericDataFileSet(files=files, ...), "CnagCfhSet",
     "cached:.fileSize" = NULL
   )
 })
@@ -388,7 +388,7 @@ setMethodS3("fromFiles", "CnagCfhSet", function(static, path="rawData/", pattern
   
   verbose && enter(verbose, "Defining ", class(static)[1], " from files");
 
-  this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+  this <- fromFiles.GenericDataFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Handle duplicates

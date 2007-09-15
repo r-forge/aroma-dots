@@ -1,5 +1,5 @@
 setConstructorS3("AromaTabularBinaryFile", function(...) {
-  this <- extend(AffymetrixFile(...), "AromaTabularBinaryFile");
+  this <- extend(GenericDataFile(...), "AromaTabularBinaryFile");
 
   # Parse attributes (all subclasses must call this in the constructor).
   if (!is.null(this$.pathname))
@@ -29,12 +29,12 @@ setMethodS3("colnames", "AromaTabularBinaryFile", function(x, ...) {
   as.character(seq(length=nbrOfColumns(this)));
 })
 
-setMethodS3("colnames<-", "AromaTabularBinaryFile", function(x, ..., value) {
+setMethodS3("dimnames<-", "AromaTabularBinaryFile", function(x, value) {
   # To please R CMD check
   this <- x;
 
-  throw("Column names of an ", class(this)[1], " are read only.");
-})
+  throw("Dimension names of an ", class(this)[1], " are read only.");
+}, createGeneric=FALSE, appendVarArgs=FALSE)
 
 
 setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ..., force=FALSE) {

@@ -1,25 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFile.R
+%  GenericDataFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{as.character.AffymetrixFile}
-\alias{as.character.AffymetrixFile}
-\alias{AffymetrixFile.as.character}
-\alias{as.character.AffymetrixFile}
-\alias{as.character,AffymetrixFile-method}
+\name{as.character.GenericDataFile}
+\alias{as.character.GenericDataFile}
+\alias{GenericDataFile.as.character}
+\alias{as.character.GenericDataFile}
+\alias{as.character,GenericDataFile-method}
 
 
-\title{Returns a short string describing the Affymetrix file}
+\title{Returns a short string describing the file}
 
 \description{
- Returns a short string describing the Affymetrix file.
+ Returns a short string describing the file.
 }
 
-\usage{\method{as.character}{AffymetrixFile}(x, ...)}
+\usage{\method{as.character}{GenericDataFile}(x, ...)}
 
 \arguments{
   \item{...}{Not used.}
@@ -32,7 +32,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFile}}.
+  For more information see \code{\link{GenericDataFile}}.
 }
 
 

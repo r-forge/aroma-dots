@@ -19,13 +19,15 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{AffymetrixFile}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\code{AffymetrixFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \link[aroma.affymetrix]{AffymetrixCsvFile}, \link[aroma.affymetrix]{AffymetrixCsvGenomeInformation}, \link[aroma.affymetrix]{AffymetrixNetAffxCsvFile}, \link[aroma.affymetrix]{AffymetrixProbeTabFile}, \link[aroma.affymetrix]{AffymetrixTabularFile}, \link[aroma.affymetrix]{AffymetrixTsvFile}, \link[aroma.affymetrix]{AromaTabularBinaryFile}, \emph{\link[aroma.affymetrix]{AromaUflFile}}, \link[aroma.affymetrix]{AromaUgpFile}, \emph{\link[aroma.affymetrix]{AromaUnitTabularBinaryFile}}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnagCfhFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{DChipGenomeInformation}, \link[aroma.affymetrix]{DChipSnpInformation}, \link[aroma.affymetrix]{ExonChipEffectFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{FirmaFile}, \link[aroma.affymetrix]{GdasAnnotationFile}, \emph{\link[aroma.affymetrix]{GenomeInformation}}, \link[aroma.affymetrix]{GenotypeCallFile}, \link[aroma.affymetrix]{GenotypeCallXdrFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{QualityAssessmentFile}, \link[aroma.affymetrix]{ResidualFile}, \link[aroma.affymetrix]{SampleAnnotationFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \emph{\link[aroma.affymetrix]{SnpInformation}}, \link[aroma.affymetrix]{SnpProbeAffinityFile}, \link[aroma.affymetrix]{UflSnpInformation}, \link[aroma.affymetrix]{UgpGenomeInformation}, \link[aroma.affymetrix]{WeightsFile}\cr
+\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \link[aroma.affymetrix]{AffymetrixProbeTabFile}, \link[aroma.affymetrix]{AffymetrixTsvFile}, \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ExonChipEffectFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{FirmaFile}, \link[aroma.affymetrix]{GdasAnnotationFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{QualityAssessmentFile}, \link[aroma.affymetrix]{ResidualFile}, \link[aroma.affymetrix]{SampleAnnotationFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}, \link[aroma.affymetrix]{WeightsFile}\cr
 
 public static class \bold{AffymetrixFile}\cr
-extends \link[R.oo]{Object}\cr
+extends \link[aroma.affymetrix]{GenericDataFile}\cr
 
 
 
@@ -36,60 +38,24 @@ extends \link[R.oo]{Object}\cr
   \code{\link[aroma.affymetrix:fromFile.AffymetrixFile]{*fromFile}()} method.
  }
 
- \usage{AffymetrixFile(filename=NULL, path=NULL, mustExist=TRUE, ...)}
+ \usage{AffymetrixFile(...)}
 
  \arguments{
-   \item{filename}{The filename of the file.}
-   \item{path}{An optional path to the file.}
-   \item{mustExist}{If \code{\link[base:logical]{TRUE}}, an exception is thrown if the file does
-     not exists, otherwise not.}
-   \item{...}{Not used.}
+   \item{...}{Arguments passed to \code{\link{GenericDataFile}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\tabular{rll}{
- \tab \code{compareChecksum} \tab  -\cr
- \tab \code{equals} \tab  -\cr
- \tab \code{fromFile} \tab  -\cr
- \tab \code{getAlias} \tab  -\cr
- \tab \code{getChecksum} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getFilename.AffymetrixFile]{getFilename}} \tab Gets the filename of the file.\cr
- \tab \code{getFileSize} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getFileType.AffymetrixFile]{getFileType}} \tab Gets the file type of a file.\cr
- \tab \code{\link[aroma.affymetrix:getFullName.AffymetrixFile]{getFullName}} \tab Gets the full name of the file.\cr
- \tab \code{\link[aroma.affymetrix:getName.AffymetrixFile]{getName}} \tab Gets the name of the file.\cr
- \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFile]{getPath}} \tab Gets the path (directory) of the file.\cr
- \tab \code{\link[aroma.affymetrix:getPathname.AffymetrixFile]{getPathname}} \tab Gets the pathname of the file.\cr
- \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFile]{getTags}} \tab Gets the tags of the file.\cr
- \tab \code{hasTag} \tab  -\cr
- \tab \code{hasTags} \tab  -\cr
- \tab \code{readChecksum} \tab  -\cr
- \tab \code{setAlias} \tab  -\cr
- \tab \code{validateChecksum} \tab  -\cr
- \tab \code{writeChecksum} \tab  -\cr
-}
+\emph{No methods defined}.
 
+
+ \bold{Methods inherited from GenericDataFile}:\cr
+compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, readChecksum, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
- }
-
- \section{Filename convention}{
-   This package assumes a special filename structure allowing methods
-   to infer data-set names, sample names, file types, versions etc from
-   the full path name.
- 
-   The filename of an \code{AffymetrixFile} is structured as follows:
-   \itemize{
-    \item{basename}{\code{"sample001,a,b,c.CEL"}
-       (this follows the \R convention (but not the Unix convention)}
-    \item{name}{\code{"sample001"}}
-    \item{adjunct names}{\code{c("a", "b", "c")}}
-    \item{extension}{\code{"CEL"}}
-   }
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

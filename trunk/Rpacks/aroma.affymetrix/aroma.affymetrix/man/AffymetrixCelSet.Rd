@@ -19,9 +19,11 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFileSet}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{AffymetrixCelSet}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\code{AffymetrixCelSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
@@ -79,7 +81,10 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
-append, appendFiles, as, as.AffymetrixFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
+as, as.AffymetrixFileSet, clearCache, fromFiles
+
+ \bold{Methods inherited from GenericDataFileSet}:\cr
+append, appendFiles, as, as.GenericDataFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

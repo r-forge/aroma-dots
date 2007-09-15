@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFile.R
+%  GenericDataFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getFileType.AffymetrixFile}
-\alias{getFileType.AffymetrixFile}
-\alias{AffymetrixFile.getFileType}
-\alias{getFileType.AffymetrixFile}
-\alias{getFileType,AffymetrixFile-method}
+\name{getFileType.GenericDataFile}
+\alias{getFileType.GenericDataFile}
+\alias{GenericDataFile.getFileType}
+\alias{getFileType.GenericDataFile}
+\alias{getFileType,GenericDataFile-method}
 
 
 \title{Gets the file type of a file}
@@ -19,7 +19,7 @@
   Gets the file type of a file.
 }
 
-\usage{\method{getFileType}{AffymetrixFile}(this, ...)}
+\usage{\method{getFileType}{GenericDataFile}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -37,7 +37,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFile}}.
+  For more information see \code{\link{GenericDataFile}}.
 }
 \keyword{internal}
 \keyword{methods}

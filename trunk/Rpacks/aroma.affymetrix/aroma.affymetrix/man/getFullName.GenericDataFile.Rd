@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFile.R
+%  GenericDataFile.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getFullName.AffymetrixFile}
-\alias{getFullName.AffymetrixFile}
-\alias{AffymetrixFile.getFullName}
-\alias{getFullName.AffymetrixFile}
-\alias{getFullName,AffymetrixFile-method}
+\name{getFullName.GenericDataFile}
+\alias{getFullName.GenericDataFile}
+\alias{GenericDataFile.getFullName}
+\alias{getFullName.GenericDataFile}
+\alias{getFullName,GenericDataFile-method}
 
 
 \title{Gets the full name of the file}
@@ -19,7 +19,7 @@
   Gets the full name of the file, that is the filename without the extension.
 }
 
-\usage{\method{getFullName}{AffymetrixFile}(this, ...)}
+\usage{\method{getFullName}{GenericDataFile}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -39,9 +39,9 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:getName.AffymetrixFile]{*getName}()}.
-  \code{\link[aroma.affymetrix:getTags.AffymetrixFile]{*getTags}()}.
-  For more information see \code{\link{AffymetrixFile}}.
+  \code{\link[aroma.affymetrix:getName.GenericDataFile]{*getName}()}.
+  \code{\link[aroma.affymetrix:getTags.GenericDataFile]{*getTags}()}.
+  For more information see \code{\link{GenericDataFile}}.
 }
 \keyword{internal}
 \keyword{methods}

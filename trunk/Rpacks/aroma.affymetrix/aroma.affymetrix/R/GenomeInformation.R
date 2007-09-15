@@ -10,7 +10,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{...}{Arguments passed to @see "GenericDataFile".}
 #   \item{.verify}{For internal use only.}
 # }
 #
@@ -21,7 +21,7 @@
 # @author
 #*/###########################################################################
 setConstructorS3("GenomeInformation", function(..., .verify=TRUE) {
-  extend(AffymetrixFile(...), "GenomeInformation",
+  extend(GenericDataFile(...), "GenomeInformation",
     "cached:.data"=NULL
   );
 })

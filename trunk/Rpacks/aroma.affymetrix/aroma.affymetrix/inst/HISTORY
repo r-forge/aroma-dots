@@ -31,6 +31,8 @@ o BETA: Added AvgPlm, AvgSnpPlm, AvgCnPlm.
 o BUG FIX: Now more effort is made to ensure that all CEL files are
   generated with an upper-case filename extension (*.CEL) and not (*.cel).
   Thanks Jeremy Silver for reporting problems on this.
+o Package passes R CMD check on R v2.6.0alpha on Windows XP.
+  It also passes all redundancy tests on Linux.
 
 
 Version: 0.6.2 [2007-09-07]

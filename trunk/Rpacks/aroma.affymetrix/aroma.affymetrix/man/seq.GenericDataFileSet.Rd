@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixFileSet.R
+%  GenericDataFileSet.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{seq.AffymetrixFileSet}
-\alias{seq.AffymetrixFileSet}
-\alias{AffymetrixFileSet.seq}
-\alias{seq.AffymetrixFileSet}
-\alias{seq,AffymetrixFileSet-method}
+\name{seq.GenericDataFileSet}
+\alias{seq.GenericDataFileSet}
+\alias{GenericDataFileSet.seq}
+\alias{seq.GenericDataFileSet}
+\alias{seq,GenericDataFileSet-method}
 
 
 \title{Gets an vector of file indices}
@@ -19,7 +19,7 @@
   Gets an vector of file indices.
 }
 
-\usage{\method{seq}{AffymetrixFileSet}(this, ...)}
+\usage{\method{seq}{GenericDataFileSet}(this, ...)}
 
 \arguments{
  \item{...}{Not used.}
@@ -33,7 +33,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  For more information see \code{\link{AffymetrixFileSet}}.
+  For more information see \code{\link{GenericDataFileSet}}.
 }
 \keyword{internal}
 \keyword{methods}

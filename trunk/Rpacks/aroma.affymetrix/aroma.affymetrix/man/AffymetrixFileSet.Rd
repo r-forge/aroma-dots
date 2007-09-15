@@ -19,13 +19,15 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{AffymetrixFileSet}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFileSet}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\code{AffymetrixFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnagCfhSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{GenotypeCallSet}, \link[aroma.affymetrix]{GenotypeCallXdrSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SampleAnnotationSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SampleAnnotationSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
 
 public static class \bold{AffymetrixFileSet}\cr
-extends \link[R.oo]{Object}\cr
+extends \link[aroma.affymetrix]{GenericDataFileSet}\cr
 
 
 
@@ -33,50 +35,25 @@ extends \link[R.oo]{Object}\cr
   with \emph{identical} chip types.
  }
 
- \usage{AffymetrixFileSet(files=NULL, tags="*", alias=NULL, ...)}
+ \usage{AffymetrixFileSet(files=NULL, ...)}
 
  \arguments{
    \item{files}{A \code{\link[base]{list}} of \code{\link{AffymetrixFile}}:s.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be used for this file set.
-      The string \code{"*"} indicates that it should be replaced by the
-      tags part of the file set pathname.}
-   \item{alias}{A \code{\link[base]{character}} string specifying a name alias overriding the
-      name inferred from the pathname.}
-   \item{...}{Not used.}
+   \item{...}{Arguments passed to \code{\link{GenericDataFileSet}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{append} \tab  -\cr
- \tab \code{appendFiles} \tab  -\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:as.AffymetrixFileSet.AffymetrixFileSet]{as.AffymetrixFileSet}} \tab Coerce an object to an AffymetrixFileSet object.\cr
- \tab \code{\link[aroma.affymetrix:as.list.AffymetrixFileSet]{as.list}} \tab Returns the files of the Affymetrix file set.\cr
  \tab \code{clearCache} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:extract.AffymetrixFileSet]{extract}} \tab Extract a subset of the file set.\cr
  \tab \code{\link[aroma.affymetrix:fromFiles.AffymetrixFileSet]{fromFiles}} \tab Defines an AffymetrixFileSet object by searching for Affymetrix files.\cr
- \tab \code{\link[aroma.affymetrix:getAlias.AffymetrixFileSet]{getAlias}} \tab Gets the alias of the file set.\cr
- \tab \code{getFile} \tab  -\cr
- \tab \code{getFileSize} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getFullName.AffymetrixFileSet]{getFullName}} \tab Gets the full name of the file set.\cr
- \tab \code{getFullNames} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getName.AffymetrixFileSet]{getName}} \tab Gets the name of the file set.\cr
- \tab \code{\link[aroma.affymetrix:getNames.AffymetrixFileSet]{getNames}} \tab Gets the names of the files in the file set.\cr
- \tab \code{\link[aroma.affymetrix:getPath.AffymetrixFileSet]{getPath}} \tab Gets the path (directory) of the file set.\cr
- \tab \code{\link[aroma.affymetrix:getPathnames.AffymetrixFileSet]{getPathnames}} \tab Gets the pathnames of the files in the file set.\cr
- \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFileSet]{getTags}} \tab Gets the tags of the file set.\cr
- \tab \code{hasTag} \tab  -\cr
- \tab \code{hasTags} \tab  -\cr
- \tab \code{indexOf} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:lapply.AffymetrixFileSet]{lapply}} \tab Applies a function to each of the Affymetrix file files.\cr
- \tab \code{nbrOfFiles} \tab  -\cr
- \tab \code{sapply} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:seq.AffymetrixFileSet]{seq}} \tab Gets an vector of file indices.\cr
- \tab \code{\link[aroma.affymetrix:setAlias.AffymetrixFileSet]{setAlias}} \tab Sets the alias of the file set.\cr
- \tab \code{\link[aroma.affymetrix:setTags.AffymetrixFileSet]{setTags}} \tab Sets the tags of the file set.\cr
 }
 
+
+ \bold{Methods inherited from GenericDataFileSet}:\cr
+append, appendFiles, as, as.GenericDataFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

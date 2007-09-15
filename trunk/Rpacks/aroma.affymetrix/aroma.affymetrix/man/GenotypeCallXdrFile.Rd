@@ -19,7 +19,7 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{GenotypeCallFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
@@ -56,8 +56,8 @@ extends \link[aroma.affymetrix]{GenotypeCallFile}\cr
  \bold{Methods inherited from GenotypeCallFile}:\cr
 [, [<-, fromFile, getCdf, readUnits, setCdf, updateUnits
 
- \bold{Methods inherited from AffymetrixFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, readChecksum, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
+ \bold{Methods inherited from GenericDataFile}:\cr
+compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, readChecksum, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
