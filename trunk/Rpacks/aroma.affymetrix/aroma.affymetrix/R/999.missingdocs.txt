@@ -629,3 +629,7 @@ yellow.colors
   importFromGenericTabularFile
   importFromGenericTabularFile.AromaUgpFile
   importFromGenericTabularFile.AromaUnitTabularBinaryFile
+  clearCache.FragmentLengthNormalization renameTo
+  renameTo.GenericDataFile translateColumnNames
+  translateColumnNames.AffymetrixTabularFile
+  translateColumnNames.GenericTabularFile
