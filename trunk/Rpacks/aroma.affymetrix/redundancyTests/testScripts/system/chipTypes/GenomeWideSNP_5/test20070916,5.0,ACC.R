@@ -4,12 +4,13 @@ log <- Arguments$getVerbose(-50);
 timestampOn(log);
 .Machine$float.eps <- sqrt(.Machine$double.eps);
 
-dataSetName <- "HapMap270,6.0,CEU,testSet";
-chipType <- "GenomeWideSNP_6";
+dataSetName <- "HapMap270,5.0,CEU,testSet";
+chipType <- "GenomeWideSNP_5";
 
 # Expected sample names
-sampleNames <- c("NA06985", "NA06991", "NA06993", 
-                 "NA06994", "NA07000", "NA07019");
+sampleNames <- c("NA06985", "NA06991", "NA06993",
+                 "NA07019", "NA07022", "NA07056");
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setting up CEL set and locating the CDF file
@@ -24,38 +25,17 @@ print(cdf);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic-crosstalk calibration
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Identify cells *not* for chromosome X & Y
+# Identify cells *not* for chromosome X
 cdf <- getCdf(cs);
 gi <- getGenomeInformation(cdf);
-units <- getUnitsOnChromosome(gi, 23:24);
+units <- getUnitsOnChromosome(gi, 23);
 cells <- getCellIndices(cdf, units=units, useNames=FALSE, unlist=TRUE);
 rm(units);
 cells <- setdiff(1:nbrOfCells(cdf), cells);
-acc <- AllelicCrosstalkCalibration(cs, subsetToAvg=cells, tags=c("*", "-XY"));
+acc <- AllelicCrosstalkCalibration(cs, subsetToAvg=cells, tags=c("*", "-X"));
 rm(cells);
 print(acc);
+
 csC <- process(acc, verbose=log);
 print(csC);
 stopifnot(identical(getNames(csC), getNames(cs)));
-
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Probe-level model
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- RmaPlm(csC);
-print(plm);
-fit(plm, verbose=log);
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Residuals
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-rs <- calculateResidualSet(plm, verbose=log);
-print(rs);
-
-ae <- ArrayExplorer(rs);
-setColorMaps(ae, c("log2,log2neg,rainbow", "log2,log2pos,rainbow"));
-print(ae);
-if (interactive())
-  process(ae, verbose=log);
