@@ -67,6 +67,16 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 })
 
 
+setMethodS3("clearCache", "FragmentLengthNormalization", function(this, ...) {
+  # Clear all cached values.
+  for (ff in c(".targetFunction")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object 
+  NextMethod("clearCache", object=this, ...);
+})
+
 
 setMethodS3("getParameters", "FragmentLengthNormalization", function(this, ...) {
   # Get parameters from super class
@@ -469,6 +479,9 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Added clearCache() to FragmentLengthNormalization such that cached
+#   target distributions can be cleared.
 # 2007-09-12
 # o BUG FIX: getSubsetToFit() of FragmentLengthNormalization would only
 #   return SNP units, but not CN units which are available on the newer

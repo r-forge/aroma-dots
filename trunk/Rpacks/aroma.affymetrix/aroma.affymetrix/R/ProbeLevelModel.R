@@ -141,7 +141,7 @@ setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
 #*/###########################################################################
 setMethodS3("getProbeAffinityFile", "ProbeLevelModel", function(this, ..., .class=ProbeAffinityFile) {
   paf <- this$.paf;
-  if (!is.null(paf))
+  if (!is.null(paf) && isFile(getPathname(paf)))
     return(paf);
 
   ds <- getDataSet(this);
@@ -742,8 +742,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     # Garbage collection
     tGc <- processTime();
     gc <- gc();
-    verbose && print(verbose, gc);
     timers$gc <- timers$gc + (processTime() - tGc);
+    verbose && print(verbose, gc);
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Store probe affinities

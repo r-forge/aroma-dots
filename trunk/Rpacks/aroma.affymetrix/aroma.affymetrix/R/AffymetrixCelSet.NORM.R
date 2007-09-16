@@ -69,6 +69,11 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

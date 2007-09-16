@@ -12,7 +12,7 @@ setMethodS3("findByChipType", "AffymetrixNetAffxCsvFile", function(static, chipT
 
 
 
-setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probeSetID$"="character", "^chromosome$"="character", "^(physicalPosition|chromosomeStart)$"="character"), con=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probe[sS]etI[dD]$"="character", "^chromosome$"="character", "^(physicalPosition|chromosomeStart|probeStartPosition)$"="character"), con=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -25,7 +25,8 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
 
   verbose && enter(verbose, "Reading (unitName, fragmentLength) from file");
 
-  data <- readData(this, colClassPatterns=colClassPatterns, camelCaseNames=TRUE, ..., verbose=less(verbose));
+  data <- readData(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
+
   # Convert chromosome strings to integers
   cc <- grep("^chr", colnames(data))[1];
   if (length(cc) == 0 || is.na(cc)) {
@@ -82,7 +83,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
   verbose && enter(verbose, "Reading (unitName, fragmentLength+) from file");
 
-  data <- readData(this, colClassPatterns=colClassPatterns, camelCaseNames=TRUE, ..., verbose=less(verbose));
+  data <- readData(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
 
   # Extract fragment lengths
   verbose && enter(verbose, "Extracting fragment lengths from (lengths, start, stop)");
@@ -152,6 +153,9 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Now readDataUnitChromosomePosition() of AffymetrixNetAffxCsvFile also
+#   recognizes column name 'probeStartPosition'.
 # 2007-09-14
 # o Added support to read fragment lengths for each enzyme.
 # 2007-09-11
