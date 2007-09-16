@@ -86,6 +86,13 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
   }
 
 
+  # First create/copy to a temporary file, then rename
+  tmpPathname <- paste(pathname, "tmp", sep=".");
+  if (isFile(tmpPathname)) {
+    throw("Cannot create CEL file. Temporary file already exists: ", tmpPathname);
+  }
+
+
   msgs <- list();
   res <- NULL;
   for (method in methods) {
@@ -102,12 +109,19 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
         verbose && exit(verbose);
         next;
       }
+
+      # 1. Create a temporary file    
+      res <- copyTo(this, filename=tmpPathname, path=NULL, verbose=less(verbose));
+#      verbose && cat(verbose, "Temporary file:");
+#      verbose && print(verbose, res);
     
-      res <- copyFile(this, filename=pathname, path=NULL,
-                                                       verbose=less(verbose));
-    
-      if (clear)
+      # 2. Update the temporary file
+      if (clear) {
         clearData(res, ..., .forSure=TRUE, verbose=less(verbose));
+      }
+
+      # 3. Rename the temporary file
+      renameTo(res, filename=pathname, verbose=less(verbose));
 
       # Break out of the methods loop
       verbose && exit(verbose);
@@ -145,12 +159,14 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Creating empty CEL file
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Creating empty CEL file");
-      createCel(pathname, header=celHeader, overwrite=overwrite, ...,
+      # 1. Create a temporary file    
+      verbose && enter(verbose, "Creating an empty temporary CEL file");
+      createCel(tmpPathname, header=celHeader, overwrite=overwrite, ...,
                                                         verbose=less(verbose));
       rm(celHeader);
       verbose && exit(verbose);
 
+      # 2. Update the temporary file
       if (!clear) {
         verbose && enter(verbose, "Copying CEL data");
         cells <- seq(length=nbrOfCells(this));
@@ -163,17 +179,27 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
           gc <- gc();
 
           verbose && enter(verbose, "Writing data to new CEL file");
-          updateCel(pathname, indices=cells, intensities=data);
+          updateCel(tmpPathname, indices=cells, intensities=data);
           verbose && exit(verbose);
 
           rm(data);
           gc <- gc();
           verbose && print(verbose, gc);
         }, chunkSize=1e6, verbose=verbose);
+        rm(cells);
 
         verbose && exit(verbose);
       }
   
+      # 3. Rename the temporary file
+      verbose && enter(verbose, "Renaming file");
+      res <- file.rename(tmpPathname, pathname);
+      if (!res) {
+        throw("Failed to rename temporary file: ", 
+                                   tmpPathname, " -> ", pathname);
+      }
+      verbose && exit(verbose);
+      
       res <- newInstance(this, pathname);
 
       # Break out of the methods loop
@@ -196,6 +222,8 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
   # Make sure the CDF is carried down
   setCdf(res, cdf);
 
+  verbose && print(verbose, res);
+
   verbose && exit(verbose);
 
   res;
@@ -204,6 +232,11 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Made createFrom() fail safe, that is, the destination file will not
+#   be created unless it is complete.  This is done by first create/writing
+#   to a temporary file which is then renamed at the end.
+# o Now createFrom() is using copyTo() instead of obsolete copyFile().
 # 2007-08-16
 # o Renamed argument 'method' in createFrom() of AffymetrixCelSet to
 #   'methods' to reflect the fact that it can take multiple values.

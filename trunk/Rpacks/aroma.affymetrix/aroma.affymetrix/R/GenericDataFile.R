@@ -525,14 +525,10 @@ setMethodS3("copyTo", "GenericDataFile", function(this, filename=getFilename(thi
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Copy
+  # Fail-safe copying
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Copying file");
-  verbose && cat(verbose, "Source: ", getPathname(this));
-  verbose && cat(verbose, "Destination: ", pathname);
-  # Get the pathname for the file
-  res <- file.copy(getPathname(this), pathname, overwrite=overwrite);
-  verbose && cat(verbose, "Result from copy: ", res);
+  fileCopy(getPathname(this), pathname, overwrite=overwrite, verbose=less(verbose, 10));
   verbose && exit(verbose);
 
 
@@ -543,6 +539,47 @@ setMethodS3("copyTo", "GenericDataFile", function(this, filename=getFilename(thi
 
   res;
 }, protected=TRUE)
+
+
+
+setMethodS3("renameTo", "GenericDataFile", function(this, filename=getFilename(this), path=NULL, ..., verbose=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'filename' and 'path':
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+  # Nothing to do?
+  if (identical(pathname, getPathname(this)))
+    return(this);
+
+  # Assert that file is not overwritten by mistake.
+  pathname <- Arguments$getWritablePathname(pathname, mustNotExist=TRUE);
+
+  srcPathname <- getPathname(this);
+
+  verbose && enter(verbose, "Renaming ", class(this)[1], " pathname");
+  verbose && cat(verbose, "Source: ", srcPathname);
+  verbose && cat(verbose, "Destination: ", pathname);
+
+  verbose && enter(verbose, "Renaming file");
+  res <- file.rename(srcPathname, pathname);
+  if (!res) {
+    throw("Failed to rename file: ", srcPathname, " -> ", pathname);
+  }
+  verbose && exit(verbose);
+
+  # Update GenericDataFile object
+  this$.pathname <- pathname;
+
+  verbose && exit(verbose);
+
+  invisible(this);
+}, protected=TRUE)
+
 
 
 setMethodS3("getChecksum", "GenericDataFile", function(this, ..., verbose=FALSE) {
@@ -710,6 +747,9 @@ setMethodS3("renameToUpperCaseExt", "GenericDataFile", function(static, pathname
 
 ############################################################################
 # HISTORY:
+# 2007-09-15
+# o Added renameTo().
+# o Now copyTo() utilizes fileCopy(), which is fail safe.
 # 2007-09-14
 # o Extracted GenericDataFile from AffymetrixFile.
 # 2007-09-13

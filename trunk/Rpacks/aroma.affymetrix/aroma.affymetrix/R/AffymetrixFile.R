@@ -62,14 +62,11 @@ setMethodS3("setLabel", "AffymetrixFile", function(this, label, ...) {
 
 
 
-setMethodS3("copyFile", "AffymetrixFile", function(this, ...) {
-  copyTo(this, ...);
-}, private=TRUE)
-
-
-
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Removed obsolete copyFile() from AffymetrixFile.  Use copyTo() of 
+#   GenericDataFile instead.
 # 2007-09-14
 # O Now AffymetrixFile inherits from GenericDataFile.
 # 2007-09-13

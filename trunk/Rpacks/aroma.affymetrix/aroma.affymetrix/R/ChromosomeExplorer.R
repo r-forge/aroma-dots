@@ -431,7 +431,7 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
   pathname <- writeRegions(model, arrays=arrays, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
 
   dest <- filePath(getPath(this), "regions.xls");
-  res <- file.copy(pathname, dest, overwrite=TRUE);
+  res <- fileCopy(pathname, dest, overwrite=TRUE);
   if (!res)
     dest <- NULL;
 

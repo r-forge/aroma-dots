@@ -446,11 +446,14 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Normalizing data towards target distribution");
   names(params) <- gsub(".targetDistribution", "xTarget", names(params));
-  args <- c(list(ds, path=outputPath, verbose=verbose), params);
+  args <- c(list(ds, path=outputPath), params);
 
   # Garbage collect
   rm(params); gc();
 
+  verbose && cat(verbose, "Calling normalizeQuantile() with arguments:");
+  verbose && str(verbose, args);
+  args$verbose <- verbose;
   outputDataSet <- do.call("normalizeQuantile", args=args);
 
   # Garbage collect

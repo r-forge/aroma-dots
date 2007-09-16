@@ -149,7 +149,7 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this,
   # Shift positions?
   if (identical(shift, "auto")) {
     shift <- 0;
-    if ("chromosomeStart" %in% importNames)
+    if (any(regexpr("[sS]tart", importNames) != -1))
       shift <- 13;
   }
   if (shift != 0) {
@@ -157,6 +157,36 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this,
     data[,2] <- data[,2] + as.integer(shift);
   }
  
+  # Multiple positions per unit?
+  dups <- which(duplicated(cdfUnits));
+  if (length(dups) > 0) {
+    verbose && enter(verbose, "Detected units with multiple positions");
+    dupUnits <- unique(cdfUnits[dups]);
+    nDupUnits <- length(dupUnits);
+    verbose && cat(verbose, "Number of units with multiple positions: ", 
+                                                               nDupUnits);
+    warning("The positions for ", nDupUnits, " units were calculated as the average of multiple positions, since that was what was available on file.");
+    verbose && enter(verbose, "Calculate average positions for those (assuming they are on the same chromosome)");
+    for (dupUnit in dupUnits) {
+      # Identify position
+      units <- which(cdfUnits == dupUnit);
+      # Average position
+      avgPos <- median(data[units,2], na.rm=TRUE);
+      avgPos <- round(avgPos);
+      # Update (can we update just units[1]?)
+      data[units,2] <- avgPos;
+    }
+    verbose && exit(verbose);
+    verbose && enter(verbose, "Remove the extraneous cases");
+    data <- data[-dups,,drop=FALSE];
+    cdfUnits <- cdfUnits[-dups];
+    verbose && exit(verbose);
+    rm(dupUnits, units);
+    verbose && str(verbose, cdfUnits);
+    verbose && exit(verbose);
+  }
+  rm(dups);
+
   # Garbage collect
   gc <- gc();
   verbose && print(verbose, gc, level=-10);
@@ -306,12 +336,21 @@ setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..
   this[,1] <- chr;
   this[,2] <- pos;
 
+  # A best guess of what was imported
+  units <- units[!(is.na(chr) & is.na(pos))];
+
   invisible(units);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Now importFromAffymetrixNetAffxCsvFile() averages positions if multiple
+#   positions were available for a particular unit.
+# o Now importFromGenomeInformation() tries to return units imported and
+#   not all.  This is still a best guess, but still more informative than
+#   before.
 # 2007-09-14
 # o Added getChromosomes(), which caches results in memory.
 # o Added importFromAffymetrixTabularFile() to AromaUgpFile.

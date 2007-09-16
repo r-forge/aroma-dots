@@ -1001,33 +1001,72 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
         verbose && cat(verbose, "Fit object: ", class(fit)[1]);
         verbose && exit(verbose);
       } else {
+        # Time the fitting.
+        startTime <- processTime();
+
+        timers <- list(total=0, read=0, fit=0, write=0, gc=0);
+
+        tTotal <- processTime();
+
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         # Get (x, M, stddev, chiptype, unit) data from all chip types
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        data <- getRawCnData(this, ceList=ceList, refList=refList, chromosome=chr, ..., force=force, verbose=less(verbose));
-print(colnames(data));
+        tRead <- processTime();
+        data <- getRawCnData(this, ceList=ceList, refList=refList, 
+                     chromosome=chr, ..., force=force, verbose=less(verbose));
+        timers$read <- timers$read + (processTime() - tRead);
+
+
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         # Fit segmentation model
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        tFit <- processTime();
         fit <- fitOne(this, data=data, chromosome=chr, ..., verbose=less(verbose));
+        timers$fit <- timers$fit + (processTime() - tFit);
+        rm(data); # Not needed anymore
+
         verbose && cat(verbose, "Class of fitted object: ", class(fit)[1]);
+        verbose && printf(verbose, "Time to fit segmentation model: %.2fmin\n", timers$fit[3]/60);
 
         verbose && enter(verbose, "Validate that it can be coerced");
         rawCns <- extractRawCopyNumbers(fit);
+        nbrOfLoci <- nbrOfLoci(rawCns);
         verbose && print(verbose, rawCns);
         cnRegions <- extractCopyNumberRegions(fit);
         verbose && print(verbose, cnRegions);
+        rm(rawCns, cnRegions);  # Not needed anymore
         verbose && exit(verbose);
 
 
         # Garbage collection
+        tGc <- processTime();
         gc <- gc();
+        timers$gc <- timers$gc + (processTime() - tGc);
         verbose && print(verbose, gc);
 
         verbose && enter(verbose, "Saving to file");
         verbose && cat(verbose, "Pathname: ", pathname);
+        tWrite <- processTime();
         saveObject(fit, file=pathname);
+        timers$write <- timers$write + (processTime() - tWrite);
         verbose && exit(verbose);
+
+        timers$total <- timers$total + (processTime() - tTotal);
+
+        # Report time profiling
+        totalTime <- processTime() - startTime;
+  
+        if (verbose) {
+          t <- totalTime[3];
+          printf(verbose, "Total time for chromosome %d: %.2fs == %.2fmin\n", chr, t, t/60);
+          t <- totalTime[3]/nbrOfLoci;
+          printf(verbose, "Total time per 1000 locus (with %d loci): %.2fs/locus\n", nbrOfLoci, 1000*t);
+          # Get distribution of what is spend where
+          t <- base::lapply(timers, FUN=function(timer) unname(timer[3]));
+          t <- unlist(t);
+          t <- 100 * t / t["total"];
+          printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%%, Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["write"], t["gc"]);
+        }
       }
 
       hookName <- "onFit.CopyNumberSegmentationModel";
@@ -1039,7 +1078,7 @@ print(colnames(data));
         res[[arrayName]][[chr]] <- fit;
 
       rm(fit);
-
+   
       verbose && exit(verbose);
     } # for (chr in ...)
   } # for (aa in ...)
@@ -1456,6 +1495,10 @@ setMethodS3("calculateChromosomeStatistics", "CopyNumberSegmentationModel", func
 
 ##############################################################################
 # HISTORY:
+# 2007-09-16
+# o Now process() of CopyNumberSegmentationModel reports timing information
+#   for each chromosome fitted.
+# o Made a better job cleaning out non-needed objects in process().
 # 2007-09-15
 # o Added getGenome() and setGenome().  Now, getGenomeData() searches for a
 #   matching <genome>(,<tags)*,chromosomes.txt in 

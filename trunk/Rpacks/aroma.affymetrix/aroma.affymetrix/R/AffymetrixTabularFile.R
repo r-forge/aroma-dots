@@ -3,6 +3,18 @@ setConstructorS3("AffymetrixTabularFile", function(...) {
 })
 
 
+setMethodS3("translateColumnNames", "AffymetrixTabularFile", function(this, names, ...) {
+  # Convert 'FOO_BAR_DOO' and 'FOO.BAR.DOO' to 'foo bar doo'?
+  if (any(regexpr("[_.]", names) != -1)) {
+    names <- tolower(gsub("[_.]", " ", names));
+  }
+
+  # Finally, convert 'Foo bar Doo' to 'fooBarDoo'
+  names <- toCamelCase(names);
+
+  names;
+}, protected=TRUE)
+
 
 setMethodS3("findByChipType", "AffymetrixTabularFile", function(static, chipType, tags=NULL, pattern=NULL, ...) {
   if (is.null(pattern)) {
@@ -31,6 +43,10 @@ setMethodS3("fromChipType", "AffymetrixTabularFile", function(static, chipType, 
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Now AffymetrixTabularFile reports the translated/cleaned up column 
+#   names.  Column names on the file can be retrieved from getHeader().
+# o Now colnames() returns column names in camelCase.
 # 2007-09-14
 # o Now inheriting from GenericTabularFile.
 # 2007-09-10

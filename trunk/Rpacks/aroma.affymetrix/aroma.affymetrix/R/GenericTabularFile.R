@@ -18,8 +18,7 @@ setMethodS3("as.character", "GenericTabularFile", function(x, ...) {
 
   s <- NextMethod("as.character", this, ...);
   class <- class(s);
-  header <- getHeader(this);
-  columns <- paste("'", header$columns, "'", sep="");
+  columns <- paste("'", colnames(this), "'", sep="");
   s <- c(s, sprintf("Columns [%d]: %s", length(columns), paste(columns, collapse=", ")));
   class(s) <- class;
   s;
@@ -41,9 +40,18 @@ setMethodS3("verify", "GenericTabularFile", function(this, ..., verbose=FALSE) {
 }, private=TRUE)
 
 
+setMethodS3("translateColumnNames", "GenericTabularFile", function(this, names, ...) {
+  # Do nothing
+  names;
+}, protected=TRUE)
+
+
+
 setMethodS3("colnames", "GenericTabularFile", function(this, ...) {
-  getHeader(this, ...)$columns;
+  colnames <- getHeader(this, ...)$columns;
+  translateColumnNames(this, colnames);
 })
+
 
 
 setMethodS3("getHeader", "GenericTabularFile", function(this, ..., force=FALSE) {
@@ -142,10 +150,15 @@ setMethodS3("readHeader", "GenericTabularFile", function(this, con=NULL, ..., ve
 
 
 
-setMethodS3("getReadArguments", "GenericTabularFile", function(this, header, colClassPatterns=c("*"=NA), defColClass="NULL", camelCaseNames=FALSE, ..., verbose=FALSE) {
+setMethodS3("getReadArguments", "GenericTabularFile", function(this, header=NULL, colClassPatterns=c("*"=NA), defColClass="NULL", ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'header':
+  if (is.null(header)) {
+    header <- getHeader(this);
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -154,11 +167,8 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, header, col
   }
 
 
-  columns <- header$columns;
-  if (camelCaseNames)
-    columns <- toCamelCase(columns);
-
   # Default column classes
+  columns <- colnames(this);
   nbrOfColumns <- length(columns);
   defColClasses <- rep(defColClass, nbrOfColumns);
   defColClassPatterns <- defColClasses;
@@ -225,7 +235,7 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, header, col
 }, protected=TRUE);
 
 
-setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, camelCaseNames=FALSE, ..., verbose=FALSE) {
+setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -259,23 +269,20 @@ setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, camelCase
 
 
   # Get read arguments
-  args <- getReadArguments(this, header=hdr, camelCaseNames=camelCaseNames, ..., verbose=less(verbose));
+  args <- getReadArguments(this, header=hdr, ..., verbose=less(verbose));
   args <- c(list(con), args);
   verbose && cat(verbose, "Arguments used to read tabular file:");
   verbose && str(verbose, args);
 
-  columns <- hdr$columns;
+  verbose && enter(verbose, "Matching colnames():");
+  columns <- colnames(this);
   columns[args$colClasses == "NULL"] <- NA;
   columns <- columns[!is.na(columns)];
-
-  # Make column names into camelCase names?
-  if (camelCaseNames) {
-    columns <- toCamelCase(columns);
-  }
+  verbose && exit(verbose);
 
   # Read the data table
   verbose && enter(verbose, "Calling read.table()");
-  verbose && str(verbose, args);
+  verbose && print(verbose, args);
   data <- do.call("read.table", args=args);
 
   rownames(data) <- NULL;
@@ -296,6 +303,9 @@ setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, camelCase
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Removed all 'camelCaseNames' arguments.  Now column names are decided 
+#   by colnames() and translateColumnNames(), which can be overridden.
 # 2007-09-14
 # o Extracted from AffymetrixTabularFile.
 # 2007-09-10

@@ -1,6 +1,23 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.7.1 [2007-09-16]
+o Now fit() of CopyNumberSegmentationModel reports timing 
+  information for each chromosome fitted when in verbose mode.
+o Now importFromAffymetrixNetAffxCsvFile() of AromaUgpFile averages
+  positions if multiple positions were available for a particular unit.
+o ROBUSTNESS: Made createFrom() of AffymetrixCelFile fail safe, 
+  that is, the destination file will not be created unless it 
+  is complete.  This is done by first create/writing to a temporary
+  file which is then renamed at the end. This should minimize the 
+  risk of creating incomplete CEL files.
+o ROBUSTNESS: Added internal fileCopy() which copies a file via
+  a temporary file which is renamed.  All file copying in the
+  package is now done via this method.
+o CLEAN UP: Removed obsolete copyFile() from AffymetrixFile in
+  favor of copyTo() in GenericDataFile.
+
+
 Version: 0.7.0 [2007-09-15]
 o Now it is possible to specify the genome used for segmentation and
   plotting. This can be done either via argument 'genome' in the
