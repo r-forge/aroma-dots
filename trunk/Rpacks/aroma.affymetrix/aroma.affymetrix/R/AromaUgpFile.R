@@ -167,7 +167,10 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this,
                                                                nDupUnits);
     warning("The positions for ", nDupUnits, " units were calculated as the average of multiple positions, since that was what was available on file.");
     verbose && enter(verbose, "Calculate average positions for those (assuming they are on the same chromosome)");
-    for (dupUnit in dupUnits) {
+    for (kk in seq(along=dupUnits)) {
+      if (kk %% 500 == 0)
+       verbose && printf(verbose, "%d, ", kk);
+      dupUnit <- dupUnits[kk];
       # Identify position
       units <- which(cdfUnits == dupUnit);
       # Average position
@@ -176,6 +179,7 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this,
       # Update (can we update just units[1]?)
       data[units,2] <- avgPos;
     }
+    verbose && cat(verbose, kk);
     verbose && exit(verbose);
     verbose && enter(verbose, "Remove the extraneous cases");
     data <- data[-dups,,drop=FALSE];
