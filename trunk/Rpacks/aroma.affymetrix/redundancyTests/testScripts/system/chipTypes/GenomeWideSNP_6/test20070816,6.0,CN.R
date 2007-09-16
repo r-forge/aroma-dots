@@ -22,14 +22,14 @@ print(cdf);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic-crosstalk calibration
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Identify cells *not* for chromosome X
+# Identify cells *not* for chromosome X & Y
 cdf <- getCdf(cs);
 gi <- getGenomeInformation(cdf);
-units <- getUnitsOnChromosome(gi, 23);
+units <- getUnitsOnChromosome(gi, 23:24);
 cells <- getCellIndices(cdf, units=units, useNames=FALSE, unlist=TRUE);
 rm(units);
 cells <- setdiff(1:nbrOfCells(cdf), cells);
-acc <- AllelicCrosstalkCalibration(cs, subsetToAvg=cells, tags=c("*", "-X"));
+acc <- AllelicCrosstalkCalibration(cs, subsetToAvg=cells, tags=c("*", "-XY"));
 rm(cells);
 print(acc);
 
