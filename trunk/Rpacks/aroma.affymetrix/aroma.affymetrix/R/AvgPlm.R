@@ -254,7 +254,7 @@ setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get the flavor of fitting algorithm for the RMA PLM
+  # Get the flavor of fitting algorithm for the averaging PLM
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   flavor <- this$.flavor;
   if (flavor == "median") {

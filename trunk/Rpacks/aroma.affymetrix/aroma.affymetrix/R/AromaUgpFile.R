@@ -94,7 +94,7 @@ setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosome, region=NULL
 
 
 
-setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this, csv, shift="auto", ..., verbose=FALSE) {
+setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this, csv, shift="auto", onReplicates=c("median", "mean", "overwrite"), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -106,6 +106,9 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this,
   # Argument 'shift':
   if (!identical(shift, "auto"))
     shift <- Arguments$getInteger(shift);
+
+  # Argument 'onReplicates':
+  onReplicates <- match.arg(onReplicates);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -157,36 +160,46 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this,
     data[,2] <- data[,2] + as.integer(shift);
   }
  
-  # Multiple positions per unit?
+  # Replicated positions per unit?
   dups <- which(duplicated(cdfUnits));
   if (length(dups) > 0) {
-    verbose && enter(verbose, "Detected units with multiple positions");
+    verbose && enter(verbose, "Detected units with replicated positions");
     dupUnits <- unique(cdfUnits[dups]);
     nDupUnits <- length(dupUnits);
-    verbose && cat(verbose, "Number of units with multiple positions: ", 
+    verbose && cat(verbose, "Number of units with replicated positions: ", 
                                                                nDupUnits);
-    warning("The positions for ", nDupUnits, " units were calculated as the average of multiple positions, since that was what was available on file.");
-    verbose && enter(verbose, "Calculate average positions for those (assuming they are on the same chromosome)");
-    for (kk in seq(along=dupUnits)) {
-      if (kk %% 500 == 0)
-       verbose && printf(verbose, "%d, ", kk);
-      dupUnit <- dupUnits[kk];
-      # Identify position
-      units <- which(cdfUnits == dupUnit);
-      # Average position
-      avgPos <- median(data[units,2], na.rm=TRUE);
-      avgPos <- round(avgPos);
-      # Update (can we update just units[1]?)
-      data[units,2] <- avgPos;
+
+    if (onReplicates %in% c("median", "mean")) {
+      verbose && enter(verbose, "Calculate average positions for those (assuming they are on the same chromosome)");
+      if (onReplicates == "mean") {
+        avgFcn <- median;
+      } else {
+        avgFcn <- mean;
+      }
+      for (kk in seq(along=dupUnits)) {
+        if (kk %% 500 == 0)
+         verbose && printf(verbose, "%d, ", kk);
+        dupUnit <- dupUnits[kk];
+        # Identify position
+        units <- which(cdfUnits == dupUnit);
+        # Average position
+        avgPos <- median(data[units,2], na.rm=TRUE);
+        avgPos <- round(avgPos);
+        # Update (can we update just units[1]?)
+        data[units,2] <- avgPos;
+      }
+      verbose && cat(verbose, kk);
+      verbose && exit(verbose);
+      verbose && enter(verbose, "Remove the extraneous cases");
+      data <- data[-dups,,drop=FALSE];
+      cdfUnits <- cdfUnits[-dups];
+      verbose && exit(verbose);
+      rm(dupUnits, units);
+      verbose && str(verbose, cdfUnits);
+      warning("The positions for ", nDupUnits, " units were calculated as the average of replicated positions, since that was what was available on file.");
+    } else {
+      verbose && cat(verbose, "Ignored replicated positions. The last one written will be the one available.");
     }
-    verbose && cat(verbose, kk);
-    verbose && exit(verbose);
-    verbose && enter(verbose, "Remove the extraneous cases");
-    data <- data[-dups,,drop=FALSE];
-    cdfUnits <- cdfUnits[-dups];
-    verbose && exit(verbose);
-    rm(dupUnits, units);
-    verbose && str(verbose, cdfUnits);
     verbose && exit(verbose);
   }
   rm(dups);
