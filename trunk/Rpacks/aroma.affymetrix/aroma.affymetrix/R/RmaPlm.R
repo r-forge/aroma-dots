@@ -27,16 +27,16 @@
 # \section{Model}{
 #   For a single unit group, the log-additive model of RMA is:
 #
-#    \deqn{log_2(y_{ij}) = \beta_i + \alpha_j + \varepsilon_{ij}}
+#    \deqn{log_2(y_{ik}) = \beta_i + \alpha_k + \varepsilon_{ik}}
 #
 #   where \eqn{\beta_i} are the chip effects for arrays \eqn{i=1,...,I}, 
-#   and \eqn{\alpha_j} are the probe affinities for probes \eqn{j=1,...,J}.
-#   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
-#   The model is constrained such that \eqn{\sum_j{\alpha_j} = 0}.
+#   and \eqn{\alpha_k} are the probe affinities for probes \eqn{k=1,...,K}.
+#   The \eqn{\varepsilon_{ik}} are zero-mean noise with equal variance.
+#   The model is constrained such that \eqn{\sum_k{\alpha_k} = 0}.
 #
 #   Note that all PLM classes must return parameters on the intensity scale.
 #   For this class that means that \eqn{\theta_i = 2^\beta_i} and 
-#   \eqn{\phi_i = 2^\alpha_i} are returned.
+#   \eqn{\phi_k = 2^\alpha_k} are returned.
 # }
 #
 # \section{Different flavors of model fitting}{
@@ -246,8 +246,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # Log-additive model
     y <- log(y, base=2);
 
-    J <- ncol(y);  # Number of arrays
-    I <- nrow(y);  # Number of probes
+    I <- ncol(y);  # Number of arrays
+    K <- nrow(y);  # Number of probes
 
     # Look for cells that have NAs in at least one sample?
     w <- NULL;
@@ -260,35 +260,35 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
         if (treatNAsAs == "weights") {
           badCells <- apply(isNA, MARGIN=2, FUN=all);
           if (any(badCells)) {
-            return(list(theta=rep(NA, J),
-                        sdTheta=rep(NA, J),
-                        thetaOutliers=rep(NA, J), 
-                        phi=rep(NA, I), 
-                        sdPhi=rep(NA, I), 
-                        phiOutliers=rep(NA, I)
+            return(list(theta=rep(NA, I),
+                        sdTheta=rep(NA, I),
+                        thetaOutliers=rep(NA, I), 
+                        phi=rep(NA, K), 
+                        sdPhi=rep(NA, K), 
+                        phiOutliers=rep(NA, K)
                        )
                   );
           }
-          w <- matrix(1, nrow=I, ncol=J);
+          w <- matrix(1, nrow=K, ncol=I);
           w[isNA] <- 0;
           y[isNA] <- 0;
         } else if (treatNAsAs == "0") {
           y[isNA] <- 0;
           hasNAs <- FALSE;
         } else if (treatNAsAs == "NA") {
-          I0 <- I;  # Number of cells
+          K0 <- K;  # Number of cells
           okCells <- !apply(isNA, MARGIN=1, FUN=any);
           # Analyze only valid cells
           y <- y[okCells,,drop=FALSE];
 
           # No valid cells left?
           if (nrow(y) == 0) {
-            return(list(theta=rep(NA, J),
-                        sdTheta=rep(NA, J),
-                        thetaOutliers=rep(NA, J), 
-                        phi=rep(NA, I0), 
-                        sdPhi=rep(NA, I0), 
-                        phiOutliers=rep(NA, I0)
+            return(list(theta=rep(NA, I),
+                        sdTheta=rep(NA, I),
+                        thetaOutliers=rep(NA, I), 
+                        phi=rep(NA, K0), 
+                        sdPhi=rep(NA, K0), 
+                        phiOutliers=rep(NA, K0)
                        )
                   );
           }
@@ -308,10 +308,10 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     se <- fit$StdErrors;
 
     # Chip effects
-    beta <- est[1:J];
+    beta <- est[1:I];
 
     # Probe affinities
-    alpha <- est[(J+1):length(est)];
+    alpha <- est[(I+1):length(est)];
     alpha[length(alpha)] <- -sum(alpha[1:(length(alpha)-1)]);
 
     # Estimates on the intensity scale
@@ -327,31 +327,31 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (is.null(se)) {
       # For affyPLM v1.10.0 (2006-09-26) or older.
-      sdTheta <- rep(1, J);
-      sdPhi <- rep(1, I);
+      sdTheta <- rep(1, I);
+      sdPhi <- rep(1, K);
     } else {
       # For affyPLM v1.11.6 (2006-11-01) or newer.
-      sdTheta <- 2^(se[1:J]);
-      sdPhi <- 2^(se[(J+1):length(se)]);
+      sdTheta <- 2^(se[1:I]);
+      sdPhi <- 2^(se[(I+1):length(se)]);
     }
 
     # Handle NAs?
     if (hasNAs) {
       if (treatNAsAs == "NA") {
-        phi0 <- rep(NA, I0);
+        phi0 <- rep(NA, K0);
         phi0[okCells] <- phi;
         phi <- phi0;
   
-        sdPhi0 <- rep(NA, I0);
+        sdPhi0 <- rep(NA, K0);
         sdPhi0[okCells] <- sdPhi;
         sdPhi <- sdPhi0;
   
-        I <- I0;
+        K <- K0;
       }
     }
 
-    thetaOutliers <- rep(FALSE, J);
-    phiOutliers <- rep(FALSE, I);
+    thetaOutliers <- rep(FALSE, I);
+    phiOutliers <- rep(FALSE, K);
 
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
@@ -393,15 +393,15 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     fit <- .C("rlm_fit_R", as.double(X), as.double(y), rows=as.integer(nchip*nprobe), cols=as.integer(nchip+nprobe-1), beta=double(nchip+nprobe-1), resids=double(nchip*nprobe), weights=double(nchip*nprobe), PACKAGE="affyPLM")
 
     # Extract probe affinities and chip estimates
-    J <- ncol(y);  # Number of arrays
-    I <- nrow(y);  # Number of probes
+    I <- ncol(y);  # Number of arrays
+    K <- nrow(y);  # Number of probes
     est <- fit$beta;
 
     # Chip effects
-    beta <- est[1:J];
+    beta <- est[1:I];
 
     # Probe affinities
-    alpha <- c(0, est[(J+1):length(est)]);
+    alpha <- c(0, est[(I+1):length(est)]);
     if (constraint.type$probe=="contr.sum") {
       alpha[1] <- -sum(alpha[2:length(alpha)]);
     } 
@@ -417,10 +417,10 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # A fit function must return: theta, sdTheta, thetaOutliers, 
     # phi, sdPhi, phiOutliers.
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    sdTheta <- rep(1, J);
-    thetaOutliers <- rep(FALSE, J);
-    sdPhi <- rep(1, I);
-    phiOutliers <- rep(FALSE, I);
+    sdTheta <- rep(1, I);
+    thetaOutliers <- rep(FALSE, I);
+    sdPhi <- rep(1, K);
+    phiOutliers <- rep(FALSE, K);
 
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
@@ -447,10 +447,10 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     }
 
     # make factor variables for chip and probe
-    J <- ncol(y); # Number of arrays
-    I <- nrow(y); # Number of probes
+    I <- ncol(y); # Number of arrays
+    K <- nrow(y); # Number of probes
 
-    unitNames <- rep("X", I);  # dummy probe names
+    unitNames <- rep("X", K);  # dummy probe names
     nbrOfUnits <- as.integer(1); # Only one unit group is fitted
 
     # Each call to fitRma() outputs "Calculating Expression".
@@ -462,10 +462,10 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     est <- fit[1,];  # Only one unit
 
     # Chip effects
-    beta <- est[1:J];
+    beta <- est[1:I];
 
     # Probe affinities
-    alpha <- rep(0, I);  # Not returned by fitRma()!
+    alpha <- rep(0, K);  # Not returned by fitRma()!
       
     # Estimates on the intensity scale
     theta <- 2^beta;
@@ -478,10 +478,10 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
     # A fit function must return: theta, sdTheta, thetaOutliers, 
     # phi, sdPhi, phiOutliers.
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    sdTheta <- rep(1, J);
-    thetaOutliers <- rep(FALSE, J);
-    sdPhi <- rep(1, I);
-    phiOutliers <- rep(FALSE, I);
+    sdTheta <- rep(1, I);
+    thetaOutliers <- rep(FALSE, I);
+    sdPhi <- rep(1, K);
+    phiOutliers <- rep(FALSE, K);
 
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
@@ -532,6 +532,9 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Renamed the variables such that index I is for samples and K is for
+#   probes, as in the paper.
 # 2007-09-15
 # o Now the RmaPlm fit function detects cases where a probe get weight zero 
 #   for all arrays. In such (rare) cases, parameter estimates equals NAs.

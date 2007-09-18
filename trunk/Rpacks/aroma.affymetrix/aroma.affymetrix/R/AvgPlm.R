@@ -211,15 +211,13 @@ setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
     # Add shift
     y <- y + shift;
 
-    J <- ncol(y);  # Number of arrays
-    I <- nrow(y);  # Number of probes
+    I <- ncol(y);  # Number of arrays
+    K <- nrow(y);  # Number of probes
 
     # Fit model
-    if (J == 1) {
+    if (K == 1) {
       theta <- y;
-      # Hmm..., when searching for "units todo", we use
-      # (sdTheta <= 0).
-      sdTheta <- rep(0, I) + floatEps;
+      sdTheta <- rep(0,I); # floatEps;
     } else {
       y <- t(y);
       if (flavor == "median") {
@@ -232,18 +230,22 @@ setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
     }
 
     # Should we store std deviations or std errors?!? /HB 2007-09-08
-    sdTheta <- sdTheta/sqrt(I);
+    sdTheta <- sdTheta/sqrt(K);
+
+    # Hmm..., when searching for "units todo", we use
+    # (sdTheta <= 0).
+    sdTheta <- sdTheta + floatEps;
 
     # Probe affinities are all identical (==ones)
-    phi <- rep(1, I);
-    sdPhi <- rep(1, I);  # Default, we not estimated (should we store NAs?!?)
+    phi <- rep(1, K);
+    sdPhi <- rep(1, K);  # Default, we not estimated (should we store NAs?!?)
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # A fit function must return: theta, sdTheta, thetaOutliers, 
     # phi, sdPhi, phiOutliers.
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    thetaOutliers <- rep(FALSE, J);
-    phiOutliers <- rep(FALSE, I);
+    thetaOutliers <- rep(FALSE, I);
+    phiOutliers <- rep(FALSE, K);
 
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
@@ -292,6 +294,9 @@ setMethodS3("getCalculateResidualsFunction", "AvgPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Renamed the variables such that index I is for samples and K is for
+#   probes, as in the paper.
 # 2007-09-12
 # o WORKAROUND: If there is only one probe, the fit function will return
 #   theta=y:s, and sdTheta=0:s.  However, when searching for units to do,

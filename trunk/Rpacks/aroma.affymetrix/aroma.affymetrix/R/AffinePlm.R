@@ -29,13 +29,13 @@
 # \section{Model}{
 #   For a single unit group, the affine model is:
 #
-#    \deqn{y_{ij} = a + \theta_i \phi_j + \varepsilon_{ij}}
+#    \deqn{y_{ik} = a + \theta_i \phi_k + \varepsilon_{ik}}
 #
 #   where \eqn{a} is an offset common to all probe signals, 
 #   \eqn{\theta_i} are the chip effects for arrays \eqn{i=1,...,I}, 
-#   and \eqn{\phi_j} are the probe affinities for probes \eqn{j=1,...,J}.
-#   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
-#   The model is constrained such that \eqn{\prod_j \phi_j = 1}.
+#   and \eqn{\phi_k} are the probe affinities for probes \eqn{k=1,...,K}.
+#   The \eqn{\varepsilon_{ik}} are zero-mean noise with equal variance.
+#   The model is constrained such that \eqn{\prod_k \phi_k = 1}.
 #
 #   Note that with the additional constraint \eqn{a=0} (see arguments above),
 #   the above model is very similar to @see "MbeiPlm".  The differences in
@@ -171,12 +171,12 @@ setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
     theta <- as.vector(f);
     phi <- as.vector(attr(f, "modelFit")$b);
 
-    J <- length(theta);
-    I <- length(phi);
+    I <- length(theta);
+    K <- length(phi);
 
     # Rescale such that prod(phi) = 1?
     if (standardize) {
-      c <- prod(phi)^(1/I);
+      c <- prod(phi)^(1/K);
       phi <- phi/c;
       theta <- theta*c;
     }
@@ -185,10 +185,10 @@ setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
     # A fit function must return: theta, sdTheta, thetaOutliers, 
     # phi, sdPhi, phiOutliers.
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    sdTheta <- rep(1, J);
-    thetaOutliers <- rep(FALSE, J);
-    sdPhi <- rep(1, I);
-    phiOutliers <- rep(FALSE, I);
+    sdTheta <- rep(1, I);
+    thetaOutliers <- rep(FALSE, I);
+    sdPhi <- rep(1, K);
+    phiOutliers <- rep(FALSE, K);
 
 
     # Return data on the intensity scale
@@ -203,6 +203,9 @@ setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o Renamed the variables such that index I is for samples and K is for
+#   probes, as in the paper.
 # 2007-03-29
 # o Changed tag 'linear' to 'lin'.
 # 2006-09-11

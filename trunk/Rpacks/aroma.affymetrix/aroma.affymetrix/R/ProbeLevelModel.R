@@ -39,9 +39,9 @@
 #       intensity scale, e.g. log-additive models such as @see "RmaPlm"
 #       have to transform the parameters on the log-scale to the intensity
 #       scale.
-#     \item The probe-affinity estimates \eqn{\phi_j} for a unit group
-#       must be constrained such that \eqn{\prod_j \phi_j = 1},
-#       or equivalently \eqn{\sum_j \log(\phi_j) = 0}.
+#     \item The probe-affinity estimates \eqn{\phi_k} for a unit group
+#       must be constrained such that \eqn{\prod_k \phi_k = 1},
+#       or equivalently if \eqn{\phi_k > 0},\eqn{\sum_k \log(\phi_k) = 0}.
 #   }
 #   Note that the above probe-affinity constraint guarantees that the
 #   estimated chip effects across models are on the same scale.
@@ -334,7 +334,7 @@ setMethodS3("getWeightsSetClass", "ProbeLevelModel", function(static, ...) {
 # \description{
 #  @get "title".
 #  Any subclass model must provide this method, which should return
-#  a @function that accepts an IxJ @matrix.
+#  a @function that accepts an IxK @matrix.
 # }
 #
 # @synopsis

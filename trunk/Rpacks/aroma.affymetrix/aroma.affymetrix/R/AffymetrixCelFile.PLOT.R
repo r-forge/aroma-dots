@@ -971,7 +971,11 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
     img <- getImage(this, ..., verbose=less(verbose));
   
     verbose && enter(verbose, "Writing image");
-    EBImage::write.image(img, file=pathname);
+    if (compareVersion(packageDescription("EBImage")$Version, "2.1.23") >= 0) {
+      EBImage::writeImage(img, file=pathname);
+    } else {
+      EBImage::write.image(img, file=pathname);
+    }
     verbose && exit(verbose);
   }
 
@@ -985,6 +989,9 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2007-09-17
+# o Added write.image()/writeImage() caller to avoid recent EBImage
+#   warnings about write.image() being deprecated.
 # 2007-06-11
 # o Explicit calls to geneplotter::smoothScatter() & EBImage::write.image().
 # 2007-06-07
