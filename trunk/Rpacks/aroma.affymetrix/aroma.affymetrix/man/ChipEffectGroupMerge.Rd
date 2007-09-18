@@ -56,6 +56,9 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
 }
 
 
+ \bold{Methods inherited from ChipEffectTransform}:\cr
+getOutputDataSet
+
  \bold{Methods inherited from Transform}:\cr
 getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags
 

@@ -44,7 +44,9 @@ extends \emph{\link[aroma.affymetrix]{Transform}}\cr
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\emph{No methods defined}.
+\tabular{rll}{
+ \tab \code{getOutputDataSet} \tab  -\cr
+}
 
 
  \bold{Methods inherited from Transform}:\cr

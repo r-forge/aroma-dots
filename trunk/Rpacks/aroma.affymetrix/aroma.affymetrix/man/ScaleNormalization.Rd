@@ -37,7 +37,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   probe-level signals towards the same scale.
  }
 
- \usage{ScaleNormalization(..., targetAvg=2200, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate)}
+ \usage{ScaleNormalization(..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate)}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of

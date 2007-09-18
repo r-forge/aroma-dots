@@ -60,6 +60,9 @@ extends \link[aroma.affymetrix]{ChipEffectGroupMerge}\cr
  \bold{Methods inherited from ChipEffectGroupMerge}:\cr
 getCdf, getMergeFunction, process, setMergeFunction
 
+ \bold{Methods inherited from ChipEffectTransform}:\cr
+getOutputDataSet
+
  \bold{Methods inherited from Transform}:\cr
 getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags
 
