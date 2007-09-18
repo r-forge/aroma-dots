@@ -74,16 +74,16 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \section{Model}{
    For a single unit group, the log-additive model of RMA is:
 
-    \deqn{log_2(y_{ij}) = \beta_i + \alpha_j + \varepsilon_{ij}}
+    \deqn{log_2(y_{ik}) = \beta_i + \alpha_k + \varepsilon_{ik}}
 
    where \eqn{\beta_i} are the chip effects for arrays \eqn{i=1,...,I},
-   and \eqn{\alpha_j} are the probe affinities for probes \eqn{j=1,...,J}.
-   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
-   The model is constrained such that \eqn{\sum_j{\alpha_j} = 0}.
+   and \eqn{\alpha_k} are the probe affinities for probes \eqn{k=1,...,K}.
+   The \eqn{\varepsilon_{ik}} are zero-mean noise with equal variance.
+   The model is constrained such that \eqn{\sum_k{\alpha_k} = 0}.
 
    Note that all PLM classes must return parameters on the intensity scale.
    For this class that means that \eqn{\theta_i = 2^\beta_i} and
-   \eqn{\phi_i = 2^\alpha_i} are returned.
+   \eqn{\phi_k = 2^\alpha_k} are returned.
  }
 
  \section{Different flavors of model fitting}{

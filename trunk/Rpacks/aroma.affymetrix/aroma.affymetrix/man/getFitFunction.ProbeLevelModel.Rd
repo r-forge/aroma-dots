@@ -18,7 +18,7 @@
 \description{
  Static method to get the low-level function that fits the PLM.
  Any subclass model must provide this method, which should return
- a \code{\link[base]{function}} that accepts an IxJ \code{\link[base]{matrix}}.
+ a \code{\link[base]{function}} that accepts an IxK \code{\link[base]{matrix}}.
 }
 
 \synopsis{getFitFunction.ProbeLevelModel(...)}
