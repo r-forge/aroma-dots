@@ -86,7 +86,7 @@ setMethodS3("getOutputDataSet", "ChipEffectTransform", function(this, ..., verbo
 
   verbose && exit(verbose);
 
-  outputDataSet;
+  res;
 })
 
 
