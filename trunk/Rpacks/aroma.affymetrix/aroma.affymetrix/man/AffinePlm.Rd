@@ -77,13 +77,13 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \section{Model}{
    For a single unit group, the affine model is:
 
-    \deqn{y_{ij} = a + \theta_i \phi_j + \varepsilon_{ij}}
+    \deqn{y_{ik} = a + \theta_i \phi_k + \varepsilon_{ik}}
 
    where \eqn{a} is an offset common to all probe signals,
    \eqn{\theta_i} are the chip effects for arrays \eqn{i=1,...,I},
-   and \eqn{\phi_j} are the probe affinities for probes \eqn{j=1,...,J}.
-   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
-   The model is constrained such that \eqn{\prod_j \phi_j = 1}.
+   and \eqn{\phi_k} are the probe affinities for probes \eqn{k=1,...,K}.
+   The \eqn{\varepsilon_{ik}} are zero-mean noise with equal variance.
+   The model is constrained such that \eqn{\prod_k \phi_k = 1}.
 
    Note that with the additional constraint \eqn{a=0} (see arguments above),
    the above model is very similar to \code{\link{MbeiPlm}}.  The differences in

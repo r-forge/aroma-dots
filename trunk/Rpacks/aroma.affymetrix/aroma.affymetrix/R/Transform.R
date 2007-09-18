@@ -403,9 +403,31 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE, ve
       ds <- getInputDataSet(this);
       verbose && exit(verbose);
       verbose && enter(verbose, "Retrieving files for ", class(ds)[1], " output data set");
+
+      args <- list(path=getPath(this), ..., checkChipType=FALSE);
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Inherit certain arguments from the input data set
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # AD HOC (not using OO), but setting these arguments does speed
+      # up things. /HB 2007-09-17
+      if (inherits(ds, "CnChipEffectSet"))
+        args$combineAlleles <- ds$combineAlleles;
+      if (inherits(ds, "SnpChipEffectSet"))
+        args$mergeStrands <- ds$mergeStrands; 
+
+      verbose && cat(verbose, "Arguments:");
+      verbose && str(verbose, str);
+
       clazz <- Class$forName(class(ds)[1]);
-      outputDataSet <- clazz$fromFiles(path=getPath(this), ...,
-                             checkChipType=FALSE, verbose=less(verbose));
+      staticMethod <- clazz$fromFiles;
+      args$verbose <- less(verbose);
+      outputDataSet <- do.call("staticMethod", args=args);
+      rm(staticMethod, args); # Not needed anymore
+
+##      outputDataSet <- clazz$fromFiles(path=getPath(this), ...,
+##                             checkChipType=FALSE, verbose=less(verbose));
+
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Updating the CDF for the output data set");
@@ -530,6 +552,9 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-09-18
+# o Now getOutputDataSet() of Transform carry down certain arguments from
+#   the input data set. This will speed up things.
 # 2007-09-12
 # o Now getOutputDataSet() of Transform passes down '...'static
 #   fromFiles() of the AffymetrixCelSet class being setup.

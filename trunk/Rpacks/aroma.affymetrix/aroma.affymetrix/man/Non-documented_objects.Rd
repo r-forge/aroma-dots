@@ -1414,6 +1414,13 @@
 \alias{importFromGenericTabularFile}
 \alias{importFromGenericTabularFile.AromaUgpFile}
 \alias{importFromGenericTabularFile.AromaUnitTabularBinaryFile}
+\alias{clearCache.FragmentLengthNormalization}
+\alias{getOutputDataSet.ChipEffectTransform}
+\alias{renameTo}
+\alias{renameTo.GenericDataFile}
+\alias{translateColumnNames}
+\alias{translateColumnNames.AffymetrixTabularFile}
+\alias{translateColumnNames.GenericTabularFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

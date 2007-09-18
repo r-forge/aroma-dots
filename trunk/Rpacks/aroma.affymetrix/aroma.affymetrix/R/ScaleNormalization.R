@@ -39,7 +39,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("ScaleNormalization", function(..., targetAvg=2200, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate) {
+setConstructorS3("ScaleNormalization", function(..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate) {
   # Argument 'targetAvg':
   targetAvg <- Arguments$getDouble(targetAvg, range=c(1,Inf));
 
@@ -76,6 +76,7 @@ setMethodS3("getSubsetToUpdate", "ScaleNormalization", function(this, ..., verbo
   if (inherits(ds, "ChipEffectSet")) {
     verbose && enter(verbose, "Identifying possible cells in ", class(ds)[1]);
     df <- getFile(ds, 1);
+    # Cannot use 'unlist=FALSE' next, because restructuring might occur.
     possibleCells <- getCellIndices(df, verbose=less(verbose));
     possibleCells <- unlist(possibleCells, use.names=FALSE);
     possibleCells <- sort(possibleCells);
@@ -131,6 +132,7 @@ setMethodS3("getSubsetToAvg", "ScaleNormalization", function(this, ..., verbose=
   if (inherits(ds, "ChipEffectSet")) {
     verbose && enter(verbose, "Identifying possible cells in ", class(ds)[1]);
     df <- getFile(ds, 1);
+    # Cannot use 'unlist=FALSE' next, because restructuring might occur.
     possibleCells <- getCellIndices(df, verbose=less(verbose));
     possibleCells <- unlist(possibleCells, use.names=FALSE);
     possibleCells <- sort(possibleCells);
@@ -248,15 +250,15 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
   params <- getParameters(this);
   targetAvg <- params$targetAvg;
 
-  subsetToAvg <- identifyCells(cdf, indices=params$subsetToAvg, 
-                          types=params$typesToAvg, verbose=less(verbose));
+  subsetToAvg <- getSubsetToAvg(this, verbose=less(verbose));
   verbose && cat(verbose, "subsetToAvg:");
   verbose && str(verbose, subsetToAvg);
+  verbose && print(verbose, range(subsetToAvg));
 
-  subsetToUpdate <- identifyCells(cdf, indices=params$subsetToUpdate, 
-                       types=params$typesToUpdate, verbose=less(verbose));
+  subsetToUpdate <- getSubsetToUpdate(this, verbose=less(verbose));
   verbose && cat(verbose, "subsetToUpdate:");
   verbose && str(verbose, subsetToUpdate);
+  verbose && print(verbose, range(subsetToUpdate));
 
   # Get the output path
   outputPath <- getPath(this);
@@ -270,7 +272,6 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Normalizing ", nbrOfArrays(ds), " arrays");
-  dataFiles <- list();
   for (kk in seq(ds)) {
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(ds, kk);
@@ -285,15 +286,15 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
     if (isFile(pathname) && skip) {
       verbose && cat(verbose, "Normalized data file already exists: ",
                                                                    pathname);
-      # CDF inheritance
-      dataFiles[[kk]] <- fromFile(df, pathname);
       verbose && exit(verbose);
       next;
     }
   
-    # Get probe signals
+    # Get probe signals for the fit
     verbose && enter(verbose, "Reading probe intensities for fitting");
-    x <- getData(df, fields="intensities", indices=subsetToAvg, verbose=less(verbose,2))$intensities;
+##    data <- getDataFlat(ce, units=map, fields="theta", verbose=less(verbose));
+    x <- getData(df, fields="intensities", indices=subsetToAvg, 
+                                 verbose=less(verbose,2))$intensities;
     verbose && str(verbose, x);
     verbose && exit(verbose);
 
@@ -304,26 +305,28 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
     # Estimating scale
     verbose && enter(verbose, "Estimating scale");
     xM <- median(x, na.rm=TRUE);
-    rm(x); # Not needed anymore
     verbose && printf(verbose, "Median before: %.2f\n", xM);
     verbose && printf(verbose, "Target avg: %.2f\n", targetAvg);
-    s <- targetAvg / xM;
-    verbose && printf(verbose, "Scale: %.2f\n", s);
+    b <- targetAvg / xM;
+    verbose && printf(verbose, "Scale: %.2f\n", b);
     verbose && exit(verbose);
 
     # Garbage collect
+    rm(x, xM);
     gc <- gc();
     verbose && print(verbose, gc);
 
-    # Get probe signals
-    verbose && enter(verbose, "Reading probe intensities to be updated");
-    x <- getData(df, fields="intensities", indices=subsetToUpdate, verbose=less(verbose,2))$intensities;
+    # Get probe signals to be updated
+    verbose && enter(verbose, "Getting signals");
+##    data <- getDataFlat(ce, units=map, fields="theta", verbose=less(verbose));
+    x <- getData(df, fields="intensities", indices=subsetToUpdate, 
+                                    verbose=less(verbose,2))$intensities;
     verbose && str(verbose, x);
     verbose && exit(verbose);
 
     # Rescale
     verbose && enter(verbose, "Rescaling");
-    x <- s*x;
+    x <- b*x;
     verbose && str(verbose, x);
     xM <- median(x, na.rm=TRUE);
     verbose && printf(verbose, "Median after: %.2f\n", xM);
@@ -341,23 +344,19 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
     createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
     verbose && exit(verbose);
 
-
-    verbose && enter(verbose, "Writing normalized intensities");
+    verbose && enter(verbose, "Storing normalized signals");
+#    updateDataFlat(ceN, data=data, verbose=less(verbose));
+#    rm(data);
     updateCel(pathname, indices=subsetToUpdate, intensities=x);
-
-    # Not needed anymore
     rm(x);
-
     verbose && exit(verbose);
+
     verbose && exit(verbose);
 
     # Garbage collect
     gc <- gc();
     verbose && print(verbose, gc);
 
-    # Return new normalized data file object
-    dataFiles[[kk]] <- fromFile(df, pathname);
-    
     verbose && exit(verbose);
   } # for (kk in seq(ds))
   verbose && exit(verbose);
@@ -367,8 +366,7 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
   verbose && print(verbose, gc);
 
   # Create result set
-  outputDataSet <- newInstance(ds, dataFiles);
-  setCdf(outputDataSet, cdf);
+  outputDataSet <- getOutputDataSet(this, force=TRUE, verbose=less(verbose));
 
   # Update the output data set
   this$outputDataSet <- outputDataSet;
@@ -380,6 +378,8 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
 
 ############################################################################
 # HISTORY:
+# 2007-09-18
+# o Updated all getCellIndices() to use 'unlist=TRUE'.
 # 2007-04-16
 # o Created.
 ############################################################################

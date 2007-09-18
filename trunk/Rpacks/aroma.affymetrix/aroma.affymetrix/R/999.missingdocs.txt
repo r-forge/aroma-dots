@@ -629,7 +629,8 @@ yellow.colors
   importFromGenericTabularFile
   importFromGenericTabularFile.AromaUgpFile
   importFromGenericTabularFile.AromaUnitTabularBinaryFile
-  clearCache.FragmentLengthNormalization renameTo
+  clearCache.FragmentLengthNormalization
+  getOutputDataSet.ChipEffectTransform renameTo
   renameTo.GenericDataFile translateColumnNames
   translateColumnNames.AffymetrixTabularFile
   translateColumnNames.GenericTabularFile
