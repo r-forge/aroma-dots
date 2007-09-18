@@ -55,8 +55,12 @@ setMethodS3("as.character", "RawCopyNumbers", function(x, ...) {
 }, private=TRUE) 
 
 
-setMethodS3("nbrOfLoci", "RawCopyNumbers", function(this, ...) {
-  length(this$x);
+setMethodS3("nbrOfLoci", "RawCopyNumbers", function(this, na.rm=FALSE, ...) {
+  cn <- this$cn;
+  if (na.rm) {
+    cn <- cn[is.finite(cn)];
+  }
+  length(cn);
 })
 
 setMethodS3("getPhysicalPositions", "RawCopyNumbers", function(this, ...) {

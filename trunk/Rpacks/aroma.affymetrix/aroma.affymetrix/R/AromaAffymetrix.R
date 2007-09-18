@@ -28,8 +28,7 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
       if (from < to) {
         verbose && printf(verbose, "Moving package: %s (%s)\n", pkg, path);
         pkgsMoved <- c(pkgsMoved, 
-          moveInSearchPath(from=path, to=toPath, where="after")
-        );
+                    moveInSearchPath(from=path, to=toPath, where="after"));
       }
     }
   }

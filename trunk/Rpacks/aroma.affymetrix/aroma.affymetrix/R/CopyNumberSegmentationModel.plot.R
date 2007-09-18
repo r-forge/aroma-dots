@@ -1,70 +1,3 @@
-setMethodS3("drawCytoband", "CopyNumberSegmentationModel", function(this, chromosome=NULL, cytobandLabels=TRUE, colCytoBand=c("white", "darkblue"), colCentro="red", unit=6, ...) {
-  require("GLAD") || stop("Package not loaded: GLAD");  # data("cytoband")
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (length(chromosome) != 1) {
-    throw("Argument 'chromosome' must be a single chromosome: ", paste(chromosome, collapse=", "));
-  }
-
-  # Do we know how to plot the genome?
-  genome <- getGenome(this);
-  name <- gsub(",.*", "", genome);
-  if (name != "Human") {
-    warning("Cannot draw cytoband. Unsupported genome: ", genome);
-    return();
-  }
-
-
-  xScale <- 1/(10^unit);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Get chromosome lengths
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Load data
-  # To please R CMD check on R v2.6.0
-  cytoband <- NULL; rm(cytoband);
-  data("cytoband", envir=sys.frame(sys.nframe()));  # Package 'GLAD'
-  genomeInfo <- aggregate(cytoband$End, 
-    by=list(Chromosome=cytoband$Chromosome, ChrNumeric=cytoband$ChrNumeric), 
-    FUN=max, na.rm=TRUE);
-  names(genomeInfo) <- c("Chromosome", "ChrNumeric", "Length");
-  genomeInfo$Chromosome <- as.character(genomeInfo$Chromosome);
-  genomeInfo$ChrNumeric <- as.integer(as.character(genomeInfo$ChrNumeric));
-
-  LabelChr <- data.frame(Chromosome=chromosome);
-  LabelChr <- merge(LabelChr, genomeInfo[, c("ChrNumeric", "Length")], 
-                         by.x="Chromosome", by.y="ChrNumeric", all.x=TRUE);
-
-  LabelChr$Length <- 0;
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Get the cytoband details for the chromosome of interest
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Drop column 'Chromosome'
-  ## Gives a NOTE in R CMD check R v2.6.0, which is nothing, but we'll
-  ## use a workaround to get a clean result. /HB 2007-06-12
-  Chromosome <- NULL; rm(Chromosome); # dummy
-  cytobandNew <- subset(cytoband, select=-Chromosome); 
-  cytobandNew <- merge(LabelChr, cytobandNew, by.x="Chromosome", 
-                                                        by.y="ChrNumeric");
-  # Rescale x positions according to units
-  cytobandNew$Start <- xScale*cytobandNew$Start;
-  cytobandNew$End <- xScale*cytobandNew$End;
-
-  # Where should the cytoband be added and how wide should it be?
-  usr <- par("usr");
-  dy <- diff(usr[3:4]);
-
-  drawCytoband2(cytobandNew, chromosome=chromosome, 
-    labels=cytobandLabels, y=usr[4]+0.02*dy, height=0.03*dy, 
-    colCytoBand=colCytoBand, colCentro=colCentro);
-}, private=TRUE) # drawCytoband()
-
-
-
-
 setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, xmargin=c(50,50), imageFormat="current", skip=TRUE, path=NULL, callList=NULL, verbose=FALSE) {
   # To please R CMD check.
   this <- x;
@@ -290,7 +223,7 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
             verbose && print(verbose, rawCns, level=-50);
 
             # Add number-of-loci annotation to graph
-            n <- nbrOfLoci(rawCns);
+            n <- nbrOfLoci(rawCns, na.rm=TRUE);
             stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8);
 
             # Plot raw CNs data points (and highlight outliers)
@@ -347,6 +280,7 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
 
 ##############################################################################
 # HISTORY:
+# 2007-09-16
 # 2007-09-15
 # o Now the cytoband is only drawn for some genomes, which currently is
 #   hardwired to the "Human" genome. 

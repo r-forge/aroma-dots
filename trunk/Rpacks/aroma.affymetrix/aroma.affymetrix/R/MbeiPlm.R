@@ -23,13 +23,13 @@
 # \section{Model}{
 #   For a single unit group, the multiplicative model of dChip is:
 #
-#    \deqn{y_{ij} = \theta_i \phi_j + \varepsilon_{ij}}
+#    \deqn{y_{ik} = \theta_i \phi_k + \varepsilon_{ik}}
 #
 #   where \eqn{\theta_i} are the chip effects for arrays \eqn{i=1,...,I}, 
-#   and \eqn{\phi_j} are the probe affinities for probes \eqn{j=1,...,J}.
-#   The \eqn{\varepsilon_{ij}} are zero-mean noise with equal variance.
+#   and \eqn{\phi_k} are the probe affinities for probes \eqn{k=1,...,K}.
+#   The \eqn{\varepsilon_{ik}} are zero-mean noise with equal variance.
 #   To make to parameters identifiable, the constraint 
-#   \eqn{\prod_j \phi_j = 1} is added.
+#   \eqn{\prod_k \phi_k = 1} is added.
 # }
 #
 # @author
@@ -208,8 +208,8 @@ setMethodS3("getFitFunction", "MbeiPlm", function(this, ...) {
       if (standardize) {
         phi <- fit$phi;
         theta <- fit$theta;
-        I <- length(phi);
-        c <- prod(phi)^(1/I);
+        K <- length(phi);
+        c <- prod(phi)^(1/K);
         phi <- phi/c;
         theta <- theta*c;
         fit$phi <- phi;

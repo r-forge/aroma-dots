@@ -78,7 +78,9 @@ setMethodS3("readData", "UflSnpInformation", function(this, nrow=NULL, ..., verb
 
 setMethodS3("getDataColumns", "UflSnpInformation", function(this, ...) {
   ufl <- getAromaUflFile(this);
-  colnames(ufl);
+  names <- colnames(ufl);
+  names <- gsub("^length", "fragmentLength", names);
+  names;
 }, private=TRUE)
 
 setMethodS3("getFields", "UflSnpInformation", function(this, ...) {
@@ -177,6 +179,10 @@ setMethodS3("getFragmentStops", "UflSnpInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-16
+# o BUG FIX: getFragmentLengths() of UflSnpInformation would thrown an error
+#   reporting "Unknown fields: fragmentLength".  Now getDataColumns() 
+#   returns the correct names.
 # 2007-09-11
 # o Created from DChipSnpInformation.R.
 ############################################################################  
