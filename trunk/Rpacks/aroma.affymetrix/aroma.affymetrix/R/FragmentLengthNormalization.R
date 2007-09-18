@@ -121,6 +121,10 @@ setMethodS3("getOutputDataSet", "FragmentLengthNormalization", function(this, ..
   verbose && enter(verbose, "Getting output data set for ", class(this)[1]);
 
   args <- list(generic="getOutputDataSet", object=this, ...);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Inherit certain arguments from the input data set
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (inherits(ces, "CnChipEffectSet"))
     args$combineAlleles <- ces$combineAlleles;
   if (inherits(ces, "SnpChipEffectSet"))
@@ -391,7 +395,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
       next;
     }
 
-    # Get unit-to-cell (for optimized reading)?
+    # Get unit-to-cell? (for optimized reading)
     if (is.null(map)) {
       # Only loaded if really needed.
       verbose && enter(verbose, "Retrieving unit-to-cell map for all arrays");

@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.7.1 [2007-09-17]
+Version: 0.7.1 [2007-09-18]
 o Now fit() of CopyNumberSegmentationModel reports timing 
   information for each chromosome fitted when in verbose mode.
 o Now importFromAffymetrixNetAffxCsvFile() of AromaUgpFile averages
@@ -16,6 +16,7 @@ o ROBUSTNESS: Added internal fileCopy() which copies a file via
   package is now done via this method.
 o CLEAN UP: Removed obsolete copyFile() from AffymetrixFile in
   favor of copyTo() in GenericDataFile.
+o BETA: Added trial version of ScaleNormalization.
 o BUG FIX: The workaround storing single-probe sdTheta estimates 
   as a small value was set for single-*chip* not probe cases.
 o BUG FIX: getFragmentLengths() of UflSnpInformation would thrown 
