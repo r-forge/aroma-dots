@@ -17,6 +17,14 @@ o ROBUSTNESS: Added internal fileCopy() which copies a file via
 o CLEAN UP: Removed obsolete copyFile() from AffymetrixFile in
   favor of copyTo() in GenericDataFile.
 o BETA: Added trial version of ScaleNormalization.
+o BUG FIX: Due to a migration of code from affyPLM to preprocessCore,
+  the fit function returned by getFitFunction() would not work with
+  affyPLM >= 1.13.9.  Now getFitFunction() adopts to the version of
+  affyPLM/preprocessCore installed.  If preprocessCore v0.99.16 or
+  newer is available, that is used, otherwise affyPLM v1.13.8 or older
+  is used. This has been veried to work on i) R v2.5.1pat with 
+  affyPLM v1.12.0, and R v2.6.0alpha with preprocessCode v0.99.16.
+  (affyPLM v1.13.6).
 o BUG FIX: The workaround storing single-probe sdTheta estimates 
   as a small value was set for single-*chip* not probe cases.
 o BUG FIX: getFragmentLengths() of UflSnpInformation would thrown 
