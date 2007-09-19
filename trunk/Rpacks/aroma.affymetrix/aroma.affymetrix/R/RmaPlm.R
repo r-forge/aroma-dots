@@ -198,20 +198,17 @@ setMethodS3("getProbeAffinityFile", "RmaPlm", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
-  # Shift signals?
-  shift <- this$shift;
-  if (is.null(shift))
-    shift <- 0;
+setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
-  # Handle non-positive signals?
-  treatNAsAs <- this$treatNAsAs;
-  if (is.null(treatNAsAs))
-    treatNAsAs <- "ignore";
-
-  # This should not be need, but for some reason is the package not loaded
-  # although it is listed in DESCRIPTION. /HB 2007-02-09
-  require("affyPLM") || throw("Package not loaded: affyPLM");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # rmaModelAffyPlm()
@@ -298,9 +295,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
 
     # Fit model using affyPLM code
     if (!is.null(w)) {
-      fit <- .Call("R_wrlm_rma_default_model", y, psiCode, psiK, w, PACKAGE="affyPLM");
+      fit <- .Call("R_wrlm_rma_default_model", y, psiCode, psiK, w, PACKAGE=rlmPkg);
     } else {
-      fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE="affyPLM");
+      fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE=rlmPkg);
     }
 
     # Extract probe affinities and chip estimates
@@ -358,6 +355,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
          phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);
   } # rmaModelAffyPlm()
   attr(rmaModelAffyPlm, "name") <- "rmaModelAffyPlm";
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -490,13 +488,63 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   attr(rmaModelOligo, "name") <- "rmaModelOligo";
 
 
+  getRlmPkg <- function(..., verbose=FALSE) {
+    # First, try to see if preprocessCore > v0.99.14 is available
+    pkg <- "preprocessCore";
+    pkgDesc <- packageDescription(pkg);
+    if (is.list(pkgDesc)) {
+      ver <- pkgDesc$Version;
+      verbose && cat(verbose, pkg, " version: ", ver);
+      if (compareVersion(ver, "0.99.14") >= 0)
+        return(pkg);
+    }
+
+    # Second, try to see if affyPLM <= v1.13.8 is available
+    pkg <- "affyPLM";
+    pkgDesc <- packageDescription(pkg);
+    if (is.list(pkgDesc)) {
+      ver <- pkgDesc$Version;
+      verbose && cat(verbose, pkg, " version: ", ver);
+      if (compareVersion(ver, "1.13.8") <= 0)
+        return(pkg);
+    }
+
+    throw("Neither preprocessCore v0.99.14+ nor affyPLM v1.13.8- is available.");
+  } # getRlmPkg()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Main
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Getting the PLM fit function");
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the flavor of fitting algorithm for the RMA PLM
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Selecting fit function depending on 'flavor'");
   flavor <- this$.flavor;
+  verbose && cat(verbose, "Flavor: ", flavor);
+
+  # Shift signals?
+  shift <- this$shift;
+  if (is.null(shift))
+    shift <- 0;
+  verbose && cat(verbose, "Amount of shift: ", shift);
+
+  # Handle non-positive signals?
+  treatNAsAs <- this$treatNAsAs;
+  if (is.null(treatNAsAs))
+    treatNAsAs <- "ignore";
+  verbose && cat(verbose, "treatNAsAs: ", treatNAsAs);
+
   if (flavor == "affyPLM") {
+    rlmPkg <- getRlmPkg(verbose=less(verbose));
+    verbose && cat(verbose, "rlmPkg: ", rlmPkg);
+    require(rlmPkg, character.only=TRUE) || throw("Package not loaded: ", rlmPkg);
     rmaModel <- rmaModelAffyPlm;
   } else if (flavor == "affyPLMold") {
+    require("affyPLM") || throw("Package not loaded: affyPLM");
     rmaModel <- rmaModelAffyPlmOld;
   } else if (flavor == "oligo") {
     require("oligo") || throw("Package not loaded: oligo");
@@ -504,8 +552,11 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   } else {
     throw("Cannot get fit function for RMA PLM. Unknown flavor: ", flavor);
   }
+  verbose && str(verbose, rmaModel);
+  verbose && exit(verbose);
 
   # Test that it works and is available.
+  verbose && enter(verbose, "Validating the fit function on some dummy data");
   ok <- FALSE;
   tryCatch({
     rmaModel(matrix(1:6+0.1, ncol=3));
@@ -513,10 +564,13 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ...) {
   }, error = function(ex) {
     print(ex);
   })
-
   if (!ok) {
     throw("The fit function for requested RMA PLM flavor failed: ", flavor);
   }
+  verbose && exit(verbose);
+
+
+  verbose && exit(verbose);
 
   rmaModel;
 }, private=TRUE)
@@ -532,6 +586,12 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-18
+# o BUG FIX: Due to a migration of code from affyPLM to preprocessCore,
+#   the fit function returned by getFitFunction() would not work with
+#   affyPLM >= 1.13.9.  Now getFitFunction() adopts to the version of
+#   affyPLM installed.
+# o Updated getFitFunction() with verbose output.
 # 2007-09-16
 # o Renamed the variables such that index I is for samples and K is for
 #   probes, as in the paper.
