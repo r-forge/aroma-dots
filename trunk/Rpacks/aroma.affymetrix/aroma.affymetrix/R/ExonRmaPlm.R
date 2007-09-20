@@ -138,6 +138,7 @@ setMethodS3("setMergeGroups", "ExonRmaPlm", function(this, ...) {
 #
 # \arguments{
 #   \item{...}{Not used.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -153,10 +154,17 @@ setMethodS3("setMergeGroups", "ExonRmaPlm", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ...) {
-  # This should not be need, but for some reason is the package not loaded
-  # although it is listed in DESCRIPTION. /HB 2007-02-09
-  require("affyPLM") || throw("Package not loaded: affyPLM");
+setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # rmaModelAffyPlm()
@@ -188,35 +196,34 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ...) {
     y <- log(y, base=2);
 
     # do we want to use median polish for large matrices?
-
     if (useMedianPolish) {
       nbrOfVariables <- dim(y)[1]+dim(y)[2]-1;
       if (nbrOfVariables > medianPolishThreshold) {
         mp <- medpolish(y, trace.iter=FALSE);
         fit <- list(Estimates=c(mp$overall+mp$col, mp$row), StdErrors=rep(0, length(c(mp$row,mp$col))));
       } else {    
-      # Fit model using affyPLM code
-        fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE="affyPLM");
+        # Fit model using affyPLM code
+        fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE=rlmPkg);
       }
     } else {
-      fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE="affyPLM");      
+      fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE=rlmPkg);      
     }
         
     # Extract probe affinities and chip estimates
-    J <- ncol(y);  # Number of arrays
-    I <- nrow(y);  # Number of probes
+    I <- ncol(y);  # Number of arrays
+    K <- nrow(y);  # Number of probes
     est <- fit$Estimates;
     se <- fit$StdErrors;
 
     # Chip effects
-    beta <- est[1:J];
+    beta <- est[1:I];
 
     # Probe affinities.  If only one probe, must have affinity=1 since
     # sum constraint => affinities sum to zero (on log scale)
-    if (I==1) {
+    if (K == 1) {
       alpha <- 0;
     } else {
-      alpha <- est[(J+1):length(est)];
+      alpha <- est[(I+1):length(est)];
       alpha[length(alpha)] <- -sum(alpha[1:(length(alpha)-1)]);
     }
       
@@ -233,15 +240,15 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ...) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (is.null(se)) {
       # For affyPLM v1.10.0 (2006-09-26) or older.
-      sdTheta <- rep(1, J);
-      sdPhi <- rep(1, I);
+      sdTheta <- rep(1, I);
+      sdPhi <- rep(1, K);
     } else {
       # For affyPLM v1.11.6 (2006-11-01) or newer.
-      sdTheta <- 2^(se[1:J]);
-      sdPhi <- 2^(se[(J+1):length(se)]);
+      sdTheta <- 2^(se[1:I]);
+      sdPhi <- 2^(se[(I+1):length(se)]);
     }
-    thetaOutliers <- rep(FALSE, J);
-    phiOutliers <- rep(FALSE, I);
+    thetaOutliers <- rep(FALSE, I);
+    phiOutliers <- rep(FALSE, K);
 
     # Return data on the intensity scale
     list(theta=theta, sdTheta=sdTheta, thetaOutliers=thetaOutliers, 
@@ -249,7 +256,67 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ...) {
   } # rmaModelAffyPlm()
   attr(exonRmaModel, "name") <- "exonRmaModel";
 
-  exonRmaModel;
+
+  getRlmPkg <- function(..., verbose=FALSE) {
+    # First, try to see if preprocessCore > v0.99.14 is available
+    pkg <- "preprocessCore";
+    pkgDesc <- packageDescription(pkg);
+    if (is.list(pkgDesc)) {
+      ver <- pkgDesc$Version;
+      verbose && cat(verbose, pkg, " version: ", ver);
+      if (compareVersion(ver, "0.99.14") >= 0)
+        return(pkg);
+    }
+
+    # Second, try to see if affyPLM <= v1.13.8 is available
+    pkg <- "affyPLM";
+    pkgDesc <- packageDescription(pkg);
+    if (is.list(pkgDesc)) {
+      ver <- pkgDesc$Version;
+      verbose && cat(verbose, pkg, " version: ", ver);
+      if (compareVersion(ver, "1.13.8") <= 0)
+        return(pkg);
+    }
+
+    throw("Neither preprocessCore v0.99.14+ nor affyPLM v1.13.8- is available.");
+  } # getRlmPkg()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Main
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Getting the PLM fit function");
+
+  # Shift signals?
+  shift <- this$shift;
+  if (is.null(shift))
+    shift <- 0;
+  verbose && cat(verbose, "Amount of shift: ", shift);
+
+  # Get 'affyPLM' or 'preprocessCore', depending on versions
+  rlmPkg <- getRlmPkg(verbose=less(verbose));
+  verbose && cat(verbose, "rlmPkg: ", rlmPkg);
+  require(rlmPkg, character.only=TRUE) || throw("Package not loaded: ", rlmPkg);
+  rmaModel <- exonRmaModel;
+  verbose && str(verbose, rmaModel);
+
+  # Test that it works and is available.
+  verbose && enter(verbose, "Validating the fit function on some dummy data");
+  ok <- FALSE;
+  tryCatch({
+    rmaModel(matrix(1:6+0.1, ncol=3));
+    ok <- TRUE;
+  }, error = function(ex) {
+    print(ex);
+  })
+  if (!ok) {
+    throw("The fit function for requested exon RMA PLM failed");
+  }
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  rmaModel;
 }, private=TRUE)
 
 
@@ -257,6 +324,12 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2007-09-20
+# o Updated getFitFunction() for ExonRmaPlm to deal with compatibility issues
+#   related different versions of affyPLM/preprocessCore.
+# o Added verbose output to getFitFunction().
+# o Renamed the variables such that index I is for samples and K is for
+#   probes, as in the paper.
 # 2007-07-13 /HB
 # o Removed findUnitsTodo() of ExonRmaPlm; it just replicated the superclass.
 # 2007-04-24 /HB+EP
