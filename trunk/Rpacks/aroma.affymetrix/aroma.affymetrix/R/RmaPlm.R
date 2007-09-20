@@ -183,6 +183,7 @@ setMethodS3("getProbeAffinityFile", "RmaPlm", function(this, ...) {
 #
 # \arguments{
 #   \item{...}{Not used.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
 #
 # \value{

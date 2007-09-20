@@ -1,6 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.7.2 [2007-09-20xx]
+o BUG FIX: Forgot to update ExonRmaPlm to handle compatibility issues
+  with affyPLM/preprocessCore. See below.
+
+
 Version: 0.7.1 [2007-09-18]
 o Now fit() of CopyNumberSegmentationModel reports timing 
   information for each chromosome fitted when in verbose mode.
