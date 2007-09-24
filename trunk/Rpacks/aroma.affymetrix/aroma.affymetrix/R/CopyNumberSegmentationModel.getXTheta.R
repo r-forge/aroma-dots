@@ -9,16 +9,19 @@ setMethodS3("getXTheta", "CopyNumberSegmentationModel", function(this, chromosom
     on.exit(popState(verbose));
   }
 
+
+  verbose && enter(verbose, "Extracting (position, theta+)");
+
   # Get (position, chipType, unit) map
   pcu <- getPositionChipTypeUnit(this, chromosome=chromosome, 
-                                                  verbose=less(verbose, 10));
+                                                  verbose=less(verbose, 20));
 
   # Get list of chip-effect sets
   cesList <- getListOfChipEffects(this);
 
   # Allocate return structure
-  x <- vector("double", nrow(pcu));
-  theta <- matrix(NA, nrow=length(xs), ncol=nbrOfArrays(this));
+  x <- vector("integer", nrow(pcu));
+  theta <- matrix(NA, nrow=length(x), ncol=nbrOfArrays(this));
 
   for (kk in seq(along=cesList)) {
     verbose && enter(verbose, "Chip type #", kk, " of ", length(cesList));
@@ -30,11 +33,12 @@ setMethodS3("getXTheta", "CopyNumberSegmentationModel", function(this, chromosom
     verbose && str(verbose, units);
 
     verbose && enter(verbose, "Reading data across chip-effect files");
-    theta[idxs,] <- extractMatrix(ces, units=units, verbose=less(verbose, 10));
+    theta[idxs,] <- extractMatrix(ces, units=units, verbose=less(verbose, 20));
     verbose && exit(verbose);
 
     verbose && exit(verbose);
   }
+
   verbose && exit(verbose);
 
   list(x=x, theta=theta);

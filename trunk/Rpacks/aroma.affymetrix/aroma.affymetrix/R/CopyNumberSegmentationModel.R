@@ -13,7 +13,8 @@
 #
 # \arguments{
 #   \item{cesTuple}{A @see "ChipEffectSetTuple".}
-#   \item{referenceList}{A single or a @list of @see "ChipEffectFile":s.}
+#   \item{refTuple}{An optional @see "ChipEffectSetTuple" for pairwise 
+#     comparisons.}
 #   \item{tags}{A @character @vector of tags.}
 #   \item{genome}{A @character string specifying what genome is process.}
 #   \item{...}{Not used.}
@@ -30,16 +31,18 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenceList=NULL, tags="", genome="Human", ...) {
+setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, refTuple=NULL, tags="", genome="Human", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'cesTuple':
   if (!is.null(cesTuple)) {
+    # Coerce to ChipEffectSetTuple
     if (!inherits(cesTuple, "ChipEffectSetTuple")) {
       cesTuple <- ChipEffectSetTuple(cesTuple);
     }
 
+    # Assert that we are dealing with CnChipEffectSet:s
     for (ces in getListOfSets(cesTuple)) {
       # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
       if (inherits(ces, "CnChipEffectSet")) {
@@ -51,30 +54,39 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenc
     }
   }
 
-  # Argument 'referenceList':
-  if (!is.null(referenceList)) {
-    if (!is.list(referenceList)) {
-      referenceList <- list(referenceList);
+  # Argument 'refTuple':
+  if (!is.null(refTuple)) {
+    # Coerce to ChipEffectSetTuple
+    if (!inherits(refTuple, "ChipEffectSetTuple")) {
+      refTuple <- ChipEffectSetTuple(refTuple);
     }
 
-    if (length(referenceList) != nbrOfChipTypes(cesTuple)) {
-      throw("The number of reference files does not match the number of chip-effect sets: ", length(referenceList), " != ", nbrOfChipTypes(cesTuple));
+    # Assert the same number of chip types in test and reference set
+    if (nbrOfChipTypes(refTuple) != nbrOfChipTypes(cesTuple)) {
+      throw("The number of reference sets does not match the number of test sets: ", nbrOfChipTypes(refTuple), " != ", nbrOfChipTypes(cesTuple));
+    }
+
+    # Assert that we are dealing with CnChipEffectSet:s
+    for (ref in getListOfSets(refTuple)) {
+      # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
+      if (inherits(ref, "CnChipEffectSet")) {
+        # Currently only total copy-number estimates are accepted
+        if (!ref$combineAlleles) {
+          throw("Unsupported copy-number chip effects. Currently only total copy-number estimates are supported: ref$combineAlleles == FALSE");
+        }
+      }
     }
 
     # Validate consistency between the chip-effect sets and the reference files
     cesList <- getListOfSets(cesTuple);
+    refList <- getListOfSets(refTuple);
     for (kk in seq(along=cesList)) {
-      ref <- referenceList[[kk]];
-      if (!inherits(ref, "ChipEffectFile")) {
-        throw("Argument 'referenceList' contains a non-ChipEffectFile: ",
-                                                             class(ref)[1]);
-      }
-
-      # Assert that the reference is compatible with the chip-effect files
       ces <- cesList[[kk]];
-      cef <- getFile(ces, 1);
-      if (!inherits(ref, class(cef)[1])) {
-        throw("Argument 'referenceList' contains a ChipEffectFile that is not of the same class as the ChipEffectFile's: ", class(ref)[1], " != ", class(cef)[1]);
+      ref <- refList[[kk]];
+
+      # Assert that the reference and the test sets are of the same size
+      if (nbrOfArrays(ref) != nbrOfArrays(ces)) {
+        throw("The number of reference files does not match the number of test files: ", nbrOfArrays(ref), " != ", nbrOfArrays(ces));
       }
 
       # Assert special properties for CnChipEffectSet:s AD HOC /HB 2006-12-20
@@ -85,6 +97,15 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenc
 
         if (ref$mergeStrands != ces$mergeStrands) {
            throw("The reference chip effects are not compatible with the chip-effect set. One is merging the strands the other is not.");
+        }
+      }
+
+      # Assert that the reference files are compatible with the test files
+      for (jj in seq(length=nbrOfArrays(ces))) {
+        cf <- getFile(ces, jj);
+        rf <- getFile(ref, jj);
+        if (!inherits(rf, class(cf)[1])) {
+          throw(class(ref)[1], " #", kk, " of argument 'refTuple' contains file #", jj, ", that is not of the same class as the paired test file: ", class(rf)[1], " !inherits from ", class(cf)[1]);
         }
       }
     } # for (kk in ...)
@@ -99,8 +120,8 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, referenc
 
   this <- extend(Object(), "CopyNumberSegmentationModel",
     .cesTuple = cesTuple,
+    .refTuple = refTuple,
     .chromosomes = NULL,
-    .referenceList = referenceList,
     .tags = tags,
     .genome = genome
   );
@@ -127,10 +148,12 @@ setMethodS3("as.character", "CopyNumberSegmentationModel", function(x, ...) {
   nbrOfChipTypes <- nbrOfChipTypes(this);
   s <- c(s, sprintf("Number of chip types: %d", nbrOfChipTypes));
   s <- c(s, "Chip-effect set & reference file pairs:");
-  cesList <- getListOfChipEffects(this);
-  refList <- getListOfReferences(this);
-  for (kk in seq(length=nbrOfChipTypes)) {
-    s <- c(s, sprintf("Pair #%d:", kk));
+  cesList <- getListOfSets(getSetTuple(this));
+  refList <- getRefSetTuple(this);
+  if (!is.null(refList))
+    refList <- getListOfSets(refList);
+  for (kk in seq(along=cesList)) {
+    s <- c(s, sprintf("Chip type #%d of %d ('%s'):", kk, nbrOfChipTypes, names(cesList)[kk]));
     s <- c(s, "Chip-effect set:");
     ces <- cesList[[kk]];
     ref <- refList[[kk]];
@@ -151,13 +174,23 @@ setMethodS3("as.character", "CopyNumberSegmentationModel", function(x, ...) {
 
 setMethodS3("getSetTuple", "CopyNumberSegmentationModel", function(this, ...) {
   this$.cesTuple;
+}, protected=TRUE)
+
+setMethodS3("getRefSetTuple", "CopyNumberSegmentationModel", function(this, ...) {
+  this$.refTuple;
+}, protected=TRUE)
+
+
+setMethodS3("getListOfChipEffectSets", "CopyNumberSegmentationModel", function(this, ...) {
+  cesTuple <- getSetTuple(this);
+  getListOfSets(cesTuple);
 })
 
 
 setMethodS3("getListOfChipEffects", "CopyNumberSegmentationModel", function(this, ...) {
-  cesTuple <- getSetTuple(this);
-  getListOfSets(cesTuple);
-})
+  getListOfChipEffectSets(this, ...);
+}, private=TRUE, deprecated=TRUE)
+
 
 
 ###########################################################################/**
@@ -187,15 +220,6 @@ setMethodS3("getListOfChipEffects", "CopyNumberSegmentationModel", function(this
 #*/###########################################################################
 setMethodS3("nbrOfChipTypes", "CopyNumberSegmentationModel", function(this, ...) {
   nbrOfChipTypes(getSetTuple(this), ...);
-})
-
-
-setMethodS3("getListOfReferences", "CopyNumberSegmentationModel", function(this, ...) {
-  res <- this$.referenceList;
-  if (is.null(res)) {
-    res <- vector("list", nbrOfChipTypes(this));
-  }
-  res;
 })
 
 
@@ -402,21 +426,7 @@ setMethodS3("setAlias", "CopyNumberSegmentationModel", function(this, alias=NULL
 })
 
 
-setMethodS3("getReferenceName", "CopyNumberSegmentationModel", function(this, collapse="+", ...) {
-  # Get name of the reference files
-  refList <- getListOfReferences(this);
 
-  # Get names
-  names <- lapply(refList, FUN=function(file) {
-    if (is.null(file)) NULL else getName(file);
-  });
-  names <- unlist(names, use.names=FALSE);
-
-  # Merge names
-  names <- mergeByCommonTails(names, collapse=collapse);
-
-  names;
-}, private=TRUE)
 
 
 setMethodS3("getAsteriskTag", "CopyNumberSegmentationModel", function(this, ...) {
@@ -429,6 +439,14 @@ setMethodS3("getAsteriskTag", "CopyNumberSegmentationModel", function(this, ...)
   keep <- (tag == tagUC);
   tag <- tag[keep];
   tag <- paste(tag, collapse=""); 
+
+  # Paired?
+  refTuple <- getRefSetTuple(this);
+  if (!is.null(refTuple)) {
+#    tag <- c(tag, "paired");
+#    tag <- paste(tag, collapse=",");
+  }
+
   tag;
 }, protected=TRUE)
 
@@ -555,6 +573,36 @@ setMethodS3("getChipEffectFiles", "CopyNumberSegmentationModel", function(this, 
   setTuple <- getSetTuple(this);
   getTuple(setTuple, ...);
 })
+
+
+
+setMethodS3("getListOfReferences", "CopyNumberSegmentationModel", function(this, ..., .calculateAvgs=TRUE) {
+  refList <- getRefSetTuple(this);
+  if (!is.null(refList)) {
+    refList <- getListOfSets(refList);
+  } else {
+    refList <- vector("list", nbrOfChipTypes(this));
+  }
+  refList;
+})
+
+
+setMethodS3("getReferenceName", "CopyNumberSegmentationModel", function(this, collapse="+", ...) {
+  # Get name of the reference files
+  refList <- getListOfReferences(this);
+
+  # Get names
+  names <- lapply(refList, FUN=function(file) {
+    if (is.null(file)) NULL else getName(file);
+  });
+  names <- unlist(names, use.names=FALSE);
+
+  # Merge names
+  names <- mergeByCommonTails(names, collapse=collapse);
+
+  names;
+}, private=TRUE)
+
 
 
 setMethodS3("getReferenceFiles", "CopyNumberSegmentationModel", function(this, ..., force=FALSE, verbose=FALSE) {
@@ -715,6 +763,30 @@ setMethodS3("getRawCnData", "CopyNumberSegmentationModel", function(this, ceList
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'ceList':
+  if (!inherits(ceList, "list")) {
+    throw("Argument 'ceList' is not a list: ", class(ceList)[1]);
+  } else {
+    for (kk in seq(along=ceList)) {
+      if (!inherits(ceList[[kk]], "ChipEffectFile")) {
+        throw("Argument 'ceList' contains a non-ChipEffectFile: ", 
+                                                     class(ceList[[kk]])[1]);
+      }
+    }
+  }
+
+  # Argument 'refList':
+  if (!inherits(refList, "list")) {
+    throw("Argument 'refList' is not a list: ", class(refList)[1]);
+  } else {
+    for (kk in seq(along=refList)) {
+      if (!inherits(refList[[kk]], "ChipEffectFile")) {
+        throw("Argument 'refList' contains a non-ChipEffectFile: ", 
+                                                    class(refList[[kk]])[1]);
+      }
+    }
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -965,6 +1037,7 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
     arrayName <- arrayNames[aa];
 
     ceList <- getChipEffectFiles(this, array=array);
+    rfList <- lapply(refList, FUN=function(ces) { getFile(ces, array) });
 
     # Get chip-effect tags *common* across chip types
     tags <- lapply(ceList, FUN=function(ce) {
@@ -1012,7 +1085,8 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
         # Get (x, M, stddev, chiptype, unit) data from all chip types
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         tRead <- processTime();
-        data <- getRawCnData(this, ceList=ceList, refList=refList, 
+print(list(ceList, rfList));
+        data <- getRawCnData(this, ceList=ceList, refList=rfList, 
                      chromosome=chr, ..., force=force, verbose=less(verbose));
         timers$read <- timers$read + (processTime() - tRead);
 
