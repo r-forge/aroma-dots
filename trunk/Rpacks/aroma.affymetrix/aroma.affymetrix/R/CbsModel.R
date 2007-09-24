@@ -49,7 +49,16 @@ setConstructorS3("CbsModel", function(cesTuple=NULL, ...) {
 
 
 setMethodS3("getAsteriskTag", "CbsModel", function(this, ...) {
-  "CBS";
+  tag <- "CBS";
+
+  # Paired?
+  refTuple <- getRefSetTuple(this);
+  if (!is.null(refTuple)) {
+#    tag <- c(tag, "paired");
+#    tag <- paste(tag, collapse=",");
+  }
+
+  tag;
 }, protected=TRUE)
 
 
