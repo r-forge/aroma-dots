@@ -1,9 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.7.2 [2007-09-20xx]
+Version: 0.7.2 [2007-09-25xx]
 o BUG FIX: Forgot to update ExonRmaPlm to handle compatibility issues
   with affyPLM/preprocessCore. See below.
+o ROBUSTNESS: Now getAverageFile() of AffymetrixCelSet detects if an 
+  average file has been deleted between calls and recalculates it,
+  if missing.
 
 
 Version: 0.7.1 [2007-09-18]

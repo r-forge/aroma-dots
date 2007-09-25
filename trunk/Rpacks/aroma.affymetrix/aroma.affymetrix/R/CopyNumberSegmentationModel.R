@@ -172,6 +172,23 @@ setMethodS3("as.character", "CopyNumberSegmentationModel", function(x, ...) {
 }, protected=TRUE)
 
 
+setMethodS3("clearCache", "CopyNumberSegmentationModel", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c()) {
+    this[[ff]] <- NULL;
+  }
+
+  if (!is.null(this$.cesTuple))
+    clearCache(this$.cesTuple);
+  if (!is.null(this$.refTuple))
+    clearCache(this$.refTuple);
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+})
+
+
 setMethodS3("getSetTuple", "CopyNumberSegmentationModel", function(this, ...) {
   this$.cesTuple;
 }, protected=TRUE)
@@ -1037,7 +1054,14 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
     arrayName <- arrayNames[aa];
 
     ceList <- getChipEffectFiles(this, array=array);
-    rfList <- lapply(refList, FUN=function(ces) { getFile(ces, array) });
+    rfList <- refList;
+##    rfList <- lapply(refList, FUN=function(ces) { 
+##      if (is.null(ces)) {
+##        NULL;
+##      } else {
+##        getFile(ces, array);
+##      }
+##    });
 
     # Get chip-effect tags *common* across chip types
     tags <- lapply(ceList, FUN=function(ce) {

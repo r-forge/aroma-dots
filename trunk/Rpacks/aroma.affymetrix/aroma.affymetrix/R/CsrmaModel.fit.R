@@ -52,84 +52,10 @@ setMethodS3("fit", "CsrmaModel", function(this, chromosome, force=FALSE, ..., ve
     on.exit(popState(verbose));
   }
 
-
-  verbose && enter(verbose, "Fitting CSRMA");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Setup
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  path <- getPath(this);
-  mkdirs(path);
-
-
-  # Get (unit, position, chipType) map for this chromosome
-  pcu <- getPositionChipTypeUnit(this, chromosome=chromosome, 
-                                                  verbose=less(verbose, 10));
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Setup data to be read
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get the chip effect data sets
-  cesList <- getListOfChipEffects(this, verbose=less(verbose, 10));
-  
-
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Extract arguments for glad().
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  args <- list(...);
-  fitArgs <- args;
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Fit GLAD
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Setting up CSRMA data structure");
-  nbrOfUnits <- nrow(data);
-  chipTypes <- getChipTypes(this);
-  data <- data.frame(
-    LogRatio=data[,"M"], 
-#   # Use T = M/sd (for modelling (x,T) instead. /HB 2007-02-26)
-#   LogRatio=data[,"M"]/data[,"sdM"], 
-    PosOrder=1:nbrOfUnits, 
-    Chromosome=rep(chromosome, nbrOfUnits),
-    PosBase=data[,"x"],
-    # Add (chipType, units) identifiers to be able to backtrack SNP IDs etc.
-    chipType=chipTypes[data[,"chipType"]],
-    unit=data[,"unit"],
-    # Add SD estimates
-    sdTheta=data[,"sdTheta"],
-    sdM=data[,"sdM"]
-  );
-  verbose && str(verbose, data);
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Calling fitCSRMA()");
-  verbose && cat(verbose, "Chromosome: ", chromosome);
-  verbose && cat(verbose, "Chip types: ", paste(chipTypes, collapse=", "));
-  verbose && cat(verbose, "Total number of units: ", nbrOfUnits);
-  args <- c(list(data), fitArgs, list(verbose=as.logical(verbose)));
-  rm(data, fitArgs);
-
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
-
-  # glad() writes to stdout; capture it and send it to the verbose object.
-  stdout <- capture.output({
-    fit <- do.call("fitCSRMA", args);
-  })
-  stdout <- paste(stdout, collapse="\n");
-  verbose && cat(verbose, stdout);
-
-  verbose && exit(verbose);
-
-  verbose && exit(verbose);
+  fitOneChromosome(this, chromosome=chromosome, ..., verbose=less(verbose, 5));
 
   fit;  
-}, private=TRUE) # fitOne()
+}, private=TRUE) # fit()
 
 
 
@@ -244,8 +170,229 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
 }, protected=TRUE)
 
 
+
+setMethodS3("createOutputTuple", "CsrmaModel", function(this, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  outTuple <- this$.outTuple;
+  if (!force && !is.null(outTuple))
+    return(outTuple);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Create chip-effect sets
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Creating output chip-effect tuple");
+  inTuple <- getSetTuple(this);
+  nbrOfChipTypes <- nbrOfChipTypes(inTuple);
+  verbose && cat(verbose, "Number of chip types: ", nbrOfChipTypes);
+  inList <- getListOfSets(inTuple);
+  outList <- vector("list", nbrOfChipTypes);
+  rootPath <- getParent(getPath(this));
+  for (kk in seq(along=inList)) {
+    verbose && enter(verbose, "Chip type #", kk, " of ", nbrOfChipTypes);
+    inSet <- inList[[kk]];
+    if (length(inSet) == 0)
+      throw("Cannot create output data set. The input data set is empty.");
+
+    cdf <- getCdf(inSet);
+    chipType <- getChipType(cdf, fullname=FALSE);
+    path <- Arguments$getWritablePath(file.path(rootPath, chipType));
+    verbose && enter(verbose, "Creating output data set using input data set as a template (by copying)");
+    verbose && cat(verbose, "Path: ", path);
+    nbrOfArrays <- nbrOfArrays(inSet);
+    for (jj in seq(length=nbrOfArrays)) {
+      inFile <- getFile(inSet, jj);
+      outFile <- createFrom(inFile, filename=getFilename(inFile), path=path, clear=TRUE, verbose=less(verbose, 10));
+    }
+
+    # Speed this up by inheriting parameters from input data set
+    args <- list(path);
+
+    # Ad hoc for ChipEffectSet classes. /HB 2007-09-25
+    if (inherits(inSet, "SnpChipEffectSet"))
+      args$mergeStrands <- inSet$mergeStrands;
+    if (inherits(inSet, "CnChipEffectSet"))
+      args$combineAlleles <- inSet$combineAlleles;
+
+    verbose && str(verbose, args);
+    args$verbose <- less(verbose, 30);
+    staticFcn <- inSet$fromFiles;
+    outSet <- do.call("staticFcn", args=args);
+    verbose && print(verbose, outSet);
+    verbose && exit(verbose);
+
+    outList[[kk]] <- outSet;
+    verbose && exit(verbose);
+  } # for (kk in ...)
+  verbose && exit(verbose);
+
+  outTuple <- newInstance(inTuple, outList);
+
+  # Store in cache
+  this$.outTuple <- outTuple;
+
+  outTuple;
+})
+
+
+setMethodS3("fitOneChromosome", "CsrmaModel", function(this, chromosome, ..., vebose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Fit one chromosome");
+
+  verbose && cat(verbose, "Chromosome: ", chromosome);
+
+  cesList <- getListOfChipEffects(this);
+  verbose && cat(verbose, "List of input data sets:");
+  verbose && print(verbose, cesList);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extracting data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Extract data across arrays and chip types");
+  inData <- getPcuTheta(this, chromosome=chromosome, verbose=less(verbose, 10));
+  verbose && cat(verbose, "Positions:");
+  verbose && str(verbose, inData$pcu[,"position"]);
+  verbose && cat(verbose, "thetas:");
+  verbose && str(verbose, inData$theta);
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Transforming data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Shift?
+  shift <- this$.shift;
+  verbose && cat(verbose, "shift:");
+  verbose && str(verbose, shift);
+  inData$theta <- inData$theta + shift;
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fit model
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fit along chromosome
+  verbose && enter(verbose, "Fit smoothWRMA()");
+  bandwidth <- getBandwidth(this);
+  verbose && printf(verbose, "Bandwidth: %.2fkb\n", bandwidth/1e3);
+  sd <- bandwidth;
+  fit <- smoothWRMA(Y=inData$theta, x=inData$pcu[,"position"], sd=sd, progress=TRUE, verbose=less(verbose, 10));
+  inData$theta <- fit$theta;
+  inData$phi <- fit$phi;
+  verbose && cat(verbose, "Results:");
+  verbose && str(verbose, inData);
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Store estimates
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Storing estimates");
+
+  outTuple <- getOutputTuple(this);
+  outList <- getListOfSets(outTuple);
+  verbose && cat(verbose, "List of uutput data sets:");
+  verbose && print(verbose, outList);
+
+  for (kk in seq(length=nbrOfChipTypes(this))) {
+    verbose && enter(verbose, "Chip type #", kk, " of ", nbrOfChipTypes(this));
+
+    outSet <- outList[[kk]];
+    verbose && cat(verbose, "Output data set:");
+    verbose && str(verbose, outSet);
+    
+    # Extract the data for this chip type
+    idxs <- which(as.integer(inData$pcu[,"chipType"]) == kk);
+    theta <- inData$theta[idxs,,drop=FALSE];
+    phi <- inData$phi[idxs];
+    units <- inData$pcu[idxs,"unit"];
+    rm(idxs);
+
+    verbose && cat(verbose, "Units:");
+    verbose && str(verbose, units);
+
+
+    map <- outData <- NULL;
+    for (aa in seq(length=ncol(theta))) {
+      verbose && enter(verbose, "Array #", aa, " of ", ncol(theta));
+
+      outFile <- getFile(outSet, aa);
+      verbose && cat(verbose, "Output data file:");
+      verbose && str(verbose, outFile);
+
+      if (is.null(map)) {
+        # TODO: Create a (unit,cell) map
+        verbose && enter(verbose, "Retrieving (unit,cell) map for all arrays");
+        map <- getCellMap(outFile, units=units, verbose=less(verbose,2));
+        verbose && str(verbose, map);
+        # Not needed anymore
+        rm(units);
+        verbose && exit(verbose);
+      }
+
+      if (is.null(outData)) {
+        # Allocate 'outData' object for writing
+        outData <- data.frame(cell=map[,"cell"], theta=rep(0, nrow(map)));
+      }
+
+      outData[,"theta"] <- theta[,aa,drop=TRUE];
+      verbose && cat(verbose, "(cell, theta):");
+      verbose && str(verbose, outData);
+
+      updateDataFlat(outFile, data=outData, verbose=less(verbose));
+
+      rm(outFile);
+
+      verbose && exit(verbose);
+    } # for (aa in ...)
+
+    # Clean up
+    rm(map, outData, theta, phi);
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    rm(outSet);
+
+    verbose && exit(verbose);
+  } # for (kk in ...)
+  verbose && exit(verbose);
+
+  # Clean up
+  rm(outList, inData);
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
+
+  invisible(outTuple);
+})
+
+
 ############################################################################
 # HISTORY:
+# 2007-09-25
+# o For now fit() calls fitOneChromosome(), but all this should go in a
+#   different model class.
+# o Added fitOneChromosome().
+# o Added createOuputTuple().
 # 2007-09-20
 # o Created from GladModel.fitOne.R.
 ############################################################################

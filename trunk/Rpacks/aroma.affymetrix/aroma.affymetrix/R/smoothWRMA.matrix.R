@@ -16,12 +16,6 @@ setMethodS3("smoothWRMA", "matrix", function(Y, x, kernel=gaussKernel, sd=100e3,
                                                      length(x), " != ", K);
   }
 
-  # Identify missing values?
-  if (na.rm) {
-    nas <- is.na(Y);
-    dim(nas) <- c(K,I);
-  }
-
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -33,9 +27,18 @@ setMethodS3("smoothWRMA", "matrix", function(Y, x, kernel=gaussKernel, sd=100e3,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup up
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fit everything on the log2 scale
+  Y <- log2(Y);
+
+  # Identify missing values?
+  if (na.rm) {
+    nas <- is.na(Y);
+    dim(nas) <- c(K,I);
+  }
+
   # Allocate vector of smoothed signals
-  Ys <- matrix(0, nrow=K, ncol=I);
-  naThetas <- rep(NA, I);
+  theta <- matrix(NA, nrow=K, ncol=I);
+  phi <- rep(NA, K);
 
   # At each position, calculate the weighed average using a 
   # Gaussian kernel.
@@ -47,7 +50,7 @@ setMethodS3("smoothWRMA", "matrix", function(Y, x, kernel=gaussKernel, sd=100e3,
     w <- kernel(x, mean=x[kk], sd=sd);
     # Weight matrix
     w <- matrix(w, nrow=K, ncol=I);
-
+   
     # Give missing values zero weight?
     if (na.rm)
       w[nas] <- 0;
@@ -61,22 +64,28 @@ setMethodS3("smoothWRMA", "matrix", function(Y, x, kernel=gaussKernel, sd=100e3,
 
       # Fit weighted RMA (don't have to rescale weights)
       # Call fitWRMA.matrix() explicitly to avoid dispatching
-      fit <- fitWRMA.matrix(y=y, w=w);
+      fit <- fitWRMA.matrix(y=y, w=w, .log2=FALSE);
       verbose && print(verbose, fit);
-      theta <- fit$theta;
+      theta[kk,] <- .subset2(fit, "theta");
+      # Average phi?
+      phi[kk] <- .subset2(fit, "avgPhi");
     } else {
-      theta <- naThetas; 
+      # If no data, keep theta:s and phi:s as missing values.
     }
-
-    Ys[kk,] <- theta;
   }
 
-  log2(Ys);
+  # Return everything on the intensity scale
+  theta <- 2^theta;
+  phi <- 2^phi;
+
+  list(theta=theta, phi=phi);
 }) # smoothWRMA()
 
 
 ############################################################################
 # HISTORY:
-# 2007-09+18
+# 2007-09-24
+# o Now smoothWRMA() returns (theta, phi) on the intensity scale.
+# 2007-09-18
 # o Created from gaussianSmoothing.R.
 ############################################################################

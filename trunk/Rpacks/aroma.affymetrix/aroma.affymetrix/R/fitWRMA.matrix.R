@@ -1,4 +1,8 @@
-setMethodS3("fitWRMA", "matrix", function(y, w, psiCode=0, psiK=1.345) {
+setMethodS3("fitWRMA", "matrix", function(y, w, psiCode=0, psiK=1.345, .log2=TRUE) {
+  # Transform 'y' to log2 scale?
+  if (.log2)
+    y <- log2(y);
+
   I <- ncol(y);
   K <- nrow(y);
 
@@ -8,21 +12,23 @@ setMethodS3("fitWRMA", "matrix", function(y, w, psiCode=0, psiK=1.345) {
   se <- fit$StdErrors;
 
   # Chip effects
-  beta <- est[1:I];
+  theta <- est[1:I];
 
   # Probe affinities
-  alpha <- est[(I+1):length(est)];
-  alpha[length(alpha)] <- -sum(alpha[1:(length(alpha)-1)]);
+  phi <- est[(I+1):length(est)];
+  phi[length(phi)] <- -sum(phi[1:(length(phi)-1)]);
 
-  # Estimates on the intensity scale
-  theta <- 2^beta;
-  phi <- 2^alpha;
+  # Weighted-average affinity
+  avgPhi <- sum(w*phi, na.rm=TRUE) / sum(w, na.rm=TRUE);
 
-  # Calcuate log-ratios
-  thetaR <- median(theta, na.rm=TRUE);
-  M <- log2(theta/thetaR);
+  # Estimates on the intensity scale?
+  if (.log2) {
+    theta <- 2^theta;
+    phi <- 2^phi;
+    avgPhi <- 2^avgPhi;
+  }
 
-  list(theta=theta, phi=phi, M=M);
+  list(theta=theta, phi=phi, avgPhi=avgPhi);
 }, protected=TRUE) # fitWRMA()
 
 

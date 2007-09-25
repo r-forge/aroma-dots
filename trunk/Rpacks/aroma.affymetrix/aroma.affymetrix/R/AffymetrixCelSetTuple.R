@@ -56,6 +56,21 @@ setConstructorS3("AffymetrixCelSetTuple", function(csList=NULL, tags="*", ..., .
 })
 
 
+setMethodS3("clearCache", "AffymetrixCelSetTuple", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
+  for (ff in c()) {
+    this[[ff]] <- NULL;
+  }
+
+  if (!is.null(this$.cesList))
+    clearCache(this$.cesList);
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+})
+
+
 setMethodS3("byPath", "AffymetrixCelSetTuple", function(static, path, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
