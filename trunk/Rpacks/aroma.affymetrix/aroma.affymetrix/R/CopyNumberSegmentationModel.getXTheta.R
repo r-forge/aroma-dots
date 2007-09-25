@@ -1,4 +1,4 @@
-setMethodS3("getXTheta", "CopyNumberSegmentationModel", function(this, chromosome, reorder=TRUE, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getPcuTheta", "CopyNumberSegmentationModel", function(this, chromosome, reorder=TRUE, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -20,14 +20,12 @@ setMethodS3("getXTheta", "CopyNumberSegmentationModel", function(this, chromosom
   cesList <- getListOfChipEffects(this);
 
   # Allocate return structure
-  x <- vector("integer", nrow(pcu));
-  theta <- matrix(NA, nrow=length(x), ncol=nbrOfArrays(this));
+  theta <- matrix(NA, nrow=nrow(pcu), ncol=nbrOfArrays(this));
 
   for (kk in seq(along=cesList)) {
     verbose && enter(verbose, "Chip type #", kk, " of ", length(cesList));
     ces <- cesList[[kk]];
-    idxs <- which(as.integer(pcu[,"chipType"]) == kk);
-    x[idxs] <- pcu[idxs,"position"];
+    idxs <- which(as.integer(pcu[,"chipType"]) == kk);  
     units <- pcu[idxs,"unit"];
     verbose && cat(verbose, "Units: ");
     verbose && str(verbose, units);
@@ -41,8 +39,8 @@ setMethodS3("getXTheta", "CopyNumberSegmentationModel", function(this, chromosom
 
   verbose && exit(verbose);
 
-  list(x=x, theta=theta);
-}, protected=TRUE);  # getXTheta()
+  list(pcu=pcu, theta=theta);
+}, protected=TRUE);  # getPcuTheta()
 
 
 ##############################################################################

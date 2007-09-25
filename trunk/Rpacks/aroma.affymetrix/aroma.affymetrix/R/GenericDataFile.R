@@ -444,6 +444,11 @@ setMethodS3("getFileType", "GenericDataFile", function(this, ...) {
 })
 
 
+setMethodS3("isFile", "GenericDataFile", function(this, ...) {
+  isFile(getPathname(this));
+})
+
+
 setMethodS3("getFileSize", "GenericDataFile", function(this, what=c("numeric", "units"), sep="", ...) {
   # Argument 'what':
   what <- match.arg(what);
@@ -747,6 +752,8 @@ setMethodS3("renameToUpperCaseExt", "GenericDataFile", function(static, pathname
 
 ############################################################################
 # HISTORY:
+# 2007-09-25
+# o Added isFile() to test if the file exists or not.
 # 2007-09-15
 # o Added renameTo().
 # o Now copyTo() utilizes fileCopy(), which is fail safe.

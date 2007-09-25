@@ -1119,6 +1119,13 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   if (is.null(this$.averageFiles))
     this$.averageFiles <- list();
   res <- this$.averageFiles[[filename]];
+
+  # Has file been deleted since last time?
+  if (!is.null(res) && !isFile(res)) {
+    warning("Will recalculate average file, because it seems to have been deleted since last time: ", getPathname(res));
+    res <- NULL;
+  }
+
   if (is.null(res)) {
     verbose && enter(verbose, "Creating CEL file to store average signals");
     verbose && cat(verbose, "Pathname: ", file.path(getPath(this), filename));
@@ -1304,6 +1311,9 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-25
+# o Now getAverageFile() will detect if an average file has been deleted 
+#   between calls and recalculate it.
 # 2007-09-13
 # o Added validate that the 'name' of an AffymetrixCelSet and 
 #   AffymetrixCelFile is of at least length one.
