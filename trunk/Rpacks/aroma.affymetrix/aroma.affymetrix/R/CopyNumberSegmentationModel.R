@@ -118,7 +118,7 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, refTuple
   }
 
 
-  this <- extend(Object(), "CopyNumberSegmentationModel",
+  this <- extend(ChromosomalModel(), "CopyNumberSegmentationModel",
     .cesTuple = cesTuple,
     .refTuple = refTuple,
     .chromosomes = NULL,
