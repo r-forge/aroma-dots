@@ -273,7 +273,8 @@ setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., veb
   # Extracting data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Extract data across arrays and chip types");
-  inData <- getPcuTheta(this, chromosome=chromosome, verbose=less(verbose, 10));
+  inData <- getPcuTheta(this, chromosome=chromosome, verbose=less(verbose, 10)); 
+  colnames(inData$theta) <- getNames(cesList[[1]]); # AD HOC /2007-09-26
   verbose && cat(verbose, "Positions:");
   verbose && str(verbose, inData$pcu[,"position"]);
   verbose && cat(verbose, "thetas:");
@@ -304,6 +305,14 @@ setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., veb
   if (this$.weights == "1/s2") {
     # Calculate prior weights as the inverse variance of log ratios
     Y <- inData$theta;
+    # AD HOC /HB 2007-09-26
+    if (chromosome == 23) {
+      # Keep only diploid samples
+      n23 <- as.integer(sapply(cesList[[1]], FUN=getAttribute, "n23"));
+      names(n23) <- getNames(cesList[[1]]);
+      isDiploid <- (n23[colnames(Y)] == 2);
+      Y <- Y[,isDiploid,drop=FALSE];
+    }
     YR <- rowMedians(Y, na.rm=TRUE);
     M <- log2(Y/YR);
     s <- rowMads(M, na.rm=TRUE);
