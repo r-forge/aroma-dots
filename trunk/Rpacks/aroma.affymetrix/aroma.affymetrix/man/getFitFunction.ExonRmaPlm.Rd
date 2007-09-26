@@ -19,10 +19,11 @@
  Gets the low-level function that fits the Exon PLM.
 }
 
-\usage{\method{getFitFunction}{ExonRmaPlm}(this, ...)}
+\usage{\method{getFitFunction}{ExonRmaPlm}(this, ..., verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
+  \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

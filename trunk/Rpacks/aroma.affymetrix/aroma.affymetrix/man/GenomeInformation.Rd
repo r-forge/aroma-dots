@@ -42,23 +42,23 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fromCdf.GenomeInformation]{fromCdf}} \tab Static method to define a genome information set from a CDF.\cr
- \tab \code{\link[aroma.affymetrix:fromChipType.GenomeInformation]{fromChipType}} \tab Static method to define a genome information set by chip type.\cr
+ \tab \code{fromCdf} \tab  -\cr
+ \tab \code{fromChipType} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipType.GenomeInformation]{getChipType}} \tab Gets the chip type of this genome information set.\cr
+ \tab \code{getChipType} \tab  -\cr
  \tab \code{getChromosomes} \tab  -\cr
  \tab \code{getChromosomeStats} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getData.GenomeInformation]{getData}} \tab Gets all or a subset of the genome information data.\cr
- \tab \code{\link[aroma.affymetrix:getPositions.GenomeInformation]{getPositions}} \tab Gets the physical positions for a set of units.\cr
- \tab \code{\link[aroma.affymetrix:getUnitIndices.GenomeInformation]{getUnitIndices}} \tab Gets unit indices ordered along the chromosome.\cr
+ \tab \code{getData} \tab  -\cr
+ \tab \code{getPositions} \tab  -\cr
+ \tab \code{getUnitIndices} \tab  -\cr
  \tab \code{getUnitsOnChromosome} \tab  -\cr
  \tab \code{nbrOfUnits} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:plotDensity.GenomeInformation]{plotDensity}} \tab Plots the density of SNPs for a given chromosome.\cr
+ \tab \code{plotDensity} \tab  -\cr
 }
 
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

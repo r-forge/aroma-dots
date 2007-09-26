@@ -58,10 +58,10 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 \tabular{rll}{
  \tab \code{calculateResidualSet} \tab  -\cr
  \tab \code{calculateWeights} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:fit.ProbeLevelModel]{fit}} \tab Estimates the model parameters.\cr
+ \tab \code{fit} \tab  -\cr
  \tab \code{getAsteriskTag} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipEffectSet.ProbeLevelModel]{getChipEffectSet}} \tab Gets the set of chip effects for this model.\cr
- \tab \code{\link[aroma.affymetrix:getProbeAffinityFile.ProbeLevelModel]{getProbeAffinityFile}} \tab Gets the probe affinities for this model.\cr
+ \tab \code{getChipEffectSet} \tab  -\cr
+ \tab \code{getProbeAffinityFile} \tab  -\cr
  \tab \code{getResidualSet} \tab  -\cr
  \tab \code{getWeightsSet} \tab  -\cr
 }

@@ -50,8 +50,8 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:findUnitsTodo.PlasqModel]{findUnitsTodo}} \tab Identifies units for which the PLM has still not been fitted to.\cr
- \tab \code{\link[aroma.affymetrix:fit.PlasqModel]{fit}} \tab Fits the model.\cr
+ \tab \code{findUnitsTodo} \tab  -\cr
+ \tab \code{fit} \tab  -\cr
  \tab \code{getChipEffects} \tab  -\cr
  \tab \code{getProbeParameters} \tab  -\cr
 }
