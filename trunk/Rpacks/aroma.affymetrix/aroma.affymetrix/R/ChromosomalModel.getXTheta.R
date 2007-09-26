@@ -1,4 +1,4 @@
-setMethodS3("getPcuTheta", "CopyNumberSegmentationModel", function(this, chromosome, reorder=TRUE, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getPcuTheta", "ChromosomalModel", function(this, chromosome, reorder=TRUE, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -45,6 +45,8 @@ setMethodS3("getPcuTheta", "CopyNumberSegmentationModel", function(this, chromos
 
 ##############################################################################
 # HISTORY:
+# 2007-09-25
+# o Moved getPcuTheta() to ChromosomalModel.
 # 2007-09-24
 # o Added getXTheta().
 ##############################################################################

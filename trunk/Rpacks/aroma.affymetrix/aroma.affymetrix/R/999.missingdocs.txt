@@ -634,3 +634,44 @@ yellow.colors
   renameTo.GenericDataFile translateColumnNames
   translateColumnNames.AffymetrixTabularFile
   translateColumnNames.GenericTabularFile
+  AffymetrixFileTable as.character.AffymetrixFileTable
+  as.character.ChromosomalModel clearCache.AffymetrixCelSetTuple
+  clearCache.ChromosomalModel clearCache.CopyNumberSegmentationModel
+  clearCache.SrmaModel createOutputTuple createOutputTuple.SrmaModel
+  drawCytoband.ChromosomalModel extract.AffymetrixFileTable
+  fit.ChromosomalModel fitOneChromosome
+  fitOneChromosome.SrmaModel fitWRMA fitWRMA.matrix gaussKernel
+  getAlias.AffymetrixFileTable getAlias.ChromosomalModel getArrayPair
+  getArrayPair.AffymetrixFileTable getArrays.AffymetrixFileTable
+  getArrayTable getArrayTable.AffymetrixFileTable
+  getAsteriskTag.AffymetrixFileTable getAsteriskTag.ChromosomalModel
+  getAsteriskTag.SrmaModel getBandwidth getBandwidth.SrmaModel
+  getChipEffectFiles.ChromosomalModel getChipTypes.AffymetrixFileTable
+  getChipTypes.ChromosomalModel getFullName.AffymetrixFileTable
+  getFullName.ChromosomalModel getFullNames.AffymetrixFileTable
+  getFullNames.ChromosomalModel getGenome.ChromosomalModel
+  getGenomeData.ChromosomalModel getGenomeFile.ChromosomalModel
+  getListOfCdfs.AffymetrixFileTable getListOfCdfs.ChromosomalModel
+  getListOfChipEffects.ChromosomalModel getListOfChipEffectSets
+  getListOfChipEffectSets.ChromosomalModel
+  getListOfChipEffectSets.CopyNumberSegmentationModel
+  getListOfGenomeInformations.ChromosomalModel
+  getListOfSets.AffymetrixFileTable getName.AffymetrixFileTable
+  getName.ChromosomalModel getNames.AffymetrixFileTable
+  getNames.ChromosomalModel getOutputTuple getOutputTuple.SrmaModel
+  getParentPath getParentPath.ChromosomalModel getPath.ChromosomalModel
+  getPcuTheta getPcuTheta.ChromosomalModel getPositionChipTypeUnit
+  getPositionChipTypeUnit.ChromosomalModel
+  getPositionChipTypeUnit.CopyNumberSegmentationModel getRefSetTuple
+  getRefSetTuple.CopyNumberSegmentationModel
+  getReportPath.ChromosomalModel getRootPath.ChromosomalModel
+  getRootPath.SrmaModel getSetTag.ChromosomalModel
+  getSetTuple.ChromosomalModel getTableOfArrays.AffymetrixFileTable
+  getTags.AffymetrixFileTable getTags.ChromosomalModel
+  indexOfArrays.AffymetrixFileTable isFile.GenericDataFile
+  nbrOfChipTypes.AffymetrixFileTable nbrOfFiles.AffymetrixFileTable
+  nbrOfSets nbrOfSets.AffymetrixFileTable setAlias.AffymetrixFileTable
+  setAlias.ChromosomalModel setBandwidth setBandwidth.SrmaModel
+  setGenome.ChromosomalModel setTags.AffymetrixFileTable smoothWRMA
+  smoothWRMA.matrix
+as.character.SrmaModel

@@ -447,15 +447,7 @@ setMethodS3("setAlias", "CopyNumberSegmentationModel", function(this, alias=NULL
 
 
 setMethodS3("getAsteriskTag", "CopyNumberSegmentationModel", function(this, ...) {
-  # Default '*' tag is the abbreviation from upper-case letters only,
-  # e.g. "FooHooMooModel" gives "FHM". 
-  tag <- class(this)[1];
-  tag <- gsub("Model$", "", tag);
-  tag <- strsplit(tag, split="")[[1]];
-  tagUC <- toupper(tag);
-  keep <- (tag == tagUC);
-  tag <- tag[keep];
-  tag <- paste(tag, collapse=""); 
+  tag <- NextMethod("getAsteriskTag", this, ...);
 
   # Paired?
   refTuple <- getRefSetTuple(this);
@@ -469,127 +461,9 @@ setMethodS3("getAsteriskTag", "CopyNumberSegmentationModel", function(this, ...)
 
 
 
-setMethodS3("getTags", "CopyNumberSegmentationModel", function(this, collapse=NULL, ...) {
-  tags <- getTags(getSetTuple(this), ...);
-
-  # Add model tags
-  tags <- c(tags, this$.tags);
-
-  # Update default tags
-  tags[tags == "*"] <- getAsteriskTag(this);
-
-  # Keep non-empty tags
-  tags <- tags[nchar(tags) > 0];
-
-  # Get unique tags
-  tags <- unique(tags);
-
-  tags <- paste(tags, collapse=collapse);
-  if (length(tags) == 0)
-    tags <- NULL;
-
-  tags;
-})
 
 
-setMethodS3("getFullName", "CopyNumberSegmentationModel", function(this, ...) {
-  name <- getName(this);
-  tags <- getTags(this);
-  fullname <- paste(c(name, tags), collapse=",");
-  fullname <- gsub("[,]$", "", fullname);
-  fullname;
-})
 
-
-setMethodS3("getRootPath", "CopyNumberSegmentationModel", function(this, ...) {
-  # Example: gladData/.
-  sprintf("%sData", tolower(getAsteriskTag(this)));
-}, private=TRUE)
-
-
-setMethodS3("getPath", "CopyNumberSegmentationModel", function(this, ...) {
-  # Create the (sub-)directory tree for the data set
-
-  # Root path
-  rootPath <- getRootPath(this);
-
-  # Full name
-  fullname <- getFullName(this);
-
-  # Chip type
-  chipType <- getChipType(this);
-
-	  # The full path
-  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
-
-  # Create path?
-  if (!isDirectory(path)) {
-    mkdirs(path);
-    if (!isDirectory(path))
-      throw("Failed to create output directory: ", path);
-  }
-
-  path;
-})
-
-###########################################################################/**
-# @RdocMethod getChromosomes
-#
-# @title "Gets the chromosomes available"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character @vector.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getChromosomes", "CopyNumberSegmentationModel", function(this, ...) {
-  gis <- getListOfGenomeInformations(this);
-  chromosomes <- lapply(gis, getChromosomes);
-  chromosomes <- unlist(chromosomes, use.names=TRUE);
-  chromosomes <- sort(unique(chromosomes));
-  chromosomes;
-})
-
-
-setMethodS3("getListOfGenomeInformations", "CopyNumberSegmentationModel", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Retrieving genome informations");
-  cdfList <- getListOfCdfs(this);
-  giList <- lapply(cdfList, getGenomeInformation, verbose=less(verbose));
-  verbose && exit(verbose);
-
-  giList;
-})
-
-
-setMethodS3("getChipEffectFiles", "CopyNumberSegmentationModel", function(this, ...) {
-  setTuple <- getSetTuple(this);
-  getTuple(setTuple, ...);
-})
 
 
 
@@ -658,122 +532,6 @@ setMethodS3("getReferenceFiles", "CopyNumberSegmentationModel", function(this, .
   refList;
 })
 
-
-setMethodS3("getGenome", "CopyNumberSegmentationModel", function(this, ...) {
-  this$.genome;
-})
-
-
-setMethodS3("getGenomeFile", "CopyNumberSegmentationModel", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  fullname <- getGenome(this);
-  pattern <- sprintf("^%s.*,chromosomes.txt$", fullname);
-
-  # 1. Search in the regular places
-  pathname <- findAnnotationData(name=fullname, set="genomes", 
-                            pattern=pattern, ..., verbose=less(verbose, 10));
-
-  # 2. As a backup, search in the <pkg>/annotationData/ directory
-  if (is.null(pathname)) {
-    verbose && enter(verbose, "Search among package's annotationData/");
-    path <- system.file("annotationData", package="aroma.affymetrix");
-    verbose && cat(verbose, "Path: ", path);
-    pathname <- findAnnotationData(name=fullname, set="genomes", 
-                pattern=pattern, ..., paths=path, verbose=less(verbose, 10));
-    verbose && exit(verbose);
-  }
-
-  if (is.null(pathname)) {
-    throw("Failed to locate a genome annotation data file: ", fullname);
-  }
-
-  pathname;
-}, protected=TRUE)
-
-
-setMethodS3("setGenome", "CopyNumberSegmentationModel", function(this, genome, tags=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'genome':
-  genome <- Arguments$getCharacter(genome);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  oldGenome <- this$.genome;
-
-  fullname <- paste(c(genome, tags), collapse=",");
-  verbose && cat(verbose, "Fullname: ", fullname);
-
-  # Verify that there is an existing genome file
-  tryCatch({
-    this$.genome <- fullname;
-    pathname <- getGenomeFile(this, verbose=less(verbose, 10));
-  }, error = function(ex) {
-    this$.genome <- oldGenome;
-    throw(ex$message);
-  })
-
-  invisible(oldGenome);
-})
-
-
-
-setMethodS3("getGenomeData", "CopyNumberSegmentationModel", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  verbose && enter(verbose, "Reading genome chromosome annotation file");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get genome annotation data
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Searching for the file");
-  # Search annotationData/genomes/
-  pathname <- getGenomeFile(this, verbose=less(verbose, 10));
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Reading data file");
-  verbose && cat(verbose, "Pathname: ", pathname);
-  data <- readTable(pathname, header=TRUE, 
-                            colClasses=c(nbrOfBases="integer"), row.names=1);
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Translating chromosome names");
-  chromosomes <- row.names(data);
-  map <- c("X"=23, "Y"=24, "Z"=25);
-  for (kk in seq(along=map)) {
-    chromosomes <- gsub(names(map)[kk], map[kk], chromosomes, fixed=TRUE);
-  }
-  row.names(data) <- chromosomes;
-  verbose && exit(verbose);
-
-  verbose && exit(verbose);
-
-  data;
-}, protected=TRUE)
 
 
 setMethodS3("getRawCnData", "CopyNumberSegmentationModel", function(this, ceList, refList, chromosome, units=NULL, reorder=TRUE, ..., maxNAFraction=1/8, force=FALSE, verbose=FALSE) {
@@ -954,7 +712,7 @@ setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
 #     chromosomes to be considered.  If @NULL, all are processed.}
 #   \item{force}{If @FALSE, the model will not be fitted again if it was
 #     already fitted.}
-#   \item{...}{Not used.}
+#   \item{...}{Additional arguments passed to @seemethod "fitOne".}
 #   \item{.retResults}{If @TRUE, CBS fit structures are returned for each
 #     fitted array and chromosome.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
@@ -962,6 +720,11 @@ setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
 #
 # \value{
 #  Returns a named @list of named @lists.
+# }
+#
+# \section{Additional arguments to the internal fit function}{
+#   Arguments in \code{...} are passed down to the internal fit function,
+#   which means that it is possible to fine tune even further.
 # }
 #
 # @author
@@ -1183,32 +946,6 @@ print(list(ceList, rfList));
 
   invisible(res);
 })
-
-
-setMethodS3("getSetTag", "CopyNumberSegmentationModel", function(this, ...) {
-  tolower(getAsteriskTag(this));
-}, private=TRUE)
-
-setMethodS3("getReportPath", "CopyNumberSegmentationModel", function(this, ...) {
-  rootPath <- "reports";
-
-  # Data set name
-  name <- getName(this);
-
-  # Data set tags
-  tags <- getTags(this, collapse=",");
-
-  # Get chip type
-  chipType <- getChipType(this);
-
-  # Image set
-  set <- getSetTag(this);
-
-  # The report path
-  path <- filePath(rootPath, name, tags, chipType, set, expandLinks="any");
-
-  path;
-}, protected=TRUE)
 
 
 
@@ -1593,6 +1330,8 @@ setMethodS3("calculateChromosomeStatistics", "CopyNumberSegmentationModel", func
 
 ##############################################################################
 # HISTORY:
+# 2007-09-25
+# o Now CopyNumberSegmentationModel extends ChromosomalModel.
 # 2007-09-16
 # o Now process() of CopyNumberSegmentationModel reports timing information
 #   for each chromosome fitted.
