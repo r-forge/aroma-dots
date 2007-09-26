@@ -30,7 +30,10 @@
 #  @see "CopyNumberSegmentationModel".
 # }
 #*/###########################################################################
-setConstructorS3("SrmaModel", function(..., bandwidth=10e3, tags="*") {
+setConstructorS3("SrmaModel", function(..., weights=c("none", "1/s2"), bandwidth=10e3, tags="*") {
+  # Argument 'weights':
+  weights <- match.arg(weights);
+
   # Argument 'bandwidth':
   bandwidth <- Arguments$getDouble(bandwidth, range=c(1,Inf));
 
@@ -38,6 +41,7 @@ setConstructorS3("SrmaModel", function(..., bandwidth=10e3, tags="*") {
     .outTuple = NULL,
     .shift = 0,
     .kernel = "gauss",
+    .weights = weights,
     .bandwidth = bandwidth
   )
 })
@@ -72,9 +76,11 @@ setMethodS3("clearCache", "SrmaModel", function(this, ...) {
 
 setMethodS3("getAsteriskTag", "SrmaModel", function(this, ...) {
   classTag <- toupper(gsub("Model$", "", class(this)[1]));
+  weightsTag <- switch(this$.weights, "1/s2"="w=s2inv", "");
   kernelTag <- this$.kernel;
   bandwidthTag <- sprintf("b=%d", getBandwidth(this));
-  tags <- c(classTag, kernelTag, bandwidthTag);
+  tags <- c(classTag, weightsTag, kernelTag, bandwidthTag);
+  tags <- tags[nchar(tags) > 0];
 #  tags <- paste(tags, collapse=",");
   tags;
 }, protected=TRUE)
