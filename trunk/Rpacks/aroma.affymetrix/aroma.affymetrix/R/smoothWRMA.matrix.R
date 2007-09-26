@@ -1,4 +1,4 @@
-setMethodS3("smoothWRMA", "matrix", function(Y, x, kernel=gaussKernel, sd=100e3, na.rm=TRUE, ..., progress=TRUE, verbose=FALSE) {
+setMethodS3("smoothWRMA", "matrix", function(Y, x, w=NULL, kernel=gaussKernel, sd=100e3, na.rm=TRUE, ..., progress=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -15,6 +15,29 @@ setMethodS3("smoothWRMA", "matrix", function(Y, x, kernel=gaussKernel, sd=100e3,
     throw("Argument 'x' has different number of values that rows in 'Y': ", 
                                                      length(x), " != ", K);
   }
+
+  # Argument 'w'
+  if (is.null(w)) {
+    w <- 1; # Uniform prior weights.
+  } else if (is.matrix(w)) {
+    if (nrow(w) != K) {
+      throw("Argument 'w' has different number of rows than 'Y': ", 
+                                                     nrow(w), " != ", K);
+    }
+    if (ncol(w) != I) {
+      throw("Argument 'w' has different number of columns than 'Y': ", 
+                                                     ncol(w), " != ", I);
+    }
+  } else if (is.vector(w)) {
+    if (length(w) != K) {
+      throw("Argument 'w' has different number of values that rows in 'Y': ", 
+                                                     length(w), " != ", K);
+    }
+  }
+  if (any(w < 0))
+    throw("Argument 'w' contains negative weights.");
+  if (any(!is.finite(w)))
+    throw("Argument 'w' contains non-finite weights.");
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -42,37 +65,47 @@ setMethodS3("smoothWRMA", "matrix", function(Y, x, kernel=gaussKernel, sd=100e3,
 
   # At each position, calculate the weighed average using a 
   # Gaussian kernel.
+  cat("Progress: ");
   for (kk in seq(length=K)) {
     if (progress && kk %% 100 == 0)
-      print(kk);
+      cat(kk, ", ", sep="");
 
     # Weights centered around x[kk]
-    w <- kernel(x, mean=x[kk], sd=sd);
+    wK <- kernel(x, mean=x[kk], sd=sd);
+
     # Weight matrix
-    w <- matrix(w, nrow=K, ncol=I);
+    wM <- matrix(wK, nrow=K, ncol=I);
+    rm(wK);
+
+    # Multiple with prior (row) weights
+    wM <- w*wM;
    
     # Give missing values zero weight?
     if (na.rm)
-      w[nas] <- 0;
+      wM[nas] <- 0;
 
-    wR <- rowSums(w);
-    keep <- which(wR > 0);
+    wMR <- rowSums(wM);
+    keep <- which(wMR > 0);
+    rm(wMR);
     if (length(keep) > 0) {
-      w <- w[keep,,drop=FALSE];
+      wM <- wM[keep,,drop=FALSE];
       y <- Y[keep,,drop=FALSE];
-      verbose && print(verbose, list(y=y, w=w));
+      verbose && print(verbose, list(y=y, wM=wM));
 
       # Fit weighted RMA (don't have to rescale weights)
       # Call fitWRMA.matrix() explicitly to avoid dispatching
-      fit <- fitWRMA.matrix(y=y, w=w, .log2=FALSE);
+      fit <- fitWRMA.matrix(y=y, w=wM, .log2=FALSE);
       verbose && print(verbose, fit);
       theta[kk,] <- .subset2(fit, "theta");
       # Average phi?
       phi[kk] <- .subset2(fit, "avgPhi");
+      rm(y,fit);
     } else {
-      # If no data, keep theta:s and phi:s as missing values.
+      # If no data, keep theta:s and phi:s as (allocated) missing values.
     }
+    rm(wM);
   }
+  cat(kk, "\n", sep="");
 
   # Return everything on the intensity scale
   theta <- 2^theta;
@@ -84,6 +117,9 @@ setMethodS3("smoothWRMA", "matrix", function(Y, x, kernel=gaussKernel, sd=100e3,
 
 ############################################################################
 # HISTORY:
+# 2007-09-26
+# o Added support for (optional) prior weights (either as row weights or
+#   full matrix weights).
 # 2007-09-24
 # o Now smoothWRMA() returns (theta, phi) on the intensity scale.
 # 2007-09-18

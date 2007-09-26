@@ -299,7 +299,24 @@ setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., veb
   bandwidth <- getBandwidth(this);
   verbose && printf(verbose, "Bandwidth: %.2fkb\n", bandwidth/1e3);
   sd <- bandwidth;
-  fit <- smoothWRMA(Y=inData$theta, x=inData$pcu[,"position"], sd=sd, progress=TRUE, verbose=less(verbose, 10));
+
+  # Prior weights?
+  if (this$.weights == "1/s2") {
+    # Calculate prior weights as the inverse variance of log ratios
+    Y <- inData$theta;
+    YR <- rowMedians(Y, na.rm=TRUE);
+    M <- log2(Y/YR);
+    s <- rowMads(M, na.rm=TRUE);
+    w <- 1/(s^2);
+    rm(Y,YR,M,s);
+    gc <- gc();
+  } else {
+    w <- NULL;
+  }
+  verbose && cat(verbose, "Prior weights:");
+  verbose && str(verbose, w);
+  fit <- smoothWRMA(Y=inData$theta, x=inData$pcu[,"position"], w=w, 
+                          sd=sd, progress=TRUE, verbose=less(verbose, 10));
   inData$theta <- fit$theta;
   inData$phi <- fit$phi;
   verbose && cat(verbose, "Results:");
@@ -392,6 +409,9 @@ setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., veb
 
 ############################################################################
 # HISTORY:
+# 2007-09-26
+# o Added support for prior weights as the inverse of the log-ratio 
+#   variances.
 # 2007-09-25
 # o Renamed to SrmaModel (from CsrmaModel).
 # o For now fit() calls fitOneChromosome(), but all this should go in a
