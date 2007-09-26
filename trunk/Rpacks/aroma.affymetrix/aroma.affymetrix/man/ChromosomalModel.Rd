@@ -1,64 +1,73 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AffymetrixCelSetTuple.R
+%  ChromosomalModel.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{AffymetrixCelSetTuple}
+ \name{ChromosomalModel}
 \docType{class}
-\alias{AffymetrixCelSetTuple}
+\alias{ChromosomalModel}
 
 
- \title{The AffymetrixCelSetTuple class}
+ \title{The ChromosomalModel class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class AffymetrixCelSetTuple}\cr
+\bold{Class ChromosomalModel}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{AffymetrixCelSetTuple}\cr
+\code{~~+--}\emph{\code{ChromosomalModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectSetTuple}\cr
+\link[aroma.affymetrix]{SrmaModel}\cr
 
-public static class \bold{AffymetrixCelSetTuple}\cr
+public abstract static class \bold{ChromosomalModel}\cr
 extends \link[R.oo]{Object}\cr
 
 
+
+  This \emph{abstract} class represents a chromosomal model.
  }
 
- \usage{AffymetrixCelSetTuple(csList=NULL, tags="*", ..., .setClass="AffymetrixCelSet")}
+ \usage{ChromosomalModel(cesTuple=NULL, tags="", genome="Human", ...)}
 
  \arguments{
-   \item{csList}{A single or \code{\link[base]{list}} of \code{\link{AffymetrixCelSet}}:s.}
+   \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
+   \item{genome}{A \code{\link[base]{character}} string specifying what genome is process.}
    \item{...}{Not used.}
-   \item{.setClass}{The name of the class of the input set.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{byPath} \tab  -\cr
  \tab \code{clearCache} \tab  -\cr
- \tab \code{extract} \tab  -\cr
+ \tab \code{fit} \tab  -\cr
  \tab \code{getAlias} \tab  -\cr
  \tab \code{getArrays} \tab  -\cr
+ \tab \code{getChipEffectFiles} \tab  -\cr
+ \tab \code{getChipType} \tab  -\cr
  \tab \code{getChipTypes} \tab  -\cr
+ \tab \code{getChromosomes} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
- \tab \code{getListOfSets} \tab  -\cr
+ \tab \code{getGenome} \tab  -\cr
+ \tab \code{getListOfChipEffectSets} \tab  -\cr
+ \tab \code{getListOfGenomeInformations} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getNames} \tab  -\cr
+ \tab \code{getParentPath} \tab  -\cr
+ \tab \code{getPath} \tab  -\cr
+ \tab \code{getRootPath} \tab  -\cr
+ \tab \code{getTableOfArrays} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
- \tab \code{getTuple} \tab  -\cr
  \tab \code{nbrOfArrays} \tab  -\cr
  \tab \code{nbrOfChipTypes} \tab  -\cr
  \tab \code{setAlias} \tab  -\cr
- \tab \code{setTags} \tab  -\cr
+ \tab \code{setGenome} \tab  -\cr
 }
 
 
@@ -68,8 +77,10 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \seealso{
+ \section{Requirements}{
+   This class requires genome information annotation files for
+   every chip type.
  }
+
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 \keyword{classes}

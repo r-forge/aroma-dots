@@ -53,16 +53,17 @@ extends \link[R.oo]{Object}\cr
  \tab \code{fromFile} \tab  -\cr
  \tab \code{getAlias} \tab  -\cr
  \tab \code{getChecksum} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getFilename.GenericDataFile]{getFilename}} \tab Gets the filename of the file.\cr
+ \tab \code{getFilename} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getFileType.GenericDataFile]{getFileType}} \tab Gets the file type of a file.\cr
- \tab \code{\link[aroma.affymetrix:getFullName.GenericDataFile]{getFullName}} \tab Gets the full name of the file.\cr
- \tab \code{\link[aroma.affymetrix:getName.GenericDataFile]{getName}} \tab Gets the name of the file.\cr
- \tab \code{\link[aroma.affymetrix:getPath.GenericDataFile]{getPath}} \tab Gets the path (directory) of the file.\cr
- \tab \code{\link[aroma.affymetrix:getPathname.GenericDataFile]{getPathname}} \tab Gets the pathname of the file.\cr
- \tab \code{\link[aroma.affymetrix:getTags.GenericDataFile]{getTags}} \tab Gets the tags of the file.\cr
+ \tab \code{getFileType} \tab  -\cr
+ \tab \code{getFullName} \tab  -\cr
+ \tab \code{getName} \tab  -\cr
+ \tab \code{getPath} \tab  -\cr
+ \tab \code{getPathname} \tab  -\cr
+ \tab \code{getTags} \tab  -\cr
  \tab \code{hasTag} \tab  -\cr
  \tab \code{hasTags} \tab  -\cr
+ \tab \code{isFile} \tab  -\cr
  \tab \code{readChecksum} \tab  -\cr
  \tab \code{setAlias} \tab  -\cr
  \tab \code{validateChecksum} \tab  -\cr

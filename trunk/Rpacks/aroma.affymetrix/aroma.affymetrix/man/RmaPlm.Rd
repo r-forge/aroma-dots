@@ -3,8 +3,6 @@
 % 
 %  RmaPlm.R
 % 
-% on Wed Sep 19 13:52:38 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -59,7 +57,7 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
 
 
  \bold{Methods inherited from ProbeLevelModel}:\cr
-calculateResidualSet, calculateWeights, fit, getAsteriskTag, getCalculateResidualsFunction, getChipEffects, getChipEffectSet, getProbeAffinities, getProbeAffinityFile, getResidualSet, getWeightsSet
+calculateResidualSet, calculateWeights, fit, getAsteriskTag, getCalculateResidualsFunction, getChipEffectSet, getProbeAffinityFile, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getCellIndices, readUnits

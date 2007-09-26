@@ -32,11 +32,12 @@ extends \link[R.oo]{Object}\cr
   This \emph{abstract} class represents a copy-number segmentation model.
  }
 
- \usage{CopyNumberSegmentationModel(cesTuple=NULL, referenceList=NULL, tags="", genome="Human", ...)}
+ \usage{CopyNumberSegmentationModel(cesTuple=NULL, refTuple=NULL, tags="", genome="Human", ...)}
 
  \arguments{
    \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
-   \item{referenceList}{A single or a \code{\link[base]{list}} of \code{\link{ChipEffectFile}}:s.}
+   \item{refTuple}{An optional \code{\link{ChipEffectSetTuple}} for pairwise
+     comparisons.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
    \item{genome}{A \code{\link[base]{character}} string specifying what genome is process.}
    \item{...}{Not used.}
@@ -45,34 +46,26 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fit.CopyNumberSegmentationModel]{fit}} \tab Fits the model.\cr
- \tab \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{fitOne}} \tab Fits the copy-number segmentation model for one chromosome in one sample.\cr
+ \tab \code{clearCache} \tab  -\cr
+ \tab \code{fit} \tab  -\cr
+ \tab \code{fitOne} \tab  -\cr
  \tab \code{getAlias} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getArrays.CopyNumberSegmentationModel]{getArrays}} \tab Gets the names of the arrays.\cr
- \tab \code{getChipEffectFiles} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipType.CopyNumberSegmentationModel]{getChipType}} \tab Gets a label for all chip types merged.\cr
+ \tab \code{getArrays} \tab  -\cr
+ \tab \code{getChipType} \tab  -\cr
  \tab \code{getChipTypes} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChromosomes.CopyNumberSegmentationModel]{getChromosomes}} \tab Gets the chromosomes available.\cr
- \tab \code{getFullName} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
- \tab \code{getGenome} \tab  -\cr
- \tab \code{getListOfChipEffects} \tab  -\cr
- \tab \code{getListOfGenomeInformations} \tab  -\cr
+ \tab \code{getListOfChipEffectSets} \tab  -\cr
  \tab \code{getListOfReferences} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getNames} \tab  -\cr
- \tab \code{getPath} \tab  -\cr
  \tab \code{getReferenceFiles} \tab  -\cr
  \tab \code{getRegions} \tab  -\cr
- \tab \code{getSetTuple} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getTableOfArrays.CopyNumberSegmentationModel]{getTableOfArrays}} \tab Gets a table of arrays.\cr
- \tab \code{getTags} \tab  -\cr
+ \tab \code{getTableOfArrays} \tab  -\cr
  \tab \code{migrateTool} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:nbrOfArrays.CopyNumberSegmentationModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
- \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.CopyNumberSegmentationModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
+ \tab \code{nbrOfArrays} \tab  -\cr
+ \tab \code{nbrOfChipTypes} \tab  -\cr
  \tab \code{plot} \tab  -\cr
  \tab \code{setAlias} \tab  -\cr
- \tab \code{setGenome} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
 

@@ -68,7 +68,7 @@ getCellIndices, getChipEffectSet, getProbeAffinityFile, setMergeStrands
 getAsteriskTag, getProbeAffinityFile
 
  \bold{Methods inherited from ProbeLevelModel}:\cr
-calculateResidualSet, calculateWeights, fit, getAsteriskTag, getCalculateResidualsFunction, getChipEffects, getChipEffectSet, getProbeAffinities, getProbeAffinityFile, getResidualSet, getWeightsSet
+calculateResidualSet, calculateWeights, fit, getAsteriskTag, getCalculateResidualsFunction, getChipEffectSet, getProbeAffinityFile, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getCellIndices, readUnits

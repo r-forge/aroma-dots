@@ -49,8 +49,8 @@ extends \emph{\link[aroma.affymetrix]{Model}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fit.CrlmmModel]{fit}} \tab Fits the model.\cr
- \tab \code{\link[aroma.affymetrix:getChipEffects.CrlmmModel]{getChipEffects}} \tab Gets the chip effects for this model.\cr
+ \tab \code{fit} \tab  -\cr
+ \tab \code{getChipEffects} \tab  -\cr
 }
 
 

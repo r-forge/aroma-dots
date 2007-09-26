@@ -28,7 +28,7 @@
     chromosomes to be considered.  If \code{\link[base]{NULL}}, all are processed.}
   \item{force}{If \code{\link[base:logical]{FALSE}}, the model will not be fitted again if it was
     already fitted.}
-  \item{...}{Not used.}
+  \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{*fitOne}()}.}
   \item{.retResults}{If \code{\link[base:logical]{TRUE}}, CBS fit structures are returned for each
     fitted array and chromosome.}
   \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
@@ -36,6 +36,11 @@
 
 \value{
  Returns a named \code{\link[base]{list}} of named \code{\link[base]{list}}s.
+}
+
+\section{Additional arguments to the internal fit function}{
+  Arguments in \code{...} are passed down to the internal fit function,
+  which means that it is possible to fine tune even further.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
