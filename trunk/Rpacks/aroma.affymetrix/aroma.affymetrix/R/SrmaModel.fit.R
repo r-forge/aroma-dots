@@ -1,5 +1,5 @@
 ###########################################################################/**
-# @set "class=CsrmaModel"
+# @set "class=SrmaModel"
 # @RdocMethod fit
 #
 # @title "Fits the CSRMA model for one chromosome across samples"
@@ -31,7 +31,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fit", "CsrmaModel", function(this, chromosome, force=FALSE, ..., verbose=FALSE) {
+setMethodS3("fit", "SrmaModel", function(this, chromosome, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -171,7 +171,7 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
 
 
 
-setMethodS3("createOutputTuple", "CsrmaModel", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("createOutputTuple", "SrmaModel", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -196,22 +196,24 @@ setMethodS3("createOutputTuple", "CsrmaModel", function(this, ..., force=FALSE, 
   verbose && cat(verbose, "Number of chip types: ", nbrOfChipTypes);
   inList <- getListOfSets(inTuple);
   outList <- vector("list", nbrOfChipTypes);
-  rootPath <- getParent(getPath(this));
+  names(outList) <- names(inList);
+  parentPath <- getParentPath(this);
   for (kk in seq(along=inList)) {
-    verbose && enter(verbose, "Chip type #", kk, " of ", nbrOfChipTypes);
-    inSet <- inList[[kk]];
+    chipType <- names(inList)[kk];
+    verbose && enter(verbose, "Chip type #", kk, "'(", chipType, ")' of ", nbrOfChipTypes);
+    inSet <- inList[[chipType]];
     if (length(inSet) == 0)
       throw("Cannot create output data set. The input data set is empty.");
 
     cdf <- getCdf(inSet);
     chipType <- getChipType(cdf, fullname=FALSE);
-    path <- Arguments$getWritablePath(file.path(rootPath, chipType));
+    path <- Arguments$getWritablePath(file.path(parentPath, chipType));
     verbose && enter(verbose, "Creating output data set using input data set as a template (by copying)");
     verbose && cat(verbose, "Path: ", path);
     nbrOfArrays <- nbrOfArrays(inSet);
     for (jj in seq(length=nbrOfArrays)) {
       inFile <- getFile(inSet, jj);
-      outFile <- createFrom(inFile, filename=getFilename(inFile), path=path, clear=TRUE, verbose=less(verbose, 10));
+      outFile <- createFrom(inFile, filename=getFilename(inFile), path=path, methods=c("create", "copy"), clear=TRUE, verbose=less(verbose, 10));
     }
 
     # Speed this up by inheriting parameters from input data set
@@ -230,7 +232,7 @@ setMethodS3("createOutputTuple", "CsrmaModel", function(this, ..., force=FALSE, 
     verbose && print(verbose, outSet);
     verbose && exit(verbose);
 
-    outList[[kk]] <- outSet;
+    outList[[chipType]] <- outSet;
     verbose && exit(verbose);
   } # for (kk in ...)
   verbose && exit(verbose);
@@ -244,7 +246,7 @@ setMethodS3("createOutputTuple", "CsrmaModel", function(this, ..., force=FALSE, 
 })
 
 
-setMethodS3("fitOneChromosome", "CsrmaModel", function(this, chromosome, ..., vebose=FALSE) {
+setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., vebose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -263,6 +265,9 @@ setMethodS3("fitOneChromosome", "CsrmaModel", function(this, chromosome, ..., ve
   cesList <- getListOfChipEffects(this);
   verbose && cat(verbose, "List of input data sets:");
   verbose && print(verbose, cesList);
+
+  # Getting output data set (create if missing)
+  outTuple <- getOutputTuple(this, verbose=less(verbose, 10));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extracting data
@@ -307,9 +312,8 @@ setMethodS3("fitOneChromosome", "CsrmaModel", function(this, chromosome, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Storing estimates");
 
-  outTuple <- getOutputTuple(this);
   outList <- getListOfSets(outTuple);
-  verbose && cat(verbose, "List of uutput data sets:");
+  verbose && cat(verbose, "List of output data sets:");
   verbose && print(verbose, outList);
 
   for (kk in seq(length=nbrOfChipTypes(this))) {
@@ -389,6 +393,7 @@ setMethodS3("fitOneChromosome", "CsrmaModel", function(this, chromosome, ..., ve
 ############################################################################
 # HISTORY:
 # 2007-09-25
+# o Renamed to SrmaModel (from CsrmaModel).
 # o For now fit() calls fitOneChromosome(), but all this should go in a
 #   different model class.
 # o Added fitOneChromosome().

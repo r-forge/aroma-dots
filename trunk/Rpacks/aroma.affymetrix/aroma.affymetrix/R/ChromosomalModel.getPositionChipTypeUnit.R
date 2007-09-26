@@ -1,4 +1,4 @@
-setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(this, chromosome, force=FALSE, ..., verbose=FALSE) {
+setMethodS3("getPositionChipTypeUnit", "ChromosomalModel", function(this, chromosome, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -109,6 +109,8 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
 
 ############################################################################
 # HISTORY:
+# 2007-09-25
+# o Moved getPositionChipTypeUnit() to ChromosomalModel.
 # 2007-09-20
 # o Added getPositionChipTypeUnit().
 ############################################################################

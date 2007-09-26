@@ -1,4 +1,4 @@
-setMethodS3("drawCytoband", "CopyNumberSegmentationModel", function(this, chromosome=NULL, cytobandLabels=TRUE, colCytoBand=c("white", "darkblue"), colCentro="red", unit=6, ...) {
+setMethodS3("drawCytoband", "ChromosomalModel", function(this, chromosome=NULL, cytobandLabels=TRUE, colCytoBand=c("white", "darkblue"), colCentro="red", unit=6, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -66,6 +66,8 @@ setMethodS3("drawCytoband", "CopyNumberSegmentationModel", function(this, chromo
 
 ##############################################################################
 # HISTORY:
+# 2007-09-25
+# o Moved drawCytoband() to ChromosomalModel. 
 # 2007-09-16
 # o Now drawCytoband() only loads the GLAD package, if actually plotting.
 #   This means that the GLAD package is not required for CbsModel:s with
