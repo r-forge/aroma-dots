@@ -675,3 +675,14 @@ yellow.colors
   setGenome.ChromosomalModel setTags.AffymetrixFileTable smoothWRMA
   smoothWRMA.matrix
 as.character.SrmaModel
+  as.character.SmoothMultiarrayModel clearCache.SmoothMultiarrayModel
+  createOutputTuple.SmoothMultiarrayModel
+  fitOneChromosome.SmoothMultiarrayModel
+  getAsteriskTag.SmoothMultiarrayModel getAsteriskTag.SmoothRmaModel
+  getAsteriskTag.SmoothSaModel getBandwidth.SmoothMultiarrayModel
+  getFitFunction.SmoothMultiarrayModel getFitFunction.SmoothRmaModel
+  getFitFunction.SmoothSaModel getFitFunction.SmoothSingleArrayModel
+  getOutputTuple.SmoothMultiarrayModel
+  getRootPath.SmoothMultiarrayModel locallyUnique locallyUnique.default
+  setBandwidth.SmoothMultiarrayModel SmoothSaModel smoothWSA
+  smoothWSA.matrix
