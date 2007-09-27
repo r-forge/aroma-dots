@@ -303,8 +303,8 @@ setMethodS3("getTags", "AffymetrixCelSetTuple", function(this, collapse=NULL, ..
   # Remove empty tags
   tags <- tags[nchar(tags) > 0];
 
-  # Keep unique tags
-  tags <- unique(tags);
+  # Remove duplicated tags 
+  tags <- locallyUnique(tags);
 
   tags <- paste(tags, collapse=collapse);
 
@@ -492,7 +492,7 @@ setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL,
     tags <- base::lapply(tags, setdiff, exclude);
     tags <- getCommonListElements(tags);
     tags <- unlist(tags, use.names=FALSE);
-    tags <- unique(tags);
+    tags <- locallyUnique(tags);
     
     fullname <- paste(c(name, tags), collapse=",");
     

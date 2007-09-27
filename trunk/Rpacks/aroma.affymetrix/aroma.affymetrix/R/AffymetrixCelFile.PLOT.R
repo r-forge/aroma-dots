@@ -947,7 +947,7 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
   if ("*" %in% tags) {
     idx <- match("*", tags);
     tags[idx] <- field;
-    tags <- unique(tags);
+    tags <- locallyUnique(tags);
   }
 
   verbose && enter(verbose, "Writing CEL image to file");

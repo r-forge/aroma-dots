@@ -292,7 +292,7 @@ setMethodS3("getCdf", "AptCopyNumberPipeline", function(this, ...) {
 setMethodS3("getTags", "AptCopyNumberPipeline", function(this, collapse=NULL, ...) {
   ds <- getDataSet(this);
   tags <- c(getTags(ds), this$.tags);
-  tags <- unique(tags);
+  tags <- locallyUnique(tags);
 
   tags <- paste(tags, collapse=collapse);
   if (length(tags) == 0)

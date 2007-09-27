@@ -89,8 +89,12 @@ setMethodS3("as.character", "ChromosomalModel", function(x, ...) {
   s <- c(s, sprintf("Number of chip types: %d", nbrOfChipTypes));
   s <- c(s, "Chip-effect set:");
   cesList <- getListOfSets(getSetTuple(this));
+  chipTypes <- sapply(cesList, FUN=function(ces) {
+    getChipType(getCdf(ces));
+  })
   for (kk in seq(along=cesList)) {
-    s <- c(s, sprintf("Chip type #%d of %d ('%s'):", kk, nbrOfChipTypes, names(cesList)[kk]));
+    s <- c(s, sprintf("Chip type #%d of %d ('%s'):", 
+                                    kk, nbrOfChipTypes, chipTypes[kk]));
     s <- c(s, "Chip-effect set:");
     ces <- cesList[[kk]];
     s <- c(s, as.character(ces));
@@ -469,7 +473,7 @@ setMethodS3("getTags", "ChromosomalModel", function(this, collapse=NULL, ...) {
   tags <- tags[nchar(tags) > 0];
 
   # Get unique tags
-  tags <- unique(tags);
+  tags <- locallyUnique(tags);
 
   tags <- paste(tags, collapse=collapse);
   if (length(tags) == 0)

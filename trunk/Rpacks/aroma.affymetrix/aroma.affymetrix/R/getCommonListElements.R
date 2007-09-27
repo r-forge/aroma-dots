@@ -6,7 +6,7 @@ getCommonListElements <- function(lst, ignoreEmpty=TRUE) {
   common <- c();
   n <- length(lst);
   first <- TRUE;
-  for (kk in seq_len(n)) {
+  for (kk in seq(length=n)) {
     value <- lst[[kk]];
 
     # Ignoring empty list elements or not?
@@ -34,7 +34,10 @@ getCommonListElements <- function(lst, ignoreEmpty=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # 2. Keep only common elements
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  lst <- base::lapply(lst, FUN=intersect, common);
+  lst <- base::lapply(lst, FUN=function(ss) {
+    keep <- (ss %in% common);
+    ss[keep];
+  });
 
   lst;
 } # getCommonListElements()
@@ -42,6 +45,8 @@ getCommonListElements <- function(lst, ignoreEmpty=TRUE) {
 
 ############################################################################
 # HISTORY:
+# 2007-09-26
+# o BUG FIX: getCommonListElements() would exclude duplicated tags, e.g. -X.
 # 2007-02-16
 # o Created.
 ############################################################################
