@@ -307,7 +307,7 @@ setMethodS3("getTags", "Explorer", function(this, collapse=NULL, ...) {
   tags <- getTagsOfInput(this, ...);
 
   tags <- c(tags, this$.tags);
-  tags <- unique(tags);
+  tags <- locallyUnique(tags);
 
   # Update asterisk tags
   tags[tags == "*"] <- getAsteriskTags(this);
@@ -315,7 +315,7 @@ setMethodS3("getTags", "Explorer", function(this, collapse=NULL, ...) {
   # Keep non-empty tags
   tags <- tags[nchar(tags) > 0];
 
-  tags <- unique(tags);
+  tags <- locallyUnique(tags);
 
   tags <- paste(tags, collapse=collapse);
   if (length(tags) == 0)

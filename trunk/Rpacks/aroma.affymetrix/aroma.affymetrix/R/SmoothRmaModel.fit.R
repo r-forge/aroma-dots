@@ -1,8 +1,8 @@
 ###########################################################################/**
-# @set "class=SrmaModel"
+# @set "class=SmoothMultiarrayModel"
 # @RdocMethod fit
 #
-# @title "Fits the CSRMA model for one chromosome across samples"
+# @title "Fits the model for one chromosome across samples"
 #
 # \description{
 #  @get "title".
@@ -21,17 +21,15 @@
 # }
 #
 # \value{
-#  Returns the @see "GLAD::profileCGH" object returned by @see "GLAD::glad".
 # }
 #
 # @author
 #
 # \seealso{
-#   Internally @see "GLAD::glad" is used.
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fit", "SrmaModel", function(this, chromosome, force=FALSE, ..., verbose=FALSE) {
+setMethodS3("fit", "SmoothMultiarrayModel", function(this, chromosome, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -171,7 +169,7 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
 
 
 
-setMethodS3("createOutputTuple", "SrmaModel", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("createOutputTuple", "SmoothMultiarrayModel", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -245,8 +243,17 @@ setMethodS3("createOutputTuple", "SrmaModel", function(this, ..., force=FALSE, v
   outTuple;
 })
 
+setMethodS3("getFitFunction", "SmoothRmaModel", function(this, ...) {
+  smoothWRMA;
+})
 
-setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., vebose=FALSE) {
+setMethodS3("getFitFunction", "SmoothSingleArrayModel", function(this, ...) {
+  smoothWSingleArray;
+})
+
+setMethodS3("getFitFunction", "SmoothMultiarrayModel", abstract=TRUE);
+
+setMethodS3("fitOneChromosome", "SmoothMultiarrayModel", function(this, chromosome, ..., vebose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -261,6 +268,8 @@ setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., veb
   verbose && enter(verbose, "Fit one chromosome");
 
   verbose && cat(verbose, "Chromosome: ", chromosome);
+
+  smoothFitFcn <- getFitFunction(this);
 
   cesList <- getListOfChipEffects(this);
   verbose && cat(verbose, "List of input data sets:");
@@ -322,9 +331,10 @@ setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., veb
   } else {
     w <- NULL;
   }
+
   verbose && cat(verbose, "Prior weights:");
   verbose && str(verbose, w);
-  fit <- smoothWRMA(Y=inData$theta, x=inData$pcu[,"position"], w=w, 
+  fit <- smoothFitFcn(Y=inData$theta, x=inData$pcu[,"position"], w=w, 
                           sd=sd, progress=TRUE, verbose=less(verbose, 10));
   inData$theta <- fit$theta;
   inData$phi <- fit$phi;
@@ -419,6 +429,7 @@ setMethodS3("fitOneChromosome", "SrmaModel", function(this, chromosome, ..., veb
 ############################################################################
 # HISTORY:
 # 2007-09-26
+# o Renamed to SmoothMultiarrayModel (from SrmaModel).
 # o Added support for prior weights as the inverse of the log-ratio 
 #   variances.
 # 2007-09-25
