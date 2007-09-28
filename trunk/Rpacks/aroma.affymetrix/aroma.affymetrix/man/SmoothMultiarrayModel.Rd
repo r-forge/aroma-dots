@@ -1,56 +1,63 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  CbsModel.R
+%  SmoothMultiarrayModel.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{CbsModel}
+ \name{SmoothMultiarrayModel}
 \docType{class}
-\alias{CbsModel}
+\alias{SmoothMultiarrayModel}
 
 
- \title{The CbsModel class}
+ \title{The SmoothMultiarrayModel class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class CbsModel}\cr
+\bold{Class SmoothMultiarrayModel}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.affymetrix]{ChromosomalModel}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
-\code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{CbsModel}\cr
+\code{~~~~~~~+--}\emph{\code{SmoothMultiarrayModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\link[aroma.affymetrix]{SmoothRmaModel}, \link[aroma.affymetrix]{SmoothSaModel}\cr
 
-public static class \bold{CbsModel}\cr
-extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
+public abstract static class \bold{SmoothMultiarrayModel}\cr
+extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
 
 
 
-  This class represents the Circular Binary Segmentation (CBS) model [1].
+  This class represents the Chromosomal Smoothing Robust Multichip Analysis
+  method.
  }
 
- \usage{CbsModel(cesTuple=NULL, ...)}
+ \usage{SmoothMultiarrayModel(..., weights=c("none", "1/s2"), bandwidth=10000, tags="*")}
 
  \arguments{
-   \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
-   \item{...}{Arguments passed to the constructor of
-              \code{\link{CopyNumberSegmentationModel}}.}
+   \item{...}{Arguments passed to the constructor of \code{\link{ChromosomalModel}}.}
+   \item{weights}{A \code{\link[base]{character}} string.}
+   \item{bandwidth}{A single \code{\link[base]{numeric}} specifying the smoothing bandwidth
+     in units of nucleotides.}
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be added.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\emph{No methods defined}.
+\tabular{rll}{
+ \tab \code{clearCache} \tab  -\cr
+ \tab \code{createOutputTuple} \tab  -\cr
+ \tab \code{fitOneChromosome} \tab  -\cr
+ \tab \code{getBandwidth} \tab  -\cr
+ \tab \code{getFitFunction} \tab  -\cr
+ \tab \code{getOutputTuple} \tab  -\cr
+ \tab \code{getRootPath} \tab  -\cr
+ \tab \code{setBandwidth} \tab  -\cr
+}
 
-
- \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
-as.character, calculateChromosomeStatistics, clearCache, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipType, getChipTypes, getFullNames, getListOfChipEffectSets, getListOfReferences, getName, getNames, getPositionChipTypeUnit, getRawCnData, getReferenceFiles, getRefSetTuple, getRegions, getSetTuple, getTableOfArrays, migrateTool, nbrOfArrays, nbrOfChipTypes, newPlot, plot, setAlias, writeRegions
 
  \bold{Methods inherited from ChromosomalModel}:\cr
 as.character, clearCache, fit, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffectSets, getListOfGenomeInformations, getName, getNames, getParentPath, getPath, getPcuTheta, getPositionChipTypeUnit, getReportPath, getRootPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setGenome
@@ -65,14 +72,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  \seealso{
   \code{\link{CopyNumberSegmentationModel}}.
- }
-
- \references{
-  [1] Olshen, A. B., Venkatraman, E. S., Lucito, R., Wigler, M.
-      \emph{Circular binary segmentation for the analysis of array-based
-      DNA copy number data. Biostatistics 5: 557-572, 2004.}\cr
-  [2] Venkatraman, E. S. & Olshen, A. B.
-      \emph{A faster circular binary segmentation algorithm for the
-      analysis of array CGH data}. Bioinformatics, 2007.\cr
  }
 \keyword{classes}

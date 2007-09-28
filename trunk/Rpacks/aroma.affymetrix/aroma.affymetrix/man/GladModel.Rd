@@ -19,9 +19,11 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{ChromosomalModel}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{GladModel}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\code{GladModel}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
@@ -54,6 +56,9 @@ extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
 
  \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
 as.character, calculateChromosomeStatistics, clearCache, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipType, getChipTypes, getFullNames, getListOfChipEffectSets, getListOfReferences, getName, getNames, getPositionChipTypeUnit, getRawCnData, getReferenceFiles, getRefSetTuple, getRegions, getSetTuple, getTableOfArrays, migrateTool, nbrOfArrays, nbrOfChipTypes, newPlot, plot, setAlias, writeRegions
+
+ \bold{Methods inherited from ChromosomalModel}:\cr
+as.character, clearCache, fit, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffectSets, getListOfGenomeInformations, getName, getNames, getParentPath, getPath, getPcuTheta, getPositionChipTypeUnit, getReportPath, getRootPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setGenome
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

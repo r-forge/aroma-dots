@@ -49,7 +49,7 @@ extends \link[aroma.affymetrix]{QuantileNormalization}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.OligoQuantileNormalization]{process}} \tab Normalizes the data set.\cr
 }
 
 

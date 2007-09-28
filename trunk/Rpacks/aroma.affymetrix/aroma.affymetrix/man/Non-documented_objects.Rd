@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Tue Sep 25 19:25:54 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1509,6 +1507,26 @@
 \alias{smoothWRMA}
 \alias{smoothWRMA.matrix}
 \alias{as.character.SrmaModel}
+\alias{as.character.SmoothMultiarrayModel}
+\alias{clearCache.SmoothMultiarrayModel}
+\alias{createOutputTuple.SmoothMultiarrayModel}
+\alias{fitOneChromosome.SmoothMultiarrayModel}
+\alias{getAsteriskTag.SmoothMultiarrayModel}
+\alias{getAsteriskTag.SmoothRmaModel}
+\alias{getAsteriskTag.SmoothSaModel}
+\alias{getBandwidth.SmoothMultiarrayModel}
+\alias{getFitFunction.SmoothMultiarrayModel}
+\alias{getFitFunction.SmoothRmaModel}
+\alias{getFitFunction.SmoothSaModel}
+\alias{getFitFunction.SmoothSingleArrayModel}
+\alias{getOutputTuple.SmoothMultiarrayModel}
+\alias{getRootPath.SmoothMultiarrayModel}
+\alias{locallyUnique}
+\alias{locallyUnique.default}
+\alias{setBandwidth.SmoothMultiarrayModel}
+\alias{SmoothSaModel}
+\alias{smoothWSA}
+\alias{smoothWSA.matrix}
 
 \description{
   This page contains aliases for all "non-documented" objects that

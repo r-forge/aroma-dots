@@ -50,7 +50,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
 \section{Fields and Methods}{
  \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.BackgroundCorrection]{process}} \tab Processes the data set.\cr
 }
 
 
