@@ -19,13 +19,15 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\emph{\code{CopyNumberSegmentationModel}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{ChromosomalModel}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\emph{\code{CopyNumberSegmentationModel}}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{CbsModel}, \link[aroma.affymetrix]{GladModel}\cr
 
 public abstract static class \bold{CopyNumberSegmentationModel}\cr
-extends \link[R.oo]{Object}\cr
+extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
 
 
 
@@ -47,11 +49,11 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
- \tab \code{fit} \tab  -\cr
- \tab \code{fitOne} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fit.CopyNumberSegmentationModel]{fit}} \tab Fits the model.\cr
+ \tab \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{fitOne}} \tab Fits the copy-number segmentation model for one chromosome in one sample.\cr
  \tab \code{getAlias} \tab  -\cr
- \tab \code{getArrays} \tab  -\cr
- \tab \code{getChipType} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getArrays.CopyNumberSegmentationModel]{getArrays}} \tab Gets the names of the arrays.\cr
+ \tab \code{\link[aroma.affymetrix:getChipType.CopyNumberSegmentationModel]{getChipType}} \tab Gets a label for all chip types merged.\cr
  \tab \code{getChipTypes} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
  \tab \code{getListOfChipEffectSets} \tab  -\cr
@@ -60,15 +62,18 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getNames} \tab  -\cr
  \tab \code{getReferenceFiles} \tab  -\cr
  \tab \code{getRegions} \tab  -\cr
- \tab \code{getTableOfArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getTableOfArrays.CopyNumberSegmentationModel]{getTableOfArrays}} \tab Gets a table of arrays.\cr
  \tab \code{migrateTool} \tab  -\cr
- \tab \code{nbrOfArrays} \tab  -\cr
- \tab \code{nbrOfChipTypes} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.CopyNumberSegmentationModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.CopyNumberSegmentationModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
  \tab \code{plot} \tab  -\cr
  \tab \code{setAlias} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from ChromosomalModel}:\cr
+as.character, clearCache, fit, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffectSets, getListOfGenomeInformations, getName, getNames, getParentPath, getPath, getPcuTheta, getPositionChipTypeUnit, getReportPath, getRootPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setGenome
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

@@ -47,7 +47,7 @@ extends \emph{\link[aroma.affymetrix]{SnpInformation}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{fromChipType} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fromChipType.DChipSnpInformation]{fromChipType}} \tab Defines a DChipSnpInformation object by chip type.\cr
  \tab \code{readData} \tab  -\cr
 }
 

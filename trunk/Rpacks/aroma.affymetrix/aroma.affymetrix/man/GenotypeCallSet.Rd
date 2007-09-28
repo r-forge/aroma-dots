@@ -44,16 +44,16 @@ extends \link[aroma.affymetrix]{GenericDataFileSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{[} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:000-LB-.GenotypeCallSet]{[}} \tab Gets the genotype calls.\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{as} \tab  -\cr
- \tab \code{as.GenotypeCallSet} \tab  -\cr
- \tab \code{fromFiles} \tab  -\cr
- \tab \code{getCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:as.GenotypeCallSet.GenotypeCallSet]{as.GenotypeCallSet}} \tab Coerce an object to an GenotypeCallSet object.\cr
+ \tab \code{\link[aroma.affymetrix:fromFiles.GenotypeCallSet]{fromFiles}} \tab Static method defining a set of genotype call files.\cr
+ \tab \code{\link[aroma.affymetrix:getCdf.GenotypeCallSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
  \tab \code{getFullName} \tab  -\cr
- \tab \code{nbrOfArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.GenotypeCallSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
  \tab \code{readUnits} \tab  -\cr
- \tab \code{setCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:setCdf.GenotypeCallSet]{setCdf}} \tab Sets the CDF structure for this genotype call set.\cr
 }
 
 

@@ -1,26 +1,26 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  SrmaModel.fit.R
+%  SmoothMultiarrayModel.fit.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\name{fit.SrmaModel}
-\alias{fit.SrmaModel}
-\alias{SrmaModel.fit}
-\alias{fit.SrmaModel}
-\alias{fit,SrmaModel-method}
+\name{fit.SmoothMultiarrayModel}
+\alias{fit.SmoothMultiarrayModel}
+\alias{SmoothMultiarrayModel.fit}
+\alias{fit.SmoothMultiarrayModel}
+\alias{fit,SmoothMultiarrayModel-method}
 
 
-\title{Fits the CSRMA model for one chromosome across samples}
+\title{Fits the model for one chromosome across samples}
 
 \description{
- Fits the CSRMA model for one chromosome across samples.
+ Fits the model for one chromosome across samples.
 }
 
-\usage{\method{fit}{SrmaModel}(this, chromosome, force=FALSE, ..., verbose=FALSE)}
+\usage{\method{fit}{SmoothMultiarrayModel}(this, chromosome, force=FALSE, ..., verbose=FALSE)}
 
 \arguments{
   \item{data}{A \code{\link[base]{data.frame}} with columns \code{M} (log-ratio) and
@@ -33,14 +33,12 @@
 }
 
 \value{
- Returns the \code{\link[GLAD]{profileCGH}} object returned by \code{\link[GLAD]{glad}}.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  Internally \code{\link[GLAD]{glad}} is used.
-  For more information see \code{\link{SrmaModel}}.
+  For more information see \code{\link{SmoothMultiarrayModel}}.
 }
 \keyword{internal}
 \keyword{methods}
