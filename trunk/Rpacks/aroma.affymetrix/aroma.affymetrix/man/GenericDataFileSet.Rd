@@ -22,7 +22,7 @@
 \code{~~+--}\code{GenericDataFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{AffymetrixFileSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnagCfhSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{GdasAnnotationSet}, \link[aroma.affymetrix]{GenotypeCallSet}, \link[aroma.affymetrix]{GenotypeCallXdrSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SampleAnnotationSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{AffymetrixFileSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnagCfhSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SampleAnnotationSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
 
 public static class \bold{GenericDataFileSet}\cr
 extends \link[R.oo]{Object}\cr
