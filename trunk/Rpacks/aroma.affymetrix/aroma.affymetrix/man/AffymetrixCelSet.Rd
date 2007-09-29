@@ -55,7 +55,6 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{byName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:extractAffyBatch.AffymetrixCelSet]{extractAffyBatch}} \tab Extracts an in-memory AffyBatch object from the CEL set.\cr
  \tab \code{\link[aroma.affymetrix:extractMatrix.AffymetrixCelSet]{extractMatrix}} \tab Extract data as a matrix for a set of arrays.\cr
- \tab \code{\link[aroma.affymetrix:extractSnpFeatureSet.AffymetrixCelSet]{extractSnpFeatureSet}} \tab Extracts an in-memory SnpFeatureSet object from the CEL set.\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{fromName} \tab  -\cr

@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\code{QuantileNormalization}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{DChipQuantileNormalization}, \link[aroma.affymetrix]{OligoQuantileNormalization}\cr
+\link[aroma.affymetrix]{DChipQuantileNormalization}\cr
 
 public static class \bold{QuantileNormalization}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr

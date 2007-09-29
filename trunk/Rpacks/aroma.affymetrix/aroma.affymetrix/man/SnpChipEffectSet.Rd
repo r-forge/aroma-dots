@@ -51,7 +51,6 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:extractSnpQSet.SnpChipEffectSet]{extractSnpQSet}} \tab Extracts chip effects as a SnpQSet.\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getBaseline} \tab  -\cr
@@ -64,7 +63,7 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
 calculateBaseline, extractMatrix, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, readUnits, updateUnits
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, extractSnpFeatureSet, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf
+[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, clearCache, fromFiles
