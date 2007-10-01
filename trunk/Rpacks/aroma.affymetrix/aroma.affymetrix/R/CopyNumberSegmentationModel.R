@@ -31,7 +31,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, refTuple=NULL, tags="", genome="Human", ...) {
+setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, refTuple=NULL, tags="*", genome="Human", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -41,6 +41,8 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, refTuple
     if (!inherits(cesTuple, "ChipEffectSetTuple")) {
       cesTuple <- ChipEffectSetTuple(cesTuple);
     }
+
+    cesMatrix <- asMatrixOfFiles(cesTuple);
 
     # Assert that we are dealing with CnChipEffectSet:s
     for (ces in getListOfSets(cesTuple)) {
@@ -62,8 +64,8 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, refTuple
     }
 
     # Assert the same number of chip types in test and reference set
-    if (nbrOfChipTypes(refTuple) != nbrOfChipTypes(cesTuple)) {
-      throw("The number of reference sets does not match the number of test sets: ", nbrOfChipTypes(refTuple), " != ", nbrOfChipTypes(cesTuple));
+    if (!identical(getChipTypes(refTuple), getChipTypes(cesTuple))) {
+      throw("The reference tuple has a different set of chip types compared with the test tuple");
     }
 
     # Assert that we are dealing with CnChipEffectSet:s
@@ -121,6 +123,7 @@ setConstructorS3("CopyNumberSegmentationModel", function(cesTuple=NULL, refTuple
   this <- extend(ChromosomalModel(), "CopyNumberSegmentationModel",
     .cesTuple = cesTuple,
     .refTuple = refTuple,
+    .paired = (length(refTuple) > 0),
     .chromosomes = NULL,
     .tags = tags,
     .genome = genome
@@ -145,7 +148,8 @@ setMethodS3("as.character", "CopyNumberSegmentationModel", function(x, ...) {
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
   s <- c(s, paste("Chip type (virtual):", getChipType(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
-  nbrOfChipTypes <- nbrOfChipTypes(this);
+  chipTypes <- getChipTypes(this);
+  nbrOfChipTypes <- length(chipTypes);
   s <- c(s, sprintf("Number of chip types: %d", nbrOfChipTypes));
   s <- c(s, "Chip-effect set & reference file pairs:");
   cesList <- getListOfSets(getSetTuple(this));
@@ -153,7 +157,7 @@ setMethodS3("as.character", "CopyNumberSegmentationModel", function(x, ...) {
   if (!is.null(refList))
     refList <- getListOfSets(refList);
   for (kk in seq(along=cesList)) {
-    s <- c(s, sprintf("Chip type #%d of %d ('%s'):", kk, nbrOfChipTypes, names(cesList)[kk]));
+    s <- c(s, sprintf("Chip type #%d of %d ('%s'):", kk, nbrOfChipTypes, chipTypes[kk]));
     s <- c(s, "Chip-effect set:");
     ces <- cesList[[kk]];
     ref <- refList[[kk]];
@@ -445,17 +449,15 @@ setMethodS3("setAlias", "CopyNumberSegmentationModel", function(this, alias=NULL
 
 
 
+setMethodS3("isPaired", "CopyNumberSegmentationModel", function(this, ...) {
+  as.logical(this$.paired);
+})
+
 
 setMethodS3("getAsteriskTag", "CopyNumberSegmentationModel", function(this, ...) {
   tag <- NextMethod("getAsteriskTag", this, ...);
-
-  # Paired?
-  refTuple <- getRefSetTuple(this);
-  if (!is.null(refTuple)) {
-#    tag <- c(tag, "paired");
-#    tag <- paste(tag, collapse=",");
-  }
-
+  if (isPaired(this))
+    tag <- c(tag, "paired");
   tag;
 }, protected=TRUE)
 
@@ -464,39 +466,7 @@ setMethodS3("getAsteriskTag", "CopyNumberSegmentationModel", function(this, ...)
 
 
 
-
-
-
-setMethodS3("getListOfReferences", "CopyNumberSegmentationModel", function(this, ..., .calculateAvgs=TRUE) {
-  refList <- getRefSetTuple(this);
-  if (!is.null(refList)) {
-    refList <- getListOfSets(refList);
-  } else {
-    refList <- vector("list", nbrOfChipTypes(this));
-  }
-  refList;
-})
-
-
-setMethodS3("getReferenceName", "CopyNumberSegmentationModel", function(this, collapse="+", ...) {
-  # Get name of the reference files
-  refList <- getListOfReferences(this);
-
-  # Get names
-  names <- lapply(refList, FUN=function(file) {
-    if (is.null(file)) NULL else getName(file);
-  });
-  names <- unlist(names, use.names=FALSE);
-
-  # Merge names
-  names <- mergeByCommonTails(names, collapse=collapse);
-
-  names;
-}, private=TRUE)
-
-
-
-setMethodS3("getReferenceFiles", "CopyNumberSegmentationModel", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getReferenceSetTuple", "CopyNumberSegmentationModel", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -508,29 +478,64 @@ setMethodS3("getReferenceFiles", "CopyNumberSegmentationModel", function(this, .
   }
 
 
-  verbose && enter(verbose, "Retrieving reference data files");
 
-  cesList <- getListOfChipEffects(this);
-  refList <- getListOfReferences(this);
-  for (kk in seq(length=nbrOfChipTypes(this))) {
+  cesTuple <- getSetTuple(this);
+  cesList <- getListOfSets(cesTuple);
+
+  refTuple <- getRefSetTuple(this);
+  if (!force && inherits(refTuple, class(cesTuple)[1])) {
+    return(refTuple);
+  }
+
+  verbose && enter(verbose, "Building tuple of reference sets");
+
+  # Build a reference set tuple, if missing
+  refList <- vector("list", length(cesList));
+  for (kk in seq(along=cesList)) {
     ces <- cesList[[kk]];
-    ref <- refList[[kk]];
-    if (force || is.null(ref)) {
+    refSet <- refList[[kk]];
+
+    if (force || !inherits(refSet, "AffymetrixCelSet")) {
       if (force) {
         verbose && cat(verbose, "Forced recalculation requested.");
       } else {
         verbose && cat(verbose, "No reference available.");
       }
       verbose && enter(verbose, "Calculating average chip effects");
-      ref <- getAverageFile(ces, force=force, verbose=less(verbose));
+      refFile <- getAverageFile(ces, force=force, verbose=less(verbose));
+      refSet <- clone(ces);
+      clearCache(refSet);
+      refFiles <- rep(list(refFile), nbrOfFiles(ces));
+      refSet$files <- refFiles;
       verbose && exit(verbose);
-      refList[[kk]] <- ref;
+      refList[[kk]] <- refSet;
     }
   }
+
+  refTuple <- ChipEffectSetTuple(refList);
+
+  this$.referenceTuple <- refTuple;
+
   verbose && exit(verbose);
 
-  refList;
+  refTuple;
 })
+
+
+setMethodS3("getMatrixChipEffectFiles", "CopyNumberSegmentationModel", function(this, array, ..., verbose=FALSE) {
+  cesTuple <- getSetTuple(this);
+  refTuple <- getReferenceSetTuple(this);
+  ceList <- getTuple(cesTuple, array=array, ..., verbose=less(verbose,1));
+  rfList <- getTuple(refTuple, array=array, ..., verbose=less(verbose,1));
+  if (!identical(names(ceList), names(rfList)))
+    throw("Internal error. Reference files of non-matching chip types.");
+  files <- c(ceList, rfList);
+  dim(files) <- c(length(ceList), 2);
+  dimnames(files) <- list(names(ceList), c("test", "reference"));
+  files;  
+}, protected=TRUE);
+
+
 
 
 
@@ -554,6 +559,9 @@ setMethodS3("getRawCnData", "CopyNumberSegmentationModel", function(this, ceList
   if (!inherits(refList, "list")) {
     throw("Argument 'refList' is not a list: ", class(refList)[1]);
   } else {
+    if (length(refList) != length(ceList)) {
+      throw("Argument 'refList' is of a different length than 'cesList': ", length(refList), " != ", length(ceList));
+    }
     for (kk in seq(along=refList)) {
       if (!inherits(refList[[kk]], "ChipEffectFile")) {
         throw("Argument 'refList' contains a non-ChipEffectFile: ", 
@@ -589,6 +597,9 @@ setMethodS3("getRawCnData", "CopyNumberSegmentationModel", function(this, ceList
     ce <- ceList[[kk]];
     if (!is.null(ce)) {
       ref <- refList[[kk]];
+      # AD HOC. /HB 2007-09-29
+      if (!inherits(ref, "AffymetrixCelFile"))
+        ref <- NULL;
       df0 <- getXAM(ce, other=ref, chromosome=chromosome, units=units, verbose=less(verbose));
       df0 <- df0[,c("x", "M")];
       verbose && cat(verbose, "Number of units: ", nrow(df0));
@@ -777,37 +788,17 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
   mkdirs(path);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Retrieving reference chip effects
+  # Retrieving tuple of reference chip effects
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Note: Do *not* pass done 'force' to getReferenceFiles(), because then
   # it will calculate the average regardless of reference. /HB 2007-03-24
-  refList <- getReferenceFiles(this, verbose=verbose);
-  verbose && cat(verbose, "Using references:");
-  verbose && print(verbose, refList);
+  refTuple <- getReferenceSetTuple(this, verbose=verbose);
+  verbose && cat(verbose, "Using reference tuple:");
+  verbose && print(verbose, refTuple);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get reference annotations
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get reference tags across chip types
-  tags <- lapply(refList, getTags);
-  # HB 2007-02-19 To fix: Should the name and the tags of average files
-  # be replaced?!? We do not get the same names if we specify the average
-  # files explicitly or indirectly.
-  #  tags <- getCommonListElements(tags);
-  tags <- unlist(tags, use.names=FALSE);
-  tags <- setdiff(tags, "chipEffects");
-  refTags <- tags;
-#  verbose && cat(verbose, "Reference tags: ", paste(refTags, collapse=","));
-
-  # Add combined reference name
-  refName <- getReferenceName(this);
-  refTags <- c(refName, refTags);
-  verbose && cat(verbose, "Reference tags: ", paste(refTags, collapse=","));
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Chromosome by chromosome
+  # Array by array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   res <- list();
   arrayNames <- getNames(this)[arrays];
@@ -816,16 +807,14 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
     array <- arrays[aa];
     arrayName <- arrayNames[aa];
 
-    ceList <- getChipEffectFiles(this, array=array);
-    rfList <- refList;
-##    rfList <- lapply(refList, FUN=function(ces) { 
-##      if (is.null(ces)) {
-##        NULL;
-##      } else {
-##        getFile(ces, array);
-##      }
-##    });
+    files <- getMatrixChipEffectFiles(this, array=array, 
+                                                    verbose=less(verbose,5));
+    ceList <- files[,"test"];
+    rfList <- files[,"reference"];
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Get tags for test sample
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get chip-effect tags *common* across chip types
     tags <- lapply(ceList, FUN=function(ce) {
       if (is.null(ce)) NULL else getTags(ce);
@@ -833,12 +822,39 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
     tags <- getCommonListElements(tags);
     tags <- unlist(tags, use.names=FALSE);
     tags <- setdiff(tags, "chipEffects");
+    tags <- locallyUnique(tags);
     ceTags <- tags;
     verbose && cat(verbose, "Chip-effect tags: ", paste(ceTags, collapse=","));
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Get tags for reference sample
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Get chip-effect tags *common* across chip types
+    tags <- lapply(rfList, FUN=function(rf) {
+      if (is.null(rf)) NULL else getTags(rf);
+    });
+    tags <- getCommonListElements(tags);
+    tags <- unlist(tags, use.names=FALSE);
+    tags <- setdiff(tags, "chipEffects");
+    tags <- locallyUnique(tags);
+
+    # HB 2007-02-19 To fix: Should the name and the tags of average files
+    # be replaced?!? We do not get the same names if we specify the average
+    # files explicitly or indirectly.
+
+    # Add combined reference name
+    names <- sapply(rfList, FUN=getName);
+    names <- mergeByCommonTails(names,"+");
+    rfTags <- c(names, tags);
+    rfTags <- digest2(rfTags);
+    verbose && cat(verbose, "Reference tags: ", paste(rfTags, collapse=","));
+
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Chromosome by chromosome
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     res[[arrayName]] <- list();
     for (chr in chromosomes) {
-##      chrIdx <- match(chr, c(1:22, "X", "Y"));
       verbose && enter(verbose, 
                           sprintf("Array #%d ('%s') of %d on chromosome %s", 
                                            aa, arrayName, nbrOfArrays, chr));
@@ -848,7 +864,7 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Add tags chrNN,<reference tags>
       tags <- c(ceTags, sprintf("chr%02d", chr));
-      tags <- c(tags, refTags);
+      tags <- c(tags, rfTags);
       fullname <- paste(c(arrayName, tags), collapse=",");
       filename <- sprintf("%s.xdr", fullname);
       pathname <- filePath(path, filename);
@@ -872,7 +888,6 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
         # Get (x, M, stddev, chiptype, unit) data from all chip types
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         tRead <- processTime();
-print(list(ceList, rfList));
         data <- getRawCnData(this, ceList=ceList, refList=rfList, 
                      chromosome=chr, ..., force=force, verbose=less(verbose));
         timers$read <- timers$read + (processTime() - tRead);
@@ -1274,10 +1289,6 @@ setMethodS3("calculateChromosomeStatistics", "CopyNumberSegmentationModel", func
   nbrOfChromosomes <- length(chromosomes);
   verbose && printf(verbose, "Chromosomes (%d): %s", nbrOfChromosomes, paste(chromosomes, collapse=", "));
 
-  refList <- getReferenceFiles(this, verbose=verbose);
-  verbose && cat(verbose, "Using references:");
-  verbose && print(verbose, refList);
-
   res <- list();
   arrayNames <- getNames(this)[arrays];
   nbrOfArrays <- length(arrayNames);
@@ -1286,18 +1297,22 @@ setMethodS3("calculateChromosomeStatistics", "CopyNumberSegmentationModel", func
     array <- arrays[aa];
     arrayName <- arrayNames[aa];
 
-    ceList <- getChipEffectFiles(this, array=array);
+    files <- getMatrixChipEffectFiles(this, array=array, 
+                                                  verbose=less(verbose,5));
+    ceList <- files[,"test"];
+    rfList <- files[,"reference"];
 
     res[[arrayName]] <- list();
-    for (chr in chromosomes) {
+    for (chromosome in chromosomes) {
       verbose && enter(verbose, 
-                          sprintf("Array #%d ('%s') of %d on chromosome %s", 
-                                           aa, arrayName, nbrOfArrays, chr));
+                         sprintf("Array #%d ('%s') of %d on chromosome %s", 
+                                  aa, arrayName, nbrOfArrays, chromosome));
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Get (x, M, stddev, chiptype, unit) data from all chip types
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      data <- getRawCnData(this, ceList=ceList, refList=refList, chromosome=chr, ..., verbose=less(verbose));
+      data <- getRawCnData(this, ceList=ceList, refList=rfList, 
+                        chromosome=chromosome, ..., verbose=less(verbose));
       M <- data[,"M"];
       rm(data);
 
@@ -1318,9 +1333,9 @@ setMethodS3("calculateChromosomeStatistics", "CopyNumberSegmentationModel", func
       gc <- gc();
       verbose && print(verbose, gc);
 
-      res[[arrayName]][[chr]] <- fit;
+      res[[arrayName]][[chromosome]] <- fit;
       verbose && exit(verbose);
-    } # for (chr in ...)
+    } # for (chromosome in ...)
   } # for (aa in ...)
   verbose && exit(verbose);
 
@@ -1330,6 +1345,8 @@ setMethodS3("calculateChromosomeStatistics", "CopyNumberSegmentationModel", func
 
 ##############################################################################
 # HISTORY:
+# 2007-09-29
+# o Now argument 'refTuple' works again.
 # 2007-09-25
 # o Now CopyNumberSegmentationModel extends ChromosomalModel.
 # 2007-09-16

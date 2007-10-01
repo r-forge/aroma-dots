@@ -32,7 +32,7 @@ extends \link[R.oo]{Object}\cr
   This \emph{abstract} class represents a chromosomal model.
  }
 
- \usage{ChromosomalModel(cesTuple=NULL, tags="", genome="Human", ...)}
+ \usage{ChromosomalModel(cesTuple=NULL, tags="*", genome="Human", ...)}
 
  \arguments{
    \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}

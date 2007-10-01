@@ -1,4 +1,4 @@
-setMethodS3("fitWRMA", "matrix", function(y, w, psiCode=0, psiK=1.345, .log2=TRUE) {
+setMethodS3("fitWRMA", "matrix", function(y, w, psiCode=0, psiK=1.345, .log2=TRUE, ...) {
   # Transform 'y' to log2 scale?
   if (.log2)
     y <- log2(y);

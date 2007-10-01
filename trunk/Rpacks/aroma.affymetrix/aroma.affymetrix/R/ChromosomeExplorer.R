@@ -364,7 +364,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 
 
 
-setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename="index.html", ...) {
+setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename="ChromosomeExplorer.html", ...) {
   NextMethod("addIndexFile", this, filename=filename, ...);
 }, protected=TRUE)
 
@@ -375,7 +375,7 @@ setMethodS3("setup", "ChromosomeExplorer", function(this, ..., force=FALSE) {
   # Setup includes/?
   addIncludes(this, ..., force=force);
 
-  # Setup index.html
+  # Setup main HTML file
   addIndexFile(this, ..., force=force);
 
   # Setup samples.js?
@@ -508,13 +508,18 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
 })
 
 
-setMethodS3("display", "ChromosomeExplorer", function(this, filename="index.html", ...) {
+setMethodS3("display", "ChromosomeExplorer", function(this, filename="ChromosomeExplorer.html", ...) {
   NextMethod("display", this, filename=filename, ...);
 })
 
 
 ##############################################################################
 # HISTORY:
+# 2007-09-30
+# o Now the main HTML file for ChromosomeExplorer is ChromosomeExplorer.html,
+#   which is in analogue to how the ArrayExplorer works.  This HTML now
+#   loads to a different Javascript file with a different name so that already
+#   existing index.html ChromosomeExplorer files will still work.
 # 2007-09-04
 # o Now ChromosomeExplorer recognizes CopyNumberSegmentationModel:s.
 # 2007-05-08

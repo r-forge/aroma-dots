@@ -1,0 +1,16 @@
+library(aroma.affymetrix)
+log <- Verbose(threshold=-4, timestamp=TRUE);
+
+dataSetName <- "FusionSDK_Test3";
+chipType <- "Test3";
+
+cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+print(cs);
+
+cdf <- getCdf(cs);
+print(cdf);
+
+ae <- ArrayExplorer(cs);
+setColorMaps(ae, "log2,yellow");
+if (interactive())
+  process(ae, verbose=log);

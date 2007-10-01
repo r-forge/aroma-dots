@@ -34,7 +34,7 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
   This \emph{abstract} class represents a copy-number segmentation model.
  }
 
- \usage{CopyNumberSegmentationModel(cesTuple=NULL, refTuple=NULL, tags="", genome="Human", ...)}
+ \usage{CopyNumberSegmentationModel(cesTuple=NULL, refTuple=NULL, tags="*", genome="Human", ...)}
 
  \arguments{
    \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
@@ -57,12 +57,12 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
  \tab \code{getChipTypes} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
  \tab \code{getListOfChipEffectSets} \tab  -\cr
- \tab \code{getListOfReferences} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getNames} \tab  -\cr
- \tab \code{getReferenceFiles} \tab  -\cr
+ \tab \code{getReferenceSetTuple} \tab  -\cr
  \tab \code{getRegions} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getTableOfArrays.CopyNumberSegmentationModel]{getTableOfArrays}} \tab Gets a table of arrays.\cr
+ \tab \code{isPaired} \tab  -\cr
  \tab \code{migrateTool} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.CopyNumberSegmentationModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.CopyNumberSegmentationModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
