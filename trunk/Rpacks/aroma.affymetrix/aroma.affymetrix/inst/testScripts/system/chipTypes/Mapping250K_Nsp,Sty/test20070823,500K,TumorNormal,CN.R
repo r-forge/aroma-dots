@@ -1,11 +1,9 @@
-library(aroma.affymetrix)
+library(aroma.affymetrix);
 log <- Arguments$getVerbose(-4);
 timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
 
 dataSetName <- "Affymetrix_2006-TumorNormal";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
-#chipTypes <- chipTypes[2];
 
 pairs <- matrix(c(
   "CRL-2325D", "CRL-2324D",  
@@ -27,6 +25,7 @@ csRawList <- list();
 for (chipType in chipTypes) {
   cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
+  stopifnot(all(getNames(cs) %in% pairs));
   csRawList[[chipType]] <- cs;
 }
 
@@ -46,7 +45,6 @@ for (chipType in names(csList)) {
 }
 
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level modelling test (for CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -55,7 +53,7 @@ cesCnList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
   plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, 
-                                              tags=c("+300", "*", "w"));
+                                             tags=c("+300", "*", "w"));
   plm$shift <- +300;
   plm$treatNAsAs <- "weighted";
   print(plm);
@@ -75,7 +73,6 @@ cesFlnList <- list();
 for (chipType in names(csList)) {
   ces <- cesCnList[[chipType]];
   fln <- FragmentLengthNormalization(ces);
-#  excludeChrXFromFit(fln);  # TO DO
   print(fln);
   cesFln <- process(fln, verbose=verbose);
   print(cesFln);
@@ -85,7 +82,7 @@ for (chipType in names(csList)) {
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Glad model test
+# Setup a paired CBS model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Split data set in (tumor, normal) pairs
 sets <- list(tumor=list(), normal=list());
@@ -96,21 +93,15 @@ for (chipType in names(cesFlnList)) {
     sets[[type]][[chipType]] <- extract(ces, idxs);
   }
 }
-
 cns <- CbsModel(sets$tumor, sets$normal);
 print(cns);
 
-fit(cns, arrays=1, chromosomes=19, verbose=log);
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# ChromosomeExplorer test
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Link the ChromosomeExplorer to the segmentation model
 ce <- ChromosomeExplorer(cns);
 print(ce);
-process(ce, chromosomes=c(19, 22:23), maxNAFraction=1/5, verbose=log);
 
-normals <- c("CRL-2325D", "CRL-5957D", "CCL-256.1D", "CRL-2319D",
-       "CRL-2362D", "CRL-2337D", "CRL-2339D", "CRL-2341D", "CRL-2346D");
-tumors <- setdiff(getNames(ce), normals);
-stopifnot(length(normals) == length(tumors));
-setArrays(ce, c(tumors, normals));
+# Fit the model for a few chromosomes
+process(ce, chromosomes=c(1, 19, 22), verbose=log);
+
+# The X chromosome is very noisy and generates quite a few missing values
+process(ce, chromosomes=23, maxNAFraction=1/5, verbose=log);
