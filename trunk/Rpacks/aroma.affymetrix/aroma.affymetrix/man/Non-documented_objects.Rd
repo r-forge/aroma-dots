@@ -74,7 +74,6 @@
 \alias{as.character.AffymetrixCelSetReporter}
 \alias{as.character.AffymetrixCelSetTuple}
 \alias{as.character.AffymetrixFileSetReporter}
-\alias{as.character.AffymetrixPowerTools}
 \alias{as.character.AffymetrixProbeTabFile}
 \alias{as.character.AromaTabularBinaryFile}
 \alias{as.character.ArrayExplorer}
@@ -693,8 +692,6 @@
 \alias{getNames.ChromosomalModel}
 \alias{getNames.ChromosomeExplorer}
 \alias{getNames.CopyNumberSegmentationModel}
-\alias{getOligoToCelMap}
-\alias{getOligoToCelMap.AffymetrixCdfFile}
 \alias{getOutputDataSet}
 \alias{getOutputDataSet.ChipEffectTransform}
 \alias{getOutputDataSet.FragmentLengthNormalization}
@@ -764,8 +761,6 @@
 \alias{getPhysicalPositions}
 \alias{getPhysicalPositions.RawCopyNumbers}
 \alias{getPlasqTypes}
-\alias{getPlatformDesignObject}
-\alias{getPlatformDesignObject.AffymetrixCdfFile}
 \alias{getPlm}
 \alias{getPlm.FirmaModel}
 \alias{getPlm.QualityAssessmentModel}
@@ -794,8 +789,6 @@
 \alias{getRectangle.AffymetrixCelFile}
 \alias{getReferenceFiles}
 \alias{getReferenceFiles.CopyNumberSegmentationModel}
-\alias{getReferenceName}
-\alias{getReferenceName.CopyNumberSegmentationModel}
 \alias{getRefSetTuple}
 \alias{getRefSetTuple.CopyNumberSegmentationModel}
 \alias{getRegions}
@@ -914,8 +907,6 @@
 \alias{identifyCells}
 \alias{identifyCells.AffymetrixCdfFile}
 \alias{image270}
-\alias{importFeatureSet}
-\alias{importFeatureSet.AffymetrixCelFile}
 \alias{importFrom}
 \alias{importFrom.AromaUnitTabularBinaryFile}
 \alias{importFromAffymetrixNetAffxCsvFile}
@@ -1023,8 +1014,6 @@
 \alias{plotBasepair}
 \alias{plotBasepair.AllelicCrosstalkCalibration}
 \alias{plotImage}
-\alias{plotMvsPosition}
-\alias{plotMvsPosition.ProbeLevelModel}
 \alias{plotMvsX}
 \alias{plotNuse}
 \alias{plotNuse.QualityAssessmentModel}
@@ -1287,8 +1276,6 @@
 \alias{write}
 \alias{writeChecksum}
 \alias{writeChecksum.GenericDataFile}
-\alias{writeChrXFile}
-\alias{writeChrXFile.AffymetrixPowerTools}
 \alias{writeGraphs}
 \alias{writeGraphs.ChromosomeExplorer}
 \alias{writeImage}
@@ -1307,6 +1294,14 @@
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
 \alias{yellow.colors}
+\alias{asMatrixOfFiles}
+\alias{asMatrixOfFiles.AffymetrixCelSetTuple}
+\alias{getMatrixChipEffectFiles}
+\alias{getMatrixChipEffectFiles.CopyNumberSegmentationModel}
+\alias{getReferenceSetTuple}
+\alias{getReferenceSetTuple.CopyNumberSegmentationModel}
+\alias{isPaired}
+\alias{isPaired.CopyNumberSegmentationModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

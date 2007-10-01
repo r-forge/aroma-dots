@@ -1,16 +1,47 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.7.2 [2007-09-29xx]
+Version: 0.7.2 [2007-09-30]
+o Now the main HTML file for ChromosomeExplorer is ChromosomeExplorer.html,
+  which is in analogue to how the ArrayExplorer works.  This HTML now
+  loads to a different Javascript file with a different name so that 
+  already existing index.html ChromosomeExplorer files will still work.
+o By default, all CopyNumberSegmentationModel plots do now display
+  non-robust and robust estimates of the standard deviation of the 
+  raw CNs across the complete genome.  Note that this is not done 
+  segment by segment, so if there are alot of aberrations then these
+  estimates will be biased.
 o BUG FIX: Forgot to update ExonRmaPlm to handle compatibility issues
   with affyPLM/preprocessCore. See below.
+o BUG FIX: The CopyNumberSegmentationModel:s did not support paired
+  copy-number analysis by specifying references files explictly.  
+  To do this, pass an additional list of CnChipEffectSet:s via 
+  constructor argument 'refTuple'.  This list my contain the same
+  chip types, and each chip type must contain exactly the same number
+  of files.  Note, the hashcode-generated hexadecimal tag added to
+  the save CopyNumberSegmentationModel results, but also as part of
+  the ChromosomeExplorer image files, will be different in this new
+  version, meaning the package will not detect already existing 
+  segmentation estimates.  You can always one run chromosome, check
+  the new hashcode, and rename existing files to have the same one.
+o BUG FIX: Before duplicated tags were removed using unique(), but that
+  would also remove duplicated tags that were not "neighbors", e.g.
+  the 2nd "-X" tags in "ACC,-X,RMA,A+B,FLN,-X" was removed.  Now
+  only duplicated neighboring tags are removed, e.g. "-X,-X,-X".
 o ROBUSTNESS: Now getAverageFile() of AffymetrixCelSet detects if an 
   average file has been deleted between calls and recalculates it,
   if missing.
+o BETA: Did some "behind the scenes" restructuring of the 
+  CopyNumberSegmentationModel by adding an even simpler superclass
+  ChromosomalModel, allowing for simpler types of modelling along
+  the chromosomes.
 o CLEAN UP: Moved several classes to aroma.affymetrix.extras that
   are haven't been updated in a long time and are likely to be broken.
   This was done in order make this package easier to maintain. If this
   broke something for you, please contact me.
+o Package pass R CMD check on R v2.6.0 beta and all of the redundancy
+  tests.  The redundancy tests are now available under testScripts/
+  in the package directory.
 
 
 Version: 0.7.1 [2007-09-18]

@@ -29,7 +29,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("ChromosomalModel", function(cesTuple=NULL, tags="", genome="Human", ...) {
+setConstructorS3("ChromosomalModel", function(cesTuple=NULL, tags="*", genome="Human", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -465,8 +465,11 @@ setMethodS3("getTags", "ChromosomalModel", function(this, collapse=NULL, ...) {
   tags <- c(tags, this$.tags);
 
   # Update default tags
-  tags[tags == "*"] <- paste(getAsteriskTag(this), collapse=",");
-
+  asteriskTags <- paste(getAsteriskTag(this)[-1], collapse=",");
+  if (length(asteriskTags) == 0)
+    asteriskTags <- "";
+  tags[tags == "*"] <- asteriskTags;
+  tags <- tags[nchar(tags) > 0];
   tags <- unlist(strsplit(tags, split=","), use.names=TRUE);
 
   # Keep non-empty tags
@@ -676,7 +679,7 @@ setMethodS3("fit", "ChromosomalModel", abstract=TRUE);
 
 
 setMethodS3("getSetTag", "ChromosomalModel", function(this, ...) {
-  tolower(getAsteriskTag(this));
+  tolower(getAsteriskTag(this)[1]);
 }, private=TRUE)
 
 

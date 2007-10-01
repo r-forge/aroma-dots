@@ -23,7 +23,7 @@
   as.character.AffymetrixCelSetReporter
   as.character.AffymetrixCelSetTuple
   as.character.AffymetrixFileSetReporter
-  as.character.AffymetrixPowerTools as.character.AffymetrixProbeTabFile
+  as.character.AffymetrixProbeTabFile
   as.character.AromaTabularBinaryFile as.character.ArrayExplorer
   as.character.ChipEffectFile as.character.ChipEffectSet
   as.character.ChromosomalModel as.character.ChromosomeExplorer
@@ -357,8 +357,8 @@
   getRawCnData.CopyNumberSegmentationModel getReadArguments
   getReadArguments.GenericTabularFile getRectangle
   getRectangle.AffymetrixCelFile getReferenceFiles
-  getReferenceFiles.CopyNumberSegmentationModel getReferenceName
-  getReferenceName.CopyNumberSegmentationModel getRefSetTuple
+  getReferenceFiles.CopyNumberSegmentationModel 
+  getRefSetTuple
   getRefSetTuple.CopyNumberSegmentationModel getRegions
   getRegions.CopyNumberSegmentationModel getRegions.profileCGH
   getReportPath getReportPath.ChromosomalModel getReportSet
@@ -570,8 +570,8 @@
   verify.DChipGenomeInformation verify.DChipSnpInformation
   verify.GenericTabularFile verify.UflSnpInformation
   verify.UgpGenomeInformation whatDataType whatDataType.default write
-  writeChecksum writeChecksum.GenericDataFile writeChrXFile
-  writeChrXFile.AffymetrixPowerTools writeGraphs
+  writeChecksum writeChecksum.GenericDataFile 
+  writeGraphs
   writeGraphs.ChromosomeExplorer writeImage writeImage.ResidualFile
   writeImage.WeightsFile writeImageCombined
   writeImageCombined.TransformReport writeImages
@@ -580,3 +580,8 @@
   writeRegions.CopyNumberSegmentationModel writeRegions.GladModel
   writeRegions.profileCGH writeWig writeWig.CnChipEffectSet
   yellow.colors
+  asMatrixOfFiles asMatrixOfFiles.AffymetrixCelSetTuple
+  getMatrixChipEffectFiles
+  getMatrixChipEffectFiles.CopyNumberSegmentationModel
+  getReferenceSetTuple getReferenceSetTuple.CopyNumberSegmentationModel
+ isPaired isPaired.CopyNumberSegmentationModel

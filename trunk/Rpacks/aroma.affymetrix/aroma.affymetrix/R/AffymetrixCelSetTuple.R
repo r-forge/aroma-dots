@@ -292,6 +292,7 @@ setMethodS3("getTags", "AffymetrixCelSetTuple", function(this, collapse=NULL, ..
 
   # Keep common tags
   tags <- getCommonListElements(tags);
+  tags <- tags[[1]];
   tags <- unlist(tags, use.names=FALSE);
 
   # Add optional tuple tags
@@ -326,7 +327,11 @@ setMethodS3("getFullName", "AffymetrixCelSetTuple", function(this, ...) {
 
 
 setMethodS3("getListOfSets", "AffymetrixCelSetTuple", function(this, ...) {
-  this$.csList;
+  sets <- this$.csList;
+  if (is.null(names(sets))) {
+    names(sets) <- sapply(sets, FUN=function(set) getChipType(getCdf(set), fullname=FALSE));
+  }
+  sets;
 })
 
 
@@ -364,7 +369,7 @@ setMethodS3("getChipTypes", "AffymetrixCelSetTuple", function(this, merge=FALSE,
   chipTypes <- sapply(cdfList, FUN=getChipType, fullname=FALSE);
 
   # Invariant for order
-  chipTypes <- sort(chipTypes);
+#  chipTypes <- sort(chipTypes);
 
   # Merge to a single string?
   if (merge)
@@ -453,18 +458,29 @@ setMethodS3("getTableOfArrays", "AffymetrixCelSetTuple", function(this, ...) {
   names <- lapply(csList, FUN=getNames);
   names(names) <- chipTypes;
 
-  # Get all unique sample names
+  # Get all sample names
   allNames <- unlist(names, use.names=FALSE);
+
+  # Get all unique names
   allNames <- unique(allNames);
+  lens <- sapply(names, FUN=length);
+  nbrOfArrays <- max(lens, length(allNames));
+  allNames <- rep(allNames, length.out=nbrOfArrays);
 
   # Create table of arrays
   nbrOfArrays <- length(allNames);
   X <- matrix(NA, nrow=nbrOfArrays, ncol=nbrOfChipTypes);
   dimnames(X) <- list(allNames, chipTypes);
   for (chipType in chipTypes) {
-    names0 <- names[[chipType]];
-    idx <- match(names0, allNames);
-    X[idx,chipType] <- seq(along=idx);
+    namesCT <- names[[chipType]];
+    for (rr in seq(length=nrow(X))) {
+      name <- rownames(X)[rr];
+      idx <- match(name, namesCT);
+      if (!is.na(idx)) {
+        X[idx,chipType] <- rr;
+        namesCT[idx] <- NA;
+      }
+    }
   }
 
   X;
@@ -491,6 +507,7 @@ setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL,
     });
     tags <- base::lapply(tags, setdiff, exclude);
     tags <- getCommonListElements(tags);
+    tags <- tags[[1]];
     tags <- unlist(tags, use.names=FALSE);
     tags <- locallyUnique(tags);
     
@@ -702,8 +719,47 @@ setMethodS3("getTuple", "AffymetrixCelSetTuple", function(this, array, ...) {
 
 
 
+setMethodS3("asMatrixOfFiles", "AffymetrixCelSetTuple", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Extracting matrix of files");
+
+  csList <- getListOfSets(this);
+
+  # Identify the array indices for each chip type
+  arrayTable <- getTableOfArrays(this);
+  verbose && print(verbose, arrayTable);
+
+  arrayOfFiles <- rep(NA, length(arrayTable));
+  arrayOfFiles <- as.list(arrayOfFiles);
+  dim(arrayOfFiles) <- dim(arrayTable);
+  dimnames(arrayOfFiles) <- dimnames(arrayTable);
+
+  for (cc in seq(length=ncol(arrayOfFiles))) {
+    files <- as.list(csList[[cc]]);
+    files <- files[arrayTable[,cc]];
+    arrayOfFiles[,cc] <- files;
+  }
+  rm(files, arrayTable, csList);
+
+  verbose && exit(verbose);
+
+  arrayOfFiles;
+}, protected=TRUE)
+
+
 ##############################################################################
 # HISTORY:
+# 2007-03-29
+# o Added asMatrixOfFiles().
 # 2007-03-20
 # o Now getArrays() returns a named list where the names are the result from
 #   getFullNames().

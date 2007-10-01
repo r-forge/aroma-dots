@@ -55,7 +55,7 @@ extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
 
 
  \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
-as.character, calculateChromosomeStatistics, clearCache, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipType, getChipTypes, getFullNames, getListOfChipEffectSets, getListOfReferences, getName, getNames, getPositionChipTypeUnit, getRawCnData, getReferenceFiles, getRefSetTuple, getRegions, getSetTuple, getTableOfArrays, migrateTool, nbrOfArrays, nbrOfChipTypes, newPlot, plot, setAlias, writeRegions
+as.character, calculateChromosomeStatistics, clearCache, fit, fitOne, getAlias, getArrays, getAsteriskTag, getChipType, getChipTypes, getFullNames, getListOfChipEffectSets, getMatrixChipEffectFiles, getName, getNames, getPositionChipTypeUnit, getRawCnData, getReferenceSetTuple, getRefSetTuple, getRegions, getSetTuple, getTableOfArrays, isPaired, migrateTool, nbrOfArrays, nbrOfChipTypes, newPlot, plot, setAlias, writeRegions
 
  \bold{Methods inherited from ChromosomalModel}:\cr
 as.character, clearCache, fit, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffectSets, getListOfGenomeInformations, getName, getNames, getParentPath, getPath, getPcuTheta, getPositionChipTypeUnit, getReportPath, getRootPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setGenome
