@@ -7,6 +7,19 @@ dataSetName <- "Affymetrix_2006-TumorNormal";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
 #chipTypes <- chipTypes[2];
 
+pairs <- matrix(c(
+  "CRL-2325D", "CRL-2324D",  
+  "CRL-5957D", "CRL-5868D",  
+  "CCL-256.1D", "CCL-256D",  
+  "CRL-2319D", "CRL-2320D",  
+  "CRL-2362D", "CRL-2321D",  
+  "CRL-2337D", "CRL-2336D",  
+  "CRL-2339D", "CRL-2338D",  
+  "CRL-2341D", "CRL-2340D",  
+  "CRL-2346D", "CRL-2314D"
+), ncol=2, byrow=TRUE);
+colnames(pairs) <- c("normal", "tumor");
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -17,18 +30,8 @@ for (chipType in chipTypes) {
   csRawList[[chipType]] <- cs;
 }
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Spatial plots
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-ae <- ArrayExplorer(csRawList);
-setColorMaps(ae, "log2,yellow");
-if (interactive())
-  process(ae, verbose=log);
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Allelic cross-talk calibration tests
+# Allelic cross-talk calibration
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 csList <- csRawList;
 csAccList <- list();
@@ -54,7 +57,6 @@ for (chipType in names(csList)) {
   plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, 
                                               tags=c("+300", "*", "w"));
   plm$shift <- +300;
-  plm$treatNAsAs <- "NA";
   plm$treatNAsAs <- "weighted";
   print(plm);
   fit(plm, verbose=log);
@@ -85,16 +87,25 @@ for (chipType in names(csList)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Glad model test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-glad <- GladModel(cesFlnList);
-print(glad);
+# Split data set in (tumor, normal) pairs
+sets <- list(tumor=list(), normal=list());
+for (chipType in names(cesFlnList)) {
+  ces <- cesFlnList[[chipType]];
+  for (type in colnames(pairs)) {
+    idxs <- match(pairs[,type], getNames(ces));
+    sets[[type]][[chipType]] <- extract(ces, idxs);
+  }
+}
 
-fit(glad, arrays=1, chromosomes=19, verbose=log);
+cns <- CbsModel(sets$tumor, sets$normal);
+print(cns);
 
+fit(cns, arrays=1, chromosomes=19, verbose=log);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ChromosomeExplorer test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-ce <- ChromosomeExplorer(glad);
+ce <- ChromosomeExplorer(cns);
 print(ce);
 process(ce, chromosomes=19:23, verbose=log);
 
