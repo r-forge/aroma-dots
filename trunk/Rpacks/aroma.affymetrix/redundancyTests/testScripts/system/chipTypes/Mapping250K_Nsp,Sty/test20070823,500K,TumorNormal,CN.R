@@ -107,7 +107,7 @@ fit(cns, arrays=1, chromosomes=19, verbose=log);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ce <- ChromosomeExplorer(cns);
 print(ce);
-process(ce, chromosomes=19:23, verbose=log);
+process(ce, chromosomes=c(19, 22:23), verbose=log);
 
 normals <- c("CRL-2325D", "CRL-5957D", "CCL-256.1D", "CRL-2319D",
        "CRL-2362D", "CRL-2337D", "CRL-2339D", "CRL-2341D", "CRL-2346D");
