@@ -1,6 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.7.3 [2007-10-05xx]
+o BETA: Added low-level methods fitWHRCModel() and fitWHLAPLM().
+
+
 Version: 0.7.2 [2007-09-30]
 o Now the main HTML file for ChromosomeExplorer is ChromosomeExplorer.html,
   which is in analogue to how the ArrayExplorer works.  This HTML now
