@@ -71,7 +71,7 @@ if (!exists("sets", mode="list")) {
      "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
 #     "dChip,QN,MBEI,A+B,xport" = list(col=niceCols[1], name="dChip,QN"),
      "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
-     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
+     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4")
     );
   } else if (case == "MTV") {
     sets <- list(
@@ -79,7 +79,7 @@ if (!exists("sets", mode="list")) {
 #     "ACC,+250,RMA,A+B,FLN,-X" = list(col=niceCols[4], name="CRMA,+250"),
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[5], name="CRMA"),
      "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
-     "ACC,+300,RMA,A+B,FLN,-X,V" = list(col=niceCols[7], name="CRMA,V"),
+     "ACC,+300,RMA,A+B,FLN,-X,V" = list(col=niceCols[7], name="CRMA,V")
     );
   } else if (case == "DCQN") {
     sets <- list(
@@ -87,7 +87,7 @@ if (!exists("sets", mode="list")) {
      "ACC,QN,pm,+300,RMA,A+B,FLN,-X" = list(col=niceCols[3], name="CRMA,QN"),
      "ACC,DCQN,pm,+300,RMA,A+B,FLN,-X" = list(col=niceCols[4], name="CRMA,DCQN"),
      "ACC,DCQN,pm,-X,+300,RMA,A+B,FLN,-X" = list(col=niceCols[7], name="CRMA,DCQN,-X"),
-     "ACC,DCQN,pm,-X,robust,+300,RMA,A+B,FLN,-X" = list(col=niceCols[8], name="CRMA,DCQN,-X,robust"),
+     "ACC,DCQN,pm,-X,robust,+300,RMA,A+B,FLN,-X" = list(col=niceCols[8], name="CRMA,DCQN,-X,robust")
     );
 
   } else if (case == "optimalMT") {
@@ -96,7 +96,14 @@ if (!exists("sets", mode="list")) {
      "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
      "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[5], name="CRMA"),
-     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
+     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T")
+    );
+  } else if (case == "optimalT") {
+    sets <- list(
+     "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
+     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
+     "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
+     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T")
     );
   } else if (case == "optimalT") {
     sets <- list(
@@ -104,19 +111,12 @@ if (!exists("sets", mode="list")) {
      "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
      "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
      "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
-    );
-  } else if (case == "optimalT") {
-    sets <- list(
-     "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
-     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
-     "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
-     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
-     "ACC,+300,RMA,A+B,FLN,-X,V" = list(col=niceCols[7], name="CRMA,V"),
+     "ACC,+300,RMA,A+B,FLN,-X,V" = list(col=niceCols[7], name="CRMA,V")
     );
   } else if (case == "MvT") {
     sets <- list(
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[2], name="CRMA"),
-     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
+     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T")
     );
   } else if (case == "FLN") {
     sets <- list(
@@ -127,14 +127,14 @@ if (!exists("sets", mode="list")) {
     sets <- list(
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC+FLN"),
      "ACC,+300,RMA,A+B" = list(col=niceCols[4], name="ACC"),
-     "QN,RMA,A+B" = list(col=niceCols[10], name="QN"),
+     "QN,RMA,A+B" = list(col=niceCols[10], name="QN")
     );
   } else if (case == "allVdiploid") {
     sets <- list(
      "ACC,+300,RMA,A+B,FLN,-X;all" = list(col=niceCols[6], name="CRMA,all"),
      "ACC,+300,RMA,A+B,FLN,-X;mean" = list(col=niceCols[7], name="CRMA,mean"),
      "ACC,+300,RMA,A+B,FLN,-X;adj" = list(col=niceCols[5], name="CRMA,adj"),
-     "ACC,+300,RMA,A+B,FLN,-X;diploid" = list(col=niceCols[10], name="CRMA,diploid"),
+     "ACC,+300,RMA,A+B,FLN,-X;diploid" = list(col=niceCols[10], name="CRMA,diploid")
 #     "dChip,ISN,MBEI,A+B,xport;adj" = list(col=niceCols[1], name="dChip,adj"),
 #     "dChip,ISN,MBEI,A+B,xport;diploid" = list(col=niceCols[2], name="dChip,diploid"),
     );
@@ -142,35 +142,35 @@ if (!exists("sets", mode="list")) {
     sets <- list(
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,RMA,FLN"),
      "ACC,+300,RMA,A+B,FLN,-X,DCQN,-X,v0" = list(col=niceCols[5], name="ACC,RMA,FLN,QN,v0"),
-     "ACC,+300,RMA,A+B,FLN,-X,DCQN,-X" = list(col=niceCols[4], name="ACC,RMA,FLN,QN"),
+     "ACC,+300,RMA,A+B,FLN,-X,DCQN,-X" = list(col=niceCols[4], name="ACC,RMA,FLN,QN")
     );
   } else if (case == "+-") {
     sets <- list(
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,RMA,FLN"),
-     "ACC,+300,RMA,+-,A+B,FLN,-X,CEGM" = list(col=niceCols[5], name="ACC,RMA,+-,FLN,CEGM"),
+     "ACC,+300,RMA,+-,A+B,FLN,-X,CEGM" = list(col=niceCols[5], name="ACC,RMA,+-,FLN,CEGM")
     );
   } else if (case == "PM-MM") {
     sets <- list(
      "DCQN,RMA,A+B,FLN" = list(col=niceCols[6], name="QN,RMA,PM-only"),
-     "DCQN,MIN1(PM-MM),RMA,A+B,FLN" = list(col=niceCols[2], name="QN,RMA,MIN(PM-MM,1)"),
+     "DCQN,MIN1(PM-MM),RMA,A+B,FLN" = list(col=niceCols[2], name="QN,RMA,MIN(PM-MM,1)")
     );
   } else if (case == "RBC") {
     sets <- list(
      "QN,RMA,A+B" = list(col=niceCols[6], name="QN,RMA"),
-     "RBC,QN,RMA,A+B" = list(col=niceCols[2], name="RBC,QN,RMA"),
+     "RBC,QN,RMA,A+B" = list(col=niceCols[2], name="RBC,QN,RMA")
     );
   } else if (case == "ACC") {
     sets <- list(
      "QN,RMA,A+B,FLN,-X" = list(col=niceCols[2], name="QN,RMA,FLN"),
      "RMA,A+B,FLN,-X" = list(col=niceCols[2], name="RMA,FLN"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,RMA,FLN"),
+     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,RMA,FLN")
     );
   } else if (case == "RMAvMBEI") {
     sets <- list(
      "QN,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="QN,RMA,FLN,-X"),
      "QN,MBEI,A+B,FLN,-X" = list(col=niceCols[2], name="QN,MBEI,FLN,-X"),
      "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,+300,RMA,FLN,-X"),
-     "ACC,+300,MBEI,A+B,FLN,-X" = list(col=niceCols[2], name="ACC,+300,MBEI,FLN,-X"),
+     "ACC,+300,MBEI,A+B,FLN,-X" = list(col=niceCols[2], name="ACC,+300,MBEI,FLN,-X")
     );
   } else if (case == 2) {
   } else {
@@ -684,6 +684,8 @@ jj999 <- which(Dm >= 0.999);
 jj <- jj800;
 jj <- setdiff(jj, 1:100)[1];
 
+# Example: Moderate SNP
+jj <- indexOf(cdf, "SNP_A-1790385");
 unitNames <- getUnitNames(cdf);
 jj <- which(unitNames == "SNP_A-1884486");  # POOR
 jj <- which(unitNames == "SNP_A-1790385");  # MODERATE

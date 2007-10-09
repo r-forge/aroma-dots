@@ -4,31 +4,50 @@ library(R.graphics);
 library(R.native);  # rowMedians(..., na.rm=TRUE)
 source("fitRoc.R");
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Local functions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+shakyText <- function(x, y, labels, col=NULL, bgcol="white", adj=c(0.5,0.5), jitter=c(0.1,0.1), ...) {
+  for (dx in seq(from=-jitter[1], to=+jitter[1], length=9)) {
+    for (dy in seq(from=-jitter[2], to=+jitter[2], length=9)) {
+      text(x, y, labels, col=bgcol, adj=adj+c(dx,dy), ...);
+    }
+  }
+  text(x, y, labels, col=col, adj=adj, ...);
+} # shakyText()
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Graphical settings
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 imgFormat <- "screen";
-#imgFormat <- "eps";
-
-# Smoothing parameter (zero == no smoothing)
-sd <- 1e3;  # in units of 1bp
-sd <- 0;
+imgFormat <- "eps";
 
 mavgR <- 1;
-mavgR <- 2;
-mavgR <- 5;
-mavgR <- 1;
 
-  d <- 1; by <- 0.05
-  d <- 0.50; by <- 0.05;
-  d <- 0.25; by <- 0.05;
-  d <- 0.15; by <- 0.01;
-  d <- 0.12; by <- 0.01;
-#  d <- 0.10; by <- 0.01;
-#  d <- 0.05; by <- 0.01;
-#  d <- 0.025; by <- 0.001;
-#  d <- 0.01; by <- 0.001;
+d <- 1; by <- 0.05
+d <- 0.11; by <- 0.01;
+d <- 0.09; by <- 0.01;
 
-case <- "optimal";
-#case <- "ACC";
-case <- "steps";
+# Setup a palette
+useColors <- FALSE;
+# Setup a palette
+if (useColors) {
+  niceCols <- RColorBrewer::brewer.pal(12, "Paired");
+  niceCols <- niceCols[c(6,5,10)];
+  useColorsStr <- "-col";
+} else {
+  niceCols <- c("#000000", "#666666", "#999999");
+  useColorsStr <- "";
+}
+
+fig <- 1;
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Setup
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+case <- "reference";
 
 # Classification
 group <- c("male"=0, "female"=1);
@@ -39,144 +58,18 @@ tpName <- pName;
 ylab <- sprintf("True-positive rate\n(correctly calling %ss %ss)", pName, pName);
 xlab <- sprintf("False-positive rate\n(incorrectly calling %ss %ss)", nName, pName);
 
-# Reference set
-refSets <- c("all", "females", "males");
-refSet <- "all";
-#refSet <- "females";
 
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Setup
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Setup a palette
-niceCols <- RColorBrewer::brewer.pal(12, "Paired");
-
-fig <- 1;
 
 
 # Arrays with strong spatial artifacts (in residuals)
 badArrays <- c("NA06985", "NA07055", "NA11829", "NA11830", "NA11995", "NA12004", "NA12005", "NA12006", "NA12057", "NA12234", "NA12156", "NA12236", "NA12239", "NA12264", "NA12760", "NA12762", "NA12763", "NA12892");
 
 if (!exists("sets", mode="list")) {
-  if (case == "one") {
-    sets <- list(
-     "QN,RMA,A+B" = list(col=niceCols[6], name="QN,RMA,A+B"),
-    );
-  } else if (case == "optimal") {
-    sets <- list(
-     "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
-     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
-     "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
-#     "dChip,QN,MBEI,A+B,xport" = list(col=niceCols[1], name="dChip,QN"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="CRMA"),
-#     "ACC,-X,+300,RMA,A+B,FLN,-X" = list(col="black", name="CRMA2")
-#     "ACC,+350,RMA,A+B,FLN,-X" = list(col="black", name="CRMA4")
-#     "ACC,-X,+300,RMA,A+B,w,FLN,-X" = list(col="black", name="CRMA3")
-#     "ACC,+300,RMA,A+B,FLN,-X,GCN,-X" = list(col=niceCols[5], name="CRMA,GC"),
-    );
-  } else if (case == "MTV") {
-    sets <- list(
-#     "ACC,+350,RMA,A+B,FLN,-X" = list(col=niceCols[3], name="CRMA,+350"),
-#     "ACC,+250,RMA,A+B,FLN,-X" = list(col=niceCols[4], name="CRMA,+250"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[5], name="CRMA"),
-     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
-     "ACC,+300,RMA,A+B,FLN,-X,V" = list(col=niceCols[7], name="CRMA,V"),
-    );
-  } else if (case == "DCQN") {
-    sets <- list(
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[5], name="CRMA"),
-     "ACC,QN,pm,+300,RMA,A+B,FLN,-X" = list(col=niceCols[3], name="CRMA,QN"),
-     "ACC,DCQN,pm,+300,RMA,A+B,FLN,-X" = list(col=niceCols[4], name="CRMA,DCQN"),
-     "ACC,DCQN,pm,-X,+300,RMA,A+B,FLN,-X" = list(col=niceCols[7], name="CRMA,DCQN,-X"),
-     "ACC,DCQN,pm,-X,robust,+300,RMA,A+B,FLN,-X" = list(col=niceCols[8], name="CRMA,DCQN,-X,robust"),
-    );
-
-  } else if (case == "optimalMT") {
-    sets <- list(
-     "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
-     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
-     "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[5], name="CRMA"),
-     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
-    );
-  } else if (case == "optimalT") {
-    sets <- list(
-     "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
-     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
-     "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
-     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
-    );
-  } else if (case == "optimalT") {
-    sets <- list(
-     "CNAG,FLN+GC,r60,xport" = list(col=niceCols[8], name="CNAG*"),
-     "CNAT,QN,PLIER,FLN+GC,xport" = list(col=niceCols[4], name="CNAT v4"),
-     "dChip,ISN,MBEI,A+B,xport" = list(col=niceCols[2], name="dChip"),
-     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
-     "ACC,+300,RMA,A+B,FLN,-X,V" = list(col=niceCols[7], name="CRMA,V"),
-    );
-  } else if (case == "MvT") {
-    sets <- list(
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[2], name="CRMA"),
-     "ACC,+300,RMA,A+B,FLN,-X,T" = list(col=niceCols[6], name="CRMA,T"),
-    );
-  } else if (case == "FLN") {
-    sets <- list(
-     "ACC,+300,RMA,A+B" = list(col=niceCols[2], name="ACC,RMA"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,RMA,FLN"),
-    );
-  } else if (case == "steps") {
-    sets <- list(
-     "QN,RMA,A+B" = list(col=niceCols[2], name="QN"),
-     "ACC,+300,RMA,A+B" = list(col=niceCols[4], name="ACC"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC+FLN"),
-    );
-  } else if (case == "CQN") {
-    sets <- list(
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,RMA,FLN"),
-     "ACC,+300,RMA,A+B,FLN,-X,DCQN,-X,v0" = list(col=niceCols[5], name="ACC,RMA,FLN,QN,v0"),
-     "ACC,+300,RMA,A+B,FLN,-X,DCQN,-X" = list(col=niceCols[4], name="ACC,RMA,FLN,QN"),
-    );
-  } else if (case == "+-") {
-    sets <- list(
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,RMA,FLN"),
-     "ACC,+300,RMA,+-,A+B,FLN,-X,CEGM" = list(col=niceCols[5], name="ACC,RMA,+-,FLN,CEGM"),
-    );
-  } else if (case == "PM-MM") {
-    sets <- list(
-     "DCQN,RMA,A+B,FLN" = list(col=niceCols[6], name="QN,RMA,PM-only"),
-     "DCQN,MIN1(PM-MM),RMA,A+B,FLN" = list(col=niceCols[2], name="QN,RMA,MIN(PM-MM,1)"),
-    );
-  } else if (case == "RBC") {
-    sets <- list(
-     "QN,RMA,A+B" = list(col=niceCols[6], name="QN,RMA"),
-     "RBC,QN,RMA,A+B" = list(col=niceCols[2], name="RBC,QN,RMA"),
-    );
-  } else if (case == "ACC") {
-    sets <- list(
-     "QN,RMA,A+B,FLN,-X" = list(col=niceCols[2], name="QN,RMA,FLN"),
-     "RMA,A+B,FLN,-X" = list(col=niceCols[2], name="RMA,FLN"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,RMA,FLN"),
-    );
-  } else if (case == "RMAvMBEI") {
-    sets <- list(
-     "QN,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="QN,RMA,FLN,-X"),
-     "QN,MBEI,A+B,FLN,-X" = list(col=niceCols[2], name="QN,MBEI,FLN,-X"),
-     "ACC,+300,RMA,A+B,FLN,-X" = list(col=niceCols[6], name="ACC,+300,RMA,FLN,-X"),
-     "ACC,+300,MBEI,A+B,FLN,-X" = list(col=niceCols[2], name="ACC,+300,MBEI,FLN,-X"),
-    );
-  } else if (case == "allVdiploid") {
-    sets <- list(
-     "ACC,+300,RMA,A+B,FLN,-X;all" = list(col=niceCols[6], name="CRMA,all"),
-     "ACC,+300,RMA,A+B,FLN,-X;adj" = list(col=niceCols[7], name="CRMA,adj"),
-     "ACC,+300,RMA,A+B,FLN,-X;diploid" = list(col=niceCols[5], name="CRMA,diploid"),
-     "dChip,ISN,MBEI,A+B,xport;adj" = list(col=niceCols[1], name="dChip,adj"),
-     "dChip,ISN,MBEI,A+B,xport;diploid" = list(col=niceCols[2], name="dChip,diploid"),
-    );
-  } else if (case == 2) {
-  } else {
-    stop("Unknown case");
-  }
+  sets <- list(
+   "ACC,+300,RMA,A+B,FLN,-X;all" = list(col=niceCols[1], name="all"),
+   "ACC,+300,RMA,A+B,FLN,-X;adj" = list(col=niceCols[2], name="adjusted"),
+   "ACC,+300,RMA,A+B,FLN,-X;diploid" = list(col=niceCols[3], name="diploid")
+  );
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -203,14 +96,9 @@ if (!exists("truth")) {
 males <- which(truth[1,] == 0);
 females <- which(truth[1,] == 1);
 
-# The indices of the reference set
-if (refSet == "all") {
-  references <- seq_len(ncol(truth));
-} else if (refSet == "females") {
-  references <- females;
-} else if (refSet == "males") {
-  references <- males;
-}
+# Use pool of females and males for the reference set
+references <- seq_len(ncol(truth));
+
 
 for (kk in seq(along=sets)) {
   name <- names(sets)[kk];
@@ -234,21 +122,33 @@ for (kk in seq(along=sets)) {
     if (!is.null(set$theta)) {
       # Calculate average theta, and (A,M).
       refMethod <- gsub("^.*;", "", name);
+      print(refMethod);
       if (refMethod == "all") {
+        print("ALL");
         thetaRefs <- set$theta;
-        set$thetaR <- apply(thetaRefs, MARGIN=1, FUN=median, na.rm=TRUE);
+        set$thetaR <- rowMedians.matrix(thetaRefs, na.rm=TRUE);
+      } else if (refMethod == "diploid") {
+        print("ALL");
+        thetaRefs <- set$theta[,females];
+        set$thetaR <- rowMedians.matrix(thetaRefs, na.rm=TRUE);
       } else if (refMethod == "adj") {
-        thetaRm <- apply(set$theta[,males], MARGIN=1, FUN=median, na.rm=TRUE);
-        thetaRf <- apply(set$theta[,females], MARGIN=1, FUN=median, na.rm=TRUE);
+        print("ADJUSTED");
+        thetaRm <- rowMedians.matrix(set$theta[,males], na.rm=TRUE);
+        thetaRf <- rowMedians.matrix(set$theta[,females], na.rm=TRUE);
         c <- median(thetaRf, na.rm=TRUE) / median(thetaRm, na.rm=TRUE);
 print(c);
         thetaRm <- thetaRm * c;
         w <- c(females=length(females), males=length(males));
         w <- w / sum(w);
         set$thetaR <- w[1] * thetaRf + w[2] * thetaRm;
-      } else {
+      } else if (refMethod == "mean") {
+        print("MEAN; ALL or DIPLOID");
         thetaRefs <- set$theta[,references];
-        set$thetaR <- apply(thetaRefs, MARGIN=1, FUN=median, na.rm=TRUE);
+        set$thetaR <- rowMeans(thetaRefs, na.rm=TRUE);
+      } else {
+        print("ALL or DIPLOID");
+        thetaRefs <- set$theta[,references];
+        set$thetaR <- rowMedians.matrix(thetaRefs, na.rm=TRUE);
       }
       str(thetaRefs);
 
@@ -276,7 +176,6 @@ print(c);
     sets[[name]] <- set;
   }
 }
-
 
 
 
@@ -329,6 +228,8 @@ for (name in names(sets)) {
 
     # Exclude pseudo copy-neutral regions
     keep <- (xx > 2.8e6);
+    if (sum(keep) < 1/4)
+      stop(sprintf("Something is wrong. Too few loci: %.2f%%", 100*sum(keep)));
     xx <- xx[keep];
     M <- M[keep,cc,drop=FALSE];
     C <- C[keep,cc,drop=FALSE];
@@ -341,6 +242,8 @@ for (name in names(sets)) {
     ok <- (is.finite(M) & is.finite(C));
     n <- length(M);
     nok <- sum(ok);
+    if (nok < 1/4)
+      stop(sprintf("Something is wrong. Call rate is only %.2f%%", 100*nok));
     callRate <- nok/n;
     cat(sprintf("Keeping %d out of %d (%.2f%%) data points \n", 
                                                nok, n, 100*callRate));
@@ -401,28 +304,46 @@ if (!Device$isOpen(fig <- fig + 1)) {
   if (imgFormat == "eps") {
     dStr2 <- gsub("[.]", "_", dStr);
     imgName <- sprintf("ROC,%s,h%d,d%s", case, mavgR, dStr2);
-    filename <- sprintf("%s.eps", imgName);
+    filename <- sprintf("%s%s.eps", useColorsStr, imgName);
     eps(filename, width=5, height=5);
-    par(mar=c(4,5,1,1)+0.1);
-    par(cex=0.7, mgp=c(2.7,0.7,0));
+    par(mar=c(5.2,7.2,1,1)+0.1);
+    par(cex=0.7, mgp=c(4.1,0.9,0));
   } else if (imgFormat == "screen") {
     par(mar=c(5,5,2,1)+0.1);
     par(cex=1, mgp=c(2.5,0.2,0));
   }
-  par(cex.axis=1, cex.lab=1, font.lab=2);
+
+  # Create empty plot
+  par(cex.axis=1.7, cex.lab=1.7, font.lab=2);
   par(xaxs="i", yaxs="i");
   plot(NA, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, las=1);
+ 
+  # Add grid
   abline(h=seq(0,1,by=by), lty=3, lwd=1);
   abline(v=seq(0,1,by=by), lty=3, lwd=1);
-  legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
+
+  # Draw ROC curves
   for (kk in seq(along=sets)) {
     print(labels[kk]);
-  
     set <- sets[[kk]];
     roc <- set$roc;
     plot(roc, line=TRUE, lwd=4, lty=ltys[kk], col=cols[kk], add=TRUE);
   } # for (kk in ...)
-  legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee");
+
+  # Add labels/legend
+  labels <- sapply(sets, FUN=function(set) set$name);
+  if (d < 0.20) {
+    xs <- c(0.0535, 0.0555, 0.0645);
+    ys <- c(0.945, 0.945, 0.933);
+    srt <- rep(45, 3);
+    adjy <- c(-0.6,1.4,-0.5);
+    for (kk in seq(along=xs)) {
+#      points(xs[kk], ys[kk], pch=19, col=cols[kk]);
+     shakyText(xs[kk], ys[kk], labels[kk], srt=srt[kk], cex=1.8, col=cols[kk], adj=c(0.5,adjy[kk]));
+    }
+  } else {
+    legend("bottomright", pch=19, lty=ltys, lwd=4, col=cols, legend=labels, bg="#eeeeee", cex=1.6);
+  }
 
   if (imgFormat == "eps") {
     dev.off();
