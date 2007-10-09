@@ -14,7 +14,7 @@ if (is.null(tracks2)) {
     cdf <- AffymetrixCdfFile$fromChipType("Mapping250K_Nsp");
   }
   
-  pathname <- "500KEA_CNVs.gff";
+  pathname <- "cnvData/500KEA_CNVs.gff";
   
   pathname <- Arguments$getReadablePathname(pathname, mustExist=TRUE);
   
@@ -32,6 +32,7 @@ if (is.null(tracks2)) {
   saveCache(tracks2, key=key, dirs=dirs);
 }
 
-nbrOfUnits <- sum(sapply(tracks2[[1]]$cnvs, .subset2, "nbrOfUnits"));
+cnvs <- tracks2[[1]]$cnvs;
+nbrOfUnits <- sum(sapply(cnvs, .subset2, "nbrOfUnits"));
 print(nbrOfUnits);
 
