@@ -585,3 +585,22 @@
   getMatrixChipEffectFiles.CopyNumberSegmentationModel
   getReferenceSetTuple getReferenceSetTuple.CopyNumberSegmentationModel
  isPaired isPaired.CopyNumberSegmentationModel
+  findPngDevice findPngDevice.default fitWHLAPLM fitWHLAPLM.matrix
+  fitWHRCModel fitWHRCModel.matrix fitWLAPLM fitWLAPLM.matrix
+  fitWRCModel fitWRCModel.matrix getAsteriskTag.HetLogAddPlm
+  getAsteriskTag.UnitModel getTags.UnitModel plotAxesLayers
+  plotAxesLayers.CopyNumberSegmentationModel plotChromosomesLayers
+  plotChromosomesLayers.CopyNumberSegmentationModel
+  plotCopyNumberRegionLayers
+  plotCopyNumberRegionLayers.CopyNumberSegmentationModel
+  plotCytobandLayers plotCytobandLayers.CopyNumberSegmentationModel
+  plotFitLayers plotFitLayers.CopyNumberSegmentationModel
+  plotGridHorizontalLayers
+  plotGridHorizontalLayers.CopyNumberSegmentationModel
+  plotRawCopyNumbers plotRawCopyNumbers.CopyNumberSegmentationModel
+  writeAxesLayers writeAxesLayers.ChromosomeExplorer
+  writeCopyNumberRegionLayers
+  writeCopyNumberRegionLayers.ChromosomeExplorer writeCytobandLayers
+  writeCytobandLayers.ChromosomeExplorer writeGridHorizontalLayers
+  writeGridHorizontalLayers.ChromosomeExplorer writeRawCopyNumberLayers
+  writeRawCopyNumberLayers.ChromosomeExplorer
