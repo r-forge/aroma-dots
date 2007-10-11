@@ -1,7 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.7.3 [2007-10-05xx]
+Version: 0.7.3 [2007-10-10xx]
+o Now the asterisk tags ('*') of the ProbeLevelModels are no longer
+  interpreted in the constructor, but by getTags().
+o BETA: Started to add support for image layers in ChromosomeExplorer.
 o BETA: Added low-level methods fitWHRCModel() and fitWHLAPLM().
 
 

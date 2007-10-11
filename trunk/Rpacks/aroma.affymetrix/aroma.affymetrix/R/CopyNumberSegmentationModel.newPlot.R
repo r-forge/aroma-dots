@@ -1,4 +1,4 @@
-setMethodS3("newPlot", "CopyNumberSegmentationModel", function(this, xlim, ylim=c(-1,1)*2.5, xlab="Physical position", ylab="Relative copy number", flavor=c("ce", "minimal"), xmargin=c(50,50), resScale=1, unit=6, ...) {
+setMethodS3("newPlot", "CopyNumberSegmentationModel", function(this, xlim, ylim=c(-1,1)*2.5, xlab="Physical position", ylab="Relative copy number", flavor=c("ce", "minimal"), xmargin=c(50,50), resScale=1, unit=6, yaxt="s", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -14,9 +14,6 @@ setMethodS3("newPlot", "CopyNumberSegmentationModel", function(this, xlim, ylim=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Plotting flavor
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Default settings
-  yaxt <- "s";
-
   args <- list();
   if (flavor == "glad") {
     par(mar=c(3,3,5,3)+0.1, mgp=c(2,0.6,0.3));

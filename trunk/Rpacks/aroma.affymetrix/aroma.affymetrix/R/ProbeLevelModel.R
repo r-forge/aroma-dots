@@ -93,8 +93,7 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
 
 
 setMethodS3("getAsteriskTag", "ProbeLevelModel", function(this, ...) {
-  name <- "PLM";
-  name;
+  "PLM";
 })
 
 

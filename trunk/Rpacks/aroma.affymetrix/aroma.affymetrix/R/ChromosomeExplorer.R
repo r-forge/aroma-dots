@@ -289,7 +289,6 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 
   srcPath <- getTemplatePath(this);
   pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "ChromosomeExplorer.onLoad.js.rsp");
-#  pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "samples.js.rsp");
   verbose && enter(verbose, "Compiling ", basename(pathname));
   verbose && cat(verbose, "Source: ", pathname);
   outFile <- gsub("[.]rsp$", "", basename(pathname));
@@ -326,11 +325,19 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   verbose && cat(verbose, "Detected (or default) zooms: ", paste(zooms, collapse=", "));
   verbose && exit(verbose);
 
-  # Get available sets
-  verbose && enter(verbose, "Scanning directory for \"set\" directories");
-  sets <- list.files(path=parentPath, full.names=TRUE);
+  # Get available subdirectories
+  verbose && enter(verbose, "Scanning directory for subdirectories");
+  subdirs <- list.files(path=parentPath, full.names=TRUE);
   # Keep only directories
-  sets <- sets[sapply(sets, FUN=isDirectory)];
+  subdirs <- subdirs[sapply(subdirs, FUN=isDirectory)];
+
+  isChrLayer <- (regexpr(",chrLayer", subdirs) != -1);
+  isSampleLayer <- (regexpr(",sampleLayer", subdirs) != -1);
+  isLayer <- (isChrLayer | isSampleLayer);
+
+  # Remove anything that is a layer
+  sets <- basename(subdirs)[!isLayer];
+
   if (length(sets) == 0) {
     sets <- c("glad", "cbs");
     warning("No 'set' directories detected. Using defauls: ", paste(sets, collapse=", "));
@@ -350,7 +357,10 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   env$samples <- getFullNames(this);
   env$sampleLabels <- getNames(this);
   env$zooms <- zooms;
-  env$sets <- sets;
+  env$sets <- c("-LAYERS-", sets);
+  env$chrLayerIds <- gsub(",.*", "", basename(subdirs)[isChrLayer]);
+  env$sampleLayerIds <- gsub(",.*", "", basename(subdirs)[isSampleLayer]);
+
   pathname <- rspToHtml(pathname, path=NULL, 
                         outFile=outFile, outPath=outPath, 
                         overwrite=TRUE, envir=env);
@@ -364,7 +374,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 
 
 
-setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename="ChromosomeExplorer.html", ...) {
+setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename="ChromosomeExplorer4.html", ...) {
   NextMethod("addIndexFile", this, filename=filename, ...);
 }, protected=TRUE)
 
@@ -381,6 +391,71 @@ setMethodS3("setup", "ChromosomeExplorer", function(this, ..., force=FALSE) {
   # Setup samples.js?
   updateSamplesFile(this, ...);
 }, private=TRUE)
+
+
+
+
+setMethodS3("writeAxesLayers", "ChromosomeExplorer", function(this, ...) {
+  model <- getModel(this);
+
+  path <- getPath(this);
+  path <- filePath(getParent(path), "axes");
+  path <- Arguments$getWritablePath(path);
+
+  plotAxesLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+
+  invisible(path);
+}, private=TRUE)
+
+
+setMethodS3("writeGridHorizontalLayers", "ChromosomeExplorer", function(this, ...) {
+  model <- getModel(this);
+
+  path <- getPath(this);
+  path <- filePath(getParent(path), "gridH");
+  path <- Arguments$getWritablePath(path);
+
+  plotGridHorizontalLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+
+  invisible(path);
+}, private=TRUE)
+
+
+
+setMethodS3("writeCytobandLayers", "ChromosomeExplorer", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the model
+  model <- getModel(this);
+
+  path <- getPath(this);
+  path <- filePath(getParent(path), "cytoband");
+  path <- Arguments$getWritablePath(path);
+
+  plotCytobandLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+
+  invisible(path);
+}, private=TRUE)
+
+
+
+setMethodS3("writeRawCopyNumberLayers", "ChromosomeExplorer", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the model
+  model <- getModel(this);
+
+  path <- getPath(this);
+  path <- filePath(getParent(path), "rawCNs");
+  path <- Arguments$getWritablePath(path);
+
+  plotRawCopyNumbers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+
+  invisible(path);
+}, private=TRUE)
+
 
 
 
@@ -472,7 +547,7 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromosomes=NULL, ..., verbose=FALSE) {
+setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromosomes=NULL, ..., layers=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -495,8 +570,28 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   # Setup HTML, CSS, Javascript files first
   setup(this, ..., verbose=less(verbose));
 
-  # Generate bitmap images
-  writeGraphs(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
+  # Generate layers?
+  if (layers) {
+    verbose && enter(verbose, "Generating image layers");
+
+    # 1. Non-sample specific layers
+    verbose && enter(verbose, "Non-sample specific layers");
+    writeAxesLayers(this, chromosomes=chromosomes, ..., verbose=less(verbose));
+    writeGridHorizontalLayers(this, chromosomes=chromosomes, ..., verbose=less(verbose));
+    writeCytobandLayers(this, chromosomes=chromosomes, ..., verbose=less(verbose));
+    verbose && exit(verbose);
+
+    # 2. Sample specific layers
+    verbose && enter(verbose, "Sample-specific layers");
+    writeRawCopyNumberLayers(this, arrays=arrays, chromosomes=chromosomes, 
+                                                              ..., verbose=less(verbose));
+    verbose && exit(verbose);
+
+    verbose && exit(verbose);
+  } else {
+    # Generate bitmap images
+    writeGraphs(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
+  }
 
   # Update samples.js
   updateSamplesFile(this, ..., verbose=less(verbose));
@@ -515,6 +610,9 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="Chromosome
 
 ##############################################################################
 # HISTORY:
+# 2007-10-09
+# o Now process() writes cytoband/*.png layer images.
+# o Added writeCytobandLayers().
 # 2007-09-30
 # o Now the main HTML file for ChromosomeExplorer is ChromosomeExplorer.html,
 #   which is in analogue to how the ArrayExplorer works.  This HTML now

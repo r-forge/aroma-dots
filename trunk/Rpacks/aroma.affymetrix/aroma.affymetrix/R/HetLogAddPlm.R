@@ -97,12 +97,21 @@ setMethodS3("getFitFunction", "HetLogAddPlm", function(this, ..., verbose=FALSE)
     shift <- 0;
   verbose && cat(verbose, "Amount of shift: ", shift);
 
-  if (shift == 0) {
-    fitPlm <- fitWHLAPLM.matrix;
-  } else {
-    fitPlm <- function(y, ...) {
-      fitWHLAPLM.matrix(y+shift, ...);
+  fitPlm <- function(y, ...) {
+    fit <- fitWHLAPLM.matrix(y+shift, ...);
+    fit$sdTheta <- fit$seTheta;
+    fit$sdPhi <- fit$sePhi;
+    fit$thetaOutliers <- rep(NA, ncol(y));
+    fit$phiOutliers <- rep(NA, nrow(y));
+    if (length(fit$sdTheta) != ncol(y)) {
+      print(list(y=y, fit=fit));
+      throw("Internal error");
     }
+    if (length(fit$sdPhi) != nrow(y)) {
+      print(list(y=y, fit=fit));
+      throw("Internal error");
+    }
+    fit;
   }
 
   verbose && str(verbose, fitPlm);

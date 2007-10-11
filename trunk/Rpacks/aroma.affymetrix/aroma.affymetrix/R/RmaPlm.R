@@ -73,13 +73,13 @@ setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMo
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
 
-    asteriskTag <- "RMA";
-    # Add flavor tag?
-    if (flavor != "affyPLM")
-      asteriskTag <- paste(asteriskTag, flavor, sep=",");
+#    asteriskTag <- "RMA";
+#    # Add flavor tag?
+#    if (flavor != "affyPLM")
+#      asteriskTag <- paste(asteriskTag, flavor, sep=",");
 
-    # Update default tags
-    tags[tags == "*"] <- asteriskTag;
+#    # Update default tags
+#    tags[tags == "*"] <- asteriskTag;
 
     # Split by commas
     tags <- paste(tags, collapse=",");
@@ -95,8 +95,10 @@ setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMo
 
 
 setMethodS3("getAsteriskTag", "RmaPlm", function(this, ...) {
-  name <- "RMA";
-  name;
+  tag <- "RMA";
+  if (this$.flavor != "affyPLM")
+    tag <- paste(tag, this$.flavor, sep=",");
+  tag;
 })
 
 
@@ -587,6 +589,9 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-10-06
+# o Now the asterisk tag ('*') is no longer assigned in the constructor,
+#   but in getTags().
 # 2007-09-18
 # o BUG FIX: Due to a migration of code from affyPLM to preprocessCore,
 #   the fit function returned by getFitFunction() would not work with
