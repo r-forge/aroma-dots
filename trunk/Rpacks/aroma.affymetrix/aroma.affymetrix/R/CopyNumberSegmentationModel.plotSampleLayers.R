@@ -1,31 +1,7 @@
-setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., pixelsPerMb=3, zooms=2^(0:7), pixelsPerTick=2.5, height=400, xmargin=c(50,50), imageFormat="current", skip=TRUE, path=NULL, callList=NULL, verbose=FALSE) {
-  # To please R CMD check.
-  this <- x;
-
-
+setMethodS3("plotFitLayers", "CopyNumberSegmentationModel", function(this, FUN, path, xlim=NULL, ..., pixelsPerMb=3, zooms=2^(0:7), height=400, xmargin=c(50,50), imageFormat="current", transparent=FALSE, skip=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  drawXAxisRuler <- function(xrange=NULL, ticksBy=1) {
-    xlim <- par("usr")[1:2];
-    if (is.null(xrange))
-      xrange <- xlim;
-
-    for (kk in 1:3) {
-      at <- seq(from=xrange[1], to=xrange[2], by=ticksBy*c(1,5,10)[kk]);
-      keep <- (at >= xlim[1] & at <= xlim[2]);
-      at <- at[keep];
-      tcl <- c(0.2,0.4,0.6)[kk];
-      lwd <- c(1,1,2)[kk];
-      for (ss in c(1,3))
-        axis(side=ss, at=at, tcl=tcl, lwd=lwd, labels=FALSE);
-    }
-    cxy <- par("cxy");
-    text(x=at, y=par("usr")[3]-0.5*cxy[2], labels=at, srt=90, 
-                                       adj=1, cex=1, xpd=TRUE);
-  } # drawXAxisRuler()
-
-
   getChromosomeLength <- function(chromosome) {
     data <- getGenomeData(this);
     if (!chromosome %in% row.names(data))
@@ -33,9 +9,15 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
     data[chromosome,"nbrOfBases"];
   } # getChromosomeLength()
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'FUN':
+  if (!is.function(FUN)) {
+    throw("Arguments 'FUN' is not a function: ", class(FUN)[1]);
+  }
+
   # Argument 'pixelsPerMb':
   pixelsPerMb <- Arguments$getDouble(pixelsPerMb, range=c(0.001,9999));
 
@@ -43,37 +25,8 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
   zooms <- Arguments$getIntegers(zooms, range=c(1,9999));
   zooms <- unique(zooms);
 
-  # Argument 'pixelsPerTick':
-  pixelsPerTick <- Arguments$getDouble(pixelsPerTick, range=c(1,256));
-
   # Argument 'height':
   height <- Arguments$getInteger(height, range=c(1,4096));
-
-  # Argument 'callList':
-  chipTypes <- getChipTypes(this);
-  if (length(callList) > 0) {
-    if (!is.list(callList))
-      callList <- list(callList);
-
-    if (length(callList) != length(chipTypes)) {
-      throw("Number of elements in argument 'callList' does not match the number of chip types: ", length(callList), " != ", length(chipTypes));
-    }
-
-    if (is.null(names(callList)))
-      names(callList) <- chipTypes;
-
-    for (chipType in chipTypes) {
-      callSet <- callList[[chipType]];
-      if (!is.null(callSet)) {
-        if (!inherits(callSet, "GenotypeCallSet"))
-          throw("Argument 'callList' contains a non-GenotypeCallSet: ", class(callSet)[1]);
-
-        if (getChipType(callSet) != chipType) {
-          throw("Argument 'callList' contains a GenotypeCallSet for a different chip type than the corresponding chip-effect set: ", getChipType(callSet), " != ", chipType);
-        }
-      }
-    }
-  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -92,14 +45,6 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
   # Default 'ylim'
   ylim <- c(-1,+1)*3;
 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Output path
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # The report path
-  if (is.null(path))
-    path <- getReportPath(this);
-  mkdirs(path);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup the PNG device
@@ -124,15 +69,12 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
     zooms <- zooms[1];
     plotDev <- screenDev;
   } else if (identical(imageFormat, "png")) {
-    pngDev <- findPngDevice(transparent=FALSE);
+    pngDev <- findPngDevice(transparent=TRUE);
     plotDev <- pngDev;
     if (identical(pngDev, png2))
       resScale <- 2;
   }
 
-
-  # Get chip type (used to annotate the plot)
-  chipType <- getChipType(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Define the plot function
@@ -153,12 +95,7 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
       arrayFullName <- gsub("^(.*),chr[0-9][0-9].*$", "\\1", fullname);
       arrayName <- gsub("^([^,]*).*$", "\\1", arrayFullName);
   
-      # Figure out what chromosome is fitted
-#      chromosome <- unique(fit$profileValues$Chromosome); # Should only be one!
-##      chromosome[chromosome == "23"] <- "X";  # TODO
-  
       # Infer the length (in bases) of the chromosome
-##      chromosomeIdx <- match(chromosome, getChromosomes(this));
       nbrOfBases <- genome$nbrOfBases[chromosome];
       widthMb <- nbrOfBases / 10^unit;
 
@@ -185,75 +122,29 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
           }
         }
 
-        # Calculate MBs per ticks
-        ticksBy <- 10^ceiling(log10(pixelsPerTick / (zoom * pixelsPerMb)));
-
         # Calculate width in pixels from MBs
         width <- round(zoom * widthMb * pixelsPerMb + sum(xmargin));
 
         # Plot to PNG file
         verbose && printf(verbose, "Pathname: %s\n", pathname);
         verbose && printf(verbose, "Dimensions: %dx%d\n", width, height);
-        verbose && printf(verbose, "Ticks by: %f\n", ticksBy);
+
+        args <- list(cns=this, fit=fit, chromosome=chromosome, xlim=xlim, ylim=ylim, unit=unit, width=width, height=height, zoom=zoom, pixelsPerMb=pixelsPerMb, nbrOfBases=nbrOfBases, ..., verbose=less(verbose,1));
   
         if (!is.null(plotDev))
           plotDev(pathname, width=width, height=height);
+
+        if (transparent) {
+          par(bg=NA, xaxs="r");
+        } else {
+          par(xaxs="r");
+        }
+
         tryCatch({
-          verbose && enter(verbose, "Plotting graph");
-          opar <- par(xaxs="r");
-          suppressWarnings({
-            # Create empty plot
-            newPlot(this, xlim=xlim, ylim=ylim, flavor="ce", unit=unit, ...);
-
-#            plotProfile2(fit, unit=unit, ylim=c(-1,+1)*3, xmargin=xmargin, resScale=resScale, flavor="ce", Bkp=FALSE, Smoothing=NULL, cnLevels=NULL, plotband=FALSE, ...);
-
-            # Add ruler
-            drawXAxisRuler(xrange=c(0,nbrOfBases)/10^unit, ticksBy=ticksBy); 
- 
-            # Add cytoband to graph (optional; class specific)
-            if (!identical(this$.plotCytoband, FALSE)) {
-              drawCytoband(this, chromosome=chromosome, unit=unit);
-            }
-        
-            # Add CN=1,2,3 lines to graph
-            cnLevels <- c(1/2,1,3/2);
-            for (level in cnLevels) {
-              abline(h=log2(level), col="blue", lty=2);
-            }
-
-            # Extract raw CN estimates
-            rawCns <- extractRawCopyNumbers(fit);
-            verbose && print(verbose, rawCns, level=-50);
-
-            # Add number-of-loci annotation to graph
-            n <- nbrOfLoci(rawCns, na.rm=TRUE);
-            stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8);
-
-            # Plot raw CNs data points (and highlight outliers)
-            # Generic function
-            pointsRawCNs(fit, unit=unit, ...);
-#            points(rawCns, xScale=1/10^unit, pch=20, col="black");
-
-            # Draw CNRs
-            cnRegions <- extractCopyNumberRegions(fit);
-            verbose && print(verbose, cnRegions, level=-50);
-            drawLevels(cnRegions, lwd=2, col="black", xScale=1/10^unit);
-
-            # Model-specific annotations (optional; class specific)
-            drawExtraAnnotations(fit);
-
-            # Add genotype call tracks, if available (optional; class specific)
-            onFitAddGenotypeCalls(fit, callList=callList, arrayName=arrayName, resScale=10^unit*resScale, ...);
-          });
-
-          # Add chip-type annotation
-          stext(chipType, side=4, pos=1, line=0, cex=0.8);
- 
-          verbose && exit(verbose);
+          do.call("FUN", args=args);
         }, error = function(ex) {
           print(ex);
         }, finally = {
-          par(opar);
           if (!imageFormat %in% c("screen", "current"))
             dev.off();
         });
@@ -276,13 +167,87 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
   fit(this, ..., .retResults=FALSE, verbose=verbose);
 
   invisible();
-}) # plot()
+}) # plotFitLayers()
+
+
+
+
+setMethodS3("plotRawCopyNumbers", "CopyNumberSegmentationModel", function(this, path=NULL, col="black", ...) {
+  # The report path
+  if (is.null(path)) {
+    path <- getReportPath(this);
+    path <- filePath(getParent(path), "rawCNs,sampleLayer");
+    path <- Arguments$getWritablePath(path);
+  }
+  mkdirs(path);
+
+  # Get chip type (used to annotate the plot)
+  chipType <- getChipType(this);
+
+  plotFitLayers(this, FUN=function(..., fit, unit, verbose=FALSE) {
+    verbose && enter(verbose, "Plotting transparent image");
+    suppressWarnings({
+      # Create empty plot
+      newPlot(this, ..., xlab="", ylab="", yaxt="n", flavor="ce", unit=unit);
+
+      # Extract raw CN estimates
+      rawCns <- extractRawCopyNumbers(fit);
+      verbose && print(verbose, rawCns, level=-50);
+
+      # Plot raw CNs data points
+      points(rawCns, xScale=1/10^unit, col=col, ...);
+
+      # Add number-of-loci annotation to graph
+      n <- nbrOfLoci(rawCns, na.rm=TRUE);
+      stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8);
+
+      # Add std dev estimates
+      sd <- sd(rawCns$cn, na.rm=TRUE);
+      mad <- mad(rawCns$cn, na.rm=TRUE);
+      text <- substitute(paste(hat(sigma)==sd, ", ", hat(sigma)["MAD"]==mad, sep=""), list(sd=sprintf("%.3g", sd), mad=sprintf("%.3g", mad)));
+      stext(text=text, side=3, pos=0.5, line=-2);  
+    });
+
+    # Add chip-type annotation
+    stext(chipType, side=4, pos=1, line=0, cex=0.8);
+  }, path=path, ...);
+}) # plotRawCopyNumbers()
+
+
+
+setMethodS3("plotCopyNumberRegionLayers", "CopyNumberSegmentationModel", function(this, path=NULL, col="red", lwd=2, ...) {
+  # The report path
+  if (is.null(path)) {
+    path <- getReportPath(this);
+    path <- filePath(getParent(path), "rawCNs,sampleLayer");
+    path <- Arguments$getWritablePath(path);
+  }
+  mkdirs(path);
+
+  # Get chip type (used to annotate the plot)
+  chipType <- getChipType(this);
+
+  plotFitLayers(this, FUN=function(..., fit, unit, verbose=FALSE) {
+    verbose && enter(verbose, "Plotting transparent image");
+    suppressWarnings({
+      # Create empty plot
+      newPlot(this, ..., xlab="", ylab="", yaxt="n", flavor="ce", unit=unit);
+
+      # Draw CNRs
+      cnRegions <- extractCopyNumberRegions(fit);
+      verbose && print(verbose, cnRegions, level=-50);
+      drawLevels(cnRegions, lwd=lwd, col=col, xScale=1/10^unit);
+    });
+  }, path=path, ...);
+}) # plotCopyNumberRegions()
 
 
 
 
 ##############################################################################
 # HISTORY:
+# 2007-10-09
+# o Added plotCytobandLayers().
 # 2007-09-15
 # o Now the cytoband is only drawn for some genomes, which currently is
 #   hardwired to the "Human" genome. 
