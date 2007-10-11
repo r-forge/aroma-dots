@@ -113,16 +113,16 @@ function ChromosomeExplorer() {
     for (var kk=0; kk < layerIds.length; kk++) {
       layerIds[kk] = layerIds[kk] + ',sampleLayer';
     }
-		this.sampleLayerIds = layerIds;
-    this.setLayers(layerIds, 'Sample layers');
+    this.sampleLayerIds = layerIds;
+    this.setLayers(layerIds, 'Layers');
   }
 
   this.setChromosomeLayerIds = function(layerIds) {
     for (var kk=0; kk < layerIds.length; kk++) {
       layerIds[kk] = layerIds[kk] + ',chrLayer';
     }
-   	this.chromosomeLayerIds = layerIds;
-    this.setLayers(layerIds, 'Chromosome layers');
+     this.chromosomeLayerIds = layerIds;
+    this.setLayers(layerIds, 'Annotations');
   }
 
 
@@ -141,6 +141,7 @@ function ChromosomeExplorer() {
   this.setStatus = function(state) {
     navImage = document.getElementById('navigatorImage');
     panelImage = document.getElementById('panelImage');
+
     if (state == "") {
       this.showIndicator(false);
       navImage.style.filter = "alpha(opacity=50)";
@@ -189,7 +190,7 @@ function ChromosomeExplorer() {
   }
 
   this.updateSampleLayers = function() {
-	  var layerIds = this.sampleLayerIds;
+    var layerIds = this.sampleLayerIds;
     for (var kk=0; kk < layerIds.length; kk++) {
       this.updateSampleLayer(layerIds[kk]);
     }
@@ -198,34 +199,34 @@ function ChromosomeExplorer() {
   this.updateChromosomeLayer = function(layerId) {
     var img = document.getElementById('panelImageLayer'+layerId);
 
-    /* First blank it */
-    var pathname = "../../includes/images/pixelWhite.png";
-    img.src = pathname;
-
     var path = this.chipType + "/" + layerId;
     var chr = "chr" + padWidthZeros(this.chromosomeIdx+1, 2);
     var zoom = "x" + padWidthZeros(this.scale, 4);
     var fullname = chr + "," + zoom;
     var filename = fullname + ".png";
-    pathname = path + "/" + filename;
-		img.src = pathname;
-	}
+    var pathname = path + "/" + filename;
+
+    if (img.src != pathname) {
+      img.src = "../../includes/images/blockRed.png";  /* First blank it */
+      img.src = pathname;
+    }
+  }
 
   this.updateSampleLayer = function(layerId) {
     var img = document.getElementById('panelImageLayer'+layerId);
-
-    /* First blank it */
-    var pathname = "../../includes/images/pixelWhite.png";
-    img.src = pathname;
 
     var path = this.chipType + "/" + layerId;
     var chr = "chr" + padWidthZeros(this.chromosomeIdx+1, 2);
     var zoom = "x" + padWidthZeros(this.scale, 4);
     var fullname = this.sample + "," + chr + "," + zoom;
     var filename = fullname + ".png";
-    pathname = path + "/" + filename;
-		img.src = pathname;
-	}
+    var pathname = path + "/" + filename;
+
+    if (img.src != pathname) {
+      img.src = "../../includes/images/blockRed.png";  /* First blank it */
+      img.src = pathname;
+    }
+  }
 
   /************************************************************************
    * Methods for changing chip type, sample, set & zoom
@@ -319,9 +320,9 @@ function ChromosomeExplorer() {
 
   this.update = function() {
     this.updateGlobals();
-		this.updatePanel();
-  	this.updateNavigator();
-		this.updateNavigatorWidth();
+    this.updatePanel();
+    this.updateNavigator();
+    this.updateNavigatorWidth();
   }
 
   this.updateGlobals = function() {
@@ -349,7 +350,7 @@ function ChromosomeExplorer() {
       var args = "'" + this.chipType + "', '" + this.sample + "', '" + this.chromosome + "', " + panel.scrollLeft + ", " + this.scale + ", " + this.set;
       url = 'javascript:explorer.jumpTo(' + args + ');';
       url = 'x:"' + args + '",';
-    	/* url = 'javascript:addToFavorites("' + url + '", "sss")';	*/
+      /* url = 'javascript:addToFavorites("' + url + '", "sss")';  */
       this.bookmarkUrl.href = url;
       updateText(this.bookmarkUrl, url);
     }
@@ -470,26 +471,27 @@ function ChromosomeExplorer() {
     panel.onscroll = panelOnScroll;
   
     panelImage = document.getElementById('panelImage');
+    panelImageLayers = document.getElementById('panelImageLayers');
   
     var panelLocatorIsLocked = true;
   
-    panelImage.ondblclick = function() {
+    panelImageLayers.ondblclick = function() {
       panelLocatorIsLocked = false;
-      panelImage.onmousedown = null;
+      panelImageLayers.onmousedown = null;
       var e = arguments[0] || event;
       mouseX = e.clientX;
       panelLocator.style.left = (mouseX-2) + "px";
       owner.locatorUpdated();
     }
-    panelLocator.ondblclick = panelImage.ondblclick;
+    panelLocator.ondblclick = panelImageLayers.ondblclick;
   
-    panelImage.onclick = function() {
+    panelImageLayers.onclick = function() {
       panelLocatorIsLocked = true;
-      panelImage.onmousedown = panelImageOnMouseDown;
+      panelImageLayers.onmousedown = panelImageLayersOnMouseDown;
     }
-    panelLocator.onclick = panelImage.onclick;
+    panelLocator.onclick = panelImageLayers.onclick;
   
-    panelImageOnMouseMove = function() {
+    panelImageLayersOnMouseMove = function() {
       if (!panelLocatorIsLocked) {
         var e = arguments[0] || event;
         mouseX = e.clientX;
@@ -498,15 +500,15 @@ function ChromosomeExplorer() {
       }
       return false;
     }
+
+    panelImageLayers.onmousemove = panelImageLayersOnMouseMove;
   
-    panelImage.onmousemove = panelImageOnMouseMove;
-  
-    panelImageOnMouseDown = function() {
+    panelImageLayersOnMouseDown = function() {
       var e = arguments[0] || event;
       var x = panel.scrollLeft + e.clientX;
       owner.setGlobalCursor("move");
       panel.onscroll = null;
-      panelImage.onmousemove = null;
+      panelImageLayers.onmousemove = null;
   
       document.onmousemove = function() {
         var e = arguments[0] || event;
@@ -519,7 +521,7 @@ function ChromosomeExplorer() {
       document.onmouseup = function() {
         document.onmousemove = null;
         panel.onscroll = panelOnScroll;
-        panelImage.onmousemove = panelImageOnMouseMove;
+        panelImageLayers.onmousemove = panelImageLayersOnMouseMove;
   //      panelLocatorIsLocked = false;
         owner.setGlobalCursor("default");
         return false;
@@ -528,7 +530,7 @@ function ChromosomeExplorer() {
       return false;
     }
   
-    panelImage.onmousedown = panelImageOnMouseDown;
+    panelImageLayers.onmousedown = panelImageLayersOnMouseDown;
 
     /*******************************************************
      * chromosomeNavigator
@@ -637,7 +639,7 @@ function ChromosomeExplorer() {
     this.bookmarkUrl = document.getElementById('bookmarkUrl');
     this.cnrUrl = document.getElementById('cnrUrl');
 
-		this.setupEventHandlers();
+    this.setupEventHandlers();
   
     this.updateNavigator();
     this.updatePanel();
@@ -688,7 +690,7 @@ function ChromosomeExplorer() {
     var navAreaRelMidX = (navAreaX + navAreaWidth/2) / navImageWidth;
 
     this.updateChromosomeLayers();
-   	this.updateSampleLayers();
+     this.updateSampleLayers();
     var pathname = null;
     if (this.set == "-LAYERS-") {
       pathname = "../../includes/images/pixelWhite.png";
@@ -697,6 +699,8 @@ function ChromosomeExplorer() {
     }
 
     panelImage = document.getElementById('panelImage');
+    panelImageLayers = document.getElementById('panelImageLayers');
+
     panelImage.onload = function() {
       owner.updateNavigatorWidth();
       owner.updateGlobals();
@@ -708,7 +712,7 @@ function ChromosomeExplorer() {
       }
       panelImageOnLoad();
       panelImageOnLoad = function() {};
-		}
+    }
     panelImage.src = pathname;
     this.imageUrl.href = pathname;
     updateText(this.imageUrl, pathname);
@@ -762,6 +766,8 @@ function ChromosomeExplorer() {
 
 /****************************************************************
  HISTORY:
+ 2007-10-10
+ o Added support for image layer.
  2007-09-04
  o Added support for (model) "sets", e.g. 'glad', 'cbs'.
  2007-03-06

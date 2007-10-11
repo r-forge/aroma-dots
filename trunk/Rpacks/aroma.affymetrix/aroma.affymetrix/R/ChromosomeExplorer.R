@@ -399,7 +399,7 @@ setMethodS3("writeAxesLayers", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
 
   path <- getPath(this);
-  path <- filePath(getParent(path), "axes");
+  path <- filePath(getParent(path), "axes,chrLayer");
   path <- Arguments$getWritablePath(path);
 
   plotAxesLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
@@ -412,7 +412,7 @@ setMethodS3("writeGridHorizontalLayers", "ChromosomeExplorer", function(this, ..
   model <- getModel(this);
 
   path <- getPath(this);
-  path <- filePath(getParent(path), "gridH");
+  path <- filePath(getParent(path), "gridH,chrLayer");
   path <- Arguments$getWritablePath(path);
 
   plotGridHorizontalLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
@@ -430,7 +430,7 @@ setMethodS3("writeCytobandLayers", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
 
   path <- getPath(this);
-  path <- filePath(getParent(path), "cytoband");
+  path <- filePath(getParent(path), "cytoband,chrLayer");
   path <- Arguments$getWritablePath(path);
 
   plotCytobandLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
@@ -448,7 +448,7 @@ setMethodS3("writeRawCopyNumberLayers", "ChromosomeExplorer", function(this, ...
   model <- getModel(this);
 
   path <- getPath(this);
-  path <- filePath(getParent(path), "rawCNs");
+  path <- filePath(getParent(path), "rawCNs,sampleLayer");
   path <- Arguments$getWritablePath(path);
 
   plotRawCopyNumbers(model, path=path, imageFormat="png", transparent=TRUE, ...);

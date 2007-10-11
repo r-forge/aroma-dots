@@ -18,6 +18,11 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
     throw("Arguments 'FUN' is not a function: ", class(FUN)[1]);
   }
 
+  # Argument 'chromosomes':
+  if (is.null(chromosomes)) {
+    chromosomes <- getChromosomes(this);
+  }
+
   # Argument 'pixelsPerMb':
   pixelsPerMb <- Arguments$getDouble(pixelsPerMb, range=c(0.001,9999));
 
@@ -71,18 +76,7 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
     zooms <- zooms[1];
     plotDev <- screenDev;
   } else if (identical(imageFormat, "png")) {
-    if (transparent) {
-      png2trans <- function(...) {
-        png2(..., type="pngalpha");
-        # The 'pngalpha' ghostscript device is quite slow, so to avoid
-        # overloading the CPU, we add an ad hoc sleep here.
-  #      Sys.sleep(0.3);
-      }
-      devices <- list(png2trans, png);
-    } else {
-      devices <- list(png2, png);
-    }
-    pngDev <- System$findGraphicsDevice(devices=devices);
+    pngDev <- findPngDevice(transparent=TRUE);
     plotDev <- pngDev;
     if (identical(pngDev, png2))
       resScale <- 2;
@@ -95,7 +89,7 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Define the plot function
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Creating cytoband image layers");
+  verbose && enter(verbose, "Creating image layers");
 
   for (chromosome in chromosomes) {
     nbrOfBases <- genome$nbrOfBases[chromosome];
@@ -392,7 +386,7 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
     zooms <- zooms[1];
     plotDev <- screenDev;
   } else if (identical(imageFormat, "png")) {
-    pngDev <- System$findGraphicsDevice();
+    pngDev <- findPngDevice(transparent=FALSE);
     plotDev <- pngDev;
     if (identical(pngDev, png2))
       resScale <- 2;
@@ -628,18 +622,7 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberSegmentationModel", function(x, xli
     zooms <- zooms[1];
     plotDev <- screenDev;
   } else if (identical(imageFormat, "png")) {
-    if (transparent) {
-      png2trans <- function(...) {
-        png2(..., type="pngalpha");
-        # The 'pngalpha' ghostscript device is quite slow, so to avoid
-        # overloading the CPU, we add an ad hoc sleep here.
-  #      Sys.sleep(0.3);
-      }
-      devices <- list(png2trans, png);
-    } else {
-      devices <- list(png2, png);
-    }
-    pngDev <- System$findGraphicsDevice(devices=devices);
+    pngDev <- findPngDevice(transparent=TRUE);
     plotDev <- pngDev;
     if (identical(pngDev, png2))
       resScale <- 2;
