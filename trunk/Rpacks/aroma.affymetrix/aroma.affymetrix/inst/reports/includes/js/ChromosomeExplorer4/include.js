@@ -11,4 +11,5 @@ function includeDom(url) {
 includeDom("../../includes/js/Webcuts.js");
 includeDom("../../includes/js/domUtils.js");
 includeDom("../../includes/js/ScrollImage1d.js");
-includeDom("../../includes/js/ChromosomeExplorer3/ChromosomeExplorer.js");
+includeDom("../../includes/js/ChromosomeExplorer4/ChromosomeExplorer.js");
+
