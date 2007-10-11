@@ -188,31 +188,42 @@ function ChromosomeExplorer() {
     }
   }
 
+  this.updateSampleLayers = function() {
+	  var layerIds = this.sampleLayerIds;
+    for (var kk=0; kk < layerIds.length; kk++) {
+      this.updateSampleLayer(layerIds[kk]);
+    }
+  }
+
   this.updateChromosomeLayer = function(layerId) {
     var img = document.getElementById('panelImageLayer'+layerId);
+
+    /* First blank it */
+    var pathname = "../../includes/images/pixelWhite.png";
+    img.src = pathname;
+
     var path = this.chipType + "/" + layerId;
     var chr = "chr" + padWidthZeros(this.chromosomeIdx+1, 2);
     var zoom = "x" + padWidthZeros(this.scale, 4);
     var fullname = chr + "," + zoom;
     var filename = fullname + ".png";
-    var pathname = path + "/" + filename;
+    pathname = path + "/" + filename;
 		img.src = pathname;
 	}
 
-  this.updateSampleLayers = function() {
-    var layerIds = this.sampleLayerIds;
-    for (var kk=0; kk < layerIds.length; kk++) {
-      this.updateSampleLayer(layerIds[kk]);
-    }
-  }
   this.updateSampleLayer = function(layerId) {
     var img = document.getElementById('panelImageLayer'+layerId);
+
+    /* First blank it */
+    var pathname = "../../includes/images/pixelWhite.png";
+    img.src = pathname;
+
     var path = this.chipType + "/" + layerId;
     var chr = "chr" + padWidthZeros(this.chromosomeIdx+1, 2);
     var zoom = "x" + padWidthZeros(this.scale, 4);
     var fullname = this.sample + "," + chr + "," + zoom;
     var filename = fullname + ".png";
-    var pathname = path + "/" + filename;
+    pathname = path + "/" + filename;
 		img.src = pathname;
 	}
 
