@@ -457,6 +457,24 @@ setMethodS3("writeRawCopyNumberLayers", "ChromosomeExplorer", function(this, ...
 }, private=TRUE)
 
 
+setMethodS3("writeCopyNumberRegionLayers", "ChromosomeExplorer", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the model
+  model <- getModel(this);
+
+  path <- getPath(this);
+  tag <- getAsteriskTag(model);
+  path <- filePath(getParent(path), sprintf("%s,sampleLayer", tag));
+  path <- Arguments$getWritablePath(path);
+
+  plotCopyNumberRegionLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+
+  invisible(path);
+}, private=TRUE)
+
+
 
 
 setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, arrays=NULL, ...) {
@@ -584,7 +602,9 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
     # 2. Sample specific layers
     verbose && enter(verbose, "Sample-specific layers");
     writeRawCopyNumberLayers(this, arrays=arrays, chromosomes=chromosomes, 
-                                                              ..., verbose=less(verbose));
+                                                 ..., verbose=less(verbose));
+    writeCopyNumberRegionLayers(this, arrays=arrays, chromosomes=chromosomes, 
+                                                 ..., verbose=less(verbose));
     verbose && exit(verbose);
 
     verbose && exit(verbose);

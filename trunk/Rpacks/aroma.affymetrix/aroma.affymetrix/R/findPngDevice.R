@@ -13,6 +13,7 @@ setMethodS3("findPngDevice", "default", function(transparent=TRUE, ...) {
     # R.utils::png2()
     png2trans <- function(...) {
       png2(..., type="pngalpha");
+      par(bg=NA);
       # The 'pngalpha' ghostscript device is quite slow, so to avoid
       # overloading the CPU, we add an ad hoc sleep here.
 #      Sys.sleep(0.3);
