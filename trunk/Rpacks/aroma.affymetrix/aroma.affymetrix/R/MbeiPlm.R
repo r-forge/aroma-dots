@@ -55,9 +55,6 @@ setConstructorS3("MbeiPlm", function(..., tags="*") {
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    tags[tags == "*"] <- "MBEI";
   }
 
 
@@ -66,8 +63,7 @@ setConstructorS3("MbeiPlm", function(..., tags="*") {
 
 
 setMethodS3("getAsteriskTag", "MbeiPlm", function(this, ...) {
-  name <- "MBEI";
-  name;
+  "MBEI";
 })
 
 

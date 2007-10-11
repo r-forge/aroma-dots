@@ -1,7 +1,7 @@
 ###########################################################################/**
-# @RdocClass HetLogAddSnpPlm
+# @RdocClass HetLogAddCnPlm
 #
-# @title "The HetLogAddSnpPlm class"
+# @title "The HetLogAddCnPlm class"
 #
 # \description{
 #  @classhierarchy
@@ -10,7 +10,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "HetLogAddSnpPlm".}
+#   \item{...}{Arguments passed to @see "HetLogAddCnPlm".}
 #   \item{combineAlleles}{If @FALSE, allele A and allele B are treated 
 #      seperately, otherwise together.}
 #   \item{tags}{A @character @vector of tags.}
@@ -27,7 +27,7 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("HetLogAddSnpPlm", function(..., combineAlleles=FALSE, tags="*") {
+setConstructorS3("HetLogAddCnPlm", function(..., combineAlleles=FALSE, tags="*") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -45,7 +45,7 @@ setConstructorS3("HetLogAddSnpPlm", function(..., combineAlleles=FALSE, tags="*"
   }
 
 
-  extend(RmaSnpPlm(..., tags=tags), c("HetLogAddSnpPlm", uses(CnPlm())),
+  extend(HetLogAddSnpPlm(..., tags=tags), c("HetLogAddCnPlm", uses(CnPlm())),
     combineAlleles = combineAlleles
   )
 })

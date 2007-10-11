@@ -41,7 +41,7 @@ setConstructorS3("HetLogAddSnpPlm", function(..., mergeStrands=FALSE, tags="*") 
   }
 
 
-  extend(RmaPlm(..., tags=tags), c("HetLogAddSnpPlm", uses(SnpPlm())),
+  extend(HetLogAddPlm(..., tags=tags), c("HetLogAddSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })

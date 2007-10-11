@@ -14,7 +14,7 @@ setMethodS3("fitWRCModel", "matrix", function(y, ...) {
 # Each data element can be given a weight.  Moreover, if there
 # are missing values, these will be given zero weights.
 # 'tau' is an optional penalty term to avoid zero variance estimates.
-setMethodS3("fitWHRCModel", "matrix", function(y, w=NULL, hasNAs=TRUE, psiCode=0, psiK=1.345, tau=0, eps=1e-3, maxIterations=100, .checkArgs=TRUE, ...) {
+setMethodS3("fitWHRCModel", "matrix", function(y, w=NULL, hasNAs=TRUE, psiCode=0, psiK=1.345, tau=1e-3, eps=1e-3, maxIterations=100, .checkArgs=TRUE, ...) {
   I <- ncol(y);  # Number of arrays
   K <- nrow(y);  # Number of probes
 
@@ -46,12 +46,10 @@ setMethodS3("fitWHRCModel", "matrix", function(y, w=NULL, hasNAs=TRUE, psiCode=0
 
     badCells <- apply(isNA, MARGIN=2, FUN=all);
     if (any(badCells)) {
-      return(list(theta=rep(NA, I),
-                  sdTheta=rep(NA, I),
-                  thetaOutliers=rep(NA, I), 
-                  phi=rep(NA, K), 
-                  sdPhi=rep(NA, K), 
-                  phiOutliers=rep(NA, K)
+      return(list(Estimates=rep(NA, I+K),
+                  StdErrors=rep(NA, I+K),
+                  Weights=matrix(NA, nrow=K, ncol=I),
+                  Residuals=matrix(NA, nrow=K, ncol=I)
                  )
             );
     }
@@ -98,11 +96,12 @@ setMethodS3("fitWHRCModel", "matrix", function(y, w=NULL, hasNAs=TRUE, psiCode=0
       # Estimate probe standard deviations robustly
       phi <- params[phiIdxs];
       res <- fit$Residuals;
-      phiSd <- rowMads(res, na.rm=TRUE);
+      res[isNA] <- NA;  # Missing values were set to zero.
+      phiSd <- rowMads(res, centers=0, na.rm=TRUE);
   
       # Downweights by variance (with a small penalty term)
       wV <- 1/(phiSd^2 + tau);
-      wV <- wV / sum(wV, na.rm=TRUE);
+#      wV <- wV / sum(wV, na.rm=TRUE);
 
       # Update the weights
       w <- wV * w0;

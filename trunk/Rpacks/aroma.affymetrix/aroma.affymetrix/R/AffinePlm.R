@@ -66,12 +66,12 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
 
-    # Update default tags
-    idx <- which(tags == "*");
-    if (length(idx) > 0) {
-      tags[idx] <- "APLM";
-      if (!background)
-        tags <- R.utils::insert.default(tags, idx+1, "lin");
+#    # Update default tags
+#    idx <- which(tags == "*");
+#    if (length(idx) > 0) {
+#      tags[idx] <- "APLM";
+#      if (!background)
+#        tags <- R.utils::insert.default(tags, idx+1, "lin");
     }
   }
 
@@ -83,8 +83,11 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
 
 
 setMethodS3("getAsteriskTag", "AffinePlm", function(this, ...) {
-  name <- "APLM";
-  name;
+  tags <- "APLM";
+  if (!this$background)
+    tags <- c(tags, "lin");
+  tags <- paste(tags, collapse=",");
+  tags;
 })
 
 
@@ -203,6 +206,9 @@ setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-10-06
+# o Now the asterisk tag ('*') is no longer assigned in the constructor,
+#   but in getTags().
 # 2007-09-16
 # o Renamed the variables such that index I is for samples and K is for
 #   probes, as in the paper.
