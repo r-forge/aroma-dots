@@ -14,6 +14,10 @@ explorer.onLoad = function() {
   /* Detected sets */
   this.setSets(new Array(<%=paste(paste("'", sets, "'", sep=""), collapse=", ")%>));
 
+  /* Layers */
+  this.setChromosomeLayerIds(new Array(<%=paste(paste("'", chrLayerIds, "'", sep=""), collapse=", ")%>));
+  this.setSampleLayerIds(new Array(<%=paste(paste("'", sampleLayerIds, "'", sep=""), collapse=", ")%>));
+
   /* Zooms */
   this.setScales(new Array(<%=paste(zooms, collapse=", ")%>));
 
