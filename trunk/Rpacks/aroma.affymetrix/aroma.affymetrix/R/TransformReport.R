@@ -437,7 +437,7 @@ setMethodS3("plotXYCurveLog2", "TransformReport", function(this, xlim=c(0,16), x
 
 
 setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=800, height=width, ..., skip=TRUE, verbose=FALSE) {
-  pngDev <- System$findGraphicsDevice();
+  pngDev <- findPngDevice(transparent=FALSE);
  
   cdf <- getCdf(this);
   chipType <- getChipType(cdf, fullname=FALSE);
@@ -494,7 +494,7 @@ setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=80
 
 
 setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, width=800, height=width, ..., skip=TRUE, verbose=FALSE) {
-  pngDev <- System$findGraphicsDevice();
+  pngDev <- findPngDevice(transparent=FALSE);
  
   cdf <- getCdf(this);
   chipType <- getChipType(cdf, fullname=FALSE);

@@ -72,9 +72,8 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
 #      tags[idx] <- "APLM";
 #      if (!background)
 #        tags <- R.utils::insert.default(tags, idx+1, "lin");
-    }
+#    }
   }
-
 
   extend(ProbeLevelModel(..., tags=tags), "AffinePlm",
     background = background

@@ -67,6 +67,11 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.CopyNumberSegmentationModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.CopyNumberSegmentationModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
  \tab \code{plot} \tab  -\cr
+ \tab \code{plotAxesLayers} \tab  -\cr
+ \tab \code{plotChromosomesLayers} \tab  -\cr
+ \tab \code{plotCytobandLayers} \tab  -\cr
+ \tab \code{plotGridHorizontalLayers} \tab  -\cr
+ \tab \code{plotRawCopyNumbers} \tab  -\cr
  \tab \code{setAlias} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
