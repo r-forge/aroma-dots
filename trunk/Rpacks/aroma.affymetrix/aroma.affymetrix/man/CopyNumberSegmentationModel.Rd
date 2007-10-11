@@ -69,7 +69,9 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
  \tab \code{plot} \tab  -\cr
  \tab \code{plotAxesLayers} \tab  -\cr
  \tab \code{plotChromosomesLayers} \tab  -\cr
+ \tab \code{plotCopyNumberRegionLayers} \tab  -\cr
  \tab \code{plotCytobandLayers} \tab  -\cr
+ \tab \code{plotFitLayers} \tab  -\cr
  \tab \code{plotGridHorizontalLayers} \tab  -\cr
  \tab \code{plotRawCopyNumbers} \tab  -\cr
  \tab \code{setAlias} \tab  -\cr

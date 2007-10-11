@@ -334,6 +334,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   isChrLayer <- (regexpr(",chrLayer", subdirs) != -1);
   isSampleLayer <- (regexpr(",sampleLayer", subdirs) != -1);
   isLayer <- (isChrLayer | isSampleLayer);
+  hasLayers <- any(isLayer);
 
   # Remove anything that is a layer
   sets <- basename(subdirs)[!isLayer];
@@ -348,7 +349,9 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   verbose && cat(verbose, "Detected (or default) sets: ", paste(sets, collapse=", "));
   verbose && exit(verbose);
 
-
+  if (hasLayers) {
+    sets <- c("-LAYERS-", sets);
+  }
 
   # Compile RSP file
   verbose && enter(verbose, "Compiling RSP");
@@ -357,7 +360,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   env$samples <- getFullNames(this);
   env$sampleLabels <- getNames(this);
   env$zooms <- zooms;
-  env$sets <- c("-LAYERS-", sets);
+  env$sets <- sets;
   env$chrLayerIds <- gsub(",.*", "", basename(subdirs)[isChrLayer]);
   env$sampleLayerIds <- gsub(",.*", "", basename(subdirs)[isSampleLayer]);
 
@@ -630,9 +633,11 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="Chromosome
 
 ##############################################################################
 # HISTORY:
+# 2007-10-10
+# o Added support for layers.  This should be backward compatible.
 # 2007-10-09
 # o Now process() writes cytoband/*.png layer images.
-# o Added writeCytobandLayers().
+# o Added writeCytobandLayers() etc.
 # 2007-09-30
 # o Now the main HTML file for ChromosomeExplorer is ChromosomeExplorer.html,
 #   which is in analogue to how the ArrayExplorer works.  This HTML now
