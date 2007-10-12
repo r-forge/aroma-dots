@@ -18,16 +18,36 @@ body {
   cursor: crosshair;
 }
 
-#navigatorImage {
+span.navigatorImageLayers #navigatorImage {
   float: left;
   margin: 0px;
   padding: 0px; 
-  border: none;
-  border: 1px dotted #000066;
+  border: 1px dashed #000066;
   width: 99%;
   height: 96px;
   filter: alpha(opacity=50);
   opacity: 0.50;
+}
+
+span.navigatorImageLayers { 
+  float: left;
+  position:relative;
+}
+
+span.navigatorImageLayers img { 
+  vertical-align: top;
+  width: 99%;
+  height: 96px;
+  margin: 0px;
+  padding: 0px; 
+  filter: alpha(opacity=50);
+  opacity: 0.50;
+}
+
+span.navigatorImageLayers img.navLayer { 
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 #navigatorArea {
