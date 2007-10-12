@@ -1,4 +1,5 @@
-savehistory();
+if (interactive())
+  savehistory();
 library(aroma.affymetrix);
 source("init.R");
 
@@ -14,16 +15,20 @@ print(names(..pathnames));
 
 ..chipTypes <- c("Test3", "Mapping10K_Xba142", "Mapping50K_Hind240,Xba240", "HG-U133_Plus_2", "GenomeWideSNP6.0");
 
-pathname <- ..pathnames[[1]][1];
-#source(pathname, echo=TRUE);
-#stop();
+pathnames <- ..pathnames[[6]];
+pathname <- pathnames[10];
+#source(pathname, echo=TRUE);	
+stop()
 
-..chipTypes <- ..chipTypes[3];
-..chipTypes <- ..chipTypes[5];
-..chipTypes <- ..chipTypes[1];
+#..chipTypes <- ..chipTypes[3];
+#..chipTypes <- ..chipTypes[5];
+#..chipTypes <- ..chipTypes[1];
 
-..chipTypes <- c("GenomeWideSNP6.0");
+#..chipTypes <- c("GenomeWideSNP6.0");
+#..chipTypes <- c("Test3");
+#..chipTypes <- c("Mapping50K_Hind240,Xba240");
 #..chipTypes <- c("Mapping10K_Xba142");
+##stop()
 
 for (..chipType in ..chipTypes) {
   nbrOfTests <- length(..pathnames[[..chipType]]);
