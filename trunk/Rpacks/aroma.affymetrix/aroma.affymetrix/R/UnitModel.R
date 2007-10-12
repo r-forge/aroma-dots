@@ -50,17 +50,6 @@ setConstructorS3("UnitModel", function(dataSet=NULL, tags=NULL, ...) {
 
 
 
-setMethodS3("getTags", "UnitModel", function(this, ...) {
-  tags <- this$.tags;
-  tags[tags == "*"] <- paste(getAsteriskTag(this), collapse=",");
-  tags;
-})
-
-
-setMethodS3("getAsteriskTag", "UnitModel", function(this, ...) {
-  "UM";
-})
-
 
 ###########################################################################/**
 # @RdocMethod getCellIndices

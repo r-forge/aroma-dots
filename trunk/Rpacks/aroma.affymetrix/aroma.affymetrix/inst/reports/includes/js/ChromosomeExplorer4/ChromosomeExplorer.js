@@ -116,16 +116,18 @@ function ChromosomeExplorer() {
     for (var kk=0; kk < layerIds.length; kk++) {
       layerIds[kk] = layerIds[kk] + ',sampleLayer';
     }
+    if (layerIds.length > 0)
+      this.setLayers(layerIds, 'Layers');
     this.sampleLayerIds = layerIds;
-    this.setLayers(layerIds, 'Layers');
   }
 
   this.setChromosomeLayerIds = function(layerIds) {
     for (var kk=0; kk < layerIds.length; kk++) {
       layerIds[kk] = layerIds[kk] + ',chrLayer';
     }
-     this.chromosomeLayerIds = layerIds;
-    this.setLayers(layerIds, 'Annotations');
+    if (layerIds.length > 0)
+      this.setLayers(layerIds, 'Annotations');
+    this.chromosomeLayerIds = layerIds;
   }
 
 
