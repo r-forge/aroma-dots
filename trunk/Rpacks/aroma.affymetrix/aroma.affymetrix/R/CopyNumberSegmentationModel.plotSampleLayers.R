@@ -215,7 +215,7 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberSegmentationModel", function(this, 
 
 
 
-setMethodS3("plotCopyNumberRegionLayers", "CopyNumberSegmentationModel", function(this, path=NULL, col="red", lwd=2, ...) {
+setMethodS3("plotCopyNumberRegionLayers", "CopyNumberSegmentationModel", function(this, path=NULL, col="red", lwd=4, ...) {
   # The report path
   if (is.null(path)) {
     path <- getReportPath(this);
