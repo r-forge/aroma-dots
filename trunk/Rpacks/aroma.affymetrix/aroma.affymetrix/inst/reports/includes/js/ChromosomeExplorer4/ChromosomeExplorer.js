@@ -113,6 +113,14 @@ function ChromosomeExplorer() {
 
 
   this.setSampleLayerIds = function(layerIds) {
+    /* Ad hoc reordering for better visability */
+    var idx = layerIds.indexOf('rawCNs');
+    if (idx != -1) {
+      layerIds.splice(idx);
+      layerIds.reverse();
+      layerIds.push('rawCNs');
+      layerIds.reverse();
+    }
     for (var kk=0; kk < layerIds.length; kk++) {
       layerIds[kk] = layerIds[kk] + ',sampleLayer';
     }

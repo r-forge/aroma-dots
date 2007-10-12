@@ -237,7 +237,7 @@ setMethodS3("plot", "CopyNumberSegmentationModel", function(x, xlim=NULL, ..., p
             # Draw CNRs
             cnRegions <- extractCopyNumberRegions(fit);
             verbose && print(verbose, cnRegions, level=-50);
-            drawLevels(cnRegions, lwd=2, col="black", xScale=1/10^unit);
+            drawLevels(cnRegions, lwd=4, col="black", xScale=1/10^unit);
 
             # Model-specific annotations (optional; class specific)
             drawExtraAnnotations(fit);
