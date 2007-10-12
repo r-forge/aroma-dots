@@ -281,6 +281,10 @@ setMethodS3("getAsteriskTag", "Model", function(this, ...) {
 setMethodS3("getTags", "Model", function(this, collapse=NULL, ...) {
   ds <- getDataSet(this);
   tags <- c(getTags(ds), this$.tags);
+  if (any(tags == "*")) {
+    tags[tags == "*"] <- paste(getAsteriskTag(this), collapse=",");
+    tags <- unlist(strsplit(tags, split=","));
+  }
   tags <- paste(tags, collapse=collapse);
   if (length(tags) == 0)
     tags <- NULL;
@@ -551,6 +555,8 @@ setMethodS3("setLabel", "Model", function(this, label, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-10-11
+# o Now getTags() of Model inserts "asterisk" tags.
 # 2007-04-12
 # o Added default getAsteriskTag().
 # 2007-03-24
