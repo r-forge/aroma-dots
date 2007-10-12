@@ -439,14 +439,12 @@ setMethodS3("addIncludes", "Explorer", function(this, ..., force=FALSE, verbose=
   verbose && enter(verbose, "Setting up ", class(this)[1], " report files");
 
   destPath <- filePath(getRootPath(this), "includes");
-  if (force || !isDirectory(destPath)) {
-    verbose && enter(verbose, "Copying template files");
-    srcPath <- getIncludePath(this);
-    verbose && cat(verbose, "Source path: ", srcPath);
-    verbose && cat(verbose, "Destination path: ", destPath);
-    pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE);
-    verbose && exit(verbose);
-  }
+  verbose && enter(verbose, "Copying template files");
+  srcPath <- getIncludePath(this);
+  verbose && cat(verbose, "Source path: ", srcPath);
+  verbose && cat(verbose, "Destination path: ", destPath);
+  pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE, overwrite=force, ...);
+  verbose && exit(verbose);
 
   verbose && exit(verbose);
 })
@@ -581,6 +579,8 @@ setMethodS3("display", "Explorer", function(this, filename=sprintf("%s.html", cl
 
 ##############################################################################
 # HISTORY:
+# 2007-10-11
+# o Now addIncludes() always copies missing files in the includes/ directory.
 # 2007-03-24
 # o BUG FIX: getPath() created the root path before trying to expand
 #   Windows shortcuts.
