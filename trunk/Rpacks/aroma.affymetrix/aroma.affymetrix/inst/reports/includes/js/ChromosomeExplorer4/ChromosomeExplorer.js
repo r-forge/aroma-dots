@@ -88,19 +88,22 @@ function ChromosomeExplorer() {
 
   this.setLayers = function(layerIds, name) {
     var s = name + ': ';
-    var imgs = '';
+    var pimgs = '';
+    var nimgs = '';
     for (var kk=0; kk < layerIds.length; kk++) {
       var layerId = layerIds[kk];
       var label = layerId.substring(0, layerId.indexOf(','));
       s = s + '[<span id="layer' + layerId + '"><a href="javascript:explorer.toggleLayer(\'' + layerId + '\');">' + label + '</a></span>]'; 
-      imgs = imgs + '<img id="panelImageLayer'+layerId+'" class="layer" src="" alt="ERROR: Image file for layer \''+layerId+'\' is not available">';
+      pimgs = pimgs + '<img id="panelImageLayer'+layerId+'" class="layer" src="" alt="ERROR: Image file for layer \''+layerId+'\' is not available">';
+      nimgs = nimgs + '<img id="navigatorImageLayer'+layerId+'" class="navLayer" src="" alt="ERROR: Image file for layer \''+layerId+'\' is not available">';
     }
 
     var layerId = layerIds[0];
     var prefix = layerId.substring(layerId.indexOf(',')+1);
 
     updateLabel(prefix + 'Labels', s);
-    updateLabel(prefix + 's', imgs);
+    updateLabel(prefix + 's', pimgs);
+    updateLabel('navigator' + prefix + 's', nimgs);
 
     for (var kk=0; kk < layerIds.length; kk++) {
       var layerId = layerIds[kk];
@@ -170,60 +173,91 @@ function ChromosomeExplorer() {
   }
 
   this.toggleLayer = function(layerId) {
-    var obj = document.getElementById('panelImageLayer'+layerId);
-    var state = obj.style.visibility;
-    if (state != 'hidden') {
-      state = 'hidden';
-      clearById('layer' + layerId);
-    } else {
-      state = 'visible';
-      highlightById('layer' + layerId);
+    var objId = null;
+    for (var kk=0; kk < 2; kk++) {
+      if (kk == 1) {
+        objId = "navigatorImageLayer" + layerId;
+      } else {
+        objId = "panelImageLayer" + layerId;
+      }
+      var obj = document.getElementById(objId);
+      var state = obj.style.visibility;
+      if (state != 'hidden') {
+        state = 'hidden';
+        clearById('layer' + layerId);
+      } else {
+        state = 'visible';
+        highlightById('layer' + layerId);
+      }
+      obj.style.visibility = state;
     }
-    obj.style.visibility = state;
   }
 
-  this.updateChromosomeLayers = function() {
+  this.updateChromosomeLayers = function(where) {
     var layerIds = this.chromosomeLayerIds;
     for (var kk=0; kk < layerIds.length; kk++) {
-      this.updateChromosomeLayer(layerIds[kk]);
+      this.updateChromosomeLayer(layerIds[kk], where);
     }
   }
 
-  this.updateSampleLayers = function() {
+  this.updateSampleLayers = function(where) {
     var layerIds = this.sampleLayerIds;
     for (var kk=0; kk < layerIds.length; kk++) {
-      this.updateSampleLayer(layerIds[kk]);
+      this.updateSampleLayer(layerIds[kk], where);
     }
   }
 
-  this.updateChromosomeLayer = function(layerId) {
-    var img = document.getElementById('panelImageLayer'+layerId);
+
+  this.updateChromosomeLayer = function(layerId, where) {
+    var objId = null;
+    if (where == "navigator") {
+      objId = "navigatorImageLayer" + layerId;
+    } else {
+      objId = "panelImageLayer" + layerId;
+    }
+    var img = document.getElementById(objId);
 
     var path = this.chipType + "/" + layerId;
     var chr = "chr" + padWidthZeros(this.chromosomeIdx+1, 2);
-    var zoom = "x" + padWidthZeros(this.scale, 4);
+    var zoom = null;
+    if (where == "navigator") {
+      zoom = "x0004";
+    } else {
+      zoom = "x" + padWidthZeros(this.scale, 4);
+    }
     var fullname = chr + "," + zoom;
     var filename = fullname + ".png";
     var pathname = path + "/" + filename;
 
+    img.src = "../../includes/images/blockRed.png";  /* First blank it */
     if (img.src != pathname) {
-      img.src = "../../includes/images/blockRed.png";  /* First blank it */
       img.src = pathname;
     }
   }
 
-  this.updateSampleLayer = function(layerId) {
-    var img = document.getElementById('panelImageLayer'+layerId);
+  this.updateSampleLayer = function(layerId, where) {
+    var objId = null;
+    if (where == "navigator") {
+      objId = "navigatorImageLayer" + layerId;
+    } else {
+      objId = "panelImageLayer" + layerId;
+    }
+    var img = document.getElementById(objId);
 
     var path = this.chipType + "/" + layerId;
     var chr = "chr" + padWidthZeros(this.chromosomeIdx+1, 2);
-    var zoom = "x" + padWidthZeros(this.scale, 4);
+    var zoom = null;
+    if (where == "navigator") {
+      zoom = "x0004";
+    } else {
+      zoom = "x" + padWidthZeros(this.scale, 4);
+    }
     var fullname = this.sample + "," + chr + "," + zoom;
     var filename = fullname + ".png";
     var pathname = path + "/" + filename;
 
+    img.src = "../../includes/images/blockRed.png";  /* First blank it */
     if (img.src != pathname) {
-      img.src = "../../includes/images/blockRed.png";  /* First blank it */
       img.src = pathname;
     }
   }
@@ -537,13 +571,14 @@ function ChromosomeExplorer() {
      *******************************************************/
     nav = document.getElementById('navigator');
     navImage = document.getElementById('navigatorImage');
+    navImageLayers = document.getElementById("navigatorImageLayers");
   
     navArea = document.getElementById('navigatorArea');
     var mouseX = 0;
     var mouseDown = false;
   
     /* Immitate onmousepress, which does not exists */
-    navImage.onmousepress = function() {
+    navImageLayers.onmousepress = function() {
       if (mouseDown) {
         if (mouseX < navAreaX) {
           owner.navAreaMove(navAreaX - 0.47*navAreaWidth);
@@ -552,12 +587,12 @@ function ChromosomeExplorer() {
         } else {
           owner.navAreaMove(mouseX);
         }
-        setTimeout('navImage.onmousepress();', 100);
+        setTimeout('navImageLayers.onmousepress();', 100);
       }
       return false;
     }
   
-    navImage.onmousedown = function() {
+    navImageLayers.onmousedown = function() {
       var e = arguments[0] || event;
       mouseDown = true;
       owner.updateGlobals();
@@ -568,15 +603,15 @@ function ChromosomeExplorer() {
         owner.navAreaMove(navAreaX + 1.47*navAreaWidth);
       }
   
-      setTimeout('navImage.onmousepress();', 500);
+      setTimeout('navImageLayers.onmousepress();', 500);
   
       document.onmouseup = function() {
-        navImage.onmousemove = null;
+        navImageLayers.onmousemove = null;
         mouseDown = false;
         return false;
       }
   
-      navImage.onmousemove = function() {
+      navImageLayers.onmousemove = function() {
         var e = arguments[0] || event;
         mouseX = (e.clientX - navImageOffsetX);
         return false;
@@ -689,8 +724,10 @@ function ChromosomeExplorer() {
 
     var navAreaRelMidX = (navAreaX + navAreaWidth/2) / navImageWidth;
 
-    this.updateChromosomeLayers();
-     this.updateSampleLayers();
+    /* Update layers */
+    this.updateChromosomeLayers('panel');
+    this.updateSampleLayers('panel');
+
     var pathname = null;
     if (this.set == "-LAYERS-") {
       pathname = "../../includes/images/pixelWhite.png";
@@ -713,6 +750,8 @@ function ChromosomeExplorer() {
       panelImageOnLoad();
       panelImageOnLoad = function() {};
     }
+
+    panelImage.src = "../../includes/images/blockRed.png";  /* First blank it */
     panelImage.src = pathname;
     this.imageUrl.href = pathname;
     updateText(this.imageUrl, pathname);
@@ -728,6 +767,10 @@ function ChromosomeExplorer() {
   this.updateNavigator = function() {
     var owner = this;
 
+    /* Update layers */
+    this.updateChromosomeLayers('navigator');
+    this.updateSampleLayers('navigator');
+
     var pathname = null;
     if (this.set == "-LAYERS-") {
       pathname = "../../includes/images/pixelWhite.png";
@@ -736,6 +779,8 @@ function ChromosomeExplorer() {
     }
 
     navImage = document.getElementById("navigatorImage");
+    navImage.src = "../../includes/images/blockRed.png";  /* First blank it */
+
     navImage.onload = function() {
       owner.loadCount = owner.loadCount - 1;
       if (owner.loadCount <= 0) {
@@ -743,6 +788,7 @@ function ChromosomeExplorer() {
         owner.setStatus("");
       }
     }
+
     navImage.src = pathname;
   } // updateNavigator()
 
@@ -753,7 +799,22 @@ function ChromosomeExplorer() {
     var relWidth = chromosomeLength[this.chromosomeIdx] / chromosomeLength[0];
     navImageWidth = Math.round(relWidth * nav.clientWidth);
     navAreaWidth = Math.round(relWidth * nav.clientWidth);
-    navImage.style.width = "" + navImageWidth  + "px";
+    var width = "" + navImageWidth  + "px";
+    navImage.style.width = width;
+
+    var objId = null;
+    var layerIds = this.chromosomeLayerIds;
+    for (var kk=0; kk < layerIds.length; kk++) {
+      objId = "navigatorImageLayer" + layerIds[kk];
+      var obj = document.getElementById(objId);
+      obj.style.width = width;
+    }
+    var layerIds = this.sampleLayerIds;
+    for (var kk=0; kk < layerIds.length; kk++) {
+      objId = "navigatorImageLayer" + layerIds[kk];
+      var obj = document.getElementById(objId);
+      obj.style.width = width;
+    }
   }
   
   this.getMouseMb = function(x, chromosome, zoom) {
