@@ -31,9 +31,10 @@ var ExplorerSettings = Class.create({
 
   /* Update arguments by another Array */
   importArray: function(args) {
-    for (key in args) {
-      this.set(key, args[key]);
-    };
+    args.each(function(pair) {
+       var value = args[key];
+      this.set(pair.key, value);
+    });
   },
 
   /* Update arguments by cookies */
@@ -86,13 +87,13 @@ var ChromosomeExplorerSettings = Class.create(ExplorerSettings, {
   },
 
   getImagePathname: function() {
-		var path = "imgs";
+    var path = "imgs";
     return path + "/" + this.getImageFilename();
   },
 
   getLinkTo: function() {
-		var l = window.location;
-  	var url = l.protocol + '//' + l.host + l.pathname;
+    var l = window.location;
+    var url = l.protocol + '//' + l.host + l.pathname;
     return url + '?' + this.toQueryString();
   }
 });
