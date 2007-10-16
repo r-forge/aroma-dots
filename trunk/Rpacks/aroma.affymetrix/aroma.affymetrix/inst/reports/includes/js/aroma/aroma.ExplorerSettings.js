@@ -1,8 +1,10 @@
+var $jq = jQuery.noConflict();
+
 var ExplorerSettings = Class.create({
   initialize: function(args) {
     /* Default values */
     this.args = new Hash({
-      sample: "NA06985,B5",
+      sample: "0001-7,10K,15-08-2006",
       chromosome: 22, 
       zoom: 1
     });
@@ -18,7 +20,8 @@ var ExplorerSettings = Class.create({
   get: function(key) {
     if (typeof(key) == "undefined")
       throw "Invalid key: " + key;
-    return this.args[key];
+    var value = this.args[key];
+    return value;
   },
 
   set: function(key, value) {
@@ -31,10 +34,11 @@ var ExplorerSettings = Class.create({
 
   /* Update arguments by another Array */
   importArray: function(args) {
+		var that = this;
+    args = new Hash(args);
     args.each(function(pair) {
-       var value = args[key];
-      this.set(pair.key, value);
-    });
+			that.set(pair.key, pair.value);
+		})
   },
 
   /* Update arguments by cookies */
@@ -65,10 +69,19 @@ var ExplorerSettings = Class.create({
     this.importUrlParameters();
   },
 
+  show: function() {
+    var args = this.args.collect(function(pair) {
+      return pair.key + "=" + pair.value + "<br>";
+    });
+    var s = '<small><strong>Arguments:</strong><br>' + args + '</small>';
+    $jq("#debugSettings").html(s);
+  },
+
   /* Store arguments as cookies */
   save: function() {
+    this.show();
     this.args.each(function(pair) {
-      $jq.cookie(pair.key, pair.value);
+      $jq.cookie(pair.key, pair.value, {expires: 7});
     });
   },
 
@@ -87,7 +100,9 @@ var ChromosomeExplorerSettings = Class.create(ExplorerSettings, {
   },
 
   getImagePathname: function() {
-    var path = "imgs";
+		var path = this.get('imagePath');
+    if (path == null)
+      path = "imgs";
     return path + "/" + this.getImageFilename();
   },
 
