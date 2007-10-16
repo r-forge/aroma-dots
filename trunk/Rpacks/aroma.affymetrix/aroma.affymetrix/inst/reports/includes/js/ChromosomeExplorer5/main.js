@@ -35,37 +35,3 @@ var panelLocator = null;
 var panelLocatorTag = null;
 var panelWidth = 0;
 var panelMaxWidth = 0;
-
-
-var playSamples = false;
-var playDelay = 2000;
-
-function gotoNextSample(step) {
-  var nextSampleIdx = sampleIdx + step;
-  if (nextSampleIdx >= samples.length) {
-    nextSampleIdx = 0;
-  } else if (nextSampleIdx < 0) {
-    nextSampleIdx = samples.length-1;
-  }
-  explorer.setSample(nextSampleIdx);
-  if (playSamples) {
-    cmd = "gotoNextSample(" + step + ");";
-    setTimeout(cmd, playDelay);
-  }
-}
-
-function playAlongSamples(cmd) {
-  if (cmd == "start") {
-    playSamples = true;
-    gotoNextSample(1);
-  } else if (cmd == "stop") {
-    playSamples = false;
-  }
-}
-
-
-
-/* NOT USED */
-var shortcuts = new Array();
-var shortcutLabels = new Array();
-

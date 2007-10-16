@@ -5,7 +5,7 @@
  ****************************************************************/
 var AbstractExplorer = Class.create({
   initialize: function(args) {
-		this.reloadCountdown = 100;
+		this.reloadCountdown = 25;
 
     /* All lists */
     this.hashes = new Hash();
@@ -74,7 +74,7 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
       chromosome: 22, 
       chipType: "Mapping10K_Xba142", 
       set: "glad", 
-      zoom: 4
+      zoom: 2
 		});
 
     /* Update settings from cookies and URL parameters */
@@ -377,7 +377,7 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
     var chipType = this.getChipType();
     var zoom = this.getZoom();
     if (where == "navigator")
-      zoom = 4;
+      zoom = 2;
     var layerArray = this.getLayerArray(class);
     layerArray.each(function(layer) {
       var pathname = layer.getImagePathname(chipType, chromosome, sample, zoom);
@@ -639,17 +639,7 @@ function ChromosomeExplorer() {
     var chipType = this._explorer.getChipType();
     var zoom = this._explorer.getZoom();
     var set = this._explorer.getSet();
-  
-    /* Update shortcut link */
-    if (this.bookmarkUrl != null) {
-      var args = "'" + chipType + "', '" + sample + "', '" + chromosome + "', " + panel.scrollLeft + ", " + zoom + ", " + set;
-      url = 'javascript:explorer.jumpTo(' + args + ');';
-      url = 'x:"' + args + '",';
-      /* url = 'javascript:addToFavorites("' + url + '", "sss")';  */
-      this.bookmarkUrl.href = url;
-      updateText(this.bookmarkUrl, url);
-    }
-  
+
     /* Update CNR link */
     if (this.cnrUrl != null) {
       url = chipType + '/' + set + '/' + 'regions.xls';
@@ -677,7 +667,6 @@ function ChromosomeExplorer() {
 
   this.loadCount = 0;
   this.imageUrl = null;
-  this.bookmarkUrl = null;
   this.cnrUrl = null;
 
   this.setupEventHandlers = function() {
@@ -895,9 +884,8 @@ function ChromosomeExplorer() {
     var zoom = this._explorer.getZoom();
     selectById('zoom' + zoom);
   
-    this.imageUrl = document.getElementById('imageUrl');
-    this.bookmarkUrl = document.getElementById('bookmarkUrl');
-    this.cnrUrl = document.getElementById('cnrUrl');
+    this.imageUrl = document.getElementById('imageUrl') || null;
+    this.cnrUrl = document.getElementById('cnrUrl') || null;
 
     this.setupEventHandlers();
   
@@ -912,7 +900,6 @@ function ChromosomeExplorer() {
   }
 
   this.getNavAreaWidth = function() {
-    logAdd("getNavAreaWidth()...");
     var value = navAreaWidth;
     if (typeof(value) == "undefined") {
       this.updateNavigatorWidth();
@@ -921,14 +908,15 @@ function ChromosomeExplorer() {
       if (typeof(value) == "undefined")
         value = null;
     }
-    logAdd("getNavAreaWidth()...done");
     return value;
   }
 
   this.navAreaUpdate = function() {
  		logAdd("navAreaUpdate()...");
 
+		/*
     this._explorer.settings.show();
+    */
     navAreaWidth = this.getNavAreaWidth();
     if (typeof(navAreaWidth) == "undefined" || typeof(navImageWidth) == "undefined")
       return(false);
@@ -940,11 +928,15 @@ function ChromosomeExplorer() {
       navAreaX = navImageWidth - navAreaWidth;
     }
     this._explorer.setNavAreaX(navAreaX);
+		/*
     this._explorer.settings.show();
+		*/
 
     navArea.style.width = navAreaWidth + "px";
     navArea.style.left = (navAreaX + navImageOffsetX) + "px";
+		/*
     this.locatorUpdated();
+		*/
 
  		logAdd("navAreaUpdate()...done");
   }
@@ -1078,7 +1070,6 @@ function ChromosomeExplorer() {
         owner.setStatus("");
       }
       owner.navAreaUpdate();
-      owner._explorer.countdown();
       logAdd("navImage.onload()...done");
     }
 
