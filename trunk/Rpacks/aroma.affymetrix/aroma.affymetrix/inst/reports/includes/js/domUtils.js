@@ -46,27 +46,43 @@ Array.prototype.indexOf = function(v, b, s) {
 };
 
 
+function selectById(id) {
+  var obj = document.getElementById(id);
+  if (obj == null)
+    return false;
+  obj.isSelected = true;
+  highlightById(id);  
+}
+
+function unselectById(id) {
+  var obj = document.getElementById(id);
+  if (obj == null)
+    return false;
+  obj.isSelected = false;
+  clearById(id);  
+}
+
 function clearById(id) {
   var obj = document.getElementById(id);
-  if (obj != null) {
+  if (obj == null)
+    return false;
 /*  
-    obj.style.visibility = 'hidden'; 
-    obj.style.borderBottom = 'none';
+  obj.style.visibility = 'hidden'; 
+  obj.style.borderBottom = 'none';
 */
-    obj.style.background = 'none';
-  }
+  obj.style.background = 'none';
 } /* clearById() */
 
 
 function highlightById(id) {
   var obj = document.getElementById(id);
-  if (obj != null) {
+  if (obj == null)
+    return false;
 /*  
-    obj.style.visibility = 'visible'; 
-    obj.style.borderBottom = '2px solid black';
+  obj.style.visibility = 'visible'; 
+  obj.style.borderBottom = '2px solid black';
 */
-    obj.style.background = '#ccccff;';
-  }
+  obj.style.background = '#ccccff;';
 } /* highlightById() */
 
 

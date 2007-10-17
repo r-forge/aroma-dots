@@ -62,6 +62,7 @@ span.navigatorImageLayers img.navLayer {
   padding: 0px; 
   filter: alpha(opacity=20);
   opacity: 0.20;
+  z-index: 20;
 }
 
 #panel {
@@ -103,10 +104,10 @@ span.panelImageLayers img.layer {
   margin: 0px;
   padding: 0px;
   border: none;
-  border-left: 1px solid #000066;
+  border-left: 2px solid #000066;
   filter: alpha(opacity=50);
   opacity: 0.50;
-  cursor: move;
+  z-index: 20;
 }
 
 #panelLocatorTag { 

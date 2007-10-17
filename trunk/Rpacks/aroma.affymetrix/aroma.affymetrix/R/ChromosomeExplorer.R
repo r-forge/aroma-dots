@@ -12,6 +12,7 @@
 # \arguments{
 #   \item{model}{A @see "CopyNumberSegmentationModel" object.}
 #   \item{...}{Not used.}
+#   \item{version}{The version of the Explorer HTML/Javascript generated/used.}
 # }
 #
 # \section{Fields and Methods}{
@@ -36,7 +37,7 @@
 #  @see "CopyNumberSegmentationModel".
 # }
 #*/###########################################################################
-setConstructorS3("ChromosomeExplorer", function(model=NULL, ...) {
+setConstructorS3("ChromosomeExplorer", function(model=NULL, ..., version=c("5", "4")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,10 +49,15 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, ...) {
     }
   }
 
+  # Argument 'version':
+  version <- match.arg(version);
+
+
   extend(Explorer(...), "ChromosomeExplorer",
     .model = model,
     .arrays = NULL,
-    .plotCytoband = TRUE
+    .plotCytoband = TRUE,
+    .version = version
   )
 })
 
@@ -282,13 +288,22 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   }
 
 
+  # Output version
+  version <- this$.version;
+  verbose && cat(verbose, "Explorer output version: ", version);
+
+
   path <- getPath(this);
   parentPath <- getParent(path);
   parent2Path <- getParent(parentPath);
   parent3Path <- getParent(parent2Path);
 
   srcPath <- getTemplatePath(this);
-  pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "ChromosomeExplorer.onLoad.js.rsp");
+  if (version == "4") {
+    pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "ChromosomeExplorer.onLoad.js.rsp");
+  } else if (version == "5") {
+    pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer5", "ChromosomeExplorer5.onLoad.js.rsp");
+  }
   verbose && enter(verbose, "Compiling ", basename(pathname));
   verbose && cat(verbose, "Source: ", pathname);
   outFile <- gsub("[.]rsp$", "", basename(pathname));
@@ -353,6 +368,9 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
     sets <- c("-LAYERS-", sets);
   }
 
+  chrLayers <- gsub(",.*", "", basename(subdirs)[isChrLayer]);
+  sampleLayers <- gsub(",.*", "", basename(subdirs)[isSampleLayer]);
+
   # Compile RSP file
   verbose && enter(verbose, "Compiling RSP");
   env <- new.env();
@@ -361,8 +379,8 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   env$sampleLabels <- getNames(this);
   env$zooms <- zooms;
   env$sets <- sets;
-  env$chrLayerIds <- gsub(",.*", "", basename(subdirs)[isChrLayer]);
-  env$sampleLayerIds <- gsub(",.*", "", basename(subdirs)[isSampleLayer]);
+  env$chrLayers <- chrLayers;
+  env$sampleLayers <- sampleLayers;
 
   pathname <- rspToHtml(pathname, path=NULL, 
                         outFile=outFile, outPath=outPath, 
@@ -377,7 +395,15 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 
 
 
-setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename="ChromosomeExplorer4.html", ...) {
+setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename=NULL, ...) {
+  if (is.null(filename)) {
+    version <- this$.version;
+    if (version == "4") {
+      filename <- "ChromosomeExplorer4.html";
+    } else if (version == "5") {
+      filename <- "ChromosomeExplorer5.html";
+    }
+  }
   NextMethod("addIndexFile", this, filename=filename, ...);
 }, protected=TRUE)
 
@@ -633,6 +659,8 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="Chromosome
 
 ##############################################################################
 # HISTORY:
+# 2007-10-17
+# o Added support for specifying the output version (at least for now).
 # 2007-10-10
 # o Added support for layers.  This should be backward compatible.
 # 2007-10-09

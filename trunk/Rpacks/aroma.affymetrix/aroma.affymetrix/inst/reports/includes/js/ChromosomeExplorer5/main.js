@@ -8,6 +8,8 @@ window.onresize = function() {
 includeDom("ChromosomeExplorer.onLoad.js");
 includeDom("../ChromosomeExplorer.onLoad.js");
 includeDom("../samples.js");
+includeDom("ChromosomeExplorer5.onLoad.js");
+includeDom("../ChromosomeExplorer5.onLoad.js");
 includeDom("extras.js");
 
 function onLoad() {
