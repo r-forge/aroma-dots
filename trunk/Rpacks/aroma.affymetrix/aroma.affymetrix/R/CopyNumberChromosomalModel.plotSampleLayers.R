@@ -1,4 +1,4 @@
-setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, path, xlim=NULL, ..., pixelsPerMb=3, zooms=2^(0:7), height=400, xmargin=c(50,50), imageFormat="current", transparent=FALSE, skip=TRUE, verbose=FALSE) {
+setMethodS3("plotSampleLayers", "CopyNumberChromosomalModel", function(this, arrays=NULL, chromosomes=getChromosomes(this), FUN, path, xlim=NULL, ..., pixelsPerMb=3, zooms=2^(0:7), height=400, xmargin=c(50,50), imageFormat="current", transparent=FALSE, skip=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -13,6 +13,28 @@ setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, p
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'arrays':
+  if (identical(arrays, "fitted")) {
+  } else {
+    arrays <- indexOfArrays(this, arrays=arrays);
+  } 
+
+  allChromosomes <- getChromosomes(this);
+
+  # Argument 'chromosomes':
+  if (identical(chromosomes, "fitted")) {
+  } else if (is.null(chromosomes)) {
+    chromosomes <- getChromosomes(this);
+  } else if (is.numeric(chromosomes)) {
+    chromosomes <- Arguments$getChromosomes(chromosomes,
+                                                range=range(allChromosomes));
+    chromosomes <- intersect(chromosomes, allChromosomes);
+  } else if (is.character(chromosomes)) {
+    chromosomes <- Arguments$getChromosomes(chromosomes, 
+                                                range=range(allChromosomes));
+    chromosomes <- intersect(chromosomes, getChromosomes(this));
+  }
+
   # Argument 'FUN':
   if (!is.function(FUN)) {
     throw("Arguments 'FUN' is not a function: ", class(FUN)[1]);
@@ -77,24 +99,26 @@ setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, p
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Define the plot function
+  # Array by array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  hookName <- "onFit.CopyNumberSegmentationModel";
-  on.exit({
-    setHook(hookName, NULL, action="replace");
-  })
+  res <- list();
+  arrayFullNames <- getFullNames(this)[arrays];
+  arrayNames <- getNames(this)[arrays];
+  nbrOfArrays <- length(arrayNames);
+  for (aa in seq(length=nbrOfArrays)) {
+    array <- arrays[aa]; # A number
+    arrayFullName <- arrayFullNames[aa];
+    arrayName <- arrayNames[aa];
 
-  setHook(hookName, function(fit, chromosome, fullname) {
-    if (verbose) {
-      pushState(verbose);
-      on.exit(popState(verbose));
-    }
-
-    tryCatch({
-      # Extract the array name from the full name
-      arrayFullName <- gsub("^(.*),chr[0-9][0-9].*$", "\\1", fullname);
-      arrayName <- gsub("^([^,]*).*$", "\\1", arrayFullName);
-  
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Chromosome by chromosome
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    res[[arrayName]] <- list();
+    for (chromosome in chromosomes) {
+      verbose && enter(verbose, 
+                          sprintf("Array #%d ('%s') of %d on chromosome %s", 
+                                    aa, arrayName, nbrOfArrays, chromosome)); 
+ 
       # Infer the length (in bases) of the chromosome
       nbrOfBases <- genome$nbrOfBases[chromosome];
       widthMb <- nbrOfBases / 10^unit;
@@ -103,12 +127,13 @@ setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, p
       if (is.null(xlim)) {
         xlim <- c(0, getChromosomeLength(chromosome))/10^unit;
       }
-    
+
       verbose && enter(verbose, sprintf("Plotting %s for chromosome %02d [%.2fMB]", arrayName, chromosome, widthMb));
   
-      for (zz in seq(along=zooms)) {
-        zoom <- zooms[zz];
-  
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Zoom by zoom
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      for (zoom in zooms) {
         # Create the pathname to the file
         imgName <- sprintf("%s,chr%02d,x%04d.%s", 
                           arrayFullName, chromosome, zoom, imageFormat);
@@ -129,8 +154,6 @@ setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, p
         verbose && printf(verbose, "Pathname: %s\n", pathname);
         verbose && printf(verbose, "Dimensions: %dx%d\n", width, height);
 
-        args <- list(cns=this, fit=fit, chromosome=chromosome, xlim=xlim, ylim=ylim, unit=unit, width=width, height=height, zoom=zoom, pixelsPerMb=pixelsPerMb, nbrOfBases=nbrOfBases, ..., verbose=less(verbose,1));
-  
         if (!is.null(plotDev))
           plotDev(pathname, width=width, height=height);
 
@@ -141,6 +164,11 @@ setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, p
         }
 
         tryCatch({
+          args <- list(cncModel=this, array=array, chromosome=chromosome, 
+                       xlim=xlim, ylim=ylim, unit=unit, 
+                       width=width, height=height, 
+                       zoom=zoom, pixelsPerMb=pixelsPerMb, 
+                       nbrOfBases=nbrOfBases, ..., verbose=less(verbose,1));
           do.call("FUN", args=args);
         }, error = function(ex) {
           print(ex);
@@ -148,27 +176,12 @@ setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, p
           if (!imageFormat %in% c("screen", "current"))
             dev.off();
         });
-      } # for (zz in ...)
-    }, error = function(ex) {
-      cat("ERROR caught in ", hookName, "():\n", sep="");
-      print(ex);
-    }, finally = {
-      # Garbage collect
-      gc <- gc();
-      verbose && print(verbose, gc);
-      verbose && exit(verbose);
-    }) # tryCatch()
-  }, action="replace")
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Start fitting and plotting
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  fit(this, ..., .retResults=FALSE, verbose=verbose);
+      } # for (zoom in ...)
+    } # for (chromosome in ...)
+  } # for (aa in ...)
 
   invisible();
-}) # plotFitLayers()
-
+}) # plotSampleLayers()
 
 
 
@@ -184,14 +197,14 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, p
   # Get chip type (used to annotate the plot)
   chipType <- getChipType(this);
 
-  plotFitLayers(this, FUN=function(..., fit, unit, verbose=FALSE) {
+  plotSampleLayers(this, FUN=function(..., array, chromosome, unit, verbose=FALSE) {
     verbose && enter(verbose, "Plotting transparent image");
     suppressWarnings({
       # Create empty plot
       newPlot(this, ..., xlab="", ylab="", yaxt="n", flavor="ce", unit=unit);
 
       # Extract raw CN estimates
-      rawCns <- extractRawCopyNumbers(fit);
+      rawCns <- extractRawCopyNumbers(this, array=array, chromosome=chromosome, verbose=less(verbose, 5));
       verbose && print(verbose, rawCns, level=-50);
 
       # Plot raw CNs data points
@@ -212,7 +225,6 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, p
     stext(chipType, side=4, pos=1, line=0, cex=0.8);
   }, path=path, ...);
 }) # plotRawCopyNumbers()
-
 
 
 

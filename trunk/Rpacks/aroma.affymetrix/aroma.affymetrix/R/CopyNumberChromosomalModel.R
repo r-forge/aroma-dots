@@ -536,8 +536,43 @@ setMethodS3("fit", "CopyNumberChromosomalModel", abstract=TRUE);
 
 
 
+setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this, array, chromosome, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'array':
+  array <- Arguments$getIndex(array, range=c(1,nbrOfArrays(this)));
+
+  # Argument 'chromosome':
+  allChromosomes <- getChromosomes(this);
+  chromosome <- Arguments$getIndex(chromosome, range=range(allChromosomes));
+  if (!chromosome %in% allChromosomes)
+    throw("Argument 'chromosome' has an unknown value: ", chromosome);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # Extract the test and reference arrays
+  files <- getMatrixChipEffectFiles(this, array=array, verbose=less(verbose,5));
+  ceList <- files[,"test"];
+  rfList <- files[,"reference"];
+
+  data <- getRawCnData(this, ceList=ceList, refList=rfList, 
+                          chromosome=chromosome, ..., verbose=less(verbose));
+
+  rawCNs <- RawCopyNumbers(cn=data[,"M"], x=data[,"x"]); 
+
+  rawCNs;
+})
+
+
 ##############################################################################
 # HISTORY:
 # 2007-10-17
-# o Extracted from CopyNumberSegmentationModel.R.
+# o Added extractRawCopyNumbers().
+# o Created.
 ##############################################################################

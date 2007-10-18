@@ -171,7 +171,6 @@ setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, p
 
 
 
-
 setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, path=NULL, col="black", ...) {
   # The report path
   if (is.null(path)) {
@@ -212,8 +211,6 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, p
     stext(chipType, side=4, pos=1, line=0, cex=0.8);
   }, path=path, ...);
 }) # plotRawCopyNumbers()
-
-
 
 
 
