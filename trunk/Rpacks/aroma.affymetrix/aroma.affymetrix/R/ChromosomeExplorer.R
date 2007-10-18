@@ -10,7 +10,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{model}{A @see "CopyNumberSegmentationModel" object.}
+#   \item{model}{A @see "CopyNumberChromosomalModel" object.}
 #   \item{...}{Not used.}
 #   \item{version}{The version of the Explorer HTML/Javascript generated/used.}
 # }
@@ -34,7 +34,7 @@
 # @author
 # 
 # \seealso{
-#  @see "CopyNumberSegmentationModel".
+#  @see "CopyNumberChromosomalModel".
 # }
 #*/###########################################################################
 setConstructorS3("ChromosomeExplorer", function(model=NULL, ..., version=c("5", "4")) {
@@ -43,8 +43,8 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, ..., version=c("5", 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'model':
   if (!is.null(model)) {
-    if (!inherits(model, "CopyNumberSegmentationModel")) {
-      throw("Argument 'model' is not a 'CopyNumberSegmentationModel': ", 
+    if (!inherits(model, "CopyNumberChromosomalModel")) {
+      throw("Argument 'model' is not a 'CopyNumberChromosomalModel': ", 
                                                             class(model)[1]);
     }
   }
@@ -101,7 +101,7 @@ setMethodS3("setCytoband", "ChromosomeExplorer", function(this, status=TRUE, ...
 # }
 #
 # \value{
-#  Returns a @see "CopyNumberSegmentationModel".
+#  Returns a @see "CopyNumberChromosomalModel".
 # }
 #
 # @author
@@ -493,6 +493,10 @@ setMethodS3("writeCopyNumberRegionLayers", "ChromosomeExplorer", function(this, 
   # Get the model
   model <- getModel(this);
 
+  # Not supported?
+  if (!inherits(model, "CopyNumberSegmentationModel"))
+    return(null);
+    
   path <- getPath(this);
   tag <- getAsteriskTag(model);
   path <- filePath(getParent(path), sprintf("%s,sampleLayer", tag));
@@ -546,10 +550,15 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
   }
 
 
+  model <- getModel(this);
+
+  # Not supported?
+  if (!inherits(model, "CopyNumberSegmentationModel"))
+    return(null);
+
   verbose && enter(verbose, "Writing CN regions");
 
   # Extract and write regions
-  model <- getModel(this);
   pathname <- writeRegions(model, arrays=arrays, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
 
   dest <- filePath(getPath(this), "regions.xls");
@@ -603,6 +612,10 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
     arrays <- getNames(this);
 
   # Argument 'chromosomes':
+  allChromosomes <- getChromosomes(this);
+  if (is.null(chromosomes)) {
+    chromosomes <- allChromosomes;
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -616,6 +629,8 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
 
   # Setup HTML, CSS, Javascript files first
   setup(this, ..., verbose=less(verbose));
+
+  model <- getModel(this);
 
   # Generate layers?
   if (layers) {
@@ -632,8 +647,11 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
     verbose && enter(verbose, "Sample-specific layers");
     writeRawCopyNumberLayers(this, arrays=arrays, chromosomes=chromosomes, 
                                                  ..., verbose=less(verbose));
-    writeCopyNumberRegionLayers(this, arrays=arrays, chromosomes=chromosomes, 
-                                                 ..., verbose=less(verbose));
+
+    if (inherits(model, "CopyNumberSegmentationModel")) {
+      writeCopyNumberRegionLayers(this, arrays=arrays, chromosomes=chromosomes, 
+                                                   ..., verbose=less(verbose));
+    }
     verbose && exit(verbose);
 
     verbose && exit(verbose);
@@ -646,7 +664,9 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   updateSamplesFile(this, ..., verbose=less(verbose));
 
   # Write regions file
-  writeRegions(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
+  if (inherits(model, "CopyNumberSegmentationModel")) {
+    writeRegions(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
+  }
 
   verbose && exit(verbose);
 })
@@ -657,9 +677,11 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="Chromosome
 })
 
 
+
 ##############################################################################
 # HISTORY:
 # 2007-10-17
+# o Now the ChromosomeExplorer accepts CopyNumberChromosomalModel:s.
 # o Added support for specifying the output version (at least for now).
 # 2007-10-10
 # o Added support for layers.  This should be backward compatible.

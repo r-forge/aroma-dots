@@ -171,50 +171,6 @@ setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, p
 
 
 
-setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, path=NULL, col="black", ...) {
-  # The report path
-  if (is.null(path)) {
-    path <- getReportPath(this);
-    path <- filePath(getParent(path), "rawCNs,sampleLayer");
-    path <- Arguments$getWritablePath(path);
-  }
-  mkdirs(path);
-
-  # Get chip type (used to annotate the plot)
-  chipType <- getChipType(this);
-
-  plotFitLayers(this, FUN=function(..., fit, unit, verbose=FALSE) {
-    verbose && enter(verbose, "Plotting transparent image");
-    suppressWarnings({
-      # Create empty plot
-      newPlot(this, ..., xlab="", ylab="", yaxt="n", flavor="ce", unit=unit);
-
-      # Extract raw CN estimates
-      rawCns <- extractRawCopyNumbers(fit);
-      verbose && print(verbose, rawCns, level=-50);
-
-      # Plot raw CNs data points
-      points(rawCns, xScale=1/10^unit, col=col, ...);
-
-      # Add number-of-loci annotation to graph
-      n <- nbrOfLoci(rawCns, na.rm=TRUE);
-      stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8);
-
-      # Add std dev estimates
-      sd <- sd(rawCns$cn, na.rm=TRUE);
-      mad <- mad(rawCns$cn, na.rm=TRUE);
-      text <- substitute(paste(hat(sigma)==sd, ", ", hat(sigma)["MAD"]==mad, sep=""), list(sd=sprintf("%.3g", sd), mad=sprintf("%.3g", mad)));
-      stext(text=text, side=3, pos=0.5, line=-2);  
-    });
-
-    # Add chip-type annotation
-    stext(chipType, side=4, pos=1, line=0, cex=0.8);
-  }, path=path, ...);
-}) # plotRawCopyNumbers()
-
-
-
-
 ##############################################################################
 # HISTORY:
 # 2007-10-09
