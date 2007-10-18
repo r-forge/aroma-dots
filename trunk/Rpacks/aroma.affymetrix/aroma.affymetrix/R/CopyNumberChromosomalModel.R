@@ -139,6 +139,13 @@ setConstructorS3("CopyNumberChromosomalModel", function(cesTuple=NULL, refTuple=
 })
 
 
+setMethodS3("clearCache", "CopyNumberChromosomalModel", function(this, ...) {
+  for (ff in c(".extractRawCopyNumbersCache")) {
+    this[[ff]] <- NULL;
+  }
+  NextMethod("clearCache", this, ...);
+})
+
 setMethodS3("as.character", "CopyNumberChromosomalModel", function(x, ...) {
   # To please R CMD check
   this <- x;
@@ -536,7 +543,7 @@ setMethodS3("fit", "CopyNumberChromosomalModel", abstract=TRUE);
 
 
 
-setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this, array, chromosome, ..., verbose=FALSE) {
+setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this, array, chromosome, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -556,6 +563,16 @@ setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this
     on.exit(popState(verbose));
   }
 
+  key <- list(method="extractRawCopyNumbers", class=class(this), array=array, chromosome=chromosome, ...);
+  id <- digest(key);
+  cache <- this$.extractRawCopyNumbersCache;
+  if (!is.list(cache))
+    cache <- list();
+  rawCNs <- cache[[id]];
+  if (!force && !is.null(rawCNs)) {
+    return(rawCNs);
+  }
+
   # Extract the test and reference arrays
   files <- getMatrixChipEffectFiles(this, array=array, verbose=less(verbose,5));
   ceList <- files[,"test"];
@@ -565,6 +582,10 @@ setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this
                           chromosome=chromosome, ..., verbose=less(verbose));
 
   rawCNs <- RawCopyNumbers(cn=data[,"M"], x=data[,"x"]); 
+
+  # Save to cache
+  cache[[id]] <- rawCNs;
+  this$.extractRawCopyNumbersCache <- cache;
 
   rawCNs;
 })
