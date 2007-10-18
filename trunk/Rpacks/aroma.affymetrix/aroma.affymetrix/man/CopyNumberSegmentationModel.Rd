@@ -49,23 +49,12 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:fit.CopyNumberSegmentationModel]{fit}} \tab Fits the model.\cr
- \tab \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{fitOne}} \tab Fits the copy-number segmentation model for one chromosome in one sample.\cr
- \tab \code{getAlias} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getArrays.CopyNumberSegmentationModel]{getArrays}} \tab Gets the names of the arrays.\cr
- \tab \code{\link[aroma.affymetrix:getChipType.CopyNumberSegmentationModel]{getChipType}} \tab Gets a label for all chip types merged.\cr
- \tab \code{getChipTypes} \tab  -\cr
- \tab \code{getFullNames} \tab  -\cr
- \tab \code{getListOfChipEffectSets} \tab  -\cr
- \tab \code{getName} \tab  -\cr
- \tab \code{getNames} \tab  -\cr
+ \tab \code{fit} \tab  -\cr
+ \tab \code{fitOne} \tab  -\cr
  \tab \code{getReferenceSetTuple} \tab  -\cr
  \tab \code{getRegions} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getTableOfArrays.CopyNumberSegmentationModel]{getTableOfArrays}} \tab Gets a table of arrays.\cr
  \tab \code{isPaired} \tab  -\cr
  \tab \code{migrateTool} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:nbrOfArrays.CopyNumberSegmentationModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
- \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.CopyNumberSegmentationModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
  \tab \code{plot} \tab  -\cr
  \tab \code{plotAxesLayers} \tab  -\cr
  \tab \code{plotChromosomesLayers} \tab  -\cr
@@ -74,7 +63,6 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
  \tab \code{plotFitLayers} \tab  -\cr
  \tab \code{plotGridHorizontalLayers} \tab  -\cr
  \tab \code{plotRawCopyNumbers} \tab  -\cr
- \tab \code{setAlias} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
 

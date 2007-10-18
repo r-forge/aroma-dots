@@ -32,24 +32,25 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
 
  }
 
- \usage{ChromosomeExplorer(model=NULL, ...)}
+ \usage{ChromosomeExplorer(model=NULL, ..., version=c("5", "4"))}
 
  \arguments{
    \item{model}{A \code{\link{CopyNumberSegmentationModel}} object.}
    \item{...}{Not used.}
+   \item{version}{The version of the Explorer HTML/Javascript generated/used.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{display} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChromosomes.ChromosomeExplorer]{getChromosomes}} \tab Gets the chromosomes available.\cr
+ \tab \code{getChromosomes} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getModel.ChromosomeExplorer]{getModel}} \tab Gets the model.\cr
+ \tab \code{getModel} \tab  -\cr
  \tab \code{getNames} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:process.ChromosomeExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
- \tab \code{\link[aroma.affymetrix:setArrays.ChromosomeExplorer]{setArrays}} \tab Sets the arrays.\cr
+ \tab \code{process} \tab  -\cr
+ \tab \code{setArrays} \tab  -\cr
  \tab \code{setCytoband} \tab  -\cr
 }
 

@@ -74,7 +74,7 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
       chromosome: 22, 
       chipType: "Mapping10K_Xba142", 
       set: "glad", 
-      zoom: 2
+      zoom: 4
 		});
 
     /* Update settings from cookies and URL parameters */
@@ -377,7 +377,7 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
     var chipType = this.getChipType();
     var zoom = this.getZoom();
     if (where == "navigator")
-      zoom = 2;
+      zoom = 4;
     var layerArray = this.getLayerArray(class);
     layerArray.each(function(layer) {
       var pathname = layer.getImagePathname(chipType, chromosome, sample, zoom);
