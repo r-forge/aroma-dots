@@ -128,8 +128,6 @@ setMethodS3("plotSampleLayers", "CopyNumberChromosomalModel", function(this, arr
         xlim <- c(0, getChromosomeLength(chromosome))/10^unit;
       }
 
-      verbose && enter(verbose, sprintf("Plotting %s for chromosome %02d [%.2fMB]", arrayName, chromosome, widthMb));
-  
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Zoom by zoom
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -177,6 +175,8 @@ setMethodS3("plotSampleLayers", "CopyNumberChromosomalModel", function(this, arr
             dev.off();
         });
       } # for (zoom in ...)
+
+      verbose && exit(verbose);
     } # for (chromosome in ...)
   } # for (aa in ...)
 
@@ -192,6 +192,15 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, p
     path <- filePath(getParent(path), "rawCNs,sampleLayer");
     path <- Arguments$getWritablePath(path);
   }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
   mkdirs(path);
 
   # Get chip type (used to annotate the plot)
@@ -199,6 +208,7 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, p
 
   plotSampleLayers(this, FUN=function(..., array, chromosome, unit, verbose=FALSE) {
     verbose && enter(verbose, "Plotting transparent image");
+
     suppressWarnings({
       # Create empty plot
       newPlot(this, ..., xlab="", ylab="", yaxt="n", flavor="ce", unit=unit);
@@ -223,6 +233,8 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, p
 
     # Add chip-type annotation
     stext(chipType, side=4, pos=1, line=0, cex=0.8);
+
+    verbose && exit(verbose);
   }, path=path, ...);
 }) # plotRawCopyNumbers()
 
