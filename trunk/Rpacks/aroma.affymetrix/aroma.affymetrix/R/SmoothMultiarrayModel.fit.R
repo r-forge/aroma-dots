@@ -1,3 +1,6 @@
+setMethodS3("getFitFunction", "SmoothMultiarrayModel", abstract=TRUE);
+
+
 ###########################################################################/**
 # @set "class=SmoothMultiarrayModel"
 # @RdocMethod fit
@@ -242,9 +245,6 @@ setMethodS3("createOutputTuple", "SmoothMultiarrayModel", function(this, ..., fo
 
   outTuple;
 })
-
-
-setMethodS3("getFitFunction", "SmoothMultiarrayModel", abstract=TRUE);
 
 
 setMethodS3("fitOneChromosome", "SmoothMultiarrayModel", function(this, chromosome, ..., vebose=FALSE) {

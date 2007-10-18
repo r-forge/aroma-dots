@@ -6,7 +6,8 @@ setMethodS3("fitWRMA", "matrix", function(y, w, psiCode=0, psiK=1.345, .log2=TRU
   I <- ncol(y);
   K <- nrow(y);
 
-  fit <- .Call("R_wrlm_rma_default_model", y, psiCode, psiK, w, PACKAGE="affyPLM");
+  pkg <- "preprocessCore";
+  fit <- .Call("R_wrlm_rma_default_model", y, psiCode, psiK, w, PACKAGE=pkg);
 
   est <- fit$Estimates;
   se <- fit$StdErrors;

@@ -34,6 +34,10 @@ setMethodS3("getAsteriskTag", "SmoothRmaModel", function(this, ...) {
   tags;
 }, protected=TRUE)
 
+setMethodS3("getRootPath", "SmoothRmaModel", function(this, ...) {
+  "plmData";
+})
+
 
 setMethodS3("getFitFunction", "SmoothRmaModel", function(this, ...) {
   smoothWRMA;

@@ -73,7 +73,7 @@ setConstructorS3("ChromosomalModel", function(cesTuple=NULL, tags="*", genome="H
   }
 
   this;
-})
+}, abstract=TRUE)
 
 
 setMethodS3("as.character", "ChromosomalModel", function(x, ...) {
