@@ -1,4 +1,4 @@
-setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(this, FUN, path, chromosomes=getChromosomes(this), xlim=NULL, ..., pixelsPerMb=3, zooms=2^(0:7), height=400, xmargin=c(50,50), imageFormat="current", transparent=FALSE, skip=TRUE, verbose=FALSE) {
+setMethodS3("plotFitLayers", "CopyNumberChromosomalModel", function(this, FUN, path, xlim=NULL, ..., pixelsPerMb=3, zooms=2^(0:7), height=400, xmargin=c(50,50), imageFormat="current", transparent=FALSE, skip=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -16,11 +16,6 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
   # Argument 'FUN':
   if (!is.function(FUN)) {
     throw("Arguments 'FUN' is not a function: ", class(FUN)[1]);
-  }
-
-  # Argument 'chromosomes':
-  if (is.null(chromosomes)) {
-    chromosomes <- getChromosomes(this);
   }
 
   # Argument 'pixelsPerMb':
@@ -50,7 +45,6 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
   # Default 'ylim'
   ylim <- c(-1,+1)*3;
 
-  xlim0 <- xlim;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup the PNG device
@@ -64,8 +58,7 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
     plotDev <- NULL;
     zooms <- zooms[1];
   } else if (identical(imageFormat, "screen")) {
-    screenDev <- function(pathname, width, height, ..., 
-                                                  xpinch=50, ypinch=xpinch) {
+    screenDev <- function(pathname, width, height, ..., xpinch=50, ypinch=xpinch) {
       # Dimensions are in pixels. Rescale to inches
       width <- width/xpinch;
       height <- height/ypinch;
@@ -86,25 +79,39 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Define the plot function
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Creating image layers");
+  hookName <- "onFit.CopyNumberSegmentationModel";
+  on.exit({
+    setHook(hookName, NULL, action="replace");
+  })
 
-  for (chromosome in chromosomes) {
-    nbrOfBases <- genome$nbrOfBases[chromosome];
-    widthMb <- nbrOfBases / 10^unit;
-
-    # Argument 'xlim' missing?
-    xlim <- xlim0;
-    if (is.null(xlim)) {
-      xlim <- c(0, getChromosomeLength(chromosome))/10^unit;
+  setHook(hookName, function(fit, chromosome, fullname) {
+    if (verbose) {
+      pushState(verbose);
+      on.exit(popState(verbose));
     }
-    verbose && enter(verbose, sprintf("Plotting chromosome %02d [%.2fMB]", chromosome, widthMb));
 
     tryCatch({
+      # Extract the array name from the full name
+      arrayFullName <- gsub("^(.*),chr[0-9][0-9].*$", "\\1", fullname);
+      arrayName <- gsub("^([^,]*).*$", "\\1", arrayFullName);
+  
+      # Infer the length (in bases) of the chromosome
+      nbrOfBases <- genome$nbrOfBases[chromosome];
+      widthMb <- nbrOfBases / 10^unit;
+
+      # Argument 'xlim' missing?
+      if (is.null(xlim)) {
+        xlim <- c(0, getChromosomeLength(chromosome))/10^unit;
+      }
+    
+      verbose && enter(verbose, sprintf("Plotting %s for chromosome %02d [%.2fMB]", arrayName, chromosome, widthMb));
+  
       for (zz in seq(along=zooms)) {
         zoom <- zooms[zz];
-    
+  
         # Create the pathname to the file
-        imgName <- sprintf("chr%02d,x%04d.%s", chromosome, zoom, imageFormat);
+        imgName <- sprintf("%s,chr%02d,x%04d.%s", 
+                          arrayFullName, chromosome, zoom, imageFormat);
         pathname <- filePath(path, imgName);
   
         # pngDev() (that is bitmap()) does not accept spaces in pathnames
@@ -122,7 +129,7 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
         verbose && printf(verbose, "Pathname: %s\n", pathname);
         verbose && printf(verbose, "Dimensions: %dx%d\n", width, height);
 
-        args <- list(cns=this, chromosome=chromosome, xlim=xlim, ylim=ylim, unit=unit, width=width, height=height, zoom=zoom, pixelsPerMb=pixelsPerMb, nbrOfBases=nbrOfBases, ..., verbose=less(verbose,1));
+        args <- list(cns=this, fit=fit, chromosome=chromosome, xlim=xlim, ylim=ylim, unit=unit, width=width, height=height, zoom=zoom, pixelsPerMb=pixelsPerMb, nbrOfBases=nbrOfBases, ..., verbose=less(verbose,1));
   
         if (!is.null(plotDev))
           plotDev(pathname, width=width, height=height);
@@ -143,120 +150,68 @@ setMethodS3("plotChromosomesLayers", "CopyNumberSegmentationModel", function(thi
         });
       } # for (zz in ...)
     }, error = function(ex) {
+      cat("ERROR caught in ", hookName, "():\n", sep="");
       print(ex);
     }, finally = {
+      # Garbage collect
+      gc <- gc();
+      verbose && print(verbose, gc);
+      verbose && exit(verbose);
     }) # tryCatch()
+  }, action="replace")
 
-    verbose && exit(verbose);
-  } # for (...)
 
-  verbose && exit(verbose);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Start fitting and plotting
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  fit(this, ..., .retResults=FALSE, verbose=verbose);
 
   invisible();
-}) # plotChromosomesLayers()
+}) # plotFitLayers()
 
 
 
-setMethodS3("plotAxesLayers", "CopyNumberSegmentationModel", function(this, path=NULL, pixelsPerTick=2.5, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Local functions
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  drawXAxisRuler <- function(xrange=NULL, ticksBy=1) {
-    xlim <- par("usr")[1:2];
-    if (is.null(xrange))
-      xrange <- xlim;
 
-    for (kk in 1:3) {
-      at <- seq(from=xrange[1], to=xrange[2], by=ticksBy*c(1,5,10)[kk]);
-      keep <- (at >= xlim[1] & at <= xlim[2]);
-      at <- at[keep];
-      tcl <- c(0.2,0.4,0.6)[kk];
-      lwd <- c(1,1,2)[kk];
-      for (ss in c(1,3))
-        axis(side=ss, at=at, tcl=tcl, lwd=lwd, labels=FALSE);
-    }
-    cxy <- par("cxy");
-    text(x=at, y=par("usr")[3]-0.5*cxy[2], labels=at, srt=90, 
-                                       adj=1, cex=1, xpd=TRUE);
-  } # drawXAxisRuler()
-
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'pixelsPerTick':
-  pixelsPerTick <- Arguments$getDouble(pixelsPerTick, range=c(1,256));
-
+setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, path=NULL, col="black", ...) {
   # The report path
   if (is.null(path)) {
     path <- getReportPath(this);
-    path <- filePath(getParent(path), "axes,chrLayer");
+    path <- filePath(getParent(path), "rawCNs,sampleLayer");
     path <- Arguments$getWritablePath(path);
   }
   mkdirs(path);
 
+  # Get chip type (used to annotate the plot)
+  chipType <- getChipType(this);
 
-  plotChromosomesLayers(this, FUN=function(..., zoom, unit, nbrOfBases, pixelsPerMb, verbose=FALSE) {
-    # Calculate MBs per ticks
-    ticksBy <- 10^ceiling(log10(pixelsPerTick / (zoom * pixelsPerMb)));
-    verbose && printf(verbose, "Ticks by: %f\n", ticksBy);
-  
-    suppressWarnings({
-      # Create empty plot
-      newPlot(this, ..., xlab="", ylab="", unit=unit, flavor="ce");
-
-      # Add ruler
-      drawXAxisRuler(xrange=c(0,nbrOfBases)/10^unit, ticksBy=ticksBy); 
-    });
-  }, path=path, ...);
-}) # plotAxesLayers()
-
-
-setMethodS3("plotGridHorizontalLayers", "CopyNumberSegmentationModel", function(this, path=NULL, cnLevels=c(1/2,1,3/2), col="blue", lty=2, ...) {
-  # The report path
-  if (is.null(path)) {
-    path <- getReportPath(this);
-    path <- filePath(getParent(path), "gridH,chrLayer");
-    path <- Arguments$getWritablePath(path);
-  }
-  mkdirs(path);
-
-  plotChromosomesLayers(this, FUN=function(..., verbose=FALSE) {
+  plotFitLayers(this, FUN=function(..., fit, unit, verbose=FALSE) {
     verbose && enter(verbose, "Plotting transparent image");
     suppressWarnings({
       # Create empty plot
-      newPlot(this, ..., xlab="", ylab="", yaxt="n", flavor="ce");
+      newPlot(this, ..., xlab="", ylab="", yaxt="n", flavor="ce", unit=unit);
 
-      for (level in cnLevels) {
-        abline(h=log2(level), col=col, lty=lty);
-      }
+      # Extract raw CN estimates
+      rawCns <- extractRawCopyNumbers(fit);
+      verbose && print(verbose, rawCns, level=-50);
+
+      # Plot raw CNs data points
+      points(rawCns, xScale=1/10^unit, col=col, ...);
+
+      # Add number-of-loci annotation to graph
+      n <- nbrOfLoci(rawCns, na.rm=TRUE);
+      stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8);
+
+      # Add std dev estimates
+      sd <- sd(rawCns$cn, na.rm=TRUE);
+      mad <- mad(rawCns$cn, na.rm=TRUE);
+      text <- substitute(paste(hat(sigma)==sd, ", ", hat(sigma)["MAD"]==mad, sep=""), list(sd=sprintf("%.3g", sd), mad=sprintf("%.3g", mad)));
+      stext(text=text, side=3, pos=0.5, line=-2);  
     });
+
+    # Add chip-type annotation
+    stext(chipType, side=4, pos=1, line=0, cex=0.8);
   }, path=path, ...);
-}) # plotGridHorizontalLayers()
-
-
-
-setMethodS3("plotCytobandLayers", "CopyNumberSegmentationModel", function(this, path=NULL, ...) {
-  # The report path
-  if (is.null(path)) {
-    path <- getReportPath(this);
-    path <- filePath(getParent(path), "cytoband,chrLayer");
-    path <- Arguments$getWritablePath(path);
-  }
-  mkdirs(path);
-
-  plotChromosomesLayers(this, FUN=function(..., chromosome, unit=unit, verbose=FALSE) {
-    suppressWarnings({
-      # Create empty plot
-      newPlot(this, chromosome=chromosome, unit=unit, ..., xlab="", ylab="", yaxt="n", flavor="ce");
-
-      # Add cytoband to graph (optional; class specific)
-      drawCytoband(this, chromosome=chromosome, unit=unit);
-    });
-  }, path=path, ...);
-}) # plotCytobandLayers()
-
+}) # plotRawCopyNumbers()
 
 
 

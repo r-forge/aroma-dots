@@ -47,11 +47,11 @@ extends \link[R.oo]{Object}\cr
  \tab \code{clearCache} \tab  -\cr
  \tab \code{fit} \tab  -\cr
  \tab \code{getAlias} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getArrays.ChromosomalModel]{getArrays}} \tab Gets the names of the arrays.\cr
+ \tab \code{getArrays} \tab  -\cr
  \tab \code{getChipEffectFiles} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipType.ChromosomalModel]{getChipType}} \tab Gets a label for all chip types merged.\cr
+ \tab \code{getChipType} \tab  -\cr
  \tab \code{getChipTypes} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChromosomes.ChromosomalModel]{getChromosomes}} \tab Gets the chromosomes available.\cr
+ \tab \code{getChromosomes} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
  \tab \code{getGenome} \tab  -\cr
@@ -62,10 +62,10 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getParentPath} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
  \tab \code{getRootPath} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getTableOfArrays.ChromosomalModel]{getTableOfArrays}} \tab Gets a table of arrays.\cr
+ \tab \code{getTableOfArrays} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:nbrOfArrays.ChromosomalModel]{nbrOfArrays}} \tab Gets the number of arrays.\cr
- \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.ChromosomalModel]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
+ \tab \code{nbrOfArrays} \tab  -\cr
+ \tab \code{nbrOfChipTypes} \tab  -\cr
  \tab \code{setAlias} \tab  -\cr
  \tab \code{setGenome} \tab  -\cr
 }

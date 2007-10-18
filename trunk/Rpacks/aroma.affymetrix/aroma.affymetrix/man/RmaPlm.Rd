@@ -60,7 +60,7 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
 calculateResidualSet, calculateWeights, fit, getAsteriskTag, getCalculateResidualsFunction, getChipEffectSet, getProbeAffinityFile, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
-findUnitsTodo, getAsteriskTag, getCellIndices, getTags, readUnits
+findUnitsTodo, getCellIndices, readUnits
 
  \bold{Methods inherited from Model}:\cr
 fit, getAlias, getAsteriskTag, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags

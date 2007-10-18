@@ -1,4 +1,4 @@
-setMethodS3("newPlot", "CopyNumberSegmentationModel", function(this, xlim, ylim=c(-1,1)*2.5, xlab="Physical position", ylab="Relative copy number", flavor=c("ce", "minimal"), xmargin=c(50,50), resScale=1, unit=6, yaxt="s", ...) {
+setMethodS3("newPlot", "CopyNumberChromosomalModel", function(this, xlim, ylim=c(-1,1)*2.5, xlab="Physical position", ylab="Relative copy number", flavor=c("ce", "minimal"), xmargin=c(50,50), resScale=1, unit=6, yaxt="s", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -52,6 +52,8 @@ setMethodS3("newPlot", "CopyNumberSegmentationModel", function(this, xlim, ylim=
 
 ############################################################################
 # HISTORY:
+# 2007-10-17
+# o Renamed to CopyNumberChromosomalModel.
 # 2007-09-04
 # o Created specifically for CopyNumberSegmentationModel.
 # o Updated.  Now independent of 'fit' object.
