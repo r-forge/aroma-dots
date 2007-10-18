@@ -236,7 +236,7 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
       var label = "";
       if (chromosome != idx)
         label = "(" + chromosome + ")";
-      s += sprintf('[<span id="chromosome%d"><a href="javascript:explorer.setChromosome(%d);">%02d%s</a></span>]', chromosome, idx, idx, label); 
+      s += sprintf('[<span id="chromosome%d"><a href="javascript:explorer.setChromosome(%d);">%02d%s</a></span>]', idx, idx, idx, label); 
     })
     updateLabel('chromosomesLabel', s);
  		logAdd("setChromosomes()...done");
