@@ -4,13 +4,20 @@ var ExplorerSettings = Class.create({
   initialize: function(args) {
     /* Default values */
     this.args = new Hash({
-      sample: "0001-7,10K,15-08-2006",
-      chromosome: 22, 
-      zoom: 1
+      sample: null,
+      chromosome: null, 
+      zoom: null
     });
 
     /* Update by constructor arguments */
     this.importArray(args);
+  },
+
+  clear: function() {
+		this.set('chipType', null);
+		this.set('sample', null);
+		this.set('chromosome', null);
+		this.set('zoom', null);
   },
 
   getArray: function() {

@@ -16,13 +16,17 @@ var AbstractExplorer = Class.create({
    * Count down reload counter; when reaching zero, the page is reloaded.
    * This is done to workaround memory leaks.
    */
+  reload: function() {
+    this.settings.save();
+    window.location.reload();
+    return false;
+	},
+
   countdown: function() {
     this.reloadCountdown = this.reloadCountdown - 1;
     updateLabel('countdownLabel', this.reloadCountdown);
-   
     if (this.reloadCountdown <= 0) {
-      this.settings.save();
-      window.location.reload();
+      this.reload();
       return false;
     } 
   },
@@ -69,13 +73,7 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
   initialize: function($super, args) {
 		$super(args);
     /* Default settings */
-    this.settings = new ChromosomeExplorerSettings({
-      sample: null,
-      chromosome: 22, 
-      chipType: "Mapping10K_Xba142", 
-      set: "glad", 
-      zoom: 4
-		});
+    this.settings = new ChromosomeExplorerSettings();
 
     /* Update settings from cookies and URL parameters */
     this.settings.load(); 
@@ -246,7 +244,7 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
   setChipTypes: function(chipTypes) {
  		logAdd("setChipTypes()...");
     var array = this.setArray('chipTypes', chipTypes);
-    if (array.size() > 1) {
+    if (array.size() > 0) {
       var s = 'Chip types: ';
       array.each(function(chipType) {
         s += sprintf('[<span id="chipType%s"><a href="javascript:explorer.setChipType(\'%s\');">%s</a></span>]', chipType, chipType, chipType); 
@@ -297,6 +295,12 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
     return hash;
 	},
 
+	clear: function() {
+		logAdd("clear()...");
+    this.settings.clear();
+		logAdd("clear()...done");
+  },
+
 	load: function() {
 		logAdd("load()...");
     this.settings.load();
@@ -310,7 +314,8 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
   },
 
   getLayerArray: function(class) {
-    return this.layerArrays[class];
+		var arrays = this.layerArrays || new Array();
+    return arrays[class] || new Array();
 	},
 
 	setLayerArray: function(class, array) {
@@ -657,6 +662,16 @@ function ChromosomeExplorer() {
     nav.style.cursor = status;
     navImage.style.cursor = status;
     navArea.style.cursor = status;
+  }
+
+  this.reset = function() {
+    this._explorer.clear();
+    this._explorer.save();
+    reload();
+  }
+  
+  this.reload = function() {
+    this._explorer.reload();
   }
   
 
