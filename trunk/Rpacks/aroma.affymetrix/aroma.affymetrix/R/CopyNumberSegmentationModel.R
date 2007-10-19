@@ -27,6 +27,34 @@ setConstructorS3("CopyNumberSegmentationModel", function(...) {
 })
 
 
+setMethodS3("getTags", "CopyNumberSegmentationModel", function(this, collapse=NULL, ...) {
+  tags <- getTags(getSetTuple(this), ...);
+
+  # Add model tags
+  tags <- c(tags, this$.tags);
+
+  # Update default tags
+  asteriskTags <- paste(getAsteriskTag(this)[-1], collapse=",");
+  if (length(asteriskTags) == 0)
+    asteriskTags <- "";
+  tags[tags == "*"] <- asteriskTags;
+  tags <- tags[nchar(tags) > 0];
+  tags <- unlist(strsplit(tags, split=","), use.names=TRUE);
+
+  # Keep non-empty tags
+  tags <- tags[nchar(tags) > 0];
+
+  # Get unique tags
+  tags <- locallyUnique(tags);
+
+  tags <- paste(tags, collapse=collapse);
+  if (length(tags) == 0)
+    tags <- NULL;
+
+  tags;
+})
+
+
 
 
 ###########################################################################/**

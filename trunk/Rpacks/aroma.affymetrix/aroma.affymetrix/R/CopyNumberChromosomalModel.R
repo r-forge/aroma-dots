@@ -201,6 +201,7 @@ setMethodS3("clearCache", "CopyNumberChromosomalModel", function(this, ...) {
 
 
 
+
 setMethodS3("getRefSetTuple", "CopyNumberChromosomalModel", function(this, ...) {
   this$.refTuple;
 }, protected=TRUE)
@@ -212,16 +213,6 @@ setMethodS3("getRefSetTuple", "CopyNumberChromosomalModel", function(this, ...) 
 setMethodS3("isPaired", "CopyNumberChromosomalModel", function(this, ...) {
   as.logical(this$.paired);
 })
-
-
-setMethodS3("getAsteriskTag", "CopyNumberChromosomalModel", function(this, ...) {
-  tag <- NextMethod("getAsteriskTag", this, ...);
-  if (isPaired(this))
-    tag <- c(tag, "paired");
-  tag;
-}, protected=TRUE)
-
-
 
 
 
