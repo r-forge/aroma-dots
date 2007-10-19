@@ -458,6 +458,7 @@ setMethodS3("getAsteriskTag", "ChromosomalModel", function(this, ...) {
 
 
 
+
 setMethodS3("getTags", "ChromosomalModel", function(this, collapse=NULL, ...) {
   tags <- getTags(getSetTuple(this), ...);
 
@@ -465,7 +466,7 @@ setMethodS3("getTags", "ChromosomalModel", function(this, collapse=NULL, ...) {
   tags <- c(tags, this$.tags);
 
   # Update default tags
-  asteriskTags <- paste(getAsteriskTag(this)[-1], collapse=",");
+  asteriskTags <- paste(getAsteriskTag(this), collapse=",");
   if (length(asteriskTags) == 0)
     asteriskTags <- "";
   tags[tags == "*"] <- asteriskTags;

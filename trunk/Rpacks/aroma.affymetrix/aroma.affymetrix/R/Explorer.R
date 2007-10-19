@@ -18,6 +18,29 @@
 #  @allmethods "public"
 # }
 #
+# \section{Output directory structure}{
+#   The \emph{main directory} of an Explorer report is
+#    \code{reports/<name>/<subname>/}.
+#   The \code{<name>} is typically the same as the name of the input 
+#   data set, and the \code{<subname>} is typically the tags of ditto.
+#   This main directory is where main HTML document is stored.
+#
+#   For each chip type, real or "virtual" (combined), there is a
+#   subdirectory with the same name as the chip type, i.e.
+#    \code{reports/<name>/<subname>/<chiptype>/}.
+#
+#   For each chip type directory, there are set of subdirectories each
+#   specifying a so called \emph{image layer}, e.g. an image layer
+#   showing the raw data, another containing the estimates of a model
+#   fit and so on.  Path format:
+#    \code{reports/<name>/<subname>/<chiptype>/<image layer>/}.
+#   In this directory all image files are stored, e.g. PNG files.
+#
+#   In some cases one do not want to all input tags to become part of the
+#   subname, but instead for instance use those to name the image layer(s).
+#   In such cases one has to override the default names.
+# }
+#
 # @author
 # 
 # \seealso{
@@ -49,7 +72,7 @@ setMethodS3("as.character", "Explorer", function(x, ...) {
 
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
-  s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
+  s <- c(s, paste("Tags:", getTags(this, collapse=",")));
   s <- c(s, sprintf("Main path: %s", getMainPath(this)));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
@@ -346,9 +369,73 @@ setMethodS3("getFullName", "Explorer", function(this, ...) {
 
 
 
+# tags <- "100K,CEU,testSet,ACC,-X,+300,RMA,A+B,w,FLN,SRMA,gauss,b=50000"
+# Example: setReportPathPattern(ce, "^(.*),(SRMA,.*)(,CNC|)$");
+
+setMethodS3("setReportPathPattern", "Explorer", function(this, pattern, ...) {
+  # Argument 'pattern':
+  pattern <- Arguments$getRegularExpression(pattern);
+  this$.reportPathPattern <- pattern;
+})
+
+setMethodS3("getReportPathPattern", "Explorer", function(this, ...) {
+	this$.reportPathPattern;
+})
+
+setMethodS3("splitByReportPathPattern", "Explorer", function(this, tags, ...) {
+  tags <- paste(tags, collapse=",");
+
+  # Get subname and sampleLayerPrefix
+	pattern <- getReportPathPattern(this);
+  res <- list();
+  if (is.null(pattern) || regexpr(pattern, tags) == -1) {
+    res$subname <- tags;
+  } else {
+    res$subname <- gsub(pattern, "\\1", tags);
+    res$sampleLayerPrefix <- gsub(pattern, "\\2", tags);
+  }
+  res;
+})
+
 setMethodS3("getRootPath", "Explorer", function(this, ...) {
   "reports";
 }, private=TRUE)
+
+
+setMethodS3("setSubname", "Explorer", function(this, value, ...) {
+  oldValue <- this$.subname;
+  this$.subname <- value;
+  invisible(oldValue);
+})
+
+setMethodS3("getSubname", "Explorer", function(this, ...) {
+  # Preset?
+  subname <- this$.subname;
+  if (!is.null(subname))
+    return(subname);
+
+  # Infer from tags
+  tags <- getTags(this, collapse=",");
+  if (nchar(tags) == 0)
+    tags <- "raw";  # Default
+
+  subname <- splitByReportPathPattern(this, tags)$subname;
+  if (is.null(subname))
+    throw("ERROR: No subname could be inferred from tags: ", tags);
+
+  subname; 
+}, protected=TRUE)
+
+
+setMethodS3("getSampleLayerPrefix", "Explorer", function(this, ...) {
+  # Infer from tags
+  tags <- getTags(this, collapse=",");
+  if (nchar(tags) == 0)
+    tags <- "raw";  # Default
+  prefix <- splitByReportPathPattern(this, tags)$sampleLayerPrefix;
+  prefix;
+}, protected=TRUE)
+
 
 
 setMethodS3("getMainPath", "Explorer", function(this, ...) {
@@ -357,18 +444,14 @@ setMethodS3("getMainPath", "Explorer", function(this, ...) {
   # Root path
   rootPath <- getRootPath(this);
 
-  # Full name
+  # Name
   name <- getName(this);
 
-  # Tags
-  tags <- getTags(this);
-  tags <- paste(tags, collapse=",");
-  if (nchar(tags) == 0) {
-    tags <- "raw";  # Default
-  }
+  # Subname
+  subname <- getSubname(this);
 
   # The full path
-  path <- filePath(rootPath, name, tags, expandLinks="any");
+  path <- filePath(rootPath, name, subname, expandLinks="any");
   if (!isDirectory(path)) {
     mkdirs(path);
     if (!isDirectory(path))

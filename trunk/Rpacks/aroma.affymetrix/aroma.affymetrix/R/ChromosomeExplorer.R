@@ -368,8 +368,8 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
     sets <- c("-LAYERS-", sets);
   }
 
-  chrLayers <- gsub(",.*", "", basename(subdirs)[isChrLayer]);
-  sampleLayers <- gsub(",.*", "", basename(subdirs)[isSampleLayer]);
+  chrLayers <- gsub(",chrLayer", "", basename(subdirs)[isChrLayer]);
+  sampleLayers <- gsub(",sampleLayer", "", basename(subdirs)[isSampleLayer]);
 
   # Compile RSP file
   verbose && enter(verbose, "Compiling RSP");
@@ -468,6 +468,11 @@ setMethodS3("writeCytobandLayers", "ChromosomeExplorer", function(this, ...) {
 }, private=TRUE)
 
 
+setMethodS3("getSampleLayerName", "Explorer", function(this, name, class="sampleLayer", ...) {
+  layer <- c(getSampleLayerPrefix(this), name, class);
+  layer <- paste(layer, collapse=",");
+  layer;
+}, private=TRUE)
 
 setMethodS3("writeRawCopyNumberLayers", "ChromosomeExplorer", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -477,8 +482,10 @@ setMethodS3("writeRawCopyNumberLayers", "ChromosomeExplorer", function(this, ...
   model <- getModel(this);
 
   path <- getPath(this);
-  path <- filePath(getParent(path), "rawCNs,sampleLayer");
+  layer <- getSampleLayerName(this, "rawCNs");
+  path <- filePath(getParent(path), layer);
   path <- Arguments$getWritablePath(path);
+print(path);
 
   plotRawCopyNumbers(model, path=path, imageFormat="png", transparent=TRUE, ...);
 

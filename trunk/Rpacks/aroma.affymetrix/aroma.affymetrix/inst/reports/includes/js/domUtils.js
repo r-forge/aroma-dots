@@ -46,6 +46,19 @@ Array.prototype.indexOf = function(v, b, s) {
 };
 
 
+function toggleById(id) {
+  var obj = document.getElementById(id);
+  if (obj == null)
+    alert("ERROR: No such element: " + id);
+  obj.isSelected = !(obj.isSelected || false);
+  if (obj.isSelected) {
+    highlightById(id); 
+  } else {
+    clearById(id);  
+  }
+  return obj.isSelected;
+}
+
 function selectById(id) {
   var obj = document.getElementById(id);
   if (obj == null)

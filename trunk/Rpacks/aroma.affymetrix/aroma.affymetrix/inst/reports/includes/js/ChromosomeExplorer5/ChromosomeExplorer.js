@@ -5,7 +5,7 @@
  ****************************************************************/
 var AbstractExplorer = Class.create({
   initialize: function(args) {
-		this.reloadCountdown = 25;
+		this.reloadCountdown = 21;
 
     /* All lists */
     this.hashes = new Hash();
@@ -391,19 +391,26 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
     logAdd("updateLayers()...done");
   },
 
+  getLayerClass: function(fullname) {
+    var class = null;
+    ['chrLayer', 'sampleLayer'].each(function(layer) {
+			if (fullname.indexOf(layer) != -1)
+				class = layer;
+  	});
+    return class;
+  },
+
   getLayer: function(fullname) {
  		logAdd("getLayer()...");
-    var pos = fullname.indexOf(',');
-    var name = fullname.substring(0, pos);
-    var tags = fullname.substring(pos+1);
-
-    var class = tags;
-    var layerArray = this.getLayerArray(class);
+    var class = this.getLayerClass(fullname);
+    if (class == null)
+      alert("ERROR: No such layer class: " + class);
+     var layerArray = this.getLayerArray(class);
     var layer = layerArray.detect(function(layer) {
  		  return (layer.getFullname() == fullname);
 	  });
     if (layer == null)
-      alert("ERROR: No such ImageLayer: " + name + "," + class);
+      alert("ERROR: No such ImageLayer: " + fullname);
  		logAdd("getLayer()...done");
     return layer;
   }
