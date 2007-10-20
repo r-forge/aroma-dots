@@ -3,14 +3,247 @@
  *
  * Author: Henrik Bengtsson, hb@stat.berkeley.edu
  ****************************************************************/
+var Selector = Class.create({
+  initialize: function(name, class) {
+		this.name = name;
+		this.class = class;
+    this.isSelected = true;
+    this.hasError = false;
+    this.callbacks = new Hash();
+	},
+
+	inspect: function() {
+		args = new Hash();
+    args['name'] = this.name;
+    args['class'] = this.class;
+    args['isSelected'] = this.isSelected;
+    args['callbacks'] = this.callbacks.inspect();
+    return "<#Selector: " + args.inspect() + ">";
+	},
+
+	getCallback: function(event) {
+		return this.callbacks[event] || null;
+	},
+
+	setCallback: function(event, fcn) {
+		this.callbacks[event] = fcn;
+	},
+
+	callback: function(event) {
+		var fcn = this.getCallback(event);
+    if (fcn == null)
+      return false;
+    return fcn(this);
+	},
+
+	onChange: function() {
+ 		this.saveToCookie();
+		return this.callback('onChange');
+	},
+
+	getFullname: function() {
+  	var res = this.name;
+    if (this.class != null)
+      res = res + "," + this.class;
+    return res;
+	},
+
+	getId: function() {
+		var id = this.getFullname();
+    id = escape(id);
+    return id;
+	},
+
+
+	getSelectorId: function() {
+		return "selector_" + this.getId();
+	},
+
+	getSelector: function() {
+		var id = this.getSelectorId();
+    var obj = document.getElementById(id) || null;
+    if (obj == null)
+      throw("Selector.getSelector(): No such selector: ", id);
+    return obj;
+	},
+
+	update: function() {
+    this.isSelected = (this.isSelected == true || this.isSelected == 'true');
+
+		var id = this.getSelectorId();
+    var obj = document.getElementById(id) || null;
+    if (obj == null)
+      return false;
+
+		if (this.isSelected) {
+  		if (this.hasError) {
+        obj.style.background = '#ffcc99;';
+			} else {
+        obj.style.background = '#ccccff;';
+			}
+		} else {
+      obj.style.background = 'none';
+		}
+	},
+
+	select: function() {
+		var oldValue = this.isSelected;
+    var value = true;
+    if (oldValue != value) {
+    	this.isSelected = value;
+      this.onChange();
+      this.update();
+		}
+    return this.isSelected;
+	},
+
+	unselect: function() {
+		var oldValue = this.isSelected;
+    var value = false;
+    if (oldValue != value) {
+    	this.isSelected = value;
+      this.onChange();
+      this.update();
+		}
+    return this.isSelected;
+	},
+
+	toQueryString: function() {
+		return this.getFullname()+"="+this.isSelected;
+	},
+
+	toHtmlString: function() {
+		alert("ERROR: toHtmlString() is not defined for this Selector class");
+	},
+
+	saveToCookie: function() {
+		$jq.cookie(this.getId(), this.isSelected, {expires: 7});
+	},
+
+	deleteCookie: function() {
+	  $jq.cookie(this.getId(), null);
+	},
+
+	loadFromCookie: function() {
+		var value = $jq.cookie(this.getId());
+    if (typeof(value) == "undefined" || value == null)
+      return false;
+    value = (value == true || value == 'true');
+		this.isSelected = value;
+	},
+
+	loadFromUrl: function() {
+    var params = $jq.getUrlParameters();
+    var value = params[this.getFullname()];
+    if (typeof(value) == "undefined")
+      return false;
+    value = (value == true || value == 'true');
+  	this.isSelected = value;
+	},
+
+	load: function() {
+		this.loadFromCookie();
+		this.loadFromUrl();
+  }
+})
+
+
+var ToggleSelector = Class.create(Selector, {
+	toggle: function() {
+  	this.isSelected = !this.isSelected;
+    this.onChange();
+    this.update();
+    return this.isSelected;
+	},
+
+	toHtmlString: function() {
+		var id = this.getSelectorId();
+    var html = sprintf('[<span id="%s"><a href="javascript:explorer.toggleLayer(\'%s\');">%s</a></span>]', id, this.getFullname(), this.name);
+		return html;
+	},
+})
+
+
+
+
 var AbstractExplorer = Class.create({
   initialize: function(args) {
 		this.reloadCountdown = 21;
 
+    this.layerSelectors = new Array();
+
     /* All lists */
     this.hashes = new Hash();
     this.arrays = new Hash();
+    this.layerArrays = new Hash();
+
+    /* Default settings */
+    this.settings = new ChromosomeExplorerSettings();
+
+    /* Update settings from cookies and URL parameters */
+    this.settings.load(); 
+
+    /* Update by constructor arguments */
+    this.settings.importArray(args);
 	},
+
+	findSelector: function(fullname) {
+    var res = this.layerSelectors.detect(function(selector) {
+			return (selector.getFullname() == fullname);
+		})
+    return res;
+  },
+
+	updateLayers: function() {
+		/* Update the layers by calling the onChange() callback
+       of all layer selectors. */
+			/*
+		this.updateLayersByArgs(new Hash({chipType:this.getChipType(), chromosome:this.getChromosome(), sample:this.getSample(), zoom:this.getZoom()}));
+			*/
+    this.layerSelectors.each(function(selector) {
+			selector.onChange();
+		})
+  },
+
+	loadSelectors: function() {
+    this.layerSelectors.each(function(selector) {
+			selector.load();
+			selector.update();
+			selector.onChange();
+			selector.update();
+		})
+  },
+
+  getPersistentSettings: function() {
+    var args = new Hash();
+    args['chipType'] = this.getChipType();
+    args['sample'] = this.getSample();
+    args['chromosome'] = this.getChromosome();
+    args['zoom'] = this.getZoom();
+    args['set'] = this.getSet();
+		this.settings.args.each(function(pair) {
+			isLayer = (pair.name.indexOf('Layer') != -1);
+      if (isLayer) {
+        /* Default is always true, i.e. to display a layer, so... */
+        if (!pair.value) {
+          args[pair.key] = pair.value;
+        }
+      }
+		})
+    return args;
+  },
+
+
+  setPersistentSettings: function(args) {
+		var that = this;
+		['chipType', 'sample', 'chromosome', 'zoom', 'set'].each(function(key) {
+      that.settings.set(key, args[key]);
+  	})
+		/* Layers */
+		args.grep('Layer').each(function(pair) {
+			that.settings.args[pair.key] = pair.value;
+ 		})
+  },
 
   /* 
    * Count down reload counter; when reaching zero, the page is reloaded.
@@ -70,18 +303,6 @@ var AbstractExplorer = Class.create({
 
 
 var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
-  initialize: function($super, args) {
-		$super(args);
-    /* Default settings */
-    this.settings = new ChromosomeExplorerSettings();
-
-    /* Update settings from cookies and URL parameters */
-    this.settings.load(); 
-
-    /* Update by constructor arguments */
-    this.settings.importArray(args);
-	},
-
   getChipType: function() {
 		var value = this.settings.get('chipType');
     if (typeof(value) == "undefined" || value == null) {
@@ -92,6 +313,8 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
 
   setChipType: function(value) {
 		this.settings.set('chipType', value);
+		this.updateLayersByArgs(new Hash({chipType:this.getChipType()}));
+    this.updateLayers();
 	},
 
   getSet: function() {
@@ -104,6 +327,7 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
 
   setSet: function(value) {
 		this.settings.set('set', value);
+    this.updateLayers();
 	},
 
   getImagePath: function() {
@@ -128,13 +352,9 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
     return path + "/" + this.getImageFilename();
   },
 
+
   toQueryString: function() {
-    var args = new Hash();
-    args['chipType'] = this.getChipType();
-    args['sample'] = this.getSample();
-    args['chromosome'] = this.getChromosome();
-    args['set'] = this.getSet();
-    args['zoom'] = this.getZoom();
+		var args = this.getPersistentSettings();
     return args.toQueryString();
   },
 
@@ -154,6 +374,8 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
 
   setChromosome: function(value) {
     this.settings.set('chromosome', value);
+		this.updateLayersByArgs(new Hash({chromosome:this.getChromosome()}));
+    this.updateLayers();
   },
 
   getSampleLabel: function() {
@@ -177,6 +399,8 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
 
   setSample: function(value) {
     this.settings.set('sample', value);
+		this.updateLayersByArgs(new Hash({sample:this.getSample()}));
+    this.updateLayers();
   },
 
   getZoom: function() {
@@ -189,6 +413,8 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
 
   setZoom: function(value) {
     this.settings.set('zoom', value);
+		this.updateLayersByArgs(new Hash({zoom:this.getZoom()}));
+    this.updateLayers();
   },
 
   getLocation: function() {
@@ -314,18 +540,36 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
   },
 
   getLayerArray: function(class) {
-		var arrays = this.layerArrays || new Array();
-    return arrays[class] || new Array();
+    return this.layerArrays[class] || new Array();
 	},
 
 	setLayerArray: function(class, array) {
-    var arrays = this.layerArrays || null;
-    if (arrays == null)
-      arrays = new Hash();
-    arrays[class] = array;
-		this.layerArrays = arrays;
+    this.layerArrays[class] = array;
 	},
 
+	getLayerStatuses: function(field) {
+		var res = new Hash();
+		this.layerArrays.each(function(pair) {
+			var values = new Hash();
+      pair.value.each(function(layer) {
+				var key = layer.getFullname();
+        values[key] = layer[field];
+   	  })
+      res[pair.key] = values;
+    })
+		return res;
+	},
+
+	getLayersQString: function(field) {
+		var s = "";
+		this.layerArrays.each(function(pair) {
+      pair.value.each(function(layer) {
+        var value = layer.getFullname() + "=" + layer[field];
+        s = s + "&" + value;
+   	  })
+    })
+		return s;
+	},
 
 	setLayers: function(names, class, label) {
 		logAdd("setLayers()...");
@@ -333,8 +577,41 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
     if (names.size() == 0)
       return(false);
 
-    var layerArray = names.collect(function(name) {
-      return new ImageLayer(name, class);
+
+    var that = this;    
+
+    var layerArray = new Array();
+    names.collect(function(name) {
+			var selector = new ToggleSelector(name, class);
+
+			var layer = new ExplorerImageLayer(name, class);
+      layerArray[layerArray.size()] = layer;
+
+      selector.layer = layer;
+      selector.setCallback("onChange", function(selector) {
+			  var layer = selector.layer;
+  		  layer.setStatus(selector.isSelected);
+
+        /* Let selector have error status until an image is loaded. */
+        layer.setCallback('onChange', function(obj) {
+					obj.setCallback('onChange', null);
+          selector.hasError = true;
+          selector.update();
+				})
+
+        layer.setCallback('onLoad', function(obj) {
+					obj.setCallback('onLoad', null);
+          selector.hasError = false;
+          if (selector.isSelected) {
+            var img = obj.getImage("panel");
+            img.style.visibility = 'visible';
+					}
+					selector.update();
+				})
+
+        layer.update();
+  		})
+      that.layerSelectors[that.layerSelectors.size()] = selector;
   	});
 
 		$jq("#debugWindow").html("<small>"+layerArray.inspect()+"</small>");	
@@ -343,7 +620,8 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
     var pimgs = '';
     var nimgs = '';
     var res = layerArray.each(function(obj) {
-			s = s + obj.getSelectorHtml();
+      var selector = new ToggleSelector(obj.name, obj.tags);
+      s = s + '<span style="font-size:1%;"> </span>' + selector.toHtmlString();
       pimgs = pimgs + obj.getPanelImageHtml();
       nimgs = nimgs + obj.getNavigatorImageHtml();
 		});
@@ -351,10 +629,6 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
     updateLabel(class + 'Labels', s);
     updateLabel(class + 's', pimgs);
     updateLabel('navigator' + class + 's', nimgs);
-
-    layerArray.each(function(layer) {
-			layer.select();
-  	});
 
     this.setLayerArray(class, layerArray);
 		logAdd("setLayers()...done");
@@ -366,7 +640,25 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
         are loaded dynamically. */
 		$jq("img[@id]").each(function() {
 			var isLoaded = this.isLoaded || false;
-			if (isLoaded) {
+      if (!isLoaded) {
+        this.style.visibility = 'hidden';
+        return false;
+      }
+      
+      var isSelected = false;
+      var id = this.id || null;
+      if (id != null) {
+  			id = this.id.replace(/.*ImageLayer/,"");
+        var selectorId = "layer" + id;
+        var selector = document.getElementById(selectorId) || null;
+		  	if (selector != null) {
+          isSelected = selector.isSelected;
+        } else {
+          isSelected = false;
+        }
+        logAdd(this.id + ":" + id + ":" + selectorId + "=" + isSelected);
+      }
+			if (isSelected) {
         this.style.visibility = 'visible';
       } else {
         this.style.visibility = 'hidden';
@@ -375,20 +667,56 @@ var ChromosomeExplorerCore = Class.create(AbstractExplorer, {
 		logAdd("updateImages()...done");
   },
 
-  updateLayers: function(class, where) {
-    logAdd("updateLayers()...");
+  updateLayersByArgs: function(args) {
+		var that = this;
+		['chrLayer', 'sampleLayer'].each(function(class) {
+      var layerArray = that.getLayerArray(class);
+      args.each(function(pair) {
+        layerArray.each(function(layer) {
+  				layer.args[pair.key] = pair.value;
+  			})
+    	})
+		})
+	},
+
+  loadLayers: function(class, where) {
+    logAdd("loadLayers()...");
     var sample = this.getSample();
     var chromosome = this.getChromosome();
     var chipType = this.getChipType();
     var zoom = this.getZoom();
     if (where == "navigator")
       zoom = 4;
+
+		this.updateLayersByArgs(new Hash({chipType:chipType, chromosome:chromosome, sample:sample, zoom:zoom}));
+
+    this.layerSelectors.each(function(selector) {
+      if (selector.class != class)
+				 return false;
+      var layer = selector.layer;
+      /* Let selector have error status until an image is loaded. */
+      layer.setCallback('onChange', function(obj) {
+   			obj.setCallback('onChange', null);
+        selector.hasError = true;
+        selector.update();
+			})
+      layer.setCallback('onLoad', function(obj) {
+			  obj.setCallback('onLoad', null);
+        selector.hasError = false;
+        if (selector.isSelected) {
+          var img = obj.getImage("panel");
+          img.style.visibility = 'visible';
+				}
+				selector.update();
+			})
+		});
+
     var layerArray = this.getLayerArray(class);
     layerArray.each(function(layer) {
-      var pathname = layer.getImagePathname(chipType, chromosome, sample, zoom);
+      var pathname = layer.getImagePathname();
       layer.loadImage(pathname, where);
 		});
-    logAdd("updateLayers()...done");
+    logAdd("loadLayers()...done");
   },
 
   getLayerClass: function(fullname) {
@@ -538,9 +866,10 @@ function ChromosomeExplorer() {
   }
 
   this.toggleLayer = function(fullname) {
-    this._explorer.getLayer(fullname).toggle();
+    var selector = this._explorer.findSelector(fullname);
+    selector.toggle();
+    this.updateInfo();
   }
-
 
 
   /************************************************************************
@@ -909,6 +1238,8 @@ function ChromosomeExplorer() {
     this.imageUrl = document.getElementById('imageUrl') || null;
     this.cnrUrl = document.getElementById('cnrUrl') || null;
 
+    this._explorer.loadSelectors();
+
     this.setupEventHandlers();
   
     this.updateNavigator();
@@ -926,7 +1257,6 @@ function ChromosomeExplorer() {
     if (typeof(value) == "undefined") {
       this.updateNavigatorWidth();
       value = navAreaWidth;
-			alert(value);
       if (typeof(value) == "undefined")
         value = null;
     }
@@ -1013,7 +1343,7 @@ function ChromosomeExplorer() {
     /* Update layers */
     var that = this;
     ['chrLayer', 'sampleLayer'].each(function(class) {
-      that._explorer.updateLayers(class, 'panel');
+      that._explorer.loadLayers(class, 'panel');
     });
 
     var pathname = null;
@@ -1070,8 +1400,8 @@ function ChromosomeExplorer() {
 
     /* Update layers */
 		logAdd("Update layers...");
-    this._explorer.updateLayers('chrLayer', 'navigator');
-    this._explorer.updateLayers('sampleLayer', 'navigator');
+    this._explorer.loadLayers('chrLayer', 'navigator');
+    this._explorer.loadLayers('sampleLayer', 'navigator');
 		logAdd("Update layers...done");
 
     var pathname = null;
@@ -1083,6 +1413,7 @@ function ChromosomeExplorer() {
     }
 
     navImage = document.getElementById("navigatorImage");
+
     navImage.onload = function() {
       logAdd("navImage.onload()...");
       this.isLoaded = true;

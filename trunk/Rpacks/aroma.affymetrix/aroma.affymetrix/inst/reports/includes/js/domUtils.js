@@ -64,7 +64,7 @@ function selectById(id) {
   if (obj == null)
     return false;
   obj.isSelected = true;
-  highlightById(id);  
+  highlightById(id);
 }
 
 function unselectById(id) {
