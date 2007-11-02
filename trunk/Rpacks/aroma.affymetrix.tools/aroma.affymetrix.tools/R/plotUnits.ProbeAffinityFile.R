@@ -1,5 +1,5 @@
 setMethodS3("plotUnits","ProbeAffinityFile",function(this,units,intercept=0,x.pos=NULL,add=T,type=ifelse(add,"l","h"),
-    joinGroups=T,plot.it=T,...){
+    joinGroups=T,plot.it=T,xlab="Probes",ylab="Probe Affinity",...){
     #add lines for the effects -- note can't add on top of data, because the chip effects/intercept wrong...
     #takes parameter intercept to fix this if know the offset
     if(length(units)>1) stop("units must be single integer -- only can plot 1 unit") ##could change this...
@@ -10,7 +10,9 @@ setMethodS3("plotUnits","ProbeAffinityFile",function(this,units,intercept=0,x.po
     nCellsPerGroup<-.subset2(readCdfNbrOfCellsPerUnitGroup(getPathname(cdf),unit=units),1)
     if(plot.it){
         if(!joinGroups){
-            if(!add) plot(x.pos,probeEffect+intercept,xaxs="i",type="n",...)
+            if(!add){
+                 plot(x.pos,probeEffect+intercept,xaxs="i",type="n",xlab=xlab,ylab=ylab,...)
+            }
             xstart<-c(1,head(cumsum(nCellsPerGroup)+1,-1))
             xend<-cumsum(nCellsPerGroup) 
             tmp<-lapply(1:length(xstart),function(i){
@@ -18,7 +20,7 @@ setMethodS3("plotUnits","ProbeAffinityFile",function(this,units,intercept=0,x.po
                     })
         }       
         else{
-            if(!add) plot(x.pos,probeEffect+intercept,xaxs="i",type=type,...)
+            if(!add) plot(x.pos,probeEffect+intercept,xaxs="i",type=type,xlab=xlab,ylab=ylab,...)
             else lines(x.pos,probeEffect+intercept,xaxs="i",...)
         }
     }
