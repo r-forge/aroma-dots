@@ -175,7 +175,8 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
     # Assert right dimensions of 'y'.
 
     # If input data are dimensionless, return NAs. /KS 2006-01-30
-    if (is.null(dim(y))) {
+    dim <- dim(y);
+    if (is.null(dim)) {
       nbrOfArrays <- nbrOfArrays(getDataSet(this));
       return(list(theta=rep(NA, nbrOfArrays),
                   sdTheta=rep(NA, nbrOfArrays),
@@ -186,18 +187,24 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
       
     }
 
-    if (length(dim(y)) != 2) {
-      str(y);
+    if (length(dim) != 2) {
       stop("Argument 'y' must have two dimensions: ", 
-                                                paste(dim(y), collapse="x"));
+                                                paste(dim, collapse="x"));
     }
+
+    # Add shift?
+    if (shift != 0)
+      y <- y + shift;
 
     # Log-additive model
     y <- log(y, base=2);
 
+    I <- dim[2];  # Number of arrays
+    K <- dim[1];  # Number of probes
+
     # do we want to use median polish for large matrices?
     if (useMedianPolish) {
-      nbrOfVariables <- dim(y)[1]+dim(y)[2]-1;
+      nbrOfVariables <- K+I-1;
       if (nbrOfVariables > medianPolishThreshold) {
         mp <- medpolish(y, trace.iter=FALSE);
         fit <- list(Estimates=c(mp$overall+mp$col, mp$row), StdErrors=rep(0, length(c(mp$row,mp$col))));
@@ -210,8 +217,6 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
     }
         
     # Extract probe affinities and chip estimates
-    I <- ncol(y);  # Number of arrays
-    K <- nrow(y);  # Number of probes
     est <- fit$Estimates;
     se <- fit$StdErrors;
 
@@ -324,6 +329,8 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2007-11-07
+# o Now the fit function supports 'shift' too. Before it was ignored.
 # 2007-09-20
 # o Updated getFitFunction() for ExonRmaPlm to deal with compatibility issues
 #   related different versions of affyPLM/preprocessCore.
