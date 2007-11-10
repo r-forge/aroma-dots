@@ -1,6 +1,6 @@
 setMethodS3("getUnitMergeGroupsFunction","list",function (this,logscale=F,...) 
 {
-    mergeFcn<-function(groupList,arrays,fields="intensities"){
+    mergeFcn<-function(groupList,arrays,fields){
         perFieldFunction<-function(field){
             fieldList<-lapply(groupList,function(group){return(.subset2(group,field))})
             nRows<-sapply(fieldList,nrow)
