@@ -105,8 +105,8 @@ mergeDataList<-function(listOfData,join=c("row","column")){
         return(x)
     }
     if(is.null(dim1)){
-        numVec<-sapply(listOfData,function(x){is.numeric(x) && is.vector(x)})
-        if(any(!numVec)) stop("Must be list of numeric data")
+        numVec<-sapply(listOfData,function(x){is.vector(x) && (is.numeric(x) || all(is.na(x)))})
+        if(!all(numVec)) stop("Must be list of numeric data")
         listLength<-sapply(listOfData,length)
         if(length(unique(listLength))!=1) stop("elements of 'listOfList' must be lists of same length")
         allData<-unlist(listOfData)
