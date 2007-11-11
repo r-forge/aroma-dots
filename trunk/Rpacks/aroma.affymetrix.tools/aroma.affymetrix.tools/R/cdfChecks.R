@@ -60,7 +60,7 @@ cdfChecks<-function(cdf){
     if(length(whichBig)>0){
         cat(paste(check,". Possible Problem:",length(whichBig),"units have probesets with more than 4 probes\n"))
         cat("\tSummary of distribution of number of probes per probesets (for those with >4 probes):\n")
-        print(summary(unlist(lapply(nprobesPerUnitFull[whichBigFull],function(x){x[x>4]}))))
+        print(summary(unlist(lapply(nprobesPerUnit[whichBig],function(x){x[x>4]}))))
         out<-c(out,unitsLongProbesets=names(nprobesPerUnit[whichBig]))
     }
     else cat(paste(check,". Passed: 4 or less probes per probeset\n"))
