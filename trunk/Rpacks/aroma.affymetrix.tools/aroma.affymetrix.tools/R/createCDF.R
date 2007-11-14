@@ -60,7 +60,7 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type){
     
     pbsetcount<-0
     #per chunk, add only those in type want; considerable memory savings if type=core!;
-    for(i in 1:3){ # should be for(i in 1:nChunks)
+    for(i in 1:nChunks) #for(i in 1:3){ # 
         cat("Reading ",i,"th chunk of ", linesPerRead,"\n",sep="")
         pbsetTab<-read.table(csvAnnotFile,sep=",",nrows=linesPerRead,skip=startRead,header=F,stringsAsFactors=F,colClasses=colClasses,row.names=NULL)
         names(pbsetTab)<-header
