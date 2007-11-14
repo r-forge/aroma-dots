@@ -66,7 +66,7 @@ cdfChecks<-function(cdf){
     else cat(paste(check,". Passed: 4 or less probes per probeset\n"))
     check<-check+1
 
-    cat("Summary Information:\n")
+    cat("\nSummary Information:\n")
     cat(paste("Number of Units",length(cells),"\n"))
     cat(paste("Number of Groups",sum(nperUnit),"\n"))
     cat(paste("Number of Cells (probes)",length(unlist(cells)),"\n"))
