@@ -15,33 +15,15 @@
 #    nbrOfRows(cdfOrig) #number of rows on array
 ####    [1] 2560
 
-#csvAnnotFile<-"Annotation//CSVFiles//HuEx-1_0-st-v2.na23.hg18.probeset.csv"
-#linesPerRead<-4
-#type<-"extended"
-#probesetCdf<-AffymetrixCdfFile$fromChipType("HuEx-1_0-st-v2" )
-#chipType<-"HuEx-1_0-st-v2"
-#createTranscriptCDF(AffymetrixCdfFile$fromChipType("HuEx-1_0-st-v2" ), "Annotation//CSVFiles//HuEx-1_0-st-v2.na23.hg18.probeset.csv",linesPerRead=3,type="extended")
 
-#   main                       part of the main design
-#    control->affx              a standard AFFX control
-#    control->chip              a chip control
-#    control->bgp->antigenomic  contains antigenomic background probes
-#    control->bgp->genomic      contains genomic background probes
-#    normgene->exon             from an exonic region of a
-#                               normalization control gene
-#    normgene->intron           from an intronic region of a
-#                               normalization control gene
-#    rescue->FLmRNA->unmapped   contains probes tiled across
-#                               an mRNA transcript which either did not
-#                               align to the genome, or aligned poorly
-
-createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type){
+createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type,dirLoc=getPath(probesetCdf)){
     type<-match.arg(type,c("core","extended","full","main","control"))
     npbset<-nbrOfUnits(probesetCdf)
-    if(!file.exists(csvAnnotFile)) stop("invalid probeset annotation file name")
-    
-    nChunks<-npbset%/%linesPerRead+1
-
+    #if(!file.exists(csvAnnotFile)) stop("invalid probeset annotation file name")
+     #   nLinesFile<-length(readLines(csvAnnotFile))
+    nChunks<-npbset%/%linesPerRead+1 #may not be the same size as annotation file, but close approximation
+    cat(paste(npbset,"probesets in original cdf\n"))
+ 
     keepType<-switch(type,"core"="core","extended"=c("core","extended"),"full"=c("core","extended","full"),
         "main"="main","control"=c("control->affx","control->chip","control->bgp->antigenomic","control->bgp->genomic","normgene->exon","normgene->intron"))
     if(type%in% c("core","extended","full")) columnCompare<-"level"
@@ -49,51 +31,103 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type){
     colClasses<-rep("NULL",times=39) #don't keep most of the columns
     colClasses[c(1,7,16,39)]<-"character" #corresponds to 1=probeset_id,7=transcript_cluster_id,16=level,39=probeset_type; keep as characters
     
-    #get first value of first 1000 lines to find how many to skip
-    pbsetFinalTab<-matrix(nrow=0,ncol=length(which(colClasses!="NULL")))
+    #get first value of first 500 lines to find how many to skip
     firstLines<-substr(scan(csvAnnotFile,nmax=500,what="",quote="",sep="\n"),start=1,stop=1) #get first character of each line
     startRead<-match(F,sapply(firstLines,function(x){x=="#"})) #first time not start with #
-    header<-unlist(read.table(csvAnnotFile,sep=",",header=F,skip=startRead-1,nrow=1,stringsAsFactors=F,colClasses=colClasses),use.names=F)
-    print(header)
-    print(sapply(colClasses,is.null))
-    colnames(pbsetFinalTab)<-header
-    
-    pbsetcount<-0
-    #per chunk, add only those in type want; considerable memory savings if type=core!;
-    for(i in 1:nChunks) #for(i in 1:3){ # 
-        cat("Reading ",i,"th chunk of ", linesPerRead,"\n",sep="")
-        pbsetTab<-read.table(csvAnnotFile,sep=",",nrows=linesPerRead,skip=startRead,header=F,stringsAsFactors=F,colClasses=colClasses,row.names=NULL)
-        names(pbsetTab)<-header
-        pbsetcount<-pbsetcount+nrow(pbsetTab)
-        indexTemp<-indexOf(probesetCdf,names=pbsetTab[,"probeset_id"])
-        if(any(is.na(indexTemp))) stop("Probesets in annotation are not all in original cdf")
-        rm(indexTemp)
-        gc()
-        keepPbSet<-which(pbsetTab[,columnCompare]%in%keepType)
-        pbsetFinalTab<-rbind(pbsetFinalTab,pbsetTab[keepPbSet,])
-        if(i != nChunks) startRead<-startRead+linesPerRead
-    }    
 
-    if(pbsetcount != nbrOfUnits(probesetCdf)) stop("Original cdf and annotation have different numbers of probesets") ##put back!!
-    unitNames<-unique(pbsetFinalTab[,"transcript_cluster_id"])
+    #take out nrow in final version
+    pbsetFinalTab<-read.table(csvAnnotFile,sep=",",skip=startRead-1,header=T,stringsAsFactors=F,colClasses=colClasses,row.names=NULL)
+    indexTemp<-indexOf(probesetCdf,names=pbsetFinalTab[,"probeset_id"])
+    pbsetcount<-nrow(pbsetFinalTab)
+    if(pbsetcount > npbset) warning(paste("Annotation has",pbsetcount,"lines (probesets); original cdf only has",npbset))
+    
+    if(any(is.na(indexTemp))) {
+      warning(paste(length(which(is.na(indexTemp))),"probesets in annotation are not in original cdf; will be discarded"))
+      out<-pbsetFinalTab[is.na(indexTemp),"probeset_id"]
+
+      pbsetFinalTab<-pbsetFinalTab[!is.na(indexTemp),]
+    }
+    else out<-NULL
+    pbsetcount<-nrow(pbsetFinalTab)
+    if(pbsetcount < npbset) {
+      cat(paste("Fewer (valid) probesets in annotation than orginal cdf (",pbsetcount,"compared to",npbset,")\n"))
+      
+    }
+      keepPbSet<-which(pbsetFinalTab[,columnCompare]%in%keepType)
+    pbsetFinalTab<-pbsetFinalTab[keepPbSet,]
+    cat(paste(length(keepPbSet),"probesets match requirement (out of",pbsetcount,"valid probesets in annotation\n"))
+    rm(indexTemp)
+    gc()
+    if(length(keepPbSet)==0) invisible(NULL)
+                       
+#    pbsetFinalTab<-matrix(nrow=0,ncol=length(which(colClasses!="NULL")))
+#    header<-unlist(read.table(csvAnnotFile,sep=",",header=F,skip=startRead-1,nrow=1,stringsAsFactors=F,colClasses=colClasses),use.names=F)
+#    colnames(pbsetFinalTab)<-header
+#    pbsetcount<-0
+#per chunk, add only those in type want; considerable memory savings if type=core!;
+#    for(i in 1:nChunks){ #for(i in 1:3){ # should be 
+#      
+#        if(i==nChunks){
+#          linesPerRead<- -1 #get remaining lines regardless
+#          cat("Reading remaining lines in iteration ",i," out of ", nChunks," total iterations\n",sep="")
+#        }
+#        else   cat("Reading ",linesPerRead," lines in iteration ",i," out of ", nChunks," total iterations\n",sep="")
+#
+#        pbsetTab<-read.table(csvAnnotFile,sep=",",nrows=linesPerRead,skip=startRead,header=F,stringsAsFactors=F,colClasses=colClasses,row.names=NULL)
+#        names(pbsetTab)<-header
+#        pbsetcount<-pbsetcount+nrow(pbsetTab)
+#        indexTemp<-indexOf(probesetCdf,names=pbsetTab[,"probeset_id"])
+#    
+#        if(any(is.na(indexTemp))) warning("Probesets in annotation are not all in original cdf")
+#        rm(indexTemp)
+#        gc()
+#    
+#        keepPbSet<-which(pbsetTab[,columnCompare]%in%keepType)
+#        pbsetFinalTab<-rbind(pbsetFinalTab,pbsetTab[keepPbSet,])
+#        if(i != nChunks) startRead<-startRead+linesPerRead
+#      }    
+#    if(pbsetcount > nbrOfUnits(probesetCdf)) warning("Annotation has more probesets than original cdf") ##put back!!
+
     getCdfInfo<-function(uname){
         whichUnit<-which(pbsetFinalTab[,"transcript_cluster_id"]==uname)
         pbsetMat<-pbsetFinalTab[whichUnit,]
-        groups<-pbsetMat[,"probeset_id"]
-        groupUnits<-indexOf(probesetCdf,names=groups)
-        groupCdf<-readCdfUnits(getPathname(probesetCdf),units=groupUnits)
-        if(type%in% c("core","extended","full","main")) pbsetType<-as.character(unique(pbsetMat[,"level"])) #change from Ken's so that type indicates level if only have main design probes
-        else pbsetType<- as.character(unique(pbsetMat[,"probeset_type"]))
-        if(length(pbsetType)!=1) stop("Programming Error 1")
-        direction<-unique(sapply(groupCdf,function(x){x$direction}))
-        if(length(direction)!=1) stop("Programming Error 2")
-        groups<-lapply(groupCdf,function(x){x$groups[[1]]})
-        return(list(type=pbsetType,direction=direction,groups=groups))
+        groupNames<-pbsetMat[,"probeset_id"]
+        groupUnits<-indexOf(probesetCdf,names=groupNames)
+        if(any(is.na(groupUnits))){ warning(paste("not all group names belonging to",uname,"given in annotation file were found in the given cdf. These groups have been dropped"))
+            groupUnits<-na.omit(groupUnits)}
+      
+      groupCdf<-readCdf(getPathname(probesetCdf),units=groupUnits)
+#        if(type%in% c("core","extended","full","main")) pbsetType<-as.character(unique(pbsetMat[,"level"])) #change from Ken's so that type indicates level if only have main design probes
+#        else pbsetType<- as.character(unique(pbsetMat[,"probeset_type"]))
+#        if(length(pbsetType)!=1) stop("Programming Error 1")
+
+       unittype <- .subset2(.subset2(groupCdf,1), "unittype")
+       unitdirection <- .subset2(.subset2(groupCdf,1), "unitdirection")
+         natoms <- sum(unlist(lapply(groupCdf, .subset2, "natoms")))
+        ncells <- sum(unlist(lapply(groupCdf, .subset2, "ncells")))
+        ncellsperatom <- .subset2(.subset2(groupCdf,1), "ncellsperatom")
+        groups <- lapply(lapply(groupCdf, .subset2, "groups"), .subset2, 1)
+        return(list(groups=groups, unittype=unittype, unitdirection=unitdirection, natoms=natoms, ncells=ncells, ncellsperatom=ncellsperatom, unitnumber=unitnumber))
     }
-    outList<-lapply(unitNames,getCdfInfo)
+    outList<-list()
+    nprobesetsAdded<-0
+    
+    unitNames<-unique(pbsetFinalTab[,"transcript_cluster_id"])
+    unitnumber<-0
+    cat(paste("Starting iteration over",length(unitNames),"units\nDone so far:"))
+    for(i in 1:length(unitNames)){#can't get the unitnumber to increment within lapply...Ken did though
+      unitnumber <- unitnumber + 1
+      if(unitnumber %% 100 == 0) cat("\t",unitnumber)
+      if(unitnumber %% 2000 == 0) cat("\n")
+      outList[[i]]<-getCdfInfo(unitNames[[i]])
+      nprobesetsAdded<-nprobesetsAdded+length(outList[[i]]$groups)
+    }
+
     names(outList)<-unitNames
     nunits <- length(outList)
     nprobesets <- nrow(pbsetFinalTab)
+    if(nprobesetsAdded!=nprobesets) stop("Programming error: not all probesets in matrix added to new cdf")
+    cat(paste("New cdf consists of",nunits,"units and",nprobesets,"probesets\n"))
     rm(pbsetFinalTab)    
     gc()
 
@@ -101,17 +135,20 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type){
     qc <- readCdfQc(getPathname(probesetCdf))
     hdr <- readCdfHeader(getPathname(probesetCdf))
     filename<-paste(getChipType(probesetCdf), paste(type,".cdf",sep=""), sep=",")
-    outfile<-paste(getPath(probesetCdf),"/",filename,sep="")
+    cat(paste("New cdf has filename",filename,"\n"))
+    outfile<-paste(dirLoc,"/",filename,sep="")
     hdr$chiptype <- paste(getChipType(probesetCdf),type,sep=",")
     hdr$filename <- outfile
     hdr$probesets <- nprobesets
     hdr$nunits <- nunits
 
     if (length(qc)==0) { #i.e. no qc elements;
+      cat("No inherited qc items. Creating fake qc portion for writeCdf()\n")
       qc <- list(x=0, y=0, indices=1, length=25, pm=FALSE, background=FALSE, type="unknown", ncells=1);
       qc <- list(qc);
       hdr$nqcunits <- 1;
     }
     #return(list(outList,qc,hdr))
     writeCdf(outfile, cdfheader=hdr, cdf=outList, cdfqc=qc, overwrite=TRUE, verbose=10)
+    return(out)
 }

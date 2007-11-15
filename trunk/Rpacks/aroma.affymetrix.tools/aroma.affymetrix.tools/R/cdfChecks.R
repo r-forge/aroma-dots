@@ -8,19 +8,19 @@ cdfChecks<-function(cdf){
     repsCore <- tcells[tcells > 1] 
     if(length(repsCore)>0) {
         cat(paste(check,". Possible Problem:",length(repsCore),"cells assigned to multiple probesets/units\n"))
-        out<-c(out,list(repeatCells=as.numeric(names(repsCore))))}
+        out<-c(out,list(repeatCellIndices=as.numeric(names(repsCore))))}
     else{cat(paste(check,". Passed: Cells assigned to unique probesets/units\n"))}
     check<-check+1
     
     #check repeated group names:
-    allGroups<-readCdfGroupNames(getPathname(cdf)) #list of groups by unit
+    allGroups<-readCdfGroupNames(getPathname(cdf)) #list of groups by unit -- note is "" if group name is unit name? Might want to fix and just use info from cells?
     nperUnit<-sapply(allGroups,length) #how many groups per unit
     whichSingle<-which(nperUnit==1)
-    whichBlank<-which(sapply(allGroups,function(x){length(x)==1 && x==""}))
-    tgroups<-table(unlist(allGroups[-whichBlank],use.names=F))
+    whichSingleBlank<-which(sapply(allGroups,function(x){length(x)==1 && x==""}))#singleton and blank...
+    tgroups<-table(unlist(allGroups[-whichSingleBlank],use.names=F))
     tgroups[tgroups>1]
-    whichSingleNotBlank<-whichSingle[!(whichSingle %in% whichBlank)]
-    whichSingleGpUnitEqual<-which(sapply(names(allGroups[whichSingleNotBlank]),function(unitName){ allGroups[[unitName]]==unitName})) #indices (allGroups) of single with groupname=unit name
+    whichSingleNotBlank<-whichSingle[!(whichSingle %in% whichSingleBlank)]
+#    whichSingleGpUnitEqual<-which(sapply(names(allGroups[whichSingleNotBlank]),function(unitName){ allGroups[[unitName]]==unitName})) #indices (allGroups) of single with groupname=unit name
     if(length(tgroups[tgroups>1])>0) {
         cat(paste(check,". Possible Problem:",length(tgroups[tgroups>1]),"groups with same name (not including groups with blank names)\n"))
         out<-c(out,list(repeatGroups=names(tgroups[tgroups>1])))}
@@ -38,19 +38,19 @@ cdfChecks<-function(cdf){
     
     #check if group name is also a unit name
     groupUnitOverlap<-unlist(allGroups,use.names=F)[which(unlist(allGroups,use.names=F) %in% allUnits)] #names of groups that also names of units
-    if(length(groupUnitOverlap)>0) {
-        cat(paste(check,". Possible Problem:",length(groupUnitOverlap),"group names are also unit names\n"))
+    whichNotSingleBlank<-which(sapply(allGroups,function(x){length(x)>1 && x==""}))
+    if(length(groupUnitOverlap)>0 || length(whichNotSingleBlank)>0) {
+        cat(paste(check,". Possible Problem:",length(groupUnitOverlap),"unit names are same as a group name in another unit and",length(whichNotSingleBlank),"units with more than 1 group contain a group with the same name.\n"))
 
         subsetOverlap<-sapply(groupUnitOverlap,function(name){sapply(allGroups[[name]],'%in%',x=name)}) #logical for groupUnitOverlap: whether the group in the same unit
         whichSubsetOverlap<-which(names(allGroups) %in% groupUnitOverlap[which(subsetOverlap)]) #indices (allGroups) of which unit names have group names that are the same
-        cat("\t",length(whichSubsetOverlap),"are a group within a unit of the same name\n")
+        #cat("\t",length(whichSubsetOverlap),"are a group within a unit of the same name\n")
 
         whichUnitsOverlap<-which(names(allGroups) %in% groupUnitOverlap) #indices (allGroups) of which unit names are also names of groups
-        cat(paste("\t",length(intersect(whichUnitsOverlap,whichSingle)),"are a unit with a single probeset\n"))
+        cat(paste("\t",length(intersect(whichUnitsOverlap,whichSingle)),"units that are also a group name somewhere else have only single probeset\n"))
         
-        cat(paste("\t",length(intersect(whichSubsetOverlap,whichSingleGpUnitEqual)),"are a unit with a single probeset, and the probeset name is the same as the unit name\n"))
         
-        out<-c(out,list(overlapGroupUnit=groupUnitOverlap))}
+        out<-c(out,list(overlapGroupUnit=c(groupUnitOverlap,names(allGroups)[whichNotSingleBlank])))
     else{cat(paste(check,". Passed: Distinct unit and group names\n"))}
     check<-check+1
 
@@ -72,7 +72,7 @@ cdfChecks<-function(cdf){
     cat(paste("Number of Cells (probes)",length(unlist(cells)),"\n"))
     
 
-    cat(paste("Number of Single Group Units:",length(whichSingle),"(",length(whichBlank),"have blank group names,",length(whichSingleGpUnitEqual),"have group name equal to unit name)\n"))
+    cat(paste("Number of Single Group Units:",length(whichSingle),"(",length(whichBlank),"have group names same as unit)"))
 #    gc(cdf) #put this back
     invisible(out)
 
