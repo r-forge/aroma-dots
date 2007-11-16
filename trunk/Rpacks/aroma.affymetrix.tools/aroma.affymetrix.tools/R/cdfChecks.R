@@ -51,7 +51,7 @@ cdfChecks<-function(cdf){
         
         
         out<-c(out,list(overlapGroupUnit=c(groupUnitOverlap,names(allGroups)[whichNotSingleBlank])))
-    else{cat(paste(check,". Passed: Distinct unit and group names\n"))}
+    } else{cat(paste(check,". Passed: Distinct unit and group names\n"))}
     check<-check+1
 
     #information about the nprobes per group
