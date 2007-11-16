@@ -17,20 +17,22 @@
 
 
 createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type,dirLoc=getPath(probesetCdf),addTag=""){
-    type<-match.arg(type,c("core","extended","full","main","control"))
+    type<-match.arg(type,c("core","extended","full","main","control","all"),keepColumns=c(1,7,16,39),ncolumns=39)
     npbset<-nbrOfUnits(probesetCdf)
     if(!is.character(addTag)) stop("'addTag' must be character")
     #if(!file.exists(csvAnnotFile)) stop("invalid probeset annotation file name")
      #   nLinesFile<-length(readLines(csvAnnotFile))
-    nChunks<-npbset%/%linesPerRead+1 #may not be the same size as annotation file, but close approximation
+#    nChunks<-npbset%/%linesPerRead+1 #may not be the same size as annotation file, but close approximation
     cat(paste(npbset,"probesets in original cdf\n"))
  
     keepType<-switch(type,"core"="core","extended"=c("core","extended"),"full"=c("core","extended","full"),
-        "main"="main","control"=c("control->affx","control->chip","control->bgp->antigenomic","control->bgp->genomic","normgene->exon","normgene->intron"))
+        "main"="main","control"=c("control->affx","control->chip","control->bgp->antigenomic","control->bgp->genomic","normgene->exon","normgene->intron"),
+        "all"=NULL)
     if(type%in% c("core","extended","full")) columnCompare<-"level"
     if(type%in%c("main","control")) columnCompare<-"probeset_type"
-    colClasses<-rep("NULL",times=39) #don't keep most of the columns
-    colClasses[c(1,7,16,39)]<-"character" #corresponds to 1=probeset_id,7=transcript_cluster_id,16=level,39=probeset_type; keep as characters
+    if(!all(keepColumns %in% 1:ncolumns)) stop(paste("'keepColumns' must be a subset of 1-",ncolumns,sep=""))
+    colClasses<-rep("NULL",times=ncolumns) #don't keep most of the columns
+    colClasses[keepColumns]<-"character" #default corresponds to 1=probeset_id,7=transcript_cluster_id,16=level,39=probeset_type; keep as characters
     
     #get first value of first 500 lines to find how many to skip
     firstLines<-substr(scan(csvAnnotFile,nmax=500,what="",quote="",sep="\n"),start=1,stop=1) #get first character of each line
@@ -54,13 +56,15 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type,d
       cat(paste("Fewer (valid) probesets in annotation than orginal cdf (",pbsetcount,"compared to",npbset,")\n"))
       
     }
-      keepPbSet<-which(pbsetFinalTab[,columnCompare]%in%keepType)
-    pbsetFinalTab<-pbsetFinalTab[keepPbSet,]
-    cat(paste(length(keepPbSet),"probesets match requirement (out of",pbsetcount,"valid probesets in annotation\n"))
+    if(!is.null(keepType)){
+        keepPbSet<-which(pbsetFinalTab[,columnCompare]%in%keepType)
+        pbsetFinalTab<-pbsetFinalTab[keepPbSet,]
+        cat(paste(length(keepPbSet),"probesets match requirement (out of",pbsetcount,"valid probesets in annotation\n"))
+        if(length(keepPbSet)==0) invisible(NULL)
+    }
     rm(indexTemp)
     gc()
-    if(length(keepPbSet)==0) invisible(NULL)
-                       
+                   
 #    pbsetFinalTab<-matrix(nrow=0,ncol=length(which(colClasses!="NULL")))
 #    header<-unlist(read.table(csvAnnotFile,sep=",",header=F,skip=startRead-1,nrow=1,stringsAsFactors=F,colClasses=colClasses),use.names=F)
 #    colnames(pbsetFinalTab)<-header
