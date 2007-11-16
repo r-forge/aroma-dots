@@ -16,9 +16,10 @@
 ####    [1] 2560
 
 
-createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type,dirLoc=getPath(probesetCdf)){
+createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type,dirLoc=getPath(probesetCdf),addTag=""){
     type<-match.arg(type,c("core","extended","full","main","control"))
     npbset<-nbrOfUnits(probesetCdf)
+    if(!is.character(addTag)) stop("'addTag' must be character")
     #if(!file.exists(csvAnnotFile)) stop("invalid probeset annotation file name")
      #   nLinesFile<-length(readLines(csvAnnotFile))
     nChunks<-npbset%/%linesPerRead+1 #may not be the same size as annotation file, but close approximation
@@ -134,7 +135,7 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,linesPerRead=1000,type,d
 #Copy header and qc info from original cdf
     qc <- readCdfQc(getPathname(probesetCdf))
     hdr <- readCdfHeader(getPathname(probesetCdf))
-    filename<-paste(getChipType(probesetCdf), paste(type,".cdf",sep=""), sep=",")
+    filename<-paste(getChipType(probesetCdf), paste(type,addTag,".cdf",sep=""), sep=",")
     cat(paste("New cdf has filename",filename,"\n"))
     outfile<-paste(dirLoc,"/",filename,sep="")
     hdr$chiptype <- paste(getChipType(probesetCdf),type,sep=",")

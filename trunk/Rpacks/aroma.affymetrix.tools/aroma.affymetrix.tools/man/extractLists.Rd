@@ -26,19 +26,9 @@ extractLists takes as an argument a list where each element is itself a *named* 
 
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+Returns named list, where each element is a list of the length of listOfLists
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+\author{ Elizabeth Purdom}
 \examples{
 lsOfLs<-list(x=list(a=1,b=2),y=list(a=3,b=10))
 extractLists(lsOfLs,"a")
@@ -48,7 +38,3 @@ ymat<-matrix(c(11,12,13,14,15,16,17,18),nrow=2)
 mergeDataList(list(xmat,ymat),join="column")
 mergeDataList(list(t(xmat),t(ymat)),join="row")
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
