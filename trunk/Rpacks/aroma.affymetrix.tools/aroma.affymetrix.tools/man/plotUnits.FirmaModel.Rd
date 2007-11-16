@@ -16,7 +16,7 @@ plotUnits.FirmaModel(this, units, arrays = NULL, colSchemeProbe = brewer.pal(11,
   \item{colSchemeProbe}{ color palette to use for the probe-level residuals image}
   \item{colSchemeFIRMA}{ color palette to use for the FIRMA scores }
   \item{breaksProbe}{ breaks for the probe-level residuals (passed to \code{image}) }
-  \item{breaksFIRMA}{ breaks for the FIRMA scores (passed to \code{image}) } }
+  \item{breaksFIRMA}{ breaks for the FIRMA scores (passed to \code{image}) }
   \item{colArrays}{ color of the arrays }
   \item{arrayFactor}{ factor for grouping the arrays in the image plots}
   \item{arrayNames}{ Names for the arrays}

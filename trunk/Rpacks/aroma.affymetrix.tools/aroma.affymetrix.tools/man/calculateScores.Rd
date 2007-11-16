@@ -29,39 +29,53 @@ dataList <- readFUN(units = units, verbose = less(verbose))
 scoresList <- lapply(dataList, FUN = calculateFUN)
 }
 The output from calculateFUN will be the 'unit' object in the returned list.  There's no writing to CEL files, so any output format is allowed. However, in order to use other functions to manage the scores, calculateFUN must return a 'group list'-- a list with an element corresponding to each group. If your scores are not per group, then you can simply define your output to have only 1 group per unit(like a cel file with a monocell cdf, if we were working with cel files). In otherwords, to return object 'x' that is not a list, instead return 'list(group=x)'. We would recommend that you go even further, and give an additional list structure to your output so that it will match the output from readUnits of an AffymetrixCelSet. This should give a final output of the following format:
-\code{
+
      scoreList
+     
       +- unit #1
+      
       |  +- group #1
+      
       |  |   +- Score element #1 
+      
       |  |   |   +- data
+      
       |  |   +- Score element #2
+      
       |  |   |   +- data
+      
       .  .   .
-      .  .   .
-      .  .   .
+ 
       |  +-group #2
+      
       |  |   +- Score element #1 
+      
       |  |   |   +- data
+      
       |  |   +- Score element #2
+      
       |  |   |   +- data
+      
       .  .   .
-      .  .   .
-      .  .   .
+      
       |  +- group #K
+      
       |      +- Score element #1 
+      
       |      |   +- data
+      
       |      +- Score element #2
+      
       |      |   +- data
+      
       .      .
-      .      .
-      .      .
+      
       +- unit #2
+      
       .
-      .
-      .
+      
       +- unit #J
-}
+
 }
 \value{
 A list of the length of the number of units, each element corresponding to the output of calculateFUN for that unit.

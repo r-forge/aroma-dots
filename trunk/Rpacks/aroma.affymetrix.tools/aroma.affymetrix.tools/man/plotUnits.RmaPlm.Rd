@@ -13,9 +13,9 @@ plotUnits.RmaPlm(this, units, arrays = NULL, joinGroups = T, includeProbeEffect 
   \item{this}{ RmaPlm object }
   \item{units}{ unit to plot (must be just 1) }
   \item{arrays}{ vector of indices of which arrays to plot (in order of the arrays in this)}
-  \item{joinGroups}{ ~~Describe \code{joinGroups} here~~ }
-  \item{includeProbeEffect}{ logical; if T, plots original intensities. If F, plots the intensities with probe effect subtracted off }
-  \item{includeChipEffect}{ logical; if T, plots original intensities. If F, plots the intensities with chip effect subtracted off } }
+  \item{joinGroups}{ logical; whether to connect the lines that cross group boundaries}
+  \item{includeProbeEffect}{ logical; if T, plots original intensities. If F, plots the intensities with probe effect subtracted off}
+  \item{includeChipEffect}{ logical; if T, plots original intensities. If F, plots the intensities with chip effect subtracted off}
   \item{plotRaw}{ logical; whether to plot raw data (over rides other options) }
   \item{plotProbeEffect}{ logical; whether to superimpose the probe effect (affinity) estimates }
   \item{probePlotArgs}{ list of named arguments to pass to plotUnits.ProbeAffinityFile (if plotProbeEffect=T) }
@@ -26,6 +26,6 @@ plotUnits.RmaPlm(this, units, arrays = NULL, joinGroups = T, includeProbeEffect 
   \item{\dots}{ arguments to pass to plotUnits.AffymetrixCelSet}
 }
 \value{
-  returns matrix of data plotted (with effects subtracted off if requested)
+  returns matrix of data plotted (with effects subtracted off as requested)
 }
 \author{ Elizabeth Purdom}
