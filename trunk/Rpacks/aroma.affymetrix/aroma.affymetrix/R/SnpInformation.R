@@ -34,6 +34,7 @@ setMethodS3("as.character", "SnpInformation", function(x, ...) {
 
   s <- NextMethod("as.character", this, ...);
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
+  s <- c(s, sprintf("Number of enzymes: %s", nbrOfEnzymes(this)));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -370,26 +371,39 @@ setMethodS3("readTableInternal", "SnpInformation", function(this, pathname, colC
 }, private=TRUE)
 
 
-setMethodS3("getFragmentLengths", "SnpInformation", function(this, ...) {
+setMethodS3("nbrOfEnzymes", "SnpInformation", function(this, ...) {
+  as.integer(1);
+})
+
+setMethodS3("getFragmentLengths", "SnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
   data <- getData(this, ..., fields="fragmentLength");
-  fl <- data[,1];
+  fl <- data[,enzymes,drop=FALSE];
+  fl <- as.matrix(fl);
+  dim <- dim(fl);
   fl <- as.integer(fl);
+  dim(fl) <- dim;
   fl;
 })
 
 
-setMethodS3("getFragmentStarts", "SnpInformation", function(this, ...) {
+setMethodS3("getFragmentStarts", "SnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
   data <- getData(this, ..., fields="start");
-  fl <- data[,1];
+  fl <- data[,enzymes,drop=FALSE];
+  fl <- as.matrix(fl);
+  dim <- dim(fl);
   fl <- as.integer(fl);
+  dim(fl) <- dim;
   fl;
 })
 
 
-setMethodS3("getFragmentStops", "SnpInformation", function(this, ...) {
+setMethodS3("getFragmentStops", "SnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
   data <- getData(this, ..., fields="stop");
-  fl <- data[,1];
+  fl <- data[,enzymes,drop=FALSE];
+  fl <- as.matrix(fl);
+  dim <- dim(fl);
   fl <- as.integer(fl);
+  dim(fl) <- dim;
   fl;
 })
 
@@ -397,6 +411,10 @@ setMethodS3("getFragmentStops", "SnpInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-11-19
+# o Now getFragmentLength/Starts/Stops() of SnpInformation return a matrix
+#   where each column correspond to an enzyme. This is was added because 
+#   the new SNP chips have two enzymes. Added nbrOfEnzymes().
 # 2007-01-22
 # o BUG FIX: getData() did not support the dChip SNP information file for
 #   the Mapping10K_Xba142 chip type, because yet again it used a slightly
