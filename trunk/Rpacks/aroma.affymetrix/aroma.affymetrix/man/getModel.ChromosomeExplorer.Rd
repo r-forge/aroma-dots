@@ -26,7 +26,7 @@
 }
 
 \value{
- Returns a \code{\link{CopyNumberSegmentationModel}}.
+ Returns a \code{\link{CopyNumberChromosomalModel}}.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

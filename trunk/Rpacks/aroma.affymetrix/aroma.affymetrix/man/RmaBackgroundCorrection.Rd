@@ -3,6 +3,8 @@
 % 
 %  RmaBackgroundCorrection.R
 % 
+% on Tue Nov 20 12:40:39 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -52,7 +54,7 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 \section{Fields and Methods}{
  \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.RmaBackgroundCorrection]{process}} \tab Performs background correction.\cr
 }
 
 

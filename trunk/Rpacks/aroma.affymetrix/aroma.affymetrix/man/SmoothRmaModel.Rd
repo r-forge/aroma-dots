@@ -3,6 +3,8 @@
 % 
 %  SmoothSaModel.R
 % 
+% on Tue Nov 20 12:40:57 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -48,6 +50,7 @@ extends \emph{\link[aroma.affymetrix]{SmoothMultiarrayModel}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{getFitFunction} \tab  -\cr
+ \tab \code{getRootPath} \tab  -\cr
 }
 
 

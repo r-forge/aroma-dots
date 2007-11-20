@@ -3,6 +3,8 @@
 % 
 %  ArrayExplorer.R
 % 
+% on Tue Nov 20 12:39:39 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -46,18 +48,18 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
  \tab \code{getAlias} \tab  -\cr
  \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getColorMaps} \tab  -\cr
- \tab \code{getDataSet} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getDataSet.ArrayExplorer]{getDataSet}} \tab Gets the data set.\cr
  \tab \code{getSetTuple} \tab  -\cr
  \tab \code{nbrOfChipTypes} \tab  -\cr
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.ArrayExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
  \tab \code{setAlias} \tab  -\cr
- \tab \code{setArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:setArrays.ArrayExplorer]{setArrays}} \tab Sets the arrays.\cr
  \tab \code{setColorMaps} \tab  -\cr
 }
 
 
  \bold{Methods inherited from Explorer}:\cr
-addIncludes, addIndexFile, display, getAlias, getArrays, getAsteriskTags, getFullName, getIncludePath, getMainPath, getName, getNameOfInput, getPath, getTags, getTagsOfInput, getTemplatePath, nbrOfArrays, process, setAlias, setArrays, setup
+addIncludes, addIndexFile, display, getAlias, getArrays, getAsteriskTags, getFullName, getIncludePath, getMainPath, getName, getNameOfInput, getPath, getReportPathPattern, getSampleLayerPrefix, getSubname, getTags, getTagsOfInput, getTemplatePath, nbrOfArrays, process, setAlias, setArrays, setReportPathPattern, setSubname, setup, splitByReportPathPattern
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

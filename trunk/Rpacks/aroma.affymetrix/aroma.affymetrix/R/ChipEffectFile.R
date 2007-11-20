@@ -550,6 +550,8 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
     cells <- unlist(cells, use.names=FALSE);
   } else {
     verbose && enter(verbose, "Retrieving cell indices for specified units");
+    if (is.null(units))
+      units <- seq(length=nbrOfUnits(cdf));
     chunks <- splitInChunks(units, chunkSize=100e3);
     nbrOfUnits <- length(units);
     cells <- vector("integer", nbrOfUnits);
@@ -589,9 +591,8 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
                                         paste(uUnitSizes, collapse=","));
   verbose && cat(verbose, "Number of units: ", length(unitNames));
 
-  if (is.null(units)) {
+  if (is.null(units))
     units <- seq(length=nbrOfUnits(cdf));
-  }
 
   # The following is too slow:
   #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));

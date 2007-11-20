@@ -526,7 +526,7 @@ setMethodS3("addIncludes", "Explorer", function(this, ..., force=FALSE, verbose=
   srcPath <- getIncludePath(this);
   verbose && cat(verbose, "Source path: ", srcPath);
   verbose && cat(verbose, "Destination path: ", destPath);
-  pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE, overwrite=force, ...);
+  pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE, overwrite=force);
   verbose && exit(verbose);
 
   verbose && exit(verbose);
@@ -662,6 +662,8 @@ setMethodS3("display", "Explorer", function(this, filename=sprintf("%s.html", cl
 
 ##############################################################################
 # HISTORY:
+# 2007-11-20
+# o Now addIncludes() no longer passes '...' to copyDirectory().
 # 2007-10-11
 # o Now addIncludes() always copies missing files in the includes/ directory.
 # 2007-03-24

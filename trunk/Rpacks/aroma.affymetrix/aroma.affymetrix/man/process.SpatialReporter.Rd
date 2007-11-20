@@ -3,6 +3,8 @@
 % 
 %  SpatialReporter.R
 % 
+% on Tue Nov 20 12:41:17 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

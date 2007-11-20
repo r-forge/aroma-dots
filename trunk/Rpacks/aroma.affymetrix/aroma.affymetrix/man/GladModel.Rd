@@ -21,9 +21,11 @@
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.affymetrix]{ChromosomalModel}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{GladModel}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{GladModel}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
@@ -55,7 +57,10 @@ extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
 
 
  \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
-as.character, calculateChromosomeStatistics, clearCache, fit, fitOne, getAsteriskTag, getMatrixChipEffectFiles, getPositionChipTypeUnit, getRawCnData, getReferenceSetTuple, getRefSetTuple, getRegions, isPaired, migrateTool, newPlot, plot, plotAxesLayers, plotChromosomesLayers, plotCopyNumberRegionLayers, plotCytobandLayers, plotFitLayers, plotGridHorizontalLayers, plotRawCopyNumbers, writeRegions
+fit, fitOne, getPositionChipTypeUnit, getRegions, getTags, migrateTool, plot, plotCopyNumberRegionLayers, writeRegions
+
+ \bold{Methods inherited from CopyNumberChromosomalModel}:\cr
+as.character, calculateChromosomeStatistics, clearCache, extractRawCopyNumbers, fit, getMatrixChipEffectFiles, getRawCnData, getReferenceSetTuple, getRefSetTuple, isPaired, newPlot, plotAxesLayers, plotChromosomesLayers, plotCytobandLayers, plotFitLayers, plotGridHorizontalLayers, plotRawCopyNumbers, plotSampleLayers
 
  \bold{Methods inherited from ChromosomalModel}:\cr
 as.character, clearCache, fit, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffectSets, getListOfGenomeInformations, getName, getNames, getParentPath, getPath, getPcuTheta, getPositionChipTypeUnit, getReportPath, getRootPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setGenome
