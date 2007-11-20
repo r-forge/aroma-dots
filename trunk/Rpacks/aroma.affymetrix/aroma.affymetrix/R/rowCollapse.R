@@ -1,5 +1,6 @@
 ###########################################################################/**
-# @RdocDefault rowCollapse
+# @set "class=matrix"
+# @RdocMethod rowCollapse
 #
 # @title "Extracts one cell per row from a matrix"
 #
@@ -41,7 +42,7 @@
 #
 # @author
 #
-# @keyword utility
+# @keyword utilities
 #*/########################################################################### 
 setMethodS3("rowCollapse", "matrix", function(x, cols, ...) {
   dim <- dim(x);

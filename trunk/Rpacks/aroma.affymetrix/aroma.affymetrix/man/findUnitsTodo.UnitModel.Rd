@@ -3,6 +3,8 @@
 % 
 %  UnitModel.R
 % 
+% on Tue Nov 20 12:41:32 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

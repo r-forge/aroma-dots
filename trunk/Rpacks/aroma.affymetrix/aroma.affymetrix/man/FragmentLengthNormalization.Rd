@@ -37,13 +37,14 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
   fragment length effects on total copy-number chip-effect estimates.
  }
 
- \usage{FragmentLengthNormalization(dataSet=NULL, ..., targetFunction=NULL, subsetToFit=NULL)}
+ \usage{FragmentLengthNormalization(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit=NULL)}
 
  \arguments{
    \item{dataSet}{A \code{\link{CnChipEffectSet}}.}
    \item{...}{Additional arguments passed to the constructor of
      \code{\link{ChipEffectTransform}}.}
-   \item{targetFunction}{A \code{\link[base]{function}}.  The target function to which all arrays
+   \item{targetFunctions}{An optional list of \code{\link[base]{function}}s.
+     For each enzyme there is one target function to which all arrays
      should be normalized to.}
    \item{subsetToFit}{The units from which the normalization curve should
      be estimated.  If \code{\link[base]{NULL}}, all are considered.}
@@ -55,7 +56,7 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
  \tab \code{clearCache} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getOutputDataSet} \tab  -\cr
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.FragmentLengthNormalization]{process}} \tab Normalizes the data set.\cr
 }
 
 

@@ -334,7 +334,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
     }
 
     # Remove as many promises as possible
-    rm(fcn, nbrOfEnzymes, allEnzymes, fl, yR, okYR, hasFl);
+    rm(fcns, nbrOfEnzymes, allEnzymes, fl, yR, okYR, hasFL);
 
     # Create a target prediction function for each enzyme
     fcns <- vector("list", length(fits));

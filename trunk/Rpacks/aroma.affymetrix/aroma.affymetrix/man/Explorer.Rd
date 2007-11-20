@@ -41,20 +41,24 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{addIncludes} \tab  -\cr
- \tab \code{display} \tab  -\cr
- \tab \code{getAlias} \tab  -\cr
- \tab \code{getArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:display.Explorer]{display}} \tab Displays the explorer in the default browser.\cr
+ \tab \code{\link[aroma.affymetrix:getAlias.Explorer]{getAlias}} \tab Gets the alias of the output set.\cr
+ \tab \code{\link[aroma.affymetrix:getArrays.Explorer]{getArrays}} \tab Gets the names of the arrays.\cr
  \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
- \tab \code{getName} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getName.Explorer]{getName}} \tab Gets the name of the explorer.\cr
  \tab \code{getPath} \tab  -\cr
- \tab \code{getTags} \tab  -\cr
+ \tab \code{getReportPathPattern} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getTags.Explorer]{getTags}} \tab Gets the tags of the explorer.\cr
  \tab \code{getTagsOfInput} \tab  -\cr
- \tab \code{nbrOfArrays} \tab  -\cr
- \tab \code{process} \tab  -\cr
- \tab \code{setAlias} \tab  -\cr
- \tab \code{setArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.Explorer]{nbrOfArrays}} \tab Gets the total number of arrays.\cr
+ \tab \code{\link[aroma.affymetrix:process.Explorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
+ \tab \code{\link[aroma.affymetrix:setAlias.Explorer]{setAlias}} \tab Sets the alias of the output set.\cr
+ \tab \code{\link[aroma.affymetrix:setArrays.Explorer]{setArrays}} \tab Sets the arrays.\cr
+ \tab \code{setReportPathPattern} \tab  -\cr
+ \tab \code{setSubname} \tab  -\cr
  \tab \code{setup} \tab  -\cr
+ \tab \code{splitByReportPathPattern} \tab  -\cr
 }
 
 
@@ -62,6 +66,29 @@ extends \link[R.oo]{Object}\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
+ }
+
+ \section{Output directory structure}{
+   The \emph{main directory} of an Explorer report is
+    \code{reports/<name>/<subname>/}.
+   The \code{<name>} is typically the same as the name of the input
+   data set, and the \code{<subname>} is typically the tags of ditto.
+   This main directory is where main HTML document is stored.
+
+   For each chip type, real or "virtual" (combined), there is a
+   subdirectory with the same name as the chip type, i.e.
+    \code{reports/<name>/<subname>/<chiptype>/}.
+
+   For each chip type directory, there are set of subdirectories each
+   specifying a so called \emph{image layer}, e.g. an image layer
+   showing the raw data, another containing the estimates of a model
+   fit and so on.  Path format:
+    \code{reports/<name>/<subname>/<chiptype>/<image layer>/}.
+   In this directory all image files are stored, e.g. PNG files.
+
+   In some cases one do not want to all input tags to become part of the
+   subname, but instead for instance use those to name the image layer(s).
+   In such cases one has to override the default names.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Tue Nov 20 12:40:22 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

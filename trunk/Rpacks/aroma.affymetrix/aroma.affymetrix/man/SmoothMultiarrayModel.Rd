@@ -3,6 +3,8 @@
 % 
 %  SmoothMultiarrayModel.R
 % 
+% on Tue Nov 20 12:40:52 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -31,15 +33,15 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
 
 
 
-  This class represents the Chromosomal Smoothing Robust Multichip Analysis
-  method.
+  This abstract class represents a chromosomal smoothing method done
+  chromosome by chromosome.
  }
 
- \usage{SmoothMultiarrayModel(..., weights=c("none", "1/s2"), bandwidth=10000, tags="*")}
+ \usage{SmoothMultiarrayModel(..., typoOfWeights=c("none", "1/s2"), bandwidth=10000, tags="*")}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of \code{\link{ChromosomalModel}}.}
-   \item{weights}{A \code{\link[base]{character}} string.}
+   \item{typoOfWeights}{A \code{\link[base]{character}} string.}
    \item{bandwidth}{A single \code{\link[base]{numeric}} specifying the smoothing bandwidth
      in units of nucleotides.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be added.}

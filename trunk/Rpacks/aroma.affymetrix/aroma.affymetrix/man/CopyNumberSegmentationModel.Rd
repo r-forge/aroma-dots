@@ -21,51 +21,44 @@
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.affymetrix]{ChromosomalModel}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\emph{\code{CopyNumberSegmentationModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\emph{\code{CopyNumberSegmentationModel}}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{CbsModel}, \link[aroma.affymetrix]{GladModel}\cr
 
 public abstract static class \bold{CopyNumberSegmentationModel}\cr
-extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
+extends \emph{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}\cr
 
 
 
   This \emph{abstract} class represents a copy-number segmentation model.
  }
 
- \usage{CopyNumberSegmentationModel(cesTuple=NULL, refTuple=NULL, tags="*", genome="Human", ...)}
+ \usage{CopyNumberSegmentationModel(...)}
 
  \arguments{
-   \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
-   \item{refTuple}{An optional \code{\link{ChipEffectSetTuple}} for pairwise
-     comparisons.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
-   \item{genome}{A \code{\link[base]{character}} string specifying what genome is process.}
-   \item{...}{Not used.}
+   \item{...}{Arguments passed to constructor
+      \code{\link{CopyNumberChromosomalModel}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{clearCache} \tab  -\cr
- \tab \code{fit} \tab  -\cr
- \tab \code{fitOne} \tab  -\cr
- \tab \code{getReferenceSetTuple} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fit.CopyNumberSegmentationModel]{fit}} \tab Fits the model.\cr
+ \tab \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{fitOne}} \tab Fits the copy-number segmentation model for one chromosome in one sample.\cr
  \tab \code{getRegions} \tab  -\cr
- \tab \code{isPaired} \tab  -\cr
+ \tab \code{getTags} \tab  -\cr
  \tab \code{migrateTool} \tab  -\cr
  \tab \code{plot} \tab  -\cr
- \tab \code{plotAxesLayers} \tab  -\cr
- \tab \code{plotChromosomesLayers} \tab  -\cr
  \tab \code{plotCopyNumberRegionLayers} \tab  -\cr
- \tab \code{plotCytobandLayers} \tab  -\cr
- \tab \code{plotFitLayers} \tab  -\cr
- \tab \code{plotGridHorizontalLayers} \tab  -\cr
- \tab \code{plotRawCopyNumbers} \tab  -\cr
  \tab \code{writeRegions} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from CopyNumberChromosomalModel}:\cr
+as.character, calculateChromosomeStatistics, clearCache, extractRawCopyNumbers, fit, getMatrixChipEffectFiles, getRawCnData, getReferenceSetTuple, getRefSetTuple, isPaired, newPlot, plotAxesLayers, plotChromosomesLayers, plotCytobandLayers, plotFitLayers, plotGridHorizontalLayers, plotRawCopyNumbers, plotSampleLayers
 
  \bold{Methods inherited from ChromosomalModel}:\cr
 as.character, clearCache, fit, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffectSets, getListOfGenomeInformations, getName, getNames, getParentPath, getPath, getPcuTheta, getPositionChipTypeUnit, getReportPath, getRootPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setGenome
@@ -74,11 +67,6 @@ as.character, clearCache, fit, getAlias, getArrays, getAsteriskTag, getChipEffec
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
- }
-
- \section{Requirements}{
-   This class requires genome information annotation files for
-   every chip type.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

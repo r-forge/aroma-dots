@@ -502,7 +502,7 @@ setMethodS3("writeCopyNumberRegionLayers", "ChromosomeExplorer", function(this, 
 
   # Not supported?
   if (!inherits(model, "CopyNumberSegmentationModel"))
-    return(null);
+    return(NULL);
     
   path <- getPath(this);
   tag <- getAsteriskTag(model);
@@ -561,7 +561,7 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
 
   # Not supported?
   if (!inherits(model, "CopyNumberSegmentationModel"))
-    return(null);
+    return(NULL);
 
   verbose && enter(verbose, "Writing CN regions");
 

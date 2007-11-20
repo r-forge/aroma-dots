@@ -3,6 +3,8 @@
 % 
 %  SpatialReporter.R
 % 
+% on Tue Nov 20 12:41:17 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -48,7 +50,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
 \tabular{rll}{
  \tab \code{addColorMap} \tab  -\cr
  \tab \code{getColorMaps} \tab  -\cr
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.SpatialReporter]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
  \tab \code{setColorMaps} \tab  -\cr
 }
 
