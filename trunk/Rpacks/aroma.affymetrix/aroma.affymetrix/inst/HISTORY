@@ -1,7 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.7.3 [2007-11-19xx]
+Version: 0.7.3 [2007-11-20xx]
+o Updated FragmentLengthNormalization to normalize data for which
+  more than one enzyme was used to digest the DNA. See class for
+  model constraints and assumptions.
 o Now getFragmentLength/Starts/Stops() of SnpInformation return a matrix
   where each column correspond to an enzyme. This is was added because 
   the new SNP chips have two enzymes. Added nbrOfEnzymes().
