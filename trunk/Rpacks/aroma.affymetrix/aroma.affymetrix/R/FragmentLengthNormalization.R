@@ -16,7 +16,8 @@
 #   \item{dataSet}{A @see "CnChipEffectSet".}
 #   \item{...}{Additional arguments passed to the constructor of 
 #     @see "ChipEffectTransform".}
-#   \item{targetFunction}{A @function.  The target function to which all arrays
+#   \item{targetFunctions}{An optional list of @functions.  
+#     For each enzyme there is one target function to which all arrays
 #     should be normalized to.}
 #   \item{subsetToFit}{The units from which the normalization curve should
 #     be estimated.  If @NULL, all are considered.}
@@ -36,7 +37,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunction=NULL, subsetToFit=NULL) {
+setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit=NULL) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -54,22 +55,30 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 #    }
   }
 
-  if (!is.null(targetFunction)) {
-    if (!is.function(targetFunction)) {
-      throw("Argument 'targetFunction' is not a function: ", class(targetFunction)[1]);
+  # Argument 'targetFunctions':
+  if (!is.null(targetFunctions)) {
+    if (!is.list(targetFunctions)) {
+      throw("Argument 'targetFunctions' is not a list: ", class(targetFunctions)[1]);
+    }
+    
+    # Validate each element
+    for (kk in seq(along=targetFunctions)) {
+      if (!is.function(targetFunctions[[kk]])) {
+        throw("One element in 'targetFunctions' is not a function: ", class(targetFunctions[[kk]])[1]);
+      }
     }
   }
 
   extend(ChipEffectTransform(dataSet, ...), "FragmentLengthNormalization", 
     .subsetToFit = subsetToFit,
-    .targetFunction = targetFunction
+    .targetFunctions = targetFunctions
   )
 })
 
 
 setMethodS3("clearCache", "FragmentLengthNormalization", function(this, ...) {
   # Clear all cached values.
-  for (ff in c(".targetFunction")) {
+  for (ff in c(".targetFunctions")) {
     this[[ff]] <- NULL;
   }
 
@@ -85,7 +94,7 @@ setMethodS3("getParameters", "FragmentLengthNormalization", function(this, ...) 
   # Get parameters of this class
   params2 <- list(
     subsetToFit = this$.subsetToFit,
-    .targetFunction = this$.targetFunction
+    .targetFunctions = this$.targetFunctions
   );
 
   # Append the two sets
@@ -152,21 +161,46 @@ setMethodS3("getOutputDataSet", "FragmentLengthNormalization", function(this, ..
   res;
 })
 
-setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, force=FALSE, ...) {
+setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, force=FALSE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
   # Cached?
   units <- this$.units;
   if (!is.null(units) && !force)
     return(units);
 
-  # Identify all SNP and CN units
-  cdf <- getCdf(this);
-  units <- indexOf(cdf, "^(SNP|CN)");
+  verbose && enter(verbose, "Getting subset to be fitted");
 
-  # Keep only those for which we have PCR fragmenth-length information
+  # Get SNP information
+  cdf <- getCdf(this);
   si <- getSnpInformation(cdf);
+
+  # Identify all SNP and CN units
+  verbose && enter(verbose, "Identifying SNPs and CN probes");
+  units <- indexOf(cdf, "^(SNP|CN)");
+  verbose && str(verbose, units);
+  verbose && exit(verbose);
+
+  # Keep only those for which we have PCR fragmenth-length information for at least one enzyme
+  verbose && enter(verbose, "Reading fragment lengths");
   fl <- getFragmentLengths(si, units=units);
-  keep <- is.finite(fl);
+  keep <- rep(FALSE, nrow(fl));
+  for (ee in seq(length=ncol(fl))) {
+    keep <- keep | is.finite(fl[,ee]);
+  }
   units <- units[keep];
+  verbose && printf(verbose, "Number of SNP/CN units without fragment-length details: %d out of %d (%.1f%%)\n", sum(!keep), length(keep), 100*sum(!keep)/length(keep));
+  verbose && exit(verbose);
+
 
   # Fit to a subset of the units?
   subsetToFit <- this$.subsetToFit;
@@ -179,7 +213,9 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
     }
 
     # Make sure to keep data points at the tails too
-    keep <- c(keep, which.min(fl), which.max(fl));
+    for (ee in seq(length=ncol(fl))) {
+      keep <- c(keep, which.min(fl[,ee]), which.max(fl[,ee]));
+    }
     keep <- unique(keep);
 
     # Now filter
@@ -196,12 +232,18 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   # Cache
   this$.units <- units;
 
+  verbose && exit(verbose);
+
   units;
 }, private=TRUE)
 
 
 
-setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, ...) {
+  getTargetFunctions(this, ...);
+}, deprecated=TRUE)
+
+setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -213,18 +255,20 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
   }
 
 
-  fcn <- this$.targetFunction;
-  if (is.null(fcn) || force) {
+  fcns <- this$.targetFunctions;
+  if (is.null(fcns) || force) {
     verbose && enter(verbose, "Estimating target prediction function");
 
     # Get the SNP information annotation
     cdf <- getCdf(this);
     si <- getSnpInformation(cdf);
+    rm(cdf); # Not needed anymore
 
     # Get target set
     ces <- getInputDataSet(this);
     verbose && enter(verbose, "Get average signal across arrays");
     ceR <- getAverageFile(ces, force=force, verbose=less(verbose));
+    rm(ces); # Not needed anymore
     verbose && exit(verbose);
 
     # Garbage collect
@@ -236,6 +280,7 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
 
     # Get target log2 signals for SNPs
     data <- getDataFlat(ceR, units=units, fields="theta", verbose=less(verbose));
+    rm(ceR); # Not needed anymore
     units <- data[,"unit"];
     verbose && cat(verbose, "Units:");
     verbose && str(verbose, units);
@@ -248,21 +293,55 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
     
     # Get PCR fragment lengths for these
     fl <- getFragmentLengths(si, units=units);
+    rm(si, units); # Not needed anymore
     verbose && cat(verbose, "Fragment lengths:");
     verbose && str(verbose, fl);
 
     # Fit lowess function
-    verbose && enter(verbose, "Fitting target prediction function");
-    ok <- (is.finite(fl) & is.finite(yR));
-    fit <- lowess(fl[ok], yR[ok]);
-    class(fit) <- "lowess";
+    verbose && enter(verbose, "Fitting target prediction function to each enzyme exclusively");
+    okYR <- is.finite(yR);
+    hasFL <- is.finite(fl);
+    nbrOfEnzymes <- ncol(fl);
+    allEnzymes <- seq(length=nbrOfEnzymes);
+
+    fits <- list();
+    for (ee in allEnzymes) {
+      verbose && enter(verbose, "Enzyme #", ee, " of ", nbrOfEnzymes);
+
+      # Fit only to units with known length and non-missing data points.
+      ok <- (hasFL[,ee] & okYR);
+
+      # Exclude multi-enzyme units
+      for (ff in setdiff(allEnzymes, ee))
+        ok <- ok & !hasFL[,ff];
+
+      # Sanity check
+      if (sum(ok) == 0) {
+        throw("Cannot fit target function to enzyme, because there are no (finite) data points that are unique to this enzyme: ", ee);
+      }
+
+      # Fit fragment-length effect to single-enzyme units
+      fit <- lowess(fl[ok,ee], yR[ok]);
+      class(fit) <- "lowess";
+
+      rm(ok);
+
+      fits[[ee]] <- fit;
+
+      rm(fit);
+
+      verbose && exit(verbose);
+    }
 
     # Remove as many promises as possible
-    rm(fcn, ces, ceR, units, cdf, si, fl, yR, ok);
+    rm(fcn, nbrOfEnzymes, allEnzymes, fl, yR, okYR, hasFl);
 
-    # Create target prediction function
-    fcn <- function(x, ...) {
-      predict(fit, x, ...);  # Dispatched predict.lowess().
+    # Create a target prediction function for each enzyme
+    fcns <- vector("list", length(fits));
+    for (ee in seq(along=fits)) {
+      fcns[[ee]] <- function(x, ...) {
+        predict(fits[[ee]], x, ...);  # Dispatched predict.lowess().
+      }
     }
     verbose && exit(verbose);
 
@@ -272,10 +351,10 @@ setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, .
 
     verbose && exit(verbose);
 
-    this$.targetFunction <- fcn;
+    this$.targetFunctions <- fcns;
   }
 
-  fcn;
+  fcns;
 }, private=TRUE)
 
 
@@ -348,9 +427,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
   verbose && enter(verbose, "Retrieving SNP information annotations");
   si <- getSnpInformation(cdf);
+  verbose && cat(verbose, "Number of enzymes: ", nbrOfEnzymes(si));
   verbose && exit(verbose);
 
-  verbose && enter(verbose, "Identifying the subset used to fit normalization function");
+  verbose && enter(verbose, "Identifying the subset used to fit normalization function(s)");
   # Get subset to fit
   subsetToFit <- getSubsetToFit(this, verbose=less(verbose));
   verbose && str(verbose, subsetToFit);
@@ -364,7 +444,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   fl <- NULL;
-  targetFcn <- NULL;
+  targetFcns <- NULL;
   map <- NULL;
   nbrOfArrays <- nbrOfArrays(ces);
   res <- vector("list", nbrOfArrays);
@@ -405,7 +485,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     }
 
     if (is.null(fl)) {
-      # Get PCR fragment lengths for the subset to be fitted
+      # For the subset to be fitted, get PCR fragment lengths (for all enzymes) 
       fl <- getFragmentLengths(si, units=map[,"unit"]);
 
       # Get the index in the data vector of subset to be fitted.
@@ -416,10 +496,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
       subset <- match(subsetToFit[subset], map[,"unit"]);
     }
 
-    if (is.null(targetFcn)) {
+    if (is.null(targetFcns)) {
       # Only loaded if really needed.
       # Retrieve/calculate the target function
-      targetFcn <- getTargetFunction(this, verbose=less(verbose));
+      targetFcns <- getTargetFunctions(this, verbose=less(verbose));
     }
 
     # Get target log2 signals for all SNPs to be updated
@@ -432,7 +512,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     verbose && enter(verbose, "Normalizing log2 signals");
     y <- log2(data[,"theta"]);
     y <- normalizeFragmentLength(y, fragmentLengths=fl, 
-                             targetFcn=targetFcn, subsetToFit=subset, ...);
+                             targetFcns=targetFcns, subsetToFit=subset, ...);
     y <- 2^y;
     verbose && exit(verbose);
 
@@ -483,6 +563,10 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-11-19
+# o Updated getSubsetToFit() to handle chip types with multiple enzymes.
+# o Updated methods to give an error if chip types with more than one
+#   enzyme is tried to be normalized.
 # 2007-09-16
 # o Added clearCache() to FragmentLengthNormalization such that cached
 #   target distributions can be cleared.

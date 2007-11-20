@@ -87,7 +87,7 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=F
   }
 
 
-  verbose && enter(verbose, "Infer parameters from stored data in quartet units in CEL set");
+  verbose && enter(verbose, "Infer (mergeStrands) parameters from stored data in quartet units in CEL set");
   
   # Identify units with quartets
   cdf <- getCdf(this);
@@ -102,39 +102,48 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=F
 
   mergeStrands <- NA;
   while(length(allUnits) > 0) {
-    uu <- 1:min(1000,length(allUnits));
+    verbose && cat(verbose, "Units left: ", length(allUnits));
+    uu <- 1:min(10e3,length(allUnits));
     units <- allUnits[uu];
     allUnits <- allUnits[-uu];
+    rm(uu);
 
     # Identify units that are quartets
     unitSizes <- readCdfGroupNames(cdfPathname, units=units);
     names(unitSizes) <- NULL;
     unitSizes <- sapply(unitSizes, FUN=length);
     units <- units[unitSizes == 4];
-    verbose && cat(verbose, "Scanning units:");
-    verbose && str(verbose, units);
-
-    # Infer parameters from 'intensities'
-    values <- readCelUnits(cePathname, units=units, 
-                                  readIntensities=TRUE, readStdvs=FALSE);
-
-    # Put quartets by columns
-    values <- matrix(unlist(values, use.names=FALSE), nrow=4);
-    
-    # Keep only estimated units without NAs
-    csums <- colSums(values);
-    values <- values[,is.finite(csums) & (csums > 0),drop=FALSE];
-    verbose && cat(verbose, "Values quartets:");
-    verbose && print(verbose, values[,seq_len(min(ncol(values),6)),drop=FALSE]);
-    if (ncol(values) > 0) {
-      t <- rowMeans(values);
-      if (length(t) > 0) {
-        isZero <- isZero(t);
-        if (!all(isZero)) {
-          mergeStrands <- isZero[3] && isZero[4];
-          break;
+    rm(unitSizes);
+    if (length(units) > 0) {
+      verbose && cat(verbose, "Scanning units:");
+      verbose && str(verbose, units);
+      # Infer parameters from 'intensities'
+      values <- readCelUnits(cePathname, units=units, 
+                                    readIntensities=TRUE, readStdvs=FALSE);
+      rm(units);
+  
+      # Put quartets by columns
+      values <- matrix(unlist(values, use.names=FALSE), nrow=4);
+      
+      # Keep only estimated units without NAs
+      csums <- colSums(values);
+      values <- values[,is.finite(csums) & (csums > 0),drop=FALSE];
+      rm(csums);
+      verbose && cat(verbose, "Values quartets:");
+      verbose && print(verbose, values[,seq_len(min(ncol(values),6)),drop=FALSE]);
+      if (ncol(values) > 0) {
+        t <- rowMeans(values);
+        if (length(t) > 0) {
+          isZero <- isZero(t);
+          if (!all(isZero)) {
+            mergeStrands <- isZero[3] && isZero[4];
+            break;
+          }
+          rm(isZero);
         }
+        rm(t);
       }
+      rm(values);
     }
   } # while(...)
 
@@ -154,6 +163,9 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=F
 
 ############################################################################
 # HISTORY:
+# 2007-11-20
+# o BUG FIX: inferParams() would load all units if no units of size four
+#   was found, because units <- units[unitsSizes == 4] => units == NULL.
 # 2007-03-23
 # o Now inferParameters() are looking at the 'intensity' (==theta) field
 #   instead of 'stdvs'.  The reason for this is that 'stdvs' might be all
