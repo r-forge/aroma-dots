@@ -34,6 +34,13 @@ setConstructorS3("UgpGenomeInformation", function(..., .ugp=NULL, .verify=TRUE) 
   this;
 })
 
+setMethodS3("clearCache", "UgpGenomeInformation", function(this, ...) {
+  NextMethod("clearCache", this, ...);
+  for (ff in c(".ugp")) {
+    this[[ff]] <- NULL;
+  }
+})
+
 
 setMethodS3("getAromaUgpFile", "UgpGenomeInformation", function(this, ..., force=FALSE) {
   ugp <- this$.ugp;
@@ -246,6 +253,8 @@ setMethodS3("getUnitsOnChromosome", "UgpGenomeInformation", function(this, ...) 
 
 ############################################################################
 # HISTORY:
+# 2007-11-20
+# o Added clearCache() to clear cached UGP file.
 # 2007-09-11
 # o Created.
 ############################################################################  
