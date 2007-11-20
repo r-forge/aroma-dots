@@ -167,6 +167,20 @@ setMethodS3("getData", "UflSnpInformation", function(this, units=NULL, fields=ge
 })
 
 
+setMethodS3("nbrOfEnzymes", "UflSnpInformation", function(this, ...) {
+  length(getDataColumns(this));
+})
+
+setMethodS3("getFragmentLengths", "UflSnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
+  data <- getData(this, ..., fields=getDataColumns(this)[enzymes]);
+  fl <- data[,enzymes,drop=FALSE];
+  fl <- as.matrix(fl);
+  dim <- dim(fl);
+  fl <- as.integer(fl);
+  dim(fl) <- dim;
+  fl;
+})
+
 setMethodS3("getFragmentStarts", "UflSnpInformation", function(this, ...) {
   throw("Not supported.");
 })
@@ -179,6 +193,8 @@ setMethodS3("getFragmentStops", "UflSnpInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-11-19
+# o Added nbrOfEnzymes().
 # 2007-09-16
 # o BUG FIX: getFragmentLengths() of UflSnpInformation would thrown an error
 #   reporting "Unknown fields: fragmentLength".  Now getDataColumns() 
