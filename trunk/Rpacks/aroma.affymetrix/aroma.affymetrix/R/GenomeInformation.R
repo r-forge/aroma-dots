@@ -339,7 +339,7 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 })
 
 
-setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosome=23, region=NULL, ...) {
+setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosome, region=NULL, ...) {
   allChromosomes <- getChromosomes(this);
 
   # Argument 'chromosome':
@@ -611,6 +611,9 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-10-30
+# o Now argument 'chromosome' for getUnitsOnChromosome() needs to be 
+#   specified explictly. Before its default was '23'.
 # 2007-09-10
 # o Now readData() in GenomeInformation is no longer abstract, but tries
 #   naively to read data using readTableInternal() as is.  That will make
