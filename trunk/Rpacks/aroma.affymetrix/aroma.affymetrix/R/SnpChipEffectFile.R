@@ -61,7 +61,17 @@ setMethodS3("getParameters", "SnpChipEffectFile", function(this, ...) {
 })
 
 
-setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FALSE, .cache=TRUE, verbose=FALSE) {
+setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, units=NULL, ..., force=FALSE, .cache=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'units':
+  if (is.null(units)) {
+  } else if (is.numeric(units)) {
+    cdf <- getCdf(this);
+    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -79,7 +89,7 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
     params <- getParameters(this);
     key <- list(method="getCellIndices", class=class(this)[1], 
                 pathname=getPathname(this),
-                chipType=chipType, params=params, ...);
+                chipType=chipType, params=params, units=units, ...);
     dirs <- c("aroma.affymetrix", chipType);
     id <- digest2(key);
   }
@@ -104,42 +114,57 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, ..., force=FAL
     }
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get and restructure cell indices
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cells <- NextMethod("getCellIndices", this, ..., force=force, 
-                                          .cache=FALSE, verbose=verbose);
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Merge strands?
+  # Get units in chunks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # If merging strands, we only need half the number of chip-effect 
-  # parameters per unit group.  Example:
-  # a) mergeStrands=FALSE:
-  #   Fit by strand and allele:        #groups=4, #chip effects=4
-  #   (same but single-stranded SNP)   #groups=2, #chip effects=2
-  # b) mergeStrands=TRUE:
-  #   Merge strands, fit by allele:    #groups=4, #chip effects=2
-  #   (same but single-stranded SNP)   #groups=2, #chip effects=2
-  if (this$mergeStrands) {
-    verbose && enter(verbose, "Merging strands");
-    cells <- applyCdfGroups(cells, function(groups) {
-      ngroups <- length(groups);
-      if (ngroups == 4) {
-        .subset(groups, c(1,2));
-      } else if (ngroups == 2) {
-        .subset(groups, c(1,2));
-      } else if (ngroups == 1) {
-        .subset(groups, 1);
-      } else {
-        # groups[1:ceiling(ngroups/2)];
-        # groups[1:round((ngroups+1)/2)];
-        .subset(groups, 1:round((ngroups+1)/2));
-      }
-    })
-    verbose && exit(verbose);
-  }
+  if (is.null(units))
+    units <- seq(length=nbrOfUnits(cdf));
+
+  cells <- lapplyInChunks(units, function(unitChunk) {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Get and restructure cell indices
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## NOTE: NextMethod() does not work from within another function
+##    cells <- NextMethod("getCellIndices", this, units=unitChunk, ..., 
+##                            force=force, .cache=FALSE, verbose=verbose);
+    cells <- getCellIndices.ChipEffectFile(this, units=unitChunk, ..., 
+                             force=force, .cache=FALSE, verbose=verbose);
+
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Merge strands?
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # If merging strands, we only need half the number of chip-effect 
+    # parameters per unit group.  Example:
+    # (a) mergeStrands=FALSE:
+    #    Fit by strand and allele:        #groups=4, #chip effects=4
+    #    (same but single-stranded SNP)   #groups=2, #chip effects=2
+    # (b) mergeStrands=TRUE:
+    #    Merge strands, fit by allele:    #groups=4, #chip effects=2
+    #    (same but single-stranded SNP)   #groups=2, #chip effects=2
+    if (this$mergeStrands) {
+      verbose && enter(verbose, "Merging strands");
+      cells <- applyCdfGroups(cells, function(groups) {
+        ngroups <- length(groups);
+        if (ngroups == 4) {
+          .subset(groups, c(1,2));
+        } else if (ngroups == 2) {
+          .subset(groups, c(1,2));
+        } else if (ngroups == 1) {
+          .subset(groups, 1);
+        } else {
+          # groups[1:ceiling(ngroups/2)];
+          # groups[1:round((ngroups+1)/2)];
+          .subset(groups, 1:round((ngroups+1)/2));
+        }
+      }) # applyCdfGroups()
+      verbose && printf(verbose, "Number of units: %d\n", length(cells));
+      verbose && exit(verbose);
+    }
+
+    cells;
+  }, chunkSize=100e3, verbose=less(verbose));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache

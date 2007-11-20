@@ -83,7 +83,7 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
   }
 
 
-  verbose && enter(verbose, "Infer parameters from stored data in quartet units in CEL set");
+  verbose && enter(verbose, "Infer (mergeStrands, combineAlleles) parameters from stored data in quartet units in CEL set");
   
   # Identify units with quartets
   cdf <- getCdf(this);
@@ -98,9 +98,11 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
 
   mergeStrands <- combineAlleles <- NA;
   while(length(allUnits) > 0) {
-    uu <- 1:min(1000,length(allUnits));
+    verbose && cat(verbose, "Units left: ", length(allUnits));
+    uu <- 1:min(10e3,length(allUnits));
     units <- allUnits[uu];
     allUnits <- allUnits[-uu];
+    rm(uu);
 
     # Identify units that are quartets
     unitSizes <- readCdfGroupNames(cdfPathname, units=units);
@@ -108,26 +110,34 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
     unitSizes <- base::sapply(unitSizes, FUN=length);
     units <- units[unitSizes == 4];
 
-    # Infer parameters from 'intensities'
-    values <- readCelUnits(cePathname, units=units, 
-                                  readIntensities=TRUE, readStdvs=FALSE);
-    # Put quartets by columns
-    values <- matrix(unlist(values, use.names=FALSE), nrow=4);
-    # Keep only estimated units
-    csums <- colSums(values);
-    values <- values[,is.finite(csums) & (csums > 0),drop=FALSE];
-    verbose && cat(verbose, "Values quartets:");
-    verbose && print(verbose, values[,seq_len(min(ncol(values),6)),drop=FALSE]);
-    if (ncol(values) > 0) {
-      t <- rowMeans(values);
-      if (length(t) > 0) {
-        isZero <- isZero(t);
-        if (!all(isZero)) {
-          combineAlleles <- isZero[2] && isZero[4];
-          mergeStrands <- isZero[3] && isZero[4];
-          break;
+    if (length(units) > 0) {
+      verbose && cat(verbose, "Scanning units:");
+      verbose && str(verbose, units);
+      # Infer parameters from 'intensities'
+      values <- readCelUnits(cePathname, units=units, 
+                                    readIntensities=TRUE, readStdvs=FALSE);
+      # Put quartets by columns
+      values <- matrix(unlist(values, use.names=FALSE), nrow=4);
+      # Keep only estimated units
+      csums <- colSums(values);
+      values <- values[,is.finite(csums) & (csums > 0),drop=FALSE];
+      rm(csums);
+      verbose && cat(verbose, "Values quartets:");
+      verbose && print(verbose, values[,seq_len(min(ncol(values),6)),drop=FALSE]);
+      if (ncol(values) > 0) {
+        t <- rowMeans(values);
+        if (length(t) > 0) {
+          isZero <- isZero(t);
+          if (!all(isZero)) {
+            combineAlleles <- isZero[2] && isZero[4];
+            mergeStrands <- isZero[3] && isZero[4];
+            break;
+          }
+          rm(isZero);
         }
+        rm(t);
       }
+      rm(values);
     }
   } # while(...)
 
@@ -148,6 +158,9 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
 
 ############################################################################
 # HISTORY:
+# 2007-11-20
+# o BUG FIX: inferParams() would load all units if no units of size four
+#   was found, because units <- units[unitsSizes == 4] => units == NULL.
 # 2007-09-12
 # o BUG FIX: A typo in setCombineAlleles() cause the function to always
 #   return NULL instead of the last value.

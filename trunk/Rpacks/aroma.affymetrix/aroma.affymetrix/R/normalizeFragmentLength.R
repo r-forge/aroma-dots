@@ -79,8 +79,8 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
         throw("Argument 'targetFcns' is not a list: ", class(targetFcns)[1]);
       }
     }
-    if (length(tagetFcns) != nbrOfEnzymes) {
-      throw("Number of elements in 'targetFcns' does not match the number of columns in 'fragmentLengths': ", length(tagetFcns), " != ", nbrOfEnzymes);
+    if (length(targetFcns) != nbrOfEnzymes) {
+      throw("Number of elements in 'targetFcns' does not match the number of columns in 'fragmentLengths': ", length(targetFcns), " != ", nbrOfEnzymes);
     }
 
     # Validate each element

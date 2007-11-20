@@ -537,21 +537,49 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
       throw("Argument 'units' is of unknown structure.");
     }
     verbose && enter(verbose, "Argument 'cells' is already a CDF cell-index structure");
+
+    # Get the unit names
+    unitNames <- names(cells);
+
+    # Get the number of groups per unit
+    unitSizes <- base::lapply(cells, FUN=function(unit) {
+      length(.subset2(unit, "groups"));
+    });
+    unitSizes <- unlist(unitSizes, use.names=FALSE);
+
+    cells <- unlist(cells, use.names=FALSE);
   } else {
     verbose && enter(verbose, "Retrieving cell indices for specified units");
-    # Get the cells to read
-    cells <- getCellIndices(this, units=units, force=force, verbose=less(verbose));
+    chunks <- splitInChunks(units, chunkSize=100e3);
+    nbrOfUnits <- length(units);
+    cells <- vector("integer", nbrOfUnits);
+    unitNames <- vector("character", nbrOfUnits);
+    unitSizes <- vector("integer", nbrOfUnits);
+    offset <- 0;
+    for (kk in seq(along=chunks)) {
+      verbose && printf(verbose, "Chunk #%d of %d\n", kk, length(chunks));
+      chunk <- chunks[[kk]];
+      chunks[[kk]] <- NA;
+      cells0 <- getCellIndices(this, units=chunk, .cache=FALSE, verbose=less(verbose));
+      idxs <- offset + seq(length=length(chunk));
+      offset <- offset + length(chunk);
+      rm(chunk);
+      unitNames[idxs] <- names(cells0);
+      names(cells0) <- NULL;
+      unitSizes0 <- base::lapply(cells0, FUN=function(unit) {
+        length(.subset2(unit, "groups"));
+      });
+      unitSizes[idxs] <- unlist(unitSizes0, use.names=FALSE);
+      rm(unitSizes0);
+      cells[idxs] <- unlist(cells0, use.names=FALSE);
+      rm(cells0, idxs);
+    }
+    rm(chunks);
+    gc <- gc();
+    verbose && print(verbose, gc);
   }
 
-  # Get the unit names
-  unitNames <- names(cells);
   
-  # Get the number of groups per unit
-  unitSizes <- base::lapply(cells, FUN=function(unit) {
-    length(.subset2(unit, "groups"));
-  });
-  unitSizes <- unlist(unitSizes, use.names=FALSE);
-  cells <- unlist(cells, use.names=FALSE);
   gc <- gc();
   verbose && exit(verbose);
   
@@ -806,6 +834,9 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2007-11-20
+# o MEMORY OPTIMIZATION: Now getCellMap() builds data in chunks if 
+#   argument 'units' is NULL.
 # 2007-09-12
 # o Now getCellMap() of ChipEffectFile caches (large) results to file.
 # 2007-08-16
