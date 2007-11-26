@@ -4,7 +4,7 @@ Package: aroma.affymetrix
 Version: 0.8.1 [2007-11-26]
 o Added doCRMA().
 o CLEAN UP: Moved the following methods to R.utils: copyFile(), 
-  isEof(), and reassignInPackage().
+  dataFrame(), isEof(), and reassignInPackage().
 
 
 Version: 0.8.0 [2007-11-25]
