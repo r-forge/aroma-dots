@@ -533,7 +533,7 @@ setMethodS3("copyTo", "GenericDataFile", function(this, filename=getFilename(thi
   # Fail-safe copying
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Copying file");
-  fileCopy(getPathname(this), pathname, overwrite=overwrite, verbose=less(verbose, 10));
+  copyFile(getPathname(this), pathname, overwrite=overwrite, verbose=less(verbose, 10));
   verbose && exit(verbose);
 
 

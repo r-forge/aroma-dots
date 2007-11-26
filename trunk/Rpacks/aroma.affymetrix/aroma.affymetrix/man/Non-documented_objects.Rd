@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Tue Nov 20 12:40:22 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1341,6 +1339,49 @@
 \alias{writeGridHorizontalLayers.ChromosomeExplorer}
 \alias{writeRawCopyNumberLayers}
 \alias{writeRawCopyNumberLayers.ChromosomeExplorer}
+\alias{as.character.CopyNumberChromosomalModel}
+\alias{calculateChromosomeStatistics.CopyNumberChromosomalModel}
+\alias{clearCache.CopyNumberChromosomalModel}
+\alias{clearCache.UgpGenomeInformation}
+\alias{extractRawCopyNumbers.CopyNumberChromosomalModel}
+\alias{getAsteriskTag.RawCopyNumberModel}
+\alias{getFragmentLengths.UflSnpInformation}
+\alias{getMatrixChipEffectFiles.CopyNumberChromosomalModel}
+\alias{getRawCnData.CopyNumberChromosomalModel}
+\alias{getReferenceSetTuple.CopyNumberChromosomalModel}
+\alias{getRefSetTuple.CopyNumberChromosomalModel}
+\alias{getReportPathPattern}
+\alias{getReportPathPattern.Explorer}
+\alias{getRootPath.SmoothRmaModel}
+\alias{getSampleLayerName}
+\alias{getSampleLayerName.Explorer}
+\alias{getSampleLayerPrefix}
+\alias{getSampleLayerPrefix.Explorer}
+\alias{getSetTag.RawCopyNumberModel}
+\alias{getSubname}
+\alias{getSubname.Explorer}
+\alias{getTags.CopyNumberSegmentationModel}
+\alias{getTargetFunctions}
+\alias{getTargetFunctions.FragmentLengthNormalization}
+\alias{isPaired.CopyNumberChromosomalModel}
+\alias{nbrOfEnzymes.SnpInformation}
+\alias{nbrOfEnzymes.UflSnpInformation}
+\alias{newPlot.CopyNumberChromosomalModel}
+\alias{plotAxesLayers.CopyNumberChromosomalModel}
+\alias{plotChromosomesLayers.CopyNumberChromosomalModel}
+\alias{plotCytobandLayers.CopyNumberChromosomalModel}
+\alias{plotFitLayers.CopyNumberChromosomalModel}
+\alias{plotGridHorizontalLayers.CopyNumberChromosomalModel}
+\alias{plotRawCopyNumbers.CopyNumberChromosomalModel}
+\alias{plotSampleLayers}
+\alias{plotSampleLayers.CopyNumberChromosomalModel}
+\alias{rowCollapse}
+\alias{setReportPathPattern}
+\alias{setReportPathPattern.Explorer}
+\alias{setSubname}
+\alias{setSubname.Explorer}
+\alias{splitByReportPathPattern}
+\alias{splitByReportPathPattern.Explorer}
 
 \description{
   This page contains aliases for all "non-documented" objects that

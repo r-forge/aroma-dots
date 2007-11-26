@@ -3,8 +3,6 @@
 % 
 %  SnpProbeAffinityFile.R
 % 
-% on Tue Nov 20 12:41:15 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
