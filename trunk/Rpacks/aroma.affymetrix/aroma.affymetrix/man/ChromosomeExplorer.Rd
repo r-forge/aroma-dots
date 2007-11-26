@@ -32,7 +32,7 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
 
  }
 
- \usage{ChromosomeExplorer(model=NULL, ..., version=c("5", "4"))}
+ \usage{ChromosomeExplorer(model=NULL, ..., version=c("3"))}
 
  \arguments{
    \item{model}{A \code{\link{CopyNumberChromosomalModel}} object.}

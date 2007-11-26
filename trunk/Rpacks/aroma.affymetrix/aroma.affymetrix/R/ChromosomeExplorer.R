@@ -37,7 +37,7 @@
 #  @see "CopyNumberChromosomalModel".
 # }
 #*/###########################################################################
-setConstructorS3("ChromosomeExplorer", function(model=NULL, ..., version=c("5", "4")) {
+setConstructorS3("ChromosomeExplorer", function(model=NULL, ..., version=c("3")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -299,8 +299,10 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   parent3Path <- getParent(parent2Path);
 
   srcPath <- getTemplatePath(this);
-  if (version == "4") {
-    pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer", "ChromosomeExplorer.onLoad.js.rsp");
+  if (version == "3") {
+    pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer3", "ChromosomeExplorer.onLoad.js.rsp");
+  } else if (version == "4") {
+    pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer4", "ChromosomeExplorer4.onLoad.js.rsp");
   } else if (version == "5") {
     pathname <- filePath(srcPath, "rsp", "ChromosomeExplorer5", "ChromosomeExplorer5.onLoad.js.rsp");
   }
@@ -398,7 +400,9 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
 setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename=NULL, ...) {
   if (is.null(filename)) {
     version <- this$.version;
-    if (version == "4") {
+    if (version == "3") {
+      filename <- "ChromosomeExplorer.html";
+    } else if (version == "4") {
       filename <- "ChromosomeExplorer4.html";
     } else if (version == "5") {
       filename <- "ChromosomeExplorer5.html";
@@ -569,7 +573,7 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
   pathname <- writeRegions(model, arrays=arrays, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
 
   dest <- filePath(getPath(this), "regions.xls");
-  res <- fileCopy(pathname, dest, overwrite=TRUE);
+  res <- copyFile(pathname, dest, overwrite=TRUE);
   if (!res)
     dest <- NULL;
 

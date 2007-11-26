@@ -339,11 +339,11 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 })
 
 
-setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosome, region=NULL, ...) {
+setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosomes, region=NULL, ...) {
   allChromosomes <- getChromosomes(this);
 
-  # Argument 'chromosome':
-  chromosome <- Arguments$getChromosome(chromosome, range=range(allChromosomes), ...);
+  # Argument 'chromosomes':
+  chromosomes <- Arguments$getChromosomes(chromosomes, range=range(allChromosomes), ...);
 
   # Argument 'region':
   if (!is.null(region)) {
@@ -359,7 +359,7 @@ setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromoso
   }
 
   data <- getData(this);
-  keep <- (data[,"chromosome"] %in% chromosome);
+  keep <- (data[,"chromosome"] %in% chromosomes);
   data <- data[keep,,drop=FALSE];
 
   # Stratify by physical position?
@@ -611,6 +611,9 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-11-25
+# o Now getUnitsOnChromosome() of GenomeInformation can indentify units from
+#   multiple chromosomes.
 # 2007-10-30
 # o Now argument 'chromosome' for getUnitsOnChromosome() needs to be 
 #   specified explictly. Before its default was '23'.

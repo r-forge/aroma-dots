@@ -554,7 +554,7 @@ setMethodS3("addIndexFile", "Explorer", function(this, filename=sprintf("%s.html
     verbose && cat(verbose, "Destination pathname: ", outPathname);
     if (!isFile(srcPathname))
       throw("File not found: ", srcPathname);
-    fileCopy(srcPathname, outPathname, overwrite=TRUE);
+    copyFile(srcPathname, outPathname, overwrite=TRUE);
     verbose && exit(verbose);
   }
 }, protected=TRUE)
