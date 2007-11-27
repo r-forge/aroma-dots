@@ -85,7 +85,7 @@
   createBlankSet.AffymetrixCelSet createFrom createMonoCell
   createOutputTuple createOutputTuple.SmoothMultiarrayModel
   createParamCdf createParamCdf.ChipEffectFile createParamCdf.FirmaFile
-  dataFrame dataFrame.default decode decode.ParameterCelFile digest2
+  decode decode.ParameterCelFile digest2
   dim.AromaTabularBinaryFile dimnames<-.AromaTabularBinaryFile display
   display.ChromosomeExplorer drawCnRegions drawCnRegions.DNAcopy
   drawCnRegions.profileCGH drawCytoband drawCytoband.ChromosomalModel
@@ -433,7 +433,7 @@
   indexOf.GenericDataFileSet indexOfArrays indexOfUnits
   indexOfUnits.AromaUnitTabularBinaryFile inferParameters
   inferParameters.CnChipEffectSet inferParameters.SnpChipEffectSet
-  isDuplicated isEof isEof.connection isFile.GenericDataFile isPm
+  isDuplicated isFile.GenericDataFile isPm
   isSnpChip lapply.AromaTabularBinaryFile lapplyInChunks
   lapplyInChunks.numeric library lines.CopyNumberOutliers
   lines.CopyNumberRegions lines.RawCopyNumbers locallyUnique
