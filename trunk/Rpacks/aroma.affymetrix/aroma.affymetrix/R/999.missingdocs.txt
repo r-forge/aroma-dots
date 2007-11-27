@@ -631,3 +631,4 @@
  setReportPathPattern setReportPathPattern.Explorer setSubname
  setSubname.Explorer splitByReportPathPattern
  splitByReportPathPattern.Explorer
+  doCRMA doCRMA.default
