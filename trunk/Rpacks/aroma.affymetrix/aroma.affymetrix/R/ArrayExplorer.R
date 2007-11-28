@@ -344,19 +344,6 @@ setMethodS3("getColorMaps", "ArrayExplorer", function(this, parsed=FALSE, ...) {
 })
 
 
-setMethodS3("setScale", "ArrayExplorer", function(this, ...) {
-  reporters <- getListOfReporters(this);
-  lapply(reporters, FUN=setScale, ...);
-  invisible(this);
-})
-
-setMethodS3("getScale", "ArrayExplorer", function(this, parsed=FALSE, ...) {
-  # All reporters should have the same color maps
-  reporter <- getListOfReporters(this)[[1]];
-  getScale(reporter, ...);
-})
-
-
 ###########################################################################/**
 # @RdocMethod process
 #
@@ -421,14 +408,9 @@ setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
-<<<<<<< .mine
-# 2007-03-30
-# o Added getScale() and setScale().
-=======
 # 2007-08-09
 # o Renamed updateSampleFile() to updateOnLoadJS().
 # o Added updateOnChipTypeJS().
->>>>>>> .r2966
 # 2007-03-20
 # o Removed argument arrays from process().
 # o Added setAlias() which also sets the alias on the reporters.
