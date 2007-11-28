@@ -64,5 +64,6 @@ firma <- FirmaModel(plmTissue);
 print(firma);
 
 fit(firma, verbose=log);
+
 fsTissue <- getFirmaScores(firma);
 print(fsTissue);
