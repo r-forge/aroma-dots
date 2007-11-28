@@ -238,7 +238,7 @@ setMethodS3("getData", "SnpInformation", function(this, units=NULL, fields=c("fr
 
   data <- this$.data;
   if (force || is.null(data)) {
-    verbose && enter(verbose, "Requiring SNP information from file");
+    verbose && enter(verbose, "Retrieving SNP information from file");
 
     # Read the unit names from the corresponding CDF file
     verbose && enter(verbose, "Reading unit names from CDF file");

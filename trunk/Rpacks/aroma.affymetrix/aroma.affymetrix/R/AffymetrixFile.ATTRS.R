@@ -62,6 +62,7 @@ setMethodS3("setAttributesBy", "AffymetrixFile", function(this, object, ...) {
 }, protected=TRUE)
 
 
+
 setMethodS3("setAttributesByTags", "AffymetrixFile", function(this, tags=getTags(this), ...) {
   # Split tags
   if (length(tags) > 0) {

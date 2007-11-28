@@ -1,0 +1,95 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  HetLogAddCnPlm.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ \name{HetLogAddCnPlm}
+\docType{class}
+\alias{HetLogAddCnPlm}
+
+
+ \title{The HetLogAddCnPlm class}
+
+ \description{
+  Package:  aroma.affymetrix \cr
+\bold{Class HetLogAddCnPlm}\cr
+
+\code{\link[R.oo]{Object}}\cr
+\code{~~|}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{Model}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{RmaPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{HetLogAddPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{HetLogAddSnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{SnpPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{CnPlm}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{HetLogAddCnPlm}\cr
+
+\bold{Directly known subclasses:}\cr
+\cr
+
+public static class \bold{HetLogAddCnPlm}\cr
+extends \link[aroma.affymetrix]{CnPlm}\cr
+
+
+ }
+
+ \usage{HetLogAddCnPlm(..., combineAlleles=FALSE, tags="*")}
+
+ \arguments{
+   \item{...}{Arguments passed to \code{\link{HetLogAddCnPlm}}.}
+   \item{combineAlleles}{If \code{\link[base:logical]{FALSE}}, allele A and allele B are treated
+      seperately, otherwise together.}
+   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
+ }
+
+ \section{Fields and Methods}{
+  \bold{Methods:}\cr
+\emph{No methods defined}.
+
+
+ \bold{Methods inherited from CnPlm}:\cr
+getCellIndices, getChipEffectSet, getProbeAffinityFile, setCombineAlleles
+
+ \bold{Methods inherited from SnpPlm}:\cr
+getCellIndices, getChipEffectSet, getProbeAffinityFile, setMergeStrands
+
+ \bold{Methods inherited from HetLogAddPlm}:\cr
+getAsteriskTag
+
+ \bold{Methods inherited from RmaPlm}:\cr
+getAsteriskTag, getCalculateResidualsFunction
+
+ \bold{Methods inherited from ProbeLevelModel}:\cr
+calculateResidualSet, calculateWeights, fit, getAsteriskTag, getCalculateResidualsFunction, getChipEffectSet, getProbeAffinityFile, getResidualSet, getWeightsSet
+
+ \bold{Methods inherited from UnitModel}:\cr
+findUnitsTodo, getCellIndices, readUnits
+
+ \bold{Methods inherited from Model}:\cr
+fit, getAlias, getAsteriskTag, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
+
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
+
+ }
+
+ \section{Model}{
+   TO DO.
+ }
+
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\keyword{classes}

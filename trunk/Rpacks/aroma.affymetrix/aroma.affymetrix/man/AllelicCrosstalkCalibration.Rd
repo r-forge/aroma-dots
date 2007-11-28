@@ -3,6 +3,8 @@
 % 
 %  AllelicCrosstalkCalibration.R
 % 
+% on Tue Nov 27 21:13:37 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -14,7 +16,7 @@
  \title{The AllelicCrosstalkCalibration class}
 
  \description{
-  Package:  aroma.affymetrix \cr
+  Package:   \cr
 \bold{Class AllelicCrosstalkCalibration}\cr
 
 \code{\link[R.oo]{Object}}\cr
@@ -40,14 +42,19 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   affect the model fitting and are unaffected.
  }
 
- \usage{AllelicCrosstalkCalibration(..., targetAvg=c(2200, 2200), subsetToAvg=NULL, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
+ \usage{AllelicCrosstalkCalibration(..., rescaleBy=c("all", "groups", "none"), targetAvg=c(2200, 2200), subsetToAvg=NULL, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of
      \code{\link{ProbeLevelTransform}}.}
+   \item{rescaleBy}{A \code{\link[base]{character}} string specifying what sets of cells
+     should be rescaled towards a target average, if any.
+     Default is to rescale all cells together.
+     If \code{"none"}, no rescaling is done.}
    \item{targetAvg}{The signal(s) that either the average of the sum
      (if one target value) or the average of each of the alleles
-     (if two target values) should have after calibration.}
+     (if two target values) should have after calibration.
+     Only used if \code{rescaleBy != "none"}.}
    \item{subsetToAvg}{The indices of the cells (taken as the intersect of
      existing indices) used to calculate average in order to rescale to
      the target average. If \code{\link[base]{NULL}}, all probes are considered.}
@@ -67,9 +74,22 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
    when estimating the target average.
  }
 
+ \section{Important about rescaling towards target average}{
+   Rescaling each allele-pair group (e.g. AC, AG, AT, CG, CT, GC)
+   towards a target average (\code{rescaleBy="groups"})
+   \emph{must not} be used for multi-enzyme chip types,
+   e.g. GenomeWideSNP\_6.
+   If still done, due to confounded effects of non-perfect enzyme
+   mixtures etc, there will be a significant bias between raw CNs
+   for SNPs and CN probes.
+   Instead, for such chip types \emph{all probe signales} should be
+   rescale together towards the target average (\code{rescaleBy="all"}).
+ }
+
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{\link[aroma.affymetrix:process.AllelicCrosstalkCalibration]{process}} \tab Calibrates the data set.\cr
  \tab \code{\link[aroma.affymetrix:process.AllelicCrosstalkCalibration]{process}} \tab Calibrates the data set.\cr
 }
 

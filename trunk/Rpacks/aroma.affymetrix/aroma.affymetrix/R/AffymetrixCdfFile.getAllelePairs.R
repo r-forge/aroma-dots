@@ -342,7 +342,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
     return(NULL);
 
   # Read group names for these SNPs
-  verbose && enter(verbose, "Requiring group names");
+  verbose && enter(verbose, "Retrieving group names");
   groupNames <- readCdfGroupNames(cdfFile, units=units);
   # Save memory by removing names. [55Mb -> 44Mb]
   names(groupNames) <- NULL;
