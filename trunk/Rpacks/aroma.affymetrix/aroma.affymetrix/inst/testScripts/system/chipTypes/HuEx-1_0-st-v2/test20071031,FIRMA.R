@@ -1,6 +1,6 @@
 library(aroma.affymetrix);
 
-log <- Arguments$getVerbose(threshold=-3);
+log <- Arguments$getVerbose(-3);
 timestampOn(log);
 
 
