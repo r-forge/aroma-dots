@@ -284,7 +284,7 @@ setMethodS3("getMatrixChipEffectFiles", "CopyNumberChromosomalModel", function(t
 
 
 
-setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList, refList, chromosome, units=NULL, reorder=TRUE, ..., maxNAFraction=1/8, force=FALSE, verbose=FALSE) {
+setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList, refList, chromosome, units=NULL, reorder=TRUE, ..., maxNAFraction=1/5, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -579,6 +579,7 @@ setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this
 ##############################################################################
 # HISTORY:
 # 2007-11-27
+# o Changed default 'maxNAFraction' to 1/5 (from 1/8) in getRawCnData().
 # o BUG FIX: Two different clearCache() was defined.
 # 2007-10-17
 # o Added extractRawCopyNumbers().
