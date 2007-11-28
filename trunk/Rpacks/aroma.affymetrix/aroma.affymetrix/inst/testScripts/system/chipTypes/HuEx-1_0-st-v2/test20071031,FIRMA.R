@@ -11,18 +11,25 @@ name <- "Affymetrix-HeartBrain";
 chipType <- "HuEx-1_0-st-v2";
 coreChipType <- paste(chipType, "core", sep=",");
 cdfCore <- AffymetrixCdfFile$fromChipType(coreChipType);
+print(cdfCore);
 
 csTissue <- AffymetrixCelSet$fromName(name=name, chipType=chipType);
 setCdf(csTissue, cdfCore);
+print(csTissue);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Background correction and normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-bcTissue <- RmaBackgroundCorrection(csTissue);
-csBCTissue <- process(bcTissue,verbose=log);
-qnTissue <- QuantileNormalization(csBCTissue, typesToUpdate="pm");
-csNTissue <- process(qnTissue, verbose=log);
+bc <- RmaBackgroundCorrection(csTissue);
+print(bc);
+csBCTissue <- process(bc, verbose=log);
+print(csBCTissue);
+
+qn <- QuantileNormalization(csBCTissue, typesToUpdate="pm");
+print(qn);
+csNTissue <- process(qn, verbose=log);
+print(csNTissue);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -41,7 +48,7 @@ fit(plmNoMergeTissue, verbose=log);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Fit FIRMA
+# FIRMA
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 rsTissue <- calculateResiduals(plmTissue, verbose=log);
 wsTissue <- calculateWeights(plmTissue,verbose=log);
@@ -53,6 +60,9 @@ cesTissue <- getChipEffectSet(plmTissue);
 cesNoMergeTissue <- getChipEffectSet(plmNoMergeTissue);
 pafNoMergeTissue <- getProbeAffinityFile(plmNoMergeTissue);
 
-firmaTissue <- FirmaModel(plmTissue);
-fit(firmaTissue, verbose=log);
-fsTissue <- getFirmaScores(firmaTissue);
+firma <- FirmaModel(plmTissue);
+print(firma);
+
+fit(firma, verbose=log);
+fsTissue <- getFirmaScores(firma);
+print(fsTissue);

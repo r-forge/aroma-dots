@@ -26,7 +26,8 @@
 # }
 #*/###########################################################################
 setConstructorS3("SpatialReporter", function(...) {
-  extend(AffymetrixCelSetReporter(...), "SpatialReporter"
+  extend(AffymetrixCelSetReporter(...), "SpatialReporter",
+    .scale = 1
   )
 })
 
@@ -160,6 +161,17 @@ setMethodS3("getColorMaps", "SpatialReporter", function(this, parsed=FALSE, ...)
 })
 
 
+setMethodS3("setScale", "SpatialReporter", function(this, scale, ...) {
+  scale <- Arguments$getDouble(scale, range=c(1/100,1));
+  this$.scale <- scale;
+  invisible(this);
+})
+
+setMethodS3("getScale", "SpatialReporter", function(this, ...) {
+  this$.scale;
+})
+
+
 setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., verbose=FALSE) {
   # Get the CEL set of interest
   cs <- getDataSet(this);
@@ -189,6 +201,10 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
     return(invisible(path));
   }
 
+  # Get the scale
+  scale <- getScale(this);
+  verbose && cat(verbose, "Scale: ", scale);
+  
   # For each array...
   nbrOfArrays <- nbrOfArrays(cs);
   for (kk in seq(length=nbrOfArrays)) {
@@ -205,7 +221,7 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
 #      verbose && str(verbose, colorMap$transforms);
 #      verbose && str(verbose, colorMap$palette);
       writeImage(df, path=path, transforms=colorMap$transforms, 
-                                   palette=colorMap$palette, tags=tags, ...);
+                      palette=colorMap$palette, tags=tags, scale=scale, ...);
       gc <- gc();
       verbose && exit(verbose);
     }
@@ -266,8 +282,13 @@ setMethodS3("process", "SpatialReporter", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+<<<<<<< .mine
+# 2007-03-30
+# o Added getScale() and setScale().
+=======
 # 2007-08-09
 # o Now getColorMaps(parsed=FALSE) returns a unique sorted set of color maps.
+>>>>>>> .r2966
 # 2007-03-19
 # o Updated addColorMap() to accept multiple transforms.
 # o Created from ArrayExplorer.R.

@@ -50,7 +50,8 @@ ces <- getChipEffectSet(plm);
 theta <- extractMatrix(ces, units=1000:1002);
 
 fln <- FragmentLengthNormalization(ces);
-cesFln <- process(fln, verbose=log);
+#cesFln <- process(fln, verbose=log);
+cesFln <- ces;
 print(cesFln);
 
 cnr <- CbsModel(cesFln);
