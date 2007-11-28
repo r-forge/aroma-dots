@@ -500,7 +500,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #   \item{transforms}{A @list of transform functions.}
 #   \item{interleaved}{}
 #   \item{...}{Additional arguments passed to @seemethod "getRectangle".}
-#   \item{scale}{An optional scale factor to resize the image.}
+#   \item{zoom}{}
 #   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
 # }
 #
@@ -520,11 +520,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #
 # @keyword IO
 #*/###########################################################################
-<<<<<<< .mine
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("auto", "h", "v", "none") , ..., scale=NULL, verbose=FALSE) {
-=======
 setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("none", "h", "v", "auto") , ..., zoom=NULL, verbose=FALSE) {
->>>>>>> .r2966
   require("EBImage") || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -553,9 +549,9 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   # Argument 'interleaved':
   interleaved <- match.arg(interleaved);
 
-  # Argument 'scale':
-  if (!is.null(scale))
-    scale <- Arguments$getDouble(scale, range=c(0,Inf));
+  # Argument 'zoom':
+  if (!is.null(zoom))
+    zoom <- Arguments$getDouble(zoom, range=c(0,Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -637,15 +633,11 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   img <- rgbTransform(img, lim=zrange, ...);
   verbose && exit(verbose);
 
-  # Scale?
-  if (!is.null(scale)) {
+  # Zoom?
+  if (!is.null(zoom)) {
     verbose && enter(verbose, "Resizing image");
     # Rescaling by keeping aspect ratio
-<<<<<<< .mine
-    img <- resize(img, w=scale*dim(img)[1], blur=FALSE);
-=======
     img <- EBImage::resize(img, w=zoom*dim(img)[1], blur=FALSE);
->>>>>>> .r2664
     verbose && exit(verbose);
   }
 
@@ -836,16 +828,9 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
-<<<<<<< .mine
-<<<<<<< .mine
-# 2007-03-30
-# o Renamed argument 'zoom' of getImage() to 'scale'.
-=======
-=======
 # 2007-09-17
 # o Added write.image()/writeImage() caller to avoid recent EBImage
 #   warnings about write.image() being deprecated.
->>>>>>> .r3475
 # 2007-06-11
 # o Explicit calls to geneplotter::smoothScatter() & EBImage::write.image().
 # 2007-06-07
@@ -853,7 +838,6 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 #   wasn't a list, then "Error: argument "transform" is missing, with no
 #   default" was thrown.  Thanks Karen Vranizan, UC Berkeley for reporting
 #   this problem.
->>>>>>> .r2664
 # 2007-03-20
 # o Now writeImage() uses the file alias as the name if it exists.
 # 2007-03-19
