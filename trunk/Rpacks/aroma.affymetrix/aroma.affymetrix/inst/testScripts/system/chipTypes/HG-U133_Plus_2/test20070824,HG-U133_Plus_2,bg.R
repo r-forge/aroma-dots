@@ -1,8 +1,9 @@
 library(aroma.affymetrix);
 
-log <- Verbose(threshold=-4, timestamp=TRUE);
+log <- Verbose(threshold=-4);
+timestampOn(log);
 
-dataSetName <- "heart_brain";
+dataSetName <- "Affymetrix-HeartBrain";
 chipType <- "HG-U133_Plus_2";
 
 cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
