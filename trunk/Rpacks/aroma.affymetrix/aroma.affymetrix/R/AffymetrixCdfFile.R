@@ -619,11 +619,22 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   key <- list(method="getCellIndices", class=class(this)[1], 
              chipType=getChipType(this), units=units, ...,
              useNames=useNames, unlist=unlist);
-  id <- digest2(key);
-  res <- this$.cellIndices[[id]];
-  if (!force && !is.null(res)) {
-    verbose && cat(verbose, "getCellIndices.AffymetrixCdfFile(): Returning cached data");
-    return(res);
+
+  # This is a trick to store either to memory or file cache
+  key <- digest2(key);
+  if (!force) {
+    # (a) Check memory cache
+    res <- this$.cellIndices[[key]];
+
+##    # (b) Check file cache
+##    if (is.null(res)) {
+##      res <- loadCache(key=list(key));
+##    }
+
+    if (!is.null(res)) {
+      verbose && cat(verbose, "getCellIndices.AffymetrixCdfFile(): Returning cached data");
+      return(res);
+    }
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -671,10 +682,15 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (cache && object.size(cdf) < 10e6) { # Cache only objects < 10MB.
+  if (cache) {
     verbose && cat(verbose, "readUnits.AffymetrixCdfFile(): Updating cache");
-    this$.cellIndices <- list();
-    this$.cellIndices[[id]] <- cdf;
+    # Cache small objects in memory
+    if (object.size(cdf) < 10e6) { 
+      this$.cellIndices <- list();
+      this$.cellIndices[[key]] <- cdf;
+##    } else {
+##      saveCache(cdf, key=list(key));
+    }
   }
 
   cdf;

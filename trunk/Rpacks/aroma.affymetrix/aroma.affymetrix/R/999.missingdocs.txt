@@ -632,3 +632,7 @@
  setSubname.Explorer splitByReportPathPattern
  splitByReportPathPattern.Explorer
   doCRMA doCRMA.default
+  doCRMA doCRMA.default
+ rescaleByAll rescaleByAll.AllelicCrosstalkCalibration
+ rescaleByGroups rescaleByGroups.AllelicCrosstalkCalibration
+getAsteriskTag.AllelicCrosstalkCalibration

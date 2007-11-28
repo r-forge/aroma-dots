@@ -748,7 +748,7 @@ setMethodS3("getData", "AffymetrixCelSet", function(this, indices=NULL, fields=c
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Reading cell signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Requiring data from ", nbrOfArrays, " arrays");
+  verbose && enter(verbose, "Retrieving data from ", nbrOfArrays, " arrays");
   for (kk in seq(length=nbrOfArrays)) {
     verbose && enter(verbose, "Array #", kk, " of ", nbrOfArrays);
     dataFile <- this$files[[kk]];

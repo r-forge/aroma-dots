@@ -42,12 +42,6 @@ setConstructorS3("AffymetrixFile", function(...) {
 }, abstract=TRUE)
 
 
-setMethodS3("setAttributesByTags", "AffymetrixFile", function(this, ...) {
-  # Does nothing.
-}, protected=TRUE)
-
-
-
 setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
   label <- this$label;
   if (is.null(label))

@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Tue Nov 27 21:13:25 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -214,8 +216,6 @@
 \alias{createParamCdf}
 \alias{createParamCdf.ChipEffectFile}
 \alias{createParamCdf.FirmaFile}
-\alias{dataFrame}
-\alias{dataFrame.default}
 \alias{decode}
 \alias{decode.ParameterCelFile}
 \alias{digest2}
@@ -936,8 +936,6 @@
 \alias{inferParameters.CnChipEffectSet}
 \alias{inferParameters.SnpChipEffectSet}
 \alias{isDuplicated}
-\alias{isEof}
-\alias{isEof.connection}
 \alias{isFile.GenericDataFile}
 \alias{isPm}
 \alias{isSnpChip}
@@ -1382,6 +1380,13 @@
 \alias{setSubname.Explorer}
 \alias{splitByReportPathPattern}
 \alias{splitByReportPathPattern.Explorer}
+\alias{doCRMA}
+\alias{doCRMA.default}
+\alias{rescaleByAll}
+\alias{rescaleByAll.AllelicCrosstalkCalibration}
+\alias{rescaleByGroups}
+\alias{rescaleByGroups.AllelicCrosstalkCalibration}
+\alias{getAsteriskTag.AllelicCrosstalkCalibration}
 
 \description{
   This page contains aliases for all "non-documented" objects that

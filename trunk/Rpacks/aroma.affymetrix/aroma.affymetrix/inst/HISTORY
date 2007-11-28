@@ -1,10 +1,26 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.1 [2007-11-26]
+Version: 0.8.1 [2007-11-27]
+o Package now requires R v2.6.0 or newer.  The main reason for
+  this is so we can move away from outdated package dependencies.
+o MODEL UPDATE: The AllelicCrosstalkCalibration method would,
+  if 'targetAvg' was specified (default), rescale the probe signals
+  such that the average of *each* allele-pair group would equal 
+  the target average (default =2200).  However, this approach would
+  make it hard to correct for other kinds of systematic effects, 
+  e.g. varying mixing proportions of target DNA from different 
+  enzymes.  For instance, on the GenomeWideSNP_6 chip type the 
+  symptom could be that raw CN estimates for CN probes would be 
+  biased compared with SNP units.  The default is now instead to
+  rescale all signals on the array together, i.e. basically a
+  median scale normalization.  The old rescaling style is available
+  by setting argument 'rescaleBy="groups"'.
 o Added doCRMA().
 o CLEAN UP: Moved the following methods to R.utils: copyFile(), 
   dataFrame(), isEof(), and reassignInPackage().
+o CLEAN UP: normalizeAverage.{matrix,list}() is now instead in
+  the aroma.light package.
 
 
 Version: 0.8.0 [2007-11-25]

@@ -84,7 +84,7 @@ setMethodS3("fromDataSet", "FirmaSet", function(static, dataSet, path, name=getN
     ff <- clazz$fromDataFile(df, path=path, name=name, cdf=cdf, ...,
                                                        verbose=less(verbose));
     if (is.null(cdf)) {
-      verbose && enter(verbose, "Requiring the CDF for the FIRMA results file");
+      verbose && enter(verbose, "Retrieving the CDF for the FIRMA results file");
       cdf <- getCdf(ff);
       verbose && exit(verbose);
     }

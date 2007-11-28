@@ -139,13 +139,6 @@ setConstructorS3("CopyNumberChromosomalModel", function(cesTuple=NULL, refTuple=
 })
 
 
-setMethodS3("clearCache", "CopyNumberChromosomalModel", function(this, ...) {
-  for (ff in c(".extractRawCopyNumbersCache")) {
-    this[[ff]] <- NULL;
-  }
-  NextMethod("clearCache", this, ...);
-})
-
 setMethodS3("as.character", "CopyNumberChromosomalModel", function(x, ...) {
   # To please R CMD check
   this <- x;
@@ -183,10 +176,11 @@ setMethodS3("as.character", "CopyNumberChromosomalModel", function(x, ...) {
 }, protected=TRUE)
 
 
+
 setMethodS3("clearCache", "CopyNumberChromosomalModel", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c()) {
+  for (ff in c(".extractRawCopyNumbersCache")) {
     this[[ff]] <- NULL;
   }
 
@@ -584,6 +578,8 @@ setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this
 
 ##############################################################################
 # HISTORY:
+# 2007-11-27
+# o BUG FIX: Two different clearCache() was defined.
 # 2007-10-17
 # o Added extractRawCopyNumbers().
 # o Created.
