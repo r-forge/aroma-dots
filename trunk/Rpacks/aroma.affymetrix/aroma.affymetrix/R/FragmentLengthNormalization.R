@@ -511,6 +511,8 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     # Extract the values to fit the normalization function
     verbose && enter(verbose, "Normalizing log2 signals");
     y <- log2(data[,"theta"]);
+    verbose && cat(verbose, "Log2 signals:");
+    verbose && str(verbose, y);
     y <- normalizeFragmentLength(y, fragmentLengths=fl, 
                              targetFcns=targetFcns, subsetToFit=subset, ...);
     y <- 2^y;
