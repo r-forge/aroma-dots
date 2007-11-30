@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.1 [2007-11-28]
+Version: 0.8.1 [2007-11-29]
 o Package now requires R v2.6.0 or newer.  The main reason for
   this is so we can move away from outdated package dependencies.
 o MODEL UPDATE: The AllelicCrosstalkCalibration method would,
@@ -16,9 +16,16 @@ o MODEL UPDATE: The AllelicCrosstalkCalibration method would,
   rescale all signals on the array together, i.e. basically a
   median scale normalization.  The old rescaling style is available
   by setting argument 'rescaleBy="groups"'.
+o BUG FIX: The multi-enzyme model implemented was not the one in mind;
+  The correction for the multi-enzyme data points was not right.
+  The example(normalizeFragmentLength) has been updated to also display
+  the normalized log-ratios (as a function of fragment length as well
+  as they densities).  That revealed the bug.  The example also tests
+  the case for non-aliquot mixing proportions between enzymes. This 
+  is indeed "automagically" corrected for by the model itself, i.e. 
+  there is no need to estimate the mixing proportions explicitly.
 o UPDATE: Updated AffymetrixNetAffxCsvFile to recognize enzyme 
   fragment annotation data for the new GenomeWideSNP_6 CSV files.
-o Added doCRMA().
 o TESTS: Added test script for HuEx-1_0-st-v2 by Elizabeth Purdom.
 o CLEAN UP: Moved the following methods to R.utils: copyFile(), 
   dataFrame(), isEof(), and reassignInPackage().
