@@ -54,7 +54,8 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'y':
   y <- Arguments$getDoubles(y, disallow=NULL);
-  
+  nbrOfDataPoints <- length(y);
+
   # Argument 'fragmentLengths':
   if (!is.matrix(fragmentLengths)) {
     if (is.vector(fragmentLengths)) {
@@ -67,7 +68,7 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
   nbrOfEnzymes <- ncol(fragmentLengths);
   allEnzymes <- seq(length=nbrOfEnzymes);
   for (ee in allEnzymes) {
-    fragmentLengths[,ee] <- Arguments$getDoubles(fragmentLengths[,ee], length=length(y), disallow=NULL);
+    fragmentLengths[,ee] <- Arguments$getDoubles(fragmentLengths[,ee], length=nbrOfDataPoints, disallow=NULL);
   }
 
   # Argument 'targetFcns':
@@ -93,7 +94,7 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
   
   # Argument 'subsetToFit':
   if (!is.null(subsetToFit)) {
-    subsetToFit <- Arguments$getIndices(subsetToFit, length=length(y));
+    subsetToFit <- Arguments$getIndices(subsetToFit, length=nbrOfDataPoints);
   }
 
 
@@ -103,19 +104,20 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
   # Fit smooth curve to each enzyme separately
   hasFL <- is.finite(fragmentLengths);
   # Count the number of enzymes per units
-  countFL <- rep(0, nrow(hasFL));
+  countFL <- rep(0, nbrOfDataPoints);
   for (ee in allEnzymes)
     countFL <- countFL + as.integer(hasFL[,ee]);
   isSingleEnzymed <- (countFL == 1);
 
   okY <- is.finite(y);
 
-  # KxE matrix of corrections
-  dy <- matrix(NA, nrow=nrow(fragmentLengths), ncol=nbrOfEnzymes);
+  # KxE matrix for sample (and target predictions)
+  mu <- matrix(NA, nrow=nbrOfDataPoints, ncol=nbrOfEnzymes);
+  if (!is.null(targetFcns))
+    muT <- matrix(NA, nrow=nbrOfDataPoints, ncol=nbrOfEnzymes);
 
-  if (.returnFit) {
+  if (.returnFit)
     fits <- vector("list", nbrOfEnzymes);
-  }
 
   for (ee in allEnzymes) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -131,14 +133,18 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
 
     if (!is.null(subsetToFit)) {
       ok[-subsetToFit] <- FALSE;
+
+      # Sanity check
+      if (sum(ok) == 0) {
+        throw("Cannot fit normalization function to enzyme, because there are no (finite) data points that are unique to this enzyme for the subset requested: ", ee);
+      }
     }
 
-    # Sanity check
-    if (sum(ok) == 0) {
-      throw("Cannot fit normalization function to enzyme, because there are no (finite) data points that are unique to this enzyme for the subset requested: ", ee);
-    }
 
+    # All fragment lengths for current enzyme
     fl <- fragmentLengths[,ee];
+
+    # Fit finite {(lambda, log2theta)_j} to data points j on current enzyme
     suppressWarnings({
       fit <- lowess(fl[ok], y[ok], ...);
       class(fit) <- "lowess";
@@ -151,17 +157,19 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # (b) Calculate correction factor
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    dy[,ee] <- predict(fit, newdata=fl);
+    # Calculate the correction factor for every data point on this enzyme
+    ok <- (hasFL[,ee] & okY);
+    mu[ok,ee] <- predict(fit, newdata=fl[ok]);
+
+    if (.returnFit)
+      fits[[ee]] <- list(fit=fit, mu=mu[,ee]);
 
     # Normalize toward a target function?
     if (!is.null(targetFcns)) {
-      yTargetPred <- targetFcns[[ee]](fl);
-      dy[,ee] <- dy[,ee] - yTargetPred;
-      rm(yTargetPred);
+      muT[ok,ee] <- targetFcns[[ee]](fl[ok]);
+      if (.returnFit)
+        fits[[ee]]$muT <- muT[,ee];
     }
-
-    if (.returnFit)
-      fits[[ee]] <- list(fit=fit, dy=dy);
 
     rm(fit, fl);
 
@@ -170,12 +178,36 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
 
   # Sum on the non-log scale.
   if (.isLogged) {
-    dy <- 2^dy;
-    dy <- rowSums(dy, na.rm=TRUE);
-    dy <- dy / countFL;
-    dy <- log2(dy);
+    mu <- 2^mu;
+    if (!is.null(targetFcns))
+      muT <- 2^muT;
   }
+
+  mu <- rowSums(mu, na.rm=TRUE);
+#  mu <- mu / countFL; # Averaging (needed?!?)
+
+  if (!is.null(targetFcns)) {
+    muT <- rowSums(muT, na.rm=TRUE);
+#    muT <- muT / countFL; # Averaging (needed?!?)
+  }
+
+  if (.isLogged) {
+    mu <- log2(mu);
+    if (!is.null(targetFcns))
+      muT <- log2(muT);
+  }
+
   rm(countFL);
+
+  # Calculate correction factors
+  if (is.null(targetFcns)) {
+    dy <- mu;
+  } else {
+    dy <- (mu - muT);
+  }
+  rm(mu);
+  if (!is.null(targetFcns))
+    rm(muT);
 
   # Transform signals
   y[okY] <- y[okY] - dy[okY];
@@ -190,6 +222,15 @@ setMethodS3("normalizeFragmentLength", "default", function(y, fragmentLengths, t
 
 ############################################################################
 # HISTORY:
+# 2007-11-29
+# o BUG FIX: The implemented multi-enzyme model was not the one in mind;
+#   The correction for the multi-enzyme data points was not right.
+#   Have now created an updated example that displays the normalized 
+#   log-ratios (as a function of fragment length as well as they densities).
+#   The example does also test the case for non-aliquot mixing proportions
+#   between enzymes. This is actually automagically corrected for by the
+#   way the model was set up, i.e. there is no need to estimate the 
+#   mixing proportions.
 # 2007-11-19
 # o Added Rdoc examples. From these simulation examples, it looks like the
 #   multi-enzyme normalization method works.
