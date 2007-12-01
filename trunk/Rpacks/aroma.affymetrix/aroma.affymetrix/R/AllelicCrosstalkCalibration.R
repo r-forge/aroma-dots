@@ -63,29 +63,75 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(..., rescaleBy=c("all", "groups", "none"), targetAvg=c(2200, 2200), subsetToAvg=NULL, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'rescaleBy':
-  rescaleBy <- match.arg(rescaleBy);
-  if (rescaleBy == "all") {
-    targetAvg <- targetAvg[1];
-  }
+  extraTags <- NULL;
 
-  # Argument 'targetAvg':
-  if (!is.null(targetAvg)) {
-    targetAvg <- Arguments$getDoubles(targetAvg, range=c(0, Inf));
-    if (!length(targetAvg) %in% 1:2) {
-      throw("Argument 'targetAvg' must be of length one or two: ", length(targetAvg));
+  # Argument 'dataSet':
+  if (!is.null(dataSet)) {
+    if (!inherits(dataSet, "AffymetrixCelSet")) {
+      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", 
+                                                          class(dataSet)[1]);
+    }
+
+    cdf <- getCdf(dataSet);
+
+    # Argument 'rescaleBy':
+    rescaleBy <- match.arg(rescaleBy);
+    if (rescaleBy == "auto") {
+      # Extract the CDF
+      chipType <- getChipType(cdf);
+      if (regexpr("^Mapping[0-9]+K_", chipType) != -1) {
+        rescaleBy <- "groups";
+      } else if (regexpr("^GenomeWideSNP_", chipType) != -1) {
+        rescaleBy <- "groups";
+      } else {
+        throw("Failed to infer a default value for 'rescaleBy' for the given chip type: ", chipType);
+      }
+    }
+  
+    if (rescaleBy == "all") {
+      targetAvg <- targetAvg[1];
+      extraTags <- c(extraTags, rescaleBy="ra");  # rescale all together
+    } else if (rescaleBy == "groups") {
+      # For backward compatibility, no extra tag (at the moment) /2007-12-01
+      extraTags <- c(extraTags);
+    } else if (rescaleBy == "none") {
+      extraTags <- c(extraTags, rescaleBy="rn");  # rescale nothing
+    }
+  
+    # Argument 'targetAvg':
+    if (!is.null(targetAvg)) {
+      targetAvg <- Arguments$getDoubles(targetAvg, range=c(0, Inf));
+      if (!length(targetAvg) %in% 1:2) {
+        throw("Argument 'targetAvg' must be of length one or two: ", length(targetAvg));
+      }
+    }
+  
+    # Argument 'subsetToAvg':
+    if (is.null(subsetToAvg)) {
+    } else if (is.character(subsetToAvg)) {
+      if (subsetToAvg %in% c("-X", "-Y", "-XY")) {
+      } else {
+        throw("Unknown value of argument 'subsetToAvg': ", subsetToAvg);
+      }
+      extraTags <- c(extraTags, subsetToAvg=subsetToAvg);
+    } else {
+      subsetToAvg <- Arguments$getIndices(subsetToAvg, 
+                                          range=c(1, nbrOfUnits(cdf)));
+      subsetToAvg <- unique(subsetToAvg);
+      subsetToAvg <- sort(subsetToAvg);
     }
   }
 
 
-  extend(ProbeLevelTransform(...), "AllelicCrosstalkCalibration",
+  extend(ProbeLevelTransform(dataSet=dataSet, ...), "AllelicCrosstalkCalibration",
     .rescaleBy = rescaleBy,
     .targetAvg = targetAvg,
     .subsetToAvg = subsetToAvg,
+    .extraTags = extraTags,
     .alpha = alpha,
     .q = q,
     .Q = Q
@@ -96,23 +142,15 @@ setConstructorS3("AllelicCrosstalkCalibration", function(..., rescaleBy=c("all",
 setMethodS3("getAsteriskTag", "AllelicCrosstalkCalibration", function(this, ...) {
   tag <- NextMethod("getAsteriskTag", this);
 
-  # Tag for subclass?
-  rescaleBy <- this$.rescaleBy;
-  if (rescaleBy == "all") {
-    # Default is nothing.
-    tag <- c(tag);
-  } else if (rescaleBy == "groups") {
-    tag <- c(tag, "g");
-  } else if (rescaleBy == "none") {
-    # Rare
-    tag <- c(tag, "n");
-  }
+  # Extra tags?
+  tag <- c(tag, this$.extraTags);
 
   # Collapse
   tag <- paste(tag, collapse=",");
 
   tag;
 }, private=TRUE)
+
 
 
 setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ..., verbose=FALSE) {
@@ -127,8 +165,56 @@ setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ...,
   }
 
   subsetToAvg <- this$.subsetToAvg;
-  if (FALSE) {
-    this$.subsetToAvg <- subsetToAvg;
+
+  # Expand?
+  if (is.character(subsetToAvg)) {
+    if (subsetToAvg %in% c("-X", "-Y", "-XY")) {
+      verbose && enter(verbose, "Identify subset of units from genome information");
+      verbose && cat(verbose, "subsetToAvg: ", subsetToAvg);
+
+      # Look up in cache
+      subset <- this$.subsetToFitExpanded;
+      if (is.null(subset)) {
+        dataSet <- getInputDataSet(this);
+        cdf <- getCdf(dataSet);
+  
+        # Get the genome information (throws an exception if missing)
+        gi <- getGenomeInformation(cdf);
+        verbose && print(verbose, gi);
+  
+        # Identify units to be excluded
+        if (subsetToAvg == "-X") {
+          subset <- getUnitsOnChromosome(gi, 23, .checkArgs=FALSE);
+        } else if (subsetToAvg == "-Y") {
+          subset <- getUnitsOnChromosome(gi, 24, .checkArgs=FALSE);
+        } else if (subsetToAvg == "-XY") {
+          subset <- getUnitsOnChromosome(gi, 23:24, .checkArgs=FALSE);
+        }
+  
+        verbose && cat(verbose, "Units to exclude: ");
+        verbose && str(verbose, subset);
+
+        # Identify the cell indices for these units
+        subset <- getCellIndices(cdf, units=subset, 
+                                 useNames=FALSE, unlist=TRUE);
+        verbose && cat(verbose, "Cells to exclude: ");
+        verbose && str(verbose, subset);
+  
+        # The cells to keep
+        subset <- setdiff(1:nbrOfCells(cdf), subset);
+  
+        verbose && cat(verbose, "Cells to include: ");
+        verbose && str(verbose, subset);
+
+        # Store
+        this$.subsetToFitExpanded <- subset;
+      }
+
+      subsetToAvg <- subset;
+      rm(subset);
+
+      verbose && exit(verbose);
+    }
   }
 
   subsetToAvg;
@@ -136,18 +222,23 @@ setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ...,
 
 
 
-setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, ...) {
+setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expand=TRUE, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
 
   params <- c(params, list(
     rescaleBy = this$.rescaleBy,
     targetAvg = this$.targetAvg,
-    subsetToAvg = getSubsetToAvg(this),
+    subsetToAvg = this$.subsetToAvg,
     alpha = this$.alpha,
     q = this$.q,
     Q = this$.Q
   ));
+
+  # Expand?
+  if (expand) {
+    params$subsetToAvg <- getSubsetToAvg(this);
+  }
 
   params;
 }, private=TRUE)
@@ -167,7 +258,7 @@ setMethodS3("rescale", "AllelicCrosstalkCalibration", function(this, yAll, param
 
 
 setMethodS3("rescaleByAll", "AllelicCrosstalkCalibration", function(this, yAll, params, ..., verbose=FALSE) {
-  targetAvg <- params$targetAvg
+  targetAvg <- params$targetAvg;
   nt <- length(targetAvg);
   if (nt != 1) {
     throw("In order rescale towards a global target average ('rescaleBy' == \"all\"), argument 'targetAvg' must be a scalar: ", paste(targetAvg, collapse=","));
@@ -179,7 +270,10 @@ setMethodS3("rescaleByAll", "AllelicCrosstalkCalibration", function(this, yAll, 
     cat(verbose, "Target average: ", targetAvg);
     if (!is.null(params$subsetToAvg)) {
       cat(verbose, "Using subset of cells for estimate of target average:");
-      str(verbose, params$subsetToAvg);
+      src <- attr(params$subsetToAvg, "src");
+      if (is.null(src))
+         src <- params$subsetToAvg;
+      str(verbose, src);
     }
     cat(verbose, "yAll: ");
     str(verbose, yAll);
@@ -248,7 +342,10 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
     printf(verbose, "Method: %s\n", method);
     if (!is.null(params$subsetToAvg)) {
       cat(verbose, "Using subset of cells for estimate of target average:");
-      str(verbose, params$subsetToAvg);
+      src <- attr(params$subsetToAvg, "src");
+      if (is.null(src))
+         src <- params$subsetToAvg;
+      str(verbose, src);
     }
   }
 
@@ -395,42 +492,44 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
   verbose && enter(verbose, "Non-SNP cells");
   name <- "nonSNPs";
   idx <- setsOfProbes[[name]];
+
   if (!is.null(params$subsetToAvg)) {
     idx <- intersect(idx, params$subsetToAvg);
   }
+
   y <- yAll[idx];
   n <- length(y);
-  if (n == 0) {
-    throw("Cannot rescale to target average. After taking the intersect of the subset of cells to be used, there are no cells left.");
-  }
-  yAvg <- median(y, na.rm=TRUE);
-  rm(y);
-  if (!is.finite(yAvg)) 
-    throw("Cannot rescale to target average. Signal average is non-finite: ", yAvg);
-  # Rescale (to half of the allele target averages)
-  #  AA : P(2A,0B)=0.25
-  #  AB : P(1A,1B)=0.50
-  #  BB : P(0A,2B)=0.25
-  # => P(A=0)=0.25, P(A=1)=0.5, P(A=2)=0.25, ...
-  # => E[A] = 0*0.25 + 1*0.5 + 2*0.25 = 1
-  #    E[B] = 0*0.25 + 1*0.5 + 2*0.25 = 1
-  # => E[cA] = 1c, E[dB] = 1d
-  # => E[cA+cB] = c+d
-  # => E[A+B] = E[A]+E[B] = 2
-  # => E[c(A+B)] = 2c
-  if (method == "allele") {
-    #  c = targetAvg[1], d = targetAvg[2]
-    #  => (c+d) = sum(targetAvg)
-    targetAvg <- sum(params$targetAvg);
-  } else if (method == "sum") {
-    #  2c = targetAvg
-    targetAvg <- params$targetAvg;
-  }
-  b <- targetAvg/yAvg;
-  verbose && printf(verbose, "scale factor: %.2f\n", b);
-  yAll[idx] <- b*yAll[idx];
+  if (n > 0) {
+    yAvg <- median(y, na.rm=TRUE);
+    rm(y);
+    if (!is.finite(yAvg)) 
+      throw("Cannot rescale to target average. Signal average is non-finite: ", yAvg);
+
+    # Rescale (to half of the allele target averages)
+    #  AA : P(2A,0B)=0.25
+    #  AB : P(1A,1B)=0.50
+    #  BB : P(0A,2B)=0.25
+    # => P(A=0)=0.25, P(A=1)=0.5, P(A=2)=0.25, ...
+    # => E[A] = 0*0.25 + 1*0.5 + 2*0.25 = 1
+    #    E[B] = 0*0.25 + 1*0.5 + 2*0.25 = 1
+    # => E[cA] = 1c, E[dB] = 1d
+    # => E[cA+cB] = c+d
+    # => E[A+B] = E[A]+E[B] = 2
+    # => E[c(A+B)] = 2c
+    if (method == "allele") {
+      #  c = targetAvg[1], d = targetAvg[2]
+      #  => (c+d) = sum(targetAvg)
+      targetAvg <- sum(params$targetAvg);
+    } else if (method == "sum") {
+      #  2c = targetAvg
+      targetAvg <- params$targetAvg;
+    }
+    b <- targetAvg/yAvg;
+    verbose && printf(verbose, "scale factor: %.2f\n", b);
+    yAll[idx] <- b*yAll[idx];
+    fit$subset[[name]] <- list(b=b);
+  } # if (n > 0)
   rm(idx);
-  fit$subset[[name]] <- list(b=b);
   verbose && exit(verbose);
 
   attr(yAll, "fit") <- fit;
@@ -978,6 +1077,15 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2007-12-01
+# o BUG FIX: The AllelicCrosstalkCalibration introduced in previous version
+#   was broken for 10K (maybe 100K and 500K as well).
+# o Now 'subsetToAvg' of AllelicCrosstalkCalibration accepts '-XY' (and
+#   '-X' and '-Y') for automatic look up of all units and exclude those 
+#   that are on ChrX and ChrY.  Note, '-XY' will work on all chip types,
+#   also older ones for which there are no ChrY units.
+# o The new constructor argument 'rescaleBy' now sets a "subtag", e.g.
+#   'ACC,ra' where the 'ra' indicates that 'rescaleBy=all' was used.
 # 2007-11-27
 # o Added specific getAsteriskTag() for AllelicCrosstalkCalibration.
 # o Added the option to rescale towards a target average of *all* probes.

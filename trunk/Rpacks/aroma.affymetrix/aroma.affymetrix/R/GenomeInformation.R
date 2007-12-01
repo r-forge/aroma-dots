@@ -339,22 +339,29 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 })
 
 
-setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosomes, region=NULL, ...) {
+setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosomes, region=NULL, ..., .checkArgs=TRUE) {
   allChromosomes <- getChromosomes(this);
 
   # Argument 'chromosomes':
-  chromosomes <- Arguments$getChromosomes(chromosomes, range=range(allChromosomes), ...);
+  if (.checkArgs) {
+    range <- range(allChromosomes);
+  } else {
+    range <- c(1,999);
+  }
+  chromosomes <- Arguments$getChromosomes(chromosomes, range=range, ...);
 
   # Argument 'region':
-  if (!is.null(region)) {
-    region <- Arguments$getNumerics(region);
-    if (length(region) != 2) {
-      throw("Argument 'region' must be a numeric vector of length 2: ", 
-                                                         length(region));
-    }
-    if (region[1] > region[2]) {
-      throw("Argument 'region' is not ordered: c(", 
-                                      paste(region, collapse=", "), ")");
+  if (.checkArgs) {
+    if (!is.null(region)) {
+      region <- Arguments$getNumerics(region);
+      if (length(region) != 2) {
+        throw("Argument 'region' must be a numeric vector of length 2: ", 
+                                                           length(region));
+      }
+      if (region[1] > region[2]) {
+        throw("Argument 'region' is not ordered: c(", 
+                                        paste(region, collapse=", "), ")");
+      }
     }
   }
 
@@ -611,6 +618,7 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2007-12-01
 # 2007-11-25
 # o Now getUnitsOnChromosome() of GenomeInformation can indentify units from
 #   multiple chromosomes.
