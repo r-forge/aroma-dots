@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.1 [2007-11-29]
+Version: 0.8.1 [2007-11-30]
 o Package now requires R v2.6.0 or newer.  The main reason for
   this is so we can move away from outdated package dependencies.
 o MODEL UPDATE: The AllelicCrosstalkCalibration method would,
