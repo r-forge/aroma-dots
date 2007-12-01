@@ -55,7 +55,6 @@ for (chipType in names(csList)) {
   plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, 
                                              tags=c("+300", "*", "w"));
   plm$shift <- +300;
-  plm$treatNAsAs <- "weighted";
   print(plm);
   fit(plm, verbose=log);
   ces <- getChipEffectSet(plm);

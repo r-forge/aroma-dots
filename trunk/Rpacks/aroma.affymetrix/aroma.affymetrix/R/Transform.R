@@ -239,9 +239,8 @@ setMethodS3("getFullName", "Transform", function(this, ...) {
 
 
 
-
 setMethodS3("getParametersAsString", "Transform", function(this, ...) {
-  params <- getParameters(this);
+  params <- getParameters(this, expand=FALSE);
   params <- trim(capture.output(str(params)))[-1];
   params <- gsub("^[$][ ]*", "", params);
   params <- gsub(" [ ]*", " ", params);

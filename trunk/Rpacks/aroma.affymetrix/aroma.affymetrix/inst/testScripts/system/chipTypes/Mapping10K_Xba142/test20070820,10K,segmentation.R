@@ -38,8 +38,6 @@ stopifnot(identical(getNames(csAcc), getNames(cs)));
 plm <- RmaCnPlm(csAcc, mergeStrands=TRUE, combineAlleles=TRUE, 
                                               tags=c("+300", "*", "w"));
 plm$shift <- +300;
-plm$treatNAsAs <- "NA";
-plm$treatNAsAs <- "weighted";
 print(plm);
 
 fit(plm, verbose=log);
@@ -52,7 +50,6 @@ stopifnot(identical(getNames(ces), getNames(cs)));
 # Fragment-length normalization test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 fln <- FragmentLengthNormalization(ces);
-#  excludeChrXFromFit(fln);  # TO DO
 print(fln);
 cesFln <- process(fln, verbose=verbose);
 print(cesFln);

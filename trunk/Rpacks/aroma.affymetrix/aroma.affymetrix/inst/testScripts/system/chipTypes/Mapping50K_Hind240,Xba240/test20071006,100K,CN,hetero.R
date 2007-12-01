@@ -31,14 +31,7 @@ csAccList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
 
-  # Identify cells *not* for chromosome X
-  cdf <- getCdf(cs);
-  gi <- getGenomeInformation(cdf);
-  units <- getUnitsOnChromosome(gi, 23);
-  cells <- getCellIndices(cdf, units=units, useNames=FALSE, unlist=TRUE);
-  cells <- setdiff(1:nbrOfCells(cdf), cells);
-
-  acc <- AllelicCrosstalkCalibration(cs, subsetToAvg=cells, tags=c("*", "-X"));
+  acc <- AllelicCrosstalkCalibration(cs);
   print(acc);
   csAcc <- process(acc, verbose=log);
   print(csAcc);
@@ -57,8 +50,6 @@ for (chipType in names(csList)) {
   plm <- HetLogAddCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, 
                                               tags=c("+300", "*", "w"));
   plm$shift <- +300;
-  plm$treatNAsAs <- "NA";
-  plm$treatNAsAs <- "weighted";
   print(plm);
   fit(plm, ram=1/2, verbose=log);
   ces <- getChipEffectSet(plm);
@@ -88,7 +79,6 @@ cesFlnList <- list();
 for (chipType in names(csList)) {
   ces <- cesCnList[[chipType]];
   fln <- FragmentLengthNormalization(ces);
-#  excludeChrXFromFit(fln);  # TO DO
   print(fln);
   cesFln <- process(fln, verbose=verbose);
   print(cesFln);

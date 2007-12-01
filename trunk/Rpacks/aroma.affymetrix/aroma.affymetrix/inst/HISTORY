@@ -1,9 +1,19 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.1 [2007-11-30]
-o Package now requires R v2.6.0 or newer.  The main reason for
-  this is so we can move away from outdated package dependencies.
+Version: 0.8.1 [2007-12-01]
+o DEPENDENCIES: Package now requires R v2.6.0 or newer.  The main reason
+  for this is so we can move away from outdated package dependencies.
+o NOTE: For AllelicCrosstalkCalibration and FragmentLengthNormalization, 
+  the default is now to exclude units/cells that on sex chromosomes
+  from the model fitting in order not shrink XX and XY samples towards
+  each other.  For instance, AllelicCrosstalkCalibration argument
+  'subsetToAvg' defaults to '-XY' which automatically look up all units
+  and then cells that are on ChrX and ChrY.  For this to work, there
+  must be a genome information file for the chip type. Note, '-XY' will
+  work also on chip types for which there are no ChrX, e.g. Mapping250K_Nsp.
+  The output data set will be get the extra tag '-XY' whenever this
+  type of subsetting is used.  To fit with all units, use 'subsetToAvg=NULL'.
 o MODEL UPDATE: The AllelicCrosstalkCalibration method would,
   if 'targetAvg' was specified (default), rescale the probe signals
   such that the average of *each* allele-pair group would equal 
@@ -12,10 +22,13 @@ o MODEL UPDATE: The AllelicCrosstalkCalibration method would,
   e.g. varying mixing proportions of target DNA from different 
   enzymes.  For instance, on the GenomeWideSNP_6 chip type the 
   symptom could be that raw CN estimates for CN probes would be 
-  biased compared with SNP units.  The default is now instead to
-  rescale all signals on the array together, i.e. basically a
-  median scale normalization.  The old rescaling style is available
-  by setting argument 'rescaleBy="groups"'.
+  biased compared with SNP units.  The default, for these SNP & CN
+  chip types ("5.0" & "6.0") is now to rescale all signals on the 
+  array together, i.e. basically a median scale normalization.  For 
+  the SNP only chip types ("10K", "100K" & "500K") the default is to
+  rescale by group.
+o UPDATE: Updated AffymetrixNetAffxCsvFile to recognize enzyme 
+  fragment annotation data for the new GenomeWideSNP_6 CSV files.
 o BUG FIX: The multi-enzyme model implemented was not the one in mind;
   The correction for the multi-enzyme data points was not right.
   The example(normalizeFragmentLength) has been updated to also display
@@ -24,8 +37,8 @@ o BUG FIX: The multi-enzyme model implemented was not the one in mind;
   the case for non-aliquot mixing proportions between enzymes. This 
   is indeed "automagically" corrected for by the model itself, i.e. 
   there is no need to estimate the mixing proportions explicitly.
-o UPDATE: Updated AffymetrixNetAffxCsvFile to recognize enzyme 
-  fragment annotation data for the new GenomeWideSNP_6 CSV files.
+o BUG FIX: The AllelicCrosstalkCalibration introduced in previous 
+  version was broken for 10K (and possibly also for 100K and 500K).
 o TESTS: Added test script for HuEx-1_0-st-v2 by Elizabeth Purdom.
 o CLEAN UP: Moved the following methods to R.utils: copyFile(), 
   dataFrame(), isEof(), and reassignInPackage().

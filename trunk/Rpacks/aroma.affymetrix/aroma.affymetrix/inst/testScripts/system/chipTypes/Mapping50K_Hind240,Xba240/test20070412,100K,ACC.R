@@ -30,15 +30,7 @@ csList <- csRawList;
 csAccList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
-
-  # Identify cells *not* for chromosome X
-  cdf <- getCdf(cs);
-  gi <- getGenomeInformation(cdf);
-  units <- getUnitsOnChromosome(gi, 23);
-  cells <- getCellIndices(cdf, units=units, useNames=FALSE, unlist=TRUE);
-  cells <- setdiff(1:nbrOfCells(cdf), cells);
-
-  acc <- AllelicCrosstalkCalibration(cs, subsetToAvg=cells, tags=c("*", "-X"));
+  acc <- AllelicCrosstalkCalibration(cs);
   print(acc);
   csAcc <- process(acc, verbose=log);
   print(csAcc);

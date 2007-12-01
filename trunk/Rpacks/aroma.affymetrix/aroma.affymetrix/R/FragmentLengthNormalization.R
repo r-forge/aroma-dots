@@ -37,7 +37,9 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit=NULL) {
+setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY") {
+  extraTags <- NULL;
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -69,11 +71,42 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
     }
   }
 
+  # Argument 'subsetToFit':
+  if (is.null(subsetToFit)) {
+  } else if (is.character(subsetToFit)) {
+    if (subsetToFit %in% c("-X", "-Y", "-XY")) {
+    } else {
+      throw("Unknown value of argument 'subsetToFit': ", subsetToFit);
+    }
+    extraTags <- c(extraTags, subsetToFit=subsetToFit);
+  } else {
+    subsetToFit <- Arguments$getIndices(subsetToFit, 
+                                        range=c(1, nbrOfUnits(cdf)));
+    subsetToFit <- unique(subsetToFit);
+    subsetToFit <- sort(subsetToFit);
+  }
+
+
   extend(ChipEffectTransform(dataSet, ...), "FragmentLengthNormalization", 
     .subsetToFit = subsetToFit,
-    .targetFunctions = targetFunctions
+    .targetFunctions = targetFunctions,
+    .extraTags = extraTags
   )
 })
+
+
+
+setMethodS3("getAsteriskTag", "FragmentLengthNormalization", function(this, ...) {
+  tag <- NextMethod("getAsteriskTag", this);
+
+  # Extra tags?
+  tag <- c(tag, this$.extraTags);
+
+  # Collapse
+  tag <- paste(tag, collapse=",");
+
+  tag;
+}, private=TRUE)
 
 
 setMethodS3("clearCache", "FragmentLengthNormalization", function(this, ...) {
@@ -87,18 +120,20 @@ setMethodS3("clearCache", "FragmentLengthNormalization", function(this, ...) {
 })
 
 
-setMethodS3("getParameters", "FragmentLengthNormalization", function(this, ...) {
+setMethodS3("getParameters", "FragmentLengthNormalization", function(this, expand=TRUE, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
 
   # Get parameters of this class
-  params2 <- list(
+  params <- c(params, list(
     subsetToFit = this$.subsetToFit,
     .targetFunctions = this$.targetFunctions
-  );
+  ));
 
-  # Append the two sets
-  params <- c(params, params2);
+  # Expand?
+  if (expand) {
+    subsetToFit <- getSubsetToFit(this);
+  }
 
   params;
 }, private=TRUE)
@@ -178,19 +213,24 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   if (!is.null(units) && !force)
     return(units);
 
-  verbose && enter(verbose, "Getting subset to be fitted");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identifying all potential units, i.e. SNPs and CN probes
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Identifying units that are SNP and CN probes");
 
   # Get SNP information
   cdf <- getCdf(this);
   si <- getSnpInformation(cdf);
 
-  # Identify all SNP and CN units
+  # Identify all SNP and CN units (==potential units to be fitted)
   verbose && enter(verbose, "Identifying SNPs and CN probes");
   units <- indexOf(cdf, "^(SNP|CN)");
   verbose && str(verbose, units);
   verbose && exit(verbose);
 
-  # Keep only those for which we have PCR fragmenth-length information for at least one enzyme
+  # Keep only those for which we have PCR fragmenth-length information
+  # for at least one enzyme
   verbose && enter(verbose, "Reading fragment lengths");
   fl <- getFragmentLengths(si, units=units);
   keep <- rep(FALSE, nrow(fl));
@@ -199,11 +239,56 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   }
   units <- units[keep];
   verbose && printf(verbose, "Number of SNP/CN units without fragment-length details: %d out of %d (%.1f%%)\n", sum(!keep), length(keep), 100*sum(!keep)/length(keep));
+
   verbose && exit(verbose);
 
 
-  # Fit to a subset of the units?
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Subset with a prespecified set of units?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   subsetToFit <- this$.subsetToFit;
+  if (is.character(subsetToFit)) {
+    if (subsetToFit %in% c("-X", "-Y", "-XY")) {
+      verbose && enter(verbose, "Identify subset of units from genome information");
+      verbose && cat(verbose, "subsetToFit: ", subsetToFit);
+
+      # Look up in cache
+      subset <- this$.subsetToFitExpanded;
+      if (is.null(subset)) {
+        # Get the genome information (throws an exception if missing)
+        gi <- getGenomeInformation(cdf);
+        verbose && print(verbose, gi);
+  
+        # Identify units to be excluded
+        if (subsetToFit == "-X") {
+          subset <- getUnitsOnChromosome(gi, 23, .checkArgs=FALSE);
+        } else if (subsetToFit == "-Y") {
+          subset <- getUnitsOnChromosome(gi, 24, .checkArgs=FALSE);
+        } else if (subsetToFit == "-XY") {
+          subset <- getUnitsOnChromosome(gi, 23:24, .checkArgs=FALSE);
+        }
+  
+        verbose && cat(verbose, "Units to exclude: ");
+        verbose && str(verbose, subset);
+  
+        # The units to keep
+        subset <- setdiff(1:nbrOfUnits(cdf), subset);
+  
+        verbose && cat(verbose, "Units to include: ");
+        verbose && str(verbose, subset);
+
+        # Store
+        this$.subsetToFitExpanded <- subset;
+      }
+
+      subsetToFit <- subset;
+      rm(subset);
+
+      verbose && exit(verbose);
+    }
+  }
+
   if (!is.null(subsetToFit)) {
     # A fraction subset?
     if (length(subsetToFit) == 1 && 0 < subsetToFit && subsetToFit < 1) {
@@ -213,9 +298,11 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
     }
 
     # Make sure to keep data points at the tails too
+    extremeUnits <- c();
     for (ee in seq(length=ncol(fl))) {
-      keep <- c(keep, which.min(fl[,ee]), which.max(fl[,ee]));
+      extremeUnits <- c(extremeUnits, which.min(fl[,ee]), which.max(fl[,ee]));
     }
+    keep <- c(keep, extremeUnits);
     keep <- unique(keep);
 
     # Now filter
@@ -565,6 +652,12 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2007-12-01
+# o Added getAsteriskTag(0 to FragmentLengthNormalization.
+# o Similar to AllelicCrosstalkCalibration, the constructor argument
+#   'subsetToFit' of FragmentLengthNormalization accept "-XY" (and "-X" and
+#   "-Y") to specify the set of units to fit the model over to be all units
+#   that are not on ChrX or ChrY.
 # 2007-11-19
 # o Updated getSubsetToFit() to handle chip types with multiple enzymes.
 # o Updated methods to give an error if chip types with more than one
