@@ -33,7 +33,8 @@ stopifnot(identical(getNames(csC), getNames(cs)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Averaging probe-level model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE);
+plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE, tags=c("+300", "*"));
+plm$shift <- +300;
 print(plm);
 fit(plm, verbose=log);
 

@@ -29,7 +29,6 @@ csList <- csRawList;
 csAccList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
-
   acc <- AllelicCrosstalkCalibration(cs);
   print(acc);
   csAcc <- process(acc, verbose=log);
@@ -47,7 +46,7 @@ cesCnList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
   plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, 
-                                              tags=c("+300", "*", "w"));
+                                                  tags=c("+300", "*"));
   plm$shift <- +300;
   print(plm);
   fit(plm, ram=1/2, verbose=log);
