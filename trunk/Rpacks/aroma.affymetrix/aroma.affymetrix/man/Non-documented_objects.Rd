@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Tue Nov 27 21:13:25 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1387,6 +1385,8 @@
 \alias{rescaleByGroups}
 \alias{rescaleByGroups.AllelicCrosstalkCalibration}
 \alias{getAsteriskTag.AllelicCrosstalkCalibration}
+\alias{clearCache.AllelicCrosstalkCalibration}
+\alias{getAsteriskTag.FragmentLengthNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that

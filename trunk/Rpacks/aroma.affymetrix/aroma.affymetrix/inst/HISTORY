@@ -5,9 +5,9 @@ Version: 0.8.1 [2007-12-01]
 o DEPENDENCIES: Package now requires R v2.6.0 or newer.  The main reason
   for this is so we can move away from outdated package dependencies.
 o NOTE: For AllelicCrosstalkCalibration and FragmentLengthNormalization, 
-  the default is now to exclude units/cells that on sex chromosomes
-  from the model fitting in order not shrink XX and XY samples towards
-  each other.  For instance, AllelicCrosstalkCalibration argument
+  the default is now to exclude units/cells on sex chromosomes from
+  the model fitting (in order not shrink XX and XY samples towards
+  each other).  For instance, AllelicCrosstalkCalibration argument
   'subsetToAvg' defaults to '-XY' which automatically look up all units
   and then cells that are on ChrX and ChrY.  For this to work, there
   must be a genome information file for the chip type. Note, '-XY' will
@@ -44,6 +44,8 @@ o CLEAN UP: Moved the following methods to R.utils: copyFile(),
   dataFrame(), isEof(), and reassignInPackage().
 o CLEAN UP: normalizeAverage.{matrix,list}() is now instead in
   the aroma.light package.
+o Package pass R CMD check on R v2.6.1 patched as well as all
+  redundancy tests in testScripts/.
 
 
 Version: 0.8.0 [2007-11-25]

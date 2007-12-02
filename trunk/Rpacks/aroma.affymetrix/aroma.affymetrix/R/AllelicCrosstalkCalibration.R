@@ -16,6 +16,7 @@
 # @synopsis 
 #
 # \arguments{
+#   \item{dataSet}{An @see "AffymetrixCelSet".}
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform".}
 #   \item{rescaleBy}{A @character string specifying what sets of cells
@@ -139,6 +140,17 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
 })
 
 
+setMethodS3("clearCache", "AllelicCrosstalkCalibration", function(this, ...) {
+  # Clear all cached values.
+  for (ff in c(".subsetToAvgExpanded")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object 
+  NextMethod("clearCache", object=this, ...);
+})
+
+
 setMethodS3("getAsteriskTag", "AllelicCrosstalkCalibration", function(this, ...) {
   tag <- NextMethod("getAsteriskTag", this);
 
@@ -173,7 +185,7 @@ setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ...,
       verbose && cat(verbose, "subsetToAvg: ", subsetToAvg);
 
       # Look up in cache
-      subset <- this$.subsetToFitExpanded;
+      subset <- this$.subsetToAvgExpanded;
       if (is.null(subset)) {
         dataSet <- getInputDataSet(this);
         cdf <- getCdf(dataSet);
@@ -207,7 +219,7 @@ setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ...,
         verbose && str(verbose, subset);
 
         # Store
-        this$.subsetToFitExpanded <- subset;
+        this$.subsetToAvgExpanded <- subset;
       }
 
       subsetToAvg <- subset;
@@ -1078,6 +1090,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 ############################################################################
 # HISTORY:
 # 2007-12-01
+# o MEMORY OPTIMIZATION: Added clearCache() to AllelicCrosstalkCalibration.
 # o BUG FIX: The AllelicCrosstalkCalibration introduced in previous version
 #   was broken for 10K (maybe 100K and 500K as well).
 # o Now 'subsetToAvg' of AllelicCrosstalkCalibration accepts '-XY' (and

@@ -3,8 +3,6 @@
 % 
 %  normalizeFragmentLength.R
 % 
-% on Thu Nov 29 17:09:21 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

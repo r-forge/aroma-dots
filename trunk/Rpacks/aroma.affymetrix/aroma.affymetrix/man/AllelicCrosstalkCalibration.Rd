@@ -1,9 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AllelicCrosstalkCalibration.R
+%  allelicCrosstalkCalibration.R
 % 
-% on Tue Nov 27 21:13:37 2007.
+% on Sat Dec 01 16:14:08 2007.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,7 +16,7 @@
  \title{The AllelicCrosstalkCalibration class}
 
  \description{
-  Package:   \cr
+  Package:  aroma.affymetrix \cr
 \bold{Class AllelicCrosstalkCalibration}\cr
 
 \code{\link[R.oo]{Object}}\cr
@@ -42,9 +42,10 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   affect the model fitting and are unaffected.
  }
 
- \usage{AllelicCrosstalkCalibration(..., rescaleBy=c("all", "groups", "none"), targetAvg=c(2200, 2200), subsetToAvg=NULL, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
+ \usage{AllelicCrosstalkCalibration(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
 
  \arguments{
+   \item{dataSet}{An \code{\link{AffymetrixCelSet}}.}
    \item{...}{Arguments passed to the constructor of
      \code{\link{ProbeLevelTransform}}.}
    \item{rescaleBy}{A \code{\link[base]{character}} string specifying what sets of cells
@@ -89,7 +90,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:process.AllelicCrosstalkCalibration]{process}} \tab Calibrates the data set.\cr
+ \tab \code{clearCache} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:process.AllelicCrosstalkCalibration]{process}} \tab Calibrates the data set.\cr
 }
 
