@@ -636,3 +636,5 @@
  rescaleByAll rescaleByAll.AllelicCrosstalkCalibration
  rescaleByGroups rescaleByGroups.AllelicCrosstalkCalibration
 getAsteriskTag.AllelicCrosstalkCalibration
+clearCache.AllelicCrosstalkCalibration
+getAsteriskTag.FragmentLengthNormalization

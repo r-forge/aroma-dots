@@ -80,6 +80,7 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
     }
     extraTags <- c(extraTags, subsetToFit=subsetToFit);
   } else {
+    cdf <- getCdf(dataSet);
     subsetToFit <- Arguments$getIndices(subsetToFit, 
                                         range=c(1, nbrOfUnits(cdf)));
     subsetToFit <- unique(subsetToFit);
