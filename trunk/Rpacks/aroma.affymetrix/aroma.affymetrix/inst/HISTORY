@@ -11,7 +11,7 @@ o NOTE: For AllelicCrosstalkCalibration and FragmentLengthNormalization,
   'subsetToAvg' defaults to '-XY' which automatically look up all units
   and then cells that are on ChrX and ChrY.  For this to work, there
   must be a genome information file for the chip type. Note, '-XY' will
-  work also on chip types for which there are no ChrX, e.g. Mapping250K_Nsp.
+  work also on chip types for which there is no ChrY, e.g. Mapping250K_Nsp.
   The output data set will be get the extra tag '-XY' whenever this
   type of subsetting is used.  To fit with all units, use 'subsetToAvg=NULL'.
 o MODEL UPDATE: The AllelicCrosstalkCalibration method would,
