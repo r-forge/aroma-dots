@@ -87,7 +87,7 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
       if (regexpr("^Mapping[0-9]+K_", chipType) != -1) {
         rescaleBy <- "groups";
       } else if (regexpr("^GenomeWideSNP_", chipType) != -1) {
-        rescaleBy <- "groups";
+        rescaleBy <- "all";
       } else {
         throw("Failed to infer a default value for 'rescaleBy' for the given chip type: ", chipType);
       }
@@ -121,7 +121,7 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
       extraTags <- c(extraTags, subsetToAvg=subsetToAvg);
     } else {
       subsetToAvg <- Arguments$getIndices(subsetToAvg, 
-                                          range=c(1, nbrOfUnits(cdf)));
+                                          range=c(1, nbrOfCells(cdf)));
       subsetToAvg <- unique(subsetToAvg);
       subsetToAvg <- sort(subsetToAvg);
     }
