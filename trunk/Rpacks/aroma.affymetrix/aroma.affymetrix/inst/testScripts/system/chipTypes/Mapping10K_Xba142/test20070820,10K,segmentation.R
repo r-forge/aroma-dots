@@ -36,7 +36,7 @@ stopifnot(identical(getNames(csAcc), getNames(cs)));
 # Probe-level modelling test (for CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 plm <- RmaCnPlm(csAcc, mergeStrands=TRUE, combineAlleles=TRUE, 
-                                              tags=c("+300", "*", "w"));
+                                                  tags=c("+300", "*"));
 plm$shift <- +300;
 print(plm);
 

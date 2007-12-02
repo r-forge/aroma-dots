@@ -28,7 +28,6 @@ csList <- csRawList;
 csAccList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
-
   acc <- AllelicCrosstalkCalibration(cs);
   print(acc);
   csAcc <- process(acc, verbose=log);

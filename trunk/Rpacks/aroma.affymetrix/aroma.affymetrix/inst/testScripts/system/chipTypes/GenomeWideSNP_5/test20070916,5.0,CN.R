@@ -33,7 +33,8 @@ stopifnot(identical(getNames(csC), getNames(cs)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Averaging probe-level model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE);
+plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE, tags=c("+300","*"));
+plm$shift <- +300;
 print(plm);
 fit(plm, verbose=log);
 
@@ -42,8 +43,7 @@ ces <- getChipEffectSet(plm);
 theta <- extractMatrix(ces, units=1000:1002);
 
 fln <- FragmentLengthNormalization(ces);
-#cesFln <- process(fln, verbose=log);
-cesFln <- ces;
+cesFln <- process(fln, verbose=log);
 print(cesFln);
 
 cnr <- CbsModel(cesFln);
