@@ -13,6 +13,9 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,type="all",dirLoc=getPat
 #keepColumns are the columns in the annot. file to keep when do comparisons
 #ncolumns are the number of (total) columns in annot. file -- could find it, but safer to just have user give
 #tag added to name: <chiptype>,tag.cdf (can contain commas itself)
+#example (a test run for keeping only probesets with 3 or 4 probes):
+#x<-createTranscriptCDF(cdfProbeset, csvAnnotFile, keepType=c("3","4"),columnCompare="probe_count",
+#  dirLoc=getwd(),tag="temp",nrow=500, keepColumns=c(1,6,7,16,19,39),writeCdf=F)
 
     type<-match.arg(type,c("core","extended","full","main","control","all","cds"))
     npbset<-nbrOfUnits(probesetCdf)
