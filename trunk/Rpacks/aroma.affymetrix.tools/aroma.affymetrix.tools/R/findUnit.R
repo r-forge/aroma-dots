@@ -1,4 +1,4 @@
-findUnit<-function(cdf,names){ #given group (probeset) name, returns the unit number (cdf dependent) where group is found
+findUnit<-function(cdf,names){ #given group (probeset) name(s), returns the unit number (cdf dependent) where group is found
     groupNames <- readCdfGroupNames(cdf$.pathname);
     blanks <- which(unlist(lapply(groupNames, function(x){all(x=="")})));
     groupNames[blanks] <- names(groupNames)[blanks];
