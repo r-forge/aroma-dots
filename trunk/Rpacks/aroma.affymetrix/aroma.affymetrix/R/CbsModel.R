@@ -48,11 +48,17 @@ setConstructorS3("CbsModel", function(cesTuple=NULL, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "CbsModel", function(this, ...) {
-  tag <- "CBS";
+setMethodS3("getAsteriskTag", "CbsModel", function(this, collapse=NULL, ...) {
+  tags <- "CBS";
+
+  # Add class-specific tags
   if (isPaired(this))
-    tag <- c(tag, "paired");
-  tag;
+    tags <- c(tags, "paired");
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
+  tags;
 }, protected=TRUE)
 
 

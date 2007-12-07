@@ -384,13 +384,19 @@ setMethodS3("getTags", "GenericDataFile", function(this, pattern=NULL, collapse=
   # Keep anything after the data-set name (and the separator).
   name <- substring(name, nchar(dsName)+2);
   
-  tags <- strsplit(name, split=",")[[1]];
+  tags <- unlist(strsplit(name, split=","));
 
   # Keep only those matching a regular expression?
   if (!is.null(pattern))
     tags <- grep(pattern, tags, value=TRUE);
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+ 
   if (length(tags) == 0)
     tags <- NULL;
 

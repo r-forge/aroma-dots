@@ -13,7 +13,6 @@
 #   \item{...}{Arguments passed to @see "AffinePlm".}
 #   \item{mergeStrands}{If @TRUE, the sense and the anti-sense strands are
 #      fitted together, otherwise separately.}
-#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{
@@ -23,33 +22,33 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    idx <- which(tags == "*");
-    if (length(idx) > 0) {
-      if (!mergeStrands)
-        tags <- R.utils::insert.default(tags, idx+1, "+-");
-    }
-  }
-
-  extend(AffinePlm(..., tags=tags), c("AffineSnpPlm", uses(SnpPlm())),
+setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE) {
+  extend(AffinePlm(...), c("AffineSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })
 
 
 
+setMethodS3("getAsteriskTag", "AffineSnpPlm", function(this, collapse=NULL, ...) {
+  # Returns 'AFF[,<flavor>]'
+  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+
+  # Add class specific parameter tags
+  if (!this$mergeStrands)
+    tags <- c(tags, "+-");
+
+  # Collapse
+  tags <- paste(tags, collapse=collapse); 
+
+  tags;
+}, protected=TRUE) 
+
 
 ############################################################################
 # HISTORY:
+# 2007-12-06
+# o Added getAsteriskTag() for AffineSnpPlm.
 # 2006-09-11
 # o Created from the MbeiSnpPlm.
 ############################################################################

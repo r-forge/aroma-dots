@@ -13,7 +13,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
-#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{
@@ -39,7 +38,7 @@
 #   Li, C. and Wong, W.H. (2001), Proc. Natl. Acad. Sci USA 98, 31-36.\cr
 # }
 #*/###########################################################################
-setConstructorS3("MbeiPlm", function(..., tags="*") {
+setConstructorS3("MbeiPlm", function(...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,17 +47,7 @@ setConstructorS3("MbeiPlm", function(..., tags="*") {
     require("affy") || throw("Package 'affy' not loaded.");
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-  }
-
-
-  extend(ProbeLevelModel(..., tags=tags), "MbeiPlm")
+  extend(ProbeLevelModel(...), "MbeiPlm")
 })
 
 

@@ -19,7 +19,6 @@
 #     otherwise not. That is, if @FALSE, a \emph{linear} (proportional) 
 #     model without offset is fitted, resulting in very similar results as 
 #     obtained by the @see "MbeiPlm".}
-#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{
@@ -49,7 +48,7 @@
 #   Bengtsson \& \enc{Hössjer}{Hossjer} (2006). \cr
 # }
 #*/###########################################################################
-setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
+setConstructorS3("AffinePlm", function(..., background=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -58,34 +57,22 @@ setConstructorS3("AffinePlm", function(..., background=TRUE, tags="*") {
     require("aroma.light") || throw("Package not loaded: aroma.light");
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-#    # Update default tags
-#    idx <- which(tags == "*");
-#    if (length(idx) > 0) {
-#      tags[idx] <- "APLM";
-#      if (!background)
-#        tags <- R.utils::insert.default(tags, idx+1, "lin");
-#    }
-  }
-
-  extend(ProbeLevelModel(..., tags=tags), "AffinePlm",
+  extend(ProbeLevelModel(...), "AffinePlm",
     background = background
   )
 })
 
 
-setMethodS3("getAsteriskTag", "AffinePlm", function(this, ...) {
-  tags <- "APLM";
+setMethodS3("getAsteriskTag", "AffinePlm", function(this, collapse=NULL, ...) {
+  tags <- "AFF";
+
+  # Add class specific parameter tags
   if (!this$background)
     tags <- c(tags, "lin");
-  tags <- paste(tags, collapse=",");
+
+  # Collapse
+  tags <- paste(tags, collapse=collapse);
+
   tags;
 })
 
@@ -205,6 +192,8 @@ setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-12-06
+# o The tag for the affine PLM is now 'AFF' (before it was APLM).
 # 2007-10-06
 # o Now the asterisk tag ('*') is no longer assigned in the constructor,
 #   but in getTags().

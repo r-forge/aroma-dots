@@ -76,13 +76,17 @@ setMethodS3("clearCache", "SmoothMultiarrayModel", function(this, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "SmoothMultiarrayModel", function(this, ...) {
+setMethodS3("getAsteriskTag", "SmoothMultiarrayModel", function(this, collapse=NULL, ...) {
   classTag <- toupper(gsub("Model$", "", class(this)[1]));
   weightsTag <- switch(this$.typoOfWeights, "1/s2"="w=s2inv", "");
   kernelTag <- this$.kernel;
   bandwidthTag <- sprintf("b=%d", getBandwidth(this));
   tags <- c(classTag, weightsTag, kernelTag, bandwidthTag);
   tags <- tags[nchar(tags) > 0];
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
   tags;
 }, protected=TRUE)
 

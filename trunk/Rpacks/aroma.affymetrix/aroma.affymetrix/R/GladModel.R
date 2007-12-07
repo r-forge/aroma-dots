@@ -65,11 +65,17 @@ setConstructorS3("GladModel", function(cesTuple=NULL, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "GladModel", function(this, ...) {
-  tag <- "GLAD";
+setMethodS3("getAsteriskTag", "GladModel", function(this, collapse=NULL, ...) {
+  tags <- "GLAD";
+
+  # Add class-specific tags
   if (isPaired(this))
-    tag <- c(tag, "paired");
-  tag;
+    tags <- c(tags, "paired");
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
+  tags;
 }, protected=TRUE)
 
 

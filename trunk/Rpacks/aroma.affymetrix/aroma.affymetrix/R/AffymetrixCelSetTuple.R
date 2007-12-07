@@ -47,6 +47,7 @@ setConstructorS3("AffymetrixCelSetTuple", function(csList=NULL, tags="*", ..., .
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
+    tags <- tags[nchar(tags) > 0];
   }
 
   extend(Object(), "AffymetrixCelSetTuple",
@@ -275,6 +276,7 @@ setMethodS3("setTags", "AffymetrixCelSetTuple", function(this, tags=NULL, ...) {
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
+    tags <- tags[nchar(tags) > 0];
   }
 
   this$.tags <- tags;
@@ -299,7 +301,7 @@ setMethodS3("getTags", "AffymetrixCelSetTuple", function(this, collapse=NULL, ..
   tags <- c(tags, this$.tags);
 
   # Update asterisk tags
-  tags[tags == "*"] <- getAsteriskTag(this);
+  tags[tags == "*"] <- getAsteriskTag(this, collapse=",");
 
   # Remove empty tags
   tags <- tags[nchar(tags) > 0];
@@ -307,7 +309,12 @@ setMethodS3("getTags", "AffymetrixCelSetTuple", function(this, collapse=NULL, ..
   # Remove duplicated tags 
   tags <- locallyUnique(tags);
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
 
   if (length(tags) == 0)
     tags <- NULL;

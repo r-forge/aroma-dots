@@ -393,7 +393,7 @@ setMethodS3("getTags", "GenericDataFileSet", function(this, collapse=NULL, ...) 
     # Keep anything after the file set name (and the separator).
     name <- substring(name, nchar(fsName)+2);
   
-    filenameTags <- strsplit(name, split=",")[[1]];
+    filenameTags <- unlist(strsplit(name, split=","));
 
     pos <- which("*" == tags);
     tags <- tags[-pos];
@@ -406,7 +406,13 @@ setMethodS3("getTags", "GenericDataFileSet", function(this, collapse=NULL, ...) 
     }
   }
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
 
@@ -461,6 +467,7 @@ setMethodS3("setTags", "GenericDataFileSet", function(this, tags="*", ...) {
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
+    tags <- tags[nchar(tags) > 0];
   }
   
   this$.tags <- tags;

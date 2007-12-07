@@ -151,16 +151,16 @@ setMethodS3("clearCache", "AllelicCrosstalkCalibration", function(this, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "AllelicCrosstalkCalibration", function(this, ...) {
-  tag <- NextMethod("getAsteriskTag", this);
+setMethodS3("getAsteriskTag", "AllelicCrosstalkCalibration", function(this, collapse=NULL, ...) {
+  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
 
   # Extra tags?
-  tag <- c(tag, this$.extraTags);
+  tags <- c(tags, this$.extraTags);
 
-  # Collapse
-  tag <- paste(tag, collapse=",");
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
 
-  tag;
+  tags;
 }, private=TRUE)
 
 

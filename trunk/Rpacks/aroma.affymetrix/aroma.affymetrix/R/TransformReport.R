@@ -163,9 +163,15 @@ setMethodS3("getTags", "TransformReport", function(this, collapse=NULL, ...) {
   tags <- this$.tags;
 
   ds <- getOutputDataSet(this);
-  tags <- getTags(ds);
+  tags <- getTags(ds, collapse=collapse);
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
 

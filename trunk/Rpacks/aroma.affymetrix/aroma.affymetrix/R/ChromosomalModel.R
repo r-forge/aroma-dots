@@ -56,8 +56,9 @@ setConstructorS3("ChromosomalModel", function(cesTuple=NULL, tags="*", genome="H
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
+    tags <- tags[nchar(tags) > 0];
   }
-
+ 
 
   this <- extend(Object(), "ChromosomalModel",
     .cesTuple = cesTuple,
@@ -82,7 +83,7 @@ setMethodS3("as.character", "ChromosomalModel", function(x, ...) {
 
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
-  s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
+  s <- c(s, paste("Tags:", getTags(this, collapse=","));
   s <- c(s, paste("Chip type (virtual):", getChipType(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   nbrOfChipTypes <- nbrOfChipTypes(this);
@@ -442,31 +443,39 @@ setMethodS3("setAlias", "ChromosomalModel", function(this, alias=NULL, ...) {
 
 
 
-setMethodS3("getAsteriskTag", "ChromosomalModel", function(this, ...) {
-  # Default '*' tag is the abbreviation from upper-case letters only,
-  # e.g. "FooHooMooModel" gives "FHM". 
-  tag <- class(this)[1];
-  tag <- gsub("Model$", "", tag);
-  tag <- strsplit(tag, split="")[[1]];
-  tagUC <- toupper(tag);
-  keep <- (tag == tagUC);
-  tag <- tag[keep];
-  tag <- paste(tag, collapse=""); 
+setMethodS3("getAsteriskTag", "ChromosomalModel", function(this, collapse=NULL, ...) {
+  # Create a default asterisk tags for any class by extracting all
+  # capital letters and pasting them together, e.g. AbcDefGhi => ADG.
+  name <- class(this)[1];
 
-  tag;
+  # Remove any 'Model' suffixes
+  name <- gsub("Model$", "", name);
+
+  name <- capitalize(name);
+
+  # Vectorize
+  name <- strsplit(name, split="")[[1]];
+
+  # Identify upper case
+  name <- name[(toupper(name) == name)];
+
+  # Paste
+  name <- paste(name, collapse="");
+
+  tag <- name;
 }, protected=TRUE)
 
 
 
 
 setMethodS3("getTags", "ChromosomalModel", function(this, collapse=NULL, ...) {
-  tags <- getTags(getSetTuple(this), ...);
+  tags <- getTags(getSetTuple(this), collapse=collapse, ...);
 
   # Add model tags
   tags <- c(tags, this$.tags);
 
   # Update default tags
-  asteriskTags <- paste(getAsteriskTag(this), collapse=",");
+  asteriskTags <- getAsteriskTag(this, collapse=",");
   if (length(asteriskTags) == 0)
     asteriskTags <- "";
   tags[tags == "*"] <- asteriskTags;
@@ -479,7 +488,13 @@ setMethodS3("getTags", "ChromosomalModel", function(this, collapse=NULL, ...) {
   # Get unique tags
   tags <- locallyUnique(tags);
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
 

@@ -1,6 +1,16 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.8.2 [2007-12-08]
+o UPDATE: Now output sets of a FirmaModel are stored in firmaData/.
+  Previously they were stored under modelFirmaModel/.
+o CLEAN UP: Went through all classes where applicable and updated
+  so that getTags() and getAsteriskTags() work properly.  The
+  latter was also renamed from getAsteriskTag() to getAsteriskTags()
+  to indicate that it can actually return a multiple tags.
+o BUG FIX: Tags from the input data set of FirmaModel were lost.
+
+
 Version: 0.8.1 [2007-12-01]
 o DEPENDENCIES: Package now requires R v2.6.0 or newer.  The main reason
   for this is so we can move away from outdated package dependencies.

@@ -17,7 +17,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
-#   \item{tags}{A @character @vector of tags.}
 #   \item{flavor}{A @character string specifying what model fitting algorithm
 #     to be used.  This makes it possible to get identical estimates as other
 #     packages.}
@@ -53,41 +52,32 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("AvgPlm", function(..., tags="*", flavor=c("median", "mean")) {
+setConstructorS3("AvgPlm", function(..., flavor=c("median", "mean")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'flavor':
   flavor <- match.arg(flavor);
 
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    asteriskTag <- "AVG";
-    # Add flavor tag?
-    if (flavor != "median")
-      asteriskTag <- paste(asteriskTag, flavor, sep=",");
-
-    # Update default tags
-    tags[tags == "*"] <- asteriskTag;
-
-    # Split by commas
-    tags <- paste(tags, collapse=",");
-    tags <- unlist(strsplit(tags, split=","));
-  }
-
-
-  extend(ProbeLevelModel(..., tags=tags), "AvgPlm",
+  extend(ProbeLevelModel(...), "AvgPlm",
     .flavor = flavor
   )
 })
 
 
-setMethodS3("getAsteriskTag", "AvgPlm", function(this, ...) {
-  "AVG";
+setMethodS3("getAsteriskTag", "AvgPlm", function(this, collapse=NULL, ...) {
+  tags <- "AVG";
+
+  # Add class specific parameter tags
+  if (this$.flavor != "median")
+    tags <- paste(tags, this$.flavor, sep=",");
+
+  # Collapse
+  tags <- paste(tags, collapse=collapse); 
+
+  tags;
 })
+
 
 
 setMethodS3("getParameterSet", "AvgPlm", function(this, ...) {
@@ -294,6 +284,8 @@ setMethodS3("getCalculateResidualsFunction", "AvgPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-10-06
+# o Added getAsteriskTag() to AvgPlm.
 # 2007-09-16
 # o Renamed the variables such that index I is for samples and K is for
 #   probes, as in the paper.

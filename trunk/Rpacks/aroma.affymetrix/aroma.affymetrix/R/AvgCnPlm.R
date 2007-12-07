@@ -13,7 +13,6 @@
 #   \item{...}{Arguments passed to @see "AvgSnpPlm".}
 #   \item{combineAlleles}{If @FALSE, allele A and allele B are treated 
 #      seperately, otherwise together.}
-#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{
@@ -22,34 +21,32 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("AvgCnPlm", function(..., combineAlleles=FALSE, tags="*") {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    idx <- which(tags == "*");
-    if (length(idx) > 0) {
-      if (combineAlleles)
-        tags <- R.utils::insert.default(tags, idx+1, "A+B");
-    }
-  }
-
-
-  extend(AvgSnpPlm(..., tags=tags), c("AvgCnPlm", uses(CnPlm())),
+setConstructorS3("AvgCnPlm", function(..., combineAlleles=FALSE) {
+  extend(AvgSnpPlm(...), c("AvgCnPlm", uses(CnPlm())),
     combineAlleles = combineAlleles
   )
 })
 
 
+setMethodS3("getAsteriskTag", "AvgCnPlm", function(this, collapse=NULL, ...) {
+  # Returns 'AVG[,<flavor>][,+-]'
+  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+
+  # Add class specific parameter tags
+  if (this$combineAlleles)
+    tags <- c(tags, "A+B");
+
+  # Collapse
+  tags <- paste(tags, collapse=collapse); 
+
+  tags;
+}, protected=TRUE) 
 
 
 ############################################################################
 # HISTORY:
+# 2007-12-06
+# o Added getAsteriskTag() for AvgSnpPlm.
 # 2007-09-08
 # o Created from MbeiCnPlm.R.
 ############################################################################

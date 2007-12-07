@@ -14,7 +14,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelModel".}
-#   \item{tags}{A @character @vector of tags.}
 #   \item{flavor}{A @character string specifying what model fitting algorithm
 #     to be used.  This makes it possible to get identical estimates as other
 #     packages.}
@@ -61,44 +60,31 @@
 #  NAR, 2003, 31, e15.\cr
 # }
 #*/###########################################################################
-setConstructorS3("RmaPlm", function(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo")) {
+setConstructorS3("RmaPlm", function(..., flavor=c("affyPLM", "affyPLMold", "oligo")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'flavor':
   flavor <- match.arg(flavor);
 
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-#    asteriskTag <- "RMA";
-#    # Add flavor tag?
-#    if (flavor != "affyPLM")
-#      asteriskTag <- paste(asteriskTag, flavor, sep=",");
-
-#    # Update default tags
-#    tags[tags == "*"] <- asteriskTag;
-
-    # Split by commas
-    tags <- paste(tags, collapse=",");
-    tags <- unlist(strsplit(tags, split=","));
-  }
-
-
-  extend(ProbeLevelModel(..., tags=tags), "RmaPlm",
+  extend(ProbeLevelModel(...), "RmaPlm",
     .flavor = flavor,
     treatNAsAs = "weights"
   )
 })
 
 
-setMethodS3("getAsteriskTag", "RmaPlm", function(this, ...) {
-  tag <- "RMA";
+setMethodS3("getAsteriskTag", "RmaPlm", function(this, collapse=NULL, ...) {
+  tags <- "RMA";
+
+  # Add class specific parameter tags
   if (this$.flavor != "affyPLM")
-    tag <- paste(tag, this$.flavor, sep=",");
-  tag;
+    tags <- c(tags, this$.flavor);
+
+  # Collapse
+  tags <- paste(tags, collapse=collapse); 
+
+  tags;
 })
 
 

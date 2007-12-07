@@ -35,9 +35,18 @@ setConstructorS3("AffymetrixFileSetReporter", function(set=NULL, tags="*", ..., 
     throw("Argument 'set' is not a ", .setClass, ": ", class(set)[1]);
   }
 
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+    tags <- tags[nchar(tags) > 0];
+  }
+ 
+
   extend(Object(...), "AffymetrixFileSetReporter",
+    .tags = tags,
     .alias = NULL,
-    .set = set
+    .set = set,
   )
 })
 
@@ -219,14 +228,20 @@ setMethodS3("getTags", "AffymetrixFileSetReporter", function(this, collapse=NULL
   tags <- locallyUnique(tags);
 
   # Update asterisk tags
-  tags[tags == "*"] <- getAsteriskTags(this);
+  tags[tags == "*"] <- getAsteriskTags(this, collapse=",");
 
   # Keep non-empty tags
   tags <- tags[nchar(tags) > 0];
 
   tags <- locallyUnique(tags);
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
 
