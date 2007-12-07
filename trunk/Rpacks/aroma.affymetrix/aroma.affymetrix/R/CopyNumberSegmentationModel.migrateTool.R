@@ -38,8 +38,8 @@ setMethodS3("migrateTool", "CopyNumberSegmentationModel", function(static, what=
       className <- classes[cc];
       clazz <- Class$forName(className);
       obj <- newInstance(clazz);
-      aTag <- getAsteriskTag(obj);
-      pattern <- sprintf(",%s(,|$)", aTag);
+      aTag <- getAsteriskTag(obj)[1];
+      pattern <- sprintf(",%s(,|$)", aTags);
       oldRootPath <- sprintf("%sData", tolower(aTag));
 
       verbose && enter(verbose, sprintf("Step #%d of %d - Scanning %s/ for datasets to be renamed", cc, length(classes), oldRootPath));

@@ -28,11 +28,21 @@ setConstructorS3("SmoothSaModel", function(...) {
 })
 
 
-setMethodS3("getAsteriskTag", "SmoothSaModel", function(this, ...) {
-  tags <- NextMethod("getAsteriskTag", this, ...);
+setMethodS3("getAsteriskTag", "SmoothSaModel", function(this, collapse=NULL, ...) {
+  tags <- NextMethod("getAsteriskTag", this, collapse=NULL, ...);
+
+  # Replace first tags
   tags[1] <- "SA";
+
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   tags;
-}, protected=TRUE)
+}, protected=TRUE) 
 
 
 setMethodS3("getFitFunction", "SmoothSaModel", function(this, ...) {

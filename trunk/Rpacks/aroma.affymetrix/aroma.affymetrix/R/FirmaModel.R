@@ -27,39 +27,37 @@
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #
 #*/###########################################################################
-setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod="upperQuartile", tags="*", ...) {
+setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod="upperQuartile", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'rmaPlm':
 
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    asteriskTag <- "FIRMA";
-
-    # Update default tags
-    tags[tags == "*"] <- asteriskTag;
-
-    # Split by commas
-    tags <- paste(tags, collapse=",");
-    tags <- unlist(strsplit(tags, split=","));
-  }
 
   # Argument 'summaryMethod':
   if (!is.character(summaryMethod)) {
     throw("Argument 'summaryMethod' must be a string.");
   }
 
-  extend(UnitModel(..., tags=tags), "FirmaModel",
-         .plm=rmaPlm,
-         summaryMethod=summaryMethod,
-         "cached:.fs"=NULL
-         );
-  
+  extend(UnitModel(...), "FirmaModel",
+     .plm = rmaPlm,
+     summaryMethod = summaryMethod,
+     "cached:.fs" = NULL
+   );
 })
 
+
+setMethodS3("getAsteriskTag", "FirmaModel", function(this, collapse=NULL, ...) {
+  tags <- "FIRMA";
+
+  # Append class-specific tags
+  # tags <- c(tags, ...);
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
+  tags;
+})
 
 setMethodS3("getPlm", "FirmaModel", function(this, ...) {
   this$.plm;
@@ -77,8 +75,16 @@ setMethodS3("getName", "FirmaModel", function(this, ...) {
   getName(this$.plm, ...);
 })
 
-setMethodS3("getTags", "FirmaModel", function(this, ...) {
-  this$.tags;
+setMethodS3("getTags", "FirmaModel", function(this, collapse=NULL, ...) {
+  tags <- NextMethods("getTags", this, collapse=collapse, ...);
+
+  # Add class-specific tags
+  # tags <- c(tags, ...);
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
+  tags;
 })
 
 setMethodS3("as.character", "FirmaModel", function(x, ...) {
@@ -122,7 +128,7 @@ setMethodS3("getFileSetClass", "FirmaModel", function(static, ...) {
 
 
 setMethodS3("getRootPath", "FirmaModel", function(this, ...) {
-  "modelFirmaModel";
+  "firmaData";
 }, private=TRUE)
 
 
@@ -602,6 +608,11 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
 
 ############################################################################
 # HISTORY:
+# 2007-12-07 [HB]
+# o UPDATE: Renamed the "root" directory of FirmaModel to firmaData/
+#   (formely modelFirmaModel/).
+# o BUG FIX: Tags from the input data set of FirmaModel were lost.
+# o Added getAsteriskTag().
 # 2007-07-01 [HB]
 # o Added 'cache=FALSE' to findUnitsTodo() in fit() so that the results are 
 #   not stored in memory for every file.

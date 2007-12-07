@@ -28,7 +28,7 @@ setConstructorS3("CopyNumberSegmentationModel", function(...) {
 
 
 setMethodS3("getTags", "CopyNumberSegmentationModel", function(this, collapse=NULL, ...) {
-  tags <- getTags(getSetTuple(this), ...);
+  tags <- getTags(getSetTuple(this), collapse=collapse, ...);
 
   # Add model tags
   tags <- c(tags, this$.tags);
@@ -47,7 +47,13 @@ setMethodS3("getTags", "CopyNumberSegmentationModel", function(this, collapse=NU
   # Get unique tags
   tags <- locallyUnique(tags);
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
 
@@ -612,7 +618,7 @@ setMethodS3("writeRegions", "CopyNumberSegmentationModel", function(this, arrays
       trackAttr <- c(type="wiggle_0");
       trackAttr <- c(trackAttr, name=sprintf("\"%s\"", name));
       trackAttr <- c(trackAttr, 
-                     group=sprintf("\"%s regions\"", getAsteriskTag(this)));
+                     group=sprintf("\"%s regions\"", getAsteriskTag(this, collapse=",")));
       trackAttr <- c(trackAttr, priority=array);
       trackAttr <- c(trackAttr, graphType="bar");
       trackAttr <- c(trackAttr, visibility="full");

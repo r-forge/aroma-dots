@@ -13,7 +13,6 @@
 #   \item{...}{Arguments passed to @see "HetLogAddPlm".}
 #   \item{mergeStrands}{If @TRUE, the sense and the anti-sense strands are
 #      fitted together, otherwise separately.}
-#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{
@@ -23,32 +22,33 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("HetLogAddSnpPlm", function(..., mergeStrands=FALSE, tags="*") {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    idx <- which(tags == "*");
-    if (length(idx) > 0) {
-      if (!mergeStrands)
-        tags <- R.utils::insert.default(tags, idx+1, "+-");
-    }
-  }
-
-
-  extend(HetLogAddPlm(..., tags=tags), c("HetLogAddSnpPlm", uses(SnpPlm())),
+setConstructorS3("HetLogAddSnpPlm", function(..., mergeStrands=FALSE) {
+  extend(HetLogAddPlm(...), c("HetLogAddSnpPlm", uses(SnpPlm())),
     mergeStrands = mergeStrands
   )
 })
 
 
+setMethodS3("getAsteriskTag", "HetLogAddSnpPlm", function(this, collapse=NULL, ...) {
+  # Returns 'HLA[,<flavor>]'
+  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+
+  # Add class specific parameter tags
+  if (!this$mergeStrands)
+    tags <- c(tags, "+-");
+
+  # Collapse
+  tags <- paste(tags, collapse=collapse); 
+
+  tags;
+}, protected=TRUE) 
+
+
+
 ############################################################################
 # HISTORY:
+# 2007-12-06
+# o Added getAsteriskTag() for HetLogAddSnpPlm.
 # 2007-10-06
 # o Created.
 ############################################################################

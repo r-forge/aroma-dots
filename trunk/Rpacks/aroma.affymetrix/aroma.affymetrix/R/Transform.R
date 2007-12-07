@@ -75,17 +75,29 @@ setMethodS3("clearCache", "Transform", function(this, ...) {
 
 
 
-setMethodS3("getAsteriskTag", "Transform", function(this, ...) {
-  # Default '*' tag is the abbreviation from upper-case letters only,
-  # e.g. "QuantileNormalization" gives "QN".
-  tag <- class(this)[1];
-  tag <- strsplit(tag, split="")[[1]];
-  tagUC <- toupper(tag);
-  keep <- (tag == tagUC);
-  tag <- tag[keep];
-  tag <- paste(tag, collapse="");
-  tag <- sprintf("%s", tag);
-  tag;
+
+setMethodS3("getAsteriskTag", "Transform", function(this,...) {
+  # Create a default asterisk tags for any class by extracting all
+  # capital letters and pasting them together, e.g. AbcDefGhi => ADG.
+  name <- class(this)[1];
+
+  # Remove any 'Model' suffixes
+  name <- gsub("Model$", "", name);
+
+  name <- capitalize(name);
+
+  # Vectorize
+  name <- strsplit(name, split="")[[1]];
+
+  # Identify upper case
+  name <- name[(toupper(name) == name)];
+
+  # Paste
+  name <- paste(name, collapse="");
+
+  tags <- name;
+
+  tags;
 }, private=TRUE)
 
 
@@ -176,15 +188,23 @@ setMethodS3("getName", "Transform", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getTags", "Transform", function(this, collapse=NULL, ...) {
-  tags <- this$.tags;
-
+  # "Pass down" tags from input data set
   ds <- getInputDataSet(this);
-  tags <- c(getTags(ds), tags);
+  tags <- getTags(ds, collapse=collapse);
+
+  # Get class-specific tags
+  tags <- c(tags, this$.tags);
 
   # Update default tags
-  tags[tags == "*"] <- getAsteriskTag(this);
+  tags[tags == "*"] <- getAsteriskTag(this, collapse=",");
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
 
@@ -197,6 +217,7 @@ setMethodS3("setTags", "Transform", function(this, tags="*", ...) {
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
+    tags <- tags[nchar(tags) > 0];
   }
   
   this$.tags <- tags;

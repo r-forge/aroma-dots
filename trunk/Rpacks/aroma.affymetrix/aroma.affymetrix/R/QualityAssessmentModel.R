@@ -91,9 +91,18 @@ setMethodS3("getName", "QualityAssessmentModel", function(this, ...) {
 
 setMethodS3("getTags", "QualityAssessmentModel", function(this, collapse=NULL, ...) {
   ces <- getChipEffects(this);
-  tags <- c(getTags(ces), this$.tags);
+  tags <- getTags(ces, collapse=collapse);
 
-  tags <- paste(tags, collapse=collapse);
+  # Append class-specific tags
+  tags <- c(tags, this$.tags);
+
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
 

@@ -54,8 +54,8 @@ setConstructorS3("Explorer", function(tags="*", ...) {
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
+    tags <- tags[nchar(tags) > 0];
   }
-
 
   extend(Object(), "Explorer",
     .alias = NULL,
@@ -333,14 +333,20 @@ setMethodS3("getTags", "Explorer", function(this, collapse=NULL, ...) {
   tags <- locallyUnique(tags);
 
   # Update asterisk tags
-  tags[tags == "*"] <- getAsteriskTags(this);
+  tags[tags == "*"] <- getAsteriskTags(this, collapse=",");
 
   # Keep non-empty tags
   tags <- tags[nchar(tags) > 0];
 
   tags <- locallyUnique(tags);
 
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
   if (length(tags) == 0)
     tags <- NULL;
 

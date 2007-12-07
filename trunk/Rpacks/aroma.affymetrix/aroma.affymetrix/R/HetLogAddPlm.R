@@ -33,8 +33,7 @@ setConstructorS3("HetLogAddPlm", function(...) {
 
 
 setMethodS3("getAsteriskTag", "HetLogAddPlm", function(this, ...) {
-  name <- "HLA";
-  name;
+  "HLA";
 })
 
 

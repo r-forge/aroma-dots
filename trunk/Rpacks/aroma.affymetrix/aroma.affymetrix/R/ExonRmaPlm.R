@@ -17,7 +17,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "RmaPlm".}
-#   \item{tags}{A @character @vector of tags.}
 #   \item{mergeGroups}{A @logical flag specifying whether to merge exons
 #      into transcripts.}
 # }
@@ -37,29 +36,28 @@
 #  NAR, 2003, 31, e15.\cr
 # }
 #*/###########################################################################
-setConstructorS3("ExonRmaPlm", function(..., tags="*", mergeGroups=TRUE) {
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    asteriskTag <- "RMA";
-    # Update default tags
-    tags[tags == "*"] <- asteriskTag;
-
-    if (mergeGroups) {
-      tags <- c(tags, "merged");
-    }
-    
-    # Split by commas
-    tags <- paste(tags, collapse=",");
-    tags <- unlist(strsplit(tags, split=","));
-  }
-
-  extend(RmaPlm(..., tags=tags), "ExonRmaPlm",
+setConstructorS3("ExonRmaPlm", function(..., mergeGroups=TRUE) {
+  extend(RmaPlm(...), "ExonRmaPlm",
     mergeGroups=mergeGroups
   )
 })
+
+
+
+setMethodS3("getAsteriskTag", "ExonRmaPlm", function(this, collapse=NULL, ...) {
+  # Returns 'RMA[,<flavor>]'
+  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+
+  # Add class specific parameter tags
+  if (this$mergeGroups)
+    tags <- c(tags, "merged");
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse); 
+
+  tags;
+}, protected=TRUE) 
+
 
 # utility function - keep here for now
 
@@ -329,6 +327,8 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2007-12-06
+# o Added getAsteriskTag() for ExonRmaPlm.
 # 2007-11-07
 # o Now the fit function supports 'shift' too. Before it was ignored.
 # 2007-09-20

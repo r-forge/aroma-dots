@@ -12,7 +12,6 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to constructor of @see "AffymetrixCelSet".}
-#   \item{tags}{A @character @vector of tags.}
 # }
 #
 # \section{Fields and Methods}{
@@ -23,22 +22,12 @@
 #   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
 #*/###########################################################################
-setConstructorS3("FirmaSet", function(..., tags="*") {
-  
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    tags[tags == "*"] <- "FIRMA";
-  }
-
+setConstructorS3("FirmaSet", function(...) {
   extend(AffymetrixCelSet(...), "FirmaSet",
-         "cached:.firstCells" = NULL, 
-         .tags=tags);
-  
+    "cached:.firstCells" = NULL, 
+  )
 })
+
 
 setMethodS3("clearCache", "FirmaSet", function(this, ...) {
   # Clear all cached values.
@@ -193,6 +182,8 @@ setMethodS3("updateUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, data
 
 ############################################################################
 # HISTORY:
+# 2007-12-07 [HB]
+# o Removed argument 'tags' from the FirmaSet constructor.
 # 2007-02-09
 # o Created.
 ############################################################################

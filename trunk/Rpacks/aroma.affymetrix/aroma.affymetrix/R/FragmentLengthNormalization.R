@@ -97,14 +97,14 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 
 
 
-setMethodS3("getAsteriskTag", "FragmentLengthNormalization", function(this, ...) {
-  tag <- NextMethod("getAsteriskTag", this);
+setMethodS3("getAsteriskTag", "FragmentLengthNormalization", function(this, collapse=NULL, ...) {
+  tag <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
 
   # Extra tags?
   tag <- c(tag, this$.extraTags);
 
-  # Collapse
-  tag <- paste(tag, collapse=",");
+  # Collapse?
+  tag <- paste(tag, collapse=collapse);
 
   tag;
 }, private=TRUE)
