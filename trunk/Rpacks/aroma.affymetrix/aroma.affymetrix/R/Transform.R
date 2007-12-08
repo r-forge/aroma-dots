@@ -424,7 +424,9 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE, ve
       verbose && exit(verbose);
       verbose && enter(verbose, "Retrieving files for ", class(ds)[1], " output data set");
 
-      args <- list(path=getPath(this), ..., checkChipType=FALSE);
+      # Inherit the CDF from the input data set.
+      cdf <- getCdf(ds);
+      args <- list(path=getPath(this), ..., cdf=cdf, checkChipType=FALSE);
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Inherit certain arguments from the input data set
@@ -450,9 +452,9 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE, ve
 
       verbose && exit(verbose);
 
-      verbose && enter(verbose, "Updating the CDF for the output data set");
-      setCdf(outputDataSet, getCdf(ds));
-      verbose && exit(verbose);
+#      verbose && enter(verbose, "Updating the CDF for the output data set");
+#      setCdf(outputDataSet, cdf);
+#      verbose && exit(verbose);
 
       this$.outputDataSet <- outputDataSet;
     }
@@ -572,6 +574,10 @@ setMethodS3("process", "Transform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o getOutputDataSet() of Transform was updated to utilize the new 'cdf'
+#   argument in static fromFiles() of AffymetrixCelSet.  This way the 
+#   default is not queried (in case it does not exist).
 # 2007-09-18
 # o Now getOutputDataSet() of Transform carry down certain arguments from
 #   the input data set. This will speed up things.

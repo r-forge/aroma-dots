@@ -44,13 +44,12 @@ extends \link[aroma.affymetrix]{CnPlm}\cr
 
  }
 
- \usage{RmaCnPlm(..., combineAlleles=FALSE, tags="*")}
+ \usage{RmaCnPlm(..., combineAlleles=FALSE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{RmaSnpPlm}}.}
    \item{combineAlleles}{If \code{\link[base:logical]{FALSE}}, allele A and allele B are treated
       seperately, otherwise together.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{
@@ -63,6 +62,9 @@ getCellIndices, getChipEffectSet, getProbeAffinityFile, setCombineAlleles
 
  \bold{Methods inherited from SnpPlm}:\cr
 getCellIndices, getChipEffectSet, getProbeAffinityFile, setMergeStrands
+
+ \bold{Methods inherited from RmaSnpPlm}:\cr
+getAsteriskTag
 
  \bold{Methods inherited from RmaPlm}:\cr
 getAsteriskTag, getCalculateResidualsFunction

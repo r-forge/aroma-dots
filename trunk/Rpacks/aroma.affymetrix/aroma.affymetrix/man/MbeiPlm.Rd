@@ -38,11 +38,10 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
   This class represents the multiplicative model in Li \& Wong (2001).
  }
 
- \usage{MbeiPlm(..., tags="*")}
+ \usage{MbeiPlm(...)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{

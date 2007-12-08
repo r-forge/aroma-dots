@@ -167,6 +167,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 #
 # \arguments{
 #  \item{chipType}{A @character string.}
+#  \item{tags}{An optional @character @vector of tags.}
 #  \item{...}{Not used.}
 # }
 #
@@ -185,8 +186,8 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("byChipType", "AffymetrixCdfFile", function(static, chipType, ...) {
-  pathname <- static$findByChipType(chipType);
+setMethodS3("byChipType", "AffymetrixCdfFile", function(static, chipType, tags=NULL, ...) {
+  pathname <- static$findByChipType(chipType, tags=tags);
   if (is.null(pathname)) {
     throw("Could not create ", class(static)[1], " object. No CDF file with that chip type found: ", chipType);
   }
@@ -215,6 +216,7 @@ setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, ...) {
 #
 # \arguments{
 #  \item{chipType}{A @character string.}
+#  \item{tags}{An optional @character @vector of tags.}
 #  \item{...}{Not used.}
 #  \item{.useAffxparser}{If @TRUE, @see "affxparser::findCdf" is used if
 #    the CDF could not be located.}
@@ -238,12 +240,15 @@ setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, pattern=NULL, ..., .useAffxparser=TRUE) {
+setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Handle deprecated <chipType>-monocell CDFs specially
+  # (This part of the code will not be updated anymore /HB 2007-12-08)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   pattern <- "-monocell$";
   if (regexpr(pattern, chipType) != -1) {
     newChipType <- gsub("-monocell$", ",monocell", chipType);
@@ -267,9 +272,17 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, pa
   }
 
 
+  # Create the fullname
+  fullname <- paste(c(chipType, tags), collapse=",");
+
+  # Extract the name and the tags
+  parts <- unlist(strsplit(fullname, split=","));
+  chipType <- parts[1];
+  tags <- parts[-1];
+
   args <- list(
     chipType=chipType,
-    pattern=sprintf("^%s[.](c|C)(d|D)(f|F)$", chipType),
+    pattern=sprintf("^%s[.](c|C)(d|D)(f|F)$", fullname),
     ...
   );
   pathname <- do.call("findAnnotationDataByChipType", args=args);
@@ -279,7 +292,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, pa
     # Search for a Windows shortcut
     args <- list(
       chipType=chipType, 
-      pattern=sprintf("^%s[.](c|C)(d|D)(f|F)[.]lnk$", chipType),
+      pattern=sprintf("^%s[.](c|C)(d|D)(f|F)[.]lnk$", fullname),
       ...
     );
     pathname <- do.call("findAnnotationDataByChipType", args=args);
@@ -1332,6 +1345,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o Now construct AffymetrixCdfFile$fromName("HuEx-1_0-st-v2", tags="core") 
+#   can be used to locate 'HuEx-1_0-st-v2,core.CDF'.
 # 2007-09-10
 # o Now getGenomeInformation() of AffymetrixCdfFile recognizes UGP files
 #   as well and before dChip genome information files.

@@ -19,11 +19,12 @@
  Locates a CDF file from its chip type.
 }
 
-\synopsis{findByChipType.AffymetrixCdfFile(static, chipType, pattern=NULL, ..., .useAffxparser=TRUE)}
-\usage{AffymetrixCdfFile$findByChipType(chipType, pattern=NULL, ..., .useAffxparser=TRUE)}
+\synopsis{findByChipType.AffymetrixCdfFile(static, chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE)}
+\usage{AffymetrixCdfFile$findByChipType(chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}
+ \item{tags}{An optional \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  \item{...}{Not used.}
  \item{.useAffxparser}{If \code{\link[base:logical]{TRUE}}, \code{\link[affxparser]{findCdf}} is used if
    the CDF could not be located.}

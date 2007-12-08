@@ -1387,6 +1387,18 @@
 \alias{getAsteriskTag.AllelicCrosstalkCalibration}
 \alias{clearCache.AllelicCrosstalkCalibration}
 \alias{getAsteriskTag.FragmentLengthNormalization}
+\alias{getAsteriskTag.AffineCnPlm}
+\alias{getAsteriskTag.AffineSnpPlm}
+\alias{getAsteriskTag.AvgCnPlm}
+\alias{getAsteriskTag.AvgSnpPlm}
+\alias{getAsteriskTag.ExonRmaPlm}
+\alias{getAsteriskTag.FirmaModel}
+\alias{getAsteriskTag.HetLogAddCnPlm}
+\alias{getAsteriskTag.HetLogAddSnpPlm}
+\alias{getAsteriskTag.MbeiCnPlm}
+\alias{getAsteriskTag.MbeiSnpPlm}
+\alias{getAsteriskTag.RmaCnPlm}
+\alias{getAsteriskTag.RmaSnpPlm}
 
 \description{
   This page contains aliases for all "non-documented" objects that

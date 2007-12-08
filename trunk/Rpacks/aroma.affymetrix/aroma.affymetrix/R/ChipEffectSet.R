@@ -108,6 +108,7 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
+
   # Get the ChipEffectFile class specific for this set
   clazz <- getChipEffectFileClass(static);
 

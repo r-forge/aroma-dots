@@ -40,7 +40,7 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
   \enc{Hössjer}{Hossjer} (2006).
  }
 
- \usage{AffinePlm(..., background=TRUE, tags="*")}
+ \usage{AffinePlm(..., background=TRUE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
@@ -48,7 +48,6 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
      otherwise not. That is, if \code{\link[base:logical]{FALSE}}, a \emph{linear} (proportional)
      model without offset is fitted, resulting in very similar results as
      obtained by the \code{\link{MbeiPlm}}.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{

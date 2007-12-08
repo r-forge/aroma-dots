@@ -35,13 +35,11 @@ extends \emph{\link[aroma.affymetrix]{Model}}\cr
   a model that is applied to each unit separately.
  }
 
- \usage{UnitModel(dataSet=NULL, tags=NULL, ...)}
+ \usage{UnitModel(dataSet=NULL, ...)}
 
  \arguments{
    \item{dataSet}{An \code{\link{AffymetrixCelSet}} to which this model should
       be fitted.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be appended to the tags of
-      the input data set.}
    \item{...}{Arguments passed to the constructor of \code{\link{Model}}.}
  }
 

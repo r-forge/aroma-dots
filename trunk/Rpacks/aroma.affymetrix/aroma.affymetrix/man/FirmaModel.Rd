@@ -38,13 +38,12 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
  }
 
- \usage{FirmaModel(rmaPlm=NULL, summaryMethod="upperQuartile", tags="*", ...)}
+ \usage{FirmaModel(rmaPlm=NULL, summaryMethod="upperQuartile", ...)}
 
  \arguments{
    \item{rmaPlm}{An @RmaPlm object.}
    \item{summaryMethod}{}
-   \item{tags}{}
-   \item{...}{Not used.}
+   \item{...}{Arguments passed to constructor of \code{\link{UnitModel}}.}
  }
 
  \section{Fields and Methods}{
@@ -52,6 +51,7 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 \tabular{rll}{
  \tab \code{calculateWeights} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.FirmaModel]{fit}} \tab Estimates the model parameters.\cr
+ \tab \code{getAsteriskTag} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getDataSet} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFirmaScores.FirmaModel]{getFirmaScores}} \tab Gets the set of FIRMA results for this model.\cr

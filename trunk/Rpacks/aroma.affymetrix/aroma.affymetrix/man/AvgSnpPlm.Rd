@@ -40,13 +40,12 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 
  }
 
- \usage{AvgSnpPlm(..., mergeStrands=FALSE, tags="*")}
+ \usage{AvgSnpPlm(..., mergeStrands=FALSE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AvgPlm}}.}
    \item{mergeStrands}{If \code{\link[base:logical]{TRUE}}, the sense and the anti-sense strands are
       fitted together, otherwise separately.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{

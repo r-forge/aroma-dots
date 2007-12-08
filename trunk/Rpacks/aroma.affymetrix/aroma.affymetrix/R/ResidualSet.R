@@ -85,12 +85,24 @@ setMethodS3("getResidualFileClass", "ResidualSet", function(static, ...) {
 }, static=TRUE, private=TRUE)
 
 
-setMethodS3("fromFiles", "ResidualSet", function(static, ..., pattern=",residuals[.](c|C)(e|E)(l|L)$", fileClass=NULL) {
+setMethodS3("fromFiles", "ResidualSet", function(static, ..., pattern=",residuals[.](c|C)(e|E)(l|L)$", cdf=NULL, fileClass=NULL) {
+  # Argument 'cdf':
+  if (!is.null(cdf)) {
+    if (!inherits(cdf, "AffymetrixCdfFile"))
+      throw("Argument 'cdf' must be an AffymetrixCdfFile: ", class(cdf)[1]);     
+  }
+
   # Argument 'fileClass':
   if (is.null(fileClass))
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
-  fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
+  res <- fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
+
+  # Set CDF?
+  if (!is.null(cdf))
+    setCdf(res, cdf);
+
+  res;
 }, static=TRUE)
 
 
@@ -240,6 +252,8 @@ setMethodS3("findUnitsTodo", "ResidualSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o Added argument 'cdf' to fromFiles() of ResidualSet.
 # 2007-02-12
 # o Created from ChipEffectSet.R.
 ############################################################################

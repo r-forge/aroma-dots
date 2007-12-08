@@ -19,11 +19,12 @@
  Defines an AffymetrixCdfFile object by chip type.
 }
 
-\synopsis{byChipType.AffymetrixCdfFile(static, chipType, ...)}
-\usage{AffymetrixCdfFile$byChipType(chipType, ...)}
+\synopsis{byChipType.AffymetrixCdfFile(static, chipType, tags=NULL, ...)}
+\usage{AffymetrixCdfFile$byChipType(chipType, tags=NULL, ...)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}
+ \item{tags}{An optional \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  \item{...}{Not used.}
 }
 
