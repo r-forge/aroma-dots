@@ -33,7 +33,7 @@ extends \link[R.oo]{Object}\cr
   to a data set.
  }
 
- \usage{Model(dataSet=NULL, tags=NULL, parSet=NULL, ...)}
+ \usage{Model(dataSet=NULL, tags="*", parSet=NULL, ...)}
 
  \arguments{
    \item{dataSet}{The data set to which this model should be fitted.}

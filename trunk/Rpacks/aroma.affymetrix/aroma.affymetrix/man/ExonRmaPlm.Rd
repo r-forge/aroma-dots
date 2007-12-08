@@ -44,11 +44,10 @@ extends \link[aroma.affymetrix]{RmaPlm}\cr
   (probes within an exon treated as a group, but exons fitted separately).
  }
 
- \usage{ExonRmaPlm(..., tags="*", mergeGroups=TRUE)}
+ \usage{ExonRmaPlm(..., mergeGroups=TRUE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{RmaPlm}}.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
    \item{mergeGroups}{A \code{\link[base]{logical}} flag specifying whether to merge exons
       into transcripts.}
  }

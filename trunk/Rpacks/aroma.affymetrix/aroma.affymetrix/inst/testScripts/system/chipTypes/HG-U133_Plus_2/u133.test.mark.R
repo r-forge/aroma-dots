@@ -19,7 +19,9 @@
 
 coef.tol <- 0.001
 
-library(aroma.affymetrix)
+library(aroma.affymetrix);
+library(affyPLM);  # fitPLM()
+
 getExprs <- function(ces, ...) {
   cdf <- getCdf(ces);
   theta <- extractMatrix(ces, ..., returnUgcMap=TRUE);

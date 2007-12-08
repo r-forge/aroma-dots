@@ -19,9 +19,10 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "UnitModel".}
-#   \item{tags}{A @character @vector of tags to be added.}
 #   \item{probeModel}{A @character string specifying how PM and MM values
 #      should be modelled.  By default only PM signals are used.}
+#   \item{shift}{An optional amount the data points should be shifted
+#      (translated).}
 #   \item{standardize}{If @TRUE, chip-effect and probe-affinity estimates are
 #      rescaled such that the product of the probe affinities is one.}
 # }
@@ -54,30 +55,29 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), standardize=TRUE) {
+setConstructorS3("ProbeLevelModel", function(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), shift=0, standardize=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'probeModel':
   probeModel <- match.arg(probeModel);
 
-  
-  # Add tags
-  if (probeModel != "pm") {
-    tags <- c(toupper(probeModel), tags);
-  }
+  # Argument 'shift':
+  shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf"));
 
-  extend(UnitModel(..., tags=tags, parSet=list(probeModel=probeModel)), "ProbeLevelModel",
+  
+  extend(UnitModel(..., parSet=list(probeModel=probeModel)), "ProbeLevelModel",
     "cached:.paf" = NULL,
     "cached:.ces" = NULL,
     "cached:.rs" = NULL,
     "cached:.ws" = NULL,
     "cached:.lastPlotData" = NULL,
     probeModel = probeModel,
-    standardize = standardize,
-    shift = 0
+    shift = shift,
+    standardize = standardize
   )
 }, abstract=TRUE)
+
 
 setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
   # Clear all cached values.
@@ -93,7 +93,19 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
 
 
 setMethodS3("getAsteriskTag", "ProbeLevelModel", function(this, ...) {
-  "PLM";
+  tags <- "PLM";
+
+  # Add class-specific tags
+  shift <- as.integer(round(this$shift));
+  if (shift != 0) {
+    tags <- c(tags, sprintf("%+d", shift));
+  }
+  probeModel <- this$probeModel;
+  if (probeModel != "pm") {
+    tags <- c(tags, probeModel);
+  }
+
+  tags;
 })
 
 
@@ -272,8 +284,9 @@ setMethodS3("getResidualSet", "ProbeLevelModel", function(this, ..., force=FALSE
   clazz <- getResidualSetClass(this);
   rs <- clazz$fromDataSet(dataSet=ds, path=getPath(this), 
                                                      verbose=less(verbose));
-  # make sure CDF is inherited
-  setCdf(rs, getCdf(ds));
+  # Inherit the CDF from the input data set
+  cdf <- getCdf(ds);
+  setCdf(rs, cdf);
   verbose && exit(verbose);
 
   # Store in cache
@@ -835,6 +848,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o Now the tag for the 'shift' is also set in getAsteriskTag().
+# o Now the tag for the 'probeModel' is set in getAsteriskTag().
+# o Added argument 'shift' to ProbeLevelModel.
 # 2007-08-09
 # o getProbeAffinityFile() of ProbeLevelModel now creates CEL files with 
 #   upper-case filename extension "*.CEL", not "*.cel".  The reason for this

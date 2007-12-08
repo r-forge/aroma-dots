@@ -42,13 +42,14 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
   in Affymetrix CDF terms.
  }
 
- \usage{ProbeLevelModel(..., tags=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), standardize=TRUE)}
+ \usage{ProbeLevelModel(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), shift=0, standardize=TRUE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{UnitModel}}.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be added.}
    \item{probeModel}{A \code{\link[base]{character}} string specifying how PM and MM values
       should be modelled.  By default only PM signals are used.}
+   \item{shift}{An optional amount the data points should be shifted
+      (translated).}
    \item{standardize}{If \code{\link[base:logical]{TRUE}}, chip-effect and probe-affinity estimates are
       rescaled such that the product of the probe affinities is one.}
  }

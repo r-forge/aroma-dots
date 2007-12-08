@@ -46,9 +46,7 @@ csList <- csAccList;
 cesCnList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
-  plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, 
-                                                  tags=c("+300", "*"));
-  plm$shift <- +300;
+  plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
   print(plm);
   fit(plm, ram=1/2, verbose=log);
   ces <- getChipEffectSet(plm);

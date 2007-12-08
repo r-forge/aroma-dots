@@ -39,11 +39,10 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
   Analysis (RMA) method described in Irizarry et al (2003).
  }
 
- \usage{RmaPlm(..., tags="*", flavor=c("affyPLM", "affyPLMold", "oligo"))}
+ \usage{RmaPlm(..., flavor=c("affyPLM", "affyPLMold", "oligo"))}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
    \item{flavor}{A \code{\link[base]{character}} string specifying what model fitting algorithm
      to be used.  This makes it possible to get identical estimates as other
      packages.}
@@ -89,8 +88,9 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \section{Different flavors of model fitting}{
    There are a few differ algorithms available for fitting the same
    probe-level model.  The default and recommended method
-   (\code{flavor="affyPLM"}) uses the implementation in the \pkg{affyPLM}
-   package which fits the model parameters robustly using an M-estimator.
+   (\code{flavor="affyPLM"}) uses the implementation in the
+   \pkg{preprocessCore} package which fits the model parameters robustly
+   using an M-estimator (the method used to be in \pkg{affyPLM}).
 
    Alternatively, other model-fitting algorithms are available.
    The algorithm (\code{flavor="oligo"}) used by the \pkg{oligo} package,

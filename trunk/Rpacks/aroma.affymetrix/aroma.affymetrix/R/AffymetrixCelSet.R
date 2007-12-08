@@ -412,7 +412,22 @@ setMethodS3("fromName", "AffymetrixCelSet", function(static, ...) {
   byName(static, ...);
 }, static=TRUE)
 
-setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType, ...) {
+setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, cdf=NULL, ...) {
+  # Argument 'cdf':
+  if (!is.null(cdf)) {
+    if (!inherits(cdf, "AffymetrixCdfFile"))
+      throw("Argument 'cdf' must be an AffymetrixCdfFile object: ", class(cdf)[1]);
+  }
+
+  # Argument 'chipType':
+  if (is.null(chipType)) {
+    if (!is.null(cdf)) {
+      chipType <- getChipType(cdf, fullname=FALSE);  # Without tags
+    } else {
+      throw("Argument 'chipType' must be specified unless argument 'cdf' is specified.");
+    }
+  }
+
   suppressWarnings({
     path <- static$findByName(name, tags=tags, chipType=chipType, ...);
   })
@@ -422,12 +437,12 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
   }
 
   suppressWarnings({
-    static$fromFiles(path=path, ...);
+    static$fromFiles(path=path, cdf=cdf, ...);
   })
 }, static=TRUE)
 
 
-setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", checkChipType=TRUE, ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
+setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", cdf=NULL, checkChipType=is.null(cdf), ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -475,8 +490,8 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # Chip type according to the directory structure
   path <- getPath(this);
   chipType <- basename(path);
-  verbose && cat(verbose, "The chip type according to the directory is: ", 
-                                                              chipType);
+  verbose && cat(verbose, 
+                 "The chip type according to the path is: ", chipType);
 
   # Let the directory name specify the chip type?
   if (checkChipType) {
@@ -516,15 +531,26 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Use the same CDF object for all CEL files.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Updating the CDF for all files");
-  verbose && cat(verbose, "Chip type: ", chipType);
-  cdf <- AffymetrixCdfFile$fromChipType(chipType);
-  cf <- getFile(this, 1);
-  if (nbrOfCells(cdf) != nbrOfCells(cf)) {
-    cdf <- getCdf(cf);
-    chipType <- getChipType(cdf);
+  if (is.null(cdf)) {
+    verbose && enter(verbose, "Retrieving the CDF for chip type '", chipType, "' inferred from path");
+    cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Check compatibility with 1st CEL file");
     verbose && cat(verbose, "Chip type: ", chipType);
+    cf <- getFile(this, 1);
+    if (nbrOfCells(cdf) != nbrOfCells(cf)) {
+      cdf <- getCdf(cf);
+      chipType <- getChipType(cdf);
+      verbose && cat(verbose, "Chip type (updated): ", chipType);
+    }
+    verbose && exit(verbose);
+  } else {
+    verbose && cat(verbose, "Using prespecified CDF: ", 
+                   getChipType(cdf, fullname=TRUE));
   }
+
+  verbose && enter(verbose, "Updating the CDF for all files");
   setCdf(this, cdf, .checkArgs=FALSE);
   verbose && exit(verbose);
 
@@ -1311,6 +1337,13 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o Added argument 'cdf' to static fromName() of AffymetrixCelSet.  When
+#   using this argument, the 'chipType' argument is optional, and the 
+#   returned CEL set will be using the specified CDF.
+# o Now fromFiles() of AffymetrixCelSet takes argument 'cdf' which can be
+#   used to override the default CDF.  This way the default CDF must not
+#   have to be in the search path.
 # 2007-09-25
 # o Now getAverageFile() will detect if an average file has been deleted 
 #   between calls and recalculate it.

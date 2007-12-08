@@ -37,11 +37,10 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 }
 
-\usage{FirmaSet(..., tags="*")}
+\usage{FirmaSet(...)}
 
 \arguments{
   \item{...}{Arguments passed to constructor of \code{\link{AffymetrixCelSet}}.}
-  \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
 }
 
 \section{Fields and Methods}{

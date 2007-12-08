@@ -272,7 +272,8 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
     if (isFile(pathname)) {
       cef <- clazz$fromFile(pathname, verbose=less(verbose));
     } else {
-      cef <- clazz$fromDataFile(filename=filename, path=outPath, name=sampleName, cdf=monocellCdf, verbose=less(verbose));
+      cef <- clazz$fromDataFile(filename=filename, path=outPath, 
+               name=sampleName, cdf=monocellCdf, verbose=less(verbose));
     }
     cef$combineAlleles <- combineAlleles;
     cef$mergeStrands <- TRUE;
@@ -329,8 +330,7 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   verbose && exit(verbose);
 
   # Define chip-effect set
-  ces <- fromFiles(static, path=outPath, ...);
-  setCdf(ces, monocellCdf);
+  ces <- fromFiles(static, path=outPath, cdf=monocellCdf, ...);
 
   verbose && exit(verbose);
 

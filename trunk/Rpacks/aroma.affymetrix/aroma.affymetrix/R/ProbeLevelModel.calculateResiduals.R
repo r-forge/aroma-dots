@@ -291,9 +291,9 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   verbose && print(verbose, gc);
 
   # Define residual set
-  rs <- ResidualSet$fromFiles(path, ...);
-  # needed to keep custom CDF since fromFiles() takes CDF name from header
-  setCdf(rs, getCdf(ds));
+  # Inherit the CDF from the input data set.
+  cdf <- getCdf(ds);
+  rs <- ResidualSet$fromFiles(path, cdf=cdf, ...);
   
   verbose && exit(verbose);
 
@@ -316,6 +316,9 @@ setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o Now calculateResidualSet() of ProbeLevelModel utilizes the new 'cdf'
+#   argument of fromFiles() in AffymetrixCelSet.
 # 2007-08-17
 # o Now calculateResidualSet() of ProbeLevelModel only loads probe-affinity
 #   estimates if needed, i.e. if residuals are already calculated this 

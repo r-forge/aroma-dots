@@ -42,11 +42,10 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
   chip type.
  }
 
- \usage{AvgPlm(..., tags="*", flavor=c("median", "mean"))}
+ \usage{AvgPlm(..., flavor=c("median", "mean"))}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{ProbeLevelModel}}.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
    \item{flavor}{A \code{\link[base]{character}} string specifying what model fitting algorithm
      to be used.  This makes it possible to get identical estimates as other
      packages.}

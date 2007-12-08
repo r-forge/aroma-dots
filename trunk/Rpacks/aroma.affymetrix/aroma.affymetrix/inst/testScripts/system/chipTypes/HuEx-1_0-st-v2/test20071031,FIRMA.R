@@ -9,12 +9,11 @@ timestampOn(log);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 name <- "Affymetrix-HeartBrain";
 chipType <- "HuEx-1_0-st-v2";
-coreChipType <- paste(chipType, "core", sep=",");
-cdfCore <- AffymetrixCdfFile$fromChipType(coreChipType);
+cdfCore <- AffymetrixCdfFile$fromChipType(chipType, tags="core");
 print(cdfCore);
 
-csTissue <- AffymetrixCelSet$fromName(name=name, chipType=chipType);
-setCdf(csTissue, cdfCore);
+# Setup CEL set using the core CDF.
+csTissue <- AffymetrixCelSet$fromName(name=name, cdf=cdfCore);
 print(csTissue);
 
 

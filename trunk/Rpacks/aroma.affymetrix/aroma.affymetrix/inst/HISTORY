@@ -2,12 +2,26 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.8.2 [2007-12-08]
+o Added argument 'cdf' to static fromName() of AffymetrixCelSet.
+  When using this argument, the 'chipType' argument is optional, 
+  and the returned CEL set will be using the specified CDF.
+o Now AffymetrixCdfFile$fromName("HuEx-1_0-st-v2", tags="core") can
+  be used to locate 'HuEx-1_0-st-v2,core.CDF'.
+o Now all ProbeLevelModel takes argument 'shift', which specifies
+  the amount of shift each data point should be shifted before being
+  passed to the model fit. If non-zero, a signed tag (rounded to the
+  closest integer) is automatically set.
 o UPDATE: Now output sets of a FirmaModel are stored in firmaData/.
   Previously they were stored under modelFirmaModel/.
 o CLEAN UP: Went through all classes where applicable and updated
   so that getTags() and getAsteriskTags() work properly.  The
   latter was also renamed from getAsteriskTag() to getAsteriskTags()
   to indicate that it can actually return a multiple tags.
+o CLEAN UP: Since much of the feature we used in 'affyPLM' moved to
+  'preprocessCore', packages 'affyPLM' (and 'affy') are no longer
+  required by default.  As with 'gcrma', the 'affy' package is only
+  "suggested" and will be requested if need, e.g. when doing using
+  one of background correction methods.
 o BUG FIX: Tags from the input data set of FirmaModel were lost.
 
 

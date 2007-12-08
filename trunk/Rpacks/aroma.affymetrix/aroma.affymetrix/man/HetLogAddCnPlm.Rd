@@ -46,13 +46,12 @@ extends \link[aroma.affymetrix]{CnPlm}\cr
 
  }
 
- \usage{HetLogAddCnPlm(..., combineAlleles=FALSE, tags="*")}
+ \usage{HetLogAddCnPlm(..., combineAlleles=FALSE)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{HetLogAddCnPlm}}.}
    \item{combineAlleles}{If \code{\link[base:logical]{FALSE}}, allele A and allele B are treated
       seperately, otherwise together.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
  }
 
  \section{Fields and Methods}{
@@ -65,6 +64,9 @@ getCellIndices, getChipEffectSet, getProbeAffinityFile, setCombineAlleles
 
  \bold{Methods inherited from SnpPlm}:\cr
 getCellIndices, getChipEffectSet, getProbeAffinityFile, setMergeStrands
+
+ \bold{Methods inherited from HetLogAddSnpPlm}:\cr
+getAsteriskTag
 
  \bold{Methods inherited from HetLogAddPlm}:\cr
 getAsteriskTag
