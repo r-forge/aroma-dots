@@ -46,7 +46,7 @@ setConstructorS3("AffymetrixFileSetReporter", function(set=NULL, tags="*", ..., 
   extend(Object(...), "AffymetrixFileSetReporter",
     .tags = tags,
     .alias = NULL,
-    .set = set,
+    .set = set
   )
 })
 
@@ -239,7 +239,8 @@ setMethodS3("getTags", "AffymetrixFileSetReporter", function(this, collapse=NULL
   if (!is.null(collapse)) {
     tags <- paste(tags, collapse=collapse);
   } else {
-    tags <- unlist(strsplit(tags, split=","));
+    if (length(tags) > 0)
+      tags <- unlist(strsplit(tags, split=","));
   }
 
   if (length(tags) == 0)

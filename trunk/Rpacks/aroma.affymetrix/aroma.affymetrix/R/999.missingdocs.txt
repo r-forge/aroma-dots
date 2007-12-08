@@ -638,3 +638,9 @@
 getAsteriskTag.AllelicCrosstalkCalibration
 clearCache.AllelicCrosstalkCalibration
 getAsteriskTag.FragmentLengthNormalization
+  getAsteriskTag.AffineCnPlm getAsteriskTag.AffineSnpPlm
+  getAsteriskTag.AvgCnPlm getAsteriskTag.AvgSnpPlm
+  getAsteriskTag.ExonRmaPlm getAsteriskTag.FirmaModel
+  getAsteriskTag.HetLogAddCnPlm getAsteriskTag.HetLogAddSnpPlm
+  getAsteriskTag.MbeiCnPlm getAsteriskTag.MbeiSnpPlm
+  getAsteriskTag.RmaCnPlm getAsteriskTag.RmaSnpPlm

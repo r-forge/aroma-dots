@@ -313,7 +313,8 @@ setMethodS3("getTags", "AffymetrixCelSetTuple", function(this, collapse=NULL, ..
   if (!is.null(collapse)) {
     tags <- paste(tags, collapse=collapse);
   } else {
-    tags <- unlist(strsplit(tags, split=","));
+    if (length(tags) > 0)
+      tags <- unlist(strsplit(tags, split=","));
   }
 
   if (length(tags) == 0)

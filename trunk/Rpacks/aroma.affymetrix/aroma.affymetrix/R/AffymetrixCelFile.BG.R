@@ -375,6 +375,10 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
     throw("bgAdjustRma() is deprecated.  Please use the RmaBackgroundCorrection class");
   }
 
+  # Load required packages
+  require("affy") || throw("Package not loaded: affy");
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -441,7 +445,7 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
   # adjust background - use original affy functions to avoid errors from
   # re-coding
   verbose && enter(verbose, "Applying normal+exponential signal model");
-  pm <- bg.adjust(pm);
+  pm <- bg.adjust(pm);  # From package 'affy' (without a namespace)
   verbose && exit(verbose);
   
   # update the PM
@@ -479,6 +483,8 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o Now bgAdjustRma() no longer assumes 'affy' is loaded.
 # 2007-06-30
 # o Added .deprecated=TRUE to all methods.
 # 2007-03-26

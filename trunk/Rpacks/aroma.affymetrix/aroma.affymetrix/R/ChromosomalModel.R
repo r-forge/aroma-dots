@@ -83,7 +83,7 @@ setMethodS3("as.character", "ChromosomalModel", function(x, ...) {
 
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
-  s <- c(s, paste("Tags:", getTags(this, collapse=","));
+  s <- c(s, paste("Tags:", getTags(this, collapse=",")));
   s <- c(s, paste("Chip type (virtual):", getChipType(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   nbrOfChipTypes <- nbrOfChipTypes(this);
