@@ -24,7 +24,7 @@
 #*/###########################################################################
 setConstructorS3("FirmaSet", function(...) {
   extend(AffymetrixCelSet(...), "FirmaSet",
-    "cached:.firstCells" = NULL, 
+    "cached:.firstCells" = NULL 
   )
 })
 

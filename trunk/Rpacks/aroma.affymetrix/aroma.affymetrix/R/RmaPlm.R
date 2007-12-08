@@ -41,8 +41,9 @@
 # \section{Different flavors of model fitting}{
 #   There are a few differ algorithms available for fitting the same 
 #   probe-level model.  The default and recommended method
-#   (\code{flavor="affyPLM"}) uses the implementation in the \pkg{affyPLM}
-#   package which fits the model parameters robustly using an M-estimator.
+#   (\code{flavor="affyPLM"}) uses the implementation in the 
+#   \pkg{preprocessCore} package which fits the model parameters robustly
+#   using an M-estimator (the method used to be in \pkg{affyPLM}).
 #
 #   Alternatively, other model-fitting algorithms are available.
 #   The algorithm (\code{flavor="oligo"}) used by the \pkg{oligo} package,
@@ -377,7 +378,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     X <- model.matrix(~ -1 + chip + probe, contrasts.arg=list(chip=constraint.type$chip, probe=constraint.type$probe))
 
     # Fit model using affyPLM code
-    fit <- .C("rlm_fit_R", as.double(X), as.double(y), rows=as.integer(nchip*nprobe), cols=as.integer(nchip+nprobe-1), beta=double(nchip+nprobe-1), resids=double(nchip*nprobe), weights=double(nchip*nprobe), PACKAGE="affyPLM")
+    rlmPkg <- "affyPLM";
+    fit <- .C("rlm_fit_R", as.double(X), as.double(y), rows=as.integer(nchip*nprobe), cols=as.integer(nchip+nprobe-1), beta=double(nchip+nprobe-1), resids=double(nchip*nprobe), weights=double(nchip*nprobe), PACKAGE=rlmPkg);
 
     # Extract probe affinities and chip estimates
     I <- ncol(y);  # Number of arrays

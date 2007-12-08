@@ -29,7 +29,7 @@
 # \seealso{
 # }
 #*/###########################################################################
-setConstructorS3("Model", function(dataSet=NULL, tags=NULL, parSet=NULL, ...) {
+setConstructorS3("Model", function(dataSet=NULL, tags="*", parSet=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -298,13 +298,16 @@ setMethodS3("getTags", "Model", function(this, collapse=NULL, ...) {
     tags[tags == "*"] <- getAsteriskTag(this, collapse=",");
   }
 
-  tags <- unlist(strsplit(tags, split=","));
-
   # Combine input tags and local tags
   tags <- c(inputTags, tags);
 
-  # Collapse
-  tags <- paste(tags, collapse=collapse);
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    if (length(tags) > 0)
+      tags <- unlist(strsplit(tags, split=","));
+  }
 
   # No tags?
   if (length(tags) == 0)

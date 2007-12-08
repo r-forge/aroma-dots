@@ -15,8 +15,6 @@
 # \arguments{
 #   \item{dataSet}{An @see "AffymetrixCelSet" to which this model should
 #      be fitted.}
-#   \item{tags}{A @character @vector of tags to be appended to the tags of
-#      the input data set.}
 #   \item{...}{Arguments passed to the constructor of @see "Model".}
 # }
 #
@@ -29,7 +27,7 @@
 # \seealso{
 # }
 #*/###########################################################################
-setConstructorS3("UnitModel", function(dataSet=NULL, tags=NULL, ...) {
+setConstructorS3("UnitModel", function(dataSet=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -40,12 +38,7 @@ setConstructorS3("UnitModel", function(dataSet=NULL, tags=NULL, ...) {
                                                            class(dataSet));
   }
 
-  this <- extend(Model(dataSet=dataSet, ...), "UnitModel");
-
-  # Interpret and append tags
-  setTags(this, tags);
-
-  this;
+  extend(Model(dataSet=dataSet, ...), "UnitModel");
 }, abstract=TRUE)
 
 

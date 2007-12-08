@@ -268,7 +268,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, pa
 
 
   args <- list(
-    chipType=chipType, 
+    chipType=chipType,
     pattern=sprintf("^%s[.](c|C)(d|D)(f|F)$", chipType),
     ...
   );

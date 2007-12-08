@@ -16,8 +16,7 @@
 # \arguments{
 #   \item{rmaPlm}{An @RmaPlm object.}
 #   \item{summaryMethod}{}
-#   \item{tags}{}
-#   \item{...}{Not used.}
+#   \item{...}{Arguments passed to constructor of @see "UnitModel".}
 # }
 #
 # \section{Fields and Methods}{
@@ -51,7 +50,13 @@ setMethodS3("getAsteriskTag", "FirmaModel", function(this, collapse=NULL, ...) {
   tags <- "FIRMA";
 
   # Append class-specific tags
-  # tags <- c(tags, ...);
+##  if (this$medianResiduals) {
+##    tags <- c(tags, "medres");
+##  }
+
+##  if (this$summaryMethod) {
+##    tags <- c(tags, "uqwt");
+##  }
 
   # Collapse?
   tags <- paste(tags, collapse=collapse);
@@ -76,7 +81,7 @@ setMethodS3("getName", "FirmaModel", function(this, ...) {
 })
 
 setMethodS3("getTags", "FirmaModel", function(this, collapse=NULL, ...) {
-  tags <- NextMethods("getTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getTags", this, collapse=collapse, ...);
 
   # Add class-specific tags
   # tags <- c(tags, ...);
