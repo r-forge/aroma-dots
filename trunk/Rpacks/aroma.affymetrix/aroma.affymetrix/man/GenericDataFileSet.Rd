@@ -51,30 +51,30 @@ extends \link[R.oo]{Object}\cr
  \tab \code{append} \tab  -\cr
  \tab \code{appendFiles} \tab  -\cr
  \tab \code{as} \tab  -\cr
- \tab \code{as.GenericDataFileSet} \tab  -\cr
- \tab \code{as.list} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:as.GenericDataFileSet.GenericDataFileSet]{as.GenericDataFileSet}} \tab Coerce an object to an GenericDataFileSet object.\cr
+ \tab \code{\link[aroma.affymetrix:as.list.GenericDataFileSet]{as.list}} \tab Returns the files of the file set.\cr
  \tab \code{clearCache} \tab  -\cr
- \tab \code{extract} \tab  -\cr
- \tab \code{fromFiles} \tab  -\cr
- \tab \code{getAlias} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:extract.GenericDataFileSet]{extract}} \tab Extract a subset of the file set.\cr
+ \tab \code{\link[aroma.affymetrix:fromFiles.GenericDataFileSet]{fromFiles}} \tab Defines an GenericDataFileSet object by searching for files.\cr
+ \tab \code{\link[aroma.affymetrix:getAlias.GenericDataFileSet]{getAlias}} \tab Gets the alias of the file set.\cr
  \tab \code{getFile} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
- \tab \code{getFullName} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getFullName.GenericDataFileSet]{getFullName}} \tab Gets the full name of the file set.\cr
  \tab \code{getFullNames} \tab  -\cr
- \tab \code{getName} \tab  -\cr
- \tab \code{getNames} \tab  -\cr
- \tab \code{getPath} \tab  -\cr
- \tab \code{getPathnames} \tab  -\cr
- \tab \code{getTags} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getName.GenericDataFileSet]{getName}} \tab Gets the name of the file set.\cr
+ \tab \code{\link[aroma.affymetrix:getNames.GenericDataFileSet]{getNames}} \tab Gets the names of the files in the file set.\cr
+ \tab \code{\link[aroma.affymetrix:getPath.GenericDataFileSet]{getPath}} \tab Gets the path (directory) of the file set.\cr
+ \tab \code{\link[aroma.affymetrix:getPathnames.GenericDataFileSet]{getPathnames}} \tab Gets the pathnames of the files in the file set.\cr
+ \tab \code{\link[aroma.affymetrix:getTags.GenericDataFileSet]{getTags}} \tab Gets the tags of the file set.\cr
  \tab \code{hasTag} \tab  -\cr
  \tab \code{hasTags} \tab  -\cr
  \tab \code{indexOf} \tab  -\cr
- \tab \code{lapply} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:lapply.GenericDataFileSet]{lapply}} \tab Applies a function to each of the data files.\cr
  \tab \code{nbrOfFiles} \tab  -\cr
  \tab \code{sapply} \tab  -\cr
- \tab \code{seq} \tab  -\cr
- \tab \code{setAlias} \tab  -\cr
- \tab \code{setTags} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:seq.GenericDataFileSet]{seq}} \tab Gets an vector of file indices.\cr
+ \tab \code{\link[aroma.affymetrix:setAlias.GenericDataFileSet]{setAlias}} \tab Sets the alias of the file set.\cr
+ \tab \code{\link[aroma.affymetrix:setTags.GenericDataFileSet]{setTags}} \tab Sets the tags of the file set.\cr
 }
 
 

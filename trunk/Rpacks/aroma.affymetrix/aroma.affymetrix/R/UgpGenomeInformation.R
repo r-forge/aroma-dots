@@ -115,6 +115,26 @@ setMethodS3("fromChipType", "UgpGenomeInformation", function(static, chipType, .
 }, static=TRUE)
 
 
+setMethodS3("nbrOfUnits", "UgpGenomeInformation", function(this, ...) {
+  ugp <- getAromaUgpFile(this);
+  nbrOfUnits(ugp);
+})
+
+setMethodS3("isCompatibleWithCdf", "UgpGenomeInformation", function(this, cdf, ...) {
+  # Argument 'cdf':
+  if (!inherits(cdf, "AffymetrixCdfFile")) {
+    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  }
+
+  if (nbrOfUnits(this) != nbrOfUnits(cdf)) {
+    return(FALSE);
+  }
+
+  TRUE;
+})
+
+
+
 setMethodS3("verify", "UgpGenomeInformation", function(this, ...) {
   tryCatch({
     df <- readData(this, nrow=10);
@@ -253,6 +273,8 @@ setMethodS3("getUnitsOnChromosome", "UgpGenomeInformation", function(this, ...) 
 
 ############################################################################
 # HISTORY:
+# 2007-12-09
+# o Added nbrOfUnits().
 # 2007-11-20
 # o Added clearCache() to clear cached UGP file.
 # 2007-09-11

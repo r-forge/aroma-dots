@@ -92,7 +92,7 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
 
 
 
-setMethodS3("getAsteriskTags", "ProbeLevelModel", function(this, ...) {
+setMethodS3("getAsteriskTags", "ProbeLevelModel", function(this, collapse=NULL, ...) {
   tags <- "PLM";
 
   # Add class-specific tags
@@ -103,6 +103,10 @@ setMethodS3("getAsteriskTags", "ProbeLevelModel", function(this, ...) {
   probeModel <- this$probeModel;
   if (probeModel != "pm") {
     tags <- c(tags, probeModel);
+  }
+
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
   }
 
   tags;

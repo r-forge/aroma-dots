@@ -644,3 +644,12 @@ getAsteriskTags.FragmentLengthNormalization
   getAsteriskTags.HetLogAddCnPlm getAsteriskTags.HetLogAddSnpPlm
   getAsteriskTags.MbeiCnPlm getAsteriskTags.MbeiSnpPlm
   getAsteriskTags.RmaCnPlm getAsteriskTags.RmaSnpPlm
+  getAsteriskTags.AffymetrixFileSetReporter
+  getAsteriskTags.ArrayExplorer getAsteriskTags.Explorer
+  setGenomeInformation setGenomeInformation.AffymetrixCdfFile
+  setSnpInformation setSnpInformation.AffymetrixCdfFile
+  isCompatibleWithCdf isCompatibleWithCdf.GenomeInformation
+  isCompatibleWithCdf.SnpInformation
+  isCompatibleWithCdf.UflSnpInformation
+  isCompatibleWithCdf.UgpGenomeInformation
+  nbrOfUnits.UgpGenomeInformation

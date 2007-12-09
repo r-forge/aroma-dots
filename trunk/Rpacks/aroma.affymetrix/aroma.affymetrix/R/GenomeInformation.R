@@ -469,6 +469,18 @@ setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRU
 })
 
 
+setMethodS3("isCompatibleWithCdf", "GenomeInformation", function(this, cdf, ...) {
+  # Argument 'cdf':
+  if (!inherits(cdf, "AffymetrixCdfFile")) {
+    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  }
+
+  # By default, be naive and always return FALSE.
+  TRUE;
+}, protected=TRUE)
+
+
+
 ###########################################################################/**
 # @RdocMethod getPositions
 #

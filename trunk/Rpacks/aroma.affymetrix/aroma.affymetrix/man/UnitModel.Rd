@@ -46,9 +46,9 @@ extends \emph{\link[aroma.affymetrix]{Model}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{findUnitsTodo} \tab  -\cr
- \tab \code{getCellIndices} \tab  -\cr
- \tab \code{readUnits} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:findUnitsTodo.UnitModel]{findUnitsTodo}} \tab Identifies non-fitted units.\cr
+ \tab \code{\link[aroma.affymetrix:getCellIndices.UnitModel]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
+ \tab \code{\link[aroma.affymetrix:readUnits.UnitModel]{readUnits}} \tab Reads data unit by unit.\cr
 }
 
 
