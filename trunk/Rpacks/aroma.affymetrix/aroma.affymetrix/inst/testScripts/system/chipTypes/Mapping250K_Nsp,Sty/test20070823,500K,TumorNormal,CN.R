@@ -98,7 +98,7 @@ ce <- ChromosomeExplorer(cns);
 print(ce);
 
 # Fit the model for a few chromosomes
-process(ce, chromosomes=c(1, 19, 22), verbose=log);
+process(ce, arrays=1:2, chromosomes=c(2, 19), verbose=log);
 
 # The X chromosome is very noisy and generates quite a few missing values
-process(ce, chromosomes=23, maxNAFraction=1/5, verbose=log);
+process(ce, arrays=1:2, chromosomes=23, maxNAFraction=1/5, verbose=log);

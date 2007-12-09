@@ -79,5 +79,5 @@ csmList <- list(
 
 lapply(csmList, FUN=function(csm) {
   ce <- ChromosomeExplorer(csm);
-  process(ce, arrays=1:3, chromosomes=c(1:2, 21:23), verbose=log);
+  process(ce, arrays=1:2, chromosomes=c(1:2,23), verbose=log);
 })
