@@ -76,5 +76,5 @@ fit(glad, arrays=1, chromosomes=19, verbose=log);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ce <- ChromosomeExplorer(glad);
 print(ce);
-process(ce, chromosomes=c(19,22:23), verbose=log);
+process(ce, chromosomes=c(19,23), verbose=log);
 ## process(ce, verbose=log);

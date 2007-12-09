@@ -50,4 +50,4 @@ print(cnr);
 
 ce <- ChromosomeExplorer(cnr);
 print(ce);
-process(ce, arrays=1, chromosomes=19:23, verbose=log);
+process(ce, arrays=1, chromosomes=c(19,23), verbose=log);

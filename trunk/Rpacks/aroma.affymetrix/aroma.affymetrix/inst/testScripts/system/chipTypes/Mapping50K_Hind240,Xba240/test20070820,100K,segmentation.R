@@ -86,12 +86,12 @@ lapply(cnsList, FUN=fit, arrays=1, chromosomes=19, verbose=log);
 # There is a CN deletion on chr 2 @ 83.0Mb in NA06985.
 lapply(cnsList, FUN=function(cns) {
   ce <- ChromosomeExplorer(cns);
-  process(ce, arrays=1, chromosomes=c(2,19:23), verbose=log);
+  process(ce, arrays=1, chromosomes=c(2,19), verbose=log);
 })
 
 # There is a CN deletion on chr 22 @ 21Mb in NA06994.
 lapply(cnsList, FUN=function(cns) {
   ce <- ChromosomeExplorer(cns);
-  process(ce, arrays=4, chromosomes=c(2,19:23), verbose=log);
+  process(ce, arrays=4, chromosomes=22, verbose=log);
 })
 
