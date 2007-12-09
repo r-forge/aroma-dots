@@ -266,7 +266,7 @@ setMethodS3("setAlias", "AffymetrixCelSetTuple", function(this, alias=NULL, ...)
 })
 
 
-setMethodS3("getAsteriskTag", "AffymetrixCelSetTuple", function(this, ...) {
+setMethodS3("getAsteriskTags", "AffymetrixCelSetTuple", function(this, ...) {
   "";
 }, protected=TRUE)
 
@@ -301,7 +301,7 @@ setMethodS3("getTags", "AffymetrixCelSetTuple", function(this, collapse=NULL, ..
   tags <- c(tags, this$.tags);
 
   # Update asterisk tags
-  tags[tags == "*"] <- getAsteriskTag(this, collapse=",");
+  tags[tags == "*"] <- getAsteriskTags(this, collapse=",");
 
   # Remove empty tags
   tags <- tags[nchar(tags) > 0];

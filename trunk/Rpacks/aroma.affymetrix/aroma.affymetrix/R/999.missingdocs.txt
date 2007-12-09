@@ -155,17 +155,17 @@
   getAromaUflFile.UflSnpInformation getAromaUgpFile
   getAromaUgpFile.UgpGenomeInformation getArrays getArraysOfInput
   getArraysOfInput.ArrayExplorer getArraysOfInput.ChromosomeExplorer
-  getAsteriskTag getAsteriskTag.AffinePlm
-  getAsteriskTag.AffymetrixCelSetTuple getAsteriskTag.AvgPlm
-  getAsteriskTag.CbsModel getAsteriskTag.ChromosomalModel
-  getAsteriskTag.CopyNumberSegmentationModel getAsteriskTag.GladModel
-  getAsteriskTag.MbeiPlm getAsteriskTag.Model
-  getAsteriskTag.ProbeLevelModel getAsteriskTag.RmaPlm
-  getAsteriskTag.SmoothMultiarrayModel getAsteriskTag.SmoothRmaModel
-  getAsteriskTag.SmoothSaModel getAsteriskTag.SnpChipEffectGroupMerge
-  getAsteriskTag.Transform getAsteriskTags
-  getAsteriskTags.AffymetrixFileSetReporter
-  getAsteriskTags.ArrayExplorer getAsteriskTags.Explorer getAttribute
+  getAsteriskTags getAsteriskTags.AffinePlm
+  getAsteriskTags.AffymetrixCelSetTuple getAsteriskTags.AvgPlm
+  getAsteriskTags.CbsModel getAsteriskTags.ChromosomalModel
+  getAsteriskTags.CopyNumberSegmentationModel getAsteriskTags.GladModel
+  getAsteriskTags.MbeiPlm getAsteriskTags.Model
+  getAsteriskTags.ProbeLevelModel getAsteriskTags.RmaPlm
+  getAsteriskTags.SmoothMultiarrayModel getAsteriskTags.SmoothRmaModel
+  getAsteriskTags.SmoothSaModel getAsteriskTags.SnpChipEffectGroupMerge
+  getAsteriskTags.Transform getAsteriskTagss
+  getAsteriskTagss.AffymetrixFileSetReporter
+  getAsteriskTagss.ArrayExplorer getAsteriskTagss.Explorer getAttribute
   getAttribute.AffymetrixFile getAttributes
   getAttributes.AffymetrixFile getAttributeXY
   getAttributeXY.AffymetrixCelFile getAverage
@@ -587,8 +587,8 @@
  isPaired isPaired.CopyNumberSegmentationModel
   findPngDevice findPngDevice.default fitWHLAPLM fitWHLAPLM.matrix
   fitWHRCModel fitWHRCModel.matrix fitWLAPLM fitWLAPLM.matrix
-  fitWRCModel fitWRCModel.matrix getAsteriskTag.HetLogAddPlm
-  getAsteriskTag.UnitModel getTags.UnitModel plotAxesLayers
+  fitWRCModel fitWRCModel.matrix getAsteriskTags.HetLogAddPlm
+  getAsteriskTags.UnitModel getTags.UnitModel plotAxesLayers
   plotAxesLayers.CopyNumberSegmentationModel plotChromosomesLayers
   plotChromosomesLayers.CopyNumberSegmentationModel
   plotCopyNumberRegionLayers
@@ -608,7 +608,7 @@
  calculateChromosomeStatistics.CopyNumberChromosomalModel
  clearCache.CopyNumberChromosomalModel clearCache.UgpGenomeInformation
  extractRawCopyNumbers.CopyNumberChromosomalModel
- getAsteriskTag.RawCopyNumberModel
+ getAsteriskTags.RawCopyNumberModel
  getFragmentLengths.UflSnpInformation
  getMatrixChipEffectFiles.CopyNumberChromosomalModel
  getRawCnData.CopyNumberChromosomalModel
@@ -635,12 +635,12 @@
   doCRMA doCRMA.default
  rescaleByAll rescaleByAll.AllelicCrosstalkCalibration
  rescaleByGroups rescaleByGroups.AllelicCrosstalkCalibration
-getAsteriskTag.AllelicCrosstalkCalibration
+getAsteriskTags.AllelicCrosstalkCalibration
 clearCache.AllelicCrosstalkCalibration
-getAsteriskTag.FragmentLengthNormalization
-  getAsteriskTag.AffineCnPlm getAsteriskTag.AffineSnpPlm
-  getAsteriskTag.AvgCnPlm getAsteriskTag.AvgSnpPlm
-  getAsteriskTag.ExonRmaPlm getAsteriskTag.FirmaModel
-  getAsteriskTag.HetLogAddCnPlm getAsteriskTag.HetLogAddSnpPlm
-  getAsteriskTag.MbeiCnPlm getAsteriskTag.MbeiSnpPlm
-  getAsteriskTag.RmaCnPlm getAsteriskTag.RmaSnpPlm
+getAsteriskTags.FragmentLengthNormalization
+  getAsteriskTags.AffineCnPlm getAsteriskTags.AffineSnpPlm
+  getAsteriskTags.AvgCnPlm getAsteriskTags.AvgSnpPlm
+  getAsteriskTags.ExonRmaPlm getAsteriskTags.FirmaModel
+  getAsteriskTags.HetLogAddCnPlm getAsteriskTags.HetLogAddSnpPlm
+  getAsteriskTags.MbeiCnPlm getAsteriskTags.MbeiSnpPlm
+  getAsteriskTags.RmaCnPlm getAsteriskTags.RmaSnpPlm

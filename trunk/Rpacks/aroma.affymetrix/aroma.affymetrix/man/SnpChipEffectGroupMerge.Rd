@@ -52,7 +52,7 @@ extends \link[aroma.affymetrix]{ChipEffectGroupMerge}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{getAsteriskTag} \tab  -\cr
+ \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getMergeFunction} \tab  -\cr
 }
 

@@ -46,14 +46,14 @@ extends \emph{\link[aroma.affymetrix]{Model}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:findUnitsTodo.UnitModel]{findUnitsTodo}} \tab Identifies non-fitted units.\cr
- \tab \code{\link[aroma.affymetrix:getCellIndices.UnitModel]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
- \tab \code{\link[aroma.affymetrix:readUnits.UnitModel]{readUnits}} \tab Reads data unit by unit.\cr
+ \tab \code{findUnitsTodo} \tab  -\cr
+ \tab \code{getCellIndices} \tab  -\cr
+ \tab \code{readUnits} \tab  -\cr
 }
 
 
  \bold{Methods inherited from Model}:\cr
-fit, getAlias, getAsteriskTag, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
+fit, getAlias, getAsteriskTags, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

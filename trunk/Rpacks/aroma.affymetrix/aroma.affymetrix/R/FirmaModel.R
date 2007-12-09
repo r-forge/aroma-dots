@@ -15,7 +15,8 @@
 #
 # \arguments{
 #   \item{rmaPlm}{An @RmaPlm object.}
-#   \item{summaryMethod}{}
+#   \item{summaryMethod}{A @character specifying what summarization method
+#     should be used.}
 #   \item{...}{Arguments passed to constructor of @see "UnitModel".}
 # }
 #
@@ -26,17 +27,20 @@
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #
 #*/###########################################################################
-setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod="upperQuartile", ...) {
+setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod=c("upperQuartile", "median", "max"), ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'rmaPlm':
-
+  if (!is.null(rmaPlm)) {
+    if (!inherits(rmaPlm, "ProbeLevelModel")) {
+      throw("Argument 'rmaPlm' is not a ProbeLevelModel: ", class(rmaPlm)[1]);
+    }
+  }
 
   # Argument 'summaryMethod':
-  if (!is.character(summaryMethod)) {
-    throw("Argument 'summaryMethod' must be a string.");
-  }
+  summaryMethod <- match.arg(summaryMethod);
+
 
   extend(UnitModel(...), "FirmaModel",
      .plm = rmaPlm,
@@ -46,17 +50,18 @@ setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod="upperQuartil
 })
 
 
-setMethodS3("getAsteriskTag", "FirmaModel", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "FirmaModel", function(this, collapse=NULL, ...) {
   tags <- "FIRMA";
 
   # Append class-specific tags
-##  if (this$medianResiduals) {
-##    tags <- c(tags, "medres");
-##  }
-
-##  if (this$summaryMethod) {
-##    tags <- c(tags, "uqwt");
-##  }
+  summaryMethod <- this$summaryMethod;
+  if (summaryMethod == "max") {
+    tags <- c(tags, "max");
+  } else if (summaryMethod == "median") {
+    tags <- c(tags, "med");
+  } else if (summaryMethod == "upperQuartile") {
+    tags <- c(tags, "uqwt");
+  }
 
   # Collapse?
   tags <- paste(tags, collapse=collapse);
@@ -226,18 +231,17 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ..., verbose=FALSE) {
 #*/###########################################################################
 
 setMethodS3("getFitFunction", "FirmaModel", function(this, ...) {
-  if (this$summaryMethod=="upperQuartile") {
+  if (this$summaryMethod == "upperQuartile") {
     fitfcn <- function(y) {
       J <- length(y);
       list(intensities=2^(1-quantile(y, probs=0.75)), stdvs=1, pixels=1);
     }
-  } else if (this$summaryMethod=="median") {
+  } else if (this$summaryMethod == "median") {
     fitfcn <- function(y) {
       J <- length(y);
-      1-median(y);
       list(intensities=2^(1-median(y)), stdvs=1, pixels=1);
     }
-  } else if (this$summaryMethod=="max") {
+  } else if (this$summaryMethod == "max") {
     fitfcn <- function(y) {
       J <- length(y);
       list(intensities=2^(1-max(y)), stdvs=1, pixels=1);

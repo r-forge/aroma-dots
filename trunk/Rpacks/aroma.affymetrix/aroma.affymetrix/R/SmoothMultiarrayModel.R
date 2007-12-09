@@ -76,7 +76,7 @@ setMethodS3("clearCache", "SmoothMultiarrayModel", function(this, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "SmoothMultiarrayModel", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "SmoothMultiarrayModel", function(this, collapse=NULL, ...) {
   classTag <- toupper(gsub("Model$", "", class(this)[1]));
   weightsTag <- switch(this$.typoOfWeights, "1/s2"="w=s2inv", "");
   kernelTag <- this$.kernel;
@@ -92,7 +92,7 @@ setMethodS3("getAsteriskTag", "SmoothMultiarrayModel", function(this, collapse=N
 
 
 setMethodS3("getRootPath", "SmoothMultiarrayModel", function(this, ...) {
-  tag <- getAsteriskTag(this)[1];
+  tag <- getAsteriskTags(this)[1];
   sprintf("%sData", tolower(tag));
 })
 

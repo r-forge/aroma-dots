@@ -44,9 +44,9 @@ setConstructorS3("ExonRmaPlm", function(..., mergeGroups=TRUE) {
 
 
 
-setMethodS3("getAsteriskTag", "ExonRmaPlm", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "ExonRmaPlm", function(this, collapse=NULL, ...) {
   # Returns 'RMA[,<flavor>]'
-  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
   # Add class specific parameter tags
   if (this$mergeGroups)

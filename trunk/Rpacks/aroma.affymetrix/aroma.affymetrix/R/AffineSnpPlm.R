@@ -30,9 +30,9 @@ setConstructorS3("AffineSnpPlm", function(..., mergeStrands=FALSE) {
 
 
 
-setMethodS3("getAsteriskTag", "AffineSnpPlm", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "AffineSnpPlm", function(this, collapse=NULL, ...) {
   # Returns 'AFF[,<flavor>]'
-  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
   # Add class specific parameter tags
   if (!this$mergeStrands)

@@ -97,8 +97,8 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 
 
 
-setMethodS3("getAsteriskTag", "FragmentLengthNormalization", function(this, collapse=NULL, ...) {
-  tag <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+setMethodS3("getAsteriskTags", "FragmentLengthNormalization", function(this, collapse=NULL, ...) {
+  tag <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
   # Extra tags?
   tag <- c(tag, this$.extraTags);
@@ -654,7 +654,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 ############################################################################
 # HISTORY:
 # 2007-12-01
-# o Added getAsteriskTag(0 to FragmentLengthNormalization.
+# o Added getAsteriskTag() to FragmentLengthNormalization.
 # o Similar to AllelicCrosstalkCalibration, the constructor argument
 #   'subsetToFit' of FragmentLengthNormalization accept "-XY" (and "-X" and
 #   "-Y") to specify the set of units to fit the model over to be all units

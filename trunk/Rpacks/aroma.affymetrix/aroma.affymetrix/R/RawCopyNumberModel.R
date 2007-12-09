@@ -26,7 +26,7 @@ setConstructorS3("RawCopyNumberModel", function(...) {
   extend(CopyNumberChromosomalModel(...), "RawCopyNumberModel");
 })
 
-setMethodS3("getAsteriskTag", "RawCopyNumberModel", function(this, ...) {
+setMethodS3("getAsteriskTags", "RawCopyNumberModel", function(this, ...) {
   "";
 })
 

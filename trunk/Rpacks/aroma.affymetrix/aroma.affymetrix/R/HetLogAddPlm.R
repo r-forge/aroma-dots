@@ -32,7 +32,7 @@ setConstructorS3("HetLogAddPlm", function(...) {
 })
 
 
-setMethodS3("getAsteriskTag", "HetLogAddPlm", function(this, ...) {
+setMethodS3("getAsteriskTags", "HetLogAddPlm", function(this, ...) {
   "HLA";
 })
 

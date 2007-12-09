@@ -33,9 +33,9 @@ setConstructorS3("RmaCnPlm", function(..., combineAlleles=FALSE) {
 })
 
 
-setMethodS3("getAsteriskTag", "RmaCnPlm", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "RmaCnPlm", function(this, collapse=NULL, ...) {
   # Returns 'RMA[,<flavor>][,+-]'
-  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
   # Add class specific parameter tags
   if (this$combineAlleles)

@@ -53,10 +53,10 @@ extends \emph{\link[aroma.affymetrix]{SmoothMultiarrayModel}}\cr
 
 
  \bold{Methods inherited from SmoothMultiarrayModel}:\cr
-as.character, clearCache, createOutputTuple, fitOneChromosome, getAsteriskTag, getBandwidth, getFitFunction, getOutputTuple, getRootPath, setBandwidth
+as.character, clearCache, createOutputTuple, fitOneChromosome, getAsteriskTags, getBandwidth, getFitFunction, getOutputTuple, getRootPath, setBandwidth
 
  \bold{Methods inherited from ChromosomalModel}:\cr
-as.character, clearCache, fit, getAlias, getArrays, getAsteriskTag, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffectSets, getListOfGenomeInformations, getName, getNames, getParentPath, getPath, getPcuTheta, getPositionChipTypeUnit, getReportPath, getRootPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setGenome
+as.character, clearCache, fit, getAlias, getArrays, getAsteriskTags, getChipEffectFiles, getChipType, getChipTypes, getChromosomes, getFullName, getFullNames, getGenome, getGenomeData, getGenomeFile, getListOfChipEffectSets, getListOfGenomeInformations, getName, getNames, getParentPath, getPath, getPcuTheta, getPositionChipTypeUnit, getReportPath, getRootPath, getSetTuple, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setGenome
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

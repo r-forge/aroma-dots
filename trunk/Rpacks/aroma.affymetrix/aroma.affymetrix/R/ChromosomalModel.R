@@ -123,7 +123,7 @@ setMethodS3("clearCache", "ChromosomalModel", function(this, ...) {
 
 
 setMethodS3("getRootPath", "ChromosomalModel", function(this, ...) {
-  tag <- getAsteriskTag(this)[1];
+  tag <- getAsteriskTags(this)[1];
   sprintf("%sData", tolower(tag));
 })
 
@@ -443,7 +443,7 @@ setMethodS3("setAlias", "ChromosomalModel", function(this, alias=NULL, ...) {
 
 
 
-setMethodS3("getAsteriskTag", "ChromosomalModel", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "ChromosomalModel", function(this, collapse=NULL, ...) {
   # Create a default asterisk tags for any class by extracting all
   # capital letters and pasting them together, e.g. AbcDefGhi => ADG.
   name <- class(this)[1];
@@ -475,7 +475,7 @@ setMethodS3("getTags", "ChromosomalModel", function(this, collapse=NULL, ...) {
   tags <- c(tags, this$.tags);
 
   # Update default tags
-  asteriskTags <- getAsteriskTag(this, collapse=",");
+  asteriskTags <- getAsteriskTags(this, collapse=",");
   if (length(asteriskTags) == 0)
     asteriskTags <- "";
   tags[tags == "*"] <- asteriskTags;
@@ -695,7 +695,7 @@ setMethodS3("fit", "ChromosomalModel", abstract=TRUE);
 
 
 setMethodS3("getSetTag", "ChromosomalModel", function(this, ...) {
-  tolower(getAsteriskTag(this)[1]);
+  tolower(getAsteriskTags(this)[1]);
 }, private=TRUE)
 
 
