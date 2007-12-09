@@ -10,7 +10,7 @@ chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
 # Expected sample names
 sampleNames <- c("NA06985", "NA06991", "NA06993", 
                  "NA06994", "NA07000", "NA07019");
-tags <- "ACC,-X,RMA,+300,A+B,FLN";
+tags <- "ACC,-XY,RMA,+300,A+B,FLN,-XY";
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
