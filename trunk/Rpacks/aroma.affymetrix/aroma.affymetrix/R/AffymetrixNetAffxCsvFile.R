@@ -107,7 +107,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
   for (kk in seq(along=fln)) {
     unit <- fln[kk]; 
     if (nchar(unit) > 0) {
-      hasNames <- (regexpr("^[a-zA-Z]", unit) != -1);
+      hasNames <- (regexpr("^([a-zA-Z]+|---)", unit) != -1);
       break;
     }
   }
@@ -149,10 +149,20 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     # Replace '---' with NAs
     enzymeIdxs[enzymeIdxs %in% c("---")] <- NA;
     allNames <- na.omit(sort(unique(enzymeIdxs)));
-    verbose && cat(verbose, "Identified enzymes: ",
+
+    # AD HOC: In the na24 builds, for Mapping250K_{Nsp|Sty} and
+    # the fault GenomeWideSNP_5, the enzyme name field is there
+    # but all are '---'.  In that case, assume first enzyme.
+    if (length(allNames) == 0) {
+      verbose && cat(verbose, "No identified enzymes. Assuming a single enzyme.");
+      enzymeIdxs <- rep(1, times=length(enzymeIdxs));
+    } else {
+      verbose && cat(verbose, "Identified enzymes: ",
                                     paste(allNames, collapse=", "));
-    # Map names to indices
-    enzymeIdxs <- match(enzymeIdxs,allNames);
+      # Map names to indices
+      enzymeIdxs <- match(enzymeIdxs, allNames);
+    }
+
     # Put into an ExJ matrix
     enzymeIdxs <- matrix(enzymeIdxs, nrow=nbrOfEnzymes);
     verbose && exit(verbose);
@@ -178,12 +188,16 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
       for (rr in 1:nbrOfEnzymes) {
         # Identify all indices that have enzyme 'ee' in row 'rr'
         idxs <- which(enzymeIdxs[rr,] == ee);
-        if (length(idxs) > 0)
-          fln2[idxs,ee] <- fln[rr,idxs];
+        if (length(idxs) > 0) {
+          values <- fln[rr,idxs];
+          ok <- is.finite(values);
+          fln2[idxs[ok],ee] <- values[ok];
+          rm(ok, values);
+        }
       }
     }
     # Keep only requested enzymes
-    fln <- fln2[,enzymes];
+    fln <- fln2[,enzymes,drop=FALSE];
     rm(enzymeIdxs, fln2);
     verbose && exit(verbose);
   } else {
@@ -217,6 +231,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
   names <- c("fragmentLength", rep(c("fragmentLength"), nbrOfEnzymes-1));
   if (nbrOfEnzymes > 1)
     names[-1] <- sprintf("%s.%02d", names[-1], 2:nbrOfEnzymes);
+  names <- names[enzymes];
 
   data <- data.frame(unitName=data[[1]], fln);
   colnames(data) <- c("unitName", names);
@@ -231,6 +246,9 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o BUG FIX: readDataUnitFragmentLength() of AffymetrixNetAffxCsvFile would
+#   not handle cases where enzymes names a given but all are '---'.
 # 2007-11-28
 # o Updated readDataUnitFragmentLength() of AffymetrixNetAffxCsvFile to
 #   also handle "enzyme data" columns that contain named or non-named

@@ -48,16 +48,18 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
- \tab \code{fromChipType} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fromChipType.UgpGenomeInformation]{fromChipType}} \tab Defines a UgpGenomeInformation object by chip type.\cr
  \tab \code{getChromosomes} \tab  -\cr
  \tab \code{getData} \tab  -\cr
  \tab \code{getUnitsOnChromosome} \tab  -\cr
+ \tab \code{isCompatibleWithCdf} \tab  -\cr
+ \tab \code{nbrOfUnits} \tab  -\cr
  \tab \code{readData} \tab  -\cr
 }
 
 
  \bold{Methods inherited from GenomeInformation}:\cr
-fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, nbrOfUnits, plotDensity, readData
+fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, isCompatibleWithCdf, nbrOfUnits, plotDensity, readData
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum

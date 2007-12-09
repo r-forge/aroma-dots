@@ -47,11 +47,11 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{clone} \tab  -\cr
- \tab \code{fromFile} \tab  -\cr
- \tab \code{getCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fromFile.CnagCfhFile]{fromFile}} \tab Defines an CnagCfhFile object from a CFH file.\cr
+ \tab \code{\link[aroma.affymetrix:getCdf.CnagCfhFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{nbrOfSnps} \tab  -\cr
- \tab \code{setCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:setCdf.CnagCfhFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
 }
 
 

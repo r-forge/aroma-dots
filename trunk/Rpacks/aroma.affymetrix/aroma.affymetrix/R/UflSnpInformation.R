@@ -93,6 +93,20 @@ setMethodS3("nbrOfUnits", "UflSnpInformation", function(this, ...) {
 })
 
 
+setMethodS3("isCompatibleWithCdf", "UflSnpInformation", function(this, cdf, ...) {
+  # Argument 'cdf':
+  if (!inherits(cdf, "AffymetrixCdfFile")) {
+    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  }
+
+  if (nbrOfUnits(this) != nbrOfUnits(cdf)) {
+    return(FALSE);
+  }
+
+  TRUE;
+})
+
+
 setMethodS3("getData", "UflSnpInformation", function(this, units=NULL, fields=getDataColumns(this), orderBy=NULL, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

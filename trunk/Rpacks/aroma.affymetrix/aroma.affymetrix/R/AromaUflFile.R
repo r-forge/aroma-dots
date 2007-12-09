@@ -97,7 +97,7 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
   verbose && print(verbose, gc, level=-10);
 
   # Update
-  this[cdfUnits,] <- data;
+  this[cdfUnits,enzymes] <- data;
   rm(data);
 
   gc <- gc();
@@ -111,6 +111,9 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
 
 ############################################################################
 # HISTORY:
+# 2007-12-08
+# o BUG FIX: importFromAffymetrixNetAffxCsvFile() of AromaUflFile failed
+#   to import one of two enzymes.
 # 2007-09-14
 # o Added support for multiple fragment lengths, in case multiple enzymes
 #   were used for the same assay.

@@ -1248,12 +1248,24 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
 
 
 setMethodS3("setGenomeInformation", "AffymetrixCdfFile", function(this, gi=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'gi':
   if (!is.null(gi)) {
     if (!inherits(gi, "GenomeInformation")) {
       throw("Argument 'gi' is not a GenomeInformation object:", class(gi)[1]);
     }
   }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Sanity checks
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!isCompatibleWithCdf(gi, this)) {
+    throw("Cannot set genome information. The ", class(gi)[1], " object 'gi' is compatible with the CDF: ", getFullName(gi), " != ", getFullName(this));
+  }
+
 
   this$.gi <- gi;
 })
@@ -1295,11 +1307,22 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UF
 
 
 setMethodS3("setSnpInformation", "AffymetrixCdfFile", function(this, si=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'si':
   if (!is.null(si)) {
     if (!inherits(si, "SnpInformation")) {
       throw("Argument 'si' is not a SnpInformation object:", class(si)[1]);
     }
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Sanity checks
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!isCompatibleWithCdf(si, this)) {
+    throw("Cannot set SNP information. The ", class(si)[1], " object 'si' is compatible with the CDF: ", getFullName(si), " != ", getFullName(this));
   }
 
   this$.si <- si;
@@ -1369,6 +1392,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2007-12-09
+# o Now get- and set- Genome/SnpInformation() asserts that the annotation
+#   file objects are compatible with the CDF.  At least for UGP & UFL files.
 # 2007-12-08
 # o Added setGenomeInformation() & setSnpInformation() to AffymetrixCdfFile.
 # o Now construct AffymetrixCdfFile$fromName("HuEx-1_0-st-v2", tags="core") 

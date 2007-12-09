@@ -47,13 +47,13 @@ extends \emph{\link[aroma.affymetrix]{SnpInformation}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{fromChipType} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fromChipType.DChipSnpInformation]{fromChipType}} \tab Defines a DChipSnpInformation object by chip type.\cr
  \tab \code{readData} \tab  -\cr
 }
 
 
  \bold{Methods inherited from SnpInformation}:\cr
-fromCdf, fromChipType, fromDataSet, getChipType, getData, getFields, getFragmentLengths, getFragmentStarts, getFragmentStops, nbrOfEnzymes, nbrOfUnits, readData
+fromCdf, fromChipType, fromDataSet, getChipType, getData, getFields, getFragmentLengths, getFragmentStarts, getFragmentStops, isCompatibleWithCdf, nbrOfEnzymes, nbrOfUnits, readData
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum

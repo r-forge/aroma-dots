@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.2 [2007-12-08]
+Version: 0.8.2 [2007-12-09]
 o Added argument 'cdf' to static fromName() of AffymetrixCelSet.
   When using this argument, the 'chipType' argument is optional, 
   and the returned CEL set will be using the specified CDF.
@@ -13,7 +13,13 @@ o Now all ProbeLevelModel takes argument 'shift', which specifies
   closest integer) is automatically set.
 o UPDATE: Now output sets of a FirmaModel are stored in firmaData/.
   Previously they were stored under modelFirmaModel/.
+o UPDATE: Updated AffymetrixNetAffxCsvFile and AromaUflFile to
+  better import fragment-length information from NetAffx files.
 o Renamed all getAsteriskTag() methods to getAsteriskTags().
+o ROBUSTNESS: Now getGenomeInformation() of AffymetrixCdfFile asserts
+  that the located GenomeInformation annotation file is compatible
+  with the CDF.  Same for getSnpInformation().  Currently this can
+  only be asserted for UGP & UFL annotation files.
 o CLEAN UP: Went through all classes where applicable and updated
   so that getTags() and getAsteriskTags() work properly.  The
   latter was also renamed from getAsteriskTag() to getAsteriskTags()

@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Sun Dec 09 11:03:30 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1399,6 +1401,19 @@
 \alias{getAsteriskTags.MbeiSnpPlm}
 \alias{getAsteriskTags.RmaCnPlm}
 \alias{getAsteriskTags.RmaSnpPlm}
+\alias{getAsteriskTags.AffymetrixFileSetReporter}
+\alias{getAsteriskTags.ArrayExplorer}
+\alias{getAsteriskTags.Explorer}
+\alias{setGenomeInformation}
+\alias{setGenomeInformation.AffymetrixCdfFile}
+\alias{setSnpInformation}
+\alias{setSnpInformation.AffymetrixCdfFile}
+\alias{isCompatibleWithCdf}
+\alias{isCompatibleWithCdf.GenomeInformation}
+\alias{isCompatibleWithCdf.SnpInformation}
+\alias{isCompatibleWithCdf.UflSnpInformation}
+\alias{isCompatibleWithCdf.UgpGenomeInformation}
+\alias{nbrOfUnits.UgpGenomeInformation}
 
 \description{
   This page contains aliases for all "non-documented" objects that

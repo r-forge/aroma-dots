@@ -200,6 +200,19 @@ setMethodS3("fromDataSet", "SnpInformation", function(static, dataSet, ...) {
 
 
 
+
+setMethodS3("isCompatibleWithCdf", "SnpInformation", function(this, cdf, ...) {
+  # Argument 'cdf':
+  if (!inherits(cdf, "AffymetrixCdfFile")) {
+    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  }
+
+  # By default, be naive and always return FALSE.
+  TRUE;
+}, protected=TRUE)
+
+
+
 ###########################################################################/**
 # @RdocMethod getData
 #
