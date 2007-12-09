@@ -51,7 +51,7 @@ setConstructorS3("MbeiPlm", function(...) {
 })
 
 
-setMethodS3("getAsteriskTag", "MbeiPlm", function(this, ...) {
+setMethodS3("getAsteriskTags", "MbeiPlm", function(this, ...) {
   "MBEI";
 })
 

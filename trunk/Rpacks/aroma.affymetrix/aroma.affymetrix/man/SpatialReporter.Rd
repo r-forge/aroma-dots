@@ -48,7 +48,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
 \tabular{rll}{
  \tab \code{addColorMap} \tab  -\cr
  \tab \code{getColorMaps} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:process.SpatialReporter]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
+ \tab \code{process} \tab  -\cr
  \tab \code{setColorMaps} \tab  -\cr
 }
 

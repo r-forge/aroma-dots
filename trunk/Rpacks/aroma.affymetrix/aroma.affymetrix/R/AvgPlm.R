@@ -65,7 +65,7 @@ setConstructorS3("AvgPlm", function(..., flavor=c("median", "mean")) {
 })
 
 
-setMethodS3("getAsteriskTag", "AvgPlm", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "AvgPlm", function(this, collapse=NULL, ...) {
   tags <- "AVG";
 
   # Add class specific parameter tags

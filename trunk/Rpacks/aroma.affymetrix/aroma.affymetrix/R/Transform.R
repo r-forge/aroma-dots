@@ -76,7 +76,7 @@ setMethodS3("clearCache", "Transform", function(this, ...) {
 
 
 
-setMethodS3("getAsteriskTag", "Transform", function(this,...) {
+setMethodS3("getAsteriskTags", "Transform", function(this,...) {
   # Create a default asterisk tags for any class by extracting all
   # capital letters and pasting them together, e.g. AbcDefGhi => ADG.
   name <- class(this)[1];
@@ -196,7 +196,7 @@ setMethodS3("getTags", "Transform", function(this, collapse=NULL, ...) {
   tags <- c(tags, this$.tags);
 
   # Update default tags
-  tags[tags == "*"] <- getAsteriskTag(this, collapse=",");
+  tags[tags == "*"] <- getAsteriskTags(this, collapse=",");
 
   # Collapsed or split?
   if (!is.null(collapse)) {

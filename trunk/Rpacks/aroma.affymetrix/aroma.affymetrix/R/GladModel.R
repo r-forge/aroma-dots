@@ -65,7 +65,7 @@ setConstructorS3("GladModel", function(cesTuple=NULL, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "GladModel", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "GladModel", function(this, collapse=NULL, ...) {
   tags <- "GLAD";
 
   # Add class-specific tags

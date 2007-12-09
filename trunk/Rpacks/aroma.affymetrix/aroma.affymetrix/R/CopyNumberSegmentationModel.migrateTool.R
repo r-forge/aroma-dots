@@ -38,7 +38,7 @@ setMethodS3("migrateTool", "CopyNumberSegmentationModel", function(static, what=
       className <- classes[cc];
       clazz <- Class$forName(className);
       obj <- newInstance(clazz);
-      aTag <- getAsteriskTag(obj)[1];
+      aTag <- getAsteriskTags(obj)[1];
       pattern <- sprintf(",%s(,|$)", aTag);
       oldRootPath <- sprintf("%sData", tolower(aTag));
 

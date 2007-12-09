@@ -28,8 +28,8 @@ setConstructorS3("SmoothSaModel", function(...) {
 })
 
 
-setMethodS3("getAsteriskTag", "SmoothSaModel", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTag", this, collapse=NULL, ...);
+setMethodS3("getAsteriskTags", "SmoothSaModel", function(this, collapse=NULL, ...) {
+  tags <- NextMethod("getAsteriskTags", this, collapse=NULL, ...);
 
   # Replace first tags
   tags[1] <- "SA";

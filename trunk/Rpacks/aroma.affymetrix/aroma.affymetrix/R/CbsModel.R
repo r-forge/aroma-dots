@@ -48,7 +48,7 @@ setConstructorS3("CbsModel", function(cesTuple=NULL, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "CbsModel", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "CbsModel", function(this, collapse=NULL, ...) {
   tags <- "CBS";
 
   # Add class-specific tags

@@ -151,8 +151,8 @@ setMethodS3("clearCache", "AllelicCrosstalkCalibration", function(this, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "AllelicCrosstalkCalibration", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+setMethodS3("getAsteriskTags", "AllelicCrosstalkCalibration", function(this, collapse=NULL, ...) {
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
   # Extra tags?
   tags <- c(tags, this$.extraTags);

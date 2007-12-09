@@ -1240,10 +1240,22 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
       throw("Failed to retrieve genome information for this chip type: ", chipType);
     }
 
-    this$.gi <- gi;
+    setGenomeInformation(this, gi);
   }
 
   gi;
+})
+
+
+setMethodS3("setGenomeInformation", "AffymetrixCdfFile", function(this, gi=NULL, ...) {
+  # Argument 'gi':
+  if (!is.null(gi)) {
+    if (!inherits(gi, "GenomeInformation")) {
+      throw("Argument 'gi' is not a GenomeInformation object:", class(gi)[1]);
+    }
+  }
+
+  this$.gi <- gi;
 })
 
 
@@ -1275,11 +1287,23 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UF
       throw("Failed to retrieve SNP information for this chip type: ", chipType);
     }
 
-    this$.si <- si;
+    setSnpInformation(this, si);
   }
 
   si;
 }, private=TRUE)
+
+
+setMethodS3("setSnpInformation", "AffymetrixCdfFile", function(this, si=NULL, ...) {
+  # Argument 'si':
+  if (!is.null(si)) {
+    if (!inherits(si, "SnpInformation")) {
+      throw("Argument 'si' is not a SnpInformation object:", class(si)[1]);
+    }
+  }
+
+  this$.si <- si;
+})
 
 
 ###########################################################################/**
@@ -1346,6 +1370,7 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 ############################################################################
 # HISTORY:
 # 2007-12-08
+# o Added setGenomeInformation() & setSnpInformation() to AffymetrixCdfFile.
 # o Now construct AffymetrixCdfFile$fromName("HuEx-1_0-st-v2", tags="core") 
 #   can be used to locate 'HuEx-1_0-st-v2,core.CDF'.
 # 2007-09-10

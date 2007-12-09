@@ -28,9 +28,9 @@ setConstructorS3("AvgCnPlm", function(..., combineAlleles=FALSE) {
 })
 
 
-setMethodS3("getAsteriskTag", "AvgCnPlm", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "AvgCnPlm", function(this, collapse=NULL, ...) {
   # Returns 'AVG[,<flavor>][,+-]'
-  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
   # Add class specific parameter tags
   if (this$combineAlleles)

@@ -84,7 +84,7 @@ setMethodS3("getMergeFunction", "SnpChipEffectGroupMerge", function(this, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "SnpChipEffectGroupMerge", function(this, ...) {
+setMethodS3("getAsteriskTags", "SnpChipEffectGroupMerge", function(this, ...) {
   tags <- NULL;
   if (this$mergeStrands)
     tags <- c(tags, "F+R");

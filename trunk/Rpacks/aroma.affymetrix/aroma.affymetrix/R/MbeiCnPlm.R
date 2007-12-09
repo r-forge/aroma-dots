@@ -28,9 +28,9 @@ setConstructorS3("MbeiCnPlm", function(..., combineAlleles=FALSE) {
 })
 
 
-setMethodS3("getAsteriskTag", "MbeiCnPlm", function(this, collapse=NULL, ...) {
+setMethodS3("getAsteriskTags", "MbeiCnPlm", function(this, collapse=NULL, ...) {
   # Returns 'MBEI[,<flavor>][,+-]'
-  tags <- NextMethod("getAsteriskTag", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
   # Add class specific parameter tags
   if (this$combineAlleles)

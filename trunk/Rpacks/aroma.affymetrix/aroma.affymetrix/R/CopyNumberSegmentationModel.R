@@ -34,7 +34,7 @@ setMethodS3("getTags", "CopyNumberSegmentationModel", function(this, collapse=NU
   tags <- c(tags, this$.tags);
 
   # Update default tags
-  asteriskTags <- paste(getAsteriskTag(this)[-1], collapse=",");
+  asteriskTags <- paste(getAsteriskTags(this)[-1], collapse=",");
   if (length(asteriskTags) == 0)
     asteriskTags <- "";
   tags[tags == "*"] <- asteriskTags;
@@ -618,7 +618,8 @@ setMethodS3("writeRegions", "CopyNumberSegmentationModel", function(this, arrays
       trackAttr <- c(type="wiggle_0");
       trackAttr <- c(trackAttr, name=sprintf("\"%s\"", name));
       trackAttr <- c(trackAttr, 
-                     group=sprintf("\"%s regions\"", getAsteriskTag(this, collapse=",")));
+                     group=sprintf("\"%s regions\"", 
+                                getAsteriskTags(this, collapse=",")));
       trackAttr <- c(trackAttr, priority=array);
       trackAttr <- c(trackAttr, graphType="bar");
       trackAttr <- c(trackAttr, visibility="full");

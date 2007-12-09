@@ -51,21 +51,21 @@ extends \link[aroma.affymetrix]{RmaPlm}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{getAsteriskTag} \tab  -\cr
+ \tab \code{getAsteriskTags} \tab  -\cr
 }
 
 
  \bold{Methods inherited from RmaPlm}:\cr
-getAsteriskTag, getCalculateResidualsFunction
+getAsteriskTags, getCalculateResidualsFunction
 
  \bold{Methods inherited from ProbeLevelModel}:\cr
-calculateResidualSet, calculateWeights, fit, getAsteriskTag, getCalculateResidualsFunction, getChipEffectSet, getProbeAffinityFile, getResidualSet, getWeightsSet
+calculateResidualSet, calculateWeights, fit, getAsteriskTags, getCalculateResidualsFunction, getChipEffectSet, getProbeAffinityFile, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getCellIndices, readUnits
 
  \bold{Methods inherited from Model}:\cr
-fit, getAlias, getAsteriskTag, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
+fit, getAlias, getAsteriskTags, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

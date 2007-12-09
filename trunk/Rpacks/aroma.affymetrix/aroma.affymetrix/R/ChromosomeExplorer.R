@@ -509,7 +509,7 @@ setMethodS3("writeCopyNumberRegionLayers", "ChromosomeExplorer", function(this, 
     return(NULL);
     
   path <- getPath(this);
-  tags <- getAsteriskTag(model, collapse=",");
+  tags <- getAsteriskTags(model, collapse=",");
   path <- filePath(getParent(path), sprintf("%s,sampleLayer", tags));
   path <- Arguments$getWritablePath(path);
 

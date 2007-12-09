@@ -231,7 +231,7 @@ setMethodS3("setAlias", "Model", function(this, alias=NULL, ...) {
 })
 
 
-setMethodS3("getAsteriskTag", "Model", function(this, ...) {
+setMethodS3("getAsteriskTags", "Model", function(this, ...) {
   # Create a default asterisk tags for any class by extracting all
   # capital letters and pasting them together, e.g. AbcDefGhi => ADG.
   name <- class(this)[1];
@@ -295,7 +295,7 @@ setMethodS3("getTags", "Model", function(this, collapse=NULL, ...) {
 
   # Expand asterisk tags
   if (any(tags == "*")) {
-    tags[tags == "*"] <- getAsteriskTag(this, collapse=",");
+    tags[tags == "*"] <- getAsteriskTags(this, collapse=",");
   }
 
   # Combine input tags and local tags

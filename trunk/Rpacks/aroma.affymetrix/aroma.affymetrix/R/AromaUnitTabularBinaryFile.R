@@ -28,10 +28,11 @@ setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ...) {
 })
 
 
-setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(static, chipType, ...) {
-  pathname <- findByChipType(static, chipType=chipType, ...);
+setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, ...) {
+  pathname <- findByChipType(static, chipType=chipType, tags=tags, ...);
   if (is.null(pathname)) {
-    throw("Could not locate file for this chip type: ", chipType);
+    throw("Could not locate file for this chip type: ", 
+                                   paste(c(chipType, tags), collapse=","));
   }
 
   # Create object
@@ -40,27 +41,29 @@ setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(static, chipT
 
 
 
-setMethodS3("findByChipType", "AromaUnitTabularBinaryFile", function(static, chipType, ...) {
+setMethodS3("findByChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Exclude all chip type tags
-  chipType <- gsub(",.*", "", chipType);
+  # Get fullname, name, and tags
+  fullname <- paste(c(chipType, tags), collapse=",");
+  parts <- unlist(strsplit(fullname, split=","));
+  chipType <- parts[1];
+  tags <- parts[-1];
 
   ext <- getFilenameExtension(static);
   ext <- paste(c(tolower(ext), toupper(ext)), collapse="|");
   ext <- sprintf("(%s)", ext);
 
-  pattern <- sprintf("^%s(,[.]*)*[.]%s$", chipType, ext);
+  pattern <- sprintf("^%s.*[.]%s$", fullname, ext);
   args <- list(chipType=chipType, ...);
-  args$pattern <- pattern;
+  args$pattern <- pattern;  # Override argument 'pattern'?
   pathname <- do.call("findAnnotationDataByChipType", args=args);
 
   # If not found, look for Windows shortcuts
   if (is.null(pathname)) {
     # Search for a Windows shortcut
-    pattern <- sprintf("^%s(,[.]*)*[.]%s[.]lnk$", chipType, ext);
-    args <- list(chipType=chipType, ...);
+    pattern <- sprintf("^%s.*[.]%s[.]lnk$", chipType, ext);
     args$pattern <- pattern;
     pathname <- do.call("findAnnotationDataByChipType", args=args);
     if (!is.null(pathname)) {
