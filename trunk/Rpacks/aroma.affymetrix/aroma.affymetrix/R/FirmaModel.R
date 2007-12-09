@@ -55,13 +55,13 @@ setMethodS3("getAsteriskTags", "FirmaModel", function(this, collapse=NULL, ...) 
 
   # Append class-specific tags
   summaryMethod <- this$summaryMethod;
-  if (summaryMethod == "max") {
-    tags <- c(tags, "max");
-  } else if (summaryMethod == "median") {
-    tags <- c(tags, "med");
-  } else if (summaryMethod == "upperQuartile") {
-    tags <- c(tags, "uqwt");
-  }
+#  if (summaryMethod == "max") {
+#    tags <- c(tags, "max");
+#  } else if (summaryMethod == "median") {
+#    tags <- c(tags, "med");
+#  } else if (summaryMethod == "upperQuartile") {
+#    tags <- c(tags, "uqwt");
+#  }
 
   # Collapse?
   tags <- paste(tags, collapse=collapse);
