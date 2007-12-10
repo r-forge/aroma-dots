@@ -66,7 +66,9 @@ setConstructorS3("AvgPlm", function(..., flavor=c("median", "mean")) {
 
 
 setMethodS3("getAsteriskTags", "AvgPlm", function(this, collapse=NULL, ...) {
-  tags <- "AVG";
+  # Returns 'PLM[,<shift>]'
+  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags[1] <- "AVG";
 
   # Add class specific parameter tags
   if (this$.flavor != "median")

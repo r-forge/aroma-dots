@@ -54,7 +54,7 @@ setMethodS3("fromFiles", "FirmaSet", function(static, ..., pattern=",FIRMAscores
 }, static=TRUE)
 
 
-setMethodS3("fromDataSet", "FirmaSet", function(static, dataSet, path, name=getName(dataSet), ..., verbose=FALSE) {
+setMethodS3("fromDataSet", "FirmaSet", function(static, dataSet, path, name=getName(dataSet), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -64,7 +64,6 @@ setMethodS3("fromDataSet", "FirmaSet", function(static, dataSet, path, name=getN
   verbose && enter(verbose, "Retrieving FIRMA results");
   fs <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", name);
-  cdf <- NULL;
   for (kk in seq(dataSet)) {
     df <- getFile(dataSet, kk);
     verbose && enter(verbose,

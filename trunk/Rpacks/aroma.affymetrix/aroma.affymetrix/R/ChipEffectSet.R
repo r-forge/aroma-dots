@@ -104,7 +104,7 @@ setMethodS3("fromFiles", "ChipEffectSet", function(static, path="plmData/", patt
 }, static=TRUE)
 
 
-setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name=getName(dataSet), ..., verbose=FALSE) {
+setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name=getName(dataSet), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -115,7 +115,6 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name
   verbose && enter(verbose, "Retrieving chip-effects from data set");
   ces <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", name);
-  cdf <- NULL;
   for (kk in seq(dataSet)) {
     df <- getFile(dataSet, kk);
     verbose && enter(verbose, 
@@ -257,6 +256,8 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-12-10
+# o Now fromDataSet() of ChipEffectSet accepts argument 'cdf'.
 # 2007-07-01
 # o BUG FIX: getOutputDataSet() of Transform would give "Error in 
 #   fromFiles.AffymetrixCelSet(static, path = path, pattern = pattern,:

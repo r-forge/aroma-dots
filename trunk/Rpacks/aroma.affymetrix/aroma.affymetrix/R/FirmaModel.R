@@ -51,7 +51,9 @@ setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod=c("upperQuart
 
 
 setMethodS3("getAsteriskTags", "FirmaModel", function(this, collapse=NULL, ...) {
-  tags <- "FIRMA";
+  # Returns 'U' (but allow for future extensions)
+  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags[1] <- "FIRMA";
 
   # Append class-specific tags
   summaryMethod <- this$summaryMethod;
@@ -191,9 +193,14 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ..., verbose=FALSE) {
     throw("Cannot create FIRMA results file. The CEL set is empty.");
   
   verbose && enter(verbose, "Getting FIRMA results set from data set");
+  # Inherit the (monocell) CDF
+  cdf <- getCdf(ds);
+  cdfMono <- getMonoCell(cdf); 
+
   # Gets the Class object
   clazz <- getFileSetClass(this);
-  fs <- clazz$fromDataSet(dataSet=ds, path=getPath(this), pattern=",FIRMAscores[.](c|C)(e|E)(l|L)$", verbose=less(verbose));
+  fs <- clazz$fromDataSet(dataSet=ds, path=getPath(this), cdf=cdfMono, 
+         pattern=",FIRMAscores[.](c|C)(e|E)(l|L)$", verbose=less(verbose));
   verbose && exit(verbose);
 
   # Store in cache
@@ -617,6 +624,13 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
 
 ############################################################################
 # HISTORY:
+# 2007-12-10 [HB]
+# o Now getFirmaScores() of FirmaModel infers the monocell CDF from
+#   the CDF of the input data set and uses that when retrieving the
+#   chip-effect CEL set.  In other words, if the CDF is overridden for
+#   the input data set, it will also be overridden (with the corresponding
+#   monocell CDF) in the chip-effect set.  Before the monocell CDF was
+#   always inferred from the CEL header, if the CEL file existed. 
 # 2007-12-07 [HB]
 # o UPDATE: Renamed the "root" directory of FirmaModel to firmaData/
 #   (formely modelFirmaModel/).

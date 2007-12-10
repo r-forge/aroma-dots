@@ -94,7 +94,7 @@ setMethodS3("fromFiles", "WeightsSet", function(static, ..., pattern=",weights[.
 }, static=TRUE)
 
 
-setMethodS3("fromDataSet", "WeightsSet", function(static, dataSet, path, fullname=getFullName(dataSet), ..., verbose=FALSE) {
+setMethodS3("fromDataSet", "WeightsSet", function(static, dataSet, path, fullname=getFullName(dataSet), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -104,7 +104,6 @@ setMethodS3("fromDataSet", "WeightsSet", function(static, dataSet, path, fullnam
   verbose && enter(verbose, "Retrieving probe-level weights from data set");
   ws <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", fullname);
-  cdf <- NULL;
   for (kk in seq(dataSet)) {
     df <- getFile(dataSet, kk);
     verbose && enter(verbose, 

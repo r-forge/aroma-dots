@@ -106,7 +106,7 @@ setMethodS3("fromFiles", "ResidualSet", function(static, ..., pattern=",residual
 }, static=TRUE)
 
 
-setMethodS3("fromDataSet", "ResidualSet", function(static, dataSet, path, fullname=getFullName(dataSet), ..., verbose=FALSE) {
+setMethodS3("fromDataSet", "ResidualSet", function(static, dataSet, path, fullname=getFullName(dataSet), cdf=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -118,7 +118,6 @@ setMethodS3("fromDataSet", "ResidualSet", function(static, dataSet, path, fullna
   verbose && enter(verbose, "Retrieving probe-level residuals from data set");
   rs <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", fullname);
-  cdf <- NULL;
   for (kk in seq(dataSet)) {
     df <- getFile(dataSet, kk);
     verbose && enter(verbose, 

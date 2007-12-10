@@ -132,13 +132,15 @@ setMethodS3("fromDataFile", "WeightsFile", function(static, df=NULL, filename=sp
   # This should be removed in future versions. /HB 2007-01-10
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "Pathname: ", pathname);
-  rf <- createFrom(df, filename=pathname, methods="create", clear=TRUE, ...);
+  res <- createFrom(df, filename=pathname, methods="create", clear=TRUE, ...);
 
   # Don't forget to return a ResidualFile object  
-  rf <- fromFile(static, filename=pathname, verbose=less(verbose));
-  verbose && print(verbose, rf);
+  res <- fromFile(static, filename=pathname, verbose=less(verbose));
+  # Inherit the CDF
+  setCdf(res, cdf); 
+  verbose && print(verbose, res);
 
-  rf;
+  res;
 }, static=TRUE, private=TRUE)
 
 

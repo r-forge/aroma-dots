@@ -76,8 +76,8 @@ setConstructorS3("RmaPlm", function(..., flavor=c("affyPLM", "affyPLMold", "olig
 
 
 setMethodS3("getAsteriskTags", "RmaPlm", function(this, collapse=NULL, ...) {
-  # Get asterisk tags from super class
-  tags <- NextMethod("getAsteriskTags", this, collapse=FALSE);
+  # Returns 'PLM[,<shift>]'
+  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
   tags[1] <- "RMA";
 
   # Add class specific parameter tags
