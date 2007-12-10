@@ -19,6 +19,13 @@ setMethodS3("getAromaUflFile", "UflSnpInformation", function(this, ..., force=FA
 }, protected=TRUE);
 
 
+setMethodS3("getChipType", "UflSnpInformation", function(this, ...) {
+  ufl <- getAromaUflFile(this, ...);
+  chipType <- getChipType(ufl, ...);
+  chipType;
+})
+
+
 setMethodS3("findByChipType", "UflSnpInformation", function(static, ...) {
   AromaUflFile$findByChipType(...);
 }, static=TRUE, protected=TRUE)
@@ -207,6 +214,8 @@ setMethodS3("getFragmentStops", "UflSnpInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2007-12-10
+# o Added getChipType() to UflSnpInformation.
 # 2007-11-19
 # o Added nbrOfEnzymes().
 # 2007-09-16

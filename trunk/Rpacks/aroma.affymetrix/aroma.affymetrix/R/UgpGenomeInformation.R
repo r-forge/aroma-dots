@@ -52,6 +52,13 @@ setMethodS3("getAromaUgpFile", "UgpGenomeInformation", function(this, ..., force
 }, protected=TRUE);
 
 
+setMethodS3("getChipType", "UgpGenomeInformation", function(this, ...) {
+  ugp <- getAromaUgpFile(this, ...);
+  chipType <- getChipType(ugp, ...);
+  chipType;
+})
+
+
 setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
   AromaUgpFile$findByChipType(...);
 }, static=TRUE, protected=TRUE)
@@ -273,6 +280,8 @@ setMethodS3("getUnitsOnChromosome", "UgpGenomeInformation", function(this, ...) 
 
 ############################################################################
 # HISTORY:
+# 2007-12-10
+# o Added getChipType() to UgpGenomeInformation.
 # 2007-12-09
 # o Added nbrOfUnits().
 # 2007-11-20

@@ -11,9 +11,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{files}{A @list of @see "QualityAssessmentFile":s.}
-#   \item{tags}{A @character @vector of tags.}
-#   \item{...}{Not used.}
+#   \item{...}{Arguments passed to constructor of @see "AffymetrixCelSet".}
 # }
 #
 # \section{Fields and Methods}{
@@ -24,37 +22,15 @@
 #   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
 #*/###########################################################################
-setConstructorS3("QualityAssessmentSet", function(files=NULL, tags="*", ...) {
-  
-  # Argument 'tags':
-  if (!is.null(tags)) {
-    tags <- Arguments$getCharacters(tags);
-    tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    tags[tags == "*"] <- "QA";
-  }
-
-  extend(AffymetrixCelSet(files=files, ...), "QualityAssessmentSet");
-  
+setConstructorS3("QualityAssessmentSet", function(...) {
+  extend(AffymetrixCelSet(...), "QualityAssessmentSet");
 })
 
-
-
-#setMethodS3("fromFiles", "QualityAssessmentSet", function(static, path, pattern="[.]calls$", ..., fileClass="GenotypeCallFile", verbose=FALSE) {
-#  # Argument 'verbose':
-#  verbose <- Arguments$getVerbose(verbose);
-#  if (verbose) {
-#    pushState(verbose);
-#    on.exit(popState(verbose));
-#  }#
-#
-#  # S3 method dispatch does not work for static methods.
-#  ds <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));#
-#
-#  # Use the same CDF object for all CEL files.
-#  setCdf(ds, getCdf(ds));#
-#
-#  ds;
-#}, static=TRUE)
-
+##########################################################################
+# HISTORY:
+# 2007-12-10 
+# o Now a QualityAssessmentSet is a plain AffymetrixCelSet.
+# o Removed argument 'tags' to constructor of QualityAssessmentSet,
+#   because it was never used anywhere.
+##########################################################################
+ 

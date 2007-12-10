@@ -34,11 +34,7 @@ setConstructorS3("QualityAssessmentModel", function(plm=NULL, tags="*", ...) {
   if (!is.null(tags)) {
     tags <- Arguments$getCharacters(tags);
     tags <- trim(unlist(strsplit(tags, split=",")));
-
-    # Update default tags
-    tags[tags == "*"] <- "QC";
   }
-
 
   extend(Object(), "QualityAssessmentModel",
     .plm = plm,
@@ -89,12 +85,34 @@ setMethodS3("getName", "QualityAssessmentModel", function(this, ...) {
   getName(this$.plm);
 })
 
-setMethodS3("getTags", "QualityAssessmentModel", function(this, collapse=NULL, ...) {
-  ces <- getChipEffects(this);
-  tags <- getTags(ces, collapse=collapse);
 
-  # Append class-specific tags
-  tags <- c(tags, this$.tags);
+setMethodS3("getAsteriskTags", "QualityAssessmentModel", function(this, collapse=NULL, ...) {
+  tags <- "QC";
+
+  # Parameter-specific tags?
+  # <none>
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
+  tags;
+})
+
+
+setMethodS3("getTags", "QualityAssessmentModel", function(this, collapse=NULL, ...) {
+  # Data set specific tags
+  ces <- getChipEffects(this);
+  inputTags <- getTags(ces, collapse=NULL);
+
+  # Get class-specific tags
+  tags <- this$.tags;
+  # Expand asterisk tags
+  if (any(tags == "*")) {
+    tags[tags == "*"] <- getAsteriskTags(this, collapse=",");
+  }
+
+  # Combine input tags and local tags
+  tags <- c(inputTags, tags);  
 
   # Collapsed or split?
   if (!is.null(collapse)) {
@@ -673,6 +691,8 @@ setMethodS3("plotRle", "QualityAssessmentModel", function(this, subset=NULL, ver
 
 ##########################################################################
 # HISTORY:
+# 2007-12-10
+# o Added getAsteriskTags() and updated getTags() accordingly.
 # 2007-08-09
 # o getResiduals() and getWeights() of QualityAssessmentModel now creates 
 #   CEL files with upper-case filename extension "*.CEL", not "*.cel".  
