@@ -113,17 +113,32 @@ setMethodS3("getParametersAsString", "WeightsFile", function(this, ...) {
 
 
 
-setMethodS3("fromDataFile", "WeightsFile", function(static, df=NULL, filename=sprintf("%s,weights.CEL", getFullName(df)), path, ..., verbose=FALSE) {
+setMethodS3("fromDataFile", "WeightsFile", function(static, df=NULL, filename=sprintf("%s,weights.CEL", getFullName(df)), path, cdf=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'df':
   if (!is.null(df)) {
     if (!inherits(df, "AffymetrixCelFile"))
       throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
   }
 
+  # Argument 'cdf':
+  if (is.null(cdf)) {
+    if (is.null(df))
+      throw("Either argument 'df' or 'cdf' must specified.");
+  } else {
+    if (!inherits(cdf, "AffymetrixCdfFile"))
+      throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  }
+
+  # Argument 'filename' & 'path':
+  pathname <- Arguments$getWritablePathname(filename, path=path);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  pathname <- Arguments$getWritablePathname(filename, path=path);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Backward compatibility patch for now. Before residual files
@@ -136,8 +151,9 @@ setMethodS3("fromDataFile", "WeightsFile", function(static, df=NULL, filename=sp
 
   # Don't forget to return a ResidualFile object  
   res <- fromFile(static, filename=pathname, verbose=less(verbose));
-  # Inherit the CDF
-  setCdf(res, cdf); 
+  # Inherit the CDF?
+  if (!is.null(cdf)) 
+    setCdf(res, cdf); 
   verbose && print(verbose, res);
 
   res;
