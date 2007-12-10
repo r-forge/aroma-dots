@@ -200,7 +200,9 @@ setMethodS3("updateUnits", "FirmaFile", function(this, units=NULL, cdf=NULL, dat
 
 
 setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=sprintf("%s,FIRMAscores.CEL", getFullName(df)), path, name=getName(df), cdf=NULL, ..., verbose=FALSE) {
-
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'df':
   if (!is.null(df)) {
     if (!inherits(df, "AffymetrixCelFile"))
@@ -216,11 +218,13 @@ setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=spri
       throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
   }
 
+  # Argument 'filename' & 'path':
+  pathname <- Arguments$getWritablePathname(filename, path=path);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  pathname <- Arguments$getWritablePathname(filename, path=path);
+
 
   # Rename lower-case *.cel to *.CEL, if that is the case.  Old versions
   # of the package generated lower-case CEL files. /HB 2007-08-09
@@ -260,8 +264,9 @@ setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=spri
   verbose && enter(verbose, "Defining FIRMA results file");
   verbose && cat(verbose, "Pathname: ", pathname);
   res <- newInstance(static, pathname);
-  # Inherit the CDF
-  setCdf(res, cdf); 
+  # Inherit the CDF?
+  if (!is.null(cdf))
+    setCdf(res, cdf); 
   verbose && exit(verbose);
 
   res;
