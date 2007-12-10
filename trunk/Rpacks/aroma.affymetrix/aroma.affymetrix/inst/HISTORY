@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.2 [2007-12-09]
+Version: 0.8.2 [2007-12-10]
 o Added argument 'cdf' to static fromName() of AffymetrixCelSet.
   When using this argument, the 'chipType' argument is optional, 
   and the returned CEL set will be using the specified CDF.
@@ -15,11 +15,17 @@ o UPDATE: Now output sets of a FirmaModel are stored in firmaData/.
   Previously they were stored under modelFirmaModel/.
 o UPDATE: Updated AffymetrixNetAffxCsvFile and AromaUflFile to
   better import fragment-length information from NetAffx files.
-o Renamed all getAsteriskTag() methods to getAsteriskTags().
 o ROBUSTNESS: Now getGenomeInformation() of AffymetrixCdfFile asserts
   that the located GenomeInformation annotation file is compatible
   with the CDF.  Same for getSnpInformation().  Currently this can
   only be asserted for UGP & UFL annotation files.
+o CONSISTENCY: Now getChipEffectSet() of ProbeLevelModel infers the
+  monocell CDF from the CDF of the input data set and uses that when
+  retrieving the chip-effect CEL set, not only when creating the set
+  from scratch, but now also overriding the CDF according to the CEL
+  header of existing sets.  In other words, if the CDF is overridden 
+  for the input data set, it will also be overridden (with the 
+  corresponding monocell CDF) in the chip-effect set.
 o CLEAN UP: Went through all classes where applicable and updated
   so that getTags() and getAsteriskTags() work properly.  The
   latter was also renamed from getAsteriskTag() to getAsteriskTags()
@@ -29,6 +35,7 @@ o CLEAN UP: Since much of the feature we used in 'affyPLM' moved to
   required by default.  As with 'gcrma', the 'affy' package is only
   "suggested" and will be requested if need, e.g. when doing using
   one of background correction methods.
+o DEVEL: Renamed all getAsteriskTag() methods to getAsteriskTags().
 o BUG FIX: Tags from the input data set of FirmaModel were lost.
 
 

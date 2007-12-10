@@ -93,7 +93,9 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
 
 
 setMethodS3("getAsteriskTags", "ProbeLevelModel", function(this, collapse=NULL, ...) {
-  tags <- "PLM";
+  # Returns 'U' (but allow for future extensions)
+  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags[1] <- "PLM";
 
   # Add class-specific tags
   shift <- as.integer(round(this$shift));
@@ -238,9 +240,13 @@ setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ..., verbose=F
     throw("Cannot create chip-effect set. The CEL set is empty.");
   
   verbose && enter(verbose, "Getting chip-effect set from data set");
+  # Inherit the (monocell) CDF
+  cdf <- getCdf(ds);
+  cdfMono <- getMonoCell(cdf);
+
   # Gets the ChipEffects Class object
   clazz <- getChipEffectSetClass(this);
-  ces <- clazz$fromDataSet(dataSet=ds, path=getPath(this), 
+  ces <- clazz$fromDataSet(dataSet=ds, path=getPath(this), cdf=cdfMono,
                                                     verbose=less(verbose));
   verbose && exit(verbose);
 
@@ -852,6 +858,13 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2007-12-10
+# o Now getChipEffectSet() of ProbeLevelModel infers the monocell CDF from
+#   the CDF of the input data set and uses that when retrieving the
+#   chip-effect CEL set.  In other words, if the CDF is overridden for
+#   the input data set, it will also be overridden (with the corresponding
+#   monocell CDF) in the chip-effect set.  Before the monocell CDF was
+#   always inferred from the CEL header, if the CEL file existed.
 # 2007-12-08
 # o Now the tag for the 'shift' is also set in getAsteriskTag().
 # o Now the tag for the 'probeModel' is set in getAsteriskTag().

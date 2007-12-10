@@ -266,6 +266,8 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename
   verbose && enter(verbose, "Defining chip-effect file");
   verbose && cat(verbose, "Pathname: ", pathname);
   res <- newInstance(static, pathname);
+  # Inherit the CDF
+  setCdf(res, cdf);
   verbose && exit(verbose);
 
   res;
@@ -835,6 +837,8 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2007-12-10
+# o Now fromDataFile() of ChipEffectSet accepts argument 'cdf'.
 # 2007-11-20
 # o MEMORY OPTIMIZATION: Now getCellMap() builds data in chunks if 
 #   argument 'units' is NULL.

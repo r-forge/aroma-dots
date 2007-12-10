@@ -64,7 +64,9 @@ setConstructorS3("AffinePlm", function(..., background=TRUE) {
 
 
 setMethodS3("getAsteriskTags", "AffinePlm", function(this, collapse=NULL, ...) {
-  tags <- "AFF";
+  # Returns 'PLM[,<shift>]'
+  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags[1] <- "AFF";
 
   # Add class specific parameter tags
   if (!this$background)

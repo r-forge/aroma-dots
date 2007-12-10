@@ -260,6 +260,8 @@ setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=spri
   verbose && enter(verbose, "Defining FIRMA results file");
   verbose && cat(verbose, "Pathname: ", pathname);
   res <- newInstance(static, pathname);
+  # Inherit the CDF
+  setCdf(res, cdf); 
   verbose && exit(verbose);
 
   res;
