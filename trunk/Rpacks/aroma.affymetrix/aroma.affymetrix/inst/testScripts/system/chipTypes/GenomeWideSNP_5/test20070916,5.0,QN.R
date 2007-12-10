@@ -14,11 +14,12 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setting up CEL set and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+cdf <- AffymetrixCdfFile$fromChipType(chipType, tags="Full,r2");
+print(cdf);
+
+cs <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
 print(cs);
 stopifnot(identical(getNames(cs), sampleNames));
-cdf <- getCdf(cs);
-print(cdf);
 
 
 

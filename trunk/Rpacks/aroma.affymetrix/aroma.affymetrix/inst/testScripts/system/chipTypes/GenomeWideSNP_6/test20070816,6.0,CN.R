@@ -12,11 +12,12 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setting up CEL set and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+cdf <- AffymetrixCdfFile$fromChipType(chipType, tags="Full");
+print(cdf);
+
+cs <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
 print(cs);
 stopifnot(identical(getNames(cs), sampleNames));
-cdf <- getCdf(cs);
-print(cdf);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,10 +36,13 @@ stopifnot(identical(getNames(csC), getNames(cs)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
 print(plm);
+
+ces <- getChipEffectSet(plm);
+print(ces);
+
 fit(plm, verbose=log);
 
 
-ces <- getChipEffectSet(plm);
 theta <- extractMatrix(ces, units=1000:1002);
 
 fln <- FragmentLengthNormalization(ces);
