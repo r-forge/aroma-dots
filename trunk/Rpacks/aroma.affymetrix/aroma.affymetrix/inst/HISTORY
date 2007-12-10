@@ -8,10 +8,6 @@ o Added argument 'cdf' to static fromName() of AffymetrixCelSet.
 o In general, there is now better support for tagged CDFs.  For
   instance, AffymetrixCdfFile$fromName("HuEx-1_0-st-v2", tags="core")
   can be used to locate 'HuEx-1_0-st-v2,core.CDF'.
-o Now all ProbeLevelModel takes argument 'shift', which specifies
-  the amount of shift each data point should be shifted before being
-  passed to the model fit. If non-zero, a signed tag (rounded to the
-  closest integer) is automatically set.
 o UPDATE: Now output sets of a FirmaModel are stored in firmaData/.
   Previously they were stored under modelFirmaModel/.
 o UPDATE: Updated AffymetrixNetAffxCsvFile and AromaUflFile to
