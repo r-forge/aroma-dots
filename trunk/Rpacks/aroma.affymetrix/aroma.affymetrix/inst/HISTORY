@@ -5,8 +5,9 @@ Version: 0.8.2 [2007-12-10]
 o Added argument 'cdf' to static fromName() of AffymetrixCelSet.
   When using this argument, the 'chipType' argument is optional, 
   and the returned CEL set will be using the specified CDF.
-o Now AffymetrixCdfFile$fromName("HuEx-1_0-st-v2", tags="core") can
-  be used to locate 'HuEx-1_0-st-v2,core.CDF'.
+o In general, there is now better support for tagged CDFs.  For
+  instance, AffymetrixCdfFile$fromName("HuEx-1_0-st-v2", tags="core")
+  can be used to locate 'HuEx-1_0-st-v2,core.CDF'.
 o Now all ProbeLevelModel takes argument 'shift', which specifies
   the amount of shift each data point should be shifted before being
   passed to the model fit. If non-zero, a signed tag (rounded to the
