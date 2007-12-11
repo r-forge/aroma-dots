@@ -658,6 +658,7 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,fo
       eta <- Sys.time() + t;
       printf(verbose, "ETA: %s\n", format(eta, "%Y%m%d %H:%M:%S"));
     }
+    verbose && exit(verbose);
 
   } # while (length(idxs) > 0) loop over chunks
 
