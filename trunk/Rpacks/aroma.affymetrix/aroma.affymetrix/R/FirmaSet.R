@@ -159,9 +159,9 @@ setMethodS3("updateUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, data
       # theta = group$theta[kk] = ...
       # stdvs = group$sdTheta[kk] = ...
       list(
-        theta=.subset(.subset2(group, "theta"), kk),
-        sdTheta=.subset(.subset2(group, "sdTheta"), kk),
-        thetaOutliers=.subset(.subset2(group, "thetaOutliers"), kk)
+        intensities=.subset(.subset2(group, "intensities"), kk),
+        stdvs=.subset(.subset2(group, "stdvs"), kk),
+        pixels=.subset(.subset2(group, "pixels"), kk)
       );
     });
     verbose && exit(verbose);
