@@ -376,10 +376,11 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
 setMethodS3("findByName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, paths=c("rawData", "probeData"), ...) {
   # Look only in existing directories
   paths <- sapply(paths, FUN=filePath, expandLinks="any");
+  paths0 <- paths;
   paths <- paths[sapply(paths, FUN=isDirectory)];
   if (length(paths) == 0) {
     throw("None of the data directories exist: ", 
-                                           paste(paths, collapse=", "));
+                                           paste(paths0, collapse=", "));
   }
 
   # The full name of the data set

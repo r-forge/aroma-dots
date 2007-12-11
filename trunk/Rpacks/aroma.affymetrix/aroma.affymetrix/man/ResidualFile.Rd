@@ -3,8 +3,6 @@
 % 
 %  ResidualFile.R
 % 
-% on Mon Dec 10 09:17:17 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

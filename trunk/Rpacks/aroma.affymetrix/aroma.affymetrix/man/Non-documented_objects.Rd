@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Mon Dec 10 17:03:22 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1412,6 +1414,10 @@
 \alias{isCompatibleWithCdf.UflSnpInformation}
 \alias{isCompatibleWithCdf.UgpGenomeInformation}
 \alias{nbrOfUnits.UgpGenomeInformation}
+\alias{clearCache.AromaUnitTabularBinaryFile}
+\alias{getAsteriskTags.QualityAssessmentModel}
+\alias{getChipType.UflSnpInformation}
+\alias{getChipType.UgpGenomeInformation}
 
 \description{
   This page contains aliases for all "non-documented" objects that
