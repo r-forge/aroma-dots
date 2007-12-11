@@ -653,3 +653,6 @@ getAsteriskTags.FragmentLengthNormalization
   isCompatibleWithCdf.UflSnpInformation
   isCompatibleWithCdf.UgpGenomeInformation
   nbrOfUnits.UgpGenomeInformation
+  clearCache.AromaUnitTabularBinaryFile
+  getAsteriskTags.QualityAssessmentModel getChipType.UflSnpInformation
+  getChipType.UgpGenomeInformation

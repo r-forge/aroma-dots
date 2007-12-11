@@ -37,12 +37,10 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 }
 
-\usage{QualityAssessmentSet(files=NULL, tags="*", ...)}
+\usage{QualityAssessmentSet(...)}
 
 \arguments{
-  \item{files}{A \code{\link[base]{list}} of \code{\link{QualityAssessmentFile}}:s.}
-  \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
-  \item{...}{Not used.}
+  \item{...}{Arguments passed to constructor of \code{\link{AffymetrixCelSet}}.}
 }
 
 \section{Fields and Methods}{

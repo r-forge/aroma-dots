@@ -41,6 +41,7 @@ extends \link[R.oo]{Object}\cr
 \section{Fields and Methods}{
  \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getChipEffects} \tab  -\cr
  \tab \code{getDataSet} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
