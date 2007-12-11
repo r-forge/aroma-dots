@@ -15,8 +15,8 @@
 #
 # \arguments{
 #   \item{rmaPlm}{An @RmaPlm object.}
-#   \item{summaryMethod}{A @character specifying what summarization method
-#     should be used.}
+#   \item{summaryMethod}{A @character specifying what summarization method should be used.}
+#   \item{operateOn}{A @character specifying what statistic to operate on.}
 #   \item{...}{Arguments passed to constructor of @see "UnitModel".}
 # }
 #
@@ -27,7 +27,7 @@
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #
 #*/###########################################################################
-setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod=c("upperQuartile", "median", "max"), ...) {
+setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod="median", operateOn="residuals", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,12 +39,15 @@ setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod=c("upperQuart
   }
 
   # Argument 'summaryMethod':
-  summaryMethod <- match.arg(summaryMethod);
+  summaryMethod <- match.arg(summaryMethod,c("upperQuartile", "median", "max"));
 
+  # Argument 'operateOn':
+  operateOn<- match.arg(operateOn,c("residuals","weights"))
 
   extend(UnitModel(...), "FirmaModel",
      .plm = rmaPlm,
      summaryMethod = summaryMethod,
+     operateOn = operateOn,
      "cached:.fs" = NULL
    );
 })
@@ -209,6 +212,37 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ..., verbose=FALSE) {
   fs;
 })
 
+###########################################################################/**
+# @RdocMethod calculateResiduals
+#
+# @title "Gets the set of residuals corresponding to the PLM"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{verbose}{A @logical or a @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @see "ResidualsSet" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
+
+setMethodS3("calculateResiduals", "FirmaModel", function(this, ...) {
+  calculateResiduals(this$.plm, ...)
+})
+
 
 
 ###########################################################################/**
@@ -238,30 +272,51 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ..., verbose=FALSE) {
 #*/###########################################################################
 
 setMethodS3("getFitFunction", "FirmaModel", function(this, ...) {
-  if (this$summaryMethod == "upperQuartile") {
-    fitfcn <- function(y) {
-      J <- length(y);
-      list(intensities=2^(1-quantile(y, probs=0.75)), stdvs=1, pixels=1);
+  if(this$operateOn=="weights") {
+    if (this$summaryMethod == "upperQuartile") {
+        fitfcn <- function(y) {
+            J <- length(y)
+            list(intensities = 2^(1 - quantile(y, probs = 0.75)),
+                stdvs = 1, pixels = 1)
+        }
     }
-  } else if (this$summaryMethod == "median") {
-    fitfcn <- function(y) {
-      J <- length(y);
-      list(intensities=2^(1-median(y)), stdvs=1, pixels=1);
+    else if (this$summaryMethod == "median") {
+        fitfcn <- function(y) {
+            J <- length(y)
+            1 - median(y)
+            list(intensities = 2^(1 - median(y)), stdvs = 1,
+                pixels = 1)
+        }
     }
-  } else if (this$summaryMethod == "max") {
-    fitfcn <- function(y) {
-      J <- length(y);
-      list(intensities=2^(1-max(y)), stdvs=1, pixels=1);
+    else if (this$summaryMethod == "max") {
+        fitfcn <- function(y) {
+            J <- length(y)
+            list(intensities = 2^(1 - max(y)), stdvs = 1, pixels = 1)
+        }
+    }
+    else {
+        fitfcn <- function(y) {
+            J <- length(y)
+            list(intensities = 1, stdvs = 1, pixels = 1)
+        }
     }
   } else {
-    fitfcn <- function(y) {
-      J <- length(y);
-      list(intensities=1, stdvs=1, pixels=1);
+    if (this$summaryMethod == "median") {
+        fitfcn <- function(y) {
+            #J <- length(y)
+            list(intensities = 2^apply(y,2,median), stdvs = 1, pixels = 1)
+        }
+    }
+    else if (this$summaryMethod == "mean") {
+        fitfcn <- function(y) {
+            #J <- length(y)
+            list(intensities = 2^colMeans(y), stdvs = 1, pixels = 1)
+        }
     }
   }
-
   fitfcn;
 })
+
 
 setMethodS3("getFitUnitFunction", "FirmaModel", function(this, ...) {
 
@@ -270,16 +325,31 @@ setMethodS3("getFitUnitFunction", "FirmaModel", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Function to fit all groups (exons) within a unit
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  fitUnit <- function(unit, ...) {
-    base::lapply(unit, FUN=function(group) {
-      if (length(group) > 0) {
-        y <- .subset2(group, 1); # Get intensities
-      } else {
-        y <- NULL;
-      }
-      y <- log(y, base=2);      # convert to log scale
-      fitfcn(y);
-    })
+  if(this$operateOn=="residuals") {
+    fitUnit <- function(unit, ...) {
+      u.mad<-mad(log(unlist(unit,use.names=F),base=2),center=0)
+      base::lapply(unit, FUN=function(group) {
+        if (length(group) > 0) {
+          y <- .subset2(group, 1); # Get intensities
+        } else {
+          y <- NULL;
+        }
+        y <- log(y, base=2);      # convert to log scale
+        fitfcn(y/u.mad);
+      })
+    }
+  } else {
+    fitUnit <- function(unit, ...) {
+      base::lapply(unit, FUN=function(group) {
+        if (length(group) > 0) {
+          y <- .subset2(group, 1); # Get intensities
+        } else {
+          y <- NULL;
+        }
+        y <- log(y, base=2);      # convert to log scale
+        fitfcn(y);
+      })
+    }
   }
 
   fitUnit;
@@ -393,13 +463,16 @@ setMethodS3("findUnitsTodo", "FirmaModel", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FALSE, verbose=FALSE) {
+setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the some basic information about this model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ds <- getDataSet(this$.plm);
   cdf <- getCdf(ds);
-  ws <- calculateWeights(this, verbose=verbose);
+  if (this$operateOn=="weights")
+    ws <- calculateWeights(this, verbose = verbose)
+  else
+    ws <- calculateResiduals(this, verbose = verbose)
   nbrOfArrays <- length(ds);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -465,137 +538,128 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
   if (nbrOfUnits == 0)
     return(NULL);
 
+  fs <- getFirmaScores(this, verbose=less(verbose));
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Calculate results array by array.  We should be able to process a
-  # whole array in memory, so don't do in chunks for now, to speed up
-  # I/O.
+  # Fit the model in chunks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the model-fit function
   fitUnit <- getFitUnitFunction(this);
 
-  # Get (and create if missing) the chip-effect files (one per array)
-  fs <- getFirmaScores(this, verbose=less(verbose));
+  # Number of units to load into memory and fit at the same time
+  bytesPerChunk <- 100e6;       # 100Mb
+  bytesPerUnitAndArray <- 400;  # Just a rough number; good enough?
+  bytesPerUnit <- nbrOfArrays * bytesPerUnitAndArray;
+  unitsPerChunk <- ram * bytesPerChunk / bytesPerUnit;
+  unitsPerChunk <- as.integer(max(unitsPerChunk,1));
 
   idxs <- 1:nbrOfUnits;
+  head <- 1:unitsPerChunk;
+  nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
+  verbose && cat(verbose, "Number units per chunk: ", unitsPerChunk);
 
-  # Time the fitting.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Garbage collect
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  clearCache(ds);
+  clearCache(ws);
+  clearCache(fs);
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the model-fit function
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  fitUnit <- getFitUnitFunction(this);
+
   startTime <- processTime();
-
   timers <- list(total=0, read=0, fit=0, writeFs=0, gc=0);
 
-  verbose && cat(verbose, "Units: ");
-  verbose && str(verbose, units);
-
-  unitsFull <- units;
-  
-  for (kk in seq(ws)) {
-    units <- unitsFull;
-    
+  count <- 1;
+  while (length(idxs) > 0) {
     tTotal <- processTime();
 
-    ff <- getFile(fs, kk);
-    wf <- getFile(ws, kk);
+    verbose && enter(verbose, "Fitting chunk #", count, " of ", nbrOfChunks);
+    if (length(idxs) < unitsPerChunk) {
+      head <- 1:length(idxs);
+    }
+    uu <- idxs[head];
 
-    # check which units need to be fitted, for each file, to avoid having
-    # to re-calculate in the event of a crash.
+    verbose && cat(verbose, "Units: ");
+    verbose && str(verbose, units[uu]);
 
-    verbose && enter(verbose, "Array #", kk, ": ", getName(wf));
-    
-    if (!force) {
-      units <- findUnitsTodo(ff, units=units, force=TRUE, cache=FALSE, verbose=less(verbose));
-      nbrOfUnits <- length(units);
-      verbose && printf(verbose, "%d of the requested units need to be fitted.\n", nbrOfUnits);
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Get the CEL intensities by units
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    tRead <- processTime();
+    y <- readUnits(ws, units=units[uu], ..., force=force, cache=FALSE, verbose=less(verbose));
+    timers$read <- timers$read + (processTime() - tRead);
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Fit the model
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Calculating FIRMA scores");
+    tFit <- processTime();
+    fit <- base::lapply(y, FUN=fitUnit);
+    #fit <- base::lapply(fit, FUN=normalizeFits);
+    timers$fit <- timers$fit + (processTime() - tFit);
+    y <- NULL; # Not needed anymore (to minimize memory usage)
+    verbose && str(verbose, fit[1]);
+    verbose && exit(verbose);
+
+    # Garbage collection
+    tGc <- processTime();
+    gc <- gc();
+    timers$gc <- timers$gc + (processTime() - tGc);
+    verbose && print(verbose, gc);
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Store FIRMA scores
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Storing FIRMA results");
+    tWriteFs <- processTime();
+    updateUnits(fs, units=units[uu], data=fit, verbose=less(verbose));
+    timers$writeFs <- timers$writeFs + (processTime() - tWriteFs);
+    verbose && exit(verbose);
+
+    fit <- NULL; # Not needed anymore
+
+    # Next chunk
+    idxs <- idxs[-head];
+    count <- count + 1;
+
+    # Garbage collection
+    tGc <- processTime();
+    gc <- gc();
+    timers$gc <- timers$gc + (processTime() - tGc);
+    verbose && print(verbose, gc);
+
+    timers$total <- timers$total + (processTime() - tTotal);
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # ETA
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (verbose) {
+      # Clarifies itself once in a while (in case running two in parallel).
+      print(this);
+
+      # Fraction left
+      fLeft <- length(idxs) / nbrOfUnits;
+      # Time this far
+      lapTime <- processTime() - startTime;
+      t <- Sys.time() - lapTime[3];
+      printf(verbose, "Started: %s\n", format(t, "%Y%m%d %H:%M:%S"));
+      # Estimated time left
+      fDone <- 1-fLeft;
+      timeLeft <- fLeft/fDone * lapTime;
+      t <- timeLeft[3];
+      printf(verbose, "Estimated time left: %.1fmin\n", t/60);
+      # Estimate time to arrivale
+      eta <- Sys.time() + t;
+      printf(verbose, "ETA: %s\n", format(eta, "%Y%m%d %H:%M:%S"));
     }
 
-    if (length(units) > 0) {
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Get the weights by unit
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      tRead <- processTime();
-
-      y <- readUnits(wf, units=units, stratifyBy="pm", ..., force=force, 
-                                                      verbose=less(verbose));
-      timers$read <- timers$read + (processTime() - tRead);
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Calculate FIRMA scores
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      tFit <- processTime();
-      fit <- base::lapply(y, FUN=fitUnit);
-      timers$fit <- timers$fit + (processTime() - tFit);
-      y <- NULL; # Not needed anymore (to minimize memory usage)
-      verbose && str(verbose, fit[1]);
-      verbose && exit(verbose);
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Store results
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Storing FIRMA results");
-      tWriteFs <- processTime();
-
-      intensities <- unlist(base::lapply(fit, function(unit) {
-        base::lapply(unit, function(group) {
-          .subset2(group, "intensities");
-        })
-      }), use.names=FALSE);
-
-      stdvs <- unlist(base::lapply(fit, function(unit) {
-        base::lapply(unit, function(group) {
-          .subset2(group, "stdvs");
-        })
-      }), use.names=FALSE);
-
-      pixels <- unlist(base::lapply(fit, function(unit) {
-        base::lapply(unit, function(group) {
-          .subset2(group, "pixels");
-        })
-      }), use.names=FALSE);
-      rm(fit);   # Not needed anymore
-
-      # Garbage collection
-      tGc <- processTime();
-      gc <- gc();
-      verbose && print(verbose, gc);
-      timers$gc <- timers$gc + (processTime() - tGc);
-
-      suppressWarnings({
-        map <- getCellMap(ff, units=units, ..., verbose=less(verbose));
-      });
-
-      data <- data.frame(
-        intensities=intensities, 
-        stdvs=stdvs, 
-        pixels=pixels, 
-        cell=map[,"cell"]
-      );
-      rm(intensities, stdvs, pixels, map);   # Not needed anymore
-    
-      updateDataFlat(ff, units=units, data=data, verbose=less(verbose));
-      rm(data);   # Not needed anymore
-
-      timers$writeFs <- timers$writeFs + (processTime() - tWriteFs);
-      verbose && exit(verbose);
-
-      # Garbage collection
-      tGc <- processTime();
-      gc <- gc();
-      verbose && print(verbose, gc);
-      timers$gc <- timers$gc + (processTime() - tGc);
-      
-      timers$total <- timers$total + (processTime() - tTotal);
-
-      # end of if (length(units) > 0)
-    } else {
-      verbose && exit(verbose);
-    }
-
-    # Clear cache
-    clearCache(ff);
-    clearCache(wf);
-
-    rm(ff, wf);  # Not needed anymore.
-  } # for (kk in ...), i.e. end of loop over arrays
-
+  } # while (length(idxs) > 0) loop over chunks
 
   totalTime <- processTime() - startTime;
   if (verbose) {
@@ -611,11 +675,10 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., force=FA
     t <- nbrOfUnits(cdf)*totalTime[3]/nunits;
     printf(verbose, "Total time for complete data set: %.2fmin = %.2fh\n", t/60, t/3600);
     # Get distribution of what is spend where
-    timers$write <- timers$writeFs;
     t <- base::lapply(timers, FUN=function(timer) unname(timer[3]));
     t <- unlist(t);
     t <- 100 * t / t["total"];
-    printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%% (of which %.2f%% is for writing results), Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["write"], 100*t["writeFs"]/t["write"], t["gc"]);
+    printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%%, Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["writeFs"], t["gc"]);
   }
 
   invisible(units);
