@@ -560,12 +560,18 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
     if (is.null(units))
       units <- seq(length=nbrOfUnits(cdf));
     chunks <- splitInChunks(units, chunkSize=100e3);
+    nbrOfChunks <- length(chunks);
     nbrOfUnits <- length(units);
-    cells <- vector("integer", nbrOfUnits);
+
+    # Store unit names and unit sizes
     unitNames <- vector("character", nbrOfUnits);
     unitSizes <- vector("integer", nbrOfUnits);
+    # Store cell indices in the "raw" list format first.
+    cells <- vector("list", nbrOfUnits);
+
+    
     offset <- 0;
-    for (kk in seq(along=chunks)) {
+    for (kk in seq(length=nbrOfChunks)) {
       verbose && printf(verbose, "Chunk #%d of %d\n", kk, length(chunks));
       chunk <- chunks[[kk]];
       chunks[[kk]] <- NA;
@@ -580,15 +586,15 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
       });
       unitSizes[idxs] <- unlist(unitSizes0, use.names=FALSE);
       rm(unitSizes0);
-      cells[idxs] <- unlist(cells0, use.names=FALSE);
+      cells[idxs] <- cells0;
       rm(cells0, idxs);
     }
     rm(chunks);
     gc <- gc();
     verbose && print(verbose, gc);
   }
-
   
+  cells <- unlist(cells, use.names=FALSE);
   gc <- gc();
   verbose && exit(verbose);
   
@@ -621,7 +627,6 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
   }
   keep <- !is.na(groups);
   groups <- groups[keep];
-  gc <- gc();
   units2 <- units2[keep];
   rm(keep);
   gc <- gc();
