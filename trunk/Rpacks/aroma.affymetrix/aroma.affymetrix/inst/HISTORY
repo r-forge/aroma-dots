@@ -4,6 +4,13 @@ Package: aroma.affymetrix
 Version: 0.8.3 [2007-12-11]
 o BUG FIX: extractMatrix() of ChipEffectSet was broken (due to an
   internal bug in getCellMap() of ChipEffectFile).
+o BUG FIX: When calling fit() on a ProbeLevelModel for chip type
+  where no monocell CDF exists, an exception like "Could not create 
+  AffymetrixCdfFile object. No CDF file with that chip type found:
+  GenomeWideSNP_6,Full,monocell" would be thrown.  This is due to
+  a bug introduced in previous version when trying to make sure 
+  custom CDFs are carried down more consistently.  Now getMonoCell()
+  of AffymetrixCdfFile will create the monocell CDF, if missing.
 
 
 Version: 0.8.2 [2007-12-10]

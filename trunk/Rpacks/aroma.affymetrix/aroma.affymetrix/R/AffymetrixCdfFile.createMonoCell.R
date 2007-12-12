@@ -518,13 +518,46 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 }, private=TRUE) # createMonoCell()
 
 
-setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ...) {
+setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Retrieving monocell CDF");
+
+  # The full chiptype of the monocell CDF
   chipType <- sprintf("%s,monocell", getChipType(this));
-  fromChipType(this, chipType=chipType, ...);
+  verbose && cat(verbose, "Monocell chip type: ", chipType);
+
+  # First, try to locate an existing monocell CDF
+  verbose && enter(verbose, "Locating monocell CDF");
+  pathname <- findByChipType(this, chipType=chipType, ...);
+  verbose && cat(verbose, "Pathname: ", pathname);
+  verbose && exit(verbose);
+
+  if (is.null(pathname)) {
+    verbose && enter(verbose, "Could not locate monocell CDF. Will create one for chip type");
+    res <- createMonoCell(this, ..., verbose=less(verbose));
+    verbose && exit(verbose);
+  } else {
+    res <- fromChipType(this, chipType=chipType, ...);
+  }
+
+  verbose && exit(verbose);
+
+  res;
 }, protected=TRUE)
 
 ############################################################################
 # HISTORY:
+# 2007-12-11
+# o Now getMonoCell() will create the monocell CDF, if missing.
 # 2007-07-13
 # o Now the createMonoCell() first writes a temporary CDF named *.cdf.tmp,
 #   and then rename it to *.cdf when it has been validated.
