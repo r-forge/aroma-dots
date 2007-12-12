@@ -1,6 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.8.3 [2007-12-11]
+o BUG FIX: extractMatrix() of ChipEffectSet was broken (due to an
+  internal bug in getCellMap() of ChipEffectFile).
+
+
 Version: 0.8.2 [2007-12-10]
 o Added argument 'cdf' to static fromName() of AffymetrixCelSet.
   When using this argument, the 'chipType' argument is optional, 
@@ -34,6 +39,9 @@ o CLEAN UP: Since much of the feature we used in 'affyPLM' moved to
   one of background correction methods.
 o DEVEL: Renamed all getAsteriskTag() methods to getAsteriskTags().
 o BUG FIX: Tags from the input data set of FirmaModel were lost.
+o Package pass R CMD CHECK on R v2.6.1 patch (WinXP).
+o All testScripts/system/ scripts pass as well. Total processing
+  time right of these scripts is ~18 hours.
 
 
 Version: 0.8.1 [2007-12-01]

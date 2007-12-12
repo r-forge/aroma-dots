@@ -466,16 +466,13 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
 # }
 #
 # \examples{\dontrun{
-#      unit group cell
-#   1    20     1   20
-#   2    21     1   21
-#   3    22     1   22
-#   4    23     1   23
-#   5    24     1   24
-#   6    25     1   25
-#   7    25     2   27
-#   8    26     1   29
-#   9    26     2   31
+#      unit group cell 
+#    1  104     1  335 
+#    2  104     2  336 
+#    3  105     1  337 
+#    4  105     2  338 
+#    5  105     3  339 
+#    6  105     4  340 
 # }}
 #
 # @author
@@ -566,9 +563,9 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
     # Store unit names and unit sizes
     unitNames <- vector("character", nbrOfUnits);
     unitSizes <- vector("integer", nbrOfUnits);
-    # Store cell indices in the "raw" list format first.
-    cells <- vector("list", nbrOfUnits);
 
+    # Store cell indices first chunk-by-chunk, then as a vector.
+    cells <- vector("list", nbrOfChunks);
     
     offset <- 0;
     for (kk in seq(length=nbrOfChunks)) {
@@ -586,7 +583,7 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
       });
       unitSizes[idxs] <- unlist(unitSizes0, use.names=FALSE);
       rm(unitSizes0);
-      cells[idxs] <- cells0;
+      cells[[kk]] <- unlist(cells0, use.names=FALSE);
       rm(cells0, idxs);
     }
     rm(chunks);
@@ -847,6 +844,8 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2007-12-11
+# o BUG FIX: getCellMap() of ChipEffectFile was broken.
 # 2007-12-10
 # o Now fromDataFile() of ChipEffectSet accepts argument 'cdf'.
 # 2007-11-20
