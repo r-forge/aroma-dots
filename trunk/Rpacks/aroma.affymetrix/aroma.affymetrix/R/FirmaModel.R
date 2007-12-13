@@ -27,7 +27,7 @@
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #
 #*/###########################################################################
-setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod="median", operateOn="residuals", ...) {
+setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod=c("median","upperQuartile","max"), operateOn=c("residuals","weights"), ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,10 +39,10 @@ setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod="median", ope
   }
 
   # Argument 'summaryMethod':
-  summaryMethod <- match.arg(summaryMethod, c("upperQuartile", "median", "max"));
+  summaryMethod <- match.arg(summaryMethod);
 
   # Argument 'operateOn':
-  operateOn <- match.arg(operateOn, c("residuals","weights"));
+  operateOn <- match.arg(operateOn);
 
   extend(UnitModel(...), "FirmaModel",
      .plm = rmaPlm,
