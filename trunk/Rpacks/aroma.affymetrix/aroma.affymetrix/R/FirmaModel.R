@@ -39,10 +39,10 @@ setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod="median", ope
   }
 
   # Argument 'summaryMethod':
-  summaryMethod <- match.arg(summaryMethod,c("upperQuartile", "median", "max"));
+  summaryMethod <- match.arg(summaryMethod, c("upperQuartile", "median", "max"));
 
   # Argument 'operateOn':
-  operateOn<- match.arg(operateOn,c("residuals","weights"))
+  operateOn <- match.arg(operateOn, c("residuals","weights"));
 
   extend(UnitModel(...), "FirmaModel",
      .plm = rmaPlm,
@@ -58,21 +58,66 @@ setMethodS3("getAsteriskTags", "FirmaModel", function(this, collapse=NULL, ...) 
   tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
   tags[1] <- "FIRMA";
 
-  # Append class-specific tags
-  summaryMethod <- this$summaryMethod;
-#  if (summaryMethod == "max") {
-#    tags <- c(tags, "max");
-#  } else if (summaryMethod == "median") {
-#    tags <- c(tags, "med");
-#  } else if (summaryMethod == "upperQuartile") {
-#    tags <- c(tags, "uqwt");
-#  }
+  # Append parameter tags
+
+  # Create one tag for (summaryMethod, operateOn)
+  # EP on 2007-12-08:
+  #  if operateOn==weights
+  #         and summaryMethod=upperQuartile, then add to FIRMA tag=uqwt
+  #         and summaryMethod=median, then add to FIRMA tag=medwt
+  #         and summaryMethod=max, then add to FIRMA tag=maxwt
+  #  if operateOn==residuals (all new)
+  #         and summaryMethod=mean, then add to FIRMA tag=meanres
+  #         and summaryMethod=median, then add to FIRMA tag=medres
+  codes <- c("upperQuartile"="uq", "mean"="mean", "median"="med", "max"="max");
+  smCode <- codes[this$summaryMethod];
+  codes <- c("residuals"="res", "weights"="wt");
+  ooCode <- codes[this$operateOn];
+  smooTag <- paste(smCode, ooCode, sep="");
+  tags <- c(tags, smooTag);
 
   # Collapse?
   tags <- paste(tags, collapse=collapse);
 
   tags;
 })
+
+
+setMethodS3("getTags", "FirmaModel", function(this, collapse=NULL, ...) {
+  # "Pass down" tags from the "input" data set, which "happens to be"
+  # the chip types, i.e. getChipEffectSet(plm).  This is why we can't
+  # call NextMethod() here, because that is using getDataSet(plm).
+  # /HB 2007-12-13
+  plm <- getPlm(this);
+  ces <- getChipEffectSet(plm);
+  inputTags <- getTags(ces);
+
+  # Get class specific tags
+  tags <- this$.tags;
+
+  # Expand asterisk tags
+  if (any(tags == "*")) {
+    tags[tags == "*"] <- getAsteriskTags(this, collapse=",");
+  }
+
+  # Combine input tags and local tags
+  tags <- c(inputTags, tags);
+
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    if (length(tags) > 0)
+      tags <- unlist(strsplit(tags, split=","));
+  }
+
+  # No tags?
+  if (length(tags) == 0)
+    tags <- NULL;
+
+  tags;
+})
+
 
 setMethodS3("getPlm", "FirmaModel", function(this, ...) {
   this$.plm;
@@ -90,17 +135,7 @@ setMethodS3("getName", "FirmaModel", function(this, ...) {
   getName(this$.plm, ...);
 })
 
-setMethodS3("getTags", "FirmaModel", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getTags", this, collapse=collapse, ...);
 
-  # Add class-specific tags
-  # tags <- c(tags, ...);
-
-  # Collapse?
-  tags <- paste(tags, collapse=collapse);
-
-  tags;
-})
 
 setMethodS3("as.character", "FirmaModel", function(x, ...) {
   # To please R CMD check
@@ -688,6 +723,8 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,fo
 
 ############################################################################
 # HISTORY:
+# 2007-12-13 [HB]
+# o Updated getAsteriskTags() and getTags().
 # 2007-12-10 [HB]
 # o Now getFirmaScores() of FirmaModel infers the monocell CDF from
 #   the CDF of the input data set and uses that when retrieving the
