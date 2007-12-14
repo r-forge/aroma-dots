@@ -360,19 +360,19 @@ setMethodS3("getFitUnitFunction", "FirmaModel", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Function to fit all groups (exons) within a unit
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if(this$operateOn=="residuals") {
+  if(identical(this$operateOn, "residuals")) {
     fitUnit <- function(unit, ...) {
-      u.mad<-mad(log(unlist(unit,use.names=F),base=2),center=0)
+      u.mad <- mad(log2(unlist(unit, use.names=FALSE)), center=0);
       base::lapply(unit, FUN=function(group) {
         if (length(group) > 0) {
           y <- .subset2(group, 1); # Get intensities
         } else {
           y <- NULL;
         }
-        y <- log(y, base=2);      # convert to log scale
+        y <- log2(y);              # convert to log scale
         fitfcn(y/u.mad);
       })
-    }
+    } # fitUnit()
   } else {
     fitUnit <- function(unit, ...) {
       base::lapply(unit, FUN=function(group) {
@@ -381,10 +381,10 @@ setMethodS3("getFitUnitFunction", "FirmaModel", function(this, ...) {
         } else {
           y <- NULL;
         }
-        y <- log(y, base=2);      # convert to log scale
+        y <- log2(y);              # convert to log scale
         fitfcn(y);
       })
-    }
+    } # fitUnit()
   }
 
   fitUnit;

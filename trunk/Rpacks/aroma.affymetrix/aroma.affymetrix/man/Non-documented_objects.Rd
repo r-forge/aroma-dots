@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Mon Dec 10 17:03:22 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1418,6 +1416,10 @@
 \alias{getAsteriskTags.QualityAssessmentModel}
 \alias{getChipType.UflSnpInformation}
 \alias{getChipType.UgpGenomeInformation}
+\alias{calculateResiduals.FirmaModel}
+\alias{patch}
+\alias{patch.AromaAffymetrix}
+\alias{update.AromaAffymetrix}
 
 \description{
   This page contains aliases for all "non-documented" objects that

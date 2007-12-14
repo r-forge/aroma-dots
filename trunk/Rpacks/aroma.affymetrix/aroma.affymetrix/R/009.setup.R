@@ -1,4 +1,4 @@
-.setupAromaAffymetrix <- function(...) {
+.setupAromaAffymetrix <- function(pkg, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Patches
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -30,18 +30,27 @@
   # Package settings (settings might change)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load
-  settings <- getOption("aroma.affymetrix.settings");	
-  if (is.null(settings))
-    settings <- list();
+  settings <- getOption("aroma.affymetrix.settings");
 
-  if (!"annotationData" %in% names(settings))
-    settings$annotationData <- list();
-  
-#  if (!"aliases" %in% names(settings))
-#    settings$annotationData$aliases <- list();
-  
-  if (!"paths" %in% names(settings))
-    settings$annotationData$paths <- list();
+  template <- list(
+    annotationData = list(
+      paths = list()
+    ),
+    system = list(
+      checkForUpdates = FALSE,
+      checkInterval = "onEachLoad"
+    )
+  );
+
+  # Copy settings from template, if missing
+  for (dir in names(template)) {
+    if (!dir %in% names(settings))
+      settings[[dir]] <- list();
+    for (subdir in names(template[[dir]])) {
+      if (!subdir %in% names(settings[[dir]]))
+        settings[[dir]][[subdir]] <- template[[dir]][[subdir]];
+    }
+  }
 
   options("aroma.affymetrix.settings"=settings);
 
@@ -64,6 +73,20 @@
   }, action="append");
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for updates and patches?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  settings <- getOption("aroma.affymetrix.settings");
+  if (identical(settings$system$checkForUpdates, TRUE)) {
+    interval <- settings$system$checkInterval;
+    if (is.null(interval))
+      interval <- "onEachLoad";
+    if (identical(interval, "onEachLoad")) {
+      if (interactive())
+        update(pkg, verbose=TRUE);
+    }
+  }
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -75,8 +98,13 @@
 } # .setupAromaAffymetrix()
 
 
+
 ############################################################################
 # HISTORY:
+# 2007-12-13
+# o Added code for automatic updates on startup.  In active by default.
+# o Added settings for 'checkForPatches' and 'checkInterval'.
+# o Now the settings are set according to a tempate, if missing.
 # 2007-08-30
 # o Added "patch" to make sure that there is rowMedians() supporting 
 #   missing values.
