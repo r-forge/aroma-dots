@@ -3,6 +3,8 @@
 % 
 %  FirmaModel.R
 % 
+% on Fri Dec 14 14:17:46 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -38,18 +40,19 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
  }
 
- \usage{FirmaModel(rmaPlm=NULL, summaryMethod=c("upperQuartile", "median", "max"), ...)}
+ \usage{FirmaModel(rmaPlm=NULL, summaryMethod=c("median", "upperQuartile", "max"), operateOn=c("residuals", "weights"), ...)}
 
  \arguments{
    \item{rmaPlm}{An @RmaPlm object.}
-   \item{summaryMethod}{A \code{\link[base]{character}} specifying what summarization method
-     should be used.}
+   \item{summaryMethod}{A \code{\link[base]{character}} specifying what summarization method should be used.}
+   \item{operateOn}{A \code{\link[base]{character}} specifying what statistic to operate on.}
    \item{...}{Arguments passed to constructor of \code{\link{UnitModel}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{\link[aroma.affymetrix:calculateResiduals.FirmaModel]{calculateResiduals}} \tab Gets the set of residuals corresponding to the PLM.\cr
  \tab \code{calculateWeights} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.FirmaModel]{fit}} \tab Estimates the model parameters.\cr
  \tab \code{getAsteriskTags} \tab  -\cr
