@@ -3,6 +3,8 @@
 % 
 %  FirmaModel.R
 % 
+% on Fri Dec 14 14:17:46 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

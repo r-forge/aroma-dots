@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Fri Dec 14 14:06:26 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1416,7 +1418,6 @@
 \alias{getAsteriskTags.QualityAssessmentModel}
 \alias{getChipType.UflSnpInformation}
 \alias{getChipType.UgpGenomeInformation}
-\alias{calculateResiduals.FirmaModel}
 \alias{patch}
 \alias{patch.AromaAffymetrix}
 \alias{update.AromaAffymetrix}

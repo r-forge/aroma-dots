@@ -264,7 +264,7 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ..., verbose=FALSE) {
 # }
 #
 # \value{
-#  Returns a @see "ResidualsSet" object.
+#  Returns a @see "ResidualSet" object.
 # }
 #
 # @author

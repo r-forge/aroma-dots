@@ -3,6 +3,8 @@
 % 
 %  FirmaModel.R
 % 
+% on Fri Dec 14 14:17:46 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -19,7 +21,7 @@
   Estimates the model parameters for all or a subset of the units.
  }
 
- \usage{\method{fit}{FirmaModel}(this, units="remaining", ..., force=FALSE, verbose=FALSE)}
+ \usage{\method{fit}{FirmaModel}(this, units="remaining", ..., ram=1, force=FALSE, verbose=FALSE)}
 
  \arguments{
    \item{units}{The units to be fitted.

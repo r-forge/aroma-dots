@@ -36,15 +36,12 @@
 
 \examples{\dontrun{
      unit group cell
-  1    20     1   20
-  2    21     1   21
-  3    22     1   22
-  4    23     1   23
-  5    24     1   24
-  6    25     1   25
-  7    25     2   27
-  8    26     1   29
-  9    26     2   31
+   1  104     1  335
+   2  104     2  336
+   3  105     1  337
+   4  105     2  338
+   5  105     3  339
+   6  105     4  340
 }}
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
