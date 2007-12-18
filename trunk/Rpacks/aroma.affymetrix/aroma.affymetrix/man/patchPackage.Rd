@@ -3,6 +3,8 @@
 % 
 %  patchPackage.R
 % 
+% on Sun Dec 16 21:02:47 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -16,7 +18,7 @@
   Applies patches for a specific package from the package online reprocitory.
  }
 
- \usage{\method{patchPackage}{default}(pkgName, paths="patches", deleteOld=TRUE, verbose=FALSE, ...)}
+ \usage{\method{patchPackage}{default}(pkgName, paths=c("~/.Rpatches/", "patches/"), deleteOld=TRUE, verbose=FALSE, ...)}
 
  \arguments{
    \item{pkgName}{The name of the package to be patched."}
