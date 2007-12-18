@@ -657,3 +657,4 @@ getAsteriskTags.FragmentLengthNormalization
   getAsteriskTags.QualityAssessmentModel getChipType.UflSnpInformation
   getChipType.UgpGenomeInformation
   patch patch.AromaAffymetrix update.AromaAffymetrix
+  summaryOfUnits summaryOfUnits.AromaUflFile
