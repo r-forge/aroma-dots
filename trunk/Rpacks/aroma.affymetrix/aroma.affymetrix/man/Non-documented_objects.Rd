@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Fri Dec 14 14:06:26 2007.
+% on Mon Dec 17 23:28:54 2007.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1421,6 +1421,8 @@
 \alias{patch}
 \alias{patch.AromaAffymetrix}
 \alias{update.AromaAffymetrix}
+\alias{summaryOfUnits}
+\alias{summaryOfUnits.AromaUflFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

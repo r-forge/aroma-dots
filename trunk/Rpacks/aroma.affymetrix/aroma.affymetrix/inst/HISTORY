@@ -1,12 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.3 [2007-12-17]
-o Added summaryOfUnits() to AromaUflFile.
-o UPDATE: Now package patches installed by downloadPackagePatch()
-  are stored in ~/.Rpatches/ (previously in ./patches/).  This was
-  done so that patches will be applied regardless of working 
-  directory.
+Version: 0.8.3 [2007-12-18]
+o UPDATE: Package patches installed by downloadPackagePatch()
+  are now stored in ~/.Rpatches/ (previously in ./patches/).
+  Thus, patches will be applied regardless of working directory.
+o DEVEL: Added summaryOfUnits() for AromaUflFile.
 o BUG FIX: extractMatrix() of ChipEffectSet was broken (due to an
   internal bug in getCellMap() of ChipEffectFile).
 o BUG FIX: When calling fit() on a ProbeLevelModel for chip type
