@@ -5,6 +5,12 @@ Version: 0.8.3 [2007-12-18]
 o UPDATE: Package patches installed by downloadPackagePatch()
   are now stored in ~/.Rpatches/ (previously in ./patches/).
   Thus, patches will be applied regardless of working directory.
+o UPDATE: Changed fit() for FirmaModel to operate as fit() for
+  ProbeLevelModel, where the units are read in in chunks and 
+  operated on over all chips, instead reading and operating 
+  chip-by-chip.  Default summary is now the median residual 
+  instead of 1-UQR of weights.  The added tags will reflect what
+  settings are used.
 o DEVEL: Added summaryOfUnits() for AromaUflFile.
 o BUG FIX: extractMatrix() of ChipEffectSet was broken (due to an
   internal bug in getCellMap() of ChipEffectFile).
