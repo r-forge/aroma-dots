@@ -311,7 +311,7 @@ setMethodS3("getFitFunction", "FirmaModel", function(this, ...) {
     if (this$summaryMethod == "upperQuartile") {
         fitfcn <- function(y) {
             J <- length(y)
-            list(intensities = 2^(1 - quantile(y, probs = 0.75)),
+            list(intensities = 2^(1 - apply(y,2,quantile,probs=0.75)),
                 stdvs = 1, pixels = 1)
         }
     }
@@ -319,14 +319,14 @@ setMethodS3("getFitFunction", "FirmaModel", function(this, ...) {
         fitfcn <- function(y) {
             J <- length(y)
             1 - median(y)
-            list(intensities = 2^(1 - median(y)), stdvs = 1,
+            list(intensities = 2^(1 - apply(y,2,median)), stdvs = 1,
                 pixels = 1)
         }
     }
     else if (this$summaryMethod == "max") {
         fitfcn <- function(y) {
             J <- length(y)
-            list(intensities = 2^(1 - max(y)), stdvs = 1, pixels = 1)
+            list(intensities = 2^(1 - apply(y,2,max)), stdvs = 1, pixels = 1)
         }
     }
     else {
@@ -346,6 +346,12 @@ setMethodS3("getFitFunction", "FirmaModel", function(this, ...) {
         fitfcn <- function(y) {
             #J <- length(y)
             list(intensities = 2^colMeans(y), stdvs = 1, pixels = 1)
+        }
+    }
+    else {
+        fitfcn <- function(y) {
+            J <- length(y)
+            list(intensities = 1, stdvs = 1, pixels = 1)
         }
     }
   }
