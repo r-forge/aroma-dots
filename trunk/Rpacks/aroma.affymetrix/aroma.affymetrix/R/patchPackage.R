@@ -29,7 +29,7 @@
 #
 # @keyword internal
 #*/###########################################################################
-setMethodS3("patchPackage", "default", function(pkgName, paths="patches", deleteOld=TRUE, verbose=FALSE, ...) {
+setMethodS3("patchPackage", "default", function(pkgName, paths=c("~/.Rpatches/", "patches/"), deleteOld=TRUE, verbose=FALSE, ...) {
   require("R.utils") || stop("Package not loaded: R.utils");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -65,6 +65,11 @@ setMethodS3("patchPackage", "default", function(pkgName, paths="patches", delete
   # Argument 'deleteOld':
   deleteOld <- Arguments$getVerbose(deleteOld);
 
+  # Argument 'paths':
+  for (kk in seq(along=paths)) {
+    paths[kk] <- Arguments$getReadablePathname(paths[kk], mustExist=FALSE);
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -79,6 +84,13 @@ setMethodS3("patchPackage", "default", function(pkgName, paths="patches", delete
 
 #  require(pkgName, character.only=TRUE) || throw("Package not loaded: ", pkgName);
 
+
+  # 0. Exclude non-existing patch root paths
+  for (kk in seq(along=paths)) {
+    if (!isDirectory(paths[kk]))
+      paths[kk] <- NA;
+  }
+  paths <- paths[!is.na(paths)];
 
   # 1. Scan for patch directories
   paths <- base::lapply(paths, FUN=function(path) {
@@ -144,6 +156,8 @@ setMethodS3("patchPackage", "default", function(pkgName, paths="patches", delete
 
 ############################################################################
 # HISTORY:
+# 2007-12-16
+# o Added ~/.Rpatches/ to the set of default directories of patchPackage().
 # 2007-05-10
 # o Now patchPackage(..., deleteOld=TRUE) removes not only old patches, but
 #   also patches that are older than the package itself.

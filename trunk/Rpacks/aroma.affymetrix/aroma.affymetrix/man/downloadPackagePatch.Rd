@@ -3,6 +3,8 @@
 % 
 %  downloadPackagePatch.R
 % 
+% on Sun Dec 16 21:02:34 2007.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -17,7 +19,7 @@
   By default, the patches are applied after being downloaded.
  }
 
- \usage{\method{downloadPackagePatch}{default}(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, ...)}
+ \usage{\method{downloadPackagePatch}{default}(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, rootPath="~/.Rpatches", ...)}
 
  \arguments{
    \item{pkgName}{The name of the package to be patched."}

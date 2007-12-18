@@ -32,7 +32,7 @@
 #
 # @keyword internal
 #*/###########################################################################
-setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, ...) {
+setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, rootPath="~/.Rpatches", ...) {
   require("R.utils") || stop("Package not loaded: R.utils");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -41,6 +41,9 @@ setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, u
   # Argument 'pkgName':
   require(pkgName, character.only=TRUE) || stop("Package not loaded: ", pkgName);
   
+  # Argument 'rootPath':
+  rootPath <- Arguments$getWritablePath(rootPath);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -93,7 +96,8 @@ setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, u
   version <- attr(files, "version");
   patchUrl <- paste(rootUrl, version, sep="/");
   verbose && cat(verbose, "Patch URL: ", patchUrl);
-  path <- file.path("patches", pkgName, version);
+
+  path <- file.path(rootPath, pkgName, version);
   mkdirs(path);
   verbose && cat(verbose, "Download directory: ", path);
 
@@ -119,6 +123,10 @@ setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, u
 
 ############################################################################
 # HISTORY:
+# 2007-12-16
+# o Added argument 'rootPath' to downloadPackagePatch() which is the root
+#   directory where to store package patches.  The default is now to store
+#   patches under ~/.Rpatches/ (previously it was './patches/').
 # 2007-05-10
 # o Added argument 'apply=TRUE' to downloadPackagePatch() so that downloaded
 #   patches are applied immediately after being downloaded.
