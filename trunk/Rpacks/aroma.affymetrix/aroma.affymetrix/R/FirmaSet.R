@@ -132,7 +132,7 @@ setMethodS3("readUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, ..., v
 
 setMethodS3("findUnitsTodo", "FirmaSet", function(this, ...) {
   # Look into the last file since that is updated last
-  ff <- getFile(this, length(this));
+  ff <- getFile(this, 1);
   findUnitsTodo(ff, ...);
 })
 
