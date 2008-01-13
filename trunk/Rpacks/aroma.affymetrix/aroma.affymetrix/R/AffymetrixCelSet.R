@@ -299,7 +299,10 @@ setMethodS3("getCdf", "AffymetrixCelSet", function(this, ...) {
 #
 # \arguments{
 #   \item{cdf}{An @see "AffymetrixCdfFile" object.}
+#   \item{verbose}{If @TRUE, progress details are printed, otherwise not.
+#     May also be a @see "R.utils::Verbose" object.}
 #   \item{...}{Not used.}
+#   \item{.checkArgs}{(Internal) If @FALSE, arguments are not validated.}
 # }
 #
 # \value{
@@ -315,13 +318,21 @@ setMethodS3("getCdf", "AffymetrixCelSet", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...) {
+setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ..., .checkArgs=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'cdf':
-  if (!inherits(cdf, "AffymetrixCdfFile")) {
-    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+  if (.checkArgs) {
+    # Argument 'cdf':
+    if (!inherits(cdf, "AffymetrixCdfFile")) {
+      throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
+    }
+  
+    # Assure that the CDF is compatible with the CEL file
+    cf <- getFile(this, 1);
+    if (nbrOfCells(cdf) != nbrOfCells(cf)) {
+      throw("The specified CDF structure is not compatible with the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(cf));
+    }
   }
 
   # Argument 'verbose':
@@ -352,14 +363,9 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
     }
   }
 
-  # Nothing to do?
-#  oldCdf <- getCdf(this);
-#  if (equals(cdf, oldCdf))
-#    return(invisible(this));
-
   # Set the CDF for all CEL files
   verbose && enter(verbose, "Setting CDF for each CEL file");
-  lapply(this, setCdf, cdf, ...);
+  lapply(this, setCdf, cdf, .checkArgs=FALSE, ...);
   verbose && exit(verbose);
 
   # Have to clear the cache 
@@ -552,7 +558,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   }
 
   verbose && enter(verbose, "Updating the CDF for all files");
-  setCdf(this, cdf, .checkArgs=FALSE);
+  setCdf(this, cdf);
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1338,6 +1344,11 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-01-11
+# o ROBUSTNESS: It was possible to set a non-compatible CDF when using
+#   static fromFiles() of AffymetrixCelSet.
+# o Added argument '.checkArgs' to setCdf() of AffymetrixCelSet, which now
+#   validated the arguments once and not for every file.
 # 2007-12-08
 # o Added argument 'cdf' to static fromName() of AffymetrixCelSet.  When
 #   using this argument, the 'chipType' argument is optional, and the 
