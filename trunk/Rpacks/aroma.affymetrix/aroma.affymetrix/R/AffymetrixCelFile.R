@@ -256,6 +256,7 @@ setMethodS3("getCdf", "AffymetrixCelFile", function(this, ...) {
 # \arguments{
 #   \item{cdf}{An @see "AffymetrixCdfFile" object.}
 #   \item{...}{Not used.}
+#   \item{.checkArgs}{(Internal) If @FALSE, arguments are not validated.}
 # }
 #
 # \value{

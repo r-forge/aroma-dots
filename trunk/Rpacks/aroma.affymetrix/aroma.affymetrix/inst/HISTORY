@@ -1,6 +1,17 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.8.4 [2008-01-11xx]
+o ROBUSTNESS/BUG FIX: It was possible to set a non-compatible 
+  CDF when using static fromFiles() of AffymetrixCelSet.
+o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
+  much less memory when infering the cell indices.
+o Updated importFromDChip() for CnChipEffectSet so that it imports data
+  exported by more recent versions of dChip.  In recent versions the
+  standard-error columns are named '*SE' whereas before it were '*SD'.
+  In either case, standard errors were exported (confirmed by author).
+
+
 Version: 0.8.3 [2007-12-18]
 o UPDATE: Package patches installed by downloadPackagePatch()
   are now stored in ~/.Rpatches/ (previously in ./patches/).

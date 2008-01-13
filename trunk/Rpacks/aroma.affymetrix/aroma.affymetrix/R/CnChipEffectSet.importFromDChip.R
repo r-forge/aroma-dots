@@ -15,7 +15,7 @@
 # \arguments{
 #   \item{filename}{The filename of the dChip result file.}
 #   \item{path}{An optional path to the file.}
-#   \item{combineAlleles}{If @TRUE, .}
+#   \item{combineAlleles}{If @TRUE, ...}
 #   \item{cdf}{An @see "AffymetrixCdfFile" object.}
 #   \item{...}{Not used.}
 #   \item{skip}{If @TRUE, already imported arrays will be skipped.}
@@ -24,6 +24,19 @@
 #
 # \value{
 #  Returns an @see "CnChipEffectSet".
+# }
+#
+# \details{
+#   This import method is robust and memory efficient.  One array at the 
+#   time is imported by first writing to a temporary file which is then
+#   renamed to the final name, if import was successful.  (If the import
+#   failed, a temporary file will rename that has to be deleted manually).
+#
+#   Since only one array at the time is imported, the memory overhead
+#   will be bounded allowing to import very large tab-delimited data files 
+#   containing a large number of arrays.  Unfortunately, this approach
+#   slows down the reading substantially, because in each import all but
+#   one column is parsed but ignored.
 # }
 #
 # @author
@@ -133,7 +146,7 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   # Infer data path
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rootPath <- "plmData";
-  chipType <- getChipType(cdf);
+  chipType <- getChipType(cdf, fullname=FALSE);
   currPath <- dirname(pathname);
   while(TRUE) {
     dataSetName <- basename(currPath);
@@ -164,6 +177,7 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Open file & assert file format
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  srcPathname <- pathname;
   con <- file(pathname, open="r");
   on.exit(close(con));
 
@@ -192,8 +206,8 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
     throw("dChip data file contains log-transformed values. Not supported.");
   }
 
-  hasStddev <- (tolower(header$OutputBothSignalAndCall) == "yes");
-  verbose && cat(verbose, "Has standard-deviation estimates: ", hasStddev);
+  hasStdError <- (tolower(header$OutputBothSignalAndCall) == "yes");
+  verbose && cat(verbose, "Has standard-error estimates: ", hasStdError);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Read column names
@@ -214,17 +228,18 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
                                            paste(colNames, collapse=", "));
 
   # Infer sample names
-  sampleNames <- gsub(" (call|SD)$", "", colNames[-1]);
+  sampleNames <- gsub(" (call|SD|SE)$", "", colNames[-1]);
   sampleNames <- unique(sampleNames);
   nbrOfSamples <- length(sampleNames);
-  verbose && printf(verbose, "Sample names [%d]: %s\n", nbrOfSamples, paste(sampleNames, collapse=", "));
+  verbose && printf(verbose, "Sample names [%d]: %s\n", nbrOfSamples, 
+                                         paste(sampleNames, collapse=", "));
 
 
   nbrOfColsPerSample <- (nbrOfColumns-1)/nbrOfSamples;
   hasCalls <- any(regexpr(" call$", colNames[-1]) != -1);
-  hasSDs <- any(regexpr(" SD$", colNames[-1]) != -1);
+  hasSEs <- any(regexpr(" (SD|SE)$", colNames[-1]) != -1);
   verbose && printf(verbose, "Has calls: %s\n", hasCalls);
-  verbose && printf(verbose, "Has SDs: %s\n", hasSDs);
+  verbose && printf(verbose, "Has SEs: %s\n", hasSEs);
   verbose && printf(verbose, "Columns per sample: %d\n", nbrOfColsPerSample);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -238,9 +253,12 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Import each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # (signal, call, sd)
+  # (signal, call, se)
   sampleColClasses <- c("double", "NULL", "double")[1:nbrOfColsPerSample];
   cells <- NULL;
+
+  # Garbage collect
+  gc <- gc();
 
   verbose && enter(verbose, "Importing ", nbrOfSamples, " samples");
   for (kk in seq(length=nbrOfSamples)) {
@@ -269,57 +287,122 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
 
     verbose && enter(verbose, "Retrieving chip-effect CEL file");
     verbose && cat(verbose, "Class: ", getName(clazz));
-    if (isFile(pathname)) {
-      cef <- clazz$fromFile(pathname, verbose=less(verbose));
-    } else {
-      cef <- clazz$fromDataFile(filename=filename, path=outPath, 
-               name=sampleName, cdf=monocellCdf, verbose=less(verbose));
+
+    # Write to a temporary file
+    tmpPathname <- paste(pathname, ".TMP", sep="");
+    if (isFile(tmpPathname)) {
+      throw("Remove already existing temporary data file: ", tmpPathname);
     }
+
+    if (isFile(pathname)) {
+      # Test if file can be loaded
+      cef <- clazz$fromFile(pathname, verbose=less(verbose));
+      # Ok, then rename this file
+      res <- file.rename(pathname, tmpPathname);
+      if (!res) {
+        throw("Failed to rename existing file: ", pathname, 
+                                               " -> ", tmpPathname);
+      }
+      cef <- clazz$fromFile(tmpPathname, verbose=less(verbose));
+    } else {
+      tmpFilename <- basename(tmpPathname);
+      cef <- clazz$fromDataFile(filename=tmpFilename, path=outPath, 
+               name=sampleName, cdf=monocellCdf, verbose=less(verbose));
+      rm(tmpFilename);
+    }
+    tmpPathname <- getPathname(cef);
     cef$combineAlleles <- combineAlleles;
     cef$mergeStrands <- TRUE;
     verbose && print(verbose, cef);
     verbose && exit(verbose);
 
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
     if (is.null(cells)) {
-      res <- importUnits(con, cdf=monocellCdf, verbose=verbose);
+      verbose && enter(verbose, "Infering cell indices");
+
+      verbose && enter(verbose, "Reading units");
+      dirs <- c("aroma.affymetrix", "dChip");
+      key <- list(method="importFromDChip", class="CnChipEffectSet", result="importUnits", fileHeader=header, fileSize=file.info(srcPathname)$size, colNames=colNames, chipType=getChipType(monocellCdf));
+      verbose && str(verbose, key);
+      verbose && print(verbose, generateCache(key, dirs=dirs));
+      verbose && exit(verbose);
+
+      force <- FALSE;
+      res <- NULL;
+      if (!force) {
+        res <- loadCache(key, dirs=dirs);
+      }
+      if (is.null(res)) {
+        res <- importUnits(con, cdf=monocellCdf, verbose=verbose);
+        # Store in cache
+        saveCache(res, key=key, dirs=dirs);
+      }
       units <- res$units;
       keep <- res$keep;
       rm(res);
-      verbose && enter(verbose, "Getting CDF cell indices");
-      cells <- getCellIndices(cef, units=units);
-      verbose && cat(verbose, "CDF cell indices:");
-      verbose && cat(verbose, "Number of units: ", length(cells));
-      cells <- unlist(cells, use.names=FALSE);
-      verbose && cat(verbose, "Number of cells: ", length(cells));
-      verbose && str(verbose, cells);
-      verbose && exit(verbose);
       # Garbage collect
       gc <- gc();
       verbose && print(verbose, gc);
-    }
+
+      verbose && enter(verbose, "Getting CDF cell indices");
+      cells <- lapplyInChunks(units, function(units) {
+        cells <- getCellIndices(cef, units=units);
+        verbose && cat(verbose, "CDF cell indices:");
+        verbose && cat(verbose, "Number of units: ", length(cells));
+        cells <- unlist(cells, use.names=FALSE);
+        verbose && cat(verbose, "Number of cells: ", length(cells));
+        verbose && str(verbose, cells);
+        cells <- as.list(cells);
+        # Garbage collect
+        gc <- gc();
+        verbose && print(verbose, gc);
+        cells;
+      }, chunkSize=100e3, verbose=less(verbose,5));
+      cells <- unlist(cells, use.names=FALSE);
+      verbose && str(verbose, cells);
+      verbose && exit(verbose);
+
+      verbose && exit(verbose);
+    } # if (is.null(cells))
+    rm(cef);  # Not needed anymore
 
     verbose && enter(verbose, "Reading data");
     colClasses <- rep("NULL", nbrOfColumns+1);
     colClasses[cols] <- sampleColClasses;
     seek(con, where=dataOffset, rw="read");
-    data <- read.table(file=con, colClasses=colClasses, sep=sep, header=FALSE);
+    data <- read.table(file=con, colClasses=colClasses, sep=sep, 
+                 header=FALSE, comment.char="", quote="", fill=FALSE);
     data <- as.matrix(data[keep,,drop=FALSE]);
     dimnames(data) <- NULL;
     verbose && str(verbose, data);
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "Storing chip effects");
-    pathname <- getPathname(cef);
-    rm(cef);
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
 
-    if (hasSDs) {
+    verbose && enter(verbose, "Storing chip effects");
+
+    if (hasSEs) {
       stdvs <- data[,2];
     } else {
       stdvs <- NULL;
     }
-    updateCel(pathname, indices=cells, intensities=data[,1], stdvs=stdvs);
+    
+    updateCel(tmpPathname, indices=cells, intensities=data[,1], stdvs=stdvs);
     rm(data, stdvs);
     verbose && exit(verbose);
+
+    # Renaming temporary file
+    pathname <- gsub("[.](tmp|TMP)$", "", tmpPathname);
+    res <- file.rename(tmpPathname, pathname);
+    if (!res) {
+      throw("Failed to rename temporary file: ", tmpPathname,
+                                                 " -> ", pathname);
+    }
 
     # Garbage collect
     gc <- gc();
@@ -340,6 +423,21 @@ setMethodS3("importFromDChip", "CnChipEffectSet", function(static, filename, pat
 
 ############################################################################
 # HISTORY:
+# 2008-01-12
+# o ROBUSTNESS: Now importFromDChip() for CnChipEffectSet first imports to
+#   a temporary data file, which is renamed if import was successful.  This
+#   will prevent getting broken data files.
+# o BUG FIX: importFromDChip() for CnChipEffectSet would write output files
+#   to a subdirectory with the full chip type name.
+# o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
+#   much less memory when infering the cell indices.
+# 2008-01-11
+# o Updated importFromDChip() of CnChipEffectSet so that it can import data
+#   exported by more recent versions of dChip.  In recent versions, the
+#   standard-error columns are named '*SE' whereas before they were named
+#   '*SD'.  In either case, standard errors were exported (confirmed by 
+#   author), cf. dChip Forum 'SNP copy number & LOH analysis' and thread
+#   'File format version history for exported MBEIs' on 2008-01-11.
 # 2007-08-09
 # o CnChipEffectSet$importFromDChip() now creates CEL files with upper-case
 #   filename extension "*.CEL", not "*.cel".  The reason for this is that
