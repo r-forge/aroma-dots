@@ -1,0 +1,920 @@
+Package: aroma
+==============
+
+Version: 0.93 [2006-07-04]
+o BUG FIX: read() of ImaGeneData could not handle '#' in the Gene ID.
+
+Version: 0.92 [2006-06-13]
+o BUG FIX: From R v2.3.1 graphics::image.default() does not accept 
+  xlim=NULL nor ylim=NULL.  Had to update plot.MAData() accordingly.
+
+Version: 0.91 [2006-05-04]
+o BUG FIX: An error would be thrown in getChannelNames() if the GPR header
+  contained two headers with names containing "Type".  Thanks Valtteri 
+  Wirta, KTH for reporting this.
+
+Version: 0.90 [2006-03-28]
+o Updated broken Rd links.
+o Updated the references to publications.
+
+Version: 0.89 [2006-02-23]
+o Some people have newlines in their GPR name and/or id columns, which
+  read() of GenePixData could not deal with.  Now we try to read such
+  data by assuming different types of quotation marks around the cells.
+  The first one to read the result table correctly is used.
+o BUG FIX: The heuristic methods for trying to identify column names
+  in GPR files failed to identify channel 3 and 4 fields in some cases.
+  This generated warnings about unknown fields when reading GPR files.
+
+Version: 0.88 [2006-02-13]
+o The help pages no longer claims that the package requires the
+  R.classes bundle.  Install stand alone packages instead.
+o Package now relies on aroma.light, which provide light-weight methods
+  for normalizing and calibrating data in matrices.  Many of the methods
+  in aroma.light have co-existed in aroma for a long time.  A few of
+  the methods related to affine normalization differed slightly in the
+  two packages, although they had the same names.  Here is a list of
+  important differences/updates from using aroma.light instead:
+  * backtransformAffine.matrix():
+    - Now the method returns only a single column if project is TRUE.  
+      This is because all columns would be identical.
+    - The average of projected data is now on the same scale as the
+      average on non-projected data. Before the data was max(b) times 
+      too large.
+  * calibrateMultiscan.matrix():
+    - Since backtransformAffine.matrix() now returns a single column
+      if project is TRUE, so do calibrateMultiscan.matrix().
+  * fitIWPCA.matrix():
+    - Input data (X) is no longer returned; saves memory.
+  * plotMvsA().matrix(), plotMvsAPairs.matrix(), and plotMvsM.matrix():
+    - are also moved to aroma.light.
+  * Internal functions tr(), scalarProduct(), and projectUontoV():
+    - are also moved to aroma.light.
+  * The PMT-RGData.dat example data set is now in aroma.light only.
+o BUG FIX: read() of QuantArrayData gave "Error in method(static, ...) : 
+  5 arguments passed to 'readTableHead' which requires 6".  This bug 
+  must have been around since (at least) R v2.1.1, when the number of
+  arguments were changed, cf. the fix for GenePixData in v0.84 below.
+  Thanks to Napawan Polmee and Sumalee Kamchonwongpaisan, National 
+  Center for Genetic Engineering and Biotechnology, Thailand, for 
+  reporting this.
+
+Version: 0.87 [2006-02-08]
+o The code for normalizeWithinSlide() in MAData and RGData assumed 
+  argument 'method' was a single value, but it may be a vector which 
+  then generates a warning.
+o Updated broken links in Rd files.
+o Replaced the "about" help page with a "package" help page.
+
+Version: 0.86 [2005-10-28]
+o Removed doCall() since it is now in the R.utils package.
+o Package requires R.utils v0.6.3 or newer. Trust me!
+o Rebuild package to verify it conforms to the renaming of argument
+  'overwrite' to 'mustNotExist' and 'mustExists' to 'mustExist' in
+  the static methods of the Arguments class.
+o Added 'Suggests: sma' to the DESCRIPTION file, because sma is
+  needed for the examples to run.
+
+Version: 0.85 [2005-07-21]
+o All default 'path' arguments are now NULL; do not use path="".
+o Package now requires R.classes v0.62 or later and especially the
+  new R.utils package (part of R.classes).
+o Package do no longer make use of the File class.
+o doCall() has moved to R.utils.
+o Made classes TMAData, BMAData, TFilter and BFilter and related methods
+  deprecated, because they are very old. It is better to use the limma
+  package for this.
+o Made class Replicates deprecated.
+
+Version: 0.84 [2005-07-01]
+o Replaced all internal image.matrix() with image270(). Now more 
+  warnings.
+o BUG FIX: GenePixData$read() would give "Error in read.table.default(...
+  ...): 5 arguments passed to 'readTableHead' which requires 6".
+
+Version: 0.83 [2005-05-03]
+o Deprectated setField() in class MicroarrayData made GenePixData
+  and a few other classes abstract. This method is now removed.
+o Stopped supporting aroma for R v1.9.1 and before. The rule of
+  thumb is to support only R versions that are less than a year old.
+
+Version: 0.82 [2005-04-07]
+o More of the read methods of MicroarrayData and Layout objects do
+  now support gzip'ed files.
+o Added plotMvsAPairs() for the matrix class.
+
+Version: 0.81 [2005-03-23]
+o Updated all methods utilizing lowess() and approx(), for instance,
+  normalizeCurveFit(), so that approx() does not give warnings about
+  'Collapsing to unique x values' anymore.
+
+Version: 0.80 [2005-02-28]
+o Package now passes R CMD check with only one warning about 'log'.
+o Added getArrayLeft() etc. to SpotData.
+o For some standard methods such as plot(), summary(), str() etc.
+  the first argument has been renamed from 'this' to, for example, 'x'
+  in order for these methods to match the generics and to pass
+  R CMD check with less warnings.
+o There should be no missing links in the help pages.
+
+Version: 0.79 [2005-02-22]
+o Added missing alias for 'aroma'. Now ?aroma should work.
+
+Version: 0.78 [2005-02-21]
+o IMPORTANT: If using R.classes v0.58 or higher, aroma has to 
+  be updated, otherwise multiscan calibration and affine normalization
+  will not give the same results as in previous versions. This is
+  because iwpca() in R.basic have different defaults now and is
+  used by the above to methods.
+o More help on multiscan calibration, affine normalization and
+  curve-fit normalization. 
+o Removed require() for R v2.0.x and above.
+
+Version: 0.77 [2005-02-05]
+o Added first initial support for a general weight model. First
+  method added are get- and setProbeWeights() in the MicroarrayData
+  class. Added also get- and setWeights().
+o Added light-weight normalizeCurveFit() and normalizeAffine() for the 
+  matrix class with support for weights.
+o Documented all arguments etc in order to get rid of warnings 
+  in R CMD CHECK.
+o Renamed old-style normalizeAffine() for MAData to 
+  normalizeAffineShift() to be consistent with normalizeAffine() 
+  in RGData.
+o Updated the loess parameters for normalizeCurveFit() according to 
+  G. Smyth's suggestions by email on 2003-03-17. 
+o Added normalizeCurveFit() to RGData, which now utilizing the method 
+  with the same name, but for the matrix class.
+o calibrateMultiscan() is now using the calibrateMultiscan.matrix()
+  method. Similar for the normalizeAffine() method.
+o BUG FIX: The background transform in calibrateMultiscan() did not
+  transform the matrix before subtracting. This made no difference when
+  using the default constraint=="diagonal", but would introduce strange
+  biases in others would be used.
+o Added getLogRatios() and getLogIntensities() and their Rdoc comments.
+  getM() and getA() are aliases for these.
+o Removed deprecated dyeSwap() from all classes.
+o Zero-one weights are now round off by round(w). 
+o For backtransformAffine(), missing values are now excluded before 
+  projection. 
+o Added arg. na.rm=FALSE to tr(), scalarProduct(), and projectUontoV().
+
+Version: 0.76 [2004-12-27]
+o Now argument 'weights' for normalizeWithinSlides() will only have an
+  effect on the fitting of the normalization function. All data points
+  are normalized. Before, zero weights would also prevent the 
+  corresponding data points from being normalized at all.
+  (Note, there is a plan to introduce a more general concept of weights,
+   which can be set on each individual spot and channel. When this will
+   be implemented is unknown.)
+o Added internal validateArgumentWeights() to MicroarrayData.
+
+Version: 0.75 [2004-10-22]
+o Reconstructed so that package installs on both R v2.0.0 and Rv1.9.1.
+  To install, write:
+  install.packages("aroma", contriburl="http://www.maths.lth.se/help/R")
+  To install on R v1.9.1 or earlier on Windows, write:
+  install.packages("aroma", contriburl="http://www.maths.lth.se/help/R/R190")
+o Names of help pages for S3 methods are now in the standard R 
+  format, that is, in <method>.<class>, and not <class>.<method> anymore.
+
+Version: 0.74 [2004-08-15]
+o Rename as.RawData() to getRawData().
+
+Version: 0.73 [2004-07-01]
+o Added constraint "baseline" and argument 'baselineChannel' to
+  fitIWPCA(), and hence to normalizeAffine() and calibrateMultiscan().
+o Updated all affine normalization methods. Major internal restructuring;
+  now there is an internal core working on matrices only not relying on
+  any specific aroma objects.
+o Updated the read() method for QuantArrayData; it was not compatible
+  with R v1.9.0. Also added help for its file format.
+
+Version: 0.72 [2004-05-06]
+o BUG FIX: GenePixData$read() opened a file/connection without closing it
+  eventually resulting in an error with too many opened connections. The
+  was a single left over code of line that opened a file and should not
+  be there. Thanks Lei Jiang at University of Washington for reporting 
+  this. 
+
+Version: 0.71 [2004-04-26]
+o Verified to load correctly on R v1.9.0. However, there are most
+  likely broken links in the help pages since many functions has
+  been moved into new R v1.9.0 packages.
+o Added a few get methods to SpotPosition to get aspect ratios etc.
+o Added the ... argument to the normalization methods of RGData, which
+  is passed down all the way to for instance iwpca() method. This allows
+  a weight argument to normalizeAffine() and calibrateMultiscan().
+
+Version: 0.70 [2004-03-17]
+p BUG FIX: Reading unicoded QuantArrayData files generated several 
+  warnings about conditional test was done on more than one element.
+o BUG FIX: Corrected a bug in as.RawData() of QuantArrayData complaining
+  about 'this', which was introduced in previous version.
+
+Version: 0.69 [2004-03-09]
+o BUG FIX: Argument 'slides' of write() in MicroarrayData had no effect;
+  all slides were written anyway. Thanks Johan Lindberg at the Royal
+  Institute of Technology, Stockholm for reporting this.
+  Updated the Rdoc comments for write() too.
+  I also found out that write() for ImaGeneData, QuantArray, 
+  ScanAlyzeData, SpotData and SpotfinderData were mistakenly accepting
+  more than once slide at the time. It was a cut'n'paste typo and now 
+  an error is thrown if more than one slide is specified.
+o The R.classes bundle has been updated and recompiled to work fully
+  with R v1.8.1. It was basically only the new error handling mechanism
+  that made trycatch() in R.oo to be confused. Also, strsplit() is
+  now not doing as.character() for you, which means that NULL and 
+  numerics etc won't work. Had to update R.classes accordingly.
+  Same with some aroma code too. Recompiled aroma. No other updates
+  has been made.
+
+Version: 0.68 [2004-02-25]
+o BUG FIX: The Unicode reading in QuantArrayData$read() was broken,
+  most likely due to a change in R.
+o Included normalizeAffine() and calibrateMultiscan().
+o Now read() and write() of GenePixData is sensitive to the "Wavelengths"
+  header field, if it exists. Its contents is parsed (basically string
+  split around '\t' and removes all known non-digits) and used as 
+  channel labels. This replaces the hard coded "635", "532", "3" and "4"
+  as used before. Another step towards multi-color/channel analysis.
+o Added the readHeader() to GenePixData to read just the header 
+  information and not the data. This is now also used internally by
+  the read() method.
+o For plot() in MAData the ylim will now follow the xlim such that 
+  R and G, which are rotate 45 degrees in the M vs A plot, are still
+  ortogonal to each other. This is recommended because the logarithmic 
+  scale fools you enough anyway.
+o Added internal generic validateArgumentGroupBy() to validate all
+  'groupBy' arguments. All to make the API more consistent.
+
+Version: 0.67 [2003-12-31] [Package renamed to aroma]
+o PACKAGE RENAMED TO aroma.
+
+Version: 0.66 [2003-12-31]
+o Added plotMvsM() to the MAData class.
+o Now the 'slide' and 'slides' arguments to any method also accepts
+  slide names as given by getSlideNames().
+o Renamed get/setSlideName() to get/setSlideNames() for the 
+  MicroarrayData class. The old methods are made deprecated.
+o Added a read-multiple-slides example to the ImaGeneData help. This was
+  done on request from Giovanni Martinelli, Italy.
+
+Version: 0.65 [2003-12-02]
+o BUG FIX: In append() of GenePixData, I did rep(NA, nrow=...) instead 
+  of rep(NA, length=...) ib a section of code that was rarely called,
+  but still very important. Thanks to Jarmo Schrader at Umea 
+  University, Sweden, for the report.
+o Updated some broken links in the help pages.
+
+Version: 0.64 [2003-11-18]
+o When reading GPR files the estimation/guessing of the number of grid 
+  rows was improved. Before it happend that it failed because some spot
+  positions (x,y) were NAs. If that occurs, it will try again with 
+  another set of spots and so on.
+o When reading GPR files with "missing" spots, i.e. when the printtip
+  groups are not completly rectangular, "missing" spots are inserted at
+  the missing (Block,Row,Column) with all other values set to NA. The
+  speed for doing this has been improved dramatically.
+o Improved consistency of how different method interpret the same
+  argument. Now arguments 'filename', 'path', 'slide', 'slides' are
+  interpreted and validated in the same way for all methods.
+
+Version: 0.63 [2003-10-30]
+o Added support to call highlight(), points() and text() after calling
+  plotSpatial() on a GenePixData object. Other classes will be support
+  this too later.
+
+Version: 0.62 [2003-10-29]
+o Added support to read ScanAlyze v2.0 data files. Since this format
+  is quite different from ScanAlyze v1.0, for now we have decided to 
+  have a ScanAlyze20Data class to represent this "new" format. A write
+  function still has to be written. Toby Dylan Hocking at UC Berkeley
+  provided most of the code for reading version 2.0 files. Thanks!
+o Added support to read gzip'ed Spot, GenePix etc data files. 
+  Internally, this is (currently) done by extracting the *.gz file to 
+  a temporary file, which is then read.
+o Updated all getForeground() and getBackground() to choose the median
+  estimates before the mean. For SpotData, getBackground() by default
+  returns the morphological close opening (instead of morph.erode). 
+  The as.RawData() methods already had these "corrections", which means
+  that if you have only used those you will see no difference.
+o BUG FIX: A typo made as.RawData() for ImaGeneData to return the *mean*
+  instead of the median.
+
+Version: 0.61 [2003-10-13]
+o The background extracted by as.RawData() of the SpotData class is now
+  i) morph.close.open, ii) morph.open, or iii) morph.erode in order of
+  existance.
+o append() in GenePixData can now append GenePixData object of different
+  GPR versions. This means that read() can also handle different versions
+  of GPR files at the same time and put them in a common GenePixData 
+  object. Thank you Marcus Gry Björklund at AlboNova, Stockholm for 
+  reporting the problem with reading different GPR versions.
+o read() in MicroarrayData now gives a correctly spelled(!) error message
+  if it did not recognize any of the data files. Thanks again to Marcus.
+o Layout class: Added getLayoutGroupsByName(). Very useful in all plot 
+  and normalization methods etc that have a groupBy argument. Added
+  getPrintorder() and setPrintorder(). getPrintorder() is to replace
+  toPrintorderMatrix(). Removed obsolete '.return' argument from set().
+  Made setByLayout() and setExplicit() deprecated. 
+o MicroarrayData class: Added getCache(), setCache(), clearCache(). 
+o Internal updates.
+
+Version: 0.60 [2003-08-29]
+o BUG FIX: When reading two or more GPR v3 created by GenePix 5.0.0.x
+  an error "getPixelSize(this) : Object "this" not found" was given.
+  This happend since the new version contained the column "Circularity"
+  and was in conflict with getCircularity(), which is a virtual field.
+  Thanks Valtteri Wirta, AlbaNova University Center, Sweden for
+  reporting this bug.
+o Added some help for plotSpatial3d() in the MicroarrayData class.
+
+Version: 0.59 [2003-07-29]
+o Added help for plotSpatial3d() for the MicroarrayData class.
+o Updated as.RawData() of GenePixData to by default use the *median* 
+  estimates instead of the *mean* estimates of the foreground and 
+  background signals.
+o Updated append() of the MicroarrayData class to set the Layout object
+  if such an object does *not* already exist, but the appended 
+  MicroarrayData object has one. 
+o Added an example to append() of the MicroarrayData class showing how
+  one easily can read multiple GPR files one by one and convert each 
+  to MAData objects that are appended together. This makes it possible
+  to read 10-20 times more data files.
+o Added shift(M,A,R,G,...) to RawData(), RGData() and MAData().
+o Added getDuplicates(), getTriplicates(), getQuadruplicates(), and the
+  more general getReplicates() to the GeneGroups class.
+o Added an example to getIndices() of the Layout class how to get the 
+  "alley spots", i.e. those spots in each printtip groups that do not 
+  have eight neighbors.
+
+Version: 0.58 [2003-07-07]
+o It is now recommended to use Gordon Smyth's limma package
+  (http://bioinf.wehi.edu.au/limma/), which is part of Bioconductor.org,
+  instead of using the somewhat out-of-date BMAData class and as.BMAData()
+  methods. Gordon has done quite a bit of work on the Empirical Bayes 
+  methods since Lönnstedt and Speed's paper first came out. For more
+  information and links see help on BMAData.
+o Added getBackgroundArea(), getWavelengths(), getPMTGain(), getLaserPower(),
+  getLaserOnTime(), getLinesAveraged(), getTemperature(), getFocusPosition(), 
+  getPixelSize(), getForegroundSE(), getForegroundSD() and getBackgroundSD()
+  to the GenePixData class. Moreover, made all GPR header fields into
+  regular fields too. This means that now the header fields are stored for
+  *all* slides if several slides are appended together. Moreover, if a 
+  header field contains TABS ("\t") they are used to split the field into
+  a vector of string value to make it easier for the user to retrieve for
+  instance the wavelength for each channel etc. Old 'settings' field is 
+  removed. append() was updated to support the new header fields.
+o BUG FIX: plotSpatial() of RawData and RGData did only work for "known" 
+  fields. User added fields did not plot. 
+o TYPO FIX: Updated Rdoc about 'CH*KSD' and 'CH*KSP' for ScanAlyzeData.
+o Added getForegroundSE() and getForegroundSD() to SpotData. Moreover, 
+  updated the Rdoc about 'badspot' and added information about IQR for
+  non-statisticians. 
+
+Version: 0.57 [2003-05-14]
+o BUG FIX: getForeground() and as.RawData() in SpotfinderData did by 
+  mistake return fg-2*bg instead of fg as the foreground signal.
+o Update the help about 'logratio' in the SpotData class; it is not
+  calculated based on the 'Rmean' but the 'Rmedian'. It is still 
+  redundant though.
+o The AndFilter and the OrFilter was mistakenly set to be abstract.
+o Added and update even more of the help pages.
+
+Version: 0.56 [2003-05-04]
+o Added and updated many of the help files. Is now making more and more 
+  use of the new Rdoc compiler, which means that the help pages are
+  (automatically) more consistent with the source code.
+o Added getBackground() and getForeground() to SpotData and friends for
+  convienience. Other classes will probably follow later.
+o The SpotSlideArray objects returned by getM() and getA() in RGData and
+  getR() and getG() in MAData do now include a reference to the
+  Layout object.
+o BUG FIX: getM() and getA() in RGData gave an error because 
+  SpotSlideData() did not exist. Should be SpotSlideArray(). 
+o BUG FIX: getM() and getA() in the RGData class gave an error because
+  SpotSlideData() did not exist. Should have been SpotSlideArray().
+o R CMD check passes with 4 warnings.
+
+Version: 0.55 [2003-04-08]
+o Replaced all internal getClass() with data.class() to prepare for
+  getClass() to return objects of class Class.
+o getColors() of TMAData is (once again) returning red-green colors if
+  colors for (M,A) is requested.
+o BUG FIX: as.TMAData() gave "Error in var.default(Mi) : `x' is empty" if
+  the matrix M contains a row with all NA's. Thanks Valtteri Wirta at
+  the Royal Institute of Technology, Stockholm for this bug report.
+o Renamed lowessLine() to lowessCurve() in MicroarrayData and made
+  lowessLine() deprecated.
+o Made bg.subtract in getSignal() of class RawData deprecated and
+  replaced it by bgSubtract.
+
+Version: 0.54 [2003-02-25]
+o Added trial version of SpotfinderData to read and write TAV files
+  generated by the TIGR Spotfinder software.
+o Updated the Rdoc comments for SpotData to explain the three different
+  morphological background estimates much better.
+o Added trial version of class ExperimentalSetup, which provides methods
+  for searching for and reading setup files that describes the experimental
+  setup of a set of hybridizations. The purpose of such setup files are
+  to collect information about experiments in one place and to provide
+  means to easily access any data part of the experiments.
+o For convenience, the default values for arguments in plotXY() of class
+  MicroarrayData, the method which creates scatter plots, has been changed
+  to ylog=xlog. For RawData and RGData the change also included ylim=xlim.
+
+Version: 0.53 [2002-12-24]
+o BUG FIX: setSlideName() failed if there existed a virtual field with
+  the same name.
+o When reading GPR files with GenePixData$read() and the gene name field
+  contains "#" as part of the gene name, the internal read.table() treats
+  it as a comment character and skips the rest of the line. Added 
+  comment.char="" to fix it and the example GPR data file now contains
+  a line with a # to verify/show that its works. 
+  Thanks Sangsoo, South Korea, for the report and the fix.
+o BUG FIX: Plot annotation such as putting a timestamp or slide name was
+  also performed when highlight(), text() etc was called. Now it is only
+  done when the plot is created.
+o When reading slides from microarray data files the slides are now named
+  as the basename of the filenames.
+o BUG FIX: Update the static read() method in GalLayout to read both
+  comma AND tab delimited headers.
+o BUG FIX: as.RawData() in MAData and RGData did not work for data 
+  containing only one slide.
+o BUG FIX: The get*() methods of SpotData, GenePixData etc did not return
+  a matrix if there was only one slide.
+o Added argument 'groupBy=c("slide", "printtip")' for boxplot() to specify
+  how the "boxes" in the boxplot should represent. The boxes are now also
+  colored automatically if 'what' is "M" or "A".
+o Added summary() to the MicroarrayData class. By default it is
+  doing the summary on as.data.frame().
+o BUG FIX: In v0.52 the column and row names of the fields were not
+  preserved in transformations to other classes, e.g. as.RGData(ma).
+o BUG FIX: If both MicroarrayData objects did not have the Layout object
+  set, append() would throw an Exception. Now it is possible to append
+  to object with no Layout set.
+
+Version: 0.52 [2002-11-24]
+o BUG FIX: From R v1.6.0 the binary version of this package would not
+¨ load on unix systems even if it contained pure R code.
+o Now read() of the GenePixData class can read data files where some 
+  spots are missing. This is done by reconstructing the missing rows
+  and adding NA's. Oleg Paliy at UC Berkeley requested this.
+o Updated normalizePlatewise() with the argument 'slides'.
+o Added the GalLayout class, which currently only contains the static
+  methods read() and write() for reading and writing GenePix Array List
+  (GAL) files. Note that as for GenePix Results files, to be able to 
+  write a GAL file, originally it has to have been read from a GAL file.
+  This is because all the header information must be written too and 
+  automatic generation of header information is currently not supported.
+o Minor update to write() of the GenePixData class: Header rows, e.g.
+  "type=value" are not prepended by a spaces anymore.
+o Made the data fields of RawData, RGData and MAData to be of class
+  SpotSlideData, which extends MicroarrayArray.
+o Added trial versions of classes Array, MicroarrayArray, SpotSlideArray, 
+  GeneSlideArray and GeneReplicateSlideArray. These classes relies on
+  the trial version of BasicObject in R.oo, which is a root class whose
+  objects can *not* be referenced.
+o Added internal support for different view for different kind of
+  plot methods. For now that is all, but there are internal differences.
+o Made getField(), setField() and set() deprecated in all MicroarrayData
+  classes. There are plenty of old methods hanging around that should be
+  removed and this is the first step towards that.
+o Package passes the R CMD check under R v1.6.1 with 5 warnings (no errors).
+
+Version: 0.51 [2002-10-28]
+o Now read() of class MicroarrayData will automatically call the read()
+  methods of its subclasses and thereby try all known file formats meaning
+  that the end user can now alway call the same method for reading the
+  data, e.g. mobj <- MicroarrayData$read(...).
+o Added the normalizeQuantile() method to MicroarrayData and the 
+  subclasses MAData, RGData and RawData.
+o All stop()'s are now throw()'s and their message are a more consistent
+  with each other and a little bit more informative.
+o Added the virtual fields R and G to the MAData class, which are
+  calculated on the fly. Same for the virtual fields M and A of RGData.
+o First version based on the new Rx.oo core classes. Rx.oo is even more
+  light weight that R.oo was and is using much more standard code. It
+  is basically plain S3/UseMethod, but with references using 
+  internal environment variables.
+
+Version: 0.50 [2002-10-14]
+o Renamed dyeSwap() to swapDyes(). dyeSwap() is still working but 
+  deprecated.
+o The plot functions of TMAData will now by default plot heat colors for
+  T values.
+o If any of 'col', 'pch', 'cex' to plotPrintorder() are vector they will
+  automatically be arranged into printorder, by assuming they are given
+  in spot index order.
+o BUG FIX: Updated the read() method in the GenePixData to to be more
+  forgiving and also accept unknown headers by assuming colClass=NA and
+  not expecting any specific order of the headers. Update initated by
+  bug report from Sangsoo, South Korea.
+o Made (all) MicroarrayData classes implement the interface Morphable, 
+  which means that no warnings will be generated if a new field is added.
+o Made normalizePlatewise() public.
+o Added getGeneVariability() and getMOR(). Made former getGeneResiduals() 
+  deprecated and private.
+o The read() method in GenePixData, QuantArrayData(), ScanAlyzeData() and
+  SpotData() can now all read one or several files specified by names or
+  by a pattern. This is identical to how readAll(), which is kept only for 
+  backward compatibility, used to be. readAll() is deprecated and read()
+  should be used instead. One step towards an easier API :)
+o BUG FIX: read(), which replaces former read() and readAll(), inherited
+  a bug from readAll() where the path argument was by default ".". It
+  should have been "".
+o Do not open any other screen devices than "Device 2", because then the
+  postscript document generated by R CMD check will miss several figures.
+  Now it generates 34 pages of figures instead of 5 as before.
+o Package passes the R CMD check with 5 warnings (no errors).
+
+Version: 0.49 [2002-09-12]
+o Thanks to an update in R.oo (get it by install R.classes v0.31) and
+  and update of this package it is now possible to exit [R] and save
+  an image of the ObjectSpace to be reloaded the next time [R] is 
+  started. For this to work, you have to quit [R] by Q() or Quit(),
+  *not* q() and quit().
+o Added support for automatically detecting 'sep' and 'skip' in the
+  read() method of SpotData.
+o Now the read() method of SpotData is much more forgiving and accept new
+  unknown fields by just reading them in anyway. Before the one normally
+  got the error "Can not read data file. Do not recognize the headers.",
+  which was unnecessary.
+o Removed all usage of S4 methods, i.e. no more need for the 'methods'
+  package, because it is buggy and I believe has only reaches an alpha
+  version stage. Better to use R.oo all over ;)
+o BUG FIX: Some Spot data files do include a first row numbering column
+  and others do not. Since I before tried to use scan() to read the 
+  data I had to make different tests for the above. However, read.table()
+  deals with such situations automatically, which is now used internally.
+  Thanks Simon Lin at Duke University for reporting the bug.
+o BUG FIX: SMA$loadData(), which is used in several examples did only 
+  work on Windows machine and on others it crashed.
+o Package passes the R CMD check with 5 warnings (no errors).
+
+Version: 0.48 [2002-08-23]
+o Added support to read Unicoded QuantArray files (by first translating
+  it into a temporary ASCII file).
+o Added the methods plotSpatial(), getSpotPosition() and getArea() to
+  the QuantArrayClass.
+o BUG FIX: Doing append() on a GenePixData, ScanAlyzeData or a SpotData 
+  object would result in an (incorrect) warning saying "Trying to append
+  a MicroarrayData object of a different class.". Thanks Simon Lin at
+  Duke University Medical Center for reporting this bug.
+o BUG FIX: Method normalizeWithinSlide(..., method="p") (or method="s") 
+  in class MAData would give an error ('x is empty') if there were some
+  grids with only NA values. This could be the case if some grids were
+  not spotted or just contain empty spots. The extreme case where all
+  spots on one slide are NA's is also taken care of. 
+  Thanks Yoshiyuki Ito at Mie University in Japan for report this bug.
+o BUG FIX: For the same reasons as above was lowessLine() in 
+  MicroarrayData updated.
+o With R.classes v0.30 all spots with NA values will be plotted with
+  color NA, i.e. with a transparent or the current background color 
+  depending on plot function and device driver.
+o Package passes the R CMD check with 5 warnings (no errors).
+
+Version: 0.47 [2002-08-18]
+o Updated QuantArrayData to be able to read QuantArray version 3 files 
+  too. Thanks Anita Grigoriadis, University College London for sending 
+  me some sample files.
+o Added readAll() to QuantArrayData.
+
+Version: 0.46 [2002-08-13]
+o Added a trial version of QuantArrayData. I could not find one single
+  document online describing the file format so I had to rely on sample
+  files for implementing read() and write(). I could only find one
+  single QuantArray file on the web and therefore the testing of read() 
+  has been sparse and it might not work with other versions.
+o Package (still) passes the R CMD check with 5 warnings (no errors).
+
+Version: 0.45 [2002-08-09]
+o BUG FIX: The ImaGeneData class was hard coded to assume the value "auto"
+  in Begin Header -> Begin Measurement parameters -> Segmentation Method
+  when reading ImaGene files. Changed the code to accept any value.
+  Thanks Sangsoo, South Korea for reporting this problem.
+
+Version: 0.44 [2002-08-06]
+o BUG FIX: In previous versions of GenePixData I did not have access to
+  a GenePix v4.0 GPR file and I just wrote up the read/write code from
+  the specifications. Thanks Sangsoo Kim, Korea, for reporting the
+  problem and sending me a test file. Both read() and write() has now
+  been tested.
+o write() in GenePixData is not anymore making use of write.table()
+  because the latter is adding additional and unnecessary blanks for
+  numeric columns (to right align the values), This makes the files
+  written unnecessary large, e.g. 20% larger. Now the GPR files read
+  and written are approximately the same size. I also updated write() 
+  to be a much more memory efficient by retrieving and writing chunks of
+  data instead of all data at once. If this idea turns out to be really
+  great the Spot, ImaGene and ScanAlyze classes will also be updated.
+o Updated read() in GenePixData to deal with data header rows that 
+  contain trailing blanks. Currently I do not know how to deal with
+  leading blanks; a bug in gsub("^[ ]*", "", text)?
+o If equals() in MicroarrayData returns FALSE, FALSE got an attribute
+  "firstUnequalField" showing which field that was unequal. Note that 
+  more fields might differ.
+
+Version: 0.43 [2002-07-14]
+o BUG FIX: When updating plotSpatial() (in v0.42) the argument 'include'
+  stopped working. Thanks Jon McAuliffe and Oleg Paliy at UC Berkeley for
+  reporting this.
+o Updated paint() when called after plotSpatial() to make use of image()
+  too.
+o Updated getInclude() to support 'include' and 'exclude' as matrices too.
+  It also is guaranteed to return a matrix (even if has one column).
+o Changed the default highlight() symbol for plotSpatial() to pch=20.
+
+Version: 0.42 [2002-07-02]
+o Added a trial version of the ImaGeneData class. It supports reading
+  and writing of ImaGene results data files of version 4.1, 4.2 and 5.0.
+  Added two ImaGene example data files to the data/ directory.
+o plotSpatial() is now making use of image() and not as before plot(). 
+  This means that one can safely resize the graphs without have to worry
+  about "strange" spaces add between the spots. This is a great 
+  improvement.
+o BUG FIX in GenePixData class: The field 'Log Ratio' was incorrectly
+  translated to levels instead of doubles. read() failed to read column
+  names that contains non-ASCII 0-127 characters, e.g. "Rgn R^2" where
+  '^2' is ASCII hex 0xB2, octal \262, or decimal 178. Added a 
+  "getRgn R2"() wrapper for the "Rgn R^2" field, which allows the field
+  to be access as gpr[["Rgn R2"]] :)
+o Updated write() in GenePixData to work for more different kinds of
+  versions. Also updated its read() so it is easier to update to recognize
+  new GPR file header versions. Added code for GPR file version v3.0, but
+  haven't been able to test it.
+o Added argument 'force' to getMOR() and did a small bug fix to it also.
+o BUG FIX: as.data.frame() (and extract()) now return a data frame with
+  the same column names as the original field names. Before the column
+  names were translated into 'safe' data frame names.
+o Added argument 'weights' to normalizeWithinSlide() on request from 
+  Jon McAuliffe. Currently only 0-1 weights or FALSE-TRUE weights are
+  supported, since lowess() does not support weights. If loess() would
+  be used internally weights could be [0,1].
+o BUG FIX: The read()/write() fix of 2002-05-20 (see below) was not fully
+  correct for write(), which remained broken. A small update did it!
+o BUG FIX: getSpotPosition() in the ScanAlyzeData class was broken.
+o Rd fixes: Corrected several mismatched curly brackets in the Rd pages.
+o Examples fixes: Updated several non-working Rd example codes.
+o SMA$loadData() now calls gco() if [R] is running low of memory. The
+  rational for doing this here is that loadData() is mostly used in Rd
+  examples and when doing R CMD check on the package the gco() is never
+  called and R CMD check will quickly run into memory problems.
+o Made class QualityData, WangetalData and WorkData deprecated. 
+o Package now passes the R CMD check with 5 warnings (no errors).
+
+Version: 0.41 [2002-05-30]
+o RGData constructor now accept vectors for R and G by calling as.matrix(). 
+o Now the package reports its name, version and date if it was succesfully
+  loaded.
+o as.MAData() now sets M and A to NA if either R < 0 or G < 0.
+  Requested by Lei Jiang.
+o Minimized the number of warnings when loading packages.
+
+Version: 0.40 [2002-05-21]
+o BUG FIX: From [R] v1.5.0 the setClass() methods must be called in the
+  correct order, which they now are. The symptom for this bug was:
+  'Error in getClass.default(x) : "MultiwayArray" is not a defined class.'
+o BUG FIX: From [R] v1.5.0 read() and write() in GenePixData would give a
+  cohersion error: No method or default for coercing "character" to "NA".
+  This was due to use "NA"'s instead of NA's in colClasses specifications
+  to read.table().
+o The automatic color generation now creates a little bit more red and green
+  colors. Before the colors were a little bit too brownish.
+o Added SMA$loadData() and SMA$unloadData() to load and unload the data set
+  MouseArray in the sma package. The data set is about 10Mb large so it
+  is wise to unload it when done. It is possible to specify which objects
+  to load/unload. E.g. in most Rd example only the 'mouse.data' object
+  is used, which is about 1.2Mb compared to 10Mb!
+o BUG FIX: new(MAData(M,A)) transformed M and A internally in way so they
+  lost the colnames, which defines the slide names. Slide names are used
+  in annotation of plots.
+o BUG FIX: highlight() for RawData and RGData would not work since
+  the argument 'what' was never set.
+o Cleaner Rd examples; introduced com.braju.sma$data in all example 
+  codes, which replaced the old
+    datapath <- paste(.path.package("com.braju.sma"), "/data/", sep="")
+  Details: The structure com.braju.sma is automatically set when the
+  package is loaded.
+o BUG FIX: GenePixData$read() could not read Demo.gpr from Axon. It was
+  a too old version of file format, but now it works!
+o Added anonymize() and getBlank() to Layout class.
+o Added getBlank() to MicroarrayData class.
+o Added getArea() and getCircularity() to GenePixData, ScanAlyzeData and
+  SpotData. Also added getBgArea() to GenePixData and ScanAlyzeData; there
+  is no way to retrieve this information from SpotData :(
+o Added trial versions of LayoutGroups(), PrinttipGroups(), PlateGroups()
+  and GeneGroups(). Added the corresponding get-() and set-() methods
+  in class Layout.
+o TYPO FIX: Type fix in string returned by as.character() in class Layout.
+o Argument 'col' now sets the color of the lines in lowessLine() in class
+  MicroarrayData.
+o Now 'col' argument in plot() and plotSpatial() can be color numbers.
+o Added points() to the MicroarrayData class.
+o BUG FIX: Fixed the coloring of spots in plotPrintOrder() in 
+  MicroarrayData when plotting with include=from:to where from > 1.
+o Added support for querying 'plate' in indexOf() in class Layout.
+o BUG FIX: indexOf() in class Layout did only work on unique matches. If
+  there where duplicates matches in the query on the first unique match
+  was returned. Used match(v1, v2) instead of match(v2, v1).
+o Added field plate, and hasPlate(), getPlate(), setPlate() and
+  getPlateNumber() to the Layout class.
+o Added as.data.frame(), read() and write() to the Layout class. Now one 
+  can save the microarray data with the layout as
+    write(ma, "foo.MAData")
+    write(getLayout(ma), "foo.Layout")
+  and then read it back by 
+    ma <- MAData$read("foo.MAData")
+    setLayout(ma, Layout$read("foo.Layout"))
+
+Version: 0.39 [2002-04-20]
+o Added a trial version of static method read() to the classes MAData, 
+  RGData and RawData.
+o BUG FIX: hist() now also exclude Inf's (in addition to NA's) before
+  trying to plot. Before pretty() gave an error if there where Inf values.
+  Bug reported by Lei Jiang.
+o Updated the Rdoc comments with some more references other functions.
+
+Version: 0.38 [2002-04-13]
+o Updated indexOf() in Layout with two new optional arguments;
+  ignoreCase=TRUE and regexpr=FALSE. Note that now regular expressions
+  are *not* used by default, but exact (case insensitive) string matching.
+  These modifications was trigged by questions from Lei Jiang.
+o Added getSpotPosition() to get the physical positions of some or all
+  spots. If no information about the *physical* positions is available
+  then NULL is returned.
+o Added default value of 'index' to getLocation() and getPosition().
+
+Version: 0.37 [2002-04-03]
+o Added argument 'solve' to read() in GenePixData to be used when the
+  file format is not fully correct but you still want to read the data.
+o BUG FIX: write() in GenePixData now asserts that each columns is saved in 
+  the correct format; integers, doubles and characters.
+o read() and write() in all MicroarrayData classes now supports File objects
+  as filenames.
+
+Version: 0.36 [2002-04-03]
+o Updated normalizeAcrossSlides() to also accept rescaling of one single
+  slide. This is useful if the slides are in seperated MAData objects.
+  
+Version: 0.35 [2002-03-29]
+o BUG FIX: getID() and getName() in class Layout returned factors and
+  not character string (as they used to). Corrected.
+o getSignal() in class RawData did produce "NAs produced by integer 
+  overflow in: R * G" where log base two for R and G was approx. >= 15.5.
+  Corrected. Thanks to Lei Jiang at the Department of Chemistry, University 
+  of Washington for reporting these problems.
+
+Version: 0.34 [2002-03-25]
+o Added getSpotPositions() and plotSpatial() to GenePixData and 
+  ScanAlyzeData. The Spot software does not return the coordinates
+  of the spots and for this reason these two functions are not
+  implemented by the SpotData class.
+o Added the class SpotPositions.
+
+Version: 0.33 [2002-03-24]
+o BUG FIX: text() in the class MicroarrayData did not work correctly if
+  argument 'labels' was not explicitly set.
+
+Version: 0.32 [2002-03-10]
+o write() in MicorarrayData will now by default save the object as the
+  data frame returned by as.data.frame(), i.e. if write() is not
+  overridden by a subclass e.g. GenePixData, which then saves in a
+  different format.
+o BUG FIX: Argument 'slides' in write() was mistakenly named 'slide'.
+o BUG FIX: extract() in MicroarrayData would neglect the special fields
+  "slide", "spot" and "gene". This automatically also fixed the fact that
+  as.data.frame() would not create these fields.
+
+Version: 0.31 [2002-02-27]
+o Made GenePixData, ScanAlyzeData and SpotData implement the new interface
+  Morphable, which makes R.oo not report warnings when new fields are added.
+o Since Rdoc in package R.oo now provides automatic generations of table of
+  methods, all the Methods sections in the help pages are now up to date.
+o BUG FIX: When reading GPR files using the GenePixData class, GPR files
+  with white space in the ATF header (such as those written by the write()
+  function) would generate a warning.
+
+Version: 0.30 [2002-02-26]
+o BUG FIX: getIndex() in FieldFilter did not work with the new R v1.4.x due
+  to abs() don't accept data frames anymore. Made a work around.
+o BUG FIX: as.BMAData() does work again after having updated the code to work
+  with the new stat.bayesian() in sma v0.5.7
+o It is now possible to write GenePixData, ScanAlyzeData and SpotData objects
+  to file in the corresponding data format. This is a step toward easier 
+  integration with software like GenePix etc.
+o The classes GenePixData, ScanAlyzeData and SpotData now inherits directly
+  from MicroarrayData, which makes the ResultsData class obsolete. All data
+  fields in these classes are now stored as matrices. Before each object
+  could only contain one instance of a XXX data in form of a data frame. With
+  the solution reading several files and extracting the raw signal is done
+  in just two lines of code without any for-loops etc.
+o TO DO: The "Method" section in each help page for classes are out of
+  date and has to be updated. Will probably find a way of generating them
+  automatically from the Rd files.
+
+Version: 0.29 [2002-01-25]
+o com.braju.sma now requires that R v1.4.0 and that R.oo v0.31 is installed.
+o Made read.GenePixData() a little bit faster. Also, it does not complain
+  about not recognizing the "Rgn R2" field anymore.
+o Renamed all class methods named 'get' to 'extract'. It turned out that
+  get is not a very safe name of a generic function.
+o The plot functions in the MicroarrayData class now annotates the plots
+  with a timestamp, the author if set by options("author") and the
+  dataset if set by options("dataset"). Some plot functions also adds
+  slide and gene information.
+
+Version: 0.28 [2002-01-10]
+o Updated (mostly in R.oo) the bundle so it is compatible with the 
+  new [R] v1.4.0 and J. Chambers package "methods". All ResultsData 
+  classes (GenePixData, ScanAlyzeData and SpotData) now supports reading
+  several files at once and returning the ResultsData objects in a list.
+  Filename patterns are also supported.
+
+Version: 0.27 [2001-10-02]
+o Added a beta version of the BMAData class, which still has to 
+  be documented.
+
+Version: 0.26 [2001-09-28]
+o Bug fix in normalizeWithinSlide(). Removed obsolete topSpots() method.
+
+Version: 0.25 [2001-08-08]
+o Added the static class SMA to ease to use function of the sma package.
+o Added support for dye swapping individual slides (RawData, RGData,
+  MAData).
+o Added support for specifying the lowess function in the global
+  lowess within-slide normalization (MAData.normalizeWithinSlide.
+o Added the option to explicitly specify the lowess function used in 
+  global lowess normalization. This can be useful in cases where you 
+  have time series and you can only estimate a lowess function on the
+  first slide, because succeeding slides have too many genes 
+  differentially expressed.
+o Minor updates in the documents.
+
+Version: 0.24 [2001-08-07]
+o BUG FIX: Automatic coloring of spots did not work correctly for 
+  slides other than the first slide (MAData.getColors).
+o Updated to work better with the updated R.oo package.
+o Updated some documentation and examples.
+o Most classes should also be more memory efficient.
+
+Version: 0.23 [2001-07-17]
+o Minor updates, such as removing the need of the MicroarrayData object
+  in the highlight.Filter method. Also updated some of the documentation.
+o This version requires that R.classes version 0.9 or higher is installed.
+
+Version: 0.22 [2001-07-16]
+o Some bug fixes, updated documentation, minor modifications in the API
+  like removing the default method of normalization in
+  normalizeWithinSlide etc.
+
+Version: 0.21 [2001-07-13]
+o Important bug fixes, improved documentation and a first beta version
+  of hopefully useful Filter classes.
+
+Version: 0.20 [2001-07-12]
+o A first half-public version. The package's API is getting stable and
+  major effort has been put into updating the documentation and its 
+  examples.
+o In addition to GenePix and Spot data files, now ScanAlyze data files
+  is also supported.
+o Note that still things will change, but you could start using it now.
+
+Version: 0.18 [2001-06-28]
+o Version 0.18 and before have been unofficial with an API that has
+  been changing several times.
+
+Version: 0.17 [2001-06-08]
+
+Version: 0.16 [2001-06-01]
+
+Version: 0.15 [2001-05-06]
+
+Version: 0.14 [2001-05-04]
+
+Version: 0.13 [2001-04-29]
+
+Version: 0.12 [2001-04-13]
+
+Version: 0.11 [2001-04-08]
+
+Version: 0.10 [2001-04-06]
+
+Version: 0.9 [2001-04-04]
+
+Version: 0.8 [2001-04-03]
+
+Version: 0.7 [2001-04-01]
+
+Version: 0.6 [2001-03-29]
+
+Version: 0.4 [2001-03-28]
+
+Version: 0.2 [2001-03-12]
+
+Version: 0.1 [2001-03-08]
+
+Version: 0.0 [2001-03-10]
+o The very first version.
+

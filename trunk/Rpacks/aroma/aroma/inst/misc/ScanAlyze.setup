@@ -1,0 +1,16 @@
+###########################################################################
+# ScanAlyze Experiment
+#
+# This file can be read as:
+# setup <- ExperimentalSetup$read("ScanAlyze.setup")
+###########################################################################
+
+name	sample1	sample2	dye1	dye2	print-layout	print-arrayer	slide-number	print-date	hybridization-date	scanner	scan-passes	scan-date	image-file1	image-file2	image-software	raw-file1	raw-file2	comment
+1	Control	Reference	Cy5	Cy3	group4.dat	-	4	-	2001-09-20	GenePix 4000A	2	2001-09-20	-	-	ScanAlyze	group4.dat	-	No comments!
+2	Control	Reference	Cy5	Cy3	group7.dat	-	7	-	2001-09-20	GenePix 4000A	2	2001-09-20	-	-	ScanAlyze	group7.dat	-	No comments!
+
+###########################################################################
+# HISTORY:
+# 2003-01-07
+# o Created. /HB
+###########################################################################

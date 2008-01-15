@@ -1,0 +1,39 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  MicroarrayData.ARGS.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\name{validateArgumentSlides.MicroarrayData}
+\alias{validateArgumentSlides.MicroarrayData}
+\alias{MicroarrayData.validateArgumentSlides}
+\alias{validateArgumentSlides.MicroarrayData}
+\alias{validateArgumentSlides,MicroarrayData-method}
+
+
+\title{Validates the argument 'slides'}
+
+\description{
+ Validates the argument 'slides'.
+}
+
+\usage{\method{validateArgumentSlides}{MicroarrayData}(this, slides=NULL, unique=TRUE, sort=TRUE, ...)}
+
+\arguments{
+  \item{slides}{The argument value to be validated.}
+}
+
+\value{
+ Returns an interpreted and valid value.
+ If the argument was invalid an \code{\link[R.oo]{Exception}} is thrown.
+}
+
+\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+\seealso{
+  For more information see \code{\link{MicroarrayData}}.
+}
+\keyword{internal}
+\keyword{methods}
