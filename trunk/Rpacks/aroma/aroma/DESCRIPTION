@@ -1,0 +1,16 @@
+Package: aroma
+Version: 0.93
+Date: 2006-07-04
+Title: An R Object-oriented Microarray Analysis package
+Author: Henrik Bengtsson <henrikb@braju.com>
+Maintainer: Henrik Bengtsson <henrikb@braju.com>
+Depends: R (>= 2.0.0), R.oo, R.utils, R.basic, R.graphics, R.io, aroma.light
+Suggests: sma
+Description: Methods for microarray analysis after the images have been scanned. Formerly known as the com.braju.sma package.
+License: LGPL version 2.1 or newer (the releases)
+URL: http://www.braju.com/R/
+ContribURL: http://www.maths.lth.se/help/R/
+DevelURL: http://www.maths.lth.se/help/R/
+LazyLoad: TRUE
+biocViews: DataImport, Microarray, OneChannel, TwoChannel, Preprocessing
+Packaged: Tue Jul  4 18:17:57 2006; hb

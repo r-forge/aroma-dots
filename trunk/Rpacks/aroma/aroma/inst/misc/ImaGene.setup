@@ -1,0 +1,17 @@
+###########################################################################
+# ImaGene Experiment
+#
+# This file can be read as:
+# setup <- ExperimentalSetup$read("ImaGene.setup")
+###########################################################################
+
+name	sample1	sample2	dye1	dye2	print-layout	print-arrayer	slide-number	print-date	hybridization-date	scanner	scan-passes	scan-date	image-file1	image-file2	image-software	raw-file1	raw-file2	comment
+1	Control	Reference	Cy5	Cy3	group4.dat	-	1	-	2002-01-25	GenePix 4000A	2	2002-01-25	-	-	ImaGene 4.2	imagene234.cy3	imagene234.cy5	No comments!
+
+
+###########################################################################
+# HISTORY:
+# 2003-01-07
+# o Created. /HB
+###########################################################################
+
