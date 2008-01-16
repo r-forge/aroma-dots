@@ -2,6 +2,8 @@
 # @set "class=RGData"
 # @RdocMethod normalizeAffine
 #
+# \encoding{latin1}
+# 
 # @title "Weighted affine normalization between channels and arrays"
 #
 # \description{
@@ -352,6 +354,8 @@ setMethodS3("normalizeRobustSpline", "RGData", function(this, ...) {
 #########################################################################/**
 # @RdocMethod calibrateMultiscan
 #
+# \encoding{latin1}
+# 
 # @title "Calibrates multiple re-scanned images based on an affine model"
 #
 # \description{

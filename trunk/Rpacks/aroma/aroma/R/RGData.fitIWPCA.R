@@ -186,8 +186,7 @@ setMethodS3("fitIWPCA", "RGData", function(static, X, w=NULL, constraint=c("diag
   require("R.basic") || throw("Package 'R.basic' not found.");
 
   if (bootstrap == TRUE)  {
-    require("boot") || 
-        throw("Package 'boot' not found. Can perform bootstrap resampling.");
+    require("boot") || throw("Package not loaded: boot");
     if (is.null(R))
       R <- 50;
     boot <- boot(X, statistic=statistic, w=w, R=R, constraint=constraint, Xmin=Xmin, aShift=aShift, ...);
@@ -219,6 +218,8 @@ setMethodS3("fitIWPCA", "RGData", function(static, X, w=NULL, constraint=c("diag
 #########################################################################/**
 # @RdocMethod fitMultiscanAffine
 #
+# \encoding{latin1}
+# 
 # @title "Fits an affine model to signals from a multi-scanned slide"
 #
 # \description{

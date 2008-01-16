@@ -1,6 +1,8 @@
 #########################################################################/**
 # @RdocPackage aroma
 #
+# \encoding{latin1}
+# 
 # \description{
 #   @eval "getDescription(aroma)" 
 #
@@ -12,8 +14,8 @@
 #
 # \section{Requirements}{
 #   This package depends on several other packages, namely
-#   \pkg{R.oo}, \pkg{R.utils}, \pkg{R.basic}, \pkg{R.graphics}, 
-#   \pkg{R.io}, and \pkg{aroma.light}.
+#   \pkg{R.methodsS3}, \pkg{R.oo}, \pkg{R.utils}, \pkg{aroma.light},
+#   \pkg{R.basic}, \pkg{R.graphics}, and \pkg{R.io}.
 # } 
 #
 # \section{Installation}{
@@ -26,6 +28,8 @@
 #   \enumerate{
 #     \item @see "GenePixData", @see "QuantArrayData", @see "ScanAlyzeData", 
 #           @see "SpotData", or @see "SpotfinderData".
+#     \item For an overview of normalization and calibration methods,
+#           please see the @see "aroma.light::aroma.light" package.
 #     \item @see "calibrateMultiscan.RGData".
 #     \item @see "normalizeAffine.RGData".
 #   }

@@ -58,17 +58,18 @@ extends \link[aroma]{RejectFilter}\cr
 }
 
 
-\bold{Methods inherited from RejectFilter}:\cr
+ \bold{Methods inherited from RejectFilter}:\cr
 getIndex
 
-\bold{Methods inherited from SerialFilter}:\cr
+ \bold{Methods inherited from SerialFilter}:\cr
 changeInput, getInput
 
-\bold{Methods inherited from Filter}:\cr
+ \bold{Methods inherited from Filter}:\cr
 as.character, changeInput, getIndex, getInput, getParameter, getVisible, highlight, setParameter, setVisible, text
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clone, detach, environment, equals, extend, finalize, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
 
 }
 

@@ -3,118 +3,122 @@
 % 
 %  RGData.NORM.R
 % 
+% on Tue Jan 15 18:36:04 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\name{normalizeAffine.RGData}
+ \name{normalizeAffine.RGData}
 \alias{normalizeAffine.RGData}
 \alias{RGData.normalizeAffine}
 \alias{normalizeAffine.RGData}
 \alias{normalizeAffine,RGData-method}
 
 
-\title{Weighted affine normalization between channels and arrays}
+ \encoding{latin1}
 
-\description{
-  Weighted affine normalization between channels and arrays.
+ \title{Weighted affine normalization between channels and arrays}
 
-  This method will both remove curvature in the M vs A plots that are
-  due to an affine transformation of the data. In other words, if there
-  are (small or large) biases in the different (red or green) channels,
-  biases that can be equal too, you will get curvature in the M vs A plots
-  and this type of curvature will be removed by this normalization method.
+ \description{
+   Weighted affine normalization between channels and arrays.
 
-  Moreover, if you normalize all slides at once (recommended), this
-  method will also bring the signals on the same scale such that the
-  log-ratios for different slides are comparable. Thus, do not normalize
-  the scale of the log-ratios between slides afterward.
+   This method will both remove curvature in the M vs A plots that are
+   due to an affine transformation of the data. In other words, if there
+   are (small or large) biases in the different (red or green) channels,
+   biases that can be equal too, you will get curvature in the M vs A plots
+   and this type of curvature will be removed by this normalization method.
 
-  It is recommended to normalize as many slides as possible in one run.
-  The result is that if creating log-ratios between any channels and any
-  slides, they will contain as little curvature as possible.
+   Moreover, if you normalize all slides at once (recommended), this
+   method will also bring the signals on the same scale such that the
+   log-ratios for different slides are comparable. Thus, do not normalize
+   the scale of the log-ratios between slides afterward.
 
-  Furthermore, since the relative scale between any two channels on any
-  two slides will be one if one normalizes all slides (and channels) at
-  once it is possible to add or multiply with the \emph{same} constant
-  to all channels/arrays without introducing curvature. Thus, it is
-  easy to rescale the data afterwards as demonstrated in the example.
-}
+   It is recommended to normalize as many slides as possible in one run.
+   The result is that if creating log-ratios between any channels and any
+   slides, they will contain as little curvature as possible.
 
-\usage{\method{normalizeAffine}{RGData}(this, slides=NULL, groupBy=NULL, ...)}
+   Furthermore, since the relative scale between any two channels on any
+   two slides will be one if one normalizes all slides (and channels) at
+   once it is possible to add or multiply with the \emph{same} constant
+   to all channels/arrays without introducing curvature. Thus, it is
+   easy to rescale the data afterwards as demonstrated in the example.
+ }
 
-\arguments{
- \item{slides}{\code{\link[base]{vector}} of slides to be normalized \emph{at once}.
-  If \code{\link[base]{NULL}}, all slides are used.
-  To normalize several slides but slide by slide, call this method
-  once for each slide instead.}
- \item{groupBy}{\code{\link[base]{character}} string or \code{\link[aroma]{LayoutGroups}}
-  specifying the groups of spots that are to normalized individually.
-  If \code{\link[base]{NULL}}, all spots are considered.}
- \item{...}{Additional arguments accepted by
-  \code{\link[aroma.light]{normalizeAffine.matrix}}.}
-}
+ \usage{\method{normalizeAffine}{RGData}(this, slides=NULL, groupBy=NULL, ...)}
 
-\value{
-  Returns a \code{\link[base]{list}} containing estimated biases, slopes, and distances
-  to the optimal line for each slide.
-}
+ \arguments{
+  \item{slides}{\code{\link[base]{vector}} of slides to be normalized \emph{at once}.
+   If \code{\link[base]{NULL}}, all slides are used.
+   To normalize several slides but slide by slide, call this method
+   once for each slide instead.}
+  \item{groupBy}{\code{\link[base]{character}} string or \code{\link[aroma]{LayoutGroups}}
+   specifying the groups of spots that are to normalized individually.
+   If \code{\link[base]{NULL}}, all spots are considered.}
+  \item{...}{Additional arguments accepted by
+   \code{\link[aroma.light]{normalizeAffine.matrix}}.}
+ }
 
-\section{Negative, non-positive, and saturated values}{
- Affine normalization applies equally well to negative values. Thus,
- contrary to normalization methods applied to log-ratios, such as curve-fit
- normalization methods, affine normalization, will not set these to \code{\link[base]{NA}}.
+ \value{
+   Returns a \code{\link[base]{list}} containing estimated biases, slopes, and distances
+   to the optimal line for each slide.
+ }
 
- Data points that are saturated in one or more channels are not used
- to estimate the normalization function, but they are normalized.
-}
+ \section{Negative, non-positive, and saturated values}{
+  Affine normalization applies equally well to negative values. Thus,
+  contrary to normalization methods applied to log-ratios, such as curve-fit
+  normalization methods, affine normalization, will not set these to \code{\link[base]{NA}}.
 
-\section{Missing values}{
- The estimation of the affine normalization function will be made based
- on only complete non-saturated observations, i.e. observations that
- contains no \code{\link[base]{NA}} values nor saturated values as defined by \code{satSignal}.
-}
+  Data points that are saturated in one or more channels are not used
+  to estimate the normalization function, but they are normalized.
+ }
 
-\section{Weighted normalization}{
- Each data point can be assigned a weight in [0,1] specifying how much
- it should \emph{affect the fitting of the affine normalization function}.
- Note that here a \emph{data point} is here considered to be the \code{\link[base]{vector}}
- of values for all channels and all arrays included in the normalization.
- For instance, for two-channel data with three arrays, each data point is
- a vector (R1,G1,R2,G2,R3,G3) of length 6 where R and G represent the
- red and the green channels.
+ \section{Missing values}{
+  The estimation of the affine normalization function will be made based
+  on only complete non-saturated observations, i.e. observations that
+  contains no \code{\link[base]{NA}} values nor saturated values as defined by \code{satSignal}.
+ }
 
- Regardless of weights, \emph{all} data points are
- \emph{normalized} based on the fitted normalization function.
+ \section{Weighted normalization}{
+  Each data point can be assigned a weight in [0,1] specifying how much
+  it should \emph{affect the fitting of the affine normalization function}.
+  Note that here a \emph{data point} is here considered to be the \code{\link[base]{vector}}
+  of values for all channels and all arrays included in the normalization.
+  For instance, for two-channel data with three arrays, each data point is
+  a vector (R1,G1,R2,G2,R3,G3) of length 6 where R and G represent the
+  red and the green channels.
 
- Data-point weights are obtained from probe weights, if given.
- Weights can be set using \code{\link[aroma:setProbeWeights.RGData]{*setProbeWeights}()}.
- If weights are specified, they will be used.
-}
+  Regardless of weights, \emph{all} data points are
+  \emph{normalized} based on the fitted normalization function.
 
-\section{Within-slide normalization}{
-  This normalization method normalized multiple channels/arrays at once.
-  To normalize array by array, like curve-fit normalization, use a loop,
-  e.g. \code{for (kk in 1:nbrOfSlides(rg)) normalizeAffine(rg, slide=kk)}.
-}
+  Data-point weights are obtained from probe weights, if given.
+  Weights can be set using \code{\link[aroma:setProbeWeights.RGData]{*setProbeWeights}()}.
+  If weights are specified, they will be used.
+ }
 
-\details{
- A line is fitted robustly throught the \eqn{(y_R,y_G)} observations
- using an iterated re-weighted principal component analysis (IWPCA),
- which minimized the residuals that are orthogonal to the fitted line.
- Each observation is down-weighted by the inverse of the absolute
- residuals, i.e. in \eqn{L_1}.
-}
+ \section{Within-slide normalization}{
+   This normalization method normalized multiple channels/arrays at once.
+   To normalize array by array, like curve-fit normalization, use a loop,
+   e.g. \code{for (kk in 1:nbrOfSlides(rg)) normalizeAffine(rg, slide=kk)}.
+ }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \details{
+  A line is fitted robustly throught the \eqn{(y_R,y_G)} observations
+  using an iterated re-weighted principal component analysis (IWPCA),
+  which minimized the residuals that are orthogonal to the fitted line.
+  Each observation is down-weighted by the inverse of the absolute
+  residuals, i.e. in \eqn{L_1}.
+ }
 
-\references{
-  [1] Henrik Bengtsson and Ola Hössjer, \emph{Methodological Study of Affine Transformations of Gene Expression Data}, Methodological study of affine transformations of gene expression data with proposed robust non-parametric multi-dimensional normalization method, BMC Bioinformatics, 2006, 7:100.
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \references{
+   [1] Henrik Bengtsson and Ola Hössjer, \emph{Methodological Study of Affine Transformations of Gene Expression Data}, Methodological study of affine transformations of gene expression data with proposed robust non-parametric multi-dimensional normalization method, BMC Bioinformatics, 2006, 7:100.
  \cr
-}
+ }
 
-\examples{
- # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ \examples{
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # First some utilities functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 plotPairwiseScans <- function(rg, channel, ...) {
@@ -223,7 +227,7 @@ drawRGGrid <- function(maxSignal=16, by=1, drawCurve=TRUE, highlightLog1=FALSE, 
 } # drawRGGrid()
 
 
- # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main example code
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -320,13 +324,13 @@ drawRGGrid(maxSignal=Alim[2])
 plotPairDensities(rg, ylim=c(0,0.4), main="All scans normalized");
 
 
-}
+ }
 
-\seealso{
-  Internally, the light-weight function
-  \code{\link[aroma.light]{normalizeAffine.matrix}} is used.
+ \seealso{
+   Internally, the light-weight function
+   \code{\link[aroma.light]{normalizeAffine.matrix}} is used.
 
-  For more information see \code{\link{RGData}}.
-}
+   For more information see \code{\link{RGData}}.
+ }
 \keyword{internal}
 \keyword{methods}

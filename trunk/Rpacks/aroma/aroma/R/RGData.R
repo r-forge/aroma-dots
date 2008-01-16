@@ -29,7 +29,7 @@
 #    \tab \code{G} \tab The signal for channel G (non-logged). \cr
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # \details{
@@ -95,7 +95,10 @@ setConstructorS3("RGData", function(R=NULL, G=NULL, layout=NULL, extras=list()) 
 })
 
 
-setMethodS3("as.character", "RGData", function(this) {
+setMethodS3("as.character", "RGData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- "";
   s <- paste(sep="",s,"R ",   com.braju.sma.dimStr(this$R));
   s <- paste(sep="",s,", G ", com.braju.sma.dimStr(this$G));
@@ -816,7 +819,9 @@ setMethodS3("findChannelBiasDifferences", "RGData", function(this, slides=NULL, 
       plot(G, R, pch=176, xlim=c(0,2e3), ylim=c(0,2e3));
 
     if (method == "pca") {
-      require("mva") || throw("Package 'mva' not found.");
+      if (!require("mva") && !require("stats")) {
+        throw("Failed to locate princomp(). Package not loaded: mva or stats");
+      }
       fit <- princomp(~R+G, scores=TRUE);
       A <- unclass(loadings(fit));
       x0 <- fit$center;
@@ -826,13 +831,14 @@ setMethodS3("findChannelBiasDifferences", "RGData", function(this, slides=NULL, 
       offsetG <- c(G0=mR, R0=0);
       offset <- rbind(offsetR, offsetG);
     } else if (method == "robust-pca") {
+      acp <- NULL; rm(acp);  # Dummy to please R CMD check.
       require("multidim") || throw("Package 'multidim' not found.");
       reps <- 0.01;
       xy <- cbind(R,G);
       w <- rep(1, length=nrow(xy));
       for (iter in 1:maxIter) {
-  	fit <- acp(xy, wt=w, reduc=FALSE);
-  	w <- 1/abs(fit$cmpr[,2]+reps);
+        fit <- acp(xy, wt=w, reduc=FALSE);
+        w <- 1/abs(fit$cmpr[,2]+reps);
       }
       A <- fit$vectors;
       x0 <- fit$moy;

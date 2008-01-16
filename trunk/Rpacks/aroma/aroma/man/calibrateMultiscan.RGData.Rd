@@ -3,75 +3,79 @@
 % 
 %  RGData.NORM.R
 % 
+% on Tue Jan 15 18:36:04 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{calibrateMultiscan.RGData}
+ \name{calibrateMultiscan.RGData}
 \alias{calibrateMultiscan.RGData}
 \alias{RGData.calibrateMultiscan}
 \alias{calibrateMultiscan.RGData}
 \alias{calibrateMultiscan,RGData-method}
 
 
-\title{Calibrates multiple re-scanned images based on an affine model}
+ \encoding{latin1}
 
-\description{
-  Calibrates multiple re-scanned images based on an affine model.
+ \title{Calibrates multiple re-scanned images based on an affine model}
 
-  Each channel is calibrated seperately.
-}
+ \description{
+   Calibrates multiple re-scanned images based on an affine model.
 
-\usage{\method{calibrateMultiscan}{RGData}(this, slides=NULL, channels=NULL, groupBy=NULL, ...)}
+   Each channel is calibrated seperately.
+ }
 
-\arguments{
- \item{slides}{Slides to be used in the fit \emph{and} that are to be
-  calibrated. If \code{\link[base]{NULL}}, all slides are considered.}
-  \item{channels}{\code{\link[base]{character}} string specifying which channels to be
-   calibrated. If \code{\link[base]{NULL}}, all channels are calibrated.}
-  \item{groupBy}{\code{\link[base]{character}} string or \code{\link[aroma]{LayoutGroups}}
-    specifying the groups of spots that are to calibrated individually.
-    If \code{\link[base]{NULL}}, all spots are considered.}
- \item{...}{Additional arguments accepted by
-    \code{\link[aroma.light]{calibrateMultiscan.matrix}}.
-    Its help page is very USEFUL.}
-}
+ \usage{\method{calibrateMultiscan}{RGData}(this, slides=NULL, channels=NULL, groupBy=NULL, ...)}
 
-\value{
-  Returns a \code{\link[base]{list}} containing one element for each calibrated channel.
-  Each channel element contains parameter estimates either directly
-  as global estimates or as a \code{\link[base]{list}} consisting estimates for each
-  group (as defined \code{groupBy}).
-}
+ \arguments{
+  \item{slides}{Slides to be used in the fit \emph{and} that are to be
+   calibrated. If \code{\link[base]{NULL}}, all slides are considered.}
+   \item{channels}{\code{\link[base]{character}} string specifying which channels to be
+    calibrated. If \code{\link[base]{NULL}}, all channels are calibrated.}
+   \item{groupBy}{\code{\link[base]{character}} string or \code{\link[aroma]{LayoutGroups}}
+     specifying the groups of spots that are to calibrated individually.
+     If \code{\link[base]{NULL}}, all spots are considered.}
+  \item{...}{Additional arguments accepted by
+     \code{\link[aroma.light]{calibrateMultiscan.matrix}}.
+     Its help page is very USEFUL.}
+ }
 
-\section{Weighted calibration}{
- Each data point can be assigned a weight in [0,1] specifying how much
- it should \emph{affect the fitting of the calibration function}.
- Note that here a \emph{data point} is here considered to be the \code{\link[base]{vector}}
- of values from all scans ("slides").
+ \value{
+   Returns a \code{\link[base]{list}} containing one element for each calibrated channel.
+   Each channel element contains parameter estimates either directly
+   as global estimates or as a \code{\link[base]{list}} consisting estimates for each
+   group (as defined \code{groupBy}).
+ }
 
- Regardless of weights, \emph{all} data points are \emph{calibrated} based
- on the fitted calibrated function.
+ \section{Weighted calibration}{
+  Each data point can be assigned a weight in [0,1] specifying how much
+  it should \emph{affect the fitting of the calibration function}.
+  Note that here a \emph{data point} is here considered to be the \code{\link[base]{vector}}
+  of values from all scans ("slides").
 
- Data-point weights are obtained from probe weights, if given.
- Weights can be set using \code{\link[aroma:setProbeWeights.RGData]{*setProbeWeights}()}.
- If weights are specified, they will be used.
- Currently it is not possible to set different in different channels.
-}
+  Regardless of weights, \emph{all} data points are \emph{calibrated} based
+  on the fitted calibrated function.
 
-\details{
- Fitting is done by iterated re-weighted principal component analysis
- (IWPCA).
-}
+  Data-point weights are obtained from probe weights, if given.
+  Weights can be set using \code{\link[aroma:setProbeWeights.RGData]{*setProbeWeights}()}.
+  If weights are specified, they will be used.
+  Currently it is not possible to set different in different channels.
+ }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \details{
+  Fitting is done by iterated re-weighted principal component analysis
+  (IWPCA).
+ }
 
-\references{
-  [1] H. Bengtsson, J. Vallon-Christersson and G. Jönsson, \emph{Calibration and assessment of channel-specific biases in microarray data with extended dynamical range}, BMC Bioinformatics, 5:177, 2004.
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \references{
+   [1] H. Bengtsson, J. Vallon-Christersson and G. Jönsson, \emph{Calibration and assessment of channel-specific biases in microarray data with extended dynamical range}, BMC Bioinformatics, 5:177, 2004.
  \cr
-}
+ }
 
-\examples{
- # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ \examples{
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # First some utilities functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 plotPairwiseScans <- function(rg, channel, ...) {
@@ -180,7 +184,7 @@ drawRGGrid <- function(maxSignal=16, by=1, drawCurve=TRUE, highlightLog1=FALSE, 
 } # drawRGGrid()
 
 
- # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main example code
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -279,12 +283,12 @@ plotMvsM(ma, slides=1:2, pch=176, cex=0.5, include=incl, xlim=Mlim);
 abline(a=0,b=1, col="lightblue");
 
 
-}
+ }
 
-\seealso{
-  \code{\link[aroma.light]{calibrateMultiscan.matrix}}.
-  \code{\link{normalizeAffine.RGData}}().
-  For more information see \code{\link{RGData}}.
-}
+ \seealso{
+   \code{\link[aroma.light]{calibrateMultiscan.matrix}}.
+   \code{\link{normalizeAffine.RGData}}().
+   For more information see \code{\link{RGData}}.
+ }
 \keyword{internal}
 \keyword{methods}

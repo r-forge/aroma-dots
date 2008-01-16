@@ -17,8 +17,8 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
-# }
+#  @allmethods "public"
+# } 
 #
 #
 # @author

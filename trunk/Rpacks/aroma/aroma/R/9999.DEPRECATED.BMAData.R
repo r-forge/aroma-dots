@@ -101,7 +101,10 @@ setMethodS3("as.BMAData", "ANY", function(this, ...) {
   BMAData(this, ...);
 }, deprecated=TRUE)
 
-setMethodS3("as.character", "BMAData", function(this) {
+setMethodS3("as.character", "BMAData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- data.class(this);
   s <- paste(sep="",s,": B ", com.braju.sma.dimStr(this$B));
   s <- paste(sep="",s,", df ", this$df);

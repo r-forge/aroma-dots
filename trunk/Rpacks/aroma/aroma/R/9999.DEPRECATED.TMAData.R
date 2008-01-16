@@ -116,7 +116,10 @@ setMethodS3("as.TMAData", "ANY", function(this, ...) {
 }, deprecated=TRUE)
 
 
-setMethodS3("as.character", "TMAData", function(this) {
+setMethodS3("as.character", "TMAData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- data.class(this);
   s <- paste(sep="",s,": T ",      com.braju.sma.dimStr(this$T));
   s <- paste(sep="",s,", df ",     com.braju.sma.dimStr(this$df));
@@ -192,7 +195,7 @@ setMethodS3("plotPrintorder", "TMAData", function(this, what="T", ...) {
 
 setMethodS3("topSpots", "TMAData", function(this, X="A", Y="T", limits=NULL, ...) {
   if (X == "pval" || Y == "pval")
-    this$pval <- as.matrix(tma$getPValues()$pval);
+    this$pval <- as.matrix(this$getPValues()$pval);
   if (is.null(limits))
     if (Y == "pval") limits <- "lower" else limits <- "both";
 

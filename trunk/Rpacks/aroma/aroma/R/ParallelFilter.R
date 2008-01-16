@@ -30,7 +30,7 @@
 #    \tab filters \tab The input filters. \cr
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 #

@@ -135,7 +135,10 @@ setConstructorS3("AffineModelFit", function(a, b, adiag, fitted=NULL, weights=NU
   fit;
 })
 
-setMethodS3("as.character", "AffineModelFit", function(this) {
+setMethodS3("as.character", "AffineModelFit", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(data.class(this), ":", sep="");
   s <- paste(s, " a=(", paste(format(getA(this)), collapse=","), ")", sep="");
   s <- paste(s, ", b=(", paste(format(getB(this)), collapse=","), ")", sep="");

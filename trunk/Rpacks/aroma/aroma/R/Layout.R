@@ -65,7 +65,7 @@
 #   \tab \code{id}      \tab A @vector of strings which specified the id of each gene. \cr
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # \note{
@@ -137,7 +137,10 @@ setConstructorS3("Layout", function(ngrid.r=0, ngrid.c=0, nspot.r=0, nspot.c=0, 
 });
 
 
-setMethodS3("as.character", "Layout", function(this, ...) {
+setMethodS3("as.character", "Layout", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(sep="", data.class(this), ": ",
     "Grids: ", this$ngrid.r, "x", this$ngrid.c, " (=", 
                                           nbrOfGrids(this), "), ",

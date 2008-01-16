@@ -3,6 +3,8 @@
 % 
 %  QuantArrayData.R
 % 
+% on Tue Jan 15 18:35:00 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

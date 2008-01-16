@@ -85,12 +85,12 @@
 #     \code{=="ch1 Intensity"/"ch1 Background Std Dev"} and so on.
 #     The ratio of the spot intensity to the standard deviation of the
 #     local background of all spots in the microarray.}
-
+#
 #   Sources: Our own "research" and [2].
 # }
-
+#
 # \section{Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -1208,7 +1208,7 @@ setMethodS3("getArea", "QuantArrayData", function(this, slides=NULL, include=NUL
   if (is.null(include))
     include <- seq(nbrOfSpots(this));
 
-  fields <- getFieldNames(qa);
+  fields <- getFieldNames(this);
 
   method <- match.arg(method);
   found <- FALSE;
@@ -1237,6 +1237,8 @@ setMethodS3("getArea", "QuantArrayData", function(this, slides=NULL, include=NUL
 
 ############################################################################
 # HISTORY:
+# 2008-01-15
+# o BUG FIX: getArea() of QuantArrayData used 'qa' not 'this' internally.
 # 2006-02-11
 # o BUG FIX: Since (at least) R v2.1.1, the R internal readTableHead() takes
 #   six arguments and not five.  This gave "Error in method(static, ...) : 

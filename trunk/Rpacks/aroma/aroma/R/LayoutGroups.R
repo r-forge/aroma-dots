@@ -17,7 +17,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -38,7 +38,10 @@ setConstructorS3("LayoutGroups", function(layout=NULL) {
 }, abstract=TRUE);
 
 
-setMethodS3("as.character", "LayoutGroups", function(object) {
+setMethodS3("as.character", "LayoutGroups", function(x, ...) {
+  # To please R CMD check
+  object <- x;
+
   s <- paste(data.class(object), ": ", nbrOfGroups(object),
              " groups defined.", sep="");
   s;
@@ -128,7 +131,7 @@ setMethodS3("apply", "LayoutGroups", function(object, data, FUN, groups=NULL, un
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -183,7 +186,10 @@ setConstructorS3("PlateGroups", function(layout=NULL, plateDef=NULL) {
   )
 })
 
-setMethodS3("as.character", "PlateGroups", function(object) {
+setMethodS3("as.character", "PlateGroups", function(x, ...) {
+  # To please R CMD check
+  object <- x;
+
   s <- NextMethod("as.character");
   first <- getFirst(object);
   last <- getLast(object);
@@ -271,7 +277,10 @@ setConstructorS3("SuperGroups", function(layoutGroups=NULL, groups=NULL) {
 });
 
 
-setMethodS3("as.character", "SuperGroups", function(object) {
+setMethodS3("as.character", "SuperGroups", function(x, ...) {
+  # To please R CMD check
+  object <- x;
+
   s <- paste(data.class(object), ": ", nbrOfGroups(object),
              " groups defined.", sep="");
   s;
@@ -343,7 +352,7 @@ setMethodS3("getSpots", "SuperGroups", function(object, groups=NULL, unlist=FALS
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -367,7 +376,10 @@ setConstructorS3("SlideRowGroups", function(layout=NULL, groups=NULL) {
   )
 })
 
-setMethodS3("as.character", "SlideRowGroups", function(object) {
+setMethodS3("as.character", "SlideRowGroups", function(x, ...) {
+  # To please R CMD check
+  object <- x;
+
   s <- NextMethod("as.character");
   idx <- getSpots(object);
   first <- unlist(lapply(idx, FUN=function(x) x[1]));
@@ -433,7 +445,7 @@ setMethodS3("getSpots", "SlideRowGroups", function(object, groups=NULL, unlist=F
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -457,7 +469,10 @@ setConstructorS3("SlideColumnGroups", function(layout=NULL, groups=NULL) {
   )
 })
 
-setMethodS3("as.character", "SlideColumnGroups", function(object) {
+setMethodS3("as.character", "SlideColumnGroups", function(x, ...) {
+  # To please R CMD check
+  object <- x;
+
   s <- NextMethod("as.character");
   idx <- getSpots(object);
   first <- unlist(lapply(idx, FUN=function(x) x[1]));

@@ -17,7 +17,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # \section{Details}{
@@ -167,18 +167,20 @@ setMethodS3("readOneFile", "ScanAlyzeData", function(static, filename, path=NULL
     on.exit(file.remove(tmpname));
   }
   
-  trycatch({
+
+  read <- constructor <- NULL;
+  tryCatch({
     if (safe) {
       read <- ScanAlyzeData$readInternalSafe(filename)
     } else {
       read <- ScanAlyzeData$readInternal(filename);
     }
     constructor <- ScanAlyzeData;
-  }, ANY={
+  }, error=function(ex) {
     # Try ScanAlyze v2.0 if not found. Superclasses could always
     # try its subclasses, but not the otherway around.
-    read <- ScanAlyze20Data$readInternal(filename);
-    constructor <- ScanAlyze20Data;
+    read <<- ScanAlyze20Data$readInternal(filename);
+    constructor <<- ScanAlyze20Data;
   })
 
   header <- read$header;
@@ -971,10 +973,10 @@ setMethodS3("getDiameter", "ScanAlyzeData", function(this, slides=NULL, include=
   #                            ellipse, in image coordinates."
   # (Warning! This is a very bad approximation of the diameter of the
   #  spots, especially when fixed size boxed are used.)
-  top   <- this[["TOP"]][include,slides];
-  left  <- this[["LEFT"]][include,slides];
-  bot   <- this[["BOT"]][include,slides];
-  right <- this[["RIGHT"]][include,slides];
+  top    <- this[["TOP"]][include,slides];
+  left   <- this[["LEFT"]][include,slides];
+  bottom <- this[["BOT"]][include,slides];
+  right  <- this[["RIGHT"]][include,slides];
   diameter <- ((right-left) + (top-bottom)) / 2;
 
   diameter;
@@ -1087,6 +1089,9 @@ setMethodS3("getSpotPosition", "ScanAlyzeData", function(this, slides=NULL, inde
 
 ############################################################################
 # HISTORY:
+# 2008-01-15
+# o Replaced obsolete trycatch() with tryCatch().
+# o BUG FIX: getDiameter() of ScanAlyzeData used a non-existing variable.
 # 2005-10-21
 # o Replace 'overwrite' arguments with 'mustNotExist' in calls to Arguments. 
 # 2005-07-19

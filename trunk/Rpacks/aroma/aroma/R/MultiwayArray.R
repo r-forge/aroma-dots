@@ -49,7 +49,10 @@ setMethodS3("mean", "MultiwayArray", function(x, MARGIN=c(), na.rm=TRUE) {
   apply(this, MARGIN=MARGIN, FUN=mean.default, na.rm=na.rm);
 })
 
-setMethodS3("median", "MultiwayArray", function(this, MARGIN=c(), na.rm=TRUE) {
+setMethodS3("median", "MultiwayArray", function(x, MARGIN=c(), na.rm=TRUE) {
+  # To please R CMD check
+  this <- x;
+
   apply(this, MARGIN=MARGIN, FUN=median.default, na.rm=na.rm);
 })
 

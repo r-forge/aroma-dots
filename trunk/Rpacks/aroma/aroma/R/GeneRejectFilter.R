@@ -22,7 +22,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 #
@@ -85,7 +85,10 @@ setConstructorS3("GeneRejectFilter", function(input, layout, genes=NULL, ids=NUL
 })
 
 
-setMethodS3("as.character", "GeneRejectFilter", function(this) {
+setMethodS3("as.character", "GeneRejectFilter", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- data.class(this);
   s <- paste(s, ": Rejects a set of ", length(this$genes), " genes.", sep="");
   s;

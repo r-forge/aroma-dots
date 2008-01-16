@@ -59,7 +59,7 @@ setMethodS3("asSSMatrix", "GSRArray", function(Mnew, geneSpotMap="neighboring") 
 setMethodS3("plotXY", "SSMatrix", function(object, object2, rows=NULL, columns=NULL, ...) {
   # Assert correct values on arguments
   if (!inherits(object, "SSMatrix"))
-    throw("Second object must be of class SSMatrix: ", data.class(objec));
+    throw("Second object must be of class SSMatrix: ", data.class(object));
 
   # Argument 'columns'
   if (is.null(columns)) columns <- seq(ncol(object));

@@ -35,7 +35,7 @@
 #         displayed in plots etc or not. \cr
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 #
@@ -80,7 +80,10 @@ setConstructorS3("Filter", function(cex=NULL, col=NULL, pch=20, visible=TRUE) {
 }, abstract=TRUE);
 
 
-setMethodS3("as.character", "Filter", function(this) {
+setMethodS3("as.character", "Filter", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(data.class(this), ": ", sep="");
   s <- paste(s, "visible=", this$visible, sep="");
   parameter <- novirtual(this)$.parameter;

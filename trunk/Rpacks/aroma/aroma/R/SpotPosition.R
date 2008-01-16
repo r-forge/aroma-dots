@@ -22,7 +22,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -132,7 +132,10 @@ setMethodS3("equals", "SpotPosition", function(this, other) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("as.character", "SpotPosition", function(this) {
+setMethodS3("as.character", "SpotPosition", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(data.class(this), ":", sep="");
   s <- paste(s, " number of spots: ", nbrOfSpots(this), sep="");
   s <- paste(s, " number of slides: ", nbrOfSlides(this), sep="");

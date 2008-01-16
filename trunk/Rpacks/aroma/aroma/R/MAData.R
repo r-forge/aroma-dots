@@ -28,7 +28,7 @@
 #    \tab \code{A} \tab The log of the intensities of R and G, i.e. \eqn{\frac{1}{2}\log_2{R{\cdot}G}}{1/2*log2(R*G)} where R and G is the signal for the R and the G channel. \cr 
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # \details{
@@ -174,7 +174,10 @@ setMethodS3("swapDyes", "MAData", function(this, slides=NULL) {
 
 
 
-setMethodS3("as.character", "MAData", function(this) {
+setMethodS3("as.character", "MAData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(data.class(this), ": ", sep="");
   s <- paste(sep="",s,"M ",   com.braju.sma.dimStr(this$M));
   s <- paste(sep="",s,", A ", com.braju.sma.dimStr(this$A));
@@ -202,7 +205,7 @@ setMethodS3("as.character", "MAData", function(this) {
 
 setMethodS3("as.MAData", "ANY", function(object, ...) {
   warning("Argument 'object' is of unknown type, but will try anyway.");
-  MAData(obj, ...)
+  MAData(object, ...)
 })
 
 
@@ -508,9 +511,9 @@ setMethodS3("plotMvsM", "MAData", function(this, slides=NULL, include=NULL, excl
   if (is.null(slideNames))
     slideNames <- as.character(slides);
   if (is.null(xlab))
-    xlab <- substitute(M^{(s)}, list=list(s=slideNames[1]));
+    xlab <- substitute(M^{(s)}, list(s=slideNames[1]));
   if (is.null(ylab))
-    ylab <- substitute(M^{(s)}, list=list(s=slideNames[2]));
+    ylab <- substitute(M^{(s)}, list(s=slideNames[2]));
 
   Mx <- this$M[include,slides[1]]; 
   My <- this$M[include,slides[2]]; 
@@ -606,48 +609,6 @@ setMethodS3("plotPrintorder", "MAData", function(this, what="M", ...) {
 setMethodS3("plotDiporder", "MAData", function(this, what="M", ...) {
   plotDiporder.MicroarrayData(this, what=what, ...);
 })
-
-
-hideme01 <- function() {
-      if (!is.null(extra.type)) {
-      # Extra on top of that
-  	if(extra.type == "t")
-  	    txt(A,M, labels, pch=pch.ex, cex=cex.ex, col=col.ex, ...);
-  	if(extra.type == "p")
-  	    points(A,M, pch=pch.ex, cex=cex.ex, col=col.ex, ...);
-    
-  	if(extra.type == "tci") { # Text labels
-  	    M.ex <- M[topN];
-  	    A.ex <- A[topN];
-  	    if (length(cex.ex) > 1) 
-  	      cex.ex <- cex.ex[topN];
-  	    if (length(col.ex) > 1)
-  	      col.ex <- col.ex[topN];
-  	    if (length(pch.ex) > 1) 
-  	      pch.ex <- pch.ex[topN];
-    
-  	    # Place text labels on top and below actual value.
-  	    pos.ex <- sign(M.ex)+2;
-  	    
-  	    text(A.ex, M.ex, labels=labels[topN], cex=cex.ex, col=col.ex, pos=pos.ex, ...);
-  	    points(A.ex, M.ex, pch.ex=pch.ex, cex=cex.ex, ...);
-  	    str(cex.ex);
-  	}
-    
-  	if(extra.type == "pci")
-  	    plot.confband.points(A,M, crit1,crit2, nclass,
-  				      pch=pch.ex, cex=cex.ex, col=col.ex, ...);
-  	if(extra.type == "lci") 
-  	    plot.confband.lines(A,M, crit1,crit2, nclass,
-  				      pch=pch.ex, cex=cex.ex, col=col.ex, ...);
-      } # if (!is.null(extra.type))
-    
-      # Plot the lowess line...
-      ind <- !(is.na(A) | is.na(M) | is.infinite(A) | is.infinite(M))
-      lowess.line <- lowess(A[ind], M[ind], f=0.3);
-      lines(lowess.line, lty=1, col="black")
-      lines(lowess.line, lty=3, col="white")
-}
 
 
 
@@ -1329,7 +1290,7 @@ setMethodS3("shiftEqualRG", "MAData", function(this, a=NULL, slides=NULL) {
 #     quantiles. If the data is Gaussian distributed the default factor
 #     \code{1.4826} makes the upper and lower quantile to correspond to
 #     one standard deviation.}
-#   \item{family}{Family to be used by @see "modreg::loess". 
+#   \item{family}{Family to be used by @see "stats::loess". 
 #     By default, a robust family is used.}
 #   \item{...}{Other arguments passed to \code{loess()}.}
 # }
@@ -1607,6 +1568,8 @@ setMethodS3("getMOR2003a", "MAData", function(this, robust=TRUE, probs=NULL, for
 
 ############################################################################
 # HISTORY:
+# 2008-01-15
+# o Removed internal/dummy function hideme01().
 # 2006-06-13
 # o BUG FIX: From R v2.3.1 graphics::image.default() does not accept 
 #   xlim=NULL nor ylim=NULL.  Had to update plot.MAData() accordingly.

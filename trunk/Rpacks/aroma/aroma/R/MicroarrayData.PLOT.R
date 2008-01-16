@@ -548,7 +548,7 @@ setMethodS3("plotXY", "MicroarrayData", function(this, what, style=NULL, slide=N
 setMethodS3("plotSpatial", "MicroarrayData", function(this, what, slide=1, include=NULL, exclude=NULL, col="auto", xlab=NULL, ylab="", axes=FALSE, xaxs="i", yaxs="i", pch="auto", grid=TRUE, log=NULL, ..., cex=NULL, style=NULL) {
   # To be removed in August 2005. /HB 2005-05-04
   if (!exists("image270", mode="function"))
-    image270 <- image.matrix;
+    image270 <- get("image.matrix", mode="function");
 
   cmd <- NULL;
   if (!is.null(style) && is.element(style, c("points", "highlight", "text"))) {

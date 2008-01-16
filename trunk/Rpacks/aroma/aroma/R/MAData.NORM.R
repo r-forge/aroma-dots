@@ -668,7 +668,7 @@ setMethodS3("estimateMACurve", "MAData", function(this, slides=NULL, groupBy=NUL
     if (is.null(span))
       span <- 0.75;
   } else if (method == "robust.spline") {
-    fcn <- function(A, M, newA, weights=NULL, span=0.75, ...) {
+    fcn <- function(A, M, weights=NULL, span=0.75, ...) {
       require(R.basic) || throw("Could not load package R.basic.");
       fit <- doCall("robust.smooth.spline", x=A, y=M, w=weights, spar=span, ...);
       fit$predictM <- function(newA) predict(fit, x=newA)$y;
@@ -1011,7 +1011,7 @@ setMethodS3("normalizeAffineShift", "MAData", function(this, slides=NULL, groupB
 
     newNegs <- (negAfter - negBefore);
     if (newNegs > 0) {
-      throw(InternalErrorException("Bengtsson's optimal shift normalization introduced negative signals. Please, contact the author as this should never happen!", package=com.braju.sma));
+      throw(InternalErrorException("Bengtsson's optimal shift normalization introduced negative signals. Please, contact the author as this should never happen!", package=aroma));
     }
     fit <- list(shift=as, nbrOfLostValues=newNegs, objectiveFunction=objectiveFunction);
   } else if (method == "Newton") {
@@ -1029,6 +1029,9 @@ setMethodS3("normalizeAffineShift", "MAData", function(this, slides=NULL, groupB
 
 ############################################################################
 # HISTORY:
+# 2008-01-15
+# o CLEAN UP: Removed non-used argument 'newA' from internal fit function
+#   of estimateMACurve() in MAData.
 # 2006-02-08
 # o The code for normalizeWithinSlide() assumed 'method' was a single value,
 #   but it may be a vector which then generates a warning.

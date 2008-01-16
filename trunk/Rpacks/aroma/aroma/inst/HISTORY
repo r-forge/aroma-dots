@@ -1,6 +1,22 @@
 Package: aroma
 ==============
 
+Version: 0.94 [2008-01-15]
+o BUG FIX: The package would not load in R v2.6.1 with "Error in
+  as.function.default(c(value, if (is.null(bd)) list(bd) else bd),
+  : use of NULL environment is defunct" and "Error: unable to load
+  R code in package 'aroma'".
+o BUG FIX: addFlag and setFlag() of MicroarrayData called witch(), 
+  not which() :).
+o BUG FIX: getDiameter() of ScanAlyzeData used a non-existing variable.
+o CLEAN UP: Removed as.DataFrame() of Matrix. It was broken anyway.
+o Package passes R CMD check on R v2.6.1 with some warnings and
+  some NOTEs, but no errors. I am aware of these, but leave them
+  for now for maximum backward compatibility because it has been
+  a while since the package was last updates.
+  No tests and no promises are made for version before R v2.6.1. 
+
+
 Version: 0.93 [2006-07-04]
 o BUG FIX: read() of ImaGeneData could not handle '#' in the Gene ID.
 

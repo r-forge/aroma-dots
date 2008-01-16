@@ -57,14 +57,16 @@ setMethodS3("rotate", "Matrix", function(this, angle=90) {
 
 
 
-setMethodS3("as.DataFrame", "Matrix", function(this, row.names = NULL, optional = FALSE) {
-  DataFrame(as.data.frame(this, row.names=row.names, optional=optional));
-})
+## setMethodS3("as.DataFrame", "Matrix", function(this, row.names = NULL, optional = FALSE) {
+##   DataFrame(as.data.frame(this, row.names=row.names, optional=optional));
+## }, deprecated=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2008-01-15
+# o CLEAN UP: Removed as.DataFrame() of Matrix.  It was broken anyway.
 # 2002-10-24
 # o Note that MultiwayArray extends Object with core value. Be careful!!!
 # 2002-09-12

@@ -41,7 +41,7 @@
 #    \tab top \tab The top criteria. \cr
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 #

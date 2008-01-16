@@ -3,6 +3,8 @@
 % 
 %  QuantArrayData.R
 % 
+% on Tue Jan 15 18:35:00 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -110,8 +112,10 @@ extends \link[aroma]{MicroarrayData}\cr
     \code{=="ch1 Intensity"/"ch1 Background Std Dev"} and so on.
     The ratio of the spot intensity to the standard deviation of the
     local background of all spots in the microarray.}
+
   Sources: Our own "research" and [2].
 }
+
 \section{Methods}{
  \bold{Methods:}\cr
 \tabular{rll}{
@@ -128,17 +132,17 @@ extends \link[aroma]{MicroarrayData}\cr
  \tab \code{\link[aroma:plotSpatial.QuantArrayData]{plotSpatial}} \tab Creates a spatial plot of a slide.\cr
  \tab \code{plotSpatial3d} \tab  -\cr
  \tab \code{\link[aroma:read.QuantArrayData]{read}} \tab Reads one or several QuantArray files into one QuantArrayData object.\cr
- \tab \code{read.table} \tab  -\cr
  \tab \code{setLayout} \tab  -\cr
  \tab \code{\link[aroma:write.QuantArrayData]{write}} \tab Write a QuantArray result data file.\cr
 }
 
 
-\bold{Methods inherited from MicroarrayData}:\cr
+ \bold{Methods inherited from MicroarrayData}:\cr
 addFlag, append, applyGenewise, applyGroupwise, applyPlatewise, applyPrintdipwise, applyPrinttipwise, as.character, as.data.frame, boxplot, clearCache, clearFlag, createColors, dataFrameToList, equals, extract, getBlank, getCache, getChannelNames, getColors, getExcludedSpots, getExtra, getExtreme, getFieldNames, getFlag, getInclude, getLabel, getLayout, getProbeWeights, getSignalWeights, getSlideNames, getSlidePairs, getSpotPosition, getSpotValue, getTreatments, getView, getWeights, getWeightsAsString, hasExcludedSpots, hasLayout, hasProbeWeights, hasSignalWeights, hasWeights, highlight, hist, isFieldColorable, keepSlides, keepSpots, listFlags, lowessCurve, nbrOfDataPoints, nbrOfFields, nbrOfSlides, nbrOfSpots, nbrOfTreatments, normalizePlatewise, normalizePrintorder, normalizeQuantile, plot, plotDensity, plotGene, plotPrintorder, plotReplicates, plotSpatial, plotSpatial3d, plotXY, points, putGene, putSlide, qqnorm, quantile, range, range2, read, readHeader, readToList, removeSlides, removeSpots, resetProbeWeights, resetSignalWeights, select, seq, setCache, setExcludedSpots, setExtra, setFlag, setLabel, setLayout, setProbeWeights, setSignalWeights, setSlideNames, setTreatments, setView, setWeights, size, str, subplots, summary, text, updateHeader, validateArgumentChannel, validateArgumentChannels, validateArgumentGroupBy, validateArgumentSlide, validateArgumentSlides, validateArgumentSpotIndex, validateArgumentWeights, write, writeHeader
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clone, detach, environment, equals, extend, finalize, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
 
 }
 

@@ -3,6 +3,8 @@
 % 
 %  MicroarrayData.R
 % 
+% on Tue Jan 15 18:34:02 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -57,7 +59,6 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma:getChannelNames.MicroarrayData]{getChannelNames}} \tab Gets the names of the channels.\cr
  \tab \code{getColors} \tab  -\cr
  \tab \code{getExtreme} \tab  -\cr
- \tab \code{\link[aroma:getFieldNames.MicroarrayData]{getFieldNames}} \tab Gets the names of all fields containing spot specific data.\cr
  \tab \code{getInclude} \tab  -\cr
  \tab \code{\link[aroma:getLabel.MicroarrayData]{getLabel}} \tab Gets the label of one field.\cr
  \tab \code{\link[aroma:getLayout.MicroarrayData]{getLayout}} \tab Gets the layout.\cr
@@ -128,17 +129,15 @@ extends \link[R.oo]{Object}\cr
  \tab \code{validateArgumentChannel} \tab  -\cr
  \tab \code{validateArgumentChannels} \tab  -\cr
  \tab \code{\link[aroma:validateArgumentGroupBy.MicroarrayData]{validateArgumentGroupBy}} \tab Validates the argument 'groupBy'.\cr
- \tab \code{\link[aroma:validateArgumentSlide.MicroarrayData]{validateArgumentSlide}} \tab Validates the argument 'slide'.\cr
- \tab \code{\link[aroma:validateArgumentSlides.MicroarrayData]{validateArgumentSlides}} \tab Validates the argument 'slides'.\cr
- \tab \code{validateArgumentSpotIndex} \tab  -\cr
  \tab \code{\link[aroma:validateArgumentWeights.MicroarrayData]{validateArgumentWeights}} \tab Validates the argument 'weights'.\cr
  \tab \code{\link[aroma:write.MicroarrayData]{write}} \tab Write a MicroarrayData object to file.\cr
  \tab \code{writeHeader} \tab  -\cr
 }
 
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clone, detach, environment, equals, extend, finalize, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
 
 }
 

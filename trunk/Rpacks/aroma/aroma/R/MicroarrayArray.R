@@ -77,7 +77,7 @@ setMethodS3("setView", "MicroarrayArray", function(this, newView) {
   if (is.null(newView))
     newView <- 0;
   if (!is.element(newView, 0:5))
-    throw("Value of 'newView' is out of range: ", newValue);
+    throw("Value of 'newView' is out of range: ", newView);
   attr(this, ".view") <- newView;
   invisible(this);
 })
@@ -86,7 +86,7 @@ setMethodS3("pushView", "MicroarrayArray", function(this, view) {
   if (is.null(view))
     view <- 0;
   if (!is.element(view, 0:5))
-    throw("Value of 'view' is out of range: ", newValue);
+    throw("Value of 'view' is out of range: ", view);
   attr(this, ".view") <- c(view, attr(this, ".view"));
   invisible(this);
 })
