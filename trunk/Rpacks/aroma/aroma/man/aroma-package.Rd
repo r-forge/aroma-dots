@@ -14,6 +14,8 @@
 \title{Package aroma}
 
 
+ \encoding{latin1}
+
  \description{
    Methods for microarray analysis after the images have been scanned. Formerly known as the com.braju.sma package.
 
@@ -25,8 +27,8 @@
 
  \section{Requirements}{
    This package depends on several other packages, namely
-   \pkg{R.oo}, \pkg{R.utils}, \pkg{R.basic}, \pkg{R.graphics},
-   \pkg{R.io}, and \pkg{aroma.light}.
+   \pkg{R.methodsS3}, \pkg{R.oo}, \pkg{R.utils}, \pkg{aroma.light},
+   \pkg{R.basic}, \pkg{R.graphics}, and \pkg{R.io}.
  }
 
  \section{Installation}{
@@ -39,6 +41,8 @@
    \enumerate{
      \item \code{\link{GenePixData}}, \code{\link{QuantArrayData}}, \code{\link{ScanAlyzeData}},
            \code{\link{SpotData}}, or \code{\link{SpotfinderData}}.
+     \item For an overview of normalization and calibration methods,
+           please see the \code{\link[aroma.light]{aroma.light}} package.
      \item \code{\link{calibrateMultiscan.RGData}}().
      \item \code{\link{normalizeAffine.RGData}}().
    }

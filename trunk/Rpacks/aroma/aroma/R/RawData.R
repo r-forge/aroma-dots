@@ -31,7 +31,7 @@
 #    \tab \code{Gb} \tab The background for channel Gb (non-logged). \cr
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # \note{
@@ -138,7 +138,10 @@ setMethodS3("swapDyes", "RawData", function(this, slides=NULL) {
 
 
 
-setMethodS3("as.character", "RawData", function(this) {
+setMethodS3("as.character", "RawData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- "RawData: ";
   s <- paste(sep="",s,"R ",    com.braju.sma.dimStr(this$R));
   s <- paste(sep="",s,", G ",  com.braju.sma.dimStr(this$G));

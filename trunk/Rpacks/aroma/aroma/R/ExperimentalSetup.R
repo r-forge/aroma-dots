@@ -14,7 +14,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 #
@@ -47,7 +47,10 @@ setConstructorS3("ExperimentalSetup", function(...) {
   )
 })
 
-setMethodS3("as.character", "ExperimentalSetup", function(this) {
+setMethodS3("as.character", "ExperimentalSetup", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(data.class(this), ": ", nbrOfHybridizations(this), " hybridizations/data files.", sep="");
   s <- paste(s, " Samples used: ", paste(getSampleUsed(this), collapse=", "), ".", sep="");
   s <- paste(s, " Dyes used: ", paste(getDyesUsed(this), collapse=", "), ".", sep="");

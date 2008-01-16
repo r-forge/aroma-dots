@@ -602,7 +602,6 @@
 # @alias hasSignalWeights.MicroarrayData
 # @alias hasWeights
 # @alias hasWeights.MicroarrayData
-# @alias hideme01
 # @alias highlight
 # @alias hist.MAData
 # @alias indexOf

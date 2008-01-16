@@ -18,7 +18,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # \section{Details}{
@@ -626,18 +626,19 @@ setMethodS3("plotSpatial", "SpotData", function(this, what=NULL, slide=1, includ
     }
   }
 
-  setView(this, MicroarrayArray$SPOT.SLIDE.VIEW)
-  include <- which(getInclude(this, include, exclude, slide = slide))
+  setView(this, MicroarrayArray$SPOT.SLIDE.VIEW);
+  include <- which(getInclude(this, include, exclude, slide = slide));
+  colWhat <- what;
   if (length(col) == 1) {
-    color <- col
-    col <- rep(NA, length.out = nbrOfSpots(this))
+    color <- col;
+    col <- rep(NA, length.out=nbrOfSpots(this));
     if (!is.numeric(color) && substring(color, 1, 1) != "#" &&
         !is.element(color, colors())) {
-        col[include] <- getColors(this, what = colWhat, slide = slide,
-            include = include, palette = color, log = log)
+        col[include] <- getColors(this, what=colWhat, slide=slide,
+                                  include=include, palette=color, log=log);
     }
     else {
-        col[include] <- color
+        col[include] <- color;
     }
   }  
 
@@ -996,6 +997,8 @@ setMethodS3("getArrayAspectRatio", "SpotData", function(this, slide=NULL) {
 
 ############################################################################
 # HISTORY:
+# 2008-01-15
+# o BUG FIX: Added a 'colWhat <- col' to plotSpatial() of SpotData.
 # 2005-10-21
 # o Replace 'overwrite' arguments with 'mustNotExist' in calls to Arguments. 
 # 2005-07-20

@@ -20,7 +20,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -42,7 +42,10 @@ setConstructorS3("PrintdipGroups", function(layout=NULL, groups=NULL) {
   )
 })
 
-setMethodS3("as.character", "PrintdipGroups", function(object) {
+setMethodS3("as.character", "PrintdipGroups", function(x, ...) {
+  # To please R CMD check
+  object <- x;
+
   s <- NextMethod("as.character");
   s <- paste(s, " The size of each printdip groups is ", getSizes(object)[1], ".", sep="");
   s;

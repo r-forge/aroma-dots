@@ -59,14 +59,11 @@ extends \link[aroma]{MicroarrayData}\cr
  \tab \code{getBackgroundArea} \tab  -\cr
  \tab \code{\link[aroma:getBackgroundSD.GenePixData]{getBackgroundSD}} \tab Gets the standard deviation of the background pixels.\cr
  \tab \code{getBad} \tab  -\cr
- \tab \code{getBgArea} \tab  -\cr
  \tab \code{getCircularity} \tab  -\cr
  \tab \code{getFocusPosition} \tab  -\cr
  \tab \code{getForeground} \tab  -\cr
  \tab \code{\link[aroma:getForegroundSD.GenePixData]{getForegroundSD}} \tab Gets the standard deviation of the foreground pixels.\cr
  \tab \code{\link[aroma:getForegroundSE.GenePixData]{getForegroundSE}} \tab Gets the standard error of the foreground pixels.\cr
- \tab \code{getHeaderField} \tab  -\cr
- \tab \code{getHeaderFields} \tab  -\cr
  \tab \code{getLaserOnTime} \tab  -\cr
  \tab \code{getLaserPower} \tab  -\cr
  \tab \code{getLinesAveraged} \tab  -\cr
@@ -83,17 +80,17 @@ extends \link[aroma]{MicroarrayData}\cr
  \tab \code{plotSpatial3d} \tab  -\cr
  \tab \code{\link[aroma:read.GenePixData]{read}} \tab Reads one or several GenePix files into one GenePixData object.\cr
  \tab \code{\link[aroma:readHeader.GenePixData]{readHeader}} \tab Reads a GenePix Results (GPR) file header.\cr
- \tab \code{setHeaderField} \tab  -\cr
  \tab \code{setLayout} \tab  -\cr
  \tab \code{\link[aroma:write.GenePixData]{write}} \tab Write a GenePix Results Data file.\cr
 }
 
 
-\bold{Methods inherited from MicroarrayData}:\cr
+ \bold{Methods inherited from MicroarrayData}:\cr
 addFlag, append, applyGenewise, applyGroupwise, applyPlatewise, applyPrintdipwise, applyPrinttipwise, as.character, as.data.frame, boxplot, clearCache, clearFlag, createColors, dataFrameToList, equals, extract, getBlank, getCache, getChannelNames, getColors, getExcludedSpots, getExtra, getExtreme, getFieldNames, getFlag, getInclude, getLabel, getLayout, getProbeWeights, getSignalWeights, getSlideNames, getSlidePairs, getSpotPosition, getSpotValue, getTreatments, getView, getWeights, getWeightsAsString, hasExcludedSpots, hasLayout, hasProbeWeights, hasSignalWeights, hasWeights, highlight, hist, isFieldColorable, keepSlides, keepSpots, listFlags, lowessCurve, nbrOfDataPoints, nbrOfFields, nbrOfSlides, nbrOfSpots, nbrOfTreatments, normalizePlatewise, normalizePrintorder, normalizeQuantile, plot, plotDensity, plotGene, plotPrintorder, plotReplicates, plotSpatial, plotSpatial3d, plotXY, points, putGene, putSlide, qqnorm, quantile, range, range2, read, readHeader, readToList, removeSlides, removeSpots, resetProbeWeights, resetSignalWeights, select, seq, setCache, setExcludedSpots, setExtra, setFlag, setLabel, setLayout, setProbeWeights, setSignalWeights, setSlideNames, setTreatments, setView, setWeights, size, str, subplots, summary, text, updateHeader, validateArgumentChannel, validateArgumentChannels, validateArgumentGroupBy, validateArgumentSlide, validateArgumentSlides, validateArgumentSpotIndex, validateArgumentWeights, write, writeHeader
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clone, detach, environment, equals, extend, finalize, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
 
  }
 

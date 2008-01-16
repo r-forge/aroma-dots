@@ -238,14 +238,18 @@ setMethodS3("normalizePrintorder", "MicroarrayData", function(this, fields, brea
   slides <- validateArgumentSlides(this, slides=slides);
   
   if (method == "loess") {
-    require(modreg); # loess()
+    if (!require("modreg") && !require("stats")) {
+      throw("Failed to locate loess().  Failed to load packages 'modreg' or 'stats'.");
+    }
     if (robust == TRUE)
       family <- "symmetric"
     else
       family <- "gaussian";
   } else if (method == "ssanova") {
-    require(modreg); # smooth.spline()
     throw("Spatial normalization using splines is not impleted: ", method);
+    if (!require("modreg") && !require("stats")) {
+      throw("Failed to locate smooth.spline().  Failed to load packages 'modreg' or 'stats'.");
+    }
   } else {
     throw("Unknown method for spatial normalization: ", method);
   }
@@ -345,10 +349,12 @@ setMethodS3("normalizeSpatial", "MicroarrayData", function(this, fields, slides=
   slides <- validateArgumentSlides(this, slides=slides);
 
   if (method == "loess") {
-    require(modreg); # loess()
+    if (!require("modreg") && !require("stats")) {
+      throw("Failed to locate loess().  Failed to load packages 'modreg' or 'stats'.");
+    }
   } else if (method == "ssanova") {
-    require(gss); # ssanova()
     throw("Spatial normalization using thin plate splines (ssanova) is not impleted: ", method);
+#    require("gss") || throw("Package not loaded: gss"); # ssanova()
   } else {
     throw("Unknown value on argument 'method': ", method);
   }

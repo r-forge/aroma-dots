@@ -3,6 +3,8 @@
 % 
 %  RGData.R
 % 
+% on Tue Jan 15 18:36:16 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -63,16 +65,12 @@ extends \link[aroma]{MicroarrayData}\cr
  \tab \code{as.RGData} \tab  -\cr
  \tab \code{boxplot} \tab  -\cr
  \tab \code{\link[aroma:calibrateMultiscan.RGData]{calibrateMultiscan}} \tab Calibrates multiple re-scanned images based on an affine model.\cr
- \tab \code{\link[aroma:fitMultiscanAffine.RGData]{fitMultiscanAffine}} \tab Fits an affine model to signals from a multi-scanned slide.\cr
- \tab \code{getA} \tab  -\cr
  \tab \code{getCalibratedMultiscan} \tab  -\cr
  \tab \code{getChannelNames} \tab  -\cr
  \tab \code{\link[aroma:getColors.RGData]{getColors}} \tab Generates red to green colors for each of the specified spots.\cr
  \tab \code{\link[aroma:getLogIntensities.RGData]{getLogIntensities}} \tab Calculates the log-intensitites (A values).\cr
  \tab \code{\link[aroma:getLogRatios.RGData]{getLogRatios}} \tab Calculates the log-ratios (M values).\cr
- \tab \code{getM} \tab  -\cr
  \tab \code{getWithinChannelPairs} \tab  -\cr
- \tab \code{log} \tab  -\cr
  \tab \code{\link[aroma:mean.RGData]{mean}} \tab Genewise Average Mean for channel R and G.\cr
  \tab \code{\link[aroma:normalizeAffine.RGData]{normalizeAffine}} \tab Weighted affine normalization between channels and arrays.\cr
  \tab \code{\link[aroma:normalizeCurveFit.RGData]{normalizeCurveFit}} \tab Within-slide intensity-dependent normalization in (A,M).\cr
@@ -85,7 +83,6 @@ extends \link[aroma]{MicroarrayData}\cr
  \tab \code{plot} \tab  -\cr
  \tab \code{plotSpatial} \tab  -\cr
  \tab \code{plotXY} \tab  -\cr
- \tab \code{power} \tab  -\cr
  \tab \code{range} \tab  -\cr
  \tab \code{\link[aroma:shift.RGData]{shift}} \tab Shift the log-ratios, log-intensities or the raw signal.\cr
  \tab \code{\link[aroma:swapDyes.RGData]{swapDyes}} \tab Swap dyes of one or many slides.\cr
@@ -93,11 +90,12 @@ extends \link[aroma]{MicroarrayData}\cr
 }
 
 
-\bold{Methods inherited from MicroarrayData}:\cr
+ \bold{Methods inherited from MicroarrayData}:\cr
 addFlag, append, applyGenewise, applyGroupwise, applyPlatewise, applyPrintdipwise, applyPrinttipwise, as.character, as.data.frame, boxplot, clearCache, clearFlag, createColors, dataFrameToList, equals, extract, getBlank, getCache, getChannelNames, getColors, getExcludedSpots, getExtra, getExtreme, getFieldNames, getFlag, getInclude, getLabel, getLayout, getProbeWeights, getSignalWeights, getSlideNames, getSlidePairs, getSpotPosition, getSpotValue, getTreatments, getView, getWeights, getWeightsAsString, hasExcludedSpots, hasLayout, hasProbeWeights, hasSignalWeights, hasWeights, highlight, hist, isFieldColorable, keepSlides, keepSpots, listFlags, lowessCurve, nbrOfDataPoints, nbrOfFields, nbrOfSlides, nbrOfSpots, nbrOfTreatments, normalizePlatewise, normalizePrintorder, normalizeQuantile, plot, plotDensity, plotGene, plotPrintorder, plotReplicates, plotSpatial, plotSpatial3d, plotXY, points, putGene, putSlide, qqnorm, quantile, range, range2, read, readHeader, readToList, removeSlides, removeSpots, resetProbeWeights, resetSignalWeights, select, seq, setCache, setExcludedSpots, setExtra, setFlag, setLabel, setLayout, setProbeWeights, setSignalWeights, setSlideNames, setTreatments, setView, setWeights, size, str, subplots, summary, text, updateHeader, validateArgumentChannel, validateArgumentChannels, validateArgumentGroupBy, validateArgumentSlide, validateArgumentSlides, validateArgumentSpotIndex, validateArgumentWeights, write, writeHeader
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clone, detach, environment, equals, extend, finalize, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
 
 }
 

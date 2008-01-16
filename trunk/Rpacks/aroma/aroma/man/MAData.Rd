@@ -3,6 +3,8 @@
 % 
 %  MAData.R
 % 
+% on Tue Jan 15 18:33:22 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -62,26 +64,18 @@ extends \link[aroma]{MicroarrayData}\cr
  \tab \code{\link[aroma:as.RGData.MAData]{as.RGData}} \tab Transform MA format into RG format.\cr
  \tab \code{boxplot} \tab  -\cr
  \tab \code{drawCurveFit} \tab  -\cr
- \tab \code{\link[aroma:estimateMACurve.MAData]{estimateMACurve}} \tab Estimates a smooth intensity-dependent curve in (A,M).\cr
- \tab \code{\link[aroma:getAdjustedSpotVariability.MAData]{getAdjustedSpotVariability}} \tab Gets the spotwise intensity-adjusted variability of replicate slides.\cr
  \tab \code{\link[aroma:getColors.MAData]{getColors}} \tab Generates colors for each of the specified spots.\cr
  \tab \code{getDenseSpots} \tab  -\cr
- \tab \code{getG} \tab  -\cr
  \tab \code{\link[aroma:getGeneVariability.MAData]{getGeneVariability}} \tab Gets the genewise variability.\cr
  \tab \code{getHistogram} \tab  -\cr
  \tab \code{\link[aroma:getMOR.MAData]{getMOR}} \tab Gets the Measure of Reproducibility.\cr
- \tab \code{\link[aroma:getMOR2003a.MAData]{getMOR2003a}} \tab Gets the Intensity Adjusted Measure of Reproducibility.\cr
- \tab \code{getR} \tab  -\cr
- \tab \code{getRange} \tab  -\cr
  \tab \code{getSpotVariability} \tab  -\cr
  \tab \code{hist} \tab  -\cr
- \tab \code{loessQuantile} \tab  -\cr
  \tab \code{\link[aroma:mean.MAData]{mean}} \tab Average Mean for microarray data.\cr
  \tab \code{\link[aroma:normalizeAcrossSlides.MAData]{normalizeAcrossSlides}} \tab Normalizes across slides.\cr
  \tab \code{\link[aroma:normalizeAffine.MAData]{normalizeAffine}} \tab Affine normalization based on non-logged data.\cr
  \tab \code{\link[aroma:normalizeCurveFit.MAData]{normalizeCurveFit}} \tab Within-slide normalization that adjust log-ratios by estimating a smooth intensity-dependent curve in (A,M).\cr
  \tab \code{normalizeGenewise} \tab  -\cr
- \tab \code{\link[aroma:normalizeLogRatioShift.MAData]{normalizeLogRatioShift}} \tab Within-slide normalization that adjust the log-ratios shift.\cr
  \tab \code{normalizePlatewise} \tab  -\cr
  \tab \code{normalizePrintorder} \tab  -\cr
  \tab \code{normalizeQuantile} \tab  -\cr
@@ -106,11 +100,12 @@ extends \link[aroma]{MicroarrayData}\cr
 }
 
 
-\bold{Methods inherited from MicroarrayData}:\cr
+ \bold{Methods inherited from MicroarrayData}:\cr
 addFlag, append, applyGenewise, applyGroupwise, applyPlatewise, applyPrintdipwise, applyPrinttipwise, as.character, as.data.frame, boxplot, clearCache, clearFlag, createColors, dataFrameToList, equals, extract, getBlank, getCache, getChannelNames, getColors, getExcludedSpots, getExtra, getExtreme, getFieldNames, getFlag, getInclude, getLabel, getLayout, getProbeWeights, getSignalWeights, getSlideNames, getSlidePairs, getSpotPosition, getSpotValue, getTreatments, getView, getWeights, getWeightsAsString, hasExcludedSpots, hasLayout, hasProbeWeights, hasSignalWeights, hasWeights, highlight, hist, isFieldColorable, keepSlides, keepSpots, listFlags, lowessCurve, nbrOfDataPoints, nbrOfFields, nbrOfSlides, nbrOfSpots, nbrOfTreatments, normalizePlatewise, normalizePrintorder, normalizeQuantile, plot, plotDensity, plotGene, plotPrintorder, plotReplicates, plotSpatial, plotSpatial3d, plotXY, points, putGene, putSlide, qqnorm, quantile, range, range2, read, readHeader, readToList, removeSlides, removeSpots, resetProbeWeights, resetSignalWeights, select, seq, setCache, setExcludedSpots, setExtra, setFlag, setLabel, setLayout, setProbeWeights, setSignalWeights, setSlideNames, setTreatments, setView, setWeights, size, str, subplots, summary, text, updateHeader, validateArgumentChannel, validateArgumentChannels, validateArgumentGroupBy, validateArgumentSlide, validateArgumentSlides, validateArgumentSpotIndex, validateArgumentWeights, write, writeHeader
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clone, detach, environment, equals, extend, finalize, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
 
 }
 

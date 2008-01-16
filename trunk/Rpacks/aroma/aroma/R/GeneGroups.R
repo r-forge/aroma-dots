@@ -22,7 +22,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -110,7 +110,10 @@ setConstructorS3("GeneGroups", function(layout=NULL, specification=NULL) {
 })
 
 
-setMethodS3("as.character", "GeneGroups", function(this) {
+setMethodS3("as.character", "GeneGroups", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod("as.character");
   idx <- getSpots(this);
   len <- unlist(lapply(idx, FUN=length));

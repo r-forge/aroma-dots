@@ -45,12 +45,13 @@ setMethodS3("setDesignMatrix", "Analyzer", function(this, design) {
 
 
 setMethodS3("qqplotTTest", "Analyzer", function(this, main="t-test diagnostic", col="black", pch=".", low=-5, high=+5) {
-  if (is.null(this$tma))
+  tma <- this$tma;
+  if (is.null(tma))
     ttest(this);
   opar <- par("mar");
   on.exit(par(opar));
   subplots(2, nrow=2);
-  t <- unlist(this$tma$tstat[,])
+  t <- unlist(tma$tstat[,])
   low  <- which(t <= low);
   high <- which(t >= high);
   hist(t, xlab="t", nclass=100, main="Histogram and quantile-quantile plot of t-statistics", col=9, cex=0.8);

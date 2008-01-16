@@ -83,7 +83,7 @@ setMethodS3("read", "MicroarrayData", function(static, ..., verbose=FALSE) {
   #    the data using that static read() method.
   object <- NULL;
   for (method in methods) {
-    trycatch({
+    tryCatch({
       mthd <- get(method, mode="function");
       if (verbose)
         cat("Trying ", method, "...", sep="");
@@ -91,7 +91,7 @@ setMethodS3("read", "MicroarrayData", function(static, ..., verbose=FALSE) {
       if (verbose)
         cat("ok\n");
       # Can not do return(object) inside trycatch() calls.
-    }, ANY = {
+    }, error = function(ex) {
       if (verbose)
         cat("failed\n");
     })
@@ -235,6 +235,8 @@ setMethodS3("writeHeader", "MicroarrayData", function(this, filename, path=NULL,
 
 ############################################################################
 # HISTORY:
+# 2008-01-15
+# o Replaced an obsolete trycatch() with tryCatch().
 # 2005-10-21
 # o Replace 'overwrite' arguments with 'mustNotExist' in calls to Arguments. 
 # 2005-07-19

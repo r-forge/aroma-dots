@@ -23,7 +23,7 @@
 #    \tab input \tab The input. \cr
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 #

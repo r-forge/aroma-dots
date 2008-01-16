@@ -3,6 +3,8 @@
 % 
 %  MicroarrayData.R
 % 
+% on Tue Jan 15 18:34:03 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

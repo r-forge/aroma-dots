@@ -3,6 +3,8 @@
 % 
 %  SEFilter.R
 % 
+% on Tue Jan 15 18:36:56 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -50,17 +52,18 @@ extends \link[aroma]{FieldFilter}\cr
 \emph{No methods defined}.
 
 
-\bold{Methods inherited from FieldFilter}:\cr
+ \bold{Methods inherited from FieldFilter}:\cr
 getIndex, getIndex0
 
-\bold{Methods inherited from SerialFilter}:\cr
+ \bold{Methods inherited from SerialFilter}:\cr
 changeInput, getInput
 
-\bold{Methods inherited from Filter}:\cr
+ \bold{Methods inherited from Filter}:\cr
 as.character, changeInput, getIndex, getInput, getParameter, getVisible, highlight, setParameter, setVisible, text
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clone, detach, environment, equals, extend, finalize, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
 
 }
 

@@ -32,7 +32,10 @@ setConstructorS3("Replicates", function(replicates=NULL, type=NA) {
 }, deprecated=TRUE)
 
 
-setMethodS3("as.character", "Replicates", function(this) {
+setMethodS3("as.character", "Replicates", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste("Replicates: ", sep="");
   s <- paste(s, nbrOfGenes(this), " genes in ", nbrOfSpots(this), " spots", sep="");
   s <- paste(s, " (", formatC(nbrOfSpots(this)/nbrOfGenes(this), width=1, digits=3), " spots/gene)", sep="");

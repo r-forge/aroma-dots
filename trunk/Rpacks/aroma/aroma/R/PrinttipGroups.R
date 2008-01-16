@@ -18,7 +18,7 @@
 # }
 #
 # \section{Fields and Methods}{
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -38,7 +38,10 @@ setConstructorS3("PrinttipGroups", function(layout=NULL, groups=NULL) {
   )
 })
 
-setMethodS3("as.character", "PrinttipGroups", function(this) {
+setMethodS3("as.character", "PrinttipGroups", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- NextMethod("as.character");
   idx <- getSpots(this);
   first <- unlist(lapply(idx, FUN=function(x) x[1]));

@@ -3,6 +3,8 @@
 % 
 %  PrintdipGroups.R
 % 
+% on Tue Jan 15 18:34:46 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -55,11 +57,12 @@ extends \emph{\link[aroma]{LayoutGroups}}\cr
 }
 
 
-\bold{Methods inherited from LayoutGroups}:\cr
+ \bold{Methods inherited from LayoutGroups}:\cr
 apply, as.character, getGroupValues, getLayout, getNames, getSpots, getSpotValues, nbrOfGroups, seq, setLayout
 
-\bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clone, detach, environment, equals, extend, finalize, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
 
 }
 

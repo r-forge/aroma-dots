@@ -15,7 +15,7 @@
 #    \tab \code{layout} \tab The layout structure of the microarray slide(s). \cr
 #  }
 #
-#  @allmethods
+#  @allmethods "public"
 # }
 #
 # @author
@@ -49,7 +49,10 @@ setConstructorS3("MicroarrayData", function(layout=NULL, extras=list()) {
 ############################################################################
 
 
-setMethodS3("as.character", "MicroarrayData", function(this) {
+setMethodS3("as.character", "MicroarrayData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   if (isAbstract(Class$forName(class(this)[1])))
     throw("Class is abstract: ", class(this)[1]);
 
@@ -817,7 +820,7 @@ setMethodS3("setExcludedSpots", "MicroarrayData", function(this, excludes, slide
   slides <- validateArgumentSlides(this, slides=slides);
   
   mat <- matrix(FALSE, nrow=nbrOfSpots(this), ncol=nbrOfSlides(this));
-  mat[exludes, slides] <- TRUE;
+  mat[excludes, slides] <- TRUE;
 
   if (!hasExcludedSpots(this) || !add) {
     exclude <- mat;
@@ -825,7 +828,7 @@ setMethodS3("setExcludedSpots", "MicroarrayData", function(this, excludes, slide
     exclude <- unwhich(this$.exclude, dim=dim(mat));
     exclude <- exclude & mat;
   }
-  this$.exclude <- which(exlude);
+  this$.exclude <- which(exclude);
   invisible(this);
 }, trial=TRUE)
 
@@ -1199,7 +1202,7 @@ setMethodS3("setFlag", "MicroarrayData", function(this, flag, include=NULL, excl
   include <- getInclude(this, include=include, exclude=exclude, include.op=include.op, exclude.op=exclude.op);
 
   if (!is.null(slide)) {
-    if (is.logical(slide)) slide <- witch(slide);
+    if (is.logical(slide)) slide <- which(slide);
     include[,-slide] <- FALSE;
   }
 
@@ -1274,7 +1277,7 @@ setMethodS3("addFlag", "MicroarrayData", function(this, flag, include=NULL, excl
   include <- getInclude(this, include=include, exclude=exclude, include.op=include.op, exclude.op=exclude.op);
 
   if (!is.null(slide)) {
-    if (is.logical(slide)) slide <- witch(slide);
+    if (is.logical(slide)) slide <- which(slide);
     include[,-slide] <- FALSE;
   }
 
@@ -1347,7 +1350,6 @@ setMethodS3("clearFlag", "MicroarrayData", function(this, flag) {
 # }
 #*/#########################################################################
 setMethodS3("listFlags", "MicroarrayData", function(this, regexpr=NULL) {
-  this <- getObject(this);
   flags <- this$.flags;
   names <- names(flags);
   if (!is.null(regexpr)) {
@@ -2455,6 +2457,9 @@ setMethodS3("setCache", "MicroarrayData", function(this, name, value) {
 
 ############################################################################
 # HISTORY:
+# 2008-01-15
+# o BUG FIX: Removed an old 'this <- getObject(this)' call in listFlags().
+# o BUG FIX: setFlag() of MicroarrayData called witch() not which() :).
 # 2006-05-22
 # o seq() now uses seq(length=...) internally, to deal with zero lengths.
 # 2006-02-08

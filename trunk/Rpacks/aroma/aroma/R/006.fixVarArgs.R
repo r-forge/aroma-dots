@@ -4,7 +4,7 @@
 append <- appendVarArgs(append)
 as.data.frame <- appendVarArgs(as.data.frame)
 as.matrix <- appendVarArgs(as.matrix)
-log <- appendVarArgs(log)
+#log <- appendVarArgs(log)
 mad <- appendVarArgs(mad)
 median <- appendVarArgs(median)
 power <- appendVarArgs(power)

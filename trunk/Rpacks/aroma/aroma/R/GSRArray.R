@@ -63,11 +63,17 @@ setMethodS3("asGSRArray", "SSMatrix", function(object) {
 })
 
 
-setMethodS3("as.character", "GSRArray", function(this) {
+setMethodS3("as.character", "GSRArray", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   s <- paste(data.class(this), ": ", sep="");
 })
 
-setMethodS3("dim<-", "GSRArray", function(this, value) {
+setMethodS3("dim<-", "GSRArray", function(x, value) {
+  # To please R CMD check
+  this <- x;
+
   # Asserts:
   if (length(value) != 3)
     throw("A GSRMatrix must have three and only three dimensions.");
