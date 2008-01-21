@@ -31,20 +31,26 @@ setMethodS3("findByChipType", "UflSnpInformation", function(static, ...) {
 }, static=TRUE, protected=TRUE)
 
 
-setMethodS3("fromChipType", "UflSnpInformation", function(static, ..., verbose=FALSE) {
+setMethodS3("fromChipType", "UflSnpInformation", function(static, chipType, tags=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
-  ufl <- AromaUflFile$fromChipType(...);
+
+  ufl <- AromaUflFile$fromChipType(chipType, tags=tags, ...);
   pathname <- getPathname(ufl);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
   verbose && cat(verbose, "Pathname: ", pathname);
+  verbose && cat(verbose, "Arguments:");
+  verbose && str(verbose, list(...));
 
-  res <- newInstance(static, filename=pathname, path=NULL, .ufl=ufl, .verify=FALSE);
+  res <- newInstance(static, filename=pathname, path=NULL, .ufl=ufl, 
+                                                  .verify=FALSE, ...);
   verbose && print(verbose, res);
-  verbose && exit(verbose);
-
   verbose && exit(verbose);
 
   res;
@@ -214,6 +220,8 @@ setMethodS3("getFragmentStops", "UflSnpInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-01-20
+# o Made argument 'chipType' and 'tags' explicit for fromChipType().
 # 2007-12-10
 # o Added getChipType() to UflSnpInformation.
 # 2007-11-19

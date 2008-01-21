@@ -1,7 +1,15 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.4 [2008-01-13xx]
+Version: 0.8.4 [2008-01-20xx]
+o UPDATE: Now AromaUnitTabularBinaryFile:s stores the chip type in
+  the file footer.  This allows us to identify the correct file
+  gives a full chip type.  Because of this update, old UFL and UGP
+  files become incompatible with the class and new version have to
+  be downloaded.
+o ROBUSTNESS: Now fromChipType() of AromaUnitTabularBinaryFile validates
+  that the number of units in the located file match the number of units
+  in the CDF located using the same search parameters.
 o ROBUSTNESS/BUG FIX: It was possible to set a non-compatible 
   CDF when using static fromFiles() of AffymetrixCelSet.
 o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
@@ -11,7 +19,8 @@ o Updated importFromDChip() for CnChipEffectSet so that it imports data
   standard-error columns are named '*SE' whereas before it were '*SD'.
   In either case, standard errors were exported (confirmed by author).
 o BETA: Added static importFromApt() for CnChipEffectSet.
-o BETA: Added class AffymetrixAptSummaryFile.
+o BETA: Added classes AffymetrixAptSummaryFile and AffymetrixCnChpFile.
+o BETA: Added class AromaUfcFile.
 
 
 Version: 0.8.3 [2007-12-18]

@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\emph{\code{ChipEffectTransform}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectGroupMerge}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{GcContentNormalization}, \link[aroma.affymetrix]{SnpChipEffectGroupMerge}\cr
+\link[aroma.affymetrix]{ChipEffectGroupMerge}, \link[aroma.affymetrix]{FragmentEquivalentClassNormalization}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{GcContentNormalization}, \link[aroma.affymetrix]{SnpChipEffectGroupMerge}\cr
 
 public abstract static class \bold{ChipEffectTransform}\cr
 extends \emph{\link[aroma.affymetrix]{Transform}}\cr

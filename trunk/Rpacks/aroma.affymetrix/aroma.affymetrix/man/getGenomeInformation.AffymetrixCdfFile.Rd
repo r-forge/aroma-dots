@@ -19,7 +19,7 @@
  Gets genome information for this chip type.
 }
 
-\usage{\method{getGenomeInformation}{AffymetrixCdfFile}(this, types=c("UGP", "dChip"), ..., force=FALSE)}
+\usage{\method{getGenomeInformation}{AffymetrixCdfFile}(this, types=c("UGP", "dChip"), ..., force=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{types}{A \code{\link[base]{character}} \code{\link[base]{vector}} specifying what type of genome

@@ -1214,34 +1214,59 @@ setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c("UGP", "dChip"), ..., force=FALSE) {
+setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c("UGP", "dChip"), ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'types':
   types <- Arguments$getCharacters(types);
   types <- tolower(types);
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Locating a GenomeInformation file");
+
   chipType <- getChipType(this, fullname=FALSE);
+  tags <- getTags(this);
+  tags <- setdiff(tags, "monocell");
 
   gi <- this$.gi;
   if (force || is.null(gi)) {
     gi <- NULL;
     for (type in types) {
+      verbose && enter(verbose, "Searching for type '", type, "'");
+
       tryCatch({
         if (type == "ugp") {
-          gi <- UgpGenomeInformation$fromChipType(chipType);
+          gi <- UgpGenomeInformation$fromChipType(chipType, tags=tags, 
+                                            verbose=less(verbose, 5));
           break;
         } else if (type == "dchip") {
-          gi <- DChipGenomeInformation$fromChipType(chipType);
+          gi <- DChipGenomeInformation$fromChipType(chipType, 
+                                            verbose=less(verbose, 5));
+
           break;
         }
       }, error = function(ex) {})
-    }
+
+      verbose && exit(verbose);
+    } # for (type ...)
   
     if (is.null(gi)) {
-      throw("Failed to retrieve genome information for this chip type: ", chipType);
+      throw("Failed to retrieve genome information for this chip type: ",
+                                                               chipType);
     }
 
     setGenomeInformation(this, gi);
   }
+
+  verbose && exit(verbose);
 
   gi;
 })
@@ -1271,37 +1296,59 @@ setMethodS3("setGenomeInformation", "AffymetrixCdfFile", function(this, gi=NULL,
 })
 
 
-setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UFL", "dChip"), ..., force=FALSE) {
+setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UFL", "dChip"), ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'types':
   types <- Arguments$getCharacters(types);
   types <- tolower(types);
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
-  # Remove any suffices to get the "main" chip type.
+  
+  verbose && enter(verbose, "Locating a SnpInformation file");
+  
   chipType <- getChipType(this, fullname=FALSE);
+  tags <- getTags(this);
+  tags <- setdiff(tags, "monocell");
 
   si <- this$.si;
   if (force || is.null(si)) {
     gi <- NULL;
     for (type in types) {
+      verbose && enter(verbose, "Searching for type '", type, "'");
+
       tryCatch({
         if (type == "ufl") {
-          si <- UflSnpInformation$fromChipType(chipType);
+          si <- UflSnpInformation$fromChipType(chipType, tags=tags,
+                                         verbose=less(verbose, 5));
           break;
         } else if (type == "dchip") {
-          si <- DChipSnpInformation$fromChipType(chipType);
+          si <- DChipSnpInformation$fromChipType(chipType, 
+                                         verbose=less(verbose, 5));
           break;
         }
       }, error = function(ex) {})
-    }
+
+      verbose && exit(verbose);
+    } # for (type ...)
   
     if (is.null(si)) {
-      throw("Failed to retrieve SNP information for this chip type: ", chipType);
+      throw("Failed to retrieve SNP information for this chip type: ",
+                                                            chipType);
     }
 
     setSnpInformation(this, si);
   }
 
+  verbose && exit(verbose);
+  
   si;
 }, private=TRUE)
 
@@ -1392,6 +1439,10 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-01-20
+# o Now getSnpInformation() searches for UFL files with tags.
+# 2008-01-19
+# o Now getGenomeInformation() searches for UGP files with tags.
 # 2007-12-09
 # o Now get- and set- Genome/SnpInformation() asserts that the annotation
 #   file objects are compatible with the CDF.  At least for UGP & UFL files.
