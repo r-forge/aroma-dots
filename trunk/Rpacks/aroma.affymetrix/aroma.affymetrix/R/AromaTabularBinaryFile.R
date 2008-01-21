@@ -18,6 +18,11 @@ setMethodS3("as.character", "AromaTabularBinaryFile", function(x, ...) {
                          paste(getColClasses(this), collapse=", ")));
   s <- c(s, sprintf("Number of bytes per column: %s", 
                          paste(getBytesPerColumn(this), collapse=", ")));
+  footer <- readFooter(this);
+  footer <- unlist(footer);
+  footer <- paste(names(footer), footer, sep="=");
+  footer <- paste(footer, collapse="; ");
+  s <- c(s, sprintf("Footer: %s", footer));
   class(s) <- "GenericSummary";
   s;
 })
@@ -169,7 +174,7 @@ setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ...
 }, protected=TRUE)
 
 
-setMethodS3("readFooter", "AromaTabularBinaryFile", function(this, con=NULL, .hdr=NULL, ...) {
+setMethodS3("readRawFooter", "AromaTabularBinaryFile", function(this, con=NULL, ...) {
   readInts <- function(con, n=1, ...) {
     readBin(con=con, what=integer(), size=4, n=n, signed=FALSE, endian="little");
   }
@@ -189,9 +194,10 @@ setMethodS3("readFooter", "AromaTabularBinaryFile", function(this, con=NULL, .hd
   }
 
   hdr <- readHeader(this, con=con, ...);
+  footerOffset <- hdr$dataHeader$footerOffset;
 
   # Move to the footer
-  seek(con=con, where=hdr$footerOffset, origin="start", rw="r");
+  seek(con=con, where=footerOffset, origin="start", rw="r");
   nbrOfBytes <- readInts(con=con, size=4);
 
   raw <- readBin(con=con, what="raw", n=nbrOfBytes);
@@ -203,6 +209,127 @@ setMethodS3("readFooter", "AromaTabularBinaryFile", function(this, con=NULL, .hd
 
   res;
 })
+
+
+
+setMethodS3("readFooter", "AromaTabularBinaryFile", function(this, ...) {
+  raw <- readRawFooter(this)$raw;
+  xml <- rawToChar(raw);
+  xml <- gsub(".*<footer>(.*)</footer>.*", "\\1", xml);
+  xml <- trim(xml);
+  xml <- xml[nchar(xml) > 0];
+  if (length(xml) > 0) {
+    pattern <- "<([a-Z].*)>(.*)</([a-Z].*)>";
+    tags1 <- gsub(pattern, "\\1", xml);
+    tags2 <- gsub(pattern, "\\3", xml);
+    if (!identical(tags1, tags2)) {
+      throw("Parsing error while parsing attributes: ", xml);
+    }
+    values <- gsub(pattern, "\\2", xml);
+    values <- trim(values);
+  
+    attrs <- as.list(values);
+    names(attrs) <- tags1;
+  } else {
+    attrs <- list();
+  }
+
+  attrs;
+})
+
+
+setMethodS3("writeFooter", "AromaTabularBinaryFile", function(this, attrs, ...) {
+  # Argument 'attrs':
+  if (!is.list(attrs)) {
+    throw("Argument 'attrs' is not a list: ", mode(attrs));
+  }
+
+  # Generate XML version of attributes
+  values <- sapply(attrs, FUN=function(attr) {
+    as.character(attr);
+  })
+  xml <- sprintf("<%s>%s</%s>", names(attrs), values, names(attrs));
+  xml <- paste(xml, collapse="\n");
+  xml <- sprintf("<footer>\n%s</footer>\n", xml);
+
+  # Generate raw byte stream of attributes
+  raw <- charToRaw(xml);
+  writeRawFooter(this, raw);
+})
+
+
+setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Locale functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  writeInts <- function(con, values, ...) {
+    values <- as.integer(values);
+    writeBin(con=con, values, size=4, endian="little");
+  }
+
+  readInts <- function(con, n=1, ...) {
+    readBin(con=con, what=integer(), size=4, n=n, signed=FALSE, endian="little");
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Writing footer");
+
+  # Open file?
+  if (is.null(con)) {
+    pathname <- getPathname(this);
+    con <- file(pathname, open="r+b");
+    verbose && cat(verbose, "Opened file ('r+b') to be close automatically");
+    verbose && cat(verbose, "Pathname: ", pathname);
+    on.exit(close(con));
+  }
+
+
+  verbose && enter(verbose, "Locating footer");
+  hdr <- readHeader(this, con=con, ...);
+  footerOffset <- hdr$dataHeader$footerOffset;
+  verbose && cat(verbose, "File position: ", footerOffset);
+
+  # Read current footer
+  seek(con=con, where=footerOffset, origin="start", rw="r");
+  nbrOfBytes <- readInts(con=con, size=4);
+  verbose && cat(verbose, "Current length of footer: ",  nbrOfBytes);
+  verbose && exit(verbose);
+
+
+  verbose && enter(verbose, "Modifying footer");
+  # Move to the footer
+  seek(con=con, where=footerOffset, origin="start", rw="w");
+
+  # Write length of footer
+  size <- length(raw);
+  writeInts(con=con, size);
+  writeBin(con=con, raw);
+  verbose && enter(verbose, "New length: ", size);
+
+  # Erase the rest of the footer
+  rest <- nbrOfBytes - size;
+  if (rest > 0) {
+    verbose && enter(verbose, "Clearing reminder of footer");
+    verbose && cat(verbose, "Number of bytes: ", rest);
+    writeBin(con=con, raw(rest));
+    verbose && exit(verbose);
+  }
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+})
+
 
 
 setMethodS3("readData", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, ..., verbose=FALSE) {
@@ -906,6 +1033,11 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-01-19
+# o Now writeFooter() writes a named list to the binary file footer as a
+#   XML string.  readFooter() reads its back and returns a named list.
+# o Added writeRawFooter().
+# o BUG FIX: readRawFooter() did not locate the footer correctly.
 # 2007-09-14
 # o Renamed static method create() to allocate().
 # 2007-09-13

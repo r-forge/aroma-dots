@@ -24,6 +24,7 @@
 \arguments{
   \item{cdf}{An \code{\link{AffymetrixCdfFile}} object.}
   \item{...}{Not used.}
+  \item{.checkArgs}{(Internal) If \code{\link[base:logical]{FALSE}}, arguments are not validated.}
 }
 
 \value{

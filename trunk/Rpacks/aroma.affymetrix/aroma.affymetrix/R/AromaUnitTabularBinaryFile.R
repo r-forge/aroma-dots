@@ -5,6 +5,7 @@ setConstructorS3("AromaUnitTabularBinaryFile", function(...) {
 })
 
 
+
 setMethodS3("clearCache", "AromaUnitTabularBinaryFile", function(this, ...) {
   # Clear all cached values.
   for (ff in c(".cdf")) {
@@ -23,23 +24,37 @@ setMethodS3("nbrOfUnits", "AromaUnitTabularBinaryFile", function(this, ...) {
 })
 
 
-setMethodS3("getChipType", "AromaUnitTabularBinaryFile", function(this, fullname=TRUE, ...) {
-  if (fullname) {
-    # Currently these files do not contain fullname chiptype information.
-    # Instead we have to search for a match CDF and use its chip type.
-    # Note, the CDF returned will depend of which CDF exists in the search
-    # path, if at all.  AD HOC! /HB 2007-12-10
-    cdf <- getCdf(this, ...);
-    chipType <- getChipType(cdf, fullname=fullname);
+setMethodS3("getChipType", "AromaUnitTabularBinaryFile", function(this, fullname=TRUE, .old=FALSE, ...) {
+  footer <- readFooter(this);
+  chipType <- footer$chipType;
+
+  if (is.null(chipType) && !.old) {
+    throw("File format error: This ", class(this)[1], " file does not contain information on chip type in the file footer.  This is because the file is of an older file format an is no longer supported.  Please update to a more recent version: ", getPathname(this));
+  }
+
+  if (.old) {
+    # Keep backward compatible for a while. /HB 2008-01-19
+    if (fullname) {
+      # Currently these files do not contain fullname chiptype information.
+      # Instead we have to search for a match CDF and use its chip type.
+      # Note, the CDF returned will depend of which CDF exists in the search
+      # path, if at all.  AD HOC! /HB 2007-12-10
+      cdf <- getCdf(this, ...);
+      chipType <- getChipType(cdf, fullname=fullname);
+    } else {
+      chipType <- getName(this, ...);
+    }
   } else {
-    chipType <- getName(this, ...);
+    if (!fullname) {
+      chipType <- gsub(",.*", "", chipType);
+    }
   }
 
   chipType;
 });
 
 
-setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FALSE, .old=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -52,42 +67,35 @@ setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FA
 
   cdf <- this$.cdf;
   if (force || is.null(cdf)) {
-    # Generate all possible fullname 'chipTypes' and search for the existance
-    # of a CDF with the longest name *and* that have the same number of units.
-    # This is AD HOC! We should really store the full chiptype of the
-    # corresponding CDF in the internal file header. /HB 2007-12-10
-    verbose && enter(verbose, "Searching for a match CDF");
-    verbose && cat(verbose, "Filename: ", getFilename(this));
-    name <- getName(this, ...);
-    tags <- getTags(this, collapse=NULL, ...);
-    cdf <- NULL;
-    # Number of units the matching CDF must have.
-    nbrOfUnits <- nbrOfUnits(this);
-    for (kk in rev(c(0,seq(along=tags)))) {
-      cdfTags <- tags[seq(length=kk)];
-      fullname <- paste(c(name, cdfTags), collapse=",");
-      verbose && printf(verbose, "Trying '%s'...", fullname);
-      tryCatch({
-        cdf <- AffymetrixCdfFile$fromChipType(name, tags=cdfTags);
-        # Does it have the correct number of units?
-        if (nbrOfUnits(cdf) != nbrOfUnits)
-          cdf <- NULL;
-      }, error = function(ex) {})
+    if (.old) {
+      # Generate all possible fullname 'chipTypes' and search for the existance
+      # of a CDF with the longest name *and* that have the same number of units.
+      # This is AD HOC! We should really store the full chiptype of the
+      # corresponding CDF in the internal file header. /HB 2007-12-10
   
-      # Found a CDF?
-      if (!is.null(cdf)) {
-        verbose && writeRaw(verbose, "found.\n");
-        break;
+      verbose && enter(verbose, "Searching for a match CDF");
+  
+      verbose && cat(verbose, "Filename: ", getFilename(this));
+      name <- getName(this, ...);
+      tags <- getTags(this, collapse=NULL, ...); 
+  
+      validator <- function(cdf, ...) {
+        (nbrOfUnits(cdf) == nbrOfUnits(this));
       }
-      verbose && writeRaw(verbose, "no match.\n");
-    }
-    verbose && exit(verbose);
+      pathname <- findByCdf2(chipType=name, tags=tags, validator=validator, 
+                                                    verbose=less(verbose, 1));
+      if (is.null(pathname)) {
+        throw("Failed to locate a CDF for ", class(this)[1], 
+              " that have ", nbrOfUnits, " units: ", getFullName(this));
+      }
   
-    if (is.null(cdf)) {
-      throw("Failed to locate a CDF for ", class(this)[1], 
-            " that have ", nbrOfUnits, " units: ", getFullName(this));
+      cdf <- AffymetrixCdfFile$fromFile(pathname);
+    
+      verbose && exit(verbose);
+    } else {
+      cdf <- AffymetrixCdfFile$fromChipType(getChipType(this));
     }
-  
+
     this$.cdf <- cdf;
   }
 
@@ -95,15 +103,93 @@ setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FA
 })
 
 
-setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, ...) {
-  pathname <- findByChipType(static, chipType=chipType, tags=tags, ...);
-  if (is.null(pathname)) {
-    throw("Could not locate file for this chip type: ", 
+
+setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, validate=TRUE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'chipType':
+  chipType <- Arguments$getCharacter(chipType);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+  pathnames <- findByChipType(static, chipType=chipType, tags=tags, firstOnly=FALSE, ...);
+  if (is.null(pathnames)) {
+    throw("Could not locate a file for this chip type: ", 
                                    paste(c(chipType, tags), collapse=","));
   }
 
-  # Create object
-  newInstance(static, pathname);
+  verbose && cat(verbose, "Number of tabular binary files located: ", length(pathnames));
+  verbose && print(verbose, pathnames);
+
+  # Validate?
+  if (validate) {
+    verbose && cat(verbose, "Validation against CDF requested");
+    verbose && enter(verbose, "Locating all matching CDFs");
+
+    # Locate corresponding CDFs
+    fullname <- paste(c(chipType, tags), collapse=",");
+    parts <- unlist(strsplit(fullname, split=",", fixed=TRUE));
+    chipType <- parts[1];
+    tags <- parts[-1];
+    cdfPathnames <- findByCdf2(chipType, tags=tags, firstOnly=FALSE, 
+                                                 verbose=less(verbose, 1));
+    queryStr <- paste(c(chipType, tags), collapse=", ");
+    if (is.null(cdfPathnames)) {
+      throw("Cannot validate against CDF.  No CDF located: ", queryStr);
+    }
+
+    cdfs <- lapply(cdfPathnames, FUN=function(pathname) {
+      AffymetrixCdfFile$fromFile(pathname, verbose=less(verbose, 5));
+    });
+
+    verbose && cat(verbose, "Number of CDFs found: ", length(cdfs));
+
+    verbose && exit(verbose);
+  }
+
+  verbose && enter(verbose, "Scanning for a valid file");
+
+  for (kk in seq(along=pathnames)) {
+    pathname <- pathnames[kk];
+    verbose && enter(verbose, "File #", kk, " (", pathname, ")");
+
+    # Create object
+    res <- newInstance(static, pathname);
+
+    # Validate?
+    if (validate) {
+      for (ll in seq(along=cdfs)) {
+        cdf <- cdfs[[ll]];
+        if (nbrOfUnits(res) == nbrOfUnits(cdf)) {
+          verbose && cat(verbose, "Found a tabular binary file that is compatible with matching CDF:");
+          verbose && cat(verbose, "Tabular binary file: ", getPathname(res));
+          verbose && cat(verbose, "CDF: ", getPathname(cdf));
+          break;
+        }
+        res <- NULL;
+      }
+    }
+
+    if (!is.null(res)) {
+      verbose && cat(verbose);
+    }
+
+    verbose && exit(verbose);
+  }
+
+  if (is.null(res)) {
+    throw("Failed to located a (valid) tabular binary file: ", queryStr);
+  }
+
+  verbose && exit(verbose);
+
+  res;
 }, static=TRUE)
 
 
@@ -115,8 +201,11 @@ setMethodS3("findByChipType", "AromaUnitTabularBinaryFile", function(static, chi
   # Get fullname, name, and tags
   fullname <- paste(c(chipType, tags), collapse=",");
   parts <- unlist(strsplit(fullname, split=","));
+  # Strip 'monocell' parts
+  parts <- parts[parts != "monocell"];
   chipType <- parts[1];
   tags <- parts[-1];
+  fullname <- paste(c(chipType, tags), collapse=",");
 
   ext <- getFilenameExtension(static);
   ext <- paste(c(tolower(ext), toupper(ext)), collapse="|");
@@ -125,6 +214,8 @@ setMethodS3("findByChipType", "AromaUnitTabularBinaryFile", function(static, chi
   pattern <- sprintf("^%s.*[.]%s$", fullname, ext);
   args <- list(chipType=chipType, ...);
   args$pattern <- pattern;  # Override argument 'pattern'?
+#  args$firstOnly <- FALSE;
+#  str(args);
   pathname <- do.call("findAnnotationDataByChipType", args=args);
 
   # If not found, look for Windows shortcuts
@@ -154,6 +245,7 @@ setMethodS3("indexOfUnits", "AromaUnitTabularBinaryFile", function(this, names, 
 
 
 
+
 setMethodS3("allocateFromCdf", "AromaUnitTabularBinaryFile", function(static, cdf, path=getPath(cdf), tags=NULL, ...) {
   # Argument 'cdf':
   if (!inherits(cdf, "AffymetrixCdfFile")) {
@@ -162,12 +254,22 @@ setMethodS3("allocateFromCdf", "AromaUnitTabularBinaryFile", function(static, cd
 
   # Generate filename: <chipType>(,tags)*.<ext>
   chipType <- getChipType(cdf);
+  # Exclude 'monocell' tags
+  chipType <- gsub(",monocell", "", chipType);
+
   fullname <- paste(c(chipType, tags), collapse=",");
   ext <- getFilenameExtension(static);
   filename <- sprintf("%s.%s", fullname, ext);
 
   # Create tabular binary file
-  allocate(static, filename=filename, path=path, nbrOfRows=nbrOfUnits(cdf), ...);
+  res <- allocate(static, filename=filename, path=path, nbrOfRows=nbrOfUnits(cdf), ...);
+
+
+  # Write attributes to footer
+  attrs <- list(chipType=chipType);
+  writeFooter(res, attrs);
+
+  res;
 }, static=TRUE)
 
 
@@ -217,6 +319,11 @@ setMethodS3("importFromGenomeInformation", "AromaUnitTabularBinaryFile", abstrac
 
 ############################################################################
 # HISTORY:
+# 2008-01-19
+# o Now AromaUnitTabularBinaryFile gets the chip type from the file footer.
+# o ROBUSTNESS: Now fromChipType() of AromaUnitTabularBinaryFile validates
+#   that the number of units in the located file match the number of units
+#   in the CDF located using the same search parameters.
 # 2007-12-10
 # o Currently a AromaUnitTabularBinaryFile (e.g. AromaUgpFile) does not
 #   contain information about the "fullname" chip type, but only the basic

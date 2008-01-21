@@ -658,3 +658,48 @@ getAsteriskTags.FragmentLengthNormalization
   getChipType.UgpGenomeInformation
   patch patch.AromaAffymetrix update.AromaAffymetrix
   summaryOfUnits summaryOfUnits.AromaUflFile
+  AffymetrixAptSummaryFile AffymetrixCnChpFile
+  allocateFromCdf.AromaUfcFile AromaUfcFile
+  as.character.AffymetrixCnChpFile calculateAverages
+  calculateAverages.FragmentEquivalentClassNormalization
+  clearCache.AffymetrixCnChpFile
+  clearCache.FragmentEquivalentClassNormalization
+  clone.AffymetrixCnChpFile colnames.AromaUfcFile findByCdf2
+  findByCdf2.default fromFile.AffymetrixCnChpFile getAromaUfcFile
+  getAromaUfcFile.FragmentEquivalentClassNormalization getArrayNames
+  getArrayNames.AffymetrixAptSummaryFile
+  getAsteriskTags.FragmentEquivalentClassNormalization
+  getCdf.AffymetrixCnChpFile
+  getCdf.FragmentEquivalentClassNormalization
+  getChipType.AffymetrixAptSummaryFile getChipType.AffymetrixCnChpFile
+  getData.AffymetrixCnChpFile getExclusiveUnitSubsets
+  getExclusiveUnitSubsets.FragmentEquivalentClassNormalization
+  getFileFormat.AffymetrixCnChpFile getFilenameExtension.AromaUfcFile
+  getHeader.AffymetrixCnChpFile getOrderedFragmentPairMap
+  getOrderedFragmentPairMap.AromaUfcFile getOrderedFragmentPairs
+  getOrderedFragmentPairs.AromaUfcFile
+  getOutputDataSet.FragmentEquivalentClassNormalization
+  getParameter.AffymetrixAptSummaryFile
+  getParameters.FragmentEquivalentClassNormalization getProbesetIds
+  getProbesetIds.AffymetrixAptSummaryFile getQuantificationScale
+  getQuantificationScale.AffymetrixAptSummaryFile getRawData
+  getRawData.AffymetrixCnChpFile
+  getReadArguments.AffymetrixAptSummaryFile
+  getSubsetToFit.FragmentEquivalentClassNormalization getTargetAverages
+  getTargetAverages.FragmentEquivalentClassNormalization getTimeStamp
+  getTimeStamp.AffymetrixAptSummaryFile
+  getTimestamp.AffymetrixCnChpFile getUnitReadMap
+  getUnitReadMap.AffymetrixCnChpFile hasUnitReadMap
+  hasUnitReadMap.AffymetrixCnChpFile
+  importFromAffymetrixTabularFile.AromaUfcFile importFromApt
+  nbrOfArrays.AffymetrixAptSummaryFile nbrOfEnzymes.AromaUfcFile
+  normalizeOneArrayVector
+  normalizeOneArrayVector.FragmentEquivalentClassNormalization
+  readArrays readArrays.AffymetrixAptSummaryFile readData.AromaUfcFile
+  readHeader.AffymetrixAptSummaryFile readProbesetIds
+  readProbesetIds.AffymetrixAptSummaryFile readRawFooter
+  readRawFooter.AromaTabularBinaryFile setCdf.AffymetrixCnChpFile
+  setUnitReadMap setUnitReadMap.AffymetrixCnChpFile
+  translateColumnNames.AffymetrixAptSummaryFile writeFooter
+  writeFooter.AromaTabularBinaryFile writeRawFooter
+  writeRawFooter.AromaTabularBinaryFile

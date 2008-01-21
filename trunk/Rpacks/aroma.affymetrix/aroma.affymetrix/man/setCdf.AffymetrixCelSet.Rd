@@ -19,11 +19,14 @@
  Sets the CDF structure for this CEL set.  This structures is assigned to all CEL files in the set.
 }
 
-\usage{\method{setCdf}{AffymetrixCelSet}(this, cdf, verbose=FALSE, ...)}
+\usage{\method{setCdf}{AffymetrixCelSet}(this, cdf, verbose=FALSE, ..., .checkArgs=TRUE)}
 
 \arguments{
   \item{cdf}{An \code{\link{AffymetrixCdfFile}} object.}
+  \item{verbose}{If \code{\link[base:logical]{TRUE}}, progress details are printed, otherwise not.
+    May also be a \code{\link[R.utils]{Verbose}} object.}
   \item{...}{Not used.}
+  \item{.checkArgs}{(Internal) If \code{\link[base:logical]{FALSE}}, arguments are not validated.}
 }
 
 \value{

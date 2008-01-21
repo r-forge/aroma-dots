@@ -3,8 +3,6 @@
 % 
 %  downloadPackagePatch.R
 % 
-% on Sun Dec 16 21:02:34 2007.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

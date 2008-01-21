@@ -19,11 +19,12 @@
  Defines a UgpGenomeInformation object by chip type.
 }
 
-\synopsis{fromChipType.UgpGenomeInformation(static, chipType, ..., verbose=FALSE)}
-\usage{UgpGenomeInformation$fromChipType(chipType, ..., verbose=FALSE)}
+\synopsis{fromChipType.UgpGenomeInformation(static, chipType, tags=NULL, ..., verbose=FALSE)}
+\usage{UgpGenomeInformation$fromChipType(chipType, tags=NULL, ..., verbose=FALSE)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}
+ \item{tags}{...}
  \item{version}{An optional \code{\link[base]{character}} string specifying the version
    string, if more than one version is available.}
  \item{...}{Not used.}

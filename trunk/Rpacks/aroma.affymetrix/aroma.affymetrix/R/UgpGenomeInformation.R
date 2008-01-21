@@ -77,6 +77,7 @@ setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
 #
 # \arguments{
 #  \item{chipType}{A @character string.}
+#  \item{tags}{...}
 #  \item{version}{An optional @character string specifying the version
 #    string, if more than one version is available.}
 #  \item{...}{Not used.}
@@ -97,7 +98,7 @@ setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromChipType", "UgpGenomeInformation", function(static, chipType, ..., verbose=FALSE) {
+setMethodS3("fromChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -106,7 +107,7 @@ setMethodS3("fromChipType", "UgpGenomeInformation", function(static, chipType, .
   }
 
 
-  ugp <- AromaUgpFile$fromChipType(chipType, ...);
+  ugp <- AromaUgpFile$fromChipType(chipType, tags=tags, ...);
   pathname <- getPathname(ugp);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
@@ -280,6 +281,9 @@ setMethodS3("getUnitsOnChromosome", "UgpGenomeInformation", function(this, ...) 
 
 ############################################################################
 # HISTORY:
+# 2008-01-19
+# o ROBUSTNESS: Added argument 'tags' to fromChipType() for class
+#   UgpGenomeInformation.
 # 2007-12-10
 # o Added getChipType() to UgpGenomeInformation.
 # 2007-12-09
