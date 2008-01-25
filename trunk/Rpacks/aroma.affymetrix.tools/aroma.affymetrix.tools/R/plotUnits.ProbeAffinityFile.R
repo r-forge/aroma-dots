@@ -1,5 +1,5 @@
-setMethodS3("plotUnits","ProbeAffinityFile",function(this,units,intercept=0,x.pos=NULL,add=T,type=ifelse(add,"l","h"),
-    joinGroups=T,plot.it=T,xlab="Probes",ylab="Probe Affinity",...){
+setMethodS3("plotUnits","ProbeAffinityFile",function(this,units,intercept=0,x.pos=NULL,add=TRUE,type=ifelse(add,"l","h"),
+    joinGroups=TRUE,plot.it=TRUE,xlab="Probes",ylab="Probe Affinity",...){
     #add lines for the effects -- note can't add on top of data, because the chip effects/intercept wrong...
     #takes parameter intercept to fix this if know the offset
     if(length(units)>1) stop("units must be single integer -- only can plot 1 unit") ##could change this...
