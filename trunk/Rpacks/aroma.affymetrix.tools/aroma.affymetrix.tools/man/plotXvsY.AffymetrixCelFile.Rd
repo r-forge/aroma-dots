@@ -6,7 +6,7 @@
     A function to plot scatterplot of two AffymetrixCelFile objects
 }
 \usage{
-plotXvsY.AffymetrixCelFile(this1, this2, indices = NULL, field="intensities", densityPlot = T, loess = TRUE, ...)
+\method{plotXvsY}{AffymetrixCelFile}(this1, this2, indices = NULL, field="intensities", densityPlot = TRUE, loess = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -1,4 +1,4 @@
-setMethodS3("getUnitMergeGroupsFunction","AffymetrixCelSet",function (this,logscale=F,...) 
+setMethodS3("getUnitMergeGroupsFunction","AffymetrixCelSet",function (this,logscale=FALSE,...) 
 {
     mergeFcn<-function(groupList,arrays,fields="intensities"){
         perFieldFunction<-function(field){
@@ -12,7 +12,7 @@ setMethodS3("getUnitMergeGroupsFunction","AffymetrixCelSet",function (this,logsc
             }
             #rownames(x)<-names(fieldList)
             if(logscale) x<-log2(x)
-            return(x[,arrays,drop=F])    
+            return(x[,arrays,drop=FALSE])    
         }
         
         allFieldsList<-lapply(fields,perFieldFunction)

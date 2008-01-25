@@ -5,7 +5,7 @@
 #   use file: HuEx-1_0-st-v2.na23.hg18.probeset.csv
 
 createTranscriptCDF<-function(probesetCdf, csvAnnotFile,type="all",dirLoc=getPath(probesetCdf),tag=type,
-    keepColumns=c(1,7,16,19,39),ncolumns=39,keepType=NULL,columnCompare=NULL,nrowRead=NULL,writeCdf=T)
+    keepColumns=c(1,7,16,19,39),ncolumns=39,keepType=NULL,columnCompare=NULL,nrowRead=NULL,writeCdf=TRUE)
 {
 #if user defined, keepType is the (charcater) value to compare entries of columnCompare for probesets to keep
 #nrowRead allows set only read certain number of lines -- for testing
@@ -15,7 +15,7 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,type="all",dirLoc=getPat
 #tag added to name: <chiptype>,tag.cdf (can contain commas itself)
 #example (a test run for keeping only probesets with 3 or 4 probes):
 #x<-createTranscriptCDF(cdfProbeset, csvAnnotFile, keepType=c("3","4"),columnCompare="probe_count",
-#  dirLoc=getwd(),tag="temp",nrow=500, keepColumns=c(1,6,7,16,19,39),writeCdf=F)
+#  dirLoc=getwd(),tag="temp",nrow=500, keepColumns=c(1,6,7,16,19,39),writeCdf=FALSE)
 
     type<-match.arg(type,c("core","extended","full","main","control","all","cds"))
     npbset<-nbrOfUnits(probesetCdf)
@@ -41,16 +41,16 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,type="all",dirLoc=getPat
     
     #get first value of first 500 lines to find how many to skip -- don't really need because R comments out those rows anyway...
     firstLines<-substr(scan(csvAnnotFile,nmax=500,what="",quote="",sep="\n"),start=1,stop=1) #get first character of each line
-    startRead<-match(F,sapply(firstLines,function(x){x=="#"})) #first time not start with # 
-    header<-unlist(read.table(csvAnnotFile,sep=",",header=F,skip=startRead-1,nrow=1,stringsAsFactors=F,colClasses=colClasses),use.names=F)
+    startRead<-match(FALSE,sapply(firstLines,function(x){x=="#"})) #first time not start with # 
+    header<-unlist(read.table(csvAnnotFile,sep=",",header=FALSE,skip=startRead-1,nrow=1,stringsAsFactors=FALSE,colClasses=colClasses),use.names=FALSE)
     print(header)
     if(! columnCompare %in% header) stop(paste(columnCompare,"is not the name of a column in",csvAnnotFile))
     if(!all(c("probeset_id","transcript_cluster_id") %in% header) ) stop(paste("'csvAnnotFile' must contain headers 'probeset_id' and 'transcript_cluster_id'"))
 
 
     #take out nrow in final version
-    if(!is.null(nrowRead)) pbsetFinalTab<-read.table(csvAnnotFile,sep=",",skip=startRead-1,nrow=nrowRead,header=T,stringsAsFactors=F,colClasses=colClasses,row.names=NULL)
-    else pbsetFinalTab<-read.table(csvAnnotFile,sep=",",skip=startRead-1,header=T,stringsAsFactors=F,colClasses=colClasses,row.names=NULL)
+    if(!is.null(nrowRead)) pbsetFinalTab<-read.table(csvAnnotFile,sep=",",skip=startRead-1,nrow=nrowRead,header=TRUE,stringsAsFactors=FALSE,colClasses=colClasses,row.names=NULL)
+    else pbsetFinalTab<-read.table(csvAnnotFile,sep=",",skip=startRead-1,header=TRUE,stringsAsFactors=FALSE,colClasses=colClasses,row.names=NULL)
     indexTemp<-indexOf(probesetCdf,names=pbsetFinalTab[,"probeset_id"])
     pbsetcount<-nrow(pbsetFinalTab)
     if(pbsetcount > npbset) warning(paste("Annotation has",pbsetcount,"lines (probesets); original cdf only has",npbset))

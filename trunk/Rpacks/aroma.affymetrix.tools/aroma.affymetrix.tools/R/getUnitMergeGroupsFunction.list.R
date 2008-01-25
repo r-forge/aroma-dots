@@ -1,4 +1,4 @@
-setMethodS3("getUnitMergeGroupsFunction","list",function (this,logscale=F,...) 
+setMethodS3("getUnitMergeGroupsFunction","list",function (this,logscale=FALSE,...) 
 {
     mergeFcn<-function(groupList,arrays,fields){
         perFieldFunction<-function(field){
@@ -13,7 +13,7 @@ setMethodS3("getUnitMergeGroupsFunction","list",function (this,logscale=F,...)
             #rownames(x)<-names(fieldList)
             if(logscale) x<-log2(x)
             if(is.null(arrays)) arrays<-1:nCols
-            return(x[,arrays,drop=F])    
+            return(x[,arrays,drop=FALSE])    
         }
         
         allFieldsList<-lapply(fields,perFieldFunction)

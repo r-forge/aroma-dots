@@ -1,7 +1,7 @@
-setMethodS3("plotBoxplot","AffymetrixCelSet",function(this,subset=NULL,arrays=NULL, verbose = FALSE,
-    field="intensities", trans=log2,types="pm",...){
+setMethodS3("plotBoxplot","AffymetrixCelSet",function(this,arrays=NULL, verbose = FALSE,
+    calcArgs=NULL,...){
     nbrOfArrays <- nbrOfArrays(this)
-    
+    #field, trans,types, subset passed with calcArgs
     #if (is.null(col)) {
 #        col <- seq(length = nbrOfArrays)
 #    }
@@ -22,13 +22,14 @@ setMethodS3("plotBoxplot","AffymetrixCelSet",function(this,subset=NULL,arrays=NU
     cdf <- getCdf(this)
     verbose && enter(verbose, "Identifying subset of probes")
     suppressWarnings({
-        subset <- identifyCells(cdf, indices = subset, types = types, ..., verbose = less(verbose))
+        subset <- identifyCells(cdf, indices = subset, types = types, verbose = less(verbose))
     })
     verbose && exit(verbose)
     boxplotStats<-list()
     for (cc in 1:length(arrays)) {
         df <- getFile(this, arrays[cc])
-        boxplotStats[[cc]]<-plotBoxplot(df, subset = subset, plot=F,add = add, field=field, trans=trans,types=types, verbose = less(verbose))
+        boxplotStats[[cc]]<-do.call("plotBoxplot", args=c(list(this=df),list(plot=FALSE),calcArgs))
+#        else boxplotStats[[cc]]<-plotBoxplot(df, plot=FALSE, verbose = less(verbose),...)
     }
     bxpStats <- list()
     elementNames <-    c("stats","n","conf","out","group","names") #parts of the list

@@ -4,7 +4,7 @@ Date: 2007-10-23
 Title: Tools for aroma.affymetrix
 Author: Mark Robinson <mrobinson@wehi.edu.au>
 Maintainer: Mark Robinson <mrobinson@wehi.edu.au>
-Depends: R (>= 2.6.0), aroma.affymetrix (>= 0.7.2)
+Depends: R (>= 2.6.0), aroma.affymetrix (>= 0.7.2), RColorBrewer, geneplotter
 Description: This package provides tools for aroma.affymetrix.
 License: LGPL-2
 URL: http://www.braju.com/R/aroma.affymetrix/

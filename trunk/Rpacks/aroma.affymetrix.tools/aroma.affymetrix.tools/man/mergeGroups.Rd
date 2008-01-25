@@ -9,10 +9,11 @@
   ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-mergeGroups.AffymetrixCelFile(this, units, fields = NULL, force = F, logscale = F, ...)}
-\usage{mergeGroups.AffymetrixCelSet(this, units, arrays = NULL, fields = NULL, force = F, logscale = F, ...)}
-\usage{mergeGroups.ProbeLevelModel(this, units, arrays = NULL, fields = NULL, force = F, logscale = F, ...)}
-\usage{mergeGroups.list(this, arrays = NULL, fields = NULL, logscale = F, ...)}
+\method{mergeGroups}{AffymetrixCelFile}(this, units, fields = NULL, force = FALSE, logscale = FALSE, ...)
+\method{mergeGroups}{AffymetrixCelSet}(this, units, arrays = NULL, fields = NULL, force = FALSE, logscale = FALSE, ...)
+\method{mergeGroups}{ProbeLevelModel}(this, units, arrays = NULL, fields = NULL, force = FALSE, logscale = FALSE, ...)
+\method{mergeGroups}{list}(this, arrays = NULL, fields = NULL, logscale = FALSE, ...)
+}
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{this}{ object}

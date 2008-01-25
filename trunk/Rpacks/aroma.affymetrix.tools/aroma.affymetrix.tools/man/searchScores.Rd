@@ -45,9 +45,10 @@ T/F when applied to the group. Thus the standard cutoff criteria is a function
 where 'func' is the function that returns x, -x or abs(x) depending on the value of 'type'. Note that if the saved 
 scores follow the AffymetrixCelSet list style, as recommended, then the input x to the function will be a list with 
 named elements (e.g. 'intensities' and 'stdevs' for intensities data) 
+
+Currently the function pulls the data exactly as saved, without any logging of the data, even if 
+searching .CEL files
 } 
- \warning{Currently the function pulls the data exactly as saved, without any logging of the data, even if 
-searching .CEL files} 
 
 \value{ Returns a list of the same form as the searched list object but with only those groups and units that 
 contain a score meeting the requirements(see details) } 

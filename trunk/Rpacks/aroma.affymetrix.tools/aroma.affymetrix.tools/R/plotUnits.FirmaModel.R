@@ -1,7 +1,7 @@
 setMethodS3("plotUnits","FirmaModel",function(this,units,arrays=NULL,
     colSchemeProbe=brewer.pal(11,"RdBu"),colSchemeFIRMA=c("white",brewer.pal(9,"YlGnBu")),
     breaksProbe=NULL,breaksFIRMA=NULL,colArrays=NULL,arrayFactor=NULL,arrayNames=NULL,
-    mar=c(2.1,7.1,.5,.2),intersp=2.1,plotResiduals=T,...){
+    mar=c(2.1,7.1,.5,.2),intersp=2.1,plotResiduals=TRUE,...){
 
     require(RColorBrewer)
     if(length(units)>1) stop("units must be single integer -- only can plot 1 unit") ##could change this...
@@ -54,7 +54,7 @@ setMethodS3("plotUnits","FirmaModel",function(this,units,arrays=NULL,
         image(1:sum(nProbesPerExon),y=1:ncol(mat),mat,breaks=breaksProbe,
             col=colSchemeProbe,xaxt="n",yaxt="n",xlab="",ylab="")
         abline(v=c(0,cumsum(nProbesPerExon))+.5,col="grey",lwd=1.5)
-        axis(1,at=c(0,cumsum(nProbesPerExon))+.5,labels=F,col="grey")
+        axis(1,at=c(0,cumsum(nProbesPerExon))+.5,labels=FALSE,col="grey")
         mapply(axis,label=arrayNames,col.axis=colArrays,
             at=1:length(arrays),MoreArgs=list(side=2),las=2)
         if(hlines) abline(h=c(0,cumsum(table(arrayFactor)))+.5,col="grey")
@@ -66,7 +66,7 @@ setMethodS3("plotUnits","FirmaModel",function(this,units,arrays=NULL,
     image(c(0,cumsum(nProbesPerExon))+.5,y=1:ncol(mat),mat,breaks=breaksFIRMA,
         col=colSchemeFIRMA,xaxt="n",yaxt="n",xlab="",ylab="")
     abline(v=c(0,cumsum(nProbesPerExon))+.5,col="grey",lwd=1.5)
-    axis(1,at=c(0,cumsum(nProbesPerExon))+.5,labels=F,col="grey")
+    axis(1,at=c(0,cumsum(nProbesPerExon))+.5,labels=FALSE,col="grey")
     mapply(axis,label=arrayNames,col.axis=colArrays,
         at=1:length(arrayFactor),MoreArgs=list(side=2),las=2)
     if(hlines) abline(h=c(0,cumsum(table(arrayFactor)))+.5,col="grey")

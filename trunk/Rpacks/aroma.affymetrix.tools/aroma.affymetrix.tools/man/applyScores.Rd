@@ -7,11 +7,8 @@
 Apply a function to the group values returned from calculating scores}
 \usage{
 applyScores(filename, path = NULL, FUN = function(x) {x})
-}
-\usage{
-flatScores(filename, path = NULL, FUN = function(x) {
-    x
-}, componentNames = NULL)
+
+flatScores(filename, path = NULL, FUN = function(x) {x}, componentNames = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
