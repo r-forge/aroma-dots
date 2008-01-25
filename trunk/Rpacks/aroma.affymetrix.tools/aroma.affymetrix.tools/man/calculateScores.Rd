@@ -32,49 +32,49 @@ The output from calculateFUN will be the 'unit' object in the returned list.  Th
 
      scoreList
      
-      +- unit #1
+      +- unit 1
       
-      |  +- group #1
+      |  +- group 1
       
-      |  |   +- Score element #1 
+      |  |   +- Score element 1 
       
       |  |   |   +- data
       
-      |  |   +- Score element #2
+      |  |   +- Score element 2
       
       |  |   |   +- data
       
       .  .   .
  
-      |  +-group #2
+      |  +-group 2
       
-      |  |   +- Score element #1 
+      |  |   +- Score element 1 
       
       |  |   |   +- data
       
-      |  |   +- Score element #2
+      |  |   +- Score element 2
       
       |  |   |   +- data
       
       .  .   .
       
-      |  +- group #K
+      |  +- group K
       
-      |      +- Score element #1 
+      |      +- Score element 1 
       
       |      |   +- data
       
-      |      +- Score element #2
+      |      +- Score element 2
       
       |      |   +- data
       
       .      .
       
-      +- unit #2
+      +- unit 2
       
       .
       
-      +- unit #J
+      +- unit J
 
 }
 \value{

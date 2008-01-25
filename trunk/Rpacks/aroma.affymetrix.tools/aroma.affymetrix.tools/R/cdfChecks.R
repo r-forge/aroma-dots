@@ -3,8 +3,8 @@ cdfChecks<-function(cdf){
     check<-1
     
     #check repeated cells:
-    cells <- getCellIndices(cdf, unlist=F, useNames=T) #unit list; each unit element is $groups, then list with indices per group
-    tcells <- table(unlist(cells,use.names=F))
+    cells <- getCellIndices(cdf, unlist=FALSE, useNames=TRUE) #unit list; each unit element is $groups, then list with indices per group
+    tcells <- table(unlist(cells,use.names=FALSE))
     repsCore <- tcells[tcells > 1] 
     if(length(repsCore)>0) {
         cat(paste(check,". Possible Problem:",length(repsCore),"cells assigned to multiple probesets/units\n"))
@@ -17,8 +17,8 @@ cdfChecks<-function(cdf){
     nperUnit<-sapply(allGroups,length) #how many groups per unit
     whichSingle<-which(nperUnit==1)
     whichSingleBlank<-which(sapply(allGroups,function(x){length(x)==1 && x==""}))#singleton and blank...
-    if(length(whichSingleBlank)>0) tgroups<-table(unlist(allGroups[-whichSingleBlank],use.names=F)) #problem if length 0
-    else  tgroups<-table(unlist(allGroups,use.names=F))
+    if(length(whichSingleBlank)>0) tgroups<-table(unlist(allGroups[-whichSingleBlank],use.names=FALSE)) #problem if length 0
+    else  tgroups<-table(unlist(allGroups,use.names=FALSE))
     tgroups[tgroups>1]
     whichSingleNotBlank<-whichSingle[!(whichSingle %in% whichSingleBlank)]
     if(length(tgroups[tgroups>1])>0) {
@@ -37,7 +37,7 @@ cdfChecks<-function(cdf){
     check<-check+1
     
     #check if group name is also a unit name
-    groupUnitOverlap<-unlist(allGroups,use.names=F)[which(unlist(allGroups,use.names=F) %in% allUnits)] #names of groups that also names of units
+    groupUnitOverlap<-unlist(allGroups,use.names=FALSE)[which(unlist(allGroups,use.names=FALSE) %in% allUnits)] #names of groups that also names of units
     whichNotSingleBlank<-which(sapply(allGroups,function(x){length(x)>1 && x==""}))
     if(length(groupUnitOverlap)>0 || length(whichNotSingleBlank)>0) {
         cat(paste(check,". Possible Problem:",length(groupUnitOverlap),"unit names are same as a group name in another unit and",length(whichNotSingleBlank),"units with more than 1 group contain a group with the same name.\n"))

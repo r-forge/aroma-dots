@@ -1,4 +1,4 @@
-setMethodS3("getUnitMergeGroupsFunction","ProbeLevelModel",function (this,logscale=F,...) 
+setMethodS3("getUnitMergeGroupsFunction","ProbeLevelModel",function (this,logscale=FALSE,...) 
 {
     mergeFcn<-function(groupList,arrays,fields="intensities"){
         perFieldFunction<-function(field){
@@ -11,7 +11,7 @@ setMethodS3("getUnitMergeGroupsFunction","ProbeLevelModel",function (this,logsca
                 x<-rbind(x,.subset2(fieldList,i))
             }
             if(logscale) x<-log2(x)
-            return(x[,arrays,drop=F])    
+            return(x[,arrays,drop=FALSE])    
         }
         
         allFieldsList<-lapply(fields,perFieldFunction)

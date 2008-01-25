@@ -6,7 +6,7 @@
     Plots image plot of the firma scores, per exon, as well as the original data and the weights, aligned by probe.
 }
 \usage{
-plotUnits.FirmaModel(this, units, arrays = NULL, colSchemeProbe = brewer.pal(11, "RdBu"), colSchemeFIRMA = c("white", brewer.pal(9, "YlGnBu")), breaksProbe = NULL, breaksFIRMA = NULL, colArrays = NULL, arrayFactor = NULL, arrayNames = NULL, mar = c(2.1, 7.1, 0.5, 0.2), intersp = 2.1, plotResiduals = T, ...)
+\method{plotUnits}{FirmaModel}(this, units, arrays = NULL, colSchemeProbe = brewer.pal(11, "RdBu"), colSchemeFIRMA = c("white", brewer.pal(9, "YlGnBu")), breaksProbe = NULL, breaksFIRMA = NULL, colArrays = NULL, arrayFactor = NULL, arrayNames = NULL, mar = c(2.1, 7.1, 0.5, 0.2), intersp = 2.1, plotResiduals = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

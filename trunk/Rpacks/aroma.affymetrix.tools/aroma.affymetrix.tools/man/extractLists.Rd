@@ -10,10 +10,9 @@ Tools to manipulate lists.
 }
 \usage{
 extractLists(listOfLists, names)
+combineLists(listOfLists)
+mergeDataList(listOfData,join=c("row","column"))
 }
-\usage{
-combineLists(listOfLists)}
-\usage{mergeDataList(listOfData,join=c("row","column"))}
 
 \arguments{
   \item{listOfLists}{a list where each element is a list of the same size}

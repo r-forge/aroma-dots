@@ -26,7 +26,7 @@ calculateScores<-function(cdf,units=NULL, calculateFUN, readFUN,nbrOfArrays, fil
 #    if (force) {
 #        unitsToDo <- units
 #    }
-#    else { #problem...made force=T
+#    else { #problem...made force=TRUE
 #        unitsToDo <- findUnitsTodo(ws, units = units)
 #    }
     verbose && printf(verbose, "Number of units: %d\n", nbrOfUnits)

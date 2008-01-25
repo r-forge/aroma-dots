@@ -1,4 +1,4 @@
-setMethodS3("getUnitMergeGroupsFunction","AffymetrixCelFile",function (this,logscale=F,...) 
+setMethodS3("getUnitMergeGroupsFunction","AffymetrixCelFile",function (this,logscale=FALSE,...) 
 {
     mergeFcn<-function(groupList,arrays,fields="intensities"){
         perFieldFunction<-function(field){

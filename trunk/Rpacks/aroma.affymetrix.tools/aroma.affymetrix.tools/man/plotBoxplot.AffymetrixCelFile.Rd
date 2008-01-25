@@ -6,7 +6,7 @@
   Create boxplot of values stored in AffymetrixCelFile object
 }
 \usage{
-plotBoxplot.AffymetrixCelFile(this, subset = 1/2, verbose = FALSE, field = "intensities", trans = log2, types = "pm", ...)
+\method{plotBoxplot}{AffymetrixCelFile}(this, subset = 1/2, verbose = FALSE, field = "intensities", trans = log2, types = "pm", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

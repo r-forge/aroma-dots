@@ -1,4 +1,4 @@
-setMethodS3("mergeGroups","ProbeLevelModel",function(this,units,arrays=NULL,fields=NULL,force=F,logscale=F,...){
+setMethodS3("mergeGroups","ProbeLevelModel",function(this,units,arrays=NULL,fields=NULL,force=FALSE,logscale=FALSE,...){
     unitFcn<-getUnitMergeGroupsFunction(this,logscale=logscale,...) #a function that takes a groupList, arrays, and fields
     data<-readUnits(this,units=units,force=force)
     if(is.null(arrays)) arrays<-1:nbrOfArrays(getDataSet(this))

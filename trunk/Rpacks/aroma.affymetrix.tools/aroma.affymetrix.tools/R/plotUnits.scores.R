@@ -4,7 +4,7 @@ setMethodS3("plotUnits","scores",function(scoresList,plm,units,arrays=NULL,
     plotType=list("image"),scoreNames=list(NULL),breaksScores=list(NULL),ylim=list(NULL),ablineAdd=list(NULL), colSchemeScores=list(colSchemeProbe),
     colArrays=NULL,arrayFactor=NULL,arrayNames=NULL,lwdArrays=1, ltyArrays=1, pchArrays=19,cex=1, highLightProbes=list(NULL),
     additionalPlots=c("residuals","weights","none"),additionalType=c("image","lines"),colSchemeProbe=brewer.pal(11,"RdBu"),breaksProbe=NULL,
-    mar=c(2.1,7.1,.5,.2),intersp=2.1,logscale=F,equalScale=F,ylimIntensities=NULL,plotHeights=NULL,...){
+    mar=c(2.1,7.1,.5,.2),intersp=2.1,logscale=FALSE,equalScale=FALSE,ylimIntensities=NULL,plotHeights=NULL,...){
     
     require(RColorBrewer)
     additionalPlots<-match.arg(additionalPlots)
@@ -12,8 +12,8 @@ setMethodS3("plotUnits","scores",function(scoresList,plm,units,arrays=NULL,
     if(length(units)>1) stop("units must be single integer -- only can plot 1 unit") ##could change this...
     cdf<-getCdf(plm)
     ds<-getDataSet(plm)
-    if(additionalPlots=="residuals") rsMat<-log2(mergeData(getResidualSet(plm),units=units,fields="eps")[[1]][[1]])
-    if(additionalPlots=="weights") rsMat<-log2(mergeData(getWeightsSet(plm),units=units,fields="eps")[[1]][[1]])
+    if(additionalPlots=="residuals") rsMat<-log2(mergeGroups(getResidualSet(plm),units=units,fields="eps")[[1]][[1]])
+    if(additionalPlots=="weights") rsMat<-log2(mergeGroups(getWeightsSet(plm),units=units,fields="eps")[[1]][[1]])
     nbrOfArrays <- nbrOfArrays(ds)
     nProbesPerExon<-readCdfNbrOfCellsPerUnitGroup(getPathname(cdf),unit=units)[[1]]
     nExons<-length(nProbesPerExon)
@@ -59,7 +59,7 @@ setMethodS3("plotUnits","scores",function(scoresList,plm,units,arrays=NULL,
     else arrayNames<-arrayNames[arrays]
 
     plotSwitch<-function(mat,type,colScheme,breaks=NULL,ylim,highlight){
-        if(is.null(breaks) && type=="image") breaks<-seq(min(mat,na.rm=T),max(mat,na.rm=T),length=length(colScheme)+1)
+        if(is.null(breaks) && type=="image") breaks<-seq(min(mat,na.rm=TRUE),max(mat,na.rm=TRUE),length=length(colScheme)+1)
         if(nrow(mat)==nExons) level<-"exon"
         else{
             if(nrow(mat)==sum(nProbesPerExon))level<-"probe"
@@ -82,12 +82,12 @@ setMethodS3("plotUnits","scores",function(scoresList,plm,units,arrays=NULL,
                 xlim=range(exonBoundaries),xaxt="n",ylim=ylim,lwd=lwdArrays,lty=ltyArrays,cex=cex)
         }
         abline(v=exonBoundaries,col="grey",lwd=1.5)
-        axis(1,at=exonBoundaries,labels=F,col="grey")
+        axis(1,at=exonBoundaries,labels=FALSE,col="grey")
         box()    
     }
 
     
-    if(equalScale){ylim<-rep(list(range(unlist(scoresList),na.rm=T)),length=nscores)}
+    if(equalScale){ylim<-rep(list(range(unlist(scoresList),na.rm=TRUE)),length=nscores)}
 
     nplots<-nscores+1 #the original data
     if(additionalPlots!="none") nplots<-nplots+1 #also the residuals
@@ -101,7 +101,7 @@ setMethodS3("plotUnits","scores",function(scoresList,plm,units,arrays=NULL,
     if(additionalPlots!="none"){
         par(mar=c(intersp,mar[2],mar[3],mar[4]),las=2,mgp=c(3, 0.5, 0))
         mat<-rsMat[,arrays]
-        ylimRes<-range(as.vector(mat),na.rm=T)
+        ylimRes<-range(as.vector(mat),na.rm=TRUE)
         plotSwitch(mat,type=additionalType,colScheme=colSchemeProbe,breaks=breaksProbe,ylim=ylimRes)
     }
 
@@ -110,8 +110,8 @@ setMethodS3("plotUnits","scores",function(scoresList,plm,units,arrays=NULL,
         if(additionalPlots=="none" && i==1) par(mar=c(intersp,mar[2],mar[3],mar[4]),las=2,mgp=c(3, 0.5, 0))
         else par(mar=c(intersp,mar[2],intersp,mar[4]),las=2,mgp=c(3, 0.5, 0))
         mat<-scoresList[[i]]
-        if(ncol(mat)==nbrOfArrays) mat<-mat[,arrays,drop=F]
-        if(is.null(ylim[[i]])) ylim[[i]]<-range(as.vector(mat),na.rm=T)
+        if(ncol(mat)==nbrOfArrays) mat<-mat[,arrays,drop=FALSE]
+        if(is.null(ylim[[i]])) ylim[[i]]<-range(as.vector(mat),na.rm=TRUE)
         plotSwitch(mat,type=plotType[[i]], colScheme=colSchemeScores[[i]],breaks=breaksScores[[i]],ylim=ylim[[i]])
         if(is.null(scoreNames[[i]])) scoreTitle<-names(scoresList)[i]
         else scoreTitle<-scoreNames[[i]]
@@ -119,7 +119,7 @@ setMethodS3("plotUnits","scores",function(scoresList,plm,units,arrays=NULL,
         if(!is.null(ablineAdd[[i]])) abline(h=ablineAdd[[i]],col="grey",lty=2)
     })
     par(mar=c(mar[1],mar[2],intersp,mar[4]),mgp=c(3,1,0))
-    if(!is.null(ylimIntensities))plotDataUnit(plm,unit=units,col=colArrays[order(arrayOrder)],arrays=arrays[order(arrayOrder)],lwd=lwdArrays[order(arrayOrder)],lty=ltyArrays[order(arrayOrder)],pch=pchArrays[order(arrayOrder)],ylim=ylimIntensities,...)
-    else plotDataUnit(plm,unit=units,col=colArrays[order(arrayOrder)],arrays=arrays[order(arrayOrder)],lwd=lwdArrays[order(arrayOrder)],lty=ltyArrays[order(arrayOrder)],pch=pchArrays[order(arrayOrder)],...)
+    if(!is.null(ylimIntensities))plotUnits(plm,unit=units,col=colArrays[order(arrayOrder)],arrays=arrays[order(arrayOrder)],lwd=lwdArrays[order(arrayOrder)],lty=ltyArrays[order(arrayOrder)],pch=pchArrays[order(arrayOrder)],ylim=ylimIntensities,...)
+    else plotUnits(plm,unit=units,col=colArrays[order(arrayOrder)],arrays=arrays[order(arrayOrder)],lwd=lwdArrays[order(arrayOrder)],lty=ltyArrays[order(arrayOrder)],pch=pchArrays[order(arrayOrder)],...)
     invisible(list(breaksProbe=breaksProbe,breaksScores=breaksScores))
 })

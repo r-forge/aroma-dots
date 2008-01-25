@@ -6,17 +6,17 @@
     Create boxplots of values stored in AffymetrixCelSet object
 }
 \usage{
-plotBoxplot.AffymetrixCelSet(this, subset = NULL, arrays = NULL, verbose = FALSE, field = "intensities", trans = log2, add = F, types = "pm", ...)
+\method{plotBoxplot}{AffymetrixCelSet}(this, arrays = NULL, verbose = FALSE, calcArgs=NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{this}{ an AffymetrixCelSet object }
-  \item{subset}{ passed to \code{identifyCells} to use only a subset of probes to calculate boxplot }
   \item{arrays}{ arrays to calculate boxplot}
-  \item{field}{ name of field to create boxplot of }
-  \item{trans}{ function describing a transformation wanted of the data (must take vectors)}
-  \item{types}{ passed to \code{identifyCells} }
+  \item{calcArgs}{named list of arguments to be passed to plotBoxplot.AffymetrixCelFile}
   \item{\dots}{ arguments passed to \code{bxp} for plotting boxplots }
+}
+\details{
+The function calls plotBoxplot.AffymetrixCelFile for each array (without plotting the boxplot), so any changes in the calculation, such as the proportion of the IQR that the whiskers should go, etc., should be passed in this list.
 }
 \value{
     list appropriate to give as argument to \code{bxp}

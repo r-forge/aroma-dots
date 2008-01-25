@@ -14,7 +14,7 @@ readUnitsScores<-function(names,filename,path=NULL,verbose=0){ #get the scores f
             i,"of",nbrOfChunks))
         cat(paste("\n\tFilename:",fullpathnames[i],"\n"))
         x <- c(x,loadObject(file=fullpathnames[i]))
-        keep<-names(x) %in% currnames
+        keep<-names(x) %in% names
         currnames<-currnames[!(currnames %in% names(x))] #only keep looking for names not found
         x<-x[keep]
         verbose && exit(verbose)

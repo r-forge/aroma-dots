@@ -98,8 +98,11 @@ mergeDataList<-function(listOfData,join=c("row","column")){
         else listdim<-sapply(listOfData,nrow)
         if(length(unique(listdim))!=1) stop("Must have same dimension in each list element")
         x<-switch(join, row=matrix(ncol=listdim),columns=matrix(nrow=listdim))
+        if(join=="row")colnames(x)<-colnames(listOfData[[1]])
+        if(join=="column")rownames(x)<-rownames(listOfData[[1]])
         for(i in 1:length(listOfData)){
             x<-switch(join,row=rbind(x,listOfData[[i]]),column=cbind(x,listOfData[[i]]))
+
         }
         x<-switch(join,row=x[-1,],column=x[,-1]) #get rid of NA 
         return(x)
@@ -110,7 +113,7 @@ mergeDataList<-function(listOfData,join=c("row","column")){
         listLength<-sapply(listOfData,length)
         if(length(unique(listLength))!=1) stop("elements of 'listOfList' must be lists of same length")
         allData<-unlist(listOfData)
-        x<-switch(join,row=matrix(allData,ncol=unique(listLength),byrow=T),column=matrix(allData,nrow=unique(listLength),byrow=F))
+        x<-switch(join,row=matrix(allData,ncol=unique(listLength),byrow=TRUE),column=matrix(allData,nrow=unique(listLength),byrow=FALSE))
         if(join=="row") rownames(x)<-names(listOfData)
         if(join=="column") colnames(x)<-names(listOfData)
         return(x)

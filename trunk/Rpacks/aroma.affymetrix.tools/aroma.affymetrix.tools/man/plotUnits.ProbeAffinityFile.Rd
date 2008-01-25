@@ -6,7 +6,7 @@
     Plots probe affinities, usually only called to plot on top of existing function or calculate certain terms of model
 }
 \usage{
-plotUnits.ProbeAffinityFile(this, units, intercept = 0, x.pos = NULL, add = T, type = "l", joinGroups = T, plot.it = T, ...)
+\method{plotUnits}{ProbeAffinityFile}(this, units, intercept = 0, x.pos = NULL, add = TRUE, type = ifelse(add, "l", "h"), joinGroups = TRUE, plot.it = TRUE, xlab = "Probes", ylab = "Probe Affinity",...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -1,9 +1,9 @@
 setMethodS3("plotUnits","AffymetrixCelSet",function(this,units,dataMat=NULL,arrays=NULL,field="intensities",
-    markGroups=T,markcol="grey",labelGroups=F,labelcol="black",plotByArray=T,marklwd=1.5,joinGroups=T,plot.it=T, main=NULL,
-    type="l",xaxt="n",ylab=NULL,xlab="",logscale=T, col=1:6,...){
+    markGroups=TRUE,markcol="grey",labelGroups=FALSE,labelcol="black",plotByArray=TRUE,marklwd=1.5,joinGroups=TRUE,plot.it=TRUE, main=NULL,
+    type="l",xaxt="n",ylab=NULL,xlab="",logscale=TRUE, col=1:6,...){
     
     #plot the data with the effects
-    #if(plotByArray==F) markGroups<-F #could change this so have different colors/lty for different exons?
+    #if(plotByArray==FALSE) markGroups<-FALSE #could change this so have different colors/lty for different exons?
     if(is.null(ylab)){
      if(logscale) ylab<-"Log2 Intensities"
      else ylab<-"Intensities"}
@@ -20,10 +20,10 @@ setMethodS3("plotUnits","AffymetrixCelSet",function(this,units,dataMat=NULL,arra
         dataList<-mergeGroups(this,units=units,fields=field)
         dataMat<-.subset2(.subset2(dataList,1),field)
     }
-    if(logscale==T) dataMat<-log2(dataMat)
+    if(logscale==TRUE) dataMat<-log2(dataMat)
     dataMat<-dataMat[,arrays]
     if(plot.it){
-        if(plotByArray==F){
+        if(plotByArray==FALSE){
             xlim<-c(.5,length(arrays)+.5) #maybe change so more flexible???
             if(markGroups) colExon<-rep(rep(col,length=length(nCellsPerGroup)),times=nCellsPerGroup)
             else colExon<-col
@@ -31,28 +31,28 @@ setMethodS3("plotUnits","AffymetrixCelSet",function(this,units,dataMat=NULL,arra
         }
         else{
             xlim<-c(.5,sum(nCellsPerGroup)+.5) #maybe change so more flexible???
-            if(markGroups==T && joinGroups==F){
+            if(markGroups==TRUE && joinGroups==FALSE){
                 matplot(1:sum(nCellsPerGroup),dataMat,xlim=xlim,xaxs="i",type="n",xlab=xlab,ylab=ylab,xaxt=xaxt,col=col,...)
                 xstart<-c(1,head(cumsum(nCellsPerGroup)+1,-1))
                 xend<-cumsum(nCellsPerGroup) 
                 tmp<-lapply(1:length(xstart),function(i){
-                    matplot(xstart[i]:xend[i],dataMat[xstart[i]:xend[i],],type=type,add=T,col=col,...)
+                    matplot(xstart[i]:xend[i],dataMat[xstart[i]:xend[i],],type=type,add=TRUE,col=col,...)
                     })
             }
             else{
                 matplot(1:sum(nCellsPerGroup),dataMat,xlim=xlim,xaxs="i",type=type,xlab=xlab,ylab=ylab,xaxt=xaxt,col=col,...)    
             }
             abline(v=c(0,cumsum(nCellsPerGroup))+.5,col=markcol,lwd=marklwd)
-            axis(1,at=c(0,cumsum(nCellsPerGroup))+.5,labels=F,col=markcol)
-            if(markGroups==T && labelGroups==T){
+            axis(1,at=c(0,cumsum(nCellsPerGroup))+.5,labels=FALSE,col=markcol)
+            if(markGroups==TRUE && labelGroups==TRUE){
                 xstart<-c(1,head(cumsum(nCellsPerGroup)+1,-1))
                 xend<-cumsum(nCellsPerGroup) 
                 mids<-(xstart+xend)/2
                 groups<-readCdfGroupNames(getPathname(cdf),unit=units)[[1]]
-                if(length(labelcol)==1) axis(1,at=mids,labels=groups,tick=F,las=2,col.axis=labelcol)
+                if(length(labelcol)==1) axis(1,at=mids,labels=groups,tick=FALSE,las=2,col.axis=labelcol)
                 else{
                     labelcol<-rep(labelcol,length=length(groups))
-                    for(i in 1:length(groups)){ axis(1,at=mids[i],labels=groups[i],tick=F,las=2,col.axis=labelcol[i])}
+                    for(i in 1:length(groups)){ axis(1,at=mids[i],labels=groups[i],tick=FALSE,las=2,col.axis=labelcol[i])}
                 }
             }
         }

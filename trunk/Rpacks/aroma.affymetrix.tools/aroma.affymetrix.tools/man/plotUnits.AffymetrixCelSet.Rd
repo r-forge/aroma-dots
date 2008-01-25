@@ -6,7 +6,7 @@
   Plots (using matplot) the data from a single unit
 }
 \usage{
-plotUnits.AffymetrixCelSet(this, units, dataMat = NULL, arrays = NULL, field = "intensities", markGroups = T, markcol = "grey", labelGroups = F, labelcol = "black", plotByArray = T, marklwd = 1.5, joinGroups = T, plot.it = T, main = NULL, type = "l", xaxt = "n", ylab = NULL, xlab = "", logscale = T, col = 1:6, ...)
+\method{plotUnits}{AffymetrixCelSet}(this, units, dataMat = NULL, arrays = NULL, field = "intensities", markGroups = TRUE, markcol = "grey", labelGroups = FALSE, labelcol = "black", plotByArray = TRUE, marklwd = 1.5, joinGroups = TRUE, plot.it = TRUE, main = NULL, type = "l", xaxt = "n", ylab = NULL, xlab = "", logscale = TRUE, col = 1:6, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
