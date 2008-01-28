@@ -50,7 +50,7 @@ setMethodS3("plotUnits","FirmaModel",function(this,units,arrays=NULL,
     #c(2.1,7.1,.5,.2)
     if(plotResiduals){
         par(mar=c(intersp,mar[2],mar[3],mar[4]),las=2,mgp=c(3, 0.5, 0))
-        mat<-((1-wtMat)*sign(rsMat))[,arrays]
+        mat<-rsMat[,arrays]
         image(1:sum(nProbesPerExon),y=1:ncol(mat),mat,breaks=breaksProbe,
             col=colSchemeProbe,xaxt="n",yaxt="n",xlab="",ylab="")
         abline(v=c(0,cumsum(nProbesPerExon))+.5,col="grey",lwd=1.5)
