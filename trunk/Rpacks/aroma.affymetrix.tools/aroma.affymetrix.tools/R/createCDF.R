@@ -80,6 +80,7 @@ createTranscriptCDF<-function(probesetCdf, csvAnnotFile,type="all",dirLoc=getPat
         whichUnit<-which(pbsetFinalTab[,"transcript_cluster_id"]==uname)
         pbsetMat<-pbsetFinalTab[whichUnit,]
         groupNames<-pbsetMat[,"probeset_id"]
+        groupNames<-sort(groupNames)
         groupUnits<-indexOf(probesetCdf,names=groupNames)
         if(any(is.na(groupUnits))){ warning(paste("not all group names belonging to",uname,"given in annotation file were found in the given cdf. These groups have been dropped"))
             groupUnits<-na.omit(groupUnits)}

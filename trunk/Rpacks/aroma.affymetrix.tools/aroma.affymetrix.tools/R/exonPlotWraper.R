@@ -1,27 +1,38 @@
 exonPlotWrapper<-function(plm,pbsetUgp,units,previousOutput=NULL,dataToPlot=c("intensities","residuals"),includeProbeAffinity=TRUE,includeChipEffect=TRUE,plot.it=TRUE,...){
+    require(aroma.affymetrix)
     dataToPlot<-match.arg(dataToPlot)
-    if(!exists("readUnits.RmaPlm")) stop("need method of 'readUnits' for RmaPlm")
-    if(!exists("findGroupPositions")) stop("need function 'findGroupPositions'")
-    if(!inherits(plm,"ExonRmaPlm") || !plm$mergeGroups)stop("Only currently supports output from ExonRmaPlm with option mergeGroups=TRUE")
     if(is.null(previousOutput)){
+        if(!exists("findGroupPositions")) stop("need function 'findGroupPositions'")
+        if(!inherits(plm,"ExonRmaPlm") || !plm$mergeGroups)stop("Only currently supports output from ExonRmaPlm with option mergeGroups=TRUE")
         cdfUnits<-getCdf(plm)
         exonPositions<-findGroupPositions(cdfUnits,units=units,pbsetUgp=pbsetUgp)
         nProbes<-readCdfNbrOfCellsPerUnitGroup(getPathname(cdfUnits),unit=units)
-        if(dataToPlot=="residuals"){
-            includeProbeAffinity<-FALSE
-            includeChipEffect<-FALSE
+        if(!exists("readUnits.RmaPlm")){
+            warning("need method of 'readUnits' for RmaPlm to use options 'includeProbeEffect', 'includeChipEffect', or to choose to plot residuals; will instead return standard intensities")
+            dataList<-readUnits(plm,units=units)
         }
-        dataList<-readUnits(plm,units=units,includeProbeAffinity=includeProbeAffinity,includeChipEffect=includeChipEffect)
+        else{
+            if(dataToPlot=="residuals"){
+                includeProbeAffinity<-FALSE
+                includeChipEffect<-FALSE
+            }
+            dataList<-readUnits(plm,units=units,includeProbeAffinity=includeProbeAffinity,includeChipEffect=includeChipEffect)
+        }
+        nunits<-length(units)
     }
     else{
         dataList<-previousOutput$dataList
         nProbes<-previousOutput$nProbes
         exonPositions<-previousOutput$exonPositions
+        nunits<-length(exonPositions)
     }
-    mart<-useMart("ensembl",dataset= "hsapiens_gene_ensembl")
     
     if(plot.it){
-        for(kk in 1:length(units)){
+        require(biomaRt)
+        require(EnsemblGraphs)
+        mart<-useMart("ensembl",dataset= "hsapiens_gene_ensembl")
+    
+        for(kk in 1:nunits){
             exonPlot(exonarray=log2(dataList[[kk]][[1]]$int), probepos=exonPositions[[kk]][,c(1,3,4)],
                 nprobes=nProbes[[kk]],gene = names(nProbes)[kk],biomart=mart,...)
         }
