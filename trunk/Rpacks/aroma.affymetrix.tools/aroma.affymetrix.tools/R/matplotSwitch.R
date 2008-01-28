@@ -36,6 +36,8 @@ matplotSwitch<-function(mat,type,colScheme,nProbesPerExon,breaks=NULL,
         arrayNames<-arrayNames[arrayOrder]
         mat<-mat[,arrayOrder]
         
+        
+        
         if(is.null(breaks) && type=="image"){
             if(valuesPlot=="positive") breaks<-seq(0,max(mat,na.rm=TRUE),length=length(colScheme)+1)
             if(valuesPlot=="zeroSym") breaks<-seq(-max(abs(mat),na.rm=TRUE),max(abs(mat),na.rm=TRUE),length=length(colScheme)+1)
@@ -46,6 +48,17 @@ matplotSwitch<-function(mat,type,colScheme,nProbesPerExon,breaks=NULL,
         else{
             if(nrow(mat)==sum(nProbesPerExon))level<-"probe"
             else stop(paste("Incorrect number of rows in scores matrix: Should have",sum(nProbesPerExon),"or",nExons,"rows"))
+        }
+        
+        #check that probesets in right order
+        pbsetNames<-names(nProbesPerExon)
+        if(!is.null(pbsetNames)){
+            reOrderExons<-order(pbsetNames,decreasing=FALSE)
+            reOrderProbes<-order(rep(pbsetNames,times=nProbesPerExon))
+            if(level=="probe") mat<-mat[reOrderProbes,]
+            if(level=="exon") mat<-mat[reOrderExons,]
+            nProbesPerExon<-nProbesPerExon[reOrderExons]
+            
         }
         exonBoundaries<-c(0, cumsum(nProbesPerExon)) + 0.5
         midpoints<-(tail(exonBoundaries,-1)+head(exonBoundaries,-1))/2
@@ -74,5 +87,5 @@ matplotSwitch<-function(mat,type,colScheme,nProbesPerExon,breaks=NULL,
         abline(v=exonBoundaries,col="grey",lwd=1.5)
         axis(1,at=exonBoundaries,labels=FALSE,col="grey")
         box()  
-        invisible(list(exonBoundaries=exonBoundaries,midpoints=midpoints,arrayOrder=arrayOrder,type=type))  
+        invisible(list(exonBoundaries=exonBoundaries,midpoints=midpoints,arrayOrder=arrayOrder,type=type,reOrderProbes=reOrderProbes,reOrderExons=reOrderExons))  
     }

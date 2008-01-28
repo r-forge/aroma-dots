@@ -33,9 +33,14 @@ exonPlotWrapper<-function(plm,pbsetUgp,units,previousOutput=NULL,dataToPlot=c("i
         mart<-useMart("ensembl",dataset= "hsapiens_gene_ensembl")
     
         for(kk in 1:nunits){
-            exonPlot(exonarray=log2(dataList[[kk]][[1]]$int), probepos=exonPositions[[kk]][,c(1,3,4)],
-                nprobes=nProbes[[kk]],gene = names(nProbes)[kk],biomart=mart,...)
+            pbsetNames<-names(nProbes[[kk]])
+            reOrderExons<-order(pbsetNames,decreasing=FALSE)
+            reOrderProbes<-order(rep(pbsetNames,times=nProbes))
+            exonPlot(exonarray=log2(dataList[[kk]][[1]]$int)[reOrderProbes,], probepos=exonPositions[[kk]][reOrderExons,c(1,3,4)],
+                nprobes=nProbes[[kk]][reOrderExons],gene = names(nProbes)[kk],biomart=mart,...)
+        
         }
+        martDisconnect(mart)
     }
     invisible(list(dataList=dataList,exonPositions=exonPositions,nProbes=nProbes))
 }
