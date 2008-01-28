@@ -35,7 +35,7 @@ exonPlotWrapper<-function(plm,pbsetUgp,units,previousOutput=NULL,dataToPlot=c("i
         for(kk in 1:nunits){
             pbsetNames<-names(nProbes[[kk]])
             reOrderExons<-order(pbsetNames,decreasing=FALSE)
-            reOrderProbes<-order(rep(pbsetNames,times=nProbes))
+            reOrderProbes<-order(rep(pbsetNames,times=nProbes[[kk]]))
             exonPlot(exonarray=log2(dataList[[kk]][[1]]$int)[reOrderProbes,], probepos=exonPositions[[kk]][reOrderExons,c(1,3,4)],
                 nprobes=nProbes[[kk]][reOrderExons],gene = names(nProbes)[kk],biomart=mart,...)
         
