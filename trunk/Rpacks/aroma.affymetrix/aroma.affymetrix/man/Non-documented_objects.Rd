@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Sun Jan 20 19:45:28 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1498,6 +1496,39 @@
 \alias{writeFooter.AromaTabularBinaryFile}
 \alias{writeRawFooter}
 \alias{writeRawFooter.AromaTabularBinaryFile}
+\alias{as.character.DChipDcpFile}
+\alias{as.DChipDcpSet}
+\alias{byName.DChipDcpSet}
+\alias{dim.DChipDcpFile}
+\alias{findByName.DChipDcpSet}
+\alias{fromFile.DChipDcpFile}
+\alias{fromFiles.DChipDcpSet}
+\alias{fromName.DChipDcpSet}
+\alias{getCalls}
+\alias{getCalls.DChipDcpFile}
+\alias{getExcludes}
+\alias{getExcludes.DChipDcpFile}
+\alias{getFileFormat.DChipDcpFile}
+\alias{getFullName.DChipDcpSet}
+\alias{getHeader.DChipDcpFile}
+\alias{getNormalizedIntensities}
+\alias{getNormalizedIntensities.DChipDcpFile}
+\alias{getRawIntensities}
+\alias{getRawIntensities.DChipDcpFile}
+\alias{getThetas}
+\alias{getThetas.DChipDcpFile}
+\alias{getThetasAB}
+\alias{getThetasAB.DChipDcpFile}
+\alias{getThetaStds}
+\alias{getThetaStds.DChipDcpFile}
+\alias{hasMbeiData}
+\alias{hasMbeiData.DChipDcpFile}
+\alias{hasNormalizedData}
+\alias{hasNormalizedData.DChipDcpFile}
+\alias{nbrOfCells.DChipDcpFile}
+\alias{nbrOfUnits.DChipDcpFile}
+\alias{readDcp}
+\alias{readDcpHeader}
 
 \description{
   This page contains aliases for all "non-documented" objects that

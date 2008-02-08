@@ -629,7 +629,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Calibrates data set for allelic cross talk");
+  verbose && enter(verbose, "Calibrating data set for allelic cross talk");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already done?

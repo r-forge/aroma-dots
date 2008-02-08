@@ -703,3 +703,18 @@ getAsteriskTags.FragmentLengthNormalization
   translateColumnNames.AffymetrixAptSummaryFile writeFooter
   writeFooter.AromaTabularBinaryFile writeRawFooter
   writeRawFooter.AromaTabularBinaryFile
+  as.character.DChipDcpFile as.DChipDcpSet byName.DChipDcpSet
+  dim.DChipDcpFile findByName.DChipDcpSet
+  fromFile.DChipDcpFile fromFiles.DChipDcpSet fromName.DChipDcpSet
+  getCalls getCalls.DChipDcpFile getExcludes getExcludes.DChipDcpFile
+  getFileFormat.DChipDcpFile getFullName.DChipDcpSet
+  getHeader.DChipDcpFile getNormalizedIntensities
+  getNormalizedIntensities.DChipDcpFile getRawIntensities
+  getRawIntensities.DChipDcpFile getThetas getThetas.DChipDcpFile
+  getThetasAB getThetasAB.DChipDcpFile getThetaStds
+  getThetaStds.DChipDcpFile hasMbeiData hasMbeiData.DChipDcpFile
+  hasNormalizedData hasNormalizedData.DChipDcpFile
+  nbrOfCells.DChipDcpFile nbrOfUnits.DChipDcpFile readDcp readDcpHeader
+  extractDataFrame extractDataFrame.ChipEffectSet
+  getUnitGroupNamesFromUgcMap
+  getUnitGroupNamesFromUgcMap.AffymetrixCdfFile

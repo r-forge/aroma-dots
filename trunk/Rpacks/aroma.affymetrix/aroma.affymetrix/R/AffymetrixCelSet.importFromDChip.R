@@ -8,7 +8,9 @@
 #  @get "title" into a directory structure recognized by this package.
 #  ASCII CEL files are converted to binary CEL files, and for chip types
 #  where the array data is rotated 90-degrees counter clockwise by dChip, 
-#  the data is rotated back. dChip rotates data for exon, tiling, and 
+#  the data is rotated back. 
+#
+#  As of 2007-03-28, dChip rotates data for exon, tiling, and 
 #  Mapping 500K arrays.
 # }
 #
