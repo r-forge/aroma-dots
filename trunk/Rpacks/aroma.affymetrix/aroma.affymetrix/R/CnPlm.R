@@ -215,7 +215,7 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
           y1 <- yA1 + yB1;
           y2 <- yA2 + yB2;
           list(
-            fitfcn(y1), 
+            fitfcn(y1),
             fitfcn(y2)
           );
         } else {

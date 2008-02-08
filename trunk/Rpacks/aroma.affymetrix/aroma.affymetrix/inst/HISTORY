@@ -1,12 +1,19 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.4 [2008-01-20xx]
+Version: 0.8.4 [2008-02-05xx]
+o Added extractDataFrame() to ChipEffectSet, which extract
+  the data where the first three columns contains the 
+  (unit, group, cell) map, and the remaining columns the data
+  from extractMatrix().
+o Added getUnitGroupNamesFromUgcMap() to AffymetrixCdfFile, which 
+  extracts the names of the units and groups that are specified
+  by a given (unit, group, cell) map.
 o UPDATE: Now AromaUnitTabularBinaryFile:s stores the chip type in
   the file footer.  This allows us to identify the correct file
   gives a full chip type.  Because of this update, old UFL and UGP
   files become incompatible with the class and new version have to
-  be downloaded.
+  be downloaded.  The chip type can be queried by getChipType().
 o ROBUSTNESS: Now fromChipType() of AromaUnitTabularBinaryFile validates
   that the number of units in the located file match the number of units
   in the CDF located using the same search parameters.
@@ -14,6 +21,11 @@ o ROBUSTNESS/BUG FIX: It was possible to set a non-compatible
   CDF when using static fromFiles() of AffymetrixCelSet.
 o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
   much less memory when infering the cell indices.
+o TIME OPTIMIZATION: Now as.character() for AffymetrixCelSet only 
+  reports time stamp if the number of arrays in the data set is less
+  that the threshold specified in the 'aroma.affymetrix.settings'.
+o BUG FIX: getTimestamp() for AffymetrixCelFile would return NA for 
+  Calvin files.
 o Updated importFromDChip() for CnChipEffectSet so that it imports data
   exported by more recent versions of dChip.  In recent versions the
   standard-error columns are named '*SE' whereas before it were '*SD'.
@@ -21,6 +33,7 @@ o Updated importFromDChip() for CnChipEffectSet so that it imports data
 o BETA: Added static importFromApt() for CnChipEffectSet.
 o BETA: Added classes AffymetrixAptSummaryFile and AffymetrixCnChpFile.
 o BETA: Added class AromaUfcFile.
+o BETA: Added classes DChipChpFile and DChipChpSet.
 
 
 Version: 0.8.3 [2007-12-18]

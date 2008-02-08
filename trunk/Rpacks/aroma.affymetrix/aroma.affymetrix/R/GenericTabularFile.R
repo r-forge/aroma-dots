@@ -1,9 +1,10 @@
-setConstructorS3("GenericTabularFile", function(..., sep=c("\t", ","), quote="\"", fill=FALSE, .verify=TRUE) {
+setConstructorS3("GenericTabularFile", function(..., sep=c("\t", ","), quote="\"", fill=FALSE, skip=0, .verify=TRUE) {
   this <- extend(GenericDataFile(...), "GenericTabularFile",
     .header = NULL,
     sep = sep,
     quote = quote,
-    fill = fill
+    fill = fill,
+    skip = skip
   );
 
   if (.verify)
@@ -31,7 +32,7 @@ setMethodS3("verify", "GenericTabularFile", function(this, ..., verbose=FALSE) {
     return(invisible(this));
 
   tryCatch({
-    data <- readData(this, nrow=10, verbose=verbose);
+    data <- readData(this, skip=this$skip, nrow=10, verbose=verbose);
   }, error = function(ex) {
     throw("File format error of the tabular file: ", getPathname(this));
   })
@@ -94,11 +95,15 @@ setMethodS3("readHeader", "GenericTabularFile", function(this, con=NULL, ..., ve
 
   ready <- FALSE;
   comments <- c();
+  skip <- this$skip;
   while (!ready) {
     line <- readLines(con, n=1);
     isComments <- (regexpr("^#", line) != -1);
-    if (!isComments)
-      break;
+    if (!isComments) {
+      if (skip == 0)
+        break;
+      skip <- skip - 1;
+    }
     comments <- c(comments, line);
   }
 
@@ -138,7 +143,8 @@ setMethodS3("readHeader", "GenericTabularFile", function(this, con=NULL, ..., ve
     comments=comments,
     columns=columns,
     sep=sep,
-    quote=quote
+    quote=quote,
+    skip=this$skip
   );
 
   verbose && str(verbose, hdr);

@@ -88,22 +88,29 @@ setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
 })
 
 
-setMethodS3("getFileFormat", "AffymetrixCelFile", function(this, ...) {
+setMethodS3("getFileFormat", "AffymetrixCelFile", function(this, asString=TRUE, ...) {
   pathname <- getPathname(this);
 
   # Read CEL header
   raw <- readBin(pathname, what="raw", n=10);
 
-  if (raw[1] == 59)
-    return("v1 (binary; CC)");
+  if (raw[1] == 59) {
+    ver <- 1;
+    verStr <- "v1 (binary; CC)";
+  } else if (raw[1] == 64) {
+    ver <- 4;
+    verStr <- "v4 (binary; XDA)";
+  } else if (rawToChar(raw[1:5]) == "[CEL]") {
+    ver <- 3;
+    verStr <- "v3 (text; ASCII)";
+  } else {
+    verStr <- ver <- NA;
+  }
 
-  if (raw[1] == 64)
-    return("v4 (binary; XDA)");
+  if (asString)
+    ver <- verStr;
 
-  if (rawToChar(raw[1:5]) == "[CEL]")
-    return("v3 (text; ASCII)");
-
-  return(NA);
+  ver;
 })
 
 setMethodS3("as.character", "AffymetrixCelFile", function(x, ...) {
@@ -111,7 +118,7 @@ setMethodS3("as.character", "AffymetrixCelFile", function(x, ...) {
   this <- x;
 
   s <- NextMethod("as.character", ...);
-  s <- c(s, sprintf("File format: %s", getFileFormat(this)));
+  s <- c(s, sprintf("File format: %s", getFileFormat(this, asString=TRUE)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
   s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));
   class(s) <- "GenericSummary";
@@ -392,56 +399,85 @@ setMethodS3("getHeaderV3", "AffymetrixCelFile", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y %H:%M:%S", ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  getTimestampFromDatHeader <- function(headerDAT, chipType) {
+    # Find the element with a date. It is part of the same string as the
+    # one containing the chip type.  Get the chip type from the header.
+    pattern <- sprintf(" %s.1sq ", chipType);
+    header <- grep(pattern, headerDAT, value=TRUE);
+  
+    # Extract the date timestamp
+    pattern <- ".*([01][0-9]/[0-3][0-9]/[0-9][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]).*";
+    timestamp <- gsub(pattern, "\\1", header);
+  
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Alternative:
+    # Could use a pattern, but if a different timestamp than the American is 
+    # used, this wont work.  Instead assume a fixed location.
+    # From the DAT header specification (Affymetrix Data File Formats, April
+    # 2006), we know that the date and the timestamp is 18 characters long.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ##   nTemp <- 7;
+  ##   nPower <- 4;
+  ##   nTimestamp <- 18;
+  ##   # Expected start position
+  ##   pos <- nTemp + 1 + nPower + 1;
+  ##   # ...however, the files we have start at the next position. /HB 2006-12-01
+  ##   pos <- pos + 1;
+  ##   timestamp <- substring(header, first=pos, last=pos+nTimestamp-1);
+  
+    timestamp <- trim(timestamp); # Unnecessary?
+  
+    # Parse the identified timestamp into POSIXct
+    res <- strptime(timestamp, format=format, ...);
+  
+    # If no valid timestamp was found, return NA.
+    if (length(as.character(res)) == 0) {
+      res <- as.POSIXct(NA);
+    }
+  
+    # Keep the non-parsed timetstamp etc for debugging.
+    attr(res, "text") <- timestamp;
+    attr(res, "header") <- header;
+    attr(res, "headerDAT") <- headerDAT;
+
+    res;
+  } # getTimestampFromDatHeader()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'format':
   format <- Arguments$getCharacter(format);
 
 
-  # Get the CEL v3 header of the CEL header
-  header <- getHeaderV3(this);
 
-  # Get the DAT header
-  headerDAT <- header$DatHeader;
-
-  # Find the element with a date. It is part of the same string as the
-  # one containing the chip type.  Get the chip type from the header.
   chipType <- getHeader(this)$chiptype;
-  pattern <- sprintf(" %s.1sq ", chipType);
-  header <- grep(pattern, headerDAT, value=TRUE);
 
-  # Extract the date timestamp
-  pattern <- ".*([01][0-9]/[0-3][0-9]/[0-9][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]).*";
-  timestamp <- gsub(pattern, "\\1", header);
+  fileFormat <- getFileFormat(this, asString=FALSE);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Alternative:
-  # Could use a pattern, but if a different timestamp than the American is 
-  # used, this wont work.  Instead assume a fixed location.
-  # From the DAT header specification (Affymetrix Data File Formats, April
-  # 2006), we know that the date and the timestamp is 18 characters long.
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##   nTemp <- 7;
-##   nPower <- 4;
-##   nTimestamp <- 18;
-##   # Expected start position
-##   pos <- nTemp + 1 + nPower + 1;
-##   # ...however, the files we have start at the next position. /HB 2006-12-01
-##   pos <- pos + 1;
-##   timestamp <- substring(header, first=pos, last=pos+nTimestamp-1);
+  if (fileFormat == 1) {
+    hdr <- readCcgHeader(getPathname(this));
 
-  timestamp <- trim(timestamp); # Unnecessary?
+    # Get the DAT header
+    params <- hdr$dataHeader$parents[[1]]$parameters;
+    headerDAT <- params[["affymetrix-dat-header"]];
 
-  # Parse the identified timestamp into POSIXct
-  res <- strptime(timestamp, format=format, ...);
+    # Extract the timestamp
+    res <- getTimestampFromDatHeader(headerDAT, chipType=chipType); 
+  } else if (fileFormat %in% c(3,4)) {
+    # Get the DAT header
+    header <- getHeaderV3(this);
+    headerDAT <- header$DatHeader;
 
-  # If no valid timestamp was found, return NA.
-  if (length(as.character(res)) == 0) {
+    # Extract the timestamp
+    res <- getTimestampFromDatHeader(headerDAT, chipType=chipType); 
+  } else {
     res <- as.POSIXct(NA);
   }
-
-  # Keep the non-parsed timetstamp etc for debugging.
-  attr(res, "text") <- timestamp;
-  attr(res, "header") <- header;
-  attr(res, "headerDAT") <- headerDAT;
 
   res;
 }, private=TRUE)
@@ -782,6 +818,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 
 ############################################################################
 # HISTORY:
+# 2008-01-30
+# o Now getTimestamp() for AffymetrixCelFile works for Calvin files too.
+# o Now getFileFormat() for AffymetrixCelFile takes argument 'asString'.
 # 2007-07-09
 # o Added getFileFormat() to AffymetrixCelFile.  This is also reported
 #   by the print() method.

@@ -33,6 +33,14 @@
   settings <- getOption("aroma.affymetrix.settings");
 
   template <- list(
+    rules = list(
+      allowAsciiCdfs = FALSE
+    ),
+
+    output = list(
+      maxNbrOfArraysForTimestamps = 500
+    ),
+
     annotationData = list(
       paths = list()
     ),
@@ -101,6 +109,9 @@
 
 ############################################################################
 # HISTORY:
+# 2008-01-30
+# o Adde default values for settings 'rules$allowAsciiCdfs' and
+#   'output$maxNbrOfArraysForTimestamps'.
 # 2007-12-13
 # o Added code for automatic updates on startup.  In active by default.
 # o Added settings for 'checkForPatches' and 'checkInterval'.

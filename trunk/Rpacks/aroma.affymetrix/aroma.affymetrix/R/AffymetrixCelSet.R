@@ -205,17 +205,24 @@ setMethodS3("as.character", "AffymetrixCelSet", function(x, ...) {
     names <- c(names[1:2], "...", names[n]);
   names <- paste(names, collapse=", ");
   s <- c(s, sprintf("Names: %s", names));
-  # Get CEL header timestamps
-  ts <- getTimestamps(this);
-  # Note: If ts <- range(ts) is used and the different timestamps uses
-  # tifferent 'tzone' attributes, e.g. if some files where scanning during
-  # daylight savings time and some not, we will get a warning saying:
-  # "'tzone' attributes are inconsistent".  By doing the below, we avoid
-  # this warning (which confuses users). 
-  ts <- sort(ts);
-  ts <- ts[c(1,n)];
-  ts <- format(ts, "%Y-%m-%d %H:%M:%S");  # range() gives strange values?!?
-  s <- c(s, sprintf("Time period: %s -- %s", ts[1], ts[2]));
+
+  # Get CEL header timestamps?
+  settings <- getOption("aroma.affymetrix.settings");
+  maxCount <- settings$output$maxNbrOfArraysForTimestamps;
+  if (maxCount >= nbrOfArrays(this)) {
+    ts <- getTimestamps(this);
+    # Note: If ts <- range(ts) is used and the different timestamps uses
+    # tifferent 'tzone' attributes, e.g. if some files where scanning during
+    # daylight savings time and some not, we will get a warning saying:
+    # "'tzone' attributes are inconsistent".  By doing the below, we avoid
+    # this warning (which confuses users). 
+    ts <- sort(ts);
+    ts <- ts[c(1,n)];
+    ts <- format(ts, "%Y-%m-%d %H:%M:%S");  # range() gives strange values?!?
+    s <- c(s, sprintf("Time period: %s -- %s", ts[1], ts[2]));
+  } else {
+    s <- c(s, sprintf("Time period: [not reported if more than %.0f arrays]", as.double(maxCount)));
+  }
   s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
@@ -1344,6 +1351,10 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-01-30
+# o Now as.character() for AffymetrixCelSet only reports time stamp if the
+#   number of arrays in the data set is less that the threshold specified
+#   in the 'aroma.affymetrix.settings'.
 # 2008-01-11
 # o ROBUSTNESS: It was possible to set a non-compatible CDF when using
 #   static fromFiles() of AffymetrixCelSet.
