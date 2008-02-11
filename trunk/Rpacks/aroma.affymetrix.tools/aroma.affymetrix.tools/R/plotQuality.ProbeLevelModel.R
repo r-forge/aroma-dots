@@ -43,6 +43,7 @@ function(this, arrays=NULL,subset = NULL, verbose = FALSE, plot.it=TRUE,
     verbose && exit(verbose)
     
     if(is.null(arrays)) arrays<-seq(ces)
+    else arrays<-Arguments$getIndices(arrays, range = c(1,length(ces)))
     verbose && enter(verbose, "Calculating summaries for ", length(arrays), " arrays")
     boxplotStats <- list()
     for (kk in arrays) {
