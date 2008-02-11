@@ -1,6 +1,6 @@
 setMethodS3("plotQuality","ProbeLevelModel",
 function(this, arrays=NULL,subset = NULL, verbose = FALSE, plot.it=TRUE,
-    type=c("Nuse","Rle"),main = type, xlim=NULL,ylim=NULL,...) 
+    type=c("Nuse","Rle"),main = type, xlim=NULL,ylim=NULL,outline=FALSE,las=2,...) 
 {
     type<-match.arg(type)
     verbose <- Arguments$getVerbose(verbose)
@@ -30,6 +30,7 @@ function(this, arrays=NULL,subset = NULL, verbose = FALSE, plot.it=TRUE,
     else indices<-"remaining" #save time and not recalculate if already calculated
     avg <- getAverageLog(ces, field = field, verbose = verbose,mean="median", sd="mad",indices=indices,force=FALSE) 
     verbose && exit(verbose)
+
     medianValue <- extractMatrix(avg, units = units, field="theta")
     medianValue <- log2(medianValue)
     verbose && exit(verbose)
@@ -80,7 +81,7 @@ function(this, arrays=NULL,subset = NULL, verbose = FALSE, plot.it=TRUE,
         #fix the strange behavior of bxp if outline=FALSE
         addPlotValues<-list(...)
         addPlotChoices<-names(addPlotValues)
-        if("outline" %in% addPlotChoices && !addPlotValues[["outline"]]){
+        if(!outline){
             if(!("horizontal" %in% addPlotChoices) || !addPlotValues["horizontal"]){ #standard plot
                 if(is.null(ylim)) ylim<-range(as.vector(bxpStats[["stats"]]))
                 
@@ -89,7 +90,7 @@ function(this, arrays=NULL,subset = NULL, verbose = FALSE, plot.it=TRUE,
                 if(is.null(xlim)) xlim<-range(as.vector(bxpStats[["stats"]]))
             }    
         }
-        bxp(bxpStats, main = main, xlim=xlim,ylim=ylim,...)
+        bxp(bxpStats, main = main, xlim=xlim,ylim=ylim,outline=outline,las=las,...)
     }
     invisible(bxpStats)
 })
