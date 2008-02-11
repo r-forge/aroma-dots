@@ -87,5 +87,5 @@ matplotSwitch<-function(mat,type,colScheme,nProbesPerExon,breaks=NULL,
         abline(v=exonBoundaries,col="grey",lwd=1.5)
         axis(1,at=exonBoundaries,labels=FALSE,col="grey")
         box()  
-        invisible(list(exonBoundaries=exonBoundaries,midpoints=midpoints,arrayOrder=arrayOrder,type=type,reOrderProbes=reOrderProbes,reOrderExons=reOrderExons))  
+        invisible(list(exonBoundaries=exonBoundaries,midpoints=midpoints,arrayOrder=arrayOrder,type=type,reOrderProbes=reOrderProbes,reOrderExons=reOrderExons,breaks=breaks))  
     }
