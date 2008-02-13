@@ -715,6 +715,6 @@ getAsteriskTags.FragmentLengthNormalization
   getThetaStds.DChipDcpFile hasMbeiData hasMbeiData.DChipDcpFile
   hasNormalizedData hasNormalizedData.DChipDcpFile
   nbrOfCells.DChipDcpFile nbrOfUnits.DChipDcpFile readDcp readDcpHeader
-  extractDataFrame extractDataFrame.ChipEffectSet
+  extractDataFrame
   getUnitGroupNamesFromUgcMap
   getUnitGroupNamesFromUgcMap.AffymetrixCdfFile
