@@ -41,6 +41,8 @@
 #   }
 # }
 #
+# @examples "../incl/fitGenotypeCone.matrix.Rex"
+#
 # @author
 #
 # \seealso{
@@ -56,6 +58,7 @@ setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 
 
   # Fit simplex of (y_A,y_B)
   fit <- sfit::cfit(y, alpha=alpha, q=q, Q=Q, ...);
+
   M <- fit$M;
   colnames(M) <- c("A", "B");
   clazz <- class(M);
@@ -111,6 +114,8 @@ setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 
 
 ############################################################################
 # HISTORY:
+# 2008-02-14
+# o Added a self-contained example for fitGenotypeCone().
 # 2007-09-08
 # o Added 'dimData' to the return structure.
 # 2007-06-12
