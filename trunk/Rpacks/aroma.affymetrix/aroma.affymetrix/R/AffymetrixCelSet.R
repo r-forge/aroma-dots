@@ -208,7 +208,7 @@ setMethodS3("as.character", "AffymetrixCelSet", function(x, ...) {
 
   # Get CEL header timestamps?
   settings <- getOption("aroma.affymetrix.settings");
-  maxCount <- settings$output$maxNbrOfArraysForTimestamps;
+  maxCount <- settings$output$timestampsThreshold;
   if (maxCount >= nbrOfArrays(this)) {
     ts <- getTimestamps(this);
     # Note: If ts <- range(ts) is used and the different timestamps uses
