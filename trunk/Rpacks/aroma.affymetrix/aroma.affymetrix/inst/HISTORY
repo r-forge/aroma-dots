@@ -1,35 +1,31 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.4 [2008-02-12xx]
-o Added extractDataFrame() to ChipEffectSet, which extract
-  data with options to add columns with unit and group names
-  as well as the (unit, group, cell) index map.
+Version: 0.8.4 [2008-02-14xx]
+o UPDATE/ROBUSTNESS: Now AromaUnitTabularBinaryFile:s stores the 
+  chip type in the file footer.  This allows us to identify the 
+  correct file gives a full chip type.  Because of this update, 
+  old UFL and UGP files become incompatible with the class and new
+  version have to be downloaded.  The chip type can be queried by 
+  getChipType().  It is now also asserted that the number of units
+  in the file match the number of units in the corresponding CDF.
+o TIME OPTIMIZATION: Now RmaPlm and ExonRmaPlm turn to median polish
+  if there are more than 500 cells *and* 6 arrays in the unit group.
+  Option: aroma.affymetrix.settings$models$RmaPlm$medianPolishThreshold.
+  Moreover, if the unit group is ridiculously large (5000 cells), the
+  unit group is skipped and all returned estimates are NAs.
+  Option: aroma.affymetrix.settings$models$RmaPlm$skipThreshold.
+o TIME OPTIMIZATION: Now as.character() for AffymetrixCelSet reports
+  time stamps only for data set with less than 500 arrays.
+  Option: aroma.affymetrix.settingsoutput$timestampsThreshold.
+o Added extractDataFrame() for ChipEffectSet & ChipEffectFile, which
+  also (optionally) extracts unit and group names, as well as the
+  (unit, group, cell) index map.
 o Added published paper to citation("aroma.affymetrix").
-o UPDATE: Now AromaUnitTabularBinaryFile:s stores the chip type in
-  the file footer.  This allows us to identify the correct file
-  gives a full chip type.  Because of this update, old UFL and UGP
-  files become incompatible with the class and new version have to
-  be downloaded.  The chip type can be queried by getChipType().
-o TIME OPTIMIZATION: Now the fit function for RmaPlm:s fits very
-  "large" unit groups using median polish, where large is specified
-  by 'models$RmaPlm$medianPolishThreshold' of option
-  'aroma.affymetrix.settings' (defaults to 500).
-o ROBUSTNESS: Now the default fit function for RlmPlm:s avoid
-  fitting unit groups that have a ridiculously large number of cells.
-  The threshold is specified by 'models$RmaPlm$maxNbrOfProbesThreshold'
-  in option 'aroma.affymetrix.settings' (defaults to 5000).
-o ROBUSTNESS: Now fromChipType() of AromaUnitTabularBinaryFile validates
-  that the number of units in the located file match the number of units
-  in the CDF located using the same search parameters.
-o ROBUSTNESS/BUG FIX: It was possible to set a non-compatible 
+o BUG FIX/ROBUSTNESS: It was possible to set a non-compatible 
   CDF when using static fromFiles() of AffymetrixCelSet.
 o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
   much less memory when infering the cell indices.
-o TIME OPTIMIZATION: Now as.character() for AffymetrixCelSet only 
-  reports time stamp if the number of arrays in the data set is less
-  that the threshold specified by 'output$maxNbrOfArraysForTimesta'
-  in option 'aroma.affymetrix.settings' (defaults to 500).
 o BUG FIX: getTimestamp() for AffymetrixCelFile would return NA for 
   Calvin files.
 o Updated importFromDChip() for CnChipEffectSet so that it imports data

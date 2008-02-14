@@ -38,19 +38,23 @@
     ),
 
     output = list(
-      maxNbrOfArraysForTimestamps = 500
+      # Max number of arrays for which to report timestamps
+      timestampsThreshold = 500
     ),
 
     models = list(
       RmaPlm = list( 
-        medianPolishThreshold   =  500,
-        maxNbrOfProbesThreshold = 5000
+       # Number of cells *and* arrays for using median polish
+        medianPolishThreshold  = c( 500, 6),
+       # Number of cells *and* arrays for skipping unit group
+        skipThreshold          = c(5000, 1)
       )
     ),
 
     annotationData = list(
       paths = list()
     ),
+
     system = list(
       checkForUpdates = FALSE,
       checkInterval = "onEachLoad"
@@ -116,6 +120,9 @@
 
 ############################################################################
 # HISTORY:
+# 2008-02-14
+# o Renamed existing threshold hold to 'timestampsThreshold', 
+#   'medianPolishThreshold', and 'skipThreshold'.
 # 2008-02-12
 # o Added default values for settings 'models$RmaPlm$...'.
 # 2008-01-30

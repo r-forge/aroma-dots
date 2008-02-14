@@ -165,15 +165,16 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Avoid fitting unit groups with a ridiculous large number of cells
+  # Thresholds for skipping/using median polish
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   settings <- getOption("aroma.affymetrix.settings");
-  maxNbrOfProbes <- settings$models$RmaPlm$maxNbrOfProbesThreshold;
-  if (is.null(maxNbrOfProbes))
-    maxNbrOfProbes <- Inf;
+  skipThreshold <- settings$models$RmaPlm$skipThreshold;
+  if (is.null(skipThreshold))
+    skipThreshold <- c(Inf, Inf);
+
   medianPolishThreshold <- settings$models$RmaPlm$medianPolishThreshold;
   if (is.null(medianPolishThreshold))
-    medianPolishThreshold <- Inf;
+    medianPolishThreshold <- c(Inf, Inf);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -207,9 +208,10 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
     K <- dim[1];  # Number of probes
     I <- dim[2];  # Number of arrays
 
-    # Too many probes?
-    if (K > maxNbrOfProbes) {
-      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
+    # Skip unit group?
+    if (K > skipThreshold[1] && I > skipThreshold[2]) {
+      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of data points: ", paste(dim, collapse="x"), " > ", paste(skipThreshold, collapse="x"));
+
       return(list(theta=rep(NA, I),
                   sdTheta=rep(NA, I),
                   thetaOutliers=rep(NA, I), 
@@ -221,7 +223,7 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
     }
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Fit the model
+    # Transform data
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Add shift?
     if (shift != 0)
@@ -230,8 +232,12 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
     # Log-additive model
     y <- log(y, base=2);
 
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Fit model
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Use median polish for large probesets?
-    if (K > medianPolishThreshold) {
+    if (K > medianPolishThreshold[1] && I > medianPolishThreshold[2]) {
       mp <- medpolish(y, trace.iter=FALSE);
       fit <- list(
         Estimates = c(mp$overall+mp$col, mp$row), 
@@ -241,8 +247,11 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
       # Fit model using affyPLM code
       fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE=rlmPkg);      
     }
+
         
-    # Extract probe affinities and chip estimates
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Extract parameters
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     est <- fit$Estimates;
     se <- fit$StdErrors;
 

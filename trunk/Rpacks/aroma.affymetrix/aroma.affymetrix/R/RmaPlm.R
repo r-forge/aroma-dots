@@ -203,15 +203,16 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Avoid fitting unit groups with a ridiculous large number of cells
+  # Thresholds for skipping/using median polish
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   settings <- getOption("aroma.affymetrix.settings");
-  maxNbrOfProbes <- settings$models$RmaPlm$maxNbrOfProbesThreshold;
-  if (is.null(maxNbrOfProbes))
-    maxNbrOfProbes <- Inf;
+  skipThreshold <- settings$models$RmaPlm$skipThreshold;
+  if (is.null(skipThreshold))
+    skipThreshold <- c(Inf, Inf);
+
   medianPolishThreshold <- settings$models$RmaPlm$medianPolishThreshold;
   if (is.null(medianPolishThreshold))
-    medianPolishThreshold <- Inf;
+    medianPolishThreshold <- c(Inf, Inf);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -246,7 +247,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     I <- dim[2];  # Number of arrays
 
     # Too many probes?
-    if (K > maxNbrOfProbes) {
+    if (K > skipThreshold[1] && I > skipThreshold[2]) {
       warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
       return(list(theta=rep(NA, I),
                   sdTheta=rep(NA, I),
@@ -258,6 +259,10 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
             );
     }
 
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Transform data
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Add shift
     y <- y + shift;
 
@@ -312,8 +317,13 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
       } # if (hasNAs)
     }
 
-    # Use median polish for large probesets without missing data?
-    if (K > medianPolishThreshold && !hasNAs) {
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Fit model
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Use median polish for large probesets (that doesn't have NAs)?
+    if (K > medianPolishThreshold[1] && I > medianPolishThreshold[2]
+                                                            && !hasNAs) {
       mp <- medpolish(y, trace.iter=FALSE);
       fit <- list(
         Estimates = c(mp$overall+mp$col, mp$row), 
@@ -328,7 +338,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
       }
     }
 
-    # Extract probe affinities and chip estimates
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Extract parameters
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     est <- fit$Estimates;
     se <- fit$StdErrors;
 
@@ -494,7 +506,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
 
     # Too many probes?
     if (K > maxNbrOfProbes) {
-      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
+      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of data points: ", paste(dim, collapse="x"), " > ", paste(skipThreshold, collapse="x"));
+
       return(list(theta=rep(NA, I),
                   sdTheta=rep(NA, I),
                   thetaOutliers=rep(NA, I), 
