@@ -8,17 +8,17 @@
   addIndexFile.Explorer AffymetrixCsvFile
   AffymetrixCsvGenomeInformation AffymetrixNetAffxCsvFile
   AffymetrixTabularFile AffymetrixTsvFile allocate
-  allocate.AromaTabularBinaryFile allocateFromCdf
+  allocateFromCdf
   allocateFromCdf.AromaUflFile allocateFromCdf.AromaUgpFile
-  allocateFromCdf.AromaUnitTabularBinaryFile annotateMvsA
+  annotateMvsA
   annotateMvsA.AffymetrixCelFile append append.AffymetrixCelSet
   append.CnagCfhSet append.default append.GenericDataFileSet
   appendFiles appendFiles.GenericDataFileSet apply apply.default
   apply.SampleAnnotationFile applyRegions
   applyRegions.CopyNumberOutliers applyRows applyRows.CopyNumberRegions
   applyToUnitIntensities applyToUnitIntensities.AffymetrixCelSet
-  AromaAffymetrix AromaTabularBinaryFile AromaUflFile AromaUgpFile
-  AromaUnitTabularBinaryFile as.AffymetrixCelSet as.AffymetrixFileSet
+  AromaAffymetrix AromaUflFile AromaUgpFile
+  as.AffymetrixCelSet as.AffymetrixFileSet
   as.character.AffymetrixCdfFile as.character.AffymetrixCelFile
   as.character.AffymetrixCelSetReporter
   as.character.AffymetrixCelSetTuple
@@ -491,7 +491,7 @@
   readDataUnitChromosomePosition.AffymetrixNetAffxCsvFile
   readDataUnitFragmentLength
   readDataUnitFragmentLength.AffymetrixNetAffxCsvFile readFooter
-  readFooter.AromaTabularBinaryFile readGenomeWideSNP
+  readGenomeWideSNP
   readGenomeWideSNP.DChipGenomeInformation
   readHeader.AromaTabularBinaryFile readHeader.GenericTabularFile
   readMouse430 readMouse430.DChipGenomeInformation
@@ -701,7 +701,7 @@ getAsteriskTags.FragmentLengthNormalization
   readRawFooter.AromaTabularBinaryFile setCdf.AffymetrixCnChpFile
   setUnitReadMap setUnitReadMap.AffymetrixCnChpFile
   translateColumnNames.AffymetrixAptSummaryFile writeFooter
-  writeFooter.AromaTabularBinaryFile writeRawFooter
+  writeRawFooter
   writeRawFooter.AromaTabularBinaryFile
   as.character.DChipDcpFile as.DChipDcpSet byName.DChipDcpSet
   dim.DChipDcpFile findByName.DChipDcpSet
