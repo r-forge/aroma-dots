@@ -1,19 +1,24 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.8.4 [2008-02-05xx]
+Version: 0.8.4 [2008-02-12xx]
 o Added extractDataFrame() to ChipEffectSet, which extract
-  the data where the first three columns contains the 
-  (unit, group, cell) map, and the remaining columns the data
-  from extractMatrix().
-o Added getUnitGroupNamesFromUgcMap() to AffymetrixCdfFile, which 
-  extracts the names of the units and groups that are specified
-  by a given (unit, group, cell) map.
+  data with options to add columns with unit and group names
+  as well as the (unit, group, cell) index map.
+o Added published paper to citation("aroma.affymetrix").
 o UPDATE: Now AromaUnitTabularBinaryFile:s stores the chip type in
   the file footer.  This allows us to identify the correct file
   gives a full chip type.  Because of this update, old UFL and UGP
   files become incompatible with the class and new version have to
   be downloaded.  The chip type can be queried by getChipType().
+o TIME OPTIMIZATION: Now the fit function for RmaPlm:s fits very
+  "large" unit groups using median polish, where large is specified
+  by 'models$RmaPlm$medianPolishThreshold' of option
+  'aroma.affymetrix.settings' (defaults to 500).
+o ROBUSTNESS: Now the default fit function for RlmPlm:s avoid
+  fitting unit groups that have a ridiculously large number of cells.
+  The threshold is specified by 'models$RmaPlm$maxNbrOfProbesThreshold'
+  in option 'aroma.affymetrix.settings' (defaults to 5000).
 o ROBUSTNESS: Now fromChipType() of AromaUnitTabularBinaryFile validates
   that the number of units in the located file match the number of units
   in the CDF located using the same search parameters.
@@ -23,7 +28,8 @@ o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
   much less memory when infering the cell indices.
 o TIME OPTIMIZATION: Now as.character() for AffymetrixCelSet only 
   reports time stamp if the number of arrays in the data set is less
-  that the threshold specified in the 'aroma.affymetrix.settings'.
+  that the threshold specified by 'output$maxNbrOfArraysForTimesta'
+  in option 'aroma.affymetrix.settings' (defaults to 500).
 o BUG FIX: getTimestamp() for AffymetrixCelFile would return NA for 
   Calvin files.
 o Updated importFromDChip() for CnChipEffectSet so that it imports data

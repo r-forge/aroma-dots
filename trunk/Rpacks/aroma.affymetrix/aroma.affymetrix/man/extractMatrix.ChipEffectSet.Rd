@@ -43,6 +43,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
+  \code{\link[aroma.affymetrix:extractDataFrame.ChipEffectSet]{*extractDataFrame}()}.
   For more information see \code{\link{ChipEffectSet}}.
 }
 \keyword{internal}

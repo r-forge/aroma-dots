@@ -1,9 +1,54 @@
+###########################################################################/**
+# @RdocClass AromaUnitTabularBinaryFile
+#
+# @title "The AromaUnitTabularBinaryFile class"
+#
+# \description{
+#  @classhierarchy
+#
+#  A AromaUnitTabularBinaryFile is an @see "AromaTabularBinaryFile" with
+#  the constraint that the rows map one-to-one to, and in the same order as,
+#  the units in a CDF.  The (full) chip type of the CDF is given by the
+#  mandatory file footer \code{chipType}.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Arguments passed to @see "AromaTabularBinaryFile".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+# 
+# @author
+#
+# \seealso{
+#   @see "AromaTabularBinaryFile".
+# }
+#*/########################################################################### 
 setConstructorS3("AromaUnitTabularBinaryFile", function(...) {
   extend(AromaTabularBinaryFile(...), "AromaUnitTabularBinaryFile",
     "cached:.cdf" = NULL
   );
 })
 
+
+setMethodS3("as.character", "AromaUnitTabularBinaryFile", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
+  s <- NextMethod("as.character", ...);
+  class <- class(s);
+
+  s <- c(s, sprintf("Chip type: %s", getChipType(this)));
+  n <- length(s);
+  s <- s[c(1:(n-2), n, n-1)];
+
+  class(s) <- class;
+  s;
+})
 
 
 setMethodS3("clearCache", "AromaUnitTabularBinaryFile", function(this, ...) {
@@ -44,14 +89,21 @@ setMethodS3("getChipType", "AromaUnitTabularBinaryFile", function(this, fullname
     } else {
       chipType <- getName(this, ...);
     }
+    chipType <- trim(chipType);
+    if (nchar(chipType) == 0)
+      throw("File format error: The inferred chip type is empty.");
   } else {
     if (!fullname) {
       chipType <- gsub(",.*", "", chipType);
     }
+    chipType <- trim(chipType);
+    if (nchar(chipType) == 0)
+      throw("File format error: The chip type according to the file footer is empty.");
   }
 
   chipType;
-});
+})
+
 
 
 setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FALSE, .old=FALSE, verbose=FALSE) {
@@ -104,7 +156,11 @@ setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FA
 
 
 
-setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, validate=TRUE, ..., verbose=FALSE) {
+setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(this, ...) {
+  byChipType(this, ...);
+})
+
+setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, validate=TRUE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -246,7 +302,43 @@ setMethodS3("indexOfUnits", "AromaUnitTabularBinaryFile", function(this, names, 
 
 
 
-setMethodS3("allocateFromCdf", "AromaUnitTabularBinaryFile", function(static, cdf, path=getPath(cdf), tags=NULL, ...) {
+###########################################################################/**
+# @RdocMethod allocateFromCdf
+#
+# @title "Creates an AromaUnitTabularBinaryFile mapping to a given CDF"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{cdf}{The @see "AffymetrixCdfFile" used as a template and from
+#      which the (full) chip type is taken.}
+#   \item{path}{The path where to store the new file.}
+#   \item{tags}{A @character @vector of optional tags appended to 
+#      the filename.}
+#   \item{footer}{A nested named @list structure of additional attributes
+#      that are saved in the file footer after the mandatory ones.}
+#   \item{...}{Additional arguments passed to \code{allocate()} of 
+#      @see "AromaTabularBinaryFile".}
+# }
+#
+# \value{
+#  Returns a @see "AromaUnitTabularBinaryFile" object.
+# }
+#
+# @author
+#
+# \seealso{
+#   To update to file footer afterwards, see @seemethod "writeFooter".
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/########################################################################### 
+setMethodS3("allocateFromCdf", "AromaUnitTabularBinaryFile", function(static, cdf, path=getPath(cdf), tags=NULL, footer=list(), ...) {
   # Argument 'cdf':
   if (!inherits(cdf, "AffymetrixCdfFile")) {
     throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
@@ -262,15 +354,18 @@ setMethodS3("allocateFromCdf", "AromaUnitTabularBinaryFile", function(static, cd
   filename <- sprintf("%s.%s", fullname, ext);
 
   # Create tabular binary file
-  res <- allocate(static, filename=filename, path=path, nbrOfRows=nbrOfUnits(cdf), ...);
+  res <- allocate(static, filename=filename, path=path, 
+                                           nbrOfRows=nbrOfUnits(cdf), ...);
 
 
   # Write attributes to footer
   attrs <- list(chipType=chipType);
-  writeFooter(res, attrs);
+  footer <- c(attrs, footer);
+  writeFooter(res, footer);
 
   res;
 }, static=TRUE)
+
 
 
 
@@ -293,6 +388,7 @@ setMethodS3("importFrom", "AromaUnitTabularBinaryFile", function(this, src, ...)
 
 setMethodS3("importFromGenericTabularFile", "AromaUnitTabularBinaryFile", abstract=TRUE);
 
+
 setMethodS3("importFromAffymetrixTabularFile", "AromaUnitTabularBinaryFile", function(this, src, ...) {
   # Argument 'src':
   if (!inherits(src, "AffymetrixTabularFile")) {
@@ -301,6 +397,7 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUnitTabularBinaryFile", fun
 
   importFromGenomeInformation(this, src, ...);
 });
+
 
 setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUnitTabularBinaryFile", abstract=TRUE, protected=TRUE);
 
@@ -319,6 +416,8 @@ setMethodS3("importFromGenomeInformation", "AromaUnitTabularBinaryFile", abstrac
 
 ############################################################################
 # HISTORY:
+# 2008-02-13
+# o Added and updated Rdoc comments.
 # 2008-01-19
 # o Now AromaUnitTabularBinaryFile gets the chip type from the file footer.
 # o ROBUSTNESS: Now fromChipType() of AromaUnitTabularBinaryFile validates

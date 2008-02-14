@@ -202,6 +202,18 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
   }
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Avoid fitting unit groups with a ridiculous large number of cells
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  settings <- getOption("aroma.affymetrix.settings");
+  maxNbrOfProbes <- settings$models$RmaPlm$maxNbrOfProbesThreshold;
+  if (is.null(maxNbrOfProbes))
+    maxNbrOfProbes <- Inf;
+  medianPolishThreshold <- settings$models$RmaPlm$medianPolishThreshold;
+  if (is.null(medianPolishThreshold))
+    medianPolishThreshold <- Inf;
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # rmaModelAffyPlm()
   # Author: Henrik Bengtsson, UC Berkeley. 
@@ -211,7 +223,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     # Assert right dimensions of 'y'.
 
     # If input data are dimensionless, return NAs. /KS 2006-01-30
-    if (is.null(dim(y))) {
+    dim <- dim(y);
+    if (is.null(dim)) {
       nbrOfArrays <- nbrOfArrays(getDataSet(this));
       return(list(theta=rep(NA, nbrOfArrays),
                   sdTheta=rep(NA, nbrOfArrays),
@@ -223,10 +236,26 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
             );
     }
 
-    if (length(dim(y)) != 2) {
+    if (length(dim) != 2) {
       str(y);
       stop("Argument 'y' must have two dimensions: ", 
-                                                paste(dim(y), collapse="x"));
+                                                paste(dim, collapse="x"));
+    }
+
+    K <- dim[1];  # Number of probes
+    I <- dim[2];  # Number of arrays
+
+    # Too many probes?
+    if (K > maxNbrOfProbes) {
+      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
+      return(list(theta=rep(NA, I),
+                  sdTheta=rep(NA, I),
+                  thetaOutliers=rep(NA, I), 
+                  phi=rep(NA, K),
+                  sdPhi=rep(NA, K),
+                  phiOutliers=rep(NA, K)
+                 )
+            );
     }
 
     # Add shift
@@ -234,9 +263,6 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
 
     # Log-additive model
     y <- log(y, base=2);
-
-    I <- ncol(y);  # Number of arrays
-    K <- nrow(y);  # Number of probes
 
     # Look for cells that have NAs in at least one sample?
     w <- NULL;
@@ -269,6 +295,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
           okCells <- !apply(isNA, MARGIN=1, FUN=any);
           # Analyze only valid cells
           y <- y[okCells,,drop=FALSE];
+          hasNAs <- FALSE;
 
           # No valid cells left?
           if (nrow(y) == 0) {
@@ -285,11 +312,20 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
       } # if (hasNAs)
     }
 
-    # Fit model using affyPLM code
-    if (!is.null(w)) {
-      fit <- .Call("R_wrlm_rma_default_model", y, psiCode, psiK, w, PACKAGE=rlmPkg);
+    # Use median polish for large probesets without missing data?
+    if (K > medianPolishThreshold && !hasNAs) {
+      mp <- medpolish(y, trace.iter=FALSE);
+      fit <- list(
+        Estimates = c(mp$overall+mp$col, mp$row), 
+        StdErrors = rep(0, length(c(mp$row, mp$col)))
+      );
     } else {
-      fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE=rlmPkg);
+      # Fit model using affyPLM code
+      if (!is.null(w)) {
+        fit <- .Call("R_wrlm_rma_default_model", y, psiCode, psiK, w, PACKAGE=rlmPkg);
+      } else {
+        fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE=rlmPkg);
+      }
     }
 
     # Extract probe affinities and chip estimates
@@ -362,10 +398,27 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     y <- y + shift;
 
     # Assert right dimensions of 'y'.
-    if (length(dim(y)) != 2) {
+    dim <- dim(y);
+    if (length(dim) != 2) {
       str(y);
       stop("Argument 'y' must have two dimensions: ", 
-                                                paste(dim(y), collapse="x"));
+                                                paste(dim, collapse="x"));
+    }
+
+    K <- dim[1];  # Number of probes
+    I <- dim[2];  # Number of arrays
+
+    # Too many probes?
+    if (K > maxNbrOfProbes) {
+      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
+      return(list(theta=rep(NA, I),
+                  sdTheta=rep(NA, I),
+                  thetaOutliers=rep(NA, I), 
+                  phi=rep(NA, K),
+                  sdPhi=rep(NA, K),
+                  phiOutliers=rep(NA, K)
+                 )
+            );
     }
 
     # Log-additive model
@@ -384,8 +437,6 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     fit <- .C("rlm_fit_R", as.double(X), as.double(y), rows=as.integer(nchip*nprobe), cols=as.integer(nchip+nprobe-1), beta=double(nchip+nprobe-1), resids=double(nchip*nprobe), weights=double(nchip*nprobe), PACKAGE=rlmPkg);
 
     # Extract probe affinities and chip estimates
-    I <- ncol(y);  # Number of arrays
-    K <- nrow(y);  # Number of probes
     est <- fit$beta;
 
     # Chip effects
@@ -431,16 +482,30 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     y <- y + shift;
 
     # Assert right dimensions of 'y'.
-    if (length(dim(y)) != 2) {
+    dim <- dim(y);
+    if (length(dim) != 2) {
       str(y);
       stop("Argument 'y' must have two dimensions: ", 
-                                                paste(dim(y), collapse="x"));
+                                                paste(dim, collapse="x"));
+    }
+
+    K <- dim[1];  # Number of probes
+    I <- dim[2];  # Number of arrays
+
+    # Too many probes?
+    if (K > maxNbrOfProbes) {
+      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
+      return(list(theta=rep(NA, I),
+                  sdTheta=rep(NA, I),
+                  thetaOutliers=rep(NA, I), 
+                  phi=rep(NA, K),
+                  sdPhi=rep(NA, K),
+                  phiOutliers=rep(NA, K)
+                 )
+            );
     }
 
     # make factor variables for chip and probe
-    I <- ncol(y); # Number of arrays
-    K <- nrow(y); # Number of probes
-
     unitNames <- rep("X", K);  # dummy probe names
     nbrOfUnits <- as.integer(1); # Only one unit group is fitted
 
@@ -479,6 +544,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
          phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);
   } # rmaModelOligo()
   attr(rmaModelOligo, "name") <- "rmaModelOligo";
+
 
 
   getRlmPkg <- function(..., verbose=FALSE) {
@@ -579,6 +645,8 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-02-12
+# o Added mechanism to avoid fitting unit groups with ridiculously many cells.
 # 2007-10-06
 # o Now the asterisk tag ('*') is no longer assigned in the constructor,
 #   but in getTags().
