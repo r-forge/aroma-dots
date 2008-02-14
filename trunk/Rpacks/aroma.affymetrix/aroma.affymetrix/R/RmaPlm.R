@@ -248,7 +248,8 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
 
     # Too many probes?
     if (K > skipThreshold[1] && I > skipThreshold[2]) {
-      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
+      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of data points: ", paste(dim, collapse="x"), " > ", paste(skipThreshold, collapse="x"));
+
       return(list(theta=rep(NA, I),
                   sdTheta=rep(NA, I),
                   thetaOutliers=rep(NA, I), 
@@ -322,8 +323,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     # Fit model
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Use median polish for large probesets (that doesn't have NAs)?
-    if (K > medianPolishThreshold[1] && I > medianPolishThreshold[2]
-                                                            && !hasNAs) {
+    if (K > medianPolishThreshold[1] && I > medianPolishThreshold[2] && !hasNAs) {
       mp <- medpolish(y, trace.iter=FALSE);
       fit <- list(
         Estimates = c(mp$overall+mp$col, mp$row), 
@@ -421,8 +421,9 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     I <- dim[2];  # Number of arrays
 
     # Too many probes?
-    if (K > maxNbrOfProbes) {
-      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
+    if (K > skipThreshold[1] && I > skipThreshold[2]) {
+      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of data points: ", paste(dim, collapse="x"), " > ", paste(skipThreshold, collapse="x"));
+
       return(list(theta=rep(NA, I),
                   sdTheta=rep(NA, I),
                   thetaOutliers=rep(NA, I), 
@@ -505,7 +506,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     I <- dim[2];  # Number of arrays
 
     # Too many probes?
-    if (K > maxNbrOfProbes) {
+    if (K > skipThreshold[1] && I > skipThreshold[2]) {
       warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of data points: ", paste(dim, collapse="x"), " > ", paste(skipThreshold, collapse="x"));
 
       return(list(theta=rep(NA, I),

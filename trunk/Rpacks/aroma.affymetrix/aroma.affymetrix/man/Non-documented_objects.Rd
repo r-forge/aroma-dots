@@ -39,11 +39,9 @@
 \alias{AffymetrixTabularFile}
 \alias{AffymetrixTsvFile}
 \alias{allocate}
-\alias{allocate.AromaTabularBinaryFile}
 \alias{allocateFromCdf}
 \alias{allocateFromCdf.AromaUflFile}
 \alias{allocateFromCdf.AromaUgpFile}
-\alias{allocateFromCdf.AromaUnitTabularBinaryFile}
 \alias{annotateMvsA}
 \alias{annotateMvsA.AffymetrixCelFile}
 \alias{append}
@@ -63,10 +61,8 @@
 \alias{applyToUnitIntensities}
 \alias{applyToUnitIntensities.AffymetrixCelSet}
 \alias{AromaAffymetrix}
-\alias{AromaTabularBinaryFile}
 \alias{AromaUflFile}
 \alias{AromaUgpFile}
-\alias{AromaUnitTabularBinaryFile}
 \alias{as.AffymetrixCelSet}
 \alias{as.AffymetrixFileSet}
 \alias{as.character.AffymetrixCdfFile}
@@ -1076,7 +1072,6 @@
 \alias{readDataUnitFragmentLength}
 \alias{readDataUnitFragmentLength.AffymetrixNetAffxCsvFile}
 \alias{readFooter}
-\alias{readFooter.AromaTabularBinaryFile}
 \alias{readGenomeWideSNP}
 \alias{readGenomeWideSNP.DChipGenomeInformation}
 \alias{readHeader.AromaTabularBinaryFile}
@@ -1493,7 +1488,6 @@
 \alias{setUnitReadMap.AffymetrixCnChpFile}
 \alias{translateColumnNames.AffymetrixAptSummaryFile}
 \alias{writeFooter}
-\alias{writeFooter.AromaTabularBinaryFile}
 \alias{writeRawFooter}
 \alias{writeRawFooter.AromaTabularBinaryFile}
 \alias{as.character.DChipDcpFile}
@@ -1537,6 +1531,8 @@
 \alias{listToXml.list}
 \alias{xmlToList}
 \alias{xmlToList.character}
+\alias{byChipType.AromaUnitTabularBinaryFile}
+\alias{clearCache.AromaTabularBinaryFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
