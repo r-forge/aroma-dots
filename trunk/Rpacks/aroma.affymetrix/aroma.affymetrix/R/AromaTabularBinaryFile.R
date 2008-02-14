@@ -1,5 +1,36 @@
+###########################################################################/**
+# @RdocClass AromaTabularBinaryFile
+#
+# @title "The AromaTabularBinaryFile class"
+#
+# \description{
+#  @classhierarchy
+#
+#  A AromaTabularBinaryFile represents a file with a binary format.
+#  It has a well defined header, a data section, and a footer.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Arguments passed to @see "GenericDataFile".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+# 
+# @author
+#
+# \seealso{
+#   @see "GenericDataFile".
+# }
+#*/########################################################################### 
 setConstructorS3("AromaTabularBinaryFile", function(...) {
-  this <- extend(GenericDataFile(...), "AromaTabularBinaryFile");
+  this <- extend(GenericDataFile(...), "AromaTabularBinaryFile",
+    "cached:.hdr"=NULL,
+    "cached:.ftr"=NULL
+  );
 
   # Parse attributes (all subclasses must call this in the constructor).
   if (!is.null(this$.pathname))
@@ -8,24 +39,42 @@ setConstructorS3("AromaTabularBinaryFile", function(...) {
   this;
 })
 
+
+
 setMethodS3("as.character", "AromaTabularBinaryFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
   s <- NextMethod("as.character", ...);
+  class <- class(s);
+
+  s <- c(s, sprintf("File format: v%d", readHeader(this)$fileVersion));
   s <- c(s, sprintf("Dimensions: %dx%d", nrow(this), ncol(this)));
   s <- c(s, sprintf("Column classes: %s", 
                          paste(getColClasses(this), collapse=", ")));
   s <- c(s, sprintf("Number of bytes per column: %s", 
                          paste(getBytesPerColumn(this), collapse=", ")));
-  footer <- readFooter(this);
-  footer <- unlist(footer);
-  footer <- paste(names(footer), footer, sep="=");
-  footer <- paste(footer, collapse="; ");
+
+  footer <- readFooter(this, asXmlString=TRUE);
+  footer <- gsub(">[\n\r ]*", ">", footer);
+  footer <- gsub("^[ ]*", "", footer);
   s <- c(s, sprintf("Footer: %s", footer));
-  class(s) <- "GenericSummary";
+
+  class(s) <- class;
   s;
 })
+
+
+setMethodS3("clearCache", "AromaTabularBinaryFile", function(this, ...) {
+  # Clear all cached values.
+  for (ff in c(".hdr", ".ftr")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...); 
+}, private=TRUE)
+
 
 
 setMethodS3("setAttributesByTags", "AromaTabularBinaryFile", function(this, ...) {
@@ -38,6 +87,7 @@ setMethodS3("colnames", "AromaTabularBinaryFile", function(x, ...) {
   this <- x;
   as.character(seq(length=nbrOfColumns(this)));
 })
+
 
 setMethodS3("dimnames<-", "AromaTabularBinaryFile", function(x, value) {
   # To please R CMD check
@@ -155,7 +205,7 @@ setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ...
     throw("File format error. Negative file version: ", version);
   }
   if (version > 10e3) {
-    throw("File format error. Ridicolous large file version (>10e3): ", version);
+    throw("File format error. Ridiculously large file version (>10e3): ", version);
   }
 
   if (version >= 1 && version <= 1) {
@@ -165,7 +215,7 @@ setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ...
     throw("Unknown file format version: ", version);
   }
 
-  hdr <- list(comment=comment, dataHeader=dataHeader);
+  hdr <- list(fileVersion=version, comment=comment, dataHeader=dataHeader);
 
   # Cache result
   this$.hdr <- hdr;
@@ -208,52 +258,113 @@ setMethodS3("readRawFooter", "AromaTabularBinaryFile", function(this, con=NULL, 
   );
 
   res;
-})
+}, protected=TRUE)
 
 
 
-setMethodS3("readFooter", "AromaTabularBinaryFile", function(this, ...) {
+###########################################################################/**
+# @RdocMethod readFooter
+#
+# @title "Reads the file footer in XML format into a named nested list"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{asXmlString}{If @TRUE, the file footer is returned as 
+#      a @character string.}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a named @list structure (or a @character string).
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "writeFooter".
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/########################################################################### 
+setMethodS3("readFooter", "AromaTabularBinaryFile", function(this, asXmlString=FALSE, ...) {
   raw <- readRawFooter(this)$raw;
   xml <- rawToChar(raw);
-  xml <- gsub(".*<footer>(.*)</footer>.*", "\\1", xml);
-  xml <- trim(xml);
-  xml <- xml[nchar(xml) > 0];
-  if (length(xml) > 0) {
-    pattern <- "<([a-Z].*)>(.*)</([a-Z].*)>";
-    tags1 <- gsub(pattern, "\\1", xml);
-    tags2 <- gsub(pattern, "\\3", xml);
-    if (!identical(tags1, tags2)) {
-      throw("Parsing error while parsing attributes: ", xml);
-    }
-    values <- gsub(pattern, "\\2", xml);
-    values <- trim(values);
-  
-    attrs <- as.list(values);
-    names(attrs) <- tags1;
+  if (asXmlString) {
+    xml <- trim(xml);
+    xml <- gsub("^<footer>", "", xml);
+    xml <- trim(xml);
+    xml <- gsub("</footer>$", "", xml);
+    xml <- trim(xml);
+    res <- xml;
   } else {
-    attrs <- list();
+    res <- xmlToList(xml);
+    if (identical(names(res), "footer"))
+      res <- res[["footer"]];
   }
-
-  attrs;
+  res;
 })
 
 
-setMethodS3("writeFooter", "AromaTabularBinaryFile", function(this, attrs, ...) {
-  # Argument 'attrs':
-  if (!is.list(attrs)) {
-    throw("Argument 'attrs' is not a list: ", mode(attrs));
+
+
+
+###########################################################################/**
+# @RdocMethod writeFooter
+#
+# @title "Writes a named nested list to the file footer in XML format"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{footer}{A named @list structure.}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns nothing.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "readFooter".
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/########################################################################### 
+setMethodS3("writeFooter", "AromaTabularBinaryFile", function(this, footer, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'footer':
+  if (!is.list(footer)) {
+    throw("Argument 'footer' is not a list: ", mode(footer));
+  }
+  if (identical(names(footer), "footer")) {
+    footer <- list(footer=footer);
   }
 
   # Generate XML version of attributes
-  values <- sapply(attrs, FUN=function(attr) {
-    as.character(attr);
-  })
-  xml <- sprintf("<%s>%s</%s>", names(attrs), values, names(attrs));
-  xml <- paste(xml, collapse="\n");
-  xml <- sprintf("<footer>\n%s</footer>\n", xml);
+  xml <- listToXml(footer, indentStep="");
+  xml <- trim(xml);
 
   # Generate raw byte stream of attributes
   raw <- charToRaw(xml);
+
+  # Write to file
   writeRawFooter(this, raw);
 })
 
@@ -328,7 +439,7 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
   verbose && exit(verbose);
 
   verbose && exit(verbose);
-})
+}, protected=TRUE)
 
 
 
@@ -598,7 +709,7 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
   verbose && exit(verbose);
 
   invisible(this);
-})
+}, protected=TRUE)
 
 
 
@@ -689,6 +800,51 @@ setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, co
 
 
 
+###########################################################################/**
+# @RdocMethod allocate
+#
+# @title "Creates an AromaTabularBinaryFile"
+#
+# \description{
+#  @get "title" of a certain dimension and data column types.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{filename}{The filename of the new file.}
+#   \item{path}{The path where to store the new file.}
+#   \item{nbrOfRows}{An @integer specifying the number of rows to allocate.}
+#   \item{types}{A @character @vector specifying the data type of each
+#      column.  The length specifies the number of columns to allocate.}
+#   \item{sizes}{An @integer @vector of values in \{1,2,4,8\} specifying
+#      the size of each column (data type).}
+#   \item{signeds}{An @logical @vector specifying if the data types in each
+#      column is signed or not.}
+#   \item{comment}{An optional @character string written to the file header.}
+#   \item{overwrite}{If @TRUE, an existing file is overwritten, otherwise not.}
+#   \item{skip}{If @TRUE and \code{overwrite=@TRUE}, any existing file is 
+#      returned as is.}
+#   \item{...}{Not used.}
+#   \item{verbose}{@see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @see "AromaTabularBinaryFile" object.
+# }
+#
+# \section{Data types}{
+#   Valid data types are currently "@integer" and "@double".
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/########################################################################### 
 setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, ..., verbose=FALSE) {
   knownDataTypes <- c("integer"=1, "double"=2);
 
@@ -1033,6 +1189,9 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-02-13
+# o Added and updated Rdoc comments.
+# o readFooter() and writeFooter() now handles nested XML/list structures.
 # 2008-01-19
 # o Now writeFooter() writes a named list to the binary file footer as a
 #   XML string.  readFooter() reads its back and returns a named list.

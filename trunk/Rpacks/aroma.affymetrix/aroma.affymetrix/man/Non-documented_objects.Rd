@@ -1529,6 +1529,14 @@
 \alias{nbrOfUnits.DChipDcpFile}
 \alias{readDcp}
 \alias{readDcpHeader}
+\alias{extractDataFrame}
+\alias{getUnitGroupNamesFromUgcMap}
+\alias{getUnitGroupNamesFromUgcMap.AffymetrixCdfFile}
+\alias{as.character.AromaUnitTabularBinaryFile}
+\alias{listToXml}
+\alias{listToXml.list}
+\alias{xmlToList}
+\alias{xmlToList.character}
 
 \description{
   This page contains aliases for all "non-documented" objects that

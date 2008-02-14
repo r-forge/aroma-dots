@@ -164,13 +164,27 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
   }
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Avoid fitting unit groups with a ridiculous large number of cells
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  settings <- getOption("aroma.affymetrix.settings");
+  maxNbrOfProbes <- settings$models$RmaPlm$maxNbrOfProbesThreshold;
+  if (is.null(maxNbrOfProbes))
+    maxNbrOfProbes <- Inf;
+  medianPolishThreshold <- settings$models$RmaPlm$medianPolishThreshold;
+  if (is.null(medianPolishThreshold))
+    medianPolishThreshold <- Inf;
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # rmaModelAffyPlm()
   # Author: Henrik Bengtsson, UC Berkeley. 
   # Requires: affyPLM() by Ben Bolstad.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  exonRmaModel <- function(y, psiCode=0, psiK=1.345, useMedianPolish=FALSE, medianPolishThreshold=100){
+  exonRmaModel <- function(y, psiCode=0, psiK=1.345, ...){
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Assert right dimensions of 'y'.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     # If input data are dimensionless, return NAs. /KS 2006-01-30
     dim <- dim(y);
@@ -190,6 +204,25 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
                                                 paste(dim, collapse="x"));
     }
 
+    K <- dim[1];  # Number of probes
+    I <- dim[2];  # Number of arrays
+
+    # Too many probes?
+    if (K > maxNbrOfProbes) {
+      warning("Ignoring a unit group when fitting probe-level model, because it has a ridiculously large number of cells: ", K, " > ", maxNbrOfProbes);
+      return(list(theta=rep(NA, I),
+                  sdTheta=rep(NA, I),
+                  thetaOutliers=rep(NA, I), 
+                  phi=rep(NA, K),
+                  sdPhi=rep(NA, K),
+                  phiOutliers=rep(NA, K)
+                 )
+            );
+    }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Fit the model
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Add shift?
     if (shift != 0)
       y <- y + shift;
@@ -197,20 +230,15 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
     # Log-additive model
     y <- log(y, base=2);
 
-    I <- dim[2];  # Number of arrays
-    K <- dim[1];  # Number of probes
-
-    # do we want to use median polish for large matrices?
-    if (useMedianPolish) {
-      nbrOfVariables <- K+I-1;
-      if (nbrOfVariables > medianPolishThreshold) {
-        mp <- medpolish(y, trace.iter=FALSE);
-        fit <- list(Estimates=c(mp$overall+mp$col, mp$row), StdErrors=rep(0, length(c(mp$row,mp$col))));
-      } else {    
-        # Fit model using affyPLM code
-        fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE=rlmPkg);
-      }
+    # Use median polish for large probesets?
+    if (K > medianPolishThreshold) {
+      mp <- medpolish(y, trace.iter=FALSE);
+      fit <- list(
+        Estimates = c(mp$overall+mp$col, mp$row), 
+        StdErrors = rep(0, length(c(mp$row, mp$col)))
+      );
     } else {
+      # Fit model using affyPLM code
       fit <- .Call("R_rlm_rma_default_model", y, psiCode, psiK, PACKAGE=rlmPkg);      
     }
         
@@ -258,6 +286,7 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
          phi=phi, sdPhi=sdPhi, phiOutliers=phiOutliers);   
   } # rmaModelAffyPlm()
   attr(exonRmaModel, "name") <- "exonRmaModel";
+
 
 
   getRlmPkg <- function(..., verbose=FALSE) {
@@ -327,6 +356,9 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2008-12-02
+# o Added mechanism to fit "large" unit groups with median polish (for speed).
+# o Added mechanism to avoid fitting unit groups with ridiculously many cells.
 # 2007-12-06
 # o Added getAsteriskTag() for ExonRmaPlm.
 # 2007-11-07

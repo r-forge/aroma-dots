@@ -41,6 +41,13 @@
       maxNbrOfArraysForTimestamps = 500
     ),
 
+    models = list(
+      RmaPlm = list( 
+        medianPolishThreshold   =  500,
+        maxNbrOfProbesThreshold = 5000
+      )
+    ),
+
     annotationData = list(
       paths = list()
     ),
@@ -109,8 +116,10 @@
 
 ############################################################################
 # HISTORY:
+# 2008-02-12
+# o Added default values for settings 'models$RmaPlm$...'.
 # 2008-01-30
-# o Adde default values for settings 'rules$allowAsciiCdfs' and
+# o Added default values for settings 'rules$allowAsciiCdfs' and
 #   'output$maxNbrOfArraysForTimestamps'.
 # 2007-12-13
 # o Added code for automatic updates on startup.  In active by default.

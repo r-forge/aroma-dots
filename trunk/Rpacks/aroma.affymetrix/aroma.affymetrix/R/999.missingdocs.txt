@@ -718,3 +718,7 @@ getAsteriskTags.FragmentLengthNormalization
   extractDataFrame
   getUnitGroupNamesFromUgcMap
   getUnitGroupNamesFromUgcMap.AffymetrixCdfFile
+  as.character.AromaUnitTabularBinaryFile listToXml listToXml.list
+  xmlToList xmlToList.character
+  byChipType.AromaUnitTabularBinaryFile
+  clearCache.AromaTabularBinaryFile
