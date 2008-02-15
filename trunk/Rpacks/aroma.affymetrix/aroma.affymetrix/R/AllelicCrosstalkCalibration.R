@@ -757,7 +757,10 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         verbose && enter(verbose, "Fitting");
         y <- matrix(yAll[idx], ncol=2);
 
-        fits[[name]] <- fitGenotypeCone(y, alpha=params$alpha, q=params$q, Q=params$Q);
+        verboseL <- (verbose && isVisible(verbose, -50));
+        fits[[name]] <- fitGenotypeCone(y, alpha=params$alpha, 
+                                        q=params$q, Q=params$Q, 
+                                        verbose=verboseL);
         verbose && print(verbose, fits[[name]], level=-5);
         verbose && exit(verbose);
 
@@ -1089,6 +1092,8 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-02-14
+# o Now 'verbose' is passed as a logical argument to fitGenotypeCone().
 # 2007-12-01
 # o MEMORY OPTIMIZATION: Added clearCache() to AllelicCrosstalkCalibration.
 # o BUG FIX: The AllelicCrosstalkCalibration introduced in previous version
