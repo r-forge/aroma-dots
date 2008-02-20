@@ -34,6 +34,10 @@
   settings <- getOption("aroma.affymetrix.settings");
 
   template <- list(
+    memory = list(
+      gcArrayFrequency = 50
+    ),
+
     rules = list(
       allowAsciiCdfs = FALSE
     ),

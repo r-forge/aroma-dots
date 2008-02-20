@@ -56,6 +56,13 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
   }
 
 
+  # Settings
+  settings <- getOption("aroma.affymetrix.settings");
+  gcArrayFrequency <- settings$memory$gcArrayFrequency; 
+  if (is.null(gcArrayFrequency))
+    gcArrayFrequency <- 10;
+
+
   verbose && enter(verbose, "Getting data for the array set");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -90,7 +97,7 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
     cf <- getFile(this, aa);
     df[o,aa] <- getData(cf, indices=cells, fields=field, 
                                            verbose=less(verbose))[[field]];
-    if (aa %% 10 == 0) {
+    if (aa %% gcArrayFrequency == 0) {
       # Garbage collect
       gc <- gc();
       verbose && print(verbose, gc);
