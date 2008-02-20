@@ -134,7 +134,7 @@ setMethodS3("createParamCdf", "FirmaFile", function(static, sourceCdf, ..., verb
     verbose && cat(verbose, "Will create CDF for the FIRMA results files from the
 original CDF. NOTE: This will take several minutes or more!");
     verbose && enter(verbose, "Creating CDF");
-    cdf <- createMonoCell(sourceCdf, verbose=less(verbose));
+    cdf <- createMonocellCdf(sourceCdf, verbose=less(verbose));
     verbose && exit(verbose);
   } else {
     verbose && cat(verbose, "Pathname: ", pathname);
