@@ -1,6 +1,6 @@
 #... passed to subset
-setMethodS3("extractMatrix","ChipEffectFile",
-function (this, units = NULL, ..., field = c("theta", "sdTheta"), 
+setMethodS3("extractMatrix","FirmaFile",
+function (this, units = NULL, ..., field = c("intensities", "stdvs", "pixels"), 
     returnUgcMap = FALSE, verbose = FALSE) 
 {
     cdf <- getCdf(this)
@@ -26,7 +26,7 @@ function (this, units = NULL, ..., field = c("theta", "sdTheta"),
     df <- matrix(NA, nrow = nrow(ugcMap), ncol = 1)
     gc <- gc()
     verbose && print(verbose, gc)
-    verbose && enter(verbose, "Retrieving sample thetas")
+    verbose && enter(verbose, "Retrieving sample values") #here
     df[, 1] <- getDataFlat(this, units = ugcMap, fields = field, verbose = less(verbose))[, field]
     verbose && exit(verbose)
     verbose && exit(verbose)

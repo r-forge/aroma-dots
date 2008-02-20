@@ -1,3 +1,4 @@
+#... passed to subset
 setMethodS3( "extractMatrix","FirmaSet",
 function (this, units = NULL, ..., field = c("intensities", "stdvs", "pixels"), 
     returnUgcMap = FALSE, verbose = FALSE) 
