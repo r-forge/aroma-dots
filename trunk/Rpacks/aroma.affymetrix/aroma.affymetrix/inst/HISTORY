@@ -24,6 +24,9 @@ o Added extractDataFrame() for ChipEffectSet & ChipEffectFile, which
   also (optionally) extracts unit and group names, as well as the
   (unit, group, cell) index map.
 o Added published paper to citation("aroma.affymetrix").
+o CLEANUP: Renamed getMonoCell() to getMonocellCdf() and 
+  createMonoCell() to createMonocellCdf(), because the former had 
+  strange names. 
 o BUG FIX/ROBUSTNESS: It was possible to set a non-compatible 
   CDF when using static fromFiles() of AffymetrixCelSet.
 o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses

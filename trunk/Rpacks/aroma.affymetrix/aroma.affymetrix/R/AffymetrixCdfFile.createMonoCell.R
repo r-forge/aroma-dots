@@ -1,6 +1,7 @@
 ###########################################################################/**
 # @set "class=AffymetrixCdfFile"
-# @RdocMethod createMonoCell
+# @RdocMethod createMonocellCdf
+# @aliasmethod createMonoCell
 #
 # @title "Creates a mono-cell version of the CDF"
 #
@@ -35,7 +36,7 @@
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getChipType(this), tags="monocell", sep=",", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE) {
+setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=getChipType(this), tags="monocell", sep=",", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -515,10 +516,10 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, chipType=getCh
 
   # Return an AffymetrixCdfFile object for the new CDF
   newInstance(this, dest);
-}, private=TRUE) # createMonoCell()
+}, private=TRUE) # createMonocellCdf()
 
 
-setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ..., verbose=FALSE) {
+setMethodS3("getMonocellCdf", "AffymetrixCdfFile", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -527,6 +528,12 @@ setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ..., verbose=FALS
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
+  }
+
+
+  # Already a monocell CDF?
+  if (isMonocellCdf(this)) {
+    return(this);
   }
 
   verbose && enter(verbose, "Retrieving monocell CDF");
@@ -543,7 +550,7 @@ setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ..., verbose=FALS
 
   if (is.null(pathname)) {
     verbose && enter(verbose, "Could not locate monocell CDF. Will create one for chip type");
-    res <- createMonoCell(this, ..., verbose=less(verbose));
+    res <- createMonocellCdf(this, ..., verbose=less(verbose));
     verbose && exit(verbose);
   } else {
     res <- fromChipType(this, chipType=chipType, ...);
@@ -554,8 +561,27 @@ setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ..., verbose=FALS
   res;
 }, protected=TRUE)
 
+
+setMethodS3("isMonocellCdf", "AffymetrixCdfFile", function(this, ...) {
+  hasTag(this, "monocell");
+})
+
+
+setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ...) {
+  getMonocellCdf(this, ...);
+})
+
+setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, ...) {
+  createMonocellCdf(this, ...);
+})
+
 ############################################################################
 # HISTORY:
+# 2008-02-20
+# o Now getMonocellCdf() returns the input cdf if already a monocell CDF.
+# o Added isMonocellCdf().
+# o Renamed getMonoCell() to getMonocellCdf() and createMonoCell() to
+#   createMonocellCdf(), because the former had strange names.
 # 2007-12-11
 # o Now getMonoCell() will create the monocell CDF, if missing.
 # 2007-07-13

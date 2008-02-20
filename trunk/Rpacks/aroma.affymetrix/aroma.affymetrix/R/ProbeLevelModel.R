@@ -242,7 +242,7 @@ setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ..., verbose=F
   verbose && enter(verbose, "Getting chip-effect set from data set");
   # Inherit the (monocell) CDF
   cdf <- getCdf(ds);
-  cdfMono <- getMonoCell(cdf, verbose=less(verbose));
+  cdfMono <- getMonocellCdf(cdf, verbose=less(verbose));
 
   # Gets the ChipEffects Class object
   clazz <- getChipEffectSetClass(this);
