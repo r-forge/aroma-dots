@@ -51,10 +51,10 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, units=NULL, ...
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cdf <- getCdf(this);
   # Argument 'units':
   if (is.null(units)) {
   } else if (is.numeric(units)) {
-    cdf <- getCdf(this);
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
   }
 
@@ -231,6 +231,9 @@ setMethodS3("mergeStrands", "CnChipEffectFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-02-19
+# o BUG FIX: getCellIndices() of CnChipEffectFile would return an error
+#   if 'units==NULL'.
 # 2007-03-01
 # o BUG FIX: getCellIndices() would give "Error in fcn(.subset2(unit, 
 #   "groups"), ...) : object "odds" not found" for units with other than

@@ -21,6 +21,8 @@
 #     should be normalized to.}
 #   \item{subsetToFit}{The units from which the normalization curve should
 #     be estimated.  If @NULL, all are considered.}
+#   \item{shift}{An optional amount the data points should be shifted
+#      (translated).}
 # }
 #
 # \section{Fields and Methods}{
@@ -37,7 +39,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY") {
+setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY", shift=0) {
   extraTags <- NULL;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -87,26 +89,36 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
     subsetToFit <- sort(subsetToFit);
   }
 
+  # Argument 'shift':
+  shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf"));
+
 
   extend(ChipEffectTransform(dataSet, ...), "FragmentLengthNormalization", 
     .subsetToFit = subsetToFit,
     .targetFunctions = targetFunctions,
-    .extraTags = extraTags
+    .extraTags = extraTags,
+    shift = shift
   )
 })
 
 
 
 setMethodS3("getAsteriskTags", "FragmentLengthNormalization", function(this, collapse=NULL, ...) {
-  tag <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
   # Extra tags?
-  tag <- c(tag, this$.extraTags);
+  tags <- c(tags, this$.extraTags);
+
+  # Add class-specific tags
+  shift <- as.integer(round(this$shift));
+  if (shift != 0) {
+    tags <- c(tags, sprintf("%+d", shift));
+  }
 
   # Collapse?
-  tag <- paste(tag, collapse=collapse);
+  tags <- paste(tags, collapse=collapse);
 
-  tag;
+  tags;
 }, private=TRUE)
 
 
@@ -128,8 +140,10 @@ setMethodS3("getParameters", "FragmentLengthNormalization", function(this, expan
   # Get parameters of this class
   params <- c(params, list(
     subsetToFit = this$.subsetToFit,
-    .targetFunctions = this$.targetFunctions
+    .targetFunctions = this$.targetFunctions,
+    shift <- this$shift
   ));
+
 
   # Expand?
   if (expand) {
@@ -375,6 +389,13 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 
     yR <- data[,"theta"];
     rm(data); # Not needed anymore
+
+    # Shift?
+    shift <- this$shift;
+    if (shift != 0) {
+      yR <- yR + shift;
+    }
+    
     yR <- log2(yR);
     verbose && cat(verbose, "Signals:");
     verbose && str(verbose, yR);
@@ -524,6 +545,9 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   verbose && str(verbose, subsetToFit);
   verbose && exit(verbose);
 
+  shift <- this$shift;
+  verbose && cat(verbose, "Shift: ", shift);
+
   # Get (and create) the output path
   path <- getPath(this);
 
@@ -598,11 +622,21 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
     # Extract the values to fit the normalization function
     verbose && enter(verbose, "Normalizing log2 signals");
-    y <- log2(data[,"theta"]);
+    y <- data[,"theta"];
+
+    # Shift?
+    if (shift != 0)
+      y <- y + shift;
+
+    # Fit on the log2 scale
+    y <- log2(y);
+
     verbose && cat(verbose, "Log2 signals:");
     verbose && str(verbose, y);
     y <- normalizeFragmentLength(y, fragmentLengths=fl, 
                              targetFcns=targetFcns, subsetToFit=subset, ...);
+    
+    # Store results on the intensity scale
     y <- 2^y;
     verbose && exit(verbose);
 
@@ -653,6 +687,8 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2008-02-18
+# o Added 'shift' to FragmentLengthNormalization, cf ProbeLevelModel.
 # 2007-12-01
 # o Added getAsteriskTag() to FragmentLengthNormalization.
 # o Similar to AllelicCrosstalkCalibration, the constructor argument

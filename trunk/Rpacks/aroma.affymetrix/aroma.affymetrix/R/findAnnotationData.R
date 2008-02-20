@@ -13,6 +13,8 @@
 #   \item{name}{A @character string.}
 #   \item{tags}{Optional @character string.}
 #   \item{pattern}{A filename pattern to search for.}
+#   \item{private}{If @FALSE, files and directories starting 
+#     with a periods are ignored.}
 #   \item{...}{Arguments passed to @see "affxparser::findFiles".}
 #   \item{paths}{A @character @vector of paths to search.
 #     If @NULL, default paths are used.}
@@ -25,7 +27,7 @@
 #
 # @keyword internal
 #*/###########################################################################
-setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, pattern=NULL, ..., paths=NULL, verbose=FALSE) {
+setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, pattern=NULL, private=FALSE, ..., paths=NULL, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -94,6 +96,7 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
   # Search recursively for all files
   args <- list(...);
   args$pattern <- pattern;
+  args$allFiles <- private;
   args$paths <- paths;
   args$recursive <- TRUE;
   verbose && cat(verbose, "Arguments to findFiles:");
@@ -108,6 +111,8 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
 
 ############################################################################
 # HISTORY:
+# 2008-02-14
+# o Added argument 'private=TRUE' to findAnnotationData().
 # 2007-09-15
 # o Created from findAnnotationDataByChipType.R.
 ############################################################################

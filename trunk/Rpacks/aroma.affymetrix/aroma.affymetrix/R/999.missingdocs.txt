@@ -112,7 +112,7 @@
   findByChipType.DChipSnpInformation findByChipType.UflSnpInformation
   findByChipType.UgpGenomeInformation findByName
   findByName.AffymetrixCelSet findByName.ChipEffectSet
-  findByName.CnagCfhSet findCdf.patch findSAFs
+  findByName.CnagCfhSet findFiles findSAFs
   findSAFs.SampleAnnotationSet findUnitsTodo
   findUnitsTodo.ChipEffectFile findUnitsTodo.ChipEffectSet
   findUnitsTodo.ExonChipEffectSet findUnitsTodo.FirmaFile
