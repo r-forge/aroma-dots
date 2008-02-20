@@ -43,6 +43,7 @@ o BETA: Added static importFromApt() for CnChipEffectSet.
 o BETA: Added classes AffymetrixAptSummaryFile and AffymetrixCnChpFile.
 o BETA: Added class AromaUfcFile.
 o BETA: Added classes DChipChpFile and DChipChpSet.
+o BETA: Added class AlleleSummation.
 
 
 Version: 0.8.3 [2007-12-18]

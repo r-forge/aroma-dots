@@ -35,7 +35,7 @@ stopifnot(identical(getNames(csAcc), getNames(cs)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level modelling test (for CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- RmaCnPlm(csAcc, mergeStrands=TRUE, combineAlleles=FALSE, shift=300);
+plm <- RmaSnpPlm(csAcc, mergeStrands=TRUE, shift=300);
 print(plm);
 
 fit(plm, verbose=log);
