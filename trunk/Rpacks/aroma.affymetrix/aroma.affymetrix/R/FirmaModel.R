@@ -233,7 +233,7 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ..., verbose=FALSE) {
   verbose && enter(verbose, "Getting FIRMA results set from data set");
   # Inherit the (monocell) CDF
   cdf <- getCdf(ds);
-  cdfMono <- getMonoCell(cdf); 
+  cdfMono <- getMonocellCdf(cdf); 
 
   # Gets the Class object
   clazz <- getFileSetClass(this);
