@@ -18,6 +18,8 @@ o TIME OPTIMIZATION: Now RmaPlm and ExonRmaPlm turn to median polish
 o TIME OPTIMIZATION: Now as.character() for AffymetrixCelSet reports
   time stamps only for data set with less than 500 arrays.
   Option: aroma.affymetrix.settingsoutput$timestampsThreshold.
+o UPDATE: Annotation data directories starting with a period are no
+  longer searched when looking for annotation data files.
 o Added extractDataFrame() for ChipEffectSet & ChipEffectFile, which
   also (optionally) extracts unit and group names, as well as the
   (unit, group, cell) index map.
@@ -28,6 +30,8 @@ o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
   much less memory when infering the cell indices.
 o BUG FIX: getTimestamp() for AffymetrixCelFile would return NA for 
   Calvin files.
+o BUG FIX: getCellIndices() of CnChipEffectFile would return an error
+  if 'units==NULL'.
 o Updated importFromDChip() for CnChipEffectSet so that it imports data
   exported by more recent versions of dChip.  In recent versions the
   standard-error columns are named '*SE' whereas before it were '*SD'.

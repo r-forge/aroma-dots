@@ -12,7 +12,8 @@
   .patchRowMedians();
 
   # Patch affxparser::findCdf()
-  reassignInPackage("findCdf", "affxparser", findCdf.patch);
+#  reassignInPackage("findFiles", "affxparser", findFiles.patch);
+#  reassignInPackage("findCdf", "affxparser", findCdf.patch);
 
 
 

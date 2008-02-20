@@ -39,18 +39,65 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("ScaleNormalization", function(..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate) {
+setConstructorS3("ScaleNormalization", function(..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg="-XY", typesToAvg=typesToUpdate, shift=0) {
+  extraTags <- NULL;
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'targetAvg':
   targetAvg <- Arguments$getDouble(targetAvg, range=c(1,Inf));
+
+  # Argument 'subsetToAvg':
+  if (is.null(subsetToAvg)) {
+  } else if (is.character(subsetToAvg)) {
+    if (subsetToAvg %in% c("-X", "-Y", "-XY")) {
+    } else {
+      throw("Unknown value of argument 'subsetToAvg': ", subsetToAvg);
+    }
+    extraTags <- c(extraTags, subsetToAvg=subsetToAvg);
+  } else {
+    cdf <- getCdf(dataSet);
+    subsetToAvg <- Arguments$getIndices(subsetToAvg, 
+                                        range=c(1, nbrOfUnits(cdf)));
+    subsetToAvg <- unique(subsetToAvg);
+    subsetToAvg <- sort(subsetToAvg);
+  } 
+
+  # Argument 'shift':
+  shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf")); 
+
 
   extend(ProbeLevelTransform(...), "ScaleNormalization", 
     .subsetToUpdate = subsetToUpdate,
     .typesToUpdate = typesToUpdate,
     .targetAvg = targetAvg,
     .subsetToAvg = subsetToAvg,
-    .typesToAvg = typesToAvg
+    .typesToAvg = typesToAvg,
+    .extraTags = extraTags,
+    shift = shift
   )
 })
+
+
+setMethodS3("getAsteriskTags", "ScaleNormalization", function(this, collapse=NULL, ...) {
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+
+  # Extra tags?
+  tags <- c(tags, this$.extraTags);
+
+  # Add class-specific tags
+  shift <- as.integer(round(this$shift));
+  if (shift != 0) {
+    tags <- c(tags, sprintf("%+d", shift));
+  }
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
+  tags;
+}, private=TRUE)
+ 
 
 
 setMethodS3("getSubsetToUpdate", "ScaleNormalization", function(this, ..., verbose=FALSE) {
@@ -76,7 +123,7 @@ setMethodS3("getSubsetToUpdate", "ScaleNormalization", function(this, ..., verbo
   if (inherits(ds, "ChipEffectSet")) {
     verbose && enter(verbose, "Identifying possible cells in ", class(ds)[1]);
     df <- getFile(ds, 1);
-    # Cannot use 'unlist=FALSE' next, because restructuring might occur.
+    # Cannot use 'unlist=TRUE' next, because restructuring might occur.
     possibleCells <- getCellIndices(df, verbose=less(verbose));
     possibleCells <- unlist(possibleCells, use.names=FALSE);
     possibleCells <- sort(possibleCells);
@@ -127,12 +174,64 @@ setMethodS3("getSubsetToAvg", "ScaleNormalization", function(this, ..., verbose=
   if (identical(attr(subsetToAvg, "adjusted"), TRUE))
     return(subsetToAvg);
 
+
+  ds <- getInputDataSet(this);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Subset with a prespecified set of units?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.character(subsetToAvg)) {
+    if (subsetToAvg %in% c("-X", "-Y", "-XY")) {
+      verbose && enter(verbose, "Identify subset of units from genome information");
+      verbose && cat(verbose, "subsetToAvg: ", subsetToAvg);
+
+      # Look up in cache
+      subset <- this$.subsetToAvgExpanded;
+      if (is.null(subset)) {
+        cdf <- getCdf(ds);
+        gi <- getGenomeInformation(cdf);
+        # Get the genome information (throws an exception if missing)
+        verbose && print(verbose, gi);
+  
+        # Identify units to be excluded
+        if (subsetToAvg == "-X") {
+          units <- getUnitsOnChromosome(gi, 23, .checkArgs=FALSE);
+        } else if (subsetToAvg == "-Y") {
+          units <- getUnitsOnChromosome(gi, 24, .checkArgs=FALSE);
+        } else if (subsetToAvg == "-XY") {
+          units <- getUnitsOnChromosome(gi, 23:24, .checkArgs=FALSE);
+        }
+  
+        verbose && cat(verbose, "Units to exclude: ");
+        verbose && str(verbose, units);
+  
+        # The units to keep
+        units <- setdiff(1:nbrOfUnits(cdf), units);
+  
+        verbose && cat(verbose, "Units to include: ");
+        verbose && str(verbose, units);
+
+        # Identify cell indices for these units
+        subset <- getCellIndices(cdf, units=units, unlist=TRUE);
+
+        # Store
+        this$.subsetToAvgExpanded <- subset;
+      } # if (is.null(subset))
+
+      subsetToAvg <- subset;
+      rm(subset);
+
+      verbose && exit(verbose);
+    }
+  }
+
+
   # Ad hoc solution for ChipEffectSet:s for now. /HB 2007-04-11
   ds <- getInputDataSet(this);
   if (inherits(ds, "ChipEffectSet")) {
     verbose && enter(verbose, "Identifying possible cells in ", class(ds)[1]);
     df <- getFile(ds, 1);
-    # Cannot use 'unlist=FALSE' next, because restructuring might occur.
+    # Cannot use 'unlist=TRUE' next, because restructuring might occur.
     possibleCells <- getCellIndices(df, verbose=less(verbose));
     possibleCells <- unlist(possibleCells, use.names=FALSE);
     possibleCells <- sort(possibleCells);
@@ -175,7 +274,8 @@ setMethodS3("getParameters", "ScaleNormalization", function(this, ...) {
     typesToUpdate = this$.typesToUpdate,
     subsetToAvg = getSubsetToAvg(this),
     typesToAvg = this$.typesToAvg,
-    targetAvg = this$.targetAvg
+    targetAvg = this$.targetAvg,
+    shift = this$shift
   );
 
   # Append the two sets
@@ -302,6 +402,12 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
     gc <- gc();
     verbose && print(verbose, gc);
 
+    # Shift?
+    shift <- this$shift;
+    if (shift != 0) {
+      x <- x + shift;
+    }
+
     # Estimating scale
     verbose && enter(verbose, "Estimating scale");
     xM <- median(x, na.rm=TRUE);
@@ -378,6 +484,9 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
 
 ############################################################################
 # HISTORY:
+# 2008-02-19
+# o Added support for "-X", "-Y" and "-XY" for argument 'subsetToAvg'.
+# o Added support for constructor argument 'shift'.
 # 2007-09-18
 # o Updated all getCellIndices() to use 'unlist=TRUE'.
 # 2007-04-16
