@@ -197,6 +197,8 @@ setMethodS3("fromDataFile", "ChipEffectFile", function(static, df=NULL, filename
   }
 
   # Argument 'filename' & 'path':
+  # First, remove any replicated "chipEffects" tags.
+  filename <- gsub("(,chipEffects)*,chipEffects", ",chipEffects", filename);
   pathname <- Arguments$getWritablePathname(filename, path=path);
 
   # Argument 'verbose':
@@ -718,14 +720,15 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
 
   verbose && enter(verbose, "Storing flat data to file");
 
-  # Encode
+  # Encode?
+  if ("outliers" %in% names) {
+    data[,"outliers"] <- -as.integer(data[,"outliers"]);
+  }
+
   names <- gsub("theta", "intensities", names);
   names <- gsub("sdTheta", "stdvs", names);
   names <- gsub("outliers", "pixels", names);
   colnames(data) <- names;
-  if ("pixels" %in% names) {
-    data[,"pixels"] <- -as.integer(data[,"pixels"]);
-  }
 
   verbose && enter(verbose, "Updating file");
   indices <- data[,"cell"];
@@ -844,6 +847,12 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2008-02-20
+# o Now updateDataFile() only encodes the "outliers" field, if it part of
+#   the input.  If the input is in "raw data", i.e. "pixels", it won't be
+#   encoded.
+# o Now fromDataFile() of ChipEffectFile no longer replicates the 
+#   "chipEffects" if already part of the filename.
 # 2007-12-11
 # o BUG FIX: getCellMap() of ChipEffectFile was broken.
 # 2007-12-10
