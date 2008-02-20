@@ -1,14 +1,15 @@
 #function that plots either lines or image
 
-matplotSwitch<-function(mat,type,colScheme,nProbesPerExon,breaks=NULL,
-    valuesPlot=c("positive","zeroSym","original"),ylim=NULL,matplotType="l",
+matplotSwitch<-function(mat,type=c("lines","image"),colScheme,nProbesPerExon,breaks=NULL,
+    valuesPlot=c("original","positive","zeroSym"),ylim=NULL,matplotType="l",
     yaxisLabel=FALSE,hlines=yaxisLabel,arrayNames=NULL,arrayFactor=NULL,col=NULL,
     lwd=1, lty=1, pch=19,plotLast=NULL,...
     ){
         nbrOfArrays<-ncol(mat)
         arrays<-1:nbrOfArrays
         valuesPlot<-match.arg(valuesPlot)
-        if(valuesPlot=="positive"){ 
+        mat[is.infinite(mat)]<-NA
+        if(valuesPlot=="positive" && type=="image"){ 
             mat<-abs(mat)
          }
         if(is.null(arrayFactor)){
