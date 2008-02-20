@@ -59,6 +59,13 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, units=NULL, ..., fi
   }
 
 
+  # Settings
+  settings <- getOption("aroma.affymetrix.settings");
+  gcArrayFrequency <- settings$memory$gcArrayFrequency; 
+  if (is.null(gcArrayFrequency))
+    gcArrayFrequency <- 10;
+
+
   verbose && enter(verbose, "Getting data for the array set");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -94,7 +101,7 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, units=NULL, ..., fi
     cf <- getFile(this, aa);
     df[,aa] <- getDataFlat(cf, units=ugcMap, fields=field, 
                                             verbose=less(verbose))[,field];
-    if (aa %% 10 == 0) {
+    if (aa %% gcArrayFrequency == 0) {
       # Garbage collect
       gc <- gc();
       verbose && print(verbose, gc);

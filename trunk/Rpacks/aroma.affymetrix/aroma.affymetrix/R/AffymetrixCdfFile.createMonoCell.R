@@ -129,6 +129,10 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
   verbose2 <- 2;
 
 
+  # Already a monocell CDF?
+  if (isMonocellCdf(this)) {
+    return(this);
+  }
 
   verbose && enter(verbose, "Creating monocell CDF");
 
@@ -578,7 +582,8 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, ...) {
 ############################################################################
 # HISTORY:
 # 2008-02-20
-# o Now getMonocellCdf() returns the input cdf if already a monocell CDF.
+# o Now getMonocellCdf() and createMonocellCdf() quietly return the input
+#   CDF if it already is a monocell CDF.
 # o Added isMonocellCdf().
 # o Renamed getMonoCell() to getMonocellCdf() and createMonoCell() to
 #   createMonocellCdf(), because the former had strange names.
