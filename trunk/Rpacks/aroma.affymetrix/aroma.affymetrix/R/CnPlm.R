@@ -115,6 +115,24 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
             fitfcn(y1), 
             fitfcn(y2)
           );
+        } else if (ngroups == 6) {
+          yA1 <- .subset2(.subset2(groups, 1), 1);
+          yB1 <- .subset2(.subset2(groups, 2), 1);
+          yA2 <- .subset2(.subset2(groups, 3), 1);
+          yB2 <- .subset2(.subset2(groups, 4), 1);
+          yA3 <- .subset2(.subset2(groups, 5), 1);
+          yB3 <- .subset2(.subset2(groups, 6), 1);
+          y1 <- yA1 + yB1;
+          y2 <- yA2 + yB2;
+          y3 <- yA3 + yB3;
+          y1 <- y1[1,,] - y1[2,,];  # PM-MM
+          y2 <- y2[1,,] - y2[2,,];  # PM-MM
+          y3 <- y3[1,,] - y3[2,,];  # PM-MM
+          list(
+            fitfcn(y1), 
+            fitfcn(y2),
+            fitfcn(y3)
+          );
         } else {
           # For all other cases, fit each group individually
           base::lapply(groups, FUN=function(group) {
@@ -152,6 +170,27 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
             fitfcn(y1), 
             fitfcn(y2)
           );
+        } else if (ngroups == 6) {
+          yA1 <- .subset2(.subset2(groups, 1), 1);
+          yB1 <- .subset2(.subset2(groups, 2), 1);
+          yA2 <- .subset2(.subset2(groups, 3), 1);
+          yB2 <- .subset2(.subset2(groups, 4), 1);
+          yA3 <- .subset2(.subset2(groups, 5), 1);
+          yB3 <- .subset2(.subset2(groups, 6), 1);
+          y1 <- yA1 + yB1;
+          y2 <- yA2 + yB2;
+          y3 <- yA3 + yB3;
+          y1 <- y1[1,,] - y1[2,,];  # PM-MM
+          y2 <- y2[1,,] - y2[2,,];  # PM-MM
+          y3 <- y3[1,,] - y3[2,,];  # PM-MM
+          y1[y1 < 1] <- 1;          # min1(PM-MM)=min(PM-MM,1)
+          y2[y2 < 1] <- 1;          # min1(PM-MM)=min(PM-MM,1)
+          y3[y3 < 1] <- 1;          # min1(PM-MM)=min(PM-MM,1)
+          list(
+            fitfcn(y1), 
+            fitfcn(y2),
+            fitfcn(y3)
+          );
         } else {
           # For all other cases, fit each group individually
           base::lapply(groups, FUN=function(group) {
@@ -187,6 +226,24 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
             fitfcn(y1), 
             fitfcn(y2)
           );
+        } else if (ngroups == 6) {
+          yA1 <- .subset2(.subset2(groups, 1), 1);
+          yB1 <- .subset2(.subset2(groups, 2), 1);
+          yA2 <- .subset2(.subset2(groups, 3), 1);
+          yB2 <- .subset2(.subset2(groups, 4), 1);
+          yA3 <- .subset2(.subset2(groups, 5), 1);
+          yB3 <- .subset2(.subset2(groups, 6), 1);
+          y1 <- yA1 + yB1;
+          y2 <- yA2 + yB2;
+          y3 <- yA3 + yB3;
+          y1 <- y1[1,,] + y1[2,,];  # PM+MM
+          y2 <- y2[1,,] + y2[2,,];  # PM+MM
+          y3 <- y3[1,,] + y3[2,,];  # PM+MM
+          list(
+            fitfcn(y1), 
+            fitfcn(y2),
+            fitfcn(y3)
+          );
         } else {
           # For all other cases, fit each group individually
           base::lapply(groups, FUN=function(group) {
@@ -217,6 +274,21 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
           list(
             fitfcn(y1),
             fitfcn(y2)
+          );
+        } else if (ngroups == 6) {
+          yA1 <- .subset2(.subset2(groups, 1), 1);
+          yB1 <- .subset2(.subset2(groups, 2), 1);
+          yA2 <- .subset2(.subset2(groups, 3), 1);
+          yB2 <- .subset2(.subset2(groups, 4), 1);
+          yA3 <- .subset2(.subset2(groups, 5), 1);
+          yB3 <- .subset2(.subset2(groups, 6), 1);
+          y1 <- yA1 + yB1;
+          y2 <- yA2 + yB2;
+          y3 <- yA3 + yB3;
+          list(
+            fitfcn(y1), 
+            fitfcn(y2),
+            fitfcn(y3)
           );
         } else {
           # For all other cases, fit each group individually
@@ -265,6 +337,9 @@ setMethodS3("setCombineAlleles", "CnPlm", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-02-22
+# o UPDATE: Now a CnPlm with combineAlleles=TRUE also handles SNPs with
+#   six groups; they occur at least once in a custom CDF.
 # 2007-03-28
 # o BUG FIX: getFitUnitFunction() of CnPlm did not handle probe
 #   model "min1(pm-mm)".

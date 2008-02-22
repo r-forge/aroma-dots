@@ -27,6 +27,7 @@
 setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
   chipType <- getChipType(this);
 
+  # First some hardwired return values
   if (regexpr("^Mapping(10K|50K|250K)_.*$", chipType) != -1)
     return(TRUE);
 
@@ -36,7 +37,11 @@ setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
   if (regexpr("^GenomeWideSNP_.*$", chipType) != -1)
     return(TRUE);
 
-  FALSE;
+  # Then, check for genotype units
+  types <- getUnitTypes(this, ...);
+  hasSnpUnits <- any(types == 2);
+
+  hasSnpUnits;
 }, private=TRUE)
 
 
@@ -53,7 +58,6 @@ setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
 # @synopsis
 #
 # \arguments{
-#  \item{pattern}{A regular expression to identify unit that are SNPs.}
 #  \item{...}{Not used.}
 # }
 #
@@ -65,15 +69,17 @@ setMethodS3("isSnpChip", "AffymetrixCdfFile", function(this, ...) {
 #
 # \seealso{
 #   @seemethod "getCnNames".
-#   Internally, @seemethod "getUnitNames".
+#   Internally, @seemethod "getUnitTypes".
 #   is used.
 #
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, pattern="SNP_", ...) {
-  unitNames <- getUnitNames(this, ...);
-  grep(pattern=pattern, unitNames, value=TRUE);
+setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, ...) {
+  types <- getUnitTypes(this, ...);
+  units <- (types == 2);
+  unitNames <- getUnitNames(this, units=units, ...);
+  unitNames;
 }, private=TRUE)
 
 
@@ -91,7 +97,6 @@ setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, pattern="SNP_", .
 # @synopsis
 #
 # \arguments{
-#  \item{pattern}{A regular expression to identify unit that are CN units.}
 #  \item{...}{Not used.}
 # }
 #
@@ -103,15 +108,17 @@ setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, pattern="SNP_", .
 #
 # \seealso{
 #   @seemethod "getSnpNames".
-#   Internally, @seemethod "getUnitNames".
+#   Internally, @seemethod "getUnitTypes".
 #   is used.
 #
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getCnNames", "AffymetrixCdfFile", function(this, pattern="CN_", ...) {
-  unitNames <- getUnitNames(this, ...);
-  grep(pattern=pattern, unitNames, value=TRUE);
+setMethodS3("getCnNames", "AffymetrixCdfFile", function(this, ...) {
+  types <- getUnitTypes(this, ...);
+  units <- (types == 5 | types == 8);
+  unitNames <- getUnitNames(this, units=units, ...);
+  unitNames;
 }, private=TRUE)
 
 
@@ -325,8 +332,25 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # Identify all possible allele pairs
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Loading all possible allele basepairs");
-  # Use only units that are SNPs
-  unitsAll <- indexOf(this, "SNP_");
+
+  verbose && enter(verbose, "Identifying compatible SNP units");
+  # Use only units that are SNPs...
+  types <- getUnitTypes(this, verbose=less(verbose, 1));
+  unitsAll <- which(types == 2);
+  verbose && cat(verbose, "Number of SNP units: ", length(unitsAll));
+
+  # ...and with either 2 or 4 groups
+  unitSizes <- getUnitSizes(this, units=unitsAll);
+  verbose && cat(verbose, "Detected unit sizes:");
+  verbose && print(verbose, table(unitSizes));
+
+  unitsAll <- unitsAll[unitSizes %in% c(2,4)];
+  rm(unitSizes);
+  verbose && cat(verbose, "Number of SNP units with 2 or 4 groups: ",
+                                                        length(unitsAll));
+
+  verbose && exit(verbose);
+
   gc <- gc();
 
   # Operate only on a subset of probes?
@@ -337,7 +361,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   rm(unitsAll);
   nunits <- length(units);
 
-  verbose && cat(verbose, "Number of units (SNPs) to query: ", nunits);
+  verbose && cat(verbose, "Number of SNP units to query: ", nunits);
   if (nunits == 0)
     return(NULL);
 
@@ -354,12 +378,19 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
     names(s) <- NULL;
     s;
   });
+
   uGroupNames <- unique(groupNames);
+  # Order by basepairs so that the verbose output is easier to read
+  o <- order(as.integer(sapply(uGroupNames, FUN=paste, collapse="")));
+  uGroupNames <- uGroupNames[o];
+  rm(o);
+
   gc <- gc();
   verbose && print(verbose, gc);
   
   verbose && cat(verbose, "Unique group names:");
-  verbose && str(verbose, lapply(uGroupNames, FUN=function(x) names(levels[x])));
+  verbose && str(verbose, lapply(uGroupNames, FUN=function(x) names(levels[x])), vec.len=8);
+
   verbose && exit(verbose);
   verbose && exit(verbose);
 
@@ -440,26 +471,34 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   for (kk in 1:length(uGroupNames)) {
     name <- uGroupNames[[kk]];
     basepair <- paste(names(levels)[name[1:2]], collapse="");
-    verbose && enter(verbose, "Allele basepair ", basepair);
+    verbose && enter(verbose, sprintf("Allele basepair %s (%d of %d)", basepair, kk, length(uGroupNames)));
 
     idx <- base::sapply(groupNames, FUN=identical, name);
     idx <- which(idx);
+    if (verbose) {
+      bpNames <- matrix(names(levels)[name], nrow=2);
+      bpNames <- paste(bpNames[1,], bpNames[2,], sep="");
+      verbose && cat(verbose, "Allele pairs: ", paste(bpNames, collapse=","));
+      rm(bpNames);
+      verbose && cat(verbose, "Number of units: ", length(idx));
+    }
     cdf <- cdfAll[idx];
     cdfAll[idx] <- NA;  # Not needed anymore (save memory)
     rm(idx);
-    gc <- gc();
+#    gc <- gc();
 
     cdf0 <- vector("list", length=length(name));
     for (gg in 1:length(name)) {
       cdf0[[gg]] <- unlist(base::lapply(cdf, FUN=.subset2, gg), use.names=FALSE);
     }
+
     rm(cdf);
     probeSets[[kk]] <- cdf0;
     rm(cdf0);
     names(probeSets)[kk] <- basepair;
 
-    gc <- gc();
-    verbose && print(verbose, gc);
+#    gc <- gc();
+#    verbose && print(verbose, gc);
 
     verbose && exit(verbose);
   }
@@ -484,12 +523,18 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # Identify equivalent groups
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Putting equivalent groups together");
+
   probeSets2 <- list();
   for (kk in 1:length(probeSets)) {
     bp <- names(probeSets)[kk];
     value <- probeSets[[kk]];
 
     nbrOfPairs <- length(value)/2;
+
+    # The below assumes that every 2nd group pair is "reversed".
+    # Should really make use of the group 'direction' in the CDF,
+    # but that is really slow.  For the CDFs we've checked, all
+    # 2 and 4 groups follow this assumption. /HB 2008-02-21
     for (ll in seq(length=nbrOfPairs)) {
       value2 <- probeSets2[[bp]];
       if (is.null(value2))
@@ -501,11 +546,11 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
       bp <- strsplit(bp, split="")[[1]];
       bp <- c(A="T", C="G", G="C", T="A")[bp];
       bp <- paste(bp, collapse="");
-      value <- value[3:4];
+      value <- value[-(1:2)];
     }
   }
   verbose && cat(verbose, "Probe pairs: ", 
-                                  paste(names(probeSets2), collapse=", "));
+                               paste(sort(names(probeSets2)), collapse=", "));
   verbose && exit(verbose);
 
   # Assert correctness
@@ -621,7 +666,8 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
   # Identify all possible allele pairs
   verbose && enter(verbose, "Loading all possible allele basepairs");
   # Use only units that are SNPs
-  units <- indexOf(this, "SNP_");
+  types <- getUnitTypes(this, verbose=verbose);
+  units <- which(types == 2);
 
   # Read group names for the SNPs
   groupNames <- readCdfGroupNames(cdfFile, units=units);
@@ -704,6 +750,13 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2008-02-21
+# o Now getAlleleProbePairs() only consider SNPs with 2 or 4 groups, because
+#   at least one custom SNP chip we've seen a few SNPs with also 6 groups
+#   (which turned out to all have the same direction).
+# o GENERALIZED: Now getSnpNames(), getCnNames(), getAlleleProbePairs(),
+#   getAlleleProbePairs2(), and isSnpChip() all infer unit type (SNP or CN)
+#   from the CDF unit type and no longer from the unit names.
 # 2007-09-14
 # o Added getCnNames().
 # o Updated isSnpChip() to recognize 5.0 and 6.0 chips.
