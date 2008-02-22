@@ -66,7 +66,7 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # Get cell map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Get unit-to-cell map");
-  map <- getCellMap(this, units=units, verbose=less(verbose));
+  map <- getUnitGroupCellMap(this, units=units, verbose=less(verbose));
   verbose && exit(verbose);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

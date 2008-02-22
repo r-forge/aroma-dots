@@ -375,7 +375,7 @@ setMethodS3("fitOneChromosome", "SmoothMultiarrayModel", function(this, chromoso
       if (is.null(map)) {
         # TODO: Create a (unit,cell) map
         verbose && enter(verbose, "Retrieving (unit,cell) map for all arrays");
-        map <- getCellMap(outFile, units=units, verbose=less(verbose,2));
+        map <- getUnitGroupCellMap(outFile, units=units, verbose=less(verbose,2));
         verbose && str(verbose, map);
         # Not needed anymore
         rm(units);

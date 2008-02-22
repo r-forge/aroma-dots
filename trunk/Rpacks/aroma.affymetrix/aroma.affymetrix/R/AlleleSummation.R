@@ -171,8 +171,7 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
 
     verbose && enter(verbose, "Copying signals for non-SNP units");
     if (is.null(otherUgcMap)) {
-      # getUnitGroupCellMap <- getCellMap;  # To do!
-      otherUgcMap <- getCellMap(inputFile, units=otherUnits);
+      otherUgcMap <- getUnitGroupCellMap(inputFile, units=otherUnits);
     }
     cells <- otherUgcMap$cell;
     data <- readCel(getPathname(inputFile), indices=cells, 
@@ -187,7 +186,7 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
 
     verbose && enter(verbose, "Summing allele signals for SNP units");
     if (is.null(snpUgcMap)) {
-      snpUgcMap <- getCellMap(inputFile, units=snps);
+      snpUgcMap <- getUnitGroupCellMap(inputFile, units=snps);
     }
     cells <- snpUgcMap$cell;
     data <- readCel(getPathname(inputFile), indices=cells, 

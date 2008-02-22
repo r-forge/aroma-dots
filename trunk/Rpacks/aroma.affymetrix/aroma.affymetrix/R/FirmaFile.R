@@ -273,7 +273,11 @@ setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=spri
 }, static=TRUE, private=TRUE)
 
 
-setMethodS3("getCellMap", "FirmaFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getCellMap", "FirmaFile", function(this, ...) {
+  getUnitGroupCellMap(this, ...);
+})
+
+setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -365,7 +369,7 @@ setMethodS3("getDataFlat", "FirmaFile", function(this, units=NULL, fields=c("int
 
   # Get unit-to-cell map
   suppressWarnings({
-    map <- getCellMap(this, units=units, ..., verbose=less(verbose));
+    map <- getUnitGroupCellMap(this, units=units, ..., verbose=less(verbose));
   })
 
   verbose && enter(verbose, "Reading data fields");

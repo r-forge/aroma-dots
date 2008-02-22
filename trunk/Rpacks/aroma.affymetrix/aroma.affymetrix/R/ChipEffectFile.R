@@ -444,7 +444,8 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
 
 
 ###########################################################################/**
-# @RdocMethod getCellMap
+# @RdocMethod getUnitGroupCellMap
+# @aliasmethod getCellMap
 #
 # @title "Gets a (unit, group, cell) index map"
 #
@@ -483,7 +484,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
+setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -574,7 +575,7 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
       verbose && printf(verbose, "Chunk #%d of %d\n", kk, length(chunks));
       chunk <- chunks[[kk]];
       chunks[[kk]] <- NA;
-      cells0 <- getCellIndices(this, units=chunk, .cache=FALSE, verbose=less(verbose));
+      cells0 <- getCellIndices(this, units=chunk, force=force, .cache=FALSE, verbose=less(verbose));
       idxs <- offset + seq(length=length(chunk));
       offset <- offset + length(chunk);
       rm(chunk);
@@ -647,6 +648,10 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, units=NULL, force=FAL
 }, private=TRUE)
 
 
+setMethodS3("getCellMap", "ChipEffectFile", function(this, ...) {
+  getUnitGroupCellMap(this, ...);
+})
+
 
 setMethodS3("getDataFlat", "ChipEffectFile", function(this, units=NULL, fields=c("theta", "sdTheta", "outliers"), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -663,7 +668,7 @@ setMethodS3("getDataFlat", "ChipEffectFile", function(this, units=NULL, fields=c
 
   # Get unit-to-cell map
   suppressWarnings({
-    map <- getCellMap(this, units=units, ..., verbose=less(verbose));
+    map <- getUnitGroupCellMap(this, units=units, ..., verbose=less(verbose));
   })
 
   verbose && enter(verbose, "Reading data fields");
@@ -781,7 +786,7 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get flat (unit, group, cell) map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  map <- getCellMap(this, verbose=less(verbose));
+  map <- getUnitGroupCellMap(this, verbose=less(verbose));
   verbose && str(verbose, map);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -847,6 +852,9 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 ############################################################################
 # HISTORY:
+# 2008-02-22
+# o Renamed getCellMap() to getUnitGroupCellMap().
+# o Now getCellMap() pass on the 'force' argument all the way.
 # 2008-02-20
 # o Now updateDataFile() only encodes the "outliers" field, if it part of
 #   the input.  If the input is in "raw data", i.e. "pixels", it won't be

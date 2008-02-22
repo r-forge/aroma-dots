@@ -285,8 +285,11 @@ setMethodS3("findUnitsTodo", "WeightsFile", function(this, units=NULL, ..., forc
 })
 
 
+setMethodS3("getCellMap", "WeightsFile", function(this, ...) {
+  getUnitGroupCellMap(this, ...);
+})
 
-setMethodS3("getCellMap", "WeightsFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getUnitGroupCellMap", "WeightsFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -372,7 +375,7 @@ setMethodS3("getDataFlat", "WeightsFile", function(this, units=NULL, fields=c("t
 
   # Get unit-to-cell map
   suppressWarnings({
-    map <- getCellMap(this, units=units, ..., verbose=less(verbose));
+    map <- getUnitGroupCellMap(this, units=units, ..., verbose=less(verbose));
   })
 
   verbose && enter(verbose, "Reading data fields");
