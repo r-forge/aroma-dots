@@ -22,7 +22,8 @@ function(this, ..., verbose=FALSE) {
   verbose && exit(verbose);
   verbose && exit(verbose);
   data;
-}
+})
+
 setMethodS3("extractNuseDataFrame","QualityAssessmentModel",
 function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -47,4 +48,5 @@ function(this, ..., verbose=FALSE) {
   verbose && exit(verbose);
   verbose && exit(verbose);
   data;
-}
+})
+
