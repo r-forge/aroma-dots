@@ -1,0 +1,11 @@
+convertBxp<-function(bxpObj){
+    out<-lapply(1:length(bxpObj$n),function(i){
+            stats<-bxpObj$stats[,i]
+            n<-bxpObj$n[i]
+            conf<-bxpObj$conf[,i]
+            out<-bxpObj$out[bxpObj$group==i]
+            return(list(stats=stats,n=n,conf=conf,out=out))
+            })
+    names(out)<-bxpObj$names
+    return(out)
+}

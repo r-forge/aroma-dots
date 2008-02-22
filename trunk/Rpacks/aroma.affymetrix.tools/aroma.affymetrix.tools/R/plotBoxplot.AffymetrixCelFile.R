@@ -1,3 +1,7 @@
+setMethodS3("plotBoxplot","AffymetrixCelFile",function(this, verbose = FALSE,statsArgs=NULL,...){
+    boxplotStats<-do.call("boxplotStats", args=c(list(this=this),statsArgs))
+    plotBoxplot(boxplotStats,...)
+})
 setMethodS3("plotBoxplot","AffymetrixCelFile",function(this,subset=1/2,verbose = FALSE,
     field="intensities", trans=log2,types="pm",...){
     verbose <- Arguments$getVerbose(verbose)
