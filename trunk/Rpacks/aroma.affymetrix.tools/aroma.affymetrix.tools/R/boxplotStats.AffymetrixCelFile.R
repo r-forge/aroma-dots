@@ -17,11 +17,11 @@ function(this, subset = NULL, verbose = FALSE,trans=log2,types="pm",...)
         y <- y$intensities
         verbose && exit(verbose)
         y <- trans(y)
-        verbose && cat(verbose, "Plotting")
+        verbose && enter(verbose, "Calculating Boxplot Statistics")
         out<-boxplot.stats(y,...)
+        verbose && exit(verbose)
     })
     verbose && exit(verbose)
-    
     return(out)
 
 })

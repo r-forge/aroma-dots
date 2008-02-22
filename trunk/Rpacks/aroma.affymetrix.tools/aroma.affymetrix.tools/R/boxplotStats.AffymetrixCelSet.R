@@ -1,8 +1,7 @@
-setMethodS3("boxplotStats","AffymetrixCelSet",function(this,arrays=NULL, verbose = FALSE,...){
+setMethodS3("boxplotStats","AffymetrixCelSet",function(this, verbose = FALSE,...){
     nbrOfArrays <- nbrOfArrays(this)
     verbose <- Arguments$getVerbose(verbose)
-    if(is.null(arrays)) arrays<-seq(this)
-    else arrays<-Arguments$getIndices(arrays, range = c(1,length(this)))
+    arrays<-seq(this)
     cdf <- getCdf(this)
     verbose && enter(verbose, "Calculating summaries for ", length(arrays), " arrays")
     boxplotStats<-list()
