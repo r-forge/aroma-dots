@@ -207,7 +207,7 @@ setMethodS3("process", "ChipEffectGroupMerge", function(this, ..., force=FALSE, 
     if (is.null(map)) {
       # Only loaded if really needed.
       verbose && enter(verbose, "Retrieving unit-to-cell map for all arrays");
-      map <- getCellMap(ce, verbose=less(verbose));
+      map <- getUnitGroupCellMap(ce, verbose=less(verbose));
       verbose && str(verbose, map);
       verbose && exit(verbose);
 

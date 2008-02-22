@@ -287,8 +287,12 @@ setMethodS3("findUnitsTodo", "ResidualFile", function(this, units=NULL, ..., for
 })
 
 
+setMethodS3("getCellMap", "ResidualFile", function(this, ...) {
+  getUnitGroupCellMap(this, ...);
+})
 
-setMethodS3("getCellMap", "ResidualFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+
+setMethodS3("getUnitGroupCellMap", "ResidualFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -378,7 +382,7 @@ setMethodS3("getDataFlat", "ResidualFile", function(this, units=NULL, fields=c("
 
   # Get unit-to-cell map
   suppressWarnings({
-    map <- getCellMap(this, units=units, ..., verbose=less(verbose));
+    map <- getUnitGroupCellMap(this, units=units, ..., verbose=less(verbose));
   })
 
   verbose && enter(verbose, "Reading data fields");

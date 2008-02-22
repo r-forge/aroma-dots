@@ -73,7 +73,7 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, units=NULL, ..., fi
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting unit-to-cell map");
   cf <- getFile(this, 1);
-  ugcMap <- getCellMap(cf, units=units, verbose=less(verbose));
+  ugcMap <- getUnitGroupCellMap(cf, units=units, verbose=less(verbose));
   ugcMap <- subset(ugcMap, ...);
   verbose && exit(verbose);
 

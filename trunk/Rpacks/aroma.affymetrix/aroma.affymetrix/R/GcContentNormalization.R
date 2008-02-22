@@ -352,7 +352,7 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
     if (is.null(map)) {
       # Only loaded if really needed.
       verbose && enter(verbose, "Retrieving unit-to-cell map for all arrays");
-      map <- getCellMap(ce, units=subsetToUpdate, verbose=less(verbose));
+      map <- getUnitGroupCellMap(ce, units=subsetToUpdate, verbose=less(verbose));
       verbose && str(verbose, map);
       verbose && exit(verbose);
     }

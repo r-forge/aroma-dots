@@ -153,6 +153,8 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, units=NULL, ..
           .subset(groups, c(1,2));
         } else if (ngroups == 1) {
           .subset(groups, 1);
+        } else if (ngroups > 4 && ngroups %% 2 == 0) {
+          .subset(groups, c(1,2));
         } else {
           # groups[1:ceiling(ngroups/2)];
           # groups[1:round((ngroups+1)/2)];
@@ -207,6 +209,14 @@ setMethodS3("mergeStrands", "SnpChipEffectFile", function(this, ...) {
       y[1,] <- colMeans(y[1:2,,drop=FALSE], na.rm=TRUE);
       y[3,] <- colMeans(y[3:4,,drop=FALSE], na.rm=TRUE);
       y[c(2,4),] <- NA;
+    } else if (n > 4 && n %% 2 == 0) {
+      # All other even-numbered groups
+      odd <- seq(from=1, to=n, by=2);
+      for (idx in odd) {
+        y[idx,] <- colMeans(y[idx:(idx+1),,drop=FALSE], na.rm=TRUE);
+      }
+      even <- seq(from=2, to=n, by=2);
+      y[even,] <- NA;
     }
     y;
   }
@@ -253,6 +263,9 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
 
 ############################################################################
 # HISTORY:
+# 2008-02-22
+# o Updated getCellIndices() and mergeStrands() to handle any even-numbered
+#   unit groups beyond two and four groups.
 # 2007-01-20
 # o Added mergeStrands().
 # 2007-01-07
