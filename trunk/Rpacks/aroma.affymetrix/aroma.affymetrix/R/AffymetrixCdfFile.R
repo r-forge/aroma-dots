@@ -339,7 +339,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ta
 #*/###########################################################################
 setMethodS3("getHeader", "AffymetrixCdfFile", function(this, ...) {
   if (is.null(header <- this$.header))
-    header <- this$.header <- readCdfHeader(this$.pathname);
+    header <- this$.header <- readCdfHeader(getPathname(this));
   header;
 }, private=TRUE)
 
@@ -426,11 +426,97 @@ setMethodS3("nbrOfQcUnits", "AffymetrixCdfFile", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getUnitNames", "AffymetrixCdfFile", function(this, units=NULL, ...) {
-  if (is.null(names <- this$.unitNames))
-    names <- this$.unitNames <- readCdfUnitNames(this$.pathname, ...);
+  names <- this$.unitNames;
+
+  if (is.null(names)) {
+    names <- readCdfUnitNames(getPathname(this), ...);
+    this$.unitNames <- names;
+  }
+
   if (!is.null(units))
     names <- names[units];
+
   names;
+})
+
+
+setMethodS3("hasUnitTypes", "AffymetrixCdfFile", function(this, types, ..., verbose=FALSE) {
+  # Argument 'types':
+  types <- Arguments$getIntegers(types, range=c(0,99));
+
+
+  # Already have unit types cached?
+  unitTypes <- this$.unitTypes;
+  if (!is.null(unitTypes)) {
+    hasUnitTypes <- any(unitTypes %in% types);
+    return(hasUnitTypes);
+  }
+
+  # ...otherwise, scan for unit types
+  allUnits <- seq(length=nbrOfUnits(this));
+  chunkSize <- 5000;
+  while (length(allUnits) > 0) {
+    idxs <- 1:min(chunkSize, length(allUnits));
+    units <- allUnits[idxs];
+    unitTypes <- getUnitTypes(this, units=units, .cache=FALSE);
+    hasUnitTypes <- any(unitTypes %in% types);
+    if (hasUnitTypes)
+      return(TRUE);
+    allUnits <- allUnits[-idxs];
+  }
+
+  FALSE;
+})
+
+setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, .cache=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  types <- this$.unitTypes;
+
+  if (.cache) {
+    if (force || is.null(types)) {
+      # Check in file cache
+      chipType <- getChipType(this);
+      key <- list(method="getUnitTypes", class=class(this)[1], chipType=chipType);
+      dirs <- c("aroma.affymetrix", chipType);
+      if (force) {
+        types <- NULL;
+      } else {
+        types <- loadCache(key=key, dirs=dirs);
+      }
+
+      if (is.null(types)) {
+        verbose && enter(verbose, "Reading types for *all* units");
+        types <- readCdfUnits(getPathname(this), readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
+        types <- unlist(types, use.names=FALSE);
+        if (length(types) != nbrOfUnits(this)) {
+          throw("Internal error: Number of read unit types does not match the number of units in the CDF: ", length(types), " != ", nbrOfUnits(this));
+        }
+
+        saveCache(types, key=key, dirs=dirs);
+
+        this$.unitTypes <- types;
+
+        verbose && exit(verbose);
+      }
+    }
+  
+    if (!is.null(units))
+      types <- types[units];
+  } else {
+    types <- readCdfUnits(getPathname(this), units=units, readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
+    types <- unlist(types, use.names=FALSE);
+  }
+
+  types;
 })
 
 
@@ -467,29 +553,107 @@ setMethodS3("getUnitNames", "AffymetrixCdfFile", function(this, units=NULL, ...)
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getUnitSizes", "AffymetrixCdfFile", function(this, units=NULL, ...) {
+setMethodS3("getUnitSizes", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
   sizes <- this$.unitSizes;
-  if (is.null(sizes)) {
-    sizes <- readCdfGroupNames(this$.pathname);
-    sizes <- restruct(this, sizes);
-    sizes <- base::lapply(sizes, FUN=length);
-    sizes <- unlist(sizes, use.names=FALSE);
+
+  if (force || is.null(sizes)) {
+    # Check in file cache
+    chipType <- getChipType(this);
+    key <- list(method="getUnitSizes", class=class(this)[1], chipType=chipType);
+    dirs <- c("aroma.affymetrix", chipType);
+    if (force) {
+      sizes <- NULL;
+    } else {
+      sizes <- loadCache(key=key, dirs=dirs);
+    }
+
+    if (is.null(sizes)) {    
+      verbose && enter(verbose, "Reading types for *all* units");
+      sizes <- readCdfGroupNames(getPathname(this));
+      sizes <- restruct(this, sizes);
+      sizes <- base::lapply(sizes, FUN=length);
+      sizes <- unlist(sizes, use.names=FALSE);
+      saveCache(sizes, key=key, dirs=dirs);
+      verbose && exit(verbose);
+    }
+
     this$.unitSizes <- sizes;
   }
 
   if (!is.null(units))
     sizes <- sizes[units];
 
-#  gc <- gc();
-
   sizes;
+}, private=TRUE)
+
+
+setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  groupDirections <- this$.groupDirections;
+
+  if (force || is.null(groupDirections)) {
+    # Check in file cache
+    chipType <- getChipType(this);
+    key <- list(method="getGroupDirections", class=class(this)[1], chipType=chipType);
+    dirs <- c("aroma.affymetrix", chipType);
+    if (force) {
+      groupDirections <- NULL;
+    } else {
+      groupDirections <- loadCache(key=key, dirs=dirs);
+    }
+
+    if (is.null(groupDirections)) {    
+      verbose && enter(verbose, "Reading types for *all* units");
+      # Have to read some group field in order to get group directions
+      groupDirections <- readCdfUnits(getPathname(this), readExpos=TRUE, readBases=FALSE, readXY=FALSE, readType=FALSE, readDirection=TRUE);
+      # Remove all 'expos'
+      groupDirections <- base::lapply(groupDirections, FUN=function(unit) {
+        groups <- .subset2(unit, 2);
+        groups <- base::lapply(groups, FUN=.subset, 2);
+        list(groups=groups);
+      });
+      groupDirections <- restruct(this, groupDirections);
+      groupDirections <- base::lapply(groupDirections, FUN=unlist, 
+                                                          use.names=FALSE);
+      saveCache(groupDirections, key=key, dirs=dirs);
+      verbose && exit(verbose);
+    }
+
+    this$.groupDirections <- groupDirections;
+  }
+
+  if (!is.null(units))
+    groupDirections <- groupDirections[units];
+
+  groupDirections;
 }, private=TRUE)
 
 
 ## setMethodS3("getUnitGroupSizes", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE, ...) {
 ##   sizes <- this$.unitGroupSizes;
 ##   if (force || is.null(sizes)) {
-##     sizes <- readCdfNbrOfCellsPerUnitGroup(this$.pathname);
+##     sizes <- readCdfNbrOfCellsPerUnitGroup(getPathname(this));
 ##     sizes <- restruct(this, sizes);
 ##     this$.unitGroupSizes <- sizes;
 ##   }
@@ -654,7 +818,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # Read from CDF file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Reading cell indices from CDF file");
-  verbose && cat(verbose, "Pathname: ", this$.pathname);
+  verbose && cat(verbose, "Pathname: ", getPathname(this));
   verbose && cat(verbose, "Units: ");
   verbose && str(verbose, units);
   verbose2 <- -as.integer(verbose)-1;
@@ -664,12 +828,12 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
     units <- seq(length=nbrOfUnits(this));
   nbrOfUnits <- length(units);
 
-#  cdf <- readCdfCellIndices(this$.pathname, units=units, ..., verbose=verbose);
+#  cdf <- readCdfCellIndices(getPathname(this), units=units, ..., verbose=verbose);
 
 
   if (unlist) {
     cdf <- lapplyInChunks(units, function(unitsChunk) {
-      cdfChunk <- getCellIndicesChunk(this$.pathname, units=unitsChunk, ..., verbose=verbose);
+      cdfChunk <- getCellIndicesChunk(getPathname(this), units=unitsChunk, ..., verbose=verbose);
       res <- vector("list", length(unitsChunk));
       res[[1]] <- unlist(cdfChunk, use.names=useNames);
       res;
@@ -677,7 +841,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
     cdf <- unlist(cdf, use.names=useNames);
   } else {  
     cdf <- lapplyInChunks(units, function(unitsChunk) {
-      getCellIndicesChunk(this$.pathname, units=unitsChunk, ..., verbose=verbose);
+      getCellIndicesChunk(getPathname(this), units=unitsChunk, ..., verbose=verbose);
     }, chunkSize=100e3, useNames=useNames, verbose=verbose);
   }
 
@@ -825,8 +989,8 @@ setMethodS3("getRestructor", "AffymetrixCdfFile", function(this, ...) {
 #*/###########################################################################
 # NOTE: getUnits() does not work because an S4 class stole it!!!
 setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units, ...) {
-#  cdf <- readCdfUnits(this$.pathname, units=units, ...);
-  cdf <- doCall("readCdfUnits", filename=this$.pathname, units=units, ...);
+#  cdf <- readCdfUnits(getPathname(this), units=units, ...);
+  cdf <- doCall("readCdfUnits", filename=getPathname(this), units=units, ...);
   restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
 })
 
@@ -876,12 +1040,12 @@ setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE,
   if (force || is.null(isPm)) {
     if (cache) {
       # If caching, read all units
-      cdf <- readCdfIsPm(this$.pathname);
+      cdf <- readCdfIsPm(getPathname(this));
       cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
       isPm <- this$.isPm <- cdf;
     } else {
       # ...otherwise, read only a subset of units
-      cdf <- readCdfIsPm(this$.pathname, units=units);
+      cdf <- readCdfIsPm(getPathname(this), units=units);
       cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
       isPm <- cdf;
     }
@@ -1439,6 +1603,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-02-21
+# o Added getGroupDirections() for AffymetrixCdfFile.
+# o Added getUnitTypes() for AffymetrixCdfFile.
 # 2008-01-20
 # o Now getSnpInformation() searches for UFL files with tags.
 # 2008-01-19

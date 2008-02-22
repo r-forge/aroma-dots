@@ -465,6 +465,9 @@ setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y
     # Get the DAT header
     params <- hdr$dataHeader$parents[[1]]$parameters;
     headerDAT <- params[["affymetrix-dat-header"]];
+    if (is.null(headerDAT)) {
+      headerDAT <- params[["affymetrix-partial-dat-header"]];
+    }
 
     # Extract the timestamp
     res <- getTimestampFromDatHeader(headerDAT, chipType=chipType); 
@@ -818,6 +821,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 
 ############################################################################
 # HISTORY:
+# 2008-02-21
+# o Updated getTimestamp() to also support Calvin files containing only
+#   a partial DAT header.
 # 2008-01-30
 # o Now getTimestamp() for AffymetrixCelFile works for Calvin files too.
 # o Now getFileFormat() for AffymetrixCelFile takes argument 'asString'.

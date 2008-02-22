@@ -109,9 +109,11 @@ setMethodS3("getSubsetToFit", "GcContentNormalization", function(this, force=FAL
   if (!is.null(units) && !force)
     return(units);
 
-  # Identify all SNP units
+  # Identify all SNP (& CN) units
   cdf <- getCdf(this);
-  units <- indexOf(cdf, "SNP_");
+#  units <- indexOf(cdf, "SNP_");
+  types <- getUnitTypes(cdf, ...);
+  units <- which(types == 2 | types == 5 | types == 8);
 
   # Keep only those for which we have GC contents information
   tsv <- AffymetrixTsvFile$fromChipType(getChipType(cdf, fullname=FALSE));
@@ -291,9 +293,11 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
   # Get input data set
   ces <- getInputDataSet(this);
 
-  # Get SNP units
+  # Get SNP (& CN) units
   cdf <- getCdf(ces);
-  subsetToUpdate <- indexOf(cdf, "SNP_");
+#  subsetToUpdate <- indexOf(cdf, "SNP_");
+  types <- getUnitTypes(cdf, ...);
+  subsetToUpdate <- which(types == 2 | types == 5 | types == 8);
 
   verbose && enter(verbose, "Retrieving Affymetrix TSV file");
   tsv <- AffymetrixTsvFile$fromChipType(getChipType(cdf, fullname=FALSE));
@@ -432,6 +436,9 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
 
 ############################################################################
 # HISTORY:
+# 2008-02-21
+# o Now getSubsetToFit() and process() not only processes SNPs but also
+#   CN probes.
 # 2007-04-02
 # o Created from FragmentLengthNormalization.R.
 ############################################################################

@@ -35,7 +35,12 @@
 #
 # \section{What probe signals are updated?}{ 
 #   Calibration for crosstalk between allele signals applies by definition
-#   only SNP units.  It is only PM probes that will be calibrated.
+#   only SNP units.
+#   Furthermore, it is only SNP units with two or four unit groups that
+#   are calibrated.  For instance, in at least on custom SNP CDFs we 
+#   know of, there is a small number of SNP units that have six groups.
+#   \emph{Currently these units are not calibrated (at all).}
+#   It is only PM probes that will be calibrated.
 #   Note that, non-calibrated signals will be saved in the output files.
 # }
 #
@@ -82,6 +87,7 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
     # Argument 'rescaleBy':
     rescaleBy <- match.arg(rescaleBy);
     if (rescaleBy == "auto") {
+      # First, hardwired...
       # Extract the CDF
       chipType <- getChipType(cdf);
       if (regexpr("^Mapping[0-9]+K_", chipType) != -1) {
@@ -89,7 +95,16 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
       } else if (regexpr("^GenomeWideSNP_", chipType) != -1) {
         rescaleBy <- "all";
       } else {
-        throw("Failed to infer a default value for 'rescaleBy' for the given chip type: ", chipType);
+        types <- getUnitTypes(cdf, verbose=verbose);
+        # 5 == Copy Number (but according to Fusion SDK docs 8 == Copy Number)
+        hasCns <- hasUnitTypes(cdf, types=c(5,8));
+        rm(types);
+
+        if (hasCns) {
+          rescaleBy <- "all";
+        } else {
+          rescaleBy <- "groups";
+        }
       }
     }
   
@@ -710,10 +725,14 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         verbose && enter(verbose, "Identifying indices for all non-SNP PM cells");
 
         # Get all non-SNP units
-        unitNames <- getUnitNames(cdf);
-        snpNames <- getSnpNames(cdf);
-        nonSnpUnits <- which(!(unitNames %in% snpNames));
-        rm(unitNames, snpNames);
+## OLD WAY!
+##        unitNames <- getUnitNames(cdf);
+##        snpNames <- getSnpNames(cdf);
+##        nonSnpUnits <- which(!(unitNames %in% snpNames));
+##        rm(unitNames, snpNames);
+
+        unitTypes <- getUnitTypes(cdf, verbose=verbose); # Takes time
+        nonSnpUnits <- which(unitTypes != 2);  # '2 == genotype unit'
 
         cells <- getCellIndices(cdf, units=nonSnpUnits, useNames=FALSE, unlist=TRUE, verbose=less(verbose));
 
@@ -1092,6 +1111,9 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-02-21
+# o Now SNPs and CN probes are infered from getUnitTypes(cdf) and no longer
+#   from the unit names.
 # 2008-02-14
 # o Now 'verbose' is passed as a logical argument to fitGenotypeCone().
 # 2007-12-01

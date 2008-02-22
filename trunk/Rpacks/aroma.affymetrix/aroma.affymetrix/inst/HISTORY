@@ -20,6 +20,14 @@ o TIME OPTIMIZATION: Now as.character() for AffymetrixCelSet reports
   Option: aroma.affymetrix.settingsoutput$timestampsThreshold.
 o UPDATE: Annotation data directories starting with a period are no
   longer searched when looking for annotation data files.
+o UPDATE: GcContentNormalization would only normalize SNP units but 
+  now also CN probes are normalized.
+o UPDATE: Now a CnPlm with combineAlleles=TRUE also handles SNPs 
+  with six groups; they occur at least once in a custom SNP CDF.
+o GENERALIZED: Now the methods of AffymetrixCdfFile infer the unit
+  type (SNP, CN probe etc) from the unit-type field in the CDF and
+  no longer from the unit names.
+o Added getUnitTypes() for AffymetrixCdfFile.
 o Added extractDataFrame() for ChipEffectSet & ChipEffectFile, which
   also (optionally) extracts unit and group names, as well as the
   (unit, group, cell) index map.
@@ -32,7 +40,7 @@ o BUG FIX/ROBUSTNESS: It was possible to set a non-compatible
 o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
   much less memory when infering the cell indices.
 o BUG FIX: getTimestamp() for AffymetrixCelFile would return NA for 
-  Calvin files.
+  Calvin files.  Now they are also supported.
 o BUG FIX: getCellIndices() of CnChipEffectFile would return an error
   if 'units==NULL'.
 o Updated importFromDChip() for CnChipEffectSet so that it imports data
