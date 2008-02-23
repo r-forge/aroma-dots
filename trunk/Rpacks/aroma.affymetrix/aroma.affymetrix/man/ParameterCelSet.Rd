@@ -3,7 +3,7 @@
 % 
 %  ParameterCelSet.R
 % 
-% on Fri Feb 22 17:36:33 2008.
+% on Fri Feb 22 17:45:10 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -43,7 +43,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \usage{ParameterCelSet(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AffymetrixSet}}.}
+   \item{...}{Arguments passed to \code{\link{AffymetrixCelSet}}.}
  }
 
  \section{Fields and Methods}{

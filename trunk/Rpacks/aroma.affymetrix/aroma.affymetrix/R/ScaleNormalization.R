@@ -13,6 +13,7 @@
 # @synopsis 
 #
 # \arguments{
+#   \item{dataSet}{@see "AffymetrixCelSet" to be normalized.}
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform".}
 #   \item{targetAvg}{A @numeric value.}
@@ -40,36 +41,37 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("ScaleNormalization", function(..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg="-XY", typesToAvg=typesToUpdate, shift=0) {
+setConstructorS3("ScaleNormalization", function(dataSet=NULL, ..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg="-XY", typesToAvg=typesToUpdate, shift=0) {
   extraTags <- NULL;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Argument 'targetAvg':
-  targetAvg <- Arguments$getDouble(targetAvg, range=c(1,Inf));
-
-  # Argument 'subsetToAvg':
-  if (is.null(subsetToAvg)) {
-  } else if (is.character(subsetToAvg)) {
-    if (subsetToAvg %in% c("-X", "-Y", "-XY")) {
+  if (!is.null(dataSet)) {
+    # Argument 'targetAvg':
+    targetAvg <- Arguments$getDouble(targetAvg, range=c(1,Inf));
+  
+    # Argument 'subsetToAvg':
+    if (is.null(subsetToAvg)) {
+    } else if (is.character(subsetToAvg)) {
+      if (subsetToAvg %in% c("-X", "-Y", "-XY")) {
+      } else {
+        throw("Unknown value of argument 'subsetToAvg': ", subsetToAvg);
+      }
+      extraTags <- c(extraTags, subsetToAvg=subsetToAvg);
     } else {
-      throw("Unknown value of argument 'subsetToAvg': ", subsetToAvg);
-    }
-    extraTags <- c(extraTags, subsetToAvg=subsetToAvg);
-  } else {
-    cdf <- getCdf(dataSet);
-    subsetToAvg <- Arguments$getIndices(subsetToAvg, 
-                                        range=c(1, nbrOfUnits(cdf)));
-    subsetToAvg <- unique(subsetToAvg);
-    subsetToAvg <- sort(subsetToAvg);
-  } 
+      cdf <- getCdf(dataSet);
+      subsetToAvg <- Arguments$getIndices(subsetToAvg, 
+                                          range=c(1, nbrOfUnits(cdf)));
+      subsetToAvg <- unique(subsetToAvg);
+      subsetToAvg <- sort(subsetToAvg);
+    } 
+  
+    # Argument 'shift':
+    shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf")); 
+  }
 
-  # Argument 'shift':
-  shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf")); 
-
-
-  extend(ProbeLevelTransform(...), "ScaleNormalization", 
+  extend(ProbeLevelTransform(dataSet=dataSet, ...), "ScaleNormalization", 
     .subsetToUpdate = subsetToUpdate,
     .typesToUpdate = typesToUpdate,
     .targetAvg = targetAvg,

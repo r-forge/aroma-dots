@@ -179,6 +179,9 @@ setMethodS3("updateUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, data
 
 
 setMethodS3("extractMatrix", "FirmaSet", function (this, ..., field=c("intensities", "stdvs", "pixels")) {
+  # Argument 'field':
+  field <- match.arg(field);
+
   NextMethod("extractMatrix", this, ..., field=field);
 }) 
 

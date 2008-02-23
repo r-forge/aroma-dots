@@ -12,7 +12,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffymetrixSet".}
+#   \item{...}{Arguments passed to @see "AffymetrixCelSet".}
 # }
 #
 # \section{Fields and Methods}{
@@ -84,7 +84,8 @@ setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., 
   }
 
   # Argument 'field':
-  field <- match.arg(field);
+  if (length(field) > 1)
+    field <- field[1];
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

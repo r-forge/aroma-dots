@@ -11,7 +11,8 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
   }
 
   # Argument 'field':
-  field <- match.arg(field);
+  if (length(field) > 1)
+    field <- field[1];
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -32,6 +33,7 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
     throw("Nothing to return.");
 
   df <- matrix(NA, nrow=nrow(ugcMap), ncol=1);
+  colnames(df) <- getName(this);
 
   gc <- gc();
   verbose && print(verbose, gc);

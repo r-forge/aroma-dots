@@ -3,6 +3,8 @@
 % 
 %  fitGenotypeCone.matrix.R
 % 
+% on Fri Feb 22 18:31:08 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -52,8 +54,6 @@
  }
 
  \examples{
-source("aroma.affymetrix/R/fitGenotypeCone.R");
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Simulate data (taken from the cfit.matrix() example of 'sfit')
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
