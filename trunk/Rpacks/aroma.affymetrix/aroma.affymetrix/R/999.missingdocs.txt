@@ -736,3 +736,8 @@ getAsteriskTags.FragmentLengthNormalization
   hasUnitTypes.AffymetrixCdfFile isMonocellCdf
   isMonocellCdf.AffymetrixCdfFile 
   process.AlleleSummation
+  boxplotNuse boxplotNuse.QualityAssessmentModel boxplotRle
+  boxplotRle.QualityAssessmentModel calculateNuseStats
+  calculateNuseStats.ChipEffectSet calculateRleStats
+  calculateRleStats.ChipEffectSet cbindBoxplotStats
+  cbindBoxplotStats.list getChipEffectSet.QualityAssessmentModel

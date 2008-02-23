@@ -564,187 +564,116 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
 
 
 
-setMethodS3("calculateNuseStats", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  plm <- getPlm(this);
-  ces <- getChipEffectSet(plm);
-  cdfMono <- getCdf(ces);
-  nbrOfUnits <- nbrOfUnits(cdfMono);
-  nbrOfArrays <- nbrOfArrays(ces);
 
-  # Argument 'arrays':
-  if (is.null(arrays)) {
-    arrays <- seq(length=nbrOfArrays);
-  } else {
-    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfArrays));
-    nbrOfArrays <- length(arrays);
-  }
-
-  # Argument 'subset':  
-  if (!(is.null(subset))) {
-    getFraction <- (length(subset) == 1) && (subset >= 0) && (subset < 1);
-    if (!getFraction) {
-      units <- Arguments$getIndices(subset, range=c(1, nbrOfUnits));
-    } else {
-      units <- identifyCells(cdfMono, indices=subset, verbose=less(verbose));
-    }
-  } else {
-    units <- 1:nbrOfUnits;
-  }
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
- 
-
-  # get the vector of median stdvs
-  verbose && enter(verbose, "Extracting average standard errors across all arrays in the set");
-  verbose && cat(verbose, "Units:");
-  verbose && str(verbose, units);
-  avg <- getAverageLog(ces, field="stdvs", indices=units, verbose=verbose);
-  verbose && exit(verbose);
-
-  medianSE <- getData(avg, indices=units, "intensities")$intensities;
-  medianSE <- log2(medianSE);
-  rm(avg);
-
-  verbose && enter(verbose, "Calculating NUSE statistics for ", nbrOfArrays, 
-                                                    " (specified) arrays");
-  
-  # For each file, calculate boxplot statistics
-  stats <- list();
-  for (kk in seq(along=arrays)) {
-    array <- arrays[kk];
-    cef <- getFile(ces, array);
-    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
-                                          kk, getName(cef), nbrOfArrays));
-    stdvs <- getData(cef, indices=units, "stdvs")$stdvs;
-    stdvs <- log2(stdvs);
-    stats[[kk]] <- boxplot.stats(stdvs/medianSE);
-    rm(stdvs);
-    verbose && exit(verbose);
-  }
-  rm(medianSE, units);
-  verbose && exit(verbose);
-
-  cbindBoxplotStats(stats, verbose=less(verbose, 50));
-}) # calculateNuseStats()
-
-
-
-# ... : additional arguments to bxp().
-setMethodS3("calculateRleStats", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  plm <- getPlm(this);
-  ces <- getChipEffectSet(plm);
-  cdfMono <- getCdf(ces);
-  nbrOfUnits <- nbrOfUnits(cdfMono);
-  nbrOfArrays <- nbrOfArrays(ces);
-
-  # Argument 'arrays':
-  if (is.null(arrays)) {
-    arrays <- seq(length=nbrOfArrays);
-  } else {
-    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfArrays));
-    nbrOfArrays <- length(arrays);
-  }
-
-  # Argument 'subset':  
-  if (!(is.null(subset))) {
-    getFraction <- (length(subset) == 1) && (subset >= 0) && (subset < 1);
-    if (!getFraction) {
-      units <- Arguments$getIndices(subset, range=c(1, nbrOfUnits));
-    } else {
-      units <- identifyCells(cdfMono, indices=subset, verbose=less(verbose));
-    }
-  } else {
-    units <- 1:nbrOfUnits;
-  }
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  
-
-  # get the vector of median stdvs
-  verbose && enter(verbose, "Calculating average log chip effects");
-  avg <- getAverageLog(ces, field="intensities", indices=units, 
+###########################################################################/**
+# @RdocMethod boxplotNuse
+#
+# @title "Boxplots Normalized Unscaled Standard Errors (NUSE)"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{arrays}{An @integer @vector of array indices to be displayed.
+#     If @NULL, all arrays are considered.}
+#  \item{subset}{An @integer @vector specifying the units for which the
+#     statistics should be calculated.  A @numeric in [0,1] specifies the
+#     fraction of units to be used.
+#     If @NULL, all units are considered.}
+#  \item{main}{Title on the boxplot.}
+#  \item{...}{Additional arguments passed @see "graphics:bxp".}
+#     @see "QualityAssessmentSet".}
+#  \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
+# }
+#
+# \value{
+#   Returns (invisibly) what @seemethod "calculateNuseStats".
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "boxplotRle".
+#   Internally @seemethod "calculateNuseStats" is used.
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("boxplotNuse", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, ylab="NUSE", main="NUSE", ..., verbose=FALSE) {
+  ces <- getChipEffectSet(this);
+  stats <- calculateNuseStats(ces, arrays=arrays, subset=subset, 
                                                          verbose=verbose);
-  verbose && exit(verbose);
+  bxp(stats, ylab=ylab, main=main, ...);
 
-  medianLE <- getData(avg, indices=units, "intensities")$intensities;
-  medianLE <- log2(medianLE);
-  rm(avg);
+  invisible(stats);
+})
 
-  verbose && enter(verbose, "Calculating RLE statistics for ", nbrOfArrays, 
-                                                    " (specified) arrays");
-  
-  # For each file, calculate boxplot statistics
-  stats <- list();
-  for (kk in seq(along=arrays)) {
-    array <- arrays[kk];
-    cef <- getFile(ces, array);
-    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
-                                          kk, getName(cef), nbrOfArrays));
 
-    theta <- getData(cef, indices=units, "intensities")$intensities;
-    theta <- log2(theta);
-    stats[[kk]] <- boxplot.stats(theta-medianLE);
-    rm(theta);
-    verbose && exit(verbose);
-  }
-  rm(medianLE, units);
-  verbose && exit(verbose);
 
-  
-  cbindBoxplotStats(stats, verbose=less(verbose, 50));
-}) # calculateRleStats()
+###########################################################################/**
+# @RdocMethod boxplotRle
+#
+# @title "Boxplots Relative Log2 Expression (RLE)"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{arrays}{An @integer @vector of array indices to be displayed.
+#     If @NULL, all arrays are considered.}
+#  \item{subset}{An @integer @vector specifying the units for which the
+#     statistics should be calculated.  A @numeric in [0,1] specifies the
+#     fraction of units to be used.
+#     If @NULL, all units are considered.}
+#  \item{main}{Title on the boxplot.}
+#  \item{...}{Additional arguments passed @see "graphics:bxp".}
+#     @see "QualityAssessmentSet".}
+#  \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
+# }
+#
+# \value{
+#   Returns (invisibly) what @seemethod "calculateRleStats".
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "boxplotRle".
+#   Internally @seemethod "calculateRleStats" is used.
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("boxplotRle", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, ylab=expression(M==log[2](theta/bar(theta))), main="RLE", ..., verbose=FALSE) {
+  ces <- getChipEffectSet(this);
+  stats <- calculateRleStats(ces, arrays=arrays, subset=subset, 
+                                                         verbose=verbose);
+  bxp(stats, ylab=ylab, main=main, ...);
 
+  invisible(stats);
+})
 
 
 setMethodS3("plotNuse", "QualityAssessmentModel", function(this, ...) {
-  plotNuseStats(this, ...);
+  boxplotNuse(this, ...);
 }, private=TRUE, deprecated=TRUE);
+
 
 setMethodS3("plotRle", "QualityAssessmentModel", function(this, ...) {
-  plotRleStats(this, ...);
+  boxplotRle(this, ...);
 }, private=TRUE, deprecated=TRUE);
 
-
-setMethodS3("boxplotNuse", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, main="NUSE", ..., verbose=FALSE) {
-  stats <- calculateNuseStats(this, arrays=arrays, subset=subset, 
-                                                         verbose=verbose);
-  bxp(stats, main=main, ...);
-
-  invisible(stats);
-})
-
-
-setMethodS3("boxplotRle", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, main="RLE", ..., verbose=FALSE) {
-  stats <- calculateRleStats(this, arrays=arrays, subset=subset, 
-                                                         verbose=verbose);
-  bxp(stats, main=main, ...);
-
-  invisible(stats);
-})
 
 
 
 ##########################################################################
 # HISTORY:
 # 2008-02-22
+# o Added Rdoc comments.
 # o Renamed plot{Nuse|Rle}() to boxplot{Nuse|Rle}().
 # o Added calculate{Nuse|Rle}Stats() for calculating NUSE/RLE boxplot
 #   statistics on an optional subset of arrays. 

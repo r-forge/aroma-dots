@@ -51,7 +51,7 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:calculateBaseline.ChipEffectSet]{calculateBaseline}} \tab Estimates the baseline signal chromosome by chromosome.\cr
- \tab \code{\link[aroma.affymetrix:extractMatrix.ChipEffectSet]{extractMatrix}} \tab Extract data as a matrix for a set of arrays.\cr
+ \tab \code{extractMatrix} \tab  -\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
@@ -88,6 +88,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  \seealso{
    An object of this class is typically obtained through the
-   \code{getChipEffects()} method for the \code{\link{ProbeLevelModel}} class.
+   \code{getChipEffectSet()} method for the \code{\link{ProbeLevelModel}} class.
  }
 \keyword{classes}
