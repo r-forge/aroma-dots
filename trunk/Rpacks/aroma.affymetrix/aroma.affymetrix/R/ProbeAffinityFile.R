@@ -24,7 +24,7 @@
 # 
 # \seealso{
 #   An object of this class is typically obtained through the
-#   \code{getProbeAffinities()} method for the @see "ProbeLevelModel" class.
+#   \code{getProbeAffinityFile()} method for the @see "ProbeLevelModel" class.
 # }
 #
 #*/###########################################################################

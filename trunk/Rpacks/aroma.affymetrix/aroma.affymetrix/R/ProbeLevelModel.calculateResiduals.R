@@ -9,13 +9,13 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     on.exit(popState(verbose));
   }
 
-  ces <- getChipEffects(this);
+  ces <- getChipEffectSet(this);
   if (inherits(ces, "CnChipEffectSet")) {
     if (ces$combineAlleles) {
       throw("calculateResiduals() does not yet support chip effects for which allele A and allele B have been combined.");
     }
   }
-  paf <- getProbeAffinities(this);
+  paf <- getProbeAffinityFile(this);
   nbrOfArrays <- nbrOfArrays(ces);
 
   # If residuals already calculated, and if force==FALSE, just return

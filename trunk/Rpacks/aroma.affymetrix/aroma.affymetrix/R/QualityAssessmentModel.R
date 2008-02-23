@@ -52,7 +52,7 @@ setMethodS3("as.character", "QualityAssessmentModel", function(x, ...) {
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, "Chip-effect set:");
-  s <- c(s, paste("   ", as.character(getChipEffects(this))));
+  s <- c(s, paste("   ", as.character(getChipEffectSet(this))));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
@@ -68,16 +68,21 @@ setMethodS3("getPlm", "QualityAssessmentModel", function(this, ...) {
 })
 
 setMethodS3("getChipEffects", "QualityAssessmentModel", function(this, ...) {
-  getChipEffects(getPlm(this));
+  getChipEffectSet(this, ...);
+}, private=TRUE, deprecated=TRUE)
+
+setMethodS3("getChipEffectSet", "QualityAssessmentModel", function(this, ...) {
+  plm <- getPlm(this);
+  getChipEffectSet(plm);
 })
 
 setMethodS3("nbrOfArrays", "QualityAssessmentModel", function(this, ...) {
-  ces <- getChipEffects(this);
+  ces <- getChipEffectSet(this);
   nbrOfArrays(ces);
 })
 
 setMethodS3("getCdf", "QualityAssessmentModel", function(this, ...) {
-  ces <- getChipEffects(this);
+  ces <- getChipEffectSet(this);
   getCdf(ces);
 }, protected=TRUE)
 
@@ -101,7 +106,7 @@ setMethodS3("getAsteriskTags", "QualityAssessmentModel", function(this, collapse
 
 setMethodS3("getTags", "QualityAssessmentModel", function(this, collapse=NULL, ...) {
   # Data set specific tags
-  ces <- getChipEffects(this);
+  ces <- getChipEffectSet(this);
   inputTags <- getTags(ces, collapse=NULL);
 
   # Get class-specific tags
@@ -262,8 +267,8 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   plm <- getPlm(this);
   ds <- getDataSet(plm);
-  ces <- getChipEffects(plm);
-  paf <- getProbeAffinities(plm);
+  ces <- getChipEffectSet(plm);
+  paf <- getProbeAffinityFile(plm);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -473,7 +478,8 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  names <- getNames(getChipEffects(this));
+  ces <- getChipEffectSet(this);
+  names <- getNames(ces);
   pathname <- sapply(names, function(name) {
     filename <- sprintf("%s,weights.CEL", name);
     pathname <- Arguments$getWritablePathname(filename, path=path);
@@ -484,8 +490,8 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
   nbrOfFiles <- length(pathname);
   
   ds <- getDataSet(this);
-  ces <- getChipEffects(this);
-  paf <- getProbeAffinities(getPlm(this));
+  ces <- getChipEffectSet(this);
+  paf <- getProbeAffinityFile(getPlm(this));
   
   nbrOfUnits <- nbrOfUnits(getCdf(ces));
 
@@ -558,18 +564,25 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
 
 
 
-
-setMethodS3("plotNuse", "QualityAssessmentModel", function(this, subset=NULL, verbose=FALSE, main="NUSE", ...) {
-
-# ... : additional arguments to bxp().
-
-  verbose <- Arguments$getVerbose(verbose);
-  
+setMethodS3("calculateNuseStats", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   plm <- getPlm(this);
-  ces <- getChipEffects(plm);
+  ces <- getChipEffectSet(plm);
   cdfMono <- getCdf(ces);
   nbrOfUnits <- nbrOfUnits(cdfMono);
-  
+  nbrOfArrays <- nbrOfArrays(ces);
+
+  # Argument 'arrays':
+  if (is.null(arrays)) {
+    arrays <- seq(length=nbrOfArrays);
+  } else {
+    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfArrays));
+    nbrOfArrays <- length(arrays);
+  }
+
+  # Argument 'subset':  
   if (!(is.null(subset))) {
     getFraction <- (length(subset) == 1) && (subset >= 0) && (subset < 1);
     if (!getFraction) {
@@ -581,60 +594,70 @@ setMethodS3("plotNuse", "QualityAssessmentModel", function(this, subset=NULL, ve
     units <- 1:nbrOfUnits;
   }
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+ 
+
   # get the vector of median stdvs
-  verbose && enter(verbose, "Extracting standard errors");
-  avg <- getAverageLog(getChipEffects(plm), field="stdvs", indices=units, verbose=verbose)
+  verbose && enter(verbose, "Extracting average standard errors across all arrays in the set");
+  verbose && cat(verbose, "Units:");
+  verbose && str(verbose, units);
+  avg <- getAverageLog(ces, field="stdvs", indices=units, verbose=verbose);
   verbose && exit(verbose);
+
   medianSE <- getData(avg, indices=units, "intensities")$intensities;
   medianSE <- log2(medianSE);
-
-  verbose && enter(verbose, "Calculating summaries for ", nbrOfArrays(this), " arrays");
-  
-  # for each file, sweep through and calculate statistics for boxplot.
-  boxplotStats <- list();
-  for (kk in seq(ces)) {
-    stdvs <- getData(getFile(ces, kk), indices=units, "stdvs")$stdvs;
-    stdvs <- log2(stdvs);
-    boxplotStats[[kk]] <- boxplot.stats(stdvs/medianSE);
-  }
   rm(avg);
-  rm(stdvs);    # not needed any more
 
+  verbose && enter(verbose, "Calculating NUSE statistics for ", nbrOfArrays, 
+                                                    " (specified) arrays");
+  
+  # For each file, calculate boxplot statistics
+  stats <- list();
+  for (kk in seq(along=arrays)) {
+    array <- arrays[kk];
+    cef <- getFile(ces, array);
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
+                                          kk, getName(cef), nbrOfArrays));
+    stdvs <- getData(cef, indices=units, "stdvs")$stdvs;
+    stdvs <- log2(stdvs);
+    stats[[kk]] <- boxplot.stats(stdvs/medianSE);
+    rm(stdvs);
+    verbose && exit(verbose);
+  }
+  rm(medianSE, units);
   verbose && exit(verbose);
-  
-  # make a new list from boxplotStats which has correct structure to
-  # pass to bxp().
 
-  bxpStats <- list();
+  cbindBoxplotStats(stats, verbose=less(verbose, 50));
+}) # calculateNuseStats()
 
-  bxpStats[["stats"]] <- do.call("cbind", lapply(boxplotStats, function(x){x[["stats"]]}));
-  bxpStats[["conf"]] <- do.call("cbind", lapply(boxplotStats, function(x){x[["conf"]]}));
-  bxpStats[["n"]] <- do.call("c", lapply(boxplotStats, function(x){x[["n"]]}));
-  bxpStats[["out"]] <- do.call("c", lapply(boxplotStats, function(x){x[["out"]]}));
-  igroup <- 0;
-  bxpStats[["group"]] <- do.call("c", lapply(boxplotStats,
-                                             function(x){
-                                               igroup <<- igroup + 1;
-                                               rep(igroup, length(x[["out"]]));
-                                             }
-                                             ));
-  
-  bxp(bxpStats, main=main, ...);
-  return(invisible(bxpStats));
-
-})
 
 
 # ... : additional arguments to bxp().
-setMethodS3("plotRle", "QualityAssessmentModel", function(this, subset=NULL, verbose=FALSE, main="RLE", ...) {
-  verbose <- Arguments$getVerbose(verbose);
-
+setMethodS3("calculateRleStats", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   plm <- getPlm(this);
-  ces <- getChipEffects(plm);
+  ces <- getChipEffectSet(plm);
   cdfMono <- getCdf(ces);
   nbrOfUnits <- nbrOfUnits(cdfMono);
-  
-  # Argument 'subset':
+  nbrOfArrays <- nbrOfArrays(ces);
+
+  # Argument 'arrays':
+  if (is.null(arrays)) {
+    arrays <- seq(length=nbrOfArrays);
+  } else {
+    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfArrays));
+    nbrOfArrays <- length(arrays);
+  }
+
+  # Argument 'subset':  
   if (!(is.null(subset))) {
     getFraction <- (length(subset) == 1) && (subset >= 0) && (subset < 1);
     if (!getFraction) {
@@ -646,51 +669,85 @@ setMethodS3("plotRle", "QualityAssessmentModel", function(this, subset=NULL, ver
     units <- 1:nbrOfUnits;
   }
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  
+
   # get the vector of median stdvs
-  verbose && enter(verbose, "Extracting chip effects");
-  avg <- getAverageLog(ces, field="intensities", indices=units, verbose=verbose)
+  verbose && enter(verbose, "Calculating average log chip effects");
+  avg <- getAverageLog(ces, field="intensities", indices=units, 
+                                                         verbose=verbose);
   verbose && exit(verbose);
+
   medianLE <- getData(avg, indices=units, "intensities")$intensities;
   medianLE <- log2(medianLE);
+  rm(avg);
 
-  verbose && enter(verbose, "Calculating summaries for ", nbrOfArrays(this), " arrays");
+  verbose && enter(verbose, "Calculating RLE statistics for ", nbrOfArrays, 
+                                                    " (specified) arrays");
   
-  # for each file, sweep through and calculate statistics for boxplot.
-  boxplotStats <- list();
-  for (kk in seq(ces)) {
-    theta <- getData(getFile(ces, kk), indices=units, "intensities")$intensities;
-    theta <- log2(theta);
-    boxplotStats[[kk]] <- boxplot.stats(theta-medianLE);
-  }
-  rm(avg, theta, medianLE, units);  # not needed any more
+  # For each file, calculate boxplot statistics
+  stats <- list();
+  for (kk in seq(along=arrays)) {
+    array <- arrays[kk];
+    cef <- getFile(ces, array);
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
+                                          kk, getName(cef), nbrOfArrays));
 
+    theta <- getData(cef, indices=units, "intensities")$intensities;
+    theta <- log2(theta);
+    stats[[kk]] <- boxplot.stats(theta-medianLE);
+    rm(theta);
+    verbose && exit(verbose);
+  }
+  rm(medianLE, units);
   verbose && exit(verbose);
 
   
-  # make a new list from boxplotStats which has correct structure to
-  # pass to bxp().
-  bxpStats <- list();
+  cbindBoxplotStats(stats, verbose=less(verbose, 50));
+}) # calculateRleStats()
 
-  bxpStats[["stats"]] <- do.call("cbind", lapply(boxplotStats, function(x){x[["stats"]]}));
-  bxpStats[["conf"]] <- do.call("cbind", lapply(boxplotStats, function(x){x[["conf"]]}));
-  bxpStats[["n"]] <- do.call("c", lapply(boxplotStats, function(x){x[["n"]]}));
-  bxpStats[["out"]] <- do.call("c", lapply(boxplotStats, function(x){x[["out"]]}));
-  igroup <- 0;
-  bxpStats[["group"]] <- do.call("c", lapply(boxplotStats,
-                                             function(x){
-                                               igroup <<- igroup + 1;
-                                               rep(igroup, length(x[["out"]]));
-                                             }
-                                             ));
-  
-  bxp(bxpStats, main=main, ...);
-  return(invisible(bxpStats));
 
+
+setMethodS3("plotNuse", "QualityAssessmentModel", function(this, ...) {
+  plotNuseStats(this, ...);
+}, private=TRUE, deprecated=TRUE);
+
+setMethodS3("plotRle", "QualityAssessmentModel", function(this, ...) {
+  plotRleStats(this, ...);
+}, private=TRUE, deprecated=TRUE);
+
+
+setMethodS3("boxplotNuse", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, main="NUSE", ..., verbose=FALSE) {
+  stats <- calculateNuseStats(this, arrays=arrays, subset=subset, 
+                                                         verbose=verbose);
+  bxp(stats, main=main, ...);
+
+  invisible(stats);
 })
+
+
+setMethodS3("boxplotRle", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, main="RLE", ..., verbose=FALSE) {
+  stats <- calculateRleStats(this, arrays=arrays, subset=subset, 
+                                                         verbose=verbose);
+  bxp(stats, main=main, ...);
+
+  invisible(stats);
+})
+
 
 
 ##########################################################################
 # HISTORY:
+# 2008-02-22
+# o Renamed plot{Nuse|Rle}() to boxplot{Nuse|Rle}().
+# o Added calculate{Nuse|Rle}Stats() for calculating NUSE/RLE boxplot
+#   statistics on an optional subset of arrays. 
 # 2007-12-10
 # o Added getAsteriskTags() and updated getTags() accordingly.
 # 2007-08-09

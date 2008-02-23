@@ -94,9 +94,9 @@ setMethodS3("getProbeAffinityFile", "SnpPlm", function(this, ..., .class=SnpProb
 })
 
 setMethodS3("setMergeStrands", "SnpPlm", function(this, ...) {
-  ces <- getChipEffects(this);
+  ces <- getChipEffectSet(this);
   setMergeStrands(ces, ...);
-  paf <- getProbeAffinities(this);
+  paf <- getProbeAffinityFile(this);
   setMergeStrands(paf, ...);
 })
 

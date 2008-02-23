@@ -27,6 +27,10 @@ o UPDATE: Now a CnPlm with combineAlleles=TRUE also handles SNPs
 o GENERALIZED: Now the methods of AffymetrixCdfFile infer the unit
   type (SNP, CN probe etc) from the unit-type field in the CDF and
   no longer from the unit names.
+o Renamed plot{Nuse|Rle}() of QualityAssessmentModel to 
+  boxplot{Nuse|Rle}().
+o Added calculate{Nuse|Rle}Stats() to QualityAssessmentModel for 
+  calculating NUSE/RLE boxplot statistics (also on a subset of arrays).
 o Added getUnitTypes() for AffymetrixCdfFile.
 o Added extractMatrix() and extractDataFrame() to Parameter{File|Set},
   i.e. subclasses ChipEffect{File|Set} and Firma{File|Set} got it too.
