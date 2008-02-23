@@ -47,6 +47,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:byChipType.AffymetrixCdfFile]{byChipType}} \tab Defines an AffymetrixCdfFile object by chip type.\cr
  \tab \code{\link[aroma.affymetrix:convert.AffymetrixCdfFile]{convert}} \tab Converts a CDF into the same CDF but with another format.\cr
+ \tab \code{\link[aroma.affymetrix:createMonoCell.AffymetrixCdfFile]{createMonoCell}} \tab Creates a mono-cell version of the CDF.\cr
  \tab \code{fromChipType} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCdfFile]{fromFile}} \tab Defines an AffymetrixCdfFile object from a CDF file.\cr
  \tab \code{\link[aroma.affymetrix:getCellIndices.AffymetrixCdfFile]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
@@ -54,9 +55,13 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{getDimension} \tab  -\cr
  \tab \code{getFileFormat} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getGenomeInformation.AffymetrixCdfFile]{getGenomeInformation}} \tab Gets genome information for this chip type.\cr
+ \tab \code{getMonoCell} \tab  -\cr
  \tab \code{getUnitGroupNamesFromUgcMap} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
+ \tab \code{getUnitTypes} \tab  -\cr
+ \tab \code{hasUnitTypes} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:indexOf.AffymetrixCdfFile]{indexOf}} \tab Gets the indices of units by their names.\cr
+ \tab \code{isMonocellCdf} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:isPm.AffymetrixCdfFile]{isPm}} \tab Checks which cells (probes) are PMs and not.\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{nbrOfColumns} \tab  -\cr

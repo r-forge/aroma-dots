@@ -25,13 +25,15 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{FirmaSet}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelSet}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{FirmaSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
 public static class \bold{FirmaSet}\cr
-extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
+extends \link[aroma.affymetrix]{ParameterCelSet}\cr
 
 
 
@@ -46,6 +48,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 \section{Fields and Methods}{
  \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{extractMatrix} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
@@ -53,6 +56,9 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from ParameterCelSet}:\cr
+extractDataFrame, extractMatrix
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
 [, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf

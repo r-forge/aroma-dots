@@ -850,9 +850,16 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 }, protected=TRUE)
 
 
+setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("theta", "sdTheta")) {
+  NextMethod("extractMatrix", this, ..., field=field);
+})
+
+
+
 ############################################################################
 # HISTORY:
 # 2008-02-22
+# o Added extractMatrix().
 # o Renamed getCellMap() to getUnitGroupCellMap().
 # o Now getCellMap() pass on the 'force' argument all the way.
 # 2008-02-20

@@ -51,6 +51,8 @@ extends \link[aroma.affymetrix]{AffymetrixCelFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{extractDataFrame} \tab  -\cr
+ \tab \code{extractMatrix} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 

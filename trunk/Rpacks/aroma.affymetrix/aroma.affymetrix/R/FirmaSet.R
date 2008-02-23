@@ -23,7 +23,7 @@
 # }
 #*/###########################################################################
 setConstructorS3("FirmaSet", function(...) {
-  extend(AffymetrixCelSet(...), "FirmaSet",
+  extend(ParameterCelSet(...), "FirmaSet",
     "cached:.firstCells" = NULL 
   )
 })
@@ -178,9 +178,17 @@ setMethodS3("updateUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, data
 }, protected=TRUE)
 
 
+setMethodS3("extractMatrix", "FirmaSet", function (this, ..., field=c("intensities", "stdvs", "pixels")) {
+  NextMethod("extractMatrix", this, ..., field=field);
+}) 
+
 
 ############################################################################
 # HISTORY:
+# 2008-02-22 [HB]
+# o Now ChipEffectSet inherits from ParameterCelSet instead of as before
+#   directly from AffymetrixCelSet.
+# o Added extractMatrix().
 # 2007-12-07 [HB]
 # o Removed argument 'tags' from the FirmaSet constructor.
 # 2007-02-09

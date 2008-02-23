@@ -1,5 +1,3 @@
-source("aroma.affymetrix/R/fitGenotypeCone.R");
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Simulate data (taken from the cfit.matrix() example of 'sfit')
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

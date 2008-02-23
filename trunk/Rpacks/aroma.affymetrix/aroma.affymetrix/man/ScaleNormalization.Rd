@@ -3,6 +3,8 @@
 % 
 %  ScaleNormalization.R
 % 
+% on Fri Feb 22 17:34:23 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -37,7 +39,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   probe-level signals towards the same scale.
  }
 
- \usage{ScaleNormalization(..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg=subsetToUpdate, typesToAvg=typesToUpdate)}
+ \usage{ScaleNormalization(..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg="-XY", typesToAvg=typesToUpdate, shift=0)}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of
@@ -55,6 +57,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
      If \code{"pm"} and \code{"mm"} only perfect-match and mismatch
      probes are used, respectively. If \code{"pmmm"} both types are used.
    }
+   \item{shift}{Optional amount of shift if data before fitting/normalizing.}
  }
 
  \section{Fields and Methods}{

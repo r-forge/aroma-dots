@@ -35,7 +35,7 @@ setConstructorS3("ChipEffectSet", function(..., probeModel=c("pm")) {
   # Argument 'probeModel':
   probeModel <- match.arg(probeModel);
 
-  extend(AffymetrixCelSet(...), "ChipEffectSet",
+  extend(ParameterCelSet(...), "ChipEffectSet",
     "cached:.firstCells" = NULL,
     probeModel = probeModel
   )
@@ -254,8 +254,19 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
   findUnitsTodo(ce, ...);
 })
 
+
+
+setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta", "sdTheta")) {
+  NextMethod("extractMatrix", this, ..., field=field);
+})
+
+
 ############################################################################
 # HISTORY:
+# 2008-02-22
+# o Now ChipEffectSet inherits from ParameterCelSet instead of as before
+#   directly from AffymetrixCelSet.
+# o Added extractMatrix() wrapper.
 # 2007-12-10
 # o Now fromDataSet() of ChipEffectSet accepts argument 'cdf'.
 # 2007-07-01

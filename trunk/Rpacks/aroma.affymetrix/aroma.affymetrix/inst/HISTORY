@@ -28,9 +28,8 @@ o GENERALIZED: Now the methods of AffymetrixCdfFile infer the unit
   type (SNP, CN probe etc) from the unit-type field in the CDF and
   no longer from the unit names.
 o Added getUnitTypes() for AffymetrixCdfFile.
-o Added extractDataFrame() for ChipEffectSet & ChipEffectFile, which
-  also (optionally) extracts unit and group names, as well as the
-  (unit, group, cell) index map.
+o Added extractMatrix() and extractDataFrame() to Parameter{File|Set},
+  i.e. subclasses ChipEffect{File|Set} and Firma{File|Set} got it too.
 o Added published paper to citation("aroma.affymetrix").
 o CLEANUP: Renamed getMonoCell() to getMonocellCdf() and 
   createMonoCell() to createMonocellCdf(), because the former had 

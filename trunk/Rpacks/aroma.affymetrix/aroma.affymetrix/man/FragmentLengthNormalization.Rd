@@ -37,7 +37,7 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
   fragment length effects on total copy-number chip-effect estimates.
  }
 
- \usage{FragmentLengthNormalization(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY")}
+ \usage{FragmentLengthNormalization(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY", shift=0)}
 
  \arguments{
    \item{dataSet}{A \code{\link{CnChipEffectSet}}.}
@@ -48,6 +48,8 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
      should be normalized to.}
    \item{subsetToFit}{The units from which the normalization curve should
      be estimated.  If \code{\link[base]{NULL}}, all are considered.}
+   \item{shift}{An optional amount the data points should be shifted
+      (translated).}
  }
 
  \section{Fields and Methods}{

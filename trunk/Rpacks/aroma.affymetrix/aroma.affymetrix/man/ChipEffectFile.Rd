@@ -50,9 +50,11 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{extractMatrix} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getAM.ChipEffectFile]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{getCellIndices} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getCellMap.ChipEffectFile]{getCellMap}} \tab Gets a (unit, group, cell) index map.\cr
  \tab \code{getParameters} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectFile]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{readUnits} \tab  -\cr
@@ -60,7 +62,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 
 
  \bold{Methods inherited from ParameterCelFile}:\cr
-getParameters, readUnits
+extractDataFrame, extractMatrix, getParameters, readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
 [, [[, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage

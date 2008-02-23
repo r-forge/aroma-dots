@@ -67,10 +67,10 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 getCellIndices, getParameters, mergeStrands, readUnits
 
  \bold{Methods inherited from ChipEffectFile}:\cr
-findUnitsTodo, getAM, getCellIndices, getParameters, getXAM, mergeGroups, readUnits
+extractMatrix, findUnitsTodo, getAM, getCellIndices, getCellMap, getParameters, getXAM, mergeGroups, readUnits
 
  \bold{Methods inherited from ParameterCelFile}:\cr
-getParameters, readUnits
+extractDataFrame, extractMatrix, getParameters, readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
 [, [[, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage

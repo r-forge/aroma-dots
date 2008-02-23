@@ -19,7 +19,7 @@
  Gets the number of groups in each unit.
 }
 
-\usage{\method{getUnitSizes}{AffymetrixCdfFile}(this, units=NULL, ...)}
+\usage{\method{getUnitSizes}{AffymetrixCdfFile}(this, units=NULL, ..., force=FALSE)}
 
 \arguments{
   \item{units}{The units of interest. If \code{\link[base]{NULL}}, all units are considered.}

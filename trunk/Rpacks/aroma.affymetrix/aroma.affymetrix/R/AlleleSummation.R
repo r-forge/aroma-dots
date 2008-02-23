@@ -15,6 +15,8 @@
 #
 # \arguments{
 #   \item{dataSet}{A @see "SnpChipEffectSet".}
+#   \item{ignoreNAs}{If @TRUE, missing values are excluded when summing
+#      the signals from the two alleles.}
 #   \item{...}{Arguments passed to @see "UnitModel".}
 # }
 #
