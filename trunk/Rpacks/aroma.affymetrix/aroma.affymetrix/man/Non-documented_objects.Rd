@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Fri Feb 22 17:37:27 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -269,7 +271,7 @@
 \alias{findByName.AffymetrixCelSet}
 \alias{findByName.ChipEffectSet}
 \alias{findByName.CnagCfhSet}
-\alias{findCdf.patch}
+\alias{findFiles}
 \alias{findSAFs}
 \alias{findSAFs.SampleAnnotationSet}
 \alias{findUnitsTodo}
@@ -1533,6 +1535,32 @@
 \alias{xmlToList.character}
 \alias{byChipType.AromaUnitTabularBinaryFile}
 \alias{clearCache.AromaTabularBinaryFile}
+\alias{cdfMergeStrands}
+\alias{createMonocellCdf}
+\alias{extractDataFrame.ParameterCelFile}
+\alias{extractMatrix.ChipEffectFile}
+\alias{extractMatrix.ChipEffectSet}
+\alias{extractMatrix.FirmaFile}
+\alias{extractMatrix.FirmaSet}
+\alias{extractMatrix.ParameterCelFile}
+\alias{getAsteriskTags.AlleleSummation}
+\alias{getAsteriskTags.ScaleNormalization}
+\alias{getChipEffectSetClass.AlleleSummation}
+\alias{getGroupDirections}
+\alias{getGroupDirections.AffymetrixCdfFile}
+\alias{getMonocellCdf}
+\alias{getMonocellCdf.AffymetrixCdfFile}
+\alias{getRootPath.AlleleSummation}
+\alias{getUnitGroupCellMap.FirmaFile}
+\alias{getUnitGroupCellMap.ResidualFile}
+\alias{getUnitGroupCellMap.WeightsFile}
+\alias{getUnitTypes}
+\alias{getUnitTypes.AffymetrixCdfFile}
+\alias{hasUnitTypes}
+\alias{hasUnitTypes.AffymetrixCdfFile}
+\alias{isMonocellCdf}
+\alias{isMonocellCdf.AffymetrixCdfFile}
+\alias{process.AlleleSummation}
 
 \description{
   This page contains aliases for all "non-documented" objects that

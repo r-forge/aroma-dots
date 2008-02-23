@@ -53,6 +53,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 \tabular{rll}{
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
+ \tab \code{getCellMap} \tab  -\cr
  \tab \code{getImage} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
@@ -61,7 +62,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 
 
  \bold{Methods inherited from ParameterCelFile}:\cr
-getParameters, readUnits
+extractDataFrame, extractMatrix, getParameters, readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
 [, [[, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage

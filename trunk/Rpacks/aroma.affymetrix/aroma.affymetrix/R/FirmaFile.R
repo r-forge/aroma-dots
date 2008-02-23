@@ -431,8 +431,15 @@ setMethodS3("updateDataFlat", "FirmaFile", function(this, data, ..., verbose=FAL
 }, private=TRUE)
 
 
+setMethodS3("extractMatrix", "FirmaFile", function (this, ..., field=c("intensities", "stdvs", "pixels")) {
+  NextMethod("extractMatrix", this, ..., field=field);
+})
+
+
 ############################################################################
 # HISTORY:
+# 2008-02-22 [HB]
+# o Added extractMatrix().
 # 2007-08-09
 # o FirmaFile$fromDataFile() now creates CEL files with upper-case
 #   filename extension "*.CEL", not "*.cel".  The reason for this is that

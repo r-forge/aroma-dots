@@ -19,10 +19,9 @@
   Gets the names of the CN units.
 }
 
-\usage{\method{getCnNames}{AffymetrixCdfFile}(this, pattern="CN_", ...)}
+\usage{\method{getCnNames}{AffymetrixCdfFile}(this, ...)}
 
 \arguments{
- \item{pattern}{A regular expression to identify unit that are CN units.}
  \item{...}{Not used.}
 }
 
@@ -34,7 +33,7 @@
 
 \seealso{
   \code{\link[aroma.affymetrix:getSnpNames.AffymetrixCdfFile]{*getSnpNames}()}.
-  Internally, \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{*getUnitNames}()}.
+  Internally, \code{\link[aroma.affymetrix:getUnitTypes.AffymetrixCdfFile]{*getUnitTypes}()}.
   is used.
 
   For more information see \code{\link{AffymetrixCdfFile}}.

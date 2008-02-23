@@ -63,7 +63,7 @@ extends \link[aroma.affymetrix]{ProbeAffinityFile}\cr
 getCellIndices, getParameters, readUnits
 
  \bold{Methods inherited from ParameterCelFile}:\cr
-getParameters, readUnits
+extractDataFrame, extractMatrix, getParameters, readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
 [, [[, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage

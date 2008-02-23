@@ -722,3 +722,17 @@ getAsteriskTags.FragmentLengthNormalization
   xmlToList xmlToList.character
   byChipType.AromaUnitTabularBinaryFile
   clearCache.AromaTabularBinaryFile
+  cdfMergeStrands createMonocellCdf extractDataFrame.ParameterCelFile
+  extractMatrix.ChipEffectFile extractMatrix.ChipEffectSet
+  extractMatrix.FirmaFile extractMatrix.FirmaSet
+  extractMatrix.ParameterCelFile getAsteriskTags.AlleleSummation
+  getAsteriskTags.ScaleNormalization
+  getChipEffectSetClass.AlleleSummation getGroupDirections
+  getGroupDirections.AffymetrixCdfFile getMonocellCdf
+  getMonocellCdf.AffymetrixCdfFile getRootPath.AlleleSummation
+  getUnitGroupCellMap.FirmaFile getUnitGroupCellMap.ResidualFile
+  getUnitGroupCellMap.WeightsFile getUnitTypes
+  getUnitTypes.AffymetrixCdfFile hasUnitTypes
+  hasUnitTypes.AffymetrixCdfFile isMonocellCdf
+  isMonocellCdf.AffymetrixCdfFile 
+  process.AlleleSummation

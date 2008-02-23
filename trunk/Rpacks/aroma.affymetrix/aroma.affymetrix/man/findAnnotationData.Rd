@@ -3,8 +3,6 @@
 % 
 %  findAnnotationData.R
 % 
-% on Mon Feb 18 14:06:24 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

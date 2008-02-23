@@ -19,10 +19,9 @@
   Gets the names of the SNP units.
 }
 
-\usage{\method{getSnpNames}{AffymetrixCdfFile}(this, pattern="SNP_", ...)}
+\usage{\method{getSnpNames}{AffymetrixCdfFile}(this, ...)}
 
 \arguments{
- \item{pattern}{A regular expression to identify unit that are SNPs.}
  \item{...}{Not used.}
 }
 
@@ -34,7 +33,7 @@
 
 \seealso{
   \code{\link[aroma.affymetrix:getCnNames.AffymetrixCdfFile]{*getCnNames}()}.
-  Internally, \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{*getUnitNames}()}.
+  Internally, \code{\link[aroma.affymetrix:getUnitTypes.AffymetrixCdfFile]{*getUnitTypes}()}.
   is used.
 
   For more information see \code{\link{AffymetrixCdfFile}}.

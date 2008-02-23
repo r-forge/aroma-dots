@@ -28,6 +28,7 @@
 #     If \code{"pm"} and \code{"mm"} only perfect-match and mismatch 
 #     probes are used, respectively. If \code{"pmmm"} both types are used.
 #   }
+#   \item{shift}{Optional amount of shift if data before fitting/normalizing.}
 # }
 #
 # \section{Fields and Methods}{

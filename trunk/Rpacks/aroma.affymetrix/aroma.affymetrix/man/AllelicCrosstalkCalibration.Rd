@@ -62,7 +62,12 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
 
  \section{What probe signals are updated?}{
    Calibration for crosstalk between allele signals applies by definition
-   only SNP units.  It is only PM probes that will be calibrated.
+   only SNP units.
+   Furthermore, it is only SNP units with two or four unit groups that
+   are calibrated.  For instance, in at least on custom SNP CDFs we
+   know of, there is a small number of SNP units that have six groups.
+   \emph{Currently these units are not calibrated (at all).}
+   It is only PM probes that will be calibrated.
    Note that, non-calibrated signals will be saved in the output files.
  }
 

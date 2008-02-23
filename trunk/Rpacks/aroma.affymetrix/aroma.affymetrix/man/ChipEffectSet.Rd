@@ -25,13 +25,15 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{ChipEffectSet}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelSet}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{ChipEffectSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{ChipEffectSet}\cr
-extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
+extends \link[aroma.affymetrix]{ParameterCelSet}\cr
 
 
 
@@ -49,7 +51,6 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:calculateBaseline.ChipEffectSet]{calculateBaseline}} \tab Estimates the baseline signal chromosome by chromosome.\cr
- \tab \code{\link[aroma.affymetrix:extractDataFrame.ChipEffectSet]{extractDataFrame}} \tab Extract data as a data.frame for a set of arrays.\cr
  \tab \code{\link[aroma.affymetrix:extractMatrix.ChipEffectSet]{extractMatrix}} \tab Extract data as a matrix for a set of arrays.\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
@@ -64,6 +65,9 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from ParameterCelSet}:\cr
+extractDataFrame, extractMatrix
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
 [, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf
