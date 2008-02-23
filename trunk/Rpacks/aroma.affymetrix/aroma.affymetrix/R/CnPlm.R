@@ -328,9 +328,9 @@ setMethodS3("getProbeAffinityFile", "CnPlm", function(this, ..., .class=CnProbeA
 })
 
 setMethodS3("setCombineAlleles", "CnPlm", function(this, ...) {
-  ces <- getChipEffects(this);
+  ces <- getChipEffectSet(this);
   setCombineAlleles(ces, ...);
-  paf <- getProbeAffinities(this);
+  paf <- getProbeAffinityFile(this);
   setCombineAlleles(paf, ...);
 })
 

@@ -116,9 +116,9 @@ setMethodS3("getProbeAffinities", "ExonRmaPlm", function(this, ...) {
 
 
 setMethodS3("setMergeGroups", "ExonRmaPlm", function(this, ...) {
-  ces <- getChipEffects(this);
+  ces <- getChipEffectSet(this);
   setMergeGroups(ces, ...);
-  paf <- getProbeAffinities(this);
+  paf <- getProbeAffinityFile(this);
   setMergeGroups(paf, ...);
 })
 

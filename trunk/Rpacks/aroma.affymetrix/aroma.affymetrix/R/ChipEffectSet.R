@@ -24,7 +24,7 @@
 # 
 # \seealso{
 #   An object of this class is typically obtained through the
-#   \code{getChipEffects()} method for the @see "ProbeLevelModel" class.
+#   \code{getChipEffectSet()} method for the @see "ProbeLevelModel" class.
 # }
 #
 #*/###########################################################################
