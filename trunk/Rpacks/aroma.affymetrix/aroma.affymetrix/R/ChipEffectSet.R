@@ -257,6 +257,9 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 
 setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta", "sdTheta")) {
+  # Argument 'field':
+  field <- match.arg(field);
+
   NextMethod("extractMatrix", this, ..., field=field);
 })
 

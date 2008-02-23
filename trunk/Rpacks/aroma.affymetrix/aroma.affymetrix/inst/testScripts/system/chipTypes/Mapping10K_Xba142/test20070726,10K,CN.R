@@ -48,8 +48,18 @@ stopifnot(identical(getNames(ces), getNames(cs)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extraction test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+theta <- extractMatrix(getFile(ces,1), verbose=log);
+print(summary(theta));
+
+data <- extractDataFrame(getFile(ces,1), addNames=TRUE, verbose=log);
+print(summary(theta));
+
 theta <- extractMatrix(ces, verbose=log);
 print(summary(theta));
+
+data <- extractDataFrame(ces, addNames=TRUE, verbose=log);
+print(summary(data));
+
 
 
 

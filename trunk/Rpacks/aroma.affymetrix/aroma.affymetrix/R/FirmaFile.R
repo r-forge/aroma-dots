@@ -432,6 +432,9 @@ setMethodS3("updateDataFlat", "FirmaFile", function(this, data, ..., verbose=FAL
 
 
 setMethodS3("extractMatrix", "FirmaFile", function (this, ..., field=c("intensities", "stdvs", "pixels")) {
+  # Argument 'field':
+  field <- match.arg(field);
+
   NextMethod("extractMatrix", this, ..., field=field);
 })
 

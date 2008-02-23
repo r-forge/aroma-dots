@@ -3,7 +3,7 @@
 % 
 %  ScaleNormalization.R
 % 
-% on Fri Feb 22 17:34:23 2008.
+% on Fri Feb 22 18:33:21 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,7 +16,7 @@
  \title{The ScaleNormalization class}
 
  \description{
-  Package:  aroma.affymetrix \cr
+  Package:   \cr
 \bold{Class ScaleNormalization}\cr
 
 \code{\link[R.oo]{Object}}\cr
@@ -39,9 +39,10 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   probe-level signals towards the same scale.
  }
 
- \usage{ScaleNormalization(..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg="-XY", typesToAvg=typesToUpdate, shift=0)}
+ \usage{ScaleNormalization(dataSet=NULL, ..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg="-XY", typesToAvg=typesToUpdate, shift=0)}
 
  \arguments{
+   \item{dataSet}{\code{\link{AffymetrixCelSet}} to be normalized.}
    \item{...}{Arguments passed to the constructor of
      \code{\link{ProbeLevelTransform}}.}
    \item{targetAvg}{A \code{\link[base]{numeric}} value.}
@@ -63,6 +64,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{\link[aroma.affymetrix:process.ScaleNormalization]{process}} \tab Normalizes the data set.\cr
  \tab \code{\link[aroma.affymetrix:process.ScaleNormalization]{process}} \tab Normalizes the data set.\cr
 }
 

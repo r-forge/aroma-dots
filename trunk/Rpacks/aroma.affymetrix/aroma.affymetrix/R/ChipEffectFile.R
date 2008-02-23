@@ -851,6 +851,9 @@ setMethodS3("mergeGroups", "ChipEffectFile", function(this, fcn, fields=c("theta
 
 
 setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("theta", "sdTheta")) {
+  # Argument 'field':
+  field <- match.arg(field);
+
   NextMethod("extractMatrix", this, ..., field=field);
 })
 
