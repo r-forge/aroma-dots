@@ -22,6 +22,17 @@
 # \section{Fields and Methods}{
 #  @allmethods "public"  
 # }
+#
+# \details{
+#   This normalization method implements the two-pass algorithm described
+#   in Bengtsson et al. (2008).
+# }
+#
+# \references{
+#   [1] H. Bengtsson, R. Irizarry, B. Carvalho, & T.P. Speed. 
+#       Estimation and assessment of raw copy numbers at the single 
+#       locus level, Bioinformatics, 2008. 
+# }
 # 
 # @author
 #*/###########################################################################
@@ -185,6 +196,15 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   verbose && cat(verbose, "Target distribution: ");
   verbose && str(verbose, xTarget);
 
+  # TO DO: Add function to "expand" 'xTarget' if of different length
+  # than 'x' and 'w'.  /HB 2007-04-11. DONE 2008-02-23.
+  if (length(xTarget) != nbrOfCells(cdf)) {
+    # See normalizeQuantileSpline() for why this is ok/the way to do it.
+    xTarget <- c(xTarget, rep(NA, nbrOfCells(cdf)-length(xTarget)));
+    verbose && cat(verbose, "Expanded target distribution (now with NAs): ");
+    verbose && str(verbose, xTarget);
+  }
+
   # Get algorithm parameters
   verbose && cat(verbose, "typesToUpdate: ");
   verbose && str(verbose, params$typesToUpdate);
@@ -262,7 +282,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     verbose && print(verbose, gc);
   
     # TO DO: Add function to "expand" 'xTarget' if of different length
-    # than 'x'.  /HB 2007-04-11
+    # than 'x' and 'w'.  /HB 2007-04-11, 2008-02-23
 
     x <- normalizeQuantileSpline(x, w=w, xTarget=xTarget, 
                                        sortTarget=FALSE, robust=robust, ...);
@@ -321,6 +341,11 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
 
 ############################################################################
 # HISTORY:
+# 2008-02-23
+# o BUG FIX: When excluding cells from the fit, we would get an error saying
+#   the length of the target distribution is not the same as the data to
+#   be normalized. I had put this up on the todo list already 2007-04-11,
+#   but it is first now I got around to fix it.
 # 2007-09-06
 # o Made excludeChrXFromFit() more memory efficient, because it's using
 #   the new unlist feature in getCellIndices() of AffymetrixCdfFile.

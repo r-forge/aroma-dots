@@ -3,6 +3,8 @@
 % 
 %  DChipQuantileNormalization.R
 % 
+% on Sat Feb 23 11:19:44 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -65,6 +67,17 @@ getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDon
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
+ }
+
+ \details{
+   This normalization method implements the two-pass algorithm described
+   in Bengtsson et al. (2008).
+ }
+
+ \references{
+   [1] H. Bengtsson, R. Irizarry, B. Carvalho, & T.P. Speed.
+       Estimation and assessment of raw copy numbers at the single
+       locus level, Bioinformatics, 2008.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

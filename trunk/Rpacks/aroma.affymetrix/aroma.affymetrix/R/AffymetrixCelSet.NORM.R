@@ -146,7 +146,7 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
 # @set "class=AffymetrixCelSet"
 # @RdocMethod averageQuantile
 #
-# @title "Gets the average empirical distribution across all samples"
+# @title "Calculates the average empirical distribution across all samples"
 #
 # \description{
 #  @get "title".
@@ -173,7 +173,18 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
 #   (still) have length N.
 # }
 #
+# \details{
+#   This methods implements Step A2-A3 in the algorithm for quantile 
+#   normalization proposed by Bengtsson et al. (2008).
+# }
+#
 # @author
+#
+# \references{
+#   [1] H. Bengtsson, R. Irizarry, B. Carvalho, & T.P. Speed. 
+#       Estimation and assessment of raw copy numbers at the single 
+#       locus level, Bioinformatics, 2008.
+# }
 #
 # \seealso{
 #   @see "aroma.light::averageQuantile.list"

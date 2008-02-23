@@ -78,6 +78,6 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
 
  \seealso{
    An object of this class is typically obtained through the
-   \code{getProbeAffinities()} method for the \code{\link{ProbeLevelModel}} class.
+   \code{getProbeAffinityFile()} method for the \code{\link{ProbeLevelModel}} class.
  }
 \keyword{classes}

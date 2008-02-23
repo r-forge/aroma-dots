@@ -3,8 +3,6 @@
 % 
 %  ScaleNormalization.R
 % 
-% on Fri Feb 22 18:33:21 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -16,7 +14,7 @@
  \title{The ScaleNormalization class}
 
  \description{
-  Package:   \cr
+  Package:  aroma.affymetrix \cr
 \bold{Class ScaleNormalization}\cr
 
 \code{\link[R.oo]{Object}}\cr
@@ -64,7 +62,6 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:process.ScaleNormalization]{process}} \tab Normalizes the data set.\cr
  \tab \code{\link[aroma.affymetrix:process.ScaleNormalization]{process}} \tab Normalizes the data set.\cr
 }
 

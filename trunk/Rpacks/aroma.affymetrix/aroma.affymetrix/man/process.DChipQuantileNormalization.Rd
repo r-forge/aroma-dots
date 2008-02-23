@@ -3,6 +3,8 @@
 % 
 %  DChipQuantileNormalization.R
 % 
+% on Sat Feb 23 11:19:44 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Sat Feb 23 09:45:45 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1559,6 +1561,17 @@
 \alias{isMonocellCdf}
 \alias{isMonocellCdf.AffymetrixCdfFile}
 \alias{process.AlleleSummation}
+\alias{boxplotNuse}
+\alias{boxplotNuse.QualityAssessmentModel}
+\alias{boxplotRle}
+\alias{boxplotRle.QualityAssessmentModel}
+\alias{calculateNuseStats}
+\alias{calculateNuseStats.ChipEffectSet}
+\alias{calculateRleStats}
+\alias{calculateRleStats.ChipEffectSet}
+\alias{cbindBoxplotStats}
+\alias{cbindBoxplotStats.list}
+\alias{getChipEffectSet.QualityAssessmentModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

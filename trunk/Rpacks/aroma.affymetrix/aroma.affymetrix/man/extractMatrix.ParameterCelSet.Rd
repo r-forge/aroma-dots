@@ -3,8 +3,6 @@
 % 
 %  ParameterCelSet.R
 % 
-% on Fri Feb 22 17:45:10 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
