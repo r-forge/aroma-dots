@@ -14,10 +14,10 @@
 \alias{averageQuantile,AffymetrixCelSet-method}
 
 
- \title{Gets the average empirical distribution across all samples}
+ \title{Calculates the average empirical distribution across all samples}
 
  \description{
-  Gets the average empirical distribution across all samples.
+  Calculates the average empirical distribution across all samples.
  }
 
  \usage{\method{averageQuantile}{AffymetrixCelSet}(this, probes=NULL, excludeCells=NULL, ..., verbose=FALSE)}
@@ -41,7 +41,18 @@
    (still) have length N.
  }
 
+ \details{
+   This methods implements Step A2-A3 in the algorithm for quantile
+   normalization proposed by Bengtsson et al. (2008).
+ }
+
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \references{
+   [1] H. Bengtsson, R. Irizarry, B. Carvalho, & T.P. Speed.
+       Estimation and assessment of raw copy numbers at the single
+       locus level, Bioinformatics, 2008.
+ }
 
  \seealso{
    \code{\link[aroma.light]{averageQuantile.list}}

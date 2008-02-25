@@ -47,7 +47,7 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{[<-} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:allocate.AromaTabularBinaryFile]{allocate}} \tab Creates an AromaTabularBinaryFile.\cr
+ \tab \code{allocate} \tab  -\cr
  \tab \code{as.character} \tab  -\cr
  \tab \code{colMeans} \tab  -\cr
  \tab \code{colMedians} \tab  -\cr
@@ -63,10 +63,10 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \tab \code{nbrOfRows} \tab  -\cr
  \tab \code{ncol} \tab  -\cr
  \tab \code{nrow} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:readFooter.AromaTabularBinaryFile]{readFooter}} \tab Reads the file footer in XML format into a named nested list.\cr
+ \tab \code{readFooter} \tab  -\cr
  \tab \code{subset} \tab  -\cr
  \tab \code{summary} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:writeFooter.AromaTabularBinaryFile]{writeFooter}} \tab Writes a named nested list to the file footer in XML format.\cr
+ \tab \code{writeFooter} \tab  -\cr
 }
 
 

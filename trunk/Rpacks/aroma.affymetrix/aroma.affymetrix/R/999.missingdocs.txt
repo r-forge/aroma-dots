@@ -741,3 +741,8 @@ getAsteriskTags.FragmentLengthNormalization
   calculateNuseStats.ChipEffectSet calculateRleStats
   calculateRleStats.ChipEffectSet cbindBoxplotStats
   cbindBoxplotStats.list getChipEffectSet.QualityAssessmentModel
+  boxplotStats boxplotStats.ChipEffectSet calculateFieldBoxplotStats
+  calculateFieldBoxplotStats.ChipEffectSet calculateNuseBoxplotStats
+  calculateNuseBoxplotStats.ChipEffectSet calculateRleBoxplotStats
+  calculateRleBoxplotStats.ChipEffectSet mergeBoxplotStats plotBoxplot
+  plotBoxplot.ChipEffectSet plotBoxplotStats
