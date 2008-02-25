@@ -564,119 +564,24 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
 
 
 
-
-###########################################################################/**
-# @RdocMethod boxplotNuse
-#
-# @title "Boxplots Normalized Unscaled Standard Errors (NUSE)"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{arrays}{An @integer @vector of array indices to be displayed.
-#     If @NULL, all arrays are considered.}
-#  \item{subset}{An @integer @vector specifying the units for which the
-#     statistics should be calculated.  A @numeric in [0,1] specifies the
-#     fraction of units to be used.
-#     If @NULL, all units are considered.}
-#  \item{main}{Title on the boxplot.}
-#  \item{...}{Additional arguments passed @see "graphics:bxp".}
-#     @see "QualityAssessmentSet".}
-#  \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
-# }
-#
-# \value{
-#   Returns (invisibly) what @seemethod "calculateNuseStats".
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "boxplotRle".
-#   Internally @seemethod "calculateNuseStats" is used.
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("boxplotNuse", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, ylab="NUSE", main="NUSE", ..., verbose=FALSE) {
-  ces <- getChipEffectSet(this);
-  stats <- calculateNuseStats(ces, arrays=arrays, subset=subset, 
-                                                         verbose=verbose);
-  bxp(stats, ylab=ylab, main=main, ...);
-
-  invisible(stats);
-})
-
-
-
-###########################################################################/**
-# @RdocMethod boxplotRle
-#
-# @title "Boxplots Relative Log2 Expression (RLE)"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{arrays}{An @integer @vector of array indices to be displayed.
-#     If @NULL, all arrays are considered.}
-#  \item{subset}{An @integer @vector specifying the units for which the
-#     statistics should be calculated.  A @numeric in [0,1] specifies the
-#     fraction of units to be used.
-#     If @NULL, all units are considered.}
-#  \item{main}{Title on the boxplot.}
-#  \item{...}{Additional arguments passed @see "graphics:bxp".}
-#     @see "QualityAssessmentSet".}
-#  \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
-# }
-#
-# \value{
-#   Returns (invisibly) what @seemethod "calculateRleStats".
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "boxplotRle".
-#   Internally @seemethod "calculateRleStats" is used.
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("boxplotRle", "QualityAssessmentModel", function(this, arrays=NULL, subset=NULL, ylab=expression(M==log[2](theta/bar(theta))), main="RLE", ..., verbose=FALSE) {
-  ces <- getChipEffectSet(this);
-  stats <- calculateRleStats(ces, arrays=arrays, subset=subset, 
-                                                         verbose=verbose);
-  bxp(stats, ylab=ylab, main=main, ...);
-
-  invisible(stats);
-})
-
-
 setMethodS3("plotNuse", "QualityAssessmentModel", function(this, ...) {
-  boxplotNuse(this, ...);
-}, private=TRUE, deprecated=TRUE);
-
+  ces <- getChipEffectSet(this);
+  stats <- plotBoxplot(ces, type="NUSE", ...);
+  invisible(stats);
+})
 
 setMethodS3("plotRle", "QualityAssessmentModel", function(this, ...) {
-  boxplotRle(this, ...);
-}, private=TRUE, deprecated=TRUE);
-
-
+  ces <- getChipEffectSet(this);
+  stats <- plotBoxplot(ces, type="RLE", ...);
+  invisible(stats);
+})
 
 
 ##########################################################################
 # HISTORY:
-# 2008-02-22
+# 2008-02-25
 # o Added Rdoc comments.
-# o Renamed plot{Nuse|Rle}() to boxplot{Nuse|Rle}().
-# o Added calculate{Nuse|Rle}Stats() for calculating NUSE/RLE boxplot
-#   statistics on an optional subset of arrays. 
+# o Now plot{Nuse|Rle}() calls plotBoxplot() of ChipEffectSet.
 # 2007-12-10
 # o Added getAsteriskTags() and updated getTags() accordingly.
 # 2007-08-09

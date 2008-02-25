@@ -50,18 +50,23 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{boxplotStats} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:calculateBaseline.ChipEffectSet]{calculateBaseline}} \tab Estimates the baseline signal chromosome by chromosome.\cr
+ \tab \code{calculateFieldBoxplotStats} \tab  -\cr
+ \tab \code{calculateNuseBoxplotStats} \tab  -\cr
+ \tab \code{calculateRleBoxplotStats} \tab  -\cr
  \tab \code{extractMatrix} \tab  -\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getAM.ChipEffectSet]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects of the set relative to a reference chip effect file.\cr
+ \tab \code{getAM} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getBaseline.ChipEffectSet]{getBaseline}} \tab Gets the baseline signals across chromosomes.\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectSet]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
+ \tab \code{getXAM} \tab  -\cr
+ \tab \code{plotBoxplot} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 

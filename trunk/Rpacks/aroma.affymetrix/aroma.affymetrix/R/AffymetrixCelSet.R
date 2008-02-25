@@ -456,7 +456,7 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
 }, static=TRUE)
 
 
-setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", cdf=NULL, checkChipType=is.null(cdf), ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", verbose=FALSE) {
+setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", cdf=NULL, checkChipType=is.null(cdf), ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", force=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -473,24 +473,36 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   
   verbose && enter(verbose, "Defining ", class(static)[1], " from files");
 
-  this <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Look for cached results (useful for extremely large data set)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- list(method="fromFiles", class=class(static)[1], path=path, pattern=pattern, cdf=cdf, checkChipType=checkChipType, ..., fileClass=fileClass);
+  dirs <- "aroma.affymetrix";
+  res <- loadCache(key=key, dirs=dirs);
+  if (!force && !is.null(res)) {
+    verbose && cat(verbose, "Found cached results");
+    verbose && exit(verbose);
+    return(res);
+  }
 
-  verbose && enter(verbose, "Retrieved files: ", nbrOfFiles(this));
+  set <- fromFiles.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+
+  verbose && enter(verbose, "Retrieved files: ", nbrOfFiles(set));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Handle duplicates
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (onDuplicates %in% c("exclude", "error")) {
-    dups <- isDuplicated(this, verbose=less(verbose));
+    dups <- isDuplicated(set, verbose=less(verbose));
     ndups <- sum(dups);
     if (ndups > 0) {
-      dupsStr <- paste(getNames(this)[dups], collapse=", ");
+      dupsStr <- paste(getNames(set)[dups], collapse=", ");
       if (onDuplicates == "error") {
         msg <- paste("Detected ", ndups, " duplicated CEL files (same datestamp): ", dupsStr, sep="");
         verbose && cat(verbose, "ERROR: ", msg);
         throw(msg);
       } else if (onDuplicates == "exclude") {
-        this <- extract(this, !dups);
+        set <- extract(set, !dups);
         msg <- paste("Excluding ", ndups, " duplicated CEL files (same datestamp): ", dupsStr, sep="");
         verbose && cat(verbose, "WARNING: ", msg);
         warning(msg);
@@ -502,7 +514,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # Scan all CEL files for possible chip types
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Chip type according to the directory structure
-  path <- getPath(this);
+  path <- getPath(set);
   chipType <- basename(path);
   verbose && cat(verbose, 
                  "The chip type according to the path is: ", chipType);
@@ -511,7 +523,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   if (checkChipType) {
     verbose && enter(verbose, "Scanning CEL set for used chip types");
     # This takes time if the CEL files are ASCII files.
-    chipTypes <- sapply(this, FUN=function(file) {
+    chipTypes <- sapply(set, FUN=function(file) {
       readCelHeader(getPathname(file))$chiptype;
     })
     tChipTypes <- table(chipTypes);
@@ -552,7 +564,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
 
     verbose && enter(verbose, "Check compatibility with 1st CEL file");
     verbose && cat(verbose, "Chip type: ", chipType);
-    cf <- getFile(this, 1);
+    cf <- getFile(set, 1);
     if (nbrOfCells(cdf) != nbrOfCells(cf)) {
       cdf <- getCdf(cf);
       chipType <- getChipType(cdf);
@@ -565,7 +577,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   }
 
   verbose && enter(verbose, "Updating the CDF for all files");
-  setCdf(this, cdf);
+  setCdf(set, cdf);
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -581,15 +593,18 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
     verbose && cat(verbose, "No annotation files found.");
   } else {
     verbose && print(verbose, sas);
-    setAttributesBy(this, sas);
+    setAttributesBy(set, sas);
   }
   # Store the SAFs for now.
-  this$.sas <- sas;
+  set$.sas <- sas;
   verbose && exit(verbose);
+
+  # Save to file cache
+  saveCache(set, key=key, dirs=dirs);
 
   verbose && exit(verbose);
 
-  this;
+  set;
 })
 
 
@@ -1351,6 +1366,10 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-02-25
+# o Now fromFiles() of AffymetrixCelSet uses the file cache, which speed up
+#   the setup for extremely large data sets.  Note, currently the default
+#   is 'force=TRUE' (for safety).
 # 2008-01-30
 # o Now as.character() for AffymetrixCelSet only reports time stamp if the
 #   number of arrays in the data set is less that the threshold specified

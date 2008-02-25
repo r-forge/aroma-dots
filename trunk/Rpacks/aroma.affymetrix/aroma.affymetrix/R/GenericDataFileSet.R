@@ -1043,6 +1043,10 @@ setMethodS3("fromFiles", "GenericDataFileSet", function(static, path=NULL, patte
   # Sort files in lexicographic order
   pathnames <- sort(pathnames);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Build list of GenericDataFile objects
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Defining ", length(pathnames), " files");
   files <- list();
   for (kk in seq(along=pathnames)) {
