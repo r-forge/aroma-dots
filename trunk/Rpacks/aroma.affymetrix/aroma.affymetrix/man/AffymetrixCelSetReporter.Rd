@@ -42,7 +42,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFileSetReporter}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{getDataSet} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getDataSet.AffymetrixCelSetReporter]{getDataSet}} \tab Gets the data set.\cr
 }
 
 

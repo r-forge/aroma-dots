@@ -48,7 +48,7 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
- \tab \code{fromChipType} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fromChipType.UgpGenomeInformation]{fromChipType}} \tab Defines a UgpGenomeInformation object by chip type.\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getChromosomes} \tab  -\cr
  \tab \code{getData} \tab  -\cr

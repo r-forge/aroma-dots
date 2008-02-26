@@ -1570,6 +1570,18 @@
 \alias{cbindBoxplotStats}
 \alias{cbindBoxplotStats.list}
 \alias{getChipEffectSet.QualityAssessmentModel}
+\alias{boxplotStats}
+\alias{boxplotStats.ChipEffectSet}
+\alias{calculateFieldBoxplotStats}
+\alias{calculateFieldBoxplotStats.ChipEffectSet}
+\alias{calculateNuseBoxplotStats}
+\alias{calculateNuseBoxplotStats.ChipEffectSet}
+\alias{calculateRleBoxplotStats}
+\alias{calculateRleBoxplotStats.ChipEffectSet}
+\alias{mergeBoxplotStats}
+\alias{plotBoxplot}
+\alias{plotBoxplot.ChipEffectSet}
+\alias{plotBoxplotStats}
 
 \description{
   This page contains aliases for all "non-documented" objects that

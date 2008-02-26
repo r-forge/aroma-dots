@@ -60,12 +60,12 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
- \tab \code{getAM} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getAM.ChipEffectSet]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects of the set relative to a reference chip effect file.\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getBaseline.ChipEffectSet]{getBaseline}} \tab Gets the baseline signals across chromosomes.\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
- \tab \code{getXAM} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectSet]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{plotBoxplot} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
