@@ -5,63 +5,73 @@
   addColorMap.SpatialReporter addExclCells
   addExclCells.DChipQuantileNormalization addIncludes
   addIncludes.Explorer addIndexFile addIndexFile.ChromosomeExplorer
-  addIndexFile.Explorer AffymetrixCsvFile
-  AffymetrixCsvGenomeInformation AffymetrixNetAffxCsvFile
-  AffymetrixTabularFile AffymetrixTsvFile allocate
-  allocateFromCdf
+  addIndexFile.Explorer AffymetrixAptSummaryFile AffymetrixCnChpFile
+  AffymetrixCsvFile AffymetrixCsvGenomeInformation
+  AffymetrixNetAffxCsvFile AffymetrixTabularFile AffymetrixTsvFile
+  allocate allocateFromCdf allocateFromCdf.AromaUfcFile
   allocateFromCdf.AromaUflFile allocateFromCdf.AromaUgpFile
-  annotateMvsA
-  annotateMvsA.AffymetrixCelFile append append.AffymetrixCelSet
-  append.CnagCfhSet append.default append.GenericDataFileSet
-  appendFiles appendFiles.GenericDataFileSet apply apply.default
-  apply.SampleAnnotationFile applyRegions
+  annotateMvsA annotateMvsA.AffymetrixCelFile append
+  append.AffymetrixCelSet append.CnagCfhSet append.default
+  append.GenericDataFileSet appendFiles appendFiles.GenericDataFileSet
+  apply apply.default apply.SampleAnnotationFile applyRegions
   applyRegions.CopyNumberOutliers applyRows applyRows.CopyNumberRegions
   applyToUnitIntensities applyToUnitIntensities.AffymetrixCelSet
-  AromaAffymetrix AromaUflFile AromaUgpFile
+  AromaAffymetrix AromaUfcFile AromaUflFile AromaUgpFile
   as.AffymetrixCelSet as.AffymetrixFileSet
   as.character.AffymetrixCdfFile as.character.AffymetrixCelFile
   as.character.AffymetrixCelSetReporter
-  as.character.AffymetrixCelSetTuple
+  as.character.AffymetrixCelSetTuple as.character.AffymetrixCnChpFile
   as.character.AffymetrixFileSetReporter
   as.character.AffymetrixProbeTabFile
-  as.character.AromaTabularBinaryFile as.character.ArrayExplorer
+  as.character.AromaTabularBinaryFile
+  as.character.AromaUnitTabularBinaryFile as.character.ArrayExplorer
   as.character.ChipEffectFile as.character.ChipEffectSet
   as.character.ChromosomalModel as.character.ChromosomeExplorer
-  as.character.CnagCfhFile as.character.CopyNumberOutliers
-  as.character.CopyNumberRegions
-  as.character.CopyNumberSegmentationModel
-  as.character.DChipQuantileNormalization as.character.Explorer
-  as.character.FirmaModel as.character.GenericTabularFile
-  as.character.GenomeInformation as.character.Interface
-  as.character.Model as.character.ProbeAffinityFile
-  as.character.QualityAssessmentModel as.character.RawCopyNumbers
-  as.character.ResidualFile as.character.ResidualSet
-  as.character.SmoothMultiarrayModel as.character.SnpInformation
-  as.character.SpatialReporter as.character.Transform
-  as.character.TransformReport as.character.WeightsFile
-  as.character.WeightsSet as.CnagCfhSet
+  as.character.CnagCfhFile as.character.CopyNumberChromosomalModel
+  as.character.CopyNumberOutliers as.character.CopyNumberRegions
+  as.character.DChipDcpFile as.character.DChipQuantileNormalization
+  as.character.Explorer as.character.FirmaModel
+  as.character.GenericTabularFile as.character.GenomeInformation
+  as.character.Interface as.character.Model
+  as.character.ProbeAffinityFile as.character.QualityAssessmentModel
+  as.character.RawCopyNumbers as.character.ResidualFile
+  as.character.ResidualSet as.character.SmoothMultiarrayModel
+  as.character.SnpInformation as.character.SpatialReporter
+  as.character.Transform as.character.TransformReport
+  as.character.WeightsFile as.character.WeightsSet as.CnagCfhSet
   as.data.frame.CopyNumberOutliers as.data.frame.CopyNumberRegions
-  as.data.frame.RawCopyNumbers as.GenericDataFileSet
+  as.data.frame.RawCopyNumbers as.DChipDcpSet as.GenericDataFileSet
+  asMatrixOfFiles asMatrixOfFiles.AffymetrixCelSetTuple
   backtransformGenotypeCone backtransformGenotypeCone.matrix
-  bgAdjustGcrma bgAdjustOptical bgAdjustRma byChipType byName
-  byName.AffymetrixCelSet byPath byPath.AffymetrixCelSetTuple
+  bgAdjustGcrma bgAdjustOptical bgAdjustRma boxplotStats
+  boxplotStats.ChipEffectSet byChipType
+  byChipType.AromaUnitTabularBinaryFile byName byName.AffymetrixCelSet
+  byName.DChipDcpSet byPath byPath.AffymetrixCelSetTuple
+  calculateAverages
+  calculateAverages.FragmentEquivalentClassNormalization
   calculateBaseline calculateChromosomeStatistics
-  calculateChromosomeStatistics.CopyNumberSegmentationModel
+  calculateChromosomeStatistics.CopyNumberChromosomalModel
+  calculateFieldBoxplotStats calculateFieldBoxplotStats.ChipEffectSet
+  calculateNuseBoxplotStats calculateNuseBoxplotStats.ChipEffectSet
   calculateParametersGsb calculateResiduals
   calculateResiduals.ProbeLevelModel calculateResidualSet
-  calculateResidualSet.ProbeLevelModel calculateTargetDistribution
+  calculateResidualSet.ProbeLevelModel calculateRleBoxplotStats
+  calculateRleBoxplotStats.ChipEffectSet calculateTargetDistribution
   calculateTargetDistribution.QuantileNormalization calculateWeights
   calculateWeights.ExonRmaPlm calculateWeights.FirmaModel
-  calculateWeights.ProbeLevelModel cdfMergeGroups ChipEffectSetTuple
-  cleanToRealChipType cleanToRealChipType.AffymetrixCdfFile
-  clearCache.AffymetrixCdfFile clearCache.AffymetrixCelFile
-  clearCache.AffymetrixCelSet clearCache.AffymetrixCelSetTuple
+  calculateWeights.ProbeLevelModel cdfMergeGroups cdfMergeStrands
+  ChipEffectSetTuple clearCache.AffymetrixCdfFile
+  clearCache.AffymetrixCelFile clearCache.AffymetrixCelSet
+  clearCache.AffymetrixCelSetTuple clearCache.AffymetrixCnChpFile
   clearCache.AffymetrixFileSet clearCache.AffymetrixProbeTabFile
-  clearCache.AffymetrixTsvFile clearCache.ChipEffectFile
+  clearCache.AffymetrixTsvFile clearCache.AllelicCrosstalkCalibration
+  clearCache.AromaTabularBinaryFile
+  clearCache.AromaUnitTabularBinaryFile clearCache.ChipEffectFile
   clearCache.ChipEffectSet clearCache.ChromosomalModel
   clearCache.CnagCfhFile clearCache.CnagCfhSet
-  clearCache.CopyNumberSegmentationModel clearCache.ExonChipEffectFile
+  clearCache.CopyNumberChromosomalModel clearCache.ExonChipEffectFile
   clearCache.FirmaFile clearCache.FirmaModel clearCache.FirmaSet
+  clearCache.FragmentEquivalentClassNormalization
   clearCache.FragmentLengthNormalization clearCache.GenericDataFileSet
   clearCache.GenomeInformation clearCache.ParameterCelFile
   clearCache.ProbeAffinityFile clearCache.ProbeLevelModel
@@ -69,13 +79,14 @@
   clearCache.ResidualFile clearCache.ResidualSet
   clearCache.SmoothMultiarrayModel clearCache.SnpChipEffectFile
   clearCache.SnpInformation clearCache.Transform
-  clearCache.TransformReport clearCache.WeightsFile
-  clearCache.WeightsSet clearData clone.AffymetrixCelFile
-  clone.AffymetrixCelSet clone.CnagCfhFile clone.CnagCfhSet
+  clearCache.TransformReport clearCache.UgpGenomeInformation
+  clearCache.WeightsFile clearCache.WeightsSet clearData
+  clone.AffymetrixCelFile clone.AffymetrixCelSet
+  clone.AffymetrixCnChpFile clone.CnagCfhFile clone.CnagCfhSet
   clone.GenericDataFile clone.GenericDataFileSet colMeans
   colMeans.AromaTabularBinaryFile colMeans.default colMedians
   colMedians.AromaTabularBinaryFile colnames.AromaTabularBinaryFile
-  colnames.AromaUflFile colnames.AromaUgpFile
+  colnames.AromaUfcFile colnames.AromaUflFile colnames.AromaUgpFile
   colnames.GenericTabularFile colStats colStats.AromaTabularBinaryFile
   colSums colSums.AromaTabularBinaryFile colSums.default compare
   compareChecksum compareChecksum.GenericDataFile computeAffinities
@@ -83,25 +94,32 @@
   CopyNumberOutliers CopyNumberRegions copyTo copyTo.GenericDataFile
   copyTo.GenericDataFileSet createBlankSet
   createBlankSet.AffymetrixCelSet createFrom createMonoCell
-  createOutputTuple createOutputTuple.SmoothMultiarrayModel
-  createParamCdf createParamCdf.ChipEffectFile createParamCdf.FirmaFile
-  decode decode.ParameterCelFile digest2
-  dim.AromaTabularBinaryFile dimnames<-.AromaTabularBinaryFile display
-  display.ChromosomeExplorer drawCnRegions drawCnRegions.DNAcopy
-  drawCnRegions.profileCGH drawCytoband drawCytoband.ChromosomalModel
-  drawCytoband.default drawCytoband.profileCGH drawCytoband2
-  drawCytoband2.default drawExtraAnnotations
-  drawExtraAnnotations.default drawExtraAnnotations.profileCGH
-  drawLevels drawLevels.CopyNumberOutliers drawLevels.CopyNumberRegions
-  encode encode.ParameterCelFile equals.GenericDataFile
-  excludeChrXFromFit excludeChrXFromFit.DChipQuantileNormalization
-  extend.Interface extractAffyBatch extractCNRs extractCNRs.default
+  createMonocellCdf createOutputTuple
+  createOutputTuple.SmoothMultiarrayModel createParamCdf
+  createParamCdf.ChipEffectFile createParamCdf.FirmaFile decode
+  decode.ParameterCelFile digest2 dim.AromaTabularBinaryFile
+  dim.DChipDcpFile dimnames<-.AromaTabularBinaryFile display
+  display.ChromosomeExplorer doCRMA doCRMA.default drawCnRegions
+  drawCnRegions.DNAcopy drawCnRegions.profileCGH drawCytoband
+  drawCytoband.ChromosomalModel drawCytoband.default
+  drawCytoband.profileCGH drawCytoband2 drawCytoband2.default
+  drawExtraAnnotations drawExtraAnnotations.default
+  drawExtraAnnotations.profileCGH drawLevels
+  drawLevels.CopyNumberOutliers drawLevels.CopyNumberRegions encode
+  encode.ParameterCelFile equals.GenericDataFile excludeChrXFromFit
+  excludeChrXFromFit.DChipQuantileNormalization extend.Interface
+  extractAffyBatch extractCNRs extractCNRs.default
   extractCopyNumberOutliers extractCopyNumberOutliers.DNAcopy
   extractCopyNumberOutliers.profileCGH extractCopyNumberRegions
   extractCopyNumberRegions.DNAcopy extractCopyNumberRegions.profileCGH
-  extractMatrix extractRawCNs extractRawCNs.default
-  extractRawCopyNumbers extractRawCopyNumbers.DNAcopy
-  extractRawCopyNumbers.profileCGH findByChipType
+  extractDataFrame extractDataFrame.ParameterCelFile extractMatrix
+  extractMatrix.ChipEffectFile extractMatrix.ChipEffectSet
+  extractMatrix.FirmaFile extractMatrix.FirmaSet
+  extractMatrix.ParameterCelFile extractRawCNs extractRawCNs.default
+  extractRawCopyNumbers
+  extractRawCopyNumbers.CopyNumberChromosomalModel
+  extractRawCopyNumbers.DNAcopy extractRawCopyNumbers.profileCGH
+  findByCdf2 findByCdf2.default findByChipType
   findByChipType.AffymetrixCsvFile
   findByChipType.AffymetrixCsvGenomeInformation
   findByChipType.AffymetrixNetAffxCsvFile
@@ -112,62 +130,77 @@
   findByChipType.DChipSnpInformation findByChipType.UflSnpInformation
   findByChipType.UgpGenomeInformation findByName
   findByName.AffymetrixCelSet findByName.ChipEffectSet
-  findByName.CnagCfhSet findFiles findSAFs
-  findSAFs.SampleAnnotationSet findUnitsTodo
-  findUnitsTodo.ChipEffectFile findUnitsTodo.ChipEffectSet
-  findUnitsTodo.ExonChipEffectSet findUnitsTodo.FirmaFile
-  findUnitsTodo.FirmaSet findUnitsTodo.QualityAssessmentFile
-  findUnitsTodo.ResidualFile findUnitsTodo.ResidualSet
-  findUnitsTodo.WeightsFile findUnitsTodo.WeightsSet fit
-  fit.ChromosomalModel fitGenotypeCone fitGlad fitGlad.CnChipEffectSet
-  fitOne fitOneChromosome fitOneChromosome.SmoothMultiarrayModel
-  fitPlasqUnit fitPlasqUnit.matrix fitQuantileNormFcn fitWRMA
-  fitWRMA.matrix fixSearchPath fixSearchPath.AromaAffymetrix fromCdf
-  fromCdf.AffymetrixProbeTabFile fromChipType
-  fromChipType.AffymetrixCdfFile
+  findByName.CnagCfhSet findByName.DChipDcpSet findFiles findPngDevice
+  findPngDevice.default findSAFs findSAFs.SampleAnnotationSet
+  findUnitsTodo findUnitsTodo.ChipEffectFile
+  findUnitsTodo.ChipEffectSet findUnitsTodo.ExonChipEffectSet
+  findUnitsTodo.FirmaFile findUnitsTodo.FirmaSet
+  findUnitsTodo.QualityAssessmentFile findUnitsTodo.ResidualFile
+  findUnitsTodo.ResidualSet findUnitsTodo.WeightsFile
+  findUnitsTodo.WeightsSet fit fit.ChromosomalModel fitGenotypeCone
+  fitGlad fitGlad.CnChipEffectSet fitOne fitOneChromosome
+  fitOneChromosome.SmoothMultiarrayModel fitPlasqUnit
+  fitPlasqUnit.matrix fitQuantileNormFcn fitWHLAPLM fitWHLAPLM.matrix
+  fitWHRCModel fitWHRCModel.matrix fitWLAPLM fitWLAPLM.matrix
+  fitWRCModel fitWRCModel.matrix fitWRMA fitWRMA.matrix fixSearchPath
+  fixSearchPath.AromaAffymetrix fromCdf fromCdf.AffymetrixProbeTabFile
+  fromChipType fromChipType.AffymetrixCdfFile
   fromChipType.AffymetrixCsvGenomeInformation
   fromChipType.AffymetrixProbeTabFile
   fromChipType.AffymetrixTabularFile fromChipType.AffymetrixTsvFile
   fromChipType.AromaUnitTabularBinaryFile
-  fromChipType.UflSnpInformation fromCleanChipType
-  fromCleanChipType.AffymetrixCdfFile fromDataFile
+  fromChipType.UflSnpInformation fromDataFile
   fromDataFile.ChipEffectFile fromDataFile.FirmaFile
   fromDataFile.ResidualFile fromDataFile.WeightsFile fromDataSet
   fromDataSet.ChipEffectSet fromDataSet.FirmaSet
   fromDataSet.GenomeInformation fromDataSet.ResidualSet
   fromDataSet.SnpInformation fromDataSet.WeightsSet fromFile
+  fromFile.AffymetrixCnChpFile fromFile.DChipDcpFile
   fromFile.GenericDataFile fromFiles fromFiles.AffymetrixCelSet
   fromFiles.ChipEffectSet fromFiles.CnagCfhSet
-  fromFiles.CnChipEffectSet fromFiles.ExonChipEffectSet
-  fromFiles.FirmaSet fromFiles.ResidualSet fromFiles.SnpChipEffectSet
-  fromFiles.WeightsSet fromName fromName.AffymetrixCelSet
-  fromName.CnagCfhSet fromPath fromPath.SampleAnnotationFile
-  fromPath.SampleAnnotationSet gaussianSmoothing
-  gaussianSmoothing.matrix gaussianSmoothing.numeric
+  fromFiles.CnChipEffectSet fromFiles.DChipDcpSet
+  fromFiles.ExonChipEffectSet fromFiles.FirmaSet fromFiles.ResidualSet
+  fromFiles.SnpChipEffectSet fromFiles.WeightsSet fromName
+  fromName.AffymetrixCelSet fromName.CnagCfhSet fromName.DChipDcpSet
+  fromPath fromPath.SampleAnnotationFile fromPath.SampleAnnotationSet
+  gaussianSmoothing gaussianSmoothing.matrix gaussianSmoothing.numeric
   gaussianSmoothing.RawCopyNumbers gaussKernel gcrmaSummary
   GenericSummary GenericTabularFile getAlias
   getAlias.AffymetrixCelSetTuple getAlias.ArrayExplorer
-  getAlias.ChromosomalModel getAlias.CopyNumberSegmentationModel
-  getAlias.GenericDataFile getAlias.TransformReport getAllelePairs
-  getAllelePairUnitSets getAlleleProbePairs getAlleleProbePairs2
+  getAlias.ChromosomalModel getAlias.GenericDataFile
+  getAlias.TransformReport getAllelePairs getAllelePairUnitSets
+  getAlleleProbePairs getAlleleProbePairs2
   getAlleleProbePairs2.AffymetrixCdfFile getAm getAM
-  getAm.AffymetrixCelFile getAromaUflFile
+  getAm.AffymetrixCelFile getAromaUfcFile
+  getAromaUfcFile.FragmentEquivalentClassNormalization getAromaUflFile
   getAromaUflFile.UflSnpInformation getAromaUgpFile
-  getAromaUgpFile.UgpGenomeInformation getArrays getArraysOfInput
+  getAromaUgpFile.UgpGenomeInformation getArrayNames
+  getArrayNames.AffymetrixAptSummaryFile getArrays getArraysOfInput
   getArraysOfInput.ArrayExplorer getArraysOfInput.ChromosomeExplorer
-  getAsteriskTags getAsteriskTags.AffinePlm
-  getAsteriskTags.AffymetrixCelSetTuple getAsteriskTags.AvgPlm
+  getAsteriskTags getAsteriskTags.AffineCnPlm getAsteriskTags.AffinePlm
+  getAsteriskTags.AffineSnpPlm getAsteriskTags.AffymetrixCelSetTuple
+  getAsteriskTags.AffymetrixFileSetReporter
+  getAsteriskTags.AlleleSummation
+  getAsteriskTags.AllelicCrosstalkCalibration
+  getAsteriskTags.ArrayExplorer getAsteriskTags.AvgCnPlm
+  getAsteriskTags.AvgPlm getAsteriskTags.AvgSnpPlm
   getAsteriskTags.CbsModel getAsteriskTags.ChromosomalModel
-  getAsteriskTags.CopyNumberSegmentationModel getAsteriskTags.GladModel
-  getAsteriskTags.MbeiPlm getAsteriskTags.Model
-  getAsteriskTags.ProbeLevelModel getAsteriskTags.RmaPlm
+  getAsteriskTags.ExonRmaPlm getAsteriskTags.Explorer
+  getAsteriskTags.FirmaModel
+  getAsteriskTags.FragmentEquivalentClassNormalization
+  getAsteriskTags.FragmentLengthNormalization getAsteriskTags.GladModel
+  getAsteriskTags.HetLogAddCnPlm getAsteriskTags.HetLogAddPlm
+  getAsteriskTags.HetLogAddSnpPlm getAsteriskTags.MbeiCnPlm
+  getAsteriskTags.MbeiPlm getAsteriskTags.MbeiSnpPlm
+  getAsteriskTags.Model getAsteriskTags.ProbeLevelModel
+  getAsteriskTags.QualityAssessmentModel
+  getAsteriskTags.RawCopyNumberModel getAsteriskTags.RmaCnPlm
+  getAsteriskTags.RmaPlm getAsteriskTags.RmaSnpPlm
+  getAsteriskTags.ScaleNormalization
   getAsteriskTags.SmoothMultiarrayModel getAsteriskTags.SmoothRmaModel
   getAsteriskTags.SmoothSaModel getAsteriskTags.SnpChipEffectGroupMerge
-  getAsteriskTags.Transform getAsteriskTagss
-  getAsteriskTagss.AffymetrixFileSetReporter
-  getAsteriskTagss.ArrayExplorer getAsteriskTagss.Explorer getAttribute
-  getAttribute.AffymetrixFile getAttributes
-  getAttributes.AffymetrixFile getAttributeXY
+  getAsteriskTags.Transform getAttribute getAttribute.AffymetrixFile
+  getAttributes getAttributes.AffymetrixFile getAttributeXY
   getAttributeXY.AffymetrixCelFile getAverage
   getAverage.AffymetrixCelSet getAverage.CnagCfhSet getAverageAsinh
   getAverageAsinh.AffymetrixCelSet getAverageAsinh.CnagCfhSet
@@ -181,15 +214,16 @@
   getBytesPerColumn getBytesPerColumn.AromaTabularBinaryFile
   getCalculateResidualsFunction getCalculateResidualsFunction.AvgPlm
   getCalculateResidualsFunction.ProbeLevelModel
-  getCalculateResidualsFunction.RmaPlm getCdf
-  getCdf.AffymetrixProbeTabFile getCdf.AffymetrixTsvFile
-  getCdf.AromaUnitTabularBinaryFile getCdf.ChipEffectGroupMerge
-  getCdf.FirmaModel getCdf.FragmentLengthNormalization
-  getCdf.GcContentNormalization getCdf.QualityAssessmentModel
-  getCdf.TransformReport getCellIndices getCellIndices.ChipEffectFile
-  getCellIndices.ChipEffectSet getCellIndices.CnChipEffectFile
-  getCellIndices.CnPlm getCellIndices.CnProbeAffinityFile
-  getCellIndices.ExonChipEffectFile
+  getCalculateResidualsFunction.RmaPlm getCalls getCalls.DChipDcpFile
+  getCdf getCdf.AffymetrixCnChpFile getCdf.AffymetrixProbeTabFile
+  getCdf.AffymetrixTsvFile getCdf.AromaUnitTabularBinaryFile
+  getCdf.ChipEffectGroupMerge getCdf.FirmaModel
+  getCdf.FragmentEquivalentClassNormalization
+  getCdf.FragmentLengthNormalization getCdf.GcContentNormalization
+  getCdf.QualityAssessmentModel getCdf.TransformReport getCellIndices
+  getCellIndices.ChipEffectFile getCellIndices.ChipEffectSet
+  getCellIndices.CnChipEffectFile getCellIndices.CnPlm
+  getCellIndices.CnProbeAffinityFile getCellIndices.ExonChipEffectFile
   getCellIndices.ExonProbeAffinityFile getCellIndices.ExonRmaPlm
   getCellIndices.FirmaFile getCellIndices.FirmaSet
   getCellIndices.ProbeAffinityFile getCellIndices.ProbeLevelModel
@@ -206,15 +240,16 @@
   getChipEffectFiles.ChromosomalModel getChipEffects
   getChipEffects.ExonRmaPlm getChipEffects.QualityAssessmentModel
   getChipEffectSet getChipEffectSet.CnPlm getChipEffectSet.ExonRmaPlm
-  getChipEffectSet.SnpPlm getChipEffectSetClass
+  getChipEffectSet.QualityAssessmentModel getChipEffectSet.SnpPlm
+  getChipEffectSetClass getChipEffectSetClass.AlleleSummation
   getChipEffectSetClass.CnPlm getChipEffectSetClass.ExonRmaPlm
   getChipEffectSetClass.ProbeLevelModel getChipEffectSetClass.SnpPlm
-  getChipType getChipType.AffymetrixCdfFile
-  getChipType.AffymetrixCelSetReporter
-  getChipType.AffymetrixProbeTabFile getChipType.AffymetrixTsvFile
-  getChipType.AromaUnitTabularBinaryFile getChipTypes
-  getChipTypes.ChromosomalModel
-  getChipTypes.CopyNumberSegmentationModel getChromosome
+  getChipType getChipType.AffymetrixAptSummaryFile
+  getChipType.AffymetrixCdfFile getChipType.AffymetrixCelSetReporter
+  getChipType.AffymetrixCnChpFile getChipType.AffymetrixProbeTabFile
+  getChipType.AffymetrixTsvFile getChipType.AromaUnitTabularBinaryFile
+  getChipType.UflSnpInformation getChipType.UgpGenomeInformation
+  getChipTypes getChipTypes.ChromosomalModel getChromosome
   getChromosome.Arguments getChromosomes getChromosomes.Arguments
   getChromosomes.AromaUgpFile getChromosomes.GenomeInformation
   getChromosomes.UgpGenomeInformation getChromosomeStats
@@ -224,9 +259,10 @@
   getColorMaps.ArrayExplorer getColorMaps.SpatialReporter
   getCombineAlleles getCombineAlleles.CnChipEffectSet
   getCommonListElements getCommonPrefix getData
-  getData.AffymetrixCelSet getData.AffymetrixProbeTabFile
-  getData.AffymetrixTsvFile getData.CnagCfhSet
-  getData.UflSnpInformation getData.UgpGenomeInformation getDataColumns
+  getData.AffymetrixCelSet getData.AffymetrixCnChpFile
+  getData.AffymetrixProbeTabFile getData.AffymetrixTsvFile
+  getData.CnagCfhSet getData.UflSnpInformation
+  getData.UgpGenomeInformation getDataColumns
   getDataColumns.GenomeInformation getDataColumns.UflSnpInformation
   getDataColumns.UgpGenomeInformation getDataFlat
   getDataFlat.ChipEffectFile getDataFlat.FirmaFile
@@ -237,13 +273,17 @@
   getDeviceResolution.default getDimension
   getDimension.AffymetrixCdfFile getExclCells
   getExclCells.DChipQuantileNormalization
-  getExclCells.QuantileNormalization getField
+  getExclCells.QuantileNormalization getExcludes
+  getExcludes.DChipDcpFile getExclusiveUnitSubsets
+  getExclusiveUnitSubsets.FragmentEquivalentClassNormalization getField
   getField.AffymetrixTsvFile getFields.SnpInformation
   getFields.UflSnpInformation getFile getFile.GenericDataFileSet
   getFileClass getFileClass.FirmaSet getFileFormat
   getFileFormat.AffymetrixCdfFile getFileFormat.AffymetrixCelFile
+  getFileFormat.AffymetrixCnChpFile getFileFormat.DChipDcpFile
   getFilename getFilename.Arguments getFilenameExtension
-  getFilenameExtension.AromaUflFile getFilenameExtension.AromaUgpFile
+  getFilenameExtension.AromaUfcFile getFilenameExtension.AromaUflFile
+  getFilenameExtension.AromaUgpFile
   getFilenameExtension.AromaUnitTabularBinaryFile getFiles
   getFiles.GenericDataFileSet getFileSet
   getFileSet.AffymetrixFileSetReporter getFileSetClass
@@ -257,69 +297,73 @@
   getFitUnitFunction.CnPlm getFitUnitFunction.FirmaModel
   getFitUnitFunction.ProbeLevelModel getFitUnitFunction.UnitModel
   getFragmentLengths getFragmentLengths.AffymetrixTsvFile
-  getFragmentLengths.SnpInformation getFragmentStarts
+  getFragmentLengths.SnpInformation
+  getFragmentLengths.UflSnpInformation getFragmentStarts
   getFragmentStarts.SnpInformation getFragmentStarts.UflSnpInformation
   getFragmentStops getFragmentStops.SnpInformation
   getFragmentStops.UflSnpInformation getFullName
   getFullName.AffymetrixCelSet getFullName.AffymetrixCelSetTuple
   getFullName.AffymetrixFileSetReporter getFullName.ChromosomalModel
-  getFullName.CnagCfhSet getFullName.Explorer
+  getFullName.CnagCfhSet getFullName.DChipDcpSet getFullName.Explorer
   getFullName.QualityAssessmentModel getFullNames
   getFullNames.AffymetrixCelSetTuple getFullNames.ChipEffectSetTuple
   getFullNames.ChromosomalModel getFullNames.ChromosomeExplorer
-  getFullNames.CopyNumberSegmentationModel
   getFullNames.GenericDataFileSet getGc getGc.AffymetrixTsvFile
   getGenome getGenome.ChromosomalModel getGenomeData
   getGenomeData.ChromosomalModel getGenomeFile
   getGenomeFile.ChromosomalModel getGenomeInformation getGenomeVersion
-  getGenomeVersion.AromaUgpFile getHeader.GenericTabularFile
-  getHeaderLength getHeaderLength.CnagCfhFile getHeaderV3
-  getHeaderV3.AffymetrixCelFile getIdentifier
-  getIdentifier.AffymetrixCelFile getIdentifier.AffymetrixCelSet
-  getIdentifier.AffymetrixFileSet getIdentifier.CnagCfhFile
-  getIdentifier.CnagCfhSet getImage getImage.ResidualFile
-  getImage.WeightsFile getIncludePath getIncludePath.Explorer
-  getIndexToRowMap getIndexToRowMap.AffymetrixProbeTabFile
-  getInputDataSet getIntensities getLabel.AffymetrixFile getLabel.Model
-  getListOfCdfs getListOfCdfs.AffymetrixCelSetTuple
-  getListOfCdfs.ArrayExplorer getListOfCdfs.ChromosomalModel
-  getListOfCdfs.CopyNumberSegmentationModel getListOfChipEffects
-  getListOfChipEffects.ChromosomalModel
-  getListOfChipEffects.CopyNumberSegmentationModel
-  getListOfChipEffectSets getListOfChipEffectSets.ChromosomalModel
-  getListOfChipEffectSets.CopyNumberSegmentationModel
-  getListOfGenomeInformations
-  getListOfGenomeInformations.ChromosomalModel getListOfReferences
-  getListOfReferences.CopyNumberSegmentationModel getListOfReporters
+  getGenomeVersion.AromaUgpFile getGroupDirections
+  getGroupDirections.AffymetrixCdfFile getHeader.AffymetrixCnChpFile
+  getHeader.DChipDcpFile getHeader.GenericTabularFile getHeaderLength
+  getHeaderLength.CnagCfhFile getHeaderV3 getHeaderV3.AffymetrixCelFile
+  getIdentifier getIdentifier.AffymetrixCelFile
+  getIdentifier.AffymetrixCelSet getIdentifier.AffymetrixFileSet
+  getIdentifier.CnagCfhFile getIdentifier.CnagCfhSet getImage
+  getImage.ResidualFile getImage.WeightsFile getIncludePath
+  getIncludePath.Explorer getIndexToRowMap
+  getIndexToRowMap.AffymetrixProbeTabFile getInputDataSet
+  getIntensities getLabel.AffymetrixFile getLabel.Model getListOfCdfs
+  getListOfCdfs.AffymetrixCelSetTuple getListOfCdfs.ArrayExplorer
+  getListOfCdfs.ChromosomalModel getListOfChipEffects
+  getListOfChipEffects.ChromosomalModel getListOfChipEffectSets
+  getListOfChipEffectSets.ChromosomalModel getListOfGenomeInformations
+  getListOfGenomeInformations.ChromosomalModel getListOfReporters
   getListOfReporters.ArrayExplorer getListOfSets
   getListOfSets.AffymetrixCelSetTuple getLociFields
   getLociFields.RawCopyNumbers getLog2Ratios
   getLog2Ratios.CopyNumberSegmentationModel getMainPath
   getMainPath.AffymetrixFileSetReporter getMainPath.Explorer
-  getMergeFunction getMergeFunction.ChipEffectGroupMerge
+  getMatrixChipEffectFiles
+  getMatrixChipEffectFiles.CopyNumberChromosomalModel getMergeFunction
+  getMergeFunction.ChipEffectGroupMerge
   getMergeFunction.SnpChipEffectGroupMerge getMergeGroups
   getMergeGroups.ExonChipEffectSet getMergeStrands
   getMergeStrands.SnpChipEffectSet getModel getMonoCell
-  getMonoCell.AffymetrixCdfFile getName.AffymetrixCelSetTuple
-  getName.ChromosomalModel getName.CopyNumberSegmentationModel
-  getName.FirmaModel getName.QualityAssessmentModel getNameOfInput
+  getMonoCell.AffymetrixCdfFile getMonocellCdf
+  getMonocellCdf.AffymetrixCdfFile getName.AffymetrixCelSetTuple
+  getName.ChromosomalModel getName.FirmaModel
+  getName.QualityAssessmentModel getNameOfInput
   getNameOfInput.ArrayExplorer getNameOfInput.ChromosomeExplorer
   getNameOfInput.Explorer getNames getNames.AffymetrixCelSetTuple
   getNames.ChromosomalModel getNames.ChromosomeExplorer
-  getNames.CopyNumberSegmentationModel 
-  getOutputDataSet
-  getOutputDataSet.ChipEffectTransform
+  getNormalizedIntensities getNormalizedIntensities.DChipDcpFile
+  getOrderedFragmentPairMap getOrderedFragmentPairMap.AromaUfcFile
+  getOrderedFragmentPairs getOrderedFragmentPairs.AromaUfcFile
+  getOutputDataSet getOutputDataSet.ChipEffectTransform
+  getOutputDataSet.FragmentEquivalentClassNormalization
   getOutputDataSet.FragmentLengthNormalization
   getOutputDataSet.GcContentNormalization getOutputFiles
   getOutputFiles.Transform getOutputIdentifier
   getOutputIdentifier.QuantileNormalization getOutputTuple
   getOutputTuple.SmoothMultiarrayModel getPackageName
+  getParameter.AffymetrixAptSummaryFile
   getParameters.AllelicCrosstalkCalibration
   getParameters.BackgroundCorrection getParameters.ChipEffectFile
   getParameters.ChipEffectGroupMerge getParameters.ChipEffectSet
   getParameters.CnChipEffectFile
   getParameters.DChipQuantileNormalization
   getParameters.ExonChipEffectFile
+  getParameters.FragmentEquivalentClassNormalization
   getParameters.FragmentLengthNormalization
   getParameters.GcContentNormalization
   getParameters.GcRmaBackgroundCorrection getParameters.Model
@@ -344,8 +388,8 @@
   getPath.QualityAssessmentModel getPathnames getPatterns
   getPatterns.SampleAnnotationFile getPcuTheta
   getPcuTheta.ChromosomalModel getPhysicalPositions
-  getPhysicalPositions.RawCopyNumbers getPlasqTypes
-  getPlm getPlm.FirmaModel getPlm.QualityAssessmentModel getPloidy
+  getPhysicalPositions.RawCopyNumbers getPlasqTypes getPlm
+  getPlm.FirmaModel getPlm.QualityAssessmentModel getPloidy
   getPloidy.AffymetrixCelFile getPosition.AffymetrixTsvFile
   getPositionChipTypeUnit getPositionChipTypeUnit.ChromosomalModel
   getPositionChipTypeUnit.CopyNumberSegmentationModel getPositions
@@ -353,33 +397,42 @@
   getProbeAffinityFile.AffinePlm getProbeAffinityFile.AvgPlm
   getProbeAffinityFile.CnPlm getProbeAffinityFile.ExonRmaPlm
   getProbeAffinityFile.MbeiPlm getProbeAffinityFile.RmaPlm
-  getProbeAffinityFile.SnpPlm getRawCnData
-  getRawCnData.CopyNumberSegmentationModel getReadArguments
+  getProbeAffinityFile.SnpPlm getProbesetIds
+  getProbesetIds.AffymetrixAptSummaryFile getQuantificationScale
+  getQuantificationScale.AffymetrixAptSummaryFile getRawCnData
+  getRawCnData.CopyNumberChromosomalModel getRawData
+  getRawData.AffymetrixCnChpFile getRawIntensities
+  getRawIntensities.DChipDcpFile getReadArguments
+  getReadArguments.AffymetrixAptSummaryFile
   getReadArguments.GenericTabularFile getRectangle
-  getRectangle.AffymetrixCelFile getReferenceFiles
-  getReferenceFiles.CopyNumberSegmentationModel 
-  getRefSetTuple
-  getRefSetTuple.CopyNumberSegmentationModel getRegions
+  getRectangle.AffymetrixCelFile getReferenceSetTuple
+  getReferenceSetTuple.CopyNumberChromosomalModel getRefSetTuple
+  getRefSetTuple.CopyNumberChromosomalModel getRegions
   getRegions.CopyNumberSegmentationModel getRegions.profileCGH
-  getReportPath getReportPath.ChromosomalModel getReportSet
+  getReportPath getReportPath.ChromosomalModel getReportPathPattern
+  getReportPathPattern.Explorer getReportSet
   getReportSet.AffymetrixFileSetReporter getReportSet.SpatialReporter
   getResidualFileClass getResidualFileClass.ResidualSet getResiduals
   getResidualSet getResidualSet.ProbeLevelModel getResidualSetClass
   getResidualSetClass.ProbeLevelModel getRestructor
   getRestructor.AffymetrixCdfFile getRootPath
-  getRootPath.AffymetrixFileSetReporter getRootPath.ChipEffectTransform
-  getRootPath.ChromosomalModel getRootPath.Explorer
-  getRootPath.FirmaModel getRootPath.ProbeLevelModel
-  getRootPath.ProbeLevelTransform getRootPath.QualityAssessmentModel
-  getRootPath.SmoothMultiarrayModel getRootPath.Transform
-  getRootPath.TransformReport getSetTag getSetTag.ChromosomalModel
-  getSetTuple getSetTuple.ArrayExplorer getSetTuple.ChromosomalModel
-  getSetTuple.ChromosomeExplorer
-  getSetTuple.CopyNumberSegmentationModel getSiblings getSnpInformation
-  getSnpInformation.AffymetrixCdfFile getSnpNames getSubsetToAvg
+  getRootPath.AffymetrixFileSetReporter getRootPath.AlleleSummation
+  getRootPath.ChipEffectTransform getRootPath.ChromosomalModel
+  getRootPath.Explorer getRootPath.FirmaModel
+  getRootPath.ProbeLevelModel getRootPath.ProbeLevelTransform
+  getRootPath.QualityAssessmentModel getRootPath.SmoothMultiarrayModel
+  getRootPath.SmoothRmaModel getRootPath.Transform
+  getRootPath.TransformReport getSampleLayerName
+  getSampleLayerName.Explorer getSampleLayerPrefix
+  getSampleLayerPrefix.Explorer getSetTag getSetTag.ChromosomalModel
+  getSetTag.RawCopyNumberModel getSetTuple getSetTuple.ArrayExplorer
+  getSetTuple.ChromosomalModel getSetTuple.ChromosomeExplorer
+  getSiblings getSnpInformation getSnpInformation.AffymetrixCdfFile
+  getSnpNames getSubname getSubname.Explorer getSubsetToAvg
   getSubsetToAvg.AllelicCrosstalkCalibration
   getSubsetToAvg.QuantileNormalization
   getSubsetToAvg.ScaleNormalization getSubsetToFit
+  getSubsetToFit.FragmentEquivalentClassNormalization
   getSubsetToFit.FragmentLengthNormalization
   getSubsetToFit.GcContentNormalization getSubsetToUpdate
   getSubsetToUpdate.BackgroundCorrection
@@ -387,42 +440,55 @@
   getSubsetToUpdate.QuantileNormalization
   getSubsetToUpdate.ScaleNormalization getTableOfArrays getTags
   getTags.AffymetrixCelSetTuple getTags.ChromosomalModel
-  getTags.FirmaModel getTags.QualityAssessmentModel getTagsOfInput
+  getTags.CopyNumberSegmentationModel getTags.FirmaModel
+  getTags.QualityAssessmentModel getTagsOfInput
   getTagsOfInput.ArrayExplorer getTagsOfInput.ChromosomeExplorer
-  getTagsOfInput.Explorer getTargetDistribution
-  getTargetDistribution.QuantileNormalization
+  getTagsOfInput.Explorer getTargetAverages
+  getTargetAverages.FragmentEquivalentClassNormalization
+  getTargetDistribution getTargetDistribution.QuantileNormalization
   getTargetDistributionIdentifier
   getTargetDistributionIdentifier.QuantileNormalization
   getTargetDistributionPathname
   getTargetDistributionPathname.QuantileNormalization getTargetFunction
   getTargetFunction.FragmentLengthNormalization
-  getTargetFunction.GcContentNormalization getTemplatePath
-  getTemplatePath.Explorer getTimestamp getTimestamp.CnagCfhFile
+  getTargetFunction.GcContentNormalization getTargetFunctions
+  getTargetFunctions.FragmentLengthNormalization getTemplatePath
+  getTemplatePath.Explorer getThetas getThetas.DChipDcpFile getThetasAB
+  getThetasAB.DChipDcpFile getThetaStds getThetaStds.DChipDcpFile
+  getTimestamp getTimeStamp getTimeStamp.AffymetrixAptSummaryFile
+  getTimestamp.AffymetrixCnChpFile getTimestamp.CnagCfhFile
   getTimestamps getTimestamps.AffymetrixCelSet getTimestamps.CnagCfhSet
   getTuple getUnitGroupCellMap getUnitGroupCellMap.AffymetrixCdfFile
-  getUnitIndices getUnitIntensities getUnitNames getUnitsAt
-  getUnitsAt.AromaUgpFile getUnitSizes getUnitsOnChromosome
+  getUnitGroupCellMap.FirmaFile getUnitGroupCellMap.ResidualFile
+  getUnitGroupCellMap.WeightsFile getUnitGroupNamesFromUgcMap
+  getUnitGroupNamesFromUgcMap.AffymetrixCdfFile getUnitIndices
+  getUnitIntensities getUnitNames getUnitReadMap
+  getUnitReadMap.AffymetrixCnChpFile getUnitsAt getUnitsAt.AromaUgpFile
+  getUnitSizes getUnitsOnChromosome
   getUnitsOnChromosome.GenomeInformation
-  getUnitsOnChromosome.UgpGenomeInformation getWeights
-  getWeightsFileClass getWeightsFileClass.WeightsSet getWeightsSet
+  getUnitsOnChromosome.UgpGenomeInformation getUnitTypes
+  getUnitTypes.AffymetrixCdfFile getWeights getWeightsFileClass
+  getWeightsFileClass.WeightsSet getWeightsSet
   getWeightsSet.ProbeLevelModel getWeightsSetClass
   getWeightsSetClass.ProbeLevelModel getXAM getXY getXY.RawCopyNumbers
   getYY getYY.TransformReport hasAttributeXY
-  hasAttributeXY.AffymetrixCelFile hasTag hasTag.GenericDataFile
-  hasTag.GenericDataFileSet hasTags hasTags.GenericDataFile
-  hasTags.GenericDataFileSet highlight highlight.AffymetrixCelFile
-  highlight.ProbeLevelModel identifyCells
-  identifyCells.AffymetrixCdfFile image270
-  importFrom
+  hasAttributeXY.AffymetrixCelFile hasMbeiData hasMbeiData.DChipDcpFile
+  hasNormalizedData hasNormalizedData.DChipDcpFile hasTag
+  hasTag.GenericDataFile hasTag.GenericDataFileSet hasTags
+  hasTags.GenericDataFile hasTags.GenericDataFileSet hasUnitReadMap
+  hasUnitReadMap.AffymetrixCnChpFile hasUnitTypes
+  hasUnitTypes.AffymetrixCdfFile highlight highlight.AffymetrixCelFile
+  identifyCells identifyCells.AffymetrixCdfFile image270 importFrom
   importFrom.AromaUnitTabularBinaryFile
   importFromAffymetrixNetAffxCsvFile
   importFromAffymetrixNetAffxCsvFile.AromaUflFile
   importFromAffymetrixNetAffxCsvFile.AromaUgpFile
   importFromAffymetrixNetAffxCsvFile.AromaUnitTabularBinaryFile
   importFromAffymetrixTabularFile
+  importFromAffymetrixTabularFile.AromaUfcFile
   importFromAffymetrixTabularFile.AromaUgpFile
   importFromAffymetrixTabularFile.AromaUnitTabularBinaryFile
-  importFromDChip importFromDChipGenomeInformation
+  importFromApt importFromDChip importFromDChipGenomeInformation
   importFromDChipGenomeInformation.AromaUnitTabularBinaryFile
   importFromGenericTabularFile
   importFromGenericTabularFile.AromaUgpFile
@@ -433,71 +499,97 @@
   indexOf.GenericDataFileSet indexOfArrays indexOfUnits
   indexOfUnits.AromaUnitTabularBinaryFile inferParameters
   inferParameters.CnChipEffectSet inferParameters.SnpChipEffectSet
-  isDuplicated isFile.GenericDataFile isPm
-  isSnpChip lapply.AromaTabularBinaryFile lapplyInChunks
-  lapplyInChunks.numeric library lines.CopyNumberOutliers
-  lines.CopyNumberRegions lines.RawCopyNumbers locallyUnique
+  isCompatibleWithCdf isCompatibleWithCdf.GenomeInformation
+  isCompatibleWithCdf.SnpInformation
+  isCompatibleWithCdf.UflSnpInformation
+  isCompatibleWithCdf.UgpGenomeInformation isDuplicated
+  isFile.GenericDataFile isMonocellCdf isMonocellCdf.AffymetrixCdfFile
+  isPaired isPaired.CopyNumberChromosomalModel isPm isSnpChip
+  lapply.AromaTabularBinaryFile lapplyInChunks lapplyInChunks.numeric
+  library lines.CopyNumberOutliers lines.CopyNumberRegions
+  lines.RawCopyNumbers listToXml listToXml.list locallyUnique
   locallyUnique.default log2abs log2neg log2pos matchPatterns
-  matchPatterns.SampleAnnotationFile mergeByCommonTails mergeGroups
-  mergeGroups.ChipEffectFile mergeStrands mergeStrands.CnChipEffectFile
+  matchPatterns.SampleAnnotationFile mergeBoxplotStats
+  mergeByCommonTails mergeGroups mergeGroups.ChipEffectFile
+  mergeStrands mergeStrands.CnChipEffectFile
   mergeStrands.SnpChipEffectFile migrateTool
   migrateTool.CopyNumberSegmentationModel nbrOfArrays
+  nbrOfArrays.AffymetrixAptSummaryFile
   nbrOfArrays.AffymetrixCelSetReporter
   nbrOfArrays.QualityAssessmentModel nbrOfArrays.TransformReport
   nbrOfCells nbrOfCells.AffymetrixCdfFile nbrOfCells.AffymetrixCelFile
-  nbrOfCells.CnagCfhFile nbrOfChipTypes nbrOfChipTypes.ArrayExplorer
-  nbrOfColumns nbrOfColumns.AffymetrixCdfFile
-  nbrOfColumns.AromaTabularBinaryFile nbrOfEnzymes
-  nbrOfEnzymes.AromaUflFile nbrOfFiles nbrOfLoci
-  nbrOfLoci.RawCopyNumbers nbrOfQcUnits nbrOfQcUnits.AffymetrixCdfFile
-  nbrOfRegions nbrOfRegions.CopyNumberOutliers
-  nbrOfRegions.CopyNumberRegions nbrOfRows nbrOfRows.AffymetrixCdfFile
+  nbrOfCells.CnagCfhFile nbrOfCells.DChipDcpFile nbrOfChipTypes
+  nbrOfChipTypes.ArrayExplorer nbrOfColumns
+  nbrOfColumns.AffymetrixCdfFile nbrOfColumns.AromaTabularBinaryFile
+  nbrOfEnzymes nbrOfEnzymes.AromaUfcFile nbrOfEnzymes.AromaUflFile
+  nbrOfEnzymes.SnpInformation nbrOfEnzymes.UflSnpInformation nbrOfFiles
+  nbrOfLoci nbrOfLoci.RawCopyNumbers nbrOfQcUnits
+  nbrOfQcUnits.AffymetrixCdfFile nbrOfRegions
+  nbrOfRegions.CopyNumberOutliers nbrOfRegions.CopyNumberRegions
+  nbrOfRows nbrOfRows.AffymetrixCdfFile
   nbrOfRows.AromaTabularBinaryFile nbrOfSnps nbrOfSnps.CnagCfhFile
   nbrOfUnits nbrOfUnits.AffymetrixCdfFile
-  nbrOfUnits.AromaUnitTabularBinaryFile nbrOfUnits.GenomeInformation
-  nbrOfUnits.SnpInformation nbrOfUnits.UflSnpInformation
+  nbrOfUnits.AromaUnitTabularBinaryFile nbrOfUnits.DChipDcpFile
+  nbrOfUnits.GenomeInformation nbrOfUnits.SnpInformation
+  nbrOfUnits.UflSnpInformation nbrOfUnits.UgpGenomeInformation
   ncol.AromaTabularBinaryFile newPlot
-  newPlot.CopyNumberSegmentationModel normalizeGenotypeCone
-  normalizeGenotypeCone.matrix normalizeQuantileSpline
-  nrow.AromaTabularBinaryFile onFitAddGenotypeCalls
-  onFitAddGenotypeCalls.default onFitAddGenotypeCalls.GladModel
+  newPlot.CopyNumberChromosomalModel normalizeGenotypeCone
+  normalizeGenotypeCone.matrix normalizeOneArrayVector
+  normalizeOneArrayVector.FragmentEquivalentClassNormalization
+  normalizeQuantileSpline nrow.AromaTabularBinaryFile
+  onFitAddGenotypeCalls onFitAddGenotypeCalls.default
+  onFitAddGenotypeCalls.GladModel patch patch.AromaAffymetrix
   plasqGaussian plot.CopyNumberSegmentationModel plot.profileCGH
-  plot.RawCopyNumbers plotBasepair
-  plotBasepair.AllelicCrosstalkCalibration plotImage 
-  plotMvsX plotNuse
-  plotNuse.QualityAssessmentModel plotProfile2 plotProfile2.profileCGH
-  plotRawCNs plotRawCNs.profileCGH plotRle
-  plotRle.QualityAssessmentModel plotXYCurve
+  plot.RawCopyNumbers plotAxesLayers
+  plotAxesLayers.CopyNumberChromosomalModel plotBasepair
+  plotBasepair.AllelicCrosstalkCalibration plotBoxplot
+  plotBoxplot.ChipEffectSet plotBoxplotStats plotChromosomesLayers
+  plotChromosomesLayers.CopyNumberChromosomalModel
+  plotCopyNumberRegionLayers
+  plotCopyNumberRegionLayers.CopyNumberSegmentationModel
+  plotCytobandLayers plotCytobandLayers.CopyNumberChromosomalModel
+  plotFitLayers plotFitLayers.CopyNumberChromosomalModel
+  plotGridHorizontalLayers
+  plotGridHorizontalLayers.CopyNumberChromosomalModel plotImage
+  plotMvsX plotNuse plotNuse.QualityAssessmentModel plotProfile2
+  plotProfile2.profileCGH plotRawCNs plotRawCNs.profileCGH
+  plotRawCopyNumbers plotRawCopyNumbers.CopyNumberChromosomalModel
+  plotRle plotRle.QualityAssessmentModel plotSampleLayers
+  plotSampleLayers.CopyNumberChromosomalModel plotXYCurve
   plotXYCurve.TransformReport plotXYCurveLog2
   plotXYCurveLog2.TransformReport points.RawCopyNumbers pointsRawCNs
   pointsRawCNs.default pointsRawCNs.profileCGH predict.lowess
-  print.GenericSummary print.Interface process range.AffymetrixCelFile
-  range.AffymetrixCelSet range.CnagCfhFile range.CnagCfhSet
-  RawCopyNumbers read10K read10K.DChipSnpInformation read250K
-  read250K.DChipSnpInformation read250KHg17
+  print.GenericSummary print.Interface process process.AlleleSummation
+  range.AffymetrixCelFile range.AffymetrixCelSet range.CnagCfhFile
+  range.CnagCfhSet RawCopyNumbers read10K read10K.DChipSnpInformation
+  read250K read250K.DChipSnpInformation read250KHg17
   read250KHg17.DChipGenomeInformation read50K
   read50K.DChipSnpInformation read50KHg17
-  read50KHg17.DChipGenomeInformation readCdfGroupStrands readCfhHeader
+  read50KHg17.DChipGenomeInformation readArrays
+  readArrays.AffymetrixAptSummaryFile readCdfGroupStrands readCfhHeader
   readCfhHeader.default readCfhUnits readCfhUnits.default readCfnHeader
   readCfnHeader.default readCfnUnits readCfnUnits.default readChecksum
   readChecksum.GenericDataFile readData
   readData.AffymetrixCsvGenomeInformation readData.AffymetrixTsvFile
-  readData.AromaTabularBinaryFile readData.AromaUflFile
-  readData.AromaUgpFile readData.DChipGenomeInformation
-  readData.DChipSnpInformation readData.GenericTabularFile
-  readData.GenomeInformation readData.SampleAnnotationFile
-  readData.SnpInformation readData.UflSnpInformation
-  readData.UgpGenomeInformation readDataUnitChromosomePosition
+  readData.AromaTabularBinaryFile readData.AromaUfcFile
+  readData.AromaUflFile readData.AromaUgpFile
+  readData.DChipGenomeInformation readData.DChipSnpInformation
+  readData.GenericTabularFile readData.GenomeInformation
+  readData.SampleAnnotationFile readData.SnpInformation
+  readData.UflSnpInformation readData.UgpGenomeInformation
+  readDataUnitChromosomePosition
   readDataUnitChromosomePosition.AffymetrixNetAffxCsvFile
   readDataUnitFragmentLength
-  readDataUnitFragmentLength.AffymetrixNetAffxCsvFile readFooter
-  readGenomeWideSNP
+  readDataUnitFragmentLength.AffymetrixNetAffxCsvFile readDcp
+  readDcpHeader readFooter readGenomeWideSNP
   readGenomeWideSNP.DChipGenomeInformation
-  readHeader.AromaTabularBinaryFile readHeader.GenericTabularFile
-  readMouse430 readMouse430.DChipGenomeInformation
-  readMouse430KenHardwired
+  readHeader.AffymetrixAptSummaryFile readHeader.AromaTabularBinaryFile
+  readHeader.GenericTabularFile readMouse430
+  readMouse430.DChipGenomeInformation readMouse430KenHardwired
   readMouse430KenHardwired.DChipGenomeInformation readPlasqTypes
-  readPlasqTypes.AffymetrixCdfFile readTableInternal
+  readPlasqTypes.AffymetrixCdfFile readProbesetIds
+  readProbesetIds.AffymetrixAptSummaryFile readRawFooter
+  readRawFooter.AromaTabularBinaryFile readTableInternal
   readTableInternal.GenomeInformation readTableInternal.SnpInformation
   readUnits readUnits.AffymetrixCelSet readUnits.ChipEffectFile
   readUnits.ChipEffectSet readUnits.CnagCfhSet
@@ -508,12 +600,14 @@
   readUnits.WeightsFile readUnits.WeightsSet renameTo
   renameTo.GenericDataFile renameToUpperCaseExt
   renameToUpperCaseExt.GenericDataFile reorder.GenericDataFileSet
-  require rescale rescale.AllelicCrosstalkCalibration restruct
+  require rescale rescale.AllelicCrosstalkCalibration rescaleByAll
+  rescaleByAll.AllelicCrosstalkCalibration rescaleByGroups
+  rescaleByGroups.AllelicCrosstalkCalibration restruct
   restruct.AffymetrixCdfFile rgbTransform rgbTransform.Image rmaSummary
-  rowMads rowSds rowVars SampleAnnotationFile SampleAnnotationSet
-  sapply sapply.default sapply.GenericDataFileSet seq.TransformReport
-  setAlias setAlias.AffymetrixCelSetTuple setAlias.ArrayExplorer
-  setAlias.ChromosomalModel setAlias.CopyNumberSegmentationModel
+  rowCollapse rowMads rowSds rowVars SampleAnnotationFile
+  SampleAnnotationSet sapply sapply.default sapply.GenericDataFileSet
+  seq.TransformReport setAlias setAlias.AffymetrixCelSetTuple
+  setAlias.ArrayExplorer setAlias.ChromosomalModel
   setAlias.GenericDataFile setAlias.TransformReport setArrays
   setAttribute setAttribute.AffymetrixFile setAttributes
   setAttributes.AffymetrixFile setAttributesBy
@@ -526,37 +620,44 @@
   setAttributesByTags.AffymetrixFile
   setAttributesByTags.AromaTabularBinaryFile setAttributeXY
   setAttributeXY.AffymetrixCelFile setBandwidth
-  setBandwidth.SmoothMultiarrayModel setCdf setColorMaps
-  setColorMaps.ArrayExplorer setColorMaps.SpatialReporter
+  setBandwidth.SmoothMultiarrayModel setCdf setCdf.AffymetrixCnChpFile
+  setColorMaps setColorMaps.ArrayExplorer setColorMaps.SpatialReporter
   setCombineAlleles setCombineAlleles.CnChipEffectSet
   setCombineAlleles.CnPlm setCombineAlleles.CnProbeAffinityFile
   setCustomFindCdf setCytoband setCytoband.ChromosomeExplorer
   setDecodeFunction setDecodeFunction.ParameterCelFile
   setEncodeFunction setEncodeFunction.ParameterCelFile setGenome
-  setGenome.ChromosomalModel setLabel.AffymetrixFile setLabel.Model
-  setMergeFunction setMergeFunction.ChipEffectGroupMerge setMergeGroups
-  setMergeGroups.ExonChipEffectSet setMergeGroups.ExonProbeAffinityFile
-  setMergeGroups.ExonRmaPlm setMergeStrands
-  setMergeStrands.SnpChipEffectSet setMergeStrands.SnpPlm
-  setMergeStrands.SnpProbeAffinityFile setRestructor setTags
-  setTags.AffymetrixCelSetTuple setTags.Transform setup
-  setup.AffymetrixFileSetReporter setup.ArrayExplorer
+  setGenome.ChromosomalModel setGenomeInformation
+  setGenomeInformation.AffymetrixCdfFile setLabel.AffymetrixFile
+  setLabel.Model setMergeFunction setMergeFunction.ChipEffectGroupMerge
+  setMergeGroups setMergeGroups.ExonChipEffectSet
+  setMergeGroups.ExonProbeAffinityFile setMergeGroups.ExonRmaPlm
+  setMergeStrands setMergeStrands.SnpChipEffectSet
+  setMergeStrands.SnpPlm setMergeStrands.SnpProbeAffinityFile
+  setReportPathPattern setReportPathPattern.Explorer setRestructor
+  setSnpInformation setSnpInformation.AffymetrixCdfFile setSubname
+  setSubname.Explorer setTags setTags.AffymetrixCelSetTuple
+  setTags.Transform setUnitReadMap setUnitReadMap.AffymetrixCnChpFile
+  setup setup.AffymetrixFileSetReporter setup.ArrayExplorer
   setup.ChromosomeExplorer setup.Explorer SmoothSaModel
   smoothScatterMvsA smoothWRMA smoothWRMA.matrix smoothWSA
-  smoothWSA.matrix sort.RawCopyNumbers splitByCommonTails splitInChunks
-  splitInChunks.numeric sqrtabs sqrtneg sqrtpos stext stext.default
-  stextChipType stextChipType.AffymetrixCdfFile stextLabel
-  stextLabel.AffymetrixFile stextLabels stextLabels.AffymetrixFile
-  stextSize stextSize.AffymetrixFile stringTree stringTree.character
-  subset.AromaTabularBinaryFile summary.AromaTabularBinaryFile
-  summary.RawCopyNumbers testAttributes testAttributes.AffymetrixFile
-  transformAffine transformAffine.AffymetrixCelFile
-  transformAffine.AffymetrixCelSet translateColumnNames
+  smoothWSA.matrix sort.RawCopyNumbers splitByCommonTails
+  splitByReportPathPattern splitByReportPathPattern.Explorer
+  splitInChunks splitInChunks.numeric sqrtabs sqrtneg sqrtpos stext
+  stext.default stextChipType stextChipType.AffymetrixCdfFile
+  stextLabel stextLabel.AffymetrixFile stextLabels
+  stextLabels.AffymetrixFile stextSize stextSize.AffymetrixFile
+  stringTree stringTree.character subset.AromaTabularBinaryFile
+  summary.AromaTabularBinaryFile summary.RawCopyNumbers summaryOfUnits
+  summaryOfUnits.AromaUflFile testAttributes
+  testAttributes.AffymetrixFile transformAffine
+  transformAffine.AffymetrixCelFile transformAffine.AffymetrixCelSet
+  translateColumnNames translateColumnNames.AffymetrixAptSummaryFile
   translateColumnNames.AffymetrixTabularFile
-  translateColumnNames.GenericTabularFile UflSnpInformation updateData
-  updateData.AromaTabularBinaryFile updateDataColumn
-  updateDataColumn.AromaTabularBinaryFile updateDataFlat
-  updateDataFlat.ChipEffectFile updateDataFlat.FirmaFile
+  translateColumnNames.GenericTabularFile UflSnpInformation
+  update.AromaAffymetrix updateData updateData.AromaTabularBinaryFile
+  updateDataColumn updateDataColumn.AromaTabularBinaryFile
+  updateDataFlat updateDataFlat.ChipEffectFile updateDataFlat.FirmaFile
   updateDataFlat.ResidualFile updateDataFlat.WeightsFile
   updateOnChipTypeJS updateOnChipTypeJS.ArrayExplorer updateOnLoadJS
   updateOnLoadJS.ArrayExplorer updateSamplesFile updateUnits
@@ -570,179 +671,19 @@
   verify.DChipGenomeInformation verify.DChipSnpInformation
   verify.GenericTabularFile verify.UflSnpInformation
   verify.UgpGenomeInformation whatDataType whatDataType.default write
-  writeChecksum writeChecksum.GenericDataFile 
-  writeGraphs
-  writeGraphs.ChromosomeExplorer writeImage writeImage.ResidualFile
-  writeImage.WeightsFile writeImageCombined
+  writeAxesLayers writeAxesLayers.ChromosomeExplorer writeChecksum
+  writeChecksum.GenericDataFile writeCopyNumberRegionLayers
+  writeCopyNumberRegionLayers.ChromosomeExplorer writeCytobandLayers
+  writeCytobandLayers.ChromosomeExplorer writeFooter writeGraphs
+  writeGraphs.ChromosomeExplorer writeGridHorizontalLayers
+  writeGridHorizontalLayers.ChromosomeExplorer writeImage
+  writeImage.ResidualFile writeImage.WeightsFile writeImageCombined
   writeImageCombined.TransformReport writeImages
-  writeImages.SpatialReporter writeImages.TransformReport writeRegions
+  writeImages.SpatialReporter writeImages.TransformReport
+  writeRawCopyNumberLayers writeRawCopyNumberLayers.ChromosomeExplorer
+  writeRawFooter writeRawFooter.AromaTabularBinaryFile writeRegions
   writeRegions.ChromosomeExplorer
   writeRegions.CopyNumberSegmentationModel writeRegions.GladModel
-  writeRegions.profileCGH writeWig writeWig.CnChipEffectSet
-  yellow.colors
-  asMatrixOfFiles asMatrixOfFiles.AffymetrixCelSetTuple
-  getMatrixChipEffectFiles
-  getMatrixChipEffectFiles.CopyNumberSegmentationModel
-  getReferenceSetTuple getReferenceSetTuple.CopyNumberSegmentationModel
- isPaired isPaired.CopyNumberSegmentationModel
-  findPngDevice findPngDevice.default fitWHLAPLM fitWHLAPLM.matrix
-  fitWHRCModel fitWHRCModel.matrix fitWLAPLM fitWLAPLM.matrix
-  fitWRCModel fitWRCModel.matrix getAsteriskTags.HetLogAddPlm
-  getAsteriskTags.UnitModel getTags.UnitModel plotAxesLayers
-  plotAxesLayers.CopyNumberSegmentationModel plotChromosomesLayers
-  plotChromosomesLayers.CopyNumberSegmentationModel
-  plotCopyNumberRegionLayers
-  plotCopyNumberRegionLayers.CopyNumberSegmentationModel
-  plotCytobandLayers plotCytobandLayers.CopyNumberSegmentationModel
-  plotFitLayers plotFitLayers.CopyNumberSegmentationModel
-  plotGridHorizontalLayers
-  plotGridHorizontalLayers.CopyNumberSegmentationModel
-  plotRawCopyNumbers plotRawCopyNumbers.CopyNumberSegmentationModel
-  writeAxesLayers writeAxesLayers.ChromosomeExplorer
-  writeCopyNumberRegionLayers
-  writeCopyNumberRegionLayers.ChromosomeExplorer writeCytobandLayers
-  writeCytobandLayers.ChromosomeExplorer writeGridHorizontalLayers
-  writeGridHorizontalLayers.ChromosomeExplorer writeRawCopyNumberLayers
-  writeRawCopyNumberLayers.ChromosomeExplorer
- as.character.CopyNumberChromosomalModel
- calculateChromosomeStatistics.CopyNumberChromosomalModel
- clearCache.CopyNumberChromosomalModel clearCache.UgpGenomeInformation
- extractRawCopyNumbers.CopyNumberChromosomalModel
- getAsteriskTags.RawCopyNumberModel
- getFragmentLengths.UflSnpInformation
- getMatrixChipEffectFiles.CopyNumberChromosomalModel
- getRawCnData.CopyNumberChromosomalModel
- getReferenceSetTuple.CopyNumberChromosomalModel
- getRefSetTuple.CopyNumberChromosomalModel getReportPathPattern
- getReportPathPattern.Explorer getRootPath.SmoothRmaModel
- getSampleLayerName getSampleLayerName.Explorer getSampleLayerPrefix
- getSampleLayerPrefix.Explorer getSetTag.RawCopyNumberModel getSubname
- getSubname.Explorer getTags.CopyNumberSegmentationModel
- getTargetFunctions getTargetFunctions.FragmentLengthNormalization
- isPaired.CopyNumberChromosomalModel nbrOfEnzymes.SnpInformation
- nbrOfEnzymes.UflSnpInformation newPlot.CopyNumberChromosomalModel
- plotAxesLayers.CopyNumberChromosomalModel
- plotChromosomesLayers.CopyNumberChromosomalModel
- plotCytobandLayers.CopyNumberChromosomalModel
- plotFitLayers.CopyNumberChromosomalModel
- plotGridHorizontalLayers.CopyNumberChromosomalModel
- plotRawCopyNumbers.CopyNumberChromosomalModel plotSampleLayers
- plotSampleLayers.CopyNumberChromosomalModel rowCollapse
- setReportPathPattern setReportPathPattern.Explorer setSubname
- setSubname.Explorer splitByReportPathPattern
- splitByReportPathPattern.Explorer
-  doCRMA doCRMA.default
-  doCRMA doCRMA.default
- rescaleByAll rescaleByAll.AllelicCrosstalkCalibration
- rescaleByGroups rescaleByGroups.AllelicCrosstalkCalibration
-getAsteriskTags.AllelicCrosstalkCalibration
-clearCache.AllelicCrosstalkCalibration
-getAsteriskTags.FragmentLengthNormalization
-  getAsteriskTags.AffineCnPlm getAsteriskTags.AffineSnpPlm
-  getAsteriskTags.AvgCnPlm getAsteriskTags.AvgSnpPlm
-  getAsteriskTags.ExonRmaPlm getAsteriskTags.FirmaModel
-  getAsteriskTags.HetLogAddCnPlm getAsteriskTags.HetLogAddSnpPlm
-  getAsteriskTags.MbeiCnPlm getAsteriskTags.MbeiSnpPlm
-  getAsteriskTags.RmaCnPlm getAsteriskTags.RmaSnpPlm
-  getAsteriskTags.AffymetrixFileSetReporter
-  getAsteriskTags.ArrayExplorer getAsteriskTags.Explorer
-  setGenomeInformation setGenomeInformation.AffymetrixCdfFile
-  setSnpInformation setSnpInformation.AffymetrixCdfFile
-  isCompatibleWithCdf isCompatibleWithCdf.GenomeInformation
-  isCompatibleWithCdf.SnpInformation
-  isCompatibleWithCdf.UflSnpInformation
-  isCompatibleWithCdf.UgpGenomeInformation
-  nbrOfUnits.UgpGenomeInformation
-  clearCache.AromaUnitTabularBinaryFile
-  getAsteriskTags.QualityAssessmentModel getChipType.UflSnpInformation
-  getChipType.UgpGenomeInformation
-  patch patch.AromaAffymetrix update.AromaAffymetrix
-  summaryOfUnits summaryOfUnits.AromaUflFile
-  AffymetrixAptSummaryFile AffymetrixCnChpFile
-  allocateFromCdf.AromaUfcFile AromaUfcFile
-  as.character.AffymetrixCnChpFile calculateAverages
-  calculateAverages.FragmentEquivalentClassNormalization
-  clearCache.AffymetrixCnChpFile
-  clearCache.FragmentEquivalentClassNormalization
-  clone.AffymetrixCnChpFile colnames.AromaUfcFile findByCdf2
-  findByCdf2.default fromFile.AffymetrixCnChpFile getAromaUfcFile
-  getAromaUfcFile.FragmentEquivalentClassNormalization getArrayNames
-  getArrayNames.AffymetrixAptSummaryFile
-  getAsteriskTags.FragmentEquivalentClassNormalization
-  getCdf.AffymetrixCnChpFile
-  getCdf.FragmentEquivalentClassNormalization
-  getChipType.AffymetrixAptSummaryFile getChipType.AffymetrixCnChpFile
-  getData.AffymetrixCnChpFile getExclusiveUnitSubsets
-  getExclusiveUnitSubsets.FragmentEquivalentClassNormalization
-  getFileFormat.AffymetrixCnChpFile getFilenameExtension.AromaUfcFile
-  getHeader.AffymetrixCnChpFile getOrderedFragmentPairMap
-  getOrderedFragmentPairMap.AromaUfcFile getOrderedFragmentPairs
-  getOrderedFragmentPairs.AromaUfcFile
-  getOutputDataSet.FragmentEquivalentClassNormalization
-  getParameter.AffymetrixAptSummaryFile
-  getParameters.FragmentEquivalentClassNormalization getProbesetIds
-  getProbesetIds.AffymetrixAptSummaryFile getQuantificationScale
-  getQuantificationScale.AffymetrixAptSummaryFile getRawData
-  getRawData.AffymetrixCnChpFile
-  getReadArguments.AffymetrixAptSummaryFile
-  getSubsetToFit.FragmentEquivalentClassNormalization getTargetAverages
-  getTargetAverages.FragmentEquivalentClassNormalization getTimeStamp
-  getTimeStamp.AffymetrixAptSummaryFile
-  getTimestamp.AffymetrixCnChpFile getUnitReadMap
-  getUnitReadMap.AffymetrixCnChpFile hasUnitReadMap
-  hasUnitReadMap.AffymetrixCnChpFile
-  importFromAffymetrixTabularFile.AromaUfcFile importFromApt
-  nbrOfArrays.AffymetrixAptSummaryFile nbrOfEnzymes.AromaUfcFile
-  normalizeOneArrayVector
-  normalizeOneArrayVector.FragmentEquivalentClassNormalization
-  readArrays readArrays.AffymetrixAptSummaryFile readData.AromaUfcFile
-  readHeader.AffymetrixAptSummaryFile readProbesetIds
-  readProbesetIds.AffymetrixAptSummaryFile readRawFooter
-  readRawFooter.AromaTabularBinaryFile setCdf.AffymetrixCnChpFile
-  setUnitReadMap setUnitReadMap.AffymetrixCnChpFile
-  translateColumnNames.AffymetrixAptSummaryFile writeFooter
-  writeRawFooter
-  writeRawFooter.AromaTabularBinaryFile
-  as.character.DChipDcpFile as.DChipDcpSet byName.DChipDcpSet
-  dim.DChipDcpFile findByName.DChipDcpSet
-  fromFile.DChipDcpFile fromFiles.DChipDcpSet fromName.DChipDcpSet
-  getCalls getCalls.DChipDcpFile getExcludes getExcludes.DChipDcpFile
-  getFileFormat.DChipDcpFile getFullName.DChipDcpSet
-  getHeader.DChipDcpFile getNormalizedIntensities
-  getNormalizedIntensities.DChipDcpFile getRawIntensities
-  getRawIntensities.DChipDcpFile getThetas getThetas.DChipDcpFile
-  getThetasAB getThetasAB.DChipDcpFile getThetaStds
-  getThetaStds.DChipDcpFile hasMbeiData hasMbeiData.DChipDcpFile
-  hasNormalizedData hasNormalizedData.DChipDcpFile
-  nbrOfCells.DChipDcpFile nbrOfUnits.DChipDcpFile readDcp readDcpHeader
-  extractDataFrame
-  getUnitGroupNamesFromUgcMap
-  getUnitGroupNamesFromUgcMap.AffymetrixCdfFile
-  as.character.AromaUnitTabularBinaryFile listToXml listToXml.list
-  xmlToList xmlToList.character
-  byChipType.AromaUnitTabularBinaryFile
-  clearCache.AromaTabularBinaryFile
-  cdfMergeStrands createMonocellCdf extractDataFrame.ParameterCelFile
-  extractMatrix.ChipEffectFile extractMatrix.ChipEffectSet
-  extractMatrix.FirmaFile extractMatrix.FirmaSet
-  extractMatrix.ParameterCelFile getAsteriskTags.AlleleSummation
-  getAsteriskTags.ScaleNormalization
-  getChipEffectSetClass.AlleleSummation getGroupDirections
-  getGroupDirections.AffymetrixCdfFile getMonocellCdf
-  getMonocellCdf.AffymetrixCdfFile getRootPath.AlleleSummation
-  getUnitGroupCellMap.FirmaFile getUnitGroupCellMap.ResidualFile
-  getUnitGroupCellMap.WeightsFile getUnitTypes
-  getUnitTypes.AffymetrixCdfFile hasUnitTypes
-  hasUnitTypes.AffymetrixCdfFile isMonocellCdf
-  isMonocellCdf.AffymetrixCdfFile 
-  process.AlleleSummation
-  boxplotNuse boxplotNuse.QualityAssessmentModel boxplotRle
-  boxplotRle.QualityAssessmentModel calculateNuseStats
-  calculateNuseStats.ChipEffectSet calculateRleStats
-  calculateRleStats.ChipEffectSet cbindBoxplotStats
-  cbindBoxplotStats.list getChipEffectSet.QualityAssessmentModel
-  boxplotStats boxplotStats.ChipEffectSet calculateFieldBoxplotStats
-  calculateFieldBoxplotStats.ChipEffectSet calculateNuseBoxplotStats
-  calculateNuseBoxplotStats.ChipEffectSet calculateRleBoxplotStats
-  calculateRleBoxplotStats.ChipEffectSet mergeBoxplotStats plotBoxplot
-  plotBoxplot.ChipEffectSet plotBoxplotStats
+  writeRegions.profileCGH writeWig writeWig.CnChipEffectSet xmlToList
+  xmlToList.character yellow.colors
+
