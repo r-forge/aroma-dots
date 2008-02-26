@@ -105,8 +105,15 @@ setMethodS3("fromFiles", "ChipEffectSet", function(static, path="plmData/", patt
 
 
 setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name=getName(dataSet), cdf=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
 
   # Get the ChipEffectFile class specific for this set
@@ -183,8 +190,16 @@ setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, .
 
 
 setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, data, ..., verbose=FALSE) {
-  # Argument 'verbose': 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   # Get the CDF structure for all chip-effect files
   if (is.null(cdf))
@@ -235,7 +250,10 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
 
 
 
-setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining", ..., verbose=FALSE) {
+setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining", ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'indices':
   if (identical(indices, "remaining")) {
   } else if (is.null(indices)) {
@@ -243,8 +261,8 @@ setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining
 #    indices <- getCellIndices(this, verbose=verbose);
 #    indices <- unlist(indices, use.names=FALSE);
   }
- 
-   NextMethod(generic="getAverageFile", object=this, indices=indices, ..., verbose=verbose);
+
+  NextMethod(generic="getAverageFile", object=this, indices=indices, ...);
 })
 
 
@@ -256,16 +274,71 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 
 
-setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta", "sdTheta")) {
+setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta", "sdTheta", "RLE", "NUSE"), verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'field':
   field <- match.arg(field);
 
-  NextMethod("extractMatrix", this, ..., field=field);
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  if (toupper(field) == "RLE") {
+    verbose && enter(verbose, "Extracting chip effects and calculates RLE scores");
+
+    # RLE - Relative Log2 Expression values
+    # Get chip effect estimates (on the log scale)
+    data <- extractMatrix(this, ..., field="theta", verbose=less(verbose, 1));
+    data <- log2(data);  # ...stored on the intensity scale
+
+    # Robust average (on the log scale, but stored on the intensity scale!)
+    avg <- getAverageLog(this, field="intensities", mean="median", 
+                                                      verbose=less(verbose,1));
+    dataR <- extractMatrix(avg, field="theta", ..., verbose=less(verbose, 1));
+    dataR <- log2(as.vector(dataR));
+
+    # Log ratios of chip effects
+    data <- data - dataR;
+    rm(dataR, avg);
+
+    verbose && exit(verbose);
+  } else if (toupper(field) == "NUSE") {
+    verbose && enter(verbose, "Extracting standard errors for chip effects and calculates NUSE scores");
+    # NUSE - Normalized Unscaled Standard Errors
+    # Get standard errors (on the log scale)
+    data <- extractMatrix(this, ..., field="sdTheta", 
+                                                   verbose=less(verbose, 1));
+    data <- log2(data);  # ...stored on the intensity scale
+
+    # Robust average (on the log scale, but stored on the intensity scale!)
+    avg <- getAverageLog(this, field="stdvs", mean="median", 
+                                                    verbose=less(verbose, 1));
+    dataR <- extractMatrix(avg, field="theta", ..., verbose=less(verbose, 1));
+    dataR <- log2(as.vector(dataR));
+
+    # Log ratios of standard errors
+    data <- data / dataR;
+    rm(dataR, avg);
+
+    verbose && exit(verbose);
+  } else {
+    data <- NextMethod("extractMatrix", this, ..., field=field);
+  }
+
+  data;
 })
 
 
 ############################################################################
 # HISTORY:
+# 2008-02-25
+# o Now extractMatrix() accepts special fields "RLE" and "NUSE".
 # 2008-02-22
 # o Now ChipEffectSet inherits from ParameterCelSet instead of as before
 #   directly from AffymetrixCelSet.

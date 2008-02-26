@@ -5,9 +5,8 @@ setMethodS3("plotBoxplot", "ChipEffectSet", function(this, type, transform=NULL,
 
 
 
-  if (is.null(main)) {
-    main <- sprintf("%s values", type);
-  }
+  if (is.null(main))
+    main <- type;
 
   if (is.null(ylab)) {
     if (type == "theta") {
