@@ -158,7 +158,11 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
   outputSet <- getChipEffectSet(this);
 
   cdf <- getCdf(this);
-  snps <- indexOf(cdf, "SNP");
+## OLD:
+## snps <- indexOf(cdf, "SNP");
+  types <- getUnitTypes(cdf);
+  snps <- which(types == 2);
+  rm(types);
   otherUnits <- setdiff(seq(length=nbrOfUnits(cdf)), snps);
 
   snpUgcMap <- otherUgcMap <- NULL;

@@ -240,7 +240,12 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
 
   # Identify all SNP and CN units (==potential units to be fitted)
   verbose && enter(verbose, "Identifying SNPs and CN probes");
-  units <- indexOf(cdf, "^(SNP|CN)");
+## OLD:
+## units <- indexOf(cdf, "^(SNP|CN)");
+  types <- getUnitTypes(cdf, verbose=less(verbose,1));
+  units <- which(types == 2 | types == 5 | types == 8);
+  rm(types);
+  verbose && cat(verbose, "units:");
   verbose && str(verbose, units);
   verbose && exit(verbose);
 
@@ -530,13 +535,22 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   # Get input data set
   ces <- getInputDataSet(this);
 
-  # Get SNP units
+  verbose && enter(verbose, "Identifying SNP and CN units");
+  # Get SNP & CN units
   cdf <- getCdf(ces);
-  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
+## OLD:
+##  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
+  types <- getUnitTypes(cdf, verbose=less(verbose,1));
+  subsetToUpdate <- which(types == 2 | types == 5 | types == 8);
+  rm(types);
+  verbose && cat(verbose, "subsetToUpdate:");
+  verbose && str(verbose, subsetToUpdate);
+  verbose && exit(verbose);
+  
 
   verbose && enter(verbose, "Retrieving SNP information annotations");
   si <- getSnpInformation(cdf);
-  verbose && cat(verbose, "Number of enzymes: ", nbrOfEnzymes(si));
+  verbose && print(verbose, si);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Identifying the subset used to fit normalization function(s)");

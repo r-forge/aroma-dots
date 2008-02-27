@@ -716,33 +716,13 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         verbose && enter(verbose, "Identifying PM cell indices for each possible allele basepair");
         setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+        verbose && cat(verbose, "setsOfProbes:");
+        verbose && str(verbose, setsOfProbes);
         gc <- gc();
         verbose && print(verbose, gc);
         verbose && exit(verbose);
       }
 
-      if (is.null(setsOfProbes$nonSNPs)) {
-        verbose && enter(verbose, "Identifying indices for all non-SNP PM cells");
-
-        # Get all non-SNP units
-## OLD WAY!
-##        unitNames <- getUnitNames(cdf);
-##        snpNames <- getSnpNames(cdf);
-##        nonSnpUnits <- which(!(unitNames %in% snpNames));
-##        rm(unitNames, snpNames);
-
-        unitTypes <- getUnitTypes(cdf, verbose=verbose); # Takes time
-        nonSnpUnits <- which(unitTypes != 2);  # '2 == genotype unit'
-
-        cells <- getCellIndices(cdf, units=nonSnpUnits, useNames=FALSE, unlist=TRUE, verbose=less(verbose));
-
-        verbose && str(verbose, cells);
-
-        setsOfProbes$nonSNPs <- cells;
-        rm(cells);
-        verbose && exit(verbose);
-      }
-  
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Reading data
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
