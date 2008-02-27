@@ -4,6 +4,7 @@ library(aroma.affymetrix);
 
 # Use special file cache for testing
 options("R.cache::rootPath"="~/.Rcache,scratch");
+options("R.cache::touchOnLoad"=TRUE);
 
 source("textUI.R");
 
