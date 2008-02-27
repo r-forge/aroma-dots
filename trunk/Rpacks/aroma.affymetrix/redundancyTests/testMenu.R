@@ -1,12 +1,17 @@
 if (interactive())
   savehistory();
 library(aroma.affymetrix);
+
+# Use special file cache for testing
+options("R.cache::rootPath"="~/.Rcache,scratch");
+
 source("textUI.R");
 
 #source("init.R");
 
 
 pathname <- textSelectFile("testScripts");
-
-if (!is.null(pathname))
-  source(pathname, echo=TRUE);	
+if (!is.null(pathname)) {
+  patchPackage("aroma.affymetrix");
+  source(pathname, echo=TRUE);
+}
