@@ -248,7 +248,9 @@ setMethodS3("getSubsetToFit", "FragmentEquivalentClassNormalization", function(t
   # Identify all SNP and CN units (==potential units to be fitted)
   verbose && enter(verbose, "Identifying SNPs and CN probes");
   cdf <- getCdf(this);
-  units <- indexOf(cdf, "^(SNP|CN)");
+## OLD:  units <- indexOf(cdf, "^(SNP|CN)");
+  types <- getUnitTypes(cdf);
+  units <- which(types == 2 | types == 5 | types == 8);
   verbose && str(verbose, units);
   verbose && exit(verbose);
 
@@ -817,7 +819,9 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
 
   # Get SNP units
   cdf <- getCdf(ces);
-  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
+# OLD:  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
+  types <- getUnitTypes(cdf);
+  subsetToUpdate <- which(types == 2 | types == 5 | types == 8);
 
   verbose && enter(verbose, "Retrieving fragment class annotations");
   ufc <- AromaUfcFile$fromChipType(getChipType(cdf));

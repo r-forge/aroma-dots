@@ -313,7 +313,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # Check for cached results?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   chipType <- getChipType(this);
-  key <- list(method="getAlleleProbePairs", class=class(this)[1], chipType=chipType, units=units, ignoreOrder=ignoreOrder);
+  key <- list(method="getAlleleProbePairs", class=class(this)[1], version="2008-02-27", chipType=chipType, units=units, ignoreOrder=ignoreOrder);
   dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
     probeSets <- loadCache(key=key, dirs=dirs);
@@ -644,6 +644,33 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   }
   verbose && exit(verbose);
 
+
+  verbose && enter(verbose, "Identifying indices for all non-SNP PM cells");
+## OLD WAY!
+##        unitNames <- getUnitNames(this);
+##        snpNames <- getSnpNames(this);
+##        nonSnpUnits <- which(!(unitNames %in% snpNames));
+##        rm(unitNames, snpNames);
+
+  # Identifying all units types
+  unitTypes <- getUnitTypes(this, verbose=less(verbose,1)); # Takes time
+  verbose && cat(verbose, "Table of identified unit types:");
+  verbose && print(verbose, table(unitTypes));
+  nonSnpUnits <- which(unitTypes != 2);  # '2 == genotype unit'
+
+  if (length(nonSnpUnits) > 0) {
+    cells <- getCellIndices(this, units=nonSnpUnits, 
+                useNames=FALSE, unlist=TRUE, verbose=less(verbose,1));
+  } else {
+    cells <- NULL;
+  }
+  verbose && cat(verbose, "Identified non-SNP units:");
+  verbose && print(verbose, cells);
+  probeSets$nonSNPs <- cells;
+  rm(cells);
+  verbose && exit(verbose);
+
+
   # Save cache to file
   comment <- key[c("method", "class", "chipType")];
   comment <- paste(names(comment), comment, sep="=");
@@ -750,6 +777,8 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2008-02-27
+# o Now getAlleleProbePairs() also returns element 'nonSNPs' (unless NULL).
 # 2008-02-21
 # o Now getAlleleProbePairs() only consider SNPs with 2 or 4 groups, because
 #   at least one custom SNP chip we've seen a few SNPs with also 6 groups

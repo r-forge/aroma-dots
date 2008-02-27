@@ -408,7 +408,7 @@ setMethodS3("getLog2Ratios", "CopyNumberSegmentationModel", function(this, ..., 
 
 
 
-setMethodS3("getRegions", "CopyNumberSegmentationModel", function(this, ..., url="ucsc", organism="Human", hgVersion="hg17", margin=10, flat=FALSE, verbose=FALSE) {
+setMethodS3("getRegions", "CopyNumberSegmentationModel", function(this, ..., url="ucsc", organism="Human", hgVersion="hg18", margin=0.1, flat=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -418,11 +418,11 @@ setMethodS3("getRegions", "CopyNumberSegmentationModel", function(this, ..., url
     # we can stick with integers to be more general.
     url <- function(chromosome, start, stop) {
       suppressWarnings({
-        start <- as.integer(start);
-        stop <- as.integer(stop);
+        start <- as.double(start);
+        stop <- as.double(stop);
       })
       uri <- "http://genome.ucsc.edu/cgi-bin/hgTracks?clade=vertebrate";
-      sprintf("%s&org=%s&db=%s&position=chr%s%%3A%d-%d", uri, organism, hgVersion, chromosome, start, stop);
+      sprintf("%s&org=%s&db=%s&position=chr%s%%3A%.0f-%.0f", uri, organism, hgVersion, chromosome, start, stop);
     }
   }
 
@@ -656,6 +656,8 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2008-02-27
+# o BUG FIX: The URLs returned by getRegions() had broken positions.
 # 2007-10-17
 # o Most of the remain of this class was moved to superclass
 #   CopyNumberChromosomalModel.
