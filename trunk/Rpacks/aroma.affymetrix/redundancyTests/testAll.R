@@ -1,41 +1,53 @@
-if (interactive())
+if (interactive()) {
   savehistory();
+} else {
+  # GLAD v1.12.0 depends on the 'tcltk' package, but that
+  # cannot be loaded if there is no display.  A workaround
+  # is to fake that the 'tcltk' package is loaded:
+  attach(list(), name="package:tcltk");
+}
 library(aroma.affymetrix);
-source("init.R");
+#source("init.R");
 
-path <- "testScripts/system/chipTypes";
-path <- Arguments$getReadablePath(path, mustExist=TRUE);
-paths <- list.files(path=path, full.names=TRUE);
+# Use special file cache for testing
+options("R.cache::rootPath"="~/.Rcache,scratch");
+
+
+args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, exludeEnvVars=TRUE);
+print(args);
+
+paths <- c();
+allPaths <- c("testScripts/replication/chipTypes", "testScripts/system/chipTypes");
+for (path in allPaths) {
+  path <- Arguments$getReadablePath(path, mustExist=TRUE);
+  paths0 <- list.files(path=path, full.names=TRUE);
+  paths <- c(paths, paths0);
+}
 
 ..pathnames <- lapply(paths, FUN=list.files, pattern="[.]R$", full.names=TRUE);
 names(..pathnames) <- basename(paths);
 ..pathnames <- ..pathnames[names(..pathnames)];
 
-print(names(..pathnames));
+..chipTypes <- c("Mapping10K_Xba142", "Test3",
+                 "HG-U133_Plus_2", "Mapping50K_Hind240,Xba240",
+                 "Mapping250K_Nsp,Sty", "HuEx-1_0-st-v2",
+                 "GenomeWideSNP_6", "GenomeWideSNP_5");
 
-..chipTypes <- c("Test3", "Mapping10K_Xba142", "Mapping50K_Hind240,Xba240", "HG-U133_Plus_2", "GenomeWideSNP6.0");
+#..chipTypes <- ..chipTypes[-(1:6)];
 
-pathnames <- ..pathnames[[6]];
-pathname <- pathnames[10];
-#source(pathname, echo=TRUE);	
-stop()
+if (!is.null(args$chipTypes)) {
+  ..chipTypes <- trim(unlist(strsplit(args$chipTypes, split=",")));
+}
 
-#..chipTypes <- ..chipTypes[3];
-#..chipTypes <- ..chipTypes[5];
-#..chipTypes <- ..chipTypes[1];
-
-#..chipTypes <- c("GenomeWideSNP6.0");
-#..chipTypes <- c("Test3");
-#..chipTypes <- c("Mapping50K_Hind240,Xba240");
-#..chipTypes <- c("Mapping10K_Xba142");
-##stop()
+cat("Processing chip types:\n");
+print(..chipTypes);
 
 for (..chipType in ..chipTypes) {
   nbrOfTests <- length(..pathnames[[..chipType]]);
   for (kk in seq(length=nbrOfTests)) {
-#    source("../aroma.affymetrix/R/digest2.R");
-#    source("../aroma.affymetrix/R/AffymetrixCelSet.R");
     pathname <- ..pathnames[[..chipType]][[kk]];
+    if (regexpr("hetero", pathname) != -1)
+      next;
     source(pathname, echo=TRUE);
     rm(list=setdiff(ls(), 
         c("kk", "..chipType", "..chipTypes", "pathname", "..pathnames")));
