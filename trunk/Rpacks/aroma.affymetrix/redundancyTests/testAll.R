@@ -11,6 +11,7 @@ library(aroma.affymetrix);
 
 # Use special file cache for testing
 options("R.cache::rootPath"="~/.Rcache,scratch");
+options("R.cache::touchOnLoad"=TRUE);
 
 
 args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, exludeEnvVars=TRUE);
