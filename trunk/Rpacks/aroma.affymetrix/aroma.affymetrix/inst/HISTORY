@@ -43,6 +43,9 @@ o BUG FIX/ROBUSTNESS: It was possible to set a non-compatible
   CDF when using static fromFiles() of AffymetrixCelSet.
 o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
   much less memory when infering the cell indices.
+o BUG FIX: Since 'affy' defines standardGeneric("colnames") and 
+  S3 methods are not found by such S4 generic functions, we avoid 
+  that method name, and instead use getColumnNames().
 o BUG FIX: getTimestamp() for AffymetrixCelFile would return NA for 
   Calvin files.  Now they are also supported.
 o BUG FIX: getCellIndices() of CnChipEffectFile would return an error

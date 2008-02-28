@@ -19,9 +19,7 @@ setMethodS3("nbrOfEnzymes", "AromaUfcFile", function(this, ...) {
 })
 
 
-setMethodS3("colnames", "AromaUfcFile", function(x, ...) {
-  # To please R CMD check
-  this <- x;
+setMethodS3("getColumnNames", "AromaUfcFile", function(this, ...) {
   nbrOfColumns <- nbrOfColumns(this);
   names <- rep("fragmentClass", nbrOfColumns);
   tags <- sprintf(".%02d", 1:nbrOfColumns);

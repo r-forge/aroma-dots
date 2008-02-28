@@ -82,9 +82,7 @@ setMethodS3("setAttributesByTags", "AromaTabularBinaryFile", function(this, ...)
 }, protected=TRUE)
 
  
-setMethodS3("colnames", "AromaTabularBinaryFile", function(x, ...) {
-  # To please R CMD check
-  this <- x;
+setMethodS3("getColumnNames", "AromaTabularBinaryFile", function(this, ...) {
   as.character(seq(length=nbrOfColumns(this)));
 })
 
@@ -550,7 +548,7 @@ setMethodS3("readData", "AromaTabularBinaryFile", function(this, rows=NULL, colu
   verbose && exit(verbose);
   
   # Add column names.
-  colnames(data) <- colnames(this)[columns];
+  colnames(data) <- getColumnNames(this)[columns];
 
   data;
 }, protected=TRUE)
@@ -1148,7 +1146,7 @@ setMethodS3("summary", "AromaTabularBinaryFile", function(object, ...) {
 
   res <- matrix(unlist(res, use.names=FALSE), ncol=nbrOfColumns);
   rownames(res) <- rep("", nrow(res));
-  colnames(res) <- colnames(this);
+  colnames(res) <- getColumnNames(this);
   class(res) <- "table";
 
   res;

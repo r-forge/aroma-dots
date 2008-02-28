@@ -19,7 +19,7 @@ setMethodS3("as.character", "GenericTabularFile", function(x, ...) {
 
   s <- NextMethod("as.character", this, ...);
   class <- class(s);
-  columns <- paste("'", colnames(this), "'", sep="");
+  columns <- paste("'", getColumnNames(this), "'", sep="");
   s <- c(s, sprintf("Columns [%d]: %s", length(columns), paste(columns, collapse=", ")));
   class(s) <- class;
   s;
@@ -48,7 +48,7 @@ setMethodS3("translateColumnNames", "GenericTabularFile", function(this, names, 
 
 
 
-setMethodS3("colnames", "GenericTabularFile", function(this, ...) {
+setMethodS3("getColumnNames", "GenericTabularFile", function(this, ...) {
   colnames <- getHeader(this, ...)$columns;
   translateColumnNames(this, colnames);
 })
@@ -174,7 +174,7 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, header=NULL
 
 
   # Default column classes
-  columns <- colnames(this);
+  columns <- getColumnNames(this);
   nbrOfColumns <- length(columns);
   defColClasses <- rep(defColClass, nbrOfColumns);
   defColClassPatterns <- defColClasses;
@@ -280,8 +280,8 @@ setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, ..., verb
   verbose && cat(verbose, "Arguments used to read tabular file:");
   verbose && str(verbose, args);
 
-  verbose && enter(verbose, "Matching colnames():");
-  columns <- colnames(this);
+  verbose && enter(verbose, "Matching column names:");
+  columns <- getColumnNames(this);
   columns[args$colClasses == "NULL"] <- NA;
   columns <- columns[!is.na(columns)];
   verbose && exit(verbose);
@@ -309,9 +309,13 @@ setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, ..., verb
 
 ############################################################################
 # HISTORY:
+# 2008-02-27
+# o Since 'affy' defines standardGeneric("colnames") and because S3 methods
+#   are not found by such S4 generic functions, we avoid that method name,
+#   and instead use getColumnNames().
 # 2007-09-16
 # o Removed all 'camelCaseNames' arguments.  Now column names are decided 
-#   by colnames() and translateColumnNames(), which can be overridden.
+#   by getColumnNames() and translateColumnNames(), which can be overridden.
 # 2007-09-14
 # o Extracted from AffymetrixTabularFile.
 # 2007-09-10

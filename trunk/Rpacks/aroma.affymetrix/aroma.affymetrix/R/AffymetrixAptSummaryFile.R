@@ -15,7 +15,7 @@ setMethodS3("translateColumnNames", "AffymetrixAptSummaryFile", function(this, n
 
 
 setMethodS3("getArrayNames", "AffymetrixAptSummaryFile", function(this, ...) {
-  names <- colnames(this);
+  names <- getColumnNames(this);
   names <- names[-1];
   names;
 })
