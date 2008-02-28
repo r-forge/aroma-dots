@@ -200,7 +200,7 @@ setMethodS3("importFromApt", "CnChipEffectSet", function(static, filename, path=
       verbose && enter(verbose, "Reading units");
       dirs <- c("aroma.affymetrix", "APT");
       srcPathname <- getPathname(apt);
-      colNames <- colnames(apt);
+      colNames <- getColumnNames(apt);
       key <- list(method="importFromApt", class="CnChipEffectSet", result="importUnits", fileHeader=header, fileSize=file.info(srcPathname)$size, colNames=colNames, chipType=getChipType(monocellCdf));
       verbose && str(verbose, key);
       verbose && print(verbose, generateCache(key, dirs=dirs));

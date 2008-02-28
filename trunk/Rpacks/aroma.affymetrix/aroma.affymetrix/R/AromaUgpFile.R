@@ -28,9 +28,7 @@ setMethodS3("getFilenameExtension", "AromaUgpFile", function(static, ...) {
   "ugp";
 }, static=TRUE)
 
-setMethodS3("colnames", "AromaUgpFile", function(x, ...) {
-  # To please R CMD check
-  this <- x;
+setMethodS3("getColumnNames", "AromaUgpFile", function(this, ...) {
   c("chromosome", "position");
 })
 
