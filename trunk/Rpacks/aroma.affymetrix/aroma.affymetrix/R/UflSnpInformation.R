@@ -19,7 +19,7 @@ setMethodS3("getAromaUflFile", "UflSnpInformation", function(this, ..., force=FA
 
   # Sanity check
   if (!inherits(ufl, "AromaUflFile"))
-    throw("Internal error: Failed to retrieve UFL file.");
+    throw("Internal error: Failed to retrieve UFL file: ", class(ufl)[1]);
 
   ufl;
 }, protected=TRUE);
@@ -98,10 +98,12 @@ setMethodS3("readData", "UflSnpInformation", function(this, nrow=NULL, ..., verb
 setMethodS3("getDataColumns", "UflSnpInformation", function(this, ...) {
   ufl <- getAromaUflFile(this);
   names <- colnames(ufl);
+str(names);
   names <- gsub("^length", "fragmentLength", names);
+str(names);
   names;
 }, private=TRUE)
-
+	
 setMethodS3("getFields", "UflSnpInformation", function(this, ...) {
   getDataColumns(this, ...);
 })
@@ -201,7 +203,9 @@ setMethodS3("getData", "UflSnpInformation", function(this, units=NULL, fields=ge
 
 
 setMethodS3("nbrOfEnzymes", "UflSnpInformation", function(this, ...) {
-  length(getDataColumns(this));
+  cols <- getDataColumns(this);
+  str(cols);
+  length(cols);
 })
 
 setMethodS3("getFragmentLengths", "UflSnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
