@@ -10,6 +10,11 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
   verbose && enter(verbose, "Making sure the search path is compatible with ", getName(this));
 
   toPath <- sprintf("package:%s", getName(this));
+  
+  # aroma.affymetrix is always before R.huge on the search path.
+  # affy must be after R.huge because it redefines colnames().
+  # /HB 2008-02-27
+  toPath <- sprintf("package:%s", "R.huge");
 
   verbose && cat(verbose, "Search path before:");
   verbose && print(verbose, search());
