@@ -3,7 +3,7 @@
 % 
 %  999.package.R
 % 
-% on Mon Feb 25 22:00:26 2008.
+% on Wed Feb 27 21:57:23 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

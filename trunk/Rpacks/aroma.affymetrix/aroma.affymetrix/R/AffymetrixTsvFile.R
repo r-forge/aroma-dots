@@ -22,7 +22,7 @@ setMethodS3("getCdf", "AffymetrixTsvFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
     chipType <- getChipType(this);
-    cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
     this$.cdf <- cdf;
   }
   cdf;
@@ -39,7 +39,11 @@ setMethodS3("findByChipType", "AffymetrixTsvFile", function(static, chipType, ..
 }, static=TRUE, protected=TRUE)
 
 
-setMethodS3("fromChipType", "AffymetrixTsvFile", function(static, chipType, ...) {
+setMethodS3("fromChipType", "AffymetrixTsvFile", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE) 
+
+setMethodS3("byChipType", "AffymetrixTsvFile", function(static, chipType, ...) {
   # Search for the genome information file
   pathname <- static$findByChipType(chipType, ...);
   if (is.null(pathname))

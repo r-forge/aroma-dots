@@ -65,7 +65,7 @@ setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod fromChipType
+# @RdocMethod byChipType
 #
 # @title "Defines a UgpGenomeInformation object by chip type"
 #
@@ -98,7 +98,7 @@ setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., verbose=FALSE) {
+setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -107,7 +107,7 @@ setMethodS3("fromChipType", "UgpGenomeInformation", function(static, chipType, t
   }
 
 
-  ugp <- AromaUgpFile$fromChipType(chipType, tags=tags, ...);
+  ugp <- AromaUgpFile$byChipType(chipType, tags=tags, ...);
   pathname <- getPathname(ugp);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
@@ -121,6 +121,11 @@ setMethodS3("fromChipType", "UgpGenomeInformation", function(static, chipType, t
 
   res;
 }, static=TRUE)
+
+
+setMethodS3("fromChipType", "UgpGenomeInformation", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE) 
 
 
 setMethodS3("nbrOfUnits", "UgpGenomeInformation", function(this, ...) {

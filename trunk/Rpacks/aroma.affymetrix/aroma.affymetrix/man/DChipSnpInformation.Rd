@@ -47,13 +47,14 @@ extends \emph{\link[aroma.affymetrix]{SnpInformation}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fromChipType.DChipSnpInformation]{fromChipType}} \tab Defines a DChipSnpInformation object by chip type.\cr
+ \tab \code{byChipType} \tab  -\cr
+ \tab \code{fromChipType} \tab  -\cr
  \tab \code{readData} \tab  -\cr
 }
 
 
  \bold{Methods inherited from SnpInformation}:\cr
-fromCdf, fromChipType, fromDataSet, getChipType, getData, getFields, getFragmentLengths, getFragmentStarts, getFragmentStops, isCompatibleWithCdf, nbrOfEnzymes, nbrOfUnits, readData
+byChipType, fromCdf, fromChipType, fromDataSet, getChipType, getData, getFields, getFragmentLengths, getFragmentStarts, getFragmentStops, isCompatibleWithCdf, nbrOfEnzymes, nbrOfUnits, readData
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
@@ -72,7 +73,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    \emph{annotations/Mapping50K\_Hind240/50k hind snp info AfAm
    june 05 hg17.xls}.
    Note that dChip changes the filename and file format slightly between
-   chip types, but currently the \code{\link[aroma.affymetrix:fromChipType.DChipSnpInformation]{*fromChipType}()} basically searches
+   chip types, but currently the \code{\link[aroma.affymetrix:byChipType.DChipSnpInformation]{*byChipType}()} basically searches
    for files with names consisting of \code{"snp info"} or
    \code{"snp_info"}.  At least for the most common chip types, there
    is no need to rename the files in order for this class to recognize them.

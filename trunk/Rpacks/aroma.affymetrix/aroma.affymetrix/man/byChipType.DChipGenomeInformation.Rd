@@ -6,11 +6,11 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{fromChipType.DChipGenomeInformation}
-\alias{fromChipType.DChipGenomeInformation}
-\alias{DChipGenomeInformation.fromChipType}
-\alias{fromChipType.DChipGenomeInformation}
-\alias{fromChipType,DChipGenomeInformation-method}
+\name{byChipType.DChipGenomeInformation}
+\alias{byChipType.DChipGenomeInformation}
+\alias{DChipGenomeInformation.byChipType}
+\alias{byChipType.DChipGenomeInformation}
+\alias{byChipType,DChipGenomeInformation-method}
 
 
 \title{Defines a DChipGenomeInformation object by chip type}
@@ -19,7 +19,7 @@
  Defines a DChipGenomeInformation object by chip type.
 }
 
-\usage{\method{fromChipType}{DChipGenomeInformation}(static, chipType, version=NULL, ..., verbose=FALSE)}
+\usage{\method{byChipType}{DChipGenomeInformation}(static, chipType, version=NULL, ..., verbose=FALSE)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}

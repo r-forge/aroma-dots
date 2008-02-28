@@ -125,7 +125,7 @@ setMethodS3("getCdf", "AffymetrixCnChpFile", function(this, ...) {
     chipType <- params[["affymetrix-algorithm-param-chip_type"]];
 
     # Retrieve the corresponding CDF
-    cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
 
     this$.cdf <- cdf;
   }

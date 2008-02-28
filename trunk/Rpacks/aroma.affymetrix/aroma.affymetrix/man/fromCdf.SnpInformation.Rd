@@ -24,7 +24,7 @@
 
 \arguments{
  \item{cdf}{An \code{\link{AffymetrixCdfFile}}.}
- \item{...}{Additional argument passed to \code{\link[aroma.affymetrix:fromChipType.SnpInformation]{*fromChipType}()}.}
+ \item{...}{Additional argument passed to \code{\link[aroma.affymetrix:byChipType.SnpInformation]{*byChipType}()}.}
 }
 
 \value{
@@ -34,7 +34,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:fromChipType.SnpInformation]{*fromChipType}()}.
+  \code{\link[aroma.affymetrix:byChipType.SnpInformation]{*byChipType}()}.
   For more information see \code{\link{SnpInformation}}.
 }
 \keyword{internal}

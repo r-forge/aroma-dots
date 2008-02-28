@@ -39,6 +39,8 @@ o CLEANUP: Renamed getMonoCell() to getMonocellCdf() and
   strange names. 
 o CLEANUP: Renamed usage of getCellMap() to getUnitGroupCellMap().
   For backward compatibility, the old ones remain for a while.
+o CLEANUP: Now byName() can be used everywhere fromName() can be used.
+  Same for byChipType() and fromChipType().
 o BUG FIX/ROBUSTNESS: It was possible to set a non-compatible 
   CDF when using static fromFiles() of AffymetrixCelSet.
 o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses

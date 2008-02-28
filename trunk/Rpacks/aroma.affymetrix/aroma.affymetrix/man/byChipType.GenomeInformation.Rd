@@ -6,11 +6,11 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{fromChipType.GenomeInformation}
-\alias{fromChipType.GenomeInformation}
-\alias{GenomeInformation.fromChipType}
-\alias{fromChipType.GenomeInformation}
-\alias{fromChipType,GenomeInformation-method}
+\name{byChipType.GenomeInformation}
+\alias{byChipType.GenomeInformation}
+\alias{GenomeInformation.byChipType}
+\alias{byChipType.GenomeInformation}
+\alias{byChipType,GenomeInformation-method}
 
 
 \title{Static method to define a genome information set by chip type}
@@ -19,8 +19,8 @@
   Static method to define a genome information set by chip type.
 }
 
-\synopsis{fromChipType.GenomeInformation(...)}
-\usage{GenomeInformation$fromChipType()}
+\synopsis{byChipType.GenomeInformation(...)}
+\usage{GenomeInformation$byChipType()}
 
 \arguments{
  \item{...}{Not used.}

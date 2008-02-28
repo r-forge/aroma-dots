@@ -44,7 +44,7 @@ setMethodS3("findByCdf2", "default", function(chipType, tags=NULL, validator=NUL
     fullname <- paste(c(chipType, cdfTags), collapse=",");
     verbose && printf(verbose, "Trying '%s'...", fullname);
     tryCatch({
-      cdf <- AffymetrixCdfFile$fromChipType(chipType, tags=cdfTags);
+      cdf <- AffymetrixCdfFile$byChipType(chipType, tags=cdfTags);
 
       # Validate?  If invalid, skip it.
       if (!is.null(validator)) {

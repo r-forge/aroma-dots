@@ -19,7 +19,11 @@ setMethodS3("findByChipType", "AffymetrixCsvGenomeInformation", function(static,
   pathname;
 }, static=TRUE, protected=TRUE)
 
-setMethodS3("fromChipType", "AffymetrixCsvGenomeInformation", function(static, chipType, version=NULL, ...) {
+setMethodS3("fromChipType", "AffymetrixCsvGenomeInformation", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE) 
+
+setMethodS3("byChipType", "AffymetrixCsvGenomeInformation", function(static, chipType, version=NULL, ...) {
   # Search for the genome information file
   pathname <- static$findByChipType(chipType, version=version, ...);
   if (is.null(pathname))

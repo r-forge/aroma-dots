@@ -242,7 +242,7 @@ setMethodS3("getCdf", "AffymetrixCelFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
     chipType <- getHeader(this)$chiptype;
-    cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
     this$.cdf <- cdf;
   }
   cdf;
