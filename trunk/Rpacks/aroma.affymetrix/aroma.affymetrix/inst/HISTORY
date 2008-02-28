@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.0 [2008-02-25xx]
+Version: 0.9.0 [2008-02-27xx]
 o UPDATE/ROBUSTNESS: Now AromaUnitTabularBinaryFile:s stores the 
   chip type in the file footer.  This allows us to identify the 
   correct file gives a full chip type.  Because of this update, 
@@ -24,9 +24,8 @@ o UPDATE: GcContentNormalization would only normalize SNP units but
   now also CN probes are normalized.
 o UPDATE: Now a CnPlm with combineAlleles=TRUE also handles SNPs 
   with six groups; they occur at least once in a custom SNP CDF.
-o GENERALIZED: Now the methods of AffymetrixCdfFile infer the unit
-  type (SNP, CN probe etc) from the unit-type field in the CDF and
-  no longer from the unit names.
+o GENERALIZED: Now SNPs and CN probes are infered from the CDF unit
+  type and no longer from the unit names.
 o Renamed plot{Nuse|Rle}() of QualityAssessmentModel to 
   boxplot{Nuse|Rle}().
 o Added calculate{Nuse|Rle}Stats() to QualityAssessmentModel for 
