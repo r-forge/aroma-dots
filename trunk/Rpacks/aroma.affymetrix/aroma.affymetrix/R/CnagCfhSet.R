@@ -358,7 +358,11 @@ setMethodS3("findByName", "CnagCfhSet", function(static, name, tags=NULL, chipTy
 }, static=TRUE)
 
 
-setMethodS3("fromName", "CnagCfhSet", function(static, name, tags=NULL, chipType, ...) {
+setMethodS3("fromName", "CnagCfhSet", function(static, ...) {
+  byName(static, ...);
+}, private=TRUE);
+
+setMethodS3("byName", "CnagCfhSet", function(static, name, tags=NULL, chipType, ...) {
   suppressWarnings({
     path <- static$findByName(name, tags=tags, chipType=chipType, ...);
   })
@@ -461,7 +465,7 @@ setMethodS3("fromFiles", "CnagCfhSet", function(static, path="rawData/", pattern
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Updating the CDF for all files");
   verbose && cat(verbose, "Chip type: ", chipType);
-  cdf <- AffymetrixCdfFile$fromChipType(chipType);
+  cdf <- AffymetrixCdfFile$byChipType(chipType);
   cf <- getFile(this, 1);
 #  if (nbrOfCells(cdf) != nbrOfCells(cf)) {
 #    cdf <- getCdf(cf);

@@ -47,6 +47,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{byChipType} \tab  -\cr
  \tab \code{fromCdf} \tab  -\cr
  \tab \code{fromChipType} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr

@@ -559,7 +559,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (is.null(cdf)) {
     verbose && enter(verbose, "Retrieving the CDF for chip type '", chipType, "' inferred from path");
-    cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Check compatibility with 1st CEL file");

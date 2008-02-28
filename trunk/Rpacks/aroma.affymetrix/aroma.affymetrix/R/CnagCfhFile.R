@@ -190,7 +190,7 @@ setMethodS3("getCdf", "CnagCfhFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
     chipType <- getHeader(this)$chipType;
-    cdf <- AffymetrixCdfFile$fromChipType(chipType);
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
     this$.cdf <- cdf;
   }
   cdf;

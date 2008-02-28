@@ -85,9 +85,10 @@
   clone.AffymetrixCnChpFile clone.CnagCfhFile clone.CnagCfhSet
   clone.GenericDataFile clone.GenericDataFileSet colMeans
   colMeans.AromaTabularBinaryFile colMeans.default colMedians
-  colMedians.AromaTabularBinaryFile colnames.AromaTabularBinaryFile
-  colnames.AromaUfcFile colnames.AromaUflFile colnames.AromaUgpFile
-  colnames.GenericTabularFile colStats colStats.AromaTabularBinaryFile
+  colMedians.AromaTabularBinaryFile getColumnNames.AromaTabularBinaryFile
+  getColumnNames.AromaUfcFile getColumnNames.AromaUflFile 
+  getColumnNames.AromaUgpFile
+  getColumnNames.GenericTabularFile colStats colStats.AromaTabularBinaryFile
   colSums colSums.AromaTabularBinaryFile colSums.default compare
   compareChecksum compareChecksum.GenericDataFile computeAffinities
   convert convertTable convertTable.default convertUnits
@@ -686,4 +687,10 @@
   writeRegions.CopyNumberSegmentationModel writeRegions.GladModel
   writeRegions.profileCGH writeWig writeWig.CnChipEffectSet xmlToList
   xmlToList.character yellow.colors
-
+  byChipType.AffymetrixCsvGenomeInformation
+  byChipType.AffymetrixProbeTabFile byChipType.AffymetrixTabularFile
+  byChipType.AffymetrixTsvFile byChipType.UflSnpInformation
+  byName.CnagCfhSet fromChipType.DChipGenomeInformation
+  fromChipType.DChipSnpInformation fromChipType.GenomeInformation
+  fromChipType.SnpInformation fromChipType.UgpGenomeInformation
+  getColumnNames

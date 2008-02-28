@@ -1408,11 +1408,11 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
 
       tryCatch({
         if (type == "ugp") {
-          gi <- UgpGenomeInformation$fromChipType(chipType, tags=tags, 
+          gi <- UgpGenomeInformation$byChipType(chipType, tags=tags, 
                                             verbose=less(verbose, 5));
           break;
         } else if (type == "dchip") {
-          gi <- DChipGenomeInformation$fromChipType(chipType, 
+          gi <- DChipGenomeInformation$byChipType(chipType, 
                                             verbose=less(verbose, 5));
 
           break;
@@ -1490,11 +1490,11 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UF
 
       tryCatch({
         if (type == "ufl") {
-          si <- UflSnpInformation$fromChipType(chipType, tags=tags,
+          si <- UflSnpInformation$byChipType(chipType, tags=tags,
                                          verbose=less(verbose, 5));
           break;
         } else if (type == "dchip") {
-          si <- DChipSnpInformation$fromChipType(chipType, 
+          si <- DChipSnpInformation$byChipType(chipType, 
                                          verbose=less(verbose, 5));
           break;
         }

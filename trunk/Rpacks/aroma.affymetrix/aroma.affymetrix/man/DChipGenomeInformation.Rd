@@ -46,13 +46,14 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fromChipType.DChipGenomeInformation]{fromChipType}} \tab Defines a DChipGenomeInformation object by chip type.\cr
+ \tab \code{byChipType} \tab  -\cr
+ \tab \code{fromChipType} \tab  -\cr
  \tab \code{readData} \tab  -\cr
 }
 
 
  \bold{Methods inherited from GenomeInformation}:\cr
-fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, isCompatibleWithCdf, nbrOfUnits, plotDensity, readData
+byChipType, fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, isCompatibleWithCdf, nbrOfUnits, plotDensity, readData
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
@@ -71,7 +72,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    \emph{annotations/Mapping50K\_Hind240/50k hind genome info AfAm
    june 05 hg17.xls}.
    Note that dChip changes the filename and file format slightly between
-   chip types, but currently the \code{\link[aroma.affymetrix:fromChipType.DChipGenomeInformation]{*fromChipType}()} basically searches
+   chip types, but currently the \code{\link[aroma.affymetrix:byChipType.DChipGenomeInformation]{*byChipType}()} basically searches
    for files with names consisting of \code{"genome info"} or
    \code{"genome_info"}.  At least for the most common chip types, there
    is no need to rename the files in order for this class to recognize them.

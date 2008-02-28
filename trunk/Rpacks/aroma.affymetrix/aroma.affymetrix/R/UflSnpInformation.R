@@ -37,7 +37,11 @@ setMethodS3("findByChipType", "UflSnpInformation", function(static, ...) {
 }, static=TRUE, protected=TRUE)
 
 
-setMethodS3("fromChipType", "UflSnpInformation", function(static, chipType, tags=NULL, ..., verbose=FALSE) {
+setMethodS3("fromChipType", "UflSnpInformation", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE) 
+
+setMethodS3("byChipType", "UflSnpInformation", function(static, chipType, tags=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -46,7 +50,7 @@ setMethodS3("fromChipType", "UflSnpInformation", function(static, chipType, tags
   }
 
 
-  ufl <- AromaUflFile$fromChipType(chipType, tags=tags, ...);
+  ufl <- AromaUflFile$byChipType(chipType, tags=tags, ...);
   pathname <- getPathname(ufl);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
@@ -202,7 +206,6 @@ setMethodS3("getData", "UflSnpInformation", function(this, units=NULL, fields=ge
 
 setMethodS3("nbrOfEnzymes", "UflSnpInformation", function(this, ...) {
   cols <- getDataColumns(this);
-  str(cols);
   length(cols);
 })
 

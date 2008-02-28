@@ -557,7 +557,7 @@ setMethodS3("getMonocellCdf", "AffymetrixCdfFile", function(this, ..., verbose=F
     res <- createMonocellCdf(this, ..., verbose=less(verbose));
     verbose && exit(verbose);
   } else {
-    res <- fromChipType(this, chipType=chipType, ...);
+    res <- byChipType(this, chipType=chipType, ...);
   }
 
   verbose && exit(verbose);

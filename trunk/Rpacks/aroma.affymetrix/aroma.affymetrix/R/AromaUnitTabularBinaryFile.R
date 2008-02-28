@@ -145,7 +145,7 @@ setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FA
     
       verbose && exit(verbose);
     } else {
-      cdf <- AffymetrixCdfFile$fromChipType(getChipType(this));
+      cdf <- AffymetrixCdfFile$byChipType(getChipType(this));
     }
 
     this$.cdf <- cdf;
@@ -156,8 +156,8 @@ setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FA
 
 
 
-setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(this, ...) {
-  byChipType(this, ...);
+setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(static, ...) {
+  byChipType(static, ...);
 })
 
 setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, validate=TRUE, ..., verbose=FALSE) {

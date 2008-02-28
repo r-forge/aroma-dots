@@ -51,7 +51,7 @@ extends \link[aroma.affymetrix]{QuantileNormalization}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:process.DChipQuantileNormalization]{process}} \tab Normalizes the data set.\cr
+ \tab \code{process} \tab  -\cr
 }
 
 

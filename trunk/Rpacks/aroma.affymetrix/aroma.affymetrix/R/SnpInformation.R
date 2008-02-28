@@ -142,7 +142,7 @@ setMethodS3("getChipType", "SnpInformation", function(this, ...) {
 #
 # \arguments{
 #  \item{cdf}{An @see "AffymetrixCdfFile".}
-#  \item{...}{Additional argument passed to @seemethod "fromChipType".}
+#  \item{...}{Additional argument passed to @seemethod "byChipType".}
 # }
 #
 # \value{
@@ -152,19 +152,19 @@ setMethodS3("getChipType", "SnpInformation", function(this, ...) {
 # @author
 #
 # \seealso{
-#   @seemethod "fromChipType".
+#   @seemethod "byChipType".
 #   @seeclass
 # }
 #*/###########################################################################
 setMethodS3("fromCdf", "SnpInformation", function(static, cdf, ...) {
-  fromChipType(static, getChipType(cdf), ...);
+  byChipType(static, getChipType(cdf), ...);
 }, static=TRUE)
 
 
 
 
 ###########################################################################/**
-# @RdocMethod fromChipType
+# @RdocMethod byChipType
 #
 # @title "Static method to define a genome information set by chip type"
 #
@@ -189,13 +189,17 @@ setMethodS3("fromCdf", "SnpInformation", function(static, cdf, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fromChipType", "SnpInformation", abstract=TRUE);
+setMethodS3("byChipType", "SnpInformation", abstract=TRUE);
+
+setMethodS3("fromChipType", "SnpInformation", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE) 
 
 
 setMethodS3("fromDataSet", "SnpInformation", function(static, dataSet, ...) {
   cdf <- getCdf(dataSet);
   chipType <- getChipType(cdf);
-  fromChipType(static, chipType, ...);
+  byChipType(static, chipType, ...);
 }, static=TRUE)
 
 

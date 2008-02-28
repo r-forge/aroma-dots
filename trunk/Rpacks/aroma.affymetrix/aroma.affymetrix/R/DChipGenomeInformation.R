@@ -28,7 +28,7 @@
 #   \emph{annotations/Mapping50K\_Hind240/50k hind genome info AfAm
 #   june 05 hg17.xls}.  
 #   Note that dChip changes the filename and file format slightly between
-#   chip types, but currently the @seemethod "fromChipType" basically searches
+#   chip types, but currently the @seemethod "byChipType" basically searches
 #   for files with names consisting of \code{"genome info"} or
 #   \code{"genome_info"}.  At least for the most common chip types, there
 #   is no need to rename the files in order for this class to recognize them.
@@ -79,7 +79,7 @@ setMethodS3("findByChipType", "DChipGenomeInformation", function(static, chipTyp
 
 
 ###########################################################################/**
-# @RdocMethod fromChipType
+# @RdocMethod byChipType
 #
 # @title "Defines a DChipGenomeInformation object by chip type"
 #
@@ -111,7 +111,7 @@ setMethodS3("findByChipType", "DChipGenomeInformation", function(static, chipTyp
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType, version=NULL, ..., verbose=FALSE) {
+setMethodS3("byChipType", "DChipGenomeInformation", function(static, chipType, version=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -142,6 +142,10 @@ setMethodS3("fromChipType", "DChipGenomeInformation", function(static, chipType,
 
   res;
 })
+
+setMethodS3("fromChipType", "DChipGenomeInformation", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE) 
 
 
 setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {

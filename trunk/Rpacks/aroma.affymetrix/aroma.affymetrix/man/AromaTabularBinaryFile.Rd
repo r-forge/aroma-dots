@@ -51,13 +51,13 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \tab \code{as.character} \tab  -\cr
  \tab \code{colMeans} \tab  -\cr
  \tab \code{colMedians} \tab  -\cr
- \tab \code{colnames} \tab  -\cr
  \tab \code{colStats} \tab  -\cr
  \tab \code{colSums} \tab  -\cr
  \tab \code{dim} \tab  -\cr
  \tab \code{dimnames<-} \tab  -\cr
  \tab \code{getBytesPerColumn} \tab  -\cr
  \tab \code{getColClasses} \tab  -\cr
+ \tab \code{getColumnNames} \tab  -\cr
  \tab \code{lapply} \tab  -\cr
  \tab \code{nbrOfColumns} \tab  -\cr
  \tab \code{nbrOfRows} \tab  -\cr

@@ -69,7 +69,7 @@ setMethodS3("doCRMA", "default", function(dataSet, chipTypes=NULL, ..., logName=
   if (is.null(csRawList)) {
     csRawList <- list();
     for (chipType in chipTypes) {  
-      cs <- AffymetrixCelSet$fromName(dataSet, chipType=chipType);
+      cs <- AffymetrixCelSet$byName(dataSet, chipType=chipType);
       log && print(log, cs); 
       csRawList[[chipType]] <- cs;
       rm(cs);

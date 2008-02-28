@@ -22,7 +22,7 @@ setMethodS3("getRegions", "profileCGH", function(this, nbrOfSnps=c(1,Inf), smoot
     rsIds <- character(nrow(pv));
     unitNames <- character(nrow(pv));
     for (cc in unique(chipType)) {
-      cdf <- AffymetrixCdfFile$fromChipType(cc);
+      cdf <- AffymetrixCdfFile$byChipType(cc);
 
       idxs <- which(chipType == cc);
       unitNames[idxs] <- getUnitNames(cdf, units=pv$units[idxs]);

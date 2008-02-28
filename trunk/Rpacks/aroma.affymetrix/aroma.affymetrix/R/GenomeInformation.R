@@ -140,7 +140,7 @@ setMethodS3("getChipType", "GenomeInformation", function(this, ...) {
 #
 # \arguments{
 #  \item{cdf}{An @see "AffymetrixCdfFile".}
-#  \item{...}{Additional argument passed to @seemethod "fromChipType".}
+#  \item{...}{Additional argument passed to @seemethod "byChipType".}
 # }
 #
 # \value{
@@ -150,19 +150,19 @@ setMethodS3("getChipType", "GenomeInformation", function(this, ...) {
 # @author
 #
 # \seealso{
-#   @seemethod "fromChipType".
+#   @seemethod "byChipType".
 #   @seeclass
 # }
 #*/###########################################################################
 setMethodS3("fromCdf", "GenomeInformation", function(static, cdf, ...) {
-  fromChipType(static, getChipType(cdf), ...);
+  byChipType(static, getChipType(cdf), ...);
 }, static=TRUE)
 
 
 
 
 ###########################################################################/**
-# @RdocMethod fromChipType
+# @RdocMethod byChipType
 #
 # @title "Static method to define a genome information set by chip type"
 #
@@ -187,13 +187,17 @@ setMethodS3("fromCdf", "GenomeInformation", function(static, cdf, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fromChipType", "GenomeInformation", static=TRUE, abstract=TRUE);
+setMethodS3("byChipType", "GenomeInformation", static=TRUE, abstract=TRUE);
+
+setMethodS3("fromChipType", "GenomeInformation", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE) 
 
 
 setMethodS3("fromDataSet", "GenomeInformation", function(static, dataSet, ...) {
   cdf <- getCdf(dataSet);
   chipType <- getChipType(cdf);
-  fromChipType(static, chipType, ...);
+  byChipType(static, chipType, ...);
 }, static=TRUE)
 
 
@@ -620,7 +624,7 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
   # Annotate?
   if (annotate) {
     stext(sprintf("%d SNPs", d$n), side=3, pos=1, line=-1, cex=0.8);
-    cdf <- AffymetrixCdfFile$fromChipType(getChipType(this));
+    cdf <- AffymetrixCdfFile$byChipType(getChipType(this));
     stextChipType(cdf);
   }
 

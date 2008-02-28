@@ -195,13 +195,17 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
 
 
 setMethodS3("fromCdf", "AffymetrixProbeTabFile", function(static, cdf, ...) {
-  res <- fromChipType(static, getChipType(cdf));
+  res <- byChipType(static, getChipType(cdf));
   res$.cdf <- cdf;
   res;
 }, static=TRUE);
 
 
-setMethodS3("fromChipType", "AffymetrixProbeTabFile", function(static, chipType, ...) {
+setMethodS3("fromChipType", "AffymetrixProbeTabFile", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE) 
+
+setMethodS3("byChipType", "AffymetrixProbeTabFile", function(static, chipType, ...) {
   pathname <- AffymetrixProbeTabFile$findByChipType(chipType);
   if (length(pathname) == 0)
     throw("Failed to located the Affymetrix probe tab file: ", chipType);

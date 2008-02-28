@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Mon Feb 25 22:00:26 2008.
+% on Wed Feb 27 21:57:23 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,11 +209,11 @@
 \alias{colMeans.default}
 \alias{colMedians}
 \alias{colMedians.AromaTabularBinaryFile}
-\alias{colnames.AromaTabularBinaryFile}
-\alias{colnames.AromaUfcFile}
-\alias{colnames.AromaUflFile}
-\alias{colnames.AromaUgpFile}
-\alias{colnames.GenericTabularFile}
+\alias{getColumnNames.AromaTabularBinaryFile}
+\alias{getColumnNames.AromaUfcFile}
+\alias{getColumnNames.AromaUflFile}
+\alias{getColumnNames.AromaUgpFile}
+\alias{getColumnNames.GenericTabularFile}
 \alias{colStats}
 \alias{colStats.AromaTabularBinaryFile}
 \alias{colSums}
@@ -1533,6 +1533,18 @@
 \alias{xmlToList}
 \alias{xmlToList.character}
 \alias{yellow.colors}
+\alias{byChipType.AffymetrixCsvGenomeInformation}
+\alias{byChipType.AffymetrixProbeTabFile}
+\alias{byChipType.AffymetrixTabularFile}
+\alias{byChipType.AffymetrixTsvFile}
+\alias{byChipType.UflSnpInformation}
+\alias{byName.CnagCfhSet}
+\alias{fromChipType.DChipGenomeInformation}
+\alias{fromChipType.DChipSnpInformation}
+\alias{fromChipType.GenomeInformation}
+\alias{fromChipType.SnpInformation}
+\alias{fromChipType.UgpGenomeInformation}
+\alias{getColumnNames}
 
 \description{
   This page contains aliases for all "non-documented" objects that
