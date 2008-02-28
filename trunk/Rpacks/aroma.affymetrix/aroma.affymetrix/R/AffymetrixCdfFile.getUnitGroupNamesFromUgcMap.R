@@ -1,4 +1,4 @@
-setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, ugcMap, ..., verbose=FALSE) {
+setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, ugcMap, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -11,6 +11,18 @@ setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, u
 
 
   verbose && enter(verbose, "Extracting unit and group names from CDF");
+
+  key <- list(method="getUnitGroupNamesFromUgcMap", class=class(this)[1],
+              ugcMap=ugcMap[,c("unit", "group")]);
+  dirs <- c("aroma.affymetrix", getChipType(this, fullname=TRUE));
+  if (!force) {
+    res <- loadCache(key, dirs=dirs);
+    if (!is.null(res)) {
+      verbose && cat(verbose, "Found results cached on file");
+      verbose && exit(verbose);
+      return(res);
+    }
+  }
 
   units <- ugcMap[,"unit"];
 
@@ -52,6 +64,9 @@ setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, u
     throw("Internal error: Number of extract unit and group names does not match the number of rows in the UGC map: ", nrow(res), " != ", nrow(ugcMap));
   }
 
+  # Save to file cache
+  saveCache(res, key=key, dirs=dirs);
+
   verbose && exit(verbose);
 
   res;
@@ -60,6 +75,8 @@ setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, u
 
 ############################################################################
 # HISTORY:
+# 2008-02-27
+# o Now getUnitGroupNamesFromUgcMap() caches results to file.
 # 2008-02-05
 # o Created.
 ############################################################################

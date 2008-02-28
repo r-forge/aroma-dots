@@ -11,10 +11,16 @@ setConstructorS3("UflSnpInformation", function(..., .ufl=NULL, .verify=TRUE) {
 
 setMethodS3("getAromaUflFile", "UflSnpInformation", function(this, ..., force=FALSE) {
   ufl <- this$.ufl;
+
   if (force || is.null(ufl)) {
     ufl <- AromaUflFile(getPathname(this), ...);
     this$.ufl <- ufl;
   }
+
+  # Sanity check
+  if (!inherits(ufl, "AromaUflFile"))
+    throw("Internal error: Failed to retrieve UFL file.");
+
   ufl;
 }, protected=TRUE);
 
