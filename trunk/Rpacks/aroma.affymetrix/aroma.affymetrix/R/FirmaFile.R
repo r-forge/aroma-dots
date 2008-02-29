@@ -283,7 +283,7 @@ setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'units':
-  if (inherits(units, "ChipEffectFileCellMap")) {
+  if (inherits(units, "UnitGroupCellMap")) {
     return(units);
   }
 
@@ -343,13 +343,14 @@ setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., 
     seq <- seq(length=size);
     groups[seq,cc] <- seq;
   }
+
   groups <- groups[!is.na(groups)];
   map <- data.frame(unit=units, group=groups, cell=cells);
   verbose && exit(verbose);
 
   verbose && exit(verbose);
 
-  class(map) <- c("ChipEffectFileCellMap", class(map));
+  class(map) <- c("UnitGroupCellMap", class(map));
 
   map;
 }, private=TRUE)
@@ -442,6 +443,9 @@ setMethodS3("extractMatrix", "FirmaFile", function (this, ..., field=c("intensit
 
 ############################################################################
 # HISTORY:
+# 2008-02-28 [HB]
+# o Now a (unit,group,cell) map has class UnitGroupCellMap and no longer
+#   ChipEffectFileCellMap.
 # 2008-02-22 [HB]
 # o Added extractMatrix().
 # 2007-08-09

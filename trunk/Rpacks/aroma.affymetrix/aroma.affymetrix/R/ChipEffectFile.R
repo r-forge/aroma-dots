@@ -489,7 +489,7 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'units':
-  if (inherits(units, "ChipEffectFileCellMap")) {
+  if (inherits(units, "UnitGroupCellMap")) {
     return(units);
   } else if (is.null(units)) {
   } else if (is.list(units)) {
@@ -517,7 +517,7 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
   if (useFileCache) {
     chipType <- getChipType(cdf);
     # Look up chip-type and parameter specific but data set independent data
-    key <- list(method="getCellMap", class=class(this)[1], 
+    key <- list(method="getUnitGroupCellMap", class=class(this)[1], 
                 chipType=chipType, params=getParameters(this),
                 units=units);
     dirs <- c("aroma.affymetrix", chipType);
@@ -636,7 +636,7 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
 
   verbose && exit(verbose);
 
-  class(map) <- c("ChipEffectFileCellMap", class(map));
+  class(map) <- c("UnitGroupCellMap", class(map));
 
   if (useFileCache) {
     verbose && enter(verbose, "Saving to file cache");
@@ -862,6 +862,9 @@ setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("thet
 
 ############################################################################
 # HISTORY:
+# 2008-02-28
+# o Now a (unit,group,cell) map has class UnitGroupCellMap and no longer
+#   ChipEffectFileCellMap.
 # 2008-02-22
 # o Added extractMatrix().
 # o Renamed getCellMap() to getUnitGroupCellMap().
