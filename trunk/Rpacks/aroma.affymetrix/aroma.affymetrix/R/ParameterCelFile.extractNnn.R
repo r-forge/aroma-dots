@@ -120,7 +120,9 @@ setMethodS3("extractDataFrame", "ParameterCelFile", function(this, addNames=FALS
 
 ############################################################################
 # HISTORY:
-# 2007-02-22
+# 2008-02-28
+# o Now argument 'units' also can be a UnitGroupCellMap.
+# 2008-02-22
 # o Added extractDataFrame() for ParameterCelFile as well.
 # o Generalized to ParameterCelFile and moved into aroma.affymetrix.
 # 2008-02-11 [EP]
