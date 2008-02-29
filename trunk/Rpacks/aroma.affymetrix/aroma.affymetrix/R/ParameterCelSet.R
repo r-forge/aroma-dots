@@ -78,6 +78,9 @@ setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., 
   cdf <- getCdf(this);
   if (is.null(units)) {
     nunits <- nbrOfUnits(cdf);
+  } else if (inherits(units, "UnitGroupCellMap")) {
+    ugcMap <- units;
+    units <- unique(ugcMap$unit);
   } else {
     units <- Arguments$getIndices(units, range=c(1,nbrOfUnits(cdf)));
     nunits <- length(units);
@@ -105,13 +108,14 @@ setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., 
   verbose && enter(verbose, "Getting data for the array set");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get cell map
+  # Get (unit, group, cell) map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Getting unit-to-cell map");
-  cf <- getFile(this, 1);
-  ugcMap <- getUnitGroupCellMap(cf, units=units, verbose=less(verbose));
+  if (is.null(ugcMap)) {
+    verbose && enter(verbose, "Getting (unit, group, cell) map");
+    ugcMap <- getUnitGroupCellMap(this, units=units, verbose=less(verbose));
+    verbose && exit(verbose);
+  }
   ugcMap <- subset(ugcMap, ...);
-  verbose && exit(verbose);
 
   if (nrow(ugcMap) == 0)
     throw("Nothing to return.");

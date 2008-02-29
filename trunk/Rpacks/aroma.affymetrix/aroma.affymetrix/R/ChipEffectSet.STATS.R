@@ -73,7 +73,7 @@ setMethodS3("calculateFieldBoxplotStats", "ChipEffectSet", function(this, field=
     cef <- getFile(this, array);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                           kk, getName(cef), nbrOfArrays));
-    data <- extractMatrix(cef, fields=field, units=units);
+    data <- extractMatrix(cef, fields=field, units=ugcMap);
     data <- as.vector(data);
     if (is.function(transform)) {
       data <- transform(data);
@@ -146,7 +146,7 @@ setMethodS3("calculateRleBoxplotStats", "ChipEffectSet", function(this, arrays=N
   avg <- getAverageLog(this, field="intensities", verbose=verbose);
   verbose && exit(verbose);
 
-  medianLE <- extractMatrix(avg, field="theta", units=units, 
+  medianLE <- extractMatrix(avg, field="theta", units=ugcMap, 
                                                  verbose=less(verbose, 5));
   medianLE <- log2(as.vector(medianLE));
   rm(avg);
@@ -164,7 +164,7 @@ setMethodS3("calculateRleBoxplotStats", "ChipEffectSet", function(this, arrays=N
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                           kk, getName(cef), nbrOfArrays));
 
-    theta <- extractMatrix(cef, field="theta", units=units, 
+    theta <- extractMatrix(cef, field="theta", units=ugcMap, 
                                                 verbose=less(verbose, 5));
     theta <- log2(as.vector(theta));
 
@@ -238,7 +238,7 @@ setMethodS3("calculateNuseBoxplotStats", "ChipEffectSet", function(this, arrays=
   verbose && exit(verbose);
 
   # Note, the average of the 'stdvs' is stored in the 'theta' field.
-  medianSE <- extractMatrix(avg, field="theta", units=units, 
+  medianSE <- extractMatrix(avg, field="theta", units=ugcMap, 
                                                  verbose=less(verbose, 5));
   rm(avg);
   medianSE <- log2(as.vector(medianSE));
@@ -255,7 +255,7 @@ setMethodS3("calculateNuseBoxplotStats", "ChipEffectSet", function(this, arrays=
     cef <- getFile(this, array);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                           kk, getName(cef), nbrOfArrays));
-    stdvs <- extractMatrix(cef, field="sdTheta", units=units, 
+    stdvs <- extractMatrix(cef, field="sdTheta", units=ugcMap, 
                                                 verbose=less(verbose, 5));
     stdvs <- log2(as.vector(stdvs));
 
