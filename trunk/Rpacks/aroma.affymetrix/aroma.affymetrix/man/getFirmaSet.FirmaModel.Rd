@@ -3,11 +3,17 @@
 % 
 %  FirmaModel.R
 % 
+% on Thu Feb 28 18:33:55 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{getFirmaScores.FirmaModel}
-\alias{getFirmaScores.FirmaModel}
+\name{getFirmaSet.FirmaModel}
+\alias{getFirmaSet.FirmaModel}
+\alias{FirmaModel.getFirmaSet}
+\alias{getFirmaSet.FirmaModel}
+\alias{getFirmaSet,FirmaModel-method}
+
 \alias{FirmaModel.getFirmaScores}
 \alias{getFirmaScores.FirmaModel}
 \alias{getFirmaScores,FirmaModel-method}
@@ -20,7 +26,7 @@
  There is one chip-effect file per array.
 }
 
-\usage{\method{getFirmaScores}{FirmaModel}(this, ..., verbose=FALSE)}
+\usage{\method{getFirmaSet}{FirmaModel}(this, ..., verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
