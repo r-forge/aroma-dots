@@ -89,7 +89,7 @@ ae <- ArrayExplorer(rsList);
 setColorMaps(ae, c("log2,log2neg,rainbow", "log2,log2pos,rainbow"));
 print(ae);
 stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
-process(ae, interleaved="auto", verbose=log);
+process(ae, arrays=1:2, interleaved="auto", verbose=log);
 
 
 
