@@ -262,6 +262,8 @@ setMethodS3("extractDataFrame", "ParameterCelSet", function(this, addNames=FALSE
 
 ############################################################################
 # HISTORY:
+# 2008-02-28
+# o Now argument 'units' also can be a UnitGroupCellMap.
 # 2008-02-22
 # o Created for the main purpose of putting extractMatrix() here, which
 #   is currently common for ChipEffectSet and FirmaSet.
