@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.0 [2008-02-28]
+Version: 0.9.0 [2008-02-29]
 o UPDATE/ROBUSTNESS: Now AromaUnitTabularBinaryFile:s stores the 
   chip type in the file footer.  This allows us to identify the 
   correct file gives a full chip type.  Because of this update, 
@@ -26,28 +26,20 @@ o UPDATE: Now a CnPlm with combineAlleles=TRUE also handles SNPs
   with six groups; they occur at least once in a custom SNP CDF.
 o GENERALIZED: Now SNPs and CN probes are infered from the CDF unit
   type and no longer from the unit names.
-o Renamed plot{Nuse|Rle}() of QualityAssessmentModel to 
-  boxplot{Nuse|Rle}().
-o Added calculate{Nuse|Rle}Stats() to QualityAssessmentModel for 
-  calculating NUSE/RLE boxplot statistics (also on a subset of arrays).
+o Added boxplotStats() to ChipEffectSet for calculating NUSE or RLE 
+  boxplot statistics (also on a subset of arrays).
 o Added getUnitTypes() for AffymetrixCdfFile.
 o Added extractMatrix() and extractDataFrame() to Parameter{File|Set},
   i.e. subclasses ChipEffect{File|Set} and Firma{File|Set} got it too.
 o Added published paper to citation("aroma.affymetrix").
-o CLEANUP: Renamed getMonoCell() to getMonocellCdf() and 
-  createMonoCell() to createMonocellCdf(), because the former had 
-  strange names. 
-o CLEANUP: Renamed usage of getCellMap() to getUnitGroupCellMap().
-  For backward compatibility, the old ones remain for a while.
 o CLEANUP: Now byName() can be used everywhere fromName() can be used.
   Same for byChipType() and fromChipType().
+o BUG FIX: The methods for calculating boxplot statistics did not
+  handle "merged" CDF units correctly giving incorrect results.
 o BUG FIX/ROBUSTNESS: It was possible to set a non-compatible 
   CDF when using static fromFiles() of AffymetrixCelSet.
 o MEMORY OPTIMIZATION: Now importFromDChip() for CnChipEffectSet uses
   much less memory when infering the cell indices.
-o BUG FIX: Since 'affy' defines standardGeneric("colnames") and 
-  S3 methods are not found by such S4 generic functions, we avoid 
-  that method name, and instead use getColumnNames().
 o BUG FIX: getTimestamp() for AffymetrixCelFile would return NA for 
   Calvin files.  Now they are also supported.
 o BUG FIX: getCellIndices() of CnChipEffectFile would return an error
@@ -56,6 +48,15 @@ o Updated importFromDChip() for CnChipEffectSet so that it imports data
   exported by more recent versions of dChip.  In recent versions the
   standard-error columns are named '*SE' whereas before it were '*SD'.
   In either case, standard errors were exported (confirmed by author).
+MAINLY FOR DEVELOPERS:
+o CLEANUP: Renamed getMonoCell() to getMonocellCdf() and 
+  createMonoCell() to createMonocellCdf(), because the former had 
+  strange names. 
+o CLEANUP: Renamed usage of getCellMap() to getUnitGroupCellMap().
+  For backward compatibility, the old ones remain for a while.
+o BUG FIX: Since 'affy' defines standardGeneric("colnames") and 
+  S3 methods are not found by such S4 generic functions, we avoid 
+  that method name, and instead use getColumnNames().
 o BETA: Added static importFromApt() for CnChipEffectSet.
 o BETA: Added classes AffymetrixAptSummaryFile and AffymetrixCnChpFile.
 o BETA: Added class AromaUfcFile.
