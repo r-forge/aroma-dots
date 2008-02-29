@@ -18,7 +18,7 @@
 #
 # \value{
 #   Returns a @list structure in a format that is returned by
-#   @see "grDevices::boxplot".
+#   @see "graphics::boxplot".
 # }
 #
 # @examples "../incl/mergeBoxplotStats.list.Rex"
