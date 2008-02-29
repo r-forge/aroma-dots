@@ -3,6 +3,8 @@
 % 
 %  mergeBoxplotStats.list.R
 % 
+% on Fri Feb 29 12:54:47 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -28,7 +30,7 @@
 
  \value{
    Returns a \code{\link[base]{list}} structure in a format that is returned by
-   \code{\link[grDevices]{boxplot.stats}}.
+   \code{\link[graphics]{boxplot}}.
  }
 
  \examples{
