@@ -27,5 +27,5 @@ for (chipType in chipTypes) {
 ae <- ArrayExplorer(csRawList);
 setColorMaps(ae, "sqrt,yellow");
 print(ae);
-process(ae, verbose=log);
+process(ae, arrays=1:2, verbose=log);
 stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
