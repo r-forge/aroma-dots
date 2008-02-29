@@ -12,5 +12,4 @@ print(cdf);
 
 ae <- ArrayExplorer(cs);
 setColorMaps(ae, "log2,yellow");
-if (interactive())
-  process(ae, verbose=log);
+process(ae, verbose=log);
