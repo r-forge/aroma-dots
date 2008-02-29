@@ -63,8 +63,8 @@ setMethodS3("calculateFieldBoxplotStats", "ChipEffectSet", function(this, field=
 
   verbose && enter(verbose, "Calculating '", field, 
                   "' statistics for ", nbrOfArrays, " (specified) arrays");
-  verbose && cat(verbose, "Subset of units used:");
-  verbose && str(verbose, units);
+  verbose && cat(verbose, "Using (unit,group,cell) map:");
+  verbose && str(verbose, ugcMap);
   
   # For each file, calculate boxplot statistics
   stats <- list();
@@ -153,8 +153,8 @@ setMethodS3("calculateRleBoxplotStats", "ChipEffectSet", function(this, arrays=N
 
   verbose && enter(verbose, "Calculating RLE statistics for ", nbrOfArrays, 
                                                     " (specified) arrays");
-  verbose && cat(verbose, "Subset of units used:");
-  verbose && str(verbose, units);
+  verbose && cat(verbose, "Using (unit,group,cell) map:");
+  verbose && str(verbose, ugcMap);
   
   # For each file, calculate boxplot statistics
   stats <- list();
@@ -245,8 +245,8 @@ setMethodS3("calculateNuseBoxplotStats", "ChipEffectSet", function(this, arrays=
 
   verbose && enter(verbose, "Calculating NUSE statistics for ", nbrOfArrays, 
                                                     " (specified) arrays");
-  verbose && cat(verbose, "Subset of units used:");
-  verbose && str(verbose, units);
+  verbose && cat(verbose, "Using (unit,group,cell) map:");
+  verbose && str(verbose, ugcMap);
 
   # For each file, calculate boxplot statistics
   stats <- list();
