@@ -3,6 +3,7 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   cdf <- getCdf(this);
+  ugcMap <- NULL;
 
   # Argument 'units':
   if (is.null(units)) {

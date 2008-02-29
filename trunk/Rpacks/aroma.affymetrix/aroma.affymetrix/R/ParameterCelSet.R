@@ -76,6 +76,8 @@ setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'units':
   cdf <- getCdf(this);
+  ugcMap <- NULL;
+
   if (is.null(units)) {
     nunits <- nbrOfUnits(cdf);
   } else if (inherits(units, "UnitGroupCellMap")) {
