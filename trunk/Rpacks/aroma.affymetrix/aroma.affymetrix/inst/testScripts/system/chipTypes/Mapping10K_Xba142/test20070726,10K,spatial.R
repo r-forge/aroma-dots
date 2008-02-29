@@ -29,8 +29,7 @@ ae <- ArrayExplorer(cs);
 setColorMaps(ae, "sqrt,yellow");
 print(ae);
 stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
-if (interactive())
-  process(ae, verbose=log);
+process(ae, verbose=log);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -44,5 +43,4 @@ ae <- ArrayExplorer(rs);
 setColorMaps(ae, c("log2,log2neg,rainbow", "log2,log2pos,rainbow"));
 print(ae);
 stopifnot(identical(unname(getArrays(ae)), getNames(cs)));
-if (interactive())
-  process(ae, interleaved="auto", verbose=log);
+process(ae, interleaved="auto", verbose=log);
