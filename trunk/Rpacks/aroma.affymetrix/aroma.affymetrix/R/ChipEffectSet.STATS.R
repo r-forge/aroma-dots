@@ -58,6 +58,9 @@ setMethodS3("calculateFieldBoxplotStats", "ChipEffectSet", function(this, field=
   }
 
 
+  # Get the (unit, group, cell) map
+  ugcMap <- getUnitGroupCellMap(this, units=units, verbose=less(verbose, 5));
+
   verbose && enter(verbose, "Calculating '", field, 
                   "' statistics for ", nbrOfArrays, " (specified) arrays");
   verbose && cat(verbose, "Subset of units used:");
@@ -70,7 +73,7 @@ setMethodS3("calculateFieldBoxplotStats", "ChipEffectSet", function(this, field=
     cef <- getFile(this, array);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                           kk, getName(cef), nbrOfArrays));
-    data <- extractMatrix(cef, units=units, fields=field);
+    data <- extractMatrix(cef, fields=field, ugcMap=ugcMap);
     data <- as.vector(data);
     if (is.function(transform)) {
       data <- transform(data);
@@ -134,7 +137,8 @@ setMethodS3("calculateRleBoxplotStats", "ChipEffectSet", function(this, arrays=N
   }
 
 
-  
+  # Get the (unit, group, cell) map
+  ugcMap <- getUnitGroupCellMap(this, units=units, verbose=less(verbose, 5));
 
   # get the vector of median stdvs
   verbose && enter(verbose, "Calculating average log chip effects");

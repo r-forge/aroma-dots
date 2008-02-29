@@ -694,3 +694,4 @@
   fromChipType.DChipSnpInformation fromChipType.GenomeInformation
   fromChipType.SnpInformation fromChipType.UgpGenomeInformation
   getColumnNames
+getFirmaSet getUnitGroupCellMap.AffymetrixCelSet

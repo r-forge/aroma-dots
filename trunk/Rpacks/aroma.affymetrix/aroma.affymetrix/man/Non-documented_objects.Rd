@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Wed Feb 27 21:57:23 2008.
+% on Thu Feb 28 18:56:45 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1545,6 +1545,8 @@
 \alias{fromChipType.SnpInformation}
 \alias{fromChipType.UgpGenomeInformation}
 \alias{getColumnNames}
+\alias{getFirmaSet}
+\alias{getUnitGroupCellMap.AffymetrixCelSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
