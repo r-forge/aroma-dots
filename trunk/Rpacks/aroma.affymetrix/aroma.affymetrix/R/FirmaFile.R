@@ -274,8 +274,9 @@ setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=spri
 
 
 setMethodS3("getCellMap", "FirmaFile", function(this, ...) {
+  warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
   getUnitGroupCellMap(this, ...);
-})
+}, deprecated=TRUE)
 
 setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

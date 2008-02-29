@@ -2,102 +2,74 @@ library(aroma.affymetrix);
 
 log <- Arguments$getVerbose(-3);
 timestampOn(log);
+.Machine$float.eps <- sqrt(.Machine$double.eps);
 
+# The reason for observing a small difference is scores below,
+# is that when saving to file the estimates are rounded of to
+# floats, whereas the estimates calculated in memory are kept
+# in full precision.
+tol <- 1e-5;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup data set (from previous file)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 name <- "Affymetrix-HeartBrain";
 chipType <- "HuEx-1_0-st-v2";
-cdfCore <- AffymetrixCdfFile$fromChipType(chipType, tags="core");
-csTissue <- AffymetrixCelSet$fromName(name=name, cdf=cdfCore);
-#Background correction and normalization
-bc <- RmaBackgroundCorrection(csTissue);
-csBCTissue <- process(bc);
-qn <- QuantileNormalization(csBCTissue, typesToUpdate="pm");
-csNTissue <- process(qn);
-#Probe-level summarization
-plmTissue <- ExonRmaPlm(csNTissue, mergeGroups=TRUE);
-cesTissue <- getChipEffectSet(plmTissue);
-plmNoMergeTissue <- ExonRmaPlm(csNTissue, mergeGroups=FALSE);
-cesNoMergeTissue <- getChipEffectSet(plmNoMergeTissue);
+cdf <- AffymetrixCdfFile$fromChipType(chipType, 
+                                         tags="coreR3,A20071112,EP");
+cs <- AffymetrixCelSet$fromName(name=name, cdf=cdf);
 
+# Background correction and normalization
+bc <- RmaBackgroundCorrection(cs);
+csBC <- process(bc, verbose=log);
+qn <- QuantileNormalization(csBC, typesToUpdate="pm");
+csN <- process(qn, verbose=log);
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Merged Groups:
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Probe-level summarization
+plmList <- list(
+  merge   = ExonRmaPlm(csN, mergeGroups=TRUE),
+  noMerge = ExonRmaPlm(csN, mergeGroups=FALSE)
+);
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Manually Calculate RLE/NUSE for first 100 units
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-units<-1:100
-#Rle
-theta <- extractMatrix(cesTissue,field="theta",units=units)
-avg<-getAverageLog(cesTissue,field="intensities", mean="median",verbose=log)
-thetaR <- extractMatrix(avg,field="theta",units=units)
-RLE <- sweep(log2(theta),1,FUN="-",STATS=log2(thetaR))
-#Nuse
-theta <- extractMatrix(cesTissue, field="sdTheta",units=units)
-avg<-getAverageLog(cesTissue,field="stdvs", mean="median", verbose=log)
-thetaR <- extractMatrix(avg,field="theta",units=units)
-NUSE <- sweep(log2(theta),1,FUN="/",STATS=log2(thetaR))
-
+cesList <- lapply(plmList, FUN=getChipEffectSet);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Compare to extractMatrix Results
+# RLE/NUSE for first 100 units
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-testRLE<-extractMatrix(cesTissue,field="RLE",units=units)
-stopifnot(identical(testRLE[,1], RLE[,1]));
-testNUSE<-extractMatrix(cesTissue,field="NUSE",units=units)
-stopifnot(identical(testNUSE[,1], NUSE[,1]));
+units <- 1:100;
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Compare boxplot summaries of manual calculation to calculate{Rle|Nuse}BoxplotStats
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-bxpRLE1<-boxplot.stats(RLE[,1])
-testRLEBxp<-calculateRleBoxplotStats(cesTissue, arrays = 1:2, subset = units) 
-stopifnot(identical(testRLEBxp[[1]]$stats, bxpRLE1$stats));
+# Make sure the units are fitted
+dummy <- lapply(plmList, FUN=fit, units=units, verbose=log);
+rm(dummy);
 
-bxpNUSE1<-boxplot.stats(NUSE[,1])
-testNUSEBxp<-calculateNuseBoxplotStats(cesTissue, arrays = 1:2, subset = units) 
-stopifnot(identical(testNUSEBxp[[1]]$stats, bxpNUSE1$stats));
+for (name in names(cesList)) {
+  log && enter(log, name);
 
+  ces <- cesList[[name]];
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Repeat for No-Merged Groups:
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Assert correctness of unit-specific RLE scores
+  theta <- extractMatrix(ces, field="theta", units=units);
+  thetaR <- 2^rowMedians(log2(theta), na.rm=TRUE);
+  rle0 <- log2(theta/thetaR);
+  rle1 <- extractMatrix(ces, field="RLE", units=units, verbose=log);
+  stopifnot(all.equal(rle1, rle0, tolerance=tol));
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Manually Calculate RLE/NUSE for first 100 units
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-units<-1:100
-#Rle
-theta <- extractMatrix(cesNoMergeTissue,field="theta",units=units)
-avg<-getAverageLog(cesNoMergeTissue,field="intensities", mean="median",verbose=log)
-thetaR <- extractMatrix(avg,field="theta",units=units)
-RLE <- sweep(log2(theta),1,FUN="-",STATS=log2(thetaR))
-#Nuse
-theta <- extractMatrix(cesNoMergeTissue, field="sdTheta",units=units)
-avg<-getAverageLog(cesNoMergeTissue,field="stdvs", mean="median", verbose=log)
-thetaR <- extractMatrix(avg,field="theta",units=units)
-NUSE <- sweep(log2(theta),1,FUN="/",STATS=log2(thetaR))
+  # Assert correctness of boxplot statistics of RLE scores
+  stats0 <- boxplot.stats(rle0[,1]);
+  stats1 <- boxplotStats(ces, type="RLE", arrays=1:2, subset=units);
+  stopifnot(all.equal(stats1[[1]], stats0, tolerance=tol));
+  
+  # Assert correctness of unit-specific NUSE scores
+  se <- extractMatrix(ces, field="sdTheta", units=units);
+  seR <- 2^rowMedians(log2(se), na.rm=TRUE);
+  nuse0 <- log2(se)/log2(seR);
+  nuse1 <- extractMatrix(ces, field="NUSE", units=units, verbose=log);
+  stopifnot(all.equal(nuse1, nuse0, tolerance=tol));
 
+  # Assert correctness of boxplot statistics of NUSE scores
+  stats0 <- boxplot.stats(nuse0[,1]);
+  stats1 <- boxplotStats(ces, type="NUSE", arrays=1:2, subset=units);
+  stopifnot(all.equal(stats1[[1]], stats0, tolerance=tol));
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Compare to extractMatrix Results
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-testRLE<-extractMatrix(cesNoMergeTissue,field="RLE",units=units)
-stopifnot(identical(testRLE[,1], RLE[,1]));
-testNUSE<-extractMatrix(cesNoMergeTissue,field="NUSE",units=units)
-stopifnot(identical(testNUSE[,1], NUSE[,1]));
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Compare boxplot summaries of manual calculation to calculate{Rle|Nuse}BoxplotStats
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-bxpRLE1<-boxplot.stats(RLE[,1])
-testRLEBxp<-calculateRleBoxplotStats(cesNoMergeTissue, arrays = 1:2, subset = units) 
-stopifnot(identical(testRLEBxp[[1]]$stats, bxpRLE1$stats));
-
-bxpNUSE1<-boxplot.stats(NUSE[,1])
-testNUSEBxp<-calculateNuseBoxplotStats(cesNoMergeTissue, arrays = 1:2, subset = units) 
-stopifnot(identical(testNUSEBxp[[1]]$stats, bxpNUSE1$stats));
+  log && exit(log);
+} # for (name in ...)

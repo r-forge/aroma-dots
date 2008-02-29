@@ -184,7 +184,8 @@ setMethodS3("getRootPath", "FirmaModel", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getFirmaScores
+# @RdocMethod getFirmaSet
+# @aliasmethod getFirmaScores
 #
 # @title "Gets the set of FIRMA results for this model"
 #
@@ -210,7 +211,7 @@ setMethodS3("getRootPath", "FirmaModel", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFirmaScores", "FirmaModel", function(this, ..., verbose=FALSE) {
+setMethodS3("getFirmaSet", "FirmaModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -246,6 +247,11 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ..., verbose=FALSE) {
 
   fs;
 })
+
+setMethodS3("getFirmaScores", "FirmaModel", function(this, ...) {
+  getFirmaSet(this, ...);
+})
+
 
 ###########################################################################/**
 # @RdocMethod calculateResiduals
@@ -729,6 +735,8 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,fo
 
 ############################################################################
 # HISTORY:
+# 2008-02-28 [HB]
+# o Added getFirmaSet() (to replace getFirmaScores()?).
 # 2007-12-13 [HB]
 # o Updated getAsteriskTags() and getTags().
 # 2007-12-10 [HB]

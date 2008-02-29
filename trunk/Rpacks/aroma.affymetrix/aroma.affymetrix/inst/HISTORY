@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.0 [2008-02-27xx]
+Version: 0.9.0 [2008-02-28]
 o UPDATE/ROBUSTNESS: Now AromaUnitTabularBinaryFile:s stores the 
   chip type in the file footer.  This allows us to identify the 
   correct file gives a full chip type.  Because of this update, 
