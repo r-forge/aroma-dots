@@ -9,60 +9,62 @@ timestampOn(log);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 name <- "Affymetrix-HeartBrain";
 chipType <- "HuEx-1_0-st-v2";
-cdfCore <- AffymetrixCdfFile$fromChipType(chipType, tags="core");
-print(cdfCore);
+cdf <- AffymetrixCdfFile$fromChipType(chipType, 
+                                         tags="coreR3,A20071112,EP");
+print(cdf);
 
 # Setup CEL set using the core CDF.
-csTissue <- AffymetrixCelSet$fromName(name=name, cdf=cdfCore);
-print(csTissue);
+cs <- AffymetrixCelSet$fromName(name=name, cdf=cdf);
+print(cs);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Background correction and normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-bc <- RmaBackgroundCorrection(csTissue);
+bc <- RmaBackgroundCorrection(cs);
 print(bc);
-csBCTissue <- process(bc, verbose=log);
-print(csBCTissue);
+csBC <- process(bc, verbose=log);
+print(csBC);
 
-qn <- QuantileNormalization(csBCTissue, typesToUpdate="pm");
+qn <- QuantileNormalization(csBC, typesToUpdate="pm");
 print(qn);
-csNTissue <- process(qn, verbose=log);
-print(csNTissue);
+csN <- process(qn, verbose=log);
+print(csN);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level summarization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# if mergeGroups == FALSE, then each exon separately
-plmTissue <- ExonRmaPlm(csNTissue, mergeGroups=TRUE);
-print(plmTissue);
+# Probe-level summarization
+plmList <- list(
+  merge   = ExonRmaPlm(csN, mergeGroups=TRUE), # all exons together
+  noMerge = ExonRmaPlm(csN, mergeGroups=FALSE) # each exon separately
+);
+print(plmList);
 
-# if mergeGroups == FALSE, then each exon separately
-plmNoMergeTissue <- ExonRmaPlm(csNTissue, mergeGroups=FALSE);
-print(plmNoMergeTissue);
-
-fit(plmTissue, verbose=log);
-fit(plmNoMergeTissue, verbose=log);
+# Fit the PLMs
+dummy <- lapply(plmList, FUN=fit, verbose=log);
+rm(dummy);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # FIRMA
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-rsTissue <- calculateResiduals(plmTissue, verbose=log);
-wsTissue <- calculateWeights(plmTissue,verbose=log);
-rsNoMergeTissue <- calculateResiduals(plmNoMergeTissue, verbose=log);
-wsNoMergeTissue <- calculateWeights(plmNoMergeTissue,verbose=log);
+firmaList <- lapply(plmList, FUN=FirmaModel);
+print(firmaList);
 
-pafTissue <- getProbeAffinityFile(plmTissue);
-cesTissue <- getChipEffectSet(plmTissue);
-cesNoMergeTissue <- getChipEffectSet(plmNoMergeTissue);
-pafNoMergeTissue <- getProbeAffinityFile(plmNoMergeTissue);
-
-firma <- FirmaModel(plmTissue);
-print(firma);
-
+# FIRMA for one of the PLMs
+firma <- firmaList$merge;
 fit(firma, verbose=log);
+fScores <- getFirmaScores(firma);
+print(fScores);
 
-fsTissue <- getFirmaScores(firma);
-print(fsTissue);
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Residuals and weights (actually already calculated by FIRMA)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+resList <- lapply(plmList, FUN=calculateResiduals, verbose=log);
+print(resList);
+
+weightList <- lapply(plmList, FUN=calculateWeights, verbose=log);
+print(weightList);

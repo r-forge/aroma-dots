@@ -286,8 +286,10 @@ setMethodS3("findUnitsTodo", "WeightsFile", function(this, units=NULL, ..., forc
 
 
 setMethodS3("getCellMap", "WeightsFile", function(this, ...) {
+  warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
   getUnitGroupCellMap(this, ...);
-})
+}, deprecated=TRUE)
+
 
 setMethodS3("getUnitGroupCellMap", "WeightsFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

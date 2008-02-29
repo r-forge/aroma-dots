@@ -1363,9 +1363,17 @@ setMethodS3("getFullName", "AffymetrixCelSet", function(this, parent=1, ...) {
 })
 
 
+setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
+  ce <- getFile(this, 1);
+  getUnitGroupCellMap(ce, ...);
+})
+
+
 
 ############################################################################
 # HISTORY:
+# 2008-02-28
+# o Added getUnitGroupCellMap() to all AffymetrixCelSet classes.
 # 2008-02-25
 # o Now fromFiles() of AffymetrixCelSet uses the file cache, which speed up
 #   the setup for extremely large data sets.  Note, currently the default

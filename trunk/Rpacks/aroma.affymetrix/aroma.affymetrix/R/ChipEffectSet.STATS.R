@@ -1,10 +1,10 @@
-setMethodS3("boxplotStats", "ChipEffectSet", function(this, type=c("NUSE", "RLE"), ...) {
+setMethodS3("boxplotStats", "ChipEffectSet", function(this, type=c("NUSE", "RLE"), transform=NULL, ...) {
   if (toupper(type) == "NUSE") {
-    calculateNuseBoxplotStats(this, ...);    
+    calculateNuseBoxplotStats(this, ...);
   } else if (toupper(type) == "RLE") {
-    calculateRleBoxplotStats(this, ...);    
+    calculateRleBoxplotStats(this, ...);
   } else {
-    calculateFieldBoxplotStats(this, field=type, ...);
+    calculateFieldBoxplotStats(this, field=type, transform=transform, ...);
   }
 })
 
@@ -60,6 +60,8 @@ setMethodS3("calculateFieldBoxplotStats", "ChipEffectSet", function(this, field=
 
   verbose && enter(verbose, "Calculating '", field, 
                   "' statistics for ", nbrOfArrays, " (specified) arrays");
+  verbose && cat(verbose, "Subset of units used:");
+  verbose && str(verbose, units);
   
   # For each file, calculate boxplot statistics
   stats <- list();
@@ -73,7 +75,7 @@ setMethodS3("calculateFieldBoxplotStats", "ChipEffectSet", function(this, field=
     if (is.function(transform)) {
       data <- transform(data);
     }
-    stats[[kk]] <- boxplot.stats(data);
+    stats[[kk]] <- boxplot.stats(data, ...);
     rm(data);
     verbose && exit(verbose);
   }
@@ -136,16 +138,19 @@ setMethodS3("calculateRleBoxplotStats", "ChipEffectSet", function(this, arrays=N
 
   # get the vector of median stdvs
   verbose && enter(verbose, "Calculating average log chip effects");
-  avg <- getAverageLog(this, field="intensities", indices=units, 
-                                                         verbose=verbose);
+  # Calculating the average on the log (but stored on the intensity) scale.
+  avg <- getAverageLog(this, field="intensities", verbose=verbose);
   verbose && exit(verbose);
 
-  medianLE <- getData(avg, indices=units, "intensities")$intensities;
-  medianLE <- log2(medianLE);
+  medianLE <- extractMatrix(avg, field="theta", ugcMap=ugcMap, 
+                                                 verbose=less(verbose, 5));
+  medianLE <- log2(as.vector(medianLE));
   rm(avg);
 
   verbose && enter(verbose, "Calculating RLE statistics for ", nbrOfArrays, 
                                                     " (specified) arrays");
+  verbose && cat(verbose, "Subset of units used:");
+  verbose && str(verbose, units);
   
   # For each file, calculate boxplot statistics
   stats <- list();
@@ -155,9 +160,16 @@ setMethodS3("calculateRleBoxplotStats", "ChipEffectSet", function(this, arrays=N
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                           kk, getName(cef), nbrOfArrays));
 
-    theta <- getData(cef, indices=units, "intensities")$intensities;
-    theta <- log2(theta);
-    stats[[kk]] <- boxplot.stats(theta-medianLE);
+    theta <- extractMatrix(cef, field="theta", ugcMap=ugcMap, 
+                                                verbose=less(verbose, 5));
+    theta <- log2(as.vector(theta));
+
+    # Sanity check
+    if (length(theta) != length(medianLE)) {
+      throw("Internal error: The number of 'theta' does not match the number of 'medianLE': ", length(theta), " != ", length(medianLE));
+    }
+
+    stats[[kk]] <- boxplot.stats(theta-medianLE, ...);
     rm(theta);
     verbose && exit(verbose);
   }
@@ -211,22 +223,27 @@ setMethodS3("calculateNuseBoxplotStats", "ChipEffectSet", function(this, arrays=
     units <- 1:nbrOfUnits;
   }
 
- 
+
+  # Get the (unit, group, cell) map
+  ugcMap <- getUnitGroupCellMap(this, units=units, verbose=less(verbose, 5));
 
   # get the vector of median stdvs
   verbose && enter(verbose, "Extracting average standard errors across all arrays in the set");
-  verbose && cat(verbose, "Units:");
-  verbose && str(verbose, units);
-  avg <- getAverageLog(this, field="stdvs", indices=units, verbose=verbose);
+  # Calculating the average on the log (but stored on the intensity) scale.
+  avg <- getAverageLog(this, field="stdvs", verbose=verbose);
   verbose && exit(verbose);
 
-  medianSE <- getData(avg, indices=units, "intensities")$intensities;
-  medianSE <- log2(medianSE);
+  # Note, the average of the 'stdvs' is stored in the 'theta' field.
+  medianSE <- extractMatrix(avg, field="theta", ugcMap=ugcMap, 
+                                                 verbose=less(verbose, 5));
   rm(avg);
+  medianSE <- log2(as.vector(medianSE));
 
   verbose && enter(verbose, "Calculating NUSE statistics for ", nbrOfArrays, 
                                                     " (specified) arrays");
-  
+  verbose && cat(verbose, "Subset of units used:");
+  verbose && str(verbose, units);
+
   # For each file, calculate boxplot statistics
   stats <- list();
   for (kk in seq(along=arrays)) {
@@ -234,9 +251,16 @@ setMethodS3("calculateNuseBoxplotStats", "ChipEffectSet", function(this, arrays=
     cef <- getFile(this, array);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                           kk, getName(cef), nbrOfArrays));
-    stdvs <- getData(cef, indices=units, "stdvs")$stdvs;
-    stdvs <- log2(stdvs);
-    stats[[kk]] <- boxplot.stats(stdvs/medianSE);
+    stdvs <- extractMatrix(cef, field="sdTheta", ugcMap=ugcMap, 
+                                                verbose=less(verbose, 5));
+    stdvs <- log2(as.vector(stdvs));
+
+    # Sanity check
+    if (length(stdvs) != length(medianSE)) {
+      throw("Internal error: The number of 'stdvs' does not match the number of 'medianSE': ", length(stdvs), " != ", length(medianSE));
+    }
+
+    stats[[kk]] <- boxplot.stats(stdvs/medianSE, ...);
     rm(stdvs);
     verbose && exit(verbose);
   }
@@ -256,6 +280,11 @@ setMethodS3("calculateNuseBoxplotStats", "ChipEffectSet", function(this, arrays=
 
 ##########################################################################
 # HISTORY:
+# 2008-02-28 [EP]
+# o Now '...' are passed to boxplot.stats().
+# o BUG FIX: Now extractMatrix() is used internally to calculate the
+#   'RLE' and the 'NUSE' stats.  Before getData() was used which is not
+#   "sensitive" to arguments such as 'mergeGroups', 'mergeAlleles' etc.
 # 2008-02-25
 # o Renamed to make it explicit that it is boxplot stats that are 
 #   calculated.

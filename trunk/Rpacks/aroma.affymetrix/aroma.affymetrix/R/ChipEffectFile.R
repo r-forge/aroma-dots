@@ -649,8 +649,9 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
 
 
 setMethodS3("getCellMap", "ChipEffectFile", function(this, ...) {
+  warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
   getUnitGroupCellMap(this, ...);
-})
+}, deprecated=TRUE)
 
 
 setMethodS3("getDataFlat", "ChipEffectFile", function(this, units=NULL, fields=c("theta", "sdTheta", "outliers"), ..., verbose=FALSE) {

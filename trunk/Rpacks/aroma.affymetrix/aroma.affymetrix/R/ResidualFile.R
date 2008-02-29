@@ -288,8 +288,9 @@ setMethodS3("findUnitsTodo", "ResidualFile", function(this, units=NULL, ..., for
 
 
 setMethodS3("getCellMap", "ResidualFile", function(this, ...) {
+  warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
   getUnitGroupCellMap(this, ...);
-})
+}, deprecated=TRUE)
 
 
 setMethodS3("getUnitGroupCellMap", "ResidualFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
