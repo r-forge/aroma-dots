@@ -23,5 +23,4 @@ for (chipType in chipTypes) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ae <- ArrayExplorer(csRawList);
 setColorMaps(ae, "log2,yellow");
-if (interactive())
-  process(ae, verbose=log);
+process(ae, verbose=log);

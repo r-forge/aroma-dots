@@ -50,5 +50,4 @@ print(rs);
 ae <- ArrayExplorer(rs);
 setColorMaps(ae, c("log2,log2neg,rainbow", "log2,log2pos,rainbow"));
 print(ae);
-if (interactive())
-  process(ae, verbose=log);
+process(ae, verbose=log);

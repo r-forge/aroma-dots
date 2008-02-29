@@ -29,5 +29,4 @@ stopifnot(identical(getNames(cs), sampleNames));
 ae <- ArrayExplorer(cs);
 setColorMaps(ae, c("sqrt,yellow", "log2,yellow"));
 print(ae);
-if (interactive())
-  process(ae, verbose=log);
+process(ae, verbose=log);
