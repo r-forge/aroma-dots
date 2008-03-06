@@ -46,7 +46,7 @@ setMethodS3("patchPackage", "default", function(pkgName, paths=c("~/.Rpatches/",
     verbose && enter(verbose, "Root path: ", rootPath);
   
     # Search for patch directories
-    pattern <- "^20[0-9][0-9][01][0-9][0-3][0-9](|[a-z])";
+    pattern <- "^20[0-9][0-9][01][0-9][0-3][0-9](|[abcdefghijklmnopqrstuvwxyz])";
     paths <- list.files(path=rootPath, pattern=pattern, full.names=TRUE);
     if (length(paths) > 0)
       paths <- paths[sapply(paths, FUN=isDirectory)];

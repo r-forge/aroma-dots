@@ -73,7 +73,7 @@ setMethodS3("setAttributesByTags", "AffymetrixFile", function(this, tags=getTags
   newAttrs <- list();
 
   # Get all <name>=<value> tags
-  pattern <- "^([A-z][A-z0-9]*)=(.*)$";
+  pattern <- "^([abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]+)=(.*)$";
   values <- grep(pattern, tags, value=TRUE);
   for (kk in seq(along=values)) {
     tag <- values[[kk]];
