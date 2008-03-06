@@ -1,6 +1,6 @@
 Package: aroma.affymetrix.tools
-Version: 0.0.1
-Date: 2007-10-23
+Version: 0.0.3
+Date: 2008-02-22
 Title: Tools for aroma.affymetrix
 Author: Mark Robinson <mrobinson@wehi.edu.au>
 Maintainer: Mark Robinson <mrobinson@wehi.edu.au>
