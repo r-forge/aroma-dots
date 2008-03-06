@@ -32,7 +32,7 @@ setMethodS3("getFilename", "Arguments", function(static, filename, nchar=c(1,64)
   chars <- filename;
 
   # Always valid characters
-  chars <- gsub("[a-zA-Z0-9_.,]", "", chars);
+  chars <- gsub("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0-9_.,]", "", chars);
   chars <- gsub("[-]", "", chars);
   chars <- gsub("[+]", "", chars);
 

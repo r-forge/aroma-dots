@@ -275,7 +275,7 @@ setMethodS3("getFullName", "GenericDataFile", function(this, ...) {
   name <- basename(pathname);
 
   # Exclude filename extension
-  name <- gsub("[.][a-zA-Z0-9][a-zA-Z0-9]*$", "", name);
+  name <- gsub("[.][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0-9]+$", "", name);
 
   name;
 })
@@ -444,7 +444,7 @@ setMethodS3("hasTag", "GenericDataFile", function(this, tag, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getFileType", "GenericDataFile", function(this, ...) {
-  pattern <- "(.*)[.]([a-zA-Z0-9][a-zA-Z0-9]*)$";
+  pattern <- "(.*)[.]([abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0-9]+)$";
   ext <- gsub(pattern, "\\2", this$.pathname);
   tolower(ext);
 })

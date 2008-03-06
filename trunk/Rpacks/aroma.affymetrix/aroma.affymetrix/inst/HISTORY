@@ -4,10 +4,11 @@ Package: aroma.affymetrix
 Version: 0.9.1 [2008-03-05xx]
 o Now setCdf() also reports on the two incompatible chip types involved 
   if trying to set a CDF that is not compatible with a CEL file.
-o BUG FIX: At least in one case on OSX, creating a new UGP/UFL file
-  with AromaUgpFile$allocateFromCdf() would give "Error in regexpr(
-  pattern, xml) : invalid regular expression '^<([a-Z][^>]*)>(.*)'".
-  Replacing '[a-Z]' with '[a-zA-Z]' solved the problem.
+o BUG FIX: Regular expression pattern 'a-Z' is illegal on (at least) 
+  with locale, e.g. 'C' (where 'A-z' works). The only way to specify 
+  the ASCII alphabet is to list all characters explicitly, which we now
+  do in all methods of the package.  See the r-devel thread 
+  "invalid regular expression '[a-Z]'" on 2008-03-05 for details.
 
 
 Version: 0.9.0 [2008-02-29]
