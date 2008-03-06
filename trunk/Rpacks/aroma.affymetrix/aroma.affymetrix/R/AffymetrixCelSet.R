@@ -338,7 +338,7 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
     # Assure that the CDF is compatible with the CEL file
     cf <- getFile(this, 1);
     if (nbrOfCells(cdf) != nbrOfCells(cf)) {
-      throw("The specified CDF structure is not compatible with the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(cf));
+      throw("The specified CDF structure ('", getChipType(cdf), "') is not compatible with the chip type ('", getChipType(cf), "') of the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(cf));
     }
   }
 
@@ -583,14 +583,14 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Scan for SAF files and apply them
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Scanning for and applying annotation files");
+  verbose && enter(verbose, "Scanning for and applying sample annotation files");
   sasPath <- "annotationData/samples/";
   sasPath <- filePath(sasPath, expandLinks="any");
   mkdirs(sasPath);
 
   sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
   if (nbrOfFiles(sas) == 0) {
-    verbose && cat(verbose, "No annotation files found.");
+    verbose && cat(verbose, "No sample annotation files found.");
   } else {
     verbose && print(verbose, sas);
     setAttributesBy(set, sas);
@@ -1372,6 +1372,8 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-03-05
+# o Updated message specifying that it looks for *sample* annotation files.
 # 2008-02-28
 # o Added getUnitGroupCellMap() to all AffymetrixCelSet classes.
 # 2008-02-25

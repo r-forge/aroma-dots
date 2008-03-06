@@ -289,7 +289,7 @@ setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ..., .checkArgs=T
   
     # Assure that the CDF is compatible with the CEL file
     if (nbrOfCells(cdf) != nbrOfCells(this)) {
-      throw("The specified CDF structure is not compatible with the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(this));
+      throw("The specified CDF structure ('", getChipType(cdf), "') is not compatible with the chip type ('", getChipType(this), "') of the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(this));
     }
 
     # Nothing to do?
@@ -821,6 +821,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf),
 
 ############################################################################
 # HISTORY:
+# 2008-03-05
+# o Now setCdf() also reports on the two incompatible chip types involved 
+#   if trying to set a CDF that is not compatible with a CEL file.
 # 2008-02-21
 # o Updated getTimestamp() to also support Calvin files containing only
 #   a partial DAT header.

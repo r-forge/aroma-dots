@@ -57,7 +57,7 @@ setMethodS3("xmlToList", "character", function(xml, ...) {
 
     while (nchar(xml) > 0) {
       # Find first tag
-      pattern <- "^<([a-Z][^>]*)>(.*)";
+      pattern <- "^<([a-zA-Z][^>]*)>(.*)";
       hasStartTag <- (regexpr(pattern, xml) != -1);
       if (hasStartTag) {
         # Find second tag
@@ -100,6 +100,9 @@ setMethodS3("xmlToList", "character", function(xml, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-03-05
+# o BUG FIX: Regular expression pattern 'a-Z' is illegal on (at least) some
+#   OSX systems (where 'A-z' works). Replaced it with the safer 'a-zA-Z'.
 # 2008-02-13
 # o Validation test: identical(tree, xmlToList(listToXml(tree)))
 # o Created to support read/write of footer in AromaTabularBinaryFile.R.
