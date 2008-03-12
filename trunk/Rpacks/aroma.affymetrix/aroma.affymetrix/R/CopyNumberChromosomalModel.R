@@ -271,10 +271,14 @@ setMethodS3("getReferenceSetTuple", "CopyNumberChromosomalModel", function(this,
 setMethodS3("getMatrixChipEffectFiles", "CopyNumberChromosomalModel", function(this, array, ..., verbose=FALSE) {
   cesTuple <- getSetTuple(this);
   refTuple <- getReferenceSetTuple(this);
-  ceList <- getTuple(cesTuple, array=array, ..., verbose=less(verbose,1));
-  rfList <- getTuple(refTuple, array=array, ..., verbose=less(verbose,1));
+
+  ceList <- getArrayTuple(cesTuple, array=array, ..., verbose=less(verbose,1));
+  rfList <- getArrayTuple(refTuple, array=array, ..., verbose=less(verbose,1));
+
+  # Sanity check
   if (!identical(names(ceList), names(rfList)))
     throw("Internal error. Reference files of non-matching chip types.");
+
   files <- c(ceList, rfList);
   dim(files) <- c(length(ceList), 2);
   dimnames(files) <- list(names(ceList), c("test", "reference"));
@@ -329,7 +333,6 @@ setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList,
   chipTypes <- getChipTypes(this);
   arrayNames <- getArrays(this);
 
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get (x, M, stddev, chiptype, unit) from all chip types
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -350,7 +353,8 @@ setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList,
       df0 <- df0[,c("x", "M")];
       verbose && cat(verbose, "Number of units: ", nrow(df0));
 
-      # Estimate the std dev of the raw log2(CN).  [only if ref is average across arrays]
+      # Estimate the std dev of the raw log2(CN). 
+      # [only if ref is average across arrays]
       units0 <- as.integer(rownames(df0));
       # Get (mu, sigma) of theta (estimated across all arrays).
       data <- getDataFlat(ref, units=units0, verbose=less(verbose));
@@ -477,6 +481,8 @@ setMethodS3("calculateChromosomeStatistics", "CopyNumberChromosomalModel", funct
         median = median(M, na.rm=TRUE),
         mad = mad(M, na.rm=TRUE),
         quantiles = quantile(M, probs=seq(0,1,by=0.01), na.rm=TRUE),
+        sdDiff = sd(diff(M), na.rm=TRUE)/sqrt(2),
+        madDiff = mad(diff(M), na.rm=TRUE)/sqrt(2),
         nbrOfLoci = length(M),
         nbrOfNAs = sum(is.na(M))
       );
@@ -577,8 +583,93 @@ setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this
 })
 
 
+
+
+###########################################################################/**
+# @RdocMethod estimateSds
+#
+# @title "Estimates the standard deviation of the raw copy numbers (log2-ratios) robustly"
+#
+# \description{
+#  @get "title" using a first-order difference variance estimator, which is
+#  an estimator that is fairly robust for change points.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{arrays}{The arrays to be queried.}
+#   \item{chromosomes}{The chromosomes to be queried.}
+#   \item{...}{Additional arguments passed to 
+#      @seemethod "extractRawCopyNumbers".}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a CxK @double @matrix where C is the number of chromosomes, 
+#  and K is the number of arrays (arrays are always the last dimension).
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/########################################################################### 
+setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=seq(length=nbrOfArrays(this)), chromosomes=getChromosomes(this), ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'arrays':
+  arrays <- indexOfArrays(this, arrays=arrays);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  nbrOfChromosomes <- length(chromosomes);
+
+  res <- matrix(NA, nrow=nbrOfChromosomes, ncol=length(arrays));
+  colnames(res) <- getArrays(this)[arrays];
+  rownames(res) <- chromosomes;
+
+
+  for (rr in seq(length=nbrOfChromosomes)) {
+    chromosome <- chromosomes[rr];
+    verbose && enter(verbose, "Chromosome #", rr, " of ", nbrOfChromosomes);
+
+    for (cc in seq(along=arrays)) {
+      array <- arrays[cc];
+      verbose && enter(verbose, "Array #", cc, " of ", length(arrays));
+
+      rawCns <- extractRawCopyNumbers(this, array=array, chromosome=chromosome, ..., verbose=less(verbose,5));
+
+#      verbose && enter(verbose, "First-order robust variance estimator");
+      res[rr,cc] <- mad(rawCns);
+      rm(rawCns);
+#      verbose && exit(verbose);
+
+      verbose && exit(verbose);
+    }
+
+    verbose && exit(verbose);
+  }
+
+  res;
+}, protected=TRUE)
+
+
+
+
+
 ##############################################################################
 # HISTORY:
+# 2008-03-10
+# o Added estimateSds() with Rdoc comments.
 # 2007-11-27
 # o Changed default 'maxNAFraction' to 1/5 (from 1/8) in getRawCnData().
 # o BUG FIX: Two different clearCache() was defined.

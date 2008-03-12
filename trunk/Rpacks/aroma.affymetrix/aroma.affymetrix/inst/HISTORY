@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.1 [2008-03-05xx]
+Version: 0.9.1 [2008-03-11xx]
 o Now setCdf() also reports on the two incompatible chip types involved 
   if trying to set a CDF that is not compatible with a CEL file.
 o BUG FIX: Regular expression pattern 'a-Z' is illegal on (at least) 
@@ -9,6 +9,26 @@ o BUG FIX: Regular expression pattern 'a-Z' is illegal on (at least)
   the ASCII alphabet is to list all characters explicitly, which we now
   do in all methods of the package.  See the r-devel thread 
   "invalid regular expression '[a-Z]'" on 2008-03-05 for details.
+o BUG FIX: extractMatrix(..., cells=NULL), the default, would throw
+  'Error in order(cells) : argument 1 is not a vector'.
+o BUG FIX: getUnitIntensities() would not pass arguments '...', e.g.
+  'stratifyBy', to readUnits() for AffymetrixCdfFile.  Thanks to
+  Tim Keighley, CSIRO, Sydney, for reporting this.
+o BUG FIX: Calling readUnits() of an AffymetrixCdfFile without specifying
+  the 'units' argument gave an error.  Thanks again Tim Keighley.
+o BUG FIX: Calling readUnits(..., units=cdfUnits, stratifyBy=stratifyBy)
+  twice with different 'stratifyBy' arguments and with a 'cdfUnits' list
+  structure containing the identical set of unit names, would cause 
+  readUnits() to incorrectly return cached results from the previous call.
+o BETA: Added isUnitGroupCellMap().
+o BETA: Added estimateSds() to CopyNumberChromosomalModel for estimating
+  the standard deviation of the raw CNs (log2-ratios) robustly and so
+  that change points have minimal impact. This is done by using a
+  first-order difference variance estimator.  The reading of the data
+  can definitely be made faster, but at least it works for now.  Added
+  redundancy tests for this based on the 10K and the 100K chip types.
+o BETA: Added getUnitGroupCellChromosomePositionMap() to both
+  AffymetrixCdfFile and ChipEffectFile.
 
 
 Version: 0.9.0 [2008-02-29]

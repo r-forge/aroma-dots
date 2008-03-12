@@ -303,6 +303,8 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
         rawCns <- extractRawCopyNumbers(fit);
         nbrOfLoci <- nbrOfLoci(rawCns);
         verbose && print(verbose, rawCns);
+        sigmaM <- mad(rawCns);
+        verbose && printf(verbose, "Robust first-order standard deviation estimate: %g\n", sigmaM);
         cnRegions <- extractCopyNumberRegions(fit);
         verbose && print(verbose, cnRegions);
         rm(rawCns, cnRegions);  # Not needed anymore
@@ -656,6 +658,8 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2008-03-10
+# o Now verbose output of fit() reports the robust estimate of the log-ratios.
 # 2008-02-27
 # o BUG FIX: The URLs returned by getRegions() had broken positions.
 # 2007-10-17

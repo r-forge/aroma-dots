@@ -513,7 +513,8 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  useFileCache <- (is.null(units) || (!is.list(units) && length(units) > 10000));
+#  useFileCache <- (is.null(units) || (!is.list(units) && length(units) > 10000));
+  useFileCache <- (is.null(units) || (!is.list(units) && length(units) > 100));
   if (useFileCache) {
     chipType <- getChipType(cdf);
     # Look up chip-type and parameter specific but data set independent data
@@ -652,6 +653,130 @@ setMethodS3("getCellMap", "ChipEffectFile", function(this, ...) {
   warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
   getUnitGroupCellMap(this, ...);
 }, deprecated=TRUE)
+
+
+
+setMethodS3("getUnitGroupCellChromosomePositionMap", "ChipEffectFile", function(this, units=NULL, chromosomes=NULL, orderByPosition=TRUE, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  cdf <- getCdf(this);
+
+  # Argument 'units':
+  ugcMap <- NULL;
+  if (is.null(units)) {
+  } else if (isUnitGroupCellMap(units)) {
+    ugcMap <- units;
+    units <- ugcMap[,"unit"];
+  }
+  if (!is.null(units)) {
+    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+  }
+  units0 <- units;
+
+  # Get the genome position information
+  gi <- getGenomeInformation(cdf);
+
+  # Argument 'chromosomes':
+  if (!is.null(chromosomes)) {
+    allChromosomes <- getChromosomes(gi);
+    unknown <- chromosomes[!(chromosomes %in% allChromosomes)];
+    if (length(unknown) > 0) {
+      throw("Argument 'chromosomes' contains unknown values: ", 
+                                 paste(unknown, collapse=", "));
+    }
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Getting (unit, group, cell, chromosome, position) map");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached results
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Look for results in file cache 
+  verbose && enter(verbose, "Checking cache");
+  chipType <- getChipType(cdf);
+  key <- list(method="getUnitGroupCellChromosomePositionMap", 
+              class=class(this)[1], 
+              chipType=chipType, units=units, ugcMap=ugcMap,
+              chromosomes=chromosomes, orderByPosition=orderByPosition);
+  dirs <- c("aroma.affymetrix", chipType);
+  if (!force) {
+    map <- loadCache(key=key, dirs=dirs); 
+    if (!is.null(map)) {
+      verbose && cat(verbose, "Found cached results");
+      verbose && exit(verbose);
+      return(map);
+    }
+  }
+
+
+  # Select by chromosome(s)?
+  if (!is.null(chromosomes)) {
+    verbose && cat(verbose, "Units:");
+    verbose && str(verbose, units);
+    verbose && cat(verbose, "Subset by chromosomes:");
+    verbose && str(verbose, chromosomes);
+    units <- getUnitsOnChromosome(gi, chromosomes);
+    verbose && cat(verbose, "Units:");
+    verbose && str(verbose, units);
+    if (!is.null(units0)) {
+      units <- intersect(units, units0);
+    }
+  }
+  verbose && cat(verbose, "Units:");
+  verbose && str(verbose, units);
+
+
+  # Get the (unit, group, cell) map?
+  if (!isUnitGroupCellMap(ugcMap)) {
+    ugcMap <- getUnitGroupCellMap(this, units=units, force=force, verbose=less(verbose, 10));
+    verbose && cat(verbose, "(unit, group, cell) map:");
+    verbose && str(verbose, ugcMap);
+  }
+
+  # Get the (chromosome, position) map
+  cpMap <- getData(gi, units=ugcMap[,"unit"], force=force, verbose=less(verbose, 10));
+  verbose && cat(verbose, "(chromosome, position) map:");
+  verbose && str(verbose, cpMap);
+
+  # Sanity check
+  stopifnot(nrow(ugcMap) == nrow(cpMap));
+
+  # Merge the two maps
+  map <- cbind(ugcMap, cpMap);
+  rm(ugcMap, cpMap);
+
+  if (orderByPosition) {
+    o <- with(map, order(chromosome, physicalPosition));
+    map <- map[o,,drop=FALSE];
+    rm(o);
+    verbose && cat(verbose, "Reordered by genomic position");
+  }
+  rownames(map) <- NULL;
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Save to cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Save only results > 50kB
+  if (object.size(map) > 50e3) {
+    saveCache(map, key=key, dirs=dirs); 
+    verbose && cat(verbose, "Saved to file cache");
+  }
+
+  verbose && exit(verbose);
+
+  map;  
+})
+
+
 
 
 setMethodS3("getDataFlat", "ChipEffectFile", function(this, units=NULL, fields=c("theta", "sdTheta", "outliers"), ..., verbose=FALSE) {
@@ -862,6 +987,8 @@ setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("thet
 
 ############################################################################
 # HISTORY:
+# 2008-03-11
+# o Now getUnitGroupCellMap() of ChipEffectFile file caches smaller objects.
 # 2008-02-28
 # o Now a (unit,group,cell) map has class UnitGroupCellMap and no longer
 #   ChipEffectFileCellMap.

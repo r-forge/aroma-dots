@@ -172,7 +172,7 @@ setMethodS3("as.character", "AffymetrixCelSetTuple", function(x, ...) {
 #
 # \details{
 #   If no matching arrays are available for a given chip type, that chip type
-#   is excluded in the returns set tuple.  This guarantees that a set tuple
+#   is excluded in the returned set tuple.  This guarantees that a set tuple
 #   always contains existing arrays.
 # }
 #
@@ -337,7 +337,11 @@ setMethodS3("getFullName", "AffymetrixCelSetTuple", function(this, ...) {
 setMethodS3("getListOfSets", "AffymetrixCelSetTuple", function(this, ...) {
   sets <- this$.csList;
   if (is.null(names(sets))) {
-    names(sets) <- sapply(sets, FUN=function(set) getChipType(getCdf(set), fullname=FALSE));
+    names(sets) <- sapply(sets, FUN=function(set) {
+      cdf <- getCdf(set);
+      getChipType(cdf, fullname=FALSE);
+    });
+    this$.csList <- sets;
   }
   sets;
 })
@@ -541,7 +545,7 @@ setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL,
   
   fullnames <- c();
   for (kk in arrays) {
-    cfList <- getTuple(this, array=kk, ...);
+    cfList <- getArrayTuple(this, array=kk, ...);
     fullname <- getFullNameOfTuple(cfList);
     fullnames <- c(fullnames, fullname);
   }
@@ -664,7 +668,7 @@ setMethodS3("nbrOfArrays", "AffymetrixCelSetTuple", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getTuple
+# @RdocMethod getArrayTuple
 #
 # @title "Gets arrays across chip types for one sample"
 #
@@ -689,7 +693,7 @@ setMethodS3("nbrOfArrays", "AffymetrixCelSetTuple", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getTuple", "AffymetrixCelSetTuple", function(this, array, ...) {
+setMethodS3("getArrayTuple", "AffymetrixCelSetTuple", function(this, array, ...) {
   # Get table of arrays
   arrayTable <- getTableOfArrays(this);
 
@@ -724,7 +728,6 @@ setMethodS3("getTuple", "AffymetrixCelSetTuple", function(this, array, ...) {
 
   tuple;
 })
-
 
 
 setMethodS3("asMatrixOfFiles", "AffymetrixCelSetTuple", function(this, ..., verbose=FALSE) {
@@ -766,6 +769,8 @@ setMethodS3("asMatrixOfFiles", "AffymetrixCelSetTuple", function(this, ..., verb
 
 ##############################################################################
 # HISTORY:
+# 2008-03-11
+# o Renamed getTuple() to getArrayTuple().
 # 2007-03-29
 # o Added asMatrixOfFiles().
 # 2007-03-20

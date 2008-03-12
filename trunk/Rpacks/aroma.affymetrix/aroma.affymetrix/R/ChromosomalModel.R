@@ -568,7 +568,7 @@ setMethodS3("getListOfGenomeInformations", "ChromosomalModel", function(this, ..
 
 setMethodS3("getChipEffectFiles", "ChromosomalModel", function(this, ...) {
   setTuple <- getSetTuple(this);
-  getTuple(setTuple, ...);
+  getArrayTuple(setTuple, ...);
 })
 
 

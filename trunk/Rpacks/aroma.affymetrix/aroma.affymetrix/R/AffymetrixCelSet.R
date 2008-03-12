@@ -871,7 +871,9 @@ setMethodS3("getIntensities", "AffymetrixCelSet", function(this, ...) {
 #  \item{units}{An @integer index @vector specifying units to be read. 
 #    If @NULL, all units are read.}
 #  \item{...}{Arguments passed to the low-level function for read units, 
-#    e.g. @see "affxparser::readCelUnits" or @see "aroma.apd::readApdUnits".}
+#    e.g. @see "affxparser::readCelUnits" or @see "aroma.apd::readApdUnits".
+#    If \code{units} is not already a CDF @list structure, these arguments
+#    are also passed to \code{readUnits()} of @see "AffymetrixCdfFile".}
 #  \item{force}{If @TRUE, cached values are ignored.}
 #  \item{verbose}{If @TRUE, progress details are printed, otherwise not.
 #    May also be a @see "R.utils::Verbose" object.}
@@ -916,18 +918,17 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # Get the pathnames of all CEL files
   pathnames <- unlist(lapply(this, getPathname), use.names=FALSE);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Cached values
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Is 'units' a (pre-created) CDF structure?
   if (is.list(units)) {
-    res <- readCelUnits(pathnames, cdf=units, readStdvs=FALSE, 
-                                                    readPixels=FALSE, ...);
+    cdfUnits <- units;
   } else {
     # Always ask for CDF information from the CDF object!
-    cdf <- readUnits(getCdf(this), units=units);
-    res <- readCelUnits(pathnames, cdf=cdf, readStdvs=FALSE, 
-                                                    readPixels=FALSE, ...);
+    cdf <- getCdf(this);
+    cdfUnits <- readUnits(cdf, units=units, ...);
   }
+
+  res <- readCelUnits(pathnames, cdf=cdfUnits, readStdvs=FALSE, 
+                                                  readPixels=FALSE, ...);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
@@ -962,7 +963,18 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
   verbose && enter(verbose, "Generating hashcode key for cache");
   key <- list(method="readUnits", class=class(this)[1]);
   if (is.list(units)) {
-    key <- c(key, units=names(units), ...);
+    # BUG FIX: Cannot stratify only on unit names, e.g. then 'stratifyBy'
+    # will not make a difference! 2008-03-11
+#    key <- c(key, units=names(units), ...);
+#   ...will also not work (stratifyBy="pm" and "mm" gives the same)!
+#    key <- c(key, unitNames=names(units), cdfUnitSize=object.size(units), ...);
+    # This will allow us to pass pre-digested object.
+    unitsHashcode <- attr(units, "hashcode");
+    if (is.null(unitsHashcode)) {
+      unitsHashcode <- digest2(units);
+      attr(units, "hashcode") <- unitsHashcode;
+    }
+    key <- c(key, unitsHashcode=unitsHashcode, ...);
   } else {
     key <- c(key, units=units, ...);
   }
@@ -1372,6 +1384,15 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-03-11
+# o BUG FIX: Calling readUnits(..., units=cdfUnits) twice, where 'cdfUnits' 
+#   was first created with, say, stratifyBy="pm" and then with
+#   stratifyBy="pmmm", for the identical set of units, would give the same
+#   results both times.  This was because the hash key list object for the
+#   file cache where identical.
+# o BUG FIX: getUnitIntensities() would not pass arguments '...', e.g.
+#   'stratifyBy', to readUnits() for AffymetrixCdfFile.  Thanks Tim 
+#   Keighley, CSIRO, Sydney for reporting this.
 # 2008-03-05
 # o Updated message specifying that it looks for *sample* annotation files.
 # 2008-02-28
