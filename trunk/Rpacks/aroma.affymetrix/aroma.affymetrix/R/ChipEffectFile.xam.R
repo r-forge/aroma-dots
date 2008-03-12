@@ -37,26 +37,28 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cdf <- getCdf(this);
   # Argument 'other':
   if (!inherits(other, "ChipEffectFile")) {
     throw("Argument 'other' is not an ChipEffectFile: ", class(other)[1]);
   }
-
+  
   # Argument 'units':
-  cdf <- getCdf(this);
+  ugcMap <- NULL;
   if (is.null(units)) {
-    nunits <- nbrOfUnits(cdf);
+  } else if (isUnitGroupCellMap(units)) {
+    ugcMap <- units;
   } else {
-    units <- Arguments$getIndices(units, range=c(1,nbrOfUnits(cdf)));
-    nunits <- length(units);
+    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
   }
-
+  
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
   }
+  
 
 
   verbose && enter(verbose, "Getting (A,M)-transformed chip effects");
@@ -65,17 +67,23 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get cell map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Get unit-to-cell map");
-  map <- getUnitGroupCellMap(this, units=units, verbose=less(verbose));
-  verbose && exit(verbose);
+  if (is.null(ugcMap)) {
+    verbose && enter(verbose, "Get unit-to-cell map");
+    ugcMap <- getUnitGroupCellMap(this, units=units, verbose=less(verbose));
+    verbose && exit(verbose);
+  }
+  rm(units);
+  nunits <- nrow(ugcMap);
+
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get thetas from the sample
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving sample thetas");
-  theta <- getDataFlat(this, units=map, fields="theta", verbose=less(verbose))[,"theta"];
+  theta <- getDataFlat(this, units=ugcMap, fields="theta", 
+                                          verbose=less(verbose))[,"theta"];
   nTheta <- length(theta);
-  if (!identical(nTheta, nrow(map))) {
+  if (!identical(nTheta, nunits)) {
     verbose && str(verbose, theta);
     verbose && print(verbose, nunits);
     throw("Internal error: The number of chip-effect values is not equal to the number of units requested: ", nTheta, " != ", nunits);
@@ -96,7 +104,8 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   }
 
   # Get the other theta estimates
-  thetaRef <- getDataFlat(other, units=map, fields="theta", verbose=less(verbose))[,"theta"];
+  thetaRef <- getDataFlat(other, units=ugcMap, fields="theta", 
+                                          verbose=less(verbose))[,"theta"];
   stopifnot(identical(length(thetaRef), nTheta));
   verbose && exit(verbose);
 
@@ -113,7 +122,7 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   am <- matrix(c(A,M), ncol=2)
   colnames(am) <- c("A", "M");
-  rownames(am) <- map[,"unit"];
+  rownames(am) <- ugcMap[,"unit"];
 
   verbose && exit(verbose);
 

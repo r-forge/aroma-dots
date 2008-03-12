@@ -104,11 +104,44 @@ setMethodS3("sort", "RawCopyNumbers", function(x, ...) {
 
 
 setMethodS3("getXY", "RawCopyNumbers", function(this, sort=TRUE, ...) {
-  xy <- data.frame(x=this$x, y=this$cnl);
+  xy <- data.frame(x=this$x, y=this$cn);
   if (sort)
     xy <- xy[order(xy$x),];
   xy;
 })
+
+setMethodS3("sd", "RawCopyNumbers", function(this, na.rm=TRUE, method=c("diff", "var"), ...) {
+  # Argument 'method':
+  method <- match.arg(method);
+
+  if (method == "diff") {
+    value <- diff(this$cn);
+    sigma <- sd(value, na.rm=na.rm)/sqrt(2);
+  } else if (method == "var") {
+    value <- this$cn;
+    sigma <- sd(value, na.rm=na.rm);
+  }
+
+  sigma;
+})
+
+
+setMethodS3("mad", "RawCopyNumbers", function(this, na.rm=TRUE, method=c("diff", "var"), ...) {
+  # Argument 'method':
+  method <- match.arg(method);
+
+  if (method == "diff") {
+    values <- diff(getCNs(this));
+    sigma <- mad(values, na.rm=na.rm, ...)/sqrt(2);
+  } else if (method == "var") {
+    values <- getCNs(this);
+    sigma <- mad(values, na.rm=na.rm, ...);
+  }
+
+  sigma;
+})
+
+
 
 setMethodS3("plot", "RawCopyNumbers", function(x, xlab="Physical position", ylab="Relative copy number", ylim=c(-3,3), pch=20, xScale=1, yScale=1, ...) {
   # To please R CMD check
@@ -169,6 +202,9 @@ setMethodS3("extractRawCopyNumbers", "DNAcopy", function(object, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-03-10
+# o Added standard deviation estimator sd() and mad() which my default
+#   uses a first-order difference variance estimator.
 # 2007-08-22
 # o Created.  Need a generic container for holding copy number data and
 #   to plot them nicely.

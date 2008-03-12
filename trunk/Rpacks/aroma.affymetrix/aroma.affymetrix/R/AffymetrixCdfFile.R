@@ -988,7 +988,7 @@ setMethodS3("getRestructor", "AffymetrixCdfFile", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 # NOTE: getUnits() does not work because an S4 class stole it!!!
-setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units, ...) {
+setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units=NULL, ...) {
 #  cdf <- readCdfUnits(getPathname(this), units=units, ...);
   cdf <- doCall("readCdfUnits", filename=getPathname(this), units=units, ...);
   restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
@@ -1603,6 +1603,10 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-03-11
+# o BUG FIX: Calling readUnits() of an AffymetrixCdfFile without specifying
+#   the 'units' argument gave an error.  Thanks Tim Keighley, CSIRO, Sydney
+#   for reporting this.
 # 2008-02-21
 # o Added getGroupDirections() for AffymetrixCdfFile.
 # o Added getUnitTypes() for AffymetrixCdfFile.

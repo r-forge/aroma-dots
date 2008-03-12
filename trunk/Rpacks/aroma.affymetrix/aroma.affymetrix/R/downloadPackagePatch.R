@@ -16,8 +16,11 @@
 #   \item{url}{The root URL from where to download the patch.}
 #   \item{apply}{If @TRUE, the patches are applied immediately after
 #      being downloaded.}
-#   \item{verbose}{See @see "R.utils::Verbose".}
+#   \item{rootPath}{The root path to the directory where to install patches.}
+#   \item{pkgVer}{A optional @character string to "fake" the currently
+#      installed version of the package. Use with great care.}
 #   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -32,7 +35,7 @@
 #
 # @keyword internal
 #*/###########################################################################
-setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, rootPath="~/.Rpatches", ...) {
+setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, url=NULL, apply=TRUE, rootPath="~/.Rpatches", pkgVer=NULL, ..., verbose=FALSE) {
   require("R.utils") || stop("Package not loaded: R.utils");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -71,7 +74,9 @@ setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, u
   verbose && cat(verbose, "Patch root URL: ", rootUrl);
 
   # Get the package version
-  pkgVer <- packageDescription(pkgName)$Version;
+  if (is.null(pkgVer)) {
+    pkgVer <- packageDescription(pkgName)$Version;
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the vector of files to be downloaded
@@ -123,6 +128,8 @@ setMethodS3("downloadPackagePatch", "default", function(pkgName, version=NULL, u
 
 ############################################################################
 # HISTORY:
+# 2008-03-11
+# o Added argument 'pkgVer' allowing us to fake the package version.
 # 2007-12-16
 # o Added argument 'rootPath' to downloadPackagePatch() which is the root
 #   directory where to store package patches.  The default is now to store

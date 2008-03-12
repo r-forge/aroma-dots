@@ -77,11 +77,15 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
   verbose && printf(verbose, "RAM: %.2fMB\n", object.size(df)/1024^2);
   verbose && exit(verbose);
 
-  verbose && enter(verbose, "Optimize reading order");
-  o <- order(cells);
-  cells <- cells[o];
-  o <- order(o);
-  verbose && exit(verbose);
+  if (!is.null(cells)) {
+    verbose && enter(verbose, "Optimize reading order");
+    o <- order(cells);
+    cells <- cells[o];
+    o <- order(o);
+    verbose && exit(verbose);
+  } else {
+    o <- seq(length=ncells);
+  }
   
   # Garbage collect
   gc <- gc();
@@ -113,6 +117,9 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
 
 ############################################################################
 # HISTORY:
+# 2008-03-11
+# o BUG FIX: extractMatrix(..., cells=NULL), the default, would throw
+#   'Error in order(cells) : argument 1 is not a vector'.
 # 2007-03-29
 # o Created from ChipEffectSet.extractMatrix.R.
 ############################################################################
