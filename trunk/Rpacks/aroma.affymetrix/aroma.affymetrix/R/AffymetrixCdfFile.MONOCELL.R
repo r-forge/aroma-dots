@@ -579,8 +579,84 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, ...) {
   createMonocellCdf(this, ...);
 })
 
+
+# equals(getMainCdf(getMonocellCdf(cdf), cdf)) == TRUE
+setMethodS3("getMainCdf", "AffymetrixCdfFile", function(this, ...) {
+  # Argument 'this':
+  if (!isMonocellCdf(this)) {
+    throw("Cannot get the main CDF, because this CDF is not a monocell CDF: ", getPathname(this));
+  }
+
+  chipType <- getChipType(this, fullname=FALSE);
+  tags <- getTags(this);
+  tags <- setdiff(tags, c("monocell"));
+
+  # Try to locate the main CDF  
+  cdf <- byChipType(this, chipType=chipType, tags=tags, ...);
+
+  cdf;
+}, protected=TRUE)
+
+
+
+setMethodS3("getUnitGroupCellMapWithMonocell", "AffymetrixCdfFile", function(this, units=NULL, ..., ugcMapM=NULL, verbose=FALSE) {
+  # Argument 'this':
+  if (isMonocellCdf(this)) {
+    throw("Argument 'this' is already a monocell CDF: ", getPathname(this));
+  }
+
+  # Argument 'units':
+  units0 <- units;
+
+  # Argument 'ugcMapM':
+  if (is.null(ugcMapM)) {
+    cdfM <- getMonocellCdf(this);
+  } else if (!isUnitGroupCellMap(ugcMapM)) {
+    throw("Argument 'ugcMapM' is not a UnitGroupCellMap");
+  }
+
+  # Merge maps with ordered and unique units (and the expand in the end)
+  if (!is.null(units))
+    units <- sort(unique(units));
+ 
+  ugcMap <- list();
+
+  # Get the (unit, group, cell) map for this CDF
+  ugcMap[[1]] <- getUnitGroupCellMap(this, units=units, verbose=verbose);
+
+  # Get the (unit, group, cell) map for the monocell CDF
+  if (is.null(ugcMapM)) {
+    ugcMap[[2]] <- getUnitGroupCellMap(cdfM, units=units, verbose=verbose);
+  } else {
+    ugcMap[[2]] <- ugcMapM;
+  }
+
+  # Expand the monocell CDF (unit, group, cell) map to the main one
+  # (1) Create a (unit, group) -> hashcode map
+  MAXGROUP <- 10000;
+  ugHashcode <- lapply(ugcMap, FUN=function(map) {
+    units  <- map[,"unit"];
+    groups <- map[,"group"];
+    hashcode <- MAXGROUP*units + groups;
+    hashcode;
+  })
+  # (2) Map (unit, group)_monocell to (unit, group)_main
+  rr <- match(ugHashcode[[1]], ugHashcode[[2]]);
+  rm(ugHashcode);
+  mergedMap <- cbind(ugcMap[[1]], cellM=ugcMap[[2]][rr,"cell"]);
+  rm(ugcMap);
+
+  mergedMap;
+}, protected=TRUE)
+
+
+
 ############################################################################
 # HISTORY:
+# 2008-03-18
+# o Added getUnitGroupCellMapWithMonocell() to AffymetrixCdfFile.
+# o Added getMainCdf() for AffymetrixCdfFile to get main CDF from a 
+#   monocell CDF.
 # 2008-02-20
 # o Now getMonocellCdf() and createMonocellCdf() quietly return the input
 #   CDF if it already is a monocell CDF.

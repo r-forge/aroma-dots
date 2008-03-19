@@ -440,11 +440,9 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   field <- match.arg(field);
 
   suppressWarnings({
-    cel <- getRectangle(this, xrange=xrange, yrange=yrange, fields=field, ...);
+    y <- readRawDataRectangle(this, xrange=xrange, yrange=yrange, 
+                                              fields=field, ..., drop=TRUE);
   })
-
-  # Display the rectangle
-  y <- cel[[field]];
 
   # if only PM locations have signal, add a fake row
 
@@ -495,12 +493,23 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 # @synopsis
 #
 # \arguments{
-#   \item{xrange, yrange}{}
-#   \item{field}{}
-#   \item{transforms}{A @list of transform functions.}
+#   \item{other}{An optional @see "AffymetrixCelFile" of the same chip type,
+#      that is used for calculating the ratio (non-logged).  Note, to get
+#      the log-ratios, the \code{log}() function has to be specified as
+#      the first transform in the @list of \code{transformations}.}
+#   \item{xrange, yrange}{@vectors of length two specifying the 
+#      (x0,x1) and (y0,y1) regions to be extracted.  If @NULL, the
+#      complete regions is used.}
+#   \item{field}{One of the CEL file fields, i.e. \code{"intensities"},
+#      \item{stdvs}, or \item{pixels}.}
+#   \item{transforms}{A @list of transform @functions.}
 #   \item{interleaved}{}
-#   \item{...}{Additional arguments passed to @seemethod "getRectangle".}
-#   \item{zoom}{}
+#   \item{...}{Additional arguments passed to 
+#      @seemethod "readRawDataRectangle".}
+#   \item{zoom}{A @numeric scale factor in (0,+Inf) for resizing the 
+#     imaging. If \code{1}, no resizing is done.}
+#   \item{readRectFcn}{A @function taking arguments 'xrange' and 'yrange',
+#     or @NULL for the default read function.}
 #   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
 # }
 #
@@ -520,7 +529,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("none", "h", "v", "auto") , ..., zoom=NULL, verbose=FALSE) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("none", "h", "v", "auto"), ..., zoom=1, readRectFcn=NULL, verbose=FALSE) {
   require("EBImage") || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -530,9 +539,47 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
     mean(x[is.finite(x)]);
   }
 
+  readRectangleByField <- function(this, other=NULL, xrange, yrange, ...) {
+    suppressWarnings({
+      y <- readRawDataRectangle(this, xrange=xrange, yrange=yrange, 
+                                               fields=field, ..., drop=TRUE);
+    });
+
+    if (is.null(other)) {
+    } else {
+      if (inherits(other, "AffymetrixCelFile")) {
+        suppressWarnings({
+          yR <- readRawDataRectangle(other, xrange=xrange, yrange=yrange, 
+                                               fields=field, ..., drop=TRUE);
+        });
+      } else {
+        yR <- other;
+      }
+
+      y <- y/yR;
+    }
+
+    y;
+  } # readRectangleByField()
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'other':
+  if (!is.null(other)) {
+    if (inherits(other, "AffymetrixCelFile")) {
+      hdr1 <- getHeader(this);
+      hdr2 <- getHeader(other);
+      fields <- c("rows", "cols");
+      if (!identical(hdr1[fields], hdr2[fields])) {
+        throw("Argument 'other' contains an ", class(other)[1], " with a dimension not compatible with the main ", class(this)[1], "");
+      }
+    } else {
+      throw("Argument 'other' is of an unknown class: ", other);
+    }
+  }
+  
   # Argument 'field':
   field <- match.arg(field);
   
@@ -550,23 +597,26 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   interleaved <- match.arg(interleaved);
 
   # Argument 'zoom':
-  if (!is.null(zoom))
-    zoom <- Arguments$getDouble(zoom, range=c(0,Inf));
+  zoom <- Arguments$getDouble(zoom, range=c(0,Inf));
+
+  # Argument 'readRectFcn':
+  if (is.null(readRectFcn)) {
+    readRectFcn <- readRectangleByField;
+  } else if (!is.function(readRectFcn)) {
+    throw("Argument 'readRectFcn' is not a function: ", readRectFcn);
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
 
- # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Getting CEL image");
 
   verbose && enter(verbose, "Reading CEL image");
-  suppressWarnings({
-    y <- getRectangle(this, xrange=xrange, yrange=yrange, fields=field, ...);
-  });
-  y <- y[[field]];
+  y <- readRectFcn(this, other=other, xrange=xrange, yrange=yrange, ...);
   verbose && str(verbose, y);
   verbose && summary(verbose, as.vector(y[is.finite(y) & (y != 0)]));
   verbose && printf(verbose, "RAM: %.1fMB\n", object.size(y)/1024^2);
@@ -634,7 +684,7 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
   verbose && exit(verbose);
 
   # Zoom?
-  if (!is.null(zoom)) {
+  if (zoom != 1) {
     verbose && enter(verbose, "Resizing image");
     # Rescaling by keeping aspect ratio
     img <- EBImage::resize(img, w=zoom*dim(img)[1], blur=FALSE);
@@ -828,6 +878,10 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2008-03-14
+# o Added argument 'readRectFcn' to getImage() allowing one to read data
+#   in different ways, e.g. by also read a reference array and return
+#   log-ratios.
 # 2007-09-17
 # o Added write.image()/writeImage() caller to avoid recent EBImage
 #   warnings about write.image() being deprecated.

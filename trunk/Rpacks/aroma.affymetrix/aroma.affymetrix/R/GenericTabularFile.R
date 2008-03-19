@@ -195,6 +195,7 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, header=NULL
       names <- insert(names[-pos], at=pos, values=rep("*", nbrOfColumns));
       idxs <- which(names == "*");
       names[idxs] <- sprintf("^%s$", columns);
+
       colClassPatterns <- insert(colClassPatterns[-pos], at=pos, 
                                  values=rep("*", nbrOfColumns));
       names(colClassPatterns) <- names;
@@ -226,6 +227,7 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, header=NULL
   verbose && cat(verbose, "Column classes:", level=-20);
   verbose && print(verbose, colClasses, level=-20);
 
+  # Inferred arguments
   args <- list(
     header      = FALSE,
     colClasses  = colClasses,
@@ -233,9 +235,14 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, header=NULL
     quote       = header$quote,
     fill        = this$fill,
     check.names = FALSE,
-    na.strings  = c("---"),
-    ...
+    na.strings  = c("---")
   );
+
+  # Overwrite with user specified arguments, if any
+  userArgs <- list(...);
+  for (key in names(userArgs)) {
+    args[[key]] <- userArgs[[key]];
+  }
 
   args;
 }, protected=TRUE);
@@ -309,6 +316,9 @@ setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, ..., verb
 
 ############################################################################
 # HISTORY:
+# 2008-03-18
+# o Now any '...' arguments to getReadArguments() override the inferred 
+#   read arguments, e.g. na.strings="NA".
 # 2008-02-27
 # o Since 'affy' defines standardGeneric("colnames") and because S3 methods
 #   are not found by such S4 generic functions, we avoid that method name,

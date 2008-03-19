@@ -25,9 +25,14 @@
 # \seealso{
 # }
 #*/###########################################################################
-setConstructorS3("SpatialReporter", function(...) {
-  extend(AffymetrixCelSetReporter(...), "SpatialReporter"
+setConstructorS3("SpatialReporter", function(..., reference=NULL) {
+  this <- extend(AffymetrixCelSetReporter(...), "SpatialReporter",
+    .reference = NULL
   )
+
+  setReference(this, reference);
+
+  this;
 })
 
 setMethodS3("as.character", "SpatialReporter", function(x, ...) {
@@ -38,6 +43,15 @@ setMethodS3("as.character", "SpatialReporter", function(x, ...) {
   s <- c(s, paste("Name:", getName(this)));
   s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
   s <- c(s, paste("Number of arrays:", nbrOfArrays(this)));
+
+  # Reference?
+  reference <- getReference(this);
+  if (!is.null(reference)) {
+    s <- c(s, paste("<Relative to reference>"));
+    s <- c(s, paste("Name:", getName(reference)));
+    s <- c(s, paste("Tags:", getTags(reference, collapse=",")));
+  }
+
   colorMaps <- getColorMaps(this);
   if (length(colorMaps) == 0)
     colorMaps <- "<no color maps; set before processing>";
@@ -45,12 +59,38 @@ setMethodS3("as.character", "SpatialReporter", function(x, ...) {
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
+
   s;
 }, private=TRUE)
 
 
 setMethodS3("getReportSet", "SpatialReporter", function(this, ...) {
   "spatial";
+}, protected=TRUE)
+
+
+
+setMethodS3("getReference", "SpatialReporter", function(this, ...) {
+  this$.reference;
+}, protected=TRUE)
+
+
+setMethodS3("setReference", "SpatialReporter", function(this, reference, ...) {
+  if (is.null(reference)) {
+  } else {
+    ds <- getDataSet(this);
+    df <- getFile(ds, 1);
+  
+    if (!inherits(reference, "AffymetrixCelFile")) {
+      throw("Cannot set reference. Argument 'reference' is not an AffymetrixCelFile: ", class(reference)[1]);
+    }
+
+    if (!class(reference)[1] %in% class(df)) {
+      throw("Cannot set reference. Argument 'reference' is not of a class compatible with the data set: ", class(reference)[1]);
+    } 
+  }
+
+  this$.reference <- reference;
 }, protected=TRUE)
 
 
@@ -182,6 +222,9 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
   # Get the path to the image directory
   path <- getPath(this);
 
+  # Relative to a reference?
+  reference <- getReference(this);
+
   # Get the color maps to be generated
   colorMaps <- getColorMaps(this, parsed=TRUE);
   if (length(colorMaps) == 0) {
@@ -204,9 +247,10 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
       verbose && enter(verbose, sprintf("Color map #%d ('%s')", ll, tags));
 #      verbose && str(verbose, colorMap$transforms);
 #      verbose && str(verbose, colorMap$palette);
-      writeImage(df, path=path, transforms=colorMap$transforms, 
-                                   palette=colorMap$palette, tags=tags, ...);
-      gc <- gc();
+      writeImage(df, other=reference, path=path, 
+                 transforms=colorMap$transforms, palette=colorMap$palette, 
+                                  tags=tags, ..., verbose=less(verbose, 5));
+#      gc <- gc();
       verbose && exit(verbose);
     }
     verbose && exit(verbose);
@@ -263,9 +307,150 @@ setMethodS3("process", "SpatialReporter", function(this, ..., verbose=FALSE) {
 })
 
 
+setMethodS3("readRawDataRectangle", "SpatialReporter", function(this, array, ..., field="intensities", transforms=list(), verbose=FALSE) {
+  ds <- getDataSet(this);
+  df <- getFile(ds, array);
+
+  y <- readRawDataRectangle(df, fields=field, ..., drop=TRUE, verbose=less(verbose, 5));
+##    verbose && str(verbose, y);
+
+  # Relative signals?
+  reference <- getReference(this);
+  if (!is.null(reference)) {
+    yR <- readRawDataRectangle(cfR, fields=field, ..., drop=TRUE, verbose=less(verbose, 5));
+##    verbose && str(verbose, yR);
+    y <- y/yR;
+    rm(yR);
+##    verbose && str(verbose, y);
+  }
+
+  # Transform data
+  for (transform in transforms) {
+    y <- transform(y);
+  }
+
+  y;  
+})
+
+
+setMethodS3("calculateMargins", "SpatialReporter", function(this, unshift=TRUE, ..., verbose=FALSE) {
+  colMedians <- function(x, ...) {
+    x <- t(x);
+    rowMedians(x, ...);
+  }
+
+  # Read data
+  y <- readRawDataRectangle(this, ...);
+
+  # Remove average?
+  if (unshift) {
+    yAvg <- median(y, na.rm=TRUE);;
+    y <- y - yAvg;
+  }
+
+  # Calculate margins
+  yR <- rowMedians(y, na.rm=TRUE);
+  yC <- colMedians(y, na.rm=TRUE);
+
+  list(rowAvgs=yR, colAvgs=yC);
+})
+
+
+setMethodS3("plotMargins", "SpatialReporter", function(this, array, margins=c("rows", "columns"), ..., pch=20, cex=0.7, ylim=NULL, ylab=NULL, rotate=0, verbose=FALSE) {plotMargins
+  # Argument 'margins':
+#  if (!all(margins %in% formals(plotMargins.SpatialReporter)$margins)) {
+#    throw("Unknown value(s) in argument 'margins': ", paste(margins));
+#  }
+
+  # Get the array file
+  ds <- getDataSet(this);
+  df <- getFile(ds, array);
+
+  yMargins <- calculateMargins(this, array=array, ..., verbose=verbose);
+  keep <- is.element(c("rows", "columns"), margins);
+  yMargins <- yMargins[keep];
+  
+  if (is.null(ylim)) {
+    ylim <- c(NA, NA);
+    for (kk in seq(along=yMargins)) {
+      ylim <- range(c(ylim, range(yMargins[[1]], na.rm=TRUE)));
+    }
+  }
+
+  if (is.null(ylab)) {
+    ylab <- "signal";
+  }
+
+  xlabs <- margins;
+  mains <- paste("Average signal per", substring(margins, 1, nchar(margins)-1));
+  
+  if (length(yMargins) > 1) {
+    layout(matrix(seq(along=yMargins), ncol=1));
+  }
+
+  for (ff in seq(along=yMargins)) {
+    xlab <- xlabs[ff];
+    main <- mains[ff];
+    y <- yMargins[[ff]];
+
+    x <- seq(along=y);
+    if (rotate == -90) {
+      x <- rev(x);
+    }
+
+    fit <- list();
+    fit[[1]] <- robustSmoothSpline(x, y, spar=0.3);
+    fit[[2]] <- robustSmoothSpline(x, y, spar=0.9);
+
+    if (rotate == 0) {
+      plot(x, y, pch=pch, cex=cex, ylim=ylim, xlab=xlab, ylab=ylab);
+      abline(h=0, lwd=2, col="gray");
+      side <- 3;
+    } else if (rotate == 90) {
+      mar <- par("mar");
+      mar <- mar[c(2,3,4,1)];
+      par(mar=mar);
+      plot(y, x, pch=pch, cex=cex, xlim=ylim, ylab=xlab, xlab=ylab, axes=FALSE);
+      axis(side=1); axis(side=4); box();
+      abline(v=0, lwd=2, col="gray");
+      for (kk in 1:2) {
+        t <- fit[[kk]]$x;
+        fit[[kk]]$x <- fit[[kk]]$y;
+        fit[[kk]]$y <- t;
+      }
+      side <- 2;
+    } else if (rotate == -90) {
+      mar <- par("mar");
+      mar <- mar[c(2,3,4,1)];
+      par(mar=mar);
+      plot(y, x, pch=pch, cex=cex, xlim=ylim, ylab=xlab, xlab=ylab, axes=FALSE);
+      axis(side=1); axis(side=4); box();
+      abline(v=0, lwd=2, col="gray");
+      for (kk in 1:2) {
+        t <- fit[[kk]]$x;
+        fit[[kk]]$x <- fit[[kk]]$y;
+        fit[[kk]]$y <- t;
+      }
+      side <- 2;
+    }
+    lines(fit[[1]], col="blue", lwd=3);
+    lines(fit[[2]], col="red", lwd=5);
+
+    # Plot annotation
+    stext(side=side, pos=0, sprintf("Array: %s", getFullName(df)), cex=0.7);
+    stext(side=side, pos=1, sprintf("Chip type: %s", getChipType(df)), cex=0.7);
+  }
+
+  invisible(yMargins);
+})
+
 
 ##############################################################################
 # HISTORY:
+# 2008-03-17
+# o Added readRawDataRectangle(), calculateMargins(), plotMargins(). Will
+#   probably be moved elsewhere.
+# o Added support for a reference (file).
 # 2007-08-09
 # o Now getColorMaps(parsed=FALSE) returns a unique sorted set of color maps.
 # 2007-03-19
