@@ -1,9 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.1 [2008-03-11xx]
+Version: 0.9.1 [2008-03-18xx]
 o Now setCdf() also reports on the two incompatible chip types involved 
   if trying to set a CDF that is not compatible with a CEL file.
+o Added getMainCdf() for AffymetrixCdfFile for retrieving the 
+  "main" CDF given a monocell CDF.
 o BUG FIX: Regular expression pattern 'a-Z' is illegal on (at least) 
   some locale, e.g. 'C' (where 'A-z' works). The only way to specify 
   the ASCII alphabet is to list all characters explicitly, which we now

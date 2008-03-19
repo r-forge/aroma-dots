@@ -478,7 +478,7 @@ setMethodS3("fromFiles", "CnagCfhSet", function(static, path="rawData/", pattern
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Scan for SAF files and apply them
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Scanning for and applying annotation files");
+  verbose && enter(verbose, "Scanning for and applying sample annotation files");
   sasPath <- "annotationData/samples/";
   sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
   if (nbrOfFiles(sas) == 0) {

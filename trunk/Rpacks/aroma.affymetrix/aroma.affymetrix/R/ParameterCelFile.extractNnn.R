@@ -41,8 +41,8 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
   df <- matrix(NA, nrow=nrow(ugcMap), ncol=1);
   colnames(df) <- getName(this);
 
-  gc <- gc();
-  verbose && print(verbose, gc);
+#  gc <- gc();
+#  verbose && print(verbose, gc);
 
   verbose && enter(verbose, "Retrieving array data");
   df[, 1] <- getDataFlat(this, units=ugcMap, fields=field, 
@@ -78,8 +78,8 @@ setMethodS3("extractDataFrame", "ParameterCelFile", function(this, addNames=FALS
   attr(data, "unitGroupCellMap") <- NULL;
 
   # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
+#  gc <- gc();
+#  verbose && print(verbose, gc);
 
   if (addUgcMap) {
     verbose && enter(verbose, "Merging UGC map and extracted data");
@@ -121,6 +121,8 @@ setMethodS3("extractDataFrame", "ParameterCelFile", function(this, addNames=FALS
 
 ############################################################################
 # HISTORY:
+# 2008-03-11
+# o Removed some gc() to speed things up.
 # 2008-02-28
 # o Now argument 'units' also can be a UnitGroupCellMap.
 # 2008-02-22

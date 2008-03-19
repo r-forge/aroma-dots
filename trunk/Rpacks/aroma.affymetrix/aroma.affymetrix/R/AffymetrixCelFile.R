@@ -709,7 +709,8 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 
 
 ###########################################################################/**
-# @RdocMethod getData
+# @RdocMethod readRawData
+# @aliasmethod getData
 #
 # @title "Gets all or a subset of the fields in a CEL file"
 #
@@ -724,11 +725,13 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 #     are considered.}
 #   \item{fields}{Names of fields to be retrieved.}
 #   \item{...}{Additional arguments passed to @see "affxparser::readCel".}
+#   \item{drop}{If @TRUE and a single field is returned, then data is 
+#     returned as a @vector, otherwise as a @data.frame.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
 #
 # \value{
-#  Returns a @data.frame of the fields requested.
+#  Returns a @data.frame of the fields requested (unless dimension dropped).
 # }
 #
 # \section{Caching}{
@@ -743,7 +746,7 @@ setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., verbose=FALSE) {
+setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fields=c("xy", "intensities", "stdvs", "pixels"), ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -751,7 +754,7 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   nbrOfCells <- nbrOfCells(getCdf(this));
   if (is.null(indices)) {
   } else {
-    indices <- Arguments$getIndices(indices, range=c(1,nbrOfCells));
+    indices <- Arguments$getIndices(indices, range=c(1,nbrOfCells), disallow="NaN");
     nbrOfCells <- length(indices);
   }
 
@@ -765,9 +768,20 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieve data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Workaround for readCel() not handling NA indices
+  if (!is.null(indices)) {
+    nas <- which(is.na(indices));
+    hasNAs <- length(nas);
+    if (hasNAs)
+      indices[nas] <- 1;
+  } else {
+    hasNAs <- FALSE;
+  }
+
   cVerbose <- -(as.numeric(verbose) + 50);
   args <- list(
-    filename=this$.pathname, indices=indices, 
+    filename=this$.pathname, 
+    indices=indices, 
     readHeader=FALSE, 
     readIntensities=("intensities" %in% fields), 
     readStdvs=("stdvs" %in% fields), 
@@ -782,7 +796,15 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
   keep <- intersect(names(args), names(formals(fcn)));
   args <- args[keep];
   cel <- do.call("readCel", args=args);
- 
+
+  if (hasNAs) {
+    for (kk in seq(along=cel)) {
+      naValue <- NA;
+      storage.mode(naValue) <- storage.mode(cel[[kk]]);
+      cel[[kk]][nas] <- naValue;
+    }
+  }
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Clean up
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -799,12 +821,22 @@ setMethodS3("getData", "AffymetrixCelFile", function(this, indices=NULL, fields=
     cel <- cel[fields];
   }
 
-  # Return as data frame
-  attr(cel, "row.names") <- seq_len(length(cel[[1]]));
-  class(cel) <- "data.frame";
+  # Drop dimensions?
+  if (drop && length(cel) == 1) {
+    cel <- cel[[1]];
+  } else {
+    # Return as data frame
+    attr(cel, "row.names") <- seq_len(length(cel[[1]]));
+    class(cel) <- "data.frame";
+  }
 
   cel;
 }, private=TRUE)
+
+setMethodS3("getData", "AffymetrixCelFile", function(this, ...) {
+  readRawData(this, ...);
+}, private=TRUE, deprecated=TRUE)
+
 
 
 setMethodS3("range", "AffymetrixCelFile", function(this, ..., na.rm=TRUE) {
@@ -813,14 +845,28 @@ setMethodS3("range", "AffymetrixCelFile", function(this, ..., na.rm=TRUE) {
 }, private=TRUE)
 
 
-setMethodS3("getRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), fields=c("intensities", "stdvs", "pixels"), ...) {
-  readCelRectangle(this$.pathname, xrange=xrange, yrange=yrange, readIntensities=("intensities" %in% fields), readStdvs=("stdvs" %in% fields), readPixels=("pixels" %in% fields));
+setMethodS3("readRawDataRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), fields=c("intensities", "stdvs", "pixels"), ..., drop=FALSE) {
+  data <- readCelRectangle(this$.pathname, xrange=xrange, yrange=yrange, readIntensities=("intensities" %in% fields), readStdvs=("stdvs" %in% fields), readPixels=("pixels" %in% fields), readHeader=FALSE, readOutliers=FALSE, readMasked=FALSE);
+
+  if (drop && length(data) == 1) {
+    data <- data[[1]];
+  }
+
+  data;
 }, private=TRUE)
 
+setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
+  readRawDataRectangle(this, ...);
+}, private=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2008-03-14
+# o Renamed getRectangle() to readRawDataRectangle().
+# 2008-03-13
+# o Now readRawData(), formely known as getData(), handle NA indices and
+#   drops the dimension if only one field and argument drop=TRUE.
 # 2008-03-05
 # o Now setCdf() also reports on the two incompatible chip types involved 
 #   if trying to set a CDF that is not compatible with a CEL file.
