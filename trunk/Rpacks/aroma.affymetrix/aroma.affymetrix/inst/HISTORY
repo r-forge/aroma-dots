@@ -22,6 +22,12 @@ o BUG FIX: Calling readUnits(..., units=cdfUnits, stratifyBy=stratifyBy)
   twice with different 'stratifyBy' arguments and with a 'cdfUnits' list
   structure containing the identical set of unit names, would cause 
   readUnits() to incorrectly return cached results from the previous call.
+o CLEAN UP: Removed the backward compatibility patch from 2007-01-10 that 
+  made fromDataFile() of ChipEffectFile to add missing tags. If anyone 
+  still has such old chip effect files lying around, they have to either 
+  add the tags manually or reanalyze the data if they want the fullnames
+  of the chip effect files to match the fullnames raw data files.
+o BETA: Added static method allocateFromCdf() of AffymetrixCelFile.
 o BETA: Added isUnitGroupCellMap().
 o BETA: Added estimateSds() to CopyNumberChromosomalModel for estimating
   the standard deviation of the raw CNs (log2-ratios) robustly and so
