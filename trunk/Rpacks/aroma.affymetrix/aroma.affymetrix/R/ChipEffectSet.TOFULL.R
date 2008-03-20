@@ -17,6 +17,7 @@ setMethodS3("getAsFullCelSet", "ChipEffectSet", function(this, ..., verbose=FALS
                                           kk, getName(cef), length(this)));
     cf <- getAsFullCelFile(cef, ..., verbose=less(verbose, 5));
     files[[kk]] <- cf;
+    verbose && exit(verbose);
   }
   verbose && exit(verbose);
 
