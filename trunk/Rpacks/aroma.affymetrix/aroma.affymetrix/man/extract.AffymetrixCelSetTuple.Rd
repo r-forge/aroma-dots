@@ -32,7 +32,7 @@
 
 \details{
   If no matching arrays are available for a given chip type, that chip type
-  is excluded in the returns set tuple.  This guarantees that a set tuple
+  is excluded in the returned set tuple.  This guarantees that a set tuple
   always contains existing arrays.
 }
 

@@ -57,6 +57,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{getCellIndices} \tab  -\cr
+ \tab \code{getExpandedCellMap} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
  \tab \code{mergeStrands} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
@@ -64,10 +65,10 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 
 
  \bold{Methods inherited from SnpChipEffectFile}:\cr
-getCellIndices, getParameters, mergeStrands, readUnits
+getCellIndices, getExpandedCellMap, getParameters, mergeStrands, readUnits
 
  \bold{Methods inherited from ChipEffectFile}:\cr
-extractMatrix, findUnitsTodo, getAM, getCellIndices, getCellMap, getParameters, getXAM, mergeGroups, readUnits
+extractMatrix, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellChromosomePositionMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 extractDataFrame, extractMatrix, getParameters, readUnits

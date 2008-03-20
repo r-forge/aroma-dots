@@ -53,7 +53,6 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 \tabular{rll}{
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
- \tab \code{getCellMap} \tab  -\cr
  \tab \code{getImage} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr

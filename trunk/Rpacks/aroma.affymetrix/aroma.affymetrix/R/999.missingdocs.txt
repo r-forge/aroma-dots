@@ -151,7 +151,7 @@
   fromChipType.AffymetrixTabularFile fromChipType.AffymetrixTsvFile
   fromChipType.AromaUnitTabularBinaryFile
   fromChipType.UflSnpInformation fromDataFile
-  fromDataFile.ChipEffectFile fromDataFile.FirmaFile
+  fromDataFile.FirmaFile
   fromDataFile.ResidualFile fromDataFile.WeightsFile fromDataSet
   fromDataSet.ChipEffectSet fromDataSet.FirmaSet
   fromDataSet.GenomeInformation fromDataSet.ResidualSet

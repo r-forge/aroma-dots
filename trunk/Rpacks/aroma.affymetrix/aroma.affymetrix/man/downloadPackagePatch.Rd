@@ -17,7 +17,7 @@
   By default, the patches are applied after being downloaded.
  }
 
- \usage{\method{downloadPackagePatch}{default}(pkgName, version=NULL, url=NULL, apply=TRUE, verbose=FALSE, rootPath="~/.Rpatches", ...)}
+ \usage{\method{downloadPackagePatch}{default}(pkgName, version=NULL, url=NULL, apply=TRUE, rootPath="~/.Rpatches", pkgVer=NULL, ..., verbose=FALSE)}
 
  \arguments{
    \item{pkgName}{The name of the package to be patched."}
@@ -25,8 +25,11 @@
    \item{url}{The root URL from where to download the patch.}
    \item{apply}{If \code{\link[base:logical]{TRUE}}, the patches are applied immediately after
       being downloaded.}
-   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
+   \item{rootPath}{The root path to the directory where to install patches.}
+   \item{pkgVer}{A optional \code{\link[base]{character}} string to "fake" the currently
+      installed version of the package. Use with great care.}
    \item{...}{Not used.}
+   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
  }
 
  \value{

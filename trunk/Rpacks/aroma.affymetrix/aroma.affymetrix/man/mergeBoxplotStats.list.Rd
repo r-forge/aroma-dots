@@ -3,8 +3,6 @@
 % 
 %  mergeBoxplotStats.list.R
 % 
-% on Fri Feb 29 12:54:47 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
