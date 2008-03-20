@@ -14,6 +14,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "AffymetrixCelSetReporter".}
+#   \item{reference}{}
 # }
 #
 # \section{Fields and Methods}{
@@ -45,11 +46,11 @@ setMethodS3("as.character", "SpatialReporter", function(x, ...) {
   s <- c(s, paste("Number of arrays:", nbrOfArrays(this)));
 
   # Reference?
-  reference <- getReference(this);
-  if (!is.null(reference)) {
+  refFile <- getReference(this);
+  if (!is.null(refFile)) {
     s <- c(s, paste("<Relative to reference>"));
-    s <- c(s, paste("Name:", getName(reference)));
-    s <- c(s, paste("Tags:", getTags(reference, collapse=",")));
+    s <- c(s, paste("Name:", getName(refFile)));
+    s <- c(s, paste("Tags:", getTags(refFile, collapse=",")));
   }
 
   colorMaps <- getColorMaps(this);
@@ -75,22 +76,22 @@ setMethodS3("getReference", "SpatialReporter", function(this, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("setReference", "SpatialReporter", function(this, reference, ...) {
-  if (is.null(reference)) {
+setMethodS3("setReference", "SpatialReporter", function(this, refFile, ...) {
+  if (is.null(refFile)) {
   } else {
     ds <- getDataSet(this);
     df <- getFile(ds, 1);
   
-    if (!inherits(reference, "AffymetrixCelFile")) {
-      throw("Cannot set reference. Argument 'reference' is not an AffymetrixCelFile: ", class(reference)[1]);
+    if (!inherits(refFile, "AffymetrixCelFile")) {
+      throw("Cannot set reference. Argument 'refFile' is not an AffymetrixCelFile: ", class(refFile)[1]);
     }
 
-    if (!class(reference)[1] %in% class(df)) {
-      throw("Cannot set reference. Argument 'reference' is not of a class compatible with the data set: ", class(reference)[1]);
+    if (!class(refFile)[1] %in% class(df)) {
+      throw("Cannot set reference. Argument 'refFile' is not of a class compatible with the data set: ", class(refFile)[1]);
     } 
   }
 
-  this$.reference <- reference;
+  this$.reference <- refFile;
 }, protected=TRUE)
 
 
@@ -223,7 +224,7 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
   path <- getPath(this);
 
   # Relative to a reference?
-  reference <- getReference(this);
+  refFile <- getReference(this);
 
   # Get the color maps to be generated
   colorMaps <- getColorMaps(this, parsed=TRUE);
@@ -247,7 +248,7 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
       verbose && enter(verbose, sprintf("Color map #%d ('%s')", ll, tags));
 #      verbose && str(verbose, colorMap$transforms);
 #      verbose && str(verbose, colorMap$palette);
-      writeImage(df, other=reference, path=path, 
+      writeImage(df, other=refFile, path=path, 
                  transforms=colorMap$transforms, palette=colorMap$palette, 
                                   tags=tags, ..., verbose=less(verbose, 5));
 #      gc <- gc();
@@ -315,9 +316,9 @@ setMethodS3("readRawDataRectangle", "SpatialReporter", function(this, array, ...
 ##    verbose && str(verbose, y);
 
   # Relative signals?
-  reference <- getReference(this);
-  if (!is.null(reference)) {
-    yR <- readRawDataRectangle(cfR, fields=field, ..., drop=TRUE, verbose=less(verbose, 5));
+  refFile <- getReference(this);
+  if (!is.null(refFile)) {
+    yR <- readRawDataRectangle(refFile, fields=field, ..., drop=TRUE, verbose=less(verbose, 5));
 ##    verbose && str(verbose, yR);
     y <- y/yR;
     rm(yR);

@@ -121,7 +121,7 @@ setMethodS3("writeAsFullCelFile", "ChipEffectFile", function(this, name=getName(
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create empty CEL file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cdfM <- getCdf(ces);
+  cdfM <- getCdf(this);
   cdf <- getMainCdf(cdfM);
   cf <- AffymetrixCelFile$allocateFromCdf(cdf, name=name, tags=tags, suffix=".CEL.tmp", ..., verbose=less(verbose, 10));
   verbose && print(verbose, cf);
@@ -139,7 +139,7 @@ setMethodS3("writeAsFullCelFile", "ChipEffectFile", function(this, name=getName(
   mainCells <- which(is.finite(cells));
   rm(cells);
   data <- data[mainCells,,drop=FALSE];
-  verbose && str(verbose, cells);
+  verbose && str(verbose, data);
 
   pathname <- getPathname(cf);
   updateCel(pathname, indices=mainCells, intensities=data);
