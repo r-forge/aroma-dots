@@ -695,3 +695,38 @@
   fromChipType.SnpInformation fromChipType.UgpGenomeInformation
   getColumnNames
 getFirmaSet getUnitGroupCellMap.AffymetrixCelSet
+ applyAnyOrder applyAnyOrder.CopyNumberChromosomalModel applyCCF0
+  applyCCF0.CopyNumberChromosomalModel applyCFC0
+  applyCFC0.CopyNumberChromosomalModel calcMargins calcMargins.matrix
+  calcRawCnStats calcRawCnStats.CopyNumberChromosomalModel
+  calcRawCnStats.default calculateMargins
+  calculateMargins.SpatialReporter estimateSds fit2d fit2d.matrix
+  getArrayTuple getAsFullCelFile getAsFullCelFile.ChipEffectFile
+  getCellMapForMainCdf getCellMapForMainCdf.ChipEffectFile
+  getExpandedCellMap getExpandedCellMap.ChipEffectFile
+  getExpandedCellMap.CnChipEffectFile
+  getExpandedCellMap.SnpChipEffectFile getH
+  getH.SpatialRowColumnNormalization getLogRatioData
+  getLogRatioData.SpatialRowColumnNormalization getMainCdf
+  getMainCdf.AffymetrixCdfFile
+  getParameters.SpatialRowColumnNormalization getReference
+  getReference.SpatialReporter getReferenceData
+  getReferenceData.SpatialRowColumnNormalization getReferenceFile
+  getReferenceFile.SpatialRowColumnNormalization getSpar
+  getSpar.SpatialRowColumnNormalization
+  getUnitGroupCellChromosomePositionMap
+  getUnitGroupCellChromosomePositionMap.AffymetrixCdfFile
+  getUnitGroupCellChromosomePositionMap.ChipEffectFile
+  getUnitGroupCellMapWithMonocell
+  getUnitGroupCellMapWithMonocell.AffymetrixCdfFile isUnitGroupCellMap
+  isUnitGroupCellMap.data.frame isUnitGroupCellMap.default
+  isUnitGroupCellMap.matrix log2center mad mad.default
+  mad.RawCopyNumbers norm2d norm2d.matrix normalizeOne
+  normalizeOne.SpatialRowColumnNormalization plotMargins
+  plotMargins.SpatialReporter process.SpatialRowColumnNormalization
+  readRawData readRawDataRectangle
+  readRawDataRectangle.AffymetrixCelFile
+  readRawDataRectangle.SpatialReporter sd sd.default sd.RawCopyNumbers
+  setReference setReference.SpatialReporter
+  SpatialRowColumnNormalization sqrtcenter writeAsFullCelFile
+  writeAsFullCelFile.ChipEffectFile
