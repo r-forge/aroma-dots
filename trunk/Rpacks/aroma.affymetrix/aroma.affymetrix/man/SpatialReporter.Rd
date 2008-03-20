@@ -37,7 +37,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
   cell signals for each of the arrays in the input set.
  }
 
- \usage{SpatialReporter(...)}
+ \usage{SpatialReporter(..., reference=NULL)}
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AffymetrixCelSetReporter}}.}
@@ -47,8 +47,11 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{addColorMap} \tab  -\cr
+ \tab \code{calculateMargins} \tab  -\cr
  \tab \code{getColorMaps} \tab  -\cr
- \tab \code{process} \tab  -\cr
+ \tab \code{plotMargins} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.SpatialReporter]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
+ \tab \code{readRawDataRectangle} \tab  -\cr
  \tab \code{setColorMaps} \tab  -\cr
 }
 

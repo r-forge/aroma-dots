@@ -180,7 +180,7 @@ setMethodS3("process", "SpatialRowColumnNormalization", function(this, ..., forc
       verbose && enter(verbose, "Normalizing rows and columns in blocks");
       Mn <- norm2d(M, spar=params$spar, h=params$h, ...);
       rm(M);
-      verbose && str(verbose, M); 
+      verbose && str(verbose, Mn); 
       verbose && exit(verbose); 
 
       verbose && enter(verbose, "Back-transforming to single-channel intensities");

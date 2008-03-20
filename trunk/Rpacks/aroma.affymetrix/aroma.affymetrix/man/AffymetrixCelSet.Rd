@@ -58,7 +58,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{fromName} \tab  -\cr
- \tab \code{gcrmaSummary} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:gcrmaSummary.AffymetrixCelSet]{gcrmaSummary}} \tab Calculates the GCRMA expression summary.\cr
  \tab \code{getAverage} \tab  -\cr
  \tab \code{getAverageAsinh} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getAverageFile.AffymetrixCelSet]{getAverageFile}} \tab Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set.\cr
@@ -68,13 +68,14 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getIntensities.AffymetrixCelSet]{getIntensities}} \tab Gets cell intensities from a set of cells and a set of arrays.\cr
  \tab \code{getTimestamps} \tab  -\cr
+ \tab \code{getUnitGroupCellMap} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
  \tab \code{\link[aroma.affymetrix:isDuplicated.AffymetrixCelSet]{isDuplicated}} \tab Identifies duplicated CEL files.\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelSet]{plotDensity}} \tab Plots the densities of all samples.\cr
  \tab \code{range} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
- \tab \code{rmaSummary} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:rmaSummary.AffymetrixCelSet]{rmaSummary}} \tab Calculates the RMA expression summary.\cr
  \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelSet]{setCdf}} \tab Sets the CDF structure for this CEL set.\cr
 }
 

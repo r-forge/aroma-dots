@@ -3,8 +3,6 @@
 % 
 %  FirmaModel.R
 % 
-% on Thu Feb 28 18:33:55 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -58,8 +56,8 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getDataSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getFirmaScores.FirmaModel]{getFirmaScores}} \tab Gets the set of FIRMA results for this model.\cr
- \tab \code{getFirmaSet} \tab  -\cr
+ \tab \code{getFirmaScores} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getFirmaSet.FirmaModel]{getFirmaSet}} \tab Gets the set of FIRMA results for this model.\cr
  \tab \code{\link[aroma.affymetrix:getFitFunction.FirmaModel]{getFitFunction}} \tab Static method to get the low-level function that fits the PLM.\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getPlm} \tab  -\cr
