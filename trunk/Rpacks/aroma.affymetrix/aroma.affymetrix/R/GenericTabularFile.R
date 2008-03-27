@@ -1,6 +1,7 @@
 setConstructorS3("GenericTabularFile", function(..., sep=c("\t", ","), quote="\"", fill=FALSE, skip=0, .verify=TRUE) {
   this <- extend(GenericDataFile(...), "GenericTabularFile",
     .header = NULL,
+    .columnNameTranslator = NULL,
     sep = sep,
     quote = quote,
     fill = fill,
@@ -26,6 +27,7 @@ setMethodS3("as.character", "GenericTabularFile", function(x, ...) {
 })
 
 
+
 setMethodS3("verify", "GenericTabularFile", function(this, ..., verbose=FALSE) {
   # Nothing to do?
   if (is.null(getPathname(this)))
@@ -41,7 +43,31 @@ setMethodS3("verify", "GenericTabularFile", function(this, ..., verbose=FALSE) {
 }, private=TRUE)
 
 
+
+
+setMethodS3("getColumnNameTranslator", "GenericTabularFile", function(this, ...) {
+  this$.columnNameTranslator;
+})
+
+
+setMethodS3("setColumnNameTranslator", "GenericTabularFile", function(this, fcn, ...) {
+  # Arguments 'fcn':
+  if (!is.function(fcn)) {
+    throw("Argument 'fcn' is not a function: ", class(fcn)[1]);
+  }
+
+  this$.columnNameTranslator = fcn;
+})
+
+
 setMethodS3("translateColumnNames", "GenericTabularFile", function(this, names, ...) {
+  nameTranslator <- getColumnNameTranslator(this);
+  if (!is.null(nameTranslator)) {
+    names <- nameTranslator(names);
+    if (identical(attr(names, "isFinal"), TRUE))
+      return(names);
+  }
+
   # Do nothing
   names;
 }, protected=TRUE)
@@ -316,6 +342,8 @@ setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, ..., verb
 
 ############################################################################
 # HISTORY:
+# 2008-03-22
+# o Added {get|set}ColumnNameTranslator().
 # 2008-03-18
 # o Now any '...' arguments to getReadArguments() override the inferred 
 #   read arguments, e.g. na.strings="NA".

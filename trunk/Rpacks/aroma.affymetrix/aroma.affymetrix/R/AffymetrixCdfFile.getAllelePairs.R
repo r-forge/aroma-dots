@@ -665,7 +665,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
     cells <- NULL;
   }
   verbose && cat(verbose, "Identified non-SNP units:");
-  verbose && print(verbose, cells);
+  verbose && str(verbose, cells);
   probeSets$nonSNPs <- cells;
   rm(cells);
   verbose && exit(verbose);
@@ -777,6 +777,9 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2008-03-26
+# o CLEAN UP: getAlleleProbePairs() of AffymetrixCdfFile would print *all*
+#   identified non-SNP cells in the verbose output, instead of using str().
 # 2008-02-27
 # o Now getAlleleProbePairs() also returns element 'nonSNPs' (unless NULL).
 # 2008-02-21
