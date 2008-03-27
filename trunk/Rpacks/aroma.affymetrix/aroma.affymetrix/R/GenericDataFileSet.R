@@ -651,7 +651,8 @@ setMethodS3("reorder", "GenericDataFileSet", function(x, order, ...) {
 # @synopsis
 #
 # \arguments{
-#  \item{...}{Not used.}
+#  \item{...}{Arguments passed to \code{getName()} of each 
+#                                                   @see "GenericDataFile".}
 # }
 #
 # \value{
@@ -665,7 +666,7 @@ setMethodS3("reorder", "GenericDataFileSet", function(x, order, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getNames", "GenericDataFileSet", function(this, ...) {
-  res <- unlist(lapply(this, FUN=getName));
+  res <- unlist(lapply(this, FUN=getName, ...));
   unname(res);
 })
 
@@ -1120,6 +1121,9 @@ setMethodS3("copyTo", "GenericDataFileSet", function(this, path=NULL, ..., verbo
 
 ############################################################################
 # HISTORY:
+# 2008-03-22
+# o Now getNames() of GenericDataFileSet passes '...' to getName() of 
+#   each file.
 # 2007-09-14
 # o Extracted from AffymetrixFileSet.
 # 2007-03-06

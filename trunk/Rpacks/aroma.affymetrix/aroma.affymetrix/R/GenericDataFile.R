@@ -245,6 +245,8 @@ setMethodS3("getFilename", "GenericDataFile", function(this, ...) {
 # @synopsis
 #
 # \arguments{
+#  \item{aliased}{If @TRUE, and an alias has been set, the alias is 
+#     returned, otherwise the default full name is returned.}
 #  \item{...}{Not used.}
 # }
 #
@@ -267,7 +269,13 @@ setMethodS3("getFilename", "GenericDataFile", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFullName", "GenericDataFile", function(this, ...) {
+setMethodS3("getFullName", "GenericDataFile", function(this, aliased=FALSE, ...) {
+  if (aliased) {
+    alias <- getAlias(this);
+    if (!is.null(alias))
+      return(alias);
+  }
+
   pathname <- this$.pathname;
   if (is.null(pathname))
     return("");
@@ -758,6 +766,8 @@ setMethodS3("renameToUpperCaseExt", "GenericDataFile", function(static, pathname
 
 ############################################################################
 # HISTORY:
+# 2008-03-22
+# o Added 'aliased' to getFullName().
 # 2007-09-25
 # o Added isFile() to test if the file exists or not.
 # 2007-09-15
