@@ -109,20 +109,22 @@
     interval <- settings$system$checkInterval;
     if (is.null(interval))
       interval <- "onEachLoad";
+
     if (identical(interval, "onEachLoad")) {
-      if (interactive())
+      if (interactive()) {
         update(pkg, verbose=TRUE);
+      }
     }
   }
-
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Assert that digest() gives a consistent result across R versions
   # and platforms.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!identical(getOption("aroma.affymetrix::assertDigest"), FALSE))
+  if (!identical(getOption("aroma.affymetrix::assertDigest"), FALSE)) {
     .assertDigest("error");
+  }
 } # .setupAromaAffymetrix()
 
 

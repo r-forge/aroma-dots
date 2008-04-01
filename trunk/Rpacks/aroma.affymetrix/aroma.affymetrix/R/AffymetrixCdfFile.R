@@ -149,7 +149,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
   }
 
   newInstance(static, pathname);
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -197,7 +197,7 @@ setMethodS3("byChipType", "AffymetrixCdfFile", function(static, chipType, tags=N
 
 setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, ...) {
   byChipType(static, ...);
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 

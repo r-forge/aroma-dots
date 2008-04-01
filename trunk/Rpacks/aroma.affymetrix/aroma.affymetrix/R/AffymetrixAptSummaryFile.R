@@ -30,7 +30,7 @@ setMethodS3("getReadArguments", "AffymetrixAptSummaryFile", function(this, heade
   args$na.strings <- "";
   
   args;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getProbesetIds", "AffymetrixAptSummaryFile", function(this, force=FALSE, ...) {
@@ -46,7 +46,7 @@ setMethodS3("readProbesetIds", "AffymetrixAptSummaryFile", function(this, ...) {
   data <- readData(this, colClassPatterns=c("probeset_id"="character"), ...);
   data <- data[,1,drop=TRUE];
   data;
-})
+}, protected=TRUE)
 
 
 setMethodS3("readArrays", "AffymetrixAptSummaryFile", function(this, patterns, ...) {
@@ -98,7 +98,7 @@ setMethodS3("readHeader", "AffymetrixAptSummaryFile", function(this, ..., verbos
   header <- c(list(params=params), header);
   
   header;
-})     
+}, protected=TRUE)
 
 
 setMethodS3("getParameter", "AffymetrixAptSummaryFile", function(this, name, ...) {
@@ -107,7 +107,7 @@ setMethodS3("getParameter", "AffymetrixAptSummaryFile", function(this, name, ...
   if (!is.null(value))
     value <- trim(value);
   value;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getTimeStamp", "AffymetrixAptSummaryFile", function(this, format="%a %b %d %H:%M:%S %Y", ...) {
@@ -116,7 +116,7 @@ setMethodS3("getTimeStamp", "AffymetrixAptSummaryFile", function(this, format="%
     value <- strptime(value, format=format);
   }
   value;
-})
+}, protected=TRUE)
  
 
 setMethodS3("getChipType", "AffymetrixAptSummaryFile", function(this, ...) {
@@ -126,7 +126,7 @@ setMethodS3("getChipType", "AffymetrixAptSummaryFile", function(this, ...) {
 
 setMethodS3("getQuantificationScale", "AffymetrixAptSummaryFile", function(this, ...) {
   getParameter(this, "affymetrix-algorithm-param-quantification-scale");
-})
+}, protected=TRUE)
 
 
 
