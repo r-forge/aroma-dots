@@ -99,7 +99,7 @@ setMethodS3("getCellMapForMainCdf", "ChipEffectFile", function(this, ..., verbos
 })
 
 
-setMethodS3("writeAsFullCelFile", "ChipEffectFile", function(this, name=getName(this), tags="*,full", ..., verbose=FALSE) {
+setMethodS3("writeAsFullCelFile", "ChipEffectFile", function(this, name=getName(this), tags="*", ..., cells=NULL, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -127,8 +127,10 @@ setMethodS3("writeAsFullCelFile", "ChipEffectFile", function(this, name=getName(
   verbose && print(verbose, cf);
 
   # Get the index map that maps monocell-CDF cells to main-CDF cells
-  cells <- getCellMapForMainCdf(this, verbose=less(verbose, 10));
-  verbose && str(verbose, cells);
+  if (is.null(cells)) {
+    cells <- getCellMapForMainCdf(this, verbose=less(verbose, 10));
+    verbose && str(verbose, cells);
+  }
 
   # Read data
   fields <- c("intensities", "stdvs", "pixels");
@@ -137,7 +139,6 @@ setMethodS3("writeAsFullCelFile", "ChipEffectFile", function(this, name=getName(
 
   # Identify cells that have data
   mainCells <- which(is.finite(cells));
-  rm(cells);
   data <- data[mainCells,,drop=FALSE];
   verbose && str(verbose, data);
 
@@ -154,16 +155,26 @@ setMethodS3("writeAsFullCelFile", "ChipEffectFile", function(this, name=getName(
 
   res <- AffymetrixCelFile(pathname2);
 
+  attr(res, "cells") <- cells;
+
   res;
 }, protected=TRUE);
 
 
 
-setMethodS3("getAsFullCelFile", "ChipEffectFile", function(this, name=getName(this), tags="*,full", path=getPath(this), ..., verbose=FALSE) {
+setMethodS3("getAsFullCelFile", "ChipEffectFile", function(this, name=getName(this), tags="*", path=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'path':
+  if (is.null(path)) {
+    rootPath <- "probeData";
+    path <- getPath(this);
+    chipType <- basename(path);
+    dataSet <- basename(getParent(path));
+    path <- file.path(rootPath, dataSet, chipType);
+    path <- Arguments$getWritablePath(path);
+  }
   path <- Arguments$getWritablePath(path);
 
   # Argument 'verbose':
@@ -177,8 +188,10 @@ setMethodS3("getAsFullCelFile", "ChipEffectFile", function(this, name=getName(th
     tags <- paste(tags, collapse=",");
     tags <- unlist(strsplit(tags, split=","));
     idx <- which(tags == "*");
-    if (length(idx) > 0)
+    if (length(idx) > 0) {
       tags <- insert(tags[-idx], at=idx, getTags(this));
+    }
+    tags <- tags[(tags != "chipEffects")];
   }
 
 
@@ -198,6 +211,8 @@ setMethodS3("getAsFullCelFile", "ChipEffectFile", function(this, name=getName(th
 
 ############################################################################
 # HISTORY:
+# 2008-03-31
+# o Now getAsFullCelFile() writes to probeData/.
 # 2008-03-18
 # o Added getAsFullCelFile() and writeAsFullCelFile() for ChipEffectFile.
 ############################################################################

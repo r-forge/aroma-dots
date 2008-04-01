@@ -10,12 +10,18 @@ setMethodS3("getAsFullCelSet", "ChipEffectSet", function(this, ..., verbose=FALS
   } 
 
   verbose && enter(verbose, "Getting chip effect set expanded to the full CDF");
+  cells <- NULL;
   files <- list();
   for (kk in seq(this)) {
     cef <- getFile(this, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') %d", 
                                           kk, getName(cef), length(this)));
-    cf <- getAsFullCelFile(cef, ..., verbose=less(verbose, 5));
+
+    cf <- getAsFullCelFile(cef, ..., cells=cells, verbose=less(verbose, 5));
+
+    cells <- attr(cf, "cells");
+    attr(cf, "cells") <- NULL;
+
     files[[kk]] <- cf;
     verbose && exit(verbose);
   }
@@ -30,6 +36,8 @@ setMethodS3("getAsFullCelSet", "ChipEffectSet", function(this, ..., verbose=FALS
 
 ############################################################################
 # HISTORY:
+# 2008-03-31
+# o Now the cell map is reused across arrays.
 # 2008-03-20
 # o Created.
 ############################################################################
