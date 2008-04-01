@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{Explorer}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{ArrayExplorer}}, \link[aroma.affymetrix]{ChromosomeExplorer}\cr
+\emph{\link{ArrayExplorer}}, \link[aroma.affymetrix]{ChromosomeExplorer}\cr
 
 public abstract static class \bold{Explorer}\cr
 extends \link[R.oo]{Object}\cr

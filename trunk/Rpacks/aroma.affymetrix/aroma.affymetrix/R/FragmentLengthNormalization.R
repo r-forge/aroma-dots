@@ -394,27 +394,42 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 
     yR <- data[,"theta"];
     rm(data); # Not needed anymore
+    verbose && cat(verbose, "Summary of signals (on the intensity scale):");
+    verbose && summary(verbose, yR);
 
     # Shift?
     shift <- this$shift;
     if (shift != 0) {
+      verbose && printf(verbose, "Applying shift: %+f\n", shift);
       yR <- yR + shift;
+      verbose && cat(verbose, "Summary of shifted signals (on the intensity scale):");
+      verbose && summary(verbose, yR);
     }
     
     yR <- log2(yR);
     verbose && cat(verbose, "Signals:");
     verbose && str(verbose, yR);
+    verbose && cat(verbose, "Summary of signals (on the log2 scale):");
+    verbose && summary(verbose, yR);
     
     # Get PCR fragment lengths for these
     fl <- getFragmentLengths(si, units=units);
     rm(si, units); # Not needed anymore
     verbose && cat(verbose, "Fragment lengths:");
     verbose && str(verbose, fl);
+    verbose && cat(verbose, "Summary of fragment lengths:");
+    verbose && summary(verbose, fl);
 
     # Fit lowess function
     verbose && enter(verbose, "Fitting target prediction function to each enzyme exclusively");
     okYR <- is.finite(yR);
+    verbose && cat(verbose, "Distribution of log2 signals that are finite:");
+    verbose && summary(verbose, okYR);
+
     hasFL <- is.finite(fl);
+    verbose && cat(verbose, "Distribution of units with known fragment lengths:");
+    verbose && summary(verbose, hasFL);
+
     nbrOfEnzymes <- ncol(fl);
     allEnzymes <- seq(length=nbrOfEnzymes);
 
@@ -425,9 +440,17 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
       # Fit only to units with known length and non-missing data points.
       ok <- (hasFL[,ee] & okYR);
 
+      verbose && cat(verbose, "Distribution of units with known fragment lengths and finite signals:");
+      verbose && summary(verbose, ok);
+
       # Exclude multi-enzyme units
-      for (ff in setdiff(allEnzymes, ee))
+      for (ff in setdiff(allEnzymes, ee)) {
         ok <- ok & !hasFL[,ff];
+      }
+
+      verbose && cat(verbose, "Distribution of units with known fragment lengths and finite signals that are exclusively on this enzyme:");
+      verbose && summary(verbose, ok);
+
 
       # Sanity check
       if (sum(ok) == 0) {
@@ -701,6 +724,9 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2008-03-29
+# o Added more verbose output for the getTargetFunctions() in order to
+#   simplify troubleshooting.
 # 2008-02-18
 # o Added 'shift' to FragmentLengthNormalization, cf ProbeLevelModel.
 # 2007-12-01

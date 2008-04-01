@@ -3,6 +3,8 @@
 % 
 %  AffymetrixCelFile.PLOT.R
 % 
+% on Mon Mar 31 17:19:46 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -30,7 +32,7 @@
      (x0,x1) and (y0,y1) regions to be extracted.  If \code{\link[base]{NULL}}, the
      complete regions is used.}
   \item{field}{One of the CEL file fields, i.e. \code{"intensities"},
-     \item{stdvs}, or \item{pixels}.}
+     \code{stdvs}, or \code{pixels}.}
   \item{transforms}{A \code{\link[base]{list}} of transform \code{\link[base]{function}}s.}
   \item{interleaved}{}
   \item{...}{Additional arguments passed to

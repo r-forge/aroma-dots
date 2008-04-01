@@ -28,7 +28,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fitOne", "CbsModel", function(this, data=data, chromosome, ..., verbose=FALSE) {
+setMethodS3("fitOne", "CbsModel", function(this, data, chromosome, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -85,6 +85,8 @@ setMethodS3("fitOne", "CbsModel", function(this, data=data, chromosome, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2008-03-29
+# o fitOne() had argument 'data=data'. Replaced with 'data'.
 # 2007-08-20
 # o Created from GladModel.fitOne.R.
 ############################################################################

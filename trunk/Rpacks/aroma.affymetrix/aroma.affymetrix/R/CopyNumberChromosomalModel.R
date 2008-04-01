@@ -649,7 +649,7 @@ setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=s
       rawCns <- extractRawCopyNumbers(this, array=array, chromosome=chromosome, ..., verbose=less(verbose,5));
 
 #      verbose && enter(verbose, "First-order robust variance estimator");
-      res[rr,cc] <- mad(rawCns);
+      res[rr,cc] <- estimateStandardDeviation(rawCns);
       rm(rawCns);
 #      verbose && exit(verbose);
 

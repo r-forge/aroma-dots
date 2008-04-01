@@ -303,7 +303,7 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
         rawCns <- extractRawCopyNumbers(fit);
         nbrOfLoci <- nbrOfLoci(rawCns);
         verbose && print(verbose, rawCns);
-        sigmaM <- mad(rawCns);
+        sigmaM <- estimateStandardDeviation(rawCns);
         verbose && printf(verbose, "Robust first-order standard deviation estimate: %g\n", sigmaM);
         cnRegions <- extractCopyNumberRegions(fit);
         verbose && print(verbose, cnRegions);

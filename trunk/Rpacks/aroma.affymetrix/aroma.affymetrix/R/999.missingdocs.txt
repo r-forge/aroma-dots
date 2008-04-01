@@ -720,13 +720,17 @@ getFirmaSet getUnitGroupCellMap.AffymetrixCelSet
   getUnitGroupCellMapWithMonocell
   getUnitGroupCellMapWithMonocell.AffymetrixCdfFile isUnitGroupCellMap
   isUnitGroupCellMap.data.frame isUnitGroupCellMap.default
-  isUnitGroupCellMap.matrix log2center mad mad.default
-  mad.RawCopyNumbers norm2d norm2d.matrix normalizeOne
+  isUnitGroupCellMap.matrix log2center 
+  norm2d norm2d.matrix normalizeOne
   normalizeOne.SpatialRowColumnNormalization plotMargins
   plotMargins.SpatialReporter process.SpatialRowColumnNormalization
   readRawData readRawDataRectangle
   readRawDataRectangle.AffymetrixCelFile
-  readRawDataRectangle.SpatialReporter sd sd.default sd.RawCopyNumbers
+  readRawDataRectangle.SpatialReporter 
   setReference setReference.SpatialReporter
   SpatialRowColumnNormalization sqrtcenter writeAsFullCelFile
   writeAsFullCelFile.ChipEffectFile
+ estimateStandardDeviation estimateStandardDeviation.RawCopyNumbers
+  getAsFullCelSet getAsFullCelSet.ChipEffectSet getColumnNameTranslator
+  getColumnNameTranslator.GenericTabularFile log10 log2
+  setColumnNameTranslator setColumnNameTranslator.GenericTabularFile

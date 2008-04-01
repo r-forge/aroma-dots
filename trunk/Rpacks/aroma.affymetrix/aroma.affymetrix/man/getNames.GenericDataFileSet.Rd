@@ -22,7 +22,8 @@
 \usage{\method{getNames}{GenericDataFileSet}(this, ...)}
 
 \arguments{
- \item{...}{Not used.}
+ \item{...}{Arguments passed to \code{getName()} of each
+                                                  \code{\link{GenericDataFile}}.}
 }
 
 \value{
