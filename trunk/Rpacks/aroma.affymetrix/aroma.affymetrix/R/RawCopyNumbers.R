@@ -110,32 +110,61 @@ setMethodS3("getXY", "RawCopyNumbers", function(this, sort=TRUE, ...) {
   xy;
 })
 
-setMethodS3("sd", "RawCopyNumbers", function(this, na.rm=TRUE, method=c("diff", "var"), ...) {
+
+
+###########################################################################/**
+# @RdocMethod estimateStandardDeviation
+#
+# @title "Estimates the standard deviation of the raw CNs"
+#
+# \description{
+#  @get "title" robustly or non-robustly using either a "direct" estimator
+#  or a first-order difference estimator.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{method}{If \code{"diff"}, the estimate is based on the first-order
+#     contigous differences of raw CNs. If \code{"direct"}, it is based 
+#     directly on the raw CNs.}
+#   \item{estimator}{If \code{"mad"}, the robust @see "stats::mad" estimator
+#     is used.  If \code{"sd"}, the @see "stats::sd" estimator is used.}
+#   \item{na.rm}{If @TRUE, missing values are excluded first.}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a non-negative @numeric value.
+# }
+#
+# @author
+#
+# \seealso{
+#   @see "base::diff", @see "stats::sd", and @see "stats::mad".
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/########################################################################### 
+setMethodS3("estimateStandardDeviation", "RawCopyNumbers", function(this, method=c("diff", "direct"), estimator=c("mad", "sd"), na.rm=TRUE, ...) {
   # Argument 'method':
   method <- match.arg(method);
+
+  # Argument 'estimator':
+  estimator <- match.arg(estimator);
+
+
+  # Get the estimator function
+  estimatorFcn <- get(estimator, mode="function");
 
   if (method == "diff") {
     value <- diff(this$cn);
-    sigma <- sd(value, na.rm=na.rm)/sqrt(2);
-  } else if (method == "var") {
+    sigma <- estimatorFcn(value, na.rm=na.rm)/sqrt(2);
+  } else if (method == "direct") {
     value <- this$cn;
-    sigma <- sd(value, na.rm=na.rm);
-  }
-
-  sigma;
-})
-
-
-setMethodS3("mad", "RawCopyNumbers", function(this, na.rm=TRUE, method=c("diff", "var"), ...) {
-  # Argument 'method':
-  method <- match.arg(method);
-
-  if (method == "diff") {
-    values <- diff(getCNs(this));
-    sigma <- mad(values, na.rm=na.rm, ...)/sqrt(2);
-  } else if (method == "var") {
-    values <- getCNs(this);
-    sigma <- mad(values, na.rm=na.rm, ...);
+    sigma <- estimatorFcn(value, na.rm=na.rm);
   }
 
   sigma;
@@ -202,6 +231,8 @@ setMethodS3("extractRawCopyNumbers", "DNAcopy", function(object, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-03-31
+# o Put recently added sd() and mad() into estimateStandardDeviation().
 # 2008-03-10
 # o Added standard deviation estimator sd() and mad() which my default
 #   uses a first-order difference variance estimator.

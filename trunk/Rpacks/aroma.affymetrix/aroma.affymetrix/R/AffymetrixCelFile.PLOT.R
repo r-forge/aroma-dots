@@ -501,7 +501,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #      (x0,x1) and (y0,y1) regions to be extracted.  If @NULL, the
 #      complete regions is used.}
 #   \item{field}{One of the CEL file fields, i.e. \code{"intensities"},
-#      \item{stdvs}, or \item{pixels}.}
+#      \code{stdvs}, or \code{pixels}.}
 #   \item{transforms}{A @list of transform @functions.}
 #   \item{interleaved}{}
 #   \item{...}{Additional arguments passed to 

@@ -3,6 +3,8 @@
 % 
 %  GenericDataFile.R
 % 
+% on Mon Mar 31 17:07:46 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -19,9 +21,11 @@
   Gets the full name of the file, that is the filename without the extension.
 }
 
-\usage{\method{getFullName}{GenericDataFile}(this, ...)}
+\usage{\method{getFullName}{GenericDataFile}(this, aliased=FALSE, ...)}
 
 \arguments{
+ \item{aliased}{If \code{\link[base:logical]{TRUE}}, and an alias has been set, the alias is
+    returned, otherwise the default full name is returned.}
  \item{...}{Not used.}
 }
 

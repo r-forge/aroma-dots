@@ -69,11 +69,14 @@ setMethodS3("getListOfReporters", "ArrayExplorer", function(this, ...) {
   reporters <- this$.reporters;
 
   if (is.null(reporters)) {
-    tags <- getTags(this);
+    # No need to add the tags, because they are now automatically inferred from
+    # the input set.  This is done by the new AffymetrixFileSetReporter superclass
+    # of SpatialReporter.  /HB 2008-03-29
+#    tags <- getTags(this);  
     setTuple <- getSetTuple(this);
     csList <- getListOfSets(setTuple);
     reporters <- lapply(csList, FUN=function(cs) {
-      reporter <- SpatialReporter(cs, tags=tags);
+      reporter <- SpatialReporter(cs, tags="*");
       reporter;
     });
     this$.reporters <- reporters;
@@ -408,6 +411,13 @@ setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2008-03-29
+# o BUG FIX: The ArrayExplorer would generate image files to a directory under
+#   reports/<dataSet>/<tags>,<tags>/..., i.e. the tags where replicated.  This
+#   is a bug introduced in the latest release.
+#   Details: No need to add the tags, because they are now automatically 
+#   inferred from the input set.  This is done by the new 
+#   AffymetrixFileSetReporter superclass of SpatialReporter.
 # 2007-08-09
 # o Renamed updateSampleFile() to updateOnLoadJS().
 # o Added updateOnChipTypeJS().

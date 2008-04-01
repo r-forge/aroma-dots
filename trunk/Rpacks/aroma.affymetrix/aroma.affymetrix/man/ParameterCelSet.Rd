@@ -23,7 +23,7 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link{AffymetrixCelSet}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~~~~~~+--}\code{ParameterCelSet}\cr
 
@@ -31,7 +31,7 @@
 \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 public static class \bold{ParameterCelSet}\cr
-extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
+extends \link{AffymetrixCelSet}\cr
 
 
 
@@ -53,7 +53,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
 
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitGroupCellMap, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf
+[, [[, append, as.AffymetrixCelSet, byName, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitGroupCellMap, getUnitIntensities, isDuplicated, nbrOfArrays, range, readUnits, setCdf, [, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitGroupCellMap, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, clearCache, fromFiles

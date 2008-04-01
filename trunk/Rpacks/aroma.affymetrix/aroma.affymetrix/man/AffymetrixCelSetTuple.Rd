@@ -14,7 +14,7 @@
  \title{The AffymetrixCelSetTuple class}
 
  \description{
-  Package:  aroma.affymetrix \cr
+  Package:   \cr
 \bold{Class AffymetrixCelSetTuple}\cr
 
 \code{\link[R.oo]{Object}}\cr
@@ -47,7 +47,24 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.affymetrix:extract.AffymetrixCelSetTuple]{extract}} \tab Extracts a subset AffymetrixCelSetTuple.\cr
  \tab \code{getAlias} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getArrays.AffymetrixCelSetTuple]{getArrays}} \tab Gets the names of the arrays.\cr
- \tab \code{getArrayTuple} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getArrayTuple.AffymetrixCelSetTuple]{getArrayTuple}} \tab Gets arrays across chip types for one sample.\cr
+ \tab \code{\link[aroma.affymetrix:getChipTypes.AffymetrixCelSetTuple]{getChipTypes}} \tab Gets a label for all chip types merged.\cr
+ \tab \code{getFullName} \tab  -\cr
+ \tab \code{getFullNames} \tab  -\cr
+ \tab \code{getListOfSets} \tab  -\cr
+ \tab \code{getName} \tab  -\cr
+ \tab \code{getNames} \tab  -\cr
+ \tab \code{getTags} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSetTuple]{nbrOfArrays}} \tab Gets the number of arrays.\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.AffymetrixCelSetTuple]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
+ \tab \code{setAlias} \tab  -\cr
+ \tab \code{setTags} \tab  -\cr
+ \tab \code{byPath} \tab  -\cr
+ \tab \code{clearCache} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:extract.AffymetrixCelSetTuple]{extract}} \tab Extracts a subset AffymetrixCelSetTuple.\cr
+ \tab \code{getAlias} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getArrays.AffymetrixCelSetTuple]{getArrays}} \tab Gets the names of the arrays.\cr
+ \tab \code{\link[aroma.affymetrix:getArrayTuple.AffymetrixCelSetTuple]{getArrayTuple}} \tab Gets arrays across chip types for one sample.\cr
  \tab \code{\link[aroma.affymetrix:getChipTypes.AffymetrixCelSetTuple]{getChipTypes}} \tab Gets a label for all chip types merged.\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr

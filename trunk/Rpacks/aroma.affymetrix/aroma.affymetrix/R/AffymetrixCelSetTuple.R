@@ -484,15 +484,17 @@ setMethodS3("getTableOfArrays", "AffymetrixCelSetTuple", function(this, ...) {
   X <- matrix(NA, nrow=nbrOfArrays, ncol=nbrOfChipTypes);
   dimnames(X) <- list(allNames, chipTypes);
   for (chipType in chipTypes) {
-    namesCT <- names[[chipType]];
-    for (rr in seq(length=nrow(X))) {
-      name <- rownames(X)[rr];
-      idx <- match(name, namesCT);
-      if (!is.na(idx)) {
-        X[idx,chipType] <- rr;
-        namesCT[idx] <- NA;
-      }
-    }
+    idxs <- match(rownames(X), names[[chipType]]);
+    X[,chipType] <- idxs;
+
+##    for (rr in seq(length=nrow(X))) {
+##      name <- rownames(X)[rr];
+##      idx <- match(name, namesCT);
+##      if (!is.na(idx)) {
+##        X[idx,chipType] <- rr;
+##        namesCT[idx] <- NA;
+##      }
+##    }
   }
 
   X;
@@ -769,6 +771,9 @@ setMethodS3("asMatrixOfFiles", "AffymetrixCelSetTuple", function(this, ..., verb
 
 ##############################################################################
 # HISTORY:
+# 2008-03-29
+# o getTableOfArrays() of AffymetrixCelSetTuple returned the incorrect 
+#   array indices for the 2nd chip type if different arrays in the two sets.
 # 2008-03-11
 # o Renamed getTuple() to getArrayTuple().
 # 2007-03-29

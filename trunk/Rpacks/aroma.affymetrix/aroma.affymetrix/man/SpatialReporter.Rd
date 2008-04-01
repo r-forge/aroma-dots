@@ -3,6 +3,8 @@
 % 
 %  SpatialReporter.R
 % 
+% on Mon Mar 31 17:07:59 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -41,6 +43,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
 
  \arguments{
    \item{...}{Arguments passed to \code{\link{AffymetrixCelSetReporter}}.}
+   \item{reference}{An optional reference \code{\link{AffymetrixCelFile}}.}
  }
 
  \section{Fields and Methods}{

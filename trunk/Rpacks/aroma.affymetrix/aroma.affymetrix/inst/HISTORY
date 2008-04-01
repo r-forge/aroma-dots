@@ -1,11 +1,21 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.0.2 [2008-03-22xx]
+Version: 0.9.0.2 [2008-03-31xx]
 o Now setCdf() also reports on the two incompatible chip types involved 
   if trying to set a CDF that is not compatible with a CEL file.
 o Added getMainCdf() for AffymetrixCdfFile for retrieving the 
   "main" CDF given a monocell CDF.
+o Now the standard deviation across all CNs in a chromosome is calculated
+  using a robust first-order difference estimator, which will make the 
+  estimate much less affected by copy-number changes.
+o BUG FIX: The ArrayExplorer would generate image files to a directory 
+  under reports/<dataSet>/<tags>,<tags>/..., i.e. the tags where 
+  replicated.  This is a bug introduced in the latest release.  Thanks
+  to 
+o BUG FIX: getTableOfArrays() of AffymetrixCelSetTuple returned the
+  incorrect array indices for the 2nd chip type if different arrays
+  in the two sets.
 o BUG FIX: Regular expression pattern 'a-Z' is illegal on (at least) 
   some locale, e.g. 'C' (where 'A-z' works). The only way to specify 
   the ASCII alphabet is to list all characters explicitly, which we now

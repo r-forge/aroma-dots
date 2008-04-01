@@ -42,9 +42,8 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, p
       stext(text=sprintf("n=%d", n), side=4, pos=0, line=0, cex=0.8);
 
       # Add std dev estimates
-      sd <- sd(rawCns$cn, na.rm=TRUE);
-      mad <- mad(rawCns$cn, na.rm=TRUE);
-      text <- substitute(paste(hat(sigma)==sd, ", ", hat(sigma)["MAD"]==mad, sep=""), list(sd=sprintf("%.3g", sd), mad=sprintf("%.3g", mad)));
+      sd <- estimateStandardDeviation(rawCns);
+      text <- substitute(hat(sigma)==sd, list(sd=sprintf("%.3g", sd)));
       stext(text=text, side=3, pos=0.5, line=-2);  
     });
 
@@ -61,6 +60,10 @@ setMethodS3("plotRawCopyNumbers", "CopyNumberChromosomalModel", function(this, p
 
 ##############################################################################
 # HISTORY:
+# 2008-03-31
+# o Now the standard deviation across all CNs in a chromosome is calculated
+#   using a robust first-order difference estimator, which will make the 
+#   estimate much less affected by copy-number changes.
 # 2007-10-09
 # o Added plotCytobandLayers().
 # 2007-09-15

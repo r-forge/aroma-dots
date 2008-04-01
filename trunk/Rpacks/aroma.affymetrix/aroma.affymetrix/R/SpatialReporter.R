@@ -14,7 +14,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "AffymetrixCelSetReporter".}
-#   \item{reference}{}
+#   \item{reference}{An optional reference @see "AffymetrixCelFile".}
 # }
 #
 # \section{Fields and Methods}{

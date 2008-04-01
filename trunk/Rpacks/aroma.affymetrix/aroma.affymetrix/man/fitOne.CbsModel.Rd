@@ -3,6 +3,8 @@
 % 
 %  CbsModel.fitOne.R
 % 
+% on Mon Mar 31 17:07:02 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -20,7 +22,7 @@
  Fits the CBS model for one chromosome in one sample.
 }
 
-\usage{\method{fitOne}{CbsModel}(this, data=data, chromosome, ..., verbose=FALSE)}
+\usage{\method{fitOne}{CbsModel}(this, data, chromosome, ..., verbose=FALSE)}
 
 \arguments{
   \item{data}{}
