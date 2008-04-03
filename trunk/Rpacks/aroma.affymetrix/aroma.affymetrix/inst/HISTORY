@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.0.2 [2008-03-31xx]
+Version: 0.9.0.2 [2008-04-02xx]
 o Now setCdf() also reports on the two incompatible chip types involved 
   if trying to set a CDF that is not compatible with a CEL file.
 o Added getMainCdf() for AffymetrixCdfFile for retrieving the 
@@ -39,6 +39,7 @@ o CLEAN UP: Removed the backward compatibility patch from 2007-01-10 that
   of the chip effect files to match the fullnames raw data files.
 o BETA: Added static method allocateFromCdf() of AffymetrixCelFile.
 o BETA: Added isUnitGroupCellMap().
+o BETA: Added matrixBlockPolish().
 o BETA: Added estimateSds() to CopyNumberChromosomalModel for estimating
   the standard deviation of the raw CNs (log2-ratios) robustly and so
   that change points have minimal impact. This is done by using a
