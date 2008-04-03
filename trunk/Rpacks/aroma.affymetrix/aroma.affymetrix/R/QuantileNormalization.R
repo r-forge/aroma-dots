@@ -312,6 +312,20 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##   # Argument 'targetDataSet':
+##   if (is.null(targetDataSet)) {
+##     targetDataSet <- getInputDataSet(this);
+##   } else if (inherits(targetDataSet, "AffymetrixCelSet")) {
+##     cdf <- getCdf(targetDataSet);
+##     dataSet <- getInputDataSet(this);
+##     if (getChipType(cdf) != getChipType(getCdf(dataSet))) {
+##       throw("Argument 'targetDataSet' does not have the same chip type as the input data set: ", getChipType(cdf), " != ", getChipType(getCdf(dataSet)));
+##     }
+##   } else {
+##     throw("Argument 'targetDataSet' is not an AffymetrixCelSet: ", 
+##                                                   class(targetDataSet)[1]);
+##   }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -323,10 +337,12 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
   verbose && enter(verbose, "Calculating target distribution");
   verbose && cat(verbose, "Method: average empirical distribution");
 
+  # Get name where to store the target distribution
   pathname <- getTargetDistributionPathname(this, verbose=less(verbose));
 
-  ds <- getInputDataSet(this);
-  cdf <- getCdf(ds);
+  targetDataSet <- getInputDataSet(this);
+  cdf <- getCdf(targetDataSet);
+
   params <- getParameters(this);
 
   cellsToSearch <- params$subsetToAvg;
@@ -347,9 +363,10 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
   verbose && str(verbose, excl);
 
   verbose && cat(verbose, "Calculating target distribution from the ", 
-                            length(ds), " arrays in the input data set");
+                length(targetDataSet), " arrays in the input data set");
   # Calculate the average quantile
-  yTarget <- averageQuantile(ds, probes=probes, excludeCells=excl, verbose=less(verbose));
+  yTarget <- averageQuantile(targetDataSet, probes=probes, 
+                              excludeCells=excl, verbose=less(verbose));
   rm(probes);
 
   # Write the result to file

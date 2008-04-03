@@ -65,30 +65,7 @@ setMethodS3("getReferenceData", "SpatialRowColumnNormalization", function(this, 
 })
 
 
-setMethodS3("getLogRatioData", "SpatialRowColumnNormalization", function(this, array, ...) {
-  ds <- getInputDataSet(this);
-  df <- getFile(ds, array);
 
-  y <- readRawDataRectangle(df, field="intensities", drop=TRUE, ...);
-  yR <- getReferenceData(this, ...);
-
-  suppressWarnings({
-    M <- log2(y/yR);
-  });
-
-  M;
-})
-
-
-setMethodS3("normalizeOne", "SpatialRowColumnNormalization", function(this, array, ...) {
-  M <- getLogRatioData(this, array=array, ...);
-  spar <- getSpar(this);
-  h <- getH(this);
-  Mn <- norm2d(M, spar=spar, h=h, ...);
-  Mn;
-})
-
-  
 setMethodS3("process", "SpatialRowColumnNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -163,34 +140,27 @@ setMethodS3("process", "SpatialRowColumnNormalization", function(this, ..., forc
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Reading all probe intensities");
       y <- readRawDataRectangle(df, field="intensities", drop=TRUE, ...);
-      verbose && str(verbose, y); 
-      verbose && exit(verbose); 
+      verbose && str(verbose, y);
+      verbose && exit(verbose);
 
-      verbose && enter(verbose, "Transforming to log-ratios");
-      suppressWarnings({
-        M <- log2(y/yR);
-      });
-      rm(y);
-      verbose && str(verbose, M); 
-      verbose && exit(verbose); 
+      verbose && enter(verbose, "Transforming to the log-scale");
+      y <- log2(y);
+      verbose && str(verbose, y);
+      verbose && exit(verbose);
+
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Normalizing log-ratios data
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Normalizing rows and columns in blocks");
-      Mn <- norm2d(M, spar=params$spar, h=params$h, ...);
-      rm(M);
-      verbose && str(verbose, Mn); 
+      y <- norm2d(y, yTarget=yR, spar=params$spar, h=params$h, ...);
+      verbose && str(verbose, y); 
       verbose && exit(verbose); 
 
-      verbose && enter(verbose, "Back-transforming to single-channel intensities");
-      # Back-transform to the single-channel intensities
-      # M = log2(y/yR) <=> 2^M = y/yR <=> y = 2^M*yR;
-      # Note: This transform has the same problem as curve-fit normalization
-      # because it only corrects log-ratios. /HB 2008-03-19
-      yN <- 2^Mn * yR;
-      rm(Mn);
-      verbose && str(verbose, yN); 
+      verbose && enter(verbose, "Back-transforming to intensity scale");
+      y <- 2^y;
+      y <- as.vector(y);
+      verbose && str(verbose, y); 
       verbose && exit(verbose); 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -206,15 +176,12 @@ setMethodS3("process", "SpatialRowColumnNormalization", function(this, ..., forc
       # Write calibrated data to file
       verbose2 <- -as.integer(verbose)-2;
       verbose && str(verbose, cells);
-      yN <- as.vector(yN);
-      verbose && str(verbose, yN);
-      updateCel(pathname, indices=cells, intensities=yN, verbose=verbose2);
-      rm(yN, verbose2);
+      updateCel(pathname, indices=cells, intensities=y, verbose=verbose2);
+      rm(y, verbose2);
 
       gc <- gc();
       verbose && print(verbose, gc);
       verbose && exit(verbose); 
-
     } # if-else
 
     # Retrieving normalized data file
@@ -247,6 +214,9 @@ setMethodS3("process", "SpatialRowColumnNormalization", function(this, ..., forc
 
 ############################################################################
 # HISTORY: 
+# 2008-04-02
+# o Note: Normalizing log-ratios and then transforming back to chip effects
+#   might not do.  See my PPT notes from today.
 # 2008-03-19
 # o Created.
 ############################################################################ 
