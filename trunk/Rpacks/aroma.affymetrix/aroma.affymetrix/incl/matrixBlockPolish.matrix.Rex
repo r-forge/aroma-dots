@@ -24,13 +24,14 @@ x <- y <- seq(-4*pi, 4*pi, len=27)
 r <- sqrt(outer(x^2, y^2, FUN="+"))
 z <- cos(r^2) * exp(-r/6)
 
-fit <- matrixBlockPolish(z, FUN=function(y, x, ...) median(y, ...), returnEffects=TRUE)
+fit <- matrixBlockPolish(z, FUN=function(z, x, ...) median(z, ...),
+                                                      returnEffects=TRUE)
 r1 <- residuals(fit)
 
-fit <- matrixBlockPolish(z, FUN=function(y, x, ...) {
-  fit <- smooth.spline(x=x, y=y, ...);
+fit <- matrixBlockPolish(z, FUN=function(z, x, ...) {
+  fit <- smooth.spline(x=x, y=z, ...);
   predict(fit, x=x)$y;
-}, spar=0.25, returnEffects=TRUE)
+}, spar=0.25)
 r2 <- residuals(fit)
 print(range(r2))
 image(r2)

@@ -3,8 +3,6 @@
 % 
 %  AffymetrixCelFile.PLOT.R
 % 
-% on Mon Mar 31 17:19:46 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
