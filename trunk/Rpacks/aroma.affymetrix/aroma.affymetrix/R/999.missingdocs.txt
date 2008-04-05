@@ -730,7 +730,20 @@ getFirmaSet getUnitGroupCellMap.AffymetrixCelSet
   setReference setReference.SpatialReporter
   SpatialRowColumnNormalization sqrtcenter writeAsFullCelFile
   writeAsFullCelFile.ChipEffectFile
- estimateStandardDeviation estimateStandardDeviation.RawCopyNumbers
   getAsFullCelSet getAsFullCelSet.ChipEffectSet getColumnNameTranslator
   getColumnNameTranslator.GenericTabularFile log10 log2
   setColumnNameTranslator setColumnNameTranslator.GenericTabularFile
+ estimateStandardDeviation fitSplineBlockPolish
+  fitSplineBlockPolish.matrix getBlockSizes
+  getBlockSizes.SpatialRowColumnNormalization
+  getH.SpatialRowColumnLogRatioNormalization
+  getLogRatioData.SpatialRowColumnLogRatioNormalization
+  getParameters.SpatialRowColumnLogRatioNormalization
+  getReferenceData.SpatialRowColumnLogRatioNormalization
+  getReferenceFile.SpatialRowColumnLogRatioNormalization
+  getSpar.SpatialRowColumnLogRatioNormalization matrixBlockPolish
+  normalizeOne.SpatialRowColumnLogRatioNormalization
+  process.SpatialRowColumnLogRatioNormalization readCdfDataFrameFinal
+  readDataFrame readDataFrame.AffymetrixCdfFile
+  SpatialRowColumnLogRatioNormalization
+readCdfDataFrame

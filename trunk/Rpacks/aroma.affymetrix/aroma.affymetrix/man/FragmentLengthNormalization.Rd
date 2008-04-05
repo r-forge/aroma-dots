@@ -14,7 +14,7 @@
  \title{The FragmentLengthNormalization class}
 
  \description{
-  Package:   \cr
+  Package:  aroma.affymetrix \cr
 \bold{Class FragmentLengthNormalization}\cr
 
 \code{\link[R.oo]{Object}}\cr
@@ -55,10 +55,6 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{clearCache} \tab  -\cr
- \tab \code{getCdf} \tab  -\cr
- \tab \code{getOutputDataSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:process.FragmentLengthNormalization]{process}} \tab Normalizes the data set.\cr
  \tab \code{clearCache} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getOutputDataSet} \tab  -\cr

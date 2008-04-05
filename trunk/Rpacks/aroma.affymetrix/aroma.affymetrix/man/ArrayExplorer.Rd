@@ -14,7 +14,7 @@
  \title{The ArrayExplorer class}
 
  \description{
-  Package:   \cr
+  Package:  aroma.affymetrix \cr
 \bold{Class ArrayExplorer}\cr
 
 \code{\link[R.oo]{Object}}\cr
@@ -42,17 +42,6 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{addColorMap} \tab  -\cr
- \tab \code{getAlias} \tab  -\cr
- \tab \code{getAsteriskTags} \tab  -\cr
- \tab \code{getColorMaps} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getDataSet.ArrayExplorer]{getDataSet}} \tab Gets the data set.\cr
- \tab \code{getSetTuple} \tab  -\cr
- \tab \code{nbrOfChipTypes} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:process.ArrayExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
- \tab \code{setAlias} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:setArrays.ArrayExplorer]{setArrays}} \tab Sets the arrays.\cr
- \tab \code{setColorMaps} \tab  -\cr
  \tab \code{addColorMap} \tab  -\cr
  \tab \code{getAlias} \tab  -\cr
  \tab \code{getAsteriskTags} \tab  -\cr

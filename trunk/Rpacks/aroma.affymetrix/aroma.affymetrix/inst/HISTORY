@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.0.2 [2008-04-02xx]
+Version: 0.9.1 [2008-04-04]
 o Now setCdf() also reports on the two incompatible chip types involved 
   if trying to set a CDF that is not compatible with a CEL file.
 o Added getMainCdf() for AffymetrixCdfFile for retrieving the 
@@ -37,17 +37,19 @@ o CLEAN UP: Removed the backward compatibility patch from 2007-01-10 that
   still has such old chip effect files lying around, they have to either 
   add the tags manually or reanalyze the data if they want the fullnames
   of the chip effect files to match the fullnames raw data files.
-o BETA: Added static method allocateFromCdf() of AffymetrixCelFile.
-o BETA: Added isUnitGroupCellMap().
-o BETA: Added matrixBlockPolish().
 o BETA: Added estimateSds() to CopyNumberChromosomalModel for estimating
   the standard deviation of the raw CNs (log2-ratios) robustly and so
   that change points have minimal impact. This is done by using a
   first-order difference variance estimator.  The reading of the data
   can definitely be made faster, but at least it works for now.  Added
   redundancy tests for this based on the 10K and the 100K chip types.
+o BETA: Added static method allocateFromCdf() for AffymetrixCelFile.
+o BETA: Added readDataFrame() for AffymetrixCdfFile (SLOOOOW! but will
+  be faster when the underlying function in 'affxparser' is updated).
 o BETA: Added getUnitGroupCellChromosomePositionMap() to both
   AffymetrixCdfFile and ChipEffectFile.
+o BETA: Added isUnitGroupCellMap().
+o BETA: Added matrixBlockPolish().
 
 
 Version: 0.9.0 [2008-02-29]

@@ -113,6 +113,7 @@ setMethodS3("getXY", "RawCopyNumbers", function(this, sort=TRUE, ...) {
 
 
 ###########################################################################/**
+# @set "class=RawCopyNumbers"
 # @RdocMethod estimateStandardDeviation
 #
 # @title "Estimates the standard deviation of the raw CNs"

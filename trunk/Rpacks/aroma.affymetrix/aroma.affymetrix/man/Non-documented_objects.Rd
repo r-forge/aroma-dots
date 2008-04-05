@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Mon Mar 31 17:06:49 2008.
+% on Fri Apr 04 16:35:40 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1613,8 +1613,6 @@
 \alias{sqrtcenter}
 \alias{writeAsFullCelFile}
 \alias{writeAsFullCelFile.ChipEffectFile}
-\alias{estimateStandardDeviation}
-\alias{estimateStandardDeviation.RawCopyNumbers}
 \alias{getAsFullCelSet}
 \alias{getAsFullCelSet.ChipEffectSet}
 \alias{getColumnNameTranslator}
@@ -1623,6 +1621,25 @@
 \alias{log2}
 \alias{setColumnNameTranslator}
 \alias{setColumnNameTranslator.GenericTabularFile}
+\alias{estimateStandardDeviation}
+\alias{fitSplineBlockPolish}
+\alias{fitSplineBlockPolish.matrix}
+\alias{getBlockSizes}
+\alias{getBlockSizes.SpatialRowColumnNormalization}
+\alias{getH.SpatialRowColumnLogRatioNormalization}
+\alias{getLogRatioData.SpatialRowColumnLogRatioNormalization}
+\alias{getParameters.SpatialRowColumnLogRatioNormalization}
+\alias{getReferenceData.SpatialRowColumnLogRatioNormalization}
+\alias{getReferenceFile.SpatialRowColumnLogRatioNormalization}
+\alias{getSpar.SpatialRowColumnLogRatioNormalization}
+\alias{matrixBlockPolish}
+\alias{normalizeOne.SpatialRowColumnLogRatioNormalization}
+\alias{process.SpatialRowColumnLogRatioNormalization}
+\alias{readCdfDataFrameFinal}
+\alias{readDataFrame}
+\alias{readDataFrame.AffymetrixCdfFile}
+\alias{SpatialRowColumnLogRatioNormalization}
+\alias{readCdfDataFrame}
 
 \description{
   This page contains aliases for all "non-documented" objects that

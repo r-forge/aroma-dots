@@ -3,8 +3,6 @@
 % 
 %  GenericDataFile.R
 % 
-% on Mon Mar 31 17:07:46 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
