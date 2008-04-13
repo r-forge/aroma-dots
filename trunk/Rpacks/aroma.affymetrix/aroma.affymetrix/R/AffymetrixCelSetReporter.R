@@ -85,7 +85,7 @@ setMethodS3("nbrOfArrays", "AffymetrixCelSetReporter", function(this, ...) {
 setMethodS3("getChipType", "AffymetrixCelSetReporter", function(this, ...) {
   cs <- getDataSet(this);
   cdf <- getCdf(cs);
-  getChipType(cdf);
+  getChipType(cdf, ...);
 }, protected=TRUE)
 
 

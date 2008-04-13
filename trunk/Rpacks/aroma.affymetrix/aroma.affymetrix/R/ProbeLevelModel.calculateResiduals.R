@@ -12,7 +12,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   ces <- getChipEffectSet(this);
   if (inherits(ces, "CnChipEffectSet")) {
     if (ces$combineAlleles) {
-      throw("calculateResiduals() does not yet support chip effects for which allele A and allele B have been combined.");
+      throw("calculateResidualSet() does not yet support chip effects for which allele A and allele B have been combined.");
     }
   }
   paf <- getProbeAffinityFile(this);

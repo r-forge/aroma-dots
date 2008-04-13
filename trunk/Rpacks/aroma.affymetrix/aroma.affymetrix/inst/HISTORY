@@ -1,6 +1,17 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.1.2 [2008-04-09]
+o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
+o CONSISTENCY: Now the FirmaModel also has calculateResidualSet() just
+  as ProbeLevelModel got it.
+o CLEAN UP: Moved several methods to new package 'matrixStats' that is
+  specialized and optimized for matrix operations.
+o BUG FIX: getChipType(..., fullname=FALSE) of AffymetrixCdfFile would
+  return the chip type as the 'tags' attribute if there were no tags.
+
+
+
 Version: 0.9.1 [2008-04-04]
 o Now setCdf() also reports on the two incompatible chip types involved 
   if trying to set a CDF that is not compatible with a CEL file.
