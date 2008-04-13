@@ -514,7 +514,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 # }
 #
 # \value{
-#   Returns an Image object.
+#   Returns an @see "EBImage::Image" object.
 # }
 #
 # \section{Details}{
@@ -622,6 +622,13 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, xrange=c
   verbose && printf(verbose, "RAM: %.1fMB\n", object.size(y)/1024^2);
   verbose && exit(verbose);
 
+  # Transform signals?
+  for (transform in transforms) {
+    dim <- dim(y);
+    y <- transform(y);
+    dim(y) <- dim;
+  }
+
   # if only PM locations have signal, add a fake row
   if (interleaved == "auto") {
     verbose && enter(verbose, "Infering horizontal, vertical, or no interleaving");
@@ -670,17 +677,12 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, xrange=c
     y[,idxOdd] <- y[,idxOdd+1];
   }
 
-  # Transform signals?
-  for (transform in transforms) {
-    y <- transform(y);
-  }
-
   # Create an EBImage Image object
   y <- t(y);
   img <- EBImage::Image(data=y, dim=dim(y), colormode=EBImage::Grayscale);
 
-  verbose && enter(verbose, "Transforming image");
-  img <- rgbTransform(img, lim=zrange, ...);
+  verbose && enter(verbose, "Colorizing image");
+  img <- colorize(img, lim=zrange, ...);
   verbose && exit(verbose);
 
   # Zoom?

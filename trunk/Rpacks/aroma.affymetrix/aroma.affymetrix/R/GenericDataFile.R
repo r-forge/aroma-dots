@@ -384,15 +384,14 @@ setMethodS3("setAlias", "GenericDataFile", function(this, alias=NULL, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getTags", "GenericDataFile", function(this, pattern=NULL, collapse=NULL, ...) {
-  name <- getFullName(this, ...);
+  fullname <- getFullName(this, ...);
 
   # Data-set name is anything before the first comma
-  dsName <- gsub("[,].*$", "", name);
+  name <- gsub("[,].*$", "", fullname);
 
   # Keep anything after the data-set name (and the separator).
-  name <- substring(name, nchar(dsName)+2);
-  
-  tags <- unlist(strsplit(name, split=","));
+  tags <- substring(fullname, nchar(name)+2);
+  tags <- unlist(strsplit(tags, split=","));
 
   # Keep only those matching a regular expression?
   if (!is.null(pattern))

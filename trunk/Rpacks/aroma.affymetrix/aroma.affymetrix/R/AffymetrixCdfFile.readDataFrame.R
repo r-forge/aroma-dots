@@ -1,4 +1,4 @@
-setMethodS3("readDataFrame", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("readDataFrame", "AffymetrixCdfFile", function(this, units=NULL, fields=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -9,6 +9,11 @@ setMethodS3("readDataFrame", "AffymetrixCdfFile", function(this, units=NULL, ...
     # Validate unit indices
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits));
     nbrOfUnits <- length(units);
+  }
+
+  # Argument 'fields':
+  if (!is.null(fields)) {
+    fields <- Arguments$getCharacters(fields);
   }
 
   # Argument 'verbose':
@@ -22,7 +27,8 @@ setMethodS3("readDataFrame", "AffymetrixCdfFile", function(this, units=NULL, ...
   verbose && enter(verbose, "Reading CDF as a data frame");
 
   key <- list(method="readDataFrame", class=class(this)[1],
-              chipType=getChipType(this, fullname=TRUE), units=units, ...);
+              chipType=getChipType(this, fullname=TRUE), 
+              units=units, fields=fields, ...);
   dirs <- c("aroma.affymetrix", getChipType(this, fullname=TRUE));
   if (!force) {
     res <- loadCache(key, dirs=dirs);
@@ -41,9 +47,17 @@ setMethodS3("readDataFrame", "AffymetrixCdfFile", function(this, units=NULL, ...
   verbose && cat(verbose, "Pathname: ", pathname);
 
 
+  knownVirtualFields <- c("isPm");
+  virtualFields <- intersect(fields, knownVirtualFields);
+  verbose && cat(verbose, "Virtual fields: ", paste(virtualFields, collapse=", "));
+
   verbose2 <- as.integer(isVisible(verbose, -10));
   t0 <- processTime();
-  res <- readCdfDataFrame(pathname, units=units, ..., verbose=verbose2);
+  cdfFields <- setdiff(fields, virtualFields);
+  if ("isPm" %in% virtualFields) {
+    cdfFields <- c(cdfFields, "pbase", "tbase");
+  }
+  res <- readCdfDataFrame(pathname, units=units, fields=cdfFields, ..., verbose=verbose2);
   t1 <- processTime();
 
   verbose && cat(verbose, "Read data:");
@@ -63,6 +77,24 @@ setMethodS3("readDataFrame", "AffymetrixCdfFile", function(this, units=NULL, ...
                                          1000*dt/nbrOfUnits, dt/nbrOfUnits);
   }
 
+
+  # Generate virtual fields
+  if (length(virtualFields) > 0) {
+    if ("isPm" %in% virtualFields) {
+      res[["isPm"]] <- with(res, 
+        (tbase == "A" & pbase == "T") | 
+        (tbase == "T" & pbase == "A") |
+        (tbase == "C" & pbase == "G") |
+        (tbase == "G" & pbase == "C")
+      );
+    }
+  }
+
+  # Extract fields of interest
+  if (!is.null(fields)) {
+    res <- res[fields];
+  }
+
   # Save to file cache
   saveCache(res, key=key, dirs=dirs);
 
@@ -74,6 +106,9 @@ setMethodS3("readDataFrame", "AffymetrixCdfFile", function(this, units=NULL, ...
 
 ############################################################################
 # HISTORY:
+# 2008-04-13
+# o Now readDataFrame() of AffymetrixCdfFile adds "virtual" fields, e.g.
+#   the field 'isPm' is inferred and generated from 'pbase' and 'tbase'.
 # 2008-04-03
 # o Created.
 ############################################################################

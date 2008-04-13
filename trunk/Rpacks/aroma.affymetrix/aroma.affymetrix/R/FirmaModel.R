@@ -254,7 +254,8 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod calculateResiduals
+# @RdocMethod calculateResidualSet
+# @aliasmethod calculateResiduals
 #
 # @title "Gets the set of residuals corresponding to the PLM"
 #
@@ -279,10 +280,13 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
+setMethodS3("calculateResidualSet", "FirmaModel", function(this, ...) {
+  calculateResidualSet(this$.plm, ...)
+})
 
 setMethodS3("calculateResiduals", "FirmaModel", function(this, ...) {
-  calculateResiduals(this$.plm, ...)
-})
+  calculateResidualSet(this, ...);
+}, private=TRUE)
 
 
 
@@ -735,6 +739,8 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,fo
 
 ############################################################################
 # HISTORY:
+# 2008-04-09 [HB]
+# o Added calculateResidualSet() and made calculateResiduals() call it.
 # 2008-02-28 [HB]
 # o Added getFirmaSet() (to replace getFirmaScores()?).
 # 2007-12-13 [HB]

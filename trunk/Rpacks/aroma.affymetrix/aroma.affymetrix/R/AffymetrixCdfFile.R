@@ -156,6 +156,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 
 ###########################################################################/**
 # @RdocMethod byChipType
+# @aliasmethod byName
 #
 # @title "Defines an AffymetrixCdfFile object by chip type"
 #
@@ -195,9 +196,15 @@ setMethodS3("byChipType", "AffymetrixCdfFile", function(static, chipType, tags=N
   fromFile(static, filename=pathname, path=NULL, ...);
 }, static=TRUE)
 
+setMethodS3("byName", "AffymetrixCdfFile", function(static, ...) {
+  byChipType(static, ...);
+}, static=TRUE, protected=TRUE)
+
+
 setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, ...) {
   byChipType(static, ...);
 }, static=TRUE, protected=TRUE)
+
 
 
 
@@ -355,10 +362,15 @@ setMethodS3("getChipType", "AffymetrixCdfFile", function(this, fullname=TRUE, ..
       chipType <- gsub(pattern, "\\1", chipType);
       tags <- "monocell";
     } else {    
-      pattern <- "^([^,]*)[,](.*)$";
-      tags <- gsub(pattern, "\\2", chipType);
-      tags <- strsplit(tags, split=",")[[1]];
-      chipType <- gsub(pattern, "\\1", chipType);
+      name <- gsub("[,].*$", "", chipType);
+
+      # Keep anything after the data-set name (and the separator).
+      tags <- substring(chipType, nchar(name)+2);
+      tags <- unlist(strsplit(tags, split=","));
+      if (length(tags) == 0)
+        tags <- NULL;
+
+      chipType <- name;
     }
     attr(chipType, "tags") <- tags;
   }
@@ -1603,6 +1615,11 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-04-12
+# o BUG FIX: getChipType(..., fullname=FALSE) would return the chip type as
+#   the 'tags' attribute if there were no tags.
+# 2008-04-08
+# o Added byName().
 # 2008-03-11
 # o BUG FIX: Calling readUnits() of an AffymetrixCdfFile without specifying
 #   the 'units' argument gave an error.  Thanks Tim Keighley, CSIRO, Sydney

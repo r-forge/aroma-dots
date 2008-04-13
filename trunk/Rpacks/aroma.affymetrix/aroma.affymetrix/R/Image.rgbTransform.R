@@ -1,22 +1,36 @@
 # given an input Image, transform to new RGB image based
 # on list of colours given in argument 'palette' and lower and
 # upper bounds given in 'lim'.
-setMethodS3("rgbTransform", "Image", function(this, palette=gray.colors(256), lim=c(-Inf,Inf), outlierCol="white", ..., verbose=FALSE) {
+setMethodS3("colorize", "Image", function(this, palette=gray.colors(256), lim=c(-Inf,Inf), outlierCol="white", ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   col2rgbComposite <- function(color) {
     rgb <- col2rgb(color);
-    rgb[3,]*256^2 + rgb[2,]*256 + rgb[1,];
+    rgb <- rgb[3,]*256^2 + rgb[2,]*256 + rgb[1,];
+    rgb;
   } # col2rgbComposite()
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'this':
+  colorMode <- colorMode(this);
+  if (colorMode != EBImage::Grayscale) {
+    if (colorMode == EBImage::TrueColor) {
+      colorMode <- "TrueColor";
+    }
+    throw("Cannot colorize() non-Grayscale Image: ", colorMode);
+  }
+
   # Argument 'lim':
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -25,6 +39,7 @@ setMethodS3("rgbTransform", "Image", function(this, palette=gray.colors(256), li
   verbose && enter(verbose, "Binning image signals");
   # Data
   x <- this@.Data;
+  dim <- dim(x);
 
   # Outliers
   if (lim[1] > -Inf)
@@ -65,16 +80,24 @@ setMethodS3("rgbTransform", "Image", function(this, palette=gray.colors(256), li
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Create a new Image object
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  img <- EBImage::Image(x, dim(this@.Data), colormode=EBImage::TrueColor);
+  img <- EBImage::Image(x, dim=dim, colormode=EBImage::TrueColor);
 
   verbose && exit(verbose);
 
   img;
-})
+}, protected=TRUE)
+
+
+setMethodS3("rgbTransform", "Image", function(this, ...) {
+  colorize(this, ...);
+}, private=TRUE, deprecated=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2008-04-13
+# o Added asserting to colorize() that the Image has color mode Grayscale.
+# o Renamed rgbTransform() to colorize().
 # 2007-06-11
 # o Explicit calls to EBImage::Image() etc.
 # 2007-01-30 /HB
