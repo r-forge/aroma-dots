@@ -34,9 +34,6 @@
 #   chip type to be normalized.
 # }
 #
-# \examples{\dontrun{
-# }}
-#
 # @author
 #*/###########################################################################
 setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY", shift=0) {
@@ -517,8 +514,6 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 # \value{
 #  Returns a @double @vector.
 # }
-#
-# @examples "../incl/normalizeQuantile.Rex"
 #
 # @author
 #

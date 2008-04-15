@@ -53,7 +53,7 @@ setMethodS3("byChipType", "AffymetrixTsvFile", function(static, chipType, ...) {
 
 setMethodS3("verify", "AffymetrixTsvFile", function(this, ...) {
   tryCatch({
-    df <- readData(this, nrows=10);
+    df <- readDataFrame(this, nrows=10);
   }, error = function(ex) {
     throw("File format error of the Affymetrix TSV file: ", 
                                                   getPathname(this));
@@ -64,13 +64,13 @@ setMethodS3("verify", "AffymetrixTsvFile", function(this, ...) {
 setMethodS3("getData", "AffymetrixTsvFile", function(this, force=FALSE, ...) {
   data <- this$.data;
   if (force || is.null(data)) {
-    data <- readData(this, ...);
+    data <- readDataFrame(this, ...);
     this$.data <- data;
   }
   data;
 })
 
-setMethodS3("readData", "AffymetrixTsvFile", function(this, ..., verbose=FALSE) {
+setMethodS3("readDataFrame", "AffymetrixTsvFile", function(this, ..., verbose=FALSE) {
   pathname <- getPathname(this);
 
   colClasses <- c(
@@ -127,6 +127,12 @@ setMethodS3("readData", "AffymetrixTsvFile", function(this, ..., verbose=FALSE) 
   df;
 })
 
+
+setMethodS3("readData", "AffymetrixTsvFile", function(this, ...) {
+  readDataFrame(this, ...);
+}, protected=TRUE, deprecated=TRUE)
+
+
 setMethodS3("getField", "AffymetrixTsvFile", function(this, units=NULL, field, ...) {
   if (is.null(units)) {
     cdf <- getCdf(this);
@@ -157,6 +163,8 @@ setMethodS3("getGc", "AffymetrixTsvFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for AffymetrixTsvFile.
 # 2007-03-02
 # o Created.
 ############################################################################

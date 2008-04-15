@@ -254,7 +254,7 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 
     # Now read the genome information data
     verbose && enter(verbose, "Reading genome information data");
-    data <- readData(this, verbose=less(verbose));
+    data <- readDataFrame(this, verbose=less(verbose));
     verbose && str(verbose, data);
     verbose && exit(verbose);
 
@@ -388,9 +388,11 @@ setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromoso
 })
 
 
-#setMethodS3("readData", "GenomeInformation", abstract=TRUE);
-
 setMethodS3("readData", "GenomeInformation", function(this, ...) {
+  readDataFrame(this, ...);
+}, protected=TRUE, deprecated=TRUE);
+
+setMethodS3("readDataFrame", "GenomeInformation", function(this, ...) {
   readTableInternal(this, ...);
 }, protected=TRUE);
 
@@ -634,6 +636,8 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for GenomeInformation. 
 # 2007-12-01
 # 2007-11-25
 # o Now getUnitsOnChromosome() of GenomeInformation can indentify units from

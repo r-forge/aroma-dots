@@ -33,7 +33,7 @@ setMethodS3("byChipType", "AffymetrixCsvGenomeInformation", function(static, chi
 
 setMethodS3("verify", "AffymetrixCsvGenomeInformation", function(this, ...) {
   tryCatch({
-    df <- readData(this, nrow=10);
+    df <- readDataFrame(this, nrow=10);
   }, error = function(ex) {
     throw("File format error of the Affymetrix CSV annotation file: ", 
                                                   getPathname(this));
@@ -41,7 +41,8 @@ setMethodS3("verify", "AffymetrixCsvGenomeInformation", function(this, ...) {
   invisible(TRUE);
 }, private=TRUE)
 
-setMethodS3("readData", "AffymetrixCsvGenomeInformation", function(this, ..., verbose=FALSE) {
+
+setMethodS3("readDataFrame", "AffymetrixCsvGenomeInformation", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -129,6 +130,8 @@ setMethodS3("readData", "AffymetrixCsvGenomeInformation", function(this, ..., ve
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for AffymetrixCsvGenomeInformation.
 # 2007-08-03
 # o BUG FIX: Declared fromChipType() static.
 # 2007-03-02

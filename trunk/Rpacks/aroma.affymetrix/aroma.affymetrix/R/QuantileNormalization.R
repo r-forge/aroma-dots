@@ -407,8 +407,6 @@ setMethodS3("calculateTargetDistribution", "QuantileNormalization", function(thi
 #  Returns a @double @vector.
 # }
 #
-# @examples "../incl/normalizeQuantile.Rex"
-#
 # @author
 #
 # \seealso{

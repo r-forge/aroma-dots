@@ -470,7 +470,7 @@ setMethodS3("[[", "CnagCfhFile", function(this, unit=NULL) {
 
 
 setMethodS3("range", "CnagCfhFile", function(this, ..., na.rm=TRUE) {
-  x <- readData(this, ...);
+  x <- readDataFrame(this, ...);
   range(x, na.rm=na.rm);
 }, private=TRUE)
 

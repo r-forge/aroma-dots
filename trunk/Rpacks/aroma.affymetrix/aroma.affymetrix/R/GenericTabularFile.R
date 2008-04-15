@@ -34,7 +34,7 @@ setMethodS3("verify", "GenericTabularFile", function(this, ..., verbose=FALSE) {
     return(invisible(this));
 
   tryCatch({
-    data <- readData(this, skip=this$skip, nrow=10, verbose=verbose);
+    data <- readDataFrame(this, skip=this$skip, nrow=10, verbose=verbose);
   }, error = function(ex) {
     throw("File format error of the tabular file: ", getPathname(this));
   })
@@ -274,7 +274,8 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, header=NULL
 }, protected=TRUE);
 
 
-setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, ..., verbose=FALSE) {
+
+setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -339,9 +340,15 @@ setMethodS3("readData", "GenericTabularFile", function(this, con=NULL, ..., verb
   data;
 })
 
+setMethodS3("readData", "GenericTabularFile", function(this, ...) {
+  readDataFrame(this, ...);
+}, protected=TRUE, deprecated=TRUE)
+
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for GenericTabularFile.
 # 2008-03-22
 # o Added {get|set}ColumnNameTranslator().
 # 2008-03-18

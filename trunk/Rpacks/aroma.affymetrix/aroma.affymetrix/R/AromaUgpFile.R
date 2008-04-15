@@ -32,7 +32,7 @@ setMethodS3("getColumnNames", "AromaUgpFile", function(this, ...) {
   c("chromosome", "position");
 })
 
-setMethodS3("readData", "AromaUgpFile", function(this, ..., verbose=FALSE) {
+setMethodS3("readDataFrame", "AromaUgpFile", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -40,7 +40,7 @@ setMethodS3("readData", "AromaUgpFile", function(this, ..., verbose=FALSE) {
     on.exit(popState(verbose));
   }
 
-  data <- NextMethod("readData", this, ..., verbose=less(verbose));
+  data <- NextMethod("readDataFrame", this, ..., verbose=less(verbose));
 
   verbose && enter(verbose, "Converting zeros to NAs");
   # Interpret zeros as NAs
@@ -262,7 +262,7 @@ setMethodS3("importFromGenericTabularFile", "AromaUgpFile", function(this, src, 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Importing (unitName, chromosome, position) from ", class(src)[1], " file");
 
-  data <- readData(src, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
+  data <- readDataFrame(src, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
 
   # Rearrange columns (optional)
   if (!is.null(colOrder))
@@ -360,6 +360,8 @@ setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for AromaTabularBinaryFile.
 # 2007-09-16
 # o Now importFromAffymetrixNetAffxCsvFile() averages positions if multiple
 #   positions were available for a particular unit.

@@ -1,15 +1,28 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.1.2 [2008-04-09]
+Version: 0.9.1.2 [2008-04-14]
 o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
 o CONSISTENCY: Now the FirmaModel also has calculateResidualSet() just
   as ProbeLevelModel got it.
 o CLEAN UP: Moved several methods to new package 'matrixStats' that is
   specialized and optimized for matrix operations.
+o CLEAN UP: Moved normalizeQuantileSpline(), normalizeFragmentLength, 
+  plotXYCurve, and predict() for lowess to aroma.light v1.7.2.
+o CLEAN UP: Removed "patches" for rowMedians() and as.<basic data type>()
+  since they are now available in all R v2.6.x installations.
+o CLEAN UP: Renamed all readData() methods that return a data.frame 
+  to readDataFrame().
 o BUG FIX: getChipType(..., fullname=FALSE) of AffymetrixCdfFile would
   return the chip type as the 'tags' attribute if there were no tags.
-
+o BUG FIX: The default drawExtraAnnotations() returned error <simpleError
+  in UseMethod("estimateStandardDeviation"): no applicable method for
+  "estimateStandardDeviation"> causing the sigma estimate as well as
+  the chip type annotation for non-GladModels to be missing.
+o BUG FIX: readDataFrame() of AffymetrixProbeTabFile did not return the
+  correct number of rows if there were missing cells, which there are.
+o ALPHA: Added getImage() for AromaUnitTabularBinaryFile and
+  AffymetrixCdfFile.
 
 
 Version: 0.9.1 [2008-04-04]

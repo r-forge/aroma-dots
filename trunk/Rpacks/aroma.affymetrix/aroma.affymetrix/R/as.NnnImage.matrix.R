@@ -38,7 +38,7 @@
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("as.GrayscaleImage", "matrix", function(z, transforms=list(sqrt), interleaved=c("none", "h", "v", "auto"), scale=1, ..., verbose=FALSE) {
+setMethodS3("as.GrayscaleImage", "matrix", function(z, transforms=NULL, interleaved=c("none", "h", "v", "auto"), scale=1, ..., verbose=FALSE) {
   require("EBImage") || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -52,8 +52,10 @@ setMethodS3("as.GrayscaleImage", "matrix", function(z, transforms=list(sqrt), in
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'transforms':
-  if (!is.list(transforms))
-    transforms <- list(transforms);
+  if (!is.list(transforms)) {
+    transforms <- as.list(transforms);
+  }
+
   for (transform in transforms) {
     if (!is.function(transform)) {
       throw("Argument 'transforms' contains a non-function: ", 
@@ -121,10 +123,32 @@ setMethodS3("as.TrueColorImage", "matrix", function(z, ...) {
 }, protected=TRUE)
 
 
+setMethodS3("as.TrueColorImage", "Image", function(img, ...) {
+  if (colorMode(img) == EBImage::TrueColor)
+    return(img);
+
+  img <- colorize(img, ...);
+
+  img;
+}, protected=TRUE)
+
+
+setMethodS3("getImage", "matrix", function(z, ..., palette=NULL) {
+  img <- as.GrayscaleImage(z, ...);
+
+  if (!is.null(palette)) {
+    img <- colorize(img, palette=palette, ...);
+  }
+
+  img;
+}, protected=TRUE)
+
+
 
 ############################################################################
 # HISTORY:
 # 2008-03-14
+# o Added getImage().
 # o Added as.GrayscaleImage() and as.TrueColorImage().
 # o Created from getImage() of AffymetrixCelFile.
 ############################################################################

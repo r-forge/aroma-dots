@@ -120,8 +120,6 @@ setMethodS3("getCdf", "ChipEffectGroupMerge", function(this, ...) {
 #  Returns a @double @vector.
 # }
 #
-# @examples "../incl/normalizeQuantile.Rex"
-#
 # @author
 #
 # \seealso{

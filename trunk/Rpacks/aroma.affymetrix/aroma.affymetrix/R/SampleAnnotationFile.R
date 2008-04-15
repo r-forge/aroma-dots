@@ -21,7 +21,11 @@ setMethodS3("fromPath", "SampleAnnotationFile", function(static, path, pattern="
 }, static=TRUE, protected=TRUE)
 
 
-setMethodS3("readData", "SampleAnnotationFile", function(this, rows=NULL, force=FALSE, ...) {
+setMethodS3("readData", "SampleAnnotationFile", function(this, ...) {
+  readDataFrame(this, ...);
+}, protected=TRUE, deprecated=TRUE)
+
+setMethodS3("readDataFrame", "SampleAnnotationFile", function(this, rows=NULL, force=FALSE, ...) {
   db <- this$.db;
   if (force || is.null(db)) {
     pathname <- getPathname(this);
@@ -52,7 +56,7 @@ setMethodS3("readData", "SampleAnnotationFile", function(this, rows=NULL, force=
 
 
 setMethodS3("getPatterns", "SampleAnnotationFile", function(this, ...) {
-  db <- readData(this, ...);
+  db <- readDataFrame(this, ...);
 
   # Get sample name pattern
   patterns <- sprintf("^%s.*$", db[,"name"]);
@@ -103,7 +107,7 @@ setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ..., ver
 
   verbose && print(verbose, rows);
 
-  db <- readData(this, rows=rows);
+  db <- readDataFrame(this, rows=rows);
   cc <- setdiff(colnames(db), "name");
   db <- db[,cc,drop=FALSE];
 
@@ -129,6 +133,8 @@ setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for SampleAnnotationFile. 
 # 2007-04-12
 # o BUG FIX: readData() of SampleAnnotationFile would open a text connection
 #   without closing it.

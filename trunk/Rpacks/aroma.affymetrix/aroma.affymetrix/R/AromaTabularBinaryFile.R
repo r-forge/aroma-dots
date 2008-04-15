@@ -440,8 +440,7 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
 }, protected=TRUE)
 
 
-
-setMethodS3("readData", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, ..., verbose=FALSE) {
   # Open file
   pathname <- getPathname(this);
   con <- file(pathname, open="rb");
@@ -552,6 +551,12 @@ setMethodS3("readData", "AromaTabularBinaryFile", function(this, rows=NULL, colu
 
   data;
 }, protected=TRUE)
+
+
+setMethodS3("readData", "AromaTabularBinaryFile", function(this, ...) {
+  readDataFrame(this, ...);
+}, protected=TRUE, deprecated=TRUE)
+
 
 
 
@@ -1059,7 +1064,7 @@ setMethodS3("ncol", "AromaTabularBinaryFile", function(x, ...) {
 
 setMethodS3("[", "AromaTabularBinaryFile", function(this, i=NULL, j=NULL, drop=FALSE) {
   # Read data
-  data <- readData(this, rows=i, columns=j);
+  data <- readDataFrame(this, rows=i, columns=j);
 
   # Drop dimensions?
   if (drop) {
@@ -1081,7 +1086,7 @@ setMethodS3("[[", "AromaTabularBinaryFile", function(this, i) {
   if (length(i) != 1)
     throw("Argument 'i' must be a single value: ", length(i));
 
-  readData(this, columns=i)[[1]];
+  readDataFrame(this, columns=i)[[1]];
 })
 
 
@@ -1096,7 +1101,7 @@ setMethodS3("subset", "AromaTabularBinaryFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  data <- readData(this);
+  data <- readDataFrame(this);
   subset(data, ...);
 })
 
@@ -1187,6 +1192,8 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for AromaTabularBinaryFile.
 # 2008-02-13
 # o Added and updated Rdoc comments.
 # o readFooter() and writeFooter() now handles nested XML/list structures.

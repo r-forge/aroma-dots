@@ -113,6 +113,7 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
     on.exit(popState(verbose));
   }
 
+
   verbose && enter(verbose, "Searching for probe sequence file");
   verbose && cat(verbose, "Chip type: ", chipType);
 
@@ -240,34 +241,90 @@ setMethodS3("getIndexToRowMap", "AffymetrixProbeTabFile", function(this, ..., fo
 
 
 
-setMethodS3("getData", "AffymetrixProbeTabFile", function(this, cells=NULL, ...) {
-str(1)
-  map <- getIndexToRowMap(this);
+setMethodS3("getData", "AffymetrixProbeTabFile", function(this, ...) {
+  readDataFrame(this, ...);
+})
+
+setMethodS3("readDataFrame", "AffymetrixProbeTabFile", function(this, cells=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Read data");
+  verbose && cat(verbose, "Chip type: ", getChipType(this));
+
+  verbose && enter(verbose, "Reading (cell,row) map");
+  map <- getIndexToRowMap(this, verbose=less(verbose, 5));
+  verbose && cat(verbose, "(cell,row) map:");
+  verbose && str(verbose, map);
+  verbose && exit(verbose);
+
   if (is.null(cells)) {
     rows <- map;
   } else {
     rows <- map[cells];
   }
 
+  verbose && cat(verbose, "Unfiltered rows to read:");
+  verbose && str(verbose, rows);
+
   ok <- !is.na(rows);
 
   if (length(rows[ok]) > 0) {
-    colClasses <- c("factor", "integer", "integer", "integer", "character", "factor", "factor", "factor");
+#    colClasses <- c("factor", "integer", "integer", "integer", "character", "factor", "factor", "factor");
+    colClasses <- c("character", "integer", "integer", "integer", "character", "character", "character", "character");
     colClasses[2:3] <- "NULL";
     names(colClasses) <- c("probeSetId", "x", "y", "offset", "sequence", "strand", "type", "allele");
   
     pathname <- getPathname(this);
-  str(3)
+    verbose && enter(verbose, "Reading data table");
+    verbose && cat(verbose, "Pathname: ", pathname);
+    verbose && cat(verbose, "Column classes:");
+    verbose && str(verbose, as.list(colClasses));
     df <- readTable(pathname, colClasses=colClasses, sep="\t", header=FALSE, col.names=names(colClasses), rows=rows[ok]);
+    verbose && exit(verbose);
   } else {
-df <- NULL;
+    verbose && cat(verbose, "No rows to read.");
+    df <- NULL;
   }
-  df;
+
+  verbose && enter(verbose, "Expanding result data frame");
+  verbose && str(verbose, df);
+#  df <- as.list(df);
+#  nas <- which(!ok);
+#  rm(ok);
+#  for (kk in seq(along=df)) {
+#    df[[kk]] <- insert(df[[kk]], at=nas, values=NA);
+#  }
+#  df <- as.data.frame(df);
+  colClasses <- sapply(df, FUN=data.class);
+  data <- dataFrame(colClasses=colClasses, nrow=length(rows));
+  data[ok,] <- df;
+  data[!ok,] <- NA;
+  rm(ok);
+  verbose && str(verbose, data);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  data;
 }, private=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o BUG FIX: readDataFrame() for AffymetrixProbeTabFile would not return
+#   the correct number of rows if there were missing cells, which there are.
+# o Added verbose output to readDataFrame().
+# o Renamed getData() to readDataFrame().
 # 2007-06-07
 # o When there are no annotation files, findByChipType() of 
 #   AffymetrixProbeTabFile would throw "Error in basename(path) : a 

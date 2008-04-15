@@ -155,7 +155,7 @@ setMethodS3("fromChipType", "DChipSnpInformation", function(static, ...) {
 
 setMethodS3("verify", "DChipSnpInformation", function(this, ...) {
   tryCatch({
-    df <- readData(this, nrow=10);
+    df <- readDataFrame(this, nrow=10);
   }, error = function(ex) {
     throw("File format error of the dChip SNP information file (", 
                                  ex$message, "): ", getPathname(this));
@@ -164,7 +164,7 @@ setMethodS3("verify", "DChipSnpInformation", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("readData", "DChipSnpInformation", function(this, ...) {
+setMethodS3("readDataFrame", "DChipSnpInformation", function(this, ...) {
   readFcns <- list(
     "^Mapping10K" = read10K,
     "^Mapping50K" = read50K,

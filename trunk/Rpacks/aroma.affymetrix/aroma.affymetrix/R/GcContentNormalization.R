@@ -199,7 +199,7 @@ setMethodS3("getTargetFunction", "GcContentNormalization", function(this, ..., f
     verbose && cat(verbose, "Signals:");
     verbose && str(verbose, yR);
     
-    # Get PCR fragment lengths for these
+    # Get GC contents for these
     gcContents <- getGc(tsv, units=units);
     verbose && cat(verbose, "GC content:");
     verbose && str(verbose, gcContents);
@@ -254,8 +254,6 @@ setMethodS3("getTargetFunction", "GcContentNormalization", function(this, ..., f
 # \value{
 #  Returns a @double @vector.
 # }
-#
-# @examples "../incl/normalizeQuantile.Rex"
 #
 # @author
 #

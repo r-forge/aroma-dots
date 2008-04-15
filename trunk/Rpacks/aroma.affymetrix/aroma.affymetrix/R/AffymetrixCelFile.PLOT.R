@@ -502,12 +502,11 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #      complete regions is used.}
 #   \item{field}{One of the CEL file fields, i.e. \code{"intensities"},
 #      \code{stdvs}, or \code{pixels}.}
-#   \item{transforms}{A @list of transform @functions.}
-#   \item{interleaved}{}
-#   \item{...}{Additional arguments passed to 
-#      @seemethod "readRawDataRectangle".}
 #   \item{zoom}{A @numeric scale factor in (0,+Inf) for resizing the 
 #     imaging. If \code{1}, no resizing is done.}
+#   \item{palette}{An optional @vector of color code.}
+#   \item{...}{Additional arguments passed to 
+#      @seemethod "readRawDataRectangle" and more function.}
 #   \item{readRectFcn}{A @function taking arguments 'xrange' and 'yrange',
 #     or @NULL for the default read function.}
 #   \item{verbose}{A @logical or a @see "R.utils::Verbose" object.}
@@ -515,6 +514,8 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #
 # \value{
 #   Returns an @see "EBImage::Image" object.
+#   If \code{palette==NULL}, the color code is \code{Grayscale}, otherwise
+#   \code{TrueColor}.
 # }
 #
 # \section{Details}{
@@ -529,16 +530,12 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), transforms=list(sqrt), interleaved=c("none", "h", "v", "auto"), ..., zoom=1, readRectFcn=NULL, verbose=FALSE) {
+setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, transforms=list(sqrt), xrange=c(0,Inf), yrange=xrange, zrange=c(0,sqrt(2^16)), field=c("intensities", "stdvs", "pixels"), zoom=1, ..., readRectFcn=NULL, verbose=FALSE) {
   require("EBImage") || throw("Package not loaded: EBImage.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  safeMeans <- function(x) {
-    mean(x[is.finite(x)]);
-  }
-
   readRectangleByField <- function(this, other=NULL, xrange, yrange, ...) {
     suppressWarnings({
       y <- readRawDataRectangle(this, xrange=xrange, yrange=yrange, 
@@ -583,19 +580,6 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, xrange=c
   # Argument 'field':
   field <- match.arg(field);
   
-  # Argument 'transforms':
-  if (!is.list(transforms))
-    transforms <- list(transforms);
-  for (transform in transforms) {
-    if (!is.function(transform)) {
-      throw("Argument 'transforms' contains a non-function: ", 
-                                                        mode(transform));
-    }
-  }
-
-  # Argument 'interleaved':
-  interleaved <- match.arg(interleaved);
-
   # Argument 'zoom':
   zoom <- Arguments$getDouble(zoom, range=c(0,Inf));
 
@@ -622,76 +606,11 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, xrange=c
   verbose && printf(verbose, "RAM: %.1fMB\n", object.size(y)/1024^2);
   verbose && exit(verbose);
 
-  # Transform signals?
-  for (transform in transforms) {
-    dim <- dim(y);
-    y <- transform(y);
-    dim(y) <- dim;
-  }
-
-  # if only PM locations have signal, add a fake row
-  if (interleaved == "auto") {
-    verbose && enter(verbose, "Infering horizontal, vertical, or no interleaving");
-    n <- 2*(nrow(y) %/% 2);
-    idxOdd <- seq(from=1, to=n, by=2);
-    hOdd <- safeMeans(abs(y[idxOdd,]));
-    hEven <- safeMeans(abs(y[idxOdd+1,]));
-    hRatio <- log(hOdd/hEven);
-    verbose && printf(verbose, "hRatio=%.2g\n", hRatio);
-
-    n <- 2*(ncol(y) %/% 2);
-    n <- max(n, 40);
-    idxOdd <- seq(from=1, to=n, by=2);
-    vOdd <- safeMeans(abs(y[,idxOdd]));
-    vEven <- safeMeans(abs(y[,idxOdd+1]));
-    verbose && printf(verbose, "vOdd=%.2g\n", vOdd);
-    verbose && printf(verbose, "vEven=%.2g\n", vEven);
-    vRatio <- log(vOdd/vEven);
-    verbose && printf(verbose, "vRatio=%.2g\n", vRatio);
-
-    interleaved <- "none";
-    if (abs(vRatio) > abs(hRatio)) {
-      if (abs(vRatio) > 0.25) {
-        if (vRatio > 0)
-          interleaved <- "v"
-        else
-          interleaved <- "v";
-      }
-    } else {
-      if (abs(hRatio) > 0.25) {
-        if (hRatio > 0)
-          interleaved <- "h"
-        else
-          interleaved <- "h";
-      }
-    }
-    verbose && cat(verbose, "interleaved: ", interleaved);
-    verbose && exit(verbose);
-  }
-
-  if (interleaved == "h") {
-    idxOdd <- seq(from=1, to=2*(nrow(y) %/% 2), by=2);
-    y[idxOdd,] <- y[idxOdd+1,];
-  } else if (interleaved == "v") {
-    idxOdd <- seq(from=1, to=2*(ncol(y) %/% 2), by=2);
-    y[,idxOdd] <- y[,idxOdd+1];
-  }
-
-  # Create an EBImage Image object
-  y <- t(y);
-  img <- EBImage::Image(data=y, dim=dim(y), colormode=EBImage::Grayscale);
-
-  verbose && enter(verbose, "Colorizing image");
-  img <- colorize(img, lim=zrange, ...);
+  verbose && enter(verbose, "Creating Image");
+  img <- getImage(y, transforms=transforms, scale=zoom, lim=zrange, ..., 
+                                                   verbose=less(verbose, 1));
+  verbose && print(verbose, img);
   verbose && exit(verbose);
-
-  # Zoom?
-  if (zoom != 1) {
-    verbose && enter(verbose, "Resizing image");
-    # Rescaling by keeping aspect ratio
-    img <- EBImage::resize(img, w=zoom*dim(img)[1], blur=FALSE);
-    verbose && exit(verbose);
-  }
 
   verbose && exit(verbose);
 
@@ -700,9 +619,6 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, xrange=c
 
   img;
 })
-
-
-
 
 
 

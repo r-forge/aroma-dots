@@ -43,7 +43,7 @@ setMethodS3("getProbesetIds", "AffymetrixAptSummaryFile", function(this, force=F
 })
 
 setMethodS3("readProbesetIds", "AffymetrixAptSummaryFile", function(this, ...) {
-  data <- readData(this, colClassPatterns=c("probeset_id"="character"), ...);
+  data <- readDataFrame(this, colClassPatterns=c("probeset_id"="character"), ...);
   data <- data[,1,drop=TRUE];
   data;
 }, protected=TRUE)
@@ -57,7 +57,7 @@ setMethodS3("readArrays", "AffymetrixAptSummaryFile", function(this, patterns, .
   colClassPatterns <- rep("double", length(patterns));
   names(colClassPatterns) <- patterns;
   
-  data <- readData(this, colClassPatterns=colClassPatterns, ...);
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ...);
   data <- as.matrix(data);
   attr(data, "quantificationScale") <- getQuantificationScale(this);
   
