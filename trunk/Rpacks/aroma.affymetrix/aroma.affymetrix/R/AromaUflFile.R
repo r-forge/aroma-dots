@@ -28,8 +28,8 @@ setMethodS3("getColumnNames", "AromaUflFile", function(this, ...) {
   names;
 })
 
-setMethodS3("readData", "AromaUflFile", function(this, ...) {
-  data <- NextMethod("readData", this, ...);
+setMethodS3("readDataFrame", "AromaUflFile", function(this, ...) {
+  data <- NextMethod("readDataFrame", this, ...);
 
   # Interpret zeros as NAs
   for (cc in seq(length=ncol(data))) {
@@ -109,6 +109,8 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for AromaTabularBinaryFile.
 # 2007-12-08
 # o BUG FIX: importFromAffymetrixNetAffxCsvFile() of AromaUflFile failed
 #   to import one of two enzymes.

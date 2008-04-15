@@ -69,7 +69,7 @@ setMethodS3("byChipType", "UflSnpInformation", function(static, chipType, tags=N
 
 setMethodS3("verify", "UflSnpInformation", function(this, ...) {
   tryCatch({
-    df <- readData(this, nrow=10);
+    df <- readDataFrame(this, nrow=10);
   }, error = function(ex) {
     throw("File format error of the UFL SNP information file (", 
                                  ex$message, "): ", getPathname(this));
@@ -78,7 +78,7 @@ setMethodS3("verify", "UflSnpInformation", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("readData", "UflSnpInformation", function(this, nrow=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataFrame", "UflSnpInformation", function(this, nrow=NULL, ..., verbose=FALSE) {
   verbose && enter(verbose, "Reading data from UFL file");
 
   ufl <- getAromaUflFile(this);

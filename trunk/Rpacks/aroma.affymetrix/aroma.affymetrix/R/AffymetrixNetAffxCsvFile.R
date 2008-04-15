@@ -25,7 +25,7 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
 
   verbose && enter(verbose, "Reading (unitName, fragmentLength) from file");
 
-  data <- readData(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
 
   # Convert chromosome strings to integers
   cc <- grep("^chr", colnames(data))[1];
@@ -83,7 +83,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
   verbose && enter(verbose, "Reading (unitName, fragmentLength+) from file");
 
-  data <- readData(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
 
   # Extract fragment lengths
   verbose && enter(verbose, "Extracting fragment lengths from ([enzyme], lengths, start, stop)");

@@ -777,8 +777,6 @@ setMethodS3("normalizeOneArrayVector", "FragmentEquivalentClassNormalization", f
 #  Returns a @double @vector.
 # }
 #
-# @examples "../incl/normalizeQuantile.Rex"
-#
 # @author
 #
 # \seealso{

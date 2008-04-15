@@ -135,7 +135,8 @@ setMethodS3("excludeChrXFromFit", "DChipQuantileNormalization", function(this, .
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "normalizeQuantileSpline.numeric".}
+#   \item{...}{Arguments passed to 
+#       @see "aroma.light::normalizeQuantileSpline.numeric".}
 #   \item{force}{If @TRUE, data already normalized is re-normalized, 
 #       otherwise not.}
 #   \item{verbose}{See @see "R.utils::Verbose".}

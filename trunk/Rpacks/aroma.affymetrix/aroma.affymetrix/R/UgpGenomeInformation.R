@@ -150,7 +150,7 @@ setMethodS3("isCompatibleWithCdf", "UgpGenomeInformation", function(this, cdf, .
 
 setMethodS3("verify", "UgpGenomeInformation", function(this, ...) {
   tryCatch({
-    df <- readData(this, nrow=10);
+    df <- readDataFrame(this, nrow=10);
   }, error = function(ex) {
     throw("File format error of the UGP genome information file (", 
                                  ex$message, "): ", getPathname(this));
@@ -159,7 +159,7 @@ setMethodS3("verify", "UgpGenomeInformation", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("readData", "UgpGenomeInformation", function(this, nrow=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataFrame", "UgpGenomeInformation", function(this, nrow=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {

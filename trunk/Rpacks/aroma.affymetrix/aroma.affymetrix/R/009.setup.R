@@ -5,14 +5,8 @@
   # Patch base::matrix() to be more memory efficient when 'dimnames==NULL'.
   .patchMatrix();
 
-  # Package as.<basic data type>()? (for memory efficiencies)
-  .patchAsDataTypes();
-
   # Patch log2()/log10() that are slow to display warnings
   .patchLog2();
-
-  # Make sure there is rowMedians() supporting missing values
-  .patchRowMedians();
 
   # Patch affxparser::findCdf()
   .patchCdfMergeStrands();

@@ -268,7 +268,7 @@ setMethodS3("getData", "SnpInformation", function(this, units=NULL, fields=c("fr
 
     # Now read the SNP information data
     verbose && enter(verbose, "Reading SNP information data");
-    data <- readData(this, verbose=less(verbose));
+    data <- readDataFrame(this, verbose=less(verbose));
     # Garbage collect
     gc <- gc();
     verbose && print(verbose, gc);
@@ -360,7 +360,11 @@ setMethodS3("getFields", "SnpInformation", function(this, ...) {
 })
 
 
-setMethodS3("readData", "SnpInformation", abstract=TRUE);
+setMethodS3("readData", "SnpInformation", function(this, ...) {
+  readDataFrame(this, ...);
+}, protected=TRUE, deprecated=TRUE)
+
+setMethodS3("readDataFrame", "SnpInformation", abstract=TRUE);
 
 
 setMethodS3("readTableInternal", "SnpInformation", function(this, pathname, colClasses=NULL, ..., include=NULL, exclude=NULL, verbose=FALSE) {
@@ -428,6 +432,8 @@ setMethodS3("getFragmentStops", "SnpInformation", function(this, enzymes=seq(len
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for SnpInformation. 
 # 2007-11-19
 # o Now getFragmentLength/Starts/Stops() of SnpInformation return a matrix
 #   where each column correspond to an enzyme. This is was added because 

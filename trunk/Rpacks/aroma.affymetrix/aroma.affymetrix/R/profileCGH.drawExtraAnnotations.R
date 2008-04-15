@@ -1,8 +1,7 @@
 setMethodS3("drawExtraAnnotations", "default", function(fit, ...) {
   rawCNs <- extractRawCopyNumbers(fit);
-  rawCNs <- getCNs(rawCNs);
   sd <- estimateStandardDeviation(rawCNs);
-  text <- substitute(hat(sigma)==sd, list(sd=sprintf("%.3g", sd)));
+  text <- substitute(hat(sigma)[Delta]==sd, list(sd=sprintf("%.3g", sd)));
   stext(text=text, side=3, pos=0.5, line=-2); 
 }, protected=TRUE);
 
@@ -18,6 +17,11 @@ setMethodS3("drawExtraAnnotations", "profileCGH", function(fit, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o BUG FIX: The default drawExtraAnnotations() returned error <simpleError
+#   in UseMethod("estimateStandardDeviation"): no applicable method for
+#   "estimateStandardDeviation"> causing the sigma estimate for 
+#   non-GladModels to be missing.
 # 2008-03-31
 # o Now the standard deviation across all CNs in a chromosome is calculated
 #   using a robust first-order difference estimator, which will make the 

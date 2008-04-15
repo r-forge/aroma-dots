@@ -28,8 +28,8 @@ setMethodS3("getColumnNames", "AromaUfcFile", function(this, ...) {
   names;
 })
 
-setMethodS3("readData", "AromaUfcFile", function(this, ...) {
-  data <- NextMethod("readData", this, ...);
+setMethodS3("readDataFrame", "AromaUfcFile", function(this, ...) {
+  data <- NextMethod("readDataFrame", this, ...);
 
   # Interpret zeros as NAs
   for (cc in seq(length=ncol(data))) {
@@ -80,7 +80,7 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUfcFile", function(this, at
 
   t <- system.time({
     # Read annotation data
-    data0 <- readData(atf, colClassPatterns=colClassPatterns);
+    data0 <- readDataFrame(atf, colClassPatterns=colClassPatterns);
   });
 
   verbose && printf(verbose, "Reading time: %.1fs\n", t[3]);
@@ -226,6 +226,8 @@ setMethodS3("getOrderedFragmentPairs", "AromaUfcFile", function(this, units=NULL
 
 ############################################################################
 # HISTORY:
+# 2008-04-14
+# o Renamed readData() to readDataFrame() for AromaTabularBinaryFile.
 # 2008-01-20
 # o Added getOrderedFragmentPairs() and getOrderedFragmentPairMap().
 # 2007-12-19
