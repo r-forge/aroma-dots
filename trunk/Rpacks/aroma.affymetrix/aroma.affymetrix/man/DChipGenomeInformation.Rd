@@ -48,12 +48,12 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:byChipType.DChipGenomeInformation]{byChipType}} \tab Defines a DChipGenomeInformation object by chip type.\cr
  \tab \code{fromChipType} \tab  -\cr
- \tab \code{readData} \tab  -\cr
+ \tab \code{readDataFrame} \tab  -\cr
 }
 
 
  \bold{Methods inherited from GenomeInformation}:\cr
-byChipType, fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, isCompatibleWithCdf, nbrOfUnits, plotDensity, readData
+byChipType, fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, isCompatibleWithCdf, nbrOfUnits, plotDensity, readDataFrame
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum

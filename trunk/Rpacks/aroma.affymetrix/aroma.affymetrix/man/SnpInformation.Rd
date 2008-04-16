@@ -3,8 +3,6 @@
 % 
 %  SnpInformation.R
 % 
-% on Fri Apr 04 15:51:52 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -55,7 +53,7 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \tab \code{getFragmentStops} \tab  -\cr
  \tab \code{nbrOfEnzymes} \tab  -\cr
  \tab \code{nbrOfUnits} \tab  -\cr
- \tab \code{readData} \tab  -\cr
+ \tab \code{readDataFrame} \tab  -\cr
 }
 
 

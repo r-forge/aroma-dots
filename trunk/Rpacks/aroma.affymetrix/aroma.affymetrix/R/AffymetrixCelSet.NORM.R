@@ -37,8 +37,6 @@
 #  Returns a @double @vector.
 # }
 #
-# @examples "../incl/normalizeQuantile.Rex"
-#
 # @author
 #
 # \seealso{

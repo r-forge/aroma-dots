@@ -22,7 +22,8 @@
 \usage{\method{process}{DChipQuantileNormalization}(this, ..., force=FALSE, skip=TRUE, verbose=FALSE)}
 
 \arguments{
-  \item{...}{Arguments passed to \code{\link{normalizeQuantileSpline.numeric}}().}
+  \item{...}{Arguments passed to
+      \code{\link[aroma.light]{normalizeQuantileSpline.numeric}}.}
   \item{force}{If \code{\link[base:logical]{TRUE}}, data already normalized is re-normalized,
       otherwise not.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}

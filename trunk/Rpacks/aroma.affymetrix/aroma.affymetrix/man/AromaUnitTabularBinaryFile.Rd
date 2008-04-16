@@ -55,6 +55,7 @@ extends \link[aroma.affymetrix]{AromaTabularBinaryFile}\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getFilenameExtension} \tab  -\cr
+ \tab \code{getImage} \tab  -\cr
  \tab \code{importFrom} \tab  -\cr
  \tab \code{importFromAffymetrixTabularFile} \tab  -\cr
  \tab \code{importFromDChipGenomeInformation} \tab  -\cr
@@ -64,7 +65,7 @@ extends \link[aroma.affymetrix]{AromaTabularBinaryFile}\cr
 
 
  \bold{Methods inherited from AromaTabularBinaryFile}:\cr
-[, [[, [<-, allocate, as.character, colMeans, colMedians, colStats, colSums, dim, dimnames<-, getBytesPerColumn, getColClasses, getColumnNames, lapply, nbrOfColumns, nbrOfRows, ncol, nrow, readData, readFooter, readHeader, readRawFooter, setAttributesByTags, subset, summary, updateData, updateDataColumn, writeFooter, writeRawFooter
+[, [[, [<-, allocate, as.character, colMeans, colMedians, colStats, colSums, dim, dimnames<-, getBytesPerColumn, getColClasses, getColumnNames, lapply, nbrOfColumns, nbrOfRows, ncol, nrow, readDataFrame, readFooter, readHeader, readRawFooter, setAttributesByTags, subset, summary, updateData, updateDataColumn, writeFooter, writeRawFooter
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum

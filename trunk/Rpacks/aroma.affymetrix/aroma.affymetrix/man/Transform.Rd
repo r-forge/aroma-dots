@@ -3,8 +3,6 @@
 % 
 %  Transform.R
 % 
-% on Fri Apr 04 15:52:11 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -24,7 +22,7 @@
 \code{~~+--}\emph{\code{Transform}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \emph{\link[aroma.affymetrix]{BackgroundCorrection}}, \link[aroma.affymetrix]{ChipEffectGroupMerge}, \emph{\link[aroma.affymetrix]{ChipEffectTransform}}, \link[aroma.affymetrix]{DChipQuantileNormalization}, \link[aroma.affymetrix]{FragmentEquivalentClassNormalization}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{GcContentNormalization}, \link[aroma.affymetrix]{GcRmaBackgroundCorrection}, \link[aroma.affymetrix]{OpticalBackgroundCorrection}, \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}, \link[aroma.affymetrix]{QuantileNormalization}, \link[aroma.affymetrix]{RmaBackgroundCorrection}, \link[aroma.affymetrix]{ScaleNormalization}, \link[aroma.affymetrix]{SnpChipEffectGroupMerge}, \link[aroma.affymetrix]{SpatialRowColumnLogRatioNormalization}, \link[aroma.affymetrix]{SpatialRowColumnNormalization}\cr
+\link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \emph{\link[aroma.affymetrix]{BackgroundCorrection}}, \link[aroma.affymetrix]{ChipEffectGroupMerge}, \emph{\link[aroma.affymetrix]{ChipEffectTransform}}, \link[aroma.affymetrix]{DChipQuantileNormalization}, \link[aroma.affymetrix]{FragmentEquivalentClassNormalization}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{GcContentNormalization}, \link[aroma.affymetrix]{GcRmaBackgroundCorrection}, \link[aroma.affymetrix]{OpticalBackgroundCorrection}, \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}, \link[aroma.affymetrix]{QuantileNormalization}, \link[aroma.affymetrix]{RmaBackgroundCorrection}, \link[aroma.affymetrix]{ScaleNormalization}, \link[aroma.affymetrix]{SnpChipEffectGroupMerge}, \link[aroma.affymetrix]{SpatialRowColumnNormalization}\cr
 
 public abstract static class \bold{Transform}\cr
 extends \link[R.oo]{Object}\cr

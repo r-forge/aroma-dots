@@ -79,8 +79,5 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
    chip type to be normalized.
  }
 
- \examples{\dontrun{
- }}
-
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 \keyword{classes}

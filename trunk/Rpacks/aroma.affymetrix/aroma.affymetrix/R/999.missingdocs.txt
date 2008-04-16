@@ -747,3 +747,37 @@ getFirmaSet getUnitGroupCellMap.AffymetrixCelSet
   readDataFrame readDataFrame.AffymetrixCdfFile
   SpatialRowColumnLogRatioNormalization
 readCdfDataFrame
+  addColorMap.ChipTypeReporter as.character.ChipTypeReporter
+  as.character.GenericReporter as.GrayscaleImage as.TrueColorImage
+  as.TrueColorImage.Image as.TrueColorImage.matrix
+  calculateMargins.ChipTypeReporter colorize colorize.Image
+  display.Image getAsteriskTags.GenericReporter
+  getCdf.AffymetrixChipTypeReporter
+  getChipType.AffymetrixChipTypeReporter getColorMaps.ChipTypeReporter
+  getFullName.GenericReporter getImage.AffymetrixCdfFile
+  getImage.AffymetrixChipTypeReporter
+  getImage.AromaUnitTabularBinaryFile getImage.matrix getInputName
+  getInputName.AffymetrixChipTypeReporter
+  getInputName.AffymetrixFileSetReporter getInputName.GenericReporter
+  getInputTags getInputTags.AffymetrixChipTypeReporter
+  getInputTags.AffymetrixFileSetReporter getInputTags.GenericReporter
+  getMainPath.AffymetrixChipTypeReporter getMainPath.GenericReporter
+  getPath.AffymetrixChipTypeReporter getPath.GenericReporter
+  getReference.ChipTypeReporter getReportSet.ChipTypeReporter
+  getReportSet.GenericReporter getRootPath.GenericReporter interleave
+  interleave.Image plotMargins.ChipTypeReporter readCdfFields
+  readCdfFields.AffymetrixChipTypeReporter readCdfRectangle
+  readCdfRectangle.AffymetrixChipTypeReporter
+  readDataFrame.AffymetrixCsvGenomeInformation
+  readDataFrame.AffymetrixProbeTabFile readDataFrame.AffymetrixTsvFile
+  readDataFrame.AromaTabularBinaryFile readDataFrame.AromaUfcFile
+  readDataFrame.AromaUflFile readDataFrame.AromaUgpFile
+  readDataFrame.DChipGenomeInformation
+  readDataFrame.DChipSnpInformation readDataFrame.GenericTabularFile
+  readDataFrame.GenomeInformation readDataFrame.SampleAnnotationFile
+  readDataFrame.SnpInformation readDataFrame.UflSnpInformation
+  readDataFrame.UgpGenomeInformation
+  readRawDataRectangle.ChipTypeReporter rescale.Image
+  setColorMaps.ChipTypeReporter setReference.ChipTypeReporter
+  setup.GenericReporter writeImages.ChipTypeReporter
+

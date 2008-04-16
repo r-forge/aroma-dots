@@ -3,8 +3,6 @@
 % 
 %  UgpGenomeInformation.R
 % 
-% on Fri Apr 04 15:52:19 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -58,12 +56,12 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
  \tab \code{getUnitsOnChromosome} \tab  -\cr
  \tab \code{isCompatibleWithCdf} \tab  -\cr
  \tab \code{nbrOfUnits} \tab  -\cr
- \tab \code{readData} \tab  -\cr
+ \tab \code{readDataFrame} \tab  -\cr
 }
 
 
  \bold{Methods inherited from GenomeInformation}:\cr
-byChipType, fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, isCompatibleWithCdf, nbrOfUnits, plotDensity, readData
+byChipType, fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, isCompatibleWithCdf, nbrOfUnits, plotDensity, readDataFrame
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum

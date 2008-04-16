@@ -11,8 +11,7 @@
 #
 # \arguments{
 #   \item{set}{An @see "AffymetrixFileSet" object.}
-#   \item{tags}{A @character @vector of tags to be added to the output path.}
-#   \item{...}{Not used.}
+#   \item{...}{Arguments passed to @see "GenericReporter".}
 #   \item{.setClass}{The name of the class of the input set.}
 # }
 #

@@ -50,7 +50,7 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:calculateResiduals.FirmaModel]{calculateResiduals}} \tab Gets the set of residuals corresponding to the PLM.\cr
+ \tab \code{\link[aroma.affymetrix:calculateResidualSet.FirmaModel]{calculateResidualSet}} \tab Gets the set of residuals corresponding to the PLM.\cr
  \tab \code{calculateWeights} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.FirmaModel]{fit}} \tab Estimates the model parameters.\cr
  \tab \code{getAsteriskTags} \tab  -\cr
