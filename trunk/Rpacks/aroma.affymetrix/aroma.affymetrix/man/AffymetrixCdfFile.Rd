@@ -53,6 +53,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{getDimension} \tab  -\cr
  \tab \code{getFileFormat} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getGenomeInformation.AffymetrixCdfFile]{getGenomeInformation}} \tab Gets genome information for this chip type.\cr
+ \tab \code{getImage} \tab  -\cr
  \tab \code{getMonoCell} \tab  -\cr
  \tab \code{getUnitGroupNamesFromUgcMap} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr

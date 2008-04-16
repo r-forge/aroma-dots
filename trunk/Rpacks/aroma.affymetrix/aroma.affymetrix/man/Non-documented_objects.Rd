@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Fri Apr 04 16:35:40 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1640,6 +1638,70 @@
 \alias{readDataFrame.AffymetrixCdfFile}
 \alias{SpatialRowColumnLogRatioNormalization}
 \alias{readCdfDataFrame}
+\alias{addColorMap.ChipTypeReporter}
+\alias{as.character.ChipTypeReporter}
+\alias{as.character.GenericReporter}
+\alias{as.GrayscaleImage}
+\alias{as.TrueColorImage}
+\alias{as.TrueColorImage.Image}
+\alias{as.TrueColorImage.matrix}
+\alias{calculateMargins.ChipTypeReporter}
+\alias{colorize}
+\alias{colorize.Image}
+\alias{display.Image}
+\alias{getAsteriskTags.GenericReporter}
+\alias{getCdf.AffymetrixChipTypeReporter}
+\alias{getChipType.AffymetrixChipTypeReporter}
+\alias{getColorMaps.ChipTypeReporter}
+\alias{getFullName.GenericReporter}
+\alias{getImage.AffymetrixCdfFile}
+\alias{getImage.AffymetrixChipTypeReporter}
+\alias{getImage.AromaUnitTabularBinaryFile}
+\alias{getImage.matrix}
+\alias{getInputName}
+\alias{getInputName.AffymetrixChipTypeReporter}
+\alias{getInputName.AffymetrixFileSetReporter}
+\alias{getInputName.GenericReporter}
+\alias{getInputTags}
+\alias{getInputTags.AffymetrixChipTypeReporter}
+\alias{getInputTags.AffymetrixFileSetReporter}
+\alias{getInputTags.GenericReporter}
+\alias{getMainPath.AffymetrixChipTypeReporter}
+\alias{getMainPath.GenericReporter}
+\alias{getPath.AffymetrixChipTypeReporter}
+\alias{getPath.GenericReporter}
+\alias{getReference.ChipTypeReporter}
+\alias{getReportSet.ChipTypeReporter}
+\alias{getReportSet.GenericReporter}
+\alias{getRootPath.GenericReporter}
+\alias{interleave}
+\alias{interleave.Image}
+\alias{plotMargins.ChipTypeReporter}
+\alias{readCdfFields}
+\alias{readCdfFields.AffymetrixChipTypeReporter}
+\alias{readCdfRectangle}
+\alias{readCdfRectangle.AffymetrixChipTypeReporter}
+\alias{readDataFrame.AffymetrixCsvGenomeInformation}
+\alias{readDataFrame.AffymetrixProbeTabFile}
+\alias{readDataFrame.AffymetrixTsvFile}
+\alias{readDataFrame.AromaTabularBinaryFile}
+\alias{readDataFrame.AromaUfcFile}
+\alias{readDataFrame.AromaUflFile}
+\alias{readDataFrame.AromaUgpFile}
+\alias{readDataFrame.DChipGenomeInformation}
+\alias{readDataFrame.DChipSnpInformation}
+\alias{readDataFrame.GenericTabularFile}
+\alias{readDataFrame.GenomeInformation}
+\alias{readDataFrame.SampleAnnotationFile}
+\alias{readDataFrame.SnpInformation}
+\alias{readDataFrame.UflSnpInformation}
+\alias{readDataFrame.UgpGenomeInformation}
+\alias{readRawDataRectangle.ChipTypeReporter}
+\alias{rescale.Image}
+\alias{setColorMaps.ChipTypeReporter}
+\alias{setReference.ChipTypeReporter}
+\alias{setup.GenericReporter}
+\alias{writeImages.ChipTypeReporter}
 
 \description{
   This page contains aliases for all "non-documented" objects that

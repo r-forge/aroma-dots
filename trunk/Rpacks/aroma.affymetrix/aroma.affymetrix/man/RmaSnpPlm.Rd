@@ -3,8 +3,6 @@
 % 
 %  RmaSnpPlm.R
 % 
-% on Fri Apr 04 15:51:25 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

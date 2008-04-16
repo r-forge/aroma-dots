@@ -12,6 +12,10 @@
 \alias{byChipType.AffymetrixCdfFile}
 \alias{byChipType,AffymetrixCdfFile-method}
 
+\alias{AffymetrixCdfFile.byName}
+\alias{byName.AffymetrixCdfFile}
+\alias{byName,AffymetrixCdfFile-method}
+
 
 \title{Defines an AffymetrixCdfFile object by chip type}
 

@@ -52,6 +52,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{fromChipType} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
+ \tab \code{getData} \tab  -\cr
 }
 
 

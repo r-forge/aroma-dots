@@ -3,8 +3,6 @@
 % 
 %  SpatialReporter.R
 % 
-% on Fri Apr 04 15:52:04 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,11 +19,13 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSetReporter}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericReporter}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSetReporter}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\emph{\code{SpatialReporter}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\emph{\code{SpatialReporter}}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
@@ -63,7 +63,10 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
 getChipType, getDataSet, getPath, nbrOfArrays
 
  \bold{Methods inherited from AffymetrixFileSetReporter}:\cr
-getAlias, getAsteriskTags, getFileSet, getFullName, getMainPath, getName, getPath, getReportSet, getTags, process, setAlias, setup
+getFileSet, getInputName, getInputTags
+
+ \bold{Methods inherited from GenericReporter}:\cr
+getAlias, getAsteriskTags, getFullName, getInputName, getInputTags, getMainPath, getName, getPath, getReportSet, getTags, process, setAlias, setup
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

@@ -19,40 +19,37 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\emph{\code{AffymetrixFileSetReporter}}\cr
+\code{~~+--}\code{\link[aroma.affymetrix]{GenericReporter}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\emph{\code{AffymetrixFileSetReporter}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}, \emph{\link[aroma.affymetrix]{SpatialReporter}}\cr
+\emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}, \emph{\link[aroma.affymetrix]{ChipTypeReporter}}, \emph{\link[aroma.affymetrix]{SpatialReporter}}\cr
 
 public abstract static class \bold{AffymetrixFileSetReporter}\cr
-extends \link[R.oo]{Object}\cr
+extends \emph{\link[aroma.affymetrix]{GenericReporter}}\cr
 
 
  }
 
- \usage{AffymetrixFileSetReporter(set=NULL, tags="*", ..., .setClass="AffymetrixFileSet")}
+ \usage{AffymetrixFileSetReporter(set=NULL, ..., .setClass="AffymetrixFileSet")}
 
  \arguments{
    \item{set}{An \code{\link{AffymetrixFileSet}} object.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be added to the output path.}
-   \item{...}{Not used.}
+   \item{...}{Arguments passed to \code{\link{GenericReporter}}.}
    \item{.setClass}{The name of the class of the input set.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:getAlias.AffymetrixFileSetReporter]{getAlias}} \tab Gets the alias of the output set.\cr
- \tab \code{getAsteriskTags} \tab  -\cr
- \tab \code{getFullName} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getName.AffymetrixFileSetReporter]{getName}} \tab Gets the name of the explorer.\cr
- \tab \code{getPath} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getTags.AffymetrixFileSetReporter]{getTags}} \tab Gets the tags of the explorer.\cr
- \tab \code{\link[aroma.affymetrix:process.AffymetrixFileSetReporter]{process}} \tab Generates report.\cr
- \tab \code{\link[aroma.affymetrix:setAlias.AffymetrixFileSetReporter]{setAlias}} \tab Sets the alias of the output set.\cr
- \tab \code{setup} \tab  -\cr
+ \tab \code{getInputName} \tab  -\cr
+ \tab \code{getInputTags} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from GenericReporter}:\cr
+getAlias, getAsteriskTags, getFullName, getInputName, getInputTags, getMainPath, getName, getPath, getReportSet, getTags, process, setAlias, setup
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
