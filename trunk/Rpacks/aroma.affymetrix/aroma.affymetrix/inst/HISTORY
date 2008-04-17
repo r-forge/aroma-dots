@@ -5,6 +5,10 @@ Version: 0.9.1.2 [2008-04-14]
 o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
 o CONSISTENCY: Now the FirmaModel also has calculateResidualSet() just
   as ProbeLevelModel got it.
+o CONSISTENCY: Renamed argument 'chromosome' of getUnitsAt() of 
+  AromaUgpFile to 'chromosomes'.  This was done in order to make it 
+  consistent with getUnitsOnChromosome() of GenomeInformation. Thanks
+  Tim Keighley at CSIRO for pointing this out.
 o CLEAN UP: Moved several methods to new package 'matrixStats' that is
   specialized and optimized for matrix operations.
 o CLEAN UP: Moved normalizeQuantileSpline(), normalizeFragmentLength, 

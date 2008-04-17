@@ -69,14 +69,14 @@ setMethodS3("allocateFromCdf", "AromaUgpFile", function(static, ...) {
 
 
 
-setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosome, region=NULL, ..., verbose=FALSE) {
+setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NULL, ..., verbose=FALSE) {
   # Stratify by chromosome
   data <- this[,1,drop=TRUE];
 
   # Update known chromosomes, if not already done.  
   chromosomes <- getChromosomes(this, .chromosomes=data);
 
-  keep <- !is.na(data) & (data %in% chromosome);
+  keep <- !is.na(data) & (data %in% chromosomes);
   idxs <- which(keep);
 
   if (!is.null(region)) {
@@ -360,6 +360,11 @@ setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..
 
 ############################################################################
 # HISTORY:
+# 2008-04-17
+# o Renamed argument 'chromosome' of getUnitsAt() of AromaUgpFile to 
+#   'chromosomes'.  This was done in order to make it consistent with 
+#   getUnitsOnChromosome() of GenomeInformation. Thanks Tim Keighley at 
+#   CSIRO for pointing this out.
 # 2008-04-14
 # o Renamed readData() to readDataFrame() for AromaTabularBinaryFile.
 # 2007-09-16
