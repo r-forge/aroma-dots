@@ -36,7 +36,7 @@ setMethodS3("getPositionChipTypeUnit", "ChromosomalModel", function(this, chromo
 
   # Get the units on the chromosome of interest
   unitsList <- base::lapply(giList, FUN=function(gi) {
-    getUnitsOnChromosome(gi, chromosome=chromosome, ...);
+    getUnitsOnChromosome(gi, chromosomes=chromosome, ...);
   });
   verbose && str(verbose, unitsList);
 

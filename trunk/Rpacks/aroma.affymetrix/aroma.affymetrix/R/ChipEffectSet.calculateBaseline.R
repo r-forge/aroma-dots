@@ -89,7 +89,7 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
     verbose && enter(verbose, "Chromosome ", chromosome);
 
     verbose && enter(verbose, "Identifying units on chromosome");
-    units <- getUnitsOnChromosome(gi, chromosome=chromosome);
+    units <- getUnitsOnChromosome(gi, chromosomes=chromosome);
     verbose && cat(verbose, "Units:");
     verbose && str(verbose, units);
     verbose && exit(verbose);
@@ -296,6 +296,8 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
 
 ############################################################################
 # HISTORY:
+# 2008-04-17
+# o Now calling getUnitsOnChromosome() with argument 'chromosomes'.
 # 2007-06-11
 # o Removed never used 'muRs'.
 # 2007-03-30
