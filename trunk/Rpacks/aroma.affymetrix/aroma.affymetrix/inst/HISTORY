@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.1.2 [2008-04-14]
+Version: 0.9.1.2 [2008-04-17]
 o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
 o CONSISTENCY: Now the FirmaModel also has calculateResidualSet() just
   as ProbeLevelModel got it.
@@ -25,6 +25,8 @@ o BUG FIX: The default drawExtraAnnotations() returned error <simpleError
   the chip type annotation for non-GladModels to be missing.
 o BUG FIX: readDataFrame() of AffymetrixProbeTabFile did not return the
   correct number of rows if there were missing cells, which there are.
+o BUG FIX: applyRows() and lines() of CopyNumberRegions did not handle
+  cases with zero regions.
 o ALPHA: Added getImage() for AromaUnitTabularBinaryFile and
   AffymetrixCdfFile.
 
