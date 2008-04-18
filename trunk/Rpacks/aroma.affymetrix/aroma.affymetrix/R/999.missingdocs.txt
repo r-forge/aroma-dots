@@ -780,4 +780,5 @@ readCdfDataFrame
   readRawDataRectangle.ChipTypeReporter rescale.Image
   setColorMaps.ChipTypeReporter setReference.ChipTypeReporter
   setup.GenericReporter writeImages.ChipTypeReporter
-
+  extractCopyNumberRegions.SCPfit extractRawCopyNumbers.SCPfit
+  fitOne.ScpModel getAsteriskTags.ScpModel

@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{ChromosomalModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CbsModel}, \emph{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}, \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}, \link[aroma.affymetrix]{GladModel}, \emph{\link[aroma.affymetrix]{RawCopyNumberModel}}, \emph{\link[aroma.affymetrix]{SmoothMultiarrayModel}}, \link[aroma.affymetrix]{SmoothRmaModel}, \link[aroma.affymetrix]{SmoothSaModel}\cr
+\link[aroma.affymetrix]{CbsModel}, \emph{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}, \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}, \link[aroma.affymetrix]{GladModel}, \emph{\link[aroma.affymetrix]{RawCopyNumberModel}}, \link[aroma.affymetrix]{ScpModel}, \emph{\link[aroma.affymetrix]{SmoothMultiarrayModel}}, \link[aroma.affymetrix]{SmoothRmaModel}, \link[aroma.affymetrix]{SmoothSaModel}\cr
 
 public abstract static class \bold{ChromosomalModel}\cr
 extends \link[R.oo]{Object}\cr

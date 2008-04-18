@@ -54,13 +54,16 @@ setMethodS3("as.data.frame", "CopyNumberRegions", function(x, ...) {
 
 setMethodS3("applyRows", "CopyNumberRegions", function(this, FUN, ...) {
   data <- as.data.frame(this);
-  o <- order(data[,"chromosome"], data[,"start"]);
-  data <- data[o,,drop=FALSE];
-
   res <- vector("list", nrow(data));
-  for (kk in seq(length=nrow(data))) {  
-    res[[kk]] <- FUN(data[kk,,drop=FALSE], ...);
+
+  if (nrow(data) > 0) {
+    o <- order(data[,"chromosome"], data[,"start"]);
+    data <- data[o,,drop=FALSE];
+    for (kk in seq(length=nrow(data))) {  
+      res[[kk]] <- FUN(data[kk,,drop=FALSE], ...);
+    }
   }
+
   res;
 })
 
@@ -89,11 +92,13 @@ setMethodS3("lines", "CopyNumberRegions", function(x, col="red", lwd=2, xScale=1
   this <- x;
 
   data <- as.data.frame(this);
-  o <- order(data[,"start"]);
-  data <- data[o,,drop=FALSE];
-  xx <- t(data[,c("start", "stop"),drop=FALSE]);
-  yy <- rep(this$mean[o], each=2);
-  lines(x=xScale*xx, y=yScale*yy, col=col, lwd=lwd, ...);
+  if (nrow(data) > 0) {
+    o <- order(data[,"start"]);
+    data <- data[o,,drop=FALSE];
+    xx <- t(data[,c("start", "stop"),drop=FALSE]);
+    yy <- rep(this$mean[o], each=2);
+    lines(x=xScale*xx, y=yScale*yy, col=col, lwd=lwd, ...);
+  }
 })
 
 
@@ -179,6 +184,9 @@ setMethodS3("extractCopyNumberRegions", "DNAcopy", function(object, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-04-17
+# o BUG FIX: applyRows() and lines() of CopyNumberRegions did not handle
+#   cases with zero regions.
 # 2007-09-04
 # o Now CopyNumberRegions also contains an 'chromosome' field.
 # o BUG FIX: as.data.frame() gave an error if some optional fields were

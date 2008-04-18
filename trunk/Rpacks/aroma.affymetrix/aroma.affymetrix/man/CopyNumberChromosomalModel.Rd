@@ -24,7 +24,7 @@
 \code{~~~~~~~+--}\emph{\code{CopyNumberChromosomalModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CbsModel}, \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}, \link[aroma.affymetrix]{GladModel}, \emph{\link[aroma.affymetrix]{RawCopyNumberModel}}\cr
+\link[aroma.affymetrix]{CbsModel}, \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}, \link[aroma.affymetrix]{GladModel}, \emph{\link[aroma.affymetrix]{RawCopyNumberModel}}, \link[aroma.affymetrix]{ScpModel}\cr
 
 public abstract static class \bold{CopyNumberChromosomalModel}\cr
 extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr

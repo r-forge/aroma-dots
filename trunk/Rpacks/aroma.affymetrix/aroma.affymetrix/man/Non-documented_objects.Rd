@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Fri Apr 18 09:44:34 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1702,6 +1704,10 @@
 \alias{setReference.ChipTypeReporter}
 \alias{setup.GenericReporter}
 \alias{writeImages.ChipTypeReporter}
+\alias{extractCopyNumberRegions.SCPfit}
+\alias{extractRawCopyNumbers.SCPfit}
+\alias{fitOne.ScpModel}
+\alias{getAsteriskTags.ScpModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

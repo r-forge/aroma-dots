@@ -1,21 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  CopyNumberSegmentationModel.R
+%  ScpModel.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{CopyNumberSegmentationModel}
+ \name{ScpModel}
 \docType{class}
-\alias{CopyNumberSegmentationModel}
+\alias{ScpModel}
 
 
- \title{The CopyNumberSegmentationModel class}
+ \title{The ScpModel class}
 
  \description{
   Package:  aroma.affymetrix \cr
-\bold{Class CopyNumberSegmentationModel}\cr
+\bold{Class ScpModel}\cr
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
@@ -23,39 +23,38 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\emph{\code{CopyNumberSegmentationModel}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{ScpModel}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CbsModel}, \link[aroma.affymetrix]{GladModel}, \link[aroma.affymetrix]{ScpModel}\cr
+\cr
 
-public abstract static class \bold{CopyNumberSegmentationModel}\cr
-extends \emph{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}\cr
+public static class \bold{ScpModel}\cr
+extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
 
 
 
-  This \emph{abstract} class represents a copy-number segmentation model.
+  This class represents the Stochastic Change-Point (SCP) model [1].
+  The required package is currently private, but according to the
+  authors, it will soon be released.
  }
 
- \usage{CopyNumberSegmentationModel(...)}
+ \usage{ScpModel(cesTuple=NULL, ...)}
 
  \arguments{
-   \item{...}{Arguments passed to constructor
-      \code{\link{CopyNumberChromosomalModel}}.}
+   \item{cesTuple}{A \code{\link{ChipEffectSetTuple}}.}
+   \item{...}{Arguments passed to the constructor of
+              \code{\link{CopyNumberSegmentationModel}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\tabular{rll}{
- \tab \code{\link[aroma.affymetrix:fit.CopyNumberSegmentationModel]{fit}} \tab Fits the model.\cr
- \tab \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{fitOne}} \tab Fits the copy-number segmentation model for one chromosome in one sample.\cr
- \tab \code{getRegions} \tab  -\cr
- \tab \code{getTags} \tab  -\cr
- \tab \code{migrateTool} \tab  -\cr
- \tab \code{plot} \tab  -\cr
- \tab \code{plotCopyNumberRegionLayers} \tab  -\cr
- \tab \code{writeRegions} \tab  -\cr
-}
+\emph{No methods defined}.
 
+
+ \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
+fit, fitOne, getPositionChipTypeUnit, getRegions, getTags, migrateTool, plot, plotCopyNumberRegionLayers, writeRegions
 
  \bold{Methods inherited from CopyNumberChromosomalModel}:\cr
 as.character, calculateChromosomeStatistics, clearCache, estimateSds, extractRawCopyNumbers, fit, getMatrixChipEffectFiles, getRawCnData, getReferenceSetTuple, getRefSetTuple, isPaired, newPlot, plotAxesLayers, plotChromosomesLayers, plotCytobandLayers, plotFitLayers, plotGridHorizontalLayers, plotRawCopyNumbers, plotSampleLayers
@@ -70,4 +69,14 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+  \code{\link{CopyNumberSegmentationModel}}.
+ }
+
+ \references{
+  [1] Lai et al., \emph{Stochastic segmentation models for array-based
+      comparative genomic hybridization data analysis},
+      Biostatistics, 2008.\cr
+ }
 \keyword{classes}
