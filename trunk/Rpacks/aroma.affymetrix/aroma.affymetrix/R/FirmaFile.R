@@ -274,8 +274,7 @@ setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=spri
 
 
 setMethodS3("getCellMap", "FirmaFile", function(this, ...) {
-  warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
-  getUnitGroupCellMap(this, ...);
+  throw("getCellMap() is defunct. Use getUnitGroupCellMap() instead.");
 }, deprecated=TRUE)
 
 setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
@@ -443,6 +442,8 @@ setMethodS3("extractMatrix", "FirmaFile", function (this, ..., field=c("intensit
 
 ############################################################################
 # HISTORY:
+# 2008-04-21
+# o getCellMap() is now defunct.
 # 2008-02-28 [HB]
 # o Now a (unit,group,cell) map has class UnitGroupCellMap and no longer
 #   ChipEffectFileCellMap.

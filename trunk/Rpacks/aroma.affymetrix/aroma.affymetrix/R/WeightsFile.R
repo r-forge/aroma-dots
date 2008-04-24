@@ -286,8 +286,7 @@ setMethodS3("findUnitsTodo", "WeightsFile", function(this, units=NULL, ..., forc
 
 
 setMethodS3("getCellMap", "WeightsFile", function(this, ...) {
-  warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
-  getUnitGroupCellMap(this, ...);
+  throw("getCellMap() is defunct. Use getUnitGroupCellMap() instead.");
 }, deprecated=TRUE)
 
 
@@ -467,6 +466,8 @@ setMethodS3("writeImage", "WeightsFile", function(this, ..., tags=c("*", "log2",
 
 ############################################################################
 # HISTORY:
+# 2008-04-21
+# o getCellMap() is now defunct.
 # 2007-08-09
 # o WeightFile$fromDataFile() now creates CEL files with upper-case
 #   filename extension "*.CEL", not "*.cel".  The reason for this is that

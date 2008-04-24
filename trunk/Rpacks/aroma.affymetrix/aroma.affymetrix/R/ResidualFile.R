@@ -288,8 +288,7 @@ setMethodS3("findUnitsTodo", "ResidualFile", function(this, units=NULL, ..., for
 
 
 setMethodS3("getCellMap", "ResidualFile", function(this, ...) {
-  warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
-  getUnitGroupCellMap(this, ...);
+  throw("getCellMap() is defunct. Use getUnitGroupCellMap() instead.");
 }, deprecated=TRUE)
 
 
@@ -473,6 +472,8 @@ setMethodS3("writeImage", "ResidualFile", function(this, ..., tags=c("*", "log2"
 
 ############################################################################
 # HISTORY:
+# 2008-04-21
+# o getCellMap() is now defunct.
 # 2007-08-09
 # o ResidualFile$fromDataFile() now creates CEL files with upper-case
 #   filename extension "*.CEL", not "*.cel".  The reason for this is that

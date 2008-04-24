@@ -59,6 +59,30 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
 }, protected=TRUE);
 
 
+setMethodS3("readDataUnitNames", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probe[sS]etI[dD]$"="character"), con=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Reading unitName from file");
+
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
+
+  data <- data[[1]];
+  attr(data, "importNames") <- colnames(data);
+
+  verbose && exit(verbose);
+
+  data;
+}, protected=TRUE)
+
+
 
 setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probe[sS]etI[dD]$"="character", "^fragment.*Length.*"="character"), enzymes=1, con=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -124,7 +148,9 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
   if (hasNames) {
     verbose && enter(verbose, "Identifying number of enzymes");
-    nbrOfEnzymes <- max(sapply(fln, length));
+    nbrOfEnzymes <- sapply(fln, length);
+    verbose && print(verbose, table(nbrOfEnzymes));
+    nbrOfEnzymes <- max(nbrOfEnzymes);
     verbose && cat(verbose, "Max number of enzymes: ", nbrOfEnzymes);
     verbose && exit(verbose);
     
@@ -148,35 +174,69 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     enzymeIdxs <- unlist(enzymeIdxs, use.names=FALSE);
     # Replace '---' with NAs
     enzymeIdxs[enzymeIdxs %in% c("---")] <- NA;
-    allNames <- na.omit(sort(unique(enzymeIdxs)));
+
+    # Identify the unique enzymes
+    allEnzymes <- na.omit(sort(unique(enzymeIdxs)));
 
     # AD HOC: In the na24 builds, for Mapping250K_{Nsp|Sty} and
     # the fault GenomeWideSNP_5, the enzyme name field is there
     # but all are '---'.  In that case, assume first enzyme.
-    if (length(allNames) == 0) {
+    if (length(allEnzymes) == 0) {
       verbose && cat(verbose, "No identified enzymes. Assuming a single enzyme.");
       enzymeIdxs <- rep(1, times=length(enzymeIdxs));
     } else {
       verbose && cat(verbose, "Identified enzymes: ",
-                                    paste(allNames, collapse=", "));
+                                    paste(allEnzymes, collapse=", "));
       # Map names to indices
-      enzymeIdxs <- match(enzymeIdxs, allNames);
+      enzymeIdxs <- match(enzymeIdxs, allEnzymes);
+    }
+
+    # Sanity check
+    if (length(enzymeIdxs) %% nbrOfEnzymes != 0) {
+      throw("Internal error: The number of extracted (and NA padded) enzymes IDs (", length(enzymeIdxs), ") is not a multiple of the number of enzymes (", nbrOfEnzymes, ")");
     }
 
     # Put into an ExJ matrix
     enzymeIdxs <- matrix(enzymeIdxs, nrow=nbrOfEnzymes);
+
     verbose && exit(verbose);
     if (isVisible(verbose, level=-50))
       verbose && str(verbose, enzymeIdxs, level=-50);
     verbose && exit(verbose);
 
+    verbose && enter(verbose, "Identifying the location of the fragment lengths");
+    offset <- 1;
+    for (kk in seq(along=fln)) {
+      unit <- fln[[kk]][[1]]; 
+      if (length(unit) > 1) {
+        if (length(unit) == 5) {
+          # e.g. GenomeWideSNP_5 for na25
+          offset <- 3;
+        } else {
+          offset <- 2;
+        }
+        break;
+      }
+    }
+
+    verbose && cat(verbose, "Offset: ", offset);
+    verbose && exit(verbose);
+  
     # Extract the fragment length for each enzyme
     verbose && enter(verbose, "Extracting fragment lengths");
     fln <- base::lapply(fln, FUN=function(unit) {
-      base::sapply(unit, FUN=.subset, 2, USE.NAMES=FALSE);
+      base::sapply(unit, FUN=.subset, offset, USE.NAMES=FALSE);
     });
     fln <- unlist(fln, use.names=FALSE);
     fln <- as.integer(fln);
+    verbose && cat(verbose, "Summary of *all* fragment lengths:");
+    verbose && summary(verbose, fln);
+
+    # Sanity check
+    if (length(fln) %% nbrOfEnzymes != 0) {
+      throw("Internal error: The number of extracted (and NA padded) fragment lengths (", length(fln), ") is not a multiple of the number of enzymes (", nbrOfEnzymes, ")");
+    }
+
     # Put into an ExJ matrix
     fln <- matrix(fln, nrow=nbrOfEnzymes);
     verbose && exit(verbose);
@@ -184,8 +244,8 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     verbose && enter(verbose, "Sorting data by enzyme");
     # Reorganize as an JxE matrix (transposed compared with 'fln'!)
     fln2 <- matrix(NA, nrow=ncol(fln), ncol=nbrOfEnzymes);
-    for (ee in 1:nbrOfEnzymes) {
-      for (rr in 1:nbrOfEnzymes) {
+    for (ee in seq(along=allEnzymes)) {
+      for (rr in seq(along=allEnzymes)) {
         # Identify all indices that have enzyme 'ee' in row 'rr'
         idxs <- which(enzymeIdxs[rr,] == ee);
         if (length(idxs) > 0) {
@@ -197,7 +257,9 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
       }
     }
     # Keep only requested enzymes
+    verbose && summary(verbose, fln2);
     fln <- fln2[,enzymes,drop=FALSE];
+#    verbose && summary(verbose, fln);
     rm(enzymeIdxs, fln2);
     verbose && exit(verbose);
   } else {
@@ -210,7 +272,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
       base::sapply(parts, FUN=.subset, 1, USE.NAMES=FALSE);
     });
     verbose && exit(verbose);
-    
+   
     # Reorganize as an JxE integer matrix
     fln <- unlist(fln, use.names=FALSE);
     fln <- as.integer(fln);
@@ -228,9 +290,11 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
   verbose && exit(verbose);
 
-  names <- c("fragmentLength", rep(c("fragmentLength"), nbrOfEnzymes-1));
+  names <- rep("fragmentLength", nbrOfEnzymes);
   if (nbrOfEnzymes > 1)
     names[-1] <- sprintf("%s.%02d", names[-1], 2:nbrOfEnzymes);
+
+  # Keep only enzymes of interest
   names <- names[enzymes];
 
   data <- data.frame(unitName=data[[1]], fln);
@@ -246,6 +310,11 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2008-04-23
+# o NOTE: The CNV for GenomeWideSNP_5 for na25 contains one SNP 
+#   (SNP_A-1905053) with "duplicated" fragment lengths, i.e. NspI=617,
+#   StyI=912, StyI=57.  This will cause the returned data to contain "three"
+#   enzyme columns.
 # 2007-12-08
 # o BUG FIX: readDataUnitFragmentLength() of AffymetrixNetAffxCsvFile would
 #   not handle cases where enzymes names a given but all are '---'.
