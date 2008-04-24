@@ -70,6 +70,7 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
   }
 
 
+
   verbose && enter(verbose, "Importing (unit name, fragment length+) data from ", class(csv)[1]);
 
   # Query CDF
@@ -78,9 +79,14 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
 
   # Read data
   data <- readDataUnitFragmentLength(csv, enzymes=enzymes, ..., verbose=less(verbose));
+  verbose && str(verbose, data);
+#  verbose && summary(verbose, data);
 
   # Map to CDF unit names
   cdfUnits <- match(data[,1,drop=TRUE], cdfUnitNames);
+  verbose && cat(verbose, "CDF units:");
+  verbose && str(verbose, cdfUnits);
+  verbose && print(verbose, range(cdfUnits, na.rm=TRUE));
 
   # Exclude units that are not in the CDF
   keep <- which(!is.na(cdfUnits));
@@ -89,6 +95,11 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
     warning("None of the imported unit names match the ones in the CDF ('", getPathname(cdf), "'). Is the correct file ('", getPathname(csv), "'), being imported?");
   }
   data <- data[keep,-1,drop=FALSE];
+
+#  verbose && str(verbose, cdfUnits);
+#  verbose && str(verbose, enzymes);
+#  verbose && summary(verbose, data);
+#  verbose && str(verbose, data);
  
   # Garbage collect
   gc <- gc();

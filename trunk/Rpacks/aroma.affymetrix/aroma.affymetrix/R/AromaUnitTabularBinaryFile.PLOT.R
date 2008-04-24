@@ -32,7 +32,7 @@ setMethodS3("getImage", "AromaUnitTabularBinaryFile", function(this, transforms=
   z <- vector(mode=mode(values), 1);
   z <- matrix(z, nrow=nbrOfRows(cdf), ncol=nbrOfColumns(cdf));
   z[indexByRow(z, ugcMap[,"cell"])] <- values[ugcMap[,"unit"]];
-  rm(values);
+  rm(values, ugcMap);
   verbose && summary(verbose, as.vector(z));
   verbose && printf(verbose, "RAM: %.1fMB\n", object.size(z)/1024^2);
   verbose && exit(verbose);

@@ -275,10 +275,21 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, header=NULL
 
 
 
-setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, rows=NULL, nrow=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'rows':
+  if (!is.null(rows)) {
+    rows <- Arguments$getIndices(rows);
+    nrow <- max(rows);
+  }
+
+  # Argument 'nrow':
+  if (!is.null(nrow)) {
+    nrow <- Arguments$getInteger(nrow, range=c(1,Inf));
+  }
+  
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -309,7 +320,7 @@ setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, ...,
 
 
   # Get read arguments
-  args <- getReadArguments(this, header=hdr, ..., verbose=less(verbose));
+  args <- getReadArguments(this, header=hdr, nrow=nrow, ..., verbose=less(verbose));
   args <- c(list(con), args);
   verbose && cat(verbose, "Arguments used to read tabular file:");
   verbose && str(verbose, args);
@@ -324,6 +335,11 @@ setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, ...,
   verbose && enter(verbose, "Calling read.table()");
   verbose && print(verbose, args);
   data <- do.call("read.table", args=args);
+
+  # Extract subset of rows?
+  if (!is.null(rows)) {
+    data <- data[rows,,drop=FALSE];
+  }
 
   rownames(data) <- NULL;
   if (ncol(data) != length(columns)) {
@@ -347,6 +363,8 @@ setMethodS3("readData", "GenericTabularFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-04-24
+# o Added argument 'rows' to readDataFrame() for GenericTabularFile.
 # 2008-04-14
 # o Renamed readData() to readDataFrame() for GenericTabularFile.
 # 2008-03-22

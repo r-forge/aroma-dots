@@ -1,8 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.1.2 [2008-04-17]
+Version: 0.9.1.3 [2008-04-24]
 o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
+o Added argument 'rows' to readDataFrame() for GenericTabularFile.
+o UPDATE: Updated readDataUnitFragmentLength() of AffymetrixNetAffxCsvFile
+  to support the NetAffx r25 CSV files.
 o CONSISTENCY: Now the FirmaModel also has calculateResidualSet() just
   as ProbeLevelModel got it.
 o CONSISTENCY: Renamed argument 'chromosome' of getUnitsAt() of 
@@ -17,6 +20,7 @@ o CLEAN UP: Removed "patches" for rowMedians() and as.<basic data type>()
   since they are now available in all R v2.6.x installations.
 o CLEAN UP: Renamed all readData() methods that return a data.frame 
   to readDataFrame().
+o DEFUNCT: All getCellMap() are now defunct; use getUnitCellMap().
 o BUG FIX: getChipType(..., fullname=FALSE) of AffymetrixCdfFile would
   return the chip type as the 'tags' attribute if there were no tags.
 o BUG FIX: The default drawExtraAnnotations() returned error <simpleError

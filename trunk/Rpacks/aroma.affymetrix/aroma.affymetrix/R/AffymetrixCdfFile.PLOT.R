@@ -31,7 +31,7 @@ setMethodS3("getImage", "AffymetrixCdfFile", function(this, transforms=NULL, xra
   verbose && str(verbose, data);
   z <- vector(mode=mode(data[[field]]), 1);
   z <- matrix(z, nrow=nbrOfRows(this), ncol=nbrOfColumns(this));
-  z[indexByRow(z, data$cell)] <- data[[field]];
+  z[indexByRow(z, data[,"cell"])] <- data[[field]];
   rm(data);
   verbose && summary(verbose, as.vector(z));
   verbose && printf(verbose, "RAM: %.1fMB\n", object.size(z)/1024^2);

@@ -44,12 +44,8 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCdfFile", function(this, units=NUL
     verbose && exit(verbose);
   
     # Return data 
-    if (retNames) {
-      map <- data.frame(unit=units, group=groups, cell=cells);
-    } else {
-      map <- matrix(c(units, groups, cells), ncol=3, 
-                         dimnames=list(NULL, c("unit", "group", "cell")));
-    }
+    map <- data.frame(unit=units, group=groups, cell=cells);
+    class(map) <- c("UnitGroupCellMap", class(map));
 
     map;
   } # flattenCellIndices()
@@ -111,18 +107,11 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCdfFile", function(this, units=NUL
     }
   
     verbose && enter(verbose, "Flattening cell indices to create cell map");
-    map <- flattenCellIndices(cells, retNames=retNames, verbose=less(verbose)); 
-    if (!retNames) {
-      map <- as.matrix(map);
-      rownames(map) <- NULL;
-      # Garbage collect
-      gc <- gc();
-      verbose && print(verbose, gc);
-    }
+    map <- flattenCellIndices(cells, retNames=retNames, verbose=less(verbose));
     verbose && str(verbose, map);
     verbose && exit(verbose);
   
-  
+
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Save to cache
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -238,7 +227,8 @@ setMethodS3("getUnitGroupCellChromosomePositionMap", "AffymetrixCdfFile", functi
   }
 
   # Get the (chromosome, position) map
-  cpMap <- getData(gi, units=ugcMap[,"unit"], force=force, verbose=less(verbose, 10));
+  cpMap <- getData(gi, units=ugcMap[,"unit"], force=force, 
+                                              verbose=less(verbose, 10));
   verbose && cat(verbose, "(chromosome, position) map:");
   verbose && str(verbose, cpMap);
 
@@ -274,6 +264,9 @@ setMethodS3("getUnitGroupCellChromosomePositionMap", "AffymetrixCdfFile", functi
 
 ############################################################################
 # HISTORY:
+# 2008-04-21
+# o Now getUnitGroupCellMap() always returns a data.frame.
+# o Added class attribute to getUnitGroupCellMap().
 # 2008-03-11
 # o Added getUnitGroupCellChromosomePositionMap();
 # 2007-03-08

@@ -9,7 +9,7 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
   if (is.null(units)) {
   } else if (inherits(units, "UnitGroupCellMap")) {
     ugcMap <- units;
-    units <- unique(ugcMap$unit);
+    units <- unique(ugcMap[,"unit"]);
   } else {
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
   }

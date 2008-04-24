@@ -179,7 +179,7 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
     if (is.null(otherUgcMap)) {
       otherUgcMap <- getUnitGroupCellMap(inputFile, units=otherUnits);
     }
-    cells <- otherUgcMap$cell;
+    cells <- otherUgcMap[,"cell"];
     data <- readCel(getPathname(inputFile), indices=cells, 
                     readIntensities=TRUE, readStdvs=TRUE, readPixels=TRUE);
     data <- as.data.frame(data[c("intensities", "stdvs", "pixels")]);
@@ -194,7 +194,7 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
     if (is.null(snpUgcMap)) {
       snpUgcMap <- getUnitGroupCellMap(inputFile, units=snps);
     }
-    cells <- snpUgcMap$cell;
+    cells <- snpUgcMap[,"cell"];
     data <- readCel(getPathname(inputFile), indices=cells, 
                     readIntensities=TRUE, readStdvs=FALSE, readPixels=FALSE);
     yAB <- data[["intensities"]];

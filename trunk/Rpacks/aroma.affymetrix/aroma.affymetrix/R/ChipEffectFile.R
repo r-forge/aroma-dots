@@ -547,8 +547,7 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
 
 
 setMethodS3("getCellMap", "ChipEffectFile", function(this, ...) {
-  warnings("getCellMap() is deprecated. Use getUnitGroupCellMap() instead.");
-  getUnitGroupCellMap(this, ...);
+  throw("getCellMap() is defunct. Use getUnitGroupCellMap() instead.");
 }, deprecated=TRUE)
 
 
@@ -884,6 +883,8 @@ setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("thet
 
 ############################################################################
 # HISTORY:
+# 2008-04-21
+# o getCellMap() is now defunct.
 # 2008-03-11
 # o Now getUnitGroupCellMap() of ChipEffectFile file caches smaller objects.
 # 2008-02-28

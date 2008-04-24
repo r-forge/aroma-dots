@@ -359,7 +359,7 @@ setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList,
       # Get (mu, sigma) of theta (estimated across all arrays).
       data <- getDataFlat(ref, units=units0, verbose=less(verbose));
       # Number of arrays (for each unit)
-      n <- readCel(getPathname(ref), indices=data$cell, readIntensities=FALSE, readPixels=TRUE)$pixels;
+      n <- readCel(getPathname(ref), indices=data[,"cell"], readIntensities=FALSE, readPixels=TRUE)$pixels;
 
       # Use Gauss' approximation (since mu and sigma are on the 
       # intensity scale)
