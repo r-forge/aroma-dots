@@ -35,18 +35,20 @@ setMethodS3("fromChipType", "AffymetrixTabularFile", function(static, ...) {
   byChipType(static, ...);
 }, static=TRUE) 
 
-setMethodS3("byChipType", "AffymetrixTabularFile", function(static, chipType, ...) {
+setMethodS3("byChipType", "AffymetrixTabularFile", function(static, chipType, tags=NULL, ...) {
   # Search for the genome information file
-  pathname <- static$findByChipType(chipType, ...);
+  pathname <- static$findByChipType(chipType, tags=tags, ...);
   if (is.null(pathname))
     throw("Failed to located Affymetrix tabular file: ", chipType);
-  newInstance(static, pathname);
+  newInstance(static, pathname, ...);
 }, static=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2008-04-25
+# o Now byChipType() passes '...' to the constructor, e.g. 'verbose'.
 # 2007-09-16
 # o Now AffymetrixTabularFile reports the translated/cleaned up column 
 #   names.  Column names on the file can be retrieved from getHeader().

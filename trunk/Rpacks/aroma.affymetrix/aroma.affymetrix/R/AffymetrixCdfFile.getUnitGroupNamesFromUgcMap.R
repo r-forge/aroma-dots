@@ -12,60 +12,92 @@ setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, u
 
   verbose && enter(verbose, "Extracting unit and group names from CDF");
 
-  key <- list(method="getUnitGroupNamesFromUgcMap", class=class(this)[1],
-              ugcMap=ugcMap[,c("unit", "group")]);
-  dirs <- c("aroma.affymetrix", getChipType(this, fullname=TRUE));
-  if (!force) {
-    res <- loadCache(key, dirs=dirs);
-    if (!is.null(res)) {
-      verbose && cat(verbose, "Found results cached on file");
-      verbose && exit(verbose);
-      return(res);
-    }
-  }
+##  key <- list(method="getUnitGroupNamesFromUgcMap", class=class(this)[1],
+##              ugcMap=ugcMap[,c("unit", "group")]);
+##  dirs <- c("aroma.affymetrix", getChipType(this, fullname=TRUE));
+##  if (!force) {
+##    res <- loadCache(key, dirs=dirs);
+##    if (!is.null(res)) {
+##      verbose && cat(verbose, "Found results cached on file");
+##      verbose && exit(verbose);
+##      return(res);
+##    }
+##  }
 
-  units <- ugcMap[,"unit"];
+  allUnits <- ugcMap[,"unit"];
 
   # Get unit names
   res <- data.frame(
-    unitName = getUnitNames(this, units=units),
+    unitName = getUnitNames(this, units=allUnits),
+    groupName = character(length(allUnits)),
     stringsAsFactors = FALSE
   );
   verbose && str(verbose, res);
 
   verbose && enter(verbose, "Reading all group names for units of interest");
-  uniqueUnits <- unique(units);
+  uniqueUnits <- unique(allUnits);
   groupNames <- readCdfGroupNames(getPathname(this), units=uniqueUnits);
   verbose && cat(verbose, "First unit:");
   verbose && str(verbose, groupNames[1]);
   verbose && exit(verbose);
 
-  groups <- ugcMap[,"group"];
-  verbose && enter(verbose, "Build (unit name, group name) map");
-  verbose && cat(verbose, "Number of units: ", length(uniqueUnits));
-  for (kk in seq(along=uniqueUnits)) {
-    if (kk %% 100 == 0) {
-      verbose && writeRaw(verbose, length(uniqueUnits)-kk, ", ");
+  verbose && enter(verbose, "Calculating the number of groups per unit");
+  unitSizes <- lapply(groupNames, FUN=length);
+  unitSizes <- unlist(unitSizes, use.names=FALSE);
+  uniqueUnitSizes <- sort(unique(unitSizes));
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Building (unit name, group name) map");
+
+  for (unitSize in uniqueUnitSizes) {
+    verbose && enter(verbose, "Processing units with maximum ", unitSize, " group(s)");
+    # Extract the group names for unit with 'unitSize' groups as a matrix
+    idxs <- which(unitSizes == unitSize);
+    units <- uniqueUnits[idxs];
+    verbose && cat(verbose, "Number of units with ", unitSize, 
+                                            " group(s): ", length(units));
+
+    if (length(units) > 0) {  # Isn't this always the case? /HB 2008-04-28
+      names <- groupNames[idxs];
+      names <- unlist(names, use.names=FALSE);
+      names <- matrix(names, nrow=unitSize);
+      verbose && cat(verbose, "Identfied group names:");
+      verbose && str(verbose, names);
+
+      # Find the subset of the UGC map that contains these units
+      rrU <- (ugcMap[,"unit"] %in% units);
+#      verbose && str(verbose, rrU);
+
+      # For each possible group index...
+      for (group in seq(length=unitSize)) {
+        verbose && enter(verbose, "Group ", group);
+        # Identify row in the UGC map containing those units and the group
+        rrG <- (ugcMap[,"group"] == group);
+#        verbose && str(verbose, rrG);
+        rrUG <- which(rrU & rrG);
+#        verbose && str(verbose, rrUG);
+        if (length(rrUG) > 0) {
+          unitsUG <- ugcMap[rrUG, "unit"];
+          rr <- match(unitsUG, units);
+          res[rrUG,"groupName"] <- names[group,rr];
+        }
+        verbose && exit(verbose);
+      }
     }
 
-    # Find matching rows
-    ### rr <- which(units %in% .uniqueUnits[kk]);
-    rr <- which(units %in% .subset(uniqueUnits, kk));
-    # All groups for this unit
-    ### gg <- groups[rr];
-    ### res[rr,"groupName"] <- groupNames[[kk]][gg];
-    gg <- .subset(groups, rr);
-    res[rr,"groupName"] <- .subset(.subset2(groupNames, kk), gg);
-  }
-  verbose && cat(verbose, "0.");
+    verbose && exit(verbose);
+  } # for (unitSize ...)
+
   verbose && exit(verbose);
 
   if (nrow(res) != nrow(ugcMap)) {
     throw("Internal error: Number of extract unit and group names does not match the number of rows in the UGC map: ", nrow(res), " != ", nrow(ugcMap));
   }
 
-  # Save to file cache
-  saveCache(res, key=key, dirs=dirs);
+##  # Save to file cache
+##  verbose && enter(verbose, "Caching result");
+##  saveCache(res, key=key, dirs=dirs);
+##  verbose && exit(verbose);
 
   verbose && exit(verbose);
 
@@ -75,6 +107,11 @@ setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, u
 
 ############################################################################
 # HISTORY:
+# 2008-04-28
+# o SPEEDUP: Changed the algorithm for getUnitGroupNamesFromUgcMap(). It
+#   was painfully slow for large UGC maps.  Took ~10-14 days(!) for the
+#   GenomeWideSNP_6 chip. Now 50s. The relative overhead for loading/saving
+#   to cache is now so large that it no longer pays off.
 # 2008-02-27
 # o Now getUnitGroupNamesFromUgcMap() caches results to file.
 # 2008-02-05

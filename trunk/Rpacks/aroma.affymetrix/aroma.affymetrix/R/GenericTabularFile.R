@@ -1,4 +1,4 @@
-setConstructorS3("GenericTabularFile", function(..., sep=c("\t", ","), quote="\"", fill=FALSE, skip=0, .verify=TRUE) {
+setConstructorS3("GenericTabularFile", function(..., sep=c("\t", ","), quote="\"", fill=FALSE, skip=0, .verify=TRUE, verbose=FALSE) {
   this <- extend(GenericDataFile(...), "GenericTabularFile",
     .header = NULL,
     .columnNameTranslator = NULL,
@@ -9,7 +9,7 @@ setConstructorS3("GenericTabularFile", function(..., sep=c("\t", ","), quote="\"
   );
 
   if (.verify)
-    verify(this, ...);
+    verify(this, ..., verbose=verbose);
   this;
 })
 
@@ -33,11 +33,27 @@ setMethodS3("verify", "GenericTabularFile", function(this, ..., verbose=FALSE) {
   if (is.null(getPathname(this)))
     return(invisible(this));
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Validating file contents");
+
   tryCatch({
     data <- readDataFrame(this, skip=this$skip, nrow=10, verbose=verbose);
   }, error = function(ex) {
-    throw("File format error of the tabular file: ", getPathname(this));
+    throw("File format error of the tabular file ('", getPathname(this), "'): ", ex$message);
   })
+
+  verbose && exit(verbose);
 
   invisible(this);
 }, private=TRUE)
@@ -152,8 +168,10 @@ setMethodS3("readHeader", "GenericTabularFile", function(this, con=NULL, ..., ve
     verbose && exit(verbose);
   }
 
+  verbose && print(verbose, line);
   columns <- strsplit(line, split=sep)[[1]];
   columns <- trim(columns);
+  verbose && print(verbose, columns);
 
   # Remove quotes?
   quote <- this$quote;
@@ -297,7 +315,6 @@ setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, rows
     on.exit(popState(verbose));
   }
 
-
   verbose && enter(verbose, "Reading ", class(this)[1]);
 
   # Open a file connection?
@@ -318,7 +335,6 @@ setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, rows
   # Reading header
   hdr <- readHeader(this, con=con, verbose=verbose);
 
-
   # Get read arguments
   args <- getReadArguments(this, header=hdr, nrow=nrow, ..., verbose=less(verbose));
   args <- c(list(con), args);
@@ -327,6 +343,10 @@ setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, rows
 
   verbose && enter(verbose, "Matching column names:");
   columns <- getColumnNames(this);
+  verbose && printf(verbose, "Column names (%d):\n", length(columns));
+  verbose && cat(verbose, paste(columns, collapse=", "));
+  verbose && printf(verbose, "Column classes (%d):\n", length(args$colClasses));
+  verbose && cat(verbose, paste(args$colClasses, collapse=", "));
   columns[args$colClasses == "NULL"] <- NA;
   columns <- columns[!is.na(columns)];
   verbose && exit(verbose);
@@ -363,6 +383,8 @@ setMethodS3("readData", "GenericTabularFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-04-25
+# o Now argument 'verbose' of the constructor is passed to verfity().
 # 2008-04-24
 # o Added argument 'rows' to readDataFrame() for GenericTabularFile.
 # 2008-04-14

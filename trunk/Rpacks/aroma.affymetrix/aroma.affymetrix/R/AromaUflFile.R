@@ -75,38 +75,41 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
 
   # Query CDF
   cdf <- getCdf(this);
-  cdfUnitNames <- getUnitNames(cdf);
+
+  # Read unit names
+  unitNames <- getUnitNames(csv, ..., verbose=less(verbose));
+  verbose && cat(verbose, "Unit names:");
+  verbose && str(verbose, unitNames);
+  
+  # Keep the units in the CDF
+  units <- indexOf(cdf, names=unitNames);
+  verbose && cat(verbose, "Unit indices:");
+  verbose && str(verbose, units);
+  rm(unitNames);
+
+  keep <- which(!is.na(units));
+  verbose && printf(verbose, "Keeping %d of %d (%.2f%%)\n", 
+       length(keep), length(units), 100*length(keep)/length(units));
+  units <- units[keep];
+  if (length(units) == 0) {
+    warning("None of the unit names in the CSV match the ones in the CDF ('", getPathname(cdf), "'). Is the correct file ('", getPathname(csv), "'), being imported?");
+  }
+
+#  verbose && summary(verbose, data);
 
   # Read data
-  data <- readDataUnitFragmentLength(csv, enzymes=enzymes, ..., verbose=less(verbose));
+  data <- readDataUnitFragmentLength(csv, enzymes=enzymes, rows=keep, ..., verbose=less(verbose));
   verbose && str(verbose, data);
 #  verbose && summary(verbose, data);
 
-  # Map to CDF unit names
-  cdfUnits <- match(data[,1,drop=TRUE], cdfUnitNames);
-  verbose && cat(verbose, "CDF units:");
-  verbose && str(verbose, cdfUnits);
-  verbose && print(verbose, range(cdfUnits, na.rm=TRUE));
+  data <- data[,-1,drop=FALSE];
 
-  # Exclude units that are not in the CDF
-  keep <- which(!is.na(cdfUnits));
-  cdfUnits <- cdfUnits[keep];
-  if (length(cdfUnits) == 0) {
-    warning("None of the imported unit names match the ones in the CDF ('", getPathname(cdf), "'). Is the correct file ('", getPathname(csv), "'), being imported?");
-  }
-  data <- data[keep,-1,drop=FALSE];
-
-#  verbose && str(verbose, cdfUnits);
-#  verbose && str(verbose, enzymes);
-#  verbose && summary(verbose, data);
-#  verbose && str(verbose, data);
- 
   # Garbage collect
   gc <- gc();
   verbose && print(verbose, gc, level=-10);
 
   # Update
-  this[cdfUnits,enzymes] <- data;
+  this[units,enzymes] <- data;
   rm(data);
 
   gc <- gc();
@@ -114,12 +117,18 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
 
   verbose && exit(verbose);
 
-  invisible(cdfUnits);
+  invisible(units);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2008-04-24
+# o Updated importFromAffymetrixNetAffxCsvFile() to read the unit names,
+#   then identify the ones that are in the CDF, and the only read the data
+#   for the corresponding rows.  This was done so that one can see from the
+#   verbose output that by excluding the extra units the remaining ones are
+#   sound.
 # 2008-04-14
 # o Renamed readData() to readDataFrame() for AromaTabularBinaryFile.
 # 2007-12-08

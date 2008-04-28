@@ -1,14 +1,64 @@
 setConstructorS3("AffymetrixNetAffxCsvFile", function(..., .verify=TRUE) {
-  this <- extend(AffymetrixCsvFile(..., .verify=FALSE), "AffymetrixNetAffxCsvFile");
+  this <- extend(AffymetrixCsvFile(..., .verify=FALSE), "AffymetrixNetAffxCsvFile",
+    "cache:.unitNames" = NULL
+  );
 
   if (.verify)
     verify(this, ...);
   this;
 })
 
+
+setMethodS3("clearCache", "AffymetrixNetAffxCsvFile", function(this, ...) {
+  NextMethod("clearCache", this, ...);
+  for (ff in c(".unitNames")) {
+    this[[ff]] <- NULL;
+  }
+})
+
+
+
 setMethodS3("findByChipType", "AffymetrixNetAffxCsvFile", function(static, chipType, tags=".*", pattern=sprintf("^%s%s([.]|_)annot[.](csv|CSV)$", chipType, tags), ...) {
   findByChipType.AffymetrixCsvFile(static, chipType=chipType, pattern=pattern, ...);
 }, static=TRUE, protected=TRUE)
+
+
+
+setMethodS3("readUnitNames", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probe[sS]etI[dD]$"="character"), con=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Reading unitName from file");
+
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
+
+  data <- data[[1]];
+  attr(data, "importNames") <- colnames(data);
+
+  verbose && exit(verbose);
+
+  data;
+}, protected=TRUE)
+
+
+setMethodS3("getUnitNames", "AffymetrixNetAffxCsvFile", function(this, ..., force=FALSE) {
+  unitNames <- this$.unitNames;
+
+  if (force || is.null(unitNames)) {
+    unitNames <- readUnitNames(this, ...);
+  }
+
+  verbose && exit(verbose);
+
+  unitNames;
+})
 
 
 
@@ -57,30 +107,6 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
 
   data;
 }, protected=TRUE);
-
-
-setMethodS3("readDataUnitNames", "AffymetrixNetAffxCsvFile", function(this, colClassPatterns=c("*"="NULL", "^probe[sS]etI[dD]$"="character"), con=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Reading unitName from file");
-
-  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
-
-  data <- data[[1]];
-  attr(data, "importNames") <- colnames(data);
-
-  verbose && exit(verbose);
-
-  data;
-}, protected=TRUE)
 
 
 
@@ -310,6 +336,8 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2008-04-25
+# o Added getUnitNames().
 # 2008-04-23
 # o NOTE: The CNV for GenomeWideSNP_5 for na25 contains one SNP 
 #   (SNP_A-1905053) with "duplicated" fragment lengths, i.e. NspI=617,
