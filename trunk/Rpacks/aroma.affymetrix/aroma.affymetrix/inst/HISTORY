@@ -1,9 +1,14 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.1.3 [2008-04-24]
+Version: 0.9.1.3 [2008-04-28]
 o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
 o Added argument 'rows' to readDataFrame() for GenericTabularFile.
+o SPEEDUP: The internal getUnitGroupNamesFromUgcMap() for AffymetrixCdfFile
+  was painfully slow for large UGC maps. Instead of 10-15 days(!) for
+  for GenomeWideSNP_6, it now takes 50 seconds.  This speeds up
+  extractDataFrame(..., addNames=TRUE) for ChipEffectSet:s substantially.
+  Thanks ... for reporting this.
 o UPDATE: Updated readDataUnitFragmentLength() of AffymetrixNetAffxCsvFile
   to support the NetAffx r25 CSV files.
 o CONSISTENCY: Now the FirmaModel also has calculateResidualSet() just
