@@ -74,7 +74,7 @@ setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NUL
   data <- this[,1,drop=TRUE];
 
   # Update known chromosomes, if not already done.  
-  chromosomes <- getChromosomes(this, .chromosomes=data);
+  allChromosomes <- getChromosomes(this, .chromosomes=data);
 
   keep <- !is.na(data) & (data %in% chromosomes);
   idxs <- which(keep);
@@ -360,6 +360,8 @@ setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..
 
 ############################################################################
 # HISTORY:
+# 2008-04-29
+# o BUG FIX: Name clash in getUnitsAt() after new argument 'chromosomes'.
 # 2008-04-17
 # o Renamed argument 'chromosome' of getUnitsAt() of AromaUgpFile to 
 #   'chromosomes'.  This was done in order to make it consistent with 

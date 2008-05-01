@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.1.3 [2008-04-28]
+Version: 0.9.1.3 [2008-05-01]
 o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
 o Added argument 'rows' to readDataFrame() for GenericTabularFile.
 o SPEEDUP: The internal getUnitGroupNamesFromUgcMap() for AffymetrixCdfFile
@@ -38,6 +38,7 @@ o BUG FIX: applyRows() and lines() of CopyNumberRegions did not handle
   cases with zero regions.
 o ALPHA: Added getImage() for AromaUnitTabularBinaryFile and
   AffymetrixCdfFile.
+o ALPHA: Added writeColumnsToFiles() for GenericTabularFile.
 
 
 Version: 0.9.1 [2008-04-04]
