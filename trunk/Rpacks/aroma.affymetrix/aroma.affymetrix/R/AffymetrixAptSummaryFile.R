@@ -24,7 +24,7 @@ setMethodS3("nbrOfArrays", "AffymetrixAptSummaryFile", function(this, ...) {
   length(getArrayNames(this, ...));
 })
 
-setMethodS3("getReadArguments", "AffymetrixAptSummaryFile", function(this, header=NULL, colClassPatterns=c("*"="double", "probeset_id"="character"), ..., verbose=FALSE) {
+setMethodS3("getReadArguments", "AffymetrixAptSummaryFile", function(this, fileHeader=NULL, colClassPatterns=c("*"="double", "probeset_id"="character"), ..., verbose=FALSE) {
   args <- NextMethod("getReadArguments", this, colClassPatterns=colClassPatterns, ..., verbose=verbose);
   args$quote <- "";
   args$na.strings <- "";
