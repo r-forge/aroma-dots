@@ -105,6 +105,15 @@ setMethodS3("as.character", "DChipDcpSet", function(x, ...) {
 
 
 setMethodS3("findByName", "DChipDcpSet", function(static, name, tags=NULL, chipType=NULL, paths=c("rawData", "probeData"), ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'paths':
+  if (is.null(paths)) {
+    paths <- eval(formals(findByName.AffymetrixCelSet)[["paths"]]);
+  }
+
+
   # Look only in existing directories
   paths <- sapply(paths, FUN=filePath, expandLinks="any");
   paths0 <- paths;
@@ -144,12 +153,12 @@ setMethodS3("fromName", "DChipDcpSet", function(static, ...) {
   byName(static, ...);
 }, static=TRUE)
 
-setMethodS3("byName", "DChipDcpSet", function(static, name, tags=NULL, chipType, ...) {
+setMethodS3("byName", "DChipDcpSet", function(static, name, tags=NULL, chipType, paths=NULL, ...) {
   # Argument 'chipType':
   chipType <- Arguments$getCharacter(chipType);
 
   suppressWarnings({
-    path <- static$findByName(name, tags=tags, chipType=chipType, ...);
+    path <- static$findByName(name, tags=tags, chipType=chipType, paths=paths, ...);
   })
   if (is.null(path)) {
     path <- file.path(paste(c(name, tags), collapse=","), chipType);
@@ -279,6 +288,8 @@ setMethodS3("getFullName", "DChipDcpSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o If paths=NULL in findByName(), it becomes the default argument value.
 # 2008-01-30
 # o Created.
 ############################################################################

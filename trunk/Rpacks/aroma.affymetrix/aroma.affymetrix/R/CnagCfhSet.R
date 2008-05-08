@@ -323,6 +323,15 @@ setMethodS3("setCdf", "CnagCfhSet", function(this, cdf, verbose=FALSE, ...) {
 
 
 setMethodS3("findByName", "CnagCfhSet", function(static, name, tags=NULL, chipType=NULL, paths=c("cnagData", ...), ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'paths':
+  if (is.null(paths)) {
+    paths <- eval(formals(findByName.AffymetrixCelSet)[["paths"]]);
+  }
+
+
   # Look only in existing directories
   paths <- sapply(paths, FUN=filePath, expandLinks="any");
   paths0 <- paths;
@@ -362,9 +371,9 @@ setMethodS3("fromName", "CnagCfhSet", function(static, ...) {
   byName(static, ...);
 }, private=TRUE);
 
-setMethodS3("byName", "CnagCfhSet", function(static, name, tags=NULL, chipType, ...) {
+setMethodS3("byName", "CnagCfhSet", function(static, name, tags=NULL, chipType, paths=NULL, ...) {
   suppressWarnings({
-    path <- static$findByName(name, tags=tags, chipType=chipType, ...);
+    path <- static$findByName(name, tags=tags, chipType=chipType, paths=paths, ...);
   })
   if (is.null(path)) {
     path <- file.path(paste(c(name, tags), collapse=","), chipType);
@@ -1078,6 +1087,8 @@ setMethodS3("getFullName", "CnagCfhSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o If paths=NULL in findByName(), it becomes the default argument value.
 # 2007-08-10
 # o Now getAverageFile() utilizes Biobase::rowMedians(), if available.
 # 2007-04-06

@@ -10,6 +10,12 @@ setMethodS3("writeColumnsToFiles", "GenericTabularFile", function(this, destPath
     writeLines(con=con, hdrStr);
   }
 
+  escapeFilename <- function(filename, ...) {
+    filename <- gsub(":", "%3A", filename);
+    filename <- gsub(";", "%3B", filename);
+    filename;
+  }
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -34,7 +40,7 @@ setMethodS3("writeColumnsToFiles", "GenericTabularFile", function(this, destPath
   # Argument 'header':
   if (is.null(header)) {
     header <- list(
-      sourceFile=getPathname(this)
+      sourceFile=getFilename(this)
     );
   } else {
     header <- as.list(header);
@@ -62,6 +68,7 @@ setMethodS3("writeColumnsToFiles", "GenericTabularFile", function(this, destPath
   
     fullname <- paste(c(columnName, tags), collapse=",");
     filename <- sprintf(filenameFmt, fullname);
+    filename <- escapeFilename(filename);
     pathname <- file.path(path, filename);
     if (!isFile(pathname)) {
       names(colClassPatterns) <- sprintf("^%s$", columnName);
@@ -100,6 +107,9 @@ setMethodS3("writeColumnsToFiles", "GenericTabularFile", function(this, destPath
 
 ############################################################################
 # HISTORY:
+# 2008-05-05
+# o Now some non-valid filename characters are escaped.
+# o Added internal escapeFilename().
 # 2008-05-01
 # o Created.
 ############################################################################

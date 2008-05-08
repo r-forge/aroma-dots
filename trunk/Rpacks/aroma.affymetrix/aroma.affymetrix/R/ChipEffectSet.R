@@ -87,8 +87,16 @@ setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
 
 
 setMethodS3("findByName", "ChipEffectSet", function(static, ..., paths="plmData/") {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'paths':
+  if (is.null(paths)) {
+    paths <- eval(formals(findByName.AffymetrixCelSet)[["paths"]];
+  }
 
-  # Unfortunately does method dispatching not work here.
+
+  # Unfortunately method dispatching does not work here.
   path <- findByName.AffymetrixCelSet(static, ..., paths=paths);
   
   path;
@@ -101,7 +109,7 @@ setMethodS3("fromFiles", "ChipEffectSet", function(static, path="plmData/", patt
 
   # Unfortunately, method dispatching does not work here.
   fromFiles.AffymetrixCelSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, checkChipType=checkChipType);
-}, static=TRUE)
+}, protected=TRUE, static=TRUE)
 
 
 setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name=getName(dataSet), cdf=NULL, ..., verbose=FALSE) {
@@ -337,6 +345,9 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o If paths=NULL in findByName(), it becomes the default argument value.
+# o Made fromFiles() protected.
 # 2008-02-25
 # o Now extractMatrix() accepts special fields "RLE" and "NUSE".
 # 2008-02-22

@@ -33,7 +33,7 @@ setConstructorS3("SnpChipEffectSet", function(..., mergeStrands=FALSE) {
   
 setMethodS3("fromFiles", "SnpChipEffectSet", function(static, ..., mergeStrands="auto") {
   fromFiles.ChipEffectSet(static, ..., mergeStrands=mergeStrands);
-}, static=TRUE)
+}, protected=TRUE, static=TRUE)
 
 
 
@@ -163,6 +163,8 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=F
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o Made fromFiles() protected.
 # 2007-11-20
 # o BUG FIX: inferParams() would load all units if no units of size four
 #   was found, because units <- units[unitsSizes == 4] => units == NULL.

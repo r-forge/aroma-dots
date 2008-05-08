@@ -32,7 +32,7 @@ setConstructorS3("CnChipEffectSet", function(..., combineAlleles=FALSE) {
 
 setMethodS3("fromFiles", "CnChipEffectSet", function(static, ..., combineAlleles="auto") {
   fromFiles.SnpChipEffectSet(static, ..., combineAlleles=combineAlleles);
-}, static=TRUE)
+}, protected=TRUE, static=TRUE)
 
 
 setMethodS3("getAverageFile", "CnChipEffectSet", function(this, ...) {
@@ -158,6 +158,8 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o Made fromFiles() protected.
 # 2007-11-20
 # o BUG FIX: inferParams() would load all units if no units of size four
 #   was found, because units <- units[unitsSizes == 4] => units == NULL.

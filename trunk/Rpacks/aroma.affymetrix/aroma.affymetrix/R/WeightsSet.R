@@ -91,7 +91,7 @@ setMethodS3("fromFiles", "WeightsSet", function(static, ..., pattern=",weights[.
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
   fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
-}, static=TRUE)
+}, protected=TRUE, static=TRUE)
 
 
 setMethodS3("fromDataSet", "WeightsSet", function(static, dataSet, path, fullname=getFullName(dataSet), cdf=NULL, ..., verbose=FALSE) {
@@ -231,6 +231,8 @@ setMethodS3("findUnitsTodo", "WeightsSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o Made fromFiles() protected.
 # 2007-02-15
 # o Created from ResidualSet.R.
 ############################################################################

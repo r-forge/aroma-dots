@@ -387,6 +387,15 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
 
 
 setMethodS3("findByName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, paths=c("rawData", "probeData"), ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'paths':
+  if (is.null(paths)) {
+    paths <- eval(formals(findByName.AffymetrixCelSet)[["paths"]]);
+  }
+
+
   # Look only in existing directories
   paths <- sapply(paths, FUN=filePath, expandLinks="any");
   paths0 <- paths;
@@ -426,7 +435,7 @@ setMethodS3("fromName", "AffymetrixCelSet", function(static, ...) {
   byName(static, ...);
 }, static=TRUE)
 
-setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, cdf=NULL, ...) {
+setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, cdf=NULL, paths=NULL, ...) {
   # Argument 'cdf':
   if (!is.null(cdf)) {
     if (!inherits(cdf, "AffymetrixCdfFile"))
@@ -443,7 +452,7 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
   }
 
   suppressWarnings({
-    path <- static$findByName(name, tags=tags, chipType=chipType, ...);
+    path <- static$findByName(name, tags=tags, chipType=chipType, paths=paths, ...);
   })
   if (is.null(path)) {
     path <- file.path(paste(c(name, tags), collapse=","), chipType);
@@ -605,7 +614,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   verbose && exit(verbose);
 
   set;
-})
+}, protected=TRUE, static=TRUE)
 
 
 
@@ -1384,6 +1393,10 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o If paths=NULL in findByName(), it becomes the default argument value.
+# o BUG FIX: fromFiles() was not declared static.
+# o Made fromFiles() protected.
 # 2008-03-11
 # o BUG FIX: Calling readUnits(..., units=cdfUnits) twice, where 'cdfUnits' 
 #   was first created with, say, stratifyBy="pm" and then with

@@ -103,7 +103,7 @@ setMethodS3("fromFiles", "ResidualSet", function(static, ..., pattern=",residual
     setCdf(res, cdf);
 
   res;
-}, static=TRUE)
+}, protected=TRUE, static=TRUE)
 
 
 setMethodS3("fromDataSet", "ResidualSet", function(static, dataSet, path, fullname=getFullName(dataSet), cdf=NULL, ..., verbose=FALSE) {
@@ -251,6 +251,8 @@ setMethodS3("findUnitsTodo", "ResidualSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o Made fromFiles() protected.
 # 2007-12-08
 # o Added argument 'cdf' to fromFiles() of ResidualSet.
 # 2007-02-12
