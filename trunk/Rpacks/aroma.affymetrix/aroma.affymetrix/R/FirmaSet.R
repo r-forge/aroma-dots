@@ -51,7 +51,7 @@ setMethodS3("fromFiles", "FirmaSet", function(static, ..., pattern=",FIRMAscores
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
   fromFiles.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
-}, static=TRUE)
+}, protected=TRUE, static=TRUE)
 
 
 setMethodS3("fromDataSet", "FirmaSet", function(static, dataSet, path, name=getName(dataSet), cdf=NULL, ..., verbose=FALSE) {
@@ -188,6 +188,8 @@ setMethodS3("extractMatrix", "FirmaSet", function (this, ..., field=c("intensiti
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o Made fromFiles() protected.
 # 2008-02-22 [HB]
 # o Now ChipEffectSet inherits from ParameterCelSet instead of as before
 #   directly from AffymetrixCelSet.

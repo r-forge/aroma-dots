@@ -33,7 +33,7 @@ setConstructorS3("ExonChipEffectSet", function(..., mergeGroups=TRUE) {
 
 setMethodS3("fromFiles", "ExonChipEffectSet", function(static, ..., mergeGroups="auto") {
   fromFiles.ChipEffectSet(static, ..., mergeGroups=mergeGroups);
-}, static=TRUE)
+}, protected=TRUE, static=TRUE)
 
 
 
@@ -97,6 +97,8 @@ setMethodS3("findUnitsTodo", "ExonChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o Made fromFiles() protected.
 # 2007-02-08
 # o Created (based on SnpChipEffectSet.R following chat with HB on
 #   2007-02-07).
