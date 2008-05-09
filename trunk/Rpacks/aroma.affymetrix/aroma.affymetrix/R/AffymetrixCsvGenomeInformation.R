@@ -25,7 +25,7 @@ setMethodS3("fromChipType", "AffymetrixCsvGenomeInformation", function(static, .
 
 setMethodS3("byChipType", "AffymetrixCsvGenomeInformation", function(static, chipType, version=NULL, ...) {
   # Search for the genome information file
-  pathname <- static$findByChipType(chipType, version=version, ...);
+  pathname <- findByChipType(static, chipType, version=version, ...);
   if (is.null(pathname))
     throw("Failed to located Affymetrix CSV annotation file: ", chipType);
   newInstance(static, pathname);

@@ -296,6 +296,15 @@ setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., 
 
   verbose && enter(verbose, "Retrieving unit-to-cell map");
 
+  # Special case: requesting zero units?
+  if (length(units) == 0 && !is.null(units)) {
+    map <- data.frame(unit=integer(0), group=integer(0), cell=integer(0));
+    class(map) <- c("UnitGroupCellMap", class(map));
+    verbose && exit(verbose);
+    return(map);
+  }
+
+
   # Is 'units' already a CDF list?
   if (is.list(units)) {
     # No fancy validation for now.
@@ -442,6 +451,9 @@ setMethodS3("extractMatrix", "FirmaFile", function (this, ..., field=c("intensit
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o BUG FIX: getUnitGroupCellMap() gave an error if argument 'units' had
+#   zero length (non-NULL).
 # 2008-04-21
 # o getCellMap() is now defunct.
 # 2008-02-28 [HB]

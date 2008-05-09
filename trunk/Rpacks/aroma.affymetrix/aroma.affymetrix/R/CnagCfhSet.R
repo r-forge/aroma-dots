@@ -328,7 +328,7 @@ setMethodS3("findByName", "CnagCfhSet", function(static, name, tags=NULL, chipTy
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'paths':
   if (is.null(paths)) {
-    paths <- eval(formals(findByName.AffymetrixCelSet)[["paths"]]);
+    paths <- eval(formals(findByName.CnagCfhSet)[["paths"]]);
   }
 
 
@@ -373,7 +373,7 @@ setMethodS3("fromName", "CnagCfhSet", function(static, ...) {
 
 setMethodS3("byName", "CnagCfhSet", function(static, name, tags=NULL, chipType, paths=NULL, ...) {
   suppressWarnings({
-    path <- static$findByName(name, tags=tags, chipType=chipType, paths=paths, ...);
+    path <- findByName(static, name, tags=tags, chipType=chipType, paths=paths, ...);
   })
   if (is.null(path)) {
     path <- file.path(paste(c(name, tags), collapse=","), chipType);
@@ -381,7 +381,7 @@ setMethodS3("byName", "CnagCfhSet", function(static, name, tags=NULL, chipType, 
   }
 
   suppressWarnings({
-    static$fromFiles(path=path, ...);
+    fromFiles(static, path=path, ...);
   })
 }, static=TRUE)
 

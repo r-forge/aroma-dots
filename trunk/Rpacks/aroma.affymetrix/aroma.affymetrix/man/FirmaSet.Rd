@@ -51,7 +51,6 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
  \tab \code{extractMatrix} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
- \tab \code{fromFiles} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }

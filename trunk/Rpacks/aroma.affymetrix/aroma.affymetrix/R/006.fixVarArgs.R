@@ -1,11 +1,12 @@
 # Added '...' to some base functions. These will later be
 # turned into default functions by setMethodS3().
 
-colSums <- appendVarArgs(colSums)
-colMeans <- appendVarArgs(colMeans)
-write <- appendVarArgs(write)
-append <- appendVarArgs(append)
-getPackageName <- appendVarArgs(getPackageName)
+colSums <- appendVarArgs(colSums);
+colMeans <- appendVarArgs(colMeans);
+write <- appendVarArgs(write);
+append <- appendVarArgs(append);
+getPackageName <- appendVarArgs(getPackageName);
+readLines <- appendVarArgs(readLines);
 
 
 ############################################################################

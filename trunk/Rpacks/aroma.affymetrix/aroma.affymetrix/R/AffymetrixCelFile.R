@@ -768,6 +768,13 @@ setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fie
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieve data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Special case: requesting zero indices?
+  readZeroElements <- (length(indices) == 0 && !is.null(indices));
+  if (readZeroElements) {
+    # A work around...
+    indices <- 1;
+  }
+    
   # Workaround for readCel() not handling NA indices
   if (!is.null(indices)) {
     nas <- which(is.na(indices));
@@ -821,6 +828,10 @@ setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fie
     cel <- cel[fields];
   }
 
+  if (readZeroElements) {
+    cel <- lapply(cel, FUN=.subset, integer(0));
+  }
+
   # Drop dimensions?
   if (drop && length(cel) == 1) {
     cel <- cel[[1]];
@@ -832,6 +843,7 @@ setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fie
 
   cel;
 }, private=TRUE)
+
 
 setMethodS3("getData", "AffymetrixCelFile", function(this, ...) {
   readRawData(this, ...);
@@ -862,6 +874,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-08
+# o BUG FIX: readRawData() did not handle a zero-length 'indices' argument;
+#   it was interpreted as NULL, i.e. read everything.
 # 2008-03-14
 # o Renamed getRectangle() to readRawDataRectangle().
 # 2008-03-13

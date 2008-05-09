@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.1.3 [2008-05-01]
+Version: 0.9.1.3 [2008-05-08]
 o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
 o Added argument 'rows' to readDataFrame() for GenericTabularFile.
 o SPEEDUP: The internal getUnitGroupNamesFromUgcMap() for AffymetrixCdfFile
@@ -17,6 +17,7 @@ o CONSISTENCY: Renamed argument 'chromosome' of getUnitsAt() of
   AromaUgpFile to 'chromosomes'.  This was done in order to make it 
   consistent with getUnitsOnChromosome() of GenomeInformation. Thanks
   Tim Keighley at CSIRO for pointing this out.
+o CLEAN UP: Package R.native is no longer suggested.
 o CLEAN UP: Moved several methods to new package 'matrixStats' that is
   specialized and optimized for matrix operations.
 o CLEAN UP: Moved normalizeQuantileSpline(), normalizeFragmentLength, 
@@ -25,7 +26,17 @@ o CLEAN UP: Removed "patches" for rowMedians() and as.<basic data type>()
   since they are now available in all R v2.6.x installations.
 o CLEAN UP: Renamed all readData() methods that return a data.frame 
   to readDataFrame().
+o CLEAN UP: Now we're using construct foo(static, ...) instead of
+  static$foo(...) internally.
 o DEFUNCT: All getCellMap() are now defunct; use getUnitCellMap().
+o BUG FIX: readRawData() for AffymetrixCelFile did not handle a 
+  zero-length 'indices' argument; it was interpreted as NULL, i.e. 
+  read everything.  This is actually a bug in affxparser.
+o BUG FIX: getUnitGroupCellMap() for ChipEffectFile, ResidualFile, 
+  WeightsFile, and FirmaFile, gave an error if argument 'units' had
+  zero length (non-NULL).
+o BUG FIX: Now it is possible to pass argument 'paths' to byName() of
+  AffymetrixCelSet, which in turn pass it to findByName().
 o BUG FIX: getChipType(..., fullname=FALSE) of AffymetrixCdfFile would
   return the chip type as the 'tags' attribute if there were no tags.
 o BUG FIX: The default drawExtraAnnotations() returned error <simpleError
@@ -39,6 +50,12 @@ o BUG FIX: applyRows() and lines() of CopyNumberRegions did not handle
 o ALPHA: Added getImage() for AromaUnitTabularBinaryFile and
   AffymetrixCdfFile.
 o ALPHA: Added writeColumnsToFiles() for GenericTabularFile.
+o ALPHA: By using process(..., aliased=TRUE) for ChromosomeExplorer 
+  the names of generated PNG files are inferred from the aliased
+  full names.  This makes it possible to control the names of across
+  multiple chip types without having to rename the files.  Note, 
+  aliased=TRUE is currently only working to alias the tags, whereas
+  any aliased name portions are still ignored.
 
 
 Version: 0.9.1 [2008-04-04]

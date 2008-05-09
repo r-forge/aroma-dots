@@ -506,18 +506,18 @@ setMethodS3("getNames", "AffymetrixCelSetTuple", function(this, ...) {
 })
 
 
-setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL, exclude=NULL, ...) {
+setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL, exclude=NULL, aliased=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  getFullNameOfTuple <- function(cfList) {
+  getFullNameOfTuple <- function(cfList, aliased=FALSE) {
     # Get sample name
     first <- which(!sapply(cfList, FUN=is.null))[1];
-    name <- getName(cfList[[first]]);
+    name <- getName(cfList[[first]], aliased=aliased);
   
     # Get chip-effect tags *common* across chip types
     tags <- lapply(cfList, FUN=function(ce) {
-      if (is.null(ce)) NULL else getTags(ce);
+      if (is.null(ce)) NULL else getTags(ce, aliased=aliased);
     });
     tags <- base::lapply(tags, setdiff, exclude);
     tags <- getCommonListElements(tags);
@@ -548,7 +548,7 @@ setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL,
   fullnames <- c();
   for (kk in arrays) {
     cfList <- getArrayTuple(this, array=kk, ...);
-    fullname <- getFullNameOfTuple(cfList);
+    fullname <- getFullNameOfTuple(cfList, aliased=aliased);
     fullnames <- c(fullnames, fullname);
   }
 

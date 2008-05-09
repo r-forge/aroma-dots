@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Fri Apr 18 09:44:34 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1708,6 +1706,22 @@
 \alias{extractRawCopyNumbers.SCPfit}
 \alias{fitOne.ScpModel}
 \alias{getAsteriskTags.ScpModel}
+\alias{clearCache.AffymetrixNetAffxCsvFile}
+\alias{dim.GenericTabularFile}
+\alias{getUnitNames.AffymetrixNetAffxCsvFile}
+\alias{nbrOfColumns.GenericTabularFile}
+\alias{nbrOfLines}
+\alias{nbrOfLines.GenericTabularFile}
+\alias{nbrOfRows.GenericTabularFile}
+\alias{readColumnNames}
+\alias{readColumnNames.GenericTabularFile}
+\alias{readLines}
+\alias{readLines.default}
+\alias{readLines.GenericTabularFile}
+\alias{readUnitNames}
+\alias{readUnitNames.AffymetrixNetAffxCsvFile}
+\alias{writeColumnsToFiles}
+\alias{writeColumnsToFiles.GenericTabularFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

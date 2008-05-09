@@ -45,7 +45,7 @@ setMethodS3("fromChipType", "AffymetrixTsvFile", function(static, ...) {
 
 setMethodS3("byChipType", "AffymetrixTsvFile", function(static, chipType, ...) {
   # Search for the genome information file
-  pathname <- static$findByChipType(chipType, ...);
+  pathname <- findByChipType(static, chipType, ...);
   if (is.null(pathname))
     throw("Failed to located Affymetrix TSV file: ", chipType);
   newInstance(static, pathname);

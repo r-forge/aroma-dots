@@ -59,7 +59,6 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
- \tab \code{fromFiles} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getAM.ChipEffectSet]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects of the set relative to a reference chip effect file.\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getBaseline.ChipEffectSet]{getBaseline}} \tab Gets the baseline signals across chromosomes.\cr

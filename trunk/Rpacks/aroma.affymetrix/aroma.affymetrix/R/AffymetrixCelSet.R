@@ -452,7 +452,7 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
   }
 
   suppressWarnings({
-    path <- static$findByName(name, tags=tags, chipType=chipType, paths=paths, ...);
+    path <- findByName(static, name, tags=tags, chipType=chipType, paths=paths, ...);
   })
   if (is.null(path)) {
     path <- file.path(paste(c(name, tags), collapse=","), chipType);
@@ -460,7 +460,7 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
   }
 
   suppressWarnings({
-    static$fromFiles(path=path, cdf=cdf, ...);
+    fromFiles(static, path=path, cdf=cdf, ...);
   })
 }, static=TRUE)
 
@@ -1394,6 +1394,7 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 ############################################################################
 # HISTORY:
 # 2008-05-08
+# o Now we are using foo(static, ...) instead of static$foo(...).
 # o If paths=NULL in findByName(), it becomes the default argument value.
 # o BUG FIX: fromFiles() was not declared static.
 # o Made fromFiles() protected.
