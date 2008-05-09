@@ -28,7 +28,7 @@ o CLEAN UP: Renamed all readData() methods that return a data.frame
   to readDataFrame().
 o CLEAN UP: Now we're using construct foo(static, ...) instead of
   static$foo(...) internally.
-o DEFUNCT: All getCellMap() are now defunct; use getUnitCellMap().
+o DEFUNCT: All getCellMap() are now defunct; use getUnitGroupCellMap().
 o BUG FIX: readRawData() for AffymetrixCelFile did not handle a 
   zero-length 'indices' argument; it was interpreted as NULL, i.e. 
   read everything.  This is actually a bug in affxparser.
