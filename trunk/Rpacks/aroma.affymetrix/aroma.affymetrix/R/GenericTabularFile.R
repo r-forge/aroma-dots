@@ -460,7 +460,11 @@ setMethodS3("nbrOfColumns", "GenericTabularFile", function(this, ...) {
   length(getColumnNames(this));
 })
 
-setMethodS3("dim", "GenericTabularFile", function(this, ...) {
+
+setMethodS3("dim", "GenericTabularFile", function(x) {
+  # To please R CMD check.
+  this <- x;
+
   c(nbrOfRows(this), nbrOfColumns(this));
 })
 

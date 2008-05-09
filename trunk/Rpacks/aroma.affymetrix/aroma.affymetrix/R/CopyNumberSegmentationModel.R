@@ -139,7 +139,7 @@ setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, chromosomes=getChromosomes(this), force=FALSE, ..., .retResults=FALSE, verbose=FALSE) {
+setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, chromosomes=getChromosomes(this), force=FALSE, aliased=FALSE, ..., .retResults=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -167,6 +167,9 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
 ##    chromosomes[chromosomes == "23"] <- "X";   ## TODO
     chromosomes <- intersect(chromosomes, getChromosomes(this));
   }
+
+  # Argument 'aliased':
+  aliased <- Arguments$getLogical(aliased);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -212,7 +215,7 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get chip-effect tags *common* across chip types
     tags <- lapply(ceList, FUN=function(ce) {
-      if (is.null(ce)) NULL else getTags(ce);
+      if (is.null(ce)) NULL else getTags(ce, aliased=aliased);
     });
     tags <- getCommonListElements(tags);
     tags <- unlist(tags, use.names=FALSE);
@@ -226,7 +229,7 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get chip-effect tags *common* across chip types
     tags <- lapply(rfList, FUN=function(rf) {
-      if (is.null(rf)) NULL else getTags(rf);
+      if (is.null(rf)) NULL else getTags(rf, aliased=aliased);
     });
     tags <- getCommonListElements(tags);
     tags <- unlist(tags, use.names=FALSE);

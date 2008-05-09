@@ -69,7 +69,7 @@ setMethodS3("writeColumnsToFiles", "GenericTabularFile", function(this, destPath
     fullname <- paste(c(columnName, tags), collapse=",");
     filename <- sprintf(filenameFmt, fullname);
     filename <- escapeFilename(filename);
-    pathname <- file.path(path, filename);
+    pathname <- file.path(destPath, filename);
     if (!isFile(pathname)) {
       names(colClassPatterns) <- sprintf("^%s$", columnName);
       values <- readDataFrame(db, colClassPatterns=colClassPatterns);

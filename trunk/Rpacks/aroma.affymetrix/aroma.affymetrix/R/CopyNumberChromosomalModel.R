@@ -350,7 +350,7 @@ setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList,
       if (!inherits(ref, "AffymetrixCelFile"))
         ref <- NULL;
       df0 <- getXAM(ce, other=ref, chromosome=chromosome, units=units, verbose=less(verbose));
-      df0 <- df0[,c("x", "M")];
+      df0 <- df0[,c("x", "M"), drop=FALSE];
       verbose && cat(verbose, "Number of units: ", nrow(df0));
 
       # Estimate the std dev of the raw log2(CN). 
@@ -399,7 +399,7 @@ setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList,
 
   if (reorder) {
     verbose && enter(verbose, "Re-order by physical position");
-    df <- df[order(df[,"x"]),];
+    df <- df[order(df[,"x"]),,drop=FALSE];
     rownames(df) <- NULL;
     nbrOfUnits <- nrow(df);
     verbose && exit(verbose);
@@ -668,6 +668,8 @@ setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=s
 
 ##############################################################################
 # HISTORY:
+# 2008-05-08
+# o BUG FIX: getRawCnData() of CopyNumberChromosomalModel gave an error if
 # 2008-03-10
 # o Added estimateSds() with Rdoc comments.
 # 2007-11-27

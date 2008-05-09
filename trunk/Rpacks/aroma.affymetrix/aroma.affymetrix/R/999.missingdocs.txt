@@ -782,3 +782,10 @@ readCdfDataFrame
   setup.GenericReporter writeImages.ChipTypeReporter
   extractCopyNumberRegions.SCPfit extractRawCopyNumbers.SCPfit
   fitOne.ScpModel getAsteriskTags.ScpModel
+  clearCache.AffymetrixNetAffxCsvFile dim.GenericTabularFile
+  getUnitNames.AffymetrixNetAffxCsvFile nbrOfColumns.GenericTabularFile
+  nbrOfLines nbrOfLines.GenericTabularFile nbrOfRows.GenericTabularFile
+  readColumnNames readColumnNames.GenericTabularFile readLines
+  readLines.default readLines.GenericTabularFile readUnitNames
+  readUnitNames.AffymetrixNetAffxCsvFile writeColumnsToFiles
+  writeColumnsToFiles.GenericTabularFile

@@ -55,7 +55,6 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{findUnitsTodo} \tab  -\cr
- \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getFirstCellPerUnitIndices} \tab  -\cr
  \tab \code{getMergeGroups} \tab  -\cr

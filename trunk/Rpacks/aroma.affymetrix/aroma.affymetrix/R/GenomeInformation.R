@@ -344,6 +344,15 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
 
 
 setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosomes, region=NULL, ..., .checkArgs=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument '...':
+  args <- list(...);
+  if ("chromosome" %in% names(args)) {
+    chromosomes <- args[["chromosome"]];
+  }
+
   allChromosomes <- getChromosomes(this);
 
   # Argument 'chromosomes':
@@ -368,6 +377,7 @@ setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromoso
       }
     }
   }
+
 
   data <- getData(this);
   keep <- (data[,"chromosome"] %in% chromosomes);

@@ -110,7 +110,7 @@ setMethodS3("findByName", "DChipDcpSet", function(static, name, tags=NULL, chipT
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'paths':
   if (is.null(paths)) {
-    paths <- eval(formals(findByName.AffymetrixCelSet)[["paths"]]);
+    paths <- eval(formals(findByName.DChipDcpSet)[["paths"]]);
   }
 
 
@@ -158,7 +158,7 @@ setMethodS3("byName", "DChipDcpSet", function(static, name, tags=NULL, chipType,
   chipType <- Arguments$getCharacter(chipType);
 
   suppressWarnings({
-    path <- static$findByName(name, tags=tags, chipType=chipType, paths=paths, ...);
+    path <- findByName(static, name, tags=tags, chipType=chipType, paths=paths, ...);
   })
   if (is.null(path)) {
     path <- file.path(paste(c(name, tags), collapse=","), chipType);
@@ -166,7 +166,7 @@ setMethodS3("byName", "DChipDcpSet", function(static, name, tags=NULL, chipType,
   }
 
   suppressWarnings({
-    static$fromFiles(path=path, ...);
+    fromFiles(static, path=path, ...);
   })
 }, static=TRUE)
 

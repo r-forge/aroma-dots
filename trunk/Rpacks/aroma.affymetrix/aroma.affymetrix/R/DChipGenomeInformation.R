@@ -127,7 +127,7 @@ setMethodS3("byChipType", "DChipGenomeInformation", function(static, chipType, v
   verbose && cat(verbose, "Version: ", version);
 
   # Search for the genome information file
-  pathname <- static$findByChipType(chipType, version=version, ..., verbose=verbose);
+  pathname <- findByChipType(static, chipType, version=version, ..., verbose=verbose);
   verbose && cat(verbose, "Located pathname: ", pathname);
 
   if (is.null(pathname))

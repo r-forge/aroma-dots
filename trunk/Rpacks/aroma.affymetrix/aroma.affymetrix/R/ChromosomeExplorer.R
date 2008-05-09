@@ -129,7 +129,7 @@ setMethodS3("getFullNames", "ChromosomeExplorer", function(this, ...) {
   model <- getModel(this);
   arrays <- getArrays(this);
   idx <- match(arrays, getNames(model));
-  fullnames <- getFullNames(model, arrays=idx);
+  fullnames <- getFullNames(model, arrays=idx, ...);
   fullnames;
 })
 
@@ -377,7 +377,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   verbose && enter(verbose, "Compiling RSP");
   env <- new.env();
   env$chipTypes <- chipTypes;
-  env$samples <- getFullNames(this);
+  env$samples <- getFullNames(this, ...);
   env$sampleLabels <- getNames(this);
   env$zooms <- zooms;
   env$sets <- sets;
@@ -660,15 +660,16 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
                                                  ..., verbose=less(verbose));
 
     if (inherits(model, "CopyNumberSegmentationModel")) {
-      writeCopyNumberRegionLayers(this, arrays=arrays, chromosomes=chromosomes, 
-                                                   ..., verbose=less(verbose));
+      writeCopyNumberRegionLayers(this, arrays=arrays, 
+                        chromosomes=chromosomes, ..., verbose=less(verbose));
     }
     verbose && exit(verbose);
 
     verbose && exit(verbose);
   } else {
     # Generate bitmap images
-    writeGraphs(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
+    writeGraphs(this, arrays=arrays, chromosomes=chromosomes, 
+                                                ..., verbose=less(verbose));
   }
 
   # Update samples.js
@@ -691,8 +692,15 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="Chromosome
 
 ##############################################################################
 # HISTORY:
+# 2008-05-08
+# o Now one can pass argument 'aliased=TRUE' to process() which causes the
+#   ChromosomeExplorer and coupled CopyNumberSegmentationModel to return
+#   tags that inferred from aliased full names.
+# o Now updateSamplesFile() of ChromosomeExplorer passes arguments '...' 
+#   to getFullNames().
+# o Now getFullNames() of ChromosomeExplorer passes arguments '...' along.
 # 2007-10-17
-# o Now the ChromosomeExplorer accepts CopyNumberChromosomalModel:s.
+# o Now the  accepts CopyNumberChromosomalModel:s.ChromosomeExplorer
 # o Added support for specifying the output version (at least for now).
 # 2007-10-10
 # o Added support for layers.  This should be backward compatible.

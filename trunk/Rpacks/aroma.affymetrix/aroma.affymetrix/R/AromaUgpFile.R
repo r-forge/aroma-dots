@@ -69,7 +69,17 @@ setMethodS3("allocateFromCdf", "AromaUgpFile", function(static, ...) {
 
 
 
-setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NULL, ..., verbose=FALSE) {
+setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NULL, verbose=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument '...':
+  args <- list(...);
+  if ("chromosome" %in% names(args)) {
+    chromosomes <- args[["chromosome"]];
+  }
+
+
   # Stratify by chromosome
   data <- this[,1,drop=TRUE];
 

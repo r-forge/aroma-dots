@@ -92,7 +92,7 @@ setMethodS3("findByName", "ChipEffectSet", function(static, ..., paths="plmData/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'paths':
   if (is.null(paths)) {
-    paths <- eval(formals(findByName.AffymetrixCelSet)[["paths"]];
+    paths <- eval(formals(findByName.ChipEffectSet)[["paths"]]);
   }
 
 

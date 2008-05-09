@@ -53,7 +53,6 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getBaseline} \tab  -\cr
  \tab \code{getMergeStrands} \tab  -\cr

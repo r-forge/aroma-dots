@@ -37,7 +37,7 @@ setMethodS3("fromChipType", "AffymetrixTabularFile", function(static, ...) {
 
 setMethodS3("byChipType", "AffymetrixTabularFile", function(static, chipType, tags=NULL, ...) {
   # Search for the genome information file
-  pathname <- static$findByChipType(chipType, tags=tags, ...);
+  pathname <- findByChipType(static, chipType, tags=tags, ...);
   if (is.null(pathname))
     throw("Failed to located Affymetrix tabular file: ", chipType);
   newInstance(static, pathname, ...);
