@@ -12,7 +12,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{...}{Arguments passed to @see "AromaChipTypeAnnotationFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -22,7 +22,7 @@
 # @author
 #*/###########################################################################
 setConstructorS3("AffymetrixCdfFile", function(...) {
-  this <- extend(AffymetrixFile(...), "AffymetrixCdfFile",
+  this <- extend(AromaChipTypeAnnotationFile(...), "AffymetrixCdfFile",
     "cached:.header" = NULL,
     "cached:.unitNames" = NULL,
     "cached:.unitSizes" = NULL,
@@ -73,12 +73,10 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- sprintf("%s:", class(this)[1]);
-  s <- c(s, sprintf("Path: %s", getPath(this)));
-  s <- c(s, sprintf("Filename: %s", getFilename(this)));
-  s <- c(s, sprintf("Filesize: %.2fMB", getFileSize(this)/1024^2));
+  s <- NextMethod("as.character", this, ...);
+  class <- class(s);
+
   s <- c(s, sprintf("File format: %s", getFileFormat(this)));
-  s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Dimension: %s", paste(getDimension(this), collapse="x")));
   s <- c(s, sprintf("Number of cells: %d", nbrOfCells(this)));
   # Requires reading of data:
@@ -89,8 +87,8 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
   # Requires that unit names are read:
 #  s <- c(s, sprintf("Number of AFFX- units: %d", length(indexOf(this, "^AFFX-"))));
   s <- c(s, sprintf("Number of QC units: %d", nbrOfQcUnits(this)));
-  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
-  class(s) <- "GenericSummary";
+  class(s) <- class;
+
   s;
 }, private=TRUE)
 
@@ -131,81 +129,14 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
 #*/###########################################################################
 setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NULL, ...) {
   # Arguments 'filename' and 'path':
-  pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=TRUE);
+  pathname <- Arguments$getReadablePathname(filename, path=path, 
+                                                              mustExist=TRUE);
 
   # Assert that it is a CDF file
   header <- readCdfHeader(pathname);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Try to define an instance of a subclass traversing bottom up.
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  clazz <- Class$forName(class(static)[1]);
-  for (className in rev(getKnownSubclasses(clazz))) {
-    clazz <- Class$forName(className);
-    tryCatch({
-      res <- newInstance(clazz, pathname);
-      return(res);
-    }, error = function(ex) {})
-  }
-
-  newInstance(static, pathname);
+  fromFile.AromaChipTypeAnnotationFile(static, filename=pathname, ...);
 }, static=TRUE, protected=TRUE)
-
-
-
-
-###########################################################################/**
-# @RdocMethod byChipType
-# @aliasmethod byName
-#
-# @title "Defines an AffymetrixCdfFile object by chip type"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{chipType}{A @character string.}
-#  \item{tags}{An optional @character @vector of tags.}
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns an @see "AffymetrixCdfFile" object.  
-#  If a matching CDF file was not found, an error is thrown.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "fromFile".
-#   @seeclass
-# }
-#
-# @keyword IO
-# @keyword programming
-#*/###########################################################################
-setMethodS3("byChipType", "AffymetrixCdfFile", function(static, chipType, tags=NULL, ...) {
-  pathname <- findByChipType(static, chipType, tags=tags);
-  if (is.null(pathname)) {
-    throw("Could not create ", class(static)[1], " object. No CDF file with that chip type found: ", chipType);
-  }
-
-  fromFile(static, filename=pathname, path=NULL, ...);
-}, static=TRUE)
-
-setMethodS3("byName", "AffymetrixCdfFile", function(static, ...) {
-  byChipType(static, ...);
-}, static=TRUE, protected=TRUE)
-
-
-setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, ...) {
-  byChipType(static, ...);
-}, static=TRUE, protected=TRUE)
-
-
 
 
 
@@ -235,9 +166,6 @@ setMethodS3("fromChipType", "AffymetrixCdfFile", function(static, ...) {
 # }
 #
 # @author
-#
-# \details{
-# }
 #
 # \seealso{
 #   @seemethod "byChipType".
@@ -349,6 +277,11 @@ setMethodS3("getHeader", "AffymetrixCdfFile", function(this, ...) {
     header <- this$.header <- readCdfHeader(getPathname(this));
   header;
 }, private=TRUE)
+
+
+setMethodS3("getPlatform", "AffymetrixCdfFile", function(this, ...) {
+  "Affymetrix";
+})
 
 
 setMethodS3("getChipType", "AffymetrixCdfFile", function(this, fullname=TRUE, ...) {
@@ -1615,6 +1548,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-05-09
+# o Now inherits from AromaChipTypeAnnotationFile.
 # 2008-04-12
 # o BUG FIX: getChipType(..., fullname=FALSE) would return the chip type as
 #   the 'tags' attribute if there were no tags.

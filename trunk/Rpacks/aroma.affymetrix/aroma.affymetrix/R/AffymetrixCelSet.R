@@ -32,16 +32,17 @@
 # @author
 #*/###########################################################################
 setConstructorS3("AffymetrixCelSet", function(files=NULL, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'files':
   if (is.null(files)) {
   } else if (is.list(files)) {
-    lapply(files, FUN=function(df) {
-      if (!inherits(df, "AffymetrixCelFile"))
-        throw("Argument 'files' contains a non-AffymetrixCelFile object: ", 
-                                                              class(df)[1]);
+    reqFileClass <- "AffymetrixCelFile";
+    base::lapply(files, FUN=function(df) {
+      if (!inherits(df, reqFileClass))
+        throw("Argument 'files' contains a non-", reqFileClass, 
+                                                  " object: ", class(df)[1]);
     })
   } else if (inherits(files, "AffymetrixCelSet")) {
     return(as.AffymetrixCelSet(files));
@@ -81,6 +82,10 @@ setMethodS3("clearCache", "AffymetrixCelSet", function(this, ...) {
   }
   this$.averageFiles <- list();
 
+  # Clear the cache for the CDF.
+  cdf <- getCdf(this);
+  clearCache(cdf);
+
   # Then for this object
   NextMethod(generic="clearCache", object=this, ...);
 }, private=TRUE)
@@ -113,6 +118,7 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
 
   object;
 }, private=TRUE)
+
 
 
 setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ..., verbose=FALSE) {
@@ -1393,6 +1399,8 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-09
+# o Now AffymetrixCelSet inherits from AromaMicroarrayDataSet.
 # 2008-05-08
 # o Now we are using foo(static, ...) instead of static$foo(...).
 # o If paths=NULL in findByName(), it becomes the default argument value.

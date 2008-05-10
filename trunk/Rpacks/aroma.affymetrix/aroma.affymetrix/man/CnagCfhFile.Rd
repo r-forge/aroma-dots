@@ -19,15 +19,19 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
+\code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{CnagCfhFile}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataFile}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{CnagCfhFile}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
 public static class \bold{CnagCfhFile}\cr
-extends \link[aroma.affymetrix]{GenericDataFile}\cr
+extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 
 
 
@@ -37,7 +41,7 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \usage{CnagCfhFile(..., cdf=NULL)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
+   \item{...}{Arguments passed to \code{\link{AromaMicroarrayDataFile}}.}
    \item{cdf}{An optional \code{\link{AffymetrixCdfFile}}}
  }
 
@@ -47,16 +51,22 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{clone} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:fromFile.CnagCfhFile]{fromFile}} \tab Defines an CnagCfhFile object from a CFH file.\cr
- \tab \code{\link[aroma.affymetrix:getCdf.CnagCfhFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
+ \tab \code{fromFile} \tab  -\cr
+ \tab \code{getCdf} \tab  -\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{nbrOfSnps} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:setCdf.CnagCfhFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
+ \tab \code{setCdf} \tab  -\cr
 }
 
 
+ \bold{Methods inherited from AffymetrixFile}:\cr
+getPlatform
+
+ \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
+getChipType, getPlatform
+
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

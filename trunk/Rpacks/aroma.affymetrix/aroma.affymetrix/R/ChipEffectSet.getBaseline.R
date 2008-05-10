@@ -16,9 +16,6 @@
 #   \item{...}{Not used.}
 # }
 #
-# \value{
-# }
-#
 # @author
 #
 # \seealso{

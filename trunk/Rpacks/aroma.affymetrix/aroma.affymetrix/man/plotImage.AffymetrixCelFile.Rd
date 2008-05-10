@@ -29,9 +29,6 @@
   Returns (invisibly) the image displayed.
 }
 
-\section{Details}{
-}
-
 \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 
 \seealso{

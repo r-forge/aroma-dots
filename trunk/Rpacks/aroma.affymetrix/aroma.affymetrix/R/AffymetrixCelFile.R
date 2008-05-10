@@ -12,7 +12,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{...}{Arguments passed to @see "AromaMicroarrayDataFile".}
 #   \item{cdf}{An optional @see "AffymetrixCdfFile" making it possible to
 #     override the default CDF file as specified by the CEL file header.  
 #     The requirement is that its number of cells must match that of
@@ -524,6 +524,11 @@ setMethodS3("getChipType", "AffymetrixCelFile", function(this, ...) {
 }, private=TRUE)
 
 
+setMethodS3("getPlatform", "AffymetrixCelFile", function(this, ...) {
+  "Affymetrix";
+}, private=TRUE)
+
+
 
 ###########################################################################/**
 # @RdocMethod readUnits
@@ -867,13 +872,18 @@ setMethodS3("readRawDataRectangle", "AffymetrixCelFile", function(this, xrange=c
   data;
 }, private=TRUE)
 
+
 setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
   readRawDataRectangle(this, ...);
 }, private=TRUE)
 
 
+
 ############################################################################
 # HISTORY:
+# 2008-05-09
+# o Added getPlatform().
+# o Now AffymetrixCelFile inherits from AromaMicroarrayDataFile.
 # 2008-05-08
 # o BUG FIX: readRawData() did not handle a zero-length 'indices' argument;
 #   it was interpreted as NULL, i.e. read everything.

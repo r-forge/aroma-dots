@@ -19,7 +19,7 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
+\code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{GenomeInformation}}\cr
 \code{~~~~~~~~~~~~|}\cr
@@ -46,7 +46,7 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:byChipType.DChipGenomeInformation]{byChipType}} \tab Defines a DChipGenomeInformation object by chip type.\cr
+ \tab \code{byChipType} \tab  -\cr
  \tab \code{fromChipType} \tab  -\cr
  \tab \code{readDataFrame} \tab  -\cr
 }
@@ -56,7 +56,7 @@ extends \emph{\link[aroma.affymetrix]{GenomeInformation}}\cr
 byChipType, fromCdf, fromChipType, fromDataSet, getChipType, getChromosomes, getChromosomeStats, getData, getPositions, getUnitIndices, getUnitsOnChromosome, isCompatibleWithCdf, nbrOfUnits, plotDensity, readDataFrame
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

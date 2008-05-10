@@ -19,15 +19,17 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFileSet}}\cr
+\code{~~+--}\code{\link[aroma.core]{GenericDataFileSet}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelSet}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixCelSet}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{ChipEffectSet}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ParameterCelSet}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{ChipEffectSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{SnpChipEffectSet}\cr
@@ -59,12 +61,12 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getAM.ChipEffectSet]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects of the set relative to a reference chip effect file.\cr
+ \tab \code{getAM} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getBaseline.ChipEffectSet]{getBaseline}} \tab Gets the baseline signals across chromosomes.\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectSet]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
+ \tab \code{getXAM} \tab  -\cr
  \tab \code{plotBoxplot} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
@@ -74,10 +76,13 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
 extractDataFrame, extractMatrix
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, gcrmaSummary, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitGroupCellMap, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, rmaSummary, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf
+[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getData, getFullName, getIntensities, getTimestamps, getUnitGroupCellMap, getUnitIntensities, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, setCdf
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, clearCache, fromFiles
+as, as.AffymetrixFileSet, fromFiles, getPlatform
+
+ \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
+as, as.AromaMicroarrayDataSet, clearCache, fromFiles, getChipType, getPlatform
 
  \bold{Methods inherited from GenericDataFileSet}:\cr
 append, appendFiles, as, as.GenericDataFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags

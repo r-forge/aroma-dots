@@ -17,7 +17,7 @@
   Package:  aroma.affymetrix \cr
 \bold{Class CnPlm}\cr
 
-\code{\link[aroma.affymetrix]{Interface}}\cr
+\code{\link[aroma.core]{Interface}}\cr
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.affymetrix]{SnpPlm}}\cr
 \code{~~~~~~~|}\cr

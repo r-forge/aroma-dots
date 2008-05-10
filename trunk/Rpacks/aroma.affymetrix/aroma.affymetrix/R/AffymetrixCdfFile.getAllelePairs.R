@@ -318,6 +318,9 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   if (!force) {
     probeSets <- loadCache(key=key, dirs=dirs);
     if (!is.null(probeSets)) {
+      # Backward compatibility; remove October 2008. /HB
+      if (is.list(probeSets$nonSNPs))
+        break;
       verbose && cat(verbose, "Loaded from file cache");
       gc <- gc();
       verbose && print(verbose, gc);
@@ -777,6 +780,9 @@ setMethodS3("getAlleleProbePairs2", "AffymetrixCdfFile", function(this, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2008-05-10
+# o ROBUSTNESS: Added backward compatibility for cases when the cached 
+#   results has sets$nonSNPs as a list.
 # 2008-03-26
 # o CLEAN UP: getAlleleProbePairs() of AffymetrixCdfFile would print *all*
 #   identified non-SNP cells in the verbose output, instead of using str().

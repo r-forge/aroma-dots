@@ -53,7 +53,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}\cr
  \tab \code{calculateMargins} \tab  -\cr
  \tab \code{getColorMaps} \tab  -\cr
  \tab \code{plotMargins} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:process.SpatialReporter]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
+ \tab \code{process} \tab  -\cr
  \tab \code{readRawDataRectangle} \tab  -\cr
  \tab \code{setColorMaps} \tab  -\cr
 }
@@ -75,7 +75,4 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \seealso{
- }
 \keyword{classes}

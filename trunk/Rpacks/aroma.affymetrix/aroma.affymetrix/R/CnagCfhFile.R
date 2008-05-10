@@ -12,7 +12,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{...}{Arguments passed to @see "AromaMicroarrayDataFile".}
 #   \item{cdf}{An optional @see "AffymetrixCdfFile"}
 # }
 #
@@ -27,7 +27,7 @@
 # }
 #*/###########################################################################
 setConstructorS3("CnagCfhFile", function(..., cdf=NULL) {
-  this <- extend(GenericDataFile(...), "CnagCfhFile",
+  this <- extend(AffymetrixFile(...), "CnagCfhFile",
     "cached:.header" = NULL,
     .cdf = NULL
   )
@@ -478,6 +478,8 @@ setMethodS3("range", "CnagCfhFile", function(this, ..., na.rm=TRUE) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-09
+# o Now CnagCfhFile inherits from AromaMicroarrayDataFile.
 # 2007-06-11
 # o BUG FIX: readUnits() of CnagCfhFile was broken because it used the
 #   non-existing variable 'nbrOfBytes'.

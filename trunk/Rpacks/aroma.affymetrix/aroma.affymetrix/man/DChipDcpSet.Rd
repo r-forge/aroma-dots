@@ -19,11 +19,13 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFileSet}}\cr
+\code{~~+--}\code{\link[aroma.core]{GenericDataFileSet}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{DChipDcpSet}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{DChipDcpSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
@@ -48,18 +50,21 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{as} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:as.DChipDcpSet.DChipDcpSet]{as.DChipDcpSet}} \tab Coerce an object to an DChipDcpSet object.\cr
+ \tab \code{as.DChipDcpSet} \tab  -\cr
  \tab \code{byName} \tab  -\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{fromName} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:nbrOfArrays.DChipDcpSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
+ \tab \code{nbrOfArrays} \tab  -\cr
 }
 
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, clearCache, fromFiles
+as, as.AffymetrixFileSet, fromFiles, getPlatform
+
+ \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
+as, as.AromaMicroarrayDataSet, clearCache, fromFiles, getChipType, getPlatform
 
  \bold{Methods inherited from GenericDataFileSet}:\cr
 append, appendFiles, as, as.GenericDataFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags

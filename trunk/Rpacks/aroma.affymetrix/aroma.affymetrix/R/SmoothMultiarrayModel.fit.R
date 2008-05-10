@@ -23,9 +23,6 @@ setMethodS3("getFitFunction", "SmoothMultiarrayModel", abstract=TRUE);
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
-# \value{
-# }
-#
 # @author
 #
 # \seealso{

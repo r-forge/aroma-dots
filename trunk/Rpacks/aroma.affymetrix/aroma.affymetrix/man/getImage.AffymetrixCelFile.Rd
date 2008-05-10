@@ -47,9 +47,6 @@
   \code{TrueColor}.
 }
 
-\section{Details}{
-}
-
 \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 
 \seealso{

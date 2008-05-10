@@ -123,9 +123,6 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
 #   This method is not constant in memory! /HB 2007-03-26
 # }
 #
-# \value{
-# }
-#
 # \author{
 #   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }

@@ -19,9 +19,9 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
+\code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AromaTabularBinaryFile}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{AromaTabularBinaryFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\emph{\code{AromaUnitTabularBinaryFile}}\cr
 
@@ -29,7 +29,7 @@
 \emph{\link[aroma.affymetrix]{AromaUfcFile}}, \emph{\link[aroma.affymetrix]{AromaUflFile}}, \link[aroma.affymetrix]{AromaUgpFile}\cr
 
 public abstract static class \bold{AromaUnitTabularBinaryFile}\cr
-extends \link[aroma.affymetrix]{AromaTabularBinaryFile}\cr
+extends \link[aroma.core]{AromaTabularBinaryFile}\cr
 
 
 
@@ -48,7 +48,7 @@ extends \link[aroma.affymetrix]{AromaTabularBinaryFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:allocateFromCdf.AromaUnitTabularBinaryFile]{allocateFromCdf}} \tab Creates an AromaUnitTabularBinaryFile mapping to a given CDF.\cr
+ \tab \code{allocateFromCdf} \tab  -\cr
  \tab \code{as.character} \tab  -\cr
  \tab \code{byChipType} \tab  -\cr
  \tab \code{fromChipType} \tab  -\cr
@@ -65,10 +65,10 @@ extends \link[aroma.affymetrix]{AromaTabularBinaryFile}\cr
 
 
  \bold{Methods inherited from AromaTabularBinaryFile}:\cr
-[, [[, [<-, allocate, as.character, colMeans, colMedians, colStats, colSums, dim, dimnames<-, getBytesPerColumn, getColClasses, getColumnNames, lapply, nbrOfColumns, nbrOfRows, ncol, nrow, readDataFrame, readFooter, readHeader, readRawFooter, setAttributesByTags, subset, summary, updateData, updateDataColumn, writeFooter, writeRawFooter
+[, [[, [<-, allocate, as.character, colMeans, colMedians, colStats, colSums, dim, dimnames<-, getBytesPerColumn, getColClasses, getColumnNames, lapply, nbrOfColumns, nbrOfRows, readDataFrame, readFooter, readHeader, readRawFooter, setAttributesByTags, subset, summary, updateData, updateDataColumn, writeFooter, writeRawFooter
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

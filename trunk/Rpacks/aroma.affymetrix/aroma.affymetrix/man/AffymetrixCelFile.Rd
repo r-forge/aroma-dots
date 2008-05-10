@@ -19,17 +19,19 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
+\code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{AffymetrixCelFile}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{AffymetrixCelFile}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{ChipEffectFile}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \link[aroma.affymetrix]{ExonChipEffectFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{FirmaFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{QualityAssessmentFile}, \link[aroma.affymetrix]{ResidualFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}, \link[aroma.affymetrix]{WeightsFile}\cr
 
 public static class \bold{AffymetrixCelFile}\cr
-extends \link[aroma.affymetrix]{AffymetrixFile}\cr
+extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 
 
 
@@ -39,7 +41,7 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \usage{AffymetrixCelFile(..., cdf=NULL)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
+   \item{...}{Arguments passed to \code{\link{AromaMicroarrayDataFile}}.}
    \item{cdf}{An optional \code{\link{AffymetrixCdfFile}} making it possible to
      override the default CDF file as specified by the CEL file header.
      The requirement is that its number of cells must match that of
@@ -54,9 +56,9 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{clone} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:fromFile.AffymetrixCelFile]{fromFile}} \tab Defines an AffymetrixCelFile object from a CEL file.\cr
+ \tab \code{fromFile} \tab  -\cr
  \tab \code{getAm} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelFile]{getCdf}} \tab Gets the CDF structure for this CEL file.\cr
+ \tab \code{getCdf} \tab  -\cr
  \tab \code{getFileFormat} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getImage.AffymetrixCelFile]{getImage}} \tab Creates an RGB Image object from a CEL file.\cr
  \tab \code{highlight} \tab  -\cr
@@ -66,17 +68,20 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \tab \code{\link[aroma.affymetrix:plotImage.AffymetrixCelFile]{plotImage}} \tab Displays a spatial plot of a CEL file.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsA.AffymetrixCelFile]{plotMvsA}} \tab Plots log-ratio versus log-intensity in a scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:plotMvsX.AffymetrixCelFile]{plotMvsX}} \tab Plots log-ratio versus another variable in a scatter plot.\cr
- \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelFile]{setCdf}} \tab Sets the CDF structure for this CEL file.\cr
+ \tab \code{setCdf} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:smoothScatterMvsA.AffymetrixCelFile]{smoothScatterMvsA}} \tab Plots log-ratio versus log-intensity in a smooth scatter plot.\cr
  \tab \code{\link[aroma.affymetrix:writeImage.AffymetrixCelFile]{writeImage}} \tab Writes a spatial image of the signals in the CEL file.\cr
 }
 
 
  \bold{Methods inherited from AffymetrixFile}:\cr
-getAttribute, getAttributes, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes
+getPlatform
+
+ \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
+getChipType, getPlatform
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

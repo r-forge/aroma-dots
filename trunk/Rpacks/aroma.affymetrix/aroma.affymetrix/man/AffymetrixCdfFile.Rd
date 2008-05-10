@@ -19,17 +19,21 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
+\code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{AffymetrixCdfFile}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{AffymetrixCdfFile}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
 public static class \bold{AffymetrixCdfFile}\cr
-extends \link[aroma.affymetrix]{AffymetrixFile}\cr
+extends \emph{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}\cr
 
 
 
@@ -39,46 +43,52 @@ extends \link[aroma.affymetrix]{AffymetrixFile}\cr
  \usage{AffymetrixCdfFile(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AffymetrixFile}}.}
+   \item{...}{Arguments passed to \code{\link{AromaChipTypeAnnotationFile}}.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:byChipType.AffymetrixCdfFile]{byChipType}} \tab Defines an AffymetrixCdfFile object by chip type.\cr
- \tab \code{\link[aroma.affymetrix:convert.AffymetrixCdfFile]{convert}} \tab Converts a CDF into the same CDF but with another format.\cr
+ \tab \code{convert} \tab  -\cr
  \tab \code{createMonoCell} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getCellIndices.AffymetrixCdfFile]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
+ \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getDimension} \tab  -\cr
  \tab \code{getFileFormat} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getGenomeInformation.AffymetrixCdfFile]{getGenomeInformation}} \tab Gets genome information for this chip type.\cr
+ \tab \code{getGenomeInformation} \tab  -\cr
  \tab \code{getImage} \tab  -\cr
  \tab \code{getMonoCell} \tab  -\cr
+ \tab \code{getPlatform} \tab  -\cr
  \tab \code{getUnitGroupNamesFromUgcMap} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
+ \tab \code{getUnitNames} \tab  -\cr
  \tab \code{getUnitTypes} \tab  -\cr
  \tab \code{hasUnitTypes} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:indexOf.AffymetrixCdfFile]{indexOf}} \tab Gets the indices of units by their names.\cr
+ \tab \code{indexOf} \tab  -\cr
  \tab \code{isMonocellCdf} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:isPm.AffymetrixCdfFile]{isPm}} \tab Checks which cells (probes) are PMs and not.\cr
+ \tab \code{isPm} \tab  -\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{nbrOfColumns} \tab  -\cr
  \tab \code{nbrOfQcUnits} \tab  -\cr
  \tab \code{nbrOfRows} \tab  -\cr
  \tab \code{nbrOfUnits} \tab  -\cr
  \tab \code{readDataFrame} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:readUnits.AffymetrixCdfFile]{readUnits}} \tab Reads CDF data unit by unit.\cr
+ \tab \code{readUnits} \tab  -\cr
  \tab \code{setGenomeInformation} \tab  -\cr
  \tab \code{setSnpInformation} \tab  -\cr
 }
 
 
+ \bold{Methods inherited from AromaChipTypeAnnotationFile}:\cr
+byChipType, byName, findByChipType, fromChipType, fromFile, getChipType, getHeader, getPlatform
+
  \bold{Methods inherited from AffymetrixFile}:\cr
-getAttribute, getAttributes, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes
+getPlatform
+
+ \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
+getChipType, getPlatform
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

@@ -24,15 +24,17 @@
 # @author
 #*/###########################################################################
 setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'files':
   if (is.null(files)) {
   } else if (is.list(files)) {
+    reqFileClass <- "AffymetrixFile";
     base::lapply(files, FUN=function(df) {
-      if (!inherits(df, "AffymetrixFile"))
-        throw("Argument 'files' contains a non-AffymetrixFile object: ", class(df));
+      if (!inherits(df, reqFileClass))
+        throw("Argument 'files' contains a non-", reqFileClass, 
+                                                   " object: ", class(df)[1]);
     })
   } else if (inherits(files, "AffymetrixFileSet")) {
     return(as.AffymetrixFileSet(files));
@@ -40,15 +42,8 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
 
-  # Arguments '...':
-  args <- list(...);
-  if (length(args) > 0) {
-    argsStr <- paste(names(args), collapse=", ");
-    throw("Unknown arguments: ", argsStr);
-  }
 
-
-  extend(GenericDataFileSet(files=files, ...), "AffymetrixFileSet");
+  extend(AromaMicroarrayDataSet(files=files, ...), "AffymetrixFileSet");
 })
 
 
@@ -91,18 +86,6 @@ setMethodS3("as.AffymetrixFileSet", "list", function(object, ...) {
 
 setMethodS3("as.AffymetrixFileSet", "default", function(object, ...) {
   throw("Cannot coerce object to an AffymetrixFileSet object: ", mode(object));
-})
-
-
-setMethodS3("clearCache", "AffymetrixFileSet", function(this, ...) {
-  # Clear the cache of all files
-  lapply(this, clearCache);
-
-  # Clear the cache of the CDF object
-  clearCache(getCdf(this));
-
-  # Then for this object
-  NextMethod("clearCache", this);
 })
 
 
@@ -155,9 +138,17 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, ..., fileClass="A
 }, static=TRUE)
 
 
+setMethodS3("getPlatform", "AffymetrixFileSet", function(this, ...) {
+  "Affymetrix";
+}, protected=TRUE)
+
+
 
 ############################################################################
 # HISTORY:
+# 2008-05-09
+# o Removed clearCache() since it was identical to the inherited one.
+# o BUG FIX: clearCache() called getCdf() which did not exist.
 # 2007-09-14
 # o AffymetrixFileSet now inherits from GenericDataFileSet.
 # 2007-03-06
