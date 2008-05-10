@@ -86,8 +86,10 @@ stopifnot(mean(as.vector(e^2)) < 1e-4);
 stopifnot(sd(as.vector(e^2)) < 1e-4);
 
 if (doPlot) {
-  if (saveImg)
-    png("replication-affyPLM,fitPLM.png", width=640, height=640);
+  if (saveImg) {
+    pngDev <- findPngDevice();
+    pngDev("replication-affyPLM,fitPLM.png", width=640, height=640);
+  }
 
   layout(matrix(1:9, ncol=3, byrow=TRUE));
 
