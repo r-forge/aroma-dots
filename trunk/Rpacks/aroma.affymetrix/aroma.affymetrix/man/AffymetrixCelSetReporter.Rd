@@ -44,7 +44,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFileSetReporter}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:getDataSet.AffymetrixCelSetReporter]{getDataSet}} \tab Gets the data set.\cr
+ \tab \code{getDataSet} \tab  -\cr
 }
 
 
@@ -61,7 +61,4 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
- \seealso{
- }
 \keyword{classes}

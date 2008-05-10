@@ -22,8 +22,6 @@
 #
 # @author
 # 
-# \seealso{
-# }
 #*/###########################################################################
 setConstructorS3("AffymetrixCelSetTuple", function(csList=NULL, tags="*", ..., .setClass="AffymetrixCelSet") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

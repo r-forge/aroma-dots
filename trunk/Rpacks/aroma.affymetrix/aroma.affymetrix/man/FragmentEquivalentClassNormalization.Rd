@@ -59,7 +59,7 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
  \tab \code{getAromaUfcFile} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getOutputDataSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:process.FragmentEquivalentClassNormalization]{process}} \tab Normalizes the data set.\cr
+ \tab \code{process} \tab  -\cr
 }
 
 

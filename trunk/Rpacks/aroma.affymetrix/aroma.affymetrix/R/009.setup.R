@@ -2,12 +2,6 @@
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Patches
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Patch base::matrix() to be more memory efficient when 'dimnames==NULL'.
-  .patchMatrix();
-
-  # Patch log2()/log10() that are slow to display warnings
-  .patchLog2();
-
   # Patch affxparser::findCdf()
   .patchCdfMergeStrands();
 #  reassignInPackage("findFiles", "affxparser", findFiles.patch);
@@ -52,15 +46,6 @@
        # Number of cells *and* arrays for skipping unit group
         skipThreshold          = c(5000, 1)
       )
-    ),
-
-    annotationData = list(
-      paths = list()
-    ),
-
-    system = list(
-      checkForUpdates = FALSE,
-      checkInterval = "onEachLoad"
     )
   );
 
@@ -109,15 +94,6 @@
         update(pkg, verbose=TRUE);
       }
     }
-  }
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Assert that digest() gives a consistent result across R versions
-  # and platforms.
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!identical(getOption("aroma.affymetrix::assertDigest"), FALSE)) {
-    .assertDigest("error");
   }
 } # .setupAromaAffymetrix()
 

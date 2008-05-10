@@ -19,7 +19,7 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{GenericDataFile}}\cr
+\code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\emph{\code{SnpInformation}}\cr
 
@@ -27,7 +27,7 @@
 \link[aroma.affymetrix]{DChipSnpInformation}, \link[aroma.affymetrix]{UflSnpInformation}\cr
 
 public abstract static class \bold{SnpInformation}\cr
-extends \link[aroma.affymetrix]{GenericDataFile}\cr
+extends \link[aroma.core]{GenericDataFile}\cr
 
 
  }
@@ -41,12 +41,12 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:byChipType.SnpInformation]{byChipType}} \tab Static method to define a genome information set by chip type.\cr
- \tab \code{\link[aroma.affymetrix:fromCdf.SnpInformation]{fromCdf}} \tab Static method to define a genome information set from a CDF.\cr
+ \tab \code{byChipType} \tab  -\cr
+ \tab \code{fromCdf} \tab  -\cr
  \tab \code{fromChipType} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipType.SnpInformation]{getChipType}} \tab Gets the chip type of this genome information set.\cr
- \tab \code{\link[aroma.affymetrix:getData.SnpInformation]{getData}} \tab Gets all or a subset of the genome information data.\cr
+ \tab \code{getChipType} \tab  -\cr
+ \tab \code{getData} \tab  -\cr
  \tab \code{getFields} \tab  -\cr
  \tab \code{getFragmentLengths} \tab  -\cr
  \tab \code{getFragmentStarts} \tab  -\cr
@@ -58,7 +58,7 @@ extends \link[aroma.affymetrix]{GenericDataFile}\cr
 
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

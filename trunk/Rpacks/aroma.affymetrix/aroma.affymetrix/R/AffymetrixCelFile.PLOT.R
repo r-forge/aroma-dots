@@ -518,9 +518,6 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 #   \code{TrueColor}.
 # }
 #
-# \section{Details}{
-# }
-#
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}
 #
 # \seealso{
@@ -639,9 +636,6 @@ setMethodS3("getImage", "AffymetrixCelFile", function(this, other=NULL, transfor
 #
 # \value{
 #   Returns (invisibly) the image displayed.
-# }
-#
-# \section{Details}{
 # }
 #
 # \author{Ken Simpson (ksimpson[at]wehi.edu.au).}

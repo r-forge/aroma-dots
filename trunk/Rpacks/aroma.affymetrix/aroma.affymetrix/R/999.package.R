@@ -55,6 +55,8 @@
 # }
 #
 # \section{How to cite this package}{
+#    Bengtsson et al. 2008a.
+#    Bengtsson et al. 2008b.
 # }
 #
 # \section{Wishlist}{
@@ -69,8 +71,8 @@
 # } 
 #
 # \author{
-#   Henrik Bengtsson <henrikb@braju.com> with major contributions
-#   from Ken Simpson <ksimpson@wehi.edu.au>.
+#   Henrik Bengtsson with great contributions from
+#   Ken Simpson, Elizabeth Purdom and Mark Robinson.
 # }
 #
 # \section{License}{

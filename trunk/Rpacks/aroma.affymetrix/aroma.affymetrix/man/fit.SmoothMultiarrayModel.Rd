@@ -32,9 +32,6 @@
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 
-\value{
-}
-
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{

@@ -43,8 +43,6 @@
 #
 # @author
 # 
-# \seealso{
-# }
 #*/###########################################################################
 setConstructorS3("Explorer", function(tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -233,9 +231,6 @@ setMethodS3("getAlias", "Explorer", function(this, ...) {
 #
 # \value{
 #   Returns nothing.
-# }
-#
-# \details{
 # }
 #
 # @author

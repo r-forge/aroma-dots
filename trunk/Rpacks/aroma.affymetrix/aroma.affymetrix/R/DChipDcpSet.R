@@ -28,16 +28,17 @@
 # @author
 #*/###########################################################################
 setConstructorS3("DChipDcpSet", function(files=NULL, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'files':
   if (is.null(files)) {
   } else if (is.list(files)) {
+    reqFileClass <- "DChipDcpFile";
     lapply(files, FUN=function(df) {
-      if (!inherits(df, "DChipDcpFile"))
-        throw("Argument 'files' contains a non-DChipDcpFile object: ", 
-                                                              class(df)[1]);
+      if (!inherits(df, reqFileClass))
+        throw("Argument 'files' contains a non-", reqFileClass, 
+                                                  " object: ", class(df)[1]);
     })
   } else if (inherits(files, "DChipDcpSet")) {
     return(as.DChipDcpSet(files));
@@ -152,6 +153,7 @@ setMethodS3("findByName", "DChipDcpSet", function(static, name, tags=NULL, chipT
 setMethodS3("fromName", "DChipDcpSet", function(static, ...) {
   byName(static, ...);
 }, static=TRUE)
+
 
 setMethodS3("byName", "DChipDcpSet", function(static, name, tags=NULL, chipType, paths=NULL, ...) {
   # Argument 'chipType':
@@ -288,6 +290,8 @@ setMethodS3("getFullName", "DChipDcpSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-09
+# o Now DChipDcpSet inherits from GenericDataFileSet.
 # 2008-05-08
 # o If paths=NULL in findByName(), it becomes the default argument value.
 # 2008-01-30

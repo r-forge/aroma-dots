@@ -19,9 +19,6 @@
 #  @allmethods "public"  
 # }
 # 
-# \details{
-# }
-#
 # @author
 #*/###########################################################################
 setConstructorS3("TransformReport", function(inSet=NULL, outSet=NULL, ...) {

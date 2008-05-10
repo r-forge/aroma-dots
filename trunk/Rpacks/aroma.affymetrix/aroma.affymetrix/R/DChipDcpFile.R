@@ -12,7 +12,7 @@
 # @synopsis 
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AffymetrixFile".}
+#   \item{...}{Arguments passed to @see "GenericDataFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -289,6 +289,8 @@ setMethodS3("getThetasAB", "DChipDcpFile", function(this, units=NULL, force=FALS
 
 ##############################################################################
 # HISTORY:
+# 2008-05-09
+# o Now DChipDcpFile inherits from GenericDataFile.
 # 2008-01-30
 # o Created.
 ##############################################################################

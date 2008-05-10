@@ -20,8 +20,6 @@
 #
 # @author
 # 
-# \seealso{
-# }
 #*/###########################################################################
 setConstructorS3("AffymetrixCelSetReporter", function(..., .setClass="AffymetrixCelSet") {
   extend(AffymetrixFileSetReporter(..., .setClass=.setClass), "AffymetrixCelSetReporter"

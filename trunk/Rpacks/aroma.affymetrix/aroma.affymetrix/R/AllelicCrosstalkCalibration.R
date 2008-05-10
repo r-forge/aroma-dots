@@ -659,8 +659,6 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  require("sfit") || throw("Package not loaded: sfit.");
-
   # Get input data set
   ds <- getInputDataSet(this);
 

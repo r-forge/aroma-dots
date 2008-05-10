@@ -20,8 +20,6 @@
 #
 # @author
 # 
-# \seealso{
-# }
 #*/###########################################################################
 setConstructorS3("GenericReporter", function(tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -113,9 +111,6 @@ setMethodS3("getAlias", "GenericReporter", function(this, ...) {
 #
 # \value{
 #   Returns nothing.
-# }
-#
-# \details{
 # }
 #
 # @author

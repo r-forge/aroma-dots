@@ -30,34 +30,19 @@
 # }
 #*/###########################################################################
 setConstructorS3("AffymetrixFile", function(...) {
-  this <- extend(GenericDataFile(...), "AffymetrixFile",
-    .attributes = list()
-  )
-
-  # Parse attributes (all subclasses must call this in the constructor).
-  if (!is.null(this$.pathname))
-    setAttributesByTags(this);
-
-  this;
+  extend(AromaMicroarrayDataFile(...), "AffymetrixFile");
 }, abstract=TRUE)
 
 
-setMethodS3("getLabel", "AffymetrixFile", function(this, ...) {
-  label <- this$label;
-  if (is.null(label))
-    label <- getName(this, ...);
-  label;
-}, private=TRUE)
-
-setMethodS3("setLabel", "AffymetrixFile", function(this, label, ...) {
-  this$label <- label;
-  invisible(this);
-}, private=TRUE)
-
+setMethodS3("getPlatform", "AffymetrixFile", function(this, ...) {
+  "Affymetrix";
+}, protected=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2008-05-09
+# o Added getPlatform().
 # 2007-09-16
 # o Removed obsolete copyFile() from AffymetrixFile.  Use copyTo() of 
 #   GenericDataFile instead.

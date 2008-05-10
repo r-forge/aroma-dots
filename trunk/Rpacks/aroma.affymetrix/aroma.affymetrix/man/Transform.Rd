@@ -46,14 +46,14 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:getFullName.Transform]{getFullName}} \tab Gets the full name of the output data set.\cr
- \tab \code{\link[aroma.affymetrix:getInputDataSet.Transform]{getInputDataSet}} \tab Gets the source data set.\cr
- \tab \code{\link[aroma.affymetrix:getName.Transform]{getName}} \tab Gets the name of the output data set.\cr
- \tab \code{\link[aroma.affymetrix:getOutputDataSet.Transform]{getOutputDataSet}} \tab Gets the transformed data set.\cr
- \tab \code{\link[aroma.affymetrix:getPath.Transform]{getPath}} \tab Gets the path of the output data set.\cr
- \tab \code{\link[aroma.affymetrix:getTags.Transform]{getTags}} \tab Gets the tags of the output data set.\cr
- \tab \code{\link[aroma.affymetrix:isDone.Transform]{isDone}} \tab Checks if the data set is processed or not.\cr
- \tab \code{\link[aroma.affymetrix:process.Transform]{process}} \tab Processes the data set.\cr
+ \tab \code{getFullName} \tab  -\cr
+ \tab \code{getInputDataSet} \tab  -\cr
+ \tab \code{getName} \tab  -\cr
+ \tab \code{getOutputDataSet} \tab  -\cr
+ \tab \code{getPath} \tab  -\cr
+ \tab \code{getTags} \tab  -\cr
+ \tab \code{isDone} \tab  -\cr
+ \tab \code{process} \tab  -\cr
  \tab \code{setTags} \tab  -\cr
 }
 

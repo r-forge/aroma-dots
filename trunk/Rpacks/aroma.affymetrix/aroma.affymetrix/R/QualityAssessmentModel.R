@@ -193,9 +193,6 @@ setMethodS3("getPath", "QualityAssessmentModel", function(this, ...) {
 #   Returns an @see "QualityAssessmentSet".
 # }
 #
-# \details{
-# }
-#
 # @author
 #
 # \seealso{
@@ -407,9 +404,6 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
 #
 # \value{
 #   Returns an @see "QualityAssessmentSet".
-# }
-#
-# \details{
 # }
 #
 # @author

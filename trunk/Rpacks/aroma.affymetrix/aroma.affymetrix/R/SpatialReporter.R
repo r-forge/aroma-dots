@@ -23,8 +23,6 @@
 #
 # @author
 # 
-# \seealso{
-# }
 #*/###########################################################################
 setConstructorS3("SpatialReporter", function(..., reference=NULL) {
   this <- extend(AffymetrixCelSetReporter(...), "SpatialReporter",

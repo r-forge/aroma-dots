@@ -21,8 +21,6 @@
 #
 # @author
 # 
-# \seealso{
-# }
 #*/###########################################################################
 setConstructorS3("AffymetrixFileSetReporter", function(set=NULL, ..., .setClass="AffymetrixFileSet") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

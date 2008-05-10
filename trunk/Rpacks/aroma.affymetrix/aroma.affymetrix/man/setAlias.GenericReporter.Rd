@@ -34,9 +34,6 @@
   Returns nothing.
 }
 
-\details{
-}
-
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
