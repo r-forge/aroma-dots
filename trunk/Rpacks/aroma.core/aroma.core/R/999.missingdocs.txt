@@ -1,0 +1,101 @@
+ [.AromaTabularBinaryFile [[.AromaTabularBinaryFile
+  [<-.AromaTabularBinaryFile allocate append append.default
+  append.GenericDataFileSet appendFiles appendFiles.GenericDataFileSet
+  apply apply.default apply.SampleAnnotationFile
+  as.character.AromaTabularBinaryFile as.character.GenericTabularFile
+  as.GenericDataFileSet calcMargins calcMargins.matrix
+  clearCache.AromaTabularBinaryFile clearCache.GenericDataFileSet
+  clone.GenericDataFile clone.GenericDataFileSet colMeans
+  colMeans.AromaTabularBinaryFile colMeans.default
+  colMedians.AromaTabularBinaryFile colStats
+  colStats.AromaTabularBinaryFile colSums
+  colSums.AromaTabularBinaryFile colSums.default compareChecksum
+  compareChecksum.GenericDataFile convertTable convertTable.default
+  copyTo copyTo.GenericDataFile copyTo.GenericDataFileSet digest2
+  dim.AromaTabularBinaryFile dim.GenericTabularFile
+  dimnames<-.AromaTabularBinaryFile equals.GenericDataFile findFiles
+  findPngDevice findPngDevice.default findSAFs
+  findSAFs.SampleAnnotationSet fit2d fit2d.matrix fromFile
+  fromFile.GenericDataFile fromFiles fromPath
+  fromPath.SampleAnnotationFile fromPath.SampleAnnotationSet
+  GenericSummary GenericTabularFile getAlias getAlias.GenericDataFile
+  getAttribute getAttribute.GenericDataFile getAttributes
+  getAttributes.GenericDataFile getBytesPerColumn
+  getBytesPerColumn.AromaTabularBinaryFile getChecksum
+  getChecksum.GenericDataFile getChromosome getChromosome.Arguments
+  getChromosomes getChromosomes.Arguments getColClasses
+  getColClasses.AromaTabularBinaryFile getColumnNames
+  getColumnNames.AromaTabularBinaryFile
+  getColumnNames.GenericTabularFile getColumnNameTranslator
+  getColumnNameTranslator.GenericTabularFile getCommonListElements
+  getCommonPrefix getDeviceResolution getDeviceResolution.default
+  getFile getFile.GenericDataFileSet getFilename getFilename.Arguments
+  getFiles getFiles.GenericDataFileSet getFileSize
+  getFileSize.GenericDataFile getFileSize.GenericDataFileSet
+  getFileType getFullName getFullNames getFullNames.GenericDataFileSet
+  getHeader.GenericTabularFile getLabel.GenericDataFile getNames
+  getPathname getPathnames getPatterns getPatterns.SampleAnnotationFile
+  getReadArguments getReadArguments.GenericTabularFile getTags hasTag
+  hasTag.GenericDataFile hasTag.GenericDataFileSet hasTags
+  hasTags.GenericDataFile hasTags.GenericDataFileSet importFromTable
+  importFromTable.FileMatrix indexOf indexOf.GenericDataFileSet
+  isFile.GenericDataFile lapply.AromaTabularBinaryFile lapplyInChunks
+  lapplyInChunks.numeric library listToXml listToXml.list locallyUnique
+  locallyUnique.default matchPatterns
+  matchPatterns.SampleAnnotationFile matrixBlockPolish
+  mergeByCommonTails nbrOfColumns nbrOfColumns.AromaTabularBinaryFile
+  nbrOfColumns.GenericTabularFile nbrOfFiles nbrOfLines
+  nbrOfLines.GenericTabularFile nbrOfRows
+  nbrOfRows.AromaTabularBinaryFile nbrOfRows.GenericTabularFile 
+  norm2d norm2d.matrix print.GenericSummary
+  readChecksum readChecksum.GenericDataFile readColumnNames
+  readColumnNames.GenericTabularFile readData
+  readData.AromaTabularBinaryFile readData.GenericTabularFile
+  readData.SampleAnnotationFile readDataFrame
+  readDataFrame.AromaTabularBinaryFile readDataFrame.GenericTabularFile
+  readDataFrame.SampleAnnotationFile readFooter readHeader
+  readHeader.AromaTabularBinaryFile readHeader.GenericTabularFile
+  readLines readLines.default readLines.GenericTabularFile
+  readRawFooter readRawFooter.AromaTabularBinaryFile renameTo
+  renameTo.GenericDataFile renameToUpperCaseExt
+  renameToUpperCaseExt.GenericDataFile reorder.GenericDataFileSet
+  require SampleAnnotationFile SampleAnnotationSet sapply
+  sapply.default sapply.GenericDataFileSet setAlias
+  setAlias.GenericDataFile setAttribute setAttribute.GenericDataFile
+  setAttributes setAttributes.GenericDataFile setAttributesBy
+  setAttributesBy.GenericDataFile setAttributesByTags
+  setAttributesByTags.AromaTabularBinaryFile
+  setAttributesByTags.GenericDataFile setColumnNameTranslator
+  setColumnNameTranslator.GenericTabularFile setLabel.GenericDataFile
+  setTags splitByCommonTails splitInChunks splitInChunks.numeric stext
+  stext.default stringTree stringTree.character
+  subset.AromaTabularBinaryFile summary.AromaTabularBinaryFile
+  testAttributes testAttributes.GenericDataFile translateColumnNames
+  translateColumnNames.GenericTabularFile updateData
+  updateData.AromaTabularBinaryFile updateDataColumn
+  updateDataColumn.AromaTabularBinaryFile validateChecksum
+  validateChecksum.GenericDataFile verify verify.GenericTabularFile
+  writeChecksum writeChecksum.GenericDataFile writeColumnsToFiles
+  writeColumnsToFiles.GenericTabularFile writeFooter writeRawFooter
+  writeRawFooter.AromaTabularBinaryFile xmlToList xmlToList.character
+  yellow.colors
+  as.character.Interface as.GrayscaleImage as.TrueColorImage
+  as.TrueColorImage.Image as.TrueColorImage.matrix
+  backtransformGenotypeCone backtransformGenotypeCone.matrix colorize
+  colorize.Image display display.Image extend.Interface fitGenotypeCone
+  fitSplineBlockPolish fitSplineBlockPolish.matrix fitWHLAPLM
+  fitWHLAPLM.matrix fitWHRCModel fitWHRCModel.matrix fitWLAPLM
+  fitWLAPLM.matrix fitWRCModel fitWRCModel.matrix fitWRMA
+  fitWRMA.matrix gaussianSmoothing gaussianSmoothing.matrix
+  gaussianSmoothing.numeric gaussKernel getImage getImage.matrix
+  interleave interleave.Image log2abs log2center log2neg log2pos
+  mergeBoxplotStats normalizeGenotypeCone normalizeGenotypeCone.matrix
+  print.Interface rescale rescale.Image rgbTransform rgbTransform.Image
+  smoothWRMA smoothWRMA.matrix smoothWSA smoothWSA.matrix sqrtabs
+  sqrtcenter sqrtneg sqrtpos uses uses.Interface whatDataType
+  whatDataType.default
+  as.AromaMicroarrayDataSet clearCache.AromaMicroarrayDataSet
+  getChipType getChipType.AromaMicroarrayDataFile
+  getChipType.AromaMicroarrayDataSet getLabel.AromaMicroarrayDataFile
+  getPlatform getPlatform.AromaMicroarrayDataFile
+  getPlatform.AromaMicroarrayDataSet setLabel.AromaMicroarrayDataFile
