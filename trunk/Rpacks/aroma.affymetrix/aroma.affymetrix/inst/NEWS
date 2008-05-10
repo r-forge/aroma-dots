@@ -36,8 +36,7 @@ o CLEAN UP: Renamed all readData() methods that return a data.frame
   to readDataFrame().
 o CLEAN UP: Now we're using construct foo(static, ...) instead of
   static$foo(...) internally.
-o CLEAN UP: Removed obsolete getDescription() and getIdentifier() 
-  from AffymetrixFileSet.
+o CLEAN UP: Removed obsolete getDescription() from AffymetrixFileSet.
 o CLEAN UP: Removed obsolete getSibilings() from AffymetrixCelSet.
 o CLEAN UP: Removed obsolete gcrmaSummary() and rmaSummary().
 o DEFUNCT: All getCellMap() are now defunct; use getUnitGroupCellMap().
