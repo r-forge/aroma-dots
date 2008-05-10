@@ -1,0 +1,97 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  GenericDataFile.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ \name{GenericDataFile}
+\docType{class}
+\alias{GenericDataFile}
+
+
+ \title{The abstract GenericDataFile class}
+
+ \description{
+  Package:  aroma.core \cr
+\bold{Class GenericDataFile}\cr
+
+\code{\link[R.oo]{Object}}\cr
+\code{~~|}\cr
+\code{~~+--}\code{GenericDataFile}\cr
+
+\bold{Directly known subclasses:}\cr
+\emph{\link[aroma.core]{AromaMicroarrayDataFile}}, \link[aroma.core]{AromaTabularBinaryFile}, \link[aroma.core]{GenericTabularFile}, \link[aroma.core]{SampleAnnotationFile}\cr
+
+public static class \bold{GenericDataFile}\cr
+extends \link[R.oo]{Object}\cr
+
+
+
+  A GenericDataFile is an object refering to a data file on a file system.
+  Note that this class is abstract and can not be instanciated, but
+  instead you have to use one of the subclasses or the generic
+  \code{\link[aroma.core:fromFile.GenericDataFile]{*fromFile}()} method.
+ }
+
+ \usage{GenericDataFile(filename=NULL, path=NULL, mustExist=TRUE, ...)}
+
+ \arguments{
+   \item{filename}{The filename of the file.}
+   \item{path}{An optional path to the file.}
+   \item{mustExist}{If \code{\link[base:logical]{TRUE}}, an exception is thrown if the file does
+     not exists, otherwise not.}
+   \item{...}{Not used.}
+ }
+
+ \section{Fields and Methods}{
+  \bold{Methods:}\cr
+\tabular{rll}{
+ \tab \code{compareChecksum} \tab  -\cr
+ \tab \code{equals} \tab  -\cr
+ \tab \code{fromFile} \tab  -\cr
+ \tab \code{getAlias} \tab  -\cr
+ \tab \code{getChecksum} \tab  -\cr
+ \tab \code{\link[aroma.core:getFilename.GenericDataFile]{getFilename}} \tab Gets the filename of the file.\cr
+ \tab \code{getFileSize} \tab  -\cr
+ \tab \code{\link[aroma.core:getFileType.GenericDataFile]{getFileType}} \tab Gets the file type of a file.\cr
+ \tab \code{\link[aroma.core:getFullName.GenericDataFile]{getFullName}} \tab Gets the full name of the file.\cr
+ \tab \code{\link[aroma.core:getName.GenericDataFile]{getName}} \tab Gets the name of the file.\cr
+ \tab \code{\link[aroma.core:getPath.GenericDataFile]{getPath}} \tab Gets the path (directory) of the file.\cr
+ \tab \code{\link[aroma.core:getPathname.GenericDataFile]{getPathname}} \tab Gets the pathname of the file.\cr
+ \tab \code{\link[aroma.core:getTags.GenericDataFile]{getTags}} \tab Gets the tags of the file.\cr
+ \tab \code{hasTag} \tab  -\cr
+ \tab \code{hasTags} \tab  -\cr
+ \tab \code{isFile} \tab  -\cr
+ \tab \code{readChecksum} \tab  -\cr
+ \tab \code{setAlias} \tab  -\cr
+ \tab \code{validateChecksum} \tab  -\cr
+ \tab \code{writeChecksum} \tab  -\cr
+}
+
+
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
+
+ }
+
+ \section{Filename convention}{
+   The filename of an \code{GenericDataFile} is structured as follows:
+   \itemize{
+    \item{filename}{\code{"sample001,a,b,c.CEL"}
+       (this follows the \R convention (but not the Unix convention)}
+    \item{fullname}{\code{"sample001,a,b,c"}}
+    \item{name}{\code{"sample001"}}
+    \item{tags}{\code{c("a", "b", "c")}}
+    \item{extension}{\code{"CEL"}}
+   }
+ }
+
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+ \seealso{
+   An object of this class is typically part of an \code{\link{GenericDataFileSet}}.
+ }
+\keyword{classes}
