@@ -1,4 +1,4 @@
-setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, groups=NULL, ..., verbose=FALSE) {
+setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -6,15 +6,9 @@ setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, groups=
   # Argument 'units':
   if (is.null(units)) {
     nbrOfUnits <- nbrOfUnits(cdf);
-    ugcMap <- NULL;
-  } else if (isUnitGroupCellMap(units)) {
-    ugcMap <- units;
-    units <- unique(ugcMap[,"unit"]);
-    nbrOfUnits <- length(units);
   } else {
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
     nbrOfUnits <- length(units);
-    ugcMap <- NULL;
   }
 
   # Argument 'groups':
@@ -33,14 +27,12 @@ setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, groups=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read the UGC map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  ugcMap <- NULL;
   if (is.null(ugcMap)) {
     verbose && enter(verbose, "Getting (unit, group, cell) map");
     ugcMap <- getUnitGroupCellMap(this, units=units, verbose=less(verbose));
     verbose && exit(verbose);
   }
-
-
-  # Subset by groups?
   if (!is.null(groups)) {
     idxs <- which(ugcMap$group %in% groups);
     ugcMap <- ugcMap[idxs,,drop=FALSE];
@@ -48,25 +40,22 @@ setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, groups=
     groups <- sort(unique(ugcMap$group));
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Import (theta1,theta2,...)
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  data <- extractMatrix(this, units=ugcMap, verbose=less(verbose, 5));
-  data <- data[,1,drop=TRUE];
-  verbose && cat(verbose, "Raw data:");
-  verbose && str(verbose, data);
+  verbose && cat(verbose, "Filtered (unit,group,cell) map:");
+  verbose && str(verbose, ugcMap);
 
-  allUnits <- unique(ugcMap[,"unit"]);
+
   nbrOfGroups <- length(groups);
-  theta <- matrix(NA, nrow=nbrOfUnits, ncol=nbrOfGroups);
-  for (gg in groups) {
-    idxs <- which(ugcMap$group == gg);
-    units <- ugcMap[idxs,"unit"];
-    units <- match(units, allUnits);
-    theta[units,gg] <- data[idxs];
-    rm(idxs, units);
+  nbrOfArrays <- nbrOfArrays(this);
+  dim <- c(nbrOfUnits, nbrOfGroups, nbrOfArrays);
+  dimnames <- list(NULL, NULL, getNames(this));
+  theta <- array(NA, dim=dim, dimnames=dimnames);
+  for (kk in seq(length=nbrOfArrays)) {
+    ce <- getFile(this, kk);
+    thetaKK <- extractTheta(ce, units=ugcMap, groups=groups, verbose=less(verbose, 5));
+    verbose && str(verbose, thetaKK);
+    theta[,,kk] <- thetaKK;
   }
-  rm(data, allUnits);
+  rm(ugcMap);
 
   verbose && cat(verbose, "Thetas:");
   verbose && str(verbose, theta);
@@ -76,8 +65,7 @@ setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, groups=
 
 
 
-
-setMethodS3("extractTheta", "SnpChipEffectFile", function(this, groups=NULL, ...) {
+setMethodS3("extractTheta", "SnpChipEffectSet", function(this, groups=NULL, ...) {
   if (is.null(groups)) {
     maxNbrOfGroups <- 4;
     if (this$mergeStrands) {
@@ -93,7 +81,7 @@ setMethodS3("extractTheta", "SnpChipEffectFile", function(this, groups=NULL, ...
 
 
 
-setMethodS3("extractTheta", "CnChipEffectFile", function(this, groups=NULL, ...) {
+setMethodS3("extractTheta", "CnChipEffectSet", function(this, groups=NULL, ...) {
   if (is.null(groups)) {
     maxNbrOfGroups <- 4;
     if (this$mergeStrands) {
@@ -111,11 +99,8 @@ setMethodS3("extractTheta", "CnChipEffectFile", function(this, groups=NULL, ...)
 })
 
 
-
 ############################################################################
 # HISTORY:
 # 2008-05-10
-# o Updated to take an UGC map via argument 'units'.
-# 2008-05-09
 # o Created.
 ############################################################################
