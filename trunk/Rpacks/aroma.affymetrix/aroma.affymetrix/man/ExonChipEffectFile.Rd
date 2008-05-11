@@ -62,13 +62,13 @@ extends \link[aroma.affymetrix]{ChipEffectFile}\cr
 
 
  \bold{Methods inherited from ChipEffectFile}:\cr
-extractMatrix, extractThetaMatrix, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellChromosomePositionMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
+extractMatrix, extractTheta, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellChromosomePositionMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 extractDataFrame, extractMatrix, getParameters, readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage
+[, [[, allocateFromCdf, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage
 
  \bold{Methods inherited from AffymetrixFile}:\cr
 getPlatform

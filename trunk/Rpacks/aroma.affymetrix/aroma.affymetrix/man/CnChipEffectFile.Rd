@@ -58,8 +58,8 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{extractSumAndFreqB} \tab  -\cr
- \tab \code{extractThetaMatrix} \tab  -\cr
+ \tab \code{extractTheta} \tab  -\cr
+ \tab \code{extractTotalAndFreqB} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getExpandedCellMap} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
@@ -69,16 +69,16 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 
 
  \bold{Methods inherited from SnpChipEffectFile}:\cr
-extractSumAndFreqB, extractThetaMatrix, getCellIndices, getExpandedCellMap, getParameters, mergeStrands, readUnits
+extractTheta, extractTotalAndFreqB, getCellIndices, getExpandedCellMap, getParameters, mergeStrands, readUnits
 
  \bold{Methods inherited from ChipEffectFile}:\cr
-extractMatrix, extractThetaMatrix, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellChromosomePositionMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
+extractMatrix, extractTheta, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellChromosomePositionMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 extractDataFrame, extractMatrix, getParameters, readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage
+[, [[, allocateFromCdf, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage
 
  \bold{Methods inherited from AffymetrixFile}:\cr
 getPlatform

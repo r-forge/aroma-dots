@@ -53,15 +53,15 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{extractMatrix} \tab  -\cr
- \tab \code{extractThetaMatrix} \tab  -\cr
+ \tab \code{extractTheta} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
- \tab \code{getAM} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getAM.ChipEffectFile]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getCellMapForMainCdf} \tab  -\cr
  \tab \code{getExpandedCellMap} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
  \tab \code{getUnitGroupCellChromosomePositionMap} \tab  -\cr
- \tab \code{getXAM} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectFile]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
@@ -70,7 +70,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 extractDataFrame, extractMatrix, getParameters, readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage
+[, [[, allocateFromCdf, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage
 
  \bold{Methods inherited from AffymetrixFile}:\cr
 getPlatform

@@ -1,7 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  999.package.R
+%  999.package.R~
+% 
+% on Sun May 11 11:56:42 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,8 +70,6 @@
  }
 
  \section{How to cite this package}{
-    Bengtsson et al. 2008a.
-    Bengtsson et al. 2008b.
  }
 
  \section{Wishlist}{

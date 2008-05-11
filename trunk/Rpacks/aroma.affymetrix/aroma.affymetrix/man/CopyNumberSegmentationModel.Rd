@@ -46,8 +46,8 @@ extends \emph{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{fit} \tab  -\cr
- \tab \code{fitOne} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:fit.CopyNumberSegmentationModel]{fit}} \tab Fits the model.\cr
+ \tab \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{fitOne}} \tab Fits the copy-number segmentation model for one chromosome in one sample.\cr
  \tab \code{getRegions} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
  \tab \code{migrateTool} \tab  -\cr

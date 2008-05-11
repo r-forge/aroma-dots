@@ -20,8 +20,8 @@
  Creates an empty CEL file from a template CDF.
 }
 
-\synopsis{allocateFromCdf.AffymetrixCelFile(static, cdf, name, tags=NULL, path=".", ..., overwrite=FALSE, verbose=FALSE)}
-\usage{AffymetrixCelFile$allocateFromCdf(cdf, name, tags=NULL, path=".", ..., overwrite=FALSE, verbose=FALSE)}
+\synopsis{allocateFromCdf.AffymetrixCelFile(static, cdf, name, tags=NULL, path=".", suffix=".CEL", ..., overwrite=FALSE, verbose=FALSE)}
+\usage{AffymetrixCelFile$allocateFromCdf(cdf, name, tags=NULL, path=".", suffix=".CEL", ..., overwrite=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{cdf}{A \code{\link{AffymetrixCdfFile}} to be used as a template.}
