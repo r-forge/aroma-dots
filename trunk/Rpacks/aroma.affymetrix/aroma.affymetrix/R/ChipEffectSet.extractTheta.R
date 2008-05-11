@@ -3,12 +3,20 @@ setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=N
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   cdf <- getCdf(this);
+
   # Argument 'units':
   if (is.null(units)) {
     nbrOfUnits <- nbrOfUnits(cdf);
+    ugcMap <- NULL;
+  } else if (isUnitGroupCellMap(units)) {
+    ugcMap <- units;
+    units <- unique(ugcMap[,"unit"]);
+    nbrOfUnits <- length(units);
+    rm(units);
   } else {
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
     nbrOfUnits <- length(units);
+    ugcMap <- NULL;
   }
 
   # Argument 'groups':
@@ -25,14 +33,14 @@ setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=N
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Read the UGC map
+  # Get the UGC map
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  ugcMap <- NULL;
   if (is.null(ugcMap)) {
     verbose && enter(verbose, "Getting (unit, group, cell) map");
     ugcMap <- getUnitGroupCellMap(this, units=units, verbose=less(verbose));
     verbose && exit(verbose);
   }
+
   if (!is.null(groups)) {
     idxs <- which(ugcMap$group %in% groups);
     ugcMap <- ugcMap[idxs,,drop=FALSE];
@@ -40,10 +48,14 @@ setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=N
     groups <- sort(unique(ugcMap$group));
   }
 
-  verbose && cat(verbose, "Filtered (unit,group,cell) map:");
+  verbose && cat(verbose, "Using (unit,group,cell) map:");
   verbose && str(verbose, ugcMap);
 
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Extract the thetas
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   nbrOfGroups <- length(groups);
   nbrOfArrays <- nbrOfArrays(this);
   dim <- c(nbrOfUnits, nbrOfGroups, nbrOfArrays);
@@ -51,7 +63,8 @@ setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=N
   theta <- array(NA, dim=dim, dimnames=dimnames);
   for (kk in seq(length=nbrOfArrays)) {
     ce <- getFile(this, kk);
-    thetaKK <- extractTheta(ce, units=ugcMap, groups=groups, verbose=less(verbose, 5));
+    thetaKK <- extractTheta(ce, units=ugcMap, groups=groups, 
+                                                 verbose=less(verbose, 5));
     verbose && str(verbose, thetaKK);
     theta[,,kk] <- thetaKK;
   }
