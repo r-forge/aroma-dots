@@ -285,6 +285,7 @@
 \alias{sqrtpos}
 \alias{uses}
 \alias{uses.Interface}
+\alias{uses.character}
 \alias{whatDataType}
 \alias{whatDataType.default}
 \alias{as.AromaMicroarrayDataSet}
@@ -297,6 +298,7 @@
 \alias{getPlatform.AromaMicroarrayDataFile}
 \alias{getPlatform.AromaMicroarrayDataSet}
 \alias{setLabel.AromaMicroarrayDataFile}
+\alias{AromaMicroarrayDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

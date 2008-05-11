@@ -1035,13 +1035,14 @@ setMethodS3("getBytesPerColumn", "AromaTabularBinaryFile", function(this, ...) {
 })
 
 
-setMethodS3("dim", "AromaTabularBinaryFile", function(x, ...) {
+setMethodS3("dim", "AromaTabularBinaryFile", function(x) {
   # To please R CMD check
   this <- x;
 
   hdr <- readHeader(this)$dataHeader;
   c(hdr$nbrOfRows, hdr$nbrOfColumns);
-})
+}, appendVarArgs=FALSE)
+
 
 setMethodS3("nbrOfRows", "AromaTabularBinaryFile", function(x, ...) {
   dim(x)[1];
