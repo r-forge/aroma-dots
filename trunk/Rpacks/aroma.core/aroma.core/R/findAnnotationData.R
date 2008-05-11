@@ -95,6 +95,18 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
   verbose && str(verbose, args);
   pathname <- do.call("findFiles", args=args);
 
+  # AD HOC: Clean out files in "private" directories
+  if (!private) {
+    isInPrivateDirectory <- function(pathname) {
+      pathname <- strsplit(pathname, split="[/\\\\]")[[1]];
+      pathname <- pathname[!(pathname %in% c(".", ".."))];
+      any(regexpr("^[.]", pathname) != -1);
+    }
+
+    excl <- sapply(pathname, FUN=isInPrivateDirectory);
+    pathname <- pathname[!excl];
+  }
+
   verbose && cat(verbose, "Pathname: ", pathname);
   verbose && exit(verbose);
 
@@ -103,6 +115,10 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
 
 ############################################################################
 # HISTORY:
+# 2008-05-10
+# o BUG FIX: When searching with 'firstOnly=FALSE', findAnnotationData() 
+#   was identifying files that are in "private" directory.  This is how
+#   affxparser::findFiles() works.  Such files are now filtered out.
 # 2008-05-09
 # o Removed the option to specify the annotation data path by the option
 #   'aroma.affymetrix.settings'.

@@ -9,4 +9,7 @@ o The version is numbered starting from the current version of
 o BUG FIX: interleave() for Image gave 'Error in z[idxOdd, ] : 
   incorrect number of dimensions'.  The internal image structure
   is a 3-dim array.
+o BUG FIX: When searching with 'firstOnly=FALSE', findAnnotationData() 
+  was identifying files that are in "private" directory.  This is how
+  affxparser::findFiles() works.  Such files are now filtered out.
 o Created.
