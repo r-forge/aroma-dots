@@ -1,9 +1,14 @@
 library(aroma.affymetrix);
-library("geneplotter");
+library(geneplotter);
 
 log <- Arguments$getVerbose(-4);
 timestampOn(log);
 .Machine$float.eps <- sqrt(.Machine$double.eps);
+
+pngDev <- findPngDevice();
+imgFormat <- "png";
+figPath <- "figures";
+
 
 dataSetName <- "Jeremy_2007-10k";
 chipType <- "Mapping10K_Xba142";
@@ -53,10 +58,12 @@ stopifnot(identical(getNames(ces), getNames(cs)));
 data <- extractDataFrame(ces, units=1:50, addNames=TRUE, verbose=log);
 print(data[1:50,1:8]);
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extract (thetaA, thetaB)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 theta <- extractTheta(ces, groups=1:2, verbose=log);
 dimnames(theta)[[2]] <- c("A", "B");
-
 thetaA <- theta[,"A",];
 thetaB <- theta[,"B",];
 theta <- thetaA + thetaB;
@@ -68,10 +75,57 @@ Blim <- c(0,1);
 tlab <- expression(log[2](theta));
 Blab <- expression(theta[B]/theta);
 
-layout(matrix(1:ncol(theta), ncol=2, byrow=TRUE));
+nbrOfArrays <- ncol(theta);
+layout(matrix(1:nbrOfArrays, ncol=2, byrow=TRUE));
 par(mar=c(3.8,4,3,1)+0.1);
-for (kk in seq(length=ncol(theta))) {
+for (kk in seq(length=nbrOfArrays)) {
   name <- colnames(theta)[kk];
   smoothScatter(log2(theta[,kk]), freqB[,kk], 
                 xlim=tlim, ylim=Blim, xlab=tlab, ylab=Blab, main=name);
 }
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Extract (log2(total), freqB)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+data <- extractTotalAndFreqB(ces, verbose=log);
+data[,1,] <- log2(data[,1,]);
+
+tlim <- c(9,15);
+
+upperPanel <- function(x,y, pch=".", ...) {
+  xy <- data[,1,c(x,y)];
+  xy <- (xy - tlim[1])/diff(tlim);
+  abline(a=0,b=1, col="#999999");
+  points(xy, pch=pch);
+}
+
+lowerPanel <- function(x,y, pch=".", ...) {
+  xy <- data[,2,c(x,y)];
+  abline(a=0,b=1, col="#999999");
+  abline(a=1,b=-1, col="#999999");
+  points(xy, pch=pch);
+}
+
+diagPanel <- function(x, pch=".", ...) {
+  xy <- data[,,x];
+  xy[,1] <- (xy[,1] - tlim[1])/diff(tlim);
+  geneplotter::smoothScatter(xy, add=TRUE);
+  abline(h=1/2, col="#999999");
+}
+
+pairs <- matrix(1:nbrOfArrays, nrow=1, ncol=nbrOfArrays);
+colnames(pairs) <- dimnames(data)[[length(dim)]];
+
+
+filename <- sprintf("%s,pairs.png", getFullName(ces));
+pathname <- filePath(figPath, filename);
+
+if (imgFormat == "png")
+  pngDev(pathname, width=1024, height=1024);
+
+pairs(pairs, upper.panel=upperPanel, lower.panel=lowerPanel, 
+             diag.panel=diagPanel, xlim=c(0,1), ylim=c(0,1));
+
+if (imgFormat != "screen")
+  dev.off();
