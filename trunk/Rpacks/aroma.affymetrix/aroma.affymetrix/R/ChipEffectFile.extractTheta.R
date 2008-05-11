@@ -3,6 +3,7 @@ setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, groups=
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   cdf <- getCdf(this);
+
   # Argument 'units':
   if (is.null(units)) {
     nbrOfUnits <- nbrOfUnits(cdf);
