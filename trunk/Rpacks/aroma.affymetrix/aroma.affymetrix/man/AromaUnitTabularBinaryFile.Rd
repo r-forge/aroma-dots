@@ -48,7 +48,7 @@ extends \link[aroma.core]{AromaTabularBinaryFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{allocateFromCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:allocateFromCdf.AromaUnitTabularBinaryFile]{allocateFromCdf}} \tab Creates an AromaUnitTabularBinaryFile mapping to a given CDF.\cr
  \tab \code{as.character} \tab  -\cr
  \tab \code{byChipType} \tab  -\cr
  \tab \code{fromChipType} \tab  -\cr

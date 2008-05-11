@@ -112,11 +112,7 @@
   extractRawCopyNumbers
   extractRawCopyNumbers.CopyNumberChromosomalModel
   extractRawCopyNumbers.DNAcopy extractRawCopyNumbers.profileCGH
-  extractRawCopyNumbers.SCPfit extractSumAndFreqB
-  extractSumAndFreqB.CnChipEffectFile
-  extractSumAndFreqB.SnpChipEffectFile extractThetaMatrix
-  extractThetaMatrix.ChipEffectFile extractThetaMatrix.CnChipEffectFile
-  extractThetaMatrix.SnpChipEffectFile findByCdf2 findByCdf2.default
+  extractRawCopyNumbers.SCPfit findByCdf2 findByCdf2.default
   findByChipType findByChipType.AffymetrixCsvFile
   findByChipType.AffymetrixCsvGenomeInformation
   findByChipType.AffymetrixNetAffxCsvFile
@@ -664,4 +660,14 @@
   writeRegions.ChromosomeExplorer
   writeRegions.CopyNumberSegmentationModel writeRegions.GladModel
   writeRegions.profileCGH writeWig writeWig.CnChipEffectSet
-
+  as.character.AromaChipTypeAnnotationFile extractTheta
+  extractTheta.ChipEffectFile extractTheta.ChipEffectSet
+  extractTheta.CnChipEffectFile extractTheta.CnChipEffectSet
+  extractTheta.SnpChipEffectFile extractTheta.SnpChipEffectSet
+  extractTotalAndFreqB extractTotalAndFreqB.CnChipEffecSet
+  extractTotalAndFreqB.CnChipEffectFile
+  extractTotalAndFreqB.SnpChipEffectFile
+  extractTotalAndFreqB.SnpChipEffectSet
+  fromChipType.AromaChipTypeAnnotationFile
+  getChipType.AromaChipTypeAnnotationFile getPlatform.AffymetrixCdfFile
+  getPlatform.AromaChipTypeAnnotationFile

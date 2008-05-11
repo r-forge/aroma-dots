@@ -57,6 +57,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{extractTheta} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getBaseline} \tab  -\cr
  \tab \code{getCombineAlleles} \tab  -\cr
@@ -66,10 +67,10 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 
  \bold{Methods inherited from SnpChipEffectSet}:\cr
-fromFiles, getAverageFile, getBaseline, getMergeStrands, setMergeStrands
+extractTheta, extractTotalAndFreqB, fromFiles, getAverageFile, getBaseline, getMergeStrands, setMergeStrands
 
  \bold{Methods inherited from ChipEffectSet}:\cr
-boxplotStats, calculateBaseline, calculateFieldBoxplotStats, calculateNuseBoxplotStats, calculateRleBoxplotStats, extractMatrix, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAsFullCelSet, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, plotBoxplot, readUnits, updateUnits
+boxplotStats, calculateBaseline, calculateFieldBoxplotStats, calculateNuseBoxplotStats, calculateRleBoxplotStats, extractMatrix, extractTheta, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAsFullCelSet, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, plotBoxplot, readUnits, updateUnits
 
  \bold{Methods inherited from ParameterCelSet}:\cr
 extractDataFrame, extractMatrix

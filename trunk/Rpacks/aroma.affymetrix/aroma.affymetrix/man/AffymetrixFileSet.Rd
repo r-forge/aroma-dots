@@ -48,8 +48,8 @@ extends \link[aroma.core]{AromaMicroarrayDataSet}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{as} \tab  -\cr
- \tab \code{as.AffymetrixFileSet} \tab  -\cr
- \tab \code{fromFiles} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:as.AffymetrixFileSet.AffymetrixFileSet]{as.AffymetrixFileSet}} \tab Coerce an object to an AffymetrixFileSet object.\cr
+ \tab \code{\link[aroma.affymetrix:fromFiles.AffymetrixFileSet]{fromFiles}} \tab Defines an AffymetrixFileSet object by searching for Affymetrix files.\cr
 }
 
 

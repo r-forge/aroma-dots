@@ -37,9 +37,6 @@
   \item{...}{Not used.}
 }
 
-\value{
-}
-
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{

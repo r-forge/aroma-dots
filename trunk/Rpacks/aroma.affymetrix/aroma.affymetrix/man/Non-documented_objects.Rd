@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Sun May 11 11:56:42 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -268,13 +270,6 @@
 \alias{extractRawCopyNumbers.DNAcopy}
 \alias{extractRawCopyNumbers.profileCGH}
 \alias{extractRawCopyNumbers.SCPfit}
-\alias{extractSumAndFreqB}
-\alias{extractSumAndFreqB.CnChipEffectFile}
-\alias{extractSumAndFreqB.SnpChipEffectFile}
-\alias{extractThetaMatrix}
-\alias{extractThetaMatrix.ChipEffectFile}
-\alias{extractThetaMatrix.CnChipEffectFile}
-\alias{extractThetaMatrix.SnpChipEffectFile}
 \alias{findByCdf2}
 \alias{findByCdf2.default}
 \alias{findByChipType}
@@ -1409,6 +1404,23 @@
 \alias{writeRegions.profileCGH}
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
+\alias{as.character.AromaChipTypeAnnotationFile}
+\alias{extractTheta}
+\alias{extractTheta.ChipEffectFile}
+\alias{extractTheta.ChipEffectSet}
+\alias{extractTheta.CnChipEffectFile}
+\alias{extractTheta.CnChipEffectSet}
+\alias{extractTheta.SnpChipEffectFile}
+\alias{extractTheta.SnpChipEffectSet}
+\alias{extractTotalAndFreqB}
+\alias{extractTotalAndFreqB.CnChipEffecSet}
+\alias{extractTotalAndFreqB.CnChipEffectFile}
+\alias{extractTotalAndFreqB.SnpChipEffectFile}
+\alias{extractTotalAndFreqB.SnpChipEffectSet}
+\alias{fromChipType.AromaChipTypeAnnotationFile}
+\alias{getChipType.AromaChipTypeAnnotationFile}
+\alias{getPlatform.AffymetrixCdfFile}
+\alias{getPlatform.AromaChipTypeAnnotationFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

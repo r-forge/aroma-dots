@@ -53,7 +53,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{append} \tab  -\cr
  \tab \code{as} \tab  -\cr
- \tab \code{as.AffymetrixCelSet} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:as.AffymetrixCelSet.AffymetrixCelSet]{as.AffymetrixCelSet}} \tab Coerce an object to an AffymetrixCelSet object.\cr
  \tab \code{byName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:extractAffyBatch.AffymetrixCelSet]{extractAffyBatch}} \tab Extracts an in-memory AffyBatch object from the CEL set.\cr
  \tab \code{\link[aroma.affymetrix:extractMatrix.AffymetrixCelSet]{extractMatrix}} \tab Extract data as a matrix for a set of arrays.\cr
@@ -61,21 +61,21 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{fromName} \tab  -\cr
  \tab \code{getAverage} \tab  -\cr
  \tab \code{getAverageAsinh} \tab  -\cr
- \tab \code{getAverageFile} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getAverageFile.AffymetrixCelSet]{getAverageFile}} \tab Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set.\cr
  \tab \code{getAverageLog} \tab  -\cr
- \tab \code{getCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
  \tab \code{getData} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
- \tab \code{getIntensities} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getIntensities.AffymetrixCelSet]{getIntensities}} \tab Gets cell intensities from a set of cells and a set of arrays.\cr
  \tab \code{getTimestamps} \tab  -\cr
  \tab \code{getUnitGroupCellMap} \tab  -\cr
- \tab \code{getUnitIntensities} \tab  -\cr
- \tab \code{isDuplicated} \tab  -\cr
- \tab \code{nbrOfArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
+ \tab \code{\link[aroma.affymetrix:isDuplicated.AffymetrixCelSet]{isDuplicated}} \tab Identifies duplicated CEL files.\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelSet]{plotDensity}} \tab Plots the densities of all samples.\cr
  \tab \code{range} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
- \tab \code{setCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:setCdf.AffymetrixCelSet]{setCdf}} \tab Sets the CDF structure for this CEL set.\cr
 }
 
 
