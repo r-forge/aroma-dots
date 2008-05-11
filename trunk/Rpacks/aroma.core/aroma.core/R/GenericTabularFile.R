@@ -466,7 +466,7 @@ setMethodS3("dim", "GenericTabularFile", function(x) {
   this <- x;
 
   c(nbrOfRows(this), nbrOfColumns(this));
-})
+}, appendVarArgs=FALSE)
 
 
 ############################################################################

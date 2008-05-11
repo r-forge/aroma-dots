@@ -92,10 +92,11 @@
   mergeBoxplotStats normalizeGenotypeCone normalizeGenotypeCone.matrix
   print.Interface rescale rescale.Image rgbTransform rgbTransform.Image
   smoothWRMA smoothWRMA.matrix smoothWSA smoothWSA.matrix sqrtabs
-  sqrtcenter sqrtneg sqrtpos uses uses.Interface whatDataType
-  whatDataType.default
+  sqrtcenter sqrtneg sqrtpos uses uses.Interface uses.character
+  whatDataType whatDataType.default
   as.AromaMicroarrayDataSet clearCache.AromaMicroarrayDataSet
   getChipType getChipType.AromaMicroarrayDataFile
   getChipType.AromaMicroarrayDataSet getLabel.AromaMicroarrayDataFile
   getPlatform getPlatform.AromaMicroarrayDataFile
   getPlatform.AromaMicroarrayDataSet setLabel.AromaMicroarrayDataFile
+  AromaMicroarrayDataFileSet
