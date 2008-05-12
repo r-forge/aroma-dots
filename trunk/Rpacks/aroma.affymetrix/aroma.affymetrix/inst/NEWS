@@ -1,14 +1,19 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.2.1 [2008-05-11]
+
+
 Version: 0.9.2 [2008-05-10]
 o MAJOR: Moved all methods and classes that are independent of
   platform (e.g. GenericDataFile) to a new package aroma.core.
+o Package passes all redundancy tests (which takes approx 24 
+  hours to run) on R v2.6.1 on Linux.
 o ALPHA: Inserted new classes AromaMicroarrayData{File|Set} and
   AromaChipTypeAnnotationFile into the class hierarchy.
 
 
-Version: 0.9.1.4 [2008-05-09] (Never publically released)
+Version: 0.9.1.4 [2008-05-09] (Never released)
 o Added byName() to AffymetrixCdfFile, which is identical to byChipType().
 o Added argument 'rows' to readDataFrame() for GenericTabularFile.
 o SPEEDUP: The internal getUnitGroupNamesFromUgcMap() for AffymetrixCdfFile
