@@ -1,12 +1,12 @@
 ###########################################################################/**
-# @RdocClass AromaTotalCghBinaryFile
+# @RdocClass AromaFreqBCnBinaryFile
 #
-# @title "The AromaTotalCghBinaryFile class"
+# @title "The AromaFreqBCnBinaryFile class"
 #
 # \description{
 #  @classhierarchy
 #
-#  An AromaTotalCghBinaryFile is a @see "AromaTabularBinaryFile".
+#  An AromaFreqBCnBinaryFile is a @see "AromaTabularBinaryFile".
 # }
 # 
 # @synopsis
@@ -21,8 +21,8 @@
 # 
 # @author
 #*/########################################################################### 
-setConstructorS3("AromaTotalCghBinaryFile", function(...) {
-  extend(AromaSignalBinaryFile(...), "AromaTotalCghBinaryFile"
+setConstructorS3("AromaFreqBCnBinaryFile", function(...) {
+  extend(AromaSignalBinaryFile(...), "AromaFreqBCnBinaryFile"
   );
 })
 
