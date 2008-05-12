@@ -41,8 +41,6 @@ setConstructorS3("GenericDataFileSet", function(files=NULL, tags="*", alias=NULL
         throw("Argument 'files' contains a non-", reqFileClass, 
                                                   " object: ", class(df)[1]);
     })
-  } else if (inherits(files, "GenericDataFileSet")) {
-    return(as.GenericDataFileSet(files));
   } else {
     throw("Argument 'files' is of unknown type: ", mode(files));
   }
@@ -922,46 +920,6 @@ setMethodS3("extract", "GenericDataFileSet", function(this, files, ...) {
 })
 
 
-###########################################################################/**
-# @RdocMethod as.GenericDataFileSet
-# @alias as.GenericDataFileSet.list
-# @alias as.GenericDataFileSet.default
-#
-# @title "Coerce an object to an GenericDataFileSet object"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Other arguments passed to @see "base::list.files".}
-# }
-#
-# \value{
-#   Returns an @see "GenericDataFileSet" object.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("as.GenericDataFileSet", "GenericDataFileSet", function(object, ...) {
-  object;
-})
-
-setMethodS3("as.GenericDataFileSet", "list", function(object, ...) {
-  GenericDataFileSet(object, ...);
-})
-
-
-setMethodS3("as.GenericDataFileSet", "default", function(object, ...) {
-  throw("Cannot coerce object to an GenericDataFileSet object: ", mode(object));
-})
-
 
 setMethodS3("clearCache", "GenericDataFileSet", function(this, ...) {
   # Clear the cache of all files
@@ -1173,29 +1131,27 @@ setMethodS3("findByName", "GenericDataFileSet", function(static, name, tags=NULL
 
   # Look for existing directories
   paths <- paths[sapply(paths, FUN=isDirectory)];
-  if (length(paths) == 0)
-    return(NULL);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Identify existing subdirectories
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!is.null(subdirs)) {
-    if (length(subdirs) > 1)
-      subdirs <- do.call("file.path", subdirs);
-    paths <- file.path(paths, subdirs);
-    paths <- paths[sapply(paths, FUN=isDirectory)];
-    if (length(paths) == 0)
-      return(NULL);
-  }
-
-  if (length(paths) > 1) {
-    warning("Found duplicated data set: ", paste(paths, collapse=", "));
-    paths <- paths[1];
+  if (length(paths) > 0) {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Identify existing subdirectories
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (!is.null(subdirs)) {
+      if (length(subdirs) > 1)
+        subdirs <- do.call("file.path", subdirs);
+      paths <- file.path(paths, subdirs);
+      paths <- paths[sapply(paths, FUN=isDirectory)];
+    }
+  
+    if (length(paths) > 1) {
+      warning("Found duplicated data set: ", paste(paths, collapse=", "));
+      paths <- paths[1];
+    }
   }
   
-  if (mustExist) {
-    if (is.null(paths)) {
+  if (length(paths) == 0) {
+    paths <- NULL;
+
+    if (mustExist) {
       msg <- sprintf("Failed to locate data set '%s'", fullname);
       if (!is.null(subdirs))
         msg <- sprintf("%s (in subdirectory '%s')", msg, subdirs);

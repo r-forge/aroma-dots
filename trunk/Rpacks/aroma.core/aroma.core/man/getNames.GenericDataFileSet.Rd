@@ -22,8 +22,7 @@
 \usage{\method{getNames}{GenericDataFileSet}(this, ...)}
 
 \arguments{
- \item{...}{Arguments passed to \code{getName()} of each
-                                                  \code{\link{GenericDataFile}}.}
+ \item{...}{Arguments passed to \code{getName()} of each file.}
 }
 
 \value{

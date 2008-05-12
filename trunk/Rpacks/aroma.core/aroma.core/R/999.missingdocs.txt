@@ -3,7 +3,7 @@
   append.GenericDataFileSet appendFiles appendFiles.GenericDataFileSet
   apply apply.default apply.SampleAnnotationFile
   as.character.AromaTabularBinaryFile as.character.GenericTabularFile
-  as.GenericDataFileSet calcMargins calcMargins.matrix
+  calcMargins calcMargins.matrix
   clearCache.AromaTabularBinaryFile clearCache.GenericDataFileSet
   clone.GenericDataFile clone.GenericDataFileSet colMeans
   colMeans.AromaTabularBinaryFile colMeans.default
@@ -94,9 +94,15 @@
   smoothWRMA smoothWRMA.matrix smoothWSA smoothWSA.matrix sqrtabs
   sqrtcenter sqrtneg sqrtpos uses uses.Interface uses.character
   whatDataType whatDataType.default
-  as.AromaMicroarrayDataSet clearCache.AromaMicroarrayDataSet
+  clearCache.AromaMicroarrayDataSet
   getChipType getChipType.AromaMicroarrayDataFile
   getChipType.AromaMicroarrayDataSet getLabel.AromaMicroarrayDataFile
   getPlatform getPlatform.AromaMicroarrayDataFile
   getPlatform.AromaMicroarrayDataSet setLabel.AromaMicroarrayDataFile
   AromaMicroarrayDataFileSet
+  byName byName.GenericDataFileSet extractMatrix
+  extractMatrix.AromaTabularBinaryFile
+  extractMatrix.AromaTabularBinarySet findByName
+  findByName.GenericDataFileSet getFileClass
+  getFileClass.GenericDataFileSet validate.AromaMicroarrayDataSet
+  validate.GenericDataFileSet

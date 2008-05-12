@@ -26,7 +26,7 @@
 }
 
 \value{
- Returns a \code{\link[base]{list}} of \code{\link{GenericDataFile}}s.
+ Returns a \code{\link[base]{list}} of files, each of class \code{\link{getFileClass}}().
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

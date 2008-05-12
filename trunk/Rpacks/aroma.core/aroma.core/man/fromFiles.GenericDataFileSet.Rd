@@ -19,8 +19,8 @@
   Defines an GenericDataFileSet object by searching for files.
 }
 
-\synopsis{fromFiles.GenericDataFileSet(static, path=NULL, pattern=NULL, recursive=FALSE, fileClass="GenericDataFile", ..., verbose=FALSE)}
-\usage{GenericDataFileSet$fromFiles(path=NULL, pattern=NULL, recursive=FALSE, fileClass="GenericDataFile", ..., verbose=FALSE)}
+\synopsis{fromFiles.GenericDataFileSet(static, path=NULL, pattern=NULL, recursive=FALSE, fileClass=getFileClass(static), ..., .validate=FALSE, verbose=FALSE)}
+\usage{GenericDataFileSet$fromFiles(path=NULL, pattern=NULL, recursive=FALSE, fileClass=getFileClass(static), ..., .validate=FALSE, verbose=FALSE)}
 
 \arguments{
  \item{path}{The path where to search for files.}
