@@ -55,6 +55,7 @@ extends \link[aroma.core]{GenericDataFile}\cr
  \tab \code{colSums} \tab  -\cr
  \tab \code{dim} \tab  -\cr
  \tab \code{dimnames<-} \tab  -\cr
+ \tab \code{extractMatrix} \tab  -\cr
  \tab \code{getBytesPerColumn} \tab  -\cr
  \tab \code{getColClasses} \tab  -\cr
  \tab \code{getColumnNames} \tab  -\cr

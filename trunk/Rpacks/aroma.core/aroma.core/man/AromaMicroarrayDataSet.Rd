@@ -45,17 +45,13 @@ extends \link[aroma.core]{GenericDataFileSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{as} \tab  -\cr
- \tab \code{\link[aroma.core:as.AromaMicroarrayDataSet.AromaMicroarrayDataSet]{as.AromaMicroarrayDataSet}} \tab Coerce an object to an AromaMicroarrayDataSet object.\cr
- \tab \code{clearCache} \tab  -\cr
- \tab \code{\link[aroma.core:fromFiles.AromaMicroarrayDataSet]{fromFiles}} \tab Defines an AromaMicroarrayDataSet object by searching for data files.\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getPlatform} \tab  -\cr
 }
 
 
  \bold{Methods inherited from GenericDataFileSet}:\cr
-append, appendFiles, as, as.GenericDataFileSet, as.list, clearCache, copyTo, extract, fromFiles, getAlias, getFile, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags
+append, appendFiles, as, as.GenericDataFileSet, as.list, byName, clearCache, copyTo, extract, findByName, fromFiles, getAlias, getFile, getFileClass, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags, validate
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

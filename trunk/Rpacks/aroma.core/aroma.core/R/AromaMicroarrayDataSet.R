@@ -32,7 +32,7 @@ setMethodS3("validate", "AromaMicroarrayDataSet", function(this, ...) {
   chipTypes <- lapply(this, FUN=getChipType);
   chipTypes <- unique(chipTypes);
   if (length(chipTypes) > 1) {
-    throw("The located ", class(res)[1], " contains files with different chip types: ", paste(chipTypes, collapse=", "));
+    throw("The located ", class(this)[1], " contains files with different chip types: ", paste(chipTypes, collapse=", "));
   }
 
   NextMethod("validate", this, ...);

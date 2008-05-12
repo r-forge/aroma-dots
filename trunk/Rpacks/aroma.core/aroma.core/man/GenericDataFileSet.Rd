@@ -22,7 +22,7 @@
 \code{~~+--}\code{GenericDataFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.core]{AromaMicroarrayDataSet}, \link[aroma.core]{SampleAnnotationSet}\cr
+\link[aroma.core]{AromaMicroarrayDataSet}, \link[aroma.core]{AromaTabularBinarySet}, \link[aroma.core]{SampleAnnotationSet}\cr
 
 public static class \bold{GenericDataFileSet}\cr
 extends \link[R.oo]{Object}\cr
@@ -53,11 +53,14 @@ extends \link[R.oo]{Object}\cr
  \tab \code{as} \tab  -\cr
  \tab \code{\link[aroma.core:as.GenericDataFileSet.GenericDataFileSet]{as.GenericDataFileSet}} \tab Coerce an object to an GenericDataFileSet object.\cr
  \tab \code{\link[aroma.core:as.list.GenericDataFileSet]{as.list}} \tab Returns the files of the file set.\cr
+ \tab \code{byName} \tab  -\cr
  \tab \code{clearCache} \tab  -\cr
  \tab \code{\link[aroma.core:extract.GenericDataFileSet]{extract}} \tab Extract a subset of the file set.\cr
+ \tab \code{findByName} \tab  -\cr
  \tab \code{\link[aroma.core:fromFiles.GenericDataFileSet]{fromFiles}} \tab Defines an GenericDataFileSet object by searching for files.\cr
  \tab \code{\link[aroma.core:getAlias.GenericDataFileSet]{getAlias}} \tab Gets the alias of the file set.\cr
  \tab \code{getFile} \tab  -\cr
+ \tab \code{getFileClass} \tab  -\cr
  \tab \code{getFileSize} \tab  -\cr
  \tab \code{\link[aroma.core:getFullName.GenericDataFileSet]{getFullName}} \tab Gets the full name of the file set.\cr
  \tab \code{getFullNames} \tab  -\cr
@@ -75,6 +78,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.core:seq.GenericDataFileSet]{seq}} \tab Gets an vector of file indices.\cr
  \tab \code{\link[aroma.core:setAlias.GenericDataFileSet]{setAlias}} \tab Sets the alias of the file set.\cr
  \tab \code{\link[aroma.core:setTags.GenericDataFileSet]{setTags}} \tab Sets the tags of the file set.\cr
+ \tab \code{validate} \tab  -\cr
 }
 
 

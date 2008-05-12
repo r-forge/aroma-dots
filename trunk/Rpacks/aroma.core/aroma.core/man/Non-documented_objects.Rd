@@ -26,7 +26,6 @@
 \alias{apply.SampleAnnotationFile}
 \alias{as.character.AromaTabularBinaryFile}
 \alias{as.character.GenericTabularFile}
-\alias{as.GenericDataFileSet}
 \alias{calcMargins}
 \alias{calcMargins.matrix}
 \alias{clearCache.AromaTabularBinaryFile}
@@ -288,7 +287,6 @@
 \alias{uses.character}
 \alias{whatDataType}
 \alias{whatDataType.default}
-\alias{as.AromaMicroarrayDataSet}
 \alias{clearCache.AromaMicroarrayDataSet}
 \alias{getChipType}
 \alias{getChipType.AromaMicroarrayDataFile}
@@ -299,6 +297,17 @@
 \alias{getPlatform.AromaMicroarrayDataSet}
 \alias{setLabel.AromaMicroarrayDataFile}
 \alias{AromaMicroarrayDataFileSet}
+\alias{byName}
+\alias{byName.GenericDataFileSet}
+\alias{extractMatrix}
+\alias{extractMatrix.AromaTabularBinaryFile}
+\alias{extractMatrix.AromaTabularBinarySet}
+\alias{findByName}
+\alias{findByName.GenericDataFileSet}
+\alias{getFileClass}
+\alias{getFileClass.GenericDataFileSet}
+\alias{validate.AromaMicroarrayDataSet}
+\alias{validate.GenericDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
