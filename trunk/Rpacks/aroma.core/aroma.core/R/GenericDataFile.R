@@ -532,9 +532,13 @@ setMethodS3("fromFile", "GenericDataFile", function(static, filename, path=NULL,
     }, error = function(ex) {})
   }
 
-  throw("Could not read file '", pathname, "'.", 
-             "Tried using all known subclasses of ", class(static)[1], ": ", 
-                                     paste(knownSubclasses, collapse=", "));
+  # If not "read" above, just create an instance as is.
+  res <- newInstance(static, filename=pathname, ...);
+  return(res);
+
+##  throw("Could not read file '", pathname, "'.", 
+##             "Tried using all known subclasses of ", class(static)[1], ": ", 
+##                                     paste(knownSubclasses, collapse=", "));
 }, static=TRUE)
 
 
@@ -781,6 +785,8 @@ setMethodS3("renameToUpperCaseExt", "GenericDataFile", function(static, pathname
 
 ############################################################################
 # HISTORY:
+# 2008-05-11
+# o Now static fromFile() always creates an instance.
 # 2008-05-09
 # o Moved private get/seLabel() from AffymetrixFile to GenericDataFile.
 # o Moved the attributes features from AffymetrixFile to GenericDataFile.

@@ -1184,8 +1184,36 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 })
 
 
+setMethodS3("extractMatrix", "AromaTabularBinaryFile", function(this, column=1, drop=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  nbrOfColumns <- nbrOfColumns(this);
+
+  # Argument 'column':
+  column <- Arguments$getIndex(column, range=c(1, nbrOfColumns));
+
+  # Read data as data frame
+  data <- readDataFrame(this, column=column, ...);
+
+  # Drop dimension
+  data <- data[,1];
+
+  # Coerce into a matrix?
+  if (!drop) {
+    data <- as.matrix(data);
+  }
+
+  data;
+})
+
+
+
 ############################################################################
 # HISTORY:
+# 2008-05-11
+# o Added extractMatrix() with returns a matrix with one column.  This
+#   will be used by the corresponding method for the file set.
 # 2008-04-14
 # o Renamed readData() to readDataFrame() for AromaTabularBinaryFile.
 # 2008-02-13
