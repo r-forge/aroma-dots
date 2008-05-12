@@ -35,7 +35,7 @@ setConstructorS3("GenericDataFileSet", function(files=NULL, tags="*", alias=NULL
   # Arguments 'files':
   if (is.null(files)) {
   } else if (is.list(files)) {
-    reqFileClass <- "GenericDataFile";
+    reqFileClass <- GenericDataFileSet$getFileClass();
     base::lapply(files, FUN=function(df) {
       if (!inherits(df, reqFileClass))
         throw("Argument 'files' contains a non-", reqFileClass, 
@@ -141,6 +141,24 @@ setMethodS3("clone", "GenericDataFileSet", function(this, clear=TRUE, ...) {
 
   object;
 }, private=TRUE)
+
+
+
+setMethodS3("getFileClass", "GenericDataFileSet", function(static, ...) {
+  # By default, infer the file class from the set class.
+  name <- class(static)[1];
+  name <- gsub("Set$", "", name);
+  if (regexpr("File$", name) == -1) {
+    name <- paste(name, "File", sep="");
+  }
+  name;
+}, static=TRUE, protected=FALSE)
+
+
+
+setMethodS3("validate", "GenericDataFileSet", function(this, ...) {
+  invisible(TRUE);
+}, protected=FALSE)
 
 
 
@@ -647,8 +665,7 @@ setMethodS3("reorder", "GenericDataFileSet", function(x, order, ...) {
 # @synopsis
 #
 # \arguments{
-#  \item{...}{Arguments passed to \code{getName()} of each 
-#                                                   @see "GenericDataFile".}
+#  \item{...}{Arguments passed to \code{getName()} of each file.}
 # }
 #
 # \value{
@@ -775,7 +792,7 @@ setMethodS3("seq", "GenericDataFileSet", function(this, ...) {
 # }
 #
 # \value{
-#  Returns a @list of @see "GenericDataFile"s.
+#  Returns a @list of files, each of class @see "getFileClass".
 # }
 #
 # @author
@@ -995,7 +1012,7 @@ setMethodS3("clearCache", "GenericDataFileSet", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("fromFiles", "GenericDataFileSet", function(static, path=NULL, pattern=NULL, recursive=FALSE, fileClass="GenericDataFile", ..., verbose=FALSE) {
+setMethodS3("fromFiles", "GenericDataFileSet", function(static, path=NULL, pattern=NULL, recursive=FALSE, fileClass=getFileClass(static), ..., .validate=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1009,8 +1026,10 @@ setMethodS3("fromFiles", "GenericDataFileSet", function(static, path=NULL, patte
   # Argument 'fileClass':
   clazz <- Class$forName(fileClass);
   dfStatic <- getStaticInstance(clazz);
-  if (!inherits(dfStatic, "GenericDataFile"))
-    throw("Argument 'fileClass' is not refering to an GenericDataFile class: ", paste(class(dfStatic), collapse=", "));
+  if (!inherits(dfStatic, getFileClass(static))) {
+    throw("Argument 'fileClass' is not refering to an ", getFileClass(static),
+                           " class: ", paste(class(dfStatic), collapse=", "));
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -1075,6 +1094,11 @@ setMethodS3("fromFiles", "GenericDataFileSet", function(static, path=NULL, patte
   set <- newInstance(static, files, ...);
   verbose && exit(verbose);
 
+  # Validate?
+  if (.validate) {
+    validate(set, verbose=less(verbose, 5));
+  }
+
   verbose && exit(verbose);
 
   set;
@@ -1115,8 +1139,94 @@ setMethodS3("copyTo", "GenericDataFileSet", function(this, path=NULL, ..., verbo
   res;
 }, protected=TRUE)
 
+
+
+setMethodS3("findByName", "GenericDataFileSet", function(static, name, tags=NULL, subdirs=NULL, paths=NULL, ..., mustExist=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'paths':
+  if (is.null(paths)) {
+    paths <- ".";
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify existing root directories
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  paths <- sapply(paths, FUN=filePath, expandLinks="any");
+  paths0 <- paths;
+  paths <- paths[sapply(paths, FUN=isDirectory)];
+  if (length(paths) == 0) {
+    throw("None of the data directories exist: ", 
+                                           paste(paths0, collapse=", "));
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify existing data set directories
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # The full name of the data set
+  fullname <- paste(c(name, tags), collapse=",");
+
+  # Look for matching data sets
+  paths <- file.path(paths, fullname);
+
+  # Look for existing directories
+  paths <- paths[sapply(paths, FUN=isDirectory)];
+  if (length(paths) == 0)
+    return(NULL);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify existing subdirectories
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!is.null(subdirs)) {
+    if (length(subdirs) > 1)
+      subdirs <- do.call("file.path", subdirs);
+    paths <- file.path(paths, subdirs);
+    paths <- paths[sapply(paths, FUN=isDirectory)];
+    if (length(paths) == 0)
+      return(NULL);
+  }
+
+  if (length(paths) > 1) {
+    warning("Found duplicated data set: ", paste(paths, collapse=", "));
+    paths <- paths[1];
+  }
+  
+  if (mustExist) {
+    if (is.null(paths)) {
+      msg <- sprintf("Failed to locate data set '%s'", fullname);
+      if (!is.null(subdirs))
+        msg <- sprintf("%s (in subdirectory '%s')", msg, subdirs);
+      throw(msg);
+    }
+  }
+
+  paths;
+}, static=TRUE) 
+
+
+setMethodS3("byName", "GenericDataFileSet", function(static, name, tags=NULL, ...) {
+  suppressWarnings({
+    path <- findByName(static, name=name, tags=tags, ..., mustExist=TRUE);
+  })
+
+  suppressWarnings({
+    fromFiles(static, path=path, ...);
+  })
+}, static=TRUE) 
+
+
+
 ############################################################################
 # HISTORY:
+# 2008-05-11
+# o Added static findByName() and byName() to GenericDataFileSet.
+# o If argument '.validate' to fromFiles() is TRUE, validate() is called.
+# o Added validate().
+# o Now argument 'fileClass' of fromFiles() defaults to getFileClass().
+# o Added static and protected getFileClass().
 # 2008-03-22
 # o Now getNames() of GenericDataFileSet passes '...' to getName() of 
 #   each file.

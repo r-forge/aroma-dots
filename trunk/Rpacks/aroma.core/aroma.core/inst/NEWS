@@ -1,6 +1,17 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.2.1 [2008-05-11]
+o Added static findByName() and byName() to GenericDataFileSet.
+o Added static getFileClass() to GenericDataFileSet.  This makes it
+  possible to remove most fromFiles() from subclasses but also
+  the validation of argument 'files' of their constructors.
+o Added validate() to GenericDataFileSet, which is called at the
+  end of fromFiles(..., .validate=TRUE).
+o Added extractMatrix to AromaTabularBinary(File|Set).
+o Added class AromaTabularBinarySet.
+
+
 Version: 0.9.2 [2008-05-10]
 o Took all core classes and core methods in aroma.affymetrix that
   are independent of the Affymetrix platform and placed the here.
