@@ -1,3 +1,44 @@
+# (thetaA,thetaB) -> (theta, freqB)
+#  theta = thetaA+thetaB
+#  freqB = thetaB/theta
+#
+# (thetaA,thetaB) -> (theta, freqB)
+#  thetaB = freqB*theta
+#  thetaA = theta - thetaB = (1 - freqB)*theta
+#
+# (thetaA, thetaB) => (theta, freqB)
+# ----------------------------------
+#   (0,0) => (0, NA) => (NA,NA)***
+#   (0,eps) => (eps, 1) => (0,eps)
+#   (1,0) => (1,  0) => (1,0)
+#   (0,1) => (1,  1) => (0,1)
+#   (1,1) => (2,1/2) => (1,1)
+#   (2,0) => (2,  0) => (2,0)
+#   (1,1) => (2,1/2) => (1,1)
+#   (0,2) => (2,  1) => (0,2)
+#   (3,0) => (3,  0) => (3,0)
+#   (2,1) => (3,1/3) => (2,1)
+#   (1,2) => (3,2/3) => (1,2)
+#   (0,3) => (3,  1) => (0,3)
+#
+#  (-1, 0) => (-1,  0) => (-1,  0)
+#  ( 0,-1) => (-1,  1) => ( 0, -1)
+#  (-2, 0) => (-2,  0) => (-2,  0)
+#  (-1,-1) => (-2,1/2) => (-1, -1)
+#  ( 0,-2) => (-2,  1) => ( 0, -2)
+#  (-3, 0) => (-3,  0) => (-3,  0)
+#  (-2,-1) => (-3,1/3) => (-2, -1)
+#  (-1,-2) => (-3,2/3) => (-1, -2)
+#  ( 0,-3) => (-3,  1) => ( 0, -3)
+#
+#  (-1, 1) => ( 0, NA)  => (NA, NA)***
+#  (-1, 2) => ( 1,   2) => (-1,  2)
+#  (-2, 1) => (-1,  -1) => (-2,  1)
+#  (-1, 3) => ( 2, 3/2) => (-1,  3)
+#  (-2, 4) => ( 2,   2) => (-2,  4)
+#  (-3, 1) => (-2,-1/2) => (-3,  1)
+#
+
 setMethodS3("extractTotalAndFreqB", "CnChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -202,11 +243,12 @@ setMethodS3("extractTotalAndFreqB", "SnpChipEffectFile", function(this, units=NU
 })
 
 
-
-
-
 ############################################################################
 # HISTORY:
+# 2008-05-11
+# o The (thetaA,thetaB) -> (theta, freqB) is bijective *except* when 
+#   theta = thetaA+thetaB = 0.  With the assumption that thetaA,thetaB > 0
+#   then it is truly bijective.
 # 2008-05-10
 # o Now extractTotalAndFreqB() takes and UGC map via argument 'units'.
 # 2008-05-09
