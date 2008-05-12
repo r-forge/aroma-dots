@@ -250,8 +250,8 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, fileHeader=
 
 
   # Default column classes
-  if (this$readColumnNames) {
-    columns <- getColumnNames(this);
+  columns <- getColumnNames(this);
+  if (!is.null(columns)) {
     nbrOfColumns <- length(columns);
     defColClasses <- rep(defColClass, nbrOfColumns);
     defColClassPatterns <- defColClasses;
@@ -301,7 +301,8 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, fileHeader=
       }
     }
   } else {
-    colClasses <- NULL;
+    args <- list(...);
+    colClasses <- args$colClasses;
   }
   
   verbose && cat(verbose, "Column classes:", level=-20);
@@ -309,7 +310,8 @@ setMethodS3("getReadArguments", "GenericTabularFile", function(this, fileHeader=
 
   # Inferred arguments
   args <- list(
-    header      = FALSE,
+    header      = this$readColumnNames,
+    skip        = fileHeader$skip,
     colClasses  = colClasses,
     sep         = fileHeader$sep,
     quote       = fileHeader$quote,
@@ -353,6 +355,41 @@ setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, rows
 
   verbose && enter(verbose, "Reading ", class(this)[1]);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Reading header to infer read.table() arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  hdr <- readHeader(this, verbose=less(verbose, 5));
+
+  # Get read arguments
+  args <- getReadArguments(this, fileHeader=hdr, nrow=nrow, ..., 
+                                               verbose=less(verbose, 5));
+
+  verbose && cat(verbose, "Arguments inferred from file header:");
+  verbose && print(verbose, args);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify names of columns read
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  columns <- getColumnNames(this);
+  verbose && printf(verbose, "Column names (%d):\n", length(columns));
+  verbose && cat(verbose, paste(columns, collapse=", "));
+
+  if (!is.null(columns)) {
+    verbose && enter(verbose, "Matching column names:");
+    verbose && printf(verbose, "Column classes (%d):\n", length(args$colClasses));
+    verbose && cat(verbose, paste(args$colClasses, collapse=", "));
+    columns[args$colClasses == "NULL"] <- NA;
+    columns <- columns[!is.na(columns)];
+    verbose && exit(verbose);
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read the data using read.table()
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Calling read.table()");
+
   # Open a file connection?
   if (is.null(con)) {
     pathname <- getPathname(this);
@@ -368,32 +405,12 @@ setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, rows
     })
   }
 
-  # Reading header
-  hdr <- readHeader(this, con=con, verbose=verbose);
-
-  # Get read arguments
-  args <- getReadArguments(this, fileHeader=hdr, nrow=nrow, ..., verbose=less(verbose));
   args <- c(list(con), args);
   verbose && cat(verbose, "Arguments used to read tabular file:");
-  verbose && str(verbose, args);
-
-  columns <- getColumnNames(this);
-  verbose && printf(verbose, "Column names (%d):\n", length(columns));
-  verbose && cat(verbose, paste(columns, collapse=", "));
-
-  if (!is.null(columns)) {
-    verbose && enter(verbose, "Matching column names:");
-    verbose && printf(verbose, "Column classes (%d):\n", length(args$colClasses));
-    verbose && cat(verbose, paste(args$colClasses, collapse=", "));
-    columns[args$colClasses == "NULL"] <- NA;
-    columns <- columns[!is.na(columns)];
-    verbose && exit(verbose);
-  }
-
-  # Read the data table
-  verbose && enter(verbose, "Calling read.table()");
   verbose && print(verbose, args);
   data <- do.call("read.table", args=args);
+  verbose && cat(verbose, "Raw data read by read.table():");
+  verbose && str(verbose, data);
 
   # Extract subset of rows?
   if (!is.null(rows)) {
@@ -418,10 +435,6 @@ setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, rows
 
   data;
 })
-
-setMethodS3("readData", "GenericTabularFile", function(this, ...) {
-  readDataFrame(this, ...);
-}, protected=TRUE, deprecated=TRUE)
 
 
 setMethodS3("nbrOfLines", "GenericTabularFile", function(this, ...) {
@@ -469,8 +482,77 @@ setMethodS3("dim", "GenericTabularFile", function(x) {
 }, appendVarArgs=FALSE)
 
 
+
+setMethodS3("extractMatrix", "GenericTabularFile", function(this, column=1, drop=FALSE, ..., colClass="character", verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  nbrOfColumns <- nbrOfColumns(this);
+
+  # Argument 'column':
+  column <- Arguments$getIndex(column, range=c(1, nbrOfColumns));
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Extracting data as a single-column matrix");
+
+  # Map column indices to column names
+  columnName <- getColumnNames(this)[column];
+  verbose && printf(verbose, "Reading column (%d, %s)\n", column, columnName);
+
+  colClassPatterns <- colClass;
+  names(colClassPatterns) <- sprintf("^%s$", columnName);
+
+  # Read data as data frame
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ..., 
+                                                verbose=less(verbose, 5));
+
+  verbose && cat(verbose, "Raw data frame read:");
+  verbose && str(verbose, data);
+
+
+  # Drop dimension
+  data <- data[,1];
+
+  # Coerce into a matrix?
+  if (!drop) {
+    verbose && cat(verbose, "Dropping singleton dimensions");
+    data <- as.matrix(data);
+  }
+
+  verbose && cat(verbose, "Result:");
+  verbose && str(verbose, data);
+
+  verbose && exit(verbose);
+
+  data;
+})
+ 
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# DEPRECATED
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethodS3("readData", "GenericTabularFile", function(this, ...) {
+  readDataFrame(this, ...);
+}, protected=TRUE, deprecated=TRUE)
+
+
+
 ############################################################################
 # HISTORY:
+# 2008-05-12
+# o Added extractMatrix().
+# o BUG FIX: getReadArguments() did not infer column classes if there was
+#   no header to read but the column names was manually set.
+# o BUG FIX: readDataFrame() did not read the first data row if there was
+#   no column header; it was eaten up by a preceeding readHeader().
 # 2008-04-29
 # o Added readLines(), nbrOfLines(), nbrOfRows() and dim().
 # o Now readDataFrame() keeps the row names if arguments rows != NULL.

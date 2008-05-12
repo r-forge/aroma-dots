@@ -1099,7 +1099,7 @@ setMethodS3("copyTo", "GenericDataFileSet", function(this, path=NULL, ..., verbo
 
 
 
-setMethodS3("findByName", "GenericDataFileSet", function(static, name, tags=NULL, subdirs=NULL, paths=NULL, ..., mustExist=FALSE) {
+setMethodS3("findByName", "GenericDataFileSet", function(static, name, tags=NULL, subdirs=NULL, paths=NULL, mustExist=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1163,9 +1163,10 @@ setMethodS3("findByName", "GenericDataFileSet", function(static, name, tags=NULL
 }, static=TRUE) 
 
 
-setMethodS3("byName", "GenericDataFileSet", function(static, name, tags=NULL, ...) {
+setMethodS3("byName", "GenericDataFileSet", function(static, name, tags=NULL, subdirs=NULL, paths=NULL, ...) {
   suppressWarnings({
-    path <- findByName(static, name=name, tags=tags, ..., mustExist=TRUE);
+    path <- findByName(static, name=name, tags=tags, subdirs=subdirs, 
+                                               paths=paths, mustExist=TRUE);
   })
 
   suppressWarnings({
