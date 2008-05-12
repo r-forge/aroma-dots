@@ -1,13 +1,13 @@
 ###########################################################################/**
-# @RdocClass AromaFreqBCghBinarySet
+# @RdocClass AromaFreqBCnBinarySet
 #
-# @title "The AromaFreqBCghBinarySet class"
+# @title "The AromaFreqBCnBinarySet class"
 #
 # \description{
 #  @classhierarchy
 #
-#  An AromaFreqBCghBinarySet object represents a set of 
-#  @see "AromaFreqBCghBinaryFile"s with \emph{identical} chip types.
+#  An AromaFreqBCnBinarySet object represents a set of 
+#  @see "AromaFreqBCnBinaryFile"s with \emph{identical} chip types.
 # }
 # 
 # @synopsis
@@ -22,12 +22,12 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AromaFreqBCghBinarySet", function(...) {
-  extend(AromaSignalBinarySet(...), "AromaFreqBCghBinarySet");
+setConstructorS3("AromaFreqBCnBinarySet", function(...) {
+  extend(AromaSignalBinarySet(...), "AromaFreqBCnBinarySet");
 })
 
 
-setMethodS3("byName", "AromaFreqBCghBinarySet", function(static, name, tags=NULL, ..., chipType=NULL, paths="cghData") {
+setMethodS3("byName", "AromaFreqBCnBinarySet", function(static, name, tags=NULL, ..., chipType=NULL, paths="cnData") {
   suppressWarnings({
     path <- findByName(static, name=name, tags=tags, chipType=chipType, 
                                            ..., paths=paths, mustExist=TRUE);
