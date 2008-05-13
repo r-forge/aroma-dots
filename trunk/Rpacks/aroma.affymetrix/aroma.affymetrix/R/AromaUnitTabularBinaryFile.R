@@ -51,16 +51,6 @@ setMethodS3("as.character", "AromaUnitTabularBinaryFile", function(x, ...) {
 })
 
 
-setMethodS3("clearCache", "AromaUnitTabularBinaryFile", function(this, ...) {
-  # Clear all cached values.
-  for (ff in c(".cdf")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...); 
-}, private=TRUE)
-
 
 setMethodS3("getFilenameExtension", "AromaUnitTabularBinaryFile", static=TRUE, abstract=TRUE);
 
@@ -292,12 +282,37 @@ setMethodS3("findByChipType", "AromaUnitTabularBinaryFile", function(static, chi
 }, static=TRUE, protected=TRUE)
 
 
+
+setMethodS3("importFrom", "AromaUnitTabularBinaryFile", function(this, src, ...) {
+  if (inherits(src, "AffymetrixNetAffxCsvFile")) {
+    importFromAffymetrixNetAffxCsvFile(this, src, ...);
+  } else if (inherits(src, "DChipGenomeInformation")) {
+    importFromDChipGenomeInformation(this, src, ...);
+  } else if (inherits(src, "GenomeInformation")) {
+    importFromGenomeInformation(this, src, ...);
+  } else if (inherits(src, "AffymetrixTabularFile")) {
+    importFromAffymetrixTabularFile(this, src, ...);
+  } else if (inherits(src, "GenericTabularFile")) {
+    importFromGenericTabularFile(this, src, ...);
+  } else {
+    throw("Do not know how to import from an src of class ", class(src)[1]);
+  }
+})
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# BEGIN: Platform specific
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
 setMethodS3("indexOfUnits", "AromaUnitTabularBinaryFile", function(this, names, ...) {
   # Look up unit names from CDF
   cdf <- getCdf(this);
   idxs <- match(names, getUnitNames(cdf));
   idxs;
 }, protected=TRUE)
+
 
 
 
@@ -367,23 +382,19 @@ setMethodS3("allocateFromCdf", "AromaUnitTabularBinaryFile", function(static, cd
 }, static=TRUE)
 
 
-
-
-setMethodS3("importFrom", "AromaUnitTabularBinaryFile", function(this, src, ...) {
-  if (inherits(src, "AffymetrixNetAffxCsvFile")) {
-    importFromAffymetrixNetAffxCsvFile(this, src, ...);
-  } else if (inherits(src, "DChipGenomeInformation")) {
-    importFromDChipGenomeInformation(this, src, ...);
-  } else if (inherits(src, "GenomeInformation")) {
-    importFromGenomeInformation(this, src, ...);
-  } else if (inherits(src, "AffymetrixTabularFile")) {
-    importFromAffymetrixTabularFile(this, src, ...);
-  } else if (inherits(src, "GenericTabularFile")) {
-    importFromGenericTabularFile(this, src, ...);
-  } else {
-    throw("Do not know how to import from an src of class ", class(src)[1]);
+setMethodS3("clearCache", "AromaUnitTabularBinaryFile", function(this, ...) {
+  # Clear all cached values.
+  for (ff in c(".cdf")) {
+    this[[ff]] <- NULL;
   }
-})
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...); 
+}, private=TRUE)
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# END: Platform specific
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 setMethodS3("importFromGenericTabularFile", "AromaUnitTabularBinaryFile", abstract=TRUE);
