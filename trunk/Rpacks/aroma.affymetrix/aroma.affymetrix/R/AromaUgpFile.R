@@ -62,13 +62,6 @@ setMethodS3("getGenomeVersion", "AromaUgpFile", function(this, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("allocateFromCdf", "AromaUgpFile", function(static, ...) {
-  # NextMethod() not supported here.
-  allocateFromCdf.AromaUnitTabularBinaryFile(static, ..., types=rep("integer",2), sizes=c(1,4));
-}, static=TRUE)
-
-
-
 setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NULL, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
@@ -99,6 +92,160 @@ setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NUL
   idxs;
 }, protected=TRUE)
 
+
+
+setMethodS3("allocate", "AromaUgpFile", function(static, ..., platform, chipType) {
+  # Argument 'platform':
+  platform <- ARguments$getCharacter(platform);
+
+  # Argument 'chipType':
+  chipType <- ARguments$getCharacter(chipType);
+
+
+  res <- allocate.AromaUnitTabularBinaryFile(static, ..., types=rep("integer",2), sizes=c(1,4));
+
+
+  footer <- list(platform=platform, chipType=chipType);
+  writeFooter(res, footer);
+
+  res;
+}, static=TRUE)
+
+
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# BEGIN: Platform specific
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+setMethodS3("importFromGenericTabularFile", "AromaUgpFile", function(this, src, colClassPatterns=c("*"="NULL", "^Probe Set ID$"="character", "^Chromosome$"="character", "^Physical Position$"="character"), colOrder=NULL, shift=0, con=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!inherits(src, "GenericTabularFile")) {
+    throw("Argument 'src' is not an GenericTabularFile: ", class(src)[1]);
+  }
+
+  # Argument 'colOrder':
+  if (!is.null(colOrder)) {
+    colOrder <- Arguments$getIndices(colOrder, length=3);
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Main
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Importing (unitName, chromosome, position) from ", class(src)[1], " file");
+
+  data <- readDataFrame(src, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
+
+  # Rearrange columns (optional)
+  if (!is.null(colOrder))
+    data <- data[,colOrder,drop=FALSE];
+
+  # Map to CDF unit names
+  cdf <- getCdf(this);
+  cdfUnitNames <- getUnitNames(cdf);
+  cdfUnits <- match(data[,1], cdfUnitNames);
+
+  # Exclude units that are not in the CDF
+  keep <- which(!is.na(cdfUnits));
+  cdfUnits <- cdfUnits[keep];
+  if (length(cdfUnits) == 0) {
+    warning("None of the imported unit names match the ones in the CDF ('", getPathname(cdf), "'). Is the correct file ('", getPathname(src), "'), being imported?");
+  }
+
+  # Assume 'chromosome' is in 2nd column, and 'position' in 3rd.
+  data <- data[keep,2:3,drop=FALSE];
+
+  # Garbage collection
+  rm(keep);
+  gc <- gc();
+
+  # Convert chromosome strings to integers
+  if (!is.integer(data[,1])) {
+    map <- c(X=23, Y=24, Z=25);
+    for (kk in seq(along=map)) {
+      data[,1] <- gsub(names(map)[kk], map[kk], data[,1]);
+    }
+    suppressWarnings({
+      data[,1] <- as.integer(data[,1]);
+    })
+    gc <- gc();
+  }
+
+  # Convert positions to integers
+  if (!is.integer(data[,2])) {
+    suppressWarnings({
+      data[,2] <- as.integer(data[,2]);
+    })
+    gc <- gc();
+  }
+
+  # Shift positions?
+  if (shift != 0) {
+    verbose && printf(verbose, "Shifting positions %d steps.", shift);
+    data[,2] <- data[,2] + as.integer(shift);
+  }
+
+  # Update to file
+  this[cdfUnits,1] <- data[,1];
+  this[cdfUnits,2] <- data[,2];
+
+  verbose && exit(verbose);
+
+  invisible(cdfUnits);
+}, protected=TRUE);
+
+
+
+setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..., verbose=FALSE) {
+  if (!inherits(gi, "GenomeInformation")) {
+    throw("Argument 'gi' is not a GenomeInformation object: ", class(gi)[1]);
+  }
+
+  # AD HOC patch, since units==NULL does not work./HB 2007-03-03
+  units <- seq_len(nbrOfUnits(gi));
+  data <- getData(gi, units=units, fields=c("chromosome", "physicalPosition"));
+
+  chr <- data[,"chromosome"];
+  if (is.character(chr)) {
+    chr[chr == "X"] <- 23;
+    chr[chr == "Y"] <- 24;
+    chr[chr == "Z"] <- 25;
+    suppressWarnings({
+      chr <- as.integer(chr);
+    })
+  }
+  
+  pos <- data[,"physicalPosition"];
+  suppressWarnings({
+    pos <- as.integer(pos);
+  })
+
+  this[,1] <- chr;
+  this[,2] <- pos;
+
+  # A best guess of what was imported
+  units <- units[!(is.na(chr) & is.na(pos))];
+
+  invisible(units);
+})
+
+
+
+setMethodS3("allocateFromCdf", "AromaUgpFile", function(static, ...) {
+  # NextMethod() not supported here.
+  allocateFromCdf.AromaUnitTabularBinaryFile(static, ..., types=rep("integer",2), sizes=c(1,4));
+}, static=TRUE)
 
 
 
@@ -245,131 +392,15 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUgpFile", function(this, sr
 }, protected=TRUE);
 
 
-
-setMethodS3("importFromGenericTabularFile", "AromaUgpFile", function(this, src, colClassPatterns=c("*"="NULL", "^Probe Set ID$"="character", "^Chromosome$"="character", "^Physical Position$"="character"), colOrder=NULL, shift=0, con=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!inherits(src, "GenericTabularFile")) {
-    throw("Argument 'src' is not an GenericTabularFile: ", class(src)[1]);
-  }
-
-  # Argument 'colOrder':
-  if (!is.null(colOrder)) {
-    colOrder <- Arguments$getIndices(colOrder, length=3);
-  }
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Main
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Importing (unitName, chromosome, position) from ", class(src)[1], " file");
-
-  data <- readDataFrame(src, colClassPatterns=colClassPatterns, ..., verbose=less(verbose));
-
-  # Rearrange columns (optional)
-  if (!is.null(colOrder))
-    data <- data[,colOrder,drop=FALSE];
-
-  # Map to CDF unit names
-  cdf <- getCdf(this);
-  cdfUnitNames <- getUnitNames(cdf);
-  cdfUnits <- match(data[,1], cdfUnitNames);
-
-  # Exclude units that are not in the CDF
-  keep <- which(!is.na(cdfUnits));
-  cdfUnits <- cdfUnits[keep];
-  if (length(cdfUnits) == 0) {
-    warning("None of the imported unit names match the ones in the CDF ('", getPathname(cdf), "'). Is the correct file ('", getPathname(src), "'), being imported?");
-  }
-
-  # Assume 'chromosome' is in 2nd column, and 'position' in 3rd.
-  data <- data[keep,2:3,drop=FALSE];
-
-  # Garbage collection
-  rm(keep);
-  gc <- gc();
-
-  # Convert chromosome strings to integers
-  if (!is.integer(data[,1])) {
-    map <- c(X=23, Y=24, Z=25);
-    for (kk in seq(along=map)) {
-      data[,1] <- gsub(names(map)[kk], map[kk], data[,1]);
-    }
-    suppressWarnings({
-      data[,1] <- as.integer(data[,1]);
-    })
-    gc <- gc();
-  }
-
-  # Convert positions to integers
-  if (!is.integer(data[,2])) {
-    suppressWarnings({
-      data[,2] <- as.integer(data[,2]);
-    })
-    gc <- gc();
-  }
-
-  # Shift positions?
-  if (shift != 0) {
-    verbose && printf(verbose, "Shifting positions %d steps.", shift);
-    data[,2] <- data[,2] + as.integer(shift);
-  }
-
-  # Update to file
-  this[cdfUnits,1] <- data[,1];
-  this[cdfUnits,2] <- data[,2];
-
-  verbose && exit(verbose);
-
-  invisible(cdfUnits);
-}, protected=TRUE);
-
-
-
-setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..., verbose=FALSE) {
-  if (!inherits(gi, "GenomeInformation")) {
-    throw("Argument 'gi' is not a GenomeInformation object: ", class(gi)[1]);
-  }
-
-  # AD HOC patch, since units==NULL does not work./HB 2007-03-03
-  units <- seq_len(nbrOfUnits(gi));
-  data <- getData(gi, units=units, fields=c("chromosome", "physicalPosition"));
-
-  chr <- data[,"chromosome"];
-  if (is.character(chr)) {
-    chr[chr == "X"] <- 23;
-    chr[chr == "Y"] <- 24;
-    chr[chr == "Z"] <- 25;
-    suppressWarnings({
-      chr <- as.integer(chr);
-    })
-  }
-  
-  pos <- data[,"physicalPosition"];
-  suppressWarnings({
-    pos <- as.integer(pos);
-  })
-
-  this[,1] <- chr;
-  this[,2] <- pos;
-
-  # A best guess of what was imported
-  units <- units[!(is.na(chr) & is.na(pos))];
-
-  invisible(units);
-})
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# END: Platform specific
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 ############################################################################
 # HISTORY:
+# 2008-05-12
+# o Added static allocate().
 # 2008-04-29
 # o BUG FIX: Name clash in getUnitsAt() after new argument 'chromosomes'.
 # 2008-04-17
