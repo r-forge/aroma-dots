@@ -86,7 +86,8 @@ setMethodS3("getColumnNameTranslator", "GenericTabularFile", function(this, ...)
 
 setMethodS3("setColumnNameTranslator", "GenericTabularFile", function(this, fcn, ...) {
   # Arguments 'fcn':
-  if (!is.function(fcn)) {
+  if (is.null(fcn)) {
+  } else if (!is.function(fcn)) {
     throw("Argument 'fcn' is not a function: ", class(fcn)[1]);
   }
 
