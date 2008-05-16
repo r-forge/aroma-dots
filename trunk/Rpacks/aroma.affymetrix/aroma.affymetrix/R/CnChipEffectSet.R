@@ -24,7 +24,7 @@
 # @author
 # 
 #*/###########################################################################
-setConstructorS3("CnChipEffectSet", function(..., combineAlleles=FALSE) {
+setConstructorS3("CnChipEffectSet", function(..., combineAlleles="byFirstFile") {
   this <- extend(SnpChipEffectSet(...), "CnChipEffectSet");
   setCombineAlleles(this, combineAlleles);
   this;
@@ -63,8 +63,13 @@ setMethodS3("setCombineAlleles", "CnChipEffectSet", function(this, status, ...) 
   ce <- getFile(this, 1);
   oldStatus <- ce$combineAlleles;
 
-  if (identical(status, "auto"))
+  if (identical(status, "byFirstFile")) {
+    status <- oldStatus;
+  }
+
+  if (identical(status, "auto")) {
     status <- inferParameters(this, ...)$combineAlleles;
+  }
 
   status <- Arguments$getLogical(status);
   lapply(this, FUN=function(ce) {
@@ -158,6 +163,8 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
 
 ############################################################################
 # HISTORY:
+# 2008-05-16
+# o Added support for setCombineAlleles(..., "byFirstFile").
 # 2008-05-08
 # o Made fromFiles() protected.
 # 2007-11-20
