@@ -682,7 +682,7 @@ setMethodS3("getNames", "GenericDataFileSet", function(this, ...) {
 })
 
 setMethodS3("getFullNames", "GenericDataFileSet", function(this, ...) {
-  res <- unlist(lapply(this, FUN=getFullName));
+  res <- unlist(lapply(this, FUN=getFullName, ...));
   unname(res);
 })
 
@@ -1244,6 +1244,8 @@ setMethodS3("equals", "GenericDataFileSet", function(this, other, ..., verbose=F
 
 ############################################################################
 # HISTORY:
+# 2008-05-16
+# o Now ... is passed down by getFullNames().
 # 2008-05-15
 # o Added equals().
 # 2008-05-14

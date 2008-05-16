@@ -294,6 +294,8 @@ setMethodS3("getFilename", "GenericDataFile", function(this, ...) {
 # \arguments{
 #  \item{aliased}{If @TRUE, and an alias has been set, the alias is 
 #     returned, otherwise the default full name is returned.}
+#  \item{translate}{If @TRUE, an a fullname translator is set, the fullname
+#     is translated before returned.}
 #  \item{...}{Not used.}
 # }
 #
@@ -316,25 +318,65 @@ setMethodS3("getFilename", "GenericDataFile", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFullName", "GenericDataFile", function(this, aliased=FALSE, ...) {
+setMethodS3("getFullName", "GenericDataFile", function(this, aliased=FALSE, translate=TRUE, ...) {
   if (aliased) {
     alias <- getAlias(this);
     if (!is.null(alias))
-      return(alias);
+      fullname <- alias;
+  } else {
+    pathname <- this$.pathname;
+    if (is.null(pathname))
+      pathname <- "";
+    fullname <- basename(pathname);
   }
 
-  pathname <- this$.pathname;
-  if (is.null(pathname))
-    return("");
-
-  name <- basename(pathname);
-
   # Exclude filename extension
-  name <- gsub("[.][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0-9]+$", "", name);
+  fullname <- gsub("[.][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0-9]+$", "", fullname);
 
-  name;
+  if (translate) {
+    fullname <- translateFullName(this, fullname);
+  }
+
+  fullname;
 })
 
+
+setMethodS3("getFullNameTranslator", "GenericDataFile", function(this, ...) {
+  this$.fullNameTranslator;
+}, protected=TRUE)
+
+
+setMethodS3("setFullNameTranslator", "GenericDataFile", function(this, fcn, ...) {
+  # Arguments 'fcn':
+  if (is.null(fcn)) {
+  } else if (!is.function(fcn)) {
+    throw("Argument 'fcn' is not a function: ", class(fcn)[1]);
+  }
+
+  # Sanity check
+  if (!is.null(fcn)) {
+    names <- c("foo bar");
+    names <- fcn(names);
+  }
+
+  this$.fullNameTranslator <- fcn;
+
+  invisible(this);
+}, protected=TRUE)
+
+
+setMethodS3("translateFullName", "GenericDataFile", function(this, name, ...) {
+  nameTranslator <- getFullNameTranslator(this);	
+  if (!is.null(nameTranslator)) {
+    name <- nameTranslator(name);
+    if (identical(attr(name, "isFinal"), TRUE))
+      return(name);
+  }
+
+  # Do nothing
+  name;
+}, private=TRUE)
+ 
 
 ###########################################################################/**
 # @RdocMethod getName
@@ -840,6 +882,8 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-16
+# o Added support for full name translation of GenericDataFile:s.
 # 2008-05-15
 # o Added gzip() and gunzip().
 # o Update equals() to also compare classes, file sizes, and checksums.
