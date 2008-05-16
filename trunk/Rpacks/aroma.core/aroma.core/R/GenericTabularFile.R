@@ -90,12 +90,12 @@ setMethodS3("setColumnNameTranslator", "GenericTabularFile", function(this, fcn,
     throw("Argument 'fcn' is not a function: ", class(fcn)[1]);
   }
 
-  this$.columnNameTranslator = fcn;
+  this$.columnNameTranslator <- fcn;
 })
 
 
 setMethodS3("translateColumnNames", "GenericTabularFile", function(this, names, ...) {
-  nameTranslator <- getColumnNameTranslator(this);
+  nameTranslator <- getColumnNameTranslator(this);	
   if (!is.null(nameTranslator)) {
     names <- nameTranslator(names);
     if (identical(attr(names, "isFinal"), TRUE))

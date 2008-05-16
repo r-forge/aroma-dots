@@ -1175,9 +1175,79 @@ setMethodS3("byName", "GenericDataFileSet", function(static, name, tags=NULL, su
 }, static=TRUE) 
 
 
+setMethodS3("hasFile", "GenericDataFileSet", function(this, file, ...) {
+  # Argument 'file':
+  if (!inherits(file, "GenericDataFile")) {
+    throw("Argument 'file' is not a GenericDataFile: ", class(file)[1]);
+  }
+
+  files <- getFiles(this);
+  for (kk in seq(along=files)) {
+    if (identical(file, files[[kk]]))
+      return(TRUE);
+  }
+
+  return(FALSE);
+})
+
+
+setMethodS3("equals", "GenericDataFileSet", function(this, other, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
+  # Default values
+  notEqual <- FALSE;
+  msg <- NULL;
+  attr(notEqual, "thisSet") <- getPath(this);
+  attr(notEqual, "otherSet") <- getPath(other);
+
+
+  if (!inherits(other, "GenericDataFileSet")) {
+    msg <- sprintf("The 'other' is not a GenericDataFileSet: %s",
+                                                 class(other)[1]);
+    attr(notEqual, "reason") <- msg;
+    return(notEqual);
+  }
+
+  nbrOfFiles <- nbrOfFiles(this);
+
+  value <- nbrOfFiles;
+  valueOther <- nbrOfFiles(other);
+  if (value != valueOther) {
+    msg <- sprintf("The number of files differ: %d != %d",
+                                              value, valueOther);
+    attr(notEqual, "reason") <- msg;
+    return(notEqual);
+  }
+
+  if (identical(getPathnames(this), getPathnames(other)))
+    return(TRUE);
+
+  for (kk in seq(this)) {
+    verbose && enter(verbose, sprintf("File #%d of %d", kk, nbrOfFiles));
+
+    df1 <- getFile(this, 1);
+    df2 <- getFile(other, 1);
+    eqls <- equals(df1, df2, ...);
+    if (!eqls) {
+      verbose && cat(verbose, "Not equal");
+      return(eqls);
+    }
+
+    verbose && exit(verbose);
+  }
+
+  TRUE;
+})
+
 
 ############################################################################
 # HISTORY:
+# 2008-05-15
+# o Added equals().
+# 2008-05-14
+# o Added hasFile() to GenericDataFileSet.
 # 2008-05-11
 # o Added static findByName() and byName() to GenericDataFileSet.
 # o If argument '.validate' to fromFiles() is TRUE, validate() is called.

@@ -92,9 +92,41 @@ setMethodS3("clone", "GenericDataFile", function(this, clear=TRUE, ...) {
 
 
 setMethodS3("equals", "GenericDataFile", function(this, other, ...) {
-  if (getPathname(this) == getPathname(other))
+  # Default values
+  notEqual <- FALSE;
+  attr(notEqual, "thisFile") <- getPathname(this);
+  attr(notEqual, "otherFile") <- getPathname(other);
+  msg <- NULL;
+
+  if (!inherits(other, "GenericDataFile")) {
+    msg <- sprintf("The 'other' is not a GenericDataFile: %s",
+                                                 class(other)[1]);
+    attr(notEqual, "reason") <- msg;
+    return(notEqual);
+  }
+
+  if (identical(getPathname(this), getPathname(other)))
     return(TRUE);
-  FALSE;
+
+  value <- getFileSize(this);
+  valueOther <- getFileSize(other);
+  if (value != valueOther) {
+    msg <- sprintf("The file sizes differ: %d != %d",
+                                          value, valueOther);
+    attr(notEqual, "reason") <- msg;
+    return(notEqual);
+  }
+
+  value <- getChecksum(this);
+  valueOther <- getChecksum(other);
+  if (value != valueOther) {
+    msg <- sprintf("The checksums differ: %d != %d",
+                                          value, valueOther);
+    attr(notEqual, "reason") <- msg;
+    return(notEqual);
+  }
+
+  TRUE;
 })
 
 
@@ -785,6 +817,8 @@ setMethodS3("renameToUpperCaseExt", "GenericDataFile", function(static, pathname
 
 ############################################################################
 # HISTORY:
+# 2008-05-15
+# o Update equals() to also compare classes, file sizes, and checksums.
 # 2008-05-11
 # o Now static fromFile() always creates an instance.
 # 2008-05-09
