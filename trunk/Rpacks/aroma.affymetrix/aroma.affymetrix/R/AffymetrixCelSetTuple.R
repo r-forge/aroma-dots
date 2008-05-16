@@ -504,7 +504,7 @@ setMethodS3("getNames", "AffymetrixCelSetTuple", function(this, ...) {
 })
 
 
-setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL, exclude=NULL, aliased=FALSE, ...) {
+setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL, exclude=NULL, aliased=FALSE, translate=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -546,7 +546,8 @@ setMethodS3("getFullNames", "AffymetrixCelSetTuple", function(this, arrays=NULL,
   fullnames <- c();
   for (kk in arrays) {
     cfList <- getArrayTuple(this, array=kk, ...);
-    fullname <- getFullNameOfTuple(cfList, aliased=aliased);
+    fullname <- getFullNameOfTuple(cfList, aliased=aliased, 
+                                                        translate=translate);
     fullnames <- c(fullnames, fullname);
   }
 
@@ -769,6 +770,8 @@ setMethodS3("asMatrixOfFiles", "AffymetrixCelSetTuple", function(this, ..., verb
 
 ##############################################################################
 # HISTORY:
+# 2008-05-16
+# o Now getFullNames() passes down 'translate'.
 # 2008-03-29
 # o getTableOfArrays() of AffymetrixCelSetTuple returned the incorrect 
 #   array indices for the 2nd chip type if different arrays in the two sets.
