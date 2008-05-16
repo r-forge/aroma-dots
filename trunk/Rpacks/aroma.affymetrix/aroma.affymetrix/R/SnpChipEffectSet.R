@@ -24,7 +24,7 @@
 # @author
 # 
 #*/###########################################################################
-setConstructorS3("SnpChipEffectSet", function(..., mergeStrands=FALSE) {
+setConstructorS3("SnpChipEffectSet", function(..., mergeStrands="byFirstFile") {
   this <- extend(ChipEffectSet(...), "SnpChipEffectSet");
   setMergeStrands(this, mergeStrands);
   this;
@@ -61,6 +61,10 @@ setMethodS3("setMergeStrands", "SnpChipEffectSet", function(this, status, ...) {
     return(FALSE);
 
   oldStatus <- getMergeStrands(this);
+
+  if (identical(status, "byFirstFile")) {
+    status <- oldStatus;
+  }
 
   if (identical(status, "auto")) {
     status <- inferParameters(this, ...)$mergeStrands;
@@ -163,6 +167,8 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=F
 
 ############################################################################
 # HISTORY:
+# 2008-05-16
+# o Added support for setMergeStrands(..., "byFirstFile").
 # 2008-05-08
 # o Made fromFiles() protected.
 # 2007-11-20
