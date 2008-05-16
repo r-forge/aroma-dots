@@ -815,9 +815,33 @@ setMethodS3("renameToUpperCaseExt", "GenericDataFile", function(static, pathname
 }, static=TRUE, protected=TRUE)
 
 
+
+setMethodS3("gzip", "GenericDataFile", function(this, ...) {
+  pathname <- getPathname(this);
+  if (regexpr("[.]gz$", pathname) != -1)
+    throw("File is already gzip'ed: ", pathname);
+  outPathname <- sprintf("%s.gz", pathname);
+  gzip(pathname, destname=outPathname, ...);
+  this$.pathname <- outPathname;
+  invisible(pathname);
+}, protected=TRUE)
+
+
+setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
+  pathname <- getPathname(this);
+  if (regexpr("[.]gz$", pathname) == -1)
+    throw("File is not gzip'ed: ", pathname);
+  outPathname <- gsub("[.]gz$", "", pathname);
+  gunzip(pathname, destname=outPathname, ...);
+  this$.pathname <- outPathname;
+  invisible(pathname);
+}, protected=TRUE)
+
+
 ############################################################################
 # HISTORY:
 # 2008-05-15
+# o Added gzip() and gunzip().
 # o Update equals() to also compare classes, file sizes, and checksums.
 # 2008-05-11
 # o Now static fromFile() always creates an instance.

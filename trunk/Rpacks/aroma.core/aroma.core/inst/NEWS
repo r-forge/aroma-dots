@@ -7,6 +7,7 @@ o ALPHA: Now equals() for GenericDataFile:s uses the class,
   comparison.  Similarly, for GenericDataFileSet:s, the class, 
   path, number of files, pathnames, and finally equals() for 
   each file pair is used for the comparison.  
+o Added gzip()/gunzip() to GenericDataFile.
 o Added static findByName() and byName() to GenericDataFileSet.
 o Added static getFileClass() to GenericDataFileSet.  This makes it
   possible to remove most fromFiles() from subclasses but also
