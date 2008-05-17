@@ -1,8 +1,10 @@
   allocate.AromaSignalBinaryFile as.character.AromaSignalBinaryFile
-  byName.AromaFreqBCghBinarySet byName.AromaSignalBinarySet
-  byName.AromaTotalCghBinarySet findByName.AromaSignalBinarySet
+  byName.AromaSignalBinarySet
+  findByName.AromaSignalBinarySet
   fromFile.AromaSignalBinaryFile getChipType.AromaSignalBinaryFile
   getChipType.AromaSignalBinarySet
   getFilenameExtension.AromaSignalBinaryFile
   getPlatform.AromaSignalBinaryFile getPlatform.AromaSignalBinarySet
   nbrOfUnits.AromaSignalBinaryFile validate.AromaSignalBinarySet
+  byName.AromaFreqBCnBinarySet
+  byName.AromaTotalCnBinarySet

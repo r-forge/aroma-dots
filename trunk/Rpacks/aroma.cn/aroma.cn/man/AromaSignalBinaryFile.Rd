@@ -21,12 +21,14 @@
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.core]{AromaTabularBinaryFile}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{GenericTabularFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{AromaSignalBinaryFile}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaTabularBinaryFile}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{AromaSignalBinaryFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.cn]{AromaFreqBCghBinaryFile}, \link[aroma.cn]{AromaTotalCghBinaryFile}\cr
+\link[aroma.cn]{AromaFreqBCnBinaryFile}, \link[aroma.cn]{AromaTotalCnBinaryFile}\cr
 
 public static class \bold{AromaSignalBinaryFile}\cr
 extends \link[aroma.core]{AromaTabularBinaryFile}\cr
@@ -55,10 +57,13 @@ extends \link[aroma.core]{AromaTabularBinaryFile}\cr
 
 
  \bold{Methods inherited from AromaTabularBinaryFile}:\cr
-[, [[, [<-, allocate, as.character, colMeans, colMedians, colStats, colSums, dim, dimnames<-, extractMatrix, getBytesPerColumn, getColClasses, getColumnNames, lapply, nbrOfColumns, nbrOfRows, readDataFrame, readFooter, readHeader, readRawFooter, setAttributesByTags, subset, summary, updateData, updateDataColumn, writeFooter, writeRawFooter
+[, [[, [<-, allocate, as.character, colMeans, colMedians, colStats, colSums, dimnames<-, getBytesPerColumn, getColClasses, getColumnNames, lapply, nbrOfColumns, nbrOfRows, readColumns, readDataFrame, readFooter, readHeader, readRawFooter, setAttributesByTags, subset, summary, updateData, updateDataColumn, writeFooter, writeRawFooter
+
+ \bold{Methods inherited from GenericTabularFile}:\cr
+as.character, dim, extractMatrix, getColumnNames, getColumnNameTranslator, nbrOfColumns, nbrOfRows, readColumns, readDataFrame, setColumnNameTranslator, translateColumnNames
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getFullNameTranslator, getName, getPath, getPathname, getTags, gunzip, gzip, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, setFullNameTranslator, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
