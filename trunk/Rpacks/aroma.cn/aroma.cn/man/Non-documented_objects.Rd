@@ -14,9 +14,7 @@
 % Other missing docs
 \alias{allocate.AromaSignalBinaryFile}
 \alias{as.character.AromaSignalBinaryFile}
-\alias{byName.AromaFreqBCghBinarySet}
 \alias{byName.AromaSignalBinarySet}
-\alias{byName.AromaTotalCghBinarySet}
 \alias{findByName.AromaSignalBinarySet}
 \alias{fromFile.AromaSignalBinaryFile}
 \alias{getChipType.AromaSignalBinaryFile}
@@ -26,6 +24,8 @@
 \alias{getPlatform.AromaSignalBinarySet}
 \alias{nbrOfUnits.AromaSignalBinaryFile}
 \alias{validate.AromaSignalBinarySet}
+\alias{byName.AromaFreqBCnBinarySet}
+\alias{byName.AromaTotalCnBinarySet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

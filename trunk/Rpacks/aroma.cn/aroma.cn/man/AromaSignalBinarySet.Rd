@@ -21,12 +21,14 @@
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.core]{GenericDataFileSet}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.core]{AromaTabularBinarySet}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{GenericTabularFileSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{AromaSignalBinarySet}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaTabularBinarySet}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{AromaSignalBinarySet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.cn]{AromaFreqBCghBinarySet}, \link[aroma.cn]{AromaTotalCghBinarySet}\cr
+\link[aroma.cn]{AromaFreqBCnBinarySet}, \link[aroma.cn]{AromaTotalCnBinarySet}\cr
 
 public static class \bold{AromaSignalBinarySet}\cr
 extends \link[aroma.core]{AromaTabularBinarySet}\cr
@@ -53,11 +55,11 @@ extends \link[aroma.core]{AromaTabularBinarySet}\cr
 }
 
 
- \bold{Methods inherited from AromaTabularBinarySet}:\cr
+ \bold{Methods inherited from GenericTabularFileSet}:\cr
 extractMatrix
 
  \bold{Methods inherited from GenericDataFileSet}:\cr
-append, appendFiles, as.list, byName, clearCache, copyTo, extract, findByName, fromFiles, getAlias, getFile, getFileClass, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags, validate
+append, appendFiles, as.list, byName, clearCache, copyTo, equals, extract, findByName, fromFiles, getAlias, getFile, getFileClass, getFileSize, getFullName, getFullNames, getName, getNames, getPath, getPathnames, getTags, hasFile, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setTags, validate
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
