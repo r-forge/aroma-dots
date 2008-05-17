@@ -22,7 +22,7 @@
 \code{~~+--}\code{GenericDataFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.core]{AromaMicroarrayDataSet}, \link[aroma.core]{AromaTabularBinarySet}, \link[aroma.core]{SampleAnnotationSet}\cr
+\link[aroma.core]{AromaMicroarrayDataSet}, \link[aroma.core]{AromaTabularBinarySet}, \link[aroma.core]{GenericTabularFileSet}, \link[aroma.core]{SampleAnnotationSet}, \link[aroma.core]{TabularTextFileSet}\cr
 
 public static class \bold{GenericDataFileSet}\cr
 extends \link[R.oo]{Object}\cr
@@ -50,11 +50,10 @@ extends \link[R.oo]{Object}\cr
 \tabular{rll}{
  \tab \code{append} \tab  -\cr
  \tab \code{appendFiles} \tab  -\cr
- \tab \code{as} \tab  -\cr
- \tab \code{\link[aroma.core:as.GenericDataFileSet.GenericDataFileSet]{as.GenericDataFileSet}} \tab Coerce an object to an GenericDataFileSet object.\cr
  \tab \code{\link[aroma.core:as.list.GenericDataFileSet]{as.list}} \tab Returns the files of the file set.\cr
  \tab \code{byName} \tab  -\cr
  \tab \code{clearCache} \tab  -\cr
+ \tab \code{equals} \tab  -\cr
  \tab \code{\link[aroma.core:extract.GenericDataFileSet]{extract}} \tab Extract a subset of the file set.\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{\link[aroma.core:fromFiles.GenericDataFileSet]{fromFiles}} \tab Defines an GenericDataFileSet object by searching for files.\cr
@@ -69,6 +68,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{\link[aroma.core:getPath.GenericDataFileSet]{getPath}} \tab Gets the path (directory) of the file set.\cr
  \tab \code{\link[aroma.core:getPathnames.GenericDataFileSet]{getPathnames}} \tab Gets the pathnames of the files in the file set.\cr
  \tab \code{\link[aroma.core:getTags.GenericDataFileSet]{getTags}} \tab Gets the tags of the file set.\cr
+ \tab \code{hasFile} \tab  -\cr
  \tab \code{hasTag} \tab  -\cr
  \tab \code{hasTags} \tab  -\cr
  \tab \code{indexOf} \tab  -\cr

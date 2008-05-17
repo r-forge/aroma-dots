@@ -22,7 +22,7 @@
 \code{~~+--}\code{GenericDataFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.core]{AromaMicroarrayDataFile}}, \link[aroma.core]{AromaTabularBinaryFile}, \link[aroma.core]{GenericTabularFile}, \link[aroma.core]{SampleAnnotationFile}\cr
+\emph{\link[aroma.core]{AromaMicroarrayDataFile}}, \link[aroma.core]{AromaTabularBinaryFile}, \emph{\link[aroma.core]{GenericTabularFile}}, \link[aroma.core]{SampleAnnotationFile}, \link[aroma.core]{TabularTextFile}\cr
 
 public static class \bold{GenericDataFile}\cr
 extends \link[R.oo]{Object}\cr
