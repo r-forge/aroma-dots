@@ -106,3 +106,61 @@
   findByName.GenericDataFileSet getFileClass
   getFileClass.GenericDataFileSet validate.AromaMicroarrayDataSet
   validate.GenericDataFileSet
+  applyRegions applyRegions.CopyNumberOutliers applyRows
+  applyRows.CopyNumberRegions as.character.AromaMicroarrayDataSetTuple
+  as.character.CopyNumberOutliers as.character.CopyNumberRegions
+  as.character.RawCopyNumbers as.character.TabularTextFile
+  as.data.frame.CopyNumberOutliers as.data.frame.CopyNumberRegions
+  as.data.frame.RawCopyNumbers asMatrixOfFiles
+  asMatrixOfFiles.AromaMicroarrayDataSetTuple byPath
+  byPath.AromaMicroarrayDataSetTuple CopyNumberOutliers
+  CopyNumberRegions drawLevels drawLevels.CopyNumberOutliers
+  drawLevels.CopyNumberRegions equals.GenericDataFileSet
+  estimateStandardDeviation extractCNRs extractCNRs.default
+  extractMatrix.GenericTabularFile extractMatrix.GenericTabularFileSet
+  extractRawCNs extractRawCNs.default gaussianSmoothing.RawCopyNumbers
+  getAlias.AromaMicroarrayDataSetTuple getArrays getArrayTuple
+  getAsteriskTags getAsteriskTags.AromaMicroarrayDataSetTuple
+  getChipTypes getCNs getCNs.RawCopyNumbers
+  getColumnNames.TabularTextFile
+  getFullName.AromaMicroarrayDataSetTuple
+  getFullNames.AromaMicroarrayDataSetTuple getFullNameTranslator
+  getFullNameTranslator.GenericDataFile getHeader.TabularTextFile
+  getListOfCdfs getListOfCdfs.AromaMicroarrayDataSetTuple getListOfSets
+  getListOfSets.AromaMicroarrayDataSetTuple getLociFields
+  getLociFields.RawCopyNumbers getName.AromaMicroarrayDataSetTuple
+  getNames.AromaMicroarrayDataSetTuple getPhysicalPositions
+  getPhysicalPositions.RawCopyNumbers getReadArguments.TabularTextFile
+  getTableOfArrays getTags.AromaMicroarrayDataSetTuple getXY
+  getXY.RawCopyNumbers gunzip.GenericDataFile gzip.GenericDataFile
+  hasFile hasFile.GenericDataFileSet indexOfArrays
+  lines.CopyNumberOutliers lines.CopyNumberRegions lines.RawCopyNumbers
+  nbrOfArrays nbrOfChipTypes nbrOfLines.TabularTextFile nbrOfLoci
+  nbrOfLoci.RawCopyNumbers nbrOfRegions nbrOfRegions.CopyNumberOutliers
+  nbrOfRegions.CopyNumberRegions nbrOfRows.TabularTextFile
+  plot.RawCopyNumbers points.RawCopyNumbers RawCopyNumbers
+  readColumnNames.TabularTextFile readColumns
+  readColumns.AromaTabularBinaryFile readColumns.GenericTabularFile
+  readColumns.TabularTextFile readDataFrame.TabularTextFile
+  readHeader.TabularTextFile readLines.TabularTextFile
+  setAlias.AromaMicroarrayDataSetTuple setFullNameTranslator
+  setFullNameTranslator.GenericDataFile
+  setTags.AromaMicroarrayDataSetTuple sort.RawCopyNumbers stextChipType
+  stextChipType.character summary.RawCopyNumbers TabularTextFile
+  translateFullName translateFullName.GenericDataFile
+  verify.TabularTextFile writeColumnsToFiles.TabularTextFile
+  extractCopyNumberRegions extractCopyNumberRegions.default
+  extractRawCopyNumbers extractRawCopyNumbers.default
+  getAttributeXY getAttributeXY.AromaMicroarrayDataFile getPloidy
+  getPloidy.AromaMicroarrayDataFile hasAttributeXY
+  hasAttributeXY.AromaMicroarrayDataFile
+  setAttributesBy.AromaMicroarrayDataSet
+  setAttributesBySampleAnnotationFile
+  setAttributesBySampleAnnotationFile.AromaMicroarrayDataSet
+  setAttributesBySampleAnnotationSet
+  setAttributesBySampleAnnotationSet.AromaMicroarrayDataSet
+  setAttributesByTags.AromaMicroarrayDataFile setAttributeXY
+  setAttributeXY.AromaMicroarrayDataFile stextLabel
+  stextLabel.AromaMicroarrayDataFile stextLabels
+  stextLabels.AromaMicroarrayDataFile stextSize
+  stextSize.AromaMicroarrayDataFile

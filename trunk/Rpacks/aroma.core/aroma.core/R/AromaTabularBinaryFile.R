@@ -13,7 +13,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "GenericDataFile".}
+#   \item{...}{Arguments passed to @see "GenericTabularFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -27,7 +27,7 @@
 # }
 #*/########################################################################### 
 setConstructorS3("AromaTabularBinaryFile", function(...) {
-  this <- extend(GenericDataFile(...), "AromaTabularBinaryFile",
+  this <- extend(GenericTabularFile(...), "AromaTabularBinaryFile",
     "cached:.hdr"=NULL,
     "cached:.ftr"=NULL
   );
@@ -440,7 +440,7 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
 }, protected=TRUE)
 
 
-setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, ..., verbose=FALSE) {
+setMethodS3("readColumns", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, ..., verbose=FALSE) {
   # Open file
   pathname <- getPathname(this);
   con <- file(pathname, open="rb");
@@ -553,10 +553,10 @@ setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL,
 }, protected=TRUE)
 
 
-setMethodS3("readData", "AromaTabularBinaryFile", function(this, ...) {
-  readDataFrame(this, ...);
-}, protected=TRUE, deprecated=TRUE)
 
+setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, ...) {
+  readColumns(this, ...);
+})
 
 
 
@@ -1035,24 +1035,15 @@ setMethodS3("getBytesPerColumn", "AromaTabularBinaryFile", function(this, ...) {
 })
 
 
-setMethodS3("dim", "AromaTabularBinaryFile", function(x) {
-  # To please R CMD check
-  this <- x;
-
+setMethodS3("nbrOfRows", "AromaTabularBinaryFile", function(this, ...) {
   hdr <- readHeader(this)$dataHeader;
-  c(hdr$nbrOfRows, hdr$nbrOfColumns);
-}, appendVarArgs=FALSE)
-
-
-setMethodS3("nbrOfRows", "AromaTabularBinaryFile", function(x, ...) {
-  dim(x)[1];
+  hdr$nbrOfRows;
 })
 
-setMethodS3("nbrOfColumns", "AromaTabularBinaryFile", function(x, ...) {
-  dim(x)[2];
+setMethodS3("nbrOfColumns", "AromaTabularBinaryFile", function(this, ...) {
+  hdr <- readHeader(this)$dataHeader;
+  hdr$nbrOfColumns;
 })
-
-
 
 
 
@@ -1184,33 +1175,14 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 })
 
 
-setMethodS3("extractMatrix", "AromaTabularBinaryFile", function(this, column=1, drop=FALSE, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  nbrOfColumns <- nbrOfColumns(this);
-
-  # Argument 'column':
-  column <- Arguments$getIndex(column, range=c(1, nbrOfColumns));
-
-  # Read data as data frame
-  data <- readDataFrame(this, column=column, ...);
-
-  # Drop dimension
-  data <- data[,1];
-
-  # Coerce into a matrix?
-  if (!drop) {
-    data <- as.matrix(data);
-  }
-
-  data;
-})
-
 
 
 ############################################################################
 # HISTORY:
+# 2008-05-16
+# o Added readColumns().
+# o Removed deprecated readData().
+# o Inherits from GenericTabularFile.
 # 2008-05-11
 # o Added extractMatrix() with returns a matrix with one column.  This
 #   will be used by the corresponding method for the file set.

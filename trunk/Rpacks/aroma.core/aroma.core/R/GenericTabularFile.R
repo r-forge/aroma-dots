@@ -1,24 +1,5 @@
-setConstructorS3("GenericTabularFile", function(..., sep=c("\t", ","), quote="\"", fill=FALSE, skip=0, columnNames=TRUE, .verify=TRUE, verbose=FALSE) {
-  # Argument 'columnNames':
-  if (is.logical(columnNames)) {
-    readColumnNames <- columnNames;
-    columnNames <- NULL;
-  } else if (is.character(columnNames)) {
-    readColumnNames <- FALSE;
-  } else {
-    throw("Argument 'columnNames' must be either a logical or a character vector: ", class(columnNames)[1]);
-  }
-
-  this <- extend(GenericDataFile(...), "GenericTabularFile",
-    .fileHeader = NULL,
-    .columnNameTranslator = NULL,
-    sep = sep,
-    quote = quote,
-    fill = fill,
-    skip = skip,
-    columnNames = columnNames,
-    readColumnNames = readColumnNames
-  );
+setConstructorS3("GenericTabularFile", function(..., .verify=TRUE, verbose=FALSE) {
+  this <- extend(GenericDataFile(...), "GenericTabularFile");
 
   if (.verify)
     verify(this, ..., verbose=verbose);
@@ -32,13 +13,7 @@ setMethodS3("as.character", "GenericTabularFile", function(x, ...) {
 
   s <- NextMethod("as.character", this, ...);
   class <- class(s);
-  if (this$readColumnNames) {
-    columns <- paste("'", getColumnNames(this), "'", sep="");
-    s <- c(s, sprintf("Columns [%d]: %s", length(columns), paste(columns, collapse=", ")));
-  } else {
-    s <- c(s, sprintf("Columns [NA]: <not reading column names>"));
-  }
-  s <- c(s, sprintf("Number of data rows (lines): %d (%d)", nbrOfRows(this), nbrOfLines(this)));
+  s <- c(s, sprintf("Number of data rows: %d (%d)", nbrOfRows(this)));
 
   class(s) <- class;
   s;
@@ -66,7 +41,7 @@ setMethodS3("verify", "GenericTabularFile", function(this, ..., verbose=FALSE) {
   verbose && enter(verbose, "Validating file contents");
 
   tryCatch({
-    data <- readDataFrame(this, skip=this$skip, nrow=10, verbose=verbose);
+    data <- readDataFrame(this, rows=1:10, verbose=verbose);
   }, error = function(ex) {
     throw("File format error of the tabular file ('", getPathname(this), "'): ", ex$message);
   })
@@ -75,7 +50,6 @@ setMethodS3("verify", "GenericTabularFile", function(this, ..., verbose=FALSE) {
 
   invisible(this);
 }, private=TRUE)
-
 
 
 
@@ -108,372 +82,18 @@ setMethodS3("translateColumnNames", "GenericTabularFile", function(this, names, 
 }, protected=TRUE)
 
 
-setMethodS3("readColumnNames", "GenericTabularFile", function(this, ...) {
-  as.logical(this$readColumnNames);
-})
 
+setMethodS3("getColumnNames", "GenericTabularFile", abstract=TRUE);
 
-setMethodS3("getColumnNames", "GenericTabularFile", function(this, ...) {
-  if (this$readColumnNames) {
-    colnames <- getHeader(this, ...)$columns;
-    colnames <- translateColumnNames(this, colnames);
-  } else {
-    colnames <- this$columnNames;
-  }
-  colnames;
-})
+setMethodS3("readDataFrame", "GenericTabularFile", abstract=TRUE);
 
+setMethodS3("readColumns", "GenericTabularFile", abstract=TRUE);
 
-
-setMethodS3("getHeader", "GenericTabularFile", function(this, ..., force=FALSE) {
-  hdr <- this$.fileHeader;
-  if (force || is.null(hdr)) {
-    hdr <- readHeader(this, ...);
-    this$.fileHeader <- hdr;
-  }
-  hdr;
-})
-
-
-setMethodS3("readHeader", "GenericTabularFile", function(this, con=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Reading comment header & column header from ", class(this)[1]);
-
-  # Open a file connection?
-  if (is.null(con)) {
-    pathname <- getPathname(this);
-    verbose && cat(verbose, "Pathname: ", pathname);
-
-    # Open file connection
-    con <- file(pathname, open="r");
-    on.exit({
-      if (!is.null(con)) {
-        close(con);
-        con <- NULL;
-      }
-    })
-  }
-
-
-  ready <- FALSE;
-  comments <- c();
-  skip <- this$skip;
-  while (!ready) {
-    line <- readLines(con, n=1);
-    isComments <- (regexpr("^#", line) != -1);
-    if (!isComments) {
-      if (skip == 0)
-        break;
-      skip <- skip - 1;
-    }
-    comments <- c(comments, line);
-  }
-
-  verbose && cat(verbose, "Header comments:", level=-20);
-  verbose && str(verbose, comments, level=-20);
-
-  # Infer column separator?
-  sep <- this$sep;
-  if (length(sep) > 1) {
-    verbose && enter(verbose, "Identifying the separator that returns most columns");
-    verbose && cat(verbose, "Separators:");
-    verbose && str(verbose, sep);
-    columns <- base::lapply(sep, FUN=function(split) {
-      strsplit(line, split=split)[[1]];
-    });
-    nbrOfColumns <- sapply(columns, FUN=length);
-    max <- which.max(nbrOfColumns);
-    sep <- sep[max];
-    verbose && printf(verbose, "Choosen separator: '%s' (0x%s)\n", sep, charToRaw(sep));
-    verbose && exit(verbose);
-  }
-
-  if (this$readColumnNames) {
-    verbose && print(verbose, line);
-    columns <- strsplit(line, split=sep)[[1]];
-    columns <- trim(columns);
-    verbose && print(verbose, columns);
-  } else {
-    columns <- NULL;
-  }
-
-  # Remove quotes?
-  quote <- this$quote;
-  if (!is.null(quote)) {
-    for (pattern in c(sprintf("^%s", quote), sprintf("%s$", quote))) {
-      columns <- gsub(pattern, "", columns);
-    }
-  }
-
-  verbose && cat(verbose, "Columns: ", paste(paste("'", columns, "'", sep=""), collapse=", "), level=-10);
-
-  hdr <- list(
-    comments=comments,
-    columns=columns,
-    sep=sep,
-    quote=quote,
-    skip=this$skip
-  );
-
-  verbose && str(verbose, hdr);
-
-  verbose && exit(verbose);
-
-  hdr;
-}, protected=TRUE);
-
-
-
-setMethodS3("getReadArguments", "GenericTabularFile", function(this, fileHeader=NULL, colClassPatterns=c("*"=NA), defColClass="NULL", ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'fileHeader':
-  if (is.null(fileHeader)) {
-    fileHeader <- getHeader(this);
-  }
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  # Default column classes
-  columns <- getColumnNames(this);
-  if (!is.null(columns)) {
-    nbrOfColumns <- length(columns);
-    defColClasses <- rep(defColClass, nbrOfColumns);
-    defColClassPatterns <- defColClasses;
-
-    # Default columns?
-    pos <- which(names(colClassPatterns) == "*");
-    if (length(pos) > 0) {
-      # Exclude extra '*':s
-      if (length(pos) > 1) {
-        colClassPatterns <- colClassPatterns[-(pos[-1])];
-        pos <- pos[1];
-      }
-  
-      # Insert defaults
-      colClass <- colClassPatterns[pos];
-      names <- names(colClassPatterns);
-      if (length(colClassPatterns) > 1) {
-        names <- insert(names[-pos], at=pos, values=rep("*", nbrOfColumns));
-        idxs <- which(names == "*");
-        names[idxs] <- sprintf("^%s$", columns);
-  
-        colClassPatterns <- insert(colClassPatterns[-pos], at=pos, 
-                                   values=rep("*", nbrOfColumns));
-        names(colClassPatterns) <- names;
-        colClassPatterns[idxs] <- colClass;
-      } else {
-        colClassPatterns <- rep(colClass, nbrOfColumns);
-        names(colClassPatterns) <- sprintf("^%s$", columns);
-      }
-    }
-
-    verbose && cat(verbose, "Pattern used to identify column classes:", level=-20);
-    verbose && print(verbose, colClassPatterns, level=-20);
-  
-    verbose && cat(verbose, "Generate column classes:");
-    # Read everything by default
-    colClasses <- defColClasses;
-    names(colClasses) <- columns;
-  
-    # Update column classes according to patterns
-    for (kk in seq(along=colClassPatterns)) {
-      pattern <- names(colClassPatterns)[kk];
-      idxs <- which(regexpr(pattern, columns) != -1);
-      if (length(idxs) > 0) {
-        colClass <- colClassPatterns[kk];
-        colClasses[idxs] <- colClass;
-      }
-    }
-  } else {
-    args <- list(...);
-    colClasses <- args$colClasses;
-  }
-  
-  verbose && cat(verbose, "Column classes:", level=-20);
-  verbose && print(verbose, colClasses, level=-20);
-
-  # Inferred arguments
-  args <- list(
-    header      = this$readColumnNames,
-    skip        = fileHeader$skip,
-    colClasses  = colClasses,
-    sep         = fileHeader$sep,
-    quote       = fileHeader$quote,
-    fill        = this$fill,
-    check.names = FALSE,
-    na.strings  = c("---")
-  );
-
-  # Overwrite with user specified arguments, if any
-  userArgs <- list(...);
-  for (key in names(userArgs)) {
-    args[[key]] <- userArgs[[key]];
-  }
-
-  args;
-}, protected=TRUE);
-
-
-
-setMethodS3("readDataFrame", "GenericTabularFile", function(this, con=NULL, rows=NULL, nrow=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'rows':
-  if (!is.null(rows)) {
-    rows <- Arguments$getIndices(rows);
-    nrow <- max(rows);
-  }
-
-  # Argument 'nrow':
-  if (!is.null(nrow)) {
-    nrow <- Arguments$getInteger(nrow, range=c(1,Inf));
-  }
-  
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Reading ", class(this)[1]);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Reading header to infer read.table() arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  hdr <- readHeader(this, verbose=less(verbose, 5));
-
-  # Get read arguments
-  args <- getReadArguments(this, fileHeader=hdr, nrow=nrow, ..., 
-                                               verbose=less(verbose, 5));
-
-  verbose && cat(verbose, "Arguments inferred from file header:");
-  verbose && print(verbose, args);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Identify names of columns read
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  columns <- getColumnNames(this);
-  verbose && printf(verbose, "Column names (%d):\n", length(columns));
-  verbose && cat(verbose, paste(columns, collapse=", "));
-
-  if (!is.null(columns)) {
-    verbose && enter(verbose, "Matching column names:");
-    verbose && printf(verbose, "Column classes (%d):\n", length(args$colClasses));
-    verbose && cat(verbose, paste(args$colClasses, collapse=", "));
-    columns[args$colClasses == "NULL"] <- NA;
-    columns <- columns[!is.na(columns)];
-    verbose && exit(verbose);
-  }
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Read the data using read.table()
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Calling read.table()");
-
-  # Open a file connection?
-  if (is.null(con)) {
-    pathname <- getPathname(this);
-    verbose && cat(verbose, "Pathname: ", pathname);
-
-    # Open file connection
-    con <- file(pathname, open="r");
-    on.exit({
-      if (!is.null(con)) {
-        close(con);
-        con <- NULL;
-      }
-    })
-  }
-
-  args <- c(list(con), args);
-  verbose && cat(verbose, "Arguments used to read tabular file:");
-  verbose && print(verbose, args);
-  data <- do.call("read.table", args=args);
-  verbose && cat(verbose, "Raw data read by read.table():");
-  verbose && str(verbose, data);
-
-  # Extract subset of rows?
-  if (!is.null(rows)) {
-    data <- data[rows,,drop=FALSE];
-  } else {
-    rownames(data) <- NULL;
-  }
-
-  if (length(columns) > 0) {
-    if (ncol(data) != length(columns)) {
-      throw("Number of read data columns does not match the number of column headers: ", ncol(data), " !=", length(columns));
-    }
-    colnames(data) <- columns;
-  }
-
-  verbose && str(verbose, data);
-  verbose && exit(verbose);
-
-  attr(data, "fileHeader") <- hdr;
-
-  verbose && exit(verbose);
-
-  data;
-})
-
-
-setMethodS3("nbrOfLines", "GenericTabularFile", function(this, ...) {
-  pathname <- getPathname(this);
-  con <- file(pathname, open="r");
-  on.exit(close(con));
-  count <- as.integer(0);
-  while (TRUE) {
-    dummy <- readLines(con=con, n=4096);
-    n <- length(dummy);
-    count <- count + n;
-    if (n == 0)
-      break;
-  }
-  count;
-})
-
-
-setMethodS3("readLines", "GenericTabularFile", function(con, ...) {
-  # To please R CMD check
-  this <- con;
-  pathname <- getPathname(this);
-  readLines(pathname, ...);
-})
-
-
-setMethodS3("nbrOfRows", "GenericTabularFile", function(this, ...) {
-  hdr <- getHeader(this, ...);
-  n <- nbrOfLines(this) - hdr$skip - as.integer(length(hdr$columns) > 0);
-  n <- as.integer(n);
-  n;
-})
-
+setMethodS3("nbrOfRows", "GenericTabularFile", abstract=TRUE);
 
 setMethodS3("nbrOfColumns", "GenericTabularFile", function(this, ...) {
   length(getColumnNames(this));
 })
-
 
 setMethodS3("dim", "GenericTabularFile", function(x) {
   # To please R CMD check.
@@ -484,14 +104,11 @@ setMethodS3("dim", "GenericTabularFile", function(x) {
 
 
 
-setMethodS3("extractMatrix", "GenericTabularFile", function(this, column=1, drop=FALSE, ..., colClass="character", verbose=FALSE) {
+setMethodS3("extractMatrix", "GenericTabularFile", function(this, column=1, drop=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   nbrOfColumns <- nbrOfColumns(this);
-
-  # Argument 'column':
-  column <- Arguments$getIndex(column, range=c(1, nbrOfColumns));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -503,28 +120,19 @@ setMethodS3("extractMatrix", "GenericTabularFile", function(this, column=1, drop
 
   verbose && enter(verbose, "Extracting data as a single-column matrix");
 
-  # Map column indices to column names
-  columnName <- getColumnNames(this)[column];
-  verbose && printf(verbose, "Reading column (%d, %s)\n", column, columnName);
-
-  colClassPatterns <- colClass;
-  names(colClassPatterns) <- sprintf("^%s$", columnName);
-
   # Read data as data frame
-  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ..., 
-                                                verbose=less(verbose, 5));
+  data <- readColumns(this, columns=column, ..., verbose=less(verbose, 5));
+  # Drop dimension
+  data <- data[,1];
 
   verbose && cat(verbose, "Raw data frame read:");
   verbose && str(verbose, data);
 
-
-  # Drop dimension
-  data <- data[,1];
-
   # Coerce into a matrix?
   if (!drop) {
-    verbose && cat(verbose, "Dropping singleton dimensions");
     data <- as.matrix(data);
+  } else {
+    verbose && cat(verbose, "Dropping singleton dimensions");
   }
 
   verbose && cat(verbose, "Result:");
@@ -535,16 +143,6 @@ setMethodS3("extractMatrix", "GenericTabularFile", function(this, column=1, drop
   data;
 })
  
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# DEPRECATED
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-setMethodS3("readData", "GenericTabularFile", function(this, ...) {
-  readDataFrame(this, ...);
-}, protected=TRUE, deprecated=TRUE)
-
-
 
 ############################################################################
 # HISTORY:

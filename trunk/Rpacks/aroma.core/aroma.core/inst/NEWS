@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.2.2 [2008-05-15]
+Version: 0.9.2.3 [2008-05-17]
 o Added gzip()/gunzip() to GenericDataFile.
 o Added static findByName() and byName() to GenericDataFileSet.
 o Added static getFileClass() to GenericDataFileSet.  This makes it
@@ -13,6 +13,13 @@ o Added extractMatrix to GenericTabular(File|Set) and
   AromaTabularBinary(File|Set).
 o Added equals() and hasFile() to GenericDataFileSet.
 o Added classes GenericTabularFileSet and AromaTabularBinarySet.
+o Added stextChipType() for strings.
+o CLEAN UP: Moved more classes and methods from aroma.affymetrix to 
+  aroma.core: RawCopyNumbers, CopyNumberRegions, CopyNumberOutliers.
+  Moved attribute methods from AffymetrixCel{File|Set} to 
+  AromaMicroarrayDataSet.  Moved stextNnn() methods from AffymetrixFile
+  to AffymetrixMicroarrayDataSet.
+  Created superclass AromaMicroarrayDataSetTuple of AffymetrixCelSetTuple.
 o BUG FIX: readDataFrame() did not read the first data row if there 
   was no column header; it was eaten up by a preceeding readHeader().
 o ALPHA: Now equals() for GenericDataFile:s uses the class, 
