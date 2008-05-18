@@ -28,6 +28,9 @@
 # @keyword internal
 #*/###########################################################################
 setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, pattern=NULL, private=FALSE, ..., paths=NULL, verbose=FALSE) {
+  # Needs affxparser::findFiles()
+  require("affxparser") || throw("Package not loaded: affxparser");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
