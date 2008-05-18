@@ -3,6 +3,8 @@
 % 
 %  QualityAssessmentModel.R
 % 
+% on Sat May 17 11:55:45 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -48,10 +50,10 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
  \tab \code{getPlm} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getResiduals.QualityAssessmentModel]{getResiduals}} \tab Calculates the residuals from a probe-level model.\cr
+ \tab \code{getResiduals} \tab  -\cr
  \tab \code{getRootPath} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getWeights.QualityAssessmentModel]{getWeights}} \tab Calculates the weights from the robust fit to a probe-level model.\cr
+ \tab \code{getWeights} \tab  -\cr
  \tab \code{nbrOfArrays} \tab  -\cr
  \tab \code{plotNuse} \tab  -\cr
  \tab \code{plotRle} \tab  -\cr

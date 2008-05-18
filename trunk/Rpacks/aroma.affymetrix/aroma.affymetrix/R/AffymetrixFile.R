@@ -30,17 +30,16 @@
 # }
 #*/###########################################################################
 setConstructorS3("AffymetrixFile", function(...) {
-  extend(AromaMicroarrayDataFile(...), "AffymetrixFile");
+  extend(AromaMicroarrayDataFile(...), c("AffymetrixFile",
+                                                 uses("AffymetrixPlatform")));
 }, abstract=TRUE)
 
-
-setMethodS3("getPlatform", "AffymetrixFile", function(this, ...) {
-  "Affymetrix";
-}, protected=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2008-05-18
+# o Now "provides" AffymetrixPlatform methods.
 # 2008-05-09
 # o Added getPlatform().
 # 2007-09-16

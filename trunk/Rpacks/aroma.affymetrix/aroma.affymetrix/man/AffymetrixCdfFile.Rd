@@ -49,30 +49,30 @@ extends \emph{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:convert.AffymetrixCdfFile]{convert}} \tab Converts a CDF into the same CDF but with another format.\cr
+ \tab \code{convert} \tab  -\cr
  \tab \code{createMonoCell} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getCellIndices.AffymetrixCdfFile]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
+ \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getDimension} \tab  -\cr
  \tab \code{getFileFormat} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getGenomeInformation.AffymetrixCdfFile]{getGenomeInformation}} \tab Gets genome information for this chip type.\cr
+ \tab \code{getGenomeInformation} \tab  -\cr
  \tab \code{getImage} \tab  -\cr
  \tab \code{getMonoCell} \tab  -\cr
  \tab \code{getPlatform} \tab  -\cr
  \tab \code{getUnitGroupNamesFromUgcMap} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
+ \tab \code{getUnitNames} \tab  -\cr
  \tab \code{getUnitTypes} \tab  -\cr
  \tab \code{hasUnitTypes} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:indexOf.AffymetrixCdfFile]{indexOf}} \tab Gets the indices of units by their names.\cr
+ \tab \code{indexOf} \tab  -\cr
  \tab \code{isMonocellCdf} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:isPm.AffymetrixCdfFile]{isPm}} \tab Checks which cells (probes) are PMs and not.\cr
+ \tab \code{isPm} \tab  -\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{nbrOfColumns} \tab  -\cr
  \tab \code{nbrOfQcUnits} \tab  -\cr
  \tab \code{nbrOfRows} \tab  -\cr
  \tab \code{nbrOfUnits} \tab  -\cr
  \tab \code{readDataFrame} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:readUnits.AffymetrixCdfFile]{readUnits}} \tab Reads CDF data unit by unit.\cr
+ \tab \code{readUnits} \tab  -\cr
  \tab \code{setGenomeInformation} \tab  -\cr
  \tab \code{setSnpInformation} \tab  -\cr
 }
@@ -85,10 +85,10 @@ byChipType, byName, findByChipType, fromChipType, fromFile, getChipType, getHead
 getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
-getChipType, getPlatform
+getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getFullNameTranslator, getName, getPath, getPathname, getTags, gunzip, gzip, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, setFullNameTranslator, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

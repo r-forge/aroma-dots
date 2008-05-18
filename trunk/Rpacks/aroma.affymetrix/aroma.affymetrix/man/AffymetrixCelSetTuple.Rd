@@ -19,48 +19,36 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{AffymetrixCelSetTuple}\cr
+\code{~~+--}\code{\link[aroma.core]{AromaMicroarrayDataSetTuple}}\cr
+\code{~~~~~~~|}\cr
+\code{~~~~~~~+--}\code{AffymetrixCelSetTuple}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{ChipEffectSetTuple}\cr
 
 public static class \bold{AffymetrixCelSetTuple}\cr
-extends \link[R.oo]{Object}\cr
+extends \link[aroma.core]{AromaMicroarrayDataSetTuple}\cr
 
 
  }
 
- \usage{AffymetrixCelSetTuple(csList=NULL, tags="*", ..., .setClass="AffymetrixCelSet")}
+ \usage{AffymetrixCelSetTuple(..., .setClass="AffymetrixCelSet")}
 
  \arguments{
-   \item{csList}{A single or \code{\link[base]{list}} of \code{\link{AffymetrixCelSet}}:s.}
-   \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
-   \item{...}{Not used.}
+   \item{...}{Arguments passed to the constructor of
+      \code{\link{AromaMicroarrayDataSetTuple}}.}
    \item{.setClass}{The name of the class of the input set.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{byPath} \tab  -\cr
  \tab \code{clearCache} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:extract.AffymetrixCelSetTuple]{extract}} \tab Extracts a subset AffymetrixCelSetTuple.\cr
- \tab \code{getAlias} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getArrays.AffymetrixCelSetTuple]{getArrays}} \tab Gets the names of the arrays.\cr
- \tab \code{\link[aroma.affymetrix:getArrayTuple.AffymetrixCelSetTuple]{getArrayTuple}} \tab Gets arrays across chip types for one sample.\cr
- \tab \code{\link[aroma.affymetrix:getChipTypes.AffymetrixCelSetTuple]{getChipTypes}} \tab Gets a label for all chip types merged.\cr
- \tab \code{getFullName} \tab  -\cr
- \tab \code{getFullNames} \tab  -\cr
- \tab \code{getListOfSets} \tab  -\cr
- \tab \code{getName} \tab  -\cr
- \tab \code{getNames} \tab  -\cr
- \tab \code{getTags} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSetTuple]{nbrOfArrays}} \tab Gets the number of arrays.\cr
- \tab \code{\link[aroma.affymetrix:nbrOfChipTypes.AffymetrixCelSetTuple]{nbrOfChipTypes}} \tab Gets the number of chip types.\cr
- \tab \code{setAlias} \tab  -\cr
- \tab \code{setTags} \tab  -\cr
 }
 
+
+ \bold{Methods inherited from AromaMicroarrayDataSetTuple}:\cr
+byPath, asMatrixOfFiles, byPath, extract, getAlias, getArrays, getArrayTuple, getAsteriskTags, getChipTypes, getFullName, getFullNames, getListOfSets, getName, getNames, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

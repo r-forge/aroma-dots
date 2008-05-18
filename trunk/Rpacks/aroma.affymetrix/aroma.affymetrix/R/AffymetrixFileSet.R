@@ -43,7 +43,8 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
   }
 
 
-  extend(AromaMicroarrayDataSet(files=files, ...), "AffymetrixFileSet");
+  extend(AromaMicroarrayDataSet(files=files, ...), c("AffymetrixFileSet",
+                                                 uses("AffymetrixPlatform")));
 })
 
 
@@ -138,14 +139,12 @@ setMethodS3("fromFiles", "AffymetrixFileSet", function(static, ..., fileClass="A
 }, static=TRUE)
 
 
-setMethodS3("getPlatform", "AffymetrixFileSet", function(this, ...) {
-  "Affymetrix";
-}, protected=TRUE)
-
 
 
 ############################################################################
 # HISTORY:
+# 2008-05-18
+# o Now "provides" AffymetrixPlatform methods.
 # 2008-05-09
 # o Removed clearCache() since it was identical to the inherited one.
 # o BUG FIX: clearCache() called getCdf() which did not exist.

@@ -1,5 +1,5 @@
-setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, side=4, fmtstr="%s", pos=1, cex=0.7, col="darkgray", ...) {
-  stext(side=side, text=sprintf(fmtstr, getChipType(this)), pos=pos, cex=cex, col=col, ...);
+setMethodS3("stextChipType", "AffymetrixCdfFile", function(this, ...) {
+  stextChipType(..., chipType=getChipType(this));
 }, private=TRUE)
 
 

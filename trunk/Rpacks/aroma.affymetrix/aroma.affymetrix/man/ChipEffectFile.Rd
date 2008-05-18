@@ -55,13 +55,13 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
  \tab \code{extractMatrix} \tab  -\cr
  \tab \code{extractTheta} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getAM.ChipEffectFile]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects for two arrays.\cr
+ \tab \code{getAM} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getCellMapForMainCdf} \tab  -\cr
  \tab \code{getExpandedCellMap} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
  \tab \code{getUnitGroupCellChromosomePositionMap} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectFile]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
+ \tab \code{getXAM} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
@@ -70,16 +70,16 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
 extractDataFrame, extractMatrix, getParameters, readUnits
 
  \bold{Methods inherited from AffymetrixCelFile}:\cr
-[, [[, allocateFromCdf, clone, createFrom, fromFile, getAm, getAttributeXY, getCdf, getFileFormat, getImage, getPloidy, hasAttributeXY, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setAttributesByTags, setAttributeXY, setCdf, smoothScatterMvsA, writeImage
+[, [[, allocateFromCdf, clone, createFrom, fromFile, getAm, getCdf, getFileFormat, getImage, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setCdf, smoothScatterMvsA, writeImage
 
  \bold{Methods inherited from AffymetrixFile}:\cr
 getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
-getChipType, getPlatform
+getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY
 
  \bold{Methods inherited from GenericDataFile}:\cr
-compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getName, getPath, getPathname, getTags, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, testAttributes, validateChecksum, writeChecksum
+compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getFullNameTranslator, getName, getPath, getPathname, getTags, gunzip, gzip, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, setFullNameTranslator, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

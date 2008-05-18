@@ -112,8 +112,9 @@ setMethodS3("readDataFrame", "AffymetrixTsvFile", function(this, ..., verbose=FA
   gc();
 
   # Convert unit names to unit indices
-  cdf <- getCdf(this);
-  units <- match(df[["unit"]], getUnitNames(cdf));
+  unf <- getUnitNamesFile(this);
+  unitNames <- getUnitNames(unf);
+  units <- match(df[["unit"]], unitNames);
   if (any(is.na(units))) {
     throw("File format error: Identified units that do not exist in the CDF: ", getChipType(cdf));
   }

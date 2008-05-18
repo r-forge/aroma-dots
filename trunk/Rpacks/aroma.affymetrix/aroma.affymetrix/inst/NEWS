@@ -1,11 +1,21 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.2.3 [2008-05-17]
+o CLEAN UP: Moved more classes and methods from aroma.affymetrix to 
+  aroma.core: RawCopyNumbers, CopyNumberRegions, CopyNumberOutliers.
+  Moved attribute methods from AffymetrixCel{File|Set} to 
+  AromaMicroarrayDataSet.  Moved stextNnn() methods from AffymetrixFile
+  to AffymetrixMicroarrayDataSet.
+  Created superclass AromaMicroarrayDataSetTuple of AffymetrixCelSetTuple. 
+
+
 Version: 0.9.2.2 [2008-05-16]
 o Now NnnChipEffectSet parameters are by default set by the 
   parameters of the first file.
 o Added support for getFullNames(..., translate=TRUE)
   of AffymetrixCelSetTuple.
+
 
 Version: 0.9.2.1 [2008-05-11]
 o Added allocate() to AromaUgpFile.

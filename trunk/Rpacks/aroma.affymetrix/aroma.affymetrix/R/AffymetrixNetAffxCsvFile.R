@@ -1,5 +1,6 @@
 setConstructorS3("AffymetrixNetAffxCsvFile", function(..., .verify=TRUE) {
-  this <- extend(AffymetrixCsvFile(..., .verify=FALSE), "AffymetrixNetAffxCsvFile",
+  this <- extend(AffymetrixCsvFile(..., .verify=FALSE), 
+                  c("AffymetrixNetAffxCsvFile", uses("UnitNamesInterface")),
     "cache:.unitNames" = NULL
   );
 

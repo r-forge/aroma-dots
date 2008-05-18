@@ -117,6 +117,10 @@ setMethodS3("getChipType", "AffymetrixCnChpFile", function(this, ...) {
 }, private=TRUE)
  
 
+setMethodS3("getUnitNamesFile", "AffymetrixCnChpFile", function(this, ...) {
+  getCdf(this, ...);
+})
+
 setMethodS3("getCdf", "AffymetrixCnChpFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
@@ -229,8 +233,8 @@ setMethodS3("setUnitReadMap", "AffymetrixCnChpFile", function(this, readMap=NULL
   if (is.null(readMap)) {
   } else if (is.character(readMap)) {
     unitNamesOnFile <- readMap;
-    cdf <- getCdf(this);
-    unitNames <- getUnitNames(cdf);
+    unf <- getUnitNamesFile(this);
+    unitNames <- getUnitNames(unf);
     verbose && cat(verbose, "Unit names (CDF):");
     verbose && str(verbose, unitNames);
     readMap <- match(unitNames, unitNamesOnFile);	

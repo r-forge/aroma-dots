@@ -3,6 +3,8 @@
 % 
 %  SmoothSaModel.R
 % 
+% on Sat May 17 11:56:22 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

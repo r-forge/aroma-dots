@@ -50,7 +50,7 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
  \tab \code{extractRawCopyNumbers} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:fit.CopyNumberChromosomalModel]{fit}} \tab Fits the model.\cr
+ \tab \code{fit} \tab  -\cr
  \tab \code{getReferenceSetTuple} \tab  -\cr
  \tab \code{isPaired} \tab  -\cr
  \tab \code{plotAxesLayers} \tab  -\cr

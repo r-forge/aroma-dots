@@ -119,7 +119,8 @@ setMethodS3("as.character", "AffymetrixCelFile", function(x, ...) {
 
   s <- NextMethod("as.character", ...);
   s <- c(s, sprintf("File format: %s", getFileFormat(this, asString=TRUE)));
-  s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
+  s <- c(s, sprintf("Platform: %s", getPlatform(this)));
+  s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));
   class(s) <- "GenericSummary";
   s;
@@ -246,6 +247,11 @@ setMethodS3("getCdf", "AffymetrixCelFile", function(this, ...) {
     this$.cdf <- cdf;
   }
   cdf;
+})
+
+
+setMethodS3("getUnitNamesFile", "AffymetrixCelFile", function(this, ...) {
+  getCdf(this, ...);
 })
 
 
@@ -520,7 +526,8 @@ setMethodS3("nbrOfCells", "AffymetrixCelFile", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getChipType", "AffymetrixCelFile", function(this, ...) {
-  getChipType(getCdf(this));
+  unf <- getUnitNamesFile(this);
+  getChipType(unf);
 }, private=TRUE)
 
 
@@ -882,6 +889,7 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
 ############################################################################
 # HISTORY:
 # 2008-05-09
+# o Added getUnitNamesFile().
 # o Added getPlatform().
 # o Now AffymetrixCelFile inherits from AromaMicroarrayDataFile.
 # 2008-05-08

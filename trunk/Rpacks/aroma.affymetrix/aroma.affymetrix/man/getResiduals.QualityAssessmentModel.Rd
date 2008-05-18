@@ -3,6 +3,8 @@
 % 
 %  QualityAssessmentModel.R
 % 
+% on Sat May 17 11:55:45 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
