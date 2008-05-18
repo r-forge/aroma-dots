@@ -13,7 +13,7 @@ setMethodS3("as.character", "GenericTabularFile", function(x, ...) {
 
   s <- NextMethod("as.character", this, ...);
   class <- class(s);
-  s <- c(s, sprintf("Number of data rows: %d (%d)", nbrOfRows(this)));
+  s <- c(s, sprintf("Number of data rows: %d", nbrOfRows(this)));
 
   class(s) <- class;
   s;
