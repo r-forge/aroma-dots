@@ -3,6 +3,8 @@
 % 
 %  UnitModel.R
 % 
+% on Sat May 17 11:57:10 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -46,9 +48,9 @@ extends \emph{\link[aroma.affymetrix]{Model}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:findUnitsTodo.UnitModel]{findUnitsTodo}} \tab Identifies non-fitted units.\cr
- \tab \code{\link[aroma.affymetrix:getCellIndices.UnitModel]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
- \tab \code{\link[aroma.affymetrix:readUnits.UnitModel]{readUnits}} \tab Reads data unit by unit.\cr
+ \tab \code{findUnitsTodo} \tab  -\cr
+ \tab \code{getCellIndices} \tab  -\cr
+ \tab \code{readUnits} \tab  -\cr
 }
 
 

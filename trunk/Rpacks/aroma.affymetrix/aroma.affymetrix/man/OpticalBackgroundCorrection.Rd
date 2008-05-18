@@ -3,6 +3,8 @@
 % 
 %  OpticalBackgroundCorrection.R
 % 
+% on Sat May 17 11:55:17 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -49,7 +51,7 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 \section{Fields and Methods}{
  \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:process.OpticalBackgroundCorrection]{process}} \tab Performs background correction.\cr
+ \tab \code{process} \tab  -\cr
 }
 
 

@@ -248,8 +248,8 @@ setMethodS3("getPath", "TransformReport", function(this, ...) {
 
   # Chip type    
   ds <- getOutputDataSet(this);
-  cdf <- getCdf(ds);
-  chipType <- getChipType(cdf, fullname=FALSE);
+  unf <- getUnitNamesFile(ds);
+  chipType <- getChipType(unf, fullname=FALSE);
 
   # Image set
   set <- "transform";
@@ -335,6 +335,11 @@ setMethodS3("getCdf", "TransformReport", function(this, ...) {
 })
 
 
+setMethodS3("getUnitNamesFile", "TransformReport", function(this, ...) { 
+  getUnitNamesFile(getOutputDataSet(this));
+})
+
+
 setMethodS3("nbrOfArrays", "TransformReport", function(this, ...) { 
   nbrOfArrays(getOutputDataSet(this));
 })
@@ -386,7 +391,8 @@ setMethodS3("plotXYCurve", "TransformReport", function(this, arrays=seq(this), l
   }
 
   outSet <- getOutputDataSet(this);
-  cdf <- getCdf(this);
+  unf <- getUnitNamesFile(this);
+  chipType <- getChipType(unf);
   for (kk in seq(along=arrays)) {
     array <- arrays[kk];
 
@@ -412,7 +418,7 @@ setMethodS3("plotXYCurve", "TransformReport", function(this, arrays=seq(this), l
     verbose && exit(verbose);
   
     if (!add)
-      stextChipType(cdf, line=-1);
+      stextChipType(chipType, line=-1);
 
     if (length(arrays) == 1)
       stextSize(df, size=length(yy$y1));
@@ -442,8 +448,8 @@ setMethodS3("plotXYCurveLog2", "TransformReport", function(this, xlim=c(0,16), x
 setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=800, height=width, ..., skip=TRUE, verbose=FALSE) {
   pngDev <- findPngDevice(transparent=FALSE);
  
-  cdf <- getCdf(this);
-  chipType <- getChipType(cdf, fullname=FALSE);
+  unf <- getUnitNamesFile(this);
+  chipType <- getChipType(unf, fullname=FALSE);
   rootPath <- getRootPath(this);
   name <- getName(this);
   tags <- getTags(this);
@@ -499,8 +505,8 @@ setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=80
 setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, width=800, height=width, ..., skip=TRUE, verbose=FALSE) {
   pngDev <- findPngDevice(transparent=FALSE);
  
-  cdf <- getCdf(this);
-  chipType <- getChipType(cdf, fullname=FALSE);
+  unf <- getUnitNamesFile(this);
+  chipType <- getChipType(unf, fullname=FALSE);
   rootPath <- getRootPath(this);
   name <- getName(this);
   tags <- getTags(this);
@@ -543,6 +549,8 @@ setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, w
 
 ############################################################################
 # HISTORY:
+# 2008-05-18
+# o Made class less platform specific by utilizing UnitNamesFile interface.
 # 2007-03-24
 # o BUG FIX: getPath() created the root path before trying to expand
 #   Windows shortcuts.

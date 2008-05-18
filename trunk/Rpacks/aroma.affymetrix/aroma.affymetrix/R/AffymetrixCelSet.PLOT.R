@@ -83,7 +83,7 @@ setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=1/2, types=
     plotDensity(df, subset=subset, ..., col=col[kk], lty=lty[kk], 
               lwd=lwd[kk], annotate=FALSE, add=add, verbose=less(verbose));
     if (annotate) {
-      stextChipType(getCdf(this));
+      stextChipType(getChipType(this));
       stextSize(df, size=length(subset));
       annotate <- FALSE;
     }

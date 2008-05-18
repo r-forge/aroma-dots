@@ -22,7 +22,8 @@
 # @author
 #*/###########################################################################
 setConstructorS3("AffymetrixCdfFile", function(...) {
-  this <- extend(AromaChipTypeAnnotationFile(...), "AffymetrixCdfFile",
+  this <- extend(AromaChipTypeAnnotationFile(...), c("AffymetrixCdfFile", 
+                            uses("UnitNamesInterface", "AffymetrixPlatform")),
     "cached:.header" = NULL,
     "cached:.unitNames" = NULL,
     "cached:.unitSizes" = NULL,
@@ -48,6 +49,11 @@ setMethodS3("clearCache", "AffymetrixCdfFile", function(this, ...) {
   # Then for this object
   NextMethod(generic="clearCache", object=this, ...);
 }, private=TRUE)
+
+
+setMethodS3("getUnitNamesFile", "AffymetrixCdfFile", function(this, ...) {
+  this;
+}, protected=TRUE)
 
 
 setMethodS3("getFileFormat", "AffymetrixCdfFile", function(this, ...) {
@@ -609,52 +615,6 @@ setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL
 ##   sizes;
 ## }, private=TRUE)
 
-
-
-
-###########################################################################/**
-# @RdocMethod indexOf
-#
-# @title "Gets the indices of units by their names"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{pattern}{A pattern to be used for identifying unit names of 
-#      interest.  If @NULL, no regular expression matching is done.}
-#   \item{names}{Names to be match exactly to the unit names.}
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @vector of @integers in [1,N] where N is the number of units
-#  in this CDF structure.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "getUnitNames".
-#   @seeclass
-# }
-#
-# @keyword IO
-#*/###########################################################################
-setMethodS3("indexOf", "AffymetrixCdfFile", function(this, pattern=NULL, names=NULL, ...) {
-  if (!is.null(names)) {
-    idx <- match(names, getUnitNames(this));
-  } else if (!is.null(pattern)) {
-    idx <- grep(pattern, getUnitNames(this));
-  } else {
-    throw("Either argument 'names' or 'pattern' must be specified.");
-  }
-
-  idx;
-})
 
 
 ###########################################################################/**
@@ -1548,6 +1508,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-05-18
+# o Now AffymetrixCdfFile "provides" the UnitNamesInterface.
 # 2008-05-09
 # o Now inherits from AromaChipTypeAnnotationFile.
 # 2008-04-12

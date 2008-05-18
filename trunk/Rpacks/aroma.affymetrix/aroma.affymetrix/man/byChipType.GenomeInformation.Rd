@@ -3,6 +3,8 @@
 % 
 %  GenomeInformation.R
 % 
+% on Sat May 17 11:54:49 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -33,7 +35,6 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.affymetrix:fromCdf.GenomeInformation]{*fromCdf}()}.
   For more information see \code{\link{GenomeInformation}}.
 }
 \keyword{internal}

@@ -1,5 +1,6 @@
 setConstructorS3("AffymetrixTabularFile", function(...) {
-  extend(GenericTabularFile(...), "AffymetrixTabularFile");
+  extend(TabularTextFile(...), c("AffymetrixTabularFile", 
+                                              uses("AffymetrixPlatform")));
 })
 
 
@@ -47,6 +48,8 @@ setMethodS3("byChipType", "AffymetrixTabularFile", function(static, chipType, ta
 
 ############################################################################
 # HISTORY:
+# 2008-05-17
+# o Now inherits from TabularTextFile.
 # 2008-04-25
 # o Now byChipType() passes '...' to the constructor, e.g. 'verbose'.
 # 2007-09-16

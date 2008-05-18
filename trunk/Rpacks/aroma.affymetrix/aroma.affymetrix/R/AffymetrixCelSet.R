@@ -203,7 +203,8 @@ setMethodS3("as.character", "AffymetrixCelSet", function(x, ...) {
   tags <- paste(tags, collapse=",");
   s <- c(s, sprintf("Tags: %s", tags));
   s <- c(s, sprintf("Path: %s", getPath(this)));
-  s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
+  s <- c(s, sprintf("Platform: %s", getPlatform(this)));
+  s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   n <- nbrOfArrays(this);
   s <- c(s, sprintf("Number of arrays: %d", n));
   names <- getNames(this);
@@ -263,6 +264,46 @@ setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE
   identifier;
 }, private=TRUE)
 
+
+
+###########################################################################/**
+# @RdocMethod getChipType
+#
+# @title "Gets the chip type for this CEL set"
+#
+# \description{
+#  @get "title".
+#  The chip type is inferred from the current CDF.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns an @character string.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getCdf".
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
+setMethodS3("getChipType", "AffymetrixCelSet", function(this, ...) {
+  unf <- getUnitNamesFile(this);
+  getChipType(unf, ...);
+})
+
+
+setMethodS3("getUnitNamesFile", "AffymetrixCelSet", function(this, ...) {
+  getUnitNamesFile(this$files[[1]], ...);
+})
 
 
 
@@ -1399,6 +1440,8 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-17
+# o Added getChipType().
 # 2008-05-09
 # o Now AffymetrixCelSet inherits from AromaMicroarrayDataSet.
 # 2008-05-08

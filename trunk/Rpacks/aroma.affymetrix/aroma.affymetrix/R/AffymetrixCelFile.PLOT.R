@@ -83,7 +83,7 @@ setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types
   })
 
   if (annotate) {
-    stextChipType(getCdf(this));
+    stextChipType(getChipType(this));
     stextLabels(this);
     stextSize(this, size=length(y));
   }
@@ -116,8 +116,8 @@ setMethodS3("getAm", "AffymetrixCelFile", function(this, reference, indices=NULL
 #  }
 #
 #  # Argument 'units':
-#  cdf <- getCdf(this);
-#  nbrOfUnits <- nbrOfUnits(cdf);
+#  unf <- getUnitNamesFile(this);
+#  nbrOfUnits <- nbrOfUnits(unf);
 #  if (is.null(units)) {
 #  } else {
 #    units <- Arguments$getIndices(units, range=c(1,nbrOfUnits));
@@ -196,7 +196,7 @@ setMethodS3("annotateMvsA", "AffymetrixCelFile", function(this, reference, ..., 
   if (identical(what, "M")) {
     abline(h=0, lty=1, col="blue");
   }
-  stextChipType(getCdf(this));
+  stextChipType(getChipType(this));
   stextLabels(this, others=reference);
 }, private=TRUE)
 
@@ -467,7 +467,7 @@ setMethodS3("image270", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yra
 
   cdf <- getCdf(this);
   dim <- paste(getDimension(cdf), collapse="x");
-  label <- sprintf("Chip type: %s [%s]", getChipType(cdf), dim);
+  label <- sprintf("Chip type: %s [%s]", getChipType(this), dim);
   text(x=0, y=0, labels=label, adj=c(0,1.2), cex=0.8, xpd=TRUE)
   label <- sprintf("(%d,%d)", as.integer(xrange[1]), as.integer(yrange[1]));
   text(x=0, y=1, labels=label, adj=c(0,-0.7), cex=0.8, xpd=TRUE)
@@ -725,8 +725,7 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
     }
 
     # chip type
-    cdf <- getCdf(this);
-    chipType <- getChipType(cdf, fullname=FALSE);
+    chipType <- getChipType(this, fullname=FALSE);
 
     # image set
     set <- "spatial";

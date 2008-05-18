@@ -3,6 +3,8 @@
 % 
 %  ProbeLevelModel.R
 % 
+% on Sat May 17 11:55:36 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -61,8 +63,8 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \tab \code{calculateWeights} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.ProbeLevelModel]{fit}} \tab Estimates the model parameters.\cr
  \tab \code{getAsteriskTags} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getChipEffectSet.ProbeLevelModel]{getChipEffectSet}} \tab Gets the set of chip effects for this model.\cr
- \tab \code{\link[aroma.affymetrix:getProbeAffinityFile.ProbeLevelModel]{getProbeAffinityFile}} \tab Gets the probe affinities for this model.\cr
+ \tab \code{getChipEffectSet} \tab  -\cr
+ \tab \code{getProbeAffinityFile} \tab  -\cr
  \tab \code{getResidualSet} \tab  -\cr
  \tab \code{getWeightsSet} \tab  -\cr
 }

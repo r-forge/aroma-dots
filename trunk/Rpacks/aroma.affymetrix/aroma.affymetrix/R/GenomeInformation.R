@@ -83,83 +83,6 @@ setMethodS3("verify", "GenomeInformation", function(this, ...) {
 
 
 
-###########################################################################/**
-# @RdocMethod getChipType
-#
-# @title "Gets the chip type of this genome information set"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Not used.}
-# }
-#
-# \value{
-#   Returns a @character string.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getChipType", "GenomeInformation", function(this, ...) {
-  # Infer chip type from the first parent directory that has the same name
-  # as the chip type of an existing CDF file.
-  pathname <- getPathname(this);
-  lastPath <- pathname;
-  while (TRUE) {
-    path <- dirname(lastPath);
-    if (path == lastPath)
-      break;
-    chipType <- basename(path);
-    dummy <- AffymetrixCdfFile$findByChipType(chipType);
-    if (!is.null(dummy))
-      return(chipType)
-    lastPath <- path;
-  }
-  throw("Failed to infer the chip type from the pathname of the genome information file: ", pathname);
-})
-
-
-###########################################################################/**
-# @RdocMethod fromCdf
-#
-# @title "Static method to define a genome information set from a CDF"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{cdf}{An @see "AffymetrixCdfFile".}
-#  \item{...}{Additional argument passed to @seemethod "byChipType".}
-# }
-#
-# \value{
-#   Returns a @see "GenomeInformation" object.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "byChipType".
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("fromCdf", "GenomeInformation", function(static, cdf, ...) {
-  byChipType(static, getChipType(cdf), ...);
-}, static=TRUE)
-
-
-
 
 ###########################################################################/**
 # @RdocMethod byChipType
@@ -183,7 +106,6 @@ setMethodS3("fromCdf", "GenomeInformation", function(static, cdf, ...) {
 # @author
 #
 # \seealso{
-#   @seemethod "fromCdf".
 #   @seeclass
 # }
 #*/###########################################################################
@@ -195,152 +117,11 @@ setMethodS3("fromChipType", "GenomeInformation", function(static, ...) {
 
 
 setMethodS3("fromDataSet", "GenomeInformation", function(static, dataSet, ...) {
-  cdf <- getCdf(dataSet);
-  chipType <- getChipType(cdf);
+  chipType <- getChipType(dataSet);
   byChipType(static, chipType, ...);
 }, static=TRUE)
 
 
-
-###########################################################################/**
-# @RdocMethod getData
-#
-# @title "Gets all or a subset of the genome information data"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{units}{The units for which the data should be returned.}
-#  \item{fields}{The fields to be returned.}
-#  \item{orderBy}{The fields by which the returned data frame should be 
-#      ordered.}
-#  \item{...}{Named arguments used to select a subset of the units to be
-#      returned.  Either a value to be compared to or a @function returning
-#      @TRUE or @FALSE.}
-# }
-#
-# \value{
-#   Returns a @data.frame, where the row names correspond to unit indices
-#   as defined by the CDF.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "getUnitIndices".
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c("chromosome", "physicalPosition"), orderBy=NULL, ..., force=FALSE, verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  data <- this$.data;
-  if (is.null(data) || force) {
-    verbose && enter(verbose, "Retrieving genome information from file");
-
-    # Read the unit names from the corresponding CDF file
-    verbose && enter(verbose, "Reading unit names from CDF file");
-    chipType <- getChipType(this);
-    cdfFile <- AffymetrixCdfFile$findByChipType(chipType);
-    if (is.null(cdfFile))
-      throw("Could not located CDF file: ", chipType);
-    targetUnitNames <- readCdfUnitNames(cdfFile);
-    verbose && exit(verbose);
-
-    # Now read the genome information data
-    verbose && enter(verbose, "Reading genome information data");
-    data <- readDataFrame(this, verbose=less(verbose));
-    verbose && str(verbose, data);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Reordering units according to the CDF file");
-    # Reorder genome information data according to CDF file
-    idxs <- match(targetUnitNames, data[,1]);
-    data <- data[idxs,,drop=FALSE];
-#    data <- data[,-1];
-    rownames(data) <- 1:nrow(data);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Optimizing default return order");
-    # Default ordering
-    args <- as.list(data[,fields,drop=FALSE]);
-    o <- do.call("order", args=args);
-    data <- data[o,,drop=FALSE];
-    rm(o);
-    verbose && str(verbose, data);
-    verbose && exit(verbose);
-
-    if ("chromosome" %in% fields) {
-      verbose && enter(verbose, "Replacing 'X' and 'Y' with 23 and 24");
-      chr <- data[,"chromosome"];
-      chr[chr == "X"] <- 23;
-      chr[chr == "Y"] <- 24;
-      chr[chr == "Z"] <- 25;
-      suppressWarnings({
-        chr <- as.integer(chr);
-      })
-      data[,"chromosome"] <- chr;
-      rm(chr);
-      verbose && str(verbose, data);
-      verbose && exit(verbose);
-    }
-
-    # Store in cache
-    this$.data <- data;
-
-    # Garbage collect
-    gc <- gc();
-    verbose && print(verbose, gc);
-    
-    verbose && exit(verbose);
-  }
-
-  # Subset by unit?
-  if (!is.null(units)) {
-    # Map the unit indicies to the row names
-    rr <- match(units, rownames(data));
-    data <- data[rr,,drop=FALSE];
-  }
-
-  # Stratify by field values?
-  args <- list(...);
-  if (length(args) > 0) {
-    for (key in names(args)) {
-      # Get the values to be stratified upon.
-      values <- data[,key,drop=FALSE];
-
-      # Get the test (value or function)
-      test <- args[[key]];
-      test <- na.omit(test);
-      if (is.function(test)) {
-        keep <- test(values);
-      } else {
-        keep <- (values == test);
-        keep <- (keep & !is.na(keep));
-      }
-      data <- data[keep,,drop=FALSE];
-    }
-    rm(keep);
-  }
-
-  # Reorder?
-  if (!is.null(orderBy)) {
-    o <- do.call("order", args=as.list(data[,orderBy,drop=FALSE]));
-    data <- data[o,,drop=FALSE];
-    rm(o);
-  }
-
-  # Extract a subset of fields?
-  if (!is.null(fields))
-    data <- data[,fields, drop=FALSE];
-
-  data;
-})
 
 
 setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosomes, region=NULL, ..., .checkArgs=TRUE) {
@@ -485,18 +266,6 @@ setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRU
 })
 
 
-setMethodS3("isCompatibleWithCdf", "GenomeInformation", function(this, cdf, ...) {
-  # Argument 'cdf':
-  if (!inherits(cdf, "AffymetrixCdfFile")) {
-    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
-  }
-
-  # By default, be naive and always return FALSE.
-  TRUE;
-}, protected=TRUE)
-
-
-
 ###########################################################################/**
 # @RdocMethod getPositions
 #
@@ -544,12 +313,6 @@ setMethodS3("getChromosomes", "GenomeInformation", function(this, ..., force=FAL
     chromosomes <- unique(getData(this, fields="chromosome")[,1]);
     chromosomes <- sort(chromosomes);
 
-##    # Sort in order of (1:22,"X","Y")
-##    chromosomeMap <- c(1:22,"X","Y", NA);
-##    o <- match(chromosomeMap, chromosomes);
-##    chromosomes <- chromosomes[o];
-##    chromosomes <- chromosomes[!is.na(chromosomes)];
-    
     this$.chromosomes <- chromosomes;
   }
   chromosomes;
@@ -636,8 +399,7 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
   # Annotate?
   if (annotate) {
     stext(sprintf("%d SNPs", d$n), side=3, pos=1, line=-1, cex=0.8);
-    cdf <- AffymetrixCdfFile$byChipType(getChipType(this));
-    stextChipType(cdf);
+    stextChipType(chipType=getChipType(this));
   }
 
   invisible(d);
@@ -646,6 +408,10 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2008-05-17
+# o This files now only contains methods generic to any platform.  Methods
+#   specific to Affymetrix are in GenomeInformation.AFFX.R.
+# o Now fromDataSet() uses getChipType(ds) and not getChipType(getCdf(ds)).
 # 2008-04-14
 # o Renamed readData() to readDataFrame() for GenomeInformation. 
 # 2007-12-01

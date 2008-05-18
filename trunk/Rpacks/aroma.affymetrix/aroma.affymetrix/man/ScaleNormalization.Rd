@@ -3,6 +3,8 @@
 % 
 %  ScaleNormalization.R
 % 
+% on Sat May 17 11:56:12 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -62,7 +64,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:process.ScaleNormalization]{process}} \tab Normalizes the data set.\cr
+ \tab \code{process} \tab  -\cr
 }
 
 

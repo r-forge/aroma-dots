@@ -3,6 +3,8 @@
 % 
 %  QuantileNormalization.R
 % 
+% on Sat May 17 11:55:50 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -62,7 +64,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:process.QuantileNormalization]{process}} \tab Normalizes the data set.\cr
+ \tab \code{process} \tab  -\cr
 }
 
 
