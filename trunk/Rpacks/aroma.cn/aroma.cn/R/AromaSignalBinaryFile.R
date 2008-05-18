@@ -26,7 +26,10 @@
 # }
 #*/########################################################################### 
 setConstructorS3("AromaSignalBinaryFile", function(...) {
-  extend(AromaTabularBinaryFile(...), "AromaSignalBinaryFile"
+  extend(AromaTabularBinaryFile(...), c("AromaSignalBinaryFile",
+                                                   uses("PlatformInterface")),
+    "cached:.unf" = NULL,
+    "cached:.ugp" = NULL
   );
 })
 
@@ -135,6 +138,31 @@ setMethodS3("getChipType", "AromaSignalBinaryFile", function(this, ...) {
 
   res;
 })
+
+
+setMethodS3("getUnitNamesFile", "AromaUnitTabularBinaryFile", function(this, force=FALSE, ...) {
+  unf <- this$.unf;
+  if (force || is.null(unf)) {
+    platform <- getPlatform(this);
+    platform <- PlatformInterface$byName(platform, ...);
+    unf <- getUnitNamesFile(platform);
+    this$.unf <- unf;
+  }
+
+  unf;
+})
+
+
+setMethodS3("getAromaUgpFile", "AromaSignalBinaryFile", function(this, ..., force=TRUE) {
+  ugp <- this$.ugp;
+  if (force || is.null(ugp)) {
+    chipType <- getChipType(this, ...);
+    ugp <- AromaUgpFile$byChipType(chipType);
+    this$.ugp <- ugp;
+  }
+  ugp;
+}) 
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # END Interface API?

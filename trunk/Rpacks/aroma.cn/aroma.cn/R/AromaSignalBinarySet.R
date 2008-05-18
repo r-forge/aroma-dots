@@ -61,15 +61,18 @@ setMethodS3("validate", "AromaSignalBinarySet", function(this, ...) {
 
 
 setMethodS3("getPlatform", "AromaSignalBinarySet", function(this, ...) {
-  file <- getFile(this, 1);
-  getPlatform(file);
+  getPlatform(getFile(this, 1), ...);
 })
 
 
 setMethodS3("getChipType", "AromaSignalBinarySet", function(this, ...) {
-  file <- getFile(this, 1);
-  getChipType(file);
+  getChipType(getFile(this, 1), ...);
 }) 
+
+
+setMethodS3("getAromaUgpFile", "AromaSignalBinarySet", function(this, ...) {
+  getAromaUgpFile(getFile(this,1), ...);
+})
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # END Interface API?

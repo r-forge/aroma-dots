@@ -1,5 +1,13 @@
 Package: aroma.cn
 =================
 
+Version: 0.1.1 [2008-05-18]
+o Package now provides platform-independent classes 
+  Aroma{Total|FreqB}CnSignal{File|Set}.   With the more generalized
+  aroma.core package, it is now possible retrieve the AromaUgpFile
+  for the above.  This provides the necessary basic methods for 
+  plotting data along chromosomes.
+
+
 Version: 0.1.0 [2008-05-09]
 o Created.
