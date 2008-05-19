@@ -102,7 +102,7 @@ setMethodS3("as.character", "GenericDataFileSet", function(x, ...) {
   s <- c(s, sprintf("Name: %s", getName(this)));
   tags <- getTags(this, collapse=",");
   if (!is.null(tags)) {
-    s <- paste(s, " Tags: ", tags, ".", sep="");
+    s <- c(s, sprintf("Tags: %s", tags));
   }
   s <- c(s, sprintf("Full name: %s", getFullName(this)));
   n <- nbrOfFiles(this);

@@ -1,19 +1,38 @@
+setConstructorS3("AromaPlatformInterface", function(...) {
+  extend(Interface(), "AromaPlatformInterface");
+})
+
+
+setMethodS3("getAromaPlatform", "AromaPlatformInterface", function(this, ..., force=FALSE) {
+  ap <- this$.ap;
+
+  if (force || is.null(ap)) {
+    platform <- getPlatform(this, ...);
+    ap <- AromaPlatform$byName(platform, ...);
+    this$.ap <- ap;
+  }
+
+  ap;
+})
+
+
+
 ###########################################################################/**
-# @RdocClass PlatformInterface
+# @RdocClass AromaPlatform
 #
-# @title "The PlatformInterface class"
+# @title "The AromaPlatform class"
 #
 # \description{
 #  @classhierarchy
 #
-#  A PlatformInterface provides methods for a given platform, e.g.
+#  A AromaPlatform provides methods for a given platform, e.g.
 #  Affymetrix, Agilent, Illumina.
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "Interface".}
+#   \item{...}{Not used.}
 # }
 #
 # \section{Methods}{
@@ -22,32 +41,31 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("PlatformInterface", function(...) {
-  extend(Interface(), "PlatformInterface");
+setConstructorS3("AromaPlatform", function(...) {
+  extend(Object(), "AromaPlatform");
 })
 
 
-setMethodS3("byName", "PlatformInterface", function(static, name, ...) {
+setMethodS3("byName", "AromaPlatform", function(static, name, ...) {
   className <- sprintf("%sPlatform", capitalize(name));
   clazz <- Class$forName(className);
   newInstance(clazz);
 }, static=TRUE);
 
 
-setMethodS3("getName", "PlatformInterface", function(this, ...) {
-  name <- grep("Platform", class(this), value=TRUE);
+setMethodS3("getName", "AromaPlatform", function(this, ...) {
+  name <- class(this)[1];
   name <- name[1];
   name <- gsub("Platform", "", name);
   name;
 })
 
-setMethodS3("findUnitNamesFile", "PlatformInterface", abstract=TRUE);
+setMethodS3("findUnitNamesFile", "AromaPlatform", abstract=TRUE);
 
-setMethodS3("getUnitNamesFile", "PlatformInterface", abstract=TRUE);
+setMethodS3("getUnitNamesFile", "AromaPlatform", abstract=TRUE);
 
 
-
-setMethodS3("getAromaUgpFile", "PlatformInterface", function(static, ...) {
+setMethodS3("getAromaUgpFile", "AromaPlatform", function(static, ...) {
   AromaUgpFile$byName(...);
 }, static=TRUE)
 

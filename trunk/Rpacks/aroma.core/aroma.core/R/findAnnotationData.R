@@ -27,7 +27,7 @@
 #
 # @keyword internal
 #*/###########################################################################
-setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, pattern=NULL, private=FALSE, ..., paths=NULL, verbose=FALSE) {
+setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, pattern=NULL, private=FALSE, ..., firstOnly=TRUE, paths=NULL, verbose=FALSE) {
   # Needs affxparser::findFiles()
   require("affxparser") || throw("Package not loaded: affxparser");
 
@@ -94,6 +94,7 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
   args$allFiles <- private;
   args$paths <- paths;
   args$recursive <- TRUE;
+  args$firstOnly <- FALSE;
   verbose && cat(verbose, "Arguments to findFiles:");
   verbose && str(verbose, args);
   pathname <- do.call("findFiles", args=args);
@@ -110,6 +111,15 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
     pathname <- pathname[!excl];
   }
 
+  # AD HOC[?]
+  if (firstOnly && length(pathname) > 1) {
+    # Keep the shortest possible fullname match
+    basenames <- basename(pathname);
+    fullnames <- gsub("[.][^.]*$", "", basenames);
+    keep <- order(nchar(fullnames))[1];
+    pathname <- pathname[keep];
+  }
+
   verbose && cat(verbose, "Pathname: ", pathname);
   verbose && exit(verbose);
 
@@ -118,6 +128,11 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
 
 ############################################################################
 # HISTORY:
+# 2008-05-18
+# o BUG FIX: findAnnotationDataByChipType(chipType="GenomeWideSNP_6", 
+#   pattern="^GenomeWideSNP_6.*[.]ugp$") would find file 
+#   'GenomeWideSNP_6,Full,na24.ugp' before 'GenomeWideSNP_6,na24.ugp'.
+#   Now we return the one with the shortest full name.
 # 2008-05-10
 # o BUG FIX: When searching with 'firstOnly=FALSE', findAnnotationData() 
 #   was identifying files that are in "private" directory.  This is how
