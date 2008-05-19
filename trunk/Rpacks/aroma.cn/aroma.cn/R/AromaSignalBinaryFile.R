@@ -27,7 +27,7 @@
 #*/########################################################################### 
 setConstructorS3("AromaSignalBinaryFile", function(...) {
   extend(AromaTabularBinaryFile(...), c("AromaSignalBinaryFile",
-                                                   uses("PlatformInterface")),
+                                              uses("AromaPlatformInterface")),
     "cached:.unf" = NULL,
     "cached:.ugp" = NULL
   );
@@ -140,11 +140,10 @@ setMethodS3("getChipType", "AromaSignalBinaryFile", function(this, ...) {
 })
 
 
-setMethodS3("getUnitNamesFile", "AromaUnitTabularBinaryFile", function(this, force=FALSE, ...) {
+setMethodS3("getUnitNamesFile", "AromaSignalBinaryFile", function(this, force=FALSE, ...) {
   unf <- this$.unf;
   if (force || is.null(unf)) {
-    platform <- getPlatform(this);
-    platform <- PlatformInterface$byName(platform, ...);
+    platform <- getAromaPlatform(this);
     unf <- getUnitNamesFile(platform);
     this$.unf <- unf;
   }
