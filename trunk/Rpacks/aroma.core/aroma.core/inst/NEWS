@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.2.3 [2008-05-17]
+Version: 0.9.2.3 [2008-05-18]
 o Added gzip()/gunzip() to GenericDataFile.
 o Added static findByName() and byName() to GenericDataFileSet.
 o Added static getFileClass() to GenericDataFileSet.  This makes it
@@ -22,6 +22,10 @@ o CLEAN UP: Moved more classes and methods from aroma.affymetrix to
   Created superclass AromaMicroarrayDataSetTuple of AffymetrixCelSetTuple.
 o BUG FIX: readDataFrame() did not read the first data row if there 
   was no column header; it was eaten up by a preceeding readHeader().
+o BUG FIX: findAnnotationDataByChipType(chipType="GenomeWideSNP_6", 
+  pattern="^GenomeWideSNP_6.*[.]ugp$") would find file 
+  'GenomeWideSNP_6,Full,na24.ugp' before 'GenomeWideSNP_6,na24.ugp'.
+  Now we return the one with the shortest full name.
 o ALPHA: Now equals() for GenericDataFile:s uses the class, 
   pathname, file size and file-contents checksum to do the 
   comparison.  Similarly, for GenericDataFileSet:s, the class, 
