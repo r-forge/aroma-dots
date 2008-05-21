@@ -3,8 +3,6 @@
 % 
 %  MbeiCnPlm.R
 % 
-% on Sat May 17 11:55:00 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

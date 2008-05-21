@@ -3,8 +3,6 @@
 % 
 %  ProbeLevelTransform.R
 % 
-% on Sat May 17 11:55:39 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

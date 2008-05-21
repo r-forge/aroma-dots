@@ -23,14 +23,16 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaPlatformInterface}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{CnagCfhFile}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\emph{\code{CnagCfhFile}}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{CnagCfhFile}\cr
+public abstract static class \bold{CnagCfhFile}\cr
 extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 
 
@@ -59,8 +61,8 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 }
 
 
- \bold{Methods inherited from AffymetrixFile}:\cr
-getPlatform
+ \bold{Methods inherited from AromaPlatformInterface}:\cr
+getAromaPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY

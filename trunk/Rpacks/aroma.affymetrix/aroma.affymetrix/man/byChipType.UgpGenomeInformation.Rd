@@ -3,8 +3,6 @@
 % 
 %  UgpGenomeInformation.R
 % 
-% on Sat May 17 11:57:03 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,8 +19,8 @@
  Defines a UgpGenomeInformation object by chip type.
 }
 
-\synopsis{byChipType.UgpGenomeInformation(static, chipType, tags=NULL, ..., verbose=FALSE)}
-\usage{UgpGenomeInformation$byChipType(chipType, tags=NULL, ..., verbose=FALSE)}
+\synopsis{byChipType.UgpGenomeInformation(static, chipType, tags=NULL, ..., validate=TRUE, verbose=FALSE)}
+\usage{UgpGenomeInformation$byChipType(chipType, tags=NULL, ..., validate=TRUE, verbose=FALSE)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}

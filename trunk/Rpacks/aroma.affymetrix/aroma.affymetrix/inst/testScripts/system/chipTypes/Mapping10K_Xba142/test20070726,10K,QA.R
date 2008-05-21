@@ -34,7 +34,7 @@ fit(plm, verbose=log);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ces <- getChipEffectSet(plm);
 
-# Boxplots of via log2(theta), RLE, and NUSE
+# Boxplots of log2(theta), RLE, and NUSE
 layout(matrix(1:4, ncol=2, byrow=TRUE));
 plotBoxplot(ces, type="theta", transform=log2);
 plotBoxplot(ces, type="RLE", arrays=c(2,4:6));
