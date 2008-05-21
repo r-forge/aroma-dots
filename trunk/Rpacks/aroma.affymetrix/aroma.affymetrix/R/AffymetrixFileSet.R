@@ -44,7 +44,7 @@ setConstructorS3("AffymetrixFileSet", function(files=NULL, ...) {
 
 
   extend(AromaMicroarrayDataSet(files=files, ...), c("AffymetrixFileSet",
-                                                 uses("AffymetrixPlatform")));
+                                             uses("AromaPlatformInterface")));
 })
 
 
