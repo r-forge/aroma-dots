@@ -96,19 +96,22 @@ setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NUL
 
 
 
-setMethodS3("allocate", "AromaUgpFile", function(static, ..., platform, chipType) {
+setMethodS3("allocate", "AromaUgpFile", function(static, ..., platform, chipType, footer=list()) {
   # Argument 'platform':
   platform <- Arguments$getCharacter(platform);
 
   # Argument 'chipType':
   chipType <- Arguments$getCharacter(chipType);
 
+  # Argument 'footer':
+  if (is.null(footer)) {
+  } else if (!is.list(footer)) {
+    throw("Argument 'footer' must be NULL or a list: ", class(footer)[1]);
+  }
 
-  res <- allocate.AromaTabularBinaryFile(static, ..., types=rep("integer",2), sizes=c(1,4));
-
-
-  footer <- list(platform=platform, chipType=chipType);
-  writeFooter(res, footer);
+  footer <- c(list(platform=platform, chipType=chipType), footer);
+  res <- allocate.AromaTabularBinaryFile(static, ..., types=rep("integer",2), 
+                                                sizes=c(1,4), footer=footer);
 
   res;
 }, static=TRUE)

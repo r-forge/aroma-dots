@@ -29,7 +29,6 @@
 #*/###########################################################################
 setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, pattern=NULL, private=FALSE, ..., firstOnly=TRUE, paths=NULL, verbose=FALSE) {
   # Needs affxparser::findFiles()
-  require("affxparser") || throw("Package not loaded: affxparser");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -97,7 +96,10 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
   args$firstOnly <- FALSE;
   verbose && cat(verbose, "Arguments to findFiles:");
   verbose && str(verbose, args);
-  pathname <- do.call("findFiles", args=args);
+  localFindFiles <- function(...) {
+    affxparser::findFiles(...);
+  }
+  pathname <- do.call("localFindFiles", args=args);
 
   # AD HOC: Clean out files in "private" directories
   if (!private) {
@@ -128,6 +130,8 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
 
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o Updated findAnnotationData() to only "import" affxparser.
 # 2008-05-18
 # o BUG FIX: findAnnotationDataByChipType(chipType="GenomeWideSNP_6", 
 #   pattern="^GenomeWideSNP_6.*[.]ugp$") would find file 

@@ -294,6 +294,12 @@ setMethodS3("readRawFooter", "AromaTabularBinaryFile", function(this, con=NULL, 
 #*/########################################################################### 
 setMethodS3("readFooter", "AromaTabularBinaryFile", function(this, asXmlString=FALSE, ...) {
   raw <- readRawFooter(this)$raw;
+  if (length(raw) == 0) {
+    if (asXmlString)
+      return("");
+    return(NULL);
+  }
+
   xml <- rawToChar(raw);
   if (asXmlString) {
     xml <- trim(xml);
@@ -413,7 +419,8 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
   # Read current footer
   seek(con=con, where=footerOffset, origin="start", rw="r");
   nbrOfBytes <- readInts(con=con, size=4);
-  verbose && cat(verbose, "Current length of footer: ",  nbrOfBytes);
+str(nbrOfBytes);
+  verbose && cat(verbose, "Current length of footer: ", nbrOfBytes);
   verbose && exit(verbose);
 
 
@@ -829,6 +836,8 @@ setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, co
 #   \item{overwrite}{If @TRUE, an existing file is overwritten, otherwise not.}
 #   \item{skip}{If @TRUE and \code{overwrite=@TRUE}, any existing file is 
 #      returned as is.}
+#   \item{footer}{An optional @list of attributes written (as character 
+#      strings) to the file footer.}
 #   \item{...}{Not used.}
 #   \item{verbose}{@see "R.utils::Verbose".}
 # }
@@ -849,7 +858,7 @@ setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, co
 #
 # @keyword IO
 #*/########################################################################### 
-setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, ..., verbose=FALSE) {
+setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, footer=list(), ..., verbose=FALSE) {
   knownDataTypes <- c("integer"=1, "double"=2);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -953,6 +962,12 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
   path <- Arguments$getWritablePath(path);
 
 
+  # Argument 'footer':
+  if (is.null(footer)) {
+  } else if (!is.list(footer)) {
+    throw("Argument 'footer' must be NULL or a list: ", class(footer)[1]);
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -984,12 +999,19 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
   verbose && cat(verbose, "sizes: ", paste(sizes, collapse=", "));
   verbose && cat(verbose, "signed: ", paste(signeds, collapse=", "));
 
+  verbose && cat(verbose, "Attributes to be written to file footer:");
+  verbose && str(verbose, footer);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create empty file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Open file
   con <- file(pathname, open="wb");
-  on.exit(close(con));
+  on.exit({
+    if (!is.null(con))
+      close(con);
+    con <- NULL;
+  });
 
   # Write magic
   magic <- charToRaw("aroma");
@@ -1018,9 +1040,19 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
   # Write size of footer
   size <- 0;
   writeInts(con=con, size);
+
+  # Close connection (otherwise writeFooter() will fail below)
+  close(con);
+  con <- NULL;
+
+  # Object to be returned
+  res <- newInstance(static, pathname);
+
+  # Write footer
+  writeFooter(res, footer);
   
   # Return
-  newInstance(static, pathname);
+  res;
 }, static=TRUE)
 
 
@@ -1180,6 +1212,8 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o Now allocate() takes argument 'footer' as well.
 # 2008-05-16
 # o Added readColumns().
 # o Removed deprecated readData().

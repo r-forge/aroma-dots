@@ -1,7 +1,20 @@
 setMethodS3("findPngDevice", "default", function(transparent=TRUE, ...) {
   devices <- list();
+
+  isRv270plus <- (compareVersion(as.character(getRversion()), "2.7.0") >= 0);
+  pngHasType <- ("type" %in% names(formals(png)));
+
+  # To fool R CMD check code validation
+  pngTyped <- function(...) png(...);
   
   if (transparent) {
+    if (isRv270plus && pngHasType) {
+      # png(..., type="cairo");
+      pngCairoDefault <- function(...) pngTyped(..., bg=NA, type="cairo");
+      pngCairo1 <- function(...) pngTyped(..., bg=NA, type="cairo1");
+      devices <- c(devices, pngCairoDefault, pngCairo1);
+    }
+
     # Cairo::CairoPNG()
     if (require("Cairo")) {
       CairoPNGtrans <- function(...) {
@@ -26,6 +39,13 @@ setMethodS3("findPngDevice", "default", function(transparent=TRUE, ...) {
     }
     devices <- c(devices, pngtrans);
   } else {
+    if (isRv270plus && pngHasType) {
+      # png(..., type="cairo");
+      pngCairoDefault <- function(...) pngTyped(..., type="cairo");
+      pngCairo1 <- function(...) pngTyped(..., type="cairo1");
+      devices <- c(devices, pngCairoDefault, pngCairo1);
+    }
+
     # R.utils::png2()
     devices <- c(devices, png2);
 
@@ -45,6 +65,9 @@ setMethodS3("findPngDevice", "default", function(transparent=TRUE, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2008-05-21
+# o Added png(..., type="cairo") and png(..., type="cairo1") for cases when
+#   png() has argument 'type' and R is v2.7.0 or newer.
 # 2007-11-25
 # o We'll wait a bit making the Cairo PNG device the default *non-transparent*
 #   device; the reason for this is that I still haven't figured out what the
