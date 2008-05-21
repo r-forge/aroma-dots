@@ -378,14 +378,14 @@ setMethodS3("getFullNames", "AromaMicroarrayDataSetTuple", function(this, arrays
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  getFullNameOfTuple <- function(cfList, aliased=FALSE) {
+  getFullNameOfTuple <- function(cfList, ...) {
     # Get sample name
     first <- which(!sapply(cfList, FUN=is.null))[1];
-    name <- getName(cfList[[first]], aliased=aliased);
+    name <- getName(cfList[[first]], ...);
   
     # Get chip-effect tags *common* across chip types
     tags <- lapply(cfList, FUN=function(ce) {
-      if (is.null(ce)) NULL else getTags(ce, aliased=aliased);
+      if (is.null(ce)) NULL else getTags(ce, ...);
     });
     tags <- base::lapply(tags, setdiff, exclude);
     tags <- getCommonListElements(tags);
@@ -663,6 +663,8 @@ setMethodS3("byPath", "AromaMicroarrayDataSetTuple", abstract=TRUE, static=TRUE)
 
 ##############################################################################
 # HISTORY:
+# 2008-05-21
+# o BUG FIX: getFullNames() was not passing down new 'translate' correctly.
 # 2008-05-16
 # o Abstract methods right now: byPath().
 # o Made getChipTypes() platform independent (not querying CDF:s anymore).

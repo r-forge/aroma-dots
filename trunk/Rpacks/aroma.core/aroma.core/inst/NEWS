@@ -1,7 +1,10 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.2.3 [2008-05-18]
+Version: 0.9.2.3 [2008-05-21]
+o Now findPngDevice() search for a working PNG device in the following
+  order: png(..., type="cairo"), png(..., type="cairo1"), 
+  Cairo::CairoPNG(), R.utils::png2(), and finally plain png().
 o Added gzip()/gunzip() to GenericDataFile.
 o Added static findByName() and byName() to GenericDataFileSet.
 o Added static getFileClass() to GenericDataFileSet.  This makes it
@@ -33,6 +36,7 @@ o ALPHA: Now equals() for GenericDataFile:s uses the class,
   each file pair is used for the comparison.  
 o ALPHA: Added full name translation for GenericDataFile:s.
 o ALPHA: Added UnitNamesInterface.
+o Package passes R CMD check on R v2.7.0 patched.
 
 
 Version: 0.9.2 [2008-05-10]

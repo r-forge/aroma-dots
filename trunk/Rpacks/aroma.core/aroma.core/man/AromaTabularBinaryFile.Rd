@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\code{AromaTabularBinaryFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\cr
+\link[aroma.core]{AromaUgpFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}\cr
 
 public static class \bold{AromaTabularBinaryFile}\cr
 extends \emph{\link[aroma.core]{GenericTabularFile}}\cr

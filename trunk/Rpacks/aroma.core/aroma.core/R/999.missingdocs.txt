@@ -164,3 +164,28 @@
   stextLabel.AromaMicroarrayDataFile stextLabels
   stextLabels.AromaMicroarrayDataFile stextSize
   stextSize.AromaMicroarrayDataFile
+  allocate.AromaUgpFile allocateFromUnitNamesFile
+  allocateFromUnitNamesFile.AromaUnitTabularBinaryFile
+  AromaPlatformInterface AromaUgpFile
+  as.character.AromaUnitTabularBinaryFile byChipType
+  byChipType.AromaUnitTabularBinaryFile byName.AromaPlatform
+  clearCache.AromaUnitTabularBinaryFile findByChipType
+  findByChipType.AromaUnitTabularBinaryFile findUnitNamesFile
+  findUnitNamesFile.AromaPlatform fromChipType
+  fromChipType.AromaUnitTabularBinaryFile getAromaPlatform
+  getAromaPlatform.AromaPlatformInterface getAromaUgpFile
+  getAromaUgpFile.AromaPlatform getChipType.AromaUnitTabularBinaryFile
+  getChipType.UnitNamesInterface getChromosomes.AromaUgpFile
+  getColumnNames.AromaUgpFile getFilenameExtension
+  getFilenameExtension.AromaUgpFile
+  getFilenameExtension.AromaUnitTabularBinaryFile getGenomeVersion
+  getGenomeVersion.AromaUgpFile getName.AromaPlatform
+  getPlatform.AromaUnitTabularBinaryFile getPlatform.UnitNamesInterface
+  getUnitNames getUnitNames.UnitNamesInterface getUnitNamesFile
+  getUnitNamesFile.AromaPlatform
+  getUnitNamesFile.AromaUnitTabularBinaryFile getUnitsAt
+  getUnitsAt.AromaUgpFile importFromGenericTabularFile
+  importFromGenericTabularFile.AromaUgpFile indexOfUnits
+  indexOfUnits.AromaUnitTabularBinaryFile nbrOfUnits
+  nbrOfUnits.AromaUnitTabularBinaryFile nbrOfUnits.UnitNamesInterface
+  readDataFrame.AromaUgpFile

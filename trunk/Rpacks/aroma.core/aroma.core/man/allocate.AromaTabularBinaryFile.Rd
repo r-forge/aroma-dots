@@ -19,8 +19,8 @@
  Creates an AromaTabularBinaryFile of a certain dimension and data column types.
 }
 
-\synopsis{allocate.AromaTabularBinaryFile(static, filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, ..., verbose=FALSE)}
-\usage{AromaTabularBinaryFile$allocate(filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, ..., verbose=FALSE)}
+\synopsis{allocate.AromaTabularBinaryFile(static, filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, footer=list(), ..., verbose=FALSE)}
+\usage{AromaTabularBinaryFile$allocate(filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, footer=list(), ..., verbose=FALSE)}
 
 \arguments{
   \item{filename}{The filename of the new file.}
@@ -36,6 +36,8 @@
   \item{overwrite}{If \code{\link[base:logical]{TRUE}}, an existing file is overwritten, otherwise not.}
   \item{skip}{If \code{\link[base:logical]{TRUE}} and \code{overwrite=\code{\link[base:logical]{TRUE}}}, any existing file is
      returned as is.}
+  \item{footer}{An optional \code{\link[base]{list}} of attributes written (as character
+     strings) to the file footer.}
   \item{...}{Not used.}
   \item{verbose}{\code{\link[R.utils]{Verbose}}.}
 }
