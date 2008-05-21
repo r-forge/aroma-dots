@@ -26,6 +26,9 @@
 \alias{validate.AromaSignalBinarySet}
 \alias{byName.AromaFreqBCnBinarySet}
 \alias{byName.AromaTotalCnBinarySet}
+\alias{getAromaUgpFile.AromaSignalBinaryFile}
+\alias{getAromaUgpFile.AromaSignalBinarySet}
+\alias{getUnitNamesFile.AromaSignalBinaryFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

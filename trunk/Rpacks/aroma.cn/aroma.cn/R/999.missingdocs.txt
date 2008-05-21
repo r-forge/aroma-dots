@@ -8,3 +8,6 @@
   nbrOfUnits.AromaSignalBinaryFile validate.AromaSignalBinarySet
   byName.AromaFreqBCnBinarySet
   byName.AromaTotalCnBinarySet
+  getAromaUgpFile.AromaSignalBinaryFile
+  getAromaUgpFile.AromaSignalBinarySet
+  getUnitNamesFile.AromaSignalBinaryFile
