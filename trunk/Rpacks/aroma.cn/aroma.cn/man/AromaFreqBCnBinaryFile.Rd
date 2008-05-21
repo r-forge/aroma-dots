@@ -25,9 +25,11 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaTabularBinaryFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.cn]{AromaSignalBinaryFile}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaPlatformInterface}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{AromaFreqBCnBinaryFile}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.cn]{AromaSignalBinaryFile}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{AromaFreqBCnBinaryFile}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
@@ -52,7 +54,10 @@ extends \link[aroma.cn]{AromaSignalBinaryFile}\cr
 
 
  \bold{Methods inherited from AromaSignalBinaryFile}:\cr
-allocate, as.character, fromFile, getChipType, getFilenameExtension, getPlatform, nbrOfUnits
+allocate, as.character, fromFile, getAromaUgpFile, getChipType, getFilenameExtension, getPlatform, getUnitNamesFile, nbrOfUnits
+
+ \bold{Methods inherited from AromaPlatformInterface}:\cr
+getAromaPlatform
 
  \bold{Methods inherited from AromaTabularBinaryFile}:\cr
 [, [[, [<-, allocate, as.character, colMeans, colMedians, colStats, colSums, dimnames<-, getBytesPerColumn, getColClasses, getColumnNames, lapply, nbrOfColumns, nbrOfRows, readColumns, readDataFrame, readFooter, readHeader, readRawFooter, setAttributesByTags, subset, summary, updateData, updateDataColumn, writeFooter, writeRawFooter

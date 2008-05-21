@@ -50,6 +50,7 @@ extends \link[aroma.core]{AromaTabularBinarySet}\cr
 \tabular{rll}{
  \tab \code{byName} \tab  -\cr
  \tab \code{findByName} \tab  -\cr
+ \tab \code{getAromaUgpFile} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getPlatform} \tab  -\cr
 }
