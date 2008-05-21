@@ -98,7 +98,7 @@ setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., verbose=FALSE) {
+setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., validate=TRUE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -107,7 +107,7 @@ setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tag
   }
 
 
-  ugp <- AromaUgpFile$byChipType(chipType, tags=tags, ...);
+  ugp <- AromaUgpFile$byChipType(chipType, tags=tags, validate=validate, ...);
   pathname <- getPathname(ugp);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
@@ -286,6 +286,8 @@ setMethodS3("getUnitsOnChromosome", "UgpGenomeInformation", function(this, ...) 
 
 ############################################################################
 # HISTORY:
+# 2008-05-20
+# o Added argument 'validate' to byChipType().
 # 2008-01-19
 # o ROBUSTNESS: Added argument 'tags' to fromChipType() for class
 #   UgpGenomeInformation.

@@ -31,7 +31,7 @@
 #*/###########################################################################
 setConstructorS3("AffymetrixFile", function(...) {
   extend(AromaMicroarrayDataFile(...), c("AffymetrixFile",
-                                                 uses("AffymetrixPlatform")));
+                                             uses("AromaPlatformInterface")));
 }, abstract=TRUE)
 
 
