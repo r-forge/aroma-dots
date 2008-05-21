@@ -1,13 +1,18 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.2.3 [2008-05-17]
+Version: 0.9.2.3 [2008-05-21]
 o CLEAN UP: Moved more classes and methods from aroma.affymetrix to 
   aroma.core: RawCopyNumbers, CopyNumberRegions, CopyNumberOutliers.
   Moved attribute methods from AffymetrixCel{File|Set} to 
   AromaMicroarrayDataSet.  Moved stextNnn() methods from AffymetrixFile
   to AffymetrixMicroarrayDataSet.
   Created superclass AromaMicroarrayDataSetTuple of AffymetrixCelSetTuple. 
+  There is probably more that was moved to aroma.core that I forgot
+  to mention here.  Please see aroma.core NEWS as well.
+o Package passes R CMD check on R v2.7.0 patched. There are some
+  warnings of broken links in the Rd pages though.
+o Package passes all redundancy tests.
 
 
 Version: 0.9.2.2 [2008-05-16]
