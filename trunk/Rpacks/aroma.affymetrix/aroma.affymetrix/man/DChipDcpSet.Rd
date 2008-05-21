@@ -23,9 +23,11 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaPlatformInterface}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{DChipDcpSet}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{DChipDcpSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
@@ -61,7 +63,10 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, fromFiles, getPlatform
+as, as.AffymetrixFileSet, fromFiles
+
+ \bold{Methods inherited from AromaPlatformInterface}:\cr
+getAromaPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
 getChipType, getPlatform, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, validate

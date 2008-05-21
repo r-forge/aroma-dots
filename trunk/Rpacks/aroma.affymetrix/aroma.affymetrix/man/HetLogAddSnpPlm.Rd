@@ -3,8 +3,6 @@
 % 
 %  HetLogAddSnpPlm.R
 % 
-% on Sat May 17 11:54:58 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

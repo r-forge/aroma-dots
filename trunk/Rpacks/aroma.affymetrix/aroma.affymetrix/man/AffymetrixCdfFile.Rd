@@ -23,17 +23,21 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaPlatformInterface}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{AffymetrixCdfFile}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.core]{UnitNamesInterface}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{AffymetrixCdfFile}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
 public static class \bold{AffymetrixCdfFile}\cr
-extends \emph{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}\cr
+extends \emph{\link[aroma.core]{UnitNamesInterface}}\cr
 
 
 
@@ -63,7 +67,6 @@ extends \emph{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}\cr
  \tab \code{getUnitNames} \tab  -\cr
  \tab \code{getUnitTypes} \tab  -\cr
  \tab \code{hasUnitTypes} \tab  -\cr
- \tab \code{indexOf} \tab  -\cr
  \tab \code{isMonocellCdf} \tab  -\cr
  \tab \code{isPm} \tab  -\cr
  \tab \code{nbrOfCells} \tab  -\cr
@@ -78,11 +81,14 @@ extends \emph{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}\cr
 }
 
 
+ \bold{Methods inherited from UnitNamesInterface}:\cr
+getChipType, getPlatform, getUnitNames, indexOf, nbrOfUnits
+
  \bold{Methods inherited from AromaChipTypeAnnotationFile}:\cr
 byChipType, byName, findByChipType, fromChipType, fromFile, getChipType, getHeader, getPlatform
 
- \bold{Methods inherited from AffymetrixFile}:\cr
-getPlatform
+ \bold{Methods inherited from AromaPlatformInterface}:\cr
+getAromaPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY

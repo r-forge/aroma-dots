@@ -3,8 +3,6 @@
 % 
 %  GenomeInformation.AFFX.R
 % 
-% on Sat May 17 11:54:46 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -35,7 +33,7 @@
 
 \value{
   Returns a \code{\link[base]{data.frame}}, where the row names correspond to unit indices
-  as defined by the CDF.
+  as defined by the annotation unit names file.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

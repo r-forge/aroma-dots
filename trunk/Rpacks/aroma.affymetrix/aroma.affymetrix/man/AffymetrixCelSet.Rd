@@ -23,9 +23,11 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaPlatformInterface}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{AffymetrixCelSet}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{AffymetrixCelSet}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{ParameterCelSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
@@ -71,6 +73,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
  \tab \code{getTimestamps} \tab  -\cr
  \tab \code{getUnitGroupCellMap} \tab  -\cr
  \tab \code{getUnitIntensities} \tab  -\cr
+ \tab \code{getUnitNamesFile} \tab  -\cr
  \tab \code{isDuplicated} \tab  -\cr
  \tab \code{nbrOfArrays} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelSet]{plotDensity}} \tab Plots the densities of all samples.\cr
@@ -81,7 +84,10 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
-as, as.AffymetrixFileSet, fromFiles, getPlatform
+as, as.AffymetrixFileSet, fromFiles
+
+ \bold{Methods inherited from AromaPlatformInterface}:\cr
+getAromaPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
 getChipType, getPlatform, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, validate

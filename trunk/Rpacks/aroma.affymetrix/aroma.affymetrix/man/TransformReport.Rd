@@ -3,8 +3,6 @@
 % 
 %  TransformReport.R
 % 
-% on Sat May 17 11:56:59 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -51,6 +49,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getOutputDataSet} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
+ \tab \code{getUnitNamesFile} \tab  -\cr
  \tab \code{getYY} \tab  -\cr
  \tab \code{nbrOfArrays} \tab  -\cr
  \tab \code{plotXYCurve} \tab  -\cr

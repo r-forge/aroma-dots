@@ -1,10 +1,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  AromaUnitTabularBinaryFile.R
+%  AromaUnitTabularBinaryFile.AFFX.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \name{allocateFromCdf.AromaUnitTabularBinaryFile}
 \alias{allocateFromCdf.AromaUnitTabularBinaryFile}
@@ -19,8 +20,8 @@
  Creates an AromaUnitTabularBinaryFile mapping to a given CDF.
 }
 
-\synopsis{allocateFromCdf.AromaUnitTabularBinaryFile(static, cdf, path=getPath(cdf), tags=NULL, footer=list(), ...)}
-\usage{AromaUnitTabularBinaryFile$allocateFromCdf(cdf, path=getPath(cdf), tags=NULL, footer=list(), ...)}
+\synopsis{allocateFromCdf.AromaUnitTabularBinaryFile(static, cdf, ...)}
+\usage{AromaUnitTabularBinaryFile$allocateFromCdf(cdf, ...)}
 
 \arguments{
   \item{cdf}{The \code{\link{AffymetrixCdfFile}} used as a template and from

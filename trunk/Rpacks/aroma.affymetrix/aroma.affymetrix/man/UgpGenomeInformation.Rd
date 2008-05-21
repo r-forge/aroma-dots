@@ -3,8 +3,6 @@
 % 
 %  UgpGenomeInformation.R
 % 
-% on Sat May 17 11:57:03 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

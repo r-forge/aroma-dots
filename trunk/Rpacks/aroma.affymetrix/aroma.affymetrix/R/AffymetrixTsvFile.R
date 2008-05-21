@@ -18,16 +18,6 @@ setMethodS3("getChipType", "AffymetrixTsvFile", function(this, ...) {
   getName(this);
 })
 
-setMethodS3("getCdf", "AffymetrixTsvFile", function(this, ...) {
-  cdf <- this$.cdf;
-  if (is.null(cdf)) {
-    chipType <- getChipType(this);
-    cdf <- AffymetrixCdfFile$byChipType(chipType);
-    this$.cdf <- cdf;
-  }
-  cdf;
-})
-
 setMethodS3("findByChipType", "AffymetrixTsvFile", function(static, chipType, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
@@ -116,7 +106,7 @@ setMethodS3("readDataFrame", "AffymetrixTsvFile", function(this, ..., verbose=FA
   unitNames <- getUnitNames(unf);
   units <- match(df[["unit"]], unitNames);
   if (any(is.na(units))) {
-    throw("File format error: Identified units that do not exist in the CDF: ", getChipType(cdf));
+    throw("File format error: Identified units that do not exist in the annotation unit names file: ", getChipType(unf));
   }
   df[["unit"]] <- units;
 
@@ -136,8 +126,8 @@ setMethodS3("readData", "AffymetrixTsvFile", function(this, ...) {
 
 setMethodS3("getField", "AffymetrixTsvFile", function(this, units=NULL, field, ...) {
   if (is.null(units)) {
-    cdf <- getCdf(this);
-    units <- 1:nbrOfUnits(cdf);
+    unf <- getUnitNamesFile(this);
+    units <- seq(length=nbrOfUnits(unf));
   }
 
   data <- getData(this, ...);
@@ -162,8 +152,31 @@ setMethodS3("getGc", "AffymetrixTsvFile", function(this, ...) {
 
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# BEGIN: Methods that requires an Affymetrix CDF file
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethodS3("getCdf", "AffymetrixTsvFile", function(this, ...) {
+  cdf <- this$.cdf;
+  if (is.null(cdf)) {
+    chipType <- getChipType(this);
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
+    this$.cdf <- cdf;
+  }
+  cdf;
+})
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# END: Methods that requires an Affymetrix CDF file
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
 ############################################################################
 # HISTORY:
+# 2008-05-18
+# o Now readDataFrame() and getField() of AffymetrixTsvFile utilize the
+#   UnitNamesFile interface rather than the platform-specific 
+#   AffymetrixCdfFile.  This is done in order minimize dependencies for
+#   certain file formats, i.e. not all chip types comes with a CDF.
 # 2008-04-14
 # o Renamed readData() to readDataFrame() for AffymetrixTsvFile.
 # 2007-03-02
