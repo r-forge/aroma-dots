@@ -1,12 +1,14 @@
 setMethodS3("extractRawCopyNumbers", "profileCGH", function(object, ...) {
   pv <- object$profileValues;
-  RawCopyNumbers(cn=pv$LogRatio, x=pv$PosBase);
+  chromosome <- unique(pv$Chromosome);
+  RawCopyNumbers(cn=pv$LogRatio, x=pv$PosBase, chromosome=chromosome);
 })
 
 
 setMethodS3("extractRawCopyNumbers", "DNAcopy", function(object, ...) {
   data <- object$data;
-  RawCopyNumbers(cn=data[[3]], x=data$maploc);
+  chromosome <- unique(data$chrom);
+  RawCopyNumbers(cn=data[[3]], x=data$maploc, chromosome=chromosome);
 })
 
 
@@ -14,6 +16,8 @@ setMethodS3("extractRawCopyNumbers", "DNAcopy", function(object, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o Now extractRawCopyNumbers() adds 'chromosome' to the returned object.
 # 2008-05-17
 # o Extracted RawCopyNumbers.FOREIGN.R after moving RawCopyNumbers.R
 #   to aroma.core.  

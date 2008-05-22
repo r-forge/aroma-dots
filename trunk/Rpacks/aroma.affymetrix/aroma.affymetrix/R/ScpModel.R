@@ -127,7 +127,8 @@ setMethodS3("fitOne", "ScpModel", function(this, data, chromosome, ..., verbose=
   gc <- gc();
   verbose && print(verbose, gc);
 
-  # segment() writes to stdout; capture it and send it to the verbose object.
+  # getBcmixSmoothClass() writes to stdout; capture it and send it
+  # to the verbose object.
   stdout <- capture.output({
     fit <- do.call("getBcmixSmoothClass", args);
   })
@@ -139,6 +140,7 @@ setMethodS3("fitOne", "ScpModel", function(this, data, chromosome, ..., verbose=
 
   verbose && enter(verbose, "Adding physical position to the fit object");
   fit$xPos <- xPos;
+  fit$chromosome <- chromosome;
   class(fit) <- c("SCPfit", class(fit));
   verbose && str(verbose, fit);
   verbose && exit(verbose);
@@ -150,7 +152,7 @@ setMethodS3("fitOne", "ScpModel", function(this, data, chromosome, ..., verbose=
 
 
 setMethodS3("extractRawCopyNumbers", "SCPfit", function(object, ...) {
-  RawCopyNumbers(cn=object$obs, x=object$xPos);
+  RawCopyNumbers(cn=object$obs, x=object$xPos, chromosome=object$chromosome);
 })
 
 
@@ -162,6 +164,8 @@ setMethodS3("extractCopyNumberRegions", "SCPfit", function(object, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2008-05-21
+# o Now extractRawCopyNumbers() adds 'chromosome' to the returned object.
 # 2008-04-17.
 # o Created.
 ##############################################################################
