@@ -19,6 +19,11 @@ setMethodS3("setAttributesBy", "AromaMicroarrayDataSet", function(this, object, 
 setMethodS3("setAttributesBySampleAnnotationSet", "AromaMicroarrayDataSet", function(this, sas, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
 
   res <- lapply(sas, FUN=function(saf) {
     verbose && enter(verbose, "Applying sample annotations");
@@ -89,6 +94,10 @@ setMethodS3("setAttributesBySampleAnnotationFile", "AromaMicroarrayDataSet", fun
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
 
   names <- getFullNames(this);
   res <- apply(saf, names, FUN=setAttrs, force=force, verbose=verbose);

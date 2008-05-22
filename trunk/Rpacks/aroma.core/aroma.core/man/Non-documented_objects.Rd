@@ -479,6 +479,11 @@
 \alias{nbrOfUnits.AromaUnitTabularBinaryFile}
 \alias{nbrOfUnits.UnitNamesInterface}
 \alias{readDataFrame.AromaUgpFile}
+\alias{clearCache.AromaUgpFile}
+\alias{getPositions}
+\alias{getPositions.AromaUgpFile}
+\alias{getUnitsOnChromosome}
+\alias{getUnitsOnChromosome.AromaUgpFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

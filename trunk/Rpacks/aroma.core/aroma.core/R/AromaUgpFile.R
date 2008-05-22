@@ -1,5 +1,6 @@
 setConstructorS3("AromaUgpFile", function(...) {
   this <- extend(AromaUnitTabularBinaryFile(...), "AromaUgpFile",
+    "cached:.memoryCache" = list(),
     .chromosomes=NULL
   );
 
@@ -9,6 +10,17 @@ setConstructorS3("AromaUgpFile", function(...) {
 
   this;
 })
+
+
+setMethodS3("clearCache", "AromaUgpFile", function(this, ...) {
+  # Clear all cached values.
+  for (ff in c(".memoryCache")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...); 
+}, private=TRUE) 
 
 
 
@@ -64,7 +76,7 @@ setMethodS3("getGenomeVersion", "AromaUgpFile", function(this, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NULL, verbose=FALSE, ...) {
+setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -74,6 +86,23 @@ setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NUL
     chromosomes <- args[["chromosome"]];
   }
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  # Cached in memory?
+  key <- list(method="getUnitsAt", class="AromaUgpFile", 
+                                   chromosomes=chromosomes, region=region);
+  key <- digest2(key);
+  if (!force) {
+    res <- this$.memoryCache[["getUnitsAt"]][[key]];
+    if (!is.null(res))
+      return(res);
+  }
 
   # Stratify by chromosome
   data <- this[,1,drop=TRUE];
@@ -90,8 +119,28 @@ setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NUL
     keep <- keep & (region[1] <= data & data <= region[2]);
     idxs <- idxs[keep];
   }
+
+  if (!is.list(this$.memoryCache))
+    this$.memoryCache <- list();
+
+  cache <- list(idxs); names(cache) <- key;
+  this$.memoryCache[["getUnitsAt"]] <- cache;
   
   idxs;
+}, protected=TRUE)
+
+
+setMethodS3("getUnitsOnChromosome", "AromaUgpFile", function(this, chromosome, ...) {
+  # Argument 'chromosome':
+  chromosome <- Arguments$getIndex(chromosome);
+
+  getUnitsAt(this, chromosomes=chromosome, ...);
+}, protected=TRUE)
+
+
+setMethodS3("getPositions", "AromaUgpFile", function(this, units=NULL, ...) {
+  # It is possible to pass NULL as an index here.
+  this[units,2, drop=TRUE];
 }, protected=TRUE)
 
 
@@ -213,6 +262,8 @@ setMethodS3("importFromGenericTabularFile", "AromaUgpFile", function(this, src, 
 
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o Added getUnitsOnChromosome() and getPositions().
 # 2008-05-18
 # o Made class a little bit less platform specific by utilizing new
 #   UnitNamesFile interface.

@@ -189,3 +189,5 @@
   indexOfUnits.AromaUnitTabularBinaryFile nbrOfUnits
   nbrOfUnits.AromaUnitTabularBinaryFile nbrOfUnits.UnitNamesInterface
   readDataFrame.AromaUgpFile
+  clearCache.AromaUgpFile getPositions getPositions.AromaUgpFile
+  getUnitsOnChromosome getUnitsOnChromosome.AromaUgpFile

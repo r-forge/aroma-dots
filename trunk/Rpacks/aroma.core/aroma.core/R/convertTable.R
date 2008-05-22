@@ -7,7 +7,11 @@ setMethodS3("convertTable", "default", function(src, dest=NULL, sep="\t", ..., v
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
-
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+ 
 
   verbose && enter(verbose, "Convert tabular file");
   verbose && cat(verbose, "Source: ", src);
