@@ -63,7 +63,7 @@ setMethodS3("patchPackage", "default", function(pkgName, paths=c("~/.Rpatches/",
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'deleteOld':
-  deleteOld <- Arguments$getVerbose(deleteOld);
+  deleteOld <- Arguments$getLogical(deleteOld);
 
   # Argument 'paths':
   for (kk in seq(along=paths)) {
@@ -156,6 +156,8 @@ setMethodS3("patchPackage", "default", function(pkgName, paths=c("~/.Rpatches/",
 
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o BUG FIX: Argument 'deleteOld' was passed to Arguments$getVerbose().
 # 2008-05-09
 # o BUG FIX: The package date was hardwired to the aroma.affymetrix package.
 # 2007-12-16

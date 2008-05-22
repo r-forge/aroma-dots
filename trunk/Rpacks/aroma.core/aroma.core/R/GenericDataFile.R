@@ -626,6 +626,12 @@ setMethodS3("copyTo", "GenericDataFile", function(this, filename=getFilename(thi
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+ 
+
 
   # Assert that we're not trying to copy to itself
   if (identical(pathname, getPathname(this)))
@@ -662,6 +668,11 @@ setMethodS3("renameTo", "GenericDataFile", function(this, filename=getFilename(t
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+ 
 
   # Nothing to do?
   if (identical(pathname, getPathname(this)))

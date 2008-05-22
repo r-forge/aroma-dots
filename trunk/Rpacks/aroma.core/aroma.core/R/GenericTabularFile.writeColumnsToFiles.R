@@ -46,6 +46,14 @@ setMethodS3("writeColumnsToFiles", "TabularTextFile", function(this, destPath, f
     header <- as.list(header);
   }
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+
   hdrColumnName <- columnName;
 
 
@@ -107,6 +115,8 @@ setMethodS3("writeColumnsToFiles", "TabularTextFile", function(this, destPath, f
 
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o BUG FIX: Argument 'verbose' was never passed to Arguments$getVerbose(). 
 # 2008-05-05
 # o Now some non-valid filename characters are escaped.
 # o Added internal escapeFilename().

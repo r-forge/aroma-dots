@@ -193,7 +193,8 @@ setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ...
   magic <- readBin(con=con, what=raw(), n=length(trueMagic));
   if (!identical(magic, trueMagic)) {
     asStr <- function(raw) {
-      paste("[", paste(sprintf("%#0x", as.integer(magic)), collapse=","), "]", sep="");
+      paste("[", paste(sprintf("%#0x", as.integer(raw)), collapse=","), 
+                                                             "]", sep="");
     }
     throw("File format error. The read \"magic\" does not match the existing one: ", asStr(magic), " != ", asStr(trueMagic));
   }
@@ -1213,6 +1214,8 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 ############################################################################
 # HISTORY:
 # 2008-05-21
+# o TYPO: File-format error message for incorrect 'magic' sequence was
+#   reporting the incorrect true sequence.
 # o Now allocate() takes argument 'footer' as well.
 # 2008-05-16
 # o Added readColumns().

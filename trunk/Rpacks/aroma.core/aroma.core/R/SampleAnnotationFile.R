@@ -87,6 +87,11 @@ setMethodS3("matchPatterns", "SampleAnnotationFile", function(this, names, trim=
 
 setMethodS3("apply", "SampleAnnotationFile", function(this, names, FUN, ..., verbose=FALSE) {
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+ 
   
   allPatterns <- getPatterns(this, ..., verbose=verbose);
 

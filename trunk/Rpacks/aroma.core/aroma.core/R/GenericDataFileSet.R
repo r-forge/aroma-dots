@@ -1194,7 +1194,11 @@ setMethodS3("hasFile", "GenericDataFileSet", function(this, file, ...) {
 setMethodS3("equals", "GenericDataFileSet", function(this, other, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
-
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+ 
 
   # Default values
   notEqual <- FALSE;

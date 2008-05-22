@@ -13,6 +13,13 @@ setMethodS3("importFromTable", "FileMatrix", function(static, filename, path=NUL
     colClasses <- Arguments$getCharacters(colClasses);
   }
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   verbose && enter(verbose, "Importing data from text file/connection");
   verbose && cat(verbose, "Destination pathname: ", pathname);
@@ -144,6 +151,8 @@ setMethodS3("importFromTable", "FileMatrix", function(static, filename, path=NUL
 
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o BUG FIX: Argument 'verbose' was never passed to Arguments$getVerbose().
 # 2007-04-01
 # o TO DO: Make more generic (bullet proof) before moving into R.huge.
 # o Created.
