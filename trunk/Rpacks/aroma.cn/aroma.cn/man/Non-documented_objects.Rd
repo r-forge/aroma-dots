@@ -29,6 +29,7 @@
 \alias{getAromaUgpFile.AromaSignalBinaryFile}
 \alias{getAromaUgpFile.AromaSignalBinarySet}
 \alias{getUnitNamesFile.AromaSignalBinaryFile}
+\alias{extractRawCopyNumbers.AromaTotalCnBinaryFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -11,3 +11,4 @@
   getAromaUgpFile.AromaSignalBinaryFile
   getAromaUgpFile.AromaSignalBinarySet
   getUnitNamesFile.AromaSignalBinaryFile
+ extractRawCopyNumbers.AromaTotalCnBinaryFile
