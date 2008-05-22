@@ -484,6 +484,17 @@
 \alias{getPositions.AromaUgpFile}
 \alias{getUnitsOnChromosome}
 \alias{getUnitsOnChromosome.AromaUgpFile}
+\alias{cnRange}
+\alias{cnRange.RawCopyNumbers}
+\alias{getChromosome.RawCopyNumbers}
+\alias{xMax}
+\alias{xMax.RawCopyNumbers}
+\alias{xMin}
+\alias{xMin.RawCopyNumbers}
+\alias{xRange}
+\alias{xRange.RawCopyNumbers}
+\alias{xSeq}
+\alias{xSeq.RawCopyNumbers}
 
 \description{
   This page contains aliases for all "non-documented" objects that

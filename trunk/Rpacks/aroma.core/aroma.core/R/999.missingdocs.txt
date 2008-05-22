@@ -191,3 +191,6 @@
   readDataFrame.AromaUgpFile
   clearCache.AromaUgpFile getPositions getPositions.AromaUgpFile
   getUnitsOnChromosome getUnitsOnChromosome.AromaUgpFile
+  cnRange cnRange.RawCopyNumbers getChromosome.RawCopyNumbers xMax
+  xMax.RawCopyNumbers xMin xMin.RawCopyNumbers xRange
+  xRange.RawCopyNumbers xSeq xSeq.RawCopyNumbers

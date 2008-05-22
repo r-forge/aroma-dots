@@ -9,7 +9,10 @@
 # => w*T = w*M + w*R = M' + w*R
 
 
-setMethodS3("gaussianSmoothing", "matrix", function(Y, x, w=NULL, sd=1, na.rm=FALSE, ...) {
+setMethodS3("gaussianSmoothing", "matrix", function(Y, x, w=NULL, xOut=x, sd=1, censorSd=3, na.rm=FALSE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'Y'
   n <- nrow(Y);
   k <- ncol(Y);
@@ -28,30 +31,88 @@ setMethodS3("gaussianSmoothing", "matrix", function(Y, x, w=NULL, sd=1, na.rm=FA
     }
   }
 
+  # Argument 'xOut'
+  if (is.null(xOut)) {
+    xOut <- x;
+  } else {
+    xOut <- Arguments$getDoubles(xOut);
+  }
+  nOut <- length(xOut);
 
+  # Argument 'censorSd':
+  censorSd <- Arguments$getDouble(censorSd, range=c(0,Inf));
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Smoothing
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Allocate vector of smoothed signals
-  Ys <- matrix(0, nrow=n, ncol=k);
+  Ys <- matrix(NA, nrow=nOut, ncol=k);
 
 #  wKernelMax <- dnorm(x, sd=sd);
 
-  # At each position, calculate the weighed average using a 
-  # Gaussian kernel.
-  for (kk in seq_len(n)) {
+  verbose && enter(verbose, "Estimating signals at given locations");
+
+  verbose && cat(verbose, "Output locations:");
+  verbose && str(verbose, xOut);
+
+  censorThreshold <- censorSd * sd;
+  isCensored <- (censorThreshold < Inf);
+  if (isCensored) {
+    # Default weights - all zeros
+    wZeroKernel <- rep(0, times=length(x));
+  }
+
+  # At each position in 'xOut', calculate the weighed average 
+  # using a Gaussian kernel.
+  for (kk in seq_len(nOut)) {
     if (kk %% 100 == 0)
-      print(kk);
+      verbose && cat(verbose, kk);
 
     # Weights centered around x[kk]
-    wKernel <- dnorm(x, mean=x[kk], sd=sd);
+    xDiff <- (x-xOut[kk]);
+    if (isCensored) {
+      keep <- which(abs(xDiff) <= censorThreshold);
+
+      # Nothing to do?
+      if (length(keep) == 0) {
+        next;
+      }
+
+      wKernel <- dnorm(xDiff[keep], mean=0, sd=sd);
+      Y2 <- Y[keep,,drop=FALSE];
+    } else {
+      wKernel <- dnorm(xDiff, mean=0, sd=sd);
+      Y2 <- Y;
+    }
+
     wKernel <- wKernel / sum(wKernel);
+#    verbose && str(verbose, wKernel);
 
     # Exclude NAs
     if (na.rm) {
-      Ys[kk,] <- colSums(wKernel*Y, na.rm=TRUE);
+      value <- colSums(wKernel*Y2, na.rm=TRUE);
     } else {
-      Ys[kk,] <- colSums(wKernel*Y);
+      value <- colSums(wKernel*Y2);
     }
+
+#    verbose && str(verbose, value);
+    Ys[kk,] <- value;
   }
 
+  verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Weighting
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (!is.null(w)) {
     w <- w / sum(w, na.rm=TRUE);
     Ys <- w*Ys;
@@ -68,8 +129,12 @@ setMethodS3("gaussianSmoothing", "numeric", function(y, ...) {
 }) # gaussianSmoothing()
 
 
+
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o Added argument 'censorSd' to sensor the kernel at a given bandwidth.
+# o Added argument 'xOut' to gaussianSmoothing().
 # 2007-04-08
 # o Added Gaussian smoothing for columns in a matrix.
 # 2007-04-02
