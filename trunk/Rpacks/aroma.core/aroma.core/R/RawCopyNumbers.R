@@ -1,4 +1,4 @@
-setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, ...) {
+setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, chromosome=NA, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,9 +28,16 @@ setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, ...) {
     }
   }
 
+  # Argument 'chromosome':
+  if (!is.na(chromosome)) {
+    chromosome <- Arguments$getIndex(chromosome);
+  }
+
+
   extend(Object(), "RawCopyNumbers", 
     cn = cn,
-    x = x
+    x = x,
+    chromosome = chromosome
   )
 })
 
@@ -40,6 +47,7 @@ setMethodS3("as.character", "RawCopyNumbers", function(x, ...) {
   this <- x;
 
   s <- sprintf("%s:", class(this)[1]);
+  s <- c(s, sprintf("Chromosome: %d", getChromosome(this)));
   s <- c(s, sprintf("Number of loci: %d", nbrOfLoci(this)));
   fields <- getLociFields(this);
   fields <- sapply(fields, FUN=function(field) {
@@ -65,6 +73,13 @@ setMethodS3("nbrOfLoci", "RawCopyNumbers", function(this, na.rm=FALSE, ...) {
 
 setMethodS3("getPhysicalPositions", "RawCopyNumbers", function(this, ...) {
   this$x;
+})
+
+setMethodS3("getChromosome", "RawCopyNumbers", function(this, ...) {
+  chr <- this$chromosome;
+  if (is.null(chr))
+    chr <- NA;
+  as.integer(chr);
 })
 
 setMethodS3("getCNs", "RawCopyNumbers", function(this, ...) {
@@ -200,11 +215,53 @@ setMethodS3("lines", "RawCopyNumbers", function(x, ...) {
 })
 
 
-setMethodS3("gaussianSmoothing", "RawCopyNumbers", function(this, sd=10e3, ...) {
-  # Get a sorted copy
-  res <- sort(this);
+setMethodS3("xSeq", "RawCopyNumbers", function(this, from=1, to=xMax(this), by=100e3, ...) {
+  seq(from=from, to=to, by=by);
+})
 
-  res$cn <- gaussianSmoothing(res$cn, x=res$x, sd=sd, na.rm=TRUE, ...);
+setMethodS3("xRange", "RawCopyNumbers", function(this, na.rm=TRUE, ...) {
+  values <- this[["x"]];
+  range(values, na.rm=na.rm);
+})
+
+setMethodS3("xMin", "RawCopyNumbers", function(this, ...) {
+  xRange(this, ...)[1];
+})
+
+setMethodS3("xMax", "RawCopyNumbers", function(this, ...) {
+  xRange(this, ...)[2];
+})
+
+setMethodS3("cnRange", "RawCopyNumbers", function(this, na.rm=TRUE, ...) {
+  values <- this[["cn"]];
+  range(values, na.rm=na.rm);
+})
+
+
+setMethodS3("gaussianSmoothing", "RawCopyNumbers", function(this, xOut=NULL, sd=10e3, na.rm=TRUE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Smoothing ", class(this)[1]);
+
+  verbose && enter(verbose, "Sorting data along chromosome");
+  # Get a sorted *copy*
+  res <- sort(this);
+  verbose && exit(verbose);
+
+  res$cn <- gaussianSmoothing(res$cn, x=res$x, xOut=xOut, sd=sd, 
+                                na.rm=na.rm, ..., verbose=less(verbose,1));
+  res$x <- xOut;
+
+  verbose && exit(verbose);
 
   res;
 })
@@ -220,6 +277,8 @@ setMethodS3("extractRawCopyNumbers", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2008-05-21
+# o Added field 'chromosome' (single value).
 # 2008-05-17
 # o Added abstract default extractCopyNumberRegions().
 # o Moved to aroma.core. 

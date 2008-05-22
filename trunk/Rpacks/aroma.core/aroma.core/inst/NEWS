@@ -1,6 +1,13 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.2.4 [2008-05-22]
+o Added member 'chromosome' to RawCopyNumbers.
+o Added gaussianSmoothing() to RawCopyNumbers.
+o Added argument 'xOut' to gaussianSmoothing() in order to specify
+  at what loci the smoothed signals should be calculated.
+
+
 Version: 0.9.2.3 [2008-05-21]
 o Now findPngDevice() search for a working PNG device in the following
   order: png(..., type="cairo"), png(..., type="cairo1"), 
