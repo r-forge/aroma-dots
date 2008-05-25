@@ -47,6 +47,7 @@ extends \link[aroma.core]{GenericDataFileSet}\cr
 \tabular{rll}{
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getPlatform} \tab  -\cr
+ \tab \code{nbrOfArrays} \tab  -\cr
 }
 
 

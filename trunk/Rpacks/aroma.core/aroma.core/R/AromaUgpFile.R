@@ -158,7 +158,14 @@ setMethodS3("allocate", "AromaUgpFile", function(static, ..., platform, chipType
     throw("Argument 'footer' must be NULL or a list: ", class(footer)[1]);
   }
 
-  footer <- c(list(platform=platform, chipType=chipType), footer);
+  footer <- c(
+    list(
+      createdOn=format(Sys.time(), "%Y%m%d %H:%M:%S", usetz=TRUE),
+      platform=platform, 
+      chipType=chipType
+    ), 
+    footer
+  );
   res <- allocate.AromaTabularBinaryFile(static, ..., types=rep("integer",2), 
                                                 sizes=c(1,4), footer=footer);
 
@@ -262,6 +269,8 @@ setMethodS3("importFromGenericTabularFile", "AromaUgpFile", function(this, src, 
 
 ############################################################################
 # HISTORY:
+# 2008-05-24
+# o Now allocate() of AromaUgpFile adds footer 'createdOn'.
 # 2008-05-21
 # o Added getUnitsOnChromosome() and getPositions().
 # 2008-05-18

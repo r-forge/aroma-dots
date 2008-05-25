@@ -495,6 +495,21 @@
 \alias{xRange.RawCopyNumbers}
 \alias{xSeq}
 \alias{xSeq.RawCopyNumbers}
+\alias{as.character.AromaTransform}
+\alias{clearCache.AromaTransform}
+\alias{getAsteriskTags.AromaTransform}
+\alias{getInputDataSet}
+\alias{getOutputDataSet}
+\alias{getOutputFiles}
+\alias{getOutputFiles.AromaTransform}
+\alias{getParameters.AromaTransform}
+\alias{getParametersAsString}
+\alias{getParametersAsString.AromaTransform}
+\alias{getRootPath}
+\alias{getRootPath.AromaTransform}
+\alias{nbrOfArrays.AromaMicroarrayDataSet}
+\alias{process}
+\alias{setTags.AromaTransform}
 
 \description{
   This page contains aliases for all "non-documented" objects that

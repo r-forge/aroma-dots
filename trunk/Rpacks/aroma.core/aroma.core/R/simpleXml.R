@@ -50,49 +50,90 @@ setMethodS3("xmlToList", "character", function(xml, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  parseXml <- function(xml, ...) {
-    xml <- trim(xml);
+  parseXml <- function(xml, beginTag=NA, ...) {
+#    cat("############################################\n");
+#    cat("<", beginTag, ">\n", sep="");
+#    cat("############################################\n");
 
-    res <- list();
+    xmlTree <- list();
+    if (length(xml) == 0)
+      return(xmlTree);
 
-    while (nchar(xml) > 0) {
-      # Find first tag (Note: '[a-zA-Z]' is not locale safe! /2008-03-05)
-      pattern <- "^<([abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][^>]*)>(.*)";
-      hasStartTag <- (regexpr(pattern, xml) != -1);
-      if (hasStartTag) {
-        # Find second tag
-        tag <- gsub(pattern, "\\1", xml);
-        xml <- gsub(pattern, "\\2", xml);
-        xml <- trim(xml);
-        pattern <- sprintf("(.*)</%s>(.*)", tag);
-        hasEndTag <- (regexpr(pattern, xml) != -1);
-        if (!hasEndTag) {
-          throw("File footer parsing error: Missing </", tag, ">: ", xml);
+    state <- "inBody";
+    body <- tag <- "";
+    while (length(xml) > 0) {
+#      cat(sprintf("%s (%d): %s\n", state, length(xml), paste(xml, collapse="")));
+#      cat(sprintf("tag: (%d): %s\n", nchar(tag), tag));
+#      cat(sprintf("body: (%d): %s\n", nchar(body), body));
+#      cat("\n");
+
+      xmlNext <- xml[1];
+      xml <- xml[-1];
+
+      if (state == "inBeginTag") {
+        if (xmlNext == ">") {
+          res <- parseXml(xml, beginTag=trim(tag), ...);
+          xmlNode <- res$xmlNode;
+          names(xmlNode) <- trim(tag);
+          xmlTree <- c(xmlTree, xmlNode);
+          xml <- res$xml;
+#          str(xmlNode);
+#          cat("############################################\n");
+#          cat("</", trim(tag), ">\n", sep="");
+#          cat("############################################\n");
+          tag <- "";
+          state <- "inBody";
+        } else {
+          tag <- paste(tag, xmlNext, sep="");
         }
-        body <- gsub(pattern, "\\1", xml);
-        body <- trim(body);
-        if (is.null(res))
-          res <- list();
-        res[[tag]] <- parseXml(body);
-
-        xml <- gsub(pattern, "\\2", xml);
-        xml <- trim(xml);
-      } else {
-        res <- xml;
-        xml <- "";
+      } else if (state == "inEndTag") {
+        if (xmlNext == ">") {
+          endTag <- trim(tag);
+          tag <- "";
+          if (endTag != beginTag) {
+            throw("End tag does not match expected begin tag: ", 
+                                               endTag, " != ", beginTag);
+          }
+          if (length(xmlTree) == 1) {
+            xmlNode <- xmlTree;
+          } else {
+            xmlNode <- list(xmlTree);
+          }
+          return(list(xmlNode=xmlNode, xml=xml));
+        } else {
+          tag <- paste(tag, xmlNext, sep="");
+        }
+      } else if (state == "inBody") {
+        if (xmlNext == "<") {
+          if (xml[1] == "/") {
+            xml <- xml[-1];
+            body <- trim(body);
+            if (nchar(body) > 0) {
+              xmlNode <- body;
+              xmlTree <- c(xmlTree, xmlNode);
+            }
+            body <- "";
+            state <- "inEndTag";
+          } else {
+#            xmlNode <- list(body);
+#            xmlTree <- c(xmlTree, list(xmlNode));
+            state <- "inBeginTag";
+          }
+        } else {
+          body <- paste(body, xmlNext, sep="");
+        }
       }
     } # while(...)
 
-    if (length(res) == 0)
-      res <- "";
-
-    res;
+    xmlTree;
   } # parseXml()
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   xml <- paste(xml, collapse="");
+  xml <- trim(xml);
+  xml <- unlist(strsplit(xml, split=""));
   parseXml(xml);
 }) # xmlToList()
 
@@ -100,6 +141,9 @@ setMethodS3("xmlToList", "character", function(xml, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-23
+# o UPDATED: Rewrote internal parseXml() to be a "real" parser.  Hopefully,
+#   it is a bit more generic now.
 # 2008-03-05
 # o BUG FIX: Regular expression pattern 'a-Z' is illegal on (at least) some
 #   locale (where 'A-z' works). The only way to get specify the ASCII

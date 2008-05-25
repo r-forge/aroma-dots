@@ -194,3 +194,10 @@
   cnRange cnRange.RawCopyNumbers getChromosome.RawCopyNumbers xMax
   xMax.RawCopyNumbers xMin xMin.RawCopyNumbers xRange
   xRange.RawCopyNumbers xSeq xSeq.RawCopyNumbers
+ as.character.AromaTransform clearCache.AromaTransform
+ getAsteriskTags.AromaTransform getInputDataSet getOutputDataSet
+ getOutputFiles getOutputFiles.AromaTransform
+ getParameters.AromaTransform getParametersAsString
+ getParametersAsString.AromaTransform getRootPath
+ getRootPath.AromaTransform nbrOfArrays.AromaMicroarrayDataSet process
+ setTags.AromaTransform

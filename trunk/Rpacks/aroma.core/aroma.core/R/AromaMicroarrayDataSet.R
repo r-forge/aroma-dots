@@ -51,8 +51,16 @@ setMethodS3("getChipType", "AromaMicroarrayDataSet", function(this, ...) {
 })
 
 
+setMethodS3("nbrOfArrays", "AromaMicroarrayDataSet", function(this, ...) {
+  nbrOfFiles(this, ...);
+})
+
+
+
 ############################################################################
 # HISTORY:
+# 2008-05-23
+# o Added nbrOfArrays().
 # 2008-05-09
 # o Created.
 ############################################################################
