@@ -30,6 +30,17 @@
 \alias{getAromaUgpFile.AromaSignalBinarySet}
 \alias{getUnitNamesFile.AromaSignalBinaryFile}
 \alias{extractRawCopyNumbers.AromaTotalCnBinaryFile}
+\alias{getAsteriskTags.TotalCnSmoothing}
+\alias{getOutputFiles.TotalCnSmoothing}
+\alias{getParameters.TotalCnSmoothing}
+\alias{getPath.TotalCnSmoothing}
+\alias{getRootPath.TotalCnSmoothing}
+\alias{getTargetPositions}
+\alias{getTargetPositions.TotalCnSmoothing}
+\alias{getTargetUgpFile}
+\alias{getTargetUgpFile.TotalCnSmoothing}
+\alias{process.TotalCnSmoothing}
+\alias{TotalCnSmoothing}
 
 \description{
   This page contains aliases for all "non-documented" objects that

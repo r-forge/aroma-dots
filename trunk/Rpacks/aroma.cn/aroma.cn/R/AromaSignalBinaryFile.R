@@ -98,6 +98,7 @@ setMethodS3("allocate", "AromaSignalBinaryFile", function(static, ..., platform,
 
   # Write attributes to footer
   attrs <- list(
+    createdOn=format(Sys.time(), "%Y%m%d %H:%M:%S", usetz=TRUE),
     platform=platform, 
     chipType=chipType
   );
@@ -170,6 +171,8 @@ setMethodS3("getAromaUgpFile", "AromaSignalBinaryFile", function(this, ..., forc
 
 ############################################################################
 # HISTORY:
+# 2008-05-24
+# o Now allocate() of AromaSignalBinaryFile adds footer 'createdOn'.
 # 2008-05-11
 # o Created.
 ############################################################################

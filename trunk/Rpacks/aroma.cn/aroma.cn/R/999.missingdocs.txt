@@ -12,3 +12,9 @@
   getAromaUgpFile.AromaSignalBinarySet
   getUnitNamesFile.AromaSignalBinaryFile
  extractRawCopyNumbers.AromaTotalCnBinaryFile
+  getAsteriskTags.TotalCnSmoothing getOutputFiles.TotalCnSmoothing
+  getParameters.TotalCnSmoothing getPath.TotalCnSmoothing
+  getRootPath.TotalCnSmoothing getTargetPositions
+  getTargetPositions.TotalCnSmoothing getTargetUgpFile
+  getTargetUgpFile.TotalCnSmoothing process.TotalCnSmoothing
+  TotalCnSmoothing
