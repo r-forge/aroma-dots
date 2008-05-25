@@ -408,7 +408,7 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
     con <- file(pathname, open="r+b");
     verbose && cat(verbose, "Opened file ('r+b') to be close automatically");
     verbose && cat(verbose, "Pathname: ", pathname);
-    on.exit(close(con));
+    on.exit(close(con), add=TRUE);
   }
 
 
@@ -608,7 +608,7 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
     verbose <- Arguments$getVerbose(verbose);
     if (verbose) {
       pushState(verbose);
-      on.exit(popState(verbose));
+      on.exit(popState(verbose), add=TRUE);
     }
   } # if (.validateArgs)
 
@@ -774,7 +774,7 @@ setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, co
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
-    on.exit(popState(verbose));
+    on.exit(popState(verbose), add=TRUE);
   }
 
 
@@ -1012,7 +1012,7 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
     if (!is.null(con))
       close(con);
     con <- NULL;
-  });
+  }, add=TRUE);
 
   # Write magic
   magic <- charToRaw("aroma");
@@ -1213,6 +1213,9 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-25
+# o BUG FIX: In several methods, when using verbose the on.exit() to close
+#   an opened connection was overwritten.
 # 2008-05-21
 # o TYPO: File-format error message for incorrect 'magic' sequence was
 #   reporting the incorrect true sequence.

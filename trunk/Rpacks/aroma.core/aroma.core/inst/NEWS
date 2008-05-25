@@ -1,6 +1,12 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.2.5 [2008-05-25]
+o Added AromaTransform (extracted from aroma.affymetrix::Transform).
+o Added nbrOfArrays() to AromaMicroarrayDataSet.
+o Now private xmlToList() handles more complex XML strings.
+
+
 Version: 0.9.2.4 [2008-05-22]
 o Added member 'chromosome' to RawCopyNumbers.
 o Added gaussianSmoothing() to RawCopyNumbers.
