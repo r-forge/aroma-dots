@@ -1,8 +1,9 @@
 Package: aroma.cn
 =================
 
-Version: 0.1.2 [2008-05-22]
-o Added extractRawCopyNumbers() to AromaTotalCnBinaryFile.
+Version: 0.1.2 [2008-05-25]
+o ALPHA: Added extractRawCopyNumbers() to AromaTotalCnBinaryFile.
+o ALPHA: Added TotalCnSmoothing.
 
 
 Version: 0.1.1 [2008-05-18]
