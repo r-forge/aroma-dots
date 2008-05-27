@@ -420,7 +420,6 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
   # Read current footer
   seek(con=con, where=footerOffset, origin="start", rw="r");
   nbrOfBytes <- readInts(con=con, size=4);
-str(nbrOfBytes);
   verbose && cat(verbose, "Current length of footer: ", nbrOfBytes);
   verbose && exit(verbose);
 
