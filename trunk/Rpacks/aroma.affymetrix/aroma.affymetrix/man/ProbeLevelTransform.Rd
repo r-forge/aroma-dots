@@ -19,9 +19,11 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
+\code{~~+--}\code{\link[aroma.core]{AromaTransform}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\emph{\code{ProbeLevelTransform}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\emph{\code{ProbeLevelTransform}}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \emph{\link[aroma.affymetrix]{BackgroundCorrection}}, \link[aroma.affymetrix]{DChipQuantileNormalization}, \link[aroma.affymetrix]{GcRmaBackgroundCorrection}, \link[aroma.affymetrix]{OpticalBackgroundCorrection}, \link[aroma.affymetrix]{QuantileNormalization}, \link[aroma.affymetrix]{RmaBackgroundCorrection}, \link[aroma.affymetrix]{ScaleNormalization}, \link[aroma.affymetrix]{SpatialRowColumnNormalization}\cr
@@ -47,7 +49,10 @@ extends \emph{\link[aroma.affymetrix]{Transform}}\cr
 
 
  \bold{Methods inherited from Transform}:\cr
-getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags
+getOutputDataSet, getOutputFiles
+
+ \bold{Methods inherited from AromaTransform}:\cr
+getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

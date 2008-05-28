@@ -6,6 +6,7 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \name{getOutputDataSet.Transform}
 \alias{getOutputDataSet.Transform}
 \alias{Transform.getOutputDataSet}
@@ -28,7 +29,7 @@
 }
 
 \value{
- Returns an \code{\link{AffymetrixCelSet}} or \code{\link[base]{NULL}}.
+ Returns an \code{\link{AromaMicroarrayDataSet}} or \code{\link[base]{NULL}}.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

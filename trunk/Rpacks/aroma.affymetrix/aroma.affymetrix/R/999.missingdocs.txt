@@ -622,4 +622,5 @@
   writeRegions.ChromosomeExplorer
   writeRegions.CopyNumberSegmentationModel writeRegions.GladModel
   writeRegions.profileCGH writeWig writeWig.CnChipEffectSet
+  Transform
 
