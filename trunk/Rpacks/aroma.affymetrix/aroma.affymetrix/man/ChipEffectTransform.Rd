@@ -19,9 +19,11 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
+\code{~~+--}\code{\link[aroma.core]{AromaTransform}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\emph{\code{ChipEffectTransform}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
+\code{~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~+--}\emph{\code{ChipEffectTransform}}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{ChipEffectGroupMerge}, \link[aroma.affymetrix]{FragmentEquivalentClassNormalization}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{GcContentNormalization}, \link[aroma.affymetrix]{SnpChipEffectGroupMerge}\cr
@@ -50,7 +52,10 @@ extends \emph{\link[aroma.affymetrix]{Transform}}\cr
 
 
  \bold{Methods inherited from Transform}:\cr
-getFullName, getInputDataSet, getName, getOutputDataSet, getPath, getTags, isDone, process, setTags
+getOutputDataSet, getOutputFiles
+
+ \bold{Methods inherited from AromaTransform}:\cr
+getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

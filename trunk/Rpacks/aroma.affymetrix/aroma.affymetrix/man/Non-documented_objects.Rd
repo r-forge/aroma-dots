@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Wed May 21 12:00:10 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1304,6 +1302,7 @@
 \alias{writeRegions.profileCGH}
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
+\alias{Transform}
 
 \description{
   This page contains aliases for all "non-documented" objects that
