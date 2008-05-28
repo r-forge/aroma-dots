@@ -18,3 +18,8 @@
   getTargetPositions.TotalCnSmoothing getTargetUgpFile
   getTargetUgpFile.TotalCnSmoothing process.TotalCnSmoothing
   TotalCnSmoothing
+  fitPrincipalCurve fitPrincipalCurve.data.frame
+  fitPrincipalCurve.matrix get.lam.hb makeSmoothSplinePredict
+  makeSmoothSplinePredict.numeric normalizePrincipalCurve
+  normalizePrincipalCurve.data.frame normalizePrincipalCurve.matrix
+  principal.curve.hb
