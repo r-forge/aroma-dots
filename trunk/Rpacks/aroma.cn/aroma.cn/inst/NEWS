@@ -1,7 +1,8 @@
 Package: aroma.cn
 =================
 
-Version: 0.1.2 [2008-05-25]
+Version: 0.1.2 [2008-05-28]
+o ALPHA: Added normalizePrincipalCurve() and fitPrincipalCurve().
 o ALPHA: Added extractRawCopyNumbers() to AromaTotalCnBinaryFile.
 o ALPHA: Added TotalCnSmoothing.
 
