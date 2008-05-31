@@ -100,14 +100,25 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE, ve
 })
 
 
-setMethodS3("getOutputFiles", "Transform", function(this, ...) {
-  NextMethod("getOutputFiles", pattern=".*[.](cel|CEL)$", ...);
+setMethodS3("getOutputFiles", "Transform", function(this, pattern=NULL, ...) {
+  # Argument 'pattern':
+  if (is.null(pattern)) {
+    # Default filename pattern find non-private (no dot prefix) CEL files.
+    pattern <- "^[^.].*[.](cel|CEL)$";
+  } else {
+    pattern <- Arguments$getRegularExpression(pattern=pattern);
+  }
+
+  NextMethod("getOutputFiles", pattern=pattern, ...);
 }, protected=TRUE) 
 
 
 
 ############################################################################
 # HISTORY:
+# 2008-05-31
+# o BUG FIX: The recent updates to getOutputFiles() did also find private
+#   files.
 # 2008-05-23
 # o Transform now inherits from platform-independent AromaTransform.
 # o Removed some dependencies to CDFs.
