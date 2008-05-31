@@ -69,7 +69,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -82,6 +82,15 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
                                                           class(dataSet)[1]);
     }
 
+
+    # Argument 'verbose':
+    verbose <- Arguments$getVerbose(verbose);
+    if (verbose) {
+      pushState(verbose);
+      on.exit(popState(verbose));
+    }
+
+  
     cdf <- getCdf(dataSet);
 
     # Argument 'rescaleBy':
@@ -570,6 +579,14 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
 
 
 setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array, cs=NULL, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
   if (is.null(cs)) {
     cs <- getInputDataSet(this);
   }
@@ -643,6 +660,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
     pushState(verbose);
     on.exit(popState(verbose));
   }
+
 
   verbose && enter(verbose, "Calibrating data set for allelic cross talk");
 
@@ -1010,7 +1028,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
   # Get the data file
   cf <- getFile(cs, array);
-  print(cf);
+  verbose && print(verbose, cf);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load model parameter estimates
@@ -1089,6 +1107,9 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-05-30
+# o BUG FIX: The constructor of AllelicCrosstalkCalibration used 
+#   non-defined variable 'verbose'.
 # 2008-02-21
 # o Now SNPs and CN probes are infered from getUnitTypes(cdf) and no longer
 #   from the unit names.

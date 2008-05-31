@@ -1,6 +1,25 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.2.6 [2008-05-31]
+o Update filename pattern for getOutputFiles() of Transform.
+o BUG FIX: readUnits() would throw 'Error in readCelUnits(pathnames, cdf
+  = cdf, ...) : No CDF file for chip type found: GenomeWideSNP_6', if
+  the CDF was set to GenomeWideSNP_6,Full.CDF and no GenomeWideSNP_6.cdf 
+  file was found.  This was because readUnits() retrieve (x,y) information
+  units, which requires affxparser::readCelUnits() to locate the CDF to
+  infer the number of probe column in order to map (x,y) to cell indices.
+  Now readUnits() get the cell indices directly using getCellIndices().
+  Thanks Yue Hu for noticing this problem.
+o BUG FIX: The validation of arguments 'ceList' and 'refList' to internal
+  getRawCnData() of CopyNumberChromosomalModel was too conservative. This
+  caused it to throw 'Exception: Argument 'ceList' contains a non-
+  ChipEffectFile: NULL' whenever multiple ChipEffectSet:s were modelled
+  and one of them did not have data for one sample.  One of the redundancy
+  tests for the 100K platform was updated to test for this scenario. 
+  Thanks to Lavinia Gordon for spotting this.  
+
+
 Version: 0.9.2.5 [2008-05-28]
 o Cleaned up a bit.  Package now pass R CMD check.
 

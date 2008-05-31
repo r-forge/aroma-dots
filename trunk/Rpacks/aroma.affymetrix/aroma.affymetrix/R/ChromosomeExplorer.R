@@ -489,7 +489,6 @@ setMethodS3("writeRawCopyNumberLayers", "ChromosomeExplorer", function(this, ...
   layer <- getSampleLayerName(this, "rawCNs");
   path <- filePath(getParent(path), layer);
   path <- Arguments$getWritablePath(path);
-print(path);
 
   plotRawCopyNumbers(model, path=path, imageFormat="png", transparent=TRUE, ...);
 

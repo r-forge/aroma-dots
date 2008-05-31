@@ -298,9 +298,10 @@ setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList,
     throw("Argument 'ceList' is not a list: ", class(ceList)[1]);
   } else {
     for (kk in seq(along=ceList)) {
-      if (!inherits(ceList[[kk]], "ChipEffectFile")) {
+      ce <- ceList[[kk]];
+      if (!is.null(ce) && !inherits(ce, "ChipEffectFile")) {
         throw("Argument 'ceList' contains a non-ChipEffectFile: ", 
-                                                     class(ceList[[kk]])[1]);
+                                                               class(ce)[1]);
       }
     }
   }
@@ -313,9 +314,10 @@ setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList,
       throw("Argument 'refList' is of a different length than 'cesList': ", length(refList), " != ", length(ceList));
     }
     for (kk in seq(along=refList)) {
-      if (!inherits(refList[[kk]], "ChipEffectFile")) {
+      ref <- refList[[kk]];
+      if (!is.null(ref) && !inherits(ref, "ChipEffectFile")) {
         throw("Argument 'refList' contains a non-ChipEffectFile: ", 
-                                                    class(refList[[kk]])[1]);
+                                                              class(ref)[1]);
       }
     }
   }
@@ -668,6 +670,11 @@ setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=s
 
 ##############################################################################
 # HISTORY:
+# 2008-05-31
+# o BUG FIX: getRawCnData() of CopyNumberChromosomalModel threw "Exception: 
+#   Argument 'ceList' contains a non-ChipEffectFile: NULL" if multiple
+#   ChipEffectSet:s is modelled and one of them don't have all arrays.
+#   Thanks Lavinia Gordon for spotting this.
 # 2008-05-08
 # o BUG FIX: getRawCnData() of CopyNumberChromosomalModel gave an error if
 # 2008-03-10

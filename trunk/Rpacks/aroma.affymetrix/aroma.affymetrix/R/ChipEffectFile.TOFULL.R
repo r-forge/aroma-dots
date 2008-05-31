@@ -14,7 +14,7 @@ setMethodS3("getExpandedCellMap", "ChipEffectFile", function(this, resetFields=N
   uUnitSizes <- unique(unitSizes);
 
   ceX <- clone(this);
-## print(resetFields);
+  ## verbose && print(verbose, resetFields);
   for (field in resetFields) {
     ceX[[field]] <- FALSE;
   }

@@ -1062,13 +1062,15 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
   } else {
     # Always ask for CDF information from the CDF object!
     verbose && enter(verbose, "Retrieving CDF unit information");
-    suppressWarnings({
-      cdf <- readUnits(getCdf(this), units=units, ..., verbose=less(verbose));
-    });
-    verbose && str(verbose, cdf[1]);
+    cdf <- getCdf(this);
+    cdfList <- getCellIndices(cdf, units=units, ..., verbose=less(verbose));
+#    suppressWarnings({
+#      cdfList <- readUnits(cdf, units=units, ..., verbose=less(verbose));
+#    });
+    verbose && str(verbose, cdfList[1]);
     verbose && exit(verbose);
     verbose && enter(verbose, "Retrieving CEL units across samples");
-    res <- readCelUnits(pathnames, cdf=cdf, ...);
+    res <- readCelUnits(pathnames, cdf=cdfList, ...);
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
@@ -1440,6 +1442,15 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-05-31
+# o BUG FIX: readUnits() would throw 'Error in readCelUnits(pathnames, cdf
+#   = cdf, ...) : No CDF file for chip type found: GenomeWideSNP_6', if
+#   the CDF was set to GenomeWideSNP_6,Full.CDF and no GenomeWideSNP_6.cdf 
+#   file was found.  This was because readUnits() retrieve (x,y) information
+#   units, which requires affxparser::readCelUnits() to locate the CDF to
+#   infer the number of probe column in order to map (x,y) to cell indices.
+#   Now readUnits() get the cell indices directly using getCellIndices().
+#   Thanks Yue Hu for noticing this problem.
 # 2008-05-17
 # o Added getChipType().
 # 2008-05-09

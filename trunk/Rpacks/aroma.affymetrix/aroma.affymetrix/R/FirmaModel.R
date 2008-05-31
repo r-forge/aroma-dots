@@ -692,7 +692,7 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,fo
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (verbose) {
       # Clarifies itself once in a while (in case running two in parallel).
-      print(this);
+      verbose && print(verbose, this);
 
       # Fraction left
       fLeft <- length(idxs) / nbrOfUnits;
@@ -739,6 +739,8 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,fo
 
 ############################################################################
 # HISTORY:
+# 2008-05-31
+# o Removed an obsolete debug print() statement. 
 # 2008-04-09 [HB]
 # o Added calculateResidualSet() and made calculateResiduals() call it.
 # 2008-02-28 [HB]

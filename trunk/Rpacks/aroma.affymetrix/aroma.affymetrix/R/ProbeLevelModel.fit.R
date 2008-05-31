@@ -107,6 +107,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   }
 
 
+
   verbose && enter(verbose, "Fitting model of class ", class(this)[1], ":");
 
   verbose && print(verbose, this);
@@ -298,7 +299,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (verbose) {
       # Clarifies itself once in a while (in case running two in parallel).
-      print(this);
+      verbose && print(verbose, this);
 
       # Fraction left
       fLeft <- length(idxs) / nbrOfUnits;
@@ -349,6 +350,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2008-05-31
+# o Removed an obsolete debug print() statement.
 # 2008-02-17
 # o Moved fit() to its own source file.
 # 2007-12-10
