@@ -1025,7 +1025,7 @@ setMethodS3("fromFiles", "GenericDataFileSet", function(static, path=NULL, patte
   files <- list();
   for (kk in seq(along=pathnames)) {
     if (as.logical(verbose)) cat(kk, ", ", sep="");
-    df <- fromFile(dfStatic, pathnames[kk], .checkArgs=FALSE, verbose=less(verbose));
+    df <- fromFile(dfStatic, pathnames[kk], recursive=recursive, .checkArgs=FALSE, verbose=less(verbose));
     files[[kk]] <- df;
     if (kk == 1) {
       # Update the static class instance.  The reason for this is
@@ -1248,6 +1248,8 @@ setMethodS3("equals", "GenericDataFileSet", function(this, other, ..., verbose=F
 
 ############################################################################
 # HISTORY:
+# 2008-06-07
+# o Added argument 'recursive' to fromFiles().
 # 2008-05-16
 # o Now ... is passed down by getFullNames().
 # 2008-05-15

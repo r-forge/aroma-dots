@@ -576,7 +576,10 @@ setMethodS3("getFileSize", "GenericDataFile", function(this, what=c("numeric", "
 })
 
 
-setMethodS3("fromFile", "GenericDataFile", function(static, filename, path=NULL, ..., verbose=FALSE, .checkArgs=TRUE) {
+setMethodS3("fromFile", "GenericDataFile", function(static, filename, path=NULL, ..., recursive=TRUE, verbose=FALSE, .checkArgs=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -585,6 +588,9 @@ setMethodS3("fromFile", "GenericDataFile", function(static, filename, path=NULL,
   }
 
   if (.checkArgs) {
+    # Argument 'recursive':
+    recursive <- Arguments$getLogical(recursive);
+
     # Argument 'filename' and 'path':
     pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=TRUE);
   } else {
@@ -592,27 +598,30 @@ setMethodS3("fromFile", "GenericDataFile", function(static, filename, path=NULL,
   }
 
 
-  # Get all known subclasses (bottom up)
-  clazz <- Class$forName(class(static)[1]);
-  knownSubclasses <- rev(getKnownSubclasses(clazz));
-  for (className in knownSubclasses) {
-    clazz <- Class$forName(className);
-
-    # Try reading the file using the static fromFile() method of each class
-    static <- getStaticInstance(clazz);
-    tryCatch({
-      res <- fromFile(static, filename=pathname, .checkArgs=FALSE);
-      return(res);
-    }, error = function(ex) {})
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Use subclasses to setup the file?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (recursive) {
+    # Get all known subclasses (bottom up)
+    clazz <- Class$forName(class(static)[1]);
+    knownSubclasses <- getKnownSubclasses(clazz);
+    knownSubclasses <- rev(knownSubclasses);
+    for (className in knownSubclasses) {
+      clazz <- Class$forName(className);
+  
+      # Try reading the file using the static fromFile() method of each class
+      static <- getStaticInstance(clazz);
+      tryCatch({
+        res <- fromFile(static, filename=pathname, .checkArgs=FALSE);
+        return(res);
+      }, error = function(ex) {})
+    }
   }
 
   # If not "read" above, just create an instance as is.
   res <- newInstance(static, filename=pathname, ...);
-  return(res);
 
-##  throw("Could not read file '", pathname, "'.", 
-##             "Tried using all known subclasses of ", class(static)[1], ": ", 
-##                                     paste(knownSubclasses, collapse=", "));
+  res;
 }, static=TRUE)
 
 
@@ -893,6 +902,8 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-06-06
+# o Added argument 'recursive' to fromFile().
 # 2008-05-16
 # o Added support for full name translation of GenericDataFile:s.
 # 2008-05-15
