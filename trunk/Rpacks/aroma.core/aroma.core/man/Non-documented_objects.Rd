@@ -510,6 +510,7 @@
 \alias{nbrOfArrays.AromaMicroarrayDataSet}
 \alias{process}
 \alias{setTags.AromaTransform}
+\alias{getChipTypes.AromaMicroarrayDataSetTuple}
 
 \description{
   This page contains aliases for all "non-documented" objects that

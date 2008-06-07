@@ -201,3 +201,4 @@
  getParametersAsString.AromaTransform getRootPath
  getRootPath.AromaTransform nbrOfArrays.AromaMicroarrayDataSet process
  setTags.AromaTransform
+getChipTypes.AromaMicroarrayDataSetTuple

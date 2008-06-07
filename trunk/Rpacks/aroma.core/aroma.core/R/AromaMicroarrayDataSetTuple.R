@@ -640,9 +640,9 @@ setMethodS3("asMatrixOfFiles", "AromaMicroarrayDataSetTuple", function(this, ...
 
 
 
-setMethodS3("getChipTypes", "AromaMicroarrayDataSetTuple", function(this, merge=FALSE, collapse="+", ...) {
+setMethodS3("getChipTypes", "AromaMicroarrayDataSetTuple", function(this, fullname=FALSE, merge=FALSE, collapse="+", ...) {
   csList <- getListOfSets(this);
-  chipTypes <- sapply(csList, FUN=getChipType, fullname=FALSE);
+  chipTypes <- sapply(csList, FUN=getChipType, fullname=fullname);
 
   # Invariant for order
 #  chipTypes <- sort(chipTypes);
@@ -663,6 +663,9 @@ setMethodS3("byPath", "AromaMicroarrayDataSetTuple", abstract=TRUE, static=TRUE)
 
 ##############################################################################
 # HISTORY:
+# 2008-06-03
+# o Added argument 'fullnames=FALSE' to getChipTypes() for 
+#   AromaMicroarrayDataSetTuple.
 # 2008-05-21
 # o BUG FIX: getFullNames() was not passing down new 'translate' correctly.
 # 2008-05-16
