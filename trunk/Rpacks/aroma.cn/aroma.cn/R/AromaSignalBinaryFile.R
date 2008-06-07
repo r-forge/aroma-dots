@@ -153,11 +153,11 @@ setMethodS3("getUnitNamesFile", "AromaSignalBinaryFile", function(this, force=FA
 })
 
 
-setMethodS3("getAromaUgpFile", "AromaSignalBinaryFile", function(this, ..., force=FALSE) {
+setMethodS3("getAromaUgpFile", "AromaSignalBinaryFile", function(this, ..., validate=FALSE, force=FALSE) {
   ugp <- this$.ugp;
   if (force || is.null(ugp)) {
     chipType <- getChipType(this, ...);
-    ugp <- AromaUgpFile$byChipType(chipType);
+    ugp <- AromaUgpFile$byChipType(chipType, validate=validate);
     this$.ugp <- ugp;
   }
   ugp;
