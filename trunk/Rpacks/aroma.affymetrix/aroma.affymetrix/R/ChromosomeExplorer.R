@@ -384,9 +384,18 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   env$chrLayers <- chrLayers;
   env$sampleLayers <- sampleLayers;
 
-  pathname <- rspToHtml(pathname, path=NULL, 
-                        outFile=outFile, outPath=outPath, 
-                        overwrite=TRUE, envir=env);
+  if (getParallelSafe(this)) {
+    tryCatch({
+      pathname <- rspToHtml(pathname, path=NULL, 
+                            outFile=outFile, outPath=outPath, 
+                            overwrite=TRUE, envir=env);
+    }, error = function(ex) {})
+  } else {
+    pathname <- rspToHtml(pathname, path=NULL, 
+                          outFile=outFile, outPath=outPath, 
+                          overwrite=TRUE, envir=env);
+  }
+
   verbose && exit(verbose);
 
 
@@ -415,14 +424,27 @@ setMethodS3("addIndexFile", "ChromosomeExplorer", function(this, filename=NULL, 
 
 
 setMethodS3("setup", "ChromosomeExplorer", function(this, ..., force=FALSE) {
-  # Setup includes/?
-  addIncludes(this, ..., force=force);
+  if (getParallelSafe(this)) {
+    tryCatch({
+      # Setup includes/?
+      addIncludes(this, ..., force=force);
+  
+      # Setup main HTML file
+      addIndexFile(this, ..., force=force);
+  
+      # Setup samples.js?
+      updateSamplesFile(this, ...);
+    }, error = function(ex) {})
+  } else {
+    # Setup includes/?
+    addIncludes(this, ..., force=force);
 
-  # Setup main HTML file
-  addIndexFile(this, ..., force=force);
+    # Setup main HTML file
+    addIndexFile(this, ..., force=force);
 
-  # Setup samples.js?
-  updateSamplesFile(this, ...);
+    # Setup samples.js?
+    updateSamplesFile(this, ...);
+  }
 }, private=TRUE)
 
 
@@ -433,9 +455,17 @@ setMethodS3("writeAxesLayers", "ChromosomeExplorer", function(this, ...) {
 
   path <- getPath(this);
   path <- filePath(getParent(path), "axes,chrLayer");
-  path <- Arguments$getWritablePath(path);
 
-  plotAxesLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+
+  if (getParallelSafe(this)) {
+    tryCatch({
+      path <- Arguments$getWritablePath(path);
+      plotAxesLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+    }, error = function(ex) {})
+  } else {
+    path <- Arguments$getWritablePath(path);
+    plotAxesLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+  }
 
   invisible(path);
 }, private=TRUE)
@@ -446,9 +476,17 @@ setMethodS3("writeGridHorizontalLayers", "ChromosomeExplorer", function(this, ..
 
   path <- getPath(this);
   path <- filePath(getParent(path), "gridH,chrLayer");
-  path <- Arguments$getWritablePath(path);
 
-  plotGridHorizontalLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+
+  if (getParallelSafe(this)) {
+    tryCatch({
+      path <- Arguments$getWritablePath(path);
+      plotGridHorizontalLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+    }, error = function(ex) {})
+  } else {
+    path <- Arguments$getWritablePath(path);
+    plotGridHorizontalLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+  }
 
   invisible(path);
 }, private=TRUE)
@@ -464,9 +502,17 @@ setMethodS3("writeCytobandLayers", "ChromosomeExplorer", function(this, ...) {
 
   path <- getPath(this);
   path <- filePath(getParent(path), "cytoband,chrLayer");
-  path <- Arguments$getWritablePath(path);
 
-  plotCytobandLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+
+  if (getParallelSafe(this)) {
+    tryCatch({
+      path <- Arguments$getWritablePath(path);
+      plotCytobandLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+    }, error = function(ex) {})
+  } else {
+    path <- Arguments$getWritablePath(path);
+    plotCytobandLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
+  }
 
   invisible(path);
 }, private=TRUE)
@@ -478,6 +524,7 @@ setMethodS3("getSampleLayerName", "Explorer", function(this, name, class="sample
   layer;
 }, private=TRUE)
 
+
 setMethodS3("writeRawCopyNumberLayers", "ChromosomeExplorer", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -488,8 +535,8 @@ setMethodS3("writeRawCopyNumberLayers", "ChromosomeExplorer", function(this, ...
   path <- getPath(this);
   layer <- getSampleLayerName(this, "rawCNs");
   path <- filePath(getParent(path), layer);
-  path <- Arguments$getWritablePath(path);
 
+  path <- Arguments$getWritablePath(path);
   plotRawCopyNumbers(model, path=path, imageFormat="png", transparent=TRUE, ...);
 
   invisible(path);
@@ -510,8 +557,8 @@ setMethodS3("writeCopyNumberRegionLayers", "ChromosomeExplorer", function(this, 
   path <- getPath(this);
   tags <- getAsteriskTags(model, collapse=",");
   path <- filePath(getParent(path), sprintf("%s,sampleLayer", tags));
-  path <- Arguments$getWritablePath(path);
 
+  path <- Arguments$getWritablePath(path);
   plotCopyNumberRegionLayers(model, path=path, imageFormat="png", transparent=TRUE, ...);
 
   invisible(path);
@@ -568,13 +615,24 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
 
   verbose && enter(verbose, "Writing CN regions");
 
-  # Extract and write regions
-  pathname <- writeRegions(model, arrays=arrays, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
-
   dest <- filePath(getPath(this), "regions.xls");
-  res <- copyFile(pathname, dest, overwrite=TRUE);
-  if (!res)
-    dest <- NULL;
+
+
+  # Extract and write regions
+  if (getParallelSafe(this)) {
+    tryCatch({
+      pathname <- writeRegions(model, arrays=arrays, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
+      res <- copyFile(pathname, dest, overwrite=TRUE);
+      if (!res)
+        dest <- NULL;
+    }, error = function(ex) {})
+  } else {
+    pathname <- writeRegions(model, arrays=arrays, nbrOfSnps=nbrOfSnps, smoothing=smoothing, ..., skip=FALSE, verbose=less(verbose));
+    res <- copyFile(pathname, dest, overwrite=TRUE);
+    if (!res)
+      dest <- NULL;
+  }
+
 
   verbose && exit(verbose);
 
@@ -638,7 +696,13 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   verbose && enter(verbose, "Generating ChromosomeExplorer report");
 
   # Setup HTML, CSS, Javascript files first
-  setup(this, ..., verbose=less(verbose));
+  if (getParallelSafe(this)) {
+    tryCatch({
+      setup(this, ..., verbose=less(verbose));
+    }, error = function(ex) {})
+  } else {
+    setup(this, ..., verbose=less(verbose));
+  }
 
   model <- getModel(this);
 
@@ -672,11 +736,23 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   }
 
   # Update samples.js
-  updateSamplesFile(this, ..., verbose=less(verbose));
+  if (getParallelSafe(this)) {
+    tryCatch({
+      updateSamplesFile(this, ..., verbose=less(verbose));
+    }, error = function(ex) {})
+  } else {
+    updateSamplesFile(this, ..., verbose=less(verbose));
+  }
 
   # Write regions file
   if (inherits(model, "CopyNumberSegmentationModel")) {
-    writeRegions(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
+    if (getParallelSafe(this)) {
+      tryCatch({
+        writeRegions(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
+      }, error = function(ex) {})
+    } else {
+      writeRegions(this, arrays=arrays, chromosomes=chromosomes, ..., verbose=less(verbose));
+    }
   }
 
   verbose && exit(verbose);
@@ -691,6 +767,9 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="Chromosome
 
 ##############################################################################
 # HISTORY:
+# 2008-06-05
+# o Made updateSamplesFile(), writeAxesLayers(), writeGridHorizontalLayers(),
+#   writeCytobandLayers(), writeRegions(), setup(), process() parallel safe.
 # 2008-05-08
 # o Now one can pass argument 'aliased=TRUE' to process() which causes the
 #   ChromosomeExplorer and coupled CopyNumberSegmentationModel to return

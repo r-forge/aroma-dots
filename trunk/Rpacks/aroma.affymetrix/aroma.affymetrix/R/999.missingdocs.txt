@@ -623,4 +623,6 @@
   writeRegions.CopyNumberSegmentationModel writeRegions.GladModel
   writeRegions.profileCGH writeWig writeWig.CnChipEffectSet
   Transform
+  getParallelSafe getParallelSafe.Explorer getParameterSet.ExonRmaPlm
+  setParallelSafe setParallelSafe.Explorer
 

@@ -7,9 +7,7 @@ options("R.cache::rootPath"="~/.Rcache,scratch");
 options("R.cache::touchOnLoad"=TRUE);
 
 source("textUI.R");
-
-#source("init.R");
-
+source("patch.R");
 
 pathname <- textSelectFile("testScripts");
 if (!is.null(pathname)) {
