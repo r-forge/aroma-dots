@@ -251,7 +251,7 @@ setMethodS3("getReferenceSetTuple", "CopyNumberChromosomalModel", function(this,
       refFile <- getAverageFile(ces, force=force, verbose=less(verbose));
       refSet <- clone(ces);
       clearCache(refSet);
-      refFiles <- rep(list(refFile), nbrOfFiles(ces));
+      refFiles <- rep(list(refFile), nbrOfArrays(cesTuple));
       refSet$files <- refFiles;
       verbose && exit(verbose);
       refList[[kk]] <- refSet;
@@ -670,6 +670,10 @@ setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=s
 
 ##############################################################################
 # HISTORY:
+# 2008-06-07
+# o BUG FIX: getReferenceSetTuple() of CopyNumberChromosomalModel would
+#   generate nbrOfArrays(ces) instead of nbrOfArrays(cesTuple) reference
+#   files if not reference set was specified.
 # 2008-05-31
 # o BUG FIX: getRawCnData() of CopyNumberChromosomalModel threw "Exception: 
 #   Argument 'ceList' contains a non-ChipEffectFile: NULL" if multiple

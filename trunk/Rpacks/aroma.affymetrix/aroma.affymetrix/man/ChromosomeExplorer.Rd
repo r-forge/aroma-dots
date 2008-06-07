@@ -3,6 +3,8 @@
 % 
 %  ChromosomeExplorer.R
 % 
+% on Thu Jun 05 14:20:34 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -44,19 +46,19 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{display} \tab  -\cr
- \tab \code{getChromosomes} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getChromosomes.ChromosomeExplorer]{getChromosomes}} \tab Gets the chromosomes available.\cr
  \tab \code{getFullNames} \tab  -\cr
- \tab \code{getModel} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getModel.ChromosomeExplorer]{getModel}} \tab Gets the model.\cr
  \tab \code{getNames} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
- \tab \code{process} \tab  -\cr
- \tab \code{setArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.ChromosomeExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
+ \tab \code{\link[aroma.affymetrix:setArrays.ChromosomeExplorer]{setArrays}} \tab Sets the arrays.\cr
  \tab \code{setCytoband} \tab  -\cr
 }
 
 
  \bold{Methods inherited from Explorer}:\cr
-addIncludes, addIndexFile, display, getAlias, getArrays, getAsteriskTags, getFullName, getIncludePath, getMainPath, getName, getNameOfInput, getPath, getReportPathPattern, getSampleLayerPrefix, getSubname, getTags, getTagsOfInput, getTemplatePath, nbrOfArrays, process, setAlias, setArrays, setReportPathPattern, setSubname, setup, splitByReportPathPattern
+addIncludes, addIndexFile, display, getAlias, getArrays, getAsteriskTags, getFullName, getIncludePath, getMainPath, getName, getNameOfInput, getParallelSafe, getPath, getReportPathPattern, getSampleLayerPrefix, getSubname, getTags, getTagsOfInput, getTemplatePath, nbrOfArrays, process, setAlias, setArrays, setParallelSafe, setReportPathPattern, setSubname, setup, splitByReportPathPattern
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save

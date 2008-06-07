@@ -293,7 +293,7 @@ setMethodS3("updateOnLoadJS", "ArrayExplorer", function(this, ..., verbose=FALSE
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Compile RSP file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  chipTypes <- getChipTypes(setTuple);
+  chipTypes <- getChipTypes(setTuple, fullname=TRUE);
   verbose && cat(verbose, "Detected chip types: ", 
                                            paste(chipTypes, collapse=", "));
   verbose && enter(verbose, "Compiling RSP");
@@ -409,6 +409,10 @@ setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2008-06-03
+# o BUG FIX: updateOnLoadJS() of ArrayExplorer did not use the fullname
+#   chip type, cause an error in ArrayExplorer:s for tagged chip types.
+#   Thanks to Maria Traka at BBSRC in UK for spotting this.
 # 2008-03-29
 # o BUG FIX: The ArrayExplorer would generate image files to a directory under
 #   reports/<dataSet>/<tags>,<tags>/..., i.e. the tags where replicated.  This

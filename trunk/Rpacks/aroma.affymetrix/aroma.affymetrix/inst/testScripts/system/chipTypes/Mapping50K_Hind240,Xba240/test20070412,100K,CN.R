@@ -89,19 +89,22 @@ for (chipType in names(csList)) {
 # Emulate list of ChipEffectSet:s where some arrays on exists in
 # one of the sets
 for (kk in seq(along=cesFlnList)) {
-  cesFln <- cesFlnList[[kk]];
-  cesFln <- extract(cesFln, setdiff(seq(cesFln), kk+1));
-  cesFlnList[[kk]] <- cesFln;
+  ces <- cesFlnList[[kk]];
+  ces <- extract(ces, setdiff(seq(ces), length(ces)+1-kk));
+  cesFlnList[[kk]] <- ces;
 }
 glad <- GladModel(cesFlnList);
 print(glad);
 
 print(getTableOfArrays(glad));
+nbrOfTestArrays <- nbrOfArrays(getSetTuple(glad));
+nbrOfRefArrays <- nbrOfArrays(getReferenceSetTuple(glad));
+stopifnot(identical(nbrOfTestArrays, nbrOfRefArrays));
 
 fit(glad, arrays=1, chromosomes=19, verbose=log);
 
 # Tests the case where one of the set does not have observations.
-fit(glad, arrays=2, chromosomes=19, verbose=log);
+fit(glad, arrays=nbrOfArrays(glad), chromosomes=19, verbose=log);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

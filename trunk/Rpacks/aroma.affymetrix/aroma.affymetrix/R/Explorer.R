@@ -58,7 +58,8 @@ setConstructorS3("Explorer", function(tags="*", ...) {
   extend(Object(), "Explorer",
     .alias = NULL,
     .tags = tags,
-    .arrays = NULL
+    .arrays = NULL,
+    .parallelSafe = FALSE
   )
 })
 
@@ -77,6 +78,21 @@ setMethodS3("as.character", "Explorer", function(x, ...) {
   s;
 }, private=TRUE)
 
+
+
+setMethodS3("getParallelSafe", "Explorer", function(this, ...) {
+  status <- this$.parallelSafe;
+  status <- identical(status, TRUE);
+  status;
+}, protected=TRUE)
+
+
+setMethodS3("setParallelSafe", "Explorer", function(this, status=TRUE, ...) {
+  oldStatus <- this$.parallelSafe;
+  status <- Arguments$getLogical(status);
+  this$.parallelSafe <- status;
+  invisible(oldStatus);
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -454,9 +470,15 @@ setMethodS3("getMainPath", "Explorer", function(this, ...) {
   # The full path
   path <- filePath(rootPath, name, subname, expandLinks="any");
   if (!isDirectory(path)) {
-    mkdirs(path);
-    if (!isDirectory(path))
-      throw("Failed to create output directory: ", path);
+    if (getParallelSafe(this)) {
+      tryCatch({
+        mkdirs(path);
+      }, error = function(ex) {});
+    } else {
+      mkdirs(path);
+      if (!isDirectory(path))
+        throw("Failed to create output directory: ", path);
+    }
   }
 
   path;
@@ -527,11 +549,21 @@ setMethodS3("addIncludes", "Explorer", function(this, ..., force=FALSE, verbose=
   srcPath <- getIncludePath(this);
   verbose && cat(verbose, "Source path: ", srcPath);
   verbose && cat(verbose, "Destination path: ", destPath);
-  pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE, overwrite=force);
+  
+  if (getParallelSafe(this)) {
+    tryCatch({
+      pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE, 
+                                                          overwrite=force);
+    }, error = function(ex) {});
+  } else {
+    pathnames <- copyDirectory(from=srcPath, to=destPath, recursive=TRUE, 
+                                                          overwrite=force);
+  }
   verbose && exit(verbose);
 
   verbose && exit(verbose);
 })
+
 
 
 setMethodS3("addIndexFile", "Explorer", function(this, filename=sprintf("%s.html", class(this)[1]), ..., force=FALSE, verbose=FALSE) {
@@ -555,7 +587,15 @@ setMethodS3("addIndexFile", "Explorer", function(this, filename=sprintf("%s.html
     verbose && cat(verbose, "Destination pathname: ", outPathname);
     if (!isFile(srcPathname))
       throw("File not found: ", srcPathname);
-    copyFile(srcPathname, outPathname, overwrite=TRUE);
+
+    if (getParallelSafe(this)) {
+      tryCatch({
+        copyFile(srcPathname, outPathname, overwrite=TRUE);
+      }, error = function(ex) {});
+    } else {
+      copyFile(srcPathname, outPathname, overwrite=TRUE);
+    }
+  
     verbose && exit(verbose);
   }
 }, protected=TRUE)
@@ -644,9 +684,8 @@ setMethodS3("display", "Explorer", function(this, filename=sprintf("%s.html", cl
   # Just in case, is setup needed?
   if (!isFile(pathname)) {
     setup(this, verbose=less(verbose));
-    if (!isFile(pathname)) {
+    if (!isFile(pathname))
       throw("Cannot open ", class(this)[1], ". No such file: ", pathname);
-    }
   }
 
   pathname <- getAbsolutePath(pathname);
@@ -663,6 +702,9 @@ setMethodS3("display", "Explorer", function(this, filename=sprintf("%s.html", cl
 
 ##############################################################################
 # HISTORY:
+# 2008-06-05
+# o Made getMainPath(), addIncludes(), addIndexFile() parallel safe.
+# o Added getParallelSafe() and setParallelSafe().
 # 2007-11-20
 # o Now addIncludes() no longer passes '...' to copyDirectory().
 # 2007-10-11

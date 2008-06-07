@@ -123,6 +123,15 @@ setMethodS3("setMergeGroups", "ExonRmaPlm", function(this, ...) {
 })
 
 
+
+setMethodS3("getParameterSet", "ExonRmaPlm", function(this, ...) {
+  params <- NextMethod("getParameterSet", this, ...);
+  params$mergeGroups <- this$mergeGroups;
+  params;
+}, private=TRUE)
+
+
+
 ###########################################################################/**
 # @RdocMethod getFitFunction
 #
@@ -365,7 +374,9 @@ setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
-# 2008-12-02
+# 2008-06-03 [HB]
+# o Added getParameterSet() to ExonRmaPlm so that 'mergeGroups' is returned.
+# 2007-12-02
 # o Added mechanism to fit "large" unit groups with median polish (for speed).
 # o Added mechanism to avoid fitting unit groups with ridiculously many cells.
 # 2007-12-06

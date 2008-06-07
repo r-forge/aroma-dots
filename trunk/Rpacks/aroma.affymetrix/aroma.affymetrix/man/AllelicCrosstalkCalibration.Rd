@@ -3,6 +3,8 @@
 % 
 %  AllelicCrosstalkCalibration.R
 % 
+% on Thu Jun 05 14:13:58 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -42,7 +44,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   affect the model fitting and are unaffected.
  }
 
- \usage{AllelicCrosstalkCalibration(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
+ \usage{AllelicCrosstalkCalibration(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, verbose=FALSE)}
 
  \arguments{
    \item{dataSet}{An \code{\link{AffymetrixCelSet}}.}
@@ -96,7 +98,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.AllelicCrosstalkCalibration]{process}} \tab Calibrates the data set.\cr
 }
 
 
