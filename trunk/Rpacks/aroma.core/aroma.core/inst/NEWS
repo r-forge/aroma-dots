@@ -1,6 +1,10 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.3 [2008-06-08]
+o Package passes R CMD check on R v2.7.0 patched.
+
+
 Version: 0.9.2.6 [2008-06-07]
 o Update filename pattern for getOutputFiles() of AromaTransform.
 
