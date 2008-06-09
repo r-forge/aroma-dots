@@ -69,7 +69,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, verbose=FALSE) {
+setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -83,14 +83,6 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
     }
 
 
-    # Argument 'verbose':
-    verbose <- Arguments$getVerbose(verbose);
-    if (verbose) {
-      pushState(verbose);
-      on.exit(popState(verbose));
-    }
-
-  
     cdf <- getCdf(dataSet);
 
     # Argument 'rescaleBy':
@@ -104,7 +96,7 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
       } else if (regexpr("^GenomeWideSNP_", chipType) != -1) {
         rescaleBy <- "all";
       } else {
-        types <- getUnitTypes(cdf, verbose=verbose);
+        types <- getUnitTypes(cdf);
         # 5 == Copy Number (but according to Fusion SDK docs 8 == Copy Number)
         hasCns <- hasUnitTypes(cdf, types=c(5,8));
         rm(types);
