@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Sun Jun 08 20:01:10 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1303,6 +1305,11 @@
 \alias{writeWig}
 \alias{writeWig.CnChipEffectSet}
 \alias{Transform}
+\alias{getParallelSafe}
+\alias{getParallelSafe.Explorer}
+\alias{getParameterSet.ExonRmaPlm}
+\alias{setParallelSafe}
+\alias{setParallelSafe.Explorer}
 
 \description{
   This page contains aliases for all "non-documented" objects that
