@@ -16,7 +16,7 @@ setConstructorS3("TabularTextFile", function(..., sep=c("\t", ","), quote="\"", 
     quote = quote,
     fill = fill,
     skip = skip,
-    columnNames = columnNames,
+    .columnNames = columnNames,
     readColumnNames = readColumnNames
   );
 
@@ -32,7 +32,7 @@ setMethodS3("as.character", "TabularTextFile", function(x, ...) {
 
   s <- NextMethod("as.character", this, ...);
   class <- class(s);
-  if (this$readColumnNames) {
+  if (hasColumnHeader(this)) {
     columns <- paste("'", getColumnNames(this), "'", sep="");
     s <- c(s, sprintf("Columns [%d]: %s", length(columns), paste(columns, collapse=", ")));
   } else {
@@ -83,12 +83,17 @@ setMethodS3("readColumnNames", "TabularTextFile", function(this, ...) {
 })
 
 
+setMethodS3("hasColumnHeader", "TabularTextFile", function(this, ...) {
+  identical(this$readColumnNames, TRUE);
+})
+
+
 setMethodS3("getColumnNames", "TabularTextFile", function(this, ...) {
-  if (this$readColumnNames) {
+  if (hasColumnHeader(this)) {
     colnames <- getHeader(this, ...)$columns;
     colnames <- translateColumnNames(this, colnames);
   } else {
-    colnames <- this$columnNames;
+    colnames <- this$.columnNames;
   }
   colnames;
 })
@@ -98,14 +103,19 @@ setMethodS3("getColumnNames", "TabularTextFile", function(this, ...) {
 setMethodS3("getHeader", "TabularTextFile", function(this, ..., force=FALSE) {
   hdr <- this$.fileHeader;
   if (force || is.null(hdr)) {
-    hdr <- readHeader(this, ...);
+    hdr <- readRawHeader(this, ...);
+    if (hasColumnHeader(this)) {
+      hdr$columns <- hdr$topRows[[1]];
+    }
     this$.fileHeader <- hdr;
   }
   hdr;
 })
 
 
-setMethodS3("readHeader", "TabularTextFile", function(this, con=NULL, ..., verbose=FALSE) {
+
+
+setMethodS3("readRawHeader", "TabularTextFile", function(this, con=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -116,7 +126,7 @@ setMethodS3("readHeader", "TabularTextFile", function(this, con=NULL, ..., verbo
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Reading comment header & column header from ", class(this)[1]);
+  verbose && enter(verbose, "Reading tabular file header from ", class(this)[1]);
 
   # Open a file connection?
   if (is.null(con)) {
@@ -167,31 +177,30 @@ setMethodS3("readHeader", "TabularTextFile", function(this, con=NULL, ..., verbo
     verbose && exit(verbose);
   }
 
-  if (this$readColumnNames) {
-    verbose && print(verbose, line);
-    columns <- strsplit(line, split=sep)[[1]];
-    columns <- trim(columns);
-    verbose && print(verbose, columns);
-  } else {
-    columns <- NULL;
-  }
+  lines <- c(line, readLines(con, n=9));
+  verbose && print(verbose, line);
+  topRows <- strsplit(lines, split=sep);
+  topRows <- lapply(topRows, trim);
+  verbose && print(verbose, topRows);
 
   # Remove quotes?
   quote <- this$quote;
   if (!is.null(quote)) {
     for (pattern in c(sprintf("^%s", quote), sprintf("%s$", quote))) {
-      columns <- gsub(pattern, "", columns);
+      topRows <- lapply(topRows, FUN=function(row) {
+        gsub(pattern, "", row);
+      })
     }
   }
 
-  verbose && cat(verbose, "Columns: ", paste(paste("'", columns, "'", sep=""), collapse=", "), level=-10);
+  verbose && cat(verbose, "Columns: ", paste(paste("'", topRows, "'", sep=""), collapse=", "), level=-10);
 
   hdr <- list(
     comments=comments,
-    columns=columns,
     sep=sep,
     quote=quote,
-    skip=this$skip
+    skip=this$skip,
+    topRows=topRows
   );
 
   verbose && str(verbose, hdr);
@@ -199,7 +208,7 @@ setMethodS3("readHeader", "TabularTextFile", function(this, con=NULL, ..., verbo
   verbose && exit(verbose);
 
   hdr;
-}, protected=TRUE);
+}, protected=TRUE); # readRawHeader()
 
 
 
@@ -281,7 +290,7 @@ setMethodS3("getReadArguments", "TabularTextFile", function(this, fileHeader=NUL
 
   # Inferred arguments
   args <- list(
-    header      = this$readColumnNames,
+    header      = hasColumnHeader(this),
     skip        = fileHeader$skip,
     colClasses  = colClasses,
     sep         = fileHeader$sep,
@@ -330,7 +339,7 @@ setMethodS3("readDataFrame", "TabularTextFile", function(this, con=NULL, rows=NU
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Reading header to infer read.table() arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  hdr <- readHeader(this, verbose=less(verbose, 5));
+  hdr <- getHeader(this, verbose=less(verbose, 5));
 
   # Get read arguments
   args <- getReadArguments(this, fileHeader=hdr, nrow=nrow, ..., 
@@ -466,6 +475,9 @@ setMethodS3("readLines", "TabularTextFile", function(con, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-06-12
+# o Added readRawHeader().  Removed readHeader() [now in getHeader()].
+# o Added hasColumnHeader() to TabularTextFile.
 # 2008-05-16
 # o Took the text-file based parts of GenericTabularFile and placed them
 #   in new subclass TabularTextFile.
