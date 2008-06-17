@@ -56,6 +56,11 @@ setConstructorS3("GenericDataFile", function(filename=NULL, path=NULL, mustExist
 
   # Arguments '...':
   args <- list(...);
+
+  # Ignore any argument called 'recursive'
+  keep <- which(regexpr("^recursive$", names(args)) == -1);
+  args <- args[keep];
+
   if (length(args) > 0) {
     argsStr <- paste(names(args), collapse=", ");
     throw("Unknown arguments: ", argsStr);
@@ -902,6 +907,9 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-06-11
+# o BUG FIX: Argument 'recursive' is ignored in the GenericDataFile
+#   constructor.
 # 2008-06-06
 # o Added argument 'recursive' to fromFile().
 # 2008-05-16
