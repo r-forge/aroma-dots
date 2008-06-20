@@ -1,6 +1,12 @@
 Package: aroma.cn
 =================
 
+Version: 0.1.4 [2008-06-12x]
+o Now extractRawCopyNumbers() of AromaTotalCnBinaryFile adds 
+  annotation data fields to the returned object, e.g. platform, 
+  chipType, and the fullname of the source file.
+
+
 Version: 0.1.3 [2008-05-28]
 o ALPHA: Added normalizePrincipalCurve() and fitPrincipalCurve().
 
