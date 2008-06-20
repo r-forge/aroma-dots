@@ -229,6 +229,10 @@ setMethodS3("getReadArguments", "TabularTextFile", function(this, fileHeader=NUL
   }
 
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Infer column classes
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Default column classes
   columns <- getColumnNames(this);
   if (!is.null(columns)) {
@@ -288,11 +292,15 @@ setMethodS3("getReadArguments", "TabularTextFile", function(this, fileHeader=NUL
   verbose && cat(verbose, "Column classes:", level=-20);
   verbose && print(verbose, colClasses, level=-20);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Setup read.table() arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Inferred arguments
   args <- list(
     header      = hasColumnHeader(this),
-    skip        = fileHeader$skip,
     colClasses  = colClasses,
+    skip        = fileHeader$skip,
     sep         = fileHeader$sep,
     quote       = fileHeader$quote,
     fill        = this$fill,
@@ -315,13 +323,16 @@ setMethodS3("readDataFrame", "TabularTextFile", function(this, con=NULL, rows=NU
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'rows':
+  # Argument 'rows' and 'nrow':
+  if (!is.null(rows) && !is.null(nrow)) {
+    throw("Only one of arguments 'rows' and 'nrow' can be specified.");
+  }
+
   if (!is.null(rows)) {
     rows <- Arguments$getIndices(rows);
     nrow <- max(rows);
   }
 
-  # Argument 'nrow':
   if (!is.null(nrow)) {
     nrow <- Arguments$getInteger(nrow, range=c(1,Inf));
   }
@@ -348,6 +359,7 @@ setMethodS3("readDataFrame", "TabularTextFile", function(this, con=NULL, rows=NU
   verbose && cat(verbose, "Arguments inferred from file header:");
   verbose && print(verbose, args);
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify names of columns read
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -366,11 +378,8 @@ setMethodS3("readDataFrame", "TabularTextFile", function(this, con=NULL, rows=NU
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Read the data using read.table()
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Calling read.table()");
-
   # Open a file connection?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(con)) {
     pathname <- getPathname(this);
     verbose && cat(verbose, "Pathname: ", pathname);
@@ -385,20 +394,38 @@ setMethodS3("readDataFrame", "TabularTextFile", function(this, con=NULL, rows=NU
     })
   }
 
-  args <- c(list(con), args);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Reading data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  fcnName <- "read.table";
+#  fcnName <- "readTable";  ## BUGGY /HB 2008-06-17
+  verbose && enter(verbose, sprintf("Calling %s()", fcnName));
+
   verbose && cat(verbose, "Arguments used to read tabular file:");
+  args <- c(list(con), args);
   verbose && print(verbose, args);
-  data <- do.call("read.table", args=args);
+  data <- do.call(fcnName, args=args);
+  nbrOfRowsRead <- nrow(data);
   verbose && cat(verbose, "Raw data read by read.table():");
+  verbose && cat(verbose, "Number of rows read: ", nbrOfRowsRead);
   verbose && str(verbose, data);
 
   # Extract subset of rows?
-  if (!is.null(rows)) {
-    data <- data[rows,,drop=FALSE];
+  if (fcnName == "read.table") {
+    if (!is.null(rows)) {
+      if (max(rows) > nbrOfRowsRead) {
+        rows <- intersect(rows, 1:nbrOfRowsRead);
+        warning("Argument 'rows' was out of range [1,", nbrOfRowsRead, "]. Ignored rows beyond this range.");
+      }
+      data <- data[rows,,drop=FALSE];
+    } else {
+      rownames(data) <- NULL;
+    }
   } else {
     rownames(data) <- NULL;
   }
 
+  # Sanity check
   if (length(columns) > 0) {
     if (ncol(data) != length(columns)) {
       throw("Number of read data columns does not match the number of column headers: ", ncol(data), " !=", length(columns));
