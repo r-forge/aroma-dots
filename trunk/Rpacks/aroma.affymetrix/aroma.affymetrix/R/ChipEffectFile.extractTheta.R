@@ -1,4 +1,4 @@
-setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, groups=NULL, ..., verbose=FALSE) {
+setMethodS3("getUnitGroupCellMatrixMap", "ChipEffectFile", function(this, units=NULL, groups=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -50,29 +50,67 @@ setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, groups=
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Import (theta1,theta2,...)
+  # Build integer UxG matrix
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  data <- extractMatrix(this, units=ugcMap, verbose=less(verbose, 5));
-  data <- data[,1,drop=TRUE];
-  verbose && cat(verbose, "Raw data:");
-  verbose && str(verbose, data);
-
   allUnits <- unique(ugcMap[,"unit"]);
   nbrOfGroups <- length(groups);
-  theta <- matrix(NA, nrow=nbrOfUnits, ncol=nbrOfGroups);
-  for (gg in groups) {
-    idxs <- which(ugcMap$group == gg);
-    units <- ugcMap[idxs,"unit"];
-    units <- match(units, allUnits);
-    theta[units,gg] <- data[idxs];
-    rm(idxs, units);
+  map <- matrix(as.integer(NA), nrow=nbrOfUnits, ncol=nbrOfGroups);
+  
+  for (gg in seq(length=nbrOfGroups)) {
+    group <- groups[gg];
+    verbose && enter(verbose, sprintf("Group %d (%d) of %d", 
+                                                  gg, group, nbrOfGroups));
+
+    idxs <- which(ugcMap$group == group);
+    units <- ugcMap[idxs, "unit"];
+    cells <- ugcMap[idxs, "cell"];
+    rr <- match(units, allUnits);
+    map[rr,gg] <- cells;
+
+    rm(idxs, rr, units, cells);
+    verbose && exit(verbose);
   }
-  rm(data, allUnits);
+
+  class(map) <- "UnitGroupCellMatrixMap";
+
+  verbose && cat(verbose, "Unit-by-group cell matrix map:");
+  verbose && str(verbose, map);
+
+  map;
+}, protected=TRUE)  # getUnitGroupCellMatrixMap()
+
+
+
+
+setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'units':
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  if (inherits(units, "UnitGroupCellMatrixMap")) {
+    cellMatrixMap <- units;
+  } else {
+    cellMatrixMap <- getUnitGroupCellMatrixMap(this, units=units, ..., 
+                                               verbose=less(verbose, 10));
+  }
+
+  data <- readRawData(this, indices=cellMatrixMap, fields="intensities", 
+                                    drop=TRUE, verbose=less(verbose, 20));
+  dim(data) <- dim(cellMatrixMap);
 
   verbose && cat(verbose, "Thetas:");
-  verbose && str(verbose, theta);
+  verbose && str(verbose, data);
 
-  theta;
+  data;
 })
 
 
@@ -115,6 +153,9 @@ setMethodS3("extractTheta", "CnChipEffectFile", function(this, groups=NULL, ...)
 
 ############################################################################
 # HISTORY:
+# 2008-06-09
+# o Added getUnitGroupCellMatrixMap() to ChipEffectFile.  The extractTheta()
+#   methods is now using this method.
 # 2008-05-10
 # o Updated to take an UGC map via argument 'units'.
 # 2008-05-09

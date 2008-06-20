@@ -161,6 +161,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 # \arguments{
 #  \item{chipType}{A @character string.}
 #  \item{tags}{An optional @character @vector of tags.}
+#  \item{pattern}{An optional @character string.}
 #  \item{...}{Not used.}
 #  \item{.useAffxparser}{If @TRUE, @see "affxparser::findCdf" is used if
 #    the CDF could not be located.}
@@ -182,6 +183,8 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 # @keyword programming
 #*/###########################################################################
 setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE) {
+  args <- list(pattern=pattern);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

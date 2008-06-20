@@ -44,7 +44,8 @@
 # @keyword internal
 #*/###########################################################################
 setConstructorS3("AffymetrixProbeTabFile", function(...) {
-  extend(AffymetrixFile(..., mustExist=TRUE), "AffymetrixProbeTabFile",
+  extend(TabularTextFile(..., mustExist=TRUE),
+                  c("AffymetrixProbeTabFile", uses("AromaPlatformInterface")),
     ".cdf" = NULL,
     "cached:.indexToRowMap" = NULL
   )
@@ -67,34 +68,145 @@ setMethodS3("as.character", "AffymetrixProbeTabFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- sprintf("%s:", class(this)[1]);
-  s <- c(s, sprintf("Name: %s", getName(this)));
-  tags <- getTags(this);
-  if (!is.null(tags)) {
-    s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
-  }
-  s <- c(s, sprintf("Pathname: %s", getPathname(this)));
-  s <- c(s, sprintf("File size: %.2fMB", getFileSize(this)/1024^2));
-  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
+  s <- NextMethod("as.character", this, ...);
+  class <- class(s);
+
+#  s <- sprintf("%s:", class(this)[1]);
+#  s <- c(s, sprintf("Name: %s", getName(this)));
+#  tags <- getTags(this);
+#  if (!is.null(tags)) {
+#    s <- paste(s, " Tags: ", paste(tags, collapse=","), ".", sep="");
+#  }
+#  s <- c(s, sprintf("Pathname: %s", getPathname(this)));
+#  s <- c(s, sprintf("File size: %.2fMB", getFileSize(this)/1024^2));
+#  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   cdf <- getCdf(this);
   s <- c(s, as.character(cdf));
-  class(s) <- "GenericSummary";
+
+  class(s) <- class;
   s;
 }, private=TRUE)
 
-setMethodS3("getChipType", "AffymetrixProbeTabFile", function(this, ...) {
-  getChipType(getCdf(this));
+
+setMethodS3("translateFullName", "AffymetrixProbeTabFile", function(this, name, ...) {
+  name <- gsub("[._]probe_tab", "", name);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Patching incorrect Affymetrix file names
+  # o Mapping50K_Hind -> Mapping50K_Hind240
+  # o Mapping50K_Xba  -> Mapping50K_Xba240
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  pattern <- "^(Mapping50K_Hind|Mapping50K_Xba)(,.*|$)";
+  if (regexpr(pattern, name) != -1) {
+    name <- gsub(pattern, "\\1240\\2", name);
+  }
+
+  name <- NextMethod("translateFullName", this, name, ...);
+  name;
 })
+
+
+setMethodS3("hasColumnHeader", "AffymetrixProbeTabFile", function(this, ...) {
+  # Infer if there is a column header or not
+  hdr <- readRawHeader(this);
+  hasColumnHeader <- any(regexpr("^PROBESET", hdr$topRows[[1]]) != -1);
+  hasColumnHeader;
+})
+
+
+
+setMethodS3("translateColumnNames", "AffymetrixProbeTabFile", function(this, names, ...) {
+##  # Remove all prefixes "PROBE_"
+##  names <- gsub("^PROBE_", "", names);
+
+  # Convert 'FOO_BAR_DOO' and 'FOO.BAR.DOO' to 'foo bar doo'?
+  if (any(regexpr("[_.]", names) != -1)) {
+    names <- tolower(gsub("[_.]", " ", names));
+  }
+
+  # Finally, convert 'Foo bar Doo' to 'fooBarDoo'
+  names <- toCamelCase(names);
+
+  names <- NextMethod("translateColumnNames", this, names, ...);
+  names;
+})
+
+
+
+setMethodS3("getColumnNames", "AffymetrixProbeTabFile", function(this, ...) {
+  columns <- NextMethod("getColumnNames", this, ...);
+
+  if (is.null(columns)) {
+    topRow <- getHeader(this)$topRows[[1]];
+    nbrOfColumns <- length(topRow);
+    defColumns <- sprintf("V%02d", 1:nbrOfColumns);
+
+    columns <- rep(NA, nbrOfColumns);
+
+    # Identify PROBESET_ID
+    pattern <- "^[a-zA-Z]+[a-zA-Z0-9]_[a-zA-Z0-9].*";
+    pattern <- toAsciiRegExprPattern(pattern);
+    idx <- grep(pattern, topRow);
+    if (length(idx) > 0)
+      columns[idx] <- "PROBESET_ID";
+
+    # Identify PROBE_SEQUENCE
+    pattern <- "^[ACGT]{25}$";
+    idx <- grep(pattern, topRow);
+    if (length(idx) > 0)
+      columns[idx] <- "PROBE_SEQUENCE";
+
+    # Identify PROBE_TYPE
+    pattern <- "^(PM|MM)$";
+    idx <- grep(pattern, topRow);
+    if (length(idx) > 0)
+      columns[idx] <- "PROBE_TYPE";
+
+    # Identify TARGET_STRANDEDNESS
+    pattern <- "^(\\+|-|f|r)$";
+    idx <- grep(pattern, topRow);
+    if (length(idx) > 0)
+      columns[idx] <- "TARGET_STRANDEDNESS";
+
+    # Identify ALLELE
+    pattern <- "^[ACGT]$";
+    idx <- grep(pattern, topRow);
+    if (length(idx) > 0)
+      columns[idx] <- "ALLELE";
+
+    # Guess remaining
+    idxs <- which(is.na(columns));
+    nidxs <- length(idxs);
+    if (nidxs >= 1)
+      columns[idxs[1]] <- "PROBE_X_POS";
+    if (nidxs >= 2)
+      columns[idxs[2]] <- "PROBE_Y_POS";
+    if (nidxs >= 3)
+      columns[idxs[3]] <- "PROBE_INTERROGATION_POSITION";
+  }
+
+  # Finally, translate any column names
+  columns <- translateColumnNames(this, columns);
+
+  columns;
+})
+
+
+setMethodS3("getChipType", "AffymetrixProbeTabFile", function(this, ...) {
+  pattern <- sprintf("[._]probe_tab$");
+  chipType <- gsub(pattern, "", getName(this));
+  chipType;
+})
+
 
 setMethodS3("getCdf", "AffymetrixProbeTabFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
-    pattern <- sprintf("_probe_tab$");
-    chipType <- gsub(pattern, "", getName(this));
+    chipType <- getChipType(this);
     pathname <- AffymetrixCdfFile$findByChipType(chipType);
-    if (is.null(pathname)) {
-      throw("Could not located CDF file for chip type pattern: ", pattern);
-    }
+    if (is.null(pathname))
+      throw("Could not located CDF file for chip type pattern: ", chipType);
     cdf <- AffymetrixCdfFile$fromFile(pathname);
     this$.cdf <- cdf;
   }
@@ -104,7 +216,7 @@ setMethodS3("getCdf", "AffymetrixProbeTabFile", function(this, ...) {
 
 setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipType, paths=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
+ # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -117,13 +229,15 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
   verbose && enter(verbose, "Searching for probe sequence file");
   verbose && cat(verbose, "Chip type: ", chipType);
 
-  pattern <- paste("_probe_tab$", sep="");
+  pattern <- paste("[._]probe_tab$", sep="");
   verbose && cat(verbose, "Filename pattern: ", pattern);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   pathname <- findAnnotationDataByChipType(chipType, pattern);
+  verbose && cat(verbose, "First search: ");
+  verbose && print(verbose, pathname);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # As a backup, search "old" style (code by Ken Simpson)
@@ -148,7 +262,7 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
     paths <- "annotations";
   
     # First to an exact search
-    pattern <- sprintf("^%s_probe_tab$", chipType);
+    pattern <- sprintf("^%s[._]probe_tab$", chipType);
     pathname <- findFiles(pattern=pattern, paths=paths, recursive=TRUE);
     if (length(pathname) == 0) {
       pathname <- NULL;
@@ -157,7 +271,7 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
       # it might be that they chop of the end of the chip type string.
   
       # 1. Find all probe tab files
-      pattern <- sprintf("_probe_tab$");
+      pattern <- "[._]probe_tab$";
       pathnames <- findFiles(pattern=pattern, paths=paths, 
                                               firstOnly=FALSE, recursive=TRUE);
 
@@ -245,7 +359,8 @@ setMethodS3("getData", "AffymetrixProbeTabFile", function(this, ...) {
   readDataFrame(this, ...);
 })
 
-setMethodS3("readDataFrame", "AffymetrixProbeTabFile", function(this, cells=NULL, ..., verbose=FALSE) {
+
+setMethodS3("readDataFrame2", "AffymetrixProbeTabFile", function(this, cells=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -320,6 +435,10 @@ setMethodS3("readDataFrame", "AffymetrixProbeTabFile", function(this, cells=NULL
 
 ############################################################################
 # HISTORY:
+# 2008-06-12
+# o Added translateFullname() to fix incorrect Affymetrix filenames, e.g.
+#   'Mapping50K_Hind_probe_tab' instead of 'Mapping50K_Hind240_probe_tab'.
+# o Added default filename pattern to ".*[._]probe_tab$".
 # 2008-04-14
 # o BUG FIX: readDataFrame() for AffymetrixProbeTabFile would not return
 #   the correct number of rows if there were missing cells, which there are.
