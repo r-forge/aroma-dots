@@ -202,3 +202,8 @@
  getRootPath.AromaTransform nbrOfArrays.AromaMicroarrayDataSet process
  setTags.AromaTransform
 getChipTypes.AromaMicroarrayDataSetTuple
+getPlatform.AromaPlatformInterface hasColumnHeader
+hasColumnHeader.TabularTextFile readRawHeader
+readRawHeader.TabularTextFile
+readTableHeader
+readTableHeader.default

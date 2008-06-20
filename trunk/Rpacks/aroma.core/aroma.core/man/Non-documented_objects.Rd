@@ -511,6 +511,12 @@
 \alias{process}
 \alias{setTags.AromaTransform}
 \alias{getChipTypes.AromaMicroarrayDataSetTuple}
+\alias{getPlatform.AromaPlatformInterface}
+\alias{hasColumnHeader}
+\alias{hasColumnHeader.TabularTextFile}
+\alias{readRawHeader}
+\alias{readRawHeader.TabularTextFile}
+\alias{readTableHeader}
 
 \description{
   This page contains aliases for all "non-documented" objects that
