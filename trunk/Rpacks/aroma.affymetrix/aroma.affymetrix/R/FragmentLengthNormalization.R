@@ -7,13 +7,13 @@
 #  @classhierarchy
 #
 #  This class represents a normalization method that corrects for PCR 
-#  fragment length effects on total copy-number chip-effect estimates.
+#  fragment length effects on copy-number chip-effect estimates.
 # }
 # 
 # @synopsis 
 #
 # \arguments{
-#   \item{dataSet}{A @see "CnChipEffectSet".}
+#   \item{dataSet}{A @see "SnpChipEffectSet".}
 #   \item{...}{Additional arguments passed to the constructor of 
 #     @see "ChipEffectTransform".}
 #   \item{targetFunctions}{An optional list of @functions.  
@@ -33,6 +33,17 @@
 #   This class requires a SNP information annotation file for the 
 #   chip type to be normalized.
 # }
+# 
+# \details{
+#   For SNPs, the normalization function is estimated based on the total 
+#   chip effects, i.e. the sum of the allele signals.  The normalizing
+#   is done by rescale the chip effects on the intensity scale such that
+#   the mean of the total chip effects are the same across samples for
+#   any given fragment length.  For allele-specific estimates, both alleles
+#   are always rescaled by the same amount.  Thus, when normalizing  
+#   allele-specific chip effects, the total chip effects is change, but not
+#   the relative allele signal, e.g. the allele B frequency.
+# }
 #
 # @author
 #*/###########################################################################
@@ -44,12 +55,15 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "CnChipEffectSet"))
-      throw("Argument 'dataSet' is not an CnChipEffectSet object: ", class(dataSet));
+    if (!inherits(dataSet, "SnpChipEffectSet"))
+      throw("Argument 'dataSet' is not an SnpChipEffectSet object: ", class(dataSet));
 
-    if (dataSet$combineAlleles != TRUE) {
-      throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
-    }
+#    if (dataSet$combineAlleles != TRUE) {
+#      throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
+#    }
+
+#    if (!inherits(dataSet, "CnChipEffectSet"))
+#      throw("Argument 'dataSet' is not an CnChipEffectSet object: ", class(dataSet));
 
 #    if (dataSet$mergeStrands != TRUE) {
 #      throw("Currently only non-strands specific copy-number chip effects can be normalized, i.e. 'mergeStrands' must be TRUE");
@@ -343,9 +357,6 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
 
 
 
-setMethodS3("getTargetFunction", "FragmentLengthNormalization", function(this, ...) {
-  getTargetFunctions(this, ...);
-}, deprecated=TRUE)
 
 setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -360,7 +371,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 
 
   fcns <- this$.targetFunctions;
-  if (is.null(fcns) || force) {
+  if (force || is.null(fcns)) {
     verbose && enter(verbose, "Estimating target prediction function");
 
     # Get the SNP information annotation
@@ -381,17 +392,32 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 
     # Get units to fit
     units <- getSubsetToFit(this);
-
-    # Get target log2 signals for SNPs
-    data <- getDataFlat(ceR, units=units, fields="theta", verbose=less(verbose));
-    rm(ceR); # Not needed anymore
-    units <- data[,"unit"];
     verbose && cat(verbose, "Units:");
     verbose && str(verbose, units);
 
-    yR <- data[,"theta"];
-    rm(data); # Not needed anymore
-    verbose && cat(verbose, "Summary of signals (on the intensity scale):");
+    # Get target log2 signals for SNPs
+    yR <- extractTheta(ceR, units=units, verbose=less(verbose, 5));
+    verbose && cat(verbose, "(Allele-specific) thetas:");
+    verbose && str(verbose, yR);
+
+    if (ncol(yR) > 1) {
+      # Row sums with na.rm=TRUE => NAs are treated as zeros.
+      yR[is.na(yR)] <- 0;
+      for (cc in 2:ncol(yR)) {
+        yR[,1] <- yR[,1] + yR[,cc];
+      }
+    }
+    yR <- yR[,1,drop=TRUE];
+    verbose && cat(verbose, "Total thetas:");
+    verbose && str(verbose, yR);
+
+##     data <- getDataFlat(ceR, units=units, fields="theta", verbose=less(verbose));
+    rm(ceR); # Not needed anymore
+##     units <- data[,"unit"];
+##     yR <- data[,"theta"];
+##     rm(data); # Not needed anymore
+
+    verbose && cat(verbose, "Summary of total signals (on the intensity scale):");
     verbose && summary(verbose, yR);
 
     # Shift?
@@ -465,7 +491,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
       rm(fit);
 
       verbose && exit(verbose);
-    }
+    } # for (ee in allEnzymes)
 
     # Remove as many promises as possible
     rm(fcns, nbrOfEnzymes, allEnzymes, fl, yR, okYR, hasFL);
@@ -486,7 +512,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
     verbose && exit(verbose);
 
     this$.targetFunctions <- fcns;
-  }
+  } # if (force || ...)
 
   fcns;
 }, private=TRUE)
@@ -589,7 +615,8 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   fl <- NULL;
   targetFcns <- NULL;
-  map <- NULL;
+#  map <- NULL;
+  cellMatrixMap <- NULL;
   nbrOfArrays <- nbrOfArrays(ces);
   res <- vector("list", nbrOfArrays);
   for (kk in seq_len(nbrOfArrays)) {
@@ -620,24 +647,26 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     }
 
     # Get unit-to-cell? (for optimized reading)
-    if (is.null(map)) {
-      # Only loaded if really needed.
-      verbose && enter(verbose, "Retrieving unit-to-cell map for all arrays");
-      map <- getUnitGroupCellMap(ce, units=subsetToUpdate, verbose=less(verbose));
-      verbose && str(verbose, map);
-      verbose && exit(verbose);
-    }
+#    if (is.null(map)) {
+#      # Only loaded if really needed.
+#      verbose && enter(verbose, "Retrieving unit-to-cell map for all arrays");
+#      map <- getUnitGroupCellMap(ce, units=subsetToUpdate, verbose=less(verbose));
+#      verbose && str(verbose, map);
+#      verbose && exit(verbose);
+#    }
 
     if (is.null(fl)) {
       # For the subset to be fitted, get PCR fragment lengths (for all enzymes) 
-      fl <- getFragmentLengths(si, units=map[,"unit"]);
+      fl <- getFragmentLengths(si, units=subsetToUpdate);
+      verbose && summary(verbose, fl);
 
       # Get the index in the data vector of subset to be fitted.
       # Note: match() only returns first match, which is why we do
       # it this way.
-      subset <- match(map[,"unit"], subsetToFit);
+      subset <- match(subsetToUpdate, subsetToFit);
       subset <- subset[!is.na(subset)];
-      subset <- match(subsetToFit[subset], map[,"unit"]);
+      subset <- match(subsetToFit[subset], subsetToUpdate);
+      verbose && str(verbose, subset);
     }
 
     if (is.null(targetFcns)) {
@@ -646,15 +675,47 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
       targetFcns <- getTargetFunctions(this, verbose=less(verbose));
     }
 
+    if (is.null(cellMatrixMap)) {
+      verbose && enter(verbose, "Getting cell matrix map");
+      cellMatrixMap <- getUnitGroupCellMatrixMap(ce, units=subsetToUpdate, verbose=less(verbose, 10));
+      verbose && str(verbose, cellMatrixMap);
+      verbose && exit(verbose);
+    }
+
     # Get target log2 signals for all SNPs to be updated
-    verbose && enter(verbose, "Getting signals");
-    data <- getDataFlat(ce, units=map, fields="theta", verbose=less(verbose));
+    verbose && enter(verbose, "Getting theta estimates");
+    theta <- extractTheta(ce, units=cellMatrixMap, verbose=less(verbose, 5));
+    verbose && str(verbose, theta);
+    verbose && summary(verbose, theta);
     verbose && exit(verbose);
+
+    verbose && enter(verbose, "Calculating total signals");
+    # Get the total locus signals?
+    if (ncol(theta) > 1) {
+      # Row sums with na.rm=TRUE => NAs are treated as zeros.
+      y <- theta;
+      y[is.na(y)] <- 0;
+      for (cc in 2:ncol(y)) {
+        y[,1] <- y[,1] + y[,cc];
+      }
+      y <- y[,1,drop=TRUE];
+    } else {
+      y <- theta[,1,drop=TRUE];
+    }
+    verbose && cat(verbose, "Total thetas:");
+    verbose && str(verbose, y);
+    verbose && exit(verbose);
+
+#    data <- getDataFlat(ce, units=map, fields="theta", verbose=less(verbose));
+#    verbose && str(verbose, data);
+#    y0 <- data[,"theta",drop=TRUE];
+#    stopifnot(identical(y,y0));
+#    verbose && str(verbose, y);
+#    verbose && exit(verbose);
 
 
     # Extract the values to fit the normalization function
     verbose && enter(verbose, "Normalizing log2 signals");
-    y <- data[,"theta"];
 
     # Shift?
     if (shift != 0)
@@ -665,11 +726,29 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
     verbose && cat(verbose, "Log2 signals:");
     verbose && str(verbose, y);
-    y <- normalizeFragmentLength(y, fragmentLengths=fl, 
-                             targetFcns=targetFcns, subsetToFit=subset, ...);
-    
-    # Store results on the intensity scale
-    y <- 2^y;
+    yN <- normalizeFragmentLength(y, fragmentLengths=fl, 
+                    targetFcns=targetFcns, subsetToFit=subset, ...);
+    verbose && cat(verbose, "Normalized log2 signals:");
+    verbose && summary(verbose, yN);
+
+    # Normalization scale factor for each unit
+    rho <- y-yN;
+    rm(y,yN);
+    # On the intensity scale
+    rho <- 2^rho;
+    verbose && cat(verbose, "Normalization scale factors:");
+    verbose && summary(verbose, rho);
+
+    # Normalize the theta:s
+    ok <- which(is.finite(rho));
+    verbose && str(verbose, ok);
+    theta[ok] <- theta[ok]/rho[ok];
+    rm(ok, rho);
+
+    verbose && cat(verbose, "Normalized thetas:");
+    verbose && str(verbose, theta);
+    verbose && summary(verbose, theta);
+
     verbose && exit(verbose);
 
     # Create CEL file to store results, if missing
@@ -689,10 +768,19 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     setCdf(ceN, cdf);
 
     verbose && enter(verbose, "Storing normalized signals");
-    data[,"theta"] <- y;
-    rm(y);
-    updateDataFlat(ceN, data=data, verbose=less(verbose));
-    rm(data);
+#    data[,"theta"] <- yN;
+#    rm(yN);
+#    updateDataFlat(ceN, data=data, verbose=less(verbose));
+#    rm(data);
+    ok <- which(is.finite(cellMatrixMap));
+    cells <- cellMatrixMap[ok];
+    data <- theta[ok];
+    rm(ok, theta);
+
+    verbose2 <- -as.integer(verbose) - 5;
+    pathname <- getPathname(ceN);   
+    updateCel(pathname, indices=cells, intensities=data, verbose=verbose2);
+    rm(cells, data);
     verbose && exit(verbose);
 
     # Garbage collect
@@ -719,6 +807,17 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2008-08-09
+# o Updated process() to normalize allele-specific estimates as well.
+#   We note that the different alleles are rescaled with the same factor,
+#   that is, it is only the total chip effect that is changed whereas
+#   for instance freqB = thetaB/(thetaA+thetaB) remains constant.
+# 2008-08-06
+# o getTargetFunctions() now sums allele-specific thetas and fits the
+#   normalization function on the total thetas, if allele specific.
+# o Now getTargetFunctions() utilizes extractTheta() and no longer 
+#   getDataFlat().
+# o Removed deprecated getTargetFunction().
 # 2008-03-29
 # o Added more verbose output for the getTargetFunctions() in order to
 #   simplify troubleshooting.
