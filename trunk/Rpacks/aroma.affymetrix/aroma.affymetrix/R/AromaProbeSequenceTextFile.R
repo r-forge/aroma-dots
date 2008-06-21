@@ -3,12 +3,15 @@ setConstructorS3("AromaProbeSequenceTextFile", function(...) {
 })
 
 
-setMethodS3("allocate", "AromaProbeSequenceTextFile", function(this, filename, path=NULL, platform, chipType, nbrOfRows, nbrOfColumns, probeLengths, ..., overwrite=FALSE, verbose=FALSE) {
+setMethodS3("allocate", "AromaProbeSequenceTextFile", function(this, name, tags=NULL, path=NULL, suffix=",probeSeqs.txt", platform, chipType, nbrOfRows, nbrOfColumns, probeLengths, ..., overwrite=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Argument 'filename' and 'path':
-  pathname <- Arguments$getWritablePathname(filename, path=path, mustNotExist=!overwrite);
+  # Argument 'name' and 'tags':
+  fullname <- paste(name, tags, collapse="");
+  filename <- paste(fullname, suffix, sep="");
+  pathname <- Arguments$getWritablePathname(filename, path=path, 
+                                                  mustNotExist=!overwrite);
 
   # Argument 'platform':
   platform <- Arguments$getCharacter(platform);
@@ -48,10 +51,10 @@ setMethodS3("allocate", "AromaProbeSequenceTextFile", function(this, filename, p
     platform = platform,
     chipType = chipType,
     nbrOfCells = nbrOfCells, 
-    probeLengths = probeLengths,
-    probeSep = probeSep,
     nbrOfRows = nbrOfRows,
     nbrOfColumns = nbrOfColumns,
+    probeLengths = probeLengths,
+    probeSep = probeSep,
     createdBy = createdBy,
     createdOn = createdOn
   );
@@ -255,6 +258,7 @@ setMethodS3("getDataFileOffset", "AromaProbeSequenceTextFile", function(this, ..
   } # while()
 
   pos <- as.integer(pos);
+
   pos;
 }, protected=TRUE)
 
@@ -371,7 +375,7 @@ setMethodS3("isMissing", "AromaProbeSequenceTextFile", function(this, cells=NULL
 
   allFirst <- raw(nbrOfCells);
   nbrOfCellsRead <- 100e3;
-  seqLength <- probeLengths+1;
+  seqLength <- as.integer(probeLengths+1);
   CHUNK.SIZE <- seqLength*nbrOfCellsRead;
   firstBase <- seq(from=1, to=CHUNK.SIZE, by=seqLength);
   cellOffset <- nextCell <- 0;
@@ -497,7 +501,7 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
   # Argument 'cells':
   nbrOfCells <- nbrOfCells(this);
   probeLengths <- params$probeLengths;
-  seqLength <- probeLengths+1;
+  seqLength <- as.integer(probeLengths+1);
   if (is.null(cells)) {
   } else {
     if (is.matrix(cells) || is.data.frame(cells)) {
@@ -554,6 +558,8 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
     seqs <- seqs[,o];
     seqs <- as.vector(seqs);
     rm(o);
+    gc <- gc();
+    verbose && print(verbose, gc);
     verbose && exit(verbose);
   }
 
@@ -567,23 +573,29 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Identify cell-index intervals
   if (is.null(cells)) {
-    fromTo <- matrix(c(1,nbrOfCells), ncol=2);
+    fromTo <- matrix(as.integer(c(1,nbrOfCells)), ncol=2);
   } else {
     fromTo <- seqToIntervals(cells);
   }
   verbose && str(verbose, fromTo);
 
   # Translate to intervals in bytes
-  fromTo <- seqLength*(fromTo-1)+1;
+  fromTo <- seqLength*(fromTo-as.integer(1))+as.integer(1);
   fromTo[,2] <- fromTo[,2] + probeLengths;
   fromTo <- dataOffset + fromTo;
   verbose && cat(verbose, "Number of intervals: ", nrow(fromTo));
   verbose && str(verbose, fromTo);
 
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Read raw data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   writeBinFragments(con=getPathname(this), seqs, idxs=fromTo);
+
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   verbose && exit(verbose);
 })
@@ -695,7 +707,7 @@ setMethodS3("updateSequenceStrings", "AromaProbeSequenceTextFile", function(this
 
 
 
-setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NULL, ..., verbose=FALSE) {
+setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NULL, ..., force=FALSE, verbose=FALSE) {
   require("matchprobes") || throw("Package not loaded: matchprobes");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -720,24 +732,44 @@ setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NUL
   }
 
 
+
+  verbose && enter(verbose, "Counting occurances of each base");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Check for cached results
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  key <- list();
+  chipType <- getChipType(this);
+  key <- list(method="countBases", class=class(this)[1], 
+              chipType=chipType, fullname=getFullName(this), cells=cells);
+  dirs <- c("aroma.affymetrix", chipType);
+  if (!force) {
+    counts <- loadCache(key=key, dirs=dirs);
+    if (!is.null(counts)) {
+      verbose && cat(verbose, "Cached results found.");
+      return(counts);
+    }
+  }
+ 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Optimize reading order?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (!is.null(cells)) {
+  if (is.null(cells)) {
+    cells <- 1:nbrOfCells;
+    reorder <- FALSE;
+  } else {
     o <- order(cells);
     cells <- cells[o];
     reorder <- TRUE;
     gc <- gc();
     verbose && print(verbose, gc);
-  } else {
-    cells <- 1:nbrOfCells;
-    reorder <- FALSE;
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Count in chunks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  counts <- matrix(NA, nrow=nbrOfCells, ncol=4);
+  counts <- matrix(as.integer(NA), nrow=nbrOfCells, ncol=4);
   colnames(counts) <- colnames(matchprobes::countbases("A"));
 
   CHUNK.SIZE <- 1e6;
@@ -777,6 +809,9 @@ setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NUL
 
     # Store
     counts[offset+idxs,] <- countsChunk;
+    rm(countsChunk);
+    gc <- gc();
+    verbose && print(verbose, gc);
 
     # Next set of cells
     offset <- offset + n;
@@ -799,6 +834,11 @@ setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NUL
     gc <- gc();
     verbose && print(verbose, gc);
   }
+
+  # Cache results
+  saveCache(key=key, dirs=dirs, counts);
+
+  verbose && exit(verbose);
 
   counts;
 }, protected=TRUE)
@@ -823,7 +863,7 @@ setMethodS3("importFrom", "AromaProbeSequenceTextFile", function(this, srcFile, 
 })
 
 
-setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", function(this, srcFile, rows=NULL, ..., verbose=FALSE) {
+setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", function(this, srcFile, rows=NULL, ..., ram=1, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -850,6 +890,9 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
     rows <- sort(unique(rows));
   }
 
+  # Argument 'ram':
+  ram <- Arguments$getDouble(ram, range=c(1e-3,Inf));
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -869,7 +912,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
   colClassPatterns <- c("probe(X|Y)Pos"="integer", "probeSequence"="character");
 
   count <- 0;
-  CHUNK.SIZE <- as.integer(100e3);
+  CHUNK.SIZE <- as.integer(ram*3e6);
   rowOffset <- as.integer(1);
   idxs <- 1:CHUNK.SIZE;
   while (length(rows) > 0) {
@@ -890,7 +933,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
       idxs <- 1:nrow(df);
     }
 
-    cells <- nbrOfColumns*df[,"probeYPos"] + df[,"probeXPos"]+1;
+    cells <- nbrOfColumns*df[,"probeYPos"] + df[,"probeXPos"] + as.integer(1);
     # Sanity check
     dups <- duplicated(cells);
     hasDuplicates <- any(dups);
@@ -901,6 +944,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
       throw("Identified ", n, " duplicated cell indices: ", 
                                    paste(head(setOfDups), collapse=", "));
     }
+    rm(dups);
 
 
     df[["probeXPos"]] <- df[["probeYPos"]] <- NULL;
@@ -1045,7 +1089,7 @@ setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(thi
 })
 
 
-setMethodS3("allocateFromCdf", "AromaProbeSequenceTextFile", function(static, ..., cdf) {
+setMethodS3("allocateFromCdf", "AromaProbeSequenceTextFile", function(static, cdf, ..., path=NULL) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1054,13 +1098,20 @@ setMethodS3("allocateFromCdf", "AromaProbeSequenceTextFile", function(static, ..
     throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
   }
 
+  # Argument 'path':
+  if (is.null(path)) {
+    path <- filePath("annotationData", "chipTypes", 
+                                         getChipType(cdf, fullname=FALSE));
+  }
+
+
   platform <- getPlatform(cdf);
   chipType <- getChipType(cdf);
   nbrOfRows <- nbrOfRows(cdf);
   nbrOfColumns <- nbrOfColumns(cdf);
   probeLengths <- 25;
 
-  allocate(static, ..., platform=platform, chipType=chipType, nbrOfRows=nbrOfRows, nbrOfColumns=nbrOfColumns, probeLengths=probeLengths);
+  allocate(static, name=chipType, ..., path=path, platform=platform, chipType=chipType, nbrOfRows=nbrOfRows, nbrOfColumns=nbrOfColumns, probeLengths=probeLengths);
 }, static=TRUE)
 
 
@@ -1071,6 +1122,8 @@ setMethodS3("allocateFromCdf", "AromaProbeSequenceTextFile", function(static, ..
 
 ############################################################################
 # HISTORY:
+# 2008-06-21
+# o Now countBases() caches results.
 # 2008-06-17
 # o Added findByChipType() and byChipType().
 # o Added allocateFromCdf().
