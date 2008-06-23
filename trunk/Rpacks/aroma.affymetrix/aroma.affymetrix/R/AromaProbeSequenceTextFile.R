@@ -8,7 +8,7 @@ setMethodS3("allocate", "AromaProbeSequenceTextFile", function(this, name, tags=
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'name' and 'tags':
-  fullname <- paste(name, tags, collapse="");
+  fullname <- paste(c(name, tags), collapse=",");
   filename <- paste(fullname, suffix, sep="");
   pathname <- Arguments$getWritablePathname(filename, path=path, 
                                                   mustNotExist=!overwrite);
@@ -482,7 +482,7 @@ setMethodS3("readRawSequences", "AromaProbeSequenceTextFile", function(this, cel
   verbose && cat(verbose, "Number of intervals: ", nrow(fromTo));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Read raw data
+  # Reading raw data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   bfr <- readBinFragments(getPathname(this), what="raw", idxs=fromTo);
 
@@ -518,7 +518,8 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
   if (!all(seqs %in% knownValues)) {
     unknown <- seqs[!seqs %in% knownValues];
     unknown <- unknown[seq(length=min(length(unknown),5))];
-    unknown <- sprintf("%#02x (%s)", as.integer(unknown), rawToChar(unknown, multiple=TRUE));
+    unknown <- sprintf("%#02x (%s)", as.integer(unknown), 
+                                        rawToChar(unknown, multiple=TRUE));
     unknown <- paste(unknown, collapse=", ");
     throw("Argument 'seqs' contains values not in [ACGT \n]: ", unknown);
   }
@@ -547,6 +548,10 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
   dataOffset <- getDataFileOffset(this);
   verbose && cat(verbose, "Data section offset: ", dataOffset);
 
+  # Memory clean up
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Ordering objects
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -554,6 +559,7 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
     verbose && enter(verbose, "Ordering data");
     o <- order(cells);
     cells <- cells[o];
+    gc <- gc();
     seqs <- matrix(seqs, nrow=seqLength);    
     seqs <- seqs[,o];
     seqs <- as.vector(seqs);
@@ -579,6 +585,11 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
   }
   verbose && str(verbose, fromTo);
 
+  rm(cells);
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+
   # Translate to intervals in bytes
   fromTo <- seqLength*(fromTo-as.integer(1))+as.integer(1);
   fromTo[,2] <- fromTo[,2] + probeLengths;
@@ -590,7 +601,7 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
   verbose && print(verbose, gc);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Read raw data
+  # Writing raw data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   writeBinFragments(con=getPathname(this), seqs, idxs=fromTo);
 
@@ -677,7 +688,18 @@ setMethodS3("readSequenceStrings", "AromaProbeSequenceTextFile", function(this, 
   seqs;
 })
 
-setMethodS3("updateSequenceStrings", "AromaProbeSequenceTextFile", function(this, ..., seqs) {
+setMethodS3("updateSequenceStrings", "AromaProbeSequenceTextFile", function(this, ..., seqs, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
   probeLenghts <- nchar(seqs);
   uProbeLenghts <- unique(probeLenghts);
 
@@ -697,12 +719,17 @@ setMethodS3("updateSequenceStrings", "AromaProbeSequenceTextFile", function(this
   # Translate NAs to unknown sequences
   unknownSeq <- paste(rep(" ", probeLengths), collapse="");
   seqs[is.na(seqs)] <- unknownSeq;
+  gc <- gc();
 
   seqs <- paste(seqs, collapse="\n");
+  gc <- gc();
   seqs <- charToRaw(seqs);
+  gc <- gc();
   seqs <- c(seqs, charToRaw("\n"));
+  gc <- gc();
+  verbose && print(verbose, gc);
 
-  updateRawSequences(this, ..., seqs=seqs);
+  updateRawSequences(this, ..., seqs=seqs, verbose=less(verbose, 5));
 })
 
 
@@ -978,12 +1005,10 @@ setMethodS3("getCdf", "AromaProbeSequenceTextFile", function(this, ...) {
 })
 
 
-setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(this, units=NULL, ...) {
+setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(this, units=NULL, ..., safe=FALSE, ram=1, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-
 ##   setMethodS3("dnaComplement", "character", function(s, ...) {
 ##     map <- c("A"="T", "C"="G", "G"="C", "T"="A");
 ##     s <- map[s];
@@ -1007,6 +1032,15 @@ setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(thi
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'safe':
+  safe <- Arguments$getLogical(safe);
+  if (safe) {
+    throw("Argument 'safe' was TRUE. There is no implementation available that infers MM cell indices safely from the CDF. The non-safe version assumes that stratifyBy=\"pmmm\" will return MMs in every 2nd index.");
+  }
+
+  # Argument 'ram':
+  ram <- Arguments$getDouble(ram, range=c(1e-3,Inf));
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -1023,7 +1057,7 @@ setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(thi
     units <- Arguments$getIndices(units, range=c(1,nbrOfUnits(cdf)));
   }
 
-  CHUNK.SIZE <- 100e3;
+  CHUNK.SIZE <- as.integer(ram*100e3);
   nbrOfChunks <- ceiling(length(units) / CHUNK.SIZE);
   chunk <- 1;
   while (length(units) > 0) {
@@ -1031,10 +1065,19 @@ setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(thi
 
     uu <- 1:min(length(units), CHUNK.SIZE);
     unitsChunk <- units[uu];
+    verbose && cat(verbose, "Units in this chunk:");
+    verbose && str(verbose, unitsChunk);
 
     # Read cell indices from CDF
+    verbose && enter(verbose, "Querying CDF for cell indices");
     cells <- getCellIndices(cdf, units=unitsChunk, stratifyBy="pmmm", 
                                                unlist=TRUE, useNames=FALSE);
+    rm(unitsChunk);
+    # Sanity check
+    if (length(cells) %% 2 != 0) {
+      throw("Expected an even number of cell indices: ", length(cells));
+    }
+    verbose && exit(verbose);
 
     # Create (PM,MM) pairs
     cells <- matrix(cells, nrow=2);
@@ -1047,24 +1090,36 @@ setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(thi
     verbose && str(verbose, cells["pm",]);
 
     pmSeqs <- readSequenceMatrix(this, cells=cells["pm",], 
-                                                verbose=less(verbose, 25));
+                                                verbose=less(verbose, 5));
     verbose && cat(verbose, "PM sequences:");
     verbose && str(verbose, pmSeqs);
+    gc <- gc();
 
     # Keep only (PM,MM) pairs for which we know the PM sequence
-    keep <- which(!is.na(pmSeqs[,1]));
+    keep <- pmSeqs[,1];
+    keep <- is.na(keep);
+    keep <- !keep;
+    keep <- which(keep);
     verbose && printf(verbose, "Keeping %d of %d (%.1f%%) non-missing PM sequences\n", length(keep), nrow(pmSeqs), 100*length(keep)/nrow(pmSeqs));
+    gc <- gc();
+    verbose && print(verbose, gc);
     
     pmSeqs <- pmSeqs[keep,,drop=FALSE];
+    gc <- gc();
+
     cells <- cells["mm",keep];
     rm(keep);
     verbose && cat(verbose, "MM cell indices:");
     verbose && str(verbose, cells);
+    gc <- gc();
 
     # Complement 13th base for MM sequences
     mmSeqs <- pmSeqs;
-    mmSeqs[,13] <- dnaComplement(mmSeqs[,13]);
     rm(pmSeqs);
+    mmSeqs[,13] <- dnaComplement(mmSeqs[,13]);
+    gc <- gc();
+    verbose && print(verbose, gc);
+    
 
     # Build MM sequences
     seqs <- seqMatrixToStrings(mmSeqs, ...);
@@ -1073,16 +1128,22 @@ setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(thi
     verbose && str(verbose, cells);
     verbose && cat(verbose, "MM sequences:");
     verbose && str(verbose, seqs);
+    gc <- gc();
+    verbose && print(verbose, gc);
 
 #    o <- order(cells);
 #    cells <- cells[o];
 #    seqs <- seqs[o];
     updateSequenceStrings(this, cells=cells, seqs=seqs, 
-                                                 verbose=less(verbose, 25));
+                                                 verbose=less(verbose, 5));
     rm(cells, seqs);
+    gc <- gc();
+    verbose && print(verbose, gc);
 
     # Next chunk of units
     units <- units[-uu];
+    rm(uu);
+
     chunk <- chunk + 1;
     verbose && exit(verbose);
   } # while()

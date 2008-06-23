@@ -807,12 +807,12 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
-# 2008-08-09
+# 2008-06-09
 # o Updated process() to normalize allele-specific estimates as well.
 #   We note that the different alleles are rescaled with the same factor,
 #   that is, it is only the total chip effect that is changed whereas
 #   for instance freqB = thetaB/(thetaA+thetaB) remains constant.
-# 2008-08-06
+# 2008-06-06
 # o getTargetFunctions() now sums allele-specific thetas and fits the
 #   normalization function on the total thetas, if allele specific.
 # o Now getTargetFunctions() utilizes extractTheta() and no longer 

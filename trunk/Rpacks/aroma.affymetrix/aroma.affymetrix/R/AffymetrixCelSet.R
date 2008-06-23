@@ -300,6 +300,10 @@ setMethodS3("getChipType", "AffymetrixCelSet", function(this, ...) {
   getChipType(unf, ...);
 })
 
+setMethodS3("getPlatform", "AffymetrixCelSet", function(this, ...) {
+  "Affymetrix";
+})
+
 
 setMethodS3("getUnitNamesFile", "AffymetrixCelSet", function(this, ...) {
   getUnitNamesFile(this$files[[1]], ...);
@@ -1442,6 +1446,8 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-06-22
+# o BUG FIX: Added missing getPlatform().
 # 2008-05-31
 # o BUG FIX: readUnits() would throw 'Error in readCelUnits(pathnames, cdf
 #   = cdf, ...) : No CDF file for chip type found: GenomeWideSNP_6', if
