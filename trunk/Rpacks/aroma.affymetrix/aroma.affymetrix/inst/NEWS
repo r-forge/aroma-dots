@@ -1,10 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.3.1 [2008-06-20]
+Version: 0.9.3.1 [2008-06-22]
 o Now AffymetrixProbeTabFile inherits from TabularTextFile and
   "implements" AromaPlatformInterface.  Previously it inherited
   from the AffymetrixFile class.
+o BETA: Added BaseCountNormalization.
 o BETA: Updated FragmentLengthNormalization to handle allele-specific
   chip effect estimates as well.
 
