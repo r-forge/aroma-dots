@@ -369,7 +369,8 @@ setMethodS3("readDataFrame", "TabularTextFile", function(this, con=NULL, rows=NU
 
   if (!is.null(columns)) {
     verbose && enter(verbose, "Matching column names:");
-    verbose && printf(verbose, "Column classes (%d):\n", length(args$colClasses));
+    verbose && printf(verbose, "Column classes (%d):\n", 
+                                                length(args$colClasses));
     verbose && cat(verbose, paste(args$colClasses, collapse=", "));
     columns[args$colClasses == "NULL"] <- NA;
     columns <- columns[!is.na(columns)];
@@ -415,7 +416,8 @@ setMethodS3("readDataFrame", "TabularTextFile", function(this, con=NULL, rows=NU
     if (!is.null(rows)) {
       if (max(rows) > nbrOfRowsRead) {
         rows <- intersect(rows, 1:nbrOfRowsRead);
-        warning("Argument 'rows' was out of range [1,", nbrOfRowsRead, "]. Ignored rows beyond this range.");
+        warning("Argument 'rows' was out of range [1,", nbrOfRowsRead,
+                                  "]. Ignored rows beyond this range.");
       }
       data <- data[rows,,drop=FALSE];
     } else {
