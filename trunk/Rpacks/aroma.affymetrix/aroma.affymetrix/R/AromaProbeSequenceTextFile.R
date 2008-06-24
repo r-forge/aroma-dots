@@ -479,7 +479,7 @@ setMethodS3("readRawSequences", "AromaProbeSequenceTextFile", function(this, cel
   fromTo <- seqLength*(fromTo-1)+1;
   fromTo[,2] <- fromTo[,2] + probeLengths;
   fromTo <- dataOffset + fromTo;
-  verbose && cat(verbose, "Number of intervals: ", nrow(fromTo));
+  verbose && cat(verbose, "Number of byte intervals: ", nrow(fromTo));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Reading raw data
@@ -594,7 +594,7 @@ setMethodS3("updateRawSequences", "AromaProbeSequenceTextFile", function(this, c
   fromTo <- seqLength*(fromTo-as.integer(1))+as.integer(1);
   fromTo[,2] <- fromTo[,2] + probeLengths;
   fromTo <- dataOffset + fromTo;
-  verbose && cat(verbose, "Number of intervals: ", nrow(fromTo));
+  verbose && cat(verbose, "Number of byte intervals: ", nrow(fromTo));
   verbose && str(verbose, fromTo);
 
   gc <- gc();
@@ -939,7 +939,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
   colClassPatterns <- c("probe(X|Y)Pos"="integer", "probeSequence"="character");
 
   count <- 0;
-  CHUNK.SIZE <- as.integer(ram*3e6);
+  CHUNK.SIZE <- as.integer(ram*1.5e6);
   rowOffset <- as.integer(1);
   idxs <- 1:CHUNK.SIZE;
   while (length(rows) > 0) {
