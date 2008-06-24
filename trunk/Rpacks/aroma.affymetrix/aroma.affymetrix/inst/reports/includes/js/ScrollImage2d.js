@@ -24,7 +24,7 @@ function ScrollImage2d(id) {
 
     /* Define onload() function */
     this.image.onerror = function() {
-      alert('Image not loaded: ' + url);
+			/*      alert('Image not loaded: ' + url); */
     }
 
     /* Start loading image */
@@ -200,7 +200,7 @@ function Scrollbar2d(id) {
 
     /* Define onload() function */
     this.image.onerror = function() {
-      alert('Image not loaded: ' + url);
+			/*      alert('Image not loaded: ' + url); */
     }
 
     /* Start loading image */
@@ -344,6 +344,9 @@ function Scrollbar2d(id) {
 
 /****************************************************************
  HISTORY:
+ 2008-06-23
+ o Removed alert() for this.image.onerror(), because in 
+   Firefox 3 these showed up although the image was loaded.
  2007-01-27
  o Created.
  ****************************************************************/

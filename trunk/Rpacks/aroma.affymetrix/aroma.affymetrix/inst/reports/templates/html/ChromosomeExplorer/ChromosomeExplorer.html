@@ -8,16 +8,16 @@
 <link media="screen" type="text/css" rel="StyleSheet" href="../../includes/css/R.css">
 <link media="screen" type="text/css" rel="StyleSheet" href="../../includes/css/rsp.css">
 <link media="screen" type="text/css" rel="StyleSheet" href="../../includes/css/figures.css"> 
-<link media="screen" type="text/css" rel="StyleSheet" href="../../includes/css/ChromosomeExplorer.css"> 
-<script type="text/javascript" src="../../includes/js/ChromosomeExplorer3/include.js" language="JavaScript1.2"></script>
-<script type="text/javascript" src="../../includes/js/ChromosomeExplorer3/main.js" language="JavaScript1.2"></script></head>
+<link media="screen" type="text/css" rel="StyleSheet" href="../../includes/css/ChromosomeExplorer3.1.css"> 
+<script type="text/javascript" src="../../includes/js/ChromosomeExplorer3.1/include.js" language="JavaScript1.2"></script>
+<script type="text/javascript" src="../../includes/js/ChromosomeExplorer3.1/main.js" language="JavaScript1.2"></script></head>
 
 <body onLoad="onLoad();">
 <table width="100%" border="0" cellpadding="2" cellspacing="0" style="margin: 0px; border: none; border-bottom: 2px solid black;">
 <tr valign="bottom">
 <td align="left">
 <big>Chromosome Explorer</big>
-<small><small>(&copy; 2006-2007 Henrik Bengtsson)</small></small>
+<small><small>(&copy; 2006-2008 Henrik Bengtsson)</small></small>
 </td>
 <td align="right">
  <span style="float:right; font-size:smaller;">
@@ -104,18 +104,18 @@ if (shortcuts.length > 0) {
   </div>
  </td>
 </tr>
-<tr valign="top">
- <td align="left" style="border: solid 1px #000000;">
-  <img id="yaxis" src="../images/yaxis.png" alt="">
- </td>
- <td width="95%" style="border: solid 1px #000000;">
-  <div id="panel">
-   <div id="panelLocator"><div id="panelLocatorTag"></div></div>
-   <img id="panelImage" src="../../includes/images/indicator.gif" alt="Panel" title="Drag">
-  </div>
- </td>
-</tr>
 </table>
+
+<div id="panelPanel">
+ <span id="panelAxisY">
+  <img id="yaxis" src="../images/yaxis.png" alt="">
+ </span>
+ <span id="panel">
+  <div id="panelLocator"><div id="panelLocatorTag"></div></div>
+  <img id="panelImage" src="../../includes/images/indicator.gif" alt="Panel" title="Drag">
+ </span>
+</div>
+
 <table width="100%" border="0" cellpadding="2" cellspacing="0">
 <tr valign="top">
 <td align="left">
