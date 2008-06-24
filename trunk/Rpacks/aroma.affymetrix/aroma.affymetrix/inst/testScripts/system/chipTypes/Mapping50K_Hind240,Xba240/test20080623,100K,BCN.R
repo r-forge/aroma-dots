@@ -1,5 +1,4 @@
 library(aroma.affymetrix)
-source("../aroma.affymetrix/R/BaseCountNormalization.R");
 
 log <- Arguments$getVerbose(-4);
 timestampOn(log);
@@ -7,7 +6,6 @@ timestampOn(log);
 
 dataSetName <- "HapMap270,100K,CEU,testSet";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
-chipTypes <- chipTypes[2];
 
 # Expected sample names
 sampleNames <- c("NA06985", "NA06991", "NA06993", 
