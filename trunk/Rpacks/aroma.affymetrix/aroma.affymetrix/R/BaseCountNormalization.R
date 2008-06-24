@@ -40,7 +40,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., model=c("lm"), subsetToFit="-XY") {
+setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., model=c("robustSmoothSpline", "lm"), subsetToFit="-XY") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -270,7 +270,8 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  fitBaseCounts <- function(y, X, subset=NULL, model=c("lm"), ...) {
+  # Arguments 'y' and 'X' must not contain NAs.
+  fitBaseCounts <- function(y, X, subset=NULL, model=c("robustSmoothSpline", "lm"), ...) {
     # Argument 'y':
 
     # Argument 'X':
@@ -284,15 +285,46 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       gc <- gc();
     }
 
+    # Argument 'model':
+    model <- match.arg(model);
+print(model);
+
     if (model == "lm") {
+      require("stats") || throw("Package not loaded: stats");
       fitFcn <- function(X, y, ...) {
         fit <- stats::lm.fit(x=X, y=y, ...);
         # Remove redundant parameters
-        fit$residuals <- NULL;
-        fit$effects <- NULL;
-        fit$fitted.values <- NULL;
-        fit$qr <- NULL;
+        for (ff in c("residuals", "effects", "fitted.values", "qr")) {
+          fit[[ff]] <- NULL;
+        }
         fit;
+      }
+    } else if (model == "robustSmoothSpline") {
+      require("aroma.light") || throw("Package not loaded: aroma.light");
+      fitFcn <- function(X, y, ...) {
+        fits <- list();
+        for (cc in 1:ncol(X)) {
+          # Fit effect of term #cc
+          if (cc == 1) {
+            mu <- median(y);
+            fit <- list(mu=mu);
+          } else {
+            fit <- aroma.light::robustSmoothSpline(x=X[,cc], y=y, ...);
+            # Remove redundant parameters
+            for (ff in c("x", "y", "w", "yin", "lev")) {
+              fit[[ff]] <- NULL;
+            }
+            mu <- predict(fit, x=X[,cc])$y;
+          }
+
+          # Remove the effect of term #cc
+          y <- y - mu;
+          rm(mu);
+
+          fits[[cc]] <- fit;
+          rm(fit);
+        }
+        fits;
       }
     }
 
@@ -300,6 +332,47 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
 
     fit;
   } # fitBaseCounts()
+
+
+  predictBaseCounts <- function(fit, X, model=c("robustSmoothSpline", "lm"), ...) {
+    # Argument 'model':
+    model <- match.arg(model);
+print(model);
+
+    if (model == "lm") {
+      predictFcn <- function(fit, X, ...) {
+        coefs <- coefficients(fit);
+        coefs <- as.matrix(coefs);
+        yPred <- X %*% coefs;
+        yPred;
+      } # predictFcn()
+    } else if (model == "robustSmoothSpline") {
+      predictFcn <- function(fit, X, ...) {
+        fits <- fit;
+        yPred <- double(nrow(X));
+        for (cc in 1:ncol(X)) {
+          fit <- fits[[cc]];
+          if (cc == 1) {
+            mu <- fit$mu;
+          } else {
+            idxs <- which(is.finite(X[,cc]));
+            mu <- double(nrow(X));
+            mu[idxs] <- predict(fit, x=X[idxs,cc])$y;
+            rm(idxs);
+          }
+          str(mu);
+          yPred <- yPred + mu;
+          rm(fit, mu);
+        } # for (cc ...)
+        yPred;
+      } # predictFcn()
+    }
+
+    yPred <- predictFcn(fit, X);
+    
+    yPred;
+  } # predictBaseCounts()
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -424,7 +497,7 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
                                                                   drop=TRUE);
         rm(dfT);
 
-        verbose && enter(verbose, "Target log2 probe signals:");
+        verbose && cat(verbose, "Target log2 probe signals:");
         yT <- log2(yT);
         verbose && str(verbose, yT);
         gc <- gc();
@@ -439,21 +512,18 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
         subset <- subsetToFit[subset];
         X <- designMatrix[subset,,drop=FALSE];
         rm(subset);
-        verbose && str(verbose, "Design matrix:");
+        verbose && cat(verbose, "Design matrix:");
         verbose && str(verbose, X);
         gc <- gc();
         verbose && print(verbose, gc);
         fitT <- fitBaseCounts(yT, X=X, model=params$model, verbose=less(verbose, 5));
         rm(yT, X);
         verbose && print(verbose, fitT);
-        coefsT <- coefficients(fitT);
-        rm(fitT);
-        verbose && cat(verbose, "Target coeffients:");
-        verbose && print(verbose, coefsT);
         verbose && exit(verbose);
 
         verbose && enter(verbose, "Target mean log2 probe signals:");
-        muT <- designMatrix %*% as.matrix(coefsT);
+        muT <- predictBaseCounts(fitT, X=designMatrix, model=params$model);
+        rm(fitT);
         verbose && str(verbose, "muT:");
         verbose && str(verbose, muT);
         if (length(muT) != nbrOfCells) {
@@ -464,7 +534,7 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
         gc <- gc();
 
         verbose && exit(verbose);
-      }
+      } # if (is.null(muT))
 
 
       verbose && enter(verbose, "Getting signals used to fit the model");
@@ -484,7 +554,7 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       verbose && enter(verbose, "Fitting base-count model");
       subset <- subsetToFit[subset];
       X <- designMatrix[subset,,drop=FALSE];
-      verbose && str(verbose, "Design matrix:");
+      verbose && cat(verbose, "Design matrix:");
       verbose && str(verbose, X);
       rm(subset);
       gc <- gc();
@@ -492,11 +562,7 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       fit <- fitBaseCounts(y, X=X, model=params$model, verbose=less(verbose, 5));
       rm(y, X);
       verbose && print(verbose, fit);
-      coefs <- coefficients(fit);
       modelFit$fit <- fit;
-      rm(fit);
-      verbose && cat(verbose, "Coeffients:");
-      verbose && print(verbose, coefs);
       verbose && exit(verbose);
 
 
@@ -524,7 +590,8 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       # Normalize data
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Mean log2 probe signals:");
-      mu <- designMatrix %*% as.matrix(coefs);
+      mu <- predictBaseCounts(fit, X=designMatrix, model=params$model);
+      rm(fit);
       verbose && str(verbose, "mu:");
       verbose && str(verbose, mu);
       if (length(mu) != nbrOfCells) {
@@ -534,7 +601,7 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
 
 
       verbose && enter(verbose, "Discrepancy scale factors:");
-      rho <- mu-muT;
+      rho <- (muT-mu);
       rm(mu);
       summary(verbose, rho);
       rho <- 2^rho;
@@ -543,9 +610,9 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       # Update only "finite" subset
       subset <- which(is.finite(rho));
       rho <- rho[subset];
-      verbose && exit(verbose);
       gc <- gc();
       verbose && print(verbose, gc);
+      verbose && exit(verbose);
 
       verbose && enter(verbose, "Reading probe signals:");
       yAll <- readRawData(df, fields="intensities", drop=TRUE);
@@ -581,6 +648,7 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       rm(yAll, verbose2);
       gc <- gc();
       verbose && print(verbose, gc);
+
       verbose && exit(verbose);
     }
 
