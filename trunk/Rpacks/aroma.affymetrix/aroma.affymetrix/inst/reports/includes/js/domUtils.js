@@ -95,7 +95,7 @@ function highlightById(id) {
   obj.style.visibility = 'visible'; 
   obj.style.borderBottom = '2px solid black';
 */
-  obj.style.background = '#ccccff;';
+  obj.style.background = '#ccccff';
 } /* highlightById() */
 
 
@@ -121,6 +121,8 @@ function padWidthZeros(x, width) {
 
 /****************************************************************
  HISTORY:
+ 2008-06-23
+ o BUG FIX: highlightById() had a trailing semicolon in color.
  2007-02-20
  o Added padWidthZeros().
  2007-02-06
