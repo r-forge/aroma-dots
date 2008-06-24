@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.3.1 [2008-06-22]
+Version: 0.9.3.1 [2008-06-23]
 o Now AffymetrixProbeTabFile inherits from TabularTextFile and
   "implements" AromaPlatformInterface.  Previously it inherited
   from the AffymetrixFile class.
