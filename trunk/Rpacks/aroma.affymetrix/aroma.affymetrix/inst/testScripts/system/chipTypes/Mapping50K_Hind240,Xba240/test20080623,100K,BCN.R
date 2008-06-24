@@ -70,12 +70,13 @@ for (chipType in names(csList)) {
 # Plot probe sequence base count effects
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ff <- 3;
+
 for (chipType in chipTypes) {
   aps <- apsList[[chipType]];
   counts <- countBases(aps, verbose=log);
 
-  whats <- c("raw", "acc", "bcn");
   Ms <- list();
+  whats <- c("raw", "acc", "bcn");
   for (what in whats) {
     if (what == "raw") {
       cs <- csRawList[[chipType]];
@@ -101,17 +102,19 @@ for (chipType in chipTypes) {
   Mlim <- c(-1,1);
   Mlab <- expression(M == log[2](y/y[R]));
   xlim <- c(0, 25);
+
+  x11();
+  layout(matrix(1:(length(whats)*4), ncol=4, byrow=TRUE));
+  par(mar=c(5,4,2,1)+0.1);
   for (what in names(Ms)) {
     M <- Ms[[what]];
 
-    x11();
-    layout(matrix(1:ncol(counts), nrow=2, byrow=TRUE));
-    par(mar=c(5,4,2,1)+0.1);
-    for (cc in 1:ncol(counts)) { 
-      xlab <- sprintf("Number of %s:s", colnames(counts)[cc]);
-      boxplot(M ~ counts[,cc], outline=FALSE, ylim=Mlim, xlim=xlim, ylab=Mlab, xlab=xlab);
+    for (bb in c("A", "C", "G", "T")) { 
+      xlab <- sprintf("Number of %s:s", bb);
+      boxplot(M ~ counts[,bb], outline=FALSE, 
+              ylim=Mlim, xlim=xlim, ylab=Mlab, xlab=xlab);
       stext(side=3, pos=0, getFullName(cf));
-      stext(side=3, pos=0.98, line=-1, cex=2, colnames(counts)[cc]);
+      stext(side=3, pos=0.98, line=-1, cex=2, bb);
       stextChipType(chipType);
     }
     rm(M);
