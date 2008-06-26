@@ -527,7 +527,7 @@ setMethodS3("nbrOfCells", "AffymetrixCelFile", function(this, ...) {
 #*/###########################################################################
 setMethodS3("getChipType", "AffymetrixCelFile", function(this, ...) {
   unf <- getUnitNamesFile(this);
-  getChipType(unf);
+  getChipType(unf, ...);
 }, private=TRUE)
 
 
@@ -888,6 +888,10 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-06-25
+# o BUG FIX: getChipType() of AffymetrixCelFile did not pass down '...'
+#   causing for instance getChipType(..., fullname=FALSE) to still return
+#   tags for ChipEffectFile:s.
 # 2008-05-09
 # o Added getUnitNamesFile().
 # o Added getPlatform().
