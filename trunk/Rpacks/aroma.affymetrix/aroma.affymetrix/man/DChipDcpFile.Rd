@@ -69,7 +69,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
 
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY

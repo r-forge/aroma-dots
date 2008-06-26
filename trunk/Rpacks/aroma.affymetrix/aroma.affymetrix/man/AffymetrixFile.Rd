@@ -28,10 +28,10 @@
 \code{~~~~~~~~~~~~~~~~~+--}\emph{\code{AffymetrixFile}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \emph{\link[aroma.affymetrix]{AffymetrixCnChpFile}}, \emph{\link[aroma.affymetrix]{AffymetrixProbeTabFile}}, \emph{\link[aroma.affymetrix]{AffymetrixTsvFile}}, \emph{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}, \link[aroma.affymetrix]{ChipEffectFile}, \emph{\link[aroma.affymetrix]{CnagCfhFile}}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \emph{\link[aroma.affymetrix]{DChipDcpFile}}, \link[aroma.affymetrix]{ExonChipEffectFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{FirmaFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{QualityAssessmentFile}, \link[aroma.affymetrix]{ResidualFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}, \link[aroma.affymetrix]{WeightsFile}\cr
+\link[aroma.affymetrix]{AffymetrixCdfFile}, \link[aroma.affymetrix]{AffymetrixCelFile}, \emph{\link[aroma.affymetrix]{AffymetrixCnChpFile}}, \emph{\link[aroma.affymetrix]{AffymetrixTsvFile}}, \emph{\link[aroma.affymetrix]{AromaChipTypeAnnotationFile}}, \link[aroma.affymetrix]{ChipEffectFile}, \emph{\link[aroma.affymetrix]{CnagCfhFile}}, \link[aroma.affymetrix]{CnChipEffectFile}, \link[aroma.affymetrix]{CnProbeAffinityFile}, \emph{\link[aroma.affymetrix]{DChipDcpFile}}, \link[aroma.affymetrix]{ExonChipEffectFile}, \link[aroma.affymetrix]{ExonProbeAffinityFile}, \link[aroma.affymetrix]{FirmaFile}, \link[aroma.affymetrix]{ParameterCelFile}, \link[aroma.affymetrix]{ProbeAffinityFile}, \link[aroma.affymetrix]{QualityAssessmentFile}, \link[aroma.affymetrix]{ResidualFile}, \link[aroma.affymetrix]{SnpChipEffectFile}, \link[aroma.affymetrix]{SnpProbeAffinityFile}, \link[aroma.affymetrix]{WeightsFile}\cr
 
 public abstract static class \bold{AffymetrixFile}\cr
-extends \link[aroma.core]{AromaPlatformInterface}\cr
+extends \emph{\link[aroma.core]{AromaPlatformInterface}}\cr
 
 
 
@@ -54,7 +54,7 @@ extends \link[aroma.core]{AromaPlatformInterface}\cr
 
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY

@@ -625,4 +625,53 @@
   Transform
   getParallelSafe getParallelSafe.Explorer getParameterSet.ExonRmaPlm
   setParallelSafe setParallelSafe.Explorer
-
+  allocate.AromaProbeSequenceTextFile
+  allocateFromCdf.AromaProbeSequenceTextFile AromaProbeSequenceTextFile
+  byChipType.AromaProbeSequenceTextFile
+  cleanupNewlines cleanupNewlines.AromaProbeSequenceTextFile
+  clearCache.BaseCountNormalization countBases
+  countBases.AromaProbeSequenceTextFile
+  countBases.BaseCountNormalization exportAromaSignalBinaryFileList
+  exportAromaSignalBinaryFileList.CnChipEffectFile
+  exportAromaSignalBinaryFileList.SnpChipEffectFile
+  exportAromaSignalBinarySetList
+  exportAromaSignalBinarySetList.SnpChipEffectSet
+  findByChipType.AromaProbeSequenceTextFile getAromaFreqBCnBinarySet
+  getAromaFreqBCnBinarySet.SnpChipEffectSet getAromaSignalBinarySetList
+  getAromaSignalBinarySetList.SnpChipEffectSet getAromaTotalCnBinarySet
+  getAromaTotalCnBinarySet.SnpChipEffectSet
+  getAsteriskTags.BaseCountNormalization
+  getCdf.AromaProbeSequenceTextFile getCellsFromXY
+  getCellsFromXY.AromaProbeSequenceTextFile
+  getChipType.AromaProbeSequenceTextFile
+  getColumnNames.AffymetrixProbeTabFile getDataFileOffset
+  getDataFileOffset.AromaProbeSequenceTextFile getHeaderParameters
+  getHeaderParameters.AromaProbeSequenceTextFile
+  getParameters.BaseCountNormalization getPlatform.AffymetrixCelSet
+  getPlatform.AromaProbeSequenceTextFile
+  getSubsetToFit.BaseCountNormalization getTargetFile
+  getTargetFile.BaseCountNormalization getUnitGroupCellMatrixMap
+  getUnitGroupCellMatrixMap.ChipEffectFile
+  hasColumnHeader.AffymetrixProbeTabFile
+  importFrom.AromaProbeSequenceTextFile
+  importFromAffymetrixProbeTabFile
+  importFromAffymetrixProbeTabFile.AromaProbeSequenceTextFile
+  inferMmFromPmSequences
+  inferMmFromPmSequences.AromaProbeSequenceTextFile isMissing
+  isMissing.AromaProbeSequenceTextFile
+  nbrOfCells.AromaProbeSequenceTextFile
+  nbrOfColumns.AromaProbeSequenceTextFile
+  nbrOfRows.AromaProbeSequenceTextFile 
+  readDataFrame2 readDataFrame2.AffymetrixProbeTabFile
+  readRawSequenceMatrix
+  readRawSequenceMatrix.AromaProbeSequenceTextFile readRawSequences
+  readRawSequences.AromaProbeSequenceTextFile readSequenceMatrix
+  readSequenceMatrix.AromaProbeSequenceTextFile readSequenceStrings
+  readSequenceStrings.AromaProbeSequenceTextFile
+  readTableHeader.AromaProbeSequenceTextFile seqMatrixToStrings
+  seqMatrixToStrings.matrix seqRawMatrixToStrings
+  seqRawMatrixToStrings.matrix
+  translateColumnNames.AffymetrixProbeTabFile
+  translateFullName.AffymetrixProbeTabFile updateRawSequences
+  updateRawSequences.AromaProbeSequenceTextFile updateSequenceStrings
+  updateSequenceStrings.AromaProbeSequenceTextFile

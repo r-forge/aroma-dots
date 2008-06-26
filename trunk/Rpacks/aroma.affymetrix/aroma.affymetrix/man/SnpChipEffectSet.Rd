@@ -59,6 +59,9 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
 \tabular{rll}{
  \tab \code{extractTheta} \tab  -\cr
  \tab \code{extractTotalAndFreqB} \tab  -\cr
+ \tab \code{getAromaFreqBCnBinarySet} \tab  -\cr
+ \tab \code{getAromaSignalBinarySetList} \tab  -\cr
+ \tab \code{getAromaTotalCnBinarySet} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getBaseline} \tab  -\cr
  \tab \code{getMergeStrands} \tab  -\cr
@@ -73,13 +76,13 @@ boxplotStats, calculateBaseline, calculateFieldBoxplotStats, calculateNuseBoxplo
 extractDataFrame, extractMatrix
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf
+[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getPlatform, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, fromFiles
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
 getChipType, getPlatform, nbrOfArrays, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, validate

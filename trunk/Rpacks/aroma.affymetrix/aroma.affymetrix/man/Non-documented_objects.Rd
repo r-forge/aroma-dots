@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Sun Jun 08 20:01:10 2008.
+% on Thu Jun 26 15:27:36 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1310,6 +1310,78 @@
 \alias{getParameterSet.ExonRmaPlm}
 \alias{setParallelSafe}
 \alias{setParallelSafe.Explorer}
+\alias{allocate.AromaProbeSequenceTextFile}
+\alias{allocateFromCdf.AromaProbeSequenceTextFile}
+\alias{AromaProbeSequenceTextFile}
+\alias{byChipType.AromaProbeSequenceTextFile}
+\alias{cleanupNewlines}
+\alias{cleanupNewlines.AromaProbeSequenceTextFile}
+\alias{clearCache.BaseCountNormalization}
+\alias{countBases}
+\alias{countBases.AromaProbeSequenceTextFile}
+\alias{countBases.BaseCountNormalization}
+\alias{exportAromaSignalBinaryFileList}
+\alias{exportAromaSignalBinaryFileList.CnChipEffectFile}
+\alias{exportAromaSignalBinaryFileList.SnpChipEffectFile}
+\alias{exportAromaSignalBinarySetList}
+\alias{exportAromaSignalBinarySetList.SnpChipEffectSet}
+\alias{findByChipType.AromaProbeSequenceTextFile}
+\alias{getAromaFreqBCnBinarySet}
+\alias{getAromaFreqBCnBinarySet.SnpChipEffectSet}
+\alias{getAromaSignalBinarySetList}
+\alias{getAromaSignalBinarySetList.SnpChipEffectSet}
+\alias{getAromaTotalCnBinarySet}
+\alias{getAromaTotalCnBinarySet.SnpChipEffectSet}
+\alias{getAsteriskTags.BaseCountNormalization}
+\alias{getCdf.AromaProbeSequenceTextFile}
+\alias{getCellsFromXY}
+\alias{getCellsFromXY.AromaProbeSequenceTextFile}
+\alias{getChipType.AromaProbeSequenceTextFile}
+\alias{getColumnNames.AffymetrixProbeTabFile}
+\alias{getDataFileOffset}
+\alias{getDataFileOffset.AromaProbeSequenceTextFile}
+\alias{getHeaderParameters}
+\alias{getHeaderParameters.AromaProbeSequenceTextFile}
+\alias{getParameters.BaseCountNormalization}
+\alias{getPlatform.AffymetrixCelSet}
+\alias{getPlatform.AromaProbeSequenceTextFile}
+\alias{getSubsetToFit.BaseCountNormalization}
+\alias{getTargetFile}
+\alias{getTargetFile.BaseCountNormalization}
+\alias{getUnitGroupCellMatrixMap}
+\alias{getUnitGroupCellMatrixMap.ChipEffectFile}
+\alias{hasColumnHeader.AffymetrixProbeTabFile}
+\alias{importFrom.AromaProbeSequenceTextFile}
+\alias{importFromAffymetrixProbeTabFile}
+\alias{importFromAffymetrixProbeTabFile.AromaProbeSequenceTextFile}
+\alias{inferMmFromPmSequences}
+\alias{inferMmFromPmSequences.AromaProbeSequenceTextFile}
+\alias{isMissing}
+\alias{isMissing.AromaProbeSequenceTextFile}
+\alias{nbrOfCells.AromaProbeSequenceTextFile}
+\alias{nbrOfColumns.AromaProbeSequenceTextFile}
+\alias{nbrOfRows.AromaProbeSequenceTextFile}
+\alias{readDataFrame2}
+\alias{readDataFrame2.AffymetrixProbeTabFile}
+\alias{readRawSequenceMatrix}
+\alias{readRawSequenceMatrix.AromaProbeSequenceTextFile}
+\alias{readRawSequences}
+\alias{readRawSequences.AromaProbeSequenceTextFile}
+\alias{readSequenceMatrix}
+\alias{readSequenceMatrix.AromaProbeSequenceTextFile}
+\alias{readSequenceStrings}
+\alias{readSequenceStrings.AromaProbeSequenceTextFile}
+\alias{readTableHeader.AromaProbeSequenceTextFile}
+\alias{seqMatrixToStrings}
+\alias{seqMatrixToStrings.matrix}
+\alias{seqRawMatrixToStrings}
+\alias{seqRawMatrixToStrings.matrix}
+\alias{translateColumnNames.AffymetrixProbeTabFile}
+\alias{translateFullName.AffymetrixProbeTabFile}
+\alias{updateRawSequences}
+\alias{updateRawSequences.AromaProbeSequenceTextFile}
+\alias{updateSequenceStrings}
+\alias{updateSequenceStrings.AromaProbeSequenceTextFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -25,6 +25,7 @@
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}
  \item{tags}{An optional \code{\link[base]{character}} \code{\link[base]{vector}} of tags.}
+ \item{pattern}{An optional \code{\link[base]{character}} string.}
  \item{...}{Not used.}
  \item{.useAffxparser}{If \code{\link[base:logical]{TRUE}}, \code{\link[affxparser]{findCdf}} is used if
    the CDF could not be located.}

@@ -36,13 +36,13 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
 
 
   This class represents a normalization method that corrects for PCR
-  fragment length effects on total copy-number chip-effect estimates.
+  fragment length effects on copy-number chip-effect estimates.
  }
 
  \usage{FragmentLengthNormalization(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY", shift=0)}
 
  \arguments{
-   \item{dataSet}{A \code{\link{CnChipEffectSet}}.}
+   \item{dataSet}{A \code{\link{SnpChipEffectSet}}.}
    \item{...}{Additional arguments passed to the constructor of
      \code{\link{ChipEffectTransform}}.}
    \item{targetFunctions}{An optional list of \code{\link[base]{function}}s.
@@ -60,7 +60,7 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
  \tab \code{clearCache} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getOutputDataSet} \tab  -\cr
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.FragmentLengthNormalization]{process}} \tab Normalizes the data set.\cr
 }
 
 
@@ -82,6 +82,17 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  \section{Requirements}{
    This class requires a SNP information annotation file for the
    chip type to be normalized.
+ }
+
+ \details{
+   For SNPs, the normalization function is estimated based on the total
+   chip effects, i.e. the sum of the allele signals.  The normalizing
+   is done by rescale the chip effects on the intensity scale such that
+   the mean of the total chip effects are the same across samples for
+   any given fragment length.  For allele-specific estimates, both alleles
+   are always rescaled by the same amount.  Thus, when normalizing
+   allele-specific chip effects, the total chip effects is change, but not
+   the relative allele signal, e.g. the allele B frequency.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
