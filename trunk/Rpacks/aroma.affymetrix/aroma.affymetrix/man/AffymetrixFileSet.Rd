@@ -25,13 +25,13 @@
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaPlatformInterface}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{AffymetrixFileSet}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\emph{\code{AffymetrixFileSet}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \link[aroma.affymetrix]{DChipDcpSet}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{ParameterCelSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \emph{\link[aroma.affymetrix]{DChipDcpSet}}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{ParameterCelSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
 
-public static class \bold{AffymetrixFileSet}\cr
-extends \link[aroma.core]{AromaPlatformInterface}\cr
+public abstract static class \bold{AffymetrixFileSet}\cr
+extends \emph{\link[aroma.core]{AromaPlatformInterface}}\cr
 
 
 
@@ -50,13 +50,13 @@ extends \link[aroma.core]{AromaPlatformInterface}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{as} \tab  -\cr
- \tab \code{as.AffymetrixFileSet} \tab  -\cr
- \tab \code{fromFiles} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:as.AffymetrixFileSet.AffymetrixFileSet]{as.AffymetrixFileSet}} \tab Coerce an object to an AffymetrixFileSet object.\cr
+ \tab \code{\link[aroma.affymetrix:fromFiles.AffymetrixFileSet]{fromFiles}} \tab Defines an AffymetrixFileSet object by searching for Affymetrix files.\cr
 }
 
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
 getChipType, getPlatform, nbrOfArrays, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, validate

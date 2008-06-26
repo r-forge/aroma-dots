@@ -41,20 +41,20 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{addIncludes} \tab  -\cr
- \tab \code{display} \tab  -\cr
- \tab \code{getAlias} \tab  -\cr
- \tab \code{getArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:display.Explorer]{display}} \tab Displays the explorer in the default browser.\cr
+ \tab \code{\link[aroma.affymetrix:getAlias.Explorer]{getAlias}} \tab Gets the alias of the output set.\cr
+ \tab \code{\link[aroma.affymetrix:getArrays.Explorer]{getArrays}} \tab Gets the names of the arrays.\cr
  \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
- \tab \code{getName} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getName.Explorer]{getName}} \tab Gets the name of the explorer.\cr
  \tab \code{getPath} \tab  -\cr
  \tab \code{getReportPathPattern} \tab  -\cr
- \tab \code{getTags} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getTags.Explorer]{getTags}} \tab Gets the tags of the explorer.\cr
  \tab \code{getTagsOfInput} \tab  -\cr
- \tab \code{nbrOfArrays} \tab  -\cr
- \tab \code{process} \tab  -\cr
- \tab \code{setAlias} \tab  -\cr
- \tab \code{setArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.Explorer]{nbrOfArrays}} \tab Gets the total number of arrays.\cr
+ \tab \code{\link[aroma.affymetrix:process.Explorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
+ \tab \code{\link[aroma.affymetrix:setAlias.Explorer]{setAlias}} \tab Sets the alias of the output set.\cr
+ \tab \code{\link[aroma.affymetrix:setArrays.Explorer]{setArrays}} \tab Sets the arrays.\cr
  \tab \code{setReportPathPattern} \tab  -\cr
  \tab \code{setSubname} \tab  -\cr
  \tab \code{setup} \tab  -\cr

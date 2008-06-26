@@ -59,7 +59,7 @@ extends \link[aroma.affymetrix]{AffymetrixCelFile}\cr
 [, [[, allocateFromCdf, clone, createFrom, fromFile, getAm, getCdf, getFileFormat, getImage, getUnitNamesFile, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setCdf, smoothScatterMvsA, writeImage
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY

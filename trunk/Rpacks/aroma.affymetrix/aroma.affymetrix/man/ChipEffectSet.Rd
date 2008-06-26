@@ -64,12 +64,12 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{fromDataSet} \tab  -\cr
- \tab \code{getAM} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getAM.ChipEffectSet]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects of the set relative to a reference chip effect file.\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getBaseline.ChipEffectSet]{getBaseline}} \tab Gets the baseline signals across chromosomes.\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
- \tab \code{getXAM} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectSet]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{plotBoxplot} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
 }
@@ -79,13 +79,13 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
 extractDataFrame, extractMatrix
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf
+[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getPlatform, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, fromFiles
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
 getChipType, getPlatform, nbrOfArrays, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, validate

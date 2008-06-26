@@ -35,9 +35,6 @@
 #   for the chip type.
 # }
 # 
-# \details{
-# }
-#
 # @author
 #*/###########################################################################
 setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., model=c("robustSmoothSpline", "lm"), subsetToFit="-XY") {

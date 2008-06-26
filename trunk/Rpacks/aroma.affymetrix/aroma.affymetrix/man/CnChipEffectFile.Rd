@@ -60,6 +60,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{exportAromaSignalBinaryFileList} \tab  -\cr
  \tab \code{extractTheta} \tab  -\cr
  \tab \code{extractTotalAndFreqB} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
@@ -71,10 +72,10 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 
 
  \bold{Methods inherited from SnpChipEffectFile}:\cr
-extractTheta, extractTotalAndFreqB, getCellIndices, getExpandedCellMap, getParameters, mergeStrands, readUnits
+exportAromaSignalBinaryFileList, extractTheta, extractTotalAndFreqB, getCellIndices, getExpandedCellMap, getParameters, mergeStrands, readUnits
 
  \bold{Methods inherited from ChipEffectFile}:\cr
-extractMatrix, extractTheta, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellChromosomePositionMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
+extractMatrix, extractTheta, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellChromosomePositionMap, getUnitGroupCellMatrixMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 extractDataFrame, extractMatrix, getParameters, readUnits
@@ -83,7 +84,7 @@ extractDataFrame, extractMatrix, getParameters, readUnits
 [, [[, allocateFromCdf, clone, createFrom, fromFile, getAm, getCdf, getFileFormat, getImage, getUnitNamesFile, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setCdf, smoothScatterMvsA, writeImage
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY

@@ -69,7 +69,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 
  \bold{Methods inherited from SnpChipEffectSet}:\cr
-extractTheta, extractTotalAndFreqB, fromFiles, getAverageFile, getBaseline, getMergeStrands, setMergeStrands
+exportAromaSignalBinarySetList, extractTheta, extractTotalAndFreqB, fromFiles, getAromaFreqBCnBinarySet, getAromaSignalBinarySetList, getAromaTotalCnBinarySet, getAverageFile, getBaseline, getMergeStrands, setMergeStrands
 
  \bold{Methods inherited from ChipEffectSet}:\cr
 boxplotStats, calculateBaseline, calculateFieldBoxplotStats, calculateNuseBoxplotStats, calculateRleBoxplotStats, extractMatrix, extractTheta, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAsFullCelSet, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, plotBoxplot, readUnits, updateUnits
@@ -78,13 +78,13 @@ boxplotStats, calculateBaseline, calculateFieldBoxplotStats, calculateNuseBoxplo
 extractDataFrame, extractMatrix
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf
+[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getPlatform, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, fromFiles
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
 getChipType, getPlatform, nbrOfArrays, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, validate

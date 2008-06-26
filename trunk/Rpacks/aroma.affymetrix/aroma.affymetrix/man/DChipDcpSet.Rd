@@ -27,13 +27,13 @@
 \code{~~~~~~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{DChipDcpSet}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\emph{\code{DChipDcpSet}}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
-public static class \bold{DChipDcpSet}\cr
-extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
+public abstract static class \bold{DChipDcpSet}\cr
+extends \emph{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
 
 
 
@@ -52,13 +52,13 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{as} \tab  -\cr
- \tab \code{as.DChipDcpSet} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:as.DChipDcpSet.DChipDcpSet]{as.DChipDcpSet}} \tab Coerce an object to an DChipDcpSet object.\cr
  \tab \code{byName} \tab  -\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{fromName} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
- \tab \code{nbrOfArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.DChipDcpSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
 }
 
 
@@ -66,7 +66,7 @@ extends \link[aroma.affymetrix]{AffymetrixFileSet}\cr
 as, as.AffymetrixFileSet, fromFiles
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
 getChipType, getPlatform, nbrOfArrays, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, validate

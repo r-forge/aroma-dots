@@ -21,11 +21,11 @@
 \code{~~|}\cr
 \code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.core]{AromaMicroarrayDataFile}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{GenericTabularFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaPlatformInterface}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.core]{TabularTextFile}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.core]{AromaPlatformInterface}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~+--}\emph{\code{AffymetrixProbeTabFile}}\cr
 
@@ -33,7 +33,7 @@
 \cr
 
 public abstract static class \bold{AffymetrixProbeTabFile}\cr
-extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
+extends \emph{\link[aroma.core]{AromaPlatformInterface}}\cr
 
 
 
@@ -56,15 +56,22 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
  \tab \code{fromChipType} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
+ \tab \code{getColumnNames} \tab  -\cr
  \tab \code{getData} \tab  -\cr
+ \tab \code{hasColumnHeader} \tab  -\cr
+ \tab \code{translateColumnNames} \tab  -\cr
+ \tab \code{translateFullName} \tab  -\cr
 }
 
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
- \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
-getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY
+ \bold{Methods inherited from TabularTextFile}:\cr
+as.character, getColumnNames, getHeader, getReadArguments, hasColumnHeader, nbrOfLines, nbrOfRows, readColumnNames, readColumns, readDataFrame, readLines, readRawHeader, writeColumnsToFiles
+
+ \bold{Methods inherited from GenericTabularFile}:\cr
+as.character, dim, extractMatrix, getColumnNames, getColumnNameTranslator, nbrOfColumns, nbrOfRows, readColumns, readDataFrame, setColumnNameTranslator, translateColumnNames
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getFilename, getFileSize, getFileType, getFullName, getFullNameTranslator, getName, getPath, getPathname, getTags, gunzip, gzip, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, setFullNameTranslator, testAttributes, validateChecksum, writeChecksum

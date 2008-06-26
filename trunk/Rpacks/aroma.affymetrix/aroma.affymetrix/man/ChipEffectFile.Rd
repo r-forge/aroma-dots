@@ -57,13 +57,13 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
  \tab \code{extractMatrix} \tab  -\cr
  \tab \code{extractTheta} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr
- \tab \code{getAM} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getAM.ChipEffectFile]{getAM}} \tab Gets the log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getCellMapForMainCdf} \tab  -\cr
  \tab \code{getExpandedCellMap} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
  \tab \code{getUnitGroupCellChromosomePositionMap} \tab  -\cr
- \tab \code{getXAM} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getXAM.ChipEffectFile]{getXAM}} \tab Gets the physical position, log-intensities and log-ratios of chip effects for two arrays.\cr
  \tab \code{readUnits} \tab  -\cr
 }
 
@@ -75,7 +75,7 @@ extractDataFrame, extractMatrix, getParameters, readUnits
 [, [[, allocateFromCdf, clone, createFrom, fromFile, getAm, getCdf, getFileFormat, getImage, getUnitNamesFile, highlight, image270, nbrOfCells, plotDensity, plotImage, plotMvsA, plotMvsX, setCdf, smoothScatterMvsA, writeImage
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform
+getAromaPlatform, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY
