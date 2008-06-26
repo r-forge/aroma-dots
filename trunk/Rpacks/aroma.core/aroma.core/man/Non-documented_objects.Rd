@@ -517,6 +517,7 @@
 \alias{readRawHeader}
 \alias{readRawHeader.TabularTextFile}
 \alias{readTableHeader}
+\alias{readTableHeader.default}
 
 \description{
   This page contains aliases for all "non-documented" objects that
