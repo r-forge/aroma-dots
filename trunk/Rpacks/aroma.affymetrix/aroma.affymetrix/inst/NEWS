@@ -8,6 +8,9 @@ o Now AffymetrixProbeTabFile inherits from TabularTextFile and
 o BETA: Added BaseCountNormalization.
 o BETA: Updated FragmentLengthNormalization to handle allele-specific
   chip effect estimates as well.
+o BUG FIX: getChipType() of AffymetrixCelFile did not pass down '...'
+  causing for instance getChipType(..., fullname=FALSE) to still return
+  tags for ChipEffectFile:s.
 
 
 Version: 0.9.3 [2008-06-08]
