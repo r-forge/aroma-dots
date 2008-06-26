@@ -8,4 +8,4 @@
 autoload("appendVarArgs", package="R.methodsS3")
 autoload("hasVarArgs", package="R.methodsS3")
 autoload("setMethodS3", package="R.methodsS3")
-autoload("setConstructorS3", package="R.methodsS3")
+autoload("setConstructorS3", package="R.oo")
