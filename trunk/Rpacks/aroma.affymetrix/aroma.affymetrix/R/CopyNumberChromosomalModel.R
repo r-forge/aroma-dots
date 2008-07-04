@@ -537,7 +537,7 @@ setMethodS3("fit", "CopyNumberChromosomalModel", abstract=TRUE);
 
 
 
-setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this, array, chromosome, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this, array, chromosome, ..., cache=FALSE, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -557,12 +557,13 @@ setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this
     on.exit(popState(verbose));
   }
 
+
   key <- list(method="extractRawCopyNumbers", class=class(this), array=array, chromosome=chromosome, ...);
   id <- digest(key);
-  cache <- this$.extractRawCopyNumbersCache;
-  if (!is.list(cache))
-    cache <- list();
-  rawCNs <- cache[[id]];
+  cacheList <- this$.extractRawCopyNumbersCache;
+  if (!is.list(cacheList))
+    cacheList <- list();
+  rawCNs <- cacheList[[id]];
   if (!force && !is.null(rawCNs)) {
     return(rawCNs);
   }
@@ -577,9 +578,12 @@ setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this
 
   rawCNs <- RawCopyNumbers(cn=data[,"M"], x=data[,"x"], chromosome=chromosome); 
 
-  # Save to cache
-  cache[[id]] <- rawCNs;
-  this$.extractRawCopyNumbersCache <- cache;
+  # Save to cache?
+  if (cache) {
+    cacheList[[id]] <- rawCNs;
+    this$.extractRawCopyNumbersCache <- cacheList;
+    rm(cacheList);
+  }
 
   rawCNs;
 })
@@ -670,6 +674,14 @@ setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=s
 
 ##############################################################################
 # HISTORY:
+# 2008-07-01
+# o MEMORY OPTIMIZATION: When calling extractRawCopyNumbers(obj) on an
+#   CopyNumberChromosomalModel object, the result would be cached in memory
+#   (in the object). This would result in an increasing memory usage when
+#   data was extracted from more and more arrays. The cache could be cleared
+#   by calling gc(obj), but avoid this problem by default, the method does
+#   no longer cache results.  To cache, the method has to be called with
+#   argument 'cache=TRUE'.  Thanks Jason Li for reporting this.
 # 2008-06-07
 # o BUG FIX: getReferenceSetTuple() of CopyNumberChromosomalModel would
 #   generate nbrOfArrays(ces) instead of nbrOfArrays(cesTuple) reference

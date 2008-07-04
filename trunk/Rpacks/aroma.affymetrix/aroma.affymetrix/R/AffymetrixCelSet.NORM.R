@@ -40,7 +40,7 @@
 # @author
 #
 # \seealso{
-#   @see "aroma.light::normalizeQuantile.numeric"
+#   @see "aroma.light::normalizeQuantileRank.numeric"
 #   @seeclass
 # }
 #*/###########################################################################

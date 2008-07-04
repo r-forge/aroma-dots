@@ -17,13 +17,10 @@
 #   \item{dataSet}{A @see "AffymetrixCelSet".}
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform".}
-#   \item{targetFunctions}{An optional list of @functions.  
-#     For each enzyme there is one target function to which all arrays
-#     should be normalized to.}
+#   \item{model}{A @character string specifying the model used to fit 
+#     the base-count effects.}
 #   \item{subsetToFit}{The units from which the normalization curve should
 #     be estimated.  If @NULL, all are considered.}
-#   \item{shift}{An optional amount the data points should be shifted
-#      (translated).}
 # }
 #
 # \section{Fields and Methods}{

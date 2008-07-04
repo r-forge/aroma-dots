@@ -84,7 +84,7 @@ for (chipType in names(csList)) {
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Glad model test
+# Raw copy numbers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Emulate list of ChipEffectSet:s where some arrays on exists in
 # one of the sets
@@ -93,6 +93,16 @@ for (kk in seq(along=cesFlnList)) {
   ces <- extract(ces, setdiff(seq(ces), length(ces)+1-kk));
   cesFlnList[[kk]] <- ces;
 }
+
+cnm <- RawCopyNumberModel(cesFlnList);
+print(cnm);
+
+rawCNs <- extractRawCopyNumbers(cnm, array=1, chromosome=1, verbose=log);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Glad model test
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 glad <- GladModel(cesFlnList);
 print(glad);
 

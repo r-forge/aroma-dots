@@ -196,6 +196,17 @@ setMethodS3("getColumnNames", "AffymetrixProbeTabFile", function(this, ...) {
 setMethodS3("getChipType", "AffymetrixProbeTabFile", function(this, ...) {
   pattern <- sprintf("[._]probe_tab$");
   chipType <- gsub(pattern, "", getName(this));
+  chipType <- gsub(pattern, "", getName(this));
+
+  # Patch non-consistent Affymetrix filenames
+  if (chipType == "Mapping10K") {
+    if (getFileSize(ptb) != 14452965) {
+      chipType <- "Mapping10K_Xba142";
+    } else {
+      chipType <- "Mapping10K_Xba131";
+    }
+  }
+
   chipType;
 })
 
@@ -435,6 +446,9 @@ setMethodS3("readDataFrame2", "AffymetrixProbeTabFile", function(this, cells=NUL
 
 ############################################################################
 # HISTORY:
+# 2008-06-30
+# o Added getChipType() patch for infering the chiptype from inconsistent
+#   Affymetrix filenames.
 # 2008-06-12
 # o Added translateFullname() to fix incorrect Affymetrix filenames, e.g.
 #   'Mapping50K_Hind_probe_tab' instead of 'Mapping50K_Hind240_probe_tab'.
