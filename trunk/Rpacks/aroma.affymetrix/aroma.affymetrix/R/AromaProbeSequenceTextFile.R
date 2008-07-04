@@ -358,63 +358,43 @@ setMethodS3("isMissing", "AromaProbeSequenceTextFile", function(this, cells=NULL
   }
 
 
-  con <- file(pathname, open="rb");
-  on.exit({
-    close(con);
-  })
+  verbose && cat(verbose, "Pathname: ", pathname);
 
-  # Move to start of data section
+  verbose && cat(verbose, "Cells to be interrogated:");
+  verbose && str(verbose, cells);
+
   dataOffset <- getDataFileOffset(this);
-  seek(con=con, where=dataOffset, origin="start", rw="read");
+  verbose && cat(verbose, "File offset to data section: ", dataOffset);
 
+  seqLength <- as.integer(probeLengths+1);
+  offset <- dataOffset + as.integer(1);
   if (is.null(cells)) {
-    rCells <- c(1, nbrOfCells);
+    idxs <- seq(from=offset, to=offset+(seqLength*(nbrOfCells-1)), by=seqLength);
   } else {
-    rCells <- range(cells);
+    idxs <- offset + seqLength*cells;
+  }
+  rm(cells);
+
+  verbose && cat(verbose, "File positions:");
+  verbose && str(verbose, idxs);
+
+  bfr <- readBinFragments(pathname, what="raw", idxs=idxs);
+  rm(idxs);
+  verbose && cat(verbose, "Raw data read:");
+  verbose && str(verbose, bfr);
+
+  isMissing <- (bfr == charToRaw(" "));
+  rm(bfr);
+  verbose && cat(verbose, "isMissing:");
+  verbose && str(verbose, isMissing);
+  verbose && str(verbose, which(isMissing));
+
+  # Sanity check
+  if (length(isMissing) != nbrOfCells) {
+    throw("The length of the result vector does not match the number of cells interrogates: ", length(isMissing), " != ", nbrOfCells);
   }
 
-  allFirst <- raw(nbrOfCells);
-  nbrOfCellsRead <- 100e3;
-  seqLength <- as.integer(probeLengths+1);
-  CHUNK.SIZE <- seqLength*nbrOfCellsRead;
-  firstBase <- seq(from=1, to=CHUNK.SIZE, by=seqLength);
-  cellOffset <- nextCell <- 0;
-  while (TRUE) {
-    # No more cells to read?
-    if (nextCell > rCells[2])
-      break;
-
-    # Read big chunk of sequence data
-    bfr <- readBin(con=con, what="raw", n=CHUNK.SIZE);
-    n <- length(bfr);
-    if (n == 0)
-      break;
-
-    # Keep only the first base in each sequence
-    if (n < CHUNK.SIZE) {
-      firstBase <- seq(from=1, to=n, by=seqLength);
-      nbrOfCellsRead <- length(firstBase);
-      idxs <- 1:nbrOfCellsRead;
-    }
-    bfr <- bfr[firstBase];
-
-    # Keep only the sequences asked for
-    idxs <- 1:nbrOfCellsRead;
-    if (is.null(cells)) {
-    } else {
-      keep <- match(nextCell + idxs, cells);
-      keep <- which(is.finite(keep));
-      idxs <- idxs[keep];
-      bfr <- bfr[keep];
-    }
-
-    allFirst[cellOffset+idxs] <- bfr;
-
-    cellOffset <- cellOffset + length(idxs);
-    nextCell <- nextCell + nbrOfCellsRead;
-  } # while()
-  
-  (allFirst == charToRaw(" "));
+  isMissing;
 })
 
 
@@ -467,7 +447,6 @@ setMethodS3("readRawSequences", "AromaProbeSequenceTextFile", function(this, cel
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Identify byte intervals to be read
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Identify cell-index intervals
   if (is.null(cells)) {
     fromTo <- matrix(c(1,nbrOfCells), ncol=2);
   } else {
@@ -475,7 +454,7 @@ setMethodS3("readRawSequences", "AromaProbeSequenceTextFile", function(this, cel
   }
 
   # Translate to intervals in bytes
-  seqLength <- probeLengths+1;
+  seqLength <- as.integer(probeLengths+1);
   fromTo <- seqLength*(fromTo-1)+1;
   fromTo[,2] <- fromTo[,2] + probeLengths;
   fromTo <- dataOffset + fromTo;
@@ -735,8 +714,6 @@ setMethodS3("updateSequenceStrings", "AromaProbeSequenceTextFile", function(this
 
 
 setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NULL, ..., force=FALSE, verbose=FALSE) {
-  require("matchprobes") || throw("Package not loaded: matchprobes");
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -797,11 +774,13 @@ setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NUL
   # Count in chunks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   counts <- matrix(as.integer(NA), nrow=nbrOfCells, ncol=4);
-  colnames(counts) <- colnames(matchprobes::countbases("A"));
+  colnames(counts) <- c("A", "T", "C", "G");
+  rawValues <- charToRaw(paste(colnames(counts), collapse=""));
 
   CHUNK.SIZE <- 1e6;
   offset <- 0;
   chunk <- 1;
+  # Values to count/tabulate
   nbrOfChunks <- ceiling(length(cells) / CHUNK.SIZE);
   while (length(cells) > 0) {
     verbose && enter(verbose, sprintf("Chunk #%d of %d", chunk, nbrOfChunks));
@@ -815,21 +794,29 @@ setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NUL
     verbose && str(verbose, cellsChunk);
 
     # Read sequences
-    seqs <- readSequenceStrings(this, cells=cellsChunk, ..., 
+    seqs <- readRawSequenceMatrix(this, cells=cellsChunk, ..., 
                                                 verbose=less(verbose, 25));
     rm(cellsChunk);
     verbose && cat(verbose, "Sequences read:");
     verbose && str(verbose, seqs);
 
     # Read fewer cells?
-    n2 <- length(seqs);
+    n2 <- nrow(seqs);
     if (n2 < n) {
       n <- n2;
       idxs <- 1:n;
     }
 
     # Count bases
-    countsChunk <- matchprobes::countbases(seqs);
+    countsChunk <- matrixStats::rowTabulates(seqs, values=rawValues);
+
+    # Identify missing probe sequences
+    rowCounts <- rowSums(countsChunk);
+    missing <- which(rowCounts == 0);
+    rm(rowCounts);
+    countsChunk[missing,] <- as.integer(NA);
+    rm(missing);
+
     rm(seqs);
     verbose && cat(verbose, "Counts:");
     verbose && str(verbose, countsChunk);
@@ -1183,6 +1170,13 @@ setMethodS3("allocateFromCdf", "AromaProbeSequenceTextFile", function(static, cd
 
 ############################################################################
 # HISTORY:
+# 2008-07-01
+# o BUG FIX: isMissing(..., cells=c(1,n)) returned n values.
+# o Now countBases() uses matrixStats::rowTabulates() to count bases instead
+#   of matchprobes::basecounts(). The reason for this is that rowTabulates()
+#   can work off the raw sequence matrices without having to translate them
+#   to strings.  rowTabulates() is also not hardwired to count only ATCG:s,
+#   which we will make use of later.
 # 2008-06-21
 # o Now countBases() caches results.
 # 2008-06-17

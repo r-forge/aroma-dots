@@ -466,10 +466,10 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
   # Garbage collect
   rm(params); gc();
 
-  verbose && cat(verbose, "Calling normalizeQuantile() with arguments:");
+  verbose && cat(verbose, "Calling aroma.light::normalizeQuantileRank() with arguments:");
   verbose && str(verbose, args);
   args$verbose <- verbose;
-  outputDataSet <- do.call("normalizeQuantile", args=args);
+  outputDataSet <- do.call("normalizeQuantileRank", args=args);
 
   # Garbage collect
   gc <- gc();
@@ -487,6 +487,9 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
 
 ############################################################################
 # HISTORY:
+# 2008-07-03
+# o Now process() calls normalizeQuantileRank(), which is the new updated
+#   name for normalizeQuantile().
 # 2007-04-19
 # o BUG FIX: Added missing getExclCells() to QuantileNormalization.
 #   Thanks Elizabeth Purdom for the report.

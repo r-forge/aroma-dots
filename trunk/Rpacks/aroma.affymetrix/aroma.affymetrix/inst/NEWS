@@ -1,10 +1,17 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.3.1 [2008-06-26]
+Version: 0.9.3.1 [2008-07-03]
 o Now AffymetrixProbeTabFile inherits from TabularTextFile and
   "implements" AromaPlatformInterface.  Previously it inherited
   from the AffymetrixFile class.
+o MEMORY OPTIMIZATION: When calling extractRawCopyNumbers(obj) on an
+  CopyNumberChromosomalModel object, the result would be cached in memory
+  (in the object). This would result in an increasing memory usage when
+  data was extracted from more and more arrays. The cache could be cleared
+  by calling gc(obj), but avoid this problem by default, the method does
+  no longer cache results.  To cache, the method has to be called with
+  argument 'cache=TRUE'.  Thanks Jason Li for reporting this.
 o BUG FIX: getChipType() of AffymetrixCelFile did not pass down '...'
   causing for instance getChipType(..., fullname=FALSE) to still return
   tags for ChipEffectFile:s.
