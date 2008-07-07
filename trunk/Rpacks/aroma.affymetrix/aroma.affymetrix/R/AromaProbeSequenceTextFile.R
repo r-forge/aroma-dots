@@ -888,7 +888,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
     chipTypeSrc <- getChipType(srcFile, fullname=FALSE);
     if (!identical(chipTypeSrc, chipType)) {
       throw("Argument 'srcFile' has a different chip type: ", 
-                                                    chipTypeSrc, chipType);
+                                            chipTypeSrc, " != ", chipType);
     }
   } else {
     throw("Argument 'srcFile' is not an AffymetrixProbeTabFile: ", 
@@ -948,6 +948,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
     }
 
     cells <- nbrOfColumns*df[,"probeYPos"] + df[,"probeXPos"] + as.integer(1);
+
     # Sanity check
     dups <- duplicated(cells);
     hasDuplicates <- any(dups);
@@ -960,7 +961,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
     }
     rm(dups);
 
-
+    # Clean up to save memory
     df[["probeXPos"]] <- df[["probeYPos"]] <- NULL;
     seqs <- df[,"probeSequence"];
     rm(df);
@@ -1154,7 +1155,7 @@ setMethodS3("allocateFromCdf", "AromaProbeSequenceTextFile", function(static, cd
 
 
   platform <- getPlatform(cdf);
-  chipType <- getChipType(cdf);
+  chipType <- getChipType(cdf, fullname=FALSE);
   nbrOfRows <- nbrOfRows(cdf);
   nbrOfColumns <- nbrOfColumns(cdf);
   probeLengths <- 25;
@@ -1170,6 +1171,8 @@ setMethodS3("allocateFromCdf", "AromaProbeSequenceTextFile", function(static, cd
 
 ############################################################################
 # HISTORY:
+# 2008-07-07
+# o Now allocateFromCdf() only uses the 'name' part of the chip type.
 # 2008-07-01
 # o BUG FIX: isMissing(..., cells=c(1,n)) returned n values.
 # o Now countBases() uses matrixStats::rowTabulates() to count bases instead
