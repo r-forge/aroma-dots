@@ -466,10 +466,10 @@ setMethodS3("process", "QuantileNormalization", function(this, ..., force=FALSE,
   # Garbage collect
   rm(params); gc();
 
-  verbose && cat(verbose, "Calling aroma.light::normalizeQuantileRank() with arguments:");
+  verbose && cat(verbose, "Calling aroma.light::normalizeQuantile() with arguments:");
   verbose && str(verbose, args);
   args$verbose <- verbose;
-  outputDataSet <- do.call("normalizeQuantileRank", args=args);
+  outputDataSet <- do.call("normalizeQuantile", args=args);
 
   # Garbage collect
   gc <- gc();

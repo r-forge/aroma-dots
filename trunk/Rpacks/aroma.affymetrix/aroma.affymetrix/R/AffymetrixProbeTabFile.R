@@ -89,19 +89,30 @@ setMethodS3("as.character", "AffymetrixProbeTabFile", function(x, ...) {
 
 
 setMethodS3("translateFullName", "AffymetrixProbeTabFile", function(this, name, ...) {
-  name <- gsub("[._]probe_tab", "", name);
+  name <- gsub("[._]probe(|[._]tab)", "", name);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Turning special Affymetrix tags into regular tags
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  name <- gsub("[.](CN)(|[,_].*)", ",\\1\\2", name);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Patching incorrect Affymetrix file names
-  # o Mapping50K_Hind -> Mapping50K_Hind240
-  # o Mapping50K_Xba  -> Mapping50K_Xba240
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  map <- c(
+    "HG-U133-PLUS" = "HG-U133_Plus_2",
+    "Mapping50K_Hind" = "Mapping50K_Hind240",
+    "Mapping50K_Xba" = "Mapping50K_Xba240"
+  );
 
-  pattern <- "^(Mapping50K_Hind|Mapping50K_Xba)(,.*|$)";
-  if (regexpr(pattern, name) != -1) {
-    name <- gsub(pattern, "\\1240\\2", name);
+  patterns <- sprintf("^(%s)(,.*|$)", names(map));
+  idx <- sapply(patterns, FUN=regexpr, name);
+  idx <- which(idx != -1);
+  if (length(idx) > 0) {
+    idx <- idx[1];
+    name <- gsub(patterns[idx], sprintf("%s\\2", map[idx]), name);
   }
-
+  
   name <- NextMethod("translateFullName", this, name, ...);
   name;
 })
@@ -110,9 +121,9 @@ setMethodS3("translateFullName", "AffymetrixProbeTabFile", function(this, name, 
 setMethodS3("hasColumnHeader", "AffymetrixProbeTabFile", function(this, ...) {
   # Infer if there is a column header or not
   hdr <- readRawHeader(this);
-  hasColumnHeader <- any(regexpr("^PROBESET", hdr$topRows[[1]]) != -1);
+  hasColumnHeader <- any(regexpr("^(PROBESET|Probe Set)", hdr$topRows[[1]]) != -1);
   hasColumnHeader;
-})
+}, protected=TRUE)
 
 
 
@@ -120,17 +131,26 @@ setMethodS3("translateColumnNames", "AffymetrixProbeTabFile", function(this, nam
 ##  # Remove all prefixes "PROBE_"
 ##  names <- gsub("^PROBE_", "", names);
 
-  # Convert 'FOO_BAR_DOO' and 'FOO.BAR.DOO' to 'foo bar doo'?
+  # Convert 'Foo_baR_dOo' and 'FOO.baR.dOo' to 'Foo baR dOo'?
   if (any(regexpr("[_.]", names) != -1)) {
-    names <- tolower(gsub("[_.]", " ", names));
+    names <- gsub("[_.]", " ", names);
+
+    # Convert to lower case
+    names <- tolower(names);
   }
 
-  # Finally, convert 'Foo bar Doo' to 'fooBarDoo'
+
+  lcNames <- tolower(names);
+  names[lcNames == "probe set name"] <- "probeset id";
+  names[lcNames == "probe x"] <- "probe x pos";
+  names[lcNames == "probe y"] <- "probe y pos";
+
+  # Finally, convert 'foo bar doo' to 'fooBarDoo'
   names <- toCamelCase(names);
 
   names <- NextMethod("translateColumnNames", this, names, ...);
   names;
-})
+}, protected=TRUE)
 
 
 
@@ -138,52 +158,57 @@ setMethodS3("getColumnNames", "AffymetrixProbeTabFile", function(this, ...) {
   columns <- NextMethod("getColumnNames", this, ...);
 
   if (is.null(columns)) {
+    # Has column header?
     topRow <- getHeader(this)$topRows[[1]];
     nbrOfColumns <- length(topRow);
     defColumns <- sprintf("V%02d", 1:nbrOfColumns);
-
     columns <- rep(NA, nbrOfColumns);
 
-    # Identify PROBESET_ID
-    pattern <- "^[a-zA-Z]+[a-zA-Z0-9]_[a-zA-Z0-9].*";
-    pattern <- toAsciiRegExprPattern(pattern);
-    idx <- grep(pattern, topRow);
-    if (length(idx) > 0)
-      columns[idx] <- "PROBESET_ID";
-
-    # Identify PROBE_SEQUENCE
-    pattern <- "^[ACGT]{25}$";
-    idx <- grep(pattern, topRow);
-    if (length(idx) > 0)
-      columns[idx] <- "PROBE_SEQUENCE";
-
-    # Identify PROBE_TYPE
-    pattern <- "^(PM|MM)$";
-    idx <- grep(pattern, topRow);
-    if (length(idx) > 0)
-      columns[idx] <- "PROBE_TYPE";
-
-    # Identify TARGET_STRANDEDNESS
-    pattern <- "^(\\+|-|f|r)$";
-    idx <- grep(pattern, topRow);
-    if (length(idx) > 0)
-      columns[idx] <- "TARGET_STRANDEDNESS";
-
-    # Identify ALLELE
-    pattern <- "^[ACGT]$";
-    idx <- grep(pattern, topRow);
-    if (length(idx) > 0)
-      columns[idx] <- "ALLELE";
-
-    # Guess remaining
-    idxs <- which(is.na(columns));
-    nidxs <- length(idxs);
-    if (nidxs >= 1)
-      columns[idxs[1]] <- "PROBE_X_POS";
-    if (nidxs >= 2)
-      columns[idxs[2]] <- "PROBE_Y_POS";
-    if (nidxs >= 3)
-      columns[idxs[3]] <- "PROBE_INTERROGATION_POSITION";
+    if (hasColumnHeader(this)) {
+      columns <- topRow;
+    } else {
+      # Identify PROBESET_ID
+      pattern <- "^[a-zA-Z]+[a-zA-Z0-9]_[a-zA-Z0-9].*";
+      pattern <- toAsciiRegExprPattern(pattern);
+      idx <- grep(pattern, topRow);
+      if (length(idx) > 0) {
+        columns[idx] <- "PROBESET_ID";
+      }
+  
+      # Identify PROBE_SEQUENCE
+      pattern <- "^[ACGT]{25}$";
+      idx <- grep(pattern, topRow);
+      if (length(idx) > 0)
+        columns[idx] <- "PROBE_SEQUENCE";
+  
+      # Identify PROBE_TYPE
+      pattern <- "^(PM|MM)$";
+      idx <- grep(pattern, topRow);
+      if (length(idx) > 0)
+        columns[idx] <- "PROBE_TYPE";
+  
+      # Identify TARGET_STRANDEDNESS
+      pattern <- "^(\\+|-|f|r)$";
+      idx <- grep(pattern, topRow);
+      if (length(idx) > 0)
+        columns[idx] <- "TARGET_STRANDEDNESS";
+  
+      # Identify ALLELE
+      pattern <- "^[ACGT]$";
+      idx <- grep(pattern, topRow);
+      if (length(idx) > 0)
+        columns[idx] <- "ALLELE";
+  
+      # Guess remaining
+      idxs <- which(is.na(columns));
+      nidxs <- length(idxs);
+      if (nidxs >= 1)
+        columns[idxs[1]] <- "PROBE_X_POS";
+      if (nidxs >= 2)
+        columns[idxs[2]] <- "PROBE_Y_POS";
+      if (nidxs >= 3)
+        columns[idxs[3]] <- "PROBE_INTERROGATION_POSITION";
+    }
   }
 
   # Finally, translate any column names
@@ -196,16 +221,16 @@ setMethodS3("getColumnNames", "AffymetrixProbeTabFile", function(this, ...) {
 setMethodS3("getChipType", "AffymetrixProbeTabFile", function(this, ...) {
   pattern <- sprintf("[._]probe_tab$");
   chipType <- gsub(pattern, "", getName(this));
-  chipType <- gsub(pattern, "", getName(this));
 
   # Patch non-consistent Affymetrix filenames
   if (chipType == "Mapping10K") {
-    if (getFileSize(ptb) != 14452965) {
+    if (getFileSize(this) != 14452965) {
       chipType <- "Mapping10K_Xba142";
     } else {
       chipType <- "Mapping10K_Xba131";
     }
   }
+
 
   chipType;
 })
@@ -225,10 +250,17 @@ setMethodS3("getCdf", "AffymetrixProbeTabFile", function(this, ...) {
 })
 
 
-setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipType, paths=NULL, ..., verbose=FALSE) {
+setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipType, what=c("", "CN"), paths=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'what':
+  if (is.null(what)) {
+    what <- "";
+  } else {
+    what <- match.arg(what);
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -240,14 +272,28 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
   verbose && enter(verbose, "Searching for probe sequence file");
   verbose && cat(verbose, "Chip type: ", chipType);
 
-  pattern <- paste("[._]probe_tab$", sep="");
+  pattern <- paste("[._]probe[._]tab$", sep="");
+  if (what == "CN") {
+    pattern <- paste("[.]CN", pattern, sep="");
+  }
   verbose && cat(verbose, "Filename pattern: ", pattern);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Search in annotationData/chipTypes/<chipType>/
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  pathname <- findAnnotationDataByChipType(chipType, pattern);
-  verbose && cat(verbose, "First search: ");
+  pathname <- findAnnotationDataByChipType(chipType, pattern, 
+                                                          firstOnly=FALSE);
+  if (length(pathname) > 1) {
+    verbose && cat(verbose, "Located files:");
+    verbose && print(verbose, pathname);
+
+    # Identify the shortest matching filename
+    filenames <- basename(pathname);
+    pattern2 <- sprintf("^(%s)(.*)(%s)", chipType, pattern);
+    tags <- gsub(pattern2, "\\2", filenames);
+    idx <- which.min(nchar(tags));
+    pathname <- pathname[idx];
+  }
   verbose && print(verbose, pathname);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -331,8 +377,8 @@ setMethodS3("fromChipType", "AffymetrixProbeTabFile", function(static, ...) {
   byChipType(static, ...);
 }, static=TRUE) 
 
-setMethodS3("byChipType", "AffymetrixProbeTabFile", function(static, chipType, ...) {
-  pathname <- AffymetrixProbeTabFile$findByChipType(chipType);
+setMethodS3("byChipType", "AffymetrixProbeTabFile", function(static, chipType, what=NULL, ...) {
+  pathname <- AffymetrixProbeTabFile$findByChipType(chipType, what=what, ...);
   if (length(pathname) == 0)
     throw("Failed to located the Affymetrix probe tab file: ", chipType);
   newInstance(static, pathname, ...);
@@ -446,11 +492,18 @@ setMethodS3("readDataFrame2", "AffymetrixProbeTabFile", function(this, cells=NUL
 
 ############################################################################
 # HISTORY:
+# 2008-07-07
+# o Updated findByChipType() to search for pattern "[._]probe[._]tab$", 
+#   because all combinations exist.
+# 2008-07-06
+# o Added argument 'what' to findByChipType() and byChipType().
+# o Updated translateColumnNames() to handle more file format versions.
+# o Updated translateFullName() to fix more inconsistent filenames.
 # 2008-06-30
 # o Added getChipType() patch for infering the chiptype from inconsistent
 #   Affymetrix filenames.
 # 2008-06-12
-# o Added translateFullname() to fix incorrect Affymetrix filenames, e.g.
+# o Added translateFullName() to fix incorrect Affymetrix filenames, e.g.
 #   'Mapping50K_Hind_probe_tab' instead of 'Mapping50K_Hind240_probe_tab'.
 # o Added default filename pattern to ".*[._]probe_tab$".
 # 2008-04-14
