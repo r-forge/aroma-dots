@@ -130,18 +130,6 @@ setMethodS3("as.TrueColorImage", "Image", function(img, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("getImage", "matrix", function(z, ..., palette=NULL) {
-  img <- as.GrayscaleImage(z, ...);
-
-  if (!is.null(palette)) {
-    img <- colorize(img, palette=palette, ...);
-  }
-
-  img;
-}, protected=TRUE)
-
-
-
 ############################################################################
 # HISTORY:
 # 2008-03-14
