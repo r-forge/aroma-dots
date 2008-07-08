@@ -56,14 +56,15 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
     if (!inherits(dataSet, "SnpChipEffectSet"))
-      throw("Argument 'dataSet' is not an SnpChipEffectSet object: ", class(dataSet));
+      throw("Argument 'dataSet' is not an SnpChipEffectSet object: ", 
+                                                        class(dataSet)[1]);
 
 #    if (dataSet$combineAlleles != TRUE) {
 #      throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
 #    }
 
 #    if (!inherits(dataSet, "CnChipEffectSet"))
-#      throw("Argument 'dataSet' is not an CnChipEffectSet object: ", class(dataSet));
+#      throw("Argument 'dataSet' is not an CnChipEffectSet object: ", class(dataSet)[1]);
 
 #    if (dataSet$mergeStrands != TRUE) {
 #      throw("Currently only non-strands specific copy-number chip effects can be normalized, i.e. 'mergeStrands' must be TRUE");
@@ -73,13 +74,15 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
   # Argument 'targetFunctions':
   if (!is.null(targetFunctions)) {
     if (!is.list(targetFunctions)) {
-      throw("Argument 'targetFunctions' is not a list: ", class(targetFunctions)[1]);
+      throw("Argument 'targetFunctions' is not a list: ", 
+                                                class(targetFunctions)[1]);
     }
     
     # Validate each element
     for (kk in seq(along=targetFunctions)) {
       if (!is.function(targetFunctions[[kk]])) {
-        throw("One element in 'targetFunctions' is not a function: ", class(targetFunctions[[kk]])[1]);
+        throw("One element in 'targetFunctions' is not a function: ", 
+                                          class(targetFunctions[[kk]])[1]);
       }
     }
   }
@@ -807,6 +810,9 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2008-07-07
+# o Typo: The constructor error message for validating 'dataSet' outputted
+#   vector of messages because the whole class vector was pasted.
 # 2008-06-09
 # o Updated process() to normalize allele-specific estimates as well.
 #   We note that the different alleles are rescaled with the same factor,
