@@ -81,7 +81,6 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
     verbose && enter(verbose, "Optimize reading order");
     o <- order(cells);
     cells <- cells[o];
-    o <- order(o);
     verbose && exit(verbose);
   } else {
     o <- seq(length=ncells);
@@ -117,6 +116,9 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
 
 ############################################################################
 # HISTORY:
+# 2008-07-07 [MR; Mark Robinson, WEHI]
+# o BUG FIX: extractMatrix() of AffymetrixCelSet returned cells in a 
+#   different than requested.
 # 2008-03-11
 # o BUG FIX: extractMatrix(..., cells=NULL), the default, would throw
 #   'Error in order(cells) : argument 1 is not a vector'.
