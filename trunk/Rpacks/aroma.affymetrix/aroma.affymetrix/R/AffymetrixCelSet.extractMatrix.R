@@ -15,6 +15,7 @@
 #     If @NULL, all cells are considered.}
 #   \item{...}{Not used.}
 #   \item{field}{The field to be extracted.}
+#   \item{drop}{If @TRUE, singleton dimensions are dropped.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -32,7 +33,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ..., field=c("intensities", "stdvs", "pixels"), verbose=FALSE) {
+setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ..., field=c("intensities", "stdvs", "pixels"), drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -66,7 +67,7 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
   verbose && enter(verbose, "Getting data for the array set");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Allocate return array
+  # Allocate return matrix
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Allocating matrix");
   arrayNames <- getNames(this);
@@ -108,6 +109,11 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
   } # for (aa in ...)
   verbose && exit(verbose);
 
+  # Drop singleton dimensions?
+  if (drop) {
+    df <- drop(df);
+  }
+
   verbose && exit(verbose);
 
   df;
@@ -116,6 +122,8 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
 
 ############################################################################
 # HISTORY:
+# 2008-07-09
+# o Added argument drop=FALSE to extractMatrix().
 # 2008-07-07 [MR; Mark Robinson, WEHI]
 # o BUG FIX: extractMatrix() of AffymetrixCelSet returned cells in a 
 #   different than requested.

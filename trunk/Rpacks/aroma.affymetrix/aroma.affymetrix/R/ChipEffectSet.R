@@ -282,7 +282,7 @@ setMethodS3("findUnitsTodo", "ChipEffectSet", function(this, ...) {
 
 
 
-setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta", "sdTheta", "RLE", "NUSE"), verbose=FALSE) {
+setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta", "sdTheta", "RLE", "NUSE"), drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -339,12 +339,19 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta
     data <- NextMethod("extractMatrix", this, ..., field=field);
   }
 
+  # Drop singleton dimensions?
+  if (drop) {
+    data <- drop(data);
+  }
+
   data;
 })
 
 
 ############################################################################
 # HISTORY:
+# 2008-07-09
+# o Added argument drop=FALSE to extractMatrix().
 # 2008-05-08
 # o If paths=NULL in findByName(), it becomes the default argument value.
 # o Made fromFiles() protected.

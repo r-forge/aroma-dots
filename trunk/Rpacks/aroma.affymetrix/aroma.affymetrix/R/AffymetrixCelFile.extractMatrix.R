@@ -1,0 +1,70 @@
+setMethodS3("extractMatrix", "AffymetrixCelFile", function(this, cells=NULL, ..., field=c("intensities", "stdvs", "pixels"), drop=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'cells':
+  cdf <- getCdf(this);
+  if (is.null(cells)) {
+    ncells <- nbrOfCells(cdf);
+  } else {
+    cells <- Arguments$getIndices(cells, range=c(1,nbrOfCells(cdf)));
+    ncells <- length(cells);
+  }
+ 
+  # Argument 'field':
+  field <- match.arg(field);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+
+  verbose && enter(verbose, "Getting data for one array");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Allocate return matrix
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Allocating matrix");
+  df <- matrix(NA, nrow=ncells, ncol=1);
+  colnames(df) <- getName(this);
+  verbose && str(verbose, df);
+  verbose && printf(verbose, "RAM: %.2fMB\n", object.size(df)/1024^2);
+  verbose && exit(verbose);
+
+  if (!is.null(cells)) {
+    verbose && enter(verbose, "Optimize reading order");
+    o <- order(cells);
+    cells <- cells[o];
+    verbose && exit(verbose);
+  } else {
+    o <- seq(length=ncells);
+  }
+  
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && enter(verbose, "Retrieving data");
+  df[o,1] <- getData(this, indices=cells, fields=field, 
+                                           verbose=less(verbose))[[field]];
+  verbose && exit(verbose); 
+
+  # Drop singleton dimensions?
+  if (drop) {
+    df <- drop(df);
+  }
+
+  verbose && exit(verbose); 
+ 
+  df;
+}) # extractMatrix()
+
+
+############################################################################
+# HISTORY:
+# 2008-07-07
+# o Created from ditto for AffymetrixCelSet.
+############################################################################ 
