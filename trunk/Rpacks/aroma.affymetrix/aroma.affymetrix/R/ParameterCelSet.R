@@ -52,6 +52,7 @@ setConstructorS3("ParameterCelSet", function(...) {
 #   \item{field}{The field to be extracted.}
 #   \item{returnUgcMap}{If @TRUE, the (unit, group, cell) map is returned
 #     as an attribute.}
+#   \item{drop}{If @TRUE, singleton dimensions are dropped.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
@@ -70,7 +71,7 @@ setConstructorS3("ParameterCelSet", function(...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., field=c("intensities", "stdvs", "pixels"), returnUgcMap=FALSE, verbose=FALSE) {
+setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., field=c("intensities", "stdvs", "pixels"), returnUgcMap=FALSE, drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -151,10 +152,15 @@ setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., 
   } # for (aa in ...)
   verbose && exit(verbose);
 
-  verbose && exit(verbose);
+  # Drop singleton dimensions?
+  if (drop) {
+    df <- drop(df);
+  }
 
   if (returnUgcMap)
     attr(df, "unitGroupCellMap") <- ugcMap;
+
+  verbose && exit(verbose);
 
   df;
 }) # extractMatrix()
@@ -264,6 +270,8 @@ setMethodS3("extractDataFrame", "ParameterCelSet", function(this, addNames=FALSE
 
 ############################################################################
 # HISTORY:
+# 2008-07-09
+# o Added argument drop=FALSE to extractMatrix(). 
 # 2008-02-28
 # o Now argument 'units' also can be a UnitGroupCellMap.
 # 2008-02-22

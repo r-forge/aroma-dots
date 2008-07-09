@@ -1,10 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.3.1 [2008-07-07]
+Version: 0.9.3.1 [2008-07-09]
 o Now AffymetrixProbeTabFile inherits from TabularTextFile and
   "implements" AromaPlatformInterface.  Previously it inherited
   from the AffymetrixFile class.
+o Added extractMatrix() to AffymetrixCelFile for completeness.
+o Added argument 'drop=FALSE' to all extractMatrix().
 o MEMORY OPTIMIZATION: When calling extractRawCopyNumbers(obj) on an
   CopyNumberChromosomalModel object, the result would be cached in memory
   (in the object). This would result in an increasing memory usage when

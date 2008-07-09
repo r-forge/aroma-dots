@@ -644,7 +644,7 @@ setMethodS3("seqMatrixToStrings", "matrix", function(seqs, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("readSequenceStrings", "AromaProbeSequenceTextFile", function(this, ..., verbose=FALSE) {
+setMethodS3("readSequences", "AromaProbeSequenceTextFile", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -667,7 +667,8 @@ setMethodS3("readSequenceStrings", "AromaProbeSequenceTextFile", function(this, 
   seqs;
 })
 
-setMethodS3("updateSequenceStrings", "AromaProbeSequenceTextFile", function(this, ..., seqs, verbose=FALSE) {
+
+setMethodS3("updateSequences", "AromaProbeSequenceTextFile", function(this, ..., seqs, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -969,8 +970,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaProbeSequenceTextFile", fu
     verbose && str(verbose, cells);
     verbose && str(verbose, seqs);
 
-    updateSequenceStrings(this, cells=cells, seqs=seqs, 
-                                               verbose=less(verbose, 25));
+    updateSequences(this, cells=cells, seqs=seqs, verbose=less(verbose, 25));
     count <- count + length(cells);
 
     # Next set of rows
@@ -1122,8 +1122,7 @@ setMethodS3("inferMmFromPmSequences", "AromaProbeSequenceTextFile", function(thi
 #    o <- order(cells);
 #    cells <- cells[o];
 #    seqs <- seqs[o];
-    updateSequenceStrings(this, cells=cells, seqs=seqs, 
-                                                 verbose=less(verbose, 5));
+    updateSequences(this, cells=cells, seqs=seqs, verbose=less(verbose, 5));
     rm(cells, seqs);
     gc <- gc();
     verbose && print(verbose, gc);
@@ -1167,6 +1166,18 @@ setMethodS3("allocateFromCdf", "AromaProbeSequenceTextFile", function(static, cd
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # END: Affymetrix specific
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# DEPRECATED
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethodS3("readSequenceStrings", "AromaProbeSequenceTextFile", function(this, ...) {
+  readSequences(this, ...);
+}, deprecated=TRUE)
+
+setMethodS3("updateSequenceStrings", "AromaProbeSequenceTextFile", function(this, ...) {
+  updateSequences(this, ...);
+}, deprecated=TRUE)
 
 
 ############################################################################
