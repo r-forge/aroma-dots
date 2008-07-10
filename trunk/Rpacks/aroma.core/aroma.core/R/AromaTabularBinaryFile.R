@@ -1223,12 +1223,31 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
   colStats(x, FUN=median, ...);
 })
 
+setMethodS3("importFrom", "AromaTabularBinaryFile", function(this, srcFile, ...) {
+  methodNames <- sprintf("importFrom%s", class(srcFile));
 
+  # Search for importFrom<ClassName>() methods
+  keep <- sapply(methodNames, FUN=exists, mode="function");
+  methodNames <- methodNames[keep];
+
+  # Failure?
+  if (length(methodNames) == 0) {
+    throw("Cannot import from ", class(srcFile)[1], ". Failed to locate importFrom<ClassName>() method.");
+  }
+
+  # Use the first method
+  methodName <- methodNames[1];
+  fcn <- get(methodName, mode="function");
+
+  # Import data
+  fcn(this, srcFile=srcFile, ...);
+})
 
 
 ############################################################################
 # HISTORY:
 # 2008-07-09
+# o Added a general importFrom() that calls importFrom<ClassName>().
 # o Added support for 'raw' columns.
 # 2008-05-25
 # o BUG FIX: In several methods, when using verbose the on.exit() to close
