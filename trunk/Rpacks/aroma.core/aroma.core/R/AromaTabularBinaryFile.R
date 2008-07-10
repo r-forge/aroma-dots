@@ -104,7 +104,7 @@ setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ...
       return(hdr);
   }
 
-  knownDataTypes <- c("integer"=1, "double"=2);
+  knownDataTypes <- c("integer"=1, "double"=2, "raw"=3);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
@@ -148,6 +148,13 @@ setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ...
     if (any(!ok)) {
       cc <- which(!ok);
       throw("File format error. Detect one or more columns with invalid byte sizes, i.e. not in {1,2,4,8}: ", paste(paste(cc, sizes[cc], sep=":"), collapse=", "));
+    }
+
+    # Assert that 'raw' columns are only of size one
+    nok <- (sizes[types == "raw"] != 1);
+    if (any(nok)) {
+      cc <- which(nok);
+      throw("File format error. Detect one or more columns of data type 'raw' but of size different from one: ", paste(paste(cc, sizes[cc], sep=":"), collapse=", "));
     }
 
     # Are the columns signed or not?
@@ -649,13 +656,17 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
   size <- hdr$sizes[column];
   signed <- hdr$signeds[column];
 
-  # Censor integer data
-  if (type == "integer") {
-    # FYI: intNA <- as.integer(2^31);
-    if (signed) {
-      range <- c(1-2^(8*size-1), 2^(8*size-1));
-    } else {
-      range <- c(0, 2^(8*size)-1);
+  # Censor raw and integer data
+  if (type %in% c("raw", "integer")) {
+    if (type == "raw") {
+      range <- c(0, 255);
+    } else if (type == "integer") {
+      # FYI: intNA <- as.integer(2^31);
+      if (signed) {
+        range <- c(1-2^(8*size-1), 2^(8*size-1));
+      } else {
+        range <- c(0, 2^(8*size)-1);
+      }
     }
 
     censored <- FALSE;
@@ -674,6 +685,7 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
       warning(sprintf("Values to be assigned were out of range [%.0f,%.0f] and therefore censored to fit the range.", range[1], range[2]));
     }
   }
+
 
   # Coerce data
   # Data type information
@@ -859,7 +871,7 @@ setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, co
 # @keyword IO
 #*/########################################################################### 
 setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, path=NULL, nbrOfRows, types, sizes, signeds=TRUE, comment=NULL, overwrite=FALSE, skip=FALSE, footer=list(), ..., verbose=FALSE) {
-  knownDataTypes <- c("integer"=1, "double"=2);
+  knownDataTypes <- c("integer"=1, "double"=2, "raw"=3);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
@@ -929,6 +941,7 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
 
   nbrOfColumns <- length(types);
   nbrOfColumns <- Arguments$getInteger(nbrOfColumns, range=c(0,1000));
+print(nbrOfColumns);
 
   # Argument 'sizes':
   sizes <- Arguments$getIntegers(sizes, range=c(1,8));
@@ -940,6 +953,9 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
   sizes <- rep(sizes, length.out=nbrOfColumns);
 
   # Check (types, sizes)
+  if (any(types == "raw" & sizes > 1)) {
+    throw("Raws can only be stored as single bytes.");
+  }
   if (any(types == "integer" & sizes > 4)) {
     throw("Integers can only be stored as 1, 2 or 4 bytes, not 8.");
   }
@@ -1212,6 +1228,8 @@ setMethodS3("colMedians", "AromaTabularBinaryFile", function(x, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-09
+# o Added support for 'raw' columns.
 # 2008-05-25
 # o BUG FIX: In several methods, when using verbose the on.exit() to close
 #   an opened connection was overwritten.
