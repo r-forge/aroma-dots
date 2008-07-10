@@ -26,33 +26,12 @@
 # @author
 #
 # \seealso{
-#   @see "AromaTabularBinaryFile".
+#   @see "AromaCellTabularBinaryFile".
 # }
 #*/########################################################################### 
 setConstructorS3("AromaUnitTabularBinaryFile", function(...) {
-  extend(AromaTabularBinaryFile(...), c("AromaUnitTabularBinaryFile",
-                                              uses("AromaPlatformInterface")),
-    "cached:.unf" = NULL
-  );
+  extend(AromaMicroarrayTabularBinaryFile(...), "AromaUnitTabularBinaryFile");
 })
-
-
-setMethodS3("as.character", "AromaUnitTabularBinaryFile", function(x, ...) {
-  # To please R CMD check
-  this <- x;
-
-  s <- NextMethod("as.character", ...);
-  class <- class(s);
-
-  s <- c(s, sprintf("Platform: %s", getPlatform(this)));
-  s <- c(s, sprintf("Chip type: %s", getChipType(this)));
-  n <- length(s);
-  s <- s[c(1:(n-2), n, n-1)];
-
-  class(s) <- class;
-  s;
-})
-
 
 
 setMethodS3("clearCache", "AromaUnitTabularBinaryFile", function(this, ...) {
@@ -66,79 +45,16 @@ setMethodS3("clearCache", "AromaUnitTabularBinaryFile", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getFilenameExtension", "AromaUnitTabularBinaryFile", static=TRUE, abstract=TRUE);
 
 setMethodS3("nbrOfUnits", "AromaUnitTabularBinaryFile", function(this, ...) {
   nbrOfRows(this, ...);
 })
 
 
-setMethodS3("getPlatform", "AromaUnitTabularBinaryFile", function(this, ...) {
-  footer <- readFooter(this);
-  platform <- footer$platform;
 
-  if (is.null(platform)) {
-    # AD HOC: If there is no platform information in the file, then assume
-    # it is an Affymetrix platform.  Newer files are allocated with 
-    # platform information.  Older files have only be created for the 
-    # Affymetrix platform. /HB 2008-05-18.
-    platform <- "Affymetrix";
-    warning(sprintf("%s does not have a 'platform' footer attribute. Assuming platform 'Affymetrix': %s", class(this)[1], getPathname(this)));
-  } 
-
-  if (!is.null(platform)) {
-    platform <- as.character(platform);
-    platform <- unlist(strsplit(platform, split="[\t]"));
-    platform <- trim(platform);
-  }
-
-  platform;
-})
-
-
-setMethodS3("getChipType", "AromaUnitTabularBinaryFile", function(this, fullname=TRUE, .old=FALSE, ...) {
-  footer <- readFooter(this);
-  chipType <- footer$chipType;
-
-  if (is.null(chipType) && !.old) {
-    throw("File format error: This ", class(this)[1], " file does not contain information on chip type in the file footer.  This is because the file is of an older file format an is no longer supported.  Please update to a more recent version: ", getPathname(this));
-  }
-
-  if (.old) {
-    # Keep backward compatible for a while. /HB 2008-01-19
-    if (fullname) {
-      # Currently these files do not contain fullname chiptype information.
-      # Instead we have to search for a match CDF and use its chip type.
-      # Note, the CDF returned will depend of which CDF exists in the search
-      # path, if at all.  AD HOC! /HB 2007-12-10
-      unf <- getUnitNamesFile(this, ...);
-      chipType <- getChipType(unf, fullname=fullname);
-    } else {
-      chipType <- getName(this, ...);
-    }
-    chipType <- trim(chipType);
-    if (nchar(chipType) == 0)
-      throw("File format error: The inferred chip type is empty.");
-  } else {
-    if (!fullname) {
-      chipType <- gsub(",.*", "", chipType);
-    }
-    chipType <- trim(chipType);
-    if (nchar(chipType) == 0)
-      throw("File format error: The chip type according to the file footer is empty.");
-  }
-
-  if (!is.null(chipType)) {
-    chipType <- as.character(chipType);
-    chipType <- unlist(strsplit(chipType, split="[\t]"));
-    chipType <- trim(chipType);
-  }
-
-  chipType;
-})
-
-
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# BEGIN: UnitNamesFile
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 setMethodS3("getUnitNamesFile", "AromaUnitTabularBinaryFile", function(this, force=FALSE, ...) {
   unf <- this$.unf;
   if (force || is.null(unf)) {
@@ -151,91 +67,6 @@ setMethodS3("getUnitNamesFile", "AromaUnitTabularBinaryFile", function(this, for
 })
 
 
-setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, validate=TRUE, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  } 
-
-
-  verbose && enter(verbose, "Locating ", class(static)[1]);
-
-  pathname <- findByChipType(static, chipType=chipType, tags=tags, 
-                                                     firstOnly=TRUE, ...);
-  if (is.null(pathname)) {
-    throw("Could not locate a file for this chip type: ", 
-                                   paste(c(chipType, tags), collapse=","));
-  }
-
-  verbose && cat(verbose, "Located file: ", pathname);
-
-  # Create object
-  res <- newInstance(static, pathname);
-
-  verbose && exit(verbose);
-
-  res;
-}, static=TRUE)
-
-
-
-setMethodS3("fromChipType", "AromaUnitTabularBinaryFile", function(static, ...) {
-  byChipType(static, ...);
-}, deprecated=TRUE)
-
-
-setMethodS3("findByChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Search in annotationData/chipTypes/<chipType>/
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get fullname, name, and tags
-  fullname <- paste(c(chipType, tags), collapse=",");
-  parts <- unlist(strsplit(fullname, split=","));
-  # Strip 'monocell' parts
-  parts <- parts[parts != "monocell"];
-  chipType <- parts[1];
-  tags <- parts[-1];
-  fullname <- paste(c(chipType, tags), collapse=",");
-
-  ext <- getFilenameExtension(static);
-  ext <- paste(c(tolower(ext), toupper(ext)), collapse="|");
-  ext <- sprintf("(%s)", ext);
-
-  pattern <- sprintf("^%s.*[.]%s$", fullname, ext);
-  args <- list(chipType=chipType, ...);
-  args$pattern <- pattern;  # Override argument 'pattern'?
-#  args$firstOnly <- FALSE;
-#  str(args);
-  pathname <- do.call("findAnnotationDataByChipType", args=args);
-
-  # If not found, look for Windows shortcuts
-  if (is.null(pathname)) {
-    # Search for a Windows shortcut
-    pattern <- sprintf("^%s.*[.]%s[.]lnk$", chipType, ext);
-    args$pattern <- pattern;
-    pathname <- do.call("findAnnotationDataByChipType", args=args);
-    if (!is.null(pathname)) {
-      # ..and expand it
-      pathname <- filePath(pathname, expandLinks="any");
-      if (!isFile(pathname))
-        pathname <- NULL;
-    }
-  }
-
-  pathname;
-}, static=TRUE, protected=TRUE)
-
-
-
-
 setMethodS3("indexOfUnits", "AromaUnitTabularBinaryFile", function(this, names, ...) {
   # Map the unit names to the ones in the unit names file
   unf <- getUnitNamesFile(this);
@@ -243,7 +74,6 @@ setMethodS3("indexOfUnits", "AromaUnitTabularBinaryFile", function(this, names, 
   idxs <- match(names, unitNames);
   idxs;
 }, protected=TRUE)
-
 
 
 
@@ -263,29 +93,28 @@ setMethodS3("allocateFromUnitNamesFile", "AromaUnitTabularBinaryFile", function(
   platform <- getPlatform(unf);
 
   # Number of units
-  unf <- nbrOfUnits(unf);
+  nbrOfUnits <- nbrOfUnits(unf);
 
   fullname <- paste(c(chipType, tags), collapse=",");
   ext <- getFilenameExtension(static);
   filename <- sprintf("%s.%s", fullname, ext);
 
-  # Create tabular binary file
-  res <- allocate(static, filename=filename, path=path, 
-                                                nbrOfRows=nbrOfUnits, ...);
-
-
-  # Write attributes to footer
-  attrs <- list(platform=platform, chipType=chipType);
-  footer <- c(attrs, footer);
-  writeFooter(res, footer);
-
-  res;
+  # Create microarray tabular binary file
+  allocate(static, filename=filename, path=path, nbrOfRows=nbrOfUnits, 
+                                platform=platform, chipType=chipType, ...);
 }, static=TRUE)
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# END: UnitNamesFile
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 ############################################################################
 # HISTORY:
+# 2008-07-09
+# o Now AromaUnitTabularBinaryFile extends AromaMicroarrayTabularBinaryFile,
+#   which contains a lot of the methods previously in this class.
 # 2008-05-19
 # o Added getPlatform().
 # o Added platform-independent allocateFromUnitNamesFile() which now also
