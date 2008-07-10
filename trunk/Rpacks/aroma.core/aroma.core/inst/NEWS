@@ -2,6 +2,8 @@ Package: aroma.core
 ===================
 
 Version: 0.9.3.1 [2008-07-09]
+o Added a general importFrom() for AromaTabularBinaryFile, which
+  calls matching importFrom<ClassName>(), if found.
 o Added support for 'raw' data columns in AromaTabularBinaryFile.
 o BETA: Added readTableHeader().
 o BETA: Added AromaCellSequenceFile.

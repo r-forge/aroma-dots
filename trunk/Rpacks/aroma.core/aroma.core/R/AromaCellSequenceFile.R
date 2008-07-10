@@ -248,7 +248,7 @@ setMethodS3("readSequences", "AromaCellSequenceFile", function(this, ..., naValu
 
 
 setMethodS3("isMissing", "AromaCellSequenceFile", function(this, ...) {
-  res <- readSequenceMatrix(this, positions=1, what="raw", drop=TRUE);
+  res <- readSequenceMatrix(this, ..., positions=1, what="raw", drop=TRUE);
   res <- (res == as.raw(0));
   res;
 }, protected=TRUE)
@@ -444,14 +444,14 @@ setMethodS3("allocateFromCdf", "AromaCellSequenceFile", function(static, cdf, pa
 # END: Affymetrix specific
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-setMethodS3("importFromAromaProbeSequenceTextFile", "AromaCellSequenceFile", function(this, aps, cells=seq(length=nbrOfCells(this)), ...) {
+setMethodS3("importFromAromaProbeSequenceTextFile", "AromaCellSequenceFile", function(this, srcFile, cells=seq(length=nbrOfCells(this)), ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'aps':
-  if (!inherits(aps, "AromaProbeSequenceTextFile")) {
-    throw("Argument 'aps' is not an AromaProbeSequenceTextFile: ", 
-                                                             class(aps)[1]);
+  # Argument 'srcFile':
+  if (!inherits(srcFile, "AromaProbeSequenceTextFile")) {
+    throw("Argument 'srcFile' is not an AromaProbeSequenceTextFile: ", 
+                                                             class(srcFile)[1]);
   }
 
   # Argument 'cells':
@@ -471,16 +471,16 @@ setMethodS3("importFromAromaProbeSequenceTextFile", "AromaCellSequenceFile", fun
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Assert compatibility
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (getPlatform(aps) != getPlatform(this)) {
-    throw("The platform of argument 'aps' is not '", getPlatform(this), "': ", getPlatform(aps));
+  if (getPlatform(srcFile) != getPlatform(this)) {
+    throw("The platform of argument 'srcFile' is not '", getPlatform(this), "': ", getPlatform(srcFile));
   }
 
-  if (getChipType(aps) != getChipType(this)) {
-    throw("The chip type of argument 'aps' is not '", getChipType(this), "': ", getChipType(aps));
+  if (getChipType(srcFile, fullname=FALSE) != getChipType(this, fullname=FALSE)) {
+    throw("The chip type of argument 'srcFile' is not '", getChipType(this), "': ", getChipType(srcFile));
   }
 
-  if (nbrOfCells(aps) != nbrOfCells(this)) {
-    throw("The number of cells of argument 'aps' is not ", nbrOfCells(this), ": ", nbrOfCells(aps));
+  if (nbrOfCells(srcFile) != nbrOfCells(this)) {
+    throw("The number of cells of argument 'srcFile' is not ", nbrOfCells(this), ": ", nbrOfCells(srcFile));
   }
 
 
@@ -501,8 +501,8 @@ setMethodS3("importFromAromaProbeSequenceTextFile", "AromaCellSequenceFile", fun
     verbose && str(verbose, cellsChunk);
 
     # Read data
-    seqs <- readSequenceMatrix(aps, cells=cellsChunk, map=as.raw(c(1:4,0)), 
-                                                  verbose=less(verbose, 5));
+    seqs <- readRawSequenceMatrix(srcFile, cells=cellsChunk, 
+                           map=as.raw(c(1:4,0)), verbose=less(verbose, 5));
     verbose && cat(verbose, "Raw sequence matrix read:");
     verbose && str(verbose, seqs);
 
