@@ -22,7 +22,7 @@
 \code{~~+--}\code{GenericDataFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.core]{AromaMicroarrayDataFile}}, \link[aroma.core]{AromaTabularBinaryFile}, \link[aroma.core]{AromaUgpFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}, \emph{\link[aroma.core]{GenericTabularFile}}, \link[aroma.core]{SampleAnnotationFile}, \link[aroma.core]{TabularTextFile}\cr
+\link[aroma.core]{AromaCellSequenceFile}, \emph{\link[aroma.core]{AromaCellTabularBinaryFile}}, \emph{\link[aroma.core]{AromaMicroarrayDataFile}}, \emph{\link[aroma.core]{AromaMicroarrayTabularBinaryFile}}, \link[aroma.core]{AromaTabularBinaryFile}, \link[aroma.core]{AromaUgpFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}, \emph{\link[aroma.core]{GenericTabularFile}}, \link[aroma.core]{SampleAnnotationFile}, \link[aroma.core]{TabularTextFile}\cr
 
 public static class \bold{GenericDataFile}\cr
 extends \link[R.oo]{Object}\cr
@@ -72,7 +72,7 @@ extends \link[R.oo]{Object}\cr
 
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }
