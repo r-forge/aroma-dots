@@ -203,12 +203,13 @@ setMethodS3("findByChipType", "AromaMicroarrayTabularBinaryFile", function(stati
 
 setMethodS3("allocate", "AromaMicroarrayTabularBinaryFile", function(static, platform=footer$platform, chipType=footer$chipType, footer=list(), ...) {
   # S3 NextMethod() does not work here
-str(list(...));
   res <- allocate.AromaTabularBinaryFile(static, ...);
 
   # Write attributes to footer
   attrs <- list(platform=platform, chipType=chipType);
-  footer <- c(attrs, footer);
+  for (key in names(attrs)) {
+    footer[[key]] <- attrs[[key]];
+  }
   writeFooter(res, footer);
 
   res;

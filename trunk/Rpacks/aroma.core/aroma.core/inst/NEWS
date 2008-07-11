@@ -1,7 +1,11 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.3.1 [2008-07-09]
+Version: 0.9.3.1 [2008-07-10]
+o SPEED UP: Now all AromaTabularBinaryFile:s, such as AromaUgpFile,
+  read data much faster after two modifications to readDataFrame():
+  (i) rownames are no longer generate, if not asked for explicitly,
+  and (ii) garbage collection is no longer done after each column.
 o Added a general importFrom() for AromaTabularBinaryFile, which
   calls matching importFrom<ClassName>(), if found.
 o Added support for 'raw' data columns in AromaTabularBinaryFile.
