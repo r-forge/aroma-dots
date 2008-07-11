@@ -399,7 +399,7 @@ setMethodS3("isMissing", "AromaProbeSequenceTextFile", function(this, cells=NULL
 
 
 # \item{cells}{Non-duplicated ordered cell indices.}
-setMethodS3("readRawSequences", "AromaProbeSequenceTextFile", function(this, cells=NULL, ..., verbose=FALSE) {
+setMethodS3("readRawSequences", "AromaProbeSequenceTextFile", function(this, cells=NULL, ..., map=NULL, verbose=FALSE) {
   params <- getHeaderParameters(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -464,6 +464,15 @@ setMethodS3("readRawSequences", "AromaProbeSequenceTextFile", function(this, cel
   # Reading raw data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   bfr <- readBinFragments(getPathname(this), what="raw", idxs=fromTo);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Remap?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (!is.null(map)) {
+    rawValues <- charToRaw("ACGT ");
+    bfr <- remap(bfr, map=rawValues, values=map);
+  }
 
   verbose && exit(verbose);
 
@@ -712,151 +721,6 @@ setMethodS3("updateSequences", "AromaProbeSequenceTextFile", function(this, ...,
   updateRawSequences(this, ..., seqs=seqs, verbose=less(verbose, 5));
 })
 
-
-
-setMethodS3("countBases", "AromaProbeSequenceTextFile", function(this, cells=NULL, ..., force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Argument 'cells':
-  nbrOfCells <- nbrOfCells(this);
-  if (is.null(cells)) {
-  } else {
-    if (is.matrix(cells) || is.data.frame(cells)) {
-      cells <- getCellsFromXY(this, cells);
-    }
-    cells <- Arguments$getIndices(cells, range=c(1, nbrOfCells));
-    nbrOfCells <- length(cells);
-  }
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-
-  verbose && enter(verbose, "Counting occurances of each base");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Check for cached results
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  key <- list();
-  chipType <- getChipType(this);
-  key <- list(method="countBases", class=class(this)[1], 
-              chipType=chipType, fullname=getFullName(this), cells=cells);
-  dirs <- c("aroma.affymetrix", chipType);
-  if (!force) {
-    counts <- loadCache(key=key, dirs=dirs);
-    if (!is.null(counts)) {
-      verbose && cat(verbose, "Cached results found.");
-      return(counts);
-    }
-  }
- 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Optimize reading order?
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (is.null(cells)) {
-    cells <- 1:nbrOfCells;
-    reorder <- FALSE;
-  } else {
-    o <- order(cells);
-    cells <- cells[o];
-    reorder <- TRUE;
-    gc <- gc();
-    verbose && print(verbose, gc);
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Count in chunks
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  counts <- matrix(as.integer(NA), nrow=nbrOfCells, ncol=4);
-  colnames(counts) <- c("A", "T", "C", "G");
-  rawValues <- charToRaw(paste(colnames(counts), collapse=""));
-
-  CHUNK.SIZE <- 1e6;
-  offset <- 0;
-  chunk <- 1;
-  # Values to count/tabulate
-  nbrOfChunks <- ceiling(length(cells) / CHUNK.SIZE);
-  while (length(cells) > 0) {
-    verbose && enter(verbose, sprintf("Chunk #%d of %d", chunk, nbrOfChunks));
-
-    # Identify cells to read in this chunk
-    n <- min(CHUNK.SIZE, length(cells));
-    idxs <- 1:n;
-    cellsChunk <- cells[idxs];
-
-    verbose && cat(verbose, "Cells to be read:");
-    verbose && str(verbose, cellsChunk);
-
-    # Read sequences
-    seqs <- readRawSequenceMatrix(this, cells=cellsChunk, ..., 
-                                                verbose=less(verbose, 25));
-    rm(cellsChunk);
-    verbose && cat(verbose, "Sequences read:");
-    verbose && str(verbose, seqs);
-
-    # Read fewer cells?
-    n2 <- nrow(seqs);
-    if (n2 < n) {
-      n <- n2;
-      idxs <- 1:n;
-    }
-
-    # Count bases
-    countsChunk <- matrixStats::rowTabulates(seqs, values=rawValues);
-
-    # Identify missing probe sequences
-    rowCounts <- rowSums(countsChunk);
-    missing <- which(rowCounts == 0);
-    rm(rowCounts);
-    countsChunk[missing,] <- as.integer(NA);
-    rm(missing);
-
-    rm(seqs);
-    verbose && cat(verbose, "Counts:");
-    verbose && str(verbose, countsChunk);
-
-    # Store
-    counts[offset+idxs,] <- countsChunk;
-    rm(countsChunk);
-    gc <- gc();
-    verbose && print(verbose, gc);
-
-    # Next set of cells
-    offset <- offset + n;
-    cells <- cells[-idxs];
-    rm(idxs);
-
-    gc <- gc();
-    verbose && print(verbose, gc);
-
-    chunk <- chunk + 1;
-    verbose && exit(verbose);
-  } # while()
-  rm(cells);
-
-  # Reorder?
-  if (reorder) {
-    o <- order(o);
-    counts <- counts[o,,drop=FALSE];
-    rm(o);
-    gc <- gc();
-    verbose && print(verbose, gc);
-  }
-
-  # Cache results
-  saveCache(key=key, dirs=dirs, counts);
-
-  verbose && exit(verbose);
-
-  counts;
-}, protected=TRUE)
 
 
 setMethodS3("readSequenceMatrix", "AromaProbeSequenceTextFile", function(this, ...) {
