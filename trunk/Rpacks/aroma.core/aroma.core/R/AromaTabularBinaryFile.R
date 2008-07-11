@@ -455,7 +455,7 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
 }, protected=TRUE)
 
 
-setMethodS3("readColumns", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, ..., retRowNames=FALSE, drop=FALSE, verbose=FALSE) {
   # Open file
   pathname <- getPathname(this);
   con <- file(pathname, open="rb");
@@ -468,13 +468,22 @@ setMethodS3("readColumns", "AromaTabularBinaryFile", function(this, rows=NULL, c
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'rows':
+  rownames <- NULL;
   if (is.null(rows)) {
     rows <- seq(length=hdr$nbrOfRows);
   } else if (is.logical(rows)) {
     rows <- which(rows);
     rows <- Arguments$getIndices(rows, range=c(1, hdr$nbrOfRows));
+    if (retRowNames) {
+      rownames <- as.character(rows);
+      rownames <- make.unique(rownames);
+    }
   } else {
     rows <- Arguments$getIndices(rows, range=c(1, hdr$nbrOfRows));
+    if (retRowNames) {
+      rownames <- as.character(rows);
+      rownames <- make.unique(rownames);
+    }
   }
 
   # Argument 'columns':
@@ -503,9 +512,9 @@ setMethodS3("readColumns", "AromaTabularBinaryFile", function(this, rows=NULL, c
   verbose && cat(verbose, "Number of rows: ", length(rows));
   verbose && cat(verbose, "Column classes: ", paste(colClasses, collapse=", "));
   data <- dataFrame(colClasses=colClasses, nrow=length(rows));
-  colnames(data) <- make.unique(as.character(seq(length=ncol(data))));
-  rownames(data) <- make.unique(as.character(rows));
-  verbose && print(verbose, data, level=-30);
+  if (!is.null(rownames))
+    rownames(data) <- rownames;
+  verbose && str(verbose, data, level=-30);
   verbose && exit(verbose);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -555,22 +564,30 @@ setMethodS3("readColumns", "AromaTabularBinaryFile", function(this, rows=NULL, c
     data[[o[kk]]] <- values;
 
     rm(values);
-    gc <- gc();
+#    gc <- gc();  # This slows things down. /HB 2008-07-10
 
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
   
-  # Add column names.
+  # Add column names
   colnames(data) <- getColumnNames(this)[columns];
+
+  if (drop) {
+    if (ncol(data) == 1) {
+      data <- data[,1,drop=TRUE];
+    } else if (nrow(data) == 1) {
+      data <- data[1,,drop=TRUE];
+    }
+  }
 
   data;
 }, protected=TRUE)
 
 
 
-setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, ...) {
-  readColumns(this, ...);
+setMethodS3("readColumns", "AromaTabularBinaryFile", function(this, ...) {
+  readDataFrame(this, ...);
 })
 
 
@@ -941,7 +958,6 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
 
   nbrOfColumns <- length(types);
   nbrOfColumns <- Arguments$getInteger(nbrOfColumns, range=c(0,1000));
-print(nbrOfColumns);
 
   # Argument 'sizes':
   sizes <- Arguments$getIntegers(sizes, range=c(1,8));
@@ -1246,6 +1262,10 @@ setMethodS3("importFrom", "AromaTabularBinaryFile", function(this, srcFile, ...)
 
 ############################################################################
 # HISTORY:
+# 2008-07-10
+# o Added argument 'drop=FALSE' to readDataFrame().
+# o SPEED UP: Removed gc() in inner loop of readDataFrame().
+# o Now readColumns() calls readDataFrame() and not vice versa.
 # 2008-07-09
 # o Added a general importFrom() that calls importFrom<ClassName>().
 # o Added support for 'raw' columns.

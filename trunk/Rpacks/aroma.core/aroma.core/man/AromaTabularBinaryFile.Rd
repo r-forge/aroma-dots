@@ -49,7 +49,7 @@ extends \emph{\link[aroma.core]{GenericTabularFile}}\cr
  \tab \code{[} \tab  -\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{[<-} \tab  -\cr
- \tab \code{allocate} \tab  -\cr
+ \tab \code{\link[aroma.core:allocate.AromaTabularBinaryFile]{allocate}} \tab Creates an AromaTabularBinaryFile.\cr
  \tab \code{as.character} \tab  -\cr
  \tab \code{colMeans} \tab  -\cr
  \tab \code{colMedians} \tab  -\cr
@@ -59,14 +59,15 @@ extends \emph{\link[aroma.core]{GenericTabularFile}}\cr
  \tab \code{getBytesPerColumn} \tab  -\cr
  \tab \code{getColClasses} \tab  -\cr
  \tab \code{getColumnNames} \tab  -\cr
+ \tab \code{importFrom} \tab  -\cr
  \tab \code{lapply} \tab  -\cr
  \tab \code{nbrOfColumns} \tab  -\cr
  \tab \code{nbrOfRows} \tab  -\cr
- \tab \code{readDataFrame} \tab  -\cr
- \tab \code{readFooter} \tab  -\cr
+ \tab \code{readColumns} \tab  -\cr
+ \tab \code{\link[aroma.core:readFooter.AromaTabularBinaryFile]{readFooter}} \tab Reads the file footer in XML format into a named nested list.\cr
  \tab \code{subset} \tab  -\cr
  \tab \code{summary} \tab  -\cr
- \tab \code{writeFooter} \tab  -\cr
+ \tab \code{\link[aroma.core:writeFooter.AromaTabularBinaryFile]{writeFooter}} \tab Writes a named nested list to the file footer in XML format.\cr
 }
 
 
