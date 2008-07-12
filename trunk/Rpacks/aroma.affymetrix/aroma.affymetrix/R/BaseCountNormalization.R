@@ -188,6 +188,21 @@ setMethodS3("getTargetFile", "BaseCountNormalization", function(this, ..., verbo
 })
 
 
+setMethodS3("getAromaCellSequenceFile", "BaseCountNormalization", function(this, ..., force=FALSE) {
+  aps <- this$.aps;
+
+  if (is.null(aps)) {
+    dataSet <- getInputDataSet(this);
+    cdf <- getCdf(dataSet);
+    chipType <- getChipType(cdf);
+    aps <- AromaCellSequenceFile$byChipType(chipType, ...);
+    this$.aps <- aps;
+  }
+
+  aps;
+}, protected=TRUE)
+
+
 setMethodS3("countBases", "BaseCountNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -202,10 +217,7 @@ setMethodS3("countBases", "BaseCountNormalization", function(this, ..., force=FA
   counts <- this$.baseCounts;
 
   if (force || is.null(counts)) {
-    dataSet <- getInputDataSet(this);
-    cdf <- getCdf(dataSet);
-    chipType <- getChipType(cdf);
-    aps <- AromaProbeSequenceTextFile$byChipType(chipType, ...);
+    aps <- getAromaCellSequenceFile(this, verbose=less(verbose, 20));
     counts <- countBases(aps, verbose=less(verbose, 5));
     this$.baseCounts <- counts;
   }
@@ -673,6 +685,8 @@ print(model);
 
 ############################################################################
 # HISTORY:
+# 2008-07-11
+# o Updated countBases() to use new AromaCellSequenceFile class.
 # 2008-06-22
 # o Created from AllelicCrosstalkCalibration.R.
 ############################################################################
