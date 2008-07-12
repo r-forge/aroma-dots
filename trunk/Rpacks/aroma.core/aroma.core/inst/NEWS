@@ -1,7 +1,11 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.3.1 [2008-07-10]
+Version: 0.9.3.2 [2008-07-10]
+o ALPHA: Added private ProbePositionEffects et al.
+
+
+Version: 0.9.3.1 [2008-07-12]
 o SPEED UP: Now all AromaTabularBinaryFile:s, such as AromaUgpFile,
   read data much faster after two modifications to readDataFrame():
   (i) rownames are no longer generate, if not asked for explicitly,
