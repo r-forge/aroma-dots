@@ -230,6 +230,7 @@ setMethodS3("predict", "ProbePositionEffects", function(fit, seqs, ..., verbose=
     verbose && print(verbose, object.size(seqs));
     seqs <- paste(seqs, collapse="");
     seqs <- charToRaw(seqs);
+    throw("Not implemented yet, i.e. to be fixed.");
     seqs <- matrix(seqs, nrow=K, ncol=P, byrow=TRUE);
     gc <- gc();
     verbose && print(verbose, gc);
@@ -255,7 +256,9 @@ setMethodS3("predict", "ProbePositionEffects", function(fit, seqs, ..., verbose=
   phi <- double(K);
 
   map <- attr(seqs, "map");
-  values <- map[c("A", "C", "G", "T")];
+  values <- map[-1];
+  factors <- names(values);
+#  values <- map[c("A", "C", "G", "T")];
 
   # For each position
   for (pp in seq(length=P)) {
@@ -265,13 +268,15 @@ setMethodS3("predict", "ProbePositionEffects", function(fit, seqs, ..., verbose=
     seqsPP <- seqs[,pp];
 
     for (bb in 1:ncol(rho)) {
-      value <- values[bb];
+#      verbose && enter(verbose, sprintf("Factor #%d ('%s') of %d", bb, factors[bb], ncol(rho)));
 
       # Identify sequences with nucleotide 'bb' at position 'pp'.
-      idxs <- which(seqsPP == value);
+      idxs <- which(seqsPP == values[bb]);
 
       # Add the nucleotide effect rho(pp,bb) to the probe-affinity
       phi[idxs] <- phi[idxs] + rho[pp,bb];
+
+#      verbose && exit(verbose);
     } # for (bb ...)
 
     rm(nucleotidesPP);
