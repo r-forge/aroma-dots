@@ -52,7 +52,7 @@
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
-  \code{\link[aroma.light]{normalizeQuantile.numeric}}
+  \code{\link[aroma.light]{normalizeQuantileRank.numeric}}
   For more information see \code{\link{AffymetrixCelSet}}.
 }
 \keyword{internal}

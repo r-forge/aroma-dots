@@ -1,4 +1,4 @@
-setMethodS3("getUnitGroupCellMatrixMap", "ChipEffectFile", function(this, units=NULL, groups=NULL, ..., drop=FALSE, verbose=FALSE) {
+setMethodS3("getUnitGroupCellMatrixMap", "ChipEffectFile", function(this, units=NULL, groups=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -82,7 +82,7 @@ setMethodS3("getUnitGroupCellMatrixMap", "ChipEffectFile", function(this, units=
 
 
 
-setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -109,14 +109,14 @@ setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, ..., ve
 
   # Drop singleton dimensions
   if (drop) {
-    theta <- drop(theta);
+    data <- drop(data);
   }
 
   verbose && cat(verbose, "Thetas:");
   verbose && str(verbose, data);
 
   data;
-})
+}) # extractTheta()
 
 
 
@@ -133,7 +133,7 @@ setMethodS3("extractTheta", "SnpChipEffectFile", function(this, groups=NULL, ...
   theta <- NextMethod("extractTheta", this, groups=groups, ...);
 
   theta;
-})
+}) # extractTheta()
 
 
 
@@ -152,7 +152,7 @@ setMethodS3("extractTheta", "CnChipEffectFile", function(this, groups=NULL, ...)
   theta <- NextMethod("extractTheta", this, groups=groups, ...);
 
   theta;
-})
+}) # extractTheta()
 
 
 

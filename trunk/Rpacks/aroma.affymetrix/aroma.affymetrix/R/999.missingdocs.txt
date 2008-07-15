@@ -675,3 +675,7 @@
   translateFullName.AffymetrixProbeTabFile updateRawSequences
   updateRawSequences.AromaProbeSequenceTextFile updateSequenceStrings
   updateSequenceStrings.AromaProbeSequenceTextFile
+ extractMatrix.AffymetrixCelFile fromChipType getAromaCellSequenceFile
+  getAromaCellSequenceFile.BaseCountNormalization
+  update2.AffymetrixCelSet updateSampleAnnotationSet
+  updateSampleAnnotationSet.AffymetrixCelSet

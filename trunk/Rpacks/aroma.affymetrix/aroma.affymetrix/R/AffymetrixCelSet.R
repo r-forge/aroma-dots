@@ -516,7 +516,7 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
 }, static=TRUE)
 
 
-setMethodS3("update", "GenericDataSet", function(this, ..., verbose=FALSE) {
+setMethodS3("update2", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -693,7 +693,7 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   verbose && exit(verbose);
 
   # Let the new CEL set update itself
-  update(set, verbose=less(verbose, 1));
+  update2(set, verbose=less(verbose, 1));
 
   # Save to file cache
   saveCache(set, key=key, dirs=dirs);

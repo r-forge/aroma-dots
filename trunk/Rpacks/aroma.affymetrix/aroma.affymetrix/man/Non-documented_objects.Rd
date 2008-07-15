@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Thu Jun 26 15:27:36 2008.
+% on Tue Jul 15 14:19:37 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1382,6 +1382,13 @@
 \alias{updateRawSequences.AromaProbeSequenceTextFile}
 \alias{updateSequenceStrings}
 \alias{updateSequenceStrings.AromaProbeSequenceTextFile}
+\alias{extractMatrix.AffymetrixCelFile}
+\alias{fromChipType}
+\alias{getAromaCellSequenceFile}
+\alias{getAromaCellSequenceFile.BaseCountNormalization}
+\alias{update2.AffymetrixCelSet}
+\alias{updateSampleAnnotationSet}
+\alias{updateSampleAnnotationSet.AffymetrixCelSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

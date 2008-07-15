@@ -49,6 +49,11 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
                                            verbose=less(verbose))[, field];
   verbose && exit(verbose);
 
+  # Drop singleton dimensions?
+  if (drop) {
+    data <- drop(data);
+  }
+
   verbose && exit(verbose);
 
   if (returnUgcMap)
@@ -58,7 +63,7 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
 })
 
 
-setMethodS3("extractDataFrame", "ParameterCelFile", function(this, addNames=FALSE, addUgcMap=TRUE, ..., verbose=FALSE) {
+setMethodS3("extractDataFrame", "ParameterCelFile", function(this, addNames=FALSE, addUgcMap=TRUE, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -128,7 +133,7 @@ setMethodS3("extractDataFrame", "ParameterCelFile", function(this, addNames=FALS
 ############################################################################
 # HISTORY:
 # 2008-07-09
-# o Added argument drop=FALSE to extractMatrix(). 
+# o Added argument drop=FALSE to extractMatrix() and extractDataFrame().
 # 2008-03-11
 # o Removed some gc() to speed things up.
 # 2008-02-28

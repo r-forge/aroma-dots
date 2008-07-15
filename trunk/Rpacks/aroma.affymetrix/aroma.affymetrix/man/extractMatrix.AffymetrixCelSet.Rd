@@ -20,13 +20,14 @@
  Extract data as a matrix for a set of arrays.
 }
 
-\usage{\method{extractMatrix}{AffymetrixCelSet}(this, cells=NULL, ..., field=c("intensities", "stdvs", "pixels"), verbose=FALSE)}
+\usage{\method{extractMatrix}{AffymetrixCelSet}(this, cells=NULL, ..., field=c("intensities", "stdvs", "pixels"), drop=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{cells}{(The subset of cells to be matched.
     If \code{\link[base]{NULL}}, all cells are considered.}
   \item{...}{Not used.}
   \item{field}{The field to be extracted.}
+  \item{drop}{If \code{\link[base:logical]{TRUE}}, singleton dimensions are dropped.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 

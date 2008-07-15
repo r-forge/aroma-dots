@@ -206,7 +206,7 @@ setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., 
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("extractDataFrame", "ParameterCelSet", function(this, addNames=FALSE, addUgcMap=TRUE, ..., verbose=FALSE) {
+setMethodS3("extractDataFrame", "ParameterCelSet", function(this, addNames=FALSE, addUgcMap=TRUE, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -261,6 +261,11 @@ setMethodS3("extractDataFrame", "ParameterCelSet", function(this, addNames=FALSE
     verbose && exit(verbose);
   }
 
+  # Drop singleton dimensions?
+  if (drop) {
+    data <- drop(data);
+  }
+
   verbose && exit(verbose);
 
   data;
@@ -270,6 +275,8 @@ setMethodS3("extractDataFrame", "ParameterCelSet", function(this, addNames=FALSE
 
 ############################################################################
 # HISTORY:
+# 2008-07-16
+# o Added argument drop=FALSE to extractDataFrame(). 
 # 2008-07-09
 # o Added argument drop=FALSE to extractMatrix(). 
 # 2008-02-28
