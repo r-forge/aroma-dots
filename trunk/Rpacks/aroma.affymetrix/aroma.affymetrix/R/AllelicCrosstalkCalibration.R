@@ -398,7 +398,7 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
   
       # Get data pairs
       idxAB <- setsOfProbes[[name]];
-      idxAB <- matrix(idxAB, ncol=2);
+      idxAB <- matrix(idxAB, ncol=2, byrow=FALSE);
 
       # Sum y=yA+yB
       y <- yAll[idxAB[,1]]+yAll[idxAB[,2]];
@@ -411,7 +411,7 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
       rm(y);
     
       if (!is.null(params$subsetToAvg)) {
-        keep <- matrix((idxAB %in% params$subsetToAvg), ncol=2);
+        keep <- matrix((idxAB %in% params$subsetToAvg), ncol=2, byrow=FALSE);
         keep <- (keep[,1] & keep[,2]);
         idxAB <- idxAB[keep,,drop=FALSE];
         rm(keep);
@@ -460,7 +460,7 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
   
       # Get data pairs
       idxAB <- setsOfProbes[[name]];
-      idxAB <- matrix(idxAB, ncol=2);
+      idxAB <- matrix(idxAB, ncol=2, byrow=FALSE);
 
       # Default scale factors
       b <- c(1,1);
@@ -603,7 +603,7 @@ setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array,
     name <- names(setsOfProbes)[kk];
     basepair <- unlist(strsplit(name, split=""));
     idx <- setsOfProbes[[name]];
-    y <- matrix(yAll[idx], ncol=2);
+    y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
     colnames(y) <- c("A", "B");
     res[[kk]] <- y;
     rm(y);
@@ -762,7 +762,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         idx <- setsOfProbes[[name]];
     
         verbose && enter(verbose, "Fitting");
-        y <- matrix(yAll[idx], ncol=2);
+        y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
 
         verboseL <- (verbose && isVisible(verbose, -50));
         fits[[name]] <- fitGenotypeCone(y, alpha=params$alpha, 
@@ -825,7 +825,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
 
         idx <- setsOfProbes[[name]];
-        y <- matrix(yAll[idx], ncol=2);
+        y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
         yC <- backtransformGenotypeCone(y, fit=fits[[name]]);
         yAll[idx] <- yC;
     
@@ -1062,7 +1062,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
     # Extracting data
     idx <- setsOfProbes[[name]];
-    y <- matrix(yAll[idx], ncol=2);
+    y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
     colnames(y) <- alleles;
 
     # Exclude data points outside plot area (faster)
@@ -1079,7 +1079,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
         verbose && cat(verbose, "Parameter estimates:", level=-20);
         verbose && str(verbose, fit, level=-20);
       } else if (what == "after") {
-        fit <- list(origin=c(0,0), W=matrix(c(1,0,0,1), ncol=2));
+        fit <- list(origin=c(0,0), W=matrix(c(1,0,0,1), ncol=2, byrow=FALSE));
       }
 
       linesFcn(a=fit$origin, B=fit$W, lwd=lwd, col=lcol, ...);
@@ -1099,6 +1099,8 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-07-14
+# o Now explicitly using matrix(..., byrow=FALSE).
 # 2008-05-30
 # o BUG FIX: The constructor of AllelicCrosstalkCalibration used 
 #   non-defined variable 'verbose'.

@@ -1,4 +1,4 @@
-setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=NULL, ..., verbose=FALSE) {
+setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -70,6 +70,11 @@ setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=N
   }
   rm(ugcMap);
 
+  # Drop singleton dimensions
+  if (drop) {
+    theta <- drop(theta);
+  }
+
   verbose && cat(verbose, "Thetas:");
   verbose && str(verbose, theta);
 
@@ -114,6 +119,8 @@ setMethodS3("extractTheta", "CnChipEffectSet", function(this, groups=NULL, ...) 
 
 ############################################################################
 # HISTORY:
+# 2008-07-13
+# o Added argument 'drop=FALSE' to extractTheta().
 # 2008-05-10
 # o Created.
 ############################################################################

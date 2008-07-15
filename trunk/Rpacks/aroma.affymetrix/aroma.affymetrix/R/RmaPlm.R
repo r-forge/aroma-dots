@@ -272,6 +272,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
 
     # Look for cells that have NAs in at least one sample?
     w <- NULL;
+    nasRemoved <- FALSE;
     if (treatNAsAs == "ignore") {
       hasNAs <- FALSE;
     } else {
@@ -301,6 +302,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
           okCells <- !apply(isNA, MARGIN=1, FUN=any);
           # Analyze only valid cells
           y <- y[okCells,,drop=FALSE];
+          nasRemoved <- TRUE;
           hasNAs <- FALSE;
 
           # No valid cells left?
@@ -373,7 +375,7 @@ setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
     }
 
     # Handle NAs?
-    if (hasNAs) {
+    if (nasRemoved) {
       if (treatNAsAs == "NA") {
         phi0 <- rep(NA, K0);
         phi0[okCells] <- phi;
@@ -659,6 +661,9 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-13
+# o BUG FIX: plm$treatNAsAs=="NA" returned an incorrect number of probe
+#   affinities whenever missing values were exluded.
 # 2008-02-12
 # o Added mechanism to avoid fitting unit groups with ridiculously many cells.
 # 2007-10-06
