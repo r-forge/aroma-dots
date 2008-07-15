@@ -1,12 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.3.1 [2008-07-09]
+Version: 0.9.3.2 [2008-07-12]
 o Now AffymetrixProbeTabFile inherits from TabularTextFile and
   "implements" AromaPlatformInterface.  Previously it inherited
   from the AffymetrixFile class.
 o Added extractMatrix() to AffymetrixCelFile for completeness.
-o Added argument 'drop=FALSE' to all extractMatrix().
+o Added argument 'drop=FALSE' to all extractMatrix() and extractTheta().
 o MEMORY OPTIMIZATION: When calling extractRawCopyNumbers(obj) on an
   CopyNumberChromosomalModel object, the result would be cached in memory
   (in the object). This would result in an increasing memory usage when
@@ -19,6 +19,8 @@ o BUG FIX: extractMatrix() of AffymetrixCelSet returned cells in a
 o BUG FIX: getChipType() of AffymetrixCelFile did not pass down '...'
   causing for instance getChipType(..., fullname=FALSE) to still return
   tags for ChipEffectFile:s.
+o BUG FIX: plm$treatNAsAs == "NA" for RmaPlm:s returned an incorrect 
+  number of probe affinities whenever missing values were exluded.
 o BETA: Added BaseCountNormalization.
 o BETA: Updated FragmentLengthNormalization to handle allele-specific
   chip effect estimates as well.

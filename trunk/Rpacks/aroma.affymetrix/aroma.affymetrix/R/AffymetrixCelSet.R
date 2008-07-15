@@ -516,6 +516,58 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
 }, static=TRUE)
 
 
+setMethodS3("update", "GenericDataSet", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Updating ", class(this)[1]);
+  updateSampleAnnotationSet(this, ..., verbose=less(verbose, 1));
+  verbose && exit(verbose);
+}, protected=TRUE)
+
+
+setMethodS3("updateSampleAnnotationSet", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Scan for SAF files and apply them
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  verbose && enter(verbose, "Scanning for and applying sample annotation files");
+  sasPath <- "annotationData/samples/";
+  sasPath <- filePath(sasPath, expandLinks="any");
+  mkdirs(sasPath);
+
+  sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
+  if (nbrOfFiles(sas) == 0) {
+    verbose && cat(verbose, "No sample annotation files found.");
+  } else {
+    verbose && print(verbose, sas);
+    setAttributesBy(this, sas);
+  }
+  # Store the SAFs for now.
+  this$.sas <- sas;
+
+  verbose && exit(verbose);
+
+  invisible(this);
+}, private=TRUE)  # updateSampleAnnotationSet()
+
+
 setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", pattern="[.](c|C)(e|E)(l|L)$", cdf=NULL, checkChipType=is.null(cdf), ..., onDuplicates=c("keep", "exclude", "error"), fileClass="AffymetrixCelFile", force=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -640,24 +692,8 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
   setCdf(set, cdf);
   verbose && exit(verbose);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Scan for SAF files and apply them
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Scanning for and applying sample annotation files");
-  sasPath <- "annotationData/samples/";
-  sasPath <- filePath(sasPath, expandLinks="any");
-  mkdirs(sasPath);
-
-  sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
-  if (nbrOfFiles(sas) == 0) {
-    verbose && cat(verbose, "No sample annotation files found.");
-  } else {
-    verbose && print(verbose, sas);
-    setAttributesBy(set, sas);
-  }
-  # Store the SAFs for now.
-  set$.sas <- sas;
-  verbose && exit(verbose);
+  # Let the new CEL set update itself
+  update(set, verbose=less(verbose, 1));
 
   # Save to file cache
   saveCache(set, key=key, dirs=dirs);
@@ -1446,6 +1482,9 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-14
+# o Added protected update().
+# o Added private updateSampleAnnotationSet().
 # 2008-06-22
 # o BUG FIX: Added missing getPlatform().
 # 2008-05-31

@@ -1,4 +1,4 @@
-setMethodS3("getUnitGroupCellMatrixMap", "ChipEffectFile", function(this, units=NULL, groups=NULL, ..., verbose=FALSE) {
+setMethodS3("getUnitGroupCellMatrixMap", "ChipEffectFile", function(this, units=NULL, groups=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -107,6 +107,11 @@ setMethodS3("extractTheta", "ChipEffectFile", function(this, units=NULL, ..., ve
                                     drop=TRUE, verbose=less(verbose, 20));
   dim(data) <- dim(cellMatrixMap);
 
+  # Drop singleton dimensions
+  if (drop) {
+    theta <- drop(theta);
+  }
+
   verbose && cat(verbose, "Thetas:");
   verbose && str(verbose, data);
 
@@ -153,6 +158,8 @@ setMethodS3("extractTheta", "CnChipEffectFile", function(this, groups=NULL, ...)
 
 ############################################################################
 # HISTORY:
+# 2008-07-13
+# o Added argument 'drop=FALSE' to extractTheta().
 # 2008-06-09
 # o Added getUnitGroupCellMatrixMap() to ChipEffectFile.  The extractTheta()
 #   methods is now using this method.
