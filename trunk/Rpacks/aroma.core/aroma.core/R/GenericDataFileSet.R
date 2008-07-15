@@ -1052,6 +1052,11 @@ setMethodS3("fromFiles", "GenericDataFileSet", function(static, path=NULL, patte
   set <- newInstance(static, files, ...);
   verbose && exit(verbose);
 
+  # Allow the file set to update itself according to these new rules.
+  verbose && enter(verbose, "Updating newly allocated ", className);
+  update(set, ..., verbose=less(verbose, 5));
+  verbose && exit(verbose);
+
   # Validate?
   if (.validate) {
     validate(set, verbose=less(verbose, 5));
@@ -1246,8 +1251,27 @@ setMethodS3("equals", "GenericDataFileSet", function(this, other, ..., verbose=F
 })
 
 
+setMethodS3("setFullNamesTranslator", "GenericDataSet", function(this, ...) {
+  # Apply the fullname translator for each of the files
+  dummy <- sapply(this, setFullNameTranslator, ...);
+
+  # Allow the file set to update itself according to these new rules.
+  update(this, ...);
+
+  invisible(this);
+})
+
+
+setMethodS3("update", "GenericDataSet", function(this, ...) {
+}, protected=TRUE)
+
+
+
 ############################################################################
 # HISTORY:
+# 2008-07-14
+# o Added update().
+# o Added setFullNamesTranslator().
 # 2008-06-07
 # o Added argument 'recursive' to fromFiles().
 # 2008-05-16
