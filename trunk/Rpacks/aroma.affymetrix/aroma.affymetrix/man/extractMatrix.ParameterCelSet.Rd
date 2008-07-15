@@ -19,7 +19,7 @@
  Extract data as a matrix for a set of arrays.
 }
 
-\usage{\method{extractMatrix}{ParameterCelSet}(this, units=NULL, ..., field=c("intensities", "stdvs", "pixels"), returnUgcMap=FALSE, verbose=FALSE)}
+\usage{\method{extractMatrix}{ParameterCelSet}(this, units=NULL, ..., field=c("intensities", "stdvs", "pixels"), returnUgcMap=FALSE, drop=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{units}{(The subset of units to be matched.
@@ -28,6 +28,7 @@
   \item{field}{The field to be extracted.}
   \item{returnUgcMap}{If \code{\link[base:logical]{TRUE}}, the (unit, group, cell) map is returned
     as an attribute.}
+  \item{drop}{If \code{\link[base:logical]{TRUE}}, singleton dimensions are dropped.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 
