@@ -34,7 +34,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., model=c("robustSmoothSpline", "lm"), subsetToFit="-XY") {
+setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUpdate=NULL, subsetToUpdate=NULL, model=c("robustSmoothSpline", "lm"), typesToFit=typesToUpdate, subsetToFit="-XY") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -47,10 +47,35 @@ setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., model=c("
                                                           class(dataSet)[1]);
     }
 
+    cdf <- getCdf(dataSet);
+
+    # Argument 'typesToUpdate':
+    if (!is.null(typesToUpdate)) {
+      typesToUpdate <- match.arg(typesToUpdate, choices=c("pm", "mm", "pmmm"));
+    }
+
+    # Argument 'subsetToUpdate':
+    if (is.null(subsetToUpdate)) {
+    } else if (is.character(subsetToUpdate)) {
+      if (subsetToUpdate %in% c("-X", "-Y", "-XY")) {
+      } else {
+        throw("Unknown value of argument 'subsetToUpdate': ", subsetToUpdate);
+      }
+      extraTags <- c(extraTags, subsetToUpdate=subsetToUpdate);
+    } else {
+      nbrOfCells <- nbrOfCells(cdf);
+      subsetToUpdate <- Arguments$getIndices(subsetToUpdate, range=c(1, nbrOfCells));
+      subsetToUpdate <- unique(subsetToUpdate);
+      subsetToUpdate <- sort(subsetToUpdate);
+    }
+
     # Argument 'model':
     model <- match.arg(model);
 
-    cdf <- getCdf(dataSet);
+    # Argument 'typesToFit':
+    if (!is.null(typesToFit)) {
+      typesToFit <- match.arg(typesToFit, choices=c("pm", "mm", "pmmm"));
+    }
 
     # Argument 'subsetToFit':
     if (is.null(subsetToFit)) {
@@ -70,7 +95,10 @@ setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., model=c("
 
 
   extend(ProbeLevelTransform(dataSet=dataSet, ...), "BaseCountNormalization",
+    .typesToUpdate = typesToUpdate,
+    .subsetToUpdate = subsetToUpdate,
     .model = model,
+    .typesToFit = typesToFit,
     .subsetToFit = subsetToFit,
     .extraTags = extraTags
   )
@@ -79,7 +107,7 @@ setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., model=c("
 
 setMethodS3("clearCache", "BaseCountNormalization", function(this, ...) {
   # Clear all cached values.
-  for (ff in c(".subsetToFitExpanded")) {
+  for (ff in c(".subsetToUpdateExpanded", ".subsetToFitExpanded")) {
     this[[ff]] <- NULL;
   }
 
@@ -102,72 +130,49 @@ setMethodS3("getAsteriskTags", "BaseCountNormalization", function(this, collapse
 
 
 
-setMethodS3("getSubsetToFit", "BaseCountNormalization", function(this, ..., verbose=FALSE) {
+
+setMethodS3("getSubsetTo", "BaseCountNormalization", function(this, what=c("fit", "update"), ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
+  # Argument 'what':
+  what <- match.arg(what);
 
-  subsetToFit <- this$.subsetToFit;
+  field <- sprintf(".subsetTo%s", capitalize(what));
+  subset <- this[[field]];
 
   # Expand?
-  if (is.character(subsetToFit)) {
-    if (subsetToFit %in% c("-X", "-Y", "-XY")) {
-      verbose && enter(verbose, "Identify subset of units from genome information");
-      verbose && cat(verbose, "subsetToFit: ", subsetToFit);
-
-      # Look up in cache
-      subset <- this$.subsetToFitExpanded;
-      if (is.null(subset)) {
-        dataSet <- getInputDataSet(this);
-        cdf <- getCdf(dataSet);
-  
-        # Get the genome information (throws an exception if missing)
-        gi <- getGenomeInformation(cdf);
-        verbose && print(verbose, gi);
-  
-        # Identify units to be excluded
-        if (subsetToFit == "-X") {
-          subset <- getUnitsOnChromosome(gi, 23, .checkArgs=FALSE);
-        } else if (subsetToFit == "-Y") {
-          subset <- getUnitsOnChromosome(gi, 24, .checkArgs=FALSE);
-        } else if (subsetToFit == "-XY") {
-          subset <- getUnitsOnChromosome(gi, 23:24, .checkArgs=FALSE);
-        }
-  
-        verbose && cat(verbose, "Units to exclude: ");
-        verbose && str(verbose, subset);
-
-        # Identify the cell indices for these units
-        subset <- getCellIndices(cdf, units=subset, 
-                                 useNames=FALSE, unlist=TRUE);
-        verbose && cat(verbose, "Cells to exclude: ");
-        verbose && str(verbose, subset);
-  
-        # The cells to keep
-        subset <- setdiff(1:nbrOfCells(cdf), subset);
-  
-        verbose && cat(verbose, "Cells to include: ");
-        verbose && str(verbose, subset);
-
-        # Store
-        this$.subsetToFitExpanded <- subset;
-      }
-
-      subsetToFit <- subset;
-      rm(subset);
-
-      verbose && exit(verbose);
+  if (is.character(subset)) {
+    fieldExpanded <- paste(field, "Expanded", sep="");
+    cells <- this[[fieldExpanded]];
+    if (is.null(cells)) {
+      dataSet <- getInputDataSet(this);
+      cdf <- getCdf(dataSet);
+      units <- subset;
+      typesField <- sprintf(".typesTo%s", captitalize(what));
+      stratifyBy <- this[[typesField]];
+      cells <- getSubsetOfCellIndices(cdf, units=units, stratifyBy=stratifyBy, ...);
+      this[[fieldExpanded]] <- cells;
     }
+  } else if (is.numeric(subset)) {
+    cells <- subset;
+  } else {
+    throw("Internal error. This statment should never be reached: ", mode(subset));
   }
 
-  subsetToFit;
+  cells;
+}, private=TRUE);
+
+
+setMethodS3("getSubsetToUpdate", "BaseCountNormalization", function(this, ...) {
+  getSubsetTo(this, what="update", ...);
 }, protected=TRUE);
+
+
+setMethodS3("getSubsetToFit", "BaseCountNormalization", function(this, ...) {
+  getSubsetTo(this, what="fit", ...);
+}, protected=TRUE);
+
 
 
 setMethodS3("getTargetFile", "BaseCountNormalization", function(this, ..., verbose=FALSE) {
@@ -231,12 +236,16 @@ setMethodS3("getParameters", "BaseCountNormalization", function(this, expand=TRU
   params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
 
   params <- c(params, list(
+    typesToUpdate = this$.typesToUpdate,
+    subsetToUpdate = this$.subsetToUpdate,
     model = this$.model,
+    typesToFit = this$.typesToFit,
     subsetToFit = this$.subsetToFit
   ));
 
   # Expand?
   if (expand) {
+    params$subsetToUpdate <- getSubsetToUpdate(this);
     params$subsetToFit <- getSubsetToFit(this);
   }
 
@@ -418,12 +427,6 @@ print(model);
   # Get subset to fit
   subsetToFit <- params$subsetToFit;
 
-  
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # For hooks
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  hookName <- "process.BaseCountNormalization";
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Precalculate some model fit parameters
@@ -431,7 +434,9 @@ print(model);
   verbose && enter(verbose, "Compressing model parameter to a short format");
   paramsShort <- params;
   paramsShort$subsetToFit <- NULL;
+  paramsShort$subsetToUpdate <- NULL;
 #  paramsShort$subsetToFitIntervals <- seqToIntervals(params$subsetToFit);
+#  paramsShort$subsetToUpdateIntervals <- seqToIntervals(params$subsetToUpdate);
   verbose && exit(verbose);
 
 
@@ -464,14 +469,12 @@ print(model);
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Calibrating
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#      callHooks(sprintf("%s.onBegin", hookName), df=df, ...);
-
       modelFit <- list(
         paramsShort=paramsShort
       );
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Count nucleotide bases for this chip type?
+      # Generate design matrix for all probes of interest?
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       if (is.null(designMatrix)) {
         verbose && enter(verbose, "Count nucleotide bases");
@@ -483,9 +486,12 @@ print(model);
         # Identify subset of cells to be used for fitting
         hasSeq <- which(!is.na(designMatrix[,4]));
         subsetToFit <- intersect(subsetToFit, hasSeq);
+        subsetToUpdate <- intersect(subsetToUpdate, hasSeq);
         rm(hasSeq);
         verbose && cat(verbose, "Subset of cells to be fitted:");
         verbose && str(verbose, subsetToFit);
+        verbose && cat(verbose, "Subset of cells to be updated:");
+        verbose && str(verbose, subsetToUpdate);
 
         designMatrix[,1] <- as.integer(1);
         verbose && cat(verbose, "Design matrix:");
@@ -494,13 +500,16 @@ print(model);
         verbose && exit(verbose);
       }
 
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Fit base-count effect for target?
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       if (is.null(muT)) {
         verbose && enter(verbose, "Estimating base-count effects for target");
 
         verbose && enter(verbose, "Getting target signals to fit the model");
         dfT <- getTargetFile(this, verbose=less(verbose, 5));
-        yT <- readRawData(dfT, indices=subsetToFit, fields="intensities", 
-                                                                  drop=TRUE);
+        yT <- extractMatrix(dfT, cells=subsetToFit, drop=TRUE);
         rm(dfT);
 
         verbose && cat(verbose, "Target log2 probe signals:");
@@ -543,9 +552,12 @@ print(model);
       } # if (is.null(muT))
 
 
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Fit base-count effect for the current array
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Getting signals used to fit the model");
-      y <- readRawData(df, indices=subsetToFit, fields="intensities", 
-                                                                  drop=TRUE);
+      y <- extractMatrix(df, cells=subsetToFit, drop=TRUE);
       y <- log2(y);
       verbose && cat(verbose, "Log2 probe signals:");
       verbose && str(verbose, y);
@@ -565,22 +577,20 @@ print(model);
       rm(subset);
       gc <- gc();
       verbose && print(verbose, gc);
-      fit <- fitBaseCounts(y, X=X, model=params$model, verbose=less(verbose, 5));
+      fit <- fitBaseCounts(y, X=X, model=params$model,
+                                                 verbose=less(verbose, 5));
       rm(y, X);
       verbose && print(verbose, fit);
       modelFit$fit <- fit;
       verbose && exit(verbose);
 
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Store model fit 
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Saving model fit");
       # Store fit and parameters (in case someone are interested in looking
       # at them later; no promises of backward compatibility though).
       filename <- sprintf("%s,fit.RData", fullname);
-      fitPathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
-
+      fitPathname <- Arguments$getWritablePathname(filename, 
+                                                      path=outputPath, ...);
       saveObject(modelFit, file=fitPathname);
       verbose && str(verbose, modelFit, level=-50);
       rm(modelFit);
@@ -593,7 +603,7 @@ print(model);
 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Normalize data
+      # Normalize current array toward target
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Mean log2 probe signals:");
       mu <- predictBaseCounts(fit, X=designMatrix, model=params$model);
@@ -621,7 +631,7 @@ print(model);
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Reading probe signals:");
-      yAll <- readRawData(df, fields="intensities", drop=TRUE);
+      yAll <- extractMatrix(df, drop=TRUE);
       verbose && str(verbose, yAll);
       verbose && summary(verbose, yAll);
       verbose && exit(verbose);
@@ -660,8 +670,6 @@ print(model);
 
     # Validating by retrieving calibrated data file
     dfC <- newInstance(df, pathname);
-
-#    callHooks(sprintf("%s.onExit", hookName), df=df, dfC=dfC, ...);
 
     rm(df, dfC);
 
