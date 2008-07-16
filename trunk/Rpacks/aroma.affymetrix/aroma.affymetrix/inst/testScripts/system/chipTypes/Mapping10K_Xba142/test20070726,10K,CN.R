@@ -49,13 +49,14 @@ stopifnot(identical(getNames(ces), getNames(cs)));
 # Extraction test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # (a) Single array
-theta <- extractMatrix(getFile(ces,1), verbose=log);
+cef <- getFile(ces,1);
+theta <- extractMatrix(cef, verbose=log);
 print(summary(theta));
 
-data <- extractDataFrame(getFile(ces,1), addNames=TRUE, verbose=log);
+data <- extractDataFrame(cef, addNames=TRUE, verbose=log);
 print(summary(theta));
 
-theta <- extractTheta(getFile(ces,1), drop=TRUE, verbose=log);
+theta <- extractTheta(cef, drop=TRUE, verbose=log);
 print(summary(theta));
 
 
