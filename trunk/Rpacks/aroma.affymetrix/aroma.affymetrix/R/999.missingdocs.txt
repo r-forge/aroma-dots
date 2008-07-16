@@ -679,3 +679,6 @@
   getAromaCellSequenceFile.BaseCountNormalization
   update2.AffymetrixCelSet updateSampleAnnotationSet
   updateSampleAnnotationSet.AffymetrixCelSet
+  getSubsetOfCellIndices getSubsetOfCellIndices.AffymetrixCdfFile
+  getSubsetTo getSubsetTo.BaseCountNormalization
+  getSubsetToUpdate.BaseCountNormalization
