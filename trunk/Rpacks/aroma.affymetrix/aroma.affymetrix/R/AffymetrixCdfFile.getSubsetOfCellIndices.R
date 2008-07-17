@@ -4,9 +4,9 @@ setMethodS3("getSubsetOfCellIndices", "AffymetrixCdfFile", function(this, units=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'units':
   useGenomeInformation <- FALSE;
-  if (is.character(units)) {
+  if (is.null(units)) {
+  } else if (is.character(units)) {
     units <- Arguments$getCharacter(units);
-
     if (units %in% c("-X", "-Y", "-XY")) {
       useGenomeInformation <- TRUE;
     } else {
@@ -67,7 +67,9 @@ setMethodS3("getSubsetOfCellIndices", "AffymetrixCdfFile", function(this, units=
   unitsExcl <- NULL;
 
   verbose && cat(verbose, "Argument 'units':");
-  if (is.character(units)) {
+  if (is.null(units)) {
+    verbose && str(verbose, units);
+  } else if (is.character(units)) {
     verbose && cat(verbose, units);
     # Select by chromosome(s)?
     if (units %in% c("-X", "-Y", "-XY")) {
@@ -123,19 +125,19 @@ setMethodS3("getSubsetOfCellIndices", "AffymetrixCdfFile", function(this, units=
     # All cells but...
     cellsIncl <- NULL;
     verbose && enter(verbose, "Reading cell indices to exclude");
-    cellsExcl <- getCellIndices(cdf, units=unitsExcl, 
+    cellsExcl <- getCellIndices(this, units=unitsExcl, 
                    stratifyBy=stratifyBy, useNames=FALSE, unlist=TRUE);
     verbose && exit(verbose);
   } else if (!is.null(unitsIncl) & is.null(unitsExcl)) {
     verbose && enter(verbose, "Reading cell indices to include");
-    cellsIncl <- getCellIndices(cdf, units=unitsIncl,
+    cellsIncl <- getCellIndices(this, units=unitsIncl,
                    stratifyBy=stratifyBy, useNames=FALSE, unlist=TRUE);
     verbose && exit(verbose);
     cellsExcl <- NULL;
   } else if (!is.null(unitsIncl) & !is.null(unitsExcl)) {
     unitsIncl <- setdiff(unitsIncl, unitsExcl);
     verbose && enter(verbose, "Reading cell indices to include");
-    cellsIncl <- getCellIndices(cdf, units=unitsIncl,
+    cellsIncl <- getCellIndices(this, units=unitsIncl,
                    stratifyBy=stratifyBy, useNames=FALSE, unlist=TRUE);
     verbose && exit(verbose);
     cellsExcl <- NULL;
@@ -151,8 +153,8 @@ setMethodS3("getSubsetOfCellIndices", "AffymetrixCdfFile", function(this, units=
       cellsIncl <- seq(length=nbrOfCells(this));
     } else {
       verbose && enter(verbose, "Reading cell indices to include");
-      cellsIncl <- getCellIndices(cdf, 
-                   stratifyBy=stratifyBy, useNames=FALSE, unlist=TRUE);
+      cellsIncl <- getCellIndices(this, stratifyBy=stratifyBy, 
+                                            useNames=FALSE, unlist=TRUE);
       verbose && exit(verbose);
     }
   }

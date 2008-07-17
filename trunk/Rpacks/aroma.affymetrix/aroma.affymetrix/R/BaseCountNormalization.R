@@ -34,7 +34,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUpdate=NULL, subsetToUpdate=NULL, model=c("robustSmoothSpline", "lm"), typesToFit=typesToUpdate, subsetToFit="-XY") {
+setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUpdate="pm", subsetToUpdate=NULL, model=c("robustSmoothSpline", "lm"), typesToFit=typesToUpdate, subsetToFit="-XY") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -139,23 +139,33 @@ setMethodS3("getSubsetTo", "BaseCountNormalization", function(this, what=c("fit"
   what <- match.arg(what);
 
   field <- sprintf(".subsetTo%s", capitalize(what));
+  fieldExpanded <- paste(field, "Expanded", sep="");
+  typesField <- sprintf(".typesTo%s", capitalize(what));
+
   subset <- this[[field]];
+  stratifyBy <- this[[typesField]];
 
   # Expand?
   if (is.character(subset)) {
-    fieldExpanded <- paste(field, "Expanded", sep="");
     cells <- this[[fieldExpanded]];
     if (is.null(cells)) {
       dataSet <- getInputDataSet(this);
       cdf <- getCdf(dataSet);
       units <- subset;
-      typesField <- sprintf(".typesTo%s", captitalize(what));
-      stratifyBy <- this[[typesField]];
       cells <- getSubsetOfCellIndices(cdf, units=units, stratifyBy=stratifyBy, ...);
       this[[fieldExpanded]] <- cells;
     }
   } else if (is.numeric(subset)) {
     cells <- subset;
+  } else if (is.null(subset)) {
+    dataSet <- getInputDataSet(this);
+    cdf <- getCdf(dataSet);
+    if (is.null(stratifyBy)) {
+      cells <- seq(length=nbrOfCells(cdf));
+    } else {
+      cells <- getSubsetOfCellIndices(cdf, stratifyBy=stratifyBy, ...);
+    }
+    this[[fieldExpanded]] <- cells;
   } else {
     throw("Internal error. This statment should never be reached: ", mode(subset));
   }
@@ -427,18 +437,8 @@ print(model);
   # Get subset to fit
   subsetToFit <- params$subsetToFit;
 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Precalculate some model fit parameters
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Compressing model parameter to a short format");
-  paramsShort <- params;
-  paramsShort$subsetToFit <- NULL;
-  paramsShort$subsetToUpdate <- NULL;
-#  paramsShort$subsetToFitIntervals <- seqToIntervals(params$subsetToFit);
-#  paramsShort$subsetToUpdateIntervals <- seqToIntervals(params$subsetToUpdate);
-  verbose && exit(verbose);
-
+  # Get subset to update
+  subsetToUpdate <- params$subsetToUpdate;
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -467,42 +467,58 @@ print(model);
       verbose && cat(verbose, "Normalized data file already exists: ", pathname);
     } else {
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Calibrating
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      modelFit <- list(
-        paramsShort=paramsShort
-      );
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Generate design matrix for all probes of interest?
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       if (is.null(designMatrix)) {
-        verbose && enter(verbose, "Count nucleotide bases");
+        verbose && enter(verbose, "Count nucleotide bases for *all* cells");
         verbose && cat(verbose, "Chip type: ", getChipType(cdf));
         designMatrix <- countBases(this, verbose=less(verbose, 5));
         verbose && cat(verbose, "Nucleotide base counts:");
         verbose && str(verbose, designMatrix);
 
-        # Identify subset of cells to be used for fitting
-        hasSeq <- which(!is.na(designMatrix[,4]));
-        subsetToFit <- intersect(subsetToFit, hasSeq);
-        subsetToUpdate <- intersect(subsetToUpdate, hasSeq);
-        rm(hasSeq);
-        verbose && cat(verbose, "Subset of cells to be fitted:");
-        verbose && str(verbose, subsetToFit);
-        verbose && cat(verbose, "Subset of cells to be updated:");
-        verbose && str(verbose, subsetToUpdate);
-
         designMatrix[,1] <- as.integer(1);
         verbose && cat(verbose, "Design matrix:");
         verbose && str(verbose, designMatrix);
+
+        # Identify missing sequences (to be excluded from fit and updates)
+        missingSeqs <- which(is.na(designMatrix[,4]));
+
+        # Update subset of cell indices for fitting and updating
+        subsetToFit <- setdiff(subsetToFit, missingSeqs);
+        subsetToUpdate <- setdiff(subsetToUpdate, missingSeqs);
+        rm(missingSeqs);
+
+        verbose && cat(verbose, "Cell indices used for fitting:");
+        verbose && str(verbose, subsetToFit);
+        verbose && cat(verbose, "Cell indices to be updated:");
+        verbose && str(verbose, subsetToUpdate);
+
         gc <- gc();
+
+        # Precalculate some model fit parameters
+        verbose && enter(verbose, "Compressing model parameter to a short format");
+        paramsShort <- params;
+        paramsShort$subsetToFit <- NULL;
+        paramsShort$subsetToUpdate <- NULL;
+     #  paramsShort$subsetToFitIntervals <- seqToIntervals(subsetToFit);
+     #  paramsShort$subsetToUpdateIntervals <- seqToIntervals(subsetToUpdate);
+        verbose && exit(verbose);
+
         verbose && exit(verbose);
       }
 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Fit base-count effect for target?
+      # Setting up model fit parameters
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      modelFit <- list(
+        paramsShort=paramsShort
+      );
+
+
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Phase 0: Fit base-count effect for target?
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       if (is.null(muT)) {
         verbose && enter(verbose, "Estimating base-count effects for target");
@@ -519,14 +535,15 @@ print(model);
         verbose && exit(verbose);
 
         # Fit only finite subset
-        subset <- which(is.finite(yT));
-        yT <- yT[subset];
+        keep <- which(is.finite(yT));
+        yT <- yT[keep];
+        subsetToFitT <- subsetToFit[keep];
+        rm(keep);
         gc <- gc();
 
         verbose && enter(verbose, "Fitting base-count model");
-        subset <- subsetToFit[subset];
-        X <- designMatrix[subset,,drop=FALSE];
-        rm(subset);
+        X <- designMatrix[subsetToFitT,,drop=FALSE];
+        rm(subsetToFitT);
         verbose && cat(verbose, "Design matrix:");
         verbose && str(verbose, X);
         gc <- gc();
@@ -536,13 +553,17 @@ print(model);
         verbose && print(verbose, fitT);
         verbose && exit(verbose);
 
+
         verbose && enter(verbose, "Target mean log2 probe signals:");
-        muT <- predictBaseCounts(fitT, X=designMatrix, model=params$model);
-        rm(fitT);
+        X <- designMatrix[subsetToUpdate,,drop=FALSE];
+        verbose && cat(verbose, "Design matrix:");
+        verbose && str(verbose, X);
+        muT <- predictBaseCounts(fitT, X=X, model=params$model);
+        rm(fitT, X);
         verbose && str(verbose, "muT:");
         verbose && str(verbose, muT);
-        if (length(muT) != nbrOfCells) {
-          throw("Internal error. Number of estimated means does not match the number of cells on the array: ", length(mu), " != ", nbrOfCells);
+        if (length(muT) != length(subsetToUpdate)) {
+          throw("Internal error. Number of estimated means does not match the number of cells to be updated: ", length(mu), " != ", length(subsetToUpdate));
         }
         verbose && exit(verbose);
 
@@ -554,7 +575,7 @@ print(model);
 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Fit base-count effect for the current array
+      # Phase I: Fit base-count effect for the current array
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Getting signals used to fit the model");
       y <- extractMatrix(df, cells=subsetToFit, drop=TRUE);
@@ -565,16 +586,17 @@ print(model);
       verbose && exit(verbose);
 
       # Find finite subset
-      subset <- which(is.finite(y));
-      y <- y[subset];
+      keep <- which(is.finite(y));
+      y <- y[keep];
+      subsetToFitKK <- subsetToFit[keep];
+      rm(keep);
       gc <- gc();
 
       verbose && enter(verbose, "Fitting base-count model");
-      subset <- subsetToFit[subset];
-      X <- designMatrix[subset,,drop=FALSE];
+      X <- designMatrix[subsetToFitKK,,drop=FALSE];
       verbose && cat(verbose, "Design matrix:");
       verbose && str(verbose, X);
-      rm(subset);
+      rm(subsetToFitKK);
       gc <- gc();
       verbose && print(verbose, gc);
       fit <- fitBaseCounts(y, X=X, model=params$model,
@@ -603,44 +625,59 @@ print(model);
 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Normalize current array toward target
+      # Phase II: Normalize current array toward target
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Mean log2 probe signals:");
-      mu <- predictBaseCounts(fit, X=designMatrix, model=params$model);
-      rm(fit);
+      verbose && enter(verbose, "Reading probe signals:");
+      y <- extractMatrix(df, cells=subsetToUpdate, drop=TRUE);
+      verbose && str(verbose, y);
+      verbose && summary(verbose, y);
+      verbose && exit(verbose);
+
+      # Find finite subset for this array
+      keep <- which(is.finite(y));
+      subsetToUpdateKK <- subsetToUpdate[keep];
+      y <- y[keep];
+      gc <- gc();
+
+      X <- designMatrix[subsetToUpdateKK,,drop=FALSE];
+      verbose && cat(verbose, "Design matrix:");
+      verbose && str(verbose, X);
+      gc <- gc();
+      verbose && print(verbose, gc);
+
+      verbose && enter(verbose, "Predicting mean log2 probe signals:");
+      mu <- predictBaseCounts(fit, X=X, model=params$model);
+      rm(fit, X);
       verbose && str(verbose, "mu:");
       verbose && str(verbose, mu);
-      if (length(mu) != nbrOfCells) {
-        throw("Internal error. Number of estimated means does not match the number of cells on the array: ", length(mu), " != ", nbrOfCells);
+      if (length(mu) != length(y)) {
+        throw("Internal error. Number of estimated means does not match the number of data points: ", length(mu), " != ", length(y));
       }
       verbose && exit(verbose);
 
 
       verbose && enter(verbose, "Discrepancy scale factors:");
-      rho <- (muT-mu);
-      rm(mu);
+      rho <- (muT[keep]-mu);
+      rm(mu, keep);
       summary(verbose, rho);
       rho <- 2^rho;
       summary(verbose, rho);
 
-      # Update only "finite" subset
-      subset <- which(is.finite(rho));
-      rho <- rho[subset];
+      # Update only subset with "finite" corrections
+      keep <- which(is.finite(rho));
+      rho <- rho[keep];
+      subsetToUpdateKK <- subsetToUpdateKK[keep];
+      y <- y[keep];
+      rm(keep);
       gc <- gc();
       verbose && print(verbose, gc);
       verbose && exit(verbose);
 
-      verbose && enter(verbose, "Reading probe signals:");
-      yAll <- extractMatrix(df, drop=TRUE);
-      verbose && str(verbose, yAll);
-      verbose && summary(verbose, yAll);
-      verbose && exit(verbose);
-
       verbose && enter(verbose, "Normalizing probe signals:");
-      yAll[subset] <- rho * yAll[subset];
-      rm(rho, subset);
-      verbose && str(verbose, yAll);
-      verbose && summary(verbose, yAll);
+      y <- rho * y;
+      rm(rho);
+      verbose && str(verbose, y);
+      verbose && summary(verbose, y);
       verbose && exit(verbose);
 
       # Garbage collect
@@ -660,8 +697,8 @@ print(model);
 
       # Write calibrated data to file
       verbose2 <- -as.integer(verbose)-2;
-      updateCel(pathname, intensities=yAll, verbose=verbose2);
-      rm(yAll, verbose2);
+      updateCel(pathname, indices=subsetToUpdateKK, intensities=y, verbose=verbose2);
+      rm(y, subsetToUpdateKK, verbose2);
       gc <- gc();
       verbose && print(verbose, gc);
 
@@ -693,6 +730,9 @@ print(model);
 
 ############################################################################
 # HISTORY:
+# 2008-07-16
+# o Added support for fitting and updating subsets of cells and types of
+#   probes according to the CDF.
 # 2008-07-11
 # o Updated countBases() to use new AromaCellSequenceFile class.
 # 2008-06-22
