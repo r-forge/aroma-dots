@@ -43,7 +43,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
  \usage{CnagCfhFile(..., cdf=NULL)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AromaMicroarrayDataFile}}.}
+   \item{...}{Arguments passed to \code{\link[aroma.core]{AromaMicroarrayDataFile}}.}
    \item{cdf}{An optional \code{\link{AffymetrixCdfFile}}}
  }
 

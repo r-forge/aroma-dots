@@ -74,7 +74,7 @@ extend, print, uses
  }
 
  \section{Requirments}{
-   Classes inheriting from this \code{\link{Interface}} must provide the following
+   Classes inheriting from this \code{\link[aroma.core]{Interface}} must provide the following
    fields, in addition to the ones according to \code{\link{SnpPlm}}:
    \itemize{
     \item{combineAlleles}{A \code{\link[base]{logical}} indicating if total or allele-specific

@@ -29,7 +29,7 @@ extends \link[aroma.core]{Interface}\cr
 
 
 
-  An \code{\link{Interface}} implementing methods special for
+  An \code{\link[aroma.core]{Interface}} implementing methods special for
   \code{\link{ProbeLevelModel}}s specific to SNP arrays.
  }
 
@@ -56,7 +56,7 @@ extend, print, uses
  }
 
  \section{Requirments}{
-   Classes inheriting from this \code{\link{Interface}} must provide the following
+   Classes inheriting from this \code{\link[aroma.core]{Interface}} must provide the following
    fields:
    \itemize{
     \item{mergeStrands}{A \code{\link[base]{logical}} value indicating if strands should be

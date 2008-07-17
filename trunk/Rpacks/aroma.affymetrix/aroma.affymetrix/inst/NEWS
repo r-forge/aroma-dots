@@ -8,6 +8,9 @@ o Now AffymetrixProbeTabFile inherits from TabularTextFile and
 o Added extractMatrix() to AffymetrixCelFile for completeness.
 o Added argument 'drop=FALSE' to all extractMatrix(), extractTheta(),
   and extractTotalAndFreqB().
+o Added support for specifying the reference of any 
+  CopyNumberChromosomalModel as a single file (or a list of files
+  if more than one set is used).
 o MEMORY OPTIMIZATION: When calling extractRawCopyNumbers(obj) on an
   CopyNumberChromosomalModel object, the result would be cached in memory
   (in the object). This would result in an increasing memory usage when
@@ -25,7 +28,8 @@ o BUG FIX: plm$treatNAsAs == "NA" for RmaPlm:s returned an incorrect
 o BETA: Added BaseCountNormalization.
 o BETA: Updated FragmentLengthNormalization to handle allele-specific
   chip effect estimates as well.
-
+o Lines of code (excluding comments) using grep -v "#" *.R | wc -l:
+  aroma.affymetrix + aroma.core: 24902+8638=33540.
 
 Version: 0.9.3 [2008-06-08]
 o Package passes R CMD check on R v2.7.0 patched. There are some
@@ -853,7 +857,7 @@ o Added the abstract Explorer class.
 o Added calculateBaseline() to ChipEffectSet.
 o Replaced all occurances of affxparser::copyCel() with createFrom()
   in AffymetrixCelFile.
-o Lines of code: grep -v "#" *.R | wc -l => 24902
+o Lines of code (excluding comments): grep -v "#" *.R | wc -l => 24902
 
 
 Version: 0.4.3 [2007-03-15]

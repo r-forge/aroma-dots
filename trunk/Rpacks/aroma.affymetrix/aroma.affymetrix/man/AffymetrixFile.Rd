@@ -45,7 +45,7 @@ extends \emph{\link[aroma.core]{AromaPlatformInterface}}\cr
  \usage{AffymetrixFile(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{GenericDataFile}}.}
+   \item{...}{Arguments passed to \code{\link[aroma.core]{GenericDataFile}}.}
  }
 
  \section{Fields and Methods}{

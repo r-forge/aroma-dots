@@ -34,7 +34,7 @@
 # }
 #
 # \section{Requirments}{
-#   Classes inheriting from this @see "Interface" must provide the following
+#   Classes inheriting from this @see "aroma.core::Interface" must provide the following
 #   fields, in addition to the ones according to @see "SnpPlm":
 #   \itemize{
 #    \item{combineAlleles}{A @logical indicating if total or allele-specific

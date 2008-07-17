@@ -17,8 +17,12 @@
 #   \item{dataSet}{A @see "AffymetrixCelSet".}
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform".}
+#   \item{subsetToUpdate}{The probes to be updated.
+#     If @NULL, all probes are considered.}
+#   \item{typesToUpdate}{Types of probes to be updated.}
 #   \item{model}{A @character string specifying the model used to fit 
 #     the base-count effects.}
+#   \item{typesTofit}{Types of probes to be used when fitting the model.}
 #   \item{subsetToFit}{The units from which the normalization curve should
 #     be estimated.  If @NULL, all are considered.}
 # }

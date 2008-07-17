@@ -14,7 +14,7 @@
 #
 # \arguments{
 #   \item{files}{A @list of @see "AffymetrixFile":s.}
-#   \item{...}{Arguments passed to @see "GenericDataFileSet".}
+#   \item{...}{Arguments passed to @see "aroma.core::GenericDataFileSet".}
 # }
 #
 # \section{Fields and Methods}{

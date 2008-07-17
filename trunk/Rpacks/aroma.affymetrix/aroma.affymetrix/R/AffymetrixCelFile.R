@@ -12,7 +12,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AromaMicroarrayDataFile".}
+#   \item{...}{Arguments passed to @see "aroma.core::AromaMicroarrayDataFile".}
 #   \item{cdf}{An optional @see "AffymetrixCdfFile" making it possible to
 #     override the default CDF file as specified by the CEL file header.  
 #     The requirement is that its number of cells must match that of
