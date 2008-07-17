@@ -175,6 +175,8 @@ setMethodS3("validate", "GenericDataFileSet", function(this, ...) {
 #  \item{parent}{The number of generations up in the directory tree the
 #    directory name should be retrieved.  By default the current directory
 #    is used.}
+#  \item{translate}{If @TRUE, an a fullname translator is set, the fullname
+#     is translated before returned.} 
 #  \item{...}{Not used.}
 # }
 #
@@ -196,11 +198,12 @@ setMethodS3("validate", "GenericDataFileSet", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFullName", "GenericDataFileSet", function(this, parent=1, ...) {
+setMethodS3("getFullName", "GenericDataFileSet", function(this, parent=1, translate=TRUE, ...) {
+  # Argument 'parent':
   parent <- Arguments$getInteger(parent, range=c(0,32));
 
   # The name of a file set is inferred from the pathname of the directory
-  # of the set assuming path/to/<name>/<something>/<"chip type">/
+  # of the set assuming path/to/<fullname>/<something>/<"chip type">/
 
   # Get the path of this file set
   path <- getPath(this);
@@ -208,15 +211,20 @@ setMethodS3("getFullName", "GenericDataFileSet", function(this, parent=1, ...) {
     return(NA);
 
   while (parent > 0) {
-    # path/to/<name>/<something>
+    # path/to/<fullname>/<something>
     path <- dirname(path);
     parent <- parent - 1;
   }
 
-  # <name>
-  name <- basename(path);
+  # <fullname>
+  fullname <- basename(path);
 
-  name;
+  # Translate?
+  if (translate) {
+    fullname <- translateFullName(this, fullname);
+  } 
+
+  fullname;
 })
 
 
@@ -908,8 +916,10 @@ setMethodS3("extract", "GenericDataFileSet", function(this, files, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (is.logical(files))
+  if (is.logical(files)) {
     files <- which(files);
+  }
+
   files <- Arguments$getIndices(files, range=range(seq(this)));
 
   res <- clone(this);
@@ -1251,7 +1261,88 @@ setMethodS3("equals", "GenericDataFileSet", function(this, other, ..., verbose=F
 })
 
 
-setMethodS3("setFullNamesTranslator", "GenericDataSet", function(this, ...) {
+setMethodS3("setFullName", "GenericDataFileSet", function(this, fullname=NULL, ...) {
+  # Argument 'fullname':
+  if (!is.null(fullname)) {
+    fullname <- Arguments$getCharacter(fullname);
+  }
+
+  if (is.null(fullname)) {
+    # Clear the fullname translator.
+    setFullNameTranslator(this, NULL);
+  } else {
+    # Set a translator function that always returns the same name
+    setFullNameTranslator(this, function(...) { fullname });
+  }
+}, protected=TRUE)
+
+
+# Sets the name part of the fullname, leaving the tags untouched.
+setMethodS3("setName", "GenericDataFileSet", function(this, name=NULL, ...) {
+  # Argument 'name':
+  if (!is.null(name)) {
+    name <- Arguments$getCharacter(name);
+  }
+
+  if (is.null(name)) {
+    # Clear the name translator.
+    setFullNameTranslator(this, NULL);
+  } else {
+    # Set a translator function that always returns the same name
+    setFullNameTranslator(this, function(fullname, ...) {
+      parts <- strsplit(fullname, split=",", fixed=TRUE)[[1]];
+      parts[1] <- name;
+      fullname <- paste(parts, collapse=",");
+      fullname;
+    });
+  }
+}, protected=TRUE)
+
+
+
+
+setMethodS3("setFullNameTranslator", "GenericDataFileSet", function(this, fcn, ...) {
+  # Arguments 'fcn':
+  if (is.null(fcn)) {
+  } else if (!is.function(fcn)) {
+    throw("Argument 'fcn' is not a function: ", class(fcn)[1]);
+  }
+
+  # Sanity check
+  if (!is.null(fcn)) {
+    names <- c("foo bar");
+    names <- fcn(names);
+  }
+
+  this$.fullNameTranslator <- fcn;
+
+  # Allow the file set to update itself according to these new rules.
+  update2(this, ...);
+
+  invisible(this);
+}, protected=TRUE)
+
+
+setMethodS3("getFullNameTranslator", "GenericDataFileSet", function(this, ...) {
+  this$.fullNameTranslator;
+}, protected=TRUE) 
+
+
+setMethodS3("translateFullName", "GenericDataFileSet", function(this, name, ...) {
+  nameTranslator <- getFullNameTranslator(this);	
+  if (!is.null(nameTranslator)) {
+    name <- nameTranslator(name);
+    if (identical(attr(name, "isFinal"), TRUE))
+      return(name);
+  }
+
+  # Do nothing
+  name;
+}, private=TRUE)
+
+
+
+setMethodS3("setFullNamesTranslator", "GenericDataFileSet", function(this, ...) {
   # Apply the fullname translator for each of the files
   dummy <- sapply(this, setFullNameTranslator, ...);
 
@@ -1262,16 +1353,19 @@ setMethodS3("setFullNamesTranslator", "GenericDataSet", function(this, ...) {
 })
 
 
-setMethodS3("update2", "GenericDataSet", function(this, ...) {
+setMethodS3("update2", "GenericDataFileSet", function(this, ...) {
 }, protected=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2008-07-17
+# o Added setFullName(), and setName().
+# o Added setFullNameTranslator() for the data set itself.
 # 2008-07-14
 # o Added update2().
-# o Added setFullNamesTranslator().
+# o Added setFullNamesTranslator() to set it for all files.
 # 2008-06-07
 # o Added argument 'recursive' to fromFiles().
 # 2008-05-16
