@@ -13,11 +13,11 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Get probe-sequence annotation files
+# Assert existence of probe-sequence annotation files
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-apsList <- list();
+acsList <- list();
 for (chipType in chipTypes) {
-  apsList[[chipType]] <- AromaProbeSequenceTextFile$byChipType(chipType);
+  acsList[[chipType]] <- AromaCellSequenceFile$byChipType(chipType);
 }
 
 
