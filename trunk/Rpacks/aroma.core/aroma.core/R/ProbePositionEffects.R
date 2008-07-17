@@ -189,7 +189,11 @@ setMethodS3("getEffects", "ProbePositionEffects", function(fit, intercept=FALSE,
 
 
 
-setMethodS3("predict", "ProbePositionEffects", function(fit, seqs, ..., verbose=FALSE) {
+setMethodS3("predict", "ProbePositionEffects", function(object, seqs, ..., verbose=FALSE) {
+  # To please R CMD check
+  fit <- object;
+
+
   # Argument 'seqs':
   if (is.character(seqs)) {
     K <- length(seqs);
@@ -290,7 +294,10 @@ setMethodS3("predict", "ProbePositionEffects", function(fit, seqs, ..., verbose=
 
 
 
-setMethodS3("plot", "ProbePositionEffects", function(fit, type="b", col=NULL, pch=NULL, lwd=2, xlab="Position", ylab="Effect (on log2 scale)", ...) {
+setMethodS3("plot", "ProbePositionEffects", function(x, type="b", col=NULL, pch=NULL, lwd=2, xlab="Position", ylab="Effect (on log2 scale)", ...) {
+  # To please R CMD check
+  fit <- x;
+
   rho <- getEffects(fit);
   if (is.null(col)) {
     col <- seq(length=ncol(rho));
