@@ -316,7 +316,6 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
 
     # Argument 'model':
     model <- match.arg(model);
-print(model);
 
     if (model == "lm") {
       require("stats") || throw("Package not loaded: stats");
@@ -366,7 +365,6 @@ print(model);
   predictBaseCounts <- function(fit, X, model=c("robustSmoothSpline", "lm"), ...) {
     # Argument 'model':
     model <- match.arg(model);
-print(model);
 
     if (model == "lm") {
       predictFcn <- function(fit, X, ...) {
@@ -554,7 +552,8 @@ print(model);
         verbose && str(verbose, X);
         gc <- gc();
         verbose && print(verbose, gc);
-        fitT <- fitBaseCounts(yT, X=X, model=params$model, verbose=less(verbose, 5));
+        fitT <- fitBaseCounts(yT, X=X, model=params$model, 
+                                           verbose=less(verbose, 5));
         rm(yT, X);
         verbose && print(verbose, fitT);
         verbose && exit(verbose);
