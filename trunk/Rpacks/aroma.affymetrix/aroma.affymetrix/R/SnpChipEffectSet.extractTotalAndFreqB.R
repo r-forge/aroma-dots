@@ -1,4 +1,4 @@
-setMethodS3("extractTotalAndFreqB", "CnChipEffecSet", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("extractTotalAndFreqB", "CnChipEffecSet", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -80,8 +80,14 @@ setMethodS3("extractTotalAndFreqB", "CnChipEffecSet", function(this, units=NULL,
                                                 verbose=less(verbose, 5));
     verbose && str(verbose, dataKK);
     data[,,kk] <- dataKK;
+    rm(dataKK);
   }
   rm(ugcMap);
+
+  # Drop singleton dimensions?
+  if (drop) {
+    data <- drop(data);
+  }
 
   verbose && cat(verbose, "Results:");
   verbose && str(verbose, data);
@@ -95,7 +101,7 @@ setMethodS3("extractTotalAndFreqB", "CnChipEffecSet", function(this, units=NULL,
 
 
 
-setMethodS3("extractTotalAndFreqB", "SnpChipEffectSet", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("extractTotalAndFreqB", "SnpChipEffectSet", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -172,8 +178,14 @@ setMethodS3("extractTotalAndFreqB", "SnpChipEffectSet", function(this, units=NUL
                                                 verbose=less(verbose, 5));
     verbose && str(verbose, dataKK);
     data[,,kk] <- dataKK;
+    rm(dataKK);
   }
   rm(ugcMap);
+
+  # Drop singleton dimensions?
+  if (drop) {
+    data <- drop(data);
+  }
 
   verbose && cat(verbose, "Results:");
   verbose && str(verbose, data);
@@ -187,6 +199,8 @@ setMethodS3("extractTotalAndFreqB", "SnpChipEffectSet", function(this, units=NUL
 
 ############################################################################
 # HISTORY:
+# 2008-07-16
+# o Added argument 'drop=FALSE' to all extractTotalAndFreqB().
 # 2008-05-10
 # o Created.
 ############################################################################

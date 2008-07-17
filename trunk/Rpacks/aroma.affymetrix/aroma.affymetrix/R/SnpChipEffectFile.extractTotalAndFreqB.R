@@ -39,7 +39,7 @@
 #  (-3, 1) => (-2,-1/2) => (-3,  1)
 #
 
-setMethodS3("extractTotalAndFreqB", "CnChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("extractTotalAndFreqB", "CnChipEffectFile", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -137,6 +137,11 @@ setMethodS3("extractTotalAndFreqB", "CnChipEffectFile", function(this, units=NUL
   data <- matrix(c(thetaTotal, freqB), nrow=nbrOfUnits, ncol=2);
   colnames(data) <- c("total", "freqB");
 
+  # Drop singleton dimensions?
+  if (drop) {
+    data <- drop(data);
+  }
+
   verbose && cat(verbose, "Results:");
   verbose && str(verbose, data);
 
@@ -148,7 +153,7 @@ setMethodS3("extractTotalAndFreqB", "CnChipEffectFile", function(this, units=NUL
 
 
 
-setMethodS3("extractTotalAndFreqB", "SnpChipEffectFile", function(this, units=NULL, ..., verbose=FALSE) {
+setMethodS3("extractTotalAndFreqB", "SnpChipEffectFile", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -234,6 +239,11 @@ setMethodS3("extractTotalAndFreqB", "SnpChipEffectFile", function(this, units=NU
   data <- matrix(c(thetaTotal, freqB), nrow=nbrOfUnits, ncol=2);
   colnames(data) <- c("total", "freqB");
 
+  # Drop singleton dimensions?
+  if (drop) {
+    data <- drop(data);
+  }
+
   verbose && cat(verbose, "Results:");
   verbose && str(verbose, data);
 
@@ -245,6 +255,8 @@ setMethodS3("extractTotalAndFreqB", "SnpChipEffectFile", function(this, units=NU
 
 ############################################################################
 # HISTORY:
+# 2008-07-16
+# o Added argument 'drop=FALSE' to all extractTotalAndFreqB().
 # 2008-05-11
 # o The (thetaA,thetaB) -> (theta, freqB) is bijective *except* when 
 #   theta = thetaA+thetaB = 0.  With the assumption that thetaA,thetaB > 0
