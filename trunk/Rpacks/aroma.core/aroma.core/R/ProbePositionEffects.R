@@ -279,7 +279,7 @@ setMethodS3("predict", "ProbePositionEffects", function(fit, seqs, ..., verbose=
 #      verbose && exit(verbose);
     } # for (bb ...)
 
-    rm(nucleotidesPP);
+    rm(seqsPP);
     verbose && exit(verbose);
   } # for (pp ...)
 

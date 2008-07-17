@@ -1,4 +1,4 @@
-setMethodS3("getPositionEffectDesignMatrix", "raw", function(seqs, B=NULL, intercept=TRUE, df=5, ..., verbose=FALSE) {
+setMethodS3("getProbePositionEffectDesignMatrix", "raw", function(seqs, B=NULL, intercept=TRUE, df=5, ..., verbose=FALSE) {
   # Argument 'seqs':
   if (!is.matrix(seqs)) {
     throw("Argument 'seqs' is of type raw, but not a matrix.");
@@ -95,12 +95,12 @@ setMethodS3("getPositionEffectDesignMatrix", "raw", function(seqs, B=NULL, inter
   class(res) <- "ProbePositionEffectDesignMatrix";
 
   res;
-}) # getPositionEffectDesignMatrix()
+}) # getProbePositionEffectDesignMatrix()
 
 
 
 
-setMethodS3("getPositionEffectDesignMatrix", "character", function(seqs, ..., verbose=FALSE) {
+setMethodS3("getProbePositionEffectDesignMatrix", "character", function(seqs, ..., verbose=FALSE) {
   # Argument 'seqs':
   P <- nchar(seqs);
   P <- unique(P);
@@ -143,7 +143,7 @@ setMethodS3("getPositionEffectDesignMatrix", "character", function(seqs, ..., ve
   verbose && print(verbose, object.size(seqs));
   verbose && exit(verbose);
 
-  getPositionEffectDesignMatrix(seqs, ..., verbose=verbose);
+  getProbePositionEffectDesignMatrix(seqs, ..., verbose=verbose);
 })
 
 

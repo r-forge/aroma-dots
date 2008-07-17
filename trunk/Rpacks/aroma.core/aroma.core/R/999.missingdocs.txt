@@ -231,3 +231,10 @@ readTableHeader.default
  updateSequences updateSequences.AromaCellSequenceFile
  readTargetStrands readTargetStrands.AromaCellSequenceFile
  updateTargetStrands updateTargetStrands.AromaCellSequenceFile
+ fitProbePositionEffects fitProbePositionEffects.numeric getEffects
+ getEffects.ProbePositionEffects getProbePositionEffectDesignMatrix
+ getProbePositionEffectDesignMatrix.character
+ getProbePositionEffectDesignMatrix.raw plot.ProbePositionEffects
+ predict.ProbePositionEffects setFullNamesTranslator
+ setFullNamesTranslator.GenericDataSet text.ProbePositionEffects
+ update2 update2.GenericDataSet
