@@ -3,7 +3,7 @@ Package: aroma.core
 
 Version: 0.9.3.2 [2008-07-16]
 o BETA: Added setFullNamesTranslator() to AromaGenericFileSet.
-o ALPHA: Added protected update() to AromaGenericFileSet.
+o ALPHA: Added protected update2() to AromaGenericFileSet.
 o ALPHA: Added private ProbePositionEffects et al.
 
 
