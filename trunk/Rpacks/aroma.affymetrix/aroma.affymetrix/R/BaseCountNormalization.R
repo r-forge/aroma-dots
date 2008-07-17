@@ -22,7 +22,7 @@
 #   \item{typesToUpdate}{Types of probes to be updated.}
 #   \item{model}{A @character string specifying the model used to fit 
 #     the base-count effects.}
-#   \item{typesTofit}{Types of probes to be used when fitting the model.}
+#   \item{typesToFit}{Types of probes to be used when fitting the model.}
 #   \item{subsetToFit}{The units from which the normalization curve should
 #     be estimated.  If @NULL, all are considered.}
 # }
