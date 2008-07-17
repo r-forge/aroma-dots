@@ -190,11 +190,11 @@ setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FA
 #   \item{footer}{A nested named @list structure of additional attributes
 #      that are saved in the file footer after the mandatory ones.}
 #   \item{...}{Additional arguments passed to \code{allocate()} of 
-#      @see "AromaTabularBinaryFile".}
+#      @see "aroma.core::AromaTabularBinaryFile".}
 # }
 #
 # \value{
-#  Returns a @see "AromaUnitTabularBinaryFile" object.
+#  Returns a @see "aroma.core::AromaUnitTabularBinaryFile" object.
 # }
 #
 # @author

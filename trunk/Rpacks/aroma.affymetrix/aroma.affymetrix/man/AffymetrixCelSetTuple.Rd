@@ -36,7 +36,7 @@ extends \link[aroma.core]{AromaMicroarrayDataSetTuple}\cr
 
  \arguments{
    \item{...}{Arguments passed to the constructor of
-      \code{\link{AromaMicroarrayDataSetTuple}}.}
+      \code{\link[aroma.core]{AromaMicroarrayDataSetTuple}}.}
    \item{.setClass}{The name of the class of the input set.}
  }
 

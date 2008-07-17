@@ -10,7 +10,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "GenericDataFile".}
+#   \item{...}{Arguments passed to @see "aroma.core::GenericDataFile".}
 #   \item{.verify}{For internal use only.}
 # }
 #

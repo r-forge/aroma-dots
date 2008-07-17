@@ -32,11 +32,11 @@
   \item{footer}{A nested named \code{\link[base]{list}} structure of additional attributes
      that are saved in the file footer after the mandatory ones.}
   \item{...}{Additional arguments passed to \code{allocate()} of
-     \code{\link{AromaTabularBinaryFile}}.}
+     \code{\link[aroma.core]{AromaTabularBinaryFile}}.}
 }
 
 \value{
- Returns a \code{\link{AromaUnitTabularBinaryFile}} object.
+ Returns a \code{\link[aroma.core]{AromaUnitTabularBinaryFile}} object.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

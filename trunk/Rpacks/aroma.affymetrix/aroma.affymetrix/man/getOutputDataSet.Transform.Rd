@@ -29,7 +29,7 @@
 }
 
 \value{
- Returns an \code{\link{AromaMicroarrayDataSet}} or \code{\link[base]{NULL}}.
+ Returns an \code{\link[aroma.core]{AromaMicroarrayDataSet}} or \code{\link[base]{NULL}}.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

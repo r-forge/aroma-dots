@@ -12,7 +12,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AromaMicroarrayDataFile".}
+#   \item{...}{Arguments passed to @see "aroma.core::AromaMicroarrayDataFile".}
 #   \item{cdf}{An optional @see "AffymetrixCdfFile"}
 # }
 #

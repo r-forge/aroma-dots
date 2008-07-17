@@ -58,6 +58,39 @@ setConstructorS3("CopyNumberChromosomalModel", function(cesTuple=NULL, refTuple=
 
   # Argument 'refTuple':
   if (!is.null(refTuple)) {
+    # Is the reference a single file?
+    if (inherits(refTuple, "ChipEffectFile")) {
+      refTuple <- list(refTuple);
+    }
+
+    if (is.list(refTuple)) {
+      refList <- refTuple;
+
+      cesList <- getListOfSets(cesTuple);
+      if (length(refList) != length(cesList)) {
+        throw("The number of references in argument 'refTuple' does not match the number of references in 'cesTuple': ", length(refList), " != ", length(cesList));
+      }
+
+      # Coerce single reference file into reference sets
+      for (kk in seq(along=refList)) {
+        ref <- refList[[kk]];
+        if (inherits(ref, "ChipEffectFile")) {
+          chipType <- getChipType(ref, fullname=FALSE);
+          ces <- cesList[[chipType]];
+          if (is.null(ces)) {
+            throw("Argument 'refTuple' refers to a chip type not in 'cesTuple': ", chipType);
+          }
+          refSet <- newInstance(ces, rep(list(ref), nbrOfArrays(ces)));
+          refList[[kk]] <- refSet;
+          rm(refSet);
+        }
+        rm(ref);
+      }
+
+      refTuple <- refList;
+      rm(refList, cesList);
+    }
+
     # Coerce to ChipEffectSetTuple
     if (!inherits(refTuple, "ChipEffectSetTuple")) {
       refTuple <- ChipEffectSetTuple(refTuple);
@@ -674,6 +707,9 @@ setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=s
 
 ##############################################################################
 # HISTORY:
+# 2008-07-16
+# o Added support for specifying the reference by a single file (or a list of
+#   files if more than one set is used).
 # 2008-07-01
 # o MEMORY OPTIMIZATION: When calling extractRawCopyNumbers(obj) on an
 #   CopyNumberChromosomalModel object, the result would be cached in memory

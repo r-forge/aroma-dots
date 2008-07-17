@@ -29,7 +29,7 @@ for (chipType in chipTypes) {
   cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   stopifnot(identical(getNames(cs), sampleNames));
-  csRawList[[chipType]] <- cs;
+  csRawist[[chipType]] <- cs;
 }
 
 
@@ -55,7 +55,7 @@ for (chipType in names(csList)) {
 csList <- csAccList;
 csBcnList <- list();
 for (chipType in names(csList)) {
-  cs <- csList[[chipType]];
+  cs <- csAccList[[chipType]];
   bcn <- BaseCountNormalization(cs);
 #  bcn <- BaseCountNormalization(cs, tags="*,lm", model="lm");
   print(bcn);

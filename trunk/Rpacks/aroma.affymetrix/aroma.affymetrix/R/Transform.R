@@ -23,7 +23,7 @@ setConstructorS3("Transform", function(..., .reqSetClass="AffymetrixCelSet") {
 # }
 #
 # \value{
-#  Returns an @see "AromaMicroarrayDataSet" or @NULL.
+#  Returns an @see "aroma.core::AromaMicroarrayDataSet" or @NULL.
 # }
 #
 # @author

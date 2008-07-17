@@ -43,7 +43,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
  \usage{DChipDcpFile(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{GenericDataFile}}.}
+   \item{...}{Arguments passed to \code{\link[aroma.core]{GenericDataFile}}.}
  }
 
  \section{Fields and Methods}{

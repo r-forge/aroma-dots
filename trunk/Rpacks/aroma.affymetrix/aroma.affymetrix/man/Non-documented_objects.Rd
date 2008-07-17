@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Tue Jul 15 14:19:37 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1389,6 +1387,11 @@
 \alias{update2.AffymetrixCelSet}
 \alias{updateSampleAnnotationSet}
 \alias{updateSampleAnnotationSet.AffymetrixCelSet}
+\alias{getSubsetOfCellIndices}
+\alias{getSubsetOfCellIndices.AffymetrixCdfFile}
+\alias{getSubsetTo}
+\alias{getSubsetTo.BaseCountNormalization}
+\alias{getSubsetToUpdate.BaseCountNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that

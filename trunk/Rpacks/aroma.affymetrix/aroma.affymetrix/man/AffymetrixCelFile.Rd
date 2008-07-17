@@ -43,7 +43,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFile}}\cr
  \usage{AffymetrixCelFile(..., cdf=NULL)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{AromaMicroarrayDataFile}}.}
+   \item{...}{Arguments passed to \code{\link[aroma.core]{AromaMicroarrayDataFile}}.}
    \item{cdf}{An optional \code{\link{AffymetrixCdfFile}} making it possible to
      override the default CDF file as specified by the CEL file header.
      The requirement is that its number of cells must match that of

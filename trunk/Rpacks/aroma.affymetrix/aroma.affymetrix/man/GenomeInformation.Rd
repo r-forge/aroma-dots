@@ -35,7 +35,7 @@ extends \link[aroma.core]{GenericDataFile}\cr
  \usage{GenomeInformation(..., .verify=TRUE)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{GenericDataFile}}.}
+   \item{...}{Arguments passed to \code{\link[aroma.core]{GenericDataFile}}.}
    \item{.verify}{For internal use only.}
  }
 
