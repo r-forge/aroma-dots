@@ -559,6 +559,20 @@
 \alias{readTargetStrands.AromaCellSequenceFile}
 \alias{updateTargetStrands}
 \alias{updateTargetStrands.AromaCellSequenceFile}
+\alias{fitProbePositionEffects}
+\alias{fitProbePositionEffects.numeric}
+\alias{getEffects}
+\alias{getEffects.ProbePositionEffects}
+\alias{getProbePositionEffectDesignMatrix}
+\alias{getProbePositionEffectDesignMatrix.character}
+\alias{getProbePositionEffectDesignMatrix.raw}
+\alias{plot.ProbePositionEffects}
+\alias{predict.ProbePositionEffects}
+\alias{setFullNamesTranslator}
+\alias{setFullNamesTranslator.GenericDataSet}
+\alias{text.ProbePositionEffects}
+\alias{update2}
+\alias{update2.GenericDataSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
