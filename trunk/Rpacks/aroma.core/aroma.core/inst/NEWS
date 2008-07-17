@@ -1,9 +1,17 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.3.3 [2008-07-17]
+o ALPHA: Added setFullName() and setName() to GenericDataFile
+  and GenericDataFileSet. The plan is to have these replace
+  what getAlias() and setAlias() do today.
+o BETA: Added setFullNameTranslator() to GenericDataFileSet.
+
+
 Version: 0.9.3.2 [2008-07-16]
-o BETA: Added setFullNamesTranslator() to AromaGenericFileSet.
-o ALPHA: Added protected update2() to AromaGenericFileSet.
+o BETA: Added setFullNamesTranslator() (for the files) 
+  to AromaGenericFileSet.
+o ALPHA: Added protected update2() to GenericDataFileSet.
 o ALPHA: Added private ProbePositionEffects et al.
 
 

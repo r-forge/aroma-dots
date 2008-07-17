@@ -569,10 +569,19 @@
 \alias{plot.ProbePositionEffects}
 \alias{predict.ProbePositionEffects}
 \alias{setFullNamesTranslator}
-\alias{setFullNamesTranslator.GenericDataSet}
 \alias{text.ProbePositionEffects}
 \alias{update2}
-\alias{update2.GenericDataSet}
+\alias{update2.GenericDataFileSet}
+\alias{getFullNameTranslator.GenericDataFileSet}
+\alias{setFullName}
+\alias{setFullName.GenericDataFile}
+\alias{setFullName.GenericDataFileSet}
+\alias{setFullNamesTranslator.GenericDataFileSet}
+\alias{setFullNameTranslator.GenericDataFileSet}
+\alias{setName}
+\alias{setName.GenericDataFile}
+\alias{setName.GenericDataFileSet}
+\alias{translateFullName.GenericDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -370,6 +370,44 @@ setMethodS3("setFullNameTranslator", "GenericDataFile", function(this, fcn, ...)
 }, protected=TRUE)
 
 
+setMethodS3("setFullName", "GenericDataFile", function(this, fullname=NULL, ...) {
+  # Argument 'fullname':
+  if (!is.null(fullname)) {
+    fullname <- Arguments$getCharacter(fullname);
+  }
+
+  if (is.null(fullname)) {
+    # Clear the fullname translator.
+    setFullNameTranslator(this, NULL);
+  } else {
+    # Set a translator function that always returns the same name
+    setFullNameTranslator(this, function(...) { fullname });
+  }
+}, protected=TRUE)
+
+
+# Sets the name part of the fullname, leaving the tags untouched.
+setMethodS3("setName", "GenericDataFile", function(this, name=NULL, ...) {
+  # Argument 'name':
+  if (!is.null(name)) {
+    name <- Arguments$getCharacter(name);
+  }
+
+  if (is.null(name)) {
+    # Clear the name translator.
+    setFullNameTranslator(this, NULL);
+  } else {
+    # Set a translator function that always returns the same name
+    setFullNameTranslator(this, function(fullname, ...) {
+      parts <- strsplit(fullname, split=",", fixed=TRUE)[[1]];
+      parts[1] <- name;
+      fullname <- paste(parts, collapse=",");
+      fullname;
+    });
+  }
+}, protected=TRUE)
+
+
 setMethodS3("translateFullName", "GenericDataFile", function(this, name, ...) {
   nameTranslator <- getFullNameTranslator(this);	
   if (!is.null(nameTranslator)) {
@@ -907,6 +945,8 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-17
+# o Added setFullName(), and setName().
 # 2008-06-11
 # o BUG FIX: Argument 'recursive' is ignored in the GenericDataFile
 #   constructor.

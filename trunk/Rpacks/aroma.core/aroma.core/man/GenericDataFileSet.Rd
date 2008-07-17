@@ -77,6 +77,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{sapply} \tab  -\cr
  \tab \code{\link[aroma.core:seq.GenericDataFileSet]{seq}} \tab Gets an vector of file indices.\cr
  \tab \code{\link[aroma.core:setAlias.GenericDataFileSet]{setAlias}} \tab Sets the alias of the file set.\cr
+ \tab \code{setFullNamesTranslator} \tab  -\cr
  \tab \code{\link[aroma.core:setTags.GenericDataFileSet]{setTags}} \tab Sets the tags of the file set.\cr
  \tab \code{validate} \tab  -\cr
 }

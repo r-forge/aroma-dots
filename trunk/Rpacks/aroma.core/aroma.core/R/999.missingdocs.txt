@@ -236,5 +236,11 @@ readTableHeader.default
  getProbePositionEffectDesignMatrix.character
  getProbePositionEffectDesignMatrix.raw plot.ProbePositionEffects
  predict.ProbePositionEffects setFullNamesTranslator
- setFullNamesTranslator.GenericDataSet text.ProbePositionEffects
- update2 update2.GenericDataSet
+ text.ProbePositionEffects
+ update2 update2.GenericDataFileSet
+ getFullNameTranslator.GenericDataFileSet setFullName
+ setFullName.GenericDataFile setFullName.GenericDataFileSet
+ setFullNamesTranslator.GenericDataFileSet
+ setFullNameTranslator.GenericDataFileSet setName
+ setName.GenericDataFile setName.GenericDataFileSet
+ translateFullName.GenericDataFileSet
