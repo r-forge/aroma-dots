@@ -451,6 +451,7 @@ print(model);
   verbose && enter(verbose, "Path: ", outputPath);
 
   designMatrix <- NULL;
+  paramsShort <- NULL;
   muT <- NULL;
   hasSeq <- NULL;
   for (kk in seq_len(nbrOfArrays)) {
@@ -486,24 +487,25 @@ print(model);
         # Update subset of cell indices for fitting and updating
         subsetToFit <- setdiff(subsetToFit, missingSeqs);
         subsetToUpdate <- setdiff(subsetToUpdate, missingSeqs);
-        rm(missingSeqs);
 
         verbose && cat(verbose, "Cell indices used for fitting:");
         verbose && str(verbose, subsetToFit);
         verbose && cat(verbose, "Cell indices to be updated:");
         verbose && str(verbose, subsetToUpdate);
 
+        rm(missingSeqs); # Not needed anymore
         gc <- gc();
+        verbose && exit(verbose);
+      }
 
+      if (is.null(paramsShort)) {
         # Precalculate some model fit parameters
         verbose && enter(verbose, "Compressing model parameter to a short format");
         paramsShort <- params;
         paramsShort$subsetToFit <- NULL;
         paramsShort$subsetToUpdate <- NULL;
-     #  paramsShort$subsetToFitIntervals <- seqToIntervals(subsetToFit);
-     #  paramsShort$subsetToUpdateIntervals <- seqToIntervals(subsetToUpdate);
-        verbose && exit(verbose);
-
+        paramsShort$subsetToFitIntervals <- seqToIntervals(subsetToFit);
+        paramsShort$subsetToUpdateIntervals <- seqToIntervals(subsetToUpdate);
         verbose && exit(verbose);
       }
 
