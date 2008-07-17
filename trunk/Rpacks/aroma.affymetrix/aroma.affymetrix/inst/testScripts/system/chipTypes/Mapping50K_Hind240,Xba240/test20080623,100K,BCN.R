@@ -29,7 +29,7 @@ for (chipType in chipTypes) {
   cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   stopifnot(identical(getNames(cs), sampleNames));
-  csRawist[[chipType]] <- cs;
+  csRawList[[chipType]] <- cs;
 }
 
 
