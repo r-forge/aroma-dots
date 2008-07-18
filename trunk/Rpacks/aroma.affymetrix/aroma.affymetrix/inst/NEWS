@@ -1,6 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.3.3 [2008-07-17]
+o BUG FIX: getAromaCellSequenceFile() of BaseCountNormalization would
+  search using the full name of the chip type, e.g. GenomeWideSNP_6,Full.
+
 Version: 0.9.3.2 [2008-07-16]
 o Now AffymetrixProbeTabFile inherits from TabularTextFile and
   "implements" AromaPlatformInterface.  Previously it inherited

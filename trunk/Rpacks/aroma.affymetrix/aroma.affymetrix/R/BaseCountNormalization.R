@@ -213,7 +213,7 @@ setMethodS3("getAromaCellSequenceFile", "BaseCountNormalization", function(this,
   if (is.null(aps)) {
     dataSet <- getInputDataSet(this);
     cdf <- getCdf(dataSet);
-    chipType <- getChipType(cdf);
+    chipType <- getChipType(cdf, fullname=FALSE);
     aps <- AromaCellSequenceFile$byChipType(chipType, ...);
     this$.aps <- aps;
   }
@@ -245,7 +245,18 @@ setMethodS3("countBases", "BaseCountNormalization", function(this, ..., force=FA
 }, protected=TRUE);
 
 
-setMethodS3("getParameters", "BaseCountNormalization", function(this, expand=TRUE, ...) {
+setMethodS3("getParameters", "BaseCountNormalization", function(this, expand=TRUE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
 
@@ -259,8 +270,10 @@ setMethodS3("getParameters", "BaseCountNormalization", function(this, expand=TRU
 
   # Expand?
   if (expand) {
-    params$subsetToUpdate <- getSubsetToUpdate(this);
-    params$subsetToFit <- getSubsetToFit(this);
+    verbose && enter(verbose, "Expanding subsets to fit and update");
+    params$subsetToUpdate <- getSubsetToUpdate(this, verbose=less(verbose, 1));
+    params$subsetToFit <- getSubsetToFit(this, verbose=less(verbose, 1));
+    verbose && exit(verbose);
   }
 
   params;
@@ -431,7 +444,7 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
   ds <- getInputDataSet(this);
 
   # Get algorithm parameters
-  params <- getParameters(this);
+  params <- getParameters(this, verbose=less(verbose, 5));
 
   # Get (and create) the output path
   outputPath <- getPath(this);
@@ -735,6 +748,9 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
 
 ############################################################################
 # HISTORY:
+# 2008-07-17
+# o BUG FIX: getAromaCellSequenceFile() would search using the full name of
+#   the chip type, e.g. GenomeWideSNP_6,Full.
 # 2008-07-16
 # o Added support for fitting and updating subsets of cells and types of
 #   probes according to the CDF.
