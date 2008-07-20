@@ -38,7 +38,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUpdate="pm", subsetToUpdate=NULL, model=c("robustSmoothSpline", "lm"), typesToFit=typesToUpdate, subsetToFit="-XY") {
+setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUpdate="pm", subsetToUpdate=NULL, model=c("robustSmoothSpline", "lm"), typesToFit=typesToUpdate, subsetToFit="-XY", shift=0) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -73,9 +73,6 @@ setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUp
       subsetToUpdate <- sort(subsetToUpdate);
     }
 
-    # Argument 'model':
-    model <- match.arg(model);
-
     # Argument 'typesToFit':
     if (!is.null(typesToFit)) {
       typesToFit <- match.arg(typesToFit, choices=c("pm", "mm", "pmmm"));
@@ -97,6 +94,12 @@ setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUp
     }
   }
 
+  # Argument 'model':
+  model <- match.arg(model);
+
+  # Argument 'shift':
+  shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf")); 
+
 
   extend(ProbeLevelTransform(dataSet=dataSet, ...), "BaseCountNormalization",
     .typesToUpdate = typesToUpdate,
@@ -104,6 +107,7 @@ setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUp
     .model = model,
     .typesToFit = typesToFit,
     .subsetToFit = subsetToFit,
+    shift = shift,
     .extraTags = extraTags
   )
 })
@@ -125,6 +129,18 @@ setMethodS3("getAsteriskTags", "BaseCountNormalization", function(this, collapse
 
   # Extra tags?
   tags <- c(tags, this$.extraTags);
+
+  # Add class-specific tags
+  shift <- as.integer(round(this$shift));
+  if (shift != 0) {
+    tags <- c(tags, sprintf("%+d", shift));
+  } 
+
+  # Add model tag?
+  model <- this$.model;
+  if (model != "robustSmoothSpline") {
+    tags <- c(tags, model);
+  }
 
   # Collapse?
   tags <- paste(tags, collapse=collapse);
@@ -210,7 +226,7 @@ setMethodS3("getTargetFile", "BaseCountNormalization", function(this, ..., verbo
 setMethodS3("getAromaCellSequenceFile", "BaseCountNormalization", function(this, ..., force=FALSE) {
   aps <- this$.aps;
 
-  if (is.null(aps)) {
+  if (force || is.null(aps)) {
     dataSet <- getInputDataSet(this);
     cdf <- getCdf(dataSet);
     chipType <- getChipType(cdf, fullname=FALSE);
@@ -221,28 +237,6 @@ setMethodS3("getAromaCellSequenceFile", "BaseCountNormalization", function(this,
   aps;
 }, protected=TRUE)
 
-
-setMethodS3("countBases", "BaseCountNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  counts <- this$.baseCounts;
-
-  if (force || is.null(counts)) {
-    aps <- getAromaCellSequenceFile(this, verbose=less(verbose, 20));
-    counts <- countBases(aps, verbose=less(verbose, 5));
-    this$.baseCounts <- counts;
-  }
-
-  counts;
-}, protected=TRUE);
 
 
 setMethodS3("getParameters", "BaseCountNormalization", function(this, expand=TRUE, ..., verbose=FALSE) {
@@ -265,7 +259,8 @@ setMethodS3("getParameters", "BaseCountNormalization", function(this, expand=TRU
     subsetToUpdate = this$.subsetToUpdate,
     model = this$.model,
     typesToFit = this$.typesToFit,
-    subsetToFit = this$.subsetToFit
+    subsetToFit = this$.subsetToFit,
+    shift = this$shift
   ));
 
   # Expand?
@@ -455,6 +450,12 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
   # Get subset to update
   subsetToUpdate <- params$subsetToUpdate;
 
+  # Get shift
+  shift <- params$shift;
+
+  # Locate AromaCellSequenceFile holding probe sequences
+  aps <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calibrate each array
@@ -488,7 +489,7 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       if (is.null(designMatrix)) {
         verbose && enter(verbose, "Count nucleotide bases for *all* cells");
         verbose && cat(verbose, "Chip type: ", getChipType(cdf));
-        designMatrix <- countBases(this, verbose=less(verbose, 5));
+        designMatrix <- countBases(aps, verbose=less(verbose, 5));
         verbose && cat(verbose, "Nucleotide base counts:");
         verbose && str(verbose, designMatrix);
 
@@ -545,6 +546,11 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
         yT <- extractMatrix(dfT, cells=subsetToFit, drop=TRUE);
         rm(dfT);
 
+        if (shift != 0) {
+          yT <- yT + shift;
+          verbose && cat(verbose, "Shifted probe signals: ", shift);
+        }
+
         verbose && cat(verbose, "Target log2 probe signals:");
         yT <- log2(yT);
         verbose && str(verbose, yT);
@@ -597,6 +603,12 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Getting signals used to fit the model");
       y <- extractMatrix(df, cells=subsetToFit, drop=TRUE);
+
+      if (shift != 0) {
+        y <- y + shift;
+        verbose && cat(verbose, "Shifted probe signals: ", shift);
+      }
+
       y <- log2(y);
       verbose && cat(verbose, "Log2 probe signals:");
       verbose && str(verbose, y);
@@ -647,6 +659,12 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Reading probe signals:");
       y <- extractMatrix(df, cells=subsetToUpdate, drop=TRUE);
+
+      if (shift != 0) {
+        y <- y + shift;
+        verbose && cat(verbose, "Shifted probe signals: ", shift);
+      }
+
       verbose && str(verbose, y);
       verbose && summary(verbose, y);
       verbose && exit(verbose);
@@ -748,6 +766,11 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
 
 ############################################################################
 # HISTORY:
+# 2008-07-19
+# o Removed countBases() for this class.
+# o Added 'shift' defaulting to zero.
+# o Now asterisk tag is sensitive to the model and adds the model as a tag
+#   for models other than robustSmoothSpline.
 # 2008-07-17
 # o BUG FIX: getAromaCellSequenceFile() would search using the full name of
 #   the chip type, e.g. GenomeWideSNP_6,Full.
