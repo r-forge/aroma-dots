@@ -694,3 +694,6 @@
   getTargetFile.AbstractProbeSequenceNormalization predictOne
   predictOne.AbstractProbeSequenceNormalization
   predictOne.BaseCountNormalization
+  allocateFromCdf.AromaCellSequenceFile
+  importFromAffymetrixProbeTabFile.AromaCellSequenceFile inferMmFromPm
+  inferMmFromPm.AromaCellSequenceFile
