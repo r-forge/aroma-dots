@@ -520,7 +520,8 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
   # Instead, updated size by size
   verbose && printf(verbose, "Allocating matrix of size %dx%d.\n", 
                                      max(uUnitSizes), length(unitNames));
-  units2 <- groups <- matrix(NA, nrow=max(uUnitSizes), ncol=length(unitNames));
+  naValue <- as.integer(NA);
+  units2 <- groups <- matrix(naValue, nrow=max(uUnitSizes), ncol=length(unitNames));
   for (size in uUnitSizes) {
     # Identify units with a certain number of groups
     cc <- which(unitSizes == size);
@@ -892,6 +893,9 @@ setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("thet
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: getUnitGroupCellMap().
 # 2008-05-08
 # o BUG FIX: getUnitGroupCellMap() of ChipEffectFile gave an error if
 #   argument 'units' had zero length (non-NULL).

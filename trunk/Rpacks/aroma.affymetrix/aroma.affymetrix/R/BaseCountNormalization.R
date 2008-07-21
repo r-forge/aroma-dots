@@ -14,17 +14,12 @@
 # @synopsis 
 #
 # \arguments{
-#   \item{dataSet}{A @see "AffymetrixCelSet".}
 #   \item{...}{Arguments passed to the constructor of 
-#     @see "ProbeLevelTransform".}
-#   \item{subsetToUpdate}{The probes to be updated.
-#     If @NULL, all probes are considered.}
-#   \item{typesToUpdate}{Types of probes to be updated.}
+#     @see "AbstractProbeSequenceNormalization".}
 #   \item{model}{A @character string specifying the model used to fit 
 #     the base-count effects.}
-#   \item{typesToFit}{Types of probes to be used when fitting the model.}
-#   \item{subsetToFit}{The units from which the normalization curve should
-#     be estimated.  If @NULL, all are considered.}
+#   \item{bootstrap}{If @TRUE, the model fitting is done by bootstrap in
+#     order to save memory.}
 # }
 #
 # \section{Fields and Methods}{
@@ -38,108 +33,44 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("BaseCountNormalization", function(dataSet=NULL, ..., typesToUpdate="pm", subsetToUpdate=NULL, model=c("robustSmoothSpline", "lm"), typesToFit=typesToUpdate, subsetToFit="-XY", shift=0) {
+setConstructorS3("BaseCountNormalization", function(..., model=c("robustSmoothSpline", "lm"), bootstrap=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  extraTags <- NULL;
-
-  # Argument 'dataSet':
-  if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "AffymetrixCelSet")) {
-      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", 
-                                                          class(dataSet)[1]);
-    }
-
-    cdf <- getCdf(dataSet);
-
-    # Argument 'typesToUpdate':
-    if (!is.null(typesToUpdate)) {
-      typesToUpdate <- match.arg(typesToUpdate, choices=c("pm", "mm", "pmmm"));
-    }
-
-    # Argument 'subsetToUpdate':
-    if (is.null(subsetToUpdate)) {
-    } else if (is.character(subsetToUpdate)) {
-      if (subsetToUpdate %in% c("-X", "-Y", "-XY")) {
-      } else {
-        throw("Unknown value of argument 'subsetToUpdate': ", subsetToUpdate);
-      }
-      extraTags <- c(extraTags, subsetToUpdate=subsetToUpdate);
-    } else {
-      nbrOfCells <- nbrOfCells(cdf);
-      subsetToUpdate <- Arguments$getIndices(subsetToUpdate, range=c(1, nbrOfCells));
-      subsetToUpdate <- unique(subsetToUpdate);
-      subsetToUpdate <- sort(subsetToUpdate);
-    }
-
-    # Argument 'typesToFit':
-    if (!is.null(typesToFit)) {
-      typesToFit <- match.arg(typesToFit, choices=c("pm", "mm", "pmmm"));
-    }
-
-    # Argument 'subsetToFit':
-    if (is.null(subsetToFit)) {
-    } else if (is.character(subsetToFit)) {
-      if (subsetToFit %in% c("-X", "-Y", "-XY")) {
-      } else {
-        throw("Unknown value of argument 'subsetToFit': ", subsetToFit);
-      }
-      extraTags <- c(extraTags, subsetToFit=subsetToFit);
-    } else {
-      nbrOfCells <- nbrOfCells(cdf);
-      subsetToFit <- Arguments$getIndices(subsetToFit, range=c(1, nbrOfCells));
-      subsetToFit <- unique(subsetToFit);
-      subsetToFit <- sort(subsetToFit);
-    }
-  }
-
   # Argument 'model':
   model <- match.arg(model);
 
-  # Argument 'shift':
-  shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf")); 
+  # Argument 'bootstrap':
+  bootstrap <- Arguments$getLogical(bootstrap);
 
-
-  extend(ProbeLevelTransform(dataSet=dataSet, ...), "BaseCountNormalization",
-    .typesToUpdate = typesToUpdate,
-    .subsetToUpdate = subsetToUpdate,
-    .model = model,
-    .typesToFit = typesToFit,
-    .subsetToFit = subsetToFit,
-    shift = shift,
-    .extraTags = extraTags
-  )
-})
-
-
-setMethodS3("clearCache", "BaseCountNormalization", function(this, ...) {
-  # Clear all cached values.
-  for (ff in c(".subsetToUpdateExpanded", ".subsetToFitExpanded")) {
-    this[[ff]] <- NULL;
+  if (bootstrap && model == "lm") {
+    throw("Bootstrapping for the 'lm' model is not implemented.");
   }
 
-  # Then for this object 
-  NextMethod("clearCache", object=this, ...);
+
+  extend(AbstractProbeSequenceNormalization(...), "BaseCountNormalization",
+    .model = model,
+    .bootstrap=bootstrap,
+    .chunkSize=as.integer(2.5e6),
+    .maxIter=as.integer(50),
+    .acc=0.005
+  )
 })
 
 
 setMethodS3("getAsteriskTags", "BaseCountNormalization", function(this, collapse=NULL, ...) {
   tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
-  # Extra tags?
-  tags <- c(tags, this$.extraTags);
-
-  # Add class-specific tags
-  shift <- as.integer(round(this$shift));
-  if (shift != 0) {
-    tags <- c(tags, sprintf("%+d", shift));
-  } 
-
   # Add model tag?
   model <- this$.model;
   if (model != "robustSmoothSpline") {
     tags <- c(tags, model);
+  }
+
+  # Add bootstrap tag?
+  if (this$.bootstrap) {
+    bootstrapTag <- "B";
+    tags <- c(tags, bootstrapTag);
   }
 
   # Collapse?
@@ -150,160 +81,107 @@ setMethodS3("getAsteriskTags", "BaseCountNormalization", function(this, collapse
 
 
 
-
-setMethodS3("getSubsetTo", "BaseCountNormalization", function(this, what=c("fit", "update"), ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'what':
-  what <- match.arg(what);
-
-  field <- sprintf(".subsetTo%s", capitalize(what));
-  fieldExpanded <- paste(field, "Expanded", sep="");
-  typesField <- sprintf(".typesTo%s", capitalize(what));
-
-  subset <- this[[field]];
-  stratifyBy <- this[[typesField]];
-
-  # Expand?
-  if (is.character(subset)) {
-    cells <- this[[fieldExpanded]];
-    if (is.null(cells)) {
-      dataSet <- getInputDataSet(this);
-      cdf <- getCdf(dataSet);
-      units <- subset;
-      cells <- getSubsetOfCellIndices(cdf, units=units, stratifyBy=stratifyBy, ...);
-      this[[fieldExpanded]] <- cells;
-    }
-  } else if (is.numeric(subset)) {
-    cells <- subset;
-  } else if (is.null(subset)) {
-    dataSet <- getInputDataSet(this);
-    cdf <- getCdf(dataSet);
-    if (is.null(stratifyBy)) {
-      cells <- seq(length=nbrOfCells(cdf));
-    } else {
-      cells <- getSubsetOfCellIndices(cdf, stratifyBy=stratifyBy, ...);
-    }
-    this[[fieldExpanded]] <- cells;
-  } else {
-    throw("Internal error. This statment should never be reached: ", mode(subset));
-  }
-
-  cells;
-}, private=TRUE);
-
-
-setMethodS3("getSubsetToUpdate", "BaseCountNormalization", function(this, ...) {
-  getSubsetTo(this, what="update", ...);
-}, protected=TRUE);
-
-
-setMethodS3("getSubsetToFit", "BaseCountNormalization", function(this, ...) {
-  getSubsetTo(this, what="fit", ...);
-}, protected=TRUE);
-
-
-
-setMethodS3("getTargetFile", "BaseCountNormalization", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  dataSet <- getInputDataSet(this);
-  dfR <- getAverageFile(dataSet, verbose=less(verbose, 25));
-
-  dfR;
-})
-
-
-setMethodS3("getAromaCellSequenceFile", "BaseCountNormalization", function(this, ..., force=FALSE) {
-  aps <- this$.aps;
-
-  if (force || is.null(aps)) {
-    dataSet <- getInputDataSet(this);
-    cdf <- getCdf(dataSet);
-    chipType <- getChipType(cdf, fullname=FALSE);
-    aps <- AromaCellSequenceFile$byChipType(chipType, ...);
-    this$.aps <- aps;
-  }
-
-  aps;
-}, protected=TRUE)
-
-
-
-setMethodS3("getParameters", "BaseCountNormalization", function(this, expand=TRUE, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
+setMethodS3("getParameters", "BaseCountNormalization", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
+  params <- NextMethod(generic="getParameters", object=this, ...);
 
   params <- c(params, list(
-    typesToUpdate = this$.typesToUpdate,
-    subsetToUpdate = this$.subsetToUpdate,
     model = this$.model,
-    typesToFit = this$.typesToFit,
-    subsetToFit = this$.subsetToFit,
-    shift = this$shift
+    bootstrap = this$.bootstrap,
+    chunkSize = this$.chunkSize,
+    maxIter = this$.maxIter,
+    acc = this$.acc
   ));
-
-  # Expand?
-  if (expand) {
-    verbose && enter(verbose, "Expanding subsets to fit and update");
-    params$subsetToUpdate <- getSubsetToUpdate(this, verbose=less(verbose, 1));
-    params$subsetToFit <- getSubsetToFit(this, verbose=less(verbose, 1));
-    verbose && exit(verbose);
-  }
 
   params;
 }, private=TRUE)
 
 
-###########################################################################/**
-# @RdocMethod process
-#
-# @title "Calibrates the data set"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-#   \item{force}{If @TRUE, data already calibrated is re-calibrated, 
-#       otherwise not.}
-#   \item{verbose}{See @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns a @double @vector.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
+
+setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NULL, model=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'cells':
+  if (is.null(cells)) {
+  } else {
+    # Validated below...
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Retrieving design matrix");
+  verbose && cat(verbose, "Cells:");
+  verbose && str(verbose, cells);
+
+  verbose && cat(verbose, "Model: ", model);
+
+  # Retrieve nucleotide counts as raw values whenever
+  # possible to save memory.
+  if (model == "lm") {
+    mode <- "integer";
+    oneValue <- as.integer(1);
+  } else if (model == "robustSmoothSpline") {
+    mode <- "raw";
+    oneValue <- as.raw(1);
+  }
+
+  verbose && enter(verbose, "Locating probe-sequence annotation data");
+  # Locate AromaCellSequenceFile holding probe sequences
+  aps <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Count nucleotide bases for *all* cells");
+  verbose && cat(verbose, "Chip type: ", getChipType(aps));
+  designMatrix <- countBases(aps, mode=mode, verbose=less(verbose, 5));
+  rm(aps);
+  verbose && cat(verbose, "Nucleotide base counts:");
+  verbose && str(verbose, designMatrix);
+  verbose && cat(verbose, "object.size(designMatrix): ",
+                                            object.size(designMatrix));
+  verbose && exit(verbose);
+
+  if (!is.null(cells)) {
+    verbose && enter(verbose, "Extracing sequences of interest");
+    verbose && cat(verbose, "Cells:");
+    verbose && str(verbose, cells);
+    nbrOfCells <- nrow(designMatrix);
+    cells <- Arguments$getIndices(cells, range=c(1,nbrOfCells));
+    designMatrix <- designMatrix[cells,,drop=FALSE];
+    rm(cells);
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
+    verbose && cat(verbose, "object.size(designMatrix): ",
+                                            object.size(designMatrix));
+    verbose && exit(verbose);
+  }
+
+  designMatrix[,1] <- oneValue;
+  verbose && cat(verbose, "Design matrix:");
+  verbose && str(verbose, designMatrix);
+  verbose && cat(verbose, "object.size(designMatrix): ",
+                                            object.size(designMatrix));
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
+
+  designMatrix;
+}, private=TRUE)
+
+
+
+setMethodS3("fitOne", "BaseCountNormalization", function(this, df, cells=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -345,12 +223,15 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
             mu <- median(y);
             fit <- list(mu=mu);
           } else {
-            fit <- aroma.light::robustSmoothSpline(x=X[,cc], y=y, ...);
-            # Remove redundant parameters
-            for (ff in c("x", "y", "w", "yin", "lev")) {
-              fit[[ff]] <- NULL;
-            }
-            mu <- predict(fit, x=X[,cc])$y;
+            # Note: 'X' may be a "raw" matrix (to save memory)
+            Xcc <- as.double(X[,cc]);
+            fit <- robustSmoothSpline(x=Xcc, y=y, ...);
+##            # Remove redundant parameters (although really small here)
+##            for (ff in c("x", "y", "w", "yin", "lev")) {
+##              fit[[ff]] <- NULL;
+##            }
+            mu <- predict(fit, x=Xcc)$y;
+            rm(Xcc);
           }
 
           # Remove the effect of term #cc
@@ -370,6 +251,189 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
   } # fitBaseCounts()
 
 
+  fitSubset <- function(df, cells=NULL, ..., verbose) {
+    verbose && enter(verbose, "Reading signals to fit");
+    verbose && cat(verbose, "Cells:");
+    verbose && str(verbose, cells);
+    y <- extractMatrix(df, cells=cells, drop=TRUE, verbose=less(verbose, 10));
+    verbose && exit(verbose);
+  
+    if (shift != 0) {
+      verbose && enter(verbose, "Shifting signals");
+      verbose && cat(verbose, "Shift: ", shift);
+      y <- y + shift;
+      verbose && exit(verbose);
+    }
+  
+    verbose && enter(verbose, "Log2 transforming signals");
+    y <- log2(y);
+    verbose && cat(verbose, "Target log2 probe signals:");
+    verbose && str(verbose, y);
+    verbose && exit(verbose);
+  
+    verbose && enter(verbose, "Identify finite data points");
+    n <- length(y);
+    # Fit only finite subset
+    keep <- whichVector(is.finite(y));
+    y <- y[keep];
+    cells <- cells[keep];
+    rm(keep);
+    n2 <- length(y);
+    verbose && printf(verbose, "Removed %d (%.4f%%) out of %d non-finite data points: ", n-n2, 100*(n-n2)/n, n);
+    gc <- gc();
+    verbose && exit(verbose);
+  
+    verbose && enter(verbose, "Fitting base-count model");
+    X <- getDesignMatrix(this, cells=cells, model=model, verbose=less(verbose, 5));
+    rm(cells);
+    verbose && cat(verbose, "Design matrix:");
+    verbose && str(verbose, X);
+    gc <- gc();
+    verbose && print(verbose, gc);
+    fit <- fitBaseCounts(y, X=X, model=model, verbose=less(verbose, 5));
+    rm(y, X);
+    verbose && print(verbose, fit);
+    verbose && exit(verbose);
+  
+    fit;
+  } # fitSubset()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'df':
+  if (!inherits(df, "AffymetrixCelFile")) {
+    throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
+  }
+
+  # Argument 'cells':
+  if (is.null(cells)) {
+  } else {
+    # Validated below...
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Fitting normalization function for one array");
+  verbose && cat(verbose, "Full name: ", getFullName(df));
+
+  # Get algorithm parameters
+  params <- getParameters(this, expand=FALSE, verbose=less(verbose, 5));
+  model <- params$model;
+  shift <- params$shift;
+  bootstrap <- params$bootstrap;
+  chunkSize <- params$chunkSize;
+  maxIter <- params$maxIter;
+  acc <- params$acc;
+
+  # Is bootstrapping necessary?
+  if (chunkSize >= length(cells)) {
+    verbose && cat(verbose, "Bootstrapping not really needed.");
+    bootstrap <- FALSE;
+  }
+
+  # Bootstrap?
+  if (bootstrap) {
+    verbose && enter(verbose, "Fitting model using bootstrap");
+
+    verbose && cat(verbose, "Max number of iterations: ", maxIter);
+    verbose && cat(verbose, "Accuracy threshold: ", acc);
+
+    bb <- 0;
+    fit <- NULL;
+    deltaMax <- Inf;
+    while (deltaMax > acc && bb < maxIter) {
+      bb <- bb + 1;
+      verbose && enter(verbose, sprintf("Bootstrap iteration #%d", as.integer(bb)));
+
+      verbose && enter(verbose, "Fitting model to subset of data");
+      verbose && cat(verbose, "Chunk size: ", chunkSize);
+      subset <- sample(1:length(cells), size=chunkSize);
+      cellsChunk <- cells[subset];
+      rm(subset);
+      cellsChunk <- sort(cellsChunk);
+      verbose && cat(verbose, "Cells:");
+      verbose && str(verbose, cellsChunk);
+      fitB <- fitSubset(df, cells=cellsChunk, verbose=verbose);
+      rm(cellsChunk);
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Updating estimates");
+      if (is.null(fit)) {
+        fit <- fitB;
+      } else {
+        # Update parameters for each subfit
+        deltaMax <- 0;
+        for (kk in seq(along=fit)) {
+          fitKK <- fit[[kk]];
+
+          fitBKK <- fitB[[kk]];
+          if (kk == 1) {
+            # Average mean estimates
+            fitKK$mu <- mean(c(fitKK$mu, fitBKK$mu), na.rm=TRUE);
+          } else {
+            # Average spline estimates
+            # Common x:s
+            x <- sort(unique(c(fitKK$x, fitBKK$x)));
+            # Predict y:s based on bootstrap pool and new fit
+            y <- fitKK$y;
+            yB <- predict(fitBKK, x=x)$y;
+            # Weight them together
+            yB <- ((bb-1)*y + yB)/bb;
+            delta <- mean(abs(y - yB), na.rm=TRUE);
+            deltaMax <- max(c(deltaMax, delta), na.rm=TRUE);
+            fitKK <- list(x=x, y=yB, delta=delta);
+            rm(x,y,yB, delta);
+          }
+
+          fit[[kk]] <- fitKK;
+
+          rm(fitKK, fitBKK);
+        } # for (kk ...)
+      }
+      rm(fitB);
+      verbose && exit(verbose);
+
+      verbose && printf(verbose, "deltaMax < threshold: %.6f < %.6f\n", deltaMax, acc);
+      verbose && printf(verbose, "iteration < maxIter: %d < %d\n", as.integer(bb), as.integer(maxIter));
+
+      verbose && exit(verbose);
+    } # while()
+    converged <- (deltaMax <= acc);
+
+    verbose && enter(verbose, "Creating final fit");
+    for (kk in seq(from=2, to=length(fit))) {
+      fitKK <- fit[[kk]];
+      fitKK <- robustSmoothSpline(x=fitKK$x, y=fitKK$y);
+      fit[[kk]] <- fitKK;
+    }
+    verbose && exit(verbose);
+
+    fit$bootstrap <- list(iter=as.integer(bb), maxIter=maxIter, converged=converged);
+
+    verbose && exit(verbose);
+  } else {
+    fit <- fitSubset(df, cells=cells, verbose=verbose);
+  } # if (bootstrap)
+
+  verbose && exit(verbose);
+
+  fit;
+}, protected=TRUE)
+
+
+setMethodS3("predictOne", "BaseCountNormalization", function(this, fit, cells=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'y' and 'X' must not contain NAs.
   predictBaseCounts <- function(fit, X, model=c("robustSmoothSpline", "lm"), ...) {
     # Argument 'model':
     model <- match.arg(model);
@@ -390,10 +454,16 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
           if (cc == 1) {
             mu <- fit$mu;
           } else {
-            idxs <- which(is.finite(X[,cc]));
-            mu <- double(nrow(X));
-            mu[idxs] <- predict(fit, x=X[idxs,cc])$y;
-            rm(idxs);
+            mu <- rep(as.double(NA), times=nrow(X));
+            if (mode(X) == "raw") {
+              # Note: 'X' may be a "raw" matrix (to save memory)
+              idxs <- whichVector(X[,cc] != as.raw(255));
+            } else {
+              idxs <- whichVector(is.finite(X[,cc]));
+            }
+            x <- as.double(X[idxs,cc]);
+            mu[idxs] <- predict(fit, x=x)$y;
+            rm(idxs, x);
           }
           str(mu);
           yPred <- yPred + mu;
@@ -412,6 +482,12 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'cells':
+  if (is.null(cells)) {
+  } else {
+    # Validated below...
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -420,352 +496,59 @@ setMethodS3("process", "BaseCountNormalization", function(this, ..., force=FALSE
   }
 
 
-  verbose && enter(verbose, "Normalization data set for probe sequence base count effects");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Already done?
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!force && isDone(this)) {
-    verbose && cat(verbose, "Already normalized");
-    verbose && exit(verbose);
-    outputDataSet <- getOutputDataSet(this);
-    return(invisible(outputDataSet));
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Setup
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get input data set
-  ds <- getInputDataSet(this);
+  verbose && enter(verbose, "Predicting model for one array");
 
   # Get algorithm parameters
-  params <- getParameters(this, verbose=less(verbose, 5));
+  params <- getParameters(this, expand=FALSE, verbose=less(verbose, 5));
+  model <- params$model;
 
-  # Get (and create) the output path
-  outputPath <- getPath(this);
+  verbose && enter(verbose, "Predicting mean log2 probe signals");
+  X <- getDesignMatrix(this, cells=cells, model=model, verbose=less(verbose, 5));
+  verbose && cat(verbose, "Design matrix:");
+  verbose && str(verbose, X);
 
-  # Get subset to fit
-  subsetToFit <- params$subsetToFit;
-
-  # Get subset to update
-  subsetToUpdate <- params$subsetToUpdate;
-
-  # Get shift
-  shift <- params$shift;
-
-  # Locate AromaCellSequenceFile holding probe sequences
-  aps <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Calibrate each array
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cdf <- getCdf(ds);
-  nbrOfArrays <- nbrOfArrays(ds);
-  nbrOfCells <- nbrOfCells(cdf);
-  verbose && enter(verbose, "Normalizing ", nbrOfArrays, " arrays");
-  verbose && enter(verbose, "Path: ", outputPath);
-
-  designMatrix <- NULL;
-  paramsShort <- NULL;
-  muT <- NULL;
-  hasSeq <- NULL;
-  for (kk in seq_len(nbrOfArrays)) {
-    df <- getFile(ds, kk);
-    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
-                                              kk, getName(df), nbrOfArrays));
-
-    fullname <- getFullName(df);
-    filename <- sprintf("%s.CEL", fullname);
-    pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
-
-    # Already calibrated?
-    if (!force && isFile(pathname)) {
-      verbose && cat(verbose, "Normalized data file already exists: ", pathname);
-    } else {
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Generate design matrix for all probes of interest?
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      if (is.null(designMatrix)) {
-        verbose && enter(verbose, "Count nucleotide bases for *all* cells");
-        verbose && cat(verbose, "Chip type: ", getChipType(cdf));
-        designMatrix <- countBases(aps, verbose=less(verbose, 5));
-        verbose && cat(verbose, "Nucleotide base counts:");
-        verbose && str(verbose, designMatrix);
-
-        designMatrix[,1] <- as.integer(1);
-        verbose && cat(verbose, "Design matrix:");
-        verbose && str(verbose, designMatrix);
-
-        # Identify missing sequences (to be excluded from fit and updates)
-        missingSeqs <- which(is.na(designMatrix[,4]));
-
-        # Update subset of cell indices for fitting and updating
-        subsetToFit <- setdiff(subsetToFit, missingSeqs);
-        subsetToUpdate <- setdiff(subsetToUpdate, missingSeqs);
-
-        verbose && cat(verbose, "Cell indices used for fitting:");
-        verbose && str(verbose, subsetToFit);
-        verbose && cat(verbose, "Cell indices to be updated:");
-        verbose && str(verbose, subsetToUpdate);
-
-        rm(missingSeqs); # Not needed anymore
-        gc <- gc();
-        verbose && exit(verbose);
-      }
-
-      if (is.null(paramsShort)) {
-        # Precalculate some model fit parameters
-        verbose && enter(verbose, "Compressing model parameter to a short format");
-        paramsShort <- params;
-        paramsShort$subsetToFit <- NULL;
-        paramsShort$subsetToUpdate <- NULL;
-        paramsShort$subsetToFitIntervals <- seqToIntervals(subsetToFit);
-        paramsShort$subsetToUpdateIntervals <- seqToIntervals(subsetToUpdate);
-        verbose && exit(verbose);
-      }
-
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Setting up model fit parameters
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      modelFit <- list(
-        paramsShort=paramsShort
-      );
-
-
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Phase 0: Fit base-count effect for target?
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      if (is.null(muT)) {
-        verbose && enter(verbose, "Estimating base-count effects for target");
-
-        verbose && enter(verbose, "Getting target signals to fit the model");
-        dfT <- getTargetFile(this, verbose=less(verbose, 5));
-        yT <- extractMatrix(dfT, cells=subsetToFit, drop=TRUE);
-        rm(dfT);
-
-        if (shift != 0) {
-          yT <- yT + shift;
-          verbose && cat(verbose, "Shifted probe signals: ", shift);
-        }
-
-        verbose && cat(verbose, "Target log2 probe signals:");
-        yT <- log2(yT);
-        verbose && str(verbose, yT);
-        gc <- gc();
-        verbose && exit(verbose);
-
-        # Fit only finite subset
-        keep <- which(is.finite(yT));
-        yT <- yT[keep];
-        subsetToFitT <- subsetToFit[keep];
-        rm(keep);
-        gc <- gc();
-
-        verbose && enter(verbose, "Fitting base-count model");
-        X <- designMatrix[subsetToFitT,,drop=FALSE];
-        rm(subsetToFitT);
-        verbose && cat(verbose, "Design matrix:");
-        verbose && str(verbose, X);
-        gc <- gc();
-        verbose && print(verbose, gc);
-        fitT <- fitBaseCounts(yT, X=X, model=params$model, 
-                                           verbose=less(verbose, 5));
-        rm(yT, X);
-        verbose && print(verbose, fitT);
-        verbose && exit(verbose);
-
-
-        verbose && enter(verbose, "Target mean log2 probe signals:");
-        X <- designMatrix[subsetToUpdate,,drop=FALSE];
-        verbose && cat(verbose, "Design matrix:");
-        verbose && str(verbose, X);
-        muT <- predictBaseCounts(fitT, X=X, model=params$model);
-        rm(fitT, X);
-        verbose && str(verbose, "muT:");
-        verbose && str(verbose, muT);
-        if (length(muT) != length(subsetToUpdate)) {
-          throw("Internal error. Number of estimated means does not match the number of cells to be updated: ", length(mu), " != ", length(subsetToUpdate));
-        }
-        verbose && exit(verbose);
-
-        gc <- gc();
-
-        verbose && exit(verbose);
-      } # if (is.null(muT))
-
-
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Phase I: Fit base-count effect for the current array
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Getting signals used to fit the model");
-      y <- extractMatrix(df, cells=subsetToFit, drop=TRUE);
-
-      if (shift != 0) {
-        y <- y + shift;
-        verbose && cat(verbose, "Shifted probe signals: ", shift);
-      }
-
-      y <- log2(y);
-      verbose && cat(verbose, "Log2 probe signals:");
-      verbose && str(verbose, y);
-      gc <- gc();
-      verbose && exit(verbose);
-
-      # Find finite subset
-      keep <- which(is.finite(y));
-      y <- y[keep];
-      subsetToFitKK <- subsetToFit[keep];
-      rm(keep);
-      gc <- gc();
-
-      verbose && enter(verbose, "Fitting base-count model");
-      X <- designMatrix[subsetToFitKK,,drop=FALSE];
-      verbose && cat(verbose, "Design matrix:");
-      verbose && str(verbose, X);
-      rm(subsetToFitKK);
-      gc <- gc();
-      verbose && print(verbose, gc);
-      fit <- fitBaseCounts(y, X=X, model=params$model,
-                                                 verbose=less(verbose, 5));
-      rm(y, X);
-      verbose && print(verbose, fit);
-      modelFit$fit <- fit;
-      verbose && exit(verbose);
-
-      # Store model fit 
-      verbose && enter(verbose, "Saving model fit");
-      # Store fit and parameters (in case someone are interested in looking
-      # at them later; no promises of backward compatibility though).
-      filename <- sprintf("%s,fit.RData", fullname);
-      fitPathname <- Arguments$getWritablePathname(filename, 
-                                                      path=outputPath, ...);
-      saveObject(modelFit, file=fitPathname);
-      verbose && str(verbose, modelFit, level=-50);
-      rm(modelFit);
-      verbose && exit(verbose);
-
-      # Garbage collect
-      gc <- gc();
-      verbose && print(verbose, gc);
-
-
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Phase II: Normalize current array toward target
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Reading probe signals:");
-      y <- extractMatrix(df, cells=subsetToUpdate, drop=TRUE);
-
-      if (shift != 0) {
-        y <- y + shift;
-        verbose && cat(verbose, "Shifted probe signals: ", shift);
-      }
-
-      verbose && str(verbose, y);
-      verbose && summary(verbose, y);
-      verbose && exit(verbose);
-
-      # Find finite subset for this array
-      keep <- which(is.finite(y));
-      subsetToUpdateKK <- subsetToUpdate[keep];
-      y <- y[keep];
-      gc <- gc();
-
-      X <- designMatrix[subsetToUpdateKK,,drop=FALSE];
-      verbose && cat(verbose, "Design matrix:");
-      verbose && str(verbose, X);
-      gc <- gc();
-      verbose && print(verbose, gc);
-
-      verbose && enter(verbose, "Predicting mean log2 probe signals:");
-      mu <- predictBaseCounts(fit, X=X, model=params$model);
-      rm(fit, X);
-      verbose && str(verbose, "mu:");
-      verbose && str(verbose, mu);
-      if (length(mu) != length(y)) {
-        throw("Internal error. Number of estimated means does not match the number of data points: ", length(mu), " != ", length(y));
-      }
-      verbose && exit(verbose);
-
-
-      verbose && enter(verbose, "Discrepancy scale factors:");
-      rho <- (muT[keep]-mu);
-      rm(mu, keep);
-      summary(verbose, rho);
-      rho <- 2^rho;
-      summary(verbose, rho);
-
-      # Update only subset with "finite" corrections
-      keep <- which(is.finite(rho));
-      rho <- rho[keep];
-      subsetToUpdateKK <- subsetToUpdateKK[keep];
-      y <- y[keep];
-      rm(keep);
-      gc <- gc();
-      verbose && print(verbose, gc);
-      verbose && exit(verbose);
-
-      verbose && enter(verbose, "Normalizing probe signals:");
-      y <- rho * y;
-      rm(rho);
-      verbose && str(verbose, y);
-      verbose && summary(verbose, y);
-      verbose && exit(verbose);
-
-      # Garbage collect
-      gc <- gc();
-      verbose && print(verbose, gc);
-
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Storing data
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Storing normalized data");
-    
-      # Create CEL file to store results, if missing
-      verbose && enter(verbose, "Creating CEL file for results, if missing");
-      createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
-      verbose && exit(verbose);
-
-      # Write calibrated data to file
-      verbose2 <- -as.integer(verbose)-2;
-      updateCel(pathname, indices=subsetToUpdateKK, intensities=y, verbose=verbose2);
-      rm(y, subsetToUpdateKK, verbose2);
-      gc <- gc();
-      verbose && print(verbose, gc);
-
-      verbose && exit(verbose);
-    }
-
-    # Validating by retrieving calibrated data file
-    dfC <- newInstance(df, pathname);
-
-    rm(df, dfC);
-
-    verbose && exit(verbose);
-  } # for (kk in ...)
+  mu <- predictBaseCounts(fit, X=X, model=model);
+  rm(fit, X);
+  verbose && str(verbose, "mu:");
+  verbose && str(verbose, mu);
   verbose && exit(verbose);
 
-  # Garbage collect
-  rm(ds);
+  # Sanity check
+  if (length(mu) != length(cells)) {
+    throw("Internal error. Number of estimated means does not match the number of cells to be updated: ", length(mu), " != ", length(cells));
+  }
+
+  # Garbage collection
   gc <- gc();
   verbose && print(verbose, gc);
 
-  outputDataSet <- getOutputDataSet(this, force=TRUE);
-
   verbose && exit(verbose);
-  
-  invisible(outputDataSet);
-})
+
+  mu;
+}, protected=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2008-07-21
+# o Now BaseCountNormalization inherits from the abstract class
+#   AbstractProbeSequenceNormalization, which already has process().
+# 2008-07-20
+# o Added an option to fit the model using bootstrap techiques.  It is not
+#   obvious how to merge two smooth spline estimates for which the degrees 
+#   of freedom do not have to match.  Now it is done by predicting outcomes
+#   at common covariates and using weighted average to combine the outcomes.
+#   The weight of the pooled estimate increase by each bootstrap iteration.
+# o MEMORY OPTIMIZATION: The below changes and using "raw" design matrices
+#   have saved a lot of memory.  Before this, it peaked at 2.2-2.4GB of RAM
+#   to normalize GWS6 data whereas now it peaks at approx 1.4GB.
+# o Now fitOne() and predictOne() can handle "raw" design matrices.
+# o Now using more efficient whichVector() instead of which().
+# o Added protected getDesignMatrix(), fitOne(), and predictOne().
+#   This makes the process() code cleaner and we can save more memory by
+#   utilizing file caching.
+# o Now class inherits from ProbeLevelTransform2.
 # 2008-07-19
 # o Removed countBases() for this class.
 # o Added 'shift' defaulting to zero.

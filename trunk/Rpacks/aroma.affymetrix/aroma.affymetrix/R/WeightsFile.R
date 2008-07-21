@@ -351,7 +351,8 @@ setMethodS3("getUnitGroupCellMap", "WeightsFile", function(this, units=NULL, ...
   #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
 
   # Instead, updated size by size
-  groups <- matrix(NA, nrow=max(uUnitSizes), ncol=length(unitNames));
+  naValue <- as.integer(NA);
+  groups <- matrix(naValue, nrow=max(uUnitSizes), ncol=length(unitNames));
   for (size in uUnitSizes) {
     cc <- which(unitSizes == size);
     seq <- seq(length=size);
@@ -475,6 +476,9 @@ setMethodS3("writeImage", "WeightsFile", function(this, ..., tags=c("*", "log2",
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: getUnitGroupCellMap().
 # 2008-05-08
 # o BUG FIX: getUnitGroupCellMap() gave an error if argument 'units' had
 #   zero length (non-NULL).

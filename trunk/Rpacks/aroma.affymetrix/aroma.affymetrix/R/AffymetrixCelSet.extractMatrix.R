@@ -72,7 +72,12 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
   verbose && enter(verbose, "Allocating matrix");
   arrayNames <- getNames(this);
   nbrOfArrays <- length(arrayNames);
-  df <- matrix(NA, nrow=ncells, ncol=nbrOfArrays);
+  if (field %in% c("pixels")) {
+    naValue <- as.integer(NA);
+  } else {
+    naValue <- as.double(NA);
+  }
+  df <- matrix(naValue, nrow=ncells, ncol=nbrOfArrays);
   colnames(df) <- arrayNames;
   verbose && str(verbose, df);
   verbose && printf(verbose, "RAM: %.2fMB\n", object.size(df)/1024^2);
@@ -122,6 +127,9 @@ setMethodS3("extractMatrix", "AffymetrixCelSet", function(this, cells=NULL, ...,
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: extractMatrix().
 # 2008-07-09
 # o Added argument drop=FALSE to extractMatrix().
 # 2008-07-07 [MR; Mark Robinson, WEHI]

@@ -20,7 +20,8 @@ setMethodS3("getPcuTheta", "ChromosomalModel", function(this, chromosome, reorde
   cesList <- getListOfChipEffects(this);
 
   # Allocate return structure
-  theta <- matrix(NA, nrow=nrow(pcu), ncol=nbrOfArrays(this));
+  naValue <- as.double(NA);
+  theta <- matrix(naValue, nrow=nrow(pcu), ncol=nbrOfArrays(this));
 
   for (kk in seq(along=cesList)) {
     verbose && enter(verbose, "Chip type #", kk, " of ", length(cesList));
@@ -45,6 +46,9 @@ setMethodS3("getPcuTheta", "ChromosomalModel", function(this, chromosome, reorde
 
 ##############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: getPcuTheta().
 # 2007-09-25
 # o Moved getPcuTheta() to ChromosomalModel.
 # 2007-09-24

@@ -345,7 +345,8 @@ setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., 
   #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
 
   # Instead, updated size by size
-  groups <- matrix(NA, nrow=max(uUnitSizes), ncol=length(unitNames));
+  naValue <- as.integer(NA);
+  groups <- matrix(naValue, nrow=max(uUnitSizes), ncol=length(unitNames));
   for (size in uUnitSizes) {
     cc <- which(unitSizes == size);
     seq <- seq(length=size);
@@ -451,6 +452,9 @@ setMethodS3("extractMatrix", "FirmaFile", function (this, ..., field=c("intensit
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: getUnitGroupCellMap().
 # 2008-05-08
 # o BUG FIX: getUnitGroupCellMap() gave an error if argument 'units' had
 #   zero length (non-NULL).

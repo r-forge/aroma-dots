@@ -91,7 +91,7 @@ setMethodS3("getData", "GenomeInformation", function(this, units=NULL, fields=c(
     # Read the unit names from the corresponding annotation file
     verbose && enter(verbose, "Reading unit names from annotation file");
     chipType <- getChipType(this);
-#    unf <- UnitNamesInterface$byChipType(chipType);
+#    unf <- UnitNamesFile$byChipType(chipType);
     cdf <- AffymetrixCdfFile$byChipType(chipType);
     unf <- cdf;
     targetUnitNames <- getUnitNames(unf);
