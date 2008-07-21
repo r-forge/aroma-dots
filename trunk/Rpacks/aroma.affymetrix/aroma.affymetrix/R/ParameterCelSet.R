@@ -128,7 +128,12 @@ setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   arrayNames <- getNames(this);
   nbrOfArrays <- length(arrayNames);
-  df <- matrix(NA, nrow=nrow(ugcMap), ncol=nbrOfArrays);
+  if (field %in% c("pixels")) {
+    naValue <- as.integer(NA);
+  } else {
+    naValue <- as.double(NA);
+  }
+  df <- matrix(naValue, nrow=nrow(ugcMap), ncol=nbrOfArrays);
   colnames(df) <- arrayNames;
 
   # Garbage collect
@@ -275,6 +280,9 @@ setMethodS3("extractDataFrame", "ParameterCelSet", function(this, addNames=FALSE
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: extractMatrix().
 # 2008-07-16
 # o Added argument drop=FALSE to extractDataFrame(). 
 # 2008-07-09

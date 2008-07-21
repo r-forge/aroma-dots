@@ -673,7 +673,8 @@ setMethodS3("normalizeOneArrayVector", "FragmentEquivalentClassNormalization", f
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalizing all units
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  deltas2 <- matrix(NA, nrow=length(y), ncol=nbrOfEnzymes);
+  naValue <- as.double(NA);
+  deltas2 <- matrix(naValue, nrow=length(y), ncol=nbrOfEnzymes);
   for (ee in seq(length=nbrOfEnzymes)) {
     verbose && enter(verbose, "Enzyme #", ee, " of ", nbrOfEnzymes);
 
@@ -949,6 +950,9 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: normalizeOneArrayVector().
 # 2008-01-20
 # o Created from FragmentLengthNormalization.R.
 ############################################################################

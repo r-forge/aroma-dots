@@ -682,3 +682,15 @@
   getSubsetOfCellIndices getSubsetOfCellIndices.AffymetrixCdfFile
   getSubsetTo getSubsetTo.BaseCountNormalization
   getSubsetToUpdate.BaseCountNormalization
+ clearCache.ProbeLevelTransform2
+  fitOne.AbstractProbeSequenceNormalization
+  fitOne.BaseCountNormalization
+  getAromaCellSequenceFile.AbstractProbeSequenceNormalization
+  getAsteriskTags.ProbeLevelTransform2 getDesignMatrix
+  getDesignMatrix.BaseCountNormalization
+  getParameters.ProbeLevelTransform2 getSubsetTo.ProbeLevelTransform2
+  getSubsetToFit.ProbeLevelTransform2
+  getSubsetToUpdate.ProbeLevelTransform2
+  getTargetFile.AbstractProbeSequenceNormalization predictOne
+  predictOne.AbstractProbeSequenceNormalization
+  predictOne.BaseCountNormalization

@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Mon Jul 21 12:52:19 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1392,6 +1394,21 @@
 \alias{getSubsetTo}
 \alias{getSubsetTo.BaseCountNormalization}
 \alias{getSubsetToUpdate.BaseCountNormalization}
+\alias{clearCache.ProbeLevelTransform2}
+\alias{fitOne.AbstractProbeSequenceNormalization}
+\alias{fitOne.BaseCountNormalization}
+\alias{getAromaCellSequenceFile.AbstractProbeSequenceNormalization}
+\alias{getAsteriskTags.ProbeLevelTransform2}
+\alias{getDesignMatrix}
+\alias{getDesignMatrix.BaseCountNormalization}
+\alias{getParameters.ProbeLevelTransform2}
+\alias{getSubsetTo.ProbeLevelTransform2}
+\alias{getSubsetToFit.ProbeLevelTransform2}
+\alias{getSubsetToUpdate.ProbeLevelTransform2}
+\alias{getTargetFile.AbstractProbeSequenceNormalization}
+\alias{predictOne}
+\alias{predictOne.AbstractProbeSequenceNormalization}
+\alias{predictOne.BaseCountNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that

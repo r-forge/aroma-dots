@@ -329,7 +329,8 @@ setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE
   if (is.null(stats) || force) {
     chromosomes <- getChromosomes(this);
     nbrOfChromosomes <- length(chromosomes);
-    stats <- matrix(NA, nrow=nbrOfChromosomes, ncol=3);
+    naValue <- as.double(NA);
+    stats <- matrix(naValue, nrow=nbrOfChromosomes, ncol=3);
     colnames(stats) <- c("min", "max", "n");
     rownames(stats) <- chromosomes;
     for (kk in seq(along=chromosomes)) {
@@ -409,6 +410,9 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: getChromosomeStats().
 # 2008-05-17
 # o This files now only contains methods generic to any platform.  Methods
 #   specific to Affymetrix are in GenomeInformation.AFFX.R.

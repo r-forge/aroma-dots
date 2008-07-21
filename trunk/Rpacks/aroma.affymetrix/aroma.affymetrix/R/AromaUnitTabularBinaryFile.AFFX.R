@@ -75,17 +75,20 @@ setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipTyp
           verbose && cat(verbose, "Tabular binary file: ", getPathname(res));
           verbose && cat(verbose, "CDF: ", getPathname(cdf));
           break;
+        } else {
+          res <- NULL;
         }
-        res <- NULL;
-      }
+      } # for (ll ...)
     }
 
     if (!is.null(res)) {
-      verbose && cat(verbose);
+      verbose && cat(verbose, "Found a valid tabular binary file");
+      verbose && exit(verbose);
+      break;
     }
 
     verbose && exit(verbose);
-  }
+  } # for (kk ...)
 
   if (is.null(res)) {
     throw("Failed to located a (valid) tabular binary file: ", queryStr);
@@ -253,6 +256,10 @@ setMethodS3("importFromGenomeInformation", "AromaUnitTabularBinaryFile", abstrac
 
 ############################################################################
 # HISTORY:
+# 2008-07-21
+# o BUG FIX: byChipType() of AromaUnitTabularBinaryFile failed to locate
+#   a valid tabular file if more than one was found and it was not the
+#   last one that was matching.
 # 2008-05-19
 # o Added platform-independent allocateFromUnitNamesFile() which now also
 #   writes footer attribute 'platform'.

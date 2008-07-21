@@ -23,7 +23,7 @@
 #*/###########################################################################
 setConstructorS3("AffymetrixCdfFile", function(...) {
   this <- extend(AromaChipTypeAnnotationFile(...), c("AffymetrixCdfFile", 
-                         uses("UnitNamesInterface", "AromaPlatformInterface")),
+                             uses("UnitNamesFile", "AromaPlatformInterface")),
     "cached:.header" = NULL,
     "cached:.unitNames" = NULL,
     "cached:.unitSizes" = NULL,

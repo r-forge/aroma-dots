@@ -1,9 +1,21 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.3.3 [2008-07-17]
+Version: 0.9.3.3 [2008-07-21]
+o MEMORY OPTIMIZATION: Pre-allocation of matrixes that start off with
+  all NAs was always done by matrix(NA, ...), but since 'NA' has mode
+  "logical" this would mean that non-logical matrixes would be coerced
+  as soon as they were assigned as value.  Updated all pre-allocation
+  to be done as matrix(naValue, ...) where 'naValue' is of the correct
+  storage mode.
 o BUG FIX: getAromaCellSequenceFile() of BaseCountNormalization would
   search using the full name of the chip type, e.g. GenomeWideSNP_6,Full.
+o BUG FIX: byChipType() of AromaUnitTabularBinaryFile failed to locate
+  a valid tabular file if more than one was found and it was not the
+  last one that was matching.
+o CLEANUP: Removed allocateFromCdf() specific to AromaUgpFile since
+  that is now implemented in a super class.
+
 
 Version: 0.9.3.2 [2008-07-16]
 o Now AffymetrixProbeTabFile inherits from TabularTextFile and

@@ -141,7 +141,8 @@ setMethodS3("fitPlasqUnit", "matrix", function(ly, ptype, maxIter=1000, acc=0.1,
   # z_il = E[Z_il]
 
   # Note: here we use z_li, not z_il.
-  zs <- matrix(NA, nrow=3, ncol=nbrOfSamples);
+  naValue <- as.double(NA);
+  zs <- matrix(naValue, nrow=3, ncol=nbrOfSamples);
   ok <- !is.na(ly[1,]);
   for (ii in iis[ok]) {
     # H0: muA > muB
@@ -389,6 +390,9 @@ setMethodS3("fitPlasqUnit", "matrix", function(ly, ptype, maxIter=1000, acc=0.1,
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: fitPlasqUnit().
 # 2007-01-11
 # o Replaces argument 'mat' (on intensity scale) with 'ly' (on log scale).
 # 2007-01-01

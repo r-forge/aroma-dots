@@ -661,7 +661,12 @@ setMethodS3("getData", "CnagCfhSet", function(this, indices=NULL, fields=c("x", 
   res <- vector("list", nbrOfFields);
   names(res) <- fields;
   for (field in fields) {
-    res[[field]] <- matrix(NA, nrow=nbrOfCells, ncol=nbrOfArrays);
+    if (field %in% c("x", "y", "pixels")) {
+      naValue <- as.integer(NA);
+    } else {
+      naValue <- as.double(NA);
+    }
+    res[[field]] <- matrix(naValue, nrow=nbrOfCells, ncol=nbrOfArrays);
   }
   verbose && exit(verbose);
 
@@ -985,7 +990,8 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
     # TODO: Ideally, affxparser::readCel() should support 
     # multiple filenames turning every data fields into a 
     # matrix. /HB 2007-01-07
-    X <- matrix(NA, nrow=length(ii), ncol=nbrOfArrays);
+    naValue <- as.double(NA);
+    X <- matrix(naValue, nrow=length(ii), ncol=nbrOfArrays);
     for (kk in seq(length=nbrOfArrays)) {
       X[,kk] <- readCel(filename = pathnames[kk],
                         indices = indices[ii],
@@ -1087,6 +1093,9 @@ setMethodS3("getFullName", "CnagCfhSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: getData() and getAverageFile().
 # 2008-05-08
 # o If paths=NULL in findByName(), it becomes the default argument value.
 # 2007-08-10

@@ -442,7 +442,8 @@ setMethodS3("readUnits", "CnagCfhFile", function(this, units=NULL, ..., verbose=
   # Remap according to units
   if (!is.null(units)) {
     idxs <- match(snps[idxs], units);
-    tmp <- matrix(NA, ncol=2, nrow=length(units));
+    naValue <- as.double(NA);
+    tmp <- matrix(naValue, ncol=2, nrow=length(units));
     tmp[idxs,] <- theta;
     theta <- tmp;
   }
@@ -478,6 +479,9 @@ setMethodS3("range", "CnagCfhFile", function(this, ..., na.rm=TRUE) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: readUnits().
 # 2008-05-09
 # o Now CnagCfhFile inherits from AromaMicroarrayDataFile.
 # 2007-06-11

@@ -5,65 +5,36 @@ timestampOn(log);
 .Machine$float.eps <- sqrt(.Machine$double.eps);
 
 dataSetName <- "HapMap270,100K,CEU,testSet";
-chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
-
-# Expected sample names
-sampleNames <- c("NA06985", "NA06991", "NA06993", 
-                 "NA06994", "NA07000", "NA07019");
-
+chipType <- "Mapping50K_Hind240";
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Assert existence of probe-sequence annotation files
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acsList <- list();
-for (chipType in chipTypes) {
-  acsList[[chipType]] <- AromaCellSequenceFile$byChipType(chipType);
-}
-
+acs <- AromaCellSequenceFile$byChipType(chipType);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csRawList <- list();
-for (chipType in chipTypes) {
-  cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
-  print(cs);
-  stopifnot(identical(getNames(cs), sampleNames));
-  csRawList[[chipType]] <- cs;
-}
-
+csR <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+print(csR);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csList <- csRawList;
-csAccList <- list();
-for (chipType in names(csList)) {
-  cs <- csList[[chipType]];
-  acc <- AllelicCrosstalkCalibration(cs);
-  print(acc);
-  csC <- process(acc, verbose=log);
-  print(csC);
-  stopifnot(identical(getNames(csC), getNames(cs)));
-  csAccList[[chipType]] <- csC;
-}
+acc <- AllelicCrosstalkCalibration(csR);
+print(acc);
+csC <- process(acc, verbose=log);
+print(csC);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Base-count normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csList <- csAccList;
-csBcnList <- list();
-for (chipType in names(csList)) {
-  cs <- csAccList[[chipType]];
-  bcn <- BaseCountNormalization(cs);
-#  bcn <- BaseCountNormalization(cs, tags="*,lm", model="lm");
-  print(bcn);
-  csN <- process(bcn, verbose=log);
-  print(csN);
-  stopifnot(identical(getNames(csN), getNames(cs)));
-  csBcnList[[chipType]] <- csN;
-}
+bcn <- BaseCountNormalization(csC);
+print(bcn);
+
+csN <- process(bcn, verbose=log);
+print(csN);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -71,120 +42,48 @@ for (chipType in names(csList)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ff <- 3;
 
-for (chipType in chipTypes) {
-  aps <- apsList[[chipType]];
-  counts <- countBases(aps, verbose=log);
+counts <- countBases(acs, verbose=log);
 
-  Ms <- list();
-  whats <- c("raw", "acc", "bcn");
-  for (what in whats) {
-    if (what == "raw") {
-      cs <- csRawList[[chipType]];
-    } else if (what == "acc") {
-      cs <- csAccList[[chipType]];
-    } else if (what == "bcn") {
-      cs <- csBcnList[[chipType]];
-    }
-    cf <- getFile(cs, ff);
-    cfR <- getAverageFile(cs, verbose=log);
-    yR <- readRawData(cfR, fields="intensities", drop=TRUE);
-    y <- readRawData(cf, fields="intensities", drop=TRUE);
-    M <- log2(y/yR);
-    Ms[[what]] <- M;
-    rm(y, yR, cfR, cs, M);
-    gc <- gc();
-  } # for (what ...)
+Ms <- list();
+whats <- c("raw", "acc", "bcn");
+for (what in whats) {
+  if (what == "raw") {
+    cs <- csR;
+  } else if (what == "acc") {
+    cs <- csC;
+  } else if (what == "bcn") {
+    cs <- csN;
+  }
+  cf <- getFile(cs, ff);
+  cfR <- getAverageFile(cs, verbose=log);
+  yR <- readRawData(cfR, fields="intensities", drop=TRUE);
+  y <- readRawData(cf, fields="intensities", drop=TRUE);
+  M <- log2(y/yR);
+  Ms[[what]] <- M;
+  rm(y, yR, cfR, cs, M);
+} # for (what ...)
 
 
-  # Estimate standard deviations for log-ratios  
-  print(sapply(Ms, FUN=function(M) { mad(diff(M), na.rm=TRUE) }));
+# Estimate standard deviations for log-ratios  
+print(sapply(Ms, FUN=function(M) { mad(diff(M), na.rm=TRUE) }));
 
-  Mlim <- c(-1,1);
-  Mlab <- expression(M == log[2](y/y[R]));
-  xlim <- c(0, 25);
+Mlim <- c(-1,1);
+Mlab <- expression(M == log[2](y/y[R]));
+xlim <- c(0, 25);
 
-  x11();
-  layout(matrix(1:(length(whats)*4), ncol=4, byrow=TRUE));
-  par(mar=c(5,4,2,1)+0.1);
-  for (what in names(Ms)) {
-    M <- Ms[[what]];
+x11();
+layout(matrix(1:(length(whats)*4), ncol=4, byrow=TRUE));
+par(mar=c(5,4,2,1)+0.1);
+for (what in names(Ms)) {
+  M <- Ms[[what]];
 
-    for (bb in c("A", "C", "G", "T")) { 
-      xlab <- sprintf("Number of %s:s", bb);
-      boxplot(M ~ counts[,bb], outline=FALSE, 
-              ylim=Mlim, xlim=xlim, ylab=Mlab, xlab=xlab);
-      stext(side=3, pos=0, getFullName(cf));
-      stext(side=3, pos=0.98, line=-1, cex=2, bb);
-      stextChipType(chipType);
-    }
-    rm(M);
-  } # for (what ...)
-
-  rm(counts);
-  gc <- gc();
-}
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Probe-level modelling test (for CN analysis)
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csList <- csBcnList;
-cesCnList <- list();
-for (chipType in names(csList)) {
-  cs <- csList[[chipType]];
-  plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
-  print(plm);
-  fit(plm, ram=1/2, verbose=log);
-  ces <- getChipEffectSet(plm);
-  print(ces);
-  stopifnot(identical(getNames(ces), getNames(cs)));
-  cesCnList[[chipType]] <- ces;
-}
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Fragment-length normalization test
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cesCnList <- cesCnList;
-cesFlnList <- list();
-for (chipType in names(csList)) {
-  ces <- cesCnList[[chipType]];
-  fln <- FragmentLengthNormalization(ces);
-  print(fln);
-  cesFln <- process(fln, verbose=verbose);
-  print(cesFln);
-  stopifnot(identical(getNames(cesFln), getNames(ces)));
-  cesFlnList[[chipType]] <- cesFln;
-}
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Glad model test
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Emulate list of ChipEffectSet:s where some arrays on exists in
-# one of the sets
-for (kk in seq(along=cesFlnList)) {
-  ces <- cesFlnList[[kk]];
-  ces <- extract(ces, setdiff(seq(ces), length(ces)+1-kk));
-  cesFlnList[[kk]] <- ces;
-}
-glad <- GladModel(cesFlnList);
-print(glad);
-
-print(getTableOfArrays(glad));
-nbrOfTestArrays <- nbrOfArrays(getSetTuple(glad));
-nbrOfRefArrays <- nbrOfArrays(getReferenceSetTuple(glad));
-stopifnot(identical(nbrOfTestArrays, nbrOfRefArrays));
-
-fit(glad, arrays=1, chromosomes=19, verbose=log);
-
-# Tests the case where one of the set does not have observations.
-fit(glad, arrays=nbrOfArrays(glad), chromosomes=19, verbose=log);
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# ChromosomeExplorer test
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-ce <- ChromosomeExplorer(glad);
-print(ce);
-process(ce, arrays=1:2, chromosomes=c(19,23), verbose=log);
+  for (bb in c("A", "C", "G", "T")) { 
+    xlab <- sprintf("Number of %s:s", bb);
+    boxplot(M ~ counts[,bb], outline=FALSE, 
+            ylim=Mlim, xlim=xlim, ylab=Mlab, xlab=xlab);
+    stext(side=3, pos=0, getFullName(cf));
+    stext(side=3, pos=0.98, line=-1, cex=2, bb);
+    stextChipType(chipType);
+  }
+  rm(M);
+} # for (what ...)

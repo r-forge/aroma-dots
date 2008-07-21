@@ -892,7 +892,12 @@ setMethodS3("getData", "AffymetrixCelSet", function(this, indices=NULL, fields=c
   res <- vector("list", nbrOfFields);
   names(res) <- fields;
   for (field in fields) {
-    res[[field]] <- matrix(NA, nrow=nbrOfCells, ncol=nbrOfArrays);
+    if (field %in% c("x", "y", "pixels")) {
+      naValue <- as.integer(NA);
+    } else {
+      naValue <- as.double(NA);
+    }
+    res[[field]] <- matrix(naValue, nrow=nbrOfCells, ncol=nbrOfArrays);
   }
   verbose && exit(verbose);
 
@@ -1360,7 +1365,7 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
     # TODO: Ideally, affxparser::readCel() should support 
     # multiple filenames turning every data fields into a 
     # matrix. /HB 2007-01-07
-    X <- matrix(NA, nrow=length(ii), ncol=nbrOfArrays);
+    X <- matrix(as.double(NA), nrow=length(ii), ncol=nbrOfArrays);
     for (kk in seq(length=nbrOfArrays)) {
       X[,kk] <- readCel(filename = pathnames[kk],
                         indices = indices[ii],
@@ -1482,6 +1487,9 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: getData(), getAverageFile().
 # 2008-07-14
 # o Added protected update().
 # o Added private updateSampleAnnotationSet().

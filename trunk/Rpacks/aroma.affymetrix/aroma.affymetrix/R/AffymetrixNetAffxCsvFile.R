@@ -1,6 +1,6 @@
 setConstructorS3("AffymetrixNetAffxCsvFile", function(..., .verify=TRUE) {
   this <- extend(AffymetrixCsvFile(..., .verify=FALSE), 
-                  c("AffymetrixNetAffxCsvFile", uses("UnitNamesInterface")),
+                  c("AffymetrixNetAffxCsvFile", uses("UnitNamesFile")),
     "cache:.unitNames" = NULL
   );
 
@@ -270,7 +270,8 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
     verbose && enter(verbose, "Sorting data by enzyme");
     # Reorganize as an JxE matrix (transposed compared with 'fln'!)
-    fln2 <- matrix(NA, nrow=ncol(fln), ncol=nbrOfEnzymes);
+    naValue <- as.integer(NA);
+    fln2 <- matrix(naValue, nrow=ncol(fln), ncol=nbrOfEnzymes);
     for (ee in seq(along=allEnzymes)) {
       for (rr in seq(along=allEnzymes)) {
         # Identify all indices that have enzyme 'ee' in row 'rr'
@@ -337,6 +338,9 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: readDataUnitFragmentLength().
 # 2008-04-25
 # o Added getUnitNames().
 # 2008-04-23

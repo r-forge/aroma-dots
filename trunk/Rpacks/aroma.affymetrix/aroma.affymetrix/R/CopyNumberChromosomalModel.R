@@ -672,7 +672,8 @@ setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=s
 
   nbrOfChromosomes <- length(chromosomes);
 
-  res <- matrix(NA, nrow=nbrOfChromosomes, ncol=length(arrays));
+  naValue <- as.double(NA);
+  res <- matrix(naValue, nrow=nbrOfChromosomes, ncol=length(arrays));
   colnames(res) <- getArrays(this)[arrays];
   rownames(res) <- chromosomes;
 
@@ -707,6 +708,9 @@ setMethodS3("estimateSds", "CopyNumberChromosomalModel", function(this, arrays=s
 
 ##############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: estimateSds().
 # 2008-07-16
 # o Added support for specifying the reference by a single file (or a list of
 #   files if more than one set is used).

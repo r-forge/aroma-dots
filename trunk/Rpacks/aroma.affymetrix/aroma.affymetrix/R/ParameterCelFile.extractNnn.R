@@ -38,7 +38,12 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
   if (nrow(ugcMap) == 0)
     throw("Nothing to return.");
 
-  df <- matrix(NA, nrow=nrow(ugcMap), ncol=1);
+  if (field %in% c("pixels")) {
+    naValue <- as.integer(NA);
+  } else {
+    naValue <- as.double(NA);
+  }
+  df <- matrix(naValue, nrow=nrow(ugcMap), ncol=1);
   colnames(df) <- getName(this);
 
 #  gc <- gc();
@@ -132,6 +137,9 @@ setMethodS3("extractDataFrame", "ParameterCelFile", function(this, addNames=FALS
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Updated the following methods to preallocate matrixes with the correct
+#   data type to avoid coercing later: extractMatrix().
 # 2008-07-09
 # o Added argument drop=FALSE to extractMatrix() and extractDataFrame().
 # 2008-03-11

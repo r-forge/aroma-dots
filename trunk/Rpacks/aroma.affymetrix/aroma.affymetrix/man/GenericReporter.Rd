@@ -40,16 +40,16 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:getAlias.GenericReporter]{getAlias}} \tab Gets the alias of the report.\cr
+ \tab \code{getAlias} \tab  -\cr
  \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getInputName} \tab  -\cr
  \tab \code{getInputTags} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getName.GenericReporter]{getName}} \tab Gets the name of the explorer.\cr
+ \tab \code{getName} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
- \tab \code{\link[aroma.affymetrix:getTags.GenericReporter]{getTags}} \tab Gets the tags of the reporter.\cr
- \tab \code{\link[aroma.affymetrix:process.GenericReporter]{process}} \tab Generates report.\cr
- \tab \code{\link[aroma.affymetrix:setAlias.GenericReporter]{setAlias}} \tab Sets the alias of the report.\cr
+ \tab \code{getTags} \tab  -\cr
+ \tab \code{process} \tab  -\cr
+ \tab \code{setAlias} \tab  -\cr
  \tab \code{setup} \tab  -\cr
 }
 
