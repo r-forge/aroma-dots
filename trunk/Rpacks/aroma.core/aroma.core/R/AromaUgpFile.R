@@ -166,8 +166,8 @@ setMethodS3("allocate", "AromaUgpFile", function(static, ..., platform, chipType
     ), 
     footer
   );
-  res <- allocate.AromaTabularBinaryFile(static, ..., types=rep("integer",2), 
-                                                sizes=c(1,4), footer=footer);
+  res <- allocate.AromaMicroarrayTabularBinaryFile(static, ..., 
+                        types=rep("integer",2), sizes=c(1,4), footer=footer);
 
   res;
 }, static=TRUE)

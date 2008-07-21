@@ -1,12 +1,12 @@
 ###########################################################################/**
-# @RdocClass UnitNamesInterface
+# @RdocClass UnitNamesFile
 #
-# @title "The UnitNamesInterface class"
+# @title "The UnitNamesFile class"
 #
 # \description{
 #  @classhierarchy
 #
-#  A UnitNamesInterface provides methods for querying the unit names of
+#  A UnitNamesFile provides methods for querying the unit names of
 #  a given chip type.
 # }
 # 
@@ -22,21 +22,21 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("UnitNamesInterface", function(...) {
-  extend(Interface(), "UnitNamesInterface");
+setConstructorS3("UnitNamesFile", function(...) {
+  extend(Interface(), "UnitNamesFile");
 })
 
 
-setMethodS3("getUnitNames", "UnitNamesInterface", abstract=TRUE);
+setMethodS3("getUnitNames", "UnitNamesFile", abstract=TRUE);
 
-setMethodS3("nbrOfUnits", "UnitNamesInterface", function(this, ...) {
+setMethodS3("nbrOfUnits", "UnitNamesFile", function(this, ...) {
   length(getUnitNames(this));
 })
 
 
-setMethodS3("getChipType", "UnitNamesInterface", abstract=TRUE);
+setMethodS3("getChipType", "UnitNamesFile", abstract=TRUE);
 
-setMethodS3("getPlatform", "UnitNamesInterface", abstract=TRUE);
+setMethodS3("getPlatform", "UnitNamesFile", abstract=TRUE);
 
 
 
@@ -72,7 +72,7 @@ setMethodS3("getPlatform", "UnitNamesInterface", abstract=TRUE);
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("indexOf", "UnitNamesInterface", function(this, pattern=NULL, names=NULL, ...) {
+setMethodS3("indexOf", "UnitNamesFile", function(this, pattern=NULL, names=NULL, ...) {
   if (!is.null(names)) {
     idxs <- match(names, getUnitNames(this));
   } else if (!is.null(pattern)) {
@@ -87,6 +87,8 @@ setMethodS3("indexOf", "UnitNamesInterface", function(this, pattern=NULL, names=
 
 ############################################################################
 # HISTORY:
+# 2008-07-21
+# o Renamed UnitNamesInterface to UnitNamesFile.
 # 2008-05-18
 # o Created.
 ############################################################################

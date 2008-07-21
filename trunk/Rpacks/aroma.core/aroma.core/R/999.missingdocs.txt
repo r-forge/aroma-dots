@@ -244,3 +244,5 @@ readTableHeader.default
  setFullNameTranslator.GenericDataFileSet setName
  setName.GenericDataFile setName.GenericDataFileSet
  translateFullName.GenericDataFileSet
+  getChipType.UnitNamesFile getPlatform.UnitNamesFile
+  getUnitNames.UnitNamesFile nbrOfUnits.UnitNamesFile

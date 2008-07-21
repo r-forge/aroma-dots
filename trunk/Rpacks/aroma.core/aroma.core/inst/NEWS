@@ -1,7 +1,11 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.3.3 [2008-07-17]
+Version: 0.9.3.3 [2008-07-21]
+o Now countBases() of AromaCellSequenceFile returns "raw" 
+  counts if argument 'mode="raw"'.
+o Now updateDataColumn() coerce values to doubles before 
+  censoring them for raw and integer columns.
 o ALPHA: Added setFullName() and setName() to GenericDataFile
   and GenericDataFileSet. The plan is to have these replace
   what getAlias() and setAlias() do today.
@@ -84,7 +88,7 @@ o ALPHA: Now equals() for GenericDataFile:s uses the class,
   path, number of files, pathnames, and finally equals() for 
   each file pair is used for the comparison.  
 o ALPHA: Added full name translation for GenericDataFile:s.
-o ALPHA: Added UnitNamesInterface.
+o ALPHA: Added UnitNamesFile.
 o Package passes R CMD check on R v2.7.0 patched.
 
 

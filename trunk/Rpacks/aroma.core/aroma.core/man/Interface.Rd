@@ -20,7 +20,7 @@
 \code{+--}\code{Interface}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.core]{AromaPlatformInterface}}, \emph{\link[aroma.core]{UnitNamesInterface}}\cr
+\emph{\link[aroma.core]{AromaPlatformInterface}}, \emph{\link[aroma.core]{UnitNamesFile}}\cr
 
 public class \bold{Interface}\cr
 

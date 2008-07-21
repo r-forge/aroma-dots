@@ -582,6 +582,10 @@
 \alias{setName.GenericDataFile}
 \alias{setName.GenericDataFileSet}
 \alias{translateFullName.GenericDataFileSet}
+\alias{getChipType.UnitNamesFile}
+\alias{getPlatform.UnitNamesFile}
+\alias{getUnitNames.UnitNamesFile}
+\alias{nbrOfUnits.UnitNamesFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
