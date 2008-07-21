@@ -686,6 +686,11 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
       }
     }
 
+    # Coerce values?
+    if (!mode(values) %in% c("raw", "numeric")) {
+      values <- as.double(values);
+    }
+
     censored <- FALSE;
     idxs <- which(values < range[1]);
     if (length(idxs) > 0) {
@@ -1262,6 +1267,9 @@ setMethodS3("importFrom", "AromaTabularBinaryFile", function(this, srcFile, ...)
 
 ############################################################################
 # HISTORY:
+# 2008-07-21
+# o Now updateDataColumn() coerce values to doubles before censoring them
+#   for raw and integer columns.
 # 2008-07-10
 # o Added argument 'drop=FALSE' to readDataFrame().
 # o SPEED UP: Removed gc() in inner loop of readDataFrame().

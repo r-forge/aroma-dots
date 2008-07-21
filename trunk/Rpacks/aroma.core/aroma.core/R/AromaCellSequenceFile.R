@@ -643,28 +643,48 @@ setMethodS3("isMissing", "AromaCellSequenceFile", function(this, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("countBases", "AromaCellSequenceFile", function(this, bases=c("A", "C", "G", "T"), drop=FALSE, ...) {
+setMethodS3("countBases", "AromaCellSequenceFile", function(this, bases=c("A", "C", "G", "T"), drop=FALSE, mode=c("integer", "raw"), ...) {
+  # Argument 'mode':
+  mode <- match.arg(mode);
+
+
+  # Mode-specific values
+  if (mode == "raw") {
+    zeroValue <- as.raw(0);
+    naValue <- as.raw(255);
+  } else {
+    zeroValue <- as.integer(0);
+    naValue <- as.integer(NA);
+  }
+
   # Tabular nucleotides
-  counts <- countBasesInternal(this, ...);
+  counts <- countBasesInternal(this, mode=mode, ...);
 
   # Identify missing sequences
-  isMissing <- whichVector(counts[,1] > 0, na.rm=FALSE);
+  isMissing <- whichVector(counts[,1] != zeroValue, na.rm=FALSE);
 
   # Keep only bases of interest
   counts <- counts[,bases,drop=FALSE];
 
   # Set missing values
-  counts[isMissing,] <- NA;
+  counts[isMissing,] <- naValue;
 
   # Drop singleton dimensions?
   if (drop) {
-    counts <- drop(counts);
+    if (mode == "raw") {
+      # To be verified. /HB 2008-07-20
+      dim <- dim(counts);
+      dim <- dim[dim > 1];
+      dim(counts) <- dim;
+    } else {
+      counts <- drop(counts);
+    }
   }
 
   counts;
 })
 
-setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=NULL, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=NULL, mode=c("integer", "raw"), ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -674,6 +694,9 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
     cells <- Arguments$getIndices(cells, range=c(1, nbrOfCells));
     nbrOfCells <- length(cells);
   }
+
+  # Argument 'mode':
+  mode <- match.arg(mode);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -692,7 +715,8 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
   key <- list();
   chipType <- getChipType(this);
   key <- list(method="countBases", class=class(this)[1], 
-              chipType=chipType, fullname=getFullName(this), cells=cells);
+              chipType=chipType, fullname=getFullName(this), 
+              cells=cells, mode=mode);
   dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
     counts <- loadCache(key=key, dirs=dirs);
@@ -717,10 +741,16 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
     verbose && print(verbose, gc);
   }
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Sum over positions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  counts <- matrix(as.integer(0), nrow=nbrOfCells, ncol=5);
+  if (mode == "raw") {
+    zeroValue <- as.raw(0);
+  } else {
+    zeroValue <- as.integer(0);
+  }
+  counts <- matrix(zeroValue, nrow=nbrOfCells, ncol=5);
 
   map <- NULL;
   nbrOfPositions <- getProbeLength(this);
@@ -741,10 +771,18 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
       idxs <- whichVector(idxs, na.rm=FALSE);
 
       verbose && cat(verbose, "Increment:");
-      counts[idxs,bb] <- counts[idxs,bb] + as.integer(1);
-      rm(idxs);
+      countsBB <- counts[idxs,bb];
+      if (mode == "raw") {
+        countsBB <- as.integer(countsBB);
+        countsBB <- countsBB + as.integer(1);
+        countsBB <- as.raw(countsBB);
+      } else {
+        countsBB <- countsBB + as.integer(1);
+      }
+      counts[idxs,bb] <- countsBB;
+      rm(idxs, countsBB);
       verbose && exit(verbose);
-    }
+    } # for (bb ...)
     rm(seqs);
     verbose && exit(verbose);
     
@@ -808,6 +846,8 @@ setMethodS3("allocate", "AromaCellSequenceFile", function(static, ..., nbrOfCell
 
 ############################################################################
 # HISTORY:
+# 2008-07-20
+# o Now countBases() returns "raw" counts, if argument 'mode="raw"'.
 # 2008-07-10
 # o Added read- and updateTargetStrands().
 # o Now readNeighborSequenceMatrix() takes what="integer" and "double" too.
