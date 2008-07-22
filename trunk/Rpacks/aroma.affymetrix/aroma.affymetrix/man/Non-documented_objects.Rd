@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Mon Jul 21 12:52:19 2008.
+% on Mon Jul 21 19:11:07 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1409,6 +1409,16 @@
 \alias{predictOne}
 \alias{predictOne.AbstractProbeSequenceNormalization}
 \alias{predictOne.BaseCountNormalization}
+\alias{allocateFromCdf.AromaCellSequenceFile}
+\alias{importFromAffymetrixProbeTabFile.AromaCellSequenceFile}
+\alias{inferMmFromPm}
+\alias{inferMmFromPm.AromaCellSequenceFile}
+\alias{BasePositionNormalization}
+\alias{fitOne.BasePositionNormalization}
+\alias{getAsteriskTags.BasePositionNormalization}
+\alias{getDesignMatrix.BasePositionNormalization}
+\alias{getParameters.BasePositionNormalization}
+\alias{predictOne.BasePositionNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that

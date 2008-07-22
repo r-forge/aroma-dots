@@ -114,7 +114,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
   }
 
 
-  verbose && enter(verbose, "Normalization data set for probe sequence base count effects");
+  verbose && enter(verbose, "Normalization data set for probe-sequence effects");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already done?
@@ -215,8 +215,8 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
         paramsShort <- params;
         paramsShort$subsetToFit <- NULL;
         paramsShort$subsetToUpdate <- NULL;
-        paramsShort$subsetToFitIntervals <- seqToIntervals(subsetToFit);
-        paramsShort$subsetToUpdateIntervals <- seqToIntervals(subsetToUpdate);
+#        paramsShort$subsetToFitIntervals <- seqToIntervals(subsetToFit);
+#        paramsShort$subsetToUpdateIntervals <- seqToIntervals(subsetToUpdate);
         verbose && exit(verbose);
       }
 
@@ -231,12 +231,12 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Phase 0: Fit base-count effect for target?
+      # Phase 0: Fit probe-sequence effect for target?
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       if (is.null(muT)) {
         verbose && enter(verbose, "Modelling effects for target array");
 
-        verbose && enter(verbose, "Estimating base-count effects for target");
+        verbose && enter(verbose, "Estimating probe-sequence effects for target");
         dfT <- getTargetFile(this, verbose=less(verbose, 5));
         fitT <- fitOne(this, df=dfT, cells=subsetToFit, verbose=less(verbose, 5));
         rm(dfT);
@@ -260,7 +260,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Phase I: Fit base-count effect for the current array
+      # Phase I: Fit probe-sequence effect for the current array
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Getting signals used to fit the model");
       fit <- fitOne(this, df=df, cells=subsetToFit, verbose=less(verbose, 5));

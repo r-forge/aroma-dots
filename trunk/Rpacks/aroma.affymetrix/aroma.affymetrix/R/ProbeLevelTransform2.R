@@ -126,12 +126,6 @@ setMethodS3("getAsteriskTags", "ProbeLevelTransform2", function(this, collapse=N
     tags <- c(tags, sprintf("%+d", shift));
   } 
 
-  # Add model tag?
-  model <- this$.model;
-  if (model != "robustSmoothSpline") {
-    tags <- c(tags, model);
-  }
-
   # Collapse?
   tags <- paste(tags, collapse=collapse);
 
