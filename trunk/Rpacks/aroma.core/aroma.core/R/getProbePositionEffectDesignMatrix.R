@@ -37,6 +37,10 @@ setMethodS3("getProbePositionEffectDesignMatrix", "raw", function(seqs, B=NULL, 
 
   # Exclude NA factors and last factor
   map <- attr(seqs, "map");
+  # Sanity check
+  if (is.null(map)) {
+    throw("Cannot build design matrix: No attribute 'map'.");
+  }
   factors <- map[seq(from=2, to=length(map)-1)];
   verbose && cat(verbose, "Number of factors: ", length(factors));
 

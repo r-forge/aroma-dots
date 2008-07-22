@@ -135,6 +135,8 @@ setMethodS3("fitProbePositionEffects", "numeric", function(y, seqs, ..., interce
   names(coefs) <- NULL;
   rm(fit);
   gc <- gc();
+  verbose && cat(verbose, "Coeffients:");
+  verbose && print(verbose, coefs);
   verbose && exit(verbose);
 
   params <- list();
@@ -144,6 +146,7 @@ setMethodS3("fitProbePositionEffects", "numeric", function(y, seqs, ..., interce
   }
 
   df <- length(coefs)/length(factors);
+  verbose && cat(verbose, "Degrees of freedom: ", df);
   idxs <- 1:df;
   for (kk in seq(along=factors)) {
     key <- names(factors)[kk];
