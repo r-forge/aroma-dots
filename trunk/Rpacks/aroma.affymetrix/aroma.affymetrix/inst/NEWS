@@ -15,6 +15,7 @@ o BUG FIX: byChipType() of AromaUnitTabularBinaryFile failed to locate
   last one that was matching.
 o CLEANUP: Removed allocateFromCdf() specific to AromaUgpFile since
   that is now implemented in a super class.
+o ALPHA: Added BasePositionNormalization.
 
 
 Version: 0.9.3.2 [2008-07-16]
