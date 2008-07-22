@@ -398,6 +398,8 @@ setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, cells
 ############################################################################
 # HISTORY:
 # 2008-07-21
+# o BENCHMARKING: For a GenomeWideSNP_6,Full, the BPN peaks at 5.9GB RAM.
+#   This happens while fitting the model.  Prediction peaks at 3.2GB RAM.
 # o Now getDesignMatrix() caches results to file.
 # o Created from BaseCountNormalization.R.
 ############################################################################
