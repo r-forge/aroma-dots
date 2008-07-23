@@ -619,6 +619,21 @@ setMethodS3("getFileSize", "GenericDataFile", function(this, what=c("numeric", "
 })
 
 
+setMethodS3("getCreatedOn", "GenericDataFile", function(this, ...) {
+  file.info(this$.pathname)[["ctime"]];
+}, protected=TRUE)
+
+
+setMethodS3("getLastModifiedOn", "GenericDataFile", function(this, ...) {
+  file.info(this$.pathname)[["mtime"]];
+}, protected=TRUE)
+
+
+setMethodS3("getLastAccessedOn", "GenericDataFile", function(this, ...) {
+  file.info(this$.pathname)[["atime"]];
+}, protected=TRUE)
+
+
 setMethodS3("fromFile", "GenericDataFile", function(static, filename, path=NULL, ..., recursive=TRUE, verbose=FALSE, .checkArgs=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -945,6 +960,8 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-23
+# o Added getCreatedOn(), getLastModifiedOn(), getLastAccessedOn().
 # 2008-07-17
 # o Added setFullName(), and setName().
 # 2008-06-11

@@ -247,3 +247,6 @@ readTableHeader.default
   getChipType.UnitNamesFile getPlatform.UnitNamesFile
   getUnitNames.UnitNamesFile nbrOfUnits.UnitNamesFile
   dimension.TabularTextFile
+ getCreatedOn getCreatedOn.GenericDataFile getLastAccessedOn
+ getLastAccessedOn.GenericDataFile getLastModifiedOn
+ getLastModifiedOn.GenericDataFile

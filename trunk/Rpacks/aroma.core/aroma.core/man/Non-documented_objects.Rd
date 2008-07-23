@@ -586,6 +586,13 @@
 \alias{getPlatform.UnitNamesFile}
 \alias{getUnitNames.UnitNamesFile}
 \alias{nbrOfUnits.UnitNamesFile}
+\alias{dimension.TabularTextFile}
+\alias{getCreatedOn}
+\alias{getCreatedOn.GenericDataFile}
+\alias{getLastAccessedOn}
+\alias{getLastAccessedOn.GenericDataFile}
+\alias{getLastModifiedOn}
+\alias{getLastModifiedOn.GenericDataFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
