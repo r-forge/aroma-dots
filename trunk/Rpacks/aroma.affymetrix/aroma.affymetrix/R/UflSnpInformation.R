@@ -122,8 +122,11 @@ setMethodS3("isCompatibleWithCdf", "UflSnpInformation", function(this, cdf, ...)
     throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
   }
 
+  res <- FALSE;
+
   if (nbrOfUnits(this) != nbrOfUnits(cdf)) {
-    return(FALSE);
+    attr(res, "reason") <- sprintf("The number of units of the %s and the %s does not match: %s != %s", class(this)[1], class(cdf)[1], nbrOfUnits(this), nbrOfUnits(cdf));
+    return(res);
   }
 
   TRUE;
@@ -231,6 +234,9 @@ setMethodS3("getFragmentStops", "UflSnpInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-23
+# o Now isCompatibleWithCdf() adds attribute 'reason' to FALSE explaining 
+#   why the object is not compatible.
 # 2008-01-20
 # o Made argument 'chipType' and 'tags' explicit for fromChipType().
 # 2007-12-10

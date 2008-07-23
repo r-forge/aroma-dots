@@ -2,6 +2,8 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.9.3.4 [2008-07-24]
+o Now getGenomeInformation() and getSnpInformation() reports the reason
+  for why it thinks the located object is incompatible with the CDF.
 o MEMORY OPTIMIZATION: Now argument 'ram' is passed down to
   getChipEffectSet() which in turn pass it down to getMonocellCdf(), 
   which pass it to createMonocellCdf() in case the monocell CDF is

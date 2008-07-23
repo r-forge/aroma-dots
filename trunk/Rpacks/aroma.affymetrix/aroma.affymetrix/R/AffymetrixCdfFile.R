@@ -1359,8 +1359,9 @@ setMethodS3("setGenomeInformation", "AffymetrixCdfFile", function(this, gi=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Sanity checks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!isCompatibleWithCdf(gi, this)) {
-    throw("Cannot set genome information. The ", class(gi)[1], " object 'gi' is compatible with the CDF: ", getFullName(gi), " != ", getFullName(this));
+  isCompatible <- isCompatibleWithCdf(gi, this);
+  if (!isCompatible) {
+    throw("Cannot set genome information. The object 'gi' ('", getFullName(gi), "') of ", class(gi)[1], " is not compatible with the CDF ('", getFullName(this), "'). The reason was: ", attr(isCompatible, "reason"));
   }
 
 
@@ -1440,8 +1441,9 @@ setMethodS3("setSnpInformation", "AffymetrixCdfFile", function(this, si=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Sanity checks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (!isCompatibleWithCdf(si, this)) {
-    throw("Cannot set SNP information. The ", class(si)[1], " object 'si' is compatible with the CDF: ", getFullName(si), " != ", getFullName(this));
+  isCompatible <- isCompatibleWithCdf(gi, this);
+  if (!isCompatible) {
+    throw("Cannot set genome information. The object 'gi' ('", getFullName(gi), "') of ", class(gi)[1], " is not compatible with the CDF ('", getFullName(this), "'). The reason was: ", attr(isCompatible, "reason"));
   }
 
   this$.si <- si;
@@ -1511,6 +1513,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-07-23
+# o Now getGenomeInformation() and getSnpInformation() reports the reason
+#   for why it thinks the located object is incompatible with the CDF.
 # 2008-05-18
 # o Now AffymetrixCdfFile "provides" the UnitNamesInterface.
 # 2008-05-09
