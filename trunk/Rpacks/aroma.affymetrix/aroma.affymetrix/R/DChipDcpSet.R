@@ -109,6 +109,12 @@ setMethodS3("findByName", "DChipDcpSet", function(static, name, tags=NULL, chipT
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'name':
+  name <- Arguments$getCharacter(name);
+  if (nchar(name) == 0) {
+    throw("A ", class(static)[1], " must have a non-empty name: ''");
+  }
+
   # Arguments 'paths':
   if (is.null(paths)) {
     paths <- eval(formals(findByName.DChipDcpSet)[["paths"]]);
@@ -290,6 +296,8 @@ setMethodS3("getFullName", "DChipDcpSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-21
+# o Now findByName() assert that the data set name is not empty.
 # 2008-05-09
 # o Now DChipDcpSet inherits from GenericDataFileSet.
 # 2008-05-08

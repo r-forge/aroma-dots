@@ -56,8 +56,6 @@ setMethodS3("getUnitNames", "AffymetrixNetAffxCsvFile", function(this, ..., forc
     unitNames <- readUnitNames(this, ...);
   }
 
-  verbose && exit(verbose);
-
   unitNames;
 })
 
@@ -152,6 +150,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     verbose && str(verbose, fln[1:min(10,length(fln))], level=-50);
   gc <- gc();
 
+
   # Are enzyme names specified?
   verbose && enter(verbose, "Inferring if enzyme names are specified");
   hasNames <- NA;
@@ -167,6 +166,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
   verbose && cat(verbose, "Has enzyme names: ", hasNames);
   verbose && exit(verbose);
   
+
   # Split by enzymes first
   fln <- strsplit(fln, split=";", fixed=TRUE);
   if (isVisible(verbose, level=-50))
@@ -225,11 +225,10 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
     # Put into an ExJ matrix
     enzymeIdxs <- matrix(enzymeIdxs, nrow=nbrOfEnzymes);
-
-    verbose && exit(verbose);
     if (isVisible(verbose, level=-50))
       verbose && str(verbose, enzymeIdxs, level=-50);
     verbose && exit(verbose);
+
 
     verbose && enter(verbose, "Identifying the location of the fragment lengths");
     offset <- 1;
@@ -267,6 +266,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     # Put into an ExJ matrix
     fln <- matrix(fln, nrow=nbrOfEnzymes);
     verbose && exit(verbose);
+
 
     verbose && enter(verbose, "Sorting data by enzyme");
     # Reorganize as an JxE matrix (transposed compared with 'fln'!)

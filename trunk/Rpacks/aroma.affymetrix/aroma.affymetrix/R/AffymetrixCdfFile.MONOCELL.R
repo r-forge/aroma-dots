@@ -489,7 +489,7 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
   # Checking cell indices
   # Check CDF file in chunks
   nbrOfUnits <- header$probesets;
-  chunkSize <- 100000;
+  chunkSize <- 10000*ram;
   nbrOfChunks <- ceiling(nbrOfUnits / chunkSize);
   for (kk in 1:nbrOfChunks) {
     verbose && printf(verbose, "Chunk %d of %d\n", kk, nbrOfChunks);
@@ -497,7 +497,9 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
     to <- min(from+chunkSize, nbrOfUnits);
     cells <- readCdfCellIndices(tmpDest, units=from:to);
     cells <- unlist(cells, use.names=FALSE);
-    udcells <- as.integer(unique(diff(cells)));
+    cells <- diff(cells);
+    cells <- unique(cells);
+    udcells <- as.integer(cells);
     if (!identical(udcells, 1:1)) {
       throw("Failed to create a valid mono-cell CDF: The cell indices are not contiguous: ", paste(udcells, collapse=", "));
     }
@@ -653,6 +655,10 @@ setMethodS3("getUnitGroupCellMapWithMonocell", "AffymetrixCdfFile", function(thi
 
 ############################################################################
 # HISTORY:
+# 2008-07-22
+# o MEMORY OPTIMIZATION: Now the validation part of createMonocellCdf() for
+#   AffymetrixCdfFile is also sensitive to the 'ram' argument.  The 
+#   validation is now also down in smaller chunks.
 # 2008-03-18
 # o Added getUnitGroupCellMapWithMonocell() to AffymetrixCdfFile.
 # o Added getMainCdf() for AffymetrixCdfFile to get main CDF from a 

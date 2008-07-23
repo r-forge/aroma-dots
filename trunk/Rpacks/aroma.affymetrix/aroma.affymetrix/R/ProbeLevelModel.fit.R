@@ -191,7 +191,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   paf <- getProbeAffinityFile(this, verbose=less(verbose));
 
   # Get (and create if missing) the chip-effect files (one per array)
-  ces <- getChipEffectSet(this, verbose=less(verbose));
+  ces <- getChipEffectSet(this, ram=ram, verbose=less(verbose));
 
   # Number of units to load into memory and fit at the same time
   bytesPerChunk <- 100e6;       # 100Mb
@@ -352,6 +352,11 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2008-07-22
+# o Now argument 'ram' is passed down to getChipEffectSet() which in turn
+#   pass it down to getMonocellCdf(), which pass it to createMonocellCdf()
+#   in case the monocell CDF is missing.  This will increase the chances
+#   that fit(..., ram=<small value>) will work with small amount of RAM.
 # 2008-05-31
 # o Removed an obsolete debug print() statement.
 # 2008-02-17
