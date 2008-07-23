@@ -6,6 +6,7 @@ o Now countBases() of AromaCellSequenceFile returns "raw"
   counts if argument 'mode="raw"'.
 o Now updateDataColumn() coerce values to doubles before 
   censoring them for raw and integer columns.
+o Now findByName() assert that the data set name is not empty.
 o ALPHA: Added setFullName() and setName() to GenericDataFile
   and GenericDataFileSet. The plan is to have these replace
   what getAlias() and setAlias() do today.

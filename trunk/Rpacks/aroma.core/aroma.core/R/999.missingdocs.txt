@@ -246,3 +246,4 @@ readTableHeader.default
  translateFullName.GenericDataFileSet
   getChipType.UnitNamesFile getPlatform.UnitNamesFile
   getUnitNames.UnitNamesFile nbrOfUnits.UnitNamesFile
+  dimension.TabularTextFile

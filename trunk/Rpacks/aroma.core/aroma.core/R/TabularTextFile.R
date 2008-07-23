@@ -467,6 +467,14 @@ setMethodS3("readColumns", "TabularTextFile", function(this, columns, colClasses
 
 
 
+# AD HOC fix to speed up ll(), which calls dimension() on each object, 
+# which in turn calls dim() and dim() is really slow for this class,
+# because it has to infer the number of rows by reading the complete
+# file. The fix is to return NA for the number of rows. /HB 2008-07-22
+setMethodS3("dimension", "TabularTextFile", function(...) {
+  c(as.integer(NA), nbrOfColumns(this));
+}, private=TRUE);
+
 setMethodS3("nbrOfRows", "TabularTextFile", function(this, ...) {
   hdr <- getHeader(this, ...);
   n <- nbrOfLines(this) - hdr$skip - as.integer(length(hdr$columns) > 0);
@@ -504,6 +512,8 @@ setMethodS3("readLines", "TabularTextFile", function(con, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-22
+# o Added ad hoc dimension() to speed up ll().
 # 2008-06-12
 # o Added readRawHeader().  Removed readHeader() [now in getHeader()].
 # o Added hasColumnHeader() to TabularTextFile.
