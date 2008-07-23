@@ -1,13 +1,21 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.3.3 [2008-07-21]
+Version: 0.9.3.3 [2008-07-22]
 o MEMORY OPTIMIZATION: Pre-allocation of matrixes that start off with
   all NAs was always done by matrix(NA, ...), but since 'NA' has mode
   "logical" this would mean that non-logical matrixes would be coerced
   as soon as they were assigned as value.  Updated all pre-allocation
   to be done as matrix(naValue, ...) where 'naValue' is of the correct
   storage mode.
+o MEMORY OPTIMIZATION: Now argument 'ram' is passed down to
+  getChipEffectSet() which in turn pass it down to getMonocellCdf(), 
+  which pass it to createMonocellCdf() in case the monocell CDF is
+  missing.  This increases the chances that fit(..., ram=<small value>) 
+  will work with small amount of RAM.
+o MEMORY OPTIMIZATION: Now the validation part of createMonocellCdf() 
+  for AffymetrixCdfFile is also sensitive to the 'ram' argument.
+o Now all findByName() assert that the data set name is not empty.
 o BUG FIX: getAromaCellSequenceFile() of BaseCountNormalization would
   search using the full name of the chip type, e.g. GenomeWideSNP_6,Full.
 o BUG FIX: byChipType() of AromaUnitTabularBinaryFile failed to locate

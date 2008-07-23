@@ -200,7 +200,8 @@ setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Not used.}
+#   \item{...}{Arguments passed to \code{getMonocellCdf()} of
+#                                                  @see "AffymetrixCdfFile".}
 #   \item{verbose}{A @logical or a @see "R.utils::Verbose".}
 # }
 #
@@ -242,7 +243,7 @@ setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ..., verbose=F
   verbose && enter(verbose, "Getting chip-effect set from data set");
   # Inherit the (monocell) CDF
   cdf <- getCdf(ds);
-  cdfMono <- getMonocellCdf(cdf, verbose=less(verbose));
+  cdfMono <- getMonocellCdf(cdf, ..., verbose=less(verbose));
 
   # Gets the ChipEffects Class object
   clazz <- getChipEffectSetClass(this);
@@ -546,6 +547,10 @@ setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, verbose=FALSE, ..
 
 ############################################################################
 # HISTORY:
+# 2008-07-22
+# o Now getChipEffectSet() passes '...' to getMonocellCdf() so that argument
+#   'ram' of fit() can be passed down to getMonocellCdf().
+# 2008-02-17
 # o Moved fit() to ProbeLevelModel.fit.R.
 # 2007-12-10
 # o Now getChipEffectSet() of ProbeLevelModel infers the monocell CDF from

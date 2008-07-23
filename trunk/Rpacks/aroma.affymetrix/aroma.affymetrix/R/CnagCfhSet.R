@@ -326,6 +326,12 @@ setMethodS3("findByName", "CnagCfhSet", function(static, name, tags=NULL, chipTy
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'name':
+  name <- Arguments$getCharacter(name);
+  if (nchar(name) == 0) {
+    throw("A ", class(static)[1], " must have a non-empty name: ''");
+  }
+
   # Arguments 'paths':
   if (is.null(paths)) {
     paths <- eval(formals(findByName.CnagCfhSet)[["paths"]]);
@@ -1093,6 +1099,8 @@ setMethodS3("getFullName", "CnagCfhSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-21
+# o Now findByName() assert that the data set name is not empty.
 # 2008-07-20
 # o Updated the following methods to preallocate matrixes with the correct
 #   data type to avoid coercing later: getData() and getAverageFile().
