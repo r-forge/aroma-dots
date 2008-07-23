@@ -38,7 +38,7 @@ setMethodS3("as.character", "TabularTextFile", function(x, ...) {
   } else {
     s <- c(s, sprintf("Columns [NA]: <not reading column names>"));
   }
-  s <- c(s, sprintf("Number of data rows (lines): %d (%d)", nbrOfRows(this), nbrOfLines(this)));
+  s <- c(s, sprintf("Number of text lines: %d", nbrOfLines(this, fast=TRUE)));
 
   class(s) <- class;
   s;
@@ -470,32 +470,44 @@ setMethodS3("readColumns", "TabularTextFile", function(this, columns, colClasses
 # AD HOC fix to speed up ll(), which calls dimension() on each object, 
 # which in turn calls dim() and dim() is really slow for this class,
 # because it has to infer the number of rows by reading the complete
-# file. The fix is to return NA for the number of rows. /HB 2008-07-22
-setMethodS3("dimension", "TabularTextFile", function(...) {
-  c(as.integer(NA), nbrOfColumns(this));
+# file. The fix is to return NA for the number of rows if the file size
+# is larger than 10MB unless nbrOfLines() has already been called.
+# /HB 2008-07-22
+setMethodS3("dimension", "TabularTextFile", function(this, ...) {
+  c(nbrOfRows(this, fast=TRUE), nbrOfColumns(this, fast=TRUE));
 }, private=TRUE);
 
-setMethodS3("nbrOfRows", "TabularTextFile", function(this, ...) {
+
+setMethodS3("nbrOfRows", "TabularTextFile", function(this, fast=FALSE, ...) {
   hdr <- getHeader(this, ...);
-  n <- nbrOfLines(this) - hdr$skip - as.integer(length(hdr$columns) > 0);
+  n <- nbrOfLines(this, fast=fast);
+  n <- n - hdr$skip - as.integer(length(hdr$columns) > 0);
   n <- as.integer(n);
   n;
 })
 
 
-setMethodS3("nbrOfLines", "TabularTextFile", function(this, ...) {
+setMethodS3("nbrOfLines", "TabularTextFile", function(this, fast=FALSE, ...) {
   pathname <- getPathname(this);
-  con <- file(pathname, open="r");
-  on.exit(close(con));
-  count <- as.integer(0);
-  while (TRUE) {
-    dummy <- readLines(con=con, n=4096);
-    n <- length(dummy);
-    count <- count + n;
-    if (n == 0)
-      break;
+
+  n <- this$.nbrOfLines;
+  mtime <- getLastModifiedOn(this);
+  if (is.null(n) || is.na(mtime) || !identical(mtime, attr(n, "mtime"))) {
+    if (fast) {
+      if (getFileSize(this) < 10e6)
+        fast <- FALSE;
+    }
+
+    if (fast) {
+      n <- as.integer(NA);
+    } else {
+      n <- countLines(pathname, ...);
+      attr(n, "mtime") <- mtime;
+      this$.nbrOfLines <- n;
+    }
   }
-  count;
+
+  n;
 })
 
 
@@ -512,8 +524,14 @@ setMethodS3("readLines", "TabularTextFile", function(con, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-07-23
+# o Now nbrOfLines() cache the results and only recount if the file has
+#   been modified since last time (or the file system does not provide
+#   information on last modification time).  It also uses the new 
+#   countLines() in R.utils.
 # 2008-07-22
-# o Added ad hoc dimension() to speed up ll().
+# o Added ad hoc dimension() to speed up ll(). It may return NA for the
+#   number of rows.
 # 2008-06-12
 # o Added readRawHeader().  Removed readHeader() [now in getHeader()].
 # o Added hasColumnHeader() to TabularTextFile.

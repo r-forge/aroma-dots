@@ -1,6 +1,16 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.3.4 [2008-07-23]
+o SPEED UP: Now as.character() for GenericTabularFile:s
+  and TabularTextFile:s reports the number of data rows
+  and the number of text lines as NA if the files are too
+  large and cached results are not already available.
+o Added getCreatedOn(), getLastModifiedOn(), and
+  getLastAccessedOn() to GenericDataFile.  These a just
+  wrapper accessing file.info() fields.
+
+
 Version: 0.9.3.3 [2008-07-21]
 o Now countBases() of AromaCellSequenceFile returns "raw" 
   counts if argument 'mode="raw"'.
