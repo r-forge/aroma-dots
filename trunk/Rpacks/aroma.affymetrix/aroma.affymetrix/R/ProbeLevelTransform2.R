@@ -137,6 +137,49 @@ setMethodS3("getAsteriskTags", "ProbeLevelTransform2", function(this, collapse=N
 
 setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, what=c("fit", "update"), ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  safeGetSubsetOfCellIndices <- function(this, units, ...) {
+    dataSet <- getInputDataSet(this);
+    cdf <- getCdf(dataSet);
+
+    # Get the subset of cells according to the CDF
+    cells <- getSubsetOfCellIndices(cdf, units=units, ...);
+   
+    # If a ChipEffectSet, then so called 'restructuring' might occur,
+    # which will exclude additional cells.  For this reason, we have
+    # check what possible cells the ChipEffectSet uses and take the
+    # intersection between those and the above found cells.
+    # /HB 2008-07-25.  This was borrowed from the same idea done in
+    # ScaleNormalization on 2007-04-11.
+    if (inherits(dataSet, "ChipEffectSet")) {
+      df <- getFile(dataSet, 1);
+      # Cannot use 'unlist=TRUE' next, because restructuring might occur.
+      possibleCells <- getCellIndices(df, verbose=less(verbose));
+      possibleCells <- unlist(possibleCells, use.names=FALSE);
+      possibleCells <- sort(possibleCells);
+      verbose && str(verbose, possibleCells);
+
+      verbose && cat(verbose, "'cells' (before): ");
+      verbose && str(verbose, cells);
+
+      # Take the intersection
+      if (is.null(cells)) {
+        cells <- possibleCells;
+      } else {
+        cells <- intersect(cells, possibleCells);
+      }
+      rm(possibleCells);
+
+      verbose && cat(verbose, "'cells' (after): ");
+      verbose && str(verbose, cells);
+    }
+
+    cells;
+  } # safeGetSubsetOfCellIndices()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'what':
@@ -149,25 +192,22 @@ setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, what=c("fit", 
   subset <- this[[field]];
   stratifyBy <- this[[typesField]];
 
+
   # Expand?
   if (is.character(subset)) {
     cells <- this[[fieldExpanded]];
     if (is.null(cells)) {
-      dataSet <- getInputDataSet(this);
-      cdf <- getCdf(dataSet);
-      units <- subset;
-      cells <- getSubsetOfCellIndices(cdf, units=units, stratifyBy=stratifyBy, ...);
+      cells <- safeGetSubsetOfCellIndices(this, units=subset, stratifyBy=stratifyBy, ...);
       this[[fieldExpanded]] <- cells;
     }
   } else if (is.numeric(subset)) {
+    # Shouldn't we interpret 'subset' as units here? /HB 2008-07-25
     cells <- subset;
   } else if (is.null(subset)) {
-    dataSet <- getInputDataSet(this);
-    cdf <- getCdf(dataSet);
     if (is.null(stratifyBy)) {
       cells <- seq(length=nbrOfCells(cdf));
     } else {
-      cells <- getSubsetOfCellIndices(cdf, stratifyBy=stratifyBy, ...);
+      cells <- safeGetSubsetOfCellIndices(this, stratifyBy=stratifyBy, ...);
     }
     this[[fieldExpanded]] <- cells;
   } else {
@@ -224,9 +264,59 @@ setMethodS3("getParameters", "ProbeLevelTransform2", function(this, expand=TRUE,
 }, private=TRUE)
 
 
+setMethodS3("writeSignals", "ProbeLevelTransform2", function(this, pathname, cells=NULL, ..., templateFile, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'df':
+  if (!inherits(templateFile, "AffymetrixCelFile")) {
+    throw("Argument 'templateFile' is not an AffymetrixCelFile: ", 
+                                                   class(templateFile)[1]);
+  }
+
+  # Argument 'cells':
+  if (is.null(cells)) {
+  } else {
+    # Validated below...
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+
+  verbose && enter(verbose, "Writing probe signals");
+  verbose && cat(verbose, "Output pathname: ", pathname);
+  verbose && cat(verbose, "Cells:");
+  verbose && str(verbose, cells);
+
+  # Create CEL file to store results, if missing
+  verbose && enter(verbose, "Creating CEL file for results, if missing");
+  createFrom(templateFile, filename=pathname, path=NULL, verbose=verbose);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Storing normalized signals");
+  updateCel(pathname, indices=cells, ...);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  invisible(pathname);
+}, protected=TRUE)
+
+
 
 ############################################################################
 # HISTORY:
+# 2008-07-25
+# o Added protected writeSignals(), which write signals to a CEL file, 
+#   which is created from a template CEL file, if missing.  This method
+#   cen then later be designed to be atomic.
+# o Now getSubsetTo() also handles ChipEffectSet, which might use 
+#   so called "restructors".
 # 2008-07-20
 # o Extracted from BaseCountNormalization.R.
 ############################################################################
