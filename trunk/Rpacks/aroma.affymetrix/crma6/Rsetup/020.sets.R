@@ -31,7 +31,7 @@ verbose && enter(verbose, "Keeping data sets of interest");
 sets <- sets[c("CRMA+", "GTC", "APT", "dChip")];
 
 # Smoothed ROC comparison
-#sets <- sets[c("CRMA+", "GTC")];
+sets <- sets[c("CRMA+", "GTC")];
 
 verbose && print(verbose, names(sets));
 verbose && exit(verbose);

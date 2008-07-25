@@ -143,7 +143,8 @@ addSmoothDataSets <- function(sets, hs=2:4, subset="all", ..., verbose=FALSE) {
   # Add raw sets for subset, if missing
   sets <- addSubsetDataSets(sets, subset=subset, verbose=verbose);
 
-  rawSets <- sets[isRawSet(sets) & isSubsetSet(sets, subset=subset)];
+  keep <- (isRawSet(sets) & isSubsetSet(sets, subset=subset));
+  rawSets <- sets[keep];
   for (kk in seq(along=rawSets)) {
     verbose && enter(verbose, sprintf("Smoothing data set #%d", kk));
     set <- rawSets[[kk]];
