@@ -251,6 +251,7 @@ setMethodS3("getSubsetToFit", "FragmentEquivalentClassNormalization", function(t
 ## OLD:  units <- indexOf(cdf, "^(SNP|CN)");
   types <- getUnitTypes(cdf);
   units <- which(types == 2 | types == 5 | types == 8);
+  rm(types);
   verbose && str(verbose, units);
   verbose && exit(verbose);
 
@@ -821,6 +822,7 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
 # OLD:  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
   types <- getUnitTypes(cdf);
   subsetToUpdate <- which(types == 2 | types == 5 | types == 8);
+  rm(types);
 
   verbose && enter(verbose, "Retrieving fragment class annotations");
   ufc <- AromaUfcFile$byChipType(getChipType(cdf));
