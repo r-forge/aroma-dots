@@ -1,0 +1,478 @@
+The Copy Number Variation (CNV) Project
+-------------------------------------------
+
+
+OVERVIEW
+
+
+
+The CNV project ( http://www.sanger.ac.uk/humgen/cnv/ ) consists in the analysis of copy number variation in the HapMap samples.
+This analysis is done using array-based comparative genome hybridization with a genome-wide Whole Genome TilePath (WGTP) array  consisting of ~27000 large-insert clones.
+We have produced a dataset of array-based comparative genome hybridization from EBV-transformed lymphoblastoid cell lines from all 270 HapMap individuals used in the phase I and phase II  of the project (populations: CEU, CHB, JPT and YRI).
+
+To allow robust automatic classification of CNVs, we have developed an algorithm (CNVfinder) based on the ratio variance of each array experiment. 
+The algorithm is based on 2 working hypotheses. 
+Firstly, in whole genome profiles from apparently normal individuals, the majority of observations are normally distributed around a log2 ratio of zero (representing normal diploid copy number in both test and reference genomes). 
+This central distribution can be used to provide a good estimate of experimental variability (termed SDe). 
+Secondly, the consequence of variation in DNA copy number will be ratio values which fall outside the central distribution.
+
+
+All this work has been submited to journal and more details about this study would be available in the coming months.
+
+The data of this study can be downloaded from this FTP site : ftp://ftp.sanger.ac.uk.pub.cnv_project/
+
+For any questions regarding the data and the data release policy please contact:
+
+- Nigel Carter npc@sanger.ac.uk
+- Matthew Hurles meh@sanger.ac.uk
+
+
+
+
+
+
+
+DATA RELEASE POLICY
+
+
+
+The release of pre-publication data from large resource-generating scientific projects was the subject of a meeting held in January 2003, the "Fort Lauderdale meeting", sponsored by the Wellcome Trust, one of the Project funders.
+The report from that meeting can be viewed at http://www.wellcome.ac.uk/assets/wtd003207.pdf .
+
+The recommendations of the Fort Lauderdale meeting address the roles and responsibilities of data producers, data users, and funders of "community resource projects", with the aim of establishing and maintaining an appropriate balance between the interests of data users in rapid access to data and the needs of data producers to receive recognition for their work.
+
+The conclusion of the attendees at the meeting was that responsible use of the data is necessary to ensure that first-rate data producers will continue to participate in such projects and produce and quickly release valuable large-scale data sets.
+"Responsible use" was defined as allowing the data producers to have the opportunity to publish the initial global analyses of the data, as articulated at the outset of the project.
+Doing so also will ensure that the data generated are fully described.
+
+
+
+
+ACKNOWLEGDMENTS
+
+
+
+Nigel Carter, Richard Redon, Heike Fiegler, Lyndal Montgomery, Matthew Hurles, Chris Tyler-Smith, Tatiana Zerjal,
+Armand Valsesia, Fengtang Yang, Daniel Andrews, Dimitrios Kalaitzopoulos, Charles Lee, Steve Scherer
+
+Funding was provided by the Wellcome Trust. 
+
+
+
+
+DATA DOWNLOAD
+
+
+
+Root directory is ftp://ftp.sanger.ac.uk.pub.cnv_project/
+
+
+remark : file association 
+
+Associated files ( red, green intensities or pre/post processed intensities )
+share a common experiment_id. 
+this experiment_id is composed by the batch name and corresponds to the file prefix.
+file names are composed like : <batch_name>_<experiment_name>_<experiment date>.<file extension>
+ie : in file 1489-16_chrom10_red_active_20051022.tif
+the experiment_id is 1489-16 
+
+
+
+The following data can be downloaded :
+
+
+I - INTENSITIES - DYESWAP RATIOS :
+
+
+directory is ftp://ftp.sanger.ac.uk.pub.cnv_project/intensities/
+
+A single text file containing the mean dye-swap intensity for each clone in each individual.
+
+The format of this file is a matrix like:
+
+Clone   Chr     Start   End	sample1	...
+clone1				DSR	
+... 
+
+Each row defines a genomic clone, the first columns defining clone coordinates, then all following columns being the
+DyeSwap Ratio for a given HapMap sample. 
+If a sample does not have a given clone, then on the clone raw, the sample's DSR column would be null ( leave as blank).
+
+Remark : This file does not contains clones described in the "prior CNVfinder exclusion list" ( see CLONES EXCLUSION LIST section )
+
+
+In the sub directory  clones_log2ratios , you will find foreach samples a BED file per chromosome.
+Each BED file  will include the clone coverage ( track "Sanger_WGTP_clones" ) 
+and the clone log2ratio intensities using gene mid points coordinates, displayed as a wiggle plot.
+Also it will contain  the Copy Number Variants (CNVs) predicted from the WGTP platform, the CNVs are classified as either duplication or deletion as compared to the reference sample.
+
+Each BED file can be found in a compressed version ( .bz2 ).
+For more detail on BED format , see http://genome.ucsc.edu/goldenPath/help/hgTracksHelp.html#BED 
+Note : 
+if in a given file, tracks Hapmap deletion or Hapmap duplication are empty, it means that no CNV ( deletion/duplication ) has been predicted for the chromosome of this
+sample.
+if in a given file, all the tracks are empty it means, that the chromosome for this sample has been classified as an artefact and been removed from the dataset.
+This can be checked with the exclusion list given below in this readme.
+
+The sub directory histograms will contain foreach genomic clone, the histogram of the clone log2ratio intensities from all the Hapmap population. 
+ 
+ 
+ 
+II - WGTP ARRAY INTENSITIES DATA : 
+
+
+directory is ftp://ftp.sanger.ac.uk.pub.cnv_project/bac_array_data/
+
+Each sub-directory ( starting by 'NA', ie NA11831 ) corresponds to an HapMap individual.
+
+Foreach individual , there are :
+- 2 Raw extracted intensities files ( pre-processed intensities, for green and red intensity ) 
+- 2 Normalized extracted intensities files ( post-processed intensities , for green and red intensity ).
+
+These files are in Excel-compatible text format ( they can be opened within Excel or any text editor indifferently).
+
+The 3 zip files WGTP_array1.zip, WGTP_array2.zip and WGTP_array3.zip contains all the individual intensities data.
+
+
+Pre-processed intensities files : output.xls files
+ 
+Fluorescence intensities and log2 ratio values were extracted using the Bluefuse software (Bluegnome Ltd) from the laser scanner (Agilent Technologies) images.
+
+
+Post-processed intensities files : output_post.xls files
+
+These files are derived from the Raw intensities file after a post processing from the software BlueFuse.
+This post processing consisted in : 
+Any spot giving low signal intensities ("amplitude"<100 in both channels) or inconsistent fluorescence patterns ("confidence" < 0.5 or "quality" = 0) was excluded from further analysis.
+And the Log2 ratio values were then normalised by median block values, still using Bluefuse capabilities.
+
+
+
+III - WGTP ARRAY DATA IMAGES :
+
+
+directory is ftp://ftp.sanger.ac.uk.pub.cnv_project/bac_array_data/images/
+
+Foreach individual there are 2 files : one per intensity signal ( red, green ).
+
+These images are the raw output ( tif format) from the laser scanner (Agilent Technologies) after the experiment.
+
+Array mapping can be found in the gal files ( see WGTP ARRAY & GENOMIC CLONES MAPPING section )
+
+Due to their big size ( ~80Mb) , only some sample image files are available . 
+For  interest in any other images, please contact Matthew Hurles meh@sanger.ac.uk .
+
+
+
+IV - WGTP ARRAY & GENOMIC CLONES MAPPING  :
+
+   
+directory is ftp://ftp.sanger.ac.uk.pub.cnv_project/mapping/
+        
+Mapping files to map spots on the arrays and clones on the Human genome
+
+The zip file contains :
+- 2 GAL file corresponding to the mapping on the WGTP array.
+The WGTP_array_map1.gal file is to be used with experiments up until and including 23/09/2005.  The WGTP_array_map2.gal file should be used with experiments from 27/09/2005 onwards.
+- the text file WGTP_clone_map_NCBI35.txt contains the mapping of all the Human clones ( assembly NCBI35 May 2004 ).
+- the text file WGTP_clone_map_NCBI36.txt contains the mapping of all the Human clones ( assembly NCBI36 March 2006 ).
+
+
+V - CNVS PREDICTED using CNVfinder :
+
+
+directory is ftp://ftp.sanger.ac.uk.pub.cnv_project/cnv_data/
+
+
+4 types of data are available :
+
+1- CNV regions :
+
+A CNV region is constituted by genomic clones in which a CNV is predicted.
+
+Available for the 3 datasets ( WGTP, 500 K EA, Redon CNVs = Merged CNVs between WGTP and 500KEA platforms ) and data can be browsed within UCSC and Ensembl from http://www.sanger.ac.uk/humgen/cnv/data/cnv_data/display/
+
+
+2- CNV ends :
+
+Ends are intervals which likely contain the breakpoints of the CNV.
+There are 2 ends foreach CNV, the left one is downstream in the genome and the
+right end upstream.
+
+Available only for datasets WGTP & 500 K EA
+
+
+3- CNV events :
+
+CNVs have been classified into five classes: 
+(i) deletions, 
+(ii) duplications, 
+(iii) deletions and duplications at the same locus, 
+(iv) multi-allelic loci 
+(v) complex loci whose precise nature was difficult to discern from the present data. 
+
+Available only for datasets WGTP & 500 K EA
+
+4 - CNV at the Hapmap sample level
+
+CNV predicted on the WGTP plaftorm at the sample level
+
+
+VI -  VALIDATION_DATA  :
+
+
+directory is ftp://ftp.sanger.ac.uk.pub.cnv_project/validation_data/
+
+All validation experiments were performed to assessed the algorithm ( CNVfinder ) used to call CNV for the WGTP Array Data.
+  
+
+Two type of validation experiments are available : replicates and add_in experiments.
+
+Replicates experiments :
+
+The starting point for the algorithm CNVcaller is the measurement of SDe by calculating the 68.2 percentile value of absolute dye-swap combined ratios on a chromosome by chromosome basis. 
+As a description of the overall hybridization quality we define the global SDe as the median of these values. 
+To set significance thresholds, we determined the value of the SDe multiplier empirically using technical replicates and validated these values using replicate self-self hybridizations and a set of independently validated CNVs.
+Five replicate experiments (A-E) of cell line NA15510 versus the reference cell line NA10851 were carried out on three different days and using three different batches of arrays. 
+Ordered by global SDe, experiments A and B displayed the best hybridization quality (SDe = 0.033), followed by experiments C (SDe=0.036), D (SDe 0.039) and E (SDe = 0.053).
+
+Add_in experiments :
+
+To validate the WGTP microarray, the hybridization characteristics of all clones were assessed using chromosome specific add-in experiments. 
+This approach uses self-self hybridizations where the test probe is spiked with extra copies of DNA from a specific chromosome. 
+Clones mapping to the chromosome spiked into a particular hybridization will respond in a linear fashion to the number of extra chromosome copies.
+
+
+Data available for both Replicates & Add_in experiments :
+
+Pre processed and post processed ( as defined in WGTP ARRAY INTENSITIES DATA ) are fully available.
+
+These intensities are available in the following zip files :
+
+add_in experiments :
+validation_data/add_in_experiments/add_in_chrom.zip
+validation_data/add_in_experiments/add_in_mouse-hamster-self.zip
+
+replicates experiments :
+validation_data/replicates_experiments/all_replicates.zip
+
+
+Only samples of raw scanner images files are available :
+
+add_in experiments :
+chrom10 & chrom11
+
+replicates experiments :
+NA15510A, NA12144A & self_A
+
+For any interest in downloading the Raw Scanner images please contact Matthew Hurles . 
+
+
+
+
+CLONES EXCLUSION LIST
+
+
+
+Clones have been removed from analysis because of one of the following reasons :
+
+experimental data level :
+- clone was removed during genome remapping ( between assemblies NCBI34 and NCBI35 )
+- the dyeswap ratio value (DSR) was not significant to be use ( because of experimental noise in the intensities)
+NOTE : such clone will not then be present in the clone coverage of the Hapmap sample it belongs to. therefore it will not be displayed when browsing data for this sample.
+- the clone was from an automosomes and had similarities to either X or Y, then this clone was said to be reacting to
+X,Y
+- the clone was on a region coding for Immuno-globulin ( Igs regions)
+
+data processing data level ( using algorithm CNVfinder ) :
+- experimental artefact detected on the clone
+- cell lines artefact detected on a genomic region overlapping the clone
+
+
+Exclusion prior CNVfinder
+					
+Clone	exclusion_reason				
+Chr16tp-12D6	bad DSR value due to experimental noise				
+Chr16tp-12H4	bad DSR value due to experimental noise				
+Chr1tp-31G6	bad DSR value due to experimental noise				
+Chr1tp-32E12	bad DSR value due to experimental noise				
+Chr22tp-10A10	bad DSR value due to experimental noise				
+Chr22tp-4D7	bad DSR value due to experimental noise				
+Chr3tp-2E11	bad DSR value due to experimental noise				
+Chr5tp-21E6	bad DSR value due to experimental noise				
+Chr7tp-2H3	bad DSR value due to experimental noise				
+ChrXtp-7A6	bad DSR value due to experimental noise				
+ChrXtp-7E6	bad DSR value due to experimental noise				
+ChrXtp-7F12	bad DSR value due to experimental noise				
+ChrXtp-7F8	bad DSR value due to experimental noise				
+Chr11tp-11F9	clone reacting to X,Y				
+Chr13tp-1A5	clone reacting to X,Y				
+Chr14tp-1F2	clone reacting to X,Y				
+Chr14tp-5A5	clone reacting to X,Y				
+Chr15tp-3A8	clone reacting to X,Y				
+Chr15tp-9C5	clone reacting to X,Y				
+Chr17tp-1E6	clone reacting to X,Y				
+Chr18tp-2E3	clone reacting to X,Y				
+Chr18tp-5C9	clone reacting to X,Y				
+Chr1tp-11C10	clone reacting to X,Y				
+Chr1tp-11C8	clone reacting to X,Y				
+Chr1tp-11C9	clone reacting to X,Y				
+Chr1tp-14E4	clone reacting to X,Y				
+Chr1tp-21C10	clone reacting to X,Y				
+Chr1tp-2G1	clone reacting to X,Y				
+Chr20tp-1C9	clone reacting to X,Y				
+Chr2tp-13A11	clone reacting to X,Y				
+Chr2tp-17A4	clone reacting to X,Y				
+Chr2tp-17F11	clone reacting to X,Y				
+Chr2tp-19D6	clone reacting to X,Y				
+Chr2tp-25E6	clone reacting to X,Y				
+Chr2tp-28H7	clone reacting to X,Y				
+Chr2tp-5G11	clone reacting to X,Y				
+Chr3tp-17E12	clone reacting to X,Y				
+Chr3tp-5F9	clone reacting to X,Y				
+Chr3tp-6B12	clone reacting to X,Y				
+Chr4tp-17F2	clone reacting to X,Y				
+Chr5tp-17B2	clone reacting to X,Y				
+Chr6tp-17G12	clone reacting to X,Y				
+Chr6tp-5F1	clone reacting to X,Y				
+Chr6tp-9F9	clone reacting to X,Y				
+Chr7tp-23C3	clone reacting to X,Y				
+Chr8tp-3C12	clone reacting to X,Y				
+Chr8tp-5G11	clone reacting to X,Y				
+Chr8tp-7G10	clone reacting to X,Y				
+Chr9tp-2F11	clone reacting to X,Y				
+Chr9tp-5E6	clone reacting to X,Y				
+Chr9tp-7A3	removed during clone remapping				
+Chr9tp-7A5	removed during clone remapping				
+Chr9tp-7A6	removed during clone remapping				
+Chr9tp-7B10	removed during clone remapping				
+Chr9tp-7C11	removed during clone remapping				
+Chr9tp-7D1	removed during clone remapping				
+Chr9tp-7D7	removed during clone remapping				
+Chr9tp-7E10	removed during clone remapping				
+Chr9tp-7F1	removed during clone remapping				
+Chr9tp-7G7	removed during clone remapping				
+Chr9tp-7G8	removed during clone remapping				
+Chr9tp-8B4	removed during clone remapping				
+Chr9tp-8F2	removed during clone remapping				
+Chr9tp-8F5	removed during clone remapping				
+Chr9tp-8H4	removed during clone remapping				
+Chr9tp-8H6	removed during clone remapping				
+Chr2tp-20E7	homology to Igl-K				
+Chr2tp-31D6	homology to Igl-K				
+Chr2tp-19B12	homology to Igl-K				
+Chr2tp-28B12	homology to Igl-K				
+Chr2tp-31F7	homology to Igl-K				
+Chr2tp-16F6	homology to Igl-K				
+Chr2tp-20D11	homology to Igl-K				
+Chr2tp-10B5	homology to Igl-K				
+Chr2tp-22D7	homology to Igl-K				
+Chr2tp-4C7	homology to Igl-K				
+Chr14tp-8C9	homology to IgH				
+Chr14tp-12C3	homology to IgH				
+Chr14tp-10B2	homology to IgH				
+Chr14tp-10F5	homology to IgH				
+Chr14tp-11A3	homology to IgH				
+Chr14tp-12H5	homology to IgH				
+Chr14tp-10B5	homology to IgH				
+Chr14tp-10F11	homology to IgH				
+Chr14tp-10D11	homology to IgH				
+Chr22tp-6E7	homology to IgL-L				
+Chr22tp-6C1	homology to IgL-L				
+Chr22tp-6B9	homology to IgL-L				
+Chr22tp-6F3	homology to IgL-L				
+Chr22tp-6F9	homology to IgL-L				
+Chr22tp-6A12	homology to IgL-L				
+Chr22tp-6E2	homology to IgL-L				
+Chr22tp-6F11	homology to IgL-L				
+Chr22tp-6B7	homology to IgL-L				
+Chr22tp-6C4	homology to IgL-L				
+Chr22tp-6D3	homology to IgL-L				
+Chr22tp-6D2	homology to IgL-L				
+Chr22tp-6B12	homology to IgL-L				
+Chr22tp-6C2	homology to IgL-L				
+Chr22tp-6C12	homology to IgL-L				
+Chr22tp-6E12	homology to IgL-L				
+Chr22tp-6C10	homology to IgL-L				
+Chr22tp-6D7	homology to IgL-L				
+Chr22tp-6B10	homology to IgL-L				
+Chr22tp-6E4	homology to IgL-L				
+Chr22tp-6E8	homology to IgL-L				
+Chr22tp-6B4	homology to IgL-L				
+Chr22tp-6B3	homology to IgL-L				
+Chr22tp-6D11	homology to IgL-L				
+Chr22tp-4G1	homology to IgL-L				
+Chr22tp-4D7	homology to IgL-L				
+					
+					
+Exclusion after CNVfinder
+					
+sample	chromosome	exclusion_reason			
+NA07019	7	experimental artefact detected post_CNVfinder			
+NA07019	5	experimental artefact detected post_CNVfinder			
+NA07055	2	experimental artefact detected post_CNVfinder			
+NA10856	13	experimental artefact detected post_CNVfinder			
+NA11882	19	experimental artefact detected post_CNVfinder			
+NA12056	17	experimental artefact detected post_CNVfinder			
+NA12056	16	experimental artefact detected post_CNVfinder			
+NA12248	22	experimental artefact detected post_CNVfinder			
+NA12248	9	experimental artefact detected post_CNVfinder			
+NA12248	14	experimental artefact detected post_CNVfinder			
+NA12875	2	experimental artefact detected post_CNVfinder			
+NA18540	7	experimental artefact detected post_CNVfinder			
+NA18540	4	experimental artefact detected post_CNVfinder			
+NA18540	21	experimental artefact detected post_CNVfinder			
+NA18540	14	experimental artefact detected post_CNVfinder			
+NA18540	9	experimental artefact detected post_CNVfinder			
+NA12248	12	experimental artefact detected post_CNVfinder			
+NA18862	12	experimental artefact detected post_CNVfinder			
+NA19208	9	experimental artefact detected post_CNVfinder			
+NA19193	12	experimental artefact detected post_CNVfinder			
+NA18956	4	experimental artefact detected post_CNVfinder			
+NA18529	16	experimental artefact detected post_CNVfinder			
+NA18522	12	experimental artefact detected post_CNVfinder			
+NA10831	21	experimental artefact detected post_CNVfinder			
+NA11839	10	experimental artefact detected post_CNVfinder			
+NA12707	16	experimental artefact detected post_CNVfinder			
+NA18966	Y	experimental artefact detected post_CNVfinder			
+NA07348	X	experimental artefact detected post_CNVfinder			
+NA18540	X	experimental artefact detected post_CNVfinder			
+NA10859	X	experimental artefact detected post_CNVfinder			
+NA12145	X	experimental artefact detected post_CNVfinder			
+NA10854	X	experimental artefact detected post_CNVfinder			
+NA18507	X	experimental artefact detected post_CNVfinder			
+NA18516	X	experimental artefact detected post_CNVfinder			
+NA18978	X	experimental artefact detected post_CNVfinder			
+NA18524	X	experimental artefact detected post_CNVfinder			
+NA18562	X	experimental artefact detected post_CNVfinder			
+					
+					
+Exclusion after CNVfinder	
+
+( coordinates based on build NCBI35 )
+population	chrom	start	end	sample	exclusion_reason
+YRI	2	151551300	153541902	NA19203	cell lines artefact
+YRI	3	147114997	147144469	NA18852	cell lines artefact
+YRI	4	19301	54508	NA18859	cell lines artefact
+CEU	4	190967344	191053255	NA07348	cell lines artefact
+CEU	7	83929570	84164663	NA10831	cell lines artefact
+CEU	9	7282836	7771365	NA07345	cell lines artefact
+CEU	14	21970760	21987473	NA11839	cell lines artefact
+CEU	15	81149336	81250549	NA12891	cell lines artefact
+CEU	19	41815435	42022453	NA12891	cell lines artefact
+YRI	1	244273235	244554473	NA19101	cell lines artefact
+YRI	2	151470035	153617318	NA19203	cell lines artefact
+YRI	7	56998826	57202820	NA18507	cell lines artefact
+YRI	13	97603066	97845997	NA18852	cell lines artefact
+YRI	18	61788347	61951445	NA18855	cell lines artefact
+CEU	1	242399333	242697905	NA12057	cell lines artefact
+CEU	4	158076756	158236808	NA07345	cell lines artefact
+CEU	4	190784196	191053457	NA07348	cell lines artefact
+CEU	7	37991943	38296695	NA07034	cell lines artefact
+CEU	8	2105020	2279641	NA10859	cell lines artefact
+CEU	9	7165387	7825237	NA07345	cell lines artefact
+CEU	19	41730238	42087750	NA12891	cell lines artefact
+
+
+
+
