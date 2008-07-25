@@ -1,7 +1,10 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.3.4 [2008-07-23]
+Version: 0.9.3.4 [2008-07-24]
+o SPEED UP: Added patch for base::serialize() on Windows, 
+  which in turn will speed up digest::digest() and all
+  methods that use the latter to generate hashcodes.
 o SPEED UP: Now as.character() for GenericTabularFile:s
   and TabularTextFile:s reports the number of data rows
   and the number of text lines as NA if the files are too
