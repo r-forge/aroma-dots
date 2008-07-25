@@ -276,9 +276,13 @@ setMethodS3("extractDataFrame", "RocData", function(this, fields=NULL, ...) {
 })
 
 
-setMethodS3("getField", "RocData", function(this, field, ordered=TRUE, complete=TRUE, rows=NULL, ...) {
+setMethodS3("getField", "RocData", function(this, field, raw=FALSE, ordered=TRUE, complete=TRUE, rows=NULL, ...) {
   internalField <- getInternalRocFields(this, fields=field);
   values <- this[[internalField]];
+
+  if (raw) {
+    return(values);
+  }
 
   # Expand 'truth', if specified as one value per column
   if (field == "truth") {

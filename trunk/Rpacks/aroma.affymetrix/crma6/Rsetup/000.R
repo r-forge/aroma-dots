@@ -2,33 +2,6 @@ verbose <- Arguments$getVerbose(-10, timestamp=TRUE);
 figPath <- "figures";
 mkdirs(figPath);
 
-setConstructorS3("SmartList", function(...) {
-  this <- list(...);
-  class(this) <- c("SmartList", class(this));
-  this;
-})
-
-setMethodS3("[[<-", "SmartList", function(this, name, value) {
-  oldValue <- this[[name]];
-  if (identical(value, oldValue)) {
-#    cat("Nothing changed!\n");
-    invisible(this);
-  } else {
-    NextMethod("[[<-");
-  }
-})
-
-setMethodS3("$<-", "SmartList", function(this, name, value) {
-#  cat("$<-....\n");
-  UseMethod("[[<-");
-})
-
-setMethodS3("[", "SmartList", function(this, ...) {
-  class <- class(this);
-  this <- NextMethod("[");
-  class(this) <- class;
-  this;
-})
 
 if (!exists("sets", mode="list")) {
   sets <- SmartList();

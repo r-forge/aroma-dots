@@ -1,6 +1,6 @@
 source("init.R");
 
-imgFormat <- c("x11", "eps", "png")[2];
+imgFormat <- c("x11", "eps", "png")[1];
 
 fpRate <- 0.05;
 
