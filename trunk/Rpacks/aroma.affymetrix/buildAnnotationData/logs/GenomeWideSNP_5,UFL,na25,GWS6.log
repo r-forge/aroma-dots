@@ -1,0 +1,201 @@
+
+R version 2.6.2 (2008-02-08)
+Copyright (C) 2008 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+$HOME2/.Rprofile ...done
+> if (interactive()) savehistory();
+> library(aroma.affymetrix);
+R.cache v0.1.7 (2008-02-27) successfully loaded. See ?R.cache for help.
+R.rsp v0.3.4 (2008-03-06) successfully loaded. See ?R.rsp for help.
+ Type browseRsp() to open the RSP main menu in your browser.
+aroma.apd v0.1.3 (2006-06-14) successfully loaded. See ?aroma.apd for help.
+> log <- Verbose(threshold=-4, timestamp=TRUE);
+> 
+> source("init.R");
+> 
+> # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+> # Settings
+> # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+> naVersion <- "25";
+> user <- "HB";
+> datestamp <- "20080424";
+> 
+> chipType <- "GenomeWideSNP_5";
+> cdfTags <- "Full,r2";
+> nbrOfEnzymes <- 2;
+> 
+> 
+> # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+> # Setup required annotation files
+> # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+> if (!exists("cdf")) {
++   cdf <- AffymetrixCdfFile$byChipType(chipType, tags=cdfTags);
++   rm(csvList);
++ }
+> print(cdf);
+AffymetrixCdfFile:
+Path: C:/Documents and Settings/hb/My Documents/My Data/annotationData/chipTypes/GenomeWideSNP_5
+Filename: GenomeWideSNP_5,Full,r2.cdf
+Filesize: 249.46MB
+File format: v4 (binary; XDA)
+Chip type: GenomeWideSNP_5,Full,r2
+Dimension: 2166x2166
+Number of cells: 4691556
+Number of units: 920928
+Cells per unit: 5.09
+Number of QC units: 6
+RAM: 0.00MB
+> 
+> if (!exists("csvList", mode="list")) {
++   csvList <- list();
++   tags <- sprintf(".na%s", naVersion);
++   csv <- AffymetrixNetAffxCsvFile$byChipType(chipType, tags=tags);
++   csvList[["main"]] <- csv;
++   tags <- sprintf(".cn.na%s", naVersion);
++   csv <- AffymetrixNetAffxCsvFile$byChipType(chipType, tags=tags);
++   csvList[["CN"]] <- csv;
++   rm(csv, tags);
++ }
+> print(csvList);
+$main
+AffymetrixNetAffxCsvFile:
+Name: GenomeWideSNP_5.na25.annot
+Tags: 
+Pathname: C:/Documents and Settings/hb/My Documents/My Data/annotationData/chipTypes/GenomeWideSNP_5/GenomeWideSNP_5.na25.annot.csv
+File size: 712.01MB
+RAM: 0.00MB
+Columns [26]: 'probeSetID', 'affySNPID', 'dbSNPRSID', 'chromosome', 'physicalPosition', 'strand', 'chrXPseudo-autosomalRegion1', 'cytoband', 'flank', 'alleleA', 'alleleB', 'associatedGene', 'geneticMap', 'microsatellite', 'fragmentEnzymeTypeLengthStartStop', 'alleleFrequencies', 'heterozygousAlleleFrequencies', 'numberOfindividuals/NumberOfChromosomes', 'inHapmap', 'strandVersusdbSNP', 'copyNumberVariation', 'probeCount', 'chrXPseudo-autosomalRegion2', 'inFinalList', 'minorAllele', 'minorAlleleFrequency'
+
+$CN
+AffymetrixNetAffxCsvFile:
+Name: GenomeWideSNP_5.cn.na25.annot
+Tags: 
+Pathname: C:/Documents and Settings/hb/My Documents/My Data/annotationData/chipTypes/GenomeWideSNP_5/GenomeWideSNP_5.cn.na25.annot.csv
+File size: 168.58MB
+RAM: 0.00MB
+Columns [14]: 'probeSetID', 'chromosome', 'chromosomeStart', 'chromosomeStop', 'strand', 'chrXPseudo-autosomalRegion1', 'cytoband', 'associatedGene', 'microsatellite', 'fragmentEnzymeTypeLengthStartStop', 'copyNumberVariation', 'probeCount', 'chrXPseudo-autosomalRegion2', 'sNPInterference'
+
+> 
+> 
+> 
+> # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+> # UFL
+> # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+> tags <- sprintf("na%s,%s%s", naVersion, user, datestamp);
+> ufl <- AromaUflFile$allocateFromCdf(cdf, tags=tags, nbrOfEnzymes=nbrOfEnzymes);
+> print(ufl);
+AromaUflFile:
+Name: GenomeWideSNP_5
+Tags: Full,r2,na25,HB20080424
+Pathname: C:/Documents and Settings/hb/My Documents/My Data/annotationData/chipTypes/GenomeWideSNP_5/GenomeWideSNP_5,Full,r2,na25,HB20080424.ufl
+File size: 3.51MB
+RAM: 0.00MB
+File format: v1
+Dimensions: 920928x2
+Column classes: integer, integer
+Number of bytes per column: 2, 2
+Chip type: GenomeWideSNP_5,Full,r2
+Footer: <chipType>GenomeWideSNP_5,Full,r2</chipType>
+> 
+> for (kk in seq(along=csvList)) {
++   csv <- csvList[[kk]];
++   print(csv);
++   units <- importFrom(ufl, csv, verbose=log);
++   str(units);
++ }
+AffymetrixNetAffxCsvFile:
+Name: GenomeWideSNP_5.na25.annot
+Tags: 
+Pathname: C:/Documents and Settings/hb/My Documents/My Data/annotationData/chipTypes/GenomeWideSNP_5/GenomeWideSNP_5.na25.annot.csv
+File size: 712.01MB
+RAM: 0.00MB
+Columns [26]: 'probeSetID', 'affySNPID', 'dbSNPRSID', 'chromosome', 'physicalPosition', 'strand', 'chrXPseudo-autosomalRegion1', 'cytoband', 'flank', 'alleleA', 'alleleB', 'associatedGene', 'geneticMap', 'microsatellite', 'fragmentEnzymeTypeLengthStartStop', 'alleleFrequencies', 'heterozygousAlleleFrequencies', 'numberOfindividuals/NumberOfChromosomes', 'inHapmap', 'strandVersusdbSNP', 'copyNumberVariation', 'probeCount', 'chrXPseudo-autosomalRegion2', 'inFinalList', 'minorAllele', 'minorAlleleFrequency'
+ int [1:443816] 374902 424452 494191 280288 215221 173865 220649 379476 227991 34103 ...
+AffymetrixNetAffxCsvFile:
+Name: GenomeWideSNP_5.cn.na25.annot
+Tags: 
+Pathname: C:/Documents and Settings/hb/My Documents/My Data/annotationData/chipTypes/GenomeWideSNP_5/GenomeWideSNP_5.cn.na25.annot.csv
+File size: 168.58MB
+RAM: 0.00MB
+Columns [14]: 'probeSetID', 'chromosome', 'chromosomeStart', 'chromosomeStop', 'strand', 'chrXPseudo-autosomalRegion1', 'cytoband', 'associatedGene', 'microsatellite', 'fragmentEnzymeTypeLengthStartStop', 'copyNumberVariation', 'probeCount', 'chrXPseudo-autosomalRegion2', 'sNPInterference'
+ int [1:312384] 513035 516828 503287 505517 519797 521276 518877 516343 513588 505580 ...
+> 
+> x <- summaryOfUnits(ufl, enzymes=c("NspI", "StyI"));
+> print(x);
+                snp    cnp affxSnp other  total
+enzyme1-only 116979 140099       0     0 257078
+enzyme2-only  74135   1208       0     0  75343
+both         248980 171077       0     0 420057
+missing       60474 104885    3022    69 168450
+total        500568 417269    3022    69 920928
+> 
+> 
+> # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+> # Statistics
+> # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+> ## > csvList
+> ## $main
+> ## AffymetrixNetAffxCsvFile:
+> ## Name: GenomeWideSNP_5.na25.annot
+> ## Tags:
+> ## Pathname: annotationData/chipTypes/GenomeWideSNP_5/GenomeWideSNP_5.na25.annot.csv
+> ## File size: 712.01MB
+> ## RAM: 0.00MB
+> ## Columns [26]: 'probeSetID', 'affySNPID', 'dbSNPRSID', 'chromosome', 'physicalPosition', 'strand', 'chrXPseudo-autosomalRegion1', 'cytoband', 'flank', 'alleleA', 'alleleB', 'associatedGene', 'geneticMap', 'microsatellite', 'fragmentEnzymeTypeLengthStartStop', 'alleleFrequencies', 'heterozygousAlleleFrequencies', 'numberOfindividuals/NumberOfChromosomes', 'inHapmap', 'strandVersusdbSNP', 'copyNumberVariation', 'probeCount', 'chrXPseudo-autosomalRegion2', 'inFinalList', 'minorAllele', 'minorAlleleFrequency'
+> 
+> ## Import:
+> ##             V1              V2                 V3
+> ##       Min.   :   75   Min.   :    19.0   Min.   :    NA
+> ##       1st Qu.:  511   1st Qu.:   501.0   1st Qu.:    NA
+> ##       Median :  724   Median :   735.0   Median :    NA
+> ##       Mean   :  799   Mean   :   840.8   Mean   :   NaN
+> ##       3rd Qu.:  979   3rd Qu.:  1065.0   3rd Qu.:    NA
+> ##       Max.   : 2000   Max.   :  2000.0   Max.   :    NA
+> ##       NA's   :77857   NA's   :120701.0   NA's   :443816
+> ## 20080423 13:29:45|    Sorting data by enzyme...done
+> ## 20080423 13:29:45|   Reading (unitName, fragmentLength+) from file...done
+> ## 20080423 13:29:55|  Importing (unit name, fragment length+) data from Affymetrix
+> ## NetAffxCsvFile...done
+> ##    'data.frame':        443816 obs. of  3 variables:
+> ##     $ unitName         : Factor w/ 443816 levels "AFFX-SNP_10000979",..: 3071 3070 3201 3200 3199 3198 3069 3197 3068 3196 ...
+> ##     $ fragmentLength   : int  1857 382 1080 NA 312 560 531 468...
+> ##     $ fragmentLength.02: int  461 533 751 483 NA 119 1644 870...
+> ## 20080423 13:29:57|   CDF units:
+> ##     int [1:443816] 374902 424452 494191 280288 215221 173865 220649...
+> ## 1 34103 ...
+> 
+> ## After:
+> ## > summary(ufl)
+> ##  length           length.02
+> ##  Min.   :    75   Min.   :    19.0
+> ##  1st Qu.:   511   1st Qu.:   501.0
+> ##  Median :   724   Median :   735.0
+> ##  Mean   :   799   Mean   :   840.8
+> ##  3rd Qu.:   979   3rd Qu.:  1065.0
+> ##  Max.   :  2000   Max.   :  2000.0
+> ##  NA's   :554969   NA's   :597813.0
+> 
+> ## $CN
+> ## AffymetrixNetAffxCsvFile:
+> ## Name: GenomeWideSNP_5.cn.na25.annot
+> ## Tags:
+> ## Pathname: annotationData/chipTypes/GenomeWideSNP_5/GenomeWideSNP_5.cn.na25.annot.csv
+> ## File size: 168.58MB
+> ## RAM: 0.00MB
+> ## Columns [14]: 'probeSetID', 'chromosome', 'chromosomeStart', 'chromosomeStop', 'strand', 'chrXPseudo-autosomalRegion1', 'cytoband', 'associatedGene', 'microsatellite', 'fragmentEnzymeTypeLengthStartStop', 'copyNumberVariation', 'probeCount', 'chrXPseudo-autosomalRegion2', 'sNPInterference'
+> 
