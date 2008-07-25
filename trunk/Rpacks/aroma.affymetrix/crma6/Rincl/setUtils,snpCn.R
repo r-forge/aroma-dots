@@ -22,22 +22,27 @@ getSubsetDataSet <- function(set, subset=c("snp", "cn"), ..., verbose=FALSE) {
   types <- attr(unitTypes, "map");
   keep <- whichVector(unitTypes == types[subset]);
 
+  # Clone data set
+  set2 <- set;
+  set2$name <- name;
+
+  # Update positions
+  x <- set$positions;
+  if (is.null(x))
+    x <- positions;
+  x <- x[keep];
+  set2$positions <- x;
+  rm(x);
+
   # Get log-ratios
-  set <- addRocData(set, ...);
-  rocData <- extractSubset(set$rocData, rows=keep);
-  set$rocData <- rocData;
-  rm(rocData);
-
-  set$name <- name;
-
-  # Get positions
-  if (!is.null(set$positions))
-    set$positions <- set$positions[keep];
-  rm(keep);
+  set2 <- addRocData(set2, ...);
+  rocData <- extractSubset(set2$rocData, rows=keep);
+  set2$rocData <- rocData;
+  rm(rocData, keep);
 
   verbose && exit(verbose);
 
-  set;
+  set2;
 } # getSubsetDataSet()
 
 
