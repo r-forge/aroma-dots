@@ -8,6 +8,9 @@
   # Patch log2()/log10() that are slow to display warnings
   .patchLog2();
 
+  # Patch slow serialize() on Windows (speeds up digest() a lot!)
+  .patchSerialize();
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Apply downloaded patches
@@ -28,6 +31,8 @@
 
 ############################################################################
 # HISTORY:
+# 2008-07-24
+# o Added patch for serialize() on Windows.
 # 2008-02-14
 # o Renamed existing threshold hold to 'timestampsThreshold', 
 #   'medianPolishThreshold', and 'skipThreshold'.
