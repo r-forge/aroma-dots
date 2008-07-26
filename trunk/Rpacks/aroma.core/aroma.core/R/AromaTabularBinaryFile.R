@@ -146,14 +146,14 @@ setMethodS3("readHeader", "AromaTabularBinaryFile", function(this, con=NULL, ...
     sizes <- Arguments$getIntegers(sizes, range=c(1,8));
     ok <- (sizes %in% c(1,2,4,8));
     if (any(!ok)) {
-      cc <- which(!ok);
+      cc <- whichVector(!ok);
       throw("File format error. Detect one or more columns with invalid byte sizes, i.e. not in {1,2,4,8}: ", paste(paste(cc, sizes[cc], sep=":"), collapse=", "));
     }
 
     # Assert that 'raw' columns are only of size one
     nok <- (sizes[types == "raw"] != 1);
     if (any(nok)) {
-      cc <- which(nok);
+      cc <- whichVector(nok);
       throw("File format error. Detect one or more columns of data type 'raw' but of size different from one: ", paste(paste(cc, sizes[cc], sep=":"), collapse=", "));
     }
 
@@ -472,7 +472,7 @@ setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL,
   if (is.null(rows)) {
     rows <- seq(length=hdr$nbrOfRows);
   } else if (is.logical(rows)) {
-    rows <- which(rows);
+    rows <- whichVector(rows);
     rows <- Arguments$getIndices(rows, range=c(1, hdr$nbrOfRows));
     if (retRowNames) {
       rownames <- as.character(rows);
@@ -490,7 +490,7 @@ setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL,
   if (is.null(columns)) {
     columns <- seq(length=hdr$nbrOfColumns);
   } else if (is.logical(columns)) {
-    columns <- which(columns);
+    columns <- whichVector(columns);
     columns <- Arguments$getIndices(columns, range=c(1, hdr$nbrOfColumns));
   } else {
     columns <- Arguments$getIndices(columns, range=c(1, hdr$nbrOfColumns));
@@ -618,7 +618,7 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
     if (is.null(rows)) {
       rows <- seq(length=hdr$nbrOfRows);
     } else if (is.logical(rows)) {
-      rows <- which(rows);
+      rows <- whichVector(rows);
       rows <- Arguments$getIndices(rows, range=c(1, hdr$nbrOfRows));
     } else {
       rows <- Arguments$getIndices(rows, range=c(1, hdr$nbrOfRows));
@@ -692,12 +692,12 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
     }
 
     censored <- FALSE;
-    idxs <- which(values < range[1]);
+    idxs <- whichVector(values < range[1]);
     if (length(idxs) > 0) {
       values[idxs] <- range[1];
       censored <- TRUE;
     }
-    idxs <- which(values > range[2]);
+    idxs <- whichVector(values > range[2]);
     if (length(idxs) > 0) {
       values[idxs] <- range[2];
       censored <- TRUE;
@@ -774,7 +774,7 @@ setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, co
   if (is.null(rows)) {
     rows <- seq(length=hdr$nbrOfRows);
   } else if (is.logical(rows)) {
-    rows <- which(rows);
+    rows <- whichVector(rows);
     rows <- Arguments$getIndices(rows, range=c(1, hdr$nbrOfRows));
   } else {
     rows <- Arguments$getIndices(rows, range=c(1, hdr$nbrOfRows));
@@ -785,7 +785,7 @@ setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, co
   if (is.null(columns)) {
     columns <- seq(length=hdr$nbrOfColumns);
   } else if (is.logical(columns)) {
-    columns <- which(columns);
+    columns <- whichVector(columns);
     columns <- Arguments$getIndices(columns, range=c(1, hdr$nbrOfColumns));
   } else {
     columns <- Arguments$getIndices(columns, range=c(1, hdr$nbrOfColumns));
@@ -968,7 +968,7 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
   sizes <- Arguments$getIntegers(sizes, range=c(1,8));
   ok <- (sizes %in% c(1,2,4,8));
   if (any(!ok)) {
-    cc <- which(!ok);
+    cc <- whichVector(!ok);
     throw("Cannot allocate/create file. Detect one or more columns with invalid byte sizes, i.e. not in {1,2,4,8}: ", paste(paste(cc, sizes[cc], sep=":"), collapse=", "));
   }
   sizes <- rep(sizes, length.out=nbrOfColumns);
@@ -1196,7 +1196,7 @@ setMethodS3("summary", "AromaTabularBinaryFile", function(object, ...) {
     thisNames <- names[[kk]];
     idx <- match(unames, thisNames);
     s <- s[idx];
-    nok <- which(is.na(idx));
+    nok <- whichVector(is.na(idx));
     s[nok] <- emptyStr;
     thisNames <- paste(thisNames, ":", sep="");
     thisNames[nok] <- emptyName;

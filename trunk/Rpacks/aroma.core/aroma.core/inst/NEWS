@@ -9,6 +9,7 @@ o SPEED UP: Now as.character() for GenericTabularFile:s
   and TabularTextFile:s reports the number of data rows
   and the number of text lines as NA if the files are too
   large and cached results are not already available.
+o SPEED UP: Replaced all which() with faster whichVector().
 o Added getCreatedOn(), getLastModifiedOn(), and
   getLastAccessedOn() to GenericDataFile.  These a just
   wrapper accessing file.info() fields.

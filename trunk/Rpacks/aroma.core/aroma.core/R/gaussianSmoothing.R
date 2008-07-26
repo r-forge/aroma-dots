@@ -80,7 +80,7 @@ setMethodS3("gaussianSmoothing", "matrix", function(Y, x, w=NULL, xOut=x, sd=1, 
     # Weights centered around x[kk]
     xDiff <- (x-xOut[kk]);
     if (isCensored) {
-      keep <- which(abs(xDiff) <= censorThreshold);
+      keep <- whichVector(abs(xDiff) <= censorThreshold);
 
       # Nothing to do?
       if (length(keep) == 0) {

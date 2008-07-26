@@ -86,7 +86,7 @@ setMethodS3("smoothWSA", "matrix", function(Y, x, w=NULL, kernel=gaussKernel, sd
       wM[nas] <- 0;
 
     wMR <- rowSums(wM);
-    keep <- which(wMR > 0);
+    keep <- whichVector(wMR > 0);
     rm(wMR);
     if (length(keep) > 0) {
       wM <- wM[keep,,drop=FALSE];

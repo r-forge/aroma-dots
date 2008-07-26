@@ -241,7 +241,7 @@ setMethodS3("getReadArguments", "TabularTextFile", function(this, fileHeader=NUL
     defColClassPatterns <- defColClasses;
 
     # Default columns?
-    pos <- which(names(colClassPatterns) == "*");
+    pos <- whichVector(names(colClassPatterns) == "*");
     if (length(pos) > 0) {
       # Exclude extra '*':s
       if (length(pos) > 1) {
@@ -254,7 +254,7 @@ setMethodS3("getReadArguments", "TabularTextFile", function(this, fileHeader=NUL
       names <- names(colClassPatterns);
       if (length(colClassPatterns) > 1) {
         names <- insert(names[-pos], at=pos, values=rep("*", nbrOfColumns));
-        idxs <- which(names == "*");
+        idxs <- whichVector(names == "*");
         names[idxs] <- sprintf("^%s$", columns);
   
         colClassPatterns <- insert(colClassPatterns[-pos], at=pos, 
@@ -278,7 +278,7 @@ setMethodS3("getReadArguments", "TabularTextFile", function(this, fileHeader=NUL
     # Update column classes according to patterns
     for (kk in seq(along=colClassPatterns)) {
       pattern <- names(colClassPatterns)[kk];
-      idxs <- which(regexpr(pattern, columns) != -1);
+      idxs <- whichVector(regexpr(pattern, columns) != -1);
       if (length(idxs) > 0) {
         colClass <- colClassPatterns[kk];
         colClasses[idxs] <- colClass;
