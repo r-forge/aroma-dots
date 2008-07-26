@@ -58,7 +58,7 @@ setConstructorS3("GenericDataFile", function(filename=NULL, path=NULL, mustExist
   args <- list(...);
 
   # Ignore any argument called 'recursive'
-  keep <- which(regexpr("^recursive$", names(args)) == -1);
+  keep <- whichVector(regexpr("^recursive$", names(args)) == -1);
   args <- args[keep];
 
   if (length(args) > 0) {

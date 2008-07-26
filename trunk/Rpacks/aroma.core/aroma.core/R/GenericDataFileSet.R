@@ -418,7 +418,7 @@ setMethodS3("getTags", "GenericDataFileSet", function(this, collapse=NULL, ...) 
   
     filenameTags <- unlist(strsplit(name, split=","));
 
-    pos <- which("*" == tags);
+    pos <- whichVector("*" == tags);
     tags <- tags[-pos];
     if (length(filenameTags) > 0) {
       if (length(tags) == 0) {
@@ -640,7 +640,7 @@ setMethodS3("reorder", "GenericDataFileSet", function(x, order, ...) {
     } else {
       order <- as.list(order);
       order[!idx] <- names[pos];
-      order[[which(idx)]] <- setdiff(names, names[pos]);
+      order[[whichVector(idx)]] <- setdiff(names, names[pos]);
       order <- unlist(order, use.names=FALSE);
       order <- match(order, names);
     }
@@ -917,7 +917,7 @@ setMethodS3("extract", "GenericDataFileSet", function(this, files, ...) {
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.logical(files)) {
-    files <- which(files);
+    files <- whichVector(files);
   }
 
   files <- Arguments$getIndices(files, range=range(seq(this)));

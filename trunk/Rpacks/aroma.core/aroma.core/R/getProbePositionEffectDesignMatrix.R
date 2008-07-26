@@ -69,7 +69,7 @@ setMethodS3("getProbePositionEffectDesignMatrix", "raw", function(seqs, B=NULL, 
       verbose && enter(verbose, sprintf("Position #%d of %d", pp, P));
 
       # Identify sequences with factor 'bb' in position 'pp'
-      idxs <- which(seqs[,pp] == factors[bb]);
+      idxs <- whichVector(seqs[,pp] == factors[bb]);
 #      verbose && cat(verbose, "Matching sequences:");
 #      verbose && str(verbose, idxs);
 

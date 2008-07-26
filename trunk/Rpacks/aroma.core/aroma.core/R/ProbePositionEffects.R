@@ -71,7 +71,7 @@ setMethodS3("fitProbePositionEffects", "numeric", function(y, seqs, ..., interce
 
     # Non-missing data points
     nas <- !nas;
-    keep <- which(nas);
+    keep <- whichVector(nas);
     rm(nas);
 
     # Clean out missing data points
@@ -278,7 +278,7 @@ setMethodS3("predict", "ProbePositionEffects", function(object, seqs, ..., verbo
 #      verbose && enter(verbose, sprintf("Factor #%d ('%s') of %d", bb, factors[bb], ncol(rho)));
 
       # Identify sequences with nucleotide 'bb' at position 'pp'.
-      idxs <- which(seqsPP == values[bb]);
+      idxs <- whichVector(seqsPP == values[bb]);
 
       # Add the nucleotide effect rho(pp,bb) to the probe-affinity
       phi[idxs] <- phi[idxs] + rho[pp,bb];

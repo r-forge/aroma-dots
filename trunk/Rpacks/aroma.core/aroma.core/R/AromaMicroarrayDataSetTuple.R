@@ -126,7 +126,7 @@ setMethodS3("extract", "AromaMicroarrayDataSetTuple", function(this, arrays, ...
   rr <- indexOfArrays(this, arrays);
   verbose && print(verbose, rr);
   arrayTable <- arrayTable[rr,,drop=FALSE];
-  cc <- which(apply(arrayTable, MARGIN=2, FUN=function(idxs) {
+  cc <- whichVector(apply(arrayTable, MARGIN=2, FUN=function(idxs) {
     any(!is.na(idxs));
   }));
   verbose && print(verbose, cc);
@@ -380,7 +380,7 @@ setMethodS3("getFullNames", "AromaMicroarrayDataSetTuple", function(this, arrays
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   getFullNameOfTuple <- function(cfList, ...) {
     # Get sample name
-    first <- which(!sapply(cfList, FUN=is.null))[1];
+    first <- whichVector(!sapply(cfList, FUN=is.null))[1];
     name <- getName(cfList[[first]], ...);
   
     # Get chip-effect tags *common* across chip types
@@ -495,7 +495,7 @@ setMethodS3("indexOfArrays", "AromaMicroarrayDataSetTuple", function(this, array
   } else if (is.numeric(arrays)) {
     arrays <- Arguments$getIndices(arrays, range=c(1,length(allNames)));
   } else {
-    missing <- which(!(arrays %in% allNames));
+    missing <- whichVector(!(arrays %in% allNames));
     if (length(missing) > 0) {
       missing <- paste(arrays[missing], collapse=", ");
       throw("Argument 'arrays' contains unknown arrays: ", missing);
