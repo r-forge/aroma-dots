@@ -15,13 +15,15 @@ for (kk in seq(along=sets)) {
   name <- gsub("[*]", "+", name);
   imgName <- paste(c(name, "M", "boxplot"), collapse=",");
 
+  figPathT <- filePath(figPath, "boxplots");
   if (!devIsOpen(imgName)) {
     width <- imgScales[imgFormat] * 1.2;
     height <- 3/4*0.618*width;
     if (imgFormat == "x11") {
       devOpen(imgFormat, width=width, height=height, name=imgName);
     } else {
-      imgPathname <- filePath(figPath, sprintf("%s.%s", imgName, imgFormat));
+      mkdirs(figPathT);
+      imgPathname <- filePath(figPathT, sprintf("%s.%s", imgName, imgFormat));
       if (!force && isFile(imgPathname)) {
         verbose && cat(verbose, "Already exists: ", imgPathname);
         verbose && exit(verbose);

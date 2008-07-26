@@ -47,15 +47,19 @@ setConstructorS3("RocData", function(truth=NULL, data=NULL, recall=NULL, ...) {
   }
 
 
-  extend(Object(), "RocData",
+  this <- extend(Object(), "RocData",
     .truth=truth,
     .data=data
-  )
+  );
+
+  this;
 }) # RocData()
 
 
 setMethodS3("clearCache", "RocData", function(this, ...) {
-  for (ff in c(".tpDensityList")) {
+  fields <- c(".checksum", ".order", ".hasNAs", ".isMissing", 
+              ".rate", ".tpDensityList");
+  for (ff in fields) {
     this[[ff]] <- NULL;
   }
   NextMethod("clearCache", this, ...);
@@ -198,6 +202,7 @@ setMethodS3("nbrOfDataPoints", "RocData", function(this, complete=TRUE, ...) {
   length(data);
 })
 
+
 setMethodS3("getCallRate", "RocData", function(this, ...) {
   rate <- this$.rate;
   if (is.null(rate)) {
@@ -294,7 +299,7 @@ setMethodS3("getData", "RocData", function(this, ...) {
 })
 
 
-setMethodS3("loadCachedResult", "RocData", function(this, method, ..., skip=FALSE, dirs=class(this)[1]) {
+setMethodS3("loadCachedResult", "RocData", function(this, method, ..., skip=FALSE, dirs=NULL) {
   # Get checksum for this object
   checksum <- getChecksum(this, skip=skip);
   if (is.null(checksum))
@@ -302,6 +307,9 @@ setMethodS3("loadCachedResult", "RocData", function(this, method, ..., skip=FALS
 
   key <- list(method=method, class=class(this), checksum=checksum, ...);
 
+  if (is.null(dirs))
+    dirs <- c(class(this)[1], method);
+  
   res <- loadCache(key=key, dirs=dirs);
   list(result=res, key=key, dirs=dirs);
 })
@@ -315,7 +323,7 @@ setMethodS3("fit", "RocData", function(this, ..., skip=FALSE, force=FALSE) {
 
   truth <- getTruth(this, ordered=TRUE, complete=TRUE);
   data <- getData(this, ordered=TRUE, complete=TRUE);
-str(list(truth=truth, data=data));
+#str(list(truth=truth, data=data));
   fit <- fitRocLite(truth=truth, data=data, hasNAs=FALSE, ncuts=1200, isOrdered=TRUE);
   res <- RocCurve(roc=fit$roc, cuts=fit$cuts);
 
@@ -365,6 +373,7 @@ setMethodS3("extractSubset", "RocData", function(this, rows=NULL, ...) {
     return(this);
 
   res <- clone(this);
+  clearCache(res);
   fields <- getInternalRocFields(this);
   for (field in fields) {
     values <- res[[field]];
@@ -414,6 +423,7 @@ setMethodS3("extractSmoothRocData", "RocData", function(this, h, ..., verbose=FA
 
   verbose && enter(verbose, "Cloning existing ", class(this)[1], " object");
   res <- clone(this);
+  clearCache(res);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Smoothing applicable fields");
@@ -501,6 +511,7 @@ setMethodS3("findTpAtFpPerRow", "RocData", function(this, fpRate=0.01, rows=NULL
     } else {
       tpDensity <- cache$result;
     }
+    this$.tpDensityList[[fpRateStr]] <- tpDensity;
   }
 
   # Keep subset of interest?
@@ -509,12 +520,13 @@ setMethodS3("findTpAtFpPerRow", "RocData", function(this, fpRate=0.01, rows=NULL
 
   verbose && cat(verbose, "Existing TP-rate estimates:");
   verbose && str(verbose, tpDensity);
+  verbose && summary(verbose, tpDensity);
 
   # Identify data rows to update
   if (force) {
     rrs <- seq(along=tpDensity);
   } else {
-    rrs <- whichVector(!is.na(tpDensity) & tpDensity < 0);
+    rrs <- whichVector(is.finite(tpDensity) & tpDensity < 0);
   }
 
   # Nothing more to do?
@@ -555,7 +567,7 @@ setMethodS3("findTpAtFpPerRow", "RocData", function(this, fpRate=0.01, rows=NULL
 
     t <- truth[rr,];
     d <- data[rr,];
-    fit <- findTpAtFpLite(truth=t, data=d, fpRate=fpRate, ..., .checkArgs=FALSE);
+    fit <- findTpAtFpLite(truth=t, data=d, fpRate=fpRate, hasNAs=TRUE, isOrdered=FALSE, .checkArgs=FALSE);
 #    print(data.frame(truth=t, data=d));
 #    print(fit);
     tpRate <- fit[["tpRateEst"]]; 
@@ -577,15 +589,28 @@ setMethodS3("findTpAtFpPerRow", "RocData", function(this, fpRate=0.01, rows=NULL
   # Return updates
   res <- tpDensity;
 
+##  verbose && str(verbose, tpDensity);
+##  verbose && summary(verbose, tpDensity);
+
   # Cache result?
-  if (is.null(rows) || length(rows) > 1000) {
+  doCache <- (is.null(rows) || length(rows) > 1000);
+  doCache <- TRUE;
+  if (doCache) {
     if (!is.null(rows)) {
-      tpDensity <- rep(NA, dim[1]);
+      tpDensity <- rep(-1, dim[1]);
       tpDensity[rows] <- res;
     }
+
+##    verbose && str(verbose, tpDensity);
+##    verbose && summary(verbose, tpDensity);
+
     if (is.null(cache$key)) {
       cache <- loadCachedResult(this, method="findTpAtFpPerRow", fpRate=fpRate, rows=NULL, skip=FALSE);
     }
+
+##    verbose && str(verbose, tpDensity);
+##    verbose && summary(verbose, tpDensity);
+
     saveCache(tpDensity, key=cache$key, dirs=cache$dirs);
   }
 
@@ -593,8 +618,9 @@ setMethodS3("findTpAtFpPerRow", "RocData", function(this, fpRate=0.01, rows=NULL
 }) # findTpAtFpPerRow()
 
 
-setMethodS3("plotTpRateDensity", "RocData", function(this, fpRate=0.01, rows=NULL, ..., lwd=2, col=par("col"), cex=0.7, annotate=!add, add=FALSE, verbose=FALSE) {
-  tpRates <- findTpAtFpPerRow(this, fpRate=fpRate, rows=rows, verbose=verbose);
+
+setMethodS3("plotTpRateDensity", "RocData", function(this, fpRate=0.01, rows=NULL, ..., lwd=2, col=par("col"), cex=0.7, annotate=!add, add=FALSE, force=FALSE, verbose=FALSE) {
+  tpRates <- findTpAtFpPerRow(this, fpRate=fpRate, rows=rows, force=force, verbose=verbose);
   n <- length(tpRates);
 
   # Filter out non-finite estimates
@@ -633,6 +659,7 @@ setMethodS3("plotTpRateDensity", "RocData", function(this, fpRate=0.01, rows=NUL
 ############################################################################
 # HISTORY:
 # 2008-07-25
+# o Now clearCache() clears all cached results.
 # o Added extractSmoothedRocData().  This assumes that the rows in the 
 #   data matrix is ordered along the genome.
 # 2008-07-24
