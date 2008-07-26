@@ -1,20 +1,21 @@
-findTpAtFpLite <- function(truth, data, fpRate, acc=1e-3, recall=NULL, hasNAs=TRUE, isOrdered=FALSE, ..., verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
+findTpAtFpLite <- function(truth, data, fpRate, acc=1e-3, recall=NULL, hasNAs=TRUE, isOrdered=FALSE, ..., .checkArgs=TRUE, verbose=FALSE) {
+  if (.checkArgs) {
+    # Argument 'verbose':
+    verbose <- Arguments$getVerbose(verbose);
+    if (verbose) {
+      pushState(verbose);
+      on.exit(popState(verbose));
+    }
+  
+    # Argument 'data':
+    if (length(data) != length(truth)) {
+      throw("Argument 'data' and 'truth' are of different lengths: ", 
+                                 length(data), " != ", length(truth));
+    }
+  
+    # Argument 'fpRate':
+    fpRate <- Arguments$getDouble(fpRate, range=c(0,1));
   }
-
-  # Argument 'data':
-  if (length(data) != length(truth)) {
-    throw("Argument 'data' and 'truth' are of different lengths: ", 
-                               length(data), " != ", length(truth));
-  }
-
-  # Argument 'fpRate':
-  fpRate <- Arguments$getDouble(fpRate, range=c(0,1));
-
 
 
   verbose && enter(verbose, "Fitting ROC");

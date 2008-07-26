@@ -2,14 +2,14 @@ source("init.R");
 
 imgFormat <- c("x11", "eps", "png")[1];
 
-fpRate <- 0.05;
+fpRate <- 2*1/2*1/29;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit ROCs, if missing.  Plot as we go.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 subset <- NULL;
-#  subset <- 1:250000;
-for (unitType in knownUnitTypes[1]) {
+subset <- 1:10000;
+for (unitType in knownUnitTypes[3]) {
   verbose && enter(verbose, "Estimating TP rates for each unit");
   verbose && cat(verbose, "Unit type: ", unitType);
 
@@ -33,13 +33,16 @@ for (unitType in knownUnitTypes[1]) {
   imgTags <- c(unitType, "tpDensity");
   imgName <- paste(c("CRMA6", imgTags), collapse=",");
 
+  figPathT <- filePath(figPath, "tpDensity");
+
   if (!devIsOpen(imgName)) {
     width <- imgScales[imgFormat] * 1;
     height <- 0.618*width;
     if (imgFormat == "x11") {
       devOpen(imgFormat, width=width, height=height, name=imgName);
 	    } else {
-      imgPathname <- filePath(figPath, sprintf("%s.%s", imgName, imgFormat));
+      mkdirs(figPathT);
+      imgPathname <- filePath(figPathT, sprintf("%s.%s", imgName, imgFormat));
       devOpen(imgFormat, imgPathname, width=width, height=height, name=imgName);
     }
     
@@ -60,6 +63,7 @@ for (unitType in knownUnitTypes[1]) {
       rocData <- set$rocData;
       plotTpRateDensity(rocData, fpRate=fpRate, rows=rows, ylim=ylim, col=set$col, lwd=3, annotate=FALSE, add=(kk > 1), verbose=verbose);
       if (kk == 1) {
+        stext(side=3, pos=0, cex=1, sprintf("FP rate: %.2f%%", 100*fpRate));
         stext(side=3, pos=1, cex=1, main);
       }
       verbose && exit(verbose);

@@ -1,6 +1,6 @@
 source("init.R");
 
-imgFormat <- c("x11", "eps", "png")[1];
+imgFormat <- c("x11", "eps", "png")[3];
 
 hs <- NULL;
 #hs <- 2:4;
@@ -20,7 +20,7 @@ for (d in ds) {
   } else {
     by <- 0.1;
   }
-  for (unitType in knownUnitTypes[2]) {
+  for (unitType in knownUnitTypes[3]) {
     verbose && enter(verbose, "Plotting ROC");
     idxs <- seq(along=sets);
     verbose && cat(verbose, "Unit type: ", unitType);
@@ -35,9 +35,14 @@ for (d in ds) {
   #  idxs <- which(isSubsetSet(sets, subset=unitType) & isSmoothedSet(sets));
   
     dStr <- sprintf("d=%0.2f", d);
-    smoothTag <- NULL;
-    if (any(isSmoothedSet(sets[idxs])))
+    hasSmoothed <- any(isSmoothedSet(sets[idxs]));
+    if (hasSmoothed) {
       smoothTag <- "smooth";
+      figPathT <- filePath(figPath, "rocSmoothed");
+    } else {
+      smoothTag <- NULL;
+      figPathT <- filePath(figPath, "rocRaw");
+    }
     imgTags <- c(unitType, smoothTag, "ROC", dStr);
     imgName <- paste(c("CRMA6", imgTags), collapse=",");
   
@@ -46,7 +51,8 @@ for (d in ds) {
       if (imgFormat == "x11") {
         devOpen(imgFormat, width=width, height=width, name=imgName);
   	    } else {
-        imgPathname <- filePath(figPath, sprintf("%s.%s", imgName, imgFormat));
+         mkdirs(figPathT);
+        imgPathname <- filePath(figPathT, sprintf("%s.%s", imgName, imgFormat));
         devOpen(imgFormat, imgPathname, width=width, height=width, name=imgName);
       }
       
@@ -70,7 +76,7 @@ for (d in ds) {
         verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
                                                 kk, set$name, length(idxs)));
         verbose && cat(verbose, "Name: ", set$name);
-        fit <- fit(set$rocData, force=TRUE, verbose=verbose);
+        fit <- fit(set$rocData, verbose=verbose);
         print(fit);
         lines(fit, lwd=3, col=set$col, lty=set$lty);
         verbose && exit(verbose);
