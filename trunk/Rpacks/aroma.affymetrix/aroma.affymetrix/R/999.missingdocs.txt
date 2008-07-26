@@ -702,3 +702,7 @@
   getDesignMatrix.BasePositionNormalization
   getParameters.BasePositionNormalization
   predictOne.BasePositionNormalization
+ fitOne.ScaleNormalization2 getNormalizeSignalsOne
+  getNormalizeSignalsOne.ScaleNormalization2
+  getParameters.ScaleNormalization2 writeSignals
+  writeSignals.ProbeLevelTransform2
