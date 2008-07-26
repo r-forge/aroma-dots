@@ -44,6 +44,16 @@ print(ces);
 stopifnot(identical(getNames(ces), getNames(cs)));
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Fragment-length normalization test
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+fln <- FragmentLengthNormalization(ces);
+print(fln);
+cesFln <- process(fln, verbose=verbose);
+print(cesFln);
+stopifnot(identical(getNames(cesFln), getNames(ces)));
+
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extraction test
@@ -70,31 +80,3 @@ print(summary(data));
 theta <- extractTheta(ces, drop=TRUE, verbose=log);
 print(summary(theta));
 
-
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Fragment-length normalization test
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-fln <- FragmentLengthNormalization(ces);
-print(fln);
-cesFln <- process(fln, verbose=verbose);
-print(cesFln);
-stopifnot(identical(getNames(cesFln), getNames(ces)));
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Glad model test
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-glad <- GladModel(cesFln);
-print(glad);
-fit(glad, arrays=1, chromosomes=19, verbose=log);
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# ChromosomeExplorer test
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-ce <- ChromosomeExplorer(glad);
-print(ce);
-process(ce, chromosomes=c(19,23), verbose=log);
-## process(ce, verbose=log);
