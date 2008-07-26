@@ -27,10 +27,13 @@ findTpAtFpLite <- function(truth, data, fpRate, acc=1e-3, recall=NULL, hasNAs=TR
   if (hasNAs) {
     verbose && enter(verbose, "Removing NAs");
     ok <- (is.finite(truth) & is.finite(data));
+    callRate <- sum(ok)/length(ok);
     truth <- truth[ok];
     data <- data[ok];
     rm(ok);
     verbose && exit(verbose);
+  } else {
+    callRate <- 1;
   }
 
   if (!isOrdered) {
@@ -54,30 +57,44 @@ findTpAtFpLite <- function(truth, data, fpRate, acc=1e-3, recall=NULL, hasNAs=TR
   nbrOfDataPoints <- length(truth);
   totalTpCount <- as.integer(sum(truth));
   totalFpCount <- nbrOfDataPoints - totalTpCount;
+  verbose && printf(verbose, "Total (FP,TP): (%d,%d)\n", 
+                                         totalFpCount, totalTpCount);
 
   fpCount <- fpRate * totalFpCount;
 
   C <- as.integer(1) - truth;
   verbose && str(verbose, C);
   C <- cumsum(C);
+  verbose && cat(verbose, "Cumulative count of FPs:");
   verbose && str(verbose, C);
-  verbose && str(verbose, idx);
 
+  verbose && cat(verbose, "Position of FP count equal or smaller than target:");
   idx <- match(floor(fpCount), C);
   verbose && str(verbose, idx);
 
   fpCountEstRange <- c(C[idx], C[idx]+1);
   fpRateEstRange <- fpCountEstRange/totalFpCount;
+  verbose && cat(verbose, "FP rate interval:");
+  verbose && print(verbose, fpRateEstRange);
+
   d <- abs(fpRateEstRange - fpRate);
   w <- rev(d) / sum(d);
   fpRateEst <- w[1]*fpRateEstRange[1]+w[2]*fpRateEstRange[2];
+  verbose && cat(verbose, "Estimated FP rate:");
+  verbose && print(verbose, fpRateEst);
 
   tpCountEstRange <- c(idx, idx+1) - fpCountEstRange;
   tpRateEstRange <- tpCountEstRange/totalTpCount;
+  verbose && cat(verbose, "TP rate interval:");
+  verbose && print(verbose, tpRateEstRange);
+
   tpRateEst <- w[1]*tpRateEstRange[1]+w[2]*tpRateEstRange[2];
+  verbose && cat(verbose, "Estimated TP rate:");
+  verbose && print(verbose, tpRateEst);
+
   verbose && exit(verbose);
 
-  list(tpRateEst=tpRateEst, tpRateEstRange=tpRateEstRange, fpRateEst=fpRateEst, fpRateEstRange=fpRateEstRange, fpRate=fpRate, orderedIdxs=as.integer(c(idx, idx+1)), w=w);
+  list(tpRateEst=tpRateEst, tpRateEstRange=tpRateEstRange, fpRateEst=fpRateEst, fpRateEstRange=fpRateEstRange, fpRate=fpRate, callRate=callRate, orderedIdxs=as.integer(c(idx, idx+1)), w=w);
 } # findTpAtFpLite()
 
 
@@ -88,6 +105,8 @@ findTpAtFpLite <- function(truth, data, fpRate, acc=1e-3, recall=NULL, hasNAs=TR
 
 ############################################################################
 # HISTORY:
+# 2008-07-25
+# o Added 'callRate' to output.
 # 2008-07-24
 # o Created.
 ############################################################################

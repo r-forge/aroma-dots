@@ -24,6 +24,7 @@ setMethodS3("getTpRate", "RocCurve", function(object, ...) {
 
 
 setMethodS3("auc", "RocCurve", function(object, ...) {
+  require("ROC") || throw("Package not loaded: ROC");
   x <- getFpRate(object);
   y <- getTpRate(object);
   ROC::trapezint(x, y, a=0, b=1);
