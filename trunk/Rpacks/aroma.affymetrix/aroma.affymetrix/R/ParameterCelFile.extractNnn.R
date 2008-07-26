@@ -43,14 +43,14 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
   } else {
     naValue <- as.double(NA);
   }
-  df <- matrix(naValue, nrow=nrow(ugcMap), ncol=1);
-  colnames(df) <- getName(this);
+  data <- matrix(naValue, nrow=nrow(ugcMap), ncol=1);
+  colnames(data) <- getName(this);
 
 #  gc <- gc();
 #  verbose && print(verbose, gc);
 
   verbose && enter(verbose, "Retrieving array data");
-  df[, 1] <- getDataFlat(this, units=ugcMap, fields=field, 
+  data[, 1] <- getDataFlat(this, units=ugcMap, fields=field, 
                                            verbose=less(verbose))[, field];
   verbose && exit(verbose);
 
@@ -62,9 +62,9 @@ setMethodS3("extractMatrix", "ParameterCelFile", function(this, units=NULL, ...,
   verbose && exit(verbose);
 
   if (returnUgcMap)
-    attr(df, "unitGroupCellMap") <- ugcMap;
+    attr(data, "unitGroupCellMap") <- ugcMap;
 
-  df;
+  data;
 })
 
 
@@ -137,6 +137,8 @@ setMethodS3("extractDataFrame", "ParameterCelFile", function(this, addNames=FALS
 
 ############################################################################
 # HISTORY:
+# 2008-07-25
+# o BUG FIX: extractMatrix(..., drop=TRUE) did not work.
 # 2008-07-20
 # o Updated the following methods to preallocate matrixes with the correct
 #   data type to avoid coercing later: extractMatrix().

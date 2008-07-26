@@ -3,7 +3,7 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Mon Jul 21 19:11:07 2008.
+% on Sat Jul 26 12:17:55 2008.
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1419,6 +1419,12 @@
 \alias{getDesignMatrix.BasePositionNormalization}
 \alias{getParameters.BasePositionNormalization}
 \alias{predictOne.BasePositionNormalization}
+\alias{fitOne.ScaleNormalization2}
+\alias{getNormalizeSignalsOne}
+\alias{getNormalizeSignalsOne.ScaleNormalization2}
+\alias{getParameters.ScaleNormalization2}
+\alias{writeSignals}
+\alias{writeSignals.ProbeLevelTransform2}
 
 \description{
   This page contains aliases for all "non-documented" objects that

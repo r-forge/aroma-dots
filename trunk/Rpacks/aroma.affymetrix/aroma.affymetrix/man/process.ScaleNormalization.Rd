@@ -3,6 +3,8 @@
 % 
 %  ScaleNormalization.R
 % 
+% on Sat Jul 26 14:04:31 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
