@@ -58,7 +58,7 @@ setConstructorS3("RocData", function(truth=NULL, data=NULL, recall=NULL, ...) {
 
 setMethodS3("clearCache", "RocData", function(this, ...) {
   fields <- c(".checksum", ".order", ".hasNAs", ".isMissing", 
-              ".rate", ".tpDensityList");
+              ".rate", ".tpDensityList", ".scanTpAtFpFit");
   for (ff in fields) {
     this[[ff]] <- NULL;
   }
@@ -67,6 +67,9 @@ setMethodS3("clearCache", "RocData", function(this, ...) {
 
 
 setMethodS3("getChecksum", "RocData", function(this, force=FALSE, ..., skip=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -264,10 +267,7 @@ setMethodS3("getField", "RocData", function(this, field, raw=FALSE, ordered=TRUE
     dim <- dim(this);
     if (!is.null(dim)) {
       colTruth <- values;
-      values <- matrix(colTruth[1], nrow=dim[1], ncol=dim[2]);
-      for (cc in seq(along=colTruth)) {
-        values[,cc] <- colTruth[cc];
-      }
+      values <- matrix(colTruth, nrow=dim[1], ncol=dim[2], byrow=TRUE);
     }
   }
 
@@ -323,8 +323,10 @@ setMethodS3("fit", "RocData", function(this, ..., skip=FALSE, force=FALSE) {
 
   truth <- getTruth(this, ordered=TRUE, complete=TRUE);
   data <- getData(this, ordered=TRUE, complete=TRUE);
+
 #str(list(truth=truth, data=data));
   fit <- fitRocLite(truth=truth, data=data, hasNAs=FALSE, ncuts=1200, isOrdered=TRUE);
+
   res <- RocCurve(roc=fit$roc, cuts=fit$cuts);
 
   # Cache result
@@ -342,6 +344,7 @@ setMethodS3("findTpAtFp", "RocData", function(this, ..., skip=FALSE) {
 
   truth <- getTruth(this, ordered=TRUE, complete=TRUE);
   data <- getData(this, ordered=TRUE, complete=TRUE);
+
   res <- findTpAtFpLite(truth=truth, data=data, hasNAs=FALSE, isOrdered=TRUE, ...);
 
   # Cache result
@@ -357,6 +360,9 @@ setMethodS3("findTpAtFp", "RocData", function(this, ..., skip=FALSE) {
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 setMethodS3("extractSubset", "RocData", function(this, rows=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'rows':
   dim <- dim(this);
   if (!is.null(rows))
@@ -390,6 +396,9 @@ setMethodS3("extractSubset", "RocData", function(this, rows=NULL, ...) {
 
 
 setMethodS3("extractSmoothRocData", "RocData", function(this, h, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'h':
   h <- Arguments$getDouble(h, range=c(2, Inf));
 
@@ -467,6 +476,59 @@ setMethodS3("extractSmoothRocData", "RocData", function(this, h, ..., verbose=FA
   verbose && exit(verbose);
 
   res;
+})
+
+
+setMethodS3("scanTpAtFp", "RocData", function(this, fpRate, hs=seq(from=1, to=10, by=0.1), ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Estimating the TP rate at a given FP rate for various amounts of smoothing");
+  verbose && cat(verbose, "Smooth levels:");
+  verbose && print(verbose, hs);
+
+  verbose && enter(verbose, "Loading earlier estimates from file cache");
+  key <- list(method="extractSmoothRocData", class=class(this)[1], checksum=getChecksum(this), fpRate=fpRate);
+  dirs <- c("RocData", "scanTpAtFp");
+  fit <- loadCache(key=key, dirs=dirs);
+  verbose && exit(verbose);
+
+#  # Merge with memory cache  
+#  fit <- this$.scanTpAtFpFit;
+
+  if (force)
+    fit <- NULL;
+
+  data <- getData(this, raw=TRUE);
+  truth <- getTruth(this, raw=TRUE);
+  if (!is.matrix(truth))
+    truth <- matrix(truth, nrow=nrow(data), ncol=ncol(data), byrow=TRUE);
+
+  fit <- scanTpAtFpLite(truth=truth, data=data, fpRate=fpRate, hs=hs, fit=fit, verbose=verbose);
+
+#  this$.scanTpAtFpFit <- fit;
+
+  # Cache results?
+  if (cache)
+    saveCache(fit, key=key, dirs=dirs);
+
+  verbose && enter(verbose, "Extract smooth levels of interest");
+  keep <- whichVector(fit[,"h"] %in% hs);
+  fit <- fit[keep,,drop=FALSE];
+  verbose && print(verbose, fit);
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  fit;
 })
 
 
@@ -556,7 +618,7 @@ setMethodS3("findTpAtFpPerRow", "RocData", function(this, fpRate=0.01, rows=NULL
     rr <- rrs[kk];
 
     # Store every 100th iteration
-    if (kk %% 100 == 0) {
+    if (kk %% 500 == 0) {
       if (is.null(rows)) {
         this$.tpDensityList[[fpRateStr]] <- tpDensity;
       } else {

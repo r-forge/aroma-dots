@@ -22,7 +22,6 @@ for (d in ds) {
   }
   for (unitType in knownUnitTypes[3]) {
     verbose && enter(verbose, "Plotting ROC");
-    idxs <- seq(along=sets);
     verbose && cat(verbose, "Unit type: ", unitType);
     sets <- addSubsetDataSets(sets, subset=unitType, verbose=verbose);
 
