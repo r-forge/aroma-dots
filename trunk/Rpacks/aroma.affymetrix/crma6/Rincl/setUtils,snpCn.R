@@ -27,7 +27,7 @@ getSubsetDataSet <- function(set, subset=c("snp", "cn"), ..., verbose=FALSE) {
   set2$name <- name;
 
   # Update positions
-  x <- set$positions;
+  x <- set2$positions;
   if (is.null(x))
     x <- positions;
   x <- x[keep];

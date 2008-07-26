@@ -79,7 +79,7 @@ setMethodS3("getChecksum", "RocData", function(this, force=FALSE, ..., skip=FALS
       verbose && enter(verbose, sprintf("Calculating checksum for field %d ('%s') of %d", ff, field, length(fields)));
   
       verbose && enter(verbose, "Getting data");
-      values <- getField(this, field=field, ordered=FALSE, complete=FALSE);
+      values <- getField(this, field=field, raw=TRUE);
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Generating checksum");
@@ -109,36 +109,6 @@ setMethodS3("as.character", "RocData", function(this, ...) {
   s <- c(s, sprintf("Call rate: %f%%", 100*getCallRate(this)));
   class(s) <- "GenericSummary";
   s;
-})
-
-
-setMethodS3("extractSubset", "RocData", function(this, rows=NULL, ...) {
-  # Argument 'rows':
-  dim <- dim(this);
-  if (!is.null(rows))
-    rows <- Arguments$getIndices(rows, range=c(1, dim[1]));
-
-  # Sanity check
-  if (!is.null(rows)) {
-    if (is.null(dim))
-      throw("Cannot extract data by rows. The data has no dimension.");
-  }
-
-  # Nothing to do?
-  if (is.null(rows))
-    return(this);
-
-  res <- clone(this);
-  fields <- getInternalRocFields(this);
-  for (field in fields) {
-    values <- res[[field]];
-    if (!identical(length(values), dim[2])) {
-      values <- values[rows,,drop=FALSE];
-    }
-    res[[field]] <- values;
-  }
-
-  res;
 })
 
 
@@ -337,14 +307,15 @@ setMethodS3("loadCachedResult", "RocData", function(this, method, ..., skip=FALS
 })
 
 
-setMethodS3("fit", "RocData", function(this, complete=TRUE, ..., skip=FALSE, force=FALSE) {
+setMethodS3("fit", "RocData", function(this, ..., skip=FALSE, force=FALSE) {
   # Check file cache for results
-  cache <- loadCachedResult(this, method="fit", complete=complete, skip=skip);
+  cache <- loadCachedResult(this, method="fit", complete=TRUE, skip=skip);
   if (!force && !is.null(cache$result))
-    return(cache$result);    
+    return(cache$result);
 
-  truth <- getTruth(this, complete=complete);
-  data <- getData(this, complete=complete);
+  truth <- getTruth(this, ordered=TRUE, complete=TRUE);
+  data <- getData(this, ordered=TRUE, complete=TRUE);
+str(list(truth=truth, data=data));
   fit <- fitRocLite(truth=truth, data=data, hasNAs=FALSE, ncuts=1200, isOrdered=TRUE);
   res <- RocCurve(roc=fit$roc, cuts=fit$cuts);
 
@@ -370,6 +341,123 @@ setMethodS3("findTpAtFp", "RocData", function(this, ..., skip=FALSE) {
 
   res;
 }) # findTpAtFp()
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+#   BEGIN: Methods that requires matrix data
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethodS3("extractSubset", "RocData", function(this, rows=NULL, ...) {
+  # Argument 'rows':
+  dim <- dim(this);
+  if (!is.null(rows))
+    rows <- Arguments$getIndices(rows, range=c(1, dim[1]));
+
+  # Sanity check
+  if (!is.null(rows)) {
+    if (is.null(dim))
+      throw("Cannot extract data by rows. The data has no dimension.");
+  }
+
+  # Nothing to do?
+  if (is.null(rows))
+    return(this);
+
+  res <- clone(this);
+  fields <- getInternalRocFields(this);
+  for (field in fields) {
+    values <- res[[field]];
+    if (!identical(length(values), dim[2])) {
+      values <- values[rows,,drop=FALSE];
+    }
+    res[[field]] <- values;
+  }
+
+  res;
+})
+
+
+
+
+setMethodS3("extractSmoothRocData", "RocData", function(this, h, ..., verbose=FALSE) {
+  # Argument 'h':
+  h <- Arguments$getDouble(h, range=c(2, Inf));
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # Sanity check
+  dim <- dim(this);
+  if (is.null(dim))
+    throw("Cannot extract data by rows. The data has no dimension.");
+
+  verbose && enter(verbose, "Creating smoothed data set");
+  verbose && cat(verbose, "Amount of smoothing: ", h);
+
+## CACHING is slower than generating from scratch. /HB 2008-07-25
+##  verbose && enter(verbose, "Checking for cached results");
+##  key <- list(method="extractSmoothRocData", class=class(this)[1], checksum=getChecksum(this), h=h);
+##  dirs <- c("RocData");
+##  res <- loadCache(key=key, dirs=dirs);
+##  if (!force && !is.null(res)) {
+##    verbose && cat(verbose, "Found cached results!");
+##    verbose && exit(verbose);
+##    verbose && exit(verbose);
+##    return(res);
+##  }
+##  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Cloning existing ", class(this)[1], " object");
+  res <- clone(this);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Smoothing applicable fields");
+  idxs <- NULL;
+  fields <- getInternalRocFields(res);
+  for (ff in seq(along=fields)) {
+    field <- fields[[ff]];
+    verbose && enter(verbose, sprintf("Field %d ('%s') of %d", ff, gsub(".", "", field, fixed=TRUE), length(fields)));
+    values <- res[[field]];
+    verbose && str(verbose, values);
+
+    # Smooth field?
+    if (is.matrix(values)) {
+      verbose && enter(verbose, "Smoothing");
+
+      if (is.null(idxs)) {
+        verbose && enter(verbose, "Generating block-averaging map");
+        idxs <- getBlockAverageMap(n=dim[1], h=h);
+        hApprox <- attr(idxs, "hApprox");
+        verbose && str(verbose, idxs);
+        res$smoothingParameters <- list(h=h, hApprox=hApprox);
+        verbose && exit(verbose);
+      }
+
+      values <- blockAvg(values, idxs);
+      verbose && str(verbose, values);
+
+      res[[field]] <- values;
+
+      verbose && exit(verbose);
+    }
+    rm(values);
+    verbose && exit(verbose);
+  } # for (ff ...)
+  verbose && exit(verbose);
+
+##  # Cache results?
+##  if (cache)
+##    saveCache(res, key=key, dirs=dirs);
+
+  verbose && exit(verbose);
+
+  res;
+})
 
 
 
@@ -534,9 +622,19 @@ setMethodS3("plotTpRateDensity", "RocData", function(this, fpRate=0.01, rows=NUL
 })
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+#   END: Methods that requires matrix data
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
 
 ############################################################################
 # HISTORY:
+# 2008-07-25
+# o Added extractSmoothedRocData().  This assumes that the rows in the 
+#   data matrix is ordered along the genome.
 # 2008-07-24
 # o Added fast findTpAtFpPerRow().
 # o Added fast findTpAtFp().

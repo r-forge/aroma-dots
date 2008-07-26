@@ -28,6 +28,22 @@ if (!exists("units23excl")) {
   str(units23excl);
 }
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Get genomic positions of the units on ChrX
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+if (!exists("positions", mode="numeric")) {
+  gi <- getGenomeInformation(cdf);
+  print(gi);
+  positions <- getPositions(gi, units=units23);
+  str(positions);
+  rm(gi);
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Identify known CNV regions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("cnvData")) {
   # Names of the units not in GTC
   cnvPath <- filePath("cnvData/RedonR_etal_2006,CNV_Project/NCBI36");
@@ -48,15 +64,9 @@ if (!exists("cnvData")) {
 }
 
 
-if (!exists("positions", mode="numeric")) {
-  gi <- getGenomeInformation(cdf);
-  print(gi);
-  positions <- getPositions(gi, units=units23);
-  str(positions);
-  rm(gi);
-}
-
-# Regions to exclude on ChrX
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Exclude some regions on ChrX
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("regionsExcludedOnChr23")) {
   # Exclude known CNV regions with a safety margin
   regions <- subset(cnvData, chr == 23)[,c("start", "end")];
@@ -141,15 +151,33 @@ if (length(keep)/length(positions) < 1/4) {
   throw(sprintf("Internal error. Too few loci: %.2f%%", 100*sum(keep)));
 }
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Filter (positions, units23) accordingly
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 positions <- positions[keep];
 units23 <- units23[keep];
 unitsToKeep <- keep;
 rm(keep, excl, exclA, exclB);
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Reorder (positions, units23, unitsToKeep) by positions
+# (this will allow up to smooth data directly by rows)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+reorder <- TRUE;
+if (reorder && is.unsorted(positions)) {
+  o <- order(positions);
+  positions <- positions[o];
+  units23 <- units23[o];
+  unitsToKeep <- unitsToKeep[o];
+  rm(o);
+}
+nbrOfUnits <- length(units23);
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Get unit types
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("unitTypes", mode="integer")) {
   # A bit slow, right now (so infer from unit names instead)
   ## unitTypes <- getUnitTypes(cdf, units=units23);
@@ -164,7 +192,11 @@ if (!exists("unitTypes", mode="integer")) {
 }
 knownUnitTypes <- c("all", "snp", "cn");
 
-nbrOfUnits <- length(units23);
+
+#####################################################################
+# NOTE: Only (positions, unitTypes) & unitsToKeep is used later.
+#####################################################################
+
 
 
 
@@ -178,16 +210,20 @@ if (!exists("sampleNames", mode="character")) {
   rm(n23);
 }
 
-#sampleNames <- sampleNames[1:20];
 
-# Exclude samples
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Exclude bad samples
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 samplesToExclude <- "NA12145";
 sampleNames <- sampleNames[!sampleNames %in% samplesToExclude];
 rm(samplesToExclude);
 nbrOfSamples <- length(sampleNames);
 
 
-# Get ChrX ploidy
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Get known ChrX ploidy, i.e. gender
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("n23")) {
   pathname <- "annotationData/samples/HapMap270.saf";
   saf <- SampleAnnotationFile$fromFile(pathname);

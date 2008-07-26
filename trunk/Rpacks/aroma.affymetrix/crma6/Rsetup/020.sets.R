@@ -43,7 +43,7 @@ verbose && enter(verbose, "Adding ROC data");
 for (kk in seq(along=sets)) {
   key <- names(sets)[kk];
   set <- sets[[key]];
-  set <- addRocData(set);
+  set <- addRocData(set, verbose=verbose);
   sets[[key]] <- set;
   rm(set);
 }
