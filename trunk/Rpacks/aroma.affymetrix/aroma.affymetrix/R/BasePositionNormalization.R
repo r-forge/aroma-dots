@@ -167,7 +167,7 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
 
 
 
-setMethodS3("fitOne", "BasePositionNormalization", function(this, df, cells=NULL, ..., verbose=FALSE) {
+setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbose=FALSE) {
   fitSubset <- function(df, cells=NULL, ..., verbose) {
     verbose && enter(verbose, "Retrieving probe sequences");
 
@@ -179,7 +179,7 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, cells=NULL
     cells <- cells[!isMissing];
     rm(isMissing);
     n2 <- length(cells);
-    verbose && printf(verbose, "Removed %d (%.4f%%) missing sequences out of %d: ", n-n2, 100*(n-n2)/n, n);
+    verbose && printf(verbose, "Removed %d (%.4f%%) missing sequences out of %d\n", n-n2, 100*(n-n2)/n, n);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Getting design matrix");
@@ -246,12 +246,6 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, cells=NULL
     throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
   }
 
-  # Argument 'cells':
-  if (is.null(cells)) {
-  } else {
-    # Validated below...
-  }
-
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -263,17 +257,39 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, cells=NULL
   verbose && enter(verbose, "Fitting normalization function for one array");
   verbose && cat(verbose, "Full name: ", getFullName(df));
 
-  # Get algorithm parameters
-  params <- getParameters(this, expand=FALSE, verbose=less(verbose, 5));
-  model <- params$model;
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Getting algorithm parameters
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Getting algorithm parameters");
+  params <- getParameters(this, expand=TRUE, verbose=less(verbose, 5));
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  units <- params$unitsToFit;
+  verbose && cat(verbose, "Units:");
+  verbose && str(verbose, units);
+  cells <- params$cellsToFit;
+  stratifyBy <- params$typesToFit;
+  verbose && cat(verbose, "stratifyBy: ", stratifyBy);
+  verbose && cat(verbose, "Cells:");
+  verbose && str(verbose, cells);
   shift <- params$shift;
+  verbose && cat(verbose, "Shift: ", shift);
+
+  # Other model parameters
+  model <- params$model;
+  verbose && cat(verbose, "Model: ", model);
   bootstrap <- params$bootstrap;
   chunkSize <- params$chunkSize;
   maxIter <- params$maxIter;
   acc <- params$acc;
+  verbose && exit(verbose);
+
+  nbrOfCells <- length(cells);
 
   # Is bootstrapping necessary?
-  if (chunkSize >= length(cells)) {
+  if (chunkSize >= nbrOfCells) {
     verbose && cat(verbose, "Bootstrapping not really needed.");
     bootstrap <- FALSE;
   }
@@ -294,7 +310,7 @@ throw("Yet not implemented!");
 
       verbose && enter(verbose, "Fitting model to subset of data");
       verbose && cat(verbose, "Chunk size: ", chunkSize);
-      subset <- sample(1:length(cells), size=chunkSize);
+      subset <- sample(1:nbrOfCells, size=chunkSize);
       cellsChunk <- cells[subset];
       rm(subset);
       cellsChunk <- sort(cellsChunk);
@@ -337,16 +353,10 @@ throw("Yet not implemented!");
 }, protected=TRUE)
 
 
-setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, cells=NULL, ..., verbose=FALSE) {
+setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'cells':
-  if (is.null(cells)) {
-  } else {
-    # Validated below...
-  }
-
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -357,15 +367,42 @@ setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, cells
 
   verbose && enter(verbose, "Predicting model for one array");
 
-  # Get algorithm parameters
-  params <- getParameters(this, expand=FALSE, verbose=less(verbose, 5));
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Getting algorithm parameters
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Getting algorithm parameters");
+  params <- getParameters(this, expand=TRUE, verbose=less(verbose, 5));
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  units <- params$unitsToUpdate;
+  verbose && cat(verbose, "Units:");
+  verbose && str(verbose, units);
+  cells <- params$cellsToUpdate;
+  stratifyBy <- params$typesToUpdate;
+  verbose && cat(verbose, "stratifyBy: ", stratifyBy);
+  verbose && cat(verbose, "Cells:");
+  verbose && str(verbose, cells);
+  shift <- params$shift;
+  verbose && cat(verbose, "Shift: ", shift);
+
+  # Other model parameters
   model <- params$model;
+  verbose && cat(verbose, "Model: ", model);
+  bootstrap <- params$bootstrap;
+  chunkSize <- params$chunkSize;
+  maxIter <- params$maxIter;
+  acc <- params$acc;
+  verbose && exit(verbose);
+
+  nbrOfCells <- length(cells);
+
 
   verbose && enter(verbose, "Retrieving probe sequences");
   # Locate AromaCellSequenceFile holding probe sequences
   acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
   seqs <- readSequenceMatrix(acs, cells=cells, what="raw", verbose=less(verbose, 5));
-  rm(acs);
+  rm(acs, cells);
   verbose && cat(verbose, "Probe-sequence matrix:");
   verbose && str(verbose, seqs);
   gc <- gc();
@@ -377,11 +414,12 @@ setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, cells
   rm(seqs);
   verbose && str(verbose, "mu:");
   verbose && str(verbose, mu);
+  verbose && summary(verbose, mu);
   verbose && exit(verbose);
 
   # Sanity check
-  if (length(mu) != length(cells)) {
-    throw("Internal error. Number of estimated means does not match the number of cells to be updated: ", length(mu), " != ", length(cells));
+  if (length(mu) != nbrOfCells) {
+    throw("Internal error. Number of estimated means does not match the number of cells to be updated: ", length(mu), " != ", nbrOfCells);
   }
 
   # Garbage collection
@@ -397,6 +435,8 @@ setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, cells
 
 ############################################################################
 # HISTORY:
+# 2008-07-28
+# o Updated to work with newer ProbeLevelTransform3.
 # 2008-07-21
 # o BENCHMARKING: For a GenomeWideSNP_6,Full, the BPN peaks at 5.9GB RAM.
 #   This happens while fitting the model.  Prediction peaks at 3.2GB RAM.

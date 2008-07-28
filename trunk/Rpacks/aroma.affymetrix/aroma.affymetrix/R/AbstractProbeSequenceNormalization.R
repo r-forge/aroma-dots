@@ -15,7 +15,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of 
-#     @see "ProbeLevelTransform2".}
+#     @see "ProbeLevelTransform3".}
 # }
 #
 # \section{Fields and Methods}{
@@ -30,7 +30,7 @@
 # @author
 #*/###########################################################################
 setConstructorS3("AbstractProbeSequenceNormalization", function(...) {
-  extend(ProbeLevelTransform2(...), "AbstractProbeSequenceNormalization");
+  extend(ProbeLevelTransform3(...), "AbstractProbeSequenceNormalization");
 }, abstract=TRUE)
 
 
@@ -67,6 +67,33 @@ setMethodS3("getAromaCellSequenceFile", "AbstractProbeSequenceNormalization", fu
   aps;
 }, protected=TRUE)
 
+
+
+setMethodS3("indexOfMissingSequences", "AbstractProbeSequenceNormalization", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Identifying probes with missing sequences");
+  # Locate AromaCellSequenceFile holding probe sequences
+  acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
+
+	idxs <- isMissing(acs, verbose=less(verbose, 5));
+  idxs <- whichVector(idxs);
+  verbose && cat(verbose, "Cells with unknown sequences:");
+  verbose && str(verbose, idxs);
+  rm(acs);
+  verbose && exit(verbose);
+
+  idxs;
+}, protected=TRUE);
 
 
 setMethodS3("fitOne", "AbstractProbeSequenceNormalization", abstract=TRUE, protected=TRUE);
@@ -133,16 +160,13 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
   ds <- getInputDataSet(this);
 
   # Get algorithm parameters
-  params <- getParameters(this, verbose=less(verbose, 5));
+  params <- getParameters(this, expand=TRUE, verbose=less(verbose, 5));
 
   # Get (and create) the output path
   outputPath <- getPath(this);
 
-  # Get subset to fit
-  subsetToFit <- params$subsetToFit;
-
-  # Get subset to update
-  subsetToUpdate <- params$subsetToUpdate;
+  # Get subset of cells to update
+  cellsToUpdate <- params$cellsToUpdate;
 
   # Get shift
   shift <- params$shift;
@@ -158,7 +182,6 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
   verbose && enter(verbose, "Normalizing ", nbrOfArrays, " arrays");
   verbose && enter(verbose, "Path: ", outputPath);
 
-  hasExcludedMissingSeqs <- FALSE;
   paramsShort <- NULL;
   muT <- NULL;
   for (kk in seq_len(nbrOfArrays)) {
@@ -174,49 +197,14 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
     if (!force && isFile(pathname)) {
       verbose && cat(verbose, "Normalized data file already exists: ", pathname);
     } else {
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Identify probes that cannot be modelled?
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      if (!hasExcludedMissingSeqs) {
-        verbose && enter(verbose, "Excluding probes  with missing sequences");
-
-        verbose && enter(verbose, "Identifying probes with missing sequences");
-        # Locate AromaCellSequenceFile holding probe sequences
-        acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
-
-        missingSeqs <- isMissing(acs, verbose=less(verbose, 5));
-        missingSeqs <- whichVector(missingSeqs);
-        verbose && cat(verbose, "Cells with unknown sequences:");
-        verbose && str(verbose, missingSeqs);
-        rm(acs);
-        verbose && exit(verbose);
-
-        # Update subset of cell indices for fitting and updating
-        subsetToFit <- setdiff(subsetToFit, missingSeqs);
-        subsetToUpdate <- setdiff(subsetToUpdate, missingSeqs);
-        rm(missingSeqs);
-
-        verbose && cat(verbose, "Cell indices used for fitting:");
-        verbose && str(verbose, subsetToFit);
-        verbose && cat(verbose, "Cell indices to be updated:");
-        verbose && str(verbose, subsetToUpdate);
-
-        # Garbage collection
-        gc <- gc();
-        verbose && print(verbose, gc);
-
-        hasExcludedMissingSeqs <- TRUE;
-        verbose && exit(verbose);
-      }
-
       if (is.null(paramsShort)) {
         # Precalculate some model fit parameters
         verbose && enter(verbose, "Compressing model parameter to a short format");
         paramsShort <- params;
-        paramsShort$subsetToFit <- NULL;
-        paramsShort$subsetToUpdate <- NULL;
-#        paramsShort$subsetToFitIntervals <- seqToIntervals(subsetToFit);
-#        paramsShort$subsetToUpdateIntervals <- seqToIntervals(subsetToUpdate);
+        paramsShort$cellsToFit <- NULL;
+        paramsShort$cellsToUpdate <- NULL;
+##        paramsShort$unitsToFitIntervals <- seqToIntervals(paramsShort$unitsToFit);
+##        paramsShort$unitsToUpdateIntervals <- seqToIntervals(paramsShort$unitsToUpdate);
         verbose && exit(verbose);
       }
 
@@ -236,18 +224,47 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       if (is.null(muT)) {
         verbose && enter(verbose, "Modelling effects for target array");
 
-        verbose && enter(verbose, "Estimating probe-sequence effects for target");
+        modelFitT <- list(
+          paramsShort=paramsShort
+        );
+
         dfT <- getTargetFile(this, verbose=less(verbose, 5));
-        fitT <- fitOne(this, df=dfT, cells=subsetToFit, verbose=less(verbose, 5));
-        rm(dfT);
-        verbose && print(verbose, fitT);
+        fullnameT <- getFullName(dfT);
+        filename <- sprintf("%s,fit.RData", fullnameT);
+        fitPathname <- Arguments$getWritablePathname(filename, 
+                                                       path=outputPath, ...);
+        if (isFile(fitPathname)) {
+          verbose && enter(verbose, "Loading already fitted probe-sequence effects for target");
+          verbose && cat(verbose, "Pathname: ", fitPathname);
+          modelFitT <- loadObject(file=fitPathname);
+          fitT <- modelFitT$fit;
+          verbose && exit(verbose);
+        } else {
+          verbose && enter(verbose, "Estimating probe-sequence effects for target");
+          fitT <- fitOne(this, df=dfT, verbose=less(verbose, 5));
+          verbose && print(verbose, fitT);
+          modelFitT$fit <- fitT;
+
+          verbose && enter(verbose, "Saving model fit");
+          # Store fit and parameters (in case someone are interested in looking
+          # at them later; no promises of backward compatibility though).
+          saveObject(modelFitT, file=fitPathname);
+          verbose && exit(verbose);
+
+          verbose && exit(verbose);
+        }
+
+        verbose && str(verbose, modelFitT, level=-50);
+        rm(dfT, modelFitT);
         verbose && exit(verbose);
 
+  
         verbose && enter(verbose, "Predicting probe affinities");
-        muT <- predictOne(this, fit=fitT, cells=subsetToUpdate, verbose=less(verbose, 5));
+        muT <- predictOne(this, fit=fitT, verbose=less(verbose, 5));
         rm(fitT);
         verbose && cat(verbose, "muT:");
         verbose && str(verbose, muT);
+        verbose && summary(verbose, muT);
         verbose && exit(verbose);
 
         # Garbage collection
@@ -262,8 +279,8 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Phase I: Fit probe-sequence effect for the current array
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Getting signals used to fit the model");
-      fit <- fitOne(this, df=df, cells=subsetToFit, verbose=less(verbose, 5));
+      verbose && enter(verbose, "Fitting model for current array");
+      fit <- fitOne(this, df=df, verbose=less(verbose, 5));
       verbose && print(verbose, fit);
       modelFit$fit <- fit;
       verbose && exit(verbose);
@@ -290,7 +307,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       # Phase II: Normalize current array toward target
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Reading probe signals");
-      y <- extractMatrix(df, cells=subsetToUpdate, drop=TRUE);
+      y <- extractMatrix(df, cells=cellsToUpdate, drop=TRUE);
 
       # Shift signals?
       if (shift != 0) {
@@ -303,10 +320,11 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Predicting mean log2 probe signals");
-      mu <- predictOne(this, fit=fit, cells=subsetToUpdate, verbose=less(verbose, 5));
+      mu <- predictOne(this, fit=fit, verbose=less(verbose, 5));
       rm(fit);
       verbose && cat(verbose, "mu:");
       verbose && str(verbose, mu);
+      verbose && summary(verbose, mu);
 
       verbose && exit(verbose);
 
@@ -322,7 +340,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       keep <- whichVector(is.finite(rho));
       rho <- rho[keep];
       y <- y[keep];
-      subsetToUpdateKK <- subsetToUpdate[keep];
+      cellsToUpdateKK <- cellsToUpdate[keep];
       rm(keep);
       gc <- gc();
       verbose && print(verbose, gc);
@@ -352,8 +370,8 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
       # Write calibrated data to file
       verbose2 <- -as.integer(verbose)-2;
-      updateCel(pathname, indices=subsetToUpdateKK, intensities=y, verbose=verbose2);
-      rm(y, subsetToUpdateKK, verbose2);
+      updateCel(pathname, indices=cellsToUpdateKK, intensities=y, verbose=verbose2);
+      rm(y, cellsToUpdateKK, verbose2);
       gc <- gc();
       verbose && print(verbose, gc);
 
@@ -385,6 +403,8 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
 ############################################################################
 # HISTORY:
+# 2008-07-28
+# o Now the model fit for the target is also saved to file.
 # 2008-07-21
 # o The process() is rather generic. Subclasses have to implement fitOne()
 #   and predictOne().

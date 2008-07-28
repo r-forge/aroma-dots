@@ -26,12 +26,12 @@ print(csC);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Base-count normalization
+# Base-position normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-bcn <- BasePositionNormalization(csC, shift=+300);
-print(bcn);
+bpn <- BasePositionNormalization(csC, shift=+300);
+print(bpn);
 
-csN <- process(bcn, verbose=log);
+csN <- process(bpn, verbose=log);
 print(csN);
 
 
