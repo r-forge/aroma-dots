@@ -422,6 +422,41 @@ setMethodS3("hasUnitTypes", "AffymetrixCdfFile", function(this, types, ..., verb
   FALSE;
 })
 
+
+
+###########################################################################/**
+# @RdocMethod getUnitTypes
+#
+# @title "Gets the types of a set of units"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{units}{The units of interest. If @NULL, all units are considered.}
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @vector of @integers.
+# }
+#
+# \details{
+#   Once read from file, this information is cached in memory for efficiency.
+#   The cache can be cleared by calling \code{gc(cdf)}.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+#*/###########################################################################
 setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, .cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -434,6 +469,7 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
   }
 
   types <- this$.unitTypes;
+
 
   if (.cache) {
     if (force || is.null(types)) {
@@ -469,6 +505,22 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
     types <- readCdfUnits(getPathname(this), units=units, readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
     types <- unlist(types, use.names=FALSE);
   }
+
+  # From the Fusion SDK documentation:
+  # 0 - Unknown, 1 - CustomSeq, 2 - Genotyping, 3 - Expression, 
+  # 7 - Tag/GenFlex, 8 - Copy Number
+  typeMap <- c("Unknown"=0, "CustomSeq"=1, "Genotyping"=2, "Expression"=3, "Tag/GenFlex"=7, "CopyNumber"=8);
+  storage.mode(typeMap) <- "integer";
+
+  # Identify unknown/new unit types
+  uTypes <- sort(unique(types));
+  unknown <- uTypes[(!uTypes %in% typeMap)];
+  if (length(unknown) > 0) {
+    names(unknown) <- sprintf("Type%d", unknown);
+    typeMap <- c(typeMap, unknown);
+  }
+
+  attr(types, "types") <- typeMap;
 
   types;
 })
@@ -1513,6 +1565,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-07-26
+# o Now the integer vector returned by getUnitTypes() also has an attribute
+#   'types' explain what the different values are.
 # 2008-07-23
 # o Now getGenomeInformation() and getSnpInformation() reports the reason
 #   for why it thinks the located object is incompatible with the CDF.
