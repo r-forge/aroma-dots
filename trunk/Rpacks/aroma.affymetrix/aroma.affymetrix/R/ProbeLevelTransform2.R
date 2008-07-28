@@ -17,8 +17,8 @@
 #   \item{dataSet}{A @see "AffymetrixCelSet".}
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform".}
-#   \item{subsetToUpdate}{The probes to be updated.
-#     If @NULL, all probes are considered.}
+#   \item{subsetToUpdate}{The units to be updated.
+#     If @NULL, all are considered.}
 #   \item{typesToUpdate}{Types of probes to be updated.}
 #   \item{typesToFit}{Types of probes to be used when fitting the model.}
 #   \item{subsetToFit}{The units from which the normalization curve should
@@ -135,7 +135,7 @@ setMethodS3("getAsteriskTags", "ProbeLevelTransform2", function(this, collapse=N
 
 
 
-setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, what=c("fit", "update"), ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+setMethodS3("getUnitsTo", "ProbeLevelTransform2", function(this, units, unitTypes=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -146,17 +146,18 @@ setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, what=c("fit", 
     chipType <- getChipType(cdf);
     verbose && cat(verbose, "Dataset class:");
     verbose && cat(verbose, class(dataSet)[1]);
-    verbose && cat(verbose, chipType);
+    verbose && cat(verbose, "chipType: ", chipType);
+    verbose && cat(verbose, "Units:");
     verbose && str(verbose, units);
-    verbose && cat(verbose, "Stratify by:");
-    verbose && str(verbose, stratifyBy);
+##    verbose && cat(verbose, "unitTypes: ", paste(unitTypes, collapse=", "));
+##    verbose && cat(verbose, "stratifyBy: ", stratifyBy);
 
     if (inherits(dataSet, "ChipEffectSet")) {
       verbose && enter(verbose, "Treating ", class(dataSet)[1], " specially");
       verbose && cat(verbose, "Requested 'units': ");
       verbose && str(verbose, units);
       stratifyBy <- NULL;
-      parameters <- getParameters(dataSet);
+#      parameters <- getParameters(dataSet);
       verbose && exit(verbose);
     } else {
       parameters <- NULL;
@@ -183,7 +184,9 @@ setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, what=c("fit", 
     # Get the subset of cells according to the CDF
     verbose && cat(verbose, "Requested 'units': ");
     verbose && str(verbose, units);
-    verbose && cat(verbose, "stratifyBy: ", stratifyBy);
+##    verbose && cat(verbose, "unitTypes: ", paste(unitTypes, collapse=", "));
+##    verbose && cat(verbose, "stratifyBy: ", stratifyBy);
+
     cells <- getSubsetOfCellIndices(cdf, units=units, ...);
    
     # If a ChipEffectSet, then so called 'restructuring' might occur,
@@ -228,8 +231,166 @@ setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, what=c("fit", 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'what':
-  what <- match.arg(what);
+  # Argument 'units':
+  if (is.character(units)) {
+  } else if (is.numeric(units)) {
+  } else if (is.null(units)) {
+  } else {
+    throw("Internal error. Unknown data type for argument 'units': ", mode(units));
+  }
+
+  # Argument 'unitTypes':
+  if (!is.null(unitTypes)) {
+    unitTypes <- Arguments$getIndices(unitTypes, range=c(0,99));
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Getting subset of units indices of interest");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Expand?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.character(units)) {
+    cells <- safeGetSubsetOfCellIndices(this, units=units, 
+                     stratifyBy=stratifyBy, ..., force=force, cache=cache);
+  } else if (is.numeric(units)) {
+    # Shouldn't we interpret 'units' as units here? /HB 2008-07-25
+    cells <- units;
+  } else if (is.null(units)) {
+    if (is.null(stratifyBy)) {
+      cells <- seq(length=nbrOfCells(cdf));
+    } else {
+      cells <- safeGetSubsetOfCellIndices(this, units=NULL,
+                     stratifyBy=stratifyBy, ..., force=force, cache=cache);
+    }
+  }
+
+  verbose && cat(verbose, "Identified units:");
+  verbose && str(verbose, units);
+  verbose && exit(verbose);
+
+  cells;
+}, private=TRUE)
+
+
+
+
+setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, units, stratifyBy, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  safeGetSubsetOfCellIndices <- function(this, units, stratifyBy=NULL, ..., force=FALSE, cache=TRUE) {
+    verbose && enter(verbose, "Getting cell indices for subset of units");
+    dataSet <- getInputDataSet(this);
+    cdf <- getCdf(dataSet);
+    chipType <- getChipType(cdf);
+    verbose && cat(verbose, "Dataset class:");
+    verbose && cat(verbose, class(dataSet)[1]);
+    verbose && cat(verbose, "chipType: ", chipType);
+    verbose && cat(verbose, "Units:");
+    verbose && str(verbose, units);
+##    verbose && cat(verbose, "unitTypes: ", paste(unitTypes, collapse=", "));
+##    verbose && cat(verbose, "stratifyBy: ", stratifyBy);
+
+    if (inherits(dataSet, "ChipEffectSet")) {
+      verbose && enter(verbose, "Treating ", class(dataSet)[1], " specially");
+      verbose && cat(verbose, "Requested 'units': ");
+      verbose && str(verbose, units);
+      stratifyBy <- NULL;
+#      parameters <- getParameters(dataSet);
+      verbose && exit(verbose);
+    } else {
+      parameters <- NULL;
+    }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Check cached results
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##     key <- list(method="getSubsetTo", class=class(this)[1], 
+##       subset=subset, 
+##       stratifyBy=stratifyBy,
+##       chipType=chipType,
+##       dataSetClass=class(dataSet)[1], 
+##       parameters=parameters
+##     );
+##     dirs <- c("aroma.affymetrix", chipType);
+##     res <- loadCache(key=key, dirs=dirs);
+##     if (!force && !is.null(res)) {
+##       verbose && cat(verbose, "Found cached results!");
+##       verbose && exit(verbose);
+##       return(res);
+##     }
+
+    # Get the subset of cells according to the CDF
+    verbose && cat(verbose, "Requested 'units': ");
+    verbose && str(verbose, units);
+##    verbose && cat(verbose, "unitTypes: ", paste(unitTypes, collapse=", "));
+##    verbose && cat(verbose, "stratifyBy: ", stratifyBy);
+
+    cells <- getSubsetOfCellIndices(cdf, units=units, ...);
+   
+    # If a ChipEffectSet, then so called 'restructuring' might occur,
+    # which will exclude additional cells.  For this reason, we have
+    # check what possible cells the ChipEffectSet uses and take the
+    # intersection between those and the above found cells.
+    # /HB 2008-07-25.  This was borrowed from the same idea done in
+    # ScaleNormalization on 2007-04-11.
+    if (inherits(dataSet, "ChipEffectSet")) {
+      verbose && cat(verbose, "'cells' (before): ");
+      verbose && str(verbose, cells);
+
+      df <- getFile(dataSet, 1);
+      # Cannot use 'unlist=TRUE' next, because restructuring might occur.
+      possibleCells <- getCellIndices(df, verbose=less(verbose));
+      possibleCells <- unlist(possibleCells, use.names=FALSE);
+      possibleCells <- sort(possibleCells);
+      verbose && cat(verbose, "Cells used by this ", class(df)[1], ":");
+      verbose && str(verbose, possibleCells);
+
+      # Take the intersection
+      if (is.null(cells)) {
+        cells <- possibleCells;
+      } else {
+        cells <- intersect(cells, possibleCells);
+      }
+      rm(possibleCells);
+
+      verbose && cat(verbose, "'cells' (after): ");
+      verbose && str(verbose, cells);
+    }
+
+    res <- cells;
+
+##    if (cache)
+##      saveCache(res, key=key, dirs=dirs);
+
+    res;
+  } # safeGetSubsetOfCellIndices()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'units':
+  if (is.character(units)) {
+  } else if (is.numeric(units)) {
+  } else if (is.null(units)) {
+  } else {
+    throw("Internal error. Unknown data type for argument 'units': ", mode(units));
+  }
+
+##  # Argument 'unitTypes':
+##  if (!is.null(unitTypes)) {
+##    unitTypes <- Arguments$getIndices(unitTypes, range=c(0,99));
+##  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -241,36 +402,23 @@ setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, what=c("fit", 
 
   verbose && enter(verbose, "Getting cell indices for subset of units");
 
-  field <- sprintf(".subsetTo%s", capitalize(what));
-  fieldExpanded <- paste(field, "Expanded", sep="");
-  typesField <- sprintf(".typesTo%s", capitalize(what));
-
-  subset <- this[[field]];
-  stratifyBy <- this[[typesField]];
-  rm(field, typesField);
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Expand?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (is.character(subset)) {
-    cells <- this[[fieldExpanded]];
-    if (force || is.null(cells)) {
-      cells <- safeGetSubsetOfCellIndices(this, units=subset, stratifyBy=stratifyBy, ..., force=force, cache=cache);
-      this[[fieldExpanded]] <- cells;
-    }
-  } else if (is.numeric(subset)) {
-    # Shouldn't we interpret 'subset' as units here? /HB 2008-07-25
-    cells <- subset;
-  } else if (is.null(subset)) {
+  if (is.character(units)) {
+    cells <- safeGetSubsetOfCellIndices(this, units=units, 
+                     stratifyBy=stratifyBy, ..., force=force, cache=cache);
+  } else if (is.numeric(units)) {
+    # Shouldn't we interpret 'units' as units here? /HB 2008-07-25
+    cells <- units;
+  } else if (is.null(units)) {
     if (is.null(stratifyBy)) {
       cells <- seq(length=nbrOfCells(cdf));
     } else {
-      cells <- safeGetSubsetOfCellIndices(this, stratifyBy=stratifyBy, units=NULL, ..., force=force, cache=cache);
+      cells <- safeGetSubsetOfCellIndices(this, units=NULL,
+                     stratifyBy=stratifyBy, ..., force=force, cache=cache);
     }
-    this[[fieldExpanded]] <- cells;
-  } else {
-    throw("Internal error. This statment should never be reached: ", mode(subset));
   }
 
   verbose && cat(verbose, "Identified cells:");
@@ -278,17 +426,60 @@ setMethodS3("getSubsetTo", "ProbeLevelTransform2", function(this, what=c("fit", 
   verbose && exit(verbose);
 
   cells;
-}, private=TRUE);
+}, private=TRUE)
 
 
-setMethodS3("getSubsetToUpdate", "ProbeLevelTransform2", function(this, ...) {
-  getSubsetTo(this, what="update", ...);
-}, protected=TRUE);
 
 
-setMethodS3("getSubsetToFit", "ProbeLevelTransform2", function(this, ...) {
-  getSubsetTo(this, what="fit", ...);
-}, protected=TRUE);
+
+setMethodS3("getSubsetToUpdate", "ProbeLevelTransform2", function(this, ..., force=FALSE) {
+  what <- "update";
+  field <- sprintf(".subsetTo%s", capitalize(what));
+  fieldExpanded <- paste(field, "Expanded", sep="");
+
+  # Check for cached results
+  cells <- this[[fieldExpanded]];
+  if (!force && !is.null(cells))
+    return(cells);
+
+  # Construct subset
+  typesField <- sprintf(".typesTo%s", capitalize(what));
+  units <- this[[field]];
+  stratifyBy <- this[[typesField]];
+
+  cells <- getSubsetTo(this, units=units, stratifyBy=stratifyBy, ..., force=force);
+
+  # Cache results
+  this[[fieldExpanded]] <- cells;
+
+  cells;
+}, protected=TRUE)
+
+
+
+setMethodS3("getSubsetToFit", "ProbeLevelTransform2", function(this, ..., force=FALSE) {
+  what <- "fit";
+  field <- sprintf(".subsetTo%s", capitalize(what));
+  fieldExpanded <- paste(field, "Expanded", sep="");
+
+  # Check for cached results
+  cells <- this[[fieldExpanded]];
+  if (!force && !is.null(cells))
+    return(cells);
+
+  # Construct subset
+  typesField <- sprintf(".typesTo%s", capitalize(what));
+  units <- this[[field]];
+  stratifyBy <- this[[typesField]];
+
+  cells <- getSubsetTo(this, units=units, stratifyBy=stratifyBy, ..., force=force);
+
+  # Cache results
+  this[[fieldExpanded]] <- cells;
+
+  cells;
+}, protected=TRUE)
+
 
 
 
