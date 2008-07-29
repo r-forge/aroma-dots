@@ -236,13 +236,19 @@ setMethodS3("predict", "ProbePositionEffects", function(object, seqs, ..., verbo
     verbose && cat(verbose, "object.size(seqs):");
     verbose && print(verbose, object.size(seqs));
     seqs <- paste(seqs, collapse="");
-    seqs <- charToRaw(seqs);
-    throw("Not implemented yet, i.e. to be fixed.");
+    seqs <- strsplit(seqs, split="")[[1]];
+    map <- c("NA"=0, A=1, C=2, G=3, T=4);
+    names <- names(map);
+    map <- as.raw(map);
+    names(map) <- names;
+    values <- map[-1];
+    seqs <- match(seqs, names(values));
+    seqs <- as.raw(seqs);
     seqs <- matrix(seqs, nrow=K, ncol=P, byrow=TRUE);
-    gc <- gc();
-    verbose && print(verbose, gc);
+    attr(seqs, "map") <- map;
     verbose && cat(verbose, "object.size(seqs):");
     verbose && print(verbose, object.size(seqs));
+    verbose && str(verbose, seqs);
     verbose && exit(verbose);
   }
 
@@ -341,7 +347,93 @@ setMethodS3("text", "ProbePositionEffects", function(x, labels=NULL, col=NULL, .
     yy <- rho[,cc];
     text(xx,yy, labels=labels[cc], col=col[cc], ...);
   }
-}) # plot();
+}) # text()
+
+
+
+setMethodS3("pointsSequence", "ProbePositionEffects", function(fit, seq, col=NULL, ...) {
+  rho <- getEffects(fit);
+
+  # Argument 'seq':
+  seq <- paste(seq, collapse="");
+  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2));
+
+  if (is.null(col)) {
+    col <- seq(length=ncol(rho));
+  } else {
+    col <- rep(col, ncol(rho));
+  }
+
+  # Map the sequence to nucleotide indices
+  bases <- strsplit(seq, split="")[[1]];
+  bases <- match(bases, colnames(rho));
+
+  xx <- seq(length=nrow(rho));
+  yy <- rowCollapse(rho, bases);
+  col <- col[bases];
+
+  points(xx,yy, col=col, ...);
+}) # pointsSequence()
+
+
+setMethodS3("textSequence", "ProbePositionEffects", function(fit, seq, labels=NULL, col=NULL, ...) {
+  rho <- getEffects(fit);
+
+  # Argument 'seq':
+  seq <- paste(seq, collapse="");
+  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2));
+
+  if (is.null(labels)) {
+    labels <- colnames(rho);
+  }
+
+  if (is.null(col)) {
+    col <- seq(length=ncol(rho));
+  } else {
+    col <- rep(col, ncol(rho));
+  }
+
+  # Map the sequence to nucleotide indices
+  bases <- strsplit(seq, split="")[[1]];
+  bases <- match(bases, colnames(rho));
+
+  xx <- seq(length=nrow(rho));
+  yy <- rowCollapse(rho, bases);
+  labels <- labels[bases];
+  col <- col[bases];
+
+  text(xx,yy, labels=labels, col=col, ...);
+}) # textSequence()
+
+
+
+setMethodS3("barSequence", "ProbePositionEffects", function(fit, seq, col=NULL, ...) {
+  rho <- getEffects(fit);
+
+  # Argument 'seq':
+  seq <- paste(seq, collapse="");
+  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2));
+
+  if (is.null(col)) {
+    col <- seq(length=ncol(rho));
+  } else {
+    col <- rep(col, ncol(rho));
+  }
+
+  # Map the sequence to nucleotide indices
+  bases <- strsplit(seq, split="")[[1]];
+  bases <- match(bases, colnames(rho));
+
+  xx <- seq(length=nrow(rho));
+  yy <- rowCollapse(rho, bases);
+  col <- col[bases];
+
+  for (kk in seq(length=nrow(rho))) {
+    x <- xx[kk];
+    y <- yy[kk];
+    lines(x=c(x,x), y=c(0,y), col=col[kk], ...);
+  }
+}) # barSequence()
 
 
 
@@ -350,6 +442,8 @@ setMethodS3("text", "ProbePositionEffects", function(x, labels=NULL, col=NULL, .
 
 ############################################################################
 # HISTORY:
+# 2008-07-28
+# o Added textSequence().
 # 2008-07-11
 # o Renamed getProbePositionEffects() to getEffects().
 # o Updated to work with the new AromaCellSequenceFile encodings.
