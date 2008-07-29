@@ -18,6 +18,7 @@
 #     @see "AbstractProbeSequenceNormalization".}
 #   \item{model}{A @character string specifying the model used to fit 
 #     the base-count effects.}
+#   \item{df}{The degrees of freedom of the model.}
 #   \item{bootstrap}{If @TRUE, the model fitting is done by bootstrap in
 #     order to save memory.}
 # }
@@ -33,12 +34,15 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spline"), bootstrap=FALSE) {
+setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spline"), df=5, bootstrap=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'model':
   model <- match.arg(model);
+
+  # Argument 'df':
+  df <- Arguments$getInteger(df, range=c(1,1e3));
 
   # Argument 'bootstrap':
   bootstrap <- Arguments$getLogical(bootstrap);
@@ -50,6 +54,7 @@ setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spli
 
   extend(AbstractProbeSequenceNormalization(...), "BasePositionNormalization",
     .model = model,
+    .df = df,
     .bootstrap=bootstrap,
     .chunkSize=as.integer(500e3),
     .maxIter=as.integer(50),
@@ -65,6 +70,12 @@ setMethodS3("getAsteriskTags", "BasePositionNormalization", function(this, colla
   model <- this$.model;
   if (model != "smooth.spline") {
     tags <- c(tags, model);
+  }
+
+  # Add df tag?
+  df <- this$.df;
+  if (df != 5) {
+    tags <- c(tags, sprintf("df=%d", df));
   }
 
   # Add bootstrap tag?
@@ -87,6 +98,7 @@ setMethodS3("getParameters", "BasePositionNormalization", function(this, ...) {
 
   params <- c(params, list(
     model = this$.model,
+    df = this$.df,
     bootstrap = this$.bootstrap,
     chunkSize = this$.chunkSize,
     maxIter = this$.maxIter,
@@ -98,7 +110,7 @@ setMethodS3("getParameters", "BasePositionNormalization", function(this, ...) {
 
 
 
-setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells=NULL, model=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -119,12 +131,23 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
   verbose && cat(verbose, "Cells:");
   verbose && str(verbose, cells);
 
+  verbose && enter(verbose, "Getting algorithm parameters");
+  params <- getParameters(this, expand=FALSE, verbose=less(verbose, 1));
+  model <- params$model;
+  df <- params$df;
   verbose && cat(verbose, "Model: ", model);
+  verbose && cat(verbose, "Degrees of freedom: ", df);
+  verbose && exit(verbose);
 
   # Locate AromaCellSequenceFile holding probe sequences
   acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
 
-  key <- list(method="getDesignMatrix", class=class(this[1]), cells=cells, model=model, acs=list(fullname=getFullName(acs), checksum=getChecksum(acs)));
+  key <- list(
+    method="getDesignMatrix", class=class(this[1]), 
+    cells=cells, 
+    model=model, df=df, 
+    acs=list(fullname=getFullName(acs), checksum=getChecksum(acs))
+  );
   dirs <- c("aroma.affymetrix", getChipType(acs));
   if (!force) {
     X <- loadCache(key=key, dirs=dirs);
@@ -143,7 +166,8 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Building probe-position design matrix");
-  X <- getProbePositionEffectDesignMatrix(seqs, verbose=less(verbose, 5));
+  verbose && cat(verbose, "Degrees of freedom: ", df);
+  X <- getProbePositionEffectDesignMatrix(seqs, df=df, verbose=less(verbose, 5));
   rm(seqs);
 
   verbose && cat(verbose, "Design matrix:");
@@ -168,7 +192,7 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
 
 
 setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbose=FALSE) {
-  fitSubset <- function(df, cells=NULL, ..., verbose) {
+  fitSubset <- function(df, cells=NULL, shift=0, ..., verbose) {
     verbose && enter(verbose, "Retrieving probe sequences");
 
     verbose && enter(verbose, "Excluding cells with unknown probe sequences");
@@ -277,13 +301,15 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbo
   shift <- params$shift;
   verbose && cat(verbose, "Shift: ", shift);
 
-  # Other model parameters
-  model <- params$model;
-  verbose && cat(verbose, "Model: ", model);
+  # Bootstrap settings
   bootstrap <- params$bootstrap;
   chunkSize <- params$chunkSize;
   maxIter <- params$maxIter;
   acc <- params$acc;
+
+  # Model parameters (only for display; retrieve elsewhere)
+  verbose && cat(verbose, "Model: ", params$model);
+  verbose && cat(verbose, "Degrees of freedom: ", params$df);
   verbose && exit(verbose);
 
   nbrOfCells <- length(cells);
@@ -297,9 +323,11 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbo
   # Bootstrap?
   if (bootstrap) {
     verbose && enter(verbose, "Fitting model using bootstrap");
+
+    throw("Cannot fit the model using bootstrapping. This feature is not implemented for ", class(this)[1]);
+
     verbose && cat(verbose, "Max number of iterations: ", maxIter);
     verbose && cat(verbose, "Accuracy threshold: ", acc);
-throw("Yet not implemented!");
 
     bb <- 0;
     fit <- NULL;
@@ -316,7 +344,7 @@ throw("Yet not implemented!");
       cellsChunk <- sort(cellsChunk);
       verbose && cat(verbose, "Cells:");
       verbose && str(verbose, cellsChunk);
-      fitB <- fitSubset(df, cells=cellsChunk, verbose=verbose);
+      fitB <- fitSubset(df, cells=cellsChunk, shift=shift, verbose=verbose);
       rm(cellsChunk);
       verbose && exit(verbose);
 
@@ -344,7 +372,7 @@ throw("Yet not implemented!");
 
     verbose && exit(verbose);
   } else {
-    fit <- fitSubset(df, cells=cells, verbose=verbose);
+    fit <- fitSubset(df, cells=cells, shift=shift, verbose=verbose);
   } # if (bootstrap)
 
   verbose && exit(verbose);
@@ -435,6 +463,8 @@ setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, ..., 
 
 ############################################################################
 # HISTORY:
+# 2008-07-29
+# o Added support for specifying the degrees of freedom ('df') of the model.
 # 2008-07-28
 # o Updated to work with newer ProbeLevelTransform3.
 # 2008-07-21
