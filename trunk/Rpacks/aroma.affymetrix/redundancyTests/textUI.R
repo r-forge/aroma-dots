@@ -106,8 +106,22 @@ selectOrder <- function(choices, title="Select order", header="%s (0 to keep res
 } # selectOrder()
 
 
-textSelectFile <- function(path=".", pattern="[^~]$", ...) {
-  pathHistory <- c();
+textSelectFile <- function(path=".", pattern="[^~]$", ..., history=FALSE) {
+  if (history) {
+    lastPath <- getOption("textSelectFile::lastPath");
+    if (!is.null(lastPath))
+      path <- lastPath;
+    pathHistory <- getOption("textSelectFile::pathHistory");
+  } else {
+    lastPath <- NULL;
+    pathHistory <- c();
+  }
+
+  if (is.null(path))
+    path <- ".";
+
+  if (isDirectory(path))
+    lastPath <- path;
 
   while(!isFile(path)) {
     pathHistory <- c(pathHistory, path);
@@ -125,7 +139,8 @@ textSelectFile <- function(path=".", pattern="[^~]$", ...) {
       ans <- textMenu(options, title=path);
 
       if (options[ans] == "<quit>") {
-        return(NULL);
+        path <- NULL;
+        break;
       } else if (options[ans] == "<back>") {
         path <- pathHistory[length(pathHistory)-1];
         pathHistory <- pathHistory[seq(length=length(pathHistory)-2)];
@@ -136,10 +151,17 @@ textSelectFile <- function(path=".", pattern="[^~]$", ...) {
       path <- paths[1];
     }
     path <- Arguments$getReadablePathname(path);
+    if (isDirectory(path))
+      lastPath <- path;
   }
 
+print(lastPath);
+  # Remember last path
+  options("textSelectFile::lastPath"=lastPath);
+  options("textSelectFile::pathHistory"=pathHistory);
+
   if (!isFile(path))
-    return(NULL);
+    path <- NULL;
 
   path;
 } # textSelectFile()
