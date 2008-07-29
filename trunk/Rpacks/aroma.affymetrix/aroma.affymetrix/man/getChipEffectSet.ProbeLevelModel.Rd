@@ -27,7 +27,8 @@
 \usage{\method{getChipEffectSet}{ProbeLevelModel}(this, ..., verbose=FALSE)}
 
 \arguments{
-  \item{...}{Not used.}
+  \item{...}{Arguments passed to \code{getMonocellCdf()} of
+                                                 \code{\link{AffymetrixCdfFile}}.}
   \item{verbose}{A \code{\link[base]{logical}} or a \code{\link[R.utils]{Verbose}}.}
 }
 
