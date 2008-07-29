@@ -49,23 +49,23 @@ extends \link[aroma.core]{GenericDataFileSet}\cr
  \tab \code{[[} \tab  -\cr
  \tab \code{append} \tab  -\cr
  \tab \code{as} \tab  -\cr
- \tab \code{as.CnagCfhSet} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:as.CnagCfhSet.CnagCfhSet]{as.CnagCfhSet}} \tab Coerce an object to an CnagCfhSet object.\cr
  \tab \code{byName} \tab  -\cr
  \tab \code{findByName} \tab  -\cr
  \tab \code{fromFiles} \tab  -\cr
  \tab \code{getAverage} \tab  -\cr
  \tab \code{getAverageAsinh} \tab  -\cr
- \tab \code{getAverageFile} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getAverageFile.CnagCfhSet]{getAverageFile}} \tab Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CFH set.\cr
  \tab \code{getAverageLog} \tab  -\cr
- \tab \code{getCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getCdf.CnagCfhSet]{getCdf}} \tab Gets the CDF structure for this CFH set.\cr
  \tab \code{getData} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getTimestamps} \tab  -\cr
- \tab \code{isDuplicated} \tab  -\cr
- \tab \code{nbrOfArrays} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:isDuplicated.CnagCfhSet]{isDuplicated}} \tab Identifies duplicated CFH files.\cr
+ \tab \code{\link[aroma.affymetrix:nbrOfArrays.CnagCfhSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
  \tab \code{range} \tab  -\cr
  \tab \code{readUnits} \tab  -\cr
- \tab \code{setCdf} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:setCdf.CnagCfhSet]{setCdf}} \tab Sets the CDF structure for this CFH set.\cr
 }
 
 

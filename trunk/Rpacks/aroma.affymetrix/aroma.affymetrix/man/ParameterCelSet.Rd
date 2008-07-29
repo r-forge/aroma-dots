@@ -51,8 +51,8 @@ extends \link[aroma.affymetrix]{AffymetrixCelSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{extractDataFrame} \tab  -\cr
- \tab \code{extractMatrix} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:extractDataFrame.ParameterCelSet]{extractDataFrame}} \tab Extract data as a data.frame for a set of arrays.\cr
+ \tab \code{\link[aroma.affymetrix:extractMatrix.ParameterCelSet]{extractMatrix}} \tab Extract data as a matrix for a set of arrays.\cr
 }
 
 
