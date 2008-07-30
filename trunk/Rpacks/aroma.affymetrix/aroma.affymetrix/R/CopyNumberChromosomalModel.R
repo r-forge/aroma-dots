@@ -78,9 +78,11 @@ setConstructorS3("CopyNumberChromosomalModel", function(cesTuple=NULL, refTuple=
           chipType <- getChipType(ref, fullname=FALSE);
           ces <- cesList[[chipType]];
           if (is.null(ces)) {
-            throw("Argument 'refTuple' refers to a chip type not in 'cesTuple': ", chipType);
+            throw("Argument 'refTuple' refers to a chip type not in 'cesTuple': ", chipType, " not in (", paste(names(ces), collapse=", "), ")");
           }
+          # Create a ChipEffectSet holding the replicated reference file
           refSet <- newInstance(ces, rep(list(ref), nbrOfArrays(ces)));
+
           refList[[kk]] <- refSet;
           rm(refSet);
         }
