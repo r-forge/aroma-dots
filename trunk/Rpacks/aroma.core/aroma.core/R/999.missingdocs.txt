@@ -250,3 +250,6 @@ readTableHeader.default
  getCreatedOn getCreatedOn.GenericDataFile getLastAccessedOn
  getLastAccessedOn.GenericDataFile getLastModifiedOn
  getLastModifiedOn.GenericDataFile
+  barSequence barSequence.ProbePositionEffects pointsSequence
+  pointsSequence.ProbePositionEffects textSequence
+  textSequence.ProbePositionEffects

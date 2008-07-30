@@ -593,6 +593,12 @@
 \alias{getLastAccessedOn.GenericDataFile}
 \alias{getLastModifiedOn}
 \alias{getLastModifiedOn.GenericDataFile}
+\alias{barSequence}
+\alias{barSequence.ProbePositionEffects}
+\alias{pointsSequence}
+\alias{pointsSequence.ProbePositionEffects}
+\alias{textSequence}
+\alias{textSequence.ProbePositionEffects}
 
 \description{
   This page contains aliases for all "non-documented" objects that
