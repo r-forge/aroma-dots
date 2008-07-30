@@ -43,7 +43,6 @@
 
 \seealso{
   To update to file footer afterwards, see \code{\link[aroma.affymetrix:writeFooter.AromaUnitTabularBinaryFile]{*writeFooter}()}.
-  For more information see \code{\link{AromaUnitTabularBinaryFile}}.
 }
 
 
