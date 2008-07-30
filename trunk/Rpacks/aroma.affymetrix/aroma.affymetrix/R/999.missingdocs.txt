@@ -447,7 +447,7 @@
   getUnitReadMap.AffymetrixCnChpFile getUnitSizes getUnitsOnChromosome
   getUnitsOnChromosome.GenomeInformation
   getUnitsOnChromosome.UgpGenomeInformation getUnitTypes
-  getUnitTypes.AffymetrixCdfFile getWeights getWeightsFileClass
+  getWeights getWeightsFileClass
   getWeightsFileClass.WeightsSet getWeightsSet
   getWeightsSet.ProbeLevelModel getWeightsSetClass
   getWeightsSetClass.ProbeLevelModel getXAM getYY getYY.TransformReport
@@ -697,7 +697,7 @@
   allocateFromCdf.AromaCellSequenceFile
   importFromAffymetrixProbeTabFile.AromaCellSequenceFile inferMmFromPm
   inferMmFromPm.AromaCellSequenceFile
-  BasePositionNormalization fitOne.BasePositionNormalization
+  fitOne.BasePositionNormalization
   getAsteriskTags.BasePositionNormalization
   getDesignMatrix.BasePositionNormalization
   getParameters.BasePositionNormalization
@@ -706,3 +706,21 @@
   getNormalizeSignalsOne.ScaleNormalization2
   getParameters.ScaleNormalization2 writeSignals
   writeSignals.ProbeLevelTransform2
+  clearCache.ProbeLevelTransform3 fitOne.ScaleNormalization3
+  fitOne.UnitTypeScaleNormalization
+  getAsteriskTags.ProbeLevelTransform3 getCellsTo
+  getCellsTo.ProbeLevelTransform3 getCellsToFit
+  getCellsToFit.ProbeLevelTransform3 getCellsToInternal
+  getCellsToInternal.ProbeLevelTransform3 getCellsToUpdate
+  getCellsToUpdate.ProbeLevelTransform3
+  getNormalizeSignalsOne.ScaleNormalization3
+  getNormalizeSignalsOne.UnitTypeScaleNormalization
+  getParameters.ProbeLevelTransform3 getParameters.ScaleNormalization3
+  getParameters.UnitTypeScaleNormalization getSubsetOfCellIndices2
+  getSubsetOfCellIndices2.AffymetrixCdfFile getSubsetOfUnits
+  getSubsetOfUnits.AffymetrixCdfFile getUnitsTo
+  getUnitsTo.ProbeLevelTransform2 getUnitsTo.ProbeLevelTransform3
+  getUnitsToFit getUnitsToFit.ProbeLevelTransform3 getUnitsToUpdate
+  getUnitsToUpdate.ProbeLevelTransform3 indexOfMissingSequences
+  indexOfMissingSequences.AbstractProbeSequenceNormalization
+  writeSignals.ProbeLevelTransform3

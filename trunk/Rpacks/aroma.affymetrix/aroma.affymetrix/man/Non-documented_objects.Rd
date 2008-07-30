@@ -927,7 +927,6 @@
 \alias{getUnitsOnChromosome.GenomeInformation}
 \alias{getUnitsOnChromosome.UgpGenomeInformation}
 \alias{getUnitTypes}
-\alias{getUnitTypes.AffymetrixCdfFile}
 \alias{getWeights}
 \alias{getWeightsFileClass}
 \alias{getWeightsFileClass.WeightsSet}
@@ -1411,7 +1410,6 @@
 \alias{importFromAffymetrixProbeTabFile.AromaCellSequenceFile}
 \alias{inferMmFromPm}
 \alias{inferMmFromPm.AromaCellSequenceFile}
-\alias{BasePositionNormalization}
 \alias{fitOne.BasePositionNormalization}
 \alias{getAsteriskTags.BasePositionNormalization}
 \alias{getDesignMatrix.BasePositionNormalization}
@@ -1423,6 +1421,37 @@
 \alias{getParameters.ScaleNormalization2}
 \alias{writeSignals}
 \alias{writeSignals.ProbeLevelTransform2}
+\alias{clearCache.ProbeLevelTransform3}
+\alias{fitOne.ScaleNormalization3}
+\alias{fitOne.UnitTypeScaleNormalization}
+\alias{getAsteriskTags.ProbeLevelTransform3}
+\alias{getCellsTo}
+\alias{getCellsTo.ProbeLevelTransform3}
+\alias{getCellsToFit}
+\alias{getCellsToFit.ProbeLevelTransform3}
+\alias{getCellsToInternal}
+\alias{getCellsToInternal.ProbeLevelTransform3}
+\alias{getCellsToUpdate}
+\alias{getCellsToUpdate.ProbeLevelTransform3}
+\alias{getNormalizeSignalsOne.ScaleNormalization3}
+\alias{getNormalizeSignalsOne.UnitTypeScaleNormalization}
+\alias{getParameters.ProbeLevelTransform3}
+\alias{getParameters.ScaleNormalization3}
+\alias{getParameters.UnitTypeScaleNormalization}
+\alias{getSubsetOfCellIndices2}
+\alias{getSubsetOfCellIndices2.AffymetrixCdfFile}
+\alias{getSubsetOfUnits}
+\alias{getSubsetOfUnits.AffymetrixCdfFile}
+\alias{getUnitsTo}
+\alias{getUnitsTo.ProbeLevelTransform2}
+\alias{getUnitsTo.ProbeLevelTransform3}
+\alias{getUnitsToFit}
+\alias{getUnitsToFit.ProbeLevelTransform3}
+\alias{getUnitsToUpdate}
+\alias{getUnitsToUpdate.ProbeLevelTransform3}
+\alias{indexOfMissingSequences}
+\alias{indexOfMissingSequences.AbstractProbeSequenceNormalization}
+\alias{writeSignals.ProbeLevelTransform3}
 
 \description{
   This page contains aliases for all "non-documented" objects that

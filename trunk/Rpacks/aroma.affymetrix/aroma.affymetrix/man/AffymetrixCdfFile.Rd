@@ -65,7 +65,7 @@ extends \emph{\link[aroma.core]{UnitNamesFile}}\cr
  \tab \code{getPlatform} \tab  -\cr
  \tab \code{getUnitGroupNamesFromUgcMap} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
- \tab \code{getUnitTypes} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getUnitTypes.AffymetrixCdfFile]{getUnitTypes}} \tab Gets the types of a set of units.\cr
  \tab \code{hasUnitTypes} \tab  -\cr
  \tab \code{isMonocellCdf} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:isPm.AffymetrixCdfFile]{isPm}} \tab Checks which cells (probes) are PMs and not.\cr
