@@ -56,7 +56,7 @@ stopifnot(identical(getNames(cesFln), getNames(ces)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Scale normalization test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sn <- ScaleNormalization2(ces);
+sn <- ScaleNormalization3(ces);
 print(sn);
 cesN <- process(sn, verbose=verbose);
 print(cesN);
