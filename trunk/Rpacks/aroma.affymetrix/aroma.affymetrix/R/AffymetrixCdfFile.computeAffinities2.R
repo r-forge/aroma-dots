@@ -58,15 +58,6 @@ setMethodS3("computeAffinities2", "AffymetrixCdfFile", function(this, paths=NULL
   # Get the chip type
   chipTypeFull <- getChipType(this, fullname=TRUE);
 
-  # Check cache
-  key <- list(method="computeAffinities", class=class(this)[1], chipTypeFull=chipTypeFull);
-  dirs <- c("aroma.affymetrix", chipTypeFull);
-  if (!force) {
-    res <- loadCache(key=key, dirs=dirs);
-    if (!is.null(res))
-      return(res);
-  }
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Looking for MMs (and PMs) in the CDF
@@ -87,6 +78,19 @@ setMethodS3("computeAffinities2", "AffymetrixCdfFile", function(this, paths=NULL
   if (nbrOfMMs == 0) {
 #    throw("Cannot calculate gcRMA probe affinities. The CDF contains no MMs: ", chipTypeFull);
   }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Checking for cache results
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  key <- list(method="computeAffinities", class=class(this)[1], chipTypeFull=chipTypeFull);
+  dirs <- c("aroma.affymetrix", chipTypeFull);
+  if (!force) {
+    res <- loadCache(key=key, dirs=dirs);
+    if (!is.null(res))
+      return(res);
+  }
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
