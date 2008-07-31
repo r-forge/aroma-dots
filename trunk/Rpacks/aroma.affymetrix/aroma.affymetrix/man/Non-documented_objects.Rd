@@ -108,7 +108,7 @@
 \alias{byName.AffymetrixCelSet}
 \alias{byName.CnagCfhSet}
 \alias{byName.DChipDcpSet}
-\alias{byPath.AromaMicroarrayDataSetTuple}
+\alias{byPath.AffymetrixCelSetTuple}
 \alias{calcRawCnStats}
 \alias{calcRawCnStats.CopyNumberChromosomalModel}
 \alias{calcRawCnStats.default}
@@ -636,7 +636,7 @@
 \alias{getIntensities}
 \alias{getLabel.Model}
 \alias{getListOfCdfs}
-\alias{getListOfCdfs.AromaMicroarrayDataSetTuple}
+\alias{getListOfCdfs.AffymetrixCelSetTuple}
 \alias{getListOfCdfs.ArrayExplorer}
 \alias{getListOfCdfs.ChromosomalModel}
 \alias{getListOfChipEffects}

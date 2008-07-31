@@ -27,7 +27,7 @@
 \link[aroma.affymetrix]{ChipEffectSetTuple}\cr
 
 public static class \bold{AffymetrixCelSetTuple}\cr
-extends \link[aroma.core]{AromaMicroarrayDataSetTuple}\cr
+extends \emph{\link[aroma.core]{AromaMicroarrayDataSetTuple}}\cr
 
 
  }
@@ -43,12 +43,13 @@ extends \link[aroma.core]{AromaMicroarrayDataSetTuple}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{byPath} \tab  -\cr
  \tab \code{clearCache} \tab  -\cr
 }
 
 
  \bold{Methods inherited from AromaMicroarrayDataSetTuple}:\cr
-byPath, asMatrixOfFiles, byPath, extract, getAlias, getArrays, getArrayTuple, getAsteriskTags, getChipTypes, getFullName, getFullNames, getListOfSets, getName, getNames, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setTags
+asMatrixOfFiles, byPath, extract, getAlias, getArrays, getArrayTuple, getAsteriskTags, getChipTypes, getFullName, getFullNames, getListOfSets, getName, getNames, getTableOfArrays, getTags, nbrOfArrays, nbrOfChipTypes, setAlias, setTags
 
  \bold{Methods inherited from Object}:\cr
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
