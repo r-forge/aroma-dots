@@ -12,7 +12,7 @@ chipType <- "GenomeWideSNP_6,Full";
 cdf <- AffymetrixCdfFile$byChipType(chipType);
 
 # Assert existence of probe-sequence annotation files
-acs <- AromaCellSequenceFile$byChipType(chipType);
+acs <- AromaCellSequenceFile$byChipType(getChipType(cdf, fullname=FALSE));
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
