@@ -7,7 +7,7 @@
 #
 # Author: Mark Robinson and Henrik Bengtsson
 # Created: 2007-06-20
-# Last modified: 2008-07-17
+# Last modified: 2008-07-30
 #
 # Data set:
 #  rawData/
@@ -98,7 +98,7 @@ stopifnot(max(abs(e)) < 0.085);
 if (doPlot) {
   if (saveImg) {
     pngDev <- findPngDevice();
-    pngDev("replication-affyPLM,fitPLM.png", width=640, height=640);
+    devNew("pngDev", "replication-affyPLM,fitPLM.png", width=640, height=640);
   }
 
   layout(matrix(1:9, ncol=3, byrow=TRUE));
@@ -114,8 +114,7 @@ if (doPlot) {
   xlab <- expression(log[2](theta[aroma.affymetrix]/theta[affyPLM]));
   plotDensity(e, xlab=xlab);
 
-  if (saveImg)
-    dev.off();
+  devDone();
 }
 
 ###########################################################################

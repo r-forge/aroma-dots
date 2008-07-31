@@ -39,6 +39,7 @@ layout(matrix(1:4, ncol=2, byrow=TRUE));
 plotBoxplot(ces, type="theta", transform=log2);
 plotBoxplot(ces, type="RLE", arrays=c(2,4:6));
 plotBoxplot(ces, type="NUSE");
+devDone();
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -60,6 +61,7 @@ layout(matrix(1:4, ncol=2, byrow=TRUE));
 plotBoxplotStats(theta, main="theta");
 plotBoxplotStats(rle[c(2,4:6)], main="RLE");
 plotBoxplotStats(nuse, main="NUSE");
+devDone();
 
 
 # Calculates unit-specific RLE and NUSE scores
@@ -73,6 +75,7 @@ layout(matrix(1:4, ncol=2, byrow=TRUE));
 plotDensity(log2(theta), main="theta");
 plotDensity(rle[,c(2,4:6)], main="RLE");
 plotDensity(nuse, main="NUSE");
+devDone();
 
 # ...same, but basic unit annotation data added
 units <- 1000+1:500;
@@ -117,3 +120,4 @@ boxplot(df, ylim=ylim, ylab=ylab, xlab="Array");
 points(res[chrX,], col="blue", pch=19, cex=1.5);
 legend("bottomright", col=c("black", cols[chrX]), pch=19, lwd=2, 
                    legend=c("Autosomal", "ChrX"), horiz=TRUE, bty="n");
+devDone();

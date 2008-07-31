@@ -75,3 +75,4 @@ for (kk in 1:nbrOfArrays(ces)) {
   name <- getNames(ces)[kk];
   plot(a[,kk], m[,kk], pch=".", xlim=Alim, ylim=Mlim, xlab=Alab, ylab=Mlab, main=name);
 }
+devDone();

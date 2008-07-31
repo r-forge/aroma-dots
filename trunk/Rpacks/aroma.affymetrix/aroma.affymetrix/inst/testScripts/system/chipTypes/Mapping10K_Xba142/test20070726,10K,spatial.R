@@ -43,16 +43,18 @@ ylab <- expression(log[2](y/y[R]));
 figPath <- "figures";
 for (array in 1:nbrOfArrays(cs)) {
   df <- getFile(cs, array);
+
   filename <- sprintf("%s,spatial,rowMedians.png", getFullName(df));
   pathname <- filePath(figPath, filename);
-  pngDev(pathname, width=300, height=800);
+  devNew("pngDev", pathname, width=300, height=800);
   plotMargins(reporter, array=array, ylim=c(-1,1)*0.2, ylab=ylab, margins="rows", rotate=90);
-  dev.off();
+  devDone();
+
   filename <- sprintf("%s,spatial,colMedians.png", getFullName(df));
   pathname <- filePath(figPath, filename);
-  pngDev(pathname, width=800, height=300);
+  devNew("pngDev", pathname, width=800, height=300);
   plotMargins(reporter, array=array, ylim=c(-1,1)*0.2, ylab=ylab, margins="columns", rotate=0);
-  dev.off();
+  devDone();
 }
 
 addColorMap(reporter, "log2center,rainbow");
