@@ -34,7 +34,7 @@ names(..pathnames) <- basename(paths);
                  "Mapping250K_Nsp,Sty", "HuEx-1_0-st-v2",
                  "GenomeWideSNP_6", "GenomeWideSNP_5");
 
-#..chipTypes <- ..chipTypes[-(1:6)];
+..chipTypes <- rev(..chipTypes);
 
 if (!is.null(args$chipTypes)) {
   ..chipTypes <- trim(unlist(strsplit(args$chipTypes, split=",")));
@@ -49,7 +49,16 @@ for (..chipType in ..chipTypes) {
     pathname <- ..pathnames[[..chipType]][[kk]];
     if (regexpr("hetero", pathname) != -1)
       next;
-    source(pathname, echo=TRUE);
+
+    tryCatch({
+      source(pathname, echo=TRUE);
+    }, error = function(ex) {
+      cat("************************************************\n");
+      cat("**  ERROR  ERROR  ERROR  ERROR  ERROR  ERROR  **\n");
+      print(ex);
+      cat("************************************************\n");
+    });
+    
     rm(list=setdiff(ls(), 
         c("kk", "..chipType", "..chipTypes", "pathname", "..pathnames")));
     gc();
