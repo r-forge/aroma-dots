@@ -53,7 +53,28 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
   verbose && enter(verbose, "Computing GCRMA probe affinities for ", nbrOfUnits(this), " units");
 
-  # Check cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Looking for MMs (and PMs) in the CDF
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Identify PMs and MMs among the CDF cell indices");
+  isPm <- isPm(this);
+  verbose && str(verbose, isPm);
+  verbose && summary(verbose, isPm);
+  nbrOfPMs <- sum(isPm);
+  verbose && cat(verbose, "MMs are defined as non-PMs");
+  isMm <- !isPm;
+  nbrOfMMs <- sum(isMm);
+  verbose && cat(verbose, "Number of PMs: ", nbrOfPMs);
+  verbose && cat(verbose, "Number of MMs: ", nbrOfMMs);
+  verbose && exit(verbose);
+
+  # Sanity check
+  if (nbrOfMMs == 0) {
+#    throw("Cannot calculate gcRMA probe affinities. The CDF contains no MMs: ", chipTypeFull);
+  }
+
+
+  # Checking cache
   key <- list(method="computeAffinities", class=class(this)[1], chipType=chipType);
   dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
@@ -215,11 +236,6 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 # try to match MM indices from the CDF file with their appropriate PMs (and
 # hence assign the correct affinity).
  
-  verbose && enter(verbose, "Identifying MM probes for these units");
-# get mm indices
-  isMm <- !isPm(this);
-  verbose && exit(verbose);
-
 # assume that MM has same x-coordinate as PM, but y-coordinate larger by 1
   indexPm <- sequenceInfo$y * dimension[1] + sequenceInfo$x + 1
   indexMmPutative <- indexPm + dimension[1];
