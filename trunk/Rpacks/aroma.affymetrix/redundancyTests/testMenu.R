@@ -9,6 +9,9 @@ library(aroma.affymetrix);
 source("textUI.R");
 source("patch.R");
 
+#source("init.R");
+#source("findPngDevice.R")
+
 pathname <- textSelectFile("testScripts", history=TRUE);
 if (!is.null(pathname)) {
   patchPackage("aroma.affymetrix");
