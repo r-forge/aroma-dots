@@ -121,7 +121,8 @@ setMethodS3("as.TrueColorImage", "matrix", function(z, ...) {
 
 
 setMethodS3("as.TrueColorImage", "Image", function(img, ...) {
-  if (colorMode(img) == EBImage::TrueColor)
+  colorMode <- colorMode(img);
+  if (colorMode == EBImage::TrueColor)
     return(img);
 
   img <- colorize(img, ...);
