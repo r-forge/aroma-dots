@@ -39,7 +39,7 @@
   byChipType.AffymetrixTsvFile byChipType.AromaUnitTabularBinaryFile
   byChipType.UflSnpInformation byName.AffymetrixCelSet
   byName.CnagCfhSet byName.DChipDcpSet
-  byPath.AromaMicroarrayDataSetTuple calcRawCnStats
+  byPath.AffymetrixCelSetTuple calcRawCnStats
   calcRawCnStats.CopyNumberChromosomalModel calcRawCnStats.default
   calculateAverages
   calculateAverages.FragmentEquivalentClassNormalization
@@ -293,7 +293,7 @@
   getInputTags getInputTags.AffymetrixChipTypeReporter
   getInputTags.AffymetrixFileSetReporter getInputTags.GenericReporter
   getIntensities getLabel.Model getListOfCdfs
-  getListOfCdfs.AromaMicroarrayDataSetTuple getListOfCdfs.ArrayExplorer
+  getListOfCdfs.AffymetrixCelSetTuple getListOfCdfs.ArrayExplorer
   getListOfCdfs.ChromosomalModel getListOfChipEffects
   getListOfChipEffects.ChromosomalModel getListOfChipEffectSets
   getListOfChipEffectSets.ChromosomalModel getListOfGenomeInformations
