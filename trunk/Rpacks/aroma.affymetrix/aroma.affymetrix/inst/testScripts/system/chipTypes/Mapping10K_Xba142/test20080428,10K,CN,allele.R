@@ -88,3 +88,6 @@ points(x,B[,cc], pch=".", cex=2);
 plot(NA, xlim=xlim, ylim=c(-1,1)*3, xlab=xlab, ylab=Mlab);
 abline(h=0, col="#cccccc");
 points(x,M[,cc], pch=".", cex=2);
+
+devDone();
+

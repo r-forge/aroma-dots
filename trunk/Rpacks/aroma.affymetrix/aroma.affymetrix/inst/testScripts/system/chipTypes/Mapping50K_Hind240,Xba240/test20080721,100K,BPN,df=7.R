@@ -84,3 +84,4 @@ for (what in names(Ms)) {
   }
   rm(M);
 } # for (what ...)
+devDone();

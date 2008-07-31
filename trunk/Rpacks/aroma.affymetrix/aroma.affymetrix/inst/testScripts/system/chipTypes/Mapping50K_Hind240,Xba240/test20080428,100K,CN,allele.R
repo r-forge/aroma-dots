@@ -91,3 +91,5 @@ for (cc in 1:ncol(M)) {
   abline(h=0, col="#cccccc");
   points(x,M[,cc], pch=".");
 }
+
+devDone();

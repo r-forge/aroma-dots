@@ -106,3 +106,4 @@ boxplot(df, ylim=ylim, ylab=ylab, xlab="Array");
 points(res[chrX,], col="blue", pch=19, cex=1.5);
 legend("bottomright", col=c("black", cols[chrX]), pch=19, lwd=2, 
                    legend=c("Autosomal", "ChrX"), horiz=TRUE, bty="n");
+devDone();

@@ -69,7 +69,6 @@ Mlim <- c(-1,1);
 Mlab <- expression(M == log[2](y/y[R]));
 xlim <- c(0, 25);
 
-x11();
 layout(matrix(1:(length(whats)*4), ncol=4, byrow=TRUE));
 par(mar=c(5,4,2,1)+0.1);
 for (what in names(Ms)) {
@@ -85,3 +84,4 @@ for (what in names(Ms)) {
   }
   rm(M);
 } # for (what ...)
+devDone();

@@ -83,6 +83,7 @@ for (kk in seq(length=nbrOfArrays)) {
   smoothScatter(log2(theta[,kk]), freqB[,kk], 
                 xlim=tlim, ylim=Blim, xlab=tlab, ylab=Blab, main=name);
 }
+devDone();
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -117,15 +118,11 @@ diagPanel <- function(x, pch=".", ...) {
 pairs <- matrix(1:nbrOfArrays, nrow=1, ncol=nbrOfArrays);
 colnames(pairs) <- dimnames(data)[[length(dim)]];
 
-
-filename <- sprintf("%s,pairs.png", getFullName(ces));
-pathname <- filePath(figPath, filename);
-
-if (imgFormat == "png")
-  pngDev(pathname, width=1024, height=1024);
-
+if (imgFormat == "png") {
+  filename <- sprintf("%s,pairs.png", getFullName(ces));
+  pathname <- filePath(figPath, filename);
+  devNew("pngDev", pathname, width=1024, height=1024);
+}
 pairs(pairs, upper.panel=upperPanel, lower.panel=lowerPanel, 
              diag.panel=diagPanel, xlim=c(0,1), ylim=c(0,1));
-
-if (imgFormat != "screen")
-  dev.off();
+devDone();
