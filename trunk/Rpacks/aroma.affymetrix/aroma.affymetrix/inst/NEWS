@@ -1,6 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.3.5 [2008-07-31]
+o BUG FIX: computeAffinities() for AffymetrixCdfFile searched for the
+  probe-tab file using the chip type given by the fullname of the CDF
+  and not the basic name.
+
+
 Version: 0.9.3.4 [2008-07-30]
 o Now getGenomeInformation() and getSnpInformation() reports the reason
   for why it thinks the located object is incompatible with the CDF.
