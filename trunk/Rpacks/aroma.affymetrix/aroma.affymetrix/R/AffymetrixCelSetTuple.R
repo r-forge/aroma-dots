@@ -46,7 +46,7 @@ setMethodS3("clearCache", "AffymetrixCelSetTuple", function(this, ...) {
 
 
 
-setMethodS3("byPath", "AromaMicroarrayDataSetTuple", function(static, path, ..., verbose=FALSE) {
+setMethodS3("byPath", "AffymetrixCelSetTuple", function(static, path, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -104,7 +104,7 @@ setMethodS3("byPath", "AromaMicroarrayDataSetTuple", function(static, path, ...,
 
 
 
-setMethodS3("getListOfCdfs", "AromaMicroarrayDataSetTuple", function(this, ...) {
+setMethodS3("getListOfCdfs", "AffymetrixCelSetTuple", function(this, ...) {
   csList <- getListOfSets(this);
   lapply(csList, FUN=getCdf);
 }, private=TRUE)
@@ -115,6 +115,9 @@ setMethodS3("getListOfCdfs", "AromaMicroarrayDataSetTuple", function(this, ...) 
 
 ##############################################################################
 # HISTORY:
+# 2008-07-30
+# o BUG FIX: byPath() and getListOfCdfs() was defined for superclass
+#   AromaMicroarrayDataSetTuple and not this class.
 # 2008-05-16
 # o Extract all platform-generic methods to AromaMicroarrayDataSetTuple,
 #   which is in aroma.core.

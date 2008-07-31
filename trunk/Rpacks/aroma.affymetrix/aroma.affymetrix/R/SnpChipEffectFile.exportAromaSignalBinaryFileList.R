@@ -192,9 +192,16 @@ setMethodS3("getAromaSignalBinarySetList", "SnpChipEffectSet", function(this, wh
 })
 
 
+setMethodS3("getTotalAndFreqBSets", "SnpChipEffectSet", function(this, whats=c("total", "freqB"), ...) {
+  exportAromaSignalBinarySetList(this, whats=whats, ...);
+})
+
+
 
 ############################################################################
 # HISTORY:
+# 2008-07-30
+# o Added getTotalAndFreqBSets() which is a more convenient name.
 # 2008-06-25
 # o Created.
 ############################################################################ 

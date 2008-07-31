@@ -457,6 +457,7 @@ function ChromosomeExplorer() {
     navImage.onmousedown = function() {
       var e = arguments[0] || event;
       mouseDown = true;
+      owner.setGlobalCursor("move");
       owner.updateGlobals();
       mouseX = (e.clientX - navImageOffsetX);
       if (mouseX < navAreaX) {
@@ -470,12 +471,14 @@ function ChromosomeExplorer() {
       document.onmouseup = function() {
         navImage.onmousemove = null;
         mouseDown = false;
+        owner.setGlobalCursor("default");
         return false;
       }
   
       navImage.onmousemove = function() {
         var e = arguments[0] || event;
         mouseX = (e.clientX - navImageOffsetX);
+        owner.setGlobalCursor("default");
         return false;
       }
   
@@ -649,6 +652,8 @@ function ChromosomeExplorer() {
 
 /****************************************************************
  HISTORY:
+ 2008-07-30
+ o Seems to work with Firefox 3.01.  Don't know about Firefox 2.
  2007-09-04
  o Added support for (model) "sets", e.g. 'glad', 'cbs'.
  2007-03-06

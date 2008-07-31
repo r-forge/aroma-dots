@@ -724,3 +724,5 @@
   getUnitsToUpdate.ProbeLevelTransform3 indexOfMissingSequences
   indexOfMissingSequences.AbstractProbeSequenceNormalization
   writeSignals.ProbeLevelTransform3
+  getTotalAndFreqBSets.SnpChipEffectSet
+getTotalAndFreqBSets

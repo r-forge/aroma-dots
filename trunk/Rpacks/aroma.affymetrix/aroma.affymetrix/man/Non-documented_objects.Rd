@@ -1452,6 +1452,8 @@
 \alias{indexOfMissingSequences}
 \alias{indexOfMissingSequences.AbstractProbeSequenceNormalization}
 \alias{writeSignals.ProbeLevelTransform3}
+\alias{getTotalAndFreqBSets.SnpChipEffectSet}
+\alias{getTotalAndFreqBSets}
 
 \description{
   This page contains aliases for all "non-documented" objects that

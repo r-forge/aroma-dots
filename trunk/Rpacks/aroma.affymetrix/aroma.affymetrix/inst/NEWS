@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.3.4 [2008-07-24]
+Version: 0.9.3.4 [2008-07-30]
 o Now getGenomeInformation() and getSnpInformation() reports the reason
   for why it thinks the located object is incompatible with the CDF.
 o MEMORY OPTIMIZATION: Now argument 'ram' is passed down to
