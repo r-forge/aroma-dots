@@ -1,7 +1,12 @@
 Package: aroma.cn
 =================
 
-Version: 0.1.4 [2008-06-12x]
+Version: 0.1.5 [2008-07-30]
+o Fixed some broken cross links in the Rd help.
+  Package pass R CMD check on R v2.7.1 and v2.8.0.
+
+
+Version: 0.1.4 [2008-06-12]
 o Now extractRawCopyNumbers() of AromaTotalCnBinaryFile adds 
   annotation data fields to the returned object, e.g. platform, 
   chipType, and the fullname of the source file.

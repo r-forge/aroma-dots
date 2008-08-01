@@ -6,13 +6,13 @@
 # \description{
 #  @classhierarchy
 #
-#  An AromaSignalBinaryFile is a @see "AromaTabularBinaryFile".
+#  An AromaSignalBinaryFile is a @see "aroma.core::AromaTabularBinaryFile".
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AromaTabularBinaryFile".}
+#   \item{...}{Arguments passed to @see "aroma.core::AromaTabularBinaryFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -22,7 +22,7 @@
 # @author
 #
 # \seealso{
-#   @see "AromaTabularBinaryFile".
+#   @see "aroma.core::AromaTabularBinaryFile".
 # }
 #*/########################################################################### 
 setConstructorS3("AromaSignalBinaryFile", function(...) {
