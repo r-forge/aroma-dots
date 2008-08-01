@@ -13,7 +13,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AromaTabularBinarySet".}
+#   \item{...}{Arguments passed to @see "aroma.core::AromaTabularBinarySet".}
 # }
 #
 # \section{Fields and Methods}{

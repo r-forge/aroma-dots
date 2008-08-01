@@ -6,13 +6,13 @@
 # \description{
 #  @classhierarchy
 #
-#  An AromaFreqBCnBinaryFile is a @see "AromaTabularBinaryFile".
+#  An AromaFreqBCnBinaryFile is a @see "aroma.core::AromaTabularBinaryFile".
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "AromaTabularBinaryFile".}
+#   \item{...}{Arguments passed to @see "aroma.core::AromaTabularBinaryFile".}
 # }
 #
 # \section{Fields and Methods}{
