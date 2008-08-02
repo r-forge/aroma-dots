@@ -1,7 +1,15 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.4 [2008-08-02]
+o Public release.  Package pass R CMD check on R v2.7.1
+  and R v2.8.0 devel on WinXP.  It also pass all redundancy
+  tests without errors.
+
+
 Version: 0.9.3.5 [2008-07-31]
+o UPDATE: Now computeAffinities() for AffymetrixCdfFile gives an error
+  if there are no MMs in the CDF.
 o BUG FIX: computeAffinities() for AffymetrixCdfFile searched for the
   probe-tab file using the chip type given by the fullname of the CDF
   and not the basic name.

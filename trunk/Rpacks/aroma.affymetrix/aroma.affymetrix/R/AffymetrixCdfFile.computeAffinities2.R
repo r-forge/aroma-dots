@@ -1,4 +1,4 @@
-###########################################################################/**
+##########################################################################/**
 # @set "class=AffymetrixCdfFile"
 # @RdocMethod computeAffinities2
 #
@@ -452,8 +452,7 @@ setMethodS3("computeAffinities2", "AffymetrixCdfFile", function(this, paths=NULL
     if (verbose && ii %% 1000 == 0)
       increase(pb);
     # Get a 4x25 matrix with rows A, C, G, and T.
-    charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
-                                                       PACKAGE="gcrma");
+    charMtrx <- .Call("gcrma_getSeq", seqs[ii], PACKAGE="gcrma");
 
     A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
                charMtrx[2, ] %*% affinity.basis.matrix, 
@@ -507,7 +506,7 @@ setMethodS3("computeAffinities2", "AffymetrixCdfFile", function(this, paths=NULL
 ############################################################################
 # HISTORY:
 # 2008-07-30
-# o UPDATE: Now computeAffinities() for AffymetrixCdfFile only computes
+# o UPDATE: Now computeAffinities2() for AffymetrixCdfFile only computes
 #   affinities for (PM,MM) pairs (according to the CDF) for which there
 #   exists a probe sequence for the PM in the probe-tab file.
 # o BUG FIX: computeAffinities() for AffymetrixCdfFile searched for the

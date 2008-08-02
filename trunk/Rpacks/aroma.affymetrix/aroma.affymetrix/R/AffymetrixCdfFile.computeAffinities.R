@@ -48,7 +48,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
     on.exit(popState(verbose));
   }
 
-  chipType <- getChipType(this);
+  chipTypeFull <- getChipType(this, fullname=TRUE);
 
 
   verbose && enter(verbose, "Computing GCRMA probe affinities for ", nbrOfUnits(this), " units");
@@ -75,8 +75,8 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 
   # Checking cache
-  key <- list(method="computeAffinities", class=class(this)[1], chipType=chipType);
-  dirs <- c("aroma.affymetrix", chipType);
+  key <- list(method="computeAffinities", class=class(this)[1], chipTypeFull=chipTypeFull);
+  dirs <- c("aroma.affymetrix", chipTypeFull);
   if (!force) {
     res <- loadCache(key=key, dirs=dirs);
     if (!is.null(res))
@@ -86,6 +86,9 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Locate find probe sequence file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # The probe-sequence does not depend on the CDF but only the chip type,
+  # which is why we ignore any tags for the CDF.
+  chipType <- getChipType(this, fullname=FALSE);
   psFile <- AffymetrixProbeTabFile$findByChipType(chipType=chipType, 
                                          paths=paths, verbose=less(verbose));
   if (is.null(psFile))
@@ -330,6 +333,12 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 ############################################################################
 # HISTORY:
+# 2007-07-30
+# o UPDATE: Now computeAffinities() for AffymetrixCdfFile gives an error
+#   if there are no MMs in the CDF.
+# o BUG FIX: computeAffinities() for AffymetrixCdfFile searched for the
+#   probe-tab file using the chip type given by the fullname of the CDF
+#   and not the basic name.
 # 2007-09-06
 # o Made computeAffinities() more memory efficient since it is using the
 #   new getCellIndices(cdf, useNames=FALSE, unlist=TRUE).
