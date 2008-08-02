@@ -1454,6 +1454,7 @@
 \alias{writeSignals.ProbeLevelTransform3}
 \alias{getTotalAndFreqBSets.SnpChipEffectSet}
 \alias{getTotalAndFreqBSets}
+\alias{computeAffinities2}
 
 \description{
   This page contains aliases for all "non-documented" objects that

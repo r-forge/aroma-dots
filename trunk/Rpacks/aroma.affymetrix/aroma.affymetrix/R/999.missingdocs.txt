@@ -726,3 +726,4 @@
   writeSignals.ProbeLevelTransform3
   getTotalAndFreqBSets.SnpChipEffectSet
 getTotalAndFreqBSets
+computeAffinities2
