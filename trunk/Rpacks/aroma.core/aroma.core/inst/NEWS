@@ -1,6 +1,11 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.4 [2008-08-02]
+o Public release.  Package pass R CMD check on R v2.7.1
+  and R v2.8.0 devel on WinXP.
+
+
 Version: 0.9.3.4 [2008-07-24]
 o SPEED UP: Added patch for base::serialize() on Windows, 
   which in turn will speed up digest::digest() and all
