@@ -280,17 +280,28 @@ setMethodS3("readNeighborSequenceMatrix", "AromaCellSequenceFile", function(this
 
 
 
-setMethodS3("readSequences", "AromaCellSequenceFile", function(this, ...) {
+setMethodS3("readSequences", "AromaCellSequenceFile", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
+
+  verbose && enter(verbose, "Reading sequences as strings");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Read raw sequence matrix
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Reading raw sequence matrix");
   res <- readSequenceMatrix(this, ..., what="raw");
   map <- attr(res, "map");
+  verbose && str(verbose, res);
+  verbose && exit(verbose);
 
   nbrOfCells <- nrow(res);
   nbrOfPositions <- ncol(res);
@@ -299,6 +310,7 @@ setMethodS3("readSequences", "AromaCellSequenceFile", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup and allocation
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Allocating sequence strings");
   # Identify non-missing sequences
   idxs <- (res[,1] != as.raw(0));
   idxs <- whichVector(idxs, na.rm=FALSE);
@@ -307,38 +319,61 @@ setMethodS3("readSequences", "AromaCellSequenceFile", function(this, ...) {
   res <- res[idxs,,drop=FALSE];
 
   # Allocate return vector with missing values set
-  seqs <- rep(NA, times=nbrOfCells);
+  naValue <- as.character(NA);
+  seqs <- rep(naValue, times=nbrOfCells);
   seqs[idxs] <- "";  # Redo non-missing
+  verbose && str(verbose, seqs);
+  verbose && exit(verbose);
 
   # Nothing more to do?
   if (nrow(res) == 0) {
+    verbose && cat(verbose, "Nothing more to do.");
+    verbose && exit(verbose);
     return(seqs);
   }
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Remap
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  values <- names(map);
-  values <- paste(values, collapse="");
+  verbose && enter(verbose, "Remapping raw values to character values");
+  verbose && cat(verbose, "(raw, character) map:");
+  verbose && print(verbose, map);
+  values <- paste(names(map)[-1], collapse="");
   values <- charToRaw(values);
+  values <- c(as.raw(0), values);
+
+  verbose && cat(verbose, "Raw (from, to) map:");
+  names(values) <- names(map);
+  verbose && print(verbose, values);
 
   for (kk in seq(along=map)) {
+    verbose && enter(verbose, sprintf("Value #%d of %d", kk, length(map)));
+    verbose && cat(verbose, "Translation: 0x", map[kk], " -> 0x", values[kk]);
     idxsT <- (res == map[kk]);
     idxsT <- whichVector(idxsT, na.rm=FALSE);
+    verbose && cat(verbose, "Number of occurances: ", length(idxsT));
     res[idxsT] <- values[kk];
+    verbose && exit(verbose);
   }
   rm(idxsT);
+  verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Build sequence strings
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Building sequence strings");
   while (ncol(res) > 0) {
     bases <- rawToChar(res[,1], multiple=TRUE);
     seqs[idxs] <- paste(seqs[idxs], bases, sep="");
     res <- res[,-1,drop=FALSE];
   }
+  verbose && exit(verbose);
+
+  # Garbage collect
   gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
 
   seqs;
 })
@@ -846,6 +881,8 @@ setMethodS3("allocate", "AromaCellSequenceFile", function(static, ..., nbrOfCell
 
 ############################################################################
 # HISTORY:
+# 2008-08-04
+# o BUG FIX: readSequences() translated raw values to incorrect nucleotides.
 # 2008-07-20
 # o Now countBases() returns "raw" counts, if argument 'mode="raw"'.
 # 2008-07-10
