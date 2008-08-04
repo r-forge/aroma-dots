@@ -1,6 +1,12 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.4.1 [2008-08-04]
+o BUG FIX: readSequences() for AromaCellSequenceFile translated
+  raw values to incorrect nucleotides.
+o Added redundancy tests to aroma.core.
+
+
 Version: 0.9.4 [2008-08-02]
 o Public release.  Package pass R CMD check on R v2.7.1
   and R v2.8.0 devel on WinXP.
