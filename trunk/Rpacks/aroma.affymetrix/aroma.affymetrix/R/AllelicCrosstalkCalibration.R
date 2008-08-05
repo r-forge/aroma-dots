@@ -69,7 +69,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -143,12 +143,16 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
     }
   }
 
+  # Argument 'flavor':
+  flavor <- match.arg(flavor);
+  
 
   extend(ProbeLevelTransform(dataSet=dataSet, ...), "AllelicCrosstalkCalibration",
     .rescaleBy = rescaleBy,
     .targetAvg = targetAvg,
     .subsetToAvg = subsetToAvg,
     .extraTags = extraTags,
+    .flavor = flavor,
     .alpha = alpha,
     .q = q,
     .Q = Q
@@ -258,6 +262,7 @@ setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expan
     rescaleBy = this$.rescaleBy,
     targetAvg = this$.targetAvg,
     subsetToAvg = this$.subsetToAvg,
+    flavor = this$.flavor,
     alpha = this$.alpha,
     q = this$.q,
     Q = this$.Q
@@ -763,17 +768,19 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
     
         verbose && enter(verbose, "Fitting");
         y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
-
         verboseL <- (verbose && isVisible(verbose, -50));
-        fits[[name]] <- fitGenotypeCone(y, alpha=params$alpha, 
-                                        q=params$q, Q=params$Q, 
-                                        verbose=verboseL);
-        verbose && print(verbose, fits[[name]], level=-5);
+
+        verbose && cat(verbose, "Flavor: ", params$flavor);
+        fit <- fitGenotypeCone(y, flavor=params$flavor,
+                          alpha=params$alpha, q=params$q, Q=params$Q, 
+                                                     verbose=verboseL);
+        verbose && print(verbose, fit, level=-5);
+        fits[[name]] <- fit;
         verbose && exit(verbose);
 
-        callHooks(sprintf("%s.onFitOne", hookName), df=df, y=y, fit=fits[[name]], ...);
+        callHooks(sprintf("%s.onFitOne", hookName), df=df, y=y, fit=fit, ...);
 
-        rm(y, idx); # Not needed anymore
+        rm(y, idx, fit); # Not needed anymore
         gc <- gc();
 
         verbose && exit(verbose);
@@ -1099,6 +1106,10 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-08-04
+# o Added support to fit the genotype "cone" using the 'expectile' package
+#   instead of the 'sfit' package. This is controlled by the 'flavor' 
+#   argument of the constructor.
 # 2008-07-14
 # o Now explicitly using matrix(..., byrow=FALSE).
 # 2008-05-30

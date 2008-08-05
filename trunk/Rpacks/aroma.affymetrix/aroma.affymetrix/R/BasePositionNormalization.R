@@ -230,7 +230,7 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbo
 
     verbose && enter(verbose, "Log2 transforming signals");
     y <- log2(y);
-    verbose && cat(verbose, "Target log2 probe signals:");
+    verbose && cat(verbose, "Log2 probe signals:");
     verbose && str(verbose, y);
     verbose && exit(verbose);
 
