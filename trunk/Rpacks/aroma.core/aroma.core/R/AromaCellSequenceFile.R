@@ -719,7 +719,7 @@ setMethodS3("countBases", "AromaCellSequenceFile", function(this, bases=c("A", "
   counts;
 })
 
-setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=NULL, mode=c("integer", "raw"), ..., force=FALSE, verbose=FALSE) {
+setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=NULL, positions=seq(length=getProbeLength(this)), mode=c("integer", "raw"), ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -729,6 +729,9 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
     cells <- Arguments$getIndices(cells, range=c(1, nbrOfCells));
     nbrOfCells <- length(cells);
   }
+
+  # Argument 'positions':
+  positions <- Arguments$getIndices(positions, range=c(1, getProbeLength(this)));
 
   # Argument 'mode':
   mode <- match.arg(mode);
@@ -751,7 +754,7 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
   chipType <- getChipType(this);
   key <- list(method="countBases", class=class(this)[1], 
               chipType=chipType, fullname=getFullName(this), 
-              cells=cells, mode=mode);
+              cells=cells, positions=positions, mode=mode);
   dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
     counts <- loadCache(key=key, dirs=dirs);
@@ -788,9 +791,9 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
   counts <- matrix(zeroValue, nrow=nbrOfCells, ncol=5);
 
   map <- NULL;
-  nbrOfPositions <- getProbeLength(this);
-  for (pp in seq(length=nbrOfPositions)) {
-    verbose && enter(verbose, sprintf("Position #%d of %d", pp, nbrOfPositions));
+  for (kk in seq(along=positions)) {
+    pp <- positions[kk];
+    verbose && enter(verbose, sprintf("Position #%d (%d) of %d", kk, pp, length(positions)));
     seqs <- readSequenceMatrix(this, cells=cells, positions=pp, what="raw", drop=TRUE, verbose=less(verbose, 20));
 
     if (is.null(map)) {
@@ -822,7 +825,7 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
     verbose && exit(verbose);
     
     verbose && exit(verbose);
-  } # for (pp ...)
+  } # for (kk ...)
 
   # Reorder?
   if (reorder) {
@@ -882,6 +885,7 @@ setMethodS3("allocate", "AromaCellSequenceFile", function(static, ..., nbrOfCell
 ############################################################################
 # HISTORY:
 # 2008-08-04
+# o Added support for argument 'positions' to countBases().
 # o BUG FIX: readSequences() translated raw values to incorrect nucleotides.
 # 2008-07-20
 # o Now countBases() returns "raw" counts, if argument 'mode="raw"'.
