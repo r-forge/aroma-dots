@@ -16,6 +16,10 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform3".}
+#   \item{target}{A @character string specifying type of "target" used.
+#     If \code{"zero"}, all arrays are normalized to have no effects.
+#     If @NULL, all arrays a normalized to have the same effect as
+#     the average array has.}
 # }
 #
 # \section{Fields and Methods}{
@@ -29,9 +33,34 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AbstractProbeSequenceNormalization", function(...) {
-  extend(ProbeLevelTransform3(...), "AbstractProbeSequenceNormalization");
+setConstructorS3("AbstractProbeSequenceNormalization", function(..., target=NULL) {
+  # Argument 'target':
+  if (is.null(target)) {
+  } else {
+    target <- Arguments$getCharacter(target);
+    knowTargets <- c("zero");
+    if (!target %in% knowTargets) {
+      throw("The value of argument 'target' is unknown: ", target);
+    }
+  }
+
+  extend(ProbeLevelTransform3(...), "AbstractProbeSequenceNormalization",
+    .target = target
+  );
 }, abstract=TRUE)
+
+
+
+setMethodS3("getParameters", "AbstractProbeSequenceNormalization", function(this, ...) {
+  # Get parameters from super class
+  params <- NextMethod(generic="getParameters", object=this, ...);
+
+  params <- c(params, list(
+    target = this$.target
+  ));
+
+  params;
+}, private=TRUE)
 
 
 
@@ -168,9 +197,11 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
   # Get subset of cells to update
   cellsToUpdate <- params$cellsToUpdate;
 
+  # Get target
+  target <- params$target;
+
   # Get shift
   shift <- params$shift;
-
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -221,8 +252,8 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Phase 0: Fit probe-sequence effect for target?
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      if (is.null(muT)) {
-        verbose && enter(verbose, "Modelling effects for target array");
+      if (is.null(target) && is.null(muT)) {
+        verbose && enter(verbose, "Modelling effects of target array");
 
         modelFitT <- list(
           paramsShort=paramsShort
@@ -329,8 +360,13 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       verbose && exit(verbose);
 
 
-      verbose && enter(verbose, "Discrepancy scale factors");
-      rho <- (muT-mu);
+      verbose && enter(verbose, "Discrepancy scale factors towards target");
+      verbose && cat(verbose, "Target: ", target);
+      if (is.null(target)) {
+        rho <- (muT-mu);
+      } else if (target == "zero") {
+        rho <- -mu;
+      }
       rm(mu);
       summary(verbose, rho);
       rho <- 2^rho;
@@ -403,6 +439,9 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
 ############################################################################
 # HISTORY:
+# 2008-08-05
+# o Added support for specifying the type of target effects for any
+#   AbstractProbeSequenceNormalization method.
 # 2008-07-28
 # o Now the model fit for the target is also saved to file.
 # 2008-07-21
