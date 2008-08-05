@@ -727,3 +727,4 @@
   getTotalAndFreqBSets.SnpChipEffectSet
 getTotalAndFreqBSets
 computeAffinities2
+getParameters.AbstractProbeSequenceNormalization

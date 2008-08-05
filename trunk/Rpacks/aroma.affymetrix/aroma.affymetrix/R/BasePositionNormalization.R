@@ -242,7 +242,7 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbo
     X$X <- X$X[keep,,drop=FALSE];
     rm(keep);
     n2 <- length(y);
-    verbose && printf(verbose, "Removed %d (%.4f%%) non-finite data points out of %d: ", n-n2, 100*(n-n2)/n, n);
+    verbose && printf(verbose, "Removed %d (%.4f%%) non-finite data points out of %d\n", n-n2, 100*(n-n2)/n, n);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Fitting base-count model");
@@ -400,8 +400,6 @@ setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, ..., 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting algorithm parameters");
   params <- getParameters(this, expand=TRUE, verbose=less(verbose, 5));
-  gc <- gc();
-  verbose && print(verbose, gc);
 
   units <- params$unitsToUpdate;
   verbose && cat(verbose, "Units:");
