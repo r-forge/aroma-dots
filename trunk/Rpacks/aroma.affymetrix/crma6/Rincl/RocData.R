@@ -694,7 +694,7 @@ setMethodS3("plotTpRateDensity", "RocData", function(this, fpRate=0.01, rows=NUL
   d <- density(tpRates, from=0, to=1);
 
   if (add) {
-    lines(d, lwd=lwd, col=col);
+    lines(d, lwd=lwd, col=col, ...);
   } else {
     tpLab <- "TP rate";
     ylab <- "Density (integrates to one)";
