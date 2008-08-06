@@ -22,6 +22,10 @@ updateGraphics <- function(sets, ..., verbose=FALSE) {
     (regexpr("+", name, fixed=TRUE) != -1);
   }
 
+  hasHash <- function(name, ...) {
+    (regexpr("#", name, fixed=TRUE) != -1);
+  }
+
   for (kk in seq(along=sets)) {
     key <- names(sets)[kk];
     set <- sets[[kk]];
@@ -29,17 +33,24 @@ updateGraphics <- function(sets, ..., verbose=FALSE) {
     verbose && enter(verbose, sprintf("%d %s\n", kk, name));
   
     # Default colors
-    col <- 0;
+    col <- "black";
     lty <- 3;
 
     if (hasPrefix(name, "CRMA")) {
       col <- colors["CRMA"];
-      if (hasPlus(name) & !hasAsterisk(name)) {
+      if (hasPlus(name) & hasAsterisk(name) & hasHash(name)) {
+        col <- "blue";
+        lty <- 4;
+      } else if (hasPlus(name) & !hasAsterisk(name)) {
         lty <- 1;
       } else if (hasPlus(name) & hasAsterisk(name)) {
+        col <- "green";
         lty <- 2;
-      } else {
+      } else if (hasHash(name) & !hasAsterisk(name)) {
         lty <- 3;
+      } else {
+#        col <- colors["APT"];
+        lty <- 5;
       }
     } else if (hasPrefix(name, "dChip")) {
       col <- colors["dChip"];

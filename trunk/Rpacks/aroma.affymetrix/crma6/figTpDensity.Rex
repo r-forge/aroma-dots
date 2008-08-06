@@ -1,6 +1,6 @@
 source("init.R");
 
-imgFormat <- c("x11", "eps", "png")[1];
+imgFormat <- c("x11", "eps", "png")[3];
 
 fpRate <- 2 * 1/2*1/29;
 
@@ -8,8 +8,9 @@ fpRate <- 2 * 1/2*1/29;
 # Fit ROCs, if missing.  Plot as we go.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 subset <- NULL;
-subset <- 1:5000;
-for (unitType in knownUnitTypes[2]) {
+J <- nrow(getData(sets[[1]]$rocData, raw=TRUE));
+subset <- sample(J, size=10000);
+for (unitType in knownUnitTypes[1]) {
   verbose && enter(verbose, "Estimating TP rates for each unit");
   verbose && cat(verbose, "Unit type: ", unitType);
 
@@ -54,7 +55,8 @@ for (unitType in knownUnitTypes[2]) {
 
     sets <- updateGraphics(sets);
     idxs <- whichVector(isRawDataSet(sets));
-    for (kk in seq(along=idxs)) {
+    isFirst <- TRUE;
+    for (kk in rev(seq(along=idxs))) {
       idx <- idxs[kk];
       set <- sets[[idx]];
       verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", kk, set$name, length(idxs)));
@@ -63,15 +65,16 @@ for (unitType in knownUnitTypes[2]) {
       sets[[idx]] <- set;
       rocData <- set$rocData;
 
-      plotTpRateDensity(rocData, fpRate=fpRate, rows=rows, ylim=ylim, col=set$col, lwd=3, annotate=FALSE, add=(kk > 1), verbose=verbose);
+      plotTpRateDensity(rocData, fpRate=fpRate, rows=rows, ylim=ylim, col=set$col, lty=set$lty, lwd=3, annotate=FALSE, add=!isFirst, verbose=verbose);
 
-      if (kk == 1) {
+      if (isFirst) {
         stext(side=3, pos=0, cex=1, sprintf("FP rate: %.2f%%", 100*fpRate));
         n <- length(rows);
         if (is.null(rows))
           n <- dim(rocData)[1];
         stext(side=3, pos=1, cex=1, sprintf("%s units (n=%d)", toupper(unitType), n));
       }
+      isFirst <- FALSE;
       verbose && exit(verbose);
     }
 

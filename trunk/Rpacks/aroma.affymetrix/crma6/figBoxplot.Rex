@@ -40,7 +40,8 @@ for (kk in seq(along=sets)) {
     par(mar=c(5,4,1,1)+0.1);
     plot(NA, xlim=xlim, ylim=Mlim, las=2, xlab="", ylab=Mlab, axes=FALSE);
     abline(h=0, lty=3, col="#999999");
-    boxplot(M, col=n23[colnames(M)], outline=FALSE, las=2, add=TRUE);
+    cols <- colors[c(5,9)];
+    boxplot(M, col=cols[n23[colnames(M)]], outline=FALSE, las=2, add=TRUE);
     stext(side=3, pos=0, cex=0.7, set$name);
     rm(M);
     gc <- gc();

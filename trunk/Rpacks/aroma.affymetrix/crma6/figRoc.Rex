@@ -1,6 +1,6 @@
 source("init.R");
 
-imgFormat <- c("x11", "eps", "png")[3];
+imgFormat <- c("x11", "eps", "png")[1];
 
 hs <- NULL;
 #hs <- 2:4;
@@ -10,7 +10,7 @@ hs <- NULL;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ds <- c(0.10, 0.15, 0.25, 0.5, 1);
 if (imgFormat == "x11") {
-  ds <- ds[3];
+  ds <- ds[2];
 }
 for (d in ds) {
   if (0 < d && d <= 0.25) {
@@ -20,7 +20,7 @@ for (d in ds) {
   } else {
     by <- 0.1;
   }
-  for (unitType in knownUnitTypes[3]) {
+  for (unitType in knownUnitTypes[1]) {
     verbose && enter(verbose, "Plotting ROC");
     verbose && cat(verbose, "Unit type: ", unitType);
     sets <- addSubsetDataSets(sets, subset=unitType, verbose=verbose);
@@ -48,11 +48,11 @@ for (d in ds) {
     if (!devIsOpen(imgName)) {
       width <- imgScales[imgFormat] * 1;
       if (imgFormat == "x11") {
-        devOpen(imgFormat, width=width, height=width, name=imgName);
+        devNew(imgFormat, width=width, height=width, label=imgName);
   	    } else {
          mkdirs(figPathT);
         imgPathname <- filePath(figPathT, sprintf("%s.%s", imgName, imgFormat));
-        devOpen(imgFormat, imgPathname, width=width, height=width, name=imgName);
+        devNew(imgFormat, imgPathname, width=width, height=width, label=imgName);
       }
       
   

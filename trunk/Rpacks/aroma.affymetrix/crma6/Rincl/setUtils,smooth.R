@@ -60,6 +60,8 @@ addSmoothDataSets <- function(sets, hs=2:4, subset="all", ..., verbose=FALSE) {
       hStr <- sprintf("h=%.3f", h);
       verbose && enter(verbose, hStr);
       key <- sprintf("%s,%s", set$name, hStr);
+      print(key);
+      print(names(sets));
       if (key %in% names(sets)) {
         verbose && exit(verbose);
         next;
