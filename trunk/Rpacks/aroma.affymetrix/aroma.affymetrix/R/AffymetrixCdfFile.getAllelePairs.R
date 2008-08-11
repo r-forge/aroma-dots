@@ -116,7 +116,7 @@ setMethodS3("getSnpNames", "AffymetrixCdfFile", function(this, ...) {
 #*/###########################################################################
 setMethodS3("getCnNames", "AffymetrixCdfFile", function(this, ...) {
   types <- getUnitTypes(this, ...);
-  units <- (types == 5 | types == 8);
+  units <- (types == 5);
   unitNames <- getUnitNames(this, units=units, ...);
   unitNames;
 }, private=TRUE)

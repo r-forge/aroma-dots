@@ -42,7 +42,7 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
 setMethodS3("clearCache", "AffymetrixCdfFile", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".header", ".unitNames", ".unitSizes", ".cellIndices", ".isPm")) {
+  for (ff in c(".header", ".unitNames", ".unitTypes", ".unitSizes", ".cellIndices", ".isPm")) {
     this[[ff]] <- NULL;
   }
 
@@ -459,6 +459,28 @@ setMethodS3("hasUnitTypes", "AffymetrixCdfFile", function(this, types, ..., verb
 #*/###########################################################################
 setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, .cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local function
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  asUnitTypeIndex <- function(unitType) {
+    # From the Fusion SDK documentation:
+    # ASCII:
+    #   0 - Unknown, 1 - CustomSeq, 2 - Genotyping, 3 - Expression, 
+    #   7 - Tag/GenFlex, 8 - Copy Number
+    # XDA/binary:
+    #   1 - Expression, 2 - Genotyping, 3 - CustomSeq, 4 - Tag, 
+    #   5 - Copy Number
+
+    map <- c("unknown"=0, "expression"=1, "genotyping"=2, "resequencing"=3, "tag"=4, "copynumber"=5, "genotypingcontrol"=6, "expressioncontrol"=7);
+    storage.mode(map) <- "integer";
+
+    res <- match(unitType, names(map)) - as.integer(1);
+    attr(res, "typeMap") <- map;
+
+    res;
+  } # asUnitTypeIndex()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
@@ -475,7 +497,7 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
     if (force || is.null(types)) {
       # Check in file cache
       chipType <- getChipType(this);
-      key <- list(method="getUnitTypes", class=class(this)[1], chipType=chipType);
+      key <- list(method="getUnitTypes", class=class(this)[1], version="2008-08-09", chipType=chipType);
       dirs <- c("aroma.affymetrix", chipType);
       if (force) {
         types <- NULL;
@@ -485,11 +507,20 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
 
       if (is.null(types)) {
         verbose && enter(verbose, "Reading types for *all* units");
-        types <- readCdfUnits(getPathname(this), readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
+
+## ISSUE: readCdfUnits() does not translate the unit types, which means
+## that the unit type integer different for ASCII and binary CDFs.
+## WORKAROUND: Use readCdf() which return unit type strings.
+## types <- readCdfUnits(getPathname(this), readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
+
+        types <- readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);
         types <- unlist(types, use.names=FALSE);
         if (length(types) != nbrOfUnits(this)) {
           throw("Internal error: Number of read unit types does not match the number of units in the CDF: ", length(types), " != ", nbrOfUnits(this));
         }
+
+        # Translate
+        types <- asUnitTypeIndex(types);
 
         saveCache(types, key=key, dirs=dirs);
 
@@ -502,24 +533,14 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
     if (!is.null(units))
       types <- types[units];
   } else {
-    types <- readCdfUnits(getPathname(this), units=units, readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
+## ISSUE: types <- readCdfUnits(getPathname(this), units=units, readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
+    types <- readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);
     types <- unlist(types, use.names=FALSE);
+    types <- asUnitTypeIndex(types);
   }
 
-  # From the Fusion SDK documentation:
-  # 0 - Unknown, 1 - CustomSeq, 2 - Genotyping, 3 - Expression, 
-  # 7 - Tag/GenFlex, 8 - Copy Number
-  typeMap <- c("Unknown"=0, "CustomSeq"=1, "Genotyping"=2, "Expression"=3, "Tag/GenFlex"=7, "CopyNumber"=8);
-  storage.mode(typeMap) <- "integer";
-
-  # Identify unknown/new unit types
-  uTypes <- sort(unique(types));
-  unknown <- uTypes[(!uTypes %in% typeMap)];
-  if (length(unknown) > 0) {
-    names(unknown) <- sprintf("Type%d", unknown);
-    typeMap <- c(typeMap, unknown);
-  }
-
+  typeMap <- attr(types, "typeMap");
+  types <- as.integer(types);
   attr(types, "types") <- typeMap;
 
   types;
@@ -1565,6 +1586,10 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-08-09
+# o BUG FIX: getUnitTypes() of AffymetrixCdfFile would not return the 
+#   correct integer for binary CDFs.  Now it uses readCdf() instead of
+#   readCdfUnits() of affxparser.
 # 2008-07-26
 # o Now the integer vector returned by getUnitTypes() also has an attribute
 #   'types' explain what the different values are.

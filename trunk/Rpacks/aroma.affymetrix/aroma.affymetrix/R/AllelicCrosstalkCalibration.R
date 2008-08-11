@@ -97,8 +97,8 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
         rescaleBy <- "all";
       } else {
         types <- getUnitTypes(cdf);
-        # 5 == Copy Number (but according to Fusion SDK docs 8 == Copy Number)
-        hasCns <- hasUnitTypes(cdf, types=c(5,8));
+        # 5 == Copy Number
+        hasCns <- hasUnitTypes(cdf, types=5);
         rm(types);
 
         if (hasCns) {
@@ -708,8 +708,8 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   cdf <- getCdf(ds);
   nbrOfArrays <- nbrOfArrays(ds);
   verbose && enter(verbose, "Calibrating ", nbrOfArrays, " arrays");
-  verbose && enter(verbose, "Path: ", outputPath);
-  dataFiles <- list();
+  verbose && cat(verbose, "Path: ", outputPath);
+
   for (kk in seq_len(nbrOfArrays)) {
     df <- getFile(ds, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
@@ -920,7 +920,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       verbose && exit(verbose);
     }
 
-    # Retrieving calibrated data file
+    # Assert validity of the calibrated data file
     dfC <- newInstance(df, pathname);
 
     # CDF inheritance
@@ -929,7 +929,6 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
 #    callHooks(sprintf("%s.onExit", hookName), df=df, dfC=dfC, ...);
 
     # Record
-    dataFiles[[kk]] <- dfC;
 
     rm(df, dfC);
 
@@ -938,7 +937,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   verbose && exit(verbose);
 
   # Garbage collect
-  rm(dataFiles, ds, setsOfProbes);
+  rm(ds, setsOfProbes);
   gc <- gc();
   verbose && print(verbose, gc);
 
