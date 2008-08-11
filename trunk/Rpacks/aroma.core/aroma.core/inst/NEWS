@@ -1,12 +1,13 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.4.1 [2008-08-04]
+Version: 0.9.4.1 [2008-08-11]
 o Added support for argument 'positions' to countBases() for
   AromaCellSequenceFile.
+o ALPHA: Added fitMultiDimensionalCone().
 o BUG FIX: readSequences() for AromaCellSequenceFile translated
   raw values to incorrect nucleotides.
-o Added redundancy tests to aroma.core.
+o TESTING: Added redundancy tests to aroma.core.
 
 
 Version: 0.9.4 [2008-08-02]
