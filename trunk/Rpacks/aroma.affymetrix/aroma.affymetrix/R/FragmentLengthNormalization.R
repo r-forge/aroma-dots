@@ -257,7 +257,7 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
 ## OLD:
 ## units <- indexOf(cdf, "^(SNP|CN)");
   types <- getUnitTypes(cdf, verbose=less(verbose,1));
-  units <- which(types == 2 | types == 5 | types == 8);
+  units <- which(types == 2 | types == 5);
   rm(types);
   verbose && cat(verbose, "units:");
   verbose && str(verbose, units);
@@ -588,7 +588,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 ## OLD:
 ##  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
   types <- getUnitTypes(cdf, verbose=less(verbose,1));
-  subsetToUpdate <- which(types == 2 | types == 5 | types == 8);
+  subsetToUpdate <- which(types == 2 | types == 5);
   rm(types);
   verbose && cat(verbose, "subsetToUpdate:");
   verbose && str(verbose, subsetToUpdate);

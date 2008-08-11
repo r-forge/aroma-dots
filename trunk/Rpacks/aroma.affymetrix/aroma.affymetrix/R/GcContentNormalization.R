@@ -113,7 +113,7 @@ setMethodS3("getSubsetToFit", "GcContentNormalization", function(this, force=FAL
   cdf <- getCdf(this);
 #  units <- indexOf(cdf, "SNP_");
   types <- getUnitTypes(cdf, ...);
-  units <- which(types == 2 | types == 5 | types == 8);
+  units <- which(types == 2 | types == 5);
 
   # Keep only those for which we have GC contents information
   tsv <- AffymetrixTsvFile$byChipType(getChipType(cdf, fullname=FALSE));
@@ -295,7 +295,7 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
   cdf <- getCdf(ces);
 #  subsetToUpdate <- indexOf(cdf, "SNP_");
   types <- getUnitTypes(cdf, ...);
-  subsetToUpdate <- which(types == 2 | types == 5 | types == 8);
+  subsetToUpdate <- which(types == 2 | types == 5);
 
   verbose && enter(verbose, "Retrieving Affymetrix TSV file");
   tsv <- AffymetrixTsvFile$byChipType(getChipType(cdf, fullname=FALSE));

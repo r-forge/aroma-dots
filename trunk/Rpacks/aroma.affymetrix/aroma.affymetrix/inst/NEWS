@@ -1,11 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.1 [2008-08-05]
+Version: 0.9.4.1 [2008-08-11]
 o Added support for specifying the type of target effects for any
   AbstractProbeSequenceNormalization method.
-o Added argument 'flavor' to AllelicCrosstalkCalibration. However,
+o ALPHA: Added argument 'flavor' to AllelicCrosstalkCalibration. However,
   fitGenotypeCone() of aroma.core has to be updated to recognize it.
+o ALPHA: Added ReseqCrosstalkCalibration.
 
 
 Version: 0.9.4 [2008-08-02]

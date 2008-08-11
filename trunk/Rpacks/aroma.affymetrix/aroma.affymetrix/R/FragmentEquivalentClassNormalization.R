@@ -250,7 +250,7 @@ setMethodS3("getSubsetToFit", "FragmentEquivalentClassNormalization", function(t
   cdf <- getCdf(this);
 ## OLD:  units <- indexOf(cdf, "^(SNP|CN)");
   types <- getUnitTypes(cdf);
-  units <- which(types == 2 | types == 5 | types == 8);
+  units <- which(types == 2 | types == 5);
   rm(types);
   verbose && str(verbose, units);
   verbose && exit(verbose);
@@ -821,7 +821,7 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
   cdf <- getCdf(ces);
 # OLD:  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
   types <- getUnitTypes(cdf);
-  subsetToUpdate <- which(types == 2 | types == 5 | types == 8);
+  subsetToUpdate <- which(types == 2 | types == 5);
   rm(types);
 
   verbose && enter(verbose, "Retrieving fragment class annotations");
