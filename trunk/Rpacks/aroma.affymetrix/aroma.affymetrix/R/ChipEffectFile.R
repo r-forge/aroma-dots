@@ -744,7 +744,7 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
   names <- colnames(data);  
   namesStr <- paste(names, collapse=", ");
   if (!"cell" %in% names)
-    throw("Argument 'data' must contain a column 'cell'": namesStr);
+    throw("Argument 'data' must contain a column 'cell': ", namesStr);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
