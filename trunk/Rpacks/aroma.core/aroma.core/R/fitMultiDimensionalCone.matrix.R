@@ -13,8 +13,6 @@
 # \arguments{
 #   \item{y}{A @numeric NxK @matrix with one column for each dimension and
 #      where N is the number of data points.}
-#   \item{flavor}{A @character string specifying what model/algorithm 
-#      should be used to fit the genotype cone.}
 #   \item{alpha}{A @numeric @vector of decreasing values in (0,1).
 #      This parameter "determines how far we are willing to press the
 #      boundary of the [genotype cone]".  Lowering \code{alpha} expand
@@ -24,6 +22,8 @@
 #      below (above) will be assigned zero weight in the fitting of
 #      the parameters.}
 #   \item{...}{Additional arguments passed to @see "sfit::cfit".}
+#   \item{flavor}{A @character string specifying what model/algorithm 
+#      should be used to fit the genotype cone.}
 # }
 #
 # \value{
@@ -55,7 +55,7 @@
 #
 # @keyword internal
 #*/###########################################################################
-setMethodS3("fitMultiDimensionalCone", "matrix", function(y, flavor=c("sfit", "expectile"), alpha=c(0.10, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ...) {
+setMethodS3("fitMultiDimensionalCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ..., flavor=c("sfit", "expectile")) {
   # Argument 'flavor':
   flavor <- match.arg(flavor);
 

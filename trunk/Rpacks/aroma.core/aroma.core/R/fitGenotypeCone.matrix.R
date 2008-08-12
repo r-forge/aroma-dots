@@ -22,6 +22,8 @@
 #      below (above) will be assigned zero weight in the fitting of
 #      the parameters.}
 #   \item{...}{Additional arguments passed to @see "sfit::cfit".}
+#   \item{flavor}{A @character string specifying what model/algorithm 
+#      should be used to fit the genotype cone.}
 # }
 #
 # \value{
@@ -53,8 +55,16 @@
 #
 # @keyword internal
 #*/###########################################################################
-setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ...) {
-  require("sfit") || throw("Package 'sfit' not found.");
+setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ..., flavor=c("sfit", "expectile")) {
+  # Argument 'flavor':
+  flavor <- match.arg(flavor);
+
+  if (flavor == "sfit") {
+    require("sfit") || throw("Package 'sfit' not found.");
+  } else {
+    throw("Argument 'flavor' has a value that is yet not supported: ", flavor);
+  }
+
 
   # Fit simplex of (y_A,y_B)
   fit <- sfit::cfit(y, alpha=alpha, q=q, Q=Q, ...);
