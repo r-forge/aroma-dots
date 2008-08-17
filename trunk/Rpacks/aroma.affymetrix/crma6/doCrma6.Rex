@@ -58,15 +58,15 @@ print(csC);
 # Normalization for base-position effects
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bpn <- BasePositionNormalization(csC, target="zero", tags="*,z", shift=+300);
-bpn <- BasePositionNormalization(cs, target="zero", tags="*,z");
+#bpn <- BasePositionNormalization(cs, target="zero", tags="*,z");
 print(bpn);
 csN <- process(bpn, verbose=verbose);
 print(csN);
 
-acc <- AllelicCrosstalkCalibration(csN);
-print(acc);
-csC <- process(acc, verbose=verbose);
-print(csC);
+#acc <- AllelicCrosstalkCalibration(csN);
+#print(acc);
+#csC <- process(acc, verbose=verbose);
+#print(csC);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -74,9 +74,9 @@ print(csC);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=TRUE);
 plm <- RmaCnPlm(csN, mergeStrands=TRUE, combineAlleles=TRUE);
-plm <- RmaCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE, shift=+300);
+#plm <- RmaCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE, shift=+300);
 #plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=FALSE);
-plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=FALSE);
+#plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=FALSE);
 print(plm);
 
 fit(plm, ram=5, verbose=verbose);
@@ -88,6 +88,9 @@ print(ces);
 # Normalize for PCR fragment-length effects
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 fln <- FragmentLengthNormalization(ces, shift=300);
+fln <- FragmentLengthNormalization(ces);
+targets <- rep(list(function(...) log2(2200)), 2);
+fln <- FragmentLengthNormalization(ces, targetFunctions=targets, tags="*,z");
 print(fln);
 
 cesN <- process(fln, verbose=verbose);
@@ -108,8 +111,8 @@ print(cesN);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 sn <- UnitTypeScaleNormalization(cesN, tags="*");
 print(sn);
-cesN2 <- process(sn, verbose=verbose);
-print(cesN2);
+#cesN2 <- process(sn, verbose=verbose);
+#print(cesN2);
   
 #cesN <- cesN2;
 
@@ -158,6 +161,8 @@ if (isFile(pathname)) {
   saveObject(theta, file=pathname);
 }
 print(getFullName(cesN));
+
+stop();
 
 # Write (total, freqB) files to cnData/, if missing
 setList <- getTotalAndFreqBSets(cesN, verbose=verbose);
