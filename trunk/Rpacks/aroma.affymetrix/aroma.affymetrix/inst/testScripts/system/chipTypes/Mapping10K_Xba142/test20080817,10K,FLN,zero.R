@@ -1,0 +1,77 @@
+library(aroma.affymetrix)
+log <- Arguments$getVerbose(-4);
+timestampOn(log);
+.Machine$float.eps <- sqrt(.Machine$double.eps);
+
+dataSetName <- "Jeremy_2007-10k";
+chipType <- "Mapping10K_Xba142";
+
+# Expected sample names
+sampleNames <- c("0001-7", "0002-10", "0004-13", "0005-14", "0007-18", 
+                      "0008-19", "0010-22", "2-DPrrr", "MH12", "MH18");
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Setting up CEL sets and locating the CDF file
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+keep <- 1:6;
+cs <- extract(cs, keep);
+sampleNames <- sampleNames[keep];
+print(cs);
+stopifnot(identical(getNames(cs), sampleNames));
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Allelic cross-talk calibration 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+acc <- AllelicCrosstalkCalibration(cs);
+print(acc);
+csAcc <- process(acc, verbose=log);
+print(csAcc);
+stopifnot(identical(getNames(csAcc), getNames(cs)));
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Probe-level modelling (for CN analysis)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+plm <- RmaCnPlm(csAcc, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
+print(plm);
+
+fit(plm, verbose=log);
+ces <- getChipEffectSet(plm);
+print(ces);
+stopifnot(identical(getNames(ces), getNames(cs)));
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Fragment-length normalization (toward an average effect)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+fln <- FragmentLengthNormalization(ces);
+print(fln);
+cesFln <- process(fln, verbose=verbose);
+print(cesFln);
+stopifnot(identical(getNames(cesFln), getNames(ces)));
+
+theta <- extractTheta(cesFln, drop=TRUE);
+thetaR <- rowMedians(theta, na.rm=TRUE);
+M <- log2(theta/thetaR);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Fragment-length normalization (toward a constant effect)
+# Note, this a pure single-array approach.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+targetFunctions <- list(function(...) log2(2200));  # log2(2200) ~= 11.1
+fln <- FragmentLengthNormalization(ces, targetFunctions=targetFunctions, tags="*,z");
+print(fln);
+cesFln <- process(fln, verbose=verbose);
+print(cesFln);
+stopifnot(identical(getNames(cesFln), getNames(ces)));
+
+theta <- extractTheta(cesFln, drop=TRUE);
+thetaR <- rowMedians(theta, na.rm=TRUE);
+M2 <- log2(theta/thetaR);
+
+# When calculating the log-ratios, the above two approaches should
+# give equals results, because the effects should cancel out regardless.
+stopifnot(mean(abs(M2-M), na.rm=TRUE) < 1e-3);
