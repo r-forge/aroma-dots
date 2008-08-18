@@ -49,7 +49,7 @@
 #
 # \seealso{
 #  To backtransform data fitted using this method, 
-#  see @see "backtransformDimensionCone".
+#  see @seemethod "backtransformMultiDimensionalCone".
 #  Internally @see "sfit::cfit" of the \pkg{sfit} package is used.
 # }
 #
