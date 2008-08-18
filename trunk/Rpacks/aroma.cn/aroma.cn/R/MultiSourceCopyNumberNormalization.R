@@ -106,6 +106,15 @@ setMethodS3("as.character", "MultiSourceCopyNumberNormalization", function(x, ..
 
 
 
+setMethodS3("nbrOfDataSets", "MultiSourceCopyNumberNormalization", function(this, ...) {
+  length(getInputDataSets(this));
+});
+
+setMethodS3("getOutputPaths", "MultiSourceCopyNumberNormalization", function(this, ...) {
+  outputPaths;
+});
+
+
 ###########################################################################/**
 # @RdocMethod getInputDataSets
 #
@@ -206,6 +215,102 @@ setMethodS3("getAllNames", "MultiSourceCopyNumberNormalization", function(this, 
 
 
 
+###########################################################################/**
+# @RdocMethod extractTupleOfDataFiles
+#
+# @title "Gets a list of data files for a particular name across several data sets"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{name}{A @character string specifying the sample name of interest.}
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @list of K @see "AromaTotalCnBinarySet":s.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/########################################################################### 
+setMethodS3("extractTupleOfDataFiles", "MultiSourceCopyNumberNormalization", function(this, dsList, name, ..., na.rm=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'dsList':
+  if (is.list(dsList)) {
+    className <- "AromaTotalCnBinarySet";
+    for (kk in seq(along=dsList)) {
+      dataSet <- dsList[[kk]];
+      if (!inherits(dataSet, className)) {
+        throw("Argument 'dsList' contains a non-", className, " object: ", 
+                                                        class(dataSet)[1]);
+      }
+    }
+    if (length(dsList) < 2) {
+      throw("Argument 'dsList' must contain more than one ", className, 
+                                                     ": ", length(dsList));
+    }
+  } else {
+    throw("Argument 'dsList' is not a list: ", class(dsList)[1]);
+  }
+
+  # Argument 'name':
+  name <- Arguments$getCharacter(name);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+
+
+  verbose && enter(verbose, "Getting list tuple of data files for one sample");
+  verbose && cat(verbose, "Sample name: ", name);
+
+  dfList <- sapply(dsList, function(ds) {
+    idx <- indexOf(ds, name);
+    df <- NA;
+    if (!is.na(idx)) {
+      if (length(idx) > 1) {
+        throw("Multiple occurances identified for this sample: ", 
+                           getName(ds), " => ", paste(idx, collapse=", "));
+      }
+      df <- getFile(ds, idx);
+    }
+    df;
+  });
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Filter out missing data files in order to identify the set of files
+  # to fit the model on
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (na.rm) {
+    nok <- sapply(dfList, is.na);
+    dfList <- dfList[!nok];
+    rm(nok);
+  }
+
+  verbose && cat(verbose, "Number of arrays: ", length(dfList));
+
+  verbose && exit(verbose);
+
+  dfList;
+}, protected=TRUE)
+
+
+
 
 
 ###########################################################################/**
@@ -291,102 +396,12 @@ setMethodS3("getSmoothedDataSets", "MultiSourceCopyNumberNormalization", functio
 
 
 
-###########################################################################/**
-# @RdocMethod getSmoothedDataFiles
-#
-# @title "Gets a list of smoothed arrays across data sets for a particular sample"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{name}{A @character string specifying the sample name of interest.}
-#   \item{...}{Not used.}
-#   \item{verbose}{See @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns a @list of K @see "AromaTotalCnBinarySet":s.
-# }
-#
-# \details{
-#   This method smooth each data set, each array, and each chromosome
-#   toward the target (smoothing) UGP file independently of everything else.
-#
-#   The resulting data sets are stored in a separate location where they
-#   will be located automatically in future sessions.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "getFitAromaUgpFile".
-#   @seeclass
-# }
-#*/########################################################################### 
-setMethodS3("getSmoothedDataFiles", "MultiSourceCopyNumberNormalization", function(this, name, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  } 
 
-  # Argument 'name':
-  name <- Arguments$getCharacter(name);
-
-
-
-  verbose && enter(verbose, "Getting list of smoothed data files for one sample");
-  verbose && cat(verbose, "Sample name: ", name);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Smooth data towards target UGP, which specifies the common set of loci
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  dsSmoothList <- getSmoothedDataSets(this, verbose=less(verbose, 1));
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Extract data files to be used for fitting
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  dfList <- sapply(dsSmoothList, function(ds) {
-    idx <- indexOf(ds, name);
-    df <- NULL;
-    if (!is.na(idx)) {
-      if (length(idx) > 1) {
-        throw("Multiple occurances identified for this sample: ", 
-                           getName(ds), " => ", paste(idx, collapse=", "));
-      }
-      df <- getFile(ds, idx);
-    }
-    df;
-  });
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Filter out missing data files in order to identify the set of files
-  # to fit the model on
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  nok <- sapply(dfList, is.null);
-  dfList <- dfList[!nok];
-  rm(nok);
-  verbose && cat(verbose, "Number of arrays: ", length(dfList));
-
-  verbose && exit(verbose);
-
-  dfList;
-}, protected=TRUE)
 
 
 
 ###########################################################################/**
-# @RdocMethod getSmoothedDataFiles
+# @RdocMethod getSubsetToFit
 #
 # @title "Gets subset of (smoothing) units for fitting the model"
 #
@@ -506,7 +521,7 @@ setMethodS3("getParametersAsString", "MultiSourceCopyNumberNormalization", funct
 #   @seeclass
 # }
 #*/########################################################################### 
-setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfList, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -517,26 +532,44 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
     on.exit(popState(verbose));
   } 
 
-  # Argument 'name':
-  name <- Arguments$getCharacter(name);
-
   # Argument 'force':
   force <- Arguments$getLogical(force);
 
 
 
   verbose && enter(verbose, "Fitting one sample across multiple sources");
+  nbrOfArrays <- length(dfList);
+  verbose && cat(verbose, "Number of arrays: ", nbrOfArrays);
+
+  # Get name of the sample from the tuple of input arrays
+  # (We do it this way so that we at some stage can process() one sample
+  #  at the time without first smoothing all samples. /HB 2008-08-18)
+  df <- dfList[[1]];
+  name <- getName(df);
+  verbose && cat(verbose, "Sample name: ", name);
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get model parameters
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   params <- getParameters(this, verbose=less(verbose, 1));
+  verbose && str(verbose, params);
+  subsetToFit <- params$subsetToFit;
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify list of data files to fit model to
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  dfList <- getSmoothedDataFiles(this, name=name, verbose=less(verbose, 1));
+  # Smooth data towards target UGP, which specifies the common set of loci
+  dsSmooth <- getSmoothedDataSets(this, verbose=less(verbose, 1));
+  dfList <- extractTupleOfDataFiles(this, dsList=dsSmooth, name=name, 
+                                                 verbose=less(verbose, 1));
+  rm(dsSmooth);
+
+
+  # Identify and exlude missing data sets
+  keep <- whichVector(sapply(dfList, FUN=!is.na));
+  dfList <- dfList[keep];
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -552,7 +585,8 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
   checkSums <- unname(checkSums);
 
   key <- list(method="fitOne", class="MultiSourceCopyNumberNormalization", 
-              fullnames=fullnames, chipTypes=chipTypes, checkSums=checkSums);
+             fullnames=fullnames, chipTypes=chipTypes, checkSums=checkSums,
+                                                  subsetToFit=subsetToFit);
   dirs <- c("aroma.affymetrix", "MultiSourceCopyNumberNormalization");
   if (!force) {
     transforms <- loadCache(key=key, dirs=dirs);
@@ -565,23 +599,17 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Identify subset of (smoothing) units for fitting the model
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  units <- getSubsetToFit(this, verbose=less(verbose, 1));
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract smoothed data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Extracting data");
-  verbose && cat(verbose, "Units:");
-  verbose && str(verbose, units);
+  verbose && cat(verbose, "Subset of units used for fitting:");
+  verbose && str(verbose, subsetToFit);
   # Extracting data for sample to be normalized
   M <- lapply(dfList, FUN=function(df) {
-    extractMatrix(df, rows=units, column=1, drop=TRUE);
+    extractMatrix(df, rows=subsetToFit, column=1, drop=TRUE);
   });
 
-  rm(units);  # Not needed anymore
+  rm(subsetToFit);  # Not needed anymore
 
   M <- as.data.frame(M);
   gc <- gc();
@@ -597,7 +625,8 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
   t <- system.time({
     Mn <- normalizePrincipalCurve(M);
   });
-  verbose && printf(verbose, "Processing time: %.1f seconds\n", as.double(t[3]));
+  verbose && printf(verbose, "Processing time: %.1f seconds\n", 
+                                                          as.double(t[3]));
 
   # Sanity check
   if (!identical(dim(Mn), dim(M))) {
@@ -613,21 +642,23 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
   # Find the normalization function for each source (array)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Finding normalization function for each array");
-  transforms <- list();
+  transforms <- vector("list", nbrOfArrays);
   for (kk in seq(along=dfList)) {
     df <- dfList[[kk]];
     fullname <- getFullName(df);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
-                                              kk, fullname, length(dfList)));
+                                            kk, fullname, length(dfList)));
     transform <- makeSmoothSplinePredict(M[,kk], Mn[,kk]);
 
     verbose && enter(verbose, "Saving");
-##      header <- list(dataSet=dsList[kk], fullname=fullnames[kk], chipType=chipTypes[kk]);
+##      header <- list(dataSet=dsList[kk], fullname=fullnames[kk], 
+##                                                 chipType=chipTypes[kk]);
 ##      fit <- list(header=header, n=length(M[[kk]]), transform=transform);
 ##      saveObject(fit, file=pathname);
     verbose && exit(verbose);
 
-    transforms[[kk]] <- transform;
+    idx <- keep[kk];
+    transforms[[idx]] <- transform;
     rm(transform);
 
     gc <- gc();
@@ -650,37 +681,17 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
 
 
 
-###########################################################################/**
-# @RdocMethod fit
-#
-# @title "Fits the multi-source model for all samples"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Additional arguments passed to @seemethod "fitOne".}
-#   \item{verbose}{See @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns a @list of transforms.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "fitOne".
-#   @seeclass
-# }
-#*/########################################################################### 
-setMethodS3("fit", "MultiSourceCopyNumberNormalization", function(this, ..., verbose=FALSE) {
+
+
+setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this, dfList, fit, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'dfList':
+
+  # Argument 'fit':
+
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -688,35 +699,66 @@ setMethodS3("fit", "MultiSourceCopyNumberNormalization", function(this, ..., ver
     on.exit(popState(verbose));
   } 
 
+  # Argument 'force':
+  force <- Arguments$getLogical(force);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Fit normalization functions
-  # 
-  # This is a multi-source (same sample across sources) whole-genome method.
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Fit normalization functions to smoothed data");
 
-  verbose && enter(verbose, "Retrieving table of samples");
-  allNames <- getAllNames(this);
-  nbrOfSamples <- length(allNames);
-  verbose && cat(verbose, "Number of unique samples in all sets: ", nbrOfSamples);
-  verbose && str(verbose, allNames);
-  verbose && exit(verbose);
 
-  units <- NULL;
-  for (kk in seq(length=nbrOfSamples)) {
-    name <- allNames[kk];
-    verbose && enter(verbose, sprintf("Sample #%d ('%s') of %d", 
-                                                       kk, name, nbrOfSamples));
+  verbose && enter(verbose, "Normalize one sample across multiple sources");
 
-    transforms <- fitOne(this, name=name, ..., verbose=less(verbose, 1));
-    rm(transforms);
+  # Get name of the sample from the tuple of input arrays
+  # (We do it this way so that we at some stage can process() one sample
+  #  at the time without first smoothing all samples. /HB 2008-08-18)
+  df <- dfList[[1]];
+  name <- getName(df);
+  verbose && cat(verbose, "Sample name: ", name);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get model parameters
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  params <- getParameters(this, verbose=less(verbose, 1));
+  verbose && str(verbose, params);
+  subsetToUpdate <- params$subsetToUpdate;
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Normalizing array by array
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Normalizing array by array");
+  verbose && cat(verbose, "Units to be updated:");
+  verbose && str(verbose, subsetToUpdate);
+
+  nbrOfArrays <- length(dfList);
+  dfNList <- vector("list", nbrOfArrays);
+  for (kk in seq(length=nbrOfArrays)) {
+    df <- dfList[[kk]];
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, 
+                                            getFullName(df), nbrOfArrays));
+
+    transform <- fit[[kk]];
+    verbose && cat(verbose, "Fitted transform:");
+    verbose && str(verbose, transform);
+
+    verbose && enter(verbose, "Reading data");
+    y <- extractMatrix(df, rows=subsetToUpdate, column=1, drop=TRUE);
+    verbose && exit(verbose);
+
+    verbose && enter(verbose, "Transforming data");
+    yN <- transform(y);
+    rm(transform);
+    verbose && exit(verbose);
 
     verbose && exit(verbose);
   } # for (kk ...)
-
+  rm(subsetToUpdate);  # Not needed anymore
+  gc <- gc();
+  verbose && cat(verbose, gc);
   verbose && exit(verbose);
-}, protected=TRUE)
+
+  # Return normalized arrays
+  invisible(dfNList);
+}, protected=TRUE)  # fitOne()
 
 
 
@@ -750,7 +792,98 @@ setMethodS3("fit", "MultiSourceCopyNumberNormalization", function(this, ..., ver
 #   @seeclass
 # }
 #*/########################################################################### 
-setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ..., verbose=FALSE) {
+setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Fit normalization functions
+  # 
+  # This is a multi-source (same sample across sources) whole-genome method.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  verbose && enter(verbose, "Multi-source normalize all samples");
+  allNames <- getAllNames(this);
+  nbrOfSamples <- length(allNames);
+  verbose && cat(verbose, "Number of unique samples in all sets: ", 
+                                                               nbrOfSamples);
+  verbose && str(verbose, allNames);
+
+  # Get the input data sets
+  dsList <- getInputDataSets(this);
+
+  # Get (and create) the output paths
+  outputPaths <- getOutputPaths(this); 
+
+
+  verbose && enter(verbose, "Processing each array");
+  units <- NULL;
+  for (kk in seq(length=nbrOfSamples)) {
+    name <- allNames[kk];
+    verbose && enter(verbose, sprintf("Sample #%d ('%s') of %d", 
+                                                    kk, name, nbrOfSamples));
+
+
+    verbose && enter(verbose, "Identifying source data files");
+    dfList <- extractTupleOfDataFiles(this, dsList=dsList, name=name, 
+                                                   verbose=less(verbose, 1));
+    verbose && print(verbose, dfList);
+    verbose && exit(verbose);
+
+   
+    verbose && enter(verbose, "Check if all arrays are already normalized");
+    isDone <- TRUE;
+    for (jj in seq(along=dfList)) {
+      df <- dfList[[jj]];
+      outputPath <- outputPaths[[jj]];
+      fullname <- getFullName(df);
+      filename <- sprintf("%s.CEL", fullname);
+      pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...); 
+      isDone <- isDone && isFile(pathname);
+      if (!isDone)
+        break;
+    }
+    verbose && cat(verbose, "Is done: ", isDone);
+    verbose && exit(verbose);
+
+    if (!force && isDone) {
+      verbose && cat(verbose, "Normalized data files already exists"); 
+    } else {
+      verbose && enter(verbose, "Fitting model");
+      fit <- fitOne(this, dfList=dfList, ..., verbose=less(verbose, 1));
+      verbose && str(verbose, fit);
+      verbose && exit(verbose);
+  
+  
+      verbose && enter(verbose, "Normalizing");
+      dfNList <- normalizeOne(this, dfList=dfList, fit=fit, ..., 
+                                                    verbose=less(verbose, 1));
+      rm(fit);
+      verbose && exit(verbose);
+      rm(dfNList);
+    }
+
+    verbose && exit(verbose);
+  } # for (kk ...)
+  verbose && exit(verbose);
+
+  # Garbage collect
+  rm(ds);
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  outputDataSets <- getOutputDataSets(this, force=TRUE); 
+
+  verbose && exit(verbose);
+
+  invisible(outputDataSets);
 })
 
 
@@ -758,6 +891,7 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 ###########################################################################
 # HISTORY:
 # 2008-08-18
+# o Added utility function extractTupleOfDataFiles().
 # o Still have to write process().
 # o Added Rdoc comments.
 # 2008-07-04
