@@ -42,7 +42,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   affect the model fitting and are unaffected.
  }
 
- \usage{AllelicCrosstalkCalibration(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
+ \usage{AllelicCrosstalkCalibration(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98)}
 
  \arguments{
    \item{dataSet}{An \code{\link{AffymetrixCelSet}}.}
@@ -59,6 +59,8 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
    \item{subsetToAvg}{The indices of the cells (taken as the intersect of
      existing indices) used to calculate average in order to rescale to
      the target average. If \code{\link[base]{NULL}}, all probes are considered.}
+   \item{flavor}{A \code{\link[base]{character}} string specifying what algorithm is used
+     to fit the crosstalk calibration.}
    \item{alpha, q, Q}{}
  }
 

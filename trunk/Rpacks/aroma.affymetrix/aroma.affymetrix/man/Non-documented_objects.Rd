@@ -1455,6 +1455,20 @@
 \alias{getTotalAndFreqBSets.SnpChipEffectSet}
 \alias{getTotalAndFreqBSets}
 \alias{computeAffinities2}
+\alias{getParameters.AbstractProbeSequenceNormalization}
+\alias{clearCache.ReseqCrosstalkCalibration}
+\alias{getAsteriskTags.ReseqCrosstalkCalibration}
+\alias{getCellQuartets}
+\alias{getCellQuartets.AffymetrixCdfFile}
+\alias{getParameters.ReseqCrosstalkCalibration}
+\alias{getSubsetToAvg.ReseqCrosstalkCalibration}
+\alias{isResequenceChip}
+\alias{isResequenceChip.AffymetrixCdfFile}
+\alias{process.ReseqCrosstalkCalibration}
+\alias{readUnitsByQuartets}
+\alias{readUnitsByQuartets.AffymetrixCdfFile}
+\alias{rescaleByAll.ReseqCrosstalkCalibration}
+\alias{ReseqCrosstalkCalibration}
 
 \description{
   This page contains aliases for all "non-documented" objects that

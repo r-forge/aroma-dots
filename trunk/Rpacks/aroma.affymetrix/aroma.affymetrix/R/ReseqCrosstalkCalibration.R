@@ -422,7 +422,7 @@ setMethodS3("process", "ReseqCrosstalkCalibration", function(this, ..., force=FA
 
       verbose && enter(verbose, "Fitting");
       verbose && cat(verbose, "Flavor: ", params$flavor);
-      fit <- fitMultiDimensionCone(y, flavor=params$flavor,
+      fit <- fitMultiDimensionalCone(y, flavor=params$flavor,
                           alpha=params$alpha, q=params$q, Q=params$Q, 
                                                      verbose=verboseL);
       verbose && print(verbose, fit, level=-5);
@@ -450,7 +450,7 @@ setMethodS3("process", "ReseqCrosstalkCalibration", function(this, ..., force=FA
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Backtransforming");
-      yC <- backtransformMultiDimensionCone(y, fit=fit);
+      yC <- backtransformMultiDimensionalCone(y, fit=fit);
       rm(y, fit); # Not needed anymore
       verbose && str(verbose, yC);
       yAll[cellQuartets] <- yC;
@@ -463,7 +463,7 @@ setMethodS3("process", "ReseqCrosstalkCalibration", function(this, ..., force=FA
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       if (!is.null(params$targetAvg)) {
         yAll <- rescaleByAll(this, yAll=yAll, params=params, 
-                           setsOfProbes=setsOfProbes, verbose=less(verbose));
+                                                      verbose=less(verbose));
         fit <- attr(yAll, "fit");
         fit$params <- NULL;
         fit$paramsShort <- paramsShort;
