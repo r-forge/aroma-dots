@@ -599,6 +599,9 @@
 \alias{pointsSequence.ProbePositionEffects}
 \alias{textSequence}
 \alias{textSequence.ProbePositionEffects}
+\alias{backtransformMultiDimensionalCone}
+\alias{backtransformMultiDimensionalCone.matrix}
+\alias{fitMultiDimensionalCone}
 
 \description{
   This page contains aliases for all "non-documented" objects that

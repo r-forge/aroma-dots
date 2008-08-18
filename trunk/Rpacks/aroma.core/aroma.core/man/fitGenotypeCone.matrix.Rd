@@ -18,7 +18,7 @@
   Fits an affine transformation to allele A and allele B data using robust estimators.
  }
 
- \usage{\method{fitGenotypeCone}{matrix}(y, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ...)}
+ \usage{\method{fitGenotypeCone}{matrix}(y, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ..., flavor=c("sfit", "expectile"))}
 
  \arguments{
    \item{y}{A \code{\link[base]{numeric}} Nx2 \code{\link[base]{matrix}} with one column for each allele and
@@ -32,6 +32,8 @@
       below (above) will be assigned zero weight in the fitting of
       the parameters.}
    \item{...}{Additional arguments passed to \code{\link[sfit]{cfit}}.}
+   \item{flavor}{A \code{\link[base]{character}} string specifying what model/algorithm
+      should be used to fit the genotype cone.}
  }
 
  \value{

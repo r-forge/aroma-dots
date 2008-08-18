@@ -253,3 +253,5 @@ readTableHeader.default
   barSequence barSequence.ProbePositionEffects pointsSequence
   pointsSequence.ProbePositionEffects textSequence
   textSequence.ProbePositionEffects
+ backtransformMultiDimensionalCone
+ backtransformMultiDimensionalCone.matrix fitMultiDimensionalCone
