@@ -1,32 +1,76 @@
+###########################################################################/**
+# @RdocClass MultiSourceCopyNumberNormalization
+#
+# @title "The MultiSourceCopyNumberNormalization class"
+#
+# \description{
+#  @classhierarchy
+#
+#  A normalization method that normalizes copy-number estimates measured
+#  by multiple sites and/or platforms for common samples.  It normalizes the
+#  estimates toward a common scale such that for any copy-number level 
+#  the mean level of the normalized data are the same.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#  \item{dsList}{A @list of K @see "AromaTotalCnBinarySet":s.}
+#  \item{fitUgp}{An @see "AromaUgpFile" that specifies the common set of loci used to 
+#    normalize the data sets at.}
+#  \item{...}{Arguments passed to @see "aroma.core::AromaTabularBinaryFile".}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# \details{
+#   The multi-source normalization method is by nature a single-sample method,
+#   that is, it normalizes arrays for one sample at the time and independently
+#   of all other samples/arrays.
+#
+#   However, the current implementation is such that it first generates
+#   smoothed data for \emph{all} samples/arrays.  Then, it normalizes the
+#   sample one by one.
+# }
+# 
+# @author
+#*/###########################################################################  
 setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, ...) {
   if (!is.null(dsList)) {
     # Arguments 'dsList':
     if (is.list(dsList)) {
+      className <- "AromaTotalCnBinarySet";
       for (kk in seq(along=dsList)) {
         dataSet <- dsList[[kk]];
-        if (!inherits(dataSet, "AromaTotalCnBinarySet")) {
-          throw("Argument 'dsList' contains a non-AromaTotalCnBinarySet object: ", class(dataSet)[1]);
+        if (!inherits(dataSet, className)) {
+          throw("Argument 'dsList' contains a non-", className, " object: ", 
+                                                          class(dataSet)[1]);
         }
       }
       if (length(dsList) < 2) {
-        throw("Argument 'dsList' must contain more than one AromaTotalCnBinarySet: ", length(dsList));
+        throw("Argument 'dsList' must contain more than one ", className, 
+                                                       ": ", length(dsList));
       }
     } else {
       throw("Argument 'dsList' is not a list: ", class(dsList)[1]);
     }
 
     # Arguments 'fitUgp':
-    if (!inherits(fitUgp, "AromaUgpFile")) {
-      throw("Argument 'fitUgp' is not an AromaUgpFile: ", class(fitUgp)[1]);
+    className <- "AromaUgpFile";
+    if (!inherits(fitUgp, className)) {
+      throw("Argument 'fitUgp' is not an ", className, ": ", class(fitUgp)[1]);
     }
   }
 
   extend(Object(), "MultiSourceCopyNumberNormalization",
     .dsList = dsList,
-    .dsSmoothList = NULL,
-    .fitUgp = fitUgp
+    .fitUgp = fitUgp,
+    .dsSmoothList = NULL
   )
 })
+
 
 setMethodS3("as.character", "MultiSourceCopyNumberNormalization", function(x, ...) {
   # To please R CMD check
@@ -61,20 +105,99 @@ setMethodS3("as.character", "MultiSourceCopyNumberNormalization", function(x, ..
 }, private=TRUE)
 
 
+
+###########################################################################/**
+# @RdocMethod getInputDataSets
+#
+# @title "Gets the list of data sets to be normalized"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @list.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("getInputDataSets", "MultiSourceCopyNumberNormalization", function(this, ...) {
   this$.dsList;
 })
 
+
+
+###########################################################################/**
+# @RdocMethod getFitAromaUgpFile
+#
+# @title "Gets the UGP file specifying the common set of loci to normalize at"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+# }
+#
+# \value{
+#  Returns a @see "aroma.core::AromaUgpFile".
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("getFitAromaUgpFile", "MultiSourceCopyNumberNormalization", function(this, ...) {
   this$.fitUgp;
 }, protected=TRUE)
 
 
 
+
+###########################################################################/**
+# @RdocMethod getAllNames
+#
+# @title "Gets the names of all unique samples across all sources"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Passed to \code{getNames(...)} of each data set.}
+# }
+#
+# \value{
+#  Returns a @character @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("getAllNames", "MultiSourceCopyNumberNormalization", function(this, ...) {
   # Identify all array names across all sources
   dsList <- getInputDataSets(this);
-  allNames <- lapply(dsList, getNames);
+  allNames <- lapply(dsList, getNames, ...);
   allNames <- unlist(allNames, use.names=FALSE);
   allNames <- unique(allNames);
   allNames <- sort(allNames);
@@ -82,11 +205,44 @@ setMethodS3("getAllNames", "MultiSourceCopyNumberNormalization", function(this, 
 })
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Smooth data towards fit UGP
+
+
+
+###########################################################################/**
+# @RdocMethod getSmoothedDataSets
 #
-# This is a single-array & single-chromosome method.
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# @title "Gets the data sets smoothed toward the UGP file"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @list of K @see "AromaTotalCnBinarySet":s.
+# }
+#
+# \details{
+#   This method smooth each data set, each array, and each chromosome
+#   toward the target (smoothing) UGP file independently of everything else.
+#
+#   The resulting data sets are stored in a separate location where they
+#   will be located automatically in future sessions.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getFitAromaUgpFile".
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("getSmoothedDataSets", "MultiSourceCopyNumberNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -134,6 +290,43 @@ setMethodS3("getSmoothedDataSets", "MultiSourceCopyNumberNormalization", functio
 }, protected=TRUE)
 
 
+
+###########################################################################/**
+# @RdocMethod getSmoothedDataFiles
+#
+# @title "Gets a list of smoothed arrays across data sets for a particular sample"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{name}{A @character string specifying the sample name of interest.}
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @list of K @see "AromaTotalCnBinarySet":s.
+# }
+#
+# \details{
+#   This method smooth each data set, each array, and each chromosome
+#   toward the target (smoothing) UGP file independently of everything else.
+#
+#   The resulting data sets are stored in a separate location where they
+#   will be located automatically in future sessions.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getFitAromaUgpFile".
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("getSmoothedDataFiles", "MultiSourceCopyNumberNormalization", function(this, name, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -149,12 +342,16 @@ setMethodS3("getSmoothedDataFiles", "MultiSourceCopyNumberNormalization", functi
   name <- Arguments$getCharacter(name);
 
 
+
   verbose && enter(verbose, "Getting list of smoothed data files for one sample");
-  verbose && cat(verbose, "Name: ", name);
+  verbose && cat(verbose, "Sample name: ", name);
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Smooth data towards target UGP, which specifies the common set of loci
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   dsSmoothList <- getSmoothedDataSets(this, verbose=less(verbose, 1));
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract data files to be used for fitting
@@ -165,14 +362,17 @@ setMethodS3("getSmoothedDataFiles", "MultiSourceCopyNumberNormalization", functi
     if (!is.na(idx)) {
       if (length(idx) > 1) {
         throw("Multiple occurances identified for this sample: ", 
-                              getName(ds), " => ", paste(idx, collapse=", "))
+                           getName(ds), " => ", paste(idx, collapse=", "));
       }
       df <- getFile(ds, idx);
     }
     df;
   });
 
-  # Filter out missing data files to identify set of files to fit the model on
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Filter out missing data files in order to identify the set of files
+  # to fit the model on
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   nok <- sapply(dfList, is.null);
   dfList <- dfList[!nok];
   rm(nok);
@@ -184,9 +384,33 @@ setMethodS3("getSmoothedDataFiles", "MultiSourceCopyNumberNormalization", functi
 }, protected=TRUE)
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Gets subset of (smoothing) units for fitting the model
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+###########################################################################/**
+# @RdocMethod getSmoothedDataFiles
+#
+# @title "Gets subset of (smoothing) units for fitting the model"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns an @integer @vector of unit indices.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("getSubsetToFit", "MultiSourceCopyNumberNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -229,6 +453,7 @@ setMethodS3("getSubsetToFit", "MultiSourceCopyNumberNormalization", function(thi
 }, protected=TRUE)
 
 
+
 setMethodS3("getParameters", "MultiSourceCopyNumberNormalization", function(this, ...) {
   params <- list(
     subsetToFit = getSubsetToFit(this, ...),
@@ -249,6 +474,38 @@ setMethodS3("getParametersAsString", "MultiSourceCopyNumberNormalization", funct
 }, private=TRUE) 
 
 
+
+###########################################################################/**
+# @RdocMethod fitOne
+#
+# @title "Fits the multi-source model for one sample"
+#
+# \description{
+#  @get "title".
+#  The model is fitted on the subset of units returned 
+#  by @seemethod "getSubsetToFit".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{name}{A @character string specifying the sample name of interest.}
+#   \item{...}{Not used.}
+#   \item{force}{If @FALSE, cached model fits are returned, otherwise not.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @list of transforms.
+# }
+#
+# @author
+#
+# \seealso{
+#   This method is called internally by @seemethod "fit".
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -341,6 +598,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
     Mn <- normalizePrincipalCurve(M);
   });
   verbose && printf(verbose, "Processing time: %.1f seconds\n", as.double(t[3]));
+
   # Sanity check
   if (!identical(dim(Mn), dim(M))) {
     throw("Internal error: The normalize data has a different dimension that the non-normalized data: ", paste(dim(Mn), collapse="x"), " != ", paste(dim(M), collapse="x"));
@@ -348,6 +606,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
   gc <- gc();
   verbose && cat(verbose, gc);
   verbose && exit(verbose);
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -391,6 +650,33 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, name,
 
 
 
+###########################################################################/**
+# @RdocMethod fit
+#
+# @title "Fits the multi-source model for all samples"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Additional arguments passed to @seemethod "fitOne".}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @list of transforms.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "fitOne".
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("fit", "MultiSourceCopyNumberNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -423,7 +709,7 @@ setMethodS3("fit", "MultiSourceCopyNumberNormalization", function(this, ..., ver
     verbose && enter(verbose, sprintf("Sample #%d ('%s') of %d", 
                                                        kk, name, nbrOfSamples));
 
-    transforms <- fitOne(this, name=name, verbose=less(verbose, 1));
+    transforms <- fitOne(this, name=name, ..., verbose=less(verbose, 1));
     rm(transforms);
 
     verbose && exit(verbose);
@@ -434,12 +720,46 @@ setMethodS3("fit", "MultiSourceCopyNumberNormalization", function(this, ..., ver
 
 
 
+
+
+
+###########################################################################/**
+# @RdocMethod process
+#
+# @title "Normalizes all samples"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns a @list of K @see "AromaTotalCnBinarySet":s.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "fit".
+#   @seeclass
+# }
+#*/########################################################################### 
 setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ..., verbose=FALSE) {
 })
 
 
+
 ###########################################################################
 # HISTORY:
+# 2008-08-18
+# o Still have to write process().
+# o Added Rdoc comments.
 # 2008-07-04
 # o Added as.character().
 # o BUG FIX: getAllNames() did return duplicated names.
