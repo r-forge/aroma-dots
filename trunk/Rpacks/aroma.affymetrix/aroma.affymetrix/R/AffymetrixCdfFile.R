@@ -738,7 +738,7 @@ setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., useNames=TRUE,unlist=FALSE, force=FALSE, cache=TRUE, verbose=FALSE) {
+setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..., useNames=TRUE, unlist=FALSE, force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

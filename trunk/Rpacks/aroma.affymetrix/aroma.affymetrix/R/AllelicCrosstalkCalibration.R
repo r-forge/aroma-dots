@@ -30,6 +30,8 @@
 #   \item{subsetToAvg}{The indices of the cells (taken as the intersect of
 #     existing indices) used to calculate average in order to rescale to
 #     the target average. If @NULL, all probes are considered.}
+#   \item{flavor}{A @character string specifying what algorithm is used
+#     to fit the crosstalk calibration.}
 #   \item{alpha, q, Q}{}
 # }
 #
