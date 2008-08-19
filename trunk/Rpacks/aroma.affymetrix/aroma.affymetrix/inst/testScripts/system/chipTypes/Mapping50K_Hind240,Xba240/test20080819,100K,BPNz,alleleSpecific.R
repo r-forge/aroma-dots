@@ -32,7 +32,7 @@ print(csC);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Base-position normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-bpn <- BasePositionNormalization(csC, shift=+300);
+bpn <- BasePositionNormalization(csC, target="zero", tags="*,z", shift=+300);
 print(bpn);
 
 csN <- process(bpn, verbose=log);
@@ -85,7 +85,7 @@ xlab <- "Freq B (thetaB/theta)";
 Clab <- "Copy number";
 CAlab <- "Copy number (Allele A)";
 CBlab <- "Copy number (Allele B)";
-col <- "green";
+col <- "red";
 
 fig <- 1;
 if (!devIsOpen(fig <- fig + 1)) {
