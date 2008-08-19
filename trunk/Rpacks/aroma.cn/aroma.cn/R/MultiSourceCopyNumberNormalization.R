@@ -16,8 +16,8 @@
 #
 # \arguments{
 #  \item{dsList}{A @list of K @see "AromaTotalCnBinarySet":s.}
-#  \item{fitUgp}{An @see "AromaUgpFile" that specifies the common set of loci used to 
-#    normalize the data sets at.}
+#  \item{fitUgp}{An @see "aroma.core::AromaUgpFile" that specifies the 
+#    common set of loci used to normalize the data sets at.}
 #  \item{...}{Arguments passed to @see "aroma.core::AromaTabularBinaryFile".}
 # }
 #
@@ -37,7 +37,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, ..., tags="*,mscn") {
+setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, ...) {
   if (!is.null(dsList)) {
     # Arguments 'dsList':
     if (is.list(dsList)) {
@@ -67,7 +67,6 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
   extend(Object(), "MultiSourceCopyNumberNormalization",
     .dsList = dsList,
     .fitUgp = fitUgp,
-    .userTags = tags,
     .dsSmoothList = NULL
   )
 })
@@ -960,6 +959,7 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
       dfNList <- normalizeOne(this, dfList=dfList, fit=fit, ..., 
                              force=force, verbose=less(verbose, 1));
       rm(fit);
+      verbose && print(verbose, dfNList);
 
       # Sanity check
       if (length(dfNList) != length(dfList)) {
@@ -976,7 +976,7 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
   verbose && exit(verbose);
 
   # Garbage collect
-  rm(ds);
+  rm(dsList);
   gc <- gc();
   verbose && print(verbose, gc);
 

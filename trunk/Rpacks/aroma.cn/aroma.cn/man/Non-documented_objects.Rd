@@ -51,6 +51,24 @@
 \alias{normalizePrincipalCurve.data.frame}
 \alias{normalizePrincipalCurve.matrix}
 \alias{principal.curve.hb}
+\alias{as.character.MultiSourceCopyNumberNormalization}
+\alias{extractTupleOfDataFiles}
+\alias{fitOne}
+\alias{getAllNames}
+\alias{getFitAromaUgpFile}
+\alias{getInputDataSets}
+\alias{getOutputDataSets}
+\alias{getOutputDataSets.MultiSourceCopyNumberNormalization}
+\alias{getOutputPaths}
+\alias{getOutputPaths.MultiSourceCopyNumberNormalization}
+\alias{getParameters.MultiSourceCopyNumberNormalization}
+\alias{getParametersAsString.MultiSourceCopyNumberNormalization}
+\alias{getSmoothedDataSets}
+\alias{getSubsetToFit}
+\alias{nbrOfDataSets}
+\alias{nbrOfDataSets.MultiSourceCopyNumberNormalization}
+\alias{normalizeOne}
+\alias{normalizeOne.MultiSourceCopyNumberNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -23,3 +23,13 @@
   makeSmoothSplinePredict.numeric normalizePrincipalCurve
   normalizePrincipalCurve.data.frame normalizePrincipalCurve.matrix
   principal.curve.hb
+  as.character.MultiSourceCopyNumberNormalization
+  extractTupleOfDataFiles fitOne getAllNames getFitAromaUgpFile
+  getInputDataSets getOutputDataSets
+  getOutputDataSets.MultiSourceCopyNumberNormalization getOutputPaths
+  getOutputPaths.MultiSourceCopyNumberNormalization
+  getParameters.MultiSourceCopyNumberNormalization
+  getParametersAsString.MultiSourceCopyNumberNormalization
+  getSmoothedDataSets getSubsetToFit nbrOfDataSets
+  nbrOfDataSets.MultiSourceCopyNumberNormalization normalizeOne
+  normalizeOne.MultiSourceCopyNumberNormalization
