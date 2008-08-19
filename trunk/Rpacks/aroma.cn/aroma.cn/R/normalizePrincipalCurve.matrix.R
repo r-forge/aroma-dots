@@ -28,8 +28,11 @@ setMethodS3("normalizePrincipalCurve", "matrix", function(x, ..., returnFit=FALS
 
 
 setMethodS3("normalizePrincipalCurve", "data.frame", function(x, ...) {
-  xN <- normalizePrincipalCurve(as.matrix(x), ...);
+  x <- as.matrix(x);
+  xN <- normalizePrincipalCurve(x, ...);
+  rm(x);
   xN <- as.data.frame(xN);
+  xN;
 })
 
 
