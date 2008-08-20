@@ -1,0 +1,12 @@
+Package: dChipIO
+================
+
+Version: 0.1.0 [2008-08-20]
+o Added example data.
+o Added readDcpRectangle().
+o The readDcp() and readDcpHeader() was taken from the 
+  aroma.affymetrix package.   The readCdfBin() and 
+  readCdfBinHeader() was taken from the authors private 
+  set of code.  The first versions of these functions 
+  were written on January 30, 2008.
+o Package created.
