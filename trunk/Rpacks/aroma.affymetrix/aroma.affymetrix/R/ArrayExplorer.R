@@ -357,6 +357,8 @@ setMethodS3("getColorMaps", "ArrayExplorer", function(this, parsed=FALSE, ...) {
 # @synopsis
 #
 # \arguments{
+#   \item{arrays}{An optional @vector of arrays to be processed. 
+#      If @NULL, all arrays are considered.}
 #   \item{...}{Not used.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
@@ -371,10 +373,16 @@ setMethodS3("getColorMaps", "ArrayExplorer", function(this, parsed=FALSE, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
+setMethodS3("process", "ArrayExplorer", function(this, arrays=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'arrays':
+  if (is.null(arrays)) {
+  } else {
+    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfArrays(this)));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -388,10 +396,16 @@ setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
   # Setup HTML, CSS, Javascript files first
   setup(this, ..., verbose=less(verbose));
 
+  # Get the array aliases
+  aliases <- names(getArrays(this));
+  if (!is.null(arrays)) {
+    aliases <- aliases[arrays];
+  }
+
   # Generate bitmap images
   reporters <- getListOfReporters(this);
   res <- lapply(reporters, FUN=function(reporter) {
-    writeImages(reporter, aliases=names(getArrays(this)), ..., verbose=less(verbose));
+    writeImages(reporter, arrays=arrays, aliases=aliases, ..., verbose=less(verbose));
   });
 
   # Update Javascript files
@@ -409,6 +423,9 @@ setMethodS3("process", "ArrayExplorer", function(this, ..., verbose=FALSE) {
 
 ##############################################################################
 # HISTORY:
+# 2008-08-19
+# o Added argument 'arrays' to process() so that it is possible to specify
+#   for which arrays images should be generated.
 # 2008-06-03
 # o BUG FIX: updateOnLoadJS() of ArrayExplorer did not use the fullname
 #   chip type, cause an error in ArrayExplorer:s for tagged chip types.

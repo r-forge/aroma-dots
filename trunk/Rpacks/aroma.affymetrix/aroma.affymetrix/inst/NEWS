@@ -1,7 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.1 [2008-08-11]
+Version: 0.9.4.2 [2008-08-20]
+o Move the functions for reading dChip files to the new dChipIO package.
+
+
+Version: 0.9.4.1 [2008-08-19]
+o Added argument 'arrays' to process() of ArrayExplorer so that it is
+  possible to specify for which arrays images should be generated.
 o Added support for specifying the type of target effects for any
   AbstractProbeSequenceNormalization method.
 o ALPHA: Added argument 'flavor' to AllelicCrosstalkCalibration. However,

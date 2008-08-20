@@ -80,7 +80,7 @@ setMethodS3("fromFile", "DChipDcpFile", function(static, filename, path=NULL, ..
 setMethodS3("getHeader", "DChipDcpFile", function(this, force=FALSE, ...) {
   hdr <- this$.header;
   if (force || is.null(hdr)) {
-    hdr <- readDcpHeader(getPathname(this), ...);
+    hdr <- dChipIO::readDcpHeader(getPathname(this), ...);
     hdr$Header <- paste(rawToChar(hdr$Header));
     hdr$DatFile <- paste(hdr$DatFile);
     hdr$BaselineFile <- paste(hdr$BaselineFile);
@@ -138,8 +138,7 @@ setMethodS3("getRawIntensities", "DChipDcpFile", function(this, cells=NULL, forc
 
   nbrOfUnits <- nbrOfUnits(this);
   field <- "rawIntensities";
-  data <- readDcp(getPathname(this), fields=field, 
-                                    cells=cells, nbrOfUnits=nbrOfUnits, ...);
+  data <- dChipIO::readDcp(getPathname(this), fields=field, cells=cells, ...);
 
   data <- data[[field]];
 
@@ -154,8 +153,7 @@ setMethodS3("getNormalizedIntensities", "DChipDcpFile", function(this, cells=NUL
 
   nbrOfUnits <- nbrOfUnits(this);
   field <- "normalizedIntensities";
-  data <- readDcp(getPathname(this), fields=field, 
-                                    cells=cells, nbrOfUnits=nbrOfUnits, ...);
+  data <- dChipIO::readDcp(getPathname(this), fields=field, cells=cells, ...);
 
   data <- data[[field]];
 
@@ -170,8 +168,7 @@ setMethodS3("getCalls", "DChipDcpFile", function(this, units=NULL, force=FALSE, 
   }
 
   field <- "calls";
-  data <- readDcp(getPathname(this), fields=field, 
-                                    units=units, nbrOfUnits=nbrOfUnits, ...);
+  data <- dChipIO::readDcp(getPathname(this), fields=field, units=units, ...);
 
   data <- data[[field]];
   data <- as.integer(data) + as.integer(1);
@@ -192,8 +189,7 @@ setMethodS3("getThetas", "DChipDcpFile", function(this, units=NULL, force=FALSE,
   }
 
   field <- "thetas";
-  data <- readDcp(getPathname(this), fields=field, 
-                                    units=units, nbrOfUnits=nbrOfUnits, ...);
+  data <- dChipIO::readDcp(getPathname(this), fields=field, units=units, ...);
 
   data <- data[[field]];
 
@@ -208,8 +204,7 @@ setMethodS3("getThetaStds", "DChipDcpFile", function(this, units=NULL, force=FAL
   }
 
   field <- "thetaStds";
-  data <- readDcp(getPathname(this), fields=field, 
-                                    units=units, nbrOfUnits=nbrOfUnits, ...);
+  data <- dChipIO::readDcp(getPathname(this), fields=field, units=units, ...);
 
   data <- data[[field]];
 
@@ -224,8 +219,7 @@ setMethodS3("getExcludes", "DChipDcpFile", function(this, units=NULL, force=FALS
   }
 
   field <- "excludes";
-  data <- readDcp(getPathname(this), fields=field, 
-                                    units=units, nbrOfUnits=nbrOfUnits, ...);
+  data <- dChipIO::readDcp(getPathname(this), fields=field, units=units, ...);
 
   data <- data[[field]];
 
@@ -240,8 +234,7 @@ setMethodS3("getThetasAB", "DChipDcpFile", function(this, units=NULL, force=FALS
   }
 
   fields <- c("thetas", "thetaStds");
-  data <- readDcp(getPathname(this), fields=fields, 
-                                    units=units, nbrOfUnits=nbrOfUnits, ...);
+  data <- dChipIO::readDcp(getPathname(this), fields=fields, units=units, ...);
 
   data <- data[fields];
   data <- unlist(data, use.names=FALSE);
@@ -251,6 +244,75 @@ setMethodS3("getThetasAB", "DChipDcpFile", function(this, units=NULL, force=FALS
   data;
 })
 
+
+setMethodS3("extractTheta", "DChipDcpFile", function(this, units=NULL, ..., drop=FALSE, nbrOfGroups=NULL, verbose=FALSE) {
+  # Arguments 'nbrOfGroups':
+  if (is.null(nbrOfGroups)) {
+    nbrOfGroups <- this$.nbrOfGroups;
+    if (is.null(nbrOfGroups))
+      nbrOfGroups <- 1;
+  }
+
+  if (nbrOfGroups == 1) {
+    data <- getThetas(this, units=units, ..., verbose=verbose);
+    if (!drop) {
+      data <- as.matrix(data);
+    }
+  } else if (nbrOfGroups == 2) {
+    data <- getThetasAB(this, units=units, ..., verbose=verbose);
+  }
+
+  # Drop singleton dimensions?
+  if (drop) {
+    data <- drop(data);
+  }
+
+  data;
+})
+
+
+setMethodS3("extractTheta", "DChipDcpSet", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'units':
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Extract the thetas
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  data <- NULL;
+  nbrOfArrays <- nbrOfArrays(this);
+  for (kk in seq(length=nbrOfArrays)) {
+    df <- getFile(this, kk);
+    dataKK <- extractTheta(df, units=units, ..., verbose=less(verbose, 5));
+    verbose && str(verbose, dataKK);
+    if (is.null(data)) {
+      dim <- c(nrow(dataKK), ncol(dataKK), nbrOfArrays);
+      dimnames <- list(NULL, NULL, getNames(this));
+      naValue <- as.double(NA);
+      data <- array(naValue, dim=dim, dimnames=dimnames);
+    }
+    data[,,kk] <- dataKK;
+  }
+
+  # Drop singleton dimensions
+  if (drop) {
+    data <- drop(data);
+  }
+
+  verbose && cat(verbose, "Thetas:");
+  verbose && str(verbose, data);
+
+  data;
+})
 
 
 # setMethodS3("getCdf", "DChipDcpFile", function(this, ...) {
@@ -289,6 +351,8 @@ setMethodS3("getThetasAB", "DChipDcpFile", function(this, units=NULL, force=FALS
 
 ##############################################################################
 # HISTORY:
+# 2008-08-20
+# o Updated DChipDcpFile to utilize the new dChipIO package.
 # 2008-05-09
 # o Now DChipDcpFile inherits from GenericDataFile.
 # 2008-01-30
