@@ -60,7 +60,8 @@ setMethodS3("extractTheta", "ChipEffectSet", function(this, units=NULL, groups=N
   nbrOfArrays <- nbrOfArrays(this);
   dim <- c(nbrOfUnits, nbrOfGroups, nbrOfArrays);
   dimnames <- list(NULL, NULL, getNames(this));
-  theta <- array(NA, dim=dim, dimnames=dimnames);
+  naValue <- as.double(NA);
+  theta <- array(naValue, dim=dim, dimnames=dimnames);
   for (kk in seq(length=nbrOfArrays)) {
     ce <- getFile(this, kk);
     thetaKK <- extractTheta(ce, units=ugcMap, groups=groups, 

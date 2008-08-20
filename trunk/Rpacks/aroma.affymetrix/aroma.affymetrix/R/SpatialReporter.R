@@ -199,15 +199,23 @@ setMethodS3("getColorMaps", "SpatialReporter", function(this, parsed=FALSE, ...)
 })
 
 
-setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., verbose=FALSE) {
-  # Get the CEL set of interest
-  cs <- getDataSet(this);
-
+setMethodS3("writeImages", "SpatialReporter", function(this, arrays=NULL, aliases=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'arrays':
+  cs <- getDataSet(this);
+  nbrOfArrays <- nbrOfArrays(cs);
+  if (is.null(arrays)) {
+    arrays <- seq(length=nbrOfArrays);
+  } else {
+    arrays <- Arguments$getIndices(arrays, range=c(1,nbrOfArrays));
+    nbrOfArrays <- length(arrays);
+  }
+
+  # Argument 'aliases':
   if (!is.null(aliases)) {
-    aliases <- Arguments$getCharacters(aliases, length=nbrOfArrays(cs));
+    aliases <- Arguments$getCharacters(aliases, length=nbrOfArrays);
   }
 
   # Argument 'verbose':
@@ -232,9 +240,8 @@ setMethodS3("writeImages", "SpatialReporter", function(this, aliases=NULL, ..., 
   }
 
   # For each array...
-  nbrOfArrays <- nbrOfArrays(cs);
-  for (kk in seq(length=nbrOfArrays)) {
-    df <- getFile(cs, kk);
+  for (kk in seq(along=arrays)) {
+    df <- getFile(cs, arrays[kk]);
     setAlias(df, aliases[kk]);
     verbose && enter(verbose, sprintf("Array #%d of %d ('%s')", 
                                              kk, nbrOfArrays, getName(df)));
@@ -446,6 +453,8 @@ setMethodS3("plotMargins", "SpatialReporter", function(this, array, margins=c("r
 
 ##############################################################################
 # HISTORY:
+# 2008-08-19
+# o Now writeImages() takes argument 'arrays'.
 # 2008-03-17
 # o Added readRawDataRectangle(), calculateMargins(), plotMargins(). Will
 #   probably be moved elsewhere.

@@ -737,3 +737,4 @@ getParameters.AbstractProbeSequenceNormalization
   isResequenceChip.AffymetrixCdfFile process.ReseqCrosstalkCalibration
   readUnitsByQuartets readUnitsByQuartets.AffymetrixCdfFile
   rescaleByAll.ReseqCrosstalkCalibration ReseqCrosstalkCalibration
+extractTheta.DChipDcpFile extractTheta.DChipDcpSet
