@@ -1,0 +1,7 @@
+#
+# NAMESPACE file for the affxparser package.
+#
+
+# Export anything without a dot in the prefix.
+exportPattern("^[^\\.]")
+#exportPattern(".*")
