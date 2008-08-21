@@ -9,8 +9,8 @@ fpRate <- 2 * 1/2*1/29;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 subset <- NULL;
 J <- nrow(getData(sets[[1]]$rocData, raw=TRUE));
-subset <- sample(J, size=10000);
-for (unitType in knownUnitTypes[1]) {
+#subset <- sample(J, size=20000);
+for (unitType in knownUnitTypes[3]) {
   verbose && enter(verbose, "Estimating TP rates for each unit");
   verbose && cat(verbose, "Unit type: ", unitType);
 
@@ -41,17 +41,17 @@ for (unitType in knownUnitTypes[1]) {
     width <- imgScales[imgFormat] * 1;
     height <- 0.618*width;
     if (imgFormat == "x11") {
-      devOpen(imgFormat, width=width, height=height, name=imgName);
+      devNew(imgFormat, width=width, height=height, label=imgName);
 	    } else {
       mkdirs(figPathT);
       imgPathname <- filePath(figPathT, sprintf("%s.%s", imgName, imgFormat));
-      devOpen(imgFormat, imgPathname, width=width, height=height, name=imgName);
+      devNew(imgFormat, imgPathname, width=width, height=height, label=imgName);
     }
     
     # Create empty plot
     par(mar=c(5,5,1.2,2)+0.1);
     main <- sprintf("Unit type: %s", toupper(unitType));
-    ylim <- c(0,7);
+    ylim <- c(0,9);
 
     sets <- updateGraphics(sets);
     idxs <- whichVector(isRawDataSet(sets));

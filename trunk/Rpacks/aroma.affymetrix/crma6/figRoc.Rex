@@ -1,6 +1,6 @@
 source("init.R");
 
-imgFormat <- c("x11", "eps", "png")[1];
+imgFormat <- c("x11", "eps", "png")[3];
 
 hs <- NULL;
 #hs <- 2:4;
@@ -20,7 +20,7 @@ for (d in ds) {
   } else {
     by <- 0.1;
   }
-  for (unitType in knownUnitTypes[1]) {
+  for (unitType in knownUnitTypes[3]) {
     verbose && enter(verbose, "Plotting ROC");
     verbose && cat(verbose, "Unit type: ", unitType);
     sets <- addSubsetDataSets(sets, subset=unitType, verbose=verbose);
