@@ -8,11 +8,20 @@ log <- Verbose(threshold=-10, timestamp=TRUE);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 naVersion <- "26";
 user <- "HB";
-datestamp <- "20080722";
+datestamp <- "20080821";
 
 chipType <- "GenomeWideSNP_6";
 cdfTags <- "Full";
-nbrOfEnzymes <- 2;
+
+footer <- list(
+  createdOn = format(Sys.time(), "%Y%m%d %H:%M:%S", usetz=TRUE),
+  createdBy = list(
+    fullname = "Henrik Bengtsson", 
+    email = "hb@stat.berkeley.edu"
+  ),
+  srcFiles = list()
+);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Setup required annotation files
@@ -44,22 +53,23 @@ print(csvList);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Import UFL from CSV files
+# Import UGP from CSV files
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 tags <- sprintf("na%s,%s%s", naVersion, user, datestamp);
-ufl <- NULL;
+ugp <- NULL;
 tryCatch({
-  ufl <- AromaUflFile$byChipType(getChipType(cdf), tags=tags);
+  ugp <- AromaUgpFile$byChipType(getChipType(cdf), tags=tags);
 }, error = function(ex) {})
-if (is.null(ufl)) {
-  ufl <- AromaUflFile$allocateFromCdf(cdf, tags=tags, nbrOfEnzymes=nbrOfEnzymes);
+if (is.null(ugp)) {
+  ugp <- AromaUgpFile$allocateFromCdf(cdf, tags=tags);
 }
-print(ufl);
+print(ugp);
+
 
 for (kk in seq(along=csvList)) {
   csv <- csvList[[kk]];
   print(csv);
-  units <- importFrom(ufl, csv, verbose=log);
+  units <- importFrom(ugp, csv, verbose=log);
   str(units);
   ## GenomeWideSNP_6.na26.annot.csv:    int [1:934968] 334945 334944 ...
   ## GenomeWideSNP_6.cn.na26.annot.csv: int [1:945826] 935622 935777 ...
@@ -84,7 +94,7 @@ if (!exists("srcFileTags", mode="list")) {
   print(srcFileTags);
 }
 
-footer <- readFooter(ufl);
+footer <- readFooter(ugp);
 footer$createdOn <- format(Sys.time(), "%Y%m%d %H:%M:%S", usetz=TRUE);
 footer$createdBy = list(
   fullname = "Henrik Bengtsson", 
@@ -92,29 +102,27 @@ footer$createdBy = list(
 );
 names(srcFileTags) <- sprintf("srcFile%d", seq(along=srcFileTags));
 footer$srcFiles <- srcFileTags;
-writeFooter(ufl, footer);
+writeFooter(ugp, footer);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Statistics
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-print(ufl);
+print(ugp);
+## AromaUgpFile:
+## Name: GenomeWideSNP_6
+## Tags: Full,na26,HB20080821
+## Pathname: annotationData/chipTypes/GenomeWideSNP_6/
+##           GenomeWideSNP_6,Full,na26,HB20080821.ugp
+## File size: 8.97MB
+## RAM: 0.00MB
+## Number of data rows: 1881415
+## File format: v1
+## Dimensions: 1881415x2
+## Column classes: integer, integer
+## Number of bytes per column: 1, 4
+## Footer: ...
+## Chip type: GenomeWideSNP_6,Full
+## Platform: Affymetrix
 
-x <- summaryOfUnits(ufl);
-print(x);
-## GenomeWideSNP_6,Full,na26,HB20080722:
-##                 snp    cnp affxSnp other   total
-## enzyme1-only 246080 451191       0     0  697271
-## enzyme2-only 160899      0       0     0  160899
-## both         522472 494615       0     0 1017087
-## missing        2495     20    3022   621    6158
-## total        931946 945826    3022   621 1881415
-
-
-## GenomeWideSNP_6,na26,HB20080821:
-##                 snp    cnp affxSnp other   total
-## enzyme1-only 240001 451191       0     0  691192
-## enzyme2-only 154884      0       0     0  154884
-## both         510330 494615       0     0 1004945
-## missing        1385     20    3022   621    5048
-## total        906600 945826    3022   621 1856069
+## GenomeWideSNP_6,Full,na26,HB20080821:
