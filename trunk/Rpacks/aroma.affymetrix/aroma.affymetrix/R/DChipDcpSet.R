@@ -315,6 +315,8 @@ setMethodS3("extractTheta", "DChipDcpSet", function(this, units=NULL, ..., drop=
   gcCount <- 0;
   for (kk in seq(length=nbrOfArrays)) {
     df <- getFile(this, kk);
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(df), nbrOfArrays));
+
     dataKK <- extractTheta(df, units=units, ..., verbose=less(verbose, 5));
     verbose && str(verbose, dataKK);
     if (is.null(data)) {
@@ -332,7 +334,9 @@ setMethodS3("extractTheta", "DChipDcpSet", function(this, units=NULL, ..., drop=
       gc <- gc();
       verbose && print(verbose, gc);
     }
-  }
+
+    verbose && exit(verbose);
+  } # for (kk ...)
 
   # Drop singleton dimensions
   if (drop) {

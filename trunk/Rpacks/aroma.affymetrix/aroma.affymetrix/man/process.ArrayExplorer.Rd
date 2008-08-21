@@ -19,9 +19,11 @@
  Generates image files, scripts and dynamic pages for the explorer.
 }
 
-\usage{\method{process}{ArrayExplorer}(this, ..., verbose=FALSE)}
+\usage{\method{process}{ArrayExplorer}(this, arrays=NULL, ..., verbose=FALSE)}
 
 \arguments{
+  \item{arrays}{An optional \code{\link[base]{vector}} of arrays to be processed.
+     If \code{\link[base]{NULL}}, all arrays are considered.}
   \item{...}{Not used.}
   \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
