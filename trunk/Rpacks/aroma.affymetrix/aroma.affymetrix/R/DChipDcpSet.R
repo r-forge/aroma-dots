@@ -293,9 +293,63 @@ setMethodS3("getFullName", "DChipDcpSet", function(this, parent=1, ...) {
 })
 
 
+setMethodS3("extractTheta", "DChipDcpSet", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'units':
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Extract the thetas
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  data <- NULL;
+  nbrOfArrays <- nbrOfArrays(this);
+  gcCount <- 0;
+  for (kk in seq(length=nbrOfArrays)) {
+    df <- getFile(this, kk);
+    dataKK <- extractTheta(df, units=units, ..., verbose=less(verbose, 5));
+    verbose && str(verbose, dataKK);
+    if (is.null(data)) {
+      dim <- c(nrow(dataKK), ncol(dataKK), nbrOfArrays);
+      dimnames <- list(NULL, NULL, getNames(this));
+      naValue <- as.double(NA);
+      data <- array(naValue, dim=dim, dimnames=dimnames);
+    }
+    data[,,kk] <- dataKK;
+    rm(dataKK);
+
+    # Garbage collect?
+    gcCount <- gcCount + 1;
+    if (gcCount %% 10 == 0) {
+      gc <- gc();
+      verbose && print(verbose, gc);
+    }
+  }
+
+  # Drop singleton dimensions
+  if (drop) {
+    data <- drop(data);
+  }
+
+  verbose && cat(verbose, "Thetas:");
+  verbose && str(verbose, data);
+
+  data;
+})
+
 
 ############################################################################
 # HISTORY:
+# 2008-08-20
+# o Added extractTheta().
 # 2008-07-21
 # o Now findByName() assert that the data set name is not empty.
 # 2008-05-09

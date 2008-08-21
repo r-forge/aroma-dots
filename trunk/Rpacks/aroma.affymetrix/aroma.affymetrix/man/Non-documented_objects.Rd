@@ -1469,6 +1469,8 @@
 \alias{readUnitsByQuartets.AffymetrixCdfFile}
 \alias{rescaleByAll.ReseqCrosstalkCalibration}
 \alias{ReseqCrosstalkCalibration}
+\alias{extractTheta.DChipDcpFile}
+\alias{extractTheta.DChipDcpSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
