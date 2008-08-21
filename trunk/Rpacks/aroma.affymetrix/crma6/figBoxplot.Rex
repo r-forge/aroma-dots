@@ -1,6 +1,6 @@
 source("init.R");
 
-imgFormat <- c("x11", "eps", "png")[3];
+imgFormat <- c("x11", "eps", "png")[1];
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Do boxplots for all log-ratios
@@ -20,7 +20,7 @@ for (kk in seq(along=sets)) {
     width <- imgScales[imgFormat] * 1.2;
     height <- 3/4*0.618*width;
     if (imgFormat == "x11") {
-      devOpen(imgFormat, width=width, height=height, name=imgName);
+      devNew(imgFormat, width=width, height=height, label=imgName);
     } else {
       mkdirs(figPathT);
       imgPathname <- filePath(figPathT, sprintf("%s.%s", imgName, imgFormat));
@@ -29,7 +29,7 @@ for (kk in seq(along=sets)) {
         verbose && exit(verbose);
         next;
       }
-      devOpen(imgFormat, imgPathname, width=width, height=height, name=imgName);
+      devNew(imgFormat, imgPathname, width=width, height=height, label=imgName);
     }
 
     set <- addRocData(set, verbose=verbose);

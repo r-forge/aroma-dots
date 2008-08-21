@@ -9,23 +9,36 @@ sets <- addRocDataSet(sets, "ACC,ra,-XY,RMA,+300,A+B,FLN,-XY", name="CRMA");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # CRMA: With probe-sequence normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# BCN
-sets <- addRocDataSet(sets, "ACC,ra,-XY,BCN,-XY,+300,RMA,A+B,FLN,-XY", name="CRMA(BCN)");
-
-# BPN
-sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,RMA,A+B,FLN,-XY", name="CRMA+");
-sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,df=9,RMA,A+B,FLN,-XY", name="DRMA+");
-sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+200,RMA,A+B,FLN,-XY", name="CRMA+200");
-sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,RMA,A+B,FLN,-XY,UTSN,-XY,v2", name="CRMA#");
-sets <- addRocDataSet(sets, "RBC,BPN,-XY,RMA,A+B,FLN,-XY", name="CRMA-");
-
-# AVG
-sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,AVG,A+B,FLN,-XY", name="CRMA+*");
-sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,df=9,AVG,FLN,-XY", name="DRMA+*");
-sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,AVG,A+B,FLN,-XY,UTSN,-XY", name="CRMA+*#");
-
+### # BCN
+### sets <- addRocDataSet(sets, "ACC,ra,-XY,BCN,-XY,+300,RMA,A+B,FLN,-XY", name="CRMA(BCN)");
 ### sets <- addRocDataSet(sets, "ACC,ra,-XY,BCN,-XY,AVG,+300,A+B,FLN,-XY", name="CRMAv0");
 ### sets <- addRocDataSet(sets, "ACC,ra,-XY,BCN,-XY,RMA,+300,A+B,FLN,-XY", name="CRMAv0");
+### 
+### # BPN
+### sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,RMA,A+B,FLN,-XY", name="CRMA+");
+### sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,df=9,RMA,A+B,FLN,-XY", name="DRMA+");
+### sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+200,RMA,A+B,FLN,-XY", name="CRMA+200");
+### sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,RMA,A+B,FLN,-XY,UTSN,-XY,v2", name="CRMA#");
+### sets <- addRocDataSet(sets, "RBC,BPN,-XY,RMA,A+B,FLN,-XY", name="CRMA-");
+###                              
+### # BPN (single-array)
+### sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,AVG,A+B,FLN,-XY", name="CRMA+*");
+### sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,df=9,AVG,FLN,-XY", name="DRMA+*");
+### sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,AVG,A+B,FLN,-XY,UTSN,-XY", name="CRMA+*#");
+
+
+# BPN,z
+sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,RMA,A+B,FLN,-XY,UTSN,-XY", name="FRMA+");
+sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,RMA,A+B,FLN,-XY", name="ERMA+");
+sets <- addRocDataSet(sets, "BPN,-XY,+300,z,ACC,ra,-XY,RMA,A+B,FLN,-XY,UTSN,-XY", name="CRMA3");
+sets <- addRocDataSet(sets, "BPN,-XY,+300,z,ACC,ra,-XY,RMA,A+B,FLN,-XY", name="CRMA4");
+sets <- addRocDataSet(sets, "BPN,-XY,z,ACC,ra,-XY,RMA,+300,A+B,FLN,-XY,UTSN,-XY", name="CRMA5");
+sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,RMA,A+B,FLN,-XY,z", name="GRMA+");
+
+# BPN,z (single-array)
+sets <- addRocDataSet(sets, "BPN,-XY,z,ACC,ra,-XY,AVG,FLN,-XY,+300", name="CRMA5*");
+sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,AVG,FLN,-XY", name="ERMA+*");
+
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -33,7 +46,9 @@ sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,AVG,A+B,FLN,-XY,UTSN,-XY", 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 sets <- addRocDataSet(sets, "GTC", name="GTC");
 sets <- addRocDataSet(sets, "APT,Full,QN,sketch,PLIER", name="APT");
-sets <- addRocDataSet(sets, "dChip,IN,MBEI,A+B", name="dChip");
+sets <- addRocDataSet(sets, "dChip,IN,MBEI,A+B", name="dChip0");
+sets <- addRocDataSet(sets, "dChip,MBEI", name="dChip");
+sets <- addRocDataSet(sets, "dChip,AVG", name="dChip*");
 
 sets <- sets[!is.na(names(sets))];
 verbose && print(verbose, names(sets));
@@ -48,7 +63,12 @@ keep <- c("CRMA+", "GTC", "APT", "dChip");
 #keep <- c("CRMA+*#", "CRMA+*", "CRMA+", "GTC");
 
 keep <- c("CRMA+", "CRMA", "GTC", "dChip");
-keep <- c("DRMA+*", "CRMA+*", "CRMA+", "GTC", "dChip");
+keep <- c("ERMA+", "CRMA+", "ERMA+*", "CRMA+*", "GTC", "dChip");
+keep <- c("ERMA+", "CRMA+", "ERMA+*", "CRMA+*", "GTC", "dChip");
+keep <- c("CRMA3", "CRMA4", "FRMA+", "ERMA+", "CRMA+", "ERMA+*", "GTC");
+keep <- c("CRMA6", "CRMA5", "ERMA+", "CRMA+", "GTC");
+keep <- c("GRMA+", "ERMA+*", "GTC");
+keep <- c("GRMA+", "ERMA+*", "GTC", "dChip", "dChip*");
 
 hasPrefix <- function(name, prefix, ...) {
   (substring(name, 1, nchar(prefix)) == prefix);

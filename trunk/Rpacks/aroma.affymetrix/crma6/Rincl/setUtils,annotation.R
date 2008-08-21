@@ -36,15 +36,37 @@ updateGraphics <- function(sets, ..., verbose=FALSE) {
     col <- "black";
     lty <- 3;
 
-    if (hasPrefix(name, "CRMA")) {
+    if (hasPrefix(name, "CRMA-")) {
+      col <- "blue";
+    } else if (hasPrefix(name, "CRMA3")) {
+      col <- "black";
+      lty <- 1;
+    } else if (hasPrefix(name, "CRMA4")) {
+      col <- "black";
+      lty <- 2;
+    } else if (hasPrefix(name, "CRMA5")) {
+      col <- "green";
+      lty <- 1;
+      if (hasAsterisk(name)) {
+        lty <- 3;
+      }
+    } else if (hasPrefix(name, "CRMA6")) {
+      col <- "green";
+      lty <- 2;
+    } else if (hasPrefix(name, "GRMA")) {
+      col <- "pink";
+    } else if (hasPrefix(name, "CRMA") || hasPrefix(name, "DRMA") || hasPrefix(name, "ERMA") || hasPrefix(name, "FRMA")) {
       col <- colors["CRMA"];
+      if (hasPrefix(name, "ERMA")) {
+        col <- "purple";
+      } else if (hasPrefix(name, "FRMA")) {
+        col <- "orange";
+      }
       if (hasPlus(name) & hasAsterisk(name) & hasHash(name)) {
-        col <- "blue";
         lty <- 4;
       } else if (hasPlus(name) & !hasAsterisk(name)) {
         lty <- 1;
       } else if (hasPlus(name) & hasAsterisk(name)) {
-        col <- "green";
         lty <- 2;
       } else if (hasHash(name) & !hasAsterisk(name)) {
         lty <- 3;
@@ -52,15 +74,19 @@ updateGraphics <- function(sets, ..., verbose=FALSE) {
 #        col <- colors["APT"];
         lty <- 5;
       }
-    } else if (hasPrefix(name, "dChip")) {
-      col <- colors["dChip"];
-      lty <- 1;
     } else if (hasPrefix(name, "APT")) {
       col <- colors["APT"];
       lty <- 1;
     } else if (hasPrefix(name, "GTC")) {
       col <- colors["GTC"];
       lty <- 1;
+    } else if (hasPrefix(name, "dChip")) {
+      col <- colors["dChip"];
+      lty <- 1;
+      if (hasAsterisk(name))
+        lty <- 2;
+      if (hasPrefix(name, "dChip0"))
+        lty <- 3;
     }
 
     if (!identical(col, set$col)) {
