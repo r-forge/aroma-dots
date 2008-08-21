@@ -1463,12 +1463,8 @@
 \alias{getParameters.ReseqCrosstalkCalibration}
 \alias{getSubsetToAvg.ReseqCrosstalkCalibration}
 \alias{isResequenceChip}
-\alias{isResequenceChip.AffymetrixCdfFile}
-\alias{process.ReseqCrosstalkCalibration}
 \alias{readUnitsByQuartets}
-\alias{readUnitsByQuartets.AffymetrixCdfFile}
 \alias{rescaleByAll.ReseqCrosstalkCalibration}
-\alias{ReseqCrosstalkCalibration}
 \alias{extractTheta.DChipDcpFile}
 \alias{extractTheta.DChipDcpSet}
 

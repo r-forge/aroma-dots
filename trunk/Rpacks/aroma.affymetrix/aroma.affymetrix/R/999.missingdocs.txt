@@ -542,8 +542,8 @@
   readDataFrame.UgpGenomeInformation readDataUnitChromosomePosition
   readDataUnitChromosomePosition.AffymetrixNetAffxCsvFile
   readDataUnitFragmentLength
-  readDataUnitFragmentLength.AffymetrixNetAffxCsvFile readDcp
-  readDcpHeader readGenomeWideSNP
+  readDataUnitFragmentLength.AffymetrixNetAffxCsvFile 
+  readGenomeWideSNP
   readGenomeWideSNP.DChipGenomeInformation
   readHeader.AffymetrixAptSummaryFile readMouse430
   readMouse430.DChipGenomeInformation readMouse430KenHardwired
@@ -734,7 +734,13 @@ getParameters.AbstractProbeSequenceNormalization
   getParameters.AbstractProbeSequenceNormalization
   getParameters.ReseqCrosstalkCalibration
   getSubsetToAvg.ReseqCrosstalkCalibration isResequenceChip
-  isResequenceChip.AffymetrixCdfFile process.ReseqCrosstalkCalibration
-  readUnitsByQuartets readUnitsByQuartets.AffymetrixCdfFile
-  rescaleByAll.ReseqCrosstalkCalibration ReseqCrosstalkCalibration
+  readUnitsByQuartets 
+  rescaleByAll.ReseqCrosstalkCalibration
 extractTheta.DChipDcpFile extractTheta.DChipDcpSet
+  as.character.DChipCdfBinFile clearCache.DChipCdfBinFile
+  fromFile.DChipCdfBinFile getCellDim getCellDim.DChipCdfBinFile
+  getChipType.DChipCdfBinFile getFileFormat.DChipCdfBinFile
+  getHeader.DChipCdfBinFile getPlatform.DChipCdfBinFile
+  getUnitNames.DChipCdfBinFile getUnitSizes.DChipCdfBinFile
+  nbrOfCells.DChipCdfBinFile nbrOfUnits.DChipCdfBinFile
+  readDataFrame.DChipCdfBinFile

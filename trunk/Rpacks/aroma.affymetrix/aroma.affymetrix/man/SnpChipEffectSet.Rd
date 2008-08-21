@@ -65,6 +65,7 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getBaseline} \tab  -\cr
  \tab \code{getMergeStrands} \tab  -\cr
+ \tab \code{getTotalAndFreqBSets} \tab  -\cr
  \tab \code{setMergeStrands} \tab  -\cr
 }
 
