@@ -9,3 +9,13 @@ print(hdr)
 data <- readCdfBin(pathname)
 str(data)
 
+# Read a subset of the units
+units <- c(10:11, 15:20, 150:105, 2,2,2)
+dataT <- readCdfBin(pathname, units=units)
+str(dataT)
+
+# Assert correctness
+for (ff in c("unitNames", "numProbes", "CellPos")) {
+  stopifnot(length(dataT[[ff]]) == length(units))
+  stopifnot(identical(dataT[[ff]], data[[ff]][units]))
+}

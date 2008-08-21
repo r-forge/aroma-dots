@@ -52,7 +52,7 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
     readBin(con=con, what="integer", size=4, signed=signed, n=n, ...);
   }
 
-  readElements <- function(con, idxs, nbrOfElements, size=1, skip=FALSE, ...) {
+  readElements <- function(con, idxs, nbrOfElements, size=1, skip=FALSE, ..., drop=TRUE) {
     # Local functions
     readBin2 <- function(con, what, size, signed, n) {
       if (what == "raw") {
@@ -69,33 +69,37 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
       return(NULL);
     }
 
-    # Read all elements?
-    if (is.null(idxs)) {
-      readBin2(con=con, size=size, ..., n=nbrOfElements);
+    # Read all elements
+    values <- readBin2(con=con, size=size, ..., n=nbrOfElements);
+
+    # Turn into a matrix?
+    if (mode(values) == "raw") {
+      # Sanity check
+      if (length(values) %% size != 0) {
+        stop("File format error/read error: The number of bytes read is not a multiple of ", size, ": ", length(values));
+      }
+
+      dim(values) <- c(size, (length(values) %/% size));
+    
+      # Keep only the subset of elements?
+      if (!is.null(idxs)) {
+        values <- values[,idxs,drop=FALSE];
+      }
+
+      # Drop singleton dimensions?
+      if (drop)
+        values <- drop(values);
     } else {
-      r <- range(idxs);
-      nbrOfElementsToSkip <- r[1]-1;
-      nbrOfElementsToRead <- r[2]-r[1]+1;
-
-      # Skip to first element to read?
-      if (nbrOfElementsToSkip > 0) {
-        seek(con=con, where=size*nbrOfElementsToSkip, 
-                                           origin="current", rw="read");
-      }
-
-      # Read values
-      values <- readBin2(con=con, size=size, ..., n=nbrOfElementsToRead);
-      nbrOfBytesLeft <- size*(nbrOfElements - length(values));
-      if (nbrOfBytesLeft > 0) {
-        seek(con=con, where=nbrOfBytesLeft, origin="current", rw="read");
-      }
-      values;
+      if (!is.null(idxs))
+        values <- values[idxs];
     }
+
+    values;
   } # readElements()
 
 
   readCells <- function(con, cells, what="integer", size=2, signed=FALSE, ...) {
-    readElements(con=con, idxs=cells, nbrOfElements=nbrOfCells, 
+    readElements(con=con, idxs=cells, nbrOfElements=nbrOfCells,
                                    what=what, size=size, signed=signed, ...);
   }
 
@@ -184,14 +188,14 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Reading/skipping raw and normalized intensities
   for (field in c("rawIntensities", "normalizedIntensities")) {
-    res[[field]] <- readCells(con, cells=cells, skip=(!field %in% fields));
+    res[[field]] <- readCells(con, cells=cells, skip=(!field %in% fields), drop=TRUE);
 #    str(res);
   }
 
   # Reading/skipping calls
   field <- "calls";
   res[[field]] <- readUnits(con, units=units, what="raw", size=1, 
-                                                 skip=(!field %in% fields));
+                                       skip=(!field %in% fields), drop=TRUE);
 #  str(res);
 
   # Reading/skipping probe summaries
@@ -200,7 +204,6 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
 
   # Parse probe summaries
   if (!skip) {
-    raw <- matrix(raw, nrow=12);
     n <- ncol(raw);
   
     field <- "thetas";
@@ -232,6 +235,7 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
 ##############################################################################
 # HISTORY:
 # 2008-08-20
+# o BUG FIX: The wrong subset of units was read when 'units' was specified.
 # o Added Rdoc comments.
 # o If '.nbrOfUnits=NULL', then it is inferred automatically from the file
 #   size, if possible.

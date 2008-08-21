@@ -69,6 +69,7 @@ readCdfBin <- function(con, units=NULL, ...) {
     units <- 1:nbrOfUnits;
   } else {
     units <- .argAssertRange(as.integer(units), range=c(1, nbrOfUnits));
+    nbrOfUnits <- length(units);
   }
 
   data <- list(header=hdr);
@@ -96,42 +97,45 @@ readCdfBin <- function(con, units=NULL, ...) {
   # Read first to last unit...
   raw <- readBin(con=con, what="raw", n=nbrOfUnitsToRead*CDF_UNIT_SIZE);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Keep only units of interest
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   dim(raw) <- c(CDF_UNIT_SIZE, nbrOfUnitsToRead);
-  keep <- which(units %in% (firstUnit:lastUnit));
+  keep <- match(units, (firstUnit:lastUnit));
   raw <- raw[,keep,drop=FALSE];
 
   # Extract 'UnitName'
   idxs <- 1:UNIT_NAME_LEN;
-  unitNames <- rep("", nbrOfUnitsToRead);
+  unitNames <- rep("", nbrOfUnits);
   for (idx in idxs) {
     unitNames <- paste(unitNames, 
                    rawToChar(raw[idx,,drop=TRUE], multiple=TRUE), sep="");
   }
   raw <- raw[-idxs,,drop=FALSE];
   data$unitNames <- unitNames;
+  rm(unitNames);
 
   # Extract 'NumProbe'
   idxs <- 1:2;
   data$numProbes <- readBin(con=raw[idxs,,drop=FALSE], what="integer", 
-                                size=2, signed=FALSE, n=nbrOfUnitsToRead);
+                                       size=2, signed=FALSE, n=nbrOfUnits);
   raw <- raw[-idxs,,drop=FALSE];
 
   data$CellPos <- readBin(con=raw, what="integer", size=4, signed=FALSE, 
-                                                      n=nbrOfUnitsToRead);
+                                                             n=nbrOfUnits);
   rm(raw);
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read cell data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Skip to the last unit
   if (lastUnit < nbrOfUnits) {
     seek(con=con, origin="current",
                 where=(nbrOfUnits-lastUnit)*CDF_UNIT_SIZE, rw="read");
   }
 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Read cell data
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # To do
 
   data;
@@ -141,6 +145,7 @@ readCdfBin <- function(con, units=NULL, ...) {
 ##############################################################################
 # HISTORY:
 # 2008-08-20
+# o BUG FIX: The wrong subset of units was read when 'units' was specified.
 # o Added Rdoc comments.
 # 2008-02-03
 # o Added reader for CDF.bin unit data. Cell data are still to be done.
