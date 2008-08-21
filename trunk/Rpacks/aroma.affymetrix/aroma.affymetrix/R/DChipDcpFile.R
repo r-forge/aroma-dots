@@ -81,10 +81,6 @@ setMethodS3("getHeader", "DChipDcpFile", function(this, force=FALSE, ...) {
   hdr <- this$.header;
   if (force || is.null(hdr)) {
     hdr <- dChipIO::readDcpHeader(getPathname(this), ...);
-    hdr$Header <- paste(rawToChar(hdr$Header));
-    hdr$DatFile <- paste(hdr$DatFile);
-    hdr$BaselineFile <- paste(hdr$BaselineFile);
-    hdr$dummy <- NULL;
     this$.header <- hdr;
   }
   hdr;
@@ -270,49 +266,6 @@ setMethodS3("extractTheta", "DChipDcpFile", function(this, units=NULL, ..., drop
   data;
 })
 
-
-setMethodS3("extractTheta", "DChipDcpSet", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Argument 'units':
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Extract the thetas
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  data <- NULL;
-  nbrOfArrays <- nbrOfArrays(this);
-  for (kk in seq(length=nbrOfArrays)) {
-    df <- getFile(this, kk);
-    dataKK <- extractTheta(df, units=units, ..., verbose=less(verbose, 5));
-    verbose && str(verbose, dataKK);
-    if (is.null(data)) {
-      dim <- c(nrow(dataKK), ncol(dataKK), nbrOfArrays);
-      dimnames <- list(NULL, NULL, getNames(this));
-      naValue <- as.double(NA);
-      data <- array(naValue, dim=dim, dimnames=dimnames);
-    }
-    data[,,kk] <- dataKK;
-  }
-
-  # Drop singleton dimensions
-  if (drop) {
-    data <- drop(data);
-  }
-
-  verbose && cat(verbose, "Thetas:");
-  verbose && str(verbose, data);
-
-  data;
-})
 
 
 # setMethodS3("getCdf", "DChipDcpFile", function(this, ...) {
