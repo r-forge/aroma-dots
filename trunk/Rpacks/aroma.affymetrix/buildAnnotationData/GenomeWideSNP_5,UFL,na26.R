@@ -8,21 +8,11 @@ log <- Verbose(threshold=-10, timestamp=TRUE);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 naVersion <- "26";
 user <- "HB";
-datestamp <- "20080723";
+datestamp <- "20080822";
 
 chipType <- "GenomeWideSNP_5";
 cdfTags <- "Full,r2";
 nbrOfEnzymes <- 2;
-
-footer <- list(
-  createdOn = format(Sys.time(), "%Y%m%d %H:%M:%S", usetz=TRUE),
-  createdBy = list(
-    fullname = "Henrik Bengtsson", 
-    email = "hb@stat.berkeley.edu"
-  ),
-  srcFiles = list()
-);
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Setup required annotation files
@@ -45,16 +35,7 @@ if (!exists("csvList", mode="list")) {
     tags <- tagsList[[key]];
     pathname <- AffymetrixNetAffxCsvFile$findByChipType(chipType, tags=tags);
     if (isFile(pathname)) {
-      csv <- AffymetrixNetAffxCsvFile(pathname);
-      print(csv);
-      srcFile <- list(
-        filename=getFilename(csv), 
-        filesize=getFileSize(csv), 
-        checksum=getChecksum(csv)
-      );
-      footer$srcFiles <- c(footer$srcFiles, list(srcFile=srcFile));
-      csvList[[key]] <- csv;
-      rm(csv);
+      csvList[[key]] <- AffymetrixNetAffxCsvFile(pathname);
     }
     rm(tags);
   }
@@ -80,22 +61,44 @@ for (kk in seq(along=csvList)) {
   print(csv);
   units <- importFrom(ufl, csv, verbose=log);
   str(units);
-  ## GenomeWideSNP_5.na26.annot.csv:    ...
-  ## GenomeWideSNP_5.cn.na26.annot.csv: int [1:312384] 513035 516828 ...
+  ## GenomeWideSNP_6.na26.annot.csv:    int [1:934968] 334945 334944 ...
+  ## GenomeWideSNP_6.cn.na26.annot.csv: int [1:945826] 935622 935777 ...
 }
 
-footer <- c(readFooter(ufl), footer);
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Update the file footer
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+if (!exists("srcFileTags", mode="list")) {
+  srcFileTags <- list();
+  srcFiles <- c(list(cdf), csvList);
+  for (kk in seq(along=srcFiles)) {
+    srcFile <- srcFiles[[kk]];
+    tags <- list(
+      filename=getFilename(srcFile), 
+      filesize=getFileSize(srcFile), 
+      checksum=getChecksum(srcFile)
+    );
+    srcFileTags[[kk]] <- tags;
+  }
+  print(srcFileTags);
+}
+
+footer <- readFooter(ufl);
+footer$createdOn <- format(Sys.time(), "%Y%m%d %H:%M:%S", usetz=TRUE);
+footer$createdBy = list(
+  fullname = "Henrik Bengtsson", 
+  email = "hb@stat.berkeley.edu"
+);
+names(srcFileTags) <- sprintf("srcFile%d", seq(along=srcFileTags));
+footer$srcFiles <- srcFileTags;
 writeFooter(ufl, footer);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Statistics
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-x <- summaryOfUnits(ufl, enzymes=c("NspI", "StyI"));
+print(ufl);
+
+x <- summaryOfUnits(ufl);
 print(x);
-## GenomeWideSNP_5,Full,na26,HB20080723:
-##                 snp    cnp affxSnp other  total
-## enzyme1-only 116979 140099       0     0 257078
-## enzyme2-only  74135   1208       0     0  75343
-## both         248980 171077       0     0 420057
-## missing       60474 104885    3022    69 168450
-## total        500568 417269    3022    69 920928

@@ -28,7 +28,9 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
     "cached:.unitNames" = NULL,
     "cached:.unitSizes" = NULL,
     "cached:.cellIndices" = NULL,
-    "cached:.isPm" = NULL
+    "cached:.isPm" = NULL,
+    "cached:.gi" = NULL,
+    "cached:.si" = NULL
   );
 
   # Parse attributes (all subclasses must call this in the constructor).
@@ -42,7 +44,7 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
 setMethodS3("clearCache", "AffymetrixCdfFile", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".header", ".unitNames", ".unitTypes", ".unitSizes", ".cellIndices", ".isPm")) {
+  for (ff in c(".header", ".unitNames", ".unitTypes", ".unitSizes", ".cellIndices", ".isPm", ".gi", ".si")) {
     this[[ff]] <- NULL;
   }
 

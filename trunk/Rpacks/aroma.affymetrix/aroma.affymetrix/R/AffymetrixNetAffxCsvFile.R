@@ -81,7 +81,7 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
   if (length(cc) == 0 || is.na(cc)) {
     throw("Failed to locate chromosome column.");
   }
-  map <- c(X=23, Y=24, Z=25);
+  map <- c(X=23, Y=24, MT=25, Z=25);
   for (kk in seq(along=map)) {
     data[[cc]] <- gsub(names(map)[kk], map[kk], data[[cc]]);
   }
@@ -338,6 +338,9 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2008-08-21
+# o Now readDataUnitChromosomePosition() also recognizes "MT" as Chr25
+#   (mitochondrial).
 # 2008-07-20
 # o Updated the following methods to preallocate matrixes with the correct
 #   data type to avoid coercing later: readDataUnitFragmentLength().

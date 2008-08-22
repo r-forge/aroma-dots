@@ -1,8 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.2 [2008-08-20]
-o Move the functions for reading dChip files to the new dChipIO package.
+Version: 0.9.4.2 [2008-08-21]
+o Moved the functions for reading dChip files to the new dChipIO package.
+o Now readDataUnitChromosomePosition() of AffymetrixNetAffxCsvFile also
+  recognizes chromosome "MT" (mitochondrial).  It is encoded as Chr25.
 
 
 Version: 0.9.4.1 [2008-08-19]
