@@ -124,5 +124,5 @@ print(ugp);
 ## Footer: ...
 ## Chip type: GenomeWideSNP_6,Full
 ## Platform: Affymetrix
-
+getChromosomeStats(ugp);
 ## GenomeWideSNP_6,Full,na26,HB20080821:

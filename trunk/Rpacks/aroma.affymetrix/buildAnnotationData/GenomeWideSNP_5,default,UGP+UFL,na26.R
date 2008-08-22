@@ -8,20 +8,21 @@ log <- Verbose(threshold=-10, timestamp=TRUE);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 naVersion <- "26";
 user <- "HB";
-datestamp <- "20080821";
+datestamp <- "20080822";
 
-chipType <- "GenomeWideSNP_6";
+chipType <- "GenomeWideSNP_5";
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Setup required annotation files
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!exists("cdfD")) {
-  cdfD <- AffymetrixCdfFile$byChipType(chipType);
+  cdfD <- AffymetrixCdfFile$byChipType(chipType, tags="r2");
 }
 print(cdfD);
 
 if (!exists("cdf")) {
-  cdf <- AffymetrixCdfFile$byChipType(chipType, tags="Full");
+  cdf <- AffymetrixCdfFile$byChipType(chipType, tags="Full,r2");
 }
 print(cdf);
 
