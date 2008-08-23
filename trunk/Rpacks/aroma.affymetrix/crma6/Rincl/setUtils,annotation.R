@@ -55,6 +55,8 @@ updateGraphics <- function(sets, ..., verbose=FALSE) {
       lty <- 2;
     } else if (hasPrefix(name, "GRMA")) {
       col <- "pink";
+      if (hasAsterisk(name))
+        col <- "red";
     } else if (hasPrefix(name, "CRMA") || hasPrefix(name, "DRMA") || hasPrefix(name, "ERMA") || hasPrefix(name, "FRMA")) {
       col <- colors["CRMA"];
       if (hasPrefix(name, "ERMA")) {
