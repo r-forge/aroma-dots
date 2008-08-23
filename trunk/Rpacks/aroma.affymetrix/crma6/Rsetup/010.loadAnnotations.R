@@ -75,8 +75,11 @@ if (!exists("regionsExcludedOnChr23")) {
   regions[,"start"] <- regions[,"start"]-margin;
   regions[,"end"] <- regions[,"end"]+margin;
 
-  # Exclude pseudo copy-neutral regions
-  regions <- rbind(regions, as.integer(c(0,2.8e6)));
+  # Exclude pseudo copy-neutral regions on ChrX
+  par1 <- as.integer(c(0,2692881));
+  par2 <- as.integer(c(154494747,154824264));
+  regions <- rbind(regions, par1);
+  regions <- rbind(regions, par2);
 
   # Sort regions
   regions <- regions[order(regions[,"start"]),];

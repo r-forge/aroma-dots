@@ -27,6 +27,7 @@ sets <- addRocDataSet(sets, "ACC,ra,-XY,RMA,+300,A+B,FLN,-XY", name="CRMA");
 ### sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,AVG,A+B,FLN,-XY,UTSN,-XY", name="CRMA+*#");
 
 
+
 # BPN,z
 sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,RMA,A+B,FLN,-XY,UTSN,-XY", name="FRMA+");
 sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,RMA,A+B,FLN,-XY", name="ERMA+");
@@ -38,6 +39,8 @@ sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,RMA,A+B,FLN,-XY,z", name=
 # BPN,z (single-array)
 sets <- addRocDataSet(sets, "BPN,-XY,z,ACC,ra,-XY,AVG,FLN,-XY,+300", name="CRMA5*");
 sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,AVG,FLN,-XY", name="ERMA+*");
+sets <- addRocDataSet(sets, "ACC,ra,-XY,BPN,-XY,+300,z,AVG,A+B,FLN,-XY,z", name="GRMA+*");
+
 
 
 
@@ -69,6 +72,7 @@ keep <- c("CRMA3", "CRMA4", "FRMA+", "ERMA+", "CRMA+", "ERMA+*", "GTC");
 keep <- c("CRMA6", "CRMA5", "ERMA+", "CRMA+", "GTC");
 keep <- c("GRMA+", "ERMA+*", "GTC");
 keep <- c("GRMA+", "ERMA+*", "GTC", "dChip", "dChip*");
+keep <- c("GRMA+", "ERMA+*", "GRMA+*");
 
 hasPrefix <- function(name, prefix, ...) {
   (substring(name, 1, nchar(prefix)) == prefix);
