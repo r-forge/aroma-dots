@@ -256,7 +256,7 @@ setMethodS3("getUnitReadMap", "AffymetrixCnChpFile", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getRawData", "AffymetrixCnChpFile", function(this, fields=c("ProbeSetName", "Log2Ratio"), ..., force=FALSE, verbose=FALSE) {
+setMethodS3("readRawData", "AffymetrixCnChpFile", function(this, fields=c("ProbeSetName", "Log2Ratio"), ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -302,7 +302,7 @@ setMethodS3("getRawData", "AffymetrixCnChpFile", function(this, fields=c("ProbeS
   verbose && exit(verbose);
  
   res;
-}) # getRawData()
+}, protected=TRUE) # readRawData()
 
 
 
@@ -351,11 +351,13 @@ setMethodS3("getData", "AffymetrixCnChpFile", function(this, units=NULL, fields=
   cdf <- getCdf(this);
 
   # Get the raw data
-  res <- getRawData(this, fields=fields, ..., verbose=less(verbose, 5));
+  verbose && enter(verbose, "Reading raw data (takes time)");
+  res <- readRawData(this, fields=fields, ..., verbose=less(verbose, 5));
+  verbose && exit(verbose);
 
   verbose && enter(verbose, "Remapping rows (units) according to the CDF");
   # Extract units of interest
-  readMap <- getUnitReadMap(this);  # Have been by getRawData()
+  readMap <- getUnitReadMap(this);  # Have been by readRawData()
   str(readMap);
   # Convert CDF unit indices to CNCHP file unit inidices
   if (is.null(units)) {
@@ -384,9 +386,31 @@ setMethodS3("getData", "AffymetrixCnChpFile", function(this, units=NULL, fields=
 }) # getData()
 
 
+setMethodS3("extractLogRatios", "AffymetrixCnChpFile", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'units':
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  data <- getData(this, units=units, verbose=verbose);
+  data <- data[,"Log2Ratio"];
+  data;
+})
+
 
 ############################################################################
 # HISTORY:
+# 2008-08-22
+# o Added extractLogRatios().
+# 2008-05-18
+# o Added support for UnitNamesFile.
 # 2008-01-16
 # o Created.
 ############################################################################
