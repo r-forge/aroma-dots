@@ -1125,8 +1125,6 @@
 \alias{readDataUnitChromosomePosition.AffymetrixNetAffxCsvFile}
 \alias{readDataUnitFragmentLength}
 \alias{readDataUnitFragmentLength.AffymetrixNetAffxCsvFile}
-\alias{readDcp}
-\alias{readDcpHeader}
 \alias{readGenomeWideSNP}
 \alias{readGenomeWideSNP.DChipGenomeInformation}
 \alias{readHeader.AffymetrixAptSummaryFile}
@@ -1467,6 +1465,31 @@
 \alias{rescaleByAll.ReseqCrosstalkCalibration}
 \alias{extractTheta.DChipDcpFile}
 \alias{extractTheta.DChipDcpSet}
+\alias{as.character.DChipCdfBinFile}
+\alias{clearCache.DChipCdfBinFile}
+\alias{fromFile.DChipCdfBinFile}
+\alias{getCellDim}
+\alias{getCellDim.DChipCdfBinFile}
+\alias{getChipType.DChipCdfBinFile}
+\alias{getFileFormat.DChipCdfBinFile}
+\alias{getHeader.DChipCdfBinFile}
+\alias{getPlatform.DChipCdfBinFile}
+\alias{getUnitNames.DChipCdfBinFile}
+\alias{getUnitSizes.DChipCdfBinFile}
+\alias{nbrOfCells.DChipCdfBinFile}
+\alias{nbrOfUnits.DChipCdfBinFile}
+\alias{readDataFrame.DChipCdfBinFile}
+\alias{as.AffymetrixCnChpSet}
+\alias{byName.AffymetrixCnChpSet}
+\alias{extractLogRatios}
+\alias{extractLogRatios.AffymetrixCnChpFile}
+\alias{extractLogRatios.AffymetrixCnChpSet}
+\alias{findByName.AffymetrixCnChpSet}
+\alias{fromFiles.AffymetrixCnChpSet}
+\alias{getCdf.AffymetrixCnChpSet}
+\alias{getFullName.AffymetrixCnChpSet}
+\alias{readRawData.AffymetrixCnChpFile}
+\alias{setCdf.AffymetrixCnChpSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
