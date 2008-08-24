@@ -744,3 +744,15 @@ extractTheta.DChipDcpFile extractTheta.DChipDcpSet
   getUnitNames.DChipCdfBinFile getUnitSizes.DChipCdfBinFile
   nbrOfCells.DChipCdfBinFile nbrOfUnits.DChipCdfBinFile
   readDataFrame.DChipCdfBinFile
+  as.AffymetrixCnChpSet as.character.DChipCdfBinFile
+  byName.AffymetrixCnChpSet clearCache.DChipCdfBinFile extractLogRatios
+  extractLogRatios.AffymetrixCnChpFile
+  extractLogRatios.AffymetrixCnChpSet findByName.AffymetrixCnChpSet
+  fromFile.DChipCdfBinFile fromFiles.AffymetrixCnChpSet
+  getCdf.AffymetrixCnChpSet getCellDim getCellDim.DChipCdfBinFile
+  getChipType.DChipCdfBinFile getFileFormat.DChipCdfBinFile
+  getFullName.AffymetrixCnChpSet getHeader.DChipCdfBinFile
+  getPlatform.DChipCdfBinFile getUnitNames.DChipCdfBinFile
+  getUnitSizes.DChipCdfBinFile nbrOfCells.DChipCdfBinFile
+  nbrOfUnits.DChipCdfBinFile readDataFrame.DChipCdfBinFile
+  readRawData.AffymetrixCnChpFile setCdf.AffymetrixCnChpSet
