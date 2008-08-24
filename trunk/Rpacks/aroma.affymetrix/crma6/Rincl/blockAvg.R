@@ -1,6 +1,6 @@
 # rowMedians.matrix() for now, because it support weights(!)
 # (although 'matrixStats' exists).
-library(R.native);
+library("R.native");
 
 getBlockAverageMap <- function(n, h=1, s=0, ...) {
   # Argument 'h':
