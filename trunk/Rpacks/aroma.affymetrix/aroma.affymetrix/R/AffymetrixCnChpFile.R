@@ -286,6 +286,16 @@ setMethodS3("readRawData", "AffymetrixCnChpFile", function(this, fields=c("Probe
   verbose && cat(verbose, "Raw data read (all fields):");
   verbose && str(verbose, res);
 
+  # Trim all strings (should really be done by readCcg(). /HB 2008-08-23)
+  for (kk in seq(length=ncol(res))) {
+    values <- res[,kk];
+    if (is.character(values)) {
+      values <- trim(values);
+      res[,kk] <- values;
+    }
+    rm(values);
+  }
+
   if (!hasUnitReadMap(this)) {
     if ("ProbeSetName" %in% names(res)) {
       setUnitReadMap(this, res[,"ProbeSetName"], verbose=less(verbose, 1));
@@ -399,7 +409,7 @@ setMethodS3("extractLogRatios", "AffymetrixCnChpFile", function(this, units=NULL
     on.exit(popState(verbose));
   }
 
-  data <- getData(this, units=units, verbose=verbose);
+  data <- getData(this, units=units, ..., verbose=verbose);
   data <- data[,"Log2Ratio"];
   data;
 })
