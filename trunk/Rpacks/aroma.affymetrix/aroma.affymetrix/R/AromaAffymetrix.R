@@ -9,22 +9,36 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
 
   verbose && enter(verbose, "Making sure the search path is compatible with ", getName(this));
 
-  toPath <- sprintf("package:%s", getName(this));
-  
-  # aroma.affymetrix is always before R.huge on the search path.
-  # affy must be after R.huge because it redefines colnames().
-  # /HB 2008-02-27
-  toPath <- sprintf("package:%s", "R.huge");
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # RULES
+  # 2008-02-27:
+  # o affy must be after R.huge, otherwise the former overrides the
+  #   generic colnames() function of the latter.
+  # o affyPLM must be after aroma.affymetrix.
+  # o EBImage must be after aroma.affymetrix.
+  # 2008-08-27:
+  # o affy must be after aroma.light, otherwise the former overrides
+  #   the generic plotDensity() function of the latter.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  # Figure out which of aroma.affymetrix, R.huge, and aroma.light is
+  # last on the search path. (Since aroma.affymetrix loads both R.huge
+  # and aroma.light, it is guaranteed to be on the search path before
+  # those, but to avoid bugs in the future we don't assume that).
+  pkgs <- c("aroma.affymetrix", "aroma.light", "R.huge");
+  idxs <- match(sprintf("package:%s", pkgs), search());
+  lastPkg <- pkgs[which.max(idxs)];
+  toPath <- sprintf("package:%s", lastPkg);
 
   verbose && cat(verbose, "Search path before:");
   verbose && print(verbose, search());
 
   # Problematic package that must be after this package on the search path
-  pkgs <- c("affy", "affyPLM", "EBImage");
+  pkgsToMove <- c("affy", "affyPLM", "EBImage");
 
   # Move those package, if they are loaded.
   pkgsMoved <- c();
-  for (pkg in pkgs) {
+  for (pkg in pkgsToMove) {
     path <- sprintf("package:%s", pkg);
     if (path %in% search()) {
       # Need to move?
@@ -149,6 +163,9 @@ setMethodS3("patch", "AromaAffymetrix", function(this, ..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2008-08-27
+# o Now the affy, affyPLM, and EBImage package are forced to be after all
+#   of aroma.affymetrix, aroma.light, and R.huge on the search() path.
 # 2007-12-13
 # o Added update() and patch() to the AromaAffymetrix Package class.
 # 2007-03-06
