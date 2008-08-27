@@ -1,6 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.4.3 [2008-08-27]
+o Now the affy, affyPLM, and EBImage package are forced to be after all
+  of aroma.affymetrix, aroma.light, and R.huge on the search() path.
+
+
 Version: 0.9.4.2 [2008-08-23]
 o Moved the functions for reading dChip files to the new dChipIO package.
 o Now readDataUnitChromosomePosition() of AffymetrixNetAffxCsvFile also
