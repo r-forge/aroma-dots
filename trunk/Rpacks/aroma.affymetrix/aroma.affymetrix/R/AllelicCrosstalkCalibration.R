@@ -256,6 +256,36 @@ setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ...,
 
 
 
+setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  setsOfProbes <- this$.setsOfProbes;
+
+  if (is.null(setsOfProbes)) {
+    verbose && enter(verbose, "Identifying sets of pairs of cell indices by quering the CDF");
+    dataSet <- getInputDataSet(this);
+    cdf <- getCdf(dataSet);
+    verbose && cat(verbose, "Chip type: ", getChipType(cdf));
+
+    setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+    gc <- gc();
+    verbose && print(verbose, gc);
+    verbose && exit(verbose);
+  }
+
+  setsOfProbes;
+}, protected=TRUE);
+
+
+
 setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expand=TRUE, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
@@ -577,48 +607,6 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
 }, protected=TRUE)
 
 
-setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array, cs=NULL, ..., verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  if (is.null(cs)) {
-    cs <- getInputDataSet(this);
-  }
-  cdf <- getCdf(cs);
-
-  verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
-  setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
-  verbose && print(verbose, gc);
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Reading all probe intensities");
-  cf <- getFile(cs, array);
-  yAll <- getData(cf, fields="intensities", ...)$intensities;
-  verbose && exit(verbose);
-
-  nbrOfPairs <- length(setsOfProbes);
-  res <- vector("list", nbrOfPairs);
-  names(res) <- names(setsOfProbes);
-
-  verbose && enter(verbose, "Extracting data pairs");
-  for (kk in seq_len(nbrOfPairs)) {
-    name <- names(setsOfProbes)[kk];
-    basepair <- unlist(strsplit(name, split=""));
-    idx <- setsOfProbes[[name]];
-    y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
-    colnames(y) <- c("A", "B");
-    res[[kk]] <- y;
-    rm(y);
-  }
-  verbose && exit(verbose);
-
-  res;
-}, protected=TRUE);
 
 
 ###########################################################################/**
@@ -685,8 +673,9 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   # Get (and create) the output path
   outputPath <- getPath(this);
 
-  # To be retrieved when needed.
+  # To be retrieved later, if needed.
   setsOfProbes <- NULL;
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # For hooks
@@ -726,15 +715,9 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       verbose && cat(verbose, "Calibrated data file already exists: ", pathname);
     } else {
       if (is.null(setsOfProbes)) {
-        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        # Identify the cell indices for each possible allele basepair.
-        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        verbose && enter(verbose, "Identifying PM cell indices for each possible allele basepair");
-        setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+        setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
         verbose && cat(verbose, "setsOfProbes:");
         verbose && str(verbose, setsOfProbes);
-        gc <- gc();
-        verbose && print(verbose, gc);
         verbose && exit(verbose);
       }
 
@@ -994,9 +977,10 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
   # Identify the cell indices for each possible allele basepair.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Identifying PM cell indices for each possible allele basepair");
-  cdf <- getCdf(cs);
-  setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
-  gc <- gc();
+  setsOfProbes <- this$.setsOfProbes;
+  if (is.null(setsOfProbes)) {
+    setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
+  }
   verbose && exit(verbose);
 
   # Argument 'basepair':
@@ -1104,9 +1088,63 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# NOT USED
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array, cs=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  if (is.null(cs)) {
+    cs <- getInputDataSet(this);
+  }
+
+  verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
+  setsOfProbes <- this$.setsOfProbes;
+  if (is.null(setsOfProbes)) {
+    setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
+  }
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Reading all probe intensities");
+  cf <- getFile(cs, array);
+  yAll <- getData(cf, fields="intensities", ...)$intensities;
+  verbose && exit(verbose);
+
+  nbrOfPairs <- length(setsOfProbes);
+  res <- vector("list", nbrOfPairs);
+  names(res) <- names(setsOfProbes);
+
+  verbose && enter(verbose, "Extracting data pairs");
+  for (kk in seq_len(nbrOfPairs)) {
+    name <- names(setsOfProbes)[kk];
+    basepair <- unlist(strsplit(name, split=""));
+    idx <- setsOfProbes[[name]];
+    y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
+    colnames(y) <- c("A", "B");
+    res[[kk]] <- y;
+    rm(y);
+  }
+  verbose && exit(verbose);
+
+  res;
+}, protected=TRUE);
+
+
 
 ############################################################################
 # HISTORY:
+# 2008-08-29
+# o Added protected getSetsOfProbes().  By overriding this method, other
+#   sets of probes can be used.  This function might later also recognize
+#   user specified function generating the sets.
 # 2008-08-04
 # o Added support to fit the genotype "cone" using the 'expectile' package
 #   instead of the 'sfit' package. This is controlled by the 'flavor' 

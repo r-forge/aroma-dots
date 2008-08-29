@@ -44,6 +44,10 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
 
 
   verbose && enter(verbose, "Identifying the probes stratified by allele basepairs");
