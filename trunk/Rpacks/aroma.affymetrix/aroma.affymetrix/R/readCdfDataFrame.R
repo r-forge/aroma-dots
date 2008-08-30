@@ -1,3 +1,53 @@
+#########################################################################/**
+# @RdocFunction readCdfDataFrame
+#
+# @title "Reads units (probesets) from an Affymetrix CDF file"
+#
+# @synopsis 
+# 
+# \description{
+#  @get "title". Gets all or a subset of units (probesets).
+# }
+# 
+# \arguments{
+#  \item{filename}{The filename of the CDF file.}
+#  \item{units}{An @integer @vector of unit indices
+#    specifying which units to be read.  If @NULL, all are read.}
+#  \item{groups}{An @integer @vector of group indices
+#    specifying which groups to be read.  If @NULL, all are read.}
+#  \item{cells}{An @integer @vector of cell indices
+#    specifying which cells to be read.  If @NULL, all are read.}
+#  \item{fields}{A @character @vector specifying what fields to read.
+#    If @NULL, all unit, group and cell fields are returned.}
+#  \item{drop}{If @TRUE and only one field is read, then a @vector
+#    (rather than a single-column @data.frame) is returned.}
+#  \item{verbose}{An @integer specifying the verbose level. If 0, the
+#    file is parsed quietly.  The higher numbers, the more details.}
+# }
+# 
+# \value{
+#   An NxK @data.frame or a @vector of length N.
+# }
+#
+# \author{
+# }
+# 
+# @examples "../incl/readCdfDataFrame.Rex"
+# 
+# \seealso{
+#   For retrieving the CDF as a @list structure, see @see "readCdfUnits".
+# }
+# 
+# \references{
+#   [1] Affymetrix Inc, Affymetrix GCOS 1.x compatible file formats,
+#       June 14, 2005.
+#       \url{http://www.affymetrix.com/support/developer/}
+# }
+#
+# @keyword "file"
+# @keyword "IO"
+# @keyword "internal"
+#*/######################################################################### 
 readCdfDataFrame <- function(filename, units=NULL, groups=NULL, cells=NULL, fields=NULL, drop=TRUE, verbose=0) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
@@ -38,7 +88,7 @@ readCdfDataFrame <- function(filename, units=NULL, groups=NULL, cells=NULL, fiel
     knownGroupFields <- c("group", "groupName", "groupDirection",
                           "groupNbrOfAtoms");
     knownCellFields <- c("cell", "x", "y", "pbase", "tbase", 
-                         "indexPos", "atom");
+                         "indexPos", "atom", "expos");
     fields <- c(knownUnitFields, knownGroupFields, knownCellFields);
   }
   
@@ -71,6 +121,7 @@ readCdfDataFrame <- function(filename, units=NULL, groups=NULL, cells=NULL, fiel
   readIndices <- ("cell" %in% readFields);
   readBases <- any(c("tbase", "pbase") %in% readFields);
   readIndexpos <- ("indexPos" %in% readFields);
+  readExpos <- ("expos" %in% readFields);
   readAtoms <- ("atom" %in% readFields);
 
 
@@ -251,6 +302,69 @@ readCdfDataFrame <- function(filename, units=NULL, groups=NULL, cells=NULL, fiel
 
   df;
 } # readCdfDataFrame()
+
+
+
+
+
+# TO DO:
+.readCdfDataFrameFinal <- function(filename, units=NULL, groups=NULL, unitFields=NULL, groupFields=NULL, cellFields=NULL, verbose=0) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'filename':
+  filename <- file.path(dirname(filename), basename(filename));
+  if (!file.exists(filename))
+    stop("File not found: ", filename);
+
+  # Argument 'units':
+  if (is.null(units)) {
+  } else if (is.numeric(units)) {
+    units <- as.integer(units);
+    if (any(units < 1))
+      stop("Argument 'units' contains non-positive indices.");
+  } else {
+    stop("Argument 'units' must be numeric or NULL: ", class(units)[1]);
+  }
+
+  # Argument 'groups':
+  if (is.null(groups)) {
+  } else if (is.numeric(groups)) {
+    groups <- as.integer(groups);
+    if (any(groups < 1))
+      stop("Argument 'groups' contains non-positive indices.");
+  } else {
+    stop("Argument 'groups' must be numeric or NULL: ", class(groups)[1]);
+  }
+
+  # Argument 'unitFields':
+  knownFields <- c("unit", "unitName", "unitDirection", "nbrOfUnitAtoms", "unitSize", "unitNumber", "unitType", "nbrOfGroups", "mutationType");
+  
+  # Argument 'groupFields':
+  knownFields <- c("group", "groupName", "nbrOfGroupAtoms", "groupSize", "firstAtom", "lastAtom", "groupDirection");
+
+  # Argument 'cellFields':
+  knownFields <- c("cell", "x", "y", "probeSequence", "feat", "qual", "expos", "pos", "cbase", "pbase", "tbase", "atom", "index");
+
+
+  # Argument 'verbose':
+  if (length(verbose) != 1)
+    stop("Argument 'verbose' must be a single integer.");
+  verbose <- as.integer(verbose);
+  if (!is.finite(verbose))
+    stop("Argument 'verbose' must be an integer: ", verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Call the C function
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+##  df <- .Call("R_affx_get_cdf_dataframe", filename, units, 
+##               unitFields, groupFields, cellFields,
+##               unitNames, groupNames,
+##               verbose, PACKAGE="affxparser");
+
+  df;
+} # .readCdfDataFrameFinal()
 
 
 
