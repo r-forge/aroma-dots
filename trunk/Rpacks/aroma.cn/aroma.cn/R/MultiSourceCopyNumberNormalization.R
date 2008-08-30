@@ -673,6 +673,19 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   verbose && exit(verbose);
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Standardize the channels to a target channel?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##   targetChannel <- NULL;
+##   if (!is.null(targetChannel)) {
+##     for (kk in seq(length=ncol(M))) {
+##       if (kk == targetChannel) {
+##         targetTransform <- function(x, ...) x;
+##       } else {
+##         targetTransform <- makeSmoothSplinePredict(Mn[,kk], Mn[,targetChannel]);
+##       }
+##     } # for (kk ...)
+##   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Find the normalization function for each source (array)
