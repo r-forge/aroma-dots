@@ -1,0 +1,23 @@
+library("aroma.affymetrix");
+log <- Arguments$getVerbose(-4);
+timestampOn(log);
+.Machine$float.eps <- sqrt(.Machine$double.eps);
+
+dataSetName <- "HapMap270,100K,CEU,testSet";
+chipType <- "Mapping50K_Hind240";
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Tests for setting up CEL sets and locating the CDF file
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+csR <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+print(csR);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Allelic cross-talk calibration
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+acc <- AllelicCrosstalkCalibration(csR, mergeShifts=FALSE);
+print(acc);
+csAcc <- process(acc, verbose=log);
+print(csAcc);
