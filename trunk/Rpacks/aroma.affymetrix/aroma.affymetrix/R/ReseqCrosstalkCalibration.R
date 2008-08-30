@@ -22,6 +22,7 @@
 #   \item{subsetToAvg}{The indices of the cells (taken as the intersect of
 #     existing indices) used to calculate average in order to rescale to
 #     the target average. If @NULL, all probes are considered.}
+#   \item{mergeGroups}{A @logical ...}
 #   \item{flavor}{A @character string specifying what algorithm is used
 #     to fit the crosstalk calibration.} 
 #   \item{alpha, q, Q}{}
@@ -33,7 +34,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("ReseqCrosstalkCalibration", function(dataSet=NULL, ..., targetAvg=2200, subsetToAvg=NULL, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+setConstructorS3("ReseqCrosstalkCalibration", function(dataSet=NULL, ..., targetAvg=2200, subsetToAvg=NULL, mergeGroups=FALSE, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -70,6 +71,11 @@ setConstructorS3("ReseqCrosstalkCalibration", function(dataSet=NULL, ..., target
     }
   }
 
+  # Argument 'mergeGroups':
+  if (!is.null(mergeGroups)) {
+    mergeGroups <- Arguments$getLogical(mergeGroups);
+  }
+
   # Argument 'flavor':
   flavor <- match.arg(flavor);
   
@@ -77,6 +83,7 @@ setConstructorS3("ReseqCrosstalkCalibration", function(dataSet=NULL, ..., target
   extend(ProbeLevelTransform(dataSet=dataSet, ...), "ReseqCrosstalkCalibration",
     .targetAvg = targetAvg,
     .subsetToAvg = subsetToAvg,
+    .mergeGroups = mergeGroups,
     .extraTags = extraTags,
     .flavor = flavor,
     .alpha = alpha,
@@ -88,7 +95,7 @@ setConstructorS3("ReseqCrosstalkCalibration", function(dataSet=NULL, ..., target
 
 setMethodS3("clearCache", "ReseqCrosstalkCalibration", function(this, ...) {
   # Clear all cached values.
-  for (ff in c(".subsetToAvgExpanded")) {
+  for (ff in c(".setsOfProbes", ".subsetToAvgExpanded")) {
     this[[ff]] <- NULL;
   }
 
@@ -99,6 +106,14 @@ setMethodS3("clearCache", "ReseqCrosstalkCalibration", function(this, ...) {
 
 setMethodS3("getAsteriskTags", "ReseqCrosstalkCalibration", function(this, collapse=NULL, ...) {
   tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+
+  # 'mergeGroups' tag
+  if (this$.mergeGroups) {
+    mergeGroupsTag <- NULL;
+  } else {
+    mergeGroupsTag <- "byGroup";
+  }
+  tags <- c(tags, mergeGroupsTag);
 
   # Extra tags?
   tags <- c(tags, this$.extraTags);
@@ -187,6 +202,7 @@ setMethodS3("getParameters", "ReseqCrosstalkCalibration", function(this, expand=
   params <- c(params, list(
     targetAvg = this$.targetAvg,
     subsetToAvg = this$.subsetToAvg,
+    mergeGroups = this$.mergeGroups,
     flavor = this$.flavor,
     alpha = this$.alpha,
     q = this$.q,
@@ -275,6 +291,206 @@ setMethodS3("rescaleByAll", "ReseqCrosstalkCalibration", function(this, yAll, pa
 }, protected=TRUE)
 
 
+setMethodS3("getSetsOfProbes", "ReseqCrosstalkCalibration", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  setsOfProbes <- this$.setsOfProbes;
+
+  if (is.null(setsOfProbes)) {
+    verbose && enter(verbose, "Identifying sets of cell tuples according to the CDF");
+    dataSet <- getInputDataSet(this);
+    cdf <- getCdf(dataSet);
+    verbose && cat(verbose, "Chip type: ", getChipType(cdf));
+
+    params <- getParameters(this);
+    mergeGroups <- params$mergeGroups;
+    verbose && cat(verbose, "Merging groups: ", mergeGroups);
+
+    setsOfProbes <- getCellQuartets(cdf, mergeGroups=mergeGroups, verbose=verbose);
+
+#    verbose && cat(verbose, "setsOfProbes:");
+#    verbose && str(verbose, setsOfProbes);
+
+    this$.setsOfProbes <- setsOfProbes;
+
+    verbose && exit(verbose);
+  }
+
+  setsOfProbes;
+}, protected=TRUE)
+
+
+
+setMethodS3("fitOne", "ReseqCrosstalkCalibration", function(this, yAll, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Fitting crosstalk model");
+
+  params <- getParameters(this);
+
+  verboseL <- (verbose && isVisible(verbose, -50));
+  verbose && enter(verbose, "Fitting model unit by unit and group by group");
+  cellQuartets <- getSetsOfProbes(this, verbose=less(verbose, 20));
+
+  nbrOfUnits <- length(cellQuartets);
+  verbose && cat(verbose, "Number of units: ", nbrOfUnits);
+  fits <- vector("list", nbrOfUnits);
+  names(fits) <- names(cellQuartets);
+
+  for (uu in seq(length=nbrOfUnits)) {
+    keyUU <- names(cellQuartets)[uu];
+    verbose && enter(verbose, sprintf("Unit #%d ('%s') of %d", 
+                                           uu, keyUU, nbrOfUnits));
+    cellsUU <- cellQuartets[[uu]];
+    nbrOfGroups <- length(cellsUU);
+    verbose && cat(verbose, "Number of groups: ", nbrOfGroups);
+
+    fitsUU <- vector("list", nbrOfGroups);
+    names(fitsUU) <- names(cellsUU);
+
+    for (gg in seq(length=nbrOfGroups)) {
+      keyGG <- names(cellsUU)[gg];
+      verbose && enter(verbose, sprintf("Group #%d ('%s') of %d", 
+                                gg, keyGG, nbrOfGroups));
+      cellsGG <- cellsUU[[gg]];
+
+      # Extracting data
+      y <- yAll[cellsGG];
+      dim(y) <- dim(cellsGG);
+
+      # Fitting crosstalk model
+      y <- t(y);
+      fitGG <- fitMultiDimensionalCone(y, flavor=params$flavor,
+                      alpha=params$alpha, q=params$q, Q=params$Q, 
+                                                   verbose=verboseL);
+
+      fitsUU[[gg]] <- fitGG;
+      verbose && exit(verbose);
+    } # for (gg ...)
+
+    fits[[uu]] <- fitsUU;
+    verbose && exit(verbose);
+  } # for (uu ...)
+  rm(fitsUU, fitGG, keyGG, keyUU, y, cellsGG, cellsUU);
+
+  verbose && exit(verbose);
+
+##    callHooks(sprintf("%s.onFitOne", hookName), df=df, yAll=yAll, fits=fits, ...);
+  fits;
+}, protected=TRUE)  # fitOne()
+
+
+setMethodS3("calibrateOne", "ReseqCrosstalkCalibration", function(this, yAll, fits, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Backtransforming (calibrating)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Calibrating data");
+
+  # Get algorithm parameters
+  params <- getParameters(this);
+  targetAvg <- params$targetAvg;
+
+  # Identify cell tuples
+  cellQuartets <- getSetsOfProbes(this, verbose=less(verbose, 20));
+
+  verbose && enter(verbose, "Calibrating unit by unit and group by group");
+  nbrOfUnits <- length(cellQuartets);
+  verbose && cat(verbose, "Number of units: ", nbrOfUnits);
+
+  rescaleFits <- vector("list", nbrOfUnits);
+  names(rescaleFits) <- names(cellQuartets);
+
+  for (uu in seq(length=nbrOfUnits)) {
+    keyUU <- names(cellQuartets)[uu];
+    verbose && enter(verbose, sprintf("Unit #%d ('%s') of %d", 
+                                           uu, keyUU, nbrOfUnits));
+    cellsUU <- cellQuartets[[uu]];
+    fitsUU <- fits[[uu]];
+    nbrOfGroups <- length(cellsUU);
+    verbose && cat(verbose, "Number of groups: ", nbrOfGroups);
+
+    rescaleFitsUU <- vector("list", nbrOfGroups);
+    names(rescaleFitsUU) <- names(fitsUU);
+    for (gg in seq(length=nbrOfGroups)) {
+      keyGG <- names(cellsUU)[gg];
+      verbose && enter(verbose, sprintf("Group #%d ('%s') of %d", 
+                                           gg, keyGG, nbrOfGroups));
+      cellsGG <- cellsUU[[gg]];
+      fitGG <- fitsUU[[gg]];
+
+      # Extracting data
+      y <- yAll[cellsGG];
+      dim(y) <- dim(cellsGG);
+
+      # Calibrating
+      y <- t(y);
+      yC <- backtransformMultiDimensionalCone(y, fit=fitGG);
+      rm(y, fitGG);
+      yC <- t(yC);
+
+      # Rescaling toward target average?
+      if (!is.null(targetAvg)) {
+        verbose && enter(verbose, "Rescaling toward target average");
+        yC <- rescaleByAll(this, yAll=yC, params=params, verbose=less(verbose));
+        fit <- attr(yC, "fit");
+        fit$params <- NULL;
+  ##      fit$paramsShort <- paramsShort;
+
+        rescaleFitsUU[[gg]] <- fit;
+        rm(fit);
+        verbose && exit(verbose);
+      }
+
+      # Updating
+      yAll[cellsGG] <- yC;
+      rm(yC);
+
+      verbose && exit(verbose);
+    } # for (gg ...)
+
+    rescaleFits[[uu]] <- rescaleFitsUU;
+
+    rm(cellsUU, fitsUU, rescaleFitsUU);
+    verbose && exit(verbose);
+  } # for (uu ...)
+
+  verbose && exit(verbose);
+
+  # Update fits
+  attr(yAll, "rescaleFits") <- rescaleFits;
+
+  verbose && exit(verbose);
+
+  yAll;
+}, protected=TRUE) # calibrateOne()
+
 
 
 ###########################################################################/**
@@ -341,6 +557,8 @@ setMethodS3("process", "ReseqCrosstalkCalibration", function(this, ..., force=FA
   # Get (and create) the output path
   outputPath <- getPath(this);
 
+  mergeGroups <- params$mergeGroups;
+
   # To be retrieved when needed.
   cellQuartets <- NULL;
 
@@ -384,12 +602,11 @@ setMethodS3("process", "ReseqCrosstalkCalibration", function(this, ..., force=FA
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         # Identify the cell-index matrix
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        verbose && enter(verbose, "Identifying cell-index matrix");
-        cellQuartets <- getCellQuartets(cdf, verbose=verbose);
-#        cellQuartets <- cellQuartets[1:1000,];
+        verbose && enter(verbose, "Identifying cell-index matrices");
+        cellQuartets <- getCellQuartets(cdf, mergeGroups=mergeGroups, verbose=verbose);
         verbose && cat(verbose, "cellQuartets:");
-        verbose && str(verbose, cellQuartets);
-        dim <- dim(cellQuartets);
+#        verbose && str(verbose, cellQuartets);
+#        dim <- dim(cellQuartets);
         gc <- gc();
         verbose && print(verbose, gc);
         verbose && exit(verbose);
@@ -410,73 +627,21 @@ setMethodS3("process", "ReseqCrosstalkCalibration", function(this, ..., force=FA
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Fitting crosstalk model
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Fitting crosstalk model");
-      verbose && cat(verbose, "Number of dimensions: ", dim[2]);
-      verbose && cat(verbose, "Number of data points: ", dim[1]);
-  
-      verbose && enter(verbose, "Extracting data for fitting model");
-      y <- yAll[cellQuartets];
-      dim(y) <- dim;
-      verbose && str(verbose, y);
-      verbose && exit(verbose);
+      fits <- fitOne(this, yAll=yAll, cellQuartets=cellQuartets, verbose=verbose);
 
-      verboseL <- (verbose && isVisible(verbose, -50));
+      # Store crosstalk model fit(s)
+      modelFit$rccFits <- fits;
 
-      verbose && enter(verbose, "Fitting");
-      verbose && cat(verbose, "Flavor: ", params$flavor);
-      fit <- fitMultiDimensionalCone(y, flavor=params$flavor,
-                          alpha=params$alpha, q=params$q, Q=params$Q, 
-                                                     verbose=verboseL);
-      verbose && print(verbose, fit, level=-5);
-      verbose && str(verbose, fit);
-      verbose && exit(verbose);
-
-      callHooks(sprintf("%s.onFitOne", hookName), df=df, y=y, fit=fit, ...);
-      rm(y); # Not needed anymore
-
-      verbose && exit(verbose);
-
-      # Store crosstalk model fit
-      modelFit$rccFit <- fit;
-
+#return(list(modelFit=modelFit, yAll=yAll));
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Backtransforming (calibrating)
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Calibrating data");
+      yAll <- calibrateOne(this, yAll=yAll, fits=fits, verbose=verbose);
+      rm(fits);
 
-      verbose && enter(verbose, "Extracting data to be calibrated");
-      y <- yAll[cellQuartets];
-      dim(y) <- dim;
-      verbose && str(verbose, y);
-      verbose && exit(verbose);
-
-      verbose && enter(verbose, "Backtransforming");
-      yC <- backtransformMultiDimensionalCone(y, fit=fit);
-      rm(y, fit); # Not needed anymore
-      verbose && str(verbose, yC);
-      yAll[cellQuartets] <- yC;
-      rm(yC); # Not needed anymore
-      verbose && exit(verbose);
-
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Rescaling toward target average?
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      if (!is.null(params$targetAvg)) {
-        yAll <- rescaleByAll(this, yAll=yAll, params=params, 
-                                                      verbose=less(verbose));
-        fit <- attr(yAll, "fit");
-        fit$params <- NULL;
-        fit$paramsShort <- paramsShort;
-        modelFit$rescaleFit <- fit;
-        rm(fit);
-
-        # Garbage collect
-        gc <- gc();
-        verbose && print(verbose, gc);
-      }
-
+      # Store rescaling parameters
+      modelFit$rescaleFits <- attr(yAll, "rescaleFits");
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Store model fit 
@@ -539,6 +704,10 @@ setMethodS3("process", "ReseqCrosstalkCalibration", function(this, ..., force=FA
 
 ############################################################################
 # HISTORY:
+# 2008-08-29
+# o Created fitOne() and calibrateOne().
+# o Added option 'mergeGroups=FALSE'.  
+# o Updated according to new getCellQuartets() of AffymetrixCdfFile.
 # 2008-08-10
 # o Created from AllelicCrosstalkCalibration.R.
 ############################################################################

@@ -145,7 +145,7 @@ setMethodS3("readUnitsByQuartets", "AffymetrixCdfFile", function(this, units=NUL
 
 
 
-setMethodS3("getCellQuartets", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+setMethodS3("getCellQuartets", "AffymetrixCdfFile", function(this, units=NULL, mergeGroups=TRUE, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -155,6 +155,9 @@ setMethodS3("getCellQuartets", "AffymetrixCdfFile", function(this, units=NULL, .
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(this)));
   }
 
+  # Argument 'mergeGroups':
+  mergeGroups <- Arguments$getLogical(mergeGroups);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -163,9 +166,10 @@ setMethodS3("getCellQuartets", "AffymetrixCdfFile", function(this, units=NULL, .
   }
 
 
-  verbose && enter(verbose, "Getting cell-index matrix");
+  verbose && enter(verbose, "Getting cell-index matrices");
 
-  key <- list(method="getCellQuartets", class=class(this)[1], units=units);
+  key <- list(method="getCellQuartets", class=class(this)[1], 
+              units=units, mergeGroups=mergeGroups);
   dirs <- c("aroma.affymetrix", getChipType(this));
   if (!force) {
     cells <- loadCache(key=key, dirs=dirs);
@@ -176,33 +180,76 @@ setMethodS3("getCellQuartets", "AffymetrixCdfFile", function(this, units=NULL, .
     }
   }
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Read raw CDF data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdfUnits <- readUnitsByQuartets(this, units=units, verbose=verbose);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract cell quartets and annotate with (pbase, tbase)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   pbase <- rownames(cdfUnits[[1]]$groups[[1]]$indices);
   # Sanity check
-  if (is.null(pbase)) {
+  if (is.null(pbase))
     throw("No resequencing cell indices available.");
-  }
+  if (!all(is.element(c("A", "C", "G", "T"), pbase)))
+    throw("No resequencing cell indices available.");
 
-  verbose && enter(verbose, "Restructuring into a matrix");
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract cell quartets by CDF groups
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Restructuring into a matrices");
+
+  # Extract field 'tbase'
   tbase <- applyCdfGroups(cdfUnits, cdfGetFields, "tbase");
-  tbase <- unlist(tbase, use.names=FALSE);
-  nbrOfBases <- length(tbase);
+  tbase <- applyCdfGroups(tbase, function(groups) {
+    lapply(groups, FUN=.subset2, 1);
+  });
+  tbase <- lapply(tbase, FUN=.subset2, "groups");
 
+  # Extract field 'cells'
   cells <- applyCdfGroups(cdfUnits, cdfGetFields, "indices");
+  cells <- applyCdfGroups(cells, function(groups) {
+    lapply(groups, FUN=.subset2, 1);
+  });
+  cells <- lapply(cells, FUN=.subset2, "groups");
   rm(cdfUnits);  # Not needed anymore
 
-  cells <- unlist(cells, use.names=FALSE);
-  dim(cells) <- c(length(pbase), nbrOfBases);
-  dimnames(cells) <- list(pbase, tbase);
+  # Attach 'tbase' as column names to 'cells'
+  for (uu in seq(along=cells)) {
+    cellsUU <- cells[[uu]];
+    tbaseUU <- tbase[[uu]];
+    for (gg in seq(along=cellsUU)) {
+      cellsGG <- cellsUU[[gg]];
+      tbaseGG <- tbaseUU[[gg]];
+      colnames(cellsGG) <- tbaseGG;
+      cellsUU[[gg]] <- cellsGG;
+    } # for (gg ...)
+    cells[[uu]] <- cellsUU;
+    rm(cellsUU, tbaseUU);
+  } # for (uu ...)
+  rm(tbase, cellsGG, tbaseGG);
 
-  # Transpose
-  cells <- t(cells);
 
-  verbose && str(verbose, cells);
-  verbose && exit(verbose);
-
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Merging groups
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (mergeGroups) {
+    for (uu in seq(along=cells)) {
+      cellsUU <- cells[[uu]];
+      cells[[uu]] <- cellsUU;
+      cellsUUMerged <- NULL;
+      for (gg in seq(along=cellsUU)) {
+        cellsGG <- cellsUU[[gg]];
+        cellsUUMerged <- cbind(cellsUUMerged, cellsGG);
+      } # for (gg ...)
+      cells[[uu]] <- list(all=cellsUUMerged);
+      rm(cellsUU, cellsUUMerged);
+    } # for (uu ...)
+  }
 
   # Save to cache?
   if (cache) {
@@ -217,6 +264,8 @@ setMethodS3("getCellQuartets", "AffymetrixCdfFile", function(this, units=NULL, .
 
 ############################################################################
 # HISTORY:
+# 2008-08-29
+# o Added argument 'mergeGroups' to getCellQuartets().
 # 2008-08-18
 # BUG FIX: Used non-existing 'cdf' instead of 'this'.
 # 2008-08-10

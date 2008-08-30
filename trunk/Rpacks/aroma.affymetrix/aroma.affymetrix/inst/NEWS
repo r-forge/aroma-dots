@@ -1,9 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.3 [2008-08-27]
-o Now the affy, affyPLM, and EBImage package are forced to be after all
-  of aroma.affymetrix, aroma.light, and R.huge on the search() path.
+Version: 0.9.4.3 [2008-08-30]
+o Added options 'mergeStrands' and 'B' to AllelicCrosstalkCalibration.
+o BUG FIX: Now the affy, affyPLM, and EBImage packages are forced to 
+  be after all of aroma.affymetrix, aroma.light, and R.huge on the
+  search() path.
 
 
 Version: 0.9.4.2 [2008-08-23]

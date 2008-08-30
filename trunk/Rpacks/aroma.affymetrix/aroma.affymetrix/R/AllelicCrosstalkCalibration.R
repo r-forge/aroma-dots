@@ -71,7 +71,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", mergeShifts=TRUE, B=1, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -145,6 +145,17 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
     }
   }
 
+  # Argument 'mergeShifts':
+  mergeShifts <- Arguments$getLogical(mergeShifts);
+
+  # Argument 'B':
+  B <- Arguments$getInteger(B, range=c(0,1));
+  if (B > 1) {
+    if (B %% 2 != 1) {
+      throw("Argument 'B' must be zero or and odd integer: ", B);
+    }
+  }
+
   # Argument 'flavor':
   flavor <- match.arg(flavor);
   
@@ -153,18 +164,20 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
     .rescaleBy = rescaleBy,
     .targetAvg = targetAvg,
     .subsetToAvg = subsetToAvg,
-    .extraTags = extraTags,
+    .mergeShifts = mergeShifts,
+    .B = B,
     .flavor = flavor,
     .alpha = alpha,
     .q = q,
-    .Q = Q
+    .Q = Q,
+    .extraTags = extraTags
   )
 })
 
 
 setMethodS3("clearCache", "AllelicCrosstalkCalibration", function(this, ...) {
   # Clear all cached values.
-  for (ff in c(".subsetToAvgExpanded")) {
+  for (ff in c(".setsOfProbes", ".subsetToAvgExpanded")) {
     this[[ff]] <- NULL;
   }
 
@@ -175,6 +188,12 @@ setMethodS3("clearCache", "AllelicCrosstalkCalibration", function(this, ...) {
 
 setMethodS3("getAsteriskTags", "AllelicCrosstalkCalibration", function(this, collapse=NULL, ...) {
   tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+
+  # B tag?
+  B <- as.integer(this$.B);
+  if (B != 1) {
+    tags <- c(tags, sprintf("B=%d", B));
+  }
 
   # Extra tags?
   tags <- c(tags, this$.extraTags);
@@ -256,36 +275,6 @@ setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ...,
 
 
 
-setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  setsOfProbes <- this$.setsOfProbes;
-
-  if (is.null(setsOfProbes)) {
-    verbose && enter(verbose, "Identifying sets of pairs of cell indices by quering the CDF");
-    dataSet <- getInputDataSet(this);
-    cdf <- getCdf(dataSet);
-    verbose && cat(verbose, "Chip type: ", getChipType(cdf));
-
-    setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
-    gc <- gc();
-    verbose && print(verbose, gc);
-    verbose && exit(verbose);
-  }
-
-  setsOfProbes;
-}, protected=TRUE);
-
-
-
 setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expand=TRUE, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
@@ -294,6 +283,8 @@ setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expan
     rescaleBy = this$.rescaleBy,
     targetAvg = this$.targetAvg,
     subsetToAvg = this$.subsetToAvg,
+    mergeShifts = this$.mergeShifts,
+    B = this$.B,
     flavor = this$.flavor,
     alpha = this$.alpha,
     q = this$.q,
@@ -306,7 +297,173 @@ setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expan
   }
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
+
+
+
+setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  setsOfProbes <- this$.setsOfProbes;
+
+  if (force || is.null(setsOfProbes)) {
+    verbose && enter(verbose, "Identifying sets of pairs of cell indices by quering the CDF");
+    dataSet <- getInputDataSet(this);
+    cdf <- getCdf(dataSet);
+    chipType <- getChipType(cdf);
+    verbose && cat(verbose, "Chip type: ", chipType);
+
+    params <- getParameters(this);
+    mergeShifts <- params$mergeShifts;
+    verbose && cat(verbose, "Merge shifts: ", mergeShifts);
+    B <- params$B;
+    verbose && cat(verbose, "Number of nucleotides: ", B);
+
+    # Assert that needed annotation files exist
+    if (B > 1 || !mergeShifts) {
+      verbose && enter(verbose, "Locating AromaCellSequenceFile");
+      chipType <- getChipType(cdf, fullname=FALSE);
+      verbose && cat(verbose, "Chip type: ", chipType);
+      acs <- AromaCellSequenceFile$byChipType(chipType);
+      verbose && print(verbose, acs);
+      verbose && exit(verbose);
+    } else {
+      acs <- NULL;
+    }
+
+
+    setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Group by number of nucleotides (B) around SNP position?
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (B == 0) {
+      verbose && enter(verbose, "Merging SNP groups");
+      # Merge all SNP groups
+      setsOfProbes <- setsOfProbes;
+      names <- names(setsOfProbes);
+      names <- gsub("AC", "snps", names, fixed=TRUE);
+      names(setsOfProbes) <- names;
+      for (key in c("AC", "AG", "AT", "CG", "CT", "GT")) {
+        setsOfProbes[["snps"]] <- rbind(setsOfProbes[["snps"]], 
+                                        setsOfProbes[[key]]);
+        setsOfProbes[[key]] <- NULL;
+      }
+      verbose && exit(verbose);
+    } else if (B == 1) {
+      # Nothing to do, default
+    } else {
+      verbose && enter(verbose, "Expanding SNP groups");
+      throw("Yet to be implemented.");
+
+      positions <- seq(from=13-(B-1)%/%2, to=13+(B-1)%/%2);
+      verbose && cat(verbose, "Positions: ", seqToHumanReadable(positions));
+      for (gg in seq(along=setsOfProbes)) {
+        cells <- setsOfProbes[[gg]];
+        seqsA <- readSequenceMatrix(acs, cells=cells[,1], positions=positions);
+        seqsB <- readSequenceMatrix(acs, cells=cells[,2], positions=positions);
+      }
+      verbose && exit(verbose);
+    }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Merge shifts?
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (mergeShifts) {
+      # Nothing to do.
+    } else {
+      # Split by shift
+      verbose && enter(verbose, "Grouping probe pairs by their shift relative to SNP");
+
+      # For each set of cells...
+      for (gg in seq(along=setsOfProbes)) {
+        cells <- setsOfProbes[[gg]];
+        groupTag <- names(setsOfProbes)[gg];
+        verbose && enter(verbose, sprintf("Set #%d ('%s') of %d", gg, groupTag, length(setsOfProbes)));
+
+        dim <- dim(cells);
+        if (is.null(dim) || dim[2] != 2) {
+          # Not a set of SNP cell indexes.
+          next;
+        }
+
+        # Identify the location of the SNP position for each probe pair
+        naValue <- as.integer(NA);
+        snpPositions <- rep(naValue, length=dim[1]);
+        possibleShifts <- as.integer(seq(from=-4, to=+4));  # Hardwired!
+        possiblePositions <- 13 + possibleShifts;
+        for (pos in possiblePositions) {
+          seqsA <- readSequenceMatrix(acs, cells=cells[,1], positions=pos);
+          seqsB <- readSequenceMatrix(acs, cells=cells[,2], positions=pos);
+          snpPositions[(seqsA != seqsB)] <- pos;
+          rm(seqsA, seqsB);
+        }
+        shifts <- snpPositions - as.integer(13);
+
+        possibleShifts <- sort(unique(shifts), na.last=TRUE);
+
+        # For each shift...
+        subgroups <- vector("list", length(possibleShifts));
+        shiftTags <- sprintf("shift=%+d", possibleShifts);
+        names(subgroups) <- paste(groupTag, shiftTags, sep=",");
+
+        for (ss in seq(along=possibleShifts)) {
+          shift <- possibleShifts[ss];
+          if (is.na(shift)) {
+            idxs <- whichVector(is.na(shifts));
+          } else {
+            idxs <- whichVector(shifts == shift);
+          }
+          cellsSS <- cells[idxs,,drop=FALSE];
+          subgroups[[ss]] <- cellsSS;
+          rm(idxs, cellsSS);
+        } # for (shift ...)
+        rm(cells);
+
+        setsOfProbes[[gg]] <- subgroups;
+        rm(subgroups);
+
+        verbose && exit(verbose);
+      } # for (gg ...)
+      verbose && exit(verbose);
+    }
+
+    
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Flatten
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # For each set of cells...
+    setsOfProbes2 <- NULL;
+    for (gg in seq(along=setsOfProbes)) {
+      cells <- setsOfProbes[gg];
+      if (is.list(cells[[1]]))
+        cells <- cells[[1]];
+      setsOfProbes2 <- c(setsOfProbes2, cells);
+      rm(cells);
+    } # for (gg ...)
+    setsOfProbes <- setsOfProbes2;
+    rm(setsOfProbes2);
+
+    verbose && cat(verbose, "Number of cells per set:");
+    verbose && print(verbose, unlist(sapply(setsOfProbes, length)));
+
+    this$.setsOfProbes <- setsOfProbes;
+
+    verbose && exit(verbose);
+  }
+
+  setsOfProbes;
+}, protected=TRUE);
+
+
 
 
 setMethodS3("rescale", "AllelicCrosstalkCalibration", function(this, yAll, params, ...) {
@@ -673,10 +830,6 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   # Get (and create) the output path
   outputPath <- getPath(this);
 
-  # To be retrieved later, if needed.
-  setsOfProbes <- NULL;
-
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # For hooks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -714,12 +867,9 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
     if (!force && isFile(pathname)) {
       verbose && cat(verbose, "Calibrated data file already exists: ", pathname);
     } else {
-      if (is.null(setsOfProbes)) {
-        setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
-        verbose && cat(verbose, "setsOfProbes:");
-        verbose && str(verbose, setsOfProbes);
-        verbose && exit(verbose);
-      }
+      setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
+      verbose && cat(verbose, "setsOfProbes:");
+      verbose && str(verbose, setsOfProbes);
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Reading data
@@ -977,10 +1127,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
   # Identify the cell indices for each possible allele basepair.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Identifying PM cell indices for each possible allele basepair");
-  setsOfProbes <- this$.setsOfProbes;
-  if (is.null(setsOfProbes)) {
-    setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
-  }
+  setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
   verbose && exit(verbose);
 
   # Argument 'basepair':
@@ -1107,10 +1254,7 @@ setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array,
   }
 
   verbose && enter(verbose, "Identifying cell indices for each possible allele basepair");
-  setsOfProbes <- this$.setsOfProbes;
-  if (is.null(setsOfProbes)) {
-    setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
-  }
+  setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Reading all probe intensities");
@@ -1141,6 +1285,9 @@ setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-08-30
+# o Added argument 'mergeShifts=TRUE' and 'B=1'.  Currently B=0 and B=1 
+#   is supported.
 # 2008-08-29
 # o Added protected getSetsOfProbes().  By overriding this method, other
 #   sets of probes can be used.  This function might later also recognize
