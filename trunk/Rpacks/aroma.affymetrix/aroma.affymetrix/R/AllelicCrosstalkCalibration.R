@@ -189,6 +189,11 @@ setMethodS3("clearCache", "AllelicCrosstalkCalibration", function(this, ...) {
 setMethodS3("getAsteriskTags", "AllelicCrosstalkCalibration", function(this, collapse=NULL, ...) {
   tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
+  # shift tag?
+  if (!this$.mergeShifts) {
+    tags <- c(tags, "byShift");
+  }
+
   # B tag?
   B <- as.integer(this$.B);
   if (B != 1) {
