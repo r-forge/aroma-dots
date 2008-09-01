@@ -18,45 +18,26 @@
   Fits an affine transformation to allele A and allele B data using robust estimators.
  }
 
- \usage{\method{fitGenotypeCone}{matrix}(y, alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ..., flavor=c("sfit", "expectile"))}
+ \usage{\method{fitGenotypeCone}{matrix}(y, flavor=c("sfit", "expectile"), ...)}
 
  \arguments{
    \item{y}{A \code{\link[base]{numeric}} Nx2 \code{\link[base]{matrix}} with one column for each allele and
       where N is the number of data points.}
-   \item{alpha}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of decreasing values in (0,1).
-      This parameter "determines how far we are willing to press the
-      boundary of the [genotype cone]".  Lowering \code{alpha} expand
-      the cone.  When \code{alpha} goes to zero, all data points will
-      be on or inside the cone.}
-   \item{q,Q}{Percentiles in [0,100] for which data points that are
-      below (above) will be assigned zero weight in the fitting of
-      the parameters.}
-   \item{...}{Additional arguments passed to \code{\link[sfit]{cfit}}.}
    \item{flavor}{A \code{\link[base]{character}} string specifying what model/algorithm
       should be used to fit the genotype cone.}
+   \item{...}{Additional arguments passed to the internal fit \code{\link[base]{function}}.}
  }
 
  \value{
-   Returns the parameter estimates as a named \code{\link[base]{list}} with elements:
-   \itemize{
-    \item{M}{An estimate of the three vertices defining the genotype
-      triangle.  These three vertices are describes as an 2x3 \code{\link[base]{matrix}}
-      with column \code{origin}, \code{AA}, and \code{BB}.}
-    \item{Minv}{The inverse of \code{M}.}
-    \item{origin}{The estimate of the shift.}
-    \item{W}{The estimate of shear/rotation matrix with columns
-             \code{AA} and \code{BB}.}
-    \item{Winv}{The inverse of \code{W}.}
-    \item{params}{The parameters used for the fit, i.e.
-       \code{alpha}, \code{q}, \code{Q}, and  those passed in \code{...}.}
-    \item{dimData}{The dimension of the input data.}
-   }
+   Returns a named \code{\link[base]{list}} structure.
  }
 
  \examples{
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Simulate data (taken from the cfit.matrix() example of 'sfit')
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#set.seed(0xbeef);
+
 N <- 1000
 
 # Simulate genotypes
@@ -81,27 +62,29 @@ eps <- matrix(rnorm(2*N, mean=0, sd=0.05), ncol=2)
 Y <- Z + eps
 
 
-lim <- c(0,6)
+lim <- c(-1/2,6)
 xlab <- "Allele A"
 ylab <- "Allele B"
 plot(Y, xlab=xlab, ylab=ylab, xlim=lim, ylim=lim)
+lines(x=c(0,0,2*lim[2]), y=c(2*lim[2],0,0), col="#aaaaaa", lwd=3, lty=3)
 
 # Different alpha sequences to illustrate the impact
-alphas <- list(
-  "default" = c(0.10, 0.075, 0.05, 0.03, 0.01),
-  "a bit"   = c(0.10, 0.075),
-  "some"    = c(0.10, 0.075, 0.05, 0.03),
-  "lots"    = c(0.10, 0.075, 0.05, 0.03, 0.01, 0.002),
-  "heaps"   = c(0.10, 0.075, 0.05, 0.03, 0.01, 0.002, 0.0001)
-)
+alphas <- c(0.075, 0.05, 0.01, 0.03, 0.002, 0.001)
 
-cols <- 1 + seq(along=alphas)
-legend("topright", names(alphas), col=cols, lwd=4, title="Alpha seq's:")
+cols <- seq(from=2, to=length(alphas)+1)
+legend("topright", sprintf("\%.3f", alphas), col=cols, lwd=4, title="Alphas")
 
+flavors <- c("sfit", "expectile")
 for (kk in seq(along=alphas)) {
-  fit <- fitGenotypeCone(Y, alpha=alphas[[kk]])
-  lines(fit$M, lwd=4, col=cols[kk])
+  for (flavor in flavors) {
+    fit <- fitGenotypeCone(Y, alpha=alphas[kk], flavor=flavor)
+    radials(fit$M, lwd=3, col=cols[kk], lty=ifelse(flavor == "sfit", 1,2))
+    drawApex(fit$M, col=cols[kk], pch=19, cex=2)
+    YN <- backtransformGenotypeCone(Y, fit=fit);
+    points(YN, col=cols[kk]);
+  }
 }
+lines(x=c(0,0,2*lim[2]), y=c(2*lim[2],0,0), col="#aaaaaa", lwd=3, lty=3)
 }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
