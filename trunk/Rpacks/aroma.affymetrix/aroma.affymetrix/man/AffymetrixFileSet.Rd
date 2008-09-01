@@ -28,7 +28,7 @@
 \code{~~~~~~~~~~~~~~~~~+--}\emph{\code{AffymetrixFileSet}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffymetrixCelSet}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \emph{\link[aroma.affymetrix]{DChipDcpSet}}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{ParameterCelSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
+\link[aroma.affymetrix]{AffymetrixCelSet}, \emph{\link[aroma.affymetrix]{AffymetrixCnChpSet}}, \link[aroma.affymetrix]{ChipEffectSet}, \link[aroma.affymetrix]{CnChipEffectSet}, \emph{\link[aroma.affymetrix]{DChipDcpSet}}, \link[aroma.affymetrix]{ExonChipEffectSet}, \link[aroma.affymetrix]{FirmaSet}, \link[aroma.affymetrix]{ParameterCelSet}, \link[aroma.affymetrix]{QualityAssessmentSet}, \link[aroma.affymetrix]{ResidualSet}, \link[aroma.affymetrix]{SnpChipEffectSet}, \link[aroma.affymetrix]{WeightsSet}\cr
 
 public abstract static class \bold{AffymetrixFileSet}\cr
 extends \emph{\link[aroma.core]{AromaPlatformInterface}}\cr
