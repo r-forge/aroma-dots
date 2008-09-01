@@ -13,6 +13,119 @@
 # \arguments{
 #   \item{y}{A @numeric Nx2 @matrix with one column for each allele and
 #      where N is the number of data points.}
+#   \item{flavor}{A @character string specifying what model/algorithm 
+#      should be used to fit the genotype cone.}
+#   \item{...}{Additional arguments passed to the internal fit @function.}
+# }
+#
+# \value{
+#   Returns a named @list structure.
+# }
+#
+# @examples "../incl/fitGenotypeCone.matrix.Rex"
+#
+# @author
+#
+# \seealso{
+#  To backtransform data fitted using this method, 
+#  see @see "backtransformGenotypeCone".
+#  Internally @see "sfit::cfit" of the \pkg{sfit} package is used.
+# }
+#
+# @keyword internal
+#*/###########################################################################
+setMethodS3("fitGenotypeCone", "matrix", function(y, flavor=c("sfit", "expectile"), ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'flavor':
+  flavor <- match.arg(flavor);
+
+  if (flavor == "sfit") {
+    fitGenotypeConeBySfit(y, ...);
+  } else if (flavor == "expectile") {
+    fitGenotypeConeByExpectile(y, ...);
+  }
+}, protected=TRUE)
+
+
+
+
+setMethodS3("fitGenotypeConeByExpectile", "matrix", function(y, alpha=0.01, lambda=2, ...) {
+  require("expectile") || throw("Package not loaded: expectile");
+
+  dim <- dim(y);
+
+  # Transpose
+  y <- t(y);
+
+  # Fit cone
+  fit <- fitExpectileCone(y, alpha=alpha, lambda=lambda, ...);
+  rm(y);
+
+  origin <- fit$X[,1];
+  names(origin) <- c("A", "B");
+  fit$origin <- origin;
+
+  M <- t(fit$X);
+  idxOrigin <- which.min(apply(M, MARGIN=1, FUN=function(u) sum(u^2)));
+  origin <- M[idxOrigin,];
+  M <- M[-idxOrigin,];
+  idxBBAA <- order(apply(M, MARGIN=1, FUN=function(u) diff(u)));
+  M <- M[idxBBAA,];
+  M <- rbind(origin, M);
+  rownames(M) <- c("origin", "AA", "BB");
+  colnames(M) <- c("A", "B");
+  class(M) <- "cfit";
+  fit$M <- M;
+
+  W <- M[c("AA","BB"),];
+  W <- t(W) - origin;
+  W <- W / W[1,1];
+ 
+  # Find the inverse
+  Winv <- solve(W);
+
+  W <- t(W);
+  Winv <- t(Winv);
+
+  fit$W <- W;
+  fit$Winv <- Winv;
+
+  fit$params <- list(
+    alpha=alpha,
+    lambda=lambda,
+    ...
+  );
+
+  fit$dimData <- dim;
+
+  # Clean up
+  for (ff in c("y", "w", "Beta", "P", "N", "alpha", "lambda", "fitCone", "verbose")) {
+    fit[[ff]] <- NULL;
+  }
+
+  fit;
+}, private=TRUE) # fitGenotypeConeByExpectile()
+
+
+
+
+###########################################################################/**
+# @set "class=matrix"
+# @RdocMethod fitGenotypeConeBySfit
+#
+# @title "Fits an affine transformation to allele A and allele B data"
+#
+# \description{
+#  @get "title" using robust estimators.
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{y}{A @numeric Nx2 @matrix with one column for each allele and
+#      where N is the number of data points.}
 #   \item{alpha}{A @numeric @vector of decreasing values in (0,1).
 #      This parameter "determines how far we are willing to press the
 #      boundary of the [genotype cone]".  Lowering \code{alpha} expand
@@ -22,8 +135,6 @@
 #      below (above) will be assigned zero weight in the fitting of
 #      the parameters.}
 #   \item{...}{Additional arguments passed to @see "sfit::cfit".}
-#   \item{flavor}{A @character string specifying what model/algorithm 
-#      should be used to fit the genotype cone.}
 # }
 #
 # \value{
@@ -55,16 +166,8 @@
 #
 # @keyword internal
 #*/###########################################################################
-setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ..., flavor=c("sfit", "expectile")) {
-  # Argument 'flavor':
-  flavor <- match.arg(flavor);
-
-  if (flavor == "sfit") {
-    require("sfit") || throw("Package 'sfit' not found.");
-  } else {
-    throw("Argument 'flavor' has a value that is yet not supported: ", flavor);
-  }
-
+setMethodS3("fitGenotypeConeBySfit", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, ...) {
+  require("sfit") || throw("Package not loaded: sfit");
 
   # Fit simplex of (y_A,y_B)
   fit <- sfit::cfit(y, alpha=alpha, q=q, Q=Q, ...);
@@ -118,12 +221,16 @@ setMethodS3("fitGenotypeCone", "matrix", function(y, alpha=c(0.10, 0.075, 0.05, 
   fit$dimData <- dim(y);
 
   fit;
-}, private=TRUE) # fitGenotypeCone()
+}, private=TRUE) # fitGenotypeConeBySfit()
 
 
 
 ############################################################################
 # HISTORY:
+# 2008-08-31
+# o New fitGenotypeCone() takes flavors 'sfit' and 'expectile'.
+# o Added fitGenotypeConeByExpectile().
+# o Renamed old fitGenotypeCone() to fitGenotypeConeBySfit().
 # 2008-02-14
 # o Added a self-contained example for fitGenotypeCone().
 # 2007-09-08

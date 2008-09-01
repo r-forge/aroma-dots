@@ -1,6 +1,11 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.4.2 [2008-08-31]
+o Update fitGenotypeCone() to support both flavors 'sfit' (old)
+  and 'expectile' (new).
+
+
 Version: 0.9.4.1 [2008-08-12]
 o Added support for argument 'positions' to countBases() for
   AromaCellSequenceFile.

@@ -255,3 +255,5 @@ readTableHeader.default
   textSequence.ProbePositionEffects
  backtransformMultiDimensionalCone
  backtransformMultiDimensionalCone.matrix fitMultiDimensionalCone
+  fitGenotypeConeByExpectile fitGenotypeConeByExpectile.matrix
+  fitGenotypeConeBySfit

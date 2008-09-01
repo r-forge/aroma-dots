@@ -1,8 +1,6 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Simulate data (taken from the cfit.matrix() example of 'sfit')
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#set.seed(0xbeef);
-
 N <- 1000
 
 # Simulate genotypes
@@ -27,26 +25,24 @@ eps <- matrix(rnorm(2*N, mean=0, sd=0.05), ncol=2)
 Y <- Z + eps
 
 
-lim <- c(-1/2,6)
+lim <- c(0,6)
 xlab <- "Allele A"
 ylab <- "Allele B"
 plot(Y, xlab=xlab, ylab=ylab, xlim=lim, ylim=lim)
-lines(x=c(0,0,2*lim[2]), y=c(2*lim[2],0,0), col="#aaaaaa", lwd=3, lty=3)
 
 # Different alpha sequences to illustrate the impact
-alphas <- c(0.075, 0.05, 0.01, 0.03, 0.002, 0.001)
+alphas <- list(
+  "default" = c(0.10, 0.075, 0.05, 0.03, 0.01),
+  "a bit"   = c(0.10, 0.075),
+  "some"    = c(0.10, 0.075, 0.05, 0.03),
+  "lots"    = c(0.10, 0.075, 0.05, 0.03, 0.01, 0.002),
+  "heaps"   = c(0.10, 0.075, 0.05, 0.03, 0.01, 0.002, 0.0001)
+)
 
-cols <- seq(from=2, to=length(alphas)+1)
-legend("topright", sprintf("%.3f", alphas), col=cols, lwd=4, title="Alphas")
+cols <- 1 + seq(along=alphas)
+legend("topright", names(alphas), col=cols, lwd=4, title="Alpha seq's:")
 
-flavors <- c("sfit", "expectile")
 for (kk in seq(along=alphas)) {
-  for (flavor in flavors) {
-    fit <- fitGenotypeCone(Y, alpha=alphas[kk], flavor=flavor)
-    radials(fit$M, lwd=3, col=cols[kk], lty=ifelse(flavor == "sfit", 1,2))
-    drawApex(fit$M, col=cols[kk], pch=19, cex=2)
-    YN <- backtransformGenotypeCone(Y, fit=fit);
-    points(YN, col=cols[kk]);
-  }
+  fit <- fitGenotypeCone(Y, alpha=alphas[[kk]])
+  lines(fit$M, lwd=4, col=cols[kk])
 }
-lines(x=c(0,0,2*lim[2]), y=c(2*lim[2],0,0), col="#aaaaaa", lwd=3, lty=3)
