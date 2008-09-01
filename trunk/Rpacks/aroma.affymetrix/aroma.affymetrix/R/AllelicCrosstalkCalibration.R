@@ -32,7 +32,7 @@
 #     the target average. If @NULL, all probes are considered.}
 #   \item{flavor}{A @character string specifying what algorithm is used
 #     to fit the crosstalk calibration.}
-#   \item{alpha, q, Q}{}
+#   \item{alpha, q, Q, lambda}{}
 # }
 #
 # \section{What probe signals are updated?}{ 
@@ -71,7 +71,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", mergeShifts=TRUE, B=1, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98) {
+setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", mergeShifts=TRUE, B=1, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, lambda=2) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -158,6 +158,16 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
 
   # Argument 'flavor':
   flavor <- match.arg(flavor);
+
+  # Argument 'alpha':
+  alpha <- Arguments$getDoubles(alpha, range=c(0,1));
+
+  if (flavor == "sfit") {
+    algorithmParameters <- list(alpha=alpha, q=q, Q=Q);
+  } else if (flavor == "expectile") {
+    alpha <- alpha[length(alpha)];
+    algorithmParameters <- list(alpha=alpha, lambda=lambda);
+  }
   
 
   extend(ProbeLevelTransform(dataSet=dataSet, ...), "AllelicCrosstalkCalibration",
@@ -167,9 +177,7 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
     .mergeShifts = mergeShifts,
     .B = B,
     .flavor = flavor,
-    .alpha = alpha,
-    .q = q,
-    .Q = Q,
+    .algorithmParameters = algorithmParameters,
     .extraTags = extraTags
   )
 })
@@ -192,6 +200,11 @@ setMethodS3("getAsteriskTags", "AllelicCrosstalkCalibration", function(this, col
   # shift tag?
   if (!this$.mergeShifts) {
     tags <- c(tags, "byShift");
+  }
+  # flavor tag
+  flavor <- this$.flavor;
+  if (flavor != "sfit") {
+    tags <- c(tags, flavor);
   }
 
   # B tag?
@@ -291,9 +304,7 @@ setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expan
     mergeShifts = this$.mergeShifts,
     B = this$.B,
     flavor = this$.flavor,
-    alpha = this$.alpha,
-    q = this$.q,
-    Q = this$.Q
+    algorithmParameters = this$.algorithmParameters
   ));
 
   # Expand?
@@ -345,7 +356,21 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
     }
 
 
-    setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+#    setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+    setsOfProbes <- getAlleleProbePairs3(cdf, verbose=verbose);
+
+    # Coerce new structure to old. AD HOC for now HB /2008-08-31
+    if (is.element("snps", names(setsOfProbes))) {
+      snps <- setsOfProbes$snps;
+      for (kk in seq(along=snps)) {
+        cells <- t(snps[[kk]][3:4,,drop=FALSE]);
+##        o <- order(cells[,1]); cells <- cells[o,,drop=FALSE];
+        snps[[kk]] <- cells;
+        rm(cells);
+      }
+      setsOfProbes$snps <- NULL;
+      setsOfProbes <- c(snps, setsOfProbes);
+    }
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Group by number of nucleotides (B) around SNP position?
@@ -835,6 +860,11 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   # Get (and create) the output path
   outputPath <- getPath(this);
 
+  # Model flavor and parameters
+  flavor <- params$flavor;
+  algorithmParameters <- params$algorithmParameters;
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # For hooks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -910,10 +940,19 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
         verboseL <- (verbose && isVisible(verbose, -50));
 
-        verbose && cat(verbose, "Flavor: ", params$flavor);
-        fit <- fitGenotypeCone(y, flavor=params$flavor,
-                          alpha=params$alpha, q=params$q, Q=params$Q, 
-                                                     verbose=verboseL);
+        verbose && cat(verbose, "Model/algorithm flavor: ", flavor);
+        if (flavor == "sfit") {
+          alpha <- algorithmParameters$alpha;
+          q <- algorithmParameters$q;
+          Q <- algorithmParameters$Q;
+          fit <- fitGenotypeCone(y, flavor=flavor, alpha=alpha, q=q, Q=Q,
+                                                       verbose=verboseL);
+        } else if (flavor == "expectile") {
+          alpha <- algorithmParameters$alpha;
+          lambda <- algorithmParameters$lambda;
+          fit <- fitGenotypeCone(y, flavor=flavor, alpha=alpha, 
+                                        lambda=lambda, verbose=verboseL);
+        }
         verbose && print(verbose, fit, level=-5);
         fits[[name]] <- fit;
         verbose && exit(verbose);
@@ -1290,6 +1329,9 @@ setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-08-31
+# o BUG FIX: The allele pairs identified was not correct for GWS arrays.
+# o Updated AllelicCrosstalkCalibration to support flavor 'expectile' too.
 # 2008-08-30
 # o Added argument 'mergeShifts=TRUE' and 'B=1'.  Currently B=0 and B=1 
 #   is supported.

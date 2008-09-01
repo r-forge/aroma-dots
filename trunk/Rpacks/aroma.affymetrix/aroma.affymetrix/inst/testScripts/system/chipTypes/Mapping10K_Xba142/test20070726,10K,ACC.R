@@ -1,7 +1,5 @@
 library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
 
 dataSetName <- "Jeremy_2007-10k";
 chipType <- "Mapping10K_Xba142";
@@ -13,22 +11,21 @@ sampleNames <- c("0001-7", "0002-10", "0004-13", "0005-14", "0007-18",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+csR <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
 keep <- 1:6;
-cs <- extract(cs, keep);
+csR <- extract(csR, keep);
 sampleNames <- sampleNames[keep];
-print(cs);
-stopifnot(identical(getNames(cs), sampleNames));
+print(csR);
+stopifnot(identical(getNames(csR), sampleNames));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acc <- AllelicCrosstalkCalibration(cs);
+acc <- AllelicCrosstalkCalibration(csR);
 print(acc);
 
 csC <- process(acc, verbose=log);
 print(csC);
 
-stopifnot(identical(getNames(csC), getNames(cs)));
-
+stopifnot(identical(getNames(csC), getNames(csR)));
