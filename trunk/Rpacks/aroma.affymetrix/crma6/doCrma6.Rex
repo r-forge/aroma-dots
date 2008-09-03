@@ -36,7 +36,7 @@ print(acs);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Calibrate for allelic crosstalk
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acc <- AllelicCrosstalkCalibration(csR, mergeShifts=TRUE, B=3, tags="*,v4");
+acc <- AllelicCrosstalkCalibration(csR, mergeShifts=TRUE, B=1, tags="*,v4");
 dummy <- getSetsOfProbes(acc, version=4, force=TRUE, verbose=verbose);
 str(dummy);
 #acc <- AllelicCrosstalkCalibration(csR, mergeShifts=TRUE, tags="*,v1a");
