@@ -1,4 +1,4 @@
-setMethodS3("getSnpPositions", "AromaCellSequenceFile", function(this, cells, ..., verbose=FALSE) {
+setMethodS3("getSnpPositions", "AromaCellSequenceFile", function(this, cells, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -89,6 +89,12 @@ setMethodS3("getSnpPositions", "AromaCellSequenceFile", function(this, cells, ..
   pos;
 }) # getSnpPositions()
  
+
+setMethodS3("getSnpShifts", "AromaCellSequenceFile", function(this, ...) {
+  pos <- getSnpPositions(this, ...);
+  pos <- pos - ((getProbeLength(this) %/% 2) + 1L);
+  pos;
+}) # getSnpShifts()
 
 
 
@@ -305,6 +311,7 @@ setMethodS3("groupBySnpNucleotides", "AromaCellSequenceFile", function(this, cel
 ############################################################################
 # HISTORY:
 # 2008-09-02
+# o Added getSnpShifts().
 # o Added groupBySnpNucleotides().
 # o Added getSnpPositions() and getSnpNucleotides().
 # o Created.
