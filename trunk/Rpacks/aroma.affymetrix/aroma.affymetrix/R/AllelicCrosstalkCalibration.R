@@ -149,7 +149,7 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
   mergeShifts <- Arguments$getLogical(mergeShifts);
 
   # Argument 'B':
-  B <- Arguments$getInteger(B, range=c(0,1));
+  B <- Arguments$getInteger(B, range=c(0,3));
   if (B > 1) {
     if (B %% 2 != 1) {
       throw("Argument 'B' must be zero or and odd integer: ", B);
