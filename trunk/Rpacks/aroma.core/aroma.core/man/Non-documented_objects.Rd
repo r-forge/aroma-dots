@@ -602,6 +602,17 @@
 \alias{backtransformMultiDimensionalCone}
 \alias{backtransformMultiDimensionalCone.matrix}
 \alias{fitMultiDimensionalCone}
+\alias{fitGenotypeConeByExpectile}
+\alias{fitGenotypeConeByExpectile.matrix}
+\alias{fitGenotypeConeBySfit}
+\alias{getSnpNucleotides}
+\alias{getSnpNucleotides.AromaCellSequenceFile}
+\alias{getSnpPositions}
+\alias{getSnpPositions.AromaCellSequenceFile}
+\alias{getSnpShifts}
+\alias{getSnpShifts.AromaCellSequenceFile}
+\alias{groupBySnpNucleotides}
+\alias{groupBySnpNucleotides.AromaCellSequenceFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
