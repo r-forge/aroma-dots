@@ -84,7 +84,10 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
       verbose && exit(verbose);
 
       cells <- getAlleleCellPairs(cdf, verbose=verbose);
-      shifts <- -(B-1):+(B-1);
+      S <- as.integer(B %/% 2 + 1);
+      shifts <- -(S-1):(S-1);
+      verbose && cat(verbose, "Shifts:");
+      verbose && print(verbose, shifts);
       snps <- groupBySnpNucleotides(acs, cells=cells, shifts=shifts, 
                                                      verbose=verbose);
       rm(cells, shifts);
@@ -104,7 +107,8 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
         snpsT$all <- cbind(snpsT$all, snps[[kk]]);
       }
       rm(snps);
-      setsOfProbes$snps <- snps;
+      setsOfProbes$snps <- snpsT;
+      rm(snpsT);
       verbose && exit(verbose);
     } else if (B == 1) {
       # Nothing to do, default
