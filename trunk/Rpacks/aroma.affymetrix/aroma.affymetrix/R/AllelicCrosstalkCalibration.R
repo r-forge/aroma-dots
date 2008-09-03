@@ -769,6 +769,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
           Q <- algorithmParameters$Q;
           verbose & cat(verbose, "Model parameters:");
           verbose & str(verbose, list(alpha=alpha, q=q, Q=Q));
+          verbose & cat(verbose, "Number of data points: ", nrow(y));
           fit <- fitGenotypeCone(y, flavor=flavor, alpha=alpha, q=q, Q=Q,
                                                        verbose=verboseL);
         } else if (flavor == "expectile") {
@@ -776,6 +777,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
           lambda <- algorithmParameters$lambda;
           verbose & cat(verbose, "Model parameters:");
           verbose & str(verbose, list(alpha=alpha, lambda=lambda));
+          verbose & cat(verbose, "Number of data points: ", nrow(y));
           fit <- fitGenotypeCone(y, flavor=flavor, alpha=alpha, 
                                         lambda=lambda, verbose=verboseL);
         }
