@@ -59,8 +59,14 @@ setMethodS3("fitGenotypeConeByExpectile", "matrix", function(y, alpha=0.01, lamb
   # Transpose
   y <- t(y);
 
+  # Use an orthogonal initial simplex to stabilize the estimate
+  # /HB 2008-09-03
+  c <- median(y, na.rm=TRUE);
+  initSimplex <- matrix(c(0,0, 0,c, c,0), nrow=2, ncol=3);
+
   # Fit cone
-  fit <- fitExpectileCone(y, alpha=alpha, lambda=lambda, ...);
+  fit <- fitExpectileCone(y, alpha=alpha, lambda=lambda, 
+                          initSimplex=initSimplex, ...);
   rm(y);
 
   origin <- fit$X[,1];
@@ -227,6 +233,9 @@ setMethodS3("fitGenotypeConeBySfit", "matrix", function(y, alpha=c(0.10, 0.075, 
 
 ############################################################################
 # HISTORY:
+# 2008-09-03
+# o Added a hardwired ortogonal initial simplex when fitting the cone with
+#   fitGenotypeConeByExpectile(). Otherwise, some estimates are unstable.
 # 2008-08-31
 # o New fitGenotypeCone() takes flavors 'sfit' and 'expectile'.
 # o Added fitGenotypeConeByExpectile().
