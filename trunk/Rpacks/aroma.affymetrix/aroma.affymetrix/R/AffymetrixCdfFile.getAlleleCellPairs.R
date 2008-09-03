@@ -123,7 +123,7 @@ setMethodS3("getAlleleCellPairs", "AffymetrixCdfFile", function(this, units=NULL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Reading cell indices");
   verbose && cat(verbose, "Stratify by: ", stratifyBy);
-  cells <- getCellIndices(cdf, units=units, stratifyBy=stratifyBy, 
+  cells <- getCellIndices(this, units=units, stratifyBy=stratifyBy, 
                                           useNames=FALSE, verbose=verbose);
   rm(units);
 

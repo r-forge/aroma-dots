@@ -1,4 +1,4 @@
-setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., version=c(1,3), force=FALSE, verbose=FALSE) {
+setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., version=c(1,3,4), force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -29,7 +29,14 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
     verbose && cat(verbose, "Number of nucleotides: ", B);
 
     # Assert that needed annotation files exist
-    if (B > 1 || !mergeShifts) {
+    needAcs <- FALSE;
+    if (version == 4) {
+      needAcs <- TRUE;
+    } else if (B > 1 || !mergeShifts) {
+      needAcs <- TRUE;
+    }
+
+    if (needAcs) {
       verbose && enter(verbose, "Locating AromaCellSequenceFile");
       chipType <- getChipType(cdf, fullname=FALSE);
       verbose && cat(verbose, "Chip type: ", chipType);
@@ -43,55 +50,69 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
 
     if (version == 1) {
       setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+      # Coerce to new structure. /HB 2008-09-02
+      nonSNPs <- setsOfProbes$nonSNPs;
+      setsOfProbes$nonSNPs <- NULL;
+      setsOfProbes <- lapply(setsOfProbes, FUN=t);
+      pairs <- names(setsOfProbes);
+      pairs <- strsplit(pairs, split="", fixed=TRUE);
+      pairs <- sapply(pairs, FUN=paste, collapse="/");
+      names(setsOfProbes) <- pairs;
+      setsOfProbes <- list(snps=setsOfProbes, nonSNPs=nonSNPs);
+      rm(nonSNPs, pairs);
     } else if (version == 3) {
-      setsOfProbes <- getAlleleProbePairs3(cdf, verbose=verbose);
-    }
-
-    # Coerce new structure to old. AD HOC for now HB /2008-08-31
-    if (is.element("snps", names(setsOfProbes))) {
+      setsOfProbes <- getAlleleProbePairs3(cdf, ignoreOrder=TRUE, verbose=verbose);
       snps <- setsOfProbes$snps;
       for (kk in seq(along=snps)) {
-        cells <- t(snps[[kk]][3:4,,drop=FALSE]);
-        o <- order(cells[,1]); 
-        cells <- cells[o,,drop=FALSE];
+        cells <- snps[[kk]][3:4,,drop=FALSE];
+        o <- order(cells[1,]); 
+        cells <- cells[,o,drop=FALSE];
         snps[[kk]] <- cells;
         rm(cells, o);
       }
-      setsOfProbes$snps <- NULL;
-      setsOfProbes <- c(snps, setsOfProbes);
+      pairs <- names(snps);
+      pairs <- strsplit(pairs, split="", fixed=TRUE);
+      pairs <- sapply(pairs, FUN=paste, collapse="/");
+      names(snps) <- pairs;
+      setsOfProbes$snps <- snps;
+      rm(snps, pairs);
+    } else if (version == 4) {
+      verbose && enter(verbose, "Identifying cell indices for all non-SNP units");
+      unitTypes <- getUnitTypes(cdf, verbose=verbose);
+      nonSNPs <- whichVector(unitTypes != 2);
+      rm(unitTypes); 
+      verbose && exit(verbose);
+
+      cells <- getAlleleCellPairs(cdf, verbose=verbose);
+      shifts <- -(B-1):+(B-1);
+      snps <- groupBySnpNucleotides(acs, cells=cells, shifts=shifts, 
+                                                     verbose=verbose);
+      rm(cells, shifts);
+      setsOfProbes <- list(snps=snps, list(nonSNPs=nonSNPs));
+      rm(snps, nonSNPs);
     }
+
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Group by number of nucleotides (B) around SNP position?
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (B == 0) {
       verbose && enter(verbose, "Merging SNP groups");
-      # Merge all SNP groups
-      setsOfProbes <- setsOfProbes;
-      names <- names(setsOfProbes);
-      names <- gsub("AC", "snps", names, fixed=TRUE);
-      names(setsOfProbes) <- names;
-      for (key in c("AC", "AG", "AT", "CG", "CT", "GT")) {
-        setsOfProbes[["snps"]] <- rbind(setsOfProbes[["snps"]], 
-                                        setsOfProbes[[key]]);
-        setsOfProbes[[key]] <- NULL;
+      snpsT <- list(all=NULL);
+      snps <- setsOfProbes$snps;
+      for (kk in seq(along=snps)) {
+        snpsT$all <- cbind(snpsT$all, snps[[kk]]);
       }
+      rm(snps);
+      setsOfProbes$snps <- snps;
       verbose && exit(verbose);
     } else if (B == 1) {
       # Nothing to do, default
     } else {
-      verbose && enter(verbose, "Expanding SNP groups");
-      throw("Yet to be implemented.");
-
-      positions <- seq(from=13-(B-1)%/%2, to=13+(B-1)%/%2);
-      verbose && cat(verbose, "Positions: ", seqToHumanReadable(positions));
-      for (gg in seq(along=setsOfProbes)) {
-        cells <- setsOfProbes[[gg]];
-        seqsA <- readSequenceMatrix(acs, cells=cells[,1], positions=positions);
-        seqsB <- readSequenceMatrix(acs, cells=cells[,2], positions=positions);
-      }
-      verbose && exit(verbose);
+      if (version != 4)
+        throw("Not supported.");
     }
+
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Merge shifts?
@@ -154,25 +175,17 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
       } # for (gg ...)
       verbose && exit(verbose);
     }
-
     
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Flatten
+    # Transpose
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # For each set of cells...
-    setsOfProbes2 <- NULL;
-    for (gg in seq(along=setsOfProbes)) {
-      cells <- setsOfProbes[gg];
-      if (is.list(cells[[1]]))
-        cells <- cells[[1]];
-      setsOfProbes2 <- c(setsOfProbes2, cells);
-      rm(cells);
+    snps <- setsOfProbes$snps;
+    for (kk in seq(along=snps)) {
+      snps[[kk]] <- t(snps[[kk]]);
     } # for (gg ...)
-    setsOfProbes <- setsOfProbes2;
-    rm(setsOfProbes2);
-
-    verbose && cat(verbose, "Number of cells per set:");
-    verbose && print(verbose, unlist(sapply(setsOfProbes, length)));
+    setsOfProbes$snps <- snps;
+    rm(snps);
 
     this$.setsOfProbes <- setsOfProbes;
 
@@ -180,12 +193,16 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
   }
 
   setsOfProbes;
-}, protected=TRUE)
+}, protected=TRUE) # getSetsOfProbes()
 
 
 
 ############################################################################
 # HISTORY:
+# 2008-09-02
+# o UPDATE: Now getSetsOfProbes() returns a list of two elements 'snps' and
+#   'nonSNPs'. The 'snps' element is in turn a list of probe pairs groups.
+#   The probe pairs are Kx2 matrices, where the rows are now alleles  A & B.
 # 2008-08-31
 # o BUG FIX: The allele pairs identified was not correct for GWS arrays.
 # o Updated AllelicCrosstalkCalibration to support flavor 'expectile' too.

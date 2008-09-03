@@ -394,8 +394,7 @@ setMethodS3("rescaleByAll", "AllelicCrosstalkCalibration", function(this, yAll, 
 
 
 setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAll, params, setsOfProbes, ..., verbose=FALSE) {
-  nbrOfSets <- length(setsOfProbes);
-  basepairs <- setdiff(names(setsOfProbes), "nonSNPs");
+  basepairs <- names(setsOfProbes$snps);
   nbrOfPairs <- length(basepairs);
 
   # Infer method?
@@ -424,8 +423,10 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
   }
 
 
-  subset <- vector("list", nbrOfSets);
-  names(subset) <- names(setsOfProbes);
+  snps <- vector("list", nbrOfPairs);
+  names(snps) <- basepairs;
+  subset <- list(snps=snps, nonSNPs=NULL);
+  rm(snps);
   fit <- list(
     dimY = dim(yAll),
     params = params,
@@ -440,10 +441,10 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
   if (method == "sum") {
     for (kk in seq_len(nbrOfPairs)) {
       name <- basepairs[kk];
-      verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+      verbose && enter(verbose, sprintf("Allele-pair group #%d ('%s') of %d", kk, name, nbrOfPairs));
   
       # Get data pairs
-      idxAB <- setsOfProbes[[name]];
+      idxAB <- setsOfProbes$snps[[name]];
       idxAB <- matrix(idxAB, ncol=2, byrow=FALSE);
 
       # Sum y=yA+yB
@@ -485,12 +486,12 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
       b <- targetAvg/yAvg;
       verbose && printf(verbose, "scale factor: %.2f\n", b);
     
-      idxAB <- setsOfProbes[[name]];
+      idxAB <- setsOfProbes$snps[[name]];
       yAll[idxAB] <- b*yAll[idxAB];
   
       rm(idx);
 
-      fit$subset[[name]] <- list(b=b);
+      fit$subset$snps[[name]] <- list(b=b);
 
       verbose && exit(verbose);
     } # for (kk in ...)
@@ -502,10 +503,10 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
   if (method == "allele") {
     for (kk in seq_len(nbrOfPairs)) {
       name <- basepairs[kk];
-      verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+      verbose && enter(verbose, sprintf("Allele-pair group #%d ('%s') of %d", kk, name, nbrOfPairs));
   
       # Get data pairs
-      idxAB <- setsOfProbes[[name]];
+      idxAB <- setsOfProbes$snps[[name]];
       idxAB <- matrix(idxAB, ncol=2, byrow=FALSE);
 
       # Default scale factors
@@ -554,7 +555,7 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
         rm(idx);
       } # for (cc ...)
 
-      fit$subset[[name]] <- list(b=b);
+      fit$subset$snps[[name]] <- list(b=b);
       verbose && exit(verbose);
     } # for (kk in ...)
   } # if (method == "allelic")
@@ -564,8 +565,7 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
   # Rescaling non-SNP cells
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Non-SNP cells");
-  name <- "nonSNPs";
-  idx <- setsOfProbes[[name]];
+  idx <- setsOfProbes$nonSNPs;
 
   if (!is.null(params$subsetToAvg)) {
     idx <- intersect(idx, params$subsetToAvg);
@@ -601,7 +601,7 @@ setMethodS3("rescaleByGroups", "AllelicCrosstalkCalibration", function(this, yAl
     b <- targetAvg/yAvg;
     verbose && printf(verbose, "scale factor: %.2f\n", b);
     yAll[idx] <- b*yAll[idx];
-    fit$subset[[name]] <- list(b=b);
+    fit$subset$nonSNPs <- list(b=b);
   } # if (n > 0)
   rm(idx);
   verbose && exit(verbose);
@@ -734,7 +734,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       verbose && enter(verbose, "Reading all probe intensities");
       yAll <- getData(df, fields="intensities", ...)$intensities;
       verbose && exit(verbose);
-    
+
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Calibrating
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -747,16 +747,16 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Fitting each allelic basepair
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      basepairs <- setdiff(names(setsOfProbes), "nonSNPs");
+      basepairs <- names(setsOfProbes$snps);
       nbrOfPairs <- length(basepairs);
       fits <- vector("list", nbrOfPairs);
       names(fits) <- basepairs;
       verbose && enter(verbose, "Fitting calibration model");
       for (kk in seq_len(nbrOfPairs)) {
         name <- basepairs[kk];
-        verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+        verbose && enter(verbose, sprintf("Allele probe-pair group #%d ('%s') of %d", kk, name, nbrOfPairs));
         basepair <- unlist(strsplit(name, split=""));
-        idx <- setsOfProbes[[name]];
+        idx <- setsOfProbes$snps[[name]];
     
         verbose && enter(verbose, "Fitting");
         y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
@@ -836,7 +836,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         name <- basepairs[kk];
         verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
 
-        idx <- setsOfProbes[[name]];
+        idx <- setsOfProbes$snps[[name]];
         y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
         yC <- backtransformGenotypeCone(y, fit=fits[[name]]);
         yAll[idx] <- yC;
@@ -1001,7 +1001,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
   verbose && exit(verbose);
 
   # Argument 'basepair':
-  knownBasepairs <- names(setsOfProbes);
+  knownBasepairs <- names(setsOfProbes$snps);
   if (is.null(basepairs)) {
     basepairs <- knownBasepairs; 
   } else {
@@ -1070,7 +1070,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
     alleles <- strsplit(name, split="")[[1]];
 
     # Extracting data
-    idx <- setsOfProbes[[name]];
+    idx <- setsOfProbes$snps[[name]];
     y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
     colnames(y) <- alleles;
 
@@ -1132,15 +1132,15 @@ setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array,
   yAll <- getData(cf, fields="intensities", ...)$intensities;
   verbose && exit(verbose);
 
-  nbrOfPairs <- length(setsOfProbes);
+  nbrOfPairs <- length(setsOfProbes$snps);
   res <- vector("list", nbrOfPairs);
-  names(res) <- names(setsOfProbes);
+  names(res) <- names(setsOfProbes$snps);
 
   verbose && enter(verbose, "Extracting data pairs");
   for (kk in seq_len(nbrOfPairs)) {
-    name <- names(setsOfProbes)[kk];
+    name <- names(setsOfProbes$snps)[kk];
     basepair <- unlist(strsplit(name, split=""));
-    idx <- setsOfProbes[[name]];
+    idx <- setsOfProbes$snps[[name]];
     y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
     colnames(y) <- c("A", "B");
     res[[kk]] <- y;
