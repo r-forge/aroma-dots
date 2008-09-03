@@ -257,3 +257,7 @@ readTableHeader.default
  backtransformMultiDimensionalCone.matrix fitMultiDimensionalCone
   fitGenotypeConeByExpectile fitGenotypeConeByExpectile.matrix
   fitGenotypeConeBySfit
+  getSnpNucleotides getSnpNucleotides.AromaCellSequenceFile
+  getSnpPositions getSnpPositions.AromaCellSequenceFile getSnpShifts
+  getSnpShifts.AromaCellSequenceFile groupBySnpNucleotides
+  groupBySnpNucleotides.AromaCellSequenceFile
