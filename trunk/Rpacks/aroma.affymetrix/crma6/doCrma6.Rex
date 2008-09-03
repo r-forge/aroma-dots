@@ -1,8 +1,9 @@
 if (interactive()) savehistory();
 library(aroma.affymetrix);
 #source("FragmentLengthNormalization.R");
-source("UnitTypeScaleNormalization.R");
+#source("UnitTypeScaleNormalization.R");
 #source("DChipQuantileNormalization.R");
+#source("AllelicCrosstalkCalibration.getSetsOfProbes.R");
 
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
@@ -12,8 +13,8 @@ verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 cdf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6", tags="Full");
 print(cdf);
 
-cs <- AffymetrixCelSet$byName("HapMap270,6.0,CEU,founders", cdf=cdf);
-print(cs);
+csR <- AffymetrixCelSet$byName("HapMap270,6.0,CEU,founders", cdf=cdf);
+print(csR);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,12 +36,15 @@ print(acs);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Calibrate for allelic crosstalk
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acc <- AllelicCrosstalkCalibration(cs);
+acc <- AllelicCrosstalkCalibration(csR, mergeShifts=TRUE, B=3, tags="*,v4");
+dummy <- getSetsOfProbes(acc, version=4, force=TRUE, verbose=verbose);
+str(dummy);
+#acc <- AllelicCrosstalkCalibration(csR, mergeShifts=TRUE, tags="*,v1a");
 print(acc);
 csC <- process(acc, verbose=verbose);
 print(csC);
 
-## bc <- RmaBackgroundCorrection(cs);
+## bc <- RmaBackgroundCorrection(csR);
 ## print(bc);
 ## csBC <- process(bc, verbose=verbose);
 ## print(csBC);
@@ -58,7 +62,7 @@ print(csC);
 # Normalization for base-position effects
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bpn <- BasePositionNormalization(csC, target="zero", tags="*,z", shift=+300);
-#bpn <- BasePositionNormalization(cs, target="zero", tags="*,z");
+#bpn <- BasePositionNormalization(csR, target="zero", tags="*,z");
 print(bpn);
 csN <- process(bpn, verbose=verbose);
 print(csN);
@@ -72,11 +76,11 @@ print(csN);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Summary probe-level data
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=TRUE);
 plm <- RmaCnPlm(csN, mergeStrands=TRUE, combineAlleles=TRUE);
 #plm <- RmaCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE, shift=+300);
 #plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=FALSE);
 #plm <- AvgCnPlm(csC, mergeStrands=TRUE, combineAlleles=FALSE);
+plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=TRUE);
 print(plm);
 
 fit(plm, ram=5, verbose=verbose);
@@ -87,8 +91,8 @@ print(ces);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Normalize for PCR fragment-length effects
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-fln <- FragmentLengthNormalization(ces, shift=300);
-fln <- FragmentLengthNormalization(ces);
+#fln <- FragmentLengthNormalization(ces, shift=300);
+#fln <- FragmentLengthNormalization(ces);
 targets <- rep(list(function(...) log2(2200)), 2);
 fln <- FragmentLengthNormalization(ces, targetFunctions=targets, tags="*,z");
 print(fln);
@@ -110,10 +114,10 @@ print(cesN);
 # Normalize for (remaining) scale differences between unit types
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 sn <- UnitTypeScaleNormalization(cesN, tags="*");
-print(sn);
+#print(sn);
 #cesN2 <- process(sn, verbose=verbose);
 #print(cesN2);
-  
+stop();
 #cesN <- cesN2;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
