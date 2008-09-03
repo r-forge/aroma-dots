@@ -1,0 +1,273 @@
+setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., version=c(1,3), force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'version':
+  version <- Arguments$getIntegers(version);
+  version <- version[1];
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  setsOfProbes <- this$.setsOfProbes;
+
+  if (force || is.null(setsOfProbes)) {
+    verbose && enter(verbose, "Identifying sets of pairs of cell indices by quering the CDF");
+    dataSet <- getInputDataSet(this);
+    cdf <- getCdf(dataSet);
+    chipType <- getChipType(cdf);
+    verbose && cat(verbose, "Chip type: ", chipType);
+
+    params <- getParameters(this);
+    mergeShifts <- params$mergeShifts;
+    verbose && cat(verbose, "Merge shifts: ", mergeShifts);
+    B <- params$B;
+    verbose && cat(verbose, "Number of nucleotides: ", B);
+
+    # Assert that needed annotation files exist
+    if (B > 1 || !mergeShifts) {
+      verbose && enter(verbose, "Locating AromaCellSequenceFile");
+      chipType <- getChipType(cdf, fullname=FALSE);
+      verbose && cat(verbose, "Chip type: ", chipType);
+      acs <- AromaCellSequenceFile$byChipType(chipType);
+      verbose && print(verbose, acs);
+      verbose && exit(verbose);
+    } else {
+      acs <- NULL;
+    }
+
+
+    if (version == 1) {
+      setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
+    } else if (version == 3) {
+      setsOfProbes <- getAlleleProbePairs3(cdf, verbose=verbose);
+    }
+
+    # Coerce new structure to old. AD HOC for now HB /2008-08-31
+    if (is.element("snps", names(setsOfProbes))) {
+      snps <- setsOfProbes$snps;
+      for (kk in seq(along=snps)) {
+        cells <- t(snps[[kk]][3:4,,drop=FALSE]);
+        o <- order(cells[,1]); 
+        cells <- cells[o,,drop=FALSE];
+        snps[[kk]] <- cells;
+        rm(cells, o);
+      }
+      setsOfProbes$snps <- NULL;
+      setsOfProbes <- c(snps, setsOfProbes);
+    }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Group by number of nucleotides (B) around SNP position?
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (B == 0) {
+      verbose && enter(verbose, "Merging SNP groups");
+      # Merge all SNP groups
+      setsOfProbes <- setsOfProbes;
+      names <- names(setsOfProbes);
+      names <- gsub("AC", "snps", names, fixed=TRUE);
+      names(setsOfProbes) <- names;
+      for (key in c("AC", "AG", "AT", "CG", "CT", "GT")) {
+        setsOfProbes[["snps"]] <- rbind(setsOfProbes[["snps"]], 
+                                        setsOfProbes[[key]]);
+        setsOfProbes[[key]] <- NULL;
+      }
+      verbose && exit(verbose);
+    } else if (B == 1) {
+      # Nothing to do, default
+    } else {
+      verbose && enter(verbose, "Expanding SNP groups");
+      throw("Yet to be implemented.");
+
+      positions <- seq(from=13-(B-1)%/%2, to=13+(B-1)%/%2);
+      verbose && cat(verbose, "Positions: ", seqToHumanReadable(positions));
+      for (gg in seq(along=setsOfProbes)) {
+        cells <- setsOfProbes[[gg]];
+        seqsA <- readSequenceMatrix(acs, cells=cells[,1], positions=positions);
+        seqsB <- readSequenceMatrix(acs, cells=cells[,2], positions=positions);
+      }
+      verbose && exit(verbose);
+    }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Merge shifts?
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (mergeShifts) {
+      # Nothing to do.
+    } else {
+      # Split by shift
+      verbose && enter(verbose, "Grouping probe pairs by their shift relative to SNP");
+
+      # For each set of cells...
+      for (gg in seq(along=setsOfProbes)) {
+        cells <- setsOfProbes[[gg]];
+        groupTag <- names(setsOfProbes)[gg];
+        verbose && enter(verbose, sprintf("Set #%d ('%s') of %d", gg, groupTag, length(setsOfProbes)));
+
+        dim <- dim(cells);
+        if (is.null(dim) || dim[2] != 2) {
+          # Not a set of SNP cell indexes.
+          next;
+        }
+
+        # Identify the location of the SNP position for each probe pair
+        naValue <- as.integer(NA);
+        snpPositions <- rep(naValue, length=dim[1]);
+        possibleShifts <- as.integer(seq(from=-4, to=+4));  # Hardwired!
+        possiblePositions <- 13 + possibleShifts;
+        for (pos in possiblePositions) {
+          seqsA <- readSequenceMatrix(acs, cells=cells[,1], positions=pos);
+          seqsB <- readSequenceMatrix(acs, cells=cells[,2], positions=pos);
+          snpPositions[(seqsA != seqsB)] <- pos;
+          rm(seqsA, seqsB);
+        }
+        shifts <- snpPositions - as.integer(13);
+
+        possibleShifts <- sort(unique(shifts), na.last=TRUE);
+
+        # For each shift...
+        subgroups <- vector("list", length(possibleShifts));
+        shiftTags <- sprintf("shift=%+d", possibleShifts);
+        names(subgroups) <- paste(groupTag, shiftTags, sep=",");
+
+        for (ss in seq(along=possibleShifts)) {
+          shift <- possibleShifts[ss];
+          if (is.na(shift)) {
+            idxs <- whichVector(is.na(shifts));
+          } else {
+            idxs <- whichVector(shifts == shift);
+          }
+          cellsSS <- cells[idxs,,drop=FALSE];
+          subgroups[[ss]] <- cellsSS;
+          rm(idxs, cellsSS);
+        } # for (shift ...)
+        rm(cells);
+
+        setsOfProbes[[gg]] <- subgroups;
+        rm(subgroups);
+
+        verbose && exit(verbose);
+      } # for (gg ...)
+      verbose && exit(verbose);
+    }
+
+    
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Flatten
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # For each set of cells...
+    setsOfProbes2 <- NULL;
+    for (gg in seq(along=setsOfProbes)) {
+      cells <- setsOfProbes[gg];
+      if (is.list(cells[[1]]))
+        cells <- cells[[1]];
+      setsOfProbes2 <- c(setsOfProbes2, cells);
+      rm(cells);
+    } # for (gg ...)
+    setsOfProbes <- setsOfProbes2;
+    rm(setsOfProbes2);
+
+    verbose && cat(verbose, "Number of cells per set:");
+    verbose && print(verbose, unlist(sapply(setsOfProbes, length)));
+
+    this$.setsOfProbes <- setsOfProbes;
+
+    verbose && exit(verbose);
+  }
+
+  setsOfProbes;
+}, protected=TRUE)
+
+
+
+############################################################################
+# HISTORY:
+# 2008-08-31
+# o BUG FIX: The allele pairs identified was not correct for GWS arrays.
+# o Updated AllelicCrosstalkCalibration to support flavor 'expectile' too.
+# 2008-08-30
+# o Added argument 'mergeShifts=TRUE' and 'B=1'.  Currently B=0 and B=1 
+#   is supported.
+# 2008-08-29
+# o Added protected getSetsOfProbes().  By overriding this method, other
+#   sets of probes can be used.  This function might later also recognize
+#   user specified function generating the sets.
+# 2008-08-04
+# o Added support to fit the genotype "cone" using the 'expectile' package
+#   instead of the 'sfit' package. This is controlled by the 'flavor' 
+#   argument of the constructor.
+# 2008-07-14
+# o Now explicitly using matrix(..., byrow=FALSE).
+# 2008-05-30
+# o BUG FIX: The constructor of AllelicCrosstalkCalibration used 
+#   non-defined variable 'verbose'.
+# 2008-02-21
+# o Now SNPs and CN probes are infered from getUnitTypes(cdf) and no longer
+#   from the unit names.
+# 2008-02-14
+# o Now 'verbose' is passed as a logical argument to fitGenotypeCone().
+# 2007-12-01
+# o MEMORY OPTIMIZATION: Added clearCache() to AllelicCrosstalkCalibration.
+# o BUG FIX: The AllelicCrosstalkCalibration introduced in previous version
+#   was broken for 10K (maybe 100K and 500K as well).
+# o Now 'subsetToAvg' of AllelicCrosstalkCalibration accepts '-XY' (and
+#   '-X' and '-Y') for automatic look up of all units and exclude those 
+#   that are on ChrX and ChrY.  Note, '-XY' will work on all chip types,
+#   also older ones for which there are no ChrY units.
+# o The new constructor argument 'rescaleBy' now sets a "subtag", e.g.
+#   'ACC,ra' where the 'ra' indicates that 'rescaleBy=all' was used.
+# 2007-11-27
+# o Added specific getAsteriskTag() for AllelicCrosstalkCalibration.
+# o Added the option to rescale towards a target average of *all* probes.
+# o Now rescale() throws an error if length(params$targetAvg) is not 1 or 2.
+#   This should never happend, but was added just in case.
+# 2007-09-14
+# o BUG FIX: Now the target average of non-SNP probes is half of the target
+#   average of alleles.
+# 2007-09-09
+# o Added alpha version of plotBasepair() to AllelicCrosstalkCalibration.
+# 2007-09-08
+# o Now AllelicCrosstalkCalibration corrects also non-SNP PM cells by 
+#   substracting a global offset and rescaling towards target average.
+#   The global offset is calculated as the weighted average of all
+#   allelic offsets.  This is the simplest way to incorporate a calibration
+#   for non-SNP cells.  A more advanced version would be to stratify by
+#   middle nucleotide, and use the corresponding estimates from the SNP
+#   cells, but that would require information about the middle nucleotide
+#   for all cells, which got some overhead.  Hopefully the simpler version
+#   is good enough.
+# 2007-09-05
+# o Now the rescaling can be done either on (yA,yB) separately or on 
+#   y=yA+yB.  If targetAvg has two values the former, otherwise the latter.
+# o Now AllelicCrosstalkCalibration recognizes argument 'subsetToAvg'.
+# o Now process() stores the crosstalk settings and estimated parameters
+#   to file. May be useful if one wants to go back and look at the details.
+#   One day we might get around to store this information in the CEL file
+#   headers.
+# o Now process() first fits the crosstalk model for all basepairs, then
+#   backtransform the signals, then optional rescale signals to target
+#   average, then saves the calibrated signals.
+# o SPEED UP: Now getAlleleProbePairs() is only called if data needs to be
+#   calibrated, i.e. if already calibrated it is not loaded.
+# o CLEAN UP: Now the code of calibrateAllelicCrosstalk() is included here.
+# 2007-03-29
+# o Now 'targetAvg' defaults to 2200 so that allele A and allele B signals
+#   are rescaled to be one the same scale.  If so,  it does not make sense
+#   to do background correction afterwards.
+# o Added getParameters().
+# o Added support for arguments 'targetAvg', 'alpha', 'q', and 'Q'.
+# 2006-12-08
+# o Now this class inherits from the ProbePreprocessing class.
+# o Now this pre-processor output results to probeData/.
+# o Renamed from AllelicCrosstalkCalibrator.
+# 2006-11-18
+# o Removed version and subversion tags, and related functions. 
+#   Now getTags() returns the tags of the input data set plus any tags 
+#   of this instance.
+# 2006-11-02
+# o Created from QuantileNormalizer.R.
+############################################################################

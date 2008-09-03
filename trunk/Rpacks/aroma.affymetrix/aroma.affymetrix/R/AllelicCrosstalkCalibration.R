@@ -317,184 +317,6 @@ setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expan
 
 
 
-setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  setsOfProbes <- this$.setsOfProbes;
-
-  if (force || is.null(setsOfProbes)) {
-    verbose && enter(verbose, "Identifying sets of pairs of cell indices by quering the CDF");
-    dataSet <- getInputDataSet(this);
-    cdf <- getCdf(dataSet);
-    chipType <- getChipType(cdf);
-    verbose && cat(verbose, "Chip type: ", chipType);
-
-    params <- getParameters(this);
-    mergeShifts <- params$mergeShifts;
-    verbose && cat(verbose, "Merge shifts: ", mergeShifts);
-    B <- params$B;
-    verbose && cat(verbose, "Number of nucleotides: ", B);
-
-    # Assert that needed annotation files exist
-    if (B > 1 || !mergeShifts) {
-      verbose && enter(verbose, "Locating AromaCellSequenceFile");
-      chipType <- getChipType(cdf, fullname=FALSE);
-      verbose && cat(verbose, "Chip type: ", chipType);
-      acs <- AromaCellSequenceFile$byChipType(chipType);
-      verbose && print(verbose, acs);
-      verbose && exit(verbose);
-    } else {
-      acs <- NULL;
-    }
-
-
-#    setsOfProbes <- getAlleleProbePairs(cdf, verbose=verbose);
-    setsOfProbes <- getAlleleProbePairs3(cdf, verbose=verbose);
-
-    # Coerce new structure to old. AD HOC for now HB /2008-08-31
-    if (is.element("snps", names(setsOfProbes))) {
-      snps <- setsOfProbes$snps;
-      for (kk in seq(along=snps)) {
-        cells <- t(snps[[kk]][3:4,,drop=FALSE]);
-##        o <- order(cells[,1]); cells <- cells[o,,drop=FALSE];
-        snps[[kk]] <- cells;
-        rm(cells);
-      }
-      setsOfProbes$snps <- NULL;
-      setsOfProbes <- c(snps, setsOfProbes);
-    }
-
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Group by number of nucleotides (B) around SNP position?
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (B == 0) {
-      verbose && enter(verbose, "Merging SNP groups");
-      # Merge all SNP groups
-      setsOfProbes <- setsOfProbes;
-      names <- names(setsOfProbes);
-      names <- gsub("AC", "snps", names, fixed=TRUE);
-      names(setsOfProbes) <- names;
-      for (key in c("AC", "AG", "AT", "CG", "CT", "GT")) {
-        setsOfProbes[["snps"]] <- rbind(setsOfProbes[["snps"]], 
-                                        setsOfProbes[[key]]);
-        setsOfProbes[[key]] <- NULL;
-      }
-      verbose && exit(verbose);
-    } else if (B == 1) {
-      # Nothing to do, default
-    } else {
-      verbose && enter(verbose, "Expanding SNP groups");
-      throw("Yet to be implemented.");
-
-      positions <- seq(from=13-(B-1)%/%2, to=13+(B-1)%/%2);
-      verbose && cat(verbose, "Positions: ", seqToHumanReadable(positions));
-      for (gg in seq(along=setsOfProbes)) {
-        cells <- setsOfProbes[[gg]];
-        seqsA <- readSequenceMatrix(acs, cells=cells[,1], positions=positions);
-        seqsB <- readSequenceMatrix(acs, cells=cells[,2], positions=positions);
-      }
-      verbose && exit(verbose);
-    }
-
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Merge shifts?
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (mergeShifts) {
-      # Nothing to do.
-    } else {
-      # Split by shift
-      verbose && enter(verbose, "Grouping probe pairs by their shift relative to SNP");
-
-      # For each set of cells...
-      for (gg in seq(along=setsOfProbes)) {
-        cells <- setsOfProbes[[gg]];
-        groupTag <- names(setsOfProbes)[gg];
-        verbose && enter(verbose, sprintf("Set #%d ('%s') of %d", gg, groupTag, length(setsOfProbes)));
-
-        dim <- dim(cells);
-        if (is.null(dim) || dim[2] != 2) {
-          # Not a set of SNP cell indexes.
-          next;
-        }
-
-        # Identify the location of the SNP position for each probe pair
-        naValue <- as.integer(NA);
-        snpPositions <- rep(naValue, length=dim[1]);
-        possibleShifts <- as.integer(seq(from=-4, to=+4));  # Hardwired!
-        possiblePositions <- 13 + possibleShifts;
-        for (pos in possiblePositions) {
-          seqsA <- readSequenceMatrix(acs, cells=cells[,1], positions=pos);
-          seqsB <- readSequenceMatrix(acs, cells=cells[,2], positions=pos);
-          snpPositions[(seqsA != seqsB)] <- pos;
-          rm(seqsA, seqsB);
-        }
-        shifts <- snpPositions - as.integer(13);
-
-        possibleShifts <- sort(unique(shifts), na.last=TRUE);
-
-        # For each shift...
-        subgroups <- vector("list", length(possibleShifts));
-        shiftTags <- sprintf("shift=%+d", possibleShifts);
-        names(subgroups) <- paste(groupTag, shiftTags, sep=",");
-
-        for (ss in seq(along=possibleShifts)) {
-          shift <- possibleShifts[ss];
-          if (is.na(shift)) {
-            idxs <- whichVector(is.na(shifts));
-          } else {
-            idxs <- whichVector(shifts == shift);
-          }
-          cellsSS <- cells[idxs,,drop=FALSE];
-          subgroups[[ss]] <- cellsSS;
-          rm(idxs, cellsSS);
-        } # for (shift ...)
-        rm(cells);
-
-        setsOfProbes[[gg]] <- subgroups;
-        rm(subgroups);
-
-        verbose && exit(verbose);
-      } # for (gg ...)
-      verbose && exit(verbose);
-    }
-
-    
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Flatten
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # For each set of cells...
-    setsOfProbes2 <- NULL;
-    for (gg in seq(along=setsOfProbes)) {
-      cells <- setsOfProbes[gg];
-      if (is.list(cells[[1]]))
-        cells <- cells[[1]];
-      setsOfProbes2 <- c(setsOfProbes2, cells);
-      rm(cells);
-    } # for (gg ...)
-    setsOfProbes <- setsOfProbes2;
-    rm(setsOfProbes2);
-
-    verbose && cat(verbose, "Number of cells per set:");
-    verbose && print(verbose, unlist(sapply(setsOfProbes, length)));
-
-    this$.setsOfProbes <- setsOfProbes;
-
-    verbose && exit(verbose);
-  }
-
-  setsOfProbes;
-}, protected=TRUE);
-
-
-
 
 setMethodS3("rescale", "AllelicCrosstalkCalibration", function(this, yAll, params, ...) {
   if (params$rescaleBy == "all") {
@@ -945,11 +767,15 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
           alpha <- algorithmParameters$alpha;
           q <- algorithmParameters$q;
           Q <- algorithmParameters$Q;
+          verbose & cat(verbose, "Model parameters:");
+          verbose & str(verbose, list(alpha=alpha, q=q, Q=Q));
           fit <- fitGenotypeCone(y, flavor=flavor, alpha=alpha, q=q, Q=Q,
                                                        verbose=verboseL);
         } else if (flavor == "expectile") {
           alpha <- algorithmParameters$alpha;
           lambda <- algorithmParameters$lambda;
+          verbose & cat(verbose, "Model parameters:");
+          verbose & str(verbose, list(alpha=alpha, lambda=lambda));
           fit <- fitGenotypeCone(y, flavor=flavor, alpha=alpha, 
                                         lambda=lambda, verbose=verboseL);
         }
