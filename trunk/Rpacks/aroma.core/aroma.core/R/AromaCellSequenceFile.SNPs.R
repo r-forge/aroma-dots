@@ -21,6 +21,25 @@ setMethodS3("getSnpPositions", "AromaCellSequenceFile", function(this, cells, ..
 
   verbose && enter(verbose, "Identifying SNP positions of cell allele pairs");
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for cached results?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  chipType <- getChipType(this);
+  key <- list(method="getSnpPositions", class=class(this)[1], 
+              chipType=chipType, tags=getTags(this), cells=cells, ...);
+  dirs <- c("aroma.affymetrix", chipType);
+  if (!force) {
+    verbose && enter(verbose, "Checking for cached results");
+    res <- loadCache(key=key, dirs=dirs);
+    if (!is.null(res)) {
+      verbose && cat(verbose, "Found cached results");
+      verbose && exit(verbose);
+      verbose && exit(verbose);
+      return(res);
+    }
+    verbose && exit(verbose);
+  }
+
   byRow <- (dim[2] == 2);
   if (byRow) {
     cells <- t(cells);
@@ -55,6 +74,14 @@ setMethodS3("getSnpPositions", "AromaCellSequenceFile", function(this, cells, ..
     pos[idxs] <- pp;
   }
   rm(idxs, pp);
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Save to cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Caching result");
+  saveCache(pos, key=key, dirs=dirs);
   verbose && exit(verbose);
 
   verbose && exit(verbose);
@@ -266,7 +293,7 @@ setMethodS3("groupBySnpNucleotides", "AromaCellSequenceFile", function(this, cel
   # Save to cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Caching result");
-  saveCache(cells, key=key, dirs=dirs);
+  saveCache(res, key=key, dirs=dirs);
   verbose && exit(verbose);
 
   verbose && exit(verbose);
