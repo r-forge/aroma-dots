@@ -1,6 +1,11 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.4.3 [2008-09-03]
+o Added getSnpPositions(), getSnpNucleotides() and
+  groupBySnpNucleotides() to AromaCellSequenceFile.
+
+
 Version: 0.9.4.2 [2008-08-31]
 o Update fitGenotypeCone() to support both flavors 'sfit' (old)
   and 'expectile' (new).
