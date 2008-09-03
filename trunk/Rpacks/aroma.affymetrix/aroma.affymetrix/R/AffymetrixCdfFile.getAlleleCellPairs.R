@@ -103,8 +103,9 @@ setMethodS3("getAlleleCellPairs", "AffymetrixCdfFile", function(this, units=NULL
   verbose && print(verbose, table(unitSizes));
   verbose && exit(verbose);
 
-  units <- units[is.element(unitSizes, c(2,4))];
-  rm(unitSizes); 
+  keep <- whichVector(is.element(unitSizes, c(2,4)));
+  units <- units[keep];
+  rm(unitSizes, keep); 
  
   nbrOfUnits <- length(units);
   verbose && cat(verbose, "Number of SNP units to query: ", nbrOfUnits);
@@ -127,13 +128,30 @@ setMethodS3("getAlleleCellPairs", "AffymetrixCdfFile", function(this, units=NULL
   rm(units);
 
   verbose && enter(verbose, "Merging groups by allele pair");
-  # Merge allele-pair groups
-  cells <- applyCdfGroups(cells, cdfMergeAlleles);
+  verbose && printf(verbose, "Units left: ");
+  for (uu in seq(along=cells)) {
+    if (uu %% 5000 == 0)
+      verbose && writeRaw(verbose, length(cells)-uu, ", ");
+    unit <- cells[[uu]];
+    groups <- unit$groups;
+    groups <- cdfMergeAlleles(groups);
+    unit$groups <- groups;
+    cells[[uu]] <- unit;
+    if (uu %% 100000 == 0) {
+      gc <- gc();
+      verbose && print(verbose, gc);
+    }
+  }
+  verbose && writeRaw(verbose, "0.\n");
+  rm(unit, groups, uu);
   verbose && exit(verbose);
 
   cells <- unlist(cells, use.names=FALSE);
   cells <- matrix(cells, nrow=2);
   rownames(cells) <- c("A", "B");
+
+  gc <- gc();
+  verbose && print(verbose, gc);
 
   verbose && exit(verbose);
 
