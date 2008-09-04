@@ -526,7 +526,7 @@
   read250KHg17 read250KHg17.DChipGenomeInformation read50K
   read50K.DChipSnpInformation read50KHg17
   read50KHg17.DChipGenomeInformation readArrays
-  readArrays.AffymetrixAptSummaryFile readCdfDataFrame readCdfFields
+  readArrays.AffymetrixAptSummaryFile readCdfFields
   readCdfFields.AffymetrixChipTypeReporter readCdfGroupStrands
   readCdfRectangle readCdfRectangle.AffymetrixChipTypeReporter
   readCfhHeader readCfhHeader.default readCfhUnits readCfhUnits.default
@@ -757,14 +757,12 @@ extractTheta.DChipDcpFile extractTheta.DChipDcpSet
   nbrOfUnits.DChipCdfBinFile readDataFrame.DChipCdfBinFile
   readRawData.AffymetrixCnChpFile setCdf.AffymetrixCnChpSet
 calibrateOne calibrateOne.ReseqCrosstalkCalibration
-fit.SingleArrayUnitModel fitOne.ReseqCrosstalkCalibration fitOneArray
+fitOne.ReseqCrosstalkCalibration fitOneArray
 fitOneArray.SingleArrayUnitModel getAlleleCellPairs
 getAlleleProbePairs3 getAsteriskTags.UnitModel
 getFitFunction.MultiArrayUnitModel
 getFitUnitFunction.MultiArrayUnitModel
 getFitUnitFunction.SingleArrayUnitModel getFitUnitGroupFunction
-getFitUnitGroupFunction.SingleArrayUnitModel
 getParameterSet.UnitModel getSetsOfProbes
 getSetsOfProbes.AllelicCrosstalkCalibration
 getSetsOfProbes.ReseqCrosstalkCalibration
-readUnits.SingleArrayUnitModel SingleArrayUnitModel

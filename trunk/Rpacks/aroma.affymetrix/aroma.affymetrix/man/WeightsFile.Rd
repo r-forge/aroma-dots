@@ -3,6 +3,8 @@
 % 
 %  WeightsFile.R
 % 
+% on Thu Sep 04 00:31:42 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

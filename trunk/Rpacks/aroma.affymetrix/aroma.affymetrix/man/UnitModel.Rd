@@ -3,6 +3,8 @@
 % 
 %  UnitModel.R
 % 
+% on Thu Sep 04 00:31:36 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -24,7 +26,7 @@
 \code{~~~~~~~+--}\emph{\code{UnitModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineCnPlm}, \link[aroma.affymetrix]{AffinePlm}, \link[aroma.affymetrix]{AffineSnpPlm}, \emph{\link[aroma.affymetrix]{AlleleSummation}}, \link[aroma.affymetrix]{AvgCnPlm}, \link[aroma.affymetrix]{AvgPlm}, \link[aroma.affymetrix]{AvgSnpPlm}, \link[aroma.affymetrix]{ExonRmaPlm}, \link[aroma.affymetrix]{FirmaModel}, \link[aroma.affymetrix]{HetLogAddCnPlm}, \link[aroma.affymetrix]{HetLogAddPlm}, \link[aroma.affymetrix]{HetLogAddSnpPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \link[aroma.affymetrix]{ProbeLevelModel}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
+\link[aroma.affymetrix]{AffineCnPlm}, \link[aroma.affymetrix]{AffinePlm}, \link[aroma.affymetrix]{AffineSnpPlm}, \emph{\link[aroma.affymetrix]{AlleleSummation}}, \link[aroma.affymetrix]{AvgCnPlm}, \link[aroma.affymetrix]{AvgPlm}, \link[aroma.affymetrix]{AvgSnpPlm}, \link[aroma.affymetrix]{ExonRmaPlm}, \link[aroma.affymetrix]{FirmaModel}, \link[aroma.affymetrix]{HetLogAddCnPlm}, \link[aroma.affymetrix]{HetLogAddPlm}, \link[aroma.affymetrix]{HetLogAddSnpPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \emph{\link[aroma.affymetrix]{MultiArrayUnitModel}}, \link[aroma.affymetrix]{ProbeLevelModel}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaPlm}, \link[aroma.affymetrix]{RmaSnpPlm}, \emph{\link[aroma.affymetrix]{SingleArrayUnitModel}}\cr
 
 public abstract static class \bold{UnitModel}\cr
 extends \emph{\link[aroma.affymetrix]{Model}}\cr
@@ -35,11 +37,15 @@ extends \emph{\link[aroma.affymetrix]{Model}}\cr
   a model that is applied to each unit separately.
  }
 
- \usage{UnitModel(dataSet=NULL, ...)}
+ \usage{UnitModel(dataSet=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), shift=0, ...)}
 
  \arguments{
    \item{dataSet}{An \code{\link{AffymetrixCelSet}} to which this model should
       be fitted.}
+   \item{probeModel}{A \code{\link[base]{character}} string specifying how PM and MM values
+      should be modelled.  By default only PM signals are used.}
+   \item{shift}{An optional amount the signals should be shifted
+      (translated) before fitting the model.}
    \item{...}{Arguments passed to the constructor of \code{\link{Model}}.}
  }
 
@@ -47,8 +53,6 @@ extends \emph{\link[aroma.affymetrix]{Model}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:findUnitsTodo.UnitModel]{findUnitsTodo}} \tab Identifies non-fitted units.\cr
- \tab \code{\link[aroma.affymetrix:getCellIndices.UnitModel]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
- \tab \code{\link[aroma.affymetrix:readUnits.UnitModel]{readUnits}} \tab Reads data unit by unit.\cr
 }
 
 
