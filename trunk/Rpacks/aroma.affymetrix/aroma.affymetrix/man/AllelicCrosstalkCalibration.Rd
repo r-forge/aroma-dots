@@ -59,6 +59,11 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
    \item{subsetToAvg}{The indices of the cells (taken as the intersect of
      existing indices) used to calculate average in order to rescale to
      the target average. If \code{\link[base]{NULL}}, all probes are considered.}
+   \item{mergeShifts}{If \code{\link[base:logical]{TRUE}}, the shift of the probe sequence
+     relative to the SNP position is ignored, otherwise not.}
+   \item{B}{An \code{\link[base]{integer}} specifying by how many nucleotides the allelic
+     groups should be stratified by. If zero, all SNPs are put in one
+     group.}
    \item{flavor}{A \code{\link[base]{character}} string specifying what algorithm is used
      to fit the crosstalk calibration.}
    \item{alpha, q, Q, lambda}{}

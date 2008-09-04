@@ -15,6 +15,10 @@
 # \arguments{
 #   \item{dataSet}{An @see "AffymetrixCelSet" to which this model should
 #      be fitted.}
+#   \item{probeModel}{A @character string specifying how PM and MM values
+#      should be modelled.  By default only PM signals are used.}
+#   \item{shift}{An optional amount the signals should be shifted
+#      (translated) before fitting the model.}
 #   \item{...}{Arguments passed to the constructor of @see "Model".}
 # }
 #
@@ -25,7 +29,7 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("UnitModel", function(dataSet=NULL, ...) {
+setConstructorS3("UnitModel", function(dataSet=NULL, probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), shift=0, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -36,9 +40,50 @@ setConstructorS3("UnitModel", function(dataSet=NULL, ...) {
                                                            class(dataSet));
   }
 
-  extend(Model(dataSet=dataSet, ...), "UnitModel");
+  # Argument 'probeModel':
+  probeModel <- match.arg(probeModel);
+
+  # Argument 'shift':
+  shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf")); 
+
+
+  extend(Model(dataSet=dataSet, ...), "UnitModel",
+    probeModel = probeModel,
+    shift = shift
+  );
 }, abstract=TRUE)
 
+
+
+setMethodS3("getParameterSet", "UnitModel", function(this, ...) {
+  params <- NextMethod("getParameterSet", this, ...);
+  params$probeModel <- this$probeModel;
+  params$shift <- this$shift;
+  params;
+}, private=TRUE)
+
+
+setMethodS3("getAsteriskTags", "UnitModel", function(this, collapse=NULL, ...) {
+  # Returns 'U' (but allow for future extensions)
+  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags[1] <- "U";
+
+  # Add class-specific tags
+  shift <- as.integer(round(this$shift));
+  if (shift != 0) {
+    tags <- c(tags, sprintf("%+d", shift));
+  }
+  probeModel <- this$probeModel;
+  if (probeModel != "pm") {
+    tags <- c(tags, probeModel);
+  }
+
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  }
+
+  tags;
+}, protected=TRUE)
 
 
 
@@ -54,19 +99,13 @@ setConstructorS3("UnitModel", function(dataSet=NULL, ...) {
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to \code{getCellIndices()} of the 
-#     @see "AffymetrixCdfFile" of the input data set.}
+#   \item{...}{Additional arguments passed to \code{getCellIndices()} 
+#     of the @see "AffymetrixCdfFile" of the input data set.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 #
 # \value{
 #  Returns the @list structure consisting of CDF cell indices.
-# }
-#
-# \details{
-#   By default, this is just a wrapper function calling
-#   \code{getCellIndices()} of the @see "AffymetrixCdfFile"
-#   of the input data set.
 # }
 #
 # @author
@@ -81,89 +120,32 @@ setMethodS3("getCellIndices", "UnitModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+ 
+
+  # Identify the type of probes to read
+  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", 
+                       "pm-mm"="pmmm", "min1(pm-mm)"="pmmm", "pm+mm"="pmmm");
 
   # Get the CDF cell indices
-  verbose && enter(verbose, "Identifying CDF cell indices");
   ds <- getDataSet(this);
   cdf <- getCdf(ds);
-  cells <- getCellIndices(cdf, ...);
+
+  verbose && enter(verbose, "Identifying CDF cell indices");
+  verbose && cat(verbose, "Stratify by: ", stratifyBy);
+  cells <- getCellIndices(cdf, ..., stratifyBy=stratifyBy, 
+                                                      verbose=less(verbose));
   verbose && exit(verbose);
   
   cells;
-})
-
-###########################################################################/**
-# @RdocMethod readUnits
-#
-# @title "Reads data unit by unit"
-#
-# \description{
-#  @get "title" for all or a subset of units (probesets). 
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{units}{The units to be read. If @NULL, all units are read.}
-#   \item{...}{Arguments passed to \code{getCellIndices()} of the 
-#     @see "AffymetrixCdfFile" class (if \code{cdf} was not specified),
-#     as well as \code{getUnitIntensities()} of the 
-#     @see "AffymetrixCelSet" of the input data set.}
-#   \item{force}{If @TRUE, cached cell indices as well as data is re-read.}
-#   \item{verbose}{See @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns the @list structure that \code{readUnits()} of 
-#  @see "AffymetrixCelSet" returns.
-# }
-#
-# \details{
-#   The output structure is shaped by the @list structure returned
-#   by @seemethod "getCellIndices".  The default is to return whatever
-#   the CDF returns, but by overriding the latter, what cells are read
-#   and what group-structure each unit has can be fully customized
-#   by any subclass.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "getCellIndices".
-#   @seeclass
-# }
-#
-# @keyword IO
-#*/###########################################################################
-setMethodS3("readUnits", "UnitModel", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
+}, private=TRUE)
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get the CDF cell indices
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Identifying CDF cell indices");
-  cdfUnits <- getCellIndices(this, units=units, ..., force=force);
-  verbose && print(verbose, cdfUnits[1]);
-  verbose && exit(verbose);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Get the CEL intensities by units
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ds <- getDataSet(this);
-  verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
-  res <- getUnitIntensities(ds, units=cdfUnits, ..., force=force);
-  verbose && exit(verbose);
-  verbose && str(verbose, res[1]);
-
-  res;
-})
 
 
 ###########################################################################/**
@@ -191,9 +173,10 @@ setMethodS3("readUnits", "UnitModel", function(this, units=NULL, ..., force=FALS
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("findUnitsTodo", "UnitModel", abstract=TRUE)
+setMethodS3("findUnitsTodo", "UnitModel", abstract=TRUE);
 
-setMethodS3("getFitUnitFunction", "UnitModel", abstract=TRUE, private=TRUE)
+
+setMethodS3("getFitUnitFunction", "UnitModel", abstract=TRUE, private=TRUE);
 
 
 ############################################################################

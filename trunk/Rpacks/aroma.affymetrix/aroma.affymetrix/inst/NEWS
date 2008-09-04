@@ -1,6 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.4.4 [2008-09-03]
+o Now aroma.affymetrix requires affxparser 1.13.8, because 
+  getUnitTypes() of AffymetrixCdfFile requires that version
+  in order to correctly identify copy-number units.
+
+
 Version: 0.9.4.3 [2008-08-30]
 o Added options 'mergeStrands' and 'B' to AllelicCrosstalkCalibration.
 o BUG FIX: Now the affy, affyPLM, and EBImage packages are forced to 

@@ -23,13 +23,15 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{ProbeLevelModel}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{MultiArrayUnitModel}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{ProbeLevelModel}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{AffineCnPlm}, \link[aroma.affymetrix]{AffinePlm}, \link[aroma.affymetrix]{AffineSnpPlm}, \link[aroma.affymetrix]{AvgCnPlm}, \link[aroma.affymetrix]{AvgPlm}, \link[aroma.affymetrix]{AvgSnpPlm}, \link[aroma.affymetrix]{ExonRmaPlm}, \link[aroma.affymetrix]{HetLogAddCnPlm}, \link[aroma.affymetrix]{HetLogAddPlm}, \link[aroma.affymetrix]{HetLogAddSnpPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaPlm}, \link[aroma.affymetrix]{RmaSnpPlm}\cr
 
 public static class \bold{ProbeLevelModel}\cr
-extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
+extends \emph{\link[aroma.affymetrix]{MultiArrayUnitModel}}\cr
 
 
 
@@ -42,14 +44,10 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
   in Affymetrix CDF terms.
  }
 
- \usage{ProbeLevelModel(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), shift=0, standardize=TRUE)}
+ \usage{ProbeLevelModel(..., standardize=TRUE)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{UnitModel}}.}
-   \item{probeModel}{A \code{\link[base]{character}} string specifying how PM and MM values
-      should be modelled.  By default only PM signals are used.}
-   \item{shift}{An optional amount the data points should be shifted
-      (translated).}
+   \item{...}{Arguments passed to \code{\link{MultiArrayUnitModel}}.}
    \item{standardize}{If \code{\link[base:logical]{TRUE}}, chip-effect and probe-affinity estimates are
       rescaled such that the product of the probe affinities is one.}
  }
@@ -60,7 +58,6 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \tab \code{calculateResidualSet} \tab  -\cr
  \tab \code{calculateWeights} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.ProbeLevelModel]{fit}} \tab Estimates the model parameters.\cr
- \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChipEffectSet.ProbeLevelModel]{getChipEffectSet}} \tab Gets the set of chip effects for this model.\cr
  \tab \code{\link[aroma.affymetrix:getProbeAffinityFile.ProbeLevelModel]{getProbeAffinityFile}} \tab Gets the probe affinities for this model.\cr
  \tab \code{getResidualSet} \tab  -\cr
@@ -69,7 +66,7 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
 
  \bold{Methods inherited from UnitModel}:\cr
-findUnitsTodo, getCellIndices, readUnits
+findUnitsTodo, getAsteriskTags
 
  \bold{Methods inherited from Model}:\cr
 fit, getAlias, getAsteriskTags, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags

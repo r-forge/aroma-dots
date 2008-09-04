@@ -499,7 +499,7 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
     if (force || is.null(types)) {
       # Check in file cache
       chipType <- getChipType(this);
-      key <- list(method="getUnitTypes", class=class(this)[1], version="2008-08-09", chipType=chipType);
+      key <- list(method="getUnitTypes", class=class(this)[1], version="2008-09-03", chipType=chipType);
       dirs <- c("aroma.affymetrix", chipType);
       if (force) {
         types <- NULL;
@@ -513,6 +513,7 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
 ## ISSUE: readCdfUnits() does not translate the unit types, which means
 ## that the unit type integer different for ASCII and binary CDFs.
 ## WORKAROUND: Use readCdf() which return unit type strings.
+## Requires: affxparser v1.13.5 or newer.
 ## types <- readCdfUnits(getPathname(this), readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
 
         types <- readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);

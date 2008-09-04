@@ -16,7 +16,6 @@
 #   \item{dataSet}{The data set to which this model should be fitted.}
 #   \item{tags}{A @character @vector of tags to be appended to the tags of
 #      the input data set.}
-#   \item{parSet}{A named @list of parameters.}
 #   \item{...}{Not used.}
 # }
 #
@@ -27,7 +26,7 @@
 # @author
 #
 #*/###########################################################################
-setConstructorS3("Model", function(dataSet=NULL, tags="*", parSet=NULL, ...) {
+setConstructorS3("Model", function(dataSet=NULL, tags="*", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,8 +47,7 @@ setConstructorS3("Model", function(dataSet=NULL, tags="*", parSet=NULL, ...) {
 
   this <- extend(Object(), "Model",
     .dataSet = dataSet,
-    .tags = NULL,
-    parSet = parSet
+    .tags = NULL
   );
 
   # Interpret and append tags
@@ -518,7 +516,7 @@ setMethodS3("getCdf", "Model", function(this, ...) {
 
 
 setMethodS3("getParameterSet", "Model", function(this, ...) {
-  this$parSet;
+  list();
 }, private=TRUE)
 
 setMethodS3("getParameters", "Model", function(this, ...) {
@@ -582,6 +580,8 @@ setMethodS3("setLabel", "Model", function(this, label, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-09-03
+# o CLEANUP: Removed 'parSet' argument of Model().
 # 2007-10-11
 # o Now getTags() of Model inserts "asterisk" tags.
 # 2007-04-12

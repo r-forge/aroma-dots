@@ -23,9 +23,11 @@
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{MultiArrayUnitModel}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{AvgPlm}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ProbeLevelModel}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{AvgPlm}\cr
 
 \bold{Directly known subclasses:}\cr
 \link[aroma.affymetrix]{AvgCnPlm}, \link[aroma.affymetrix]{AvgSnpPlm}\cr
@@ -62,7 +64,7 @@ extends \link[aroma.affymetrix]{ProbeLevelModel}\cr
 calculateResidualSet, calculateWeights, fit, getAsteriskTags, getCalculateResidualsFunction, getChipEffectSet, getProbeAffinityFile, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from UnitModel}:\cr
-findUnitsTodo, getCellIndices, readUnits
+findUnitsTodo, getAsteriskTags
 
  \bold{Methods inherited from Model}:\cr
 fit, getAlias, getAsteriskTags, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
