@@ -3,6 +3,8 @@
 % 
 %  UnitModel.R
 % 
+% on Thu Sep 04 00:31:36 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -22,19 +24,13 @@
 \usage{\method{getCellIndices}{UnitModel}(this, ..., verbose=FALSE)}
 
 \arguments{
-  \item{...}{Arguments passed to \code{getCellIndices()} of the
-    \code{\link{AffymetrixCdfFile}} of the input data set.}
+  \item{...}{Additional arguments passed to \code{getCellIndices()}
+    of the \code{\link{AffymetrixCdfFile}} of the input data set.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{
  Returns the \code{\link[base]{list}} structure consisting of CDF cell indices.
-}
-
-\details{
-  By default, this is just a wrapper function calling
-  \code{getCellIndices()} of the \code{\link{AffymetrixCdfFile}}
-  of the input data set.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

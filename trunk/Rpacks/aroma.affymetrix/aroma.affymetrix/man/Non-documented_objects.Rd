@@ -3,6 +3,8 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
+% on Thu Sep 04 00:33:59 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1092,7 +1094,6 @@
 \alias{read50KHg17.DChipGenomeInformation}
 \alias{readArrays}
 \alias{readArrays.AffymetrixAptSummaryFile}
-\alias{readCdfDataFrame}
 \alias{readCdfFields}
 \alias{readCdfFields.AffymetrixChipTypeReporter}
 \alias{readCdfGroupStrands}
@@ -1492,7 +1493,6 @@
 \alias{setCdf.AffymetrixCnChpSet}
 \alias{calibrateOne}
 \alias{calibrateOne.ReseqCrosstalkCalibration}
-\alias{fit.SingleArrayUnitModel}
 \alias{fitOne.ReseqCrosstalkCalibration}
 \alias{fitOneArray}
 \alias{fitOneArray.SingleArrayUnitModel}
@@ -1503,13 +1503,10 @@
 \alias{getFitUnitFunction.MultiArrayUnitModel}
 \alias{getFitUnitFunction.SingleArrayUnitModel}
 \alias{getFitUnitGroupFunction}
-\alias{getFitUnitGroupFunction.SingleArrayUnitModel}
 \alias{getParameterSet.UnitModel}
 \alias{getSetsOfProbes}
 \alias{getSetsOfProbes.AllelicCrosstalkCalibration}
 \alias{getSetsOfProbes.ReseqCrosstalkCalibration}
-\alias{readUnits.SingleArrayUnitModel}
-\alias{SingleArrayUnitModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -3,6 +3,8 @@
 % 
 %  SnpChipEffectSet.R
 % 
+% on Thu Sep 04 00:30:51 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
