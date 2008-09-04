@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{Model}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{AffineCnPlm}, \link[aroma.affymetrix]{AffinePlm}, \link[aroma.affymetrix]{AffineSnpPlm}, \emph{\link[aroma.affymetrix]{AlleleSummation}}, \link[aroma.affymetrix]{AvgCnPlm}, \link[aroma.affymetrix]{AvgPlm}, \link[aroma.affymetrix]{AvgSnpPlm}, \link[aroma.affymetrix]{ExonRmaPlm}, \link[aroma.affymetrix]{FirmaModel}, \link[aroma.affymetrix]{HetLogAddCnPlm}, \link[aroma.affymetrix]{HetLogAddPlm}, \link[aroma.affymetrix]{HetLogAddSnpPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \link[aroma.affymetrix]{ProbeLevelModel}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaPlm}, \link[aroma.affymetrix]{RmaSnpPlm}, \emph{\link[aroma.affymetrix]{UnitModel}}\cr
+\link[aroma.affymetrix]{AffineCnPlm}, \link[aroma.affymetrix]{AffinePlm}, \link[aroma.affymetrix]{AffineSnpPlm}, \emph{\link[aroma.affymetrix]{AlleleSummation}}, \link[aroma.affymetrix]{AvgCnPlm}, \link[aroma.affymetrix]{AvgPlm}, \link[aroma.affymetrix]{AvgSnpPlm}, \link[aroma.affymetrix]{ExonRmaPlm}, \link[aroma.affymetrix]{FirmaModel}, \link[aroma.affymetrix]{HetLogAddCnPlm}, \link[aroma.affymetrix]{HetLogAddPlm}, \link[aroma.affymetrix]{HetLogAddSnpPlm}, \link[aroma.affymetrix]{MbeiCnPlm}, \link[aroma.affymetrix]{MbeiPlm}, \link[aroma.affymetrix]{MbeiSnpPlm}, \emph{\link[aroma.affymetrix]{MultiArrayUnitModel}}, \link[aroma.affymetrix]{ProbeLevelModel}, \link[aroma.affymetrix]{RmaCnPlm}, \link[aroma.affymetrix]{RmaPlm}, \link[aroma.affymetrix]{RmaSnpPlm}, \emph{\link[aroma.affymetrix]{SingleArrayUnitModel}}, \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
 public abstract static class \bold{Model}\cr
 extends \link[R.oo]{Object}\cr
@@ -33,13 +33,12 @@ extends \link[R.oo]{Object}\cr
   to a data set.
  }
 
- \usage{Model(dataSet=NULL, tags="*", parSet=NULL, ...)}
+ \usage{Model(dataSet=NULL, tags="*", ...)}
 
  \arguments{
    \item{dataSet}{The data set to which this model should be fitted.}
    \item{tags}{A \code{\link[base]{character}} \code{\link[base]{vector}} of tags to be appended to the tags of
       the input data set.}
-   \item{parSet}{A named \code{\link[base]{list}} of parameters.}
    \item{...}{Not used.}
  }
 

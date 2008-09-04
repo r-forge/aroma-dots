@@ -196,6 +196,8 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
     verbose && exit(verbose);
   }
 
+  attr(setsOfProbes, "version") <- version;
+
   setsOfProbes;
 }, protected=TRUE) # getSetsOfProbes()
 

@@ -18,11 +18,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "UnitModel".}
-#   \item{probeModel}{A @character string specifying how PM and MM values
-#      should be modelled.  By default only PM signals are used.}
-#   \item{shift}{An optional amount the data points should be shifted
-#      (translated).}
+#   \item{...}{Arguments passed to @see "MultiArrayUnitModel".}
 #   \item{standardize}{If @TRUE, chip-effect and probe-affinity estimates are
 #      rescaled such that the product of the probe affinities is one.}
 # }
@@ -55,25 +51,13 @@
 #   the \pkg{affyPLM} package.
 # }
 #*/###########################################################################
-setConstructorS3("ProbeLevelModel", function(..., probeModel=c("pm", "mm", "pm-mm", "min1(pm-mm)", "pm+mm"), shift=0, standardize=TRUE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'probeModel':
-  probeModel <- match.arg(probeModel);
-
-  # Argument 'shift':
-  shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf"));
-
-  
-  extend(UnitModel(..., parSet=list(probeModel=probeModel)), "ProbeLevelModel",
+setConstructorS3("ProbeLevelModel", function(..., standardize=TRUE) {
+  extend(MultiArrayUnitModel(...), "ProbeLevelModel",
     "cached:.paf" = NULL,
     "cached:.ces" = NULL,
     "cached:.rs" = NULL,
     "cached:.ws" = NULL,
     "cached:.lastPlotData" = NULL,
-    probeModel = probeModel,
-    shift = shift,
     standardize = standardize
   )
 }, abstract=TRUE)
@@ -93,40 +77,18 @@ setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
 
 
 setMethodS3("getAsteriskTags", "ProbeLevelModel", function(this, collapse=NULL, ...) {
-  # Returns 'U' (but allow for future extensions)
+  # Returns 'PLM' (but allow for future extensions)
   tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
   tags[1] <- "PLM";
-
-  # Add class-specific tags
-  shift <- as.integer(round(this$shift));
-  if (shift != 0) {
-    tags <- c(tags, sprintf("%+d", shift));
-  }
-  probeModel <- this$probeModel;
-  if (probeModel != "pm") {
-    tags <- c(tags, probeModel);
-  }
-
-  if (!is.null(collapse)) {
-    tags <- paste(tags, collapse=collapse);
-  }
-
   tags;
-})
-
-
-setMethodS3("getParameterSet", "ProbeLevelModel", function(this, ...) {
-  params <- NextMethod("getParameterSet", this, ...);
-  params$probeModel <- this$probeModel;
-  params$shift <- this$shift;
-  params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
 setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
   "plmData";
 }, private=TRUE)
+
 
 
 ###########################################################################/**
@@ -276,6 +238,11 @@ setMethodS3("getResidualSet", "ProbeLevelModel", function(this, ..., force=FALSE
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   rs <- this$.rs;
   if (!force && !is.null(rs))
@@ -317,6 +284,11 @@ setMethodS3("getWeightsSet", "ProbeLevelModel", function(this, ..., verbose=FALS
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   ws <- this$.ws;
   if (!is.null(ws))
@@ -350,164 +322,6 @@ setMethodS3("getWeightsSetClass", "ProbeLevelModel", function(static, ...) {
   WeightsSet;
 }, static=TRUE, private=TRUE)
 
-
-###########################################################################/**
-# @RdocMethod getFitFunction
-#
-# @title "Static method to get the low-level function that fits the PLM"
-#
-# \description{
-#  @get "title".
-#  Any subclass model must provide this method, which should return
-#  a @function that accepts an IxK @matrix.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @function.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getFitFunction", "ProbeLevelModel", abstract=TRUE, static=TRUE, private=TRUE);
-
-
-
-setMethodS3("getFitUnitFunction", "ProbeLevelModel", function(this, ...) {
-  # Get the fit function for a single set of intensities
-  fitfcn <- getFitFunction(this, ...);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Create the one for all blocks in a unit
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (this$probeModel == "pm-mm") {
-    fitUnit <- function(unit, ...) {
-      base::lapply(unit, FUN=function(group) {
-        y <- .subset2(group, 1); # Get intensities
-        y <- y[1,,] - y[2,,];  # PM-MM
-        fitfcn(y);
-      })
-    }
-  } else if (this$probeModel == "min1(pm-mm)") {
-    fitUnit <- function(unit, ...) {
-      base::lapply(unit, FUN=function(group) {
-        y <- .subset2(group, 1); # Get intensities
-        y <- y[1,,] - y[2,,];  # PM-MM
-        y[y < 1] <- 1;       # min1(PM-MM)=min(PM-MM,1)
-        fitfcn(y);
-      })
-    }
-  } else if (this$probeModel == "pm+mm") {
-    fitUnit <- function(unit, ...) {
-      base::lapply(unit, FUN=function(group) {
-        y <- .subset2(group, 1); # Get intensities
-        y <- y[1,,] + y[2,,];  # PM+MM
-        fitfcn(y);
-      })
-    }
-  } else {
-    fitUnit <- function(unit, ...) {
-      base::lapply(unit, FUN=function(group) {
-        if (length(group) > 0) {
-          y <- .subset2(group, 1); # Get intensities
-        } else {
-          y <- NULL;
-        }
-        fitfcn(y);
-      })
-    }
-  }
-
-  fitUnit;
-}, private=TRUE)
-
-
-
-
-
-###########################################################################/**
-# @RdocMethod readUnits
-#
-# @title "Reads data unit by unit"
-#
-# \description{
-#  @get "title" for all or a subset of units (probeset) 
-#  specially structured for this PLM.
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{units}{The units to be read. If @NULL, all units are read.}
-#   \item{...}{Arguments passed to \code{getCellIndices()} of the 
-#     @see "AffymetrixCdfFile" class (if \code{cdf} was not specified),
-#     but also to the \code{readUnits()} method of the 
-#     @see "AffymetrixCelSet" class.}
-# }
-#
-# \value{
-#  Returns the @list structure that \code{readUnits()} of 
-#  @see "AffymetrixCelSet" returns.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "updateUnits".
-#   @seeclass
-# }
-#
-# @keyword IO
-#*/###########################################################################
-setMethodS3("readUnits", "ProbeLevelModel", function(this, units=NULL, ..., verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  ds <- getDataSet(this);
-  verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
-
-  # Get the CDF cell indices
-  verbose && enter(verbose, "Identifying CDF cell indices");
-  cdfUnits <- getCellIndices(this, units=units, ...);
-  verbose && print(verbose, cdfUnits[1]);
-  verbose && exit(verbose);
-
-  # Get the CEL intensities by units
-  res <- getUnitIntensities(ds, units=cdfUnits, ...);
-  verbose && str(verbose, res[1]);
-  verbose && exit(verbose);
-
-  res;
-}, private=TRUE)
-
-
-
-setMethodS3("getCellIndices", "ProbeLevelModel", function(this, ..., verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-  # Get what set of probes to read
-  stratifyBy <- switch(this$probeModel, "pm"="pm", "mm"="mm", "pm-mm"="pmmm", "min1(pm-mm)"="pmmm", "pm+mm"="pmmm");
-
-  # Get the CDF cell indices
-  ds <- getDataSet(this);
-  cdf <- getCdf(ds);
-  verbose && enter(verbose, "Identifying CDF cell indices");
-  verbose && cat(verbose, "Stratify by: ", stratifyBy);
-  cells <- getCellIndices(cdf, ..., stratifyBy=stratifyBy, verbose=less(verbose));
-  verbose && exit(verbose);
-  
-  cells;
-}, private=TRUE)
 
 
 ###########################################################################/**
@@ -547,6 +361,11 @@ setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, verbose=FALSE, ..
 
 ############################################################################
 # HISTORY:
+# 2008-09-03
+# o Moved getFitUnitFunction() and getFitFunction() to MultiArrayUnitModel.
+# o Now ProbeLevelModel inherits from new MultiArrayUnitModel.
+# o Moved constructor arguments 'probeModel' and 'shift' to UnitModel.
+# o CLEANUP: Removed 'parSet' passed to Model().
 # 2008-07-22
 # o Now getChipEffectSet() passes '...' to getMonocellCdf() so that argument
 #   'ram' of fit() can be passed down to getMonocellCdf().

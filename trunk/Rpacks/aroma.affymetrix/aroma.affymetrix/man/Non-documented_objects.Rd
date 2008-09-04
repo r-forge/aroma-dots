@@ -1490,6 +1490,26 @@
 \alias{getFullName.AffymetrixCnChpSet}
 \alias{readRawData.AffymetrixCnChpFile}
 \alias{setCdf.AffymetrixCnChpSet}
+\alias{calibrateOne}
+\alias{calibrateOne.ReseqCrosstalkCalibration}
+\alias{fit.SingleArrayUnitModel}
+\alias{fitOne.ReseqCrosstalkCalibration}
+\alias{fitOneArray}
+\alias{fitOneArray.SingleArrayUnitModel}
+\alias{getAlleleCellPairs}
+\alias{getAlleleProbePairs3}
+\alias{getAsteriskTags.UnitModel}
+\alias{getFitFunction.MultiArrayUnitModel}
+\alias{getFitUnitFunction.MultiArrayUnitModel}
+\alias{getFitUnitFunction.SingleArrayUnitModel}
+\alias{getFitUnitGroupFunction}
+\alias{getFitUnitGroupFunction.SingleArrayUnitModel}
+\alias{getParameterSet.UnitModel}
+\alias{getSetsOfProbes}
+\alias{getSetsOfProbes.AllelicCrosstalkCalibration}
+\alias{getSetsOfProbes.ReseqCrosstalkCalibration}
+\alias{readUnits.SingleArrayUnitModel}
+\alias{SingleArrayUnitModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that
