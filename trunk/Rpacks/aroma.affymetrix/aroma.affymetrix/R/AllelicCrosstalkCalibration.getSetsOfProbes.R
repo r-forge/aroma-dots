@@ -91,7 +91,7 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
       snps <- groupBySnpNucleotides(acs, cells=cells, shifts=shifts, 
                                                      verbose=verbose);
       rm(cells, shifts);
-      setsOfProbes <- list(snps=snps, list(nonSNPs=nonSNPs));
+      setsOfProbes <- list(snps=snps, nonSNPs=nonSNPs);
       rm(snps, nonSNPs);
     }
 
@@ -205,6 +205,9 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
 
 ############################################################################
 # HISTORY:
+# 2008-09-05
+# o BUG FIX: getSetsOfProbes() would return 'nonSNPs' in a sublist.  This
+#   caused ACC to skip the offset calibration of non-SNP units.
 # 2008-09-02
 # o UPDATE: Now getSetsOfProbes() returns a list of two elements 'snps' and
 #   'nonSNPs'. The 'snps' element is in turn a list of probe pairs groups.

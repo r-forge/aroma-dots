@@ -36,8 +36,8 @@ setConstructorS3("UnitModel", function(dataSet=NULL, probeModel=c("pm", "mm", "p
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
     if (!inherits(dataSet, "AffymetrixCelSet"))
-      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ",
-                                                           class(dataSet));
+      throw("Argument 'dataSet' is not an AffymetrixCelSet: ",
+                                                           class(dataSet)[1]);
   }
 
   # Argument 'probeModel':
@@ -181,6 +181,12 @@ setMethodS3("getFitUnitFunction", "UnitModel", abstract=TRUE, private=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2008-09-05
+# o TYPO: The error message for argument 'dataSet' in UnitModel() returned
+#   multiple strings, one per class.
+# 2008-09-03
+# o CLEANUP: Moved the handling of 'probeModel' and 'shift'  to UnitModel
+#   from ProbeLevelModel
 # 2007-01-06
 # o Removed never-used setup() method.
 # 2007-01-01
