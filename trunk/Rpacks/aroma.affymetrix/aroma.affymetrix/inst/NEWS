@@ -1,10 +1,14 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.4 [2008-09-03]
+Version: 0.9.4.4 [2008-09-05]
 o Now aroma.affymetrix requires affxparser 1.13.8, because 
-  getUnitTypes() of AffymetrixCdfFile requires that version
-  in order to correctly identify copy-number units.
+  getUnitTypes() of AffymetrixCdfFile requires that version in order
+  to correctly identify copy-number units.
+o CLEANUP: Moved the handling of 'probeModel' and 'shift' to 
+  UnitModel from ProbeLevelModel.
+o TYPO: The error message for argument 'dataSet' in UnitModel() 
+  returned multiple strings, one per class.
 
 
 Version: 0.9.4.3 [2008-08-30]
