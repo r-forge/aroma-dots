@@ -90,7 +90,7 @@ setMethodS3("fitCnProbes", "UnitModel", function(this, ..., verbose=FALSE) {
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Writing estimates");
-    updateDataFlat(cef, data=data, verbose=log);
+    updateDataFlat(cef, data=data, verbose=verbose);
     rm(data);
     verbose && exit(verbose);
 
