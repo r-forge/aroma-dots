@@ -863,7 +863,10 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       cells <- setsOfProbes$nonSNPs;
       if (length(cells) > 0) {
         verbose && enter(verbose, "Correcting offset for all non-SNP cells");
+        verbose && cat(verbose, "Cells:");
+        verbose && str(verbose, cells);
         offset <- fits[["nonSNPs"]]$offset;
+        verbose && cat(verbose, "Offset: ", offset);
         yAll[cells] <- yAll[cells] - offset;
         verbose && exit(verbose);
       }

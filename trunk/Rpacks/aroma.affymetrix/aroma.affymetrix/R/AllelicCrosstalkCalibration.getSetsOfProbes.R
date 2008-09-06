@@ -79,8 +79,19 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
     } else if (version == 4) {
       verbose && enter(verbose, "Identifying cell indices for all non-SNP units");
       unitTypes <- getUnitTypes(cdf, verbose=verbose);
-      nonSNPs <- whichVector(unitTypes != 2);
+      units <- whichVector(unitTypes != 2);
       rm(unitTypes); 
+      verbose && enter(verbose, "Non-SNP units:");
+      verbose && str(verbose, units);
+      if (length(units) > 0) {
+        nonSNPs <- getCellIndices(cdf, units=units, 
+                       useNames=FALSE, unlist=TRUE, verbose=verbose);
+      } else {
+        nonSNPs <- NULL;
+      }
+      rm(units);
+      verbose && enter(verbose, "Non-SNP cells:");
+      verbose && str(verbose, nonSNPs);
       verbose && exit(verbose);
 
       cells <- getAlleleCellPairs(cdf, verbose=verbose);
@@ -191,12 +202,13 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
     setsOfProbes$snps <- snps;
     rm(snps);
 
+    # Tag the result with a version number
+    attr(setsOfProbes, "version") <- version;
+
     this$.setsOfProbes <- setsOfProbes;
 
     verbose && exit(verbose);
   }
-
-  attr(setsOfProbes, "version") <- version;
 
   setsOfProbes;
 }, protected=TRUE) # getSetsOfProbes()
@@ -205,6 +217,9 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
 
 ############################################################################
 # HISTORY:
+# 2008-09-06
+# o BUG FIX: getSetsOfProbes() for version 4 would return 'nonSNPs' 
+#   as units, not cells.  Arghh...
 # 2008-09-05
 # o BUG FIX: getSetsOfProbes() would return 'nonSNPs' in a sublist.  This
 #   caused ACC to skip the offset calibration of non-SNP units.
