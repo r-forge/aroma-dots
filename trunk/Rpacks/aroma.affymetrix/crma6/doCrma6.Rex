@@ -48,11 +48,13 @@ if (!isDone(acc)) {
     str(sets4);
     stopifnot(length(sets4$nonSNPs) > 0);
     if (B <= 1) stopifnot(identical(sets1$nonSNPs, sets4$nonSNPs));
-  } else {
-    if (B >= 1) stop("B >= 1 not supported: ", B);
+  } else if (version == 1) {
+    if (B > 1) throw("B > 1 not supported for version 1: ", B);
     sets1 <- getSetsOfProbes(acc, version=1, force=TRUE, verbose=verbose);
     str(sets1);
     stopifnot(length(sets1$nonSNPs) > 0);
+  } else {
+    throw("Unknown version: ", version);
   }
 }
 print(acc);
