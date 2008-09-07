@@ -533,8 +533,11 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
       }
     }
   
-    if (!is.null(units))
+    if (!is.null(units)) {
+      map <- attr(types, "typeMap");
       types <- types[units];
+      attr(types, "typeMap") <- map;
+    }
   } else {
 ## ISSUE: types <- readCdfUnits(getPathname(this), units=units, readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
     types <- readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);
@@ -1589,6 +1592,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-09-06
+# o BUG FIX: getUnitTypes() of AffymetrixCdfFile did not return a
+#   name map for the unit types if a subset was units was selected.
 # 2008-08-09
 # o BUG FIX: getUnitTypes() of AffymetrixCdfFile would not return the 
 #   correct integer for binary CDFs.  Now it uses readCdf() instead of
