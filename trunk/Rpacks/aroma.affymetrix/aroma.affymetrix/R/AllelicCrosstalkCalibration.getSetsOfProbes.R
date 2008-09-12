@@ -1,10 +1,13 @@
-setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., version=c(1,3,4), force=FALSE, verbose=FALSE) {
+setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., version=c(1,3,4), fakeSymmetry=FALSE, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'version':
   version <- Arguments$getIntegers(version);
   version <- version[1];
+
+  # Argument 'fakeSymmetry':
+  fakeSymmetry <- Arguments$getLogical(fakeSymmetry);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -192,6 +195,25 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
     }
     
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Fake symmetry by flipping every 2nd (A,B) to (B,A)?
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (fakeSymmetry) {
+      verbose && enter(verbose, "Flipping every 2nd (A,B) to (B,A)");
+      snps <- setsOfProbes$snps;
+      for (kk in seq(along=snps)) {
+        idxs <- snps[[kk]];
+        cc <- seq(from=1, to=ncol(idxs), by=2);
+        idxs[,cc] <- idxs[2:1,cc, drop=FALSE];
+        snps[[kk]] <- idxs;
+        rm(cc, idxs);
+      } # for (gg ...)
+      setsOfProbes$snps <- snps;
+      rm(snps);
+      verbose && exit(verbose);
+    }
+
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Transpose
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # For each set of cells...
@@ -217,6 +239,11 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
 
 ############################################################################
 # HISTORY:
+# 2008-09-12
+# o Added argument 'fakeSymmetry' to getSetsOfProbes().  Follow up: This
+#   seems to work; with 'fakeSymmetry=TRUE' the estimates od the 'origin'
+#   are very similar for allele A and allele B.  The estimated backtransform
+#   matrix 'Winv' is also quite symmetric.
 # 2008-09-06
 # o BUG FIX: getSetsOfProbes() for version 4 would return 'nonSNPs' 
 #   as units, not cells.  Arghh...

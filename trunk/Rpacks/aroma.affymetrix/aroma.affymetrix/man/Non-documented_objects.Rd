@@ -3,8 +3,6 @@
 % 
 %  999.NonDocumentedObjects.R
 % 
-% on Thu Sep 04 00:33:59 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1507,6 +1505,8 @@
 \alias{getSetsOfProbes}
 \alias{getSetsOfProbes.AllelicCrosstalkCalibration}
 \alias{getSetsOfProbes.ReseqCrosstalkCalibration}
+\alias{fitCnProbes}
+\alias{fitCnProbes.UnitModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -21,6 +21,8 @@
 #     should be normalized to.}
 #   \item{subsetToFit}{The units from which the normalization curve should
 #     be estimated.  If @NULL, all are considered.}
+#   \item{onMissing}{Specifies how to normalize units for which the 
+#     fragment lengths are unknown.}
 #   \item{shift}{An optional amount the data points should be shifted
 #      (translated).}
 # }
@@ -47,7 +49,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY", shift=0) {
+setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY", shift=0, onMissing=c("median", "ignore")) {
   extraTags <- NULL;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -105,11 +107,15 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 
   # Argument 'shift':
   shift <- Arguments$getDouble(shift, disallow=c("NA", "NaN", "Inf"));
+ 
+  # Argument 'onMissing':
+  onMissing <- match.arg(onMissing);
 
 
   extend(ChipEffectTransform(dataSet, ...), "FragmentLengthNormalization", 
     .subsetToFit = subsetToFit,
     .targetFunctions = targetFunctions,
+    .onMissing = onMissing,
     .extraTags = extraTags,
     shift = shift
   )
@@ -154,6 +160,7 @@ setMethodS3("getParameters", "FragmentLengthNormalization", function(this, expan
   # Get parameters of this class
   params <- c(params, list(
     subsetToFit = this$.subsetToFit,
+    onMissing = this$.onMissing,
     .targetFunctions = this$.targetFunctions,
     shift <- this$shift
   ));
@@ -251,6 +258,7 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   # Get SNP information
   cdf <- getCdf(this);
   si <- getSnpInformation(cdf);
+  verbose && print(verbose, si);
 
   # Identify all SNP and CN units (==potential units to be fitted)
   verbose && enter(verbose, "Identifying SNPs and CN probes");
@@ -264,19 +272,21 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
   verbose && str(verbose, units);
   verbose && exit(verbose);
 
-  # Keep only those for which we have PCR fragmenth-length information
-  # for at least one enzyme
-  verbose && enter(verbose, "Reading fragment lengths");
-  fl <- getFragmentLengths(si, units=units);
-  keep <- rep(FALSE, nrow(fl));
-  for (ee in seq(length=ncol(fl))) {
-    keep <- keep | is.finite(fl[,ee]);
+  onMissing <- this$.onMissing;
+  if (onMissing == "ignore") {
+    # Keep only those for which we have PCR fragmenth-length information
+    # for at least one enzyme
+    verbose && enter(verbose, "Reading fragment lengths");
+    fl <- getFragmentLengths(si, units=units);
+    keep <- rep(FALSE, nrow(fl));
+    for (ee in seq(length=ncol(fl))) {
+      keep <- keep | is.finite(fl[,ee]);
+    }
+    units <- units[keep];
+    verbose && printf(verbose, "Number of SNP/CN units without fragment-length details: %d out of %d (%.1f%%)\n", sum(!keep), length(keep), 100*sum(!keep)/length(keep));
+    verbose && exit(verbose);
+    rm(fl);
   }
-  units <- units[keep];
-  verbose && printf(verbose, "Number of SNP/CN units without fragment-length details: %d out of %d (%.1f%%)\n", sum(!keep), length(keep), 100*sum(!keep)/length(keep));
-
-  verbose && exit(verbose);
-
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -332,11 +342,17 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
       keep <- which(units %in% subsetToFit);
     }
 
+    verbose && enter(verbose, "Reading fragment lengths");
+    fl <- getFragmentLengths(si, units=units);
+    verbose && exit(verbose);
+
     # Make sure to keep data points at the tails too
     extremeUnits <- c();
     for (ee in seq(length=ncol(fl))) {
       extremeUnits <- c(extremeUnits, which.min(fl[,ee]), which.max(fl[,ee]));
     }
+    rm(fl);
+
     keep <- c(keep, extremeUnits);
     keep <- unique(keep);
 
@@ -535,7 +551,8 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Not used.}
+#   \item{...}{Additional arguments passed to 
+#     @see "aroma.light::normalizeFragmentLength" (only for advanced users).}
 #   \item{force}{If @TRUE, data already normalized is re-normalized, 
 #       otherwise not.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
@@ -610,6 +627,9 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
   shift <- this$shift;
   verbose && cat(verbose, "Shift: ", shift);
+
+  onMissing <- this$.onMissing;
+  verbose && cat(verbose, "onMissing: ", onMissing);
 
   # Get (and create) the output path
   path <- getPath(this);
@@ -732,7 +752,8 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     verbose && cat(verbose, "Log2 signals:");
     verbose && str(verbose, y);
     yN <- normalizeFragmentLength(y, fragmentLengths=fl, 
-                    targetFcns=targetFcns, subsetToFit=subset, ...);
+                    targetFcns=targetFcns, subsetToFit=subset, 
+                    onMissing=onMissing, ...);
     verbose && cat(verbose, "Normalized log2 signals:");
     verbose && summary(verbose, yN);
 
@@ -744,7 +765,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     verbose && cat(verbose, "Normalization scale factors:");
     verbose && summary(verbose, rho);
 
-    # Normalize the theta:s
+    # Normalize the theta:s (on the intensity scale)
     ok <- which(is.finite(rho));
     verbose && str(verbose, ok);
     theta[ok] <- theta[ok]/rho[ok];
@@ -812,6 +833,11 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2008-09-12
+# o Added argument 'onMissing' to FragmentLengthNormalization, which is
+#   passed down to normalizeFragmentLength() [req aroma.light v1.9.2] to
+#   make it possible to normalize also units for which fragment lenghts
+#   are unknown.
 # 2008-07-07
 # o Typo: The constructor error message for validating 'dataSet' outputted
 #   vector of messages because the whole class vector was pasted.

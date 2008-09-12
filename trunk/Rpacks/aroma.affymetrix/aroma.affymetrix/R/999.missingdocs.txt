@@ -766,3 +766,4 @@ getFitUnitFunction.SingleArrayUnitModel getFitUnitGroupFunction
 getParameterSet.UnitModel getSetsOfProbes
 getSetsOfProbes.AllelicCrosstalkCalibration
 getSetsOfProbes.ReseqCrosstalkCalibration
+fitCnProbes fitCnProbes.UnitModel
