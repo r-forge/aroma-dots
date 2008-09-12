@@ -35,7 +35,8 @@
 # @examples "../incl/readCdfDataFrame.Rex"
 # 
 # \seealso{
-#   For retrieving the CDF as a @list structure, see @see "readCdfUnits".
+#   For retrieving the CDF as a @list structure, see 
+#   @see "affxparser::readCdfUnits".
 # }
 # 
 # \references{

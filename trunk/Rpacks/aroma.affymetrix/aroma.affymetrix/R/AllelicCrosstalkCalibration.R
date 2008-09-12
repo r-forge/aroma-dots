@@ -762,10 +762,11 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         verbose && enter(verbose, sprintf("Allele probe-pair group #%d ('%s') of %d", kk, name, nbrOfPairs));
         basepair <- unlist(strsplit(name, split=""));
         idx <- setsOfProbes$snps[[name]];
-    
+
         verbose && enter(verbose, "Fitting");
         y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
         verboseL <- (verbose && isVisible(verbose, -50));
+        rm(idx);
 
         verbose && cat(verbose, "Model/algorithm flavor: ", flavor);
         if (flavor == "sfit") {
@@ -792,7 +793,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
 
         callHooks(sprintf("%s.onFitOne", hookName), df=df, y=y, fit=fit, ...);
 
-        rm(y, idx, fit); # Not needed anymore
+        rm(y, fit); # Not needed anymore
         gc <- gc();
 
         verbose && exit(verbose);

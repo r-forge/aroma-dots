@@ -22,7 +22,8 @@
 \usage{\method{process}{FragmentLengthNormalization}(this, ..., force=FALSE, verbose=FALSE)}
 
 \arguments{
-  \item{...}{Not used.}
+  \item{...}{Additional arguments passed to
+    \code{\link[aroma.light]{normalizeFragmentLength}} (only for advanced users).}
   \item{force}{If \code{\link[base:logical]{TRUE}}, data already normalized is re-normalized,
       otherwise not.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
