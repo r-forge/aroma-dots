@@ -53,7 +53,7 @@ setMethodS3("allocateFromCdf", "AromaUflFile", function(static, cdf, nbrOfEnzyme
 
 
 
-setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this, csv, enzymes=1:nbrOfEnzymes(this), ..., verbose=FALSE) {
+setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this, csv, enzymes=1:nbrOfEnzymes(this), enzymesToUpdate=1:nbrOfEnzymes(this), rows=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,6 +61,10 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
   if (!inherits(csv, "AffymetrixNetAffxCsvFile")) {
     throw("Argument 'csv' is not an AffymetrixNetAffxCsvFile: ", class(csv)[1]);
   }
+
+  # Argument 'enzymesToUpdate':
+  enzymesToUpdate <- Arguments$getIndices(enzymesToUpdate, 
+                                         range=c(1, nbrOfEnzymes(this)));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -77,7 +81,7 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
   cdf <- getCdf(this);
 
   # Read unit names
-  unitNames <- getUnitNames(csv, ..., verbose=less(verbose));
+  unitNames <- getUnitNames(csv, rows=rows, ..., verbose=less(verbose));
   verbose && cat(verbose, "Unit names:");
   verbose && str(verbose, unitNames);
   
@@ -109,7 +113,7 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
   verbose && print(verbose, gc, level=-10);
 
   # Update
-  this[units,enzymes] <- data;
+  this[units,enzymesToUpdate] <- data;
   rm(data);
 
   gc <- gc();
@@ -123,6 +127,10 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
 
 ############################################################################
 # HISTORY:
+# 2008-09-15
+# o Added argument 'enzymesToUpdate' to importFromAffymetrixNetAffxCsvFile()
+#   in order to make it possible to specify both which enzymes to read 
+#   and to update.
 # 2008-04-24
 # o Updated importFromAffymetrixNetAffxCsvFile() to read the unit names,
 #   then identify the ones that are in the CDF, and the only read the data
