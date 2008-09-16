@@ -113,8 +113,12 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'nbrOfEnzymes':
-  enzymes <- Arguments$getIndices(enzymes, range=c(1,10));
+  # Argument 'enzymes':
+  if (is.numeric(enzymes)) {
+    enzymes <- Arguments$getIndices(enzymes, range=c(1,10));
+  } else {
+    enzymes <- Arguments$getCharacters(enzymes);
+  }
   if (any(duplicated(enzymes))) {
     throw("Argument 'enzymes' contains duplicated values: ", 
                                           paste(enzymes, collapse=", "));
@@ -127,8 +131,6 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     on.exit(popState(verbose));
   }
 
-
-  nbrOfEnzymes <- length(enzymes);
 
   verbose && enter(verbose, "Reading (unitName, fragmentLength+) from file");
 
@@ -204,6 +206,18 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
     # Identify the unique enzymes
     allEnzymes <- na.omit(sort(unique(enzymeIdxs)));
+
+    # Map 'enzymes' names to found names
+    if (is.character(enzymes)) {
+      verbose && enter(verbose, "Mapping requested enzyme names to names in file");
+      enzymeNames <- enzymes;
+      enzymes <- match(enzymeNames, allEnzymes);
+      verbose && cat(verbose, paste(enzymeNames, enzymes, sep=" = "));
+      if (any(is.na(enzymes))) {
+        throw("Argument 'enzymes' specifies enzyme names that does not exists: ", paste(enzymeNames[is.na(enzymes)], collapse=", "));
+      }
+      verbose && exit(verbose);
+    }
 
     # AD HOC: In the na24 builds, for Mapping250K_{Nsp|Sty} and
     # the fault GenomeWideSNP_5, the enzyme name field is there
@@ -283,7 +297,10 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
           rm(ok, values);
         }
       }
-    }
+    } # for (ee ...)
+    colnames(fln2) <- c(allEnzymes, rep(NA, ncol(fln2)-length(allEnzymes)));
+    verbose && str(verbose, fln2);
+
     # Keep only requested enzymes
     verbose && summary(verbose, fln2);
     fln <- fln2[,enzymes,drop=FALSE];
@@ -291,6 +308,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     rm(enzymeIdxs, fln2);
     verbose && exit(verbose);
   } else {
+    nbrOfEnzymes <- length(enzymes);
     # Extract the fragment length for each enzyme
     verbose && enter(verbose, "Extracting fragment lengths");
     fln <- base::lapply(fln, FUN=function(unit) {
@@ -318,15 +336,16 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
   verbose && exit(verbose);
 
-  names <- rep("fragmentLength", nbrOfEnzymes);
-  if (nbrOfEnzymes > 1)
-    names[-1] <- sprintf("%s.%02d", names[-1], 2:nbrOfEnzymes);
+  names <- rep("fragmentLength", ncol(fln));
+  if (ncol(fln) > 1)
+    names[-1] <- sprintf("%s.%02d", names[-1], 2:ncol(fln));
 
   # Keep only enzymes of interest
   names <- names[enzymes];
 
   data <- data.frame(unitName=data[[1]], fln);
   colnames(data) <- c("unitName", names);
+  attr(data, "enzymeNames") <- colnames(fln);
   attr(data, "header") <- NULL;
 
   verbose && exit(verbose);
@@ -338,6 +357,9 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2008-09-15
+# o Now it is possible to specify enzyme names in argument 'enzymes' to
+#   readDataUnitFragmentLength().
 # 2008-08-21
 # o Now readDataUnitChromosomePosition() also recognizes "MT" as Chr25
 #   (mitochondrial).

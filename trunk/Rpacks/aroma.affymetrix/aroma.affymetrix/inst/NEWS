@@ -1,15 +1,20 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.5 [2008-09-12]
+Version: 0.9.4.5 [2008-09-15]
 o Added argument 'onMissing' to FragmentLengthNormalization, which is
   passed down to normalizeFragmentLength() [req aroma.light v1.9.2] to
   make it possible to normalize also units for which fragment lenghts
   are unknown.  Previously such units were not normalized - for 
   backward compatibility, onMissing="ignore" does exactly that.
-o Now aroma.affymetrix requires affxparser 1.13.8, because 
-  getUnitTypes() of AffymetrixCdfFile requires that version in order
-  to correctly identify copy-number units.
+o Now it is possible to specify enzyme names in argument 'enzymes' to
+  readDataUnitFragmentLength() of AffymetrixNetAffxCsvFile.
+o Added argument 'enzymesToUpdate' to importFromAffymetrixNetAffxCsvFile()
+  of AromaUflFile in order to make it possible to specify both which 
+  enzymes to read and to update.
+o DEPENDENCIES: Now aroma.affymetrix requires affxparser 1.13.8, 
+  because getUnitTypes() of AffymetrixCdfFile requires that version 
+  in order to correctly identify copy-number units.
 o CLEANUP: Moved the handling of 'probeModel' and 'shift' to 
   UnitModel from ProbeLevelModel.
 o TYPO: The error message for argument 'dataSet' in UnitModel() 
