@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\emph{\code{AffymetrixCelSetReporter}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{ChipTypeReporter}}, \emph{\link[aroma.affymetrix]{SpatialReporter}}\cr
+\emph{\link[aroma.affymetrix]{SpatialReporter}}\cr
 
 public abstract static class \bold{AffymetrixCelSetReporter}\cr
 extends \emph{\link[aroma.affymetrix]{AffymetrixFileSetReporter}}\cr
