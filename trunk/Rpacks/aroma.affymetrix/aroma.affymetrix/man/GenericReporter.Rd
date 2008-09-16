@@ -22,7 +22,7 @@
 \code{~~+--}\emph{\code{GenericReporter}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}, \emph{\link[aroma.affymetrix]{AffymetrixChipTypeReporter}}, \emph{\link[aroma.affymetrix]{AffymetrixFileSetReporter}}, \emph{\link[aroma.affymetrix]{ChipTypeReporter}}, \emph{\link[aroma.affymetrix]{SpatialReporter}}\cr
+\emph{\link[aroma.affymetrix]{AffymetrixCelSetReporter}}, \emph{\link[aroma.affymetrix]{AffymetrixFileSetReporter}}, \emph{\link[aroma.affymetrix]{SpatialReporter}}\cr
 
 public abstract static class \bold{GenericReporter}\cr
 extends \link[R.oo]{Object}\cr
