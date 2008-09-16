@@ -1,0 +1,77 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify this file since it was automatically generated from:
+% 
+%  MultiSourceCopyNumberNormalization.R
+% 
+% by the Rdoc compiler part of the R.oo package.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ \name{MultiSourceCopyNumberNormalization}
+\docType{class}
+\alias{MultiSourceCopyNumberNormalization}
+
+
+ \title{The MultiSourceCopyNumberNormalization class}
+
+ \description{
+  Package:  aroma.cn \cr
+\bold{Class MultiSourceCopyNumberNormalization}\cr
+
+\code{\link[R.oo]{Object}}\cr
+\code{~~|}\cr
+\code{~~+--}\code{MultiSourceCopyNumberNormalization}\cr
+
+\bold{Directly known subclasses:}\cr
+\cr
+
+public static class \bold{MultiSourceCopyNumberNormalization}\cr
+extends \link[R.oo]{Object}\cr
+
+
+
+  A normalization method that normalizes copy-number estimates measured
+  by multiple sites and/or platforms for common samples.  It normalizes the
+  estimates toward a common scale such that for any copy-number level
+  the mean level of the normalized data are the same.
+ }
+
+ \usage{MultiSourceCopyNumberNormalization(dsList=NULL, fitUgp=NULL, ...)}
+
+ \arguments{
+  \item{dsList}{A \code{\link[base]{list}} of K \code{\link{AromaTotalCnBinarySet}}:s.}
+  \item{fitUgp}{An \code{\link[aroma.core]{AromaUgpFile}} that specifies the
+    common set of loci used to normalize the data sets at.}
+  \item{...}{Arguments passed to \code{\link[aroma.core]{AromaTabularBinaryFile}}.}
+ }
+
+ \section{Fields and Methods}{
+  \bold{Methods:}\cr
+\tabular{rll}{
+ \tab \code{getAllNames} \tab  -\cr
+ \tab \code{getInputDataSets} \tab  -\cr
+ \tab \code{getOutputDataSets} \tab  -\cr
+ \tab \code{getOutputPaths} \tab  -\cr
+ \tab \code{getParameters} \tab  -\cr
+ \tab \code{nbrOfDataSets} \tab  -\cr
+ \tab \code{process} \tab  -\cr
+}
+
+
+ \bold{Methods inherited from Object}:\cr
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+
+
+ }
+
+ \details{
+   The multi-source normalization method is by nature a single-sample method,
+   that is, it normalizes arrays for one sample at the time and independently
+   of all other samples/arrays.
+
+   However, the current implementation is such that it first generates
+   smoothed data for \emph{all} samples/arrays.  Then, it normalizes the
+   sample one by one.
+ }
+
+ \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\keyword{classes}
