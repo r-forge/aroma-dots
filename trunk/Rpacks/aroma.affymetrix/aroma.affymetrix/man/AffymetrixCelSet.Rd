@@ -66,7 +66,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
  \tab \code{\link[aroma.affymetrix:getAverageFile.AffymetrixCelSet]{getAverageFile}} \tab Calculates the mean and the standard deviation of the cell signal (intensity, standard deviation etc.) across the CEL set.\cr
  \tab \code{getAverageLog} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCdf.AffymetrixCelSet]{getCdf}} \tab Gets the CDF structure for this CEL set.\cr
- \tab \code{getChipType} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:getChipType.AffymetrixCelSet]{getChipType}} \tab Gets the chip type for this CEL set.\cr
  \tab \code{getData} \tab  -\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getIntensities.AffymetrixCelSet]{getIntensities}} \tab Gets cell intensities from a set of cells and a set of arrays.\cr

@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.5 [2008-09-15]
+Version: 0.9.4.5 [2008-09-16]
 o Added argument 'onMissing' to FragmentLengthNormalization, which is
   passed down to normalizeFragmentLength() [req aroma.light v1.9.2] to
   make it possible to normalize also units for which fragment lenghts
