@@ -11,10 +11,10 @@ source("../aroma.affymetrix/R/AromaUflFile.R");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 naVersion <- "26";
 user <- "HB";
-datestamp <- "20080915";
+datestamp <- "20080916";
 
 chipType <- "Mapping250K_Sty";
-nbrOfEnzymes <- 1;
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Setup required annotation files
@@ -51,7 +51,10 @@ if (is.null(ufl)) {
 print(ufl);
 
 
-units <- importFrom(ufl, csv, enzymes="NspI", verbose=log);
+enzyme <- gsub("Mapping250K_(Nsp|Sty)", "\\1I", getChipType(ufl));
+print(enzyme);
+stopifnot(nchar(enzyme) == 4);
+units <- importFrom(ufl, csv, enzymes=enzyme, verbose=log);
 str(units);
 
 
@@ -88,10 +91,13 @@ writeFooter(ufl, footer);
 # Statistics
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 print(ufl);
+x <- summaryOfUnits(ufl);
+print(x);
+
 ##  AromaUflFile:
 ##  Name: Mapping250K_Sty
-##  Tags: na26,HB20080915
-##  Pathname: annotationData/chipTypes/Mapping250K_Sty/Mapping250K_Sty,na26,HB20080915.ufl
+##  Tags: na26,HB20080916
+##  Pathname: annotationData/chipTypes/Mapping250K_Sty/Mapping250K_Sty,na26,HB20080916.ufl
 ##  File size: 466.18kB
 ##  RAM: 0.00MB
 ##  Number of data rows: 238378
@@ -99,13 +105,11 @@ print(ufl);
 ##  Dimensions: 238378x1
 ##  Column classes: integer
 ##  Number of bytes per column: 2
-##  Footer: <platform>Affymetrix</platform><chipType>Mapping250K_Sty</chipType><createdOn>20080915 23:21:32 PDT</createdOn><createdBy><fullname>Henrik Bengtsson</fullname><email>hb@stat.berkeley.edu</email></createdBy><srcFiles><srcFile1><filename>Mapping250K_Sty.cdf</filename><filesize>184371335</filesize><checksum>8c7ffa88bb444d953214f601bb998e51</checksum></srcFile1><srcFile2><filename>Mapping250K_Sty.na26.annot.csv</filename><filesize>412941971</filesize><checksum>eb1ced7bd45aa7c6f6edf9fb708c7441</checksum></srcFile2></srcFiles>
+##  Footer: <platform>Affymetrix</platform><chipType>Mapping250K_Sty</chipType><createdOn>20080916 17:13:53 PDT</createdOn><createdBy><fullname>Henrik Bengtsson</fullname><email>hb@stat.berkeley.edu</email></createdBy><srcFiles><srcFile1><filename>Mapping250K_Sty.cdf</filename><filesize>184371335</filesize><checksum>8c7ffa88bb444d953214f601bb998e51</checksum></srcFile1><srcFile2><filename>Mapping250K_Sty.na26.annot.csv</filename><filesize>412941971</filesize><checksum>eb1ced7bd45aa7c6f6edf9fb708c7441</checksum></srcFile2></srcFiles>
 ##  Chip type: Mapping250K_Sty
 ##  Platform: Affymetrix
 
-x <- summaryOfUnits(ufl);
-print(x);
 ##                  snp cnp affxSnp other  total
-##  enzyme1-only 144868   0       0     0 144868
-##  missing       93436   0       0    74  93510
+##  enzyme1-only 237697   0       0     0 237697
+##  missing         607   0       0    74    681
 ##  total        238304   0       0    74 238378
