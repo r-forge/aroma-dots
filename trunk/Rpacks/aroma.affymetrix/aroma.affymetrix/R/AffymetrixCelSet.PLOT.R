@@ -11,8 +11,16 @@
 # @synopsis
 #
 # \arguments{
-#   \item{subset}{The subset of probes to include.}
-#   \item{types}{The type of probes to include.}
+#   \item{subset}{The subset of probes to considered \emph{before} any
+#     filtering by probe type is applied.
+#     If a @vector of @doubles, the cell indices.
+#     If a scalar @double in [0,1], the fraction of cells, which can
+#     be used to speed up the plotting if approximate densities are 
+#     acceptable.
+#     if @NULL, all cells are considered.
+#   }
+#   \item{types}{The type of probes to include, e.g. \code{"all"},
+#     \code{"pmmm"}, \code{"pm"}, and \code{"mm"}.}
 #   \item{...}{Additional arguments passed to 
 #      @see "plotDensity.AffymetrixCelFile".}
 #   \item{col}{A @vector of colors for each of the arrays.}
@@ -32,11 +40,14 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=1/2, types=NULL, ..., col=seq(this), lty=NULL, lwd=NULL, annotate=TRUE, add=FALSE, verbose=FALSE) {
+setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=NULL, types=NULL, ..., col=seq(this), lty=NULL, lwd=NULL, annotate=TRUE, add=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'subset':
+  if (is.null(subset)) {
+  } else if (is.numeric(subset)) {
+  }
 
   nbrOfArrays <- nbrOfArrays(this);
   
@@ -79,9 +90,13 @@ setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=1/2, types=
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, 
                                                 getName(df), nbrOfArrays));
 
+    verbose && cat(verbose, "Using cell indices:");
+    verbose && str(verbose, subset);
+
     add <- add || (kk > 1);
     plotDensity(df, subset=subset, ..., col=col[kk], lty=lty[kk], 
               lwd=lwd[kk], annotate=FALSE, add=add, verbose=less(verbose));
+
     if (annotate) {
       stextChipType(getChipType(this));
       stextSize(df, size=length(subset));
@@ -97,6 +112,11 @@ setMethodS3("plotDensity", "AffymetrixCelSet", function(this, subset=1/2, types=
 
 ############################################################################
 # HISTORY:
+# 2009-09-17
+# o Now argument 'subset' of plotDensity() of AffymetrixCelSet defaults 
+#   to NULL (all probes).  Before it was 1/2 (a fraction).
+# o Added verbose output to plotDensity() to AffymetrixCelSet show what
+#   cells are used.
 # 2007-04-16
 # o Added more verbose output.
 # 2006-05-16

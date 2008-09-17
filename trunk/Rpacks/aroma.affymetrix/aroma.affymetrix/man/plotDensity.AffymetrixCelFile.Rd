@@ -20,11 +20,19 @@
  Plots the density of the probe signals on the array.
 }
 
-\usage{\method{plotDensity}{AffymetrixCelFile}(this, subset=1/2, types=NULL, ..., xlim=c(0, 16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE)}
+\usage{\method{plotDensity}{AffymetrixCelFile}(this, subset=NULL, types=NULL, ..., xlim=c(0, 16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE)}
 
 \arguments{
-  \item{subset}{The subset of probes to include.}
-  \item{types}{The type of probes to include.}
+  \item{subset}{The subset of probes to considered \emph{before} any
+    filtering by probe type is applied.
+    If a \code{\link[base]{vector}} of \code{\link[base]{double}}s, the cell indices.
+    If a scalar \code{\link[base]{double}} in [0,1], the fraction of cells, which can
+    be used to speed up the plotting if approximate densities are
+    acceptable.
+    if \code{\link[base]{NULL}}, all cells are considered.
+  }
+  \item{types}{The type of probes to include, e.g. \code{"all"},
+    \code{"pmmm"}, \code{"pm"}, and \code{"mm"}.}
   \item{...}{Additional arguments passed to
              \code{\link[aroma.light]{plotDensity.numeric}}.}
   \item{xlim}{The range on the x axis.}

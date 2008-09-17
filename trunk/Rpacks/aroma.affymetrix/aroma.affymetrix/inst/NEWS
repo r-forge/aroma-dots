@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.5 [2008-09-16]
+Version: 0.9.4.5 [2008-09-17]
 o Added argument 'onMissing' to FragmentLengthNormalization, which is
   passed down to normalizeFragmentLength() [req aroma.light v1.9.2] to
   make it possible to normalize also units for which fragment lenghts
@@ -12,6 +12,9 @@ o Now it is possible to specify enzyme names in argument 'enzymes' to
 o Added argument 'enzymesToUpdate' to importFromAffymetrixNetAffxCsvFile()
   of AromaUflFile in order to make it possible to specify both which 
   enzymes to read and to update.
+o CONSISTENCY: Now argument 'subset' of plotDensity() of AffymetrixCelFile
+  and AffymetrixCelSet defaults to NULL (all probes).  Before it was
+  specifying the fraction 1/2 by default.
 o DEPENDENCIES: Now aroma.affymetrix requires affxparser 1.13.8, 
   because getUnitTypes() of AffymetrixCdfFile requires that version 
   in order to correctly identify copy-number units.

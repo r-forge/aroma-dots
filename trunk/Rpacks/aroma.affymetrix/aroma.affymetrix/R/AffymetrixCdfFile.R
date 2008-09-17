@@ -1141,7 +1141,7 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
 
     other <- unique(other);
     verbose && exit(verbose);
-  }
+  } # if (!"all" ...)
 
   if (is.null(indices)) {
     indices <- other;
