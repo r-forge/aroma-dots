@@ -341,7 +341,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     names[-1] <- sprintf("%s.%02d", names[-1], 2:ncol(fln));
 
   # Keep only enzymes of interest
-  names <- names[enzymes];
+#  names <- names[enzymes];
 
   data <- data.frame(unitName=data[[1]], fln);
   colnames(data) <- c("unitName", names);
