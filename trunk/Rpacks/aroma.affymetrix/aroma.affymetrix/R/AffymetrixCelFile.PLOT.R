@@ -11,8 +11,16 @@
 # @synopsis
 #
 # \arguments{
-#   \item{subset}{The subset of probes to include.}
-#   \item{types}{The type of probes to include.}
+#   \item{subset}{The subset of probes to considered \emph{before} any
+#     filtering by probe type is applied.
+#     If a @vector of @doubles, the cell indices.
+#     If a scalar @double in [0,1], the fraction of cells, which can
+#     be used to speed up the plotting if approximate densities are 
+#     acceptable.
+#     if @NULL, all cells are considered.
+#   }
+#   \item{types}{The type of probes to include, e.g. \code{"all"},
+#     \code{"pmmm"}, \code{"pm"}, and \code{"mm"}.}
 #   \item{...}{Additional arguments passed to
 #              @see "aroma.light::plotDensity.numeric".}
 #   \item{xlim}{The range on the x axis.}
@@ -32,7 +40,7 @@
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=1/2, types=NULL, ..., xlim=c(0,16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE) {
+setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=NULL, types=NULL, ..., xlim=c(0,16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE) {
   require("aroma.light") || throw("Package not loaded: aroma.light");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -789,6 +797,9 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2009-09-17
+# o Now argument 'subset' of plotDensity() of AffymetrixCelFile defaults 
+#   to NULL (all probes).  Before it was 1/2 (a fraction).
 # 2008-03-14
 # o Added argument 'readRectFcn' to getImage() allowing one to read data
 #   in different ways, e.g. by also read a reference array and return
