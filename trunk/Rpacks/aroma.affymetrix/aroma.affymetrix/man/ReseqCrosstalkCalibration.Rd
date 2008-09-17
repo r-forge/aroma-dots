@@ -61,7 +61,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.ReseqCrosstalkCalibration]{process}} \tab Calibrates the data set.\cr
 }
 
 

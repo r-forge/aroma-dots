@@ -52,7 +52,7 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform3}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{process} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.ScaleNormalization3]{process}} \tab Normalizes the data set.\cr
 }
 
 
