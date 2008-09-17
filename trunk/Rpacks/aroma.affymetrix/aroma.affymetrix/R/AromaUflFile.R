@@ -107,6 +107,7 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUflFile", function(this,
 #  verbose && summary(verbose, data);
 
   data <- data[,-1,drop=FALSE];
+  verbose && str(verbose, data);
 
   # Garbage collect
   gc <- gc();
