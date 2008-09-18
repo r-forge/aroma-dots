@@ -12,6 +12,8 @@ o Now it is possible to specify enzyme names in argument 'enzymes' to
 o Added argument 'enzymesToUpdate' to importFromAffymetrixNetAffxCsvFile()
   of AromaUflFile in order to make it possible to specify both which 
   enzymes to read and to update.
+o ANNOTATION: Updated  annotationData/genomes/Human,chromosomes.txt
+  to contain data for the Mitochondrial genome ("chromosome") as well.
 o CONSISTENCY: Now argument 'subset' of plotDensity() of AffymetrixCelFile
   and AffymetrixCelSet defaults to NULL (all probes).  Before it was
   specifying the fraction 1/2 by default.
