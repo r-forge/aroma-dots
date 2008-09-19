@@ -2,7 +2,6 @@
 \documentclass[10pt,a4paper]{article}    
 
 % Load packages
-\usepackage{cite} % Make references as [1-4], not [1,2,3,4]
 \usepackage{url}  % Formatting web addresses  
 \usepackage{ifthen}  % Conditional 
 \usepackage{multicol}   %Columns
@@ -11,6 +10,10 @@
 %\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
 \urlstyle{rm}
 \usepackage{fancyvrb}
+
+% To refer to labels to the manuscript
+\usepackage{xr} 
+\externaldocument[CRMAv2:]{BengtssonH_2008c-CRMAv2}
  
  
 \setlength{\topmargin}{-2.0cm}
@@ -90,8 +93,9 @@
 \newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}\endnote{#3 \textsl{#2}}}\xspace}
 \renewcommand{\updated}[3][red]{#2\xspace} 
 
-\newcommand{\citet}[1]{\cite{#1}} 
-\newcommand{\citep}[1]{\cite{#1}} 
+\usepackage{natbib}
+%\newcommand{\citet}[1]{\cite{#1}} 
+%\newcommand{\citep}[1]{\cite{#1}} 
 
 
 % Begin ...
@@ -395,6 +399,8 @@ The NetAffx data base is updated frequently and the following information is lik
 
 \subsubsection{Genome positions}
 In Table~\ref{tblGenomicLocation} we summarize how many SNPs and CN loci have known annotations according to NetAffx.  
+The genome location per chromosomes is summarized in Table~\ref{tblGenomicLocationByChromosome} for each of the default and the full CDF.
+
 We do not know why the location is unknown for some loci, but from our investigation we believe it is mainly because such loci map to multiple positions in the genome.  For instance, in NetAffx release 26, there is no genomic location reported for SNP\_A-4228947 (on GWS5, GWS6 and Mapping250K\_Nsp), and according to the NCBI SNP data base it (rs11261805) maps to the two locations 41,240,208 and 43,493,496 on Chr9.
 
 Furthermore, for GWS5 the NetAffx annotation files currently available only contains data on the units in the default CDF.  This is confirmed by comparing the names of the units with known locations in the default and the full GWS5.
@@ -427,9 +433,6 @@ Total                            & 861,085 &  920,859  & 1,855,448 & 1,880,794 \
 \caption{Summary of genomic location data that is available in the NetAffx files of contents in GWS5 and GWS6 with respect to unit and probe class and availability of annotation data.  The effective sets of units available for CN analysis are emphasized in bold.  *See text for why the default and the full GWS5 are identical.  NetAffx v26 was used for this summary.}
 \label{tblGenomicLocation}
 \end{table}
-
-The genome location per chromosomes is summarized in Tables~\ref{tblGenomicLocationGWSFive} and Tables~\ref{tblGenomicLocationGWSSix} for each of the default and the full CDF.
-
 
 \begin{table}[htp]
 \begin{center}
@@ -474,7 +477,7 @@ total  &     & 755,490 &  755,490 & 1,854,204 & 1,878,785 \\
 \end{tabular}
 \end{center}
 \caption{Distribution of loci by chromosome for the different CDFs of GWS5 and GWS6.  *See text for why the default and the full GWS5 are identical.  NetAffx v26 was used for this summary.}
-\label{tblGenomicLocation}
+\label{tblGenomicLocationByChromosome}
 %% Chromosome (sequence) lengths: http://www.ornl.gov/sci/techresources/Human_Genome/posters/chromosome/faqs.shtml
 %% Summaries generated 2008-08-22 using GenomeWideSNP_5,r2,na26,HB20080822 and GenomeWideSNP_5,Full,r2,na26,HB20080822.
 \end{table}
@@ -520,7 +523,7 @@ Total                          & 861,085 &  920,859  & 1,855,448 & 1,880,794 \\
 \end{tabular}
 \end{center}
 \caption{Summary of fragment-length data that is available in the NetAffx files of contents in GWS5 and GWS6 with respect to unit and probe class and availability of annotation data.  *See text for why the default and the full GWS5 are identical.  NetAffx v26 was used for this summary.}
-\label{tblGenomicLocation}
+\label{tblFragmentLengths}
 \end{table}
 
 
@@ -535,9 +538,9 @@ Consequently, SNP target DNA of PCR products originating from different enzymes 
 For CN probes the situation is somewhat different.  Affymetrix selected the CN probes from a large pool of CN probes based on their performance on copy numbers (private communication).  This pilot study was conducted on a specially designed in-house chip set containing probes that are known to be on an \NspI fragment.  For this reason, some of the selected probes are exclusively on \NspI fragments, some are by chance both on \NspI and \StyI fragments, but none are exclusively on \StyI fragments.  Note, when annotation for the human genome is updated, some of the probes might by chance be reannotated to become \StyI-only probes.
 We have found that it is important that the preprocessing models these differences, otherwise there is a substantial risk for getting systematic biases between SNPs and CN probes due to enzymatic mixing imbalances.
 %% [We will later see that the hybridization of two PCR products on the same array requires a special model in order to control for confounded effects due to mixing inbalances.]
-See Table~\ref{tblSNP5SNP6} and Table~\ref{tblSNP5SNP6enzymes} for details on fragment-length information for the two chip types and the two enzymes.
+See Table~\ref{tblFragmentLengths} for details on fragment-length information for the two chip types and the two enzymes.
 
-Note that there is no enzyme annotation data available for a large set of the GWS5 SNP units.  Instead, we use \GWSSix annotation data for the common SNPs and for CN probes for which annotation data otherwise was missing.  For further details and updates on this problem, see The aroma.affymetrix website [\url{http://www.braju.com/R/aroma.affymetrix/}].
+%% Note that there is no enzyme annotation data available for a large set of the GWS5 SNP units.  Instead, we use \GWSSix annotation data for the common SNPs and for CN probes for which annotation data otherwise was missing.  For further details and updates on this problem, see The aroma.affymetrix website [\url{http://www.braju.com/R/aroma.affymetrix/}].
 
 
 
@@ -553,23 +556,24 @@ In addition to CRMA~v2, two external methods were evaluated in this paper.  The 
 
 \subsection{CN5}
 The CN5 method is implemented in the 'apt-copynumber-workflow' software part of the Affymetrix Power Tools (APT) v1.10.0.  The Affymetrix Genotyping Console (GTC)~v3.0 software \citep{Affymetrix_2008m} utilizes APT for CN5 estimates.  We choose to run GTC, because it is not fully documented what settings should be used for APT.  According to Affymetrix both approaches produce identical results (Affymetrix Scientific Community Forums, Thread: 'copy number: Genotyping Console 3.0 vs. apt 1.10.0?' on August 15, 2008).
-In CN5, probe signals are normalized ('adapter-type background correction') for systematic variation due to so called \emph{enzyme recognition-sequence class}.   Next, all probe signals (excluding control probes) are quantile normalized using the Affymetrix 'sketch' algorithm.  For SNPs, chip effects $\{(\theta_{Aij}, \theta_{Bij})\}$ (as in the log-additive model of RMA) are estimated separately  for the two alleles using the plier algorithm.  The total CNs are obtained as in Eqns~\eqref{eqnSumSnpAB}-\eqref{eqnCnAB}.
-Log ratios are calculated as in Eqn~\eqref{eqnLogRatio}, where the reference is $\theta_{Rj}=\median_i\{\theta_{ij}\}$ with the important difference that for ChrX (ChrY) it is only samples that empirically are found to females (males) that are included.  Finally, the raw CNs (log-ratios) are shifted such that the median of all median autosomal signals is zero.~\citep{Affymetrix_2008m}
+In CN5, probe signals are normalized ('adapter-type background correction') for systematic variation due to so called \emph{enzyme recognition-sequence class}.   Next, all probe signals (excluding control probes) are quantile normalized using the Affymetrix 'sketch' algorithm.  For SNPs, chip effects $\{(\theta_{Aij}, \theta_{Bij})\}$ (as in the log-additive model of RMA) are estimated separately  for the two alleles using the plier algorithm.  The total CNs are obtained by summing $\theta_{ij}=\theta_{Aij}+\theta_{Bij}$.
+Log ratios are calculated as in Eqn~\eqref{CRMAv2:eqnCnLogRatio}, where the reference is $\theta_{Rj}=\median_i\{\theta_{ij}\}$ with the important difference that for ChrX (ChrY) it is only samples that empirically are found to females (males) that are included.  Finally, the raw CNs (log-ratios) are shifted such that the median of all median autosomal signals is zero.~\citep{Affymetrix_2008m}
+There are some \emph{limitations/restrictions} in CN5 worth knowing about:
+\begin{enumerate}
+\item The CN5 method is available only for \GWSSix.  Affymetrix explicitly says that neither GTC nor APT implements CN5 for GWS5.
+\item The CN5 method is limited to the default GWS6 CDF, that is, it cannot be used with the full GWS6 CDF.
+\item The CN5 method use only females (males) when calculating reference on ChrX (ChrY).  In the current implementation of GTC is not possible to force CN5 to estimate raw CN ratios on ChrX (ChrY) using all samples.
+\item The GTC software does not export $\{\theta_{ij}\}$ but only log-ratio CNs.
+\end{enumerate}
+It is because of the latter two restrictions we choose to calculate the CRMA~v2 and dChip estimates on ChrX and ChrY the same way as in CN5.  This is the only way a comparison of methods can be done.
+
 
 %% From the SNPs and CN probes in the default CDF, GTC/CN5 filters out an additional set of 490 SNPs that are on ChrY (or without annotation) as well as 30,033 CN probes that was found to overlap ($\pm10$ base pairs from the center base) with known SNPs in dbSNP.
-
-\textit{Important limitations}:
-It is not possible in current implementation of CN5 to estimate raw CN ratios on ChrX using ``males'' as well.  Moreover, since the software does not export $\{\theta_{ij}\}$ either, it is not possible solve this problem by calculating the log-ratios externally.  In order to do a fair evaluation, we instead have to calculate ChrX CNs for the other methods based on ``females'' only.
-
-The CN5 method is only available for \GWSSix.  Affymetrix explicitly says that neither GTC nor APT implements CN5 for GWS5.
-
-It is also limited to the default CDF, that is, it cannot be used with \filename{GenomeWideSNP\_6.Full.cdf} (this is because the implemented model is 'hardwired' to the default CDF).
-
 
 
 \subsection{dChip}
 For the dChip model, we used the \pkg{dChip~2008} (Build: July 10, 2008, \url{http://www.dchip.org/}).  Probe-level data was normalized using the \emph{invariant-set method}~\citep{LiWong_2001}, and PM signals were background corrected by '5th percentile of region (PM-only)'.  For GWS6, array 'NA12750' was suggested by dChip to be used as the baseline array for normalization, because it had the median median (sic!) probe signal.  As suggested, we verified that the spatial intensity plot of this array was not abnormal.
-For probe summarization, the dChip multiplicate model was used, with $\PM=\PMA+\PMB$ for SNPs (``Compute signals separately for A and B allele'' unchecked), returning MBEI scores (corresponding to $\{\theta_{ij}\}$).  For maximal comparison, the MBEI scores were imported to \pkg{aroma.affymetrix} and raw CNs where calculated as in Eqn~\eqref{eqnLogRatio}.
+For probe summarization, the dChip multiplicate model was used, with $\PM=\PMA+\PMB$ for SNPs (``Compute signals separately for A and B allele'' unchecked), returning MBEI scores (corresponding to $\{\theta_{ij}\}$).  For maximal comparison, the MBEI scores were imported to \pkg{aroma.affymetrix} and raw CNs where calculated as in Eqn~\eqref{CRMAv2:eqnCnLogRatio}.
 
 %% We used GenomeWideSNP_6.Full.cdf
 %% [GenomeWideSNP_6.Full.cdf.bin: 220,277,412 bytes]
@@ -618,19 +622,26 @@ Custom SNP \& CN chip types  &  yes    & yes       &   ?   &    - &  ?  &  ?  \\
 \section{Methods for the evaluation}
 We base all the performance assessments using relative copy numbers (chip effects) on the non-logaritmic scale, that is, $C_{ij}=2\cdot\theta_{ij}/\theta_{Rj}$.  This is contrary to \cite{BengtssonH_etal_2008a}, where we used log-ratios $M_{ij}=\log_2(\theta_{ij}/\theta_{Rj})$.  
 %% If there are no negative $C_{ij}$, the full-resolution ROC estimates are identical, because the ROC is invariant under strictly increasing transforms.
+We use ChrX and ChrY loci for the evaluation.  See Table~\ref{tblGenomicLocationByChromosome} for how many loci there are on each chromosome.
+Loci in pseudo-autosomal regions (PARs) are excluded.  Each of the two sex-chromosomes have to PARs~\citep{BlaschkeRappold_2006}.  See Table~\ref{tblPARs} for details.
+In addition to excluding PARs, regions known to be CN polymorphics \citep{RedonR_etal_2006} are excluded.  There are 48 such regions on ChrX and and 7 on ChrY.  We use a safetly margin of 100kb on each side.
+For further details on the evaluation methods are available in \cite{BengtssonH_etal_2008a}.
 
-Smoothing...
-
-
-\clearpage
-\section{Sets of loci used for the evaluation}
-
-We use ChrX and ChrY loci for the evaluation with pseudo-autosomal regions (PARs) and known CN polymorphic (CNPs) regions excluded.  
-According to Affymetrix' NetAffx annotation release 26 there are 87,204 ChrX and 9,486 ChrY loci in \GWSSixf.Full.CDF.
-
-The PARs for ChrX are PAR1=$[1,2692881]$ and PAR2=$[154494747,154824264]$, and for ChrY they are PAR1=$[1,2692881]$ and PAR2=$[57372174,57701691]$~\citet{BlaschkeRappold_2006}.
-
-For CNP regions, we use the ones identified by \citet{RedonR_etal_2006}.  There are 48 such regions on ChrX and and 7 on ChrY.  We use a safetly margin of 100kb on each side.
+\begin{table}[htp]
+\begin{center}
+\begin{tabular}{|r|c|c|c|cc|}
+\hline
+chromosome & PAR 1 & PAR 2 \\
+\hline
+\hline
+X  & 1-2,692,881 & 154,494,747-154,824,264 \\
+Y  & 1-2,692,881 &  57,372,174-57,701,691 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Pseudo-autosomal regions on ChrX and ChrY according to~\citet{BlaschkeRappold_2006}.  The regions are specified as base positions where the first position of the chromosome is index one.}
+\label{tblPARs}
+\end{table}
 
 
 
@@ -676,5 +687,9 @@ For CNP regions, we use the ones identified by \citet{RedonR_etal_2006}.  There 
 %% 
 %% [Will run this when Affymetrix release the corrected annotation data...]
 
+\clearpage
+\bibliography{bioinformatics-journals-abbr,hb-at-maths.lth.se}
+\bibliographystyle{natbib}
+ 
 
 \end{document}
