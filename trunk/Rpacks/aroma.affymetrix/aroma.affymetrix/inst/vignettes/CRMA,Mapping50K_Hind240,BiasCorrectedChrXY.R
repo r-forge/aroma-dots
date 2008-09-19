@@ -183,7 +183,7 @@ colnames(M) <- getArrays(cbs);
 n23 <- sapply(cesN, getAttribute, "n23");
 col <- c("blue", "red")[n23];
 Mlab <- expression(log[2](theta/theta[R]));
-Mlim <- c(-5,2);
+Mlim <- c(-3.5,1.5);
 
 fig <- "ChrX,biasCorrected";
 if (!devIsOpen(fig)) {
@@ -217,6 +217,37 @@ if (!devIsOpen(fig)) {
   boxplot(as.data.frame(M2), col=col, ylim=Mlim, ylab=Mlab, las=2);
   abline(h=0, lty=4);
   title("Copy numbers on ChrX\n(non-bias corrected)");
+  devDone();
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Segmentation using only females for the reference
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+cesXX <- extract(cesN, (n23 == 2));
+stopifnot(all(sapply(cesXX, getAttribute, "n23") == 2));
+ceXX <- getAverageFile(cesXX);
+
+# NOTE: This used the females for all chromosomes - here we only use 
+# it to illustrate the ChrX estimates.
+cbs3 <- CbsModel(cesN, ceXX);
+print(cbs3);
+
+# Verify that the ChrX CNs are bias corrected
+M3 <- NULL;
+for (kk in 1:nbrOfArrays(cbs3)) { 
+  rawCNs <- extractRawCopyNumbers(cbs3, array=kk, chromosome=23);
+  rawCNs <- as.data.frame(rawCNs)$cn;
+  M3 <- cbind(M3, rawCNs);
+}
+colnames(M3) <- getArrays(cbs3);
+
+fig <- "ChrX,XXreference";
+if (!devIsOpen(fig)) {
+  devNew2("png", width=width, height=0.618*width, label=fig);
+  boxplot(as.data.frame(M3), col=col, ylim=Mlim, ylab=Mlab, las=2);
+  abline(h=0, lty=4);
+  title("Copy numbers on ChrX\n(reference based on XX samples)");
   devDone();
 }
 
