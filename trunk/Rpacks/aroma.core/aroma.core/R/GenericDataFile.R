@@ -789,7 +789,7 @@ setMethodS3("getChecksum", "GenericDataFile", function(this, ..., verbose=FALSE)
 })
 
 
-setMethodS3("writeChecksum", "GenericDataFile", function(this, ..., verbose=FALSE) {
+setMethodS3("writeChecksum", "GenericDataFile", function(this, ..., skip=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -797,13 +797,29 @@ setMethodS3("writeChecksum", "GenericDataFile", function(this, ..., verbose=FALS
     on.exit(popState(verbose));
   }
 
+
+  verbose && enter(verbose, "Writing checksum");
+
   pathname <- getPathname(this);
   outPathname <- sprintf("%s.md5", pathname);
 
-  verbose && enter(verbose, "Writing checksum");
   verbose && cat(verbose, "Pathname: ", outPathname);
-  checksum <- getChecksum(this, verbose=less(verbose));
-  cat(checksum, file=outPathname);
+
+  # Skip existing checksum file?
+  if (skip && isFile(outPathname)) {
+    verbose && cat(verbose, "Found existing checksum file");
+    verbose && enter(verbose, "Reading existing checksum file");
+    checksum <- readChecksum(this, verbose=less(verbose));
+    verbose && cat(verbose, "Checksum (read): ", checksum);
+    verbose && exit(verbose);
+  } else {
+    verbose && enter(verbose, "Getting checksum");
+    checksum <- getChecksum(this, verbose=less(verbose));
+    verbose && cat(verbose, "Checksum (generated): ", checksum);
+    cat(checksum, file=outPathname);
+    verbose && exit(verbose);
+  }
+
   verbose && exit(verbose);
 
   invisible(outPathname);
@@ -819,11 +835,35 @@ setMethodS3("readChecksum", "GenericDataFile", function(this, ..., verbose=FALSE
     on.exit(popState(verbose));
   }
 
+  verbose && enter(verbose, "Reading checksum");
   pathname <- getPathname(this);
   outPathname <- sprintf("%s.md5", pathname);
+  verbose && cat(verbose, "Pathname: ", outPathname);
+  outPathname <- Arguments$getReadablePathname(outPathname, mustExist=TRUE);
 
-  verbose && enter(verbose, "Reading checksum");
   checksum <- readLines(outPathname, warn=FALSE);
+
+#  verbose && enter(verbose, "Trimming");
+  # Trim all lines
+  checksum <- trim(checksum);
+  # Drop empty lines
+  checksum <- checksum[nchar(checksum) > 0];
+  # Drop comments
+  checksum <- checksum[regexpr("^#", checksum) == -1];
+#  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Validating checksum");
+  if (length(checksum) == 0)
+    throw("File format error. No checksum found: ", outPathname);
+  if (length(checksum) > 1)
+    throw("File format error. Too many possible checksums: ", outPathname);
+
+  # A checksum should only consist of hexadecimal characters
+  if (regexpr("^[0-9abcdefABCDEF]+$", checksum) == -1) {
+    throw("File format error. Invalid checksum ('", checksum, "'): ", outPathname);
+  }
+  verbose && exit(verbose);
+
   verbose && exit(verbose);
 
   checksum;
@@ -960,6 +1000,10 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-09-18
+# o Now readChecksum() does some validation.  It is also possible to have
+#   commented rows in the checksum file.
+# o Added argument 'skip' to writeChecksum().
 # 2008-07-23
 # o Added getCreatedOn(), getLastModifiedOn(), getLastAccessedOn().
 # 2008-07-17
