@@ -13,7 +13,7 @@
 \usepackage{fancyvrb}
  
  
-\setlength{\topmargin}{-3.0cm}
+\setlength{\topmargin}{-2.0cm}
 \setlength{\textheight}{25.5cm}
 \setlength{\oddsidemargin}{0cm} 
 \setlength{\textwidth}{16.5cm}
@@ -105,11 +105,10 @@
 
 \clearpage
 \section{Annotation data files}
+Although the features on the arrays never change, their annotations might get updated as the Human Genome databases get updated.  In this study, we have used the latest annotation data available on the Affymetrix website as of August 2008.
+We will list all annotation files needed by CRMA~v2 for analyzing data for the \GWSFivef (GWS5) and the \GWSSixf (GWS6) chip types.  First, we specify all relevant files available from Affymetrix (Tables~\ref{tblGWSFiveAffymetrix}~\&~\ref{tblGWSSixAffymetrix}).  Then we specify the files compiled from the Affymetrix files for use in aroma.affymetrix (Tables~\ref{tblGWSFiveAromaAffymetrix}~\&~\ref{tblGWSSixAromaAffymetrix}).
 
 \subsection{Affymetrix annotation data}
-Although the features on the arrays never change, their annotations might get updated as the Human Genome databases get updated.  In this study, we have used the latest annotation data available on the Affymetrix website as of August 2008.
- Table~\ref{tblGWSSixAffymetrix} gives details on the Affymetrix annotation data files used.
-
 
 \begin{table}[htp]
 \begin{center}
@@ -118,62 +117,37 @@ Although the features on the arrays never change, their annotations might get up
 File name    & GenomeWideSNP\_5,r2.cdf \\
 File size    & 239,670,727 bytes \\
 MD5 checksum & e062cb42a392dd74721d5b7cf9a286f1 \\
-Notes        &  \\
+Notes        & Affymetrix default chip defintion file (CDF). \\
 \hline
 File name    & GenomeWideSNP\_5,Full,r2.cdf \\
 File size    & 261,578,689 bytes \\
 MD5 checksum & 79f7a8353b4978dedbeff05a7897ff6e \\
-Notes        &  \\
+Notes        & Affymetrix full chip defintion file (CDF). \\
 \hline
 File name    & GenomeWideSNP\_5.CN\_probe\_tab \\
 File size    & 43,252,969 bytes \\
 MD5 checksum & e661544a27163d1242ca690a486cb6b5 \\
-Notes        &  \\
+Notes        & Affymetrix file probe sequence file for CN probes. \\
 \hline
 File name    & GenomeWideSNP\_5.probe\_tab \\
 File size    & 233,706,497 bytes \\
 MD5 checksum & 69b66720591fde9333acf5eb4d1b3e68 \\
-Notes        &  \\
+Notes        & Affymetrix file probe sequence file for SNPs. \\
 \hline
 File name    & GenomeWideSNP\_5.cn.na26.annot.csv \\
 File size    & 180,849,309 bytes \\
 MD5 checksum & ec4f6cb4b482923d73d07f1b07faefe4 \\
-Notes        &  \\
+Notes        & Affymetrix NetAffx v26 annotation file for CN probes. \\
 \hline
 File name    & GenomeWideSNP\_5.na26.annot.csv \\
 File size    & 755,337,946 bytes \\
 MD5 checksum & af59235b6fccada7f871257149a89215 \\
-Notes        &  \\
-\hline
-File name    & GenomeWideSNP\_5,HB20080710.acs \\
-File size    & 121,981,027 bytes \\
-MD5 checksum & bd0da64b09ea164082e066798774a3c5 \\
-Notes        &  \\
-\hline
-File name    & GenomeWideSNP\_5,Full,r2,na26,HB20080822.ufl \\
-File size    & 3,684,511 bytes \\
-MD5 checksum & a533ac3ba64f36902d13bed8fe2a9a5b \\
-Notes        &  \\
-\hline
-File name    & GenomeWideSNP\_5,Full,r2,na26,HB20080822.ugp \\
-File size    & 4,605,439 bytes \\
-MD5 checksum & 9827c9fad08144d6e590b87984350a26 \\
-Notes        &  \\
-\hline
-File name    & GenomeWideSNP\_5,r2,na26,HB20080822.ufl \\
-File size    & 3,445,230 bytes \\
-MD5 checksum & 566812ef309486baf0a8496bb8a35ef5 \\
-Notes        &  \\
-\hline
-File name    & GenomeWideSNP\_5,r2,na26,HB20080822.ugp \\
-File size    & 4,306,339 bytes \\
-MD5 checksum & 9330fdcb30b3a3b4c13cbdeb8de4ffb5 \\
-Notes        &  \\
+Notes        & Affymetrix NetAffx v26 annotation file for SNPs. \\
 \hline
 \end{tabular}
 \end{center}
 \caption{Details of all Affymetrix specific GenomeWideSNP\_5 annotation files used in the study.}
-\label{tblGWSFIveAffymetrix}
+\label{tblGWSFiveAffymetrix}
 \end{table}
 
 
@@ -219,7 +193,44 @@ Notes        & Affymetrix NetAffx v26 annotation file for SNPs. \\
 
 
 \subsection{Imported annotation data}
-Several of Affymetrix annotation files use file formats that are not intended to be used directly in a computational system, but rather be imported once.  The \pkg{aroma.affymetrix} framework utilizes its own binary files that are more compact and faster to access.  The contents of these are imported from the above Affymetrix annotation data files.  Table~\ref{tblGWSSixAromaAffymetrix} give full details on the aroma.affymetrix annotation data files used.  Details on the source files used for each file is given in the file footer of each file.  For further details, see the aroma.affymetrix webpage.
+Several of Affymetrix annotation files use file formats that are not intended to be used directly in a computational system, but rather be imported once.  The \pkg{aroma.affymetrix} framework utilizes its own binary files that are more compact and faster to access.  The contents of these are imported from the above Affymetrix annotation data files.  Further details on the source files used for each compiled file is given in the file footer of each file.  To download these and for further details, see the aroma.affymetrix webpage.
+
+\begin{table}[htp]
+\begin{center}
+\begin{tabular}{lp{0.7\textwidth}}
+\hline
+File name    & GenomeWideSNP\_5,HB20080710.acs \\
+File size    & 121,981,027 bytes \\
+MD5 checksum & bd0da64b09ea164082e066798774a3c5 \\
+Notes        & Aroma.affymetrix probe sequence data from above Affymetrix sequence files. \\
+\hline
+File name    & GenomeWideSNP\_5,Full,r2,na26,HB20080822.ufl \\
+File size    & 3,684,511 bytes \\
+MD5 checksum & a533ac3ba64f36902d13bed8fe2a9a5b \\
+Notes        & Aroma.affymetrix fragment length data mapping to the full CDF.  Compiled from above Affymetrix NetAffx files. \\
+\hline
+File name    & GenomeWideSNP\_5,Full,r2,na26,HB20080822.ugp \\
+File size    & 4,605,439 bytes \\
+MD5 checksum & 9827c9fad08144d6e590b87984350a26 \\
+Notes        & Aroma.affymetrix genome location data mapping to the full CDF.  Comiles from above Affymetrix NetAffx files. \\
+\hline
+File name    & GenomeWideSNP\_5,r2,na26,HB20080822.ufl \\
+File size    & 3,445,230 bytes \\
+MD5 checksum & 566812ef309486baf0a8496bb8a35ef5 \\
+Notes        & Aroma.affymetrix fragment length data mapping to the default CDF.  Compiled from above Affymetrix NetAffx files. \\
+\hline
+File name    & GenomeWideSNP\_5,r2,na26,HB20080822.ugp \\
+File size    & 4,306,339 bytes \\
+MD5 checksum & 9330fdcb30b3a3b4c13cbdeb8de4ffb5 \\
+Notes        & Aroma.affymetrix genome location data mapping to the default CDF.  Comiles from above Affymetrix NetAffx files. \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Details of all aroma.affymetrix specific GenomeWideSNP\_5 annotation files used in the study.}
+\label{tblGWSFiveAromaAffymetrix}
+\end{table}
+
+
 
 \begin{table}[htp]
 \begin{center}
@@ -233,22 +244,22 @@ Notes        & Aroma.affymetrix probe sequence data from above Affymetrix sequen
 File name    & GenomeWideSNP\_6,Full,na26,HB20080722.ufl \\
 File size    & 7,526,454 bytes \\
 MD5 checksum & 6f11e9bd3a7a0cb060d5fcf671b0776a \\
-Notes        & Aroma.affymetrix fragment length data mapping to the full CDF.  Generated from above Affymetrix NetAffx files. \\
+Notes        & Aroma.affymetrix fragment length data mapping to the full CDF.  Compiled from above Affymetrix NetAffx files. \\
 \hline
 File name    & GenomeWideSNP\_6,Full,na26,HB20080821.ugp \\
 File size    & 9,407,937 bytes \\
 MD5 checksum & 5a7bef30a458cb238ae2167aa41f5bd6 \\
-Notes        & Aroma.affymetrix genome location data mapping to the full CDF.  Generated from above Affymetrix NetAffx files. \\
+Notes        & Aroma.affymetrix genome location data mapping to the full CDF.  Comiles from above Affymetrix NetAffx files. \\
 \hline
 File name    & GenomeWideSNP\_6,na26,HB20080821.ufl \\
 File size    & 7,425,058 bytes \\
 MD5 checksum & 522b89d875f39832f5423e78cffba8c8 \\
-Notes        & Aroma.affymetrix fragment length data mapping to the default CDF.  Generated from above Affymetrix NetAffx files. \\
+Notes        & Aroma.affymetrix fragment length data mapping to the full CDF.  Compiled from above Affymetrix NetAffx files. \\
 \hline
 File name    & GenomeWideSNP\_6,na26,HB20080821.ugp \\
 File size    & 9,281,127 bytes \\
 MD5 checksum & ad63ef009b44f1274f6e2a35cb951dbc \\
-Notes        & Aroma.affymetrix genome location data mapping to the default CDF.  Generated from above Affymetrix NetAffx files. \\
+Notes        & Aroma.affymetrix genome location data mapping to the default CDF.  Compiled from above Affymetrix NetAffx files. \\
 \hline
 \end{tabular}
 \end{center}
@@ -264,7 +275,7 @@ Notes        & Aroma.affymetrix genome location data mapping to the default CDF.
 \clearpage
 \section{Summary of annotation data}
 
-This section provides a summary of the relevant annotation data available for the new \GWSFivef (GWS5) and the \GWSSixf (GWS6) chip types.  We separate between the annotation data available in the Chip Definition Files (CDFs) and the NetAffx files, because the former does are unlikely to change over time whereas the latter gets updates when the genome annotations get uppdated.  Affymetrix' NetAffx annotation data are updated several times a year.
+This section provides a summary of the relevant annotation data available for the GWS5 and the GWS6 chip types.  We separate between the annotation data available in the Chip Definition Files (CDFs) and the NetAffx files, because the former does are unlikely to change over time whereas the latter gets updates when the genome annotations get uppdated.  Affymetrix' NetAffx annotation data are updated several times a year.
 
 \subsection{Affymetrix CDF data}
 
@@ -277,11 +288,12 @@ All summaries presented here and in the main paper refer to the full CDFs, unles
 
 \begin{table}[htp]
 \begin{center}
-\begin{tabular}{lrrrr}
+\begin{tabular}{|l|rr||rr|}
+\hline
                         &  \GWSFive &  \GWSFive &   \GWSSix  &   \GWSSix \\
                         &  default  &  full        & default &   full    \\
-\hline									            						             
-\hline									            						             
+\hline
+\hline
 UNIT TYPES              &           &           &            &           \\
 CN units                &  417,269  &  417,269  &   945,826  &   945,826 \\
 SNPs                    &  440,794  &  500,568  &   906,600  &   931,946 \\
@@ -325,7 +337,7 @@ Non-aligned allele pairs &        0  &        0  &        0  &         0  \\
 \hline									            						             
 \end{tabular}
 \end{center}
-\caption{Summary on the unit annotation available in the CDF files.  All values are in counts.}  %% Summary generated 2008-08-22.
+\caption{Summary of the unit annotation available in the CDF files.  All values are in counts.}  %% Summary generated 2008-08-22.
 \label{tblCdfUnits}
 \end{table}
 
@@ -334,11 +346,13 @@ Non-aligned allele pairs &        0  &        0  &        0  &         0  \\
 
 \begin{table}[htp]
 \begin{center}
-\begin{tabular}{lrrrr}
+\begin{tabular}{|l|rr||rr|}
+\hline
                         &  \GWSFive &  \GWSFive &   \GWSSix  &   \GWSSix \\
                         &  default  &  full        & default &   full    \\
-\hline									            						             
-\hline									            						             
+\hline
+\hline
+
 PROBES                  &           &           &            &           \\
 CN units                &   417,269 &   417,269 &    945,826 &   945,826 \\
 SNPs                    & 3,526,352 & 4,004,544 &  5,660,710 & 5,833,210 \\
@@ -390,7 +404,7 @@ Furthermore, for GWS5 the NetAffx annotation files currently available only cont
 \begin{tabular}{|l||rr||rr|}
 \hline
      & \multicolumn{2}{c||}{\GWSFive} & \multicolumn{2}{c|}{\GWSSix} \\
-     & default & full & default & full \\
+     & default & full* & default & full \\
      & \#loci & \#loci & \#loci & \#loci \\
 \hline
 \hline
@@ -410,7 +424,7 @@ Total                            & 861,085 &  920,859  & 1,855,448 & 1,880,794 \
 \hline
 \end{tabular}
 \end{center}
-\caption{Summary of genomic location data that is available in the NetAffx files of contents in \GWSFive and \GWSSix with respect to unit and probe class and availability of annotation data.  The effective sets of units available for CN analysis are emphasized in bold.  The reason for identical data for default and full GWS5 is that the current NetAffx annotation files do not contain data for the full GWS5.  NetAffx v26 was used for this summary.}
+\caption{Summary of genomic location data that is available in the NetAffx files of contents in GWS5 and GWS6 with respect to unit and probe class and availability of annotation data.  The effective sets of units available for CN analysis are emphasized in bold.  *See text for why the default and the full GWS5 are identical.  NetAffx v26 was used for this summary.}
 \label{tblGenomicLocation}
 \end{table}
 
@@ -422,7 +436,7 @@ The genome location per chromosomes is summarized in Tables~\ref{tblGenomicLocat
 \begin{tabular}{|r|r||rr||rr|}
 \hline
      & & \multicolumn{2}{c||}{\GWSFive} & \multicolumn{2}{c|}{\GWSSix} \\
-     & & default & full & default & full \\
+     & & default & full* & default & full \\
 chromosome & seq. length (Mbs) & \#loci & \#loci & \#loci & \#loci \\
 \hline
 \hline
@@ -453,14 +467,13 @@ chromosome & seq. length (Mbs) & \#loci & \#loci & \#loci & \#loci \\
 X  & 152.6   & 26,373  &  26,373  &   86,064  &   87,198  \\
 Y  &  51.0   &    946  &     946  &    8,841  &    9,485  \\
 \hline
-M  &  16.6kb &      -  &       -  &      110  &      445  \\
-\hline
+Mitochondrial  &  16.6kb &      -  &       -  &      110  &      445  \\
 \hline
 total  &     & 755,490 &  755,490 & 1,854,204 & 1,878,785 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Distribution of loci by chromosome for the different CDFs of GWS5 and GWS6.  NetAffx v26 was used for this summary.}
+\caption{Distribution of loci by chromosome for the different CDFs of GWS5 and GWS6.  *See text for why the default and the full GWS5 are identical.  NetAffx v26 was used for this summary.}
 \label{tblGenomicLocation}
 %% Chromosome (sequence) lengths: http://www.ornl.gov/sci/techresources/Human_Genome/posters/chromosome/faqs.shtml
 %% Summaries generated 2008-08-22 using GenomeWideSNP_5,r2,na26,HB20080822 and GenomeWideSNP_5,Full,r2,na26,HB20080822.
@@ -470,79 +483,51 @@ total  &     & 755,490 &  755,490 & 1,854,204 & 1,878,785 \\
 \subsubsection{Restriction enzymes and PCR fragment lengths}
 
 
-\begin{Verbatim}[fontsize=\small]
-GenomeWideSNP_5,r2,na26,HB20080822:
-                snp    cnp affxSnp other  total
-enzyme1-only 116979 140099       0     0 257078
-enzyme2-only  74135   1208       0     0  75343
-both         248980 171077       0     0 420057
-missing         700 104885    3022    24 108631
-total        440794 417269    3022    24 861109
-
-GenomeWideSNP_5,Full,r2,na26,HB20080822:
-                snp    cnp affxSnp other  total
-enzyme1-only 116979 140099       0     0 257078
-enzyme2-only  74135   1208       0     0  75343
-both         248980 171077       0     0 420057
-missing       60474 104885    3022    69 168450
-total        500568 417269    3022    69 920928
-
-GenomeWideSNP_6,na26,HB20080821:
-                snp    cnp affxSnp other   total
-enzyme1-only 240001 451191       0     0  691192
-enzyme2-only 154884      0       0     0  154884
-both         510330 494615       0     0 1004945
-missing        1385     20    3022   621    5048
-total        906600 945826    3022   621 1856069
-
-GenomeWideSNP_6,Full,na26,HB20080722:
-                snp    cnp affxSnp other   total
-enzyme1-only 246080 451191       0     0  697271
-enzyme2-only 160899      0       0     0  160899
-both         522472 494615       0     0 1017087
-missing        2495     20    3022   621    6158
-total        931946 945826    3022   621 1881415
-\end{Verbatim}
-%% [2008-08-22]
-
-
 \begin{table}[htp]
 \begin{center}
-\begin{tabular}{lrr}
-                        &  \GWSFive &   \GWSSix \\
-                        &  full     &   full    \\
+\begin{tabular}{|l||rr||rr|}
 \hline
-FRAGMENT-LENGTH INFORMATION    	&	  				&	 				  \\
-SNPs with known lengths         &  494,245  &   930,559 \\
-SNPs with unknown lengths       &    6,323  &     1,387 \\
-CN probes with known lengths    &  330,645  &   945,826 \\
-CN probes with unknown lengths  &   86,624  &         0 \\
-Total with known lengths        &  824,890  & 1,876,385 \\
-Total with unknown lengths      &   92,947  &     1,387 \\
+     & \multicolumn{2}{c||}{\GWSFive} & \multicolumn{2}{c|}{\GWSSix} \\
+     & default & full* & default & full \\
+     & \#loci & \#loci & \#loci & \#loci \\
 \hline
-SNPS CUT BY EACH ENZYME      & 	  			&	 				  \\
-SNPs only on NspI            &  129,953  &   246,340 \\
-SNPs only on StyI            &   90,418  &   161,064 \\
-SNPs on both                 &  273,874  &   523,155 \\
-SNPs with no annotation      &    6,323\parbox{0mm}{$^*$}  &     1,387\parbox{0mm}{$^*$} \\
-Total                        &  500,568  &   931,946 \\
 \hline
-CN PROBES CUT BY EACH ENZYME & 	  			&	 				  \\
-CN probes only on NspI       &  149,548  &   451,191 \\
-CN probes only on StyI       &        0  &         0 \\
-CN probes on both            &  181,097  &   494,615 \\
-CN probes with no annotation &   86,624\parbox{0mm}{$^*$}  &         0 \\
-Total                        &  417,269  &   945,826 \\
+SNPs on NspI only        & 116,979 &  116,979  &   240,001 &   246,080 \\
+SNPs on StyI only        &  74,135 &   74,135  &   154,884 &   160,899 \\
+SNPs on both             & 248,980 &  248,980  &   510,330 &   522,472 \\
+\hline
+SNPs with known lengths  & 440,094 &  440,094  &   905,215 &   929,451 \\
+SNPs with unknown lengths&     700 &   60,474  &     1,385 &     2,495 \\
+\hline
+\hline
+CN probes on NspI only   & 140,099 &  140,099  &   451,191 &   451,191 \\
+CN probes on StyI only   &   1,208 &    1,208  &         0 &         0 \\
+CN probes on both        & 171,077 &  171,077  &   494,615 &   494,615 \\
+\hline
+CN probes with known lengths   & 312,384 &  312,384  &   945,806 &   945,806 \\
+CN probes with unknown lengths & 104,885 &  104,885  &        20 &        20 \\
+\hline
+\hline
+AFFX-SNPs with known lengths   &       0 &        0  &         0 &         0 \\
+AFFX-SNPs with unknown lengths &   3,022 &    3,022  &     3,022 &     3,022 \\
+\hline
+\hline
+Total with known lengths       & 752,478 &  752,478  & 1,851,021 & 1,875,257 \\
+Total with unknown lengths     & 108,607 &  168,381  &     4,427 &     5,537 \\
+\hline
+Total                          & 861,085 &  920,859  & 1,855,448 & 1,880,794 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Summary of annotation data related to restriction enzyme available in the NetAffx files of contents in \GWSFive and \GWSSix with respect to unit and probe class and availability of annotation data.  The same SNPs and CN probes that lack information on digestion enzyme also lack information on genome position.  NetAffx v26 was used for this summary.}
-\label{tblEnzymeData}
+\caption{Summary of fragment-length data that is available in the NetAffx files of contents in GWS5 and GWS6 with respect to unit and probe class and availability of annotation data.  *See text for why the default and the full GWS5 are identical.  NetAffx v26 was used for this summary.}
+\label{tblGenomicLocation}
 \end{table}
 
 
 
 
+
+\clearpage
 \section{Multi-enzyme digestion}
 \label{secMultiEnzymeDigestion}
 For the 100K as well as the 500K SNP-only assays, DNA is prepared in two parallel processes, each digesting the DNA using a unique enzyme, amplifying the fragments by PCR, and hybridizing the products to separate arrays.  In the GWS assays, which similarly to 500K uses enzymes \NspI and \StyI, the two mixes of PCR products are no longer hybridized to separate arrays but instead hybridized in aliqout to the same array~\citep{Affymetrix_2007f,Affymetrix_2007g}.
@@ -552,7 +537,7 @@ We have found that it is important that the preprocessing models these differenc
 %% [We will later see that the hybridization of two PCR products on the same array requires a special model in order to control for confounded effects due to mixing inbalances.]
 See Table~\ref{tblSNP5SNP6} and Table~\ref{tblSNP5SNP6enzymes} for details on fragment-length information for the two chip types and the two enzymes.
 
-Note that there is no enzyme annotation data available for a large set of the \GWSFive SNP units.  Instead, we use \GWSSix annotation data for the common SNPs and for CN probes for which annotation data otherwise was missing.  For further details and updates on this problem, see The aroma.affymetrix website [\url{http://www.braju.com/R/aroma.affymetrix/}].
+Note that there is no enzyme annotation data available for a large set of the GWS5 SNP units.  Instead, we use \GWSSix annotation data for the common SNPs and for CN probes for which annotation data otherwise was missing.  For further details and updates on this problem, see The aroma.affymetrix website [\url{http://www.braju.com/R/aroma.affymetrix/}].
 
 
 
@@ -561,6 +546,7 @@ Note that there is no enzyme annotation data available for a large set of the \G
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % OTHER MODELS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
 \section{How raw copy numbers were estimated by other models}
 \label{secOtherMethods}
 In addition to CRMA~v2, two external methods were evaluated in this paper.  The first is Affymetrix' \emph{CN5} method~\citep{Affymetrix_2008m}, and the second is implemented in the dChip software~\citep{LiWong_2001}.
@@ -575,14 +561,14 @@ Log ratios are calculated as in Eqn~\eqref{eqnLogRatio}, where the reference is 
 \textit{Important limitations}:
 It is not possible in current implementation of CN5 to estimate raw CN ratios on ChrX using ``males'' as well.  Moreover, since the software does not export $\{\theta_{ij}\}$ either, it is not possible solve this problem by calculating the log-ratios externally.  In order to do a fair evaluation, we instead have to calculate ChrX CNs for the other methods based on ``females'' only.
 
-The CN5 method is only available for \GWSSix.  Affymetrix explicitly says that neither GTC nor APT supports it for \GWSFive.
+The CN5 method is only available for \GWSSix.  Affymetrix explicitly says that neither GTC nor APT implements CN5 for GWS5.
 
 It is also limited to the default CDF, that is, it cannot be used with \filename{GenomeWideSNP\_6.Full.cdf} (this is because the implemented model is 'hardwired' to the default CDF).
 
 
 
 \subsection{dChip}
-For the dChip model, we used the \pkg{dChip~2008} (Build: July 10, 2008, \url{http://www.dchip.org/}).  Probe-level data was normalized using the \emph{invariant-set method}~\citep{LiWong_2001}, and PM signals were background corrected by '5th percentile of region (PM-only)'.  Array 'NA12750' was suggested by dChip to be used as the baseline array for normalization, because it had the median median (sic!) probe signal.  As suggested, we verified that the spatial intensity plot of this array was not abnormal.
+For the dChip model, we used the \pkg{dChip~2008} (Build: July 10, 2008, \url{http://www.dchip.org/}).  Probe-level data was normalized using the \emph{invariant-set method}~\citep{LiWong_2001}, and PM signals were background corrected by '5th percentile of region (PM-only)'.  For GWS6, array 'NA12750' was suggested by dChip to be used as the baseline array for normalization, because it had the median median (sic!) probe signal.  As suggested, we verified that the spatial intensity plot of this array was not abnormal.
 For probe summarization, the dChip multiplicate model was used, with $\PM=\PMA+\PMB$ for SNPs (``Compute signals separately for A and B allele'' unchecked), returning MBEI scores (corresponding to $\{\theta_{ij}\}$).  For maximal comparison, the MBEI scores were imported to \pkg{aroma.affymetrix} and raw CNs where calculated as in Eqn~\eqref{eqnLogRatio}.
 
 %% We used GenomeWideSNP_6.Full.cdf
@@ -594,33 +580,49 @@ For probe summarization, the dChip multiplicate model was used, with $\PM=\PMA+\
 Due to odd performance of dChip for SNPs, we also ran the analysis where the MBEI probe summarization was replaced by averaging the signals while keeping everything else the same.  We denote this flavor of the dChip method by adding an asterisk to the label.
 
 
-%% We are not aware of other freely available tools that can easily process \GWSFive or \GWSSix data for copy number analysis.
+%% We are not aware of other freely available tools that can easily process GWS5 or GWS6 data for copy number analysis.
 
 \begin{table}[htp]
 \begin{center}
-\begin{tabular}{lcccc}
-                             &  APT      & CRMA6     & dChip     & GTC~v2  \\
+\begin{tabular}{|l|cc|c|c|cc|}
 \hline
-GenomeWideSNP\_5 (default)   &  yes      & yes       & yes       & no      \\
-GenomeWideSNP\_5 (full)      &  yes      & yes       & yes       & no      \\
-GenomeWideSNP\_6 (default)   &  yes      & yes       & yes       & yes     \\
-GenomeWideSNP\_6 (full)      &  yes      & yes       & yes       & no      \\
+                             & CRMA~(v1) & CRMA~v2 & dChip & CNAG & CN4 & CN5 \\
+\hline
+\hline
+Mapping10K\_Xba131           & yes     & yes       & yes   &    - &   - &  -  \\
+Mapping10K\_Xba142           & yes     & yes       & yes   &    - &   - &  -  \\
+\hline
+Mapping50K\_Hind240          & yes     & yes       & yes   &  yes & yes &  -  \\
+Mapping50K\_Xba240           & yes     & yes       & yes   &  yes & yes &  -  \\
+\hline
+Mapping250K\_Nsp             & yes     & yes       & yes   &  yes & yes &  -  \\
+Mapping250K\_Sty             & yes     & yes       & yes   &  yes & yes &  -  \\
+\hline
+GenomeWideSNP\_5 (default)   &  -      & yes       & yes   &    - &  -  &  -  \\
+GenomeWideSNP\_5 (full)      &  -      & yes       & yes   &    - &  -  &  -  \\
+\hline
+GenomeWideSNP\_6 (default)   &  -      & yes       & yes   &    - &  -  & yes \\
+GenomeWideSNP\_6 (full)      &  -      & yes       & yes   &    - &  -  &  -  \\
+\hline
+Custom SNP \& CN chip types  &  yes    & yes       &   ?   &    - &  ?  &  ?  \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Summary of methods for estimating raw CNs.}
+\caption{Summary of methods that estimate raw CNs for the different Affymetrix SNP \& CN chip types.}
 \label{tblSummaryOfMethods}
 \end{table}
 
 
 
+\clearpage
 \section{Methods for the evaluation}
-We base all the performance assessments using relative copy numbers (chip effects) on the non-logaritmic scale, that is, $C_{ij}=2\cdot\theta_{ij}/\theta_{Rj}$.  This contrary to \cite{BengtssonH_etal_2008a}, where we used log-ratios $M_{ij}=\log_2(\theta_{ij}/\theta_{Rj})$.  
+We base all the performance assessments using relative copy numbers (chip effects) on the non-logaritmic scale, that is, $C_{ij}=2\cdot\theta_{ij}/\theta_{Rj}$.  This is contrary to \cite{BengtssonH_etal_2008a}, where we used log-ratios $M_{ij}=\log_2(\theta_{ij}/\theta_{Rj})$.  
 %% If there are no negative $C_{ij}$, the full-resolution ROC estimates are identical, because the ROC is invariant under strictly increasing transforms.
 
 Smoothing...
 
 
+\clearpage
 \section{Sets of loci used for the evaluation}
 
 We use ChrX and ChrY loci for the evaluation with pseudo-autosomal regions (PARs) and known CN polymorphic (CNPs) regions excluded.  
@@ -670,7 +672,7 @@ For CNP regions, we use the ones identified by \citet{RedonR_etal_2006}.  There 
 %% 
 %% 
 %% \subsection{Assessment of GWS5 estimates}
-%% In this section we give a brief summary of the results from estimating raw CNs in the \GWSFive assay using the CRMA6, the APT, and the dChip method.  The GTC software does not support the \GWSFive assay.
+%% In this section we give a brief summary of the results from estimating raw CNs in the GWS6 assay using the CRMA6, the APT, and the dChip method.  The GTC software does not support the GWS5 assay.
 %% 
 %% [Will run this when Affymetrix release the corrected annotation data...]
 

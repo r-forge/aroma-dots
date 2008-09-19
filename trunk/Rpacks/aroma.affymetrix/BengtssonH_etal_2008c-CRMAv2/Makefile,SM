@@ -28,7 +28,7 @@ $(foo).bbl: $(foo).tex $(BIBINCLUDES)
 	latex $(foo).tex;
 
 $(foo).pdf: $(foo).ps
-	ps2pdf $(foo).ps
+	ps2pdf "$(foo).ps"
 
 
 
