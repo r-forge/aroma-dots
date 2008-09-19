@@ -844,7 +844,6 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ufe <- map <- NULL;
   nbrOfArrays <- nbrOfArrays(ces);
-  res <- vector("list", nbrOfArrays);
   for (kk in seq_len(nbrOfArrays)) {
     ce <- getFile(ces, kk);
     verbose && enter(verbose, sprintf("Array #%d of %d ('%s')",
@@ -867,7 +866,6 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
       # CDF inheritance
       setCdf(ceN, cdf);
 
-      res[[kk]] <- ceN;
       verbose && exit(verbose);
       next;
     }
@@ -932,18 +930,11 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
     gc <- gc();
     verbose && print(verbose, gc);
 
-    res[[kk]] <- ceN;
-
     verbose && exit(verbose);
   } # for (kk in ...)
 
-  # Create the output set (ad hoc for now so that we keep parameter too)
-  outputSet <- clone(ces);
-  outputSet$files <- res;
-  clearCache(outputSet);
-
-  # Update the output data set
-  this$outputSet <- outputSet;
+  # Create the output set
+  outputSet <- getOutputDataSet(this, verbose=less(verbose,5));
 
   verbose && exit(verbose);
   
@@ -952,6 +943,12 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
 
 ############################################################################
 # HISTORY:
+# 2008-09-19
+# o BUG FIX: process() of FragmentEquivalentClassNormalization did not 
+#   return a data set for which the sample attributes has been updated 
+#   according to optional sample annotation files (SAFs).
+# o MEMORY OPTIMIZATION: process() no longer records each normalized array.
+# o CLEANUP: process() no longer sets (unused) .outputSet field. 
 # 2008-07-20
 # o Updated the following methods to preallocate matrixes with the correct
 #   data type to avoid coercing later: normalizeOneArrayVector().

@@ -118,9 +118,9 @@ setMethodS3("calculateBaseline", "ChipEffectSet", function(this, chromosomes=NUL
     }
 
     verbose && enter(verbose, "Identifying samples that have the baseline ploidy and those that have not");
-    isBaseline <- (sapply(this, FUN=function(cf) {
-      getPloidy(cf, chromosome=chromosome, defaultValue=defaultPloidy);
-    }) == ploidy);
+    ploidies <- sapply(this, FUN=getPloidy, chromosome=chromosome, 
+                                              defaultValue=defaultPloidy);
+    isBaseline <- (ploidies == ploidy);
     nB <- sum(isBaseline, na.rm=TRUE);
     # Number of samples with non-baseline ploidies.
     nM <- n - nB;

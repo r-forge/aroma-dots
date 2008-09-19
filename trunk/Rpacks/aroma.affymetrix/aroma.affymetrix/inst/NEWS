@@ -1,6 +1,12 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.4.6 [2008-09-19]
+o BUG FIX: process() of FragmentLengthNormalization did not return a
+  data set for which the sample attributes has been updated according
+  to optional sample annotation files (SAFs).
+
+
 Version: 0.9.4.5 [2008-09-17]
 o Added argument 'onMissing' to FragmentLengthNormalization, which is
   passed down to normalizeFragmentLength() [req aroma.light v1.9.2] to
