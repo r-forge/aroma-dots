@@ -1,6 +1,10 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.4.4 [2008-09-18]
+o Added argument 'skip' to writeChecksum() of GenericDataFile.
+
+
 Version: 0.9.4.3 [2008-09-03]
 o Added getSnpPositions(), getSnpShifts(), getSnpNucleotides() and
   groupBySnpNucleotides() to AromaCellSequenceFile.
