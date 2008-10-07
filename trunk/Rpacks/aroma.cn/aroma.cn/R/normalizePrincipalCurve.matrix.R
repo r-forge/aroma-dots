@@ -1,4 +1,4 @@
-setMethodS3("normalizePrincipalCurve", "matrix", function(x, ..., returnFit=FALSE) {
+setMethodS3("normalizePrincipalCurve", "matrix", function(x, ..., center=TRUE, returnFit=FALSE) {
   # Fit principal curve
   fit <- fitPrincipalCurve(x, ...);
 
@@ -12,11 +12,13 @@ setMethodS3("normalizePrincipalCurve", "matrix", function(x, ..., returnFit=FALS
     xN <- -xN;
   }
 
-  # Same center for each column
-  for (cc in seq(length=ncol(x))) {
-    mu <- median(x[,cc], na.rm=TRUE);
-    muN <- median(xN[,cc], na.rm=TRUE);
-    xN[,cc] <- xN[,cc] - (muN-mu);
+  if (center) {
+    # Same center for each column
+    for (cc in seq(length=ncol(x))) {
+      mu <- median(x[,cc], na.rm=TRUE);
+      muN <- median(xN[,cc], na.rm=TRUE);
+      xN[,cc] <- xN[,cc] - (muN-mu);
+    }
   }
 
   # Return fit?
@@ -26,14 +28,6 @@ setMethodS3("normalizePrincipalCurve", "matrix", function(x, ..., returnFit=FALS
   xN;
 }) # normalizePrincipalCurve()
 
-
-setMethodS3("normalizePrincipalCurve", "data.frame", function(x, ...) {
-  x <- as.matrix(x);
-  xN <- normalizePrincipalCurve(x, ...);
-  rm(x);
-  xN <- as.data.frame(xN);
-  xN;
-})
 
 
 
@@ -76,6 +70,8 @@ setMethodS3("makeSmoothSplinePredict", "numeric", function(x, y, df=5, ...) {
 
 ###########################################################################
 # HISTORY:
+# 2008-10-08
+# o Removed implementation for data.frame:s.
 # 2008-05-27
 # o Added normalizePrincipalCurve().
 # o Created.  Will probably end up in aroma.light.

@@ -1,6 +1,10 @@
 Package: aroma.cn
 =================
 
+Version: 0.1.7 [2008-10-07]
+o ALPHA: Added backtransformPrincipalCurve().
+
+
 Version: 0.1.6 [2008-08-18]
 o Added alpha version of MultiSourceCopyNumberNormalization.
 

@@ -42,13 +42,10 @@
 \alias{process.TotalCnSmoothing}
 \alias{TotalCnSmoothing}
 \alias{fitPrincipalCurve}
-\alias{fitPrincipalCurve.data.frame}
-\alias{fitPrincipalCurve.matrix}
 \alias{get.lam.hb}
 \alias{makeSmoothSplinePredict}
 \alias{makeSmoothSplinePredict.numeric}
 \alias{normalizePrincipalCurve}
-\alias{normalizePrincipalCurve.data.frame}
 \alias{normalizePrincipalCurve.matrix}
 \alias{principal.curve.hb}
 \alias{as.character.MultiSourceCopyNumberNormalization}
@@ -69,6 +66,8 @@
 \alias{nbrOfDataSets.MultiSourceCopyNumberNormalization}
 \alias{normalizeOne}
 \alias{normalizeOne.MultiSourceCopyNumberNormalization}
+\alias{backtransformPrincipalCurve}
+\alias{backtransformPrincipalCurve.matrix}
 
 \description{
   This page contains aliases for all "non-documented" objects that

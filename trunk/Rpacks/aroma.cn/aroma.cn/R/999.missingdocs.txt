@@ -18,10 +18,10 @@
   getTargetPositions.TotalCnSmoothing getTargetUgpFile
   getTargetUgpFile.TotalCnSmoothing process.TotalCnSmoothing
   TotalCnSmoothing
-  fitPrincipalCurve fitPrincipalCurve.data.frame
-  fitPrincipalCurve.matrix get.lam.hb makeSmoothSplinePredict
+  fitPrincipalCurve
+  get.lam.hb makeSmoothSplinePredict
   makeSmoothSplinePredict.numeric normalizePrincipalCurve
-  normalizePrincipalCurve.data.frame normalizePrincipalCurve.matrix
+  normalizePrincipalCurve.matrix
   principal.curve.hb
   as.character.MultiSourceCopyNumberNormalization
   extractTupleOfDataFiles fitOne getAllNames getFitAromaUgpFile
@@ -33,3 +33,4 @@
   getSmoothedDataSets getSubsetToFit nbrOfDataSets
   nbrOfDataSets.MultiSourceCopyNumberNormalization normalizeOne
   normalizeOne.MultiSourceCopyNumberNormalization
+  backtransformPrincipalCurve backtransformPrincipalCurve.matrix
