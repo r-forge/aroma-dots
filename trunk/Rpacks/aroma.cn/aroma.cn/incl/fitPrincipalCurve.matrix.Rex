@@ -48,7 +48,6 @@ for (rr in 1:2) {
 }
 
 
-x11()
 layout(matrix(1:4, nrow=2, byrow=TRUE))
 par(mar=c(4,4,2,1)+0.1)
 for (cc in 1:3) {
