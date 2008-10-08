@@ -100,21 +100,29 @@ setMethodS3("fitPrincipalCurve", "matrix", function(X, fixDimension=NULL, ..., v
     verbose && cat(verbose, "Dimension: ", fixDimension);
 
     verbose && enter(verbose, "Fitting 'fix' dimension");
-    # Any missing values are already excluded at this stage
-    x0 <- X[,fixDimension, drop=TRUE];
-    x1 <- fit$s[,fixDimension, drop=TRUE];
-    if (length(x0) != length(x1)) {
-      throw("Error in assumption. Internal 'x0' and 'x1' are of different lengths: ", length(x0), " != ", length(x1));
+    lambda <- fit$lambda;
+    x <- fit$s[,fixDimension, drop=TRUE];
+    if (length(x) != length(lambda)) {
+      throw("Error in assumption. Internal 'x' and fitted 'lambda' are of different lengths: ", length(x), " != ", length(lambda));
     }
+    ok <- whichVector(is.finite(x) & is.finite(lambda));
+    lambda <- lambda[ok];
+    x <- x[ok];
+    rm(ok);
+    if (length(x) < 2) {
+      throw("Cannot constrain fit to dimension: No or too few finite estimates available: ", length(x));
+    }
+
     # To find f^{-1}() s.t. x1 = f(x0), we fit x0 = f^{-1}(x1) on (x1,x0).
-    fitT <- smooth.spline(x0, x1, ...);
-    rm(x0,x1);
+    fitT <- smooth.spline(lambda, x, ...);
+    rm(x,lambda);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Adjusting principal-curve fit accordingly");
     for (cc in seq(length=p)) {
-      values <- fit$s[,cc, drop=TRUE];
-      values <- predict(fitT, x=values)$y;
+      x <- fit$s[,cc, drop=TRUE];
+      ok <- whichVector(is.finite(x));
+      x[ok] <- predict(fitT, x=x[ok])$y;
       fit$s[,cc] <- values;
     }
     attr(fit, "fitT") <- fitT;
@@ -137,6 +145,8 @@ setMethodS3("fitPrincipalCurve", "matrix", function(X, fixDimension=NULL, ..., v
 
   verbose && exit(verbose);
 
+  class(fit) <- c("PrincipalCurve", class(fit));
+
   fit;
 }) # fitPrincipalCurve()
 
@@ -145,6 +155,9 @@ setMethodS3("fitPrincipalCurve", "matrix", function(X, fixDimension=NULL, ..., v
 ###########################################################################
 # HISTORY:
 # 2008-10-08
+# o Now the fitted object is of class PrincipalCurve that extends the
+#   princurve::principal.curve class.
+# 2008-10-07
 # o Added Rdoc comments and an example.
 # o Removed implementation for data.frame:s.
 # 2008-10-03

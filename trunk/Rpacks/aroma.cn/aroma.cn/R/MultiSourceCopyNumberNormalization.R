@@ -18,7 +18,12 @@
 #  \item{dsList}{A @list of K @see "AromaTotalCnBinarySet":s.}
 #  \item{fitUgp}{An @see "aroma.core::AromaUgpFile" that specifies the 
 #    common set of loci used to normalize the data sets at.}
-#  \item{...}{Arguments passed to @see "aroma.core::AromaTabularBinaryFile".}
+#  \item{subsetToFit}{The subset of loci (as mapped by the \code{fitUgp}
+#    object) to be used to fit the normalization functions.
+#    If @NULL, loci on chromosomes 1-22 are used, but not on ChrX and ChrY.
+#    %% If @NULL, all loci are considered.
+#  }
+#  \item{...}{Not used.}
 # }
 #
 # \section{Fields and Methods}{
@@ -37,7 +42,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, ...) {
+setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, ...) {
   if (!is.null(dsList)) {
     # Arguments 'dsList':
     if (is.list(dsList)) {
@@ -62,11 +67,22 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
     if (!inherits(fitUgp, className)) {
       throw("Argument 'fitUgp' is not an ", className, ": ", class(fitUgp)[1]);
     }
+
+    # Argument 'subsetToFit':
+    if (is.null(subsetToFit)) {
+    } else if (is.character(subsetToFit)) {
+      throw("Yet not implemented: Argument 'subsetToFit' is of type character.");
+    } else {
+      subsetToFit <- Arguments$getIndices(subsetToFit, 
+                                          range=c(1, nbrOfUnits(fitUgp)));
+    }
   }
+
 
   extend(Object(), "MultiSourceCopyNumberNormalization",
     .dsList = dsList,
     .fitUgp = fitUgp,
+    .subsetToFit = subsetToFit,
     .dsSmoothList = NULL
   )
 })
@@ -158,7 +174,7 @@ setMethodS3("getOutputPaths", "MultiSourceCopyNumberNormalization", function(thi
 });
 
 
-setMethodS3("getOutputDataSets", "MultiSourceCopyNumberNormalization", function(this, ...) {
+setMethodS3("getOutputDataSets", "MultiSourceCopyNumberNormalization", function(this, ..., force=FALSE) {
   dsList <- getInputDataSets(this);
   paths <- getOutputPaths(this);
   dsOutList <- list();
@@ -472,7 +488,7 @@ setMethodS3("getSubsetToFit", "MultiSourceCopyNumberNormalization", function(thi
 
   units <- this$.subsetToFit;
   if (is.null(units)) {
-    verbose && enter(verbose, "Identify subset of (smoothing) units for fitting the model");
+    verbose && enter(verbose, "Identify subset of (smoothed) units for fitting the model");
 
     ugp <- getFitAromaUgpFile(this);
     verbose && print(verbose, ugp);
@@ -553,7 +569,7 @@ setMethodS3("getParametersAsString", "MultiSourceCopyNumberNormalization", funct
 #   @seeclass
 # }
 #*/########################################################################### 
-setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfList, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfList, ..., force=FALSE, .retData=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -579,6 +595,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   df <- dfList[[1]];
   name <- getName(df);
   verbose && cat(verbose, "Sample name: ", name);
+  rm(dfList);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -594,32 +611,32 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Smooth data towards target UGP, which specifies the common set of loci
   dsSmooth <- getSmoothedDataSets(this, verbose=less(verbose, 1));
-  dfList <- extractTupleOfDataFiles(this, dsList=dsSmooth, name=name, 
+  dfSList <- extractTupleOfDataFiles(this, dsList=dsSmooth, name=name, 
                                                  verbose=less(verbose, 1));
   rm(dsSmooth);
-  verbose && str(verbose, dfList);
+  verbose && str(verbose, dfSList);
 
   # Identify and exlude missing data sets
-  keep <- sapply(dfList, FUN=function(df) !identical(df, NA));
+  keep <- sapply(dfSList, FUN=function(df) !identical(df, NA));
   keep <- whichVector(keep);
-  dfList <- dfList[keep];
+  dfSList <- dfSList[keep];
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already fitted?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  fullnames <- sapply(dfList, getFullName);
+  fullnames <- sapply(dfSList, getFullName);
   fullnames <- unname(fullnames);
 
-  chipTypes <- sapply(dfList, getChipType);
+  chipTypes <- sapply(dfSList, getChipType);
   chipTypes <- unname(chipTypes);
 
-  checkSums <- sapply(dfList, getChecksum);
+  checkSums <- sapply(dfSList, getChecksum);
   checkSums <- unname(checkSums);
 
   key <- list(method="fitOne", class="MultiSourceCopyNumberNormalization", 
              fullnames=fullnames, chipTypes=chipTypes, checkSums=checkSums,
-                                                  subsetToFit=subsetToFit);
+             subsetToFit=subsetToFit, version="2008-10-07");
   dirs <- c("aroma.affymetrix", "MultiSourceCopyNumberNormalization");
   if (!force) {
     transforms <- loadCache(key=key, dirs=dirs);
@@ -638,93 +655,78 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   verbose && cat(verbose, "Subset of units used for fitting:");
   verbose && str(verbose, subsetToFit);
   # Extracting data for sample to be normalized
-  M <- lapply(dfList, FUN=function(df) {
+  Y <- lapply(dfSList, FUN=function(df) {
     extractMatrix(df, rows=subsetToFit, column=1, drop=TRUE);
   });
 
   rm(subsetToFit);  # Not needed anymore
 
-  M <- as.data.frame(M);
+  Y <- as.data.frame(Y);
+  Y <- as.matrix(Y);
+  dim <- dim(Y);
   gc <- gc();
   verbose && cat(verbose, gc);
-  verbose && str(verbose, M);
-  verbose && summary(verbose, M);
+  verbose && str(verbose, Y);
+  verbose && summary(verbose, Y);
   verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Fit principal curve to smoothed data (M[,1], M[,2], ..., M[,K]) 
+  # Fit principal curve to smoothed data (Y[,1], Y[,2], ..., Y[,K]) 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Across-source fit of smoothed data");
+  verbose && enter(verbose, "Fitting across-source normalization function");
   t <- system.time({
-    Mn <- normalizePrincipalCurve(M);
+    fit <- fitPrincipalCurve(Y);
   });
+
+  # Flip direction of the curve ('lambda')?
+  rho <- cor(fit$lambda, Y[,1], use="complete.obs");
+  flip <- (rho < 0);
+  if (flip) {
+    fit$lambda <- max(fit$lambda, na.rm=TRUE) - fit$lambda;
+    verbose && cat(verbose, "Direction of fitted curve ('lambda') was flipped such that it increases with the signal.");
+  }
+
   verbose && printf(verbose, "Processing time: %.1f seconds\n", 
                                                           as.double(t[3]));
 
+  if (.retData) {
+    fit$Y <- Y;
+  }
+  rm(Y);
+
   # Sanity check
-  if (!identical(dim(Mn), dim(M))) {
-    throw("Internal error: The normalize data has a different dimension that the non-normalized data: ", paste(dim(Mn), collapse="x"), " != ", paste(dim(M), collapse="x"));
+  if (!identical(dim(fit$s), dim)) {
+    throw("Internal error: The fitted data has a different dimension that the input data: ", paste(dim(fit$s), collapse="x"), " != ", paste(dim, collapse="x"));
   }
   gc <- gc();
   verbose && cat(verbose, gc);
-  verbose && str(verbose, Mn);
-  verbose && summary(verbose, Mn);
+  verbose && str(verbose, fit);
   verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Standardize the channels to a target channel?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##   targetChannel <- NULL;
-##   if (!is.null(targetChannel)) {
-##     for (kk in seq(length=ncol(M))) {
+  targetChannel <- NULL;
+  if (!is.null(targetChannel)) {
+##     for (kk in seq(length=dim[2])) {
 ##       if (kk == targetChannel) {
 ##         targetTransform <- function(x, ...) x;
 ##       } else {
-##         targetTransform <- makeSmoothSplinePredict(Mn[,kk], Mn[,targetChannel]);
+##         targetTransform <- makeSmoothSplinePredict(Yn[,kk], Yn[,targetChannel]);
 ##       }
 ##     } # for (kk ...)
-##   }
+  }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Find the normalization function for each source (array)
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Finding normalization function for each array");
-  transforms <- vector("list", nbrOfArrays);
-  for (kk in seq(along=dfList)) {
-    df <- dfList[[kk]];
-    fullname <- getFullName(df);
-    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
-                                            kk, fullname, length(dfList)));
-    transform <- makeSmoothSplinePredict(M[,kk], Mn[,kk]);
-
-    verbose && enter(verbose, "Saving");
-##      header <- list(dataSet=dsList[kk], fullname=fullnames[kk], 
-##                                                 chipType=chipTypes[kk]);
-##      fit <- list(header=header, n=length(M[[kk]]), transform=transform);
-##      saveObject(fit, file=pathname);
-    verbose && exit(verbose);
-
-    idx <- keep[kk];
-    transforms[[idx]] <- transform;
-    rm(transform);
-
-    gc <- gc();
-    verbose && print(verbose, gc);
-
-    verbose && exit(verbose);
-  } # for (kk ...)
-  verbose && exit(verbose);
-
+#  class(fit) <- c("MultiSourceCopyNumberNormalizationFit", class(fit));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Save to cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  saveCache(key=key, dirs=dirs, transforms);
+  saveCache(key=key, dirs=dirs, fit);
 
-
-  transforms;
+  fit;
 }, protected=TRUE)  # fitOne()
 
 
@@ -796,17 +798,14 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
     } else {
       verbose && enter(verbose, "Normalizing");
 
-      transform <- fit[[kk]];
-      verbose && cat(verbose, "Fitted transform:");
-      verbose && str(verbose, transform);
-  
       verbose && enter(verbose, "Reading data");
       y <- extractMatrix(df, rows=subsetToUpdate, column=1, drop=TRUE);
+      verbose && str(verbose, y);
       verbose && exit(verbose);
   
-      verbose && enter(verbose, "Transforming data");
-      yN <- transform(y);
-      rm(transform);
+      verbose && enter(verbose, "Backtransforming data");
+      yN <- backtransformPrincipalCurve(y, fit=fit, dimensions=kk);
+      verbose && str(verbose, yN);
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Storing normalized data");
@@ -1001,9 +1000,54 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 })
 
 
+setMethodS3("pairs2", "principal.curve", function(fit, pch=19, cex=0.8, fitCol="red", fitLwd=2, fitLty=1, xlim=NULL, ylim=xlim, lower.panel=NULL, ...) {
+  r <- range(c(fit$s, fit$Y), na.rm=TRUE);
+
+  # Argument 'xlim' & 'ylim':
+  if (is.null(xlim)) {
+    xlim <- r;
+  }
+  if (is.null(ylim)) {
+    ylim <- r;
+  }
+
+  hasData <- !is.null(fit$Y);
+
+  nbrOfVars <- ncol(fit$s);
+  layout(matrix(1:(nbrOfVars-1)^2, nrow=nbrOfVars-1, ncol=nbrOfVars-1, byrow=TRUE));
+  par(mar=c(3,3,1,1)+0.1);
+  for (rr in seq(from=1, to=nbrOfVars)) {
+    if (rr == nbrOfVars)
+      next;
+    for (cc in seq(from=1, to=nbrOfVars)) {
+      if (cc < rr) {
+        plot.new();
+      } else if (cc == rr) {
+      } else {
+        plot(NA, xlim=xlim, ylim=ylim, xlab="", ylab="");
+        abline(a=0, b=1, lty=3, col="#999999", lwd=2);
+        if (hasData) {
+          y <- fit$Y[,c(cc,rr),drop=FALSE];
+          points(y, pch=pch, cex=cex, ...);
+        }
+
+        if (fitLwd > 0) {
+          y <- fit$s[,c(cc,rr),drop=FALSE];
+          lines(y, col=fitCol, lwd=fitLwd, lty=fitLty);
+        }
+      }
+    } # for (cc ...)
+  } # for (rr ...)
+})
 
 ###########################################################################
 # HISTORY:
+# 2008-10-08
+# o Now fitOne() makes sure the fitted curve has a "positive" direction.
+# o Added argument 'subsetToFit' with some support, but still incomplete.
+# 2008-10-07
+# o Updated fitOne() and normalizeOne() to make use of the updated/new
+#   fit- and backtransformPrincipalCurve() functions.
 # 2008-08-18
 # o Added normalizeOne() and process().
 # o Added utility function extractTupleOfDataFiles().
