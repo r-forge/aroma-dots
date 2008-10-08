@@ -21,7 +21,7 @@
  by \code{\link[aroma.cn:getSubsetToFit.MultiSourceCopyNumberNormalization]{*getSubsetToFit}()}.
 }
 
-\usage{\method{fitOne}{MultiSourceCopyNumberNormalization}(this, dfList, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{fitOne}{MultiSourceCopyNumberNormalization}(this, dfList, ..., force=FALSE, .retData=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{name}{A \code{\link[base]{character}} string specifying the sample name of interest.}

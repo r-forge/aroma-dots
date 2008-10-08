@@ -35,13 +35,21 @@ extends \link[R.oo]{Object}\cr
   the mean level of the normalized data are the same.
  }
 
- \usage{MultiSourceCopyNumberNormalization(dsList=NULL, fitUgp=NULL, ...)}
+ \usage{MultiSourceCopyNumberNormalization(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, ...)}
 
  \arguments{
   \item{dsList}{A \code{\link[base]{list}} of K \code{\link{AromaTotalCnBinarySet}}:s.}
   \item{fitUgp}{An \code{\link[aroma.core]{AromaUgpFile}} that specifies the
     common set of loci used to normalize the data sets at.}
-  \item{...}{Arguments passed to \code{\link[aroma.core]{AromaTabularBinaryFile}}.}
+  \item{subsetToFit}{The subset of loci (as mapped by the \code{fitUgp}
+    object) to be used to fit the normalization functions.
+    If \code{\link[base]{NULL}}, loci on chromosomes 1-22 are used, but not on ChrX and ChrY.
+  }
+  \item{targetDimension}{A \code{\link[base]{numeric}} index specifying the data set in
+    \code{dsList} to which each platform in standardize towards.
+    If \code{\link[base]{NULL}}, the arbitrary scale along the fitted principal curve
+    is used.  This always starts at zero and increases.}
+  \item{...}{Not used.}
  }
 
  \section{Fields and Methods}{
