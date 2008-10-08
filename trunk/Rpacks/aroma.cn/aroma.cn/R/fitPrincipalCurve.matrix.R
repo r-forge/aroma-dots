@@ -14,9 +14,6 @@
 #
 # \arguments{
 #  \item{X}{An NxK @matrix (K>=2) where the columns represent the dimension.}
-#  \item{fixDimension}{An optional @integer specifying which dimension
-#    to keep fix such that the corresponding component of the estimated 
-#    principal curve is (approximately) the identify function.}
 #  \item{...}{Other arguments passed to @see "princurve::principal.curve".}
 #  \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -45,7 +42,7 @@
 #   @see "princurve::principal.curve".
 # }
 #*/######################################################################### 
-setMethodS3("fitPrincipalCurve", "matrix", function(X, fixDimension=NULL, ..., verbose=FALSE) {
+setMethodS3("fitPrincipalCurve", "matrix", function(X, ..., verbose=FALSE) {
   require("princurve") || throw("Package not loaded: princurve");
 
   # The current implementation contains bugs. /HB 2008-05-26
@@ -57,10 +54,6 @@ setMethodS3("fitPrincipalCurve", "matrix", function(X, fixDimension=NULL, ..., v
   n <- nrow(X);
   p <- ncol(X);
 
-  if (!is.null(fixDimension)) {
-    fixDimension <- Arguments$getIndex(fixDimension, range=c(1,p));
-  }
-
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -71,10 +64,6 @@ setMethodS3("fitPrincipalCurve", "matrix", function(X, fixDimension=NULL, ..., v
 
   verbose && enter(verbose, "Fitting principal curve");
   verbose && cat(verbose, "Data size: ", n, "x", p);
-
-  if (!is.null(fixDimension)) {
-    verbose && cat(verbose, "Keeping dimension fix: ", fixDimension);
-  }
 
   verbose && enter(verbose, "Identifying missing values");
   # princurve::principal.curve() does not handle missing values.
@@ -92,45 +81,6 @@ setMethodS3("fitPrincipalCurve", "matrix", function(X, fixDimension=NULL, ..., v
   verbose && enter(verbose, "Calling principal.curve()");
   fit <- principal.curve(X, ...);
   verbose && exit(verbose);
-
-  fit$fixDimension <- fixDimension;
-
-  if (!is.null(fixDimension)) {
-    verbose && enter(verbose, "Fixing one of the dimensions");
-    verbose && cat(verbose, "Dimension: ", fixDimension);
-
-    verbose && enter(verbose, "Fitting 'fix' dimension");
-    lambda <- fit$lambda;
-    x <- fit$s[,fixDimension, drop=TRUE];
-    if (length(x) != length(lambda)) {
-      throw("Error in assumption. Internal 'x' and fitted 'lambda' are of different lengths: ", length(x), " != ", length(lambda));
-    }
-    ok <- whichVector(is.finite(x) & is.finite(lambda));
-    lambda <- lambda[ok];
-    x <- x[ok];
-    rm(ok);
-    if (length(x) < 2) {
-      throw("Cannot constrain fit to dimension: No or too few finite estimates available: ", length(x));
-    }
-
-    # To find f^{-1}() s.t. x1 = f(x0), we fit x0 = f^{-1}(x1) on (x1,x0).
-    fitT <- smooth.spline(lambda, x, ...);
-    rm(x,lambda);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Adjusting principal-curve fit accordingly");
-    for (cc in seq(length=p)) {
-      x <- fit$s[,cc, drop=TRUE];
-      ok <- whichVector(is.finite(x));
-      x[ok] <- predict(fitT, x=x[ok])$y;
-      fit$s[,cc] <- values;
-    }
-    attr(fit, "fitT") <- fitT;
-    rm(fitT);
-    verbose && exit(verbose);
-
-    verbose && exit(verbose);
-  }
 
   if (anyMissing) {
     values <- matrix(as.double(NA), nrow=n, ncol=p);
@@ -155,6 +105,8 @@ setMethodS3("fitPrincipalCurve", "matrix", function(X, fixDimension=NULL, ..., v
 ###########################################################################
 # HISTORY:
 # 2008-10-08
+# o Removed argument 'fixDimension'.  That constrain is taken care of
+#   by backtransformPrincipalCurve().
 # o Now the fitted object is of class PrincipalCurve that extends the
 #   princurve::principal.curve class.
 # 2008-10-07
