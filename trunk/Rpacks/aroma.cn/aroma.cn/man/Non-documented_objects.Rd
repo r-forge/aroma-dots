@@ -68,6 +68,9 @@
 \alias{normalizeOne.MultiSourceCopyNumberNormalization}
 \alias{backtransformPrincipalCurve}
 \alias{backtransformPrincipalCurve.matrix}
+\alias{backtransformPrincipalCurve.numeric}
+\alias{pairs2}
+\alias{pairs2.principal.curve}
 
 \description{
   This page contains aliases for all "non-documented" objects that

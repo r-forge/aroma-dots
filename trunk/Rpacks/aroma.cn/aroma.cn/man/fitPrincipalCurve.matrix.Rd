@@ -20,13 +20,10 @@
   Fit a principal curve in K dimensions.
 }
 
-\usage{\method{fitPrincipalCurve}{matrix}(X, fixDimension=NULL, ..., verbose=FALSE)}
+\usage{\method{fitPrincipalCurve}{matrix}(X, ..., verbose=FALSE)}
 
 \arguments{
  \item{X}{An NxK \code{\link[base]{matrix}} (K>=2) where the columns represent the dimension.}
- \item{fixDimension}{An optional \code{\link[base]{integer}} specifying which dimension
-   to keep fix such that the corresponding component of the estimated
-   principal curve is (approximately) the identify function.}
  \item{...}{Other arguments passed to \code{\link[princurve]{principal.curve}}.}
  \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
 }
@@ -99,7 +96,6 @@ for (rr in 1:2) {
 }
 
 
-x11()
 layout(matrix(1:4, nrow=2, byrow=TRUE))
 par(mar=c(4,4,2,1)+0.1)
 for (cc in 1:3) {

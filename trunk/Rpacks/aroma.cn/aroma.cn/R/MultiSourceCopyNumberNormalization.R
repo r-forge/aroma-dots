@@ -21,8 +21,11 @@
 #  \item{subsetToFit}{The subset of loci (as mapped by the \code{fitUgp}
 #    object) to be used to fit the normalization functions.
 #    If @NULL, loci on chromosomes 1-22 are used, but not on ChrX and ChrY.
-#    %% If @NULL, all loci are considered.
 #  }
+#  \item{targetDimension}{A @numeric index specifying the data set in
+#    \code{dsList} to which each platform in standardize towards.
+#    If @NULL, the arbitrary scale along the fitted principal curve
+#    is used.  This always starts at zero and increases.}
 #  \item{...}{Not used.}
 # }
 #
@@ -42,12 +45,14 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, ...) {
+setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, ...) {
   if (!is.null(dsList)) {
     # Arguments 'dsList':
     if (is.list(dsList)) {
+      K <- length(dsList);
+
       className <- "AromaTotalCnBinarySet";
-      for (kk in seq(along=dsList)) {
+      for (kk in seq(length=K)) {
         dataSet <- dsList[[kk]];
         if (!inherits(dataSet, className)) {
           throw("Argument 'dsList' contains a non-", className, " object: ", 
@@ -55,8 +60,8 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
         }
       }
       if (length(dsList) < 2) {
-        throw("Argument 'dsList' must contain more than one ", className, 
-                                                       ": ", length(dsList));
+        throw("Argument 'dsList' must contain more than one ", 
+                                                         className, ": ", K);
       }
     } else {
       throw("Argument 'dsList' is not a list: ", class(dsList)[1]);
@@ -76,6 +81,9 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
       subsetToFit <- Arguments$getIndices(subsetToFit, 
                                           range=c(1, nbrOfUnits(fitUgp)));
     }
+
+    # Argument 'targetDimension'
+    targetDimension <- Arguments$getIndex(targetDimension, range=c(1, K));
   }
 
 
@@ -83,6 +91,7 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
     .dsList = dsList,
     .fitUgp = fitUgp,
     .subsetToFit = subsetToFit,
+    .targetDimension = targetDimension,
     .dsSmoothList = NULL
   )
 })
@@ -520,7 +529,8 @@ setMethodS3("getSubsetToFit", "MultiSourceCopyNumberNormalization", function(thi
 setMethodS3("getParameters", "MultiSourceCopyNumberNormalization", function(this, ...) {
   params <- list(
     subsetToFit = getSubsetToFit(this, ...),
-    fitUgp = getFitAromaUgpFile(this, ...)
+    fitUgp = getFitAromaUgpFile(this, ...),
+    targetDimension = this$.targetDimension
   );
 
   params;
@@ -771,6 +781,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
   params <- getParameters(this, verbose=less(verbose, 1));
   verbose && str(verbose, params);
   subsetToUpdate <- params$subsetToUpdate;
+  targetDimension <- params$targetDimension;
 
   # Get (and create) the output paths
   outputPaths <- getOutputPaths(this); 
@@ -804,7 +815,8 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
       verbose && exit(verbose);
   
       verbose && enter(verbose, "Backtransforming data");
-      yN <- backtransformPrincipalCurve(y, fit=fit, dimensions=kk);
+      yN <- backtransformPrincipalCurve(y, fit=fit, dimensions=kk, 
+                                        targetDimension=targetDimension);
       verbose && str(verbose, yN);
       verbose && exit(verbose);
 
@@ -1043,6 +1055,7 @@ setMethodS3("pairs2", "principal.curve", function(fit, pch=19, cex=0.8, fitCol="
 ###########################################################################
 # HISTORY:
 # 2008-10-08
+# o Added argument 'targetDimension' to the constructor.
 # o Now fitOne() makes sure the fitted curve has a "positive" direction.
 # o Added argument 'subsetToFit' with some support, but still incomplete.
 # 2008-10-07

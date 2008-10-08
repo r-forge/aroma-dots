@@ -34,3 +34,7 @@
   nbrOfDataSets.MultiSourceCopyNumberNormalization normalizeOne
   normalizeOne.MultiSourceCopyNumberNormalization
   backtransformPrincipalCurve backtransformPrincipalCurve.matrix
+  backtransformPrincipalCurve.numeric
+  pairs2 pairs2.principal.curve
+
+ 
