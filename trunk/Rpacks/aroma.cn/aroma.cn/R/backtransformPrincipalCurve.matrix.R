@@ -37,12 +37,13 @@ setMethodS3("backtransformPrincipalCurve", "matrix", function(X, fit, dimensions
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Target dimension?
+  # Transform towards a target dimension?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (is.null(targetDimension)) {
-    lambda <- fit$lambda;
-  } else {
+  hasTargetDimension <- (!is.null(targetDimension));
+  if (hasTargetDimension) {
     lambda <- fit$s[,targetDimension];
+  } else {
+    lambda <- fit$lambda;
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
