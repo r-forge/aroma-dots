@@ -1,4 +1,4 @@
-setMethodS3("backtransformPrincipalCurve", "matrix", function(X, fit, dimensions=NULL, ...) {
+setMethodS3("backtransformPrincipalCurve", "matrix", function(X, fit, dimensions=NULL, targetDimension=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -18,8 +18,13 @@ setMethodS3("backtransformPrincipalCurve", "matrix", function(X, fit, dimensions
   }
 
   # Argument 'dimensions'
+  p <- ncol(fit$s);
   if (!is.null(dimensions)) {
-    dimensions <- Arguments$getIndices(dimensions, range=c(1, dim[2]));
+    dimensions <- Arguments$getIndices(dimensions, range=c(1, p));
+  }
+
+  if (!is.null(targetDimension)) {
+    targetDimension <- Arguments$getIndex(targetDimension, range=c(1, p));
   }
 
 
@@ -32,6 +37,15 @@ setMethodS3("backtransformPrincipalCurve", "matrix", function(X, fit, dimensions
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Target dimension?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (is.null(targetDimension)) {
+    lambda <- fit$lambda;
+  } else {
+    lambda <- fit$s[,targetDimension];
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Find backtransformations and backtransform data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   s <- fit$s;
@@ -39,25 +53,35 @@ setMethodS3("backtransformPrincipalCurve", "matrix", function(X, fit, dimensions
     s <- s[,dimensions,drop=FALSE];
   }
 
-
+    
   for (kk in seq(length=ncol(s))) {
     sKK <- s[,kk];
-    lambdaKK <- fit$lambda;
-    fitKK <- smooth.spline(sKK, lambdaKK, ...);
-    XhatKK <- predict(fitKK, x=X[,kk])$y;
-    stopifnot(length(XhatKK) == dim[1]);
-    Xhat[,kk] <- XhatKK;
+    fitKK <- smooth.spline(sKK, lambda, ...);
+
+    Xkk <- X[,kk];
+    keep <- whichVector(is.finite(Xkk));
+    Xkk <- Xkk[keep];
+    XhatKK <- predict(fitKK, x=Xkk)$y;
+    stopifnot(length(XhatKK) == length(keep));
+    Xhat[keep,kk] <- XhatKK;
   }
-  rm(sKK, lambdaKK, fitKK, XhatKK, s);
+
+  rm(sKK, lambda, fitKK, XhatKK, keep, s);
 
   dim(Xhat) <- dim;
   Xhat;
 }) # backtransformPrincipalCurve()
 
 
+setMethodS3("backtransformPrincipalCurve", "numeric", function(X, ...) {
+  X <- as.matrix(X);
+  backtransformPrincipalCurve(X, ...);
+})
 
 ###########################################################################
 # HISTORY:
+# 2008-10-08
+# o Added argument 'targetDimension' to backtransformPrincipalCurve().
 # 2008-10-07
 # o Created.
 ###########################################################################
