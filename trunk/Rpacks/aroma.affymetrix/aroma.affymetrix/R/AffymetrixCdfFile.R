@@ -26,7 +26,6 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
                              uses("UnitNamesFile", "AromaPlatformInterface")),
     "cached:.header" = NULL,
     "cached:.unitNames" = NULL,
-    "cached:.unitSizes" = NULL,
     "cached:.cellIndices" = NULL,
     "cached:.isPm" = NULL,
     "cached:.gi" = NULL,
@@ -44,7 +43,7 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
 setMethodS3("clearCache", "AffymetrixCdfFile", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".header", ".unitNames", ".unitTypes", ".unitSizes", ".cellIndices", ".isPm", ".gi", ".si")) {
+  for (ff in c(".header", ".unitNames", ".unitTypes", ".cellIndices", ".isPm", ".gi", ".si")) {
     this[[ff]] <- NULL;
   }
 
@@ -335,18 +334,6 @@ setMethodS3("nbrOfColumns", "AffymetrixCdfFile", function(this, ...) {
   as.integer(getDimension(this, ...)[2]);
 })
 
-setMethodS3("nbrOfCells", "AffymetrixCdfFile", function(this, ...) {
-  as.integer(prod(getDimension(this, ...)));
-})
-
-setMethodS3("nbrOfUnits", "AffymetrixCdfFile", function(this, ...) {
-  getHeader(this)$probesets;
-})
-
-setMethodS3("nbrOfQcUnits", "AffymetrixCdfFile", function(this, ...) {
-  getHeader(this)$qcprobesets;
-})
-
 
 ###########################################################################/**
 # @RdocMethod getUnitNames
@@ -553,85 +540,8 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
 })
 
 
-###########################################################################/**
-# @RdocMethod getUnitSizes
-#
-# @title "Gets the number of groups in each unit"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{units}{The units of interest. If @NULL, all units are considered.}
-#   \item{...}{Not used.}
-# }
-#
-# \value{
-#  Returns a @vector of @integers.
-# }
-#
-# \details{
-#   Once read from file, this information is cached in memory for efficiency.
-#   The cache can be cleared by calling \code{gc(cdf)}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-# @keyword IO
-#*/###########################################################################
-setMethodS3("getUnitSizes", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
 
-
-  sizes <- this$.unitSizes;
-
-  if (force || is.null(sizes)) {
-    # Check in file cache
-    chipType <- getChipType(this);
-    key <- list(method="getUnitSizes", class=class(this)[1], chipType=chipType);
-    dirs <- c("aroma.affymetrix", chipType);
-    if (force) {
-      sizes <- NULL;
-    } else {
-      sizes <- loadCache(key=key, dirs=dirs);
-    }
-
-    if (is.null(sizes)) {    
-      verbose && enter(verbose, "Reading types for *all* units");
-      sizes <- readCdfGroupNames(getPathname(this));
-      sizes <- restruct(this, sizes);
-      sizes <- base::lapply(sizes, FUN=length);
-      sizes <- unlist(sizes, use.names=FALSE);
-      saveCache(sizes, key=key, dirs=dirs);
-      verbose && exit(verbose);
-    }
-
-    this$.unitSizes <- sizes;
-  }
-
-  if (!is.null(units))
-    sizes <- sizes[units];
-
-  sizes;
-}, private=TRUE)
-
-
-setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE) {
+setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -666,7 +576,8 @@ setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL
         groups <- base::lapply(groups, FUN=.subset, 2);
         list(groups=groups);
       });
-      groupDirections <- restruct(this, groupDirections);
+      groupDirections <- restruct(this, groupDirections, 
+                                                 verbose=less(verbose, 5));
       groupDirections <- base::lapply(groupDirections, FUN=unlist, 
                                                           use.names=FALSE);
       saveCache(groupDirections, key=key, dirs=dirs);
@@ -681,21 +592,6 @@ setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL
 
   groupDirections;
 }, private=TRUE)
-
-
-## setMethodS3("getUnitGroupSizes", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE, ...) {
-##   sizes <- this$.unitGroupSizes;
-##   if (force || is.null(sizes)) {
-##     sizes <- readCdfNbrOfCellsPerUnitGroup(getPathname(this));
-##     sizes <- restruct(this, sizes);
-##     this$.unitGroupSizes <- sizes;
-##   }
-## 
-##   if (!is.null(units))
-##     sizes <- sizes[units];
-## 
-##   sizes;
-## }, private=TRUE)
 
 
 
@@ -757,7 +653,8 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
     gc <- gc();
 
     verbose && enter(verbose, "Restructuring");
-    cdfChunk <- restruct(this, cdfChunk);  # Always call restruct() after a readCdfNnn()!
+    # Always call restruct() after a readCdfNnn()!
+    cdfChunk <- restruct(this, cdfChunk, verbose=less(verbose, 5));  
     verbose && exit(verbose);
 
     gc <- gc();
@@ -862,11 +759,31 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
 
 
 
-setMethodS3("restruct", "AffymetrixCdfFile", function(this, cdf, ...) {
+setMethodS3("restruct", "AffymetrixCdfFile", function(this, cdf, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
   # Rearrange CDF structure?
   fcn <- this$.restructor;
-  if (!is.null(fcn))
+  if (!is.null(fcn)) {
+    verbose && enter(verbose, "Restructuring CDF list structure");
+    verbose && cat(verbose, "Restructuring function:");
+    verbose && str(verbose, fcn);
+    verbose && cat(verbose, "First element in list to be restructured:");
+    verbose && str(verbose, cdf[1]);
+
     cdf <- fcn(cdf);
+
+    verbose && exit(verbose);
+  }
+
   cdf;
 }, private=TRUE)
 
@@ -955,6 +872,7 @@ setMethodS3("getRestructor", "AffymetrixCdfFile", function(this, ...) {
 # \arguments{
 #   \item{units}{The units to be read. If @NULL, all units are read.}
 #   \item{...}{Additional arguments passed to @see "affxparser::readCdfUnits".}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -975,10 +893,22 @@ setMethodS3("getRestructor", "AffymetrixCdfFile", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 # NOTE: getUnits() does not work because an S4 class stole it!!!
-setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units=NULL, ...) {
+setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 #  cdf <- readCdfUnits(getPathname(this), units=units, ...);
   cdf <- doCall("readCdfUnits", filename=getPathname(this), units=units, ...);
-  restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
+
+  # Always call restruct() after a readCdfNnn()!
+  restruct(this, cdf, verbose=less(verbose, 5));
 })
 
 
@@ -1000,6 +930,7 @@ setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units=NULL, ...) {
 #   \item{...}{Additional arguments passed to @see "affxparser::readCdfUnits".}
 #   \item{force}{If @TRUE, cached results are ignored.}
 #   \item{cache}{If @TRUE, results are cached.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -1022,18 +953,30 @@ setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units=NULL, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE, cache=TRUE, ...) {
+setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE, cache=TRUE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
   isPm <- this$.isPm;
   if (force || is.null(isPm)) {
     if (cache) {
       # If caching, read all units
       cdf <- readCdfIsPm(getPathname(this));
-      cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
+      # Always call restruct() after a readCdfNnn()!
+      cdf <- restruct(this, cdf, verbose=less(verbose, 5));
       isPm <- this$.isPm <- cdf;
     } else {
       # ...otherwise, read only a subset of units
       cdf <- readCdfIsPm(getPathname(this), units=units);
-      cdf <- restruct(this, cdf);  # Always call restruct() after a readCdfNnn()!
+      # Always call restruct() after a readCdfNnn()!
+      cdf <- restruct(this, cdf, verbose=less(verbose, 5));
       isPm <- cdf;
     }
   }
@@ -1347,6 +1290,7 @@ setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(
 #     information sets to search for.}
 #   \item{...}{Not used.}
 #   \item{force}{If @FALSE, cached information is retrieved, otherwise not.}
+#   \item{verbose}{A @logical or @see "R.utils::Verbose".}
 # }
 #
 # \value{
@@ -1592,6 +1536,10 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2008-10-09
+# o Added nbrOfCellsPerUnit() and nbrOfCellsPerUnitGroup().
+# o Added verbose output to internal restruct().  Is that ever used?!?
+# o Renamed getUnitSizes() to nbrOfGroupsPerUnit().
 # 2008-09-06
 # o BUG FIX: getUnitTypes() of AffymetrixCdfFile did not return a
 #   name map for the unit types if a subset was units was selected.
