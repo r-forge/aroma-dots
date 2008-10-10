@@ -646,7 +646,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
 
   key <- list(method="fitOne", class="MultiSourceCopyNumberNormalization", 
              fullnames=fullnames, chipTypes=chipTypes, checkSums=checkSums,
-             subsetToFit=subsetToFit, version="2008-10-07");
+             subsetToFit=subsetToFit, version="2008-10-08");
   dirs <- c("aroma.affymetrix", "MultiSourceCopyNumberNormalization");
   if (!force) {
     transforms <- loadCache(key=key, dirs=dirs);
