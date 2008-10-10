@@ -1,6 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.4.7 [2008-10-09]
+o Added nbrOfCellsPerUnitGroup() and nbrOfCellsPerUnit() for
+  AffymetrixCdfFile.
+
+
 Version: 0.9.4.6 [2008-09-19]
 o BUG FIX: process() of FragmentLengthNormalization did not return a
   data set for which the sample attributes has been updated according

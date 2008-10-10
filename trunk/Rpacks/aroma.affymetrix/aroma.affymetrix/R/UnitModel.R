@@ -179,8 +179,15 @@ setMethodS3("findUnitsTodo", "UnitModel", abstract=TRUE);
 setMethodS3("getFitUnitFunction", "UnitModel", abstract=TRUE, private=TRUE);
 
 
+setMethodS3("getFitSingleCellUnitFunction", "UnitModel", function(this, ...) {
+  NULL;
+})
+
+
 ############################################################################
 # HISTORY:
+# 2008-10-09
+# o Added getFitSingleCellUnitFunction().
 # 2008-09-05
 # o TYPO: The error message for argument 'dataSet' in UnitModel() returned
 #   multiple strings, one per class.
