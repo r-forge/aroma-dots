@@ -147,38 +147,53 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # By default, fit all units that with single-cell unit groups simply
-  # using estimate theta=y (input value).  This can speed up the fitting
+  # Fit all units that with single-cell unit groups using special
+  # fit function, if available. This can speed up the fitting 
   # substantially.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##   verbose && enter(verbose, "Identifying units where all units groups have a single cell");
+##   fitSingleCellUnit <- getFitSingleCellUnitFunction(this);
+##   if (!is.null(fitSingleCellUnit)) {
+##     verbose && enter(verbose, "Fitting single-cell units");
 ## 
-##   # Get the CDF cell indices
-##   verbose && enter(verbose, "Identifying CDF cell indices");
-##   cdfUnits <- getCellIndices(this, units=units, ...);
-##   verbose && print(verbose, cdfUnits[1]);
-##   verbose && exit(verbose);
+##     verbose && enter(verbose, "Identifying single-cell units");
+##     counts <- nbrOfCellsPerUnit(cdf, units=units, verbose=less(verbose, 5));
+##     verbose && print(verbose, table(verbose));
+##     singleCellUnits <- whichVector(counts == 1);
+##     rm(counts);
+##     verbose && str(verbose, singleCellUnits);
+##     verbose && exit(verbose);
 ## 
-##   # Identify units where all unit groups have a single cell.
-##   isSingleCell <- base::sapply(cdfUnits, FUN=function(unit) {
-##     groups <- .subset2(unit, 1);
-##     groups <- unname(groups);
-##     nbrOfCells <- base::sapply(groups, FUN=function(group) {
-##       length(.subset2(group,1));
-##     }, USE.NAMES=FALSE);
-##     all(nbrOfCells == 1);
-##   }, USE.NAMES=FALSE);
-##   units1 <- which(isSingleCell);
-##   rm(isSingleCell);
+##     # Nothing to do?
+##     if (length(singleCellUnits) > 0) {
+##       verbose && enter(verbose, "Identifying CDF cell indices");
+##       cells <- getCellIndices(this, units=units, unlist=TRUE, useNames=FALSE, ...);
+##       verbose && str(verbose, cells);
+##       # Sanity check
+##       stopifnot(length(cells) == length(singleCellUnits));
+##       verbose && exit(verbose);
+##       verbose && exit(verbose);
 ## 
-##   cdfUnits <- cdfUnits[units1];
-##   gc <- gc();
+##       verbose && enter(verbose, "Reading signals");
+##       verbose && exit(verbose);
+##       rm(cells);
 ## 
-##   verbose && cat(verbose, "Number of "single-cell" units: ", length(units1)); 
-##   verbose && str(verbose, units1);
-##   verbose && exit(verbose);
-
-  
+##       verbose && enter(verbose, "Fitting units");
+##       verbose && exit(verbose);
+## 
+##       verbose && enter(verbose, "Storing estimates");
+##       verbose && exit(verbose);
+## 
+##       # Update remaining units to do
+## ##      units <- setdiff(units, singleCellUnits);
+##       nbrOfUnits <- length(units);
+##     }
+## 
+##     verbose && exit(verbose);
+## 
+##     # Nothing more to do?
+##     if (nbrOfUnits == 0)
+##       return(NULL);
+##   }
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
