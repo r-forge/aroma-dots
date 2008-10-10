@@ -88,7 +88,7 @@ setMethodS3("getAlleleProbePairs", "AffymetrixCdfFile", function(this, units=NUL
   verbose && cat(verbose, "Number of SNP units: ", length(unitsAll));
 
   # ...and with either 2 or 4 groups
-  unitSizes <- getUnitSizes(this, units=unitsAll);
+  unitSizes <- nbrOfGroupsPerUnit(this, units=unitsAll);
   verbose && cat(verbose, "Detected unit sizes:");
   verbose && print(verbose, table(unitSizes));
 
