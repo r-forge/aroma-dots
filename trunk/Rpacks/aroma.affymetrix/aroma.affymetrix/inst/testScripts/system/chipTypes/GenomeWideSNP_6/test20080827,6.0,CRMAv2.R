@@ -52,7 +52,8 @@ print(ces);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fragment-length normalization test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-fln <- FragmentLengthNormalization(ces, target="zero", tags="*,z");
+targets <- rep(list(function(...) log2(2200)), 2);
+fln <- FragmentLengthNormalization(ces, targetFunctions=targets, tags="*,z");
 print(fln);
 cesN <- process(fln, verbose=verbose);
 print(cesN);
