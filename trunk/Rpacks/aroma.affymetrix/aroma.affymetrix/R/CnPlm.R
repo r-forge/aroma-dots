@@ -85,7 +85,7 @@ setMethodS3("getFitUnitFunction", "CnPlm", function(this, ...) {
   # Total copy number of not?
   if (this$combineAlleles) {
     # Get the fit function for a single set of intensities
-    fitfcn <- getFitFunction(this, ...);
+    fitfcn <- getFitUnitGroupFunction(this, ...);
   
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Create the one for all blocks in a unit

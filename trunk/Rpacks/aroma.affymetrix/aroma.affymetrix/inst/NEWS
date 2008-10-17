@@ -1,9 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.4.7 [2008-10-09]
+Version: 0.9.4.7 [2008-10-16]
 o Added nbrOfCellsPerUnitGroup() and nbrOfCellsPerUnit() for
   AffymetrixCdfFile.
+o Renamed getFitFunction() for all PLMs to getFitUnitGroupFunction(), 
+  because the latter is much more explanatory.
 
 
 Version: 0.9.4.6 [2008-09-19]

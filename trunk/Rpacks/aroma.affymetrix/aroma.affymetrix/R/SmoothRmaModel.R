@@ -49,7 +49,7 @@ setMethodS3("getRootPath", "SmoothRmaModel", function(this, ...) {
 })
 
 
-setMethodS3("getFitFunction", "SmoothRmaModel", function(this, ...) {
+setMethodS3("getFitUnitGroupFunction", "SmoothRmaModel", function(this, ...) {
   smoothWRMA;
 })
 

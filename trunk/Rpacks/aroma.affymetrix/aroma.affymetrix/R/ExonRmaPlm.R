@@ -133,7 +133,7 @@ setMethodS3("getParameterSet", "ExonRmaPlm", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getFitFunction
+# @RdocMethod getFitUnitGroupFunction
 #
 # @title "Gets the low-level function that fits the Exon PLM"
 #
@@ -161,7 +161,7 @@ setMethodS3("getParameterSet", "ExonRmaPlm", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
+setMethodS3("getFitUnitGroupFunction", "ExonRmaPlm", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

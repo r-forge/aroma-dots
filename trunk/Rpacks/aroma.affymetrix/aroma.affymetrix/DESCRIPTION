@@ -1,6 +1,6 @@
 Package: aroma.affymetrix
 Version: 0.9.4.7
-Date: 2008-10-09
+Date: 2008-10-16
 Title: Analysis of large Affymetrix microarray data sets
 Author: Henrik Bengtsson <hb@stat.berkeley.edu>, Ken Simpson <ksimpson@wehi.edu.au>, Elizabeth Purdom <epurdom@stat.berkeley.edu>, Mark Robinson <mrobinson@wehi.edu.au>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>

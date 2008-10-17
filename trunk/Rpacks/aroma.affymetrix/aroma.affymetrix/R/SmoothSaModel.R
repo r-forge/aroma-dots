@@ -45,7 +45,7 @@ setMethodS3("getAsteriskTags", "SmoothSaModel", function(this, collapse=NULL, ..
 }, protected=TRUE) 
 
 
-setMethodS3("getFitFunction", "SmoothSaModel", function(this, ...) {
+setMethodS3("getFitUnitGroupFunction", "SmoothSaModel", function(this, ...) {
   smoothWSA;
 })
 

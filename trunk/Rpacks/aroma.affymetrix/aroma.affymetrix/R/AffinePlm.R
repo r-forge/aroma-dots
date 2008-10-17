@@ -120,7 +120,7 @@ setMethodS3("getProbeAffinityFile", "AffinePlm", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getFitFunction
+# @RdocMethod getFitUnitGroupFunction
 #
 # @title "Gets the low-level function that fits the PLM"
 #
@@ -145,7 +145,7 @@ setMethodS3("getProbeAffinityFile", "AffinePlm", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "AffinePlm", function(this, ...) {
+setMethodS3("getFitUnitGroupFunction", "AffinePlm", function(this, ...) {
   standardize <- this$standardize;
   center <- this$background;
   shift <- this$shift;

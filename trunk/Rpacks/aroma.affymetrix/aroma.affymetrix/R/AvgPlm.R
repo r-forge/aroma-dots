@@ -140,7 +140,7 @@ setMethodS3("getProbeAffinityFile", "AvgPlm", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getFitFunction
+# @RdocMethod getFitUnitGroupFunction
 #
 # @title "Gets the low-level function that fits the PLM"
 #
@@ -164,7 +164,7 @@ setMethodS3("getProbeAffinityFile", "AvgPlm", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "AvgPlm", function(this, ...) {
+setMethodS3("getFitUnitGroupFunction", "AvgPlm", function(this, ...) {
   # Float precision
 #  .Machine$float.eps <- sqrt(.Machine$double.eps);
   floatEps <- sqrt(.Machine$double.eps);

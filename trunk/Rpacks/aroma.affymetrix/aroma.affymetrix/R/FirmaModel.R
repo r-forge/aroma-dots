@@ -291,7 +291,7 @@ setMethodS3("calculateResiduals", "FirmaModel", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getFitFunction
+# @RdocMethod getFitUnitGroupFunction
 #
 # @title "Static method to get the low-level function that fits the PLM"
 #
@@ -315,8 +315,7 @@ setMethodS3("calculateResiduals", "FirmaModel", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-
-setMethodS3("getFitFunction", "FirmaModel", function(this, ...) {
+setMethodS3("getFitUnitGroupFunction", "FirmaModel", function(this, ...) {
   if(this$operateOn=="weights") {
     if (this$summaryMethod == "upperQuartile") {
         fitfcn <- function(y) {
@@ -371,7 +370,7 @@ setMethodS3("getFitFunction", "FirmaModel", function(this, ...) {
 
 setMethodS3("getFitUnitFunction", "FirmaModel", function(this, ...) {
 
-  fitfcn <- getFitFunction(this, ...);
+  fitfcn <- getFitUnitGroupFunction(this, ...);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Function to fit all groups (exons) within a unit

@@ -149,7 +149,7 @@ setMethodS3("getProbeAffinityFile", "MbeiPlm", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getFitFunction
+# @RdocMethod getFitUnitGroupFunction
 #
 # @title "Gets the low-level function that fits the PLM"
 #
@@ -174,7 +174,7 @@ setMethodS3("getProbeAffinityFile", "MbeiPlm", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "MbeiPlm", function(this, ...) {
+setMethodS3("getFitUnitGroupFunction", "MbeiPlm", function(this, ...) {
   standardize <- this$standardize;
   shift <- this$shift;
   if (is.null(shift))
