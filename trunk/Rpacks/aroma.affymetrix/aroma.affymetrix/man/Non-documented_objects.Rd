@@ -1507,6 +1507,13 @@
 \alias{getSetsOfProbes.ReseqCrosstalkCalibration}
 \alias{fitCnProbes}
 \alias{fitCnProbes.UnitModel}
+\alias{getFitSingleCellUnitFunction}
+\alias{getFitSingleCellUnitFunction.UnitModel}
+\alias{nbrOfCellsPerUnit}
+\alias{nbrOfCellsPerUnit.AffymetrixCdfFile}
+\alias{nbrOfCellsPerUnitGroup}
+\alias{nbrOfCellsPerUnitGroup.AffymetrixCdfFile}
+\alias{nbrOfGroupsPerUnit}
 
 \description{
   This page contains aliases for all "non-documented" objects that

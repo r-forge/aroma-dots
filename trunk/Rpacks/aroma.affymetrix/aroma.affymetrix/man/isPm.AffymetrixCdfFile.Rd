@@ -19,13 +19,14 @@
  Checks which cells (probes) are PMs and not.
 }
 
-\usage{\method{isPm}{AffymetrixCdfFile}(this, units=NULL, force=FALSE, cache=TRUE, ...)}
+\usage{\method{isPm}{AffymetrixCdfFile}(this, units=NULL, force=FALSE, cache=TRUE, ..., verbose=FALSE)}
 
 \arguments{
   \item{units}{The units to be read. If \code{\link[base]{NULL}}, all units are read.}
   \item{...}{Additional arguments passed to \code{\link[affxparser]{readCdfUnits}}.}
   \item{force}{If \code{\link[base:logical]{TRUE}}, cached results are ignored.}
   \item{cache}{If \code{\link[base:logical]{TRUE}}, results are cached.}
+  \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

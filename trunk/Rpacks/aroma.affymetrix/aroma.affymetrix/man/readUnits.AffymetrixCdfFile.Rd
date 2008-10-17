@@ -19,11 +19,12 @@
  Reads CDF data unit by unit for all or a subset of units (probeset).
 }
 
-\usage{\method{readUnits}{AffymetrixCdfFile}(this, units=NULL, ...)}
+\usage{\method{readUnits}{AffymetrixCdfFile}(this, units=NULL, ..., verbose=FALSE)}
 
 \arguments{
   \item{units}{The units to be read. If \code{\link[base]{NULL}}, all units are read.}
   \item{...}{Additional arguments passed to \code{\link[affxparser]{readCdfUnits}}.}
+  \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{
