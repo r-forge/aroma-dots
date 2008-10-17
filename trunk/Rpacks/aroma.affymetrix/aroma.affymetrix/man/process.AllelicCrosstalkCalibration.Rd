@@ -3,8 +3,6 @@
 % 
 %  AllelicCrosstalkCalibration.R
 % 
-% on Thu Oct 16 17:36:30 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

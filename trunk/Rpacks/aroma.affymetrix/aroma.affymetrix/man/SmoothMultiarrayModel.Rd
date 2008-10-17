@@ -52,7 +52,7 @@ extends \emph{\link[aroma.affymetrix]{ChromosomalModel}}\cr
  \tab \code{createOutputTuple} \tab  -\cr
  \tab \code{fitOneChromosome} \tab  -\cr
  \tab \code{getBandwidth} \tab  -\cr
- \tab \code{getFitFunction} \tab  -\cr
+ \tab \code{getFitUnitGroupFunction} \tab  -\cr
  \tab \code{getOutputTuple} \tab  -\cr
  \tab \code{getRootPath} \tab  -\cr
  \tab \code{setBandwidth} \tab  -\cr
