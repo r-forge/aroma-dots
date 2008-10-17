@@ -563,10 +563,6 @@
 \alias{getFirstCellIndices.AffymetrixCdfFile}
 \alias{getFirstCellPerUnitIndices}
 \alias{getFirstCellPerUnitIndices.ExonChipEffectSet}
-\alias{getFitFunction}
-\alias{getFitFunction.SmoothMultiarrayModel}
-\alias{getFitFunction.SmoothRmaModel}
-\alias{getFitFunction.SmoothSaModel}
 \alias{getFitUnitFunction}
 \alias{getFitUnitFunction.CnPlm}
 \alias{getFitUnitFunction.FirmaModel}
@@ -1497,7 +1493,6 @@
 \alias{getAlleleCellPairs}
 \alias{getAlleleProbePairs3}
 \alias{getAsteriskTags.UnitModel}
-\alias{getFitFunction.MultiArrayUnitModel}
 \alias{getFitUnitFunction.MultiArrayUnitModel}
 \alias{getFitUnitFunction.SingleArrayUnitModel}
 \alias{getFitUnitGroupFunction}
@@ -1514,6 +1509,11 @@
 \alias{nbrOfCellsPerUnitGroup}
 \alias{nbrOfCellsPerUnitGroup.AffymetrixCdfFile}
 \alias{nbrOfGroupsPerUnit}
+\alias{getFitUnitGroupFunction.SmoothMultiarrayModel}
+\alias{getFitUnitGroupFunction.SmoothRmaModel}
+\alias{getFitUnitGroupFunction.SmoothSaModel}
+\alias{getFitFunction}
+\alias{getFitFunction.MultiArrayUnitModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that
