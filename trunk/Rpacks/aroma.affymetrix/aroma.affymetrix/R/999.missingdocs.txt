@@ -767,3 +767,7 @@ getParameterSet.UnitModel getSetsOfProbes
 getSetsOfProbes.AllelicCrosstalkCalibration
 getSetsOfProbes.ReseqCrosstalkCalibration
 fitCnProbes fitCnProbes.UnitModel
+  getFitSingleCellUnitFunction getFitSingleCellUnitFunction.UnitModel
+  nbrOfCellsPerUnit nbrOfCellsPerUnit.AffymetrixCdfFile
+  nbrOfCellsPerUnitGroup nbrOfCellsPerUnitGroup.AffymetrixCdfFile
+  nbrOfGroupsPerUnit 

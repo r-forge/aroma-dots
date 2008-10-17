@@ -26,6 +26,7 @@
     information sets to search for.}
   \item{...}{Not used.}
   \item{force}{If \code{\link[base:logical]{FALSE}}, cached information is retrieved, otherwise not.}
+  \item{verbose}{A \code{\link[base]{logical}} or \code{\link[R.utils]{Verbose}}.}
 }
 
 \value{

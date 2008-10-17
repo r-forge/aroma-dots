@@ -3,6 +3,8 @@
 % 
 %  AllelicCrosstalkCalibration.R
 % 
+% on Thu Oct 16 17:36:30 2008.
+% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -14,7 +16,7 @@
  \title{The AllelicCrosstalkCalibration class}
 
  \description{
-  Package:  aroma.affymetrix \cr
+  Package:   \cr
 \bold{Class AllelicCrosstalkCalibration}\cr
 
 \code{\link[R.oo]{Object}}\cr
@@ -102,6 +104,8 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{clearCache} \tab  -\cr
+ \tab \code{\link[aroma.affymetrix:process.AllelicCrosstalkCalibration]{process}} \tab Calibrates the data set.\cr
  \tab \code{clearCache} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:process.AllelicCrosstalkCalibration]{process}} \tab Calibrates the data set.\cr
 }
