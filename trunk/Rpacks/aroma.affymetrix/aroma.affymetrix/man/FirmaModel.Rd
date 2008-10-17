@@ -58,7 +58,7 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \tab \code{getDataSet} \tab  -\cr
  \tab \code{getFirmaScores} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFirmaSet.FirmaModel]{getFirmaSet}} \tab Gets the set of FIRMA results for this model.\cr
- \tab \code{\link[aroma.affymetrix:getFitFunction.FirmaModel]{getFitFunction}} \tab Static method to get the low-level function that fits the PLM.\cr
+ \tab \code{getFitUnitGroupFunction} \tab  -\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getPlm} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
