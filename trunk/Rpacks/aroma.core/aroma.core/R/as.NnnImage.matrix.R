@@ -50,7 +50,7 @@ setMethodS3("as.GrayscaleImage", "matrix", function(z, transforms=NULL, interlea
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'transforms':
   if (!is.list(transforms)) {
-    transforms <- as.list(transforms);
+    transforms <- list(transforms);
   }
 
   for (transform in transforms) {
@@ -133,6 +133,9 @@ setMethodS3("as.TrueColorImage", "Image", function(img, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-10-16
+# o BUG FIX: Tried to turn a function passed by 'transforms' to a list using
+#   as.list() and not list().
 # 2008-03-14
 # o Added getImage().
 # o Added as.GrayscaleImage() and as.TrueColorImage().
