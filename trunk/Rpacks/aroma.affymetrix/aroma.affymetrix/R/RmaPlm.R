@@ -162,7 +162,7 @@ setMethodS3("getProbeAffinityFile", "RmaPlm", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getFitFunction
+# @RdocMethod getFitUnitGroupFunction
 #
 # @title "Gets the low-level function that fits the PLM"
 #
@@ -190,7 +190,7 @@ setMethodS3("getProbeAffinityFile", "RmaPlm", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
+setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

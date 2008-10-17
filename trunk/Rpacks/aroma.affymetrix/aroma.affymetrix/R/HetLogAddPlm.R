@@ -46,7 +46,7 @@ setMethodS3("getAsteriskTags", "HetLogAddPlm", function(this, collapse=NULL, ...
 
 
 ###########################################################################/**
-# @RdocMethod getFitFunction
+# @RdocMethod getFitUnitGroupFunction
 #
 # @title "Gets the low-level function that fits the PLM"
 #
@@ -74,7 +74,7 @@ setMethodS3("getAsteriskTags", "HetLogAddPlm", function(this, collapse=NULL, ...
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFitFunction", "HetLogAddPlm", function(this, ..., verbose=FALSE) {
+setMethodS3("getFitUnitGroupFunction", "HetLogAddPlm", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

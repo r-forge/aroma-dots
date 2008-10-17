@@ -1,4 +1,4 @@
-setMethodS3("getFitFunction", "SmoothMultiarrayModel", abstract=TRUE);
+setMethodS3("getFitUnitGroupFunction", "SmoothMultiarrayModel", abstract=TRUE);
 
 
 ###########################################################################/**
@@ -260,7 +260,7 @@ setMethodS3("fitOneChromosome", "SmoothMultiarrayModel", function(this, chromoso
 
   verbose && cat(verbose, "Chromosome: ", chromosome);
 
-  smoothFitFcn <- getFitFunction(this);
+  smoothFitFcn <- getFitUnitGroupFunction(this);
 
   cesList <- getListOfChipEffects(this);
   verbose && cat(verbose, "List of input data sets:");
