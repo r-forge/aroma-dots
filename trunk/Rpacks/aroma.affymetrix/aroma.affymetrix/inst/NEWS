@@ -1,6 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 0.9.5 [2008-10-17]
+o Package pass R CMD check on R v2.7.2 and R v2.8.0rc.
+
+
 Version: 0.9.4.7 [2008-10-16]
 o Added nbrOfCellsPerUnitGroup() and nbrOfCellsPerUnit() for
   AffymetrixCdfFile.

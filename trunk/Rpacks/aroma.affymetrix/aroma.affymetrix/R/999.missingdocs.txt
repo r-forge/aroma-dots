@@ -259,9 +259,8 @@
   getFileSetClass.FirmaModel getFirmaScores getFirmaSet
   getFirstCellIndices getFirstCellIndices.AffymetrixCdfFile
   getFirstCellPerUnitIndices
-  getFirstCellPerUnitIndices.ExonChipEffectSet getFitFunction
-  getFitFunction.SmoothMultiarrayModel getFitFunction.SmoothRmaModel
-  getFitFunction.SmoothSaModel getFitUnitFunction
+  getFirstCellPerUnitIndices.ExonChipEffectSet 
+  getFitUnitFunction
   getFitUnitFunction.CnPlm getFitUnitFunction.FirmaModel
   getFitUnitFunction.ProbeLevelModel getFitUnitFunction.UnitModel
   getFragmentLengths getFragmentLengths.AffymetrixTsvFile
@@ -760,7 +759,6 @@ calibrateOne calibrateOne.ReseqCrosstalkCalibration
 fitOne.ReseqCrosstalkCalibration fitOneArray
 fitOneArray.SingleArrayUnitModel getAlleleCellPairs
 getAlleleProbePairs3 getAsteriskTags.UnitModel
-getFitFunction.MultiArrayUnitModel
 getFitUnitFunction.MultiArrayUnitModel
 getFitUnitFunction.SingleArrayUnitModel getFitUnitGroupFunction
 getParameterSet.UnitModel getSetsOfProbes
@@ -771,3 +769,7 @@ fitCnProbes fitCnProbes.UnitModel
   nbrOfCellsPerUnit nbrOfCellsPerUnit.AffymetrixCdfFile
   nbrOfCellsPerUnitGroup nbrOfCellsPerUnitGroup.AffymetrixCdfFile
   nbrOfGroupsPerUnit 
+  getFitUnitGroupFunction.SmoothMultiarrayModel
+  getFitUnitGroupFunction.SmoothRmaModel
+  getFitUnitGroupFunction.SmoothSaModel
+  getFitFunction getFitFunction.MultiArrayUnitModel
