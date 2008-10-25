@@ -66,7 +66,7 @@ setConstructorS3("ProbeLevelModel", function(..., standardize=TRUE) {
 setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".paf", ".ces", ".rs", ".lastPlotData")) {
+  for (ff in c(".paf", ".ces", ".rs", ".ws", ".lastPlotData")) {
     this[[ff]] <- NULL;
   }
 
@@ -361,6 +361,8 @@ setMethodS3("findUnitsTodo", "ProbeLevelModel", function(this, verbose=FALSE, ..
 
 ############################################################################
 # HISTORY:
+# 2008-10-24
+# o Forgot to clear '.ws' in clearCache().
 # 2008-09-03
 # o Moved getFitUnitFunction() and getFitFunction() to MultiArrayUnitModel.
 # o Now ProbeLevelModel inherits from new MultiArrayUnitModel.
