@@ -126,7 +126,7 @@ A bounded-memory implementation that can process any number of arrays is availab
 \label{secBackground}
 Following the suite of single-nucleotide polymorphism (SNP) arrays ('10K', '100K' and '500K'), Affymetrix has released a new class of chip types referered to as GenomeWideSNP ('GWS'), which in addition to SNP units include non-polymorphic probes, also called copy-number (CN) probes.  The latter can be used to estimate the amount of target DNA at loci other than SNPs.  The \GWSFivef ('\GWSFive'), released February 2007, is targetted by Affymetrix as a genotyping assay, whereas the \GWSSixf ('\GWSSix'), released May 2007, is targetted as both a genotyping and a CN assay.
 
-In this paper we present the CRMA~v2 method for estimating full-resolution raw total copy numbers (CNs).  It extends and improves upon CRMA~\citep{BengtssonH_etal_2008a} and applies to all Affymetrix genotyping arrays including \GWS. Likewise, it does not require genotype calls.  
+In this paper we present the CRMA~v2 method for estimating full-resolution raw total copy numbers (CNs).  It extends and improves upon CRMA~\citep{BengtssonH_etal_2008} and applies to all Affymetrix genotyping arrays including \GWS. Likewise, it does not require genotype calls.  
 It should be emphasized that the purpose of the method is to provide better raw full-resolution estimates that increase chances for downstream methods such as segmentation methods and CN calling methods to produce better estimates.
 
 Contrary to other methods, CRMA~v2 is a single-array method that processes each array independently of the others.  In order to achieve this, we had to overcome challenges in adapting some of CRMA's multi-array steps.
@@ -151,7 +151,7 @@ In Discussion, we conclude the study and give future research directions.
 %\section*{Additional features of the \GWS arrays and assays}
 The \GWSSix chip type interrogates 931,946 SNPs and 945,826 CN loci totalling 1,877,772 loci, whereas \GWSFive interrogates 500,568 SNPs and 417,269 CN loci totalling 917,837 unique loci.  \GWSFive has the same set of SNPs as the 500K chip set, whereas for \GWSSix 6,238 of those have been replaced by a new set of 437,616 SNPs.  Among CN loci, only 61,846 are identical on \GWSFive and \GWSSix.
 %
-In contrast to previous generation of chip types~\citep{BengtssonH_etal_2008a}, there are no  mismatch but only perfect-match (PM) probes.  
+In contrast to previous generation of chip types~\citep{BengtssonH_etal_2008}, there are no  mismatch but only perfect-match (PM) probes.  
 On \GWSFive, all SNPs have 4 replicated (\PMA, \PMB) pairs.  On \GWSSix there are either 3 or 4 such pairs. These probe pairs are identical replicates, whereas before they were slightly shifted relative to the SNP position.
 %
 For both \GWS arrays, the pairs in each SNP were selected such that they optimized the genotype performance.  For the \GWSFive there was no constraint that the \PMA and \PMB sequences had to be aligned on the genome, causing 192,399 (38.4\%) SNPs to have misaligned \PMA and \PMB.  There was also no constraint that \PMA and \PMB should be on the same strand, resulting in 46,176 (9.22\%) SNPs with \PMA and \PMB on opposite strands.  These constraint were reintroduced for \GWSSix.
@@ -192,7 +192,7 @@ More details on the data can be found in the Suppl. Materials.
 %--------------------------------------------------------------------------
 \subsection{Proposed model}
 
-The CRMA~v2 method takes an approach similar to CRMA~\citep{BengtssonH_etal_2008a} for estimating total (non-polymorphic) CNs.  The model for allelic-crosstalk calibration is adapted to \GWS, because of the added non-polymorphic probes.  After this calibration, we utilize a nucleotide-position model~\citep{CarvalhoB_etal_2006} to normalize for small difference across arrays but also for allelic imbalances in \PMA and \PMB.  
+The CRMA~v2 method takes an approach similar to CRMA~\citep{BengtssonH_etal_2008} for estimating total (non-polymorphic) CNs.  The model for allelic-crosstalk calibration is adapted to \GWS, because of the added non-polymorphic probes.  After this calibration, we utilize a nucleotide-position model~\citep{CarvalhoB_etal_2007} to normalize for small difference across arrays but also for allelic imbalances in \PMA and \PMB.  
 In contrast to our previous multi-array model, we here use a single-array model to summarize the probes.  At the end, PCR fragment-length normalization is updated to model the multi-enzyme hybridization.
 %%
 CRMA~v2 was designed to be:
@@ -207,8 +207,8 @@ Although not discussed further in this paper, we also look towards a unified met
 
 \subsubsection{Calibration for offset and crosstalk between alleles}
 \label{secModelACC}
-For reasons explained in \citet{BengtssonH_etal_2008a}, the (\PMA,\PMB) signals are affected by allelic crosstalk.  It was shown that correcting for crosstalk as well as offset significantly improved the ability to differentiate between CN states.
-The offset \& crosstalk model introduced in \citet{BengtssonH_etal_2008a} needs to be modified for \GWS arrays in order to control for offset in the new non-polymorphic probes.  
+For reasons explained in \citet{BengtssonH_etal_2008}, the (\PMA,\PMB) signals are affected by allelic crosstalk.  It was shown that correcting for crosstalk as well as offset significantly improved the ability to differentiate between CN states.
+The offset \& crosstalk model introduced in \citet{BengtssonH_etal_2008} needs to be modified for \GWS arrays in order to control for offset in the new non-polymorphic probes.  
 %% Similarily, for the subset of SNPs on \GWSFive that have the two alleles on opposite strands we do not expect crosstalk but we still need to correct for offset.
 %%
 For SNPs, let $\bx_{ijk} = (x_{ijkA}, x_{ijkB})$ and $\by_{ijk} = (y_{ijkA}, y_{ijkB})$ denote the true and the observed signals for probe pair $(j,k)$ in SNP $j$, probe $k=1,\ldots,K_j$, and sample $i=1,\ldots,I$.  
@@ -234,15 +234,15 @@ are obtained by backtransforming as
   \hat{\bx}_{ijk} = \hat{\bS}^{-1}_i (\by_{ijk} - \hat{\ba}_i).
   \label{eqnACCiii}
 \end{equation}
-For further details, see~\citet{BengtssonH_etal_2008a}.  For other non-SNP probes, including CN probes, we estimate and correct for the offset as the weighted average of offsets across all six nucleotide pairs with weights inversely proportional to the number of data points in each group.  The reason for calculating the offset this way is the belief that there is a dominant offset that is shared by all probes, e.g. scanner offsets~\citep{BengtssonH_etal_2004}, which is further strengthened by our parallel studies on Affymetrix resequencing arrays.  This also suggests that the offsets in Eqn~\eqref{eqnACCi} should be symmetric and same for all six pairs, but for practical reasons~\citep{BengtssonH_etal_2008a} we choose not to do this.
-Another difference from CRMA~(v1) is that after correcting for offset, all probe signals are rescaled to have the same arbitrary average $(=2200)$.  In \citet{BengtssonH_etal_2008a} this was done for each nucleotide pair separately, but if done introduces systematic biases between SNPs and CN loci due to enzymatic mixture imbalances.
+For further details, see~\citet{BengtssonH_etal_2008}.  For other non-SNP probes, including CN probes, we estimate and correct for the offset as the weighted average of offsets across all six nucleotide pairs with weights inversely proportional to the number of data points in each group.  The reason for calculating the offset this way is the belief that there is a dominant offset that is shared by all probes, e.g. scanner offsets~\citep{BengtssonH_etal_2004}, which is further strengthened by our parallel studies on Affymetrix resequencing arrays.  This also suggests that the offsets in Eqn~\eqref{eqnACCi} should be symmetric and same for all six pairs, but for practical reasons~\citep{BengtssonH_etal_2008} we choose not to do this.
+Another difference from CRMA~(v1) is that after correcting for offset, all probe signals are rescaled to have the same arbitrary average $(=2200)$.  In \citet{BengtssonH_etal_2008} this was done for each nucleotide pair separately, but if done introduces systematic biases between SNPs and CN loci due to enzymatic mixture imbalances.
 
 \subsubsection{Normalization for probe-sequence effects}
 \label{secModelBPN}
-It has been shown that the affinity of a probe can be attributed to its sequence composition~\citep{BinderH_etal_2004a, ZhangL_etal_2007, CarvalhoB_etal_2006}.
-As in \citet{CarvalhoB_etal_2006}, we model the probe-sequence affinity as a function of nucleotide and position in order to control for (i) small fluctuations in probe affinities across arrays, and (ii) differences in \PMA and \PMB affinities. 
+It has been shown that the affinity of a probe can be attributed to its sequence composition~\citep{BinderH_etal_2004a, ZhangL_etal_2007, CarvalhoB_etal_2007}.
+As in \citet{CarvalhoB_etal_2007}, we model the probe-sequence affinity as a function of nucleotide and position in order to control for (i) small fluctuations in probe affinities across arrays, and (ii) differences in \PMA and \PMB affinities. 
 Consider all probes $k'=1,\ldots,K'$ on the array and let $\bb_{k'} = (b_{k',1},b_{k',2},\ldots,b_{k',25})$ be the probe sequence for probe $k'$ with nucleotide $b_{k',t} \in \{A,C,G,T\}$ at position $t=1,\ldots,25$.
-According to the probe-position model~\citep{CarvalhoB_etal_2006}, the crosstalk and offset calibrated signals $\hat{x}_{ik'}$ for probe $k'$ of a given array $i=1,\ldots,I$, can be described (on the intensity scale) by:
+According to the probe-position model~\citep{CarvalhoB_etal_2007}, the crosstalk and offset calibrated signals $\hat{x}_{ik'}$ for probe $k'$ of a given array $i=1,\ldots,I$, can be described (on the intensity scale) by:
 \begin{equation}
   \hat{x}_{ik'} = \rho_{ik'} \cdot \mu_{ik'} + \xi_{ik'},
   \label{eqnBPNi}
@@ -261,14 +261,14 @@ Given estimates $\{\hat{h}_{i,b}(\cdot)\}_b$, \emph{all} probe signals can be no
   \label{eqnBPNiii}
 \end{align}
 where $\{\tilde{y}_{ik'}\}$ denotes the offset \& crosstalk calibrated and probe-sequence normalized signals. %% and $\{\hat{\rho}_{ik'}\}$ are calculated as in Eqn~\eqref{eqnBPNii} with estimates plugged in.
-%% Because Eqn~\eqref{eqnBPNi} is on the logarithmic scale and the crosstalk calibration introduce non-positive signals, we shift the signals $e$ (=300) units in order to decrease the number of non-defined values, cf.~\citet{BengtssonH_etal_2008a}.
-As in \citet{CarvalhoB_etal_2006}, we observe small systematic effects across arrays $\{h_{i,b}(\cdot)\}_b$, which introduce extra variance.  In addition, the difference in affinity between \PMB and \PMA is $h_{i,b_B}(t) - h_{i,b_A}(t)$ where $t$ is the SNP probe position.  If not controlled for, it will bias heterozygote signals relative to homozygote signals. 
-We note that the latter effect can be controlled for by introducing a heterozygote component in the crosstalk model, but as argued in~\citet{BengtssonH_etal_2008a} such an approach is likely to be sensitive to model errors, e.g. when there are a lot of CN aberrations which may be the case for some tumors.
+%% Because Eqn~\eqref{eqnBPNi} is on the logarithmic scale and the crosstalk calibration introduce non-positive signals, we shift the signals $e$ (=300) units in order to decrease the number of non-defined values, cf.~\citet{BengtssonH_etal_2008}.
+As in \citet{CarvalhoB_etal_2007}, we observe small systematic effects across arrays $\{h_{i,b}(\cdot)\}_b$, which introduce extra variance.  In addition, the difference in affinity between \PMB and \PMA is $h_{i,b_B}(t) - h_{i,b_A}(t)$ where $t$ is the SNP probe position.  If not controlled for, it will bias heterozygote signals relative to homozygote signals. 
+We note that the latter effect can be controlled for by introducing a heterozygote component in the crosstalk model, but as argued in~\citet{BengtssonH_etal_2008} such an approach is likely to be sensitive to model errors, e.g. when there are a lot of CN aberrations which may be the case for some tumors.
 
 
 \subsubsection{Probe-level summarization}
 \label{secSummarizationModel}
-With technically replicated probes, assuming the effect from neighboring probes is negligible, probe affinities used in multi-array summarization models~\citep{BengtssonH_etal_2008a} will vanish.
+With technically replicated probes, assuming the effect from neighboring probes is negligible, probe affinities used in multi-array summarization models~\citep{BengtssonH_etal_2008} will vanish.
 %%  Also, in contrast to previous chip types, where $(\PMA,\PMB)$ pairs were shifted relative to the SNP location, there is no unique pairing of \GWS replicated probes.
 %% Moreover, pairing probes based on such a rule, would require not only that this is true for all probes but also a tedious verification of the spatial location of each probe for existing and future chip types.
 For these reasons, we consider the following single-array summarization estimates for total CNs:
@@ -289,13 +289,13 @@ Finally, for non-polymorphic loci, which are all single-probe units (as defined 
 \end{equation}
 be the corresponding estimates for unit/probe $j$ in sample $i$.  If in future chip types, or related custom genotyping arrays, there are replicated non-polymorphic probes, Eqn~\eqref{eqnCnAB} should be replaced by summaries as in Eqn~\eqref{eqnSumAllele}.  
 
-%% In \citet{BengtssonH_etal_2008a}, we utilized a log-additive multi-array model for total copy numbers that controls for differencies in affinities of probes  part of the same SNP.  For a given SNP $j$, the normalized probe signals $\{(\tilde{y}_{ijkA},\tilde{y}_{ijkB})\}_{ik}$ are modelled as:
+%% In \citet{BengtssonH_etal_2008}, we utilized a log-additive multi-array model for total copy numbers that controls for differencies in affinities of probes  part of the same SNP.  For a given SNP $j$, the normalized probe signals $\{(\tilde{y}_{ijkA},\tilde{y}_{ijkB})\}_{ik}$ are modelled as:
 %% \begin{align}
 %%   \tilde{y}_{ijk} &= \tilde{y}_{ijkA} + \tilde{y}_{ijkB}, \notag \\ 
 %%   \log_2{(\tilde{y}_{ijk}+e)} &= \log_2\theta_{ij} + \log_2\phi_{jk} + \xi_{ijk},
 %%   \label{eqnPLM}
 %% \end{align}
-%% where $\{\theta_{ij}\}_i$ are the chip effects, $\{\phi_{jk}\}_k$ are the probe affinities, and $\{\xi_{ijk}\}_{ik}$ is noise.  As before, we utilize an artifical shift $e$ (=300) because of the logarithmic transform.  For further details, see \citet{BengtssonH_etal_2008a}. 
+%% where $\{\theta_{ij}\}_i$ are the chip effects, $\{\phi_{jk}\}_k$ are the probe affinities, and $\{\xi_{ijk}\}_{ik}$ is noise.  As before, we utilize an artifical shift $e$ (=300) because of the logarithmic transform.  For further details, see \citet{BengtssonH_etal_2008}. 
 
 
 
@@ -313,10 +313,10 @@ be the corresponding estimates for unit/probe $j$ in sample $i$.  If in future c
 %% As with the Affymetrix 500K assay, in the GWS assays DNA is digested using two different restriction enzymes (\NspI and \StyI).  The difference is that, after ligating with corresponding adaptors and PCR amplification, the PCR products are in latter assays combined, purified, post-fragmented, labeled and hybridized together to the same array. 
 Because fragments from two enzymes are hybridized to the same array for \GWS, some probes will match fragments originating from both restriction digestions.  See Suppl. Materials for details on how many SNP and CN loci are exclusively on \NspI, on \StyI, and on both.
 %% For the \GWSSix chip type, out of the 931,306 SNPs, 523,573 (56.2\%) are on both fragments, 246,514 (26.5\%) only on NspI, and 161,219 (17.3\%) only StyI.  For the 945,806 CN loci, there are 494,615 (52.3\%) on both, 451,191 (47.7\%) on NspI alone, but none on StyI alone.
-For signals originating from only one of the digestions, we could, for each enzyme separately, apply the fragment-length normalization method proposed in \citet{BengtssonH_etal_2008a}.  However, because a signal that originates from both digestions consists of one \NspI and one \StyI component, which each has been amplified differently, another method has to be used for such units.  For this reason, we modify the method in \citet{BengtssonH_etal_2008a} as described next. 
+For signals originating from only one of the digestions, we could, for each enzyme separately, apply the fragment-length normalization method proposed in \citet{BengtssonH_etal_2008}.  However, because a signal that originates from both digestions consists of one \NspI and one \StyI component, which each has been amplified differently, another method has to be used for such units.  For this reason, we modify the method in \citet{BengtssonH_etal_2008} as described next. 
 %% We will not consider GC-content normalization in this paper.
 
-First, assume that the number of fragments obtained from digesting with a particular enzyme is independent of locus $j$.  This assumption was implicit in \citet{BengtssonH_etal_2008a}.
+First, assume that the number of fragments obtained from digesting with a particular enzyme is independent of locus $j$.  This assumption was implicit in \citet{BengtssonH_etal_2008}.
 %% We recognize that an enzyme might produce fragments in different proportions due to differences in recognition or adaptor sequences~\citet{Affymetrix_2007m}, but since we have found that it does not improve CRMA~v2.
 Continuing, let $\lambda^{r}_j$ be the length of the fragment that was digested by restriction enzyme $r \in \{\Nsp, \Sty\}$ and contains locus $j$.
 %% These lengths are predetermined by the restriction sites of the enzymes.
@@ -338,11 +338,11 @@ We say that \emph{the confounded fragment-length effect is additive on the inten
 %%  With everything else the same, assuming aliquot mixing proportions and ignoring other scale factors, then $n_{j} \cdot [ 2^{g^{\Nsp}(\lambda^{\Nsp}_{j})} + 2^{g^{\Sty}(\lambda^{\Sty}_{j})} ]$ copies are hybridized to the array.
 With this model, each fragment-length effect $\{g_i^r(\cdot)\}_r$ can be estimated from signals exclusively from a single digestion.
 
-In \citet{BengtssonH_etal_2008a} we normalized the data toward target fragment-length effects estimated as the average effects across arrays.  
+In \citet{BengtssonH_etal_2008} we normalized the data toward target fragment-length effects estimated as the average effects across arrays.  
 %% Without loss, this keeps the common effects such that it is possible to apply additional fragment-length models downstreams. However, 
 In the effort to avoid multi-array estimators in CRMA~v2, we here normalize data toward fixed target effects.  
 The choice of target functions is not important because the effects will cancel out when CN ratios relative to a reference is calculated.
-Using the notation of \citet{BengtssonH_etal_2008a}, we use constant target functions $g_T^r(\lambda) = \log_2(2200)$, where $2200$ was chosen arbitrary.
+Using the notation of \citet{BengtssonH_etal_2008}, we use constant target functions $g_T^r(\lambda) = \log_2(2200)$, where $2200$ was chosen arbitrary.
 
 Define $\mathcal{J}^{\Nsp}, \mathcal{J}^{\Sty}, \mathcal{J}^{\Nsp\cap\Sty} \subset \mathcal{J}$ to be the subsets of loci that are exclusive to \NspI, \StyI, and to both enzymes, respectively.
 In order to simplify the notation, we will use the same notation for the true and the estimated functions.  The normalization algorithm for array $i=1,\ldots,I$ is then:
@@ -385,7 +385,7 @@ In order to simplify the notation, we will use the same notation for the true an
 Loci for which annotation is missing (Suppl. Materials) are rescaled such that their median signal equals the median of the other loci.
 %% (excluding ChrX and ChrY, that is). /HB 2008-09-11
 %%
-For chip types such as 10K, 100K and 500K, where there are no multi-enzyme loci ($\mathcal{J}^{\Nsp\cap\Sty} = \emptyset$), Step~3 no longer applies and the method becomes effectively identical to the one presented in \citet{BengtssonH_etal_2008a} (if the target effect is estimated from the average array).
+For chip types such as 10K, 100K and 500K, where there are no multi-enzyme loci ($\mathcal{J}^{\Nsp\cap\Sty} = \emptyset$), Step~3 no longer applies and the method becomes effectively identical to the one presented in \citet{BengtssonH_etal_2008} (if the target effect is estimated from the average array).
 %% Moreover, as long as there are enough loci that are exclusively digested by each enzyme, so that the enzyme-specific fragment-length effects can be estimated, then the above method also applies to cases where more than two enzymes are used.  See Suppl. Materials for the number of loci exclusively on one enzyme.
 %% One could argue that an weighted average based on an estimates of $\rho^{\Nsp}_{i}$ and $\rho^{\Nsp}_{R}$ should be used in Eqn~\eqref{eqnPCRbiasIIIb} in order to controlling for global imbalances between enzymes.  For instance, in the current setup, signals originating for an enzyme that are significantly lower than the other enzyme on a particular samples, will have less impact on the estimated correction factors.  
 Moreover, since each $g^{r}_{i}(\cdot)$ includes the term $\rho^{r}_{i}$, the above method will also control for imperfect mixing of enzyme products, which otherwise carry through introducing systematic effects in loci that originate from both digestions.
@@ -398,13 +398,13 @@ Analogously, the scale differences between arrays, $\{\kappa_i\}$, are also cont
 
 \subsubsection{Calculation of raw copy numbers}
 \label{secRawCN}
-As in \citet{BengtssonH_etal_2008a}, we calculate raw CNs as the chip effect relative to a reference.  This is the only step in CRMA~v2 requiring a reference.
+As in \citet{BengtssonH_etal_2008}, we calculate raw CNs as the chip effect relative to a reference.  This is the only step in CRMA~v2 requiring a reference.
 We calculate the relative \CN for sample $i$ and locus $j$ as:
 \begin{equation}
   C_{ij} = 2 \cdot \frac{\tilde\theta_{ij}}{\tilde\theta_{Rj}},
   \label{eqnCnRatio}
 \end{equation}
-where $\tilde\theta_{Rj}$ is the reference signal, which commonly is the robust average across samples and possibly corrected for the case that some data points are from non-copy-neutral loci, cf. \citet{BengtssonH_etal_2008a}.
+where $\tilde\theta_{Rj}$ is the reference signal, which commonly is the robust average across samples and possibly corrected for the case that some data points are from non-copy-neutral loci, cf. \citet{BengtssonH_etal_2008}.
 Note that for paired studies such as tumor-normal comparisons, the normal DNA will serve as the reference, which is why only two hybridizations are needed in such comparisons.
 In Eqn~\eqref{eqnCnRatio} we assume that the mean of $\tilde\theta_{Rj}$ corresponds to $\CN=2$, e.g. ChrY reference estimates should be rescaled accordingly.
 For \CN estimates on the logarithmic scale, we calculate:
@@ -435,12 +435,12 @@ Since it is a single-array method, the arrays can be processed in parallel on mu
 \subsection{Methods for evaluation}
 \label{secEvaluation}
 In order to assess the performance of CRMA~v2, we compared it with Affymetrix CN5 method~\citep{Affymetrix_2008m} and the method implemented in dChip~\citep{LiWong_2001}.  For \emph{dChip}, we found that summarizing SNP probes by averaging is significantly better than using the default multiplicative model.  For this reason, we only present results for the former (here denoted by \emph{dChip*}).  
-We used the same set of evaluation methods as in \citet{BengtssonH_etal_2008a} using relative (Eqn~\eqref{eqnCnRatio}) instead of log-ratio CNs (Eqn~\eqref{eqnCnLogRatio}).
+We used the same set of evaluation methods as in \citet{BengtssonH_etal_2008} using relative (Eqn~\eqref{eqnCnRatio}) instead of log-ratio CNs (Eqn~\eqref{eqnCnLogRatio}).
 %% dChip*: I have verified that the exported MBEI estimates are the same as the ones in the DCP files.  In other words, the poor SNP performance for dChip* is not due to an error in reading in exported data. /HB 2008-02-01
 %%
 To assess how well the methods differentiate between one and two copies, and zero and one copy, we use ChrX and ChrY data, respectively.  We exclude loci in pseudo-autosomal regions and inside and close to known CN polymorphic regions \citep{RedonR_etal_2006}.  Moreover, since the CN5 implementation is limited to the default CDF, the results presented here are based on that set of loci.  
 %%
-Since CN5 uses only females (males) for the reference signals $\{\tilde\theta_{Rj}\}$ on ChrX (ChrY), this comparison study will not use bias-corrected reference signals from all samples \citep{BengtssonH_etal_2008a}.
+Since CN5 uses only females (males) for the reference signals $\{\tilde\theta_{Rj}\}$ on ChrX (ChrY), this comparison study will not use bias-corrected reference signals from all samples \citep{BengtssonH_etal_2008}.
 For more details on the above, see Suppl. Materials.
 
 
@@ -467,7 +467,7 @@ We also note that CRMA~v2 smoothed with $3$ loci per window performs equally wel
  \label{figRocChrX}
 \end{figure}
 
-Using a windowing technique similar to that in~\citet{BengtssonH_etal_2008a}, for a fixed \FPrate we can estimate the \TPrate as a function of amount of smoothing.  Since a given amount of smoothing corrsponds to a given distance between loci this provides us with a first approximation to the effective resolution of a method.  In the upper panel of Figure~\ref{figTPvResolutionChrXY} the \TPrate (for CN=2 v. CN=1) as a function of resolution is shown for the three methods, which shows that CRMA~v2 has a higher resolution.
+Using a windowing technique similar to that in~\citet{BengtssonH_etal_2008}, for a fixed \FPrate we can estimate the \TPrate as a function of amount of smoothing.  Since a given amount of smoothing corrsponds to a given distance between loci this provides us with a first approximation to the effective resolution of a method.  In the upper panel of Figure~\ref{figTPvResolutionChrXY} the \TPrate (for CN=2 v. CN=1) as a function of resolution is shown for the three methods, which shows that CRMA~v2 has a higher resolution.
 \begin{figure}[!tpbh]
 \begin{center}
   \resizebox{0.68\columnwidth}{!}{\includegraphics{CRMAv2,chrX,all,tpResolution,fpRate=2_00,y=0_50-1_00}} \\
@@ -507,7 +507,7 @@ The results also show that CN5 is equally good or slightly better than CRMA~v2 a
 
 
 \subsection{Performance of SNPs and CN loci}
-In order to better understand differences between methods, we compare the ROC curves and distribution of \TPrates at a given \FPrate~\citep{BengtssonH_etal_2008a} while stratifying on SNP and CN loci.
+In order to better understand differences between methods, we compare the ROC curves and distribution of \TPrates at a given \FPrate~\citep{BengtssonH_etal_2008} while stratifying on SNP and CN loci.
 We observe that on average the discrimatory power is greater for SNPs than CN loci (upper panels of Figure~\ref{figROC-SNPvCNChrX} and Figure~\ref{figROC-SNPvCNChrY}).  CN5 is the method for which SNPs and CN loci have the most similar performances.   Furthermore, by investigating the locus-by-locus ROCs, we observe that the \TPrates at a fixed \FPrate tend to be greater for SNPs than for CN loci (lower panels), and that there is a significant set of CN loci with very low \TPrates.  The dChip* method has a larger set of poorly performing CN loci, which is also seen when comparing dChip's ROC curves for SNPs and CN loci.  
 
 
@@ -560,7 +560,7 @@ We also found that the SNPs show stronger discrimination for copy number than th
 We look forward to further studies investigating whether this is because more/multiple probes are used for the SNPs or there are other reasons for this.
 Also, it still has to be assessed how well CRMA~v2 controls for systematic effects between labs and batches, and whether additional normalization is needed in such cases.
 
-We also wish to emphasize that the dChip method has not been optimized for \GWS or SNP arrays, which may explain its lower performance in this \GWSSix study in comparison with its higher performance for the 500K arrays~\citep{BengtssonH_etal_2008a}.
+We also wish to emphasize that the dChip method has not been optimized for \GWS or SNP arrays, which may explain its lower performance in this \GWSSix study in comparison with its higher performance for the 500K arrays~\citep{BengtssonH_etal_2008}.
 
 
 %% The sex-chromosome evaluation method used favors methods that produce CN estimates that have consistent mean CN levels across samples.  Hence, a method that produces estimates with great discrepancy power per array but does not control for the mean levels across arrays will be penalized.  This might be one reason why CRMA~v2 performs better than the other methods.  An alternative is to identify known CN aberrations within each sample, assume that the CNs are constant within each such region, and then test how well each method can separate between the CN level inside and outside each region.  Such an evaluation will not penalize against differences between arrays, but only focus on within array performances.  Which kind of evaluation method to use, depends on what the main objective is.

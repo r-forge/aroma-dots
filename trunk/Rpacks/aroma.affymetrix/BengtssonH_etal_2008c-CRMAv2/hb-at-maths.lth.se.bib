@@ -1097,8 +1097,62 @@
   comment = {LUTFMS-5041-2004}
 }
 
+@ARTICLE{BengtssonH_etal_2008,
+  author = {Henrik Bengtsson and Rafael A Irizarry and Benilton Carvalho and
+	Terence P Speed},
+  title = {Estimation and assessment of raw copy numbers at the single locus
+	level.},
+  journal = {Bioinformatics},
+  year = {2008},
+  volume = {24},
+  pages = {759--767},
+  number = {6},
+  month = {Mar},
+  abstract = {MOTIVATION: Although copy-number aberrations are known to contribute
+	to the diversity of the human DNA and cause various diseases, many
+	aberrations and their phenotypes are still to be explored. The recent
+	development of single-nucleotide polymorphism (SNP) arrays provides
+	researchers with tools for calling genotypes and identifying chromosomal
+	aberrations at an order-of-magnitude greater resolution than possible
+	a few years ago. The fundamental problem in array-based copy-number
+	(CN) analysis is to obtain CN estimates at a single-locus resolution
+	with high accuracy and precision such that downstream segmentation
+	methods are more likely to succeed. RESULTS: We propose a preprocessing
+	method for estimating raw CNs from Affymetrix SNP arrays. Its core
+	utilizes a multichip probe-level model analogous to that for high-density
+	oligonucleotide expression arrays. We extend this model by adding
+	an adjustment for sequence-specific allelic imbalances such as cross-hybridization
+	between allele A and allele B probes. We focus on total CN estimates,
+	which allows us to further constrain the probe-level model to increase
+	the signal-to-noise ratio of CN estimates. Further improvement is
+	obtained by controlling for PCR effects. Each part of the model is
+	fitted robustly. The performance is assessed by quantifying how well
+	raw CNs alone differentiate between one and two copies on Chromosome
+	X (ChrX) at a single-locus resolution (27kb) up to a 200kb resolution.
+	The evaluation is done with publicly available HapMap data. AVAILABILITY:
+	The proposed method is available as part of an open-source R package
+	named aroma.affymetrix. Because it is a bounded-memory algorithm,
+	any number of arrays can be analyzed.},
+  doi = {10.1093/bioinformatics/btn016},
+  file = {BengtssonH_etal_2008-Estimation and assessment of raw copy numbers
+	at the single locus level.pdf:BengtssonH_etal_2008-Estimation and
+	assessment of raw copy numbers at the single locus level.pdf:PDF},
+  keywords = {Algorithms; Artificial Intelligence; Base Sequence; Chromosome Mapping,
+	methods; DNA Mutational Analysis, methods; Gene Dosage, genetics;
+	Gene Expression Profiling, methods; Markov Chains; Molecular Sequence
+	Data; Oligonucleotide Array Sequence Analysis, methods; Pattern Recognition,
+	Automated, methods; Polymorphism, Single Nucleotide, genetics; Quantitative
+	Trait Loci, genetics; Software; CRMA},
+  owner = {hb},
+  pii = {btn016},
+  pmid = {18204055},
+  timestamp = {2008.01.25},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btn016}
+}
+
 @ARTICLE{BengtssonH_etal_2008a,
-  author = {Bengtsson, Henrik and Irizarry, R. and Carvalho, B. and Speed, T.P.},
+  author = {Henrik Bengtsson and Rafael A Irizarry and Benilton Carvalho and
+	Terence P Speed},
   title = {{Estimation and assessment of raw copy numbers at the single locus
 	level}},
   journal = {Bioinformatics},
@@ -1152,58 +1206,6 @@
   journal = Bioinformatics,
   owner = {hb},
   timestamp = {2007.11.14}
-}
-
-@ARTICLE{BengtssonH_etal_2008,
-  author = {H. Bengtsson and R. Irizarry and B. Carvalho and T. P. Speed},
-  title = {Estimation and assessment of raw copy numbers at the single locus
-	level.},
-  journal = {Bioinformatics},
-  year = {2008},
-  volume = {24},
-  pages = {759--767},
-  number = {6},
-  month = {Mar},
-  abstract = {MOTIVATION: Although copy-number aberrations are known to contribute
-	to the diversity of the human DNA and cause various diseases, many
-	aberrations and their phenotypes are still to be explored. The recent
-	development of single-nucleotide polymorphism (SNP) arrays provides
-	researchers with tools for calling genotypes and identifying chromosomal
-	aberrations at an order-of-magnitude greater resolution than possible
-	a few years ago. The fundamental problem in array-based copy-number
-	(CN) analysis is to obtain CN estimates at a single-locus resolution
-	with high accuracy and precision such that downstream segmentation
-	methods are more likely to succeed. RESULTS: We propose a preprocessing
-	method for estimating raw CNs from Affymetrix SNP arrays. Its core
-	utilizes a multichip probe-level model analogous to that for high-density
-	oligonucleotide expression arrays. We extend this model by adding
-	an adjustment for sequence-specific allelic imbalances such as cross-hybridization
-	between allele A and allele B probes. We focus on total CN estimates,
-	which allows us to further constrain the probe-level model to increase
-	the signal-to-noise ratio of CN estimates. Further improvement is
-	obtained by controlling for PCR effects. Each part of the model is
-	fitted robustly. The performance is assessed by quantifying how well
-	raw CNs alone differentiate between one and two copies on Chromosome
-	X (ChrX) at a single-locus resolution (27kb) up to a 200kb resolution.
-	The evaluation is done with publicly available HapMap data. AVAILABILITY:
-	The proposed method is available as part of an open-source R package
-	named aroma.affymetrix. Because it is a bounded-memory algorithm,
-	any number of arrays can be analyzed.},
-  doi = {10.1093/bioinformatics/btn016},
-  file = {BengtssonH_etal_2008-Estimation and assessment of raw copy numbers
-	at the single locus level.pdf:BengtssonH_etal_2008-Estimation and
-	assessment of raw copy numbers at the single locus level.pdf:PDF},
-  keywords = {Algorithms; Artificial Intelligence; Base Sequence; Chromosome Mapping,
-	methods; DNA Mutational Analysis, methods; Gene Dosage, genetics;
-	Gene Expression Profiling, methods; Markov Chains; Molecular Sequence
-	Data; Oligonucleotide Array Sequence Analysis, methods; Pattern Recognition,
-	Automated, methods; Polymorphism, Single Nucleotide, genetics; Quantitative
-	Trait Loci, genetics; Software},
-  owner = {hb},
-  pii = {btn016},
-  pmid = {18204055},
-  timestamp = {2008.01.25},
-  url = {http://dx.doi.org/10.1093/bioinformatics/btn016}
 }
 
 @UNPUBLISHED{BengtssonH_etal_2007,
@@ -2167,6 +2169,52 @@
 }
 
 @ARTICLE{CarvalhoB_etal_2007,
+  author = {Benilton Carvalho and Henrik Bengtsson and Terence P Speed and Rafael
+	A Irizarry},
+  title = {Exploration, normalization, and genotype calls of high-density oligonucleotide
+	{SNP} array data.},
+  journal = {Biostatistics},
+  year = {2007},
+  volume = {8},
+  pages = {485--499},
+  number = {2},
+  month = {Apr},
+  abstract = {In most microarray technologies, a number of critical steps are required
+	to convert raw intensity measurements into the data relied upon by
+	data analysts, biologists, and clinicians. These data manipulations,
+	referred to as preprocessing, can influence the quality of the ultimate
+	measurements. In the last few years, the high-throughput measurement
+	of gene expression is the most popular application of microarray
+	technology. For this application, various groups have demonstrated
+	that the use of modern statistical methodology can substantially
+	improve accuracy and precision of the gene expression measurements,
+	relative to ad hoc procedures introduced by designers and manufacturers
+	of the technology. Currently, other applications of microarrays are
+	becoming more and more popular. In this paper, we describe a preprocessing
+	methodology for a technology designed for the identification of DNA
+	sequence variants in specific genes or regions of the human genome
+	that are associated with phenotypes of interest such as disease.
+	In particular, we describe a methodology useful for preprocessing
+	Affymetrix single-nucleotide polymorphism chips and obtaining genotype
+	calls with the preprocessed data. We demonstrate how our procedure
+	improves existing approaches using data from 3 relatively large studies
+	including the one in which large numbers of independent calls are
+	available. The proposed methods are implemented in the package oligo
+	available from Bioconductor.},
+  doi = {10.1093/biostatistics/kxl042},
+  institution = {Department of Biostatistics, Johns Hopkins University, Baltimore,
+	MD 21205, USA.},
+  keywords = {Algorithms; Alleles; Data Interpretation, Statistical; Genotype; Humans;
+	Oligonucleotide Array Sequence Analysis, methods; Oligonucleotides,
+	genetics; Polymorphism, Single Nucleotide; CRLMM},
+  owner = {hb},
+  pii = {kxl042},
+  pmid = {17189563},
+  timestamp = {2008.11.02},
+  url = {http://dx.doi.org/10.1093/biostatistics/kxl042}
+}
+
+@ARTICLE{CarvalhoB_etal_2007a,
   author = {Benilton Carvalho and Henrik Bengtsson and Terence P Speed and Rafael
 	A Irizarry},
   title = {Exploration, normalization, and genotype calls of high-density oligonucleotide
