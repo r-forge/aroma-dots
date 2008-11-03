@@ -85,7 +85,7 @@
 \firstpage{1}
 
 \title[CRMA~v2]{A single-array preprocessing method for estimating full-resolution raw copy numbers from all Affymetrix genotyping arrays including GenomeWideSNP 5 \& 6}
-\author[Bengtsson \& Speed]{H. Bengtsson\,$^{\rm a}$\footnote{To whom correspondence should be addressed}, P. Wirapati\,$^{\rm b,c}$, T.P. Speed\,$^{\rm a,d}$}
+\author[Bengtsson \& Speed]{Henrik Bengtsson\,$^{\rm a}$\footnote{To whom correspondence should be addressed}, Pratyaksha Wirapati\,$^{\rm b,c}$, Terence P. Speed\,$^{\rm a,d}$}
 \address{
   $^{\rm a}$ Department of Statistics, University of California, Berkeley, USA.
   $^{\rm b}$ National Center of Competence in Research Molecular Oncology, Swiss Institute of Experimental Cancer Research, Epalinges, Switzerland.
@@ -126,11 +126,11 @@ A bounded-memory implementation that can process any number of arrays is availab
 \label{secBackground}
 Following the suite of single-nucleotide polymorphism (SNP) arrays ('10K', '100K' and '500K'), Affymetrix has released a new class of chip types referered to as GenomeWideSNP ('GWS'), which in addition to SNP units include non-polymorphic probes, also called copy-number (CN) probes.  The latter can be used to estimate the amount of target DNA at loci other than SNPs.  The \GWSFivef ('\GWSFive'), released February 2007, is targetted by Affymetrix as a genotyping assay, whereas the \GWSSixf ('\GWSSix'), released May 2007, is targetted as both a genotyping and a CN assay.
 
-In this paper we present the CRMA~v2 method for estimating full-resolution raw total copy numbers (CNs).  It extends and improves upon CRMA~\citep{BengtssonH_etal_2008} and applies to all Affymetrix genotyping arrays including \GWS. Likewise, it does not require genotype calls.  
+In this paper we present the CRMA~v2 method for estimating full-resolution raw total copy numbers (CNs).  It extends and improves upon CRMA~\citep{BengtssonH_etal_2008} and applies to all Affymetrix genotyping arrays including \GWS and custom arrays. Likewise, it does not require genotype calls.  
 It should be emphasized that the purpose of the method is to provide better raw full-resolution estimates that increase chances for downstream methods such as segmentation methods and CN calling methods to produce better estimates.
 
-Contrary to other methods, CRMA~v2 is a single-array method that processes each array independently of the others.  In order to achieve this, we had to overcome challenges in adapting some of CRMA's multi-array steps.
-The access to a single-array preprocessing method has several implications: (i) Only two hybridizations are required for paired analysis, e.g. a single-person tumor-normal study. (ii) Each array can be preprocessed immediately after being scanned.  (iii) Arrays can be processed in parallel on different hosts/processors making it possible to decrease the processing time of a set of arrays linearly with the number of processors.  (iv) There is no need to reprocess an array when new arrays are produced, which further saves time and computational resources.   Furthermore, (v) the decision to filter out poor arrays can be made later, because a poor array will not affect the preprocessing of other arrays. %%, which is illustrated by the exclusion of sample NA12145 in this study.
+Contrary to other methods, CRMA~v2 is a single-array method that processes each array independently of the others.  In order to achieve this, we had to overcome the challenges in adapting CRMA's multi-array steps.
+The access to a single-array preprocessing method has several implications: (i) Only two hybridizations are required for paired analysis, e.g. in a single-person tumor-normal study. (ii) Each array can be preprocessed immediately after being scanned.  (iii) Arrays can be processed in parallel on different hosts/processors making it possible to decrease the processing time of a set of arrays linearly with the number of processors.  (iv) There is no need to reprocess an array when new arrays are produced, which further saves time and computational resources.   Furthermore, (v) the decision to filter out poor arrays can be made later, because a poor array will not affect the preprocessing of other arrays. %%, which is illustrated by the exclusion of sample NA12145 in this study.
 More importantly, a single-array method is (vi) potentially very practical for applied medical diagnostics, because individual patients can be analyzed momentarily even when they come in trickles (instead of in batches).
 %%Furthermore, the decision to filter out poor samples can be made later, because a poor sample will not affect the estimates of other arrays, which is illustrated by the exclusion of sample NA12145 in this study.
 
@@ -166,7 +166,7 @@ For an explaination of this and a summary of how many SNP and CN loci are target
 %% This has to be accounted for in  when, for instance, fitting the fragment-length normalization.
 
 
-Finally, for \GWS, Affymetrix has identified 59,744 (6.51\% of all loci) and 25,346 (1.35\%) SNPs, respectively, that do not meet their quality criteria (private communication).
+Finally, for \GWSFive and \GWSSix, Affymetrix has identified 59,744 (6.51\% of all loci) and 25,346 (1.35\%) SNPs, respectively, that do not meet their quality criteria (private communication).
 In order to differentiate between the filtered and non-filtered sets of loci, Affymetrix provides one ``default'' chip definition file (CDF) and one ``full'' CDF.  Further details on the two types of CDFs is given in the Suppl. Materials.
 
 
@@ -181,7 +181,8 @@ In order to differentiate between the filtered and non-filtered sets of loci, Af
 % DATA SET
 %--------------------------------------------------------------------------
 \subsection{Data set}
-\textbf{\GWSSix:} \GWSSix CEL files for the 30 male and 30 female CEU founders of The International HapMap Project~\citep{HapMap_2003, AltshulerD_etal_2005} was used. Offspring were excluded in order to avoid biological relationships.
+%% \textbf{\GWSSix:} 
+\GWSSix CEL files for the 30 male and 30 female CEU founders of The International HapMap Project~\citep{HapMap_2003, AltshulerD_etal_2005} was used. Offspring were excluded in order to avoid biological relationships.
 %% \textbf{\GWSFive:} There is no public \GWSFive data available for the above \GWSSix HapMap samples but only for a subset consisting of 20 founders with 10 children, where we choose to use the latter in order to increase the sample size. 
 Because female NA12145 has a low true \chrX CN level \citep{TingJ_etal_2006}, it was excluded in the evaluation.  
 More details on the data can be found in the Suppl. Materials.
@@ -200,7 +201,7 @@ CRMA~v2 was designed to be:
 (ii) prepared for future generations of arrays, 
 (iii) sequential, so that it is easy to replace or add other steps, and
 (iv) such that each array can be processed independently of the others.
-The latter allows for online single-array CN analysis, which is becoming more important as greater data sets are being generated and updated over time.
+The latter allows for online single-array CN analysis, which is becoming more important as greater data sets are being generated and updated over time, as well as it allows for analyzing very small data sets.
 It is only in the last step while calculating \emph{relative} CNs that a reference is needed.
 Although not discussed further in this paper, we also look towards a unified method for estimating allele-specific CNs.
 
@@ -262,7 +263,7 @@ Given estimates $\{\hat{h}_{i,b}(\cdot)\}_b$, \emph{all} probe signals can be no
 \end{align}
 where $\{\tilde{y}_{ik'}\}$ denotes the offset \& crosstalk calibrated and probe-sequence normalized signals. %% and $\{\hat{\rho}_{ik'}\}$ are calculated as in Eqn~\eqref{eqnBPNii} with estimates plugged in.
 %% Because Eqn~\eqref{eqnBPNi} is on the logarithmic scale and the crosstalk calibration introduce non-positive signals, we shift the signals $e$ (=300) units in order to decrease the number of non-defined values, cf.~\citet{BengtssonH_etal_2008}.
-As in \citet{CarvalhoB_etal_2007}, we observe small systematic effects across arrays $\{h_{i,b}(\cdot)\}_b$, which introduce extra variance.  In addition, the difference in affinity between \PMB and \PMA is $h_{i,b_B}(t) - h_{i,b_A}(t)$ where $t$ is the SNP probe position.  If not controlled for, it will bias heterozygote signals relative to homozygote signals. 
+As in \citet{CarvalhoB_etal_2007}, we observe small systematic effects across arrays $\{h_{i,b}(\cdot)\}_b$, which introduce extra variance.  In addition, the difference in affinity between \PMB and \PMA is $h_{i,b_B}(t) - h_{i,b_A}(t)$ where $t$ is the SNP probe position.  If not controlled for, it will bias heterozygote signals (AB) relative to homozygote signals (AA or BB), when calculating the total signals.
 We note that the latter effect can be controlled for by introducing a heterozygote component in the crosstalk model, but as argued in~\citet{BengtssonH_etal_2008} such an approach is likely to be sensitive to model errors, e.g. when there are a lot of CN aberrations which may be the case for some tumors.
 
 
@@ -438,7 +439,7 @@ In order to assess the performance of CRMA~v2, we compared it with Affymetrix CN
 We used the same set of evaluation methods as in \citet{BengtssonH_etal_2008} using relative (Eqn~\eqref{eqnCnRatio}) instead of log-ratio CNs (Eqn~\eqref{eqnCnLogRatio}).
 %% dChip*: I have verified that the exported MBEI estimates are the same as the ones in the DCP files.  In other words, the poor SNP performance for dChip* is not due to an error in reading in exported data. /HB 2008-02-01
 %%
-To assess how well the methods differentiate between one and two copies, and zero and one copy, we use ChrX and ChrY data, respectively.  We exclude loci in pseudo-autosomal regions and inside and close to known CN polymorphic regions \citep{RedonR_etal_2006}.  Moreover, since the CN5 implementation is limited to the default CDF, the results presented here are based on that set of loci.  
+To assess how well the methods differentiate between one and two copies, and zero and one copy, we use ChrX and ChrY data, respectively.  We exclude loci in pseudo-autosomal regions~\citep{BlaschkeRappold_2006} and inside and close to known CN polymorphic regions~\citep{RedonR_etal_2006}.  Moreover, since the CN5 implementation is limited to the default CDF, the results presented here are based on that set of loci.  
 %%
 Since CN5 uses only females (males) for the reference signals $\{\tilde\theta_{Rj}\}$ on ChrX (ChrY), this comparison study will not use bias-corrected reference signals from all samples \citep{BengtssonH_etal_2008}.
 For more details on the above, see Suppl. Materials.
@@ -558,7 +559,7 @@ Our study confirms that it is harder to differentiate between CN=1 and CN=2 than
 We also found that the SNPs show stronger discrimination for copy number than the CN loci.
 %% We also found that SNPs have more power [HB: are these correct words to use?] than CN loci. 
 We look forward to further studies investigating whether this is because more/multiple probes are used for the SNPs or there are other reasons for this.
-Also, it still has to be assessed how well CRMA~v2 controls for systematic effects between labs and batches, and whether additional normalization is needed in such cases.
+Also, it still has to be assessed how well CRMA~v2 (and other methods) controls for systematic effects between labs and batches, and whether additional normalization is needed in such cases.
 
 We also wish to emphasize that the dChip method has not been optimized for \GWS or SNP arrays, which may explain its lower performance in this \GWSSix study in comparison with its higher performance for the 500K arrays~\citep{BengtssonH_etal_2008}.
 
