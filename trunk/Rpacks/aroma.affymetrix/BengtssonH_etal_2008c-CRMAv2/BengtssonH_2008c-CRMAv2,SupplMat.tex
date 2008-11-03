@@ -128,12 +128,12 @@ We will list all annotation files needed by CRMA~v2 for analyzing data for the \
 File name    & GenomeWideSNP\_5,r2.cdf \\
 File size    & 239,670,727 bytes \\
 MD5 checksum & e062cb42a392dd74721d5b7cf9a286f1 \\
-Notes        & Affymetrix default chip defintion file (CDF). \\
+Notes        & Affymetrix default chip definition file (CDF). \\
 \hline
 File name    & GenomeWideSNP\_5,Full,r2.cdf \\
 File size    & 261,578,689 bytes \\
 MD5 checksum & 79f7a8353b4978dedbeff05a7897ff6e \\
-Notes        & Affymetrix full chip defintion file (CDF). \\
+Notes        & Affymetrix full chip definition file (CDF). \\
 \hline
 File name    & GenomeWideSNP\_5.CN\_probe\_tab \\
 File size    & 43,252,969 bytes \\
@@ -169,12 +169,12 @@ Notes        & Affymetrix NetAffx v26 annotation file for SNPs. \\
 File name    & GenomeWideSNP\_6.cdf \\
 File size    & 484,489,553 bytes \\
 MD5 checksum & 223f3cd9141404b2a926a40cf47d6f1a \\
-Notes        & Affymetrix default chip defintion file (CDF). \\
+Notes        & Affymetrix default chip definition file (CDF). \\
 \hline
 File name    & GenomeWideSNP\_6.Full.cdf \\
 File size    & 493,291,745 bytes \\
 MD5 checksum & 3fbe0f6e7c8a346105238a3f3d10d4ec \\
-Notes        & Affymetrix full chip defintion file (CDF). \\
+Notes        & Affymetrix full chip definition file (CDF). \\
 \hline
 File name    & GenomeWideSNP\_6.CN\_probe\_tab \\
 File size    & 96,968,290 bytes \\
@@ -224,7 +224,7 @@ Notes        & Aroma.affymetrix fragment length data mapping to the full CDF.  C
 File name    & GenomeWideSNP\_5,Full,r2,na26,HB20080822.ugp \\
 File size    & 4,605,439 bytes \\
 MD5 checksum & 9827c9fad08144d6e590b87984350a26 \\
-Notes        & Aroma.affymetrix genome location data mapping to the full CDF.  Comiles from above Affymetrix NetAffx files. \\
+Notes        & Aroma.affymetrix genome location data mapping to the full CDF.  Compiled from above Affymetrix NetAffx files. \\
 \hline
 File name    & GenomeWideSNP\_5,r2,na26,HB20080822.ufl \\
 File size    & 3,445,230 bytes \\
@@ -234,7 +234,7 @@ Notes        & Aroma.affymetrix fragment length data mapping to the default CDF.
 File name    & GenomeWideSNP\_5,r2,na26,HB20080822.ugp \\
 File size    & 4,306,339 bytes \\
 MD5 checksum & 9330fdcb30b3a3b4c13cbdeb8de4ffb5 \\
-Notes        & Aroma.affymetrix genome location data mapping to the default CDF.  Comiles from above Affymetrix NetAffx files. \\
+Notes        & Aroma.affymetrix genome location data mapping to the default CDF.  Compiled from above Affymetrix NetAffx files. \\
 \hline
 \end{tabular}
 \end{center}
@@ -261,7 +261,7 @@ Notes        & Aroma.affymetrix fragment length data mapping to the full CDF.  C
 File name    & GenomeWideSNP\_6,Full,na26,HB20080821.ugp \\
 File size    & 9,407,937 bytes \\
 MD5 checksum & 5a7bef30a458cb238ae2167aa41f5bd6 \\
-Notes        & Aroma.affymetrix genome location data mapping to the full CDF.  Comiles from above Affymetrix NetAffx files. \\
+Notes        & Aroma.affymetrix genome location data mapping to the full CDF.  Compiled from above Affymetrix NetAffx files. \\
 \hline
 File name    & GenomeWideSNP\_6,na26,HB20080821.ufl \\
 File size    & 7,425,058 bytes \\
@@ -287,7 +287,7 @@ Notes        & Aroma.affymetrix genome location data mapping to the default CDF.
 \clearpage
 \section{Summary of annotation data}
 
-This section provides a summary of the relevant annotation data available for the GWS5 and the GWS6 chip types.  We separate between the annotation data available in the Chip Definition Files (CDFs) and the NetAffx files, because the former are less likely to change over time whereas the latter gets updates when the genome annotations get uppdated.  Affymetrix' NetAffx annotation data are updated several times a year.
+This section provides a summary of the relevant annotation data available for the GWS5 and the GWS6 chip types.  We separate between the annotation data available in the Chip Definition Files (CDFs) and the NetAffx files, because the former are less likely to change over time whereas the latter gets updates when the genome annotations get updated.  Affymetrix' NetAffx annotation data are updated several times a year.
 
 \subsection{Affymetrix CDF data}
 
@@ -540,9 +540,9 @@ Total                          & 861,085 &  920,859  & 1,855,448 & 1,880,794 \\
 \clearpage
 \section{Multi-enzyme digestion}
 \label{secMultiEnzymeDigestion}
-For the 100K as well as the 500K SNP-only assays, DNA is prepared in two parallel processes, each digesting the DNA using a unique restriction enzyme, amplifying the fragments by PCR, and hybridizing the products to separate arrays.  In the GWS assays, which similarly to 500K uses enzymes \NspI and \StyI, the two mixes of PCR products are no longer hybridized to separate arrays but instead hybridized in aliqout to the same array~\citep{Affymetrix_2007f,Affymetrix_2007g}.
+For the 100K as well as the 500K SNP-only assays, DNA is prepared in two parallel processes, each digesting the DNA using a unique restriction enzyme, amplifying the fragments by PCR, and hybridizing the products to separate arrays.  In the GWS assays, which similarly to 500K uses enzymes \NspI and \StyI, the two mixes of PCR products are no longer hybridized to separate arrays but instead hybridized in aliquot to the same array~\citep{Affymetrix_2007f,Affymetrix_2007g}.
 Consequently, SNP target DNA of PCR products originating from different digestions may hybridize to the same probe, which is something that has to be taken into account when, for instance, fitting the fragment-length normalization.
-For CN probes the situation is somewhat different.  Affymetrix selected the CN probes from a large pool of CN probes based on their performance on copy numbers (private communication).  This pilot study was conducted on a specially designed in-house chip set containing probes that are known to be on an \NspI fragment.  For this reason, some of the selected probes are exclusively on \NspI fragments, some are by chance both on \NspI and \StyI fragments, but none are exclusively on \StyI fragments.  Note, when annotation for the human genome is updated, some of the probes might by chance be reannotated to become \StyI-only probes.
+For CN probes the situation is somewhat different.  Affymetrix selected the CN probes from a large pool of CN probes based on their performance on copy numbers (private communication).  This pilot study was conducted on a specially designed in-house chip set containing probes that are known to be on an \NspI fragment.  For this reason, some of the selected probes are exclusively on \NspI fragments, some are by chance both on \NspI and \StyI fragments, but none are exclusively on \StyI fragments.  Note, when annotation for the human genome is updated, some of the probes might by chance be re-annotated to become \StyI-only probes.
 We have found that it is important that the preprocessing models these differences, otherwise there is a substantial risk for getting systematic biases between SNPs and CN probes due to enzymatic mixing imbalances.
 %% [We will later see that the hybridization of two PCR products on the same array requires a special model in order to control for confounded effects due to mixing inbalances.]
 See Table~\ref{tblFragmentLengths} for details on fragment-length information for the two chip types and the two enzymes.
@@ -580,7 +580,7 @@ It is because of the latter two restrictions we choose to calculate the CRMA~v2 
 
 \subsection{dChip}
 For the dChip model, we used the \pkg{dChip~2008} (Build: July 10, 2008, \url{http://www.dchip.org/}).  Probe-level data was normalized using the \emph{invariant-set method}~\citep{LiWong_2001}, and PM signals were background corrected by '5th percentile of region (PM-only)'.  For GWS6, array 'NA12750' was suggested by dChip to be used as the baseline array for normalization, because it had the median median (sic!) probe signal.  As suggested, we verified that the spatial intensity plot of this array was not abnormal.
-For probe summarization, the dChip multiplicate model was used, with $\PM=\PMA+\PMB$ for SNPs (``Compute signals separately for A and B allele'' unchecked), returning MBEI scores (corresponding to $\{\theta_{ij}\}$).  For maximal comparison, the MBEI scores were imported to \pkg{aroma.affymetrix} and raw CNs where calculated as in Eqn~\eqref{CRMAv2:eqnCnLogRatio}.
+For probe summarization, the dChip multiplicative model was used, with $\PM=\PMA+\PMB$ for SNPs (``Compute signals separately for A and B allele'' unchecked), returning MBEI scores (corresponding to $\{\theta_{ij}\}$).  For maximal comparison, the MBEI scores were imported to \pkg{aroma.affymetrix} and raw CNs where calculated as in Eqn~\eqref{CRMAv2:eqnCnLogRatio}.
 
 %% We used GenomeWideSNP_6.Full.cdf
 %% [GenomeWideSNP_6.Full.cdf.bin: 220,277,412 bytes]
@@ -627,11 +627,11 @@ Custom SNP \& CN chip types  &  yes    & yes       &   ?   &    - &  ?  &  ?  \\
 
 \clearpage
 \section{Methods for the evaluation}
-We base all the performance assessments using relative copy numbers (chip effects) on the non-logaritmic scale, that is, $C_{ij}=2\cdot\theta_{ij}/\theta_{Rj}$.  This is contrary to \cite{BengtssonH_etal_2008}, where we used log-ratios $M_{ij}=\log_2(\theta_{ij}/\theta_{Rj})$.  
+We base all the performance assessments using relative copy numbers (chip effects) on the non-logarithmic scale, that is, $C_{ij}=2\cdot\theta_{ij}/\theta_{Rj}$.  This is contrary to \cite{BengtssonH_etal_2008}, where we used log-ratios $M_{ij}=\log_2(\theta_{ij}/\theta_{Rj})$.  
 %% If there are no negative $C_{ij}$, the full-resolution ROC estimates are identical, because the ROC is invariant under strictly increasing transforms.
 We use ChrX and ChrY loci for the evaluation.  See Table~\ref{tblGenomicLocationByChromosome} for how many loci there are on each chromosome.
 Loci in pseudo-autosomal regions (PARs) are excluded.  Each of the two sex-chromosomes have to PARs~\citep{BlaschkeRappold_2006}.  See Table~\ref{tblPARs} for details.
-In addition to excluding PARs, regions known to be CN polymorphics \citep{RedonR_etal_2006} are excluded.  There are 48 such regions on ChrX and and 7 on ChrY.  We use a safetly margin of 100kb on each side.
+In addition to excluding PARs, regions known to be CN polymorphic \citep{RedonR_etal_2006} are excluded.  There are 48 such regions on ChrX and and 7 on ChrY.  We use a safety margin of 100kb on each side.
 For further details on the evaluation methods are available in \cite{BengtssonH_etal_2008}.
 
 \begin{table}[hp]
