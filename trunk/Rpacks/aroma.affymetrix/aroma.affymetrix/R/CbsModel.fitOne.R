@@ -61,6 +61,8 @@ setMethodS3("fitOne", "CbsModel", function(this, data, chromosome, ..., verbose=
   verbose && cat(verbose, "Chromosome: ", chromosome);
   verbose && cat(verbose, "Chip types: ", paste(chipTypes, collapse=", "));
   verbose && cat(verbose, "Total number of units: ", nbrOfUnits);
+  verbose && cat(verbose, "Additional arguments:");
+  verbose && str(verbose, fitArgs);
   args <- c(list(data), fitArgs, list(verbose=as.logical(verbose)));
   rm(data, fitArgs);
 
@@ -85,6 +87,9 @@ setMethodS3("fitOne", "CbsModel", function(this, data, chromosome, ..., verbose=
 
 ############################################################################
 # HISTORY:
+# 2008-11-03
+# o Now the verbose output also displays additional arguments passed to
+#   the internal segmentation method.
 # 2008-03-29
 # o fitOne() had argument 'data=data'. Replaced with 'data'.
 # 2007-08-20

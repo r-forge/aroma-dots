@@ -1,7 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.6 [2008-10-24x]
+Version: 0.9.6 [2008-11-03x]
+o Now CbsModel and GlabModel display any optional/additional 
+  arguments passed to the internal segmentation method in
+  the verbose output.
 o MEMORY OPTIMIZATION: Forgot to clean out weight estimates in
   ProbeLevelModel objects when cleaning out the memory cache.
 
