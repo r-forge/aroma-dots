@@ -287,12 +287,12 @@ Notes        & Aroma.affymetrix genome location data mapping to the default CDF.
 \clearpage
 \section{Summary of annotation data}
 
-This section provides a summary of the relevant annotation data available for the GWS5 and the GWS6 chip types.  We separate between the annotation data available in the Chip Definition Files (CDFs) and the NetAffx files, because the former are less likely to change over time whereas the latter gets updates when the genome annotations get updated.  Affymetrix' NetAffx annotation data are updated several times a year.
+This section provides a summary of the relevant annotation data available for the GWS5 and the GWS6 chip types.  We distinguish between the annotation data available in the Chip Definition Files (CDFs) and the NetAffx files, because the former are less likely to change over time whereas the latter gets updates when the genome annotations get updated.  Affymetrix' NetAffx annotation data are updated several times a year.
 
 \subsection{Affymetrix CDF data}
 
-Affymetrix provides one ``default'' and one ``full'' CDFs for each of the GWS5 and GWS6 chip types.  See Table~\ref{tblGWSSixAffymetrix} for which these files are.
-The default CDF contains a subset of the full CDF where certain SNP units have been filter out due to homology to other regions and poor performance (private communication with Affymetrix).
+Affymetrix provides one ``default'' and one ``full'' CDF for each of the GWS5 and GWS6 chip types.  See Table~\ref{tblGWSSixAffymetrix} for these files.
+The default CDF contains a subset of the full CDF where certain SNP units have been filtered out due to homology to other regions and poor performance (private communication with Affymetrix).
 Tables~\ref{tblCdfUnits}~\&~\ref{tblCdfProbes} provides a summary of these CDFs.
 All summaries presented here and in the main paper refer to the full CDFs, unless stated otherwise.
 
@@ -407,11 +407,11 @@ The NetAffx data base is updated frequently and the following information is lik
 
 \subsubsection{Genome positions}
 In Table~\ref{tblGenomicLocation} we summarize how many SNPs and CN loci have known annotations according to NetAffx.  
-The genome location per chromosomes is summarized in Table~\ref{tblGenomicLocationByChromosome} for each of the default and the full CDF.
+The genome location per chromosome is summarized in Table~\ref{tblGenomicLocationByChromosome} for each of the default and the full CDF.
 
 We do not know why the location is unknown for some loci, but from our investigation we believe it is mainly because such loci map to multiple positions in the genome.  For instance, in NetAffx release 26, there is no genomic location reported for SNP\_A-4228947 (on GWS5, GWS6 and Mapping250K\_Nsp), and according to the NCBI SNP data base it (rs11261805) maps to the two locations 41,240,208 and 43,493,496 on Chr9.
 
-Furthermore, for GWS5 the NetAffx annotation files currently available only contains data on the units in the default CDF.  This is confirmed by comparing the names of the units with known locations in the default and the full GWS5.
+Furthermore, for GWS5 the NetAffx annotation files currently available only contain data on the units in the default CDF.  This is confirmed by comparing the names of the units with known locations in the default and the full GWS5.
 
 \begin{table}[hp]
 \begin{center}
@@ -540,7 +540,7 @@ Total                          & 861,085 &  920,859  & 1,855,448 & 1,880,794 \\
 \clearpage
 \section{Multi-enzyme digestion}
 \label{secMultiEnzymeDigestion}
-For the 100K as well as the 500K SNP-only assays, DNA is prepared in two parallel processes, each digesting the DNA using a unique restriction enzyme, amplifying the fragments by PCR, and hybridizing the products to separate arrays.  In the GWS assays, which similarly to 500K uses enzymes \NspI and \StyI, the two mixes of PCR products are no longer hybridized to separate arrays but instead hybridized in aliquot to the same array~\citep{Affymetrix_2007f,Affymetrix_2007g}.
+For the 100K as well as the 500K SNP-only assays, DNA is prepared in two parallel processes, each digesting the DNA using a unique restriction enzyme, amplifying the fragments by PCR, and hybridizing the products to separate arrays.  In the GWS assays, which like 500K use enzymes \NspI and \StyI, the two mixes of PCR products are no longer hybridized to separate arrays but instead hybridized in aliquot to the same array~\citep{Affymetrix_2007f,Affymetrix_2007g}.
 Consequently, SNP target DNA of PCR products originating from different digestions may hybridize to the same probe, which is something that has to be taken into account when, for instance, fitting the fragment-length normalization.
 For CN probes the situation is somewhat different.  Affymetrix selected the CN probes from a large pool of CN probes based on their performance on copy numbers (private communication).  This pilot study was conducted on a specially designed in-house chip set containing probes that are known to be on an \NspI fragment.  For this reason, some of the selected probes are exclusively on \NspI fragments, some are by chance both on \NspI and \StyI fragments, but none are exclusively on \StyI fragments.  Note, when annotation for the human genome is updated, some of the probes might by chance be re-annotated to become \StyI-only probes.
 We have found that it is important that the preprocessing models these differences, otherwise there is a substantial risk for getting systematic biases between SNPs and CN probes due to enzymatic mixing imbalances.
