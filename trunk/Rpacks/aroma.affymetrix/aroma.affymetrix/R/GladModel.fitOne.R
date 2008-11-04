@@ -81,6 +81,8 @@ setMethodS3("fitOne", "GladModel", function(this, data, chromosome, ..., verbose
   verbose && cat(verbose, "Chromosome: ", chromosome);
   verbose && cat(verbose, "Chip types: ", paste(chipTypes, collapse=", "));
   verbose && cat(verbose, "Total number of units: ", nbrOfUnits);
+  verbose && cat(verbose, "Additional arguments:");
+  verbose && str(verbose, fitArgs);
   args <- c(list(data), fitArgs, list(verbose=as.logical(verbose)));
   rm(data, fitArgs);
 
@@ -105,6 +107,9 @@ setMethodS3("fitOne", "GladModel", function(this, data, chromosome, ..., verbose
 
 ############################################################################
 # HISTORY:
+# 2008-11-03
+# o Now the verbose output also displays additional arguments passed to
+#   the internal segmentation method.
 # 2007-08-20
 # o Initial tests show that the updated GladModel gives identical results.
 # o Moved the code to extract raw CN data to superclass, see getRawCnData().
