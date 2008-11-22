@@ -1,6 +1,10 @@
 Package: aroma.core
 ===================
 
+Version: 0.9.6 [2008-11-14xx]
+o ALPHA: Added the BinnedScatter class with methods.
+
+
 Version: 0.9.5 [2008-10-17]
 o Package pass R CMD check on R v2.7.2 and R v2.8.0rc.
 
