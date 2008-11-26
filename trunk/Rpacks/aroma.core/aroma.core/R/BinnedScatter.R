@@ -1,77 +1,93 @@
-setMethodS3("binScatter", "matrix", function(x, nbin=128, orderBy="density", decreasing=TRUE, ...) {
+###########################################################################/**
+# @RdocClass BinnedScatter
+#
+# @title "The BinnedScatter class"
+#
+# \description{
+#  @classhierarchy
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{data}{A Nx2 @numaric @matrix.}
+#   \item{density}{...}
+#   \item{map}{...}
+#   \item{params}{A @list of parameters.}
+#   \item{...}{Not used.}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+# 
+# @examples "../incl/BinnedScatter.Rex"
+#
+# @author
+#
+# \seealso{
+#   The spatial density is estimated by internal functions of the
+#   \pkg{smoothScatter} package.
+# }
+#*/########################################################################### 
+setConstructorS3("BinnedScatter", function(data=NULL, density=NULL, map=NULL, params=NULL) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'x':
-  dim <- dim(x);
-  if (dim[2] != 2) {
-    throw("Argument 'x' must be a two-column matrix: ", dim[2]);
-  }
-
-  # Argument 'orderBy':
-  if (!is.null(orderBy)) {
-    orderBy <- match.arg(orderBy, c("density"));
+  if (!is.null(data)) {
+    # Argument 'data':
+    dim <- dim(data);
+    if (dim[2] != 2) {
+      throw("Argument 'data' must be a two-column matrix: ", dim[2]);
+    }
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Estimate the (x,y) density
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ok <- whichVector(is.finite(x[,1]) & is.finite(x[,2]));
-  x <- x[ok,,drop=FALSE];
-  rm(ok);
-  map <- geneplotter:::.smoothScatterCalcDensity(x, nbin=nbin);
-
-  xm <- map$x1;
-  ym <- map$x2;
-  dens <- map$fhat;
-
-  nx <- length(xm);
-  ny <- length(ym);
-  dx <- x[,1]-xm[1];
-  dy <- x[,2]-ym[1];
-  w <- xm[nx] - xm[1];
-  h <- ym[ny] - ym[1];
-  ixm <- round(dx/w * (nx - 1));
-  iym <- round(dy/h * (ny - 1));
-  idens <- dens[1 + iym*nx + ixm];
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Setup return structure
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  res <- list(
-    data=x,
-    density=idens,
+  extend(list(
+    data=data,
+    density=density,
     map=map,
-    params=list(nbin=nbin, orderBy=orderBy, decreasing=decreasing)
-  );
-
-  class(res) <- c("BinnedScatter", class(res));
-
-
-  # Reorder data?
-  if (!is.null(orderBy)) {
-    o <- order(res[[orderBy]], decreasing=decreasing);
-    res$data <- res$data[o,,drop=FALSE];
-    res$density <- res$density[o];
-  }
-
-  res;
-}) # calculateScatterDensity()
+    params=params
+  ), "BinnedScatter");
+})
 
 
-setMethodS3("points", "BinnedScatter", function(object, ...) {
+setMethodS3("reorder", "BinnedScatter", function(x, orderBy="density", decreasing=FALSE, ...) {
+  # To please R CMD check
+  object <- x;
+
+  o <- order(object[[orderBy]], decreasing=decreasing);
+  object$data <- object$data[o,,drop=FALSE];
+  object$density <- object$density[o];
+  params <- object$params;
+  params$orderBy <- orderBy;
+  params$decreasing <- decreasing;
+  object$params <- params;
+
+  object;
+})
+
+
+setMethodS3("points", "BinnedScatter", function(x, ...) {
+  # To please R CMD check
+  object <- x;
+
   points(object$data, ...);
 })
 
 
-setMethodS3("plot", "BinnedScatter", function(object, ...) {
+setMethodS3("plot", "BinnedScatter", function(x, ...) {
+  # To please R CMD check
+  object <- x;
+
   plot(object$data, ...);
 })
 
 
-setMethodS3("subset", "BinnedScatter", function(object, subset, ...) {
+setMethodS3("subset", "BinnedScatter", function(x, subset, ...) {
+  # To please R CMD check
+  object <- x;
+
   object$data <- object$data[subset,,drop=FALSE];
   object$density <- object$density[subset];
   object;
@@ -124,9 +140,80 @@ setMethodS3("subsample", "BinnedScatter", function(object, size=NULL, ...) {
 }) # subsample()
 
 
+setMethodS3("binScatter", "matrix", function(x, nbin=128, orderBy="density", decreasing=TRUE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'x':
+  dim <- dim(x);
+  if (dim[2] != 2) {
+    throw("Argument 'x' must be a two-column matrix: ", dim[2]);
+  }
+
+  # Argument 'orderBy':
+  if (!is.null(orderBy)) {
+    orderBy <- match.arg(orderBy, c("density"));
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Estimate the (x,y) density
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Estimate density only from finite data points
+  ok <- whichVector(is.finite(x[,1]) & is.finite(x[,2]));
+  x <- x[ok,,drop=FALSE];
+  rm(ok);
+  map <- geneplotter:::.smoothScatterCalcDensity(x, nbin=nbin);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Map each data point to a bin
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  xm <- map$x1;
+  ym <- map$x2;
+
+  nx <- length(xm);
+  ny <- length(ym);
+  dx <- x[,1]-xm[1];
+  dy <- x[,2]-ym[1];
+  w <- xm[nx] - xm[1];
+  h <- ym[ny] - ym[1];
+  ixm <- round(dx/w * (nx - 1));
+  iym <- round(dy/h * (ny - 1));
+  binIdx <- (1 + iym*nx + ixm);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get the density at each data point
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  dens <- map$fhat;
+  idens <- dens[binIdx];
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Setup return structure
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  res <- BinnedScatter(
+    data=x,
+    density=idens,
+    map=map,
+    params=list(nbin=nbin)
+  );
+
+  # Reorder data?
+  if (!is.null(orderBy)) {
+    res <- reorder(res, orderBy=orderBy, decreasing=decreasing);
+  }
+
+  res;
+}) # binScatter()
+
+
 
 ############################################################################
 # HISTORY:
+# 2008-11-26
+# o Added Rdoc comments with an example.
+# o Added constructor and reorder().
 # 2008-11-14
 # o Created.
 ############################################################################ 

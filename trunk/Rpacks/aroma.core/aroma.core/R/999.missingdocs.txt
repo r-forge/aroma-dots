@@ -261,3 +261,6 @@ readTableHeader.default
   getSnpPositions getSnpPositions.AromaCellSequenceFile getSnpShifts
   getSnpShifts.AromaCellSequenceFile groupBySnpNucleotides
   groupBySnpNucleotides.AromaCellSequenceFile
+  binScatter binScatter.matrix plot.BinnedScatter points.BinnedScatter
+  reorder.BinnedScatter subsample subsample.BinnedScatter
+  subset.BinnedScatter

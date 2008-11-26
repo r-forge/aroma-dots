@@ -613,6 +613,14 @@
 \alias{getSnpShifts.AromaCellSequenceFile}
 \alias{groupBySnpNucleotides}
 \alias{groupBySnpNucleotides.AromaCellSequenceFile}
+\alias{binScatter}
+\alias{binScatter.matrix}
+\alias{plot.BinnedScatter}
+\alias{points.BinnedScatter}
+\alias{reorder.BinnedScatter}
+\alias{subsample}
+\alias{subsample.BinnedScatter}
+\alias{subset.BinnedScatter}
 
 \description{
   This page contains aliases for all "non-documented" objects that
