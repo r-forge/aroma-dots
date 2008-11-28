@@ -6,7 +6,11 @@
 # @title "Creates a unique-cell version of the CDF"
 #
 # \description{
-#  @get "In some cases, single probes map to multiple genome locations.  In cases where you may later want to store a probe estimate (e.g. a probe effect or a residual), you will not be able to store more than one per cell.  The unique CDF facilitates this by making the cell indices unique (essentially copying the multimapping probes)".
+#  In some cases, single probes map to multiple genome locations.  In cases
+#  where you may later want to store a probe estimate (e.g. a probe effect 
+#  or a residual), you will not be able to store more than one per cell.  
+#  The unique CDF facilitates this by making the cell indices unique 
+#  (essentially copying the multimapping probes).
 # }
 #
 # @synopsis
@@ -463,7 +467,7 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
   # Checking header
   header <- readCdfHeader(tmpDest);
   if ((header$nrows != nrows) || (header$ncols != ncols)) {
-    throw(sprintf("Failed to create a valid mono-cell CDF: The dimension of the written CDF does not match the intended one: (%d,%d) != (%d,%d)", header$nrows, header$ncols, nrows, ncols));
+    throw(sprintf("Failed to create a valid unique-cell CDF: The dimension of the written CDF does not match the intended one: (%d,%d) != (%d,%d)", header$nrows, header$ncols, nrows, ncols));
   }
 
   # Checking cell indices
@@ -481,7 +485,7 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
     cells <- unique(cells);
     udcells <- as.integer(cells);
     if (!identical(udcells, 1:1)) {
-      throw("Failed to create a valid mono-cell CDF: The cell indices are not contiguous: ", paste(udcells, collapse=", "));
+      throw("Failed to create a valid unique-cell CDF: The cell indices are not contiguous: ", paste(udcells, collapse=", "));
     }
     rm(cells, udcells);
   }
@@ -635,6 +639,6 @@ setMethodS3("getUnitGroupCellMapWithUnique", "AffymetrixCdfFile", function(this,
 
 ############################################################################
 # HISTORY:
-# 2008-11-14
+# 2008-11-14 [MR]
 # o created from Affymetrix.MONOCELL.R
 ############################################################################

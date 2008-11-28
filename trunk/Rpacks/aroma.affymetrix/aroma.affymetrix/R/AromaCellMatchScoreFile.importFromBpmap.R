@@ -1,24 +1,44 @@
+setMethodS3("importFromBpMap", "AromaCellMatchScoreFile", function(this, srcPathname, rows=NULL, ..., verbose=TRUE) {
+  # Argument 'srcPathname':
+  srcPathname <- Arguments$getReadablePathname(srcPathname);
 
-setMethodS3("importFromBpMap", "AromaCellMatchScoreFile", function(this,srcPathname,rows=NULL, ...,verbose=TRUE) {
-  if( is.null(rows) )
-    stop("Must provide the chip dimensions: 'rows' argument is NULL")
-  srcPathname <- Arguments$getReadablePathname(srcPathname)
-  verbose <- Arguments$getVerbose(verbose)
+  # Argument 'rows':
+  if(is.null(rows))
+    stop("Must provide the chip dimensions: 'rows' argument is NULL");
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
-    pushState(verbose)
-    on.exit(popState(verbose))
+    pushState(verbose);
+    on.exit(popState(verbose));
   }
-  verbose && enter(verbose,"Updating sequences from ",srcPathname)
-  bp<-readBpmap(srcPathname,readMatchScore=TRUE)
-  for(i in 1:length(bp)) {
-    verbose && enter(verbose,"Updating ",bp[[i]]$seqInfo$fullname[1])
-	ms<-round(bp[[i]]$matchscore*1e6)
-	w<-which(ms >= 1 & ms <= 10)
-	if(length(w)>0)
-      updateMatchScores(this,cells=bp[[i]]$pmy[w]*rows+bp[[i]]$pmx[w]+1,scores=ms[w])
-	rm(ms,w);
-    verbose && exit(verbose)
-  }
-  verbose && exit(verbose)
+
+  verbose && enter(verbose, "Importing match scores from BPMAP file");
+
+  verbose && enter(verbose, "Reading BPMAP file");
+  verbose && cat(verbose, "Pathname: ", srcPathname);
+  bps <- readBpmap(srcPathname, readMatchScore=TRUE);
+  verbose && exit(verbose);
+ 
+  verbose && enter(verbose, "Saving scores to ACM file");
+  verbose && cat(verbose, "Pathname: ", getPathname(this)); 
+
+  for(kk in seq(length=length(bps))) {
+    bp <- bps[[kk]];
+    verbose && enter(verbose, "Updating ", bp$seqInfo$fullname[1]);
+
+    ms <- round(bp$matchscore*1e6);
+    # whichVector() is faster than which()
+    w <- whichVector(ms >= 1 & ms <= 10);
+    if(length(w) > 0) {
+      cells <- bp$pmy[w]*rows + bp$pmx[w] + 1;
+      updateMatchScores(this, cells=cells, scores=ms[w]);
+    }
+    rm(ms,w);
+
+    verbose && exit(verbose);
+  } # for (kk ...)
+  verbose && exit(verbose);
+
   invisible(this);
 })

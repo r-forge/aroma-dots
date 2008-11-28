@@ -35,18 +35,18 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("MatNormalization", function(..., unitsToFit=NULL,model=c("lm"),numChunks=25, numBins=200) {
+setConstructorS3("MatNormalization", function(..., unitsToFit=NULL, model=c("lm"), numChunks=25, numBins=200) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'model':
   model <- match.arg(model);
 
-  extend(AbstractProbeSequenceNormalization(...,unitsToFit=unitsToFit), "MatNormalization",
+  extend(AbstractProbeSequenceNormalization(..., unitsToFit=unitsToFit), "MatNormalization",
     .model = model,
-	.scaleResiduals = TRUE,
+    .scaleResiduals = TRUE,
     .numChunks = as.integer(numChunks),
-	.numBins = as.integer(numBins)
+    .numBins = as.integer(numBins)
   )
 })
 
@@ -127,18 +127,18 @@ setMethodS3("getDesignMatrix", "MatNormalization", function(this, cells=NULL, mo
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Read sequence matrix");
-  sm<-readSequenceMatrix(aps,cells=cells,verbose=verbose)
+  sm<-readSequenceMatrix(aps, cells=cells, verbose=verbose);
   verbose && exit(verbose);
   verbose && enter(verbose, "Read match scores");
-  ms<-readColumns(apm,rows=cells,verbose=verbose)
+  ms<-readColumns(apm, rows=cells, verbose=verbose);
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Construct design matrix");
-  nT<-rowSums(sm=="T")
-  G<-(sm=="G")+0
-  A<-(sm=="A")+0
-  C<-(sm=="C")+0
-  designMatrix <- cbind(nT,A,C,G,rowSums(A)^2,rowSums(C)^2,rowSums(G)^2,nT^2,log(as.integer(ms[,1])))
+  nT <- rowSums(sm == "T");
+  G <- (sm == "G")+0;
+  A <- (sm == "A")+0;
+  C <- (sm == "C")+0;
+  designMatrix <- cbind(nT, A, C, G, rowSums(A)^2, rowSums(C)^2, rowSums(G)^2, nT^2, log(as.integer(ms[,1])));
   
   # Garbage collect
   rm(nT,G,A,C,ms,sm);
@@ -176,7 +176,7 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE)
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Reading 'non-missing' cells to fit");
-  cellsToFit<-which( !(isMissing(aps) | isMissing(apm)) )
+  cellsToFit<-whichVector( !(isMissing(aps) | isMissing(apm)) );
   verbose && cat(verbose, "Cells to fit:");
   verbose && str(verbose, cellsToFit);
   verbose && exit(verbose);
@@ -189,7 +189,7 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE)
   incr<-ceiling(length(cellsToFit)/numChunks)+1
   
   verbose && enter(verbose, "Reading signals to fit");
-  y <- extractMatrix(df, cells=cellsToFit, verbose=less(verbose,10))
+  y <- extractMatrix(df, cells=cellsToFit, verbose=less(verbose, 10));
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Log2 transforming signals");
@@ -203,27 +203,27 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE)
   while(start < length(cellsToFit)) {
   
     verbose && enter(verbose, "Working on indices over range");
-    indSubset <- seq(start + 1, min(start + incr, length(cellsToFit)))
-	rng<- range(indSubset)
+    indSubset <- seq(start + 1, min(start + incr, length(cellsToFit)));
+    rng <- range(indSubset)
     verbose && cat(verbose, paste(rng/length(cellsToFit),sep=""));
     verbose && exit(verbose);
-	
+
     verbose && enter(verbose, "Reading design matrix for this iteration");
-    X<-getDesignMatrix(this, cells=cellsToFit[indSubset], verbose=verbose)
+    X<-getDesignMatrix(this, cells=cellsToFit[indSubset], verbose=verbose);
     verbose && exit(verbose);
-	
+
     verbose && enter(verbose, "Calculating cross products");
-    xtx <- xtx + crossprod(X)
-    xty <- xty + crossprod(X, y[indSubset])
+    xtx <- xtx + crossprod(X);
+    xty <- xty + crossprod(X, y[indSubset]);
     verbose && exit(verbose);
-	
+
     start <- start + incr;
   }
   
   verbose && enter(verbose, "Solving linear system");
-  #fit<-list(xtx=xtx,xty=xty) #,beta=solve(xtx, xty))
+  #fit <- list(xtx=xtx, xty=xty) #,beta=solve(xtx, xty))
   verbose && exit(verbose);
-  fit<-list(beta=solve(xtx, xty),scaleResiduals=this$.scaleResiduals)
+  fit <- list(beta=solve(xtx, xty), scaleResiduals=this$.scaleResiduals);
 
   fit;
 }, protected=TRUE)
@@ -249,12 +249,12 @@ setMethodS3("predictOne", "MatNormalization", function(this, fit, ..., verbose=F
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Allocating mu vector");
-  mu <- rep(0, nbrOfCells(aps))
+  mu <- double(nbrOfCells(aps));
   verbose && str(verbose, mu);
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Reading 'non-missing' cells to predict");
-  cellsToPredict<-which( !(isMissing(aps) | isMissing(apm)) )
+  cellsToPredict <- whichVector( !(isMissing(aps) | isMissing(apm)) );
   verbose && cat(verbose, "Cells to predict:");
   verbose && str(verbose, cellsToPredict);
   verbose && exit(verbose);
@@ -267,28 +267,27 @@ setMethodS3("predictOne", "MatNormalization", function(this, fit, ..., verbose=F
   while(start < length(cellsToPredict)) {
   
     verbose && enter(verbose, "Working on indices over range");
-    indSubset <- seq(start + 1, min(start + incr, length(cellsToPredict)))
-	rng<- range(indSubset)
-    verbose && cat(verbose, str(paste(round(rng/length(cellsToPredict),3),sep="")));
+    indSubset <- seq(start + 1, min(start + incr, length(cellsToPredict)));
+    rng <- range(indSubset);
+    # HB: cat(str(paste(...))) ?!?
+    verbose && cat(verbose, str(paste(round(rng/length(cellsToPredict),3), sep="")));
     verbose && exit(verbose);
-	
+
     verbose && enter(verbose, "Reading design matrix for this iteration");
-    X<-getDesignMatrix(this, cells=cellsToPredict[indSubset], verbose=verbose)
+    X <- getDesignMatrix(this, cells=cellsToPredict[indSubset], verbose=verbose)
     verbose && exit(verbose);
-	
+
     verbose && enter(verbose, "Calculating mu");
-    mu[ cellsToPredict[indSubset] ] <- X %*% fit$beta
+    mu[ cellsToPredict[indSubset] ] <- X %*% fit$beta;
     verbose && exit(verbose);
-	
+
     start <- start + incr;
   }
   
-  rm(X,indSubset)
-  gc <- gc()
+  rm(X,indSubset);
+  gc <- gc();
   
   #y <-
-  
-  mu;
   
   #numBins <- this$.numBins
   #q <- quantile(mu[cellsToPredict],prob=(0:numBins)/numBins)
@@ -299,7 +298,7 @@ setMethodS3("predictOne", "MatNormalization", function(this, fit, ..., verbose=F
   #for(j in 1:length(b))
   #rr<-resid/sqrt(v)
 
-  
+  mu;
 }, protected=TRUE)
 
 ###########################################################################/**
@@ -373,13 +372,13 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Reading 'non-missing' cells to fit");
-  cellsToFit<-which( !(isMissing(aps) | isMissing(apm)) )
+  cellsToFit <- whichVector( !(isMissing(aps) | isMissing(apm)) );
   verbose && cat(verbose, "Cells to fit:");
   verbose && str(verbose, cellsToFit);
   verbose && exit(verbose);
 
-  numChunks <- this$.numChunks
-  numBins <- this$.numBins
+  numChunks <- this$.numChunks;
+  numBins <- this$.numBins;
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize all arrays simultaneously
@@ -390,21 +389,20 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
   verbose && enter(verbose, "Normalizing ", nbrOfArrays, " arrays");
   verbose && enter(verbose, "Path: ", outputPath);
   
-  start <- xtx <- 0
-  xty <- lapply(seq_len(nbrOfArrays),FUN=function(u) return(0))
-  incr<-ceiling(length(cellsToFit)/numChunks)+1
+  start <- xtx <- 0;
+  xty <- lapply(seq_len(nbrOfArrays), FUN=function(u) return(0));
+  incr <- ceiling(length(cellsToFit)/numChunks)+1;
    
   while(start < length(cellsToFit)) {
-  
     verbose && enter(verbose, "Working on indices over range");
     indSubset <- seq(start + 1, min(start + incr, length(cellsToFit)))
-	rng<- range(indSubset)
-    verbose && cat(verbose, paste(rng/length(cellsToFit),sep=""));
+    rng <- range(indSubset);
+    verbose && cat(verbose, paste(rng/length(cellsToFit), sep=""));
     verbose && exit(verbose);
-	
+
     verbose && enter(verbose, "Reading design matrix and data for this iteration");
-    X<-getDesignMatrix(this, cells=cellsToFit[indSubset], verbose=verbose)
-	Y<-extractMatrix(ds, cells=cellsToFit[indSubset], verbose = verbose)
+    X <- getDesignMatrix(this, cells=cellsToFit[indSubset], verbose=verbose);
+    Y <- extractMatrix(ds, cells=cellsToFit[indSubset], verbose=verbose);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Log2 transforming signals");
@@ -414,20 +412,21 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Calculating cross products");
-    xtx <- xtx + crossprod(X)
-    for (kk in seq_len(nbrOfArrays))
-       xty[[kk]] <- xty[[kk]] + crossprod(X, Y[,kk])
+    xtx <- xtx + crossprod(X);
+    for (kk in seq_len(nbrOfArrays)) {
+      xty[[kk]] <- xty[[kk]] + crossprod(X, Y[,kk]);
+    }
     verbose && exit(verbose);
-	
+
     start <- start + incr;
-  }
-  fits <- lapply(xty, FUN=function(u) list(beta=solve(xtx,u)))
+  }  # while (start < ...)
+
+  fits <- lapply(xty, FUN=function(u) list(beta=solve(xtx,u)));
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Save model fits
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   for (kk in seq_len(nbrOfArrays)) {
-  
     df <- getFile(ds, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                               kk, getName(df), nbrOfArrays));
@@ -449,42 +448,40 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
     gc <- gc();
     verbose && print(verbose, gc);
     verbose && exit(verbose);
-  }
+  } # for (kk ...)
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calculate residuals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  start <- xtx <- 0
-  mu <- vector("list", nbrOfArrays)
-  incr<-ceiling(length(cellsToFit)/numChunks)+1
+  start <- xtx <- 0;
+  mu <- vector("list", nbrOfArrays);
+  incr <- ceiling(length(cellsToFit)/numChunks)+1;
    
   while(start < length(cellsToFit)) {
-  
     verbose && enter(verbose, "Working on indices over range");
-    indSubset <- seq(start + 1, min(start + incr, length(cellsToFit)))
-	rng<- range(indSubset)
+    indSubset <- seq(start + 1, min(start + incr, length(cellsToFit)));
+    rng <- range(indSubset);
     verbose && cat(verbose, paste(rng/length(cellsToFit),sep=""));
     verbose && exit(verbose);
-	
+
     verbose && enter(verbose, "Reading design matrix for this iteration");
-    X<-getDesignMatrix(this, cells=cellsToFit[indSubset], verbose=verbose)
+    X <- getDesignMatrix(this, cells=cellsToFit[indSubset], verbose=verbose);
     verbose && exit(verbose);
-	
+
     verbose && enter(verbose, "Calculating model fits");
-    xtx <- xtx + crossprod(X)
+    xtx <- xtx + crossprod(X);
     for (kk in seq_len(nbrOfArrays)) {
-	
-       mu <- X %*% fits[[kk]]$beta
-	   print( str(mu) )
-	 
-	   df <- getFile(ds, kk);
+       mu <- X %*% fits[[kk]]$beta;
+       verbose && str(verbose, mu);
+
+       df <- getFile(ds, kk);
        verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                               kk, getName(df), nbrOfArrays));
 
       fullname <- getFullName(df);
-	  filename <- sprintf("%s.CEL", fullname);
-	  pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
+      filename <- sprintf("%s.CEL", fullname);
+      pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
 
       # Create CEL file to store results, if missing
       verbose && enter(verbose, "Creating CEL file for results, if missing");
@@ -492,9 +489,9 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
       verbose && exit(verbose);
 
       updateCel(pathname, indices=cellsToFit[indSubset], intensities=2^as.numeric(mu), verbose=TRUE);
-	    
+
       verbose && exit(verbose);
-	}
+    } # for (kk ...)
 
     rm(mu);
 
@@ -502,11 +499,11 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
     gc <- gc();
     verbose && print(verbose, gc);
     verbose && exit(verbose);
-	
-    start <- start + incr;
-    #start <- length(cellsToFit)+1
 
-  }
+    start <- start + incr;
+    #start <- length(cellsToFit)+1;
+
+  } # while (start < ...)
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Scale residuals
@@ -516,37 +513,36 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
       verbose && enter(verbose, "Binning predicted values, calculating and scaling residuals");
       df <- getFile(ds, kk);
 
-	  y<-log2(extractMatrix(df, cells=cellsToFit, verbose = verbose))
+      y <- log2(extractMatrix(df, cells=cellsToFit, verbose=verbose))
 
       fullname <- getFullName(df);
-	  filename <- sprintf("%s.CEL", fullname);
-	  pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
+      filename <- sprintf("%s.CEL", fullname);
+      pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
 
-      mu <- log2(readCel(pathname, indices=cellsToFit, readOutliers = FALSE, readHeader=FALSE, readMasked = FALSE, verbose=less(verbose,10))$intensities)
-	  r <- y - mu  
+      mu <- log2(readCel(pathname, indices=cellsToFit, readOutliers=FALSE, readHeader=FALSE, readMasked=FALSE, verbose=less(verbose,10))$intensities);
+      r <- y - mu;
 
-      q <- quantile(mu, prob=(0:numBins)/numBins)
-      cuts <- cut(mu,breaks=q,labels=1:(length(q)-1))  # define
-	  ss<-split(r, cuts)
-      ssvar<-sapply(ss,var)
-      v<-ssvar[as.character(cuts)]
-      r<-r/sqrt(v)
-	  
-	  #return(list(y=y,mu=mu,r=r))
-	  
+      q <- quantile(mu, prob=(0:numBins)/numBins);
+      cuts <- cut(mu,breaks=q,labels=1:(length(q)-1));  # define
+      ss <- split(r, cuts);
+      ssvar <- sapply(ss, var);
+      v <- ssvar[as.character(cuts)];
+      r <- r/sqrt(v);
+
+      #return(list(y=y,mu=mu,r=r))
+
       # Create CEL file to store results, if missing
       verbose && enter(verbose, "Creating CEL file for results, if missing");
       createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
       verbose && exit(verbose);
 
       updateCel(pathname, indices=cellsToFit, intensities=2^as.numeric(r), verbose=TRUE);
-	  rm(q,ss,ssvar,v,r,y)
+      rm(q,ss,ssvar,v,r,y);
       gc <- gc();
       verbose && print(verbose, gc);
-	    
+
       verbose && exit(verbose);
-	  
-  }
+  } # for (kk ...)
 
   outputDataSet <- getOutputDataSet(this, force=TRUE);
 
@@ -562,6 +558,6 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
 
 ############################################################################
 # HISTORY:
-# 2008-10-29
+# 2008-10-29 [MR]
 # o Created from BaseCountNormalization.R
 ############################################################################
