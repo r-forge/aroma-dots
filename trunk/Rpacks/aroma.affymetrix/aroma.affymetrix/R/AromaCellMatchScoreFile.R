@@ -188,6 +188,6 @@ setMethodS3("allocateFromCdf", "AromaCellMatchScoreFile", function(static, cdf, 
 
 ############################################################################
 # HISTORY:
-# 28/10/2008
+# 2008-10-28 [MR]
 # o Created from AromaCellSequenceFile.R.
 ############################################################################
