@@ -19,6 +19,8 @@
 #   \item{dataSet}{An @see "AffymetrixCelSet".}
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "ProbeLevelTransform".}
+#   \item{model}{A @character string for quickly specifying default
+#     parameter settings.}
 #   \item{rescaleBy}{A @character string specifying what sets of cells
 #     should be rescaled towards a target average, if any.  
 #     Default is to rescale all cells together.
@@ -37,7 +39,9 @@
 #     group.}
 #   \item{flavor}{A @character string specifying what algorithm is used
 #     to fit the crosstalk calibration.}
-#   \item{alpha, q, Q, lambda}{}
+#   \item{alpha, q, Q, lambda}{Model fitting parameters.}
+#   \item{pairBy}{A @character string specifying how allele probe pairs
+#     are identified.}
 # }
 #
 # \section{What probe signals are updated?}{ 

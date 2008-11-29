@@ -42,12 +42,14 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
   affect the model fitting and are unaffected.
  }
 
- \usage{AllelicCrosstalkCalibration(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", mergeShifts=TRUE, B=1, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, lambda=2)}
+ \usage{AllelicCrosstalkCalibration(dataSet=NULL, ..., model=c("asis", "auto", "CRMA", "CRMAv2"), rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", mergeShifts=TRUE, B=1, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, lambda=2, pairBy=c("CDF", "sequence"))}
 
  \arguments{
    \item{dataSet}{An \code{\link{AffymetrixCelSet}}.}
    \item{...}{Arguments passed to the constructor of
      \code{\link{ProbeLevelTransform}}.}
+   \item{model}{A \code{\link[base]{character}} string for quickly specifying default
+     parameter settings.}
    \item{rescaleBy}{A \code{\link[base]{character}} string specifying what sets of cells
      should be rescaled towards a target average, if any.
      Default is to rescale all cells together.
@@ -66,7 +68,9 @@ extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
      group.}
    \item{flavor}{A \code{\link[base]{character}} string specifying what algorithm is used
      to fit the crosstalk calibration.}
-   \item{alpha, q, Q, lambda}{}
+   \item{alpha, q, Q, lambda}{Model fitting parameters.}
+   \item{pairBy}{A \code{\link[base]{character}} string specifying how allele probe pairs
+     are identified.}
  }
 
  \section{What probe signals are updated?}{

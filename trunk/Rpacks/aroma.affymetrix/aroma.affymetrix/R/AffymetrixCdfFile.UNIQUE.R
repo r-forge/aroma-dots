@@ -120,8 +120,9 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
   verbose2 <- as.integer(verbose)-1;  # For 'affxparser' calls.
   verbose2 <- 2;
 
-  if( is.null(units) )
-    units <- seq_len(nbrOfUnits(cdf))
+  if(is.null(units)) {
+    units <- seq_len(nbrOfUnits(this));
+  }
 
   # Already a unique CDF?
   if (isUniqueCdf(this)) {
@@ -182,15 +183,18 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
 
   # get a relatively low-memory version of the CDF indices  
   cdfLite <- readCdf(src, units=units,
-              readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE,
+              readXY=FALSE, readBases=FALSE, 
+              readIndexpos=FALSE, readAtoms=FALSE,
               readUnitType=FALSE, readUnitDirection=FALSE,
               readUnitNumber=FALSE, readUnitAtomNumbers=FALSE,
               readGroupAtomNumbers=FALSE, readGroupDirection=FALSE,
               readIndices=TRUE, readIsPm=FALSE,
-              stratifyBy=c("nothing", "pmmm", "pm", "mm"), verbose=0)
+              stratifyBy=c("nothing", "pmmm", "pm", "mm"), verbose=0);
 
   # Get the number of cells per unit
-  nbrOfCellsPerUnit <- sapply(cdfLite, FUN=function(u) length(unlist(u,use.names=FALSE)) )
+  nbrOfCellsPerUnit <- sapply(cdfLite, FUN=function(u) {
+    length(unlist(u,use.names=FALSE));
+  });
   verbose && cat(verbose, "Number of cells per unit:");
   verbose && summary(verbose, nbrOfCellsPerUnit);
 
@@ -639,6 +643,8 @@ setMethodS3("getUnitGroupCellMapWithUnique", "AffymetrixCdfFile", function(this,
 
 ############################################################################
 # HISTORY:
+# 2008-11-28 [HB]
+# o BUG FIX: createUniqueCdf() used 'cdf' instead of 'this'.
 # 2008-11-14 [MR]
 # o created from Affymetrix.MONOCELL.R
 ############################################################################
