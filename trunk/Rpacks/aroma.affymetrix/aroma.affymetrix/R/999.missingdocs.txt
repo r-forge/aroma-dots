@@ -773,3 +773,23 @@ fitCnProbes fitCnProbes.UnitModel
   getFitUnitGroupFunction.SmoothRmaModel
   getFitUnitGroupFunction.SmoothSaModel
   getFitFunction getFitFunction.MultiArrayUnitModel
+  allocate.AromaCellMatchScoreFile
+  allocateFromCdf.AromaCellMatchScoreFile AromaCellMatchScoreFile
+  bpmapCluster2Cdf byChipType.AromaCellMatchScoreFile convertToUnique
+  convertToUnique.AffymetrixCelSet createUnique createUniqueCdf
+  fitOne.MatNormalization getAromaCellMatchScoreFile
+  getAromaCellMatchScoreFile.MatNormalization
+  getAsteriskTags.MatNormalization
+  getColumnNames.AromaCellMatchScoreFile
+  getDesignMatrix.MatNormalization
+  getFilenameExtension.AromaCellMatchScoreFile
+  getParameters.MatNormalization getUnique getUnique.AffymetrixCdfFile
+  getUniqueCdf getUniqueCdf.AffymetrixCdfFile
+  getUnitGroupCellMapWithUnique
+  getUnitGroupCellMapWithUnique.AffymetrixCdfFile importFromBpMap
+  importFromBpMap.AromaCellMatchScoreFile
+  importFromBpMap.AromaCellSequenceFile
+  isMissing.AromaCellMatchScoreFile isUniqueCdf
+  isUniqueCdf.AffymetrixCdfFile predictOne.MatNormalization
+  readMatchScores readMatchScores.AromaCellMatchScoreFile
+  updateMatchScores updateMatchScores.AromaCellMatchScoreFile

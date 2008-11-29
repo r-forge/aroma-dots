@@ -8,9 +8,7 @@
 #
 #  This class represents a normalization method that corrects for systematic
 #  effects in the probe intensities due to differences in the number of
-#  A, C, G, and T:s and the match scores according to MAT - model-based
-#  analysis of tiling arrays Johnson et al. PNAS 2006
-#  (senior author: Shirley Liu, Harvard).
+#  A, C, G, and T:s and the match scores according to MAT [1].
 # }
 # 
 # @synopsis 
@@ -18,9 +16,12 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of 
 #     @see "AbstractProbeSequenceNormalization".}
+#   \item{unitsToFit}{The units from which the normalization curve should
+#     be estimated.  If @NULL, all are considered.}
 #   \item{model}{A @character string specifying the model used to fit 
 #     the base-count effects.}
-#   \item{numChunks}{The number of chunks to split the data into to fit the model}
+#   \item{numChunks}{The number of chunks to split the data into to 
+#     fit the model}
 #   \item{numBins}{The number of bins to use for the variance smoothing step}
 # }
 #
@@ -33,7 +34,14 @@
 #   match scores file is available for the chip type.
 # }
 # 
-# @author
+# \author{
+#   Mark Robinson, WEHI.
+# }
+#
+# \references{
+#   [1] Johnson WE, Li W, Meyer CA, Gottardo R, Carroll JS, Brown M, Liu XS.
+#     \emph{Model-based analysis of tiling-arrays for ChIP-chip}, PNAS, 2006.
+# }
 #*/###########################################################################
 setConstructorS3("MatNormalization", function(..., unitsToFit=NULL, model=c("lm"), numChunks=25, numBins=200) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,14 +59,14 @@ setConstructorS3("MatNormalization", function(..., unitsToFit=NULL, model=c("lm"
 })
 
 
-setMethodS3("getAromaCellMatchscoreFile", "MatNormalization", function(this, ..., force=FALSE) {
+setMethodS3("getAromaCellMatchScoreFile", "MatNormalization", function(this, ..., force=FALSE) {
   apm <- this$.apm;
 
   if (force || is.null(apm)) {
     dataSet <- getInputDataSet(this);
     cdf <- getCdf(dataSet);
     chipType <- getChipType(cdf, fullname=FALSE);
-    apm <- AromaCellMatchscoreFile$byChipType(chipType, ...);
+    apm <- AromaCellMatchScoreFile$byChipType(chipType, ...);
     this$.apm <- apm;
   }
 
@@ -122,15 +130,15 @@ setMethodS3("getDesignMatrix", "MatNormalization", function(this, cells=NULL, mo
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Locating match scores annotation data");
-  # Locate AromaCellMatchscoreFile holding match scores
-  apm <- getAromaCellMatchscoreFile(this, verbose=less(verbose, 5));
+  # Locate AromaCellMatchScoreFile holding match scores
+  apm <- getAromaCellMatchScoreFile(this, verbose=less(verbose, 5));
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Read sequence matrix");
-  sm<-readSequenceMatrix(aps, cells=cells, verbose=verbose);
+  sm <- readSequenceMatrix(aps, cells=cells, verbose=verbose);
   verbose && exit(verbose);
   verbose && enter(verbose, "Read match scores");
-  ms<-readColumns(apm, rows=cells, verbose=verbose);
+  ms <- readColumns(apm, rows=cells, verbose=verbose);
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Construct design matrix");
@@ -171,22 +179,22 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE)
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Locating match scores annotation data");
-  # Locate AromaCellMatchscoreFile holding match scores
-  apm <- getAromaCellMatchscoreFile(this, verbose=less(verbose, 5));
+  # Locate AromaCellMatchScoreFile holding match scores
+  apm <- getAromaCellMatchScoreFile(this, verbose=less(verbose, 5));
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Reading 'non-missing' cells to fit");
-  cellsToFit<-whichVector( !(isMissing(aps) | isMissing(apm)) );
+  cellsToFit <- whichVector( !(isMissing(aps) | isMissing(apm)) );
   verbose && cat(verbose, "Cells to fit:");
   verbose && str(verbose, cellsToFit);
   verbose && exit(verbose);
 
-  numChunks<-this$.numChunks
+  numChunks <- this$.numChunks;
 
   # this code adopted from Dave Fourniers 17/08/2007 post to r-help mailing list
   # entitled "[R] Linear models over large datasets"
 
-  incr<-ceiling(length(cellsToFit)/numChunks)+1
+  incr <- ceiling(length(cellsToFit)/numChunks) + 1;
   
   verbose && enter(verbose, "Reading signals to fit");
   y <- extractMatrix(df, cells=cellsToFit, verbose=less(verbose, 10));
@@ -198,7 +206,7 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE)
   verbose && str(verbose, y);
   verbose && exit(verbose);
  
-  start <- xtx <- xty <- 0
+  start <- xtx <- xty <- 0;
    
   while(start < length(cellsToFit)) {
   
@@ -209,7 +217,7 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE)
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Reading design matrix for this iteration");
-    X<-getDesignMatrix(this, cells=cellsToFit[indSubset], verbose=verbose);
+    X <- getDesignMatrix(this, cells=cellsToFit[indSubset], verbose=verbose);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Calculating cross products");
@@ -244,8 +252,8 @@ setMethodS3("predictOne", "MatNormalization", function(this, fit, ..., verbose=F
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Locating match scores annotation data");
-  # Locate AromaCellMatchscoreFile holding match scores
-  apm <- getAromaCellMatchscoreFile(this, verbose=less(verbose, 5));
+  # Locate AromaCellMatchScoreFile holding match scores
+  apm <- getAromaCellMatchScoreFile(this, verbose=less(verbose, 5));
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Allocating mu vector");
@@ -259,10 +267,10 @@ setMethodS3("predictOne", "MatNormalization", function(this, fit, ..., verbose=F
   verbose && str(verbose, cellsToPredict);
   verbose && exit(verbose);
 
-  numChunks<-this$.numChunks
+  numChunks <- this$.numChunks;
 
-  incr<-ceiling(length(cellsToPredict)/numChunks)+1
-  start <- 0
+  incr <- ceiling(length(cellsToPredict)/numChunks) + 1;
+  start <- 0;
      
   while(start < length(cellsToPredict)) {
   
@@ -298,8 +306,10 @@ setMethodS3("predictOne", "MatNormalization", function(this, fit, ..., verbose=F
   #for(j in 1:length(b))
   #rr<-resid/sqrt(v)
 
+  # Return results
   mu;
 }, protected=TRUE)
+
 
 ###########################################################################/**
 # @RdocMethod process
@@ -367,8 +377,8 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Locating match scores annotation data");
-  # Locate AromaCellMatchscoreFile holding match scores
-  apm <- getAromaCellMatchscoreFile(this, verbose=less(verbose, 5));
+  # Locate AromaCellMatchScoreFile holding match scores
+  apm <- getAromaCellMatchScoreFile(this, verbose=less(verbose, 5));
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Reading 'non-missing' cells to fit");
@@ -384,18 +394,19 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
   # Normalize all arrays simultaneously
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   nbrOfArrays <- nbrOfArrays(ds);
-  df <- getFile(ds, 1);
-  nbrOfCells <- nbrOfCells(df);
   verbose && enter(verbose, "Normalizing ", nbrOfArrays, " arrays");
   verbose && enter(verbose, "Path: ", outputPath);
+
+  df <- getFile(ds, 1);
+  nbrOfCells <- nbrOfCells(df);
   
   start <- xtx <- 0;
   xty <- lapply(seq_len(nbrOfArrays), FUN=function(u) return(0));
-  incr <- ceiling(length(cellsToFit)/numChunks)+1;
+  incr <- ceiling(length(cellsToFit)/numChunks) + 1;
    
   while(start < length(cellsToFit)) {
     verbose && enter(verbose, "Working on indices over range");
-    indSubset <- seq(start + 1, min(start + incr, length(cellsToFit)))
+    indSubset <- seq(start + 1, min(start + incr, length(cellsToFit)));
     rng <- range(indSubset);
     verbose && cat(verbose, paste(rng/length(cellsToFit), sep=""));
     verbose && exit(verbose);
@@ -456,7 +467,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   start <- xtx <- 0;
   mu <- vector("list", nbrOfArrays);
-  incr <- ceiling(length(cellsToFit)/numChunks)+1;
+  incr <- ceiling(length(cellsToFit)/numChunks) + 1;
    
   while(start < length(cellsToFit)) {
     verbose && enter(verbose, "Working on indices over range");
@@ -501,7 +512,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
     verbose && exit(verbose);
 
     start <- start + incr;
-    #start <- length(cellsToFit)+1;
+    #start <- length(cellsToFit) + 1;
 
   } # while (start < ...)
   
@@ -513,21 +524,23 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
       verbose && enter(verbose, "Binning predicted values, calculating and scaling residuals");
       df <- getFile(ds, kk);
 
-      y <- log2(extractMatrix(df, cells=cellsToFit, verbose=verbose))
+      y <- extractMatrix(df, cells=cellsToFit, verbose=verbose);
+      y <- log2(y);
 
       fullname <- getFullName(df);
       filename <- sprintf("%s.CEL", fullname);
       pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
 
-      mu <- log2(readCel(pathname, indices=cellsToFit, readOutliers=FALSE, readHeader=FALSE, readMasked=FALSE, verbose=less(verbose,10))$intensities);
+      mu <- readCel(pathname, indices=cellsToFit, readOutliers=FALSE, readHeader=FALSE, readMasked=FALSE, verbose=less(verbose,10))$intensities;
+      mu <- log2(mu);
       r <- y - mu;
 
-      q <- quantile(mu, prob=(0:numBins)/numBins);
-      cuts <- cut(mu,breaks=q,labels=1:(length(q)-1));  # define
+      q <- quantile(mu, probs=(0:numBins)/numBins);
+      cuts <- cut(mu, breaks=q, labels=1:(length(q)-1));  # define
       ss <- split(r, cuts);
-      ssvar <- sapply(ss, var);
+      ssvar <- sapply(ss, FUN=var);
       v <- ssvar[as.character(cuts)];
-      r <- r/sqrt(v);
+      r <- r / sqrt(v);
 
       #return(list(y=y,mu=mu,r=r))
 
@@ -553,11 +566,11 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
 
 
 
-
-
-
 ############################################################################
 # HISTORY:
+# 2008-11-28 [HB]
+# o Updated the Rdocs.
+# o Renamed getAromaCellMatchscoreFile() to getAromaCellMatchScoreFile().
 # 2008-10-29 [MR]
 # o Created from BaseCountNormalization.R
 ############################################################################

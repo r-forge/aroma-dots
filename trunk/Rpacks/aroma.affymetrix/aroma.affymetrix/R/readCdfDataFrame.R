@@ -29,8 +29,7 @@
 #   An NxK @data.frame or a @vector of length N.
 # }
 #
-# \author{
-# }
+# \author{Henrik Bengtsson}
 # 
 # @examples "../incl/readCdfDataFrame.Rex"
 # 

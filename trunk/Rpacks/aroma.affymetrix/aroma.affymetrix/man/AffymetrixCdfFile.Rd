@@ -55,6 +55,7 @@ extends \emph{\link[aroma.core]{UnitNamesFile}}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:convert.AffymetrixCdfFile]{convert}} \tab Converts a CDF into the same CDF but with another format.\cr
  \tab \code{createMonoCell} \tab  -\cr
+ \tab \code{createUnique} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getCellIndices.AffymetrixCdfFile]{getCellIndices}} \tab Gets the cell indices unit by unit.\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getDimension} \tab  -\cr
@@ -63,12 +64,14 @@ extends \emph{\link[aroma.core]{UnitNamesFile}}\cr
  \tab \code{getImage} \tab  -\cr
  \tab \code{getMonoCell} \tab  -\cr
  \tab \code{getPlatform} \tab  -\cr
+ \tab \code{getUnique} \tab  -\cr
  \tab \code{getUnitGroupNamesFromUgcMap} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getUnitNames.AffymetrixCdfFile]{getUnitNames}} \tab Gets the names of each unit.\cr
  \tab \code{\link[aroma.affymetrix:getUnitTypes.AffymetrixCdfFile]{getUnitTypes}} \tab Gets the types of a set of units.\cr
  \tab \code{hasUnitTypes} \tab  -\cr
  \tab \code{isMonocellCdf} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:isPm.AffymetrixCdfFile]{isPm}} \tab Checks which cells (probes) are PMs and not.\cr
+ \tab \code{isUniqueCdf} \tab  -\cr
  \tab \code{nbrOfCells} \tab  -\cr
  \tab \code{nbrOfColumns} \tab  -\cr
  \tab \code{nbrOfQcUnits} \tab  -\cr
