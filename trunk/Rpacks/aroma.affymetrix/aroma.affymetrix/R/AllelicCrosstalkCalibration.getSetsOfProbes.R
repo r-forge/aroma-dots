@@ -1,10 +1,19 @@
-setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., version=c(1,3,4), fakeSymmetry=FALSE, force=FALSE, verbose=FALSE) {
+setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ..., version=c(0,1,3,4), fakeSymmetry=FALSE, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'version':
   version <- Arguments$getIntegers(version);
   version <- version[1];
+  if (version == 0) {
+    if (this$.pairBy == "CDF") {
+      version <- 1;
+    } else if (this$.pairBy == "sequence") {
+      version <- 4;
+    } else {
+      version <- 4;
+    }
+  }
 
   # Argument 'fakeSymmetry':
   fakeSymmetry <- Arguments$getLogical(fakeSymmetry);
@@ -19,7 +28,7 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
   setsOfProbes <- this$.setsOfProbes;
 
   if (force || is.null(setsOfProbes)) {
-    verbose && enter(verbose, "Identifying sets of pairs of cell indices by quering the CDF");
+    verbose && enter(verbose, "Identifying sets of pairs of cell indices");
     dataSet <- getInputDataSet(this);
     cdf <- getCdf(dataSet);
     chipType <- getChipType(cdf);
@@ -239,6 +248,9 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
 
 ############################################################################
 # HISTORY:
+# 2008-11-28
+# o Now getSetsOfProbes(..., version=0) uses the field '.pairBy' to decide
+#   what version to use.
 # 2008-09-12
 # o Added argument 'fakeSymmetry' to getSetsOfProbes().  Follow up: This
 #   seems to work; with 'fakeSymmetry=TRUE' the estimates od the 'origin'
