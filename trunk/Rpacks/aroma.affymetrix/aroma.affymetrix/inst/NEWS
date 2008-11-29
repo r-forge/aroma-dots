@@ -1,12 +1,25 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.6 [2008-11-03x]
+Version: 0.9.6 [2008-11-28x]
 o Now CbsModel and GlabModel display any optional/additional 
   arguments passed to the internal segmentation method in
   the verbose output.
 o MEMORY OPTIMIZATION: Forgot to clean out weight estimates in
   ProbeLevelModel objects when cleaning out the memory cache.
+o Added argument 'model' for AllelicCrosstalkCalibration to quickly 
+  specification of default parameter settings according to the CRMA and
+  CRMA v2 model.
+o Added argument 'pairBy' for AllelicCrosstalkCalibration to specify
+  how the allele probe pairs are identified.  Historically we inferred
+  this from the CDF, but it is safer and more generic to do this from 
+  the probe sequences, which then requires an ACS annotation file.
+o Now argument 'targetFunctions' of FragmentLengthNormalization can also
+  be "zero", which then specifies a predefined constant target function.
+o Added support for importing probe sequences from Affymetrix BPMAP files
+  via the importFromBpMap() for AromaCellSequenceFile.
+o Adding classes and methods in preparation for supporting analysis
+  of tiling arrays.
 
 
 Version: 0.9.5 [2008-10-17]

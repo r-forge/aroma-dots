@@ -46,7 +46,7 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
                           chipType=getChipType(this), checkChipType=FALSE);
   }, error = function(ex) {});
   
-  if (inherits(outputDataSet, "AffymetrixCelSet") {
+  if (inherits(outputDataSet, "AffymetrixCelSet")) {
     verbose && cat(verbose, "Dataset already created.");
     verbose && exit(verbose);
     return(invisible(outputDataSet));

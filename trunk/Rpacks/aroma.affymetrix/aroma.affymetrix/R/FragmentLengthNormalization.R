@@ -79,13 +79,24 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
       throw("Argument 'targetFunctions' is not a list: ", 
                                                 class(targetFunctions)[1]);
     }
-    
-    # Validate each element
-    for (kk in seq(along=targetFunctions)) {
-      if (!is.function(targetFunctions[[kk]])) {
-        throw("One element in 'targetFunctions' is not a function: ", 
-                                          class(targetFunctions[[kk]])[1]);
+
+    if (is.character(targetFunctions)) {
+      if (targetFunctions == "zero") {
+      } else {
+        throw("Unknown value of argument 'targetFunctions': ", 
+                                                          targetFunctions);
       }
+    } else if (is.list(targetFunctions)) {
+      # Validate each element
+      for (kk in seq(along=targetFunctions)) {
+        if (!is.function(targetFunctions[[kk]])) {
+          throw("One element in 'targetFunctions' is not a function: ", 
+                                          class(targetFunctions[[kk]])[1]);
+        }
+      }
+    } else {
+      throw("Unknown value of argument 'targetFunctions': ", 
+                                                class(targetFunctions)[1]);
     }
   }
 
@@ -391,14 +402,46 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 
 
   fcns <- this$.targetFunctions;
-  if (force || is.null(fcns)) {
-    verbose && enter(verbose, "Estimating target prediction function");
+
+  # AD HOC: If forced, make sure to use the original target argument
+  if (force && !is.null(fcns)) {
+    targetType <- attr(targetFunctions, "targetType");
+    if (!is.null(targetType))
+      fcns <- targetType;
+    rm(targetType);
+  }
+
+  if (force || is.character(fcns)) {
+    verbose && enter(verbose, "Setting up predefined target functions");
+    targetType <- fcns;
+    verbose && cat(verbose, "Target type: ", targetType);
 
     # Get the SNP information annotation
     cdf <- getCdf(this);
     si <- getSnpInformation(cdf);
     rm(cdf); # Not needed anymore
 
+    # Infer the number of enzymes
+    fl <- getFragmentLengths(si, units=1:5);
+    nbrOfEnzymes <- ncol(fl);
+    rm(fl);
+
+    if (identical(targetType, "zero")) {
+      targetFunctions <- rep(list(function(...) log2(2200)), nbrOfEnzymes);
+    } else {
+      throw("Unknown target function: ", targetType);
+    }
+
+    # Store the original target type in an attribute
+    attr(targetFunctions, "targetType") <- targetType;
+
+    this$.targetFunctions <- fcns;
+    force <- FALSE;
+    verbose && exit(verbose);
+  }
+
+
+  if (force || is.null(fcns)) {
     # Get target set
     ces <- getInputDataSet(this);
     verbose && enter(verbose, "Get average signal across arrays");
@@ -529,10 +572,12 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
     gc <- gc();
     verbose && print(verbose, gc);
 
-    verbose && exit(verbose);
-
     this$.targetFunctions <- fcns;
+    force <- FALSE;
+
+    verbose && exit(verbose);
   } # if (force || ...)
+
 
   fcns;
 }, private=TRUE)
@@ -824,6 +869,8 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2008-11-28
+# o Now constructor argument 'targetFunctions' can also be "zero".
 # 2008-09-19
 # o BUG FIX: process() of FragmentLengthNormalization did not return a
 #   data set for which the sample attributes has been updated according

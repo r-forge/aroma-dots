@@ -76,7 +76,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", mergeShifts=TRUE, B=1, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, lambda=2) {
+setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., model=c("asis", "auto", "CRMA", "CRMAv2"), rescaleBy=c("auto", "groups", "all", "none"), targetAvg=c(2200, 2200), subsetToAvg="-XY", mergeShifts=TRUE, B=1, flavor=c("sfit", "expectile"), alpha=c(0.1, 0.075, 0.05, 0.03, 0.01), q=2, Q=98, lambda=2, pairBy=c("CDF", "sequence")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -89,6 +89,39 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
                                                           class(dataSet)[1]);
     }
 
+
+    # Argument 'model':
+    model <- match.arg(model);
+    if (model == "auto") {
+      chipType <- getChipType(cdf);
+      if (regexpr("^Mapping[0-9]+K_", chipType) != -1) {
+        model <- "CRMA";
+      } else if (regexpr("^GenomeWideSNP_", chipType) != -1) {
+        model <- "CRMAv2";
+      } else {
+        model <- "CRMAv2";
+      }
+    }
+
+    if (model == "CRMA") {
+      alpha <- c(0.1, 0.075, 0.05, 0.03, 0.01);
+      q <- 2;
+      Q <- 98;
+      lambda <- 2;
+      mergeShifts <- TRUE;
+      B <- 1;
+      rescaleBy <- "auto";
+      pairBy <- "CDF";
+    } else if (model == "CRMAv2") {
+      alpha <- c(0.1, 0.075, 0.05, 0.03, 0.01, 0.0025, 1e-3, 1e-4);
+      q <- 2;
+      Q <- 98;
+      lambda <- 2;
+      mergeShifts <- TRUE;
+      B <- 1;
+      rescaleBy <- "auto";
+      pairBy <- "sequence";
+    }
 
     cdf <- getCdf(dataSet);
 
@@ -164,6 +197,9 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
   # Argument 'flavor':
   flavor <- match.arg(flavor);
 
+  # Argument 'pairBy':
+  pairBy <- match.arg(pairBy);
+
   # Argument 'alpha':
   alpha <- Arguments$getDoubles(alpha, range=c(0,1));
 
@@ -183,6 +219,7 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., resc
     .B = B,
     .flavor = flavor,
     .algorithmParameters = algorithmParameters,
+    .pairBy = pairBy,
     .extraTags = extraTags
   )
 })
@@ -1166,6 +1203,13 @@ setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-11-28
+# o Added argument 'model' for quick specification of default parameter
+#   settings according to the CRMA or CRMA v2 model.
+# o Added argument 'pairBy' to specify how the allele probe pairs are 
+#   identified.  Historically we inferred this from the CDF, but it is
+#   safer and more generic to do this from the probe sequences, which then
+#   requires an ACS cell-sequence annotation file.
 # 2008-08-31
 # o BUG FIX: The allele pairs identified was not correct for GWS arrays.
 # o Updated AllelicCrosstalkCalibration to support flavor 'expectile' too.
