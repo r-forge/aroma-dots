@@ -1,29 +1,34 @@
 library("aroma.affymetrix");
 
-log <- Arguments$getVerbose(-4, timestamp=TRUE);
-
-dataSetName <- "HapMap270,6.0,CEU,testSet";
-chipType <- "GenomeWideSNP_6,Full";
+log <- Arguments$getVerbose(-8, timestamp=TRUE);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup of annotation files
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CDF
-cdf <- AffymetrixCdfFile$byChipType(chipType);
+cdf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6", tags="Full");
 
-# Assert existence of probe-sequence annotation files
+# Assert that an UGP annotation data file exists
+gi <- getGenomeInformation(cdf);
+print(gi);
+
+# Assert that an UFL annotation data file exists
+si <- getSnpInformation(cdf);
+print(si);
+
+# Assert than an ACS (probe-sequence) annotation files
 acs <- AromaCellSequenceFile$byChipType(getChipType(cdf, fullname=FALSE));
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csR <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf);
+csR <- AffymetrixCelSet$fromName("HapMap270,6.0,CEU,testSet", cdf=cdf);
 print(csR);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acc <- AllelicCrosstalkCalibration(csR);
+acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2");
 print(acc);
 csC <- process(acc, verbose=log);
 print(csC);
@@ -32,7 +37,7 @@ print(csC);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Base-position normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-bpn <- BasePositionNormalization(csC, target="zero", shift=+300, tags="*,z");
+bpn <- BasePositionNormalization(csC, target="zero");
 print(bpn);
 
 csN <- process(bpn, verbose=log);
@@ -44,6 +49,13 @@ print(csN);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=TRUE);
 print(plm);
+
+# Fit CN probes quickly (~5-10s/array!)
+if (length(findUnitsTodo(plm)) > 0) {
+  units <- fitCnProbes(plm, verbose=log);
+  str(units);
+}
+
 fit(plm, verbose=log);
 ces <- getChipEffectSet(plm);
 print(ces);
@@ -52,10 +64,9 @@ print(ces);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fragment-length normalization test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-targets <- rep(list(function(...) log2(2200)), 2);
-fln <- FragmentLengthNormalization(ces, targetFunctions=targets, tags="*,z");
+fln <- FragmentLengthNormalization(ces, target="zero");
 print(fln);
-cesN <- process(fln, verbose=verbose);
+cesN <- process(fln, verbose=log);
 print(cesN);
 
 
