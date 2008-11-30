@@ -19,8 +19,7 @@
 #   \item{model}{A @character string specifying the model used to fit 
 #     the base-count effects.}
 #   \item{df}{The degrees of freedom of the model.}
-#   \item{bootstrap}{If @TRUE, the model fitting is done by bootstrap in
-#     order to save memory.}
+#   \item{.fitMethod}{...}
 # }
 #
 # \section{Fields and Methods}{
@@ -34,7 +33,7 @@
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spline"), df=5, bootstrap=FALSE) {
+setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spline"), df=5, .fitMethod=c("lm.fit", "solve")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -44,21 +43,14 @@ setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spli
   # Argument 'df':
   df <- Arguments$getInteger(df, range=c(1,1e3));
 
-  # Argument 'bootstrap':
-  bootstrap <- Arguments$getLogical(bootstrap);
-
-  if (bootstrap && model != "smooth.spline") {
-    throw("Bootstrapping for models other than 'smooth.spline' is not implemented: ", model);
-  }
+  # Argument '.fitMethod':
+  .fitMethod <- match.arg(.fitMethod);
 
 
   extend(AbstractProbeSequenceNormalization(...), "BasePositionNormalization",
     .model = model,
     .df = df,
-    .bootstrap=bootstrap,
-    .chunkSize=as.integer(500e3),
-    .maxIter=as.integer(50),
-    .acc=0.005
+    .fitMethod = .fitMethod
   )
 })
 
@@ -78,12 +70,6 @@ setMethodS3("getAsteriskTags", "BasePositionNormalization", function(this, colla
     tags <- c(tags, sprintf("df=%d", df));
   }
 
-  # Add bootstrap tag?
-  if (this$.bootstrap) {
-    bootstrapTag <- "B";
-    tags <- c(tags, bootstrapTag);
-  }
-
   # Collapse?
   tags <- paste(tags, collapse=collapse);
 
@@ -99,10 +85,7 @@ setMethodS3("getParameters", "BasePositionNormalization", function(this, ...) {
   params <- c(params, list(
     model = this$.model,
     df = this$.df,
-    bootstrap = this$.bootstrap,
-    chunkSize = this$.chunkSize,
-    maxIter = this$.maxIter,
-    acc = this$.acc
+    fitMethod = this$.fitMethod
   ));
 
   params;
@@ -191,6 +174,149 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
 
 
 
+setMethodS3("getNormalEquations", "BasePositionNormalization", function(this, df=NULL, cells=NULL, transform=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'df':
+  if (!inherits(df, "AffymetrixCelFile")) {
+    throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
+  }
+
+  # Argument 'transform':
+  if (!is.null(transform)) {
+    if (!is.function(transform)) {
+      throw("Argument 'transform' is not a function: ", mode(transform)[1]);
+    }
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Getting annotation data files
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Retrieving cell sequence annotation data file");
+  acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 20));
+  verbose && exit(verbose);
+
+  # Expand 'cells'?
+  if (is.null(cells)) {
+    cells <- 1:nbrOfCells(acs);
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identifying subset of cell indices
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Identifying subset of cells that can be fitted");
+  verbose && cat(verbose, "Cells:");
+  verbose && str(verbose, cells);
+  n0 <- length(cells);
+
+  verbose && enter(verbose, "Excluding cells with unknown probe sequences");
+  isMissing <- isMissing(acs, verbose=less(verbose, 10))[cells];
+  cells <- cells[!isMissing];
+  rm(isMissing);
+  n1 <- length(cells);
+  verbose && printf(verbose, "Removed %d (%.2f%%) missing sequences out of %d\n", n0-n1, 100*(n0-n1)/n0, n0);
+  verbose && exit(verbose);
+
+
+  verbose && enter(verbose, "Identifying cells with missing data");
+  verbose && enter(verbose, "Reading signals");
+  verbose && cat(verbose, "Cells:");
+  verbose && str(verbose, cells);
+  y <- extractMatrix(df, cells=cells, drop=TRUE, verbose=less(verbose, 10));
+
+  if (!is.null(transform)) {
+    verbose && enter(verbose, "Transforming signals");
+    verbose && cat(verbose, "Signals before transformation:");
+    verbose && str(verbose, y);
+    y <- transform(y);
+    verbose && exit(verbose);
+  }
+  verbose && cat(verbose, "Signals to be fitted:");
+  verbose && str(verbose, y);
+  verbose && exit(verbose);
+    
+  verbose && enter(verbose, "Excluding non-finite data points");
+  # Fit only finite subset
+  keep <- whichVector(is.finite(y));
+  y <- y[keep];
+  cells <- cells[keep];
+  rm(keep);
+  n2 <- length(cells);
+  verbose && printf(verbose, "Removed %d (%.2f%%) non-finite data points out of %d\n", n1-n2, 100*(n1-n2)/n1, n1);
+  verbose && exit(verbose);
+
+  verbose && printf(verbose, "Removed in total %d (%.2f%%) cells out of %d\n", n0-n2, 100*(n0-n2)/n0, n0);
+  verbose && str(verbose, cells);
+  verbose && exit(verbose);
+
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Getting design matrix for subset
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Getting design matrix");
+  res <- getDesignMatrix(this, cells=cells, verbose=less(verbose, 5));
+  X <- res$X;
+
+##  XX1 <<- X; yy1 <<- y;
+
+  verbose && cat(verbose, "Design matrix:");
+  verbose && str(verbose, X);
+
+  B <- res$B;
+  verbose && cat(verbose, "Basis vectors:");
+  verbose && str(verbose, B);
+  map <- res$map;
+
+  factors <- res$factors;
+  verbose && cat(verbose, "Factors:");
+  verbose && str(verbose, factors);
+
+  rm(res);
+
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  # Sanity check
+  stopifnot(nrow(X) == length(cells));
+  stopifnot(nrow(X) == length(y));
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Calculating cross products X'X and X'y
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Calculating cross product X'X");
+  xtx <- crossprod(X);  
+  verbose && str(verbose, xtx);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Calculating cross product X'y");
+  xty <- crossprod(X, y);
+  verbose && str(verbose, xty);
+  verbose && exit(verbose);
+
+  rm(X);
+
+  res <- list(xtx=xtx, xty=xty, n0=n0, n1=n1, n2=n2, cells=cells, map=map, B=B, factors=factors, X=X, y=y);
+  rm(xtx, xty, cells);
+
+  res;
+}, protected=TRUE)
+
+
+
+
 setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbose=FALSE) {
   fitSubset <- function(df, cells=NULL, shift=0, ..., verbose) {
     verbose && enter(verbose, "Retrieving probe sequences");
@@ -203,7 +329,7 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbo
     cells <- cells[!isMissing];
     rm(isMissing);
     n2 <- length(cells);
-    verbose && printf(verbose, "Removed %d (%.4f%%) missing sequences out of %d\n", n-n2, 100*(n-n2)/n, n);
+    verbose && printf(verbose, "Removed %d (%.2f%%) missing sequences out of %d\n", n-n2, 100*(n-n2)/n, n);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Getting design matrix");
@@ -242,7 +368,7 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbo
     X$X <- X$X[keep,,drop=FALSE];
     rm(keep);
     n2 <- length(y);
-    verbose && printf(verbose, "Removed %d (%.4f%%) non-finite data points out of %d\n", n-n2, 100*(n-n2)/n, n);
+    verbose && printf(verbose, "Removed %d (%.2f%%) non-finite data points out of %d\n", n-n2, 100*(n-n2)/n, n);
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Fitting base-count model");
@@ -250,16 +376,84 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbo
     verbose && str(verbose, y);
     verbose && cat(verbose, "Design matrix:");
     verbose && str(verbose, X);
+##  XX2 <<- X$X; yy2 <<- y;
+
     gc <- gc();
     verbose && print(verbose, gc);
     fit <- fitProbePositionEffects(y=y, seqs=X, verbose=less(verbose, 5));
     rm(y, X);
+    fit$algorithm <- "lm.fit";
     gc <- gc();
     verbose && print(verbose, gc);
     verbose && exit(verbose);
   
     fit;
   } # fitSubset()
+
+  fitSubset2 <- function(df, cells=NULL, shift=0, ..., verbose) {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Local functions
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    transform <- function(y, ...) {
+      if (shift != 0) {
+        verbose && enter(verbose, "Shifting signals");
+        verbose && cat(verbose, "Shift: ", shift);
+        y <- y + shift;
+        verbose && exit(verbose);
+      }
+      verbose && enter(verbose, "Log2 transforming signals");
+      y <- log2(y);
+      verbose && exit(verbose);
+      y;
+    } # transform()
+
+    ne <- getNormalEquations(this, df=df, cells=cells, transform=transform, verbose=verbose);
+    verbose && cat(verbose, "Normal equations:");
+    verbose && str(verbose, ne);
+
+print(sum(ne$X)); print(sum(ne$y));
+
+    map <- ne$map;
+    B <- ne$B;
+    factors <- ne$factors;
+
+    xtx <- ne$xtx;
+    xty <- ne$xty;
+    rm(ne);
+
+    coefs <- solve(xtx, xty);
+print(coefs);
+    coefs <- as.vector(coefs);
+    verbose && cat(verbose, "Coeffients:")
+    verbose && print(verbose, coefs);
+
+    params <- list();
+    intercept <- TRUE;
+    if (intercept) {
+      params$intercept <- coefs[1];
+      coefs <- coefs[-1];
+    }
+    df <- length(coefs)/length(factors);
+    verbose && cat(verbose, "Degrees of freedom: ", df);
+    idxs <- 1:df;
+    for (kk in seq(along=factors)) {
+      key <- names(factors)[kk];
+      if (is.null(key)) {
+        key <- sprintf("factor%02d", kk);
+      }
+      params[[key]] <- coefs[idxs];
+      coefs <- coefs[-idxs];
+    }
+    fit <- list(params=params, map=map, B=B, algorithm="solve");
+    class(fit) <- "ProbePositionEffects";
+
+#    params <- list(coefs=coefs);
+#    fit <- list(params=params, map=map, B=B);
+#    class(fit) <- c("fitSubset2", class(fit));
+    verbose && str(verbose, fit);
+
+    fit;
+  } # fitSubset2()
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -301,79 +495,25 @@ setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbo
   shift <- params$shift;
   verbose && cat(verbose, "Shift: ", shift);
 
-  # Bootstrap settings
-  bootstrap <- params$bootstrap;
-  chunkSize <- params$chunkSize;
-  maxIter <- params$maxIter;
-  acc <- params$acc;
-
   # Model parameters (only for display; retrieve elsewhere)
   verbose && cat(verbose, "Model: ", params$model);
   verbose && cat(verbose, "Degrees of freedom: ", params$df);
+
+  # Method for fitting linear model
+  fitMethod <- params$fitMethod;
+  verbose && cat(verbose, "Algorithm for fitting model: ", fitMethod);
   verbose && exit(verbose);
 
-  nbrOfCells <- length(cells);
-
-  # Is bootstrapping necessary?
-  if (chunkSize >= nbrOfCells) {
-    verbose && cat(verbose, "Bootstrapping not really needed.");
-    bootstrap <- FALSE;
-  }
-
-  # Bootstrap?
-  if (bootstrap) {
-    verbose && enter(verbose, "Fitting model using bootstrap");
-
-    throw("Cannot fit the model using bootstrapping. This feature is not implemented for ", class(this)[1]);
-
-    verbose && cat(verbose, "Max number of iterations: ", maxIter);
-    verbose && cat(verbose, "Accuracy threshold: ", acc);
-
-    bb <- 0;
-    fit <- NULL;
-    deltaMax <- Inf;
-    while (deltaMax > acc && bb < maxIter) {
-      bb <- bb + 1;
-      verbose && enter(verbose, sprintf("Bootstrap iteration #%d", as.integer(bb)));
-
-      verbose && enter(verbose, "Fitting model to subset of data");
-      verbose && cat(verbose, "Chunk size: ", chunkSize);
-      subset <- sample(1:nbrOfCells, size=chunkSize);
-      cellsChunk <- cells[subset];
-      rm(subset);
-      cellsChunk <- sort(cellsChunk);
-      verbose && cat(verbose, "Cells:");
-      verbose && str(verbose, cellsChunk);
-      fitB <- fitSubset(df, cells=cellsChunk, shift=shift, verbose=verbose);
-      rm(cellsChunk);
-      verbose && exit(verbose);
-
-      verbose && enter(verbose, "Updating estimates");
-      if (is.null(fit)) {
-        fit <- fitB;
-      } else {
-        # Update parameters for each subfit
-        deltaMax <- 0;
-      }
-      rm(fitB);
-      verbose && exit(verbose);
-
-      verbose && printf(verbose, "deltaMax < threshold: %.6f < %.6f\n", deltaMax, acc);
-      verbose && printf(verbose, "iteration < maxIter: %d < %d\n", as.integer(bb), as.integer(maxIter));
-
-      verbose && exit(verbose);
-    } # while()
-    converged <- (deltaMax <= acc);
-
-    verbose && enter(verbose, "Creating final fit");
-    verbose && exit(verbose);
-
-    fit$bootstrap <- list(iter=as.integer(bb), maxIter=maxIter, converged=converged);
-
-    verbose && exit(verbose);
-  } else {
+  if (fitMethod == "lm.fit") {
+    verbose && enter(verbose, "Exact fitting of model using lm.fit");
+    verbose && cat(verbose, "NOTE: This approach is not bounded in memory. For larger chip types it may peak at 4-6GB of RAM.");
     fit <- fitSubset(df, cells=cells, shift=shift, verbose=verbose);
-  } # if (bootstrap)
+    verbose && exit(verbose);
+  } else if (fitMethod == "solve") {
+    verbose && enter(verbose, "Exact fitting of model by incrementally building the normal equations (X'X = X'y) and then solve it");
+    fit <- fitSubset2(df, cells=cells, shift=shift, verbose=verbose);
+    verbose && exit(verbose);
+  }
 
   verbose && exit(verbose);
 
@@ -415,10 +555,6 @@ setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, ..., 
   # Other model parameters
   model <- params$model;
   verbose && cat(verbose, "Model: ", model);
-  bootstrap <- params$bootstrap;
-  chunkSize <- params$chunkSize;
-  maxIter <- params$maxIter;
-  acc <- params$acc;
   verbose && exit(verbose);
 
   nbrOfCells <- length(cells);
@@ -461,6 +597,12 @@ setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, ..., 
 
 ############################################################################
 # HISTORY:
+# 2008-11-29
+# o Added first step toward supporting fitting the linear model in
+#   bounded memory.  This is done by setting up the normal equations and
+#   using solve(xtx, xty) to estimate the parameters.
+#   TODO: Build up the NE incrementally.
+# o Dropped the bootstrapping framework.
 # 2008-07-29
 # o Added support for specifying the degrees of freedom ('df') of the model.
 # 2008-07-28
