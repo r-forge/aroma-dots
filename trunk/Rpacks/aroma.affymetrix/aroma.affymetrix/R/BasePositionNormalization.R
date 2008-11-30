@@ -15,25 +15,19 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of 
-#     @see "AbstractProbeSequenceNormalization".}
+#     @see "LinearModelProbeSequenceNormalization".}
 #   \item{model}{A @character string specifying the model used to fit 
 #     the base-count effects.}
 #   \item{df}{The degrees of freedom of the model.}
-#   \item{.fitMethod}{...}
 # }
 #
 # \section{Fields and Methods}{
 #  @allmethods "public"  
 # }
 # 
-# \section{Requirements}{
-#   This class requires that an aroma probe sequence file is available
-#   for the chip type.
-# }
-# 
 # @author
 #*/###########################################################################
-setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spline"), df=5, .fitMethod=c("lm.fit", "solve")) {
+setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spline"), df=5) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -43,14 +37,9 @@ setConstructorS3("BasePositionNormalization", function(..., model=c("smooth.spli
   # Argument 'df':
   df <- Arguments$getInteger(df, range=c(1,1e3));
 
-  # Argument '.fitMethod':
-  .fitMethod <- match.arg(.fitMethod);
-
-
-  extend(AbstractProbeSequenceNormalization(...), "BasePositionNormalization",
+  extend(LinearModelProbeSequenceNormalization(...), "BasePositionNormalization",
     .model = model,
-    .df = df,
-    .fitMethod = .fitMethod
+    .df = df
   )
 })
 
@@ -84,8 +73,7 @@ setMethodS3("getParameters", "BasePositionNormalization", function(this, ...) {
 
   params <- c(params, list(
     model = this$.model,
-    df = this$.df,
-    fitMethod = this$.fitMethod
+    df = this$.df
   ));
 
   params;
@@ -174,434 +162,42 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
 
 
 
-setMethodS3("getNormalEquations", "BasePositionNormalization", function(this, df=NULL, cells=NULL, transform=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'df':
-  if (!inherits(df, "AffymetrixCelFile")) {
-    throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
-  }
+setMethodS3("getSignalTransform", "BasePositionNormalization", function(this, ...) {
+  params <- getParameters(this, expand=FALSE, ...);
+  shift <- params$shift;
+  rm(params);
 
-  # Argument 'transform':
-  if (!is.null(transform)) {
-    if (!is.function(transform)) {
-      throw("Argument 'transform' is not a function: ", mode(transform)[1]);
-    }
-  }
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Getting annotation data files
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Retrieving cell sequence annotation data file");
-  acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 20));
-  verbose && exit(verbose);
-
-  # Expand 'cells'?
-  if (is.null(cells)) {
-    cells <- 1:nbrOfCells(acs);
-  }
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Identifying subset of cell indices
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Identifying subset of cells that can be fitted");
-  verbose && cat(verbose, "Cells:");
-  verbose && str(verbose, cells);
-  n0 <- length(cells);
-
-  verbose && enter(verbose, "Excluding cells with unknown probe sequences");
-  isMissing <- isMissing(acs, verbose=less(verbose, 10))[cells];
-  cells <- cells[!isMissing];
-  rm(isMissing);
-  n1 <- length(cells);
-  verbose && printf(verbose, "Removed %d (%.2f%%) missing sequences out of %d\n", n0-n1, 100*(n0-n1)/n0, n0);
-  verbose && exit(verbose);
-
-
-  verbose && enter(verbose, "Identifying cells with missing data");
-  verbose && enter(verbose, "Reading signals");
-  verbose && cat(verbose, "Cells:");
-  verbose && str(verbose, cells);
-  y <- extractMatrix(df, cells=cells, drop=TRUE, verbose=less(verbose, 10));
-
-  if (!is.null(transform)) {
-    verbose && enter(verbose, "Transforming signals");
-    verbose && cat(verbose, "Signals before transformation:");
-    verbose && str(verbose, y);
-    y <- transform(y);
-    verbose && exit(verbose);
-  }
-  verbose && cat(verbose, "Signals to be fitted:");
-  verbose && str(verbose, y);
-  verbose && exit(verbose);
-    
-  verbose && enter(verbose, "Excluding non-finite data points");
-  # Fit only finite subset
-  keep <- whichVector(is.finite(y));
-  y <- y[keep];
-  cells <- cells[keep];
-  rm(keep);
-  n2 <- length(cells);
-  verbose && printf(verbose, "Removed %d (%.2f%%) non-finite data points out of %d\n", n1-n2, 100*(n1-n2)/n1, n1);
-  verbose && exit(verbose);
-
-  verbose && printf(verbose, "Removed in total %d (%.2f%%) cells out of %d\n", n0-n2, 100*(n0-n2)/n0, n0);
-  verbose && str(verbose, cells);
-  verbose && exit(verbose);
-
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Getting design matrix for subset
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Getting design matrix");
-  res <- getDesignMatrix(this, cells=cells, verbose=less(verbose, 5));
-  X <- res$X;
-
-##  XX1 <<- X; yy1 <<- y;
-
-  verbose && cat(verbose, "Design matrix:");
-  verbose && str(verbose, X);
-
-  B <- res$B;
-  verbose && cat(verbose, "Basis vectors:");
-  verbose && str(verbose, B);
-  map <- res$map;
-
-  factors <- res$factors;
-  verbose && cat(verbose, "Factors:");
-  verbose && str(verbose, factors);
-
-  rm(res);
-
-  gc <- gc();
-  verbose && print(verbose, gc);
-
-  # Sanity check
-  stopifnot(nrow(X) == length(cells));
-  stopifnot(nrow(X) == length(y));
-  verbose && exit(verbose);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Calculating cross products X'X and X'y
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Calculating cross product X'X");
-  xtx <- crossprod(X);  
-  verbose && str(verbose, xtx);
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Calculating cross product X'y");
-  xty <- crossprod(X, y);
-  verbose && str(verbose, xty);
-  verbose && exit(verbose);
-
-  rm(X);
-
-  res <- list(xtx=xtx, xty=xty, n0=n0, n1=n1, n2=n2, cells=cells, map=map, B=B, factors=factors, X=X, y=y);
-  rm(xtx, xty, cells);
-
-  res;
-}, protected=TRUE)
-
-
-
-
-setMethodS3("fitOne", "BasePositionNormalization", function(this, df, ..., verbose=FALSE) {
-  fitSubset <- function(df, cells=NULL, shift=0, ..., verbose) {
-    verbose && enter(verbose, "Retrieving probe sequences");
-
-    verbose && enter(verbose, "Excluding cells with unknown probe sequences");
-    # Exclude missing sequences
-    n <- length(cells);
-    acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 20));
-    isMissing <- isMissing(acs, verbose=less(verbose, 10))[cells];
-    cells <- cells[!isMissing];
-    rm(isMissing);
-    n2 <- length(cells);
-    verbose && printf(verbose, "Removed %d (%.2f%%) missing sequences out of %d\n", n-n2, 100*(n-n2)/n, n);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Getting design matrix");
-    X <- getDesignMatrix(this, cells=cells, verbose=less(verbose, 5));
-    verbose && cat(verbose, "Design matrix:");
-    verbose && str(verbose, X);
-    gc <- gc();
-    verbose && print(verbose, gc);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Reading signals to fit");
-    verbose && cat(verbose, "Cells:");
-    verbose && str(verbose, cells);
-    y <- extractMatrix(df, cells=cells, drop=TRUE, verbose=less(verbose, 10));
-    rm(cells);
-    verbose && exit(verbose);
-
-    if (shift != 0) {
-      verbose && enter(verbose, "Shifting signals");
-      verbose && cat(verbose, "Shift: ", shift);
-      y <- y + shift;
-      verbose && exit(verbose);
-    }
-
-    verbose && enter(verbose, "Log2 transforming signals");
+  transform <- function(y, ...) {
+    y <- y + shift;
     y <- log2(y);
-    verbose && cat(verbose, "Log2 probe signals:");
-    verbose && str(verbose, y);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Keeping only finite data points");
-    n <- length(y);
-    # Fit only finite subset
-    keep <- whichVector(is.finite(y));
-    y <- y[keep];
-    X$X <- X$X[keep,,drop=FALSE];
-    rm(keep);
-    n2 <- length(y);
-    verbose && printf(verbose, "Removed %d (%.2f%%) non-finite data points out of %d\n", n-n2, 100*(n-n2)/n, n);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Fitting base-count model");
-    verbose && cat(verbose, "Log2 signals:");
-    verbose && str(verbose, y);
-    verbose && cat(verbose, "Design matrix:");
-    verbose && str(verbose, X);
-##  XX2 <<- X$X; yy2 <<- y;
-
-    gc <- gc();
-    verbose && print(verbose, gc);
-    fit <- fitProbePositionEffects(y=y, seqs=X, verbose=less(verbose, 5));
-    rm(y, X);
-    fit$algorithm <- "lm.fit";
-    gc <- gc();
-    verbose && print(verbose, gc);
-    verbose && exit(verbose);
-  
-    fit;
-  } # fitSubset()
-
-  fitSubset2 <- function(df, cells=NULL, shift=0, ..., verbose) {
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Local functions
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    transform <- function(y, ...) {
-      if (shift != 0) {
-        verbose && enter(verbose, "Shifting signals");
-        verbose && cat(verbose, "Shift: ", shift);
-        y <- y + shift;
-        verbose && exit(verbose);
-      }
-      verbose && enter(verbose, "Log2 transforming signals");
-      y <- log2(y);
-      verbose && exit(verbose);
-      y;
-    } # transform()
-
-    ne <- getNormalEquations(this, df=df, cells=cells, transform=transform, verbose=verbose);
-    verbose && cat(verbose, "Normal equations:");
-    verbose && str(verbose, ne);
-
-print(sum(ne$X)); print(sum(ne$y));
-
-    map <- ne$map;
-    B <- ne$B;
-    factors <- ne$factors;
-
-    xtx <- ne$xtx;
-    xty <- ne$xty;
-    rm(ne);
-
-    coefs <- solve(xtx, xty);
-print(coefs);
-    coefs <- as.vector(coefs);
-    verbose && cat(verbose, "Coeffients:")
-    verbose && print(verbose, coefs);
-
-    params <- list();
-    intercept <- TRUE;
-    if (intercept) {
-      params$intercept <- coefs[1];
-      coefs <- coefs[-1];
-    }
-    df <- length(coefs)/length(factors);
-    verbose && cat(verbose, "Degrees of freedom: ", df);
-    idxs <- 1:df;
-    for (kk in seq(along=factors)) {
-      key <- names(factors)[kk];
-      if (is.null(key)) {
-        key <- sprintf("factor%02d", kk);
-      }
-      params[[key]] <- coefs[idxs];
-      coefs <- coefs[-idxs];
-    }
-    fit <- list(params=params, map=map, B=B, algorithm="solve");
-    class(fit) <- "ProbePositionEffects";
-
-#    params <- list(coefs=coefs);
-#    fit <- list(params=params, map=map, B=B);
-#    class(fit) <- c("fitSubset2", class(fit));
-    verbose && str(verbose, fit);
-
-    fit;
-  } # fitSubset2()
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'df':
-  if (!inherits(df, "AffymetrixCelFile")) {
-    throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
+    y;
   }
 
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  verbose && enter(verbose, "Fitting normalization function for one array");
-  verbose && cat(verbose, "Full name: ", getFullName(df));
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Getting algorithm parameters
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Getting algorithm parameters");
-  params <- getParameters(this, expand=TRUE, verbose=less(verbose, 5));
-  gc <- gc();
-  verbose && print(verbose, gc);
-
-  units <- params$unitsToFit;
-  verbose && cat(verbose, "Units:");
-  verbose && str(verbose, units);
-  cells <- params$cellsToFit;
-  stratifyBy <- params$typesToFit;
-  verbose && cat(verbose, "stratifyBy: ", stratifyBy);
-  verbose && cat(verbose, "Cells:");
-  verbose && str(verbose, cells);
-  shift <- params$shift;
-  verbose && cat(verbose, "Shift: ", shift);
-
-  # Model parameters (only for display; retrieve elsewhere)
-  verbose && cat(verbose, "Model: ", params$model);
-  verbose && cat(verbose, "Degrees of freedom: ", params$df);
-
-  # Method for fitting linear model
-  fitMethod <- params$fitMethod;
-  verbose && cat(verbose, "Algorithm for fitting model: ", fitMethod);
-  verbose && exit(verbose);
-
-  if (fitMethod == "lm.fit") {
-    verbose && enter(verbose, "Exact fitting of model using lm.fit");
-    verbose && cat(verbose, "NOTE: This approach is not bounded in memory. For larger chip types it may peak at 4-6GB of RAM.");
-    fit <- fitSubset(df, cells=cells, shift=shift, verbose=verbose);
-    verbose && exit(verbose);
-  } else if (fitMethod == "solve") {
-    verbose && enter(verbose, "Exact fitting of model by incrementally building the normal equations (X'X = X'y) and then solve it");
-    fit <- fitSubset2(df, cells=cells, shift=shift, verbose=verbose);
-    verbose && exit(verbose);
-  }
-
-  verbose && exit(verbose);
-
-  fit;
-}, protected=TRUE)
-
-
-setMethodS3("predictOne", "BasePositionNormalization", function(this, fit, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  verbose && enter(verbose, "Predicting model for one array");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Getting algorithm parameters
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Getting algorithm parameters");
-  params <- getParameters(this, expand=TRUE, verbose=less(verbose, 5));
-
-  units <- params$unitsToUpdate;
-  verbose && cat(verbose, "Units:");
-  verbose && str(verbose, units);
-  cells <- params$cellsToUpdate;
-  stratifyBy <- params$typesToUpdate;
-  verbose && cat(verbose, "stratifyBy: ", stratifyBy);
-  verbose && cat(verbose, "Cells:");
-  verbose && str(verbose, cells);
-  shift <- params$shift;
-  verbose && cat(verbose, "Shift: ", shift);
-
-  # Other model parameters
-  model <- params$model;
-  verbose && cat(verbose, "Model: ", model);
-  verbose && exit(verbose);
-
-  nbrOfCells <- length(cells);
-
-
-  verbose && enter(verbose, "Retrieving probe sequences");
-  # Locate AromaCellSequenceFile holding probe sequences
-  acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
-  seqs <- readSequenceMatrix(acs, cells=cells, what="raw", verbose=less(verbose, 5));
-  rm(acs, cells);
-  verbose && cat(verbose, "Probe-sequence matrix:");
-  verbose && str(verbose, seqs);
-  gc <- gc();
-  verbose && print(verbose, gc);
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Predicting mean log2 probe signals");
-  mu <- predict(fit, seqs=seqs, verbose=less(verbose, 5));
-  rm(seqs);
-  verbose && str(verbose, "mu:");
-  verbose && str(verbose, mu);
-  verbose && summary(verbose, mu);
-  verbose && exit(verbose);
-
-  # Sanity check
-  if (length(mu) != nbrOfCells) {
-    throw("Internal error. Number of estimated means does not match the number of cells to be updated: ", length(mu), " != ", nbrOfCells);
-  }
-
-  # Garbage collection
-  gc <- gc();
-  verbose && print(verbose, gc);
-
-  verbose && exit(verbose);
-
-  mu;
-}, protected=TRUE)
+  transform;
+}, protected=TRUE);
 
 
 
 ############################################################################
 # HISTORY:
 # 2008-11-29
+# o Extracted the LinearModelProbeSequenceNormalization class from this
+#   class.
+# o Now fitOne() takes an argument 'ram' which is passed from process().
+# o The predictOne() method is looping over probe positions, which is 
+#   fairly memory efficient.  For this reason, we leave it as it.  We
+#   can now fit a GenomeWideSNP_6 array with approx 1GB of RAM (instead
+#   of 5-6GB before)!
+# o Now getNormalEquations() is done in chunks. For GenomeWideSNP_6 we can
+#   now generate normal equations with approx 500MB of RAM.
 # o Added first step toward supporting fitting the linear model in
 #   bounded memory.  This is done by setting up the normal equations and
-#   using solve(xtx, xty) to estimate the parameters.
-#   TODO: Build up the NE incrementally.
+#   using solve(xtx, xty) to estimate the parameters.  TEST: modelMethod
+#   "lm.fit" and "solve" created all.equal() == TRUE output.
+#   NEXT: Build up the NE incrementally.  Already without this, the memory
+#   usage went down dramatically.  For a Mapping50K_Hind240 fit, the peak
+#   memory usage went down from 1000MB to 380MB.  However, it is still not
+#   possible to fit a GenomeWideSNP_6 on Windows Vista 32-bit.
 # o Dropped the bootstrapping framework.
 # 2008-07-29
 # o Added support for specifying the degrees of freedom ('df') of the model.
