@@ -1548,6 +1548,15 @@
 \alias{readMatchScores.AromaCellMatchScoreFile}
 \alias{updateMatchScores}
 \alias{updateMatchScores.AromaCellMatchScoreFile}
+\alias{fitOne.LinearModelProbeSequenceNormalization}
+\alias{getCrossProductXTX}
+\alias{getCrossProductXTX.MatNormalization}
+\alias{getNormalEquations}
+\alias{getNormalEquations.LinearModelProbeSequenceNormalization}
+\alias{getSignalTransform}
+\alias{getSignalTransform.BasePositionNormalization}
+\alias{getSignalTransform.LinearModelProbeSequenceNormalization}
+\alias{predictOne.LinearModelProbeSequenceNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -166,93 +166,6 @@ setMethodS3("getDesignMatrix", "MatNormalization", function(this, cells=NULL, mo
 
 
 
-setMethodS3("getCrossProductXTX", "MatNormalization", function(this, cells=NULL, ..., force=FALSE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
-  nbrOfCells <- nbrOfCells(acs);
-
-  # Argument 'cells':
-  if (!is.null(cells)) {
-    cells <- Arguments$getIndices(cells, range=c(1, nbrOfCells));
-  }
-
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  verbose && enter(verbose, "Getting cross product X'X");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Checking for cached results
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  chipType <- getChipType(this);
-  key <- list(method="getCrossProductXTX", class=class(this)[1],
-              chipType=chipType, acsFullName=getFullName(acs), cells=cells);
-  dirs <- c("aroma.affymetrix", chipType);
-
-  xtx <- loadCache(key=key, dirs=dirs);
-  if (!force && !is.null(xtx)) {
-    verbose && cat(verbose, "Found cached results.");
-    verbose && exit(verbose);
-    return(xtx);
-  }
- 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Calculating cross product in chunks
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  nbrOfCells <- length(cells);
-  verbose && cat(verbose, "Number of cells: ", nbrOfCells);
-  verbose && cat(verbose, "Cells: ");
-  verbose && str(verbose, cells);
-
-  ram <- 1;
-  cellsPerChunk <- ram*250e3;
-  verbose && cat(verbose, "Number cells per chunk: ", cellsPerChunk);
-
-  nbrOfChunks <- ceiling(nbrOfCells / cellsPerChunk);
-
-  idxs <- 1:nbrOfCells; 
-  head <- 1:cellsPerChunk;
-  count <- 1;
-
-  xtx <- 0;
-  while(length(idxs) > 0) {
-    verbose && enter(verbose, "Fitting chunk #", count, " of ", nbrOfChunks); 
-    if (length(idxs) < cellsPerChunk) {
-      head <- 1:length(idxs);
-    }
-    cc <- idxs[head];
-
-    verbose && cat(verbose, "Cells: ");
-    verbose && str(verbose, cellsToFit[cc]);
- 
-    verbose && enter(verbose, "Reading design matrix");
-    X <- getDesignMatrix(this, cells=cells[cc], verbose=verbose);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Calculating cross product X'X");
-    xtx <- xtx + crossprod(X);
-    verbose && exit(verbose);
-
-    verbose && exit(verbose);
-  }  # while (...)
-
-  # Store results in cache
-  saveCache(xtx, key=key, dirs=dirs);
- 
-  verbose && exit(verbose);
-
-  xtx;
-}, protected=TRUE)
-
-
-
 
 setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE) {
 
@@ -320,7 +233,7 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE)
     start <- start + cellsPerChunk;
   }
   
-  verbose && enter(verbose, "Solving linear system");
+  verbose && enter(verbose, "Solving normal equations");
   #fit <- list(xtx=xtx, xty=xty) #,beta=solve(xtx, xty))
   verbose && exit(verbose);
   fit <- list(beta=solve(xtx, xty), scaleResiduals=this$.scaleResiduals);
