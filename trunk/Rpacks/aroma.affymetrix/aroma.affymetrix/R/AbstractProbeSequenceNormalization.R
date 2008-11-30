@@ -143,6 +143,8 @@ setMethodS3("predictOne", "AbstractProbeSequenceNormalization", abstract=TRUE, p
 #
 # \arguments{
 #   \item{...}{Not used.}
+#   \item{ram}{A positive @double scale factor specifying how much more
+#     memory to use relative to the default.}
 #   \item{force}{If @TRUE, data already normalized is re-normalized, 
 #       otherwise not.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
@@ -158,7 +160,7 @@ setMethodS3("predictOne", "AbstractProbeSequenceNormalization", abstract=TRUE, p
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ..., ram=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -272,7 +274,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
           verbose && exit(verbose);
         } else {
           verbose && enter(verbose, "Estimating probe-sequence effects for target");
-          fitT <- fitOne(this, df=dfT, verbose=less(verbose, 5));
+          fitT <- fitOne(this, df=dfT, ram=ram, verbose=less(verbose, 5));
           verbose && print(verbose, fitT);
           modelFitT$fit <- fitT;
 
@@ -439,6 +441,8 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
 ############################################################################
 # HISTORY:
+# 2008-11-29
+# o Added argument 'ram' to process().
 # 2008-08-05
 # o Added support for specifying the type of target effects for any
 #   AbstractProbeSequenceNormalization method.
