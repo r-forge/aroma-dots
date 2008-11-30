@@ -19,10 +19,12 @@
  Normalizes the data set.
 }
 
-\usage{\method{process}{AbstractProbeSequenceNormalization}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{process}{AbstractProbeSequenceNormalization}(this, ..., ram=1, force=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
+  \item{ram}{A positive \code{\link[base]{double}} scale factor specifying how much more
+    memory to use relative to the default.}
   \item{force}{If \code{\link[base:logical]{TRUE}}, data already normalized is re-normalized,
       otherwise not.}
   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}

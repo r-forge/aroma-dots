@@ -29,13 +29,15 @@
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{AbstractProbeSequenceNormalization}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{BasePositionNormalization}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{BasePositionNormalization}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
 
 public static class \bold{BasePositionNormalization}\cr
-extends \emph{\link[aroma.affymetrix]{AbstractProbeSequenceNormalization}}\cr
+extends \link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}\cr
 
 
 
@@ -44,22 +46,23 @@ extends \emph{\link[aroma.affymetrix]{AbstractProbeSequenceNormalization}}\cr
   A, C, G, and T:s in the probe sequences.
  }
 
- \usage{BasePositionNormalization(..., model=c("smooth.spline"), df=5, bootstrap=FALSE)}
+ \usage{BasePositionNormalization(..., model=c("smooth.spline"), df=5)}
 
  \arguments{
    \item{...}{Arguments passed to the constructor of
-     \code{\link{AbstractProbeSequenceNormalization}}.}
+     \code{\link{LinearModelProbeSequenceNormalization}}.}
    \item{model}{A \code{\link[base]{character}} string specifying the model used to fit
      the base-count effects.}
    \item{df}{The degrees of freedom of the model.}
-   \item{bootstrap}{If \code{\link[base:logical]{TRUE}}, the model fitting is done by bootstrap in
-     order to save memory.}
  }
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \emph{No methods defined}.
 
+
+ \bold{Methods inherited from LinearModelProbeSequenceNormalization}:\cr
+fitOne, getNormalEquations, getSignalTransform, predictOne
 
  \bold{Methods inherited from AbstractProbeSequenceNormalization}:\cr
 fitOne, getAromaCellSequenceFile, getTargetFile, indexOfMissingSequences, predictOne, process
@@ -77,11 +80,6 @@ getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getPath
 $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
- }
-
- \section{Requirements}{
-   This class requires that an aroma probe sequence file is available
-   for the chip type.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

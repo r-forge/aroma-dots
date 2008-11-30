@@ -793,3 +793,9 @@ fitCnProbes fitCnProbes.UnitModel
   isUniqueCdf.AffymetrixCdfFile predictOne.MatNormalization
   readMatchScores readMatchScores.AromaCellMatchScoreFile
   updateMatchScores updateMatchScores.AromaCellMatchScoreFile
+  fitOne.LinearModelProbeSequenceNormalization getCrossProductXTX
+  getCrossProductXTX.MatNormalization getNormalEquations
+  getNormalEquations.LinearModelProbeSequenceNormalization
+  getSignalTransform getSignalTransform.BasePositionNormalization
+  getSignalTransform.LinearModelProbeSequenceNormalization
+  predictOne.LinearModelProbeSequenceNormalization
