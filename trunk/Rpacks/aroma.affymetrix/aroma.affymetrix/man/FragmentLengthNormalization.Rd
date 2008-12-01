@@ -39,13 +39,14 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
   fragment length effects on copy-number chip-effect estimates.
  }
 
- \usage{FragmentLengthNormalization(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY", shift=0, onMissing=c("median", "ignore"))}
+ \usage{FragmentLengthNormalization(dataSet=NULL, ..., target=targetFunctions, subsetToFit="-XY", shift=0, onMissing=c("median", "ignore"), targetFunctions=NULL)}
 
  \arguments{
    \item{dataSet}{A \code{\link{SnpChipEffectSet}}.}
    \item{...}{Additional arguments passed to the constructor of
      \code{\link{ChipEffectTransform}}.}
-   \item{targetFunctions}{An optional list of \code{\link[base]{function}}s.
+   \item{target}{(Optional) A \code{\link[base]{character}} string or a list of \code{\link[base]{function}}s
+     specifying what to normalize toward.
      For each enzyme there is one target function to which all arrays
      should be normalized to.}
    \item{subsetToFit}{The units from which the normalization curve should
@@ -54,6 +55,7 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
      fragment lengths are unknown.}
    \item{shift}{An optional amount the data points should be shifted
       (translated).}
+   \item{targetFunctions}{Deprecated.}
  }
 
  \section{Fields and Methods}{

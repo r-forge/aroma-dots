@@ -125,7 +125,7 @@ textSelectFile <- function(path=".", pattern="[^~]$", ..., history=FALSE) {
 
   while(!isFile(path)) {
     pathHistory <- c(pathHistory, path);
-    path <- Arguments$getReadablePathname(path);
+    path <- Arguments$getReadablePath(path);
 
     paths <- list.files(pattern=pattern, path=path, full.names=TRUE);
     if (length(paths) > 0) {
@@ -169,6 +169,8 @@ print(lastPath);
 
 ############################################################################
 # HISTORY: 
+# 2008-12-01
+# o BUG FIX: Used getReadablePathname() instead of getReadablePath().
 # 2007-10-09
 # o Added textSelectFile().
 # 2007-01-11
