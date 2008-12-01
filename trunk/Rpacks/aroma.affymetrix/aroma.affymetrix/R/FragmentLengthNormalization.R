@@ -465,11 +465,12 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
     verbose && cat(verbose, "Units:");
     verbose && str(verbose, units);
 
-    # Get target log2 signals for SNPs
+    # Get target signals for SNPs
     yR <- extractTheta(ceR, units=units, verbose=less(verbose, 5));
     verbose && cat(verbose, "(Allele-specific) thetas:");
     verbose && str(verbose, yR);
 
+    # If more than one theta per unit, sum them up to get the total signal
     if (ncol(yR) > 1) {
       # Row sums with na.rm=TRUE => NAs are treated as zeros.
       yR[is.na(yR)] <- 0;
@@ -762,7 +763,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
     # Get target log2 signals for all SNPs to be updated
     verbose && enter(verbose, "Getting theta estimates");
-    theta <- extractTheta(ce, units=cellMatrixMap, verbose=less(verbose, 5));
+    theta <- extractTheta(ce, units=cellMatrixMap, drop=FALSE, verbose=less(verbose, 5));
     verbose && str(verbose, theta);
     verbose && summary(verbose, theta);
     verbose && exit(verbose);
@@ -810,7 +811,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     verbose && cat(verbose, "Normalized log2 signals:");
     verbose && summary(verbose, yN);
 
-    # Normalization scale factor for each unit
+    # Normalization scale factor for each unit (on the log2 scale)
     rho <- y-yN;
     rm(y,yN);
     # On the intensity scale
@@ -818,10 +819,13 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
     verbose && cat(verbose, "Normalization scale factors:");
     verbose && summary(verbose, rho);
 
+    # Sanity check
+    stopifnot(length(rho) == nrow(theta));
+
     # Normalize the theta:s (on the intensity scale)
     ok <- which(is.finite(rho));
     verbose && str(verbose, ok);
-    theta[ok] <- theta[ok]/rho[ok];
+    theta[ok,] <- theta[ok,]/rho[ok];
     rm(ok, rho);
 
     verbose && cat(verbose, "Normalized thetas:");
@@ -879,6 +883,11 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2008-12-01
+# o BUG FIX: For allele-specific estimates, FragmentLengthNormalization 
+#   would correctly estimate normalization scale factors, but due to a
+#   typo, it effectively only update the signals for allele A.
+#   Looking at the SVN history, this has always been the case.
 # 2008-11-28
 # o Now constructor argument 'targetFunctions' can also be "zero".
 # 2008-09-19
