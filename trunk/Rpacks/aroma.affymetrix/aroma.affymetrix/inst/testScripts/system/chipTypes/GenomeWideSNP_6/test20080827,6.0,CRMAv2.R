@@ -47,14 +47,14 @@ print(csN);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allele-specific chip effect estimates
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=TRUE);
+plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=FALSE);
 print(plm);
 
 # Fit CN probes quickly (~5-10s/array!)
-if (length(findUnitsTodo(plm)) > 0) {
-  units <- fitCnProbes(plm, verbose=log);
-  str(units);
-}
+#if (length(findUnitsTodo(plm)) > 0) {
+#  units <- fitCnProbes(plm, verbose=log);
+#  str(units);
+#}
 
 fit(plm, verbose=log);
 ces <- getChipEffectSet(plm);

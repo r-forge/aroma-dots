@@ -16,7 +16,8 @@
 #   \item{dataSet}{A @see "SnpChipEffectSet".}
 #   \item{...}{Additional arguments passed to the constructor of 
 #     @see "ChipEffectTransform".}
-#   \item{targetFunctions}{An optional list of @functions.  
+#   \item{target}{(Optional) A @character string or a list of @functions
+#     specifying what to normalize toward.
 #     For each enzyme there is one target function to which all arrays
 #     should be normalized to.}
 #   \item{subsetToFit}{The units from which the normalization curve should
@@ -25,6 +26,7 @@
 #     fragment lengths are unknown.}
 #   \item{shift}{An optional amount the data points should be shifted
 #      (translated).}
+#   \item{targetFunctions}{Deprecated.}
 # }
 #
 # \section{Fields and Methods}{
@@ -49,7 +51,7 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targetFunctions=NULL, subsetToFit="-XY", shift=0, onMissing=c("median", "ignore")) {
+setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., target=targetFunctions, subsetToFit="-XY", shift=0, onMissing=c("median", "ignore"), targetFunctions=NULL) {
   extraTags <- NULL;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -73,30 +75,23 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 #    }
   }
 
-  # Argument 'targetFunctions':
-  if (!is.null(targetFunctions)) {
-    if (!is.list(targetFunctions)) {
-      throw("Argument 'targetFunctions' is not a list: ", 
-                                                class(targetFunctions)[1]);
-    }
-
-    if (is.character(targetFunctions)) {
-      if (targetFunctions == "zero") {
+  # Argument 'target':
+  if (!is.null(target)) {
+    if (is.character(target)) {
+      if (target == "zero") {
       } else {
-        throw("Unknown value of argument 'targetFunctions': ", 
-                                                          targetFunctions);
+        throw("Unknown value of argument 'target': ", target);
       }
-    } else if (is.list(targetFunctions)) {
+    } else if (is.list(target)) {
       # Validate each element
-      for (kk in seq(along=targetFunctions)) {
-        if (!is.function(targetFunctions[[kk]])) {
-          throw("One element in 'targetFunctions' is not a function: ", 
-                                          class(targetFunctions[[kk]])[1]);
+      for (kk in seq(along=target)) {
+        if (!is.function(target[[kk]])) {
+          throw("One element in 'target' is not a function: ", 
+                                          class(target[[kk]])[1]);
         }
       }
     } else {
-      throw("Unknown value of argument 'targetFunctions': ", 
-                                                class(targetFunctions)[1]);
+      throw("Unknown value of argument 'target': ", class(target)[1]);
     }
   }
 
@@ -125,7 +120,7 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 
   extend(ChipEffectTransform(dataSet, ...), "FragmentLengthNormalization", 
     .subsetToFit = subsetToFit,
-    .targetFunctions = targetFunctions,
+    .target = target,
     .onMissing = onMissing,
     .extraTags = extraTags,
     shift = shift
@@ -155,7 +150,7 @@ setMethodS3("getAsteriskTags", "FragmentLengthNormalization", function(this, col
 
 setMethodS3("clearCache", "FragmentLengthNormalization", function(this, ...) {
   # Clear all cached values.
-  for (ff in c(".targetFunctions")) {
+  for (ff in c(".target", ".targetFunctions")) {
     this[[ff]] <- NULL;
   }
 
@@ -172,8 +167,8 @@ setMethodS3("getParameters", "FragmentLengthNormalization", function(this, expan
   params <- c(params, list(
     subsetToFit = this$.subsetToFit,
     onMissing = this$.onMissing,
-    .targetFunctions = this$.targetFunctions,
-    shift <- this$shift
+    .target = this$.target,
+    shift = this$shift
   ));
 
 
@@ -401,19 +396,28 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
   }
 
 
-  fcns <- this$.targetFunctions;
+  target <- this$.target;
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Handling argument 'force'
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # AD HOC: If forced, make sure to use the original target argument
-  if (force && !is.null(fcns)) {
-    targetType <- attr(targetFunctions, "targetType");
-    if (!is.null(targetType))
-      fcns <- targetType;
-    rm(targetType);
+  if (force) {
+    if (!is.null(target)) {
+      targetType <- attr(target, "targetType");
+      if (!is.null(targetType))
+        target <- targetType;
+      rm(targetType);
+    }
   }
 
-  if (force || is.character(fcns)) {
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Predefined target functions?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.character(target)) {
     verbose && enter(verbose, "Setting up predefined target functions");
-    targetType <- fcns;
+    targetType <- target;
     verbose && cat(verbose, "Target type: ", targetType);
 
     # Get the SNP information annotation
@@ -427,21 +431,24 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
     rm(fl);
 
     if (identical(targetType, "zero")) {
-      targetFunctions <- rep(list(function(...) log2(2200)), nbrOfEnzymes);
+      target <- rep(list(function(...) log2(2200)), nbrOfEnzymes);
     } else {
       throw("Unknown target function: ", targetType);
     }
 
     # Store the original target type in an attribute
-    attr(targetFunctions, "targetType") <- targetType;
+    attr(target, "targetType") <- targetType;
 
-    this$.targetFunctions <- fcns;
+    this$.target <- target;
     force <- FALSE;
     verbose && exit(verbose);
-  }
+  } 
 
 
-  if (force || is.null(fcns)) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Target functions based on the average array?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (force || is.null(target)) {
     # Get target set
     ces <- getInputDataSet(this);
     verbose && enter(verbose, "Get average signal across arrays");
@@ -557,7 +564,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
     } # for (ee in allEnzymes)
 
     # Remove as many promises as possible
-    rm(fcns, nbrOfEnzymes, allEnzymes, fl, yR, okYR, hasFL);
+    rm(target, nbrOfEnzymes, allEnzymes, fl, yR, okYR, hasFL);
 
     # Create a target prediction function for each enzyme
     fcns <- vector("list", length(fits));
@@ -566,20 +573,23 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
         predict(fits[[ee]], x, ...);  # Dispatched predict.lowess().
       }
     }
+    verbose && str(verbose, fcns);
     verbose && exit(verbose);
 
     # Garbage collect
     gc <- gc();
     verbose && print(verbose, gc);
 
-    this$.targetFunctions <- fcns;
+    target <- fcns;
+    rm(fcns);
+    this$.target <- target;
     force <- FALSE;
 
     verbose && exit(verbose);
   } # if (force || ...)
 
 
-  fcns;
+  target;
 }, private=TRUE)
 
 
