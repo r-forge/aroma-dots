@@ -530,7 +530,7 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
     #  fit <- oligo::fitRma(pmMat=y, mmMat=y, pnVec=unitNames, nProbes=nbrOfUnits, densFunction=NULL, 
     #                       rEnv=NULL, normalize=FALSE, background=FALSE, bgversion=2, destructive=FALSE);
     #})
-    # MR 12-Dec-2008: fitRma was removed from the 'oligo' package.  The call below is basically equivalent
+    # MR 4-Dec-2008: fitRma was removed from the 'oligo' package.  The call below is basically equivalent
     fit <- .Call("rma_c_complete_copy", y, y, unitNames, nbrOfUnits, NULL, NULL, FALSE, FALSE,
             as.integer(2), PACKAGE = "oligo")
 
@@ -665,6 +665,9 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-04
+# o BUG FIX: flavor='oligo' stopped working awhile ago.  changed the call to
+#   'fitRma' to the native C code as given by 'selectMethod("rma","FeatureSet")'
 # 2008-07-13
 # o BUG FIX: plm$treatNAsAs=="NA" returned an incorrect number of probe
 #   affinities whenever missing values were exluded.
