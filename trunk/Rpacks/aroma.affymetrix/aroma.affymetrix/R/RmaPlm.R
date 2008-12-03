@@ -526,9 +526,13 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
     nbrOfUnits <- as.integer(1); # Only one unit group is fitted
 
     # Each call to fitRma() outputs "Calculating Expression".
-    capture.output({
-      fit <- oligo::fitRma(pmMat=y, mmMat=y, pnVec=unitNames, nProbes=nbrOfUnits, densFunction=NULL, rEnv=NULL, normalize=FALSE, background=FALSE, bgversion=2, destructive=FALSE);
-    })
+    #capture.output({
+    #  fit <- oligo::fitRma(pmMat=y, mmMat=y, pnVec=unitNames, nProbes=nbrOfUnits, densFunction=NULL, 
+    #                       rEnv=NULL, normalize=FALSE, background=FALSE, bgversion=2, destructive=FALSE);
+    #})
+    # MR 12-Dec-2008: fitRma was removed from the 'oligo' package.  The call below is basically equivalent
+    fit <- .Call("rma_c_complete_copy", y, y, unitNames, nbrOfUnits, NULL, NULL, FALSE, FALSE,
+            as.integer(2), PACKAGE = "oligo")
 
     # Extract probe affinities and chip estimates
     est <- fit[1,];  # Only one unit
