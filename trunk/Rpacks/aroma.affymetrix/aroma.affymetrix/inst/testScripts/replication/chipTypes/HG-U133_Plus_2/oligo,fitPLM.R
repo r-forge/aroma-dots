@@ -3,28 +3,16 @@
 #
 # Description:
 # This test verifies that aroma.affymetrix can reproduce the RMA 
-# chip-effect estimates as estimated by affyPLM.
+# chip-effect estimates as estimated by oligo.
+# The setup is the same as in affyPLM,fitPLM.R.
 #
-# Author: Mark Robinson and Henrik Bengtsson
-# Created: 2007-06-20
-# Last modified: 2008-07-30
-#
-# Data set:
-#  rawData/
-#   Affymetrix-HeartBrain/
-#    HG-U133_Plus_2/
-#     u1332plus_ivt_cerebellum_A.CEL [13555904 bytes]
-#     u1332plus_ivt_cerebellum_B.CEL [13550687 bytes]
-#     u1332plus_ivt_cerebellum_C.CEL [13551860 bytes]
-#     u1332plus_ivt_heart_A.CEL      [13554731 bytes]
-#     u1332plus_ivt_heart_B.CEL      [13553255 bytes]
-#     u1332plus_ivt_heart_C.CEL      [13551203 bytes]
-#  Source: Affymetrix Tissue samples, 2007.  http://www.affymetrix.com/
-#  support/technical/sample_data/hugene_1_0_array_data.affx
+# Author: Henrik Bengtsson
+# Created: 2008-12-04 (from affyPLM,fitPLM.R)
+# Last modified: 2008-12-04
 ###########################################################################
 
 library("aroma.affymetrix");
-library("affyPLM");          # fitPLM()
+library("oligo");
 
 verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 
@@ -48,7 +36,7 @@ qn <- QuantileNormalization(csB, typesToUpdate="pm");
 csN <- process(qn, verbose=verbose);
 
 # RMA probe summarization (there are no NAs in this data set)
-plm <- RmaPlm(csN);
+plm <- RmaPlm(csN, flavor="oligo");
 fit(plm, verbose=verbose);
 
 # Extract chip effects on the log2 scale
@@ -61,15 +49,17 @@ rownames(theta) <- getUnitNames(getCdf(ces), ugcMap[,"unit"]);
 verbose && exit(verbose);
 
 
-# ------------------------
-# RMA estimate by affyPLM
-# ------------------------
-verbose && enter(verbose, "RMA by affyPLM");
+# ----------------------
+# RMA estimates by oligo
+# ----------------------
+verbose && enter(verbose, "RMA by oligo");
 verbose && print(verbose, sessionInfo());
 
-raw <- ReadAffy(filenames=getPathnames(csR));
-fit <- fitPLM(raw, verbos=9);
-theta0 <- coefs(fit);
+library("pd.hg.u133.plus.2");
+
+raw <- read.celfiles(filenames=getPathnames(csR));
+eSet <- rma(raw);
+theta0 <- exprs(eSet);
 
 verbose && exit(verbose);
 
@@ -97,12 +87,12 @@ stopifnot(max(abs(e)) < 0.085);
 if (doPlot) {
   if (saveImg) {
     pngDev <- findPngDevice();
-    devNew("pngDev", "replication-affyPLM,fitPLM.png", width=640, height=640);
+    devNew("pngDev", "replication-oligo,fitPLM.png", width=640, height=640);
   }
 
   layout(matrix(1:9, ncol=3, byrow=TRUE));
 
-  xlab <- expression(log[2](theta[affyPLM]));
+  xlab <- expression(log[2](theta[oligo]));
   ylab <- expression(log[2](theta[aroma.affymetrix]));
   for (kk in seq(length=ncol(theta))) {
     main <- colnames(theta)[kk];
@@ -110,7 +100,7 @@ if (doPlot) {
     abline(0,1, col="blue");
   }
 
-  xlab <- expression(log[2](theta[aroma.affymetrix]/theta[affyPLM]));
+  xlab <- expression(log[2](theta[aroma.affymetrix]/theta[oligo]));
   plotDensity(e, xlab=xlab);
 
   devDone();
@@ -118,8 +108,6 @@ if (doPlot) {
 
 ###########################################################################
 # HISTORY:
-# 2008-07-17 [HB]
-# o Added some more quantile-based assertions too.
-# o Had to lower the similarity threshold from 1e-4 to 1e-3. I don't know
-#   why this is, but the differences are still very small.
+# 2008-12-04 [HB]
+# o Created, but not tested because I miss package 'pd.hg.u133.plus.2'.
 ###########################################################################
