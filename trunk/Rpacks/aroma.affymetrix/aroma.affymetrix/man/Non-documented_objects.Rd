@@ -1557,6 +1557,7 @@
 \alias{getSignalTransform.BasePositionNormalization}
 \alias{getSignalTransform.LinearModelProbeSequenceNormalization}
 \alias{predictOne.LinearModelProbeSequenceNormalization}
+\alias{getDesignMatrix.LinearModelProbeSequenceNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that

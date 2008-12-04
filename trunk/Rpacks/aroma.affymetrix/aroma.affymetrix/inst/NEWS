@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.6 [2008-12-01x]
+Version: 0.9.6 [2008-12-03x]
 o Now CbsModel and GlabModel display any optional/additional 
   arguments passed to the internal segmentation method in
   the verbose output.
@@ -35,6 +35,8 @@ o BUG FIX: For allele-specific estimates, FragmentLengthNormalization
   typo, it effectively only update the signals for allele A.  According
   to the source code repository, this has been a bug from the very
   beginning when allele-specific estimates was claimed to be supported.
+o BUG FIX: RmaPlm(..., flavor="oligo") was broken, because oligo
+  was updated.
 
 
 Version: 0.9.5 [2008-10-17]

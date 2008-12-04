@@ -57,8 +57,10 @@ setConstructorS3("LinearModelProbeSequenceNormalization", function(..., .fitMeth
 })
 
 
+setMethodS3("getDesignMatrix", "LinearModelProbeSequenceNormalization", abstract=TRUE, protected=TRUE)
 
-setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", function(this, df=NULL, cells=NULL, ram=1, ..., verbose=FALSE) {
+
+setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", function(this, df, cells=NULL, ram=1, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -174,10 +176,9 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
     # Getting design matrix for subset
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Getting design matrix");
-    res <- getDesignMatrix(this, cells=cells[cc], verbose=less(verbose, 5));
+    res <- getDesignMatrix(this, cells=cells[cc], cache=TRUE, 
+                                                 verbose=less(verbose, 5));
     X <- res$X;
-  
-  ##  XX1 <<- X; yy1 <<- y;
   
     verbose && cat(verbose, "Design matrix:");
     verbose && str(verbose, X);
@@ -298,7 +299,6 @@ setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df
     verbose && str(verbose, y);
     verbose && cat(verbose, "Design matrix:");
     verbose && str(verbose, X);
-##  XX2 <<- X$X; yy2 <<- y;
 
     gc <- gc();
     verbose && print(verbose, gc);
@@ -317,7 +317,7 @@ setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df
     verbose && cat(verbose, "Normal equations:");
     verbose && str(verbose, ne);
 
-print(sum(ne$X)); print(sum(ne$y));
+##    print(sum(ne$X)); print(sum(ne$y));
 
     map <- ne$map;
     B <- ne$B;
@@ -328,7 +328,6 @@ print(sum(ne$X)); print(sum(ne$y));
     rm(ne);
 
     coefs <- solve(xtx, xty);
-print(coefs);
     coefs <- as.vector(coefs);
     verbose && cat(verbose, "Coeffients:")
     verbose && print(verbose, coefs);
@@ -489,10 +488,12 @@ setMethodS3("predictOne", "LinearModelProbeSequenceNormalization", function(this
 
 setMethodS3("getSignalTransform", "LinearModelProbeSequenceNormalization", function(this, ...) {
   NULL;
-}, protected=TRUE);
+}, protected=TRUE)
 
 ############################################################################
 # HISTORY:
+# 2008-12-03
+# o Added abstract getDesignMatrix() method.
 # 2008-11-29
 # o Extracted from BasePositionNormalization.R.
 # o Now fitOne() takes an argument 'ram' which is passed from process().
