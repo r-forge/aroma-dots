@@ -500,7 +500,7 @@ setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL,
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
-    on.exit(popState(verbose));
+    on.exit(popState(verbose), add=TRUE);
   }
 
 
@@ -1267,6 +1267,10 @@ setMethodS3("importFrom", "AromaTabularBinaryFile", function(this, srcFile, ...)
 
 ############################################################################
 # HISTORY:
+# 2008-12-03
+# o CLEAN UP: readDataFrame() of AromaTabularBinaryFile would forget to
+#   close the connection if verbose output was activated.  When R later
+#   would close such connections, a warning would be generated.
 # 2008-07-21
 # o Now updateDataColumn() coerce values to doubles before censoring them
 #   for raw and integer columns.
