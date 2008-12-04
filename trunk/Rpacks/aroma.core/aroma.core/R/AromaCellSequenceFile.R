@@ -478,8 +478,10 @@ setMethodS3("updateTargetStrands", "AromaCellSequenceFile", function(this, cells
   rm(keep);
 
   # Order by 'cells'
-  o <- order(cells);
-  cells <- cells[o];
+  srt <- sort(cells, method="quick", index.return=TRUE);
+  o <- srt$ix;
+  cells <- srt$x;
+  rm(srt);
   strands <- strands[o];
   rm(o);
 
@@ -554,8 +556,10 @@ setMethodS3("updateSequenceMatrix", "AromaCellSequenceFile", function(this, cell
   rm(keep);
 
   # Order by 'cells'
-  o <- order(cells);
-  cells <- cells[o];
+  srt <- sort(cells, method="quick", index.return=TRUE);
+  o <- srt$ix;
+  cells <- srt$x;
+  rm(srt);
   seqs <- seqs[o,,drop=FALSE];
   rm(o);
 
@@ -772,11 +776,11 @@ setMethodS3("countBasesInternal", "AromaCellSequenceFile", function(this, cells=
     cells <- 1:nbrOfCells;
     reorder <- FALSE;
   } else {
-    o <- order(cells);
-    cells <- cells[o];
+    srt <- sort(cells, method="quick", index.return=TRUE);
+    o <- srt$ix;
+    cells <- srt$x;
+    rm(srt);
     reorder <- TRUE;
-    gc <- gc();
-    verbose && print(verbose, gc);
   }
 
 
