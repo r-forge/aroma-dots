@@ -22,20 +22,41 @@ setMethodS3("fitCnProbes", "UnitModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ds <- getDataSet(this);
-  params <- getParameters(this);
-  shift <- params$shift;
-
   verbose && enter(verbose, "Getting chip-effect set");
   # Get chip-effect set
   ces <- getChipEffectSet(this, verbose=verbose);
   verbose && exit(verbose);
+
+  ds <- getDataSet(this);
 
   verbose && enter(verbose, "Identifying CN units");
   cdf <- getCdf(ds);
   units <- whichVector(getUnitTypes(cdf) == 5);
   verbose && str(verbose, units);
   verbose && exit(verbose);
+
+  # Nothing to do?
+  if (length(units) == 0) {
+    verbose && cat(verbose, "Nothing to do: This chip type does not have copy-number units");
+    verbose && exit(verbose);
+    return(invisible(units));
+  }
+
+  verbose && enter(verbose, "Identifying subset to fit");
+  units2 <- findUnitsTodo(ces, verbose=verbose);
+  units <- intersect(units, units2);
+  rm(units2);
+  # Nothing to do?
+  if (length(units) == 0) {
+    verbose && cat(verbose, "Nothing to do: All copy-number units are fitted");
+    verbose && exit(verbose);
+    return(invisible(units));
+  }
+  verbose && str(verbose, units);
+  verbose && exit(verbose);
+
+  params <- getParameters(this);
+  shift <- params$shift;
 
   verbose && enter(verbose, "Identifying cell indices for CN units");
   cells <- getCellIndices(cdf, units=units, useNames=FALSE, unlist=TRUE);
@@ -108,6 +129,8 @@ setMethodS3("fitCnProbes", "UnitModel", function(this, ..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-01
+# o Now fitCnProbes() of UnitModel only fits non-fitted CN units.
 # 2008-09-05
 # o Created.
 ############################################################################
