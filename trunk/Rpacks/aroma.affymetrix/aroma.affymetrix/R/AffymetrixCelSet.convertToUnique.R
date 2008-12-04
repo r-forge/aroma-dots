@@ -38,6 +38,7 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "Test whether dataset exists");
   # HB: Don't think argument 'chipType' makes a difference if 'cdf' is given.
+  outputDataSet <- NULL
   tryCatch({
     outputDataSet <- AffymetrixCelSet$byName(getName(this), tags=tags, 
                                             verbose=verbose, cdf=cdfUnique, 
@@ -119,10 +120,12 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
 
 ############################################################################
 # HISTORY:
+# 2008-12-04 [MR]
+# o fixed small bug when previous dataset not available
 # 2008-11-28 [HB]
 # o Tidying up code.
 # o Replaced try() with tryCatch() statement.  I consider try() to be 
 #   obsolete.
-# 2008-10-xx [MR]
+# 2008-11-11 [MR]
 # o Created.
 ############################################################################ 
