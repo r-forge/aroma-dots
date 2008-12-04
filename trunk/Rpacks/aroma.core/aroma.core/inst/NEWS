@@ -1,7 +1,10 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.6 [2008-12-03]
+Version: 0.9.6 [2008-12-04]
+o SPEED UP: Now predict() of ProbePositionEffects is 6-7 times faster.
+o SPEED UP: Now the result of isMissing() for AromaCellSequenceFile 
+  can be cached.
 o ALPHA: Added the BinnedScatter class with methods.
 o CLEAN UP: readDataFrame() of AromaTabularBinaryFile would forget to
   close the connection if verbose output was activated.  When R later

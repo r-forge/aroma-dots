@@ -236,7 +236,7 @@ setMethodS3("predict", "ProbePositionEffects", function(object, seqs, ..., verbo
     verbose && cat(verbose, "object.size(seqs):");
     verbose && print(verbose, object.size(seqs));
     seqs <- paste(seqs, collapse="");
-    seqs <- strsplit(seqs, split="")[[1]];
+    seqs <- strsplit(seqs, split="", fixed=TRUE)[[1]];
     map <- c("NA"=0, A=1, C=2, G=3, T=4);
     names <- names(map);
     map <- as.raw(map);
@@ -273,29 +273,76 @@ setMethodS3("predict", "ProbePositionEffects", function(object, seqs, ..., verbo
   factors <- names(values);
 #  values <- map[c("A", "C", "G", "T")];
 
-  # For each position
-  for (pp in seq(length=P)) {
-    verbose && enter(verbose, sprintf("Probe position #%d of %d", pp, P));
 
-    # Get the nucleotides at this position for all sequences
-    seqsPP <- seqs[,pp];
+  # Is it safe to use the "quick" approach for prediction?
+  # The quick approach is 6-7 times faster. /HB 2008-12-03
+  safeValues <- as.raw(1:4);
+  names(safeValues) <- c("A", "C", "G", "T");
+  safe <- identical(values, safeValues);
+  verbose && cat(verbose, "Can use quick approach: ", safe);
 
-    for (bb in 1:ncol(rho)) {
-#      verbose && enter(verbose, sprintf("Factor #%d ('%s') of %d", bb, factors[bb], ncol(rho)));
-
-      # Identify sequences with nucleotide 'bb' at position 'pp'.
-      idxs <- whichVector(seqsPP == values[bb]);
-
-      # Add the nucleotide effect rho(pp,bb) to the probe-affinity
-      phi[idxs] <- phi[idxs] + rho[pp,bb];
-
-#      verbose && exit(verbose);
-    } # for (bb ...)
-
-    rm(seqsPP);
-    verbose && exit(verbose);
-  } # for (pp ...)
-
+  if (safe) {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # This approach assumes that the 'values' are A=01, C=02, G=03, T=04
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Identify for which cells the sequences are known
+    known <- whichVector(seqs[,1] != as.raw(0));
+    K2 <- length(known);
+    phi2 <- double(K2);
+    
+    # For each position
+    for (pp in seq(length=P)) {
+      verbose && enter(verbose, sprintf("Probe position #%d of %d", pp, P));
+  
+      # Get the nucleotides at this position for all sequences
+      seqsPP <- seqs[known,pp];
+  
+      seqsPP <- as.integer(seqsPP);
+      rhoPP <- rho[pp,];
+      names(rhoPP) <- NULL;
+      phi2 <- phi2 + rhoPP[seqsPP];
+  
+      rm(seqsPP);
+      verbose && exit(verbose);
+    } # for (pp ...)
+    phi[known] <- phi2;
+    rm(phi2, known, K2);
+  } else {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # This approach assumes nothing about the 'values'
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # For each position
+    for (pp in seq(length=P)) {
+      verbose && enter(verbose, sprintf("Probe position #%d of %d", pp, P));
+  
+      # Get the nucleotides at this position for all sequences
+      seqsPP <- seqs[,pp];
+  
+      allIdxs <- 1:length(seqsPP);
+      for (bb in 1:ncol(rho)) {
+  ##      verbose && enter(verbose, sprintf("Factor #%d ('%s') of %d", bb, factors[bb], ncol(rho)));
+  
+        # Identify sequences with nucleotide 'bb' at position 'pp'.
+  ##      verbose && enter(verbose, "Identifying subset");
+        subset <- whichVector(seqsPP == values[bb]);
+  ##      verbose && exit(verbose);
+  
+        # Add the nucleotide effect rho(pp,bb) to the probe-affinity
+        idxs <- allIdxs[subset];
+        phi[idxs] <- phi[idxs] + rho[pp,bb];
+  
+        # Skip already found cells
+        allIdxs <- allIdxs[-subset];
+        seqsPP <- seqsPP[-subset];
+  
+  ##      verbose && exit(verbose);
+      } # for (bb ...)
+  
+      rm(seqsPP);
+      verbose && exit(verbose);
+    } # for (pp ...)
+  }
+  
   verbose && exit(verbose);
 
   phi;
@@ -365,7 +412,7 @@ setMethodS3("pointsSequence", "ProbePositionEffects", function(fit, seq, col=NUL
   }
 
   # Map the sequence to nucleotide indices
-  bases <- strsplit(seq, split="")[[1]];
+  bases <- strsplit(seq, split="", fixed=TRUE)[[1]];
   bases <- match(bases, colnames(rho));
 
   xx <- seq(length=nrow(rho));
@@ -394,7 +441,7 @@ setMethodS3("textSequence", "ProbePositionEffects", function(fit, seq, labels=NU
   }
 
   # Map the sequence to nucleotide indices
-  bases <- strsplit(seq, split="")[[1]];
+  bases <- strsplit(seq, split="", fixed=TRUE)[[1]];
   bases <- match(bases, colnames(rho));
 
   xx <- seq(length=nrow(rho));
@@ -421,7 +468,7 @@ setMethodS3("barSequence", "ProbePositionEffects", function(fit, seq, col=NULL, 
   }
 
   # Map the sequence to nucleotide indices
-  bases <- strsplit(seq, split="")[[1]];
+  bases <- strsplit(seq, split="", fixed=TRUE)[[1]];
   bases <- match(bases, colnames(rho));
 
   xx <- seq(length=nrow(rho));
@@ -442,6 +489,9 @@ setMethodS3("barSequence", "ProbePositionEffects", function(fit, seq, col=NULL, 
 
 ############################################################################
 # HISTORY:
+# 2008-12-03
+# o SPEED UP: Now predict() of ProbePositionEffects is 6-7 times faster.
+# o SPEED UP: All strsplit() are now using fixed=TRUE where possible.
 # 2008-07-28
 # o Added textSequence().
 # 2008-07-11
