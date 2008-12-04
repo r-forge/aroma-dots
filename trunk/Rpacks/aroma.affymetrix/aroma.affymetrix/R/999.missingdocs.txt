@@ -799,3 +799,4 @@ fitCnProbes fitCnProbes.UnitModel
   getSignalTransform getSignalTransform.BasePositionNormalization
   getSignalTransform.LinearModelProbeSequenceNormalization
   predictOne.LinearModelProbeSequenceNormalization
+getDesignMatrix.LinearModelProbeSequenceNormalization

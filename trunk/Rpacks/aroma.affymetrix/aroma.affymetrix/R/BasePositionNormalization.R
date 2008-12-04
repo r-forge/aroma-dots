@@ -113,12 +113,16 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
   # Locate AromaCellSequenceFile holding probe sequences
   acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Check file cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   key <- list(
     method="getDesignMatrix", class=class(this[1]), 
     cells=cells, 
-    model=model, df=df, 
+    model=model, df=df,
     acs=list(fullname=getFullName(acs), checksum=getChecksum(acs))
   );
+
   dirs <- c("aroma.affymetrix", getChipType(acs));
   if (!force) {
     X <- loadCache(key=key, dirs=dirs);
@@ -132,6 +136,7 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
   verbose && enter(verbose, "Reading probe sequences");
   seqs <- readSequenceMatrix(acs, cells=cells, what="raw", 
                                                 verbose=less(verbose, 5));
+  rm(acs);
   verbose && cat(verbose, "Probe-sequence matrix:");
   verbose && str(verbose, seqs);
   verbose && exit(verbose);
@@ -150,12 +155,14 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
   gc <- gc();
   verbose && print(verbose, gc);
 
-  verbose && exit(verbose);
-
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Cache results?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   if (cache) {
     saveCache(X, key=key, dirs=dirs);
   }
+
+  verbose && exit(verbose);
 
   X;
 }, private=TRUE)

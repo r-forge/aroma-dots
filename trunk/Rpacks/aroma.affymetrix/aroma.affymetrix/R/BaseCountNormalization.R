@@ -98,7 +98,7 @@ setMethodS3("getParameters", "BaseCountNormalization", function(this, ...) {
 
 
 
-setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NULL, model=NULL, ..., verbose=FALSE) {
+setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NULL, model=NULL, ..., cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -131,15 +131,38 @@ setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NU
     oneValue <- as.raw(1);
   }
 
+
   verbose && enter(verbose, "Locating probe-sequence annotation data");
   # Locate AromaCellSequenceFile holding probe sequences
-  aps <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
+  acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
   verbose && exit(verbose);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Check file cache
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  key <- list(
+    method="getDesignMatrix", class=class(this[1]), 
+    cells=cells, 
+    model=model,
+    acs=list(fullname=getFullName(acs), checksum=getChecksum(acs))
+  );
+
+  dirs <- c("aroma.affymetrix", getChipType(acs));
+  if (!force) {
+    X <- loadCache(key=key, dirs=dirs);
+    if (!is.null(X)) {
+      verbose && cat(verbose, "Cached results found.");
+      verbose && exit(verbose);
+      return(X);
+    }
+  }
+
+
   verbose && enter(verbose, "Count nucleotide bases for *all* cells");
-  verbose && cat(verbose, "Chip type: ", getChipType(aps));
-  designMatrix <- countBases(aps, mode=mode, verbose=less(verbose, 5));
-  rm(aps);
+  verbose && cat(verbose, "Chip type: ", getChipType(acs));
+  designMatrix <- countBases(acs, mode=mode, verbose=less(verbose, 5));
+  rm(acs);
   verbose && cat(verbose, "Nucleotide base counts:");
   verbose && str(verbose, designMatrix);
   verbose && cat(verbose, "object.size(designMatrix): ",
@@ -173,6 +196,13 @@ setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NU
   # Garbage collect
   gc <- gc();
   verbose && print(verbose, gc);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Cache results?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  if (cache) {
+    saveCache(X, key=key, dirs=dirs);
+  }
 
   verbose && exit(verbose);
 
@@ -568,6 +598,8 @@ setMethodS3("predictOne", "BaseCountNormalization", function(this, fit, ..., ver
 
 ############################################################################
 # HISTORY:
+# 2008-12-03
+# o Updated getDesignMatrix() to cache results.
 # 2008-07-28
 # o Updated to work with newer ProbeLevelTransform3.
 # 2008-07-21
