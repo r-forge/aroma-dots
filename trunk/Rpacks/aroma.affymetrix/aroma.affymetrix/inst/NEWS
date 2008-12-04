@@ -29,6 +29,7 @@ o Added support for importing probe sequences from Affymetrix BPMAP files
   via the importFromBpMap() for AromaCellSequenceFile.
 o Adding classes and methods in preparation for supporting analysis
   of tiling arrays.
+o Now fitCnProbes() of UnitModel only fits non-fitted CN units.
 o BUG FIX: For allele-specific estimates, FragmentLengthNormalization 
   would correctly estimate normalization scale factors, but due to a
   typo, it effectively only update the signals for allele A.  According
