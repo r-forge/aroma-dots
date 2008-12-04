@@ -37,17 +37,15 @@ setMethodS3("extractMatrix", "AffymetrixCelFile", function(this, cells=NULL, ...
 
   if (!is.null(cells)) {
     verbose && enter(verbose, "Optimize reading order");
-    o <- order(cells);
-    cells <- cells[o];
+    srt <- sort(cells, method="quick", index.return=TRUE);
+    o <- srt$ix;
+    cells <- srt$x;
+    rm(srt);
     verbose && exit(verbose);
   } else {
     o <- seq(length=ncells);
   }
   
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
-
   verbose && enter(verbose, "Retrieving data");
   df[o,1] <- getData(this, indices=cells, fields=field, 
                                            verbose=less(verbose))[[field]];
@@ -66,6 +64,11 @@ setMethodS3("extractMatrix", "AffymetrixCelFile", function(this, cells=NULL, ...
 
 ############################################################################
 # HISTORY:
+# 2008-12-03
+# o Removed internal gc().
+# o SPEED UP: The reordering the cell indices in extractMatrix() for
+#   optimizing the reading speed was slow.  It is much faster to use 
+#   sort(..., method="quick", return.index=TRUE) than order(...).
 # 2008-07-20
 # o Updated the following methods to preallocate matrixes with the correct
 #   data type to avoid coercing later: extractMatrix().

@@ -162,6 +162,23 @@ setMethodS3("predictOne", "AbstractProbeSequenceNormalization", abstract=TRUE, p
 #*/###########################################################################
 setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ..., ram=1, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  readSeqs <- function(...) {    
+    verbose && enter(verbose, "Reading probe sequences");
+    cells <- cellsToUpdate;
+    verbose && cat(verbose, "Cells:");
+    verbose && str(verbose, cells);
+
+    acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
+    seqs <- readSequenceMatrix(acs, cells=cells, what="raw", 
+                                                  verbose=less(verbose, 5));
+    rm(acs);
+    verbose && exit(verbose);
+    seqs;
+  } # readSeqs()
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'verbose':
@@ -204,7 +221,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
   # Get shift
   shift <- params$shift;
-
+   
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize each array
@@ -217,6 +234,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
   paramsShort <- NULL;
   muT <- NULL;
+  seqs <- NULL;
   for (kk in seq_len(nbrOfArrays)) {
     df <- getFile(ds, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
@@ -274,7 +292,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
           verbose && exit(verbose);
         } else {
           verbose && enter(verbose, "Estimating probe-sequence effects for target");
-          fitT <- fitOne(this, df=dfT, ram=ram, verbose=less(verbose, 5));
+          fitT <- fitOne(this, df=dfT, params=params, ram=ram, verbose=less(verbose, 5));
           verbose && print(verbose, fitT);
           modelFitT$fit <- fitT;
 
@@ -293,7 +311,9 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
   
         verbose && enter(verbose, "Predicting probe affinities");
-        muT <- predictOne(this, fit=fitT, verbose=less(verbose, 5));
+        if (is.null(seqs))
+          seqs <- readSeqs();
+        muT <- predictOne(this, fit=fitT, params=params, seqs=seqs, verbose=less(verbose, 5));
         rm(fitT);
         verbose && cat(verbose, "muT:");
         verbose && str(verbose, muT);
@@ -313,7 +333,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       # Phase I: Fit probe-sequence effect for the current array
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Fitting model for current array");
-      fit <- fitOne(this, df=df, verbose=less(verbose, 5));
+      fit <- fitOne(this, df=df, params=params, ram=ram, verbose=less(verbose, 5));
       verbose && print(verbose, fit);
       modelFit$fit <- fit;
       verbose && exit(verbose);
@@ -353,7 +373,9 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Predicting mean log2 probe signals");
-      mu <- predictOne(this, fit=fit, verbose=less(verbose, 5));
+      if (is.null(seqs))
+        seqs <- readSeqs();
+      mu <- predictOne(this, fit=fit, params=params, seqs=seqs, verbose=less(verbose, 5));
       rm(fit);
       verbose && cat(verbose, "mu:");
       verbose && str(verbose, mu);
@@ -441,6 +463,10 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
 
 ############################################################################
 # HISTORY:
+# 2008-12-03
+# o SPEED UP: Now the "expanded" algorithm parameters ('params') are passed 
+#   to fitOne() and predictOne().  It is up to the implementation of these
+#   two to either use them or not.  
 # 2008-11-29
 # o Added argument 'ram' to process().
 # 2008-08-05

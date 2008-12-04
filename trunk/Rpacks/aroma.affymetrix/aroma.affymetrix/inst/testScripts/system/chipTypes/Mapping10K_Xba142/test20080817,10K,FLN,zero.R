@@ -1,6 +1,5 @@
-library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
+library("aroma.affymetrix");
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
 .Machine$float.eps <- sqrt(.Machine$double.eps);
 
 dataSetName <- "Jeremy_2007-10k";
@@ -61,8 +60,7 @@ M <- log2(theta/thetaR);
 # Fragment-length normalization (toward a constant effect)
 # Note, this a pure single-array approach.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-targetFunctions <- list(function(...) log2(2200));  # log2(2200) ~= 11.1
-fln <- FragmentLengthNormalization(ces, targetFunctions=targetFunctions, tags="*,z");
+fln <- FragmentLengthNormalization(ces, target="zero", tags="*,z");
 print(fln);
 cesFln <- process(fln, verbose=verbose);
 print(cesFln);

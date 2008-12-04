@@ -98,7 +98,7 @@ setMethodS3("getParameters", "BaseCountNormalization", function(this, ...) {
 
 
 
-setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NULL, model=NULL, ..., cache=TRUE, verbose=FALSE) {
+setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NULL, model=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -145,7 +145,7 @@ setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NU
     method="getDesignMatrix", class=class(this[1]), 
     cells=cells, 
     model=model,
-    acs=list(fullname=getFullName(acs), checksum=getChecksum(acs))
+    acs=list(fullname=getFullName(acs))
   );
 
   dirs <- c("aroma.affymetrix", getChipType(acs));

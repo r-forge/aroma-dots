@@ -113,14 +113,15 @@ setMethodS3("getDesignMatrix", "BasePositionNormalization", function(this, cells
   # Locate AromaCellSequenceFile holding probe sequences
   acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Check file cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   key <- list(
     method="getDesignMatrix", class=class(this[1]), 
-    cells=cells, 
+    cells=cells,
     model=model, df=df,
-    acs=list(fullname=getFullName(acs), checksum=getChecksum(acs))
+    acs=list(fullname=getFullName(acs))
   );
 
   dirs <- c("aroma.affymetrix", getChipType(acs));

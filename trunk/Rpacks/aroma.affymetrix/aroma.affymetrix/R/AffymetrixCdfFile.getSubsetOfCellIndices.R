@@ -47,8 +47,9 @@ setMethodS3("getSubsetOfCellIndices", "AffymetrixCdfFile", function(this, units=
   key <- list(method="getSubsetOfCellIndices", class=class(this)[1], 
               chipType=getChipType(this), giChecksum=giChecksum, 
               units=units, stratifyBy=stratifyBy, ...);
+  dirs <- c("aroma.affymetrix", getChipType(this));
   if (!force) {
-    res <- loadCache(key=key);
+    res <- loadCache(key=key, dirs=dirs);
     if (!is.null(res)) {
       verbose && cat(verbose, "Found cached results.");
       verbose && exit(verbose);
@@ -183,7 +184,7 @@ setMethodS3("getSubsetOfCellIndices", "AffymetrixCdfFile", function(this, units=
   # Store read units in cache
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (cache) {
-    saveCache(cells, key=key);
+    saveCache(cells, key=key, dirs=dirs);
   }
 
   cells;
@@ -192,6 +193,8 @@ setMethodS3("getSubsetOfCellIndices", "AffymetrixCdfFile", function(this, units=
 
 ############################################################################
 # HISTORY:
+# 2008-12-03
+# o getSubsetOfCellIndices() stored in memoization in the root cache path.
 # 2008-07-16
 # o Created.
 ############################################################################

@@ -1,21 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.6 [2008-12-03x]
+Version: 0.9.6 [2008-12-04]
 o Now CbsModel and GlabModel display any optional/additional 
   arguments passed to the internal segmentation method in
   the verbose output.
-o MEMORY OPTIMIZATION: Added abstract normalization class 
-  LinearModelProbeSequenceNormalization that fits linear models
-  based on probe sequences in bounded memory.  This is done by
-  building up the normal equations incrementally and then call 
-  solve().  It is the generation of normal equations that otherwise 
-  consume most of the memory.  The BasePositionNormalization
-  class now inherits from this memory-efficient class, which
-  means we can now do probe-position normalization on GenomeWideSNP_6
-  arrays using less than 1GB of RAM.
-o MEMORY OPTIMIZATION: Forgot to clean out weight estimates in
-  ProbeLevelModel objects when cleaning out the memory cache.
 o Added argument 'model' for AllelicCrosstalkCalibration to quickly 
   specification of default parameter settings according to the CRMA and
   CRMA v2 model.
@@ -30,6 +19,21 @@ o Added support for importing probe sequences from Affymetrix BPMAP files
 o Adding classes and methods in preparation for supporting analysis
   of tiling arrays.
 o Now fitCnProbes() of UnitModel only fits non-fitted CN units.
+o SPEED UP: extractMatrix() of AffymetrixCel{File|Set} is now faster 
+  when argument 'cells' is specified.
+o SPEED UP: Now BasePositionNormalization is 2-3 times faster
+  due to memoization and a more clever prediction algorithm.
+o MEMORY OPTIMIZATION: Added abstract normalization class 
+  LinearModelProbeSequenceNormalization that fits linear models
+  based on probe sequences in bounded memory.  This is done by
+  building up the normal equations incrementally and then call 
+  solve().  It is the generation of normal equations that otherwise 
+  consume most of the memory.  The BasePositionNormalization
+  class now inherits from this memory-efficient class, which
+  means we can now do probe-position normalization on GenomeWideSNP_6
+  arrays using less than 1GB of RAM.
+o MEMORY OPTIMIZATION: Forgot to clean out weight estimates in
+  ProbeLevelModel objects when cleaning out the memory cache.
 o BUG FIX: For allele-specific estimates, FragmentLengthNormalization 
   would correctly estimate normalization scale factors, but due to a
   typo, it effectively only update the signals for allele A.  According
