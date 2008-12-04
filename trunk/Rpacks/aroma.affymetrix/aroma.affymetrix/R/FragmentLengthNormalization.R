@@ -413,17 +413,20 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get SNP information
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  cdf <- getCdf(this);
+  si <- getSnpInformation(cdf);
+  verbose && print(verbose, si);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Predefined target functions?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.character(target)) {
     verbose && enter(verbose, "Setting up predefined target functions");
     targetType <- target;
     verbose && cat(verbose, "Target type: ", targetType);
-
-    # Get the SNP information annotation
-    cdf <- getCdf(this);
-    si <- getSnpInformation(cdf);
-    rm(cdf); # Not needed anymore
 
     # Infer the number of enzymes
     fl <- getFragmentLengths(si, units=1:5);
@@ -451,7 +454,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
   if (force || is.null(target)) {
     # Get target set
     ces <- getInputDataSet(this);
-    verbose && enter(verbose, "Get average signal across arrays");
+    verbose && enter(verbose, "Getting average signal across arrays");
     ceR <- getAverageFile(ces, force=force, verbose=less(verbose));
     rm(ces); # Not needed anymore
     verbose && exit(verbose);
@@ -508,7 +511,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
     
     # Get PCR fragment lengths for these
     fl <- getFragmentLengths(si, units=units);
-    rm(si, units); # Not needed anymore
+    rm(units); # Not needed anymore
     verbose && cat(verbose, "Fragment lengths:");
     verbose && str(verbose, fl);
     verbose && cat(verbose, "Summary of fragment lengths:");
@@ -883,6 +886,8 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
 ############################################################################
 # HISTORY:
+# 2008-12-03
+# o BUG FIX: Missing 'si' object.
 # 2008-12-01
 # o BUG FIX: For allele-specific estimates, FragmentLengthNormalization 
 #   would correctly estimate normalization scale factors, but due to a

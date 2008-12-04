@@ -111,8 +111,10 @@ setMethodS3("updateMatchScores", "AromaCellMatchScoreFile", function(this, cells
   rm(keep);
 
   # Order by 'cells'
-  o <- order(cells);
-  cells <- cells[o];
+  srt <- sort(cells, method="quick", index.return=TRUE);
+  o <- srt$ix;
+  cells <- srt$x;
+  rm(srt);
   scores <- scores[o];
   rm(o);
 
