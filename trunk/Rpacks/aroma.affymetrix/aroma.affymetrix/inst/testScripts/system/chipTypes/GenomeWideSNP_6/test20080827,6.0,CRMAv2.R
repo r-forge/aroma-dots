@@ -78,4 +78,4 @@ gi <- getGenomeInformation(cdf);
 units <- getUnitsOnChromosome(gi, 1:22);
 theta <- extractTheta(cesN, units=units, drop=TRUE);
 str(theta);
-print(theta[1:10,]);
+print(theta[1:10,,]);
