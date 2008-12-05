@@ -195,7 +195,8 @@ setMethodS3("groupBySnpNucleotides", "AromaCellSequenceFile", function(this, cel
   chipType <- getChipType(this);
   key <- list(method="groupBySnpNucleotides", class=class(this)[1], 
               chipType=chipType, tags=getTags(this), 
-              cells=cells, ignoreOrder=ignoreOrder, ...);
+              cells=cells, ignoreOrder=ignoreOrder, 
+              version="2008-12-04", ...);
   dirs <- c("aroma.affymetrix", chipType);
   if (!force) {
     verbose && enter(verbose, "Checking for cached results");
@@ -278,7 +279,8 @@ setMethodS3("groupBySnpNucleotides", "AromaCellSequenceFile", function(this, cel
 
   idxs <- whichVector(is.na(pairNames));
   cellsKK <- cells[,idxs,drop=FALSE];
-  res[["missing"]] <- cellsKK;
+  if (length(cellsKK) > 0)
+    res[["missing"]] <- cellsKK;
   rm(idxs, cellsKK);
 
   for (kk in seq(along=res)) {
@@ -310,6 +312,10 @@ setMethodS3("groupBySnpNucleotides", "AromaCellSequenceFile", function(this, cel
 
 ############################################################################
 # HISTORY:
+# 2008-12-04
+# o BUG FIX: groupBySnpNucleotides() of AromaCellSequenceFile would return
+#   an empty element 'missing' for some chip types, e.g. Mapping10K_Xba142.
+#   Now that empty elements are dropped.
 # 2008-09-02
 # o Added getSnpShifts().
 # o Added groupBySnpNucleotides().
