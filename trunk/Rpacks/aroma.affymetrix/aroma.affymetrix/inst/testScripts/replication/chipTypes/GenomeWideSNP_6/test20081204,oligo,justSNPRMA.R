@@ -13,26 +13,23 @@
 #
 # Data set:
 #  rawData/
-#   HapMap270,100K,CEU,testSet/
-#     Mapping50K_Hind240/
-#       NA06985,Hind,B5,3005533.CEL
-#       NA06991,Hind,B6,3005533.CEL
-#       NA06993,Hind,B4,4000092.CEL
-#       NA06994,Hind,A7,3005533.CEL
-#       NA07000,Hind,A8,3005533.CEL
-#       NA07019,Hind,A12,4000092.CEL
+#   HapMap270,6.0,CEU,testSet/
+#     GenomeWideSNP_6/
+#       NA06985.CEL
+#       NA06991.CEL
+#       NA06993.CEL
+#       NA06994.CEL
+#       NA07000.CEL
+#       NA07019.CEL
 ###########################################################################
 
 library("aroma.affymetrix");
 log <- Arguments$getVerbose(-8, timestamp=TRUE);
 
-chipType <- "Mapping50K_Hind240";
+chipType <- "GenomeWideSNP_6";
 
 # Assert that oligo and the correct Platform Design package is installed
 library("oligo");
-pdPkgName <- cleanPlatformName(chipType);
-library(pdPkgName, character.only=TRUE);
-
 
 normalizeToHapmap <- TRUE;
 
@@ -40,11 +37,12 @@ normalizeToHapmap <- TRUE;
 # SNPRMA according to aroma.affymetrix
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cdf <- AffymetrixCdfFile$byChipType(chipType);
-csR <- AffymetrixCelSet$byName("HapMap270,100K,CEU,testSet", cdf=cdf);
+csR <- AffymetrixCelSet$byName("HapMap270,6.0,CEU,testSet", cdf=cdf);
 print(csR);
 
 if (normalizeToHapmap) {
   # Load target from PD package
+  pdPkgName <- cleanPlatformName(chipType);
   filename <- sprintf("%sRef.rda", pdPkgName);
   pathname <- system.file("extdata", filename, package=pdPkgName);
   target <- loadToEnv(pathname)$reference;
@@ -54,34 +52,31 @@ if (normalizeToHapmap) {
   refTag <- NULL;
 }
 
+units <- indexOf(cdf, pattern="^SNP_A-");
+cells <- getCellIndices(cdf, units=units, unlist=TRUE, useNames=FALSE);
 qn <- QuantileNormalization(csR, targetDistribution=target, 
-                            typesToUpdate="pm", tags=c("*", refTag));
+                                subsetToAvg=cells, typesToUpdate="pm", 
+                                         tags=c("*", "SNPs", refTag));
 print(qn);
+rm(cells);
 csN <- process(qn, verbose=log);
 print(csN);
 
 plm <- RmaSnpPlm(csN, mergeStrands=FALSE, flavor="oligo");
 print(plm);
+fitCnProbes(plm, verbose=log);
 fit(plm, verbose=log);
 ces <- getChipEffectSet(plm);
 print(ces);
 
-units <- indexOf(cdf, pattern="^SNP_A-");
 unitNames <- getUnitNames(cdf, units=units);
 o <- order(unitNames);
-units <- units[o];
 unitNames <- unitNames[o];
-theta <- extractTheta(ces, units=units);
+units <- units[o];
+theta <- extractTheta(ces, groups=1:2, units=units, verbose=log);
 theta <- log2(theta);
 dimnames(theta)[[1]] <- unitNames;
-rm(o, unitNames);
-
-# Make sure pairs are order as (sense, antisense)
-dirs <- getGroupDirections(cdf, units=units);
-dirs <- matrix(unlist(dirs, use.names=FALSE), nrow=4);
-idxs <- which(dirs[1,] == 2);
-theta[idxs,,] <- theta[idxs,c(3,4,1,2),];
-rm(units,dirs,idxs);
+rm(o, units, unitNames);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -92,14 +87,11 @@ print(eSet);
 
 # Extract theta array
 naValue <- as.double(NA);
-theta0 <- array(naValue, dim=c(nrow(eSet), 4, ncol(eSet)));
-theta0[,1,] <- senseThetaA(eSet);
-theta0[,2,] <- senseThetaB(eSet);
-theta0[,3,] <- antisenseThetaA(eSet);
-theta0[,4,] <- antisenseThetaB(eSet);
+theta0 <- array(naValue, dim=c(nrow(eSet), 2, ncol(eSet)));
+theta0[,1,] <- oligo:::thetaA(eSet);
+theta0[,2,] <- oligo:::thetaB(eSet);
 dimnames(theta0)[[1]] <- featureNames(eSet);
 dimnames(theta0)[[3]] <- getNames(csR);
-
 
 # Assert that the dimensions are the same
 stopifnot(identical(dim(theta), dim(theta0)));
@@ -108,5 +100,5 @@ stopifnot(identical(dim(theta), dim(theta0)));
 stopifnot(identical(dimnames(theta), dimnames(theta0)));
 
 # Assert that the estimates are very similar
-tol <- 1e-4;
+tol <- 0.012;
 stopifnot(all.equal(theta, theta0, tolerance=tol));
