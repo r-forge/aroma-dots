@@ -1,0 +1,8 @@
+  AromaAffymetrixWrappers
+  fixSearchPath.AromaAffymetrixWrappers
+  extractSnpCnvQSet extractSnpCnvQSet.SnpChipEffectSet
+  extractSnpQSet extractSnpQSet.SnpChipEffectSet
+  extractTheta.SnpCnvQSet  extractTheta.SnpQSet
+  justSNPRMA justSNPRMA.AffymetrixCelSet justSNPRMA.character
+  allocate.AromaCrlmmBinaryFile
+  justCRLMMv2 justCRLMMv2.SnpChipEffectSet

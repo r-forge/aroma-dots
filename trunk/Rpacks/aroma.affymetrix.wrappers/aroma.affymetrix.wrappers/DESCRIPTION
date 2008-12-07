@@ -1,0 +1,15 @@
+Package: aroma.affymetrix.wrappers
+Version: 0.1.0
+Date: 2008-12-05
+Title: Wrappers for aroma.affymetrix
+Author: Henrik Bengtsson <hb@stat.berkeley.edu>
+Maintainer: Henrik Bengtsson <henrikb@braju.com>
+Depends: R (>= 2.6.0), aroma.affymetrix (>= 0.9.6)
+Suggests: oligo (>= 1.2.2), affyPLM (>= 1.14.0), affy (>= 1.16.0), aroma.cn (>= 0.1.7)
+Imports: oligo
+Description: This package ...
+License: Private for now (LGPL to come)
+URL: http://www.braju.com/R/aroma.affymetrix/
+PatchURL: http://www.braju.com/R/
+LazyLoad: TRUE
+biocViews: Infrastructure, Microarray, OneChannel, DataImport, Preprocessing, DNACopyNumber
