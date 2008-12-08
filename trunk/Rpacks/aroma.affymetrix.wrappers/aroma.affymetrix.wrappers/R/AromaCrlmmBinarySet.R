@@ -40,9 +40,24 @@ setMethodS3("byName", "AromaCrlmmBinarySet", function(static, name, tags=NULL, .
 
 
 
+setMethodS3("findUnitsTodo", "AromaCrlmmBinarySet", function(this, ...) {
+  # Look into the last chip-effect file since that is updated last
+  ce <- getFile(this, length(this));
+  findUnitsTodo(ce, ...);
+})
+
+
+setMethodS3("extractCalls", "AromaCrlmmBinarySet", function(this, units=NULL, ...) {
+  values <- extractMatrix(this, rows=units, column=1, ...);
+  isNA <- whichVector(values == as.integer(255));
+  values[isNA] <- as.integer(NA);
+  values;
+})
 
 ############################################################################
 # HISTORY:
-# 2008-12-05
+# 2008-12-08
+# o Added findUnitsTodo() and extractCalls().
+# 2008-12-06
 # o Created.
 ############################################################################
