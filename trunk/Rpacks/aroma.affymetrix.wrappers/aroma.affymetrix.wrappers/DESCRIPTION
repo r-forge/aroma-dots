@@ -1,6 +1,6 @@
 Package: aroma.affymetrix.wrappers
-Version: 0.1.0
-Date: 2008-12-05
+Version: 0.1.1
+Date: 2008-12-08
 Title: Wrappers for aroma.affymetrix
 Author: Henrik Bengtsson <hb@stat.berkeley.edu>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>

@@ -52,6 +52,8 @@ extends \link[aroma.cn]{AromaSignalBinaryFile}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{allocate} \tab  -\cr
+ \tab \code{extractCalls} \tab  -\cr
+ \tab \code{findUnitsTodo} \tab  -\cr
 }
 
 

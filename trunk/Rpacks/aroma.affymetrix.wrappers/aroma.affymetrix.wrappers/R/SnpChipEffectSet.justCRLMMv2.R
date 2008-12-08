@@ -120,6 +120,7 @@ setMethodS3("justCRLMMv2", "SnpChipEffectSet", function(this, units=NULL, ram=1,
     } else {
       verbose && enter(verbose, "Allocating new file");
       acu <- AromaCrlmmBinaryFile$allocate(filename=pathname, platform=platform, chipType=chipType, nbrOfRows=nbrOfUnits, verbose=log);
+      acu[,1] <- NA;
       verbose && exit(verbose);
     }
     acuList[[kk]] <- acu;
