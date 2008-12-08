@@ -6,3 +6,12 @@
   justSNPRMA justSNPRMA.AffymetrixCelSet justSNPRMA.character
   allocate.AromaCrlmmBinaryFile
   justCRLMMv2 justCRLMMv2.SnpChipEffectSet
+  byName.AromaCrlmmBinarySet CrlmmModel extractCalls
+  extractCalls.AromaCrlmmBinaryFile extractCalls.AromaCrlmmBinarySet
+  findUnitsTodo.AromaCrlmmBinaryFile findUnitsTodo.AromaCrlmmBinarySet
+  findUnitsTodo.CrlmmModel fit.CrlmmModel getCallSet
+  getCallSet.CrlmmModel getChipType.CrlmmModel getCrlmmPriors
+  getCrlmmPriors.CrlmmModel getCrlmmSNPs getCrlmmSNPs.CrlmmModel
+  getCrlmmSNPsOnChrX getCrlmmSNPsOnChrX.CrlmmModel
+  getParameterSet.CrlmmModel getPlatformDesignDB
+  getPlatformDesignDB.CrlmmModel getUnitsToFit.CrlmmModel

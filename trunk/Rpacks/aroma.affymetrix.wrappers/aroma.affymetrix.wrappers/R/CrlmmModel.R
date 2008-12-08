@@ -18,6 +18,7 @@ setConstructorS3("CrlmmModel", function(dataSet=NULL, balance=1.5, minLLRforCall
     # For now, only allow know SNP chip types. /HB 2008-12-07
     if (regexpr("^Mapping(10|50|250)K_.*$", chipType) != -1) {
     } else if (regexpr("^GenomeWideSNP_(5|6)$", chipType) != -1) {
+      throw("Cannot fit CRLMM model: Chip type to be supported: ", chipType);
     } else {
       throw("Cannot fit CRLMM model: Unsupported/unsafe chip type: ", chipType);
     }
@@ -61,6 +62,7 @@ setMethodS3("getParameterSet", "CrlmmModel", function(this, ...) {
 
 setMethodS3("getChipType", "CrlmmModel", function(this, ...) {
   ds <- getDataSet(this);
+  cdf <- getCdf(ds);
   chipType <- getChipType(cdf);
   chipType <- gsub(",monocell", "", chipType);
   chipType;
@@ -80,6 +82,7 @@ setMethodS3("getCallSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
 
   ces <- getDataSet(this);
   cdf <- getCdf(ces);
+  chipType <- getChipType(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Allocating parameter files
