@@ -26,6 +26,28 @@
 \alias{allocate.AromaCrlmmBinaryFile}
 \alias{justCRLMMv2}
 \alias{justCRLMMv2.SnpChipEffectSet}
+\alias{byName.AromaCrlmmBinarySet}
+\alias{CrlmmModel}
+\alias{extractCalls}
+\alias{extractCalls.AromaCrlmmBinaryFile}
+\alias{extractCalls.AromaCrlmmBinarySet}
+\alias{findUnitsTodo.AromaCrlmmBinaryFile}
+\alias{findUnitsTodo.AromaCrlmmBinarySet}
+\alias{findUnitsTodo.CrlmmModel}
+\alias{fit.CrlmmModel}
+\alias{getCallSet}
+\alias{getCallSet.CrlmmModel}
+\alias{getChipType.CrlmmModel}
+\alias{getCrlmmPriors}
+\alias{getCrlmmPriors.CrlmmModel}
+\alias{getCrlmmSNPs}
+\alias{getCrlmmSNPs.CrlmmModel}
+\alias{getCrlmmSNPsOnChrX}
+\alias{getCrlmmSNPsOnChrX.CrlmmModel}
+\alias{getParameterSet.CrlmmModel}
+\alias{getPlatformDesignDB}
+\alias{getPlatformDesignDB.CrlmmModel}
+\alias{getUnitsToFit.CrlmmModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that
