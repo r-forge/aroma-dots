@@ -28,11 +28,19 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # getting output directory
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  tagsInput <- paste(getTags(this), collapse=",")
-  tags <- paste(tagsInput, tags, sep=",")
-  verbose && cat(verbose, "Tags:", tags);
-  outputPath <- gsub( tagsInput, tags, getPath(this) )
-
+  
+  inputTags <- paste( getTags(this), collapse=",")
+  verbose && cat(verbose, "Input tags:", inputTags);
+  
+  curPath <- getPath(this)
+  dataDir <- gsub("rawData","probeData",strsplit(curPath, "/")[[1]][1])
+  allTags <- gsub("^,","",paste( inputTags, tags, sep="," ))
+  chipType <- getChipType(this,fullname=FALSE)
+  
+  outputPath <- paste( dataDir, paste(getName(this),allTags,sep=","), chipType, sep="/" )
+  verbose && cat(verbose, "Input Path: ", curPath);
+  verbose && cat(verbose, "Output Path:", outputPath);
+  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # check if already done
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -40,7 +48,7 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
   # HB: Don't think argument 'chipType' makes a difference if 'cdf' is given.
   outputDataSet <- NULL
   tryCatch({
-    outputDataSet <- AffymetrixCelSet$byName(getName(this), tags=tags, 
+    outputDataSet <- AffymetrixCelSet$byName(getName(this), tags=allTags, 
                                             verbose=verbose, cdf=cdfUnique, 
                           chipType=getChipType(this), checkChipType=FALSE);
   }, error = function(ex) {});
@@ -120,6 +128,8 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
 
 ############################################################################
 # HISTORY:
+# 2008-12-08 [MR]
+# o fixed small bug when operating on raw data
 # 2008-12-04 [MR]
 # o fixed small bug when previous dataset not available
 # 2008-11-28 [HB]
