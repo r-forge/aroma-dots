@@ -24,12 +24,10 @@
 ###########################################################################
 
 library("aroma.affymetrix");
+library("oligo");
 log <- Arguments$getVerbose(-8, timestamp=TRUE);
 
 chipType <- "GenomeWideSNP_6";
-
-# Assert that oligo and the correct Platform Design package is installed
-library("oligo");
 
 normalizeToHapmap <- TRUE;
 
@@ -52,6 +50,10 @@ if (normalizeToHapmap) {
   refTag <- NULL;
 }
 
+# justSNPRMA() operates only on SNP_A-* units (CN units ignored).
+# For this reason we here *estimate* the normalization function based
+# on these units only, but for convenience we will apply it to all
+# units including CN units.
 units <- indexOf(cdf, pattern="^SNP_A-");
 cells <- getCellIndices(cdf, units=units, unlist=TRUE, useNames=FALSE);
 qn <- QuantileNormalization(csR, targetDistribution=target, 
