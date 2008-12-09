@@ -40,6 +40,7 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
   outputPath <- paste( dataDir, paste(getName(this),allTags,sep=","), chipType, sep="/" )
   verbose && cat(verbose, "Input Path: ", curPath);
   verbose && cat(verbose, "Output Path:", outputPath);
+  verbose && cat(verbose, "allTags:", allTags);
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # check if already done
@@ -48,9 +49,8 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
   # HB: Don't think argument 'chipType' makes a difference if 'cdf' is given.
   outputDataSet <- NULL
   tryCatch({
-    outputDataSet <- AffymetrixCelSet$byName(getName(this), tags=allTags, 
-                                            verbose=verbose, cdf=cdfUnique, 
-                          chipType=getChipType(this), checkChipType=FALSE);
+    outputDataSet <- AffymetrixCelSet$byName(getName(this), tags=allTags, verbose=verbose, 
+						  cdf=cdfUnique, paths=dataDir, checkChipType=FALSE);
   }, error = function(ex) {});
   
   if (inherits(outputDataSet, "AffymetrixCelSet")) {
