@@ -90,6 +90,8 @@ rm(units,dirs,idxs);
 eSet <- justSNPRMA(getPathnames(csR), normalizeToHapmap=normalizeToHapmap, verbose=TRUE);
 print(eSet);
 
+
+
 # Extract theta array
 naValue <- as.double(NA);
 theta0 <- array(naValue, dim=c(nrow(eSet), 4, ncol(eSet)));
@@ -110,3 +112,5 @@ stopifnot(identical(dimnames(theta), dimnames(theta0)));
 # Assert that the estimates are very similar
 tol <- 1e-4;
 stopifnot(all.equal(theta, theta0, tolerance=tol));
+
+
