@@ -800,3 +800,14 @@ fitCnProbes fitCnProbes.UnitModel
   getSignalTransform.LinearModelProbeSequenceNormalization
   predictOne.LinearModelProbeSequenceNormalization
 getDesignMatrix.LinearModelProbeSequenceNormalization
+  allocate.AromaCellPositionFile allocateFromCdf.AromaCellPositionFile
+  AromaCellPositionFile byChipType.AromaCellPositionFile
+  extractTotalAndFreqB.CnChipEffectSet
+  getColumnNames.AromaCellPositionFile
+  getFilenameExtension.AromaCellPositionFile getListOfPriors
+  getListOfPriors.MultiArrayUnitModel isMissing.AromaCellPositionFile
+  plotAllelePairs plotAllelePairs.AllelicCrosstalkCalibration
+  readPositions readPositions.AromaCellPositionFile readPriorsByUnits
+  readPriorsByUnits.MultiArrayUnitModel setListOfPriors
+  setListOfPriors.MultiArrayUnitModel updatePositions
+  updatePositions.AromaCellPositionFile

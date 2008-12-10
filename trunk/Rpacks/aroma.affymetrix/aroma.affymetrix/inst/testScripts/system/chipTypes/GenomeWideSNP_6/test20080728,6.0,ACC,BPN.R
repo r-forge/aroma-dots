@@ -15,20 +15,20 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 cdf <- AffymetrixCdfFile$fromChipType(chipType, tags="Full");
 print(cdf);
 
-cs <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
-print(cs);
-stopifnot(identical(getNames(cs), sampleNames));
+csR <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
+print(csR);
+stopifnot(identical(getNames(csR), sampleNames));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic-crosstalk calibration
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acc <- AllelicCrosstalkCalibration(cs);
+acc <- AllelicCrosstalkCalibration(csR);
 print(acc);
 
 csC <- process(acc, verbose=log);
 print(csC);
-stopifnot(identical(getNames(csC), getNames(cs)));
+stopifnot(identical(getNames(csC), getNames(csR)));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,4 +39,4 @@ print(bpn);
 
 csN <- process(bpn, verbose=log);
 print(csN);
-stopifnot(identical(getNames(csN), getNames(cs)));
+stopifnot(identical(getNames(csN), getNames(csR)));

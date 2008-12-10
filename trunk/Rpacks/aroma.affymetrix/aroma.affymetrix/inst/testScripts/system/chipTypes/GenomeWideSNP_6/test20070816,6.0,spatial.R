@@ -17,16 +17,16 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 cdf <- AffymetrixCdfFile$fromChipType(chipType, tags="Full");
 print(cdf);
 
-cs <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
-print(cs);
-stopifnot(identical(getNames(cs), sampleNames));
+csR <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
+print(csR);
+stopifnot(identical(getNames(csR), sampleNames));
 
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Spatial intensity plots
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-ae <- ArrayExplorer(cs);
+ae <- ArrayExplorer(csR);
 setColorMaps(ae, c("sqrt,yellow", "log2,yellow"));
 print(ae);
 process(ae, arrays=1:2, verbose=log);

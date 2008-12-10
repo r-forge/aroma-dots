@@ -17,17 +17,25 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 cdf <- AffymetrixCdfFile$fromChipType(chipType, tags="Full");
 print(cdf);
 
-cs <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
-print(cs);
-stopifnot(identical(getNames(cs), sampleNames));
+csR <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
+print(csR);
+stopifnot(identical(getNames(csR), sampleNames));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic-crosstalk calibration
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acc <- AllelicCrosstalkCalibration(cs);
+acc <- AllelicCrosstalkCalibration(csR);
 print(acc);
 
 csC <- process(acc, verbose=log);
 print(csC);
 stopifnot(identical(getNames(csC), getNames(cs)));
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Plot allele pairs before and after calibration
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+for (what in c("input", "output")) {
+  plotAllelePairs(acc, array=1, what=what, verbose=log);
+}

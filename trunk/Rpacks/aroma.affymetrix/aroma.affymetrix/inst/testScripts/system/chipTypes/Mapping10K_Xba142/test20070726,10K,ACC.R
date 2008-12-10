@@ -29,3 +29,11 @@ csC <- process(acc, verbose=log);
 print(csC);
 
 stopifnot(identical(getNames(csC), getNames(csR)));
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Plot allele pairs before and after calibration
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+for (what in c("input", "output")) {
+  plotAllelePairs(acc, array=1, what=what, verbose=log);
+}

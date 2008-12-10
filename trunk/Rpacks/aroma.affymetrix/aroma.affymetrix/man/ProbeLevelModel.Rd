@@ -65,6 +65,9 @@ extends \emph{\link[aroma.affymetrix]{MultiArrayUnitModel}}\cr
 }
 
 
+ \bold{Methods inherited from MultiArrayUnitModel}:\cr
+getListOfPriors, setListOfPriors
+
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getAsteriskTags, getFitSingleCellUnitFunction
 

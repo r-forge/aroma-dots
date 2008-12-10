@@ -60,6 +60,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{extractTheta} \tab  -\cr
+ \tab \code{extractTotalAndFreqB} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getBaseline} \tab  -\cr
  \tab \code{getCombineAlleles} \tab  -\cr

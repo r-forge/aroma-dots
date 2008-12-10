@@ -1558,6 +1558,26 @@
 \alias{getSignalTransform.LinearModelProbeSequenceNormalization}
 \alias{predictOne.LinearModelProbeSequenceNormalization}
 \alias{getDesignMatrix.LinearModelProbeSequenceNormalization}
+\alias{allocate.AromaCellPositionFile}
+\alias{allocateFromCdf.AromaCellPositionFile}
+\alias{AromaCellPositionFile}
+\alias{byChipType.AromaCellPositionFile}
+\alias{extractTotalAndFreqB.CnChipEffectSet}
+\alias{getColumnNames.AromaCellPositionFile}
+\alias{getFilenameExtension.AromaCellPositionFile}
+\alias{getListOfPriors}
+\alias{getListOfPriors.MultiArrayUnitModel}
+\alias{isMissing.AromaCellPositionFile}
+\alias{plotAllelePairs}
+\alias{plotAllelePairs.AllelicCrosstalkCalibration}
+\alias{readPositions}
+\alias{readPositions.AromaCellPositionFile}
+\alias{readPriorsByUnits}
+\alias{readPriorsByUnits.MultiArrayUnitModel}
+\alias{setListOfPriors}
+\alias{setListOfPriors.MultiArrayUnitModel}
+\alias{updatePositions}
+\alias{updatePositions.AromaCellPositionFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
