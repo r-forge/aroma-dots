@@ -70,4 +70,7 @@ stopifnot(length(yB) == length(y));
 
 avgDiff <- mean(y-yB)^2;
 cat(sprintf("avgDiff: %f\n", avgDiff));
+
+plot(yB, y, pch=".");
+
 stopifnot(avgDiff < 0.001);
