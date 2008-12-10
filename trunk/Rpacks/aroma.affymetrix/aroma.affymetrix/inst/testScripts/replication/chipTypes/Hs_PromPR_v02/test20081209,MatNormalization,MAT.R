@@ -1,3 +1,21 @@
+###########################################################################
+# Replication test
+#
+# Description:
+# This test verifies that aroma.affymetrix can reproduce the estimates
+# of the MAT (Model-based Analysis of Tiling arrays) algorithm.
+#
+# Author: Mark Robinson (and Henrik Bengtsson)
+# Created: 2008-12-09
+# Last modified: 2008-12-09
+#
+# Data set:
+#  rawData/
+#   MNtest/
+#     Hs_PromPR_v02/
+#       TESTIP.CEL
+#       TESTIP.bar.txt (estimates by MAT)
+###########################################################################
 library("aroma.affymetrix");
 log <- Arguments$getVerbose(-20, timestamp=TRUE);
 

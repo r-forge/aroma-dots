@@ -1,13 +1,14 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.6.1 [2008-12-09]
-o BUG FIX: There was no extractTotalAndFreqB() for CnChipEffectSet, 
-  but only for CnChipEffecSet (misspelled). Thanks Pierre Neuvial 
-  for spotting this.
+Version: 0.9.6.2 [2008-12-10]
+o Added plotAllelePairs() for AllelicCrosstalkCalibration.
 o Added trial version of AromaCellPositionFile.
 o Added more methods and classes which eventually will allow 
   analysis of Affymetrix tiling arrays.
+o BUG FIX: There was no extractTotalAndFreqB() for CnChipEffectSet, 
+  but only for CnChipEffecSet (misspelled). Thanks Pierre Neuvial 
+  for spotting this.
 
 
 Version: 0.9.6 [2008-12-04]

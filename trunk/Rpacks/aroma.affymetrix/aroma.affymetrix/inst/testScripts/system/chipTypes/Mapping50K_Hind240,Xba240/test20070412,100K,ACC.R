@@ -37,3 +37,11 @@ for (chipType in names(csList)) {
   stopifnot(identical(getNames(csAcc), getNames(cs)));
   csAccList[[chipType]] <- csAcc;
 }
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Plot allele pairs before and after calibration
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+for (what in c("input", "output")) {
+  plotAllelePairs(acc, array=1, what=what, verbose=log);
+}

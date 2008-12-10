@@ -37,7 +37,7 @@
 \cr
 
 public static class \bold{BasePositionNormalization}\cr
-extends \link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}\cr
+extends \emph{\link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}}\cr
 
 
 
@@ -62,7 +62,7 @@ extends \link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}\cr
 
 
  \bold{Methods inherited from LinearModelProbeSequenceNormalization}:\cr
-fitOne, getNormalEquations, getSignalTransform, predictOne
+fitOne, getDesignMatrix, getNormalEquations, getSignalTransform, predictOne
 
  \bold{Methods inherited from AbstractProbeSequenceNormalization}:\cr
 fitOne, getAromaCellSequenceFile, getTargetFile, indexOfMissingSequences, predictOne, process

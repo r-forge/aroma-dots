@@ -30,7 +30,7 @@
 \code{~~~~~~~~~~~~~~~~~~~~~~+--}\emph{\code{AbstractProbeSequenceNormalization}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{BaseCountNormalization}, \link[aroma.affymetrix]{BasePositionNormalization}, \link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}, \link[aroma.affymetrix]{MatNormalization}\cr
+\link[aroma.affymetrix]{BaseCountNormalization}, \link[aroma.affymetrix]{BasePositionNormalization}, \emph{\link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}}, \link[aroma.affymetrix]{MatNormalization}\cr
 
 public abstract static class \bold{AbstractProbeSequenceNormalization}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform3}}\cr

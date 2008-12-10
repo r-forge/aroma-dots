@@ -49,7 +49,10 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\emph{No methods defined}.
+\tabular{rll}{
+ \tab \code{getListOfPriors} \tab  -\cr
+ \tab \code{setListOfPriors} \tab  -\cr
+}
 
 
  \bold{Methods inherited from UnitModel}:\cr
