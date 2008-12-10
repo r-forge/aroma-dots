@@ -143,7 +143,19 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
   # Nothing more to do?
   if (nbrOfUnits == 0)
-    return(NULL);
+    return(invisible(NULL));
+
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for prior parameter estimates
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  priors <- getListOfPriors(this, verbose=log);
+  hasPriors <- (length(priors) > 0);
+  if (hasPriors) {
+    verbose && cat(verbose, "Prior parameters detected");
+  }
+  rm(priors);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -257,7 +269,15 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
                                                     verbose=less(verbose));
     timers$read <- timers$read + (processTime() - tRead);
 
-
+   
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Read prior parameter estimates
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (hasPriors) {
+      priors <- readPriorsByUnits(this, units=units[uu], ..., force=force, 
+                                       cache=FALSE, verbose=less(verbose));
+      timers$read <- timers$read + (processTime() - tRead);
+    }
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Fit the model
@@ -265,7 +285,13 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
     verbose && enter(verbose, "Fitting probe-level model");
     tFit <- processTime();
 
-    fit <- base::lapply(y, FUN=fitUnit);
+    if (hasPriors) {
+      verbose && cat(verbose, "Calling fitUnit() via mapply");
+      fit <- base::mapply(y, priors=priors, FUN=fitUnit, SIMPLIFY=FALSE);
+    } else {
+      verbose && cat(verbose, "Calling fitUnit() via lapply");
+      fit <- base::lapply(y, FUN=fitUnit);
+    }
 
     timers$fit <- timers$fit + (processTime() - tFit);
     y <- NULL; # Not needed anymore (to minimize memory usage)
@@ -367,6 +393,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2008-12-08
+# o Added basic support for priors in fit() of ProbeLevelModel.
 # 2008-07-22
 # o Now argument 'ram' is passed down to getChipEffectSet() which in turn
 #   pass it down to getMonocellCdf(), which pass it to createMonocellCdf()

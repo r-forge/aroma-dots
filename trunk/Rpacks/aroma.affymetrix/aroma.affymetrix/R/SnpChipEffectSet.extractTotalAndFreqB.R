@@ -1,4 +1,4 @@
-setMethodS3("extractTotalAndFreqB", "CnChipEffecSet", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
+setMethodS3("extractTotalAndFreqB", "CnChipEffectSet", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -199,6 +199,10 @@ setMethodS3("extractTotalAndFreqB", "SnpChipEffectSet", function(this, units=NUL
 
 ############################################################################
 # HISTORY:
+# 2008-12-09
+# BUG FIX: There was no extractTotalAndFreqB() for CnChipEffectSet, but
+# only for CnChipEffecSet (misspelled). Thanks Pierre Neuvial for spotting
+# this.
 # 2008-07-16
 # o Added argument 'drop=FALSE' to all extractTotalAndFreqB().
 # 2008-05-10

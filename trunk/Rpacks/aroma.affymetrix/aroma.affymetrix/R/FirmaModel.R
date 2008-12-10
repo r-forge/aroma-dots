@@ -318,14 +318,14 @@ setMethodS3("calculateResiduals", "FirmaModel", function(this, ...) {
 setMethodS3("getFitUnitGroupFunction", "FirmaModel", function(this, ...) {
   if(this$operateOn=="weights") {
     if (this$summaryMethod == "upperQuartile") {
-        fitfcn <- function(y) {
+        fitfcn <- function(y, ...) {
             J <- length(y)
             list(intensities = 2^(1 - apply(y,2,quantile,probs=0.75)),
                 stdvs = 1, pixels = 1)
         }
     }
     else if (this$summaryMethod == "median") {
-        fitfcn <- function(y) {
+        fitfcn <- function(y, ...) {
             J <- length(y)
             1 - median(y)
             list(intensities = 2^(1 - apply(y,2,median)), stdvs = 1,
@@ -333,32 +333,32 @@ setMethodS3("getFitUnitGroupFunction", "FirmaModel", function(this, ...) {
         }
     }
     else if (this$summaryMethod == "max") {
-        fitfcn <- function(y) {
+        fitfcn <- function(y, ...) {
             J <- length(y)
             list(intensities = 2^(1 - apply(y,2,max)), stdvs = 1, pixels = 1)
         }
     }
     else {
-        fitfcn <- function(y) {
+        fitfcn <- function(y, ...) {
             J <- length(y)
             list(intensities = 1, stdvs = 1, pixels = 1)
         }
     }
   } else {
     if (this$summaryMethod == "median") {
-        fitfcn <- function(y) {
+        fitfcn <- function(y, ...) {
             #J <- length(y)
             list(intensities = 2^apply(y,2,median), stdvs = 1, pixels = 1)
         }
     }
     else if (this$summaryMethod == "mean") {
-        fitfcn <- function(y) {
+        fitfcn <- function(y, ...) {
             #J <- length(y)
             list(intensities = 2^colMeans(y), stdvs = 1, pixels = 1)
         }
     }
     else {
-        fitfcn <- function(y) {
+        fitfcn <- function(y, ...) {
             J <- length(y)
             list(intensities = 1, stdvs = 1, pixels = 1)
         }
