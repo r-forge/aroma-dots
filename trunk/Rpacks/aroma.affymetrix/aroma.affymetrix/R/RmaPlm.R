@@ -220,7 +220,7 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
   # Author: Henrik Bengtsson, UC Berkeley. 
   # Requires: affyPLM() by Ben Bolstad.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rmaModelAffyPlm <- function(y, psiCode=0, psiK=1.345){
+  rmaModelAffyPlm <- function(y, ..., psiCode=0, psiK=1.345){
     # Assert right dimensions of 'y'.
 
     # If input data are dimensionless, return NAs. /KS 2006-01-30
@@ -407,7 +407,7 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
   # Why: The above "R_rlm_rma_default_model" call is not available on all
   # platforms (yet).  
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rmaModelAffyPlmOld <- function(y, constraint.type=list(default="contr.treatment", chip="contr.treatment", probe="contr.sum")) {
+  rmaModelAffyPlmOld <- function(y, ..., constraint.type=list(default="contr.treatment", chip="contr.treatment", probe="contr.sum")) {
     # Add shift
     y <- y + shift;
 
@@ -665,6 +665,9 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-08
+# o Now the fit function returned by getFitUnitFunction() must be able
+#   to handle prior parameters as well.
 # 2008-12-04
 # o BUG FIX: flavor='oligo' stopped working awhile ago.  changed the call to
 #   'fitRma' to the native C code as given by 'selectMethod("rma","FeatureSet")'

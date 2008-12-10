@@ -220,7 +220,7 @@ setMethodS3("getFitUnitGroupFunction", "MbeiPlm", function(this, ...) {
     }
 
     fit;
-  }
+  } # liWong()
 
   liWong;
 }, private=TRUE)

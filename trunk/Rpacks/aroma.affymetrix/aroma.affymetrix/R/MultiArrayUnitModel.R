@@ -195,9 +195,89 @@ setMethodS3("readUnits", "MultiArrayUnitModel", function(this, units=NULL, ..., 
 
 
 
+setMethodS3("getListOfPriors", "MultiArrayUnitModel", function(this, ...) {
+  this$.listOfPriors;
+})
+
+setMethodS3("setListOfPriors", "MultiArrayUnitModel", function(this, sets, ...) {
+  # Arguments 'sets':
+  if (!is.list(sets)) {
+    throw("Argument 'sets' is not a list: ", mode(sets)[1]);
+  }
+
+  this$.listOfPriors <- sets;
+
+  invisible(this);
+})
+
+
+setMethodS3("readPriorsByUnits", "MultiArrayUnitModel", function(this, units=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  priorsList <- getListOfPriors(this);
+  nbrOfPriors <- length(priorsList);
+
+  # Nothing to do?
+  if (nbrOfPriors == 0)
+    return(NULL);
+
+
+  verbose && enter(verbose, "Reading prior parameters by unit");
+
+  verbose && enter(verbose, "Reading prior parameters");
+  verbose && cat(verbose, "Number of parameter sets: ", nbrOfPriors);
+  res <- list();
+  for (kk in seq_len(nbrOfPriors)) {
+    priors <- priorsList[[kk]];
+    verbose && enter(verbose, sprintf("Prior set #%d ('%s') of %d", kk, getName(priors), length(priorsList)));
+    values <- readUnits(priors, units=units, ..., verbose=less(verbose, 1));
+    verbose && str(verbose, values[1]);
+    res[[kk]] <- values;
+    rm(values, priors);
+    verbose && exit(verbose);
+  } # for (kk ...)
+  verbose && exit(verbose);
+
+  if (length(priorsList) > 0) {
+    unit <- vector("list", nbrOfPriors);
+    names(unit) <- names(priorsList);
+    unit0 <- unit;
+
+    verbose && enter(verbose, "Merging prior parameters unit by unit");
+    unitNames <- names(res[[1]]);
+    res2 <- vector("list", length(unitNames));
+    names(res2) <- unitNames;
+    for (uu in seq(along=res2)) {
+      unit <- unit0;
+      for (kk in seq_len(nbrOfPriors)) {
+        unit[[kk]] <- res[[kk]][[uu]];
+      } # for (kk ...)
+      res2[[uu]] <- unit;
+    } # for (uu ...)
+    verbose && exit(verbose);
+  }
+
+  verbose && exit(verbose);
+
+  res2;
+}, private=TRUE)
+
+
+
+
 
 ############################################################################
 # HISTORY:
+# 2008-12-08
+# o Added readPriorsByUnits().
 # 2008-09-03
 # o Added getFitUnitGroupFunction() model, which is a better name than
 #   getFitFunction().
