@@ -1578,6 +1578,7 @@
 \alias{setListOfPriors.MultiArrayUnitModel}
 \alias{updatePositions}
 \alias{updatePositions.AromaCellPositionFile}
+\alias{findUnitsTodo.AlleleSummation}
 
 \description{
   This page contains aliases for all "non-documented" objects that
