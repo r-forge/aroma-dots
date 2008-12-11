@@ -233,6 +233,9 @@ setMethodS3("getOutputDataSet", "FragmentLengthNormalization", function(this, ..
     verbose && exit(verbose);
   }
 
+  # Let the set update itself
+  update2(res, verbose=less(verbose, 1));
+
   verbose && exit(verbose);
 
   res;

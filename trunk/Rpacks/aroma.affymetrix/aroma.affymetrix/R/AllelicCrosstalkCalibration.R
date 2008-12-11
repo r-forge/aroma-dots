@@ -817,8 +817,13 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
           verbose & cat(verbose, "Model parameters:");
           verbose & str(verbose, list(alpha=alpha, q=q, Q=Q));
           verbose & cat(verbose, "Number of data points: ", nrow(y));
-          fit <- fitGenotypeCone(y, flavor=flavor, alpha=alpha, q=q, Q=Q,
-                                                       verbose=verboseL);
+          if (nrow(y) > 10) {
+            fit <- fitGenotypeCone(y, flavor=flavor, alpha=alpha, q=q, Q=Q,
+                                                         verbose=verboseL);
+          } else {
+            fit <- NULL;
+            verbose & cat(verbose, "Cannot fit model: too few data points. Skipping this group: ", name);
+          }
         } else if (flavor == "expectile") {
           alpha <- algorithmParameters$alpha;
           lambda <- algorithmParameters$lambda;
@@ -868,6 +873,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       # Store allelic crosstalk model fits
       modelFit$accFits <- fits;
 
+
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Harmonizing parameter estimates?
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -887,9 +893,15 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
 
         idx <- setsOfProbes$snps[[name]];
         y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
-        yC <- backtransformGenotypeCone(y, fit=fits[[name]]);
+        fit <- fits[[name]];
+        if (!is.null(fit)) {
+          yC <- backtransformGenotypeCone(y, fit=fit);
+        } else {
+          verbose && cat(verbose, "Cannot do backtransformation because there were to few data points in group to fit anything: ", name);
+          yC <- y;
+        }
         yAll[idx] <- yC;
-    
+  	  
 #        callHooks(sprintf("%s.onUpdated", hookName), df=df, y=y, basepair=basepair, fit=fits[[name]], yC=yC,...);
         rm(idx, y, yC);
         gc <- gc();
@@ -1207,6 +1219,10 @@ setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-12-10
+# o BUG FIX: Now process() avoids sets of pairs with too few probe pairs.
+#   This could happen because of the new getSetsOfProbes() working off
+#   the probe sequence files.
 # 2008-11-28
 # o Added argument 'model' for quick specification of default parameter
 #   settings according to the CRMA or CRMA v2 model.

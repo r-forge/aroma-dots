@@ -214,6 +214,9 @@ setMethodS3("getOutputDataSet", "FragmentEquivalentClassNormalization", function
     verbose && exit(verbose);
   }
 
+  # Let the set update itself
+  update2(res, verbose=less(verbose, 1));
+
   verbose && exit(verbose);
 
   res;

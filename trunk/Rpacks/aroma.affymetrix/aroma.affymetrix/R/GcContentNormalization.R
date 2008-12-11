@@ -100,6 +100,9 @@ setMethodS3("getOutputDataSet", "GcContentNormalization", function(this, ...) {
     }
   }
 
+  # Let the set update itself
+  update2(res, verbose=less(verbose, 1));
+
   res;
 })
 

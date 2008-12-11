@@ -114,6 +114,12 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
       snps <- groupBySnpNucleotides(acs, cells=cells, shifts=shifts, 
                                                      verbose=verbose);
       rm(cells, shifts);
+      # Clean out empty sets
+      for (kk in seq(along=snps)) {
+        cells <- snps[[kk]];
+        if (length(cells) == 0)
+          snps[[kk]] <- NULL;
+      }
       setsOfProbes <- list(snps=snps, nonSNPs=nonSNPs);
       rm(snps, nonSNPs);
     }

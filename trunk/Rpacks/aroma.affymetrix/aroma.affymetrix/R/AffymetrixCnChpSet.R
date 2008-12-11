@@ -240,6 +240,9 @@ setMethodS3("fromFiles", "AffymetrixCnChpSet", function(static, path="rawData/",
   setCdf(set, cdf);
   verbose && exit(verbose); 
 
+  # Let the new CEL set update itself
+  update2(set, verbose=less(verbose, 1));
+
   verbose && exit(verbose);
 
   set;
