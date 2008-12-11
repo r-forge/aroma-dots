@@ -811,3 +811,4 @@ getDesignMatrix.LinearModelProbeSequenceNormalization
   readPriorsByUnits.MultiArrayUnitModel setListOfPriors
   setListOfPriors.MultiArrayUnitModel updatePositions
   updatePositions.AromaCellPositionFile
+findUnitsTodo.AlleleSummation
