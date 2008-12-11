@@ -63,6 +63,11 @@ setMethodS3("getRootPath", "AlleleSummation", function(this, ...) {
 }, private=TRUE)
 
 
+setMethodS3("findUnitsTodo", "AlleleSummation", function(this, ...) {
+  outSet <- getChipEffectSet(this);
+  findUnitsTodo(outSet, ...);
+})
+
 
 ###########################################################################/**
 # @RdocMethod getChipEffectSet
@@ -152,18 +157,41 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
 
 
   verbose && enter(verbose, "Summing allele-specific estimates");
+  outputSet <- getChipEffectSet(this);
+  units <- findUnitsTodo(this, verbose=less(verbose, 5));
+
+  if (length(units) == 0) {
+    verbose && cat(verbose, "Already done.");
+    verbose && exit(verbose);
+    return(outputSet);
+  }
+
+  cdf <- getCdf(this);
   inputSet <- getDataSet(this);
   verbose && print(verbose, inputSet);
 
-  outputSet <- getChipEffectSet(this);
+  verbose && enter(verbose, "Units to be updated");
+  verbose && str(verbose, units);
+  unitNames <- getUnitNames(cdf, units=units);
+  verbose && str(verbose, unitNames);
+  verbose && exit(verbose);
 
-  cdf <- getCdf(this);
 ## OLD:
 ## snps <- indexOf(cdf, "SNP");
-  types <- getUnitTypes(cdf);
-  snps <- which(types == 2);
+  types <- getUnitTypes(cdf, units=units);
+  snps <- whichVector(types == 2);
   rm(types);
-  otherUnits <- setdiff(seq(length=nbrOfUnits(cdf)), snps);
+
+  # WORKAROUND: Some of the units reported as SNPs, may actually be 
+  # non-SNPs.  Keep only those with two groups
+  nbrOfGroups <- nbrOfGroupsPerUnit(cdf, units=snps);
+  ok <- (nbrOfGroups %in% c(2,4));
+  snps <- snps[ok];
+  rm(ok, nbrOfGroups);
+
+  otherUnits <- setdiff(units, snps);
+  verbose && cat(verbose, "Non-SNP units:");
+  verbose && str(verbose, otherUnits);
 
   snpUgcMap <- otherUgcMap <- NULL;
 
@@ -175,61 +203,80 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
     inputFile <- getFile(inputSet, aa);
     outputFile <- getFile(outputSet, aa);
 
-    verbose && enter(verbose, "Copying signals for non-SNP units");
-    if (is.null(otherUgcMap)) {
-      otherUgcMap <- getUnitGroupCellMap(inputFile, units=otherUnits);
+    if (length(otherUnits) > 0) {
+      verbose && enter(verbose, "Copying signals for non-SNP units");
+      if (is.null(otherUgcMap)) {
+        otherUgcMap <- getUnitGroupCellMap(inputFile, units=otherUnits);
+      }
+      cells <- otherUgcMap[,"cell"];
+      if (length(cells) > 0) {
+        data <- readCel(getPathname(inputFile), indices=cells, 
+                        readIntensities=TRUE, readStdvs=TRUE, readPixels=TRUE);
+        data <- as.data.frame(data[c("intensities", "stdvs", "pixels")]);
+        verbose && str(verbose, data);
+        data <- cbind(cell=cells, data);
+        updateDataFlat(outputFile, data=data);
+        rm(data);
+      } else {
+        verbose && cat(verbose, "Nothing to do: All units are SNP units.");
+      }
+      rm(cells);
+      verbose && exit(verbose);
     }
-    cells <- otherUgcMap[,"cell"];
-    data <- readCel(getPathname(inputFile), indices=cells, 
-                    readIntensities=TRUE, readStdvs=TRUE, readPixels=TRUE);
-    data <- as.data.frame(data[c("intensities", "stdvs", "pixels")]);
-    verbose && str(verbose, data);
-    data <- cbind(cell=cells, data);
-    rm(cells);
-    updateDataFlat(outputFile, data=data);
-    rm(data);
-    verbose && exit(verbose);
 
-    verbose && enter(verbose, "Summing allele signals for SNP units");
-    if (is.null(snpUgcMap)) {
-      snpUgcMap <- getUnitGroupCellMap(inputFile, units=snps);
-    }
-    cells <- snpUgcMap[,"cell"];
-    data <- readCel(getPathname(inputFile), indices=cells, 
-                    readIntensities=TRUE, readStdvs=FALSE, readPixels=FALSE);
-    yAB <- data[["intensities"]];
-    verbose && cat(verbose, "(yA,yB) signals:");
-    verbose && str(verbose, yAB);
-    # Next we will assume that the data points are ordered as allele
-    # (A,B,A,B,A,B,...)
-    yAB <- matrix(yAB, nrow=2);
-
-    # Sum the alleles
-    y <- rep(NA, ncol(yAB));
-    okAB <- !is.na(yAB);
-    # 1) No missing data
-    ok <- okAB[1,] & okAB[2,];
-    y[ok] <- yAB[1,ok] + yAB[2,ok];
-    if (ignoreNAs) {
-      # 2a) Missing data in allele A
-      ok <- !okAB[1,] & okAB[2,];
-      y[ok] <- yAB[2,ok];
-      # 2b) Missing data in allele B
-      ok <- okAB[1,] & !okAB[2,];
-      y[ok] <- yAB[1,ok];
-    }
-    verbose && cat(verbose, "y=yA+yB signals:");
-    verbose && str(verbose, y);
-    # Store signals in the cell for the A alleles:
-    cells <- matrix(cells, nrow=2);
-    cells <- cells[1,];
-
-    data <- cbind(cell=cells, intensities=y);
-    rm(cells, y);
-
-    updateDataFlat(outputFile, data=data);
-    rm(data);
-    verbose && exit(verbose);
+    if (length(snps) > 0) {
+      verbose && enter(verbose, "Summing allele signals for SNP units");
+      if (is.null(snpUgcMap)) {
+        snpUgcMap <- getUnitGroupCellMap(inputFile, units=snps);
+      }
+      cells <- snpUgcMap[,"cell"];
+      data <- readCel(getPathname(inputFile), indices=cells, 
+                      readIntensities=TRUE, readStdvs=TRUE, readPixels=FALSE);
+      yAB <- data[["intensities"]];
+      verbose && cat(verbose, "(yA,yB) signals:");
+      verbose && str(verbose, yAB);
+      sdAB <- data[["stdvs"]];
+      verbose && cat(verbose, "Standard deviations (yA,yB) signals:");
+      verbose && str(verbose, sdAB);
+      # (A,B,A,B,A,B,...)
+      yAB <- matrix(yAB, nrow=2);
+      sdAB <- matrix(sdAB, nrow=2);
+  
+      # Sum the alleles
+      naValue <- as.double(NA);
+      y <- sd <- rep(naValue, ncol(yAB));
+      okAB <- !is.na(yAB);
+      # (1) No missing data
+      ok <- okAB[1,] & okAB[2,];
+      y[ok] <- yAB[1,ok] + yAB[2,ok];
+      sd[ok] <- sqrt(sdAB[1,ok]^2 + sdAB[2,ok]^2);
+      if (ignoreNAs) {
+        # (2a) Missing data in allele A
+        ok <- !okAB[1,] & okAB[2,];
+        y[ok] <- yAB[2,ok];
+        sd[ok] <- sdAB[2,ok];
+        # (2b) Missing data in allele B
+        ok <- okAB[1,] & !okAB[2,];
+        y[ok] <- yAB[1,ok];
+        sd[ok] <- sdAB[1,ok];
+      }
+      rm(yAB, sdAB);
+  
+      verbose && cat(verbose, "y=yA+yB signals:");
+      verbose && str(verbose, y);
+      verbose && cat(verbose, "sd=sqrt(sdA^2+sdB^2) signals:");
+      verbose && str(verbose, sd);
+      # Store signals in the cell for the A alleles:
+      cells <- matrix(cells, nrow=2);
+      cells <- cells[1,];
+  
+      data <- cbind(cell=cells, intensities=y, stdvs=sd);
+      rm(cells, y, sd);
+  
+      updateDataFlat(outputFile, data=data);
+      rm(data);
+      verbose && exit(verbose);
+    } # if (length(snps) > 0)
 
     verbose && exit(verbose);
   } # for (aa ...)
@@ -246,6 +293,13 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-10
+# o Now process() returns immediately if already done.
+# o Now process() only processes non-summed units.
+# o Added findUnitsTodo() to AlleleSummation.
+# o Now AlleleSummation is also estimating the pooled standard deviation.
+# o BUG FIX: AlleleSummation would not work for chip types containing 
+#   exclusively SNP units.  It expected some non-SNP units.
 # 2008-02-20
 # o Created.
 ############################################################################

@@ -6,9 +6,18 @@ o Added plotAllelePairs() for AllelicCrosstalkCalibration.
 o Added trial version of AromaCellPositionFile.
 o Added more methods and classes which eventually will allow 
   analysis of Affymetrix tiling arrays.
+o Now process() of AlleleSummation returns immediately if already done.
 o BUG FIX: There was no extractTotalAndFreqB() for CnChipEffectSet, 
   but only for CnChipEffecSet (misspelled). Thanks Pierre Neuvial 
   for spotting this.
+o BUG FIX: Now process() avoids sets of pairs with too few probe pairs.
+  This could happen because of the new getSetsOfProbes() working off
+  the probe sequence files.
+o BUG FIX: AlleleSummation would not work for chip types containing 
+  exclusively SNP units.  It expected some non-SNP units.
+o BUG FIX: Methods returning ChipEffectSet would not "update" the
+  returned data set, which for instance had the effect of not 
+  updating/setting attributes for sample annotation files.
 
 
 Version: 0.9.6 [2008-12-04]

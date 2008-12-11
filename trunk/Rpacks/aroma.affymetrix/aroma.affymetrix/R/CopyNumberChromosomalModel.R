@@ -390,13 +390,21 @@ setMethodS3("getRawCnData", "CopyNumberChromosomalModel", function(this, ceList,
       df0 <- df0[,c("x", "M"), drop=FALSE];
       verbose && cat(verbose, "Number of units: ", nrow(df0));
 
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      # BEGIN: NEED SPECIAL ATTENTION IF ALLELE-SPECIFIC ESTIMATES
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
       # Estimate the std dev of the raw log2(CN). 
       # [only if ref is average across arrays]
       units0 <- as.integer(rownames(df0));
+
       # Get (mu, sigma) of theta (estimated across all arrays).
       data <- getDataFlat(ref, units=units0, verbose=less(verbose));
+
       # Number of arrays (for each unit)
       n <- readCel(getPathname(ref), indices=data[,"cell"], readIntensities=FALSE, readPixels=TRUE)$pixels;
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      # END: NEED SPECIAL ATTENTION IF ALLELE-SPECIFIC ESTIMATES
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
       # Use Gauss' approximation (since mu and sigma are on the 
       # intensity scale)

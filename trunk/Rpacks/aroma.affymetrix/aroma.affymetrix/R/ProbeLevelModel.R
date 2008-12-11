@@ -213,6 +213,9 @@ setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ..., verbose=F
                                                     verbose=less(verbose));
   verbose && exit(verbose);
 
+  # Let the set update itself
+  update2(ces, verbose=less(verbose, 1));
+
   # Store in cache
   this$.ces <- ces;
 

@@ -84,6 +84,9 @@ setMethodS3("getOutputDataSet", "ChipEffectTransform", function(this, ..., verbo
   args$verbose <- less(verbose, 10);
   res <- do.call("NextMethod", args);
 
+  # Let the set update itself
+  update2(res, verbose=less(verbose, 1));
+
   verbose && exit(verbose);
 
   res;
