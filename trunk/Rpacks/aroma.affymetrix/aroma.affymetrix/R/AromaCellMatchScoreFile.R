@@ -155,8 +155,7 @@ setMethodS3("allocate", "AromaCellMatchScoreFile", function(static, ..., nbrOfCe
     footer
   );
 
-  probeLengths <- 25;
-  nbrOfColumns <- probeLengths+1;
+  nbrOfColumns <- 1;
   res <- allocate.AromaMicroarrayTabularBinaryFile(static, 
                  nbrOfRows=nbrOfCells, ..., 
                  types=rep("integer",1), sizes=rep(1,nbrOfColumns), 
