@@ -22,7 +22,7 @@ setMethodS3("justSNPRMA", "AffymetrixCelSet", function(this, ..., normalizeToHap
 
   csR <- this;
   cdf <- getCdf(csR);
-  chipType <- getChipType(cdf);
+  chipType <- getChipType(cdf, fullname=FALSE);
   hasCNs <- (regexpr("^GenomeWideSNP_(5|6)$", chipType) != -1);
 
   # Get the SNP only tag

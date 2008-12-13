@@ -4,8 +4,7 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, sor
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Sanity check
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  chipType <- getChipType(this);
-  chipType <- gsub(",monocell", "", chipType);
+  chipType <- getChipType(this, fullname=FALSE);
 
   if (regexpr("^GenomeWideSNP_(5|6)$", chipType) != -1) {
     throw("Cannot extract SnpQSet: Unsupported chip type: ", chipType);

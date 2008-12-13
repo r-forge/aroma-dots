@@ -48,6 +48,23 @@
 \alias{getPlatformDesignDB}
 \alias{getPlatformDesignDB.CrlmmModel}
 \alias{getUnitsToFit.CrlmmModel}
+\alias{allocate.AromaCrlmmParametersFile}
+\alias{allocate.AromaGenotypeCallFile}
+\alias{byName.AromaCrlmmParametersSet}
+\alias{byName.AromaGenotypeCallSet}
+\alias{extractCalls.AromaGenotypeCallFile}
+\alias{extractCalls.AromaGenotypeCallSet}
+\alias{extractConfidenceScores}
+\alias{extractConfidenceScores.AromaGenotypeCallFile}
+\alias{extractConfidenceScores.AromaGenotypeCallSet}
+\alias{findUnitsTodo.AromaCrlmmParametersFile}
+\alias{findUnitsTodo.AromaCrlmmParametersSet}
+\alias{findUnitsTodo.AromaGenotypeCallFile}
+\alias{findUnitsTodo.AromaGenotypeCallSet}
+\alias{fromFiles.AromaCrlmmParametersSet}
+\alias{fromFiles.AromaGenotypeCallSet}
+\alias{getCrlmmParametersSet}
+\alias{getCrlmmParametersSet.CrlmmModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

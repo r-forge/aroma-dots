@@ -12,8 +12,7 @@ setConstructorS3("CrlmmModel", function(dataSet=NULL, balance=1.5, minLLRforCall
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Sanity check
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    chipType <- getChipType(dataSet);
-    chipType <- gsub(",monocell", "", chipType);
+    chipType <- getChipType(dataSet, fullname=FALSE);
 
     # For now, only allow know SNP chip types. /HB 2008-12-07
     if (regexpr("^Mapping(10|50|250)K_.*$", chipType) != -1) {
@@ -63,7 +62,7 @@ setMethodS3("getParameterSet", "CrlmmModel", function(this, ...) {
 setMethodS3("getChipType", "CrlmmModel", function(this, ...) {
   ds <- getDataSet(this);
   cdf <- getCdf(ds);
-  chipType <- getChipType(cdf);
+  chipType <- getChipType(cdf, ...);
   chipType <- gsub(",monocell", "", chipType);
   chipType;
 })
@@ -71,8 +70,6 @@ setMethodS3("getChipType", "CrlmmModel", function(this, ...) {
 
 
 setMethodS3("getCallSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
-  require("aroma.cn") || throw("Package not loaded: aroma.cn");
-
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -82,7 +79,7 @@ setMethodS3("getCallSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
 
   ces <- getDataSet(this);
   cdf <- getCdf(ces);
-  chipType <- getChipType(this);
+  chipType <- getChipType(this, fullname=FALSE);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Allocating parameter files
@@ -95,34 +92,92 @@ setMethodS3("getCallSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
   # Setting up output pathnames
   fullnames <- getFullNames(ces);
   fullnames <- gsub(",chipEffects$", "", fullnames);
-  filenames <- sprintf("%s,CRLMM.acu", fullnames);
+  filenames <- sprintf("%s.agc", fullnames);
 
   nbrOfArrays <- nbrOfArrays(ces);
   nbrOfUnits <- nbrOfUnits(cdf);
   platform <- getPlatform(cdf);
 
   verbose && enter(verbose, "Retrieving genotype data set");
-  acuList <- list();
+  agcList <- list();
   for (kk in seq(along=filenames)) {
     filename <- filenames[kk];
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, filename, nbrOfArrays));
     pathname <- filePath(outPath, filename);
     if (isFile(pathname)) {
-      acu <- AromaCrlmmBinaryFile(pathname);
+      agc <- AromaGenotypeCallFile(pathname);
     } else {
       verbose && enter(verbose, "Allocating new file");
-      acu <- AromaCrlmmBinaryFile$allocate(filename=pathname, platform=platform, chipType=chipType, nbrOfRows=nbrOfUnits, verbose=log);
+     chipTypeF <- getChipType(this);
+      agc <- AromaGenotypeCallFile$allocate(filename=pathname, platform=platform, chipType=chipTypeF, nbrOfRows=nbrOfUnits, verbose=log);
       verbose && exit(verbose);
     }
-    acuList[[kk]] <- acu;
+    agcList[[kk]] <- agc;
     verbose && exit(verbose);
   } # for (kk ...)
   verbose && exit(verbose);
 
-  res <- AromaCrlmmBinarySet$fromFiles(outPath);
+  res <- AromaGenotypeCallSet$fromFiles(outPath);
 
   res;
 })
+
+
+setMethodS3("getCrlmmParametersSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
+  require("aroma.cn") || throw("Package not loaded: aroma.cn");
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  ces <- getDataSet(this);
+  cdf <- getCdf(ces);
+  chipType <- getChipType(this, fullname=FALSE);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Allocating parameter files
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Setting up output directory
+  rootPath <- Arguments$getWritablePath("crlmmData");
+  outPath <- filePath(rootPath, getFullName(ces), chipType);
+  outPath <- Arguments$getWritablePath(outPath);
+
+  # Setting up output pathnames
+  fullnames <- getFullNames(ces);
+  fullnames <- gsub(",chipEffects$", "", fullnames);
+  filenames <- sprintf("%s,CRLMM.atb", fullnames);
+
+  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfUnits <- nbrOfUnits(cdf);
+  platform <- getPlatform(cdf);
+
+  verbose && enter(verbose, "Retrieving genotype data set");
+  atbList <- list();
+  for (kk in seq(along=filenames)) {
+    filename <- filenames[kk];
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, filename, nbrOfArrays));
+    pathname <- filePath(outPath, filename);
+    if (isFile(pathname)) {
+      atb <- AromaCrlmmParametersFile(pathname);
+    } else {
+      verbose && enter(verbose, "Allocating new file");
+      chipTypeF <- getChipType(this);
+      atb <- AromaCrlmmParametersFile$allocate(filename=pathname, platform=platform, chipType=chipTypeF, nbrOfRows=nbrOfUnits, verbose=log);
+      verbose && exit(verbose);
+    }
+    atbList[[kk]] <- atb;
+    verbose && exit(verbose);
+  } # for (kk ...)
+  verbose && exit(verbose);
+
+  res <- AromaCrlmmParametersSet$fromFiles(outPath);
+
+  res;
+})
+
 
 
 setMethodS3("getUnitsToFit", "CrlmmModel", function(this, safe=TRUE, ..., verbose=FALSE) {
@@ -296,6 +351,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   # Get result set
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   callSet <- getCallSet(this, verbose=less(verbose,1));
+  paramSet <- getCrlmmParametersSet(this, verbose=less(verbose,1));
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -321,12 +377,12 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     phenoData(eSet) <- phenoData;
     verbose && exit(verbose);
 
-    unitNamesKK <- featureNames(eSet);
+    unitNames <- featureNames(eSet);
     verbose && cat(verbose, "Unit names:");
-    verbose && str(verbose, unitNamesKK);
+    verbose && str(verbose, unitNames);
 
     verbose && enter(verbose, "Extract CRLMM priors");
-    idxs <- match(unitNamesKK, names(allSNPs));
+    idxs <- match(unitNames, names(allSNPs));
     hapmapCallIndex <- crlmm$hapmapCallIndex[idxs];
     params <- crlmm$params;
     if (hasQuartets) {
@@ -389,7 +445,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     }
     rm(params, index);
 
-    indexX <- whichVector(is.element(unitNamesKK, names(snpsOnChrX)));
+    indexX <- whichVector(is.element(unitNames, names(snpsOnChrX)));
     calls <- oligo:::getAffySnpCalls(dist, indexX, maleIndex, sqsClass=class(eSet), verbose=as.logical(verbose));
     llr <- oligo:::getAffySnpConfidence(dist, calls, indexX, maleIndex, verbose=as.logical(verbose));
     
@@ -431,22 +487,35 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Storing genotype parameters");
-    for (ii in seq(callSet)) {
-      acu <- getFile(callSet, ii);
-      verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", ii, getName(acu), nbrOfArrays));
+    for (kk in seq(callSet)) {
+      agc <- getFile(callSet, kk);
+      atb <- getFile(paramSet, kk);
+      verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(agc), nbrOfArrays));
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # (genotypeCall, confidenceScore)
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Calls
-      acu[unitsChunk,1] <- calls[,ii,drop=TRUE];
+      agc[unitsChunk,1] <- calls[,kk,drop=TRUE];
+
+      # Confidence scores
+      ## agc[unitsChunk,2] <- ...
+      rm(agc);
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # CRLMM specific parameter estimates
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # LLR
-      acu[unitsChunk,2] <- llr[,ii,drop=TRUE];
+      atb[unitsChunk,1] <- llr[,kk,drop=TRUE];
+
       # Distances
-      distII <- dist[,ii,,,drop=TRUE];
-      dim(distII) <- c(dim(distII)[1], prod(dim(distII)[2:3]));
-      for (cc in 1:ncol(distII)) {
-        acu[unitsChunk,cc+2] <- distII[,cc];
+      distKK <- dist[,kk,,,drop=TRUE];
+      dim(distKK) <- c(dim(distKK)[1], prod(dim(distKK)[2:3]));
+      for (cc in 1:ncol(distKK)) {
+        atb[unitsChunk,cc+1] <- distKK[,cc];
       }
-      rm(distII, acu);
+      rm(distKK, atb);
       verbose && exit(verbose);
-    }
+    } # for (kk ...)
     verbose && exit(verbose);
 
     # Next chunk
@@ -468,7 +537,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
 # BEGIN: Plaform Design package dependent code
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 setMethodS3("getCrlmmPriors", "CrlmmModel", function(this, ..., verbose=FALSE) {
-  chipType <- getChipType(this);
+  chipType <- getChipType(cdf, fullname=FALSE);
   pdPkgName <- oligo::cleanPlatformName(chipType);
   verbose && cat(verbose, "Platform Design (PD) package: ", pdPkgName);
  
@@ -495,7 +564,7 @@ setMethodS3("getCrlmmPriors", "CrlmmModel", function(this, ..., verbose=FALSE) {
 
 setMethodS3("getPlatformDesignDB", "CrlmmModel", function(this, ..., verbose=FALSE) {
   verbose && enter(verbose, "Getting Platform Design Database");
-  chipType <- getChipType(this);
+  chipType <- getChipType(cdf, fullname=FALSE);
   verbose && cat(verbose, "Chip type: ", chipType);
   pdPkgName <- oligo::cleanPlatformName(chipType);
   verbose && cat(verbose, "Plaform Design package: ", pdPkgName);
