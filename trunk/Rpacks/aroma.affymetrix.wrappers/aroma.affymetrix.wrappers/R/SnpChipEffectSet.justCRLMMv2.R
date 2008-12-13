@@ -6,8 +6,7 @@ setMethodS3("justCRLMMv2", "SnpChipEffectSet", function(this, units=NULL, ram=1,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Sanity check
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  chipType <- getChipType(this);
-  chipType <- gsub(",monocell", "", chipType);
+  chipType <- getChipType(this, fullname=FALSE);
 
 #  if (regexpr("^GenomeWideSNP_(5|6)$", chipType) != -1) {
 #    throw("Cannot extract SnpQSet: Unsupported chip type: ", chipType);
@@ -119,7 +118,8 @@ setMethodS3("justCRLMMv2", "SnpChipEffectSet", function(this, units=NULL, ram=1,
       acu <- AromaCrlmmBinaryFile(pathname);
     } else {
       verbose && enter(verbose, "Allocating new file");
-      acu <- AromaCrlmmBinaryFile$allocate(filename=pathname, platform=platform, chipType=chipType, nbrOfRows=nbrOfUnits, verbose=log);
+      chipTypeF <- getChipType(cdf);
+      acu <- AromaCrlmmBinaryFile$allocate(filename=pathname, platform=platform, chipType=chipTypeF, nbrOfRows=nbrOfUnits, verbose=log);
       acu[,1] <- NA;
       verbose && exit(verbose);
     }

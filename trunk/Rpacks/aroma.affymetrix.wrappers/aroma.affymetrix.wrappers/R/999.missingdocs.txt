@@ -15,3 +15,14 @@
   getCrlmmSNPsOnChrX getCrlmmSNPsOnChrX.CrlmmModel
   getParameterSet.CrlmmModel getPlatformDesignDB
   getPlatformDesignDB.CrlmmModel getUnitsToFit.CrlmmModel
+  allocate.AromaCrlmmParametersFile allocate.AromaGenotypeCallFile
+  byName.AromaCrlmmParametersSet byName.AromaGenotypeCallSet
+  extractCalls.AromaGenotypeCallFile extractCalls.AromaGenotypeCallSet
+  extractConfidenceScores extractConfidenceScores.AromaGenotypeCallFile
+  extractConfidenceScores.AromaGenotypeCallSet
+  findUnitsTodo.AromaCrlmmParametersFile
+  findUnitsTodo.AromaCrlmmParametersSet
+  findUnitsTodo.AromaGenotypeCallFile
+  findUnitsTodo.AromaGenotypeCallSet fromFiles.AromaCrlmmParametersSet
+  fromFiles.AromaGenotypeCallSet getCrlmmParametersSet
+  getCrlmmParametersSet.CrlmmModel
