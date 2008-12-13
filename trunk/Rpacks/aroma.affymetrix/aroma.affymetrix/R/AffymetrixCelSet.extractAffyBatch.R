@@ -53,7 +53,8 @@ setMethodS3("extractAffyBatch", "AffymetrixCelSet", function(this, ..., verbose=
   }
 
   cdf <- getCdf(this);
-  cdfPkgName <- cleancdfname(getChipType(cdf));
+  chipType <- getChipType(cdf);
+  cdfPkgName <- cleancdfname(chipType);
   suppressWarnings({
     res <- require(cdfPkgName, character.only=TRUE);
   });

@@ -11,6 +11,8 @@
 #
 # \arguments{
 #   \item{model}{A @see "CopyNumberChromosomalModel" object.}
+#   \item{zooms}{An positive @integer @vector specifying for which zoom
+#    levels the graphics should be generated.}
 #   \item{...}{Not used.}
 #   \item{version}{The version of the Explorer HTML/Javascript generated/used.}
 # }
@@ -37,7 +39,7 @@
 #  @see "CopyNumberChromosomalModel".
 # }
 #*/###########################################################################
-setConstructorS3("ChromosomeExplorer", function(model=NULL, ..., version=c("3")) {
+setConstructorS3("ChromosomeExplorer", function(model=NULL, zooms=2^(0:7), ..., version=c("3")) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -49,6 +51,13 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, ..., version=c("3"))
     }
   }
 
+  # Argument 'zooms':
+  if (is.null(zooms)) {
+    zooms <- 2^(0:7);
+  } else {
+    zooms <- Arguments$getDoubles(zooms, range=c(0, Inf));
+  }
+  
   # Argument 'version':
   version <- match.arg(version);
 
@@ -57,6 +66,7 @@ setConstructorS3("ChromosomeExplorer", function(model=NULL, ..., version=c("3"))
     .model = model,
     .arrays = NULL,
     .plotCytoband = TRUE,
+    .zooms = zooms,
     .version = version
   )
 })
@@ -245,6 +255,28 @@ setMethodS3("getChromosomes", "ChromosomeExplorer", function(this, ...) {
 })
 
 
+setMethodS3("getZooms", "ChromosomeExplorer", function(this, ...) {
+  zooms <- this$.zooms;
+  if (is.null(zooms))
+    zooms <- 2^(0:7);
+  zooms <- as.integer(zooms);
+  zooms;
+})
+
+
+setMethodS3("setZooms", "ChromosomeExplorer", function(this, zooms=NULL, ...) {
+  # Argument 'zooms':
+  if (is.null(zooms)) {
+    zooms <- 2^(0:7);
+  } else {
+    zooms <- Arguments$getIntegers(zooms, range=c(1, Inf));
+  }
+  zooms <- unique(zooms);
+  zooms <- as.integer(zooms);
+  this$.zooms <- zooms;
+  invisible(this);
+})
+
 
 
 
@@ -334,7 +366,7 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   zooms <- gsub("^0*", "", zooms);
   if (length(zooms) == 0) {
     # Default zooms
-    zooms <- c(1, 2, 4, 8, 16, 32, 64, 128);
+    zooms <- getZooms(this);
   }
   zooms <- unique(zooms);
   zooms <- as.integer(zooms);
@@ -671,7 +703,7 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromosomes=NULL, ..., layers=FALSE, verbose=FALSE) {
+setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromosomes=NULL, ..., zooms=getZooms(this), layers=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -712,19 +744,19 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
 
     # 1. Non-sample specific layers
     verbose && enter(verbose, "Non-sample specific layers");
-    writeAxesLayers(this, chromosomes=chromosomes, ..., verbose=less(verbose));
-    writeGridHorizontalLayers(this, chromosomes=chromosomes, ..., verbose=less(verbose));
-    writeCytobandLayers(this, chromosomes=chromosomes, ..., verbose=less(verbose));
+    writeAxesLayers(this, chromosomes=chromosomes, zooms=zooms, ..., verbose=less(verbose));
+    writeGridHorizontalLayers(this, chromosomes=chromosomes, zooms=zooms, ..., verbose=less(verbose));
+    writeCytobandLayers(this, chromosomes=chromosomes, zooms=zooms, ..., verbose=less(verbose));
     verbose && exit(verbose);
 
     # 2. Sample specific layers
     verbose && enter(verbose, "Sample-specific layers");
     writeRawCopyNumberLayers(this, arrays=arrays, chromosomes=chromosomes, 
-                                                 ..., verbose=less(verbose));
+                                     zooms=zooms, ..., verbose=less(verbose));
 
     if (inherits(model, "CopyNumberSegmentationModel")) {
       writeCopyNumberRegionLayers(this, arrays=arrays, 
-                        chromosomes=chromosomes, ..., verbose=less(verbose));
+           chromosomes=chromosomes, zooms=zooms, ..., verbose=less(verbose));
     }
     verbose && exit(verbose);
 
@@ -732,7 +764,7 @@ setMethodS3("process", "ChromosomeExplorer", function(this, arrays=NULL, chromos
   } else {
     # Generate bitmap images
     writeGraphs(this, arrays=arrays, chromosomes=chromosomes, 
-                                                ..., verbose=less(verbose));
+                                   zooms=zooms, ..., verbose=less(verbose));
   }
 
   # Update samples.js
@@ -767,6 +799,9 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="Chromosome
 
 ##############################################################################
 # HISTORY:
+# 2008-12-13
+# o Added argument 'zooms' to the constructor of ChromosomeExplorer.
+#   Added methods get- and setZooms().
 # 2008-06-05
 # o Made updateSamplesFile(), writeAxesLayers(), writeGridHorizontalLayers(),
 #   writeCytobandLayers(), writeRegions(), setup(), process() parallel safe.

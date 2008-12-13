@@ -812,3 +812,5 @@ getDesignMatrix.LinearModelProbeSequenceNormalization
   setListOfPriors.MultiArrayUnitModel updatePositions
   updatePositions.AromaCellPositionFile
 findUnitsTodo.AlleleSummation
+getZooms getZooms.ChromosomeExplorer setZooms
+  setZooms.ChromosomeExplorer

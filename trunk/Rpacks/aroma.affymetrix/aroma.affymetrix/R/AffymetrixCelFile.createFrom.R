@@ -36,7 +36,7 @@
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), methods=c("copy", "create"), clear=FALSE, ..., verbose=TRUE) {
+setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), methods=c("copy", "create"), clear=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -232,6 +232,8 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
 
 ############################################################################
 # HISTORY:
+# 2008-12-12
+# o createFrom() for AffymetrixCelFile had verbose=TRUE as default.
 # 2007-09-16
 # o Made createFrom() fail safe, that is, the destination file will not
 #   be created unless it is complete.  This is done by first create/writing

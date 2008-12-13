@@ -199,14 +199,16 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
 
   nbrOfArrays <- nbrOfArrays(inputSet);
   for (aa in seq(length=nbrOfArrays)) {
-    verbose && enter(verbose, sprintf("Array #%d of %d", aa, nbrOfArrays));
     inputFile <- getFile(inputSet, aa);
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", aa, getName(inputFile), nbrOfArrays));
     outputFile <- getFile(outputSet, aa);
 
     if (length(otherUnits) > 0) {
       verbose && enter(verbose, "Copying signals for non-SNP units");
       if (is.null(otherUgcMap)) {
-        otherUgcMap <- getUnitGroupCellMap(inputFile, units=otherUnits);
+        verbose && enter(verbose, "Getting (unit, group, cell) map for non-SNPs");
+        otherUgcMap <- getUnitGroupCellMap(inputFile, units=otherUnits, verbose=less(verbose,5));
+        verbose && exit(verbose);
       }
       cells <- otherUgcMap[,"cell"];
       if (length(cells) > 0) {
@@ -225,9 +227,11 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
     }
 
     if (length(snps) > 0) {
-      verbose && enter(verbose, "Summing allele signals for SNP units");
+      verbose && enter(verbose, "Combining allele signals for SNP units");
       if (is.null(snpUgcMap)) {
-        snpUgcMap <- getUnitGroupCellMap(inputFile, units=snps);
+        verbose && enter(verbose, "Getting (unit, group, cell) map for SNPs");
+        snpUgcMap <- getUnitGroupCellMap(inputFile, units=snps, verbose=less(verbose, 5));
+        verbose && exit(verbose);
       }
       cells <- snpUgcMap[,"cell"];
       data <- readCel(getPathname(inputFile), indices=cells, 
@@ -293,6 +297,8 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-13
+# o More verbose output.
 # 2008-12-10
 # o Now process() returns immediately if already done.
 # o Now process() only processes non-summed units.

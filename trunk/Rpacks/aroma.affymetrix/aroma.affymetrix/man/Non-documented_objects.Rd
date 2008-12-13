@@ -1579,6 +1579,10 @@
 \alias{updatePositions}
 \alias{updatePositions.AromaCellPositionFile}
 \alias{findUnitsTodo.AlleleSummation}
+\alias{getZooms}
+\alias{getZooms.ChromosomeExplorer}
+\alias{setZooms}
+\alias{setZooms.ChromosomeExplorer}
 
 \description{
   This page contains aliases for all "non-documented" objects that

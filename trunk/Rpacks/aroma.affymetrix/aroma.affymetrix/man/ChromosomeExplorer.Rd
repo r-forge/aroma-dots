@@ -32,10 +32,12 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
 
  }
 
- \usage{ChromosomeExplorer(model=NULL, ..., version=c("3"))}
+ \usage{ChromosomeExplorer(model=NULL, zooms=2^(0:7), ..., version=c("3"))}
 
  \arguments{
    \item{model}{A \code{\link{CopyNumberChromosomalModel}} object.}
+   \item{zooms}{An positive \code{\link[base]{integer}} \code{\link[base]{vector}} specifying for which zoom
+    levels the graphics should be generated.}
    \item{...}{Not used.}
    \item{version}{The version of the Explorer HTML/Javascript generated/used.}
  }
@@ -49,9 +51,11 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
  \tab \code{\link[aroma.affymetrix:getModel.ChromosomeExplorer]{getModel}} \tab Gets the model.\cr
  \tab \code{getNames} \tab  -\cr
  \tab \code{getPath} \tab  -\cr
+ \tab \code{getZooms} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:process.ChromosomeExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
  \tab \code{\link[aroma.affymetrix:setArrays.ChromosomeExplorer]{setArrays}} \tab Sets the arrays.\cr
  \tab \code{setCytoband} \tab  -\cr
+ \tab \code{setZooms} \tab  -\cr
 }
 
 
