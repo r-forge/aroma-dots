@@ -1,11 +1,14 @@
 setMethodS3("getAttributes", "GenericDataFile", function(this, ...) {
   attrs <- this$.attributes;
-  if (is.null(attrs)) {
+  if (length(attrs) == 0) {
     attrs <- list();
   } else {
     # Always return attributes in lexicographic order by names
-    o <- order(names(attrs));
-    attrs <- attrs[o];
+    names <- names(attrs);
+    if (length(names) > 0) {
+      o <- order(names);
+      attrs <- attrs[o];
+    }
   }
   attrs;
 }, protected=TRUE)
@@ -112,6 +115,9 @@ setMethodS3("setAttributesByTags", "GenericDataFile", function(this, tags=getTag
 
 ############################################################################
 # HISTORY:
+# 2008-12-10
+# o BUG FIX: getAttributes() for GenericDataFile:s would give an error
+#   if there were no attributes.
 # 2007-05-09
 # o Moved all attribute features from AffymetrixFile to GenericDataFile.
 # 2007-03-06
