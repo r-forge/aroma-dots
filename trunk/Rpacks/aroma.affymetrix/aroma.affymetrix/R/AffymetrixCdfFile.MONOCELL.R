@@ -585,13 +585,14 @@ setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, ...) {
 # equals(getMainCdf(getMonocellCdf(cdf), cdf)) == TRUE
 setMethodS3("getMainCdf", "AffymetrixCdfFile", function(this, ...) {
   # Argument 'this':
-  if (!isMonocellCdf(this)) {
-    throw("Cannot get the main CDF, because this CDF is not a monocell CDF: ", getPathname(this));
+  if (!isMonocellCdf(this) & !isUniqueCdf(this)) {
+    throw("Cannot get the main CDF, because this CDF is not a monocell/unique CDF: ", getPathname(this));
   }
 
   chipType <- getChipType(this, fullname=FALSE);
   tags <- getTags(this);
   tags <- setdiff(tags, c("monocell"));
+  tags <- setdiff(tags, c("unique"));
 
   # Try to locate the main CDF  
   cdf <- byChipType(this, chipType=chipType, tags=tags, ...);
