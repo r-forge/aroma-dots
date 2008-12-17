@@ -1590,6 +1590,10 @@
 \alias{getAsteriskTags.HaarSegModel}
 \alias{getFit}
 \alias{getFit.BasePositionNormalization}
+\alias{getAromaCellPositionFile}
+\alias{getAromaCellPositionFile.MatSmoothing}
+\alias{getParameters.MatSmoothing}
+\alias{isDone.MatSmoothing}
 
 \description{
   This page contains aliases for all "non-documented" objects that

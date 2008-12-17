@@ -656,6 +656,8 @@ setMethodS3("getUnitGroupCellMapWithMonocell", "AffymetrixCdfFile", function(thi
 
 ############################################################################
 # HISTORY:
+# 2008-12-15 [MR]
+# o Now getMainCdf() works for "unique" (as well as "monocell") CDFs.
 # 2008-07-22
 # o MEMORY OPTIMIZATION: Now the validation part of createMonocellCdf() for
 #   AffymetrixCdfFile is also sensitive to the 'ram' argument.  The 
