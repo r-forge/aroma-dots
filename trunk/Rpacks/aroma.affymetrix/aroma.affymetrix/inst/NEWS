@@ -2,13 +2,13 @@ Package: aroma.affymetrix
 =========================
 
 Version: 0.9.6.4 [2008-12-17]
+o Added alpha version of the HaarSegModel.
 o Added plotAllelePairs() for AllelicCrosstalkCalibration.
-o Added trial version of AromaCellPositionFile.
+o Added argument 'zooms' to the constructor of ChromosomeExplorer.
+o Now process() of AlleleSummation returns immediately if already done.
 o Added more methods and classes which eventually will allow 
   analysis of Affymetrix tiling arrays.
-o Added argument 'zooms' to the constructor of ChromosomeExplorer.
-o Added alpha version of the HaarSegModel.
-o Now process() of AlleleSummation returns immediately if already done.
+o Added trial version of AromaCellPositionFile.
 o CLEAN UP: createFrom() for AffymetrixCelFile had verbose=TRUE as default.
 o BUG FIX: There was no extractTotalAndFreqB() for CnChipEffectSet, 
   but only for CnChipEffecSet (misspelled). Thanks Pierre Neuvial 
@@ -38,7 +38,7 @@ o Now argument 'targetFunctions' of FragmentLengthNormalization can also
   be "zero", which then specifies a predefined constant target function.
 o Added support for importing probe sequences from Affymetrix BPMAP files
   via the importFromBpMap() for AromaCellSequenceFile.
-o Adding classes and methods in preparation for supporting analysis
+o Added classes and methods in preparation for supporting analysis
   of tiling arrays.
 o Now fitCnProbes() of UnitModel only fits non-fitted CN units.
 o SPEED UP: extractMatrix() of AffymetrixCel{File|Set} is now faster 

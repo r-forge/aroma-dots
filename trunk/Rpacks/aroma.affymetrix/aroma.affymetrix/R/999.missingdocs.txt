@@ -817,3 +817,5 @@ getZooms getZooms.ChromosomeExplorer setZooms
   drawCnRegions.HaarSeg extractCopyNumberRegions.HaarSeg
   extractRawCopyNumbers.HaarSeg fitOne.HaarSegModel
   getAsteriskTags.HaarSegModel getFit getFit.BasePositionNormalization
+getAromaCellPositionFile getAromaCellPositionFile.MatSmoothing
+  getParameters.MatSmoothing isDone.MatSmoothing

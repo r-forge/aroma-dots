@@ -7,13 +7,15 @@
 #  @classhierarchy
 #
 #  This class represents a function for smoothing data with a trimmed mean.
-#
 # }
 #
 # @synopsis
 #
 # \arguments{
-#   \item{probeWindow}{Bandwidth to use.  Effectively the width is 2*probeWindow since it looks probeWindow bases in either direction}
+#   \item{...}{Arguments passed to @see "ProbeLevelTransform".}
+#   \item{design}{}
+#   \item{probeWindow}{Bandwidth to use.  Effectively the width is 
+#      2*probeWindow since it looks probeWindow bases in either direction}
 #   \item{nProbes}{The minimum number of probes to calculate a MAT score for.}
 #   \item{meanTrim}{The amount of trimming of the mean.}
 # }
@@ -68,7 +70,6 @@ setMethodS3("getParameters", "MatSmoothing", function(this, ...) {
 }, private=TRUE)
 
 
-#*/###########################################################################
 setMethodS3("isDone", "MatSmoothing", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -373,7 +374,6 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   verbose && exit(verbose);
   
   invisible(outputDataSet);
-
 })
 
 
@@ -382,4 +382,3 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
 # 2007-03-21
 # o Created from BackgroundCorrection.R.
 ############################################################################
-
