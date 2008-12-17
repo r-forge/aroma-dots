@@ -1583,6 +1583,13 @@
 \alias{getZooms.ChromosomeExplorer}
 \alias{setZooms}
 \alias{setZooms.ChromosomeExplorer}
+\alias{drawCnRegions.HaarSeg}
+\alias{extractCopyNumberRegions.HaarSeg}
+\alias{extractRawCopyNumbers.HaarSeg}
+\alias{fitOne.HaarSegModel}
+\alias{getAsteriskTags.HaarSegModel}
+\alias{getFit}
+\alias{getFit.BasePositionNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that
