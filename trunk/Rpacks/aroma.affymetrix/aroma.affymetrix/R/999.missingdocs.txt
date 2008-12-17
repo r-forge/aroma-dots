@@ -814,3 +814,6 @@ getDesignMatrix.LinearModelProbeSequenceNormalization
 findUnitsTodo.AlleleSummation
 getZooms getZooms.ChromosomeExplorer setZooms
   setZooms.ChromosomeExplorer
+  drawCnRegions.HaarSeg extractCopyNumberRegions.HaarSeg
+  extractRawCopyNumbers.HaarSeg fitOne.HaarSegModel
+  getAsteriskTags.HaarSegModel getFit getFit.BasePositionNormalization

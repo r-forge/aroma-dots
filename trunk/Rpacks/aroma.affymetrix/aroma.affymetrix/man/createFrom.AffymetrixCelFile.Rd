@@ -20,7 +20,7 @@
  Creates a CEL file using another as a template.
 }
 
-\usage{\method{createFrom}{AffymetrixCelFile}(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), methods=c("copy", "create"), clear=FALSE, ..., verbose=TRUE)}
+\usage{\method{createFrom}{AffymetrixCelFile}(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), methods=c("copy", "create"), clear=FALSE, ..., verbose=FALSE)}
 
 \arguments{
  \item{filename, path}{The filename and path of to the CEL

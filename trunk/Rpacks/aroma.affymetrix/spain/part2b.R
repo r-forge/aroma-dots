@@ -18,7 +18,7 @@ print(cdf);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup raw data
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csR <- AffymetrixCelSet$byName("HapMap270,100K,CEU,5trios", cdf=cdf);
+csR <- AffymetrixCelSet$byName("HapMap270,100K,CEU,3trios", cdf=cdf);
 print(csR);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

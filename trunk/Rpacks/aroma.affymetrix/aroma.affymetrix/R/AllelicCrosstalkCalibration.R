@@ -769,6 +769,8 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
     # Already calibrated?
     if (!force && isFile(pathname)) {
       verbose && cat(verbose, "Calibrated data file already exists: ", pathname);
+      # Add test to load array here? See todays error report to
+      # the aroma.affymetrix mailing list. /HB 2008-12-16
     } else {
       setsOfProbes <- getSetsOfProbes(this, verbose=less(verbose, 1));
       verbose && cat(verbose, "setsOfProbes:");
@@ -798,9 +800,9 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       fits <- vector("list", nbrOfPairs);
       names(fits) <- basepairs;
       verbose && enter(verbose, "Fitting calibration model");
-      for (kk in seq_len(nbrOfPairs)) {
-        name <- basepairs[kk];
-        verbose && enter(verbose, sprintf("Allele probe-pair group #%d ('%s') of %d", kk, name, nbrOfPairs));
+      for (pp in seq_len(nbrOfPairs)) {
+        name <- basepairs[pp];
+        verbose && enter(verbose, sprintf("Allele probe-pair group #%d ('%s') of %d", pp, name, nbrOfPairs));
         basepair <- unlist(strsplit(name, split=""));
         idx <- setsOfProbes$snps[[name]];
 
@@ -843,7 +845,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         gc <- gc();
 
         verbose && exit(verbose);
-      } # for (kk in ...)
+      } # for (pp in seq_len(nbrOfPairs))
       verbose && exit(verbose);
 
 
@@ -852,7 +854,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       ns <- sapply(fits, FUN=function(fit) fit$dimData[1]);
 
-      # Alt 1) Weighted average of all offset estimates
+      # Alt (1) Weighted average of all offset estimates
       w <- ns / sum(ns);
       origins <- sapply(fits, FUN=function(fit) fit$origin);
       verbose && cat(verbose, "Estimated origins:");
@@ -887,9 +889,9 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       # Backtransforming (calibrating)
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Backtransforming (calibrating) data");
-      for (kk in seq_len(nbrOfPairs)) {
-        name <- basepairs[kk];
-        verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", kk, name, nbrOfPairs));
+      for (pp in seq_len(nbrOfPairs)) {
+        name <- basepairs[pp];
+        verbose && enter(verbose, sprintf("Allele basepair #%d ('%s') of %d", pp, name, nbrOfPairs));
 
         idx <- setsOfProbes$snps[[name]];
         y <- matrix(yAll[idx], ncol=2, byrow=FALSE);
@@ -907,7 +909,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
         gc <- gc();
 
         verbose && exit(verbose);
-      } # for (kk in ...)
+      } # for (pp in seq_len(nbrOfPairs))
       verbose && exit(verbose);
 
 
@@ -987,7 +989,8 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
       gc <- gc();
       verbose && print(verbose, gc);
       verbose && exit(verbose);
-    }
+    } # if (!force && isFile(pathname))
+ 
 
     # Assert validity of the calibrated data file
     dfC <- newInstance(df, pathname);
@@ -1002,7 +1005,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
     rm(df, dfC);
 
     verbose && exit(verbose);
-  } # for (kk in ...)
+  } # for (kk in seq_len(nbrOfArrays))
   verbose && exit(verbose);
 
   # Garbage collect
@@ -1219,6 +1222,11 @@ setMethodS3("getDataPairs", "AllelicCrosstalkCalibration", function(this, array,
 
 ############################################################################
 # HISTORY:
+# 2008-12-17
+# o process() had a nested for loop with the same iteration variable 'kk'
+#   was used for in the inner and the outer loop.  I was surprised to find
+#   that this worked and is valid in R, cf. help(for).  However, for 
+#   readability I've changed it to use to 'kk' and 'pp'.
 # 2008-12-10
 # o BUG FIX: Now process() avoids sets of pairs with too few probe pairs.
 #   This could happen because of the new getSetsOfProbes() working off

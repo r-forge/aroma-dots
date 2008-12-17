@@ -197,7 +197,13 @@ genotypes[freqB < 1/3] <- "AA";
 genotypes[freqB > 2/3] <- "BB";
 
 cols <- c(AA="red", BB="green", AB="blue");
-plot(log2(t(theta)), col=cols[genotypes], pch=19, xlim=c(0,15), ylim=c(0,15));
+xlim <- c(0,15);
+xlab <- expression(log2(theta[A]));
+ylab <- expression(log2(theta[B]));
+plot(log2(t(theta)), col=cols[genotypes], pch=19, xlim=xlim, ylim=xlim, xlab=xlab, ylab=ylab);
+title(main=getUnitNames(cdf, units=unit));
+
+stop()
 
 # Easier way to get freqB estimates
 data <- extractTotalAndFreqB(ces, units=unit, drop=TRUE);
@@ -212,7 +218,11 @@ freqB <- extractTotalAndFreqB(ces, units=unit, drop=TRUE)["freqB",];
 genotypes <- rep("AB", length(freqB));
 genotypes[freqB < 1/3] <- "AA";
 genotypes[freqB > 2/3] <- "BB";
-plot(log2(t(theta)), col=cols[genotypes], pch=19, xlim=c(0,15), ylim=c(0,15));
+cols <- c(AA="red", BB="green", AB="blue");
+xlim <- c(5,15);
+xlab <- expression(log2(theta[A]));
+ylab <- expression(log2(theta[B]));
+plot(log2(t(theta)), col=cols[genotypes], pch=19, xlim=xlim, ylim=xlim, xlab=xlab, ylab=ylab);
 title(main=getUnitNames(cdf, units=unit));
 
 ceR <- getAverageFile(ces);
@@ -302,7 +312,7 @@ plot(pos, freqB, ylim=c(0,1), pch=19);
 plot(density(freqB[pos < 45e6], adjust=0.3), col="blue", lwd=2);
 lines(density(freqB[pos > 45e6], adjust=0.3), col="red", lwd=2);
 
-Clear deletion
+# Clear deletion
 array <- indexOf(cesN, "GSM226876");
 ce <- getFile(cesN, array);
 units <- getUnitsOnChromosome(gi, 5);
