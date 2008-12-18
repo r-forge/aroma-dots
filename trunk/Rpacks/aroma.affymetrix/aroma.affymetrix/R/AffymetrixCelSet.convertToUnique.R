@@ -90,7 +90,7 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Reading values according to standard CDF");
       df <- getFile(this, kk);
-      data <- readCelUnits(getPathname(df), cdf=cdfStandard);
+      data <- readCelUnits(getPathname(df), cdf=cdfStandard, dropArrayDim=TRUE);
       hdr <- readCelHeader(getPathname(df));
       verbose && exit(verbose);
 
