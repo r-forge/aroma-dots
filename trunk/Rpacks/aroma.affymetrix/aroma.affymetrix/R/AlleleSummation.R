@@ -144,7 +144,7 @@ setMethodS3("getChipEffectSetClass", "AlleleSummation", function(static, ...) {
 }, static=TRUE, private=TRUE)
 
 
-setMethodS3("process", "AlleleSummation", function(this, ...) {
+setMethodS3("process", "AlleleSummation", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -297,6 +297,9 @@ setMethodS3("process", "AlleleSummation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-18
+# o BUG FIX: process() of AlleleSummation used verbose but had no such
+#   argument causing it to use the global one.
 # 2008-12-13
 # o More verbose output.
 # 2008-12-10
