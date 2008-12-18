@@ -169,7 +169,7 @@ setMethodS3("readUnits", "MultiArrayUnitModel", function(this, units=NULL, ..., 
 
 
   ds <- getDataSet(this);
-  verbose && enter(verbose, "Reading probe intensities from ", length(ds), " ar	rays");
+  verbose && enter(verbose, "Reading probe intensities from ", length(ds), " arrays");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the CDF cell indices
