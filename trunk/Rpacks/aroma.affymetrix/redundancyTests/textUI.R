@@ -124,7 +124,10 @@ textSelectFile <- function(path=".", pattern="[^~]$", ..., history=FALSE) {
     lastPath <- path;
 
   while(!isFile(path)) {
-    pathHistory <- c(pathHistory, path);
+    n <- length(pathHistory);
+    if (n == 0 || (pathHistory[n] != path)) {
+      pathHistory <- c(pathHistory, path);
+    }
     path <- Arguments$getReadablePath(path);
 
     paths <- list.files(pattern=pattern, path=path, full.names=TRUE);
@@ -169,6 +172,8 @@ print(lastPath);
 
 ############################################################################
 # HISTORY: 
+# 2008-12-17
+# o Now the tail of history of menu paths is unique.
 # 2008-12-01
 # o BUG FIX: Used getReadablePathname() instead of getReadablePath().
 # 2007-10-09
