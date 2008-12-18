@@ -99,6 +99,7 @@ theta0[,1,] <- senseThetaA(eSet);
 theta0[,2,] <- senseThetaB(eSet);
 theta0[,3,] <- antisenseThetaA(eSet);
 theta0[,4,] <- antisenseThetaB(eSet);
+dimnames(theta0) <- list(NULL, NULL, NULL);
 dimnames(theta0)[[1]] <- featureNames(eSet);
 dimnames(theta0)[[3]] <- getNames(csR);
 
@@ -111,6 +112,8 @@ stopifnot(identical(dimnames(theta), dimnames(theta0)));
 
 # Assert that the estimates are very similar
 tol <- 1e-4;
-stopifnot(all.equal(theta, theta0, tolerance=tol));
+res <- all.equal(theta, theta0, tolerance=tol);
+print(res);
+stopifnot(res);
 
 
