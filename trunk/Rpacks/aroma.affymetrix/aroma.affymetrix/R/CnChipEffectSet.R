@@ -120,7 +120,7 @@ setMethodS3("inferParameters", "CnChipEffectSet", function(this, ..., verbose=FA
       verbose && str(verbose, units);
       # Infer parameters from 'intensities'
       values <- readCelUnits(cePathname, units=units, 
-                                    readIntensities=TRUE, readStdvs=FALSE);
+               readIntensities=TRUE, readStdvs=FALSE, dropArrayDim=TRUE);
       # Put quartets by columns
       values <- matrix(unlist(values, use.names=FALSE), nrow=4);
       # Keep only estimated units

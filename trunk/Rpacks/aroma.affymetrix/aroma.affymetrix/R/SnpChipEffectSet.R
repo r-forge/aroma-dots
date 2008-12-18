@@ -123,7 +123,7 @@ setMethodS3("inferParameters", "SnpChipEffectSet", function(this, ..., verbose=F
       verbose && str(verbose, units);
       # Infer parameters from 'intensities'
       values <- readCelUnits(cePathname, units=units, 
-                                    readIntensities=TRUE, readStdvs=FALSE);
+                   readIntensities=TRUE, readStdvs=FALSE, dropArrayDim=TRUE);
       rm(units);
   
       # Put quartets by columns

@@ -591,7 +591,7 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
   # Retrieve data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   suppressWarnings({
-    res <- readCelUnits(this$.pathname, cdf=cdf, ...);
+    res <- readCelUnits(this$.pathname, cdf=cdf, dropArrayDim=TRUE, ...);
   })
 
   res;

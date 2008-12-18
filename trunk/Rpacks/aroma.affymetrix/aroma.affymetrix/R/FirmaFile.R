@@ -73,7 +73,7 @@ setMethodS3("findUnitsTodo", "FirmaFile", function(this, units=NULL, ..., force=
   # Read pixels from each unit
   verbose && enter(verbose, "Reading data for these ", length(units), " units");
 #  value <- readCelUnits(getPathname(this), units=units, readIntensities=FALSE, 
-#                        readStdvs=FALSE, readPixels=TRUE);
+#                        readStdvs=FALSE, readPixels=TRUE, dropArrayDim=TRUE);
 
   value <- readUnits(this, units=units, readIntensities=FALSE, 
                         readStdvs=FALSE, readPixels=TRUE, force=force);

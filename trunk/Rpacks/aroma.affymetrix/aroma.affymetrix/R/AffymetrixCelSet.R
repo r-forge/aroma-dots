@@ -1035,7 +1035,7 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   }
 
   res <- readCelUnits(pathnames, cdf=cdfUnits, readStdvs=FALSE, 
-                                                  readPixels=FALSE, ...);
+                              readPixels=FALSE, dropArrayDim=FALSE, ...);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Store read units in cache
@@ -1109,7 +1109,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
   verbose && enter(verbose, "Calling readCelUnits() for ", 
                                               length(pathnames), " files");
   if (is.list(units)) {
-    res <- readCelUnits(pathnames, cdf=units, ...);
+    res <- readCelUnits(pathnames, cdf=units, dropArrayDim=FALSE, ...);
   } else {
     # Always ask for CDF information from the CDF object!
     verbose && enter(verbose, "Retrieving CDF unit information");
@@ -1121,7 +1121,7 @@ setMethodS3("readUnits", "AffymetrixCelSet", function(this, units=NULL, ..., for
     verbose && str(verbose, cdfList[1]);
     verbose && exit(verbose);
     verbose && enter(verbose, "Retrieving CEL units across samples");
-    res <- readCelUnits(pathnames, cdf=cdfList, ...);
+    res <- readCelUnits(pathnames, cdf=cdfList, dropArrayDim=FALSE, ...);
     verbose && exit(verbose);
   }
   verbose && exit(verbose);

@@ -748,7 +748,7 @@ setMethodS3("readUnits", "CnagCfhSet", function(this, units=NULL, ..., force=FAL
   verbose && enter(verbose, "Calling readCelUnits() for ", 
                                               length(pathnames), " files");
   if (is.list(units)) {
-    res <- readCelUnits(pathnames, cdf=units, ...);
+    res <- readCelUnits(pathnames, cdf=units, dropArrayDim=FALSE, ...);
   } else {
     # Always ask for CDF information from the CDF object!
     verbose && enter(verbose, "Retrieving CDF unit information");
@@ -758,7 +758,7 @@ setMethodS3("readUnits", "CnagCfhSet", function(this, units=NULL, ..., force=FAL
     verbose && str(verbose, cdf[1]);
     verbose && exit(verbose);
     verbose && enter(verbose, "Retrieving CFH units across samples");
-    res <- readCelUnits(pathnames, cdf=cdf, ...);
+    res <- readCelUnits(pathnames, cdf=cdf, dropArrayDim=FALSE, ...);
     verbose && exit(verbose);
   }
   verbose && exit(verbose);

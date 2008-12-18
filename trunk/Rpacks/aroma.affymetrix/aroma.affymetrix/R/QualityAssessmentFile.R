@@ -65,7 +65,7 @@ setMethodS3("findUnitsTodo", "QualityAssessmentFile", function(this, units=NULL,
   # Read 'pixels' from each unit
   verbose && enter(verbose, "Reading data for these ", length(units), " units");
   value <- readCelUnits(getPathname(this), units=units, readIntensities=FALSE, 
-                        readStdvs=FALSE, readPixels=TRUE);
+                        readStdvs=FALSE, readPixels=TRUE, dropArrayDim=TRUE);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Looking for pixels == 0 indicating non-assigned units");
