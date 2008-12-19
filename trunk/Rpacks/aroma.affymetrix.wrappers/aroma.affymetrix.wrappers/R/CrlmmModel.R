@@ -15,7 +15,9 @@ setConstructorS3("CrlmmModel", function(dataSet=NULL, balance=1.5, minLLRforCall
     chipType <- getChipType(dataSet, fullname=FALSE);
 
     # For now, only allow know SNP chip types. /HB 2008-12-07
+    isMappingChipType <- FALSE;
     if (regexpr("^Mapping(10|50|250)K_.*$", chipType) != -1) {
+      isMappingChipType <- TRUE;
     } else if (regexpr("^GenomeWideSNP_(5|6)$", chipType) != -1) {
       throw("Cannot fit CRLMM model: Chip type to be supported: ", chipType);
     } else {
@@ -41,7 +43,8 @@ setConstructorS3("CrlmmModel", function(dataSet=NULL, balance=1.5, minLLRforCall
     balance = balance, 
     minLLRforCalls = minLLRforCalls,
     recalibrate = recalibrate,
-    flavor = flavor
+    flavor = flavor,
+    .isMappingChipType = isMappingChipType
   )
 })
 
@@ -275,7 +278,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   balance <- params$balance;
   minLLRforCalls <- params$minLLRforCalls;
   recalibrate <- params$recalibrate;
-
+  isMappingChipType <- this$.isMappingChipType;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identifying units to process
@@ -410,13 +413,22 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     if (length(index) > 0) {
       verbose && enter(verbose, "Initial SNP calling");
       verbose && str(verbose, index);
-      calls[index,] <- oligo:::getInitialAffySnpCalls(correction, index, sqsClass=class(eSet), verbose=as.logical(verbose));
+      if (isMappingChipType) {
+        calls[index,] <- oligo:::getInitialAffySnpCalls(correction, index, sqsClass=class(eSet), verbose=as.logical(verbose));
+      } else {
+        throw("Not implemented for GWS");
+      }
       verbose && exit(verbose);
     }
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Estimate genotype regions");
-    rparams <- oligo:::getAffySnpGenotypeRegionParams(eSet, calls, correction$fs, subset=index, sqsClass=class(eSet), verbose=as.logical(verbose));
+    if (isMappingChipType) {
+      rparams <- oligo:::getAffySnpGenotypeRegionParams(eSet, calls, correction$fs, subset=index, sqsClass=class(eSet), verbose=as.logical(verbose));
+    } else {
+      M <- thetaA(eSet) - thetaB(eSet);
+      rparams <- getGenotypeRegionParams(M, calls, fs, verbose=as.logical(verbose));
+    }
     verbose && exit(verbose);
 
     priors <- crlmm$priors;
