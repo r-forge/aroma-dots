@@ -28,7 +28,6 @@
 #
 # \value{
 #   Returns the parameter estimates as a named @list with elements:
-#   \itemize{
 #    \item{M}{An estimate of the three vertices defining the genotype
 #      triangle.  These three vertices are describes as an 2x3 @matrix
 #      with column \code{origin}, \code{AA}, and \code{BB}.}
@@ -40,7 +39,6 @@
 #    \item{params}{The parameters used for the fit, i.e. 
 #       \code{alpha}, \code{q}, \code{Q}, and  those passed in \code{...}.}
 #    \item{dimData}{The dimension of the input data.}
-#   }
 # }
 #
 # @examples "../incl/fitMultiDimensionalCone.matrix.Rex"
