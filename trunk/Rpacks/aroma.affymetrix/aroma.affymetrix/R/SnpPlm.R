@@ -20,7 +20,7 @@
 #  @allmethods "public"
 # }
 #
-# \section{Requirments}{
+# \section{Requirements}{
 #   Classes inheriting from this @see "aroma.core::Interface" must provide the following
 #   fields:
 #   \itemize{

@@ -33,7 +33,7 @@
 #   first being merged.
 # }
 #
-# \section{Requirments}{
+# \section{Requirements}{
 #   Classes inheriting from this @see "aroma.core::Interface" must provide the following
 #   fields, in addition to the ones according to @see "SnpPlm":
 #   \itemize{
