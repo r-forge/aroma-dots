@@ -1594,6 +1594,17 @@
 \alias{getAromaCellPositionFile.MatSmoothing}
 \alias{getParameters.MatSmoothing}
 \alias{isDone.MatSmoothing}
+\alias{extractChromosomalDataFrame}
+\alias{extractChromosomalDataFrame.ChipEffectFile}
+\alias{extractChromosomalDataFrame.ChipEffectSet}
+\alias{extractCNT}
+\alias{extractCNT.SnpChipEffectFile}
+\alias{extractCNT.SnpChipEffectSet}
+\alias{getUnitGroupCellArrayMap}
+\alias{getUnitGroupCellArrayMap.ChipEffectFile}
+\alias{writeCNT}
+\alias{writeCNT.SnpChipEffectFile}
+\alias{writeCNT.SnpChipEffectSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

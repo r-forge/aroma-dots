@@ -819,3 +819,9 @@ getZooms getZooms.ChromosomeExplorer setZooms
   getAsteriskTags.HaarSegModel getFit getFit.BasePositionNormalization
 getAromaCellPositionFile getAromaCellPositionFile.MatSmoothing
   getParameters.MatSmoothing isDone.MatSmoothing
+  extractChromosomalDataFrame
+  extractChromosomalDataFrame.ChipEffectFile
+  extractChromosomalDataFrame.ChipEffectSet extractCNT
+  extractCNT.SnpChipEffectFile extractCNT.SnpChipEffectSet
+  getUnitGroupCellArrayMap getUnitGroupCellArrayMap.ChipEffectFile
+  writeCNT writeCNT.SnpChipEffectFile writeCNT.SnpChipEffectSet
