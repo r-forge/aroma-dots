@@ -67,7 +67,7 @@ setMethodS3("justSNPRMA", "AffymetrixCelSet", function(this, ..., normalizeToHap
   
       verbose && enter(verbose, "Loading binary file");
       filename <- sprintf("%sRef.rda", pdPkgName);
-      pathname <- Arguments$getReadablePathname(filename, path=path);
+      pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=TRUE);
       verbose && cat(verbose, "Pathname: ", pathname);
       target <- loadToEnv(pathname)$reference;
       verbose && str(verbose, target);
