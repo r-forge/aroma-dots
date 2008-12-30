@@ -41,8 +41,10 @@ print(csR);
 if (normalizeToHapmap) {
   # Load target from PD package
   pdPkgName <- cleanPlatformName(chipType);
+  path <- system.file("extdata", package=pdPkgName);
   filename <- sprintf("%sRef.rda", pdPkgName);
-  pathname <- system.file("extdata", filename, package=pdPkgName);
+  pathname <- Arguments$getReadablePathname(filename, path=path, 
+                                                    mustExits=TRUE);
   target <- loadToEnv(pathname)$reference;
   refTag <- "HapMapRef";
 } else {
