@@ -27,9 +27,24 @@
 # @author
 #*/###########################################################################
 setConstructorS3("MultiArrayUnitModel", function(...) {
-  extend(UnitModel(...), "MultiArrayUnitModel")
+  this <- extend(UnitModel(...), "MultiArrayUnitModel");
+  validate(this);
+  this;
 }, abstract=TRUE)
 
+
+setMethodS3("validate", "MultiArrayUnitModel", function(this, ...) {
+  ds <- getDataSet(this);
+  if (is.null(ds))
+    return(invisible(TRUE));
+
+  if (nbrOfArrays(ds) < 2) {
+    throw("This ", class(this)[1], " requires at least 2 arrays: ",
+                                                            nbrOfArrays(ds));
+  }
+
+  invisible(TRUE);
+}, protected=TRUE)
 
 
 

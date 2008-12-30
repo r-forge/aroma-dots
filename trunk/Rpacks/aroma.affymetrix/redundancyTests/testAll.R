@@ -54,7 +54,7 @@ for (..chipType in ..chipTypes) {
       source(pathname, echo=TRUE);
     }, error = function(ex) {
       cat("************************************************\n");
-      cat("**  ERROR  ERROR  ERROR  ERROR  ERROR  ERROR  **\n");
+      cat("** ", rep(c(" ER", "ROR "), times=6), " **\n", sep="");
       print(ex);
       cat("************************************************\n");
     });
