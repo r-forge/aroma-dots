@@ -162,7 +162,7 @@ setMethodS3("verify", "UgpGenomeInformation", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("readDataFrame", "UgpGenomeInformation", function(this, nrow=NULL, ..., verbose=FALSE) {
+setMethodS3("readDataFrame", "UgpGenomeInformation", function(this, units=NULL, nrow=NULL, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -170,21 +170,25 @@ setMethodS3("readDataFrame", "UgpGenomeInformation", function(this, nrow=NULL, .
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Reading data from UGP file");
 
+  verbose && enter(verbose, "Reading data from UGP file");
   ugp <- getAromaUgpFile(this);
   verbose && print(verbose, ugp, level=-20);
 
-  if (is.null(nrow)) {
-    verbose && enter(verbose, "Reading all ", nbrOfUnits(ugp), " units");
-    res <- ugp[,,drop=FALSE];
-    verbose && exit(verbose);
-  } else {
-    units <- 1:nrow;
-    verbose && enter(verbose, "Reading ", length(units), " units");
-    res <- ugp[units,,drop=FALSE];
-    verbose && exit(verbose);
+  # Validate 'units'
+  if (is.null(units)) {
+    if (is.null(nrow)) {
+      units <- 1:nbrOfUnits(ugp);
+    } else {
+      units <- 1:nrow;
+    }
   }
+  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(ugp)));
+
+
+  verbose && enter(verbose, "Reading ", length(units), " units");
+  res <- ugp[units,,drop=FALSE];
+  verbose && exit(verbose);
 
   colnames(res) <- c("chromosome", "physicalPosition");
   verbose && str(verbose, res);
@@ -192,6 +196,7 @@ setMethodS3("readDataFrame", "UgpGenomeInformation", function(this, nrow=NULL, .
 
   res;
 })
+
 
 setMethodS3("getDataColumns", "UgpGenomeInformation", function(this, ...) {
   c("chromosome", "physicalPosition");
@@ -289,6 +294,8 @@ setMethodS3("getUnitsOnChromosome", "UgpGenomeInformation", function(this, ...) 
 
 ############################################################################
 # HISTORY:
+# 2008-12-29
+# o Added argument 'units' to readDataFrame().
 # 2008-07-23
 # o Now isCompatibleWithCdf() adds attribute 'reason' to FALSE explaining 
 #   why the object is not compatible.

@@ -227,46 +227,6 @@ setMethodS3("getDataColumns", "GenomeInformation", function(this, ...) {
 
 
 ###########################################################################/**
-# @RdocMethod getUnitIndices
-#
-# @title "Gets unit indices ordered along the chromosome"
-#
-# \description{
-#   @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{...}{Arguments passed to @seemethod "getData".}
-#  \item{na.rm}{If @TRUE, non-defined unit indices are excluded, otherwise
-#      not.}
-# }
-#
-# \value{
-#   Returns an @integer @vector.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "getData".
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRUE) {
-  df <- getData(this, fields="chromosome", ...);
-  df <- rownames(df);
-  suppressWarnings({  # Suppress warnings about NAs
-    df <- as.integer(df);
-  })
-  if (na.rm)
-    df <- df[!is.na(df)];
-  df;
-})
-
-
-###########################################################################/**
 # @RdocMethod getPositions
 #
 # @title "Gets the physical positions for a set of units"
@@ -408,8 +368,54 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 })
 
 
+
+###########################################################################/**
+# @RdocMethod getUnitIndices
+#
+# @title "Gets unit indices ordered along the chromosome"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Arguments passed to @seemethod "getData".}
+#  \item{na.rm}{If @TRUE, non-defined unit indices are excluded, otherwise
+#      not.}
+# }
+#
+# \value{
+#   Returns an @integer @vector.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seemethod "getData".
+#   @seeclass
+# }
+#*/###########################################################################
+setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRUE) {
+  df <- getData(this, fields="chromosome", ...);
+  df <- rownames(df);
+  suppressWarnings({  # Suppress warnings about NAs
+    df <- as.integer(df);
+  })
+  if (na.rm)
+    df <- df[!is.na(df)];
+  df;
+}, protected=TRUE)
+
+
+
+
 ############################################################################
 # HISTORY:
+# 2008-12-29
+# o BUG (not fixed): getUnitIndices() is not working correctly.  However,
+#   it is not used anywhere, so we might drop it.
 # 2008-07-20
 # o Updated the following methods to preallocate matrixes with the correct
 #   data type to avoid coercing later: getChromosomeStats().
@@ -461,4 +467,3 @@ setMethodS3("plotDensity", "GenomeInformation", function(this, chromosome, ..., 
 # 2005-10-31
 # o Created.
 ############################################################################  
- 

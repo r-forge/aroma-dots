@@ -114,7 +114,7 @@ setMethodS3("extractChromosomalDataFrame", "ChipEffectFile", function(this, unit
 
 
 # The exact same code can be used for both ChipEffectFile and ChipEffectSet.
-setMethodS3("extractChromosomalDataFrame", "ChipEffectSet", extractChromosomalDataFrame.ChipEffectSet);
+setMethodS3("extractChromosomalDataFrame", "ChipEffectSet", extractChromosomalDataFrame.ChipEffectFile);
 
 
 ############################################################################
