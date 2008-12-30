@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.6.4 [2008-12-17]
+Version: 0.9.6.5 [2008-12-29]
 o Added alpha version of the HaarSegModel.
 o Added plotAllelePairs() for AllelicCrosstalkCalibration.
 o Added argument 'zooms' to the constructor of ChromosomeExplorer.
@@ -9,6 +9,9 @@ o Now process() of AlleleSummation returns immediately if already done.
 o Added more methods and classes which eventually will allow 
   analysis of Affymetrix tiling arrays.
 o Added trial version of AromaCellPositionFile.
+o Added extractCNT() and writeCNT() for SnpChipEffect{File|Set}, which
+  exports CNT data files that can be imported by Affymetrix GTC Browser.
+o Added argument 'units' to readDataFrame() to GenomeInformation.
 o CLEAN UP: createFrom() for AffymetrixCelFile had verbose=TRUE as default.
 o BUG FIX: There was no extractTotalAndFreqB() for CnChipEffectSet, 
   but only for CnChipEffecSet (misspelled). Thanks Pierre Neuvial 

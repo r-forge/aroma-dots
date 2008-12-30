@@ -159,7 +159,7 @@ setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("readDataFrame", "DChipGenomeInformation", function(this, ...) {
+setMethodS3("readDataFrame", "DChipGenomeInformation", function(this, units=NULL, ..., .orderByUnits=FALSE) {
   readFcns <- list(
     "^GenomeWideSNP"  = readGenomeWideSNP,
     "^Mapping10K"     = read50KHg17,
@@ -175,6 +175,13 @@ setMethodS3("readDataFrame", "DChipGenomeInformation", function(this, ...) {
   }, error = function(ex) {
     print(ex);
   })
+
+  # Validate 'units'?
+  if (!is.null(units)) {
+    # Locate the CDF
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
+    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+  }  
 
   # Try to read with the designated read function.
   res <- NULL;
@@ -206,6 +213,21 @@ setMethodS3("readDataFrame", "DChipGenomeInformation", function(this, ...) {
 
   if (is.null(res)) {
     throw("Cannot read dChip annotation data.  No predefined read function available for this chip type: ", chipType);
+  }
+
+  # Extract units of interest?
+  if (.orderByUnits) {
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
+    units <- 1:nbrOfUnits(cdf);
+  }
+
+  if (!is.null(units)) {
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
+    unitNames <- getUnitNames(cdf, units=units);
+    idxs <- match(unitNames, res[,1]);
+    rm(unitNames);
+    res <- res[idxs,,drop=FALSE];
+    rm(idxs);
   }
 
   res;
@@ -306,6 +328,8 @@ setMethodS3("readMouse430", "DChipGenomeInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-29
+# o Added argument 'units' to readDataFrame().
 # 2007-08-12
 # o Added support for dChip's 'snp6.0 genome info hg18.txt' file.  Note,
 #   this only contains informations for SNPs, not CN probes.
