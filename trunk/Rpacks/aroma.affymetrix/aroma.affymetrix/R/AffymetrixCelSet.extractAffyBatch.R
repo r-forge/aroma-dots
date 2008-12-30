@@ -59,7 +59,7 @@ setMethodS3("extractAffyBatch", "AffymetrixCelSet", function(this, ..., verbose=
     res <- require(cdfPkgName, character.only=TRUE);
   });
   if (!res) {
-    warning("CDF enviroment package '", cdfPkgName, "' not installed. The 'affy' package will later try to download from Bioconductor and install it.");
+    warning("CDF enviroment package '", cdfPkgName, "' not installed. The 'affy' package will later try to download it from Bioconductor and install it.");
   }
 
   filenames <- getPathnames(this);
