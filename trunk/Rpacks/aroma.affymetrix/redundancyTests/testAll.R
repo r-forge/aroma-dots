@@ -40,7 +40,7 @@ names(..pathnames) <- basename(paths);
                  "GenomeWideSNP_6");
 
 ..chipTypes <- rev(..chipTypes);
-..chipTypes <- ..chipTypes[1];
+#..chipTypes <- ..chipTypes[1];
 
 if (!is.null(args$chipTypes)) {
   ..chipTypes <- trim(unlist(strsplit(args$chipTypes, split=",")));
@@ -50,7 +50,8 @@ cat("Processing chip types:\n");
 print(..chipTypes);
 
 for (..chipType in ..chipTypes) {
-  ..pathnamesT <- ..pathnames[[..chipType]];
+  keep <- (names(..pathnames) == ..chipType);
+  ..pathnamesT <- unlist(..pathnames[keep], use.names=FALSE);
   for (pathname in ..pathnamesT) {
     if (regexpr("hetero", pathname) != -1)
       next;
