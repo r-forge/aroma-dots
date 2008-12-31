@@ -18,7 +18,8 @@ args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, excludeEnvVars=TRUE);
 print(args);
 
 paths <- c();
-allPaths <- c("testScripts/replication/chipTypes", "testScripts/system/chipTypes");
+allPaths <- c("testScripts/replication/chipTypes", 
+              "testScripts/system/chipTypes");
 for (path in allPaths) {
   path <- Arguments$getReadablePath(path, mustExist=TRUE);
   paths0 <- list.files(path=path, full.names=TRUE);
@@ -27,7 +28,7 @@ for (path in allPaths) {
 
 ..pathnames <- lapply(paths, FUN=list.files, pattern="[.]R$", full.names=TRUE);
 names(..pathnames) <- basename(paths);
-..pathnames <- ..pathnames[names(..pathnames)];
+#..pathnames <- ..pathnames[names(..pathnames)];
 
 ..chipTypes <- c("Mapping10K_Xba142",
                  "Test3",
@@ -52,6 +53,8 @@ print(..chipTypes);
 for (..chipType in ..chipTypes) {
   keep <- (names(..pathnames) == ..chipType);
   ..pathnamesT <- unlist(..pathnames[keep], use.names=FALSE);
+  cat("PATHNAMES CHIPTYPE: \n");
+  print(..pathnamesT);
   for (pathname in ..pathnamesT) {
     if (regexpr("hetero", pathname) != -1)
       next;
