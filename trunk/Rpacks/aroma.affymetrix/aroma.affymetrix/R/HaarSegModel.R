@@ -87,6 +87,14 @@ setMethodS3("fitOne", "HaarSegModel", function(this, data, chromosome, ..., verb
   nbrOfUnits <- nrow(data);
   chipTypes <- getChipTypes(this);
 
+  verbose && enter(verbose, "Drop non-finite data points");
+  ok <- (is.finite(data[,"x"]) & is.finite(data[,"M"]));
+  verbose && cat(verbose, "Is finite:");
+  verbose && summary(verbose, ok);
+  data <- data[ok,,drop=FALSE];
+  rm(ok);
+  verbose && exit(verbose);
+
   # Order data along chromosome
   o <- order(data[,"x"]);
   data <- data[o,,drop=FALSE];
@@ -212,6 +220,8 @@ setMethodS3("extractCopyNumberRegions", "HaarSeg", function(object, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2007-12-31
+# o Removing non-finite data points before passing to haarSeg().
 # 2007-12-17
 # o Now using the HaarSeg package (put together by HB).
 # 2007-12-16
