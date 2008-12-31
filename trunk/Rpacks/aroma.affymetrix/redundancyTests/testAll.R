@@ -40,6 +40,7 @@ names(..pathnames) <- basename(paths);
                  "GenomeWideSNP_6");
 
 ..chipTypes <- rev(..chipTypes);
+..chipTypes <- ..chipTypes[1];
 
 if (!is.null(args$chipTypes)) {
   ..chipTypes <- trim(unlist(strsplit(args$chipTypes, split=",")));
@@ -49,9 +50,8 @@ cat("Processing chip types:\n");
 print(..chipTypes);
 
 for (..chipType in ..chipTypes) {
-  nbrOfTests <- length(..pathnames[[..chipType]]);
-  for (kk in seq(length=nbrOfTests)) {
-    pathname <- ..pathnames[[..chipType]][[kk]];
+  ..pathnamesT <- ..pathnames[[..chipType]];
+  for (pathname in ..pathnamesT) {
     if (regexpr("hetero", pathname) != -1)
       next;
     if (regexpr("expectile", pathname) != -1)
@@ -60,15 +60,17 @@ for (..chipType in ..chipTypes) {
     cat("** PATHNAME: ", pathname, "\n", sep="");
     tryCatch({
       source(pathname, echo=TRUE);
+      cat("** PATHNAME DONE: ", pathname, "\n", sep="");
     }, error = function(ex) {
       cat("************************************************\n");
       cat("** ", rep(c(" ER", "ROR "), times=6), " **\n", sep="");
       print(ex);
       cat("************************************************\n");
+      cat("** PATHNAME FAILED: ", pathname, "\n", sep="");
     });
     
-    rm(list=setdiff(ls(), 
-        c("kk", "..chipType", "..chipTypes", "pathname", "..pathnames")));
+    rm(list=setdiff(ls(), c("..chipType", "..chipTypes", 
+                    "pathname", "..pathnames", "..pathnamesT")));
     gc();
   }
 }
