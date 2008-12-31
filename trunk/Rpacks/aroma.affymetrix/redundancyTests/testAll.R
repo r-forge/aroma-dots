@@ -14,7 +14,7 @@ options("R.cache::rootPath"="~/.Rcache,scratch");
 options("R.cache::touchOnLoad"=TRUE);
 
 
-args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, exludeEnvVars=TRUE);
+args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, excludeEnvVars=TRUE);
 print(args);
 
 paths <- c();
@@ -29,10 +29,15 @@ for (path in allPaths) {
 names(..pathnames) <- basename(paths);
 ..pathnames <- ..pathnames[names(..pathnames)];
 
-..chipTypes <- c("Mapping10K_Xba142", "Test3",
-                 "HG-U133_Plus_2", "Mapping50K_Hind240,Xba240",
-                 "Mapping250K_Nsp,Sty", "HuEx-1_0-st-v2",
-                 "GenomeWideSNP_6", "GenomeWideSNP_5");
+..chipTypes <- c("Mapping10K_Xba142",
+                 "Test3",
+                 "HG-U133_Plus_2",
+                 "Mapping50K_Hind240,Xba240",
+                 "Hs_PromPR_v02",
+                 "Mapping250K_Nsp,Sty",
+                 "HuEx-1_0-st-v2",
+                 "GenomeWideSNP_5",
+                 "GenomeWideSNP_6");
 
 ..chipTypes <- rev(..chipTypes);
 
@@ -49,7 +54,10 @@ for (..chipType in ..chipTypes) {
     pathname <- ..pathnames[[..chipType]][[kk]];
     if (regexpr("hetero", pathname) != -1)
       next;
+    if (regexpr("expectile", pathname) != -1)
+      next;
 
+    cat("** PATHNAME: ", pathname, "\n", sep="");
     tryCatch({
       source(pathname, echo=TRUE);
     }, error = function(ex) {
