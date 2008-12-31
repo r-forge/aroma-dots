@@ -1,7 +1,8 @@
 Package: aroma.core
 ===================
 
-Version: 0.9.6.2 [2008-12-10]
+Version: 0.9.6.3 [2008-12-30]
+o Added getMaxLengthRepeats() to AromaCellSequenceFile.
 o BUG FIX: groupBySnpNucleotides() of AromaCellSequenceFile would return
   an empty element 'missing' for some chip types, e.g. Mapping10K_Xba142.
   Now that empty elements are dropped.
