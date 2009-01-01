@@ -65,6 +65,20 @@ setConstructorS3("AvgPlm", function(..., flavor=c("median", "mean")) {
 })
 
 
+setMethodS3("validate", "AvgPlm", function(this, ...) {
+  ds <- getDataSet(this);
+  if (is.null(ds))
+    return(invisible(TRUE));
+
+  if (nbrOfArrays(ds) < 1) {
+    throw("This ", class(this)[1], " requires at least 1 array: ",
+                                                         nbrOfArrays(ds));
+  }
+
+  invisible(TRUE);
+}, protected=TRUE)
+
+
 setMethodS3("getAsteriskTags", "AvgPlm", function(this, collapse=NULL, ...) {
   # Returns 'PLM[,<shift>]'
   tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
@@ -286,6 +300,10 @@ setMethodS3("getCalculateResidualsFunction", "AvgPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-31
+# o Added an ad hoc validate() to AvgPlm to overriden the default test
+#   in MultiarrayUnitModel (yes, because it is still not a true single
+#   array implementation).
 # 2007-10-06
 # o Added getAsteriskTag() to AvgPlm.
 # 2007-09-16
