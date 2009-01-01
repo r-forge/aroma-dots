@@ -30,7 +30,7 @@ print(acc);
 
 csC <- process(acc, verbose=log);
 print(csC);
-stopifnot(identical(getNames(csC), getNames(cs)));
+stopifnot(identical(getNames(csC), getNames(csR)));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
