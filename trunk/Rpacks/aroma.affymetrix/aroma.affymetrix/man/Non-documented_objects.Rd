@@ -1605,6 +1605,8 @@
 \alias{writeCNT}
 \alias{writeCNT.SnpChipEffectFile}
 \alias{writeCNT.SnpChipEffectSet}
+\alias{validate.AvgPlm}
+\alias{validate.MultiArrayUnitModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that
