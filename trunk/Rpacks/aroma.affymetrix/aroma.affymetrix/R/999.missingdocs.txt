@@ -825,3 +825,4 @@ getAromaCellPositionFile getAromaCellPositionFile.MatSmoothing
   extractCNT.SnpChipEffectFile extractCNT.SnpChipEffectSet
   getUnitGroupCellArrayMap getUnitGroupCellArrayMap.ChipEffectFile
   writeCNT writeCNT.SnpChipEffectFile writeCNT.SnpChipEffectSet
+  validate.AvgPlm validate.MultiArrayUnitModel
