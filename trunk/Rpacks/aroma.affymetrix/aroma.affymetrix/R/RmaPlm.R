@@ -68,10 +68,12 @@ setConstructorS3("RmaPlm", function(..., flavor=c("affyPLM", "affyPLMold", "olig
   # Argument 'flavor':
   flavor <- match.arg(flavor);
 
-  extend(ProbeLevelModel(...), "RmaPlm",
+  this <- extend(ProbeLevelModel(...), "RmaPlm",
     .flavor = flavor,
     treatNAsAs = "weights"
-  )
+  );
+  validate(this);
+  this;
 })
 
 

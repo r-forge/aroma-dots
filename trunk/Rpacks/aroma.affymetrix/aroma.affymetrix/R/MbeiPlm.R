@@ -47,7 +47,9 @@ setConstructorS3("MbeiPlm", function(...) {
     require("affy") || throw("Package 'affy' not loaded.");
   }
 
-  extend(ProbeLevelModel(...), "MbeiPlm")
+  this <- extend(ProbeLevelModel(...), "MbeiPlm");
+  validate(this);
+  this;
 })
 
 

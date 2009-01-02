@@ -57,9 +57,11 @@ setConstructorS3("AffinePlm", function(..., background=TRUE) {
     require("aroma.light") || throw("Package not loaded: aroma.light");
   }
 
-  extend(ProbeLevelModel(...), "AffinePlm",
+  this <- extend(ProbeLevelModel(...), "AffinePlm",
     background = background
-  )
+  );
+  validate(this);
+  this;
 })
 
 

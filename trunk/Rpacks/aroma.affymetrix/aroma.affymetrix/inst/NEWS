@@ -1,7 +1,7 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.6.6 [2008-12-30]
+Version: 0.9.6.6 [2009-01-02]
 o Added alpha version of the HaarSegModel.
 o Added plotAllelePairs() for AllelicCrosstalkCalibration.
 o Added argument 'zooms' to the constructor of ChromosomeExplorer.

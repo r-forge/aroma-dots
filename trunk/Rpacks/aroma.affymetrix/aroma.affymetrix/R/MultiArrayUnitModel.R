@@ -27,9 +27,7 @@
 # @author
 #*/###########################################################################
 setConstructorS3("MultiArrayUnitModel", function(...) {
-  this <- extend(UnitModel(...), "MultiArrayUnitModel");
-  validate(this);
-  this;
+  extend(UnitModel(...), "MultiArrayUnitModel");
 }, abstract=TRUE)
 
 

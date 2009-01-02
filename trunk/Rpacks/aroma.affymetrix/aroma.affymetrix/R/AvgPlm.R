@@ -59,9 +59,11 @@ setConstructorS3("AvgPlm", function(..., flavor=c("median", "mean")) {
   # Argument 'flavor':
   flavor <- match.arg(flavor);
 
-  extend(ProbeLevelModel(...), "AvgPlm",
+  this <- extend(ProbeLevelModel(...), "AvgPlm",
     .flavor = flavor
-  )
+  );
+  validate(this);
+  this;
 })
 
 
