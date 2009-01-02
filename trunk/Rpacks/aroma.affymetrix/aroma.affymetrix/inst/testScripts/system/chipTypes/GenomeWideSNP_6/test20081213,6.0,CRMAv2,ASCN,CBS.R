@@ -86,6 +86,5 @@ cbs <- CbsModel(cesT);
 print(cbs);
 
 
-ce <- ChromosomeExplorer(cbs, zooms=2^c(0:5));
-stop();
+ce <- ChromosomeExplorer(cbs, zooms=2^(0:5));
 process(ce, arrays=1:2, chromosomes=18:23, verbose=log);
