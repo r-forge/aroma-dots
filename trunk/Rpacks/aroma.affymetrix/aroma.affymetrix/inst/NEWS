@@ -14,6 +14,8 @@ o Added extractCNT() and writeCNT() for SnpChipEffect{File|Set}, which
 o Added argument 'units' to readDataFrame() to GenomeInformation.
 o ROBUSTNESS: Now MultiArrayUnitModel:s assert that there are at least
   two arrays in the data set.
+o BUG FIX: AlleleSummation would not work for chip types containing 
+  exclusively SNP units.  It expected some non-SNP units.
 o CLEAN UP: createFrom() for AffymetrixCelFile had verbose=TRUE as default.
 o BUG FIX: There was no extractTotalAndFreqB() for CnChipEffectSet, 
   but only for CnChipEffecSet (misspelled). Thanks Pierre Neuvial 
@@ -21,8 +23,9 @@ o BUG FIX: There was no extractTotalAndFreqB() for CnChipEffectSet,
 o BUG FIX: Now process() avoids sets of pairs with too few probe pairs.
   This could happen because of the new getSetsOfProbes() working off
   the probe sequence files.
-o BUG FIX: AlleleSummation would not work for chip types containing 
-  exclusively SNP units.  It expected some non-SNP units.
+o BUG FIX: getUnitIntensities() of AffymetrixCelSet would drop the array
+  dimension if only one array was read.  This caused for instance PLM 
+  fitting to given an error when only one array was included.
 o BUG FIX: Methods returning ChipEffectSet would not "update" the
   returned data set, which for instance had the effect of not 
   updating/setting attributes for sample annotation files.
