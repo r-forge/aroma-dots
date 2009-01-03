@@ -1493,6 +1493,9 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2008-12-18
+# o BUG FIX: getUnitIntensities() of AffymetrixCelSet would drop the array
+#   dimension if only one array was read.
 # 2008-07-21
 # o Now findByName() assert that the data set name is not empty.
 # 2008-07-20
