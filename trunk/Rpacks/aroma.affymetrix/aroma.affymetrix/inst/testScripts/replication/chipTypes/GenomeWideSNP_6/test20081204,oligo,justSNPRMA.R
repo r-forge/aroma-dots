@@ -94,6 +94,7 @@ naValue <- as.double(NA);
 theta0 <- array(naValue, dim=c(nrow(eSet), 2, ncol(eSet)));
 theta0[,1,] <- oligo:::thetaA(eSet);
 theta0[,2,] <- oligo:::thetaB(eSet);
+dimnames(theta0) <- list(NULL, NULL, NULL);
 dimnames(theta0)[[1]] <- featureNames(eSet);
 dimnames(theta0)[[3]] <- getNames(csR);
 
