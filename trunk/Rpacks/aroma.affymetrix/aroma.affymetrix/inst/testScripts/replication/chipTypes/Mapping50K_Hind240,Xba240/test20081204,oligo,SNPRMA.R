@@ -57,7 +57,7 @@ if (normalizeToHapmap) {
 }
 
 qn <- QuantileNormalization(csR, targetDistribution=target, 
-                            typesToUpdate="pm", tags=c("*", refTag));
+                            typesToUpdate="pm", tags=c("*", "SNPs", refTag));
 print(qn);
 csN <- process(qn, verbose=log);
 print(csN);
