@@ -657,17 +657,6 @@
 \alias{allocate.AromaUnitGenotypeCallFile}
 \alias{allocate.AromaUnitSignalBinaryFile}
 \alias{allocateFromUnitNamesFile.AromaUnitSignalBinaryFile}
-\alias{AromaCellTabularBinaryFile}
-\alias{AromaUnitCallFile}
-\alias{AromaUnitCallSet}
-\alias{AromaUnitFracBCnBinaryFile}
-\alias{AromaUnitFracBCnBinarySet}
-\alias{AromaUnitGenotypeCallFile}
-\alias{AromaUnitGenotypeCallSet}
-\alias{AromaUnitSignalBinaryFile}
-\alias{AromaUnitSignalBinarySet}
-\alias{AromaUnitTotalCnBinaryFile}
-\alias{AromaUnitTotalCnBinarySet}
 \alias{as.character.AromaUnitSignalBinaryFile}
 \alias{byName.AromaUnitCallSet}
 \alias{byName.AromaUnitFracBCnBinarySet}
@@ -704,6 +693,8 @@
 \alias{updateGenotypes}
 \alias{updateGenotypes.AromaUnitGenotypeCallFile}
 \alias{validate.AromaUnitSignalBinarySet}
+\alias{byName.AromaUnitGenotypeCallSet}
+\alias{findByName.AromaUnitCallSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

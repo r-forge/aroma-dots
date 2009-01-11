@@ -287,11 +287,6 @@ allocate.AromaGenotypeCallFile byName.AromaGenotypeCallSet
  allocate.AromaUnitCallFile allocate.AromaUnitGenotypeCallFile
   allocate.AromaUnitSignalBinaryFile
   allocateFromUnitNamesFile.AromaUnitSignalBinaryFile
-  AromaCellTabularBinaryFile AromaUnitCallFile AromaUnitCallSet
-  AromaUnitFracBCnBinaryFile AromaUnitFracBCnBinarySet
-  AromaUnitGenotypeCallFile AromaUnitGenotypeCallSet
-  AromaUnitSignalBinaryFile AromaUnitSignalBinarySet
-  AromaUnitTotalCnBinaryFile AromaUnitTotalCnBinarySet
   as.character.AromaUnitSignalBinaryFile byName.AromaUnitCallSet
   byName.AromaUnitFracBCnBinarySet byName.AromaUnitSignalBinarySet
   byName.AromaUnitTotalCnBinarySet extractCallArray
@@ -317,3 +312,5 @@ allocate.AromaGenotypeCallFile byName.AromaGenotypeCallSet
   nbrOfUnits.AromaUnitSignalBinaryFile updateGenotypes
   updateGenotypes.AromaUnitGenotypeCallFile
   validate.AromaUnitSignalBinarySet
+byName.AromaUnitGenotypeCallSet findByName.AromaUnitCallSet
+
