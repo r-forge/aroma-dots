@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\code{AromaTabularBinaryFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.core]{AromaCellSequenceFile}, \emph{\link[aroma.core]{AromaCellTabularBinaryFile}}, \emph{\link[aroma.core]{AromaMicroarrayTabularBinaryFile}}, \link[aroma.core]{AromaUgpFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}\cr
+\link[aroma.core]{AromaCellSequenceFile}, \emph{\link[aroma.core]{AromaCellTabularBinaryFile}}, \emph{\link[aroma.core]{AromaMicroarrayTabularBinaryFile}}, \link[aroma.core]{AromaUgpFile}, \link[aroma.core]{AromaUnitCallFile}, \link[aroma.core]{AromaUnitFracBCnBinaryFile}, \link[aroma.core]{AromaUnitGenotypeCallFile}, \link[aroma.core]{AromaUnitSignalBinaryFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}, \link[aroma.core]{AromaUnitTotalCnBinaryFile}\cr
 
 public static class \bold{AromaTabularBinaryFile}\cr
 extends \emph{\link[aroma.core]{GenericTabularFile}}\cr

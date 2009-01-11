@@ -57,7 +57,8 @@ setMethodS3("getMaxLengthRepeats", "AromaCellSequenceFile", function(this, cells
   # Allocate
   startPosition <- rep(positions[1], nbrOfCells);
   maxRepeatLength <- rep(as.integer(1), nbrOfCells);
-  verbose && str(verbose, hasRepeats);
+  verbose && str(verbose, startPosition);
+  verbose && str(verbose, maxRepeatLength);
 
   verbose && enter(verbose, "Missing probes sequences");
   nok <- isMissing(this, cells=cells);
@@ -70,6 +71,7 @@ setMethodS3("getMaxLengthRepeats", "AromaCellSequenceFile", function(this, cells
   } else {
     cells <- cells[!nok];
   }
+  verbose && str(verbose, startPosition);
   verbose && str(verbose, maxRepeatLength);
   verbose && exit(verbose);
 
