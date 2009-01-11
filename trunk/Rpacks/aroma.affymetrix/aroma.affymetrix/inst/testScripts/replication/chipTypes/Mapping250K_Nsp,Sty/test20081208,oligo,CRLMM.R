@@ -58,7 +58,7 @@ path <- file.path("oligoData", getFullName(csR),
                                getChipType(csR, fullname=FALSE));
 path <- Arguments$getWritablePathname(path);
 if (!isDirectory(path)) {
-  path <- mkdirs(path);
+  mkdirs(path);
   oligo:::justCRLMMv2(getPathnames(csR), tmpdir=path, recalibrate=FALSE, balance=1.5, verbose=TRUE);
 }
 
