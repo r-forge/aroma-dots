@@ -11,7 +11,7 @@ setMethodS3("justSNPRMA", "AffymetrixCelSet", function(this, ..., normalizeToHap
   normalizeToHapmap <- Arguments$getLogical(normalizeToHapmap);
 
   # Argument 'normalizeSNPsOnly':
-  normalizeSNPsOnly <- Arguments$getLogical(normalizeSNPsOnly);
+#  normalizeSNPsOnly <- Arguments$getLogical(normalizeSNPsOnly);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -28,13 +28,20 @@ setMethodS3("justSNPRMA", "AffymetrixCelSet", function(this, ..., normalizeToHap
   chipType <- getChipType(cdf, fullname=FALSE);
   hasCNs <- (regexpr("^GenomeWideSNP_(5|6)$", chipType) != -1);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Normalize SNPs only?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (identical(normalizeSNPsOnly, "auto")) {
+    normalizeSNPsOnly <- hasCNs;
+  }
+
   # Get the SNP only tag
-  if (hasCNs & normalizeSNPsOnly) {
+  if (normalizeSNPsOnly) {
     snpOnlyTag <- "SNPs";
   } else {
     snpOnlyTag <- NULL;
   }
-  snpOnlyTag <- "SNPs";
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -79,7 +86,8 @@ setMethodS3("justSNPRMA", "AffymetrixCelSet", function(this, ..., normalizeToHap
       qn$.targetDistribution <- target;
       rm(target);
       verbose && exit(verbose);
-    }
+    } # if (normalizeToHapMap)
+
 
     if (normalizeSNPsOnly) {
       verbose && enter(verbose, "Identifying cells of SNPs for fitting normalization function");

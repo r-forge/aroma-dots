@@ -110,7 +110,7 @@ setMethodS3("getCallSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
   # Setting up output pathnames
   fullnames <- getFullNames(ces);
   fullnames <- gsub(",chipEffects$", "", fullnames);
-  filenames <- sprintf("%s.agc", fullnames);
+  filenames <- sprintf("%s,genotypes.acf", fullnames);
 
   nbrOfArrays <- nbrOfArrays(ces);
   nbrOfUnits <- nbrOfUnits(cdf);
@@ -505,7 +505,13 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       # (genotypeCall, confidenceScore)
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Calls
-      updateGenotypes(agc, units=unitsChunk, calls=calls[,kk,drop=TRUE]);
+      callsKK <- character(nrow(calls));
+      callsKK[(calls[,kk,drop=TRUE] == 0)] <- "NC";
+      callsKK[(calls[,kk,drop=TRUE] == 1)] <- "AA";
+      callsKK[(calls[,kk,drop=TRUE] == 2)] <- "AB";
+      callsKK[(calls[,kk,drop=TRUE] == 3)] <- "BB";
+      updateGenotypes(agc, units=unitsChunk, calls=callsKK);
+      rm(callsKK);
       verbose && cat(verbose, "Stored genotypes:");
       verbose && str(verbose, extractGenotypes(agc, units=unitsChunk));
 

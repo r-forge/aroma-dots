@@ -8,13 +8,13 @@
 # is normalizing towards the HapMap reference (as defined by oligo).
 #
 # Author: Henrik Bengtsson
-# Created: 2008-12-10
-# Last modified: 2008-12-10
+# Created: 2008-12-04
+# Last modified: 2008-12-05
 #
 # Data set:
 #  rawData/
-#   HapMap270,100K,CEU,testSet/
-#     Mapping50K_Hind240/
+#   HapMap270,500K,CEU,testSet/
+#     Mapping250K_Nsp/
 #       NA06985,Hind,B5,3005533.CEL
 #       NA06991,Hind,B6,3005533.CEL
 #       NA06993,Hind,B4,4000092.CEL
@@ -41,7 +41,8 @@ compareESets <- function(eSet1, eSet2, FUN=NULL, tolerance=1e-4) {
 } # compareESets()
 
 
-chipType <- "Mapping50K_Hind240";
+dataSet <- "HapMap270,500K,CEU,testSet";
+chipType <- "Mapping250K_Nsp";
 
 # Assert that oligo and the correct Platform Design package is installed
 library("oligo");
@@ -55,7 +56,7 @@ normalizeToHapmap <- TRUE;
 # SNPRMA according to aroma.affymetrix
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cdf <- AffymetrixCdfFile$byChipType(chipType);
-csR <- AffymetrixCelSet$byName("HapMap270,100K,CEU,testSet", cdf=cdf);
+csR <- AffymetrixCelSet$byName(dataSet, cdf=cdf);
 print(csR);
 
 eSet <- justSNPRMA(csR, normalizeToHapmap=normalizeToHapmap, verbose=log);
