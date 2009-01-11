@@ -1,12 +1,13 @@
 if (interactive())
   savehistory();
-library(aroma.affymetrix);
+library("aroma.affymetrix");
 
 # Use special file cache for testing
 ## options("R.cache::rootPath"="~/.Rcache,scratch");
 ## options("R.cache::touchOnLoad"=TRUE);
 
-source("textUI.R");
+pathname <- Arguments$getReadablePathname("textUI.R", mustExist=TRUE);
+source(pathname);
 
 pathname <- textSelectFile("testScripts", history=TRUE);
 if (!is.null(pathname)) {

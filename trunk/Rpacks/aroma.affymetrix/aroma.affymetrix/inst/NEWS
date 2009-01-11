@@ -1,8 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 0.9.6.6 [2009-01-02]
+Version: 0.9.6.6 [2009-01-10]
 o Added alpha version of the HaarSegModel.
+o Added alpha version of the CrlmmModel (currently only for 100K & 500K).
+o Added justSNPRMA().
 o Added plotAllelePairs() for AllelicCrosstalkCalibration.
 o Added argument 'zooms' to the constructor of ChromosomeExplorer.
 o Now process() of AlleleSummation returns immediately if already done.

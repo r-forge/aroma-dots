@@ -1,6 +1,4 @@
-setMethodS3("exportAromaSignalBinaryFileList", "SnpChipEffectFile", function(this, whats=c("total", "freqB"), fullname=getFullName(this), dataSet=NULL, path=NULL, ..., overwrite=FALSE, drop=TRUE, verbose=FALSE) {
-  require("aroma.cn") || throw("Package not loaded: aroma.cn");
-
+setMethodS3("exportAromaUnitSignalBinaryFileList", "SnpChipEffectFile", function(this, whats=c("total", "fracB"), fullname=getFullName(this), dataSet=NULL, path=NULL, ..., overwrite=FALSE, drop=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -54,9 +52,9 @@ setMethodS3("exportAromaSignalBinaryFileList", "SnpChipEffectFile", function(thi
   for (what in whats) {
     # Identify output class
     if (what == "total") {
-      signalClass <- AromaTotalCnBinaryFile;
-    } else if (what == "freqB") {
-      signalClass <- AromaFreqBCnBinaryFile;
+      signalClass <- AromaUnitTotalCnBinaryFile;
+    } else if (is.element(what, c("fracB", "freqB"))) {
+      signalClass <- AromaUnitFracBCnBinaryFile;
     }
   
     verbose && enter(verbose, "Exporting ", class(this)[1], " as an ", getName(signalClass));
@@ -82,7 +80,7 @@ setMethodS3("exportAromaSignalBinaryFileList", "SnpChipEffectFile", function(thi
     # Reading data
     if (is.null(data)) {
       verbose && enter(verbose, "Reading data");
-      data <- extractTotalAndFreqB(this, verbose=less(verbose, 5));
+      data <- extractTotalAndFracB(this, verbose=less(verbose, 5));
       verbose && str(verbose, data);
       verbose && exit(verbose);
     }
@@ -111,9 +109,7 @@ setMethodS3("exportAromaSignalBinaryFileList", "SnpChipEffectFile", function(thi
 
 
 
-setMethodS3("exportAromaSignalBinarySetList", "SnpChipEffectSet", function(this, whats=c("total", "freqB"), ..., drop=TRUE, verbose=FALSE) {
-  require("aroma.cn") || throw("Package not loaded: aroma.cn");
-
+setMethodS3("exportAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(this, whats=c("total", "fracB"), ..., drop=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -130,9 +126,9 @@ setMethodS3("exportAromaSignalBinarySetList", "SnpChipEffectSet", function(this,
 
   signalClassList <- lapply(whats, FUN=function(what) {
     if (what == "total") {
-      signalClass <- AromaTotalCnBinarySet;
-    } else if (what == "freqB") {
-      signalClass <- AromaFreqBCnBinarySet;
+      signalClass <- AromaUnitTotalCnBinarySet;
+    } else if (is.element(what, c("fracB", "freqB"))) {
+      signalClass <- AromaUnitFracBCnBinarySet;
     }
     signalClass;
   });
@@ -145,7 +141,7 @@ setMethodS3("exportAromaSignalBinarySetList", "SnpChipEffectSet", function(this,
   for (kk in seq(this)) {
     cf <- getFile(this, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(cf), length(this)));
-    asbList <- exportAromaSignalBinaryFileList(cf, whats=whats, dataSet=dataSetName, ..., drop=FALSE, verbose=less(verbose, 1));
+    asbList <- exportAromaUnitSignalBinaryFileList(cf, whats=whats, dataSet=dataSetName, ..., drop=FALSE, verbose=less(verbose, 1));
     if (is.null(chipType)) {
       chipType <- getChipType(asbList[[1]]);
     }
@@ -179,27 +175,48 @@ setMethodS3("exportAromaSignalBinarySetList", "SnpChipEffectSet", function(this,
 
 
 setMethodS3("getAromaTotalCnBinarySet", "SnpChipEffectSet", function(this, ...) {
-  exportAromaSignalBinarySetList(this, whats="total", ...);
+  exportAromaUnitSignalBinarySetList(this, whats="total", ...);
 })
 
-setMethodS3("getAromaFreqBCnBinarySet", "SnpChipEffectSet", function(this, ...) {
-  exportAromaSignalBinarySetList(this, whats="freqB", ...);
-})
-
-
-setMethodS3("getAromaSignalBinarySetList", "SnpChipEffectSet", function(this, whats=c("total", "freqB"), ...) {
-  exportAromaSignalBinarySetList(this, whats=whats, ...);
+setMethodS3("getAromaFracBCnBinarySet", "SnpChipEffectSet", function(this, ...) {
+  exportAromaUnitSignalBinarySetList(this, whats="fracB", ...);
 })
 
 
-setMethodS3("getTotalAndFreqBSets", "SnpChipEffectSet", function(this, whats=c("total", "freqB"), ...) {
-  exportAromaSignalBinarySetList(this, whats=whats, ...);
+setMethodS3("getAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(this, whats=c("total", "fracB"), ...) {
+  exportAromaUnitSignalBinarySetList(this, whats=whats, ...);
 })
 
+
+setMethodS3("getTotalAndFracBSets", "SnpChipEffectSet", function(this, whats=c("total", "fracB"), ...) {
+  exportAromaUnitSignalBinarySetList(this, whats=whats, ...);
+})
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Backward compatibility
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+setMethodS3("getAromaFreqBCnBinarySet", "default", function(this, ...) {
+  getAromaFracBCnBinarySet(this, ...);
+}, protected=TRUE)
+
+setMethodS3("getTotalAndFreqBSets", "default", function(this, ...) {
+  getTotalAndFracBSets(this, ...);
+}, protected=TRUE)
+
+setMethodS3("exportAromaSignalBinaryFileList", "default", function(this, ...) {
+  exportAromaUnitSignalBinaryFileList(this, ...);
+}, protected=TRUE, deprecated=TRUE);
+
+setMethodS3("exportAromaUnitSignalBinarySetList", "default", function(this, ...) {
+  exportAromaUnitSignalBinarySetList(this, ...);
+}, protected=TRUE, deprecated=TRUE);
 
 
 ############################################################################
 # HISTORY:
+# 2008-09-10
+# o Updated to be compatible with new aroma.core.
 # 2008-07-30
 # o Added getTotalAndFreqBSets() which is a more convenient name.
 # 2008-06-25

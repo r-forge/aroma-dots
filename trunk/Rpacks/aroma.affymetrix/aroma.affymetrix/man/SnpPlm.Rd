@@ -55,7 +55,7 @@ extend, print, uses
 
  }
 
- \section{Requirments}{
+ \section{Requirements}{
    Classes inheriting from this \code{\link[aroma.core]{Interface}} must provide the following
    fields:
    \itemize{

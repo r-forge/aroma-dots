@@ -59,13 +59,13 @@ extends \link[aroma.affymetrix]{SnpPlm}\cr
 getCellIndices, getChipEffectSet, getProbeAffinityFile, setMergeStrands
 
  \bold{Methods inherited from AvgPlm}:\cr
-getAsteriskTags, getCalculateResidualsFunction
+getAsteriskTags, getCalculateResidualsFunction, validate
 
  \bold{Methods inherited from ProbeLevelModel}:\cr
 calculateResidualSet, calculateWeights, fit, getAsteriskTags, getCalculateResidualsFunction, getChipEffectSet, getProbeAffinityFile, getResidualSet, getWeightsSet
 
  \bold{Methods inherited from MultiArrayUnitModel}:\cr
-getListOfPriors, setListOfPriors
+getListOfPriors, setListOfPriors, validate
 
  \bold{Methods inherited from UnitModel}:\cr
 findUnitsTodo, getAsteriskTags, getFitSingleCellUnitFunction

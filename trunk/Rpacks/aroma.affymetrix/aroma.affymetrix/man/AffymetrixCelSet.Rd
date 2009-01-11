@@ -77,6 +77,7 @@ extends \emph{\link[aroma.affymetrix]{AffymetrixFileSet}}\cr
  \tab \code{\link[aroma.affymetrix:getUnitIntensities.AffymetrixCelSet]{getUnitIntensities}} \tab Gets cell signals for a subset of units and a subset of arrays.\cr
  \tab \code{getUnitNamesFile} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:isDuplicated.AffymetrixCelSet]{isDuplicated}} \tab Identifies duplicated CEL files.\cr
+ \tab \code{justSNPRMA} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:nbrOfArrays.AffymetrixCelSet]{nbrOfArrays}} \tab Gets the number of arrays in the file set.\cr
  \tab \code{\link[aroma.affymetrix:plotDensity.AffymetrixCelSet]{plotDensity}} \tab Plots the densities of all samples.\cr
  \tab \code{range} \tab  -\cr

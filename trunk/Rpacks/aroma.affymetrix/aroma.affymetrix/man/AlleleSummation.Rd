@@ -50,6 +50,7 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{findUnitsTodo} \tab  -\cr
  \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getChipEffectSet.AlleleSummation]{getChipEffectSet}} \tab Gets the set of chip effects for this model.\cr
  \tab \code{process} \tab  -\cr
