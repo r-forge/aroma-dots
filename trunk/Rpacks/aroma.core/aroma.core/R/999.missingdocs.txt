@@ -264,3 +264,56 @@ readTableHeader.default
   binScatter binScatter.matrix plot.BinnedScatter points.BinnedScatter
   reorder.BinnedScatter subsample subsample.BinnedScatter
   subset.BinnedScatter
+getMaxLengthRepeats.AromaCellSequenceFile
+  allocate.AromaSignalBinaryFile as.character.AromaSignalBinaryFile
+  byName.AromaSignalBinarySet findByName.AromaSignalBinarySet
+  fromFile.AromaSignalBinaryFile getAromaUgpFile.AromaSignalBinaryFile
+  getAromaUgpFile.AromaSignalBinarySet
+  getChipType.AromaSignalBinaryFile getChipType.AromaSignalBinarySet
+  getFilenameExtension.AromaSignalBinaryFile getMaxLengthRepeats
+  getMaxLengthRepeats.AromaCellSequenceFile
+  getPlatform.AromaSignalBinaryFile getPlatform.AromaSignalBinarySet
+  getUnitNamesFile.AromaSignalBinaryFile
+  nbrOfUnits.AromaSignalBinaryFile validate.AromaSignalBinarySet
+byName.AromaFractionBCnBinarySet byName.AromaTotalCnBinarySet
+extractRawCopyNumbers.AromaTotalCnBinaryFile
+allocate.AromaGenotypeCallFile byName.AromaGenotypeCallSet
+  extractCalls extractCalls.AromaGenotypeCallFile
+  extractCalls.AromaGenotypeCallSet extractConfidenceScores
+  extractConfidenceScores.AromaGenotypeCallFile
+  extractConfidenceScores.AromaGenotypeCallSet findUnitsTodo
+  findUnitsTodo.AromaGenotypeCallFile
+  findUnitsTodo.AromaGenotypeCallSet fromFiles.AromaGenotypeCallSet
+ allocate.AromaUnitCallFile allocate.AromaUnitGenotypeCallFile
+  allocate.AromaUnitSignalBinaryFile
+  allocateFromUnitNamesFile.AromaUnitSignalBinaryFile
+  AromaCellTabularBinaryFile AromaUnitCallFile AromaUnitCallSet
+  AromaUnitFracBCnBinaryFile AromaUnitFracBCnBinarySet
+  AromaUnitGenotypeCallFile AromaUnitGenotypeCallSet
+  AromaUnitSignalBinaryFile AromaUnitSignalBinarySet
+  AromaUnitTotalCnBinaryFile AromaUnitTotalCnBinarySet
+  as.character.AromaUnitSignalBinaryFile byName.AromaUnitCallSet
+  byName.AromaUnitFracBCnBinarySet byName.AromaUnitSignalBinarySet
+  byName.AromaUnitTotalCnBinarySet extractCallArray
+  extractCallArray.AromaUnitCallFile extractCallArray.AromaUnitCallSet
+  extractCalls.AromaUnitCallFile extractCalls.AromaUnitCallSet
+  extractGenotypeMatrix extractGenotypeMatrix.AromaUnitCallSet
+  extractGenotypeMatrix.AromaUnitGenotypeCallFile extractGenotypes
+  extractGenotypes.AromaUnitGenotypeCallFile
+  extractGenotypes.AromaUnitGenotypeCallSet
+  extractMatrix.AromaUnitCallFile
+  extractRawCopyNumbers.AromaUnitTotalCnBinaryFile
+  findByName.AromaUnitSignalBinarySet findUnitsTodo.AromaUnitCallFile
+  findUnitsTodo.AromaUnitCallSet fromFile.AromaUnitSignalBinaryFile
+  fromFiles.AromaUnitCallSet fromFiles.AromaUnitGenotypeCallSet
+  getAromaUgpFile.AromaUnitSignalBinaryFile
+  getAromaUgpFile.AromaUnitSignalBinarySet
+  getChipType.AromaUnitSignalBinaryFile
+  getChipType.AromaUnitSignalBinarySet
+  getFilenameExtension.AromaUnitSignalBinaryFile
+  getPlatform.AromaUnitSignalBinaryFile
+  getPlatform.AromaUnitSignalBinarySet
+  getUnitNamesFile.AromaUnitSignalBinaryFile
+  nbrOfUnits.AromaUnitSignalBinaryFile updateGenotypes
+  updateGenotypes.AromaUnitGenotypeCallFile
+  validate.AromaUnitSignalBinarySet

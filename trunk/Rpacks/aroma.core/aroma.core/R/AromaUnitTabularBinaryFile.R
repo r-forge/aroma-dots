@@ -25,9 +25,9 @@
 # 
 # @author
 #
-# \seealso{
-#   @see "AromaCellTabularBinaryFile".
-# }
+# %\seealso{
+# % @see "AromaCellTabularBinaryFile".
+# %}
 #*/########################################################################### 
 setConstructorS3("AromaUnitTabularBinaryFile", function(...) {
   extend(AromaMicroarrayTabularBinaryFile(...), "AromaUnitTabularBinaryFile");

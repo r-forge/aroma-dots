@@ -22,7 +22,7 @@
 \code{~~+--}\code{GenericDataFileSet}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.core]{AromaMicroarrayDataSet}, \link[aroma.core]{AromaTabularBinarySet}, \link[aroma.core]{GenericTabularFileSet}, \link[aroma.core]{SampleAnnotationSet}, \link[aroma.core]{TabularTextFileSet}\cr
+\link[aroma.core]{AromaMicroarrayDataSet}, \link[aroma.core]{AromaTabularBinarySet}, \link[aroma.core]{AromaUnitCallSet}, \link[aroma.core]{AromaUnitFracBCnBinarySet}, \link[aroma.core]{AromaUnitGenotypeCallSet}, \link[aroma.core]{AromaUnitSignalBinarySet}, \link[aroma.core]{AromaUnitTotalCnBinarySet}, \link[aroma.core]{GenericTabularFileSet}, \link[aroma.core]{SampleAnnotationSet}, \link[aroma.core]{TabularTextFileSet}\cr
 
 public static class \bold{GenericDataFileSet}\cr
 extends \link[R.oo]{Object}\cr
