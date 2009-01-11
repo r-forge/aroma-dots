@@ -52,11 +52,11 @@ if (normalizeToHapmap) {
   refTag <- NULL;
 }
 
-# justSNPRMA() operates only on SNP_A-* units (CN units ignored).
+# justSNPRMA() operates only on SNP* units (CN units ignored).
 # For this reason we here *estimate* the normalization function based
 # on these units only, but for convenience we will apply it to all
 # units including CN units.
-units <- indexOf(cdf, pattern="^SNP_A-");
+units <- indexOf(cdf, pattern="^SNP");
 cells <- getCellIndices(cdf, units=units, unlist=TRUE, useNames=FALSE);
 qn <- QuantileNormalization(csR, targetDistribution=target, 
                                 subsetToAvg=cells, typesToUpdate="pm", 

@@ -57,7 +57,7 @@ if (normalizeToHapmap) {
 }
 
 qn <- QuantileNormalization(csR, targetDistribution=target, 
-                            typesToUpdate="pm", tags=c("*", "SNPs", refTag));
+                            typesToUpdate="pm", tags=c("*", refTag));
 print(qn);
 csN <- process(qn, verbose=log);
 print(csN);
@@ -68,7 +68,7 @@ fit(plm, verbose=log);
 ces <- getChipEffectSet(plm);
 print(ces);
 
-units <- indexOf(cdf, pattern="^SNP_A-");
+units <- indexOf(cdf, pattern="^SNP");
 unitNames <- getUnitNames(cdf, units=units);
 o <- order(unitNames);
 units <- units[o];
@@ -117,5 +117,3 @@ tol <- 1e-4;
 res <- all.equal(theta, theta0, tolerance=tol);
 print(res);
 stopifnot(res);
-
-
