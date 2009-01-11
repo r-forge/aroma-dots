@@ -59,6 +59,7 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
  \tab \code{calculateFieldBoxplotStats} \tab  -\cr
  \tab \code{calculateNuseBoxplotStats} \tab  -\cr
  \tab \code{calculateRleBoxplotStats} \tab  -\cr
+ \tab \code{extractChromosomalDataFrame} \tab  -\cr
  \tab \code{extractMatrix} \tab  -\cr
  \tab \code{extractTheta} \tab  -\cr
  \tab \code{findByName} \tab  -\cr
@@ -79,7 +80,7 @@ extends \link[aroma.affymetrix]{ParameterCelSet}\cr
 extractDataFrame, extractMatrix
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, convertToUnique, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getPlatform, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf, update2
+[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, convertToUnique, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getPlatform, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, justSNPRMA, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf, update2
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, fromFiles

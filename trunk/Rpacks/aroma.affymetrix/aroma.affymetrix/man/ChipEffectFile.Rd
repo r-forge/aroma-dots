@@ -54,6 +54,7 @@ extends \link[aroma.affymetrix]{ParameterCelFile}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{extractChromosomalDataFrame} \tab  -\cr
  \tab \code{extractMatrix} \tab  -\cr
  \tab \code{extractTheta} \tab  -\cr
  \tab \code{findUnitsTodo} \tab  -\cr

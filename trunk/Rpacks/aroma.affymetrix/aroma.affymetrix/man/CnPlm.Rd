@@ -73,7 +73,7 @@ extend, print, uses
    first being merged.
  }
 
- \section{Requirments}{
+ \section{Requirements}{
    Classes inheriting from this \code{\link[aroma.core]{Interface}} must provide the following
    fields, in addition to the ones according to \code{\link{SnpPlm}}:
    \itemize{

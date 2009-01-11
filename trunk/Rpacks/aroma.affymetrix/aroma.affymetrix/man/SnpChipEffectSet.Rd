@@ -57,27 +57,31 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
+ \tab \code{extractCNT} \tab  -\cr
+ \tab \code{extractSnpCnvQSet} \tab  -\cr
+ \tab \code{extractSnpQSet} \tab  -\cr
  \tab \code{extractTheta} \tab  -\cr
  \tab \code{extractTotalAndFreqB} \tab  -\cr
- \tab \code{getAromaFreqBCnBinarySet} \tab  -\cr
- \tab \code{getAromaSignalBinarySetList} \tab  -\cr
+ \tab \code{getAromaFracBCnBinarySet} \tab  -\cr
  \tab \code{getAromaTotalCnBinarySet} \tab  -\cr
+ \tab \code{getAromaUnitSignalBinarySetList} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getBaseline} \tab  -\cr
  \tab \code{getMergeStrands} \tab  -\cr
- \tab \code{getTotalAndFreqBSets} \tab  -\cr
+ \tab \code{getTotalAndFracBSets} \tab  -\cr
  \tab \code{setMergeStrands} \tab  -\cr
+ \tab \code{writeCNT} \tab  -\cr
 }
 
 
  \bold{Methods inherited from ChipEffectSet}:\cr
-boxplotStats, calculateBaseline, calculateFieldBoxplotStats, calculateNuseBoxplotStats, calculateRleBoxplotStats, extractMatrix, extractTheta, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAsFullCelSet, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, plotBoxplot, readUnits, updateUnits
+boxplotStats, calculateBaseline, calculateFieldBoxplotStats, calculateNuseBoxplotStats, calculateRleBoxplotStats, extractChromosomalDataFrame, extractMatrix, extractTheta, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAsFullCelSet, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, plotBoxplot, readUnits, updateUnits
 
  \bold{Methods inherited from ParameterCelSet}:\cr
 extractDataFrame, extractMatrix
 
  \bold{Methods inherited from AffymetrixCelSet}:\cr
-[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, convertToUnique, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getPlatform, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf, update2
+[, [[, append, as, as.AffymetrixCelSet, averageQuantile, byName, convertToUnique, extractAffyBatch, extractMatrix, findByName, fromFiles, fromName, getAverage, getAverageAsinh, getAverageFile, getAverageLog, getCdf, getChipType, getData, getFullName, getIntensities, getPlatform, getTimestamps, getUnitGroupCellMap, getUnitIntensities, getUnitNamesFile, isDuplicated, justSNPRMA, nbrOfArrays, normalizeQuantile, plotDensity, range, readUnits, setCdf, update2
 
  \bold{Methods inherited from AffymetrixFileSet}:\cr
 as, as.AffymetrixFileSet, fromFiles

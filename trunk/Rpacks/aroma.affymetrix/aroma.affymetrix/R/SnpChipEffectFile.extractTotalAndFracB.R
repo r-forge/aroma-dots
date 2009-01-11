@@ -152,8 +152,7 @@ setMethodS3("extractTotalAndFreqB", "CnChipEffectFile", function(this, units=NUL
 
 
 
-
-setMethodS3("extractTotalAndFreqB", "SnpChipEffectFile", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
+setMethodS3("extractTotalAndFracB", "SnpChipEffectFile", function(this, units=NULL, ..., drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -253,8 +252,16 @@ setMethodS3("extractTotalAndFreqB", "SnpChipEffectFile", function(this, units=NU
 })
 
 
+setMethodS3("extractTotalAndFreqB", "default", function(this, ...) {
+  extractTotalAndFracB(this, ...);
+})
+
+
+
 ############################################################################
 # HISTORY:
+# 2009-01-10
+# o Added extractTotalAndFracB().
 # 2008-07-16
 # o Added argument 'drop=FALSE' to all extractTotalAndFreqB().
 # 2008-05-11

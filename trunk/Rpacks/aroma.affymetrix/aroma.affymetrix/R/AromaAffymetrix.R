@@ -19,6 +19,9 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
   # 2008-08-27:
   # o affy must be after aroma.light, otherwise the former overrides
   #   the generic plotDensity() function of the latter.
+  # 2009-01-10:
+  # o oligo must be after aroma.affymetrix, otherwise the former
+  #   overrides generic justSNPRMA().
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   # Figure out which of aroma.affymetrix, R.huge, and aroma.light is
@@ -34,7 +37,7 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
   verbose && print(verbose, search());
 
   # Problematic package that must be after this package on the search path
-  pkgsToMove <- c("affy", "affyPLM", "EBImage");
+  pkgsToMove <- c("affy", "affyPLM", "EBImage", "oligo");
 
   # Move those package, if they are loaded.
   pkgsMoved <- c();
@@ -163,8 +166,10 @@ setMethodS3("patch", "AromaAffymetrix", function(this, ..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2009-01-10
+# o Now the oligo package is forced to be after aroma.affymetrix.
 # 2008-08-27
-# o Now the affy, affyPLM, and EBImage package are forced to be after all
+# o Now the affy, affyPLM, and EBImage packages are forced to be after all
 #   of aroma.affymetrix, aroma.light, and R.huge on the search() path.
 # 2007-12-13
 # o Added update() and patch() to the AromaAffymetrix Package class.

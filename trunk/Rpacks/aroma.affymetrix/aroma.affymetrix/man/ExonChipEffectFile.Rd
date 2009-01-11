@@ -64,7 +64,7 @@ extends \link[aroma.affymetrix]{ChipEffectFile}\cr
 
 
  \bold{Methods inherited from ChipEffectFile}:\cr
-extractMatrix, extractTheta, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellChromosomePositionMap, getUnitGroupCellMatrixMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
+extractChromosomalDataFrame, extractMatrix, extractTheta, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellArrayMap, getUnitGroupCellChromosomePositionMap, getUnitGroupCellMatrixMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile
 
  \bold{Methods inherited from ParameterCelFile}:\cr
 extractDataFrame, extractMatrix, getParameters, readUnits

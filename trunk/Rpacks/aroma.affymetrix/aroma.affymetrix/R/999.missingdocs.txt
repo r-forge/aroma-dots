@@ -826,3 +826,31 @@ getAromaCellPositionFile getAromaCellPositionFile.MatSmoothing
   getUnitGroupCellArrayMap getUnitGroupCellArrayMap.ChipEffectFile
   writeCNT writeCNT.SnpChipEffectFile writeCNT.SnpChipEffectSet
   validate.AvgPlm validate.MultiArrayUnitModel
+  allocate.CrlmmParametersFile byName.CrlmmParametersSet CrlmmModel
+  extractSnpCnvQSet
+  extractSnpCnvQSet.SnpChipEffectSet extractSnpQSet
+  extractSnpQSet.SnpChipEffectSet extractTheta.SnpCnvQSet
+  extractTheta.SnpQSet findUnitsTodo.CrlmmModel
+  findUnitsTodo.CrlmmParametersFile findUnitsTodo.CrlmmParametersSet
+  fit.CrlmmModel fromFiles.CrlmmParametersSet
+  getAsteriskTags.CrlmmModel getCallSet getCallSet.CrlmmModel
+  getChipType.CrlmmModel getCrlmmParametersSet
+  getCrlmmParametersSet.CrlmmModel getCrlmmPriors
+  getCrlmmPriors.CrlmmModel getCrlmmSNPs getCrlmmSNPs.CrlmmModel
+  getCrlmmSNPsOnChrX getCrlmmSNPsOnChrX.CrlmmModel
+  getParameterSet.CrlmmModel getPlatformDesignDB
+  getPlatformDesignDB.CrlmmModel getRootPath.CrlmmModel
+  getUnitsToFit.CrlmmModel justSNPRMA justSNPRMA.AffymetrixCelSet
+  justSNPRMA.character
+ exportAromaSignalBinaryFileList.default
+ exportAromaUnitSignalBinaryFileList
+ exportAromaUnitSignalBinaryFileList.SnpChipEffectFile
+ exportAromaUnitSignalBinarySetList
+ exportAromaUnitSignalBinarySetList.default
+ exportAromaUnitSignalBinarySetList.SnpChipEffectSet
+ extractTotalAndFracB extractTotalAndFracB.SnpChipEffectFile
+ extractTotalAndFreqB.default getAromaFracBCnBinarySet
+ getAromaFracBCnBinarySet.SnpChipEffectSet
+ getAromaFreqBCnBinarySet.default getAromaUnitSignalBinarySetList
+ getAromaUnitSignalBinarySetList.SnpChipEffectSet getTotalAndFracBSets
+ getTotalAndFracBSets.SnpChipEffectSet getTotalAndFreqBSets.default
