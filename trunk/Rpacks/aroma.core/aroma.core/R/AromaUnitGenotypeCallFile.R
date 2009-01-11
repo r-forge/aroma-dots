@@ -32,7 +32,7 @@ setMethodS3("allocate", "AromaUnitGenotypeCallFile", function(static, ..., types
 }, static=TRUE)
 
 
-setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this, ..., emptyValue=c("", "-", "--"), noCallValue="NC", naValue=c(NA, "NA"), drop=FALSE, verbose=FALSE) {
+setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this, ..., emptyValue=c("", "-", "--"), noCallValue="NC", naValue=c(NA, "NA"), encoding=c("generic", "oligo"), drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,6 +48,9 @@ setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this,
   naValue <- naValue[1];
   naValue <- Arguments$getVector(naValue);
 
+  # Argument 'encoding':
+  encoding <- match.arg(encoding);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -59,7 +62,10 @@ setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this,
   verbose && enter(verbose, "Extracting genotypes calls");
   verbose && cat(verbose, "Fullname: ", getFullName(this));
 
-  calls <- extractCalls(this, ..., drop=TRUE);
+  calls <- extractCalls(this, ..., drop=FALSE);
+  dim <- dim(calls);
+  dim <- dim[-length(dim)];
+  dim(calls) <- dim;
   verbose && str(verbose, calls);
 
   verbose && enter(verbose, "Translating (C_A,C_B) to {NA,NC,<emptyValue>,A,B,AA,AB,BB,AAA,AAB,...}");
@@ -71,6 +77,9 @@ setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this,
 
   # Genotypes
   isGenotype <- (calls >= 0 & calls <= maxValue);
+  verbose && cat(verbose, "isGenotype:")
+  verbose && str(verbose, isGenotype)
+;
   idxs <- whichVector(isGenotype[,1] & isGenotype[,2]);
   rm(isGenotype);
   if (length(idxs) > 0) {
@@ -114,6 +123,23 @@ setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this,
   }
 
   verbose && exit(verbose);
+
+  if (encoding != "generic") {
+    verbose && enter(verbose, "Encodes genotypes");
+    verbose && cat(verbose, "Map: ", encoding);
+    if (encoding == "oligo") {
+      calls <- integer(length(res));
+      # Genotype map according to 'oligo'
+      calls[res == "AA"] <- as.integer(1);
+      calls[res == "AB"] <- as.integer(2);
+      calls[res == "BB"] <- as.integer(3);
+      calls[res == "NC"] <- as.integer(0);
+      dim(calls) <- dim(res);
+      res <- calls;
+      rm(calls);
+    }
+    verbose && exit(verbose);
+  }
 
   if (drop) {
     res <- res[,1];
@@ -165,18 +191,7 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
 
   # Validate generic encoded genotypes
   calls[is.na(calls)] <- "NA";
-  calls <- Arguments$getCharacters(calls, length=nbrOfUnits);
-
-  pattern <- "^(|[-]+|NA|NC|[AB]+)$";
-  unknown <- calls[(regexpr(pattern, calls) == -1)];
-  if (length(unknown) > 0) {
-    unknown <- unique(unknown);
-    unknown <- sort(unknown);
-    unknown <- head(unknown);
-    throw("Argument 'calls' contains unknown genotypes: ", 
-                                        paste(unknown, collapse=", "));
-  }
-  rm(unknown);
+  calls <- Arguments$getCharacters(calls, length=nbrOfUnits, asGString=FALSE);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -186,8 +201,23 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
   }
 
 
+
   verbose && enter(verbose, "Updating genotype calls");
   verbose && cat(verbose, "Fullname: ", getFullName(this));
+
+  verbose && enter(verbose, "Validating calls");
+  pattern <- "^(|[-]+|NA|NC|[AB]+)$";
+  unknown <- calls[(regexpr(pattern, calls) == -1)];
+  verbose && str(verbose, unknown);
+  if (length(unknown) > 0) {
+    unknown <- unique(unknown);
+    unknown <- sort(unknown);
+    unknown <- head(unknown);
+    throw("Argument 'calls' contains unknown genotypes: ", 
+                                        paste(unknown, collapse=", "));
+  }
+  rm(unknown);
+  verbose && exit(verbose);
 
   verbose && enter(verbose, "Translating {NA,NC,(|-),A,B,AA,AB,BB,AAA,AAB,...} to (C_A,C_B)");
   naValue <- as.character(NA);
@@ -195,7 +225,7 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
 
   # NoCalls
   pattern <- "^NC$";
-  idxs <- whichVector(regexpr(pattern, calls) != -1);
+  idxs <- grep(pattern, calls);
   if (length(idxs) > 0) {
     verbose && cat(verbose, "NoCalls identified: ", length(idxs));
     hdr <- readHeader(this)$dataHeader;
@@ -206,7 +236,7 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
 
   # Missing calls
   pattern <- "^NA$";
-  idxs <- whichVector(regexpr(pattern, calls) != -1);
+  idxs <- grep(pattern, calls);
   if (length(idxs) > 0) {
     verbose && cat(verbose, "Missing calls identified: ", length(idxs));
     hdr <- readHeader(this)$dataHeader;
@@ -217,7 +247,7 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
 
   # Homozygote deletion, i.e. (C_A,C_B) = (0,0)
   pattern <- "^(|[-]+)$";
-  idxs <- whichVector(regexpr(pattern, calls) != -1);
+  idxs <- grep(pattern, calls);
   if (length(idxs) > 0) {
     verbose && cat(verbose, "Homozygote deletions identified: ", length(idxs));
     values[idxs,] <- as.integer(0);
@@ -225,7 +255,7 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
 
   # Genotypes {A, B, AA, AB, BB, AAA, AAB, ...}
   pattern <- "^[AB]+$";
-  idxs <- whichVector(regexpr(pattern, calls) != -1);
+  idxs <- grep(pattern, calls);
   if (length(idxs) > 0) {
     verbose && cat(verbose, "Genotypes identified: ", length(idxs));
     callsT <- strsplit(calls[idxs], split="", fixed=TRUE);
@@ -263,6 +293,8 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
 ############################################################################
 # HISTORY:
 # 2009-01-10
+# o Added argument 'encoding' to extract-/updateGenotypes() with support
+#   for oligo nucleotides {1,2,3}.
 # o Now extract-/updateGenotypes() encodes NA=missing value, NC=no call, 
 #   ''='-'='--'=(0,0), 'A'=(1,0), ..., 'AABBA'=(3,2), ...
 # 2009-01-04
