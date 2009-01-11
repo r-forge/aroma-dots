@@ -259,6 +259,12 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     throw("Unknown mode of argument 'units': ", mode(units)); 
   }
 
+  # Argument 'ram':
+  if (identical(ram, "oligo")) {
+  } else {
+    ram <- Arguments$getDouble(ram, range=c(1e-4,Inf));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -358,7 +364,11 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Processing units in chunk
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  chunkSize <- ram * (500e3/nbrOfArrays);
+  if (identical(ram, "oligo")) {
+    chunkSize <- 40000;
+  } else {
+    chunkSize <- ram * (500e3/nbrOfArrays);
+  }
   unitList <- splitInChunks(units, chunkSize=chunkSize);
   nbrOfChunks <- length(unitList);
   count <- 1;
@@ -505,13 +515,20 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       # (genotypeCall, confidenceScore)
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Calls
-      callsKK <- character(nrow(calls));
-      callsKK[(calls[,kk,drop=TRUE] == 0)] <- "NC";
-      callsKK[(calls[,kk,drop=TRUE] == 1)] <- "AA";
-      callsKK[(calls[,kk,drop=TRUE] == 2)] <- "AB";
-      callsKK[(calls[,kk,drop=TRUE] == 3)] <- "BB";
-      updateGenotypes(agc, units=unitsChunk, calls=callsKK);
+      verbose && enter(verbose, "Tranlating oligo calls to {NC,AA,AB,BB}");
+      callsKK <- calls[,kk,drop=TRUE];
+      callsT <- character(nrow(calls));
+      callsT[(callsKK == 0)] <- "NC";
+      callsT[(callsKK == 1)] <- "AA";
+      callsT[(callsKK == 2)] <- "AB";
+      callsT[(callsKK == 3)] <- "BB";
       rm(callsKK);
+      verbose && exit(verbose);
+
+      updateGenotypes(agc, units=unitsChunk, calls=callsT,
+                                              verbose=less(verbose,5));
+      rm(callsT);
+
       verbose && cat(verbose, "Stored genotypes:");
       verbose && str(verbose, extractGenotypes(agc, units=unitsChunk));
 
