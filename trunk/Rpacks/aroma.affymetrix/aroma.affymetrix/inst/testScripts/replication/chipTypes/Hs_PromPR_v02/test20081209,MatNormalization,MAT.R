@@ -68,8 +68,9 @@ y <- extractMatrix(cf, cells=cells, drop=TRUE, verbose=log);
 
 
 # Load external estimates
-bar <- TabularTextFile("TESTIP.bar.txt", path=getPath(csR), columnNames=c("chromosome", "position", "signal"));
-data <- readDataFrame(bar, colClasses=c("character", "integer", "numeric"), nrow=435000);
+bar <- TabularTextFile("TESTIP.bar.txt", path=getPath(csR), 
+                   columnNames=c("chromosome", "position", "signal"));
+data <- readDataFrame(bar, colClasses=colClasses("cin"), nrow=435000);
 
 # Extract the subset available in the aroma.affymetrix estimate
 data <- subset(data, chromosome == "chr1" & position %in% pos);

@@ -22,9 +22,7 @@
 #       NA07000.CEL
 #       NA07019.CEL
 ###########################################################################
-
 library("aroma.affymetrix");
-library("oligo");
 log <- Arguments$getVerbose(-8, timestamp=TRUE);
 
 chipType <- "GenomeWideSNP_6";
@@ -40,7 +38,7 @@ print(csR);
 
 if (normalizeToHapmap) {
   # Load target from PD package
-  pdPkgName <- cleanPlatformName(chipType);
+  pdPkgName <- oligo::cleanPlatformName(chipType);
   path <- system.file("extdata", package=pdPkgName);
   filename <- sprintf("%sRef.rda", pdPkgName);
   pathname <- Arguments$getReadablePathname(filename, path=path, 
