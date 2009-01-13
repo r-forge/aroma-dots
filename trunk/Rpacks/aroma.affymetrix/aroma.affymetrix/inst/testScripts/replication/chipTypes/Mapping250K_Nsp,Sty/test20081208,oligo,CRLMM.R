@@ -47,7 +47,7 @@ print(crlmm);
 units <- fit(crlmm, ram="oligo", verbose=log);
 str(units);
 
-callSet <- getConfidenceScoreSet(crlmm);
+callSet <- getCallSet(crlmm);
 print(callSet);
 
 
