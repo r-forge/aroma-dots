@@ -48,9 +48,11 @@ setMethodS3("getCrlmmPriors", "CrlmmModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   pkgName <- "oligoParams";
   if (isPackageInstalled(pkgName) && require(pkgName, character.only=TRUE)) {
+    # To trick R CMD check
+    getCrlmmSnpNames <- NULL; rm(getCrlmmSnpNames);
     verbose && enter(verbose, "Querying oligoParams");
     tryCatch({
-      res <- oligoParams::getCrlmmSnpNames(chipType, tags="SNPs", 
+      res <- getCrlmmSnpNames(chipType, tags="SNPs", 
                                            verbose=less(verbose, -20));
     }, error=function(ex) {})
     verbose && exit(verbose);
@@ -125,13 +127,15 @@ setMethodS3("getCrlmmSNPs", "CrlmmModel", function(this, flavor=c("oligoPD", "ol
 
     pkgName <- "oligoParams";
     if (isPackageInstalled(pkgName) && require(pkgName, character.only=TRUE)) {
+      # To trick R CMD check
+      getCrlmmSnpNames <- NULL; rm(getCrlmmSnpNames);
       ds <- getDataSet(this);
       cdf <- getCdf(ds);
       chipType <- getChipType(cdf, fullname=FALSE);
 
       verbose && enter(verbose, "Querying oligoParams");
       tryCatch({
-        res <- oligoParams::getCrlmmSnpNames(chipType, tags="SNPs", 
+        res <- getCrlmmSnpNames(chipType, tags="SNPs", 
                                              verbose=less(verbose, -20));
       }, error=function(ex) {})
       verbose && exit(verbose);
@@ -203,13 +207,15 @@ setMethodS3("getCrlmmSNPsOnChrX", "CrlmmModel", function(this, flavor=c("oligoPD
 
     pkgName <- "oligoParams";
     if (isPackageInstalled(pkgName) && require(pkgName, character.only=TRUE)) {
+      # To trick R CMD check
+      getCrlmmSnpNames <- NULL; rm(getCrlmmSnpNames);
       ds <- getDataSet(this);
       cdf <- getCdf(ds);
       chipType <- getChipType(cdf, fullname=FALSE);
 
       verbose && enter(verbose, "Querying oligoParams");
       tryCatch({
-        res <- oligoParams::getCrlmmSnpNames(chipType, tags="SNPs,ChrX", 
+        res <- getCrlmmSnpNames(chipType, tags="SNPs,ChrX", 
                                              verbose=less(verbose, -20));
       }, error=function(ex) {})
       verbose && exit(verbose);

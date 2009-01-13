@@ -96,7 +96,7 @@ stopifnot(errorRate < 1e-4);
 # Compare confidence scores
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 confSet <- getConfidenceScoreSet(crlmm);
-conf <- extractMatrix(confSet)[units,,drop=FALSE];
+conf <- extractMatrix(confSet, units=units);
 dimnames(conf) <- NULL;
 
 conf0 <- readSummaries("conf", path);

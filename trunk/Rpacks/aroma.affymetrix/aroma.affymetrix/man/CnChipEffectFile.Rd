@@ -72,7 +72,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectFile}\cr
 
 
  \bold{Methods inherited from SnpChipEffectFile}:\cr
-exportAromaUnitSignalBinaryFileList, extractCNT, extractTheta, extractTotalAndFreqB, getCellIndices, getExpandedCellMap, getParameters, mergeStrands, readUnits, writeCNT
+exportAromaUnitSignalBinaryFileList, extractCNT, extractTheta, extractTotalAndFracB, getCellIndices, getExpandedCellMap, getParameters, mergeStrands, readUnits, writeCNT
 
  \bold{Methods inherited from ChipEffectFile}:\cr
 extractChromosomalDataFrame, extractMatrix, extractTheta, findUnitsTodo, getAM, getAsFullCelFile, getCellIndices, getCellMapForMainCdf, getExpandedCellMap, getParameters, getUnitGroupCellArrayMap, getUnitGroupCellChromosomePositionMap, getUnitGroupCellMatrixMap, getXAM, mergeGroups, readUnits, writeAsFullCelFile

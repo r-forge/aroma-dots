@@ -1658,6 +1658,16 @@
 \alias{getTotalAndFracBSets}
 \alias{getTotalAndFracBSets.SnpChipEffectSet}
 \alias{getTotalAndFreqBSets.default}
+\alias{calculateConfidenceScores}
+\alias{calculateConfidenceScores.CrlmmModel}
+\alias{getConfidenceScoreSet}
+\alias{getConfidenceScoreSet.CrlmmModel}
+\alias{getCrlmmSplineParameters}
+\alias{getCrlmmSplineParameters.CrlmmModel}
+\alias{readParameter}
+\alias{readParameter.CrlmmParametersFile}
+\alias{updateParameter}
+\alias{updateParameter.CrlmmParametersFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
