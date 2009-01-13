@@ -32,6 +32,43 @@ setMethodS3("allocate", "AromaUnitGenotypeCallFile", function(static, ..., types
 }, static=TRUE)
 
 
+setMethodS3("isHomozygote", "AromaUnitGenotypeCallFile", function(this, ..., drop=FALSE) {
+  calls <- extractCalls(this, ..., drop=FALSE);
+
+  res <- rep(TRUE, length=nrow(calls));
+  for (cc in seq(length=ncol(calls))) {
+    res <- res & (calls[,cc,1] == 0);
+  }
+  rm(calls);
+
+  # Drop singleton dimensions?
+  if (drop) {
+    res <- drop(res);
+  }
+
+  res;
+})
+
+
+setMethodS3("isHeterozygote", "AromaUnitGenotypeCallFile", function(this, ..., drop=FALSE) {
+  calls <- extractCalls(this, ..., drop=FALSE);
+
+  res <- rep(TRUE, length=nrow(calls));
+  calls0 <- calls[,1,1,drop=FALSE];
+  for (cc in 2:ncol(calls)) {
+    res <- res & (calls[,cc,1] == calls0);
+  }
+  rm(calls, calls0);
+
+  # Drop singleton dimensions?
+  if (drop) {
+    res <- drop(res);
+  }
+
+  res;
+})
+
+
 setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this, ..., emptyValue=c("", "-", "--"), noCallValue="NC", naValue=c(NA, "NA"), encoding=c("generic", "oligo"), drop=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -154,6 +191,7 @@ setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this,
 setMethodS3("extractGenotypes", "AromaUnitGenotypeCallFile", function(this, ...) {
   extractGenotypeMatrix(this, ...);
 })
+
 
 
 setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units=NULL, calls, ..., encoding=c("generic", "oligo"), verbose=FALSE) {
@@ -292,6 +330,8 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
 
 ############################################################################
 # HISTORY:
+# 2009-01-12
+# Added isHomozygote() and isHeterozygote().
 # 2009-01-10
 # o Added argument 'encoding' to extract-/updateGenotypes() with support
 #   for oligo nucleotides {1,2,3}.

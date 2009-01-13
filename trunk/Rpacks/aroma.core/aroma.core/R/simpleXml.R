@@ -46,7 +46,7 @@ setMethodS3("listToXml", "list", function(tree, indentStep=" ", collapse="\t", .
 
 
 
-setMethodS3("xmlToList", "character", function(xml, ...) {
+setMethodS3("xmlToList", "character", function(xml, ..., drop=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -73,14 +73,22 @@ setMethodS3("xmlToList", "character", function(xml, ...) {
       if (state == "inBeginTag") {
         if (xmlNext == ">") {
           res <- parseXml(xml, beginTag=trim(tag), ...);
-          xmlNode <- res$xmlNode;
+          xmlNode <- res[[1]];
+
+          # Drop dimension of values
+          if (drop && is.null(names(xmlNode))) {
+            xmlNode <- xmlNode[[1]];
+          }
+
+          xmlNode <- list(xmlNode);
           names(xmlNode) <- trim(tag);
+
           xmlTree <- c(xmlTree, xmlNode);
           xml <- res$xml;
-#          str(xmlNode);
-#          cat("############################################\n");
-#          cat("</", trim(tag), ">\n", sep="");
-#          cat("############################################\n");
+##          str(xmlNode);
+##          cat("############################################\n");
+##          cat("</", trim(tag), ">\n", sep="");
+##          cat("############################################\n");
           tag <- "";
           state <- "inBody";
         } else {
@@ -109,7 +117,7 @@ setMethodS3("xmlToList", "character", function(xml, ...) {
             xml <- xml[-1];
             body <- trim(body);
             if (nchar(body) > 0) {
-              xmlNode <- body;
+              xmlNode <- list(body);
               xmlTree <- c(xmlTree, xmlNode);
             }
             body <- "";
@@ -141,6 +149,8 @@ setMethodS3("xmlToList", "character", function(xml, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-01-12
+# o Added argument 'drop' to xmlToList().
 # 2008-05-23
 # o UPDATED: Rewrote internal parseXml() to be a "real" parser.  Hopefully,
 #   it is a bit more generic now.
