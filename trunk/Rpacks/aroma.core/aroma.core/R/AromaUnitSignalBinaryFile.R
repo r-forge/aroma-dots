@@ -111,7 +111,7 @@ setMethodS3("allocate", "AromaUnitSignalBinaryFile", function(static, ..., platf
 
 
 setMethodS3("extractMatrix", "AromaUnitSignalBinaryFile", function(this, units=NULL, rows=units, ...) {
-  NextMethod("extractMatrix", rows=units, ...);  
+  NextMethod("extractMatrix", rows=rows, ...);  
 })
 
 
