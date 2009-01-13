@@ -695,6 +695,11 @@
 \alias{validate.AromaUnitSignalBinarySet}
 \alias{byName.AromaUnitGenotypeCallSet}
 \alias{findByName.AromaUnitCallSet}
+\alias{extractMatrix.AromaUnitSignalBinaryFile}
+\alias{isHeterozygote}
+\alias{isHeterozygote.AromaUnitGenotypeCallFile}
+\alias{isHomozygote}
+\alias{isHomozygote.AromaUnitGenotypeCallFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
