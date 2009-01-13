@@ -52,7 +52,7 @@ setMethodS3("extractRawCopyNumbers", "AromaUnitTotalCnBinaryFile", function(this
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Extracting data");
-  M <- extractMatrix(this, rows=units, drop=TRUE, verbose=less(verbose,5));
+  M <- extractMatrix(this, units=units, drop=TRUE, verbose=less(verbose,5));
   verbose && str(verbose, M);  
   rawCNs <- RawCopyNumbers(x=pos, cn=M, chromosome=chromosome);
 

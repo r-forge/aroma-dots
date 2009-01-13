@@ -96,7 +96,7 @@ setMethodS3("extractCallArray", "AromaUnitCallFile", function(this, units=NULL, 
 
   res <- NULL;
   for (cc in seq(length=nbrOfColumns(this))) {  
-    values <- extractMatrix(this, rows=units, column=cc, drop=TRUE, ...);
+    values <- extractMatrix(this, units=units, column=cc, drop=TRUE, ...);
     isNA <- whichVector(values == valueForNA);
     values[isNA] <- naValue;
 
