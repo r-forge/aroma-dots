@@ -58,10 +58,76 @@ setMethodS3("findUnitsTodo", "CrlmmParametersFile", function(this, units=NULL, .
 })
 
 
+setMethodS3("readParameter", "CrlmmParametersFile", function(this, name, mode="character", ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'name':
+  name <- Arguments$getCharacter(name);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Reading parameter (stored in file footer)");
+  footer <- readFooter(this);
+  key <- "parameters";
+  params <- footer[[key]];
+  res <- params[[name]];
+
+  storage.mode(res) <- mode;
+  verbose && exit(verbose);
+
+  res;
+})
+
+
+
+setMethodS3("updateParameter", "CrlmmParametersFile", function(this, name, value, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'name':
+  name <- Arguments$getCharacter(name);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Updating parameter (stored in file footer)");
+  footer <- readFooter(this);
+  verbose && cat(verbose, "File footer before:");
+  verbose && str(verbose, footer);
+
+  key <- "parameters";
+  params <- footer[[key]];
+  if (is.null(params)) {
+    params <- list();
+  }
+  params[[name]] <- value;
+  footer[[key]] <- params;
+
+  verbose && cat(verbose, "Updated footer:");
+  verbose && str(verbose, footer);
+
+  res <- writeFooter(this, footer);
+  verbose && exit(verbose);
+
+  invisible(res);
+})
+
 
 
 ############################################################################
 # HISTORY:
+# 2009-01-12
+# o Added read-/updateParameter().
 # 2008-12-08
 # o Added findUnitsTodo() and extractCalls().
 # 2008-12-05

@@ -116,7 +116,7 @@ setMethodS3("getCallSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
   nbrOfUnits <- nbrOfUnits(cdf);
   platform <- getPlatform(cdf);
 
-  verbose && enter(verbose, "Retrieving genotype data set");
+  verbose && enter(verbose, "Retrieving genotype call set");
   agcList <- list();
   for (kk in seq(along=filenames)) {
     filename <- filenames[kk];
@@ -138,7 +138,66 @@ setMethodS3("getCallSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
   res <- AromaUnitGenotypeCallSet$fromFiles(outPath);
 
   res;
-})
+}) # getCallSet()
+
+
+
+setMethodS3("getConfidenceScoreSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  ces <- getDataSet(this);
+  cdf <- getCdf(ces);
+  chipType <- getChipType(this, fullname=FALSE);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Allocating parameter files
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Setting up output directory
+  outPath <- getPath(this);
+
+  # Setting up output pathnames
+  fullnames <- getFullNames(ces);
+  fullnames <- gsub(",chipEffects$", "", fullnames);
+  filenames <- sprintf("%s,confidenceScores.acf", fullnames);
+
+  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfUnits <- nbrOfUnits(cdf);
+  platform <- getPlatform(cdf);
+
+  verbose && enter(verbose, "Retrieving genotype call confidence set");
+  agcList <- list();
+  for (kk in seq(along=filenames)) {
+    filename <- filenames[kk];
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, filename, nbrOfArrays));
+    pathname <- filePath(outPath, filename);
+    if (isFile(pathname)) {
+      agc <- AromaUnitSignalBinaryFile(pathname);
+    } else {
+      verbose && enter(verbose, "Allocating new file");
+     chipTypeF <- getChipType(this);
+      agc <- AromaUnitSignalBinaryFile$allocate(filename=pathname, platform=platform, chipType=chipTypeF, nbrOfRows=nbrOfUnits, verbose=log);
+      naValue <- as.integer(NA);
+      agc[,1] <- naValue;
+      verbose && exit(verbose);
+    }
+    agcList[[kk]] <- agc;
+    verbose && exit(verbose);
+  } # for (kk ...)
+  verbose && exit(verbose);
+
+  res <- AromaUnitSignalBinarySet$fromFiles(outPath, pattern=",confidenceScores.acf$");
+
+  res;
+}) # getConfidenceScoreSet()
 
 
 setMethodS3("getCrlmmParametersSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
@@ -172,7 +231,7 @@ setMethodS3("getCrlmmParametersSet", "CrlmmModel", function(this, ..., verbose=F
   nbrOfUnits <- nbrOfUnits(cdf);
   platform <- getPlatform(cdf);
 
-  verbose && enter(verbose, "Retrieving genotype data set");
+  verbose && enter(verbose, "Retrieving CRLMM parameters set");
   atbList <- list();
   for (kk in seq(along=filenames)) {
     filename <- filenames[kk];
@@ -194,7 +253,7 @@ setMethodS3("getCrlmmParametersSet", "CrlmmModel", function(this, ..., verbose=F
   res <- CrlmmParametersSet$fromFiles(outPath);
 
   res;
-})
+}) # getCrlmmParametersSet()
 
 
 
@@ -264,6 +323,9 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   } else {
     ram <- Arguments$getDouble(ram, range=c(1e-4,Inf));
   }
+
+  # Argument 'force':
+  force <- Arguments$getLogical(force);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -371,9 +433,13 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   }
   unitList <- splitInChunks(units, chunkSize=chunkSize);
   nbrOfChunks <- length(unitList);
-  count <- 1;
+
+  # To keep a SNR estimate per array
+  snrPerArray <- double(nbrOfArrays);
+
+  chunk <- 1;
   while (length(unitList) > 0) {
-    verbose && enter(verbose, sprintf("Chunk #%d of %d", count, nbrOfChunks));
+    verbose && enter(verbose, sprintf("Chunk #%d of %d", chunk, nbrOfChunks));
     unitsChunk <- unitList[[1]];
     verbose && cat(verbose, "Units:");
     verbose && str(verbose, unitsChunk);
@@ -412,6 +478,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     verbose && enter(verbose, "Fitting SNP mixtures");
     correction <- oligo:::fitAffySnpMixture(eSet, verbose=as.logical(verbose));
     verbose && str(verbose, correction);
+    verbose && enter(verbose, "SNR per array:");
+    verbose && str(verbose, as.vector(correction$snr));
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Genotype calling");
@@ -476,6 +544,9 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
         calls[calls == gg & llr < minLLRforCalls[gg]] <- naValue;
       }
       rm(llr);
+      # 'correction$snr' is a I vector, where I=#arrays.
+      # Note that is has a dim() attribute making it look like a matrix.
+      # Why exactly 3.675?!? /HB 2009-01-12
       calls[,(correction$snr < 3.675)] <- naValue;
 
       rparams <- oligo:::getAffySnpGenotypeRegionParams(eSet, calls, correction$fs, verbose=as.logical(verbose));
@@ -494,27 +565,47 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       verbose && exit(verbose);
     } # if (recalibrate)
 
+    snrPerArray <- snrPerArray + log(as.vector(correction$snr));
+    verbose && cat(verbose, "Average SNR per array:");
+    verbose && str(verbose, exp(snrPerArray/nbrOfChunks));
+
     # Clean up
     rm(eSet, indexX,  correction, rparams, priors);
 
     verbose && enter(verbose, "Estimated genotype parameters");
-    verbose && cat(verbose, "dist:");
-    verbose && str(verbose, dist);
     verbose && cat(verbose, "calls:");
     verbose && str(verbose, calls);
     verbose && cat(verbose, "llr:");
     verbose && str(verbose, llr);
+    verbose && cat(verbose, "dist:");
+    verbose && str(verbose, dist);
     verbose && exit(verbose);
 
-    verbose && enter(verbose, "Storing genotype parameters");
+    verbose && enter(verbose, "Storing CRLMM parameter estimates, confidence scores and genotypes");
     for (kk in seq(callSet)) {
       agc <- getFile(callSet, kk);
       atb <- getFile(paramSet, kk);
       verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(agc), nbrOfArrays));
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # (genotypeCall, confidenceScore)
+      # (i) CRLMM specific parameter estimates
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Calls
+      verbose && enter(verbose, "CRLMM specific parameter estimates");
+      # LLR
+      atb[unitsChunk,1] <- llr[,kk,drop=TRUE];
+
+      # Distances
+      distKK <- dist[,kk,,,drop=TRUE];
+      dim(distKK) <- c(dim(distKK)[1], prod(dim(distKK)[2:3]));
+      for (cc in 1:ncol(distKK)) {
+        atb[unitsChunk,cc+1] <- distKK[,cc];
+      }
+      rm(distKK, atb);
+      verbose && exit(verbose);
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # (ii) Genotype calls
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      verbose && enter(verbose, "Genotype calls");
       verbose && enter(verbose, "Tranlating oligo calls to {NC,AA,AB,BB}");
       callsKK <- calls[,kk,drop=TRUE];
       callsT <- character(nrow(calls));
@@ -529,36 +620,42 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
                                               verbose=less(verbose,5));
       rm(callsT);
 
-      verbose && cat(verbose, "Stored genotypes:");
+      verbose && cat(verbose, "Genotypes stored (as on file):");
       verbose && str(verbose, extractGenotypes(agc, units=unitsChunk));
-
-      # Confidence scores
-      ## agc[unitsChunk,2] <- ...
       rm(agc);
+      verbose && exit(verbose);
 
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # CRLMM specific parameter estimates
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # LLR
-      atb[unitsChunk,1] <- llr[,kk,drop=TRUE];
-
-      # Distances
-      distKK <- dist[,kk,,,drop=TRUE];
-      dim(distKK) <- c(dim(distKK)[1], prod(dim(distKK)[2:3]));
-      for (cc in 1:ncol(distKK)) {
-        atb[unitsChunk,cc+1] <- distKK[,cc];
-      }
-      rm(distKK, atb);
       verbose && exit(verbose);
     } # for (kk ...)
     verbose && exit(verbose);
 
     # Next chunk
-    count <- count + 1;
+    chunk <- chunk + 1;
     rm(unitsChunk, calls, llr, dist);
     verbose && exit(verbose);
   } # while(length(unitsList) > 0)
   rm(callSet);
+
+  verbose && enter(verbose, "Storing average SNR per arrays");
+
+  # Calculate average SNR per array (on the non-log scale)
+  snrPerArray <- exp(snrPerArray / nbrOfChunks);
+  verbose && cat(verbose, "Average SNR per array (over all chunks):");
+  verbose && str(verbose, snrPerArray);
+
+  for (kk in seq(paramSet)) {
+    pf <- getFile(paramSet, kk);
+    updateParameter(pf, "snr", snrPerArray[kk], verbose=less(verbose, -20));
+  }
+
+  verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Confidence scores
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Calculating confidence scores for each call");
+  callSet <- calculateConfidenceScores(this, verbose=verbose);
+  verbose && exit(verbose);
 
   verbose && exit(verbose);
 
@@ -567,10 +664,267 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
 })
 
 
+setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'force':
+  force <- Arguments$getLogical(force);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Calculating confidence scores for each call");
+
+  callSet <- getCallSet(this, verbose=less(verbose,1));
+  confSet <- getConfidenceScoreSet(this, verbose=less(verbose,1));
+  paramSet <- getCrlmmParametersSet(this, verbose=less(verbose,1));
+
+  nbrOfArrays <- nbrOfFiles(callSet);
+  verbose && cat(verbose, "Number of arrays: ", nbrOfArrays);
+  cf <- getFile(callSet,1);
+  nbrOfUnits <- nbrOfUnits(cf);
+  verbose && cat(verbose, "Number of units: ", nbrOfUnits);
+
+  verbose && enter(verbose, "Retrieving SNR estimates");
+  snrs <- sapply(paramSet, FUN=readParameter, name="snr", mode="double");
+  snrs <- unlist(snrs, use.names=FALSE);
+  # Sanity check
+  if (length(snrs) != nbrOfArrays) {
+    throw("Number of SNRs read from CRLMM parameter set does not match the number of arrays modelled: ", length(snrs), " != ", nbrOfArrays);
+  }
+  names(snrs) <- NULL;
+  verbose && cat(verbose, "SNRs:");
+  verbose && str(verbose, snrs);
+  verbose && exit(verbose);
+
+  # Ported from oligo:::LLR2conf()
+
+  verbose && enter(verbose, "Retrieving prior spline parameters");
+  splineParams <- getCrlmmSplineParameters(this, verbose=less(verbose,20));
+  verbose && print(verbose, ll(envir=splineParams));
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Thresholding SNRs according to prior estimates");
+  truncSnrs <- pmin(log(snrs), splineParams$SNRK);
+  verbose && str(verbose, truncSnrs);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Calculating transformed SNRs using prior lm fit");
+  coef <- splineParams$SNRlm$coef;
+  verbose && cat(verbose, "Prior parameters used:");
+  verbose && str(verbose, coef);
+  snrs2 <- coef[1] + coef[2]*truncSnrs;
+  verbose && cat(verbose, "Transformed SNRs:");
+  verbose && str(verbose, snrs2);
+  rm(coef);
+  verbose && exit(verbose);
+
+  # Allocate results
+  naValue <- as.double(NA);
+  conf <- matrix(naValue, nrow=nbrOfUnits, ncol=nbrOfArrays);
+
+  params <- list(
+    homozygotes=list(
+      coefs = splineParams$lm1$coef,
+      k2 = splineParams$HmzK2,
+      k3 = splineParams$HmzK3
+    ), 
+    heterozygotes=list(
+      coefs = splineParams$lm2$coef,
+      k2 = splineParams$HtzK2,
+      k3 = splineParams$HtzK3
+    )
+  );
+  verbose && str(verbose, "Prior parameters:");
+  verbose && str(verbose, params);
+
+  # If you call the genotype by chance, the probability that 
+  # you are correct is 1/3. Since CRLMM always call the genotype
+  # and picks the one with greatest confidence, the smallest
+  # possible confidence score is 1/3. /HB 2009-01-12
+  minConf <- 1/3;
+
+  for (kk in seq(length=nbrOfArrays)) {
+    cf <- getFile(callSet, kk);
+    pf <- getFile(paramSet, kk);
+    sf <- getFile(confSet, kk);
+
+    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(cf), nbrOfArrays));
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Identifying heterozygote units
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Identifying heterozygote units");
+    isHet <- isHeterozygote(cf, drop=TRUE, verbose=less(verbose, 25));
+    verbose && exit(verbose);
+
+    # Identified units called by CRLMM.  This will for instance also
+    # skip CN units.
+    unitsKK <- whichVector(!is.na(isHet));
+    isHet <- isHet[unitsKK];
+    nbrOfCalled <- length(unitsKK);
+    verbose && printf(verbose, "Number of called units: %d (%.2f%%)\n", 
+                                      nbrOfCalled, 100*nbrOfCalled/nbrOfUnits);
+    verbose && str(verbose, unitsKK);
+
+    # Sanity check
+    if (nbrOfCalled == 0) {
+      throw("Cannot calculate confidence scores. Genotypes are not called: ", 
+                                                              getPathname(cf));
+    }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Allocating/retrieving confidence scores
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    conf <- sf[unitsKK,1,drop=TRUE];
+
+    # Identifying subset to be calculated
+    if (force) {
+    } else {
+      verbose && enter(verbose, "Identifying subset of units not yet calculated units");
+      idxs <- whichVector(is.na(conf));
+      unitsKK <- unitsKK[idxs];
+      conf <- conf[idxs];
+      rm(idxs);
+      verbose && str(verbose, unitsKK);
+      verbose && exit(verbose);
+    }
+
+    if (length(unitsKK) == 0) {
+      verbose && cat(verbose, "Nothing to do.");
+      verbose && exit(verbose);
+      next;
+    }
+
+    # Special case
+    if (snrs[kk] <= 3) {
+      conf[unitsKK] <- minConf;
+    } else {
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Retrieving LLRs
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      verbose && enter(verbose, "Retrieving LLRs");
+      llr <- sqrt(pf[unitsKK,1,drop=TRUE]);
+      verbose && str(verbose, llr);
+      verbose && exit(verbose);
+  
+  
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Calculating confidence scores stratified by homozygotes & heterozygotes
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      verbose && enter(verbose, "Calculating confidence scores stratified by homozygotes and heterozygotes");
+      for (what in names(params)) {
+        verbose && enter(verbose, sprintf("Stratify by '%s'", what));
+  
+        paramsT <- params[[what]];
+        verbose && cat(verbose, "Parameters:");
+        verbose && str(verbose, paramsT);
+  
+        if (what == "homozygotes") {
+          idxs <- whichVector(!isHet);
+        } else {
+          idxs <- whichVector(isHet);
+        }
+  
+        verbose && cat(verbose, "Number of ", what, ": ", length(idxs));
+        if (length(idxs) > 0) {
+          coefs <- paramsT$coefs;
+          k2 <- paramsT$k2;
+          k3 <- paramsT$k3;
+  
+          llrT <- pmin(llr[idxs], k3);
+          confT <- coefs[1] + coefs[2]*llrT;
+  
+          delta <- llrT - k2;
+          idxsT <- whichVector(delta > 0);
+          if (length(idxsT) > 0) {
+            confT[idxsT] <- confT[idxsT] + coefs[3]*delta[idxsT];
+          }
+  
+          conf[idxs] <- confT;
+          rm(idxsT, delta, llrT, confT);
+        }
+        rm(idxs);
+  
+        verbose && exit(verbose);
+      } # for (what ...)
+      verbose && exit(verbose);
+  
+      # Clean up
+      rm(isHet, llr);
+  
+      verbose && cat(verbose, "Confidence \"scores\":");
+      verbose && str(verbose, conf);
+      verbose && summary(verbose, conf);
+  
+      verbose && cat(verbose, "Corrected confidence \"scores\":");
+      conf <- conf + snrs2[kk];
+      verbose && summary(verbose, conf);
+  
+      verbose && cat(verbose, "Final confidence scores:");
+      conf <- 1/(1+exp(-conf));
+
+      conf[(conf < minConf)] <- minConf;
+    } # if (snrs[kk] <= 3)
+    
+    verbose && cat(verbose, "Final confidence scores:");
+    verbose && str(verbose, conf);
+    verbose && summary(verbose, conf);
+
+    # Sanity check
+    if (any((conf < 0 | conf > 1), na.rm=TRUE)) {
+      throw(verbose, "Internal error: Identified ", sum((conf < 0 | conf > 1), na.rm=TRUE), " confidence scores that were out of range");
+    }
+
+    verbose && enter(verbose, "Storing confidence scores");
+    sf[unitsKK,1] <- conf;
+
+    # Updating footer
+    footer <- readFooter(sf);
+    key <- "sourceFiles";
+    data <- footer[[key]];
+    if (is.null(data))
+      data <- list();
+    srcFiles <- list(callFile=cf, paramFile=pf);
+    for (name in names(srcFiles)) {
+      srcFile <- srcFiles[[name]];
+      attr <- list(
+        nbrOfArrays = nbrOfFiles(callSet),
+        filename = getFilename(srcFile),
+        filesize = getFileSize(srcFile),
+        checksum = getChecksum(srcFile) 
+      );
+      data[[name]] <- attr;
+    }
+    footer[[key]] <- data;
+    writeFooter(sf, footer);
+    rm(footer, srcFiles, srcFile, attr, data, key);
+    verbose && exit(verbose);
+
+    rm(conf, unitsKK);
+
+    # Next array
+    verbose && exit(verbose);
+  } # for (kk ...)
+  
+  verbose && exit(verbose);
+
+  invisible(confSet);
+}, protected=TRUE);
+
+
+
 ############################################################################
 # HISTORY:
+# 2009-01-12
+# o Added calculateConfidenceScores().
 # 2009-01-10
-# o Now data in oligoParams is used, if installed.
 # o Updated to work with latest aroma.core and aroma.affymetrix.
 # 2009-01-07
 # o Overriding getAsteriskTags() and getRootPath().
