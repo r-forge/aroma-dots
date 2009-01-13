@@ -1668,6 +1668,8 @@
 \alias{readParameter.CrlmmParametersFile}
 \alias{updateParameter}
 \alias{updateParameter.CrlmmParametersFile}
+\alias{Env2Cdf}
+\alias{PdInfo2Cdf}
 
 \description{
   This page contains aliases for all "non-documented" objects that

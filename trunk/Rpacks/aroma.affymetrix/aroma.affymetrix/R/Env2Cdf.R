@@ -6,7 +6,7 @@ Env2Cdf <- function( env, celfile, verbose=TRUE, overwrite=FALSE ) {
   #### The original was written by Samuel Wuest, modified by Mark Robinson 
   #### (around 12 Jan 2009) to be generic
 
-  require(affxparser)
+  require("affxparser") || stop("Package not loaded: affxparser");
   do.call("library",args=list(package=env))
 
   if(verbose)
