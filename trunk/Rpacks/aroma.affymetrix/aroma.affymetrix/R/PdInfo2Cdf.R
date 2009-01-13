@@ -6,8 +6,8 @@ PdInfo2Cdf <- function( pdpkg, celfile, verbose=TRUE, overwrite=FALSE ) {
   #### The original was written by Samuel Wuest, modified by Mark Robinson 
   #### (around 12 Jan 2009) to be generic
 
-  require("affxparser") || throw("Package not loaded: affxparser");
-  require("pdInfoBuilder") || throw("Package not loaded: pdInfoBuilder");
+  require("affxparser") || stop("Package not loaded: affxparser");
+  require("pdInfoBuilder") || stop("Package not loaded: pdInfoBuilder");
 
   do.call("library",args=list(package=pdpkg))
 
