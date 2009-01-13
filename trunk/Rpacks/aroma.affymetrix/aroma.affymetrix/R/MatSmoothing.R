@@ -266,8 +266,6 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
 	d <- base::lapply(d, FUN=function(u) as.matrix(log2(u[[1]]$intensities),nc=length(sampsKeep)))
 	
     verbose && enter(verbose, "Computing trimmed means for all units");
-	indent <- paste(rep(" ", length.out = this$indentPos), collapse = "")
-	cat(indent)
     # ------------------------------------------------------
     # loop through each unit
     # ------------------------------------------------------
@@ -278,9 +276,7 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
 	    matScorePos[[jj]] <- matScoreNeg[[jj]] <- nbrRows[[jj]] <- outputList[[jj]] <- rep(0, nRows[[jj]])
 	  }
 	  if (jj %% 1000==1)
-        cat(jj)
-	  if (jj %% 100==1 & !(jj %% 1000==1))
-        cat(".");
+        verbose && cat(verbose, sprintf("Completed %d/%d units ...",jj,nUnits));
 	  
 	  indices <- cdfIndices[[jj]]$groups[[1]]$indices
 	  
