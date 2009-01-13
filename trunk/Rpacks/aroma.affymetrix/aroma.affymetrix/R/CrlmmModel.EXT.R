@@ -46,7 +46,8 @@ setMethodS3("getCrlmmPriors", "CrlmmModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Trying oligoParams package
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (require("oligoParams")) {
+  pkgName <- "oligoParams";
+  if (isPackageInstalled(pkgName) && require(pkgName, character.only=TRUE)) {
     verbose && enter(verbose, "Querying oligoParams");
     tryCatch({
       res <- oligoParams::getCrlmmSnpNames(chipType, tags="SNPs", 
@@ -122,7 +123,8 @@ setMethodS3("getCrlmmSNPs", "CrlmmModel", function(this, flavor=c("oligoPD", "ol
     verbose && enter(verbose, "Querying");
     res <- NULL;
 
-    if (require("oligoParams")) {
+    pkgName <- "oligoParams";
+    if (isPackageInstalled(pkgName) && require(pkgName, character.only=TRUE)) {
       ds <- getDataSet(this);
       cdf <- getCdf(ds);
       chipType <- getChipType(cdf, fullname=FALSE);
@@ -161,7 +163,7 @@ setMethodS3("getCrlmmSNPs", "CrlmmModel", function(this, flavor=c("oligoPD", "ol
   verbose && exit(verbose);
 
   units;
-}, private=TRUE)
+}, private=TRUE)  # getCrlmmSNPs()
 
 
 setMethodS3("getCrlmmSNPsOnChrX", "CrlmmModel", function(this, flavor=c("oligoPD", "oligoCDF"), ..., verbose=FALSE) {
@@ -199,7 +201,8 @@ setMethodS3("getCrlmmSNPsOnChrX", "CrlmmModel", function(this, flavor=c("oligoPD
     verbose && enter(verbose, "Querying");
     res <- NULL;
 
-    if (require("oligoParams")) {
+    pkgName <- "oligoParams";
+    if (isPackageInstalled(pkgName) && require(pkgName, character.only=TRUE)) {
       ds <- getDataSet(this);
       cdf <- getCdf(ds);
       chipType <- getChipType(cdf, fullname=FALSE);
@@ -236,11 +239,67 @@ setMethodS3("getCrlmmSNPsOnChrX", "CrlmmModel", function(this, flavor=c("oligoPD
   verbose && exit(verbose);
 
   units;
+}, private=TRUE) # getCrlmmSNPsOnChrX()
+
+
+
+setMethodS3("getCrlmmSplineParameters", "CrlmmModel", function(this, flavor=c("oligoPD"), ..., verbose=FALSE) {
+  # Argument 'flavor':
+  flavor <- match.arg(flavor);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Retrieving spline parameters");
+  verbose && cat(verbose, "Flavor: ", flavor);
+
+  ds <- getDataSet(this);
+  cdf <- getCdf(ds);
+  chipType <- getChipType(cdf, fullname=FALSE);
+  verbose && cat(verbose, "Chip type: ", chipType);
+
+  if (flavor == "oligoPD") {
+    verbose && enter(verbose, "Querying the PD package");
+  
+    pdPkgName <- oligo::cleanPlatformName(chipType);
+    verbose && cat(verbose, "Platform Design (PD) package: ", pdPkgName);
+
+    # Load target from PD package
+    path <- system.file(package=pdPkgName);
+    if (path == "") {
+      throw("Cannot load spline parameters. Package not installed: ", pdPkgName);
+    }
+
+    path <- file.path(path, "extdata");
+    path <- Arguments$getReadablePath(path);
+    filename <- sprintf("%s.spline.params.rda", pdPkgName);
+    pathname <- Arguments$getReadablePathname(filename, path=path);
+    verbose && cat(verbose, "Pathname: ", pathname);
+    res <- loadToEnv(pathname);
+    verbose && exit(verbose);
+  }
+
+  verbose && cat(verbose, "Loaded data:");
+  verbose && print(verbose, ll(envir=res));
+
+  verbose && str(verbose, res);
+
+  verbose && exit(verbose);
+
+  res;
 }, private=TRUE)
 
 
 ############################################################################
 # HISTORY:
+# 2009-01-12
+# o Added getCrlmmSplineParameters().
+# o Warnings about missing (optional) oligoParams is no longer reported.
 # 2009-01-10
 # o Now data in oligoParams is used, if installed.
 # o Updated to work with latest aroma.core and aroma.affymetrix.
