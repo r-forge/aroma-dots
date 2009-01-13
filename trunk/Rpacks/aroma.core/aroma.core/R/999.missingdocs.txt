@@ -313,4 +313,6 @@ allocate.AromaGenotypeCallFile byName.AromaGenotypeCallSet
   updateGenotypes.AromaUnitGenotypeCallFile
   validate.AromaUnitSignalBinarySet
 byName.AromaUnitGenotypeCallSet findByName.AromaUnitCallSet
-
+extractMatrix.AromaUnitSignalBinaryFile isHeterozygote
+  isHeterozygote.AromaUnitGenotypeCallFile isHomozygote
+  isHomozygote.AromaUnitGenotypeCallFile
