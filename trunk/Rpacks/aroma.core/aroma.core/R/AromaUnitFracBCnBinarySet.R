@@ -30,9 +30,9 @@
 # }
 #
 # \references{
-#   \item Peiffer et al., \emph{High-resolution genomic profiling of 
-#      chromosomal aberrations using Infinium whole-genome genotyping},
-#      Genome Res, 2006.
+#   [1] Peiffer et al., \emph{High-resolution genomic profiling of 
+#       chromosomal aberrations using Infinium whole-genome genotyping},
+#       Genome Res, 2006.\cr
 # }
 # 
 # @author
