@@ -110,6 +110,11 @@ setMethodS3("allocate", "AromaUnitSignalBinaryFile", function(static, ..., platf
 
 
 
+setMethodS3("extractMatrix", "AromaUnitSignalBinaryFile", function(this, units=NULL, rows=units, ...) {
+  NextMethod("extractMatrix", rows=units, ...);  
+})
+
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # BEGIN Interface API?
@@ -189,6 +194,9 @@ setMethodS3("getAromaUgpFile", "AromaUnitSignalBinaryFile", function(this, ..., 
 
 ############################################################################
 # HISTORY:
+# 2009-01-12
+# o Added extractMatrix() accepting argument 'units'.  This will then
+#   also work for the corresponding set of files.
 # 2009-01-05
 # o Renamed from AromaSignalBinaryFile to AromaUnitSignalBinaryFile.
 # 2008-05-24
