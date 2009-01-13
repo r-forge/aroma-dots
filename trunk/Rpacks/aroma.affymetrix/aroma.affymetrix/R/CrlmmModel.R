@@ -511,7 +511,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     if (hasQuartets) {
       verbose && enter(verbose, "Updating sense & antisense genotype regions");
       eSet1 <- eSet[,1];
-      M <- getM(eSet1);
+      M <- oligo::getM(eSet1);
       dimnames(M) <- NULL;
       M <- M[,1,,drop=TRUE];
       oneStrand <- integer(nrow(M));

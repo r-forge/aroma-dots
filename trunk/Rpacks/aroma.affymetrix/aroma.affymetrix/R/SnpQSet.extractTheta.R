@@ -34,10 +34,10 @@ setMethodS3("extractTheta", "SnpQSet", function(this, ..., transform=function(y,
     dimnames(theta)[[1]] <- snpNames;
 
   # Populate with estimates
-  theta[,1,] <- transform(senseThetaA(eSet));
-  theta[,2,] <- transform(senseThetaB(eSet));
-  theta[,3,] <- transform(antisenseThetaA(eSet));
-  theta[,4,] <- transform(antisenseThetaB(eSet));
+  theta[,1,] <- transform(oligo::senseThetaA(eSet));
+  theta[,2,] <- transform(oligo::senseThetaB(eSet));
+  theta[,3,] <- transform(oligo::antisenseThetaA(eSet));
+  theta[,4,] <- transform(oligo::antisenseThetaB(eSet));
 
   theta;
 })
