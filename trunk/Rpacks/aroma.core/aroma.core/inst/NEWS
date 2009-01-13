@@ -3,8 +3,9 @@ Package: aroma.core
 
 Version: 1.0.0 [2009-01-12]
 o Added getMaxLengthRepeats() to AromaCellSequenceFile.
-o Added AromaSignalBinary{File|Set}, AromaTotalCnBinary{File|Set},
-  and AromaFractionBCnFinary{File|Set}.
+o Added AromaUnitSignalBinary{File|Set}, AromaUnitTotalCnBinary{File|Set},
+  AromaUnitFracBCnFinary{File|Set}, AromaUnitCall{File|Set}, and
+  AromaUnitGenotypeCall{File|Set}.
 o BUG FIX: readFooter() of AromaTabularBinaryFile did not return the
   correct list for nested structures.
 o BUG FIX: groupBySnpNucleotides() of AromaCellSequenceFile would return
