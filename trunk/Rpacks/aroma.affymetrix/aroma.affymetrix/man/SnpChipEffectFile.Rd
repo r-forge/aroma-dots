@@ -59,7 +59,7 @@ extends \link[aroma.affymetrix]{ChipEffectFile}\cr
 \tabular{rll}{
  \tab \code{extractCNT} \tab  -\cr
  \tab \code{extractTheta} \tab  -\cr
- \tab \code{extractTotalAndFreqB} \tab  -\cr
+ \tab \code{extractTotalAndFracB} \tab  -\cr
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getExpandedCellMap} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
