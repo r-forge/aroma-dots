@@ -47,8 +47,8 @@ print(crlmm);
 units <- fit(crlmm, ram="oligo", verbose=log);
 str(units);
 
-gcs <- getCallSet(crlmm);
-print(gcs);
+callSet <- getConfidenceScoreSet(crlmm);
+print(callSet);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,12 +64,12 @@ if (!isDirectory(path)) {
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Compare the genotype calls
+# Compare genotype calls
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 units <- indexOf(cdf, pattern="^SNP");
 unitNames <- getUnitNames(cdf, units=units);
 units <- units[order(unitNames)];
-calls <- extractGenotypes(gcs, units=units, encoding="oligo");
+calls <- extractGenotypes(callSet, units=units, encoding="oligo");
 dimnames(calls) <- NULL;
 
 calls0 <- readSummaries("calls", path);
@@ -79,7 +79,7 @@ count <- 0;
 for (cc in 1:ncol(calls)) {
   idxs <- whichVector(calls[,cc] != calls0[,cc]);
   count <- count + length(idxs);
-  cat(sprintf("%s: ", getNames(gcs)[cc]));
+  cat(sprintf("%s: ", getNames(callSet)[cc]));
   if (length(idxs) > 0) {
     map <- c("AA", "AB", "BB");
     cat(paste(map[calls[idxs,cc]], map[calls0[idxs,cc]], sep="!="), sep=", ");
@@ -91,3 +91,31 @@ errorRate <- count/length(calls);
 cat(sprintf("Concordance rate: %.5f%%\n", 100*(1-errorRate)));
 
 stopifnot(errorRate < 1e-4);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Compare confidence scores
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+confSet <- getConfidenceScoreSet(crlmm);
+conf <- extractMatrix(confSet)[units,,drop=FALSE];
+dimnames(conf) <- NULL;
+
+conf0 <- readSummaries("conf", path);
+dimnames(conf) <- NULL;
+
+delta <- conf - conf0;
+avgDelta <- mean(abs(delta), na.rm=TRUE);
+stopifnot(avgDelta < 1e-4);
+
+subplots(ncol(conf));
+par(mar=c(3,2,1,1)+0.1);
+lim <- c(0,1);
+for (cc in 1:ncol(conf)) {
+  plot(NA, xlim=lim, ylim=lim);
+  abline(a=0, b=1, col="#999999");
+  points(conf[,cc], conf0[,cc], pch=".", cex=3);
+  rho <- cor(conf[,cc], conf0[,cc]);
+  stext(side=3, pos=0, line=-1, sprintf("rho=%.4f", rho));
+  stext(side=3, pos=0, getNames(confSet)[cc]);
+  cat(sprintf("Array #%d: Correlation: %.4f\n", cc, rho));
+}
