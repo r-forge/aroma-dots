@@ -13,7 +13,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "ProbeLevelTransform".}
-#   \item{design}{}
+#   \item{design}{A design @matrix.}
 #   \item{probeWindow}{Bandwidth to use.  Effectively the width is 
 #      2*probeWindow since it looks probeWindow bases in either direction}
 #   \item{nProbes}{The minimum number of probes to calculate a MAT score for.}
@@ -27,11 +27,28 @@
 # \author{Mark Robinson (mrobinson[at]wehi.edu.au).}
 #*/###########################################################################
 setConstructorS3("MatSmoothing", function(..., design=NULL, probeWindow=300, nProbes=10, meanTrim=0.1) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'design':
+  if (!is.null(design)) {
+    if (!is.matrix(design)) {
+      throw("Argument 'design' is not a matrix: ", class(design)[1]);
+    }
+
+    for (cc in seq(length=ncol(design))) {
+      if (!any(design[,cc] != 0)) {
+        throw("Column #", cc, " in argument 'design' is all zero.");
+      }
+    }
+  }
+
+
   extend(ProbeLevelTransform(...), "MatSmoothing",
-	.design = design,
-	.probeWindow = probeWindow,
-	.nProbes = nProbes,
-	.meanTrim = meanTrim
+    .design = design,
+    .probeWindow = probeWindow,
+    .nProbes = nProbes,
+    .meanTrim = meanTrim
   )
 })
 
@@ -92,7 +109,8 @@ setMethodS3("isDone", "MatSmoothing", function(this, ..., verbose=FALSE) {
 
   ds <- getInputDataSet(this);
   
-  design <- this$.design
+  params <- getParameters(this);
+  design <- params$design;
 
   if (length(pathnames) < ncol(design) ) {
     verbose && cat(verbose, "NOT done. Too few output files: ", 
@@ -145,14 +163,62 @@ setMethodS3("isDone", "MatSmoothing", function(this, ..., verbose=FALSE) {
 #*/###########################################################################
 setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # calculates null distribution from first taking non-overlapping probes,
+  # then replicating the negative half of the distribution.
+  calcNullDist <- function(ch, ps, x) {
+    MIN <- -999999
+    #inds <- 
+    y <- rep(MIN,length(x))
+    n <- length(ch)
+    indices <- split(seq_len(n), ch)
+    nChr <- length(indices)
+    count <- 0
+    for (ii in seq_len(nChr)) {
+      ind <- indices[[ii]]
+      nInd <- length(ind)
+      pos <- ind[1]
+      for (jj in seq_len(nInd)) {
+        pp <- ps[ ind[jj] ]
+        if ( (pp-pos) > (probeWindow*2) ) {
+          count <- count + 1
+          y[count] <- x[ ind[jj] ]
+          #inds[count] <- ind[jj]
+          pos <- pp
+        }  
+      } # for (jj ...)
+    } # for (ii ...)
+    y <- y[y > MIN]
+    md <- median(y)
+    y <- y[y <= md]
+    #list( m=md, sd = sd( c(y,-y+2*md) ), inds=inds[inds > MIN])
+    list( m=md, sd = sd( c(y,-y+2*md) ) )
+  } # callNullDist()
+    
+  # ------------------------------------------------------
+  # tolerance function to be used below to get indices
+  # ------------------------------------------------------
+  tolFun <- function(u,tol) {
+    which( abs(u) <= tol )
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'units':
+  if (!is.null(units)) {
+    units <- Arguments$getIndices(units, range=c(1,nbrOfUnits(cdf)));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
   }
+
 
   verbose && enter(verbose, "MAT smoothing according to design matrix");
 
@@ -179,191 +245,180 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   cdf <- getCdf(ds)
   
   # Get which units to fit
-  if( is.null(units) )
+  if ( is.null(units) ) {
     units <- seq_len(nbrOfUnits(cdf))
+  }
 
   verbose && enter(verbose, "Locating probe position data");
   # Locate AromaCellPositionFile holding probe sequences
   acp <- getAromaCellPositionFile(this, verbose=less(verbose, 5));
   verbose && exit(verbose);
 
-  # 
-  design <- this$.design
-  probeWindow <- this$.probeWindow
-  design <- this$.design
-  nProbes <- this$.nProbes
-  meanTrim <- this$.meanTrim
+  # Get algorithm parameters
+  params <- getParameters(this, verbose=less(verbose, 50));
+  probeWindow <- params$probeWindow
+  design <- params$design
+  nProbes <- params$nProbes
+  meanTrim <- params$meanTrim
+  rm(params);
 
-  # calculates null distribution from first taking non-overlapping probes,
-  # then replicating the negative half of the distribution.
-  calcNullDist <- function(ch, ps, x) {
-    MIN <- -999999
-	#inds <- 
-	y <- rep(MIN,length(x))
-	n <- length(ch)
-	indices <- split(seq_len(n), ch)
-	nChr <- length(indices)
-	count <- 0
-	for(ii in seq_len(nChr)) {
-	  ind <- indices[[ii]]
-	  nInd <- length(ind)
-	  pos <- ind[1]
-	  for(jj in seq_len(nInd)) {
-	    pp <- ps[ ind[jj] ]
-	    if( (pp-pos) > (probeWindow*2) ) {
-		  count <- count + 1
-		  y[count] <- x[ ind[jj] ]
-		  #inds[count] <- ind[jj]
-		  pos <- pp
-		}  
-	  }
-	}
-	y <- y[y > MIN]
-	md <- median(y)
-	y <- y[y <= md]
-	#list( m=md, sd = sd( c(y,-y+2*md) ), inds=inds[inds > MIN])
-	list( m=md, sd = sd( c(y,-y+2*md) ) )
-  }
-    
-  # ------------------------------------------------------
-  # tolerance function to be used below to get indices
-  # ------------------------------------------------------
-  tolFun <- function(u,tol) {
-    which( abs(u) <= tol )
-  }
   
   # ------------------------------------------------------
   # get CEL indices for units 
   # ------------------------------------------------------
-  nrDesign <- nrow(design)
-  ncDesign <- ncol(design)
-    
-  cdfIndices <- readCdf(getPathname(cdf), units=units,readXY=FALSE, readBases=FALSE, 
-                readIndexpos=FALSE, readAtoms=FALSE,readUnitType=FALSE, readUnitDirection=FALSE, 
-                readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, 
-                readIndices=TRUE, readIsPm=FALSE)
-				
+  cdfIndices <- getCellIndices(cdf, units=units);
+
+  # ASSUMPTION: the following is ok for tiling arrays since all have nGroups=1
+  # MR /2008-2009
+  cdfIndices <- lapply(cdfIndices, FUN=function(unit) unit$groups[[1]]$indices);
+  unitNames <- names(cdfIndices);
+  names(cdfIndices) <- NULL;
+
+  nRows <- base::sapply(cdfIndices, FUN=length);
+  allInds <- unlist(cdfIndices, use.names=FALSE);
+
   nUnits <- length( units )
-  nRows <- sapply( cdfIndices, FUN=function(u) length(u$groups[[1]]$indices) )  # this is ok for tiling arrays since
-                                                                                # all have nGroups=1
   
   # ------------------------------------------------------
   # loop through the number of columns in design matrix
   # calculate smoothed score for each combination of samples
   # ------------------------------------------------------
-  for(ii in seq_len( ncDesign )) {
+  for (ii in seq_len(ncol(design))) {
 
     matScoreNeg <- matScorePos <- nbrRows <- outputList <- vector("list", nUnits)
-    names(outputList) <- names(nRows)
+    names(outputList) <- unitNames;
   
-    sampsKeep <- which( design[,ii] != 0 )	
-	posOrNeg <- design[sampsKeep,ii]
-	  
+    sampsKeep <- which( design[,ii] != 0 )
+
+    posOrNeg <- design[sampsKeep,ii]
+      
     verbose && enter(verbose, "Reading probe data for the samples needed");
-    d <- readUnits(extract(ds,sampsKeep), units=units, verbose=verbose)
+    dd <- readUnits(extract(ds,sampsKeep), units=units, verbose=verbose)
     verbose && exit(verbose)
-	
-	d <- base::lapply(d, FUN=function(u) as.matrix(log2(u[[1]]$intensities),nc=length(sampsKeep)))
-	
+    
+    dd <- base::lapply(dd, FUN=function(u) {
+      matrix(log2(u[[1]]$intensities), ncol=length(sampsKeep))
+    })
+    
     verbose && enter(verbose, "Computing trimmed means for all units");
     # ------------------------------------------------------
     # loop through each unit
     # ------------------------------------------------------
-	for(jj in seq_len( nUnits )) {
-	
-	  # allocate space first time through
-	  if( is.null( outputList[[jj]] ) ) {
-	    matScorePos[[jj]] <- matScoreNeg[[jj]] <- nbrRows[[jj]] <- outputList[[jj]] <- rep(0, nRows[[jj]])
-	  }
-	  if (jj %% 1000==1)
-        verbose && cat(verbose, sprintf("Completed %d/%d units ...",jj,nUnits));
-	  
-	  indices <- cdfIndices[[jj]]$groups[[1]]$indices
-	  
-	  # loop through all columns in matrix
+    for (jj in seq_len( nUnits )) {
+    
+      # allocate space first time through
+      if ( is.null( outputList[[jj]] ) ) {
+        matScorePos[[jj]] <- matScoreNeg[[jj]] <- nbrRows[[jj]] <- outputList[[jj]] <- rep(0, nRows[jj])
+      }
+      if (jj %% 1000==1)
+        verbose && cat(verbose, sprintf("Completed %d/%d units ...", jj, nUnits));
+      
+      indices <- cdfIndices[[jj]]
+      
+      # loop through all columns in matrix
       sampPos <- which(posOrNeg > 0)
       sampNeg <- which(posOrNeg < 0)
-	  nPos <- length(sampPos)
-	  nNeg <- length(sampNeg)
-	  
-	  # calculate the pairwise distance matrix
-	  pos <- acp[indices,2,drop=TRUE]
-	  dist <- outer( pos, pos, FUN="-" )
-	  ppsRows <- base:::apply(dist,1,tolFun,tol=probeWindow)
-	  
+      nPos <- length(sampPos)
+      nNeg <- length(sampNeg)
+      
+      # calculate the pairwise distance matrix
+      pos <- acp[indices,2,drop=TRUE]
+      dist <- outer( pos, pos, FUN="-" )
+      ppsRows <- base::apply(dist, MARGIN=1, FUN=tolFun, tol=probeWindow)
+      
       # for every row in matrix
-      for (rw in seq_len( nRows[[jj]] )) {
+      ddJJ <- dd[[jj]];
+      for (rw in seq_len( nRows[jj] )) {
 
         rows <- ppsRows[[rw]]
-			
-		nbrRows[[jj]][rw] <- length(rows)
+            
+        nbrRows[[jj]][rw] <- length(rows)
                 
-        if( length(rows) >= nProbes  ) {
+        if ( length(rows) >= nProbes  ) {
         
           rootLength <- sqrt( round(length(rows)*(1-2*meanTrim)) )
           if ( nPos ) {
-            vPos <- d[[jj]][rows,sampPos]
+            vPos <- ddJJ[rows,sampPos]
             matScorePos[[jj]][rw] <- matScorePos[[jj]][rw] + mean(vPos, trim=meanTrim)*rootLength*sqrt(nPos)
           }
           if ( nNeg ) {
-            vNeg <- d[[jj]][rows,sampNeg]
+            vNeg <- ddJJ[rows,sampNeg]
             matScoreNeg[[jj]][rw] <- matScoreNeg[[jj]][rw] + mean(vNeg, trim=meanTrim)*rootLength*sqrt(nNeg)
           }
-		  
+          
         }
-	  } # for rw
-	} # for jj
-	cat("\n")
-    verbose && exit(verbose)
+      } # for (rw ...)
+    } # for (jj ...)
+    verbose && cat(verbose);
 
-	
-    allInds <- unlist(cdfIndices, use.names=FALSE)
-	
-	# calculate null distributions for scale factors
-	if (length(sampNeg)) {
+    # Memory cleanup
+    rm(dd, ddJJ);
+
+    verbose && exit(verbose);
+
+    
+    # calculate null distributions for scale factors
+    if (length(sampNeg) > 0) {
       verbose && enter(verbose, "Gathering common info for calculating null distributions");
-	  chr <- acp[allInds,1,drop=TRUE]
-	  pos <- acp[allInds,2,drop=TRUE]
-      verbose && exit(verbose)	
-	  
+      chr <- acp[allInds,1,drop=TRUE]
+      pos <- acp[allInds,2,drop=TRUE]
+      verbose && exit(verbose)    
+      
       verbose && enter(verbose, "Calculating null distribution for controls");
-	  nullX <- unlist(matScoreNeg, use.names=TRUE)
-	  nullDistNeg <- calcNullDist(chr, pos, nullX)
-      verbose && exit(verbose)	
-	  
+      nullX <- unlist(matScoreNeg, use.names=TRUE)
+      nullDistNeg <- calcNullDist(chr, pos, nullX)
+      verbose && exit(verbose)    
+      
       verbose && enter(verbose, "Calculating null distribution for treatments");
-	  nullX <- unlist(matScorePos, use.names=TRUE)
-	  nullDistPos <- calcNullDist(chr, pos, nullX)
-      verbose && exit(verbose)	
-	  
-	  rm(d,chr,nullX)
-	  gc <- gc()
-	  scaleFactor <- nullDistPos$sd / nullDistNeg$sd
-	  
-	} else {
-	  scaleFactor <- 1
-	}
-	
-	for(jj in seq_len( nUnits ))
-	  outputList[[jj]] <- matScorePos[[jj]] - scaleFactor*matScoreNeg[[jj]]	
-	
+      nullX <- unlist(matScorePos, use.names=TRUE)
+      nullDistPos <- calcNullDist(chr, pos, nullX)
+      verbose && exit(verbose)    
+      
+      scaleFactor <- nullDistPos$sd / nullDistNeg$sd
+      
+      # Memory cleanup
+      rm(d, chr, nullX, nullDistNeg, nullDistPos);
+      gc <- gc();
+    } else {
+      scaleFactor <- 1
+    }
+    
+    for (jj in seq_len( nUnits )) {
+      outputList[[jj]] <- matScorePos[[jj]] - scaleFactor*matScoreNeg[[jj]];
+    }
+    # Memory cleanup
+    rm(matScoreNeg, matScorePos);
+    
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Storing results
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     filename <- sprintf("%s.CEL", colnames(design)[ii]);
     pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
 
     # Create CEL file to store results, if missing
     verbose && enter(verbose, "Creating CEL file for results, if missing");
-	df <- getFile(ds,1)
+    df <- getFile(ds,1)
     createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
     verbose && exit(verbose);
-	
-	matScores <- unlist(outputList, use.names=FALSE)
+    
+    matScores <- unlist(outputList, use.names=FALSE);
+    matScores <- 2^matScores;
+    updateCel(pathname, indices=allInds, intensities=matScores, verbose=TRUE);
 
-    updateCel(pathname, indices=allInds, intensities=2^matScores, verbose=TRUE);
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Next column in design matrix
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Memory cleanup
+    rm(matScores, outputList, nbrRows);
+
+    # Garbage collect
     gc <- gc();
     verbose && print(verbose, gc);
+  } # for (ii ...)
 
-	
-  }
+  # Clean up
+  rm(cdfIndices, allInds);
   
   outputDataSet <- getOutputDataSet(this, force=TRUE);
 
@@ -375,6 +430,9 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
 
 ############################################################################
 # HISTORY:
-# 2007-03-21
+# 2009-01-13 [HB]
+# o MEMORY CLEANUP: Cleaning out more "done" variables and earlier.
+# o Code cleanup.
+# 2008-03-21
 # o Created from BackgroundCorrection.R.
 ############################################################################

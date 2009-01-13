@@ -1,6 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 1.0.1x [2009-01-13]
+o Cleaned up the MatSmoothing class.
+
+
 Version: 1.0.0 [2009-01-12]
 o Added alpha version of the CrlmmModel (currently only for 100K & 500K).
 o Added justSNPRMA() replicating ditto in the oligo package.
@@ -31,6 +35,8 @@ o BUG FIX: getUnitIntensities() of AffymetrixCelSet would drop the array
 o BUG FIX: Methods returning ChipEffectSet would not "update" the
   returned data set, which for instance had the effect of not 
   updating/setting attributes for sample annotation files.
+o Lines of code (excluding comments) using grep -v "#" *.R | wc -l:
+  aroma.affymetrix + aroma.core: 43657+10510 = 54167.
 
 
 Version: 0.9.6 [2008-12-04]
