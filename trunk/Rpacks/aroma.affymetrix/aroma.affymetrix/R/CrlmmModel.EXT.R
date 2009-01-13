@@ -15,7 +15,7 @@ setMethodS3("getPlatformDesignDB", "CrlmmModel", function(this, ..., verbose=FAL
   pdPkgName <- oligo::cleanPlatformName(chipType);
   verbose && cat(verbose, "Plaform Design package: ", pdPkgName);
   require(pdPkgName, character.only=TRUE) || throw("Package not loaded: ", pdPkgName);
-  pdDB <- db(get(pdPkgName, mode="S4"));
+  pdDB <- oligoClasses::db(get(pdPkgName, mode="S4"));
   verbose && print(verbose, pdDB);
   verbose && exit(verbose);
   pdDB;
@@ -147,7 +147,7 @@ setMethodS3("getCrlmmSNPs", "CrlmmModel", function(this, flavor=c("oligoPD", "ol
       pdDB <- getPlatformDesignDB(this, verbose=less(verbose,1));
       verbose && print(verbose, pdDB);
   
-      res <- dbGetQuery(pdDB, "SELECT man_fsetid FROM featureSet WHERE man_fsetid LIKE 'SNP%' ORDER BY man_fsetid")[[1]];
+      res <- DBI::dbGetQuery(pdDB, "SELECT man_fsetid FROM featureSet WHERE man_fsetid LIKE 'SNP%' ORDER BY man_fsetid")[[1]];
       verbose && str(verbose, res);
       verbose && exit(verbose);
     }
