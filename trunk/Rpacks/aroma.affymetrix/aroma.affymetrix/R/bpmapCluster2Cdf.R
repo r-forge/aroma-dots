@@ -53,7 +53,7 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
         ". If this is not correct, stop now and specify 'col' argument.");
   }
     
-  verbose && enter(verbose, "Creating structure for ", length(bpmapdflist), " units (dot=250):");
+  verbose && enter(verbose, "Creating structure for ", length(bpmapdflist), " units");
   e <- vector("list", 1);
   startps <- l <- ll <- vector("list", 50000);
   count <- 0;
@@ -75,7 +75,7 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
       ends <- c(w, np);
       starts <- c(1, w+1);
       k <- whichVector((ends-starts) > nProbes);
-      verbose && cat(verbose, length(k), " ROIs for ", name, " (dot=250):");
+      verbose && cat(verbose, length(k), " ROIs for ", name, ".");
 
       # Access ones
       pmx <- bpmapdf$pmx;
@@ -95,10 +95,10 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
         l[[count]] <- list(unittype=1, unitdirection=1, groups=e, natoms=na, ncells=nc, ncellsperatom=nc/na, unitnumber=ii);
         startps[[count]] <- sp[w];
         nm[count] <- names(e);
-        if (verbose) { if (count %% 250 == 0) cat(verbose, ".") }
+        #if (verbose) { if (count %% 250 == 0) cat(verbose, ".") }
       } # for (jj ...)
 
-      if (verbose) cat("\n");
+      #if (verbose) cat("\n");
     } else {
       # keep all probes
       verbose && cat(verbose, "Skipping all ", np, " probes for ", name, ".");
@@ -119,8 +119,8 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Writing CDF file");
-  verbose && cat(verbose, "Output pathname: ", hdr$filename);
   hdr <- list(probesets=length(l), qcprobesets=0, reference="", chiptype=cdfName, filename=sprintf("%s.cdf", cdfName), nqcunits=0, nunits=length(l), rows=rows, cols=cols, refseq="", nrows=rows, ncols=cols);
+  verbose && cat(verbose, "Output pathname: ", hdr$filename);
   verbose && str(verbose, hdr);
   writeCdf(hdr$filename, cdfheader=hdr, cdf=l, cdfqc=NULL, overwrite=TRUE, verbose=verbose);
   verbose && exit(verbose);
@@ -134,6 +134,9 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
 
 ############################################################################
 # HISTORY: 
+# 2009-01-14 [MR]
+# o fixed 1 small bug ('hdr' out of place)
+# o changed the verbose output commands
 # 2008-11-28 [HB]
 # o Tidying up code.
 # o Now using R.utils::Verbose statements.
