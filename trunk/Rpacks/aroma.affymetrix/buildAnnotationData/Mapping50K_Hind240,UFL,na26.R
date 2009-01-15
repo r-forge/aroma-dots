@@ -2,9 +2,6 @@ if (interactive()) savehistory();
 library("aroma.affymetrix");
 log <- Verbose(threshold=-50, timestamp=TRUE);
 
-source("../aroma.affymetrix/R/AffymetrixNetAffxCsvFile.R");
-source("../aroma.affymetrix/R/AromaUflFile.R");
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Settings
