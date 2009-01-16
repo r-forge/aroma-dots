@@ -1,6 +1,9 @@
-bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=NULL, cols=NULL, field="fullname", verbose=10, stringRemove="Hs:Sun.Nov.19.17:25:02.2006;") {
+bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=NULL,  groupName="Hs", cols=NULL, field="fullname", verbose=10, stringRemove="Hs:Sun.Nov.19.17:25:02.2006;") {
   require("affxparser") || throw("Package not loaded: affxparser");
   require("R.utils") || throw("Package not loaded: R.utils");
+
+  # Argument 'groupName':
+  groupName <- Arguments$getCharacter(groupName);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
@@ -11,7 +14,7 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
     mmy <- u[["mmy"]];
     mmx <- if (all(mmx == 0) | is.null(mmx)) 0 else mmx;
     mmy <- if (all(mmy == 0) | is.null(mmy)) 0 else mmy;
-    data.frame(seqname=u$seqInfo[[field]], u[c("pmx","pmy")], mmx=mmx, mmy=mmy, u[c("probeseq","strand","startpos","matchscore")], stringsAsFactors=FALSE)[o,];
+    data.frame(seqname=u$seqInfo[[field]],groupname=u$seqInfo$groupname, u[c("pmx","pmy")], mmx=mmx, mmy=mmy, u[c("probeseq","strand","startpos","matchscore")], stringsAsFactors=FALSE)[o,];
   } # BpmapUnit2df()
 
 
@@ -68,7 +71,8 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
 
     ch <- gsub(stringRemove, "", bpmapdf$seqname[1]);
 
-    if (all(bpmapdf$mmx == 0) & all(bpmapdf$startpos > 0)) {
+    #if (all(bpmapdf$mmx == 0) & all(bpmapdf$startpos > 0)) {
+    if (all(bpmapdf$startpos > 0) & bpmapdf$groupname[1]==groupName) {
       sp <- bpmapdf$startpos;
       d <- diff(sp);
       w <- whichVector(d > gapDist);
@@ -80,13 +84,24 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
       # Access ones
       pmx <- bpmapdf$pmx;
       pmy <- bpmapdf$pmy;
+	  mmx <- bpmapdf$mmx;
+      mmy <- bpmapdf$mmy;
+
 
       for (jj in seq(along=k)) {
         w <- starts[k[jj]]:ends[k[jj]];
         np <- length(w);
 
         # this assumes only PM probes -- is this true for all bpmaps?
-        e[[1]] <- list(x=pmx[w], y=pmy[w], pbase=rep("A", np), tbase=rep("T", np), atom=0:(np-1), indexpos=0:(np-1), groupdirection="sense", natoms=np, ncellsperatom=1);
+		if (all(bpmapdf$mmx==0)) {
+		  # PM only
+          e[[1]] <- list(x=pmx[w], y=pmy[w], pbase=rep("A", np), tbase=rep("T", np), 
+		                 atom=0:(np-1), indexpos=0:(np-1), groupdirection="sense", natoms=np, ncellsperatom=1); 
+		} else {
+		  # PM+MM
+          e[[1]] <- list(x=c(pmx[w],mmx[w]), y=c(pmy[w],mmy[w]), pbase=rep("A", np*2), tbase=rep(c("T","A"), each=np), 
+		                 atom=rep(0:(np-1),2), indexpos=rep(0:(np-1),2), groupdirection="sense", natoms=np*2, ncellsperatom=2); 
+		}
         names(e) <- paste(ch, "FROM", sp[starts[k[jj]]], "TO", sp[ends[k[jj]]], sep="");
         na <- sum(unlist(sapply(e,FUN=function(u) u$natoms)));
         nc <- sum(unlist(sapply(e,FUN=function(u) u$natoms*u$ncellsperatom)));
