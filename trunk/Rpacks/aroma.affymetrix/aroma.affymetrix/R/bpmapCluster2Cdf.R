@@ -92,7 +92,6 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
         w <- starts[k[jj]]:ends[k[jj]];
         np <- length(w);
 
-        # this assumes only PM probes -- is this true for all bpmaps?
 		if (all(bpmapdf$mmx==0)) {
 		  # PM only
           e[[1]] <- list(x=pmx[w], y=pmy[w], pbase=rep("A", np), tbase=rep("T", np), 
@@ -100,7 +99,7 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
 		} else {
 		  # PM+MM
           e[[1]] <- list(x=c(pmx[w],mmx[w]), y=c(pmy[w],mmy[w]), pbase=rep("A", np*2), tbase=rep(c("T","A"), each=np), 
-		                 atom=rep(0:(np-1),2), indexpos=rep(0:(np-1),2), groupdirection="sense", natoms=np*2, ncellsperatom=2); 
+		                 atom=rep(0:(np-1),2), indexpos=rep(0:(np-1),2), groupdirection="sense", natoms=np, ncellsperatom=2); 
 		}
         names(e) <- paste(ch, "FROM", sp[starts[k[jj]]], "TO", sp[ends[k[jj]]], sep="");
         na <- sum(unlist(sapply(e,FUN=function(u) u$natoms)));
