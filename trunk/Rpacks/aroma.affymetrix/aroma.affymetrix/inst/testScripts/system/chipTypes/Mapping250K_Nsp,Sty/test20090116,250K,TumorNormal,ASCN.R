@@ -1,5 +1,5 @@
 library("aroma.affymetrix");
-log <- Arguments$getVerbose(-8, timestamp=TRUE);
+log <- verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 
 dataSetName <- "Affymetrix_2006-TumorNormal";
 chipType <- "Mapping250K_Nsp";
@@ -31,7 +31,7 @@ print(acc);
 csC <- process(acc, verbose=log);
 print(csC);
 
-bpn <- BasePositionNormalization(csC, verbose=log);
+bpn <- BasePositionNormalization(csC);
 print(bpn);
 
 csN <- process(bpn, verbose=log);
