@@ -25,7 +25,7 @@ csR <- AffymetrixCelSet$byName(dataSetName, cdf=cdf);
 print(csR);
 
 
-acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2");
+acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2", tags="*,v2");
 print(acc);
 
 csC <- process(acc, verbose=log);
