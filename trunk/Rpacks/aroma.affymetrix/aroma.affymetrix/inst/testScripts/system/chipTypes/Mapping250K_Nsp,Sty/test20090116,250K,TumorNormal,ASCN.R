@@ -24,6 +24,8 @@ cdf <- AffymetrixCdfFile$byName(chipType);
 csR <- AffymetrixCelSet$byName(dataSetName, cdf=cdf);
 print(csR);
 
+# Reorder arrays according to 'pairs' matrix
+csR <- extract(csR, indexOf(csR, pairs));
 
 acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2", tags="*,v2");
 print(acc);
@@ -37,7 +39,7 @@ print(bpn);
 csN <- process(bpn, verbose=log);
 print(csN);
 
-plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=FALSE);
+plm <- RmaCnPlm(csN, mergeStrands=TRUE, combineAlleles=FALSE);
 print(plm);
 
 fit(plm, verbose=log);
@@ -50,11 +52,3 @@ print(fln);
 
 cesN <- process(fln, verbose=log);
 print(cesN);
-
-# Setup (tumor, normal) pairs
-sets <- list(tumor=NULL, normal=NULL);
-for (type in colnames(pairs)) {
-  idxs <- match(pairs[,type], getNames(cesN));
-  sets[[type]] <- extract(ces, idxs);
-}
-print(sets);
