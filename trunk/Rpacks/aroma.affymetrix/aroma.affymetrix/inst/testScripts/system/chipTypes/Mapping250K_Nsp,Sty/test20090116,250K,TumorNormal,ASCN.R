@@ -31,7 +31,7 @@ print(acc);
 csC <- process(acc, verbose=log);
 print(csC);
 
-bpn <- BasePositionNormalization(csC);
+bpn <- BasePositionNormalization(csC, target="zero");
 print(bpn);
 
 csN <- process(bpn, verbose=log);
@@ -45,7 +45,7 @@ fit(plm, verbose=log);
 ces <- getChipEffectSet(plm);
 print(ces);
 
-fln <- FragmentLengthNormalization(ces);
+fln <- FragmentLengthNormalization(ces, target="zero");
 print(fln);
 
 cesN <- process(fln, verbose=log);
