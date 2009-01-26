@@ -1,3 +1,38 @@
+#########################################################################/**
+# @set "class=matrix"
+# @RdocMethod backtransformPrincipalCurve
+#
+# @title "Reverse affine transformation"
+#
+# \description{
+#   @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{X}{An NxK @matrix containing data to be backtransformed.}
+#  \item{fit}{An object of @class \code{principal.curve} as returned by
+#    @seemethod "fitPrincipalCurve".}
+#  \item{dimensions}{An (optional) subset of of dimensions all in [1,K]
+#    to be returned (and backtransform).}
+#  \item{targetDimension}{An (optional) index specifying the dimension
+#    in [1,K] to be used as the target dimension.  All other
+#    dimensions will be normalized toward this dimension, which will
+#    not be changed.}
+#  \item{...}{Passed internally to @see "stats::smooth.spline".}
+# }
+#
+# \value{
+#   The backtransformed NxK @matrix.
+# }
+#
+# \examples{\dontrun{See help(fitPrincipalCurve.matrix).}}
+#
+# \seealso{
+#   @seemethod "fitPrincipalCurve"
+# }
+#*/#########################################################################  
 setMethodS3("backtransformPrincipalCurve", "matrix", function(X, fit, dimensions=NULL, targetDimension=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
@@ -63,7 +98,10 @@ setMethodS3("backtransformPrincipalCurve", "matrix", function(X, fit, dimensions
     keep <- whichVector(is.finite(Xkk));
     Xkk <- Xkk[keep];
     XhatKK <- predict(fitKK, x=Xkk)$y;
+
+    # Sanity check
     stopifnot(length(XhatKK) == length(keep));
+
     Xhat[keep,kk] <- XhatKK;
   }
 
