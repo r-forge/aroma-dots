@@ -6,13 +6,13 @@
 # \description{
 #  @classhierarchy
 #
-#  An AromaTotalCnBinaryFile is a @see "aroma.core::AromaTabularBinaryFile".
+#  An AromaTotalCnBinaryFile is a @see "AromaSignalBinaryFile".
 # }
 # 
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "aroma.core::AromaTabularBinaryFile".}
+#   \item{...}{Arguments passed to @see "AromaSignalBinaryFile".}
 # }
 #
 # \section{Fields and Methods}{
