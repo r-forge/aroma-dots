@@ -27,7 +27,7 @@
 }
 
 \value{
- Returns a \code{\link[base]{list}} of K \code{\link{AromaTotalCnBinarySet}}:s.
+ Returns a \code{\link[base]{list}} of K \code{\link[aroma.core]{AromaUnitTotalCnBinarySet}}:s.
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

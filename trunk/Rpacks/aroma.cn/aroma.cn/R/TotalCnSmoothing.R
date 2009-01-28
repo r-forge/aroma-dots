@@ -1,4 +1,35 @@
-setConstructorS3("TotalCnSmoothing", function(dataSet=NULL, ..., targetUgp=NULL, sd=50e3, .reqSetClass="AromaTotalCnBinarySet") {
+###########################################################################/**
+# @RdocClass TotalCnSmoothing
+#
+# @title "The TotalCnSmoothing class"
+#
+# \description{
+#  @classhierarchy
+#
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#  \item{dataSet}{An @see "aroma.core::AromaUnitTotalCnBinarySet".}
+#  \item{...}{Arguments passed to @see "aroma.core::AromaTransform".}
+#  \item{targetUgp}{An @see "aroma.core::AromaUgpFile" specifying the
+#    target loci for which smoothed copy-number are generated.}
+#  \item{sd}{A @double specify the bandwidth of the smoothing kernel.}
+#  \item{.reqSetClass}{(internal only)}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# \details{
+#   A Gaussian kernel centered at each target loci is used to smooth the data.
+# }
+#
+# @author
+#*/########################################################################### 
+setConstructorS3("TotalCnSmoothing", function(dataSet=NULL, ..., targetUgp=NULL, sd=50e3, .reqSetClass="AromaUnitTotalCnBinarySet") {
   if (!is.null(dataSet)) {
     # Argument 'targetUgp':
     if (!inherits(targetUgp, "AromaUgpFile")) {
@@ -301,6 +332,9 @@ setMethodS3("getOutputFiles", "TotalCnSmoothing", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-01-26
+# o Adopted to the new AromaUnitTotalCnBinarySet.
+# o Added Rdoc comments.
 # 2008-05-23
 # o Created.
 ############################################################################

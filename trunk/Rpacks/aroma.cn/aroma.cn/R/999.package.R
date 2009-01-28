@@ -9,7 +9,7 @@
 # }
 #
 # \section{Requirements}{
-#   This package requires the \pkg{aroma.affymetrix} package.
+#   This package requires the \pkg{aroma.core} package.
 # }
 #
 # \section{Installation and updates}{
