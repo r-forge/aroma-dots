@@ -3,21 +3,18 @@
   if (compareVersion(as.character(getRversion()), "2.7.0") >= 0)
     return();
 
-  # A more memory efficient matrix() function when 'dimnames' is NULL.
   log2.patch <- function(x) {
     suppressWarnings({
       base::log2(x);
     })
   }
 
-  # A more memory efficient matrix() function when 'dimnames' is NULL.
   log10.patch <- function(x) {
     suppressWarnings({
       base::log10(x);
     })
   }
   
-  # Patch base::matrix()
   envir <- as.environment("package:aroma.core");
   assign("log2", log2.patch, envir=envir);
   assign("log10", log10.patch, envir=envir);
