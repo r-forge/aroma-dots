@@ -35,7 +35,7 @@
 #   \url{http://www.ee.technion.ac.il/Sites/People/YoninaEldar/Info/software/HaarSeg.htm}
 # }
 #*/########################################################################### 
-setConstructorS3("HaarSegModel", function(cesTuple=NULL, breaksFdrQ=0.0001, ...) {
+setConstructorS3("HaarSegModel", function(cesTuple=NULL, ..., breaksFdrQ=0.0001) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Load required packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -220,10 +220,12 @@ setMethodS3("extractCopyNumberRegions", "HaarSeg", function(object, ...) {
 
 ##############################################################################
 # HISTORY:
-# 2007-12-31
+# 2008-01-26
+# o Reordered constructor arguments.
+# 2008-12-31
 # o Removing non-finite data points before passing to haarSeg().
-# 2007-12-17
+# 2008-12-17
 # o Now using the HaarSeg package (put together by HB).
-# 2007-12-16
+# 2008-12-16
 # o Created.
 ############################################################################## 
