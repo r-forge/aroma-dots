@@ -23,13 +23,13 @@ for (pp in seq(along=platforms)) {
   platform <- platforms[[pp]];
   dataSet <- platform$dataSet;
   chipType <- platform$chipType;
-  ds <- AromaTotalCnBinarySet$byName(dataSet, chipType=chipType);
+  ds <- AromaUnitTotalCnBinarySet$byName(dataSet, chipType=chipType);
   print(ds);
   platform$ds <- ds;
   platforms[[pp]] <- platform;
 }
 
-#freqBSet <- AromaFreqBCnBinarySet$byName(dataSet, chipType=chipType);
+#freqBSet <- AromaUnitFracBCnBinarySet$byName(dataSet, chipType=chipType);
 #print(freqBSet);
 
 
@@ -43,8 +43,6 @@ for (pp in seq(along=platforms)) {
   
   units <- getUnitsAt(ugp, 7);
   pos <- ugp[units,2, drop=TRUE];
-  y <- extractMatrix(ds, rows=units, files=1);
+  y <- extractMatrix(ds, units=units, files=1);
   plot(pos, y, pch=".", cex=2, ylim=ylim);
 }
-
-

@@ -1,40 +1,22 @@
-  allocate.AromaSignalBinaryFile as.character.AromaSignalBinaryFile
-  byName.AromaSignalBinarySet
-  findByName.AromaSignalBinarySet
-  fromFile.AromaSignalBinaryFile getChipType.AromaSignalBinaryFile
-  getChipType.AromaSignalBinarySet
-  getFilenameExtension.AromaSignalBinaryFile
-  getPlatform.AromaSignalBinaryFile getPlatform.AromaSignalBinarySet
-  nbrOfUnits.AromaSignalBinaryFile validate.AromaSignalBinarySet
-  byName.AromaFreqBCnBinarySet
-  byName.AromaTotalCnBinarySet
-  getAromaUgpFile.AromaSignalBinaryFile
-  getAromaUgpFile.AromaSignalBinarySet
-  getUnitNamesFile.AromaSignalBinaryFile
- extractRawCopyNumbers.AromaTotalCnBinaryFile
-  getAsteriskTags.TotalCnSmoothing getOutputFiles.TotalCnSmoothing
-  getParameters.TotalCnSmoothing getPath.TotalCnSmoothing
-  getRootPath.TotalCnSmoothing getTargetPositions
-  getTargetPositions.TotalCnSmoothing getTargetUgpFile
-  getTargetUgpFile.TotalCnSmoothing process.TotalCnSmoothing
-  TotalCnSmoothing
-  fitPrincipalCurve
-  get.lam.hb makeSmoothSplinePredict
-  makeSmoothSplinePredict.numeric normalizePrincipalCurve
-  normalizePrincipalCurve.matrix
-  principal.curve.hb
   as.character.MultiSourceCopyNumberNormalization
-  extractTupleOfDataFiles fitOne getAllNames getFitAromaUgpFile
-  getInputDataSets getOutputDataSets
-  getOutputDataSets.MultiSourceCopyNumberNormalization getOutputPaths
+  extractTupleOfDataFiles fitOne getAllNames
+  getAsteriskTags.TotalCnSmoothing getFitAromaUgpFile getInputDataSets
+  getOutputDataSets
+  getOutputDataSets.MultiSourceCopyNumberNormalization
+  getOutputFiles.TotalCnSmoothing getOutputPaths
   getOutputPaths.MultiSourceCopyNumberNormalization
   getParameters.MultiSourceCopyNumberNormalization
+  getParameters.TotalCnSmoothing
   getParametersAsString.MultiSourceCopyNumberNormalization
-  getSmoothedDataSets getSubsetToFit nbrOfDataSets
+  getPath.TotalCnSmoothing getRootPath.TotalCnSmoothing
+  getSmoothedDataSets getSubsetToFit getTargetPositions
+  getTargetPositions.TotalCnSmoothing getTargetUgpFile
+  getTargetUgpFile.TotalCnSmoothing makeSmoothSplinePredict
+  makeSmoothSplinePredict.numeric nbrOfDataSets
   nbrOfDataSets.MultiSourceCopyNumberNormalization normalizeOne
   normalizeOne.MultiSourceCopyNumberNormalization
-  backtransformPrincipalCurve backtransformPrincipalCurve.matrix
-  backtransformPrincipalCurve.numeric
-  pairs2 pairs2.principal.curve
+  normalizePrincipalCurve normalizePrincipalCurve.matrix pairs2
+  pairs2.principal.curve principal.curve.hb process.TotalCnSmoothing
+
 
  

@@ -15,7 +15,7 @@
 # @synopsis
 #
 # \arguments{
-#  \item{dsList}{A @list of K @see "AromaTotalCnBinarySet":s.}
+#  \item{dsList}{A @list of K @see "aroma.core::AromaUnitTotalCnBinarySet":s.}
 #  \item{fitUgp}{An @see "aroma.core::AromaUgpFile" that specifies the 
 #    common set of loci used to normalize the data sets at.}
 #  \item{subsetToFit}{The subset of loci (as mapped by the \code{fitUgp}
@@ -51,7 +51,7 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
     if (is.list(dsList)) {
       K <- length(dsList);
 
-      className <- "AromaTotalCnBinarySet";
+      className <- "AromaUnitTotalCnBinarySet";
       for (kk in seq(length=K)) {
         dataSet <- dsList[[kk]];
         if (!inherits(dataSet, className)) {
@@ -290,7 +290,7 @@ setMethodS3("getAllNames", "MultiSourceCopyNumberNormalization", function(this, 
 # }
 #
 # \value{
-#  Returns a @list of K @see "AromaTotalCnBinarySet":s.
+#  Returns a @list of K @see "aroma.core::AromaUnitTotalCnBinarySet":s.
 # }
 #
 # @author
@@ -305,7 +305,7 @@ setMethodS3("extractTupleOfDataFiles", "MultiSourceCopyNumberNormalization", fun
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'dsList':
   if (is.list(dsList)) {
-    className <- "AromaTotalCnBinarySet";
+    className <- "AromaUnitTotalCnBinarySet";
     for (kk in seq(along=dsList)) {
       dataSet <- dsList[[kk]];
       if (!inherits(dataSet, className)) {
@@ -386,7 +386,7 @@ setMethodS3("extractTupleOfDataFiles", "MultiSourceCopyNumberNormalization", fun
 # }
 #
 # \value{
-#  Returns a @list of K @see "AromaTotalCnBinarySet":s.
+#  Returns a @list of K @see "aroma.core::AromaUnitTotalCnBinarySet":s.
 # }
 #
 # \details{
@@ -899,7 +899,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
 # }
 #
 # \value{
-#  Returns a @list of K @see "AromaTotalCnBinarySet":s.
+#  Returns a @list of K @see "aroma.core::AromaUnitTotalCnBinarySet":s.
 # }
 #
 # @author
@@ -1014,6 +1014,8 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 
 ###########################################################################
 # HISTORY:
+# 2009-01-26
+# o Adapted to new aroma.core::AromaUnitTotalCnBinary{Set|File} classes.
 # 2008-10-08
 # o Added argument 'targetDimension' to the constructor.
 # o Now fitOne() makes sure the fitted curve has a "positive" direction.

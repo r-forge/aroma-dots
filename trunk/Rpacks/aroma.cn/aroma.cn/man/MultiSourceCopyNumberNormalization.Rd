@@ -38,7 +38,7 @@ extends \link[R.oo]{Object}\cr
  \usage{MultiSourceCopyNumberNormalization(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, ...)}
 
  \arguments{
-  \item{dsList}{A \code{\link[base]{list}} of K \code{\link{AromaTotalCnBinarySet}}:s.}
+  \item{dsList}{A \code{\link[base]{list}} of K \code{\link[aroma.core]{AromaUnitTotalCnBinarySet}}:s.}
   \item{fitUgp}{An \code{\link[aroma.core]{AromaUgpFile}} that specifies the
     common set of loci used to normalize the data sets at.}
   \item{subsetToFit}{The subset of loci (as mapped by the \code{fitUgp}

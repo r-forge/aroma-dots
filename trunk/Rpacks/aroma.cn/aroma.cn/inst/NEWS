@@ -1,6 +1,12 @@
 Package: aroma.cn
 =================
 
+Version: 0.2.0 [2009-01-26]
+o Adopted the package to the new classes of aroma.core.
+o Several classes and methods were moved to aroma.core v1.0.0.
+o {fit|backtransform}PrincipalCurve() were moved to aroma.light v1.11.1.
+
+
 Version: 0.1.7 [2008-10-07]
 o ALPHA: Added backtransformPrincipalCurve().
 
