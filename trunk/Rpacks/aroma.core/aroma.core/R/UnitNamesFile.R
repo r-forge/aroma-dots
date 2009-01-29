@@ -85,8 +85,22 @@ setMethodS3("indexOf", "UnitNamesFile", function(this, pattern=NULL, names=NULL,
 })
 
 
+setMethodS3("getAromaUgpFile", "UnitNamesFile", function(this, ..., validate=FALSE, force=FALSE) {
+  ugp <- this$.ugp;
+  if (force || is.null(ugp)) {
+    chipType <- getChipType(this, ...);
+    ugp <- AromaUgpFile$byChipType(chipType, validate=validate);
+    this$.ugp <- ugp;
+  }
+  ugp;
+}) 
+
+ 
+
 ############################################################################
 # HISTORY:
+# 2009-01-26
+# o Added getAromaUgpFile() to UnitNamesFile.
 # 2008-07-21
 # o Renamed UnitNamesInterface to UnitNamesFile.
 # 2008-05-18
