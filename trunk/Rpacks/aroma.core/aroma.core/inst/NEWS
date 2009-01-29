@@ -1,6 +1,10 @@
 Package: aroma.core
 ===================
 
+Version: 1.0.1x [2009-01-27]
+o Added getAromaUgpFile() to UnitNamesFile.
+
+
 Version: 1.0.0 [2009-01-12]
 o Added getMaxLengthRepeats() to AromaCellSequenceFile.
 o Added AromaUnitSignalBinary{File|Set}, AromaUnitTotalCnBinary{File|Set},
