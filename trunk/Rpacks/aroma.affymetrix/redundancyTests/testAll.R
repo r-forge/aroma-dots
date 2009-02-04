@@ -40,8 +40,8 @@ names(..pathnames) <- basename(paths);
                  "GenomeWideSNP_5",
                  "GenomeWideSNP_6");
 
-..chipTypes <- rev(..chipTypes);
-#..chipTypes <- ..chipTypes[1];
+#..chipTypes <- rev(..chipTypes);
+#..chipTypes <- ..chipTypes[5:6];
 
 if (!is.null(args$chipTypes)) {
   ..chipTypes <- trim(unlist(strsplit(args$chipTypes, split=",")));
