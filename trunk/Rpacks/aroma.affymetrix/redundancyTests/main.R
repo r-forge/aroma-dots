@@ -1,2 +1,2 @@
-x <- rnorm(100);
+x <- rnorm(1000);
 str(x);
