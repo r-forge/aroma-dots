@@ -10,8 +10,10 @@
 # @synopsis
 #
 # \arguments{
-#   \item{truth}{A @numerical @vector of length N.}
-#   \item{data}{A @numerical object of length N.}
+#   \item{truth}{A @numerical @vector of length J (or length K, or a JxK @matrix).}
+#   \item{data}{A @numerical @vector of length J (or a JxK @matrix).}
+#   \item{positions}{A (optional) @numerical @vector of length J specifying 
+#     the position of each entry.}
 #   \item{recall}{(Optional) Unless \code{truth} is given as binary
 #     \eqn{\{0,1\}} values, it can be reclassified as such.}
 #   \item{...}{Not used.}
@@ -28,7 +30,7 @@
 # 
 # @author
 #*/########################################################################### 
-setConstructorS3("RocData", function(truth=NULL, data=NULL, recall=NULL, ...) {
+setConstructorS3("RocData", function(truth=NULL, data=NULL, positions=NULL, recall=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -75,10 +77,16 @@ setConstructorS3("RocData", function(truth=NULL, data=NULL, recall=NULL, ...) {
     }
   }
 
+  # Argument 'positions':
+  if (!is.null(positions)) {
+    positions <- Arguments$getDoubles(positions, length=dim[1]);
+  }
+
 
   extend(Object(), "RocData",
     .truth=truth,
-    .data=data
+    .data=data,
+    .positions=positions
   )
 }) # RocData()
 
@@ -91,6 +99,22 @@ setMethodS3("clearCache", "RocData", function(this, ...) {
     this[[ff]] <- NULL;
   }
   NextMethod("clearCache", this, ...);
+})
+
+
+
+setMethodS3("as.character", "RocData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
+  s <- sprintf("%s: ", class(this)[1]);
+  s <- c(s, paste("ROC fields:", paste(getRocFields(this), collapse=", ")));
+  s <- c(s, sprintf("Data dimension: %s", paste(dim(this), collapse="x")));
+  s <- c(s, sprintf("Truth by columns: %s", isTruthByColumns(this)));
+  s <- c(s, sprintf("Number of data points: %d", nbrOfDataPoints(this, complete=FALSE)));
+  s <- c(s, sprintf("Call rate: %f%%", 100*getCallRate(this)));
+  class(s) <- "GenericSummary";
+  s;
 })
 
 
@@ -128,25 +152,15 @@ setMethodS3("getChecksum", "RocData", function(this, force=FALSE, ..., skip=FALS
       verbose && exit(verbose);
     } # for (ff ...)
 
+    # Cumulative checksum
+    values <- getPositions(this);
+    checksumFF <- digest(list(values));
+    checksum <- digest(list(checksum, checksumFF));
+
     this$.checksum <- checksum;
   }
 
   checksum;
-})
-
-
-setMethodS3("as.character", "RocData", function(x, ...) {
-  # To please R CMD check
-  this <- x;
-
-  s <- sprintf("%s: ", class(this)[1]);
-  s <- c(s, paste("ROC fields:", paste(getRocFields(this), collapse=", ")));
-  s <- c(s, sprintf("Data dimension: %s", paste(dim(this), collapse="x")));
-  s <- c(s, sprintf("Truth by columns: %s", isTruthByColumns(this)));
-  s <- c(s, sprintf("Number of data points: %d", nbrOfDataPoints(this, complete=FALSE)));
-  s <- c(s, sprintf("Call rate: %f%%", 100*getCallRate(this)));
-  class(s) <- "GenericSummary";
-  s;
 })
 
 
@@ -333,6 +347,15 @@ setMethodS3("getData", "RocData", function(this, ...) {
   getField(this, field="data", ...);
 })
 
+setMethodS3("getPositions", "RocData", function(this, ...) {
+  res <- this$.positions;
+  if (is.null(res)) {
+    nbrOfPositions <- dim(this)[1];
+    res <- seq(length=nbrOfPositions);
+  }
+  res;
+})
+
 
 setMethodS3("loadCachedResult", "RocData", function(this, method, ..., skip=FALSE, dirs=NULL) {
   # Get checksum for this object
@@ -423,6 +446,8 @@ setMethodS3("findTpAtFp", "RocData", function(this, ..., skip=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-05
+# o Added optional field 'positions' and getPositions().
 # 2009-02-01
 # o Imported to aroma.cn.eval.
 # 2008-07-25
