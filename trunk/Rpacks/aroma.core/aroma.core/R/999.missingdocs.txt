@@ -138,7 +138,7 @@
   nbrOfArrays nbrOfChipTypes nbrOfLines.TabularTextFile nbrOfLoci
   nbrOfLoci.RawCopyNumbers nbrOfRegions nbrOfRegions.CopyNumberOutliers
   nbrOfRegions.CopyNumberRegions nbrOfRows.TabularTextFile
-  plot.RawCopyNumbers points.RawCopyNumbers RawCopyNumbers
+  plot.RawCopyNumbers points.RawCopyNumbers
   readColumnNames.TabularTextFile readColumns
   readColumns.AromaTabularBinaryFile readColumns.GenericTabularFile
   readColumns.TabularTextFile readDataFrame.TabularTextFile
@@ -316,3 +316,13 @@ byName.AromaUnitGenotypeCallSet findByName.AromaUnitCallSet
 extractMatrix.AromaUnitSignalBinaryFile isHeterozygote
   isHeterozygote.AromaUnitGenotypeCallFile isHomozygote
   isHomozygote.AromaUnitGenotypeCallFile
+  getAromaUgpFile.UnitNamesFile 
+  shakyText.default shakyText
+ binnedSmoothing.RawCopyNumbers extractSubset
+ extractSubset.RawCopyNumbers getPositions.RawCopyNumbers
+ kernelSmoothing.RawCopyNumbers
+  binnedSmoothingByState binnedSmoothingByState.SegmentedCopyNumbers
+  getStateColors getStateColors.SegmentedCopyNumbers getStates
+  getStates.SegmentedCopyNumbers kernelSmoothingByState
+  kernelSmoothingByState.SegmentedCopyNumbers plot.SegmentedCopyNumbers
+  points.SegmentedCopyNumbers
