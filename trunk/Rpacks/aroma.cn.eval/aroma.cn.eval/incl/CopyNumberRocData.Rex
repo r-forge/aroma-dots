@@ -38,3 +38,17 @@ subset <- seq(from=1, to=nbrOfLoci(rd), by=3);
 rd2 <- extractSubset(rd, rows=subset);
 plotTracks(rd2);
 
+
+
+devSet(4);
+rdS <- smooth(rd, h=3);
+plotTracks(rdS);
+
+devSet(5);
+rdS <- smooth(rd, kernel="uniform", h=3);
+plotTracks(rdS);
+
+devSet(6);
+rdS <- smoothByState(rd, kernel="uniform", h=3);
+plotTracks(rdS);
+
