@@ -1,3 +1,32 @@
+###########################################################################/**
+# @RdocClass RawCopyNumbers
+#
+# @title "The RawCopyNumbers class"
+#
+# \description{
+#  @classhierarchy
+# }
+# 
+# @synopsis
+#
+# \arguments{
+#   \item{cn}{A @numeric @vector of length J specifying the copy number
+#     at each loci.}
+#   \item{x}{A (optional) @numeric @vector of length J specifying the 
+#     position of each loci.}
+#   \item{chromosome}{An (optional) @integer specifying the chromosome for
+#     these copy numbers.}
+#   \item{...}{Not used.}
+# }
+#
+# \section{Fields and Methods}{
+#  @allmethods "public"
+# }
+#
+# @examples "../incl/RawCopyNumbers.Rex"
+#
+# @author
+#*/########################################################################### 
 setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, chromosome=NA, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -36,8 +65,8 @@ setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, chromosome=NA, ...)
 
   extend(Object(), "RawCopyNumbers", 
     cn = cn,
-    x = x,
-    chromosome = chromosome
+    chromosome = chromosome,
+    x = x
   )
 })
 
@@ -72,15 +101,27 @@ setMethodS3("nbrOfLoci", "RawCopyNumbers", function(this, na.rm=FALSE, ...) {
 })
 
 setMethodS3("getPhysicalPositions", "RawCopyNumbers", function(this, ...) {
-  this$x;
+  getPositions(this, ...);
+}, protected=TRUE, deprecated=TRUE)
+
+
+setMethodS3("getPositions", "RawCopyNumbers", function(this, ...) {
+  x <- this$x;
+  if (is.null(x)) {
+    x <- seq(length=nbrOfLoci(this));
+  }
+  x;
 })
+
 
 setMethodS3("getChromosome", "RawCopyNumbers", function(this, ...) {
   chr <- this$chromosome;
   if (is.null(chr))
     chr <- NA;
-  as.integer(chr);
+  chr <- as.integer(chr);
+  chr;
 })
+
 
 setMethodS3("getCNs", "RawCopyNumbers", function(this, ...) {
   this$cn;
@@ -124,6 +165,126 @@ setMethodS3("getXY", "RawCopyNumbers", function(this, sort=TRUE, ...) {
     xy <- xy[order(xy$x),];
   xy;
 })
+
+
+
+setMethodS3("extractSubset", "RawCopyNumbers", function(this, subset, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'subset':
+  subset <- Arguments$getIndices(subset, range=c(1, nbrOfLoci(this)));
+
+  cn <- getCNs(this);
+  x <- getPositions(this);
+  cn <- cn[subset];
+  x <- x[subset];
+
+  res <- clone(this);
+  clearCache(res);
+  res$cn <- cn;
+  res$x <- x;
+  rm(cn, x);
+
+  res;
+})
+
+
+
+setMethodS3("kernelSmoothing", "RawCopyNumbers", function(this, xOut=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'xOut':
+  if (!is.null(xOut)) {
+    xOut <- Arguments$getDoubles(xOut);
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Smoothing data set");
+  y <- getCNs(this);
+  x <- getPositions(this);
+
+  if (is.null(xOut)) {
+    xOut <- x;
+  }
+
+  verbose && cat(verbose, "xOut:");
+  verbose && str(verbose, xOut);
+
+  verbose && enter(verbose, "Kernel smoothing");
+  verbose && cat(verbose, "Arguments:");
+  args <- list(y=y, x=x, xOut=xOut, ...);
+  verbose && str(verbose, args);
+  ys <- kernelSmoothing(y=y, x=x, xOut=xOut, ...);
+  verbose && str(verbose, ys);
+  verbose && exit(verbose);
+
+
+  verbose && enter(verbose, "Creating result object");
+  res <- clone(this);
+  clearCache(res);
+  res$cn <- ys;
+  res$x <- xOut;
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  res;
+}) # kernelSmoothing()
+
+
+setMethodS3("gaussianSmoothing", "RawCopyNumbers", function(this, sd=10e3, ...) {
+  kernelSmoothing(this, kernel="gaussian", h=sd, ...);
+})
+
+
+
+setMethodS3("binnedSmoothing", "RawCopyNumbers", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Smoothing data set");
+  y <- getCNs(this);
+  x <- getPositions(this);
+
+  verbose && enter(verbose, "Binned smoothing");
+  verbose && cat(verbose, "Arguments:");
+  args <- list(y=y, x=x, ...);
+  verbose && str(verbose, args);
+  ys <- binnedSmoothing(y=y, x=x, ...);
+  verbose && str(verbose, ys);
+  xOut <- attr(ys, "xOut");
+  verbose && exit(verbose);
+
+
+  verbose && enter(verbose, "Creating result object");
+  res <- clone(this);
+  clearCache(res);
+  res$cn <- ys;
+  res$x <- xOut;
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  res;
+}) # binnedSmoothing()
+
 
 
 
@@ -188,7 +349,7 @@ setMethodS3("estimateStandardDeviation", "RawCopyNumbers", function(this, method
 
 
 
-setMethodS3("plot", "RawCopyNumbers", function(x, xlab="Physical position", ylab="Relative copy number", ylim=c(-3,3), pch=20, xScale=1, yScale=1, ...) {
+setMethodS3("plot", "RawCopyNumbers", function(x, xlab="Position", ylab="Copy number", ylim=c(-3,3), pch=20, xScale=1, yScale=1, ...) {
   # To please R CMD check
   this <- x;
 
@@ -238,34 +399,6 @@ setMethodS3("cnRange", "RawCopyNumbers", function(this, na.rm=TRUE, ...) {
 })
 
 
-setMethodS3("gaussianSmoothing", "RawCopyNumbers", function(this, xOut=NULL, sd=10e3, na.rm=TRUE, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  verbose && enter(verbose, "Smoothing ", class(this)[1]);
-
-  verbose && enter(verbose, "Sorting data along chromosome");
-  # Get a sorted *copy*
-  res <- sort(this);
-  verbose && exit(verbose);
-
-  res$cn <- gaussianSmoothing(res$cn, x=res$x, xOut=xOut, sd=sd, 
-                                na.rm=na.rm, ..., verbose=less(verbose,1));
-  res$x <- xOut;
-
-  verbose && exit(verbose);
-
-  res;
-})
-
 
 setMethodS3("extractRawCNs", "default", function(...) {
   extractRawCopyNumbers(...);
@@ -277,6 +410,8 @@ setMethodS3("extractRawCopyNumbers", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-02-07
+# o Added Rdoc comments and example.
 # 2008-05-21
 # o Added field 'chromosome' (single value).
 # 2008-05-17

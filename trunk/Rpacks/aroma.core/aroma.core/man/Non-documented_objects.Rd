@@ -386,7 +386,6 @@
 \alias{nbrOfRows.TabularTextFile}
 \alias{plot.RawCopyNumbers}
 \alias{points.RawCopyNumbers}
-\alias{RawCopyNumbers}
 \alias{readColumnNames.TabularTextFile}
 \alias{readColumns}
 \alias{readColumns.AromaTabularBinaryFile}
@@ -700,6 +699,24 @@
 \alias{isHeterozygote.AromaUnitGenotypeCallFile}
 \alias{isHomozygote}
 \alias{isHomozygote.AromaUnitGenotypeCallFile}
+\alias{getAromaUgpFile.UnitNamesFile}
+\alias{shakyText.default}
+\alias{shakyText}
+\alias{binnedSmoothing.RawCopyNumbers}
+\alias{extractSubset}
+\alias{extractSubset.RawCopyNumbers}
+\alias{getPositions.RawCopyNumbers}
+\alias{kernelSmoothing.RawCopyNumbers}
+\alias{binnedSmoothingByState}
+\alias{binnedSmoothingByState.SegmentedCopyNumbers}
+\alias{getStateColors}
+\alias{getStateColors.SegmentedCopyNumbers}
+\alias{getStates}
+\alias{getStates.SegmentedCopyNumbers}
+\alias{kernelSmoothingByState}
+\alias{kernelSmoothingByState.SegmentedCopyNumbers}
+\alias{plot.SegmentedCopyNumbers}
+\alias{points.SegmentedCopyNumbers}
 
 \description{
   This page contains aliases for all "non-documented" objects that
