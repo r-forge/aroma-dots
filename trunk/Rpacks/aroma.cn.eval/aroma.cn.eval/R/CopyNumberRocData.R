@@ -20,6 +20,8 @@
 #  @allmethods "public"
 # }
 #
+# @examples "../incl/CopyNumberRocData.Rex"
+#
 # @author
 #*/########################################################################### 
 setConstructorS3("CopyNumberRocData", function(data=NULL, truth=NULL, positions=NULL, ...) {
@@ -105,7 +107,10 @@ setMethodS3("as.character", "CopyNumberRocData", function(x, ...) {
 })
 
 
-setMethodS3("dim", "CopyNumberRocData", function(this, ...) {
+setMethodS3("dim", "CopyNumberRocData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
   Y <- getData(this);
   dim(Y);
 })
@@ -148,32 +153,44 @@ setMethodS3("getPositions", "CopyNumberRocData", function(this, ...) {
 })
 
 setMethodS3("getTruth", "CopyNumberRocData", function(this, ...) {
-  T <- this$.truth;
+  nbrOfLoci <- nbrOfLoci(this);
+  nbrOfChannels <- nbrOfChannels(this);
 
-  # Apply functions?
-  if (is.function(T) || is.list(T)) {
-    x <- getPositions(this);
-    Y <- getData(this);
+  x <- getPositions(this);
 
-    if (is.list(T)) {
-      fcns <- T;
-    } else {
-      fcns <- rep(list(T), ncol(Y));
-    }
-
-    channels <- seq(length=ncol(Y));
-
-    # Allocate results
-    T <- matrix(0L, nrow=nrow(Y), ncol=ncol(Y));
-    for (kk in seq(length=ncol(Y))) {
-      fcn <- fcns[[kk]];
-      t <- fcn(x, channel=channels[kk], y=Y[,kk], ...);
-      t <- as.integer(t);
-      T[,kk] <- t;
-    } # for (kk ...)
-  }
+  # Allocate results
+  T <- matrix(0L, nrow=nbrOfLoci, ncol=nbrOfChannels);
+  for (cc in seq(length=nbrOfChannels)) {
+    T[,cc] <- getState(this, x=x, channel=cc, ...);
+  } # for (cc ...)
 
   T;
+})
+
+
+setMethodS3("getState", "CopyNumberRocData", function(this, x=NULL, channel, ...) {
+  # Argument 'x':
+  if (!is.null(x)) {
+    x <- Arguments$getDoubles(x);
+  }
+  
+  # Argument 'channel':
+  channel <- Arguments$getInteger(channel, range=c(1, nbrOfChannels(this)));
+
+
+  if (is.null(x)) {
+    x <- getPositions(this);
+  }
+
+  fcn <- this$.truth;
+  if (is.list(fcn)) {
+    fcn <- fcn[[channel]];
+  }
+
+  t <- fcn(x, channel=channel, ...);
+  t <- as.integer(t);
+
+  t;
 })
 
 
@@ -249,13 +266,14 @@ setMethodS3("extractSubset", "CopyNumberRocData", function(this, rows, ...) {
 
 
 
-
-setMethodS3("smoothByState", "CopyNumberRocData", function(this, xOut, ..., verbose=FALSE) {
+setMethodS3("smooth", "CopyNumberRocData", function(this, xOut=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'h':
-  h <- Arguments$getDouble(h, range=c(2, Inf));
+  # Argument 'xOut':
+  if (!is.null(xOut)) {
+    xOut <- Arguments$getDoubles(xOut);
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -265,68 +283,148 @@ setMethodS3("smoothByState", "CopyNumberRocData", function(this, xOut, ..., verb
   }
 
 
-  verbose && enter(verbose, "Creating smoothed data set");
-  verbose && cat(verbose, "Amount of smoothing: ", h);
-
+  verbose && enter(verbose, "Smoothing data set");
   Y <- getData(this);
-  T <- getTruth(this);
+  x <- getPositions(this);
 
-  Ys <- 
-  states <- sort(unique(as.vector(T)), na.last=FALSE);
-  for (ss in states) {
-    state <- states[ss];
-    verbose && enter(verbose, "State #%d of %d", ss, length(states));
-    Y <- colKernelSmoothing(Y=Y, x=x, w=w, xOut=xOut, ...);
-    verbose && exit(verbose);
+  if (is.null(xOut)) {
+    xOut <- x;
   }
 
-  verbose && enter(verbose, "Cloning existing ", class(this)[1], " object");
+  verbose && cat(verbose, "xOut:");
+  verbose && str(verbose, xOut);
+
+  verbose && enter(verbose, "Kernel smoothing");
+  verbose && cat(verbose, "Arguments:");
+  args <- list(Y=Y, x=x, xOut=xOut, ...);
+  verbose && str(verbose, args);
+  Ys <- colKernelSmoothing(Y=Y, x=x, xOut=xOut, ...);
+  verbose && str(verbose, Ys);
+  verbose && exit(verbose);
+
+
+  verbose && enter(verbose, "Creating result object");
   res <- clone(this);
   clearCache(res);
+  res$.data <- Ys;
+  res$.positions <- xOut;
   verbose && exit(verbose);
-
-  verbose && enter(verbose, "Smoothing applicable fields");
-  idxs <- NULL;
-  fields <- getInternalRocFields(res);
-  for (ff in seq(along=fields)) {
-    field <- fields[[ff]];
-    verbose && enter(verbose, sprintf("Field %d ('%s') of %d", ff, gsub(".", "", field, fixed=TRUE), length(fields)));
-    values <- res[[field]];
-    verbose && str(verbose, values);
-
-    # Smooth field?
-    if (is.matrix(values)) {
-      verbose && enter(verbose, "Smoothing");
-
-      if (is.null(idxs)) {
-        verbose && enter(verbose, "Generating block-averaging map");
-        idxs <- getBlockAverageMap(n=dim[1], h=h);
-        hApprox <- attr(idxs, "hApprox");
-        verbose && str(verbose, idxs);
-        res$smoothingParameters <- list(h=h, hApprox=hApprox);
-        verbose && exit(verbose);
-      }
-
-      values <- blockAvg(values, idxs);
-      verbose && str(verbose, values);
-
-      res[[field]] <- values;
-
-      verbose && exit(verbose);
-    }
-    rm(values);
-    verbose && exit(verbose);
-  } # for (ff ...)
-  verbose && exit(verbose);
-
-##  # Cache results?
-##  if (cache)
-##    saveCache(res, key=key, dirs=dirs);
 
   verbose && exit(verbose);
 
   res;
-})
+}) # smooth()
+
+
+
+
+setMethodS3("smoothByState", "CopyNumberRocData", function(this, xOut=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'xOut':
+  if (!is.null(xOut)) {
+    xOut <- Arguments$getDoubles(xOut);
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Smoothing data set");
+  Y <- getData(this);
+  x <- getPositions(this);
+
+  # Identify CN states
+  T <- getTruth(this);
+
+  if (is.null(xOut)) {
+    xOut <- x;
+  }
+  verbose && cat(verbose, "xOut:");
+  verbose && str(verbose, xOut);
+
+  nbrOfChannels <- nbrOfChannels(this);
+
+  naValue <- as.double(NA);
+  Ys <- matrix(naValue, nrow=length(xOut), ncol=nbrOfChannels);
+
+  for (cc in seq(length=nbrOfChannels)) {
+    verbose && enter(verbose, sprintf("Channel #%d of %d", cc, nbrOfChannels));
+
+    Ycc <- Y[,cc];
+    Tcc <- T[,cc];
+    states <- unique(as.vector(Tcc));
+    states <- sort(states, na.last=FALSE);
+    verbose && cat(verbose, "CN states:");
+    verbose && str(verbose, states);
+
+    # Identify CN states of target loci
+    TOut <- getState(this, x=xOut, channel=cc);
+
+    naValue <- as.double(NA);
+    Yscc <- rep(naValue, length=length(xOut));
+
+    for (ss in seq(along=states)) {
+      state <- states[ss];
+      verbose && enter(verbose, sprintf("State #%d ('%d') of %d", 
+                                             ss, state, length(states)));
+
+      # Identifying loci with this state
+      if (is.na(state)) {
+        keep <- is.na(Tcc);
+      } else {
+        keep <- (Tcc == state);
+      }
+      keep <- whichVector(keep);
+      Tccss <- Tcc[keep];
+      Yccss <- Ycc[keep];
+      xss <- x[keep];
+
+      # Identify target loci with this state
+      if (is.na(state)) {
+        keep <- is.na(Tcc);
+      } else {
+        keep <- (TOut == state);
+      }
+      keep <- whichVector(keep);
+      xOutss <- xOut[keep];
+
+      verbose && enter(verbose, "Kernel smoothing");
+      verbose && cat(verbose, "Arguments:");
+      args <- list(Y=Yccss, x=xss, xOut=xOutss, ...);
+      verbose && str(verbose, args);
+      Ysccss <- kernelSmoothing(y=Yccss, x=xss, xOut=xOutss, ...);
+      verbose && str(verbose, Ysccss);
+      verbose && exit(verbose);
+      
+      Yscc[keep] <- Ysccss;
+      verbose && exit(verbose);
+    } # for (ss ...)
+    verbose && str(verbose, Yscc);
+
+    Ys[,cc] <- Yscc;
+
+    verbose && exit(verbose);
+  } # for (cc ...)
+
+  verbose && enter(verbose, "Creating result object");
+  res <- clone(this);
+  clearCache(res);
+  res$.data <- Ys;
+  res$.positions <- xOut;
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  res;
+}) # smoothByState()
+
+
 
 
 setMethodS3("scanTpAtFp", "CopyNumberRocData", function(this, fpRate, hs=seq(from=1, to=10, by=0.1), ..., force=FALSE, cache=TRUE, verbose=FALSE) {
@@ -618,6 +716,8 @@ setMethodS3("plotTpRateDensity", "CopyNumberRocData", function(this, fpRate=0.01
 
 ############################################################################
 # HISTORY:
+# 2009-02-06
+# o Added extractSubset(), smooth(), and smoothByState().
 # 2009-02-01
 # o Imported to aroma.cn.eval.
 # 2008-07-25

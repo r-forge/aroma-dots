@@ -25,8 +25,10 @@
  \arguments{
    \item{Y}{A \code{\link[base]{numeric}} JxI \code{\link[base]{matrix}} (or a \code{\link[base]{vector}} of length J.)}
    \item{x}{A (optional) \code{\link[base]{numeric}} \code{\link[base]{vector}} specifying the positions of
-     the J rows. The default is to assume uniformly distributed positions.}
-   \item{w}{A optional \code{\link[base]{numeric}} \code{\link[base]{vector}} specifying J weights.}
+     the J entries. The default is to assume uniformly distributed
+     positions.}
+   \item{w}{A optional \code{\link[base]{numeric}} \code{\link[base]{vector}} of prior weights for each of
+     the J entries.}
    \item{xOut}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} specifying K target positions where
       the kernel is applied.}
    \item{kernel}{A \code{\link[base]{character}} string or a \code{\link[base]{function}} specifying the
@@ -45,17 +47,17 @@
    Returns a \code{\link[base]{numeric}} KxI \code{\link[base]{matrix}} (or a \code{\link[base]{vector}} of length K).
  }
 
- \details{
-   M_i' = w*M = w*(T-R) = w*T - w*R = T_i' - R'
-
-   Before smoothing, the reference R_i == median(T_i).
-   Keep this property for R' too.
-
-   R' = median(T_i')
-   T_i' = M_i' - R'
-
-   => w*T = w*M + w*R = M' + w*R
- }
+ %% \details{
+ %%   M_i' = w*M = w*(T-R) = w*T - w*R = T_i' - R'
+ %%
+ %%   Before smoothing, the reference R_i == median(T_i).
+ %%   Keep this property for R' too.
+ %%
+ %%   R' = median(T_i')
+ %%   T_i' = M_i' - R'
+ %%
+ %%   => w*T = w*M + w*R = M' + w*R
+ %% }
 
  \examples{
 J <- 100
