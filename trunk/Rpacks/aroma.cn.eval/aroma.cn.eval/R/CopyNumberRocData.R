@@ -1,7 +1,7 @@
 ###########################################################################/**
-# @RdocClass MatrixRocData
+# @RdocClass CopyNumberRocData
 #
-# @title "The MatrixRocData class"
+# @title "The CopyNumberRocData class"
 #
 # \description{
 #  @classhierarchy
@@ -10,9 +10,9 @@
 # @synopsis
 #
 # \arguments{
-#   \item{data}{A @numerical JxK @matrix.}
-#   \item{truth}{A @list of K @functions, a @numerical JxK @matrix, or 
-#     a @vector of either length J or length K.}
+#   \item{data}{A @numerical JxK @matrix consisting of L loci in K channels.}
+#   \item{truth}{A @function or a @list of K @functions.}
+#   \item{positions}{An optional @numeric @vector of J positions.}
 #   \item{...}{Not used.}
 # }
 #
@@ -22,12 +22,12 @@
 #
 # @author
 #*/########################################################################### 
-setConstructorS3("MatrixRocData", function(data=NULL, truth=NULL, ...) {
+setConstructorS3("CopyNumberRocData", function(data=NULL, truth=NULL, positions=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'truth':
-  if (inherits(data, "MatrixRocData")) {
+  if (inherits(data, "CopyNumberRocData")) {
     object <- data;
     data <- object$.data;
     truth <- object$.truth;
@@ -43,15 +43,15 @@ setConstructorS3("MatrixRocData", function(data=NULL, truth=NULL, ...) {
       data <- as.matrix(data);
     }
     dim <- dim(data);
-    nbrOfEntries <- dim[1];
+    nbrOfLoci <- dim[1];
     nbrOfChannels <- dim[2];
 
     if (nbrOfChannels == 0) {
       throw("Argument 'data' contains no channels.");
     }
 
-    if (nbrOfEntries < 2) {
-      throw("Argument 'data' contains less than two entries: ", nbrOfEntries);
+    if (nbrOfLoci < 2) {
+      throw("Argument 'data' contains less than two loci: ", nbrOfLoci);
     }
 
 
@@ -72,77 +72,63 @@ setConstructorS3("MatrixRocData", function(data=NULL, truth=NULL, ...) {
           throw("Element #", kk, " of argument 'truth' (list) is not a function: ", mode(truth[[kk]]));
         }
       }
-    } else if (is.numeric(truth)) {
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # The truth is specified explicitly and mapped to data points
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # A K vector specified?
-      dimT <- dim(truth);
-      if (is.null(dimT)) {
-        # Infer whether the truth is by entry or by channel
-        if (length(truth) == nbrOfEntries) {
-          dimT <- c(nbrOfEntries, 1);
-        } else if (length(truth) == nbrOfChannels) {
-          dimT <- c(1, nbrOfChannels);
-        } else {
-          throw("The length of argument 'truth' (vector) matches neither the number of entries (rows) nor the number of channels (columns) of 'data': ", length(truth), " not in (", nbrOfEntries, ", ", nbrOfChannels, ")");
-        }
-        dim(truth) <- dimT;
-      }
-  
-      truth <- as.integer(truth);
-      dim(truth) <- dimT;
-  
-  
-      # Expand by entries or channels?
-      if (any(dimT != dim)) {
-        # By entries or by channels?
-        byrow <- (dimT[2] == dim[2]);
-  
-        # Assert compatibility of dimensions
-        cc <- ifelse(byrow, 1, 2);
-        if (dimT[cc] != dim[cc]) {
-         throw("The dimension of argument 'truth' is not compatible with that of argument 'data': ", paste(dimT, collapse="x"), " != ", paste(dim, collapse="x"));
-        }
-  
-        # Expand
-        truth <- matrix(truth, nrow=dim[1], ncol=dim[2], byrow=byrow);
-      }
     } else {
-      throw("Argument 'truth' must be either a list or a numeric: ", 
-                                                         mode(truth));
+      throw("Argument 'truth' must be either a function or a list of function: ", mode(truth));
+    }
+
+    # Argument 'positions':
+    if (!is.null(positions)) {
+      positions <- Arguments$getDoubles(positions, length=nbrOfLoci);
     }
   }
 
-  extend(RocData(truth=truth, data=data, ...), "MatrixRocData");
-}) # MatrixRocData()
+
+  extend(Object(), "CopyNumberRocData",
+    .truth=truth,
+    .data=data,
+    .positions=positions
+  )
+}) # CopyNumberRocData()
 
 
-setMethodS3("getNEUTRAL", "MatrixRocData", function(this, ...) {
-  as.integer(0);
+setMethodS3("as.character", "CopyNumberRocData", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
+  s <- sprintf("%s: ", class(this)[1]);
+  s <- c(s, sprintf("Data dimension: %s", paste(dim(this), collapse="x")));
+  s <- c(s, sprintf("Number of loci: %d", nbrOfLoci(this)));
+  s <- c(s, sprintf("Number of channels: %d", nbrOfChannels(this)));
+#  s <- c(s, sprintf("Call rate: %f%%", 100*getCallRate(this)));
+  class(s) <- "GenericSummary";
+  s;
 })
 
-setMethodS3("getLOSS", "MatrixRocData", function(this, ...) {
-  as.integer(-1);
+
+setMethodS3("dim", "CopyNumberRocData", function(this, ...) {
+  Y <- getData(this);
+  dim(Y);
 })
 
-setMethodS3("getGAIN", "MatrixRocData", function(this, ...) {
-  as.integer(1);
+setMethodS3("nbrOfLoci", "CopyNumberRocData", function(this, ...) {
+  dim(this)[1];
 })
 
-setMethodS3("getUNKNOWN", "MatrixRocData", function(this, ...) {
-  as.integer(NA);
+setMethodS3("nbrOfChannels", "CopyNumberRocData", function(this, ...) {
+  dim(this)[2];
 })
 
 
-setMethodS3("getData", "MatrixRocData", function(this, ...) {
-  Y <- this$.data;
-  Y;
+setMethodS3("getData", "CopyNumberRocData", function(this, ...) {
+  this$.data;
 })
 
-setMethodS3("setData", "MatrixRocData", function(this, Y, ...) {
+setMethodS3("setData", "CopyNumberRocData", function(this, Y, ...) {
   oldY <- getData(this);
+
   # Argument 'Y':
+  Y <- Arguments$getDoubles(Y);
+
   if (any(dim(Y) != dim(oldY))) {
     throw("Cannot set new data. Incompatible dimensions: ", paste(dim(Y), collapse="x"), " != ", paste(dim(oldY), collapse="x"));
   }
@@ -152,8 +138,16 @@ setMethodS3("setData", "MatrixRocData", function(this, Y, ...) {
   invisible(this);
 })
 
+setMethodS3("getPositions", "CopyNumberRocData", function(this, ...) {
+  res <- this$.positions;
+  if (is.null(res)) {
+    nbrOfPositions <- nbrOfLoci(this);
+    res <- seq(length=nbrOfPositions);
+  }
+  res;
+})
 
-setMethodS3("getTruth", "MatrixRocData", function(this, byNames=TRUE, ...) {
+setMethodS3("getTruth", "CopyNumberRocData", function(this, ...) {
   T <- this$.truth;
 
   # Apply functions?
@@ -167,8 +161,6 @@ setMethodS3("getTruth", "MatrixRocData", function(this, byNames=TRUE, ...) {
       fcns <- rep(list(T), ncol(Y));
     }
 
-#    channels <- colnames(Y);
-#    if (is.null(channels))
     channels <- seq(length=ncol(Y));
 
     # Allocate results
@@ -176,25 +168,20 @@ setMethodS3("getTruth", "MatrixRocData", function(this, byNames=TRUE, ...) {
     for (kk in seq(length=ncol(Y))) {
       fcn <- fcns[[kk]];
       t <- fcn(x, channel=channels[kk], y=Y[,kk], ...);
-      if (is.character(t)) {
-        t <- getStates(this, t);
-      } else {
-        t <- as.integer(t);
-      }
+      t <- as.integer(t);
       T[,kk] <- t;
     } # for (kk ...)
-  }
-  if (byNames) {
-    T <- getStateNames(this, T);
   }
 
   T;
 })
 
-setMethodS3("hasState", "MatrixRocData", function(this, state, ...) {
-  byNames <- is.character(state);
 
-  T <- getTruth(this, byNames=byNames);
+setMethodS3("hasState", "CopyNumberRocData", function(this, state, ...) {
+  # Argument 'state':
+  state <- Arguments$getInteger(state);
+
+  T <- getTruth(this);
   res <- logical(length(T));
   dim(res) <- dim(T);
 
@@ -207,34 +194,8 @@ setMethodS3("hasState", "MatrixRocData", function(this, state, ...) {
 })
 
 
-setMethodS3("getStatesMap", "MatrixRocData", function(this, ...) {
-  statesMap <- this$.statesMap;
-  if (is.null(statesMap)) {
-    statesMap <- c(NEUTRAL=0, LOSS=-1, GAIN=+1);
-  }
-  statesMap;
-})
 
-
-setMethodS3("getStateNames", "MatrixRocData", function(this, states) {
-  statesMap <- getStatesMap(this);
-  idxs <- match(states, statesMap);
-  names <- names(statesMap)[idxs];
-  dim(names) <- dim(states);
-  names;
-}, protected=TRUE)
-
-setMethodS3("getStates", "MatrixRocData", function(this, names) {
-  statesMap <- getStatesMap(this);
-  idxs <- match(names, names(statesMap));
-  states <- statesMap[idxs];
-  dim(states) <- dim(names);
-  states;
-}, protected=TRUE)
-
-
-
-setMethodS3("plotTracks", "MatrixRocData", function(this, ..., xlim=NULL, ylim=c(-5,5), pch=19, xlab="Position", ylab="Signal") {
+setMethodS3("plotTracks", "CopyNumberRocData", function(this, ..., xlim=NULL, ylim=c(-5,5), pch=19, xlab="Position", ylab="Signal") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -248,8 +209,8 @@ setMethodS3("plotTracks", "MatrixRocData", function(this, ..., xlim=NULL, ylim=c
 
 
   Y <- getData(this);
-  T <- getTruth(this, byNames=FALSE);
-  x <- seq(length=nrow(Y));
+  T <- getTruth(this);
+  x <- getPositions(this);
 
   if (is.null(xlim)) {
     xlim <- range(x, na.rm=TRUE);
@@ -265,44 +226,23 @@ setMethodS3("plotTracks", "MatrixRocData", function(this, ..., xlim=NULL, ylim=c
 })
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#
-#   BEGIN: Methods that requires matrix data
-#
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-setMethodS3("extractSubset", "MatrixRocData", function(this, rows=NULL, ...) {
+setMethodS3("extractSubset", "CopyNumberRocData", function(this, rows, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  dim <- dim(this);
-  # Sanity check
-  if (is.null(dim)) {
-    throw("Cannot extract data by rows. The data has no dimension.");
-  }
-
   # Argument 'rows':
-  if (!is.null(rows)) {
-    rows <- Arguments$getIndices(rows, range=c(1, dim[1]));
-  }
+  rows <- Arguments$getIndices(rows, range=c(1, nbrOfLoci(this)));
 
-  # Nothing to do?
-  if (is.null(rows))
-    return(this);
+  data <- getData(this);
+  positions <- getPositions(this);
+  data <- data[rows,,drop=FALSE];
+  positions <- positions[rows];
 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Return a cloned subset
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   res <- clone(this);
   clearCache(res);
-  fields <- getInternalRocFields(this);
-  for (field in fields) {
-    values <- res[[field]];
-    if (!identical(length(values), dim[2])) {
-      values <- values[rows,,drop=FALSE];
-    }
-    res[[field]] <- values;
-  }
+  res$.data <- data;
+  res$.positions <- positions;
+  rm(data, positions);
 
   res;
 })
@@ -310,7 +250,7 @@ setMethodS3("extractSubset", "MatrixRocData", function(this, rows=NULL, ...) {
 
 
 
-setMethodS3("extractSmoothRocData", "MatrixRocData", function(this, h, ..., verbose=FALSE) {
+setMethodS3("smoothByState", "CopyNumberRocData", function(this, xOut, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -324,27 +264,21 @@ setMethodS3("extractSmoothRocData", "MatrixRocData", function(this, h, ..., verb
     on.exit(popState(verbose));
   }
 
-  # Sanity check
-  dim <- dim(this);
-  if (is.null(dim)) {
-    throw("Cannot extract data by rows. The data has no dimension.");
-  }
 
   verbose && enter(verbose, "Creating smoothed data set");
   verbose && cat(verbose, "Amount of smoothing: ", h);
 
-## CACHING is slower than generating from scratch. /HB 2008-07-25
-##  verbose && enter(verbose, "Checking for cached results");
-##  key <- list(method="extractSmoothRocData", class=class(this)[1], checksum=getChecksum(this), h=h);
-##  dirs <- c("MatrixRocData");
-##  res <- loadCache(key=key, dirs=dirs);
-##  if (!force && !is.null(res)) {
-##    verbose && cat(verbose, "Found cached results!");
-##    verbose && exit(verbose);
-##    verbose && exit(verbose);
-##    return(res);
-##  }
-##  verbose && exit(verbose);
+  Y <- getData(this);
+  T <- getTruth(this);
+
+  Ys <- 
+  states <- sort(unique(as.vector(T)), na.last=FALSE);
+  for (ss in states) {
+    state <- states[ss];
+    verbose && enter(verbose, "State #%d of %d", ss, length(states));
+    Y <- colKernelSmoothing(Y=Y, x=x, w=w, xOut=xOut, ...);
+    verbose && exit(verbose);
+  }
 
   verbose && enter(verbose, "Cloning existing ", class(this)[1], " object");
   res <- clone(this);
@@ -395,7 +329,7 @@ setMethodS3("extractSmoothRocData", "MatrixRocData", function(this, h, ..., verb
 })
 
 
-setMethodS3("scanTpAtFp", "MatrixRocData", function(this, fpRate, hs=seq(from=1, to=10, by=0.1), ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+setMethodS3("scanTpAtFp", "CopyNumberRocData", function(this, fpRate, hs=seq(from=1, to=10, by=0.1), ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -413,7 +347,7 @@ setMethodS3("scanTpAtFp", "MatrixRocData", function(this, fpRate, hs=seq(from=1,
 
   verbose && enter(verbose, "Loading earlier estimates from file cache");
   key <- list(method="extractSmoothRocData", class=class(this)[1], checksum=getChecksum(this), fpRate=fpRate);
-  dirs <- c("MatrixRocData", "scanTpAtFp");
+  dirs <- c("CopyNumberRocData", "scanTpAtFp");
   fit <- loadCache(key=key, dirs=dirs);
   verbose && exit(verbose);
 
@@ -449,7 +383,7 @@ setMethodS3("scanTpAtFp", "MatrixRocData", function(this, fpRate, hs=seq(from=1,
 
 
 
-setMethodS3("findTpAtFpPerRow", "MatrixRocData", function(this, fpRate=0.01, rows=NULL, ..., skip=FALSE, force=FALSE, verbose=FALSE) {
+setMethodS3("findTpAtFpPerRow", "CopyNumberRocData", function(this, fpRate=0.01, rows=NULL, ..., skip=FALSE, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -597,7 +531,7 @@ setMethodS3("findTpAtFpPerRow", "MatrixRocData", function(this, fpRate=0.01, row
 
 
 
-setMethodS3("drawTpRateDensity", "MatrixRocData", function(this, fpRate=0.01, rows=NULL, ..., adjust=1, lwd=2, col=par("col"), cex=0.7, annotate=!add, add=FALSE, force=FALSE, verbose=FALSE) {
+setMethodS3("drawTpRateDensity", "CopyNumberRocData", function(this, fpRate=0.01, rows=NULL, ..., adjust=1, lwd=2, col=par("col"), cex=0.7, annotate=!add, add=FALSE, force=FALSE, verbose=FALSE) {
   require("aroma.core") || throw("Package not loaded: aroma.core"); # stext()
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -633,7 +567,7 @@ setMethodS3("drawTpRateDensity", "MatrixRocData", function(this, fpRate=0.01, ro
 
 
 
-setMethodS3("plotTpRateDensity", "MatrixRocData", function(this, fpRate=0.01, rows=NULL, ..., col=par("col"), cex=0.7, breaks=NULL, offset=0, width=1, xlab="TP rate", ylab="Count", annotate=!add, add=FALSE, force=FALSE, verbose=FALSE) {
+setMethodS3("plotTpRateDensity", "CopyNumberRocData", function(this, fpRate=0.01, rows=NULL, ..., col=par("col"), cex=0.7, breaks=NULL, offset=0, width=1, xlab="TP rate", ylab="Count", annotate=!add, add=FALSE, force=FALSE, verbose=FALSE) {
   require("R.basic") || throw("Package not loaded: R.basic"); # hist()
   require("aroma.core") || throw("Package not loaded: aroma.core"); # stext()
 
