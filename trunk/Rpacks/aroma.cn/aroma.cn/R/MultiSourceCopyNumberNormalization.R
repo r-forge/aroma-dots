@@ -434,7 +434,8 @@ setMethodS3("getSmoothedDataSets", "MultiSourceCopyNumberNormalization", functio
       ds <- dsList[[kk]];
       verbose && enter(verbose, sprintf("Data set %d ('%s') of %d",
                                          kk, getFullName(ds), length(dsList)));
-      sm <- TotalCnSmoothing(ds, targetUgp=targetUgp, sd=sd);
+      sm <- TotalCnKernelSmoothing(ds, targetUgp=targetUgp, 
+                                       kernel="gaussian", bandwidth=sd);
       verbose && print(verbose, sm);
       dsSmoothList[[kk]] <- process(sm, verbose=less(verbose, 1));
       verbose && exit(verbose);
@@ -1014,6 +1015,8 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 
 ###########################################################################
 # HISTORY:
+# 2009-02-08
+# o Updated to make use of TotalCnKernelSmoothing().
 # 2009-01-26
 # o Adapted to new aroma.core::AromaUnitTotalCnBinary{Set|File} classes.
 # 2008-10-08

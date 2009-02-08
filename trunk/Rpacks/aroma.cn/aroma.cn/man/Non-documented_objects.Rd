@@ -45,7 +45,6 @@
 \alias{normalizePrincipalCurve.matrix}
 \alias{pairs2}
 \alias{pairs2.principal.curve}
-\alias{principal.curve.hb}
 \alias{process.TotalCnSmoothing}
 
 \description{
