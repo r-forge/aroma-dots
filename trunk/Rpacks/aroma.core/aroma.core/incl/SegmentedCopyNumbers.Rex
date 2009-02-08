@@ -23,8 +23,17 @@ for (state in c(-1,+1)) {
 cn <- SegmentedCopyNumbers(y, x, states=stateFcn)
 print(cn)
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Subsetting
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 plot(cn, ylim=c(-4,4))
-title("Copy numbers annotated by state")
+title("Copy numbers annotated by state (and subset by state)")
+
+cnS <- extractSubsetByState(cn, states=c(0,+1L))
+print(cnS)
+points(cnS, pch=21, cex=1.2, lwd=2, col="purple")
+
+legend("topright", pch=c(19, 21), col=c("#999999", "purple"), sprintf(c("raw [n=%d]", "CN in {0,1} [n=%d]"), c(nbrOfLoci(cn), nbrOfLoci(cnS))), bty="n")
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

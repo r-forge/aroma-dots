@@ -717,6 +717,9 @@
 \alias{kernelSmoothingByState.SegmentedCopyNumbers}
 \alias{plot.SegmentedCopyNumbers}
 \alias{points.SegmentedCopyNumbers}
+\alias{extractSubsetByState}
+\alias{extractSubsetByState.SegmentedCopyNumbers}
+\alias{as.data.frame.SegmentedCopyNumbers}
 
 \description{
   This page contains aliases for all "non-documented" objects that

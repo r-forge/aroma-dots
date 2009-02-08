@@ -50,6 +50,35 @@ setMethodS3("getStates", "SegmentedCopyNumbers", function(this, x=getPositions(t
 })
 
 
+setMethodS3("as.data.frame", "SegmentedCopyNumbers", function(x, ...) {
+  # To please R CMD check
+  this <- x;
+
+  df <- NextMethod("as.data.frame", this, ...);
+  df$state <- getStates(this, x=df$x);
+
+  df;
+})
+
+
+setMethodS3("extractSubsetByState", "SegmentedCopyNumbers", function(this, states, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'states':
+  states <- Arguments$getVector(states);
+
+
+  # Identify loci that have the requested states
+  cnStates <- getStates(this);
+  keep <- is.element(cnStates, states);
+  keep <- whichVector(keep);
+
+  # Extract this subset
+  extractSubset(this, subset=keep, ...);
+})
+
+ 
 
 setMethodS3("kernelSmoothingByState", "SegmentedCopyNumbers", function(this, xOut=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -253,9 +282,9 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
 
     verbose && enter(verbose, "Binned smoothing");
     verbose && cat(verbose, "Arguments:");
-    args <- list(y=ySS, x=xSS, xOut=xOutSS, ...);
+    args <- list(y=ySS, x=xSS, xOut=xOutSS, by=by, ...);
     verbose && str(verbose, args);
-    yOutSS <- binnedSmoothing(y=ySS, x=xSS, xOut=xOutSS, ...);
+    yOutSS <- binnedSmoothing(y=ySS, x=xSS, xOut=xOutSS, by=by, ...);
     verbose && str(verbose, yOutSS);
     verbose && exit(verbose);
 
@@ -310,5 +339,6 @@ setMethodS3("points", "SegmentedCopyNumbers", function(x, ..., col=getStateColor
 ############################################################################
 # HISTORY:
 # 2009-02-07
+# o Added extractSubsetByState().
 # o Created.
 ############################################################################

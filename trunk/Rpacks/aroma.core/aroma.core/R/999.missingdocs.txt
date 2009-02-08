@@ -326,3 +326,5 @@ extractMatrix.AromaUnitSignalBinaryFile isHeterozygote
   getStates.SegmentedCopyNumbers kernelSmoothingByState
   kernelSmoothingByState.SegmentedCopyNumbers plot.SegmentedCopyNumbers
   points.SegmentedCopyNumbers
+extractSubsetByState extractSubsetByState.SegmentedCopyNumbers
+as.data.frame.SegmentedCopyNumbers
