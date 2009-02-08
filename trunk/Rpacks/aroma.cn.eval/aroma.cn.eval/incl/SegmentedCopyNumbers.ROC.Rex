@@ -23,23 +23,66 @@ for (state in c(-1,+1)) {
 cnR <- SegmentedCopyNumbers(y, x, states=stateFcn)
 print(cnR)
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Focus on gains
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 states <- c(0,1)
 cn <- extractSubsetByState(cnR, states=states)
 print(cn)
-plot(cn, ylim=c(-3,3))
 
 
-fit <- fitRoc(cn, recall=states[1])
-plot(fit$roc, type="l", lwd=4, col=1)
-abline(a=0, b=1, lty=3)
-
-bys <- seq(from=1, to=10, by=3)
-print(bys)
-for (kk in seq(along=bys)) {
-  by <- bys[kk]
-  cnS <- binnedSmoothingByState(cn, by=by)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Smooth data
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Amount of smoothing
+binWidths <- c(1.5, 2, 4, 8, 12)
+print(binWidths)
+cnList <- list(raw=cn);
+for (kk in seq(along=binWidths)) {
+  binWidth <- binWidths[kk];
+  cnS <- binnedSmoothingByState(cn, by=binWidth)
   cnS <- extractSubsetByState(cnS, states=states)
-  print(table(getStates(cnS)))
-  fit <- fitRoc(cnS, recall=states[1])
-  lines(fit$roc, lwd=4, col=kk)
+  key <- sprintf("w=%g", binWidth);
+  cnList[[key]] <- cnS;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Plot data
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+labels <- sapply(seq(along=cnList), FUN=function(kk) {
+  sprintf("%s [n=%d]", names(cnList)[kk], nbrOfLoci(cnList[[kk]]));
+})
+
+layout(seq(along=cnList))
+par(mar=c(3,4,1,1)+0.1)
+ylim <- c(-1,1)*2
+for (kk in seq(along=cnList)) {
+  cn <- cnList[[kk]];
+  plot(cn, ylim=ylim, col=kk);
+  x <- xSeq(cn, by=1);
+  x <- x[getStates(cn, x=x) == 1];
+  points(x,rep(ylim[1],length(x)), pch=15, col="#999999");
+  stext(side=3, pos=0, labels[kk]);
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ROC
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+fits <- lapply(cnList, FUN=fitRoc, recall=states[1]);
+
+layout(1)
+par(mar=c(4,4,2,1)+0.1)
+for (kk in seq(along=fits)) {
+  fit <- fits[[kk]];
+  roc <- fit$roc;
+  if (kk == 1) {
+    plot(roc, type="l", lwd=4, col=kk);
+    abline(a=0, b=1, lty=3);
+    legend("bottomright", col=seq(along=fits), lwd=4, labels, bty="n")
+    title("Calling the CN gain")
+  } else {
+    lines(fit$roc, lwd=4, col=kk)
+  }
 }
