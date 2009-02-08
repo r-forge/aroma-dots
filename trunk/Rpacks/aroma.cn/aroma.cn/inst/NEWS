@@ -1,6 +1,10 @@
 Package: aroma.cn
 =================
 
+Version: 0.2.1 [2009-02-08]
+o Further cleanup.  Some functions are now in aroma.light.
+
+
 Version: 0.2.0 [2009-01-26]
 o Adopted the package to the new classes of aroma.core.
 o Several classes and methods were moved to aroma.core v1.0.0.
