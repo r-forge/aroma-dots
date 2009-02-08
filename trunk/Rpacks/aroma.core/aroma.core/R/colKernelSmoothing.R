@@ -63,7 +63,7 @@
 # @keyword robust
 # @keyword univar 
 #*/###########################################################################
-setMethodS3("colKernelSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w=NULL, xOut=x, kernel=c("gaussian", "uniform"), h, censorH=3, na.rm=TRUE, robust=FALSE, ..., verbose=FALSE) {
+setMethodS3("colKernelSmoothing", "matrix", function(Y, x=seq(length=nrow(Y)), w=NULL, xOut=x, kernel=c("gaussian", "uniform"), h, censorH=3, na.rm=TRUE, robust=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -81,7 +81,7 @@ setMethodS3("colKernelSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
   if (is.null(w)) {
   } else {
     if (length(w) != n) {
-      throw("Argument 'w' has different number of values than rows in 'Y': ", 
+      throw("Argument 'w' has different number of values that rows in 'Y': ", 
                                                        length(w), " != ", n);
     }
   }
@@ -225,6 +225,8 @@ setMethodS3("kernelSmoothing", "numeric", function(y, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-08
+# o BUG FIX: Argument 'x' had the wrong default value.
 # 2009-02-05
 # o Renames matrix version to colKernelSmoothing().
 # o Now making use of weighted matrix averages of matrixStats.

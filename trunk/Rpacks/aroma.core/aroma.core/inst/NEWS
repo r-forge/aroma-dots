@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.1x [2009-02-07]
+Version: 1.0.1x [2009-02-08]
 o Added SegmentedCopyNumbers class.
 o Added various smoothing methods to RawCopyNumbers.
 o Added colBinnedSmoothing() and colKernelSmoothing().

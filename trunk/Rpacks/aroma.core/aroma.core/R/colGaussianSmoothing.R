@@ -1,15 +1,15 @@
+###########################################################################/**
 # M_i' = w*M = w*(T-R) = w*T - w*R = T_i' - R'
-
+#
 # Before smoothing, the reference R_i == median(T_i). 
 # Keep this property for R' too.
-
+#
 # R' = median(T_i')
 # T_i' = M_i' - R'
-
+#
 # => w*T = w*M + w*R = M' + w*R
-
-
-setMethodS3("gaussianSmoothing", "matrix", function(Y, x, w=NULL, xOut=x, sd=1, censorSd=3, na.rm=FALSE, ..., verbose=FALSE) {
+#*/###########################################################################
+setMethodS3("colGaussianSmoothing", "matrix", function(Y, x=seq(length=nrow(Y)), w=NULL, xOut=x, sd=1, censorSd=3, na.rm=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -19,12 +19,13 @@ setMethodS3("gaussianSmoothing", "matrix", function(Y, x, w=NULL, xOut=x, sd=1, 
   
   # Argument 'x'
   if (length(x) != n) {
-    throw("Argument 'x' has different number of values that rows in 'Y': ", 
+    throw("Argument 'x' has different number of values than rows in 'Y': ", 
                                                      length(x), " != ", n);
   }
 
   # Argument 'w'
-  if (!is.null(w)) {
+  if (is.null(w)) {
+  } else {
     if (length(w) != n) {
       throw("Argument 'w' has different number of values that rows in 'Y': ", 
                                                        length(w), " != ", n);
@@ -104,9 +105,19 @@ setMethodS3("gaussianSmoothing", "matrix", function(Y, x, w=NULL, xOut=x, sd=1, 
       value <- colSums(wKernel*Y2);
     }
 
+    # Fix: Smoothing over a window with all missing values give zeros, not NA.
+    idxs <- whichVector(value == 0);
+    if (length(idxs) > 0) {
+      # Are these real zeros or missing values?
+      Y2 <- Y2[idxs,,drop=FALSE];
+      Y2 <- !is.na(Y2);
+      idxsNA <- idxs[colSums(Y2) == 0];    
+      value[idxsNA] <- NA;
+    }
+
 #    verbose && str(verbose, value);
     Ys[kk,] <- value;
-  }
+  } # for (kk ...)
 
   verbose && exit(verbose);
 
@@ -119,19 +130,29 @@ setMethodS3("gaussianSmoothing", "matrix", function(Y, x, w=NULL, xOut=x, sd=1, 
   }
 
   Ys;
-}) # gaussianSmoothing()
+}) # colGaussianSmoothing()
 
 
-
+setMethodS3("gaussianSmoothing", "matrix", function(Y, ...) {
+  colGaussianSmoothing(Y, ...);
+})
 
 setMethodS3("gaussianSmoothing", "numeric", function(y, ...) {
-  as.vector(gaussianSmoothing(as.matrix(y), ...));
-}) # gaussianSmoothing()
+  y <- colGaussianSmoothing(as.matrix(y), ...);
+  dim(y) <- NULL;
+  y;
+})
 
 
 
 ############################################################################
 # HISTORY:
+# 2009-02-08
+# o OBSOLETE? This code is (probably) obsolete, because of the newer
+#   colKernelSmoothing(). Will keep it for a while, just in case.
+# o Made the code of colGaussianSmoothing() more similar to 
+#   colKernelSmoothing().
+# o Renamed/added colGaussianSmoothing().
 # 2008-05-21
 # o Added argument 'censorSd' to sensor the kernel at a given bandwidth.
 # o Added argument 'xOut' to gaussianSmoothing().

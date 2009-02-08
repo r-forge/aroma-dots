@@ -49,6 +49,13 @@ setMethodS3("getStates", "SegmentedCopyNumbers", function(this, x=getPositions(t
   states;
 })
 
+setMethodS3("getUniqueStates", "SegmentedCopyNumbers", function(this, ...) {
+  states <- getStates(this, ...);
+  states <- unique(states);
+  states <- sort(states, na.last=TRUE);
+  states;
+})
+
 
 setMethodS3("as.data.frame", "SegmentedCopyNumbers", function(x, ...) {
   # To please R CMD check
@@ -338,6 +345,8 @@ setMethodS3("points", "SegmentedCopyNumbers", function(x, ..., col=getStateColor
 
 ############################################################################
 # HISTORY:
+# 2009-02-08
+# o Added getUniqueStates().
 # 2009-02-07
 # o Added extractSubsetByState().
 # o Created.
