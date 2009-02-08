@@ -1,6 +1,6 @@
 Package: aroma.core
 Version: 1.0.1
-Date: 2009-02-07
+Date: 2009-02-08
 Title: Support package for aroma.affymetrix et al.
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
