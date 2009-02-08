@@ -1,3 +1,33 @@
+###########################################################################/**
+# @set "class=SegmentedCopyNumbers"
+# @RdocMethod fitRoc
+#
+# @title "Estimates the ROC for calling copy numbers of state"
+#
+# \description{
+#  @get "title".
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{states}{}
+#   \item{recall}{}
+#   \item{...}{Additional arguments passed to @see "fitRoc".}
+# }
+#
+# \value{
+#  Returns what @see "fitRoc" returns.
+# }
+#
+# @examples "../incl/SegmentedCopyNumbers.ROC.Rex"
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#*/###########################################################################
 setMethodS3("fitRoc", "SegmentedCopyNumbers", function(this, states=NULL, recall=states[2], ...) {
   # Extract by state?
   if (!is.null(states)) {
