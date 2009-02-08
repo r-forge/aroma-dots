@@ -1,7 +1,7 @@
 ###########################################################################/**
 # @RdocClass TotalCnSmoothing
 #
-# @title "The TotalCnSmoothing class"
+# @title "The abstract TotalCnSmoothing class"
 #
 # \description{
 #  @classhierarchy
@@ -15,7 +15,7 @@
 #  \item{...}{Arguments passed to @see "aroma.core::AromaTransform".}
 #  \item{targetUgp}{An @see "aroma.core::AromaUgpFile" specifying the
 #    target loci for which smoothed copy-number are generated.}
-#  \item{sd}{A @double specify the bandwidth of the smoothing kernel.}
+#  \item{bandwidth}{A @double specify the bandwidth of the smoothing.}
 #  \item{.reqSetClass}{(internal only)}
 # }
 #
@@ -23,13 +23,9 @@
 #  @allmethods "public"
 # }
 #
-# \details{
-#   A Gaussian kernel centered at each target loci is used to smooth the data.
-# }
-#
 # @author
 #*/########################################################################### 
-setConstructorS3("TotalCnSmoothing", function(dataSet=NULL, ..., targetUgp=NULL, sd=50e3, .reqSetClass="AromaUnitTotalCnBinarySet") {
+setConstructorS3("TotalCnSmoothing", function(dataSet=NULL, ..., bandwidth=50e3, targetUgp=NULL, .reqSetClass="AromaUnitTotalCnBinarySet") {
   if (!is.null(dataSet)) {
     # Argument 'targetUgp':
     if (!inherits(targetUgp, "AromaUgpFile")) {
@@ -38,22 +34,22 @@ setConstructorS3("TotalCnSmoothing", function(dataSet=NULL, ..., targetUgp=NULL,
     }
   }
 
-  # Argument 'sd':
-  sd <- Arguments$getDouble(sd, range=c(0,Inf));
-
+  # Argument 'bandwidth':
+  bandwidth <- Arguments$getDouble(bandwidth, range=c(0,Inf));
 
   extend(AromaTransform(dataSet=dataSet, ..., .reqSetClass=.reqSetClass), "TotalCnSmoothing",
     .targetUgp = targetUgp,
-    .sd = sd
+    .bandwidth = bandwidth
   );
-})
+}, abstract=TRUE)
 
 
 setMethodS3("getParameters", "TotalCnSmoothing", function(this, ...) {
-  list(
+  params <- list(
     targetUgp = this$.targetUgp,
-    sd = this$.sd
+    bandwidth = this$.bandwidth
   );
+  params;
 }, private=TRUE);
 
 
@@ -63,16 +59,16 @@ setMethodS3("getAsteriskTags", "TotalCnSmoothing", function(this, collapse=NULL,
   # Add class-specific tags
 
   params <- getParameters(this);
-  # Parameter 'by'
+  # "Parameter" 'by'
   byTag <- grep("(b|kb|Mb)$", getTags(params$targetUgp), value=TRUE);
   if (length(byTag) > 0) {
     byTag <- sprintf("by=%s", byTag[1]);
   }
+  tags <- c(tags, byTag);
 
-  # Parameter 'sd'
-  sdTag <- sprintf("sd=%.1fkb", params$sd/1e3);
-
-  tags <- c(tags, byTag, sdTag);
+  # Parameter 'bandwidth'
+  bandwidthTag <- sprintf("H=%.1fkb", params$bandwidth/1e3);
+  tags <- c(tags, bandwidthTag);
 
   # Collapsed or split?
   if (!is.null(collapse)) {
@@ -183,6 +179,8 @@ setMethodS3("getTargetPositions", "TotalCnSmoothing", function(this, ..., force=
 
 
 
+setMethodS3("smoothRawCopyNumbers", "TotalCnKernelSmoothing", abstract=TRUE);
+
 
 setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -267,8 +265,9 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
       verbose && cat(verbose, "Target positions:");
       verbose && str(verbose, target$xOut);
 
-      smoothCNs <- gaussianSmoothing(rawCNs, xOut=target$xOut, sd=params$sd, 
-                                                  verbose=less(verbose, 20));
+      smoothCNs <- smoothRawCopyNumbers(this, rawCNs=rawCNs, 
+                                        target=target, verbose=verbose);
+
       verbose && print(verbose, smoothCNs);
       verbose && summary(verbose, smoothCNs);
 
@@ -287,6 +286,8 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
 
     verbose && enter(verbose, "Allocating ", className);
     verbose && cat(verbose, "Pathname: ", pathname);
+    params2 <- params;
+    params[["targetUgp"]] <- NULL;
     footer <- list(
       sourceDataFile=list(
         fullname=getFullName(df), 
@@ -300,7 +301,7 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
           chipType=getChipType(params$targetUgp),
           checksum=getChecksum(params$targetUgp)
         ),
-        sd=params$sd
+        params=params2
       )
     );
     dfOut <- clazz$allocate(filename=pathname, nbrOfRows=nbrOfUnits, 
@@ -332,6 +333,9 @@ setMethodS3("getOutputFiles", "TotalCnSmoothing", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-08
+# o Any subclass must implement smoothRawCopyNumbers().
+# o Made TotalCnSmoothing an abstract class, cf. TotalCnKernelSmoothing.
 # 2009-01-26
 # o Adopted to the new AromaUnitTotalCnBinarySet.
 # o Added Rdoc comments.
