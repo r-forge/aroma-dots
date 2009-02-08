@@ -53,6 +53,10 @@
 #
 # @author
 #
+# \seealso{
+#   @seemethod "colBinnedSmoothing".
+# }
+#
 # @keyword array
 # @keyword iteration
 # @keyword robust
@@ -212,7 +216,7 @@ setMethodS3("colKernelSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
 
 setMethodS3("kernelSmoothing", "numeric", function(y, ...) {
   y <- colKernelSmoothing(as.matrix(y), ...);
-  y <- as.vector(y);
+  dim(y) <- NULL;
   y;
 })
 

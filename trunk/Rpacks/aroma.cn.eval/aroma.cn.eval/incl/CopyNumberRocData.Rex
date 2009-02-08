@@ -1,5 +1,5 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Simulate copy-number data
+# Simulating copy-number data
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Number of loci
 J <- 100
@@ -7,48 +7,52 @@ J <- 100
 # Number of channels
 I <- 4
 
-# Copy-neutral data
-Y <- matrix(rnorm(I*J, sd=1/2), nrow=J, ncol=I)
+# Function specifying the CN states for each channel
 T <- function(x, channel, ...) {
-  t <- integer(length(x));
+  t <- integer(length(x))
   if (is.element(channel, c(2,3))) {
-    t[30 < x & x <= 50] <- +1;
-    t[(25 < x & x <= 30) | (50 < x & x <= 55)] <- NA;
+    t[30 < x & x <= 50] <- +1
+    t[(25 < x & x <= 30) | (50 < x & x <= 55)] <- NA
   }
   if (is.element(channel, c(1,3))) {
-    t[65 < x & x <= 90] <- -1;
+    t[65 < x & x <= 90] <- -1
   }
-  t;
+  t
 } # T()
 
+# Copy-neutral data
+Y <- matrix(rnorm(I*J, sd=1/2), nrow=J, ncol=I)
 rd <- CopyNumberRocData(data=Y, truth=T)
-Y <- getData(rd);
-isT <- hasState(rd, +1);
+Y <- getData(rd)
+isT <- hasState(rd, +1)
 Y[isT] <- Y[isT] + 3
-isT <- hasState(rd, -1);
+isT <- hasState(rd, -1)
 Y[isT] <- Y[isT] - 3
-setData(rd, Y);
-
-devSet(2);
-plotTracks(rd);
+setData(rd, Y)
 
 
-devSet(3);
-subset <- seq(from=1, to=nbrOfLoci(rd), by=3);
-rd2 <- extractSubset(rd, rows=subset);
-plotTracks(rd2);
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Plotting data
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+plotTracks(rd)
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Subsetting data
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+subset <- seq(from=1, to=nbrOfLoci(rd), by=3)
+rdS <- extractSubset(rd, rows=subset)
+plotTracks(rdS)
 
-devSet(4);
-rdS <- smooth(rd, h=3);
-plotTracks(rdS);
 
-devSet(5);
-rdS <- smooth(rd, kernel="uniform", h=3);
-plotTracks(rdS);
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Smoothing data
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+rdS <- smooth(rd, h=3)
+plotTracks(rdS)
 
-devSet(6);
-rdS <- smoothByState(rd, kernel="uniform", h=3);
-plotTracks(rdS);
+rdS <- smooth(rd, kernel="uniform", h=3)
+plotTracks(rdS)
 
+rdS <- smoothByState(rd, kernel="uniform", h=3)
+plotTracks(rdS)

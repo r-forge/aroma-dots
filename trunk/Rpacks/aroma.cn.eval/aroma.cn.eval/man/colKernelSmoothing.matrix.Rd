@@ -87,6 +87,10 @@ for (ii in 1:I) {
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
+ \seealso{
+   \code{\link[aroma.cn.eval:colBinnedSmoothing.matrix]{*colBinnedSmoothing}()}.
+ }
+
 
 
 
