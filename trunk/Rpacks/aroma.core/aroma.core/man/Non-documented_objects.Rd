@@ -720,6 +720,10 @@
 \alias{extractSubsetByState}
 \alias{extractSubsetByState.SegmentedCopyNumbers}
 \alias{as.data.frame.SegmentedCopyNumbers}
+\alias{colGaussianSmoothing}
+\alias{colGaussianSmoothing.matrix}
+\alias{getUniqueStates}
+\alias{getUniqueStates.SegmentedCopyNumbers}
 
 \description{
   This page contains aliases for all "non-documented" objects that

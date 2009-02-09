@@ -328,3 +328,5 @@ extractMatrix.AromaUnitSignalBinaryFile isHeterozygote
   points.SegmentedCopyNumbers
 extractSubsetByState extractSubsetByState.SegmentedCopyNumbers
 as.data.frame.SegmentedCopyNumbers
+ colGaussianSmoothing colGaussianSmoothing.matrix getUniqueStates
+ getUniqueStates.SegmentedCopyNumbers

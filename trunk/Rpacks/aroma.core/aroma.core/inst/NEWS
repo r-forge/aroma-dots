@@ -2,11 +2,17 @@ Package: aroma.core
 ===================
 
 Version: 1.0.1x [2009-02-08]
+o Now byName() of AromaUnit(FracB|Total)CnBinarySet searches 
+  rawCnData/ then cnData/.
 o Added SegmentedCopyNumbers class.
 o Added various smoothing methods to RawCopyNumbers.
 o Added colBinnedSmoothing() and colKernelSmoothing().
 o Added getAromaUgpFile() to UnitNamesFile.
 o Added shakyText().
+o Now argument 'files' in extract() of GenericDataFileSet can 
+  also be a vector of string.
+o ALPHA: Added support for "smart" subdirectories in static 
+  findByName() of GenericDataFileSet.
 
 
 Version: 1.0.0 [2009-01-12]
