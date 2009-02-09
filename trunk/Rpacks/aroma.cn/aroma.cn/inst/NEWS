@@ -1,7 +1,8 @@
 Package: aroma.cn
 =================
 
-Version: 0.2.1 [2009-02-08]
+Version: 0.2.1 [2009-02-09]
+o Added first redundancy tests to package.
 o Further cleanup.  Some functions are now in aroma.light.
 
 
