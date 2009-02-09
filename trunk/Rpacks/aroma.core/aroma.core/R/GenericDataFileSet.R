@@ -918,6 +918,8 @@ setMethodS3("extract", "GenericDataFileSet", function(this, files, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.logical(files)) {
     files <- whichVector(files);
+  } else if (is.character(files)) {
+    files <- indexOf(this, files, ...);
   }
 
   files <- Arguments$getIndices(files, range=range(seq(this)));
@@ -1157,10 +1159,27 @@ setMethodS3("findByName", "GenericDataFileSet", function(static, name, tags=NULL
     # Identify existing subdirectories
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (!is.null(subdirs)) {
-      if (length(subdirs) > 1)
-        subdirs <- do.call("file.path", subdirs);
-      paths <- file.path(paths, subdirs);
-      paths <- paths[sapply(paths, FUN=isDirectory)];
+      if (length(subdirs) >= 1) {
+        for (kk in seq(along=subdirs)) {
+          dir <- subdirs[kk];
+          # Smart directory?
+          isSmart <- (regexpr("^[*]", dir) != -1);
+          if (isSmart) {
+            paths <- sapply(paths, FUN=function(path) {
+              dirsT <- list.files(path=path);
+              if (dir == "*") {
+                dir <- dirsT[1];
+              }
+              file.path(path, dir);
+            });
+          } else {
+            paths <- file.path(paths, dir);
+          }
+          paths <- paths[sapply(paths, FUN=isDirectory)];
+        } # for (kk ...)
+      }
+#      paths <- file.path(paths, subdirs);
+#      paths <- paths[sapply(paths, FUN=isDirectory)];
     }
   
     if (length(paths) > 1) {
@@ -1366,6 +1385,11 @@ setMethodS3("update2", "GenericDataFileSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-08
+# o Now argument 'files' in extract() of GenericDataFileSet can 
+#   also be a vector of string.
+# o ALPHA: Added support for "smart" subdirectories in static findByName() 
+#   of GenericDataFileSet.
 # 2008-07-21
 # o Now findByName() assert that the data set name is not empty.
 # 2008-07-17

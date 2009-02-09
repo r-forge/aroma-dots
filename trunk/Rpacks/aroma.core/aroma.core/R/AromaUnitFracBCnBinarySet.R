@@ -42,7 +42,7 @@ setConstructorS3("AromaUnitFracBCnBinarySet", function(...) {
 })
 
 
-setMethodS3("byName", "AromaUnitFracBCnBinarySet", function(static, name, tags=NULL, ..., chipType=NULL, paths="cnData") {
+setMethodS3("byName", "AromaUnitFracBCnBinarySet", function(static, name, tags=NULL, ..., chipType=NULL, paths=c("rawCnData", "cnData", "smoothCnData")) {
   suppressWarnings({
     path <- findByName(static, name=name, tags=tags, chipType=chipType, 
                                            ..., paths=paths, mustExist=TRUE);
@@ -58,6 +58,9 @@ setMethodS3("byName", "AromaUnitFracBCnBinarySet", function(static, name, tags=N
 
 ############################################################################
 # HISTORY:
+# 2009-02-09
+# o Now byName() of AromaUnit(FracB|Total)CnBinarySet searches rawCnData/
+#   then cnData/.
 # 2009-01-03
 # o Renamed from freqB to fracB, because it is a fraction, not a frequency.
 # 2008-05-11

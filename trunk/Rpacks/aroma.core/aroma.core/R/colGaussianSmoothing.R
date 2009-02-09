@@ -1,4 +1,3 @@
-###########################################################################/**
 # M_i' = w*M = w*(T-R) = w*T - w*R = T_i' - R'
 #
 # Before smoothing, the reference R_i == median(T_i). 
@@ -8,7 +7,6 @@
 # T_i' = M_i' - R'
 #
 # => w*T = w*M + w*R = M' + w*R
-#*/###########################################################################
 setMethodS3("colGaussianSmoothing", "matrix", function(Y, x=seq(length=nrow(Y)), w=NULL, xOut=x, sd=1, censorSd=3, na.rm=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
