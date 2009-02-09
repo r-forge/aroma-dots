@@ -46,6 +46,11 @@
 \alias{pairs2}
 \alias{pairs2.principal.curve}
 \alias{process.TotalCnSmoothing}
+\alias{getAsteriskTags.TotalCnKernelSmoothing}
+\alias{getParameters.TotalCnKernelSmoothing}
+\alias{smoothRawCopyNumbers}
+\alias{smoothRawCopyNumbers.TotalCnKernelSmoothing}
+\alias{smoothRawCopyNumbers.TotalCnSmoothing}
 
 \description{
   This page contains aliases for all "non-documented" objects that

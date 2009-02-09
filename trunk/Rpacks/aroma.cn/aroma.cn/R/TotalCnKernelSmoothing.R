@@ -99,10 +99,10 @@ setMethodS3("smoothRawCopyNumbers", "TotalCnKernelSmoothing", function(this, raw
   args <- args[keep];
   
   args <- c(list(rawCNs), args);
-  args$verbose <- less(verbose, 20);
 
   verbose && cat(verbose, "Calling kernelSmoothing() with arguments:");
   verbose && str(verbose, args);
+  args$verbose <- less(verbose, 20);
   smoothCNs <- do.call("kernelSmoothing", args=args);
 
   verbose && exit(verbose);

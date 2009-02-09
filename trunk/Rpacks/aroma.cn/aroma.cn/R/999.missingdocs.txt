@@ -17,6 +17,7 @@
   normalizeOne.MultiSourceCopyNumberNormalization
   normalizePrincipalCurve normalizePrincipalCurve.matrix pairs2
   pairs2.principal.curve process.TotalCnSmoothing
-
-
- 
+  getAsteriskTags.TotalCnKernelSmoothing
+  getParameters.TotalCnKernelSmoothing smoothRawCopyNumbers
+  smoothRawCopyNumbers.TotalCnKernelSmoothing
+  smoothRawCopyNumbers.TotalCnSmoothing

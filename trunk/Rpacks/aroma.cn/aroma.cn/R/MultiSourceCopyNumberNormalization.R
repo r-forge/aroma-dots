@@ -173,6 +173,11 @@ setMethodS3("getOutputPaths", "MultiSourceCopyNumberNormalization", function(thi
     tag <- "mscn";
     path <- getPath(ds);
     path <- getParent(path, 2);
+    rootPath <- basename(path);
+    path <- getParent(path);
+    rootPath <- "cnData";
+    path <- Arguments$getWritablePath(rootPath);
+    
     fullname <- getFullName(ds);
     fullname <- sprintf("%s,%s", fullname, tag);
     chipType <- getChipType(ds);
@@ -676,7 +681,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   Y <- as.matrix(Y);
   dim <- dim(Y);
   gc <- gc();
-  verbose && cat(verbose, gc);
+  verbose && print(verbose, gc);
   verbose && str(verbose, Y);
   verbose && summary(verbose, Y);
   verbose && exit(verbose);
@@ -711,7 +716,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
     throw("Internal error: The fitted data has a different dimension that the input data: ", paste(dim(fit$s), collapse="x"), " != ", paste(dim, collapse="x"));
   }
   gc <- gc();
-  verbose && cat(verbose, gc);
+  verbose && print(verbose, gc);
   verbose && str(verbose, fit);
   verbose && exit(verbose);
 
@@ -871,7 +876,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
   } # for (kk ...)
   rm(subsetToUpdate);  # Not needed anymore
   gc <- gc();
-  verbose && cat(verbose, gc);
+  verbose && print(verbose, gc);
   verbose && exit(verbose);
 
   # Return normalized arrays
@@ -1016,6 +1021,7 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 ###########################################################################
 # HISTORY:
 # 2009-02-08
+# o Fixed verbose output of gc(); used cat() instead of print().
 # o Updated to make use of TotalCnKernelSmoothing().
 # 2009-01-26
 # o Adapted to new aroma.core::AromaUnitTotalCnBinary{Set|File} classes.

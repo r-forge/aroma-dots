@@ -81,7 +81,7 @@ setMethodS3("getAsteriskTags", "TotalCnSmoothing", function(this, collapse=NULL,
 
 
 setMethodS3("getRootPath", "TotalCnSmoothing", function(this, ...) {
-  "cnData";
+  "smoothCnData";
 }, private=TRUE)
 
 
@@ -179,7 +179,7 @@ setMethodS3("getTargetPositions", "TotalCnSmoothing", function(this, ..., force=
 
 
 
-setMethodS3("smoothRawCopyNumbers", "TotalCnKernelSmoothing", abstract=TRUE);
+setMethodS3("smoothRawCopyNumbers", "TotalCnSmoothing", abstract=TRUE);
 
 
 setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
@@ -287,7 +287,7 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
     verbose && enter(verbose, "Allocating ", className);
     verbose && cat(verbose, "Pathname: ", pathname);
     params2 <- params;
-    params[["targetUgp"]] <- NULL;
+    params2[["targetUgp"]] <- NULL;
     footer <- list(
       sourceDataFile=list(
         fullname=getFullName(df), 
@@ -334,6 +334,7 @@ setMethodS3("getOutputFiles", "TotalCnSmoothing", function(this, ...) {
 ############################################################################
 # HISTORY:
 # 2009-02-08
+# o Now the root path is smoothCnData/ and no longer cnData/.
 # o Any subclass must implement smoothRawCopyNumbers().
 # o Made TotalCnSmoothing an abstract class, cf. TotalCnKernelSmoothing.
 # 2009-01-26
