@@ -181,6 +181,10 @@ setMethodS3("getAromaUgpFile", "AromaUnitSignalBinaryFile", function(this, ..., 
   if (force || is.null(ugp)) {
     chipType <- getChipType(this, ...);
     ugp <- AromaUgpFile$byChipType(chipType, validate=validate);
+    # Sanity check
+    if (nbrOfUnits(ugp) != nbrOfUnits(this)) {
+      throw("The number of units in located UGP file ('", getPathname(ugp), "') is not compatible with the data file ('", getPathname(this), "'): ", nbrOfUnits(ugp), " != ", nbrOfUnits(this));
+    }
     this$.ugp <- ugp;
   }
   ugp;
@@ -194,6 +198,10 @@ setMethodS3("getAromaUgpFile", "AromaUnitSignalBinaryFile", function(this, ..., 
 
 ############################################################################
 # HISTORY:
+# 2009-02-10
+# o Added a sanity check to getAromaUgpFile() of AromaUnitSignalBinaryFile,
+#   which asserts that the number of units in the located UGP file match
+#   that of the data file.
 # 2009-01-12
 # o Added extractMatrix() accepting argument 'units'.  This will then
 #   also work for the corresponding set of files.

@@ -90,6 +90,10 @@ setMethodS3("getAromaUgpFile", "UnitNamesFile", function(this, ..., validate=FAL
   if (force || is.null(ugp)) {
     chipType <- getChipType(this, ...);
     ugp <- AromaUgpFile$byChipType(chipType, validate=validate);
+    # Sanity check
+    if (nbrOfUnits(ugp) != nbrOfUnits(this)) {
+      throw("The number of units in located UGP file ('", getPathname(ugp), "') is not compatible with the data file ('", getPathname(this), "'): ", nbrOfUnits(ugp), " != ", nbrOfUnits(this));
+    }
     this$.ugp <- ugp;
   }
   ugp;
@@ -99,6 +103,10 @@ setMethodS3("getAromaUgpFile", "UnitNamesFile", function(this, ..., validate=FAL
 
 ############################################################################
 # HISTORY:
+# 2009-02-10
+# o Added a sanity check to getAromaUgpFile() of UnitNamesFile,
+#   which asserts that the number of units in the located UGP file match
+#   that of the data file. 
 # 2009-01-26
 # o Added getAromaUgpFile() to UnitNamesFile.
 # 2008-07-21

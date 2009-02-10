@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.1x [2009-02-08]
+Version: 1.0.1x [2009-02-10]
 o Now byName() of AromaUnit(FracB|Total)CnBinarySet searches 
   rawCnData/ then cnData/.
 o Added SegmentedCopyNumbers class.
@@ -11,6 +11,13 @@ o Added getAromaUgpFile() to UnitNamesFile.
 o Added shakyText().
 o Now argument 'files' in extract() of GenericDataFileSet can 
   also be a vector of string.
+o ROBUSTNESS: Added a sanity check to getAromaUgpFile() of
+  UnitNamesFile and AromaUnitSignalBinaryFile, which asserts that 
+  the number of units in the located UGP file match that the number
+  of units in the data file.
+o ROBUSTNESS: Now findAnnotationData() always returns pathnames 
+  ordered by the length of their fullnames. Before this was only 
+  done if 'firstOnly=TRUE'.
 o ALPHA: Added support for "smart" subdirectories in static 
   findByName() of GenericDataFileSet.
 
