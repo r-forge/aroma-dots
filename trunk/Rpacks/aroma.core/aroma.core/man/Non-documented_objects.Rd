@@ -724,6 +724,7 @@
 \alias{colGaussianSmoothing.matrix}
 \alias{getUniqueStates}
 \alias{getUniqueStates.SegmentedCopyNumbers}
+\alias{byChipType.UnitNamesFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

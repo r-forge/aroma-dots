@@ -180,7 +180,7 @@ setMethodS3("getAromaUgpFile", "AromaUnitSignalBinaryFile", function(this, ..., 
   ugp <- this$.ugp;
   if (force || is.null(ugp)) {
     chipType <- getChipType(this, ...);
-    ugp <- AromaUgpFile$byChipType(chipType, validate=validate);
+    ugp <- AromaUgpFile$byChipType(chipType, nbrOfUnits=nbrOfUnits(this), validate=validate);
     # Sanity check
     if (nbrOfUnits(ugp) != nbrOfUnits(this)) {
       throw("The number of units in located UGP file ('", getPathname(ugp), "') is not compatible with the data file ('", getPathname(this), "'): ", nbrOfUnits(ugp), " != ", nbrOfUnits(this));
