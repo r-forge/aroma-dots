@@ -17,7 +17,7 @@ acs <- AromaCellSequenceFile$byChipType(getChipType(cdf, fullname=FALSE));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csR <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf);
+csR <- AffymetrixCelSet$byName(dataSetName, cdf=cdf);
 print(csR);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -44,7 +44,18 @@ print(csN);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=FALSE);
 print(plm);
-fit(plm, verbose=log);
+
+if (length(findUnitsTodo(plm)) > 0) {
+   # Fit CN probes quickly (~5-10s/array + some overhead)
+  units <- fitCnProbes(plm, verbose=log);
+  str(units);
+  # int [1:945826] 935590 935591 935592 935593 935594 935595 ...
+
+  # Fit remaining units, i.e. SNPs (~5-10min/array)
+  units <- fit(plm, verbose=log);
+  str(units);
+}
+
 ces <- getChipEffectSet(plm);
 print(ces);
 

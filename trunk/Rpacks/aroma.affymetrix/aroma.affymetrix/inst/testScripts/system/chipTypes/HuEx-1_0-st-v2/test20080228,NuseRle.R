@@ -15,9 +15,9 @@ tol <- 1e-5;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 name <- "Affymetrix-HeartBrain";
 chipType <- "HuEx-1_0-st-v2";
-cdf <- AffymetrixCdfFile$fromChipType(chipType, 
+cdf <- AffymetrixCdfFile$byChipType(chipType, 
                                          tags="coreR3,A20071112,EP");
-cs <- AffymetrixCelSet$fromName(name=name, cdf=cdf);
+cs <- AffymetrixCelSet$byName(name=name, cdf=cdf);
 
 # Background correction and normalization
 bc <- RmaBackgroundCorrection(cs);

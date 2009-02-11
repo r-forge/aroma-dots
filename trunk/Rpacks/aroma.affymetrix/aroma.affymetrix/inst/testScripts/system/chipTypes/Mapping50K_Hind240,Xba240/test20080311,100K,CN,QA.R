@@ -15,7 +15,7 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 csRawList <- list();
 for (chipType in chipTypes) {
-  cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+  cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   stopifnot(identical(getNames(cs), sampleNames));
   csRawList[[chipType]] <- cs;

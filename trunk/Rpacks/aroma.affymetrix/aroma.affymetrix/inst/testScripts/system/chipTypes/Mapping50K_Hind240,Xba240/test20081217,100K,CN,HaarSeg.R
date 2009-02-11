@@ -11,7 +11,7 @@ chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 csRawList <- list();
 for (chipType in chipTypes) {
-  cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+  cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   csRawList[[chipType]] <- cs;
 }

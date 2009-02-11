@@ -10,7 +10,7 @@ chipType <- "Mapping50K_Hind240";
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csR <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+csR <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
 print(csR);
 
 

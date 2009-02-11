@@ -13,7 +13,7 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Define a CEL set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipTypes[1], verbose=log);
+cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipTypes[1], verbose=log);
 keep <- 1:3;
 cs <- extract(cs, keep);
 sampleNames <- sampleNames[keep];
@@ -24,7 +24,7 @@ stopifnot(identical(getNames(cs), sampleNames));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set a custom CDF (here just use the other CDF of the chip in the set)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cdf <- AffymetrixCdfFile$fromChipType(chipTypes[2]);
+cdf <- AffymetrixCdfFile$byChipType(chipTypes[2]);
 setCdf(cs, cdf);
 print(cs);
 stopifnot(identical(getCdf(cs), cdf));

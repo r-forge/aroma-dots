@@ -12,10 +12,10 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setting up CEL set and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cdf <- AffymetrixCdfFile$fromChipType(chipType, tags="Full");
+cdf <- AffymetrixCdfFile$byChipType(chipType, tags="Full");
 print(cdf);
 
-csR <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
+csR <- AffymetrixCelSet$byName(dataSetName, cdf=cdf, verbose=log);
 print(csR);
 stopifnot(identical(getNames(csR), sampleNames));
 
@@ -40,7 +40,16 @@ print(plm);
 ces <- getChipEffectSet(plm);
 print(ces);
 
-fit(plm, verbose=log);
+if (length(findUnitsTodo(plm)) > 0) {
+   # Fit CN probes quickly (~5-10s/array + some overhead)
+  units <- fitCnProbes(plm, verbose=log);
+  str(units);
+  # int [1:945826] 935590 935591 935592 935593 935594 935595 ...
+
+  # Fit remaining units, i.e. SNPs (~5-10min/array)
+  units <- fit(plm, verbose=log);
+  str(units);
+}
 
 
 fln <- FragmentLengthNormalization(ces);

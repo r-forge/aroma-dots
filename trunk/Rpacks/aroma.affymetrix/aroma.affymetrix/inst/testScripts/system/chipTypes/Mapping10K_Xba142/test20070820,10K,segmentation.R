@@ -14,7 +14,7 @@ sampleNames <- c("0001-7", "0002-10", "0004-13", "0005-14", "0007-18",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
 keep <- 1:6;
 cs <- extract(cs, keep);
 sampleNames <- sampleNames[keep];

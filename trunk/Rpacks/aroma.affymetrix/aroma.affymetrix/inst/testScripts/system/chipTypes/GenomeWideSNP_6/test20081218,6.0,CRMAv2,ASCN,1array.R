@@ -22,7 +22,7 @@ acs <- AromaCellSequenceFile$byChipType(getChipType(cdf, fullname=FALSE));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csR <- AffymetrixCelSet$fromName("HapMap270,6.0,CEU,testSet", cdf=cdf);
+csR <- AffymetrixCelSet$byName("HapMap270,6.0,CEU,testSet", cdf=cdf);
 print(csR);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
