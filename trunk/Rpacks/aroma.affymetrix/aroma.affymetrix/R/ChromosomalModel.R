@@ -91,7 +91,7 @@ setMethodS3("as.character", "ChromosomalModel", function(x, ...) {
   s <- c(s, "Chip-effect set:");
   cesList <- getListOfSets(getSetTuple(this));
   chipTypes <- sapply(cesList, FUN=function(ces) {
-    getChipType(getCdf(ces));
+    getChipType(ces);
   })
   for (kk in seq(along=cesList)) {
     s <- c(s, sprintf("Chip type #%d of %d ('%s'):", 
@@ -201,11 +201,6 @@ setMethodS3("getListOfChipEffectSets", "ChromosomalModel", function(this, ...) {
 })
 
 
-setMethodS3("getListOfChipEffects", "ChromosomalModel", function(this, ...) {
-  getListOfChipEffectSets(this, ...);
-}, private=TRUE, deprecated=TRUE)
-
-
 
 ###########################################################################/**
 # @RdocMethod nbrOfChipTypes
@@ -238,8 +233,8 @@ setMethodS3("nbrOfChipTypes", "ChromosomalModel", function(this, ...) {
 
 
 
-setMethodS3("getListOfCdfs", "ChromosomalModel", function(this, ...) {
-  getListOfCdfs(getSetTuple(this), ...);
+setMethodS3("getListOfUnitNamesFiles", "ChromosomalModel", function(this, ...) {
+  getListOfUnitNamesFiles(getSetTuple(this), ...);
 }, private=TRUE)
 
 
@@ -546,7 +541,9 @@ setMethodS3("getChromosomes", "ChromosomalModel", function(this, ...) {
 })
 
 
-setMethodS3("getListOfGenomeInformations", "ChromosomalModel", function(this, ..., verbose=FALSE) {
+
+
+setMethodS3("getListOfAromaUgpFiles", "ChromosomalModel", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -557,12 +554,12 @@ setMethodS3("getListOfGenomeInformations", "ChromosomalModel", function(this, ..
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Retrieving genome informations");
-  cdfList <- getListOfCdfs(this);
-  giList <- lapply(cdfList, getGenomeInformation, verbose=less(verbose));
+  verbose && enter(verbose, "Retrieving UGP files");
+  unfList <- getListOfUnitNamesFiles(this);
+  ugpList <- lapply(unfList, getAromaUgpFile, verbose=less(verbose));
   verbose && exit(verbose);
 
-  giList;
+  ugpList;
 })
 
 
@@ -699,9 +696,41 @@ setMethodS3("getSetTag", "ChromosomalModel", function(this, ...) {
 }, private=TRUE)
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# BEGIN: AFFX specific
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+setMethodS3("getListOfGenomeInformations", "ChromosomalModel", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Retrieving genome informations");
+  cdfList <- getListOfCdfs(getSetTuple(this), ...);
+  giList <- lapply(cdfList, getGenomeInformation, verbose=less(verbose));
+  verbose && exit(verbose);
+
+  giList;
+})
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# END: AFFX specific
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+
 
 ##############################################################################
 # HISTORY:
+# 2009-01-26
+# o Removed get[]ListOfCdfs() from ChromosomalModel.
+# o Removed deprectated get[]ListOfChipEffects() from ChromosomalModel.
+# o Added getListOfAromaUgpFiles() to ChromosomalModel.
+# o Added getListOfUnitNamesFiles() to ChromosomalModel.
 # 2007-09-25
 # o Extracted ChromosomalModel from CopyNumberSegmentationModel.  For 
 #   previous HISTORY, see that class.

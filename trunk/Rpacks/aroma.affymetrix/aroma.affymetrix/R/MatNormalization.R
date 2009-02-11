@@ -66,7 +66,8 @@ setMethodS3("getAromaCellMatchScoreFile", "MatNormalization", function(this, ...
     dataSet <- getInputDataSet(this);
     cdf <- getCdf(dataSet);
     chipType <- getChipType(cdf, fullname=FALSE);
-    apm <- AromaCellMatchScoreFile$byChipType(chipType, ...);
+    nbrOfCells <- nbrOfCells(cdf);
+    apm <- AromaCellMatchScoreFile$byChipType(chipType, nbrOfCells=nbrOfCells, ...);
     this$.apm <- apm;
   }
 

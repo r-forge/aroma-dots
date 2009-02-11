@@ -26,17 +26,20 @@ setMethodS3("getPositionChipTypeUnit", "ChromosomalModel", function(this, chromo
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting (position, chipType, unit) map");
 
-  # Get the CDFs
-  cdfList <- getListOfCdfs(this, verbose=less(verbose, 10));
+  # Get the UnitNameFile:s
+  unfList <- getListOfUnitNamesFiles(this, verbose=less(verbose, 10));
 
   # Get the genome information files  
-  giList <- base::lapply(cdfList, FUN=getGenomeInformation, 
-                                                  verbose=less(verbose, 10));
-  verbose && print(verbose, giList);
+  ugpList <- base::lapply(unfList, FUN=getAromaUgpFile, verbose=less(verbose, 10));
+  verbose && print(verbose, ugpList);
+
+  # Get the genome information files  
+  ugpList <- base::lapply(unfList, FUN=getAromaUgpFile, verbose=less(verbose, 10));
+  verbose && print(verbose, ugpList);
 
   # Get the units on the chromosome of interest
-  unitsList <- base::lapply(giList, FUN=function(gi) {
-    getUnitsOnChromosome(gi, chromosomes=chromosome, ...);
+  unitsList <- base::lapply(ugpList, FUN=function(ugp) {
+    getUnitsOnChromosome(ugp, chromosome=chromosome, ...);
   });
   verbose && str(verbose, unitsList);
 
@@ -46,9 +49,9 @@ setMethodS3("getPositionChipTypeUnit", "ChromosomalModel", function(this, chromo
   chipTypeList <- vector("list", length(unitsList));
   names(chipTypeList) <- names(unitsList);
   for (kk in seq(along=posList)) {
-    gi <- giList[[kk]];
+    ugp <- ugpList[[kk]];
     units <- unitsList[[kk]];
-    pos <- getPositions(gi, units=units);
+    pos <- getPositions(ugp, units=units);
 
     # Keep only units with a position
     keep <- which(is.finite(pos));
@@ -63,9 +66,9 @@ setMethodS3("getPositionChipTypeUnit", "ChromosomalModel", function(this, chromo
     unitsList[[kk]] <- units;
     posList[[kk]] <- pos;
     chipTypeList[[kk]] <- rep(kk, length(units));
-    rm(gi, units, keep);
+    rm(ugp, units, keep);
   }
-  rm(giList);
+  rm(ugpList);
 
   verbose && str(verbose, unitsList);
   verbose && str(verbose, posList);
@@ -82,9 +85,10 @@ setMethodS3("getPositionChipTypeUnit", "ChromosomalModel", function(this, chromo
   chipType <- chipType[o];
 
   # Convert chipType into a factor
-  chipTypes <- sapply(cdfList, FUN=getName);
+  chipTypes <- sapply(unfList, FUN=getChipType);
   attr(chipType, "levels") <- chipTypes;
   class(chipType) <- "factor";
+  rm(unfList);
 
   units <- unlist(unitsList, use.names=FALSE);
   rm(unitsList);
@@ -109,6 +113,10 @@ setMethodS3("getPositionChipTypeUnit", "ChromosomalModel", function(this, chromo
 
 ############################################################################
 # HISTORY:
+# 2009-01-26
+# o Updated getPositionChipTypeUnit() of ChromosomalModel to utilize
+#   the UnitNamesFile Interface instead of assuming an AffymetrixCdfFile.
+#   This requires aroma.core v1.0.1.
 # 2007-09-25
 # o Moved getPositionChipTypeUnit() to ChromosomalModel.
 # 2007-09-20

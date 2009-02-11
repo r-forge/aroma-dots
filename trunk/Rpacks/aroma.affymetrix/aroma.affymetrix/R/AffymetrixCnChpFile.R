@@ -164,7 +164,9 @@ setMethodS3("getHeader", "AffymetrixCnChpFile", function(this, ...) {
   header <- this$.header;
   if (is.null(header)) {
     pathname <- getPathname(this);
-    header <- readCcgHeader(pathname);
+    suppressWarnings({
+      header <- readCcgHeader(pathname);
+    });
     this$.header <- header;
   }
   header;

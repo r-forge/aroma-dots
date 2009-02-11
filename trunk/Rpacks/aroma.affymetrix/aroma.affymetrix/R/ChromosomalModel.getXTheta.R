@@ -17,7 +17,7 @@ setMethodS3("getPcuTheta", "ChromosomalModel", function(this, chromosome, reorde
                                                   verbose=less(verbose, 20));
 
   # Get list of chip-effect sets
-  cesList <- getListOfChipEffects(this);
+  cesList <- getListOfChipEffectSets(this);
 
   # Allocate return structure
   naValue <- as.double(NA);

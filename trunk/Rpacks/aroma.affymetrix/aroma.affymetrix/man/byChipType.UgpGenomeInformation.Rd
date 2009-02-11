@@ -19,8 +19,8 @@
  Defines a UgpGenomeInformation object by chip type.
 }
 
-\synopsis{byChipType.UgpGenomeInformation(static, chipType, tags=NULL, ..., validate=TRUE, verbose=FALSE)}
-\usage{UgpGenomeInformation$byChipType(chipType, tags=NULL, ..., validate=TRUE, verbose=FALSE)}
+\synopsis{byChipType.UgpGenomeInformation(static, chipType, tags=NULL, ..., nbrOfUnits=NULL, validate=TRUE, verbose=FALSE)}
+\usage{UgpGenomeInformation$byChipType(chipType, tags=NULL, ..., nbrOfUnits=NULL, validate=TRUE, verbose=FALSE)}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}

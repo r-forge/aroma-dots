@@ -60,7 +60,8 @@ setMethodS3("getAromaCellPositionFile", "MatSmoothing", function(this, ..., forc
     dataSet <- getInputDataSet(this);
     cdf <- getCdf(dataSet);
     chipType <- getChipType(cdf, fullname=FALSE);
-    acp <- AromaCellPositionFile$byChipType(chipType, ...);
+    nbrOfCells <- nbrOfCells(cdf);
+    acp <- AromaCellPositionFile$byChipType(chipType, nbrOfCells=nbrOfCells, ...);
     this$.acp <- acp;
   }
 
@@ -377,7 +378,7 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
       scaleFactor <- nullDistPos$sd / nullDistNeg$sd
       
       # Memory cleanup
-      rm(d, chr, nullX, nullDistNeg, nullDistPos);
+      rm(chr, nullX, nullDistNeg, nullDistPos);
       gc <- gc();
     } else {
       scaleFactor <- 1

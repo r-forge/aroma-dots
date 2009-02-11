@@ -93,16 +93,32 @@ setMethodS3("getProbeAffinityFile", "SnpPlm", function(this, ..., .class=SnpProb
   paf;
 })
 
-setMethodS3("setMergeStrands", "SnpPlm", function(this, ...) {
+setMethodS3("getMergeStrands", "SnpPlm", function(this, ...) {
+  this$mergeStrands;
+})
+
+setMethodS3("setMergeStrands", "SnpPlm", function(this, status, ...) {
+  # Argument 'status':
+  status <- Arguments$getLogical(status);
+
+  oldStatus <- getCombineAlleles(this);
+
   ces <- getChipEffectSet(this);
-  setMergeStrands(ces, ...);
+  setMergeStrands(ces, status, ...);
   paf <- getProbeAffinityFile(this);
-  setMergeStrands(paf, ...);
+  setMergeStrands(paf, status, ...);
+  this$mergeStrands <- status;
+
+  invisible(oldStatus);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2009-02-03
+# o BUG FIX: setMergeStrands() of SnpPlm did not update the setting of the
+#   SnpPlm itself, only the underlying parameter files.
+# o Added getMergeStrands() to SnpPlm.
 # 2006-09-11
 # o The intention is to use SnpPlm as an interface class (that is a class
 #   that must not have any fields!) but any class "implementing" this class 

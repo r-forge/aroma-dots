@@ -1,12 +1,17 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # BEGIN: Platform specific
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, validate=TRUE, ..., verbose=FALSE) {
+setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, nbrOfUnits=NULL, validate=TRUE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'chipType':
   chipType <- Arguments$getCharacter(chipType);
+
+  # Argument 'nbrOfUnits':
+  if (!is.null(nbrOfUnits)) {
+    nbrOfUnits <- Arguments$getInteger(nbrOfUnits, range=c(0,Inf));
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -39,8 +44,8 @@ setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipTyp
     parts <- unlist(strsplit(fullname, split=",", fixed=TRUE));
     chipType <- parts[1];
     tags <- parts[-1];
-    cdfPathnames <- findByCdf2(chipType, tags=tags, firstOnly=FALSE, 
-                                                 verbose=less(verbose, 1));
+    cdfPathnames <- findByCdf2(chipType, tags=tags, nbrOfUnits=nbrOfUnits, 
+                                firstOnly=FALSE, verbose=less(verbose, 1));
     queryStr <- paste(c(chipType, tags), collapse=",");
     if (is.null(cdfPathnames)) {
       throw("Cannot validate against CDF. No CDF located: ", queryStr);
@@ -92,6 +97,17 @@ setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipTyp
 
   if (is.null(res)) {
     throw("Failed to located a (valid) tabular binary file: ", queryStr);
+  }
+
+  verbose && print(verbose, res);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validation?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!is.null(nbrOfUnits)) {
+    if (nbrOfUnits(res) != nbrOfUnits) {
+      throw("The number of units in the loaded ", class(static)[1], " does not match the expected number: ", nbrOfUnits(res), " != ", nbrOfUnits);
+    }
   }
 
   verbose && exit(verbose);
@@ -161,7 +177,9 @@ setMethodS3("getCdf", "AromaUnitTabularBinaryFile", function(this, ..., force=FA
     
       verbose && exit(verbose);
     } else {
-      cdf <- AffymetrixCdfFile$byChipType(getChipType(this));
+      chipType <- getChipType(this);
+      nbrOfUnits <- nbrOfUnits(this);
+      cdf <- AffymetrixCdfFile$byChipType(chipType, nbrOfUnits=nbrOfUnits);
     }
 
     this$.cdf <- cdf;
@@ -255,6 +273,8 @@ setMethodS3("importFromGenomeInformation", "AromaUnitTabularBinaryFile", abstrac
 
 ############################################################################
 # HISTORY:
+# 2009-02-10
+# o Added optional validation of number of units to byChipType().
 # 2008-07-21
 # o BUG FIX: byChipType() of AromaUnitTabularBinaryFile failed to locate
 #   a valid tabular file if more than one was found and it was not the

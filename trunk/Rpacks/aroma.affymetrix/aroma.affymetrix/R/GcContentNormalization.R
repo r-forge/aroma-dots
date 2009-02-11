@@ -119,7 +119,8 @@ setMethodS3("getSubsetToFit", "GcContentNormalization", function(this, force=FAL
   units <- which(types == 2 | types == 5);
 
   # Keep only those for which we have GC contents information
-  tsv <- AffymetrixTsvFile$byChipType(getChipType(cdf, fullname=FALSE));
+  chipType <- getChipType(cdf, fullname=FALSE);
+  tsv <- AffymetrixTsvFile$byChipType(chipType);
   gcContents <- getGc(tsv, units=units);
   keep <- is.finite(gcContents);
   units <- units[keep];
@@ -175,7 +176,8 @@ setMethodS3("getTargetFunction", "GcContentNormalization", function(this, ..., f
 
     # Get the Affymetrix TSV file
     cdf <- getCdf(this);
-    tsv <- AffymetrixTsvFile$byChipType(getChipType(cdf, fullname=FALSE));
+    chipType <- getChipType(cdf, fullname=FALSE);
+    tsv <- AffymetrixTsvFile$byChipType(chipType);
 
     # Get target set
     ces <- getInputDataSet(this);
@@ -301,7 +303,8 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
   subsetToUpdate <- which(types == 2 | types == 5);
 
   verbose && enter(verbose, "Retrieving Affymetrix TSV file");
-  tsv <- AffymetrixTsvFile$byChipType(getChipType(cdf, fullname=FALSE));
+  chipType <- getChipType(cdf, fullname=FALSE);
+  tsv <- AffymetrixTsvFile$byChipType(chipType);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Identifying the subset used to fit normalization function");

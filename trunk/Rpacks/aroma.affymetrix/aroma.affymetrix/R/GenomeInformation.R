@@ -118,7 +118,7 @@ setMethodS3("fromChipType", "GenomeInformation", function(static, ...) {
 
 setMethodS3("fromDataSet", "GenomeInformation", function(static, dataSet, ...) {
   chipType <- getChipType(dataSet);
-  byChipType(static, chipType, ...);
+  byChipType(static, chipType=chipType, ...);
 }, static=TRUE)
 
 

@@ -861,3 +861,8 @@ getAromaCellPositionFile getAromaCellPositionFile.MatSmoothing
  updateParameter.CrlmmParametersFile
 Env2Cdf
 PdInfo2Cdf
+ getCombineAlleles.CnPlm getListOfAromaUgpFiles
+ getListOfAromaUgpFiles.ChromosomalModel getListOfUnitNamesFiles
+ getListOfUnitNamesFiles.AffymetrixCelSetTuple
+ getListOfUnitNamesFiles.ArrayExplorer
+ getListOfUnitNamesFiles.ChromosomalModel getMergeStrands.SnpPlm

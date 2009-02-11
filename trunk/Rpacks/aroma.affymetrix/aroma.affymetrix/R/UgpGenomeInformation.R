@@ -98,7 +98,13 @@ setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., validate=TRUE, verbose=FALSE) {
+setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., nbrOfUnits=NULL, validate=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'chipType':
+  chipType <- Arguments$getCharacter(chipType);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -107,7 +113,7 @@ setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tag
   }
 
 
-  ugp <- AromaUgpFile$byChipType(chipType, tags=tags, validate=validate, ...);
+  ugp <- AromaUgpFile$byChipType(chipType, tags=tags, validate=validate, nbrOfUnits=nbrOfUnits, ...);
   pathname <- getPathname(ugp);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
@@ -117,6 +123,7 @@ setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tag
 
   res <- newInstance(static, filename=pathname, path=NULL, .ugp=ugp, ...);
   verbose && print(verbose, res);
+
   verbose && exit(verbose);
 
   res;

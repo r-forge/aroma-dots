@@ -1330,6 +1330,10 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
   chipType <- getChipType(this, fullname=FALSE);
   tags <- getTags(this);
   tags <- setdiff(tags, "monocell");
+  verbose && cat(verbose, "Chip type: ", chipType);
+  verbose && cat(verbose, "Tags: ", paste(tags, collapse=", "));
+  nbrOfUnits <- nbrOfUnits(this);
+  verbose && cat(verbose, "Number of units: ", nbrOfUnits);
 
   gi <- this$.gi;
   if (force || is.null(gi)) {
@@ -1340,11 +1344,11 @@ setMethodS3("getGenomeInformation", "AffymetrixCdfFile", function(this, types=c(
       tryCatch({
         if (type == "ugp") {
           gi <- UgpGenomeInformation$byChipType(chipType, tags=tags, 
-                                            verbose=less(verbose, 5));
+                     nbrOfUnits=nbrOfUnits, verbose=less(verbose, 5));
           break;
         } else if (type == "dchip") {
           gi <- DChipGenomeInformation$byChipType(chipType, 
-                                            verbose=less(verbose, 5));
+                     nbrOfUnits=nbrOfUnits, verbose=less(verbose, 5));
 
           break;
         }
@@ -1413,6 +1417,10 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UF
   chipType <- getChipType(this, fullname=FALSE);
   tags <- getTags(this);
   tags <- setdiff(tags, "monocell");
+  verbose && cat(verbose, "Chip type: ", chipType);
+  verbose && cat(verbose, "Tags: ", paste(tags, collapse=", "));
+  nbrOfUnits <- nbrOfUnits(this);
+  verbose && cat(verbose, "Number of units: ", nbrOfUnits);
 
   si <- this$.si;
   if (force || is.null(si)) {
@@ -1423,11 +1431,11 @@ setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UF
       tryCatch({
         if (type == "ufl") {
           si <- UflSnpInformation$byChipType(chipType, tags=tags,
-                                         verbose=less(verbose, 5));
+                     nbrOfUnits=nbrOfUnits, verbose=less(verbose, 5));
           break;
         } else if (type == "dchip") {
           si <- DChipSnpInformation$byChipType(chipType, 
-                                         verbose=less(verbose, 5));
+                     nbrOfUnits=nbrOfUnits, verbose=less(verbose, 5));
           break;
         }
       }, error = function(ex) {})
@@ -1536,6 +1544,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2009-02-10
+# o Added selection/validation of number of units in 
+#   get(Genome|Snp)nformation().
 # 2008-10-09
 # o Added nbrOfCellsPerUnit() and nbrOfCellsPerUnitGroup().
 # o Added verbose output to internal restruct().  Is that ever used?!?

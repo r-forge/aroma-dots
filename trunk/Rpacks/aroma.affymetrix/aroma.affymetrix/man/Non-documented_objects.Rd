@@ -1670,6 +1670,14 @@
 \alias{updateParameter.CrlmmParametersFile}
 \alias{Env2Cdf}
 \alias{PdInfo2Cdf}
+\alias{getCombineAlleles.CnPlm}
+\alias{getListOfAromaUgpFiles}
+\alias{getListOfAromaUgpFiles.ChromosomalModel}
+\alias{getListOfUnitNamesFiles}
+\alias{getListOfUnitNamesFiles.AffymetrixCelSetTuple}
+\alias{getListOfUnitNamesFiles.ArrayExplorer}
+\alias{getListOfUnitNamesFiles.ChromosomalModel}
+\alias{getMergeStrands.SnpPlm}
 
 \description{
   This page contains aliases for all "non-documented" objects that

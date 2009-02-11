@@ -89,7 +89,7 @@ setMethodS3("getAromaCellSequenceFile", "AbstractProbeSequenceNormalization", fu
     dataSet <- getInputDataSet(this);
     cdf <- getCdf(dataSet);
     chipType <- getChipType(cdf, fullname=FALSE);
-    aps <- AromaCellSequenceFile$byChipType(chipType, ...);
+    aps <- AromaCellSequenceFile$byChipType(chipType, nbrOfCells=nbrOfCells(cdf), ...);
     this$.aps <- aps;
   }
 

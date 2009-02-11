@@ -29,22 +29,6 @@ setConstructorS3("AffymetrixCelSetTuple", function(..., .setClass="AffymetrixCel
 
 
 
-setMethodS3("clearCache", "AffymetrixCelSetTuple", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c()) {
-    this[[ff]] <- NULL;
-  }
-
-  if (!is.null(this$.cesList))
-    clearCache(this$.cesList);
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-})
-
-
-
 
 setMethodS3("byPath", "AffymetrixCelSetTuple", function(static, path, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -110,11 +94,19 @@ setMethodS3("getListOfCdfs", "AffymetrixCelSetTuple", function(this, ...) {
 }, private=TRUE)
 
 
+setMethodS3("getListOfUnitNamesFiles", "AffymetrixCelSetTuple", function(this, ...) {
+  csList <- getListOfSets(this);
+  lapply(csList, FUN=getCdf);
+}, private=TRUE)
+
 
 
 
 ##############################################################################
 # HISTORY:
+# 2009-01-26
+# o Added getListOfUnitNamesFiles() to AffymetrixCelSetTuple.
+# o Removed obsolete clearCache() for AffymetrixCelSetTuple.
 # 2008-07-30
 # o BUG FIX: byPath() and getListOfCdfs() was defined for superclass
 #   AromaMicroarrayDataSetTuple and not this class.
