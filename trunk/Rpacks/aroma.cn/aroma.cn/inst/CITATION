@@ -42,7 +42,7 @@ citEntry(
   textVersion = paste(sep="",
     "H. Bengtsson; K. Simpson; J. Bullard; K. Hansen. ",
     "aroma.affymetrix: A generic framework in R for analyzing small to very large Affymetrix data sets in bounded memory, ",
-    "Tech Report #745, ",
+    "Tech Report 745, ",
     "Department of Statistics, University of California, Berkeley, ",
     "February 2008"
   )

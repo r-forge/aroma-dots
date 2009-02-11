@@ -40,10 +40,6 @@
 # }
 # 
 # \references{
-#  Some of the reference below can be found at 
-#  \url{http://www.maths.lth.se/bioinformatics/publications/}.\cr
-#
-# [1] @include "../incl/BengtssonH_2003.bib.Rdoc" \cr
+#  @eval "paste(capture.output(citation('aroma.cn')), collapse='\n')"
 # }
 #*/#########################################################################
-
