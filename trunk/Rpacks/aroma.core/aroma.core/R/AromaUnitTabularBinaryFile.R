@@ -51,6 +51,92 @@ setMethodS3("nbrOfUnits", "AromaUnitTabularBinaryFile", function(this, ...) {
 })
 
 
+setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipType, tags=NULL, nbrOfUnits=NULL, validate=TRUE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'chipType':
+  chipType <- Arguments$getCharacter(chipType);
+
+  # Argument 'nbrOfUnits':
+  if (!is.null(nbrOfUnits)) {
+    nbrOfUnits <- Arguments$getInteger(nbrOfUnits, range=c(0,Inf));
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Scan for all possible matches
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  pathnames <- findByChipType(static, chipType=chipType, tags=tags, 
+                                                     firstOnly=FALSE, ...);
+  if (is.null(pathnames)) {
+    throw("Could not locate a file for this chip type: ", 
+                                   paste(c(chipType, tags), collapse=","));
+  }
+
+  verbose && cat(verbose, "Number of tabular binary files located: ", 
+                                                        length(pathnames));
+  verbose && print(verbose, pathnames);
+
+
+  verbose && enter(verbose, "Scanning for a valid file");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Look for first possible valid match
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  for (kk in seq(along=pathnames)) {
+    pathname <- pathnames[kk];
+    verbose && enter(verbose, "File #", kk, " (", pathname, ")");
+
+    # Create object
+    res <- newInstance(static, pathname);
+
+    # Correct number of units?
+    if (!is.null(nbrOfUnits)) {
+      if (nbrOfUnits(res) != nbrOfUnits) {
+        res <- NULL;
+      }
+    }
+
+    if (!is.null(res)) {
+      verbose && cat(verbose, "Found a valid tabular binary file");
+      verbose && exit(verbose);
+      break;
+    }
+
+    verbose && exit(verbose);
+  } # for (kk ...)
+
+  if (is.null(res)) {
+    queryStr <- paste(c(chipType, tags), collapse=",");
+    throw("Failed to located a (valid) tabular binary file: ", queryStr);
+  }
+
+  verbose && print(verbose, res);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Final validation
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!is.null(nbrOfUnits)) {
+    if (nbrOfUnits(res) != nbrOfUnits) {
+      throw("The number of units in the loaded ", class(static)[1], " does not match the expected number: ", nbrOfUnits(res), " != ", nbrOfUnits);
+    }
+  }
+
+  verbose && exit(verbose);
+
+  res;
+}, static=TRUE)
+
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # BEGIN: UnitNamesFile
@@ -112,6 +198,9 @@ setMethodS3("allocateFromUnitNamesFile", "AromaUnitTabularBinaryFile", function(
 
 ############################################################################
 # HISTORY:
+# 2009-02-10
+# o Added byChipType() to AromaUnitTabularBinaryFile with option to 
+#   validate/select by the number of units.
 # 2008-07-09
 # o Now AromaUnitTabularBinaryFile extends AromaMicroarrayTabularBinaryFile,
 #   which contains a lot of the methods previously in this class.

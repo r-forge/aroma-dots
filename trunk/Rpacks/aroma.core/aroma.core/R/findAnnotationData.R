@@ -63,6 +63,7 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
   name <- gsub("[,].*", "", fullname);
 
   verbose && enter(verbose, "Searching for annotation data file(s)");
+
   verbose && cat(verbose, "Name: ", name);
   verbose && cat(verbose, "Tags: ", paste(tags, collapse=", "));
   verbose && cat(verbose, "Set: ", set);
@@ -106,6 +107,12 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
   }
   pathnames <- do.call("localFindFiles", args=args);
 
+  # No files found?
+  if (length(pathnames) == 0) {
+    verbose && exit(verbose);
+    return(NULL);
+  }
+
   # AD HOC: Clean out files in "private" directories
   if (!private) {
     isInPrivateDirectory <- function(pathname) {
@@ -116,6 +123,12 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
 
     excl <- sapply(pathnames, FUN=isInPrivateDirectory);
     pathnames <- pathnames[!excl];
+
+    # No files remaining?
+    if (length(pathnames) == 0) {
+      verbose && exit(verbose);
+      return(NULL);
+    }
   }
 
   # Order located pathnames in increasing length of the fullnames
@@ -136,6 +149,7 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
 
   verbose && cat(verbose, "Located pathname(s):");
   verbose && print(verbose, pathnames);
+
   verbose && exit(verbose);
 
   pathnames;

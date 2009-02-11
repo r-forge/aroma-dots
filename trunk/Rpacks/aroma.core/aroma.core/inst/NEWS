@@ -9,8 +9,13 @@ o Added various smoothing methods to RawCopyNumbers.
 o Added colBinnedSmoothing() and colKernelSmoothing().
 o Added getAromaUgpFile() to UnitNamesFile.
 o Added shakyText().
+o Added static byChipType() to UnitNamesFile.
 o Now argument 'files' in extract() of GenericDataFileSet can 
   also be a vector of string.
+o ROBUSTNESS: Added support for optional validation/selection by the
+  number of units/cells to all static byChipType() methods.  This is
+  done by specifying argument nbrOfUnits/nbrOfCells.  This is intend
+  for internal use only.
 o ROBUSTNESS: Added a sanity check to getAromaUgpFile() of
   UnitNamesFile and AromaUnitSignalBinaryFile, which asserts that 
   the number of units in the located UGP file match that the number

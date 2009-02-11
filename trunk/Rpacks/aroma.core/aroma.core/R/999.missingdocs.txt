@@ -330,3 +330,4 @@ extractSubsetByState extractSubsetByState.SegmentedCopyNumbers
 as.data.frame.SegmentedCopyNumbers
  colGaussianSmoothing colGaussianSmoothing.matrix getUniqueStates
  getUniqueStates.SegmentedCopyNumbers
+byChipType.UnitNamesFile
