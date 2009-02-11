@@ -262,12 +262,14 @@ setMethodS3("binnedSmoothing", "RawCopyNumbers", function(this, ..., verbose=FAL
   verbose && enter(verbose, "Smoothing data set");
   y <- getCNs(this);
   x <- getPositions(this);
+  verbose && printf(verbose, "Range of positions: [%d,%d]\n", 
+                       min(x,na.rm=TRUE), max(x,na.rm=TRUE));
 
   verbose && enter(verbose, "Binned smoothing");
   verbose && cat(verbose, "Arguments:");
   args <- list(y=y, x=x, ...);
   verbose && str(verbose, args);
-  ys <- binnedSmoothing(y=y, x=x, ...);
+  ys <- binnedSmoothing(y=y, x=x, ..., verbose=less(verbose, 10));
   verbose && str(verbose, ys);
   xOut <- attr(ys, "xOut");
   verbose && exit(verbose);

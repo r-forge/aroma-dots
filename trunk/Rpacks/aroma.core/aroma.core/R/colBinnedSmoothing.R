@@ -110,6 +110,7 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
   }
 
 
+  verbose && enter(verbose, "Binned smoothing column by column");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Setup (precalculations)
@@ -122,6 +123,9 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
       xOut <- seq(from=from, to=to, length.out=length.out);
     }
   }
+
+  verbose && cat(verbose, "xOut:");
+  verbose && str(verbose, xOut);
 
   # Infer 'by' from 'xOut'?
   if (is.null(by)) {
@@ -196,6 +200,8 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
   attr(Ys, "xOut") <- xOut;
   attr(Ys, "binWidth") <- h;
 
+  verbose && exit(verbose);
+
   Ys;
 }) # colBinnedSmoothing()
 
@@ -211,6 +217,8 @@ setMethodS3("binnedSmoothing", "numeric", function(y, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-11
+# o Added more verbose output to colBinnedSmoothing().
 # 2009-02-07
 # o Created.
 ############################################################################
