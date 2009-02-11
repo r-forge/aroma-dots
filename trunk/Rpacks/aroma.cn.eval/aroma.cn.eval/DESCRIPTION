@@ -1,6 +1,6 @@
 Package: aroma.cn.eval
 Version: 0.0.3
-Date: 2009-02-06
+Date: 2009-02-09
 Title: Package for evaluating copy-number estimates
 Author: Henrik Bengtsson <henrikb@braju.com>,
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
@@ -12,4 +12,4 @@ License: Private for now (LGPL to come)
 URL: http://www.braju.com/R/
 PatchURL: http://www.braju.com/R/
 LazyLoad: TRUE
-biocViews: Infrastructure, Microarray
+biocViews: Infrastructure, Microarray, aCGH, CopyNumberVariants, SNP, Genetics, QualityControl, Classification
