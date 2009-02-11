@@ -53,10 +53,22 @@
  }
 
  \references{
-  Some of the reference below can be found at
-  \url{http://www.maths.lth.se/bioinformatics/publications/}.\cr
+ 
+Please cite aroma.cn as
 
- [1] H. Bengtsson, \emph{The R.oo package - Object-Oriented Programming with References Using Standard R Code}, In Kurt Hornik, Friedrich Leisch and Achim Zeileis, editors, Proceedings of the 3rd International Workshop on Distributed Statistical Computing (DSC 2003), March 20-22, Vienna, Austria. \url{http://www.ci.tuwien.ac.at/Conferences/DSC-2003/Proceedings/}
- \cr
+  H. Bengtsson, A. Ray, P. Spellman and T.P. Speed. A single-sample
+  method for normalizing and combining full-resolutioncopy numbers from
+  multiple platforms, labs and analysis methods, Bioinformatics, 2009
+
+  H. Bengtsson; K. Simpson; J. Bullard; K. Hansen. aroma.affymetrix: A
+  generic framework in R for analyzing small to very large Affymetrix
+  data sets in bounded memory, Tech Report 745, Department of
+  Statistics, University of California, Berkeley, February 2008
+
+  H. Bengtsson, R. Irizarry, B. Carvalho, & T.P. Speed. Estimation and
+  assessment of raw copy numbers at the single locus level,
+  Bioinformatics, 2008
+
+
  }
 \keyword{package}
