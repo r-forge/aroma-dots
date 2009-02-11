@@ -1,7 +1,10 @@
 Package: aroma.cn.eval
 ======================
 
-Version: 0.0.2 [2009-02-05]
+Version: 0.0.3 [2009-02-09]
+
+
+Version: 0.0.2 [2009-02-03]
 o Added ...
 o Added internal fitRoc() and findRocTpAtFp() with Rdoc and examples.
 
