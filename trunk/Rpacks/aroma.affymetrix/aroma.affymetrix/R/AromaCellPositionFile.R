@@ -33,25 +33,51 @@ setMethodS3("getColumnNames", "AromaCellPositionFile", function(this, ...) {
 
 
 
-setMethodS3("byChipType", "AromaCellPositionFile",function(static, chipType, tags = NULL, validate = TRUE, ..., verbose = FALSE) {
-    chipType <- Arguments$getCharacter(chipType)
-    verbose <- Arguments$getVerbose(verbose)
-    if (verbose) {
-        pushState(verbose)
-        on.exit(popState(verbose))
+setMethodS3("byChipType", "AromaCellPositionFile", function(static, chipType, tags=NULL, nbrOfCells=NULL, validate=TRUE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'chipType':
+  chipType <- Arguments$getCharacter(chipType);
+
+  # Argument 'nbrOfCells':
+  if (!is.null(nbrOfCells)) {
+    nbrOfCells <- Arguments$getInteger(nbrOfCells, range=c(0,Inf));
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Locating ", class(static)[1]);
+  pathname <- findByChipType(static, chipType=chipType, tags=tags, 
+      firstOnly=TRUE, ...);
+  if (is.null(pathname)) {
+      throw("Could not locate a file for this chip type: ", 
+          paste(c(chipType, tags), collapse=","));
+  }
+
+  verbose && cat(verbose, "Located file: ", pathname);
+  res <- newInstance(static, pathname);
+  verbose && print(verbose, res);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validation?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!is.null(nbrOfCells)) {
+    if (nbrOfCells(res) != nbrOfCells) {
+      throw("The number of cells in the loaded ", class(static)[1], " does not match the expected number: ", nbrOfCells(res), " != ", nbrOfCells);
     }
-    verbose && enter(verbose, "Locating ", class(static)[1])
-    pathname <- findByChipType(static, chipType = chipType, tags = tags, 
-        firstOnly = TRUE, ...)
-    if (is.null(pathname)) {
-        throw("Could not locate a file for this chip type: ", 
-            paste(c(chipType, tags), collapse = ","))
-    }
-    verbose && cat(verbose, "Located file: ", pathname)
-    res <- newInstance(static, pathname)
-    verbose && exit(verbose)
-    res
-})
+  }
+
+  verbose && exit(verbose);
+
+  res;
+}, static=TRUE)
 
 
 
@@ -187,6 +213,9 @@ setMethodS3("allocateFromCdf", "AromaCellPositionFile", function(static, cdf, pa
 
 ############################################################################
 # HISTORY:
+# 2009-02-10 [HB]
+# o Added optional validation of number of cells to byChipType().
+# o Static method byChipType() was not declared static.
 # 2008-12-09 [MR]
 # o Created from AromaCellMatchScoresFile.R.
 ############################################################################

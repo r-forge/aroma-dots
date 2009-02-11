@@ -87,19 +87,19 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Getting (position, chipType, unit) map");
 
-  # Get the CDFs
-  cdfList <- getListOfCdfs(this, verbose=less(verbose, 10));
+  # Get the UnitNameFile:s
+  unfList <- getListOfUnitNamesFiles(this, verbose=less(verbose, 10));
 
   # Get the genome information files  
-  giList <- base::lapply(cdfList, FUN=getGenomeInformation, 
-                                                  verbose=less(verbose, 10));
-  verbose && print(verbose, giList);
+  ugpList <- base::lapply(unfList, FUN=getAromaUgpFile, verbose=less(verbose, 10));
+  verbose && print(verbose, ugpList);
 
   # Get the units on the chromosome of interest
-  unitsList <- base::lapply(giList, FUN=function(gi) {
-    getUnitsOnChromosome(gi, chromosomes=chromosome, ...);
+  unitsList <- base::lapply(ugpList, FUN=function(ugp) {
+    getUnitsOnChromosome(ugp, chromosome=chromosome, ...);
   });
   verbose && str(verbose, unitsList);
+  rm(ugpList);
 
   # Gets (position, chipType) for these units
   posList <- vector("list", length(unitsList));
@@ -107,9 +107,9 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
   chipTypeList <- vector("list", length(unitsList));
   names(chipTypeList) <- names(unitsList);
   for (kk in seq(along=posList)) {
-    gi <- giList[[kk]];
+    ugp <- ugpList[[kk]];
     units <- unitsList[[kk]];
-    pos <- getPositions(gi, units=units);
+    pos <- getPositions(ugp, units=units);
 
     # Keep only units with a position
     keep <- which(is.finite(pos));
@@ -124,9 +124,9 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
     unitsList[[kk]] <- units;
     posList[[kk]] <- pos;
     chipTypeList[[kk]] <- rep(kk, length(units));
-    rm(gi, units, keep);
+    rm(ugp, units, keep);
   }
-  rm(giList);
+  rm(ugpList);
 
   verbose && str(verbose, unitsList);
   verbose && str(verbose, posList);
@@ -143,9 +143,10 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
   chipType <- chipType[o];
 
   # Convert chipType into a factor
-  chipTypes <- sapply(cdfList, FUN=getName);
+  chipTypes <- sapply(unfList, FUN=getChipType);
   attr(chipType, "levels") <- chipTypes;
   class(chipType) <- "factor";
+  rm(unfList);
 
   units <- unlist(unitsList, use.names=FALSE);
   rm(unitsList);
@@ -203,8 +204,7 @@ setMethodS3("createOutputTuple", "SmoothMultiarrayModel", function(this, ..., fo
     if (length(inSet) == 0)
       throw("Cannot create output data set. The input data set is empty.");
 
-    cdf <- getCdf(inSet);
-    chipType <- getChipType(cdf, fullname=FALSE);
+    chipType <- getChipType(inSet, fullname=FALSE);
     path <- Arguments$getWritablePath(file.path(parentPath, chipType));
     verbose && enter(verbose, "Creating output data set using input data set as a template (by copying)");
     verbose && cat(verbose, "Path: ", path);
@@ -217,11 +217,17 @@ setMethodS3("createOutputTuple", "SmoothMultiarrayModel", function(this, ..., fo
     # Speed this up by inheriting parameters from input data set
     args <- list(path);
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # BEGIN: AFFX methods
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     # Ad hoc for ChipEffectSet classes. /HB 2007-09-25
     if (inherits(inSet, "SnpChipEffectSet"))
       args$mergeStrands <- inSet$mergeStrands;
     if (inherits(inSet, "CnChipEffectSet"))
       args$combineAlleles <- inSet$combineAlleles;
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # END: AFFX methods
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
     verbose && str(verbose, args);
     args$verbose <- less(verbose, 30);
@@ -262,9 +268,15 @@ setMethodS3("fitOneChromosome", "SmoothMultiarrayModel", function(this, chromoso
 
   smoothFitFcn <- getFitUnitGroupFunction(this);
 
-  cesList <- getListOfChipEffects(this);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # BEGIN: AFFX methods
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  cesList <- getListOfChipEffectSets(this);
   verbose && cat(verbose, "List of input data sets:");
   verbose && print(verbose, cesList);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # END: AFFX methods
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
   # Getting output data set (create if missing)
   outTuple <- getOutputTuple(this, verbose=less(verbose, 10));
@@ -419,6 +431,10 @@ setMethodS3("fitOneChromosome", "SmoothMultiarrayModel", function(this, chromoso
 
 ############################################################################
 # HISTORY:
+# 2009-01-26
+# o Updated getPositionChipTypeUnit() of SmoothMultiarrayModel to utilize
+#   the UnitNamesFile Interface instead of assuming an AffymetrixCdfFile.
+#   This requires aroma.core v1.0.1.
 # 2007-09-26
 # o Renamed to SmoothMultiarrayModel (from SrmaModel).
 # o Added support for prior weights as the inverse of the log-ratio 

@@ -1,4 +1,4 @@
-setMethodS3("findByCdf2", "default", function(chipType, tags=NULL, validator=NULL, firstOnly=TRUE, ..., verbose=FALSE) {
+setMethodS3("findByCdf2", "default", function(chipType, tags=NULL, nbrOfUnits=NULL, validator=NULL, firstOnly=TRUE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -44,7 +44,7 @@ setMethodS3("findByCdf2", "default", function(chipType, tags=NULL, validator=NUL
     fullname <- paste(c(chipType, cdfTags), collapse=",");
     verbose && printf(verbose, "Trying '%s'...", fullname);
     tryCatch({
-      cdf <- AffymetrixCdfFile$byChipType(chipType, tags=cdfTags);
+      cdf <- AffymetrixCdfFile$byChipType(chipType, tags=cdfTags, nbrOfUnits=nbrOfUnits);
 
       # Validate?  If invalid, skip it.
       if (!is.null(validator)) {
@@ -67,11 +67,13 @@ setMethodS3("findByCdf2", "default", function(chipType, tags=NULL, validator=NUL
   verbose && exit(verbose);
 
   pathnames;
-})
+}) # findByCdf2()
 
 
 ############################################################################
 # HISTORY:
+# 2009-02-11
+# o Added argument 'nbrOfUnits' to fromCdf2().
 # 2008-01-19
 # o Created from fromCdf() in AromaUnitTabularBinaryFile.R.
 ############################################################################

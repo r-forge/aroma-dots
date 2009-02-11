@@ -160,7 +160,9 @@ setMethodS3("getAromaUfcFile", "FragmentEquivalentClassNormalization", function(
 
   if (force || is.null(ufc)) {
     cdf <- getCdf(this);
-    ufc <- AromaUfcFile$byChipType(getChipType(cdf));
+    chipType <- getChipType(cdf);
+    nbrOfUnits <- nbrOfUnits(cdf);
+    ufc <- AromaUfcFile$byChipType(chipType, nbrOfUnits=nbrOfUnits);
     this$.ufc <- ufc;
   }
 
@@ -828,7 +830,9 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
   rm(types);
 
   verbose && enter(verbose, "Retrieving fragment class annotations");
-  ufc <- AromaUfcFile$byChipType(getChipType(cdf));
+  chipType <- getChipType(cdf);
+  nbrOfUnits <- nbrOfUnits(cdf);
+  ufc <- AromaUfcFile$byChipType(chipType, nbrOfUnits=nbrOfUnits);
   verbose && cat(verbose, "Number of enzymes: ", nbrOfEnzymes(ufc));
   verbose && exit(verbose);
 

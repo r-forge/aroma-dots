@@ -157,7 +157,7 @@ setMethodS3("getChipType", "SnpInformation", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("fromCdf", "SnpInformation", function(static, cdf, ...) {
-  byChipType(static, getChipType(cdf), ...);
+  byChipType(static, chipType=getChipType(cdf), nbrOfUnits=nbrOfUnits(cdf), ...);
 }, static=TRUE)
 
 
@@ -197,9 +197,8 @@ setMethodS3("fromChipType", "SnpInformation", function(static, ...) {
 
 
 setMethodS3("fromDataSet", "SnpInformation", function(static, dataSet, ...) {
-  cdf <- getCdf(dataSet);
-  chipType <- getChipType(cdf);
-  byChipType(static, chipType, ...);
+  chipType <- getChipType(dataSet);
+  byChipType(static, chipType=chipType, ...);
 }, static=TRUE)
 
 

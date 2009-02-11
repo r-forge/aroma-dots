@@ -82,11 +82,12 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaCellSequenceFile", functio
   # Assert that the CDF can be found
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   chipType <- getChipType(this);
+  nbrOfCells <- nbrOfCells(this);
   cdf <- NULL;
   tryCatch({
-    cdf <- AffymetrixCdfFile$byChipType(chipType);
+    cdf <- AffymetrixCdfFile$byChipType(chipType, nbrOfCells=nbrOfCells);
   }, error = function(ex) {
-    cdf <<- AffymetrixCdfFile$byChipType(chipType, tags=".*");
+    cdf <<- AffymetrixCdfFile$byChipType(chipType, tags=".*", nbrOfCells=nbrOfCells);
   })
 
   # Figure out the number of columns on the array

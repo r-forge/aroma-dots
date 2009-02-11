@@ -154,8 +154,8 @@ setMethodS3("nbrOfChipTypes", "ArrayExplorer", function(this, ...) {
   nbrOfChipTypes(getSetTuple(this));
 })
 
-setMethodS3("getListOfCdfs", "ArrayExplorer", function(this, ...) {
-  getListOfCdfs(getSetTuple(this));
+setMethodS3("getListOfUnitNamesFiles", "ArrayExplorer", function(this, ...) {
+  getListOfUnitNamesFiles(getSetTuple(this));
 }, private=TRUE)
 
 
@@ -419,10 +419,10 @@ setMethodS3("process", "ArrayExplorer", function(this, arrays=NULL, ..., verbose
 })
 
 
-
-
 ##############################################################################
 # HISTORY:
+# 2009-01-26
+# o Removed getListOfCdfs() from ArrayExplorer.
 # 2008-08-19
 # o Added argument 'arrays' to process() so that it is possible to specify
 #   for which arrays images should be generated.

@@ -41,7 +41,18 @@ setMethodS3("fromChipType", "UflSnpInformation", function(static, ...) {
   byChipType(static, ...);
 }, static=TRUE) 
 
-setMethodS3("byChipType", "UflSnpInformation", function(static, chipType, tags=NULL, ..., verbose=FALSE) {
+setMethodS3("byChipType", "UflSnpInformation", function(static, chipType, tags=NULL, nbrOfUnits=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'chipType':
+  chipType <- Arguments$getCharacter(chipType);
+
+  # Argument 'nbrOfUnits':
+  if (!is.null(nbrOfUnits)) {
+    nbrOfUnits <- Arguments$getInteger(nbrOfUnits, range=c(0,Inf));
+  } 
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -50,7 +61,7 @@ setMethodS3("byChipType", "UflSnpInformation", function(static, chipType, tags=N
   }
 
 
-  ufl <- AromaUflFile$byChipType(chipType, tags=tags, ...);
+  ufl <- AromaUflFile$byChipType(chipType, tags=tags, nbrOfUnits=nbrOfUnits, ...);
   pathname <- getPathname(ufl);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
@@ -61,10 +72,20 @@ setMethodS3("byChipType", "UflSnpInformation", function(static, chipType, tags=N
   res <- newInstance(static, filename=pathname, path=NULL, .ufl=ufl, 
                                                   .verify=FALSE, ...);
   verbose && print(verbose, res);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validation?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (!is.null(nbrOfUnits)) {
+    if (nbrOfUnits(res) != nbrOfUnits) {
+      throw("The number of units in the loaded ", class(static)[1], " does not match the expected number: ", nbrOfUnits(res), " != ", nbrOfUnits);
+    }
+  }
+
   verbose && exit(verbose);
 
   res;
-})
+}, static=TRUE)
 
 
 setMethodS3("verify", "UflSnpInformation", function(this, ...) {
@@ -234,6 +255,9 @@ setMethodS3("getFragmentStops", "UflSnpInformation", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-10
+# o Added optional validation of number of units to byChipType().
+# o Static method byChipType() was not declared static. 
 # 2008-07-23
 # o Now isCompatibleWithCdf() adds attribute 'reason' to FALSE explaining 
 #   why the object is not compatible.

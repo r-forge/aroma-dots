@@ -242,8 +242,10 @@ setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NUL
 setMethodS3("getCdf", "AffymetrixCelFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
-    chipType <- getHeader(this)$chiptype;
-    cdf <- AffymetrixCdfFile$byChipType(chipType);
+    hdr <- getHeader(this);
+    chipType <- hdr$chiptype;
+    nbrOfCells <- hdr$total;
+    cdf <- AffymetrixCdfFile$byChipType(chipType, nbrOfCells=nbrOfCells);
     this$.cdf <- cdf;
   }
   cdf;
@@ -466,7 +468,9 @@ setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y
   fileFormat <- getFileFormat(this, asString=FALSE);
 
   if (fileFormat == 1) {
-    hdr <- readCcgHeader(getPathname(this));
+    suppressWarnings({
+      hdr <- readCcgHeader(getPathname(this));
+    });
 
     # Get the DAT header
     params <- hdr$dataHeader$parents[[1]]$parameters;

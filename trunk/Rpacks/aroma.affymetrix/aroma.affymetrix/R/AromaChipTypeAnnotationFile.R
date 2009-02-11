@@ -142,12 +142,18 @@ setMethodS3("fromFile", "AromaChipTypeAnnotationFile", function(static, filename
 # @keyword programming
 #*/###########################################################################
 setMethodS3("byChipType", "AromaChipTypeAnnotationFile", function(static, chipType, tags=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Search for a matching annotation file
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   pathname <- findByChipType(static, chipType, tags=tags);
   if (is.null(pathname)) {
     throw("Could not create ", class(static)[1], " object. No annotation chip type file with that chip type found: ", chipType);
   }
 
-  fromFile(static, filename=pathname, path=NULL, ...);
+  res <- fromFile(static, filename=pathname, path=NULL, ...);
+  verbose && print(verbose, res);
+
+  res;
 }, static=TRUE)
 
 

@@ -51,8 +51,10 @@ setMethodS3("getSetsOfProbes", "AllelicCrosstalkCalibration", function(this, ...
     if (needAcs) {
       verbose && enter(verbose, "Locating AromaCellSequenceFile");
       chipType <- getChipType(cdf, fullname=FALSE);
+      nbrOfCells <- nbrOfCells(cdf);
       verbose && cat(verbose, "Chip type: ", chipType);
-      acs <- AromaCellSequenceFile$byChipType(chipType);
+      verbose && cat(verbose, "Number of cells: ", nbrOfCells);
+      acs <- AromaCellSequenceFile$byChipType(chipType, nbrOfCells=nbrOfCells);
       verbose && print(verbose, acs);
       verbose && exit(verbose);
     } else {

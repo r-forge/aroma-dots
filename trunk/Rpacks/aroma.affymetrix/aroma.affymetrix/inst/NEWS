@@ -1,8 +1,19 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.1x [2009-01-13]
+Version: 1.0.1x [2009-02-10]
 o Cleaned up the MatSmoothing class.
+o Cleaned up the AffymetrixCelSetTuple class.
+o ROBUSTNESS: Added support for optional validation/selection by the
+  number of units/cells to all static byChipType() methods.  This is
+  done by specifying argument nbrOfUnits/nbrOfCells.
+o CLEAN UP: Suppressing warnings about "truncating string with
+  embedded nul" in rawToChar() when using affxparser::readCcgHeader().
+o BUG FIX: setMergeStrands() of SnpPlm and setCombineAlleles() of 
+  CnPlm did not update the setting of the PLM itself, only the 
+  settings of the underlying parameter files.
+  SnpPlm itself, only only the underlying parameter files.
+  Added getMergeStrands() to SnpPlm and getCombineAlleles() to CnPlm.
 
 
 Version: 1.0.0 [2009-01-12]

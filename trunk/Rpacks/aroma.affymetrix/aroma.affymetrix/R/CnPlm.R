@@ -327,16 +327,32 @@ setMethodS3("getProbeAffinityFile", "CnPlm", function(this, ..., .class=CnProbeA
   paf;
 })
 
-setMethodS3("setCombineAlleles", "CnPlm", function(this, ...) {
+setMethodS3("getCombineAlleles", "CnPlm", function(this, ...) {
+  this$combineAlleles;
+})
+
+setMethodS3("setCombineAlleles", "CnPlm", function(this, status, ...) {
+  # Argument 'status':
+  status <- Arguments$getLogical(status);
+
+  oldStatus <- getCombineAlleles(this);
+
   ces <- getChipEffectSet(this);
-  setCombineAlleles(ces, ...);
+  setCombineAlleles(ces, status, ...);
   paf <- getProbeAffinityFile(this);
-  setCombineAlleles(paf, ...);
+  setCombineAlleles(paf, status, ...);
+  this$combineAlleles <- status;
+
+  invisible(oldStatus);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2009-02-03
+# o BUG FIX: setCombineAlleles() of CnPlm did not update the setting of the
+#   CnPlm itself, only the underlying parameter files.
+# o Added getCombineAlleles() to CnPlm.
 # 2008-02-22
 # o UPDATE: Now a CnPlm with combineAlleles=TRUE also handles SNPs with
 #   six groups; they occur at least once in a custom CDF.
