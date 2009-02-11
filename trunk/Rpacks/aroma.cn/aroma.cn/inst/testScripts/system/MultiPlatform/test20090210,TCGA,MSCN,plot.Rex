@@ -46,8 +46,9 @@ print(cnList);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Smooth CNs using consecutive bins of width 100kb
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+xRange <- range(sapply(cnList, FUN=xRange));
 cnSList <- lapply(cnList, FUN=function(cn) {
-  binnedSmoothing(cn, by=100e3);
+  binnedSmoothing(cn, from=xRange[1], to=xRange[2], by=100e3);
 })
 print(cnSList);
 
@@ -55,8 +56,8 @@ print(cnSList);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Plot raw and binned CNs along chromosome
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-xlim <- range(sapply(cnList, FUN=xRange));
 Mlim <- c(-1,1)*3;
+xlim <- xRange;
 
 # The name of the tumor/normal pair
 name <- getNames(dsList[[1]])[array];
