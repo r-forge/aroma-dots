@@ -17,7 +17,7 @@ tags <- "ACC,-XY,RMA,+300,A+B,FLN,-XY";
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cesList <- list();
 for (chipType in chipTypes) {
-  ces <- CnChipEffectSet$fromName(dataSetName, tags=tags, chipType=chipType, verbose=log);
+  ces <- CnChipEffectSet$byName(dataSetName, tags=tags, chipType=chipType, verbose=log);
   print(ces);
   stopifnot(identical(getNames(ces), sampleNames));
   cesList[[chipType]] <- ces;

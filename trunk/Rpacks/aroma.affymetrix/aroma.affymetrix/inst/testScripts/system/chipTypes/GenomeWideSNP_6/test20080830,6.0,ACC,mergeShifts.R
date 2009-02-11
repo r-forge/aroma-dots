@@ -8,10 +8,10 @@ chipType <- "GenomeWideSNP_6";
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setting up CEL set and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cdf <- AffymetrixCdfFile$fromChipType(chipType, tags="Full");
+cdf <- AffymetrixCdfFile$byChipType(chipType, tags="Full");
 print(cdf);
 
-csR <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf, verbose=log);
+csR <- AffymetrixCelSet$byName(dataSetName, cdf=cdf, verbose=log);
 print(csR);
 
 

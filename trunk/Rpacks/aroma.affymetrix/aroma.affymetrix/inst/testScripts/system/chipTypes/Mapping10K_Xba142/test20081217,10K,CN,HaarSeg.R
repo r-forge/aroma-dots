@@ -9,7 +9,7 @@ chipType <- "Mapping10K_Xba142";
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
 keep <- 1:6;
 cs <- extract(cs, keep);
 print(cs);

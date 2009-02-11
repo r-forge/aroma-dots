@@ -23,7 +23,7 @@ colnames(pairs) <- c("normal", "tumor");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 csRawList <- list();
 for (chipType in chipTypes) {
-  cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+  cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   stopifnot(all(getNames(cs) %in% pairs));
   csRawList[[chipType]] <- cs;

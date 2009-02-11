@@ -23,10 +23,10 @@ log <- Arguments$getVerbose(-20, timestamp=TRUE);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup the tiling array data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cdf <- AffymetrixCdfFile$fromChipType("Hs_PromPR_v02", tags="Harvard,ROIs");
+cdf <- AffymetrixCdfFile$byChipType("Hs_PromPR_v02", tags="Harvard,ROIs");
 print(cdf);
 
-csR <- AffymetrixCelSet$fromName("MNtest", cdf=cdf);
+csR <- AffymetrixCelSet$byName("MNtest", cdf=cdf);
 print(csR);
 
 

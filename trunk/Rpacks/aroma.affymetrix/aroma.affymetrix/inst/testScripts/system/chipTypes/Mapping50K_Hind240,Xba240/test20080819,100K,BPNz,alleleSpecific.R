@@ -17,7 +17,7 @@ acs <- AromaCellSequenceFile$byChipType(chipType);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csR <- AffymetrixCelSet$fromName(dataSetName, cdf=cdf);
+csR <- AffymetrixCelSet$byName(dataSetName, cdf=cdf);
 print(csR);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

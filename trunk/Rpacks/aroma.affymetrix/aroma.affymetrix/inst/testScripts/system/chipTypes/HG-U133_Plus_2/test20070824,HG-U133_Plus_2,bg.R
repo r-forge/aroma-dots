@@ -6,7 +6,7 @@ timestampOn(log);
 dataSetName <- "Affymetrix-HeartBrain";
 chipType <- "HG-U133_Plus_2";
 
-cs <- AffymetrixCelSet$fromName(dataSetName, chipType=chipType, verbose=log);
+cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
 print(cs);
 
 bg <- GcRmaBackgroundCorrection(cs);
