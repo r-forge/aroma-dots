@@ -1,12 +1,12 @@
-setMethodS3("exportAromaUnitSignalBinaryFileList", "SnpChipEffectFile", function(this, whats=c("total", "fracB"), fullname=getFullName(this), dataSet=NULL, path=NULL, ..., overwrite=FALSE, drop=TRUE, verbose=FALSE) {
+setMethodS3("exportTotalAndFracB", "SnpChipEffectFile", function(this, fields=c("total", "fracB"), fullname=gsub(",chipEffects", "", getFullName(this)), dataSet=NULL, path=NULL, rootPath="totalAndFracBData", ..., overwrite=FALSE, drop=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'fullname':
   fullname <- Arguments$getCharacter(fullname);
 
-  # Argument 'what':
-  whats <- match.arg(whats, several.ok=TRUE);
+  # Argument 'field':
+  fields <- match.arg(fields, several.ok=TRUE);
 
   # Arguments 'dataSet':
   if (is.null(dataSet)) {
@@ -16,7 +16,6 @@ setMethodS3("exportAromaUnitSignalBinaryFileList", "SnpChipEffectFile", function
 
   # Arguments 'path':
   if (is.null(path)) {
-    rootPath <- "cnData";
     chipType <- getChipType(this, fullname=FALSE);
     path <- filePath(rootPath, dataSet, chipType);
   }
@@ -30,7 +29,12 @@ setMethodS3("exportAromaUnitSignalBinaryFileList", "SnpChipEffectFile", function
   }
 
 
-  verbose && cat(verbose, "Whats: ", paste(whats, collapse=", "));
+  verbose && enter(verbose, "Exporting (total, fracB) data");
+  verbose && cat(verbose, "Data set: ", dataSet);
+  verbose && cat(verbose, "Fullname: ", fullname);
+  verbose && cat(verbose, "Path: ", path);
+
+  verbose && cat(verbose, "Fields: ", paste(fields, collapse=", "));
 
   cdf <- getCdf(this); 
   nbrOfUnits <- nbrOfUnits(cdf);
@@ -49,26 +53,26 @@ setMethodS3("exportAromaUnitSignalBinaryFileList", "SnpChipEffectFile", function
   data <- NULL;
 
   asbList <- list();
-  for (what in whats) {
+  for (field in fields) {
     # Identify output class
-    if (what == "total") {
+    if (field == "total") {
       signalClass <- AromaUnitTotalCnBinaryFile;
-    } else if (is.element(what, c("fracB", "freqB"))) {
+    } else if (is.element(field, c("fracB", "freqB"))) {
       signalClass <- AromaUnitFracBCnBinaryFile;
     }
   
     verbose && enter(verbose, "Exporting ", class(this)[1], " as an ", getName(signalClass));
-    verbose && cat(verbose, "Signal: ", what);
+    verbose && cat(verbose, "Signal: ", field);
   
     # Generate output filename
-    filename <- sprintf("%s,%s.asb", fullname, what);
+    filename <- sprintf("%s,%s.asb", fullname, field);
     pathname <- Arguments$getWritablePathname(filename, path=path, mustNotExist=FALSE); 
     verbose && cat(verbose, "Output pathname: ", pathname);
     if (isFile(pathname)) {
       if (!overwrite) {
         verbose && cat(verbose, "Output file already exists. Return that instead.");
         asb <- signalClass$fromFile(pathname);
-        asbList[[what]] <- asb;
+        asbList[[field]] <- asb;
         verbose && exit(verbose);
         next;
       }
@@ -81,40 +85,48 @@ setMethodS3("exportAromaUnitSignalBinaryFileList", "SnpChipEffectFile", function
     if (is.null(data)) {
       verbose && enter(verbose, "Reading data");
       data <- extractTotalAndFracB(this, verbose=less(verbose, 5));
+      # Backward compatibility
+      colnames(data) <- gsub("freqB", "fracB", colnames(data), fixed=TRUE);
       verbose && str(verbose, data);
       verbose && exit(verbose);
     }
 
+    verbose && cat(verbose, "Values:");
+    values <- data[,field, drop=TRUE];
+    verbose && str(verbose, values);
+
     verbose && enter(verbose, "Allocating output file");
     asb <- signalClass$allocate(filename=pathname, path=NULL, nbrOfRows=nbrOfUnits, platform=platform, chipType=chipType, footer=footer, overwrite=overwrite, verbose=less(verbose, 25));
+    verbose && print(verbose, asb);
     verbose && exit(verbose);
   
     verbose && enter(verbose, "Writing data");
-    asb[,1] <- data[,what, drop=TRUE];
+    asb[,1] <- values;
     verbose && exit(verbose);
     
     verbose && exit(verbose);
 
-    asbList[[what]] <- asb;
-  } # for (what ...)
-  names(asbList) <- whats;
+    asbList[[field]] <- asb;
+  } # for (field ...)
+  names(asbList) <- fields;
   rm(data);
 
   if (drop && length(asbList) == 1) {
     asbList <- asbList[[1]];
   }
 
+  verbose && exit(verbose);
+
   invisible(asbList);
-}, protected=TRUE)
+}, protected=TRUE) # exportTotalAndFracB()
 
 
-
-setMethodS3("exportAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(this, whats=c("total", "fracB"), ..., drop=TRUE, verbose=FALSE) {
+setMethodS3("exportTotalAndFracB", "SnpChipEffectSet", function(this, fields=c("total", "fracB"), rootPath="totalAndFracBData", ..., drop=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'whats':
-  whats <- match.arg(whats, several.ok=TRUE);
+  # Argument 'fields':
+  fields <- match.arg(fields, several.ok=TRUE);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -124,10 +136,10 @@ setMethodS3("exportAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(t
   }
 
 
-  signalClassList <- lapply(whats, FUN=function(what) {
-    if (what == "total") {
+  signalClassList <- lapply(fields, FUN=function(field) {
+    if (field == "total") {
       signalClass <- AromaUnitTotalCnBinarySet;
-    } else if (is.element(what, c("fracB", "freqB"))) {
+    } else if (is.element(field, c("fracB", "freqB"))) {
       signalClass <- AromaUnitFracBCnBinarySet;
     }
     signalClass;
@@ -141,10 +153,11 @@ setMethodS3("exportAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(t
   for (kk in seq(this)) {
     cf <- getFile(this, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(cf), length(this)));
-    asbList <- exportAromaUnitSignalBinaryFileList(cf, whats=whats, dataSet=dataSetName, ..., drop=FALSE, verbose=less(verbose, 1));
+    asbList <- exportAromaUnitSignalBinaryFileList(cf, fields=fields, dataSet=dataSetName, ..., drop=FALSE, verbose=less(verbose, 1));
     if (is.null(chipType)) {
       chipType <- getChipType(asbList[[1]]);
     }
+    verbose && print(verbose, asbList);
     rm(asbList);
     verbose && exit(verbose);
   }
@@ -155,14 +168,14 @@ setMethodS3("exportAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(t
     verbose && enter(verbose, "Setting up the ", getName(signalClass));
     ass <- NULL;
     tryCatch({
-      ass <- signalClass$byName(dataSetName, chipType=chipType);
+      ass <- signalClass$byName(dataSetName, chipType=chipType, paths=rootPath);
       verbose && print(verbose, ass);
     }, error = function(ex) {
     })
     verbose && exit(verbose);
     ass;
   });
-  names(assList) <- whats;
+  names(assList) <- fields;
 
   assList <- assList[!sapply(assList, is.null)];
 
@@ -171,50 +184,38 @@ setMethodS3("exportAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(t
   }
 
   invisible(assList);
-}, protected=TRUE)
+}, protected=TRUE) # exportTotalAndFracB()
 
 
-setMethodS3("getAromaTotalCnBinarySet", "SnpChipEffectSet", function(this, ...) {
-  exportAromaUnitSignalBinarySetList(this, whats="total", ...);
+
+
+setMethodS3("exportAromaUnitSignalBinaryFileList", "SnpChipEffectFile", function(this, ...) {
+  exportTotalAndFracB(this, ...);
+}, deprecated=TRUE, private=TRUE)
+
+setMethodS3("exportAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(this, ...) {
+  exportTotalAndFracB(this, ...);
+}, deprecated=TRUE, private=TRUE)
+
+
+
+
+setMethodS3("getAromaUnitTotalCnBinarySet", "default", function(this, ...) {
+  exportTotalAndFracB(this, fields="total", ...);
 })
 
-setMethodS3("getAromaFracBCnBinarySet", "SnpChipEffectSet", function(this, ...) {
-  exportAromaUnitSignalBinarySetList(this, whats="fracB", ...);
+setMethodS3("getAromaUnitFracBCnBinarySet", "default", function(this, ...) {
+  exportTotalAndFracB(this, fields="fracB", ...);
 })
 
-
-setMethodS3("getAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(this, whats=c("total", "fracB"), ...) {
-  exportAromaUnitSignalBinarySetList(this, whats=whats, ...);
-})
-
-
-setMethodS3("getTotalAndFracBSets", "SnpChipEffectSet", function(this, whats=c("total", "fracB"), ...) {
-  exportAromaUnitSignalBinarySetList(this, whats=whats, ...);
-})
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Backward compatibility
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-setMethodS3("getAromaFreqBCnBinarySet", "default", function(this, ...) {
-  getAromaFracBCnBinarySet(this, ...);
-}, protected=TRUE)
-
-setMethodS3("getTotalAndFreqBSets", "default", function(this, ...) {
-  getTotalAndFracBSets(this, ...);
-}, protected=TRUE)
-
-setMethodS3("exportAromaSignalBinaryFileList", "default", function(this, ...) {
-  exportAromaUnitSignalBinaryFileList(this, ...);
-}, protected=TRUE, deprecated=TRUE);
-
-setMethodS3("exportAromaUnitSignalBinarySetList", "default", function(this, ...) {
-  exportAromaUnitSignalBinarySetList(this, ...);
-}, protected=TRUE, deprecated=TRUE);
 
 
 ############################################################################
 # HISTORY:
+# 2000-02-11
+# o Now exported chip effect files no longer contains tag 'chipEffects'.
+# o Renamed all methods.
+# o Added argument 'rootPath'.
 # 2008-09-10
 # o Updated to be compatible with new aroma.core.
 # 2008-07-30

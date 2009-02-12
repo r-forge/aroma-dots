@@ -1678,6 +1678,13 @@
 \alias{getListOfUnitNamesFiles.ArrayExplorer}
 \alias{getListOfUnitNamesFiles.ChromosomalModel}
 \alias{getMergeStrands.SnpPlm}
+\alias{exportTotalAndFracB}
+\alias{exportTotalAndFracB.SnpChipEffectFile}
+\alias{exportTotalAndFracB.SnpChipEffectSet}
+\alias{getAromaUnitFracBCnBinarySet}
+\alias{getAromaUnitFracBCnBinarySet.default}
+\alias{getAromaUnitTotalCnBinarySet}
+\alias{getAromaUnitTotalCnBinarySet.default}
 
 \description{
   This page contains aliases for all "non-documented" objects that

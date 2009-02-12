@@ -866,3 +866,7 @@ PdInfo2Cdf
  getListOfUnitNamesFiles.AffymetrixCelSetTuple
  getListOfUnitNamesFiles.ArrayExplorer
  getListOfUnitNamesFiles.ChromosomalModel getMergeStrands.SnpPlm
+ exportTotalAndFracB exportTotalAndFracB.SnpChipEffectFile
+  exportTotalAndFracB.SnpChipEffectSet getAromaUnitFracBCnBinarySet
+  getAromaUnitFracBCnBinarySet.default getAromaUnitTotalCnBinarySet
+  getAromaUnitTotalCnBinarySet.default

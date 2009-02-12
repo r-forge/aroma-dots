@@ -1,9 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.1x [2009-02-10]
+Version: 1.0.1x [2009-02-11]
 o Cleaned up the MatSmoothing class.
 o Cleaned up the AffymetrixCelSetTuple class.
+o Added getAromaUnit{Total|FracB}CnFileSet() to SnpChipEffectSet, which
+  uses protected exportTotalAndFracB() to SnpChipEffect{File|Set}.
 o ROBUSTNESS: Added support for optional validation/selection by the
   number of units/cells to all static byChipType() methods.  This is
   done by specifying argument nbrOfUnits/nbrOfCells.
