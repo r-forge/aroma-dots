@@ -3,6 +3,7 @@ library("aroma.cn");
 
 log <- verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 
+if (FALSE) {
 tagsList <- list("MSKCC", "Harvard", "Stanford", "Broad");
 tagsList <- lapply(tagsList, FUN=c, "mscn");
 dataSet <- "TCGA,GBM,testSet,pairs";
@@ -23,6 +24,7 @@ tags <- Reduce(intersect, lapply(dsList, FUN=getTags));
 sites <- sapply(dsList, FUN=function(ds) setdiff(getTags(ds), tags));
 platforms <- sapply(dsList, FUN=getPlatform);
 chipTypes <- sapply(dsList, FUN=getChipType);
+names <- cbind(site=sites, platform=platforms, chipType=chipTypes);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -50,6 +52,8 @@ truth <- function(x, ...) {
   t;
 } # truth()
 
+name <- getNames(extract(dsList[[1]], array))[1];
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Extract data from region of interest
@@ -60,14 +64,13 @@ cnList <- lapply(dsList, FUN=function(ds) {
   cn <- SegmentedCopyNumbers(cn=cn$cn, x=cn$x, states=truth);  
   cn;
 })
-names <- cbind(site=sites, platform=platforms, chipType=chipTypes);
 names(cnList) <- apply(names, MARGIN=1, paste, collapse="\n");
 print(cnList);
 
 # Range of loci covered in all platforms
 xRange <- range(sapply(cnList, FUN=xRange));
+}
 
-# The name of the tumor/normal pair
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # TP rate at fixe FP rate at various resolutions (in kb)
@@ -75,8 +78,7 @@ xRange <- range(sapply(cnList, FUN=xRange));
 devSet("TPvResolution");
 states <- c(0,1);
 fpRate <- 0.02;
-name <- getNames(dsList[[1]])[array];
-binWidths <- c(10,25,50,100)*1e3;
+binWidths <- c(5,10,20,30,40,50,60,70,80,90,100)*1e3;
 xlim <- c(0,max(binWidth))/1e3;
 tplim <- c(0,1);
 tplab <- "True-positive rate";
@@ -84,6 +86,9 @@ xlab <- "Width of bins (in kb)";
 par(mar=c(3,3,2,1)+0.1, mgp=c(1.4,0.4,0));
 plot(NA, xlim=xlim, ylim=tplim, xlab=xlab, ylab=tplab);
 stext(side=3, pos=0, name);
+trackCols <- seq(length=nbrOfTracks);
+labels <- apply(names[,-2], MARGIN=1, paste, collapse="/");
+legend("bottomright", col=trackCols, pch=19, labels, cex=0.8, bty="n");
 
 nbrOfTracks <- length(dsList);
 naValue <- as.double(NA);
@@ -96,6 +101,18 @@ for (ww in seq(along=binWidths)) {
   binWidth <- binWidths[ww];
 
   # Smooth CNs using consecutive bins of given width (in kb)
+##   cnSList <- list();
+##   for (kk in seq(along=cnList)) {
+##     print(kk);
+##     cn <- cnList[[kk]];
+##     print(cn);
+##     cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, verbose=log);
+##     print(cnS);
+##     cnS <- extractSubsetByState(cnS, states=states);
+##     print(cnS);
+##     cnSList[[kk]] <- cnS;
+##   }
+## 
   cnSList <- lapply(cnList, FUN=function(cn) {
     cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth);
     cnS <- extractSubsetByState(cnS, states=states);
@@ -113,7 +130,7 @@ for (ww in seq(along=binWidths)) {
   res[row,cols] <- tpRates;
 
   x <- rep(binWidth/1e3, nbrOfTracks);
-  points(x, y=res[row,cols], pch=19, col=seq(length=nbrOfTracks));
+  points(x, y=res[row,cols], pch=19, col=trackCols);
 } # for (ww ...)
 
 o <- order(res[,"binWidth"]);
@@ -122,10 +139,6 @@ res <- res[o,,drop=FALSE];
 for (kk in seq(length=nbrOfTracks)) {
   binWidths <- res[,"binWidth"];
   tpRates <- res[,kk+1];
-  lines(binWidths/1e3, tpRates, lwd=2, col=kk);
+  lines(binWidths/1e3, tpRates, lwd=2, col=trackCols[kk]);
 }
-
-labels <- strsplit(names(cnSList), split="\n");
-labels <- sapply(labels, FUN=function(s) paste(s[-3], collapse="/"));
-legend("bottomright", col=seq(along=labels), pch=19, labels, cex=0.8, bty="n");
 
