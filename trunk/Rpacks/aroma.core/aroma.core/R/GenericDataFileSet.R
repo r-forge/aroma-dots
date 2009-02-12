@@ -1158,35 +1158,53 @@ setMethodS3("findByName", "GenericDataFileSet", function(static, name, tags=NULL
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Identify existing subdirectories
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (!is.null(subdirs)) {
-      if (length(subdirs) >= 1) {
-        for (kk in seq(along=subdirs)) {
-          dir <- subdirs[kk];
-          # Smart directory?
-          isSmart <- (regexpr("^[*]", dir) != -1);
-          if (isSmart) {
-            paths <- sapply(paths, FUN=function(path) {
-              dirsT <- list.files(path=path);
-              if (dir == "*") {
-                dir <- dirsT[1];
-              }
-              file.path(path, dir);
-            });
-          } else {
-            paths <- file.path(paths, dir);
-          }
-          paths <- paths[sapply(paths, FUN=isDirectory)];
-        } # for (kk ...)
-      }
-#      paths <- file.path(paths, subdirs);
-#      paths <- paths[sapply(paths, FUN=isDirectory)];
-    }
+    if (length(subdirs) >= 1) {
+      for (kk in seq(along=subdirs)) {
+        dir <- subdirs[kk];
+        # Smart directory?
+        if (identical(dir, "*"))
+          dir <- ":.*:";
+        pattern <- "^:([^:]*):$";
+        isSmart <- (regexpr(pattern, dir) != -1);
+        if (isSmart) {
+          # Regular expression pattern for subsetting directories
+          pattern <- gsub(pattern, "\\1", dir);
+          pattern <- Arguments$getRegularExpression(pattern);
+
+          paths <- sapply(paths, FUN=function(path) {
+            # List all directories and files
+            dirsT <- list.files(path=path, pattern=pattern, full.names=TRUE);
+            if (length(dirsT) == 0)
+              return(NULL);
+            # Keep only directories
+            dirsT <- dirsT[sapply(dirsT, FUN=isDirectory)];
+            if (length(dirsT) == 0)
+              return(NULL);
+            # Work only with the directory names
+            dirsT <- basename(dirsT);
+
+            # Keep only the first match
+            # TO DO: Find a more powerful set of selecting directories
+            # /HB 2009-02-11
+            dir <- dirsT[1];
+
+            file.path(path, dir);
+          });
+        } else {
+          paths <- file.path(paths, dir);
+        }
+        # In case there are NULLs
+        paths <- unlist(paths, use.names=FALSE);
+        # Keep only directories
+        paths <- paths[sapply(paths, FUN=isDirectory)];
+      } # for (kk ...)
+    } # if (length(subdirs) >= 1)
   
     if (length(paths) > 1) {
       warning("Found duplicated data set: ", paste(paths, collapse=", "));
       paths <- paths[1];
     }
-  }
+  } # if (length(paths) > 0)
   
   if (length(paths) == 0) {
     paths <- NULL;

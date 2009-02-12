@@ -225,14 +225,21 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
   }
   verbose && cat(verbose, "xOut:");
   verbose && str(verbose, xOut);
+  # Sanity check
+  xOut <- Arguments$getDoubles(xOut);
+
   naValue <- as.double(NA);
   yOut <- rep(naValue, length(xOut));
   verbose && cat(verbose, "yOut:");
   verbose && str(verbose, yOut);
+  # Sanity check
+  stopifnot(length(yOut) == length(xOut));
 
   statesOut <- getStates(this, x=xOut);
   verbose && cat(verbose, "statesOut:");
   verbose && str(verbose, statesOut);
+  # Sanity check
+  stopifnot(length(statesOut) == length(xOut));
 
   uniqueStates <- unique(statesOut);
   uniqueStates <- sort(uniqueStates, na.last=TRUE);
@@ -272,19 +279,27 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Identify target loci with this state
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (is.na(state)) {
-      keepOut <- is.na(statesOut);
-    } else {
-      keepOut <- (statesOut == state);
-    }
-    keepOut <- whichVector(keepOut);
+    keepOut <- is.element(statesOut, state);
     verbose && summary(verbose, keepOut);
+
+    # Sanity check
+    keepOut <- Arguments$getLogicals(keepOut);
+    keepOut <- whichVector(keepOut);
+    # Sanity check
+    keepOut <- Arguments$getIndices(keepOut);
+
     statesOutSS <- statesOut[keepOut];
     verbose && cat(verbose, "statesOutSS:");
     verbose && str(verbose, statesOutSS);
+    verbose && summary(verbose, statesOutSS);
+
     xOutSS <- xOut[keepOut];
     verbose && cat(verbose, "xOutSS:");
     verbose && str(verbose, xOutSS);
+    verbose && summary(verbose, xOutSS);
+
+    # Sanity check
+    xOutSS <- Arguments$getDoubles(xOutSS);
 
 
     verbose && enter(verbose, "Binned smoothing");
