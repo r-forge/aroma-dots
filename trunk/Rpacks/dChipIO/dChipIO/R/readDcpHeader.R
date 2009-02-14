@@ -29,6 +29,19 @@
 #*/########################################################################### 
 readDcpHeader <- function(con, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rawToString <- function(raw, ...) {
+    # This approach drops all '\0', in order to avoid warnings
+    # in rawToChar().  Note, it does not truncate the string after
+    # the first '\0'.  However, such strings should never occur in
+    # the first place.
+    raw <- raw[raw != as.raw(0)];
+    rawToChar(raw);
+  } # rawToString()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'con':
@@ -77,9 +90,9 @@ readDcpHeader <- function(con, ...) {
   hdr$CellDim <- readBin(con=con, what="integer", size=4, signed=TRUE, n=1);
 # print(seek(con, read="r"));
 
-  hdr$DatFile <- rawToChar(readBin(con=con, what="raw", n=1000));
+  hdr$DatFile <- rawToString(readBin(con=con, what="raw", n=1000));
 # print(seek(con, read="r"));
-  hdr$BaselineFile <- rawToChar(readBin(con=con, what="raw", n=1000));
+  hdr$BaselineFile <- rawToString(readBin(con=con, what="raw", n=1000));
 # print(seek(con, read="r"));
 
   hdr$ArrayOutlierPct <- readBin(con=con, what="double", size=4, signed=TRUE, n=1);
@@ -92,7 +105,7 @@ readDcpHeader <- function(con, ...) {
   # Clean up the header
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   hdr$dummy <- NULL; 
-  hdr$Header <- paste(rawToChar(hdr$Header));
+  hdr$Header <- paste(rawToString(hdr$Header));
   hdr$DatFile <- paste(hdr$DatFile);
   hdr$BaselineFile <- paste(hdr$BaselineFile);
 
@@ -102,6 +115,10 @@ readDcpHeader <- function(con, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2009-02-13
+# o Using rawToString() instead of rawToChar() to avoid warnings on
+#   'truncating string with embedded nul:...'.
+# 2008-xx-xx
 # o Added Rdoc comments.
 # o Added argument 'clean'.
 # 2008-01-30
