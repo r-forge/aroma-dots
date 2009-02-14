@@ -29,6 +29,19 @@
 #*/########################################################################### 
 readCdfBinHeader <- function(con, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rawToString <- function(raw, ...) {
+    # This approach drops all '\0', in order to avoid warnings
+    # in rawToChar().  Note, it does not truncate the string after
+    # the first '\0'.  However, such strings should never occur in
+    # the first place.
+    raw <- raw[raw != as.raw(0)];
+    rawToChar(raw);
+  } # rawToString()
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'con':
@@ -54,9 +67,9 @@ readCdfBinHeader <- function(con, ...) {
 
   LINE_LEN <- 1000;
   UNIT_NAME_LEN <- 50;
-  hdr$FileName <- paste(rawToChar(readBin(con=con, what="raw", n=LINE_LEN-1)));
+  hdr$FileName <- rawToString(readBin(con=con, what="raw", n=LINE_LEN-1));
   hdr$Format <- readBin(con=con, what="integer", size=1, signed=FALSE, n=1);
-  hdr$ChipType <- paste(rawToChar(readBin(con=con, what="raw", n=UNIT_NAME_LEN)));
+  hdr$ChipType <- rawToString(readBin(con=con, what="raw", n=UNIT_NAME_LEN));
 
   # Don't know why we have to add this, but in the dChip source code file
   # 'cdf.cpp' there is the following comment:
@@ -79,6 +92,9 @@ readCdfBinHeader <- function(con, ...) {
 
 ##############################################################################
 # HISTORY:
+# 2009-02-13
+# o Using rawToString() instead of rawToChar() to avoid warnings on
+#   'truncating string with embedded nul:...'.
 # 2008-08-20
 # o Added Rdoc comments.
 # 2008-02-03
