@@ -331,3 +331,8 @@ as.data.frame.SegmentedCopyNumbers
  colGaussianSmoothing colGaussianSmoothing.matrix getUniqueStates
  getUniqueStates.SegmentedCopyNumbers
 byChipType.UnitNamesFile
+getUnitsOnChromosomes.AromaUgpFile getUnitsOnChromosomes
+calculateAverageColumnAcrossFiles.GenericTabularFileSet
+  calculateAverageColumnAcrossFiles
+  calculateAverageColumnAcrossFiles.GenericTabularFileSet
+  readDataFrame.AromaUnitSignalBinaryFile

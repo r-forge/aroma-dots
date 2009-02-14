@@ -1,7 +1,11 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.1x [2009-02-10]
+Version: 1.0.2 [2009-02-13]
+o Added readDataFrame(..., units=NULL) to AromaUnitSignalBinaryFile.
+
+
+Version: 1.0.1 [2009-02-12]
 o Now byName() of AromaUnit(FracB|Total)CnBinarySet searches 
   rawCnData/ then cnData/.
 o Added SegmentedCopyNumbers class.
@@ -10,6 +14,7 @@ o Added colBinnedSmoothing() and colKernelSmoothing().
 o Added getAromaUgpFile() to UnitNamesFile.
 o Added shakyText().
 o Added static byChipType() to UnitNamesFile.
+o Added argument 'fullname' to getChipType() of AromaUnitSignalBinaryFile.
 o Now argument 'files' in extract() of GenericDataFileSet can 
   also be a vector of string.
 o ROBUSTNESS: Added support for optional validation/selection by the

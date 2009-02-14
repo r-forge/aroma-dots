@@ -129,6 +129,10 @@ setMethodS3("getUnitsAt", "AromaUgpFile", function(this, chromosomes, region=NUL
   idxs;
 }, protected=TRUE)
 
+setMethodS3("getUnitsOnChromosomes", "AromaUgpFile", function(this, ...) {
+  getUnitsAt(this, ...);
+}, protected=TRUE)
+
 
 setMethodS3("getUnitsOnChromosome", "AromaUgpFile", function(this, chromosome, ...) {
   # Argument 'chromosome':
@@ -136,6 +140,9 @@ setMethodS3("getUnitsOnChromosome", "AromaUgpFile", function(this, chromosome, .
 
   getUnitsAt(this, chromosomes=chromosome, ...);
 }, protected=TRUE)
+
+
+
 
 
 setMethodS3("getPositions", "AromaUgpFile", function(this, units=NULL, ...) {
@@ -269,6 +276,8 @@ setMethodS3("importFromGenericTabularFile", "AromaUgpFile", function(this, src, 
 
 ############################################################################
 # HISTORY:
+# 2009-02-12
+# o Added getUnitsOnChromosomes() to AromaUgpFile.
 # 2008-05-24
 # o Now allocate() of AromaUgpFile adds footer 'createdOn'.
 # 2008-05-21

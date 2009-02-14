@@ -110,6 +110,11 @@ setMethodS3("allocate", "AromaUnitSignalBinaryFile", function(static, ..., platf
 
 
 
+setMethodS3("readDataFrame", "AromaUnitSignalBinaryFile", function(this, units=NULL, ..., rows=units) {
+  NextMethod("readDataFrame", this, rows=rows, ...);
+})
+
+
 setMethodS3("extractMatrix", "AromaUnitSignalBinaryFile", function(this, units=NULL, rows=units, ...) {
   NextMethod("extractMatrix", rows=rows, ...);  
 })
@@ -132,19 +137,23 @@ setMethodS3("getPlatform", "AromaUnitSignalBinaryFile", function(this, ...) {
   res;
 })
 
-setMethodS3("getChipType", "AromaUnitSignalBinaryFile", function(this, ...) {
+setMethodS3("getChipType", "AromaUnitSignalBinaryFile", function(this, fullname=TRUE, ...) {
   footer <- readFooter(this);
-  res <- footer$chipType;
+  chipType <- footer$chipType;
 
-  if (is.null(res)) {
+  if (is.null(chipType)) {
     throw("File format error: This ", class(this)[1], " file does not contain information on chip type in the file footer: ", getPathname(this));
   }
 
-  res <- as.character(res);
-  res <- unlist(strsplit(res, split="[\t]"));
-  res <- trim(res);
+  chipType <- as.character(chipType);
+  chipType <- unlist(strsplit(chipType, split="[\t]"));
+  chipType <- trim(chipType);
 
-  res;
+  if (!fullname) {
+    chipType <- gsub(",.*", "", chipType);
+  }
+
+  chipType;
 })
 
 
@@ -198,6 +207,9 @@ setMethodS3("getAromaUgpFile", "AromaUnitSignalBinaryFile", function(this, ..., 
 
 ############################################################################
 # HISTORY:
+# 2009-02-12
+# o Added argument 'fullname' to getChipType() of AromaUnitSignalBinaryFile.
+# o Added readDataFrame(..., units=NULL) to AromaUnitSignalBinaryFile.
 # 2009-02-10
 # o Added a sanity check to getAromaUgpFile() of AromaUnitSignalBinaryFile,
 #   which asserts that the number of units in the located UGP file match

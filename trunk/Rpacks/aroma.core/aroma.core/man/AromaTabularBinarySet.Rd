@@ -50,7 +50,7 @@ extends \link[aroma.core]{GenericTabularFileSet}\cr
 
 
  \bold{Methods inherited from GenericTabularFileSet}:\cr
-extractMatrix
+calculateAverageColumnAcrossFiles, extractMatrix
 
  \bold{Methods inherited from GenericDataFileSet}:\cr
 append, appendFiles, as.list, byName, clearCache, copyTo, equals, extract, findByName, fromFiles, getAlias, getFile, getFileClass, getFileSize, getFullName, getFullNames, getFullNameTranslator, getName, getNames, getPath, getPathnames, getTags, hasFile, hasTag, hasTags, indexOf, lapply, nbrOfFiles, sapply, seq, setAlias, setFullName, setFullNamesTranslator, setFullNameTranslator, setName, setTags, update2, validate

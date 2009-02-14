@@ -725,6 +725,11 @@
 \alias{getUniqueStates}
 \alias{getUniqueStates.SegmentedCopyNumbers}
 \alias{byChipType.UnitNamesFile}
+\alias{getUnitsOnChromosomes.AromaUgpFile}
+\alias{getUnitsOnChromosomes}
+\alias{calculateAverageColumnAcrossFiles.GenericTabularFileSet}
+\alias{calculateAverageColumnAcrossFiles}
+\alias{readDataFrame.AromaUnitSignalBinaryFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

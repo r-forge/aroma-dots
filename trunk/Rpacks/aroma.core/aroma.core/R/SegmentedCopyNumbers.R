@@ -32,12 +32,17 @@ setConstructorS3("SegmentedCopyNumbers", function(..., states=NULL) {
   }
 
   extend(RawCopyNumbers(...), "SegmentedCopyNumbers", 
-    states = states
+    .states = states
   )
 })
 
 setMethodS3("getStates", "SegmentedCopyNumbers", function(this, x=getPositions(this), ...) {
-  states <- this$states;
+  # Argument 'x':
+  x <- Arguments$getDoubles(x, disallow=NULL);
+
+  nbrOfLoci <- length(x);
+
+  states <- this$.states;
 
   if (is.function(states)) {
     fcn <- states;
@@ -45,6 +50,9 @@ setMethodS3("getStates", "SegmentedCopyNumbers", function(this, x=getPositions(t
     states <- fcn(x, chromosome=chromosome, ...);
     storage.mode(states) <- "integer";
   }
+
+  # Sanity check
+  stopifnot(length(states) == nbrOfLoci);
 
   states;
 })
