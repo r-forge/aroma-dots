@@ -870,3 +870,7 @@ PdInfo2Cdf
   exportTotalAndFracB.SnpChipEffectSet getAromaUnitFracBCnBinarySet
   getAromaUnitFracBCnBinarySet.default getAromaUnitTotalCnBinarySet
   getAromaUnitTotalCnBinarySet.default
+ byChipType.DChipCdfBinFile exportTotalAndFracB.DChipDcpSet
+ findByChipType.DChipCdfBinFile getCdfBin getCdfBin.DChipDcpSet
+ getChipType.DChipDcpSet mapToUnitNamesFile
+ mapToUnitNamesFile.DChipCdfBinFile

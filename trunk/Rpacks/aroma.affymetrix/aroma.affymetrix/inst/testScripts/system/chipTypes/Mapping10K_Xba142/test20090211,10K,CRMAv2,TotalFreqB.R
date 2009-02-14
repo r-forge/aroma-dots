@@ -27,3 +27,11 @@ print(fracB);
 units <- 100 + 1:10
 print(extractMatrix(theta, units=units))
 print(extractMatrix(fracB, units=units))
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Calculate average theta across arrays
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+thetaR <- calculateAverageColumnAcrossFiles(theta, verbose=log);
+str(thetaR);
+
