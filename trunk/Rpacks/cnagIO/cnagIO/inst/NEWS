@@ -1,5 +1,10 @@
 Package: cnagIO
 ================
 
+Version: 0.1.1 [2009-02-13]
+o CLEAN UP: readCfhHeader() and readCfnHeader() no longer give
+  warnings on "In rawToChar(...) : truncating string with embedded nul". 
+
+
 Version: 0.1.0 [2008-10-27]
 o Package created.

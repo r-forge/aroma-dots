@@ -2,6 +2,15 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rawToString <- function(raw, ...) {
+    # This approach drops all '\0', in order to avoid warnings
+    # in rawToChar().  Note, it does not truncate the string after
+    # the first '\0'.  However, such strings should never occur in
+    # the first place.
+    raw <- raw[raw != as.raw(0)];
+    rawToChar(raw);
+  } # rawToString()
+ 
   readByte <- function(con, n=1, ...) {
     value <- readBin(con, what="integer", size=1, n=n, ...);
     value;
@@ -32,7 +41,7 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
     if (len == 255)
       len <- readShort(con, n=1, signed=FALSE);
     s <- readBin(con, what="raw", n=len, ...);
-    s <- rawToChar(s);
+    s <- rawToString(s);
     s;
   }
 
@@ -46,7 +55,7 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
       if (ch == sep)
         count <- count + 1;
     }
-    bfr <- rawToChar(bfr);
+    bfr <- rawToString(bfr);
     bfr <- strsplit(bfr, split="$", fixed=TRUE)[[1]];
     bfr;
   }
@@ -149,7 +158,7 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
   # Unknown
   dummy5 <- readRaw(con, n=14);
   verbose && cat(verbose, "Dummy 5: ", paste(dummy5, collapse=", "));
-#  verbose && cat(verbose, "Dummy 5: ", rawToChar(dummy5));
+#  verbose && cat(verbose, "Dummy 5: ", rawToString(dummy5));
 
   # Number of reference
   nbrOfReferences <- readInt(con, n=1);
@@ -166,7 +175,7 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
   # Unknown
 #  dummy6 <- readRaw(con, n=103);
 #  verbose && cat(verbose, "Dummy 6: ", paste(dummy6, collapse=", "));
-#  print(rawToChar(dummy6))
+#  print(rawToString(dummy6))
 
   # String
 #  str1 <- readString(con);
@@ -209,7 +218,7 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
 #    str1 = str1,
     dataOffset = dataOffset,
     raw = raw,
-    rawAsChar = rawToChar(raw),
+    rawAsChar = rawToString(raw),
     nbrOfSnps = nbrOfSnps,
     bytesPerSnp = (nbrOfBytes - dataOffset)/nbrOfSnps
   );
@@ -221,6 +230,8 @@ setMethodS3("readCfhHeader", "default", function(pathname, ..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-13
+# o Now using rawToString() instead of rawToChar().
 # 2007-04-06
 # o Created.
 ############################################################################

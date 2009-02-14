@@ -2,6 +2,15 @@ setMethodS3("readCfnHeader", "default", function(pathname, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  rawToString <- function(raw, ...) {
+    # This approach drops all '\0', in order to avoid warnings
+    # in rawToChar().  Note, it does not truncate the string after
+    # the first '\0'.  However, such strings should never occur in
+    # the first place.
+    raw <- raw[raw != as.raw(0)];
+    rawToChar(raw);
+  } # rawToString()
+
   readByte <- function(con, n=1, ...) {
     value <- readBin(con, what="integer", size=1, n=n);
     value;
@@ -20,7 +29,7 @@ setMethodS3("readCfnHeader", "default", function(pathname, ..., verbose=FALSE) {
   readString <- function(con, ...) {
     len <- readByte(con, n=1);
     s <- readBin(con, what="raw", n=len);
-    s <- rawToChar(s);
+    s <- rawToString(s);
     s;
   }
 
@@ -125,7 +134,7 @@ setMethodS3("readCfnHeader", "default", function(pathname, ..., verbose=FALSE) {
     nonSelfBaseRange = nonSelfBaseRange,
     dataOffset = dataOffset,
     raw = raw,
-    rawAsChar = rawToChar(raw),
+    rawAsChar = rawToString(raw),
     nbrOfSnps = nbrOfSnps,
     bytesPerSnp = (nbrOfBytes - dataOffset)/nbrOfSnps
   );
@@ -137,6 +146,8 @@ setMethodS3("readCfnHeader", "default", function(pathname, ..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-13
+# o Now using rawToString() instead of rawToChar().
 # 2007-04-06
 # o Created.
 ############################################################################
