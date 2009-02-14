@@ -47,7 +47,7 @@ setMethodS3("getPlatform", "AromaMicroarrayDataSet", function(this, ...) {
 
 setMethodS3("getChipType", "AromaMicroarrayDataSet", function(this, ...) {
   file <- getFile(this, 1);
-  getChipType(file);
+  getChipType(file, ...);
 })
 
 
@@ -59,6 +59,8 @@ setMethodS3("nbrOfArrays", "AromaMicroarrayDataSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-13
+# o Now getChipType() passes on '...'.
 # 2008-05-23
 # o Added nbrOfArrays().
 # 2008-05-09
