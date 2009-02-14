@@ -1685,6 +1685,14 @@
 \alias{getAromaUnitFracBCnBinarySet.default}
 \alias{getAromaUnitTotalCnBinarySet}
 \alias{getAromaUnitTotalCnBinarySet.default}
+\alias{byChipType.DChipCdfBinFile}
+\alias{exportTotalAndFracB.DChipDcpSet}
+\alias{findByChipType.DChipCdfBinFile}
+\alias{getCdfBin}
+\alias{getCdfBin.DChipDcpSet}
+\alias{getChipType.DChipDcpSet}
+\alias{mapToUnitNamesFile}
+\alias{mapToUnitNamesFile.DChipCdfBinFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

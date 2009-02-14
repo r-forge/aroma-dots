@@ -65,9 +65,12 @@ setMethodS3("getFileFormat", "DChipCdfBinFile", function(this, ...) {
   ver;
 })
  
-setMethodS3("getChipType", "DChipCdfBinFile", function(this, ...) {
+setMethodS3("getChipType", "DChipCdfBinFile", function(this, fullname=TRUE, ...) {
   hdr <- getHeader(this);
   chipType <- hdr$ChipType;
+  if (!fullname) {
+    chipType <- gsub(",.*", "", chipType);
+  }
   chipType;
 })
 
@@ -93,6 +96,27 @@ setMethodS3("nbrOfCells", "DChipCdfBinFile", function(this, ...) {
   nbrOfCells;
 })
  
+
+setMethodS3("findByChipType", "DChipCdfBinFile", function(this, chipType, tags=NULL, ...) {
+  # Argument 'chipType':
+  chipType <- Arguments$getCharacter(chipType);
+
+  fullname <- paste(c(chipType, tags), collapse=",");
+  parts <- strsplit(fullname, split=",")[[1]];
+  chipType <- parts[1];
+  tags <- parts[-1];
+  pattern <- sprintf("^%s.cdf.bin$", fullname);
+  pathname <- findAnnotationDataByChipType(chipType, pattern=pattern);
+
+  pathname;
+})
+
+setMethodS3("byChipType", "DChipCdfBinFile", function(this, ...) {
+  pathname <- findByChipType(this, ...);
+  DChipCdfBinFile(pathname);
+})
+
+
 setMethodS3("fromFile", "DChipCdfBinFile", function(static, filename, path=NULL, ..., verbose=FALSE, .checkArgs=TRUE) {
   df <- newInstance(static, filename=filename, path=path, ...);
   # Try to read the header
@@ -161,6 +185,8 @@ setMethodS3("readDataFrame", "DChipCdfBinFile", function(this, units=NULL, field
 
 ##############################################################################
 # HISTORY:
+# 2009-02-13
+# o Added argument fullname=TRUE to getChipType() of DChipCdfBinFile.
 # 2008-08-20
 # o Created.
 ##############################################################################

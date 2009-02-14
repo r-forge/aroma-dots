@@ -1,7 +1,13 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.1x [2009-02-11]
+Version: 1.0.2 [2009-02-14]
+o Added getCdfBin() and getChipType() to DChipDcpSet.
+o Added findByChipType() and byChipType() to DChipCdfBinFile.
+  Added argument fullname=TRUE to getChipType() of DChipCdfBinFile.
+
+
+Version: 1.0.1 [2009-02-13]
 o Cleaned up the MatSmoothing class.
 o Cleaned up the AffymetrixCelSetTuple class.
 o Added getAromaUnit{Total|FracB}CnFileSet() to SnpChipEffectSet, which
@@ -16,6 +22,7 @@ o BUG FIX: setMergeStrands() of SnpPlm and setCombineAlleles() of
   settings of the underlying parameter files.
   SnpPlm itself, only only the underlying parameter files.
   Added getMergeStrands() to SnpPlm and getCombineAlleles() to CnPlm.
+o Package pass R CMD check and all redundancy tests.
 
 
 Version: 1.0.0 [2009-01-12]
