@@ -33,7 +33,7 @@ setMethodS3("getColumnNames", "AromaCellPositionFile", function(this, ...) {
 
 
 
-setMethodS3("byChipType", "AromaCellPositionFile", function(static, chipType, tags=NULL, nbrOfCells=NULL, validate=TRUE, ..., verbose=FALSE) {
+setMethodS3("byChipType", "AromaCellPositionFile", function(static, chipType, tags=NULL, nbrOfCells=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -213,6 +213,8 @@ setMethodS3("allocateFromCdf", "AromaCellPositionFile", function(static, cdf, pa
 
 ############################################################################
 # HISTORY:
+# 2009-02-16 [HB]
+# Removed argument 'validate' from byChipType() of AromaCellPositionFile.
 # 2009-02-10 [HB]
 # o Added optional validation of number of cells to byChipType().
 # o Static method byChipType() was not declared static.

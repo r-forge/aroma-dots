@@ -98,7 +98,7 @@ setMethodS3("findByChipType", "UgpGenomeInformation", function(static, ...) {
 # @keyword IO
 # @keyword programming
 #*/###########################################################################
-setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., nbrOfUnits=NULL, validate=TRUE, verbose=FALSE) {
+setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tags=NULL, ..., nbrOfUnits=NULL, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -113,7 +113,7 @@ setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tag
   }
 
 
-  ugp <- AromaUgpFile$byChipType(chipType, tags=tags, validate=validate, nbrOfUnits=nbrOfUnits, ...);
+  ugp <- AromaUgpFile$byChipType(chipType, tags=tags, nbrOfUnits=nbrOfUnits, ...);
   pathname <- getPathname(ugp);
 
   verbose && enter(verbose, "Instantiating ", class(static)[1]);
@@ -301,6 +301,8 @@ setMethodS3("getUnitsOnChromosome", "UgpGenomeInformation", function(this, ...) 
 
 ############################################################################
 # HISTORY:
+# 2009-02-16
+# o Removed argument 'validate' from byChipType().
 # 2008-12-29
 # o Added argument 'units' to readDataFrame().
 # 2008-07-23
