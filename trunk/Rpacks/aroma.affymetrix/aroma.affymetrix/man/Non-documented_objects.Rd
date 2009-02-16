@@ -1694,6 +1694,7 @@
 \alias{mapToUnitNamesFile}
 \alias{mapToUnitNamesFile.DChipCdfBinFile}
 \alias{exportTotalCnRatioSet.AffymetrixCnChpSet}
+\alias{exportTotalCnRatioSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
