@@ -1,10 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.2 [2009-02-14]
+Version: 1.0.2 [2009-02-15]
 o Added getCdfBin() and getChipType() to DChipDcpSet.
 o Added findByChipType() and byChipType() to DChipCdfBinFile.
   Added argument fullname=TRUE to getChipType() of DChipCdfBinFile.
+o Added exportTotalCnRatioSet() to AffymetrixCnChpSet.
 
 
 Version: 1.0.1 [2009-02-13]
