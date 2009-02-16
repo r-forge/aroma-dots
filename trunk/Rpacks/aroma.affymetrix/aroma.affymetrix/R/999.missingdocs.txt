@@ -874,3 +874,4 @@ PdInfo2Cdf
  findByChipType.DChipCdfBinFile getCdfBin getCdfBin.DChipDcpSet
  getChipType.DChipDcpSet mapToUnitNamesFile
  mapToUnitNamesFile.DChipCdfBinFile
+exportTotalCnRatioSet.AffymetrixCnChpSet

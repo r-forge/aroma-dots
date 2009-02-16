@@ -1693,6 +1693,7 @@
 \alias{getChipType.DChipDcpSet}
 \alias{mapToUnitNamesFile}
 \alias{mapToUnitNamesFile.DChipCdfBinFile}
+\alias{exportTotalCnRatioSet.AffymetrixCnChpSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
