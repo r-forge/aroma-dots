@@ -34,6 +34,15 @@ setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, chromosome=NA, name
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'cn':
   if (!is.null(cn)) {
+    if (inherits(cn, "RawCopyNumbers")) {
+      object <- cn;
+      cn <- object$cn;
+      x <- object$x;
+      chromosome <- object$chromosome;
+      name <- object$name;
+      rm(object);
+    }
+
     if (!is.vector(cn)) {
       throw("Argument 'cn' must be a vector: ", mode(cn)[1]);
     }
@@ -424,6 +433,9 @@ setMethodS3("extractRawCopyNumbers", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-02-17
+# o Now RawCopyNumbers() also takes another RawCopyNumbers object as
+#   input.
 # 2009-02-16
 # o Added optional constructor argument 'name'.
 # 2009-02-07
