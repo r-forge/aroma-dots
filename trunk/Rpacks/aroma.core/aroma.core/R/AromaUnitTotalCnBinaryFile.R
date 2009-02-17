@@ -38,6 +38,9 @@ setMethodS3("extractRawCopyNumbers", "AromaUnitTotalCnBinaryFile", function(this
 
   verbose && enter(verbose, "Extracting RawCopyNumbers");
 
+  name <- getFullName(this);
+  verbose && cat(verbose, "Name: ", name);
+
   verbose && cat(verbose, "Chromosome: ", chromosome);
   verbose && enter(verbose, "Identifying units on chromosome");
   ugp <- getAromaUgpFile(this, ..., verbose=less(verbose,50));
@@ -53,8 +56,8 @@ setMethodS3("extractRawCopyNumbers", "AromaUnitTotalCnBinaryFile", function(this
 
   verbose && enter(verbose, "Extracting data");
   M <- extractMatrix(this, units=units, drop=TRUE, verbose=less(verbose,5));
-  verbose && str(verbose, M);  
-  rawCNs <- RawCopyNumbers(x=pos, cn=M, chromosome=chromosome);
+  verbose && str(verbose, M);
+  rawCNs <- RawCopyNumbers(x=pos, cn=M, chromosome=chromosome, name=name);
 
   # Add annotation data
   rawCNs$platform <- getPlatform(this);
@@ -72,6 +75,8 @@ setMethodS3("extractRawCopyNumbers", "AromaUnitTotalCnBinaryFile", function(this
 
 ############################################################################
 # HISTORY:
+# 2009-02-16
+# o Now extractRawCopyNumbers() also includes the full (sample) name.
 # 2008-06-12
 # o Now extractRawCopyNumbers() adds annotation data to the returned object,
 #   i.e. platform, chipType, and fullname.

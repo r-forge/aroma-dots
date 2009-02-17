@@ -47,7 +47,8 @@ setMethodS3("getStates", "SegmentedCopyNumbers", function(this, x=getPositions(t
   if (is.function(states)) {
     fcn <- states;
     chromosome <- getChromosome(this);
-    states <- fcn(x, chromosome=chromosome, ...);
+    name <- getName(this);
+    states <- fcn(x, chromosome=chromosome, name=name, ...);
     storage.mode(states) <- "integer";
   }
 
@@ -368,6 +369,9 @@ setMethodS3("points", "SegmentedCopyNumbers", function(x, ..., col=getStateColor
 
 ############################################################################
 # HISTORY:
+# 2009-02-16
+# o Now getStates() also passes the optional 'name' field to the "truth"
+#   function.
 # 2009-02-08
 # o Added getUniqueStates().
 # 2009-02-07

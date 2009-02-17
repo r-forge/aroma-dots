@@ -336,3 +336,4 @@ calculateAverageColumnAcrossFiles.GenericTabularFileSet
   calculateAverageColumnAcrossFiles
   calculateAverageColumnAcrossFiles.GenericTabularFileSet
   readDataFrame.AromaUnitSignalBinaryFile
+getName.RawCopyNumbers
