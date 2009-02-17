@@ -1,73 +1,34 @@
 if (interactive()) savehistory();
 library("aroma.cn.eval");
 
-log <- verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
-
-tagsList <- list("GTC", "dChip,AVG,ref=median", "dChip,MBEI,ref=median");
-dataSet <- "HapMap270,6.0,CEU,founders,three";
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Load raw CN data sets
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-dsList <- lapply(tagsList, FUN=function(tags) {
-  AromaUnitTotalCnBinarySet$byName(dataSet, tags=tags, chipType="*");
-});
-# Keep only common samples (just in case)
-names <- Reduce(intersect, lapply(dsList, FUN=getNames));
-dsList <- lapply(dsList, FUN=extract, names);
-print(dsList);
-
-
-tags <- Reduce(intersect, lapply(dsList, FUN=getTags));
-methods <- sapply(dsList, FUN=function(ds) {
-  paste(setdiff(getTags(ds), c(tags, "ref=median")), collapse=",");
-})
-platforms <- sapply(dsList, FUN=getPlatform);
-chipTypes <- sapply(dsList, FUN=getChipType);
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Region of interest with known CN states
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Sample of interest
-array <- "NA06985";
-
-# Chromosomal region of interest
-chromosome <- 2;
-region <- c(81,86)*1e6;
-
-# A function give the true CN state for a given set of positions
-truth <- function(x, name=NULL, ...) {
-  t <- integer(length(x));
-  # Location of change points
-  xCps <- c(83.09, 83.72)*1e6;
-  # Neutral
-  t[x <= xCps[1] | x >= xCps[2]] <- 0L;
-  # Loss
-  t[xCps[1] <= x & x < xCps[2]] <- -1L;
-  # Unknown (safety region of 50kb each side)
-  dx <- 50e3;
-  for (kk in seq(along=xCps)) {
-    xCp <- xCps[kk];
-    t[xCp-dx < x & x < xCp+dx] <- NA;
-  }
-  t;
-} # truth()
-
+# Sample and region of interest
+array <- "NA06985"; chromosome <- 2; region <- c(81,86)*1e6; states <- c(-1,0);
+array <- "NA06985"; chromosome <- 14; region <- c(19.25,19.80)*1e6; states <- c(0,+1);
+#array <- "NA06991"; chromosome <- 22; region <- c(23.5,25.0)*1e6; states <- c(0,+1);
+#array <- "NA06993"; chromosome <- 1; region <- c(147.3,149.0)*1e6; states <- c(0,+1);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Extract data from region of interest
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 cnList <- lapply(dsList, FUN=function(ds) {
   df <- getFile(extract(ds, array), 1);
-  cn <- extractRawCopyNumbers(df, chromosome=chromosome, region=region);
-  if (is.element("dChip", getTags(ds)))
+  subset <- NULL;
+  if (getChipType(df) != chipType) {
+    subset <- poolOfUnits;
+  }
+  cn <- extractRawCopyNumbers(df, chromosome=chromosome, region=region, units=subset);
+  if (any(is.element(c("dChip", "CRMAv2"), getTags(ds))))
     cn$cn <- cn$cn-1;
-  cn <- SegmentedCopyNumbers(cn=cn$cn, x=cn$x, states=truth);  
+  cn <- SegmentedCopyNumbers(cn, states=truth);
   cn;
 })
 names(cnList) <- sprintf("%s\n%s\n%s", methods, platforms, chipTypes);
 print(cnList);
+
 
 # Range of loci covered in all platforms
 xRange <- range(sapply(cnList, FUN=xRange));
@@ -97,6 +58,7 @@ for (kk in seq(along=cnList)) {
   cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth);
   points(cnS, cex=1, col="white");
   points(cnS, cex=0.5, col="orange"); 
+  points(cnS, cex=0.5); 
   lines(cnS, lwd=3, col="orange"); 
   label <- strsplit(names(cnList)[kk], split="\n")[[1]];
   label <- label[1];
@@ -110,23 +72,30 @@ for (kk in seq(along=cnList)) {
 # ROC performances at various resolutions (in kb)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 devSet("ROC");
-states <- c(-1,0);
 binWidths <- c(1,2,5,10)*1e3;
+binWidths <- c(0,1,2,3)*1e3;
 layout(matrix(seq(along=binWidths), ncol=2, byrow=TRUE));
 par(mar=c(3,3,2,1)+0.1, mgp=c(1.4,0.4,0));
 fpLim <- c(0,0.20);
 for (ww in seq(along=binWidths)) {
   binWidth <- binWidths[ww];
 
-  # Smooth CNs using consecutive bins of given width (in kb)
-  cnSList <- lapply(cnList, FUN=function(cn) {
-    cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth);
-    cnS <- extractSubsetByState(cnS, states=states);
-    cnS;
-  })
+  if (binWidth > 0) {
+    # Smooth CNs using consecutive bins of given width (in kb)
+    cnSList <- lapply(cnList, FUN=function(cn) {
+      cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth);
+      cnS <- extractSubsetByState(cnS, states=states);
+      cnS;
+    }) 
+    binLabel <- sprintf("Bin width %g kb", binWidth/1e3);
+  } else {
+    cnSList <- cnList;
+    binLabel <- sprintf("Full resolution");
+  }
   print(cnSList);
 
   fits <- lapply(cnSList, FUN=function(cnS) {
+    cat("Number of missing values: ", sum(is.na(cnS$cn)), "\n", sep="");
     fitRoc(cnS, states=states, recall=states[1]);
   });
 
@@ -136,7 +105,7 @@ for (ww in seq(along=binWidths)) {
     if (kk == 1) {
       plot(roc, type="l", lwd=3, col=kk, xlim=fpLim, ylim=sort(1-fpLim));
       abline(a=0, b=1, lty=3);
-      stext(side=3, pos=1, sprintf("Bin width %g kb", binWidth/1e3));
+      stext(side=3, pos=1, binLabel);
     } else {
       lines(roc, lwd=3, col=kk);
     }

@@ -1,31 +1,6 @@
 if (interactive()) savehistory();
 library("aroma.cn.eval");
 
-log <- verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
-
-tagsList <- list("GTC", "dChip,AVG,ref=median", "dChip,MBEI,ref=median");
-dataSet <- "HapMap270,6.0,CEU,founders,three";
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Load raw CN data sets
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-dsList <- lapply(tagsList, FUN=function(tags) {
-  AromaUnitTotalCnBinarySet$byName(dataSet, tags=tags, chipType="*");
-});
-# Keep only common samples (just in case)
-names <- Reduce(intersect, lapply(dsList, FUN=getNames));
-dsList <- lapply(dsList, FUN=extract, names);
-print(dsList);
-
-
-tags <- Reduce(intersect, lapply(dsList, FUN=getTags));
-methods <- sapply(dsList, FUN=function(ds) {
-  paste(setdiff(getTags(ds), c(tags, "ref=median")), collapse=",");
-})
-platforms <- sapply(dsList, FUN=getPlatform);
-chipTypes <- sapply(dsList, FUN=getChipType);
-
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Region of interest with known CN states
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -36,24 +11,6 @@ array <- "NA06985";
 chromosome <- 2;
 region <- c(81,86)*1e6;
 
-# A function give the true CN state for a given set of positions
-truth <- function(x, name=NULL, ...) {
-  t <- integer(length(x));
-  # Location of change points
-  xCps <- c(83.09, 83.72)*1e6;
-  # Neutral
-  t[x <= xCps[1] | x >= xCps[2]] <- 0L;
-  # Loss
-  t[xCps[1] <= x & x < xCps[2]] <- -1L;
-  # Unknown (safety region of 50kb each side)
-  dx <- 50e3;
-  for (kk in seq(along=xCps)) {
-    xCp <- xCps[kk];
-    t[xCp-dx < x & x < xCp+dx] <- NA;
-  }
-  t;
-} # truth()
-
 name <- getNames(extract(dsList[[1]], array))[1];
 print(name);
  
@@ -63,10 +20,14 @@ print(name);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 cnList <- lapply(dsList, FUN=function(ds) {
   df <- getFile(extract(ds, array), 1);
-  cn <- extractRawCopyNumbers(df, chromosome=chromosome, region=region);
-  if (is.element("dChip", getTags(ds)))
+  subset <- NULL;
+  if (getChipType(df) != chipType) {
+    subset <- poolOfUnits;
+  }
+  cn <- extractRawCopyNumbers(df, chromosome=chromosome, region=region, units=subset);
+  if (any(is.element(c("dChip", "CRMAv2"), getTags(ds))))
     cn$cn <- cn$cn-1;
-  cn <- SegmentedCopyNumbers(cn=cn$cn, x=cn$x, states=truth);  
+  cn <- SegmentedCopyNumbers(cn, states=truth);
   cn;
 })
 names(cnList) <- sprintf("%s\n%s\n%s", methods, platforms, chipTypes);
@@ -133,4 +94,3 @@ for (kk in seq(length=nbrOfTracks)) {
   tpRates <- res[,kk+1];
   lines(binWidths/1e3, tpRates, lwd=2, col=trackCols[kk]);
 }
-
