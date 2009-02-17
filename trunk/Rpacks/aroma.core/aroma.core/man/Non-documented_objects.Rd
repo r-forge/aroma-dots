@@ -730,6 +730,7 @@
 \alias{calculateAverageColumnAcrossFiles.GenericTabularFileSet}
 \alias{calculateAverageColumnAcrossFiles}
 \alias{readDataFrame.AromaUnitSignalBinaryFile}
+\alias{getName.RawCopyNumbers}
 
 \description{
   This page contains aliases for all "non-documented" objects that

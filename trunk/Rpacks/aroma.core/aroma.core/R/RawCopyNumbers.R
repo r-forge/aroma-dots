@@ -16,6 +16,7 @@
 #     position of each loci.}
 #   \item{chromosome}{An (optional) @integer specifying the chromosome for
 #     these copy numbers.}
+#   \item{name}{An (optional) @characte string specifying the sample name.}
 #   \item{...}{Not used.}
 # }
 #
@@ -27,7 +28,7 @@
 #
 # @author
 #*/########################################################################### 
-setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, chromosome=NA, ...) {
+setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, chromosome=NA, name=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -66,7 +67,8 @@ setConstructorS3("RawCopyNumbers", function(cn=NULL, x=NULL, chromosome=NA, ...)
   extend(Object(), "RawCopyNumbers", 
     cn = cn,
     chromosome = chromosome,
-    x = x
+    x = x,
+    .name = name
   )
 })
 
@@ -76,6 +78,9 @@ setMethodS3("as.character", "RawCopyNumbers", function(x, ...) {
   this <- x;
 
   s <- sprintf("%s:", class(this)[1]);
+  name <- getName(this);
+  if (is.null(name)) name <- "";
+  s <- c(s, sprintf("Name: %s", as.character(name)));
   s <- c(s, sprintf("Chromosome: %d", getChromosome(this)));
   s <- c(s, sprintf("Number of loci: %d", nbrOfLoci(this)));
   fields <- getLociFields(this);
@@ -126,6 +131,13 @@ setMethodS3("getChromosome", "RawCopyNumbers", function(this, ...) {
 setMethodS3("getCNs", "RawCopyNumbers", function(this, ...) {
   this$cn;
 })
+
+
+setMethodS3("getName", "RawCopyNumbers", function(this, ...) {
+  res <- this$.name;
+  res;
+})
+
 
 setMethodS3("as.data.frame", "RawCopyNumbers", function(x, ...) {
   # To please R CMD check
@@ -412,6 +424,8 @@ setMethodS3("extractRawCopyNumbers", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-02-16
+# o Added optional constructor argument 'name'.
 # 2009-02-07
 # o Added Rdoc comments and example.
 # 2008-05-21
