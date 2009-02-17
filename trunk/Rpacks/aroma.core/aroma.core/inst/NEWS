@@ -1,12 +1,15 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.2 [2009-02-16]
+Version: 1.0.2 [2009-02-17]
+o Added argument 'units' to extractRawCopyNumbers() of
+  AromaUnitSignalBinaryFile.
 o Added readDataFrame(..., units=NULL) to AromaUnitSignalBinaryFile.
 o Added optional argument/field 'name' to RawCopyNumbers, which
   is also used by SegmentedCopyNumbers when querying the "truth"
   function(s) for the copy-number state.  This makes it possible
   to use one (conditional) truth functions for all samples.
+o Now RawCopyNumbers() takes RawCopyNumbers objects as input.
 
 
 Version: 1.0.1 [2009-02-12]

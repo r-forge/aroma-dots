@@ -27,7 +27,13 @@ setConstructorS3("AromaUnitTotalCnBinaryFile", function(...) {
 })
 
 
-setMethodS3("extractRawCopyNumbers", "AromaUnitTotalCnBinaryFile", function(this, chromosome, range=NULL, ..., verbose=FALSE) {
+setMethodS3("extractRawCopyNumbers", "AromaUnitTotalCnBinaryFile", function(this, chromosome, range=NULL, units=NULL, ..., verbose=FALSE) {
+  # Argument 'units':
+  if (!is.null(units)) {
+    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(this)));
+    units <- sort(unique(units));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -45,9 +51,26 @@ setMethodS3("extractRawCopyNumbers", "AromaUnitTotalCnBinaryFile", function(this
   verbose && enter(verbose, "Identifying units on chromosome");
   ugp <- getAromaUgpFile(this, ..., verbose=less(verbose,50));
   verbose && print(verbose, ugp);
-  units <- getUnitsAt(ugp, chromosome=chromosome, range=range, ..., verbose=less(verbose,5));
+  units2 <- getUnitsAt(ugp, chromosome=chromosome, range=range, ..., 
+                                            verbose=less(verbose,5));
   verbose && cat(verbose, "Units:");
-  verbose && str(verbose, units);  
+  verbose && str(verbose, units2);
+
+  # Keeping only a subset of units?
+  if (!is.null(units)) {
+    verbose && enter(verbose, "Keeping only units of interest");
+    keep <- is.element(units2, units);
+    verbose && cat(verbose, "Keeping:");
+    verbose && summary(verbose, keep);
+    units2 <- units2[keep];
+    rm(keep);
+    verbose && cat(verbose, "Units:");
+    verbose && str(verbose, units);
+    verbose && exit(verbose);
+  }
+  units <- units2;
+  rm(units2);
+
 
   verbose && cat(verbose, "Genomic positions:");
   pos <- getPositions(ugp, units=units);
@@ -75,6 +98,8 @@ setMethodS3("extractRawCopyNumbers", "AromaUnitTotalCnBinaryFile", function(this
 
 ############################################################################
 # HISTORY:
+# 2009-02-17
+# o Added argument 'units' to extractRawCopyNumbers().
 # 2009-02-16
 # o Now extractRawCopyNumbers() also includes the full (sample) name.
 # 2008-06-12
