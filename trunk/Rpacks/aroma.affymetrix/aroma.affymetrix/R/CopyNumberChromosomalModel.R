@@ -619,7 +619,8 @@ setMethodS3("extractRawCopyNumbers", "CopyNumberChromosomalModel", function(this
   data <- getRawCnData(this, ceList=ceList, refList=rfList, 
                           chromosome=chromosome, ..., verbose=less(verbose));
 
-  rawCNs <- RawCopyNumbers(cn=data[,"M"], x=data[,"x"], chromosome=chromosome); 
+  rawCNs <- RawCopyNumbers(cn=data[,"M"], x=data[,"x"], 
+                           chromosome=chromosome); 
 
   # Save to cache?
   if (cache) {
