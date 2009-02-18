@@ -4,15 +4,14 @@ library("aroma.cn.eval");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Region of interest with known CN states
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Sample of interest
-array <- "NA06985";
-
-# Chromosomal region of interest
-chromosome <- 2;
-region <- c(81,86)*1e6;
-
-name <- getNames(extract(dsList[[1]], array))[1];
-print(name);
+# Sample and region of interest
+array <- "NA06985"; chromosome <- 2; region <- c(81,86)*1e6; states <- c(-1,0);
+array <- "NA06985"; chromosome <- 14; region <- c(19.25,19.80)*1e6; states <- c(0,+1);
+#array <- "NA06991"; chromosome <- 22; region <- c(23.5,25.0)*1e6; states <- c(0,+1);
+#array <- "NA06993"; chromosome <- 1; region <- c(147.3,149.0)*1e6; states <- c(0,+1);
+#array <- "NA11830"; chromosome <- 15; region <- c(29.0,31.5)*1e6; states <- c(0,+1);
+#array <- "NA11839"; chromosome <- 22; region <- c(23.5,25.0)*1e6; states <- c(0,+1);
+#array <- "NA07022"; chromosome <- 4; region <- c(116.0,122.0)*1e6; states <- c(0,+1);
  
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -25,8 +24,6 @@ cnList <- lapply(dsList, FUN=function(ds) {
     subset <- poolOfUnits;
   }
   cn <- extractRawCopyNumbers(df, chromosome=chromosome, region=region, units=subset);
-  if (any(is.element(c("dChip", "CRMAv2"), getTags(ds))))
-    cn$cn <- cn$cn-1;
   cn <- SegmentedCopyNumbers(cn, states=truth);
   cn;
 })
@@ -44,8 +41,8 @@ xRange <- range(sapply(cnList, FUN=xRange));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 devSet("TPvResolution");
 states <- c(-1,0);
-fpRate <- 0.02;
-binWidths <- c(0.1,0.5,1,2,4,6,8,10,15,20)*1e3;
+fpRate <- 0.05;
+binWidths <- c(0,0.1,0.5,1,2,4,6,8,10,15,20)*1e3;
 xlim <- c(0,max(binWidths))/1e3;
 tplim <- c(0,1);
 tplab <- "True-positive rate";
@@ -65,12 +62,16 @@ res <- cbind(data.frame(binWidth=binWidths), tpRates);
 for (ww in seq(along=binWidths)) {
   binWidth <- binWidths[ww];
 
-  # Smooth CNs using consecutive bins of given width (in kb)
-  cnSList <- lapply(cnList, FUN=function(cn) {
-    cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, verbose=log);
-    cnS <- extractSubsetByState(cnS, states=states);
-    cnS;
-  })
+  if (binWidth > 0) {
+    # Smooth CNs using consecutive bins of given width (in kb)
+    cnSList <- lapply(cnList, FUN=function(cn) {
+      cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, verbose=log);
+      cnS <- extractSubsetByState(cnS, states=states);
+      cnS;
+    })
+  } else {
+    cnSList <- cnList;
+  }
   print(cnSList);
 
   fits <- lapply(cnSList, FUN=function(cnS) {
@@ -81,6 +82,11 @@ for (ww in seq(along=binWidths)) {
   cols <- match(names(tpRates), colnames(res));
   row <- whichVector(res[,"binWidth"] == binWidth);
   res[row,cols] <- tpRates;
+
+  if (binWidth == 0) {
+    binWidth <- diff(xRange(cnS))/(nbrOfLoci(cnS)-1);
+    binWidths[ww] <- binWidth;
+  }
 
   x <- rep(binWidth/1e3, nbrOfTracks);
   points(x, y=tpRates, pch=19, col=trackCols);

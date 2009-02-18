@@ -2,6 +2,7 @@ if (interactive()) savehistory();
 library("aroma.cn.eval");
 
 log <- verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
+robust <- FALSE;
 
 chipType <- "GenomeWideSNP_6";
 

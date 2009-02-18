@@ -53,6 +53,44 @@ truth <- function(x, chromosome=NULL, name=NULL, ...) {
     } else {
       stop("Cannot infer CN state. Chromosome not in DB: ", chromosome);
     }
+  } else if (sampleName == "NA07022") {
+    if (chromosome == 4) {
+      # Location of change points
+      xCps <- c(118.75, 119.77)*1e6;
+      # Neutral
+      t[x <= xCps[1] | x >= xCps[2]] <- 0L;
+      # Loss
+      t[xCps[1] <= x & x < xCps[2]] <- +1L;
+      dx <- 50e3;
+    } else {
+      stop("Cannot infer CN state. Chromosome not in DB: ", chromosome);
+    }
+  } else if (sampleName == "NA11830") {
+    if (chromosome == 15) {
+      # Location of change points
+      xCps <- c(29.77, 30.24)*1e6;
+      # Neutral
+      t[x <= xCps[1] | x >= xCps[2]] <- 0L;
+      # Loss
+      t[xCps[1] <= x & x < xCps[2]] <- +1L;
+      # Uncertain
+      t[xCps[2] <= x & x <= 30.7e6] <- NA;
+      dx <- 50e3;
+    } else {
+      stop("Cannot infer CN state. Chromosome not in DB: ", chromosome);
+    }
+  } else if (sampleName == "NA11839") {
+    if (chromosome == 22) {
+      # Location of change points
+      xCps <- c(24.00, 24.25)*1e6;
+      # Neutral
+      t[x <= xCps[1] | x >= xCps[2]] <- 0L;
+      # Loss
+      t[xCps[1] <= x & x < xCps[2]] <- +1L;
+      dx <- 30e3;
+    } else {
+      stop("Cannot infer CN state. Chromosome not in DB: ", chromosome);
+    }
   } else {
     stop("Cannot infer CN state. Sample not in DB: ", name);
   }
