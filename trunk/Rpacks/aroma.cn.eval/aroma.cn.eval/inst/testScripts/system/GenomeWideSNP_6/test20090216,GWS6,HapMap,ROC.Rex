@@ -6,10 +6,13 @@ library("aroma.cn.eval");
 # Region of interest with known CN states
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Sample and region of interest
-array <- "NA06985"; chromosome <- 2; region <- c(81,86)*1e6; states <- c(-1,0);
+#array <- "NA06985"; chromosome <- 2; region <- c(81,86)*1e6; states <- c(-1,0);
 array <- "NA06985"; chromosome <- 14; region <- c(19.25,19.80)*1e6; states <- c(0,+1);
 #array <- "NA06991"; chromosome <- 22; region <- c(23.5,25.0)*1e6; states <- c(0,+1);
 #array <- "NA06993"; chromosome <- 1; region <- c(147.3,149.0)*1e6; states <- c(0,+1);
+#array <- "NA11830"; chromosome <- 15; region <- c(29.0,31.5)*1e6; states <- c(0,+1);
+#array <- "NA11839"; chromosome <- 22; region <- c(23.5,25.0)*1e6; states <- c(0,+1);
+#array <- "NA07022"; chromosome <- 4; region <- c(116.0,122.0)*1e6; states <- c(0,+1);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Extract data from region of interest
@@ -21,8 +24,6 @@ cnList <- lapply(dsList, FUN=function(ds) {
     subset <- poolOfUnits;
   }
   cn <- extractRawCopyNumbers(df, chromosome=chromosome, region=region, units=subset);
-  if (any(is.element(c("dChip", "CRMAv2"), getTags(ds))))
-    cn$cn <- cn$cn-1;
   cn <- SegmentedCopyNumbers(cn, states=truth);
   cn;
 })
@@ -33,6 +34,7 @@ print(cnList);
 # Range of loci covered in all platforms
 xRange <- range(sapply(cnList, FUN=xRange));
 
+robust <- TRUE;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Plot raw CNs along chromosome
@@ -55,7 +57,7 @@ for (kk in seq(along=cnList)) {
                                                chromosome, nbrOfLoci(cn)));
 
   binWidth <- 50e3;
-  cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth);
+  cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, robust=robust);
   points(cnS, cex=1, col="white");
   points(cnS, cex=0.5, col="orange"); 
   points(cnS, cex=0.5); 
@@ -83,7 +85,7 @@ for (ww in seq(along=binWidths)) {
   if (binWidth > 0) {
     # Smooth CNs using consecutive bins of given width (in kb)
     cnSList <- lapply(cnList, FUN=function(cn) {
-      cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth);
+      cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, robust=robust);
       cnS <- extractSubsetByState(cnS, states=states);
       cnS;
     }) 
