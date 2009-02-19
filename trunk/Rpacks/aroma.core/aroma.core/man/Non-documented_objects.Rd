@@ -731,6 +731,8 @@
 \alias{calculateAverageColumnAcrossFiles}
 \alias{readDataFrame.AromaUnitSignalBinaryFile}
 \alias{getName.RawCopyNumbers}
+\alias{exportTotalCnRatioSet}
+\alias{exportTotalCnRatioSet.AromaUnitTotalCnBinarySet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
