@@ -1,6 +1,10 @@
 Package: aroma.cn
 =================
 
+Version: 0.2.2 [2009-02-19]
+o Minor update in order to work with new RawGenomicSignals.
+
+
 Version: 0.2.1 [2009-02-12]
 o Added redundancy tests to package.
 o Further cleanup.  Some functions are now in aroma.light.
