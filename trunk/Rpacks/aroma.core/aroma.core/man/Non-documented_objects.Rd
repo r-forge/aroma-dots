@@ -733,6 +733,33 @@
 \alias{getName.RawCopyNumbers}
 \alias{exportTotalCnRatioSet}
 \alias{exportTotalCnRatioSet.AromaUnitTotalCnBinarySet}
+\alias{signalRange}
+\alias{as.character.RawGenomicSignals}
+\alias{as.data.frame.RawGenomicSignals}
+\alias{binnedSmoothing.RawGenomicSignals}
+\alias{extractRawGenomicSignals}
+\alias{extractRawGenomicSignals.default}
+\alias{extractSubset.RawGenomicSignals}
+\alias{gaussianSmoothing.RawGenomicSignals}
+\alias{getChromosome.RawGenomicSignals}
+\alias{getLociFields.RawGenomicSignals}
+\alias{getName.RawGenomicSignals}
+\alias{getPositions.RawGenomicSignals}
+\alias{getSignals}
+\alias{getSignals.RawGenomicSignals}
+\alias{getXY.RawGenomicSignals}
+\alias{kernelSmoothing.RawGenomicSignals}
+\alias{lines.RawGenomicSignals}
+\alias{nbrOfLoci.RawGenomicSignals}
+\alias{plot.RawGenomicSignals}
+\alias{points.RawGenomicSignals}
+\alias{signalRange.RawGenomicSignals}
+\alias{sort.RawGenomicSignals}
+\alias{summary.RawGenomicSignals}
+\alias{xMax.RawGenomicSignals}
+\alias{xMin.RawGenomicSignals}
+\alias{xRange.RawGenomicSignals}
+\alias{xSeq.RawGenomicSignals}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -1,9 +1,10 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.2 [2009-02-17]
+Version: 1.0.2 [2009-02-19]
 o Added argument 'units' to extractRawCopyNumbers() of
   AromaUnitSignalBinaryFile.
+o Added RawGenomicSignals which RawCopyNumbers now inherits from.
 o Added readDataFrame(..., units=NULL) to AromaUnitSignalBinaryFile.
 o Added optional argument/field 'name' to RawCopyNumbers, which
   is also used by SegmentedCopyNumbers when querying the "truth"
