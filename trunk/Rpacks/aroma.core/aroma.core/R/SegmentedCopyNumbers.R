@@ -125,7 +125,7 @@ setMethodS3("kernelSmoothingByState", "SegmentedCopyNumbers", function(this, xOu
   naValue <- as.double(NA);
   yOut <- rep(naValue, length(xOut));
 
-  y <- getCNs(this);
+  y <- getSignals(this);
   states <- getStates(this);
 
   uniqueStates <- unique(states);
@@ -177,7 +177,7 @@ setMethodS3("kernelSmoothingByState", "SegmentedCopyNumbers", function(this, xOu
   verbose && enter(verbose, "Creating result object");
   res <- clone(this);
   clearCache(res);
-  res$cn <- yOut;
+  res$y <- yOut;
   res$x <- xOut;
   verbose && exit(verbose);
 
@@ -256,7 +256,7 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
   verbose && str(verbose, uniqueStates);
 
 
-  y <- getCNs(this);
+  y <- getSignals(this);
   states <- getStates(this);
 
   for (ss in seq(along=uniqueStates)) {
@@ -327,7 +327,7 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
   verbose && enter(verbose, "Creating result object");
   res <- clone(this);
   clearCache(res);
-  res$cn <- yOut;
+  res$y <- yOut;
   res$x <- xOut;
   verbose && exit(verbose);
 
@@ -341,7 +341,7 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
 setMethodS3("getStateColors", "SegmentedCopyNumbers", function(this, ...) {
   states <- getStates(this);
 
-  # Copy neutral states
+  # Neutral states
   col <- rep("#000000", nbrOfLoci(this));
 
   # Losses
@@ -369,6 +369,8 @@ setMethodS3("points", "SegmentedCopyNumbers", function(x, ..., col=getStateColor
 
 ############################################################################
 # HISTORY:
+# 2009-02-19
+# o Adopted to make use of new RawGenomicSignals.
 # 2009-02-16
 # o Now getStates() also passes the optional 'name' field to the "truth"
 #   function.

@@ -338,3 +338,18 @@ calculateAverageColumnAcrossFiles.GenericTabularFileSet
   readDataFrame.AromaUnitSignalBinaryFile
 getName.RawCopyNumbers
 exportTotalCnRatioSet exportTotalCnRatioSet.AromaUnitTotalCnBinarySet
+signalRange
+ as.character.RawGenomicSignals as.data.frame.RawGenomicSignals
+ binnedSmoothing.RawGenomicSignals extractRawGenomicSignals
+ extractRawGenomicSignals.default extractSubset.RawGenomicSignals
+ gaussianSmoothing.RawGenomicSignals getChromosome.RawGenomicSignals
+ getLociFields.RawGenomicSignals getName.RawGenomicSignals
+ getPositions.RawGenomicSignals getSignals
+ getSignals.RawGenomicSignals getXY.RawGenomicSignals
+ kernelSmoothing.RawGenomicSignals lines.RawGenomicSignals
+ nbrOfLoci.RawGenomicSignals plot.RawGenomicSignals
+ points.RawGenomicSignals signalRange.RawGenomicSignals
+ sort.RawGenomicSignals summary.RawGenomicSignals
+ xMax.RawGenomicSignals xMin.RawGenomicSignals
+ xRange.RawGenomicSignals xSeq.RawGenomicSignals
+  getCns getCns.RawCopyNumbers
