@@ -271,7 +271,7 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
       verbose && print(verbose, smoothCNs);
       verbose && summary(verbose, smoothCNs);
 
-      M[target$units] <- smoothCNs$cn;
+      M[target$units] <- getSignals(smoothCNs);
       verbose && exit(verbose);
     } # for (cc ...)
 
