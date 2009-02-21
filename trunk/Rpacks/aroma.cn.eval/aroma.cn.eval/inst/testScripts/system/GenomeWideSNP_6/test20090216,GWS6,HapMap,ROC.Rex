@@ -57,7 +57,7 @@ for (kk in seq(along=cnList)) {
                                                chromosome, nbrOfLoci(cn)));
 
   binWidth <- 50e3;
-  cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, robust=robust);
+  cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, byPosition=FALSE, robust=robust);
   points(cnS, cex=1, col="white");
   points(cnS, cex=0.5, col="orange"); 
   points(cnS, cex=0.5); 
@@ -85,7 +85,7 @@ for (ww in seq(along=binWidths)) {
   if (binWidth > 0) {
     # Smooth CNs using consecutive bins of given width (in kb)
     cnSList <- lapply(cnList, FUN=function(cn) {
-      cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, robust=robust);
+      cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, byPosition=FALSE, robust=robust);
       cnS <- extractSubsetByState(cnS, states=states);
       cnS;
     }) 

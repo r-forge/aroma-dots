@@ -57,7 +57,7 @@ truth <- function(x, ...) {
 cnList <- lapply(dsList, FUN=function(ds) {
   df <- getFile(extract(ds, array), 1);
   cn <- extractRawCopyNumbers(df, chromosome=chromosome, region=region);
-  cn <- SegmentedCopyNumbers(cn=cn$cn, x=cn$x, states=truth);  
+  cn <- SegmentedCopyNumbers(cn, states=truth);  
   cn;
 })
 names(cnList) <- sprintf("%s\n%s\n%s", sites, platforms, chipTypes);
