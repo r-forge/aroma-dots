@@ -64,7 +64,7 @@ print(name);
 cnList <- lapply(dsList, FUN=function(ds) {
   df <- getFile(extract(ds, array), 1);
   cn <- extractRawCopyNumbers(df, chromosome=chromosome, region=region);
-  cn <- SegmentedCopyNumbers(cn=cn$cn, x=cn$x, states=truth);  
+  cn <- SegmentedCopyNumbers(cn, states=truth);  
   cn;
 })
 names(cnList) <- apply(names, MARGIN=1, paste, collapse="\n");
@@ -79,10 +79,11 @@ xRange <- range(sapply(cnList, FUN=xRange));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # TP rate at fixe FP rate at various resolutions (in kb)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-devSet("TPvResolution");
+devSet("TPvResolution2");
 states <- c(0,1);
 fpRate <- 0.02;
 binWidths <- c(5,10,20,30,40,50,60,70,80,90,100)*1e3;
+binWidths <- seq(from=1,to=50,by=3)*1e3;
 xlim <- c(0,max(binWidths))/1e3;
 tplim <- c(0,1);
 tplab <- "True-positive rate";
@@ -105,7 +106,7 @@ for (ww in seq(along=binWidths)) {
 
   # Smooth CNs using consecutive bins of given width (in kb)
   cnSList <- lapply(cnList, FUN=function(cn) {
-    cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth, verbose=log);
+    cnS <- binnedSmoothingByState(cn, from=xRange[1]+binWidth/2, to=xRange[2]+binWidth/2, by=binWidth, verbose=log);
     cnS <- extractSubsetByState(cnS, states=states);
     cnS;
   })
