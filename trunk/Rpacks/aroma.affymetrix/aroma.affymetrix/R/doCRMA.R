@@ -1,4 +1,4 @@
-setMethodS3("doCRMA", "default", function(dataSet, chipTypes=NULL, ..., logName=NULL, ram=1, verbose=-8) {
+setMethodS3("doCRMA", "default", function(dataSet, chipTypes=NULL, ..., logName=NULL, ram=NULL, verbose=-8) {
   csRawList <- NULL;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -32,6 +32,12 @@ setMethodS3("doCRMA", "default", function(dataSet, chipTypes=NULL, ..., logName=
   if (!is.null(chipTypes)) {
     chipTypes <- Arguments$getCharacters(chipTypes);
   }
+
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

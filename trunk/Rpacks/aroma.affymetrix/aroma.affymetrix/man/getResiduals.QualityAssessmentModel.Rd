@@ -19,7 +19,7 @@
   Calculates the residuals from a probe-level model.
 }
 
-\usage{\method{getResiduals}{QualityAssessmentModel}(this, units=NULL, path=NULL, name="qcData", tags="*", ram=1, force=FALSE, verbose=FALSE, ...)}
+\usage{\method{getResiduals}{QualityAssessmentModel}(this, units=NULL, path=NULL, name="qcData", tags="*", ram=NULL, force=FALSE, verbose=FALSE, ...)}
 
 \arguments{
  \item{...}{Additional arguments passed \code{fromFiles()} of

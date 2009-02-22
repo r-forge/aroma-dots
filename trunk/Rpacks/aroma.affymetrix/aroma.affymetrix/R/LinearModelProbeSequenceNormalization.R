@@ -53,7 +53,7 @@ setMethodS3("getDesignMatrix", "LinearModelProbeSequenceNormalization", abstract
 
 
 
-setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", function(this, df, cells=NULL, ram=1, ..., verbose=FALSE) {
+setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", function(this, df, cells=NULL, ram=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,6 +61,12 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
   if (!inherits(df, "AffymetrixCelFile")) {
     throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
   }
+
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -236,7 +242,7 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
 
 
 
-setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df, params=NULL, ram=1, ..., verbose=FALSE) {
+setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df, params=NULL, ram=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -244,6 +250,12 @@ setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df
   if (!inherits(df, "AffymetrixCelFile")) {
     throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
   }
+
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

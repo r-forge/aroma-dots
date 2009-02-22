@@ -70,7 +70,7 @@ extends \link[aroma.affymetrix]{SnpChipEffectSet}\cr
 
 
  \bold{Methods inherited from SnpChipEffectSet}:\cr
-exportAromaUnitSignalBinarySetList, extractCNT, extractSnpCnvQSet, extractSnpQSet, extractTheta, extractTotalAndFreqB, fromFiles, getAromaFracBCnBinarySet, getAromaTotalCnBinarySet, getAromaUnitSignalBinarySetList, getAverageFile, getBaseline, getMergeStrands, getTotalAndFracBSets, setMergeStrands, writeCNT
+exportTotalAndFracB, extractCNT, extractSnpCnvQSet, extractSnpQSet, extractTheta, extractTotalAndFreqB, fromFiles, getAverageFile, getBaseline, getMergeStrands, setMergeStrands, writeCNT
 
  \bold{Methods inherited from ChipEffectSet}:\cr
 boxplotStats, calculateBaseline, calculateFieldBoxplotStats, calculateNuseBoxplotStats, calculateRleBoxplotStats, extractChromosomalDataFrame, extractMatrix, extractTheta, findByName, findUnitsTodo, fromDataSet, fromFiles, getAM, getAsFullCelSet, getAverageFile, getBaseline, getCellIndices, getParameters, getXAM, plotBoxplot, readUnits, updateUnits

@@ -55,6 +55,7 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getFullName} \tab  -\cr
  \tab \code{getFullNames} \tab  -\cr
  \tab \code{getGenome} \tab  -\cr
+ \tab \code{getListOfAromaUgpFiles} \tab  -\cr
  \tab \code{getListOfChipEffectSets} \tab  -\cr
  \tab \code{getListOfGenomeInformations} \tab  -\cr
  \tab \code{getName} \tab  -\cr

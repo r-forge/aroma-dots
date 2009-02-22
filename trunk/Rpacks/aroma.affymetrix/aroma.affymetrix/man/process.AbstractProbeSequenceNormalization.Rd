@@ -19,7 +19,7 @@
  Normalizes the data set.
 }
 
-\usage{\method{process}{AbstractProbeSequenceNormalization}(this, ..., ram=1, force=FALSE, verbose=FALSE)}
+\usage{\method{process}{AbstractProbeSequenceNormalization}(this, ..., ram=NULL, force=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}

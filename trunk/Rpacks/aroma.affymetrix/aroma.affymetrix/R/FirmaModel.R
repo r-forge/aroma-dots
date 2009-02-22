@@ -513,7 +513,7 @@ setMethodS3("findUnitsTodo", "FirmaModel", function(this, ...) {
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,force=FALSE, verbose=FALSE) {
+setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=NULL, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the some basic information about this model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -538,6 +538,12 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=1,fo
   } else {
     throw("Unknown mode of argument 'units': ", mode(units));
   }
+
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'force':
   force <- Arguments$getLogical(force);

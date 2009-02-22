@@ -52,6 +52,8 @@ extends \emph{\link[aroma.core]{UnitNamesFile}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{as.character} \tab  -\cr
+ \tab \code{byChipType} \tab  -\cr
+ \tab \code{findByChipType} \tab  -\cr
  \tab \code{fromFile} \tab  -\cr
  \tab \code{getChipType} \tab  -\cr
  \tab \code{getFileFormat} \tab  -\cr
@@ -66,7 +68,7 @@ extends \emph{\link[aroma.core]{UnitNamesFile}}\cr
 
 
  \bold{Methods inherited from UnitNamesFile}:\cr
-getChipType, getPlatform, getUnitNames, indexOf, nbrOfUnits
+byChipType, getAromaUgpFile, getChipType, getPlatform, getUnitNames, indexOf, nbrOfUnits
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
 getAromaPlatform, getPlatform

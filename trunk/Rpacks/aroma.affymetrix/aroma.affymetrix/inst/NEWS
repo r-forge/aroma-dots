@@ -1,16 +1,21 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.2 [2009-02-16]
+Version: 1.0.2 [2009-02-21]
 o Added getCdfBin() and getChipType() to DChipDcpSet.
 o Added findByChipType() and byChipType() to DChipCdfBinFile.
   Added argument fullname=TRUE to getChipType() of DChipCdfBinFile.
 o Added exportTotalCnRatioSet() to AffymetrixCnChpSet.
+o Added option aroma.affymetrix.settings$memory$ram = 1, which
+  is now used as the the default value for argument 'ram' in all 
+  model fitting algorithms.
 o CLEAN UP: Removed the implementation of byChipType() for the
   AromaUnitTabularBinaryFile class that would scan annotationData/
   for matching CDFs before deciding which file to use.  That class
   should not depend on a specific platform.  Now the implementation
   is solely in the aroma.core package.
+o CLEAN UP: Removed deprecated argument 'moreUnits' of fit() of
+  ProbeLevelModel.  Use argument 'ram' instead.
 
 
 Version: 1.0.1 [2009-02-13]

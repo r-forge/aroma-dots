@@ -44,7 +44,6 @@ extends \emph{\link[aroma.core]{AromaMicroarrayDataSetTuple}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{byPath} \tab  -\cr
- \tab \code{clearCache} \tab  -\cr
 }
 
 

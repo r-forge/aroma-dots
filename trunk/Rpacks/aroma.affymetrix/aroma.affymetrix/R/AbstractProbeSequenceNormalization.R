@@ -160,7 +160,7 @@ setMethodS3("predictOne", "AbstractProbeSequenceNormalization", abstract=TRUE, p
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ..., ram=1, force=FALSE, verbose=FALSE) {
+setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ..., ram=NULL, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -181,6 +181,12 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {

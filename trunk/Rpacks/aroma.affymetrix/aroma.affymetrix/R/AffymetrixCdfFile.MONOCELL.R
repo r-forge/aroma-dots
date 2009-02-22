@@ -36,7 +36,7 @@
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=getChipType(this), tags="monocell", sep=",", path=NULL, nbrOfCellsPerField=1, ..., ram=1, verbose=TRUE) {
+setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=getChipType(this), tags="monocell", sep=",", path=NULL, nbrOfCellsPerField=1, ..., ram=NULL, verbose=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -117,6 +117,10 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
   nbrOfCellsPerField <- Arguments$getIndices(nbrOfCellsPerField);
 
   # Argument 'ram':
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
   ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':

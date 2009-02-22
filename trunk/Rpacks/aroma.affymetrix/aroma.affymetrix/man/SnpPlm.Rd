@@ -44,6 +44,7 @@ extends \link[aroma.core]{Interface}\cr
 \tabular{rll}{
  \tab \code{getCellIndices} \tab  -\cr
  \tab \code{getChipEffectSet} \tab  -\cr
+ \tab \code{getMergeStrands} \tab  -\cr
  \tab \code{getProbeAffinityFile} \tab  -\cr
  \tab \code{setMergeStrands} \tab  -\cr
 }

@@ -62,13 +62,9 @@ extends \link[aroma.affymetrix]{ChipEffectSet}\cr
  \tab \code{extractSnpQSet} \tab  -\cr
  \tab \code{extractTheta} \tab  -\cr
  \tab \code{extractTotalAndFreqB} \tab  -\cr
- \tab \code{getAromaFracBCnBinarySet} \tab  -\cr
- \tab \code{getAromaTotalCnBinarySet} \tab  -\cr
- \tab \code{getAromaUnitSignalBinarySetList} \tab  -\cr
  \tab \code{getAverageFile} \tab  -\cr
  \tab \code{getBaseline} \tab  -\cr
  \tab \code{getMergeStrands} \tab  -\cr
- \tab \code{getTotalAndFracBSets} \tab  -\cr
  \tab \code{setMergeStrands} \tab  -\cr
  \tab \code{writeCNT} \tab  -\cr
 }

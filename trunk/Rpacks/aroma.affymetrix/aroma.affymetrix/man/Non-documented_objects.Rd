@@ -1695,6 +1695,8 @@
 \alias{mapToUnitNamesFile.DChipCdfBinFile}
 \alias{exportTotalCnRatioSet.AffymetrixCnChpSet}
 \alias{exportTotalCnRatioSet}
+\alias{exportTotalAndFracB.CnChipEffectFile}
+\alias{exportTotalAndFracB.CnChipEffectSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
