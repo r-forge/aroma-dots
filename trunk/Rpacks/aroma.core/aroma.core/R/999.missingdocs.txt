@@ -353,3 +353,4 @@ signalRange
  xMax.RawGenomicSignals xMin.RawGenomicSignals
  xRange.RawGenomicSignals xSeq.RawGenomicSignals
   getCns getCns.RawCopyNumbers
+getCn getCn.RawCopyNumbers

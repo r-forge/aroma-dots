@@ -760,6 +760,10 @@
 \alias{xMin.RawGenomicSignals}
 \alias{xRange.RawGenomicSignals}
 \alias{xSeq.RawGenomicSignals}
+\alias{getCns}
+\alias{getCns.RawCopyNumbers}
+\alias{getCn}
+\alias{getCn.RawCopyNumbers}
 
 \description{
   This page contains aliases for all "non-documented" objects that
