@@ -199,7 +199,7 @@ setMethodS3("getPath", "QualityAssessmentModel", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL, path=NULL, name="qcData", tags="*", ram=1, force=FALSE, verbose=FALSE, ...) {
+setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL, path=NULL, name="qcData", tags="*", ram=NULL, force=FALSE, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -242,6 +242,12 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
     # Update default tags
     tags[tags == "*"] <- "residuals";
   }
+
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -412,7 +418,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, name="qcData", tags="*", ram=1, force=FALSE, verbose=FALSE, ...) {
+setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, name="qcData", tags="*", ram=NULL, force=FALSE, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -448,7 +454,11 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
     path <- Arguments$getWritablePath(path);
   }
 
-  mkdirs(path);
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -462,6 +472,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
     tags[tags == "*"] <- "weights";
   }
 
+
   # Argument 'unitsPerChunk':
   unitsPerChunk <- ram * 100000/nbrOfArrays(this);
   unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
@@ -472,6 +483,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  mkdirs(path);
   ces <- getChipEffectSet(this);
   names <- getNames(ces);
   pathname <- sapply(names, function(name) {

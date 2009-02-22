@@ -27,6 +27,7 @@
 
   template <- list(
     memory = list(
+      ram = 1,
       gcArrayFrequency = 50
     ),
 
@@ -101,6 +102,8 @@
 
 ############################################################################
 # HISTORY:
+# 2009-02-21
+# o Added setting memory$ram=1.
 # 2008-02-14
 # o Renamed existing threshold hold to 'timestampsThreshold', 
 #   'medianPolishThreshold', and 'skipThreshold'.

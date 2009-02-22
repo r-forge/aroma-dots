@@ -297,7 +297,7 @@ setMethodS3("findUnitsTodo", "CrlmmModel", function(this, units=NULL, safe=TRUE,
 })
 
 
-setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, ram=1, ..., verbose=FALSE) {
+setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, ram=NULL, ..., verbose=FALSE) {
   require("oligo") || throw("Package not loaded: oligo");
 
   maleIndex <- c();
@@ -321,7 +321,11 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   # Argument 'ram':
   if (identical(ram, "oligo")) {
   } else {
-    ram <- Arguments$getDouble(ram, range=c(1e-4,Inf));
+    # Argument 'ram':
+    if (is.null(ram)) {
+      ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+    }
+    ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
   }
 
   # Argument 'force':

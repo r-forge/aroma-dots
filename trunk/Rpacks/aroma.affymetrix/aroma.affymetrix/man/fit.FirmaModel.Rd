@@ -19,7 +19,7 @@
   Estimates the model parameters for all or a subset of the units.
  }
 
- \usage{\method{fit}{FirmaModel}(this, units="remaining", ..., ram=1, force=FALSE, verbose=FALSE)}
+ \usage{\method{fit}{FirmaModel}(this, units="remaining", ..., ram=NULL, force=FALSE, verbose=FALSE)}
 
  \arguments{
    \item{units}{The units to be fitted.

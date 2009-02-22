@@ -21,7 +21,6 @@
 #   \item{ram}{A @double indicating if more or less units should
 #     be loaded into memory at the same time.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
-#   \item{moreUnits}{Deprected. Use \code{ram} instead.}
 # }
 #
 # \value{
@@ -71,7 +70,7 @@
 #
 # @keyword IO
 #*/###########################################################################
-setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., force=FALSE, ram=moreUnits, verbose=FALSE, moreUnits=1) {
+setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., force=FALSE, ram=NULL, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the some basic information about this model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -97,7 +96,10 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   force <- Arguments$getLogical(force);
 
   # Argument 'ram':
-  ram <- Arguments$getDouble(ram, range=c(1e-3,Inf));
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -393,6 +395,8 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 
 ############################################################################
 # HISTORY:
+# 2009-02-21
+# o Removed deprecated argument 'moreUnits' of fit() of ProbeLevelModel.
 # 2008-12-08
 # o Added basic support for priors in fit() of ProbeLevelModel.
 # 2008-07-22

@@ -1,5 +1,5 @@
 
-setMethodS3("calculateWeights", "ProbeLevelModel", function(this, units=NULL, ram=1, force=FALSE, ..., verbose=FALSE) {
+setMethodS3("calculateWeights", "ProbeLevelModel", function(this, units=NULL, ram=NULL, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -17,10 +17,12 @@ setMethodS3("calculateWeights", "ProbeLevelModel", function(this, units=NULL, ra
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'unitsPerChunk':
-  unitsPerChunk <- ram * 100000/nbrOfArrays(getDataSet(this));
-  unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
-  
+  # Argument 'ram':
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -52,6 +54,8 @@ setMethodS3("calculateWeights", "ProbeLevelModel", function(this, units=NULL, ra
 
   unitsToDo <- findUnitsTodo(ws);
   
+  unitsPerChunk <- ram * 100000/nbrOfArrays(getDataSet(this));
+  unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
   verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n",
                     nbrOfChunks, unitsPerChunk);

@@ -39,7 +39,7 @@ setMethodS3("allocateFromCdf", "AromaCellSequenceFile", function(static, cdf, pa
 
 
 
-setMethodS3("importFromAffymetrixProbeTabFile", "AromaCellSequenceFile", function(this, srcFile, rows=NULL, ..., ram=1, verbose=FALSE) {
+setMethodS3("importFromAffymetrixProbeTabFile", "AromaCellSequenceFile", function(this, srcFile, rows=NULL, ..., ram=NULL, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -67,7 +67,10 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaCellSequenceFile", functio
   }
 
   # Argument 'ram':
-  ram <- Arguments$getDouble(ram, range=c(1e-3,Inf));
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -180,7 +183,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaCellSequenceFile", functio
 
 
 
-setMethodS3("inferMmFromPm", "AromaCellSequenceFile", function(this, cdf, units=NULL, ..., safe=FALSE, ram=1, verbose=FALSE) {
+setMethodS3("inferMmFromPm", "AromaCellSequenceFile", function(this, cdf, units=NULL, ..., safe=FALSE, ram=NULL, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -224,7 +227,10 @@ setMethodS3("inferMmFromPm", "AromaCellSequenceFile", function(this, cdf, units=
   }
 
   # Argument 'ram':
-  ram <- Arguments$getDouble(ram, range=c(1e-3,Inf));
+  if (is.null(ram)) {
+    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
+  }
+  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

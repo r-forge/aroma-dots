@@ -85,7 +85,7 @@ extends \emph{\link[aroma.core]{UnitNamesFile}}\cr
 
 
  \bold{Methods inherited from UnitNamesFile}:\cr
-getChipType, getPlatform, getUnitNames, indexOf, nbrOfUnits
+byChipType, getAromaUgpFile, getChipType, getPlatform, getUnitNames, indexOf, nbrOfUnits
 
  \bold{Methods inherited from AromaChipTypeAnnotationFile}:\cr
 byChipType, byName, findByChipType, fromChipType, fromFile, getChipType, getHeader, getPlatform

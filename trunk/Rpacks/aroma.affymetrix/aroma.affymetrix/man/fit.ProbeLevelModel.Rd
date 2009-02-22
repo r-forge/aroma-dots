@@ -20,7 +20,7 @@
   Estimates the model parameters for all or a subset of the units.
  }
 
- \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., force=FALSE, ram=moreUnits, verbose=FALSE, moreUnits=1)}
+ \usage{\method{fit}{ProbeLevelModel}(this, units="remaining", ..., force=FALSE, ram=NULL, verbose=FALSE)}
 
  \arguments{
    \item{units}{The units to be fitted.
@@ -33,7 +33,6 @@
    \item{ram}{A \code{\link[base]{double}} indicating if more or less units should
      be loaded into memory at the same time.}
    \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
-   \item{moreUnits}{Deprected. Use \code{ram} instead.}
  }
 
  \value{

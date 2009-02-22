@@ -18,6 +18,7 @@ setMethodS3("exportTotalAndFracB", "SnpChipEffectFile", function(this, fields=c(
   if (is.null(path)) {
     chipType <- getChipType(this, fullname=FALSE);
     path <- filePath(rootPath, dataSet, chipType);
+    rm(chipType);
   }
   path <- Arguments$getWritablePath(path);
 
@@ -39,7 +40,8 @@ setMethodS3("exportTotalAndFracB", "SnpChipEffectFile", function(this, fields=c(
   cdf <- getCdf(this); 
   nbrOfUnits <- nbrOfUnits(cdf);
   platform <- getPlatform(this);
-  chipType <- getChipType(this, fullname=FALSE);
+  chipType <- getChipType(this);
+  chipType <- gsub(",monocell", "", chipType, fixed=TRUE);
 
   footer <- list(
     srcFile=list(
@@ -153,14 +155,14 @@ setMethodS3("exportTotalAndFracB", "SnpChipEffectSet", function(this, fields=c("
   for (kk in seq(this)) {
     cf <- getFile(this, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(cf), length(this)));
-    asbList <- exportAromaUnitSignalBinaryFileList(cf, fields=fields, dataSet=dataSetName, ..., drop=FALSE, verbose=less(verbose, 1));
+    asbList <- exportTotalAndFracB(cf, fields=fields, dataSet=dataSetName, ..., drop=FALSE, verbose=less(verbose, 1));
     if (is.null(chipType)) {
       chipType <- getChipType(asbList[[1]]);
     }
     verbose && print(verbose, asbList);
     rm(asbList);
     verbose && exit(verbose);
-  }
+  } # for (kk ...)
   verbose && exit(verbose);
   
 
@@ -187,16 +189,24 @@ setMethodS3("exportTotalAndFracB", "SnpChipEffectSet", function(this, fields=c("
 }, protected=TRUE) # exportTotalAndFracB()
 
 
+setMethodS3("exportTotalAndFracB", "CnChipEffectFile", function(this, fields=c("total", "fracB"), ...) {
+  # Don't export fracB signals, if they are not available
+  if (this$combineAlleles) {
+    fields <- setdiff(fields, "fracB");
+  }
+
+  NextMethod("exportTotalAndFracB", this, fields=fields, ...);
+})
 
 
-setMethodS3("exportAromaUnitSignalBinaryFileList", "SnpChipEffectFile", function(this, ...) {
-  exportTotalAndFracB(this, ...);
-}, deprecated=TRUE, private=TRUE)
+setMethodS3("exportTotalAndFracB", "CnChipEffectSet", function(this, fields=c("total", "fracB"), ...) {
+  # Don't export fracB signals, if they are not available
+  if (getCombineAlleles(this)) {
+    fields <- setdiff(fields, "fracB");
+  }
 
-setMethodS3("exportAromaUnitSignalBinarySetList", "SnpChipEffectSet", function(this, ...) {
-  exportTotalAndFracB(this, ...);
-}, deprecated=TRUE, private=TRUE)
-
+  NextMethod("exportTotalAndFracB", this, fields=fields, ...);
+})
 
 
 
@@ -212,7 +222,13 @@ setMethodS3("getAromaUnitFracBCnBinarySet", "default", function(this, ...) {
 
 ############################################################################
 # HISTORY:
-# 2000-02-11
+# 2009-02-22
+# o Now exportTotalAndFracB() of CnChipEffect{File|Set} does not export
+#   fracB signals if allele-specific chip effects do not exist.
+# o exportTotalAndFracB() of SnpChipEffectFile would write the short
+#   chip type in the file footer, not the full one.  This could lead to 
+#   using the wrong annotation files etc.
+# 2009-02-11
 # o Now exported chip effect files no longer contains tag 'chipEffects'.
 # o Renamed all methods.
 # o Added argument 'rootPath'.

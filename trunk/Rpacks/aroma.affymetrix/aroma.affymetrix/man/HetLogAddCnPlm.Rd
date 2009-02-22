@@ -62,10 +62,10 @@ extends \link[aroma.affymetrix]{CnPlm}\cr
 
 
  \bold{Methods inherited from CnPlm}:\cr
-getCellIndices, getChipEffectSet, getProbeAffinityFile, setCombineAlleles
+getCellIndices, getChipEffectSet, getCombineAlleles, getProbeAffinityFile, setCombineAlleles
 
  \bold{Methods inherited from SnpPlm}:\cr
-getCellIndices, getChipEffectSet, getProbeAffinityFile, setMergeStrands
+getCellIndices, getChipEffectSet, getMergeStrands, getProbeAffinityFile, setMergeStrands
 
  \bold{Methods inherited from HetLogAddSnpPlm}:\cr
 getAsteriskTags
