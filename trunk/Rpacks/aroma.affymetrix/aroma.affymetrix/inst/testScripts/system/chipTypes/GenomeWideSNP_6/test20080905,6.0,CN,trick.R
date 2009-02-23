@@ -54,10 +54,10 @@ print(ces);
 theta <- extractMatrix(ces, units=1000:1002);
 
 fln <- FragmentLengthNormalization(ces);
-cesFln <- process(fln, verbose=log);
-print(cesFln);
+cesN <- process(fln, verbose=log);
+print(cesN);
 
-cnr <- CbsModel(cesFln);
+cnr <- CbsModel(cesN);
 print(cnr);
 
 ce <- ChromosomeExplorer(cnr);
