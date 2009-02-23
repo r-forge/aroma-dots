@@ -214,8 +214,7 @@ setMethodS3("as.character", "AffymetrixCelSet", function(x, ...) {
   s <- c(s, sprintf("Names: %s", names));
 
   # Get CEL header timestamps?
-  settings <- getOption("aroma.affymetrix.settings");
-  maxCount <- settings$output$timestampsThreshold;
+  maxCount <- getOption(aromaSettings, "output/timestampsThreshold");
   if (maxCount >= nbrOfArrays(this)) {
     ts <- getTimestamps(this);
     # Note: If ts <- range(ts) is used and the different timestamps uses
@@ -408,16 +407,14 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ASCII CDFs are only allowed if explicited accepted in the rules.
   # To change, do:
-  #  settings <- getOption("aroma.affymetrix.settings");
-  #  settings$rules <- list(allowAsciiCdfs=FALSE);
-  #  options("aroma.affymetrix.settings"=settings);
+  #  setSetting(aroma.affymetrix, "rules$allowAsciiCdfs", TRUE)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  rules <- getOption("aroma.affymetrix.settings")$rules;	
-  if (!identical(rules$allowAsciiCdfs, TRUE)) {
+  allowAsciiCdfs <- getOption(aromaSettings, "rules/allowAsciiCdfs", FALSE);
+  if (allowAsciiCdfs) {
     # ASCII CDF are *not* allowed
     ff <- getFileFormat(cdf);
     if (regexpr("ASCII", ff) != -1) {
-      throw("Cannot set CDF for data set. The given CDF is in ASCII format, which is protected against by default. It is much faster and more memory efficient to work with binary CDF files. Use affxparser::convertCdf() to convert a CDF into another format.  Set option 'aroma.affymetrix.settings$rules$allowAsciiCdfs' to TRUE to allow ASCII CDFs. For more details, see the online help pages. Details on the CDF file: ", getPathname(cdf), " [", ff, "].");
+      throw("Cannot set CDF for data set. The given CDF is in ASCII format, which is protected against by default. It is much faster and more memory efficient to work with binary CDF files. Use affxparser::convertCdf() to convert a CDF into another format.  Use setSetting(aroma.affymetrix, \"rules$allowAsciiCdfs\", TRUE) to allow ASCII CDFs. For more details, see the online help pages. Details on the CDF file: ", getPathname(cdf), " [", ff, "].");
     }
   }
 
@@ -1545,7 +1542,7 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 # 2008-01-30
 # o Now as.character() for AffymetrixCelSet only reports time stamp if the
 #   number of arrays in the data set is less that the threshold specified
-#   in the 'aroma.affymetrix.settings'.
+#   in the 'aroma.affymetrix' settings.
 # 2008-01-11
 # o ROBUSTNESS: It was possible to set a non-compatible CDF when using
 #   static fromFiles() of AffymetrixCelSet.
@@ -1567,7 +1564,7 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 # 2007-09-06
 # o Now setCdf() throws an (informative) error message whenever one tries
 #   to use an ASCII CDF file. This behavior can be changed by setting
-#   rule 'aroma.affymetrix.settings$rules$allowAsciiCdfs' in the options.
+#   rule 'rules$allowAsciiCdfs' in the package settings.
 # 2007-08-01
 # o Renamed static fromName() of AffymetrixCelSet to byName().
 # 2007-04-06
