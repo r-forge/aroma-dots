@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.2 [2009-02-22]
+Version: 1.0.2 [2009-02-23]
 o Added argument 'units' to extractRawCopyNumbers() of
   AromaUnitSignalBinaryFile.
 o Added RawGenomicSignals which RawCopyNumbers now inherits from.
@@ -10,7 +10,12 @@ o Added optional argument/field 'name' to RawCopyNumbers, which
   is also used by SegmentedCopyNumbers when querying the "truth"
   function(s) for the copy-number state.  This makes it possible
   to use one (conditional) truth functions for all samples.
+o Added hasBeenModified() to GenericDataFile.
 o Now RawCopyNumbers() takes RawCopyNumbers objects as input.
+o Now getChecksum() of GenericDataFile caches results unless the 
+  file has been modified since last time.
+o Now as.character() of GenericDataFile also reports the exact file 
+  size in case the file size is reported in kB, MB, etc.
 
 
 Version: 1.0.1 [2009-02-12]

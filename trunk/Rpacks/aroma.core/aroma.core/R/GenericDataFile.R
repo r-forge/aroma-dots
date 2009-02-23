@@ -175,8 +175,18 @@ setMethodS3("as.character", "GenericDataFile", function(x, ...) {
     s <- c(s, sprintf("Tags: %s", tags));
   }
   s <- c(s, sprintf("Pathname: %s", getPathname(this)));
-  s <- c(s, sprintf("File size: %s", getFileSize(this, "units")));
-  s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
+  fileSizeU <- getFileSize(this, "units");
+  fileSizeB <- sprintf("%d bytes", getFileSize(this, "numeric"));
+  if (fileSizeB == fileSizeU) {
+    fileSizeB <- "";
+  } else {
+    fileSizeB <- sprintf(" (%s)", fileSizeB);
+  }
+  s <- c(s, sprintf("File size: %s%s", fileSizeU, fileSizeB));
+  if (getOption(aromaSettings, "output/checksum", FALSE)) {
+    s <- c(s, sprintf("File checksum: %s", getChecksum(this)));
+  }
+  s <- c(s, sprintf("RAM: %.2f MB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -613,7 +623,8 @@ setMethodS3("getFileSize", "GenericDataFile", function(this, what=c("numeric", "
       break;
     fileSize <- fileSize/1024;
   }
-  fileSize <- sprintf("%.2f%s%s", fileSize, sep, unit);
+  fileSize <- sprintf("%.2f %s%s", fileSize, sep, unit);
+  fileSize <- gsub(".00 bytes", " bytes", fileSize, fixed=TRUE);
 
   fileSize;
 })
@@ -631,6 +642,34 @@ setMethodS3("getLastModifiedOn", "GenericDataFile", function(this, ...) {
 
 setMethodS3("getLastAccessedOn", "GenericDataFile", function(this, ...) {
   file.info(this$.pathname)[["atime"]];
+}, protected=TRUE)
+
+
+setMethodS3("hasBeenModified", "GenericDataFile", function(this, ..., unknown=TRUE) {
+  lastModifiedOn <- getLastModifiedOn(this);
+  prevModifiedOn <- this$.prevModifiedOn;
+
+  # Unknown modification timestamp on file?
+  if (is.na(lastModifiedOn) || lastModifiedOn == 0) {
+    res <- unknown;
+    attr(res, "lastModifiedOn") <- lastModifiedOn;
+    attr(res, "prevModifiedOn") <- prevModifiedOn;
+    return(res);
+  }
+
+  if (is.null(prevModifiedOn)) {
+    res <- unknown;
+    attr(res, "lastModifiedOn") <- lastModifiedOn;
+    attr(res, "prevModifiedOn") <- prevModifiedOn;
+  } else {
+    res <- (lastModifiedOn > prevModifiedOn);
+    attr(res, "lastModifiedOn") <- lastModifiedOn;
+    attr(res, "prevModifiedOn") <- prevModifiedOn;
+  }
+
+  this$.prevModifiedOn <- lastModifiedOn;
+
+  res;
 }, protected=TRUE)
 
 
@@ -771,7 +810,7 @@ setMethodS3("renameTo", "GenericDataFile", function(this, filename=getFilename(t
 
 
 
-setMethodS3("getChecksum", "GenericDataFile", function(this, ..., verbose=FALSE) {
+setMethodS3("getChecksum", "GenericDataFile", function(this, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -780,10 +819,14 @@ setMethodS3("getChecksum", "GenericDataFile", function(this, ..., verbose=FALSE)
   }
 
 
-  verbose && enter(verbose, "Calculating checksum");
-  pathname <- getPathname(this);
-  checksum <- digest2(pathname, file=TRUE);
-  verbose && exit(verbose);
+  checksum <- this$.checksum;
+  if (force || is.null(checksum) || hasBeenModified(this)) {
+    verbose && enter(verbose, "Calculating checksum");
+    pathname <- getPathname(this);
+    checksum <- digest2(pathname, file=TRUE);
+    verbose && exit(verbose);
+    this$.checksum <- checksum;
+  }
 
   checksum;
 })
@@ -1000,6 +1043,13 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-23
+# o (Re-)Added space between number and unit for RAM and file size.
+# o Now as.character() of GenericDataFile also reports the exact file size
+#   in case the file size is reported in kB, MB, etc.
+# o Now getChecksum() of GenericDataFile caches results unless the file
+#   has been modified since last time.
+# o Added hasBeenModified() to GenericDataFile.
 # 2008-09-18
 # o Now readChecksum() does some validation.  It is also possible to have
 #   commented rows in the checksum file.

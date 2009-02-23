@@ -359,3 +359,4 @@ aromaSettings
   aromaSettings AromaSettings getRam getRam.AromaSettings
   getVerbose.AromaSettings setRam setRam.AromaSettings setVerbose
   setVerbose.AromaSettings
+hasBeenModified hasBeenModified.GenericDataFile
