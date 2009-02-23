@@ -109,10 +109,7 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'ram':
-  if (is.null(ram)) {
-    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
-  }
-  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
+  ram <- getRam(aromaSettings, ram);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

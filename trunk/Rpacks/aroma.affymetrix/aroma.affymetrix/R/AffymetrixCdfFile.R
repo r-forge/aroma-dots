@@ -387,6 +387,13 @@ setMethodS3("hasUnitTypes", "AffymetrixCdfFile", function(this, types, ..., verb
   # Argument 'types':
   types <- Arguments$getIntegers(types, range=c(0,99));
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
 
   # Already have unit types cached?
   unitTypes <- this$.unitTypes;

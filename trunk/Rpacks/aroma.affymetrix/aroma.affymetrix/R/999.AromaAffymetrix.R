@@ -164,6 +164,38 @@ setMethodS3("patch", "AromaAffymetrix", function(this, ..., verbose=FALSE) {
 })
 
 
+
+setMethodS3("getDefaultSettings", "AromaAffymetrix", function(this, ...) {
+  defaults <- list(
+    memory = list(
+      ram = 1,
+      gcArrayFrequency = 50
+    ),
+
+    rules = list(
+      allowAsciiCdfs = FALSE
+    ),
+
+    output = list(
+      # Max number of arrays for which to report timestamps
+      timestampsThreshold = 500
+    ),
+
+    models = list(
+      RmaPlm = list( 
+       # Number of cells *and* arrays for using median polish
+        medianPolishThreshold  = c( 500, 6),
+       # Number of cells *and* arrays for skipping unit group
+        skipThreshold          = c(5000, 1)
+      )
+    )
+  );
+
+  defaults;
+}, protected=TRUE)
+
+
+
 ############################################################################
 # HISTORY:
 # 2009-01-10

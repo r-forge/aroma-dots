@@ -22,45 +22,8 @@
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Package settings (settings might change)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Load
-  settings <- getOption("aroma.affymetrix.settings");
-
-  template <- list(
-    memory = list(
-      ram = 1,
-      gcArrayFrequency = 50
-    ),
-
-    rules = list(
-      allowAsciiCdfs = FALSE
-    ),
-
-    output = list(
-      # Max number of arrays for which to report timestamps
-      timestampsThreshold = 500
-    ),
-
-    models = list(
-      RmaPlm = list( 
-       # Number of cells *and* arrays for using median polish
-        medianPolishThreshold  = c( 500, 6),
-       # Number of cells *and* arrays for skipping unit group
-        skipThreshold          = c(5000, 1)
-      )
-    )
-  );
-
-  # Copy settings from template, if missing
-  for (dir in names(template)) {
-    if (!dir %in% names(settings))
-      settings[[dir]] <- list();
-    for (subdir in names(template[[dir]])) {
-      if (!subdir %in% names(settings[[dir]]))
-        settings[[dir]][[subdir]] <- template[[dir]][[subdir]];
-    }
-  }
-
-  options("aroma.affymetrix.settings"=settings);
+  # This code will update the settings according to the default ones.
+  updateSettings(pkg);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -79,29 +42,14 @@
                                             paste(pkgs, collapse=", "));
     }
   }, action="append");
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Check for updates and patches?
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  settings <- getOption("aroma.affymetrix.settings");
-  if (identical(settings$system$checkForUpdates, TRUE)) {
-    interval <- settings$system$checkInterval;
-    if (is.null(interval))
-      interval <- "onEachLoad";
-
-    if (identical(interval, "onEachLoad")) {
-      if (interactive()) {
-        update(pkg, verbose=TRUE);
-      }
-    }
-  }
 } # .setupAromaAffymetrix()
 
 
 
 ############################################################################
 # HISTORY:
+# 2009-02-22
+# o Removed code checking for package updates. Was never called.
 # 2009-02-21
 # o Added setting memory$ram=1.
 # 2008-02-14
