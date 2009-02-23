@@ -877,3 +877,7 @@ PdInfo2Cdf
 exportTotalCnRatioSet.AffymetrixCnChpSet  exportTotalCnRatioSet
  exportTotalAndFracB.CnChipEffectFile
   exportTotalAndFracB.CnChipEffectSet
+ getDefaultSettings.AromaAffymetrix getDefaultSettings.Package
+  getSettings getSettings.Package setSettings setSettings.Package
+ updateSettings updateSettings.Package
+getDefaultSettings

@@ -102,11 +102,7 @@ setMethodS3("extractMatrix", "ParameterCelSet", function(this, units=NULL, ..., 
 
 
   # Settings
-  settings <- getOption("aroma.affymetrix.settings");
-  gcArrayFrequency <- settings$memory$gcArrayFrequency; 
-  if (is.null(gcArrayFrequency))
-    gcArrayFrequency <- 10;
-
+  gcArrayFrequency <- getOption(aromaSettings, "memory/gcArrayFrequency", 10);
 
   verbose && enter(verbose, "Getting data for the array set");
 

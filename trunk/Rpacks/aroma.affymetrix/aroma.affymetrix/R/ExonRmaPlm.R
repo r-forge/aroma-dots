@@ -173,17 +173,14 @@ setMethodS3("getFitUnitGroupFunction", "ExonRmaPlm", function(this, ..., verbose
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Thresholds for skipping/using median polish
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  settings <- getOption("aroma.affymetrix.settings");
-  skipThreshold <- settings$models$RmaPlm$skipThreshold;
-  if (is.null(skipThreshold))
-    skipThreshold <- c(Inf, Inf);
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  skipThreshold <- getOption(aromaSettings, 
+                                 "models/RmaPlm/skipThreshold", c(Inf, Inf));
 
-  medianPolishThreshold <- settings$models$RmaPlm$medianPolishThreshold;
-  if (is.null(medianPolishThreshold))
-    medianPolishThreshold <- c(Inf, Inf);
+  medianPolishThreshold <- getOption(aromaSettings, 
+                         "models/RmaPlm/medianPolishThreshold", c(Inf, Inf));
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
