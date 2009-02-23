@@ -35,5 +35,5 @@ fit(plm, verbose=log);
 ces <- getChipEffectSet(plm);
 fln <- FragmentLengthNormalization(ces, target="zero");
 print(fln);
-cesN <- process(fln, verbose=verbose);
+cesN <- process(fln, verbose=log);
 print(cesN);
