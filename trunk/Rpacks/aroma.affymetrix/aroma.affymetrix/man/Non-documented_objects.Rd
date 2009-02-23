@@ -1697,6 +1697,15 @@
 \alias{exportTotalCnRatioSet}
 \alias{exportTotalAndFracB.CnChipEffectFile}
 \alias{exportTotalAndFracB.CnChipEffectSet}
+\alias{getDefaultSettings.AromaAffymetrix}
+\alias{getDefaultSettings.Package}
+\alias{getSettings}
+\alias{getSettings.Package}
+\alias{setSettings}
+\alias{setSettings.Package}
+\alias{updateSettings}
+\alias{updateSettings.Package}
+\alias{getDefaultSettings}
 
 \description{
   This page contains aliases for all "non-documented" objects that
