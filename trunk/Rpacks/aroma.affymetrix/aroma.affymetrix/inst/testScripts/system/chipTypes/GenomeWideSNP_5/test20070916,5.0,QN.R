@@ -1,8 +1,8 @@
-library(aroma.affymetrix)
+library("aroma.affymetrix")
 
-log <- Arguments$getVerbose(-50);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+log <- Arguments$getVerbose(-50, timestamp=TRUE);
+
+
 
 dataSetName <- "HapMap270,5.0,CEU,testSet";
 chipType <- "GenomeWideSNP_5";

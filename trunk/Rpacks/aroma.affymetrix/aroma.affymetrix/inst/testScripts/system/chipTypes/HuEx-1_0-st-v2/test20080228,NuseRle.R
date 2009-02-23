@@ -1,8 +1,8 @@
-library(aroma.affymetrix);
+library("aroma.affymetrix");
 
-log <- Arguments$getVerbose(-3);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+log <- Arguments$getVerbose(-3, timestamp=TRUE);
+
+
 
 # The reason for observing a small difference is scores below,
 # is that when saving to file the estimates are rounded of to

@@ -1,7 +1,7 @@
-library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+library("aroma.affymetrix")
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
+
 
 dataSetName <- "HapMap270,100K,CEU,testSet";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
@@ -14,26 +14,26 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csRawList <- list();
+csRList <- list();
 for (chipType in chipTypes) {
   cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   stopifnot(identical(getNames(cs), sampleNames));
-  csRawList[[chipType]] <- cs;
+  csRList[[chipType]] <- cs;
 }
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Quantile normalization tests #1
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csQnList <- list();
-csList <- csRawList;
+csNList <- list();
+csList <- csRList;
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
   qn <- QuantileNormalization(cs);
   print(qn);
-  csQn <- process(qn, verbose=log);
-  print(csQn);
-  stopifnot(identical(getNames(csQn), getNames(cs)));
-  csQnList[[chipType]] <- csQn;
+  csN <- process(qn, verbose=log);
+  print(csN);
+  stopifnot(identical(getNames(csN), getNames(cs)));
+  csNList[[chipType]] <- csN;
 }

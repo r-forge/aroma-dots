@@ -1,6 +1,6 @@
-library(aroma.affymetrix)
+library("aroma.affymetrix")
 log <- Verbose(threshold=-4, timestamp=TRUE);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+
 
 dataSetName <- "Jeremy_2007-10k";
 chipType <- "Mapping10K_Xba142";
@@ -13,18 +13,18 @@ sampleNames <- c("0001-7", "0002-10", "0004-13", "0005-14", "0007-18",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
+csR <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
 keep <- 1:6;
-cs <- extract(cs, keep);
+csR <- extract(csR, keep);
 sampleNames <- sampleNames[keep];
-print(cs);
-stopifnot(identical(getNames(cs), sampleNames));
+print(csR);
+stopifnot(identical(getNames(csR), sampleNames));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fitting log-additive model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- RmaPlm(cs);
+plm <- RmaPlm(csR);
 print(plm);
 fit(plm, verbose=log);
 

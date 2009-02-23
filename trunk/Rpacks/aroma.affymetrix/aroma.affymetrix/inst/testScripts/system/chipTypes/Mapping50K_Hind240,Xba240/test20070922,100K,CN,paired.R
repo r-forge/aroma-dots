@@ -1,7 +1,7 @@
-library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+library("aroma.affymetrix")
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
+
 
 dataSetName <- "HapMap270,100K,CEU,testSet";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");

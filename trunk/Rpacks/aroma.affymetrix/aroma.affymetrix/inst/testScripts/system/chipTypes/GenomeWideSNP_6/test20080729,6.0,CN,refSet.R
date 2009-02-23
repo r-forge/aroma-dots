@@ -1,4 +1,4 @@
-library(aroma.affymetrix)
+library("aroma.affymetrix")
 
 log <- Verbose(threshold=-50, timestamp=TRUE);
 
@@ -53,18 +53,18 @@ if (length(findUnitsTodo(plm)) > 0) {
 
 
 fln <- FragmentLengthNormalization(ces);
-cesFln <- process(fln, verbose=log);
-print(cesFln);
+cesN <- process(fln, verbose=log);
+print(cesN);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Segmentation with specific reference set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Use the robust average of the first three arrays as a reference
-cesR <- extract(cesFln, 1:3);
+cesR <- extract(cesN, 1:3);
 ceR <- getAverageFile(cesR);
 print(ceR);
 
-sm <- CbsModel(cesFln, ceR);
+sm <- CbsModel(cesN, ceR);
 print(sm);
 fit(sm, arrays=1, chromosomes=19, verbose=log);

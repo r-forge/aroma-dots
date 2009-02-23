@@ -1,7 +1,7 @@
 library("aroma.affymetrix");
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
+
 
 dataSetName <- "HapMap270,100K,CEU,testSet";
 chipType <- "Mapping50K_Hind240";
@@ -19,5 +19,5 @@ print(csR);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 acc <- AllelicCrosstalkCalibration(csR, mergeShifts=FALSE);
 print(acc);
-csAcc <- process(acc, verbose=log);
-print(csAcc);
+csC <- process(acc, verbose=log);
+print(csC);

@@ -1,7 +1,7 @@
-library(aroma.affymetrix);
+library("aroma.affymetrix");
 
-log <- Verbose(threshold=-4);
-timestampOn(log);
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
 
 dataSetName <- "Affymetrix-HeartBrain";
 chipType <- "HG-U133_Plus_2";

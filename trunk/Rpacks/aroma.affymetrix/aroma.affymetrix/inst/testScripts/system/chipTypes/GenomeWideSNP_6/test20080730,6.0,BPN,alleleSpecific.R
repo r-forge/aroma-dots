@@ -1,4 +1,4 @@
-library(aroma.affymetrix);
+library("aroma.affymetrix");
 
 log <- Arguments$getVerbose(-4, timestamp=TRUE);
 
@@ -65,7 +65,7 @@ print(ces);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 fln <- FragmentLengthNormalization(ces);
 print(fln);
-cesN <- process(fln, verbose=verbose);
+cesN <- process(fln, verbose=log);
 print(cesN);
 
 

@@ -1,7 +1,7 @@
-library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+library("aroma.affymetrix")
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
+
 
 dataSetName <- "HapMap270,100K,CEU,testSet";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
@@ -14,28 +14,28 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csRawList <- list();
+csRList <- list();
 for (chipType in chipTypes) {
   cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   stopifnot(identical(getNames(cs), sampleNames));
-  csRawList[[chipType]] <- cs;
+  csRList[[chipType]] <- cs;
 }
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csList <- csRawList;
-csAccList <- list();
+csList <- csRList;
+csCList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
   acc <- AllelicCrosstalkCalibration(cs);
   print(acc);
-  csAcc <- process(acc, verbose=log);
-  print(csAcc);
-  stopifnot(identical(getNames(csAcc), getNames(cs)));
-  csAccList[[chipType]] <- csAcc;
+  csC <- process(acc, verbose=log);
+  print(csC);
+  stopifnot(identical(getNames(csC), getNames(cs)));
+  csCList[[chipType]] <- csC;
 }
 
 

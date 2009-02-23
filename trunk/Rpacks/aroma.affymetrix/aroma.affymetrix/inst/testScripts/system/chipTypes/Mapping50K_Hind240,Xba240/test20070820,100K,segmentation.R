@@ -1,4 +1,4 @@
-library(aroma.affymetrix)
+library("aroma.affymetrix")
 
 log <- Verbose(threshold=-4, timestamp=TRUE);
 
@@ -13,35 +13,35 @@ sampleNames <- c("NA06985", "NA06991", "NA06993",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csRawList <- list();
+csRList <- list();
 for (chipType in chipTypes) {
   cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   stopifnot(identical(getNames(cs), sampleNames));
-  csRawList[[chipType]] <- cs;
+  csRList[[chipType]] <- cs;
 }
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csList <- csRawList;
-csAccList <- list();
+csList <- csRList;
+csCList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
   acc <- AllelicCrosstalkCalibration(cs);
   print(acc);
-  csAcc <- process(acc, verbose=log);
-  print(csAcc);
-  stopifnot(identical(getNames(csAcc), getNames(cs)));
-  csAccList[[chipType]] <- csAcc;
+  csC <- process(acc, verbose=log);
+  print(csC);
+  stopifnot(identical(getNames(csC), getNames(cs)));
+  csCList[[chipType]] <- csC;
 }
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level modelling test (for CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csList <- csAccList;
+csList <- csCList;
 cesCnList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
@@ -58,16 +58,15 @@ for (chipType in names(csList)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fragment-length normalization test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cesCnList <- cesCnList;
-cesFlnList <- list();
+cesNList <- list();
 for (chipType in names(csList)) {
   ces <- cesCnList[[chipType]];
   fln <- FragmentLengthNormalization(ces);
   print(fln);
-  cesFln <- process(fln, verbose=verbose);
-  print(cesFln);
-  stopifnot(identical(getNames(cesFln), getNames(ces)));
-  cesFlnList[[chipType]] <- cesFln;
+  cesN <- process(fln, verbose=log);
+  print(cesN);
+  stopifnot(identical(getNames(cesN), getNames(ces)));
+  cesNList[[chipType]] <- cesN;
 }
 
 
@@ -75,8 +74,8 @@ for (chipType in names(csList)) {
 # Set up list of CN segmenation models
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cnsList <- list(
-  "glad" = GladModel(cesFlnList),
-   "cbs" = CbsModel(cesFlnList)
+  "glad" = GladModel(cesNList),
+   "cbs" = CbsModel(cesNList)
 );
 print(cnsList);
 

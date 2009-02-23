@@ -1,7 +1,7 @@
-library(aroma.affymetrix);
+library("aroma.affymetrix");
 
-log <- Arguments$getVerbose(-3);
-timestampOn(log);
+log <- Arguments$getVerbose(-3, timestamp=TRUE);
+
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
