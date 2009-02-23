@@ -11,5 +11,5 @@
     getDate(pkg), ") successfully loaded. See ?", pkgname, " for help.");
 
   # Setup package
-  .setupAromaCore();
+  .setupAromaCore(pkg);
 }

@@ -354,3 +354,8 @@ signalRange
  xRange.RawGenomicSignals xSeq.RawGenomicSignals
   getCns getCns.RawCopyNumbers
 getCn getCn.RawCopyNumbers
+aromaSettings
+.Machine
+  aromaSettings AromaSettings getRam getRam.AromaSettings
+  getVerbose.AromaSettings setRam setRam.AromaSettings setVerbose
+  setVerbose.AromaSettings
