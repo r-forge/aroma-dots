@@ -764,6 +764,16 @@
 \alias{getCns.RawCopyNumbers}
 \alias{getCn}
 \alias{getCn.RawCopyNumbers}
+\alias{aromaSettings}
+\alias{.Machine}
+\alias{AromaSettings}
+\alias{getRam}
+\alias{getRam.AromaSettings}
+\alias{getVerbose.AromaSettings}
+\alias{setRam}
+\alias{setRam.AromaSettings}
+\alias{setVerbose}
+\alias{setVerbose.AromaSettings}
 
 \description{
   This page contains aliases for all "non-documented" objects that

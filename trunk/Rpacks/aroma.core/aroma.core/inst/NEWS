@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.2 [2009-02-19]
+Version: 1.0.2 [2009-02-22]
 o Added argument 'units' to extractRawCopyNumbers() of
   AromaUnitSignalBinaryFile.
 o Added RawGenomicSignals which RawCopyNumbers now inherits from.

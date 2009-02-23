@@ -1,9 +1,12 @@
-setMethodS3("calculateAverageColumnAcrossFiles", "GenericTabularFileSet", function(this, method=c("mean", "median"), na.rm=TRUE, ..., ram=1, force=FALSE, verbose=FALSE) {
+setMethodS3("calculateAverageColumnAcrossFiles", "GenericTabularFileSet", function(this, method=c("mean", "median"), na.rm=TRUE, ..., ram=NULL, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'method':
   method <- match.arg(method);
+
+  # Argument 'ram':
+  ram <- getRam(aromaSettings, ram);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

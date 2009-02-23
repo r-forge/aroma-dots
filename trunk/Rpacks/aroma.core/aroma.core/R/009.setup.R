@@ -18,6 +18,19 @@
   patchPackage("aroma.core");
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Read settings file ".<name>Settings" and store it in package
+  # variable '<name>Settings'.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  name <- "aroma";
+  varName <- sprintf("%sSettings", name);
+  basename <- paste(".", varName, sep="");
+  settings <- AromaSettings$loadAnywhere(basename, verbose=TRUE);
+  if (is.null(settings))
+    settings <- AromaSettings(basename);
+  assign(varName, settings, pos=getPosition(pkg));
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Assert that digest() gives a consistent result across R versions
   # and platforms.
@@ -31,6 +44,8 @@
 
 ############################################################################
 # HISTORY:
+# 2009-02-22
+# o Now R.utils Settings object 'aromaSettings' is loaded/assign.
 # 2008-07-24
 # o Added patch for serialize() on Windows.
 # 2008-02-14

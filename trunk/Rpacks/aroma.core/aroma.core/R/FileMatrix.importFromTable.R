@@ -1,4 +1,4 @@
-setMethodS3("importFromTable", "FileMatrix", function(static, filename, path=NULL, srcPathname, colClasses=NULL, header=TRUE, sep="\t", skip=0, nrows=-1, col.names=NULL, ..., ram=1, verbose=FALSE) {
+setMethodS3("importFromTable", "FileMatrix", function(static, filename, path=NULL, srcPathname, colClasses=NULL, header=TRUE, sep="\t", skip=0, nrows=-1, col.names=NULL, ..., ram=NULL, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -12,6 +12,9 @@ setMethodS3("importFromTable", "FileMatrix", function(static, filename, path=NUL
   if (!is.null(colClasses)) {
     colClasses <- Arguments$getCharacters(colClasses);
   }
+
+  # Argument 'ram':
+  ram <- getRam(aromaSettings, ram);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
