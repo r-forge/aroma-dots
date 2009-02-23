@@ -244,10 +244,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
   }
 
   # Argument 'ram':
-  if (is.null(ram)) {
-    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
-  }
-  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
+  ram <- getRam(aromaSettings, ram);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -455,10 +452,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
   }
 
   # Argument 'ram':
-  if (is.null(ram)) {
-    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
-  }
-  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
+  ram <- getRam(aromaSettings, ram);
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

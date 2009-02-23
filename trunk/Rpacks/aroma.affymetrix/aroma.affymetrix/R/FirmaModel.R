@@ -540,10 +540,7 @@ setMethodS3("fit", "FirmaModel", function(this, units="remaining", ..., ram=NULL
   }
 
   # Argument 'ram':
-  if (is.null(ram)) {
-    ram <- getOption("aroma.affymetrix.settings")$memory$ram;
-  }
-  ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
+  ram <- getRam(aromaSettings, ram);
 
   # Argument 'force':
   force <- Arguments$getLogical(force);

@@ -322,10 +322,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   if (identical(ram, "oligo")) {
   } else {
     # Argument 'ram':
-    if (is.null(ram)) {
-      ram <- getOption("aroma.affymetrix.settings")$memory$ram;
-    }
-    ram <- Arguments$getDouble(ram, range=c(0.001, Inf));
+    ram <- getRam(aromaSettings, ram);
   }
 
   # Argument 'force':
