@@ -1,7 +1,7 @@
-library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+library("aroma.affymetrix")
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
+
 
 dataSetName <- "Jeremy_2007-10k";
 chipType <- "Mapping10K_Xba142";
@@ -13,34 +13,34 @@ sampleNames <- c("0001-7", "0002-10", "0004-13", "0005-14", "0007-18",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
+csR <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
 keep <- 1:6;
-cs <- extract(cs, keep);
+csR <- extract(csR, keep);
 sampleNames <- sampleNames[keep];
-print(cs);
-stopifnot(identical(getNames(cs), sampleNames));
+print(csR);
+stopifnot(identical(getNames(csR), sampleNames));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acc <- AllelicCrosstalkCalibration(cs);
+acc <- AllelicCrosstalkCalibration(csR);
 print(acc);
-csAcc <- process(acc, verbose=log);
-print(csAcc);
-stopifnot(identical(getNames(csAcc), getNames(cs)));
+csC <- process(acc, verbose=log);
+print(csC);
+stopifnot(identical(getNames(csC), getNames(csR)));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level modelling test (for CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- RmaCnPlm(csAcc, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
+plm <- RmaCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
 print(plm);
 
 fit(plm, verbose=log);
 ces <- getChipEffectSet(plm);
 print(ces);
-stopifnot(identical(getNames(ces), getNames(cs)));
+stopifnot(identical(getNames(ces), getNames(csR)));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,6 +48,6 @@ stopifnot(identical(getNames(ces), getNames(cs)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 fln <- FragmentLengthNormalization(ces);
 print(fln);
-cesFln <- process(fln, verbose=verbose);
-print(cesFln);
-stopifnot(identical(getNames(cesFln), getNames(ces)));
+cesN <- process(fln, verbose=log);
+print(cesN);
+stopifnot(identical(getNames(cesN), getNames(ces)));

@@ -1,6 +1,6 @@
-library(aroma.affymetrix);
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
+library("aroma.affymetrix");
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
 
 dataSetName <- "Affymetrix_2006-TumorNormal";
 chipTypes <- c("Mapping250K_Nsp", "Mapping250K_Sty");
@@ -21,34 +21,34 @@ colnames(pairs) <- c("normal", "tumor");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csRawList <- list();
+csRList <- list();
 for (chipType in chipTypes) {
   cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
   print(cs);
   stopifnot(all(getNames(cs) %in% pairs));
-  csRawList[[chipType]] <- cs;
+  csRList[[chipType]] <- cs;
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csList <- csRawList;
-csAccList <- list();
+csList <- csRList;
+csCList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
   acc <- AllelicCrosstalkCalibration(cs);
   print(acc);
-  csAcc <- process(acc, verbose=log);
-  print(csAcc);
-  stopifnot(identical(getNames(csAcc), getNames(cs)));
-  csAccList[[chipType]] <- csAcc;
+  csC <- process(acc, verbose=log);
+  print(csC);
+  stopifnot(identical(getNames(csC), getNames(cs)));
+  csCList[[chipType]] <- csC;
 }
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level modelling test (for CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csList <- csAccList;
+csList <- csCList;
 cesCnList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
@@ -66,15 +66,15 @@ for (chipType in names(csList)) {
 # Fragment-length normalization test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cesCnList <- cesCnList;
-cesFlnList <- list();
+cesNList <- list();
 for (chipType in names(csList)) {
   ces <- cesCnList[[chipType]];
   fln <- FragmentLengthNormalization(ces);
   print(fln);
-  cesFln <- process(fln, verbose=verbose);
-  print(cesFln);
-  stopifnot(identical(getNames(cesFln), getNames(ces)));
-  cesFlnList[[chipType]] <- cesFln;
+  cesN <- process(fln, verbose=log);
+  print(cesN);
+  stopifnot(identical(getNames(cesN), getNames(ces)));
+  cesNList[[chipType]] <- cesN;
 }
 
 
@@ -83,8 +83,8 @@ for (chipType in names(csList)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Split data set in (tumor, normal) pairs
 sets <- list(tumor=list(), normal=list());
-for (chipType in names(cesFlnList)) {
-  ces <- cesFlnList[[chipType]];
+for (chipType in names(cesNList)) {
+  ces <- cesNList[[chipType]];
   for (type in colnames(pairs)) {
     idxs <- match(pairs[,type], getNames(ces));
     sets[[type]][[chipType]] <- extract(ces, idxs);

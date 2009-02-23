@@ -1,7 +1,7 @@
-library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+library("aroma.affymetrix")
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
+
 
 dataSetName <- "HapMap270,100K,CEU,testSet";
 chipType <- "Mapping50K_Xba240";
@@ -26,16 +26,16 @@ stopifnot(identical(getNames(cs), sampleNames));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 acc <- AllelicCrosstalkCalibration(cs);
 print(acc);
-csAcc <- process(acc, verbose=log);
-print(csAcc);
-stopifnot(identical(getNames(csAcc), getNames(cs)));
+csC <- process(acc, verbose=log);
+print(csC);
+stopifnot(identical(getNames(csC), getNames(cs)));
 
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level modelling test (for allele-specific CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- RmaCnPlm(csAcc, mergeStrands=TRUE, combineAlleles=FALSE, shift=300);
+plm <- RmaCnPlm(csC, mergeStrands=TRUE, combineAlleles=FALSE, shift=300);
 print(plm);
 
 fit(plm, verbose=log);

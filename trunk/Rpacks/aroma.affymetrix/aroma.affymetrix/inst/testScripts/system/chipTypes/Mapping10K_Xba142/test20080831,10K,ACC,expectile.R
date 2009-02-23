@@ -1,4 +1,4 @@
-library(aroma.affymetrix)
+library("aroma.affymetrix")
 log <- Arguments$getVerbose(-4, timestamp=TRUE);
 
 dataSetName <- "Jeremy_2007-10k";

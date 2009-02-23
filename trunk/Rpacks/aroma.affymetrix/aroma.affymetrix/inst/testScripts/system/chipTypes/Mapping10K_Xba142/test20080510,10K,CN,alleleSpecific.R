@@ -1,9 +1,9 @@
-library(aroma.affymetrix);
-library(geneplotter);
+library("aroma.affymetrix");
+library("geneplotter");
 
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
+
 
 pngDev <- findPngDevice();
 imgFormat <- "png";
@@ -33,16 +33,16 @@ stopifnot(identical(getNames(cs), sampleNames));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 acc <- AllelicCrosstalkCalibration(cs);
 print(acc);
-csAcc <- process(acc, verbose=log);
-print(csAcc);
-stopifnot(identical(getNames(csAcc), getNames(cs)));
+csC <- process(acc, verbose=log);
+print(csC);
+stopifnot(identical(getNames(csC), getNames(cs)));
 
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level modelling test (for CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- RmaSnpPlm(csAcc, mergeStrands=TRUE, shift=300);
+plm <- RmaSnpPlm(csC, mergeStrands=TRUE, shift=300);
 print(plm);
 
 fit(plm, verbose=log);

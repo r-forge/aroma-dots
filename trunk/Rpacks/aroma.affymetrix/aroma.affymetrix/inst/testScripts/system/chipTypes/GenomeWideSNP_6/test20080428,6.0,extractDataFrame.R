@@ -1,4 +1,4 @@
-library(aroma.affymetrix)
+library("aroma.affymetrix")
 
 log <- Verbose(threshold=-50, timestamp=TRUE);
 

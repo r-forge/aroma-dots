@@ -1,7 +1,7 @@
-library(aroma.affymetrix)
-log <- Arguments$getVerbose(-4);
-timestampOn(log);
-.Machine$float.eps <- sqrt(.Machine$double.eps);
+library("aroma.affymetrix")
+log <- Arguments$getVerbose(-4, timestamp=TRUE);
+
+
 
 dataSetName <- "Jeremy_2007-10k";
 chipType <- "Mapping10K_Xba142";
@@ -26,15 +26,15 @@ stopifnot(identical(getNames(cs), sampleNames));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 acc <- AllelicCrosstalkCalibration(cs);
 print(acc);
-csAcc <- process(acc, verbose=log);
-print(csAcc);
-stopifnot(identical(getNames(csAcc), getNames(cs)));
+csC <- process(acc, verbose=log);
+print(csC);
+stopifnot(identical(getNames(csC), getNames(cs)));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Probe-level modelling test (for CN analysis)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- RmaCnPlm(csAcc, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
+plm <- RmaCnPlm(csC, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
 print(plm);
 
 fit(plm, verbose=log);
@@ -48,15 +48,15 @@ stopifnot(identical(getNames(ces), getNames(cs)));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 fln <- FragmentLengthNormalization(ces);
 print(fln);
-cesFln <- process(fln, verbose=verbose);
-print(cesFln);
-stopifnot(identical(getNames(cesFln), getNames(ces)));
+cesN <- process(fln, verbose=log);
+print(cesN);
+stopifnot(identical(getNames(cesN), getNames(ces)));
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Glad model test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-glad <- GladModel(cesFln);
+glad <- GladModel(cesN);
 print(glad);
 fit(glad, arrays=1, chromosomes=19, verbose=log);
 
