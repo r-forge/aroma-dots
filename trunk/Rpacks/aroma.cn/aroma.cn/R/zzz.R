@@ -9,7 +9,4 @@
 
   packageStartupMessage(getName(pkg), " v", getVersion(pkg), " (", 
     getDate(pkg), ") successfully loaded. See ?", pkgname, " for help.");
-
-  # Setup package
-  .setupAromaCore();
 }
