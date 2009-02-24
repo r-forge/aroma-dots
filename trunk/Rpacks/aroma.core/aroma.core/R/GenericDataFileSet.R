@@ -99,22 +99,43 @@ setMethodS3("as.character", "GenericDataFileSet", function(x, ...) {
   this <- x;
 
   s <- sprintf("%s:", class(this)[1]);
+
+  # Name and tags of file set
   s <- c(s, sprintf("Name: %s", getName(this)));
   tags <- getTags(this, collapse=",");
   if (!is.null(tags)) {
     s <- c(s, sprintf("Tags: %s", tags));
   }
+
+  # Full names of file set
   s <- c(s, sprintf("Full name: %s", getFullName(this)));
+
+  # Number of files in set
   n <- nbrOfFiles(this);
   s <- c(s, sprintf("Number of files: %d", n));
+
+  # Names of files
   names <- getNames(this);
   if (n >= 5)
     names <- c(names[1:2], "...", names[n]);
   names <- paste(names, collapse=", ");
   s <- c(s, sprintf("Names: %s", names));
-  s <- c(s, sprintf("Path (to the first file): %s", getPath(this)));
-  s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
+
+  # Pathname
+  path <- getPath(this);
+  pathR <- getRelativePath(path);
+  if (nchar(pathR) < nchar(path)) {
+    path <- pathR;
+  }
+  s <- c(s, sprintf("Path (to the first file): %s", path));
+
+  # File size
+  fileSizeB <- sprintf("%.2f MB", getFileSize(this, "numeric")/1024^2);
+  s <- c(s, sprintf("Total file size: %s", fileSizeB));
+
+  # RAM
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
+
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -498,7 +519,8 @@ setMethodS3("setTags", "GenericDataFileSet", function(this, tags="*", ...) {
 
 
 setMethodS3("getFileSize", "GenericDataFileSet", function(this, ...) {
-  if (is.null(fileSize <- this$.fileSize)) {
+  fileSize <- this$.fileSize;
+  if (is.null(fileSize)) {
     fileSize <- sum(unlist(lapply(this, FUN=getFileSize), use.names=FALSE));
     this$.fileSize <-  fileSize;
   }

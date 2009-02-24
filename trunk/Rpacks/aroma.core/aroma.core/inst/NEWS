@@ -15,7 +15,9 @@ o Now RawCopyNumbers() takes RawCopyNumbers objects as input.
 o Now getChecksum() of GenericDataFile caches results unless the 
   file has been modified since last time.
 o Now as.character() of GenericDataFile also reports the exact file 
-  size in case the file size is reported in kB, MB, etc.
+  size in case the file size is reported in kB, MB, etc.  It also 
+  tries to report the relative pathname rather than the absolute.
+
 
 
 Version: 1.0.1 [2009-02-12]
