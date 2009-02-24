@@ -774,6 +774,8 @@
 \alias{setRam.AromaSettings}
 \alias{setVerbose}
 \alias{setVerbose.AromaSettings}
+\alias{hasBeenModified}
+\alias{hasBeenModified.GenericDataFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

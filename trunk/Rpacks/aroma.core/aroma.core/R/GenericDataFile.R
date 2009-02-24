@@ -169,24 +169,39 @@ setMethodS3("as.character", "GenericDataFile", function(x, ...) {
   this <- x;
 
   s <- sprintf("%s:", class(this)[1]);
+
+  # Name and tags of file set
   s <- c(s, sprintf("Name: %s", getName(this)));
   tags <- getTags(this, collapse=",");
   if (!is.null(tags)) {
     s <- c(s, sprintf("Tags: %s", tags));
   }
-  s <- c(s, sprintf("Pathname: %s", getPathname(this)));
-  fileSizeU <- getFileSize(this, "units");
-  fileSizeB <- sprintf("%d bytes", getFileSize(this, "numeric"));
-  if (fileSizeB == fileSizeU) {
-    fileSizeB <- "";
-  } else {
-    fileSizeB <- sprintf(" (%s)", fileSizeB);
+
+  # Full names of file set
+  s <- c(s, sprintf("Full name: %s", getFullName(this)));
+
+  # Pathname
+  pathname <- getPathname(this);
+  pathnameR <- getRelativePath(pathname);
+  if (nchar(pathnameR) < nchar(pathname)) {
+    pathname <- pathnameR;
   }
-  s <- c(s, sprintf("File size: %s%s", fileSizeU, fileSizeB));
+  s <- c(s, sprintf("Pathname: %s", pathname));
+
+  # File size
+  fileSize <- getFileSize(this, "units");
+  fileSizeB <- sprintf("%d bytes", getFileSize(this, "numeric"));
+  if (fileSizeB != fileSize) {
+    fileSize <- sprintf("%s (%s)", fileSize, fileSizeB);
+  }
+  s <- c(s, sprintf("File size: %s", fileSize));
+
+  # RAM
   if (getOption(aromaSettings, "output/checksum", FALSE)) {
     s <- c(s, sprintf("File checksum: %s", getChecksum(this)));
   }
   s <- c(s, sprintf("RAM: %.2f MB", objectSize(this)/1024^2));
+
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
@@ -1046,7 +1061,8 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 # 2009-02-23
 # o (Re-)Added space between number and unit for RAM and file size.
 # o Now as.character() of GenericDataFile also reports the exact file size
-#   in case the file size is reported in kB, MB, etc.
+#   in case the file size is reported in kB, MB, etc.  It also tries to
+#   report the relative pathname rather than the absolute.
 # o Now getChecksum() of GenericDataFile caches results unless the file
 #   has been modified since last time.
 # o Added hasBeenModified() to GenericDataFile.
