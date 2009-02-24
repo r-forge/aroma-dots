@@ -157,7 +157,7 @@ setMethodS3("exportTotalAndFracB", "SnpChipEffectSet", function(this, fields=c("
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(cf), length(this)));
     asbList <- exportTotalAndFracB(cf, fields=fields, dataSet=dataSetName, ..., drop=FALSE, verbose=less(verbose, 1));
     if (is.null(chipType)) {
-      chipType <- getChipType(asbList[[1]]);
+      chipType <- getChipType(asbList[[1]], fullname=FALSE);
     }
     verbose && print(verbose, asbList);
     rm(asbList);
@@ -222,6 +222,9 @@ setMethodS3("getAromaUnitFracBCnBinarySet", "default", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-24
+# o BUG FIX: exportTotalAndFracB() of SnpChipEffectFile return an empty
+#   list for chip types with tags.
 # 2009-02-22
 # o Now exportTotalAndFracB() of CnChipEffect{File|Set} does not export
 #   fracB signals if allele-specific chip effects do not exist.

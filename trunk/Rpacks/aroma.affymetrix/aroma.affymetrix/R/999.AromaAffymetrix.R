@@ -177,6 +177,9 @@ setMethodS3("getDefaultSettings", "AromaAffymetrix", function(this, ...) {
     ),
 
     output = list(
+      # Should the checksum be reported when print():ing files?
+      checksum = FALSE,
+
       # Max number of arrays for which to report timestamps
       timestampsThreshold = 500
     ),
