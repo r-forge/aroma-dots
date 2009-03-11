@@ -1,0 +1,332 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Report Template for TumorBoost
+%
+% Required objects:
+%  - sampleName, e.g. sampleName <- "TCGA-02-0014";
+%
+% Author: Henrik Bengtsson, hb@stat.berkeley.edu
+% Created on: 2009-03-11
+%
+% Usage:
+%  library("R.rsp");
+%  sampleName <- "TCGA-02-0069";
+%  rsptex("pair.tex.rsp", pdf=TRUE); # *.tex.rsp => ... => *.pdf
+%
+% Advanced:
+%  library("R.rsp");
+%  sampleName <- "TCGA-06-0176";
+%  rsptex("pair.tex.rsp", pdf=TRUE, envir=globalenv(), force=TRUE);
+%  file.rename("pair.pdf", sprintf("%s,pair.pdf", sampleName));
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+<%
+if (!exists("sampleName")) {
+  throw("Parameter 'sampleName' missing.");
+}
+
+figForce <- TRUE;
+
+dataSet <- "TCGA_GBM,Broad,2.0";
+dataSetTags <- "ACC,ra,-XY,USE.ME=TRUE,BPN,-XY,AVG,FLN,-XY";
+chipType <- "GenomeWideSNP_6";
+%>
+
+<%
+annotations <- c(fullname=FALSE, n=FALSE, chr=TRUE);
+chromosomes <- 1:24;
+#chromosomes <- 18:19;
+%>
+
+
+<%
+title <- "Short Report";
+authors <- "TCGA";
+figPath <- "figures/col/";
+figForce <- TRUE;
+figForce <- FALSE;
+docId <- c("TCGA", "LBNL", "GDAC-A", format(Sys.Date(), "%Y-%m-%d"), "doc04");
+docId <- paste(docId, collapse="/");
+%>
+
+<%
+sourceDirectory("R/");
+%>
+
+
+<%
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Setup data
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+if (!exists("ces") || !inherits(ces, "SnpChipEffectSet")) {
+  ces <- SnpChipEffectSet$byName(dataSet, tags=dataSetTags, 
+                                   chipType=chipType, mergeStrands=TRUE);
+  setFullNamesTranslator(ces, function(names, ...) {
+    pattern <- "^(TCGA-[0-9]{2}-[0-9]{4})-([0-9]{2}.)-(.*)$"
+    names <- gsub(pattern, "\\1,\\2,\\3", names);
+    names <- gsub(",chipEffects", "", names);
+    names;
+  })
+
+  print(ces);
+}
+
+cdf <- getCdf(ces);
+unitTypes <- getUnitTypes(cdf);
+ugp <- AromaUgpFile$byChipType(getChipType(ces));
+%>
+
+<%
+# Extract (tumor,normal) pair
+cesTN <- extract(ces, indexOf(ces, sampleName));
+typeTags <- sapply(cesTN, getTags)[1,];
+cesTN <- extract(cesTN, order(typeTags));
+stopifnot(length(cesTN) == 2);
+%>
+
+<%
+# Extract tumor normal pair of interest
+pairTag <- sapply(cesTN, FUN=function(df) getTags(df)[1]);
+pairTag <- paste(pairTag, collapse="vs");
+fullname <- sprintf("%s,%s", sampleName, pairTag);
+%>
+
+
+%#####################################################################
+% BEGIN Document
+%#####################################################################
+\documentclass[letter]{article}
+
+\addtolength{\topmargin}{-0.8in}
+\addtolength{\textheight}{1.6in}
+\addtolength{\oddsidemargin}{-0.8in}
+\addtolength{\evensidemargin}{-0.8in}
+\addtolength{\textwidth}{1.6in}
+
+
+%% % Avoid page breaks at new chapters
+%% \makeatletter
+%% \renewcommand\chapter{\par%
+%%   \thispagestyle{plain}%
+%%   \global\@topnum\z@
+%%   \@afterindentfalse
+%%   \secdef\@chapter\@schapter}
+%% \makeatother
+
+\usepackage[pdftex]{graphicx}
+\usepackage{fancyvrb}
+
+
+% Fancy headers
+\usepackage{fancyhdr}
+\setlength{\headheight}{15.2pt}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\footrulewidth}{2pt}
+\fancyhf{}
+%\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+%\renewcommand{\sectionmark}[1]{\markright{#1}{}}
+\lhead{TCGA}
+\rhead{\today}
+\lfoot{\small DOC ID: <%=docId%>}
+\rfoot{\thepage}
+
+% The search path (within curly brackets and separated by commas)
+% where to find graphics files
+\graphicspath{{<%=figPath%>}}
+\DeclareGraphicsRule{.eps.gz}{eps}{.eps.bb}{`gunzip -c #1}
+
+\renewcommand{\topfraction}{1.0}    % max fraction of floats at top
+\renewcommand{\bottomfraction}{1.0} % max fraction of floats at bottom
+
+\title{<%=title%>}
+\author{<%=authors%>}
+
+\begin{document}
+
+\maketitle
+
+
+% = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+\section*{Dataset}
+% = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+\begin{itemize}
+  \item Data set: {<%=le(dataSet)%>}
+  \item Data set tags: <%=le(dataSetTags)%>
+  \item Sample: <%=le(sampleName)%>
+  \item Tumor-normal pair: <%=le(pairTag)%>
+  \item Full name: <%=le(fullname)%>
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{A single tumor-normal pair}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{Verbatim}
+<%=rspCapture(cesTN)%>
+\end{Verbatim}
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Chromosome by chromosome}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% BEGIN Figure (betaT vs betaN) for each chromosome
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+<%
+# Graphics settings
+lim <- c(0,1);
+xlab <- "Allele B fraction for Normal";
+ylab <- "Allele B fraction for Tumor";
+width <- 1;
+height <- 0.8*width;
+smoothTag <- "thin";
+%>
+
+<% for (chr in chromosomes) { %>
+\clearpage
+\section{Chromosome <%=chr%>}
+<%
+# Data of interest
+units <- NULL;
+%>
+
+<%
+figName <- sprintf("%s,Chr%02d,freqB", fullname, chr);
+filename <- sprintf("%s.png", figName);
+pathname <- Arguments$getWritablePathname(filename, path=figPath);
+if (figForce || !isFile(pathname)) {
+  devNew(figDev, pathname, width=width, height=height);
+  par(mar=c(3.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
+  subplots(2, ncol=1);
+%>
+
+
+<%
+# Identify data points to plot
+if (is.null(units)) {
+  units <- getUnitsOnChromosome(ugp, chr);
+  units <- units[unitTypes[units] == 2];
+
+  # Subset?
+  subset <- 10000;
+  subset <- NULL;
+  if (!is.null(subset)) {
+    idxs <- seq(from=1, to=length(units), length.out=n);
+    idxs <- unique(as.integer(idxs));
+    units <- units[idxs];
+    rm(idxs);
+  }
+}
+str(units);
+
+nbrOfUnits <- length(units);
+pos <- getPositions(ugp, units=units);
+
+# Extract (thetaA,thetaB) for the tumor and normal
+theta <- extractTheta(cesTN, units=units);
+
+# Calculate fracB for these two
+fracB <- apply(theta, MARGIN=3, FUN=function(theta) { 
+  theta[,2]/(theta[,1]+theta[,2]);
+});
+colnames(fracB) <- c("tumor", "normal");
+%>
+
+<%
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Naive genotyping
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+fit <- findPeaksAndValleys(fracB[,"normal"]);
+fit <- subset(fit, type == "valley");
+a <- fit$x[1];
+b <- fit$x[2];
+fracBNCall <- rep(1/2, nbrOfUnits);
+fracBNCall[fracB[,"normal"] < a] <- 0;
+fracBNCall[fracB[,"normal"] > b] <- 1;
+fracBNCall[is.na(fracB[,"normal"])] <- NA;
+%>
+
+
+<%
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# TumorBoost calibration
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+delta <- fracB[,"normal"] - fracBNCall;
+fracB2 <- fracB;
+fracB2[,"normal"] <- fracB2[,"normal"] - delta;
+fracB2[,"tumor"] <- fracB2[,"tumor"] - delta;
+%>
+
+<%
+ylim <- c(0.0,1.0) + c(-1,1)*0.1;
+xlab <- "Phyiscal position (Mb)";
+fracBLab <- expression(beta[T]);
+muLab <- expression(hat(mu)[T]);
+fracBLab <- "beta[T]";
+muLab <- "mu*[T]";
+x <- pos/1e6;
+plot(x, fracB[,"tumor"], pch=".", ylim=ylim, xlab=xlab, ylab=fracBLab);
+stext(side=3, pos=0, sprintf("Tumor: %s", getFullNames(cesTN)[1]));
+stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
+plot(x, fracB2[,"tumor"], pch=".", ylim=ylim, xlab=xlab, ylab=muLab);
+%>
+
+<%
+    devDone();
+} # if (!isFile(pathname))
+%>
+
+\begin{figure}[htb]
+ \begin{center}
+  \parbox{\textwidth}{%
+   \resizebox{0.96\textwidth}{!}{\includegraphics{<%=figName%>}} %
+  }
+ \end{center}
+ \caption{Raw and calibrated allele B fractions for the tumor of sample <%=sampleName%> on chromosome~<%=chr%>.}
+ \label{fig<%=fullname%>}
+\end{figure}
+
+<% } # for (chr ...) %>
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% END Figure
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\appendix
+\part*{Appendix}
+\section*{Raw data}
+\begin{Verbatim}
+<%=rspCapture(cesTN)%>
+\end{Verbatim}
+
+\section*{Annotation data}
+\begin{Verbatim}
+<%=rspCapture(ugp)%>
+<%=rspCapture(cdf)%>
+\end{Verbatim}
+
+\section*{Session information}
+<%=toLatex(sessionInfo())%>
+
+
+
+\end{document}
+%#####################################################################
+% END Document
+%#####################################################################
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HISTORY:
+% 2009-02-25
+% o Created.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
