@@ -240,12 +240,22 @@ colnames(fracB) <- c("tumor", "normal");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 fit <- findPeaksAndValleys(fracB[,"normal"]);
 fit <- subset(fit, type == "valley");
-a <- fit$x[1];
-b <- fit$x[2];
-fracBNCall <- rep(1/2, nbrOfUnits);
-fracBNCall[fracB[,"normal"] < a] <- 0;
-fracBNCall[fracB[,"normal"] > b] <- 1;
-fracBNCall[is.na(fracB[,"normal"])] <- NA;
+nbrOfGenotypeGroups <- nrow(fit)+1;
+if (nbrOfGenotypeGroups == 2) {
+  a <- fit$x[1];
+  fracBNCall <- rep(0, nbrOfUnits);
+  fracBNCall[fracB[,"normal"] > a] <- 1;
+  fracBNCall[is.na(fracB[,"normal"])] <- NA;
+} else if (nbrOfGenotypeGroups == 3) {
+  a <- fit$x[1];
+  b <- fit$x[2];
+  fracBNCall <- rep(1/2, nbrOfUnits);
+  fracBNCall[fracB[,"normal"] < a] <- 0;
+  fracBNCall[fracB[,"normal"] > b] <- 1;
+  fracBNCall[is.na(fracB[,"normal"])] <- NA;
+} else {
+  throw("Unexpected number of genotype groups: ", nbrOfGenotypeGroups);
+}
 %>
 
 
@@ -327,6 +337,9 @@ plot(x, fracB2[,"tumor"], pch=".", ylim=ylim, xlab=xlab, ylab=muLab);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HISTORY:
-% 2009-02-25
+% 2009-03-12
+% o FIX: The naive genotyping assumed three genotype groups. Now it
+%   also applies to cases with two genotype groups, e.g. Chr X & Y.
+% 2009-03-11
 % o Created.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
