@@ -75,44 +75,55 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
   # Normalize all arrays simultaneously
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   nbrOfArrays <- nbrOfArrays(this);
-  df <- getFile(this, 1);
   
-    
+  # Get CDF header
+  cdfHeader <- getHeader(cdfUnique);
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Do the conversion from standard CDF to unique CDF
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   for (kk in seq_len(nbrOfArrays)) {
 
-      verbose && enter(verbose, "Converting CEL data from standard to unique CDF");
+      df <- getFile(this, kk);
+      verbose && enter(verbose, paste("Converting CEL data from standard to unique CDF for sample ", kk, " ( ", getName(df), " ) of ", nbrOfArrays,sep=""));
   
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Read data
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Reading values according to standard CDF");
-      df <- getFile(this, kk);
+      verbose && enter(verbose, "Reading intensity values according to standard CDF");
       data <- readCelUnits(getPathname(df), cdf=cdfStandard, dropArrayDim=TRUE);
-      hdr <- readCelHeader(getPathname(df));
+      #hdr <- readCelHeader(getPathname(df));
       verbose && exit(verbose);
 
       fullname <- getFullName(df);
       filename <- sprintf("%s.CEL", fullname);
       pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
+	  
+	  # Build a valid CEL header
+      celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=fullname);
+
+      # Add some extra information about what the CEL file is for
+      params <- c(Descripion="This CEL file was created by the aroma.affymetrix package.");
+      parameters <- gsub(" ", "_", params);
+      names(parameters) <- names(params);
+      parameters <- paste(names(parameters), parameters, sep=":");
+      parameters <- paste(parameters, collapse=";");
+      parameters <- paste(celHeader$parameters, parameters, "", sep=";");
+      parameters <- gsub(";;", ";", parameters);
+      parameters <- gsub(";$", "", parameters);
+      celHeader$parameters <- parameters;
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Write data
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Create CEL file to store results, if missing
-      nr <- nbrOfRows(cdfUnique);
-      nc <- nbrOfColumns(cdfUnique);
-      header <- list(filename=pathname, version=4, rows=nr, cols=nc, total=nr*nc, noutliers=0, chiptype=getChipType(cdfUnique), header=hdr$header, algorithm=hdr$algorithm, parameters=hdr$parameters, cellmargin=hdr$cellmargin, nmasked=hdr$nmasked);
-
       verbose && enter(verbose, "Creating CEL file for results, if missing");
-      createCel(pathname, header=header);
+      createCel(pathname, header=celHeader);
       verbose && cat(verbose, "Writing values according to unique CDF");
       updateCelUnits(pathname, cdf=cdfUniqueIndices, data=data, verbose=FALSE);
       verbose && exit(verbose);
 
-      rm(data,hdr);
+      rm(data);
       gc <- gc();
       verbose && print(verbose, gc);
 
@@ -128,6 +139,8 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
 
 ############################################################################
 # HISTORY:
+# 2009-03-18 [MR]
+# o changed the way CEL headers are made ... it now uses cdfHeaderToCelHeader()
 # 2008-12-08 [MR]
 # o fixed small bug when operating on raw data
 # 2008-12-04 [MR]
