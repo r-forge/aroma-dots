@@ -107,26 +107,32 @@ setMethodS3("isDone", "MatSmoothing", function(this, ..., verbose=FALSE) {
     verbose && cat(verbose, "NOT done. No output files found.");
     return(FALSE);
   }
-
-  ds <- getInputDataSet(this);
+  
+  tags <- paste(getTags(this),collapse=",")
+  inputDs <- getInputDataSet(this);
+  cdf <- getCdf(inputDs)
+  ds <- AffymetrixCelSet$fromName(getName(inputDs),cdf=cdf,verbose=verbose,tags=tags)
   
   params <- getParameters(this);
   design <- params$design;
 
   if (length(pathnames) < ncol(design) ) {
     verbose && cat(verbose, "NOT done. Too few output files: ", 
-                                   length(pathnames), " < ", nbrOfFiles(ds));
+                                   ncol(design), " < ", nbrOfFiles(ds));
     return(FALSE);
   }
 
   if (length(pathnames) > ncol(design) ) {
     throw("Too many output files found: ", 
-                                  length(pathnames), " > ", nbrOfFiles(ds));
+                                  ncol(design), " > ", nbrOfFiles(ds));
   }
 
-  verbose && cat(verbose, "Done. All output files are there: ", 
-                                                          length(pathnames));
+  if ( length( intersect(colnames(design), getNames(ds)) ) != nbrOfFiles(ds) ) {
+    warning("Column names of the design matrix do not match the names of the dataset")
+  }
 
+  verbose && cat(verbose, "Done. All output files are there: ", ncol(design));
+    
   verbose && exit(verbose);
 
   return(TRUE);
@@ -226,12 +232,12 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already done?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #if (!force && isDone(this)) {
-  #  verbose && cat(verbose, "Already normalized");
-  #  verbose && exit(verbose);
-  #  outputDataSet <- getOutputDataSet(this);
-  #  return(invisible(outputDataSet));
-  #}
+  if (!force && isDone(this)) {
+    verbose && cat(verbose, "Already smoothed");
+    verbose && exit(verbose);
+    outputDataSet <- getOutputDataSet(this);
+    return(invisible(outputDataSet));
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup
@@ -431,6 +437,9 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
 
 ############################################################################
 # HISTORY:
+# 2009-03-20 [MR]
+# o Corrected the checking of isDone() for MatSmoothing objects
+# o If MatSmoothing has already been run, it returns the AffymetrixCelSet object
 # 2009-01-13 [HB]
 # o MEMORY CLEANUP: Cleaning out more "done" variables and earlier.
 # o Code cleanup.
