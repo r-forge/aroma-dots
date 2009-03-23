@@ -24,23 +24,21 @@
 # }
 # 
 # \section{Requirements}{
-#   This class requires an Affymetrix TSV file for the chip type to be
-#   normalized.
+#   This class requires an Aroma unit GC-content (UGC) file.
 # }
-#
-# \examples{\dontrun{
-# }}
 #
 # @author
 #*/###########################################################################
 setConstructorS3("GcContentNormalization", function(dataSet=NULL, ..., targetFunction=NULL, subsetToFit=NULL) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "CnChipEffectSet"))
-      throw("Argument 'dataSet' is not an CnChipEffectSet object: ", class(dataSet));
+    className <- "CnChipEffectSet";
+    if (!inherits(dataSet, className))
+      throw("Argument 'dataSet' is not an ", className, " object: ", 
+                                                          class(dataSet)[1]);
 
     if (dataSet$combineAlleles != TRUE) {
       throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
@@ -106,22 +104,74 @@ setMethodS3("getOutputDataSet", "GcContentNormalization", function(this, ...) {
   res;
 })
 
+
+setMethodS3("getGcContent", "GcContentNormalization", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # Argument 'units':
+  cdf <- getCdf(this);
+  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits));
+
+
+  verbose && enter(verbose, "Retrieving GC content");
+  chipType <- getChipType(cdf);
+  chipType <- gsub(",monocell", "", chipType);
+  verbose && cat(verbose, "Chip type: ", chipType);
+  verbose && cat(verbose, "Units:");
+  verbose && str(verbose, units);
+
+  gcContents <- NULL;
+  # Try 1: Use an unit GC content (UGC) file
+  tryCatch({
+    ugc <- AromaUgcFile$byChipType(chipType);
+    gcContents <- ugc[units,1,drop=TRUE];
+  }, error = function(ex) {
+  })
+
+  # Try 2: Use a TSV file (deprecated; kept for backward compatibility)
+  if (is.null(gcContents)) {
+    tryCatch({
+      chipTypeS <- gsub(",.*", "", chipType);
+      tsv <- AffymetrixTsvFile$byChipType(chipTypeS);
+      gcContents <- getGc(tsv, units=units);
+    }, error = function(ex) {
+    })
+  }
+
+  if (is.null(gcContents)) {
+    throw("Failed to retrieve GC content information. No GC-content annotation file found: ", chipType);
+  }
+
+  verbose && cat(verbose, "GC contents:");
+  verbose && str(verbose, gcContents);
+  verbose && exit(verbose);
+
+  gcContents;
+}, protected=TRUE);
+
+
 setMethodS3("getSubsetToFit", "GcContentNormalization", function(this, force=FALSE, ...) {
   # Cached?
   units <- this$.units;
   if (!is.null(units) && !force)
     return(units);
 
-  # Identify all SNP (& CN) units
+  # Identify all SNP & CN units
   cdf <- getCdf(this);
-#  units <- indexOf(cdf, "SNP_");
   types <- getUnitTypes(cdf, ...);
   units <- which(types == 2 | types == 5);
 
   # Keep only those for which we have GC contents information
-  chipType <- getChipType(cdf, fullname=FALSE);
-  tsv <- AffymetrixTsvFile$byChipType(chipType);
-  gcContents <- getGc(tsv, units=units);
+  gcContents <- getGcContent(this, units=units, ...);
+
   keep <- is.finite(gcContents);
   units <- units[keep];
 
@@ -174,10 +224,8 @@ setMethodS3("getTargetFunction", "GcContentNormalization", function(this, ..., f
   if (is.null(fcn) || force) {
     verbose && enter(verbose, "Estimating target prediction function");
 
-    # Get the Affymetrix TSV file
-    cdf <- getCdf(this);
-    chipType <- getChipType(cdf, fullname=FALSE);
-    tsv <- AffymetrixTsvFile$byChipType(chipType);
+    # Get the GC-content annotation data
+    gcContents <- getGcContent(this, verbose=less(verbose));
 
     # Get target set
     ces <- getInputDataSet(this);
@@ -204,8 +252,8 @@ setMethodS3("getTargetFunction", "GcContentNormalization", function(this, ..., f
     verbose && cat(verbose, "Signals:");
     verbose && str(verbose, yR);
     
-    # Get GC contents for these
-    gcContents <- getGc(tsv, units=units);
+    # Get GC contents for these units
+    gcContents <- gcContents[units];
     verbose && cat(verbose, "GC content:");
     verbose && str(verbose, gcContents);
 
@@ -216,7 +264,7 @@ setMethodS3("getTargetFunction", "GcContentNormalization", function(this, ..., f
     class(fit) <- "lowess";
 
     # Remove as many promises as possible
-    rm(fcn, ces, ceR, units, cdf, tsv, gc, yR, ok);
+    rm(fcn, ces, ceR, units, gc, yR, ok);
 
     # Create target prediction function
     fcn <- function(x, ...) {
@@ -302,11 +350,6 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
   types <- getUnitTypes(cdf, ...);
   subsetToUpdate <- which(types == 2 | types == 5);
 
-  verbose && enter(verbose, "Retrieving Affymetrix TSV file");
-  chipType <- getChipType(cdf, fullname=FALSE);
-  tsv <- AffymetrixTsvFile$byChipType(chipType);
-  verbose && exit(verbose);
-
   verbose && enter(verbose, "Identifying the subset used to fit normalization function");
   # Get subset to fit
   subsetToFit <- getSubsetToFit(this, verbose=less(verbose));
@@ -363,7 +406,7 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
 
     if (is.null(gcContents)) {
       # Get PCR fragment lengths for the subset to be fitted
-      gcContents <- getGc(tsv, units=map[,"unit"]);
+      gcContents <- getGcContent(this, units=map[,"unit"], verbose=less(verbose, 1));
 
       # Get the index in the data vector of subset to be fitted.
       # Note: match() only returns first match, which is why we do
@@ -440,6 +483,9 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
 
 ############################################################################
 # HISTORY:
+# 2009-03-22
+# o Updated to work with AromaUgcFile:s as well.
+# o Added protected getGcContent() method.
 # 2008-02-21
 # o Now getSubsetToFit() and process() not only processes SNPs but also
 #   CN probes.
