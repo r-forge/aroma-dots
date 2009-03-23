@@ -2,7 +2,10 @@ Package: aroma.affymetrix
 =========================
 
 Version: 1.0.3 [2009-03-22]
-o Added AromaUnitGcContentFile and AromaUgcFile to hold GC contents.
+o BETA: Added GcContentNormalization2 which extends the generic
+  AdditiveCovariateNormalization class.
+o BETA: Added abstract AdditiveCovariateNormalization.
+o BETA: Added AromaUnitGcContentFile and AromaUgcFile to hold GC contents.
 
 
 Version: 1.0.2 [2009-02-22]
