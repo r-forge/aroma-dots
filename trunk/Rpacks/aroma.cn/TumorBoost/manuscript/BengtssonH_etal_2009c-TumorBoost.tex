@@ -6,7 +6,7 @@
 % User-specific packages, macros, and settings
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 \usepackage{amsmath} 
-\usepackage{amsfonts} 
+% \usepackage{amsfonts} 
 \usepackage{xspace}
 \usepackage{graphicx}
 \usepackage{timestamp} 
@@ -30,7 +30,8 @@
 
 \graphicspath{{figures/col/}}
 
-
+\newenvironment{TODO}{\color{red}\textbf{TODO:}}{}
+\newenvironment{PN}{\color{blue}}{}
 
 \begin{document}
 \firstpage{1}
@@ -53,14 +54,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 \section{Motivation:}
-The availability of high-quality allele-specific copy number estimates for a tumor tissue allows for improved genotype and loss-of-heterozygosity calls
+The availability of high-quality allele-specific copy number estimates for a tumor tissue allows for improved genotype and loss-of-heterozygosity calls.
 
 \section{Results:}
-We propose a single-sample method for calibrating allele-specific copy number (ASCN) estimates of a tumor based on ASCN estimates of a paired normal.  
-The method applies to any paired tumor-normal copy-number estimates regardless of technology and generation.
-Here we demonstrate the method using tumor-normal pairs from the Cancer Genome Atlas (TCGA) project. 
-We show that the calibrated ASCN estimates for the tumor are significantly better than the ones obtained if no paired normal is available.
-Combined with single-array preprocessing methods, such as CRMA~v2, we conclude that for tumor tissues, ASCN estimates with high precisions can be obtained from a single pair of tumor-normal hybridizations.
+We propose a single-sample method for calibrating allele-specific copy number (ASCN) estimates of a tumor based on ASCN estimates of a paired normal. The method applies to any paired tumor-normal copy number estimates regardless of technology and generation. 
+
+We demonstrate how this calibration step can be used for two types of downstream analyses. When genotype calls for the normal sample are available they can be used to segment tumor ASCNs using any copy number segmentation algorithm. When these genotype calls are not avaiable we propose two algorithms that achieve joint segmentation of normal and tumor ASCNs, both leading to genotype calls for the normal sample as a by-product. Here we demonstrate the method using tumor-normal pairs from the Cancer Genome Atlas (TCGA) project. 
+
+\section{Conclusion:}Combined with single-array preprocessing methods, such as CRMA~v2, we conclude that ASCN estimates with high precisions can be obtained from a single pair of tumor-normal hybridizations.
 
 \section{Availability:}
 A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
@@ -80,6 +81,11 @@ A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
 The Cancer Genome Atlas (TCGA) project~\citep{CollinsBarker_2007,TCGA_2008c} is a collaborative initiative to better understand cancer using existing large-scale whole-genome technologies.  Several tumor types are or are planned to be studied, including brain cancer (glioblastoma multiforma; GBM), ovarian cancer and lung cancer.  Several of these tumors are often agressive and requires immediate treatments to slow or stop the progression of the tumor growth.
 
 [...]
+Our main motivation is that intensity estimates after data preprocessing are not comparable across probes due to a SNP effect.
+\begin{TODO}
+  Illustration
+\end{TODO}
+
 
 In this paper we present a method for calibrating the allele-specific copy-number estimates (ASCNs) of a tumor tissue given ASCNs of matched normal tissue or blood extract.  The method does not require external references and it is only the relative ASCNs that are calibrated, that is, the total CN estimates are not adjusted.
 
@@ -101,17 +107,10 @@ In Discussion, we conclude the study, discuss potential limitations, ..., and gi
 % METHODS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{methods}
-\section{Methods}
+\section{Calibration method}
 
-
-
-%--------------------------------------------------------------------------
-% DATA SET
-%--------------------------------------------------------------------------
-\subsection{Data set}
-For this study, we used data from the TCGA project.  From the DCC data portal, we downloaded (Jan 2009) raw data (Level~1; CEL files) for a set of GBM tumor-normal pairs.
-For the purpose of illustrating our method, we will focus mainly on sample TCGA-02-0104 (vials 01A vs 10A), because it has a large number of CN aberrations on Chr~3 at different mean levels.
-
+\subsection{Model}
+\label{Model}
 
 \subsubsection{Allele-specific SNP signals and allele B fractions}
 The allele~B fraction~\cite{PeifferD_etal_2006} for SNP $j=1,\ldots,J$ in the nnormal ($N$) tissue is defined as:
@@ -120,7 +119,10 @@ The allele~B fraction~\cite{PeifferD_etal_2006} for SNP $j=1,\ldots,J$ in the nn
   \label{eqnCnLogRatio}
 \end{equation}
 where $\theta_{N,j} = \theta_{N,j,A} + \theta_{N,j,B}$ is the non-polymorphic signal at locus $j$.
-TODO: DEFINE $(\theta_{N,j,A}, \theta_{N,j,B})$.
+\begin{TODO}
+  DEFINE $(\theta_{N,j,A}, \theta_{N,j,B})$.
+\end{TODO}
+
 For a diploid SNP $j$, for which the genotype is either AA, AB or BB, we expect the allele~B fraction $\beta_{N,j}$ to be fall close to $0$, $1/2$, or $1$, respectively.
 The allele~B fraction $\beta_{T,j}$ for the tumor ($T$) tissue/blood extract is defined analoguously. Because we cannot expected a SNP in a tumor to be diploid at any random SNP, we cannot make any prediction on where $\beta_{T,j}$ falls.
 
@@ -136,15 +138,30 @@ Based on this, for SNP $j$ we model the observed allele~B fraction for the tumor
   \beta_{N,j} = \mu_{N,j} + \delta_{j} + \eps_{N,j},
   \label{eqnFracBModel}
 \end{equation}
-where $\delta_{j}$ is a SNP-specific effect and $\eps_{T,j}$ and $\eps_{N,j}$ are independent zero-mean error terms.
-
-An estimate of $\mu_{T,j}$ is then:
+where $\delta_{j}$ is a SNP-specific effect and $\eps_{T,j}$ and $\eps_{N,j}$ are independent zero-mean error terms. The difference $\mu_{T,j}-\mu_{N,j}$ can then be estimated straightforwardly from the data.
 \begin{equation}
-  \hat{\mu_{T,j}} = \beta_{T,j} - \hat{\delta_{j}},
+  \widehat{\mu_{T,j}-\mu_{N,j}} = \beta_{T,j} - \beta_{N,j},
   \label{eqnTumorBoostEstimate}
 \end{equation}
-where $\hat{\delta_{j}} = \beta_{N,j} - \hat{\mu_{N,j}}$ and $\hat{\mu_{N,j}}$ is an estimate of the allele~B fraction of the normal, i.e. an estimate of the normal genotype of SNP $j$.
 
+\begin{TODO}
+  Illustration: plot of $\beta_N$ vs $\beta_T$ (with lines with $y-x=c$ for $c \in$ seq(-1, 1, length=5), say) and tracks of $\beta_T$, $\beta_N$ and $\beta_T-\beta_N$. 
+\end{TODO}
+
+\section{Downstream analysis methods}
+\label{sec:downstr-analys-meth}
+
+\subsection{Segmentation of ASCN when normal genotypes are available}
+\label{sec:segm-ascn-with-genotypes}
+
+\subsection{Iterative segmentation of ASCN when normal genotypes are not available}
+\label{sec:iter-segm-ascn}
+
+\subsection{Quantile segmentation of ASCN when normal genotypes are not available}
+\label{sec:quant-segm-ascn}
+
+
+ When genotype calls for the normal sample are available they can be used to segment tumor ASCNs using any copy number segmentation algorithm. When these genotype calls are not avaiable we propose two algorithms that achieve joint segmentation of normal and tumor ASCNs, both leading to genotype calls for the normal sample as a by-product. 
 
 %--------------------------------------------------------------------------
 % EVALUATION METHODS
@@ -169,6 +186,13 @@ The method applies estimates obtained by SNP technology.
 \section{Results}
 \label{secResults}
 
+%--------------------------------------------------------------------------
+% DATA SET
+%--------------------------------------------------------------------------
+\subsection{Data set}
+For this study, we used data from the TCGA project.  From the DCC data portal, we downloaded (Jan 2009) raw data (Level~1; CEL files) for a set of GBM tumor-normal pairs.
+For the purpose of illustrating our method, we will focus mainly on sample TCGA-02-0104 (vials 01A vs 10A), because it has a large number of CN aberrations on Chr~3 at different mean levels.
+
 \subsection{Allele~B fraction before and after calibration}
 \begin{figure}[!tpbh]
 \begin{center}
@@ -176,7 +200,7 @@ The method applies estimates obtained by SNP technology.
 \end{center}
  \caption{
  }
- \label{figROCs}
+ \label{figROCs,chr05}
 \end{figure}
 
 \begin{figure}[!tpbh]
@@ -185,7 +209,7 @@ The method applies estimates obtained by SNP technology.
 \end{center}
  \caption{
  }
- \label{figROCs}
+ \label{figROCs,chr06}
 \end{figure}
 
 
@@ -195,7 +219,7 @@ The method applies estimates obtained by SNP technology.
 \end{center}
  \caption{
  }
- \label{figROCs}
+ \label{figROCs,chr18}
 \end{figure}
 
 
@@ -206,6 +230,45 @@ The method applies estimates obtained by SNP technology.
 \section{Discussion}
 \label{secDiscussion}
 
+\section{Appendix}
+teste
+\subsection{Old model}
+\label{sec:old-model}
+
+\subsubsection{Allele-specific SNP signals and allele B fractions}
+The allele~B fraction~\cite{PeifferD_etal_2006} for SNP $j=1,\ldots,J$ in the nnormal ($N$) tissue is defined as:
+\begin{equation}
+  \beta_{N,j} = \frac{\theta_{N,j,A}}{\theta_{N,j}},
+  \label{eqnCnLogRatio}
+\end{equation}
+where $\theta_{N,j} = \theta_{N,j,A} + \theta_{N,j,B}$ is the non-polymorphic signal at locus $j$.
+\begin{TODO}
+  DEFINE $(\theta_{N,j,A}, \theta_{N,j,B})$.
+\end{TODO}
+
+For a diploid SNP $j$, for which the genotype is either AA, AB or BB, we expect the allele~B fraction $\beta_{N,j}$ to be fall close to $0$, $1/2$, or $1$, respectively.
+The allele~B fraction $\beta_{T,j}$ for the tumor ($T$) tissue/blood extract is defined analoguously. Because we cannot expected a SNP in a tumor to be diploid at any random SNP, we cannot make any prediction on where $\beta_{T,j}$ falls.
+
+For a tumor-normal pair, we observe $(\beta_{N,j}, \beta_{T,j})$ at each SNP $j$.
+
+\subsubsection{Model for allele~B fraction signals}
+Consider a SNP $j$ that is diploid in the normal tissue.  
+Let the true genotype be denoted by the true allele~B fraction $\mu_{N,j}$ with possible states $\{0,1/2,1\}$ corresponding to genotypes $\{\gAA,\gAB,\gBB\}$.
+
+Based on this, for SNP $j$ we model the observed allele~B fraction for the tumor and the normal pair as:
+\begin{equation}
+  \beta_{T,j} = \mu_{T,j} + \delta_{j} + \eps_{T,j},\\
+  \beta_{N,j} = \mu_{N,j} + \delta_{j} + \eps_{N,j},
+  \label{eqnFracBModel}
+\end{equation}
+where $\delta_{j}$ is a SNP-specific effect and $\eps_{T,j}$ and $\eps_{N,j}$ are independent zero-mean error terms.
+
+An estimate of $\mu_{T,j}$ is then:
+\begin{equation}
+  \hat{\mu_{T,j}} = \beta_{T,j} - \hat{\delta_{j}},
+  \label{eqnTumorBoostEstimate}
+\end{equation}
+where $\hat{\delta_{j}} = \beta_{N,j} - \hat{\mu_{N,j}}$ and $\hat{\mu_{N,j}}$ is an estimate of the allele~B fraction of the normal, i.e. an estimate of the normal genotype of SNP $j$.
 
 
 
