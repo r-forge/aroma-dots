@@ -1,6 +1,10 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 1.0.3 [2009-03-22]
+o Added AromaUnitGcContentFile and AromaUgcFile to hold GC contents.
+
+
 Version: 1.0.2 [2009-02-22]
 o Added getCdfBin() and getChipType() to DChipDcpSet.
 o Added findByChipType() and byChipType() to DChipCdfBinFile.
