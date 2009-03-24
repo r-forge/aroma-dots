@@ -41,7 +41,7 @@ for (kk in seq(along=srcFiles)) {
 }
 print(srcFileTags);
 
-footer <- readFooter(ugp);
+footer <- readFooter(ugc);
 footer$createdOn <- format(Sys.time(), "%Y%m%d %H:%M:%S", usetz=TRUE);
 footer$createdBy = list(
   fullname = "Henrik Bengtsson", 
@@ -49,7 +49,8 @@ footer$createdBy = list(
 );
 names(srcFileTags) <- sprintf("srcFile%d", seq(along=srcFileTags));
 footer$srcFiles <- srcFileTags;
-writeFooter(ugp, footer);
+footer$gcBinWidth <- as.integer(500e3);
+writeFooter(ugc, footer);
 
 
 print(ugc);

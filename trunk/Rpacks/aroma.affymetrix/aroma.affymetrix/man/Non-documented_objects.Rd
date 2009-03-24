@@ -1706,6 +1706,31 @@
 \alias{updateSettings}
 \alias{updateSettings.Package}
 \alias{getDefaultSettings}
+\alias{plotCovariateEffects.GcContentNormalization2}
+\alias{AdditiveCovariatesNormalization}
+\alias{allocateFromCdf.AromaUnitGcContentFile}
+\alias{AromaUgcFile}
+\alias{AromaUnitGcContentFile}
+\alias{clearCache.AdditiveCovariatesNormalization}
+\alias{GcContentNormalization2}
+\alias{getAsteriskTags.AdditiveCovariatesNormalization}
+\alias{getCdf.AdditiveCovariatesNormalization}
+\alias{getColumnNames.AromaUnitGcContentFile}
+\alias{getCovariates}
+\alias{getCovariates.AdditiveCovariatesNormalization}
+\alias{getCovariates.GcContentNormalization2}
+\alias{getFilenameExtension.AromaUnitGcContentFile}
+\alias{getGcContent}
+\alias{getGcContent.GcContentNormalization}
+\alias{getOutputDataSet.AdditiveCovariatesNormalization}
+\alias{getParameters.AdditiveCovariatesNormalization}
+\alias{getSubsetToFit.AdditiveCovariatesNormalization}
+\alias{getTargetFunctions.AdditiveCovariatesNormalization}
+\alias{importFromAffymetrixNetAffxCsvFile.AromaUnitGcContentFile}
+\alias{plotCovariateEffects}
+\alias{process.AdditiveCovariatesNormalization}
+\alias{writeSgr}
+\alias{writeSgr.AffymetrixCelSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

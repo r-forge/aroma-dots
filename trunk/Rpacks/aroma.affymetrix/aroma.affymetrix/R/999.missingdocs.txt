@@ -881,3 +881,22 @@ exportTotalCnRatioSet.AffymetrixCnChpSet  exportTotalCnRatioSet
   getSettings getSettings.Package setSettings setSettings.Package
  updateSettings updateSettings.Package
 getDefaultSettings
+plotCovariateEffects.GcContentNormalization2
+  AdditiveCovariatesNormalization
+  allocateFromCdf.AromaUnitGcContentFile AromaUgcFile
+  AromaUnitGcContentFile clearCache.AdditiveCovariatesNormalization
+  GcContentNormalization2
+  getAsteriskTags.AdditiveCovariatesNormalization
+  getCdf.AdditiveCovariatesNormalization
+  getColumnNames.AromaUnitGcContentFile getCovariates
+  getCovariates.AdditiveCovariatesNormalization
+  getCovariates.GcContentNormalization2
+  getFilenameExtension.AromaUnitGcContentFile getGcContent
+  getGcContent.GcContentNormalization
+  getOutputDataSet.AdditiveCovariatesNormalization
+  getParameters.AdditiveCovariatesNormalization
+  getSubsetToFit.AdditiveCovariatesNormalization
+  getTargetFunctions.AdditiveCovariatesNormalization
+  importFromAffymetrixNetAffxCsvFile.AromaUnitGcContentFile
+  plotCovariateEffects process.AdditiveCovariatesNormalization writeSgr
+  writeSgr.AffymetrixCelSet
