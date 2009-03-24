@@ -4,14 +4,29 @@
 # Reference:
 # http://www.affymetrix.com/support/help/faqs/genotyping_console/copy_number_analysis/faq_5.jsp
 
-setMethodS3("plotCovariateEffects", "GcContentNormalization2", function(this, arrays=NULL, units=NULL, ref="zero", ..., xlim=NULL, ylim=NULL, xlab="GC fraction", ylab=expression(log[2](theta)), verbose=FALSE) {
+setMethodS3("plotCovariateEffects", "GcContentNormalization2", function(this, arrays=NULL, units=NULL, ref="zero", ..., pch=".", lwd=2, xlim=NULL, ylim="auto", xlab="GC fraction", ylab="auto", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   dataSet <- getInputDataSet(this);
+  # Argument 'arrays':
+  if (!is.null(arrays)) {
+    arrays <- Arguments$getIndices(arrays, range=c(1, nbrOfArrays(dataSet)));
+  }
+
+  if (is.null(ref)) {
+  } else if (is.character(ref)) {
+  } else if (inherits(ref, "SnpChipEffectFile")) {
+  } else {
+    throw("Unknown value of argument 'ref': ", class(ref)[1]);
+  }
+
+
   unf <- getUnitNamesFile(dataSet);
   # Argument 'units':
-  if (!is.null(units)) {
+  if (is.null(units)) {
+    units <- seq(length=nbrOfUnits(unf));
+  } else {
     units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(unf)));
   }
 
@@ -24,8 +39,10 @@ setMethodS3("plotCovariateEffects", "GcContentNormalization2", function(this, ar
 
 
   verbose && enter(verbose, "Plotting signals as a function of covariate(s)");
+  verbose & cat(verbose, "Arrays:");
+  verbose & str(verbose, arrays);
 
-  X <- getCovariates(gcn, units=units, verbose=less(verbose,5));
+  X <- getCovariates(this, units=units, verbose=less(verbose,5));
   verbose & cat(verbose, "Covariates:");
   verbose & str(verbose, X);
   X <- X[,1];
@@ -34,31 +51,61 @@ setMethodS3("plotCovariateEffects", "GcContentNormalization2", function(this, ar
   X <- X[keep];
   units <- units[keep];
   rm(keep);
+  # Sanity check
+  stopifnot(length(units) == length(X));
 
   yR <- NULL;
-  if (ref == "median") {
+  if (is.character(ref)) {
+    if (ref == "median") {
+      verbose && enter(verbose, "Calculating reference (average) file");
+      ref <- getAverageFile(dataSet, verbose=less(verbose,10));
+      verbose && exit(verbose);
+      if (is.null(ylim)) {
+        ylim <- c(-1,1)*3;
+      }
+    } else if (ref == "zero") {
+      if (is.null(ylim)) {
+        ylim <- c(0,16);
+      }
+    }
+  }
+
+  if (inherits(ref, "SnpChipEffectFile")) {
     verbose && enter(verbose, "Extracting reference signals");
-    ceR <- getAverageFile(dataSet, verbose=less(verbose,10));
-    yR <- extractTotalAndFreqB(ceR, units=units, drop=TRUE, verbose=less(verbose,50))[,"total"];
+    yR <- extractTotalAndFreqB(ref, units=units, drop=TRUE, verbose=less(verbose,50))[,"total"];
     yR <- log2(yR);
     verbose && str(verbose, yR);
     verbose && exit(verbose);
-    if (is.null(ylim)) {
-      ylim <- c(-1,1)*3;
-    }
-  } else if (ref == "zero") {
-    if (is.null(ylim)) {
-      ylim <- c(0,16);
-    }
+  }
+
+  if (!is.null(arrays)) {
+    dataSet <- extract(dataSet, arrays);
   }
 
   if (is.null(xlim)) {
     xlim <- range(X, na.rm=TRUE);
   }
 
+  if (identical(ylim, "auto")) {
+    if (is.null(yR)) {
+      ylim <- c(0,16);
+    } else {
+      ylim <- c(-3,3);
+    }
+  }
+
+  if (identical(ylab, "auto")) {
+    if (is.null(yR)) {
+      ylab <- expression(log[2](theta));
+    } else {
+      ylab <- expression(log[2](theta/theta[R]));
+    }
+  }
+
   verbose && enter(verbose, "Plotting");
   nbrOfArrays <- nbrOfArrays(dataSet);
   subplots(nbrOfArrays);
+  par(mar=c(4,3,1,0.5)+0.1, mgp=c(2.0, 0.8, 0));
   for (cc in seq(length=nbrOfArrays)) {
     ce <- getFile(dataSet, cc);
     name <- getFullName(ce);
@@ -73,17 +120,26 @@ setMethodS3("plotCovariateEffects", "GcContentNormalization2", function(this, ar
       y <- y - yR;
     }
     verbose && exit(verbose);
+
+    verbose && cat(verbose, "(x,y):");
+    verbose && str(verbose, x);
+    verbose && str(verbose, y);
+
     ok <- (is.finite(x) & is.finite(y));
     x <- x[ok];
     y <- y[ok];
     rm(ok);
-    verbose && cat(verbose, "(x,y):");
+    verbose && enter(verbose, "smoothScatter(x,y, ...):");
     verbose && str(verbose, x);
     verbose && str(verbose, y);
-    geneplotter::smoothScatter(x, y, pch=".", xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim);
+    geneplotter::smoothScatter(x, y, pch=pch, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim);
+    verbose && exit(verbose);
     stext(side=3, pos=1, name);
+    if (!is.null(yR)) {
+      abline(h=0, col="#999999", lwd=lwd, lty=3);
+    }
     fit <- smooth.spline(x,y);
-    lines(fit, col="red", lwd=2);
+    lines(fit, col="red", lwd=lwd);
     rm(x,y);
     verbose && exit(verbose);
   } # for (cc ...)

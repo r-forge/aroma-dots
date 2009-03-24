@@ -515,7 +515,7 @@ setMethodS3("getTargetFunctions", "AdditiveCovariatesNormalization", function(th
 
       # Exclude multi-covariate units
       for (ff in setdiff(allCovariates, ee)) {
-        ok <- ok & !hasXX[,ff];
+        ok <- ok & !hasX[,ff];
       }
 
       verbose && cat(verbose, "Distribution of units with known covariates and finite signals that are exclusively for this covarite:");
