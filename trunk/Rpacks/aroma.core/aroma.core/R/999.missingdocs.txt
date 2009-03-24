@@ -360,3 +360,7 @@ aromaSettings
   getVerbose.AromaSettings setRam setRam.AromaSettings setVerbose
   setVerbose.AromaSettings
 hasBeenModified hasBeenModified.GenericDataFile
+  as.character.TextUnitNamesFile findByChipType.TextUnitNamesFile
+  getChipType.TextUnitNamesFile getFilenameExtension.TextUnitNamesFile
+  getPlatform.TextUnitNamesFile getUnitNames.TextUnitNamesFile
+  nbrOfUnits.TextUnitNamesFile TextUnitNamesFile

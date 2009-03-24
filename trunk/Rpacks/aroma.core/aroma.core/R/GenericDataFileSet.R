@@ -465,6 +465,8 @@ setMethodS3("getTags", "GenericDataFileSet", function(this, collapse=NULL, ...) 
 
 
 setMethodS3("hasTags", "GenericDataFileSet", function(this, tags, ...) {
+  tags <- strsplit(tags, split=",", fixed=TRUE);
+  tags <- unlist(tags, use.names=FALSE);
   all(tags %in% getTags(this));
 })
 
@@ -1425,6 +1427,8 @@ setMethodS3("update2", "GenericDataFileSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-26
+# o Now hasTags(..., tags) splits the 'tags' argument.
 # 2009-02-08
 # o Now argument 'files' in extract() of GenericDataFileSet can 
 #   also be a vector of string.

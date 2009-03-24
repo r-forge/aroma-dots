@@ -1,7 +1,11 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.2 [2009-02-23]
+Version: 1.0.3 [2009-03-23]
+o Added the TextUnitNamesFile class.
+
+
+Version: 1.0.2 [2009-02-26]
 o Added argument 'units' to extractRawCopyNumbers() of
   AromaUnitSignalBinaryFile.
 o Added RawGenomicSignals which RawCopyNumbers now inherits from.
@@ -11,6 +15,8 @@ o Added optional argument/field 'name' to RawCopyNumbers, which
   function(s) for the copy-number state.  This makes it possible
   to use one (conditional) truth functions for all samples.
 o Added hasBeenModified() to GenericDataFile.
+o Now hasTags(..., tags) of GenericData{File|Set} splits the
+  'tags' argument.
 o Now RawCopyNumbers() takes RawCopyNumbers objects as input.
 o Now getChecksum() of GenericDataFile caches results unless the 
   file has been modified since last time.
@@ -43,7 +49,7 @@ o ROBUSTNESS: Added a sanity check to getAromaUgpFile() of
 o ROBUSTNESS: Now findAnnotationData() always returns pathnames 
   ordered by the length of their fullnames. Before this was only 
   done if 'firstOnly=TRUE'.
-o ALPHA: Added support for "smart" subdirectories in static 
+o ALPHA: Added support for "smart" (e.g. "*") subdirectories in static 
   findByName() of GenericDataFileSet.
 
 

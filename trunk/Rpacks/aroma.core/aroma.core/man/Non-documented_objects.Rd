@@ -776,6 +776,14 @@
 \alias{setVerbose.AromaSettings}
 \alias{hasBeenModified}
 \alias{hasBeenModified.GenericDataFile}
+\alias{as.character.TextUnitNamesFile}
+\alias{findByChipType.TextUnitNamesFile}
+\alias{getChipType.TextUnitNamesFile}
+\alias{getFilenameExtension.TextUnitNamesFile}
+\alias{getPlatform.TextUnitNamesFile}
+\alias{getUnitNames.TextUnitNamesFile}
+\alias{nbrOfUnits.TextUnitNamesFile}
+\alias{TextUnitNamesFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

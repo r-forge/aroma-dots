@@ -568,6 +568,8 @@ setMethodS3("getTags", "GenericDataFile", function(this, pattern=NULL, collapse=
 })
 
 setMethodS3("hasTags", "GenericDataFile", function(this, tags, ...) {
+  tags <- strsplit(tags, split=",", fixed=TRUE);
+  tags <- unlist(tags, use.names=FALSE);
   all(tags %in% getTags(this));
 })
 
@@ -1058,6 +1060,8 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-02-26
+# o Now hasTags(..., tags) splits the 'tags' argument.
 # 2009-02-23
 # o (Re-)Added space between number and unit for RAM and file size.
 # o Now as.character() of GenericDataFile also reports the exact file size
