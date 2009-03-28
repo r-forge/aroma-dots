@@ -335,8 +335,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelSet", function(this, path=NULL, name=
       affinities <- readApd(pathname)$affinities;
       verbose && exit(verbose);
     } else {
-      affinities <- computeAffinities(cdf, paths=probePath, 
-                                                   verbose=less(verbose));
+      affinities <- computeAffinities(cdf, paths=probePath, ..., verbose=less(verbose));
       verbose && cat(verbose, "Saving affinities: ", pathname);
       writeApd(pathname, data=affinities, name="affinities");
     }
@@ -497,6 +496,9 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="R
 
 ############################################################################
 # HISTORY:
+# 2009-03-29
+# o Made slight modifications for bgAdjustGcRma to work with the 
+#   newer Gene 1.0 ST arrays.
 # 2007-09-06
 # o Made calculateParametersGsb() more memory efficient, because it's using
 #   the new unlist feature in getCellIndices() of AffymetrixCdfFile.

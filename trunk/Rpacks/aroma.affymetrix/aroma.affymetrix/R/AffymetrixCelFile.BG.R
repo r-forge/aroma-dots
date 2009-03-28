@@ -261,8 +261,10 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   pm <- getData(this, indices=indices[isPm(cdf)])$intensities;
 
   # corresponding affinities
-  apm <- affinities[indices[!isPm(cdf)]];
-  amm <- affinities[indices[isPm(cdf)]];
+  #apm <- affinities[indices[!isPm(cdf)]];
+  #amm <- affinities[indices[isPm(cdf)]];
+  apm <- affinities[indices[isPm(cdf)]];
+  amm <- affinities[indices[!isPm(cdf)]];
 
   verbose && exit(verbose);
 
@@ -276,6 +278,8 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
     anc <- affinities[indicesNegativeControl]
     ncs <- getData(this, indices=indicesNegativeControl)$intensities;
   }
+  
+  pmKeep <- 1:length(pm)
 
   # adjust background - use original GCRMA functions to avoid errors from
   # re-coding
@@ -288,7 +292,13 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
       pm <- gcrma::bg.adjust.affinities(pm, mm, apm, amm, index.affinities=1:length(pm), k=k, fast=fast);
     } else {
       # use specified negative controls
-      pm <- gcrma::bg.adjust.affinities(pm, ncs, apm, anc, index.affinities=1:length(pm), k=k, fast=fast);
+	  keep <- !is.na(anc) & !is.na(ncs)
+	  anc <- anc[keep]
+	  ncs <- ncs[keep]
+	  pmKeep <- !is.na(apm) & !is.na(pm)
+	  apm <- apm[pmKeep]
+	  pm <- pm[pmKeep]
+      pm <- gcrma::bg.adjust.affinities(pm, ncs, apm, anc, index.affinities=1:length(pm), k=k, fast=fast, nomm=TRUE);
     }
   }
     
@@ -304,7 +314,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   # don't understand this, but it was in original bg.adjust.gcrma, so
   # we will keep it
   if (stretch != 1) {
-    mu <- mean(log(pm));
+    mu <- mean(log(pm),na.rm=TRUE);
     pm <- exp(mu + stretch * (log(pm) - mu));
   }
     
@@ -320,7 +330,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Writing adjusted intensities");
-  updateCel(pathname, indices=indices[isPm(cdf)], intensities=pm);
+  updateCel(pathname, indices=indices[isPm(cdf)][pmKeep], intensities=pm);
   verbose && exit(verbose);
   verbose && exit(verbose);
 

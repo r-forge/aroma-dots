@@ -73,7 +73,6 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 #    throw("Cannot calculate gcRMA probe affinities. The CDF contains no MMs: ", chipTypeFull);
   }
 
-
   # Checking cache
   key <- list(method="computeAffinities", class=class(this)[1], chipTypeFull=chipTypeFull);
   dirs <- c("aroma.affymetrix", chipTypeFull);
@@ -119,8 +118,10 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   hasHeader <- (regexpr("[Pp]robe.*[Ss]equence", lines[1]));
   if (hasHeader) {
     data <- lines[2];
+    hdr <- strsplit(lines[1], split=sep)[[1]];
   } else {
     data <- lines[1];
+	hdr <- NULL	
   }
   verbose && cat(verbose, "First data row: ", data);
   verbose && exit(verbose);
@@ -129,8 +130,14 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   data <- strsplit(data, split=sep)[[1]];
   nbrOfColumns <- length(data);
 
-  # Get the unit name (assume first column)
-  unitName <- data[1];
+  # Get the unit name (assume first column)  # MR 2009-03-28, no longer assume first column
+  unitColumn <- 1
+  if( !is.null(hdr) ) {
+    tciCol <- grep("Transcript Cluster ID",hdr)
+	if( length(tciCol) )
+      unitColumn <- tciCol
+  }
+  unitName <- data[unitColumn];
 
   # Find the sequence column(s)
   idxs <- grep(pattern="[actgACTG]{25}", data);
@@ -159,6 +166,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   x <- unlist(x, use.names=FALSE);
   y <- applyCdfGroups(unitInfo, cdfGetFields, "y");
   y <- unlist(y, use.names=FALSE);
+  
 
   # Garbage collect
   gc <- gc();
@@ -198,9 +206,9 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   # read everybody in using read.table() with column classes specified
   # to speed things up
   colClasses <- rep("NULL", nbrOfColumns);
-  colClasses[c(1,seqcol)] <- "character";
+  colClasses[c(unitColumn,seqcol)] <- "character";
   colClasses[c(xcol,ycol)] <- "integer";
-  names(colClasses)[c(1,xcol,ycol,seqcol)] <- c("name", "x", "y", "sequence");
+  names(colClasses)[c(unitColumn,xcol,ycol,seqcol)] <- c("name", "x", "y", "sequence");
 
   verbose && cat(verbose, "Column classes for read.table():");
   verbose && print(verbose, colClasses);
@@ -249,11 +257,13 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   indexMm <- indices[isMm][matches];
   notNA <- which(!is.na(indexMm));
   indexMm <- indexMm[notNA];
-
+  
+  # for PM+MM arrays, the number of MMs and the number of PMs in the CDF is equal
+  isPMMMChip <- (length(indexMm) == length(indexPm))
+  
   rm(indexMmPutative, matches); # Not needed anymore
 
-# now calculate affinities - code reused from compute.affinities() in
-# gcrma
+# now calculate affinities - code reused from compute.affinities() in gcrma
   verbose && enter(verbose, "Calculating probe affinities");
 
   # To please R CMD check on R v2.6.0
@@ -271,52 +281,89 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   gc <- gc();
   verbose && print(verbose, gc);
 
-  apm <- vector("double", nbrOfSequences);
-  amm <- vector("double", nbrOfSequences);
-
   if (verbose) {
     cat(verbose, "Progress (counting to 100): ");
     pb <- ProgressBar(stepLength=100/(nbrOfSequences/1000));
     reset(pb);
   }
 
-  T13A13 <- T13 - A13;
-  C13G13 <- C13 - G13;
-  for (ii in seq(along = apm)) {
-    if (verbose && ii %% 1000 == 0)
-      increase(pb);
-    # Get a 4x25 matrix with rows A, C, G, and T.
-    charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
-                                                       PACKAGE="gcrma");
+  if( isPMMMChip ) {
+    # ---------------------------------------------------------
+    # keep this code below untouched for the PM+MM expression arrays
+    # ---------------------------------------------------------
+    apm <- vector("double", nbrOfSequences);
+    amm <- vector("double", nbrOfSequences);
 
-    A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
-               charMtrx[2, ] %*% affinity.basis.matrix, 
-               charMtrx[3, ] %*% affinity.basis.matrix);
-    apm[ii] <- A %*% affinity.spline.coefs;
-    if (charMtrx[1, 13] == 1) {
-      amm[ii] <- apm[ii] + T13A13;  # + T13 - A13
-    } else {
-      if (charMtrx[4, 13] == 1) {
-        amm[ii] <- apm[ii] - T13A13;  # + A13 - T13
+    T13A13 <- T13 - A13;
+    C13G13 <- C13 - G13;
+    for (ii in seq(along = apm)) {
+      if (verbose && ii %% 1000 == 0)
+        increase(pb);
+      # Get a 4x25 matrix with rows A, C, G, and T.
+      charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
+                                                       PACKAGE="gcrma");
+	  
+      A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
+                 charMtrx[2, ] %*% affinity.basis.matrix, 
+                 charMtrx[3, ] %*% affinity.basis.matrix);
+      apm[ii] <- A %*% affinity.spline.coefs;
+      if (charMtrx[1, 13] == 1) {
+        amm[ii] <- apm[ii] + T13A13;  # + T13 - A13
       } else {
-        if (charMtrx[3, 13]) {
-          amm[ii] <- apm[ii] + C13G13;  # + C13 - G13
+        if (charMtrx[4, 13] == 1) {
+          amm[ii] <- apm[ii] - T13A13;  # + A13 - T13
         } else {
-          amm[ii] <- apm[ii] - C13G13;  # + G13 - C13
+          if (charMtrx[3, 13]) {
+            amm[ii] <- apm[ii] + C13G13;  # + C13 - G13
+          } else {
+            amm[ii] <- apm[ii] - C13G13;  # + G13 - C13
+          }
         }
       }
-    }
-  } # for (ii in ...)
-  rm(charMtrx, A); # Not needed anymore
-  verbose && cat(verbose, "");
+    } # for (ii in ...)
+    rm(charMtrx, A); # Not needed anymore
+    verbose && cat(verbose, "");
+	# create a vector to hold affinities and assign values to the appropriate
+    # location in the vector
+    affinities <- rep(NA, dimension[1]*dimension[2]);
+    affinities[indexPm] <- apm;
+    affinities[indexMm] <- amm[notNA];
+    rm(dimension, indexPm, indexMm, apm, amm, notNA); # Not needed anymore
+    # ---------------------------------------------------------
 
-  # create a vector to hold affinities and assign values to the appropriate
-  # location in the vector
-  affinities <- rep(NA, dimension[1]*dimension[2]);
-  affinities[indexPm] <- apm;
-  affinities[indexMm] <- amm[notNA];
+  } else {
+    # ---------------------------------------------------------
+    # new code to compute affinities from the MM probes
+	# (antigenomic or whatever) on PM-only arrays  -- MR 2009-03-28
+    # ---------------------------------------------------------
+	
+	indexAll <- sequenceInfo$y * dimension[1] + sequenceInfo$x + 1
+    apm <- vector("double", nrow(sequenceInfo));
+	
+    for (ii in seq(along = apm)) {
+      if (verbose && ii %% 1000 == 0)
+        increase(pb);
+      # Get a 4x25 matrix with rows A, C, G, and T.
+      charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
+                                                       PACKAGE="gcrma");
+	  if( ncol(charMtrx) != 25 ) {
+	    warning(paste("Sequence with less than 25 bases:", sequenceInfo$sequence[ii], ".  Skipping and moving on.", sep=""))
+		apm[ii] <- NA
+	    next
+	  }
+	  
+      A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
+                 charMtrx[2, ] %*% affinity.basis.matrix, 
+                 charMtrx[3, ] %*% affinity.basis.matrix);
+      apm[ii] <- A %*% affinity.spline.coefs;
+    } # for (ii in ...)
+    affinities <- rep(NA, dimension[1]*dimension[2]);
+    affinities[indexAll] <- apm;
+
+    rm(dimension, indexAll, apm); # Not needed anymore
+	
+  }
   verbose && exit(verbose);
-  rm(dimension, indexPm, indexMm, apm, amm, notNA); # Not needed anymore
 
   # Garbage collect
   gc <- gc();
@@ -333,6 +380,12 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 ############################################################################
 # HISTORY:
+# 2009-03-28
+# o make several modifications to allow computing of affinities
+#   for Gene 1.0 ST arrays.  For example:
+#   -- left the PM+MM array code mostly untouched
+#   -- fixed some assumptions about the columns of the probe_tab file
+#   -- added a different stream for PM-only (with NCs) 
 # 2007-07-30
 # o UPDATE: Now computeAffinities() for AffymetrixCdfFile gives an error
 #   if there are no MMs in the CDF.
