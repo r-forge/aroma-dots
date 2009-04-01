@@ -71,7 +71,7 @@ setMethodS3("callGenotypes", "TotalFracBSnpData", function(this, adjust=1.5, ...
 
   res <- this;
   res[,2] <- mu;
-  attr(res, "fracB") <- fit;
+  attr(res, "fit") <- fit;
 
   res;
 })
