@@ -58,6 +58,6 @@ xyz <- cbind(x=data$position, y=data$thetaC, z=asTotalFracBSnpData(data$thetaTB)
 xyz <- xyz[order(xyz[,"x"]),];
 
 open3d();
-par3d(windowRect=c(50,50,1000,300));
-jj <- 1:15000;
+par3d(windowRect=c(50,50,1000,400));
+jj <- 1:25000;
 plot3d(xyz[jj,], aspect=c(4,1,1)); 
