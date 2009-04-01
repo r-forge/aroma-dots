@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Report Template for TumorBoost
 %
 % Required objects:
@@ -34,6 +34,7 @@ chipType <- "GenomeWideSNP_6";
 <%
 annotations <- c(fullname=FALSE, n=FALSE, chr=TRUE);
 chromosomes <- 1:24;
+chromosomes <- 5;
 #chromosomes <- 18:19;
 %>
 
@@ -70,6 +71,14 @@ if (!exists("ces") || !inherits(ces, "SnpChipEffectSet")) {
   print(ces);
 }
 
+# Extract all normals 
+is10 <- sapply(ces, FUN=function(cf) any(regexpr("^10", getTags(cf)) != -1));
+is11 <- sapply(ces, FUN=function(cf) any(regexpr("^11", getTags(cf)) != -1));
+isNormal <- (is10 | is11);
+cesN <- extract(ces, isNormal);
+ceNR <- getAverageFile(cesN);
+print(ceNR);
+
 cdf <- getCdf(ces);
 unitTypes <- getUnitTypes(cdf);
 ugp <- AromaUgpFile$byChipType(getChipType(ces));
@@ -88,6 +97,9 @@ stopifnot(length(cesTN) == 2);
 pairTag <- sapply(cesTN, FUN=function(df) getTags(df)[1]);
 pairTag <- paste(pairTag, collapse="vs");
 fullname <- sprintf("%s,%s", sampleName, pairTag);
+
+betalim <- c(0,1) + c(-1,1)*0.2;
+cnlim <- c(0,5)+c(-1,1)*0.2;
 %>
 
 
@@ -180,7 +192,7 @@ lim <- c(0,1);
 xlab <- "Allele B fraction for Normal";
 ylab <- "Allele B fraction for Tumor";
 width <- 1;
-height <- 0.8*width;
+height <- 0.7*width;
 smoothTag <- "thin";
 %>
 
@@ -189,110 +201,53 @@ smoothTag <- "thin";
 \section{Chromosome <%=chr%>}
 <%
 # Data of interest
-units <- NULL;
+data <- NULL;
 %>
 
+\subsection{Tumor and normal signals}
+
 <%
-figName <- sprintf("%s,Chr%02d,freqB", fullname, chr);
+figName <- sprintf("%s,Chr%02d,pair,totalAndFracB", fullname, chr);
 filename <- sprintf("%s.png", figName);
 pathname <- Arguments$getWritablePathname(filename, path=figPath);
 if (figForce || !isFile(pathname)) {
-  devNew(figDev, pathname, width=width, height=height);
+  devNew(figDev, pathname, width=width, height=2*height);
   par(mar=c(3.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
-  subplots(2, ncol=1);
+  subplots(4, ncol=1);
 %>
-
-
 <%
-# Identify data points to plot
-if (is.null(units)) {
-  units <- getUnitsOnChromosome(ugp, chr);
-  units <- units[unitTypes[units] == 2];
-
-  # Subset?
-  subset <- 10000;
-  subset <- NULL;
-  if (!is.null(subset)) {
-    idxs <- seq(from=1, to=length(units), length.out=n);
-    idxs <- unique(as.integer(idxs));
-    units <- units[idxs];
-    rm(idxs);
-  }
+if (is.null(data)) {
+  data <- getUnitsToStudy(cesTN, chr, subset=NULL);
+  nbrOfUnits <- data$nbrOfUnits;
+  str(data);
 }
-str(units);
 
-nbrOfUnits <- length(units);
-pos <- getPositions(ugp, units=units);
+xlab <- "Physical position (Mb)";
+x <- data$position;
 
-# Extract (thetaA,thetaB) for the tumor and normal
-theta <- extractTheta(cesTN, units=units);
+y <- data$C;
+ylab <- "C = 2*total[T]/total[N]";
+plot(x, y, pch=".", ylim=cnlim, xlab=xlab, ylab=ylab);
+stext(side=3, pos=0, sprintf("Tumor/normal: %s", getNames(cesTN)[1]));
+stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
 
-# Calculate fracB for these two
-fracB <- apply(theta, MARGIN=3, FUN=function(theta) { 
-  theta[,2]/(theta[,1]+theta[,2]);
-});
-colnames(fracB) <- c("tumor", "normal");
-%>
+y <- data$CN;
+ylab <- "C = 2*total[N]/total[Nref]";
+plot(x, y, pch=".", ylim=cnlim, xlab=xlab, ylab=ylab);
+stext(side=3, pos=0, sprintf("Normal/normalRef: %s", getNames(cesTN)[1]));
+stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
 
-<%
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Naive genotyping
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-fit <- findPeaksAndValleys(fracB[,"normal"], adjust=1.5);
-fit <- subset(fit, type == "valley");
-nbrOfGenotypeGroups <- nrow(fit)+1;
-if (nbrOfGenotypeGroups == 1) {
-  warning(sprintf("PRECISION ERROR: Only one genotype group was detected for Chr%02d", chr));
-  if (is.element(chr, 23:24)) {
-    fracBNCall <- rep(1/2, nbrOfUnits);
-    a <- 1/2;
-    fracBNCall[fracB[,"normal"] < a] <- 0;
-    fracBNCall[fracB[,"normal"] > a] <- 1;
-  } else {
-    a <- 1/3;
-    b <- 2/3;
-    fracBNCall[fracB[,"normal"] < a] <- 0;
-    fracBNCall[fracB[,"normal"] > b] <- 1;
-  }
-} else if (nbrOfGenotypeGroups == 2) {
-  a <- fit$x[1];
-  fracBNCall <- rep(0, nbrOfUnits);
-  fracBNCall[fracB[,"normal"] > a] <- 1;
-} else if (nbrOfGenotypeGroups == 3) {
-  a <- fit$x[1];
-  b <- fit$x[2];
-  fracBNCall <- rep(1/2, nbrOfUnits);
-  fracBNCall[fracB[,"normal"] < a] <- 0;
-  fracBNCall[fracB[,"normal"] > b] <- 1;
-} else {
-  throw("Unexpected number of genotype groups: ", nbrOfGenotypeGroups);
-}
-fracBNCall[is.na(fracB[,"normal"])] <- NA;
-%>
-
-
-<%
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# TumorBoost calibration
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-delta <- fracB[,"normal"] - fracBNCall;
-fracB2 <- fracB;
-fracB2[,"normal"] <- fracB2[,"normal"] - delta;
-fracB2[,"tumor"] <- fracB2[,"tumor"] - delta;
-%>
-
-<%
-ylim <- c(0.0,1.0) + c(-1,1)*0.1;
-xlab <- "Phyiscal position (Mb)";
-fracBLab <- expression(beta[T]);
-muLab <- expression(hat(mu)[T]);
-fracBLab <- "beta[T]";
-muLab <- "mu*[T]";
-x <- pos/1e6;
-plot(x, fracB[,"tumor"], pch=".", ylim=ylim, xlab=xlab, ylab=fracBLab);
+y <- data$betaT[,2];
+ylab <- "beta[T]";
+plot(x, y, pch=".", ylim=betalim, xlab=xlab, ylab=ylab);
 stext(side=3, pos=0, sprintf("Tumor: %s", getFullNames(cesTN)[1]));
 stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
-plot(x, fracB2[,"tumor"], pch=".", ylim=ylim, xlab=xlab, ylab=muLab);
+
+y <- data$betaN[,2];
+ylab <- "beta[N]";
+plot(x, y, pch=".", ylim=betalim, xlab=xlab, ylab=ylab);
+stext(side=3, pos=0, sprintf("Normal: %s", getNames(cesTN)[1]));
+stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
 %>
 
 <%
@@ -300,15 +255,312 @@ plot(x, fracB2[,"tumor"], pch=".", ylim=ylim, xlab=xlab, ylab=muLab);
 } # if (!isFile(pathname))
 %>
 
-\begin{figure}[htb]
+\begin{figure}[htbp]
  \begin{center}
-  \parbox{\textwidth}{%
-   \resizebox{0.96\textwidth}{!}{\includegraphics{<%=figName%>}} %
+  \resizebox{!}{0.71\textheight}{\includegraphics{<%=figName%>}} %
+ \end{center}
+ \caption{Differences in allele B fractions between the tumor and the normal of sample <%=sampleName%> on chromosome~<%=chr%>.}
+ \label{fig<%=fullname%>}
+\end{figure}
+
+
+
+\clearpage
+\subsection{Tumor-normal differences}
+
+<%
+figName <- sprintf("%s,Chr%02d,deltaFracB", fullname, chr);
+filename <- sprintf("%s.png", figName);
+pathname <- Arguments$getWritablePathname(filename, path=figPath);
+if (figForce || !isFile(pathname)) {
+  devNew(figDev, pathname, width=width, height=height);
+  par(mar=c(3.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
+  subplots(2, ncol=1);
+%>
+<%
+if (is.null(data)) {
+  data <- getUnitsToStudy(cesTN, chr, subset=NULL);
+  nbrOfUnits <- data$nbrOfUnits;
+  str(data);
+}
+
+col <- c("blue", "purple", "red")[data$genotypesN];
+
+xlab <- "Physical position (Mb)";
+fracBLab <- expression(beta[T]-beta[N]);
+x <- data$position;
+ylim <- c(-1.0,1.0) + c(-1,1)*0.2;
+ylab <- "rho = beta[T]-beta[N]";
+plot(x, data$rho, pch=".", col=col, ylim=ylim, xlab=xlab, ylab=ylab);
+stext(side=3, pos=0, sprintf("Pair: %s", getFullNames(cesTN)[1]));
+stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
+ylim <- c(0.0,1.0);
+ylab <- "abs(rho)";
+plot(x, abs(data$rho), pch=".", col=col, ylim=ylim, xlab=xlab, ylab=ylab);
+
+for (probs in c(0.05, 0.95)) {
+  FUN <- function(X, ..., na.rm=TRUE) colQuantiles(as.matrix(X), probs=probs);
+  cat("Quantile binning...\n");
+  qq <- binnedSmoothing(abs(data$rho), x=x, FUN=FUN, by=1.0);
+  cat("Quantile binning...done\n");
+  xx <- attr(qq, "xOut");
+  o <- order(xx);
+  xx <- xx[o];
+  qq <- qq[o];
+  keep <- (is.finite(xx) & is.finite(qq));
+  xx <- xx[keep];
+  qq <- qq[keep];
+  lines(xx, qq, col="white", lwd=4);
+  lines(xx, qq, col="orange", lwd=2);
+} # for (probs ...)
+%>
+
+<%
+    devDone();
+} # if (!isFile(pathname))
+%>
+
+\begin{figure}[htbp]
+ \begin{center}
+  \resizebox{0.90\textwidth}{!}{\includegraphics{<%=figName%>}} %
+ \end{center}
+ \caption{Differences in allele B fractions between the tumor and the normal of sample <%=sampleName%> on chromosome~<%=chr%>.}
+ \label{fig<%=fullname%>}
+\end{figure}
+
+
+
+
+\clearpage
+\subsection{Improved Allele B fractions for tumors (via TumorBoost)}
+<%
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Pairwise fracB scatter plot annotated by genotype
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+figNames <- c();
+tags <- c("raw", "byTheta", "byBeta", "byPolar");
+for (pp in seq(along=tags)) {
+  tag <- tags[pp];
+  figName <- sprintf("%s,Chr%02d,pair,fracB,%s", fullname, chr, tag);
+  filename <- sprintf("%s.png", figName);
+  pathname <- Arguments$getWritablePathname(filename, path=figPath);
+  if (figForce || !isFile(pathname)) {
+    devNew(figDev, pathname, width=width, height=width);
+    par(mar=c(3.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
+    subplots(1, ncol=1);
+  
+    if (is.null(data)) {
+      data <- getUnitsToStudy(cesTN, chr, subset=NULL);
+      nbrOfUnits <- data$nbrOfUnits;
+      str(data);
+    }
+
+    yys <- list(raw=data$betaT[,2], theta=asTotalFracBSnpData(data$thetaTB)[,2], beta=data$betaTB[,2], polar=asTotalFracBSnpData(data$polarTB)[,2]);
+    ylabs <- c("beta[T]", "mu*[T]", "mu*[T]", "mu*[T]");
+    ylabs[2:4] <- paste(ylabs[2:4], "by", names(yys)[2:4]);
+
+    xx <- data$betaN[,2];
+    yy <- yys[[pp]];
+  
+    xlab <- "beta[N]";
+    ylab <- ylabs[pp];
+    col <- c("blue", "purple", "red")[data$genotypesN];
+    plot(xx, yy, pch=".", col=col, xlim=betalim, ylim=betalim, xlab=xlab, ylab=ylab);
+    points(c(0,1/2,1), c(0,1/2,1), pch="+", cex=2, col="black");
+    fit <- attr(data$betaNC, "fit");
+    abline(v=fit$x, lty=3);
+    d <- density(xx, adjust=1.5);
+    d$y <- 0.1*diff(lim)*(d$y/max(d$y)) + par("usr")[3];
+    lines(d, col="#999999", lwd=2);
+    stext(side=3, pos=0, sprintf("Tumor/normal: %s", getNames(cesTN)[1]));
+    stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
+  
+    devDone();
+  } # if (!isFile(pathname))
+  figNames <- c(figNames, figName);
+} # for (pp ...)
+
+
+for (pp in seq(along=tags)) {
+  tag <- tags[pp];
+  figName <- sprintf("%s,Chr%02d,pair,fracBvCN,%s", fullname, chr, tag);
+  filename <- sprintf("%s.png", figName);
+  pathname <- Arguments$getWritablePathname(filename, path=figPath);
+  if (figForce || !isFile(pathname)) {
+    devNew(figDev, pathname, width=width, height=width);
+    par(mar=c(3.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
+    subplots(1, ncol=1);
+  
+    if (is.null(data)) {
+      data <- getUnitsToStudy(cesTN, chr, subset=NULL);
+      nbrOfUnits <- data$nbrOfUnits;
+      str(data);
+    }
+
+    xxs <- list(raw=data$C, theta=data$thetaC, beta=data$betaC, polar=data$polarC);
+    yys <- list(raw=data$betaT[,2], theta=asTotalFracBSnpData(data$thetaTB)[,2], beta=data$betaTB[,2], polar=asTotalFracBSnpData(data$polarTB)[,2]);
+    ylabs <- c("beta[T]", "mu*[T]", "mu*[T]", "mu*[T]");
+    ylabs[2:4] <- paste(ylabs[2:4], "by", names(yys)[2:4]);
+
+    xx <- xxs[[pp]];
+    yy <- yys[[pp]];
+  
+    xlab <- "C=2*theta[T]/theta[N]";
+    ylab <- ylabs[pp];
+    col <- c("blue", "purple", "red")[data$genotypesN];
+    plot(xx, yy, pch=".", col=col, xlim=cnlim, ylim=betalim, xlab=xlab, ylab=ylab);
+    abline(h=c(0,1/2,1), lty=3);
+    stext(side=3, pos=0, sprintf("Tumor/normal: %s", getNames(cesTN)[1]));
+    stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
+  
+    devDone();
+  } # if (!isFile(pathname))
+  figNames <- c(figNames, figName);
+} # for (pp ...)
+
+
+### figName <- sprintf("%s,Chr%02d,pair,RhoVsCN", fullname, chr);
+### filename <- sprintf("%s.png", figName);
+### pathname <- Arguments$getWritablePathname(filename, path=figPath);
+### if (figForce || !isFile(pathname)) {
+###   devNew(figDev, pathname, width=width, height=width);
+###   par(mar=c(3.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
+###   subplots(1, ncol=1);
+### 
+###   if (is.null(data)) {
+###     data <- getUnitsToStudy(cesTN, chr, subset=NULL);
+###     nbrOfUnits <- data$nbrOfUnits;
+###     str(data);
+###   }
+### 
+###   xlab <- "C=2*theta[T]/theta[N]";
+###   ylab <- "rho=beta[T]-beta[N]";
+###   lim <- c(0,1) + c(-1,1)*0.2;
+###   col <- c("blue", "purple", "red")[data$genotypesN];
+###   plot(data$C, data$rho, pch=".", col=col, xlim=cnlim, ylim=c(-1,1)/2, xlab=xlab, ylab=ylab);
+###   stext(side=3, pos=0, sprintf("Tumor/normal: %s", getNames(cesTN)[1]));
+###   stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
+### 
+###   devDone();
+### } # if (!isFile(pathname))
+### figNameC <- figName;
+### 
+### figName <- sprintf("%s,Chr%02d,pair,rhoVsBetaN", fullname, chr);
+### filename <- sprintf("%s.png", figName);
+### pathname <- Arguments$getWritablePathname(filename, path=figPath);
+### if (figForce || !isFile(pathname)) {
+###   devNew(figDev, pathname, width=width, height=width);
+###   par(mar=c(3.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
+###   subplots(1, ncol=1);
+### 
+###   if (is.null(data)) {
+###     data <- getUnitsToStudy(cesTN, chr, subset=NULL);
+###     nbrOfUnits <- data$nbrOfUnits;
+###     str(data);
+###   }
+### 
+###   xlab <- "beta[N]";
+###   ylab <- "rho=beta[T]-beta[N]";
+###   col <- c("blue", "purple", "red")[data$genotypesN];
+###   plot(data$betaN[,2], data$rho, pch=".", col=col, xlim=betalim, ylim=c(-1,1)/2, xlab=xlab, ylab=ylab);
+###   fit <- attr(data$betaNC, "fit");
+###   abline(v=fit$x, lty=3);
+###   d <- density(data$betaN[,2], adjust=1.5);
+###   d$y <- 0.1*diff(lim)*(d$y/max(d$y)) + par("usr")[3];
+###   lines(d, col="#999999", lwd=2);
+###   stext(side=3, pos=0, sprintf("Tumor/normal: %s", getNames(cesTN)[1]));
+###   stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
+### 
+###   devDone();
+### } # if (!isFile(pathname))
+### figNameD <- figName;
+
+
+%>
+\begin{figure}[htbp]
+ \begin{center}
+<% for (figName in figNames) { %>%
+  \resizebox{0.24\textwidth}{!}{\includegraphics{<%=figName%>}} %
+<% } %>%
+ \end{center}
+ \caption{Tumor-normal pairs of Allele B fractions of sample <%=sampleName%> on chromosome~<%=chr%>. Data points colored by normal (naive) genotype calls.}
+ \label{fig<%=fullname%>}
+\end{figure}
+
+
+<%
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# TumorBoost calibration
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+figName <- sprintf("%s,Chr%02d,fracB", fullname, chr);
+filename <- sprintf("%s.png", figName);
+pathname <- Arguments$getWritablePathname(filename, path=figPath);
+if (figForce || !isFile(pathname)) {
+  devNew(figDev, pathname, width=width, height=1.7*height);
+  subplots(4, ncol=1);
+  par(mar=c(1.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
+
+  if (is.null(data)) {
+    data <- getUnitsToStudy(cesTN, chr, subset=NULL);
+    nbrOfUnits <- data$nbrOfUnits;
+    str(data);
   }
+
+  x <- data$position;
+  yys <- list(raw=data$betaT[,2], theta=asTotalFracBSnpData(data$thetaTB)[,2], beta=data$betaTB[,2], polar=asTotalFracBSnpData(data$polarTB)[,2]);
+  
+  xlab <- "Physical position (Mb)";
+  ylabs <- c("beta[T]", "mu*[T]", "mu*[T]", "mu*[T]");
+  ylabs[2:4] <- paste(ylabs[2:4], "by", names(yy)[2:4]);
+  for (kk in seq(along=yys)) {
+    plot(x, yys[[kk]], pch=".", ylim=betalim, xlab=xlab, ylab=ylabs[kk]);
+    if (kk == 1) {
+      stext(side=3, pos=0, sprintf("Tumor: %s", getFullNames(cesTN)[1]));
+      stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
+    }
+  }
+  devDone();
+} # if (!isFile(pathname))
+figNameA <- figName;
+%>
+
+<%
+figName <- sprintf("%s,Chr%02d,fracB,density", fullname, chr);
+filename <- sprintf("%s.png", figName);
+pathname <- Arguments$getWritablePathname(filename, path=figPath);
+if (figForce || !isFile(pathname)) {
+  devNew(figDev, pathname, width=width, height=0.7*height);
+  par(mar=c(3.5,4,1,1)+0.1, mgp=c(2.5,0.8,0), cex=1.5);
+
+  if (is.null(data)) {
+    data <- getUnitsToStudy(cesTN, chr, subset=NULL);
+    nbrOfUnits <- data$nbrOfUnits;
+    str(data);
+  }
+  yy <- list(raw=data$betaT[,2], theta=asTotalFracBSnpData(data$thetaTB)[,2], beta=data$betaTB[,2], polar=asTotalFracBSnpData(data$polarTB)[,2]);
+
+  xlim <- c(0.0,1.0) + c(-1,1)*0.2;
+  xlab <- "beta[T]";
+  labels <- names(yy);
+  cols <- c("black", "red", "blue", "orange");
+  plotDensity(yy, lwd=2, col=cols, xlab=xlab);
+  abline(v=c(0,1/2,1), lty=3, lwd=2, col="#999999");
+  legend("topleft", lwd=2, col=cols, labels);
+  stext(side=3, pos=0, sprintf("Tumor: %s", getFullNames(cesTN)[1]));
+  stext(side=3, pos=1, sprintf("Chromosome %d (n=%d)", chr, nbrOfUnits));
+  devDone();
+} # if (!isFile(pathname))
+figNameB <- figName;
+%>
+\begin{figure}[htbp]
+ \begin{center}
+  \resizebox{0.72\textwidth}{!}{\includegraphics{<%=figNameA%>}}\\ %
+  \resizebox{0.50\textwidth}{!}{\includegraphics{<%=figNameB%>}} %
  \end{center}
  \caption{Raw and calibrated allele B fractions for the tumor of sample <%=sampleName%> on chromosome~<%=chr%>.}
  \label{fig<%=fullname%>}
 \end{figure}
+
 
 <% } # for (chr ...) %>
 

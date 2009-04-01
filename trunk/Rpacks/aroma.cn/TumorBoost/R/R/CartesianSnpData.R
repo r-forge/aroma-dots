@@ -39,7 +39,8 @@ setMethodS3("asTotalFracBSnpData", "CartesianSnpData", function(this, ...) {
 })
 
 
-setMethodS3("pairedBoost", "CartesianSnpData", function(this, dataN, flavor=c("manhattan", "diagonal"), ...) {
+setMethodS3("pairedBoost", "CartesianSnpData", function(this, dataN, scaleByCN=TRUE, flavor=c("diagonal", "manhattan"), ...) {
+##setMethodS3("pairedBoost", "CartesianSnpData", function(this, dataN, scaleByCN=TRUE, flavor=c("manhattan", "diagonal"), ...) {
   # Argument 'flavor':
   flavor <- match.arg(flavor);
 
@@ -78,6 +79,16 @@ setMethodS3("pairedBoost", "CartesianSnpData", function(this, dataN, flavor=c("m
   # AB:s
   idxs <- whichVector(isAB);
   delta[idxs,] <- thetaN[idxs,]-thetaNC[idxs,];
+
+  # Scale by CN?
+  if (scaleByCN) {
+    # Estimate relative CNs
+    thetaT <- this;
+    totalT <- thetaT[,1]+thetaT[,2];
+    totalN <- thetaN[,1]+thetaN[,2];
+    C <- totalT/totalN;
+    delta <- C*delta;
+  }
 
   # Calibrate accordingly
   res <- this;
