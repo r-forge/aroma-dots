@@ -1,4 +1,4 @@
-setConstructorS3("SnpData", function(data, ...) {
+setConstructorS3("SnpData", function(data=NULL, ...) {
   data <- unclass(data);
   extend(BasicObject(data), "SnpData");
 })

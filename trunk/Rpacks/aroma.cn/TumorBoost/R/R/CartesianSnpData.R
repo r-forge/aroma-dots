@@ -1,5 +1,6 @@
-setConstructorS3("CartesianSnpData", function(data, ...) {
-  colnames(data) <- c("A", "B");
+setConstructorS3("CartesianSnpData", function(data=NULL, ...) {
+  if (!is.null(data))
+    colnames(data) <- c("A", "B");
   extend(SnpData(data, ...), "CartesianSnpData");
 })
 

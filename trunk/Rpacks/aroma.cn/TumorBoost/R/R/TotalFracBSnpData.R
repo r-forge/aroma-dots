@@ -1,5 +1,6 @@
-setConstructorS3("TotalFracBSnpData", function(data, ...) {
-  colnames(data) <- c("total", "fracB");
+setConstructorS3("TotalFracBSnpData", function(data=NULL, ...) {
+  if (!is.null(data))
+    colnames(data) <- c("total", "fracB");
   extend(SnpData(data, ...), "TotalFracBSnpData");
 })
 
