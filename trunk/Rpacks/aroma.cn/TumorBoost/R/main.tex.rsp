@@ -34,7 +34,7 @@ chipType <- "GenomeWideSNP_6";
 <%
 annotations <- c(fullname=FALSE, n=FALSE, chr=TRUE);
 chromosomes <- 1:24;
-chromosomes <- 5;
+chromosomes <- 9;
 #chromosomes <- 18:19;
 %>
 

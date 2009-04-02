@@ -1,5 +1,6 @@
-setConstructorS3("PolarSnpData", function(data, ...) {
-  colnames(data) <- c("radius", "azimuth");
+setConstructorS3("PolarSnpData", function(data=NULL, ...) {
+  if (!is.null(data))
+    colnames(data) <- c("radius", "azimuth");
   extend(SnpData(data, ...), "PolarSnpData");
 })
 
