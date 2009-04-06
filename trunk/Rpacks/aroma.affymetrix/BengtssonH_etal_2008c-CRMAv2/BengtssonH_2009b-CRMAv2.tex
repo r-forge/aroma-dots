@@ -93,9 +93,9 @@
   $^{\rm d}$ Bioinformatics Division, Walter \& Eliza Hall Institute of Medical Research, Parkville, Australia.
 } 
 
-\history{Version: \timestamp; Received on XXXXX; revised on XXXXX; accepted on XXXXX}
+\history{Version: \timestamp; Received on November 4, 2008; revised on April NN, 2009; accepted on XXXXX}
 
-\editor{Associate Editor: XXXXXXX}
+\editor{Associate Editor: John Quackenbush}
 
 \maketitle
 
@@ -125,7 +125,7 @@ In this paper we present the CRMA~v2 method for estimating full-resolution raw t
 It should be emphasized that the purpose of the method is to provide better raw full-resolution estimates that increase chances for downstream methods such as segmentation methods and CN calling methods to produce better estimates.
 
 In contrast to other methods, CRMA~v2 is a single-array method that processes each array independently of the others.  In order to achieve this, we had to overcome the challenges in adapting CRMA's multi-array steps.
-The access to a single-array preprocessing method has several implications: (i) Only two hybridizations are required for paired analysis, e.g. in a single-person tumor-normal study. (ii) Each array can be preprocessed immediately after being scanned.  (iii) Arrays can be processed in parallel on different hosts/processors making it possible to decrease the processing time of a set of arrays linearly with the number of processors.  (iv) There is no need to reprocess an array when new arrays are produced, which further saves time and computational resources.   Furthermore, (v) the decision to filter out poor arrays can be made later, because a poor array will not affect the preprocessing of other arrays. %%, which is illustrated by the exclusion of sample NA12145 in this study.
+The access to a single-array preprocessing method has several implications: (i) Only two hybridizations are required for paired analysis, e.g. in a single-person tumor-normal study. [SEE SINGLE-ARRAY EVALUTION RESULTS] (ii) Each array can be preprocessed immediately after being scanned.  (iii) Arrays can be processed in parallel on different hosts/processors making it possible to decrease the processing time of a set of arrays linearly with the number of processors.  (iv) There is no need to reprocess an array when new arrays are produced, which further saves time and computational resources.   Furthermore, (v) the decision to filter out poor arrays can be made later, because a poor array will not affect the preprocessing of other arrays. %%, which is illustrated by the exclusion of sample NA12145 in this study.
 More importantly, a single-array method is (vi) potentially very practical for applied medical diagnostics, because individual patients can be analyzed at once, even when they come singly rather than in batches.
 %%Furthermore, the decision to filter out poor samples can be made later, because a poor sample will not affect the estimates of other arrays, which is illustrated by the exclusion of sample NA12145 in this study.
 
@@ -149,7 +149,7 @@ The \GWSSix chip type interrogates 931,946 SNPs and 945,826 CN loci totaling 1,8
 In contrast to previous generation of chip types~\citep{BengtssonH_etal_2008}, there are no  mismatch but only perfect-match (PM) probes.  
 On \GWSFive, all SNPs have 4 replicated (\PMA, \PMB) pairs.  On \GWSSix there are either 3 or 4 such pairs. These probe pairs are identical replicates, whereas before they were slightly shifted relative to the SNP position.
 %
-For both \GWS arrays, the pairs in each SNP were selected such that they optimized the genotype performance.  For the \GWSFive there was no constraint that the \PMA and \PMB sequences had to be aligned on the genome, causing 192,399 (38.4\%) SNPs to have misaligned \PMA and \PMB.  There was also no constraint that \PMA and \PMB should be on the same strand, resulting in 46,176 (9.22\%) SNPs with \PMA and \PMB on opposite strands.  These constraint were reintroduced for \GWSSix.
+For both \GWS arrays, the pairs in each SNP were selected such that they optimized the genotype performance.  For the \GWSFive there was no constraint that the \PMA and \PMB sequences had to be aligned on the genome, causing 192,399 (38.4\%) SNPs to have misaligned \PMA and \PMB.  There was also no constraint that \PMA and \PMB should be on the same strand, resulting in 46,176 (9.22\%) SNPs with \PMA and \PMB on opposite strands.  These constraints were reintroduced for \GWSSix.
 More details on the \GWS arrays are available in the Supplementary Materials.
 
 %%\subsection*{Co-hybridization of fragments digested by multiple enzymes}
@@ -170,17 +170,6 @@ In order to differentiate between the filtered and non-filtered sets of loci, Af
 %\section{Methods}
 %\label{secMethods}
 
-
-
-%--------------------------------------------------------------------------
-% DATA SET
-%--------------------------------------------------------------------------
-\subsection{Data set}
-%% \textbf{\GWSSix:} 
-\GWSSix CEL files for the 30 male and 30 female CEU founders of The International HapMap Project~\citep{HapMap_2003, AltshulerD_etal_2005} was used. Offspring were excluded in order to avoid biological relationships.
-%% \textbf{\GWSFive:} There is no public \GWSFive data available for the above \GWSSix HapMap samples but only for a subset consisting of 20 founders with 10 children, where we choose to use the latter in order to increase the sample size. 
-Because female NA12145 has a low true \chrX CN level \citep{TingJ_etal_2006}, it was excluded in the evaluation.  
-More details on the data can be found in the Suppl. Materials.
 
 
 %--------------------------------------------------------------------------
@@ -278,6 +267,7 @@ For these reasons, we consider the following single-array summarization estimate
 \end{align}
 where the median is calculated across all probe-pair sums $k=1,\ldots,K_j$ in SNP $j$.
 %% Note, there is nothing in Model~\eqref{eqnSumAllele} that requires equal number of allele~A and allele~B probes.
+[10K-500K ONE MIGHT WANT TO USE THE LOG-ADDITIVE MODEL FITTING PROBE AFFINITIES.]
 Finally, for non-polymorphic loci, which are all single-probe units (as defined by the CDFs used here), we let
 \begin{equation}
   \hat{\theta}_{ij} = \tilde{y}_{ij1}
@@ -387,6 +377,11 @@ For chip types such as 10K, 100K and 500K, where there are no multi-enzyme loci 
 Moreover, since each $g^{r}_{i}(\cdot)$ includes the term $\rho^{r}_{i}$, the above method will also control for imperfect mixing of enzyme products, which otherwise carry through introducing systematic effects in loci that originate from both digestions.
 Analogously, the scale differences between arrays, $\{\kappa_i\}$, are also controlled for.
 
+\subsubsection{Normalization for GC-content effects}
+\label{secGCnorm}
+
+[ADD COMMENTS?]
+
 %\subsubsection{Across-array scale normalization}
 %\label{secSN}
 %???
@@ -426,17 +421,37 @@ Since it is a single-array method, the arrays can be processed in parallel on mu
 
 
 %--------------------------------------------------------------------------
+% DATA SET
+%--------------------------------------------------------------------------
+\subsection{Data sets}
+\textbf{Normal data set:} 
+%% \textbf{\GWSSix:} 
+\GWSSix CEL files for the 30 male and 30 female CEU founders of The International HapMap Project~\citep{HapMap_2003, AltshulerD_etal_2005} was used. Offspring were excluded in order to avoid biological relationships.
+%% \textbf{\GWSFive:} There is no public \GWSFive data available for the above \GWSSix HapMap samples but only for a subset consisting of 20 founders with 10 children, where we choose to use the latter in order to increase the sample size. 
+Because female NA12145 has a low true \chrX CN level \citep{TingJ_etal_2006}, it was excluded in the evaluation.  
+More details on the data can be found in the Suppl. Materials.
+
+\textbf{Tumor data set:} 
+[DATA SET 2...]
+
+
+%--------------------------------------------------------------------------
 % EVALUATION METHODS
 %--------------------------------------------------------------------------
 \subsection{Methods for evaluation}
 \label{secEvaluation}
 In order to assess the performance of CRMA~v2, we compared it with Affymetrix CN5 method~\citep{Affymetrix_2008m} and the method implemented in dChip~\citep{LiWong_2001}.  For \emph{dChip}, we found that summarizing SNP probes by averaging is significantly better than using the default multiplicative model.  For this reason, we only present results for the former (here denoted by \emph{dChip*}).  
+\subsubsection{Multi-sample ChrX \& ChrY evaluation}
 We used the same set of evaluation methods as in \citet{BengtssonH_etal_2008} using relative (Eqn~\eqref{eqnCnRatio}) instead of log-ratio CNs (Eqn~\eqref{eqnCnLogRatio}).
 %% dChip*: I have verified that the exported MBEI estimates are the same as the ones in the DCP files.  In other words, the poor SNP performance for dChip* is not due to an error in reading in exported data. /HB 2008-02-01
 %%
 To assess how well the methods differentiate between one and two copies, and zero and one copy, we use ChrX and ChrY data, respectively.  We exclude loci in pseudo-autosomal regions~\citep{BlaschkeRappold_2006} and inside and close to known CN polymorphic regions~\citep{RedonR_etal_2006}.  Moreover, since the CN5 implementation is limited to the default CDF, the results presented here are based on that set of loci.  
 %%
 Since CN5 uses only females (males) for the reference signals $\{\tilde\theta_{Rj}\}$ on ChrX (ChrY), this comparison study will not use bias-corrected reference signals from all samples \citep{BengtssonH_etal_2008}.
+
+\subsubsection{Single-sample evaluation at a set of changepoints}
+[ADD]
+
 For more details on the above, see Suppl. Materials.
 
 
@@ -447,7 +462,9 @@ For more details on the above, see Suppl. Materials.
 \section{Results}
 \label{secResults}
 
-\subsection{Differentiating CN=1 and CN=2 (ChrX)}
+\subsection{Multi-sample evaluation}
+
+\subsubsection{Differentiating CN=1 and CN=2 (ChrX)}
 The \TPrate of calling a CN=1 locus correctly (among CN=2 loci) as a function of \FPrate is depicted in Figure~\ref{figRocChrX} for each of the three methods.
 The ROC curves show that CRMA~v2 separates CN=1 from CN=2 better than CN5, which in turn is better than dChip*.  This is true both at the full resolution ($H=1$) and at various amounts of smoothing.  
 We also note that CRMA~v2 smoothed with $3$ loci per window performs equally well or better than dChip* smoothed with $4$ loci per window (see also Figure~\ref{figTPvResolutionChrXY}).
@@ -481,7 +498,7 @@ Using a windowing technique similar to that in~\citet{BengtssonH_etal_2008}, for
 
 
 
-\subsection{Differentiating CN=0 and CN=1 (ChrY)}
+\subsubsection{Differentiating CN=0 and CN=1 (ChrY)}
 Identifying a CN=0 locus among CN=1 loci is easier than identifying a CN=1 locus among CN=2 loci.  
 %% The rationale for this is that the distance between CN=0 and CN=1 is smaller than between CN=1 and CN=2 relative to the reference level.  
 This is because the distance between CN=0 and CN=1 is greater than that between CN=1 and CN=2, relative to the reference level (and noise level). 
@@ -494,7 +511,7 @@ The results also show that CN5 is equally good or slightly better than CRMA~v2 a
  \resizebox{0.49\columnwidth}{!}{\includegraphics{CRMAv2,chrY,all,smooth1-4,ROC,d=0_06}}
 \end{center}
  \caption{
-   ROC curves showing CRMA~v2 differentiates between CN=1 and CN=0 (ChrY) equally well as or slight worse than CN5, and better than dChip* at the full resolution (left panel) as well as at various amounts of smoothing (right panel).  
+   ROC curves showing CRMA~v2 differentiates between CN=1 and CN=0 (ChrY) equally well as or slightly worse than CN5, and better than dChip* at the full resolution (left panel) as well as at various amounts of smoothing (right panel).  
    See Figure~\ref{figRocChrX} for legends.
  }
  \label{figRocChrY}
@@ -502,7 +519,7 @@ The results also show that CN5 is equally good or slightly better than CRMA~v2 a
 
 
 
-\subsection{Performance of SNPs and CN loci}
+\subsubsection{Performance of SNPs and CN loci}
 In order to better understand differences between methods, we compare the ROC curves and distribution of \TPrates at a given \FPrate~\citep{BengtssonH_etal_2008} while stratifying on SNP and CN loci.
 We observe that on average the discriminatory power is greater for SNPs than CN loci (upper panels of Figure~\ref{figROC-SNPvCNChrX} and Figure~\ref{figROC-SNPvCNChrY}).  CN5 is the method for which SNPs and CN loci have the most similar performances.   Furthermore, by investigating the locus-by-locus ROCs, we observe that the \TPrates at a fixed \FPrate tend to be greater for SNPs than for CN loci (lower panels), and that there is a significant set of CN loci with very low \TPrates.  The dChip* method has a larger set of poorly performing CN loci, which is also seen when comparing dChip's ROC curves for SNPs and CN loci.  
 
@@ -541,6 +558,7 @@ We observe that on average the discriminatory power is greater for SNPs than CN 
  \label{figROC-SNPvCNChrY}
 \end{figure} 
 
+\subsection{Single-sample evaluation}
 
 %%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
@@ -575,7 +593,7 @@ CRMA~v2 provides neither allele-specific nor calibrated CN estimates.  Allele-sp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
 We wish to thank Ben Bolstad, Simon Cawley, and Jim Veitch at Affymetrix Inc. for technical support and scientific feedback.
-We also thank Cheng Li at the Harvard School of Public Health for details on the dChip method and software.
+We also thank Cheng Li at the Harvard School of Public Health for details on the dChip method and software, and the reviewers for constructive feedback.
 HB was supported by grants from the Wenner-Gren Foundation, the American-Scandinavian Foundation, and the Solander Foundation.\\[1ex]
 
 
@@ -588,6 +606,11 @@ HB was supported by grants from the Wenner-Gren Foundation, the American-Scandin
 
 \end{document}
 
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2009-04-06 [HB]
+% o Began to enter the updates for the revision.
+% 2009-01-05
+% o Received reviews.
+% 2008-11-04
+% o Submitted to Oxford Bioinformatics.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

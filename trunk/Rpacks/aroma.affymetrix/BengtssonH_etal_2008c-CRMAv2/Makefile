@@ -1,4 +1,4 @@
-foo=BengtssonH_2008c-CRMAv2
+foo=BengtssonH_2009b-CRMAv2
 
 # TODO: Fix bounding box settings for a few postscript outputs.
 # TODO: Fix the src bundler.
