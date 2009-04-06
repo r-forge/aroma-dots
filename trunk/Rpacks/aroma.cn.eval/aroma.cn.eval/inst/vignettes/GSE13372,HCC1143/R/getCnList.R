@@ -1,9 +1,9 @@
-getCnList <- function(cnList, ...) {
+getCnList <- function(cnList, ..., verbose=TRUE) {
   if (!is.null(cnList)) {
     return(cnList);
   }
   cnList <- extractListOfCopyNumbers(dsList, region, truth=truth,
-                                    targetChipType=targetChipType);
+                            targetChipType=targetChipType, verbose=verbose);
   cnList;
 } # getCnList()
 
