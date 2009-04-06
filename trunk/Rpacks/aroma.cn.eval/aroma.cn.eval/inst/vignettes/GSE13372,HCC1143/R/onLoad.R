@@ -25,6 +25,7 @@ if (!exists("dsList", mode="list")) {
   names <- gsub("^GSE13372(,HCC1143|),", "", names);
   names <- gsub("ACC,(ra,|)-XY,BPN,-XY,(AVG|RMA),A[+]B,FLN,-XY", "CRMAv2,\\2", names);
   names <- gsub("ACC,-XY,v1,(AVG|RMA),A[+]B,FLN,-XY", "CRMAv1,\\1", names);
+  names <- gsub("GTC", "CN5", names);
   names <- sapply(names, FUN=strsplit, split=",", fixed=TRUE);
   commonTags <- Reduce(intersect, names);
   names <- sapply(names, FUN=setdiff, commonTags);
