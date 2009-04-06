@@ -480,6 +480,45 @@
   url = {http://dx.doi.org/10.1093/bib/bbm055}
 }
 
+@ARTICLE{AttiyehE_etal_2009,
+  author = {Edward F Attiyeh and Sharon J Diskin and Marc A Attiyeh and Yaël
+	P Mossé and Cuiping Hou and Eric M Jackson and Cecilia Kim and Joseph
+	Glessner and Hakon Hakonarson and Jaclyn A Biegel and John M Maris},
+  title = {Genomic copy number determination in cancer cells from single nucleotide
+	polymorphism microarrays based on quantitative genotyping corrected
+	for aneuploidy.},
+  journal = {Genome Res},
+  year = {2009},
+  month = {Jan},
+  abstract = {Microarrays are frequently used to profile genome-wide copy number
+	(CN) aberrations. While generally robust for detecting CN variants
+	in germline DNA, the methods used to derive CN from signal intensity
+	values have been suboptimal when applied to cancer genomes. The complexity
+	of genomic aberrations in cancer makes it more difficult to discriminate
+	between signal and noise, and measuring CN as a discrete variable
+	does not account for tumor heterogeneity. Furthermore, standard normalization
+	approaches detect CN changes relative to the overall DNA content,
+	which is often not diploid in cancer. We propose an algorithm that
+	uses the degree of allelic imbalance as well as probe intensity,
+	with a correction for aneuploidy, for a quantitative CN assessment
+	and scoring of allelic ratios. This algorithm results in a more precise
+	definition of CN and allelic aberration in the cancer genome, which
+	is essential for translational efforts focused on using these tools
+	for molecular diagnostics and for the discovery of therapeutic targets.},
+  doi = {10.1101/gr.075671.107},
+  file = {:AttiyehE_etal_2009-Genomic copy number determination in cancer cells
+	from single nucleotide polymorphism microarrays based on quantitative
+	genotyping corrected for aneuploidy.pdf:PDF},
+  institution = {Children's Hospital of Philadelphia, University of Pennsylvania School
+	of Medicine, and Abramson Family Cancer Research Institute, Philadelphia,
+	Pennsylvania 19104-4318, USA.},
+  owner = {hb},
+  pii = {gr.075671.107},
+  pmid = {19141597},
+  timestamp = {2009.02.06},
+  url = {http://dx.doi.org/10.1101/gr.075671.107}
+}
+
 @MISC{Axon_2001url,
   author = {Axon Instruments, Inc. },
   title = {GenePix software},
@@ -580,6 +619,49 @@
   month = {jul},
   year = {2000},
   publisher = {Integrated DNA Technologies}
+}
+
+@ARTICLE{BenYaacovEldar_2008,
+  author = {Erez Ben-Yaacov and Yonina C Eldar},
+  title = {A fast and flexible method for the segmentation of {aCGH} data.},
+  journal = {Bioinformatics},
+  year = {2008},
+  volume = {24},
+  pages = {i139--i145},
+  number = {16},
+  month = {Aug},
+  abstract = {MOTIVATION: Array Comparative Genomic Hybridization (aCGH) is used
+	to scan the entire genome for variations in DNA copy number. A central
+	task in the analysis of aCGH data is the segmentation into groups
+	of probes sharing the same DNA copy number. Some well known segmentation
+	methods suffer from very long running times, preventing interactive
+	data analysis. RESULTS: We suggest a new segmentation method based
+	on wavelet decomposition and thresholding, which detects significant
+	breakpoints in the data. Our algorithm is over 1000 times faster
+	than leading approaches, with similar performance. Another key advantage
+	of the proposed method is its simplicity and flexibility. Due to
+	its intuitive structure, it can be easily generalized to incorporate
+	several types of side information. Here, we consider two extensions
+	which include side information indicating the reliability of each
+	measurement, and compensating for a changing variability in the measurement
+	noise. The resulting algorithm outperforms existing methods, both
+	in terms of speed and performance, when applied on real high density
+	CGH data. AVAILABILITY: Implementation is available under software
+	tab at: http://www.ee.technion.ac.il/Sites/People/YoninaEldar/.},
+  doi = {10.1093/bioinformatics/btn272},
+  file = {:BenYaacovEldar_2008-A fast and flexible method for the segmentation
+	of aCGH data.pdf:PDF},
+  institution = {Department of Electrical Engineering, Technion-Israel Institute of
+	Technology, Haifa Israel.},
+  keywords = {Algorithms; Chromosome Mapping, methods; DNA, genetics; Gene Dosage,
+	genetics; In Situ Hybridization, Fluorescence, methods; Oligonucleotide
+	Array Sequence Analysis, methods; Sequence Alignment, methods; Sequence
+	Analysis, DNA, methods, HaarSeg},
+  owner = {hb},
+  pii = {btn272},
+  pmid = {18689815},
+  timestamp = {2008.12.03},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btn272}
 }
 
 @MASTERSTHESIS{BengtssonA_2003,
@@ -1281,6 +1363,59 @@
   issn = {1403-93xx}
 }
 
+@ARTICLE{BengtssonH_2009a,
+  author = {Henrik Bengtsson and Amrita Ray and Paul Spellman and Terence P Speed},
+  title = {A single-sample method for normalizing and combining full-resolution
+	copy numbers from multiple platforms, labs and analysis methods.},
+  journal = {Bioinformatics},
+  year = {2009},
+  month = {Feb},
+  abstract = {MOTIVATION: The rapid expansion ofwhole-genome copy-number (CN) studies
+	brings a demand for increased precision and resolution of CN estimates.
+	Recent studies have obtained CNestimates frommore than one platformon
+	the same samples, and it is natural to want to combine the different
+	estimates in order to meet this demand. Estimates from different
+	platforms show different degrees of attenuation of the true CN changes.
+	Similar differences can be observed in CNs from the same platformrun
+	in different labs, or in the same lab, with different analytical
+	methods. This is the reason why it is not straightforward to combine
+	CN estimates from different sources (platforms, labs, analysis methods).
+	RESULTS: We propose a single-sample multi-source normalization that
+	brings full-resolution CN estimates to the same scale across sources.
+	The normalized CNs are such that for any underlying CN level, their
+	mean level is the same regardless of source, which make them better
+	suited for being combined across sources, e.g. existing segmentation
+	methodsmay be used to identify aberrant regions.We use microarraybased
+	CN estimates from The Cancer Genome Atlas (TCGA) project to illustrate
+	and validate the method. We show that the normalized and combined
+	data better separate two CN states at a given resolution. We conclude
+	that it is possible to combine CNs from multiple sources such that
+	the resolution becomes effectively larger, and when multiple platforms
+	are combined, they also enhance the genome coverage by complementing
+	each other in different regions. AVAILABILITY: A bounded-memory implementation
+	is available in aroma.cn. CONTACT: hb@stat.berkeley.edu.},
+  doi = {10.1093/bioinformatics/btp074},
+  file = {:BengtssonH_etal_2009a-MSCN.pdf:PDF},
+  institution = { Eliza Hall Institute of Medical Research, Parkville, Australia.},
+  owner = {hb},
+  pii = {btp074},
+  pmid = {19193730},
+  timestamp = {2009.02.09},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btp074}
+}
+
+@ARTICLE{BengtssonH_etal_2008d,
+  author = {Henrik Bengtsson and Amrita Ray and Paul Spellman and Terence P.
+	Speed},
+  title = {A single-sample method for normalizing and combining full-resolution
+	copy numbers from multiple sources and technologies},
+  year = {2008},
+  month = {Nov},
+  owner = {hb},
+  timestamp = {2008.11.14},
+  url = {http://jotternotes.com/hb/work/BengtssonH_etal_2008d-MultisourceNormalization.pdf}
+}
+
 @TECHREPORT{BengtssonH_etal_2008b,
   author = {H. Bengtsson and K. Simpson and J. Bullard and K. Hansen},
   title = {{aroma.affymetrix}: A generic framework in {R} for analyzing small
@@ -1392,7 +1527,7 @@
 	and William R Sellers},
   title = {Assessing the significance of chromosomal aberrations in cancer:
 	methodology and application to glioma.},
-  journal = {Proc Natl Acad Sci U S A},
+  journal = PNAS,
   year = {2007},
   volume = {104},
   pages = {20007--20012},
@@ -1422,7 +1557,8 @@
 	and utility of systematic characterization of the cancer genome.},
   doi = {10.1073/pnas.0710052104},
   file = {:Beroukhim_etal_2007-Assessing the significance of chromosomal aberrations
-	in cancer - methodology and application to glioma.pdf:PDF},
+	in cancer - methodology and application to glioma.pdf:PDF;Supplementary
+	Materials:Beroukhim_etal_2007-SupplementaryMaterials.pdf:PDF},
   institution = {Broad Institute, Massachusetts Institute of Technology and Harvard
 	University, 7 Cambridge Center, Cambridge, MA 02142, USA.},
   keywords = {Cell Line, Tumor; Chromosome Aberrations; Data Interpretation, Statistical;
@@ -1850,7 +1986,8 @@
 }
 
 @ARTICLE{BolstadB_etal_2003,
-  author = {B.M. Bolstad and R.A. Irizarry and M. {\AA}strand and T.P. Speed},
+  author = {B.M. Bolstad and R.A. Irizarry and M. {\AA}strand and Terence P.
+	Speed},
   title = {A comparison of normalization methods for high density oligonucleotide
 	array data based on variance and bias},
   journal = Bioinformatics,
@@ -2099,6 +2236,59 @@
   treatment = {T Theoretical or Mathematical}
 }
 
+@ARTICLE{CampbellP_etal_2008,
+  author = {Peter J Campbell and Philip J Stephens and Erin D Pleasance and Sarah
+	O'Meara and Heng Li and Thomas Santarius and Lucy A Stebbings and
+	Catherine Leroy and Sarah Edkins and Claire Hardy and Jon W Teague
+	and Andrew Menzies and Ian Goodhead and Daniel J Turner and Christopher
+	M Clee and Michael A Quail and Antony Cox and Clive Brown and Richard
+	Durbin and Matthew E Hurles and Paul A W Edwards and Graham R Bignell
+	and Michael R Stratton and P. Andrew Futreal},
+  title = {Identification of somatically acquired rearrangements in cancer using
+	genome-wide massively parallel paired-end sequencing.},
+  journal = {Nat Genet},
+  year = {2008},
+  volume = {40},
+  pages = {722--729},
+  number = {6},
+  month = {Jun},
+  abstract = {Human cancers often carry many somatically acquired genomic rearrangements,
+	some of which may be implicated in cancer development. However, conventional
+	strategies for characterizing rearrangements are laborious and low-throughput
+	and have low sensitivity or poor resolution. We used massively parallel
+	sequencing to generate sequence reads from both ends of short DNA
+	fragments derived from the genomes of two individuals with lung cancer.
+	By investigating read pairs that did not align correctly with respect
+	to each other on the reference human genome, we characterized 306
+	germline structural variants and 103 somatic rearrangements to the
+	base-pair level of resolution. The patterns of germline and somatic
+	rearrangement were markedly different. Many somatic rearrangements
+	were from amplicons, although rearrangements outside these regions,
+	notably including tandem duplications, were also observed. Some somatic
+	rearrangements led to abnormal transcripts, including two from internal
+	tandem duplications and two fusion transcripts created by interchromosomal
+	rearrangements. Germline variants were predominantly mediated by
+	retrotransposition, often involving AluY and LINE elements. The results
+	demonstrate the feasibility of systematic, genome-wide characterization
+	of rearrangements in complex human cancer genomes, raising the prospect
+	of a new harvest of genes associated with cancer using this strategy.},
+  doi = {10.1038/ng.128},
+  file = {:CampbellP_etal_2008-Identification of somatically acquired rearrangements
+	in cancer using genome-wide massively parallel paired-end sequencing.pdf:PDF;Supplementary
+	Material:CampbellP_etal_2008-SupplMaterial.pdf:PDF},
+  institution = {Wellcome Trust Sanger Institute, Hinxton CB10 1SA, UK.},
+  keywords = {Base Pairing; Chromosome Mapping; Computational Biology; Gene Dosage;
+	Gene Rearrangement, genetics; Genetic Variation; Genome, Human; Humans;
+	Lung Neoplasms, genetics; RNA, Messenger, genetics/metabolism; Repetitive
+	Sequences, Nucleic Acid; Reverse Transcriptase Polymerase Chain Reaction;
+	Sequence Analysis, DNA},
+  owner = {hb},
+  pii = {ng.128},
+  pmid = {18438408},
+  timestamp = {2009.02.09},
+  url = {http://dx.doi.org/10.1038/ng.128}
+}
+
 @BOOK{charlescantorandpaulreinhardschimmel1980book,
   title = {Biophysical chemistry - {P}art {II}: {T}echniques for the study of
 	biological structure and function},
@@ -2151,7 +2341,7 @@
   author = {Nigel P Carter},
   title = {Methods and strategies for analyzing copy number variation using
 	DNA microarrays.},
-  journal = {Nat Genet},
+  journal = NatGen,
   year = {2007},
   volume = {39},
   pages = {S16--S21},
@@ -2377,6 +2567,46 @@
   timestamp = {2006.09.27}
 }
 
+@ARTICLE{CastleJ_etal_2008,
+  author = {John C Castle and Chaolin Zhang and Jyoti K Shah and Amit V Kulkarni
+	and Auinash Kalsotra and Thomas A Cooper and Jason M Johnson},
+  title = {Expression of 24,426 human alternative splicing events and predicted
+	cis regulation in 48 tissues and cell lines.},
+  journal = {Nat Genet},
+  year = {2008},
+  month = {Nov},
+  abstract = {Alternative pre-messenger RNA splicing influences development, physiology
+	and disease, but its regulation in humans is not well understood,
+	partially because of the limited scale at which the expression of
+	specific splicing events has been measured. We generated the first
+	genome-scale expression compendium of human alternative splicing
+	events using custom whole-transcript microarrays monitoring expression
+	of 24,426 alternative splicing events in 48 diverse human samples.
+	Over 11,700 genes and 9,500 splicing events were differentially expressed,
+	providing a rich resource for studying splicing regulation. An unbiased,
+	systematic screen of 21,760 4-mer to 7-mer words for cis-regulatory
+	motifs identified 143 RNA 'words' enriched near regulated cassette
+	exons, including six clusters of motifs represented by UCUCU, UGCAUG,
+	UGCU, UGUGU, UUUU and AGGG, which map to trans-acting regulators
+	PTB, Fox, Muscleblind, CELF/CUG-BP, TIA-1 and hnRNP F/H, respectively.
+	Each cluster showed a distinct pattern of genomic location and tissue
+	specificity. For example, UCUCU occurs 110 to 35 nucleotides preceding
+	cassette exons upregulated in brain and striated muscle but depleted
+	in other tissues. UCUCU and UGCAUG seem to have similar function
+	but independent action, occurring 5' and 3', respectively, of 33\%
+	of the cassette exons upregulated in skeletal muscle but co-occurring
+	for only 2\%.},
+  doi = {10.1038/ng.264},
+  file = {:CastleJ_etal_2008-Expression of 24,426 human alternative splicing
+	events and predicted cis regulation in 48 tissues and cell lines.pdf:PDF},
+  institution = {Rosetta Inpharmatics LLC, Seattle, Washington 98109, USA.},
+  owner = {hb},
+  pii = {ng.264},
+  pmid = {18978788},
+  timestamp = {2008.11.19},
+  url = {http://dx.doi.org/10.1038/ng.264}
+}
+
 @MISC{Center2001,
   author = {Gene Array Resource Center},
   title = {Frequently Asked Questions},
@@ -2471,6 +2701,78 @@
   url = {http://CRAN.R-project.org/doc/Rnews/}
 }
 
+@ARTICLE{ChanL_1991,
+  author = {Ling-Yau Chan},
+  title = {Optimal design for estimation of variance in nonparametric regression
+	using first order differences},
+  journal = {Biometrika},
+  year = {1991},
+  volume = {78},
+  pages = {926-929},
+  number = {4},
+  abstract = {In nonparametric regression, the variance of the response can be estimated
+	by the sum of squares of differences of the observed response. In
+	this paper we obtain the most efficient design for a general variance
+	estimator defined by first order differences. It is found that for
+	this estimator, in the majority of cases, a good approximation to
+	the most efficient design is the uniform design. The least efficient
+	designs are also discussed.},
+  doi = {10.1093/biomet/78.4.926},
+  eprint = {http://biomet.oxfordjournals.org/cgi/reprint/78/4/926.pdf},
+  file = {:ChanL_1991-Optimal design for estimation of variance in nonparametric
+	regression using first order differences.pdf:PDF},
+  url = {http://biomet.oxfordjournals.org/cgi/content/abstract/78/4/926}
+}
+
+@ARTICLE{ChenH_etal_2008,
+  author = {Hung-I. Harry Chen and Fang-Han Hsu and Yuan Jiang and Mong-Hsun
+	Tsai and Pan-Chyr Yang and Paul S Meltzer and Eric Y Chuang and Yidong
+	Chen},
+  title = {A probe-density-based analysis method for array {CGH} data: simulation,
+	normalization and centralization.},
+  journal = {Bioinformatics},
+  year = {2008},
+  volume = {24},
+  pages = {1749--1756},
+  number = {16},
+  month = {Aug},
+  abstract = {MOTIVATION: Genomic instability is one of the fundamental factors
+	in tumorigenesis and tumor progression. Many studies have shown that
+	copy-number abnormalities at the DNA level are important in the pathogenesis
+	of cancer. Array comparative genomic hybridization (aCGH), developed
+	based on expression microarray technology, can reveal the chromosomal
+	aberrations in segmental copies at a high resolution. However, due
+	to the nature of aCGH, many standard expression data processing tools,
+	such as data normalization, often fail to yield satisfactory results.
+	RESULTS: We demonstrated a novel aCGH normalization algorithm, which
+	provides an accurate aCGH data normalization by utilizing the dependency
+	of neighboring probe measurements in aCGH experiments. To facilitate
+	the study, we have developed a hidden Markov model (HMM) to simulate
+	a series of aCGH experiments with random DNA copy number alterations
+	that are used to validate the performance of our normalization. In
+	addition, we applied the proposed normalization algorithm to an aCGH
+	study of lung cancer cell lines. By using the proposed algorithm,
+	data quality and the reliability of experimental results are significantly
+	improved, and the distinct patterns of DNA copy number alternations
+	are observed among those lung cancer cell lines. SUPPLEMENTARY INFORMATION:
+	Source codes and.gures may be found at http://ntumaps.cgm.ntu.edu.tw/aCGH_supplementary.},
+  doi = {10.1093/bioinformatics/btn321},
+  file = {:ChenH_etal_2008-A probe-density-based analysis method for array {CGH}
+	data - simulation, normalization and centralization.pdf:PDF;Supplementary
+	Materials:ChenH_etal_2008-SupplMaterials.pdf:PDF},
+  institution = {Department of Electrical Engineering, National Taiwan University,
+	Taipei, Taiwan 106, Republic of China.},
+  keywords = {Base Sequence; Chromosome Mapping, methods; Computer Simulation; DNA
+	Probes, genetics; Gene Dosage, genetics; Models, Genetic; Molecular
+	Sequence Data; Oligonucleotide Array Sequence Analysis, methods;
+	Sequence Alignment, methods; Sequence Analysis, DNA, methods},
+  owner = {hb},
+  pii = {btn321},
+  pmid = {18603568},
+  timestamp = {2008.11.12},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btn321}
+}
+
 @ARTICLE{ChenY_etal_1997,
   author = {Y. Chen and E. R. Dougherty and M. L. Bittner},
   title = {Ratio-Based Decisions and the Quantitative Analysis of cDNA Microarray
@@ -2527,6 +2829,48 @@
   pmid = {16204457},
   timestamp = {2005.11.11},
   url = {http://dx.doi.org/10.1093/nar/gki844}
+}
+
+@ARTICLE{ChiangD_etal_2009,
+  author = {Derek Y Chiang and Gad Getz and David B Jaffe and Michael J T O'Kelly
+	and Xiaojun Zhao and Scott L Carter and Carsten Russ and Chad Nusbaum
+	and Matthew Meyerson and Eric S Lander},
+  title = {High-resolution mapping of copy-number alterations with massively
+	parallel sequencing.},
+  journal = NatMet,
+  year = {2009},
+  volume = {6},
+  pages = {99--103},
+  number = {1},
+  month = {Jan},
+  abstract = {Cancer results from somatic alterations in key genes, including point
+	mutations, copy-number alterations and structural rearrangements.
+	A powerful way to discover cancer-causing genes is to identify genomic
+	regions that show recurrent copy-number alterations (gains and losses)
+	in tumor genomes. Recent advances in sequencing technologies suggest
+	that massively parallel sequencing may provide a feasible alternative
+	to DNA microarrays for detecting copy-number alterations. Here we
+	present: (i) a statistical analysis of the power to detect copy-number
+	alterations of a given size; (ii) SegSeq, an algorithm to segment
+	equal copy numbers from massively parallel sequence data; and (iii)
+	analysis of experimental data from three matched pairs of tumor and
+	normal cell lines. We show that a collection of approximately 14
+	million aligned sequence reads from human cell lines has comparable
+	power to detect events as the current generation of DNA microarrays
+	and has over twofold better precision for localizing breakpoints
+	(typically, to within approximately 1 kilobase).},
+  doi = {10.1038/nmeth.1276},
+  file = {:ChiangD_etal_2009-High-resolution mapping of copy-number alterations
+	with massively parallel sequencing.pdf:PDF;Supplmentary Materials:ChiangD_etal_2009-SupplMaterials.pdf:PDF},
+  institution = {Broad Institute, Massachusetts Institute of Technology, 7 Cambridge
+	Center, Cambridge, MA 02142, USA.},
+  keywords = {Algorithms; Base Sequence; Cell Line, Tumor; Chromosomes, Human, genetics;
+	Databases, Genetic; Gene Dosage, genetics; Humans},
+  owner = {hb},
+  pii = {nmeth.1276},
+  pmid = {19043412},
+  timestamp = {2009.01.26},
+  url = {http://dx.doi.org/10.1038/nmeth.1276}
 }
 
 @ARTICLE{ChuTM_etal_2004,
@@ -2749,6 +3093,22 @@
   month = {jun},
   serie = {Hands On},
   url = {http://www.alphainnotech.com/presentation/note48.pdf}
+}
+
+@ARTICLE{CollinsBarker_2007,
+  author = {Francis S. Collins and Anna D. Barker},
+  title = {Mapping the Cancer Genome},
+  journal = {Scientific American},
+  year = {2007},
+  volume = {296},
+  pages = {50-57},
+  number = {3},
+  month = {mar},
+  file = {:CollinsBarker_2007-Mapping the Cancer Genome.pdf:PDF},
+  keywords = {TCGA},
+  owner = {hb},
+  timestamp = {2008.11.17},
+  url = {http://www.sciam.com/article.cfm?id=mapping-the-cancer-genome&print=true}
 }
 
 @ARTICLE{CollinsF_etal_1998,
@@ -3020,6 +3380,26 @@
   address = {Axon Instruments, Inc., Union City, US}
 }
 
+@ARTICLE{DiCawley_2005,
+  author = {Xiaojun Di and Simon Cawley},
+  title = {Alternative base calling method for resequencing microarrays.},
+  journal = {Conf Proc IEEE Eng Med Biol Soc},
+  year = {2005},
+  volume = {3},
+  pages = {2809--2812},
+  abstract = {Analysis of high density oligonucleotide arrays for resequencing requires
+	methods which are highly robust and accurate. We introduce an alternative
+	base calling method built upon ABACUS with the particular advantage
+	of achieving a very low rate for false positive detection of heterozygotes.},
+  doi = {10.1109/IEMBS.2005.1617057},
+  file = {:DiCawley_2005-Alternative Base Calling Method for Resequencing Microarrays.pdf:PDF},
+  institution = {Affymetrix Inc., Santa Clara, CA.},
+  owner = {hb},
+  pmid = {17282826},
+  timestamp = {2008.11.24},
+  url = {http://dx.doi.org/10.1109/IEMBS.2005.1617057}
+}
+
 @ARTICLE{DiX_etal_2005,
   author = {Xiaojun Di and Hajime Matsuzaki and Teresa A Webster and Earl Hubbell
 	and Guoying Liu and Shoulian Dong and Dan Bartell and Jing Huang
@@ -3077,6 +3457,50 @@
   pmid = {15657097},
   timestamp = {2006.03.23},
   url = {http://dx.doi.org/10.1093/bioinformatics/bti275}
+}
+
+@ARTICLE{DiskinS_etal_2008,
+  author = {Sharon J Diskin and Mingyao Li and Cuiping Hou and Shuzhang Yang
+	and Joseph Glessner and Hakon Hakonarson and Maja Bucan and John
+	M Maris and Kai Wang},
+  title = {Adjustment of genomic waves in signal intensities from whole-genome
+	{SNP} genotyping platforms.},
+  journal = NAR,
+  year = {2008},
+  volume = {36},
+  pages = {e126},
+  number = {19},
+  month = {Nov},
+  abstract = {Whole-genome microarrays with large-insert clones designed to determine
+	DNA copy number often show variation in hybridization intensity that
+	is related to the genomic position of the clones. We found these
+	'genomic waves' to be present in Illumina and Affymetrix SNP genotyping
+	arrays, confirming that they are not platform-specific. The causes
+	of genomic waves are not well-understood, and they may prevent accurate
+	inference of copy number variations (CNVs). By measuring DNA concentration
+	for 1444 samples and by genotyping the same sample multiple times
+	with varying DNA quantity, we demonstrated that DNA quantity correlates
+	with the magnitude of waves. We further showed that wavy signal patterns
+	correlate best with GC content, among multiple genomic features considered.
+	To measure the magnitude of waves, we proposed a GC-wave factor (GCWF)
+	measure, which is a reliable predictor of DNA quantity (correlation
+	coefficient = 0.994 based on samples with serial dilution). Finally,
+	we developed a computational approach by fitting regression models
+	with GC content included as a predictor variable, and we show that
+	this approach improves the accuracy of CNV detection. With the wide
+	application of whole-genome SNP genotyping techniques, our wave adjustment
+	method will be important for taking full advantage of genotyped samples
+	for CNV analysis.},
+  doi = {10.1093/nar/gkn556},
+  file = {:DiskinS_etal_2008-Adjustment of genomic waves in signal intensities
+	from whole-genome SNP genotyping platforms.pdf:PDF},
+  institution = {Center for Childhood Cancer Research, Children's Hospital of Philadelphia,
+	Philadelphia, PA 19104, USA.},
+  owner = {hb},
+  pii = {gkn556},
+  pmid = {18784189},
+  timestamp = {2008.11.26},
+  url = {http://dx.doi.org/10.1093/nar/gkn556}
 }
 
 @PHDTHESIS{DoelL_2002,
@@ -3595,6 +4019,62 @@
   url = {http://dx.doi.org/10.1101/gr.5630906}
 }
 
+@ARTICLE{FlibotteMoerman_2008,
+  author = {Stephane Flibotte and Donald G Moerman},
+  title = {Experimental analysis of oligonucleotide microarray design criteria
+	to detect deletions by comparative genomic hybridization.},
+  journal = {BMC Genomics},
+  year = {2008},
+  volume = {9},
+  pages = {497},
+  abstract = {BACKGROUND: Microarray comparative genomic hybridization (CGH) is
+	currently one of the most powerful techniques to measure DNA copy
+	number in large genomes. In humans, microarray CGH is widely used
+	to assess copy number variants in healthy individuals and copy number
+	aberrations associated with various diseases, syndromes and disease
+	susceptibility. In model organisms such as Caenorhabditis elegans
+	(C. elegans) the technique has been applied to detect mutations,
+	primarily deletions, in strains of interest. Although various constraints
+	on oligonucleotide properties have been suggested to minimize non-specific
+	hybridization and improve the data quality, there have been few experimental
+	validations for CGH experiments. For genomic regions where strict
+	design filters would limit the coverage it would also be useful to
+	quantify the expected loss in data quality associated with relaxed
+	design criteria. RESULTS: We have quantified the effects of filtering
+	various oligonucleotide properties by measuring the resolving power
+	for detecting deletions in the human and C. elegans genomes using
+	NimbleGen microarrays. Approximately twice as many oligonucleotides
+	are typically required to be affected by a deletion in human DNA
+	samples in order to achieve the same statistical confidence as one
+	would observe for a deletion in C. elegans. Surprisingly, the ability
+	to detect deletions strongly depends on the oligonucleotide 15-mer
+	count, which is defined as the sum of the genomic frequency of all
+	the constituent 15-mers within the oligonucleotide. A similarity
+	level above 80\% to non-target sequences over the length of the probe
+	produces significant cross-hybridization. We recommend the use of
+	a fairly large melting temperature window of up to 10 degrees C,
+	the elimination of repeat sequences, the elimination of homopolymers
+	longer than 5 nucleotides, and a threshold of -1 kcal/mol on the
+	oligonucleotide self-folding energy. We observed very little difference
+	in data quality when varying the oligonucleotide length between 50
+	and 70, and even when using an isothermal design strategy. CONCLUSION:
+	We have determined experimentally the effects of varying several
+	key oligonucleotide microarray design criteria for detection of deletions
+	in C. elegans and humans with NimbleGen's CGH technology. Our oligonucleotide
+	design recommendations should be applicable for CGH analysis in most
+	species.},
+  doi = {10.1186/1471-2164-9-497},
+  file = {:FlibotteMoerman_2008-Experimental analysis of oligonucleotide microarray
+	design criteria to detect deletions by comparative genomic hybridization.pdf:PDF},
+  institution = {Canada's Michael Smith Genome Sciences Centre, BC Cancer Agency,
+	Vancouver, BC, Canada. sflibotte@bcgsc.ca},
+  owner = {hb},
+  pii = {1471-2164-9-497},
+  pmid = {18940006},
+  timestamp = {2008.11.12},
+  url = {http://dx.doi.org/10.1186/1471-2164-9-497}
+}
+
 @ARTICLE{FridlyandJ_2004,
   author = {J. Fridlyand and A. Snijders and D. Pinkel and D.G. Albertson and
 	A.N. Jain},
@@ -3700,6 +4180,43 @@
   pages = {R80},
   file = {GentlemanR_etal_2004-Bioconductor.pdf:GentlemanR_etal_2004-Bioconductor.pdf:PDF},
   url = {http://genomebiology.com/2004/5/10/R80}
+}
+
+@ARTICLE{GiannoulatouE_etal_2008,
+  author = {Eleni Giannoulatou and Christopher Yau and Stefano Colella and Jiannis
+	Ragoussis and Christopher C Holmes},
+  title = {GenoSNP: a variational Bayes within-sample SNP genotyping algorithm
+	that does not require a reference population.},
+  journal = {Bioinformatics},
+  year = {2008},
+  volume = {24},
+  pages = {2209--2214},
+  number = {19},
+  month = {Oct},
+  abstract = {Current genotyping algorithms typically call genotypes by clustering
+	allele-specific intensity data on a single nucleotide polymorphism
+	(SNP) by SNP basis. This approach assumes the availability of a large
+	number of control samples that have been sampled on the same array
+	and platform. We have developed a SNP genotyping algorithm for the
+	Illumina Infinium SNP genotyping assay that is entirely within-sample
+	and does not require the need for a population of control samples
+	nor parameters derived from such a population. Our algorithm exhibits
+	high concordance with current methods and >99\% call accuracy on
+	HapMap samples. The ability to call genotypes using only within-sample
+	information makes the method computationally light and practical
+	for studies involving small sample sizes and provides a valuable
+	independent quality control metric for other population-based approaches.
+	AVAILABILITY: http://www.stats.ox.ac.uk/~giannoul/GenoSNP/.},
+  doi = {10.1093/bioinformatics/btn386},
+  file = {:GiannoulatouE_etal_2008-GenoSNP - a variational Bayes within-sample
+	SNP genotyping algorithm that does not require a reference population.pdf:PDF},
+  institution = {Department of Statistics, University of Oxford, 1 South Parks Road,
+	Oxford OX13TG, UK.},
+  owner = {hb},
+  pii = {btn386},
+  pmid = {18653518},
+  timestamp = {2008.11.12},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btn386}
 }
 
 @ARTICLE{GlasbeyGhazal_2003,
@@ -4333,6 +4850,28 @@
   url = {http://dx.doi.org/10.1038/nmeth.1179}
 }
 
+@ARTICLE{HinkleyD_1970,
+  author = {Hinkley, David V.},
+  title = {{Inference about the change-point in a sequence of random variables}},
+  journal = {Biometrika},
+  year = {1970},
+  volume = {57},
+  pages = {1-17},
+  number = {1},
+  abstract = {Inference is considered about the point in a sequence of random variables
+	at which the probability distribution changes. In particular, we
+	examine a normal distribution with changing mean. The asymptotic
+	distribution of the maximum likelihood estimate is derived and also
+	the asymptotic distribution of the likelihood ratio statistic for
+	testing hypotheses about the change-point. These asymptotic distributions
+	are compared with some finite sample empirical distributions.},
+  doi = {10.1093/biomet/57.1.1},
+  eprint = {http://biomet.oxfordjournals.org/cgi/reprint/57/1/1.pdf},
+  file = {:HinkleyD_1970-Inference about the change-point in a sequence of random
+	variables.pdf:PDF},
+  url = {http://biomet.oxfordjournals.org/cgi/content/abstract/57/1/1}
+}
+
 @ARTICLE{HoffmanR_etal_2002,
   author = {Reinhard Hoffmann and Thomas Seidl and Martin Dugas},
   title = {Profound effect of normalization on detection of differentially expressed
@@ -4671,7 +5210,7 @@
 	arrays.pdf:PDF},
   keywords = {Cell Line, Chromosomes, DNA, Genome, Human, Humans, Loss of Heterozygosity,
 	Oligonucleotide Array Sequence Analysis, Polymerase Chain Reaction,
-	Tumor, 15588488},
+	Tumor, 15588488, LOH},
   owner = {hb}
 }
 
@@ -5159,8 +5698,8 @@
 @ARTICLE{JohnsonE_etal_2006,
   author = {W. Evan Johnson and Wei Li and Clifford A Meyer and Raphael Gottardo
 	and Jason S Carroll and Myles Brown and X. Shirley Liu},
-  title = {Model-based analysis of tiling-arrays for ChIP-chip.},
-  journal = {Proc Natl Acad Sci U S A},
+  title = {Model-based analysis of tiling-arrays for {ChIP}-chip.},
+  journal = PNAS,
   year = {2006},
   volume = {103},
   pages = {12457--12462},
@@ -5285,6 +5824,43 @@
   url = {http://dx.doi.org/10.1016/j.yexcr.2004.01.013}
 }
 
+@ARTICLE{KapurK_etal_2008,
+  author = {Karen Kapur and Hui Jiang and Yi Xing and Wing Hung Wong},
+  title = {Cross-Hybridization Modeling on Affymetrix Exon Arrays.},
+  journal = {Bioinformatics},
+  year = {2008},
+  month = {Nov},
+  abstract = {MOTIVATION: Microarray designs have become increasingly proberich,
+	enabling targeting of specific features, such as individual exons
+	or SNPs. These arrays have the potential to achieve quantitative
+	highthroughput estimates of transcript abundances, but currently
+	these estimates are affected by biases due to cross-hybridization,
+	in which probes hybridize to off-target transcripts. RESULTS: To
+	study cross-hybridization, we map Affymetrix exon array probes to
+	a set of annotated mRNA transcripts, allowing a small number of mismatches
+	or insertion-deletions between the two sequences. Based on a systematic
+	study of the degree to which probes with a given match type to a
+	transcript are affected by cross-hybridization, we developed a strategy
+	to correct for crosshybridization biases of gene-level expression
+	estimates. Comparison with Solexa ultra-high-throughput sequencing
+	data demonstrates that correction for cross-hybridization leads to
+	a significant improvement of gene expression estimates. AVAILABILITY:
+	We provide mappings between human and mouse exon array probes and
+	off-target transcripts and provide software extending the GeneBASE
+	program for generating gene-level expression estimates including
+	the cross-hybridization correction http://biogibbs.stanford.edu/~kkapur/GeneBase/.
+	CONTACT: whwong@stanford.edu.},
+  doi = {10.1093/bioinformatics/btn571},
+  file = {:KapurK_etal_2008-Cross-Hybridization Modeling on Affymetrix Exon
+	Arrays.pdf:PDF},
+  institution = {Department of Statistics, Stanford University.},
+  owner = {hb},
+  pii = {btn571},
+  pmid = {18984598},
+  timestamp = {2008.11.19},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btn571}
+}
+
 @ARTICLE{KennedyG_etal_2003,
   author = {Giulia C Kennedy and Hajime Matsuzaki and Shoulian Dong and Wei-min
 	Liu and Jing Huang and Guoying Liu and Xing Su and Manqiu Cao and
@@ -5386,6 +5962,51 @@
 	Microarray Data.pdf:PDF},
   issue = {6},
   url = {http://www.phaget4.org/Lib/index.php3?id=91}
+}
+
+@ARTICLE{KirovG_etal_2006,
+  author = {George Kirov and Ivan Nikolov and Lyudmila Georgieva and Valentina
+	Moskvina and Michael J Owen and Michael C O'Donovan},
+  title = {Pooled DNA genotyping on Affymetrix SNP genotyping arrays.},
+  journal = {BMC Genomics},
+  year = {2006},
+  volume = {7},
+  pages = {27},
+  abstract = {BACKGROUND: Genotyping technology has advanced such that genome-wide
+	association studies of complex diseases based upon dense marker maps
+	are now technically feasible. However, the cost of such projects
+	remains high. Pooled DNA genotyping offers the possibility of applying
+	the same technologies at a fraction of the cost, and there is some
+	evidence that certain ultra-high throughput platforms also perform
+	with an acceptable accuracy. However, thus far, this conclusion is
+	based upon published data concerning only a small number of SNPs.
+	RESULTS: In the current study we prepared DNA pools from the parents
+	and from the offspring of 30 parent-child trios that have been extensively
+	genotyped by the HapMap project. We analysed the two pools with Affymetrix
+	10 K Xba 142 2.0 Arrays. The availability of the HapMap data allowed
+	us to validate the performance of 6843 SNPs for which we had both
+	complete individual and pooled genotyping data. Pooled analyses averaged
+	over 5-6 microarrays resulted in highly reproducible results. Moreover,
+	the accuracy of estimating differences in allele frequency between
+	pools using this ultra-high throughput system was comparable with
+	previous reports of pooling based upon lower throughput platforms,
+	with an average error for the predicted allelic frequencies differences
+	between the two pools of 1.37\% and with 95\% of SNPs showing an
+	error of < 3.2\%. CONCLUSION: Genotyping thousands of SNPs with DNA
+	pooling using Affymetrix microarrays produces highly accurate results
+	and can be used for genome-wide association studies.},
+  doi = {10.1186/1471-2164-7-27},
+  institution = {Department of Psychological Medicine, Henry Wellcome Building, Cardiff
+	University, Heath Park, Cardiff CF14 4XN, UK. kirov@cardiff.ac.uk},
+  keywords = {Alleles; Computational Biology; DNA, genetics/isolation /&/ purification;
+	Female; Gene Frequency; Genome, Human; Genotype; Humans; Male; Oligonucleotide
+	Array Sequence Analysis, methods/statistics /&/ numerical data; Polymorphism,
+	Single Nucleotide; Reproducibility of Results},
+  owner = {hb},
+  pii = {1471-2164-7-27},
+  pmid = {16480507},
+  timestamp = {2008.11.16},
+  url = {http://dx.doi.org/10.1186/1471-2164-7-27}
 }
 
 @ARTICLE{KleinR_etal_2005,
@@ -5592,8 +6213,8 @@
 @ARTICLE{KongS_etal_2005,
   author = {Sek Won Kong and Kyu-Baek Hwang and Richard D Kim and Byoung-Tak
 	Zhang and Steven A Greenberg and Isaac S Kohane and Peter J Park},
-  title = {CrossChip: a system supporting comparative analysis of different
-	generations of Affymetrix arrays.},
+  title = {{CrossChip}: a system supporting comparative analysis of different
+	generations of {Affymetrix} arrays.},
   journal = {Bioinformatics},
   year = {2005},
   volume = {21},
@@ -5660,11 +6281,14 @@
 	Veitch and Patrick J Collins and Katayoon Darvishi and Charles Lee
 	and Marcia M Nizzari and Stacey B Gabriel and Shaun Purcell and Mark
 	J Daly and David Altshuler},
-  title = {Integrated genotype calling and association analysis of SNPs, common
-	copy number polymorphisms and rare CNVs.},
-  journal = {Nat Genet},
+  title = {Integrated genotype calling and association analysis of {SNP}s, common
+	copy number polymorphisms and rare {CNV}s.},
+  journal = NatGen,
   year = {2008},
-  month = {Sep},
+  volume = {40},
+  pages = {1253--1260},
+  number = {10},
+  month = {Oct},
   abstract = {Accurate and complete measurement of single nucleotide (SNP) and copy
 	number (CNV) variants, both common and rare, will be required to
 	understand the role of genetic variation in disease. We present Birdsuite,
@@ -5682,11 +6306,21 @@
 	PLINK, to utilize these combined SNP and CNV genotypes for association
 	testing with a phenotype.},
   doi = {10.1038/ng.237},
-  institution = { These authors contributed equally to this work.},
+  file = {:KornJ_etal_2008-Integrated genotype calling and association analysis
+	of SNPs, common copy number polymorphisms and rare CNVs.pdf:PDF;Supplementary
+	Materials:KornJ_etal_2008-SupplMaterials.pdf:PDF},
+  institution = {Broad Institute of Harvard and Massachusetts Institute of Technology,
+	Cambridge, Massachusetts 02142, USA. jkorn@broad.mit.edu},
+  keywords = {Algorithms; Chromosomes, Human, Pair 4, genetics; Chromosomes, Human,
+	genetics; DNA, genetics; Female; Gene Dosage, genetics; Genome, Human;
+	Genotype; Haplotypes, genetics; Humans; Male; Markov Chains; Models,
+	Statistical; Oligonucleotide Array Sequence Analysis; Polymerase
+	Chain Reaction; Polymorphism, Single Nucleotide; Software, Birdseed,
+	Canary},
   owner = {hb},
   pii = {ng.237},
   pmid = {18776909},
-  timestamp = {2008.09.25},
+  timestamp = {2008.11.13},
   url = {http://dx.doi.org/10.1038/ng.237}
 }
 
@@ -6188,7 +6822,7 @@
   author = {William Lee and Desiree Tillo and Nicolas Bray and Randall H Morse
 	and Ronald W Davis and Timothy R Hughes and Corey Nislow},
   title = {A high-resolution atlas of nucleosome occupancy in yeast.},
-  journal = {Nat Genet},
+  journal = NatGen,
   year = {2007},
   volume = {39},
   pages = {1235--1244},
@@ -6245,6 +6879,112 @@
   address = {Human Genome Center, Lawrence Livermore National Laboratory, Livermore,
 	California 94550, USA},
   url = {http://www.idealibrary.com/servlet/doi/10.1006/geno.1996.0177}
+}
+
+@ARTICLE{LevyS_etal_2007,
+  author = {Samuel Levy and Granger Sutton and Pauline C Ng and Lars Feuk and
+	Aaron L Halpern and Brian P Walenz and Nelson Axelrod and Jiaqi Huang
+	and Ewen F Kirkness and Gennady Denisov and Yuan Lin and Jeffrey
+	R MacDonald and Andy Wing Chun Pang and Mary Shago and Timothy B
+	Stockwell and Alexia Tsiamouri and Vineet Bafna and Vikas Bansal
+	and Saul A Kravitz and Dana A Busam and Karen Y Beeson and Tina C
+	McIntosh and Karin A Remington and Josep F Abril and John Gill and
+	Jon Borman and Yu-Hui Rogers and Marvin E Frazier and Stephen W Scherer
+	and Robert L Strausberg and J. Craig Venter},
+  title = {The diploid genome sequence of an individual human.},
+  journal = {PLoS Biol},
+  year = {2007},
+  volume = {5},
+  pages = {e254},
+  number = {10},
+  month = {Sep},
+  abstract = {Presented here is a genome sequence of an individual human. It was
+	produced from approximately 32 million random DNA fragments, sequenced
+	by Sanger dideoxy technology and assembled into 4,528 scaffolds,
+	comprising 2,810 million bases (Mb) of contiguous sequence with approximately
+	7.5-fold coverage for any given region. We developed a modified version
+	of the Celera assembler to facilitate the identification and comparison
+	of alternate alleles within this individual diploid genome. Comparison
+	of this genome and the National Center for Biotechnology Information
+	human reference assembly revealed more than 4.1 million DNA variants,
+	encompassing 12.3 Mb. These variants (of which 1,288,319 were novel)
+	included 3,213,401 single nucleotide polymorphisms (SNPs), 53,823
+	block substitutions (2-206 bp), 292,102 heterozygous insertion/deletion
+	events (indels)(1-571 bp), 559,473 homozygous indels (1-82,711 bp),
+	90 inversions, as well as numerous segmental duplications and copy
+	number variation regions. Non-SNP DNA variation accounts for 22\%
+	of all events identified in the donor, however they involve 74\%
+	of all variant bases. This suggests an important role for non-SNP
+	genetic alterations in defining the diploid genome structure. Moreover,
+	44\% of genes were heterozygous for one or more variants. Using a
+	novel haplotype assembly strategy, we were able to span 1.5 Gb of
+	genome sequence in segments >200 kb, providing further precision
+	to the diploid nature of the genome. These data depict a definitive
+	molecular portrait of a diploid human genome that provides a starting
+	point for future genome comparisons and enables an era of individualized
+	genomic information.},
+  doi = {10.1371/journal.pbio.0050254},
+  file = {:LevyS_etal_2007-The diploid genome sequence of an individual human.pdf:PDF},
+  institution = {J. Craig Venter Institute, Rockville, Maryland, USA. slevy@jcvi.org},
+  keywords = {Base Sequence; Chromosome Mapping, instrumentation/methods; Chromosomes,
+	Human; Chromosomes, Human, Y, genetics; Diploidy; Gene Dosage; Genome,
+	Human; Genotype; Haplotypes; Human Genome Project; Humans; INDEL
+	Mutation; In Situ Hybridization, Fluorescence; Male; Microarray Analysis;
+	Middle Aged; Molecular Sequence Data; Pedigree; Phenotype; Polymorphism,
+	Single Nucleotide; Reproducibility of Results; Sequence Analysis,
+	DNA, instrumentation/methods},
+  owner = {hb},
+  pii = {07-PLBI-RA-1258},
+  pmid = {17803354},
+  timestamp = {2009.01.20},
+  url = {http://dx.doi.org/10.1371/journal.pbio.0050254}
+}
+
+@ARTICLE{LiC_etal_2008,
+  author = {Cheng Li and Rameen Beroukhim and Barbara A Weir and Wendy Winckler
+	and Levi A Garraway and William R Sellers and Matthew Meyerson},
+  title = {Major copy proportion analysis of tumor samples using {SNP} arrays.},
+  journal = {BMC Bioinformatics},
+  year = {2008},
+  volume = {9},
+  pages = {204},
+  abstract = {BACKGROUND: Single nucleotide polymorphisms (SNPs) are the most common
+	genetic variations in the human genome and are useful as genomic
+	markers. Oligonucleotide SNP microarrays have been developed for
+	high-throughput genotyping of up to 900,000 human SNPs and have been
+	used widely in linkage and cancer genomics studies. We have previously
+	used Hidden Markov Models (HMM) to analyze SNP array data for inferring
+	copy numbers and loss-of-heterozygosity (LOH) from paired normal
+	and tumor samples and unpaired tumor samples. RESULTS: We proposed
+	and implemented major copy proportion (MCP) analysis of oligonucleotide
+	SNP array data. A HMM was constructed to infer unobserved MCP states
+	from observed allele-specific signals through emission and transition
+	distributions. We used 10 K, 100 K and 250 K SNP array datasets to
+	compare MCP analysis with LOH and copy number analysis, and showed
+	that MCP performs better than LOH analysis for allelic-imbalanced
+	chromosome regions and normal contaminated samples. The major and
+	minor copy alleles can also be inferred from allelic-imbalanced regions
+	by MCP analysis. CONCLUSION: MCP extends tumor LOH analysis to allelic
+	imbalance analysis and supplies complementary information to total
+	copy numbers. MCP analysis of mixing normal and tumor samples suggests
+	the utility of MCP analysis of normal-contaminated tumor samples.
+	The described analysis and visualization methods are readily available
+	in the user-friendly dChip software.},
+  doi = {10.1186/1471-2105-9-204},
+  file = {:LiC_etal_2008-Major copy proportion analysis of tumor samples using
+	SNP arrays.pdf:PDF},
+  institution = {Department of Biostatistics and Computational Biology, Dana-Farber
+	Cancer Institute and Harvard School of Public Health, 3 Blackfan
+	Circle, Boston, MA 02115, USA. cli@hsph.harvard.edu},
+  keywords = {Algorithms; Base Sequence; DNA, Neoplasm, genetics; Gene Dosage, genetics;
+	Humans; Molecular Sequence Data; Oligonucleotide Array Sequence Analysis,
+	methods; Polymorphism, Single Nucleotide, genetics; Sensitivity and
+	Specificity; Variation (Genetics), genetics},
+  owner = {hb},
+  pii = {1471-2105-9-204},
+  pmid = {18426588},
+  timestamp = {2008.11.25},
+  url = {http://dx.doi.org/10.1186/1471-2105-9-204}
 }
 
 @ARTICLE{LiWong_2001,
@@ -7137,6 +7877,47 @@
   url = {http://links.jstor.org/sici?sici=0035-9246%281990%2952%3A2%3C325%3AASMFTA%3E2.0.CO%3B2-7}
 }
 
+@ARTICLE{MilaniL_etal_2009,
+  author = {Lili Milani and Anders Lundmark and Jessica Nordlund and Anna Kiialainen
+	and Trond Flaegstad and Gudmundur Jonmundsson and Jukka Kanerva and
+	Kjeld Schmiegelow and Kevin L Gunderson and Gudmar Lönnerholm and
+	Ann-Christine Syvänen},
+  title = {Allele-specific gene expression patterns in primary leukemic cells
+	reveal regulation of gene expression by {CpG} site methylation},
+  journal = {Genome Res},
+  year = {2009},
+  volume = {19},
+  pages = {1--11},
+  number = {1},
+  month = {Jan},
+  abstract = {To identify genes that are regulated by cis-acting functional elements
+	in acute lymphoblastic leukemia (ALL) we determined the allele-specific
+	expression (ASE) levels of 2, 529 genes by genotyping a genome-wide
+	panel of single nucleotide polymorphisms in RNA and DNA from bone
+	marrow and blood samples of 197 children with ALL. Using a reproducible,
+	quantitative genotyping method and stringent criteria for scoring
+	ASE, we found that 16\% of the analyzed genes display ASE in multiple
+	ALL cell samples. For most of the genes, the level of ASE varied
+	largely between the samples, from 1.4-fold overexpression of one
+	allele to apparent monoallelic expression. For genes exhibiting ASE,
+	55\% displayed bidirectional ASE in which overexpression of either
+	of the two SNP alleles occurred. For bidirectional ASE we also observed
+	overall higher levels of ASE and correlation with the methylation
+	level of these sites. Our results demonstrate that CpG site methylation
+	is one of the factors that regulates gene expression in ALL cells.},
+  doi = {10.1101/gr.083931.108},
+  file = {:MilaniL_etal_2009-Allele-specific gene expression patterns in primary
+	leukemic cells reveal regulation of gene expression by CpG site methylation.pdf:PDF;Supplementary
+	Materials:MilaniL_etal_2009-SupplMaterials.pdf:PDF},
+  institution = {Molecular Medicine, Department of Medical Sciences, Uppsala University,
+	75185 Uppsala, Sweden.},
+  owner = {hb},
+  pii = {gr.083931.108},
+  pmid = {18997001},
+  timestamp = {2009.02.06},
+  url = {http://dx.doi.org/10.1101/gr.083931.108}
+}
+
 @ARTICLE{MujumdarR_etal_1993,
   author = {R. B. Mujumdar and L.A. Ernst and S.R. Mujumdar and C. J. Lewis and
 	A. S. Waggoner},
@@ -7333,6 +8114,47 @@
   url = {http://dx.doi.org/10.1158/0008-5472.CAN-05-0465}
 }
 
+@ARTICLE{TCGA_2008c,
+  author = {Cancer Genome Atlas Research Network},
+  title = {Comprehensive genomic characterization defines human glioblastoma
+	genes and core pathways.},
+  journal = {Nature},
+  year = {2008},
+  volume = {455},
+  pages = {1061--1068},
+  number = {7216},
+  month = {Oct},
+  abstract = {Human cancer cells typically harbour multiple chromosomal aberrations,
+	nucleotide substitutions and epigenetic modifications that drive
+	malignant transformation. The Cancer Genome Atlas (TCGA) pilot project
+	aims to assess the value of large-scale multi-dimensional analysis
+	of these molecular characteristics in human cancer and to provide
+	the data rapidly to the research community. Here we report the interim
+	integrative analysis of DNA copy number, gene expression and DNA
+	methylation aberrations in 206 glioblastomas--the most common type
+	of adult brain cancer--and nucleotide sequence aberrations in 91
+	of the 206 glioblastomas. This analysis provides new insights into
+	the roles of ERBB2, NF1 and TP53, uncovers frequent mutations of
+	the phosphatidylinositol-3-OH kinase regulatory subunit gene PIK3R1,
+	and provides a network view of the pathways altered in the development
+	of glioblastoma. Furthermore, integration of mutation, DNA methylation
+	and clinical treatment data reveals a link between MGMT promoter
+	methylation and a hypermutator phenotype consequent to mismatch repair
+	deficiency in treated glioblastomas, an observation with potential
+	clinical implications. Together, these findings establish the feasibility
+	and power of TCGA, demonstrating that it can rapidly expand knowledge
+	of the molecular basis of cancer.},
+  doi = {10.1038/nature07385},
+  file = {:TCGA_2008-Comprehensive genomic characterization defines human glioblastoma
+	genes and core pathways.pdf:PDF;Suppl. Mat.:TCGA_2008-SupplMaterials.pdf:PDF},
+  keywords = {TCGA},
+  owner = {hb},
+  pii = {nature07385},
+  pmid = {18772890},
+  timestamp = {2008.11.10},
+  url = {http://dx.doi.org/10.1038/nature07385}
+}
+
 @ARTICLE{TCGA_2008a,
   author = {The Cancer Genome Atlas Research Network and Tissue source sites
 	with Duke University Medical School and Roger McLendon and Allan
@@ -7445,6 +8267,75 @@
   pmid = {18772890},
   timestamp = {2008.09.24},
   url = {http://dx.doi.org/10.1038/nature07385}
+}
+
+@ARTICLE{NeumannJ_etal_1941,
+  author = {J. von Neumann and Kent, R. H. and Bellinson, H. R. and Hart, B.
+	I.},
+  title = {The Mean Square Successive Difference},
+  journal = {The Annals of Mathematical Statistics},
+  year = {1941},
+  volume = {12},
+  pages = {153--162},
+  number = {2},
+  copyright = {Copyright 1941 Institute of Mathematical Statistics},
+  file = {:NeumannJ_etal_1941-The Mean Square Successive Difference.pdf:PDF},
+  issn = {00034851},
+  jstor_articletype = {primary_article},
+  jstor_formatteddate = {Jun., 1941},
+  publisher = {Institute of Mathematical Statistics},
+  url = {http://www.jstor.org/stable/2235765}
+}
+
+@ARTICLE{NeuvialP_etal_2006,
+  author = {Pierre Neuvial and Philippe Hupé and Isabel Brito and Stéphane Liva
+	and Elodie Manié and Caroline Brennetot and François Radvanyi and
+	Alain Aurias and Emmanuel Barillot},
+  title = {Spatial normalization of array-{CGH} data.},
+  journal = {BMC Bioinformatics},
+  year = {2006},
+  volume = {7},
+  pages = {264},
+  abstract = {BACKGROUND: Array-based comparative genomic hybridization (array-CGH)
+	is a recently developed technique for analyzing changes in DNA copy
+	number. As in all microarray analyses, normalization is required
+	to correct for experimental artifacts while preserving the true biological
+	signal. We investigated various sources of systematic variation in
+	array-CGH data and identified two distinct types of spatial effect
+	of no biological relevance as the predominant experimental artifacts:
+	continuous spatial gradients and local spatial bias. Local spatial
+	bias affects a large proportion of arrays, and has not previously
+	been considered in array-CGH experiments. RESULTS: We show that existing
+	normalization techniques do not correct these spatial effects properly.
+	We therefore developed an automatic method for the spatial normalization
+	of array-CGH data. This method makes it possible to delineate and
+	to eliminate and/or correct areas affected by spatial bias. It is
+	based on the combination of a spatial segmentation algorithm called
+	NEM (Neighborhood Expectation Maximization) and spatial trend estimation.
+	We defined quality criteria for array-CGH data, demonstrating significant
+	improvements in data quality with our method for three data sets
+	coming from two different platforms (198, 175 and 26 BAC-arrays).
+	CONCLUSION: We have designed an automatic algorithm for the spatial
+	normalization of BAC CGH-array data, preventing the misinterpretation
+	of experimental artifacts as biologically relevant outliers in the
+	genomic profile. This algorithm is implemented in the R package MANOR
+	(Micro-Array NORmalization), which is described at http://bioinfo.curie.fr/projects/manor
+	and available from the Bioconductor site http://www.bioconductor.org.
+	It can also be tested on the CAPweb bioinformatics platform at http://bioinfo.curie.fr/CAPweb.},
+  doi = {10.1186/1471-2105-7-264},
+  file = {:NeuvialP_etal_2006-Spatial normalization of array-CGH data.pdf:PDF},
+  institution = {Institut Curie, Service de Bioinformatique, 26, rue d'Ulm, Paris,
+	75248 cedex 05, France. pierre.neuvial@curie.fr},
+  keywords = {Algorithms; Artifacts; Base Sequence; Chromosome Mapping, methods;
+	Computer Simulation; Data Interpretation, Statistical; Gene Dosage;
+	In Situ Hybridization, methods; Models, Genetic; Models, Statistical;
+	Molecular Sequence Data; Oligonucleotide Array Sequence Analysis,
+	methods; Sequence Analysis, DNA, methods},
+  owner = {hb},
+  pii = {1471-2105-7-264},
+  pmid = {16716215},
+  timestamp = {2009.01.21},
+  url = {http://dx.doi.org/10.1186/1471-2105-7-264}
 }
 
 @ARTICLE{NewtonM_etal_2001,
@@ -7627,7 +8518,7 @@
 	Wezel},
   title = {High-resolution copy number analysis of paraffin-embedded archival
 	tissue using SNP BeadArrays.},
-  journal = {Genome Res},
+  journal = GenRes,
   year = {2007},
   volume = {17},
   pages = {368--376},
@@ -7665,6 +8556,24 @@
   pmid = {17267813},
   timestamp = {2007.10.12},
   url = {http://dx.doi.org/10.1101/gr.5686107}
+}
+
+@ARTICLE{PageE_1955,
+  author = {Page, E. S.},
+  title = {A Test for a Change in a Parameter Occurring at an Unknown Point},
+  journal = {Biometrika},
+  year = {1955},
+  volume = {42},
+  pages = {523--527},
+  number = {3/4},
+  copyright = {Copyright 1955 Biometrika Trust},
+  file = {:PageE_1955-A Test for a Change in a Parameter Occurring at an Unknown
+	Point.pdf:PDF},
+  issn = {00063444},
+  jstor_articletype = {primary_article},
+  jstor_formatteddate = {Dec., 1955},
+  publisher = {Biometrika Trust},
+  url = {http://www.jstor.org/stable/2333401}
 }
 
 @ARTICLE{ParkP_etal_2004,
@@ -7770,13 +8679,13 @@
 	fragmented gDNA, and Phi29 whole-genome pre-amplified DNA.},
   doi = {10.1101/gr.5402306},
   file = {PeifferD_etal_2006-High-resolution genomic profiling of chromosomal
-	aberrations using {Infinium} whole-genome genotyping.pdf:PeifferD_etal_2006-High-resolution
-	genomic profiling of chromosomal aberrations using {Infinium} whole-genome
+	aberrations using Infinium whole-genome genotyping.pdf:PeifferD_etal_2006-High-resolution
+	genomic profiling of chromosomal aberrations using Infinium whole-genome
 	genotyping.pdf:PDF},
   keywords = {Cell Line, Tumor; Chromosome Aberrations; Chromosomes, Human; DNA;
 	Female; Genome, Human; Genomics; Genotype; Humans; In Situ Hybridization,
 	Fluorescence; Loss of Heterozygosity; Male; Oligonucleotide Array
-	Sequence Analysis; Polymorphism, Single Nucleotide},
+	Sequence Analysis; Polymorphism, Single Nucleotide, Illumina},
   owner = {hb},
   pii = {gr.5402306},
   pmid = {16899659},
@@ -8890,6 +9799,46 @@
   url = {http://muscle.cribi.unipd.it/microarrays/spot/}
 }
 
+@ARTICLE{RonaldJ_etal_2005,
+  author = {James Ronald and Joshua M Akey and Jacqueline Whittle and Erin N
+	Smith and Gael Yvert and Leonid Kruglyak},
+  title = {Simultaneous genotyping, gene-expression measurement, and detection
+	of allele-specific expression with oligonucleotide arrays.},
+  journal = GenRes,
+  year = {2005},
+  volume = {15},
+  pages = {284--291},
+  number = {2},
+  month = {Feb},
+  abstract = {Oligonucleotide microarrays provide a high-throughput method for exploring
+	genomes. In addition to their utility for gene-expression analysis,
+	oligonucleotide-expression arrays have also been used to perform
+	genotyping on genomic DNA. Here, we show that in segregants from
+	a cross between two unrelated strains of Saccharomyces cerevisiae,
+	high-quality genotype data can also be obtained when mRNA is hybridized
+	to an oligonucleotide-expression array. We were able to identify
+	and genotype nearly 1000 polymorphisms at an error rate close to
+	3\% in segregants and at an error rate of 7\% in diploid strains,
+	a performance comparable to methods using genomic DNA. In addition,
+	we demonstrate how simultaneous genotyping and gene-expression profiling
+	can reveal cis-regulatory variation by screening hundreds of genes
+	for allele-specific expression. With this method, we discovered 70
+	ORFs with evidence for preferential expression of one allele in a
+	diploid hybrid of two S. cerevisiae strains.},
+  doi = {10.1101/gr.2850605},
+  institution = {Department of Genome Sciences, University of Washington, Seattle,
+	Washington 98195, USA.},
+  keywords = {Alleles; DNA, Fungal, genetics; Gene Expression Profiling, methods;
+	Gene Expression Regulation, Fungal, genetics; Genes, Fungal, genetics;
+	Genome, Fungal; Oligonucleotide Array Sequence Analysis, methods;
+	Research Design; Saccharomyces cerevisiae, genetics; Species Specificity},
+  owner = {hb},
+  pii = {15/2/284},
+  pmid = {15687292},
+  timestamp = {2008.11.16},
+  url = {http://dx.doi.org/10.1101/gr.2850605}
+}
+
 @ARTICLE{RoussetRaymond_1995,
   author = {F. Rousset and M. Raymond},
   title = {{T}esting heterozygote excess and deficiency.},
@@ -9001,6 +9950,30 @@
   owner = {hb}
 }
 
+@ARTICLE{SavageL_2008,
+  author = {Liz Savage},
+  title = {Forensic bioinformatician aims to solve mysteries of biomarker studies.},
+  journal = {J Natl Cancer Inst},
+  year = {2008},
+  volume = {100},
+  pages = {983--987},
+  number = {14},
+  month = {Jul},
+  doi = {10.1093/jnci/djn248},
+  file = {:SavageL_2008-Forensic bioinformatician aims to solve mysteries of
+	biomarker studies.pdf:PDF},
+  keywords = {Biomedical Research, methods/standards; Computational Biology; Female;
+	Forensic Medicine; Gene Expression Profiling; Humans; Neoplasm Proteins,
+	blood; Neoplasms, blood/diagnosis; Ovarian Neoplasms, blood/diagnosis;
+	Predictive Value of Tests; Reproducibility of Results; Tumor Markers,
+	Biological, blood},
+  owner = {hb},
+  pii = {djn248},
+  pmid = {18612123},
+  timestamp = {2009.01.06},
+  url = {http://dx.doi.org/10.1093/jnci/djn248}
+}
+
 @ARTICLE{SchadtE_etal_2000,
   author = {EE Schadt and C Li and C Su and WH Wong},
   title = {Analyzing high-density oligonucleotide gene expression array data.},
@@ -9090,7 +10063,7 @@
 	and Evan E Eichler and Nigel P Carter and Matthew E Hurles and Lars
 	Feuk},
   title = {Challenges and standards in integrating surveys of structural variation.},
-  journal = {Nat Genet},
+  journal = NatGen,
   year = {2007},
   volume = {39},
   pages = {S7--15},
@@ -9176,6 +10149,29 @@
   address = {Loomis Lab of Physics, University of Illinois, 1110 W. Green St.,
 	Urbana, Illinois 61801, USA.},
   url = {http://www.nature.com/cgi-taf/DynaPage.taf?file=/nsb/journal/v7/n9/abs/nsb0900_730.html}
+}
+
+@ARTICLE{SenSrivastava_1975,
+  author = {Ashish Sen and S. Srivastava},
+  title = {On tests for detecting change in mean when variance is unknown},
+  journal = {Annals of the Institute of Statistical Mathematics},
+  year = {1975},
+  volume = {27},
+  pages = {479-486},
+  number = {1},
+  month = {December},
+  abstract = {Procedures are considered for testing whether the means of each variable
+	in a sequence of independent random variables can be taken to be
+	the same, against alternatives that a shift might have occurred after
+	some point $r$. Bayesian test statistics as well as some statistics
+	depending on estimates of $r$ are presented and their powers compared.
+	Exact and asymptotic distribution functions are derived for some
+	of the Bayesian statistics.},
+  keywords = {Detecting a change in mean; distribution of test statistics; comparison
+	of powers by simulation},
+  owner = {hb},
+  timestamp = {2009.01.21},
+  url = {http://ideas.repec.org/a/spr/aistmt/v27y1975i1p479-486.html}
 }
 
 @BOOK{andrewshalitanddavidmoonandorcastarbuck1996book,
@@ -9593,6 +10589,55 @@
   url = {http://dx.doi.org/10.1038/ng754}
 }
 
+@ARTICLE{SolomonD_etal_2008,
+  author = {David A Solomon and Jung-Sik Kim and Julia C Cronin and Zita Sibenaller
+	and Timothy Ryken and Steven A Rosenberg and Habtom Ressom and Walter
+	Jean and Darell Bigner and Hai Yan and Yardena Samuels and Todd Waldman},
+  title = {Mutational inactivation of {PTPRD} in glioblastoma multiforme and
+	malignant melanoma.},
+  journal = {Cancer Res},
+  year = {2008},
+  volume = {68},
+  pages = {10300--10306},
+  number = {24},
+  month = {Dec},
+  abstract = {An additional tumor suppressor gene on chromosome 9p telomeric to
+	the CDKN2A/B locus has long been postulated to exist. Using Affymetrix
+	250K single nucleotide polymorphism arrays to screen for copy number
+	changes in glioblastoma multiforme (GBM), we detected a high frequency
+	of deletions of the PTPRD gene, which encodes a receptor protein
+	tyrosine phosphatase at chromosome 9p23-24.1. Missense and nonsense
+	mutations of PTPRD were identified in a subset of the samples lacking
+	deletions, including an inherited mutation with somatic loss of the
+	wild-type allele. We then sequenced the gene in melanoma and identified
+	10 somatic mutations in 7 of 57 tumors (12\%). Reconstitution of
+	PTPRD expression in GBM and melanoma cells harboring deletions or
+	mutations led to growth suppression and apoptosis that was alleviated
+	by both the somatic and constitutional mutations. These data implicate
+	PTPRD in the pathogenesis of tumors of neuroectodermal origin and,
+	when taken together with other recent reports of PTPRD mutations
+	in adenocarcinoma of the colon and lung, suggest that PTPRD may be
+	one of a select group of tumor suppressor genes that are inactivated
+	in a wide range of common human tumor types.},
+  doi = {10.1158/0008-5472.CAN-08-3272},
+  file = {:SolomonD_etal_2008-Mutational inactivation of PTPRD in glioblastoma
+	multiforme and malignant melanoma.pdf:PDF},
+  institution = {Department of Oncology, Lombardi Comprehensive Cancer Center, Georgetown
+	University School of Medicine, Washington, District of Columbia 20057,
+	USA.},
+  keywords = {Animals; Chromosomes, Human, Pair 9; Gene Deletion; Gene Expression
+	Regulation, Neoplastic; Gene Silencing; Genes, Tumor Suppressor;
+	Glioblastoma, enzymology/genetics; Humans; Melanoma, enzymology/genetics;
+	Mice; Mutation; Oligonucleotide Array Sequence Analysis; Receptor-Like
+	Protein Tyrosine Phosphatases, Class 2, genetics; Transplantation,
+	Heterologous},
+  owner = {hb},
+  pii = {68/24/10300},
+  pmid = {19074898},
+  timestamp = {2009.01.21},
+  url = {http://dx.doi.org/10.1158/0008-5472.CAN-08-3272}
+}
+
 @ARTICLE{SougakoffW_etal_2004,
   author = {W. Sougakoff and M. Rodrigue and C. Truffot-Pernot and M. Renard
 	and N. Durin and M. Szpytma and R. Vachon and A. Troesch and V. Jarlier},
@@ -9660,6 +10705,52 @@
   volume = {57},
   pages = {295--319},
   number = {2}
+}
+
+@ARTICLE{StauntonJE_etal_2001,
+  author = {J. E. Staunton and D. K. Slonim and H. A. Coller and P. Tamayo and
+	M. J. Angelo and J. Park and U. Scherf and J. K. Lee and W. O. Reinhold
+	and J. N. Weinstein and J. P. Mesirov and E. S. Lander and T. R.
+	Golub},
+  title = {Chemosensitivity prediction by transcriptional profiling.},
+  journal = PNAS,
+  year = {2001},
+  volume = {98},
+  pages = {10787--10792},
+  number = {19},
+  month = {Sep},
+  abstract = {In an effort to develop a genomics-based approach to the prediction
+	of drug response, we have developed an algorithm for classification
+	of cell line chemosensitivity based on gene expression profiles alone.
+	Using oligonucleotide microarrays, the expression levels of 6,817
+	genes were measured in a panel of 60 human cancer cell lines (the
+	NCI-60) for which the chemosensitivity profiles of thousands of chemical
+	compounds have been determined. We sought to determine whether the
+	gene expression signatures of untreated cells were sufficient for
+	the prediction of chemosensitivity. Gene expression-based classifiers
+	of sensitivity or resistance for 232 compounds were generated and
+	then evaluated on independent sets of data. The classifiers were
+	designed to be independent of the cells' tissue of origin. The accuracy
+	of chemosensitivity prediction was considerably better than would
+	be expected by chance. Eighty-eight of 232 expression-based classifiers
+	performed accurately (with P < 0.05) on an independent test set,
+	whereas only 12 of the 232 would be expected to do so by chance.
+	These results suggest that at least for a subset of compounds genomic
+	approaches to chemosensitivity prediction are feasible.},
+  doi = {10.1073/pnas.191368598},
+  file = {:StauntonJE_etal_2001-Chemosensitivity prediction by transcriptional
+	profiling.pdf:PDF},
+  institution = {Whitehead/Massachusetts Institute of Technology Center for Genome
+	Research, Cambridge, MA 02139, USA.},
+  keywords = {Drug Resistance, Neoplasm, genetics; Gene Expression Profiling; Humans;
+	Neoplasms, drug therapy/genetics; Oligonucleotide Array Sequence
+	Analysis, methods; Predictive Value of Tests; Transcription, Genetic;
+	Tumor Cells, Cultured},
+  owner = {hb},
+  pii = {98/19/10787},
+  pmid = {11553813},
+  timestamp = {2009.01.26},
+  url = {http://dx.doi.org/10.1073/pnas.191368598}
 }
 
 @ARTICLE{StearsR_etal_2000,
@@ -10460,6 +11551,44 @@
   url = {http://dx.doi.org/10.1375/1832427054253086}
 }
 
+@ARTICLE{UptonG_etal_2008,
+  author = {Graham Upton and William Langdon and Andrew Harrison},
+  title = {G-spots cause incorrect expression measurement in {Affymetrix} microarrays.},
+  journal = {BMC Genomics},
+  year = {2008},
+  volume = {9},
+  pages = {613},
+  number = {1},
+  month = {Dec},
+  abstract = {ABSTRACT: {Background:} High Density Oligonucleotide arrays (HDONAs),
+	such as the Affymetrix HG-U133A GeneChip, use sets of probes chosen
+	to match specified genes, with the expectation that if a particular
+	gene is highly expressed then all the probes in that gene's probe
+	set will provide a consistent message signifying the gene's presence.
+	We have tested this expectation by examining the correlations between
+	probes using the data on thousands of arrays that are available in
+	the NCBI Gene Expression Omnibus (GEO) repository. {Results:} We
+	have identified probes that are not well-correlated with the other
+	probes in their probeset but nevertheless are highly correlated with
+	probes in other probesets. The common element of these highly correlated
+	probes is that they contain a G-spot (a sequence of four or more
+	guanines). {Conclusions:} Since these G-spot probes generally show
+	little correlation with the other members of their probesets they
+	are not fit for purpose and their values should be excluded when
+	calculating gene expression values. This has serious implications,
+	since more than 40\% of the probesets in the HG-U133A GeneChip contain
+	at least one such probe. Future array designs should avoid these
+	untrustworthy probes.},
+  doi = {10.1186/1471-2164-9-613},
+  file = {:UptonG_etal_2008-G-spots cause incorrect expression measurement in
+	Affymetrix microarrays.pdf:PDF},
+  owner = {hb},
+  pii = {1471-2164-9-613},
+  pmid = {19094220},
+  timestamp = {2008.12.30},
+  url = {http://dx.doi.org/10.1186/1471-2164-9-613}
+}
+
 @MISC{VallonChristerssonJ_2002,
   author = {Johan Vallon-Christersson},
   title = {Personal communication, {O}ncology {D}epartment, {L}und {U}niversity},
@@ -10900,6 +12029,33 @@
   url = {http://dx.doi.org/10.1089/106652701753307520}
 }
 
+@ARTICLE{WolterK_1984,
+  author = {Kirk M. Wolter},
+  title = {An Investigation of Some Estimators of Variance for Systematic Sampling},
+  journal = {Journal of the American Statistical Association},
+  year = {1984},
+  volume = {79},
+  pages = {781--790},
+  number = {388},
+  abstract = {This article provides to the survey practitioner some guidance about
+	the problem of variance estimation for equal probability single-start
+	systematic samples. An investigation of eight alternative estimators
+	of the variance of the sample mean is presented. In the first half
+	of the investigation, the theoretical properties of the estimators
+	are compared using several superpopulation models; in the second
+	half, the comparison is empirical, based on several real populations.
+	Recommendations are made about the appropriateness of the various
+	estimators.},
+  copyright = {Copyright © 1984 American Statistical Association},
+  file = {:WolterK_1984-An Investigation of Some Estimators of Variance for
+	Systematic Sampling.pdf:PDF},
+  issn = {01621459},
+  jstor_articletype = {primary_article},
+  jstor_formatteddate = {Dec., 1984},
+  publisher = {American Statistical Association},
+  url = {http://www.jstor.org/stable/2288708}
+}
+
 @ARTICLE{WongK_etal_2004,
   author = {Kwong-Kwok Wong and Yvonne T M Tsang and Jianhe Shen and Rita S Cheng
 	and Yi-Mieng Chang and Tsz-Kwong Man and Ching C Lau},
@@ -11128,6 +12284,61 @@
   institution = {Berkeley Electronic Press},
   keywords = {gcrma},
   type = {Johns Hopkins University Dept. of Biostatistics Working Paper Series}
+}
+
+@ARTICLE{Xiao2007,
+  author = {Yuanyuan Xiao and Mark R Segal and Y. H. Yang and Ru-Fang Yeh},
+  title = {A multi-array multi-{SNP} genotyping algorithm for {Affymetrix} {SNP}
+	microarrays.},
+  journal = {Bioinformatics},
+  year = {2007},
+  volume = {23},
+  pages = {1459--1467},
+  number = {12},
+  month = {Jun},
+  abstract = {MOTIVATION: Modern strategies for mapping disease loci require efficient
+	genotyping of a large number of known polymorphic sites in the genome.
+	The sensitive and high-throughput nature of hybridization-based DNA
+	microarray technology provides an ideal platform for such an application
+	by interrogating up to hundreds of thousands of single nucleotide
+	polymorphisms (SNPs) in a single assay. Similar to the development
+	of expression arrays, these genotyping arrays pose many data analytic
+	challenges that are often platform specific. Affymetrix SNP arrays,
+	e.g. use multiple sets of short oligonucleotide probes for each known
+	SNP, and require effective statistical methods to combine these probe
+	intensities in order to generate reliable and accurate genotype calls.
+	RESULTS: We developed an integrated multi-SNP, multi-array genotype
+	calling algorithm for Affymetrix SNP arrays, MAMS, that combines
+	single-array multi-SNP (SAMS) and multi-array, single-SNP (MASS)
+	calls to improve the accuracy of genotype calls, without the need
+	for training data or computation-intensive normalization procedures
+	as in other multi-array methods. The algorithm uses resampling techniques
+	and model-based clustering to derive single array based genotype
+	calls, which are subsequently refined by competitive genotype calls
+	based on (MASS) clustering. The resampling scheme caps computation
+	for single-array analysis and hence is readily scalable, important
+	in view of expanding numbers of SNPs per array. The MASS update is
+	designed to improve calls for atypical SNPs, harboring allele-imbalanced
+	binding affinities, that are difficult to genotype without information
+	from other arrays. Using a publicly available data set of HapMap
+	samples from Affymetrix, and independent calls by alternative genotyping
+	methods from the HapMap project, we show that our approach performs
+	competitively to existing methods. AVAILABILITY: R functions are
+	available upon request from the authors.},
+  doi = {10.1093/bioinformatics/btm131},
+  file = {:XiaoY_etal_2007-A multi-array multi-SNP genotyping algorithm for
+	Affymetrix SNP microarrays.pdf:PDF},
+  institution = {Department of Epidemiology and Biostatistics, Center for Bioinformatics
+	and Molecular Biostatistics, University of California, San Francisco,
+	CA 94107, USA. yxiao@itsa.ucsf.edu},
+  keywords = {Algorithms; Alleles; Cluster Analysis; Computational Biology, methods;
+	Genotype; Haplotypes; Humans; Models, Genetic; Models, Statistical;
+	Oligonucleotide Array Sequence Analysis; Polymorphism, Single Nucleotide},
+  owner = {hb},
+  pii = {btm131},
+  pmid = {17459966},
+  timestamp = {2008.12.29},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btm131}
 }
 
 @ARTICLE{YamamotoG_etal_2007,
@@ -11429,8 +12640,8 @@
 @ARTICLE{YlstraB_etal_2006,
   author = {Bauke Ylstra and Paul van den Ijssel and Beatriz Carvalho and Ruud
 	H Brakenhoff and Gerrit A Meijer},
-  title = {BAC to the future! or oligonucleotides: a perspective for micro array
-	comparative genomic hybridization (array CGH).},
+  title = {{BAC} to the future! or oligonucleotides: a perspective for micro
+	array comparative genomic hybridization (array {CGH}).},
   journal = NAR,
   year = {2006},
   volume = {34},
@@ -11562,7 +12773,7 @@
 
 @ARTICLE{ZhangL_etal_2007,
   author = {Li Zhang and Chunlei Wu and Roberto Carta and Haitao Zhao},
-  title = {Free energy of DNA duplex formation on short oligonucleotide microarrays.},
+  title = {Free energy of {DNA} duplex formation on short oligonucleotide microarrays.},
   journal = {Nucleic Acids Res},
   year = {2007},
   volume = {35},

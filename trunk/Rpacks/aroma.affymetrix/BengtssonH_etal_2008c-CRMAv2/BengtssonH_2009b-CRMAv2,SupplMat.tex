@@ -579,7 +579,8 @@ It is because of the latter two restrictions we choose to calculate the CRMA~v2 
 
 
 \subsection{dChip}
-For the dChip model, we used the \pkg{dChip~2008} (Build: July 10, 2008, \url{http://www.dchip.org/}).  Probe-level data was normalized using the \emph{invariant-set method}~\citep{LiWong_2001}, and PM signals were background corrected by '5th percentile of region (PM-only)'.  For GWS6, array 'NA12750' was suggested by dChip to be used as the baseline array for normalization, because it had the median median (sic!) probe signal.  As suggested, we verified that the spatial intensity plot of this array was not abnormal.
+For the dChip model, we used the \pkg{dChip~2008} (Build: July 10, 2008, \url{http://www.dchip.org/}).  Probe-level data was normalized using the \emph{invariant-set method}~\citep{LiWong_2001}, and PM signals were background corrected by '5th percentile of region (PM-only)'.  
+By default, dChip suggests to use the array which has the median median (sic!) probe signal as the baseline array for normalization.  We chose to follow this suggest after verifying that the spatial intensity plot of this array was not abnormal. For the HapMap data set, the baseline array was 'NA12750'.
 For probe summarization, the dChip multiplicative model was used, with $\PM=\PMA+\PMB$ for SNPs (``Compute signals separately for A and B allele'' unchecked), returning MBEI scores (corresponding to $\{\theta_{ij}\}$).  For maximal comparison, the MBEI scores were imported to \pkg{aroma.affymetrix} and raw CNs where calculated as in Eqn~\eqref{CRMAv2:eqnCnLogRatio}.
 
 %% We used GenomeWideSNP_6.Full.cdf
