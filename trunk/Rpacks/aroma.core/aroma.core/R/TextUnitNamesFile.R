@@ -50,7 +50,7 @@ setMethodS3("getUnitNames", "TextUnitNamesFile", function(this, units=NULL, ...)
   unitNames <- data[,1,drop=TRUE];
   unitNames <- as.character(unitNames);
   if (is.null(units)) {
-    this$.nbrOfUnits <- length(units);
+    this$.nbrOfUnits <- length(unitNames);
   }
   unitNames;
 })
@@ -113,6 +113,9 @@ setMethodS3("findByChipType", "TextUnitNamesFile", function(static, chipType, ta
 
 ############################################################################
 # HISTORY:
+# 2009-04-06
+# o BUG FIX: getUnitNames(..., units=NULL) of TextUnitNamesFile would 
+#   make the object believe there are zero units in the file.
 # 2009-03-23
 # o Created.
 ############################################################################
