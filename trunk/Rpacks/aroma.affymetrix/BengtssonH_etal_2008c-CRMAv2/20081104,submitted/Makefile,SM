@@ -1,0 +1,104 @@
+foo=BengtssonH_2008c-CRMAv2,SupplMat
+
+# TODO: Fix bounding box settings for a few postscript outputs.
+# TODO: Fix the src bundler.
+
+gs=gs
+gsview=gsview32
+
+gs="C:/gs/gs8.54/bin/gswin32c.exe"
+#gsview="C:/Program Files/GSView/gsview/gsview32.exe"
+
+BIBINCLUDES=hb-at-maths.lth.se.bib bioinformatics-journals-abbr.bib
+
+
+draft=$(foo).draft
+
+
+$(foo).ps: $(foo).dvi
+	dvips -ta4 $(foo).dvi
+
+$(foo).dvi: $(foo).tex $(foo).bbl
+	latex $(foo).tex; 
+#	latex $(foo).tex
+
+$(foo).bbl: $(foo).tex $(BIBINCLUDES)
+	latex $(foo).tex;
+	bibtex $(foo);
+	latex $(foo).tex;
+
+$(foo).pdf: $(foo).ps
+	ps2pdf "$(foo).ps"
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# draft
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Drafts (without figures) of the same
+$(draft).ps: $(draft).dvi
+	dvips -ta4 $(draft).dvi
+
+$(draft).dvi: $(draft).tex $(draft).bbl
+#	latex $(draft).tex; 
+	latex $(draft).tex
+
+$(draft).tex: $(foo).tex
+	sed -e "s/documentclass/documentclass[draft]/" $(foo).tex > $(draft).tex;
+
+$(draft).bbl: $(draft).tex $(BIBINCLUDES)
+	latex $(draft).tex;
+	bibtex $(draft);
+	latex $(draft).tex;
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Source (TeX and figures) for the complete 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+$(foo)/: $(foo).tex *.tex figures/* *.sty *.cls *.bst
+	mkdir -p $(foo)/;
+	cp $(foo).tex $(foo)/;
+	cp -f Makefile $(foo)/;
+	cp -f *.tex $(foo)/;
+#	cp -f *.bbl $(foo)/;
+	cp -f *.bib $(foo)/;
+	cp -f *.bst $(foo)/;
+	cp -f *.sty $(foo)/;
+	cp -f *.cls $(foo)/;
+	cp -fr figures/ $(foo)/;
+
+$(foo).zip: $(foo)/
+	jar -cvfM $(foo).zip $(foo)
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Shortcuts
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pdf: $(foo).pdf
+ps: $(foo).ps
+dvi: $(foo).dvi
+bbl: $(foo).bbl
+
+dpdf: $(draft).pdf
+dps: $(draft).ps
+ddvi: $(draft).dvi
+
+
+src: $(foo)/
+src.zip: $(foo).zip
+src.tar: $(foo).tar
+src.tar.gz: $(foo).tar.gz
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Clean up
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+clean:
+	rm -f tmp.ps;
+	rm -f $(foo)*.aux;
+	rm -f $(foo)*.dvi;
+	rm -f $(foo)*.log;
+	rm -f $(foo)*.nav;
+	rm -f $(foo)*.out;
+	rm -f $(foo)*.snm;
+	rm -f $(foo)*.toc;
+	rm -f $(foo)*.vrb;
