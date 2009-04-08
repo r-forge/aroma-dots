@@ -12,10 +12,10 @@ o Made several modifications to computeAffinities() for
   different stream for PM-only (with NCs), (ii) left the PM+MM
   array code mostly untouched, and (iii) fixed some assumptions
   about the columns of the probe_tab file.
-o BUG FIX: computeAffinities() for AffymetrixCdfFile would mix
-  up PMs and MMs in the estimation. Methods such as
-  GcRmaBackgroundCorrection have most likely generated erroneous
-  results (since the very beginning).
+o BUG FIX: The GcRmaBackgroundCorrection method would mix up
+  PMs and MMs in the model estimation. This bug was introduced
+  in aroma.affymetrix v0.3.4 (January 20, 2007). It was located
+  to the internal bgAdjustGcrma() method.
 
 
 Version: 1.0.3 [2009-03-22]
