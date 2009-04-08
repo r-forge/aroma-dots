@@ -48,8 +48,10 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
 
   # Argument 'path':
   if (is.null(path)) {
-    # Path structure: /bgOptical/<data set name>/chip_data/<chip type>/
-    path <- file.path("probeData", paste(getName(this),getTags(this),sep=","), getChipType(cdf));
+    # Path structure: /probeData/<dataSet,tags>/<chipType>/
+    rootPath <- "probeData";
+    chipType <- getChipType(cdf, fullname=FALSE);
+    path <- file.path(rootPath, getFullname(this), chipType);
   }
   if (!is.null(path)) {
     # Verify this path (and create if missing)
@@ -496,8 +498,12 @@ setMethodS3("bgAdjustRma", "AffymetrixCelSet", function(this, path=NULL, tags="R
 
 ############################################################################
 # HISTORY:
-# 2009-03-29
-# o Made slight modifications for bgAdjustGcRma to work with the 
+# 2009-04-06 [HB]
+# o BUG FIX: The output path of bgAdjustRma() of AffymetrixCelSet would
+#   include the full chip type.  It would also give an error if no tags
+#   where specified.
+# 2009-03-29 [MR]
+# o Made slight modifications for bgAdjustGcRma() to work with the 
 #   newer Gene 1.0 ST arrays.
 # 2007-09-06
 # o Made calculateParametersGsb() more memory efficient, because it's using

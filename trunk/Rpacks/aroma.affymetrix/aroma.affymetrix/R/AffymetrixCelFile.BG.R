@@ -177,7 +177,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
 # }
 #
 # \author{
-#   Ken Simpson (ksimpson[at]wehi.edu.au).
+#   Ken Simpson (ksimpson[at]wehi.edu.au) and Mark Robinson.
 # }
 #
 # \seealso{
@@ -273,31 +273,30 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   # affinity and intensity for negative control probes
   anc <- NULL;
   ncs <- NULL;
+
+  pmKeep <- NULL;
   
   if (!is.null(indicesNegativeControl)) {
     anc <- affinities[indicesNegativeControl]
     ncs <- getData(this, indices=indicesNegativeControl)$intensities;
   }
   
-  pmKeep <- 1:length(pm)
-
   # adjust background - use original GCRMA functions to avoid errors from
   # re-coding
-  if (type=="fullmodel") {
+  if (type == "fullmodel") {
     pm <- gcrma::bg.adjust.fullmodel(pm, mm, ncs=ncs, apm, amm, anc=anc, index.affinities=1:length(pm), k=k, rho=rho, fast=fast);
-  }
-  else if (type=="affinities") {
+  } else if (type == "affinities") {
     if (is.null(ncs)) {
       # use MM as negative controls
       pm <- gcrma::bg.adjust.affinities(pm, mm, apm, amm, index.affinities=1:length(pm), k=k, fast=fast);
     } else {
       # use specified negative controls
-	  keep <- !is.na(anc) & !is.na(ncs)
-	  anc <- anc[keep]
-	  ncs <- ncs[keep]
-	  pmKeep <- !is.na(apm) & !is.na(pm)
-	  apm <- apm[pmKeep]
-	  pm <- pm[pmKeep]
+      keep <- whichVector(!is.na(anc) & !is.na(ncs));
+      anc <- anc[keep];
+      ncs <- ncs[keep];
+      pmKeep <- whichVector(!is.na(apm) & !is.na(pm));
+      apm <- apm[pmKeep];
+      pm <- pm[pmKeep];
       pm <- gcrma::bg.adjust.affinities(pm, ncs, apm, anc, index.affinities=1:length(pm), k=k, fast=fast, nomm=TRUE);
     }
   }
@@ -314,7 +313,7 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   # don't understand this, but it was in original bg.adjust.gcrma, so
   # we will keep it
   if (stretch != 1) {
-    mu <- mean(log(pm),na.rm=TRUE);
+    mu <- mean(log(pm), na.rm=TRUE);
     pm <- exp(mu + stretch * (log(pm) - mu));
   }
     
@@ -330,7 +329,11 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Writing adjusted intensities");
-  updateCel(pathname, indices=indices[isPm(cdf)][pmKeep], intensities=pm);
+  cells <- indices[isPm(cdf)];
+  if (!is.null(pmKeep)) {
+    cells <- cells[pmKeep];
+  }
+  updateCel(pathname, indices=cells, intensities=pm);
   verbose && exit(verbose);
   verbose && exit(verbose);
 
@@ -493,6 +496,9 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
 
 ############################################################################
 # HISTORY:
+# 2009-03-29 [MR]
+# o Made slight modifications for bgAdjustGcRma() to work with the 
+#   newer Gene 1.0 ST arrays.
 # 2007-12-08
 # o Now bgAdjustRma() no longer assumes 'affy' is loaded.
 # 2007-06-30

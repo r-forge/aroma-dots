@@ -900,3 +900,4 @@ plotCovariateEffects.GcContentNormalization2
   importFromAffymetrixNetAffxCsvFile.AromaUnitGcContentFile
   plotCovariateEffects process.AdditiveCovariatesNormalization writeSgr
   writeSgr.AffymetrixCelSet
+getParameters.NormExpBgCorrection
