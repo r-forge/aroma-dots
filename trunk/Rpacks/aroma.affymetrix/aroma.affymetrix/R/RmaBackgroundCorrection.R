@@ -14,7 +14,7 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of
-#     @see "ProbeLevelTransform".}
+#     @see "BackgroundCorrection".}
 #   \item{addJitter}{If @TRUE, Zero-mean gaussian noise is added to the
 #     signals before being background corrected.}
 #   \item{jitterSd}{Standard deviation of the jitter noise added.}

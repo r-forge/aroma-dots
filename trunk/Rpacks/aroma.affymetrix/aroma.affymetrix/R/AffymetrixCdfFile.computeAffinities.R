@@ -121,7 +121,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
     hdr <- strsplit(lines[1], split=sep)[[1]];
   } else {
     data <- lines[1];
-	hdr <- NULL	
+    hdr <- NULL;
   }
   verbose && cat(verbose, "First data row: ", data);
   verbose && exit(verbose);
@@ -134,8 +134,8 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   unitColumn <- 1
   if( !is.null(hdr) ) {
     tciCol <- grep("Transcript Cluster ID",hdr)
-	if( length(tciCol) )
-      unitColumn <- tciCol
+    if(length(tciCol) > 0)
+      unitColumn <- tciCol;
   }
   unitName <- data[unitColumn];
 
@@ -302,7 +302,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
       # Get a 4x25 matrix with rows A, C, G, and T.
       charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
                                                        PACKAGE="gcrma");
-	  
+
       A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
                  charMtrx[2, ] %*% affinity.basis.matrix, 
                  charMtrx[3, ] %*% affinity.basis.matrix);
@@ -323,7 +323,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
     } # for (ii in ...)
     rm(charMtrx, A); # Not needed anymore
     verbose && cat(verbose, "");
-	# create a vector to hold affinities and assign values to the appropriate
+    # create a vector to hold affinities and assign values to the appropriate
     # location in the vector
     affinities <- rep(NA, dimension[1]*dimension[2]);
     affinities[indexPm] <- apm;
@@ -334,24 +334,24 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   } else {
     # ---------------------------------------------------------
     # new code to compute affinities from the MM probes
-	# (antigenomic or whatever) on PM-only arrays  -- MR 2009-03-28
+    # (antigenomic or whatever) on PM-only arrays  -- MR 2009-03-28
     # ---------------------------------------------------------
-	
-	indexAll <- sequenceInfo$y * dimension[1] + sequenceInfo$x + 1
+    indexAll <- sequenceInfo$y * dimension[1] + sequenceInfo$x + 1;
     apm <- vector("double", nrow(sequenceInfo));
-	
-    for (ii in seq(along = apm)) {
+
+    for (ii in seq(along=apm)) {
       if (verbose && ii %% 1000 == 0)
         increase(pb);
       # Get a 4x25 matrix with rows A, C, G, and T.
       charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
                                                        PACKAGE="gcrma");
-	  if( ncol(charMtrx) != 25 ) {
-	    warning(paste("Sequence with less than 25 bases:", sequenceInfo$sequence[ii], ".  Skipping and moving on.", sep=""))
-		apm[ii] <- NA
-	    next
-	  }
-	  
+      if(ncol(charMtrx) != 25) {
+        warning("Skipping. Sequence has less than 25 bases: ", 
+                                             sequenceInfo$sequence[ii]);
+        apm[ii] <- NA;
+        next;
+      }
+
       A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
                  charMtrx[2, ] %*% affinity.basis.matrix, 
                  charMtrx[3, ] %*% affinity.basis.matrix);
@@ -361,7 +361,6 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
     affinities[indexAll] <- apm;
 
     rm(dimension, indexAll, apm); # Not needed anymore
-	
   }
   verbose && exit(verbose);
 
@@ -380,9 +379,9 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 ############################################################################
 # HISTORY:
-# 2009-03-28
-# o make several modifications to allow computing of affinities
-#   for Gene 1.0 ST arrays.  For example:
+# 2009-03-28 [MR]
+# o Made several modifications to allow computing of affinities for 
+#   Gene 1.0 ST arrays.  For example:
 #   -- left the PM+MM array code mostly untouched
 #   -- fixed some assumptions about the columns of the probe_tab file
 #   -- added a different stream for PM-only (with NCs) 

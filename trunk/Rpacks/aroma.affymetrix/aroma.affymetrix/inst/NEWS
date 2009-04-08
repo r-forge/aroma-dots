@@ -1,6 +1,23 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 1.0.4x [2009-04-08]
+o BETA: Added NormExpBgCorrection which is backward compatible
+  with RmaBackgroundCorrection but also support the 'limma'
+  algorithms in addition to the 'affy' one.  In the future
+  RmaBackgroundCorrection will just subclass this new class.
+o Made several modifications to computeAffinities() for 
+  AffymetrixCdfFile which allows us to compute affinities also
+  for PM-only chip types, e.g. Gene 1.0 ST arrays: (i) added a
+  different stream for PM-only (with NCs), (ii) left the PM+MM
+  array code mostly untouched, and (iii) fixed some assumptions
+  about the columns of the probe_tab file.
+o BUG FIX: computeAffinities() for AffymetrixCdfFile would mix
+  up PMs and MMs in the estimation. Methods such as
+  GcRmaBackgroundCorrection have most likely generated erroneous
+  results (since the very beginning).
+
+
 Version: 1.0.3 [2009-03-22]
 o BETA: Added GcContentNormalization2 which extends the generic
   AdditiveCovariateNormalization class.
