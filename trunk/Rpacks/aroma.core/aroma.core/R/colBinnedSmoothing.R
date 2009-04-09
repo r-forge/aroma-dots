@@ -84,7 +84,7 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
   if (is.null(by) & is.null(length.out)) {
     throw("Either argument 'by' or 'length.out' needs to be given.");
   }
-  if (!is.null(by)) {
+  if (n > 1 && !is.null(by)) {
     by <- Arguments$getDouble(by, range=c(0,to-from));
   }
   if (!is.null(length.out)) {
@@ -217,6 +217,10 @@ setMethodS3("binnedSmoothing", "numeric", function(y, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-04-07
+# o BUG FIX: When passing a single data points to colBinnedSmoothing(),
+#   it would throw the exception: "Range of argument 'by' is out of range
+#   [0,0]: [<by>,<by>]".
 # 2009-02-11
 # o Added more verbose output to colBinnedSmoothing().
 # 2009-02-07

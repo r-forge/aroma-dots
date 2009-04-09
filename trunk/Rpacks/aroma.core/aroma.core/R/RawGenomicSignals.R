@@ -295,7 +295,7 @@ setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., byCount=
     verbose && str(verbose, args);
     Ys <- colBinnedSmoothing(Y=Y, x=xRank, ..., verbose=less(verbose, 10));
     verbose && str(verbose, Ys);
-    xOut <- attr(ys, "xOut");
+    xOut <- attr(Ys, "xOut");
     verbose && str(verbose, xOut);
     # The smoothed y:s
     ys <- Ys[,1,drop=TRUE];
@@ -454,9 +454,12 @@ setMethodS3("extractRawGenomicSignals", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-04-06
+# o BUG FIX: binnedSmoothing(..., byCount=TRUE) of RawGenomicSignals would
+#   give error "[...] object "ys" not found".
 # 2009-02-19
 # o Renamed from RawCopyNumbers RawGenomicSignals.
-# o Added argument 'byCount' to binnedSmoothing() of RawCopyNumbers.
+# o Added argument 'byCount' to binnedSmoothing() of RawGenomicSignals.
 # 2009-02-17
 # o Now RawGenomicSignals() also takes another RawCopyNumbers object as
 #   input.

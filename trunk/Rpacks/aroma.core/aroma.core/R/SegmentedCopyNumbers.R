@@ -58,6 +58,7 @@ setMethodS3("getStates", "SegmentedCopyNumbers", function(this, x=getPositions(t
   states;
 })
 
+
 setMethodS3("getUniqueStates", "SegmentedCopyNumbers", function(this, ...) {
   states <- getStates(this, ...);
   states <- unique(states);
@@ -223,10 +224,15 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Smoothing data set");
+  verbose && enter(verbose, "Binning data set");
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Allocate output loci
+  # Allocate result set
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Allocating result set");
+  cnOut <- clone(this);
+  clearCache(cnOut);
+
+  # Target 'x':
   if (!is.null(by)) {
     xOut <- seq(from=from, to=to, by=by);
   } else {
@@ -236,28 +242,25 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
   verbose && str(verbose, xOut);
   # Sanity check
   xOut <- Arguments$getDoubles(xOut);
+  cnOut$x <- xOut;
 
-  naValue <- as.double(NA);
-  yOut <- rep(naValue, length(xOut));
-  verbose && cat(verbose, "yOut:");
-  verbose && str(verbose, yOut);
-  # Sanity check
-  stopifnot(length(yOut) == length(xOut));
+  # Target 'y':
+  cnOut$y <- rep(as.double(NA), length(xOut));
 
-  statesOut <- getStates(this, x=xOut);
+  verbose && print(verbose, cnOut);
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Binning (target) state by state
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  statesOut <- getStates(cnOut);
   verbose && cat(verbose, "statesOut:");
   verbose && str(verbose, statesOut);
-  # Sanity check
-  stopifnot(length(statesOut) == length(xOut));
-
   uniqueStates <- unique(statesOut);
   uniqueStates <- sort(uniqueStates, na.last=TRUE);
   verbose && cat(verbose, "Unique output states:");
   verbose && str(verbose, uniqueStates);
-
-
-  y <- getSignals(this);
-  states <- getStates(this);
 
   for (ss in seq(along=uniqueStates)) {
     state <- uniqueStates[ss];
@@ -265,75 +268,55 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
                                       ss, state, length(uniqueStates)));
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Identifying loci with this state
+    # Identify target loci with this state
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (is.na(state)) {
-      keep <- is.na(states);
-    } else {
-      keep <- (states == state);
-    }
-    keep <- whichVector(keep);
-    # Nothing to do?
-    if (length(keep) == 0) {
+    verbose && enter(verbose, "Extracting subset of (target) loci with this CN state");
+    idxsOut <- whichVector(is.element(statesOut, state));
+    cnOutSS <- extractSubset(cnOut, idxsOut, verbose=less(verbose,50));
+    print(cnOutSS);
+    verbose && exit(verbose);
+    # Nothing to do? [Should actually never happen!]
+    if (nbrOfLoci(cnOutSS) == 0) {
       verbose && exit(verbose);
       next;
     }
-    ySS <- y[keep];
-    xSS <- x[keep];
-    verbose && cat(verbose, "ySS:");
-    verbose && str(verbose, ySS);
-    verbose && cat(verbose, "xSS:");
-    verbose && str(verbose, xSS);
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Identify target loci with this state
+    # Identifying source loci with this state
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    keepOut <- is.element(statesOut, state);
-    verbose && summary(verbose, keepOut);
+    verbose && enter(verbose, "Extracting subset of (source) loci with this CN state");
+    cnSS <- extractSubsetByState(this, states=state, verbose=less(verbose,50));
+    print(cnSS);
+    verbose && exit(verbose);
+    # Nothing to do?
+    if (nbrOfLoci(cnSS) == 0) {
+      verbose && exit(verbose);
+      next;
+    }
 
-    # Sanity check
-    keepOut <- Arguments$getLogicals(keepOut);
-    keepOut <- whichVector(keepOut);
-    # Sanity check
-    keepOut <- Arguments$getIndices(keepOut);
-
-    statesOutSS <- statesOut[keepOut];
-    verbose && cat(verbose, "statesOutSS:");
-    verbose && str(verbose, statesOutSS);
-    verbose && summary(verbose, statesOutSS);
-
-    xOutSS <- xOut[keepOut];
-    verbose && cat(verbose, "xOutSS:");
-    verbose && str(verbose, xOutSS);
-    verbose && summary(verbose, xOutSS);
-
-    # Sanity check
-    xOutSS <- Arguments$getDoubles(xOutSS);
-
-
-    verbose && enter(verbose, "Binned smoothing");
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Bin loci of this state towards target loci (of the same state)
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Binned smoothing of temporary object");
+    xOutSS <- getPositions(cnOutSS);
     verbose && cat(verbose, "Arguments:");
-    args <- list(y=ySS, x=xSS, xOut=xOutSS, by=by, ...);
+    args <- list(xOut=xOutSS, by=by, ...);
     verbose && str(verbose, args);
-    yOutSS <- binnedSmoothing(y=ySS, x=xSS, xOut=xOutSS, by=by, ...);
-    verbose && str(verbose, yOutSS);
+    cnOutSS <- binnedSmoothing(cnSS, xOut=xOutSS, by=by, ...);
+    verbose && print(verbose, cnOutSS);
+    rm(cnSS, args);
     verbose && exit(verbose);
 
-    yOut[keepOut] <- yOutSS;
+    cnOut$y[idxsOut] <- cnOutSS$y;
+    rm(cnOutSS);
+
     verbose && exit(verbose);
   } # for (ss ...)
-  verbose && str(verbose, yOut);
 
-  verbose && enter(verbose, "Creating result object");
-  res <- clone(this);
-  clearCache(res);
-  res$y <- yOut;
-  res$x <- xOut;
+  verbose && print(verbose, cnOut);
   verbose && exit(verbose);
 
-  verbose && exit(verbose);
-
-  res;
+  cnOut;
 }) # binnedSmoothingByState()
 
 
@@ -369,6 +352,10 @@ setMethodS3("points", "SegmentedCopyNumbers", function(x, ..., col=getStateColor
 
 ############################################################################
 # HISTORY:
+# 2009-04-06
+# o Now binnedSmoothingByState() of SegmentedCopyNumbers uses 
+#   extractSubsetByState() and then binnedSmoothing() on that object.  
+#   This makes the code slightly less redundant.
 # 2009-02-19
 # o Adopted to make use of new RawGenomicSignals.
 # 2009-02-16

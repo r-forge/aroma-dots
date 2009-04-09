@@ -7,7 +7,7 @@ J <- 1000
 y <- rnorm(J, sd=1/2)
 y[200:300] <- y[200:300] + 1
 y[650:800] <- y[650:800] - 1
-x <- 1:length(y)
+x <- sort(runif(length(y), max=length(y)))
 
 
 cn <- RawCopyNumbers(y, x)
@@ -41,6 +41,24 @@ lines(cnSb, col="red")
 points(cnSb, col="red")
 
 legend("topright", pch=19, col=c("#999999", "blue", "red"), sprintf(c("raw [n=%d]", "Bin(w=3) [n=%d]", "Bin(w=9) [n=%d]"), c(nbrOfLoci(cn), nbrOfLoci(cnSa), nbrOfLoci(cnSb))), bty="n")
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Binned smoothing (by count)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+plot(cn, col="#999999", ylim=c(-3,3))
+title(main="Binned smoothing (by count)")
+
+cnSa <- binnedSmoothing(cn, by=3, byCount=TRUE)
+lines(cnSa, col="blue")
+points(cnSa, col="blue")
+
+cnSb <- binnedSmoothing(cn, by=9, byCount=TRUE)
+lines(cnSb, col="red")
+points(cnSb, col="red")
+
+legend("topright", pch=19, col=c("#999999", "blue", "red"), sprintf(c("raw [n=%d]", "BinO(w=3) [n=%d]", "BinO(w=9) [n=%d]"), c(nbrOfLoci(cn), nbrOfLoci(cnSa), nbrOfLoci(cnSb))), bty="n")
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Kernel smoothing (default is Gaussian)
