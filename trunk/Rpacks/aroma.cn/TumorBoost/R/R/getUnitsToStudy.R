@@ -65,7 +65,7 @@ getUnitsToStudy <- function(ces, chromosome, subset=NULL, ...) {
   thetaC <- 2*asTotalFracBSnpData(thetaTB)[,1]/betaN[,1];
   betaC <- 2*betaTB[,1]/betaN[,1];
   polarC <- 2*asTotalFracBSnpData(polarTB)[,1]/betaN[,1];
-  CN <- betaT[,1]/betaR[,1];
+  CN <- betaN[,1]/betaR[,1];
 
   data <- list(
     chromosome = chromosome,
