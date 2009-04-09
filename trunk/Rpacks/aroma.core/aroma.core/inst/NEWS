@@ -1,11 +1,16 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.4 [2009-04-06]
+Version: 1.0.4x [2009-04-07]
 o BUG FIX: getUnitNames(..., units=NULL) of TextUnitNamesFile would 
   make the object believe there are zero units in the file. 
   Thanks Shermane Teo at the National University of Singapore 
   for reporting this.
+o BUG FIX: binnedSmoothing(..., byCount=TRUE) of RawGenomicSignals 
+  would give error "[...] object "ys" not found".
+o BUG FIX: When passing a single data points to colBinnedSmoothing(),
+  it would throw the exception: "Range of argument 'by' is out 
+  of range [0,0]: [<by>,<by>]".
 
 
 Version: 1.0.3 [2009-03-23]
