@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.4x [2009-04-07]
+Version: 1.0.4 [2009-04-07]
 o BUG FIX: getUnitNames(..., units=NULL) of TextUnitNamesFile would 
   make the object believe there are zero units in the file. 
   Thanks Shermane Teo at the National University of Singapore 
