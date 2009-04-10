@@ -1,0 +1,269 @@
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\documentclass[10pt,a4paper]{article}    
+
+% Load packages
+\usepackage{url}  % Formatting web addresses  
+\usepackage{ifthen}  % Conditional 
+\usepackage{multicol}   %Columns
+\usepackage[utf8]{inputenc} %unicode support
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+\urlstyle{rm}
+\usepackage{fancyvrb}
+
+% To refer to labels to the manuscript
+\usepackage{xr} 
+\externaldocument[CRMAv2:]{BengtssonH_2009b-CRMAv2}
+\externaldocument[CRMAv2,SN1:]{BengtssonH_2009b-CRMAv2,SupplNotes1,AnnotationSummary}
+ 
+ 
+\setlength{\topmargin}{-2.0cm}
+\setlength{\textheight}{25.5cm}
+\setlength{\oddsidemargin}{0cm} 
+\setlength{\textwidth}{16.5cm}
+\setlength{\columnsep}{0.6cm}
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% Controlling page disposition of Tables and Figures
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\renewcommand{\topfraction}{1.0}	% max fraction of floats at top
+\renewcommand{\bottomfraction}{1.0}	% max fraction of floats at bottom
+\renewcommand{\textfraction}{0.07}
+ 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% User-specific packages
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\usepackage{amsmath} 
+\usepackage{xspace}
+\usepackage{bm} \bm{}
+\usepackage{graphicx}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% Graphics settings
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% The search path (within curly brackets and separated by commas)
+% where to find graphics files
+\graphicspath{{figures/col/},{figures/}}
+% Make dvips deal with gzip'ed EPS figures.
+\DeclareGraphicsRule{.eps.gz}{eps}{.eps.bb}{`gunzip -c #1}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+% User-specific macros
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\newcommand{\GWSFive}{GWS5\xspace}
+\newcommand{\GWSSix}{GWS6\xspace}
+\newcommand{\GWSFivef}{GenomeWideSNP\_5\xspace}
+\newcommand{\GWSSixf}{GenomeWideSNP\_6\xspace}
+
+\newcommand{\PMA}{\ensuremath{\textnormal{PM}_\textnormal{A}}\xspace}
+\newcommand{\PMB}{\ensuremath{\textnormal{PM}_\textnormal{B}}\xspace}
+\newcommand{\TP}{\ensuremath{\textnormal{TP}}\xspace}
+% MathOperator!
+\newcommand{\MAD}{\ensuremath{\textnormal{MAD}}\xspace}
+
+\newcommand{\chrX}{ChrX\xspace}
+\newcommand{\chrY}{ChrY\xspace}
+\newcommand{\NspI}{\emph{Nsp}I\xspace}
+\newcommand{\StyI}{\emph{Sty}I\xspace}
+\newcommand{\Nsp}{\ensuremath{\textnormal{Nsp}}\xspace}
+\newcommand{\Sty}{\ensuremath{\textnormal{Sty}}\xspace}
+
+\newcommand{\filename}[1]{\textit{#1}\xspace}
+%\newcommand{\url}[1]{\href{#1}{#1}\xspace}
+\newcommand{\pkg}[1]{\textit{#1}\xspace}
+\newcommand{\args}[1]{\textit{#1}\xspace}
+\newcommand{\FL}{\textnormal{FL}\xspace}
+\newcommand{\GC}{\textnormal{GC}\xspace}
+\newcommand{\CN}{CN\xspace}
+\newcommand{\kb}{\textnormal{kb}\xspace}
+\newcommand{\PM}{\textnormal{PM}\xspace}
+\newcommand{\MM}{\textnormal{MM}\xspace}
+\newcommand{\bx}{\mathbf{x}\xspace}
+\newcommand{\by}{\mathbf{y}\xspace}
+\newcommand{\bz}{\mathbf{z}\xspace}
+\newcommand{\ba}{\mathbf{a}\xspace}
+\newcommand{\bA}{\mathbf{A}\xspace}
+\newcommand{\bB}{\mathbf{B}\xspace}
+\newcommand{\bC}{\mathbf{C}\xspace}
+\newcommand{\bS}{\mathbf{S}\xspace}
+\newcommand{\bU}{\mathbf{U}\xspace}
+\newcommand{\bV}{\mathbf{V}\xspace}
+\newcommand{\bW}{\mathbf{W}\xspace}
+\newcommand{\beps}{\bm{\varepsilon}\xspace}
+\newcommand{\bnu}{\bm{\nu}\xspace}
+\renewcommand{\Re}{\mathbb{R}\xspace}
+\newcommand{\II}{\mathbb{I}\xspace}
+\DeclareMathOperator{\median}{\textnormal{median}}
+\DeclareMathOperator{\mad}{\textnormal{mad}}
+
+\newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}\endnote{#3 \textsl{#2}}}\xspace}
+\renewcommand{\updated}[3][red]{#2\xspace} 
+
+\usepackage{natbib}
+%\newcommand{\citet}[1]{\cite{#1}} 
+%\newcommand{\citep}[1]{\cite{#1}} 
+
+
+% Begin ...
+\begin{document}
+
+
+\title{Supplementary Notes \#2:\\Details on the methods used for the CRMA v2 study}
+\author{Henrik Bengtsson et al.}
+\maketitle
+\tableofcontents
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OTHER MODELS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{How raw copy numbers were estimated by other models}
+\label{secOtherMethods}
+In addition to CRMA~v2, two external methods were evaluated in this paper.  The first is Affymetrix' \emph{CN5} method~\citep{Affymetrix_2008m}, and the second is implemented in the dChip software~\citep{LiWong_2001}.
+
+\subsection{CN5}
+The CN5 method is implemented in the 'apt-copynumber-workflow' software part of the Affymetrix Power Tools (APT) v1.10.0.  The Affymetrix Genotyping Console (GTC)~v3.0 (build 3.0.3083.25494) software \citep{Affymetrix_2008m} utilizes APT for CN5 estimates.  We choose to run GTC, because it is not fully documented what settings should be used for APT.  According to Affymetrix both approaches produce identical results (Affymetrix Scientific Community Forums, Thread: 'copy number: Genotyping Console 3.0 vs. apt 1.10.0?' on August 15, 2008).
+In CN5, probe signals are normalized ('adapter-type background correction') for systematic variation due to so called \emph{enzyme recognition-sequence class}.   Next, all probe signals (excluding control probes) are quantile normalized using the Affymetrix 'sketch' algorithm.  For SNPs, chip effects $\{(\theta_{Aij}, \theta_{Bij})\}$ (as in the log-additive model of RMA) are estimated separately  for the two alleles using the plier algorithm.  The total CNs are obtained by summing $\theta_{ij}=\theta_{Aij}+\theta_{Bij}$.
+Log ratios are calculated as in Eqn~\eqref{CRMAv2:eqnCnLogRatio} [in the CRMA~v2 manuscript], where the reference is $\theta_{Rj}=\median_i\{\theta_{ij}\}$ with the important difference that for ChrX (ChrY) it is only samples that empirically are found to females (males) that are included.  Finally, the raw CNs (log-ratios) are shifted such that the median of all median autosomal signals is zero.~\citep{Affymetrix_2008m}
+There are some \emph{limitations/restrictions} in CN5 worth knowing about:
+\begin{enumerate}
+\item The CN5 method is available only for \GWSSix.  Affymetrix explicitly says that neither GTC nor APT implements CN5 for GWS5.
+\item The CN5 method is limited to the default GWS6 CDF, that is, it cannot be used with the full GWS6 CDF.
+\item The CN5 method use only females (males) when calculating reference on ChrX (ChrY).  In the current implementation of GTC is not possible to force CN5 to estimate raw CN ratios on ChrX (ChrY) using all samples.
+\item The GTC software does not export $\{\theta_{ij}\}$ but only log-ratio CNs.
+\end{enumerate}
+It is because of the latter two restrictions we choose to calculate the CRMA~v2 and dChip estimates on ChrX and ChrY the same way as in CN5.  This is the only way a comparison of methods can be done.
+
+
+%% From the SNPs and CN probes in the default CDF, GTC/CN5 filters out an additional set of 490 SNPs that are on ChrY (or without annotation) as well as 30,033 CN probes that was found to overlap ($\pm10$ base pairs from the center base) with known SNPs in dbSNP.
+
+
+\subsection{dChip}
+For the dChip model, we used the \pkg{dChip~2008} (Build: July 10, 2008, \url{http://www.dchip.org/}).  Probe-level data was normalized using the \emph{invariant-set method}~\citep{LiWong_2001}, and PM signals were background corrected by '5th percentile of region (PM-only)'.  
+By default, dChip suggests to use the array which has the median median (sic!) probe signal as the baseline array for normalization.  We chose to follow this suggest after verifying that the spatial intensity plot of this array was not abnormal. For the HapMap data set, the baseline array was 'NA12750'.
+For probe summarization, the dChip multiplicative model was used, with $\PM=\PMA+\PMB$ for SNPs (``Compute signals separately for A and B allele'' unchecked), returning MBEI scores (corresponding to $\{\theta_{ij}\}$).  For maximal comparison, the MBEI scores were imported to \pkg{aroma.affymetrix} and raw CNs where calculated as in Eqn~\eqref{CRMAv2:eqnCnLogRatio} [of the CRMA~v2 manuscript].
+
+%% We used GenomeWideSNP_6.Full.cdf
+%% [GenomeWideSNP_6.Full.cdf.bin: 220,277,412 bytes]
+%% To load all 60 arrays into memory in dChip takes roughly 1.4GB.  /HB 2008-08-19
+%% In order to do PLM in dChip for GWS6, one has to set the memory to smallest possible, i.e. 250MB, which will make dChip allocate approx 1.6GB.  With 500MB (or 1000MB), dChip will try to allocate more than 2GB and because Windows won't give more than 2GB to a process, you will get an ``Out of Memory'' error dialog.  There is a ``/3GB'' Windows option I haven't considered. /HB 2008-08-19
+
+\subsection{dChip*}
+Due to odd performance of dChip for SNPs, we also ran the analysis where the MBEI probe summarization was replaced by averaging the signals while keeping everything else the same.  We denote this flavor of the dChip method by adding an asterisk to the label.
+
+
+
+\clearpage
+\section{Summary of CN methods and their supported chip types}
+%% We are not aware of other freely available tools that can easily process GWS5 or GWS6 data for copy number analysis.
+
+\begin{table}[hp]
+\begin{center}
+\begin{tabular}{|l|cc|c|c|cc|}
+\hline
+                             & CRMA~(v1) & CRMA~v2 & dChip & CNAG & CN4 & CN5 \\
+\hline
+\hline
+Mapping10K\_Xba131           & yes     & yes       & yes   &    - &   - &  -  \\
+Mapping10K\_Xba142           & yes     & yes       & yes   &    - &   - &  -  \\
+\hline
+Mapping50K\_Hind240          & yes     & yes       & yes   &  yes & yes &  -  \\
+Mapping50K\_Xba240           & yes     & yes       & yes   &  yes & yes &  -  \\
+\hline
+Mapping250K\_Nsp             & yes     & yes       & yes   &  yes & yes &  -  \\
+Mapping250K\_Sty             & yes     & yes       & yes   &  yes & yes &  -  \\
+\hline
+GenomeWideSNP\_5 (default)   &  -      & yes       & yes   &    - &  -  &  -  \\
+GenomeWideSNP\_5 (full)      &  -      & yes       & yes   &    - &  -  &  -  \\
+\hline
+GenomeWideSNP\_6 (default)   &  -      & yes       & yes   &    - &  -  & yes \\
+GenomeWideSNP\_6 (full)      &  -      & yes       & yes   &    - &  -  &  -  \\
+\hline
+Custom SNP \& CN chip types  &  yes    & yes       &   ?   &    - &  ?  &  ?  \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Summary of methods that estimate raw CNs for the different Affymetrix SNP \& CN chip types.}
+\label{tblSummaryOfMethods}
+\end{table}
+
+
+
+\clearpage
+\section{Methods for the evaluation}
+We base all the performance assessments using relative copy numbers (chip effects) on the non-logarithmic scale, that is, $C_{ij}=2\cdot\theta_{ij}/\theta_{Rj}$.  This is contrary to \cite{BengtssonH_etal_2008}, where we used log-ratios $M_{ij}=\log_2(\theta_{ij}/\theta_{Rj})$.  
+%% If there are no negative $C_{ij}$, the full-resolution ROC estimates are identical, because the ROC is invariant under strictly increasing transforms.
+We use ChrX and ChrY loci for the evaluation.  See Table~\ref{CRMAv2,SN1:tblGenomicLocationByChromosome} in Supplementary Notes~\#1 for how many loci there are on each chromosome.
+Loci in pseudo-autosomal regions (PARs) are excluded.  Each of the two sex-chromosomes have to PARs~\citep{BlaschkeRappold_2006}.  See Table~\ref{tblPARs} for details.
+In addition to excluding PARs, regions known to be CN polymorphic \citep{RedonR_etal_2006} are excluded.  There are 48 such regions on ChrX and and 7 on ChrY.  We use a safety margin of 100kb on each side.
+For further details on the evaluation methods are available in \cite{BengtssonH_etal_2008}.
+
+\begin{table}[hp]
+\begin{center}
+\begin{tabular}{|r|c|c|c|cc|}
+\hline
+chromosome & PAR 1 & PAR 2 \\
+\hline
+\hline
+X  & 1-2,692,881 & 154,494,747-154,824,264 \\
+Y  & 1-2,692,881 &  57,372,174-57,701,691 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Pseudo-autosomal regions on ChrX and ChrY according to~\citet{BlaschkeRappold_2006}.  The regions are specified as base positions where the first position of the chromosome is index one.}
+\label{tblPARs}
+\end{table}
+
+
+
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% % Assessment of excluded loci
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \section{Additional results}
+%% 
+%% \subsection{Assessment of excluded loci}
+%% 
+%% Since the full CDF contains additional SNPs that could potentially be used to estimate raw CNs, we wanted to investigate whether these loci can be used to identify single copies from diploids.  For GWS6, there are 1,115 (1.30\%) SNPs excluded from ChrX, which is representative to the amount excluded from an average chromosome (1.35\%) (Section 'Full and filtered sets of loci').
+%% %% GWS5: 644 (2.39\%) ChrX SNPs excluded.
+%% When filtering out loci in CN polymorphic and pseudo-autosomal regions, there are 919 ChrX loci left for evaluation on GWS6.  The ROC curves for the default and the excluded set of loci are shown in Figure~\ref{figROC-excluded}.  Although the excluded loci have lower TP rates, it is still clear that they have discriminatory power.
+%% \begin{figure}[!tpbh]
+%% \begin{center}
+%%  \resizebox{0.38\columnwidth}{!}{\includegraphics{HapMap270,6_0,CEU,founders,plotROC,excludedLoci,all,y0=1_00-col}}%
+%% \end{center}
+%%  \caption{
+%%   Performance of an average ChrX locus that has been excluded (919 loci) from the default (\GWSSix) CDF compared with the average ChrX locus in the default CDF (75,642 loci).  The ROC curves are based on raw-CN estimates from CRMA6.
+%%  }
+%%  \label{figROC-excluded}
+%% \end{figure} 
+%% 
+%% This suggest that those loci could be included in downstream analysis in order to increase the effective resolution.  However, when identifying CN aberrations using segmentation methods, the assumption is that the raw CNs within a region have the same means.  When comparing density estimates of the raw CNs from the excluded loci with a same-size random set of default loci, we find, contrary to this general assumption, that there is a strong bias in the excluded loci.  This is likely the reason why Affymetrix excluded them (ref?).  The diploid loci have the same mean (0.00) and approximately the same standard deviation (0.20 v. 0.18), whereas the single-copy loci have a significantly higher mean for the excluded (-0.35) compared with the default (-0.65) set of loci.  This strong bias in the mean is likely to cause problems for a segmentation method.  
+%% When calculating the TP rate as function of resolution using the method in \cite{BengtssonH_etal_2008}, which also relies on the assumption that neighboring loci should have the same mean level, the effective resolution does indeed decrease slightly when we include the excluded loci (not shown).
+%% Furthermore, the excluded single-copy loci have a greater standard deviation (0.37) compared with the default loci (0.28) which explains the differences in ROC performances in Figure~\ref{figROC-excluded}.
+%% \begin{figure}[!tpbh]
+%% \begin{center}
+%%  \resizebox{0.38\columnwidth}{!}{\includegraphics{HapMap270,6_0,CEU,founders,plotRawCNsDensity,excluded,all-col}}%
+%%  \resizebox{0.38\columnwidth}{!}{\includegraphics{HapMap270,6_0,CEU,founders,plotRawCNsDensity,default,all-col}}%
+%% \end{center}
+%%  \caption{
+%%   Empirical densities for the 30 males and 29 females of the raw CNs for the 919 excluded loci (left) and 919 random loci from the default \GWSSix CDF (right).  The diploid distributions are approximately the same for both sets, but for the single-copy loci the mean level (-0.35) of the excluded loci is substantially different from the default loci (-0.66).  The standard deviation is 0.37 and 0.26, respectively.
+%%  }
+%%  \label{figRawCN-excluded}
+%% \end{figure}
+%% Because we do not know the bias of these loci at other copy number levels, but also because we do not know their biases on the other chromosomes, it is not obvious how to correct for the biases.  An alternative to filtering out loci is to downweight them, according to some weight function, when fitting the segmentation models.  However, we do not know of any segmentation methods that take weights.  
+%% 
+%% 
+%% \subsection{Assessment of GWS5 estimates}
+%% In this section we give a brief summary of the results from estimating raw CNs in the GWS6 assay using the CRMA6, the APT, and the dChip method.  The GTC software does not support the GWS5 assay.
+%% 
+%% [Will run this when Affymetrix release the corrected annotation data...]
+
+\clearpage
+\bibliography{bioinformatics-journals-abbr,hb-at-maths.lth.se}
+\bibliographystyle{natbib}
+ 
+
+\end{document}
