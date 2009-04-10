@@ -306,7 +306,16 @@ setMethodS3("bgAdjustGcrma", "AffymetrixCelFile", function(this, path=NULL, type
   # if specific binding correction requested, carry it out
   if (gsbAdjust && !is.null(parametersGsb)) {
     verbose && enter(verbose, "Adjusting for specific binding")
-    pm <- 2^(log2(pm) - parametersGsb[2]*apm + mean(parametersGsb[2]*apm));
+	         #> GSB.adj
+	         #function (Yin, subset, aff, fit1, k = k) 
+	         #{
+	         #    y0 = Yin[subset]
+	         #    y0.adj = k + 2^(-fit1[2] * (aff - mean(aff))) * (y0 - k)
+	         #    Yin[subset] = y0.adj
+	         #    Yin
+	         #}
+    #pm <- 2^(log2(pm) - parametersGsb[2]*apm + mean(parametersGsb[2]*apm));  # this is what it used to be
+	pm <- k + 2^(-parametersGsb[2] * (apm - mean(apm,na.rm=TRUE))) * (pm - k)
     verbose && exit(verbose);
   }
 
@@ -496,6 +505,9 @@ setMethodS3("bgAdjustRma", "AffymetrixCelFile", function(this, path=NULL, pmonly
 
 ############################################################################
 # HISTORY:
+# 2009-04-09 [MR]
+# BUG FIX: fixed discrepancy b/w aroma.affymetrix's gene specific binding
+# adjustment and gcrma's GSB.adj
 # 2009-03-29 [MR]
 # o Made slight modifications for bgAdjustGcRma() to work with the 
 #   newer Gene 1.0 ST arrays.
