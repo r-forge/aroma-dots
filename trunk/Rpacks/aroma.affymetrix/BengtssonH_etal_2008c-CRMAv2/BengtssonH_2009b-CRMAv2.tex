@@ -11,6 +11,7 @@
 \usepackage{bm} \bm{}
 \usepackage{graphicx}
 \usepackage{timestamp} 
+\usepackage{color} 
 
 \graphicspath{{figures/col/}}
 
@@ -74,7 +75,9 @@
 \DeclareMathOperator{\mad}{\textnormal{mad}}
 
 \usepackage{endnotes} 
-\newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}\endnote{#3 \textsl{#2}}}\xspace}
+\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45}
+\newcommand{\updated}[3][MyDarkBlue]{{{\color{#1}\textsl{#2}}\endnote{#3 \textsl{#2}}}\xspace}
+%\newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}\endnote{#3 \textsl{#2}}}\xspace}
 %\newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}}\xspace}
 %\renewcommand{\updated}[3][red]{#2\xspace} 
 
@@ -160,7 +163,7 @@ More details on the \GWS arrays are available in the Supplementary Notes.
 For the 100K as well as the 500K SNP-only assays, DNA is prepared in two parallel processes, each digesting the DNA using a unique enzyme, amplifying the fragments by PCR, and hybridizing the products to separate arrays.  In the GWS assays, which like 500K, uses enzymes \NspI and \StyI, the two mixes of PCR products are no longer hybridized to separate arrays but instead to the same array~\citep{Affymetrix_2007f, Affymetrix_2007g}.
 Consequently, some of the SNP target DNA of PCR products originating from different restriction digestions (enzymes) will hybridize to the same probe.  
 The non-polymorphic (CN) probes were designed to target DNA either from both enzymes or \NspI exclusively, but not from \StyI alone.  
-For an explanation of this and a summary of how many SNP and CN loci are targeted by the two enzymes, see Supplementary Notes.
+For an explanation of this and a summary of how many SNP and CN loci are targeted by the two enzymes, see the Supplementary Notes.
 %% This has to be accounted for in  when, for instance, fitting the fragment-length normalization.
 
 
@@ -271,7 +274,7 @@ For these reasons, we consider the following single-array summarization estimate
 \end{align}
 where the median is calculated across all probe-pair sums $k=1,\ldots,K_j$ in SNP $j$.
 %% Note, there is nothing in Model~\eqref{eqnSumAllele} that requires equal number of allele~A and allele~B probes.
-\updated{For older chip types (10K-500K) for which the replicated probes are slightly shifted along the genome, it is still sensible to model the probe affities using a multi-array model such as the log-additive model used in \citet{BengtssonH_etal_2008}.  Since these chip types are considered outdated, we have not conducted a formal study comparing the two summarization models, but from our experience we do note a small gain when using the log-additive model (no such gain is observed for \GWSSix). Thus, for these arrays, the choise will be a trade off of receiving this gain and having the option to process each array independently of the others.}{ADDED:}
+\updated{For older chip types (10-500K) for which the replicated probes are slightly shifted along the genome, it is still sensible to model the probe affities using a multi-array model such as the log-additive model used in \citet{BengtssonH_etal_2008}.  Since these chip types are considered outdated, we have not conducted a formal study comparing the two summarization models, but from our experience we do note a small gain when using the log-additive model (no such gain is observed for \GWSSix). Thus, for these arrays, the choise will be a trade off of receiving this gain and having the option to process each array independently of the others.}{ADDED:}
 
 Finally, for non-polymorphic loci, which are all single-probe units (as defined by the CDFs used here), we let
 \begin{equation}
@@ -302,7 +305,7 @@ be the corresponding estimates for unit/probe $j$ in sample $i$.  If in future c
 %% We have found that it is important that the preprocessing models takes this multi-enzyme digestion into account, otherwise there is a substantial risk for getting systematic biases between SNPs and CN loci due to enzymatic mixing imbalances.
 %% [We will later see that the hybridization of two PCR products on the same array requires a special model in order to control for confounded effects due to mixing inbalances.]
 %% As with the Affymetrix 500K assay, in the GWS assays DNA is digested using two different restriction enzymes (\NspI and \StyI).  The difference is that, after ligating with corresponding adaptors and PCR amplification, the PCR products are in latter assays combined, purified, post-fragmented, labeled and hybridized together to the same array. 
-Because fragments from two enzymes are hybridized to the same array for \GWS, some probes will match fragments originating from both restriction digestions.  See Supplementary Notes for details on how many SNP and CN loci are exclusively on \NspI, on \StyI, and on both.
+Because fragments from two enzymes are hybridized to the same array for \GWS, some probes will match fragments originating from both restriction digestions.  See the Supplementary Notes for details on how many SNP and CN loci are exclusively on \NspI, on \StyI, and on both.
 %% For the \GWSSix chip type, out of the 931,306 SNPs, 523,573 (56.2\%) are on both fragments, 246,514 (26.5\%) only on NspI, and 161,219 (17.3\%) only StyI.  For the 945,806 CN loci, there are 494,615 (52.3\%) on both, 451,191 (47.7\%) on NspI alone, but none on StyI alone.
 For signals originating from only one of the digestions, we could, for each enzyme separately, apply the fragment-length normalization method proposed in \citet{BengtssonH_etal_2008}.  However, because a signal that originates from both digestions consists of one \NspI and one \StyI component, which each has been amplified differently, another method has to be used for such units.  For this reason, we modify the method in \citet{BengtssonH_etal_2008} as described next. 
 %% We will not consider GC-content normalization in this paper.
@@ -377,7 +380,7 @@ Loci for which annotation is missing (Supplementary Notes) are rescaled such tha
 %% (excluding ChrX and ChrY, that is). /HB 2008-09-11
 %%
 For chip types such as 10K, 100K and 500K, where there are no multi-enzyme loci ($\mathcal{J}^{\Nsp\cap\Sty} = \emptyset$), Step~3 no longer applies and the method becomes effectively identical to the one presented in \citet{BengtssonH_etal_2008} (if the target effect is estimated from the average array).
-%% Moreover, as long as there are enough loci that are exclusively digested by each enzyme, so that the enzyme-specific fragment-length effects can be estimated, then the above method also applies to cases where more than two enzymes are used.  See Supplementary Notes for the number of loci exclusively on one enzyme.
+%% Moreover, as long as there are enough loci that are exclusively digested by each enzyme, so that the enzyme-specific fragment-length effects can be estimated, then the above method also applies to cases where more than two enzymes are used.  See the Supplementary Notes for the number of loci exclusively on one enzyme.
 %% One could argue that an weighted average based on an estimates of $\rho^{\Nsp}_{i}$ and $\rho^{\Nsp}_{R}$ should be used in Eqn~\eqref{eqnPCRbiasIIIb} in order to controlling for global imbalances between enzymes.  For instance, in the current setup, signals originating for an enzyme that are significantly lower than the other enzyme on a particular samples, will have less impact on the estimated correction factors.  
 Moreover, since each $g^{r}_{i}(\cdot)$ includes the term $\rho^{r}_{i}$, the above method will also control for imperfect mixing of enzyme products, which otherwise carry through introducing systematic effects in loci that originate from both digestions.
 Analogously, the scale differences between arrays, $\{\kappa_i\}$, are also controlled for.
@@ -429,15 +432,17 @@ Since it is a single-array method, the arrays can be processed in parallel on mu
 % DATA SET
 %--------------------------------------------------------------------------
 \subsection{Data sets}
+Two publically available data sets were used in this study.
 \textbf{Normal data set:} 
 %% \textbf{\GWSSix:} 
 \GWSSix CEL files for the 30 male and 30 female CEU founders of The International HapMap Project~\citep{HapMap_2003, AltshulerD_etal_2005} was used. Offspring were excluded in order to avoid biological relationships.
 %% \textbf{\GWSFive:} There is no public \GWSFive data available for the above \GWSSix HapMap samples but only for a subset consisting of 20 founders with 10 children, where we choose to use the latter in order to increase the sample size. 
-Because female NA12145 has a low true \chrX CN level \citep{TingJ_etal_2006}, it was excluded in the evaluation.  
-More details on the data can be found in the Supplementary Notes.
-
-\textbf{Tumor data set:} 
-[DATA SET 2...]
+Because female NA12145 has a low true \chrX CN level \citep{TingJ_etal_2006}, it was excluded from the evaluation.  
+\updated{
+\textbf{Tumor-normal data set:} 
+All 68 \GWSSix CEL files of the GEO data set GSE13372~\citep{ChiangD_etal_2009}, which among other sample contains 21 replicated tumor-normal HCC1143 (breast ductal carcinoma) pairs, were processed.  The evaluation was done on the first tumor-normal HCC1143 pair.
+}{ADDED:}
+More details on the \updated{above data sets}{REMOVED: data ADDED:} can be found in the Supplementary Notes.
 
 
 %--------------------------------------------------------------------------
@@ -445,19 +450,25 @@ More details on the data can be found in the Supplementary Notes.
 %--------------------------------------------------------------------------
 \subsection{Methods for evaluation}
 \label{secEvaluation}
-In order to assess the performance of CRMA~v2, we compared it with Affymetrix CN5 method~\citep{Affymetrix_2008m} and the method implemented in dChip~\citep{LiWong_2001}.  For \emph{dChip}, we found that summarizing SNP probes by averaging is significantly better than using the default multiplicative model.  For this reason, we only present results for the former (here denoted by \emph{dChip*}).  
+In order to assess the performance of CRMA~v2, we compared it with Affymetrix CN5 method~\citep{Affymetrix_2008m} and the method implemented in dChip~\citep{LiWong_2001}.  For \emph{dChip}, we found that summarizing SNP probes by averaging is significantly better than using the default multiplicative model.  For this reason, we only present results for the former (here denoted by \emph{dChip*}.  \updated{Moreover, since the CN5 implementation is limited to the default CDF, the results presented here are based on that set of loci.}{MOVED:}
+\updated{As outlined below, we base the evaluation on the aforementioned data sets using a multi-sample evaluation and a single-sample single-changepoint evaluation, respectively.  Further details are available in the Supplementary Notes.}{ADDED:}
+
 \subsubsection{Multi-sample ChrX \& ChrY evaluation}
-We used the same set of evaluation methods as in \citet{BengtssonH_etal_2008} using relative (Eqn~\eqref{eqnCnRatio}) instead of log-ratio CNs (Eqn~\eqref{eqnCnLogRatio}).
+\updated{For the normal data set,}{ADDED:} we used the same set of evaluation methods as in \citet{BengtssonH_etal_2008} using relative (Eqn~\eqref{eqnCnRatio}) instead of log-ratio CNs (Eqn~\eqref{eqnCnLogRatio}).
 %% dChip*: I have verified that the exported MBEI estimates are the same as the ones in the DCP files.  In other words, the poor SNP performance for dChip* is not due to an error in reading in exported data. /HB 2008-02-01
 %%
-To assess how well the methods differentiate between one and two copies, and zero and one copy, we use ChrX and ChrY data, respectively.  We exclude loci in pseudo-autosomal regions~\citep{BlaschkeRappold_2006} and inside and close to known CN polymorphic regions~\citep{RedonR_etal_2006}.  Moreover, since the CN5 implementation is limited to the default CDF, the results presented here are based on that set of loci.  
+To assess how well the methods differentiate between one and two copies, and zero and one copy, we use ChrX and ChrY data, respectively.  We exclude loci in pseudo-autosomal regions~\citep{BlaschkeRappold_2006} and inside and close to known CN polymorphic regions~\citep{RedonR_etal_2006}.
 %%
 Since CN5 uses only females (males) for the reference signals $\{\tilde\theta_{Rj}\}$ on ChrX (ChrY), this comparison study will not use bias-corrected reference signals from all samples \citep{BengtssonH_etal_2008}.
 
+\updated{
 \subsubsection{Single-sample evaluation at a set of changepoints}
-[ADD]
+For the tumor-normal data set, we selected one tumor-normal pair for which we identified a set of regions each containing a single CN change points.
+Data points in a 500kb region centered around each change point were excluded.  The remaining data points are annotated to belong to either the copy-neutral state or the CN-aberrant state.  Contrary to evaluation of the normal data set, the true CN levels are not known except that they are gains or losses.
+Next, for each CN region we use ROC analysis to assess how well the raw CNs seperate between the neutral and the aberrant data points.  This evaluation is done on the full-resolution CNs as well as smoothed CNs, where the CNs are smoothed by using non-overlapping bins for which the average CNs is calculated.
+This approach was inspired by studies such as \citet{LaiW_etal_2005} and \citet{WillenbrockFridlyand_2005}.
+}
 
-For more details on the above, see Supplementary Notes.
 
 
  
@@ -564,18 +575,20 @@ We observe that on average the discriminatory power is greater for SNPs than CN 
 \end{figure} 
 
 
-
+\updated{
 \subsection{Single-sample evaluation}
 \label{secSingleSampleEvaluation}
-
+For the tumor-normal pair HCC1143, we calculated how well CN estimates of loci that are either gains or losses separate from estimates of copy-neutral loci.  
+Figures~\ref{figROC-GSM337641,Chr01} and \ref{figROC-GSM337641,Chr10} show the CN estimates and the performance for a 7.4Mb region on Chr~1 and 9.0Mb region on Chr~10, respectively.  The former contains a loss and the latter a gain.  The ROC results show that CRMA~v2 identifies the aberrant state better than or equally well as dChip* and CN5.  We wish to emphasize that in order for CRMA~v2 to provide CN estimate for this tumor-normal pair only two CEL files are required.  For dChip* and CN5 all 68 CEL files were used in order to obtain CN estimates.  Results for additional CN regions and amounts of smoothing can found in the Supplementary Notes.
+}{ADDED:}
 \begin{figure}[!tpbh]
 \begin{center}
  \resizebox{0.96\columnwidth}{!}{\includegraphics{GSM337641,chr01,100_1-107_5,ratios,track}} \\
- \resizebox{0.96\columnwidth}{!}{\includegraphics{GSM337641,chr01,100_1-107_5,ratios,ROC}} \\
+ \resizebox{\columnwidth}{!}{\includegraphics{GSM337641,chr01,100_1-107_5,ratios,ROC}} \\
 \end{center}
  \caption{
-  The region 100.1-107.5Mb on Chr~1 in tumor-normal sample HCC1143 has a change points at approximately 103.8Mb, which separates a copy-neutral state (left) from a deletion (right).
-  The top three rows show the raw CN estimates of the CRMA~v2, the dChip, and the CN5 methods, respectively.  The 500kb safety region around the change point with data points excluded in the evaluation is highlighted by a dashed frame.  The three panels in the bottom row shows the ROC performance of the three methods at the full resolution, and after binning the CNs in non-overlapping windows of size 5kb and 20kb, respectively.  
+  The region 100.1-107.5Mb on Chr~1 in tumor-normal sample HCC1143 has a change points at approximately 103.8Mb, which separates a copy-neutral state (left) from a loss (right).
+  The top three rows show the raw CNs (Eqn~\eqref{eqnCnRatio}) of the CRMA~v2, the dChip, and the CN5 methods, respectively.  The 500kb safety region around the change point with data points excluded in the evaluation is highlighted by a dashed frame.  The three panels in the bottom row shows the ROC performance of the three methods at the full resolution, and after binning the CNs in non-overlapping windows of size 5kb and 20kb, respectively.
   Legends as in Figure~\ref{figROC-SNPvCNChrX}.
  }
  \label{figROC-GSM337641,Chr01}
@@ -584,10 +597,10 @@ We observe that on average the discriminatory power is greater for SNPs than CN 
 \begin{figure}[!tpbh]
 \begin{center}
  \resizebox{0.96\columnwidth}{!}{\includegraphics{GSM337641,chr10,61-69,ratios,track}} \\
- \resizebox{0.96\columnwidth}{!}{\includegraphics{GSM337641,chr10,61-69,ratios,ROC}} \\
+ \resizebox{\columnwidth}{!}{\includegraphics{GSM337641,chr10,61-69,ratios,ROC}} \\
 \end{center}
  \caption{
-  The region 61.0-69.0Mb on Chr~10 in tumor-normal sample HCC1143 has a change points at approximately 65.3Mb, which separates an amplification (left) from a copy-neutral state (right).
+  The region 61.0-69.0Mb on Chr~10 in tumor-normal sample HCC1143 has a change points at approximately 65.3Mb, which separates a gain (left) from a copy-neutral state (right).
   Content and legends as in Figure~\ref{figROC-GSM337641,Chr01}.
  }
  \label{figROC-GSM337641,Chr10}
@@ -613,7 +626,7 @@ We also wish to emphasize that the dChip method has not been optimized for \GWS 
 
 %% The sex-chromosome evaluation method used favors methods that produce CN estimates that have consistent mean CN levels across samples.  Hence, a method that produces estimates with great discrepancy power per array but does not control for the mean levels across arrays will be penalized.  This might be one reason why CRMA~v2 performs better than the other methods.  An alternative is to identify known CN aberrations within each sample, assume that the CNs are constant within each such region, and then test how well each method can separate between the CN level inside and outside each region.  Such an evaluation will not penalize against differences between arrays, but only focus on within array performances.  Which kind of evaluation method to use, depends on what the main objective is.
 
-CRMA~v2 provides neither allele-specific nor calibrated CN estimates.  Allele-specific CNs are needed in order to identify events such as copy-neutral loss-of-heterozygosity (LOH).  With calibrated allele-specific CNs, genotyping algorithms can be generalized to call genotypes beyond the traditional diploid AA, AB, and BB states.  We are currently working on an extension to CRMA~v2 that will provide full-resolution calibrated allele-specific CN estimates.
+CRMA~v2 provides neither allele-specific nor \updated{CN estimates calibrated toward true CN levels.}{DELETE: calibrated CN estimates. ADDED:}  Allele-specific CNs are needed in order to identify events such as copy-neutral loss-of-heterozygosity (LOH).  With calibrated allele-specific CNs, genotyping algorithms can be generalized to call genotypes beyond the traditional diploid AA, AB, and BB states.  We are currently working on an extension to CRMA~v2 that will provide full-resolution calibrated allele-specific CN estimates.
 
   
 
