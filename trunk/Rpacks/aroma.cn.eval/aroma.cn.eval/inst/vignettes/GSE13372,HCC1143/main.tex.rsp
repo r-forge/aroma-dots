@@ -8,6 +8,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 <%
 sourceDirectory("R/");
+what <- "ratios";
+addLegend <- FALSE;
+addSdEst <- FALSE;
+addBinTrack <- FALSE;
+
+binWidths <- c(0,1,2,5,10,20)*1e3; rocCols <- 2;
+binWidths <- c(0,5,20)*1e3; rocCols <- 3;
 
 figPath <- "figures/col/";
 figForce <- FALSE;
@@ -21,7 +28,6 @@ getStateColors.SegmentedCopyNumbers <- function(this, ...) {
   col
 }
 
-binWidths <- c(0,1,2,5,10,20)*1e3;
 
 title <- sprintf("Single-sample assessment of copy-number preprocessing methods CRMA~v2, Affymetrix~CN5 and dChip based on tumor-normal sample HCC1143 in GEO data set %s", dataSet);
 authors <- "Henrik Bengtsson et al.";
@@ -43,7 +49,7 @@ authors <- "Henrik Bengtsson et al.";
 
 \newcommand{\pkg}[1]{\textsl{#1}\xspace}
 
-\title{<%=title%>}
+\title{Supplementary Notes \#3:\\<%=title%>}
 \author{<%=authors%>}
 
 \begin{document}
@@ -63,7 +69,7 @@ Then we can assess how well we can detect this changepoint given the two sets of
 \subsection{Receiver Operator Characteristic performance}
 One approach is to use Receiver Operator Characteristic (ROC) analysis analogously to what is done in the (multi-sample) evaluation method presented in \citet{BengtssonH_etal_2008}.
 Given the changepoint and excluding all loci within the safety margin, the remaining $J$ loci are split up in two data sets $\mathcal{J}_A = \{x_j \leq x_0 - \delta; j=1,\ldots,J\}$ and $\mathcal{J}_B = \{x_j > x_0 + \delta; j=1,\ldots,J\}$, where $x_j$ is the position of locus $j$ and $J$ is the total number of loci.  
-Continuing, let $\mathcal{M}_s = \{M_j; j \in \mathcal{J}_s\}$ denote the (full-resolution) raw copy-number estimates of set $s \in \{A,B\}$ obtained by one of the preprocessing methods of interest.
+Continuing, let $\mathcal{M}_s = \{M_j; j \in \mathcal{J}_s\}$ denote the (full-resolution) raw (<%=if (what == "log2ratios") "$\\log_2$-ratio" else "relative"%>) copy-number estimates of set $s \in \{A,B\}$ obtained by one of the preprocessing methods of interest.
 
 Without loss of generality, assume the loci in $\mathcal{J}_A$ are copy neutral and the ones in $\mathcal{J}_B$ are deletions.
 By using a (global) threshold/cutoff $\tau$ we can then call the CN state for each locus.  We say that locus $j$ belongs to the CN state $B$ if $M_j \leq \tau$. Let $\mathcal{J}_{+} = \{M_j \leq \tau; j=1,\ldots,J\}$ be all such loci.  Let $\mathcal{J}_{-} = \{M_j > \tau; j=1,\ldots,J\}$ be the remaining loci, which are said to belong to CN state $A$. 
@@ -145,7 +151,11 @@ cnList <- NULL;
 %>
 
 <%
-cnList <- getCnList(cnList);
+what <- c("log2ratios", "ratios")[2];
+if (what == "ratios") {
+  region$label <- sprintf("%s,%s",region$label, what);
+}
+cnList <- getCnList(cnList, what=what);
 print(cnList);
 cn <- cnList[[1]];
 states <- getStates(cn);
@@ -171,12 +181,12 @@ if (fig <- figDev(figName)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Plot CN ratios along genome
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-cnList <- getCnList(cnList);
+cnList <- getCnList(cnList, what=what);
 print(cnList);
 
 nbrOfSources <- length(cnList);
 subplots(nbrOfSources, ncol=1);
-par(mar=c(3,3,0.5,1)+0.1);
+par(mar=c(2.7,2.6,0.2,1)+0.1, mgp=c(1.4,0.3,0), tcl=-0.3, cex=1.2);
 pch <- 19; cex <- 0.7;
 pch <- "."; cex <- 2;
 pch <- 176; cex <- 0.8;
@@ -185,12 +195,19 @@ xRange <- range(sapply(cnList, FUN=xRange));
 states <- na.omit(sort(unique(getStates(cnList[[1]]))));
 cp <- region$params$cp;
 s <- region$params$s;
-
+cnLab <- "CN";
+if (what == "log2ratios") {
+  cnLim <- c(-3,3);
+  cnLab <- expression(M == log[2](theta[T]/theta[N]));
+} else {
+  cnLim <- c(-0.5,6);
+  cnLab <- expression(C == 2*(theta[T]/theta[N]));
+}
 for (kk in seq(along=cnList)) {
   cn <- cnList[[kk]];
   name <- names(cnList)[kk];
   xlim <- xRange*xScale;
-  plot(cn, pch=pch, cex=1*cex, xlim=xlim, xScale=xScale);
+  plot(cn, pch=pch, cex=0.8*cex, xlim=xlim, ylim=cnLim, xScale=xScale, ylab=cnLab);
 #  abline(v=cp["position"]+c(-1,+1)*cp["delta"]);
   xs <- cp["position"]+c(-1,+1)*cp["delta"];
   ys <- par("usr")[3:4];
@@ -201,18 +218,21 @@ for (kk in seq(along=cnList)) {
     rect(xs[2],ys[1],xlim[2],ys[1]+dy, col="#999999");
   }
   rect(xs[1],ys[1], xs[2],ys[2], density=10, col="#999999");
-  stext(side=3, pos=0.02, line=-1.5, cex=1.0, name);
+  stext(side=3, pos=0.02, line=-1, cex=1.0, name);
   if (kk == 1) {
-    stext(side=3, pos=0.98, line=-1.5, cex=0.8, sprintf("Chr%02d", getChromosome(cn)));
+    stext(side=3, pos=0.98, line=-1.1, cex=0.8, sprintf("Chr%02d", getChromosome(cn)));
   }
-  sd <- estimateStandardDeviation(cn);
-#  stext(side=1, pos=0.98, line=-1.5, cex=0.8, sprintf("SD=%.3g", sd));
-  stext(side=4, pos=1, line=0.3, cex=0.8, sprintf("SD=%.3g", sd));
-##  binWidth <- 10e3;
-##  cn <- extractSubsetByState(cn, states=states);
-##  cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth);
-##  points(cnS, pch=pch, cex=0.8*cex, col="white", xScale=xScale);
-##  points(cnS, pch=19, cex=0.6*cex, col="orange", xScale=xScale);
+  if (addSdEst) {
+    sd <- estimateStandardDeviation(cn);
+    stext(side=4, pos=1, line=0, cex=0.8, sprintf("SD=%.3g", sd));
+  }
+  if (addBinTrack) {
+    binWidth <- 10e3;
+    cn <- extractSubsetByState(cn, states=states);
+    cnS <- binnedSmoothingByState(cn, from=xRange[1], to=xRange[2], by=binWidth);
+    points(cnS, pch=pch, cex=0.8*cex, col="white", xScale=xScale);
+    points(cnS, pch=19, cex=0.6*cex, col="orange", xScale=xScale);
+  }
 } # for (kk ...)
 devDone(figName);
 } # if (figDev(...))
@@ -241,16 +261,18 @@ devDone(figName);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <%
 figName <- sprintf("%s,ROC", region$label);
-if (fig <- figDev(figName, aspect=1.5)) {
+rocRows <- ceiling(length(binWidths)/rocCols);
+aspect <- rocRows/rocCols;
+if (fig <- figDev(figName, width=8, aspect=aspect)) {
 
-cnList <- getCnList(cnList);
+cnList <- getCnList(cnList, what=what);
 print(cnList);
 
 xRange <- range(sapply(cnList, FUN=xRange));
 states <- na.omit(sort(unique(getStates(cnList[[1]]))));
 
-layout(matrix(seq(along=binWidths), ncol=2, byrow=TRUE));
-par(mar=c(3,3,2,1)+0.1, mgp=c(1.4,0.4,0));
+layout(matrix(seq(along=binWidths), ncol=rocCols, byrow=TRUE));
+par(mar=c(2.5,2.4,1.3,0.7)+0.1, mgp=c(1.4,0.3,0), tcl=-0.3, cex=1.2);
 fpLim <- c(0,0.40);
 for (ww in seq(along=binWidths)) {
   binWidth <- binWidths[ww];
@@ -274,19 +296,19 @@ for (ww in seq(along=binWidths)) {
     fitRoc(cnS, states=states, recall=states[1]);
   });
 
-  cols <- c("black", "red", "blue");
-  ltys <- c(1,2,4);
+  cols <- c("red", "blue", "lightblue");
+  ltys <- c(1,4,1);
   for (kk in seq(along=fits)) {
     fit <- fits[[kk]];
     roc <- fit$roc;
     if (kk == 1) {
-      plot(roc, type="l", lwd=3, col=cols[kk], lty=ltys[kk], xlim=fpLim, ylim=sort(1-fpLim), xlab="FP rate", ylab="TP rate");
+      plot(roc, type="l", lwd=3, col=cols[kk], lty=ltys[kk], xlim=fpLim, ylim=sort(1-fpLim), xlab="False-positive rate", ylab="True-positive rate");
       abline(a=0, b=1, lty=3);
       stext(side=3, pos=1, binLabel);
     } else {
       lines(roc, lwd=3, col=cols[kk], lty=ltys[kk]);
     }
-    if (kk == 1) {
+    if (addLegend && kk == 1) {
       labels <- strsplit(names(cnSList), split="\n");
       labels <- sapply(labels, FUN=function(s) s[1]);
       legend("bottomright", col=cols, lwd=2, lty=ltys, labels, cex=0.8, bty="n");
@@ -300,7 +322,7 @@ for (ww in seq(along=binWidths)) {
  \begin{center}
   \resizebox{0.9\textwidth}{!}{\includegraphics{<%=fig$fullname%>}}
  \end{center}
- \caption{(<%=region$src%>) ROC curves for each of the <%=length(dsList)%> preprocessing methods at the full resolution as well as <%=length(binWidths)-1%> different amounts of smoothing.}
+ \caption{(<%=region$src%>) ROC curves for each of the <%=length(dsList)%> preprocessing methods at the full resolution as well as <%=length(binWidths)-1%> different amounts of smoothing.  Legend: CRMA~v2 (solid red), CN5 (dashed blue) and dChip* (solid light blue).}
  \label{fig<%=figName%>}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
