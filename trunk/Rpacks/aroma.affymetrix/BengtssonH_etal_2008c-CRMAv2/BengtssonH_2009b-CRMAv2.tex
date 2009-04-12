@@ -11,7 +11,6 @@
 \usepackage{bm} \bm{}
 \usepackage{graphicx}
 \usepackage{timestamp} 
-\usepackage{color} 
 
 \graphicspath{{figures/col/}}
 
@@ -53,8 +52,6 @@
 \newcommand{\GC}{\textnormal{GC}\xspace}
 \newcommand{\CN}{CN\xspace}
 \newcommand{\kb}{\textnormal{kb}\xspace}
-\newcommand{\PM}{\textnormal{PM}\xspace}
-\newcommand{\MM}{\textnormal{MM}\xspace}
 \newcommand{\bx}{\mathbf{x}\xspace}
 \newcommand{\by}{\mathbf{y}\xspace}
 \newcommand{\bz}{\mathbf{z}\xspace}
@@ -74,15 +71,20 @@
 \DeclareMathOperator{\median}{\textnormal{median}}
 \DeclareMathOperator{\mad}{\textnormal{mad}}
 
-\usepackage{endnotes} 
-\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45}
-\newcommand{\updated}[3][MyDarkBlue]{{{\color{#1}\textsl{#2}}\endnote{#3 \textsl{#2}}}\xspace}
-%\newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}\endnote{#3 \textsl{#2}}}\xspace}
-%\newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}}\xspace}
-%\renewcommand{\updated}[3][red]{#2\xspace} 
 
 %\newcommand{\citet}[1]{\cite{#1}} 
 %\newcommand{\citep}[1]{\cite{#1}} 
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Macros for highlighting updates
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\usepackage{endnotes} 
+\usepackage{color} 
+\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45}
+\newcommand{\updated}[3][MyDarkBlue]{{{\color{#1}\textsl{#2}}\endnote{#3 \color{#1}\textsl{#2}}}\xspace}
+%\newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}\endnote{#3 \textsl{#2}}}\xspace}
+%\newcommand{\updated}[3][red]{{{\color{#1}\textsl{\textbf{#2}}}}\xspace}
+%\renewcommand{\updated}[3][red]{#2\xspace} 
 
 
 
@@ -225,7 +227,7 @@ are obtained by backtransforming as
   \hat{\bx}_{ijk} = \hat{\bS}^{-1}_i (\by_{ijk} - \hat{\ba}_i).
   \label{eqnACCiii}
 \end{equation}
-\updated{To summarize, the crosstalk correction for SNPs is performed by treating the data as points sampled from a polyhedral cone in multidimensional space. The apex ($\ba_i$) of the cone is the baseline intensity for all channels, and edges (defined by $\bS_i$) are directions corresponding to pure signals.  Zeroing the apex and orthogonalizing the edges remove the baseline and the crosstalk. The cone is fitted iteratively by minimizing the distance from the cone to the points that lie outside it \citep{WirapatiSpeed_2002}.}{REMOVED: For further details, see~\citet{BengtssonH_etal_2008}. ADDED:}
+\updated{In words, the crosstalk correction for SNPs is performed by treating the data as points sampled from a polyhedral cone in multidimensional space. The apex ($\ba_i$) of the cone is the baseline intensity for all channels, and edges (defined by $\bS_i$) are directions corresponding to pure signals.  Zeroing the apex and orthogonalizing the edges remove the baseline and the crosstalk. The cone is fitted iteratively by minimizing the distance from the cone to the points that lie outside it \citep{WirapatiSpeed_2002}.}{REMOVED: For further details, see~\citet{BengtssonH_etal_2008}. ADDED:}
 For other non-SNP probes, including CN probes, we estimate and correct for the offset as the weighted average of offsets across all six nucleotide pairs with weights inversely proportional to the number of data points in each group.  The reason for calculating the offset this way is the belief that there is a dominant offset that is shared by all probes, e.g. scanner offsets~\citep{BengtssonH_etal_2004}, which is further strengthened by our parallel studies on Affymetrix resequencing arrays.  This also suggests that the offsets in Eqn~\eqref{eqnACCi} should be symmetric and same for all six pairs, but for practical reasons~\citep{BengtssonH_etal_2008} we \updated{chose}{choose} not to do this.
 Another difference from CRMA~(v1) is that after correcting for offset, all probe signals are rescaled to have the same arbitrary average $(=2200)$.  In \citet{BengtssonH_etal_2008} this was done for each nucleotide pair separately, but if done introduces systematic biases between SNPs and CN loci due to enzymatic mixture imbalances.
 
@@ -454,20 +456,18 @@ In order to assess the performance of CRMA~v2, we compared it with Affymetrix CN
 \updated{As outlined below, we base the evaluation on the aforementioned data sets using a multi-sample evaluation and a single-sample single-changepoint evaluation, respectively.  Further details are available in the Supplementary Notes.}{ADDED:}
 
 \subsubsection{Multi-sample ChrX \& ChrY evaluation}
-\updated{For the normal data set,}{ADDED:} we used the same set of evaluation methods as in \citet{BengtssonH_etal_2008} using relative (Eqn~\eqref{eqnCnRatio}) instead of log-ratio CNs (Eqn~\eqref{eqnCnLogRatio}).
+\updated{For the normal data set,}{ADDED:} we used the same set of \updated{ROC-based}{ADDED:} evaluation methods as in \citet{BengtssonH_etal_2008} using relative (Eqn~\eqref{eqnCnRatio}) instead of log-ratio CNs (Eqn~\eqref{eqnCnLogRatio}).
 %% dChip*: I have verified that the exported MBEI estimates are the same as the ones in the DCP files.  In other words, the poor SNP performance for dChip* is not due to an error in reading in exported data. /HB 2008-02-01
 %%
 To assess how well the methods differentiate between one and two copies, and zero and one copy, we use ChrX and ChrY data, respectively.  We exclude loci in pseudo-autosomal regions~\citep{BlaschkeRappold_2006} and inside and close to known CN polymorphic regions~\citep{RedonR_etal_2006}.
 %%
 Since CN5 uses only females (males) for the reference signals $\{\tilde\theta_{Rj}\}$ on ChrX (ChrY), this comparison study will not use bias-corrected reference signals from all samples \citep{BengtssonH_etal_2008}.
 
-\updated{
 \subsubsection{Single-sample evaluation at a set of changepoints}
-For the tumor-normal data set, we selected one tumor-normal pair for which we identified a set of regions each containing a single CN change points.
-Data points in a 500kb region centered around each change point were excluded.  The remaining data points are annotated to belong to either the copy-neutral state or the CN-aberrant state.  Contrary to evaluation of the normal data set, the true CN levels are not known except that they are gains or losses.
+\updated{For the tumor-normal data set, we selected one tumor-normal pair for which we identified a set of regions each containing a single CN change point.
+Data points in a 500kb region centered around each change point were excluded.  The remaining data points are annotated to belong to either the copy-neutral state or the CN-aberrant state.  Contrary to the evaluation on the normal data set, the true CN levels are not known except that they are either gains or losses.
 Next, for each CN region we use ROC analysis to assess how well the raw CNs seperate between the neutral and the aberrant data points.  This evaluation is done on the full-resolution CNs as well as smoothed CNs, where the CNs are smoothed by using non-overlapping bins for which the average CNs is calculated.
-This approach was inspired by studies such as \citet{LaiW_etal_2005} and \citet{WillenbrockFridlyand_2005}.
-}
+This approach was inspired by studies such as \citet{LaiW_etal_2005} and \citet{WillenbrockFridlyand_2005}.}{ADDED:}
 
 
 
@@ -575,11 +575,9 @@ We observe that on average the discriminatory power is greater for SNPs than CN 
 \end{figure} 
 
 
-\updated{
 \subsection{Single-sample evaluation}
 \label{secSingleSampleEvaluation}
-For the tumor-normal pair HCC1143, we calculated how well CN estimates of loci that are either gains or losses separate from estimates of copy-neutral loci.  
-Figures~\ref{figROC-GSM337641,Chr01} and \ref{figROC-GSM337641,Chr10} show the CN estimates and the performance for a 7.4Mb region on Chr~1 and 9.0Mb region on Chr~10, respectively.  The former contains a loss and the latter a gain.  The ROC results show that CRMA~v2 identifies the aberrant state better than or equally well as dChip* and CN5.  We wish to emphasize that in order for CRMA~v2 to provide CN estimate for this tumor-normal pair only two CEL files are required.  For dChip* and CN5 all 68 CEL files were used in order to obtain CN estimates.  Results for additional CN regions and amounts of smoothing can found in the Supplementary Notes.
+\updated{For the tumor-normal pair HCC1143, we calculated how well CN estimates of loci that are either gains or losses separate from estimates of copy-neutral loci.  Figures~\ref{figROC-GSM337641,Chr01} and \ref{figROC-GSM337641,Chr10} show the CN estimates and the performance for a 7.4Mb region on Chr~1 and 9.0Mb region on Chr~10, respectively.  The former contains a loss and the latter a gain.  The ROC results show that CRMA~v2 identifies the aberrant state better than or equally well as dChip* and CN5.  We wish to emphasize that in order for CRMA~v2 to provide CN estimate for this tumor-normal pair only two CEL files are required.  For dChip* and CN5 all 68 CEL files were used in order to obtain CN estimates.  Results for additional CN regions and amounts of smoothing can found in the Supplementary Notes.
 }{ADDED:}
 \begin{figure}[!tpbh]
 \begin{center}
