@@ -31,7 +31,6 @@ $(foo).pdf: $(foo).ps
 	ps2pdf "$(foo).ps"
 
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # draft
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -59,7 +58,7 @@ $(foo)/: $(foo).tex *.tex figures/* *.sty *.cls *.bst
 	mkdir -p $(foo)/;
 	cp $(foo).tex $(foo)/;
 	cp -f Makefile $(foo)/;
-	cp -f Makefile,SM $(foo)/;
+	cp -f Makefile,SN* $(foo)/;
 	cp -f *.tex $(foo)/;
 #	cp -f *.bbl $(foo)/;
 	cp -f *.bib $(foo)/;
@@ -102,7 +101,10 @@ src.tar.gz: $(foo).tar.gz
 clean:
 	rm -f tmp.ps;
 	rm -f $(foo)*.aux;
+	rm -f $(foo)*.bbl;
+	rm -f $(foo)*.blg;
 	rm -f $(foo)*.dvi;
+	rm -f $(foo)*.ent;
 	rm -f $(foo)*.log;
 	rm -f $(foo)*.nav;
 	rm -f $(foo)*.out;
