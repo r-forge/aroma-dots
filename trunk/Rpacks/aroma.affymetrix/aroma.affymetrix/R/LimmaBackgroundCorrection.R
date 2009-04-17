@@ -1,14 +1,13 @@
 ###########################################################################/**
-# @RdocClass NormExpBgCorrection
+# @RdocClass LimmaBackgroundCorrection
 #
-# @title "The NormExpBgCorrection class"
+# @title "The LimmaBackgroundCorrection class"
 #
 # \description{
 #  @classhierarchy
 #
-#  This class represents the normal+exponential "background" adjustment
-#  function.
-#
+#  This class represents the various "background" correction methods
+#  implemented in the \pkg{limma} package.
 # }
 #
 # @synopsis
@@ -16,7 +15,6 @@
 # \arguments{
 #   \item{...}{Arguments passed to the constructor of
 #     @see "BackgroundCorrection".}
-#   \item{flavor}{A @character string specifying what algorithm to use.}
 #   \item{args}{A @list of additional arguments passed to the 
 #     correction algorithm.}
 #   \item{addJitter}{If @TRUE, Zero-mean gaussian noise is added to the
@@ -46,14 +44,17 @@
 #         Adopted from RmaBackgroundCorrection by Ken Simpson.}
 #
 # \seealso{
-#   Internally, @see "affy::bg.adjust" is used when \code{flavor="affy"},
-#   and @see "limma::backgroundCorrect" is used when \code{flavor="limma"}.
+#   Internally, @see "limma::backgroundCorrect" is used.
 # }
 #
 #*/###########################################################################
-setConstructorS3("NormExpBgCorrection", function(..., flavor=c("affy", "limma"), args=NULL, addJitter=FALSE, jitterSd=0.2) {
-  # Argument 'flavor':
-  flavor <- match.arg(flavor);
+setConstructorS3("LimmaBackgroundCorrection", function(..., args=NULL, addJitter=FALSE, jitterSd=0.2) {
+  # Argument 'args':
+  if (!is.null(args)) {
+    if (!is.list(args)) {
+      throw("Argument 'args' is not a list: ", class(args)[1]);
+    }
+  }
 
   # Argument 'addJitter':
   addJitter <- Arguments$getLogical(addJitter);
@@ -61,16 +62,29 @@ setConstructorS3("NormExpBgCorrection", function(..., flavor=c("affy", "limma"),
   # Argument 'jitterSd':
   jitterSd <- Arguments$getDouble(jitterSd);
 
-  extend(BackgroundCorrection(..., typesToUpdate="pm"), "NormExpBgCorrection",
-    .flavor = flavor,
+  extend(BackgroundCorrection(..., typesToUpdate="pm"), "LimmaBackgroundCorrection",
+    .args = args,
     .addJitter = addJitter,
-    .jitterSd = jitterSd,
-    .args = args
+    .jitterSd = jitterSd
   );
 })
 
+setMethodS3("getAsteriskTags", "LimmaBackgroundCorrection", function(this, collapse=NULL, ...) {
+  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
 
-setMethodS3("getParameters", "NormExpBgCorrection", function(this, ...) {
+  # Extra tags?
+  params <- getParameters(this);
+  args <- params$args;
+  tags <- c(tags, args$method, args$normexp.method);
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
+  tags;
+}, private=TRUE)
+
+
+setMethodS3("getParameters", "LimmaBackgroundCorrection", function(this, ...) {
   # Get parameters from super class
   params <- NextMethod(generic="getParameters", object=this, ...);
 
@@ -78,7 +92,6 @@ setMethodS3("getParameters", "NormExpBgCorrection", function(this, ...) {
   
   # Get parameters of this class
   params2 <- list(
-    flavor = this$.flavor,
     addJitter = this$.addJitter,
     jitterSd = this$.jitterSd,
     pmOnly = pmOnly
@@ -93,6 +106,43 @@ setMethodS3("getParameters", "NormExpBgCorrection", function(this, ...) {
   params;
 }, private=TRUE)
 
+
+setMethodS3("getSubsetToUpdate0", "LimmaBackgroundCorrection", function(this, ..., verbose=FALSE) {
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  cells <- this$.cellsToUpdate0;
+
+  if (is.null(cells)) {
+    # Get algorithm parameters
+    params <- getParameters(this);
+
+    if (params$pmOnly) {
+      verbose && enter(verbose, "Retrieving PM-only CDF indices");
+      ds <- getInputDataSet(this);
+      cdf <- getCdf(ds);
+      chipType <- getChipType(cdf);
+      key <- list(method="getPmCellIndices", class=class(cdf)[1], chipType=chipType);
+      dirs <- c("aroma.affymetrix", chipType);
+      cells <- loadCache(key=key, dirs=dirs);
+      if (is.null(cells)) {
+        indices <- getCellIndices(cdf, useNames=FALSE, unlist=TRUE);
+        cells <- indices[isPm(cdf)];
+        rm(indices);
+        saveCache(cells, key=key, dirs=dirs);
+      }
+      verbose && exit(verbose);
+    }
+
+    this$.cellsToUpdate0 <- cells;
+  }
+
+  cells;
+}, private=TRUE)
 
 
 ###########################################################################/**
@@ -121,7 +171,7 @@ setMethodS3("getParameters", "NormExpBgCorrection", function(this, ...) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("process", "NormExpBgCorrection", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("process", "LimmaBackgroundCorrection", function(this, ..., force=FALSE, verbose=FALSE) {
 
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -154,16 +204,16 @@ setMethodS3("process", "NormExpBgCorrection", function(this, ..., force=FALSE, v
   # Get the output path
   outputPath <- getPath(this);
 
+  # The cells to be updated (defaults to all, but will be overloaded
+  # below in the typical settings)
+  cells <- NULL;
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Try to load the require package
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  flavor <- params$flavor;
-  if (flavor == "affy") {
-    require("affy") || throw("Package not loaded: affy");
-  } else if (flavor == "limma") {
-    require("limma") || throw("Package not loaded: limma");
-  }
+  require("limma") || throw("Package not loaded: limma");
+
 
   # Generate random jitter?
   if (params$addJitter) {
@@ -189,82 +239,67 @@ setMethodS3("process", "NormExpBgCorrection", function(this, ..., force=FALSE, v
     filename <- sprintf("%s.CEL", fullname);
     pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
 
-    # Already correction?
+    # Nothing to do? Already corrected?
     if (!force && isFile(pathname)) {
       verbose && cat(verbose, "Output data file already exists: ", pathname);
-    } else {
-      if (params$pmOnly) {
-        verbose && enter(verbose, "Retrieving PM-only CDF indices");
-        key <- list(method="getPmCellIndices", class=class(cdf)[1], chipType=chipType);
-        dirs <- c("aroma.affymetrix", chipType);
-        idxsPM <- loadCache(key=key, dirs=dirs);
-        if (is.null(idxsPM)) {
-          indices <- getCellIndices(cdf, useNames=FALSE, unlist=TRUE);
-          idxsPM <- indices[isPm(cdf)];
-          rm(indices);
-          saveCache(idxsPM, key=key, dirs=dirs);
-        }
-        verbose && exit(verbose);
-      } else {
-        idxsPM <- NULL;
-      }
-
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Reading data
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Extracting data");
-      y <- extractMatrix(df, cells=idxsPM, drop=TRUE);
-      verbose && str(verbose, y);
       verbose && exit(verbose);
+      next;
+    }
 
-      if (params$addJitter) {
-        y <- y + jitter;
-      }
 
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Correct data
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Applying the normal+exponential probe model");
-      verbose && cat(verbose, "Flavor: ", flavor);
-      if (flavor == "affy") {
-        # From package 'affy' (without a namespace)
-        args <- c(list(y), params$args);
-        verbose && str(verbose, args);
-        y <- do.call("bg.adjust", args=args);
-      } else if (flavor == "limma") {
-        args <- c(list(y), params$args);
-        verbose && str(verbose, args);
-        y <- do.call("backgroundCorrect", args=args);
-      }
-      verbose && exit(verbose);
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Identify the indices for cells to be corrected
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    if (is.null(cells)) {
+      cells <- getSubsetToUpdate0(this, verbose=less(verbose, 10));
+    }
 
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Storing data
-      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      verbose && enter(verbose, "Storing corrected data");
-    
-      # Create CEL file to store results, if missing
-      verbose && enter(verbose, "Creating CEL file for results, if missing");
-      createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
-      verbose && exit(verbose);
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Reading data
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Extracting data");
+    y <- extractMatrix(df, cells=cells, drop=TRUE);
+    verbose && str(verbose, y);
+    verbose && exit(verbose);
 
-      # Write calibrated data to file
-      verbose2 <- -as.integer(verbose)-2;
-str(idxsPM)
-str(y)
-      updateCel(pathname, indices=idxsPM, intensities=y, verbose=verbose2);
-      rm(y, verbose2);
 
-      verbose && exit(verbose);
-    } # if (!force && isFile(pathname))
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Add jitter?
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (params$addJitter) {
+      y <- y + jitter;
+    }
 
-    # Assert validity of the calibrated data file
-    dfC <- newInstance(df, pathname);
-    # CDF inheritance
-    setCdf(dfC, cdf);
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Correct data
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Calling backgroundCorrect() of limma");
+    args <- c(list(y), params$args);
+    verbose && str(verbose, args);
+    y <- do.call("backgroundCorrect", args=args);
+    verbose && str(verbose, y);
+    y <- y[,1,drop=TRUE];
+    verbose && str(verbose, y);
+    verbose && exit(verbose);
 
-    rm(df, dfC);
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Storing data
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Storing corrected data");
+  
+    # Create CEL file to store results, if missing
+    verbose && enter(verbose, "Creating CEL file for results, if missing");
+    createFrom(df, filename=pathname, path=NULL, verbose=less(verbose));
+    verbose && exit(verbose);
 
+    # Write calibrated data to file
+    verbose2 <- -as.integer(verbose)-2;
+    updateCel(pathname, indices=cells, intensities=y, verbose=verbose2);
+    rm(y, verbose2);
+
+    verbose && exit(verbose);
+
+    rm(df);
     verbose && exit(verbose);
   } # for (kk ...)
   verbose && exit(verbose);
@@ -276,18 +311,17 @@ str(y)
   invisible(outputDataSet);
 })
 
+
 ############################################################################
 # HISTORY:
+# 2009-04-16
+# o Made this a limma-only class. Removed the 'flavor' argument. 
+# 2009-04-09
+# o Added redundancy test for LimmaBackgroundCorrection.
 # 2009-04-06
-# o Verified that new NormExpBgCorrection and old RmaBackgroundCorrection
-#   gives identical results.
+# o Verified that new LimmaBackgroundCorrection and old
+#   RmaBackgroundCorrection gives identical results.
 # o Added support for 'affy' and 'limma' flavor.
 # o Added support to specify and pass any algorithm parameters.
 # o Created from RmaBackgroundCorrection.R.
-# 2007-06-30
-# o Added Rdoc comments about jitter.
-# 2007-05-26
-# o Updated the Rdocs.
-# 2007-03-21
-# o Created.
 ############################################################################

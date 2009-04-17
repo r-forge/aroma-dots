@@ -1731,6 +1731,13 @@
 \alias{process.AdditiveCovariatesNormalization}
 \alias{writeSgr}
 \alias{writeSgr.AffymetrixCelSet}
+\alias{getParameters.NormExpBgCorrection}
+\alias{getAsteriskTags.LimmaBackgroundCorrection}
+\alias{getAsteriskTags.NormExpBackgroundCorrection}
+\alias{getParameters.LimmaBackgroundCorrection}
+\alias{getParameters.NormExpBackgroundCorrection}
+\alias{getSubsetToUpdate0}
+\alias{getSubsetToUpdate0.LimmaBackgroundCorrection}
 
 \description{
   This page contains aliases for all "non-documented" objects that

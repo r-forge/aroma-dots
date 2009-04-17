@@ -901,3 +901,8 @@ plotCovariateEffects.GcContentNormalization2
   plotCovariateEffects process.AdditiveCovariatesNormalization writeSgr
   writeSgr.AffymetrixCelSet
 getParameters.NormExpBgCorrection
+  getAsteriskTags.LimmaBackgroundCorrection
+  getAsteriskTags.NormExpBackgroundCorrection
+  getParameters.LimmaBackgroundCorrection
+  getParameters.NormExpBackgroundCorrection getSubsetToUpdate0
+  getSubsetToUpdate0.LimmaBackgroundCorrection

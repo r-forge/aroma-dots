@@ -28,7 +28,7 @@
 \code{~~~~~~~~~~~~~~~~~+--}\emph{\code{BackgroundCorrection}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{GcRmaBackgroundCorrection}, \link[aroma.affymetrix]{OpticalBackgroundCorrection}, \link[aroma.affymetrix]{RmaBackgroundCorrection}\cr
+\link[aroma.affymetrix]{GcRmaBackgroundCorrection}, \link[aroma.affymetrix]{LimmaBackgroundCorrection}, \link[aroma.affymetrix]{NormExpBackgroundCorrection}, \link[aroma.affymetrix]{OpticalBackgroundCorrection}, \link[aroma.affymetrix]{RmaBackgroundCorrection}\cr
 
 public abstract static class \bold{BackgroundCorrection}\cr
 extends \emph{\link[aroma.affymetrix]{ProbeLevelTransform}}\cr
