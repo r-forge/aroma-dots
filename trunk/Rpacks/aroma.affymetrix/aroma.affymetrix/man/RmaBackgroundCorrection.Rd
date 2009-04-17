@@ -45,7 +45,7 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 
 \arguments{
   \item{...}{Arguments passed to the constructor of
-    \code{\link{ProbeLevelTransform}}.}
+    \code{\link{BackgroundCorrection}}.}
   \item{addJitter}{If \code{\link[base:logical]{TRUE}}, Zero-mean gaussian noise is added to the
     signals before being background corrected.}
   \item{jitterSd}{Standard deviation of the jitter noise added.}

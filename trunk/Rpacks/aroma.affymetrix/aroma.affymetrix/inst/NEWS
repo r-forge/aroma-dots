@@ -1,11 +1,11 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.4x [2009-04-08]
-o BETA: Added NormExpBgCorrection which is backward compatible
-  with RmaBackgroundCorrection but also support the 'limma'
-  algorithms in addition to the 'affy' one.  In the future
-  RmaBackgroundCorrection will just subclass this new class.
+Version: 1.0.4 [2009-04-16]
+o BETA: Added NormExpBackgroundCorrection which does background
+  correction according to the normal exponential model. It 
+  utilizes the limma package for this. The default setting give
+  identical results as RmaBackgroundCorrection, which uses affy.
 o Made several modifications to computeAffinities() for 
   AffymetrixCdfFile which allows us to compute affinities also
   for PM-only chip types, e.g. Gene 1.0 ST arrays: (i) added a

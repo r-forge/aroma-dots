@@ -3,12 +3,14 @@ library("aroma.affymetrix");
 log <- Arguments$getVerbose(-4, timestamp=TRUE);
 
 
-dataSetName <- "Affymetrix-HeartBrain";
+dataSet <- "Affymetrix-HeartBrain";
 chipType <- "HG-U133_Plus_2";
 
-cs <- AffymetrixCelSet$byName(dataSetName, chipType=chipType, verbose=log);
-print(cs);
+csR <- AffymetrixCelSet$byName(dataSet, chipType=chipType);
+print(csR);
 
-bg <- GcRmaBackgroundCorrection(cs);
+bg <- GcRmaBackgroundCorrection(csR);
 print(bg);
-csBg <- process(bg, verbose=log);
+csB <- process(bg, verbose=log);
+print(csB);
+

@@ -93,4 +93,3 @@ setMethodS3("process", "BackgroundCorrection", abstract=TRUE);
 # 2007-03-21
 # o Created.
 ############################################################################
-

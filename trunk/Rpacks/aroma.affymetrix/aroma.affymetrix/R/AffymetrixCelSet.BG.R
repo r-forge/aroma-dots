@@ -51,7 +51,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelSet", function(this, path=NULL, nam
     # Path structure: /probeData/<dataSet,tags>/<chipType>/
     rootPath <- "probeData";
     chipType <- getChipType(cdf, fullname=FALSE);
-    path <- file.path(rootPath, getFullname(this), chipType);
+    path <- file.path(rootPath, getFullName(this), chipType);
   }
   if (!is.null(path)) {
     # Verify this path (and create if missing)
