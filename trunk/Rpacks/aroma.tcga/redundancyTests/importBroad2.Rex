@@ -120,7 +120,7 @@ for (pp in seq(along=paths)) {
       # Transform to total or (total,beta)
       naValue <- as.double(NA);
       if (dataType == "snp") {
-        data <- matrix(naValue, nrow=nbrOfUnits(cdf), ncol=2);
+        data <- matrix(naValue, nrow=nbrOfUnits(unf), ncol=2);
         idxs <- whichVector(is.na(alleles));
         data[units[idxs],1] <- values[idxs];
         idxs <- whichVector(alleles == "A");
@@ -130,11 +130,11 @@ for (pp in seq(along=paths)) {
         data[units[idxs],2] <- values[idxs] / data[units[idxs],1];
         rm(idxs);
       } else if (dataType == "cna") {
-        data <- matrix(naValue, nrow=nbrOfUnits(cdf), ncol=1);
+        data <- matrix(naValue, nrow=nbrOfUnits(unf), ncol=1);
         data[units,1] <- values;
       }
       rm(values, units);
-    
+
       # Write total
       for (dd in whichVector(!isFiles)) {
         pathname <- pathnames[dd];
