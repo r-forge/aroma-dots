@@ -21,3 +21,8 @@ TcgaDccDownloader
  setUsername.TcgaDccDownloader
  downloadFiles downloadFiles.TcgaDccDownloader
  setLogin setLogin.TcgaDccDownloader
+  getAccessRoot getAccessRoot.TcgaDccDownloader getArchive
+  getArchive.TcgaDccDownloader getCenter getCenter.TcgaDccDownloader
+  getCenterType getCenterType.TcgaDccDownloader getDataType
+  getDataType.TcgaDccDownloader getPlatform.TcgaDccDownloader
+  getTumorType getTumorType.TcgaDccDownloader
