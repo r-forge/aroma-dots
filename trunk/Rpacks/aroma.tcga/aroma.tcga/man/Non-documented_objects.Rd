@@ -62,6 +62,19 @@
 \alias{downloadFiles.TcgaDccDownloader}
 \alias{setLogin}
 \alias{setLogin.TcgaDccDownloader}
+\alias{getAccessRoot}
+\alias{getAccessRoot.TcgaDccDownloader}
+\alias{getArchive}
+\alias{getArchive.TcgaDccDownloader}
+\alias{getCenter}
+\alias{getCenter.TcgaDccDownloader}
+\alias{getCenterType}
+\alias{getCenterType.TcgaDccDownloader}
+\alias{getDataType}
+\alias{getDataType.TcgaDccDownloader}
+\alias{getPlatform.TcgaDccDownloader}
+\alias{getTumorType}
+\alias{getTumorType.TcgaDccDownloader}
 
 \description{
   This page contains aliases for all "non-documented" objects that
