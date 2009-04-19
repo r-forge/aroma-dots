@@ -1,0 +1,23 @@
+dummy
+TcgaDccDownloader
+ as.character.TcgaDccDownloader downloadCoreTextFile
+ downloadCoreTextFile.TcgaDccDownloader downloadFile
+ downloadFile.TcgaDccDownloader downloadUrl
+ downloadUrl.TcgaDccDownloader getPassword
+ getPassword.TcgaDccDownloader getProtocol
+ getProtocol.TcgaDccDownloader getRootPath
+ getRootPath.TcgaDccDownloader getRootUrl getRootUrl.TcgaDccDownloader
+ getUrl.TcgaDccDownloader getUrlPath getUrlPath.TcgaDccDownloader
+ getUrlPathname getUrlPathname.TcgaDccDownloader
+ getUsername.TcgaDccDownloader listFiles listFiles.TcgaDccDownloader
+ readDescription readDescription.TcgaDccDownloader readIdf
+ readIdf.TcgaDccDownloader readLines readLines.default
+ readLines.TcgaDccDownloader readManifest
+ readManifest.TcgaDccDownloader readReadme
+ readReadme.TcgaDccDownloader readSampleInfo
+ readSampleInfo.TcgaDccDownloader readSdrf readSdrf.TcgaDccDownloader
+ readTextFile readTextFile.TcgaDccDownloader setPassword
+ setPassword.TcgaDccDownloader setUsername
+ setUsername.TcgaDccDownloader
+ downloadFiles downloadFiles.TcgaDccDownloader
+ setLogin setLogin.TcgaDccDownloader
