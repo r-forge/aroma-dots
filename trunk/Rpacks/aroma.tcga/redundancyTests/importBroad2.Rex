@@ -28,6 +28,7 @@ for (pp in seq(along=paths)) {
   
   # Identify unit names file
   if (platform == "genome_wide_snp_6") {
+    require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
     unf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6");
     dataTypes <- c("total", "fracB");
   } else if (platform == "") {
