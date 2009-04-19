@@ -1,16 +1,16 @@
 if (interactive()) savehistory();
 library("aroma.tcga");
 sourceDirectory("R/", modifiedOnly=TRUE);
-rootPath <- "tcgaData";
 
 dataSet <- c("broad", "hudsonalpha", "harvard", "mskcc,A", "mskcc,B")[1];
 paths <- getTcgaPaths(dataSet);
 
 for (pp in seq(along=paths)) {
+  rootPath <- "tcgaData";
   path <- file.path(rootPath, paths[pp]);
   ds <- NULL;
   tryCatch({
-    ds <- GenericDataFileSet$fromFiles(path, pattern=".*[.]data[.]txt$");
+    ds <- GenericDataFileSet$fromFiles(path, pattern=".*[.]ismpolish[.]data[.]txt$");
   }, error = function(ex) {}
   );
   if (is.null(ds)) {
