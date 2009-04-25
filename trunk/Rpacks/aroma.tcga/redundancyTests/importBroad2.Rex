@@ -133,7 +133,7 @@ for (pp in seq(along=paths)) {
         data <- matrix(naValue, nrow=nbrOfUnits(unf), ncol=1);
         data[units,1] <- values;
       }
-      rm(values, units);
+      rm(values);
 
       # Write total
       for (dd in whichVector(!isFiles)) {
