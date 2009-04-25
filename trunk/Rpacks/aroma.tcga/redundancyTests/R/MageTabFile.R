@@ -27,7 +27,10 @@ setMethodS3("getHeader", "MageTabDataMatrixFile", function(this, ..., force=FALS
         header[[tmp[1]]] <- tmp[-1];
       }
       hdr$dataMatrixHeader <- header;
-      colnames <- c(names(header)[2], sprintf("%s,%s", header[[1]], header[[2]]));
+      colnames <- sprintf("%s,%s", header[[1]], header[[2]]);
+      colnames <- gsub("(^,|,$)", "", colnames);
+      colnames <- gsub("(Rtum/Rnorm)", "Ratio", colnames, fixed=TRUE);
+      colnames <- c(names(header)[2], colnames);
       hdr$columns <- colnames;
       hdr$skip <- hdr$skip + 1L;
     }
@@ -46,6 +49,8 @@ setMethodS3("getReadArguments", "MageTabDataMatrixFile", function(this, ..., col
 
 ############################################################################
 # HISTORY:
+# 2009-04-19
+# o Fixed the column names.
 # 2009-04-18
 # o Created.
 ############################################################################
