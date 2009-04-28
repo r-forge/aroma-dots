@@ -1,10 +1,112 @@
-\documentclass[draft]{bioinfo}
-\copyrightyear{2009}
-\pubyear{2009}
+%% BioMed_Central_Tex_Template_v1.05
+%%                                      %
+%  bmc_article.tex            ver: 1.05 %
+%                                       %
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                     %%
+%%  LaTeX template for BioMed Central  %%
+%%     journal article submissions     %%
+%%                                     %%
+%%         <27 January 2006>           %%
+%%                                     %%
+%%                                     %%
+%% Uses:                               %%
+%% cite.sty, url.sty, bmc_article.cls  %%
+%% ifthen.sty. multicol.sty		       %%
+%%									   %%
+%%                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%	
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.pdf and the instructions for    %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\documentclass[10pt]{bmc_article}    
+
+
+
+% Load packages
+\usepackage{cite} % Make references as [1-4], not [1,2,3,4]
+\usepackage{url}  % Formatting web addresses  
+\usepackage{ifthen}  % Conditional 
+\usepackage{multicol}   %Columns
+\usepackage[utf8]{inputenc} %unicode support
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+\urlstyle{rm}
+ 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+%%                                             %%
+%%  If you wish to display your graphics for   %%
+%%  your own use using includegraphic or       %%
+%%  includegraphics, then comment out the      %%
+%%  following two lines of code.               %%   
+%%  NB: These line *must* be included when     %%
+%%  submitting to BMC.                         %% 
+%%  All figure files must be submitted as      %%
+%%  separate graphics through the BMC          %%
+%%  submission process, not included in the    %% 
+%%  submitted article.                         %% 
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     
+
+
+% \def\includegraphic{}
+% \def\includegraphics{}
+
+
+
+\setlength{\topmargin}{0.0cm}
+\setlength{\textheight}{21.5cm}
+\setlength{\oddsidemargin}{0cm} 
+\setlength{\textwidth}{16.5cm}
+\setlength{\columnsep}{0.6cm}
+
+\newboolean{publ}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                              %%
+%% You may change the following style settings  %%
+%% Should you wish to format your article       %%
+%% in a publication style for printing out and  %%
+%% sharing with colleagues, but ensure that     %%
+%% before submitting to BMC that the style is   %%
+%% returned to the Review style setting.        %%
+%%                                              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+
+%Review style settings
+% \newenvironment{bmcformat}{\begin{raggedright}\baselineskip20pt\sloppy\setboolean{publ}{false}}{\end{raggedright}\baselineskip20pt\sloppy}
+
+%Publication style settings
+\newenvironment{bmcformat}{\fussy\setboolean{publ}{true}}{\fussy}
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 % User-specific packages, macros, and settings
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\usepackage{color} 
 \usepackage{amsmath} 
 % \usepackage{amsfonts} 
 \usepackage{xspace}
@@ -53,52 +155,159 @@
 \newenvironment{TODO}{\color{red}\textbf{TODO:}}{}
 \newenvironment{PN}{\color{blue}}{}
 
+
+% Begin ...
 \begin{document}
-\firstpage{1}
+\begin{bmcformat}
 
-\title[TumorBoost]{TumorBoost: A single-sample method for calibrating allele-specific tumor copy numbers in paired tumor-normal designs}
-\author[Bengtsson et al.]{Henrik Bengtsson\,$^{\rm a}$\footnote{To whom correspondence should be addressed}, Pierre Neuvial\,$^{\rm a}$, Terence P. Speed\,$^{\rm a,b}$}
-\address{
-  $^{\rm a}$ Department of Statistics, University of California, Berkeley, USA.
-  $^{\rm b}$ Bioinformatics Division, Walter \& Eliza Hall Institute of Medical Research, Parkville, Australia.
-} 
 
-\history{Version: \timestamp; Received on March NN, 2009}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the title of your article here     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\editor{Associate Editor: XXX}
+\title{TumorBoost: A single-sample method for calibrating allele-specific tumor copy numbers in paired tumor-normal designs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors here                   %%
+%%                                          %%
+%% Ensure \and is entered between all but   %%
+%% the last two authors. This will be       %%
+%% replaced by a comma in the final article %%
+%%                                          %%
+%% Ensure there are no trailing spaces at   %% 
+%% the ends of the lines                    %%     	
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\author{Henrik Bengtsson\correspondingauthor$^1$%
+       \email{Henrik Bengtsson\correspondingauthor - hb@stat.berkeley.edu}%
+      \and
+         Pierre Neuvial$^1$%
+         \email{Pierre Neuvial -pierre@stat.berkeley.edu}
+       and 
+         Terence P. Speed$^{1,2}$%
+         \email{Terence P. Speed - terry@stat.berkeley.edu}%
+      }
+      
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors' addresses here        %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\address{%
+    \iid(1) Department of Statistics, University of California, Berkeley, USA\\
+    \iid(2) Bioinformatics Division, Walter \& Eliza Hall Institute of Medical Research, Parkville, Australia
+}%
 
 \maketitle
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ABSTRACT
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{abstract}
-\section{Motivation:}
-The availability of high-quality allele-specific copy number estimates for a tumor tissue allows for improved genotype and loss-of-heterozygosity calls.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Abstract begins here                 %%
+%%                                          %%
+%% The Section headings here are those for  %%
+%% a Research article submitted to a        %%
+%% BMC-Series journal.                      %%  
+%%                                          %%
+%% If your article is not of this type,     %%
+%% then refer to the Instructions for       %%
+%% authors on http://www.biomedcentral.com  %%
+%% and change the section headings          %%
+%% accordingly.                             %%   
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Results:}
-We propose a single-sample method for calibrating allele-specific copy number (ASCN) estimates of a tumor based on ASCN estimates of a paired normal. The method applies to any paired tumor-normal copy number estimates regardless of technology and generation. 
+
+\begin{abstract}
+        % Do not use inserted blank lines (ie \\) until main body of text.
+        \paragraph*{Background:} The availability of high-quality allele-specific copy number estimates for a tumor tissue allows for improved genotype and loss-of-heterozygosity calls.
+
+      
+        \paragraph*{Results:} We propose a single-sample method for calibrating allele-specific copy number (ASCN) estimates of a tumor based on ASCN estimates of a paired normal. The method applies to any paired tumor-normal copy number estimates regardless of technology and generation. 
 
 We demonstrate how this calibration step can be used for two types of downstream analyses. When genotype calls for the normal sample are available they can be used to segment tumor ASCNs using any copy number segmentation algorithm. When these genotype calls are not avaiable we propose two algorithms that achieve joint segmentation of normal and tumor ASCNs, both leading to genotype calls for the normal sample as a by-product. Here we demonstrate the method using tumor-normal pairs from the Cancer Genome Atlas (TCGA) project. 
 
-\section{Conclusion:}Combined with single-array preprocessing methods, such as CRMA~v2, we conclude that ASCN estimates with high precisions can be obtained from a single pair of tumor-normal hybridizations.
 
-\section{Availability:}
+
+        \paragraph*{Conclusions:} Combined with single-array preprocessing methods, such as CRMA~v2, we conclude that ASCN estimates with high precisions can be obtained from a single pair of tumor-normal hybridizations.
+
+        \paragraph*{Availability:}
 A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
 
-
-\section{Contact:} 
-\href{hb@stat.berkeley.edu}{hb@stat.berkeley.edu}
 \end{abstract}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% INTRODUCTION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction}
+
+\ifthenelse{\boolean{publ}}{\begin{multicols}{2}}{}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Main Body begins here                %%
+%%                                          %%
+%% The Section headings here are those for  %%
+%% a Research article submitted to a        %%
+%% BMC-Series journal.                      %%  
+%%                                          %%
+%% If your article is not of this type,     %%
+%% then refer to the instructions for       %%
+%% authors on:                              %%
+%% http://www.biomedcentral.com/info/authors%%
+%% and change the section headings          %%
+%% accordingly.                             %% 
+%%                                          %%
+%% See the Results and Discussion section   %%
+%% for details on how to create sub-sections%%
+%%                                          %%
+%% use \cite{...} to cite references        %%
+%%  \cite{koon} and                         %%
+%%  \cite{oreg,khar,zvai,xjon,schn,pond}    %%
+%%  \nocite{smith,marg,hunn,advi,koha,mouse}%%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%
+%% Background %%
+%%
+\section*{Background}
 \label{secBackground}
 
-The Cancer Genome Atlas (TCGA) project~\citep{CollinsBarker_2007,TCGA_2008c} is a collaborative initiative to better understand cancer using existing large-scale whole-genome technologies.  Several tumor types are or are planned to be studied, including brain cancer (glioblastoma multiforma; GBM), ovarian cancer and lung cancer.  Several of these tumors are often agressive and requires immediate treatments to slow or stop the progression of the tumor growth.
+The Cancer Genome Atlas (TCGA) project~\cite{CollinsBarker_2007,TCGA_2008c} is a collaborative initiative to better understand cancer using existing large-scale whole-genome technologies.  Several tumor types are or are planned to be studied, including brain cancer (glioblastoma multiforma; GBM), ovarian cancer and lung cancer.  Several of these tumors are often agressive and requires immediate treatments to slow or stop the progression of the tumor growth.
+
+[...]
+Our main motivation is that intensity estimates after data preprocessing are not comparable across probes due to a SNP effect.
+\begin{TODO}
+  Illustration
+\end{TODO}
+
+
+In this paper we present a method for calibrating the allele-specific copy-number estimates (ASCNs) of a tumor tissue given ASCNs of matched normal tissue or blood extract.  The method does not require external references and it is only the relative ASCNs that are calibrated, that is, the total CN estimates are not adjusted.
+
+The realization of a single-sample method has several implications:
+(i) Each tumor-normal pair can be analyzed immediately without needing reference samples.
+(ii) Samples can be processed in parallel on different hosts/processors making it possible to decrease the processing time of large data sets.
+(iii) There is no need to reprocess a sample when new samples are produced, which further saves time and computational resources.
+Furthermore, (iv) the decision to filter out poor samples can be made later, because a poor sample will not affect the processing of other samples.
+More importantly, a single-sample method is
+(v) more practical for applied medical diagnostics, because individual patients can be analyzed at once, even when they come singly rather than in batches.  This may otherwise be a limiting factor in projects with a larger number of samples.
+
+The outline of this paper is as follows. 
+In Methods, we describe the underlying model and algorithm for the calibration method.
+In Results, we show that the signal-to-noise ratios (SNRs) of the calibrated ASCNs are significantly larger than corresponding non-calibrated estimates.
+In Discussion, we conclude the study, discuss potential limitations, ..., and give future research directions.
+
+The Cancer Genome Atlas (TCGA) project~\cite{CollinsBarker_2007,TCGA_2008c} is a collaborative initiative to better understand cancer using existing large-scale whole-genome technologies.  Several tumor types are or are planned to be studied, including brain cancer (glioblastoma multiforma; GBM), ovarian cancer and lung cancer.  Several of these tumors are often agressive and requires immediate treatments to slow or stop the progression of the tumor growth.
 
 [...]
 Our main motivation is that intensity estimates after data preprocessing are not comparable across probes due to a SNP effect.
@@ -123,15 +332,68 @@ In Results, we show that the signal-to-noise ratios (SNRs) of the calibrated ASC
 In Discussion, we conclude the study, discuss potential limitations, ..., and give future research directions.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% METHODS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{methods}
-\section{Calibration method}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Results and Discussion %%
+%%
+\section*{Results and Discussion}
+\label{secResults}
 
-\subsection{Model for allelic crosstalk}
+%--------------------------------------------------------------------------
+% DATA SET
+%--------------------------------------------------------------------------
+\subsection*{Data set}
+For this study, we used data from the TCGA project.  From the DCC data portal, we downloaded (Jan 2009) raw data (Level~1; CEL files) for a set of GBM tumor-normal pairs.
+For the purpose of illustrating our method, we will focus mainly on sample TCGA-02-0104 (vials 01A vs 10A), because it has a large number of CN aberrations on Chr~3 at different mean levels.
+
+\subsection*{Allele~B fraction before and after calibration}
+% \begin{figure}[!tpbh]
+\begin{center}
+\resizebox{0.96\columnwidth}{!}{\includegraphics{TCGA-02-0069,tumor,Chr05,fracB,beforeAndAfter}}%
+ \label{figROCs,chr05}
+\end{center}
+%  \caption{
+%  }
+% 
+% \end{figure}
+
+% \begin{figure}[!tpbh]
+\begin{center}
+  \resizebox{0.96\columnwidth}{!}{\includegraphics{TCGA-02-0069,tumor,Chr06,fracB,beforeAndAfter}}%
+\label{figROCs,chr06}
+\end{center}
+%  \caption{
+%  }
+% \end{figure}
+
+
+% \begin{figure}[!tpbh]
+\begin{center}
+  \resizebox{0.96\columnwidth}{!}{\includegraphics{TCGA-02-0069,tumor,Chr18,fracB,beforeAndAfter}}%
+ \label{figROCs,chr18}
+\end{center}
+%  \caption{
+%  }
+% \end{figure}
+
+
+
+
+    
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section*{Conclusions}
+  Text for this section \ldots
+
+
+  
+%%%%%%%%%%%%%%%%%%
+\section*{Methods}
+\section*{Calibration method}
+
+\subsection*{Model for allelic crosstalk}
 \label{secACCModel}
-In~\citet{BengtssonH_etal_2008} and \citet{BengtssonH_etal_2009b} it is argued that there exist crosstalk between the allele signals.  For instance, for a diploid SNP that is truly AA we will not only observe a great signal in the \PMA probes, but also some signal in the \PMB probes.  One explanation for this is crosshybridization due to the close similarity of probe sequences.  In the afformentioned studies, the authors propose an offset and crosstalk correction that is applied globally (to the six different heterozygote groups).  In addition, \citet{BengtssonH_etal_2009b} suggest to apply am additional nucleotide-position probe sequence normalization, which further corrects for imbalances between the two alleles.  It is shown that these corrections significantly improves the ability to detect total CN changes.
+In~\cite{BengtssonH_etal_2008} and \cite{BengtssonH_etal_2009b} it is argued that there exist crosstalk between the allele signals.  For instance, for a diploid SNP that is truly AA we will not only observe a great signal in the \PMA probes, but also some signal in the \PMB probes.  One explanation for this is crosshybridization due to the close similarity of probe sequences.  In the afformentioned studies, the authors propose an offset and crosstalk correction that is applied globally (to the six different heterozygote groups).  In addition, \cite{BengtssonH_etal_2009b} suggest to apply am additional nucleotide-position probe sequence normalization, which further corrects for imbalances between the two alleles.  It is shown that these corrections significantly improves the ability to detect total CN changes.
 However, when looking at the distribution of the allele-specific summaries for a particular SNP $j$ across a set of samples, that is $\{(\theta_{ijA},\theta_{ijA})\}_i$, it is clear that for some SNPs there exists a remaining crosstalk, which is likely to be SNP specific.  In Figure~XXX, the allele-specific summaries for SNP\_A-XXXXXX in data set XXXXXX are shown, which clearly shows that the two homozygote genotype groups AA and BB are not located along the axes, that is, they are not orthogonal. For this particular SNP the heterozygote groups is located along the diagonal as expected.
 
 We propose the following crosstalk model for estimated allele-specific summaries $\{(\theta_{ijA},\theta_{ijA})\}_i$:
@@ -150,10 +412,10 @@ where
 \end{equation}
 
 
-\subsection{Model}
+\subsection*{Model}
 \label{Model}
 
-\subsubsection{Allele-specific SNP signals and allele B fractions}
+\subsubsection*{Allele-specific SNP signals and allele B fractions}
 The allele~B fraction~\cite{PeifferD_etal_2006} for SNP $j=1,\ldots,J$ in the nnormal ($N$) tissue is defined as:
 \begin{equation}
   \beta_{N,j} = \frac{\theta_{N,j,A}}{\theta_{N,j}},
@@ -169,36 +431,36 @@ The allele~B fraction $\beta_{T,j}$ for the tumor ($T$) tissue/blood extract is 
 
 For a tumor-normal pair, we observe $(\beta_{N,j}, \beta_{T,j})$ at each SNP $j$.
 
-\subsubsection{Model for allele~B fraction signals}
+\subsubsection*{Model for allele~B fraction signals}
 Consider a SNP $j$ that is diploid in the normal tissue.  
 Let the true genotype be denoted by the true allele~B fraction $\mu_{N,j}$ with possible states $\{0,1/2,1\}$ corresponding to genotypes $\{\gAA,\gAB,\gBB\}$.
 
 Based on this, for SNP $j$ we model the observed allele~B fraction for the tumor and the normal pair as:
-\begin{equation}
+\begin{eqnarray}
   \beta_{T,j} = \mu_{T,j} + \delta_{j} + \eps_{T,j},\\
   \beta_{N,j} = \mu_{N,j} + \delta_{j} + \eps_{N,j},
   \label{eqnFracBModel}
-\end{equation}
+\end{eqnarray}
 where $\delta_{j}$ is a SNP-specific effect and $\eps_{T,j}$ and $\eps_{N,j}$ are independent zero-mean error terms. The difference $\mu_{T,j}-\mu_{N,j}$ can then be estimated straightforwardly from the data.
-\begin{equation}
+\begin{eqnarray}
   \widehat{\mu_{T,j}-\mu_{N,j}} = \beta_{T,j} - \beta_{N,j},
   \label{eqnTumorBoostEstimate}
-\end{equation}
+\end{eqnarray}
 
 \begin{TODO}
   Illustration: plot of $\beta_N$ vs $\beta_T$ (with lines with $y-x=c$ for $c \in$ seq(-1, 1, length=5), say) and tracks of $\beta_T$, $\beta_N$ and $\beta_T-\beta_N$. 
 \end{TODO}
 
-\section{Downstream analysis methods}
+\section*{Downstream analysis methods}
 \label{sec:downstr-analys-meth}
 
-\subsection{Segmentation of ASCN when normal genotypes are available}
+\subsection*{Segmentation of ASCN when normal genotypes are available}
 \label{sec:segm-ascn-with-genotypes}
 
-\subsection{Iterative segmentation of ASCN when normal genotypes are not available}
+\subsection*{Iterative segmentation of ASCN when normal genotypes are not available}
 \label{sec:iter-segm-ascn}
 
-\subsection{Quantile segmentation of ASCN when normal genotypes are not available}
+\subsection*{Quantile segmentation of ASCN when normal genotypes are not available}
 \label{sec:quant-segm-ascn}
 
 
@@ -207,132 +469,70 @@ where $\delta_{j}$ is a SNP-specific effect and $\eps_{T,j}$ and $\eps_{N,j}$ ar
 %--------------------------------------------------------------------------
 % EVALUATION METHODS
 %--------------------------------------------------------------------------
-\subsection{Evaluation}
+\subsection*{Evaluation}
 \label{secEvaluation}
 
 
 
-\subsection{Algorithm and implementation}
-The TumorBoost calibration method is available in R~\citep{RDevel_2008} package \pkg{aroma.cn} part of the \pkg{aroma.affymetrix} framework~\citep{BengtssonH_etal_2008b}.  The  method is designed and implemented to have bounded-memory usage, regardless of the number of samples/arrays processed. 
+\subsection*{Algorithm and implementation}
+The TumorBoost calibration method is available in R~\cite{RDevel_2008} package \pkg{aroma.cn} part of the \pkg{aroma.affymetrix} framework~\cite{BengtssonH_etal_2008b}.  The  method is designed and implemented to have bounded-memory usage, regardless of the number of samples/arrays processed. 
 Furthermore, the complexity of the algorithm is linear in the number of loci ($J$).
 Since it is a single-sample method, the tumor-normal pairs can be calibrated in parallel on multiple hosts/processors.
 The method applies estimates obtained by SNP technology.
-\end{methods}
-
-
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% RESULTS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Results}
-\label{secResults}
-
-%--------------------------------------------------------------------------
-% DATA SET
-%--------------------------------------------------------------------------
-\subsection{Data set}
-For this study, we used data from the TCGA project.  From the DCC data portal, we downloaded (Jan 2009) raw data (Level~1; CEL files) for a set of GBM tumor-normal pairs.
-For the purpose of illustrating our method, we will focus mainly on sample TCGA-02-0104 (vials 01A vs 10A), because it has a large number of CN aberrations on Chr~3 at different mean levels.
-
-\subsection{Allele~B fraction before and after calibration}
-\begin{figure}[!tpbh]
-\begin{center}
-  \resizebox{0.96\columnwidth}{!}{\includegraphics{TCGA-02-0069,tumor,Chr05,fracB,beforeAndAfter}}%
-\end{center}
- \caption{
- }
- \label{figROCs,chr05}
-\end{figure}
-
-\begin{figure}[!tpbh]
-\begin{center}
-  \resizebox{0.96\columnwidth}{!}{\includegraphics{TCGA-02-0069,tumor,Chr06,fracB,beforeAndAfter}}%
-\end{center}
- \caption{
- }
- \label{figROCs,chr06}
-\end{figure}
-
-
-\begin{figure}[!tpbh]
-\begin{center}
-  \resizebox{0.96\columnwidth}{!}{\includegraphics{TCGA-02-0069,tumor,Chr18,fracB,beforeAndAfter}}%
-\end{center}
- \caption{
- }
- \label{figROCs,chr18}
-\end{figure}
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% DISCUSSION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Discussion}
-\label{secDiscussion}
 
-\section{Appendix}
-teste
-\subsection{Old model}
-\label{sec:old-model}
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Authors contributions}
+    Text for this section \ldots
 
-\subsubsection{Allele-specific SNP signals and allele B fractions}
-The allele~B fraction~\cite{PeifferD_etal_2006} for SNP $j=1,\ldots,J$ in the nnormal ($N$) tissue is defined as:
-\begin{equation}
-  \beta_{N,j} = \frac{\theta_{N,j,A}}{\theta_{N,j}},
-  \label{eqnCnLogRatio}
-\end{equation}
-where $\theta_{N,j} = \theta_{N,j,A} + \theta_{N,j,B}$ is the non-polymorphic signal at locus $j$.
-\begin{TODO}
-  DEFINE $(\theta_{N,j,A}, \theta_{N,j,B})$.
-\end{TODO}
+    
 
-For a diploid SNP $j$, for which the genotype is either AA, AB or BB, we expect the allele~B fraction $\beta_{N,j}$ to be fall close to $0$, $1/2$, or $1$, respectively.
-The allele~B fraction $\beta_{T,j}$ for the tumor ($T$) tissue/blood extract is defined analoguously. Because we cannot expected a SNP in a tumor to be diploid at any random SNP, we cannot make any prediction on where $\beta_{T,j}$ falls.
-
-For a tumor-normal pair, we observe $(\beta_{N,j}, \beta_{T,j})$ at each SNP $j$.
-
-\subsubsection{Model for allele~B fraction signals}
-Consider a SNP $j$ that is diploid in the normal tissue.  
-Let the true genotype be denoted by the true allele~B fraction $\mu_{N,j}$ with possible states $\{0,1/2,1\}$ corresponding to genotypes $\{\gAA,\gAB,\gBB\}$.
-
-Based on this, for SNP $j$ we model the observed allele~B fraction for the tumor and the normal pair as:
-\begin{equation}
-  \beta_{T,j} = \mu_{T,j} + \delta_{j} + \eps_{T,j},\\
-  \beta_{N,j} = \mu_{N,j} + \delta_{j} + \eps_{N,j},
-  \label{eqnFracBModel}
-\end{equation}
-where $\delta_{j}$ is a SNP-specific effect and $\eps_{T,j}$ and $\eps_{N,j}$ are independent zero-mean error terms.
-
-An estimate of $\mu_{T,j}$ is then:
-\begin{equation}
-  \hat{\mu_{T,j}} = \beta_{T,j} - \hat{\delta_{j}},
-  \label{eqnTumorBoostEstimate}
-\end{equation}
-where $\hat{\delta_{j}} = \beta_{N,j} - \hat{\mu_{N,j}}$ and $\hat{\mu_{N,j}}$ is an estimate of the allele~B fraction of the normal, i.e. an estimate of the normal genotype of SNP $j$.
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ACKNOWLEDGEMENTS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
+  \ifthenelse{\boolean{publ}}{\small}{}
+
 We gratefully acknowledge the TCGA Consortium and all its members for the TCGA Project initiative, for providing samples, tissues, data processing, and making data and results available.
 
 \emph{Funding}: NCI grant U24 CA126551.
 
 \emph{Conflict of interest}: none declared.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% REFERENCES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{methods}
-\bibliography{bioinformatics-journals-abbr,hb-at-maths.lth.se}
-\bibliographystyle{natbib}
-\end{methods}
  
-%\begin{thebibliography}{}
-%\end{thebibliography} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  The Bibliography                       %%
+%%                                                         %%              
+%%  Bmc_article.bst  will be used to                       %%
+%%  create a .BBL file for submission, which includes      %%
+%%  XML structured for BMC.                                %%
+%%                                                         %%
+%%                                                         %%
+%%  Note that the displayed Bibliography will not          %% 
+%%  necessarily be rendered by Latex exactly as specified  %%
+%%  in the online Instructions for Authors.                %% 
+%%                                                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+{\ifthenelse{\boolean{publ}}{\footnotesize}{\small}
+
+%  \bibliographystyle{bmc_article}  % Style BST file
+%   \bibliography{bmc_article} }     % Bibliography file (usually '*.bib' ) 
+\bibliographystyle{bmc_article}
+\bibliography{bioinformatics-journals-abbr,hb-at-maths.lth.se}}
+% \bibliography{hb-at-maths.lth.se}
+
+%%%%%%%%%%%
+
+\ifthenelse{\boolean{publ}}{\end{multicols}}{}
+
+
+
+\end{bmcformat}
 \end{document}
+
+
+
+
