@@ -1,4 +1,4 @@
-\documentclass[]{bioinfo}
+\documentclass[draft]{bioinfo}
 \copyrightyear{2009}
 \pubyear{2009}
 
@@ -8,9 +8,12 @@
 \usepackage{amsmath} 
 % \usepackage{amsfonts} 
 \usepackage{xspace}
+\usepackage{bm} \bm{}
 \usepackage{graphicx}
 \usepackage{timestamp} 
 
+\newcommand{\PMA}{\ensuremath{\textnormal{PM}_\textnormal{A}}\xspace}
+\newcommand{\PMB}{\ensuremath{\textnormal{PM}_\textnormal{B}}\xspace}
 \newcommand{\gAA}{\textnormal{AA}\xspace}
 \newcommand{\gAB}{\textnormal{AB}\xspace}
 \newcommand{\gBB}{\textnormal{BB}\xspace}
@@ -23,6 +26,23 @@
 %\newcommand{\CPs}{\ensuremath{\textnormal{CPs}}\xspace}
 \newcommand{\CP}{\ensuremath{\textnormal{change point}}\xspace}
 \newcommand{\CPs}{\ensuremath{\textnormal{change points}}\xspace}
+
+\newcommand{\bx}{\mathbf{x}\xspace}
+\newcommand{\by}{\mathbf{y}\xspace}
+\newcommand{\bz}{\mathbf{z}\xspace}
+\newcommand{\ba}{\mathbf{a}\xspace}
+\newcommand{\bb}{\mathbf{b}\xspace}
+\newcommand{\bA}{\mathbf{A}\xspace}
+\newcommand{\bB}{\mathbf{B}\xspace}
+\newcommand{\bC}{\mathbf{C}\xspace}
+\newcommand{\bS}{\mathbf{S}\xspace}
+\newcommand{\bU}{\mathbf{U}\xspace}
+\newcommand{\bV}{\mathbf{V}\xspace}
+\newcommand{\bW}{\mathbf{W}\xspace}
+\newcommand{\beps}{\bm{\varepsilon}\xspace}
+\newcommand{\btheta}{\bm{\theta}\xspace}
+\newcommand{\bnu}{\bm{\nu}\xspace}
+
 
 % Comment the 2nd row to highlight updates
 % \newcommand{\updated}[2][red]{{\color{#1}{#2}}\xspace}
@@ -108,6 +128,27 @@ In Discussion, we conclude the study, discuss potential limitations, ..., and gi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{methods}
 \section{Calibration method}
+
+\subsection{Model for allelic crosstalk}
+\label{secACCModel}
+In~\citet{BengtssonH_etal_2008} and \citet{BengtssonH_etal_2009b} it is argued that there exist crosstalk between the allele signals.  For instance, for a diploid SNP that is truly AA we will not only observe a great signal in the \PMA probes, but also some signal in the \PMB probes.  One explanation for this is crosshybridization due to the close similarity of probe sequences.  In the afformentioned studies, the authors propose an offset and crosstalk correction that is applied globally (to the six different heterozygote groups).  In addition, \citet{BengtssonH_etal_2009b} suggest to apply am additional nucleotide-position probe sequence normalization, which further corrects for imbalances between the two alleles.  It is shown that these corrections significantly improves the ability to detect total CN changes.
+However, when looking at the distribution of the allele-specific summaries for a particular SNP $j$ across a set of samples, that is $\{(\theta_{ijA},\theta_{ijA})\}_i$, it is clear that for some SNPs there exists a remaining crosstalk, which is likely to be SNP specific.  In Figure~XXX, the allele-specific summaries for SNP\_A-XXXXXX in data set XXXXXX are shown, which clearly shows that the two homozygote genotype groups AA and BB are not located along the axes, that is, they are not orthogonal. For this particular SNP the heterozygote groups is located along the diagonal as expected.
+
+We propose the following crosstalk model for estimated allele-specific summaries $\{(\theta_{ijA},\theta_{ijA})\}_i$:
+\begin{equation}
+  \btheta_{ij} = \bS_i \bx_{ij} + \beps_{ij},
+  \label{eqnACCi}
+\end{equation}
+where 
+\begin{equation}
+ \bS_i = 
+ \begin{bmatrix}
+   S_{iAA} & S_{iAB} \\
+   S_{iBA} & S_{iBB}
+ \end{bmatrix}
+  \label{eqnACCii}
+\end{equation}
+
 
 \subsection{Model}
 \label{Model}
