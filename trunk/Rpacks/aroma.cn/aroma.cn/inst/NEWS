@@ -1,6 +1,13 @@
 Package: aroma.cn
 =================
 
+Version: 0.3.0x [2009-04-29]
+o ALPHA: Added TumorBoostNormalization.
+o INTERNAL: Added foundations for TumorBoost, i.e. in 
+  memory classes such as TotalAndFracBSnpData.
+o INTERNAL: Added findPeaksAndValleys().
+
+
 Version: 0.2.2 [2009-02-23]
 o Minor update in order to work with new RawGenomicSignals.
 

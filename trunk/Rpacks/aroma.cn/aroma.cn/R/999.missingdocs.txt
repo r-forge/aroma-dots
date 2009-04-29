@@ -21,3 +21,25 @@
   getParameters.TotalCnKernelSmoothing smoothRawCopyNumbers
   smoothRawCopyNumbers.TotalCnKernelSmoothing
   smoothRawCopyNumbers.TotalCnSmoothing
+  asCartesianSnpData asCartesianSnpData.CartesianSnpData
+  asCartesianSnpData.PolarSnpData asCartesianSnpData.TotalFracBSnpData
+  asPolarSnpData asPolarSnpData.CartesianSnpData
+  asPolarSnpData.PolarSnpData asPolarSnpData.TotalFracBSnpData
+  asTotalFracBSnpData asTotalFracBSnpData.CartesianSnpData
+  asTotalFracBSnpData.PolarSnpData
+  asTotalFracBSnpData.TotalFracBSnpData callGenotypes
+  callGenotypes.SnpData callGenotypes.TotalFracBSnpData
+  CartesianSnpData findPeaksAndValleys findPeaksAndValleys.numeric
+  pairedBoost pairedBoost.CartesianSnpData pairedBoost.PolarSnpData
+  pairedBoost.TotalFracBSnpData plot.CartesianSnpData plot.PolarSnpData
+  plot.SnpData plot.TotalFracBSnpData PolarSnpData SnpData
+  TotalFracBSnpData
+ as.character.TumorBoostNormalization getDataSets
+ getDataSets.TumorBoostNormalization
+ getInputDataSet.TumorBoostNormalization getNormalDataSet
+ getNormalDataSet.TumorBoostNormalization getNormalGenotypeCallSet
+ getNormalGenotypeCallSet.TumorBoostNormalization
+ getOutputDataSet.TumorBoostNormalization getOutputPath
+ getOutputPath.TumorBoostNormalization
+ getRootPath.TumorBoostNormalization
+ nbrOfFiles.TumorBoostNormalization process.TumorBoostNormalization
