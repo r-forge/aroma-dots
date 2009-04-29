@@ -230,7 +230,7 @@
       
         \paragraph*{Results:} We propose a single-sample method for calibrating ASCN estimates of a tumor based on ASCN estimates of a paired normal. The method applies to any paired tumor-normal copy number estimates regardless of technology and generation. We demonstrate that ASCNs of Affymetrix genotyping arrays have a dramatically increased signal to noise ratio after calibration.
 
-        \paragraph*{Conclusions:} Combined with single-array preprocessing methods, such as CRMA~v2, we conclude that ASCN estimates with high precisions can be obtained from a single pair of tumor-normal hybridizations, and recommend using paired tumor-normal DNA microrarry experiments when applicable.
+        \paragraph*{Conclusions:} Combined with single-array preprocessing methods, such as CRMA~v2, we conclude that ASCN estimates with high precisions can be obtained from a single pair of tumor-normal hybridizations, and recommend using paired tumor-normal DNA microrarray experiments when applicable.
 
         \paragraph*{Availability:}
 A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
@@ -284,7 +284,11 @@ A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
 \item paired tumor/normals sometimes available
 \end{itemize}
 
-The main motivation of this paper is that ASCN estimates after data preprocessing are not comparable across probes due to a systematic SNP effect. This effect is illustrated by Figure XXX. 
+\begin{TODO}
+  mention that TCNs are usually calibrated using a reference (either paired normal or a robust average of samples) to cancel a SNP (or probe sequence)-specific affinity. Here we argue that some kind of calibration is also needed for the fracB esimates.
+\end{TODO}
+
+The main motivation of this paper is that ASCN estimates after data preprocessing are not comparable across probes due to a systematic SNP effect. Consequences (symptoms) of this effect are shown in Figure XXX. 
 \begin{TODO}
 Update these figures
 \end{TODO}
@@ -293,19 +297,18 @@ Update these figures
   \includegraphics[height=5cm]{betaNVsBetaT}
 }
 %\caption{
-\emph{Fraction of allele B $(\beta)$ in a tumor and its matched normal on chrosomosome XXX. Each point corresponds to a SNP. Left: $\beta$  along chromosome XXX for the tumor (top) and its matched normal (bottom). Right: Scatter plot of $\beta$ in the tumor vs $\beta$ in the normal. Black '+' indicate the location of normal genotype clusters: $(0,0)$, $(1/2,1/2)$ and $(1,1)$. Data were preprocessed using the CRMA~v2 method~\cite{BengtssonH_etal_2009b}.
+\emph{Fraction of allele B $(\beta)$ in a tumor and its matched normal on chrosomosome XXX. Each point corresponds to a SNP. Left: $\beta$  along chromosome XXX for the tumor (top) and the normal (bottom). Right: Scatter plot of $\beta$ in the tumor vs $\beta$ in the normal. Black '+' indicate the expected location of normal genotype clusters: $(0,0)$, $(1/2,1/2)$ and $(1,1)$. Data were preprocessed using the CRMA~v2 method~\cite{BengtssonH_etal_2009b}.
 }
 %}
 
-In figure XXX (right), most points are scattered along the diagonal but there is considerable deviation from the expected location of genotype clusters, even in the normal when no (or very few) genomic alterations are expected. Interestingly, this deviation is quite reproducible between the tumor and the normal. As a consequence of this deviation (left), genomic profiles of allele B fraction are quite noisy both in th tumor and the normal. 
-
+There is considerable deviation from the expected location of genotype clusters, even in the normal when no (or very few) genomic alterations are expected (Figure XXX, right). Interestingly, this deviation is quite reproducible between the tumor and the normal: most points are scattered along the diagonal. As a consequence of this deviation (left), genomic profiles of allele B fraction are quite noisy both in th tumor and the normal. 
 
 \begin{PN}
   Shall we add a second illustration to illustrate the motivation for downstream analyses, ie  $(\theta_A,\theta_B)$ for a given sample across SNPs in a region as in Nancy's talk ?
 \resizebox{0.96\columnwidth}{!}{\includegraphics{thetaAcrossSNPs}}
 \end{PN}
 
-In this paper we present a method for calibrating the allele-specific copy-number estimates (ASCNs) of a tumor tissue given ASCNs of matched normal tissue or blood extract.  The method does not require external references and it is only the relative ASCNs that are calibrated, that is, the total CN estimates are not adjusted.
+In this paper we present a method calibrating the allele-specific copy-number estimates (ASCNs) of a tumor tissue given ASCNs of matched normal tissue or blood extract.  The method does not require external references and it is only the relative ASCNs that are calibrated, that is, the total CN estimates are not adjusted.
 
 
 
@@ -394,7 +397,7 @@ where
 %--------------------------------------------------------------------------
 \subsection*{Evaluation methods}
 \label{secEvaluation}
-cf CRMAv2. Given a region with a known alteration, considering that Hets are known, show that the two classesare better separated after calibration than before. Focus on copy neutral events that could not be detected from TCN\\
+cf CRMA~v2 paper. Given a region with a known alteration, considering that Hets are known, show that the two classes are better separated after calibration than before. Focus on copy neutral events that could not be detected from TCN.\\
 
 Show sensitivity to genotype calls by comparing results with naive genotyping, TGCA genotypes, and ``random'' genotypes.
 
