@@ -43,3 +43,7 @@
  getOutputPath.TumorBoostNormalization
  getRootPath.TumorBoostNormalization
  nbrOfFiles.TumorBoostNormalization process.TumorBoostNormalization
+ getAsteriskTags.TumorBoostNormalization
+ getFullName.TumorBoostNormalization getName.TumorBoostNormalization
+ getPath.TumorBoostNormalization getTags.TumorBoostNormalization
+ setTags.TumorBoostNormalization

@@ -94,6 +94,12 @@
 \alias{getRootPath.TumorBoostNormalization}
 \alias{nbrOfFiles.TumorBoostNormalization}
 \alias{process.TumorBoostNormalization}
+\alias{getAsteriskTags.TumorBoostNormalization}
+\alias{getFullName.TumorBoostNormalization}
+\alias{getName.TumorBoostNormalization}
+\alias{getPath.TumorBoostNormalization}
+\alias{getTags.TumorBoostNormalization}
+\alias{setTags.TumorBoostNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that
