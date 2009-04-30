@@ -145,6 +145,7 @@
 \newcommand{\btheta}{\bm{\theta}\xspace}
 \newcommand{\bnu}{\bm{\nu}\xspace}
 
+\usepackage{fancyhdr}
 
 % Comment the 2nd row to highlight updates
 % \newcommand{\updated}[2][red]{{\color{#1}{#2}}\xspace}
@@ -154,6 +155,10 @@
 
 \newenvironment{TODO}{\color{red}\textbf{TODO:}}{}
 \newenvironment{PN}{\color{blue}\textbf{PN:}}{}
+
+\pagestyle{fancy}
+\lhead{\sf TumorBoost}
+\rhead{\sf \timestamp}
 
 
 % Begin ...
@@ -223,10 +228,11 @@
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\noindent { \sf This version: \timestamp}
 
 \begin{abstract}
         % Do not use inserted blank lines (ie \\) until main body of text.
-        \paragraph*{Background:} High-throughput genotyping microarrays can be used not only to assess changes in total DNA copy number but also changes in allele-specific copy numbers (ASCNs). Even after state of the art preprocessing methods, Affymetrix genotyping arrays still suffer from systematic effects that make them difficult to use effective for downstream ASCN studies in cancers.
+        \paragraph*{Background:} High-throughput genotyping microarrays can be used not only to assess changes in total DNA copy number but also changes in allele-specific copy numbers (ASCNs). Even after state of the art preprocessing methods, ASCN estimates for Affymetrix genotyping arrays still suffer from systematic effects that make them difficult to use effectively for downstream studies in cancers.
       
         \paragraph*{Results:} We propose a single-sample method for calibrating ASCN estimates of a tumor based on ASCN estimates of a paired normal. The method applies to any paired tumor-normal estimates regardless of technology and generation. We demonstrate that our method leads to a much clearer separation between different ASCN states, including \emph{copy number neutral events} that cannot be detected using total copy numbers only.
 
@@ -234,15 +240,9 @@
 
         \paragraph*{Availability:}
 A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
-
 \end{abstract}
 
-
-
 \ifthenelse{\boolean{publ}}{\begin{multicols}{2}}{}
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -270,7 +270,10 @@ A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   \begin{PN}
-    single ``sample'' or single ``individual'' method ?
+    \begin{itemize}
+    \item single ``sample'' or single ``individual'' method ?
+ \end{itemize}
+
   \end{PN}
 
   \begin{TODO}
@@ -286,18 +289,23 @@ A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
 \section*{Background}
 \label{secBackground}
 
-\begin{itemize}
-\item High-throughput genotyping microarrays for cancer studies: SNP, TCN, ASCN...
-\item already several preprocessing methods out there, mostly directed to total copy number analysis
-\item paired tumor/normals sometimes available
-\end{itemize}
+The development of microarray technologies to assess DNA copy number changes over the past few years has been triggered by the fact that genomic alterations are hallmarks of gene deregulation and genome instability in cancers~\cite{albertson03chromosome,hanahan00the-hallmarks}. 
 
-The typical output of genotyping microarray preprocessing method for a given SNP unit is an estimation of the total copy number --- the sum of allele A and allele B intensities divided by a reference --- and the fraction $\beta$ of allele B intensity relative to the total intensity. Together, these two quantities determine the \emph{raw allele-specific copy numbers} at each SNP locus.
+Recent technologies include genotyping microarrays that quantify not only total copy numbers (TCN) but also allele-specific copy numbers (ASCNs), that is, allelic contributions of each allele to TCN. ASCNs estimates are crucial as they can pinpoint genomic alterations that are TCN neutral, such as uniparental disomy (UPD), or allele-specific amplifications.
 
-%  $TCN = 2~\frac{\theta}{\theta^R}$ and the fraction of allele B $\beta = \frac{\theta_B}{\theta}$ are often reported, where $\theta = \theta_A + \theta_B$ is the total intensity for the SNP and $\theta^R$ is the total intensity for the same SNP for a reference, which is typically either a robust average of a large set of arrays or a paired normal.
+\begin{TODO}
+  Technologies: Illumina and Affy.
+\end{TODO}
+
+Several preprocessing methods have been developped for these technologies~\cite{Affymetrix_2008m,BengtssonH_etal_2009b,BengtssonH_etal_2008,KornJ_etal_2008,LiWong_2001}.
+\begin{TODO}
+  REFs for Illumina preprocessing ?
+\end{TODO}
+The typical output of genotyping microarray preprocessing method for a given SNP unit is an estimation of the total copy number --- the sum of allele A and allele B intensities divided by a reference --- and the fraction $\beta$ of allele B intensity relative to the total intensity. Together, these two quantities determine the raw ASCNs at each SNP locus.
 
 \subsection*{SNP effects after preprocessing}
-The main motivation of this paper is that $\beta$ estimates after preprocessing are not comparable across probes due to a systematic \emph{SNP effect}. Consequences (symptoms) of this effect are shown in Figure XXX. 
+
+The main motivation of this paper is that existing preprocessing methodsdo not correct for SNP-specific effects, that result in SNP-specific distributions of genotype clusters. As a consequence, $\beta$ estimates are not comparable across probes, as illustrated in Figure XXX. 
 
 \begin{TODO}
 Update these figures
@@ -608,7 +616,7 @@ We gratefully acknowledge the TCGA Consortium and all its members for the TCGA P
 %  \bibliographystyle{bmc_article}  % Style BST file
 %   \bibliography{bmc_article} }     % Bibliography file (usually '*.bib' ) 
 \bibliographystyle{bmc_article}
-\bibliography{bioinformatics-journals-abbr,hb-at-maths.lth.se}}
+\bibliography{bioinformatics-journals-abbr,hb-at-maths.lth.se,pnRefs}}
 % \bibliography{hb-at-maths.lth.se}
 
 %%%%%%%%%%%
@@ -618,6 +626,7 @@ We gratefully acknowledge the TCGA Consortium and all its members for the TCGA P
 
 
 \end{bmcformat}
+
 \end{document}
 
 
