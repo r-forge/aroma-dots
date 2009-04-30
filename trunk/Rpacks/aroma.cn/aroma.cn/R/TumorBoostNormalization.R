@@ -30,7 +30,7 @@
 #
 # @author
 #*/########################################################################### 
-setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NULL, ...) {
+setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NULL, tags=NULL, ...) {
   # Validate arguments
   if (!is.null(dsT)) {
     dsList <- list(dsT=dsT, dsN=dsN, gcN=gcN);
@@ -71,11 +71,15 @@ setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NUL
     } # for (jj ...)
   }
 
-  extend(Object(), "TumorBoostNormalization",
+  this <- extend(Object(), "TumorBoostNormalization",
     .dsT = dsT,
     .dsN = dsN,
     .gcN = gcN
   );
+
+  setTags(this, tags);
+
+  this;
 })
 
 
@@ -100,6 +104,64 @@ setMethodS3("as.character", "TumorBoostNormalization", function(x, ...) {
 }, private=TRUE)
 
 
+setMethodS3("getAsteriskTags", "TumorBoostNormalization", function(this, collapse=NULL, ...) {
+  tags <- "TBN";
+
+  tags;
+}, private=TRUE)
+
+
+setMethodS3("getName", "TumorBoostNormalization", function(this, ...) {
+  ds <- getInputDataSet(this);
+  getName(ds);
+})
+
+setMethodS3("getTags", "TumorBoostNormalization", function(this, collapse=NULL, ...) {
+  # "Pass down" tags from input data set
+  ds <- getInputDataSet(this);
+  tags <- getTags(ds, collapse=collapse);
+
+  # Get class-specific tags
+  tags <- c(tags, this$.tags);
+
+  # Update default tags
+  tags[tags == "*"] <- getAsteriskTags(this, collapse=",");
+
+  # Collapsed or split?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  } else {
+    tags <- unlist(strsplit(tags, split=","));
+  }
+
+  if (length(tags) == 0)
+    tags <- NULL;
+
+  tags;
+})
+
+
+setMethodS3("setTags", "TumorBoostNormalization", function(this, tags="*", ...) {
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- trim(unlist(strsplit(tags, split=",")));
+    tags <- tags[nchar(tags) > 0];
+  }
+  
+  this$.tags <- tags;
+})
+
+ 
+setMethodS3("getFullName", "TumorBoostNormalization", function(this, ...) {
+  name <- getName(this);
+  tags <- getTags(this);
+  fullname <- paste(c(name, tags), collapse=",");
+  fullname <- gsub("[,]$", "", fullname);
+  fullname;
+})
+
+
 setMethodS3("getDataSets", "TumorBoostNormalization", function(this, ...) {
   list(tumor=this$.dsT, normal=this$.dsN, normalCalls=this$.gcN);
 }, protected=TRUE)
@@ -120,15 +182,37 @@ setMethodS3("getRootPath", "TumorBoostNormalization", function(this, ...) {
   "totalAndFracBData";
 })
 
-setMethodS3("getOutputPath", "TumorBoostNormalization", function(this, ...) {
+setMethodS3("getPath", "TumorBoostNormalization", function(this, create=TRUE, ...) {
+  # Create the (sub-)directory tree for the data set
+
+  # Root path
   rootPath <- getRootPath(this);
+
+  # Full name
+  fullname <- getFullName(this);
+
+  # Chip type    
   ds <- getInputDataSet(this);
-  fullname <- getFullName(ds);
-  tags <- "TBN";
-  fullname <- paste(c(fullname, tags), collapse=",");
   chipType <- getChipType(ds, fullname=FALSE);
-  path <- file.path(rootPath, fullname, chipType);
-  path <- Arguments$getWritablePathname(path);
+
+  # The full path
+  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+
+  # Verify that it is not the same as the input path
+  inPath <- getPath(getInputDataSet(this));
+  if (getAbsolutePath(path) == getAbsolutePath(inPath)) {
+    throw("The generated output data path equals the input data path: ", path, " == ", inPath);
+  }
+
+  # Create path?
+  if (create) {
+    if (!isDirectory(path)) {
+      mkdirs(path);
+      if (!isDirectory(path))
+        throw("Failed to create output directory: ", path);
+    }
+  }
+
   path;
 })
 
@@ -141,7 +225,7 @@ setMethodS3("nbrOfFiles", "TumorBoostNormalization", function(this, ...) {
 
 setMethodS3("getOutputDataSet", "TumorBoostNormalization", function(this, ...) {
   ds <- getInputDataSet(this);
-  path <- getOutputPath(this);
+  path <- getPath(this);
   res <- fromFiles(ds, path=path, ...);
   res;
 })
@@ -164,7 +248,7 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
   verbose && enter(verbose, "TumorBoost normalization");
   nbrOfFiles <- nbrOfFiles(this);
   verbose && cat(verbose, "Number of arrays: ", nbrOfFiles);
-  outPath <- getOutputPath(this);
+  outPath <- getPath(this);
   dsList <- getDataSets(this);
   for (kk in seq(length=nbrOfFiles)) {
     dfList <- lapply(dsList, FUN=getFile, kk);
