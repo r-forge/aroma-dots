@@ -270,10 +270,12 @@ A single-sample bounded-memory implementation is available in \pkg{aroma.cn}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   \begin{PN}
+Vocabulary:
     \begin{itemize}
     \item single ``sample'' or single ``individual'' method ?
+    \item ``normal hybridization'', ``normal sample'', ``normal tissue'' ? Define it once and stick to it.
+    \item ``allele B fraction'' / ``fraction of allele B''
  \end{itemize}
-
   \end{PN}
 
   \begin{TODO}
@@ -305,10 +307,14 @@ The typical output of genotyping microarray preprocessing method for a given SNP
 
 \subsection*{SNP effects after preprocessing}
 
-The main motivation of this paper is that existing preprocessing methodsdo not correct for SNP-specific effects, that result in SNP-specific distributions of genotype clusters. As a consequence, $\beta$ estimates are not comparable across probes, as illustrated in Figure XXX. 
+The main motivation of this paper is that existing preprocessing methodsdo not fully correct for SNP-specific effects, that result in SNP-specific distributions of genotype clusters.
+\begin{TODO}
+  Mention, credit and discuss $^\star$RLMM and Bird$^\star$ approaches here.
+\end{TODO}
+ As a consequence, $\beta$ estimates are not well suited for comparisons across loci along the genome, as illustrated in Figure XXX. 
 
 \begin{TODO}
-Update these figures
+Update these figures. Highlight a few points in both panels to illustrate the correspondence between the plots.
 \end{TODO}
 
 \resizebox{0.96\columnwidth}{!}{
@@ -321,23 +327,31 @@ Update these figures
 }
 %}
 
-There is considerable deviation from the expected location of genotype clusters, even in the normal when no (or very few) genomic alterations are expected (Figure XXX, right). Interestingly, this deviation is quite reproducible between the tumor and the normal: most points are scattered along the diagonal. As a consequence of this deviation, genomic profiles of allele B fraction are quite noisy both in the tumor and the normal (Figure XXX, right). 
+There is considerable deviation from the expected location of genotype clusters, even in the normal when no (or very few) genomic alterations are expected (Figure XXX, right).
+\begin{TODO}
+  make the text understandable without the figure caption.
+\end{TODO}
+Interestingly, this deviation is quite reproducible between the tumor and the normal: most points are scattered along the diagonal. As a consequence of this deviation, genomic profiles of allele B fraction show a high variability are  both in the tumor and the normal (Figure XXX, right). 
 
-\begin{PN}
-  Shall we add a second illustration to illustrate the motivation for downstream analyses, ie  $(\theta_A,\theta_B)$ for a given sample across SNPs in a region as in Nancy's talk ?
+\begin{TODO}
+  Add 2 other plots: $\beta, beta$ for a T/N pair with alterations in the tumor and a pair of unrelated samples.
+\end{TODO}
+
+\begin{TODO}
+  add a second illustration to illustrate the motivation for downstream analyses, ie  $(\theta_A,\theta_B)$ for a given sample across SNPs in a region as in Nancy's talk:
 \resizebox{0.96\columnwidth}{!}{\includegraphics{thetaAcrossSNPs}}
-\end{PN}
+\end{TODO}
 
 \subsection*{Proposed method}
 
 In this paper we present a method calibrating the allele-specific copy-number estimates (ASCNs) of a tumor tissue given ASCNs of matched normal tissue or blood extract.  The method does not require external references and it is only the relative ASCNs that are calibrated: total CN estimates are neither used as an input nor adjusted.
 
-We show that our method leads to a much clearer separation between different ASCN states, including \emph{copy number neutral events}. Such events cannot be detected using total copy numbers only; however, detecting them is crucial in cancer studies as they can help finding new tumor suppressor genes.
+We show that our method leads to a much clearer separation between different ASCN states, including \emph{copy number neutral events}. Such events cannot be detected using total copy numbers alone; however, detecting them is often crucial, for example in cancer studies where they can help finding new tumor suppressor genes.
 
-Genotypes \emph{of the normal} hybridization are used for the calibration, hence the performance of our method depends on genotype quality. We compare the results obtained using genotypes inferred using a set of samples to those of a naive single-array genotyping
 \begin{PN}
-  add ``based on local minima of the density of $\beta$ across SNPs'' ?
-\end{PN}. We argue that the proposed naive genotyping algorithm yields calibrated $\beta$ values that are good enough for typical downstream analyses such as the search of regions of Loss of Heterozygosity (LOH) or ASCN segmentation, as all these analyses  involve smoothing or segmentation of $\beta$ along the genome. The calibration method obtained using this genotyping algorithm is therefore a purely \emph{single-sample method}.
+  Next paragraph is pretty much repeated in the Evaluation section...
+\end{PN}
+Genotypes \emph{of the normal} hybridization are used for the calibration, hence the performance of our method depends on genotype quality. We compare the results obtained using genotypes inferred using a set of samples to those of a naive single-array genotyping. We argue that the proposed naive genotyping algorithm yields calibrated $\beta$ values that are good enough for typical downstream analyses such as the search of regions of Loss of Heterozygosity (LOH) or ASCN segmentation, as all these analyses  involve smoothing or segmentation of $\beta$ along the genome. The calibration method obtained using this genotyping algorithm is therefore a purely \emph{single-sample method}.
 
 
 \subsection*{A single sample method}
@@ -352,40 +366,72 @@ More importantly, a single-sample method is
 \subsection*{Outline}
 The outline of this paper is as follows. 
 In Methods, we describe the underlying model, its estimation, and an interpretation in terms of allelic crosstalk. In Results, we show that the signal-to-noise ratios (SNRs) of the calibrated ASCNs are significantly larger than corresponding non-calibrated estimates.
-In Discussion, we conclude the study, discuss potential limitations, ..., and give future research directions.
+In Discussion, we conclude the study, discuss potential limitations, extensions, and give future research directions.
 
 
  
 %%%%%%%%%%%%%%%%%%
 \section*{Methods}
-Let $(\theta_{N,j,A}, \theta_{N,j,B})$ be the signal intensities after preprocessing for SNP $j$ in the Normal (N) tissue, and $(\theta_{T,j,A}, \theta_{t,j,B})$ the corresponding intensitites in the tumor (T) tissue. The allele~B fraction~\cite{PeifferD_etal_2006} for SNP $j=1,\ldots,J$ in the nnormal ($N$) tissue is defined as:
+Let $(\theta_{N,j,A}, \theta_{N,j,B})$ be the signal intensities after preprocessing for SNP $j$ in the normal ($N$) tissue, and $(\theta_{T,j,A}, \theta_{t,j,B})$ the corresponding intensitites in the tumor ($T$) tissue. The allele~B fraction~\cite{PeifferD_etal_2006} for SNP $j=1,\ldots,J$ in the normal is defined as:
 \begin{eqnarray*}
   \beta_{N,j} = \frac{\theta_{N,j,A}}{\theta_{N,j}},
 %   \label{eqnCnLogRatio}
 \end{eqnarray*}
 where $\theta_{N,j} = \theta_{N,j,A} + \theta_{N,j,B}$ is the non-polymorphic signal at locus $j$.
-For a diploid SNP $j$, for which the genotype is either AA, AB or BB, we expect the allele~B fraction $\beta_{N,j}$ to be fall close to $0$, $1/2$, or $1$, respectively.
-The allele~B fraction $\beta_{T,j}$ for the tumor ($T$) tissue/blood extract is defined analoguously. Because we cannot expected a SNP in a tumor to be diploid at any random SNP, we cannot make any prediction on where $\beta_{T,j}$ falls. For a tumor-normal pair, we observe $(\beta_{N,j}, \beta_{T,j})$ at each SNP $j$.
+For a diploid SNP $j$, for which the genotype is either AA, AB or BB, we expect the allele~B fraction $\beta_{N,j}$ to be close to $0$, $1/2$, or $1$, respectively.
+The allele~B fraction $\beta_{T,j}$ for the tumor is defined analoguously. Because we cannot expected a SNP in a tumor to be diploid at any random SNP, we cannot predict where $\beta_{T,j}$ falls. For a tumor-normal pair, we observe $(\beta_{N,j}, \beta_{T,j})$ at each SNP $j$.
 
-\subsection*{Model and estimation}
+\subsection*{Proposed model and its estimation}
 Consider a SNP $j$ that is diploid in the normal tissue.  
-Let the true genotype be denoted by the true allele~B fraction $\mu_{N,j}$ with possible states $\{0,1/2,1\}$ corresponding to genotypes $\{\gAA,\gAB,\gBB\}$.
+Let the true genotype be denoted by the true allele~B fraction $\mu_{N,j}$ with possible states $\{0,1/2,1\}$ corresponding to genotypes $\{\gAA,\gAB,\gBB\}$. For the tumor, the true allele~B fraction is denoted by  $\mu_{T,j} \in [0,1]$. As the tumor needs not be diploid at SNP $j$, and the ``tumor sample'' can be contaminated by normal tissue, $\mu_{T,j}$ cannot be restricted \textit{a priori} to a discrete state space.
 
-Based on this, for SNP $j$ we model the observed allele~B fraction for the tumor and the normal pair as:
-\begin{eqnarray*}
-  \beta_{T,j} & = & \mu_{T,j} + \delta_{j} + \eps_{T,j}\\
-  \beta_{N,j} & = & \mu_{N,j} + \delta_{j} + \eps_{N,j}
-%   \label{eqnFracBModel}
-\end{eqnarray*}
-where $\delta_{j}$ is a SNP-specific effect and $\eps_{T,j}$ and $\eps_{N,j}$ are independent zero-mean error terms. The difference $\mu_{T,j}-\mu_{N,j}$ can then be estimated straightforwardly from the data.
-\begin{eqnarray*}
-  \widehat{\mu_{T,j}-\mu_{N,j}} = \beta_{T,j} - \beta_{N,j}\,.
-%   \label{eqnTumorBoostEstimate}
-\end{eqnarray*}
+Based on this, for SNP $j$ we model the observed allele~B fraction for the tumor and the normal pair as
+\begin{displaymath}
+  \begin{cases}
+    \beta_{T,j} & =  \mu_{T,j} + \delta_{j} + \eps_{T,j}\\
+    \beta_{N,j}  & =  \mu_{N,j} + \delta_{j} + \eps_{N,j}
+    % \label{eqnFracBModel}
+  \end{cases}\,,
+\end{displaymath}
+
+where $\delta_{j}$ is a SNP-specific effect and $\eps_{T,j}$ and $\eps_{N,j}$ are independent zero-mean error terms. The main assumption of this model is that $\delta_{j}$ is the same for the tumor and the normal hybridization. It is motivated by the high correlation observed in Figure 1, right.
+
+\begin{TODO}
+  Explain what we do for X and Y chromosomes where the normal needs not be diploid.
+\end{TODO}
+
+The normal genotype $\mu_{N,j}$ is much easier to estimate than $\mu_{N,j}$ because it can be safely assumed to be either 0, 1/2, or 1. Assuming that such an estimate $\widehat{\mu_{N,j}}$ is available, $\delta_j$ can be estimated by  $\beta_{N,j} - \widehat{\mu_{N,j}}$ and a straightforward estimator of $\mu_{T,j}$ is 
+\begin{displaymath}
+     \widehat{\mu_{T,j}} = \beta_{T,j} + \widehat{\mu_{N,j}} - \beta_{N,j}\,.
+\end{displaymath}
+
+% The difference $\mu_{T,j}-\mu_{N,j}$ can then be estimated straightforwardly from the data.
+% \begin{eqnarray*}
+%   \widehat{\mu_{T,j}-\mu_{N,j}} = \beta_{T,j} - \beta_{N,j}\,.
+% %   \label{eqnTumorBoostEstimate}
+% \end{eqnarray*}
 
 % \begin{TODO}
 %   Illustration: plot of $\beta_N$ vs $\beta_T$ (with lines with $y-x=c$ for $c \in$ seq(-1, 1, length=5), say) and tracks of $\beta_T$, $\beta_N$ and $\beta_T-\beta_N$. 
 % \end{TODO}
+
+\begin{PN}
+  This formulation of the model does not explicitly show that the pairing is essential. I think that the main assumption is that $\delta_j$ is \emph{normal-genotype-specific}, and that the model should first be formulated in a more generic (ie non necessariliy paired setting), say something like
+\begin{displaymath}
+   \beta_{H(i),j} =  \mu_{H(i),j} + \delta(\mu_{N(i), j}) + \eps_{H(i),j} \,,
+\end{displaymath}
+where $i$ is an individual, $H(i)$ is an hybridization, and $\delta(\mu_{N(i), j})$ is a normal-genotype-specific term for this SNP, which depends on the individual only through the normal genotype at this SNP. I like this formulation because it accounts for all what we observe in $(\beta, \beta)$ plots:
+
+\begin{itemize}
+\item in the paired case, the $\delta$s are equal because they concern the same individual at the same SNP, and the model reduces to the previous one;
+\item in the unpaired case the $\delta$s don't cancel when the samples are not paired, unless normal genotype is the same, ie 
+\begin{displaymath}
+  \delta(\mu_{N(i), j}) = \delta(\mu_{N(i'), j})  \iff \mu_{N(i), j}=\mu_{N(i'), j}\,.
+\end{displaymath}
+This is also something that we see in $(\beta, \beta)$ plots for unpaired samples (high correlation along the diagonal, and no correlation elsewhere). 
+\end{itemize}
+Actually it does not really account for the observed \emph{anti-correlation} for SNPs which are say AA in sample 1 and BB in sample 2. I'm working on it ;)
+\end{PN}
 
 \subsection*{Model interpretation in terms of allelic crosstalk}
 \label{secACCModel}
@@ -424,22 +470,22 @@ is shared by all SNPs of sample $i$.
 \label{secEvaluation}
 % The evaluation methods used in this paper are inspired by those used in \cite{BengtssonH_etal_2009b}. 
 
-In order to assess the performance of TumorBoost, we compare the ability of the fraction of allele B to detect allele-specific genomic alterations before and after calibration. More specifically, we selected one tumor-normal pair for which we identified a region of uni-parental disomy (UPD, a.k.a. copy number neutral LOH) in the tumor, that is, a region in which the total copy number is 2 and there are homozygous and heterozygous loci in the normal, but there are only homozygous loci in the tumor. Importantly, such a region cannot be identified by analyzing total copy number only as it is not accompanied by any change in total copy number.
+In order to assess the performance of TumorBoost, we compare the ability of the fraction of allele B to detect allele-specific genomic alterations before and after calibration. More specifically, we selected one tumor-normal pair for which we identified a region of copy number neutral LOH in the tumor, that is, a region in which the total copy number is 2 and there are homozygous and heterozygous loci in the normal, but there are only homozygous loci in the tumor. Importantly, such a region cannot be identified by analyzing total copy number only as it is not accompanied by any change in total copy number.
 
 % Input: beta and genotype calls
  
-\subsubsection*{Quantifying UPD}
-In order to identify the start and end breakpoints of this region, we focus on SNPs that are \emph{heterozygous in the normal} and use a transformed version of the fraction of allele B, denoted by $\rho$ and defined by
+\subsubsection*{Quantifying copy neutral LOH}
+In order to identify a breakpoint between a normal region and a region of copy neutral LOH, SNPs that are homozygous in the normal are not informative because they will remain homozygous in the tumor. We therefore focus on SNPs that are \emph{heterozygous in the normal}, and calculate a transformed version of the fraction of allele B, denoted by $\rho$ and defined by
 
 \begin{displaymath}
-  \rho = \left\vert \beta - \frac{1}{2} \right\vert \,.
+  \rho_j = \left\vert \beta_j - \frac{1}{2} \right\vert \,.
 \end{displaymath}
 
-This kind of transformation is widely used for downstream analyses
+This kind of transformation is widely used for downstream analyses~\cite{PeifferD_etal_2006,AttiyehE_etal_2009}
 \begin{TODO}
-  REFS: Peiffer ? Attiyeh ? probably all Illumina SNP papers.
+  add other REFS ? probably all Illumina SNP papers.
 \end{TODO}
- and can be motivated as follows for the particular case of a region of UPD. In such a region, $\beta$ is expected to have only two bands, corresponding to the two homozygous states, whereas it has three bands in a normal region. As $\beta$ is symmetric around $a/2$, $\rho$ has only one band near 0 in an UPD region, and two bands in a normal region. After excluding SNPs that are homozygous in the normal, $\rho$ also only has one band in a normal region, which is expected to be near 1/2. 
+ and can be motivated as follows for the particular case of a region of copy neutral LOH. In such a region, $\beta$ is expected to have only two bands, corresponding to the two homozygous states, whereas it has three bands in a normal region. As $\beta$ is symmetric around $1/2$, $\rho$ has only one band near 0 in a copy neutral LOH region, and two bands in a normal region. After excluding SNPs that are homozygous in the normal, $\rho$ also only has one band in a normal region, which is expected to be near 1/2. 
  \begin{PN}
    Painful explanation... draw a picture !
  \end{PN}
@@ -455,22 +501,42 @@ In order to interpret $\rho$ it is useful to note that it can be written as the 
 or, equivalently, as the minimum ASCN, rescaled by the total copy number
 
 \begin{displaymath}
-  \rho = (CN_A \wedge CN_B) \times (CN_A + CN_B)\,.
+  \rho = \frac{CN_A \wedge CN_B}{CN_A + CN_B}\,.
 \end{displaymath}
 \begin{PN}
   ASCNs and TCN have not been formally defined yet.  $<$/sidetracking$>$
 \end{PN}
 
-Data points in the two XXXkb regions centered around the start and the end position of the UPD region were excluded. The remaining data points are annotated to belong to either the normal state or the UPD state. We use a  Receiver Operator Characteristics (ROC) analysis to assess how well the fraction of allele B separates between the neutral and the UPD data points.
+Data points in the  XXXkb region centered around the breakpoint were excluded. The remaining data points are annotated to belong to either the normal state or the copy neutral LOH state. We use a  Receiver Operator Characteristics (ROC) analysis to assess how well the fraction of allele B separates between the neutral and the copy neutral LOH data points.
 
 \subsubsection*{Resolution}
+\begin{TODO}
+  see if this section is relevant...
+\end{TODO}
 This evaluation is done on the full-resolution $\beta$ as well as on a smoothed 
 version, where $\beta$s are smoothed by using non-overlapping bins 
 for which the average $\beta$ is calculated. This approach is motivated by the fact that downstream analyses of ASCN use smoothing or segmentation and are therefore concerned with the influence of the amount of smoothing on the output of the analysis. It was inspired 
 by total copy number studies~\cite{LaiW_etal_2005,WillenbrockFridlyand_2005}. A similar approach has been used more recently in~\cite{BengtssonH_etal_2009b,BengtssonH_etal_2008}
 
+\subsubsection*{Sensitivity of the calibration to genotype calls}
+Genotypes \emph{of the normal} are used for the calibration, hence the performance of our method depends on genotype quality. To evaluate sensitivity of the calibration to genotype calls we compare the results obtained using genotypes inferred using a set of samples to those of a naive single-array genotyping which we now describe.
 
-Show sensitivity to genotype calls by comparing results with naive genotyping, TGCA genotypes, and ``random'' genotypes.
+For a given normal hybridization, we estimate the density of $\beta$ using a kernel density estimator.
+\begin{PN}
+  more details ?
+\end{PN}
+We define genotype classes by thresholding $\beta$ at local minima of this density estimate. There local minima are determined using a discrete derivative (ie successive differences) of the density estimate. 
+\begin{PN}
+Is this done for each chromosome separately ? What about sexual chromosomes ? 
+\end{PN}
+
+We argue that the proposed naive genotyping algorithm yields calibrated $\beta$ values that are good enough for typical downstream analyses such as the search of regions of Loss of Heterozygosity (LOH) or ASCN segmentation, as all these analyses  involve smoothing or segmentation of $\beta$ along the genome. The calibration method obtained using this genotyping algorithm is therefore a purely \emph{single-sample method}.
+
+ 
+As mentioned above we only our evaluation method focuses on SNPs that are \emph{heterozygous in the normal sample}. Therefore the results of this evaluation will depend on the genotype calling method used for the normal sample. To address this point we compare results with naive genotyping, TGCA genotypes, and ``random'' genotypes.
+
+\subsubsection*{Sensitivity of the evaluation to genotype calls}
+As mentioned above we only our evaluation method focuses on SNPs that are \emph{heterozygous in the normal sample}. Therefore the results of this evaluation will depend on the genotype calling method used for the normal sample. To address this point we compare results with naive genotyping, TGCA genotypes, and ``random'' genotypes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Results and Discussion %%
@@ -485,12 +551,16 @@ Show sensitivity to genotype calls by comparing results with naive genotyping, T
 We used data from the  Cancer Genome Atlas (TCGA) project~\cite{CollinsBarker_2007,TCGA_2008c}, a collaborative initiative to better understand cancer using existing large-scale whole-genome technologies.  Several tumor types are or are planned to be studied, including brain cancer (glioblastoma multiforme; GBM), ovarian cancer and lung cancer. 
  
 From the Data Coordinating Center (\url{http://tcga-data.nci.nih.gov/tcga/homepage.htm}), we downloaded (Jan 2009) raw data (Level~1; CEL files) for a set of GBM tumor-normal pairs.
-For the purpose of illustrating our method, we will focus mainly on sample TCGA-02-0104 (vials 01A vs 10A), because it has a large number of CN aberrations on Chr~3 at different mean levels.
+For the purpose of illustrating our method, we will focus mainly on sample TCGA-02-0620
+(vials 01A vs 10A), \begin{TODO}
+  check vials
+\end{TODO}
+ because it has a region of copy neutral LOH Chr~17.
 
 \subsection*{Allele~B fraction before and after calibration}
 
 \begin{PN}
-  Add $(\theta_A, \theta_B)$ plots for each sample in a right panel (colored by region ?) and/or $(\beta_T^*, \beta_N)$ plots to each of the next 3 plots in order to get another sense of the improvement ?
+  Add $(\theta_A, \theta_B)$ plots for each sample in a right panel (colored by region ?) and/or $(\widetilde{\beta_T}, \beta_N)$ plots to each of the next 3 plots in order to get another sense of the improvement ?
 \end{PN}
 
 % \begin{figure}[!tpbh]
@@ -524,19 +594,22 @@ For the purpose of illustrating our method, we will focus mainly on sample TCGA-
 
 
 \subsection*{Detecting copy number neutral LOH}
-We use one pair of tumor/normal hybridizations to assess how well ASCN estimates (or $\rho$ estimates) can differentiate between normal and UPD states. Given a global threshold $t$, a locus with $\rho$ below $t$ is considered to belong to the UPD state, otherwise the normal state. By calculating the fraction of correctly called UPD loci, we obtain an estimate of 
+We use one pair of tumor/normal hybridizations to assess how well ASCN estimates (or $\rho$ estimates) can differentiate between normal and copy neutral LOH states. Given a global threshold $\tau$, a locus with $\rho$ below $\tau$ is considered to belong to the copy neutral LOH state, otherwise the normal state. By calculating the fraction of correctly called copy neutral LOH loci, we obtain an estimate of 
 the true positive rate, and by calculating the fraction of incorrectly called normal loci, we obtain an estimate of the false positive rate. By adjusting the threshold, we can estimate a ROC curve. 
 
 \subsubsection*{Full resolution $\beta$}
-The true positive rate of calling a UPD (among normal loci) as a function of false-positive rate is depicted in Figure XXX. The ROC curves show that\dots
+The true positive rate of calling a copy neutral LOH (among normal loci) as a function of false-positive rate is depicted in Figure XXX. The ROC curves show that\dots
 
 \subsubsection*{Smoothed $\beta$}
-Using a windowing technique similar to that in \cite{BengtssonH_etal_2009b,BengtssonH_etal_2008a} for a fixed false-positive rate we can estimate the true positive rate as a function of amount of smoothing. Since a given amount of smoothing corresponds to a given distance between loci this provides us with a first approximation to the effective resolution of a method. In the upper panel of Figure XXX the true-positive rate (for normal v. UPD) as a function of resolution is shown before and after calibration.
+\begin{TODO}
+  See if this section is relevant.
+\end{TODO}
+Using a windowing technique similar to that in \cite{BengtssonH_etal_2009b,BengtssonH_etal_2008a} for a fixed false-positive rate we can estimate the true positive rate as a function of amount of smoothing. Since a given amount of smoothing corresponds to a given distance between loci this provides us with a first approximation to the effective resolution of a method. In the upper panel of Figure XXX the true-positive rate (for normal v. copy neutral LOH) as a function of resolution is shown before and after calibration.
 
 \section*{Discussion}
 
 \subsection*{Downstream analysis methods}
-= increasing power to detect copy number events, and making it possible to detect copy number neutral events from Affymetrix genotyping arrays, e.g.: 
+= increasing power to detect copy number events (even non copy neutral), and making it possible to detect copy number neutral events from Affymetrix genotyping arrays, e.g.: 
 \begin{itemize}
 \item Segmentation of ASCN when normal genotypes are available
 \item Iterative segmentation of ASCN when normal genotypes are not available
@@ -545,7 +618,7 @@ Using a windowing technique similar to that in \cite{BengtssonH_etal_2009b,Bengt
 
  When genotype calls for the normal sample are available they can be used to segment tumor ASCNs using any copy number segmentation algorithm. When these genotype calls are not avaiable we propose two algorithms that achieve joint segmentation of normal and tumor ASCNs, both leading to genotype calls for the normal sample as a by-product.\\
 
-\subsection*{Genotyping errors}
+\subsection*{Influence of genotyping errors on calibration}
 In the Results section we have shown that our calibration methods leads to an improved signal ratio at the chromosome or at the genome scale. However the correction factor is genotype-specific, so if the normal genotype call for a given SNP is wrong, the correction factor will actually add bias to the estimated fraction of allele B. We argue that this is not a serious issue, for two main reasons.
 
 First, we can take genotype \emph{confidence scores} into account, either by discarding SNPs for which we are not confident in the genotype or by  using the confidence scores in whatever downstream analyses. 
