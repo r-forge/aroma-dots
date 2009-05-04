@@ -27,6 +27,10 @@
 #    If @NULL, the arbitrary scale along the fitted principal curve
 #    is used.  This always starts at zero and increases.}
 #  \item{...}{Not used.}
+#  \item{deshift}{If @TRUE, the normalized signals are shifted chromosome
+#    by chromosome such the corresponding smoothed signals have the same
+#    mean (non-robust) across sources. For more details, see below.
+#  }
 # }
 #
 # \section{Fields and Methods}{
@@ -42,10 +46,38 @@
 #   smoothed data for \emph{all} samples/arrays.  Then, it normalizes the
 #   sample one by one.
 # }
+#
+# \section{Different preprocessing methods normalize ChrX \& ChrY differently}{
+#    Some preprocessing methods estimate copy numbers on sex chromosomes
+#    differently from the autosomal chromosomes.  The way this is done may
+#    vary from method to method and we cannot assume anything about what
+#    approach is.  This is the main reason why the estimation of the 
+#    normalization  function is by default based on signals from autosomal
+#    chromosomes only; this protects the estimate of the function from 
+#    being biased by specially estimated sex-chromosome signals. 
+#    Note that the normalization function is still applied to all chromosomes.
+#
+#    This means that if the transformation applied by a particular 
+#    preprocessing method is not the same for the sex chromosomes as the
+#    autosomal chromosomes, the normalization applied on the sex 
+#    chromosomes is not optimal one.  This is why multi-source 
+#    normalization sometimes fails to bring sex-chromosome signals
+#    to the same scale across sources.  Unfortunately, there is no
+#    automatic way to handle this.  
+#    The only way would be to fit a specific normalization function to each
+#    of the sex chromosomes, but that would require that there exist 
+#    copy-number abberations on those chromosomes, which could be a too
+#    strong assumption.
+#
+#    A more conservative approach is to normalize the signals such that
+#    afterward the mean of the smoothed copy-number levels are the same
+#    across sources for any particular chromosome.
+#    This is done by setting argument \code{deshift=TRUE}.
+# }
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, ...) {
+setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, deshift=FALSE, tags="*", ...) {
   if (!is.null(dsList)) {
     # Arguments 'dsList':
     if (is.list(dsList)) {
@@ -82,15 +114,20 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
                                           range=c(1, nbrOfUnits(fitUgp)));
     }
 
+    # Argument 'deshift'
+    deshift <- Arguments$getLogical(deshift);
+
     # Argument 'targetDimension'
     targetDimension <- Arguments$getIndex(targetDimension, range=c(1, K));
   }
 
 
   extend(Object(), "MultiSourceCopyNumberNormalization",
+    .tags = tags,
     .dsList = dsList,
     .fitUgp = fitUgp,
     .subsetToFit = subsetToFit,
+    .deshift = deshift,
     .targetDimension = targetDimension,
     .dsSmoothList = NULL
   )
@@ -166,11 +203,40 @@ setMethodS3("nbrOfDataSets", "MultiSourceCopyNumberNormalization", function(this
 });
 
 
+setMethodS3("getAsteriskTags", "MultiSourceCopyNumberNormalization", function(this, ...) {
+  tags <- "mscn";
+
+  # Deshift tag?
+  deshift <- this$.deshift;
+  if (deshift) {
+    tags <- c(tags, "deshift");
+  }
+
+  tags <- paste(tags, collapse=",");
+  tags;
+})
+
+setMethodS3("getTags", "MultiSourceCopyNumberNormalization", function(this, collapse=NULL, ...) {
+  tags <- this$.tags;
+
+  tags <- unlist(strsplit(tags, split=","));
+
+  # Asterisk tags
+  tags[tags == "*"] <- getAsteriskTags(this);
+ 
+  # Collapse?
+  if (!is.null(collapse)) {
+    tags <- paste(tags, collapse=collapse);
+  }
+
+  tags;
+})
 
 setMethodS3("getOutputPaths", "MultiSourceCopyNumberNormalization", function(this, ...) {
   dsList <- getInputDataSets(this);
+  tags <- getTags(this);
+
   paths <- lapply(dsList, FUN=function(ds) {
-    tag <- "mscn";
     path <- getPath(ds);
     path <- getParent(path, 2);
     rootPath <- basename(path);
@@ -179,7 +245,7 @@ setMethodS3("getOutputPaths", "MultiSourceCopyNumberNormalization", function(thi
     path <- Arguments$getWritablePath(rootPath);
     
     fullname <- getFullName(ds);
-    fullname <- sprintf("%s,%s", fullname, tag);
+    fullname <- paste(c(fullname, tags), collapse=",");
     chipType <- getChipType(ds);
     file.path(path, fullname, chipType);
   });
@@ -536,6 +602,7 @@ setMethodS3("getParameters", "MultiSourceCopyNumberNormalization", function(this
   params <- list(
     subsetToFit = getSubsetToFit(this, ...),
     fitUgp = getFitAromaUgpFile(this, ...),
+    deshift = this$.deshift,
     targetDimension = this$.targetDimension
   );
 
@@ -620,7 +687,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   params <- getParameters(this, verbose=less(verbose, 1));
   verbose && str(verbose, params);
   subsetToFit <- params$subsetToFit;
-
+  deshift <- params$deshift;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify list of data files to fit model to
@@ -652,14 +719,14 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
 
   key <- list(method="fitOne", class="MultiSourceCopyNumberNormalization", 
              fullnames=fullnames, chipTypes=chipTypes, checkSums=checkSums,
-             subsetToFit=subsetToFit, version="2008-10-08");
+           subsetToFit=subsetToFit, deshift=deshift, version="2009-05-03c");
   dirs <- c("aroma.affymetrix", "MultiSourceCopyNumberNormalization");
   if (!force) {
-    transforms <- loadCache(key=key, dirs=dirs);
-    if (!is.null(transforms)) {
+    fit <- loadCache(key=key, dirs=dirs);
+    if (!is.null(fit)) {
       verbose && cat(verbose, "Cached results found.");
       verbose && exit(verbose);
-      return(transforms);
+      return(fit);
     }
   }
 
@@ -678,7 +745,9 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   rm(subsetToFit);  # Not needed anymore
 
   Y <- as.data.frame(Y);
+  colnames(Y) <- NULL;
   Y <- as.matrix(Y);
+  dimnames(Y) <- NULL;
   dim <- dim(Y);
   gc <- gc();
   verbose && print(verbose, gc);
@@ -694,6 +763,8 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   t <- system.time({
     fit <- fitPrincipalCurve(Y);
   });
+  verbose && cat(verbose, "Fitting time:");
+  verbose && print(verbose, t);
 
   # Flip direction of the curve ('lambda')?
   rho <- cor(fit$lambda, Y[,1], use="complete.obs");
@@ -713,7 +784,8 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
 
   # Sanity check
   if (!identical(dim(fit$s), dim)) {
-    throw("Internal error: The fitted data has a different dimension that the input data: ", paste(dim(fit$s), collapse="x"), " != ", paste(dim, collapse="x"));
+    throw("Internal error: The fitted data has a different dimension that the input data: ", 
+                         paste(dim(fit$s), collapse="x"), " != ", paste(dim, collapse="x"));
   }
   gc <- gc();
   verbose && print(verbose, gc);
@@ -736,6 +808,100 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   }
 
 #  class(fit) <- c("MultiSourceCopyNumberNormalizationFit", class(fit));
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Shift each chromosome?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (deshift) {
+    verbose && enter(verbose, "Calculating shift for each chromosome");
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Grouping units by chromosome
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ugpS <- getAromaUgpFile(dfSList[[1]]);
+    chromosomes <- getChromosomes(ugpS);
+    verbose && cat(verbose, "Chromosomes: ", seqToHumanReadable(chromosomes));
+
+    verbose && enter(verbose, "Grouping units by chromosome");
+    values <- ugpS[,1,drop=TRUE];
+    unitsS <- list();
+    for (chr in chromosomes) {
+      chrStr <- sprintf("Chr%02d", chr);
+      unitsS[[chrStr]] <- whichVector(values == chr);
+    }
+    rm(values);
+#    verbose && str(verbose, unitsS);
+    # Dropping chromosomes with too few units
+    ns <- sapply(unitsS, FUN=length);
+    unitsS <- unitsS[ns > 5];
+    verbose && str(verbose, unitsS);
+    verbose && exit(verbose);
+
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Calculating means of each chromosome in each source
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Allocate matrix to hold all mean values
+    naValue <- as.double(NA);
+    mus <- matrix(naValue, nrow=length(unitsS), ncol=nbrOfArrays);
+    rownames(mus) <- names(unitsS);
+
+    for (kk in seq(along=dfSList)) {
+      dfS <- dfSList[[kk]];
+      verbose && enter(verbose, sprintf("Source #%d ('%s') of %d", kk, 
+                                          getFullName(dfS), nbrOfArrays));
+
+      verbose && enter(verbose, "Loading smoothed data");
+      yS <- extractMatrix(dfS, column=1, drop=TRUE);
+      verbose && str(verbose, yS);
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Normalizing (backtransforming) smoothed data");
+      ySN <- backtransformPrincipalCurve(yS, fit=fit, dimensions=kk,
+                                        targetDimension=targetDimension);
+      ySN <- ySN[,1,drop=TRUE];
+      verbose && str(verbose, ySN);
+      rm(yS);
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Calculating means by chromosome");
+      for (chr in seq(along=unitsS)) {
+        chrStr <- sprintf("Chr%02d", chr);
+        unitsCC <- unitsS[[chrStr]];
+        values <- ySN[unitsCC];
+        keep <- is.finite(values);
+        mu <- mean(values[keep]);
+        mus[chrStr,kk] <- mu;
+      } # for (cc ...)
+      verbose && exit(verbose);
+
+      verbose && exit(verbose);
+    } # for (kk ...)
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Calculating shifts
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Median mean per chromosome across sources");
+    mu <- rowMedians(mus, na.rm=TRUE);
+    names(mu) <- rownames(mus);
+    verbose && print(verbose, mu);
+    verbose && exit(verbose);
+    
+    verbose && enter(verbose, "Shift per chromosome across sources");
+    dmus <- mus - mu;
+    verbose && print(verbose, dmus);
+    verbose && exit(verbose);
+    
+    fit$deshiftParams <- list(
+      dmus=dmus,
+      mu=mu
+    );
+
+    verbose && exit(verbose);
+  } # if (deshift)
+
+  verbose && str(verbose, fit);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Save to cache
@@ -788,14 +954,34 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
   verbose && str(verbose, params);
   subsetToUpdate <- params$subsetToUpdate;
   targetDimension <- params$targetDimension;
+  deshift <- params$deshift;
 
   # Get (and create) the output paths
   outputPaths <- getOutputPaths(this); 
 
+  if (deshift) {
+    verbose && enter(verbose, "Extracting deshift parameters");
+    deshiftParams <- fit$deshiftParams;
+    verbose && str(verbose, deshiftParams);
+    # Sanity check
+    if (is.null(deshiftParams)) {
+      throw("Internal error: No shift estimates found.");
+    }
+
+    dmus <- deshiftParams$dmus;
+    verbose && print(verbose, dmus);
+    # Sanity check
+    if (is.null(dmus)) {
+      throw("Internal error: No shift estimates found.");
+    }
+    verbose && exit(verbose);
+  }
+    
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalizing array by array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Normalizing array by array");
+  verbose && enter(verbose, "Normalizing source by source (array by array)");
   verbose && cat(verbose, "Units to be updated:");
   verbose && str(verbose, subsetToUpdate);
 
@@ -803,7 +989,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
   dfNList <- vector("list", nbrOfArrays);
   for (kk in seq(length=nbrOfArrays)) {
     df <- dfList[[kk]];
-    verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, 
+    verbose && enter(verbose, sprintf("Source #%d ('%s') of %d", kk, 
                                             getFullName(df), nbrOfArrays));
 
     outputPath <- outputPaths[[kk]];
@@ -815,24 +1001,91 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
     } else {
       verbose && enter(verbose, "Normalizing");
 
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Reading data
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Reading data");
       y <- extractMatrix(df, rows=subsetToUpdate, column=1, drop=TRUE);
       verbose && str(verbose, y);
       verbose && exit(verbose);
   
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Normalizing data
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Backtransforming data");
       yN <- backtransformPrincipalCurve(y, fit=fit, dimensions=kk, 
                                         targetDimension=targetDimension);
+      yN <- yN[,1,drop=TRUE];
       verbose && str(verbose, yN);
       verbose && exit(verbose);
 
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Deshifting?
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      if (deshift) {
+        verbose && enter(verbose, "Deshifting each chromosome");
+        ugp <- getAromaUgpFile(df);
+        chromosomes <- getChromosomes(ugp);
+        verbose && cat(verbose, "Chromosomes: ", seqToHumanReadable(chromosomes));
+
+        verbose && enter(verbose, "Grouping units by chromosome");
+        values <- ugp[subsetToUpdate,1,drop=TRUE];
+        # Sanity check
+        stopifnot(length(values) == length(yN));
+
+        listOfUnits <- list();
+        for (chr in chromosomes) {
+          chrStr <- sprintf("Chr%02d", chr);
+          subset <- whichVector(values == chr);
+          listOfUnits[[chrStr]] <- subset;
+        }
+        rm(values);
+        verbose && str(verbose, units);
+
+        # Dropping chromosomes with too few units
+        ns <- sapply(listOfUnits, FUN=length);
+        listOfUnits <- listOfUnits[ns > 5];
+        verbose && str(verbose, listOfUnits);
+        verbose && exit(verbose);
+
+        # Dropping chromosomes for which there is no shift estimate
+        idxs <- match(names(listOfUnits), rownames(dmus));
+        if (anyMissing(idxs)) {
+          verbose && cat(verbose, "Shift estimates are not available for some chromosomes, which are skipped:");
+          verbose && print(verbose, names(listOfUnits[!is.finite(idxs)]));
+          listOfUnits <- listOfUnits[is.finite(idxs)];
+        }
+
+        # Deshifting
+        for (chrStr in names(listOfUnits)) {
+          subset <- listOfUnits[[chrStr]];
+          dmu <- dmus[chrStr,kk];
+          yN[subset] <- yN[subset] - dmu;
+        } # for (chrStr ...)
+
+        rm(units, listOfUnits);
+
+        verbose && str(verbose, yN);
+  
+        verbose && exit(verbose);
+      } # if (deshift)
+
+
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Writing normalized data
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Storing normalized data");
       verbose && cat(verbose, "Output pathname: ", pathname);
 
       verbose && enter(verbose, "Create output file");
-      file.copy(getPathname(df), pathname);
-      dfN <- newInstance(df, pathname);
-      rm(pathname);
+      pathnameT <- sprintf("%s.tmp", pathname);
+      verbose && cat(verbose, "Temporary pathname: ", pathnameT);
+      pathnameT <- Arguments$getWritablePathname(pathnameT, mustNotExist=TRUE);
+
+      file.copy(getPathname(df), pathnameT);
+      dfN <- newInstance(df, pathnameT);
       verbose && print(verbose, dfN);
       verbose && exit(verbose);
 
@@ -863,7 +1116,19 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
       writeFooter(dfN, footer);
       verbose && exit(verbose);
 
+      verbose && enter(verbose, "Renaming temporary filename");
+      file.rename(pathnameT, pathname);
+      if (isFile(pathnameT) || !isFile(pathname)) {
+        throw("Failed to rename temporary file: ", 
+                        pathnameT, " -> ", pathname);
+      }
+      rm(pathnameT);
       verbose && exit(verbose);
+      dfN <- newInstance(df, pathname);
+      rm(pathname);
+
+      verbose && exit(verbose);
+
 
       verbose && exit(verbose);
     }
@@ -874,6 +1139,9 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
 
     verbose && exit(verbose);
   } # for (kk ...)
+  verbose && print(verbose, dfNList);
+
+  # Cleanup
   rm(subsetToUpdate);  # Not needed anymore
   gc <- gc();
   verbose && print(verbose, gc);
@@ -1020,6 +1288,12 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 
 ###########################################################################
 # HISTORY:
+# 2009-05-03
+# o Added argument 'deshift'.  If used, the amount of shift per chromosome
+#   and source is estimated in fitOne() and applied in normalizeOne().
+# o Added getAsteriskTags() and getTags().
+# o Now normalized data is first written to a temporary file, which is 
+#   then renamed.
 # 2009-02-08
 # o Fixed verbose output of gc(); used cat() instead of print().
 # o Updated to make use of TotalCnKernelSmoothing().

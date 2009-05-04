@@ -35,7 +35,7 @@ dsN <- extract(dsPair, 2);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Load the normalized tumor data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-dsTN <- AromaUnitFracBCnBinarySet$byName(dataSet, tags="TBN", chipType="*", paths=rootPath);
+dsTN <- AromaUnitFracBCnBinarySet$byName(dataSet, tags="TBN,NGC", chipType="*", paths=rootPath);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -62,7 +62,7 @@ dsList <- lapply(dsList, FUN=function(ds) {
 # Plot the data
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ugp <- getAromaUgpFile(dsList$tumor);
-units <- getUnitsOnChromosome(ugp, 1);
+units <- getUnitsOnChromosome(ugp, 17);
 pos <- getPositions(ugp, units=units);
 
 

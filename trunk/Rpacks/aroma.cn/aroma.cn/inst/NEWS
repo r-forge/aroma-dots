@@ -1,7 +1,10 @@
 Package: aroma.cn
 =================
 
-Version: 0.3.0x [2009-04-29]
+Version: 0.3.0x [2009-05-03]
+o ROBUSTNESS: Now MultiSourceCopyNumberNormalization first write
+  normalized data to a temporary file, which is then renamed. This
+  lower the risk for having incomplete data in case of interrupts.
 o ALPHA: Added TumorBoostNormalization.
 o INTERNAL: Added foundations for TumorBoost, i.e. in 
   memory classes such as TotalAndFracBSnpData.
