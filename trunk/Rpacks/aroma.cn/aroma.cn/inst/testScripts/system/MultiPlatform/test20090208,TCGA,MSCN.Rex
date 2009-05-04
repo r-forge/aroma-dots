@@ -21,9 +21,9 @@ print(dsList);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Multi-source CN normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-ugp <- AromaUgpFile$byChipType("GenericHuman", tags="100kb");
-print(ugp);
-mscn <- MultiSourceCopyNumberNormalization(dsList, fitUgp=ugp);
+fitUgp <- AromaUgpFile$byChipType("GenericHuman", tags="100kb");
+print(fitUgp);
+mscn <- MultiSourceCopyNumberNormalization(dsList, fitUgp=fitUgp);
 print(mscn);
 
 dsNList <- process(mscn, verbose=log);

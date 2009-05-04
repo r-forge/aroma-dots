@@ -5,6 +5,11 @@ Version: 0.3.0x [2009-05-03]
 o ROBUSTNESS: Now MultiSourceCopyNumberNormalization first write
   normalized data to a temporary file, which is then renamed. This
   lower the risk for having incomplete data in case of interrupts.
+o Added argument 'alignByChromosomes' to MultiSourceCopyNumberNormalization.
+  If TRUE, the signals are shifted per chromosome such that the mean 
+  of the normalized smoothed signals is the same for all sources.
+  This can for instance remove systematic effects on sex chromosomes
+  added by some ad hoc preprocessing methods.
 o ALPHA: Added TumorBoostNormalization.
 o INTERNAL: Added foundations for TumorBoost, i.e. in 
   memory classes such as TotalAndFracBSnpData.

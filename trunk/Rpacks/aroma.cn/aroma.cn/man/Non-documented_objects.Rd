@@ -100,6 +100,8 @@
 \alias{getPath.TumorBoostNormalization}
 \alias{getTags.TumorBoostNormalization}
 \alias{setTags.TumorBoostNormalization}
+\alias{getAsteriskTags.MultiSourceCopyNumberNormalization}
+\alias{getTags.MultiSourceCopyNumberNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that

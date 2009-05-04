@@ -164,7 +164,7 @@ setMethodS3("getTargetPositions", "TotalCnSmoothing", function(this, ..., force=
                                              cc, chrTag, nbrOfChromosomes));
     verbose && cat(verbose, "Target positions:");
     units <- getUnitsOnChromosome(targetUgp, chromosome=cc);
-    xOut <- getPositions(targetUgp, units);
+    xOut <- getPositions(targetUgp, units=units);
     verbose && str(verbose, xOut);
     res[[chrTag]] <- list(chromosome=cc, units=units, xOut=xOut);
     verbose && exit(verbose);
