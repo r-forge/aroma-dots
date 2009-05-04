@@ -35,7 +35,7 @@ extends \link[R.oo]{Object}\cr
   the mean level of the normalized data are the same.
  }
 
- \usage{MultiSourceCopyNumberNormalization(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, ...)}
+ \usage{MultiSourceCopyNumberNormalization(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, alignByChromosome=FALSE, tags="*", ...)}
 
  \arguments{
   \item{dsList}{A \code{\link[base]{list}} of K \code{\link[aroma.core]{AromaUnitTotalCnBinarySet}}:s.}
@@ -49,6 +49,11 @@ extends \link[R.oo]{Object}\cr
     \code{dsList} to which each platform in standardize towards.
     If \code{\link[base]{NULL}}, the arbitrary scale along the fitted principal curve
     is used.  This always starts at zero and increases.}
+  \item{alignByChromosome}{If \code{\link[base:logical]{TRUE}}, the signals are shifted chromosome
+    by chromosome such the corresponding smoothed signals have the same
+    mean (non-robust) across sources. For more details, see below.
+  }
+  \item{tags}{(Optional) Sets the tags for the output data sets.}
   \item{...}{Not used.}
  }
 
@@ -56,10 +61,12 @@ extends \link[R.oo]{Object}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.cn:getAllNames.MultiSourceCopyNumberNormalization]{getAllNames}} \tab Gets the names of all unique samples across all sources.\cr
+ \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{\link[aroma.cn:getInputDataSets.MultiSourceCopyNumberNormalization]{getInputDataSets}} \tab Gets the list of data sets to be normalized.\cr
  \tab \code{getOutputDataSets} \tab  -\cr
  \tab \code{getOutputPaths} \tab  -\cr
  \tab \code{getParameters} \tab  -\cr
+ \tab \code{getTags} \tab  -\cr
  \tab \code{nbrOfDataSets} \tab  -\cr
  \tab \code{\link[aroma.cn:process.MultiSourceCopyNumberNormalization]{process}} \tab Normalizes all samples.\cr
 }
@@ -79,6 +86,34 @@ asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone
    However, the current implementation is such that it first generates
    smoothed data for \emph{all} samples/arrays.  Then, it normalizes the
    sample one by one.
+ }
+
+ \section{Different preprocessing methods normalize ChrX \& ChrY differently}{
+    Some preprocessing methods estimate copy numbers on sex chromosomes
+    differently from the autosomal chromosomes.  The way this is done may
+    vary from method to method and we cannot assume anything about what
+    approach is.  This is the main reason why the estimation of the
+    normalization  function is by default based on signals from autosomal
+    chromosomes only; this protects the estimate of the function from
+    being biased by specially estimated sex-chromosome signals.
+    Note that the normalization function is still applied to all chromosomes.
+
+    This means that if the transformation applied by a particular
+    preprocessing method is not the same for the sex chromosomes as the
+    autosomal chromosomes, the normalization applied on the sex
+    chromosomes is not optimal one.  This is why multi-source
+    normalization sometimes fails to bring sex-chromosome signals
+    to the same scale across sources.  Unfortunately, there is no
+    automatic way to handle this.
+    The only way would be to fit a specific normalization function to each
+    of the sex chromosomes, but that would require that there exist
+    copy-number abberations on those chromosomes, which could be a too
+    strong assumption.
+
+    A more conservative approach is to normalize the signals such that
+    afterward the mean of the smoothed copy-number levels are the same
+    across sources for any particular chromosome.
+    This is done by setting argument \code{alignByChromosome=TRUE}.
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

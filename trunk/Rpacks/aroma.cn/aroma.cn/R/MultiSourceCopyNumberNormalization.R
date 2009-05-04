@@ -26,11 +26,12 @@
 #    \code{dsList} to which each platform in standardize towards.
 #    If @NULL, the arbitrary scale along the fitted principal curve
 #    is used.  This always starts at zero and increases.}
-#  \item{...}{Not used.}
-#  \item{deshift}{If @TRUE, the normalized signals are shifted chromosome
+#  \item{alignByChromosome}{If @TRUE, the signals are shifted chromosome
 #    by chromosome such the corresponding smoothed signals have the same
 #    mean (non-robust) across sources. For more details, see below.
 #  }
+#  \item{tags}{(Optional) Sets the tags for the output data sets.}
+#  \item{...}{Not used.}
 # }
 #
 # \section{Fields and Methods}{
@@ -72,12 +73,12 @@
 #    A more conservative approach is to normalize the signals such that
 #    afterward the mean of the smoothed copy-number levels are the same
 #    across sources for any particular chromosome.
-#    This is done by setting argument \code{deshift=TRUE}.
+#    This is done by setting argument \code{alignByChromosome=TRUE}.
 # }
 # 
 # @author
 #*/###########################################################################
-setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, deshift=FALSE, tags="*", ...) {
+setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, alignByChromosome=FALSE, tags="*", ...) {
   if (!is.null(dsList)) {
     # Arguments 'dsList':
     if (is.list(dsList)) {
@@ -114,8 +115,8 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
                                           range=c(1, nbrOfUnits(fitUgp)));
     }
 
-    # Argument 'deshift'
-    deshift <- Arguments$getLogical(deshift);
+    # Argument 'alignByChromosome'
+    alignByChromosome <- Arguments$getLogical(alignByChromosome);
 
     # Argument 'targetDimension'
     targetDimension <- Arguments$getIndex(targetDimension, range=c(1, K));
@@ -127,7 +128,7 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
     .dsList = dsList,
     .fitUgp = fitUgp,
     .subsetToFit = subsetToFit,
-    .deshift = deshift,
+    .alignByChromosome = alignByChromosome,
     .targetDimension = targetDimension,
     .dsSmoothList = NULL
   )
@@ -206,10 +207,10 @@ setMethodS3("nbrOfDataSets", "MultiSourceCopyNumberNormalization", function(this
 setMethodS3("getAsteriskTags", "MultiSourceCopyNumberNormalization", function(this, ...) {
   tags <- "mscn";
 
-  # Deshift tag?
-  deshift <- this$.deshift;
-  if (deshift) {
-    tags <- c(tags, "deshift");
+  # Align-by-chromosome tag?
+  alignByChromosome <- this$.alignByChromosome;
+  if (alignByChromosome) {
+    tags <- c(tags, "align");
   }
 
   tags <- paste(tags, collapse=",");
@@ -602,7 +603,7 @@ setMethodS3("getParameters", "MultiSourceCopyNumberNormalization", function(this
   params <- list(
     subsetToFit = getSubsetToFit(this, ...),
     fitUgp = getFitAromaUgpFile(this, ...),
-    deshift = this$.deshift,
+    alignByChromosome = this$.alignByChromosome,
     targetDimension = this$.targetDimension
   );
 
@@ -687,7 +688,8 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   params <- getParameters(this, verbose=less(verbose, 1));
   verbose && str(verbose, params);
   subsetToFit <- params$subsetToFit;
-  deshift <- params$deshift;
+  alignByChromosome <- params$alignByChromosome;
+  targetDimension <- params$targetDimension;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify list of data files to fit model to
@@ -718,9 +720,10 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   checkSums <- unname(checkSums);
 
   key <- list(method="fitOne", class="MultiSourceCopyNumberNormalization", 
-             fullnames=fullnames, chipTypes=chipTypes, checkSums=checkSums,
-           subsetToFit=subsetToFit, deshift=deshift, version="2009-05-03c");
-  dirs <- c("aroma.affymetrix", "MultiSourceCopyNumberNormalization");
+           fullnames=fullnames, chipTypes=chipTypes, checkSums=checkSums,
+           subsetToFit=subsetToFit, alignByChromosome=alignByChromosome, 
+           version="2009-05-03");
+  dirs <- c("aroma.cn", "MultiSourceCopyNumberNormalization");
   if (!force) {
     fit <- loadCache(key=key, dirs=dirs);
     if (!is.null(fit)) {
@@ -813,7 +816,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Shift each chromosome?
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (deshift) {
+  if (alignByChromosome) {
     verbose && enter(verbose, "Calculating shift for each chromosome");
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -893,13 +896,13 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
     verbose && print(verbose, dmus);
     verbose && exit(verbose);
     
-    fit$deshiftParams <- list(
+    fit$alignParams <- list(
       dmus=dmus,
       mu=mu
     );
 
     verbose && exit(verbose);
-  } # if (deshift)
+  } # if (alignByChromosome)
 
   verbose && str(verbose, fit);
 
@@ -954,21 +957,21 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
   verbose && str(verbose, params);
   subsetToUpdate <- params$subsetToUpdate;
   targetDimension <- params$targetDimension;
-  deshift <- params$deshift;
+  alignByChromosome <- params$alignByChromosome;
 
   # Get (and create) the output paths
   outputPaths <- getOutputPaths(this); 
 
-  if (deshift) {
-    verbose && enter(verbose, "Extracting deshift parameters");
-    deshiftParams <- fit$deshiftParams;
-    verbose && str(verbose, deshiftParams);
+  if (alignByChromosome) {
+    verbose && enter(verbose, "Extracting align-by-chromosome parameters");
+    alignParams <- fit$alignParams;
+    verbose && str(verbose, alignParams);
     # Sanity check
-    if (is.null(deshiftParams)) {
+    if (is.null(alignParams)) {
       throw("Internal error: No shift estimates found.");
     }
 
-    dmus <- deshiftParams$dmus;
+    dmus <- alignParams$dmus;
     verbose && print(verbose, dmus);
     # Sanity check
     if (is.null(dmus)) {
@@ -1022,10 +1025,10 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      # Deshifting?
+      # Aligning signals chromosome by chromosome?
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      if (deshift) {
-        verbose && enter(verbose, "Deshifting each chromosome");
+      if (alignByChromosome) {
+        verbose && enter(verbose, "Aligning signals for each chromosome");
         ugp <- getAromaUgpFile(df);
         chromosomes <- getChromosomes(ugp);
         verbose && cat(verbose, "Chromosomes: ", seqToHumanReadable(chromosomes));
@@ -1058,7 +1061,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
           listOfUnits <- listOfUnits[is.finite(idxs)];
         }
 
-        # Deshifting
+        # Aligning mean signals chromosome by chromosome
         for (chrStr in names(listOfUnits)) {
           subset <- listOfUnits[[chrStr]];
           dmu <- dmus[chrStr,kk];
@@ -1070,7 +1073,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
         verbose && str(verbose, yN);
   
         verbose && exit(verbose);
-      } # if (deshift)
+      } # if (alignByChromosome)
 
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1289,8 +1292,9 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 ###########################################################################
 # HISTORY:
 # 2009-05-03
-# o Added argument 'deshift'.  If used, the amount of shift per chromosome
-#   and source is estimated in fitOne() and applied in normalizeOne().
+# o Added argument 'alignByChromosome'.  If used, the signals are shifted
+#   per chromosome such that the mean of the normalized smoothed signals
+#   is the same for all sources.
 # o Added getAsteriskTags() and getTags().
 # o Now normalized data is first written to a temporary file, which is 
 #   then renamed.

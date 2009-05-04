@@ -21,6 +21,7 @@
 #  \item{dsT}{...}
 #  \item{dsN}{...}
 #  \item{gcN}{...}
+#  \item{tags}{(Optional) Sets the tags for the output data sets.}
 #  \item{...}{Not used.}
 # }
 #
@@ -30,7 +31,7 @@
 #
 # @author
 #*/########################################################################### 
-setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NULL, tags=NULL, ...) {
+setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NULL, tags="*", ...) {
   # Validate arguments
   if (!is.null(dsT)) {
     dsList <- list(dsT=dsT, dsN=dsN, gcN=gcN);

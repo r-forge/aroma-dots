@@ -47,3 +47,5 @@
  getFullName.TumorBoostNormalization getName.TumorBoostNormalization
  getPath.TumorBoostNormalization getTags.TumorBoostNormalization
  setTags.TumorBoostNormalization
+ getAsteriskTags.MultiSourceCopyNumberNormalization
+ getTags.MultiSourceCopyNumberNormalization
