@@ -1,3 +1,41 @@
+###########################################################################/**
+# @set "class=TabularTextFile"
+# @RdocMethod writeColumnsToFiles
+#
+# @title "Read each column from a data file and exports it to a separate file"
+#
+# \description{
+#  @get "title".
+#  Since each column is process independently of the others, this method
+#  is memory efficient and can handle very large data files.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#   \item{destPath}{The output directory where to write the files.}
+#   \item{filenameFmt}{An @see "base::sprintf" format string used to generate
+#    filenames given the fullnames (column names plus tags).}
+#   \item{tags}{An optional @character @vector of tags added to the fullnames.}
+#   \item{columnName}{...}
+#   \item{header}{An optional file header.}
+#   \item{...}{Not used.}
+#   \item{verbose}{See @see "R.utils::Verbose".}
+# }
+#
+# \value{
+#  Returns (invisibly) a @character @vector of all output files.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword IO
+# @keyword programming
+#*/###########################################################################
 setMethodS3("writeColumnsToFiles", "TabularTextFile", function(this, destPath, filenameFmt="%s.txt", tags=NULL, columnName=NULL, header=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local function
@@ -66,8 +104,10 @@ setMethodS3("writeColumnsToFiles", "TabularTextFile", function(this, destPath, f
   
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Extract each column
+  # Extract and export each column
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  pathnames <- c();
+
   colClassPatterns <- "character";
   for (cc in seq(along=columnNames)) {
     columnName <- columnNames[cc];
@@ -78,6 +118,8 @@ setMethodS3("writeColumnsToFiles", "TabularTextFile", function(this, destPath, f
     filename <- sprintf(filenameFmt, fullname);
     filename <- escapeFilename(filename);
     pathname <- file.path(destPath, filename);
+
+    # Check if file already exists
     if (!isFile(pathname)) {
       names(colClassPatterns) <- sprintf("^%s$", columnName);
       values <- readDataFrame(this, colClassPatterns=colClassPatterns);
@@ -98,23 +140,23 @@ setMethodS3("writeColumnsToFiles", "TabularTextFile", function(this, destPath, f
       writeHeaderComments0(con=con, header);
       write.table(file=con, df, quote=FALSE, sep="\t", row.names=FALSE);
       close(con);
-
-      # Validate?
-##      dbT <- GenericTabularFile(pathname);
-##      print(dbT);
     } else {
       verbose && cat(verbose, "Column already extracted");
     }
   
+    pathnames <- c(pathnames, pathname);
+
     verbose && exit(verbose);
   } # for (cc ...)
 
-  invisible(destPath);  
+  invisible(pathnames);  
 })
 
 
 ############################################################################
 # HISTORY:
+# 2009-04-17
+# o Added Rdoc comments.
 # 2008-05-21
 # o BUG FIX: Argument 'verbose' was never passed to Arguments$getVerbose(). 
 # 2008-05-05

@@ -222,7 +222,6 @@
 \alias{writeChecksum}
 \alias{writeChecksum.GenericDataFile}
 \alias{writeColumnsToFiles}
-\alias{writeColumnsToFiles.GenericTabularFile}
 \alias{writeFooter}
 \alias{writeRawFooter}
 \alias{writeRawFooter.AromaTabularBinaryFile}
@@ -406,7 +405,6 @@
 \alias{translateFullName}
 \alias{translateFullName.GenericDataFile}
 \alias{verify.TabularTextFile}
-\alias{writeColumnsToFiles.TabularTextFile}
 \alias{extractCopyNumberRegions}
 \alias{extractCopyNumberRegions.default}
 \alias{extractRawCopyNumbers}
@@ -784,6 +782,9 @@
 \alias{getUnitNames.TextUnitNamesFile}
 \alias{nbrOfUnits.TextUnitNamesFile}
 \alias{TextUnitNamesFile}
+\alias{asThis}
+\alias{asThis.BasicObject}
+\alias{asThis.Object}
 
 \description{
   This page contains aliases for all "non-documented" objects that

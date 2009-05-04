@@ -75,8 +75,9 @@
   updateData.AromaTabularBinaryFile updateDataColumn
   updateDataColumn.AromaTabularBinaryFile validateChecksum
   validateChecksum.GenericDataFile verify verify.GenericTabularFile
-  writeChecksum writeChecksum.GenericDataFile writeColumnsToFiles
-  writeColumnsToFiles.GenericTabularFile writeFooter writeRawFooter
+  writeChecksum writeChecksum.GenericDataFile 
+  writeColumnsToFiles
+  writeFooter writeRawFooter
   writeRawFooter.AromaTabularBinaryFile xmlToList xmlToList.character
   yellow.colors
   as.character.Interface as.GrayscaleImage as.TrueColorImage
@@ -148,7 +149,7 @@
   setTags.AromaMicroarrayDataSetTuple sort.RawCopyNumbers stextChipType
   stextChipType.character summary.RawCopyNumbers TabularTextFile
   translateFullName translateFullName.GenericDataFile
-  verify.TabularTextFile writeColumnsToFiles.TabularTextFile
+  verify.TabularTextFile 
   extractCopyNumberRegions extractCopyNumberRegions.default
   extractRawCopyNumbers extractRawCopyNumbers.default
   getAttributeXY getAttributeXY.AromaMicroarrayDataFile getPloidy
@@ -364,3 +365,4 @@ hasBeenModified hasBeenModified.GenericDataFile
   getChipType.TextUnitNamesFile getFilenameExtension.TextUnitNamesFile
   getPlatform.TextUnitNamesFile getUnitNames.TextUnitNamesFile
   nbrOfUnits.TextUnitNamesFile TextUnitNamesFile
+asThis asThis.BasicObject asThis.Object

@@ -516,6 +516,20 @@ setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL,
     rownames(data) <- rownames;
   verbose && str(verbose, data, level=-30);
   verbose && exit(verbose);
+
+  # Nothing more todo?
+  if (length(rows) == 0) {
+    colnames(data) <- getColumnNames(this)[columns];
+
+    # Drop singleton dimensions?
+    if (drop) {
+      if (ncol(data) == 1) {
+        data <- data[,1,drop=TRUE];
+      }
+    }
+
+    return(data);
+  }
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Read data
@@ -573,6 +587,7 @@ setMethodS3("readDataFrame", "AromaTabularBinaryFile", function(this, rows=NULL,
   # Add column names
   colnames(data) <- getColumnNames(this)[columns];
 
+  # Drop singleton dimensions?
   if (drop) {
     if (ncol(data) == 1) {
       data <- data[,1,drop=TRUE];
@@ -1267,6 +1282,8 @@ setMethodS3("importFrom", "AromaTabularBinaryFile", function(this, srcFile, ...)
 
 ############################################################################
 # HISTORY:
+# 2009-05-03
+# o Now readDataFrame() of AromaTabularBinaryFile accepts rows=integer(0).
 # 2008-12-03
 # o CLEAN UP: readDataFrame() of AromaTabularBinaryFile would forget to
 #   close the connection if verbose output was activated.  When R later
