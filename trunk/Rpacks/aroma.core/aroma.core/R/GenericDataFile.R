@@ -116,7 +116,7 @@ setMethodS3("equals", "GenericDataFile", function(this, other, ...) {
   value <- getFileSize(this);
   valueOther <- getFileSize(other);
   if (value != valueOther) {
-    msg <- sprintf("The file sizes differ: %d != %d",
+    msg <- sprintf("The file sizes differ: %.0f != %.0f",
                                           value, valueOther);
     attr(notEqual, "reason") <- msg;
     return(notEqual);
@@ -190,7 +190,7 @@ setMethodS3("as.character", "GenericDataFile", function(x, ...) {
 
   # File size
   fileSize <- getFileSize(this, "units");
-  fileSizeB <- sprintf("%d bytes", getFileSize(this, "numeric"));
+  fileSizeB <- sprintf("%.0f bytes", getFileSize(this, "numeric"));
   if (fileSizeB != fileSize) {
     fileSize <- sprintf("%s (%s)", fileSize, fileSizeB);
   }
@@ -1060,6 +1060,10 @@ setMethodS3("gunzip", "GenericDataFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-04-23
+# o BUG FIX: as.character() would throw 'Error in sprintf("%d", getFileSize
+#   (db, "numeric")) : use format %f, %e, %g or %a for numeric objects' if
+#   file size is returned as a double, which happens for very large files.
 # 2009-02-26
 # o Now hasTags(..., tags) splits the 'tags' argument.
 # 2009-02-23

@@ -1,6 +1,18 @@
 Package: aroma.core
 ===================
 
+Version: 1.0.5x [2009-05-03]
+o Now readDataFrame() of AromaUgpFile and AromaUnitTabularBinaryFile
+  accepts rows=integer(0).
+o UPDATE: Replace argument 'robust' of colBinnedSmoothing()
+  with a more generic 'FUN' argument.  The default arguments
+  give identical results.
+o BUG FIX: as.character() of GenericDataFile would throw 
+  'Error in sprintf("%d", getFileSize(db, "numeric")) : use 
+  format %f, %e, %g or %a for numeric objects' whenever the
+  file size is returned as a double, which happens for very
+  large files (> 2^31-1 bytes).
+
 Version: 1.0.4 [2009-04-07]
 o BUG FIX: getUnitNames(..., units=NULL) of TextUnitNamesFile would 
   make the object believe there are zero units in the file. 

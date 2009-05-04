@@ -56,15 +56,17 @@ setMethodS3("readDataFrame", "AromaUgpFile", function(this, ..., verbose=FALSE) 
 
   data <- NextMethod("readDataFrame", this, ..., verbose=less(verbose));
 
-  verbose && enter(verbose, "Converting zeros to NAs");
-  # Interpret zeros as NAs
-  if (ncol(data) > 0) {
-    for (cc in seq(length=ncol(data))) {
-      nas <- (!is.na(data[,cc]) & (data[,cc] == 0));
-      data[nas,cc] <- NA;
+  if (nrow(data) > 0) {
+    verbose && enter(verbose, "Converting zeros to NAs");
+    # Interpret zeros as NAs
+    if (ncol(data) > 0) {
+      for (cc in seq(length=ncol(data))) {
+        nas <- (!is.na(data[,cc]) & (data[,cc] == 0));
+        data[nas,cc] <- NA;
+      }
     }
+    verbose && exit(verbose);
   }
-  verbose && exit(verbose);
 
   data;
 })
@@ -276,6 +278,8 @@ setMethodS3("importFromGenericTabularFile", "AromaUgpFile", function(this, src, 
 
 ############################################################################
 # HISTORY:
+# 2009-05-03
+# o Now readDataFrame() of AromaUgpFile accepts rows=integer(0).
 # 2009-02-12
 # o Added getUnitsOnChromosomes() to AromaUgpFile.
 # 2008-05-24

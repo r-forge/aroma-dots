@@ -25,7 +25,7 @@
 #   \item{length.out}{The number of bins.}
 #   \item{xOut}{Prespecified center locations.}
 #   \item{na.rm}{If @TRUE, missing values are excluded, otherwise not.}
-#   \item{robust}{If @TRUE, robust estimators are used, otherwise not.}
+#   \item{FUN}{A @function.}
 #   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -53,7 +53,7 @@
 # @keyword robust
 # @keyword univar 
 #*/###########################################################################
-setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w=NULL, from=min(x, na.rm=TRUE), to=max(x, na.rm=TRUE), by=NULL, length.out=length(x), xOut=NULL, na.rm=TRUE, robust=FALSE, ..., verbose=FALSE) {
+setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w=NULL, from=min(x, na.rm=TRUE), to=max(x, na.rm=TRUE), by=NULL, length.out=length(x), xOut=NULL, na.rm=TRUE, FUN="median", ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -99,8 +99,19 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
   # Arguments 'na.rm':
   na.rm <- Arguments$getLogical(na.rm);
 
-  # Arguments 'robust':
-  robust <- Arguments$getLogical(robust);
+  # Arguments 'FUN':
+  if (is.character(FUN)) {
+    if (FUN == "median") {
+      FUN <- colWeightedMedians;
+    } else if (FUN == "mean") {
+      FUN <- colWeightedMeans;
+    } else {
+      throw("Unknown value of argument 'FUN': ", FUN);
+    }
+  } else if (is.function(FUN)) {
+  } else {
+    throw("Argument 'FUN' is not a function: ", class(FUN)[1]);
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -175,11 +186,7 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
       wBin <- w[keep];
     }
 
-    if (robust) {
-      value <- colWeightedMedians(YBin, w=wBin, na.rm=na.rm);
-    } else {
-      value <- colWeightedMeans(YBin, w=wBin, na.rm=na.rm);
-    }
+    value <- FUN(YBin, w=wBin, na.rm=na.rm);
 
     # Fix: Smoothing over a window with all missing values give zeros, not NA.
     idxs <- whichVector(value == 0);
@@ -192,6 +199,7 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
     }
 
 #    verbose && str(verbose, value);
+
     Ys[kk,] <- value;
   } # for (kk ...)
 
@@ -221,6 +229,8 @@ setMethodS3("binnedSmoothing", "numeric", function(y, ...) {
 # o BUG FIX: When passing a single data points to colBinnedSmoothing(),
 #   it would throw the exception: "Range of argument 'by' is out of range
 #   [0,0]: [<by>,<by>]".
+# 2009-03-23
+# o Replace argument 'robust' with more generic 'FUN'.
 # 2009-02-11
 # o Added more verbose output to colBinnedSmoothing().
 # 2009-02-07
