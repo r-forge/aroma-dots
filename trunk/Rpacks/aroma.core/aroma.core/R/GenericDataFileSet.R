@@ -123,9 +123,11 @@ setMethodS3("as.character", "GenericDataFileSet", function(x, ...) {
 
   # Pathname
   path <- getPath(this);
-  pathR <- getRelativePath(path);
-  if (nchar(pathR) < nchar(path)) {
-    path <- pathR;
+  if (!is.na(path)) {
+    pathR <- getRelativePath(path);
+    if (nchar(pathR) < nchar(path)) {
+      path <- pathR;
+    }
   }
   s <- c(s, sprintf("Path (to the first file): %s", path));
 
@@ -1046,34 +1048,35 @@ setMethodS3("fromFiles", "GenericDataFileSet", function(static, path=NULL, patte
   pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE, 
                                    all.files=FALSE, recursive=recursive);
   verbose && printf(verbose, "Found %d files.\n", length(pathnames));
-  if (length(pathnames) == 0)
-    throw("No files found: ", path);
   verbose && exit(verbose);
 
-  # Sort files in lexicographic order
-  pathnames <- sort(pathnames);
+  if (length(pathnames) > 0) {
+    # Sort files in lexicographic order
+    pathnames <- sort(pathnames);
 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Build list of GenericDataFile objects
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Defining ", length(pathnames), " files");
-  files <- list();
-  for (kk in seq(along=pathnames)) {
-    if (as.logical(verbose)) cat(kk, ", ", sep="");
-    df <- fromFile(dfStatic, pathnames[kk], recursive=recursive, .checkArgs=FALSE, verbose=less(verbose));
-    files[[kk]] <- df;
-    if (kk == 1) {
-      # Update the static class instance.  The reason for this is
-      # that if the second file cannot be instanciated with the same
-      # class as the first one, then the files are incompatible.
-      # Note that 'df' might be of a subclass of 'dfStatic'.
-      clazz <- Class$forName(class(df)[1]);
-      dfStatic <- getStaticInstance(clazz);
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Build list of GenericDataFile objects
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    verbose && enter(verbose, "Defining ", length(pathnames), " files");
+    files <- list();
+    for (kk in seq(along=pathnames)) {
+      if (as.logical(verbose)) cat(kk, ", ", sep="");
+      df <- fromFile(dfStatic, pathnames[kk], recursive=recursive, .checkArgs=FALSE, verbose=less(verbose));
+      files[[kk]] <- df;
+      if (kk == 1) {
+        # Update the static class instance.  The reason for this is
+        # that if the second file cannot be instanciated with the same
+        # class as the first one, then the files are incompatible.
+        # Note that 'df' might be of a subclass of 'dfStatic'.
+        clazz <- Class$forName(class(df)[1]);
+        dfStatic <- getStaticInstance(clazz);
+      }
     }
+    if (as.logical(verbose)) cat("\n");
+    verbose && exit(verbose);
+  } else {
+    files <- list();
   }
-  if (as.logical(verbose)) cat("\n");
-  verbose && exit(verbose);
 
   # Create the file set object
   if (inherits(static, "Class")) {
@@ -1427,6 +1430,10 @@ setMethodS3("update2", "GenericDataFileSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-04
+# o Now static fromFiles() of GenericDataFileSet supports empty data sets.
+# o BUG FIX: as.character() of GenericDataFileSet would throw an error if
+#   the data set was empty, because then there was no path.
 # 2009-02-26
 # o Now hasTags(..., tags) splits the 'tags' argument.
 # 2009-02-08
