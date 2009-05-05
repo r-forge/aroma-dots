@@ -119,7 +119,7 @@ setMethodS3("getPath", "TotalCnSmoothing", function(this, create=TRUE, ...) {
 
 
 
-setMethodS3("getTargetPositions", "TotalCnSmoothing", function(this, ..., force=FALSE) {
+setMethodS3("getTargetPositions", "TotalCnSmoothing", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -333,6 +333,9 @@ setMethodS3("getOutputFiles", "TotalCnSmoothing", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-04
+# o BUG FIX: Added missing argument 'verbose' in getTargetPositions() of
+#   TotalCnSmoothing.  This caused unwanted verbose output in some cases.
 # 2009-02-08
 # o Now the root path is smoothCnData/ and no longer cnData/.
 # o Any subclass must implement smoothRawCopyNumbers().
