@@ -504,6 +504,12 @@ setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., incomplete
   nbrOfFiles <- nbrOfFiles(ds);
   verbose && exit(verbose);
 
+  if (nbrOfFiles == 0) {
+    verbose && cat(verbose, "Input data set is empty: Output data set is NULL by definition.");
+    verbose && exit(verbose);
+    return(NULL);
+  }
+
   verbose && enter(verbose, "Retrieving all files for ", class(ds)[1], 
                                                         " output data set");
   path <- getPath(this);
@@ -511,8 +517,8 @@ setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., incomplete
 
   clazz <- Class$forName(class(ds)[1]);
   args <- list(path=path, ...);
-  staticMethod <- clazz$fromFiles;
   args$verbose <- less(verbose);
+  staticMethod <- clazz$fromFiles;
   dsOut <- do.call("staticMethod", args=args);
   rm(staticMethod, args); # Not needed anymore
   verbose && exit(verbose);

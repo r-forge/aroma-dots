@@ -9,6 +9,7 @@ o Now getOutputDataSet() of AromaTransform scans for the output data
   files with fullnames matching those of the input data set.  This is
   one step closer to being able to batch process subsets of data sets
   when the method is, say, a single-array method.
+o Now static fromFiles() of GenericDataFileSet supports empty data sets.
 o Now readDataFrame() of AromaUgpFile and AromaUnitTabularBinaryFile
   accepts rows=integer(0).
 o UPDATE: Replace argument 'robust' of colBinnedSmoothing()
@@ -19,6 +20,9 @@ o BUG FIX: as.character() of GenericDataFile would throw
   format %f, %e, %g or %a for numeric objects' whenever the
   file size is returned as a double, which happens for very
   large files (> 2^31-1 bytes).
+o BUG FIX: as.character() of GenericDataFileSet would throw an error if
+  the data set was empty, because then there was no path.
+
 
 Version: 1.0.4 [2009-04-07]
 o BUG FIX: getUnitNames(..., units=NULL) of TextUnitNamesFile would 
