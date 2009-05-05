@@ -376,8 +376,6 @@ setMethodS3("getInputDataSet", "AromaTransform", function(this, ...) {
 })
 
 
-
-
 ###########################################################################/**
 # @RdocMethod isDone
 #
@@ -418,33 +416,16 @@ setMethodS3("isDone", "AromaTransform", function(this, ..., verbose=FALSE) {
 
   verbose && enter(verbose, "Checking if data set is \"done\"");
 
-  pathnames <- getOutputFiles(this);
-  if (length(pathnames) == 0) {
-    verbose && cat(verbose, "NOT done. No output files found.");
-    return(FALSE);
-  }
+  # Get input data set
+  ds <- getInputDataSet(this);
 
-  ds <- getInputDataSet(this);  
-
-  if (length(pathnames) < nbrOfFiles(ds)) {
-    verbose && cat(verbose, "NOT done. Too few output files: ", 
-                                   length(pathnames), " < ", nbrOfFiles(ds));
-    return(FALSE);
-  }
-
-  if (length(pathnames) > nbrOfFiles(ds)) {
-    throw("Too many output files found: ", 
-                                  length(pathnames), " > ", nbrOfFiles(ds));
-  }
-
-  verbose && cat(verbose, "Done. All output files are there: ", 
-                                                          length(pathnames));
-
+  # Scan for matching output files
+  dsOut <- getOutputDataSet(this, incomplete=TRUE, ..., 
+                                                    verbose=less(verbose,5));
   verbose && exit(verbose);
 
-  return(TRUE);
+  (nbrOfFiles(ds) == nbrOfFiles(dsOut));
 })
-
 
 
 setMethodS3("getOutputFiles", "AromaTransform", function(this, pattern=NULL, ...) {
@@ -479,6 +460,8 @@ setMethodS3("getOutputFiles", "AromaTransform", function(this, pattern=NULL, ...
 # \arguments{
 #   \item{...}{Arguments passed to static method \code{fromFiles()} of
 #      the class of the input @see "AromaMicroarrayDataSet".}
+#   \item{incomplete}{If the output data set is incomplete, then @NULL is
+#      returned unless \code{incomplete} is @TRUE.}
 #   \item{force}{If @TRUE, any in-memory cached results are ignored.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -493,7 +476,7 @@ setMethodS3("getOutputFiles", "AromaTransform", function(this, pattern=NULL, ...
 #   @seeclass
 # }
 #*/########################################################################### 
-setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., force=FALSE, verbose=FALSE) { 
+setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., incomplete=FALSE, force=FALSE, verbose=FALSE) { 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -507,39 +490,78 @@ setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., force=FALS
 
   verbose && enter(verbose, "Getting output data set for ", class(this)[1]);
 
-  outputDataSet <- this$.outputDataSet;
-
-  if (force || is.null(outputDataSet)) {
-    verbose && enter(verbose, "Checking to see if data set is \"done\"");
-    isDone <- isDone(this, verbose=less(verbose));
+  # Already retrieved?
+  dsOut <- this$.outputDataSet;
+  if (!force && !is.null(dsOut)) {
+    verbose && cat(verbose, "Already retrived.");
     verbose && exit(verbose);
-
-    if (isDone) {
-      verbose && enter(verbose, "Retrieving input data set");
-      ds <- getInputDataSet(this);
-      verbose && exit(verbose);
-      verbose && enter(verbose, "Retrieving files for ", class(ds)[1], 
-                                                        " output data set");
-
-      # Inherit the CDF from the input data set.
-      args <- list(path=getPath(this), ...);
-
-      clazz <- Class$forName(class(ds)[1]);
-      staticMethod <- clazz$fromFiles;
-      args$verbose <- less(verbose);
-      outputDataSet <- do.call("staticMethod", args=args);
-      rm(staticMethod, args); # Not needed anymore
-
-      verbose && exit(verbose);
-
-      this$.outputDataSet <- outputDataSet;
-    }
+    return(dsOut);
   }
+
+  verbose && enter(verbose, "Retrieving input data set");
+  ds <- getInputDataSet(this);
+  fullnames <- getFullNames(ds);
+  nbrOfFiles <- nbrOfFiles(ds);
   verbose && exit(verbose);
 
-  outputDataSet;
-}) 
+  verbose && enter(verbose, "Retrieving all files for ", class(ds)[1], 
+                                                        " output data set");
+  path <- getPath(this);
+  verbose && cat(verbose, "Path: ", path);
 
+  clazz <- Class$forName(class(ds)[1]);
+  args <- list(path=path, ...);
+  staticMethod <- clazz$fromFiles;
+  args$verbose <- less(verbose);
+  dsOut <- do.call("staticMethod", args=args);
+  rm(staticMethod, args); # Not needed anymore
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Identifying matching input and output files");
+  verbose && str(verbose, fullnames);
+  fullnamesOut <- getFullNames(dsOut);
+  verbose && str(verbose, fullnamesOut);
+  idxs <- match(fullnames, fullnamesOut);
+  verbose && str(verbose, idxs);
+
+  if (anyMissing(idxs)) {
+    verbose && enter(verbose, "Missing output files");
+    isMissing <- is.na(idxs);
+    verbose && cat(verbose, "Number of output files missing: ", sum(isMissing));
+    idxs <- idxs[!isMissing];
+    verbose && cat(verbose, "Number of matching output files: ", length(idxs));
+    verbose && str(verbose, idxs);
+    verbose && exit(verbose);
+  }
+
+  # Extracting matching files (in same order as input data set)
+  dsOut <- extract(dsOut, idxs);
+
+  verbose && exit(verbose);
+
+
+  if (nbrOfFiles(dsOut) == nbrOfFiles) {
+    verbose && cat(verbose, "Output data set is complete (matches input data set)");
+    # Sanity check
+    stopifnot(identical(getFullNames(dsOut), fullnames));
+    this$.outputDataSet <- dsOut;
+  } else if (nbrOfFiles(dsOut) < nbrOfFiles) {
+    verbose && cat(verbose, "Too few output files: ", 
+                                 nbrOfFiles(dsOut), " < ", nbrOfFiles);
+    # Return incomplete data set?
+    if (!incomplete) {
+      verbose && cat(verbose, "Ignoring incomplete output data set.");
+      dsOut <- NULL;
+    }
+  } else if (nbrOfFiles(dsOut) > nbrOfFiles) {
+    throw("Too many output files identified: ", 
+                                 nbrOfFiles(dsOut), " > ", nbrOfFiles);
+  }
+
+  verbose && exit(verbose);
+
+  dsOut;
+})
 
 
 
@@ -579,6 +601,12 @@ setMethodS3("process", "AromaTransform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-04
+# o Now getOutputDataSet() of AromaTransform returns a data set with files
+#   ordered such that the fullnames are ordered the same way as the input
+#   data set.
+# o Now getOutputDataSet() of AromaTransform scans for the output data 
+#   files with fullnames matching those of the input data set.
 # 2008-05-31
 # o Updated the default filename pattern for getOutputDataFiles().
 # 2008-05-25
