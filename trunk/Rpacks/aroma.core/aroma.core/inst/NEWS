@@ -4,9 +4,11 @@ Package: aroma.core
 Version: 1.0.5x [2009-05-04]
 o Now getOutputDataSet() of AromaTransform returns a data set with files
   ordered such that the fullnames are ordered the same way as the input
-  data set.
+  data set.  Suggested by Xin (Victoria) Wang at UC Berkeley.
 o Now getOutputDataSet() of AromaTransform scans for the output data 
-  files with fullnames matching those of the input data set.
+  files with fullnames matching those of the input data set.  This is
+  one step closer to being able to batch process subsets of data sets
+  when the method is, say, a single-array method.
 o Now readDataFrame() of AromaUgpFile and AromaUnitTabularBinaryFile
   accepts rows=integer(0).
 o UPDATE: Replace argument 'robust' of colBinnedSmoothing()
