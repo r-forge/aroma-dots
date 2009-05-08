@@ -785,6 +785,23 @@
 \alias{asThis}
 \alias{asThis.BasicObject}
 \alias{asThis.Object}
+\alias{extractByChromosomes}
+\alias{extractByChromosomes.AromaUgpFile}
+\alias{addLocusFields}
+\alias{addLocusFields.RawGenomicSignals}
+\alias{append.RawGenomicSignals}
+\alias{getLocusFields}
+\alias{getLocusFields.RawGenomicSignals}
+\alias{getXScale}
+\alias{getXScale.RawGenomicSignals}
+\alias{getYScale}
+\alias{getYScale.RawGenomicSignals}
+\alias{setLocusFields}
+\alias{setLocusFields.RawGenomicSignals}
+\alias{setXScale}
+\alias{setXScale.RawGenomicSignals}
+\alias{setYScale}
+\alias{setYScale.RawGenomicSignals}
 
 \description{
   This page contains aliases for all "non-documented" objects that
