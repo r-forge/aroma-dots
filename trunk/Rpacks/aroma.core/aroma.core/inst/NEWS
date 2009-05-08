@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.5x [2009-05-04]
+Version: 1.0.5x [2009-05-07]
 o Now getOutputDataSet() of AromaTransform returns a data set with files
   ordered such that the fullnames are ordered the same way as the input
   data set.  Suggested by Xin (Victoria) Wang at UC Berkeley.
@@ -12,9 +12,11 @@ o Now getOutputDataSet() of AromaTransform scans for the output data
 o Now static fromFiles() of GenericDataFileSet supports empty data sets.
 o Now readDataFrame() of AromaUgpFile and AromaUnitTabularBinaryFile
   accepts rows=integer(0).
+o Added extractByChromosomes() for AromaUgpFile.
 o UPDATE: Replace argument 'robust' of colBinnedSmoothing()
   with a more generic 'FUN' argument.  The default arguments
   give identical results.
+o BUG FIX: lines() of RawGenomicSignals did not recognize x/yScale.
 o BUG FIX: as.character() of GenericDataFile would throw 
   'Error in sprintf("%d", getFileSize(db, "numeric")) : use 
   format %f, %e, %g or %a for numeric objects' whenever the

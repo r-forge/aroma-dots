@@ -90,7 +90,7 @@ setMethodS3("as.character", "RawGenomicSignals", function(x, ...) {
   s <- c(s, sprintf("Name: %s", as.character(name)));
   s <- c(s, sprintf("Chromosome: %d", getChromosome(this)));
   s <- c(s, sprintf("Number of loci: %d", nbrOfLoci(this)));
-  fields <- getLociFields(this);
+  fields <- getLocusFields(this);
   fields <- sapply(fields, FUN=function(field) {
     values <- this[[field]];
     mode <- mode(values);
@@ -155,9 +155,40 @@ setMethodS3("summary", "RawGenomicSignals", function(object, ...) {
 })
 
 
-setMethodS3("getLociFields", "RawGenomicSignals", function(this, ...) {
-  c("x", "y");
+setMethodS3("getLocusFields", "RawGenomicSignals", function(this, ...) {
+  fields <- this$.locusFields;
+  if (is.null(fields)) {
+    fields <- c("x", "y");
+  }
+  fields;
 })
+
+setMethodS3("setLocusFields", "RawGenomicSignals", function(this, fields, ...) {
+  # Argument 'field':
+  fields <- Arguments$getCharacters(fields);
+
+  oldFields <- this$.locusFields;
+
+  # Always keep (x,y)
+  fields <- unique(c("x", "y", fields));
+
+  # Update
+  this$.locusFields <- fields;
+
+  invisible(oldFields);
+})
+
+setMethodS3("addLocusFields", "RawGenomicSignals", function(this, fields, ...) {
+  oldFields <- getLocusFields(this);
+  fields <- c(oldFields, fields);
+  fields <- unique(fields);
+  setLocusFields(this, fields, ...);
+})
+
+setMethodS3("getLociFields", "RawGenomicSignals", function(this, ...) {
+  getLocusFields(this, ...);
+}, deprecated=TRUE, protected=TRUE)
+
 
 setMethodS3("sort", "RawGenomicSignals", function(x, ...) {
   # To please R CMD check
@@ -167,7 +198,7 @@ setMethodS3("sort", "RawGenomicSignals", function(x, ...) {
   x <- getPositions(res);
   o <- order(x);
   rm(x);
-  for (field in getLociFields(res)) {
+  for (field in getLocusFields(res)) {
     res[[field]] <- res[[field]][o];
   }
   res;
@@ -390,8 +421,32 @@ setMethodS3("estimateStandardDeviation", "RawGenomicSignals", function(this, met
 })
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Graphics related methods
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethodS3("getXScale", "RawGenomicSignals", function(this, ...) {
+  scale <- this$.xScale;
+  if (is.null(scale)) scale <- 1;
+  scale;
+})
 
-setMethodS3("plot", "RawGenomicSignals", function(x, xlab="Position", ylab="Signal", ylim=c(-3,3), pch=20, xScale=1, yScale=1, ...) {
+setMethodS3("getYScale", "RawGenomicSignals", function(this, ...) {
+  scale <- this$.yScale;
+  if (is.null(scale)) scale <- 1;
+  scale;
+})
+
+setMethodS3("setXScale", "RawGenomicSignals", function(this, xScale=1, ...) {
+  xScale <- Arguments$getDouble(xScale);
+  this$.xScale <- xScale;
+})
+
+setMethodS3("setYScale", "RawGenomicSignals", function(this, xScale=1, ...) {
+  yScale <- Arguments$getDouble(yScale);
+  this$.yScale <- yScale;
+})
+
+setMethodS3("plot", "RawGenomicSignals", function(x, xlab="Position", ylab="Signal", ylim=c(-3,3), pch=20, xScale=getXScale(this), yScale=getYScale(this), ...) {
   # To please R CMD check
   this <- x;
 
@@ -401,7 +456,7 @@ setMethodS3("plot", "RawGenomicSignals", function(x, xlab="Position", ylab="Sign
 })
 
 
-setMethodS3("points", "RawGenomicSignals", function(x, pch=20, xScale=1, yScale=1, ...) {
+setMethodS3("points", "RawGenomicSignals", function(x, pch=20, ..., xScale=getXScale(this), yScale=getYScale(this)) {
   # To please R CMD check
   this <- x;
 
@@ -410,7 +465,7 @@ setMethodS3("points", "RawGenomicSignals", function(x, pch=20, xScale=1, yScale=
   points(xScale*x, yScale*y, pch=pch, ...);
 })
 
-setMethodS3("lines", "RawGenomicSignals", function(x, ...) {
+setMethodS3("lines", "RawGenomicSignals", function(x, ..., xScale=getXScale(this), yScale=getYScale(this)) {
   # To please R CMD check
   this <- x;
 
@@ -420,6 +475,10 @@ setMethodS3("lines", "RawGenomicSignals", function(x, ...) {
   o <- order(x);
   x <- x[o];
   y <- y[o];
+
+  x <- x*xScale;
+  y <- y*yScale;
+
   lines(x, y, ...);
 })
 
@@ -454,6 +513,11 @@ setMethodS3("extractRawGenomicSignals", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-07
+# o Added (get|set)(X|Y)Scale() to RawGenomicSignals.
+# o Added setLocusFields().
+# o Renamed getLociFields() to getLocusFields().
+# o BUG FIX: lines() of RawGenomicSignals did not recognize x/yScale.
 # 2009-04-06
 # o BUG FIX: binnedSmoothing(..., byCount=TRUE) of RawGenomicSignals would
 #   give error "[...] object "ys" not found".
