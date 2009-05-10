@@ -785,8 +785,6 @@
 \alias{asThis}
 \alias{asThis.BasicObject}
 \alias{asThis.Object}
-\alias{extractByChromosomes}
-\alias{extractByChromosomes.AromaUgpFile}
 \alias{addLocusFields}
 \alias{addLocusFields.RawGenomicSignals}
 \alias{append.RawGenomicSignals}
@@ -802,6 +800,20 @@
 \alias{setXScale.RawGenomicSignals}
 \alias{setYScale}
 \alias{setYScale.RawGenomicSignals}
+\alias{AromaUnitChromosomeTabularBinaryFile}
+\alias{clearCache.AromaUnitChromosomeTabularBinaryFile}
+\alias{extractByChromosome}
+\alias{extractByChromosome.AromaUnitChromosomeTabularBinaryFile}
+\alias{getChromosomes.AromaUnitChromosomeTabularBinaryFile}
+\alias{getColumnNames.AromaUnitChromosomeTabularBinaryFile}
+\alias{getFilenameExtension.AromaUnitChromosomeTabularBinaryFile}
+\alias{getGenomeVersion.AromaUnitChromosomeTabularBinaryFile}
+\alias{getUnitsOnChromosome.AromaUnitChromosomeTabularBinaryFile}
+\alias{getUnitsOnChromosomes.AromaUnitChromosomeTabularBinaryFile}
+\alias{indexOfColumn}
+\alias{indexOfColumn.AromaUnitChromosomeTabularBinaryFile}
+\alias{readDataFrame.AromaUnitChromosomeTabularBinaryFile}
+\alias{allocate.AromaUnitChromosomeTabularBinaryFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

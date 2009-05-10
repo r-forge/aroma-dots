@@ -22,7 +22,7 @@
 \code{~~+--}\code{GenericDataFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.core]{AromaCellSequenceFile}, \emph{\link[aroma.core]{AromaCellTabularBinaryFile}}, \emph{\link[aroma.core]{AromaMicroarrayDataFile}}, \emph{\link[aroma.core]{AromaMicroarrayTabularBinaryFile}}, \link[aroma.core]{AromaTabularBinaryFile}, \link[aroma.core]{AromaUgpFile}, \link[aroma.core]{AromaUnitCallFile}, \link[aroma.core]{AromaUnitFracBCnBinaryFile}, \link[aroma.core]{AromaUnitGenotypeCallFile}, \link[aroma.core]{AromaUnitSignalBinaryFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}, \link[aroma.core]{AromaUnitTotalCnBinaryFile}, \emph{\link[aroma.core]{GenericTabularFile}}, \link[aroma.core]{SampleAnnotationFile}, \link[aroma.core]{TabularTextFile}, \link[aroma.core]{TextUnitNamesFile}\cr
+\link[aroma.core]{AromaCellSequenceFile}, \emph{\link[aroma.core]{AromaCellTabularBinaryFile}}, \emph{\link[aroma.core]{AromaMicroarrayDataFile}}, \emph{\link[aroma.core]{AromaMicroarrayTabularBinaryFile}}, \link[aroma.core]{AromaTabularBinaryFile}, \link[aroma.core]{AromaUgpFile}, \link[aroma.core]{AromaUnitCallFile}, \emph{\link[aroma.core]{AromaUnitChromosomeTabularBinaryFile}}, \link[aroma.core]{AromaUnitFracBCnBinaryFile}, \link[aroma.core]{AromaUnitGenotypeCallFile}, \link[aroma.core]{AromaUnitSignalBinaryFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}, \link[aroma.core]{AromaUnitTotalCnBinaryFile}, \emph{\link[aroma.core]{GenericTabularFile}}, \link[aroma.core]{SampleAnnotationFile}, \link[aroma.core]{TabularTextFile}, \link[aroma.core]{TextUnitNamesFile}\cr
 
 public static class \bold{GenericDataFile}\cr
 extends \link[R.oo]{Object}\cr

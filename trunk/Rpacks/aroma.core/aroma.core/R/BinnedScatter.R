@@ -157,13 +157,25 @@ setMethodS3("binScatter", "matrix", function(x, nbin=128, orderBy="density", dec
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify density estimator
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # smootherScatter() et al. were migrated from the Bioconductor 
+  # 'geneplotter' package to the grDevices part of the R v2.9.0 distro.
+  rVer <- paste(R.Version()$major, R.Version()$minor, sep=".");
+  if (compareVersion(rVer, "2.9.0") >= 0) {
+    calcDensity <- grDevices:::.smoothScatterCalcDensity;
+  } else {
+    calcDensity <- geneplotter:::.smoothScatterCalcDensity;
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Estimate the (x,y) density
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Estimate density only from finite data points
   ok <- whichVector(is.finite(x[,1]) & is.finite(x[,2]));
   x <- x[ok,,drop=FALSE];
   rm(ok);
-  map <- geneplotter:::.smoothScatterCalcDensity(x, nbin=nbin);
+  map <- calcDensity(x, nbin=nbin);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Map each data point to a bin
@@ -211,6 +223,9 @@ setMethodS3("binScatter", "matrix", function(x, nbin=128, orderBy="density", dec
 
 ############################################################################
 # HISTORY:
+# 2009-05-09
+# o UPDATED: Now binScatter() of BinnedScatter don't need the 'geneplotter'
+#   package if R v2.9.0+ is used.
 # 2008-11-26
 # o Added Rdoc comments with an example.
 # o Added constructor and reorder().

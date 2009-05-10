@@ -366,10 +366,21 @@ hasBeenModified hasBeenModified.GenericDataFile
   getPlatform.TextUnitNamesFile getUnitNames.TextUnitNamesFile
   nbrOfUnits.TextUnitNamesFile TextUnitNamesFile
 asThis asThis.BasicObject asThis.Object
-extractByChromosomes extractByChromosomes.AromaUgpFile
   addLocusFields addLocusFields.RawGenomicSignals
   append.RawGenomicSignals getLocusFields
   getLocusFields.RawGenomicSignals getXScale
   getXScale.RawGenomicSignals getYScale getYScale.RawGenomicSignals
   setLocusFields setLocusFields.RawGenomicSignals setXScale
   setXScale.RawGenomicSignals setYScale setYScale.RawGenomicSignals
+  AromaUnitChromosomeTabularBinaryFile
+  clearCache.AromaUnitChromosomeTabularBinaryFile extractByChromosome
+  extractByChromosome.AromaUnitChromosomeTabularBinaryFile
+  getChromosomes.AromaUnitChromosomeTabularBinaryFile
+  getColumnNames.AromaUnitChromosomeTabularBinaryFile
+  getFilenameExtension.AromaUnitChromosomeTabularBinaryFile
+  getGenomeVersion.AromaUnitChromosomeTabularBinaryFile
+  getUnitsOnChromosome.AromaUnitChromosomeTabularBinaryFile
+  getUnitsOnChromosomes.AromaUnitChromosomeTabularBinaryFile
+  indexOfColumn indexOfColumn.AromaUnitChromosomeTabularBinaryFile
+  readDataFrame.AromaUnitChromosomeTabularBinaryFile
+ allocate.AromaUnitChromosomeTabularBinaryFile
