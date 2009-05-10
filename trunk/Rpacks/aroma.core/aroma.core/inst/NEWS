@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.5x [2009-05-07]
+Version: 1.0.5 [2009-05-09]
 o Now getOutputDataSet() of AromaTransform returns a data set with files
   ordered such that the fullnames are ordered the same way as the input
   data set.  Suggested by Xin (Victoria) Wang at UC Berkeley.
@@ -12,7 +12,12 @@ o Now getOutputDataSet() of AromaTransform scans for the output data
 o Now static fromFiles() of GenericDataFileSet supports empty data sets.
 o Now readDataFrame() of AromaUgpFile and AromaUnitTabularBinaryFile
   accepts rows=integer(0).
+o Added abstract class AromaUnitChromosomeTabularBinaryFile to make it
+  easier to setup up new annotation file formats based on chromosomes.
+  AromaUgpFile is now inheriting from this class.
+  getUnitsOnChromosomes() now returns a list stratified by chromosome.
 o Added extractByChromosomes() for AromaUgpFile.
+o Added argument 'translate' to getColumnNames() of TabularTextFile.
 o UPDATE: Replace argument 'robust' of colBinnedSmoothing()
   with a more generic 'FUN' argument.  The default arguments
   give identical results.
@@ -24,6 +29,7 @@ o BUG FIX: as.character() of GenericDataFile would throw
   large files (> 2^31-1 bytes).
 o BUG FIX: as.character() of GenericDataFileSet would throw an error if
   the data set was empty, because then there was no path.
+o Package passes R CMD check on R v2.9.0.
 
 
 Version: 1.0.4 [2009-04-07]
@@ -115,7 +121,7 @@ o CLEAN UP: readDataFrame() of AromaTabularBinaryFile would forget to
 
 
 Version: 0.9.5 [2008-10-17]
-o Package pass R CMD check on R v2.7.2 and R v2.8.0rc.
+o Package passes R CMD check on R v2.7.2 and R v2.8.0rc.
 
 
 Version: 0.9.4.5 [2008-10-16]
@@ -147,7 +153,7 @@ o TESTING: Added redundancy tests to aroma.core.
 
 
 Version: 0.9.4 [2008-08-02]
-o Public release.  Package pass R CMD check on R v2.7.1
+o Public release.  Package passes R CMD check on R v2.7.1
   and R v2.8.0 devel on WinXP.
 
 

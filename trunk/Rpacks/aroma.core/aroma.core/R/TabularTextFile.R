@@ -88,10 +88,15 @@ setMethodS3("hasColumnHeader", "TabularTextFile", function(this, ...) {
 })
 
 
-setMethodS3("getColumnNames", "TabularTextFile", function(this, ...) {
+setMethodS3("getColumnNames", "TabularTextFile", function(this, ..., translate=TRUE) {
+  # Argument 'translate':
+  translate <- Arguments$getLogical(translate);
+
   if (hasColumnHeader(this)) {
     colnames <- getHeader(this, ...)$columns;
-    colnames <- translateColumnNames(this, colnames);
+    if (translate) {
+      colnames <- translateColumnNames(this, colnames);
+    }
   } else {
     colnames <- this$.columnNames;
   }
@@ -521,9 +526,10 @@ setMethodS3("readLines", "TabularTextFile", function(con, ...) {
 
 
 
-
 ############################################################################
 # HISTORY:
+# 2009-05-09
+# o Added argument 'translate' to getColumnNames() of TabularTextFile.
 # 2008-07-23
 # o Now nbrOfLines() cache the results and only recount if the file has
 #   been modified since last time (or the file system does not provide
