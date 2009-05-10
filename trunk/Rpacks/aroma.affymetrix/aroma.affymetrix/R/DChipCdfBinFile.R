@@ -57,7 +57,8 @@ setMethodS3("as.character", "DChipCdfBinFile", function(x, ...) {
 
   class(s) <- class;
   s;
-})
+}, private=TRUE) 
+
 
 setMethodS3("getFileFormat", "DChipCdfBinFile", function(this, ...) {
   hdr <- getHeader(this);

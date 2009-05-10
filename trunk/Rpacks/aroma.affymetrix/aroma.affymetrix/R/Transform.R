@@ -3,6 +3,19 @@ setConstructorS3("Transform", function(..., .reqSetClass="AffymetrixCelSet") {
 }, abstract=TRUE)
 
 
+setMethodS3("getOutputFiles", "Transform", function(this, pattern=NULL, ...) {
+  # Argument 'pattern':
+  if (is.null(pattern)) {
+    # Default filename pattern find non-private (no dot prefix) CEL files.
+    pattern <- "^[^.].*[.](cel|CEL)$";
+  } else {
+    pattern <- Arguments$getRegularExpression(pattern=pattern);
+  }
+
+  NextMethod("getOutputFiles", pattern=pattern, ...);
+}, protected=TRUE) 
+
+
 
 ###########################################################################/**
 # @set "class=Transform"
@@ -32,7 +45,58 @@ setConstructorS3("Transform", function(..., .reqSetClass="AffymetrixCelSet") {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("getOutputDataSet", "Transform", function(this, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+  verbose && enter(verbose, "Getting output data set for ", class(this)[1]);
+
+  # Inherit the CDF from the input data set.
+  ds <- getInputDataSet(this);
+  cdf <- getCdf(ds);
+  args <- list(generic="getOutputDataSet", this, ..., 
+               cdf=cdf, checkChipType=FALSE);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Inherit certain arguments from the input data set
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # AD HOC (not using OO), but setting these arguments does speed
+  # up things. /HB 2007-09-17
+  # Note, this is also done in Transform for now, such it is not really
+  # needed here.  However, in case it will be removed from there it still
+  # makes sense to have it here.
+  if (inherits(ds, "CnChipEffectSet"))
+    args$combineAlleles <- ds$combineAlleles;
+  if (inherits(ds, "SnpChipEffectSet"))
+    args$mergeStrands <- ds$mergeStrands; 
+
+  verbose && cat(verbose, "Calling NextMethod:");
+  verbose && str(verbose, args);
+  args$verbose <- less(verbose,1);
+
+  res <- do.call("NextMethod", args);
+
+  # Let the set update itself
+  update2(res, ..., verbose=less(verbose,1));
+
+  verbose && exit(verbose);
+
+  res;
+})
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# OBSOLETE
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethodS3("getOutputDataSetOLD20090509", "Transform", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -87,10 +151,6 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE, ve
 
       verbose && exit(verbose);
 
-#      verbose && enter(verbose, "Updating the CDF for the output data set");
-#      setCdf(outputDataSet, cdf);
-#      verbose && exit(verbose);
-
       this$.outputDataSet <- outputDataSet;
     }
   }
@@ -100,22 +160,12 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., force=FALSE, ve
 })
 
 
-setMethodS3("getOutputFiles", "Transform", function(this, pattern=NULL, ...) {
-  # Argument 'pattern':
-  if (is.null(pattern)) {
-    # Default filename pattern find non-private (no dot prefix) CEL files.
-    pattern <- "^[^.].*[.](cel|CEL)$";
-  } else {
-    pattern <- Arguments$getRegularExpression(pattern=pattern);
-  }
-
-  NextMethod("getOutputFiles", pattern=pattern, ...);
-}, protected=TRUE) 
-
-
 
 ############################################################################
 # HISTORY:
+# 2009-05-09
+# o Updated getOutputDataSet() of Transform to work with the updated
+#   superclass AromaTransform.
 # 2008-05-31
 # o BUG FIX: The recent updates to getOutputFiles() did also find private
 #   files.

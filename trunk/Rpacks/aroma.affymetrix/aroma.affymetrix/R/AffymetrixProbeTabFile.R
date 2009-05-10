@@ -121,8 +121,13 @@ setMethodS3("translateFullName", "AffymetrixProbeTabFile", function(this, name, 
 setMethodS3("hasColumnHeader", "AffymetrixProbeTabFile", function(this, ...) {
   # Infer if there is a column header or not
   hdr <- readRawHeader(this);
-  hasColumnHeader <- any(regexpr("^(PROBESET|Probe Set)", hdr$topRows[[1]]) != -1);
-  hasColumnHeader;
+  patterns <- c("^(PROBESET|Probe Set)", "[Pp]robe.*[Ss]equence");
+  for (pattern in patterns) {
+    if (any(regexpr(pattern, hdr$topRows[[1]]) != -1)) {
+      return(TRUE);
+    }
+  }
+  FALSE;
 }, protected=TRUE)
 
 
@@ -141,7 +146,8 @@ setMethodS3("translateColumnNames", "AffymetrixProbeTabFile", function(this, nam
 
 
   lcNames <- tolower(names);
-  names[lcNames == "probe set name"] <- "probeset id";
+  names[lcNames == "probe set name"] <- "unitName";
+  names[lcNames == "transcript cluster id"] <- "unitName";
   names[lcNames == "probe x"] <- "probe x pos";
   names[lcNames == "probe y"] <- "probe y pos";
 
@@ -154,9 +160,33 @@ setMethodS3("translateColumnNames", "AffymetrixProbeTabFile", function(this, nam
 
 
 
-setMethodS3("getColumnNames", "AffymetrixProbeTabFile", function(this, ...) {
-  columns <- NextMethod("getColumnNames", this, ...);
+setMethodS3("getColumnNames", "AffymetrixProbeTabFile", function(this, ..., translate=TRUE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Arguments 'translate':
+  translate <- Arguments$getLogical(translate);
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Retrieving column names");
+
+  verbose && enter(verbose, "Using method of super class");
+  columns <- NextMethod("getColumnNames", this, ..., translate=translate, 
+                                               verbose=less(verbose, 5));
+  verbose && cat(verbose, "Identfied columns (if any):");
+  verbose && print(verbose, columns);
+  verbose && exit(verbose);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # If there are no column header in the file, then load the first row
+  # of data and make a best guess what the columns are.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(columns)) {
     # Has column header?
     topRow <- getHeader(this)$topRows[[1]];
@@ -167,52 +197,127 @@ setMethodS3("getColumnNames", "AffymetrixProbeTabFile", function(this, ...) {
     if (hasColumnHeader(this)) {
       columns <- topRow;
     } else {
-      # Identify PROBESET_ID
-      pattern <- "^[a-zA-Z]+[a-zA-Z0-9]_[a-zA-Z0-9].*";
-      pattern <- toAsciiRegExprPattern(pattern);
-      idx <- grep(pattern, topRow);
-      if (length(idx) > 0) {
-        columns[idx] <- "PROBESET_ID";
-      }
-  
+      verbose && enter(verbose, "Guessing column names based on data");
+
+      verbose && cat(verbose, "Data values:");
+      verbose && print(verbose, topRow);
+
+      verbose && enter(verbose, "Locating column of probe sequences");
       # Identify PROBE_SEQUENCE
       pattern <- "^[ACGT]{25}$";
       idx <- grep(pattern, topRow);
-      if (length(idx) > 0)
+      if (length(idx) > 0) {
         columns[idx] <- "PROBE_SEQUENCE";
+        topRow[idx] <- NA;
+        verbose && cat(verbose, "Identified column: ", idx);
+      }
+      verbose && exit(verbose);
   
+      verbose && enter(verbose, "Locating column with PM/MM flags");
       # Identify PROBE_TYPE
       pattern <- "^(PM|MM)$";
       idx <- grep(pattern, topRow);
-      if (length(idx) > 0)
+      if (length(idx) > 0) {
         columns[idx] <- "PROBE_TYPE";
+        topRow[idx] <- NA;
+        verbose && cat(verbose, "Identified column: ", idx);
+      }
+      verbose && exit(verbose);
   
+      verbose && enter(verbose, "Locating column with strandness");
       # Identify TARGET_STRANDEDNESS
-      pattern <- "^(\\+|-|f|r)$";
+      pattern <- "^(\\+|-|f|r|Antisense|Sense)$";
       idx <- grep(pattern, topRow);
-      if (length(idx) > 0)
+      if (length(idx) > 0) {
         columns[idx] <- "TARGET_STRANDEDNESS";
+        topRow[idx] <- NA;
+        verbose && cat(verbose, "Identified column: ", idx);
+      }
+      verbose && exit(verbose);
   
+      verbose && enter(verbose, "Locating column specifying the allele");
       # Identify ALLELE
       pattern <- "^[ACGT]$";
       idx <- grep(pattern, topRow);
-      if (length(idx) > 0)
+      if (length(idx) > 0) {
         columns[idx] <- "ALLELE";
+        topRow[idx] <- NA;
+        verbose && cat(verbose, "Identified column: ", idx);
+      }
+      verbose && exit(verbose);
   
-      # Guess remaining
+      verbose && enter(verbose, "Locating column of unit names");
+      # Identify PROBESET_ID
+      pattern <- "^[a-zA-Z0-9]+_[a-zA-Z0-9].*";
+      pattern <- toAsciiRegExprPattern(pattern);
+print(pattern);
+      idx <- grep(pattern, topRow);
+      if (length(idx) > 0) {
+        columns[idx] <- "PROBESET_ID";
+        topRow[idx] <- NA;
+        verbose && cat(verbose, "Identified column: ", idx);
+      }
+      verbose && exit(verbose);
+  
+      verbose && enter(verbose, "Locating columns for (x,y) & position");
       idxs <- which(is.na(columns));
+      verbose && cat(verbose, "Remaining columns:");
+      verbose && print(verbose, idxs);
+      verbose && cat(verbose, "Data values:");
+      verbose && print(verbose, topRow[idxs]);
+
+      verbose && cat(verbose, "Columns with integers:");
+      pattern <- "^[0-9]+$";
+      idxs <- idxs[grep(pattern, topRow[idxs])];
+      verbose && print(verbose, idxs);
+      verbose && cat(verbose, "Data values:");
+      verbose && print(verbose, topRow[idxs]);
+      verbose && cat(verbose, "Parsed data values:");
+      values <- as.integer(topRow[idxs]);
+      verbose && print(verbose, values);
+      # Sanity check
+      stopifnot(all(is.finite(values)));
+
+      # Guess remaining
       nidxs <- length(idxs);
-      if (nidxs >= 1)
-        columns[idxs[1]] <- "PROBE_X_POS";
-      if (nidxs >= 2)
-        columns[idxs[2]] <- "PROBE_Y_POS";
-      if (nidxs >= 3)
-        columns[idxs[3]] <- "PROBE_INTERROGATION_POSITION";
+      if (nidxs >= 1) {
+        idx <- idxs[1];
+        columns[idx] <- "PROBE_X_POS";
+        topRow[idx] <- NA;
+        verbose && cat(verbose, "Identified column: ", idx);
+      }
+      if (nidxs >= 2) {
+        idx <- idxs[2];
+        columns[idx] <- "PROBE_Y_POS";
+        topRow[idx] <- NA;
+        verbose && cat(verbose, "Identified column: ", idx);
+      }
+      if (nidxs >= 3) {
+        idx <- idxs[3];
+        columns[idx] <- "PROBE_INTERROGATION_POSITION";
+        topRow[idx] <- NA;
+        verbose && cat(verbose, "Identified column: ", idx);
+      }
+      verbose && exit(verbose);
+
+      verbose && cat(verbose, "Inferred/guessed column names:");
+      verbose && print(verbose, columns);
+      verbose && exit(verbose);
     }
   }
 
-  # Finally, translate any column names
-  columns <- translateColumnNames(this, columns);
+  # Translate any column names?
+  if (translate) {
+    verbose && enter(verbose, "Translating column names");
+    verbose && cat(verbose, "Before:");
+    verbose && print(verbose, columns);
+    columns <- translateColumnNames(this, columns);
+    verbose && cat(verbose, "After:");
+    verbose && print(verbose, columns);
+    verbose && exit(verbose);
+  }
+
+  verbose && exit(verbose);
 
   columns;
 })
@@ -240,10 +345,7 @@ setMethodS3("getCdf", "AffymetrixProbeTabFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
     chipType <- getChipType(this);
-    pathname <- AffymetrixCdfFile$findByChipType(chipType);
-    if (is.null(pathname))
-      throw("Could not located CDF file for chip type pattern: ", chipType);
-    cdf <- AffymetrixCdfFile$fromFile(pathname);
+    cdf <- AffymetrixCdfFile$byChipType(chipType, tags=".*");
     this$.cdf <- cdf;
   }
   cdf;
@@ -300,6 +402,7 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
   # As a backup, search "old" style (code by Ken Simpson)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(pathname)) {
+    verbose && enter(verbose, "Backward compatible search (v1)");
     # Default paths
     paths <- paste(".",
                    getOption("AFFX_SEQUENCE_PATH"),
@@ -310,12 +413,16 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
                    "cdf/", "data/cdf/",
                    sep=";", collapse=";");
     pathname <- findFiles(pattern, paths=paths, recursive=TRUE);
+    verbose && print(verbose, pathname);
+    throw("Found probe-tab file only by means of deprectated (v1) search rules: ", pathname);
+    verbose && exit(verbose);
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # As a backup, search using "old" style v2
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(pathname)) {
+    verbose && enter(verbose, "Backward compatible search (v2)");
     paths <- "annotations";
   
     # First to an exact search
@@ -356,6 +463,9 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
   
       pathname <- pathnames[1];
     }
+    verbose && print(verbose, pathname);
+    throw("Found probe-tab file only by means of deprectated (v2) search rules: ", pathname);
+    verbose && exit(verbose);
   }
 
   verbose && cat(verbose, "Pathname: ", pathname);
@@ -364,6 +474,7 @@ setMethodS3("findByChipType", "AffymetrixProbeTabFile", function(static, chipTyp
 
   pathname;
 }, static=TRUE, protected=TRUE)
+
 
 
 setMethodS3("fromCdf", "AffymetrixProbeTabFile", function(static, cdf, ...) {
@@ -400,7 +511,7 @@ setMethodS3("getIndexToRowMap", "AffymetrixProbeTabFile", function(this, ..., fo
     # Read only (X,Y) columns
     colClasses <- rep("NULL", 8);
     colClasses[2:3] <- "integer";
-    names(colClasses) <- c("probeSetId", "x", "y", "offset", "sequence", "strand", "type", "allele");
+    names(colClasses) <- c("unitName", "x", "y", "offset", "sequence", "strand", "type", "allele");
     pathname <- getPathname(this);
     df <- readTable(pathname, colClasses=colClasses, sep="\t", header=FALSE, col.names=names(colClasses));
     
@@ -461,7 +572,7 @@ setMethodS3("readDataFrame2", "AffymetrixProbeTabFile", function(this, cells=NUL
 #    colClasses <- c("factor", "integer", "integer", "integer", "character", "factor", "factor", "factor");
     colClasses <- c("character", "integer", "integer", "integer", "character", "character", "character", "character");
     colClasses[2:3] <- "NULL";
-    names(colClasses) <- c("probeSetId", "x", "y", "offset", "sequence", "strand", "type", "allele");
+    names(colClasses) <- c("unitName", "x", "y", "offset", "sequence", "strand", "type", "allele");
   
     pathname <- getPathname(this);
     verbose && enter(verbose, "Reading data table");
@@ -498,8 +609,101 @@ setMethodS3("readDataFrame2", "AffymetrixProbeTabFile", function(this, cells=NUL
 }, private=TRUE)
 
 
+
+setMethodS3("readSequenceDataFrame", "AffymetrixProbeTabFile", function(this, ..., rows=NULL, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Retrieving probe-sequence data");
+  chipType <- getChipType(this);
+  verbose && cat(verbose, "Chip type (full): ", chipType);
+
+  columnNames <- getColumnNames(this);
+  verbose && cat(verbose, "Column names:");
+  verbose && print(verbose, columnNames);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Sanity check of file content
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Asserting that columns for probe (x,y) and sequence exist");
+
+  # Identify the columns with (x,y) cell positions
+  xcol <- whichVector(columnNames == "probeXPos");
+  if (length(xcol) != 1) {
+    throw("Failed to identify the column with x cell positions: ", getPathname(xcol));
+  }
+
+  ycol <- whichVector(columnNames == "probeYPos");
+  if (length(ycol) != 1) {
+    throw("Failed to identify the column with y cell positions: ", getPathname(ycol));
+  }
+
+  # Identify the column with probe sequences
+  seqcol <- whichVector(columnNames == "probeSequence");
+  if (length(seqcol) != 1) {
+    throw("Failed to identify the column with probe sequences: ", getPathname(seqcol));
+  }
+
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Reading data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Reading (x,y,sequence) data");
+  colClassPatterns <- c("^probeXPos$"="integer", "^probeYPos$"="integer", 
+                                            "^probeSequence$"="character");
+  verbose && cat(verbose, "colClassPatterns:");
+  verbose && print(verbose, colClassPatterns);
+
+  # Test read
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, rows=1:10,
+                                               verbose=less(verbose, 20));
+  verbose && cat(verbose, "First 10 data rows (parsed):");
+  verbose && print(verbose, data);
+  verbose && str(verbose, data);
+  rm(data);
+
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, rows=rows,
+                                               verbose=less(verbose, 20));
+  verbose && printf(verbose, "Loaded %d probe entries", nrow(data));
+  verbose && str(verbose, data);
+  # Sanity check of (x,y) coordinates
+  if (any(is.na(data$probeXPos) | data$probeXPos < 0)) {
+    throw("Detected negative probe x positions: ", getPathname(this));
+  }
+  if (any(is.na(data$probeYPos) | data$probeYPos < 0)) {
+    throw("Detected negative probe y positions: ", getPathname(this));
+  }
+  verbose && exit(verbose);
+  
+  verbose && exit(verbose);
+
+  data;
+}, protected=TRUE)
+
+
 ############################################################################
 # HISTORY:
+# 2009-05-09
+# o Added readSequenceDataFrame() for AffymetrixProbeTabFile.
+# o Renamed the 'probeSetId' column to 'unitName'.
+# o Updated to recognize column name 'Transcript Cluster ID' as a unit names
+#   columns as well, e.g. as for the HuGene-1_0-st-v1 probe tab file.
+# o Now findByChipType() of AffymetrixProbeTabFile only search according
+#   to "modern" rules.  The by now really old alternative search rules 
+#   (v1 and v2) have been made deprecated, i.e. it still searches using
+#   those but, if a file is found, it gives an error saying that the 
+#   the method is outdated.  This should not affect anyone, but just 
+#   in case.
 # 2008-07-07
 # o Updated findByChipType() to search for pattern "[._]probe[._]tab$", 
 #   because all combinations exist.

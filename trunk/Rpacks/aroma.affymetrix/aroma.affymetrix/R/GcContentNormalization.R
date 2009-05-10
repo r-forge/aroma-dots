@@ -86,7 +86,7 @@ setMethodS3("getCdf", "GcContentNormalization", function(this, ...) {
 })
 
 
-setMethodS3("getOutputDataSet", "GcContentNormalization", function(this, ...) {
+setMethodS3("getOutputDataSet00", "GcContentNormalization", function(this, ...) {
   res <- NextMethod(generic="getOutputDataSet", object=this, ...);
 
   # Carry over parameters too.  AD HOC for now. /HB 2007-01-07

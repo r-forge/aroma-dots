@@ -1707,12 +1707,10 @@
 \alias{updateSettings.Package}
 \alias{getDefaultSettings}
 \alias{plotCovariateEffects.GcContentNormalization2}
-\alias{AdditiveCovariatesNormalization}
 \alias{allocateFromCdf.AromaUnitGcContentFile}
 \alias{AromaUgcFile}
 \alias{AromaUnitGcContentFile}
 \alias{clearCache.AdditiveCovariatesNormalization}
-\alias{GcContentNormalization2}
 \alias{getAsteriskTags.AdditiveCovariatesNormalization}
 \alias{getCdf.AdditiveCovariatesNormalization}
 \alias{getColumnNames.AromaUnitGcContentFile}
@@ -1728,7 +1726,6 @@
 \alias{getTargetFunctions.AdditiveCovariatesNormalization}
 \alias{importFromAffymetrixNetAffxCsvFile.AromaUnitGcContentFile}
 \alias{plotCovariateEffects}
-\alias{process.AdditiveCovariatesNormalization}
 \alias{writeSgr}
 \alias{writeSgr.AffymetrixCelSet}
 \alias{getParameters.NormExpBgCorrection}
@@ -1738,6 +1735,17 @@
 \alias{getParameters.NormExpBackgroundCorrection}
 \alias{getSubsetToUpdate0}
 \alias{getSubsetToUpdate0.LimmaBackgroundCorrection}
+\alias{getOutputDataSet00}
+\alias{getOutputDataSet00.AdditiveCovariatesNormalization}
+\alias{getOutputDataSet00.FragmentEquivalentClassNormalization}
+\alias{getOutputDataSet00.FragmentLengthNormalization}
+\alias{getOutputDataSet00.GcContentNormalization}
+\alias{getOutputDataSetOLD20090509}
+\alias{getOutputDataSetOLD20090509.Transform}
+\alias{getProbeSequenceData}
+\alias{getProbeSequenceData.AffymetrixCdfFile}
+\alias{readSequenceDataFrame}
+\alias{readSequenceDataFrame.AffymetrixProbeTabFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -171,7 +171,7 @@ setMethodS3("getCdf", "AdditiveCovariatesNormalization", function(this, ...) {
 })
 
 
-setMethodS3("getOutputDataSet", "AdditiveCovariatesNormalization", function(this, ..., verbose=FALSE) {
+setMethodS3("getOutputDataSet00", "AdditiveCovariatesNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

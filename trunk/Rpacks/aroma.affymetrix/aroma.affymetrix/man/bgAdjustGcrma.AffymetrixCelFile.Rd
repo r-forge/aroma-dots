@@ -57,7 +57,7 @@
 }
 
 \author{
-  Ken Simpson (ksimpson[at]wehi.edu.au).
+  Ken Simpson (ksimpson[at]wehi.edu.au) and Mark Robinson.
 }
 
 \seealso{

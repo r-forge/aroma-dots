@@ -213,6 +213,8 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
   medianPolishThreshold <- getOption(aromaSettings, 
                          "models/RmaPlm/medianPolishThreshold", c(Inf, Inf));
 
+  flavor <- this$.flavor;
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # rmaModelAffyPlm()
@@ -491,6 +493,70 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
   # Requires: oligo() by Benilto Carvalho et al.
   # Why: To fully immitate CRLMM in oligo.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (flavor == "oligo") {
+    # First, try to see if preprocessCore > v0.99.14 is available
+    pkg <- "oligo";
+    pkgDesc <- packageDescription(pkg);
+    ver <- pkgDesc$Version;
+    verbose && cat(verbose, pkg, " version: ", ver);
+    if (compareVersion(ver, "1.9.10") >= 0) {
+      # HB 2009-05-09: The API of the native function rma_c_complete_copy() 
+      #                has been updated in the devel version.
+      fitRma <- function(y, unitNames, nbrOfUnits, ...) {
+        ## SEXP rma_c_complete_copy(
+        ##           SEXP PMmat,  
+        ##           SEXP ProbeNamesVec, SEXP N_probes,
+        ##           SEXP norm_flag, SEXP bg_flag,
+        ##           SEXP bg_type, SEXP verbose)
+        .Call("rma_c_complete_copy", 
+                     y, 
+                     unitNames, nbrOfUnits, 
+                     FALSE, FALSE, 
+                     as.integer(2), FALSE, PACKAGE="oligo");
+        .Call("rma_c_complete_copy", y, unitNames, as.integer(nbrOfUnits), as.integer(0), as.integer(0), as.integer(2), as.integer(0), PACKAGE="oligo");
+      } # fitRma()
+    } else if (compareVersion(ver, "1.7.19") >= 0) {
+      # HB 2009-05-09: The API of the native function rma_c_complete_copy() 
+      #                has been updated.
+      fitRma <- function(y, unitNames, nbrOfUnits, ...) {
+        ## SEXP rma_c_complete_copy(
+        ##           SEXP PMmat,  
+        ##           SEXP ProbeNamesVec, SEXP N_probes,
+        ##           SEXP norm_flag, SEXP bg_flag,
+        ##           SEXP bg_type, SEXP verbose)
+        .Call("rma_c_complete_copy",
+                     y, 
+                     unitNames, nbrOfUnits, 
+                     FALSE, FALSE, 
+                     as.integer(2), FALSE, PACKAGE="oligo");
+      } # fitRma()
+    } else if (compareVersion(ver, "0.99.51") >= 0) {
+      # MR 2008-12-04: fitRma() was removed from the 'oligo' package.  
+      #                The call below is basically equivalent
+      fitRma <- function(y, unitNames, nbrOfUnits, ...) {
+        ## SEXP rma_c_complete_copy(
+        ##           SEXP PMmat, SEXP MMmat, 
+        ##           SEXP ProbeNamesVec, SEXP N_probes, 
+        ##           SEXP densfunc, SEXP rho,
+        ##           SEXP norm_flag, SEXP bg_flag, 
+        ##           SEXP bg_type);
+	.Call("rma_c_complete_copy", 
+              y, y, 
+              unitNames, nbrOfUnits, 
+              NULL, NULL,
+              FALSE, FALSE, 
+              as.integer(2), PACKAGE="oligo");
+      } # fitRma()
+    } else {
+      fitRma <- function(y, unitNames, nbrOfUnits, ...) {
+        capture.output({
+          fit <- oligo::fitRma(pmMat=y, mmMat=y, pnVec=unitNames, nProbes=nbrOfUnits, densFunction=NULL, rEnv=NULL, normalize=FALSE, background=FALSE, bgversion=2, destructive=FALSE);
+        });
+        fit;
+      } # fitRma()
+    }
+  }
+
   rmaModelOligo <- function(y, ...) {
     # Add shift
     y <- y + shift;
@@ -525,13 +591,7 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
     nbrOfUnits <- as.integer(1); # Only one unit group is fitted
 
     # Each call to fitRma() outputs "Calculating Expression".
-    #capture.output({
-    #  fit <- oligo::fitRma(pmMat=y, mmMat=y, pnVec=unitNames, nProbes=nbrOfUnits, densFunction=NULL, 
-    #                       rEnv=NULL, normalize=FALSE, background=FALSE, bgversion=2, destructive=FALSE);
-    #})
-    # MR 4-Dec-2008: fitRma was removed from the 'oligo' package.  The call below is basically equivalent
-    fit <- .Call("rma_c_complete_copy", y, y, unitNames, nbrOfUnits, NULL, NULL, FALSE, FALSE,
-            as.integer(2), PACKAGE = "oligo")
+    fit <- fitRma(y, unitNames, nbrOfUnits);
 
     # Extract probe affinities and chip estimates
     est <- fit[1,];  # Only one unit
@@ -601,7 +661,6 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
   # Get the flavor of fitting algorithm for the RMA PLM
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Selecting fit function depending on 'flavor'");
-  flavor <- this$.flavor;
   verbose && cat(verbose, "Flavor: ", flavor);
 
   # Shift signals?
@@ -637,7 +696,8 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
   verbose && enter(verbose, "Validating the fit function on some dummy data");
   ok <- FALSE;
   tryCatch({
-    rmaModel(matrix(1:6+0.1, ncol=3));
+    y <- matrix(1:6+0.1, ncol=3);
+    rmaModel(y);
     ok <- TRUE;
   }, error = function(ex) {
     print(ex);
@@ -664,12 +724,16 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-09
+# o Updated getFitUnitGroupFunction() of RmaPlm to work with the new
+#   oligo v1.7.19 as well.  Hmm... not sure if it works anyway.
 # 2008-12-08
 # o Now the fit function returned by getFitUnitFunction() must be able
 #   to handle prior parameters as well.
 # 2008-12-04
-# o BUG FIX: flavor='oligo' stopped working awhile ago.  changed the call to
-#   'fitRma' to the native C code as given by 'selectMethod("rma","FeatureSet")'
+# o BUG FIX: flavor='oligo' stopped working awhile ago. Changed the call to
+#   'fitRma()' to the native C code as given by 
+#   'selectMethod("rma", "FeatureSet")'.
 # 2008-07-13
 # o BUG FIX: plm$treatNAsAs=="NA" returned an incorrect number of probe
 #   affinities whenever missing values were exluded.

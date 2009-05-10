@@ -25,7 +25,7 @@ a particular CDF, and matches sequence to probe index in order to assign
 an affinity to each probe.
 }
 
-\usage{\method{computeAffinities}{AffymetrixCdfFile}(this, paths=NULL, force=FALSE, verbose=FALSE, ...)}
+\usage{\method{computeAffinities}{AffymetrixCdfFile}(this, paths=NULL, safe=TRUE, force=FALSE, verbose=FALSE, ...)}
 
 \arguments{
   \item{paths}{A \code{\link[base]{character}} variable containing location(s) to look for

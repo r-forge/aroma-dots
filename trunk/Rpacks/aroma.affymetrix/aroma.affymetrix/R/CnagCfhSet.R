@@ -430,81 +430,83 @@ setMethodS3("fromFiles", "CnagCfhSet", function(static, path="rawData/", pattern
       }
     }
   }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Scan all CFH files for possible chip types
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Chip type according to the directory structure
-  path <- getPath(this);
-  chipType <- basename(path);
-  verbose && cat(verbose, "The chip type according to the directory is: ", 
-                                                              chipType);
-
-  # Let the directory name specify the chip type?
-  if (checkChipType) {
-    verbose && enter(verbose, "Scanning CFH set for used chip types");
-    # This takes time if the CFH files are ASCII files.
-    chipTypes <- sapply(this, FUN=function(file) {
-      readCfhHeader(getPathname(file))$chipType;
-    })
-    tChipTypes <- table(chipTypes);
-    verbose && print(verbose, tChipTypes);
-    nbrOfChipTypes <- length(tChipTypes);
+ 
+  if (nbrOfFiles(this) > 0) {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Scan all CFH files for possible chip types
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Chip type according to the directory structure
+    path <- getPath(this);
+    chipType <- basename(path);
+    verbose && cat(verbose, "The chip type according to the directory is: ", 
+                                                                chipType);
+  
+    # Let the directory name specify the chip type?
+    if (checkChipType) {
+      verbose && enter(verbose, "Scanning CFH set for used chip types");
+      # This takes time if the CFH files are ASCII files.
+      chipTypes <- sapply(this, FUN=function(file) {
+        readCfhHeader(getPathname(file))$chipType;
+      })
+      tChipTypes <- table(chipTypes);
+      verbose && print(verbose, tChipTypes);
+      nbrOfChipTypes <- length(tChipTypes);
+      verbose && exit(verbose);
+    
+      if (nbrOfChipTypes > 1) {
+        verbose && cat(verbose, "Detected ", nbrOfChipTypes, 
+                                        " different chip types in CFH set: ",
+                                    paste(names(tChipTypes), collapse=", "));
+      } else {
+        verbose && cat(verbose, "All CFH files use the same chip type: ", 
+                                                          names(tChipTypes));
+      }
+    
+      # If chip type is taken from CFH headers and there are more than
+      # one chip type in the set, then it is an error.
+      if (nbrOfChipTypes > 1) {
+        throw("Detected ", nbrOfChipTypes, " different chip types in CFH set. Use argument 'checkChipType=FALSE' to let the directory name of the CFH set specify the chip type instead: ", paste(names(tChipTypes), collapse=", "));
+      } 
+  
+      # Validate that the directory name matches the chip type
+      if (!identical(names(tChipTypes), chipType)) {
+        throw("Invalid name of directory containing CFH files. The name of the directory (", chipType, ") must be the same as the chip type used for the CFH files (", names(tChipTypes), "): ", path);
+      }
+    } else {
+      verbose && cat(verbose, "Since 'checkChipType=FALSE', then the chip type specified by the directory name is used: ", chipType);
+    }
+  
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Use the same CDF object for all CFH files.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    verbose && enter(verbose, "Updating the CDF for all files");
+    verbose && cat(verbose, "Chip type: ", chipType);
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
+    cf <- getFile(this, 1);
+  #  if (nbrOfCells(cdf) != nbrOfCells(cf)) {
+  #    cdf <- getCdf(cf);
+  #    chipType <- getChipType(cdf);
+  #    verbose && cat(verbose, "Chip type: ", chipType);
+  #  }
+    setCdf(this, cdf, .checkArgs=FALSE);
     verbose && exit(verbose);
   
-    if (nbrOfChipTypes > 1) {
-      verbose && cat(verbose, "Detected ", nbrOfChipTypes, 
-                                      " different chip types in CFH set: ",
-                                  paste(names(tChipTypes), collapse=", "));
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Scan for SAF files and apply them
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    verbose && enter(verbose, "Scanning for and applying sample annotation files");
+    sasPath <- "annotationData/samples/";
+    sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
+    if (nbrOfFiles(sas) == 0) {
+      verbose && cat(verbose, "No annotation files found.");
     } else {
-      verbose && cat(verbose, "All CFH files use the same chip type: ", 
-                                                        names(tChipTypes));
+      verbose && print(verbose, sas);
+  #    setAttributesBy(this, sas);
     }
-  
-    # If chip type is taken from CFH headers and there are more than
-    # one chip type in the set, then it is an error.
-    if (nbrOfChipTypes > 1) {
-      throw("Detected ", nbrOfChipTypes, " different chip types in CFH set. Use argument 'checkChipType=FALSE' to let the directory name of the CFH set specify the chip type instead: ", paste(names(tChipTypes), collapse=", "));
-    } 
-
-    # Validate that the directory name matches the chip type
-    if (!identical(names(tChipTypes), chipType)) {
-      throw("Invalid name of directory containing CFH files. The name of the directory (", chipType, ") must be the same as the chip type used for the CFH files (", names(tChipTypes), "): ", path);
-    }
-  } else {
-    verbose && cat(verbose, "Since 'checkChipType=FALSE', then the chip type specified by the directory name is used: ", chipType);
+    # Store the SAFs for now.
+    this$.sas <- sas;
+    verbose && exit(verbose);
   }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Use the same CDF object for all CFH files.
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Updating the CDF for all files");
-  verbose && cat(verbose, "Chip type: ", chipType);
-  cdf <- AffymetrixCdfFile$byChipType(chipType);
-  cf <- getFile(this, 1);
-#  if (nbrOfCells(cdf) != nbrOfCells(cf)) {
-#    cdf <- getCdf(cf);
-#    chipType <- getChipType(cdf);
-#    verbose && cat(verbose, "Chip type: ", chipType);
-#  }
-  setCdf(this, cdf, .checkArgs=FALSE);
-  verbose && exit(verbose);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Scan for SAF files and apply them
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Scanning for and applying sample annotation files");
-  sasPath <- "annotationData/samples/";
-  sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
-  if (nbrOfFiles(sas) == 0) {
-    verbose && cat(verbose, "No annotation files found.");
-  } else {
-    verbose && print(verbose, sas);
-#    setAttributesBy(this, sas);
-  }
-  # Store the SAFs for now.
-  this$.sas <- sas;
-  verbose && exit(verbose);
 
   verbose && exit(verbose);
 

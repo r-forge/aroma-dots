@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\emph{\code{ChipEffectTransform}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{ChipEffectGroupMerge}, \link[aroma.affymetrix]{FragmentEquivalentClassNormalization}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{GcContentNormalization}, \link[aroma.affymetrix]{SnpChipEffectGroupMerge}\cr
+\emph{\link[aroma.affymetrix]{AdditiveCovariatesNormalization}}, \link[aroma.affymetrix]{ChipEffectGroupMerge}, \link[aroma.affymetrix]{FragmentEquivalentClassNormalization}, \link[aroma.affymetrix]{FragmentLengthNormalization}, \link[aroma.affymetrix]{GcContentNormalization}, \link[aroma.affymetrix]{GcContentNormalization2}, \link[aroma.affymetrix]{SnpChipEffectGroupMerge}\cr
 
 public abstract static class \bold{ChipEffectTransform}\cr
 extends \emph{\link[aroma.affymetrix]{Transform}}\cr
@@ -46,19 +46,17 @@ extends \emph{\link[aroma.affymetrix]{Transform}}\cr
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\tabular{rll}{
- \tab \code{getOutputDataSet} \tab  -\cr
-}
+\emph{No methods defined}.
 
 
  \bold{Methods inherited from Transform}:\cr
-getOutputDataSet, getOutputFiles
+getOutputDataSet, getOutputDataSetOLD20090509, getOutputFiles
 
  \bold{Methods inherited from AromaTransform}:\cr
 getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

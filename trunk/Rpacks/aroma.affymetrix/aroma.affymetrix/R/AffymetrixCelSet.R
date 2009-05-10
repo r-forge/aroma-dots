@@ -82,9 +82,11 @@ setMethodS3("clearCache", "AffymetrixCelSet", function(this, ...) {
   }
   this$.averageFiles <- list();
 
-  # Clear the cache for the CDF.
-  cdf <- getCdf(this);
-  clearCache(cdf);
+  if (nbrOfFiles(this) > 0) {
+    # Clear the cache for the CDF.
+    cdf <- getCdf(this);
+    clearCache(cdf);
+  }
 
   # Then for this object
   NextMethod(generic="clearCache", object=this, ...);
@@ -106,13 +108,16 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
   object <- NextMethod("clone", clear=TRUE, ..., verbose=less(verbose));
   clearCache(object);
 
-  # Clone the CDF (this will update the CDF of all file object)
-  verbose && enter(verbose, "Cloning CDF");
-  cdf <- clone(getCdf(object));
-  verbose && exit(verbose);
-  verbose && enter(verbose, "Adding CDF to CEL set");
-  setCdf(object, cdf, .checkArgs=FALSE);
-  verbose && exit(verbose);
+  if (nbrOfFiles(object) > 0) {
+    # Clone the CDF (this will update the CDF of all file object)
+    verbose && enter(verbose, "Cloning CDF");
+    cdf <- getCdf(object);
+    cdf <- clone(cdf);
+    verbose && exit(verbose);
+    verbose && enter(verbose, "Adding CDF to CEL set");
+    setCdf(object, cdf, .checkArgs=FALSE);
+    verbose && exit(verbose);
+  }
 
   verbose && exit(verbose);
 
@@ -386,9 +391,11 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
     }
   
     # Assure that the CDF is compatible with the CEL file
-    cf <- getFile(this, 1);
-    if (nbrOfCells(cdf) != nbrOfCells(cf)) {
-      throw("The specified CDF structure ('", getChipType(cdf), "') is not compatible with the chip type ('", getChipType(cf), "') of the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(cf));
+    if (nbrOfFiles(this) > 0) {
+      cf <- getFile(this, 1);
+      if (nbrOfCells(cdf) != nbrOfCells(cf)) {
+        throw("The specified CDF structure ('", getChipType(cdf), "') is not compatible with the chip type ('", getChipType(cf), "') of the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(cf));
+      }
     }
   }
 
@@ -604,92 +611,94 @@ setMethodS3("fromFiles", "AffymetrixCelSet", function(static, path="rawData/", p
 
   verbose && enter(verbose, "Retrieved files: ", nbrOfFiles(set));
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Handle duplicates
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (onDuplicates %in% c("exclude", "error")) {
-    dups <- isDuplicated(set, verbose=less(verbose));
-    ndups <- sum(dups);
-    if (ndups > 0) {
-      dupsStr <- paste(getNames(set)[dups], collapse=", ");
-      if (onDuplicates == "error") {
-        msg <- paste("Detected ", ndups, " duplicated CEL files (same datestamp): ", dupsStr, sep="");
-        verbose && cat(verbose, "ERROR: ", msg);
-        throw(msg);
-      } else if (onDuplicates == "exclude") {
-        set <- extract(set, !dups);
-        msg <- paste("Excluding ", ndups, " duplicated CEL files (same datestamp): ", dupsStr, sep="");
-        verbose && cat(verbose, "WARNING: ", msg);
-        warning(msg);
+  if (nbrOfFiles(set) > 0) {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Handle duplicates
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    if (onDuplicates %in% c("exclude", "error")) {
+      dups <- isDuplicated(set, verbose=less(verbose));
+      ndups <- sum(dups);
+      if (ndups > 0) {
+        dupsStr <- paste(getNames(set)[dups], collapse=", ");
+        if (onDuplicates == "error") {
+          msg <- paste("Detected ", ndups, " duplicated CEL files (same datestamp): ", dupsStr, sep="");
+          verbose && cat(verbose, "ERROR: ", msg);
+          throw(msg);
+        } else if (onDuplicates == "exclude") {
+          set <- extract(set, !dups);
+          msg <- paste("Excluding ", ndups, " duplicated CEL files (same datestamp): ", dupsStr, sep="");
+          verbose && cat(verbose, "WARNING: ", msg);
+          warning(msg);
+        }
       }
     }
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Scan all CEL files for possible chip types
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Chip type according to the directory structure
-  path <- getPath(set);
-  chipType <- basename(path);
-  verbose && cat(verbose, 
-                 "The chip type according to the path is: ", chipType);
-
-  # Let the directory name specify the chip type?
-  if (checkChipType) {
-    verbose && enter(verbose, "Scanning CEL set for used chip types");
-    # This takes time if the CEL files are ASCII files.
-    chipTypes <- sapply(set, FUN=function(file) {
-      readCelHeader(getPathname(file))$chiptype;
-    })
-    tChipTypes <- table(chipTypes);
-    verbose && print(verbose, tChipTypes);
-    nbrOfChipTypes <- length(tChipTypes);
-    verbose && exit(verbose);
   
-    if (nbrOfChipTypes > 1) {
-      verbose && cat(verbose, "Detected ", nbrOfChipTypes, 
-                                      " different chip types in CEL set: ",
-                                  paste(names(tChipTypes), collapse=", "));
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Scan all CEL files for possible chip types
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Chip type according to the directory structure
+    path <- getPath(set);
+    chipType <- basename(path);
+    verbose && cat(verbose, 
+                   "The chip type according to the path is: ", chipType);
+  
+    # Let the directory name specify the chip type?
+    if (checkChipType) {
+      verbose && enter(verbose, "Scanning CEL set for used chip types");
+      # This takes time if the CEL files are ASCII files.
+      chipTypes <- sapply(set, FUN=function(file) {
+        readCelHeader(getPathname(file))$chiptype;
+      })
+      tChipTypes <- table(chipTypes);
+      verbose && print(verbose, tChipTypes);
+      nbrOfChipTypes <- length(tChipTypes);
+      verbose && exit(verbose);
+    
+      if (nbrOfChipTypes > 1) {
+        verbose && cat(verbose, "Detected ", nbrOfChipTypes, 
+                                        " different chip types in CEL set: ",
+                                    paste(names(tChipTypes), collapse=", "));
+      } else {
+        verbose && cat(verbose, "All CEL files use the same chip type: ", 
+                                                          names(tChipTypes));
+      }
+    
+      # If chip type is taken from CEL headers and there are more than
+      # one chip type in the set, then it is an error.
+      if (nbrOfChipTypes > 1) {
+        throw("Detected ", nbrOfChipTypes, " different chip types in CEL set. Use argument 'checkChipType=FALSE' to let the directory name of the CEL set specify the chip type instead: ", paste(names(tChipTypes), collapse=", "));
+      } 
+  
+      # Validate that the directory name matches the chip type
+      if (!identical(names(tChipTypes), chipType)) {
+        throw("Invalid name of directory containing CEL files. The name of the directory (", chipType, ") must be the same as the chip type used for the CEL files (", names(tChipTypes), ") unless using argument 'checkChipType=FALSE': ", path);
+      }
     } else {
-      verbose && cat(verbose, "All CEL files use the same chip type: ", 
-                                                        names(tChipTypes));
+      verbose && cat(verbose, "Since 'checkChipType=FALSE', then the chip type specified by the directory name is used: ", chipType);
     }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Use the same CDF object for all CEL files.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    if (is.null(cdf)) {
+      verbose && enter(verbose, "Retrieving the CDF for chip type '", chipType, "' inferred from path");
+      cf <- getFile(set, 1);
+      nbrOfCells <- nbrOfCells(cf);
+      cdf <- AffymetrixCdfFile$byChipType(chipType, nbrOfCells=nbrOfCells);
+      verbose && exit(verbose);
   
-    # If chip type is taken from CEL headers and there are more than
-    # one chip type in the set, then it is an error.
-    if (nbrOfChipTypes > 1) {
-      throw("Detected ", nbrOfChipTypes, " different chip types in CEL set. Use argument 'checkChipType=FALSE' to let the directory name of the CEL set specify the chip type instead: ", paste(names(tChipTypes), collapse=", "));
-    } 
-
-    # Validate that the directory name matches the chip type
-    if (!identical(names(tChipTypes), chipType)) {
-      throw("Invalid name of directory containing CEL files. The name of the directory (", chipType, ") must be the same as the chip type used for the CEL files (", names(tChipTypes), ") unless using argument 'checkChipType=FALSE': ", path);
+      verbose && enter(verbose, "Check compatibility with 1st CEL file");
+      verbose && cat(verbose, "Chip type: ", chipType);
+      if (nbrOfCells(cdf) != nbrOfCells(cf)) {
+        cdf <- getCdf(cf);
+        chipType <- getChipType(cdf);
+        verbose && cat(verbose, "Chip type (updated): ", chipType);
+      }
+      verbose && exit(verbose);
+    } else {
+      verbose && cat(verbose, "Using prespecified CDF: ", 
+                     getChipType(cdf, fullname=TRUE));
     }
-  } else {
-    verbose && cat(verbose, "Since 'checkChipType=FALSE', then the chip type specified by the directory name is used: ", chipType);
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Use the same CDF object for all CEL files.
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (is.null(cdf)) {
-    verbose && enter(verbose, "Retrieving the CDF for chip type '", chipType, "' inferred from path");
-    cf <- getFile(set, 1);
-    nbrOfCells <- nbrOfCells(cf);
-    cdf <- AffymetrixCdfFile$byChipType(chipType, nbrOfCells=nbrOfCells);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Check compatibility with 1st CEL file");
-    verbose && cat(verbose, "Chip type: ", chipType);
-    if (nbrOfCells(cdf) != nbrOfCells(cf)) {
-      cdf <- getCdf(cf);
-      chipType <- getChipType(cdf);
-      verbose && cat(verbose, "Chip type (updated): ", chipType);
-    }
-    verbose && exit(verbose);
-  } else {
-    verbose && cat(verbose, "Using prespecified CDF: ", 
-                   getChipType(cdf, fullname=TRUE));
   }
 
   verbose && enter(verbose, "Updating the CDF for all files");

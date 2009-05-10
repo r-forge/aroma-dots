@@ -187,7 +187,7 @@ setMethodS3("getCdf", "FragmentLengthNormalization", function(this, ...) {
 })
 
 
-setMethodS3("getOutputDataSet", "FragmentLengthNormalization", function(this, ..., verbose=FALSE) {
+setMethodS3("getOutputDataSet00", "FragmentLengthNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

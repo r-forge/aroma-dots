@@ -103,7 +103,7 @@ setMethodS3("bgAdjustOptical", "AffymetrixCelFile", function(this, path=file.pat
   verbose && printf(verbose, "Array minimum: %.2f\n", arrayMinimum);
   xdiff <- (arrayMinimum - minimum);
   verbose && printf(verbose, "Correction: -(%.2f-%.2f) = %+.2f\n", 
-                                         arrayMinimum, minimum, xdiff);
+                                         arrayMinimum, minimum, -xdiff);
   x[subsetToUpdate] <- x[subsetToUpdate] - xdiff;
   rm(subsetToUpdate);
   verbose && exit(verbose);

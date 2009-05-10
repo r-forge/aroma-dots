@@ -16,6 +16,7 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
   #   generic colnames() function of the latter.
   # o affyPLM must be after aroma.affymetrix.
   # o EBImage must be after aroma.affymetrix.
+  # o IRanges must be after R.oo [trim()]
   # 2008-08-27:
   # o affy must be after aroma.light, otherwise the former overrides
   #   the generic plotDensity() function of the latter.
@@ -28,7 +29,7 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
   # last on the search path. (Since aroma.affymetrix loads both R.huge
   # and aroma.light, it is guaranteed to be on the search path before
   # those, but to avoid bugs in the future we don't assume that).
-  pkgs <- c("aroma.affymetrix", "aroma.light", "R.huge");
+  pkgs <- c("aroma.affymetrix", "aroma.light", "R.huge", "R.oo");
   idxs <- match(sprintf("package:%s", pkgs), search());
   lastPkg <- pkgs[which.max(idxs)];
   toPath <- sprintf("package:%s", lastPkg);
@@ -37,7 +38,7 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
   verbose && print(verbose, search());
 
   # Problematic package that must be after this package on the search path
-  pkgsToMove <- c("affy", "affyPLM", "EBImage", "oligo");
+  pkgsToMove <- c("affy", "affyPLM", "EBImage", "oligo", "IRanges");
 
   # Move those package, if they are loaded.
   pkgsMoved <- c();

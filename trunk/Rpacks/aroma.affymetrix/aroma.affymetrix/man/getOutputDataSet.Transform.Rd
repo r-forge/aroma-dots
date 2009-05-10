@@ -20,7 +20,7 @@
  Gets the transformed data set, if processed.
 }
 
-\usage{\method{getOutputDataSet}{Transform}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{getOutputDataSet}{Transform}(this, ..., verbose=FALSE)}
 
 \arguments{
   \item{...}{Not used.}
