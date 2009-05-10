@@ -1,7 +1,15 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.5 [2009-05-09]
+Version: 1.0.6x [2009-05-10]
+o Added segmentByCBS(), segmentByGLAD(), and segmentByHarSeeg() 
+  to RawGenomicSignals, which all support weights if the underlying
+  segmentation method does.  To date, it is only CBS and HaarSeg
+  that supports weights.
+o Added getWeights() and hasWeights() to RawGenomicSignals.
+
+
+Version: 1.0.5 [2009-05-10]
 o Now getOutputDataSet() of AromaTransform returns a data set with files
   ordered such that the fullnames are ordered the same way as the input
   data set.  Suggested by Xin (Victoria) Wang at UC Berkeley.
@@ -21,6 +29,10 @@ o Added argument 'translate' to getColumnNames() of TabularTextFile.
 o UPDATE: Replace argument 'robust' of colBinnedSmoothing()
   with a more generic 'FUN' argument.  The default arguments
   give identical results.
+o BUG FIX: Our internal interleave() for Image (defined by EBImage) gave
+  'Error in z[idxOdd,, ] : incorrect number of dimensions'. This was
+  because internal image structure of the Image class changed (back) to
+  being a 2-dim array. Now interleave() handles both 2d and 3d arrays.
 o BUG FIX: lines() of RawGenomicSignals did not recognize x/yScale.
 o BUG FIX: as.character() of GenericDataFile would throw 
   'Error in sprintf("%d", getFileSize(db, "numeric")) : use 
