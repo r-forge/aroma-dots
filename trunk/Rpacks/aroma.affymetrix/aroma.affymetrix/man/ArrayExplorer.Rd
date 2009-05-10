@@ -60,7 +60,7 @@ extends \emph{\link[aroma.affymetrix]{Explorer}}\cr
 addIncludes, addIndexFile, display, getAlias, getArrays, getAsteriskTags, getFullName, getIncludePath, getMainPath, getName, getNameOfInput, getParallelSafe, getPath, getReportPathPattern, getSampleLayerPrefix, getSubname, getTags, getTagsOfInput, getTemplatePath, nbrOfArrays, process, setAlias, setArrays, setParallelSafe, setReportPathPattern, setSubname, setup, splitByReportPathPattern
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

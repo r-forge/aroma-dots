@@ -882,10 +882,8 @@ exportTotalCnRatioSet.AffymetrixCnChpSet  exportTotalCnRatioSet
  updateSettings updateSettings.Package
 getDefaultSettings
 plotCovariateEffects.GcContentNormalization2
-  AdditiveCovariatesNormalization
   allocateFromCdf.AromaUnitGcContentFile AromaUgcFile
   AromaUnitGcContentFile clearCache.AdditiveCovariatesNormalization
-  GcContentNormalization2
   getAsteriskTags.AdditiveCovariatesNormalization
   getCdf.AdditiveCovariatesNormalization
   getColumnNames.AromaUnitGcContentFile getCovariates
@@ -898,7 +896,7 @@ plotCovariateEffects.GcContentNormalization2
   getSubsetToFit.AdditiveCovariatesNormalization
   getTargetFunctions.AdditiveCovariatesNormalization
   importFromAffymetrixNetAffxCsvFile.AromaUnitGcContentFile
-  plotCovariateEffects process.AdditiveCovariatesNormalization writeSgr
+  plotCovariateEffects writeSgr
   writeSgr.AffymetrixCelSet
 getParameters.NormExpBgCorrection
   getAsteriskTags.LimmaBackgroundCorrection
@@ -906,3 +904,10 @@ getParameters.NormExpBgCorrection
   getParameters.LimmaBackgroundCorrection
   getParameters.NormExpBackgroundCorrection getSubsetToUpdate0
   getSubsetToUpdate0.LimmaBackgroundCorrection
+ getOutputDataSet00 getOutputDataSet00.AdditiveCovariatesNormalization
+ getOutputDataSet00.FragmentEquivalentClassNormalization
+ getOutputDataSet00.FragmentLengthNormalization
+ getOutputDataSet00.GcContentNormalization getOutputDataSetOLD20090509
+ getOutputDataSetOLD20090509.Transform
+ getProbeSequenceData getProbeSequenceData.AffymetrixCdfFile
+ readSequenceDataFrame readSequenceDataFrame.AffymetrixProbeTabFile

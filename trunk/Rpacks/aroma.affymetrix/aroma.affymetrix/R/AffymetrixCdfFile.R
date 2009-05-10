@@ -323,7 +323,7 @@ setMethodS3("getChipType", "AffymetrixCdfFile", function(this, fullname=TRUE, ..
 
 setMethodS3("getDimension", "AffymetrixCdfFile", function(this, ...) {
   header <- getHeader(this);
-  c(header$rows, header$cols);
+  c(nbrOfRows=header$rows, nbrOfColumns=header$cols);
 })
 
 setMethodS3("nbrOfRows", "AffymetrixCdfFile", function(this, ...) {
@@ -1551,6 +1551,8 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2009-05-09
+# o Added names to the returned dimension of getDimension().
 # 2009-02-10
 # o Added selection/validation of number of units in 
 #   get(Genome|Snp)nformation().

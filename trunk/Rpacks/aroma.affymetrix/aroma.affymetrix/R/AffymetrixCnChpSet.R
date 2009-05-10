@@ -204,36 +204,37 @@ setMethodS3("fromFiles", "AffymetrixCnChpSet", function(static, path="rawData/",
 
   verbose && enter(verbose, "Retrieved files: ", nbrOfFiles(set));
 
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Scan all CHP files for possible chip types
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Chip type according to the directory structure
-  path <- getPath(set);
-  chipType <- basename(path);
-  verbose && cat(verbose, 
-                 "The chip type according to the path is: ", chipType);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Use the same CDF object for all CEL files.
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (is.null(cdf)) {
-    verbose && enter(verbose, "Retrieving the CDF for chip type '", chipType, "' inferred from path");
-    cdf <- AffymetrixCdfFile$byChipType(chipType);
-    verbose && exit(verbose);
-
-    verbose && enter(verbose, "Check compatibility with 1st CEL file");
-    verbose && cat(verbose, "Chip type: ", chipType);
-    cf <- getFile(set, 1);
-    if (nbrOfCells(cdf) != nbrOfCells(cf)) {
-      cdf <- getCdf(cf);
-      chipType <- getChipType(cdf);
-      verbose && cat(verbose, "Chip type (updated): ", chipType);
+  if (nbrOfFiles(set) > 0) {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Scan all CHP files for possible chip types
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Chip type according to the directory structure
+    path <- getPath(set);
+    chipType <- basename(path);
+    verbose && cat(verbose, 
+                   "The chip type according to the path is: ", chipType);
+  
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Use the same CDF object for all CEL files.
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    if (is.null(cdf)) {
+      verbose && enter(verbose, "Retrieving the CDF for chip type '", chipType, "' inferred from path");
+      cdf <- AffymetrixCdfFile$byChipType(chipType);
+      verbose && exit(verbose);
+  
+      verbose && enter(verbose, "Check compatibility with 1st CEL file");
+      verbose && cat(verbose, "Chip type: ", chipType);
+      cf <- getFile(set, 1);
+      if (nbrOfCells(cdf) != nbrOfCells(cf)) {
+        cdf <- getCdf(cf);
+        chipType <- getChipType(cdf);
+        verbose && cat(verbose, "Chip type (updated): ", chipType);
+      }
+      verbose && exit(verbose);
+    } else {
+      verbose && cat(verbose, "Using prespecified CDF: ", 
+                     getChipType(cdf, fullname=TRUE));
     }
-    verbose && exit(verbose);
-  } else {
-    verbose && cat(verbose, "Using prespecified CDF: ", 
-                   getChipType(cdf, fullname=TRUE));
   }
 
   verbose && enter(verbose, "Updating the CDF for all files");

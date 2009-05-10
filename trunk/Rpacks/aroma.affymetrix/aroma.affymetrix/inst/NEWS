@@ -1,6 +1,30 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 1.0.5 [2009-05-09]
+o BETA: Updated several methods of the package to handle the new
+  way getOutputDataSet() of AromaTransform scans and loads
+  data sets.  This new way is the first step towards supporting
+  output directories that contains more data files than the 
+  input data set, which for instance can occur if the same 
+  data set is split up and processed in subsets.  The new 
+  approach will also try to order the output files accordingly
+  with the input files.
+o Added readSequenceDataFrame() for AffymetrixProbeTabFile.
+o Updated getFitUnitGroupFunction() of RmaPlm to work with the
+  new oligo v1.7.19 as well.
+o CLEAN UP: computeAffinities() of AffymetrixCdfFile loaded the
+  'matchprobes' package, but never used it.
+o CLEAN UP: Now computeAffinities() of AffymetrixCdfFile uses
+  the AffymetrixProbeTabFile class to read probe sequences.
+o CLEAN UP: Now findByChipType() of AffymetrixProbeTabFile only 
+  search according to "modern" rules.  The by now really old 
+  alternative search rules have been made deprecated, i.e. it
+  still uses those but, if a file is found, it gives an error 
+  saying that the the method is outdated.  This should not 
+  affect anyone these days, but just in case, it is included.
+
+
 Version: 1.0.4 [2009-04-16]
 o BETA: Added NormExpBackgroundCorrection which does background
   correction according to the normal exponential model. It 
@@ -43,8 +67,6 @@ o CLEAN UP: Removed deprecated argument 'moreUnits' of fit() of
 
 
 Version: 1.0.1 [2009-02-13]
-o Cleaned up the MatSmoothing class.
-o Cleaned up the AffymetrixCelSetTuple class.
 o Added getAromaUnit{Total|FracB}CnFileSet() to SnpChipEffectSet, which
   uses protected exportTotalAndFracB() to SnpChipEffect{File|Set}.
 o ROBUSTNESS: Added support for optional validation/selection by the
@@ -52,6 +74,8 @@ o ROBUSTNESS: Added support for optional validation/selection by the
   done by specifying argument nbrOfUnits/nbrOfCells.
 o CLEAN UP: Suppressing warnings about "truncating string with
   embedded nul" in rawToChar() when using affxparser::readCcgHeader().
+o CLEAN UP: Cleaned up the MatSmoothing class.
+o CLEAN UP: Cleaned up the AffymetrixCelSetTuple class.
 o BUG FIX: setMergeStrands() of SnpPlm and setCombineAlleles() of 
   CnPlm did not update the setting of the PLM itself, only the 
   settings of the underlying parameter files.

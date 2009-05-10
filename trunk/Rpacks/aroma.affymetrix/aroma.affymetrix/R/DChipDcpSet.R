@@ -198,14 +198,16 @@ setMethodS3("fromFiles", "DChipDcpSet", function(static, path="rawData/", patter
   verbose && enter(verbose, "Retrieved files: ", nbrOfFiles(this));
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Scan all CHP files for possible chip types
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Chip type according to the directory structure
-  path <- getPath(this);
-  chipType <- basename(path);
-  verbose && cat(verbose, 
-                 "The chip type according to the path is: ", chipType);
+  if (nbrOfFiles(this) > 0) {
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Scan all CHP files for possible chip types
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Chip type according to the directory structure
+    path <- getPath(this);
+    chipType <- basename(path);
+    verbose && cat(verbose, 
+                   "The chip type according to the path is: ", chipType);
+  }
 
   verbose && exit(verbose);
 

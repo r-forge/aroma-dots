@@ -170,7 +170,7 @@ setMethodS3("getAromaUfcFile", "FragmentEquivalentClassNormalization", function(
 })
 
 
-setMethodS3("getOutputDataSet", "FragmentEquivalentClassNormalization", function(this, ..., verbose=FALSE) {
+setMethodS3("getOutputDataSet00", "FragmentEquivalentClassNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

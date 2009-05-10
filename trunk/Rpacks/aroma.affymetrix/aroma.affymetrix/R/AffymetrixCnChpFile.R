@@ -34,7 +34,7 @@ setMethodS3("as.character", "AffymetrixCnChpFile", function(x, ...) {
   s <- c(s, sprintf("Unit read map: %s", capture.output(str(getUnitReadMap(this)))));
   class(s) <- class;
   s;
-}) 
+}, private=TRUE) 
 
 
 setMethodS3("clearCache", "AffymetrixCnChpFile", function(this, ...) {

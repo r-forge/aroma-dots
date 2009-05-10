@@ -1,3 +1,140 @@
+setMethodS3("getProbeSequenceData", "AffymetrixCdfFile", function(this, paths=NULL, rows=NULL, safe=TRUE, force=FALSE, verbose=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'safe':
+  safe <- Arguments$getLogical(safe);
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  verbose && enter(verbose, "Retrieving probe-sequence data");
+  chipTypeFull <- getChipType(this, fullname=TRUE);
+  verbose && cat(verbose, "Chip type (full): ", chipTypeFull);
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Locate find probe sequence file
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Locating probe-tab file");
+  # The probe-sequence does not depend on the CDF but only the chip type,
+  # which is why we ignore any tags for the CDF.
+  chipType <- getChipType(this, fullname=FALSE);
+  verbose && cat(verbose, "Chip type: ", chipType);
+
+  ptf <- AffymetrixProbeTabFile$byChipType(chipType=chipType, 
+                                                 verbose=less(verbose, 100));
+  verbose && print(verbose, ptf);
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate content against CDF?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (safe) {
+    verbose && enter(verbose, "Validating probe-tab file against CDF");
+
+    # Reading the first unit name
+    data <- readDataFrame(ptf, colClassPatterns=c("^unitName$"="character"), 
+                                          rows=1, verbose=less(verbose, 50));
+    unitName <- data$unitName;
+    verbose && str(verbose, "Unit name: ", unitName);
+    unit <- indexOf(this, names=unitName);
+    verbose && cat(verbose, "Unit index: ", unit);
+    if (is.na(unit)) {
+      throw("Failed to identify CDF unit with unit name '", unitName, "': ",
+                                                         getPathname(ptf));
+    }
+
+    # Reading the (x,y) & sequence data
+    data <- readSequenceDataFrame(ptf, rows=1, verbose=less(verbose, 50));
+    verbose && print(verbose, data);
+
+    xySeq <- c(data$probeXPos, data$probeYPos);
+    verbose && cat(verbose, "(x,y):");
+    verbose && print(verbose, xySeq);
+
+    unitInfo <- readUnits(this, units=unit);
+    x <- applyCdfGroups(unitInfo, cdfGetFields, "x");
+    x <- unlist(x, use.names=FALSE);
+    y <- applyCdfGroups(unitInfo, cdfGetFields, "y");
+    y <- unlist(y, use.names=FALSE);
+
+    # Now, find that (x,y) coordinate in the CDF file
+    idx <- whichVector(xySeq[1] == x & xySeq[2] == y);
+    # Sanity check
+    if (length(idx) != 1) {
+      throw("The (x,y) coordinate (", paste(xySeq, collapse=","), ") of the probe-tab file could not be found in CDF unit #", unit, " ('", unitName, "'): ", getPathname(ptf));
+    }
+
+    verbose && exit(verbose);
+  } # if (safe)
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Reading probe sequence data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Reading (x,y,sequence) data");
+  data <- readSequenceDataFrame(ptf, rows=rows, verbose=less(verbose, 20));
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validating (x,y)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Validating (x,y) against CDF dimension");
+  # The dimension of the chip type
+  dimension <- getDimension(this);
+  verbose && cat(verbose, "CDF dimension:");
+  verbose && print(verbose, dimension);
+
+  # Sanity check
+  xRange <- sprintf("[0,%d]", dimension[1]);
+  yRange <- sprintf("[0,%d]", dimension[2]);
+
+  if (any(data$probeXPos < 0 | data$probeXPos > dimension[1]-1)) {
+    throw("Detected probe x position out of range ", xRange, ": ",
+                                                getPathname(ptf));
+  }
+  if (any(data$probeYPos < 0 | data$probeYPos > dimension[2]-1)) {
+    throw("Detected probe y position out of range ", yRange, ": ",
+                                                 getPathname(ptf));
+  }
+  verbose && exit(verbose);
+  
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Reformating data
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Renaming columns");
+  names <- colnames(data);
+  names[names == "probeXPos"] <- "x";
+  names[names == "probeYPos"] <- "y";
+  names[names == "probeSequence"] <- "sequence";
+  colnames(data) <- names;
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Calculating and appending cell indices");
+  dimension <- getDimension(this);
+  cells <- data$y * dimension[1] + data$x + as.integer(1);
+  data <- cbind(cell=cells, data);
+  verbose && str(verbose, data);
+  verbose && exit(verbose);
+
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
+  verbose && exit(verbose);
+
+  data;
+}, private=TRUE)
+
+
+
 ###########################################################################/**
 # @set "class=AffymetrixCdfFile"
 # @RdocMethod computeAffinities
@@ -33,14 +170,39 @@
 #   Ken Simpson (ksimpson[at]wehi.edu.au).
 # }
 #*/###########################################################################
-setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL, force=FALSE, verbose=FALSE, ...) {
-  # Try to load all required package first
-  require("gcrma", quietly=TRUE) || throw("Package not loaded: gcrma");
-  require("matchprobes", quietly=TRUE) || throw("Package not loaded: matchprobes");
+setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL, safe=TRUE, force=FALSE, verbose=FALSE, ...) {
+  isPackageInstalled("gcrma") || throw("Package not installed: gcrma");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # getSeqMatrix() corresponds to calling the following native function
+  #   .Call("gcrma_getSeq", seq, PACKAGE="gcrma");
+  # However, we do want to avoid to load 'gcrma', because it loads Biostrings
+  # which loads IRanges, which cause problems, e.g. trim(). /HB 2009-05-09
+  getSeqMatrix <- function(seq, ...) {
+    seq <- charToRaw(seq);
+    map <- charToRaw("ACGT");
+    res <- matrix(0L, nrow=4, ncol=length(seq));
+    for (kk in 1:4) {
+      res[kk,(seq == map[kk])] <- 1L;
+    }
+    res;
+  } # getSeqMatrix()
+
+  getGcrmaSplineCoefs <- function(...) {
+    env <- new.env();
+    data("affinity.spline.coefs", package="gcrma", envir=env);
+    env$affinity.spline.coefs;
+  } # getGcrmaSplineCoefs()
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'safe':
+  safe <- Arguments$getLogical(safe);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -74,201 +236,63 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   }
 
   # Checking cache
-  key <- list(method="computeAffinities", class=class(this)[1], chipTypeFull=chipTypeFull);
+  key <- list(method="computeAffinities", class=class(this)[1], 
+              chipTypeFull=chipTypeFull, version="2009-05-09");
   dirs <- c("aroma.affymetrix", chipTypeFull);
   if (!force) {
     res <- loadCache(key=key, dirs=dirs);
-    if (!is.null(res))
+    if (!is.null(res)) {
+      verbose && cat(verbose, "Cached results found.");
+      verbose && exit(verbose);
       return(res);
+    }
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Locate find probe sequence file
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # The probe-sequence does not depend on the CDF but only the chip type,
-  # which is why we ignore any tags for the CDF.
-  chipType <- getChipType(this, fullname=FALSE);
-  psFile <- AffymetrixProbeTabFile$findByChipType(chipType=chipType, 
-                                         paths=paths, verbose=less(verbose));
-  if (is.null(psFile))
-    throw("Could not locate probe sequence file for chip type: ", chipType);
 
-  verbose && cat(verbose, "Pathname of located probe-tab file: ", psFile);
-
-  
-# read in probe sequence data
-
-  dimension <- getDimension(this);
-
-#  con <- file(psFile, open="r")
-#  on.exit({
-#    if (!is.null(con))
-#      close(con);
-#  });
-
-  verbose && enter(verbose, "Reading tab-delimited sequence file");
-  sep <- "\t"
-
-  # Note: Not all probe sequence tab files have column headers
-  oLevel <- setDefaultLevel(verbose, -50);
-  on.exit(setDefaultLevel(verbose, oLevel));
-
-  verbose && enter(verbose, "Identifying first data row");
-  lines <- readLines(psFile, n=2);
-  hasHeader <- (regexpr("[Pp]robe.*[Ss]equence", lines[1]));
-  if (hasHeader) {
-    data <- lines[2];
-    hdr <- strsplit(lines[1], split=sep)[[1]];
-  } else {
-    data <- lines[1];
-    hdr <- NULL;
-  }
-  verbose && cat(verbose, "First data row: ", data);
+  verbose && enter(verbose, "Reading probe-sequence data");
+  sequenceInfo <- getProbeSequenceData(this, safe=safe, verbose=verbose);
+  verbose && str(verbose, sequenceInfo);
   verbose && exit(verbose);
-
-  verbose && enter(verbose, "Identifing the X, Y, and sequence columns");
-  data <- strsplit(data, split=sep)[[1]];
-  nbrOfColumns <- length(data);
-
-  # Get the unit name (assume first column)  # MR 2009-03-28, no longer assume first column
-  unitColumn <- 1
-  if( !is.null(hdr) ) {
-    tciCol <- grep("Transcript Cluster ID",hdr)
-    if(length(tciCol) > 0)
-      unitColumn <- tciCol;
-  }
-  unitName <- data[unitColumn];
-
-  # Find the sequence column(s)
-  idxs <- grep(pattern="[actgACTG]{25}", data);
-  if (length(idxs) == 0) {
-    throw("Could not identify sequence column: ", paste(data, collapse=", "));
-  } else if (length(idxs) > 1) {
-    warning("Found more than one column containing sequence data. Using first."); 
-  }
-  seqcol <- idxs[1];
-
-  # Identify potential (x,y) columns
-  idxs <- grep(pattern="[0-9][0-9]*", data);
-  if (length(idxs) < 2) {
-    throw("Could not identify (x,y) columns: ", paste(data, collapse=", "));
-  }
-  values <- as.integer(data[idxs]);
-
-  # Get the (x,y) CDF data for this unit
-  unitNames <- getUnitNames(this);
-  unitIdx <- match(unitName, unitNames);
-  verbose && printf(verbose, "Unit: #%d (%s)\n", unitIdx, unitName);
-  if (length(unitIdx) == 0)
-    throw("Unit '", unitName, "' not found in CDF: ", getPathname(this));
-  unitInfo <- readUnits(this, units=unitIdx);
-  x <- applyCdfGroups(unitInfo, cdfGetFields, "x");
-  x <- unlist(x, use.names=FALSE);
-  y <- applyCdfGroups(unitInfo, cdfGetFields, "y");
-  y <- unlist(y, use.names=FALSE);
-  
-
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
-  
-  # Scan for x coordinate
-  idxs <- which(values %in% x);
-  if (length(idxs) == 0)
-    throw("Could not identify X column: ", paste(data, collapse=", "));
-  # If more than one match, assume first
-  xcol <- idxs[1];
-  ycol <- xcol + 1;
-  # Get the (x,y) coordinate (in the sequence file)
-  xySeq <- c(values[xcol], values[ycol]);
-  verbose && cat(verbose, "(X,Y) in sequence file:");
-  verbose && print(verbose, xySeq);
-
-  # Now, find the same in the CDF file
-  kk <- which(xySeq[1] == x);
-  xyCdf <- matrix(c(x[kk],y[kk]), ncol=2);
-  verbose && cat(verbose, "(X,Y):s in CDF file with matching X coordinate:");
-  verbose && print(verbose, xyCdf);
-  rr <- which(apply(xyCdf, MARGIN=1, FUN=identical, xySeq));
-  if (length(rr) == 0)
-    throw("Could not identify matching (X,Y) in CDF.");
-  xyCdf <- xyCdf[rr,];
-
-  rm(xySeq, xyCdf, rr); # Never used?!? /HB 2007-03-26
-
-  verbose && printf(verbose, "(X,Y,sequence) columns: (%d,%d,%d)\n", 
-                                                      xcol, ycol, seqcol);
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
-  verbose && exit(verbose);
-
-  # read everybody in using read.table() with column classes specified
-  # to speed things up
-  colClasses <- rep("NULL", nbrOfColumns);
-  colClasses[c(unitColumn,seqcol)] <- "character";
-  colClasses[c(xcol,ycol)] <- "integer";
-  names(colClasses)[c(unitColumn,xcol,ycol,seqcol)] <- c("name", "x", "y", "sequence");
-
-  verbose && cat(verbose, "Column classes for read.table():");
-  verbose && print(verbose, colClasses);
-  sequenceInfo <- read.table(psFile, colClasses=colClasses, sep=sep, 
-                                          skip=as.integer(hasHeader));
-  colnames(sequenceInfo) <- names(colClasses)[colClasses != "NULL"];
 
   nbrOfSequences <- nrow(sequenceInfo);
-  verbose && printf(verbose, "Loaded %d PM sequences", nbrOfSequences);
-  verbose && str(verbose, sequenceInfo);
-
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
-
-  setDefaultLevel(verbose, oLevel);
-
-  # TODO: Reorder units according to CDF
-  units <- match(sequenceInfo$name, unitNames);
-  # Never used?!? /HB 2007-03-26
-  rm(units, unitNames);
-  verbose && exit(verbose);
 
   verbose && enter(verbose, "Get CDF cell indices for all units");
-  indices <- getCellIndices(this, useNames=FALSE, unlist=TRUE);
+  cells <- getCellIndices(this, useNames=FALSE, unlist=TRUE);
   verbose && exit(verbose);
 
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
-
-# probe sequence tab-separated files generally only contain the PM
-# sequence (since we know that MM sequence always has base 13 complemented).
-# This is true for expression arrays, but possibly not for genotyping arrays.
-# We will calculate affinity for PM and MM anyway, and then
-# try to match MM indices from the CDF file with their appropriate PMs (and
-# hence assign the correct affinity).
- 
-# assume that MM has same x-coordinate as PM, but y-coordinate larger by 1
-  indexPm <- sequenceInfo$y * dimension[1] + sequenceInfo$x + 1
+  # probe sequence tab-separated files generally only contain the PM
+  # sequence (since we know that MM sequence always has base 13 complemented).
+  # This is true for expression arrays, but possibly not for genotyping arrays.
+  # We will calculate affinity for PM and MM anyway, and then
+  # try to match MM indices from the CDF file with their appropriate PMs (and
+  # hence assign the correct affinity).
+   
+  # assume that MM has same x-coordinate as PM, but y-coordinate larger by 1
+  indexPm <- sequenceInfo$cell;
+  dimension <- getDimension(this);
   indexMmPutative <- indexPm + dimension[1];
 
-
-# match up putative MM with actual list of MMs from CDF
-  matches <- match(indexMmPutative, indices[isMm]);
-  indexMm <- indices[isMm][matches];
+  # match up putative MM with actual list of MMs from CDF
+  matches <- match(indexMmPutative, cells[isMm]);
+  indexMm <- cells[isMm][matches];
   notNA <- which(!is.na(indexMm));
   indexMm <- indexMm[notNA];
   
-  # for PM+MM arrays, the number of MMs and the number of PMs in the CDF is equal
-  isPMMMChip <- (length(indexMm) == length(indexPm))
+  # for PM+MM arrays, the number of MMs and the number of PMs in the
+  # CDF is equal
+  isPMMMChip <- (length(indexMm) == length(indexPm));
   
   rm(indexMmPutative, matches); # Not needed anymore
 
-# now calculate affinities - code reused from compute.affinities() in gcrma
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Calculate basis matrix based on priori probe affinitites (of gcrma)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # now calculate affinities - code reused from compute.affinities() in gcrma
   verbose && enter(verbose, "Calculating probe affinities");
 
   # To please R CMD check on R v2.6.0
-  affinity.spline.coefs <- NULL; rm(affinity.spline.coefs);
-  data("affinity.spline.coefs"); # A tiny object from 'gcrma'.
+  affinity.spline.coefs <- getGcrmaSplineCoefs();
 
   affinity.basis.matrix <- splines::ns(1:25, df=length(affinity.spline.coefs)/3);
 
@@ -277,17 +301,19 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
   C13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[6:10]);
   G13 <- sum(affinity.basis.matrix[13, ] * affinity.spline.coefs[11:15]);
 
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
 
-  if (verbose) {
-    cat(verbose, "Progress (counting to 100): ");
-    pb <- ProgressBar(stepLength=100/(nbrOfSequences/1000));
-    reset(pb);
-  }
 
-  if( isPMMMChip ) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Predicting probe affinities based on the probe sequences
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  nbrOfCells <- dimension[1]*dimension[2];
+  rm(dimension); # Not needed anymore
+
+  # Allocate empty vector of affinities
+  naValue <- as.double(NA);
+  affinities <- rep(naValue, nbrOfCells);
+
+  if(isPMMMChip) {
     # ---------------------------------------------------------
     # keep this code below untouched for the PM+MM expression arrays
     # ---------------------------------------------------------
@@ -296,72 +322,99 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
     T13A13 <- T13 - A13;
     C13G13 <- C13 - G13;
-    for (ii in seq(along = apm)) {
+
+    sequences <- sequenceInfo$sequence;
+    rm(sequenceInfo);
+
+    if (verbose) {
+      cat(verbose, "Progress (counting to 100): ");
+      pb <- ProgressBar(stepLength=100/(nbrOfSequences/1000));
+      reset(pb);
+    }
+  
+    for (ii in seq(along=apm)) {
       if (verbose && ii %% 1000 == 0)
         increase(pb);
-      # Get a 4x25 matrix with rows A, C, G, and T.
-      charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
-                                                       PACKAGE="gcrma");
 
-      A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
-                 charMtrx[2, ] %*% affinity.basis.matrix, 
-                 charMtrx[3, ] %*% affinity.basis.matrix);
+      # Get a 4x25 matrix with rows A, C, G, and T.
+      charMtrx <- getSeqMatrix(sequences[ii]);
+
+      # Calculate the PM affinity
+      A <- cbind(charMtrx[1,,drop=TRUE] %*% affinity.basis.matrix, 
+                 charMtrx[2,,drop=TRUE] %*% affinity.basis.matrix, 
+                 charMtrx[3,,drop=TRUE] %*% affinity.basis.matrix);
       apm[ii] <- A %*% affinity.spline.coefs;
-      if (charMtrx[1, 13] == 1) {
+
+      # Calculate the MM affinity
+      base <- whichVector(charMtrx[,13,drop=TRUE] == 1);
+      if (base == 1) {
         amm[ii] <- apm[ii] + T13A13;  # + T13 - A13
+      } else if (base == 4) {
+        amm[ii] <- apm[ii] - T13A13;  # + A13 - T13
+      } else if (base == 3) {
+        amm[ii] <- apm[ii] + C13G13;  # + C13 - G13
+      } else if (base == 2) {
+        amm[ii] <- apm[ii] - C13G13;  # + G13 - C13
       } else {
-        if (charMtrx[4, 13] == 1) {
-          amm[ii] <- apm[ii] - T13A13;  # + A13 - T13
-        } else {
-          if (charMtrx[3, 13]) {
-            amm[ii] <- apm[ii] + C13G13;  # + C13 - G13
-          } else {
-            amm[ii] <- apm[ii] - C13G13;  # + G13 - C13
-          }
-        }
+        throw("Unknown nucleotide index: ", base);
       }
     } # for (ii in ...)
     rm(charMtrx, A); # Not needed anymore
+    reset(pb);
     verbose && cat(verbose, "");
-    # create a vector to hold affinities and assign values to the appropriate
-    # location in the vector
-    affinities <- rep(NA, dimension[1]*dimension[2]);
+
+    # create a vector to hold affinities and assign values to the 
+    # appropriate location in the vector
     affinities[indexPm] <- apm;
     affinities[indexMm] <- amm[notNA];
-    rm(dimension, indexPm, indexMm, apm, amm, notNA); # Not needed anymore
+    rm(indexPm, indexMm, apm, amm, notNA); # Not needed anymore
     # ---------------------------------------------------------
-
   } else {
     # ---------------------------------------------------------
     # new code to compute affinities from the MM probes
     # (antigenomic or whatever) on PM-only arrays  -- MR 2009-03-28
     # ---------------------------------------------------------
-    indexAll <- sequenceInfo$y * dimension[1] + sequenceInfo$x + 1;
-    apm <- vector("double", nrow(sequenceInfo));
+    naValue <- as.double(NA);
+    apm <- rep(naValue, times=nbrOfSequences);
 
-    for (ii in seq(along=apm)) {
+    indexAll <- sequenceInfo$cell;
+    sequences <- sequenceInfo$sequence;
+    rm(sequenceInfo);
+
+    # Process only sequences of length 25
+    n <- nchar(sequences);
+    idxs <- whichVector(n == 25);
+    nbrOfNon25mers <- nbrOfSequences - length(idxs);
+    if (nbrOfNon25mers > 0) {
+      apm[-idxs] <- naValue;
+      warning("Detected ", nbrOfNon25mers, " sequence that are not of length 25 nucleotides. For those probes, the affinities are defined to be NA.");
+    }
+
+    if (verbose) {
+      cat(verbose, "Progress (counting to 100): ");
+      pb <- ProgressBar(stepLength=100/(length(idxs)/1000));
+      reset(pb);
+    }
+  
+    for (ii in seq(along=idxs)) {
       if (verbose && ii %% 1000 == 0)
         increase(pb);
+      idx <- idxs[ii];
       # Get a 4x25 matrix with rows A, C, G, and T.
-      charMtrx <- .Call("gcrma_getSeq", sequenceInfo$sequence[ii], 
-                                                       PACKAGE="gcrma");
-      if(ncol(charMtrx) != 25) {
-        warning("Skipping. Sequence has less than 25 bases: ", 
-                                             sequenceInfo$sequence[ii]);
-        apm[ii] <- NA;
-        next;
-      }
+      charMtrx <- getSeqMatrix(sequences[idx]);
 
-      A <- cbind(charMtrx[1, ] %*% affinity.basis.matrix, 
-                 charMtrx[2, ] %*% affinity.basis.matrix, 
-                 charMtrx[3, ] %*% affinity.basis.matrix);
-      apm[ii] <- A %*% affinity.spline.coefs;
+      # Calculate the PM affinity
+      A <- cbind(charMtrx[1,,drop=TRUE] %*% affinity.basis.matrix, 
+                 charMtrx[2,,drop=TRUE] %*% affinity.basis.matrix, 
+                 charMtrx[3,,drop=TRUE] %*% affinity.basis.matrix);
+      apm[idx] <- A %*% affinity.spline.coefs;
     } # for (ii in ...)
-    affinities <- rep(NA, dimension[1]*dimension[2]);
+    reset(pb);
+
     affinities[indexAll] <- apm;
 
-    rm(dimension, indexAll, apm); # Not needed anymore
-  }
+    rm(indexAll, apm); # Not needed anymore
+  } # if(isPMMMChip)
   verbose && exit(verbose);
 
   # Garbage collect
@@ -379,6 +432,19 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, paths=NULL,
 
 ############################################################################
 # HISTORY:
+# 2009-05-09 [HB]
+# o CLEAN UP: computeAffinities() of AffymetrixCdfFile no longer need to
+#   load 'gcrma'.  However, it still needs to load a small set of 
+#   prior estimates from the 'gcrma' package.
+#   'matchprobes' package, but never used it.
+# o CLEAN UP: computeAffinities() of AffymetrixCdfFile did load the
+#   'matchprobes' package, but never used it.
+# o Added private getProbeSequenceData() to AffymetrixCdfFile. This method
+#   will later retrieve probe sequences from the binary ACS file instead
+#   of the probe-tab files.
+# o Updated to make full use of the AffymetrixProbeTabFile class, which
+#   translateColumnNames() will take care of all variations of names for
+#   the column containing unit names.
 # 2009-03-28 [MR]
 # o Made several modifications to allow computing of affinities for 
 #   Gene 1.0 ST arrays.  For example:

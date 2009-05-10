@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\emph{\code{ProbeLevelTransform}}\cr
 
 \bold{Directly known subclasses:}\cr
-\emph{\link[aroma.affymetrix]{AbstractProbeSequenceNormalization}}, \link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \emph{\link[aroma.affymetrix]{BackgroundCorrection}}, \link[aroma.affymetrix]{BaseCountNormalization}, \link[aroma.affymetrix]{BasePositionNormalization}, \link[aroma.affymetrix]{DChipQuantileNormalization}, \link[aroma.affymetrix]{GcRmaBackgroundCorrection}, \emph{\link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}}, \link[aroma.affymetrix]{MatNormalization}, \link[aroma.affymetrix]{MatSmoothing}, \link[aroma.affymetrix]{OpticalBackgroundCorrection}, \emph{\link[aroma.affymetrix]{ProbeLevelTransform3}}, \link[aroma.affymetrix]{QuantileNormalization}, \link[aroma.affymetrix]{ReseqCrosstalkCalibration}, \link[aroma.affymetrix]{RmaBackgroundCorrection}, \link[aroma.affymetrix]{ScaleNormalization}, \link[aroma.affymetrix]{ScaleNormalization3}, \link[aroma.affymetrix]{SpatialRowColumnNormalization}, \link[aroma.affymetrix]{UnitTypeScaleNormalization}\cr
+\emph{\link[aroma.affymetrix]{AbstractProbeSequenceNormalization}}, \link[aroma.affymetrix]{AllelicCrosstalkCalibration}, \emph{\link[aroma.affymetrix]{BackgroundCorrection}}, \link[aroma.affymetrix]{BaseCountNormalization}, \link[aroma.affymetrix]{BasePositionNormalization}, \link[aroma.affymetrix]{DChipQuantileNormalization}, \link[aroma.affymetrix]{GcRmaBackgroundCorrection}, \link[aroma.affymetrix]{LimmaBackgroundCorrection}, \emph{\link[aroma.affymetrix]{LinearModelProbeSequenceNormalization}}, \link[aroma.affymetrix]{MatNormalization}, \link[aroma.affymetrix]{MatSmoothing}, \link[aroma.affymetrix]{NormExpBackgroundCorrection}, \link[aroma.affymetrix]{OpticalBackgroundCorrection}, \emph{\link[aroma.affymetrix]{ProbeLevelTransform3}}, \link[aroma.affymetrix]{QuantileNormalization}, \link[aroma.affymetrix]{ReseqCrosstalkCalibration}, \link[aroma.affymetrix]{RmaBackgroundCorrection}, \link[aroma.affymetrix]{ScaleNormalization}, \link[aroma.affymetrix]{ScaleNormalization3}, \link[aroma.affymetrix]{SpatialRowColumnNormalization}, \link[aroma.affymetrix]{UnitTypeScaleNormalization}\cr
 
 public abstract static class \bold{ProbeLevelTransform}\cr
 extends \emph{\link[aroma.affymetrix]{Transform}}\cr
@@ -49,13 +49,13 @@ extends \emph{\link[aroma.affymetrix]{Transform}}\cr
 
 
  \bold{Methods inherited from Transform}:\cr
-getOutputDataSet, getOutputFiles
+getOutputDataSet, getOutputDataSetOLD20090509, getOutputFiles
 
  \bold{Methods inherited from AromaTransform}:\cr
 getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

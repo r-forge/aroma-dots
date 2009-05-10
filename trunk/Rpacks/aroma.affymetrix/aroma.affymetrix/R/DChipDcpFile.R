@@ -56,7 +56,8 @@ setMethodS3("as.character", "DChipDcpFile", function(x, ...) {
 
   class(s) <- class;
   s;
-})
+}, private=TRUE) 
+
 
 setMethodS3("getFileFormat", "DChipDcpFile", function(this, ...) {
   hdr <- getHeader(this);

@@ -63,22 +63,19 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
 \tabular{rll}{
  \tab \code{clearCache} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
- \tab \code{getOutputDataSet} \tab  -\cr
+ \tab \code{getOutputDataSet00} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:process.FragmentLengthNormalization]{process}} \tab Normalizes the data set.\cr
 }
 
 
- \bold{Methods inherited from ChipEffectTransform}:\cr
-getOutputDataSet
-
  \bold{Methods inherited from Transform}:\cr
-getOutputDataSet, getOutputFiles
+getOutputDataSet, getOutputDataSetOLD20090509, getOutputFiles
 
  \bold{Methods inherited from AromaTransform}:\cr
 getFullName, getInputDataSet, getName, getOutputDataSet, getOutputFiles, getPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
  }

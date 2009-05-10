@@ -48,53 +48,11 @@ setMethodS3("getRootPath", "ChipEffectTransform", function(this, ...) {
 }, private=TRUE)
 
 
-setMethodS3("getOutputDataSet", "ChipEffectTransform", function(this, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-
-  verbose && enter(verbose, "Getting output data set");
-
-  args <- list(generic="getOutputDataSet", this, ...);
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Inherit certain arguments from the input data set
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # AD HOC (not using OO), but setting these arguments does speed
-  # up things. /HB 2007-09-17
-  # Note, this is also done in Transform for now, such it is not really
-  # needed here.  However, in case it will be removed from there it still
-  # makes sense to have it here.
-  ds <- getInputDataSet(this);
-  if (inherits(ds, "CnChipEffectSet"))
-    args$combineAlleles <- ds$combineAlleles;
-  if (inherits(ds, "SnpChipEffectSet"))
-    args$mergeStrands <- ds$mergeStrands; 
-
-  verbose && cat(verbose, "Calling NextMethod() with arguments:");
-  verbose && str(verbose, args);
-
-  args$verbose <- less(verbose, 10);
-  res <- do.call("NextMethod", args);
-
-  # Let the set update itself
-  update2(res, verbose=less(verbose, 1));
-
-  verbose && exit(verbose);
-
-  res;
-})
-
-
 ############################################################################
 # HISTORY:
+# 2009-05-09
+# o CLEANUP: Removed getOutputDataSet() of ChipEffectTransform.  It is now
+#   taken care of by the superclass.
 # 2007-09-18
 # o Now getOutputDataSet() of Transform carry down certain arguments from
 #   the input data set. This will speed up things.
