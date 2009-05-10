@@ -135,6 +135,17 @@ setMethodS3("getSignals", "RawGenomicSignals", function(this, ...) {
 })
 
 
+setMethodS3("getWeights", "RawGenomicSignals", function(this, ...) {
+  weights <- this$weights;
+  weights;
+})
+
+setMethodS3("hasWeights", "RawGenomicSignals", function(this, ...) {
+  (!is.null(getWeights(this, ...)));
+})
+
+
+
 setMethodS3("getName", "RawGenomicSignals", function(this, ...) {
   this$.name;
 })
@@ -513,6 +524,8 @@ setMethodS3("extractRawGenomicSignals", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-10
+# o Added getWeights() and hasWeights() to RawGenomicSignals.
 # 2009-05-07
 # o Added (get|set)(X|Y)Scale() to RawGenomicSignals.
 # o Added setLocusFields().

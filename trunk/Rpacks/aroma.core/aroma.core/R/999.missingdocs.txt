@@ -384,3 +384,10 @@ asThis asThis.BasicObject asThis.Object
   indexOfColumn indexOfColumn.AromaUnitChromosomeTabularBinaryFile
   readDataFrame.AromaUnitChromosomeTabularBinaryFile
  allocate.AromaUnitChromosomeTabularBinaryFile
+  drawCnRegions drawCnRegions.DNAcopy drawCnRegions.HaarSeg
+  drawCnRegions.profileCGH drawCytoband drawCytoband.profileCGH
+  drawCytoband2 drawCytoband2.default extractCopyNumberRegions.HaarSeg
+  extractDataForSegmentation
+  extractDataForSegmentation.RawGenomicSignals getWeights
+  getWeights.RawGenomicSignals hasWeights hasWeights.RawGenomicSignals
+  segmentByCBS segmentByGLAD segmentByHaarSeg

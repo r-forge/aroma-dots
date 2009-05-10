@@ -814,6 +814,24 @@
 \alias{indexOfColumn.AromaUnitChromosomeTabularBinaryFile}
 \alias{readDataFrame.AromaUnitChromosomeTabularBinaryFile}
 \alias{allocate.AromaUnitChromosomeTabularBinaryFile}
+\alias{drawCnRegions}
+\alias{drawCnRegions.DNAcopy}
+\alias{drawCnRegions.HaarSeg}
+\alias{drawCnRegions.profileCGH}
+\alias{drawCytoband}
+\alias{drawCytoband.profileCGH}
+\alias{drawCytoband2}
+\alias{drawCytoband2.default}
+\alias{extractCopyNumberRegions.HaarSeg}
+\alias{extractDataForSegmentation}
+\alias{extractDataForSegmentation.RawGenomicSignals}
+\alias{getWeights}
+\alias{getWeights.RawGenomicSignals}
+\alias{hasWeights}
+\alias{hasWeights.RawGenomicSignals}
+\alias{segmentByCBS}
+\alias{segmentByGLAD}
+\alias{segmentByHaarSeg}
 
 \description{
   This page contains aliases for all "non-documented" objects that
