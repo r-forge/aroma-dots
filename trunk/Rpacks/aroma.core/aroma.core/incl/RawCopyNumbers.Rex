@@ -4,9 +4,11 @@
 # Number of loci
 J <- 1000
 
-y <- rnorm(J, sd=1/2)
-y[200:300] <- y[200:300] + 1
-y[650:800] <- y[650:800] - 1
+mu <- double(J)
+mu[200:300] <- mu[200:300] + 1
+mu[650:800] <- mu[650:800] - 1
+eps <- rnorm(J, sd=1/2)
+y <- mu + eps
 x <- sort(runif(length(y), max=length(y)))
 
 

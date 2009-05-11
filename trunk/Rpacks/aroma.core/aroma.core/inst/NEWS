@@ -2,11 +2,14 @@ Package: aroma.core
 ===================
 
 Version: 1.0.6x [2009-05-10]
+o Added RawAlleleBFractions() extending RawGenomicSignals.
 o Added segmentByCBS(), segmentByGLAD(), and segmentByHarSeeg() 
   to RawGenomicSignals, which all support weights if the underlying
   segmentation method does.  To date, it is only CBS and HaarSeg
   that supports weights.
 o Added getWeights() and hasWeights() to RawGenomicSignals.
+o Added {add,subtract,multiply,divide}By() for RawGenomicSignals all
+  utilizing support method applyBinaryOperator().
 
 
 Version: 1.0.5 [2009-05-10]

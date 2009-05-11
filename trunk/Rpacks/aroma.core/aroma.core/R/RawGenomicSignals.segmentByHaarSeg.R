@@ -87,7 +87,7 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., verbose
   sampleName <- attr(data, "sampleName");
   chromosome <- data$chromosome[1];
   nbrOfLoci <- nrow(data);
-  hasWeights <- !is.null(data$weight);
+  hasWeights <- !is.null(data$w);
 
   verbose && cat(verbose, "Sample name: ", sampleName);
   verbose && cat(verbose, "Chromosome: ", chromosome);
@@ -98,9 +98,9 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., verbose
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (hasWeights) {
     # Verify that weights are supported (not yet)
-    if (!is.element("weights", names(formals))) {
+    if (!is.element("W", names(formals))) {
       hasWeights <- FALSE;
-      msg <- paste("Weights detected but ignored, because the available segmentation function ('", methodName, "()') does not support weights. Check with a more recent version of the package: ", pkgDetails);
+      msg <- paste("Weights detected but ignored, because the available segmentation function ('", methodName, "()') does not support weights. Check with a more recent version of the package: ", pkgDetails, sep="");
       verbose && cat(verbose, "WARNING: ", msg);
       warning(msg);
     }
@@ -113,14 +113,14 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., verbose
   verbose && enter(verbose, "Setting up method arguments");
 
   verbose && enter(verbose, "Setting up ", pkgName, " data structure");
-  cnData <- data$signal;
+  cnData <- data$y;
   verbose && str(verbose, cnData);
   verbose && exit(verbose);
 
   args <- list(I=cnData);
 
   if (hasWeights) {
-    fitArgs <- list(W=data$weight);
+    fitArgs <- list(W=data$w);
     verbose && cat(verbose, "Additional segmentation arguments:");
     keep <- (names(fitArgs) %in% names(formals));
     fitArgs <- fitArgs[keep];
@@ -154,20 +154,33 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., verbose
   stdout <- capture.output({
     # This works, but requires that one loads the package and that the
     # function is not masked in the search() path.
-    fit <- do.call(methodName, args);
+    t <- system.time({
+      fit <- do.call(methodName, args);
+    });
+    attr(fit, "processingTime") <- t;
   });
 
   verbose && cat(verbose, "Captured output that was sent to stdout:");
   stdout <- paste(stdout, collapse="\n");
   verbose && cat(verbose, stdout);
 
+  verbose && cat(verbose, "Fitting time (in seconds):");
+  verbose && print(verbose, t);
+
+  verbose && cat(verbose, "Fitting time per 1000 loci (in seconds):");
+  verbose && print(verbose, 1000*t/nbrOfLoci);
+
   verbose && cat(verbose, "Results object:");
   verbose && str(verbose, fit);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Setup a HaarSeg fit object
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Setting up return HaarSeg object");
   fit <- list(
     output = fit, 
-    data   = list(M=data$signal, x=data$position, chromosome=chromosome)
+    data   = list(M=data$y, x=data$x, chromosome=chromosome)
   );
   class(fit) <- "HaarSeg";
   verbose && exit(verbose);

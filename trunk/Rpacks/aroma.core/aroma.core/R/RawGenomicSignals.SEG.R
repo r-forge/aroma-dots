@@ -1,4 +1,4 @@
-setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, order=TRUE, dropZeroWeights=TRUE, dropWeightsIfAllEqual=TRUE, defaultChromosome=0L, defaultSampleName="Unnamed sample", ..., verbose=FALSE) {
+setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, order=TRUE, useWeights=TRUE, dropNonFinite=TRUE, dropZeroWeights=TRUE, dropWeightsIfAllEqual=TRUE, defaultChromosome=0L, defaultSampleName="Unnamed sample", ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,30 +28,46 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
   verbose && cat(verbose, "Chromosome: ", chromosome);
   verbose && cat(verbose, "Number of loci: ", nbrOfLoci);
 
-  pos <- getPositions(this);
-  verbose && cat(verbose, "Positions:");
-  verbose && str(verbose, pos);
-  verbose && summary(verbose, pos);
-  # Sanity check
-  stopifnot(length(pos) == nbrOfLoci);
+  # Extracting data of interest
+  data <- as.data.frame(this, translate=FALSE);
+  data <- cbind(chromosome=chromosome, data);
+  verbose && str(verbose, data);
 
-  signals <- getSignals(this);
-  verbose && cat(verbose, "Signals:");
-  verbose && str(verbose, signals);
-  verbose && summary(verbose, signals);
-  # Sanity check
-  stopifnot(length(signals) == nbrOfLoci);
-
-  weights <- getWeights(this);
-  hasWeights <- (length(weights) > 0);
-  if (hasWeights) {
-    verbose && cat(verbose, "Weights:");
-    verbose && str(verbose, weights);
-    verbose && summary(verbose, weights);
-    # Sanity check
-    stopifnot(length(weights) == nbrOfLoci);
+  # Use weights, if they exists?
+  hasWeights <- useWeights && (length(data$w) > 0);
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Drop loci with unknown locations?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Dropping loci with unknown locations");
+  keep <- whichVector(is.finite(data$x));
+  nbrOfDropped <- nbrOfLoci-length(keep);
+  verbose && cat(verbose, "Number of dropped loci: ", nbrOfDropped);
+  if (nbrOfDropped > 0) {
+    data <- data[keep,,drop=FALSE];
+    nbrOfLoci <- nrow(data);
+    verbose && str(verbose, data);
   }
+  rm(keep);
+  verbose && exit(verbose);
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Drop non-finite signals?
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (dropNonFinite) {
+    verbose && enter(verbose, "Dropping loci with non-finite signals");
+    keep <- whichVector(is.finite(data$y));
+    nbrOfDropped <- nbrOfLoci-length(keep);
+    verbose && cat(verbose, "Number of dropped loci: ", nbrOfDropped);
+    if (nbrOfDropped > 0) {
+      data <- data[keep,,drop=FALSE];
+      nbrOfLoci <- nrow(data);
+      verbose && str(verbose, data);
+    }
+    rm(keep);
+    verbose && exit(verbose);
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Order along genome?
@@ -59,18 +75,11 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
   if (order) {
     verbose && enter(verbose, "Order data along genome");
     # Order signals by their genomic location
-    o <- order(pos);
-    pos <- pos[o];
-    signals <- signals[o];  
-    if (hasWeights) {
-      weights <- weights[o];
-    }
-    verbose && str(verbose, pos);
-    verbose && str(verbose, signals);
-    if (hasWeights) {
-      verbose && str(verbose, weights);
-    }
+    o <- order(data$x);
+    data <- data[o,,drop=FALSE];
+    verbose && str(verbose, data);
     verbose && exit(verbose);
+    rm(o);
   }
 
 
@@ -80,19 +89,15 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
   if (hasWeights && dropZeroWeights) {
     # Dropping loci with non-positive weights
     verbose && enter(verbose, "Dropping loci with non-positive weights");
-    keep <- whichVector(weights > 0);
-    pos <- pos[keep];
-    signals <- signals[keep];
-    weights <- weights[keep];
-    nbrOfLoci <- length(pos);
-    rm(keep);
-    verbose && cat(verbose, "Number of loci dropped: ", 
-                                             nbrOfLoci(this)-nbrOfLoci);
-
-    # Sanity check
-    if (nbrOfLoci == 0) {
-      throw("No loci with non-positive weights remains.");
+    keep <- whichVector(data$w > 0);
+    nbrOfDropped <- nbrOfLoci-length(keep);
+    verbose && cat(verbose, "Number of loci dropped: ", nbrOfDropped);
+    if (nbrOfDropped > 0) {
+      data <- data[keep,,drop=FALSE];
+      nbrOfLoci <- nrow(data);
+      verbose && str(verbose, data);
     }
+    rm(keep);
     verbose && exit(verbose);
   }
 
@@ -100,23 +105,18 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
   if (hasWeights && dropWeightsIfAllEqual) {
     # Are all weights equal?
     verbose && enter(verbose, "Checking if all (remaining) weights are identical");
-    t <- weights - weights[1];
+    t <- data$w - data$w[1];
     if (all(isZero(t))) {
-      verbose && cat(verbose, "Dropping weights, because all weights are equal: ", weights[1]);
+      verbose && cat(verbose, "Dropping weights, because all weights are equal: ", data$w[1]);
       hasWeights <- FALSE;
+      data$w <- NULL;
     }
     rm(t);
     verbose && exit(verbose);
   }
 
-  verbose && enter(verbose, "Setting up data frame");
-  data <- data.frame(chromosome=chromosome, position=pos, signal=signals);
-  if (hasWeights) {
-    data$weight <- weights;
-  }
   attr(data, "sampleName") <- sampleName;
   verbose && str(verbose, data);
-  verbose && exit(verbose);
   
   verbose && exit(verbose);
 

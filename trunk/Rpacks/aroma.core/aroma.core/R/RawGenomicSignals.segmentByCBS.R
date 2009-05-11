@@ -89,7 +89,7 @@ setMethodS3("segmentByCBS", "RawGenomicSignals", function(this, ..., verbose=FAL
   sampleName <- attr(data, "sampleName");
   chromosome <- data$chromosome[1];
   nbrOfLoci <- nrow(data);
-  hasWeights <- !is.null(data$weight);
+  hasWeights <- !is.null(data$w);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Weights
@@ -98,7 +98,7 @@ setMethodS3("segmentByCBS", "RawGenomicSignals", function(this, ..., verbose=FAL
     # Verify that weights are supported (from DNAcopy v1.18.0);
     if (!is.element("weights", names(formals))) {
       hasWeights <- FALSE;
-      msg <- paste("Weights detected but ignored, because the available segmentation function does not support weights. Check with a more recent version of the package: ", pkgDetails);
+      msg <- paste("Weights detected but ignored, because the available segmentation function ('", methodName, "()') does not support weights. Check with a more recent version of the package: ", pkgDetails, sep="");
       verbose && cat(verbose, msg);
       warning(msg);
     }
@@ -111,19 +111,21 @@ setMethodS3("segmentByCBS", "RawGenomicSignals", function(this, ..., verbose=FAL
 
   verbose && enter(verbose, "Setting up ", pkgName, " data structure");
   cnData <- DNAcopy::CNA(
-    genomdat  = data$signal, 
+    genomdat  = data$y, 
     chrom     = data$chromosome,
     data.type = "logratio",
-    maploc    = data$position,
+    maploc    = data$x,
     sampleid  = sampleName
   );
+  verbose && str(verbose, cnData);
+  names(cnData)[3] <- sampleName;
   verbose && str(verbose, cnData);
   verbose && exit(verbose);
 
   args <- list(cnData);
 
   if (hasWeights) {
-    fitArgs <- list(weights=data$weight);
+    fitArgs <- list(weights=data$w);
     verbose && cat(verbose, "Additional segmentation arguments:");
     keep <- (names(fitArgs) %in% names(formals));
     fitArgs <- fitArgs[keep];
@@ -163,12 +165,21 @@ setMethodS3("segmentByCBS", "RawGenomicSignals", function(this, ..., verbose=FAL
 ##    fit <- do.call(fitFcn, args);
     # This works, but requires that one loads the package and that the
     # function is not masked in the search() path.
-    fit <- do.call(methodName, args);
+    t <- system.time({
+      fit <- do.call(methodName, args);
+    });
+    attr(fit, "processingTime") <- t;
   });
 
   verbose && cat(verbose, "Captured output that was sent to stdout:");
   stdout <- paste(stdout, collapse="\n");
   verbose && cat(verbose, stdout);
+
+  verbose && cat(verbose, "Fitting time (in seconds):");
+  verbose && print(verbose, t);
+
+  verbose && cat(verbose, "Fitting time per 1000 loci (in seconds):");
+  verbose && print(verbose, 1000*t/nbrOfLoci);
 
   verbose && cat(verbose, "Results object:");
   verbose && str(verbose, fit);

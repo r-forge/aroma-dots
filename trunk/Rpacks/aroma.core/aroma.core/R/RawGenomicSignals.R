@@ -11,9 +11,11 @@
 #
 # \arguments{
 #   \item{y}{A @numeric @vector of length J specifying the signal
-#     at each loci.}
+#     at each locus.}
 #   \item{x}{A (optional) @numeric @vector of length J specifying the 
-#     position of each loci.}
+#     position of each locus.}
+#   \item{w}{A (optional) non-negative @numeric @vector of length J 
+#     specifying a weight of each locus.}
 #   \item{chromosome}{An (optional) @integer specifying the chromosome for
 #     these genomic signals.}
 #   \item{name}{An (optional) @characte string specifying the sample name.}
@@ -26,7 +28,7 @@
 #
 # @author
 #*/########################################################################### 
-setConstructorS3("RawGenomicSignals", function(y=NULL, x=NULL, chromosome=NA, name=NULL, ...) {
+setConstructorS3("RawGenomicSignals", function(y=NULL, x=NULL, w=NULL, chromosome=NA, name=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -49,20 +51,16 @@ setConstructorS3("RawGenomicSignals", function(y=NULL, x=NULL, chromosome=NA, na
       throw("Argument 'y' must be a numeric: ", class(y)[1]);
     }
   }
+  n <- length(y);
 
+  # Argument 'x':
   if (!is.null(x)) {
-    if (!is.vector(x)) {
-      throw("Argument 'x' must be a vector: ", mode(x)[1]);
-    }
+    x <- Arguments$getDoubles(x, length=n);
+  }
 
-    if (!is.numeric(x)) {
-      throw("Argument 'x' must be a numeric: ", class(x)[1]);
-    }
-
-    n <- length(y);
-    if (length(x) != n) {
-      throw("Argument 'x' and 'y' are of different lengths: ", length(x), " != ", n);
-    }
+  # Argument 'w':
+  if (!is.null(w)) {
+    w <- Arguments$getDoubles(w, range=c(0,Inf), length=n);
   }
 
   # Argument 'chromosome':
@@ -74,6 +72,7 @@ setConstructorS3("RawGenomicSignals", function(y=NULL, x=NULL, chromosome=NA, na
   extend(Object(), "RawGenomicSignals", 
     y = y,
     x = x,
+    w = w,
     chromosome = chromosome,
     .name = name
   )
@@ -135,9 +134,16 @@ setMethodS3("getSignals", "RawGenomicSignals", function(this, ...) {
 })
 
 
+setMethodS3("setWeights", "RawGenomicSignals", function(this, weights, ...) {
+  # Argument 'weights':
+  n <- length(getSignals(this));
+  weights <- Arguments$getDoubles(weights, length=rep(n,2), range=c(0,Inf));
+  this$w <- weights;
+  invisible(this);
+})
+
 setMethodS3("getWeights", "RawGenomicSignals", function(this, ...) {
-  weights <- this$weights;
-  weights;
+  this$w;
 })
 
 setMethodS3("hasWeights", "RawGenomicSignals", function(this, ...) {
@@ -155,7 +161,20 @@ setMethodS3("as.data.frame", "RawGenomicSignals", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  data.frame(x=this$x, y=this$y);
+  fields <- getLocusFields(this);
+  data <- NULL;
+  for (cc in seq(along=fields)) {
+    field <- fields[cc];
+    values <- this[[field]];
+    if (cc == 1) {
+      data <- data.frame(values);
+    } else {
+      data[[field]] <- values;
+    }
+  } # for (cc ...)
+  colnames(data) <- fields;
+
+  data;
 })
 
 setMethodS3("summary", "RawGenomicSignals", function(object, ...) {
@@ -170,6 +189,9 @@ setMethodS3("getLocusFields", "RawGenomicSignals", function(this, ...) {
   fields <- this$.locusFields;
   if (is.null(fields)) {
     fields <- c("x", "y");
+    if (hasWeights(this)) {
+      fields <- c(fields, "w");
+    }
   }
   fields;
 })
@@ -525,7 +547,8 @@ setMethodS3("extractRawGenomicSignals", "default", abstract=TRUE);
 ############################################################################
 # HISTORY:
 # 2009-05-10
-# o Added getWeights() and hasWeights() to RawGenomicSignals.
+# o Added argument 'w=NULL' to the constructor.
+# o Added getWeights(), setWeights(), and hasWeights() to RawGenomicSignals.
 # 2009-05-07
 # o Added (get|set)(X|Y)Scale() to RawGenomicSignals.
 # o Added setLocusFields().
