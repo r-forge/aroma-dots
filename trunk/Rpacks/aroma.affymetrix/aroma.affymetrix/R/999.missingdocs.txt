@@ -441,7 +441,7 @@
   getUnitNamesFile.AffymetrixCdfFile getUnitNamesFile.AffymetrixCelFile
   getUnitNamesFile.AffymetrixCelSet
   getUnitNamesFile.AffymetrixCnChpFile
-  getUnitNamesFile.AffymetrixPlatform getUnitNamesFile.AromaUgpFile
+  getUnitNamesFile.AffymetrixPlatform 
   getUnitNamesFile.TransformReport getUnitReadMap
   getUnitReadMap.AffymetrixCnChpFile getUnitSizes getUnitsOnChromosome
   getUnitsOnChromosome.GenomeInformation
@@ -911,3 +911,11 @@ getParameters.NormExpBgCorrection
  getOutputDataSetOLD20090509.Transform
  getProbeSequenceData getProbeSequenceData.AffymetrixCdfFile
  readSequenceDataFrame readSequenceDataFrame.AffymetrixProbeTabFile
+ addBy addBy.RawGenomicSignals applyBinaryOperator
+ applyBinaryOperator.RawGenomicSignals clearCache.TextUnitNamesFile
+ divideBy divideBy.RawGenomicSignals extractRawAlleleBFractions
+ extractRawAlleleBFractions.default getHeaderParameters
+ getHeaderParameters.TextUnitNamesFile
+ getUnitNamesFile.AromaPlatformInterface multiplyBy
+ multiplyBy.RawGenomicSignals plot.RawAlleleBFractions subtractBy
+ subtractBy.RawGenomicSignals
