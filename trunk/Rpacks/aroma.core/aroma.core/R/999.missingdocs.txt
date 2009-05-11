@@ -391,3 +391,4 @@ asThis asThis.BasicObject asThis.Object
   extractDataForSegmentation.RawGenomicSignals getWeights
   getWeights.RawGenomicSignals hasWeights hasWeights.RawGenomicSignals
   segmentByCBS segmentByGLAD segmentByHaarSeg
+setWeights setWeights.RawGenomicSignals

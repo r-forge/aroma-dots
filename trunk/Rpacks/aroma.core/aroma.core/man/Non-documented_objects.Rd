@@ -832,6 +832,8 @@
 \alias{segmentByCBS}
 \alias{segmentByGLAD}
 \alias{segmentByHaarSeg}
+\alias{setWeights}
+\alias{setWeights.RawGenomicSignals}
 
 \description{
   This page contains aliases for all "non-documented" objects that

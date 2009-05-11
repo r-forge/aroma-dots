@@ -28,7 +28,6 @@ setConstructorS3("RawCopyNumbers", function(cn=NULL, ...) {
 })
 
 
-
 setMethodS3("getPhysicalPositions", "RawCopyNumbers", function(this, ...) {
   getPositions(this, ...);
 }, protected=TRUE, deprecated=TRUE)
@@ -43,12 +42,16 @@ setMethodS3("getCn", "RawCopyNumbers", function(this, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("as.data.frame", "RawCopyNumbers", function(x, ...) {
+setMethodS3("as.data.frame", "RawCopyNumbers", function(x, ..., translate=TRUE) {
   # To please R CMD check
   this <- x;
 
   df <- NextMethod("as.data.frame");
-  colnames(df) <- gsub("y", "cn", colnames(df), fixed=TRUE);
+
+  # Translate column names?
+  if (translate) {
+    colnames(df) <- gsub("y", "cn", colnames(df), fixed=TRUE);
+  }
 
   df;
 })
@@ -77,6 +80,8 @@ setMethodS3("extractRawCopyNumbers", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-10
+# o Added argument 'translate=TRUE' to as.data.frame().
 # 2009-02-19
 # o Now inherits from RawGenomicSignals.R.
 # o Added argument 'byCount' to binnedSmoothing() of RawCopyNumbers.

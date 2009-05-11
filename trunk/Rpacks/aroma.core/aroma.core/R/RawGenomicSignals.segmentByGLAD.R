@@ -87,7 +87,7 @@ setMethodS3("segmentByGLAD", "RawGenomicSignals", function(this, ..., verbose=FA
   sampleName <- attr(data, "sampleName");
   chromosome <- data$chromosome[1];
   nbrOfLoci <- nrow(data);
-  hasWeights <- !is.null(data$weight);
+  hasWeights <- !is.null(data$w);
 
   verbose && cat(verbose, "Sample name: ", sampleName);
   verbose && cat(verbose, "Chromosome: ", chromosome);
@@ -100,7 +100,7 @@ setMethodS3("segmentByGLAD", "RawGenomicSignals", function(this, ..., verbose=FA
     # Verify that weights are supported (not yet)
     if (!is.element("weights", names(formals))) {
       hasWeights <- FALSE;
-      msg <- paste("Weights detected but ignored, because the available segmentation function does not support weights. Check with a more recent version of the package: ", pkgDetails);
+      msg <- paste("Weights detected but ignored, because the available segmentation function ('", methodName, "()') does not support weights. Check with a more recent version of the package: ", pkgDetails, sep="");
       verbose && cat(verbose, "WARNING: ", msg);
       warning(msg);
     }
@@ -114,10 +114,10 @@ setMethodS3("segmentByGLAD", "RawGenomicSignals", function(this, ..., verbose=FA
 
   verbose && enter(verbose, "Setting up ", pkgName, " data structure");
   cnData <- data.frame(
-    LogRatio=data$signal, 
+    LogRatio=data$y, 
     PosOrder=1:nbrOfLoci, 
     Chromosome=data$chromosome,
-    PosBase=data$position
+    PosBase=data$x
     # Add (chipType, units) identifiers to be able to backtrack SNP IDs etc.
 #    chipType=as.factor(chipType),
 #    units=units,
@@ -131,7 +131,7 @@ setMethodS3("segmentByGLAD", "RawGenomicSignals", function(this, ..., verbose=FA
   args <- list(cnData);
 
   if (hasWeights) {
-    fitArgs <- list(weights=data$weight);
+    fitArgs <- list(weights=data$w);
     verbose && cat(verbose, "Additional segmentation arguments:");
     keep <- (names(fitArgs) %in% names(formals));
     fitArgs <- fitArgs[keep];
@@ -166,12 +166,21 @@ setMethodS3("segmentByGLAD", "RawGenomicSignals", function(this, ..., verbose=FA
   stdout <- capture.output({
     # This works, but requires that one loads the package and that the
     # function is not masked in the search() path.
-    fit <- do.call(methodName, args);
+    t <- system.time({
+      fit <- do.call(methodName, args);
+    });
+    attr(fit, "processingTime") <- t;
   });
 
   verbose && cat(verbose, "Captured output that was sent to stdout:");
   stdout <- paste(stdout, collapse="\n");
   verbose && cat(verbose, stdout);
+
+  verbose && cat(verbose, "Fitting time (in seconds):");
+  verbose && print(verbose, t);
+
+  verbose && cat(verbose, "Fitting time per 1000 loci (in seconds):");
+  verbose && print(verbose, 1000*t/nbrOfLoci);
 
   verbose && cat(verbose, "Results object:");
   verbose && str(verbose, fit);
