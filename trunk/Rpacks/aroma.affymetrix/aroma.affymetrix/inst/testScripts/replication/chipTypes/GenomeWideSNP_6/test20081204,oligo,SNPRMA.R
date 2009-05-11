@@ -30,6 +30,17 @@ chipType <- "GenomeWideSNP_6";
 normalizeToHapmap <- TRUE;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Local functions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pkgName <- "oligo";
+pkgVer <- packageDescription(pkgName)$Version;
+if (compareVersion(pkgVer, "1.8.0") < 0) {
+  thetaA <- oligo:::thetaA;
+  thetaB <- oligo:::thetaB;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SNPRMA according to aroma.affymetrix
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cdf <- AffymetrixCdfFile$byChipType(chipType);
@@ -90,8 +101,8 @@ print(eSet);
 # Extract theta array
 naValue <- as.double(NA);
 theta0 <- array(naValue, dim=c(nrow(eSet), 2, ncol(eSet)));
-theta0[,1,] <- oligo:::thetaA(eSet);
-theta0[,2,] <- oligo:::thetaB(eSet);
+theta0[,1,] <- thetaA(eSet);
+theta0[,2,] <- thetaB(eSet);
 dimnames(theta0) <- list(NULL, NULL, NULL);
 dimnames(theta0)[[1]] <- featureNames(eSet);
 dimnames(theta0)[[3]] <- getNames(csR);
