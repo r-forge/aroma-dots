@@ -465,7 +465,6 @@
 \alias{getUnitNames.UnitNamesInterface}
 \alias{getUnitNamesFile}
 \alias{getUnitNamesFile.AromaPlatform}
-\alias{getUnitNamesFile.AromaUnitTabularBinaryFile}
 \alias{getUnitsAt}
 \alias{getUnitsAt.AromaUgpFile}
 \alias{importFromGenericTabularFile}
@@ -632,7 +631,6 @@
 \alias{getMaxLengthRepeats}
 \alias{getPlatform.AromaSignalBinaryFile}
 \alias{getPlatform.AromaSignalBinarySet}
-\alias{getUnitNamesFile.AromaSignalBinaryFile}
 \alias{nbrOfUnits.AromaSignalBinaryFile}
 \alias{validate.AromaSignalBinarySet}
 \alias{byName.AromaFractionBCnBinarySet}
@@ -685,7 +683,6 @@
 \alias{getFilenameExtension.AromaUnitSignalBinaryFile}
 \alias{getPlatform.AromaUnitSignalBinaryFile}
 \alias{getPlatform.AromaUnitSignalBinarySet}
-\alias{getUnitNamesFile.AromaUnitSignalBinaryFile}
 \alias{nbrOfUnits.AromaUnitSignalBinaryFile}
 \alias{updateGenotypes}
 \alias{updateGenotypes.AromaUnitGenotypeCallFile}
@@ -834,6 +831,19 @@
 \alias{segmentByHaarSeg}
 \alias{setWeights}
 \alias{setWeights.RawGenomicSignals}
+\alias{addBy}
+\alias{addBy.RawGenomicSignals}
+\alias{applyBinaryOperator}
+\alias{applyBinaryOperator.RawGenomicSignals}
+\alias{divideBy}
+\alias{divideBy.RawGenomicSignals}
+\alias{extractRawAlleleBFractions}
+\alias{extractRawAlleleBFractions.default}
+\alias{multiplyBy}
+\alias{multiplyBy.RawGenomicSignals}
+\alias{plot.RawAlleleBFractions}
+\alias{subtractBy}
+\alias{subtractBy.RawGenomicSignals}
 
 \description{
   This page contains aliases for all "non-documented" objects that
