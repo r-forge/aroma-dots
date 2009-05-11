@@ -36,12 +36,6 @@ setMethodS3("importFromGenomeInformation", "AromaUgpFile", function(this, gi, ..
 
 
 
-# AD HOC for now /HB 2008-05-18
-setMethodS3("getUnitNamesFile", "AromaUgpFile", function(this, ...) {
-  getCdf(this, ...);
-})
-
-
 setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUgpFile", function(this, csv, shift="auto", onReplicates=c("median", "mean", "overwrite"), ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -192,6 +186,9 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUgpFile", function(this, sr
 
 ############################################################################
 # HISTORY:
+# 2009-05-12
+# o Removed getUnitNamesFile() from AromaUgpFile. This requires 
+#   aroma.core v1.0.6 or newer.
 # 2008-07-21
 # o Removed allocateFromCdf() specific to AromaUgpFile since that is
 #   now taken care of in the super classes.

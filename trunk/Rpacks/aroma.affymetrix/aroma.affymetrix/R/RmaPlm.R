@@ -499,36 +499,14 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
     pkgDesc <- packageDescription(pkg);
     ver <- pkgDesc$Version;
     verbose && cat(verbose, pkg, " version: ", ver);
-    if (compareVersion(ver, "1.9.10") >= 0) {
-      # HB 2009-05-09: The API of the native function rma_c_complete_copy() 
-      #                has been updated in the devel version.
+    if (compareVersion(ver, "1.7.19") >= 0) {
+      # HB 2009-05-09:
+      # The API of the native function rma_c_complete_copy() 
+      # has been updated yet again, but the good thing, 
+      # there is now a basicRMA() wrapper function.
       fitRma <- function(y, unitNames, nbrOfUnits, ...) {
-        ## SEXP rma_c_complete_copy(
-        ##           SEXP PMmat,  
-        ##           SEXP ProbeNamesVec, SEXP N_probes,
-        ##           SEXP norm_flag, SEXP bg_flag,
-        ##           SEXP bg_type, SEXP verbose)
-        .Call("rma_c_complete_copy", 
-                     y, 
-                     unitNames, nbrOfUnits, 
-                     FALSE, FALSE, 
-                     as.integer(2), FALSE, PACKAGE="oligo");
-        .Call("rma_c_complete_copy", y, unitNames, as.integer(nbrOfUnits), as.integer(0), as.integer(0), as.integer(2), as.integer(0), PACKAGE="oligo");
-      } # fitRma()
-    } else if (compareVersion(ver, "1.7.19") >= 0) {
-      # HB 2009-05-09: The API of the native function rma_c_complete_copy() 
-      #                has been updated.
-      fitRma <- function(y, unitNames, nbrOfUnits, ...) {
-        ## SEXP rma_c_complete_copy(
-        ##           SEXP PMmat,  
-        ##           SEXP ProbeNamesVec, SEXP N_probes,
-        ##           SEXP norm_flag, SEXP bg_flag,
-        ##           SEXP bg_type, SEXP verbose)
-        .Call("rma_c_complete_copy",
-                     y, 
-                     unitNames, nbrOfUnits, 
-                     FALSE, FALSE, 
-                     as.integer(2), FALSE, PACKAGE="oligo");
+        oligo::basicRMA(y, pnVec=unitNames, background=FALSE, 
+                                            normalize=FALSE, verbose=FALSE);
       } # fitRma()
     } else if (compareVersion(ver, "0.99.51") >= 0) {
       # MR 2008-12-04: fitRma() was removed from the 'oligo' package.  
@@ -594,7 +572,7 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
     fit <- fitRma(y, unitNames, nbrOfUnits);
 
     # Extract probe affinities and chip estimates
-    est <- fit[1,];  # Only one unit
+    est <- fit[1,,drop=TRUE];  # Only one unit
 
     # Chip effects
     beta <- est[1:I];
@@ -726,7 +704,7 @@ setMethodS3("getCalculateResidualsFunction", "RmaPlm", function(static, ...) {
 # HISTORY:
 # 2009-05-09
 # o Updated getFitUnitGroupFunction() of RmaPlm to work with the new
-#   oligo v1.7.19 as well.  Hmm... not sure if it works anyway.
+#   oligo v1.7.19 as well, which luckily gut oligo::basicRMA().
 # 2008-12-08
 # o Now the fit function returned by getFitUnitFunction() must be able
 #   to handle prior parameters as well.

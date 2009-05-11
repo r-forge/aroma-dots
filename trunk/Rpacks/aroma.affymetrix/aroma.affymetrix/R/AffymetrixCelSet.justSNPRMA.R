@@ -1,4 +1,5 @@
 setMethodS3("justSNPRMA", "character", function(...) {
+  require("oligo") || throw("Package not loaded: oligo");
   oligo::justSNPRMA(...);
 })
 
@@ -189,6 +190,10 @@ setMethodS3("justSNPRMA", "AffymetrixCelSet", function(this, ..., normalizeToHap
 
 ############################################################################
 # HISTORY:
+# 2009-05-10
+# o BUG FIX: In the most recent version of oligo, its justSNPRMA() requires
+#   that oligo is loaded.  Updated justSNPRMA() for character
+#   to assert this.
 # 2009-01-10
 # o Added argument 'normalizeSNPsOnly'.
 # 2008-12-05

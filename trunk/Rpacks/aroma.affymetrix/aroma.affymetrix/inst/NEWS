@@ -1,7 +1,14 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.5 [2009-05-09]
+Version: 1.0.6x [2009-05-12]
+o BUG FIX: In the most recent version of oligo, its justSNPRMA() 
+  requires that oligo is loaded, i.e. oligo::justSNPRMA() will
+  not work.  Updated justSNPRMA() for character to require oligo.
+o CLEAN UP: 
+
+
+Version: 1.0.5 [2009-05-10]
 o BETA: Updated several methods of the package to handle the new
   way getOutputDataSet() of AromaTransform scans and loads
   data sets.  This new way is the first step towards supporting
@@ -23,6 +30,8 @@ o CLEAN UP: Now findByChipType() of AffymetrixProbeTabFile only
   still uses those but, if a file is found, it gives an error 
   saying that the the method is outdated.  This should not 
   affect anyone these days, but just in case, it is included.
+o Package passes R CMD check on R v2.9.0.
+o Package passes redundancy tests.
 
 
 Version: 1.0.4 [2009-04-16]

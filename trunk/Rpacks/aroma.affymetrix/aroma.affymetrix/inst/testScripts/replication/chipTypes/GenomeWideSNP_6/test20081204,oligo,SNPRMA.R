@@ -23,6 +23,7 @@
 #       NA07019.CEL
 ###########################################################################
 library("aroma.affymetrix");
+library("oligo");
 log <- Arguments$getVerbose(-8, timestamp=TRUE);
 
 chipType <- "GenomeWideSNP_6";
