@@ -141,18 +141,6 @@ setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipTyp
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # BEGIN: UnitNamesFile
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-setMethodS3("getUnitNamesFile", "AromaUnitTabularBinaryFile", function(this, force=FALSE, ...) {
-  unf <- this$.unf;
-  if (force || is.null(unf)) {
-    platform <- getAromaPlatform(this, ...);
-    unf <- getUnitNamesFile(platform);
-    this$.unf <- unf;
-  }
-
-  unf;
-})
-
-
 setMethodS3("indexOfUnits", "AromaUnitTabularBinaryFile", function(this, names, ...) {
   # Map the unit names to the ones in the unit names file
   unf <- getUnitNamesFile(this);
@@ -198,6 +186,8 @@ setMethodS3("allocateFromUnitNamesFile", "AromaUnitTabularBinaryFile", function(
 
 ############################################################################
 # HISTORY:
+# 2009-05-12
+# o Removed getUnitNamesFile() from AromaUnitTabularBinaryFile.
 # 2009-02-10
 # o Added byChipType() to AromaUnitTabularBinaryFile with option to 
 #   validate/select by the number of units.

@@ -184,8 +184,7 @@
   getPlatform.AromaUnitTabularBinaryFile getPlatform.UnitNamesInterface
   getUnitNames getUnitNames.UnitNamesInterface getUnitNamesFile
   getUnitNamesFile.AromaPlatform
-  getUnitNamesFile.AromaUnitTabularBinaryFile getUnitsAt
-  getUnitsAt.AromaUgpFile importFromGenericTabularFile
+  getUnitsAt getUnitsAt.AromaUgpFile importFromGenericTabularFile
   importFromGenericTabularFile.AromaUgpFile indexOfUnits
   indexOfUnits.AromaUnitTabularBinaryFile nbrOfUnits
   nbrOfUnits.AromaUnitTabularBinaryFile nbrOfUnits.UnitNamesInterface
@@ -274,7 +273,6 @@ getMaxLengthRepeats.AromaCellSequenceFile
   getFilenameExtension.AromaSignalBinaryFile getMaxLengthRepeats
   getMaxLengthRepeats.AromaCellSequenceFile
   getPlatform.AromaSignalBinaryFile getPlatform.AromaSignalBinarySet
-  getUnitNamesFile.AromaSignalBinaryFile
   nbrOfUnits.AromaSignalBinaryFile validate.AromaSignalBinarySet
 byName.AromaFractionBCnBinarySet byName.AromaTotalCnBinarySet
 extractRawCopyNumbers.AromaTotalCnBinaryFile
@@ -309,7 +307,6 @@ allocate.AromaGenotypeCallFile byName.AromaGenotypeCallSet
   getFilenameExtension.AromaUnitSignalBinaryFile
   getPlatform.AromaUnitSignalBinaryFile
   getPlatform.AromaUnitSignalBinarySet
-  getUnitNamesFile.AromaUnitSignalBinaryFile
   nbrOfUnits.AromaUnitSignalBinaryFile updateGenotypes
   updateGenotypes.AromaUnitGenotypeCallFile
   validate.AromaUnitSignalBinarySet
@@ -392,3 +389,9 @@ asThis asThis.BasicObject asThis.Object
   getWeights.RawGenomicSignals hasWeights hasWeights.RawGenomicSignals
   segmentByCBS segmentByGLAD segmentByHaarSeg
 setWeights setWeights.RawGenomicSignals
+  addBy addBy.RawGenomicSignals applyBinaryOperator
+  applyBinaryOperator.RawGenomicSignals divideBy
+  divideBy.RawGenomicSignals extractRawAlleleBFractions
+  extractRawAlleleBFractions.default multiplyBy
+  multiplyBy.RawGenomicSignals plot.RawAlleleBFractions subtractBy
+  subtractBy.RawGenomicSignals

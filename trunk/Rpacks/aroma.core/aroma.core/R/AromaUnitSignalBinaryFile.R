@@ -157,19 +157,6 @@ setMethodS3("getChipType", "AromaUnitSignalBinaryFile", function(this, fullname=
 })
 
 
-setMethodS3("getUnitNamesFile", "AromaUnitSignalBinaryFile", function(this, force=FALSE, ...) {
-  unf <- this$.unf;
-  if (force || is.null(unf)) {
-    platform <- getAromaPlatform(this);
-    unf <- getUnitNamesFile(platform);
-    this$.unf <- unf;
-  }
-
-  unf;
-})
-
-
-
 setMethodS3("allocateFromUnitNamesFile", "AromaUnitSignalBinaryFile", function(static, unf, ...) {
   # Argument 'unf':
   className <- "UnitNamesFile";
@@ -207,6 +194,8 @@ setMethodS3("getAromaUgpFile", "AromaUnitSignalBinaryFile", function(this, ..., 
 
 ############################################################################
 # HISTORY:
+# 2009-05-12
+# o Removed getUnitNamesFile() from AromaUnitSignalBinaryFile.
 # 2009-02-12
 # o Added argument 'fullname' to getChipType() of AromaUnitSignalBinaryFile.
 # o Added readDataFrame(..., units=NULL) to AromaUnitSignalBinaryFile.

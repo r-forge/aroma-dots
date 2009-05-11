@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.6x [2009-05-10]
+Version: 1.0.6x [2009-05-12]
 o Added RawAlleleBFractions() extending RawGenomicSignals.
 o Added segmentByCBS(), segmentByGLAD(), and segmentByHarSeeg() 
   to RawGenomicSignals, which all support weights if the underlying
@@ -10,6 +10,9 @@ o Added segmentByCBS(), segmentByGLAD(), and segmentByHarSeeg()
 o Added getWeights() and hasWeights() to RawGenomicSignals.
 o Added {add,subtract,multiply,divide}By() for RawGenomicSignals all
   utilizing support method applyBinaryOperator().
+o SPEED UP: Now TextUnitNamesFile caches all unit names in memory.
+o BUG FIX: getPlatform() of TextUnitNamesFile would sometimes return
+  a list of length one, instead of an single character string.
 
 
 Version: 1.0.5 [2009-05-10]
