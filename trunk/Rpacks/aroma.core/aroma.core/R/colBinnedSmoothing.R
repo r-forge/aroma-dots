@@ -77,18 +77,19 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
   }
 
   # Argument 'from' & 'to':
-  from <- Arguments$getDouble(from);
-  to <- Arguments$getDouble(to, range=c(from,Inf));
+  disallow <- c("NA", "NaN", "Inf");
+  from <- Arguments$getDouble(from, disallow=disallow);
+  to <- Arguments$getDouble(to, range=c(from,Inf), disallow=disallow);
 
   # Arguments 'by' & 'length.out':
   if (is.null(by) & is.null(length.out)) {
     throw("Either argument 'by' or 'length.out' needs to be given.");
   }
   if (n > 1 && !is.null(by)) {
-    by <- Arguments$getDouble(by, range=c(0,to-from));
+    by <- Arguments$getDouble(by, range=c(0,Inf));
   }
   if (!is.null(length.out)) {
-    length.out <- Arguments$getInteger(length.out, range=c(1,Inf));
+    length.out <- Arguments$getInteger(length.out, range=c(0,Inf));
   }
 
   # Argument 'xOut':
@@ -225,6 +226,8 @@ setMethodS3("binnedSmoothing", "numeric", function(y, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-12
+# o Now colBinnedSmoothing() assert that 'from' and 'to' are finite.
 # 2009-04-07
 # o BUG FIX: When passing a single data points to colBinnedSmoothing(),
 #   it would throw the exception: "Range of argument 'by' is out of range

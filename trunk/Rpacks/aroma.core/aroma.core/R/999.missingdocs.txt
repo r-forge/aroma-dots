@@ -395,3 +395,14 @@ setWeights setWeights.RawGenomicSignals
   extractRawAlleleBFractions.default multiplyBy
   multiplyBy.RawGenomicSignals plot.RawAlleleBFractions subtractBy
   subtractBy.RawGenomicSignals
+ clearCache.TextUnitNamesFile getHeaderParameters
+ getHeaderParameters.TextUnitNamesFile getSigma
+ getSigma.RawGenomicSignals getUnitNamesFile.AromaPlatformInterface
+ setSigma setSigma.RawGenomicSignals
+  GenericDataFileList GenericDataFileSetList
+  getFileClass.GenericDataFileSetList getFileList
+  getFileList.GenericDataFileSetList
+  AromaUnitTotalCnBinaryFileList extractMergedRawCopyNumbers
+  extractMergedRawCopyNumbers.AromaUnitTotalCnBinaryFileList
+  extractRawCopyNumbers.AromaUnitTotalCnBinaryFileList
+  extractRawGenomicSignals.AromaUnitTotalCnBinaryFileList

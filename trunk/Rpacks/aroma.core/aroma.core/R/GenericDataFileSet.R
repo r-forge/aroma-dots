@@ -6,8 +6,7 @@
 # \description{
 #  @classhierarchy
 #
-#  An GenericDataFileSet object represents a set of @see "GenericDataFile"s
-#  with \emph{identical} chip types.
+#  An GenericDataFileSet object represents a set of @see "GenericDataFile"s.
 # }
 # 
 # @synopsis
@@ -226,7 +225,7 @@ setMethodS3("getFullName", "GenericDataFileSet", function(this, parent=1, transl
   parent <- Arguments$getInteger(parent, range=c(0,32));
 
   # The name of a file set is inferred from the pathname of the directory
-  # of the set assuming path/to/<fullname>/<something>/<"chip type">/
+  # of the set assuming path/to/<fullname>/<something>/<subdir>/
 
   # Get the path of this file set
   path <- getPath(this);

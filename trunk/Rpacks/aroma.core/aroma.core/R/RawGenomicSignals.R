@@ -55,12 +55,12 @@ setConstructorS3("RawGenomicSignals", function(y=NULL, x=NULL, w=NULL, chromosom
 
   # Argument 'x':
   if (!is.null(x)) {
-    x <- Arguments$getDoubles(x, length=n);
+    x <- Arguments$getDoubles(x, length=c(n,n));
   }
 
   # Argument 'w':
   if (!is.null(w)) {
-    w <- Arguments$getDoubles(w, range=c(0,Inf), length=n);
+    w <- Arguments$getDoubles(w, range=c(0,Inf), length=c(n,n));
   }
 
   # Argument 'chromosome':
@@ -69,7 +69,7 @@ setConstructorS3("RawGenomicSignals", function(y=NULL, x=NULL, w=NULL, chromosom
   }
 
 
-  extend(Object(), "RawGenomicSignals", 
+  extend(Object(...), "RawGenomicSignals", 
     y = y,
     x = x,
     w = w,
@@ -254,16 +254,12 @@ setMethodS3("extractSubset", "RawGenomicSignals", function(this, subset, ...) {
   # Argument 'subset':
   subset <- Arguments$getIndices(subset, range=c(1, nbrOfLoci(this)));
 
-  y <- getSignals(this);
-  x <- getPositions(this);
-  y <- y[subset];
-  x <- x[subset];
-
   res <- clone(this);
   clearCache(res);
-  res$x <- x;
-  res$y <- y;
-  rm(y, x);
+
+  for (field in getLocusFields(res)) {
+    res[[field]] <- res[[field]][subset];
+  }
 
   res;
 })
@@ -326,10 +322,16 @@ setMethodS3("gaussianSmoothing", "RawGenomicSignals", function(this, sd=10e3, ..
 
 
 
-setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., byCount=FALSE, verbose=FALSE) {
+setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., weights=getWeights(this), byCount=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'weights':
+  if (!is.null(weights)) {
+    weights <- Arguments$getDoubles(weights, length=rep(nbrOfLoci(this),2),
+                                                           range=c(0,Inf));
+  }
+
   # Argument 'byCount':
   byCount <- Arguments$getLogical(byCount);
 
@@ -344,39 +346,46 @@ setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., byCount=
   verbose && enter(verbose, "Smoothing data set");
   y <- getSignals(this);
   x <- getPositions(this);
-  verbose && printf(verbose, "Range of positions: [%d,%d]\n", 
-                       min(x,na.rm=TRUE), max(x,na.rm=TRUE));
+  n <- length(x);
+  xRange <- range(x, na.rm=TRUE);
+  verbose && printf(verbose, "Range of positions: [%.0f,%.0f]\n", 
+                                           xRange[1], xRange[2]);
 
-  if (byCount) {
-    verbose && enter(verbose, "Binned smoothing (by count)");
-    # Smoothing both y and x.
-    Y <- cbind(y=y, x=x);
-    xRank <- seq(length=length(x));
-    verbose && cat(verbose, "Positions (ranks):");
-    verbose && str(verbose, xRank);
-    verbose && cat(verbose, "Arguments:");
-    args <- list(Y=Y, x=x, ...);
-    verbose && str(verbose, args);
-    Ys <- colBinnedSmoothing(Y=Y, x=xRank, ..., verbose=less(verbose, 10));
-    verbose && str(verbose, Ys);
-    xOut <- attr(Ys, "xOut");
-    verbose && str(verbose, xOut);
-    # The smoothed y:s
-    ys <- Ys[,1,drop=TRUE];
-    # The smoothed x:s, which becomes the new target positions
-    xOut <- Ys[,2,drop=TRUE];
-    rm(xRank, Y, Ys);
-    verbose && exit(verbose);
+  if (n > 0) {
+    if (byCount) {
+      verbose && enter(verbose, "Binned smoothing (by count)");
+      # Smoothing both y and x.
+      Y <- cbind(y=y, x=x);
+      xRank <- seq(length=length(x));
+      verbose && cat(verbose, "Positions (ranks):");
+      verbose && str(verbose, xRank);
+      verbose && cat(verbose, "Arguments:");
+      args <- list(Y=Y, x=xRank, w=weights, ...);
+      verbose && str(verbose, args);
+      Ys <- colBinnedSmoothing(Y=Y, x=xRank, w=weights, ..., verbose=less(verbose, 10));
+      verbose && str(verbose, Ys);
+      xOut <- attr(Ys, "xOut");
+      verbose && str(verbose, xOut);
+      # The smoothed y:s
+      ys <- Ys[,1,drop=TRUE];
+      # The smoothed x:s, which becomes the new target positions
+      xOut <- Ys[,2,drop=TRUE];
+      rm(xRank, Y, Ys);
+      verbose && exit(verbose);
+    } else {
+      verbose && enter(verbose, "Binned smoothing (by position)");
+      verbose && cat(verbose, "Arguments:");
+      args <- list(y=y, x=x, w=weights, ...);
+      verbose && str(verbose, args);
+      ys <- binnedSmoothing(y=y, x=x, w=weights, ..., verbose=less(verbose, 10));
+      verbose && str(verbose, ys);
+      xOut <- attr(ys, "xOut");
+      verbose && exit(verbose);
+    }
   } else {
-    verbose && enter(verbose, "Binned smoothing (by position)");
-    verbose && cat(verbose, "Arguments:");
-    args <- list(y=y, x=x, ...);
-    verbose && str(verbose, args);
-    ys <- binnedSmoothing(y=y, x=x, ..., verbose=less(verbose, 10));
-    verbose && str(verbose, ys);
-    xOut <- attr(ys, "xOut");
-    verbose && exit(verbose);
-  }
+    ys <- double(0);
+    xOut <- double(0);
+  } # if (n > 0)
 
 
   verbose && enter(verbose, "Creating result object");
@@ -443,6 +452,10 @@ setMethodS3("estimateStandardDeviation", "RawGenomicSignals", function(this, met
   estimatorFcn <- get(estimator, mode="function");
 
   y <- getSignals(this);
+  if (length(y) <= 1) {
+    return(as.double(NA));
+  }
+
   if (method == "diff") {
     y <- diff(y);
     sigma <- estimatorFcn(y, na.rm=na.rm)/sqrt(2);
@@ -538,14 +551,37 @@ setMethodS3("signalRange", "RawGenomicSignals", function(this, na.rm=TRUE, ...) 
   range(y, na.rm=na.rm);
 })
 
+setMethodS3("setSigma", "RawGenomicSignals", function(this, sigma, ...) {
+  sigma <- Arguments$getDouble(sigma, range=c(0,Inf), disallow=NULL);
+  this$.sigma <- sigma;
+})
+
+setMethodS3("getSigma", "RawGenomicSignals", function(this, ..., force=FALSE) {
+  sigma <- this$.sigma;
+  if (is.null(sigma)) {
+    sigma <- estimateStandardDeviation(this, ...);
+    setSigma(this, sigma);
+  }
+  sigma;
+})
+
+
 
 
 setMethodS3("extractRawGenomicSignals", "default", abstract=TRUE);
 
 
 
+
 ############################################################################
 # HISTORY:
+# 2009-05-12
+# o BUG FIX: extractSubset() of RawGenomicSignals did not recognize all
+#   locus fields.
+# o Now getSigma() returns the current standard deviation estimate, and
+#   if not available, then it estimate it using estimateStandardDeviation().
+# o Now binnedSmoothing() of RawGenomicSignals uses weighted estimates
+#   (by default) if weights exists.
 # 2009-05-10
 # o Added argument 'w=NULL' to the constructor.
 # o Added getWeights(), setWeights(), and hasWeights() to RawGenomicSignals.
