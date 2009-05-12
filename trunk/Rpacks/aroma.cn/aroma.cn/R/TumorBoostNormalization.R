@@ -72,7 +72,7 @@ setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NUL
     } # for (jj ...)
   }
 
-  this <- extend(Object(), "TumorBoostNormalization",
+  this <- extend(Object(...), "TumorBoostNormalization",
     .dsT = dsT,
     .dsN = dsN,
     .gcN = gcN

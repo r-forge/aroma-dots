@@ -123,14 +123,14 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
   }
 
 
-  extend(Object(), "MultiSourceCopyNumberNormalization",
+  extend(Object(...), "MultiSourceCopyNumberNormalization",
     .tags = tags,
     .dsList = dsList,
     .fitUgp = fitUgp,
     .subsetToFit = subsetToFit,
     .alignByChromosome = alignByChromosome,
     .targetDimension = targetDimension,
-    .dsSmoothList = NULL
+    "cache:.dsSmoothList" = NULL
   )
 })
 
@@ -166,6 +166,19 @@ setMethodS3("as.character", "MultiSourceCopyNumberNormalization", function(x, ..
   class(s) <- "GenericSummary";
   s;
 }, private=TRUE)
+
+
+setMethodS3("clearCache", "MultiSourceCopyNumberNormalization", function(this, ...) {
+  # Clear all cached values.
+  # /AD HOC.
+  for (ff in c(".dsSmoothList")) {
+    this[[ff]] <- NULL;
+  }
+
+  # Then for this object
+  NextMethod(generic="clearCache", object=this, ...);
+}, private=TRUE)
+
 
 
 ###########################################################################/**
@@ -255,20 +268,62 @@ setMethodS3("getOutputPaths", "MultiSourceCopyNumberNormalization", function(thi
 });
 
 
-setMethodS3("getOutputDataSets", "MultiSourceCopyNumberNormalization", function(this, ..., force=FALSE) {
+setMethodS3("getOutputDataSets", "MultiSourceCopyNumberNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+
+  verbose && enter(verbose, "Retrieving list of output data sets");
+
   dsList <- getInputDataSets(this);
   paths <- getOutputPaths(this);
   dsOutList <- list();
   for (kk in seq(along=dsList)) {
+    ds <- dsList[[kk]];
+    verbose && enter(verbose, sprintf("Data set %d ('%s') of %d",
+                                    kk, getFullName(ds), length(dsList)));
+
     path <- paths[[kk]];
     if (isDirectory(path)) {
-      ds <- dsList[[kk]];
-      dsOut <- fromFiles(ds, path=path, ...);
+      verbose && enter(verbose, "Scanning directory for matching data files");
+      verbose && cat(verbose, "Path: ", path);
+
+      dsOut <- fromFiles(ds, path=path, ..., verbose=less(verbose, 10));
+
+      verbose && enter(verbose, "Keeping output data files matching input data files");
+      # Identify output data files that match the input data files
+      fullnames <- getFullNames(ds);
+      df <- getFile(ds, 1);
+      translator <- getFullNameTranslator(df);
+      setFullNamesTranslator(dsOut, translator);
+      fullnamesOut <- getFullNames(dsOut);
+      idxs <- match(fullnames, fullnamesOut);
+      verbose && str(verbose, idxs);
+      if (anyMissing(idxs)) {
+        throw("Should not happen.");
+      }
+      verbose && cat(verbose, "Number of files dropped: ", nbrOfFiles(dsOut) - length(idxs));
+      verbose && cat(verbose, "Number of files kept: ", length(idxs));
+      dsOut <- extract(dsOut, idxs);
+      verbose && exit(verbose);
+
+      verbose && exit(verbose);
     } else {
       dsOut <- NA;
     }
     dsOutList[[kk]] <- dsOut;
-  }
+
+    verbose && exit(verbose);
+  } # for (kk ...)
+
+  verbose && exit(verbose);
 
   dsOutList;
 })
@@ -670,6 +725,18 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
 
 
   verbose && enter(verbose, "Fitting one sample across multiple sources");
+
+  if (is.character(dfList)) {
+    verbose && enter(verbose, "Extracting list of input data files");
+    name <- dfList;
+    verbose && cat(verbose, "Sample name: ", name);
+    dsList <- getInputDataSets(this);
+    dfList <- extractTupleOfDataFiles(this, dsList=dsList, name=name, 
+                                                verbose=less(verbose, 1));
+    verbose && print(verbose, dfList);
+    verbose && exit(verbose);
+  }
+
   nbrOfArrays <- length(dfList);
   verbose && cat(verbose, "Number of arrays: ", nbrOfArrays);
 
@@ -722,7 +789,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   key <- list(method="fitOne", class="MultiSourceCopyNumberNormalization", 
            fullnames=fullnames, chipTypes=chipTypes, checkSums=checkSums,
            subsetToFit=subsetToFit, alignByChromosome=alignByChromosome, 
-           version="2009-05-03");
+           .retData=.retData, version="2009-05-06");
   dirs <- c("aroma.cn", "MultiSourceCopyNumberNormalization");
   if (!force) {
     fit <- loadCache(key=key, dirs=dirs);
@@ -874,7 +941,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
         unitsCC <- unitsS[[chrStr]];
         values <- ySN[unitsCC];
         keep <- is.finite(values);
-        mu <- mean(values[keep]);
+        mu <- median(values[keep]);
         mus[chrStr,kk] <- mu;
       } # for (cc ...)
       verbose && exit(verbose);
@@ -996,6 +1063,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
                                             getFullName(df), nbrOfArrays));
 
     outputPath <- outputPaths[[kk]];
+    # Here we really should use the fullname /HB 2009-05-05
     filename <- getFilename(df);
     pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...); 
     if (!force && isFile(pathname)) {
@@ -1291,6 +1359,12 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 
 ###########################################################################
 # HISTORY:
+# 2009-05-06
+# o Now the 'alignByChromosome' is corrected using median estimates.
+# 2009-05-05
+# o Now getOutputDataSets() of  MultiSourceCopyNumberNormalization only
+#   returns output data files with a matching fullname in the input set.
+# o Added a clearCache() to MultiSourceCopyNumberNormalization.
 # 2009-05-03
 # o Added argument 'alignByChromosome'.  If used, the signals are shifted
 #   per chromosome such that the mean of the normalized smoothed signals

@@ -102,6 +102,7 @@
 \alias{setTags.TumorBoostNormalization}
 \alias{getAsteriskTags.MultiSourceCopyNumberNormalization}
 \alias{getTags.MultiSourceCopyNumberNormalization}
+\alias{clearCache.MultiSourceCopyNumberNormalization}
 
 \description{
   This page contains aliases for all "non-documented" objects that
