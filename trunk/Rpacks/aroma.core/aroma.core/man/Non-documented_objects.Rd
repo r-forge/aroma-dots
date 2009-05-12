@@ -844,6 +844,24 @@
 \alias{plot.RawAlleleBFractions}
 \alias{subtractBy}
 \alias{subtractBy.RawGenomicSignals}
+\alias{clearCache.TextUnitNamesFile}
+\alias{getHeaderParameters}
+\alias{getHeaderParameters.TextUnitNamesFile}
+\alias{getSigma}
+\alias{getSigma.RawGenomicSignals}
+\alias{getUnitNamesFile.AromaPlatformInterface}
+\alias{setSigma}
+\alias{setSigma.RawGenomicSignals}
+\alias{GenericDataFileList}
+\alias{GenericDataFileSetList}
+\alias{getFileClass.GenericDataFileSetList}
+\alias{getFileList}
+\alias{getFileList.GenericDataFileSetList}
+\alias{AromaUnitTotalCnBinaryFileList}
+\alias{extractMergedRawCopyNumbers}
+\alias{extractMergedRawCopyNumbers.AromaUnitTotalCnBinaryFileList}
+\alias{extractRawCopyNumbers.AromaUnitTotalCnBinaryFileList}
+\alias{extractRawGenomicSignals.AromaUnitTotalCnBinaryFileList}
 
 \description{
   This page contains aliases for all "non-documented" objects that

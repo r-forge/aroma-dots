@@ -34,7 +34,7 @@
 #
 # @keyword IO
 #*/########################################################################### 
-setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., verbose=FALSE) {
+setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -74,6 +74,14 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., verbose
   verbose && cat(verbose, "Formals:");
   verbose && str(verbose, formals);
   verbose && exit(verbose);
+
+  signatures <- list();
+  signatures$fitFcn <- list(
+    pkgName=pkgName,
+    methodName=methodName,
+    formals=formals,
+    pkgDetails=pkgDetails
+  );
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -117,32 +125,51 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., verbose
   verbose && str(verbose, cnData);
   verbose && exit(verbose);
 
-  args <- list(I=cnData);
-
+  params <- list();
   if (hasWeights) {
-    fitArgs <- list(W=data$w);
+    params$W <- data$w;
     verbose && cat(verbose, "Additional segmentation arguments:");
-    keep <- (names(fitArgs) %in% names(formals));
-    fitArgs <- fitArgs[keep];
-    verbose && str(verbose, fitArgs);
-    args <- c(args, fitArgs);
-    rm(fitArgs);
+    verbose && str(verbose, params);
   }
 
   userArgs <- list(...);
   if (length(userArgs) > 0) {
     verbose && cat(verbose, "User and segmentation arguments:");
     verbose && str(verbose, userArgs);
-    verbose && cat(verbose, "Kept user arguments:");
-    keep <- (names(userArgs) %in% names(formals));
-    userArgs <- userArgs[keep];
-    verbose && str(verbose, userArgs);
-    args <- c(args, userArgs);
-    rm(userArgs);
+    # Assign/overwrite by user arguments
+    for (ff in names(userArgs)) {
+      params[[ff]] <- userArgs[[ff]];
+    }
   }
 
+  # Cleaning out unknown parameters
+  keep <- (names(params) %in% names(formals));
+  params <- params[keep];
+
+  signatures$data <- cnData;
+  signatures$params <- params;
+
+  args <- c(list(I=cnData), params);
   verbose && cat(verbose, "Final arguments:");
   verbose && str(verbose, args);
+  verbose && exit(verbose);
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Now, check for cached results
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Looking for cached results");
+  key <- list(method="segmentByHaarSeg", class=class(this)[1], 
+                                                signatures=signatures);
+  dirs <- c("aroma.cn", class(this)[1]);
+  if (!force) {
+    res <- loadCache(key, dirs=dirs);
+    if (!is.null(res)) {
+      verbose && cat(verbose, "Found cached results.");
+      verbose && exit(verbose);
+      return(res);
+    }
+  }
   verbose && exit(verbose);
 
 
@@ -183,10 +210,14 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., verbose
     data   = list(M=data$y, x=data$x, chromosome=chromosome)
   );
   class(fit) <- "HaarSeg";
+  attr(fit, "processingTime") <- t;
   verbose && exit(verbose);
 
 
   verbose && exit(verbose);
+
+  # Saving cached results
+  saveCache(fit, key=key, dirs=dirs);
 
   verbose && exit(verbose);
 

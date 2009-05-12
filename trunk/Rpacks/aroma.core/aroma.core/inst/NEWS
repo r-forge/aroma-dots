@@ -1,18 +1,25 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.6x [2009-05-12]
+Version: 1.0.6x [2009-05-13]
+o Now binnedSmoothing() of RawGenomicSignals uses weighted estimates
+  (by default) if weights exists.
 o Added RawAlleleBFractions() extending RawGenomicSignals.
 o Added segmentByCBS(), segmentByGLAD(), and segmentByHarSeeg() 
   to RawGenomicSignals, which all support weights if the underlying
   segmentation method does.  To date, it is only CBS and HaarSeg
-  that supports weights.
+  that supports weights.  These methods also support memoization.
 o Added getWeights() and hasWeights() to RawGenomicSignals.
 o Added {add,subtract,multiply,divide}By() for RawGenomicSignals all
   utilizing support method applyBinaryOperator().
+o ALPHA: Added classes GenericDataFile{Set}List.
+o ALPHA: Added class AromaUnitTotalCnBinaryFileList with methods 
+  extractRawCopyNumbers() and extractMergedRawCopyNumbers().
 o SPEED UP: Now TextUnitNamesFile caches all unit names in memory.
 o BUG FIX: getPlatform() of TextUnitNamesFile would sometimes return
   a list of length one, instead of an single character string.
+o BUG FIX: extractSubset() of RawGenomicSignals did not recognize all
+  locus fields.
 
 
 Version: 1.0.5 [2009-05-10]

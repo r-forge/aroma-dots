@@ -31,7 +31,7 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
   # Extracting data of interest
   data <- as.data.frame(this, translate=FALSE);
   data <- cbind(chromosome=chromosome, data);
-  verbose && str(verbose, data);
+#  verbose && str(verbose, data);
 
   # Use weights, if they exists?
   hasWeights <- useWeights && (length(data$w) > 0);
@@ -46,7 +46,7 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
   if (nbrOfDropped > 0) {
     data <- data[keep,,drop=FALSE];
     nbrOfLoci <- nrow(data);
-    verbose && str(verbose, data);
+#    verbose && str(verbose, data);
   }
   rm(keep);
   verbose && exit(verbose);
@@ -63,7 +63,7 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
     if (nbrOfDropped > 0) {
       data <- data[keep,,drop=FALSE];
       nbrOfLoci <- nrow(data);
-      verbose && str(verbose, data);
+#      verbose && str(verbose, data);
     }
     rm(keep);
     verbose && exit(verbose);
@@ -77,7 +77,7 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
     # Order signals by their genomic location
     o <- order(data$x);
     data <- data[o,,drop=FALSE];
-    verbose && str(verbose, data);
+#    verbose && str(verbose, data);
     verbose && exit(verbose);
     rm(o);
   }
@@ -95,7 +95,7 @@ setMethodS3("extractDataForSegmentation", "RawGenomicSignals", function(this, or
     if (nbrOfDropped > 0) {
       data <- data[keep,,drop=FALSE];
       nbrOfLoci <- nrow(data);
-      verbose && str(verbose, data);
+#      verbose && str(verbose, data);
     }
     rm(keep);
     verbose && exit(verbose);
