@@ -227,7 +227,9 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
                                             kk, getName(df), nbrOfArrays));
 
     path <- getPath(this);
-    filename <- getFilename(df, translate=TRUE);
+    fullname <- getFullName(df);
+    ext <- getFilenameExtension(df);
+    filename <- sprintf("%s.%s", fullname, ext);
     pathname <- Arguments$getReadablePathname(filename, path=path, 
                                                          mustExist=FALSE);
     className <- class(df)[1];
@@ -330,9 +332,12 @@ setMethodS3("getOutputFiles", "TotalCnSmoothing", function(this, ...) {
 
 
 
-
 ############################################################################
 # HISTORY:
+# 2009-05-05
+# o BUG FIX: process() of TotalCnSmoothing would not "recognize" fullname
+#   translators, that is, the output filenames were always identical to 
+#   the input ones.
 # 2009-05-04
 # o BUG FIX: Added missing argument 'verbose' in getTargetPositions() of
 #   TotalCnSmoothing.  This caused unwanted verbose output in some cases.

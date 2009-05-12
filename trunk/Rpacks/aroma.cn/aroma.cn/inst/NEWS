@@ -1,21 +1,28 @@
 Package: aroma.cn
 =================
 
-Version: 0.3.0x [2009-05-04]
+Version: 0.3.0x [2009-05-12]
+o ROBUSTNESS: Now all constructors report on unknown arguments.
 o ROBUSTNESS: Now MultiSourceCopyNumberNormalization first write
   normalized data to a temporary file, which is then renamed. This
   lower the risk for having incomplete data in case of interrupts.
+o Now getOutputDataSets() of  MultiSourceCopyNumberNormalization only
+  returns output data files with a matching fullname in the input set.
 o Added argument 'alignByChromosomes' to MultiSourceCopyNumberNormalization.
   If TRUE, the signals are shifted per chromosome such that the mean 
   of the normalized smoothed signals is the same for all sources.
   This can for instance remove systematic effects on sex chromosomes
   added by some ad hoc preprocessing methods.
+o Added a clearCache() to MultiSourceCopyNumberNormalization.
 o ALPHA: Added TumorBoostNormalization.
 o INTERNAL: Added foundations for TumorBoost, i.e. in 
   memory classes such as TotalAndFracBSnpData.
 o INTERNAL: Added findPeaksAndValleys().
 o BUG FIX: Added missing argument 'verbose' in getTargetPositions() of
   TotalCnSmoothing.  This caused unwanted verbose output in some cases.
+o BUG FIX: process() of TotalCnSmoothing would not "recognize" fullname
+  translators, that is, the output filenames were always identical to 
+  the input ones.
 
 
 Version: 0.2.2 [2009-02-23]

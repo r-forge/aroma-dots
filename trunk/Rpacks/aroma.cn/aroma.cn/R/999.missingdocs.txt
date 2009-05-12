@@ -49,3 +49,4 @@
  setTags.TumorBoostNormalization
  getAsteriskTags.MultiSourceCopyNumberNormalization
  getTags.MultiSourceCopyNumberNormalization
+clearCache.MultiSourceCopyNumberNormalization
