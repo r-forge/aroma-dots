@@ -29,8 +29,7 @@ extends \link[R.oo]{Object}\cr
 
 
 
-  An GenericDataFileSet object represents a set of \code{\link{GenericDataFile}}s
-  with \emph{identical} chip types.
+  An GenericDataFileSet object represents a set of \code{\link{GenericDataFile}}s.
  }
 
  \usage{GenericDataFileSet(files=NULL, tags="*", alias=NULL, ...)}

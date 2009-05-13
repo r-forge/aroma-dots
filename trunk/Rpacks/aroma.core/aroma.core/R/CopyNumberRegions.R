@@ -72,7 +72,7 @@ setMethodS3("drawLevels", "CopyNumberRegions", function(this, col="red", lwd=2, 
   col0 <- col;
   lwd0 <- lwd;
   lty0 <- lty;
-  applyRows(this, FUN=function(cnr) {
+  res <- applyRows(this, FUN=function(cnr) {
     x <- c(cnr[["start"]], cnr[["stop"]]);
     y <- rep(cnr[["mean"]], times=2);
     if (is.function(col0))
@@ -82,7 +82,8 @@ setMethodS3("drawLevels", "CopyNumberRegions", function(this, col="red", lwd=2, 
     if (is.function(lty0))
       lty <- lty0(cnr);
     lines(x=xScale*x, y=yScale*y, col=col, lwd=lwd, lty=lty, ...);
-  })
+  });
+  invisible(res);
 })
 
 
@@ -113,6 +114,8 @@ setMethodS3("extractCopyNumberRegions", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-13
+# o CLEAN UP: drawLevels() no longer returns a (useless) list structure.
 # 2008-05-17
 # o Added abstract default extractCopyNumberRegions().
 # o Moved to aroma.core.
