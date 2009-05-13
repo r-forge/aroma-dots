@@ -351,11 +351,12 @@ setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., weights=
   verbose && printf(verbose, "Range of positions: [%.0f,%.0f]\n", 
                                            xRange[1], xRange[2]);
 
+  wOut <- NULL;
   if (n > 0) {
     if (byCount) {
       verbose && enter(verbose, "Binned smoothing (by count)");
-      # Smoothing both y and x.
-      Y <- cbind(y=y, x=x);
+      # Smoothing y and x (and w).
+      Y <- cbind(y=y, x=x, w=weights);
       xRank <- seq(length=length(x));
       verbose && cat(verbose, "Positions (ranks):");
       verbose && str(verbose, xRank);
@@ -370,16 +371,29 @@ setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., weights=
       ys <- Ys[,1,drop=TRUE];
       # The smoothed x:s, which becomes the new target positions
       xOut <- Ys[,2,drop=TRUE];
+      # Smoothed weights
+      if (!is.null(weights)) {
+        wOut <- Ys[,3,drop=TRUE];
+      }
       rm(xRank, Y, Ys);
       verbose && exit(verbose);
     } else {
       verbose && enter(verbose, "Binned smoothing (by position)");
+      # Smoothing y (and w).
+      Y <- cbind(y=y, w=weights);
       verbose && cat(verbose, "Arguments:");
-      args <- list(y=y, x=x, w=weights, ...);
+      args <- list(Y=Y, w=weights, ...);
       verbose && str(verbose, args);
-      ys <- binnedSmoothing(y=y, x=x, w=weights, ..., verbose=less(verbose, 10));
+      Ys <- colBinnedSmoothing(Y=Y, x=x, w=weights, ..., verbose=less(verbose, 10));
+      # The smoothed y:s
+      ys <- Ys[,1,drop=TRUE];
       verbose && str(verbose, ys);
-      xOut <- attr(ys, "xOut");
+      xOut <- attr(Ys, "xOut");
+      # Smoothed weights
+      if (!is.null(weights)) {
+        wOut <- Ys[,2,drop=TRUE];
+        wOut[is.na(wOut)] <- 0;
+      }
       verbose && exit(verbose);
     }
   } else {
@@ -393,6 +407,7 @@ setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., weights=
   clearCache(res);
   res$y <- ys;
   res$x <- xOut;
+  res$w <- wOut;
   verbose && exit(verbose);
 
   verbose && exit(verbose);
@@ -423,6 +438,7 @@ setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., weights=
 #   \item{estimator}{If \code{"mad"}, the robust @see "stats::mad" estimator
 #     is used.  If \code{"sd"}, the @see "stats::sd" estimator is used.}
 #   \item{na.rm}{If @TRUE, missing values are excluded first.}
+#   \item{weights}{Locus specific weights.}
 #   \item{...}{Not used.}
 # }
 #
@@ -440,27 +456,48 @@ setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., weights=
 # @keyword IO
 # @keyword programming
 #*/########################################################################### 
-setMethodS3("estimateStandardDeviation", "RawGenomicSignals", function(this, method=c("diff", "direct"), estimator=c("mad", "sd"), na.rm=TRUE, ...) {
+setMethodS3("estimateStandardDeviation", "RawGenomicSignals", function(this, method=c("diff", "direct"), estimator=c("mad", "sd"), na.rm=TRUE, weights=getWeights(this), ...) {
   # Argument 'method':
   method <- match.arg(method);
 
   # Argument 'estimator':
   estimator <- match.arg(estimator);
 
-
-  # Get the estimator function
-  estimatorFcn <- get(estimator, mode="function");
-
   y <- getSignals(this);
-  if (length(y) <= 1) {
+  n <- length(y);
+  if (n <= 1) {
     return(as.double(NA));
   }
 
+  # Argument 'weights':
+  if (!is.null(weights)) {
+    weights <- Arguments$getDoubles(weights, range=c(0,Inf), length=rep(n,2));
+  }
+
+  # Get the estimator function
+  if (!is.null(weights)) {
+    estimator <- sprintf("weighted %s", estimator);
+    estimator <- toCamelCase(estimator);
+  }  
+  estimatorFcn <- get(estimator, mode="function");
+
   if (method == "diff") {
     y <- diff(y);
-    sigma <- estimatorFcn(y, na.rm=na.rm)/sqrt(2);
+
+    # Weighted estimator?
+    if (!is.null(weights)) {
+      # Calculate weights per pair
+      weights <- (weights[1:(n-1)]+weights[2:n])/2;
+      sigma <- estimatorFcn(y, w=weights, na.rm=na.rm)/sqrt(2);
+    } else {
+      sigma <- estimatorFcn(y, na.rm=na.rm)/sqrt(2);
+    }
   } else if (method == "direct") {
-    sigma <- estimatorFcn(y, na.rm=na.rm);
+    if (!is.null(weights)) {
+      sigma <- estimatorFcn(y, w=weights, na.rm=na.rm);
+    } else {
+      sigma <- estimatorFcn(y, na.rm=na.rm);
+    }
   }
 
   sigma;
@@ -575,6 +612,9 @@ setMethodS3("extractRawGenomicSignals", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-13
+# o Now estimateStandardDeviation() takes a weighted estimate by default, 
+#   if weights are available.
 # 2009-05-12
 # o BUG FIX: extractSubset() of RawGenomicSignals did not recognize all
 #   locus fields.

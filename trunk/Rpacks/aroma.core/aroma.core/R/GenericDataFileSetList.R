@@ -45,15 +45,21 @@ setMethodS3("getFileList", "GenericDataFileSetList", function(this, name, dropMi
   # Argument 'name':
   name <- Arguments$getCharacter(name);
 
+  dsList <- this;
+
   dfList <- list();
+  names <- character(0);
   for (kk in seq(along=this)) {
-    ds <- this[[kk]];
+    ds <- dsList[[kk]];
     idx <- indexOf(ds, name);
     if (!is.na(idx)) {
       dfList[[kk]] <- getFile(ds, idx);
+      names[kk] <- names(dsList)[kk];
     }
   }
-  names(dfList) <- names(this);
+  if (!is.null(names(dfList))) {
+    names(dfList) <- names;
+  }
 
   if (dropMissing) {
     dfList <- dfList[!sapply(dfList, FUN=is.null)];

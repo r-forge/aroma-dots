@@ -862,6 +862,8 @@
 \alias{extractMergedRawCopyNumbers.AromaUnitTotalCnBinaryFileList}
 \alias{extractRawCopyNumbers.AromaUnitTotalCnBinaryFileList}
 \alias{extractRawGenomicSignals.AromaUnitTotalCnBinaryFileList}
+\alias{weightedMad}
+\alias{weightedMean}
 
 \description{
   This page contains aliases for all "non-documented" objects that

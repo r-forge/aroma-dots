@@ -406,3 +406,4 @@ setWeights setWeights.RawGenomicSignals
   extractMergedRawCopyNumbers.AromaUnitTotalCnBinaryFileList
   extractRawCopyNumbers.AromaUnitTotalCnBinaryFileList
   extractRawGenomicSignals.AromaUnitTotalCnBinaryFileList
+weightedMad weightedMean
