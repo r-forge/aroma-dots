@@ -90,7 +90,7 @@ setMethodS3("colKernelSmoothing", "matrix", function(Y, x=seq(length=nrow(Y)), w
   if (is.null(xOut)) {
     xOut <- x;
   } else {
-    xOut <- Arguments$getDoubles(xOut);
+    xOut <- Arguments$getNumerics(xOut);
   }
   nOut <- length(xOut);
 
@@ -117,10 +117,10 @@ setMethodS3("colKernelSmoothing", "matrix", function(Y, x=seq(length=nrow(Y)), w
   }
 
   # Arguments 'h':
-  h <- Arguments$getDouble(h, range=c(0,Inf));
+  h <- Arguments$getNumeric(h, range=c(0,Inf));
 
   # Arguments 'censorH':
-  censorH <- Arguments$getDouble(censorH, range=c(0,Inf));
+  censorH <- Arguments$getNumeric(censorH, range=c(0,Inf));
 
   # Arguments 'robust':
   robust <- Arguments$getLogical(robust);
@@ -225,6 +225,9 @@ setMethodS3("kernelSmoothing", "numeric", function(y, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now colKernelSmoothing() uses Arguments$getNumerics(), not 
+#   getDoubles(), where possible.  This will save memory in some cases.
 # 2009-02-08
 # o BUG FIX: Argument 'x' had the wrong default value.
 # 2009-02-05

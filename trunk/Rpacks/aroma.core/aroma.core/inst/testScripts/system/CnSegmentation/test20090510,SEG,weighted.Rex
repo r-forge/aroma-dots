@@ -30,12 +30,18 @@ lines(cnS, col="black", lwd=3);
 cols <- c(CBS="red", GLAD="blue", HaarSeg="orange");
 
 fit <- segmentByCBS(cn);
-drawCnRegions(fit, col=cols["CBS"], lwd=3);
+cnr <- extractCopyNumberRegions(fit);
+print(cnr);
+drawLevels(cnr, col=cols["CBS"]);
 
 fit <- segmentByGLAD(cn);
-drawCnRegions(fit, col=cols["GLAD"], lwd=3);
+cnr <- extractCopyNumberRegions(fit);
+print(cnr);
+drawLevels(cnr, col=cols["GLAD"]);
 
 fit <- segmentByHaarSeg(cn);
-drawCnRegions(fit, col=cols["HaarSeg"], lwd=3);
+cnr <- extractCopyNumberRegions(fit);
+print(cnr);
+drawLevels(cnr, col=cols["HaarSeg"]);
 
 legend("topleft", horiz=TRUE, bty="n", lwd=3, col=cols, names(cols));

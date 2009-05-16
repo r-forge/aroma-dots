@@ -196,6 +196,7 @@ setMethodS3("segmentByCBS", "RawGenomicSignals", function(this, ..., force=FALSE
     # Drop the 'call' (because it will be huge due to the do.call() call)
     fit$call <- NULL;
     attr(fit, "processingTime") <- t;
+    attr(fit, "pkgDetails") <- pkgDetails;
   });
 
   verbose && cat(verbose, "Captured output that was sent to stdout:");

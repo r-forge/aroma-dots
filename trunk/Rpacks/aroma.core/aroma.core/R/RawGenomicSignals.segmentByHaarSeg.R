@@ -185,6 +185,7 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., force=F
       fit <- do.call(methodName, args);
     });
     attr(fit, "processingTime") <- t;
+    attr(fit, "pkgDetails") <- pkgDetails;
   });
 
   verbose && cat(verbose, "Captured output that was sent to stdout:");
@@ -211,6 +212,7 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., force=F
   );
   class(fit) <- "HaarSeg";
   attr(fit, "processingTime") <- t;
+  attr(fit, "pkgDetails") <- pkgDetails;
   verbose && exit(verbose);
 
 

@@ -42,7 +42,7 @@
 #*/###########################################################################
 setMethodS3("processTime", "default", function(since=NULL, units=c("seconds", "milliseconds", "minutes", "hours", "days"), fmtstr=NULL, ...) {
   if (!exists("proc.time", mode="function"))
-    return(rep(as.numeric(NA), 5));
+    return(rep(as.double(NA), 5));
 
   units <- match.arg(units);
 

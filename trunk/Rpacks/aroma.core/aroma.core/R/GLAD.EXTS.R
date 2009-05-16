@@ -1,34 +1,74 @@
-setMethodS3("drawCnRegions", "profileCGH", function(this, xScale=1, ...) {
-  # Get data
-  pv <- this$profileValues;
+setMethodS3("extractCopyNumberRegions", "profileCGH", function(object, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  pv <- object$profileValues;
 
-  # Order data along chromosome(s)
-  o <- order(pv$Chromosome, pv$PosBase);
-  pv <- pv[o, ];
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Allocate result table
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Identify unique regions
+  uRegions <- unique(pv$Region);
+  nbrOfRegions <- length(uRegions);
 
-  # Number of data points
-  n <- length(pv[, 1]);
+  # Columns
+  colClasses <- c(chromosome="character", start="integer", 
+                  stop="integer", mean="double", nbrOfLoci="integer",
+                  call="character");
+  df <- dataFrame(colClasses, nrow=nbrOfRegions);
 
-  posMax <- max(pv$PosBase) + 1;
-  pos <- pv$PosBase[1:(n-1)];
-  posNext <- pv$PosBase[2:n];
 
-  interPos <- pos + (posNext - pos)/2;
-  interPos <- c(0, interPos, posMax);
-  smtStart <- pv[, "Smoothing"][1];
-  smtEnd <- pv[, "Smoothing"][n];
-  smt1 <- pv[, "Smoothing"][1:(n-1)];
-  smt1 <- c(smtStart, smt1, smtEnd);
-  smt2 <- pv[, "Smoothing"][2:n];
-  smt2 <- c(smtStart, smt2, smtEnd);
-  datasmt <- data.frame(posBase=c(interPos, interPos), smoothing=c(smt1, smt2));
-  datasmt <- unique(datasmt);
-  datasmt <- datasmt[order(datasmt$posBase), ];
-#  posBase <- xScale * datasmt$posBase;
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract each region
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  for (rr in seq(along=uRegions)) {
+    # Get the region ID
+    region <- uRegions[rr];
 
-  lines(datasmt$smoothing ~ datasmt$posBase, ...);
+    # Get the first and last position of each region
+    idx <- which(region == pv$Region);
+    idx <- idx[c(1,length(idx))];
+    idx1 <- idx[1];
+
+    # Chromosome
+    df[rr,"chromosome"] <- pv$Chromosome[idx1];
+
+    # (start, stop, length)
+    df[rr,c("start", "stop")] <- as.integer(pv$PosBase[idx]);
+
+    # Number of SNPs
+    df[rr,"nbrOfLoci"] <- as.integer(diff(idx)+1);
+
+    # Smoothing
+    df[rr,"mean"] <- pv$Smoothing[idx1];
+
+    # Call
+    df[rr,"call"] <- c("loss", "neutral", "gain")[pv$ZoneGNL[idx1]+2];
+  }
+
+  CopyNumberRegions(
+    chromosome=df$chromosome,
+    start=df$start, 
+    stop=df$stop, 
+    mean=df$mean, 
+    count=df$nbrOfLoci,
+    call=df$call
+  );
+}) # extractCopyNumberRegions()
+
+
+setMethodS3("extractRawCopyNumbers", "profileCGH", function(object, ...) {
+  pv <- object$profileValues;
+  chromosome <- unique(pv$Chromosome);
+  chromosome <- Arguments$getIndex(chromosome);
+  RawCopyNumbers(cn=pv$LogRatio, x=pv$PosBase, chromosome=chromosome);
 })
 
+
+setMethodS3("drawCnRegions", "profileCGH", function(this, ...) {
+  cnr <- extractCopyNumberRegions(this, ...);
+  drawLevels(cnr, ...);
+})
 
 
 # Patch for plotProfile() of class profileCGH so that 'ylim' argument works.
@@ -162,12 +202,18 @@ setMethodS3("drawCytoband2", "default", function(cytoband, chromosome=1, y=-1, l
   }
 }, private=TRUE)
 
+
  
 ############################################################################
 # HISTORY:
+# 2009-05-14
+# o Moved extractRawCopyNumbers() for profileCGH from aroma.affymetrix.
+# o Moved extractCopyNumberRegions() for profileCGH from aroma.affymetrix.
 # 2009-05-10
 # o Moved to aroma.core v1.0.6.  Source files: profileCGH.drawCnRegions.R
 #   and profileCGH.drawCytoband.R.
+# 2008-05-21
+# o Now extractRawCopyNumbers() adds 'chromosome' to the returned object.
 # 2007-09-04
 # o Now data("cytoband") is loaded to the local environment.
 # 2007-08-22

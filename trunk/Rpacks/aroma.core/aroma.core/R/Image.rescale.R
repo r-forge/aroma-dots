@@ -5,7 +5,7 @@ setMethodS3("rescale", "Image", function(this, scale=1, blur=FALSE, ..., verbose
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'scale':
-  scale <- Arguments$getDouble(scale, range=c(0,Inf));
+  scale <- Arguments$getNumeric(scale, range=c(0,Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -30,6 +30,9 @@ setMethodS3("rescale", "Image", function(this, scale=1, blur=FALSE, ..., verbose
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now rescale() for Image uses Arguments$getNumerics(), not 
+#   getDoubles(), where possible.  This will save memory in some cases.
 # 2008-03-14
 # o Created from getImage() of AffymetrixCelFile.
 ############################################################################

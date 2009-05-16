@@ -407,3 +407,10 @@ setWeights setWeights.RawGenomicSignals
   extractRawCopyNumbers.AromaUnitTotalCnBinaryFileList
   extractRawGenomicSignals.AromaUnitTotalCnBinaryFileList
 weightedMad weightedMean
+ AromaCore AromaPackage extractRegion extractRegion.RawGenomicSignals
+ fixSearchPath fixSearchPath.AromaCore fixSearchPath.AromaPackage
+ fixSearchPathInternal fixSearchPathInternal.AromaPackage patch
+ patch.AromaPackage
+extractCopyNumberRegions.DNAcopy extractCopyNumberRegions.profileCGH
+  extractRawCopyNumbers.DNAcopy extractRawCopyNumbers.HaarSeg
+  extractRawCopyNumbers.profileCGH

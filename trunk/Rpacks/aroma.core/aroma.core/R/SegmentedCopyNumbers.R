@@ -38,7 +38,7 @@ setConstructorS3("SegmentedCopyNumbers", function(..., states=NULL) {
 
 setMethodS3("getStates", "SegmentedCopyNumbers", function(this, x=getPositions(this), ...) {
   # Argument 'x':
-  x <- Arguments$getDoubles(x, disallow=NULL);
+  x <- Arguments$getNumerics(x, disallow=NULL);
 
   nbrOfLoci <- length(x);
 
@@ -103,7 +103,7 @@ setMethodS3("kernelSmoothingByState", "SegmentedCopyNumbers", function(this, xOu
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'xOut':
   if (!is.null(xOut)) {
-    xOut <- Arguments$getDoubles(xOut);
+    xOut <- Arguments$getNumerics(xOut);
   }
 
   # Argument 'verbose':
@@ -211,7 +211,7 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
     throw("Either argument 'by' or 'length.out' needs to be given.");
   }
   if (!is.null(by)) {
-    by <- Arguments$getDouble(by, range=c(0,to-from));
+    by <- Arguments$getNumeric(by, range=c(0,to-from));
   }
   if (!is.null(length.out)) {
     length.out <- Arguments$getInteger(length.out, range=c(1,Inf));
@@ -241,7 +241,7 @@ setMethodS3("binnedSmoothingByState", "SegmentedCopyNumbers", function(this, fro
   verbose && cat(verbose, "xOut:");
   verbose && str(verbose, xOut);
   # Sanity check
-  xOut <- Arguments$getDoubles(xOut);
+  xOut <- Arguments$getNumerics(xOut);
   cnOut$x <- xOut;
 
   # Target 'y':
@@ -352,6 +352,10 @@ setMethodS3("points", "SegmentedCopyNumbers", function(x, ..., col=getStateColor
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now all methods of SegmentedCopyNumbers() coerce numerics only if
+#   necessary, i.e. it keeps integers if integers, otherwise to doubles.
+#   This is a general design of aroma.* that saves some memory.
 # 2009-04-06
 # o Now binnedSmoothingByState() of SegmentedCopyNumbers uses 
 #   extractSubsetByState() and then binnedSmoothing() on that object.  

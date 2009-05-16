@@ -4,7 +4,7 @@
 
 
 .First.lib <- function(libname, pkgname) {
-  pkg <- Package(pkgname);
+  pkg <- AromaCore(pkgname);
   assign(pkgname, pkg, pos=getPosition(pkg));
 
   packageStartupMessage(getName(pkg), " v", getVersion(pkg), " (", 

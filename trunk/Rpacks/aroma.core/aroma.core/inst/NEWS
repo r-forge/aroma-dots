@@ -1,14 +1,30 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.6x [2009-05-13]
+Version: 1.0.7 [2009-05-16]
+o MEMORY OPTIMIZATION: Where ever possible/applicable, we now use
+  Arguments$getNumerics(), which, in R utils v1.1.5 and new, corces
+  to doubles only if the input is not already doubles.  This will 
+  lower the memory usage in some cases since an integers use 4 bytes
+  and doubles 8 bytes.  This also save disk space if object is saved
+  to disk, e.g. a DNAcopy fit object with integer genomic positions 
+  instead of double ones, save approx 5-7% disk space.
+o ROBUSTNESS: Now allocate() for AromaTabularBinaryFile first allocates
+  a temporary file which is then renamed.  This makes the file allocation
+  more atomic, and therefore less error prone to interrupts etc.
+  
+
+Version: 1.0.6 [2009-05-14]
 o Now binnedSmoothing() of RawGenomicSignals uses weighted estimates
   (by default) if weights exists.
 o Added RawAlleleBFractions() extending RawGenomicSignals.
+o Added extractCopyNumberRegions() for profileCGH, DNAcopy, and 
+  HaarSeg segmentation object. Before they were in aroma.affymetrix.
 o Added segmentByCBS(), segmentByGLAD(), and segmentByHarSeeg() 
   to RawGenomicSignals, which all support weights if the underlying
   segmentation method does.  To date, it is only CBS and HaarSeg
   that supports weights.  These methods also support memoization.
+o Added extractRegion() to RawGenomicSignals.
 o Added getWeights() and hasWeights() to RawGenomicSignals.
 o Added {add,subtract,multiply,divide}By() for RawGenomicSignals all
   utilizing support method applyBinaryOperator().
@@ -16,6 +32,8 @@ o ALPHA: Added classes GenericDataFile{Set}List.
 o ALPHA: Added class AromaUnitTotalCnBinaryFileList with methods 
   extractRawCopyNumbers() and extractMergedRawCopyNumbers().
 o SPEED UP: Now TextUnitNamesFile caches all unit names in memory.
+o BUG FIX: Now aroma.core works with the IRanges and grid packages,
+  regardless on the order they were loaded.
 o BUG FIX: getPlatform() of TextUnitNamesFile would sometimes return
   a list of length one, instead of an single character string.
 o BUG FIX: extractSubset() of RawGenomicSignals did not recognize all
