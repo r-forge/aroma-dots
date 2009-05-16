@@ -70,7 +70,7 @@ setMethodS3("updateApd", "default", function(filename, indices=NULL, data, write
     
     # Argument 'writeMap':
     if (!is.null(writeMap)) {
-      writeMap <- Arguments$getNumerics(writeMap, range=c(1,nbrOfProbes));
+      writeMap <- Arguments$getIndices(writeMap, range=c(1,nbrOfProbes));
     }
   
     # Argument 'verbose':
@@ -106,6 +106,9 @@ setMethodS3("updateApd", "default", function(filename, indices=NULL, data, write
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Updated updateApd() to coerce argument 'writeMap' to integer indices.  
+#   Before it used to coerce to doubles (before updating R.utils).
 # 2006-03-28
 # o Removed argument 'indexOffset'.
 # 2006-03-18
