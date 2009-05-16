@@ -55,12 +55,12 @@ setConstructorS3("RawGenomicSignals", function(y=NULL, x=NULL, w=NULL, chromosom
 
   # Argument 'x':
   if (!is.null(x)) {
-    x <- Arguments$getDoubles(x, length=c(n,n));
+    x <- Arguments$getNumerics(x, length=c(n,n));
   }
 
   # Argument 'w':
   if (!is.null(w)) {
-    w <- Arguments$getDoubles(w, range=c(0,Inf), length=c(n,n));
+    w <- Arguments$getNumerics(w, range=c(0,Inf), length=c(n,n));
   }
 
   # Argument 'chromosome':
@@ -88,7 +88,13 @@ setMethodS3("as.character", "RawGenomicSignals", function(x, ...) {
   if (is.null(name)) name <- "";
   s <- c(s, sprintf("Name: %s", as.character(name)));
   s <- c(s, sprintf("Chromosome: %d", getChromosome(this)));
-  s <- c(s, sprintf("Number of loci: %d", nbrOfLoci(this)));
+  xRange <- xRange(this);
+  s <- c(s, sprintf("Position range: [%g,%g]", xRange[1], xRange[2]));
+  n <- nbrOfLoci(this);
+  s <- c(s, sprintf("Number of loci: %d", n));
+  dAvg <- if (n >= 2) diff(xRange)/(n-1) else as.double(NA);
+  s <- c(s, sprintf("Mean distance between loci: %g", dAvg));
+
   fields <- getLocusFields(this);
   fields <- sapply(fields, FUN=function(field) {
     values <- this[[field]];
@@ -137,7 +143,7 @@ setMethodS3("getSignals", "RawGenomicSignals", function(this, ...) {
 setMethodS3("setWeights", "RawGenomicSignals", function(this, weights, ...) {
   # Argument 'weights':
   n <- length(getSignals(this));
-  weights <- Arguments$getDoubles(weights, length=rep(n,2), range=c(0,Inf));
+  weights <- Arguments$getNumerics(weights, length=rep(n,2), range=c(0,Inf));
   this$w <- weights;
   invisible(this);
 })
@@ -247,6 +253,26 @@ setMethodS3("getXY", "RawGenomicSignals", function(this, sort=TRUE, ...) {
 
 
 
+setMethodS3("extractRegion", "RawGenomicSignals", function(this, region, ...) {
+  # Argument 'region':
+  region <- Arguments$getNumerics(region, length=c(2,2));
+  stopifnot(region[1] <= region[2]);
+
+  res <- clone(this);
+
+  x <- getPositions(this);
+  keep <- whichVector(region[1] <= x & x <= region[2]);
+
+  fields <- getLocusFields(res);
+  for (ff in seq(along=fields)) {
+    field <- fields[ff];
+    res[[field]] <- this[[field]][keep];
+  } # for (ff ...)
+
+  res;   
+})
+
+
 setMethodS3("extractSubset", "RawGenomicSignals", function(this, subset, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -272,7 +298,7 @@ setMethodS3("kernelSmoothing", "RawGenomicSignals", function(this, xOut=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'xOut':
   if (!is.null(xOut)) {
-    xOut <- Arguments$getDoubles(xOut);
+    xOut <- Arguments$getNumerics(xOut);
   }
 
   # Argument 'verbose':
@@ -328,7 +354,7 @@ setMethodS3("binnedSmoothing", "RawGenomicSignals", function(this, ..., weights=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'weights':
   if (!is.null(weights)) {
-    weights <- Arguments$getDoubles(weights, length=rep(nbrOfLoci(this),2),
+    weights <- Arguments$getNumerics(weights, length=rep(nbrOfLoci(this),2),
                                                            range=c(0,Inf));
   }
 
@@ -471,7 +497,7 @@ setMethodS3("estimateStandardDeviation", "RawGenomicSignals", function(this, met
 
   # Argument 'weights':
   if (!is.null(weights)) {
-    weights <- Arguments$getDoubles(weights, range=c(0,Inf), length=rep(n,2));
+    weights <- Arguments$getNumerics(weights, range=c(0,Inf), length=rep(n,2));
   }
 
   # Get the estimator function
@@ -520,12 +546,12 @@ setMethodS3("getYScale", "RawGenomicSignals", function(this, ...) {
 })
 
 setMethodS3("setXScale", "RawGenomicSignals", function(this, xScale=1, ...) {
-  xScale <- Arguments$getDouble(xScale);
+  xScale <- Arguments$getNumeric(xScale);
   this$.xScale <- xScale;
 })
 
 setMethodS3("setYScale", "RawGenomicSignals", function(this, xScale=1, ...) {
-  yScale <- Arguments$getDouble(yScale);
+  yScale <- Arguments$getNumeric(yScale);
   this$.yScale <- yScale;
 })
 
@@ -589,7 +615,7 @@ setMethodS3("signalRange", "RawGenomicSignals", function(this, na.rm=TRUE, ...) 
 })
 
 setMethodS3("setSigma", "RawGenomicSignals", function(this, sigma, ...) {
-  sigma <- Arguments$getDouble(sigma, range=c(0,Inf), disallow=NULL);
+  sigma <- Arguments$getNumeric(sigma, range=c(0,Inf), disallow=NULL);
   this$.sigma <- sigma;
 })
 
@@ -612,7 +638,13 @@ setMethodS3("extractRawGenomicSignals", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now all methods of RawCopyNumbers() coerce numerics only if necessary,
+#   i.e. it keeps integers if integers, otherwise to doubles.  This is a
+#   general design of aroma.* that saves some memory.
 # 2009-05-13
+# o Now as.character() also reports mean distance between loci.
+# o Added extractRegion() to RawGenomicSignals.
 # o Now estimateStandardDeviation() takes a weighted estimate by default, 
 #   if weights are available.
 # 2009-05-12

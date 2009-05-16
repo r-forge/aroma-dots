@@ -34,12 +34,12 @@ setMethodS3("colGaussianSmoothing", "matrix", function(Y, x=seq(length=nrow(Y)),
   if (is.null(xOut)) {
     xOut <- x;
   } else {
-    xOut <- Arguments$getDoubles(xOut);
+    xOut <- Arguments$getNumerics(xOut);
   }
   nOut <- length(xOut);
 
   # Argument 'censorSd':
-  censorSd <- Arguments$getDouble(censorSd, range=c(0,Inf));
+  censorSd <- Arguments$getNumeric(censorSd, range=c(0,Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -145,6 +145,9 @@ setMethodS3("gaussianSmoothing", "numeric", function(y, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now colGaussianSmoothing() uses Arguments$getNumerics(), not 
+#   getDoubles(), where possible.  This will save memory in some cases.
 # 2009-02-08
 # o OBSOLETE? This code is (probably) obsolete, because of the newer
 #   colKernelSmoothing(). Will keep it for a while, just in case.

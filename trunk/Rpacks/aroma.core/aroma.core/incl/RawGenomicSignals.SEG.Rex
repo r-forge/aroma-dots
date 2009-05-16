@@ -28,11 +28,17 @@ lines(cnS, col="black", lwd=3)
 # Segment
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 fit <- segmentByCBS(cn)
-drawCnRegions(fit, col="red", lwd=3)
+cnr <- extractCopyNumberRegions(fit)
+print(cnr)
+drawLevels(cnr, col="red")
 
 fit <- segmentByGLAD(cn)
-drawCnRegions(fit, col="blue", lwd=3)
+cnr <- extractCopyNumberRegions(fit)
+print(cnr)
+drawLevels(cnr, col="blue")
 
 fit <- segmentByHaarSeg(cn)
-drawCnRegions(fit, col="orange", lwd=3)
+cnr <- extractCopyNumberRegions(fit)
+print(cnr)
+drawLevels(cnr, col="orange")
 

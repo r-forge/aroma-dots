@@ -409,9 +409,12 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
 
   verbose && enter(verbose, "Writing footer");
 
-  # Open file?
-  if (is.null(con)) {
+  # Need to open a file?
+  isFile <- (is.null(con));
+  if (isFile) {
     pathname <- getPathname(this);
+    # Sanity check
+    stopifnot(isFile(pathname));
     con <- file(pathname, open="r+b");
     verbose && cat(verbose, "Opened file ('r+b') to be close automatically");
     verbose && cat(verbose, "Pathname: ", pathname);
@@ -620,6 +623,8 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
     if (is.null(con)) {
       # Open file
       pathname <- getPathname(this);
+      # Sanity check
+      stopifnot(isFile(pathname));
       con <- file(pathname, open="r+b");
       on.exit(close(con));
     }
@@ -776,6 +781,8 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
 setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, columns=NULL, values, ..., verbose=FALSE) {
   # Open file
   pathname <- getPathname(this);
+  # Sanity check
+  stopifnot(isFile(pathname));
   con <- file(pathname, open="r+b");
   on.exit(close(con));
 
@@ -1055,10 +1062,13 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
   verbose && str(verbose, footer);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Create empty file
+  # Create empty temporary file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Open file
-  con <- file(pathname, open="wb");
+  # Open temporary file (should not exist!)
+  pathnameT <- sprintf("%s.tmp", pathname);
+  pathnameT <- Arguments$getWritablePathname(pathnameT, mustNotExist=TRUE);
+
+  con <- file(pathnameT, open="wb");
   on.exit({
     if (!is.null(con))
       close(con);
@@ -1096,6 +1106,12 @@ setMethodS3("allocate", "AromaTabularBinaryFile", function(static, filename, pat
   # Close connection (otherwise writeFooter() will fail below)
   close(con);
   con <- NULL;
+
+  # Rename temporary file
+  file.rename(pathnameT, pathname);
+  if (!isFile(pathname) || isFile(pathnameT)) {
+    throw("Failed to rename temporary file: ", pathnameT, " -> ", pathname);
+  }
 
   # Object to be returned
   res <- newInstance(static, pathname);
@@ -1282,6 +1298,13 @@ setMethodS3("importFrom", "AromaTabularBinaryFile", function(this, srcFile, ...)
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o ROBUSTNESS: Now allocate() for AromaTabularBinaryFile first allocates
+#   a temporary file which is then renamed.  This makes the file allocation
+#   more atomic, and therefore less error prone to interrupts etc.
+# o ROBUSTNESS: Now all "write" methods that updates a file asserts that 
+#   the file exists with isFile(pathname) before open it with 
+#   file(pathname, open="r+b").
 # 2009-05-03
 # o Now readDataFrame() of AromaTabularBinaryFile accepts rows=integer(0).
 # 2008-12-03

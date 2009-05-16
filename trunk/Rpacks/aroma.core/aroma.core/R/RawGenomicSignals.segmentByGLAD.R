@@ -196,6 +196,7 @@ setMethodS3("segmentByGLAD", "RawGenomicSignals", function(this, ..., force=FALS
       fit <- do.call(methodName, args);
     });
     attr(fit, "processingTime") <- t;
+    attr(fit, "pkgDetails") <- pkgDetails;
   });
 
   verbose && cat(verbose, "Captured output that was sent to stdout:");

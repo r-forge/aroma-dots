@@ -38,12 +38,26 @@
   if (!identical(getOption("aroma.core::assertDigest"), FALSE)) {
     .assertDigest("error");
   }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Fix the search path every time a package is loaded
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  setHook("base::library:onLoad", function(...) {
+    # Fix the search path
+    pkgs <- fixSearchPath(aroma.core);
+    if (length(pkgs) > 0) {
+      warning("Packages reordered in search path: ", 
+                                            paste(pkgs, collapse=", "));
+    }
+  }, action="append");
 } # .setupAromaCore()
 
 
 
 ############################################################################
 # HISTORY:
+# 2009-05-13
+# o Now the search() path is fixed for aroma.core as well.
 # 2009-02-22
 # o Now R.utils Settings object 'aromaSettings' is loaded/assign.
 # 2008-07-24

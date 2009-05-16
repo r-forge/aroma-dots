@@ -78,15 +78,15 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
 
   # Argument 'from' & 'to':
   disallow <- c("NA", "NaN", "Inf");
-  from <- Arguments$getDouble(from, disallow=disallow);
-  to <- Arguments$getDouble(to, range=c(from,Inf), disallow=disallow);
+  from <- Arguments$getNumeric(from, disallow=disallow);
+  to <- Arguments$getNumeric(to, range=c(from,Inf), disallow=disallow);
 
   # Arguments 'by' & 'length.out':
   if (is.null(by) & is.null(length.out)) {
     throw("Either argument 'by' or 'length.out' needs to be given.");
   }
   if (n > 1 && !is.null(by)) {
-    by <- Arguments$getDouble(by, range=c(0,Inf));
+    by <- Arguments$getNumeric(by, range=c(0,Inf));
   }
   if (!is.null(length.out)) {
     length.out <- Arguments$getInteger(length.out, range=c(0,Inf));
@@ -94,7 +94,7 @@ setMethodS3("colBinnedSmoothing", "matrix", function(Y, x=seq(length=ncol(Y)), w
 
   # Argument 'xOut':
   if (!is.null(xOut)) {
-    xOut <- Arguments$getDoubles(xOut);
+    xOut <- Arguments$getNumerics(xOut);
   }
 
   # Arguments 'na.rm':
@@ -226,6 +226,9 @@ setMethodS3("binnedSmoothing", "numeric", function(y, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now colBinnedSmoothing() uses Arguments$getNumerics(), not getDoubles(),
+#   where possible.  This will save memory in some cases.
 # 2009-05-12
 # o Now colBinnedSmoothing() assert that 'from' and 'to' are finite.
 # 2009-04-07

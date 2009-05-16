@@ -125,9 +125,9 @@ setMethodS3("exportTotalCnRatioSet", "AromaUnitTotalCnBinarySet", function(this,
     # Allocating
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Allocating temporary output file");
-    tmpPathname <- sprintf("%s.tmp", pathname);
-    tmpPathname <- Arguments$getWritablePathname(tmpPathname, mustNotExist=TRUE);
-    asb <- AromaUnitSignalBinaryFile$allocate(tmpPathname, nbrOfRows=nbrOfUnits(ce), platform=platform, chipType=chipType);
+    pathnameT <- sprintf("%s.tmp", pathname);
+    pathnameT <- Arguments$getWritablePathname(pathnameT, mustNotExist=TRUE);
+    asb <- AromaUnitSignalBinaryFile$allocate(pathnameT, nbrOfRows=nbrOfUnits(ce), platform=platform, chipType=chipType);
     verbose && print(verbose, asb);
     verbose && exit(verbose);
   
@@ -228,9 +228,9 @@ setMethodS3("exportTotalCnRatioSet", "AromaUnitTotalCnBinarySet", function(this,
     # Renaming temporary file
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Renaming temporary output file");
-    file.rename(tmpPathname, pathname);
+    file.rename(pathnameT, pathname);
     if (!isFile(pathname)) {
-      throw("Failed to rename temporary file ('", tmpPathname, "') to final file ('", pathname, "')");
+      throw("Failed to rename temporary file ('", pathnameT, "') to final file ('", pathname, "')");
     }
     verbose && exit(verbose);
 

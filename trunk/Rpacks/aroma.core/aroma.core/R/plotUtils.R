@@ -3,10 +3,10 @@ setMethodS3("stext", "default", function(text, side=1, line=0, pos=0.5, margin=c
   side <- Arguments$getInteger(side, range=c(1,4));
 
   # Argument 'pos':
-  pos <- Arguments$getDouble(pos);
+  pos <- Arguments$getNumeric(pos);
 
   # Argument 'margin':
-  margin <- Arguments$getDoubles(margin);
+  margin <- Arguments$getNumerics(margin);
   margin <- rep(margin, length.out=2);
 
   # dx, dy:

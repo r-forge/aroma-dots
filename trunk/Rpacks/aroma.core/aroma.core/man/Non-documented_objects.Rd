@@ -864,6 +864,22 @@
 \alias{extractRawGenomicSignals.AromaUnitTotalCnBinaryFileList}
 \alias{weightedMad}
 \alias{weightedMean}
+\alias{AromaCore}
+\alias{AromaPackage}
+\alias{extractRegion}
+\alias{extractRegion.RawGenomicSignals}
+\alias{fixSearchPath}
+\alias{fixSearchPath.AromaCore}
+\alias{fixSearchPath.AromaPackage}
+\alias{fixSearchPathInternal}
+\alias{fixSearchPathInternal.AromaPackage}
+\alias{patch}
+\alias{patch.AromaPackage}
+\alias{extractCopyNumberRegions.DNAcopy}
+\alias{extractCopyNumberRegions.profileCGH}
+\alias{extractRawCopyNumbers.DNAcopy}
+\alias{extractRawCopyNumbers.HaarSeg}
+\alias{extractRawCopyNumbers.profileCGH}
 
 \description{
   This page contains aliases for all "non-documented" objects that

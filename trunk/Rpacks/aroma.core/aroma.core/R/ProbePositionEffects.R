@@ -1,6 +1,6 @@
 setMethodS3("fitProbePositionEffects", "numeric", function(y, seqs, ..., intercept=TRUE, na.rm=TRUE, verbose=FALSE) {
   # Argument 'y':
-  y <- Arguments$getDoubles(y, disallow=NULL);
+  y <- Arguments$getNumerics(y, disallow=NULL);
 
   # Argument 'seqs':
   res <- NULL;
@@ -489,6 +489,9 @@ setMethodS3("barSequence", "ProbePositionEffects", function(fit, seq, col=NULL, 
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now fitProbePositionEffects() for numeric uses Arguments$getNumerics(), 
+#   not getDoubles(), where possible.  This will save memory in some cases.
 # 2008-12-03
 # o SPEED UP: Now predict() of ProbePositionEffects is 6-7 times faster.
 # o SPEED UP: All strsplit() are now using fixed=TRUE where possible.

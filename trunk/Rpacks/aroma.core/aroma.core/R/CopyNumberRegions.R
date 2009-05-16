@@ -3,11 +3,24 @@ setConstructorS3("CopyNumberRegions", function(chromosome=NULL, start=NULL, stop
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(chromosome)) {
-    chromosome <- as.integer(chromosome);
-    start <- as.numeric(start);
-    stop <- as.numeric(stop);
-    mean <- as.numeric(mean);
-    count <- as.numeric(count);
+    # Argument 'start':
+    start <- Arguments$getNumerics(start);
+    n <- length(start);
+
+    # Arguments 'stop' & 'mean':
+    stop <- Arguments$getNumerics(stop, length=c(n,n));
+    mean <- Arguments$getNumerics(mean, length=c(n,n));
+
+    # Argument 'chromosome':
+    if (length(chromosome) == 1) {
+      chromosome <- rep(chromosome, times=n);
+    }
+    chromosome <- Arguments$getIntegers(chromosome, length=c(n,n));
+
+    # Argument 'count':
+    if (!is.null(count)) {
+      count <- Arguments$getIntegers(count, length=c(n,n));
+    }
   }
 
   extend(Object(), "CopyNumberRegions", 
@@ -114,6 +127,10 @@ setMethodS3("extractCopyNumberRegions", "default", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now the constructor CopyNumberRegions() coerce numerics only if 
+#   necessary, i.e. it keeps integers if integers, otherwise to doubles.
+#   This is a general design of aroma.* that saves some memory.
 # 2009-05-13
 # o CLEAN UP: drawLevels() no longer returns a (useless) list structure.
 # 2008-05-17

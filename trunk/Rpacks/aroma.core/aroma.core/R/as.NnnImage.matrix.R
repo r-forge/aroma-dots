@@ -64,7 +64,7 @@ setMethodS3("as.GrayscaleImage", "matrix", function(z, transforms=NULL, interlea
   interleaved <- match.arg(interleaved);
 
   # Argument 'scale':
-  scale <- Arguments$getDouble(scale, range=c(0,Inf));
+  scale <- Arguments$getNumeric(scale, range=c(0,Inf));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -133,6 +133,9 @@ setMethodS3("as.TrueColorImage", "Image", function(img, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Now argument 'scale' of as.GrayscaleImage() is validated using 
+#   Arguments$getNumeric() [not getDouble()].
 # 2008-10-16
 # o BUG FIX: Tried to turn a function passed by 'transforms' to a list using
 #   as.list() and not list().
