@@ -93,10 +93,9 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
 
   if (.checkArgs) {
     # Argument 'indices':
-    if (is.null(indices)) {
-    } else {
+    if (!is.null(indices)) {
       # An APD file has zero- or one-based indices
-      indices <- Arguments$getIntegers(indices, range=c(1, nbrOfProbes));
+      indices <- Arguments$getIndices(indices, range=c(1, nbrOfProbes));
     }
   
     # Argument 'readMap':
@@ -104,8 +103,8 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
       # No probe map specified.
     } else if (is.character(readMap)) {
     } else if (is.vector(readMap)) {
-      readMap <- Arguments$getNumerics(readMap, length=nbrOfProbes, 
-                                                  range=c(1, nbrOfProbes));
+      readMap <- Arguments$getIndices(readMap, range=c(1, nbrOfProbes),
+                                                     length=nbrOfProbes);
     }
   
     # Argument 'name':
@@ -186,6 +185,9 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Updated readApd() to coerce argument 'indices' and 'readMap' to integer
+#   indices.  Before it used to coerce to doubles (before updating R.utils).
 # 2006-04-08
 # o Remove internal rm().
 # o When reading the the APD header, the 'apd' argument is passed.

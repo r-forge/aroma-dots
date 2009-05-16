@@ -1,5 +1,16 @@
-Package: aroma.affxparser
-=========================
+Package: aroma.apd
+==================
+
+Version: 0.1.5 [2009-05-16]
+o Updated {read|update|write}Apd() to coerce argument 'writeMap' to
+  integer indices.  readApd() also corce argument 'indices' to the
+  same.  Before it used to coerce to doubles, if using R.utils v1.1.4
+  or before.  These updates should make no difference to anyone.
+  The main purpose is just to use Arguments$getIndices() instead of
+  Arguments$getNumerics() whereever possible.
+o Fixed a syntax error in one Rdoc comment.
+o Renamed the file HISTORY (this one) to NEWS.
+
 
 Version: 0.1.4 [2007-05-24]
 o Added a namespace to the package.

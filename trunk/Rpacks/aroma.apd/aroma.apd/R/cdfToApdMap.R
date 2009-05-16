@@ -23,12 +23,10 @@
 # 
 # \value{
 #   Returns (invisibly) a @list structure with elements:
-#   \itemize{
-#    \item{pathname}{The pathname of the generated APD map file.}
-#    \item{mapType}{The map type @character string.}
-#    \item{chipType}{The chip type @character string.}
-#    \item{readMap}{The generated read map @integer @vector.}
-#   }
+#   \item{pathname}{The pathname of the generated APD map file.}
+#   \item{mapType}{The map type @character string.}
+#   \item{chipType}{The chip type @character string.}
+#   \item{readMap}{The generated read map @integer @vector.}
 # }
 #
 # @author

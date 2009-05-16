@@ -45,7 +45,7 @@ setMethodS3("writeApd", "default", function(filename, data, ..., writeMap=NULL) 
 
   # Argument 'writeMap':
   if (!is.null(writeMap)) {
-    writeMap <- Arguments$getNumerics(writeMap, range=c(1,nbrOfCells));
+    writeMap <- Arguments$getIndices(writeMap, range=c(1,nbrOfCells));
   }
 
 
@@ -74,6 +74,9 @@ setMethodS3("writeApd", "default", function(filename, data, ..., writeMap=NULL) 
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Updated writeApd() to coerce argument 'writeMap' to integer indices.  
+#   Before it used to coerce to doubles (before updating R.utils).
 # 2006-03-28
 # o Renamed argument 'map' to 'writeMap'.  Removed argument 'isWriteMap'.
 # 2006-03-14
