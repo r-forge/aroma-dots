@@ -70,7 +70,7 @@ extractDataFrame, extractMatrix
 as, as.AffymetrixFileSet, fromFiles
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform, getPlatform
+getAromaPlatform, getPlatform, getUnitNamesFile
 
  \bold{Methods inherited from AromaMicroarrayDataSet}:\cr
 getChipType, getPlatform, nbrOfArrays, setAttributesBy, setAttributesBySampleAnnotationFile, setAttributesBySampleAnnotationSet, validate

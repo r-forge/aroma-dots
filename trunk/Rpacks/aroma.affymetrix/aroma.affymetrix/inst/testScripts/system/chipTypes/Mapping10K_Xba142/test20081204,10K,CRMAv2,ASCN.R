@@ -55,7 +55,7 @@ for (chr in getChromosomes(gi)) {
     layout(matrix(1:2, ncol=1));
     par(mar=c(3,4,2,1)+0.1, pch=".");
 
-    cn <- RawCopyNumbers(data[,"total"], pos, chromsome=chr);
+    cn <- RawCopyNumbers(data[,"total"], pos, chromosome=chr);
     plot(cn, col="gray", cex=0.8, ylim=c(0,4));
     cnS <- gaussianSmoothing(cn, xOut=seq(xMin(cn), xMax(cn), by=1/2), sd=1);
     points(cnS, col="black");

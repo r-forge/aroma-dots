@@ -47,24 +47,15 @@ setConstructorS3("CbsModel", function(cesTuple=NULL, ...) {
   extend(CopyNumberSegmentationModel(cesTuple=cesTuple, ...), "CbsModel")
 })
 
-
-setMethodS3("getAsteriskTags", "CbsModel", function(this, collapse=NULL, ...) {
-  tags <- "CBS";
-
-  # Add class-specific tags
-  if (isPaired(this))
-    tags <- c(tags, "paired");
-
-  # Collapse?
-  tags <- paste(tags, collapse=collapse);
-
-  tags;
-}, protected=TRUE)
-
+setMethodS3("getFitFunction", "CbsModel", function(this, ...) {
+  segmentByCBS;
+});
 
 
 ##############################################################################
 # HISTORY:
+# 2009-05-16
+# o Added getFitFunction().  Removed fitOne().
 # 2007-08-20
 # o Created from GladModel.R.
 ##############################################################################

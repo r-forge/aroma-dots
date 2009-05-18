@@ -1,14 +1,8 @@
 setConstructorS3("AromaAffymetrix", function(...) {
-  extend(Package("aroma.affymetrix"), "AromaAffymetrix");
+  extend(AromaPackage("aroma.affymetrix"), "AromaAffymetrix");
 })
 
-setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALSE) {
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-
-
-  verbose && enter(verbose, "Making sure the search path is compatible with ", getName(this));
-
+setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # RULES
   # 2008-02-27:
@@ -16,7 +10,6 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
   #   generic colnames() function of the latter.
   # o affyPLM must be after aroma.affymetrix.
   # o EBImage must be after aroma.affymetrix.
-  # o IRanges must be after R.oo [trim()]
   # 2008-08-27:
   # o affy must be after aroma.light, otherwise the former overrides
   #   the generic plotDensity() function of the latter.
@@ -24,45 +17,18 @@ setMethodS3("fixSearchPath", "AromaAffymetrix", function(this, ..., verbose=FALS
   # o oligo must be after aroma.affymetrix, otherwise the former
   #   overrides generic justSNPRMA().
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  # Figure out which of aroma.affymetrix, R.huge, and aroma.light is
-  # last on the search path. (Since aroma.affymetrix loads both R.huge
-  # and aroma.light, it is guaranteed to be on the search path before
-  # those, but to avoid bugs in the future we don't assume that).
-  pkgs <- c("aroma.affymetrix", "aroma.light", "R.huge", "R.oo");
-  idxs <- match(sprintf("package:%s", pkgs), search());
-  lastPkg <- pkgs[which.max(idxs)];
-  toPath <- sprintf("package:%s", lastPkg);
-
-  verbose && cat(verbose, "Search path before:");
-  verbose && print(verbose, search());
+  # Figure out which of our packages (aroma.core, aroma.light etc.) is
+  # last on the search path.
+  aheadPkgs <- c("aroma.affymetrix", "aroma.light", "R.huge", "R.oo");
 
   # Problematic package that must be after this package on the search path
-  pkgsToMove <- c("affy", "affyPLM", "EBImage", "oligo", "IRanges");
+  behindPkgs <- c("affy", "affyPLM", "EBImage", "oligo");
 
-  # Move those package, if they are loaded.
-  pkgsMoved <- c();
-  for (pkg in pkgsToMove) {
-    path <- sprintf("package:%s", pkg);
-    if (path %in% search()) {
-      # Need to move?
-      from <- match(path, search());
-      to <- match(toPath, search());
-      if (from < to) {
-        verbose && printf(verbose, "Moving package: %s (%s)\n", pkg, path);
-        pkgsMoved <- c(pkgsMoved, 
-                    moveInSearchPath(from=path, to=toPath, where="after"));
-      }
-    }
-  }
-
-  verbose && cat(verbose, "Search path after:");
-  verbose && print(verbose, search());
-
-  verbose && exit(verbose);
+  res <- fixSearchPathInternal(this, aheadPkgs=aheadPkgs, 
+                                           behindPkgs=behindPkgs, ...);
 
   # Return the package actually moved
-  invisible(pkgsMoved);
+  invisible(res); 
 })
 
 
@@ -202,6 +168,9 @@ setMethodS3("getDefaultSettings", "AromaAffymetrix", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-16
+# o Updated fitSearchPath() to utilize new fitSearchPathInternal().
+# o Now AromaAffymetrix inherits from AromaPackage.
 # 2009-01-10
 # o Now the oligo package is forced to be after aroma.affymetrix.
 # 2008-08-27

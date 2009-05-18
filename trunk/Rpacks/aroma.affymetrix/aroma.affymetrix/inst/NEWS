@@ -1,11 +1,29 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.6x [2009-05-12]
+Version: 1.0.7x [2009-05-17]
+o CLEAN UP: Moved the Explorer class and its support files under 
+  inst/ from aroma.affymetrixd to aroma.core.
+o CLEAN UP: Moved the AromaCellPositionFile class from 
+  aroma.affymetrix to aroma.core.
+o CLEAN UP: Removed obsolete patch of affxparser cdfMergeStrands().
+o BUG FIX: fit() for CrlmmModel was calling oligo::getM(), but that 
+  method was later moved to oligoClasses.  Now we just do getM().
+o Package passes R CMD check on R v2.9.0.
+
+
+Version: 1.0.6 [2009-05-16]
 o BUG FIX: In the most recent version of oligo, its justSNPRMA() 
   requires that oligo is loaded, i.e. oligo::justSNPRMA() will
   not work.  Updated justSNPRMA() for character to require oligo.
-o CLEAN UP: 
+o CLEAN UP: Generalized CopyNumberSegmentationModel such that 
+  subclasses no longer have to implement fitOne(), but instead
+  only getFitFunction(), which should return a segmentByNnn()
+  function for the RawCopyNumbers class.
+o CLEAN UP: Moved all drawCnLevels(), extractCopyNumberRegions()
+  and extractRawCopyNumbers() [for DNAcopy, HaarSeg and profileCGH]
+  to aroma.core v1.0.6 (will eventually end up in aroma.cn).
+o CLEAN UP: Removed obsolete fitGlad() for CnChipEffect{File|Set}.
 
 
 Version: 1.0.5 [2009-05-10]
@@ -37,7 +55,7 @@ o Package passes redundancy tests.
 Version: 1.0.4 [2009-04-16]
 o BETA: Added NormExpBackgroundCorrection which does background
   correction according to the normal exponential model. It 
-  utilizes the limma package for this. The default setting give
+  utilizes the limma package for this. The default settings give
   identical results as RmaBackgroundCorrection, which uses affy.
 o Made several modifications to computeAffinities() for 
   AffymetrixCdfFile which allows us to compute affinities also

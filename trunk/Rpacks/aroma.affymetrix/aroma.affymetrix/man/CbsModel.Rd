@@ -48,11 +48,13 @@ extends \emph{\link[aroma.affymetrix]{CopyNumberSegmentationModel}}\cr
 
  \section{Fields and Methods}{
   \bold{Methods:}\cr
-\emph{No methods defined}.
+\tabular{rll}{
+ \tab \code{getFitFunction} \tab  -\cr
+}
 
 
  \bold{Methods inherited from CopyNumberSegmentationModel}:\cr
-fit, fitOne, getPositionChipTypeUnit, getRegions, getTags, migrateTool, plot, plotCopyNumberRegionLayers, writeRegions
+fit, getAsteriskTags, getFitFunction, getPositionChipTypeUnit, getRegions, getTags, migrateTool, plot, plotCopyNumberRegionLayers, writeRegions
 
  \bold{Methods inherited from CopyNumberChromosomalModel}:\cr
 as.character, calculateChromosomeStatistics, clearCache, estimateSds, extractRawCopyNumbers, fit, getMatrixChipEffectFiles, getRawCnData, getReferenceSetTuple, getRefSetTuple, isPaired, newPlot, plotAxesLayers, plotChromosomesLayers, plotCytobandLayers, plotFitLayers, plotGridHorizontalLayers, plotRawCopyNumbers, plotSampleLayers
