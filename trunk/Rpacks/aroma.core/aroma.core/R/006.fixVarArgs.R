@@ -3,8 +3,6 @@
 
 colSums <- appendVarArgs(colSums);
 colMeans <- appendVarArgs(colMeans);
-append <- appendVarArgs(append);
-readLines <- appendVarArgs(readLines);
 
 
 ############################################################################

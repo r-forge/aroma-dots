@@ -19,7 +19,7 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
+\code{~~+--}\code{\link[R.filesets]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\emph{\code{AromaMicroarrayDataFile}}\cr
 
@@ -27,7 +27,7 @@
 \cr
 
 public abstract static class \bold{AromaMicroarrayDataFile}\cr
-extends \link[aroma.core]{GenericDataFile}\cr
+extends \link[R.filesets]{GenericDataFile}\cr
 
 
 
@@ -39,7 +39,7 @@ extends \link[aroma.core]{GenericDataFile}\cr
  \usage{AromaMicroarrayDataFile(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{GenericDataFile}}.}
+   \item{...}{Arguments passed to \code{\link[R.filesets]{GenericDataFile}}.}
  }
 
  \section{Fields and Methods}{
@@ -62,6 +62,7 @@ asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-   An object of this class is typically part of an \code{\link{AromaMicroarrayDataFileSet}}.
+   An object of this class is typically part of an
+   \code{\link{AromaMicroarrayDataSet}}.
  }
 \keyword{classes}

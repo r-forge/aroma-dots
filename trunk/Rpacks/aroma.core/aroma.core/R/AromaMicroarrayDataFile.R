@@ -14,7 +14,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "GenericDataFile".}
+#   \item{...}{Arguments passed to @see "R.filesets::GenericDataFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -24,7 +24,8 @@
 # @author
 #
 # \seealso{
-#   An object of this class is typically part of an @see "AromaMicroarrayDataFileSet".
+#   An object of this class is typically part of an 
+#   @see "AromaMicroarrayDataSet".
 # }
 #*/###########################################################################
 setConstructorS3("AromaMicroarrayDataFile", function(...) {

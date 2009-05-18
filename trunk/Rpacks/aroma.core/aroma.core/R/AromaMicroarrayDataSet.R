@@ -14,7 +14,7 @@
 #
 # \arguments{
 #   \item{files}{A @list of @see "AromaMicroarrayDataFile":s.}
-#   \item{...}{Arguments passed to @see "GenericDataFileSet".}
+#   \item{...}{Arguments passed to @see "R.filesets::GenericDataFileSet".}
 # }
 #
 # \section{Fields and Methods}{

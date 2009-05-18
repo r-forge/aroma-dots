@@ -13,7 +13,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "GenericTabularFile".}
+#   \item{...}{Arguments passed to @see "R.filesets::GenericTabularFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -23,7 +23,7 @@
 # @author
 #
 # \seealso{
-#   @see "GenericDataFile".
+#   @see "R.filesets::GenericDataFile".
 # }
 #*/########################################################################### 
 setConstructorS3("AromaTabularBinaryFile", function(...) {

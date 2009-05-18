@@ -1,416 +1,314 @@
- [.AromaTabularBinaryFile [[.AromaTabularBinaryFile
-  [<-.AromaTabularBinaryFile allocate append append.default
-  append.GenericDataFileSet appendFiles appendFiles.GenericDataFileSet
-  apply apply.default apply.SampleAnnotationFile
-  as.character.AromaTabularBinaryFile as.character.GenericTabularFile
-  calcMargins calcMargins.matrix
-  clearCache.AromaTabularBinaryFile clearCache.GenericDataFileSet
-  clone.GenericDataFile clone.GenericDataFileSet colMeans
-  colMeans.AromaTabularBinaryFile colMeans.default
-  colMedians.AromaTabularBinaryFile colStats
-  colStats.AromaTabularBinaryFile colSums
-  colSums.AromaTabularBinaryFile colSums.default compareChecksum
-  compareChecksum.GenericDataFile convertTable convertTable.default
-  copyTo copyTo.GenericDataFile copyTo.GenericDataFileSet digest2
-  dim.AromaTabularBinaryFile dim.GenericTabularFile
-  dimnames<-.AromaTabularBinaryFile equals.GenericDataFile findFiles
-  findPngDevice findPngDevice.default findSAFs
-  findSAFs.SampleAnnotationSet fit2d fit2d.matrix fromFile
-  fromFile.GenericDataFile fromFiles fromPath
-  fromPath.SampleAnnotationFile fromPath.SampleAnnotationSet
-  GenericSummary GenericTabularFile getAlias getAlias.GenericDataFile
-  getAttribute getAttribute.GenericDataFile getAttributes
-  getAttributes.GenericDataFile getBytesPerColumn
-  getBytesPerColumn.AromaTabularBinaryFile getChecksum
-  getChecksum.GenericDataFile getChromosome getChromosome.Arguments
-  getChromosomes getChromosomes.Arguments getColClasses
-  getColClasses.AromaTabularBinaryFile getColumnNames
-  getColumnNames.AromaTabularBinaryFile
-  getColumnNames.GenericTabularFile getColumnNameTranslator
-  getColumnNameTranslator.GenericTabularFile getCommonListElements
-  getCommonPrefix getDeviceResolution getDeviceResolution.default
-  getFile getFile.GenericDataFileSet getFilename getFilename.Arguments
-  getFiles getFiles.GenericDataFileSet getFileSize
-  getFileSize.GenericDataFile getFileSize.GenericDataFileSet
-  getFileType getFullName getFullNames getFullNames.GenericDataFileSet
-  getHeader.GenericTabularFile getLabel.GenericDataFile getNames
-  getPathname getPathnames getPatterns getPatterns.SampleAnnotationFile
-  getReadArguments getReadArguments.GenericTabularFile getTags hasTag
-  hasTag.GenericDataFile hasTag.GenericDataFileSet hasTags
-  hasTags.GenericDataFile hasTags.GenericDataFileSet importFromTable
-  importFromTable.FileMatrix indexOf indexOf.GenericDataFileSet
-  isFile.GenericDataFile lapply.AromaTabularBinaryFile lapplyInChunks
-  lapplyInChunks.numeric library listToXml listToXml.list locallyUnique
-  locallyUnique.default matchPatterns
-  matchPatterns.SampleAnnotationFile matrixBlockPolish
-  mergeByCommonTails nbrOfColumns nbrOfColumns.AromaTabularBinaryFile
-  nbrOfColumns.GenericTabularFile nbrOfFiles nbrOfLines
-  nbrOfLines.GenericTabularFile nbrOfRows
-  nbrOfRows.AromaTabularBinaryFile nbrOfRows.GenericTabularFile 
-  norm2d norm2d.matrix print.GenericSummary
-  readChecksum readChecksum.GenericDataFile readColumnNames
-  readColumnNames.GenericTabularFile readData
-  readData.AromaTabularBinaryFile readData.GenericTabularFile
-  readData.SampleAnnotationFile readDataFrame
-  readDataFrame.AromaTabularBinaryFile readDataFrame.GenericTabularFile
-  readDataFrame.SampleAnnotationFile readFooter readHeader
-  readHeader.AromaTabularBinaryFile readHeader.GenericTabularFile
-  readLines readLines.default readLines.GenericTabularFile
-  readRawFooter readRawFooter.AromaTabularBinaryFile renameTo
-  renameTo.GenericDataFile renameToUpperCaseExt
-  renameToUpperCaseExt.GenericDataFile reorder.GenericDataFileSet
-  require SampleAnnotationFile SampleAnnotationSet sapply
-  sapply.default sapply.GenericDataFileSet setAlias
-  setAlias.GenericDataFile setAttribute setAttribute.GenericDataFile
-  setAttributes setAttributes.GenericDataFile setAttributesBy
-  setAttributesBy.GenericDataFile setAttributesByTags
-  setAttributesByTags.AromaTabularBinaryFile
-  setAttributesByTags.GenericDataFile setColumnNameTranslator
-  setColumnNameTranslator.GenericTabularFile setLabel.GenericDataFile
-  setTags splitByCommonTails splitInChunks splitInChunks.numeric stext
-  stext.default stringTree stringTree.character
-  subset.AromaTabularBinaryFile summary.AromaTabularBinaryFile
-  testAttributes testAttributes.GenericDataFile translateColumnNames
-  translateColumnNames.GenericTabularFile updateData
-  updateData.AromaTabularBinaryFile updateDataColumn
-  updateDataColumn.AromaTabularBinaryFile validateChecksum
-  validateChecksum.GenericDataFile verify verify.GenericTabularFile
-  writeChecksum writeChecksum.GenericDataFile 
-  writeColumnsToFiles
-  writeFooter writeRawFooter
-  writeRawFooter.AromaTabularBinaryFile xmlToList xmlToList.character
-  yellow.colors
-  as.character.Interface as.GrayscaleImage as.TrueColorImage
-  as.TrueColorImage.Image as.TrueColorImage.matrix
-  backtransformGenotypeCone backtransformGenotypeCone.matrix colorize
-  colorize.Image display display.Image extend.Interface fitGenotypeCone
-  fitSplineBlockPolish fitSplineBlockPolish.matrix fitWHLAPLM
-  fitWHLAPLM.matrix fitWHRCModel fitWHRCModel.matrix fitWLAPLM
-  fitWLAPLM.matrix fitWRCModel fitWRCModel.matrix fitWRMA
-  fitWRMA.matrix gaussianSmoothing gaussianSmoothing.matrix
-  gaussianSmoothing.numeric gaussKernel getImage getImage.matrix
-  interleave interleave.Image log2abs log2center log2neg log2pos
-  mergeBoxplotStats normalizeGenotypeCone normalizeGenotypeCone.matrix
-  print.Interface rescale rescale.Image rgbTransform rgbTransform.Image
-  smoothWRMA smoothWRMA.matrix smoothWSA smoothWSA.matrix sqrtabs
-  sqrtcenter sqrtneg sqrtpos uses uses.Interface uses.character
-  whatDataType whatDataType.default
-  clearCache.AromaMicroarrayDataSet
-  getChipType getChipType.AromaMicroarrayDataFile
-  getChipType.AromaMicroarrayDataSet getLabel.AromaMicroarrayDataFile
-  getPlatform getPlatform.AromaMicroarrayDataFile
-  getPlatform.AromaMicroarrayDataSet setLabel.AromaMicroarrayDataFile
-  AromaMicroarrayDataFileSet
-  byName byName.GenericDataFileSet extractMatrix
-  extractMatrix.AromaTabularBinaryFile
-  extractMatrix.AromaTabularBinarySet findByName
-  findByName.GenericDataFileSet getFileClass
-  getFileClass.GenericDataFileSet validate.AromaMicroarrayDataSet
-  validate.GenericDataFileSet
-  applyRegions applyRegions.CopyNumberOutliers applyRows
-  applyRows.CopyNumberRegions as.character.AromaMicroarrayDataSetTuple
+  [.AromaTabularBinaryFile [[.AromaTabularBinaryFile
+  [<-.AromaTabularBinaryFile addBy addBy.RawGenomicSignals
+  addLocusFields addLocusFields.RawGenomicSignals allocate
+  allocate.AromaCellSequenceFile
+  allocate.AromaMicroarrayTabularBinaryFile allocate.AromaUgpFile
+  allocate.AromaUnitCallFile
+  allocate.AromaUnitChromosomeTabularBinaryFile
+  allocate.AromaUnitGenotypeCallFile allocate.AromaUnitSignalBinaryFile
+  allocateFromUnitNamesFile
+  allocateFromUnitNamesFile.AromaUnitSignalBinaryFile
+  allocateFromUnitNamesFile.AromaUnitTabularBinaryFile
+  append.RawGenomicSignals apply apply.default
+  apply.SampleAnnotationFile applyBinaryOperator
+  applyBinaryOperator.RawGenomicSignals applyRegions
+  applyRegions.CopyNumberOutliers applyRows applyRows.CopyNumberRegions
+  AromaCellSequenceFile AromaCore AromaPackage AromaPlatformInterface
+  aromaSettings AromaSettings AromaUgpFile
+  AromaUnitChromosomeTabularBinaryFile AromaUnitTotalCnBinaryFileList
+  as.character.AromaMicroarrayDataSetTuple
+  as.character.AromaMicroarrayTabularBinaryFile
+  as.character.AromaTabularBinaryFile as.character.AromaTransform
+  as.character.AromaUnitSignalBinaryFile
   as.character.CopyNumberOutliers as.character.CopyNumberRegions
-  as.character.RawCopyNumbers as.character.TabularTextFile
-  as.data.frame.CopyNumberOutliers as.data.frame.CopyNumberRegions
-  as.data.frame.RawCopyNumbers asMatrixOfFiles
-  asMatrixOfFiles.AromaMicroarrayDataSetTuple byPath
-  byPath.AromaMicroarrayDataSetTuple CopyNumberOutliers
-  CopyNumberRegions drawLevels drawLevels.CopyNumberOutliers
-  drawLevels.CopyNumberRegions equals.GenericDataFileSet
-  estimateStandardDeviation extractCNRs extractCNRs.default
-  extractMatrix.GenericTabularFile extractMatrix.GenericTabularFileSet
-  extractRawCNs extractRawCNs.default gaussianSmoothing.RawCopyNumbers
-  getAlias.AromaMicroarrayDataSetTuple getArrays getArrayTuple
-  getAsteriskTags getAsteriskTags.AromaMicroarrayDataSetTuple
-  getChipTypes getCNs getCNs.RawCopyNumbers
-  getColumnNames.TabularTextFile
+  as.character.Interface as.character.RawGenomicSignals
+  as.character.TextUnitNamesFile as.data.frame.CopyNumberOutliers
+  as.data.frame.CopyNumberRegions as.data.frame.RawCopyNumbers
+  as.data.frame.RawGenomicSignals as.data.frame.SegmentedCopyNumbers
+  as.GrayscaleImage as.TrueColorImage as.TrueColorImage.Image
+  as.TrueColorImage.matrix asMatrixOfFiles
+  asMatrixOfFiles.AromaMicroarrayDataSetTuple asThis asThis.BasicObject
+  asThis.Object backtransformGenotypeCone
+  backtransformGenotypeCone.matrix backtransformMultiDimensionalCone
+  backtransformMultiDimensionalCone.matrix barSequence
+  barSequence.ProbePositionEffects binnedSmoothing.RawGenomicSignals
+  binnedSmoothingByState binnedSmoothingByState.SegmentedCopyNumbers
+  binScatter binScatter.matrix byChipType
+  byChipType.AromaMicroarrayTabularBinaryFile
+  byChipType.AromaUnitTabularBinaryFile byChipType.UnitNamesFile
+  byName.AromaPlatform byName.AromaUnitFracBCnBinarySet
+  byName.AromaUnitGenotypeCallSet byName.AromaUnitSignalBinarySet
+  byName.AromaUnitTotalCnBinarySet byPath
+  byPath.AromaMicroarrayDataSetTuple calcMargins calcMargins.matrix
+  clearCache.AromaTabularBinaryFile clearCache.AromaTransform
+  clearCache.AromaUnitChromosomeTabularBinaryFile
+  clearCache.AromaUnitTabularBinaryFile clearCache.TextUnitNamesFile
+  cnRange cnRange.RawCopyNumbers colGaussianSmoothing
+  colGaussianSmoothing.matrix colMeans colMeans.AromaTabularBinaryFile
+  colMeans.default colMedians.AromaTabularBinaryFile colorize
+  colorize.Image colStats colStats.AromaTabularBinaryFile colSums
+  colSums.AromaTabularBinaryFile colSums.default convertTable
+  convertTable.default CopyNumberOutliers CopyNumberRegions countBases
+  countBases.AromaCellSequenceFile countBasesInternal
+  countBasesInternal.AromaCellSequenceFile
+  dimnames<-.AromaTabularBinaryFile display display.Image divideBy
+  divideBy.RawGenomicSignals drawCnRegions drawCnRegions.DNAcopy
+  drawCnRegions.HaarSeg drawCnRegions.profileCGH drawCytoband
+  drawCytoband.profileCGH drawCytoband2 drawCytoband2.default
+  drawLevels drawLevels.CopyNumberOutliers drawLevels.CopyNumberRegions
+  estimateStandardDeviation exportTotalCnRatioSet
+  exportTotalCnRatioSet.AromaUnitTotalCnBinarySet extend.Interface
+  extractByChromosome
+  extractByChromosome.AromaUnitChromosomeTabularBinaryFile
+  extractCallArray extractCallArray.AromaUnitCallFile
+  extractCallArray.AromaUnitCallSet extractCalls
+  extractCalls.AromaUnitCallFile extractCalls.AromaUnitCallSet
+  extractCNRs extractCNRs.default extractCopyNumberRegions
+  extractCopyNumberRegions.default extractCopyNumberRegions.DNAcopy
+  extractCopyNumberRegions.HaarSeg extractCopyNumberRegions.profileCGH
+  extractDataForSegmentation
+  extractDataForSegmentation.RawGenomicSignals extractGenotypeMatrix
+  extractGenotypeMatrix.AromaUnitCallSet
+  extractGenotypeMatrix.AromaUnitGenotypeCallFile extractGenotypes
+  extractGenotypes.AromaUnitGenotypeCallFile
+  extractGenotypes.AromaUnitGenotypeCallSet
+  extractMatrix.AromaUnitCallFile
+  extractMatrix.AromaUnitSignalBinaryFile extractMergedRawCopyNumbers
+  extractMergedRawCopyNumbers.AromaUnitTotalCnBinaryFileList
+  extractRawAlleleBFractions extractRawAlleleBFractions.default
+  extractRawCNs extractRawCNs.default extractRawCopyNumbers
+  extractRawCopyNumbers.AromaUnitTotalCnBinaryFile
+  extractRawCopyNumbers.AromaUnitTotalCnBinaryFileList
+  extractRawCopyNumbers.default extractRawCopyNumbers.DNAcopy
+  extractRawCopyNumbers.HaarSeg extractRawCopyNumbers.profileCGH
+  extractRawGenomicSignals
+  extractRawGenomicSignals.AromaUnitTotalCnBinaryFileList
+  extractRawGenomicSignals.default extractRegion
+  extractRegion.RawGenomicSignals extractSubset
+  extractSubset.RawGenomicSignals extractSubsetByState
+  extractSubsetByState.SegmentedCopyNumbers findByChipType
+  findByChipType.AromaMicroarrayTabularBinaryFile
+  findByChipType.TextUnitNamesFile findByName.AromaUnitCallSet
+  findByName.AromaUnitSignalBinarySet findPngDevice
+  findPngDevice.default findSAFs findSAFs.SampleAnnotationSet
+  findUnitNamesFile findUnitNamesFile.AromaPlatform findUnitsTodo
+  findUnitsTodo.AromaUnitCallFile findUnitsTodo.AromaUnitCallSet fit2d
+  fit2d.matrix fitGenotypeCone fitGenotypeConeByExpectile
+  fitGenotypeConeByExpectile.matrix fitGenotypeConeBySfit
+  fitMultiDimensionalCone fitProbePositionEffects
+  fitProbePositionEffects.numeric fitSplineBlockPolish
+  fitSplineBlockPolish.matrix fitWHLAPLM fitWHLAPLM.matrix fitWHRCModel
+  fitWHRCModel.matrix fitWLAPLM fitWLAPLM.matrix fitWRCModel
+  fitWRCModel.matrix fitWRMA fitWRMA.matrix fixSearchPath
+  fixSearchPath.AromaCore fixSearchPath.AromaPackage
+  fixSearchPathInternal fixSearchPathInternal.AromaPackage
+  fromFile.AromaUnitSignalBinaryFile fromFiles.AromaUnitCallSet
+  fromFiles.AromaUnitGenotypeCallSet fromPath
+  fromPath.SampleAnnotationFile fromPath.SampleAnnotationSet
+  gaussianSmoothing gaussianSmoothing.matrix gaussianSmoothing.numeric
+  gaussianSmoothing.RawGenomicSignals gaussKernel GenericSummary
+  getAlias.AromaMicroarrayDataSetTuple getAromaPlatform
+  getAromaPlatform.AromaPlatformInterface getAromaUgpFile
+  getAromaUgpFile.AromaPlatform
+  getAromaUgpFile.AromaUnitSignalBinaryFile
+  getAromaUgpFile.AromaUnitSignalBinarySet
+  getAromaUgpFile.UnitNamesFile getArrays getArrayTuple getAsteriskTags
+  getAsteriskTags.AromaMicroarrayDataSetTuple
+  getAsteriskTags.AromaTransform getAttributeXY
+  getAttributeXY.AromaMicroarrayDataFile getBytesPerColumn
+  getBytesPerColumn.AromaTabularBinaryFile getChipType
+  getChipType.AromaMicroarrayDataFile
+  getChipType.AromaMicroarrayDataSet
+  getChipType.AromaMicroarrayTabularBinaryFile
+  getChipType.AromaUnitSignalBinaryFile
+  getChipType.AromaUnitSignalBinarySet getChipType.TextUnitNamesFile
+  getChipType.UnitNamesFile getChipTypes
+  getChipTypes.AromaMicroarrayDataSetTuple getChromosome
+  getChromosome.Arguments getChromosome.RawGenomicSignals
+  getChromosomes getChromosomes.Arguments
+  getChromosomes.AromaUnitChromosomeTabularBinaryFile getCn
+  getCn.RawCopyNumbers getCNs getCNs.RawCopyNumbers getColClasses
+  getColClasses.AromaTabularBinaryFile
+  getColumnNames.AromaCellSequenceFile
+  getColumnNames.AromaTabularBinaryFile getColumnNames.AromaUgpFile
+  getColumnNames.AromaUnitChromosomeTabularBinaryFile
+  getCommonListElements getCommonPrefix getDeviceResolution
+  getDeviceResolution.default getEffects
+  getEffects.ProbePositionEffects getFilenameExtension
+  getFilenameExtension.AromaCellSequenceFile
+  getFilenameExtension.AromaMicroarrayTabularBinaryFile
+  getFilenameExtension.AromaUgpFile
+  getFilenameExtension.AromaUnitChromosomeTabularBinaryFile
+  getFilenameExtension.AromaUnitSignalBinaryFile
+  getFilenameExtension.TextUnitNamesFile
   getFullName.AromaMicroarrayDataSetTuple
-  getFullNames.AromaMicroarrayDataSetTuple getFullNameTranslator
-  getFullNameTranslator.GenericDataFile getHeader.TabularTextFile
-  getListOfCdfs getListOfCdfs.AromaMicroarrayDataSetTuple getListOfSets
-  getListOfSets.AromaMicroarrayDataSetTuple getLociFields
-  getLociFields.RawCopyNumbers getName.AromaMicroarrayDataSetTuple
-  getNames.AromaMicroarrayDataSetTuple getPhysicalPositions
-  getPhysicalPositions.RawCopyNumbers getReadArguments.TabularTextFile
-  getTableOfArrays getTags.AromaMicroarrayDataSetTuple getXY
-  getXY.RawCopyNumbers gunzip.GenericDataFile gzip.GenericDataFile
-  hasFile hasFile.GenericDataFileSet indexOfArrays
-  lines.CopyNumberOutliers lines.CopyNumberRegions lines.RawCopyNumbers
-  nbrOfArrays nbrOfChipTypes nbrOfLines.TabularTextFile nbrOfLoci
-  nbrOfLoci.RawCopyNumbers nbrOfRegions nbrOfRegions.CopyNumberOutliers
-  nbrOfRegions.CopyNumberRegions nbrOfRows.TabularTextFile
-  plot.RawCopyNumbers points.RawCopyNumbers
-  readColumnNames.TabularTextFile readColumns
-  readColumns.AromaTabularBinaryFile readColumns.GenericTabularFile
-  readColumns.TabularTextFile readDataFrame.TabularTextFile
-  readHeader.TabularTextFile readLines.TabularTextFile
-  setAlias.AromaMicroarrayDataSetTuple setFullNameTranslator
-  setFullNameTranslator.GenericDataFile
-  setTags.AromaMicroarrayDataSetTuple sort.RawCopyNumbers stextChipType
-  stextChipType.character summary.RawCopyNumbers TabularTextFile
-  translateFullName translateFullName.GenericDataFile
-  verify.TabularTextFile 
-  extractCopyNumberRegions extractCopyNumberRegions.default
-  extractRawCopyNumbers extractRawCopyNumbers.default
-  getAttributeXY getAttributeXY.AromaMicroarrayDataFile getPloidy
-  getPloidy.AromaMicroarrayDataFile hasAttributeXY
-  hasAttributeXY.AromaMicroarrayDataFile
+  getFullNames.AromaMicroarrayDataSetTuple getGenomeVersion
+  getGenomeVersion.AromaUnitChromosomeTabularBinaryFile
+  getHeaderParameters getHeaderParameters.TextUnitNamesFile getImage
+  getImage.matrix getInputDataSet getLabel.AromaMicroarrayDataFile
+  getListOfSets getListOfSets.AromaMicroarrayDataSetTuple getLociFields
+  getLociFields.RawGenomicSignals getLocusFields
+  getLocusFields.RawGenomicSignals getMaxLengthRepeats
+  getMaxLengthRepeats.AromaCellSequenceFile
+  getName.AromaMicroarrayDataSetTuple getName.AromaPlatform
+  getName.RawGenomicSignals getNames.AromaMicroarrayDataSetTuple
+  getOutputDataSet getOutputFiles getOutputFiles.AromaTransform
+  getParameters.AromaTransform getParametersAsString
+  getParametersAsString.AromaTransform getPatterns
+  getPatterns.SampleAnnotationFile getPhysicalPositions
+  getPhysicalPositions.RawCopyNumbers getPlatform
+  getPlatform.AromaMicroarrayDataFile
+  getPlatform.AromaMicroarrayDataSet
+  getPlatform.AromaMicroarrayTabularBinaryFile
+  getPlatform.AromaPlatformInterface
+  getPlatform.AromaUnitSignalBinaryFile
+  getPlatform.AromaUnitSignalBinarySet getPlatform.TextUnitNamesFile
+  getPlatform.UnitNamesFile getPloidy getPloidy.AromaMicroarrayDataFile
+  getPositions getPositions.AromaUgpFile getPositions.RawGenomicSignals
+  getProbeLength getProbeLength.AromaCellSequenceFile
+  getProbePositionEffectDesignMatrix
+  getProbePositionEffectDesignMatrix.character
+  getProbePositionEffectDesignMatrix.raw getRam getRam.AromaSettings
+  getRootPath getRootPath.AromaTransform getSigma
+  getSigma.RawGenomicSignals getSignals getSignals.RawGenomicSignals
+  getSnpNucleotides getSnpNucleotides.AromaCellSequenceFile
+  getSnpPositions getSnpPositions.AromaCellSequenceFile getSnpShifts
+  getSnpShifts.AromaCellSequenceFile getStateColors
+  getStateColors.SegmentedCopyNumbers getStates
+  getStates.SegmentedCopyNumbers getTableOfArrays
+  getTags.AromaMicroarrayDataSetTuple getUniqueStates
+  getUniqueStates.SegmentedCopyNumbers getUnitNames
+  getUnitNames.TextUnitNamesFile getUnitNames.UnitNamesFile
+  getUnitNamesFile getUnitNamesFile.AromaPlatform
+  getUnitNamesFile.AromaPlatformInterface getUnitsAt
+  getUnitsAt.AromaUgpFile getUnitsOnChromosome
+  getUnitsOnChromosome.AromaUgpFile
+  getUnitsOnChromosome.AromaUnitChromosomeTabularBinaryFile
+  getUnitsOnChromosomes
+  getUnitsOnChromosomes.AromaUnitChromosomeTabularBinaryFile
+  getVerbose.AromaSettings getWeights getWeights.RawGenomicSignals
+  getXScale getXScale.RawGenomicSignals getXY getXY.RawGenomicSignals
+  getYScale getYScale.RawGenomicSignals groupBySnpNucleotides
+  groupBySnpNucleotides.AromaCellSequenceFile hasAttributeXY
+  hasAttributeXY.AromaMicroarrayDataFile hasWeights
+  hasWeights.RawGenomicSignals importFrom
+  importFrom.AromaTabularBinaryFile importFromGenericTabularFile
+  importFromGenericTabularFile.AromaUgpFile importFromTable
+  importFromTable.FileMatrix indexOfArrays indexOfColumn
+  indexOfColumn.AromaUnitChromosomeTabularBinaryFile indexOfUnits
+  indexOfUnits.AromaUnitTabularBinaryFile interleave interleave.Image
+  isHeterozygote isHeterozygote.AromaUnitGenotypeCallFile isHomozygote
+  isHomozygote.AromaUnitGenotypeCallFile isMissing
+  isMissing.AromaCellSequenceFile kernelSmoothing.RawGenomicSignals
+  kernelSmoothingByState kernelSmoothingByState.SegmentedCopyNumbers
+  lapply.AromaTabularBinaryFile library lines.CopyNumberOutliers
+  lines.CopyNumberRegions lines.RawGenomicSignals listToXml
+  listToXml.list locallyUnique locallyUnique.default log2abs log2center
+  log2neg log2pos matchPatterns matchPatterns.SampleAnnotationFile
+  matrixBlockPolish mergeBoxplotStats mergeByCommonTails multiplyBy
+  multiplyBy.RawGenomicSignals nbrOfArrays
+  nbrOfArrays.AromaMicroarrayDataSet nbrOfCells
+  nbrOfCells.AromaCellTabularBinaryFile nbrOfChipTypes
+  nbrOfColumns.AromaTabularBinaryFile nbrOfLoci
+  nbrOfLoci.RawGenomicSignals nbrOfRegions
+  nbrOfRegions.CopyNumberOutliers nbrOfRegions.CopyNumberRegions
+  nbrOfRows.AromaTabularBinaryFile nbrOfUnits
+  nbrOfUnits.AromaUnitSignalBinaryFile
+  nbrOfUnits.AromaUnitTabularBinaryFile nbrOfUnits.TextUnitNamesFile
+  nbrOfUnits.UnitNamesFile norm2d norm2d.matrix normalizeGenotypeCone
+  normalizeGenotypeCone.matrix patch patch.AromaPackage
+  plot.BinnedScatter plot.ProbePositionEffects plot.RawAlleleBFractions
+  plot.RawCopyNumbers plot.RawGenomicSignals plot.SegmentedCopyNumbers
+  points.BinnedScatter points.RawGenomicSignals
+  points.SegmentedCopyNumbers pointsSequence
+  pointsSequence.ProbePositionEffects predict.ProbePositionEffects
+  print.GenericSummary print.Interface process
+  readColumns.AromaTabularBinaryFile readData
+  readData.SampleAnnotationFile readDataFrame.AromaTabularBinaryFile
+  readDataFrame.AromaUnitChromosomeTabularBinaryFile
+  readDataFrame.AromaUnitSignalBinaryFile
+  readDataFrame.SampleAnnotationFile readFooter readHeader
+  readHeader.AromaTabularBinaryFile readNeighborSequenceMatrix
+  readNeighborSequenceMatrix.AromaCellSequenceFile
+  readPairSequenceMatrix readPairSequenceMatrix.AromaCellSequenceFile
+  readRawFooter readRawFooter.AromaTabularBinaryFile readSequenceMatrix
+  readSequenceMatrix.AromaCellSequenceFile readSequences
+  readSequences.AromaCellSequenceFile readTargetStrands
+  readTargetStrands.AromaCellSequenceFile remap remap.default
+  reorder.BinnedScatter require rescale rescale.Image rgbTransform
+  rgbTransform.Image SampleAnnotationFile SampleAnnotationSet
+  segmentByCBS segmentByGLAD segmentByHaarSeg
+  setAlias.AromaMicroarrayDataSetTuple
   setAttributesBy.AromaMicroarrayDataSet
   setAttributesBySampleAnnotationFile
   setAttributesBySampleAnnotationFile.AromaMicroarrayDataSet
   setAttributesBySampleAnnotationSet
   setAttributesBySampleAnnotationSet.AromaMicroarrayDataSet
-  setAttributesByTags.AromaMicroarrayDataFile setAttributeXY
-  setAttributeXY.AromaMicroarrayDataFile stextLabel
+  setAttributesByTags.AromaMicroarrayDataFile
+  setAttributesByTags.AromaTabularBinaryFile setAttributeXY
+  setAttributeXY.AromaMicroarrayDataFile
+  setLabel.AromaMicroarrayDataFile setLocusFields
+  setLocusFields.RawGenomicSignals setRam setRam.AromaSettings setSigma
+  setSigma.RawGenomicSignals setTags.AromaMicroarrayDataSetTuple
+  setTags.AromaTransform setVerbose setVerbose.AromaSettings setWeights
+  setWeights.RawGenomicSignals setXScale setXScale.RawGenomicSignals
+  setYScale setYScale.RawGenomicSignals shakyText shakyText.default
+  signalRange signalRange.RawGenomicSignals smoothWRMA
+  smoothWRMA.matrix smoothWSA smoothWSA.matrix sort.RawGenomicSignals
+  splitByCommonTails sqrtabs sqrtcenter sqrtneg sqrtpos stext
+  stext.default stextChipType stextChipType.character stextLabel
   stextLabel.AromaMicroarrayDataFile stextLabels
   stextLabels.AromaMicroarrayDataFile stextSize
-  stextSize.AromaMicroarrayDataFile
-  allocate.AromaUgpFile allocateFromUnitNamesFile
-  allocateFromUnitNamesFile.AromaUnitTabularBinaryFile
-  AromaPlatformInterface AromaUgpFile
-  as.character.AromaUnitTabularBinaryFile byChipType
-  byChipType.AromaUnitTabularBinaryFile byName.AromaPlatform
-  clearCache.AromaUnitTabularBinaryFile findByChipType
-  findByChipType.AromaUnitTabularBinaryFile findUnitNamesFile
-  findUnitNamesFile.AromaPlatform fromChipType
-  fromChipType.AromaUnitTabularBinaryFile getAromaPlatform
-  getAromaPlatform.AromaPlatformInterface getAromaUgpFile
-  getAromaUgpFile.AromaPlatform getChipType.AromaUnitTabularBinaryFile
-  getChipType.UnitNamesInterface getChromosomes.AromaUgpFile
-  getColumnNames.AromaUgpFile getFilenameExtension
-  getFilenameExtension.AromaUgpFile
-  getFilenameExtension.AromaUnitTabularBinaryFile getGenomeVersion
-  getGenomeVersion.AromaUgpFile getName.AromaPlatform
-  getPlatform.AromaUnitTabularBinaryFile getPlatform.UnitNamesInterface
-  getUnitNames getUnitNames.UnitNamesInterface getUnitNamesFile
-  getUnitNamesFile.AromaPlatform
-  getUnitsAt getUnitsAt.AromaUgpFile importFromGenericTabularFile
-  importFromGenericTabularFile.AromaUgpFile indexOfUnits
-  indexOfUnits.AromaUnitTabularBinaryFile nbrOfUnits
-  nbrOfUnits.AromaUnitTabularBinaryFile nbrOfUnits.UnitNamesInterface
-  readDataFrame.AromaUgpFile
-  clearCache.AromaUgpFile getPositions getPositions.AromaUgpFile
-  getUnitsOnChromosome getUnitsOnChromosome.AromaUgpFile
-  cnRange cnRange.RawCopyNumbers getChromosome.RawCopyNumbers xMax
-  xMax.RawCopyNumbers xMin xMin.RawCopyNumbers xRange
-  xRange.RawCopyNumbers xSeq xSeq.RawCopyNumbers
- as.character.AromaTransform clearCache.AromaTransform
- getAsteriskTags.AromaTransform getInputDataSet getOutputDataSet
- getOutputFiles getOutputFiles.AromaTransform
- getParameters.AromaTransform getParametersAsString
- getParametersAsString.AromaTransform getRootPath
- getRootPath.AromaTransform nbrOfArrays.AromaMicroarrayDataSet process
- setTags.AromaTransform
-getChipTypes.AromaMicroarrayDataSetTuple
-getPlatform.AromaPlatformInterface hasColumnHeader
-hasColumnHeader.TabularTextFile readRawHeader
-readRawHeader.TabularTextFile
-readTableHeader
-readTableHeader.default
- allocate.AromaCellSequenceFile
- allocate.AromaMicroarrayTabularBinaryFile AromaCellSequenceFile
- as.character.AromaMicroarrayTabularBinaryFile
- byChipType.AromaMicroarrayTabularBinaryFile countBases
- countBases.AromaCellSequenceFile countBasesInternal
- countBasesInternal.AromaCellSequenceFile
- findByChipType.AromaMicroarrayTabularBinaryFile
- getChipType.AromaMicroarrayTabularBinaryFile
- getColumnNames.AromaCellSequenceFile
- getFilenameExtension.AromaCellSequenceFile
- getFilenameExtension.AromaMicroarrayTabularBinaryFile
- getPlatform.AromaMicroarrayTabularBinaryFile getProbeLength
- getProbeLength.AromaCellSequenceFile importFrom
- importFrom.AromaTabularBinaryFile
- isMissing isMissing.AromaCellSequenceFile nbrOfCells
- nbrOfCells.AromaCellTabularBinaryFile readNeighborSequenceMatrix
- readNeighborSequenceMatrix.AromaCellSequenceFile
- readPairSequenceMatrix readPairSequenceMatrix.AromaCellSequenceFile
- readSequenceMatrix readSequenceMatrix.AromaCellSequenceFile
- readSequences readSequences.AromaCellSequenceFile remap remap.default
- updateSequenceMatrix updateSequenceMatrix.AromaCellSequenceFile
- updateSequences updateSequences.AromaCellSequenceFile
- readTargetStrands readTargetStrands.AromaCellSequenceFile
- updateTargetStrands updateTargetStrands.AromaCellSequenceFile
- fitProbePositionEffects fitProbePositionEffects.numeric getEffects
- getEffects.ProbePositionEffects getProbePositionEffectDesignMatrix
- getProbePositionEffectDesignMatrix.character
- getProbePositionEffectDesignMatrix.raw plot.ProbePositionEffects
- predict.ProbePositionEffects setFullNamesTranslator
- text.ProbePositionEffects
- update2 update2.GenericDataFileSet
- getFullNameTranslator.GenericDataFileSet setFullName
- setFullName.GenericDataFile setFullName.GenericDataFileSet
- setFullNamesTranslator.GenericDataFileSet
- setFullNameTranslator.GenericDataFileSet setName
- setName.GenericDataFile setName.GenericDataFileSet
- translateFullName.GenericDataFileSet
-  getChipType.UnitNamesFile getPlatform.UnitNamesFile
-  getUnitNames.UnitNamesFile nbrOfUnits.UnitNamesFile
-  dimension.TabularTextFile
- getCreatedOn getCreatedOn.GenericDataFile getLastAccessedOn
- getLastAccessedOn.GenericDataFile getLastModifiedOn
- getLastModifiedOn.GenericDataFile
-  barSequence barSequence.ProbePositionEffects pointsSequence
-  pointsSequence.ProbePositionEffects textSequence
-  textSequence.ProbePositionEffects
- backtransformMultiDimensionalCone
- backtransformMultiDimensionalCone.matrix fitMultiDimensionalCone
-  fitGenotypeConeByExpectile fitGenotypeConeByExpectile.matrix
-  fitGenotypeConeBySfit
-  getSnpNucleotides getSnpNucleotides.AromaCellSequenceFile
-  getSnpPositions getSnpPositions.AromaCellSequenceFile getSnpShifts
-  getSnpShifts.AromaCellSequenceFile groupBySnpNucleotides
-  groupBySnpNucleotides.AromaCellSequenceFile
-  binScatter binScatter.matrix plot.BinnedScatter points.BinnedScatter
-  reorder.BinnedScatter subsample subsample.BinnedScatter
-  subset.BinnedScatter
-getMaxLengthRepeats.AromaCellSequenceFile
-  allocate.AromaSignalBinaryFile as.character.AromaSignalBinaryFile
-  byName.AromaSignalBinarySet findByName.AromaSignalBinarySet
-  fromFile.AromaSignalBinaryFile getAromaUgpFile.AromaSignalBinaryFile
-  getAromaUgpFile.AromaSignalBinarySet
-  getChipType.AromaSignalBinaryFile getChipType.AromaSignalBinarySet
-  getFilenameExtension.AromaSignalBinaryFile getMaxLengthRepeats
-  getMaxLengthRepeats.AromaCellSequenceFile
-  getPlatform.AromaSignalBinaryFile getPlatform.AromaSignalBinarySet
-  nbrOfUnits.AromaSignalBinaryFile validate.AromaSignalBinarySet
-byName.AromaFractionBCnBinarySet byName.AromaTotalCnBinarySet
-extractRawCopyNumbers.AromaTotalCnBinaryFile
-allocate.AromaGenotypeCallFile byName.AromaGenotypeCallSet
-  extractCalls extractCalls.AromaGenotypeCallFile
-  extractCalls.AromaGenotypeCallSet extractConfidenceScores
-  extractConfidenceScores.AromaGenotypeCallFile
-  extractConfidenceScores.AromaGenotypeCallSet findUnitsTodo
-  findUnitsTodo.AromaGenotypeCallFile
-  findUnitsTodo.AromaGenotypeCallSet fromFiles.AromaGenotypeCallSet
- allocate.AromaUnitCallFile allocate.AromaUnitGenotypeCallFile
-  allocate.AromaUnitSignalBinaryFile
-  allocateFromUnitNamesFile.AromaUnitSignalBinaryFile
-  as.character.AromaUnitSignalBinaryFile byName.AromaUnitCallSet
-  byName.AromaUnitFracBCnBinarySet byName.AromaUnitSignalBinarySet
-  byName.AromaUnitTotalCnBinarySet extractCallArray
-  extractCallArray.AromaUnitCallFile extractCallArray.AromaUnitCallSet
-  extractCalls.AromaUnitCallFile extractCalls.AromaUnitCallSet
-  extractGenotypeMatrix extractGenotypeMatrix.AromaUnitCallSet
-  extractGenotypeMatrix.AromaUnitGenotypeCallFile extractGenotypes
-  extractGenotypes.AromaUnitGenotypeCallFile
-  extractGenotypes.AromaUnitGenotypeCallSet
-  extractMatrix.AromaUnitCallFile
-  extractRawCopyNumbers.AromaUnitTotalCnBinaryFile
-  findByName.AromaUnitSignalBinarySet findUnitsTodo.AromaUnitCallFile
-  findUnitsTodo.AromaUnitCallSet fromFile.AromaUnitSignalBinaryFile
-  fromFiles.AromaUnitCallSet fromFiles.AromaUnitGenotypeCallSet
-  getAromaUgpFile.AromaUnitSignalBinaryFile
-  getAromaUgpFile.AromaUnitSignalBinarySet
-  getChipType.AromaUnitSignalBinaryFile
-  getChipType.AromaUnitSignalBinarySet
-  getFilenameExtension.AromaUnitSignalBinaryFile
-  getPlatform.AromaUnitSignalBinaryFile
-  getPlatform.AromaUnitSignalBinarySet
-  nbrOfUnits.AromaUnitSignalBinaryFile updateGenotypes
-  updateGenotypes.AromaUnitGenotypeCallFile
-  validate.AromaUnitSignalBinarySet
-byName.AromaUnitGenotypeCallSet findByName.AromaUnitCallSet
-extractMatrix.AromaUnitSignalBinaryFile isHeterozygote
-  isHeterozygote.AromaUnitGenotypeCallFile isHomozygote
-  isHomozygote.AromaUnitGenotypeCallFile
-  getAromaUgpFile.UnitNamesFile 
-  shakyText.default shakyText
- binnedSmoothing.RawCopyNumbers extractSubset
- extractSubset.RawCopyNumbers getPositions.RawCopyNumbers
- kernelSmoothing.RawCopyNumbers
-  binnedSmoothingByState binnedSmoothingByState.SegmentedCopyNumbers
-  getStateColors getStateColors.SegmentedCopyNumbers getStates
-  getStates.SegmentedCopyNumbers kernelSmoothingByState
-  kernelSmoothingByState.SegmentedCopyNumbers plot.SegmentedCopyNumbers
-  points.SegmentedCopyNumbers
-extractSubsetByState extractSubsetByState.SegmentedCopyNumbers
-as.data.frame.SegmentedCopyNumbers
- colGaussianSmoothing colGaussianSmoothing.matrix getUniqueStates
- getUniqueStates.SegmentedCopyNumbers
-byChipType.UnitNamesFile
-getUnitsOnChromosomes.AromaUgpFile getUnitsOnChromosomes
-calculateAverageColumnAcrossFiles.GenericTabularFileSet
-  calculateAverageColumnAcrossFiles
-  calculateAverageColumnAcrossFiles.GenericTabularFileSet
-  readDataFrame.AromaUnitSignalBinaryFile
-getName.RawCopyNumbers
-exportTotalCnRatioSet exportTotalCnRatioSet.AromaUnitTotalCnBinarySet
-signalRange
- as.character.RawGenomicSignals as.data.frame.RawGenomicSignals
- binnedSmoothing.RawGenomicSignals extractRawGenomicSignals
- extractRawGenomicSignals.default extractSubset.RawGenomicSignals
- gaussianSmoothing.RawGenomicSignals getChromosome.RawGenomicSignals
- getLociFields.RawGenomicSignals getName.RawGenomicSignals
- getPositions.RawGenomicSignals getSignals
- getSignals.RawGenomicSignals getXY.RawGenomicSignals
- kernelSmoothing.RawGenomicSignals lines.RawGenomicSignals
- nbrOfLoci.RawGenomicSignals plot.RawGenomicSignals
- points.RawGenomicSignals signalRange.RawGenomicSignals
- sort.RawGenomicSignals summary.RawGenomicSignals
- xMax.RawGenomicSignals xMin.RawGenomicSignals
- xRange.RawGenomicSignals xSeq.RawGenomicSignals
-  getCns getCns.RawCopyNumbers
-getCn getCn.RawCopyNumbers
-aromaSettings
-.Machine
-  aromaSettings AromaSettings getRam getRam.AromaSettings
-  getVerbose.AromaSettings setRam setRam.AromaSettings setVerbose
-  setVerbose.AromaSettings
-hasBeenModified hasBeenModified.GenericDataFile
-  as.character.TextUnitNamesFile findByChipType.TextUnitNamesFile
-  getChipType.TextUnitNamesFile getFilenameExtension.TextUnitNamesFile
-  getPlatform.TextUnitNamesFile getUnitNames.TextUnitNamesFile
-  nbrOfUnits.TextUnitNamesFile TextUnitNamesFile
-asThis asThis.BasicObject asThis.Object
-  addLocusFields addLocusFields.RawGenomicSignals
-  append.RawGenomicSignals getLocusFields
-  getLocusFields.RawGenomicSignals getXScale
-  getXScale.RawGenomicSignals getYScale getYScale.RawGenomicSignals
-  setLocusFields setLocusFields.RawGenomicSignals setXScale
-  setXScale.RawGenomicSignals setYScale setYScale.RawGenomicSignals
-  AromaUnitChromosomeTabularBinaryFile
-  clearCache.AromaUnitChromosomeTabularBinaryFile extractByChromosome
-  extractByChromosome.AromaUnitChromosomeTabularBinaryFile
-  getChromosomes.AromaUnitChromosomeTabularBinaryFile
-  getColumnNames.AromaUnitChromosomeTabularBinaryFile
-  getFilenameExtension.AromaUnitChromosomeTabularBinaryFile
-  getGenomeVersion.AromaUnitChromosomeTabularBinaryFile
-  getUnitsOnChromosome.AromaUnitChromosomeTabularBinaryFile
-  getUnitsOnChromosomes.AromaUnitChromosomeTabularBinaryFile
-  indexOfColumn indexOfColumn.AromaUnitChromosomeTabularBinaryFile
-  readDataFrame.AromaUnitChromosomeTabularBinaryFile
- allocate.AromaUnitChromosomeTabularBinaryFile
-  drawCnRegions drawCnRegions.DNAcopy drawCnRegions.HaarSeg
-  drawCnRegions.profileCGH drawCytoband drawCytoband.profileCGH
-  drawCytoband2 drawCytoband2.default extractCopyNumberRegions.HaarSeg
-  extractDataForSegmentation
-  extractDataForSegmentation.RawGenomicSignals getWeights
-  getWeights.RawGenomicSignals hasWeights hasWeights.RawGenomicSignals
-  segmentByCBS segmentByGLAD segmentByHaarSeg
-setWeights setWeights.RawGenomicSignals
-  addBy addBy.RawGenomicSignals applyBinaryOperator
-  applyBinaryOperator.RawGenomicSignals divideBy
-  divideBy.RawGenomicSignals extractRawAlleleBFractions
-  extractRawAlleleBFractions.default multiplyBy
-  multiplyBy.RawGenomicSignals plot.RawAlleleBFractions subtractBy
-  subtractBy.RawGenomicSignals
- clearCache.TextUnitNamesFile getHeaderParameters
- getHeaderParameters.TextUnitNamesFile getSigma
- getSigma.RawGenomicSignals getUnitNamesFile.AromaPlatformInterface
- setSigma setSigma.RawGenomicSignals
-  GenericDataFileList GenericDataFileSetList
-  getFileClass.GenericDataFileSetList getFileList
-  getFileList.GenericDataFileSetList
-  AromaUnitTotalCnBinaryFileList extractMergedRawCopyNumbers
-  extractMergedRawCopyNumbers.AromaUnitTotalCnBinaryFileList
-  extractRawCopyNumbers.AromaUnitTotalCnBinaryFileList
-  extractRawGenomicSignals.AromaUnitTotalCnBinaryFileList
-weightedMad weightedMean
- AromaCore AromaPackage extractRegion extractRegion.RawGenomicSignals
- fixSearchPath fixSearchPath.AromaCore fixSearchPath.AromaPackage
- fixSearchPathInternal fixSearchPathInternal.AromaPackage patch
- patch.AromaPackage
-extractCopyNumberRegions.DNAcopy extractCopyNumberRegions.profileCGH
-  extractRawCopyNumbers.DNAcopy extractRawCopyNumbers.HaarSeg
-  extractRawCopyNumbers.profileCGH
+  stextSize.AromaMicroarrayDataFile stringTree stringTree.character
+  subsample subsample.BinnedScatter subset.AromaTabularBinaryFile
+  subset.BinnedScatter subtractBy subtractBy.RawGenomicSignals
+  summary.AromaTabularBinaryFile summary.RawGenomicSignals
+  text.ProbePositionEffects textSequence
+  textSequence.ProbePositionEffects TextUnitNamesFile updateData
+  updateData.AromaTabularBinaryFile updateDataColumn
+  updateDataColumn.AromaTabularBinaryFile updateGenotypes
+  updateGenotypes.AromaUnitGenotypeCallFile updateSequenceMatrix
+  updateSequenceMatrix.AromaCellSequenceFile updateSequences
+  updateSequences.AromaCellSequenceFile updateTargetStrands
+  updateTargetStrands.AromaCellSequenceFile uses uses.character
+  uses.Interface validate.AromaMicroarrayDataSet
+  validate.AromaUnitSignalBinarySet weightedMad weightedMean
+  whatDataType whatDataType.default writeFooter writeRawFooter
+  writeRawFooter.AromaTabularBinaryFile xMax xMax.RawGenomicSignals
+  xMin xMin.RawGenomicSignals xmlToList xmlToList.character xRange
+  xRange.RawGenomicSignals xSeq xSeq.RawGenomicSignals yellow.colors
+All user-level objects in a package should have documentation entries.
+ calculateAverageColumnAcrossFiles
+ calculateAverageColumnAcrossFiles.GenericTabularFileSet
+ lapplyInChunks lapplyInChunks.numeric splitInChunks
+ splitInChunks.numeric
+  allocate.AromaCellPositionFile AromaCellPositionFile
+  byChipType.AromaCellPositionFile getColumnNames.AromaCellPositionFile
+  getFilenameExtension.AromaCellPositionFile
+  isMissing.AromaCellPositionFile readPositions
+  readPositions.AromaCellPositionFile updatePositions
+  updatePositions.AromaCellPositionFile
+
+  addIncludes addIncludes.Explorer addIndexFile addIndexFile.Explorer
+  as.character.Explorer 
+  getAsteriskTags.Explorer getFullName.Explorer
+  getIncludePath getIncludePath.Explorer getMainPath
+  getMainPath.Explorer getNameOfInput
+  getNameOfInput.Explorer getParallelSafe getParallelSafe.Explorer
+  getPath.Explorer getReportPathPattern getReportPathPattern.Explorer
+  getRootPath.Explorer getSampleLayerPrefix
+  getSampleLayerPrefix.Explorer getSubname getSubname.Explorer
+  getTagsOfInput getTagsOfInput.Explorer
+  getTemplatePath getTemplatePath.Explorer 
+  setArrays
+  setParallelSafe setParallelSafe.Explorer setReportPathPattern
+  setReportPathPattern.Explorer setSubname setSubname.Explorer setup
+  setup.Explorer splitByReportPathPattern
+  splitByReportPathPattern.Explorer
+  getArraysOfInput getArraysOfInput.Explorer
+  extractRawAlleleBFractions.AromaUnitFracBCnBinaryFile
+  extractRawGenomicSignals.AromaUnitSignalBinaryFile
+  extractRawMirroredAlleleBFractions
+  extractRawMirroredAlleleBFractions.default
+  extractRawMirroredAlleleBFractions.RawAlleleBFractions
+ plot.RawMirroredAlleleBFractions RawMirroredAlleleBFractions
