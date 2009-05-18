@@ -242,7 +242,7 @@ setMethodS3("allocateFromUnitNamesFile", "AromaUnitSignalBinaryFile", function(s
   chipType <- getChipType(unf);
   nbrOfRows <- nbrOfUnits(unf);
   
-  allocate.AromaUnitSignalBinaryFile(static, ..., nbrOfRows=nbrOfRows, platform=platform, chipType=chipType);
+  allocate(static, ..., nbrOfRows=nbrOfRows, platform=platform, chipType=chipType);
 }, static=TRUE)
 
 
@@ -268,6 +268,9 @@ setMethodS3("getAromaUgpFile", "AromaUnitSignalBinaryFile", function(this, ..., 
 
 ############################################################################
 # HISTORY:
+# 2009-05-18
+# o BUG FIX: allocateFromUnitNamesFile() for AromaUnitSignalBinaryFile
+#   would not call generic allocate() but the one for this class.
 # 2009-05-17
 # o Added generic extractRawGenomicSignals() for AromaUnitSignalBinaryFile.
 # 2009-05-12

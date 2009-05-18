@@ -1,7 +1,7 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.7 [2009-05-17]
+Version: 1.0.7 [2009-05-18]
 o CLEAN UP: Moved all file set specific classes and methods to
   the new R.filesets package.
 o Added extractRawAlleleBFractions() for AromaUnitFracBCnBinaryFile.
@@ -20,6 +20,8 @@ o Moved the Explorer class and its support files under inst/ from
   aroma.affymetrix to aroma.core.
 o Moved the AromaCellPositionFile class from aroma.affymetrix 
   to aroma.core.
+o BUG FIX: allocateFromUnitNamesFile() for AromaUnitSignalBinaryFile
+  would not call generic allocate() but the one for this class.
 
 
 Version: 1.0.6 [2009-05-14]
