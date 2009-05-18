@@ -1,7 +1,7 @@
 Package: aroma.cn
 =================
 
-Version: 0.3.0x [2009-05-12]
+Version: 0.3.0x [2009-05-17]
 o ROBUSTNESS: Now all constructors report on unknown arguments.
 o ROBUSTNESS: Now MultiSourceCopyNumberNormalization first write
   normalized data to a temporary file, which is then renamed. This

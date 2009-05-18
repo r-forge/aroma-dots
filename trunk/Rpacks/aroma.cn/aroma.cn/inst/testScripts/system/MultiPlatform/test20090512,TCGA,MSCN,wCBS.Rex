@@ -58,6 +58,7 @@ print(dsList);
 
 sampleNames <- unlist(lapply(dsList, FUN=getNames), use.names=TRUE);
 sampleNames <- sort(unique(sampleNames));
+sampleNames <- "TCGA-02-0104-01Avs10A";
 cat("All sample names:\n");
 print(sampleNames);
 
@@ -87,7 +88,6 @@ srcCols <- gray(seq(from=0.3, to=0.8, length.out=5));
 xScale <- 1; # xScale <- 1e-6;	
 
   
-#sampleNames <- "TCGA-02-0104-01Avs10A";
 
 
 for (ii in seq(along=sampleNames)) {

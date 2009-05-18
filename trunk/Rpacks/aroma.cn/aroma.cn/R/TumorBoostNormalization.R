@@ -72,6 +72,13 @@ setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NUL
     } # for (jj ...)
   }
 
+  # Arguments '...':
+  args <- list(...);
+  if (length(args) > 0) {
+    argsStr <- paste(names(args), collapse=", ");
+    throw("Unknown arguments: ", argsStr);
+  }
+
   this <- extend(Object(...), "TumorBoostNormalization",
     .dsT = dsT,
     .dsN = dsN,
@@ -352,6 +359,9 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
 
 ############################################################################
 # HISTORY:
+# 2009-05-17
+# o Now the constructor of TumorBoostNormalization asserts that there are
+#   no stray arguments.
 # 2009-04-29
 # o Created.
 ############################################################################ 
