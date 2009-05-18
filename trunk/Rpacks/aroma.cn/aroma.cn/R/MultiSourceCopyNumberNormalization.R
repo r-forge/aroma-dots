@@ -122,8 +122,14 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
     targetDimension <- Arguments$getIndex(targetDimension, range=c(1, K));
   }
 
+  # Arguments '...':
+  args <- list(...);
+  if (length(args) > 0) {
+    argsStr <- paste(names(args), collapse=", ");
+    throw("Unknown arguments: ", argsStr);
+  }
 
-  extend(Object(...), "MultiSourceCopyNumberNormalization",
+  extend(Object(), "MultiSourceCopyNumberNormalization",
     .tags = tags,
     .dsList = dsList,
     .fitUgp = fitUgp,
@@ -1359,6 +1365,9 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 
 ###########################################################################
 # HISTORY:
+# 2009-05-17
+# o Now the constructor of MultiSourceCopyNumberNormalization asserts that
+#   there are no stray arguments.
 # 2009-05-06
 # o Now the 'alignByChromosome' is corrected using median estimates.
 # 2009-05-05
