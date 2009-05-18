@@ -1,7 +1,11 @@
 Package: aroma.core
 ===================
 
-Version: 1.0.7 [2009-05-16]
+Version: 1.0.7 [2009-05-17]
+o CLEAN UP: Moved all file set specific classes and methods to
+  the new R.filesets package.
+o Added extractRawAlleleBFractions() for AromaUnitFracBCnBinaryFile.
+o Added exportFracBDiffSet() for AromaUnitFracBCnBinarySet.
 o MEMORY OPTIMIZATION: Where ever possible/applicable, we now use
   Arguments$getNumerics(), which, in R utils v1.1.5 and new, corces
   to doubles only if the input is not already doubles.  This will 
@@ -12,7 +16,11 @@ o MEMORY OPTIMIZATION: Where ever possible/applicable, we now use
 o ROBUSTNESS: Now allocate() for AromaTabularBinaryFile first allocates
   a temporary file which is then renamed.  This makes the file allocation
   more atomic, and therefore less error prone to interrupts etc.
-  
+o Moved the Explorer class and its support files under inst/ from
+  aroma.affymetrix to aroma.core.
+o Moved the AromaCellPositionFile class from aroma.affymetrix 
+  to aroma.core.
+
 
 Version: 1.0.6 [2009-05-14]
 o Now binnedSmoothing() of RawGenomicSignals uses weighted estimates

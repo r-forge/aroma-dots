@@ -121,6 +121,80 @@ setMethodS3("extractMatrix", "AromaUnitSignalBinaryFile", function(this, units=N
 
 
 
+setMethodS3("extractRawGenomicSignals", "AromaUnitSignalBinaryFile", function(this, chromosome, range=NULL, units=NULL, ..., clazz=RawGenomicSignals, verbose=FALSE) {
+  # Argument 'units':
+  if (!is.null(units)) {
+    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(this)));
+    units <- sort(unique(units));
+  }
+
+  # Argument 'clazz':
+  if (!inherits(clazz, "Class")) {
+    throw("Argument 'clazz' is not a Class: ", class(clazz)[1]);
+  }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  } 
+
+
+  className <- getName(clazz);
+  verbose && enter(verbose, "Extracting ", className, " object");
+
+  name <- getFullName(this);
+  verbose && cat(verbose, "Name: ", name);
+
+  verbose && cat(verbose, "Chromosome: ", chromosome);
+  verbose && enter(verbose, "Identifying units on chromosome");
+  ugp <- getAromaUgpFile(this, ..., verbose=less(verbose,50));
+  verbose && print(verbose, ugp);
+  units2 <- getUnitsAt(ugp, chromosome=chromosome, range=range, ..., 
+                                            verbose=less(verbose,5));
+  verbose && cat(verbose, "Units:");
+  verbose && str(verbose, units2);
+
+  # Keeping only a subset of units?
+  if (!is.null(units)) {
+    verbose && enter(verbose, "Keeping only units of interest");
+    keep <- is.element(units2, units);
+    verbose && cat(verbose, "Keeping:");
+    verbose && summary(verbose, keep);
+    units2 <- units2[keep];
+    rm(keep);
+    verbose && cat(verbose, "Units:");
+    verbose && str(verbose, units);
+    verbose && exit(verbose);
+  }
+  units <- units2;
+  rm(units2);
+
+
+  verbose && cat(verbose, "Genomic positions:");
+  pos <- getPositions(ugp, units=units);
+  verbose && str(verbose, pos);  
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Extracting data");
+  y <- extractMatrix(this, units=units, drop=TRUE, verbose=less(verbose,5));
+  verbose && str(verbose, y);
+  res <- newInstance(clazz, y, x=pos, chromosome=chromosome, name=name);
+
+  # Add annotation data
+  res$platform <- getPlatform(this);
+  res$chipType <- getChipType(this);
+  res$fullname <- getFullName(this);
+
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  res;
+}, protected=TRUE)
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # BEGIN Interface API?
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -194,6 +268,8 @@ setMethodS3("getAromaUgpFile", "AromaUnitSignalBinaryFile", function(this, ..., 
 
 ############################################################################
 # HISTORY:
+# 2009-05-17
+# o Added generic extractRawGenomicSignals() for AromaUnitSignalBinaryFile.
 # 2009-05-12
 # o Removed getUnitNamesFile() from AromaUnitSignalBinaryFile.
 # 2009-02-12

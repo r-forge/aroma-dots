@@ -90,6 +90,7 @@ setMethodS3("exportTotalCnRatioSet", "AromaUnitTotalCnBinarySet", function(this,
   } else {
     ratioTag <- sprintf("log%dratio", logBase);
   }
+  typeTags <- paste(c(ratioTag, "total"), collapse=",");
 
   for (kk in seq(this)) {
     ce <- getFile(this, kk);
@@ -110,8 +111,8 @@ setMethodS3("exportTotalCnRatioSet", "AromaUnitTotalCnBinarySet", function(this,
 
     fullname <- getFullName(ce);
     fullname <- gsub(",(total|log2ratio)", "", fullname);
-    fullname <- paste(c(fullname, refTag, ratioTag), collapse=",");
-    filename <- sprintf("%s,total.asb", fullname);
+    fullname <- paste(c(fullname, refTag, typeTags), collapse=",");
+    filename <- sprintf("%s.asb", fullname);
     pathname <- file.path(outPath, filename);
     verbose && cat(verbose, "Pathname: ", pathname);
 
@@ -240,17 +241,20 @@ setMethodS3("exportTotalCnRatioSet", "AromaUnitTotalCnBinarySet", function(this,
 
 
   verbose && enter(verbose, "Setting up output data sets");
-  res <- AromaUnitTotalCnBinarySet$fromFiles(outPath);
+  pattern <- sprintf("%s.asb", typeTags);
+  res <- AromaUnitFracBCnBinarySet$fromFiles(outPath, pattern=pattern);
   verbose && exit(verbose);
 
   verbose && exit(verbose);
 
   invisible(res);
-}) # getTotalCnRatioSet()
+}) # exportTotalCnRatioSet()
 
 
 ############################################################################
 # HISTORY:
+# 2009-05-17
+# o BUG FIX: exportTotalCnRatioSet() would return any signal file.
 # 2009-02-22
 # o Updated exportTotalCnRatioSet() to take log2ratio files as well.
 # 2009-02-18

@@ -19,9 +19,9 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.core]{GenericDataFileSet}}\cr
+\code{~~+--}\code{\link[R.filesets]{GenericDataFileSet}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.core]{GenericTabularFileSet}}\cr
+\code{~~~~~~~+--}\code{\link[R.filesets]{GenericTabularFileSet}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{AromaTabularBinarySet}\cr
 
@@ -29,7 +29,7 @@
 \link[aroma.core]{AromaUnitCallSet}, \link[aroma.core]{AromaUnitFracBCnBinarySet}, \link[aroma.core]{AromaUnitGenotypeCallSet}, \link[aroma.core]{AromaUnitSignalBinarySet}, \link[aroma.core]{AromaUnitTotalCnBinarySet}\cr
 
 public static class \bold{AromaTabularBinarySet}\cr
-extends \link[aroma.core]{GenericTabularFileSet}\cr
+extends \link[R.filesets]{GenericTabularFileSet}\cr
 
 
 
@@ -41,7 +41,7 @@ extends \link[aroma.core]{GenericTabularFileSet}\cr
 
  \arguments{
    \item{files}{A \code{\link[base]{list}} of \code{\link{AromaTabularBinaryFile}}:s.}
-   \item{...}{Arguments passed to \code{\link{GenericDataFileSet}}.}
+   \item{...}{Arguments passed to \code{\link[R.filesets]{GenericDataFileSet}}.}
  }
 
  \section{Fields and Methods}{

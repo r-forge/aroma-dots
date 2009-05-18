@@ -68,8 +68,14 @@ setConstructorS3("RawGenomicSignals", function(y=NULL, x=NULL, w=NULL, chromosom
     chromosome <- Arguments$getIndex(chromosome);
   }
 
+  # Arguments '...':
+  args <- list(...);
+  if (length(args) > 0) {
+    argsStr <- paste(names(args), collapse=", ");
+    throw("Unknown arguments: ", argsStr);
+  } 
 
-  extend(Object(...), "RawGenomicSignals", 
+  extend(Object(), "RawGenomicSignals", 
     y = y,
     x = x,
     w = w,

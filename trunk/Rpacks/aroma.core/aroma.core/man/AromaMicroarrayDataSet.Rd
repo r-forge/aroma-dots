@@ -19,7 +19,7 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.core]{GenericDataFileSet}}\cr
+\code{~~+--}\code{\link[R.filesets]{GenericDataFileSet}}\cr
 \code{~~~~~~~|}\cr
 \code{~~~~~~~+--}\code{AromaMicroarrayDataSet}\cr
 
@@ -27,7 +27,7 @@
 \cr
 
 public static class \bold{AromaMicroarrayDataSet}\cr
-extends \link[aroma.core]{GenericDataFileSet}\cr
+extends \link[R.filesets]{GenericDataFileSet}\cr
 
 
 
@@ -39,7 +39,7 @@ extends \link[aroma.core]{GenericDataFileSet}\cr
 
  \arguments{
    \item{files}{A \code{\link[base]{list}} of \code{\link{AromaMicroarrayDataFile}}:s.}
-   \item{...}{Arguments passed to \code{\link{GenericDataFileSet}}.}
+   \item{...}{Arguments passed to \code{\link[R.filesets]{GenericDataFileSet}}.}
  }
 
  \section{Fields and Methods}{

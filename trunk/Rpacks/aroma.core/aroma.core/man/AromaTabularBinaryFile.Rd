@@ -19,17 +19,17 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.core]{GenericDataFile}}\cr
+\code{~~+--}\code{\link[R.filesets]{GenericDataFile}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.core]{GenericTabularFile}}\cr
+\code{~~~~~~~+--}\code{\link[R.filesets]{GenericTabularFile}}\cr
 \code{~~~~~~~~~~~~|}\cr
 \code{~~~~~~~~~~~~+--}\code{AromaTabularBinaryFile}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.core]{AromaCellSequenceFile}, \emph{\link[aroma.core]{AromaCellTabularBinaryFile}}, \emph{\link[aroma.core]{AromaMicroarrayTabularBinaryFile}}, \link[aroma.core]{AromaUgpFile}, \link[aroma.core]{AromaUnitCallFile}, \emph{\link[aroma.core]{AromaUnitChromosomeTabularBinaryFile}}, \link[aroma.core]{AromaUnitFracBCnBinaryFile}, \link[aroma.core]{AromaUnitGenotypeCallFile}, \link[aroma.core]{AromaUnitSignalBinaryFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}, \link[aroma.core]{AromaUnitTotalCnBinaryFile}\cr
+\link[aroma.core]{AromaCellPositionFile}, \link[aroma.core]{AromaCellSequenceFile}, \emph{\link[aroma.core]{AromaCellTabularBinaryFile}}, \emph{\link[aroma.core]{AromaMicroarrayTabularBinaryFile}}, \link[aroma.core]{AromaUgpFile}, \link[aroma.core]{AromaUnitCallFile}, \emph{\link[aroma.core]{AromaUnitChromosomeTabularBinaryFile}}, \link[aroma.core]{AromaUnitFracBCnBinaryFile}, \link[aroma.core]{AromaUnitGenotypeCallFile}, \link[aroma.core]{AromaUnitSignalBinaryFile}, \emph{\link[aroma.core]{AromaUnitTabularBinaryFile}}, \link[aroma.core]{AromaUnitTotalCnBinaryFile}\cr
 
 public static class \bold{AromaTabularBinaryFile}\cr
-extends \emph{\link[aroma.core]{GenericTabularFile}}\cr
+extends \emph{\link[R.filesets]{GenericTabularFile}}\cr
 
 
 
@@ -40,7 +40,7 @@ extends \emph{\link[aroma.core]{GenericTabularFile}}\cr
  \usage{AromaTabularBinaryFile(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link{GenericTabularFile}}.}
+   \item{...}{Arguments passed to \code{\link[R.filesets]{GenericTabularFile}}.}
  }
 
  \section{Fields and Methods}{
@@ -86,6 +86,6 @@ asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
  \seealso{
-   \code{\link{GenericDataFile}}.
+   \code{\link[R.filesets]{GenericDataFile}}.
  }
 \keyword{classes}
