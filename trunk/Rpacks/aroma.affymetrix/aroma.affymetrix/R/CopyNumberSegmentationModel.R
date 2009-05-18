@@ -27,6 +27,29 @@ setConstructorS3("CopyNumberSegmentationModel", function(...) {
 })
 
 
+setMethodS3("getAsteriskTags", "CopyNumberSegmentationModel", function(this, collapse=NULL, ..., tag=NULL) {
+  if (is.null(tag)) {
+    # Infer 'GLAD' from GladModel, 'CBS' from CbsModel, 'HAARSEG' 
+    # from HaarSegModel, and so on.
+    tag <- class(this)[1];
+    tag <- gsub("Model$", "", tag);
+    tag <- toupper(tag);
+  }
+
+  tags <- tag;
+
+  # Add class-specific tags
+  if (isPaired(this))
+    tags <- c(tags, "paired");
+
+  # Collapse?
+  tags <- paste(tags, collapse=collapse);
+
+  tags;
+}, protected=TRUE)
+
+
+
 setMethodS3("getTags", "CopyNumberSegmentationModel", function(this, collapse=NULL, ...) {
   tags <- getTags(getSetTuple(this), collapse=collapse, ...);
 
@@ -61,42 +84,7 @@ setMethodS3("getTags", "CopyNumberSegmentationModel", function(this, collapse=NU
 })
 
 
-
-
-###########################################################################/**
-# @RdocMethod fitOne
-#
-# @title "Fits the copy-number segmentation model for one chromosome in one sample"
-#
-# \description{
-#  @get "title".
-#
-#  \emph{This is an abstract method that has to be implemented in a subclass.}
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{data}{A @data.frame with columns \code{M} (log-ratio) and 
-#      \code{x} (locus position).
-#   }
-#   \item{chromosome}{An @integer specifying the index of the chromosome to
-#      be fitted.}
-#   \item{...}{Additional arguments passed down to the internal fit function.}
-#   \item{verbose}{See @see "R.utils::Verbose".}
-# }
-#
-# \value{
-#  Returns an object returned by internal fit function.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#*/###########################################################################
-setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
+setMethodS3("getFitFunction", "CopyNumberSegmentationModel", abstract=TRUE, protected=TRUE);
 
 
 
@@ -118,7 +106,8 @@ setMethodS3("fitOne", "CopyNumberSegmentationModel", abstract=TRUE);
 #     chromosomes to be considered.  If @NULL, all are processed.}
 #   \item{force}{If @FALSE, the model will not be fitted again if it was
 #     already fitted.}
-#   \item{...}{Additional arguments passed to @seemethod "fitOne".}
+#   \item{...}{Additional arguments passed to the segmentation method for
+#     the @see "aroma.core::RawGenomicSignals".}
 #   \item{.retResults}{If @TRUE, CBS fit structures are returned for each
 #     fitted array and chromosome.}
 #   \item{verbose}{A @logical or @see "R.utils::Verbose".}
@@ -184,6 +173,8 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   path <- getPath(this);
   mkdirs(path);
+
+  fitFcn <- getFitFunction(this, verbose=less(verbose, 50));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieving tuple of reference chip effects
@@ -290,12 +281,16 @@ setMethodS3("fit", "CopyNumberSegmentationModel", function(this, arrays=NULL, ch
                      chromosome=chr, ..., force=force, verbose=less(verbose));
         timers$read <- timers$read + (processTime() - tRead);
 
+        cn <- RawCopyNumbers(data[,"M"], x=data[,"x"], chromosome=chr);
+        verbose && print(verbose, cn);
+
 
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         # Fit segmentation model
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         tFit <- processTime();
-        fit <- fitOne(this, data=data, chromosome=chr, ..., verbose=less(verbose));
+        fit <- fitFcn(cn, ..., verbose=less(verbose, 1));
+        verbose && str(verbose, fit);
         timers$fit <- timers$fit + (processTime() - tFit);
         rm(data); # Not needed anymore
 
@@ -661,6 +656,12 @@ ylim <- c(-1,1);
 
 ##############################################################################
 # HISTORY:
+# 2009-05-16
+# o Added generic getAsteriskTags() for CopyNumberSegmentationModel.
+# o Classes extending CopyNumberSegmentationModel do no longer need to have
+#   a fitOne() method.  Instead, they need to implement a static 
+#   getFitFunction() which should return a segmentByNnn() function for the
+#   RawGenomicSignals class.
 # 2008-03-10
 # o Now verbose output of fit() reports the robust estimate of the log-ratios.
 # 2008-02-27

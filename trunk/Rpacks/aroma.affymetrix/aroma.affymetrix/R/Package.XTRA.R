@@ -41,6 +41,7 @@ setMethodS3("updateSettings", "Package", function(this, ...) {
 
   flat <- getLeaves(Options(settings));
   for (key in names(flat)) {
+    # aromaSettings? /HB 2009-05-17  ('settings' does not work)
     setOption(aromaSettings, key, flat[[key]]);
   }
 })

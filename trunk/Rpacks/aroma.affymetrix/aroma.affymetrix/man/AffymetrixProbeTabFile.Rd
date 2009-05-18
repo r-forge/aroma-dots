@@ -63,7 +63,7 @@ extends \emph{\link[aroma.core]{AromaPlatformInterface}}\cr
 
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform, getPlatform
+getAromaPlatform, getPlatform, getUnitNamesFile
 
  \bold{Methods inherited from TabularTextFile}:\cr
 as.character, getColumnNames, getHeader, getReadArguments, hasColumnHeader, nbrOfLines, nbrOfRows, readColumnNames, readColumns, readDataFrame, readLines, readRawHeader, writeColumnsToFiles

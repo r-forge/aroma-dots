@@ -52,174 +52,24 @@ setConstructorS3("HaarSegModel", function(cesTuple=NULL, ..., breaksFdrQ=0.0001)
 })
 
 
-setMethodS3("getAsteriskTags", "HaarSegModel", function(this, collapse=NULL, ...) {
-  tags <- "HAAR";
-
-  # Add class-specific tags
-  if (isPaired(this))
-    tags <- c(tags, "paired");
-
-  # Collapse?
-  tags <- paste(tags, collapse=collapse);
-
-  tags;
+setMethodS3("getAsteriskTags", "HaarSegModel", function(this, ...) {
+  NextMethod("getAsteriskTags", this, ..., tag="HAAR");
 }, protected=TRUE)
 
 
-setMethodS3("fitOne", "HaarSegModel", function(this, data, chromosome, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'verbose':
-  verbose <- Arguments$getVerbose(verbose);
-  if (verbose) {
-    pushState(verbose);
-    on.exit(popState(verbose));
-  }
-
-  verbose && enter(verbose, "Fitting HaarSeg");
-
-  args <- list(...);
-  keep <- (names(args) %in% names(formals(HaarSeg::haarSeg)));
-  fitArgs <- args[keep];
-
-  verbose && enter(verbose, "Setting up HaarSeg data structure");
-  nbrOfUnits <- nrow(data);
-  chipTypes <- getChipTypes(this);
-
-  verbose && enter(verbose, "Drop non-finite data points");
-  ok <- (is.finite(data[,"x"]) & is.finite(data[,"M"]));
-  verbose && cat(verbose, "Is finite:");
-  verbose && summary(verbose, ok);
-  data <- data[ok,,drop=FALSE];
-  rm(ok);
-  verbose && exit(verbose);
-
-  # Order data along chromosome
-  o <- order(data[,"x"]);
-  data <- data[o,,drop=FALSE];
-  rm(o);
-
-  # Setup arguments to HaarSeg::haarSeg()
-  args <- list(
-    I = data[,"M"],
-    breaksFdrQ = this$.breaksFdrQ
-  );
-  verbose && str(verbose, args);
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Calling HaarSeg::haarSeg()");
-  verbose && cat(verbose, "Chip types: ", paste(chipTypes, collapse=", "));
-  verbose && cat(verbose, "Total number of units: ", nbrOfUnits);
-  verbose && cat(verbose, "Additional arguments:");
-  verbose && str(verbose, fitArgs);
-  args <- c(args, fitArgs);
-  rm(fitArgs);
-
-  # Garbage collect
-  gc <- gc();
-  verbose && print(verbose, gc);
-
-  # segment() writes to stdout; capture it and send it to the verbose object.
-  verbose && cat(verbose, "Arguments to segmentation method:");
-  verbose && str(verbose, args);
-  verbose && enter(verbose, "Calling HaarSeg::haarSeg() function");
-  stdout <- capture.output({
-    fit <- do.call("haarSeg", args);
-  })
-  rm(args);
-  verbose && str(verbose, fit);
-  verbose && exit(verbose);
-  stdout <- paste(stdout, collapse="\n");
-  verbose && cat(verbose, stdout);
-
-  verbose && exit(verbose);
-
-  verbose && enter(verbose, "Setting up return HaarSeg object");
-  fit <- list(
-    output=fit, 
-    data=list(M=data[,"M"], x=data[,"x"], chromosome=chromosome)
-  );
-  class(fit) <- "HaarSeg";
-  rm(data);
-  verbose && exit(verbose);
-
-  verbose && exit(verbose);
-
-  fit;  
-}, private=TRUE) # fitOne()
-
-
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# HaarSeg class wrappers
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-setMethodS3("extractRawCopyNumbers", "HaarSeg", function(object, ...) {
-  data <- object$data;
-  RawCopyNumbers(cn=data$M, x=data$x, chromosome=data$chromosome);
-})
-
-
-setMethodS3("drawCnRegions", "HaarSeg", function(object, ...) {
-  output <- object$output;
-  regions <- output$SegmentsTable;
-  data <- object$data;
-  x <- data$x;
-
-  # Identify the locus indices where the regions starts and ends
-  starts <- regions[,1];
-  counts <- regions[,2];
-  ends <- starts+counts-1;
-
-  # Translate to genomic positions
-  starts <- x[starts];
-  ends <- x[ends];
-
-  # Get the mean levels of each region
-  means <- regions[,3];
-
-  nbrOfSegments <- length(means);
-  xx <- cbind(starts, ends);
-  yy <- cbind(means, means);
-  for (rr in 1:nrow(xx)) {
-    lines(x=xx[rr,], y=yy[rr,], ...);
-  };
-})
-
-
-
-setMethodS3("extractCopyNumberRegions", "HaarSeg", function(object, ...) {
-  output <- object$output;
-  regions <- output$SegmentsTable;
-  data <- object$data;
-  x <- data$x;
-
-  # Identify the locus indices where the regions starts and ends
-  starts <- regions[,1];
-  counts <- regions[,2];
-  ends <- starts+counts-1;
-
-  # Translate to genomic positions
-  starts <- x[starts];
-  ends <- x[ends];
-
-  # Get the mean levels of each region
-  means <- regions[,3];
-
-  CopyNumberRegions(
-    chromosome=data$chromosome,
-    start=starts, 
-    stop=ends, 
-    mean=means,
-    count=counts
-  );
-})
-
+setMethodS3("getFitFunction", "HaarSegModel", function(this, ...) {
+  segmentByHaarSeg;
+});
 
 
 ##############################################################################
 # HISTORY:
+# 2009-05-16
+# o Added getFitFunction().  Removed fitOne().
+# 2008-05-14
+# o Moved drawCnRegions(), extractCopyNumberRegions() and 
+#   extractRawCopyNumbers() for HaarSeg to aroma.core v1.0.6 (will
+#   eventually end up in aroma.cn).
 # 2008-01-26
 # o Reordered constructor arguments.
 # 2008-12-31

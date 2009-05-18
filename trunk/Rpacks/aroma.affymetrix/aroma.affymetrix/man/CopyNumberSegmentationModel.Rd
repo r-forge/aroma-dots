@@ -26,7 +26,7 @@
 \code{~~~~~~~~~~~~+--}\emph{\code{CopyNumberSegmentationModel}}\cr
 
 \bold{Directly known subclasses:}\cr
-\link[aroma.affymetrix]{CbsModel}, \link[aroma.affymetrix]{GladModel}, \link[aroma.affymetrix]{HaarSegModel}, \link[aroma.affymetrix]{ScpModel}\cr
+\link[aroma.affymetrix]{CbsModel}, \link[aroma.affymetrix]{GladModel}, \link[aroma.affymetrix]{HaarSegModel}\cr
 
 public abstract static class \bold{CopyNumberSegmentationModel}\cr
 extends \emph{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}\cr
@@ -47,7 +47,6 @@ extends \emph{\link[aroma.affymetrix]{CopyNumberChromosomalModel}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{\link[aroma.affymetrix:fit.CopyNumberSegmentationModel]{fit}} \tab Fits the model.\cr
- \tab \code{\link[aroma.affymetrix:fitOne.CopyNumberSegmentationModel]{fitOne}} \tab Fits the copy-number segmentation model for one chromosome in one sample.\cr
  \tab \code{getRegions} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
  \tab \code{migrateTool} \tab  -\cr

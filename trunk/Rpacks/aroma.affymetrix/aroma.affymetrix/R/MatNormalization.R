@@ -539,7 +539,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
                                               kk, getName(df), nbrOfArrays));
 
       mu <- X %*% fits[[kk]]$beta;
-      mu <- as.numeric(mu);
+      mu <- as.double(mu);
       verbose && str(verbose, mu);
 
       fullname <- getFullName(df);
@@ -594,7 +594,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
       ssvar <- sapply(ss, FUN=var);
       v <- ssvar[as.character(cuts)];
       r <- r / sqrt(v);
-      r <- as.numeric(r);
+      r <- as.double(r);
 
       #return(list(y=y,mu=mu,r=r))
 

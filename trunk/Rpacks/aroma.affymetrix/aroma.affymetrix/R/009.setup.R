@@ -2,12 +2,7 @@
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Patches
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Patch affxparser::findCdf()
-  .patchCdfMergeStrands();
-#  reassignInPackage("findFiles", "affxparser", findFiles.patch);
-#  reassignInPackage("findCdf", "affxparser", findCdf.patch);
-
-
+  # None at the moment.
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Customize affxparser

@@ -33,7 +33,7 @@ setConstructorS3("GenericReporter", function(tags="*", ...) {
   }
  
 
-  extend(Object(...), "GenericReporter",
+  extend(Object(), "GenericReporter",
     .alias = NULL,
     .tags = tags
   )

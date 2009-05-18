@@ -91,7 +91,7 @@ byChipType, getAromaUgpFile, getChipType, getPlatform, getUnitNames, indexOf, nb
 byChipType, byName, findByChipType, fromChipType, fromFile, getChipType, getHeader, getPlatform
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform, getPlatform
+getAromaPlatform, getPlatform, getUnitNamesFile
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY

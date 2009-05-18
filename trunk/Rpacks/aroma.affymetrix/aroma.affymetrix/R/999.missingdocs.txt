@@ -84,9 +84,8 @@
   createParamCdf.ChipEffectFile createParamCdf.FirmaFile decode
   decode.ParameterCelFile dim.DChipDcpFile display.ChromosomeExplorer
   doCRMA doCRMA.default drawCnRegions drawCnRegions.DNAcopy
-  drawCnRegions.profileCGH drawCytoband drawCytoband.ChromosomalModel
-  drawCytoband.default drawCytoband.profileCGH drawCytoband2
-  drawCytoband2.default drawExtraAnnotations
+  drawCnRegions.profileCGH  drawCytoband.ChromosomalModel
+  drawExtraAnnotations
   drawExtraAnnotations.default drawExtraAnnotations.profileCGH encode
   encode.ParameterCelFile estimateSds excludeChrXFromFit
   excludeChrXFromFit.DChipQuantileNormalization extractAffyBatch
@@ -122,7 +121,7 @@
   findUnitsTodo.QualityAssessmentFile findUnitsTodo.ResidualFile
   findUnitsTodo.ResidualSet findUnitsTodo.WeightsFile
   findUnitsTodo.WeightsSet fit fit.ChromosomalModel fitGlad
-  fitGlad.CnChipEffectSet fitOne fitOne.ScpModel fitOneChromosome
+  fitGlad.CnChipEffectSet  fitOneChromosome
   fitOneChromosome.SmoothMultiarrayModel fitPlasqUnit
   fitPlasqUnit.matrix fitQuantileNormFcn fixSearchPath
   fixSearchPath.AromaAffymetrix fromCdf fromCdf.AffymetrixProbeTabFile
@@ -800,22 +799,19 @@ fitCnProbes fitCnProbes.UnitModel
   getSignalTransform.LinearModelProbeSequenceNormalization
   predictOne.LinearModelProbeSequenceNormalization
 getDesignMatrix.LinearModelProbeSequenceNormalization
-  allocate.AromaCellPositionFile allocateFromCdf.AromaCellPositionFile
-  AromaCellPositionFile byChipType.AromaCellPositionFile
+   allocateFromCdf.AromaCellPositionFile
   extractTotalAndFreqB.CnChipEffectSet
-  getColumnNames.AromaCellPositionFile
-  getFilenameExtension.AromaCellPositionFile getListOfPriors
-  getListOfPriors.MultiArrayUnitModel isMissing.AromaCellPositionFile
+  getListOfPriors
+  getListOfPriors.MultiArrayUnitModel 
   plotAllelePairs plotAllelePairs.AllelicCrosstalkCalibration
-  readPositions readPositions.AromaCellPositionFile readPriorsByUnits
+  readPositions readPriorsByUnits
   readPriorsByUnits.MultiArrayUnitModel setListOfPriors
   setListOfPriors.MultiArrayUnitModel updatePositions
-  updatePositions.AromaCellPositionFile
 findUnitsTodo.AlleleSummation
 getZooms getZooms.ChromosomeExplorer setZooms
   setZooms.ChromosomeExplorer
   drawCnRegions.HaarSeg extractCopyNumberRegions.HaarSeg
-  extractRawCopyNumbers.HaarSeg fitOne.HaarSegModel
+  extractRawCopyNumbers.HaarSeg 
   getAsteriskTags.HaarSegModel getFit getFit.BasePositionNormalization
 getAromaCellPositionFile getAromaCellPositionFile.MatSmoothing
   getParameters.MatSmoothing isDone.MatSmoothing
@@ -919,3 +915,6 @@ getParameters.NormExpBgCorrection
  getUnitNamesFile.AromaPlatformInterface multiplyBy
  multiplyBy.RawGenomicSignals plot.RawAlleleBFractions subtractBy
  subtractBy.RawGenomicSignals
+ getFitFunction.CbsModel getFitFunction.CopyNumberSegmentationModel
+  getFitFunction.GladModel getFitFunction.HaarSegModel
+fitOne getAsteriskTags.CopyNumberSegmentationModel

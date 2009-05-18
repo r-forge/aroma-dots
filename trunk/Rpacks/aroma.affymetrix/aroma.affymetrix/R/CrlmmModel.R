@@ -512,7 +512,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     if (hasQuartets) {
       verbose && enter(verbose, "Updating sense & antisense genotype regions");
       eSet1 <- eSet[,1];
-      M <- oligo::getM(eSet1);
+      M <- getM(eSet1);  # From 'oligoClasses' (formely in 'oligo')
       dimnames(M) <- NULL;
       M <- M[,1,,drop=TRUE];
       oneStrand <- integer(nrow(M));
@@ -923,6 +923,9 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
 
 ############################################################################
 # HISTORY:
+# 2009-05-17
+# o BUG FIX: fit() for CrlmmModel was calling oligo::getM(), but that 
+#   method was later moved to oligoClasses.  Now we just do getM().
 # 2009-01-12
 # o Added calculateConfidenceScores().
 # 2009-01-10

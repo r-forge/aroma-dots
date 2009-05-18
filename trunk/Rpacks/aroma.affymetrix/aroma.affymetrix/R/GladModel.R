@@ -64,21 +64,9 @@ setConstructorS3("GladModel", function(cesTuple=NULL, ...) {
   extend(CopyNumberSegmentationModel(cesTuple=cesTuple, ...), "GladModel")
 })
 
-
-setMethodS3("getAsteriskTags", "GladModel", function(this, collapse=NULL, ...) {
-  tags <- "GLAD";
-
-  # Add class-specific tags
-  if (isPaired(this))
-    tags <- c(tags, "paired");
-
-  # Collapse?
-  tags <- paste(tags, collapse=collapse);
-
-  tags;
-}, protected=TRUE)
-
-
+setMethodS3("getFitFunction", "GladModel", function(this, ...) {
+  segmentByGLAD;
+});
 
 
 setMethodS3("writeRegions", "GladModel", function(this, arrays=NULL, format=c("xls", "wig"), digits=3, ..., oneFile=TRUE, skip=TRUE, verbose=FALSE) {
@@ -232,9 +220,10 @@ ylim <- c(-1,1);
 })
 
 
-
 ##############################################################################
 # HISTORY:
+# 2009-05-16
+# o Added getFitFunction().  Removed fitOne().
 # 2007-09-04
 # o Move plot() of GladModel to its own file.
 # 2007-08-20
