@@ -3,7 +3,7 @@ setMethodS3("findByCdf2", "default", function(chipType, tags=NULL, nbrOfUnits=NU
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Argument 'tags':
   if (!is.null(tags)) {

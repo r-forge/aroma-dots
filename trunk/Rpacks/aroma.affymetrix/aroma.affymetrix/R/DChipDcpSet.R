@@ -110,7 +110,7 @@ setMethodS3("findByName", "DChipDcpSet", function(static, name, tags=NULL, chipT
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'name':
-  name <- Arguments$getCharacter(name);
+  name <- Arguments$getCharacter(name, length=c(1,1));
   if (nchar(name) == 0) {
     throw("A ", class(static)[1], " must have a non-empty name: ''");
   }
@@ -163,7 +163,7 @@ setMethodS3("fromName", "DChipDcpSet", function(static, ...) {
 
 setMethodS3("byName", "DChipDcpSet", function(static, name, tags=NULL, chipType, paths=NULL, ...) {
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   suppressWarnings({
     path <- findByName(static, name, tags=tags, chipType=chipType, paths=paths, ...);

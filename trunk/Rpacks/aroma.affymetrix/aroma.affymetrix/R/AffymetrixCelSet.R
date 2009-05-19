@@ -446,7 +446,7 @@ setMethodS3("findByName", "AffymetrixCelSet", function(static, name, tags=NULL, 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'name':
-  name <- Arguments$getCharacter(name);
+  name <- Arguments$getCharacter(name, length=c(1,1));
   if (nchar(name) == 0) {
     throw("A ", class(static)[1], " must have a non-empty name: ''");
   }

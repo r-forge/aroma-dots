@@ -36,7 +36,7 @@ setMethodS3("writeWig", "CnChipEffectSet", function(this, reference=NULL, arrays
   gzip <- Arguments$getLogical(gzip);
 
   # Argument 'group':
-  group <- Arguments$getCharacter(group);
+  group <- Arguments$getCharacter(group, length=c(1,1));
 
   # Argument 'smoothingWindow':
   smoothingWindow <- Arguments$getInteger(smoothingWindow, range=c(0,16));

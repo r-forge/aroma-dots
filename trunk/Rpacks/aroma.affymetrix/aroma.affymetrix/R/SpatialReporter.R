@@ -98,7 +98,7 @@ setMethodS3("addColorMap", "SpatialReporter", function(this, colorMap, ...) {
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'colorMap':
-  colorMap <- Arguments$getCharacter(colorMap, nchar=c(1,Inf));
+  colorMap <- Arguments$getCharacter(colorMap, nchar=c(1,Inf), length=c(1,1));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Parser argument 'colorMap'

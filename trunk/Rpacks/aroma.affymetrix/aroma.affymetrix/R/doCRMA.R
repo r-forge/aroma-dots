@@ -25,7 +25,7 @@ setMethodS3("doCRMA", "default", function(dataSet, chipTypes=NULL, ..., logName=
     names(csRawList) <- chipTypes;
     dataSet <- getFullName(csRawList[[1]]);
   } else {
-    dataSet <- Arguments$getCharacter(dataSet);
+    dataSet <- Arguments$getCharacter(dataSet, length=c(1,1));
   }
 
   # Argument 'chipTypes':
@@ -57,9 +57,8 @@ setMethodS3("doCRMA", "default", function(dataSet, chipTypes=NULL, ..., logName=
   logPathname <- sprintf("%s,%s.log", logName, logDate);
   verbose && cat(verbose, "Log file: ", logPathname);
 
-  fileLog <- Verbose(con=logPathname, threshold=-50);
-  timestampOn(fileLog);
-  header(fileLog, "Log file created by doCRMA() in the aroma.affymetrix package");
+  fileLog <- Verbose(con=logPathname, threshold=-50, timestamp=TRUE);
+  fileLog && header(fileLog, "Log file created by doCRMA() in the aroma.affymetrix package");
 
 
   # Setup multi-verbose output

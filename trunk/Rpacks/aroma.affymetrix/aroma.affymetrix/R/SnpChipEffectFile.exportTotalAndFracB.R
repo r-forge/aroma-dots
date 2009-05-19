@@ -3,7 +3,7 @@ setMethodS3("exportTotalAndFracB", "SnpChipEffectFile", function(this, fields=c(
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Arguments 'fullname':
-  fullname <- Arguments$getCharacter(fullname);
+  fullname <- Arguments$getCharacter(fullname, length=c(1,1));
 
   # Argument 'field':
   fields <- match.arg(fields, several.ok=TRUE);
@@ -12,7 +12,7 @@ setMethodS3("exportTotalAndFracB", "SnpChipEffectFile", function(this, fields=c(
   if (is.null(dataSet)) {
     dataSet <- basename(getParent(getPath(this)));
   }
-  dataSet <- Arguments$getCharacter(dataSet);
+  dataSet <- Arguments$getCharacter(dataSet, length=c(1,1));
 
   # Arguments 'path':
   if (is.null(path)) {

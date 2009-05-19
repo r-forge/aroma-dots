@@ -100,7 +100,7 @@ setMethodS3("nbrOfCells", "DChipCdfBinFile", function(this, ...) {
 
 setMethodS3("findByChipType", "DChipCdfBinFile", function(this, chipType, tags=NULL, ...) {
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   fullname <- paste(c(chipType, tags), collapse=",");
   parts <- strsplit(fullname, split=",")[[1]];

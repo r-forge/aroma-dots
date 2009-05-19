@@ -125,7 +125,9 @@ setMethodS3("getAlias", "TransformReport", function(this, ...) {
 })
 
 setMethodS3("setAlias", "TransformReport", function(this, alias, ...) {
-  alias <- Arguments$getCharacter(alias, nchar=c(1,Inf));
+  if (!is.null(alias)) {
+    alias <- Arguments$getCharacter(alias, nchar=c(1,Inf), length=c(1,1));
+  }
   this$.alias <- alias;
 })
 

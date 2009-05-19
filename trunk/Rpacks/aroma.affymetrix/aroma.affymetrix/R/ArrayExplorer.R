@@ -234,6 +234,7 @@ setMethodS3("updateOnChipTypeJS", "ArrayExplorer", function(this, ..., verbose=F
 
   outPath <- mainPath;
   verbose && cat(verbose, "Output path: ", outPath);
+  outPath <- Arguments$getWritablePath(outPath);
 
   # For each SpatialReporters
   reporters <- getListOfReporters(this);
@@ -289,6 +290,7 @@ setMethodS3("updateOnLoadJS", "ArrayExplorer", function(this, ..., verbose=FALSE
 
   outPath <- mainPath;
   verbose && cat(verbose, "Output path: ", outPath);
+  outPath <- Arguments$getWritablePath(outPath);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Compile RSP file
@@ -421,6 +423,8 @@ setMethodS3("process", "ArrayExplorer", function(this, arrays=NULL, ..., verbose
 
 ##############################################################################
 # HISTORY:
+# 2009-05-19
+# o Now testing for file permissions for creating/writing/updating files/dirs.
 # 2009-01-26
 # o Removed getListOfCdfs() from ArrayExplorer.
 # 2008-08-19

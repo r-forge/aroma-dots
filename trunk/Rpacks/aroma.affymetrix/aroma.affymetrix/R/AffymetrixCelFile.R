@@ -50,11 +50,12 @@ setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
   if (!is.null(cdf))
     setCdf(this, cdf);
 
-  if (!is.null(this$.pathname)) {
+  pathname <- getPathname(this);
+  if (!is.null(pathname)) {
     # Make sure the name is non-empty
     name <- getName(this);
     if (nchar(name) == 0) {
-      throw("An ", class(this)[1], " must have a name of at least length one: ", this$.pathname);
+      throw("An ", class(this)[1], " must have a name of at least length one: ", pathname);
     }
 
     # Parse attributes (all subclasses must call this in the constructor).
@@ -346,7 +347,8 @@ setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ..., .checkArgs=T
 setMethodS3("getHeader", "AffymetrixCelFile", function(this, ...) {
   header <- this$.header;
   if (is.null(header)) {
-    header <- readCelHeader(this$.pathname);
+    pathname <- getPathname(this);
+    header <- readCelHeader(pathname);
     this$.header <- header;
   }
   header;
@@ -459,7 +461,7 @@ setMethodS3("getTimestamp", "AffymetrixCelFile", function(this, format="%m/%d/%y
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'format':
-  format <- Arguments$getCharacter(format);
+  format <- Arguments$getCharacter(format, length=c(1,1));
 
 
 
@@ -594,8 +596,9 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Retrieve data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  pathname <- getPathname(this);
   suppressWarnings({
-    res <- readCelUnits(this$.pathname, cdf=cdf, dropArrayDim=TRUE, ...);
+    res <- readCelUnits(pathname, cdf=cdf, dropArrayDim=TRUE, ...);
   })
 
   res;
@@ -633,7 +636,9 @@ setMethodS3("readUnits", "AffymetrixCelFile", function(this, units=NULL, cdf=NUL
 # @keyword IO
 #*/###########################################################################
 setMethodS3("updateUnits", "AffymetrixCelFile", function(this, data, ...) {
-  updateCelUnits(this$.pathname, data=data, ...);
+  pathname <- getPathname(this);
+  pathname <- Arguments$getWritablePathname(pathname);
+  updateCelUnits(pathname, data=data, ...);
 }, private=TRUE)
 
 
@@ -693,7 +698,13 @@ setMethodS3("clearData", "AffymetrixCelFile", function(this, fields=c("intensiti
   # Clear
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Clearing Affymetrix CEL file");
-  verbose && cat(verbose, "Fields to be cleared: ", paste(fields, collapse=", "));
+
+  # Asserting file permissions
+  pathname <- getPathname(this);
+  pathname <- Arguments$getWritablePathname(pathname);
+
+  verbose && cat(verbose, "Fields to be cleared: ", 
+                                             paste(fields, collapse=", "));
   bfr <- rep(value, length.out=nbrOfCells(this));
   intensities <- stdvs <- pixels <- NULL;
   if ("intensities" %in% fields)
@@ -702,7 +713,8 @@ setMethodS3("clearData", "AffymetrixCelFile", function(this, fields=c("intensiti
     stdvs <- bfr;
   if ("pixels" %in% fields)
     pixels <- bfr;
-  updateCel(getPathname(this), intensities=bfr, stdvs=bfr, pixels=bfr);
+
+  updateCel(pathname, intensities=bfr, stdvs=bfr, pixels=bfr);
   verbose && exit(verbose);
 
   invisible(fields);
@@ -802,8 +814,9 @@ setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fie
   }
 
   cVerbose <- -(as.numeric(verbose) + 50);
+  pathname <- getPathname(this);
   args <- list(
-    filename=this$.pathname, 
+    filename=pathname, 
     indices=indices, 
     readHeader=FALSE, 
     readIntensities=("intensities" %in% fields), 
@@ -874,7 +887,8 @@ setMethodS3("range", "AffymetrixCelFile", function(this, ..., na.rm=TRUE) {
 
 
 setMethodS3("readRawDataRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), fields=c("intensities", "stdvs", "pixels"), ..., drop=FALSE) {
-  data <- readCelRectangle(this$.pathname, xrange=xrange, yrange=yrange, readIntensities=("intensities" %in% fields), readStdvs=("stdvs" %in% fields), readPixels=("pixels" %in% fields), readHeader=FALSE, readOutliers=FALSE, readMasked=FALSE);
+  pathname <- getPathname(this);
+  data <- readCelRectangle(pathname, xrange=xrange, yrange=yrange, readIntensities=("intensities" %in% fields), readStdvs=("stdvs" %in% fields), readPixels=("pixels" %in% fields), readHeader=FALSE, readOutliers=FALSE, readMasked=FALSE);
 
   if (drop && length(data) == 1) {
     data <- data[[1]];
@@ -892,6 +906,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-19
+# o Now testing for file permissions before trying to update a CEL file.
+# o Using getPathname() instead of this$.pathname everywhere.
 # 2008-06-25
 # o BUG FIX: getChipType() of AffymetrixCelFile did not pass down '...'
 #   causing for instance getChipType(..., fullname=FALSE) to still return

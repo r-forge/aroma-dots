@@ -61,6 +61,7 @@ setConstructorS3("ChromosomalModel", function(cesTuple=NULL, tags="*", genome="H
  
 
   this <- extend(Object(), "ChromosomalModel",
+    .alias = NULL,
     .cesTuple = cesTuple,
     .chromosomes = NULL,
     .tags = tags,
@@ -429,7 +430,9 @@ setMethodS3("getAlias", "ChromosomalModel", function(this, ...) {
 
 setMethodS3("setAlias", "ChromosomalModel", function(this, alias=NULL, ...) {
   # Argument 'alias':
-  alias <- Arguments$getCharacter(alias);
+  if (!is.null(alias)) {
+    alias <- Arguments$getCharacter(alias, length=c(1,1));
+  }
   this$.alias <- alias;
   invisible(this);
 })
@@ -617,7 +620,7 @@ setMethodS3("setGenome", "ChromosomalModel", function(this, genome, tags=NULL, .
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'genome':
-  genome <- Arguments$getCharacter(genome);
+  genome <- Arguments$getCharacter(genome, length=c(1,1));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

@@ -310,7 +310,7 @@ setMethodS3("nbrOfSnps", "CnagCfhFile", function(this, ...) {
 
 setMethodS3("getTimestamp", "CnagCfhFile", function(this, format="%m/%d/%y %H:%M:%S", ...) {
   # Argument 'format':
-  format <- Arguments$getCharacter(format);
+  format <- Arguments$getCharacter(format, length=c(1,1));
 
   # Get the CEL v3 header of the CEL header
   header <- getHeader(this);

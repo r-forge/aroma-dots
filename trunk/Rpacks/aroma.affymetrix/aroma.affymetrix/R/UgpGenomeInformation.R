@@ -103,7 +103,7 @@ setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tag
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

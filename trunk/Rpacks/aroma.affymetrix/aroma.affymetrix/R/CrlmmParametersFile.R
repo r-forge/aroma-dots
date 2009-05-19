@@ -63,7 +63,7 @@ setMethodS3("readParameter", "CrlmmParametersFile", function(this, name, mode="c
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'name':
-  name <- Arguments$getCharacter(name);
+  name <- Arguments$getCharacter(name, length=c(1,1));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -91,7 +91,7 @@ setMethodS3("updateParameter", "CrlmmParametersFile", function(this, name, value
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'name':
-  name <- Arguments$getCharacter(name);
+  name <- Arguments$getCharacter(name, length=c(1,1));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
