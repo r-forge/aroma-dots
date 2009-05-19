@@ -415,6 +415,7 @@ setMethodS3("writeRawFooter", "AromaTabularBinaryFile", function(this, raw, con=
     pathname <- getPathname(this);
     # Sanity check
     stopifnot(isFile(pathname));
+    pathname <- Arguments$getWritablePathname(pathname);
     con <- file(pathname, open="r+b");
     verbose && cat(verbose, "Opened file ('r+b') to be close automatically");
     verbose && cat(verbose, "Pathname: ", pathname);
@@ -625,6 +626,7 @@ setMethodS3("updateDataColumn", "AromaTabularBinaryFile", function(this, rows=NU
       pathname <- getPathname(this);
       # Sanity check
       stopifnot(isFile(pathname));
+      pathname <- Arguments$getWritablePathname(pathname);
       con <- file(pathname, open="r+b");
       on.exit(close(con));
     }
@@ -783,6 +785,7 @@ setMethodS3("updateData", "AromaTabularBinaryFile", function(this, rows=NULL, co
   pathname <- getPathname(this);
   # Sanity check
   stopifnot(isFile(pathname));
+  pathname <- Arguments$getWritablePathname(pathname);
   con <- file(pathname, open="r+b");
   on.exit(close(con));
 
@@ -1298,6 +1301,10 @@ setMethodS3("importFrom", "AromaTabularBinaryFile", function(this, srcFile, ...)
 
 ############################################################################
 # HISTORY:
+# 2009-05-18
+# o All methods for modifying an existing file, are now calling
+#   Arguments$getWritablePathname() to assert that it exist and that
+#   the permissions allow it to be modified.
 # 2009-05-16
 # o ROBUSTNESS: Now allocate() for AromaTabularBinaryFile first allocates
 #   a temporary file which is then renamed.  This makes the file allocation

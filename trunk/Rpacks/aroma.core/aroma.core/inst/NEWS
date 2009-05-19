@@ -2,10 +2,14 @@ Package: aroma.core
 ===================
 
 Version: 1.0.7 [2009-05-18]
-o CLEAN UP: Moved all file set specific classes and methods to
-  the new R.filesets package.
 o Added extractRawAlleleBFractions() for AromaUnitFracBCnBinaryFile.
 o Added exportFracBDiffSet() for AromaUnitFracBCnBinarySet.
+o Moved the Explorer class and its support files under inst/ from
+  aroma.affymetrix to aroma.core.
+o Moved the AromaCellPositionFile class from aroma.affymetrix 
+  to aroma.core.
+o CLEAN UP: Moved all file set specific classes and methods to
+  the new R.filesets package.
 o MEMORY OPTIMIZATION: Where ever possible/applicable, we now use
   Arguments$getNumerics(), which, in R utils v1.1.5 and new, corces
   to doubles only if the input is not already doubles.  This will 
@@ -22,10 +26,9 @@ o ROBUSTNESS: Now indexOf() for UnitNamesFile assert that exactly one
 o ROBUSTNESS: Now all arguments that are expected to be exactly one
   character string (not an empty vector or a vector of length two)
   are asserted to be that too.  This closes some potential bugs.
-o Moved the Explorer class and its support files under inst/ from
-  aroma.affymetrix to aroma.core.
-o Moved the AromaCellPositionFile class from aroma.affymetrix 
-  to aroma.core.
+o EXCEPTION HANDLING: All methods that modifies an existing file, are 
+  now asserting that the file permissions allow modifying it, and if not
+  gives a clear error message that this is the case.
 o BUG FIX: allocateFromUnitNamesFile() for AromaUnitSignalBinaryFile
   would not call generic allocate() but the one for this class.
 o BUG FIX: extractMergedRawCopyNumbers(..., unshift=TRUE) would estimate
