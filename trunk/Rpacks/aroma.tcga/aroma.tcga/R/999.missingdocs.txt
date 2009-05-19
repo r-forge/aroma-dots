@@ -26,3 +26,6 @@ TcgaDccDownloader
   getCenterType getCenterType.TcgaDccDownloader getDataType
   getDataType.TcgaDccDownloader getPlatform.TcgaDccDownloader
   getTumorType getTumorType.TcgaDccDownloader
+  getHeader.MageTabDataMatrixFile
+  getReadArguments.MageTabDataMatrixFile MageTabDataMatrixFile
+  MageTabFile

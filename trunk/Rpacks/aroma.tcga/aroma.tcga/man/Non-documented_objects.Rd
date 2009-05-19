@@ -75,6 +75,10 @@
 \alias{getPlatform.TcgaDccDownloader}
 \alias{getTumorType}
 \alias{getTumorType.TcgaDccDownloader}
+\alias{getHeader.MageTabDataMatrixFile}
+\alias{getReadArguments.MageTabDataMatrixFile}
+\alias{MageTabDataMatrixFile}
+\alias{MageTabFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
