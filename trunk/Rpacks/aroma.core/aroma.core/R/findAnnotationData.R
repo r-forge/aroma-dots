@@ -39,10 +39,10 @@ setMethodS3("findAnnotationData", "default", function(name, tags=NULL, set, patt
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'name':
-  name <- Arguments$getCharacter(name);
+  name <- Arguments$getCharacter(name, length=c(1,1));
 
   # Argument 'set':
-  set <- Arguments$getCharacter(set);
+  set <- Arguments$getCharacter(set, length=c(1,1));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

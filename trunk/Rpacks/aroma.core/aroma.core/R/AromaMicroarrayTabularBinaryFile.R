@@ -125,7 +125,7 @@ setMethodS3("byChipType", "AromaMicroarrayTabularBinaryFile", function(static, c
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

@@ -44,7 +44,7 @@ setMethodS3("byChipType", "UnitNamesFile", function(static, chipType, tags=NULL,
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Argument 'nbrOfUnits':
   if (!is.null(nbrOfUnits)) {
@@ -157,12 +157,23 @@ setMethodS3("byChipType", "UnitNamesFile", function(static, chipType, tags=NULL,
 # @keyword IO
 #*/###########################################################################
 setMethodS3("indexOf", "UnitNamesFile", function(this, pattern=NULL, names=NULL, ...) {
-  if (!is.null(names)) {
-    idxs <- match(names, getUnitNames(this));
-  } else if (!is.null(pattern)) {
-    idxs <- grep(pattern, getUnitNames(this));
-  } else {
+  # Arguments 'pattern' & 'names':
+  if (!is.null(pattern) && !is.null(names)) {
+    throw("Only one of arguments 'pattern' and 'names' can be specified.");
+  }
+
+  if (is.null(pattern) && is.null(names)) {
     throw("Either argument 'names' or 'pattern' must be specified.");
+  }
+
+  if (!is.null(pattern)) {
+    if (length(pattern) != 0) {
+      throw("If specified, argument 'pattern' must be a single string. Did you mean to use argument 'names'?");
+    }
+    pattern <- Arguments$getRegularExpression(pattern);
+    idxs <- grep(pattern, getUnitNames(this));
+  } else if (!is.null(names)) {
+    idxs <- match(names, getUnitNames(this));
   }
 
   idxs;
@@ -187,6 +198,10 @@ setMethodS3("getAromaUgpFile", "UnitNamesFile", function(this, ..., validate=FAL
 
 ############################################################################
 # HISTORY:
+# 2009-05-18
+# o Now indexOf() for UnitNamesFile assert that exactly one of the 'pattern'
+#   and 'names' arguments is given.  It also gives an informative error
+#   message if 'pattern' is a vector.
 # 2009-02-10
 # o Added static byChipType() to UnitNamesFile.
 # o Added a sanity check to getAromaUgpFile() of UnitNamesFile,

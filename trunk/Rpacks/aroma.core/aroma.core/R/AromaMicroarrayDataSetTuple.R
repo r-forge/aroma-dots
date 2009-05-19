@@ -186,7 +186,7 @@ setMethodS3("getAlias", "AromaMicroarrayDataSetTuple", function(this, ...) {
 
 setMethodS3("setAlias", "AromaMicroarrayDataSetTuple", function(this, alias=NULL, ...) {
   # Argument 'alias':
-  alias <- Arguments$getCharacter(alias);
+  alias <- Arguments$getCharacter(alias, length=c(1,1));
   this$.alias <- alias;
   invisible(this);
 })
@@ -572,7 +572,7 @@ setMethodS3("getArrayTuple", "AromaMicroarrayDataSetTuple", function(this, array
   if (is.numeric(array)) {
     array <- Arguments$getIndex(array, range=c(1, nrow(arrayTable)));
   } else {
-    array <- Arguments$getCharacter(array);
+    array <- Arguments$getCharacter(array, length=c(1,1));
     arrayNames <- rownames(arrayTable);
     if (!array %in% arrayNames)
       throw("Argument 'array' refers to a non-existing array: ", array);

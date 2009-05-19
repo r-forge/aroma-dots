@@ -86,10 +86,10 @@ setMethodS3("nbrOfUnits", "AromaUnitSignalBinaryFile", function(this, ...) {
 
 setMethodS3("allocate", "AromaUnitSignalBinaryFile", function(static, ..., platform, chipType, types="double", sizes=4, signed=TRUE, footer=list()) {
   # Argument 'platform':
-  platform <- Arguments$getCharacter(platform);
+  platform <- Arguments$getCharacter(platform, length=c(1,1));
 
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Create tabular binary file
   res <- allocate.AromaTabularBinaryFile(static, generic="allocate", ...,

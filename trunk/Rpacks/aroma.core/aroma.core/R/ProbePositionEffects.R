@@ -403,7 +403,7 @@ setMethodS3("pointsSequence", "ProbePositionEffects", function(fit, seq, col=NUL
 
   # Argument 'seq':
   seq <- paste(seq, collapse="");
-  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2));
+  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2), length=c(1,1));
 
   if (is.null(col)) {
     col <- seq(length=ncol(rho));
@@ -428,7 +428,7 @@ setMethodS3("textSequence", "ProbePositionEffects", function(fit, seq, labels=NU
 
   # Argument 'seq':
   seq <- paste(seq, collapse="");
-  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2));
+  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2), length=c(1,1));
 
   if (is.null(labels)) {
     labels <- colnames(rho);
@@ -459,7 +459,7 @@ setMethodS3("barSequence", "ProbePositionEffects", function(fit, seq, col=NULL, 
 
   # Argument 'seq':
   seq <- paste(seq, collapse="");
-  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2));
+  seq <- Arguments$getCharacter(seq, nchar=rep(nrow(rho),2), length=c(1,1));
 
   if (is.null(col)) {
     col <- seq(length=ncol(rho));

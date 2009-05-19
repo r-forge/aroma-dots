@@ -311,5 +311,5 @@ All user-level objects in a package should have documentation entries.
   extractRawMirroredAlleleBFractions
   extractRawMirroredAlleleBFractions.default
   extractRawMirroredAlleleBFractions.RawAlleleBFractions
- plot.RawMirroredAlleleBFractions RawMirroredAlleleBFractions
+ plot.RawMirroredAlleleBFractions 
 exportFracBDiffSet exportFracBDiffSet.AromaUnitFracBCnBinarySet
