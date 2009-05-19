@@ -175,7 +175,7 @@ setMethodS3("getHeader", "AffymetrixCnChpFile", function(this, ...) {
 
 setMethodS3("getTimestamp", "AffymetrixCnChpFile", function(this, format="%a %b %d %H:%M:%S * %Y", ...) {
   # Argument 'format':
-  format <- Arguments$getCharacter(format); 
+  format <- Arguments$getCharacter(format, length=c(1,1)); 
 
   # Look up the chip type in the header
   params <- getHeader(this)$dataHeader$parameters;

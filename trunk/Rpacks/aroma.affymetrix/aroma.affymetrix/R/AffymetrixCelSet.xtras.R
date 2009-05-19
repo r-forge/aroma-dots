@@ -6,7 +6,7 @@ setMethodS3("createBlankSet", "AffymetrixCelSet", function(static, name, tags=NU
   }
 
   # Argument 'name':
-  name <- Arguments$getCharacter(name);
+  name <- Arguments$getCharacter(name, length=c(1,1));
 
   # Argument 'sampleNames':
   sampleNames <- Arguments$getCharacters(sampleNames);

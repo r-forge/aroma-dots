@@ -57,8 +57,9 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
   rootPath <- Arguments$getWritablePath(rootPath);
 
   # Argument 'name':
-  if (!is.null(name))
-    name <- Arguments$getCharacter(name, nchar=c(1,Inf));
+  if (!is.null(name)) {
+    name <- Arguments$getCharacter(name, nchar=c(1,Inf), length=c(1,1));
+  }
 
   # Argument 'tags':
 

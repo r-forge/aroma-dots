@@ -177,7 +177,7 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
   }
 
   # Argument 'chromosome':
-  chromosome <- Arguments$getCharacter(chromosome);
+  chromosome <- Arguments$getCharacter(chromosome);  # integer? /HB 2009-05-18
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

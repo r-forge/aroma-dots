@@ -3,7 +3,7 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
   require("R.utils") || throw("Package not loaded: R.utils");
 
   # Argument 'groupName':
-  groupName <- Arguments$getCharacter(groupName);
+  groupName <- Arguments$getCharacter(groupName, length=c(1,1));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Local functions
@@ -25,7 +25,7 @@ bpmapCluster2Cdf <- function(filename, cdfName, nProbes=30, gapDist=3000, rows=N
   filename <- Arguments$getReadablePathname(filename);
 
   # Argument 'cdfName':
-  cdfName <- Arguments$getCharacter(cdfName);
+  cdfName <- Arguments$getCharacter(cdfName, length=c(1,1));
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

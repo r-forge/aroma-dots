@@ -772,6 +772,7 @@ setMethodS3("updateDataFlat", "ChipEffectFile", function(this, data, ..., verbos
   keep <- (names %in% c("intensities", "stdvs", "pixels"));
   data <- data[,keep];
   pathname <- getPathname(this);
+  pathname <- Arguments$getWritablePathname(pathname);
   updateCel(pathname, indices=indices, data, verbose=verbose2);
   verbose && exit(verbose);
 
@@ -893,6 +894,8 @@ setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("thet
 
 ############################################################################
 # HISTORY:
+# 2009-05-19
+# o Now testing for file permissions for creat-/writ-/updating files/dirs.
 # 2008-07-20
 # o Updated the following methods to preallocate matrixes with the correct
 #   data type to avoid coercing later: getUnitGroupCellMap().

@@ -1,7 +1,7 @@
 setMethodS3("plotBoxplot", "ChipEffectSet", function(this, type, transform=NULL, ..., main=NULL, ylab=NULL) {
   # Argument 'type':
   # Further validation in 'boxplotStats()':
-  type <- Arguments$getCharacter(type);
+  type <- Arguments$getCharacter(type, length=c(1,1));
 
 
 

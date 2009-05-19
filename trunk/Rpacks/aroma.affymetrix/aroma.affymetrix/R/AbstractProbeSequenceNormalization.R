@@ -37,7 +37,7 @@ setConstructorS3("AbstractProbeSequenceNormalization", function(..., target=NULL
   # Argument 'target':
   if (is.null(target)) {
   } else {
-    target <- Arguments$getCharacter(target);
+    target <- Arguments$getCharacter(target, length=c(1,1));
     knowTargets <- c("zero");
     if (!target %in% knowTargets) {
       throw("The value of argument 'target' is unknown: ", target);

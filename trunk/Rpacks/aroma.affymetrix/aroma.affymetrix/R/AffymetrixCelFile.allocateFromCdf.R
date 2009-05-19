@@ -41,9 +41,9 @@ setMethodS3("allocateFromCdf", "AffymetrixCelFile", function(static, cdf, name, 
   } 
 
   # Argument 'name':
-  name <- Arguments$getCharacter(name, nchar=c(1,256));
+  name <- Arguments$getCharacter(name, nchar=c(1,256), length=c(1,1));
   name <- trim(name);
-  name <- Arguments$getCharacter(name, nchar=c(1,256));
+  name <- Arguments$getCharacter(name, nchar=c(1,256), length=c(1,1));
 
   # Argument 'tags':
   tags <- Arguments$getCharacters(tags);
@@ -56,7 +56,7 @@ setMethodS3("allocateFromCdf", "AffymetrixCelFile", function(static, cdf, name, 
   tags <- parts[-1];
 
   # Argument 'suffix':
-  suffix <- Arguments$getCharacter(suffix);
+  suffix <- Arguments$getCharacter(suffix, length=c(1,1));
 
   filename <- sprintf("%s%s", fullname, suffix);
 

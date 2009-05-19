@@ -342,8 +342,8 @@ setMethodS3("updateSamplesFile", "ChromosomeExplorer", function(this, ..., verbo
   verbose && cat(verbose, "Source: ", pathname);
   outFile <- gsub("[.]rsp$", "", basename(pathname));
   outPath <- parent2Path;
+  outPath <- Arguments$getWritablePath(outPath); 
   verbose && cat(verbose, "Output path: ", outPath);
-
 
   verbose && enter(verbose, "Scanning directories for available chip types");
   # Find all directories matching these
@@ -615,6 +615,8 @@ setMethodS3("writeGraphs", "ChromosomeExplorer", function(x, arrays=NULL, ...) {
   model <- getModel(this);
 
   path <- getPath(this);
+  path <- Arguments$getWritablePath(path); 
+
   plotband <- this$.plotCytoband;  # Plot cytoband?
   plot(model, path=path, imageFormat="png", plotband=plotband, arrays=arrays, ...);
 
@@ -647,7 +649,11 @@ setMethodS3("writeRegions", "ChromosomeExplorer", function(this, arrays=NULL, nb
 
   verbose && enter(verbose, "Writing CN regions");
 
-  dest <- filePath(getPath(this), "regions.xls");
+  path <- getPath(this);
+  path <- Arguments$getWritablePath(path); 
+
+  dest <- filePath(path, "regions.xls");
+  dest <- Arguments$getWritablePathname(dest); 
 
 
   # Extract and write regions
@@ -799,6 +805,8 @@ setMethodS3("display", "ChromosomeExplorer", function(this, filename="Chromosome
 
 ##############################################################################
 # HISTORY:
+# 2009-05-19
+# o Now testing for file permissions for creat-/writ-/updating files/dirs.
 # 2008-12-13
 # o Added argument 'zooms' to the constructor of ChromosomeExplorer.
 #   Added methods get- and setZooms().
