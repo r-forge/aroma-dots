@@ -1,13 +1,22 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.0.5 [2009-05-18]
+o Added MageTabFile and MageTabDataMatrixFile classes.
+
+
+Version: 0.0.4 [2009-04-18]
+
+
 Version: 0.0.3 [2009-04-16]
 o Added downloadFiles() to TcgaDccDownloader.
 o Added setLogin() to TcgaDccDownloader.
 o BUG FIX: Root path was tgcaData/ (not tcgaData/).
 
+
 Version: 0.0.2 [2009-04-13]
 o Now tested for both public and protected data set.
+
 
 Version: 0.0.1 [2009-04-07]
 o Created.
