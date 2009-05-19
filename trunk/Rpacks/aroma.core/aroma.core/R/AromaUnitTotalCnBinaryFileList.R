@@ -115,6 +115,7 @@ setMethodS3("extractMergedRawCopyNumbers", "AromaUnitTotalCnBinaryFileList", fun
     verbose && cat(verbose, "Bandwidth: ", bandwidth);
     # Estimate the noise level for each platform
     xRange <- sapply(cnList, FUN=xRange);
+    xRange <- range(xRange, na.rm=TRUE);
     xRangeStr <- paste(sprintf("%.2f", xRange/1e6), collapse=":");
     verbose && cat(verbose, "Range (Mb): ", xRangeStr);
     cnSList <- lapply(cnList, FUN=function(cn) {
@@ -215,6 +216,12 @@ setMethodS3("extractMergedRawCopyNumbers", "AromaUnitTotalCnBinaryFileList", fun
 
 ###########################################################################
 # HISTORY:
+# 2009-05-18
+# o BUG FIX: extractMergedRawCopyNumbers(..., unshift=TRUE) would estimate
+#   the relative shifts between platforms using smoothed CNs over the
+#   genomic region defined by the first data set.  Now it is done over the
+#   region defined by the union of all data sets.  The impact of this
+#   bug should be neglectable or zero.
 # 2009-05-12
 # o Added extractMergedRawCopyNumbers(), which will unshift CN profiles
 #   and estimate locus specific weights based on the noise levels of each

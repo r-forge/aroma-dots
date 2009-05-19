@@ -16,12 +16,23 @@ o MEMORY OPTIMIZATION: Where ever possible/applicable, we now use
 o ROBUSTNESS: Now allocate() for AromaTabularBinaryFile first allocates
   a temporary file which is then renamed.  This makes the file allocation
   more atomic, and therefore less error prone to interrupts etc.
+o ROBUSTNESS: Now indexOf() for UnitNamesFile assert that exactly one
+  of the 'pattern' and 'names' arguments is given.  It also gives an 
+  informative error message if 'pattern' is a vector.
+o ROBUSTNESS: Now all arguments that are expected to be exactly one
+  character string (not an empty vector or a vector of length two)
+  are asserted to be that too.  This closes some potential bugs.
 o Moved the Explorer class and its support files under inst/ from
   aroma.affymetrix to aroma.core.
 o Moved the AromaCellPositionFile class from aroma.affymetrix 
   to aroma.core.
 o BUG FIX: allocateFromUnitNamesFile() for AromaUnitSignalBinaryFile
   would not call generic allocate() but the one for this class.
+o BUG FIX: extractMergedRawCopyNumbers(..., unshift=TRUE) would estimate
+  the relative shifts between platforms using smoothed CNs over the
+  genomic region defined by the first data set.  Now it is done over the
+  region defined by the union of all data sets.  The impact of this
+  bug should be neglectable or zero.
 
 
 Version: 1.0.6 [2009-05-14]

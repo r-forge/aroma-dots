@@ -1,7 +1,7 @@
 setConstructorS3("TextUnitNamesFile", function(..., platform=NULL) {
   # Argument 'platform':
   if (!is.null(platform)) {
-    platform <- Arguments$getCharacter(platform);
+    platform <- Arguments$getCharacter(platform, length=c(1,1));
   }
 
   extend(TabularTextFile(...), c("TextUnitNamesFile", uses("UnitNamesFile")),

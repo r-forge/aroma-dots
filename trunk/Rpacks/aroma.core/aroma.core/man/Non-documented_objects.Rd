@@ -688,7 +688,8 @@
 \alias{extractRawMirroredAlleleBFractions.default}
 \alias{extractRawMirroredAlleleBFractions.RawAlleleBFractions}
 \alias{plot.RawMirroredAlleleBFractions}
-\alias{RawMirroredAlleleBFractions}
+\alias{exportFracBDiffSet}
+\alias{exportFracBDiffSet.AromaUnitFracBCnBinarySet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

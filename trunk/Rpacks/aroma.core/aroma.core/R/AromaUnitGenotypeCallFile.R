@@ -75,11 +75,11 @@ setMethodS3("extractGenotypeMatrix", "AromaUnitGenotypeCallFile", function(this,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'emptyValue':
   emptyValue <- match.arg(emptyValue);
-  emptyValue <- Arguments$getCharacter(emptyValue);
+  emptyValue <- Arguments$getCharacter(emptyValue, length=c(1,1));
 
   # Argument 'noCallValue':
   noCallValue <- match.arg(noCallValue);
-  noCallValue <- Arguments$getCharacter(noCallValue);
+  noCallValue <- Arguments$getCharacter(noCallValue, length=c(1,1));
 
   # Argument 'naValue':
   naValue <- naValue[1];

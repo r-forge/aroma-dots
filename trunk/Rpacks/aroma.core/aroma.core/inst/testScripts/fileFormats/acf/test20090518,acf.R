@@ -24,7 +24,15 @@ path <- file.path(rootPath, dataSet, chipType);
 
 kk <- 1;
 filename <- sprintf("foo%02d,genotypes.acf", kk);
-acf <- AromaUnitGenotypeCallFile$allocateFromUnitNamesFile(unf, filename=filename, path=path, overwrite=TRUE);
+acf <- AromaUnitGenotypeCallFile$allocateFromUnitNamesFile(unf, filename=filename, path=path, footer=list(comment="Hello world!"), overwrite=TRUE);
+print(acf);
+
+ftr <- readFooter(acf);
+str(ftr);
+ftr$comment2 <- "Hello moon!";
+print(ftr);
+
+writeFooter(acf, ftr);
 print(acf);
 
 
@@ -59,13 +67,9 @@ for (kk in seq(acs)) {
   pathname <- filePath(getPath(acf), filename);
   pathname <- Arguments$getWritablePathname(pathname, mustNotExist=FALSE);
 
-  if (isFile(pathname)) {
-    asf <- AromaUnitSignalBinaryFile(pathname);
-  } else {
-    asf <- AromaUnitSignalBinaryFile$allocateFromUnitNamesFile(unf, filename=pathname, types="double", size=4, signed=TRUE);
-    naValue <- as.integer(NA);
-    asf[,1] <- naValue;
-  }
+  asf <- AromaUnitSignalBinaryFile$allocateFromUnitNamesFile(unf, filename=pathname, types="double", size=4, signed=TRUE, footer=list(comment="Hello world!"), overwrite=TRUE);
+  naValue <- as.integer(NA);
+  asf[,1] <- naValue;
 }
 
 ass <- AromaUnitSignalBinarySet$byName(dataSet, chipType=chipType, pattern=",confidenceScores.acf$", paths=rootPath);

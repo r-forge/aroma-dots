@@ -152,10 +152,10 @@ setMethodS3("allocate", "AromaUnitChromosomeTabularBinaryFile", function(static,
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'platform':
-  platform <- Arguments$getCharacter(platform);
+  platform <- Arguments$getCharacter(platform, length=c(1,1));
 
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Argument 'footer':
   if (is.null(footer)) {

@@ -56,7 +56,7 @@ setMethodS3("byChipType", "AromaUnitTabularBinaryFile", function(static, chipTyp
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Argument 'nbrOfUnits':
   if (!is.null(nbrOfUnits)) {

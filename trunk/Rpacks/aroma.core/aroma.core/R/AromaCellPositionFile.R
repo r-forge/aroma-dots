@@ -38,7 +38,7 @@ setMethodS3("byChipType", "AromaCellPositionFile", function(static, chipType, ta
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Argument 'nbrOfCells':
   if (!is.null(nbrOfCells)) {
@@ -161,10 +161,10 @@ setMethodS3("allocate", "AromaCellPositionFile", function(static, ..., nbrOfCell
   nbrOfCells <- Arguments$getInteger(nbrOfCells, range=c(1, 1000e6));
 
   # Argument 'platform':
-  platform <- Arguments$getCharacter(platform);
+  platform <- Arguments$getCharacter(platform, length=c(1,1));
 
   # Argument 'chipType':
-  chipType <- Arguments$getCharacter(chipType);
+  chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
   # Argument 'footer':
   if (is.null(footer)) {
