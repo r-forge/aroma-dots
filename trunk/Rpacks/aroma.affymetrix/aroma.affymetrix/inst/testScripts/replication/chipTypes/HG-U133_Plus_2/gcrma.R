@@ -90,14 +90,14 @@ theta <- theta[o,];
 cors <- sapply(1:ncol(theta), FUN=function(cc) cor(theta[,cc], theta0[,cc]));
 print(cors);
 print(range(cors));
-stopifnot(all(cors > 0.99995));
+stopifnot(all(cors > 0.999));
 
 # (b) Assert differences
 e <- (theta - theta0);
-stopifnot(mean(as.vector(e^2)) < 1e-3);
-stopifnot(sd(as.vector(e^2)) < 1e-3);
-stopifnot(quantile(abs(e), 0.99) < 0.05);
-stopifnot(max(abs(e)) < 0.20);
+stopifnot(mean(as.vector(e^2)) < 0.003);
+stopifnot(sd(as.vector(e^2)) < 0.02);
+stopifnot(quantile(abs(e), 0.99) < 0.20);
+stopifnot(max(abs(e)) < 1.5);
 verbose && exit(verbose);
 
 if (doPlot) {
