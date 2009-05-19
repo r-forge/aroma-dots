@@ -329,7 +329,7 @@ setMethodS3("updateGenotypes", "AromaUnitGenotypeCallFile", function(this, units
 
 
 ############################################################################
-# HISTORY:
+# HISTORY:#
 # 2009-01-12
 # Added isHomozygote() and isHeterozygote().
 # 2009-01-10

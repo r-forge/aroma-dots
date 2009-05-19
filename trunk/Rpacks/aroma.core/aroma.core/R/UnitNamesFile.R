@@ -167,7 +167,7 @@ setMethodS3("indexOf", "UnitNamesFile", function(this, pattern=NULL, names=NULL,
   }
 
   if (!is.null(pattern)) {
-    if (length(pattern) != 0) {
+    if (length(pattern) != 1) {
       throw("If specified, argument 'pattern' must be a single string. Did you mean to use argument 'names'?");
     }
     pattern <- Arguments$getRegularExpression(pattern);
