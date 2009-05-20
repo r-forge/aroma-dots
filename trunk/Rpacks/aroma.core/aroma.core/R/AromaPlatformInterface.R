@@ -47,12 +47,14 @@ setMethodS3("getUnitNamesFile", "AromaPlatformInterface", function(this, force=F
 
   platform <- getPlatform(this);
   chipType <- getChipType(this, fullname=FALSE);
+  chipTypeF <- getChipType(this);
   nbrOfUnits <- nbrOfUnits(this);
 
   unf <- this$.unf;
   if (force || is.null(unf)) {
     verbose && enter(verbose, "Locating a UnitNamesFile");
     verbose && cat(verbose, "Platform: ", platform);
+    verbose && cat(verbose, "Chip type (fullname): ", chipTypeF);
     verbose && cat(verbose, "Chip type: ", chipType);
     verbose && cat(verbose, "Number of units: ", nbrOfUnits);
 
@@ -76,7 +78,7 @@ setMethodS3("getUnitNamesFile", "AromaPlatformInterface", function(this, force=F
     if (!is.null(aPlatform)) {
       verbose && enter(verbose, "Searching for UnitNamesFile");
       tryCatch({
-        unf <- getUnitNamesFile(aPlatform, chipType=chipType, 
+        unf <- getUnitNamesFile(aPlatform, chipType=chipTypeF, 
                         nbrOfUnits=nbrOfUnits, verbose=less(verbose,10));
         if (!isCompatibleWith(unf, this)) {
           unf <- NULL;
