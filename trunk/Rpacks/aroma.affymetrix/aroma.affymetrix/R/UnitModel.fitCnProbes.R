@@ -59,7 +59,20 @@ setMethodS3("fitCnProbes", "UnitModel", function(this, ..., verbose=FALSE) {
   shift <- params$shift;
 
   verbose && enter(verbose, "Identifying cell indices for CN units");
-  cells <- getCellIndices(cdf, units=units, useNames=FALSE, unlist=TRUE);
+  cells <- getCellIndices(cdf, units=units, useNames=FALSE);
+  cells <- sapply(cells, FUN=unlist, use.names=FALSE);
+  verbose && exit(verbose);
+
+  verbose && enter(verbose, "Keeping only single-cell units");
+  unitCellCounts <- sapply(cells, FUN=length);
+  keep <- whichVector(unitCellCounts == 1);
+  rm(unitCellCounts);
+  units <- units[keep];
+  verbose && cat(verbose, "Single-cell units:");
+  verbose && str(verbose, units);
+  cells <- cells[keep];
+  cells <- unlist(cells, use.names=FALSE);
+  verbose && cat(verbose, "Cell indices:");
   verbose && str(verbose, cells);
   # Sanity check
   if (length(cells) != length(units)) {
@@ -129,6 +142,11 @@ setMethodS3("fitCnProbes", "UnitModel", function(this, ..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2009-05-20
+# o Updated fitCnProbes() of UnitModel to identify single-cell CN units,
+#   and ignore multi-cell CN units, which will be process like the other
+#   units.  By not assuming single-cell CN units, this methods should also
+#   apply to other CDFs, e.g. the new Cytogenetics_Array.
 # 2008-12-01
 # o Now fitCnProbes() of UnitModel only fits non-fitted CN units.
 # 2008-09-05
