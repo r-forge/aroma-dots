@@ -310,7 +310,8 @@ setMethodS3("getPlatform", "AffymetrixCelSet", function(this, ...) {
 
 
 setMethodS3("getUnitNamesFile", "AffymetrixCelSet", function(this, ...) {
-  getUnitNamesFile(this$files[[1]], ...);
+  aFile <- getFile(this, 1);
+  getUnitNamesFile(aFile, ...);
 })
 
 

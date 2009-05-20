@@ -345,7 +345,11 @@ setMethodS3("getCdf", "AffymetrixProbeTabFile", function(this, ...) {
   cdf <- this$.cdf;
   if (is.null(cdf)) {
     chipType <- getChipType(this);
-    cdf <- AffymetrixCdfFile$byChipType(chipType, tags=".*");
+    cdf <- NULL;
+    tryCatch({
+      cdf <- AffymetrixCdfFile$byChipType(chipType, tags=".*");
+    }, error = function(ex) {});
+    cdf <- AffymetrixCdfFile$byChipType(chipType);
     this$.cdf <- cdf;
   }
   cdf;
@@ -693,6 +697,9 @@ setMethodS3("readSequenceDataFrame", "AffymetrixProbeTabFile", function(this, ..
 
 ############################################################################
 # HISTORY:
+# 2009-05-19
+# o BUG FIX: getCdf() for AffymetrixProbeTabFile would fail if the CDF
+#   had no tags.
 # 2009-05-09
 # o Added readSequenceDataFrame() for AffymetrixProbeTabFile.
 # o Renamed the 'probeSetId' column to 'unitName'.

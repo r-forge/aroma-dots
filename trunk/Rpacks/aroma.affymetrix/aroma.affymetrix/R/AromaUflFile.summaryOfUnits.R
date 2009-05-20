@@ -2,7 +2,7 @@ setMethodS3("summaryOfUnits", "AromaUflFile", function(this, enzymeLabels=paste(
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  cdf <- getCdf(this);
+  unf <- getUnitNamesFile(this);
   nbrOfEnzymes <- nbrOfEnzymes(this);
 
   # Argument 'enzymeLabels':
@@ -34,10 +34,11 @@ setMethodS3("summaryOfUnits", "AromaUflFile", function(this, enzymeLabels=paste(
   # Extract unit classes of interest
   patterns <- unitClasses;
   unitClasses <- lapply(patterns, FUN=function(pattern) {
-    indexOf(cdf, pattern);
+    indexOf(unf, pattern);
   })
   names(unitClasses) <- names(patterns);
-  unitClasses[["other"]] <- setdiff(1:nbrOfUnits(cdf), 
+  nbrOfUnits <- nbrOfUnits(unf);
+  unitClasses[["other"]] <- setdiff(1:nbrOfUnits, 
                               unlist(unitClasses, use.names=FALSE));
   verbose && exit(verbose);
  
@@ -105,6 +106,8 @@ setMethodS3("summaryOfUnits", "AromaUflFile", function(this, enzymeLabels=paste(
 
 ############################################################################
 # HISTORY:
+# 2009-05-20
+# o Updated to make use of getUnitNamesFile() instead of getCdf().
 # 2007-12-17
 # o Created.
 ############################################################################

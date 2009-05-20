@@ -338,7 +338,8 @@ setMethodS3("getCdf", "TransformReport", function(this, ...) {
 
 
 setMethodS3("getUnitNamesFile", "TransformReport", function(this, ...) { 
-  getUnitNamesFile(getOutputDataSet(this));
+  dsOut <- getOutputDataSet(this);
+  getUnitNamesFile(dsOut);
 })
 
 

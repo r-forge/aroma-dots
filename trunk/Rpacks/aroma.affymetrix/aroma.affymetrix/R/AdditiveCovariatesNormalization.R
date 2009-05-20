@@ -88,9 +88,9 @@ setConstructorS3("AdditiveCovariatesNormalization", function(dataSet=NULL, ..., 
     }
     extraTags <- c(extraTags, subsetToFit=subsetToFit);
   } else {
-    cdf <- getCdf(dataSet);
+    unf <- getUnitNamesFile(dataSet);
     subsetToFit <- Arguments$getIndices(subsetToFit, 
-                                        range=c(1, nbrOfUnits(cdf)));
+                                        range=c(1, nbrOfUnits(unf)));
     subsetToFit <- unique(subsetToFit);
     subsetToFit <- sort(subsetToFit);
   }
@@ -253,6 +253,7 @@ setMethodS3("getSubsetToFit", "AdditiveCovariatesNormalization", function(this, 
 
   # Get SNP information
   cdf <- getCdf(this);
+  nbrOfUnits <- nbrOfUnits(cdf);
 
   # Identify all SNP and CN units (==potential units to be fitted)
   verbose && enter(verbose, "Identifying SNPs and CN probes");
@@ -310,7 +311,7 @@ setMethodS3("getSubsetToFit", "AdditiveCovariatesNormalization", function(this, 
         verbose && str(verbose, subset);
   
         # The units to keep
-        subset <- setdiff(1:nbrOfUnits(cdf), subset);
+        subset <- setdiff(seq(length=nbrOfUnits), subset);
   
         verbose && cat(verbose, "Units to include: ");
         verbose && str(verbose, subset);
@@ -358,7 +359,7 @@ setMethodS3("getSubsetToFit", "AdditiveCovariatesNormalization", function(this, 
   units <- sort(units);
 
   # Assert correctness
-  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits));
 
   # Cache
   this$.units <- units;
@@ -635,8 +636,6 @@ setMethodS3("process", "AdditiveCovariatesNormalization", function(this, ..., fo
   verbose && enter(verbose, "Identifying SNP and CN units");
   # Get SNP & CN units
   cdf <- getCdf(ces);
-## OLD:
-##  subsetToUpdate <- indexOf(cdf, "^(SNP|CN)");
   types <- getUnitTypes(cdf, verbose=less(verbose,1));
   verbose && print(verbose, table(types));
   subsetToUpdate <- which(types == 2 | types == 5);
