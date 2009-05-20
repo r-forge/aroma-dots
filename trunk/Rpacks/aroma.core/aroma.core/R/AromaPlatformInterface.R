@@ -66,7 +66,7 @@ setMethodS3("getUnitNamesFile", "AromaPlatformInterface", function(this, force=F
     verbose && enter(verbose, "Alt #1: Using an AromaPlatform object");
 
     verbose && enter(verbose, "Locating AromaPlatform object");
-    platform <- NULL;
+    aPlatform <- NULL;
     tryCatch({
       aPlatform <- getAromaPlatform(this);
       verbose && print(verbose, aPlatform);
@@ -151,6 +151,9 @@ setMethodS3("getUnitNamesFile", "AromaPlatformInterface", function(this, force=F
 
 ############################################################################
 # HISTORY:
+# 2009-05-19
+# o Now getUnitNamesFile() searches using the fullname chip type.
+#   Not happy though with the current ad hoc setup.
 # 2009-05-11
 # o Added rather generic getUnitNamesFile() for AromaPlatformInterface.
 # 2008-06-12

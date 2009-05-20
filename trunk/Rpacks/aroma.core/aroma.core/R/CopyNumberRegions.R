@@ -64,6 +64,31 @@ setMethodS3("as.data.frame", "CopyNumberRegions", function(x, ...) {
   data;
 })
 
+setMethodS3("extractIGV", "CopyNumberRegions", function(this, ...) {
+  data <- as.data.frame(this, ...);
+  names <- colnames(data);
+  names <- gsub("chromosome", "Chromosome", names);
+  names <- gsub("start", "Start Position", names);
+  names <- gsub("stop", "End Position", names);
+  names <- gsub("count", "Num markers", names);
+  names <- gsub("mean", "Seg CN", names);
+  colnames(data) <- names;
+
+  # Append 'Sample' column
+  name <- this$name;
+  if (is.null(name)) {
+    name <- "<Unknown Sample>";
+  }
+  data <- cbind(Sample=name, data);
+
+  # Reorder for IGV
+  cols <- c("Sample", "Chromosome", "Start Position", 
+            "End Position", "Num markers", "Seg CN");
+  data <- data[,cols,drop=FALSE];
+
+  data;
+})
+
 
 setMethodS3("applyRows", "CopyNumberRegions", function(this, FUN, ...) {
   data <- as.data.frame(this);
