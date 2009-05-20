@@ -81,7 +81,7 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
   if (length(cc) == 0 || is.na(cc)) {
     throw("Failed to locate chromosome column.");
   }
-  map <- c(X=23, Y=24, MT=25, Z=25);
+  map <- c(X=23, Y=24, M=25, MT=25, Z=25);
   for (kk in seq(along=map)) {
     data[[cc]] <- gsub(names(map)[kk], map[kk], data[[cc]]);
   }
@@ -357,6 +357,9 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
 ############################################################################
 # HISTORY:
+# 2009-05-19
+# o Now readDataUnitChromosomePosition() for AffymetrixNetAffxCsvFile
+#   also recognize 'M' for chromosome 25.
 # 2008-09-15
 # o Now it is possible to specify enzyme names in argument 'enzymes' to
 #   readDataUnitFragmentLength().

@@ -2,6 +2,8 @@ Package: aroma.affymetrix
 =========================
 
 Version: 1.0.7x [2009-05-19]
+o Now readDataUnitChromosomePosition() for AffymetrixNetAffxCsvFile
+  also recognize 'M' for chromosome 25.
 o CLEAN UP: Moved the Explorer class and its support files under 
   inst/ from aroma.affymetrixd to aroma.core.
 o CLEAN UP: Moved the AromaCellPositionFile class from 
@@ -12,6 +14,8 @@ o EXCEPTION HANDLING: Methods that creates/modifies files will give
 o ROBUSTNESS: Now all arguments that are expected to be exactly one
   character string (not an empty vector or a vector of length two)
   are asserted to be that too.  This closes some potential bugs. 
+o BUG FIX: getCdf() for AffymetrixProbeTabFile would fail if the 
+  CDF had no tags.
 o BUG FIX: fit() for CrlmmModel was calling oligo::getM(), but that 
   method was later moved to oligoClasses.  Now we just do getM().
 o Package passes R CMD check on R v2.9.0.
