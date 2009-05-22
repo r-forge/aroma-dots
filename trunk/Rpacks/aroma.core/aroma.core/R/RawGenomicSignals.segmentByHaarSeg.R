@@ -34,7 +34,7 @@
 #
 # @keyword IO
 #*/########################################################################### 
-setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., force=FALSE, verbose=FALSE) {
+setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., cache=FALSE, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -216,10 +216,47 @@ setMethodS3("segmentByHaarSeg", "RawGenomicSignals", function(this, ..., force=F
   verbose && exit(verbose);
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Estimating aroma parameters
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Estimating aroma parameters");
+  # Estimate the standard deviation
+  sigma <- estimateStandardDeviation(this);
+
+  # Estimate the standard *error* for each segment
+  cnr <- extractCopyNumberRegions(fit);
+  cnrData <- as.data.frame(cnr);
+  regions <- as.matrix(cnrData[,c("start", "stop")]);
+  rm(cnr, cnrData);
+  x <- data$x;
+  y <- data$y;
+  naValue <- as.double(NA);
+  sigmas <- rep(naValue, length(means));
+  for (kk in seq(length=nrow(regions))) {
+    keep <- whichVector(regions[kk,1] < x & x <= regions[kk,2]);
+    t <- y[keep];
+    t <- diff(t);
+    t <- median(t, na.rm=TRUE)/sqrt(2);
+    sigmas[kk] <- t;
+  } # for (kk ...)
+  rm(x,y,t,keep);
+  aromaEstimates <- list(
+    stddevAll = sigma,
+    stddevRegions = sigmas
+  );
+  attr(fit, "aromaEstimates") <- aromaEstimates;
   verbose && exit(verbose);
 
-  # Saving cached results
-  saveCache(fit, key=key, dirs=dirs);
+  verbose && cat(verbose, "Results object:");
+  verbose && str(verbose, fit);
+
+
+  verbose && exit(verbose);
+
+  # Save cached results?
+  if (cache) {
+    saveCache(fit, key=key, dirs=dirs);
+  }
 
   verbose && exit(verbose);
 
