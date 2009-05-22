@@ -8,6 +8,10 @@ o Moved the Explorer class and its support files under inst/ from
   aroma.affymetrix to aroma.core.
 o Moved the AromaCellPositionFile class from aroma.affymetrix 
   to aroma.core.
+o ADDED: Now all segmentByNnn() for RawGenomicSignals also returns
+  so called 'aromaEstimates', which are additional parameter 
+  estimates, e.g. robust estimates of the standard deviation of
+  all full-resolution CNs as well as per identified region.
 o CLEAN UP: Moved all file set specific classes and methods to
   the new R.filesets package.
 o MEMORY OPTIMIZATION: Where ever possible/applicable, we now use
