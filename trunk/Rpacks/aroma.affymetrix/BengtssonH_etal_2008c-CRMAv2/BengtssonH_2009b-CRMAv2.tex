@@ -247,7 +247,7 @@ where $\ba_i = (a_{iA}, a_{iB})^T$ denotes the offset,
   \label{eqnACCii}
 \end{equation}
 is the crosstalk matrix, and $\beps_{ijk} = (\varepsilon_{ijkA}, \varepsilon_{ijkB})^T$ is noise.  
-\updated{In order to avoid biases in parameter estimates due aberrant copy numbers, this model is fitted based on signals from autosomal chromosomes only, or more generally to a subset $\mathcal{J^*}$ of loci that are likely to be copy neutral regardless of sample, i.e. signals from ChrX and ChrY as well as known CN polymorphic regions are excluded.}{REMOVED: The affine parameters in this model are estimated based on the subset $\mathcal{J^*}$ of loci that are likely to be copy neutral regardless of sample, i.e. ChrX and ChrY data are excluded. ADDED:}
+\updated{In order to avoid biases in parameter estimates due to aberrant copy numbers, this model is fitted based on signals from autosomal chromosomes only, or more generally to a subset $\mathcal{J^*}$ of loci that are likely to be copy neutral regardless of sample, i.e. signals from ChrX and ChrY as well as known CN polymorphic regions are excluded.}{REMOVED: The affine parameters in this model are estimated based on the subset $\mathcal{J^*}$ of loci that are likely to be copy neutral regardless of sample, i.e. ChrX and ChrY data are excluded. ADDED:}
 If some of the remaining loci are not copy neutral, we rely on robustness of the estimator to get unbiased estimates.
 Estimates of the true signals
 %% (up to a multiplicative constant) 
@@ -339,7 +339,7 @@ be the corresponding estimates for unit/probe $j$ in sample $i$.  If in future c
 %% As with the Affymetrix 500K assay, in the GWS assays DNA is digested using two different restriction enzymes (\NspI and \StyI).  The difference is that, after ligating with corresponding adaptors and PCR amplification, the PCR products are in latter assays combined, purified, post-fragmented, labeled and hybridized together to the same array. 
 Because fragments from two enzymes are hybridized to the same array for \GWS, some probes will match fragments originating from both restriction digestions.  See the Supplementary Notes for details on how many SNP and CN loci are exclusively on \NspI, on \StyI, and on both.
 %% For the \GWSSix chip type, out of the 931,306 SNPs, 523,573 (56.2\%) are on both fragments, 246,514 (26.5\%) only on NspI, and 161,219 (17.3\%) only StyI.  For the 945,806 CN loci, there are 494,615 (52.3\%) on both, 451,191 (47.7\%) on NspI alone, but none on StyI alone.
-For signals originating from only one of the digestions, we could, for each enzyme separately, apply the fragment-length normalization method proposed in \citet{BengtssonH_etal_2008}.  However, because a signal that originates from both digestions consists of one \NspI and one \StyI component, which each has been amplified differently, another method has to be used for such units.  For this reason, we modify \updated{the previous model}{REMOVED: the method in Bengtsson et al. (2008b) ADDED:} as described next. 
+For signals originating from only one of the digestions, we could, for each enzyme separately, apply the fragment-length normalization method proposed in \citet{BengtssonH_etal_2008}.  However, because a signal that originates from both digestions consists of one \NspI and one \StyI component, which each has been amplified differently, another method has to be used for such units.  For this reason, we modify \updated{our previous model}{REMOVED: the method in Bengtsson et al. (2008b) ADDED:} as described next. 
 
 First, assume that the number of fragments obtained from digesting with a particular enzyme is independent of locus $j$.  This assumption was implicit in \updated{CRMA~v1}{REMOVED: Bengtsson et al. (2008b) ADDED:}.
 %% We recognize that an enzyme might produce fragments in different proportions due to differences in recognition or adaptor sequences~\citet{Affymetrix_2007m}, but since we have found that it does not improve CRMA~v2.
@@ -490,7 +490,7 @@ Since CN5 uses only females (males) for the reference signals $\{\tilde\theta_{R
 For the tumor-normal data set, we selected one tumor-normal pair for which we identified a set of regions each containing a single CN change point.
 Data points in a 500kb region centered around each change point were excluded.  The remaining data points are annotated to belong to either the copy-neutral state or the copy-aberrant state.  Contrary to the evaluation on the normal data set, the true CN levels are not known except that they are either gains or losses.
 Next, for each CN region we use ROC analysis to assess how well the raw CNs separate between the neutral and the aberrant data points.  This evaluation is done on the full-resolution CNs as well as smoothed CNs, where the CNs are smoothed by using non-overlapping bins for which the average CNs is calculated.
-This approach was inspired by studies such as \citet{LaiW_etal_2005}, and \citet{WillenbrockFridlyand_2005}.
+This approach was inspired by studies such as \citet{LaiW_etal_2005}, \citet{WillenbrockFridlyand_2005}\updated{, as well as \citet{BengtssonH_etal_2009a}}{ADDED:}.
 
 
 
