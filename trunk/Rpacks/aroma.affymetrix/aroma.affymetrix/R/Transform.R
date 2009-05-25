@@ -85,7 +85,9 @@ setMethodS3("getOutputDataSet", "Transform", function(this, ..., verbose=FALSE) 
   res <- do.call("NextMethod", args);
 
   # Let the set update itself
-  update2(res, ..., verbose=less(verbose,1));
+  if (!is.null(res)) {
+    update2(res, ..., verbose=less(verbose,1));
+  }
 
   verbose && exit(verbose);
 
@@ -163,6 +165,10 @@ setMethodS3("getOutputDataSetOLD20090509", "Transform", function(this, ..., forc
 
 ############################################################################
 # HISTORY:
+# 2009-05-23
+# o Now getOutputDataSet() of Transform may return NULL if the output 
+#   data set is empty. Before it gave an error say update2() is not
+#   applicable.
 # 2009-05-09
 # o Updated getOutputDataSet() of Transform to work with the updated
 #   superclass AromaTransform.

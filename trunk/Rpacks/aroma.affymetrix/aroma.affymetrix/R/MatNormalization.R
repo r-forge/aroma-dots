@@ -217,9 +217,10 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ..., verbose=FALSE)
     verbose && enter(verbose, "Working on indices over range");
     from <- start+1;
     to <- min(start+cellsPerChunk, length(cellsToFit));
-    indSubset <- from:to;
+    indSubset <- (from:to);
     rng <- c(from, to);
-    verbose && cat(verbose, paste(rng/length(cellsToFit),sep=""));
+    rng <- rng / length(cellsToFit);
+    verbose && cat(verbose, sprintf("[%g,%g]", rng[1], rng[2]));
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Reading design matrix for this iteration");
@@ -283,10 +284,10 @@ setMethodS3("predictOne", "MatNormalization", function(this, fit, ..., verbose=F
     verbose && enter(verbose, "Working on indices over range");
     from <- start+1;
     to <- min(start+cellsPerChunk, length(cellsToPredict));
-    indSubset <- from:to;
+    indSubset <- (from:to);
     rng <- c(from, to);
-    # HB: cat(str(paste(...))) ?!?
-    verbose && cat(verbose, str(paste(round(rng/length(cellsToPredict),3), sep="")));
+    rng <- rng / length(cellsToPredict);
+    verbose && cat(verbose, sprintf("[%g,%g]", rng[1], rng[2]));
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Reading design matrix for this iteration");
@@ -515,9 +516,10 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
     verbose && enter(verbose, "Working on indices over range");
     from <- start+1;
     to <- min(start+cellsPerChunk, nbrOfCells);
-    indSubset <- from:to;
+    indSubset <- (from:to);
     rng <- c(from, to);
-    verbose && cat(verbose, paste(rng/nbrOfCells, sep=""));
+    rng <- rng / nbrOfCells;
+    verbose && cat(verbose, sprintf("[%g,%g]", rng[1], rng[2]));
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Set of cells");
@@ -622,6 +624,8 @@ setMethodS3("process", "MatNormalization", function(this, ..., force=FALSE, verb
 
 ############################################################################
 # HISTORY:
+# 2009-05-23 [HB]
+# o Updated some minor format mistakes in the verbose output.
 # 2008-11-28 [HB]
 # o Added protected getCrossProductXTX().  Still not used.
 # o Modified the first loop over chunks that calculated cross products such

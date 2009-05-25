@@ -918,3 +918,4 @@ getParameters.NormExpBgCorrection
  getFitFunction.CbsModel getFitFunction.CopyNumberSegmentationModel
   getFitFunction.GladModel getFitFunction.HaarSegModel
 fitOne getAsteriskTags.CopyNumberSegmentationModel
+getExpectedOutputFiles.MatSmoothing
