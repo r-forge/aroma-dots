@@ -532,9 +532,10 @@
 }
 
 @ARTICLE{AttiyehE_etal_2009,
-  author = {Edward F Attiyeh and Sharon J Diskin and Marc A Attiyeh and Yaël
-	P Mossé and Cuiping Hou and Eric M Jackson and Cecilia Kim and Joseph
-	Glessner and Hakon Hakonarson and Jaclyn A Biegel and John M Maris},
+  author = {Edward F Attiyeh and Sharon J Diskin and Marc A Attiyeh and Ya\"el
+	P Moss\'e and Cuiping Hou and Eric M Jackson and Cecilia Kim and
+	Joseph Glessner and Hakon Hakonarson and Jaclyn A Biegel and John
+	M Maris},
   title = {Genomic copy number determination in cancer cells from single nucleotide
 	polymorphism microarrays based on quantitative genotyping corrected
 	for aneuploidy.},
@@ -1515,40 +1516,45 @@
   issn = {1403-93xx}
 }
 
-@ARTICLE{BengtssonH_2009a,
+@ARTICLE{BengtssonH_etal_2009a,
   author = {Henrik Bengtsson and Amrita Ray and Paul Spellman and Terence P Speed},
   title = {A single-sample method for normalizing and combining full-resolution
 	copy numbers from multiple platforms, labs and analysis methods.},
   journal = {Bioinformatics},
   year = {2009},
-  month = {Feb},
-  abstract = {MOTIVATION: The rapid expansion ofwhole-genome copy-number (CN) studies
+  volume = {25},
+  pages = {861--867},
+  number = {7},
+  month = {Apr},
+  abstract = {MOTIVATION: The rapid expansion of whole-genome copy number (CN) studies
 	brings a demand for increased precision and resolution of CN estimates.
-	Recent studies have obtained CNestimates frommore than one platformon
-	the same samples, and it is natural to want to combine the different
-	estimates in order to meet this demand. Estimates from different
-	platforms show different degrees of attenuation of the true CN changes.
-	Similar differences can be observed in CNs from the same platformrun
-	in different labs, or in the same lab, with different analytical
-	methods. This is the reason why it is not straightforward to combine
-	CN estimates from different sources (platforms, labs, analysis methods).
-	RESULTS: We propose a single-sample multi-source normalization that
-	brings full-resolution CN estimates to the same scale across sources.
-	The normalized CNs are such that for any underlying CN level, their
-	mean level is the same regardless of source, which make them better
-	suited for being combined across sources, e.g. existing segmentation
-	methodsmay be used to identify aberrant regions.We use microarraybased
-	CN estimates from The Cancer Genome Atlas (TCGA) project to illustrate
-	and validate the method. We show that the normalized and combined
-	data better separate two CN states at a given resolution. We conclude
-	that it is possible to combine CNs from multiple sources such that
-	the resolution becomes effectively larger, and when multiple platforms
-	are combined, they also enhance the genome coverage by complementing
-	each other in different regions. AVAILABILITY: A bounded-memory implementation
-	is available in aroma.cn. CONTACT: hb@stat.berkeley.edu.},
+	Recent studies have obtained CN estimates from more than one platform
+	for the same set of samples, and it is natural to want to combine
+	the different estimates in order to meet this demand. Estimates from
+	different platforms show different degrees of attenuation of the
+	true CN changes. Similar differences can be observed in CNs from
+	the same platform run in different labs, or in the same lab, with
+	different analytical methods. This is the reason why it is not straightforward
+	to combine CN estimates from different sources (platforms, labs and
+	analysis methods). RESULTS: We propose a single-sample multi source
+	normalization that brings full-resolution CN estimates to the same
+	scale across sources. The normalized CNs are such that for any underlying
+	CN level, their mean level is the same regardless of the source,
+	which make them better suited for being combined across sources,
+	e.g. existing segmentation methods may be used to identify aberrant
+	regions. We use microarray-based CN estimates from 'The Cancer Genome
+	Atlas' (TCGA) project to illustrate and validate the method. We show
+	that the normalized and combined data better separate two CN states
+	at a given resolution. We conclude that it is possible to combine
+	CNs from multiple sources such that the resolution becomes effectively
+	larger, and when multiple platforms are combined, they also enhance
+	the genome coverage by complementing each other in different regions.
+	AVAILABILITY: A bounded-memory implementation is available in aroma.cn.},
   doi = {10.1093/bioinformatics/btp074},
   file = {:BengtssonH_etal_2009a-MSCN.pdf:PDF},
   institution = { Eliza Hall Institute of Medical Research, Parkville, Australia.},
+  keywords = {Algorithms; Gene Dosage; Genetic Variation; Genome, Human; Genomics,
+	methods; Humans; Neoplasms, genetics; MSCN},
   owner = {hb},
   pii = {btp074},
   pmid = {19193730},
@@ -2410,6 +2416,35 @@
   pmid = {16455750},
   timestamp = {2007.10.25},
   url = {http://dx.doi.org/10.1093/bioinformatics/btl035}
+}
+
+@TECHREPORT{BullardJ_etal_2008,
+  author = {James H. Bullard and Elizabeth A. Purdom and Kasper D. Hansen and
+	Steffen Durinck and Sandrine Dudoit},
+  title = {Statistical Inference in mRNA-Seq: Exploratory Data Analysis and
+	Differential Expression},
+  institution = {Division of Biostatistics, School of Public Health, University of
+	California, Berkeley},
+  year = {2009},
+  abstract = {The focus of this article is on the design and analysis of mRNA-Seq
+	experiments, with the aim of inferring transcript levels and identifying
+	differentially expressed genes. We investigate two mRNA-Seq datasets
+	obtained using Illumina's Genome Analyzer platform to measure transcript
+	levels in reference samples considered in the MicroArray Quality
+	Control (MAQC) Project. We address the following four main issues:
+	(1) exploratory data analysis for mapped reads, relating read counts
+	to variables describing input samples and genomic regions of interest;
+	(2) assessment and quantitation of biological effects (e.g., expression
+	levels in Brain vs. UHR) and nuisance experimental effects (e.g.,
+	library preparation, flow-cell, and lane effects); (3) evaluation
+	and comparison of methods for the identification of differentially
+	expressed genes; (4) impact of base-calling calibration method (phi
+	X vs. auto-calibration).},
+  file = {:BullardJ_etal_2008-Statistical Inference in {mRNA-Seq} - Exploratory
+	Data Analysis and Differential Expression.pdf:PDF},
+  keywords = {mRNA-Seq},
+  owner = {hb},
+  timestamp = {2009.05.20}
 }
 
 @MANUAL{BurleIndustries_1980,
@@ -7258,6 +7293,54 @@
   keywords = {Incidental parameters; Bayes; Nuisance parameters; Maximum likelihood}
 }
 
+@ARTICLE{LangdonW_etal_2009,
+  author = {William B Langdon and Graham J G Upton and Andrew P Harrison},
+  title = {Probes containing runs of guanines provide insights into the biophysics
+	and bioinformatics of {Affymetrix} {GeneChips}.},
+  journal = {Brief Bioinform},
+  year = {2009},
+  volume = {10},
+  pages = {259--277},
+  number = {3},
+  month = {May},
+  abstract = {The reliable interpretation of Affymetrix GeneChip data is a multi-faceted
+	problem. The interplay between biophysics, bioinformatics and mining
+	of GeneChip surveys is leading to new insights into how best to analyse
+	the data. Many of the molecular processes occurring on the surfaces
+	of GeneChips result from the high surface density of probes. Interactions
+	between neighbouring adjacent probes affect their rate and strength
+	of hybridization to targets. Competing targets may hybridize to the
+	same probe, and targets may partially bind to more than one probe.
+	The formation of these partial hybrids results in a number of probes
+	not reaching thermodynamic equilibrium during hybridization. Moreover,
+	some targets fold up, or cross-hybridize to other targets. Furthermore,
+	probes may fold and can undergo chemical saturation. There are also
+	sequence-dependent differences in the rates of target desorption
+	during the washing stage. Improvements in the mappings between probe
+	sequence and biological databases are leading to more accurate gene
+	expression profiles. Moreover, algorithms that combine the intensities
+	of multiple probes into single measures of expression are increasingly
+	dependent upon models of the hybridization processes occurring on
+	GeneChips. The large repositories of GeneChip data can be searched
+	for systematic effects across many experiments. This data mining
+	has led to the discovery of a family of thousands of probes, which
+	show correlated expression across thousands of GeneChip experiments.
+	These probes contain runs of guanines, suggesting that G-quadruplexes
+	are able to form on GeneChips. We discuss the impact of these structures
+	on the interpretation of data from GeneChip experiments.},
+  doi = {10.1093/bib/bbp018},
+  file = {:LangdonW_etal_2009-Probes containing runs of guanines provide insights
+	into the biophysics and bioinformatics of Affymetrix GeneChips.pdf:PDF},
+  institution = {Department of Mathematical Sciences and Department of Biological
+	Sciences, University of Essex, Wivenhoe Park, Colchester, Essex CO4
+	3SQ, UK.},
+  owner = {hb},
+  pii = {bbp018},
+  pmid = {19359259},
+  timestamp = {2009.04.23},
+  url = {http://dx.doi.org/10.1093/bib/bbp018}
+}
+
 @ARTICLE{LaurenP_2003,
   author = {Peter D Lauren},
   title = {Algorithm to model gene expression on {A}ffymetrix chips without
@@ -9646,6 +9729,52 @@
   timestamp = {2006.11.13}
 }
 
+@ARTICLE{PoundsS_etal_2009,
+  author = {Stan Pounds and Cheng Cheng and Charles Mullighan and Susana C Raimondi
+	and Sheila Shurtleff and James R Downing},
+  title = {Reference alignment of {SNP} microarray signals for copy number analysis
+	of tumors.},
+  journal = {Bioinformatics},
+  year = {2009},
+  volume = {25},
+  pages = {315--321},
+  number = {3},
+  month = {Feb},
+  abstract = {A new procedure to align single nucleotide polymorphism (SNP) microarray
+	signals for copy number analysis is proposed. For each individual
+	array, this reference alignment procedure (RAP) uses a set of selected
+	markers as internal references to direct the signal alignment. RAP
+	aligns the signals so that each array has a similar signal distribution
+	among its reference markers. An accompanying reference selection
+	algorithm (RSA) uses genotype calls and initial signal intensities
+	to choose two-copy markers as the internal references for each array.
+	After RSA and RAP are applied, each array has a similar distribution
+	of signals of two-copy markers so that across-array signal comparisons
+	are biologically meaningful. An upper bound for a statistical metric
+	of signal misalignment is derived and provides a theoretical basis
+	to choose RSA-RAP over other alignment procedures for copy number
+	analysis of cancers. In our study of acute lymphoblastic leukemia,
+	RSA-RAP gives copy number analysis results that show substantially
+	better concordance with cytogenetics than do two other alignment
+	procedures. AVAILABILITY: Documented R code is freely available from
+	www.stjuderesearch.org/depts/biostats/refnorm.},
+  doi = {10.1093/bioinformatics/btn624},
+  file = {:PoundsS_etal_2009-Reference alignment of SNP microarray signals for
+	copy number analysis of tumors.pdf:PDF;:PoundsS_etal_2009-SupplNotes.pdf:PDF},
+  institution = {Department of Biostatistics, St. Jude Children's Research Hospital,
+	262 Danny Thomas Place, Memphis, TN 38105, USA. stanley.pounds@stjude.org},
+  keywords = {Algorithms; Chromosome Aberrations; Cluster Analysis; Computational
+	Biology, methods; Gene Dosage; Humans; Neoplasms, genetics; Oligonucleotide
+	Array Sequence Analysis, methods; Polymorphism, Single Nucleotide,
+	genetics; Precursor Cell Lymphoblastic Leukemia-Lymphoma, genetics;
+	Sequence Alignment, methods; Tumor Markers, Biological, analysis/genetics},
+  owner = {hb},
+  pii = {btn624},
+  pmid = {19052058},
+  timestamp = {2009.04.15},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btn624}
+}
+
 @MANUAL{Probes2002,
   title = {The {H}andbook of {F}luorescent {P}robes and {R}esearch {P}roducts},
   author = {Molecular Probes},
@@ -11819,6 +11948,155 @@
   url = {http://dx.doi.org/10.1186/gb-2004-5-8-r59}
 }
 
+@ARTICLE{TaylorB_etal_2008,
+  author = {Barry S Taylor and Jordi Barretina and Nicholas D Socci and Penelope
+	Decarolis and Marc Ladanyi and Matthew Meyerson and Samuel Singer
+	and Chris Sander},
+  title = {Functional copy-number alterations in cancer.},
+  journal = {PLoS ONE},
+  year = {2008},
+  volume = {3},
+  pages = {e3179},
+  number = {9},
+  abstract = {Understanding the molecular basis of cancer requires characterization
+	of its genetic defects. DNA microarray technologies can provide detailed
+	raw data about chromosomal aberrations in tumor samples. Computational
+	analysis is needed (1) to deduce from raw array data actual amplification
+	or deletion events for chromosomal fragments and (2) to distinguish
+	causal chromosomal alterations from functionally neutral ones. We
+	present a comprehensive computational approach, RAE, designed to
+	robustly map chromosomal alterations in tumor samples and assess
+	their functional importance in cancer. To demonstrate the methodology,
+	we experimentally profile copy number changes in a clinically aggressive
+	subtype of soft-tissue sarcoma, pleomorphic liposarcoma, and computationally
+	derive a portrait of candidate oncogenic alterations and their target
+	genes. Many affected genes are known to be involved in sarcomagenesis;
+	others are novel, including mediators of adipocyte differentiation,
+	and may include valuable therapeutic targets. Taken together, we
+	present a statistically robust methodology applicable to high-resolution
+	genomic data to assess the extent and function of copy-number alterations
+	in cancer.},
+  doi = {10.1371/journal.pone.0003179},
+  file = {User Manual:TaylorB_etal_2008-RAEv0.91,UserManual.pdf:PDF;:TaylorB_etal_2008-Functional
+	copy-number alterations in cancer.pdf:PDF},
+  institution = {Computational Biology Center, Memorial Sloan-Kettering Cancer Center,
+	New York, New York, United States of America. copy-number@cbio.mskcc.org},
+  keywords = {Chromosome Aberrations; Cluster Analysis; Gene Amplification; Gene
+	Dosage; Gene Expression Profiling; Gene Expression Regulation, Neoplastic;
+	Genome, Human; Genomics, methods; Humans; Models, Genetic; Models,
+	Statistical; Neoplasms, genetics; Phenotype; Poisson Distribution;
+	Polymorphism, Single Nucleotide, RAE},
+  owner = {hb},
+  pmid = {18784837},
+  timestamp = {2009.05.18},
+  url = {http://dx.doi.org/10.1371/journal.pone.0003179}
+}
+
+@MANUAL{TCGA_20090323,
+  title = {{TCGA Portal Data Access Matrix} - User's Guide v2.3},
+  author = {{TCGA Network}},
+  organization = {Center for Bioinformatics, National Cancer Institute},
+  edition = {Version 2.3},
+  month = {March 23},
+  year = {2009},
+  abstract = {This guide provides an overview of the Data Access Matrix. It explains
+	how to use the
+	
+	Matrix to select and download specific data sets that are of interest
+	to the researcher.},
+  file = {:TCGA_20090323-TCGA Portal Data Access Matrix - User's Guide v2.3.pdf:PDF},
+  owner = {hb},
+  timestamp = {2009.05.04},
+  url = {http://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/docs/tcga_DataAccessMatrix_UserGuide.pdf}
+}
+
+@MANUAL{TCGA_20080715,
+  title = {{TCGA Data Primer} - Version 1.0},
+  author = {{TCGA Network}},
+  organization = {Center for Bioinformatics, National Cancer Institute},
+  edition = {Version 1.0},
+  month = {July 15},
+  year = {2008},
+  abstract = {The Cancer Genome Atlas (TCGA), a three-year pilot project of the
+	National Cancer
+	
+	Institute and the National Human Genome Research Institute (NHGRI),
+	is a large-scale
+	
+	collaborative effort to understand the genomic changes that occur
+	in cancer. For more
+	
+	information, see http://cancergenome.nih.gov/dataportal/index.asp.
+	
+	
+	The goal of TCGA is to accelerate our understanding of the molecular
+	basis of cancer
+	
+	through the application of genome analysis technologies, including
+	large-scale genome
+	
+	sequencing. A better understanding of the molecular basis of cancer
+	will, in turn, lead to
+	
+	improvements in the diagnosis, treatment, and prevention of cancer.
+	
+	
+	This purpose of this TCGA Data Primer is to provide individual researchers
+	with a
+	
+	description of the TCGA data enterprise, that is, what kinds of data
+	are available, how
+	
+	the data is created and distributed, how the data is modeled and formatted,
+	how they
+	
+	can access that data, and how they can make use of the data.
+	
+	
+	TCGA data, which meets the highest standards for protection and respect
+	of the
+	
+	research participants, is made available through public databases
+	supported by the
+	
+	TCGA Data Portal, as well as through the NCI’s cancer Biomedical Informatics
+	Grid™
+	
+	(caBIG™) and the National Library of Medicine’s National Center for
+	Biotechnology
+	
+	Information (NCBI).},
+  file = {:TCGA_20080715-Data Primer v1.0.pdf:PDF},
+  owner = {hb},
+  timestamp = {2009.05.04},
+  url = {http://tcga-data.nci.nih.gov/docs/TCGA_Data_Primer.pdf}
+}
+
+@MANUAL{TCGA_20081113,
+  title = {{TCGA Data Center} Standard Operating Procedures for Preparation
+	and Transfer of Data to the {TCGA Data Coordinating Center}},
+  author = {{TCGA Network}},
+  organization = {Center for Bioinformatics, National Cancer Institute},
+  edition = {Version 1.9.2},
+  month = {November 13},
+  year = {2008},
+  note = {CM Document Control Number: 13154-046},
+  abstract = {This document provides TCGA data centers with standard operating procedures
+	for preparation and
+	
+	transfer of data to the TCGA Data Coordinating Center (DCC). The TCGA
+	Data Primer (http://tcgadata.
+	
+	nci.nih.gov/docs/TCGA_Data_Primer.pdf) provides a cohesive overview
+	of TCGA data
+	
+	organization, and distribution.},
+  file = {:TCGA_2008113-Data Center Standard Operating Procedures.pdf:PDF},
+  owner = {hb},
+  timestamp = {2009.05.04},
+  url = {http://tcga-data.nci.nih.gov/docs/TCGA_Data_Primer.pdf}
+}
+
 @ARTICLE{TCGA_2008c,
   author = {{TCGA Network}},
   title = {Comprehensive genomic characterization defines human glioblastoma
@@ -11852,7 +12130,7 @@
   doi = {10.1038/nature07385},
   file = {:TCGA_2008-Comprehensive genomic characterization defines human glioblastoma
 	genes and core pathways.pdf:PDF;Suppl. Mat.:TCGA_2008-SupplMaterials.pdf:PDF},
-  keywords = {TCGA},
+  keywords = {TCGA, GBM},
   owner = {hb},
   pii = {nature07385},
   pmid = {18772890},
@@ -12163,6 +12441,46 @@
 	optimizations - increasing spot accuracy and automated identification
 	of true microarray signals.pdf:PDF},
   publisher = {Oxford University Press}
+}
+
+@ARTICLE{TrapnellC_etal_2009,
+  author = {Cole Trapnell and Lior Pachter and Steven L Salzberg},
+  title = {{TopHat}: discovering splice junctions with {RNA}-Seq.},
+  journal = {Bioinformatics},
+  year = {2009},
+  volume = {25},
+  pages = {1105--1111},
+  number = {9},
+  month = {May},
+  abstract = {MOTIVATION: A new protocol for sequencing the messenger RNA in a cell,
+	known as RNA-Seq, generates millions of short sequence fragments
+	in a single run. These fragments, or 'reads', can be used to measure
+	levels of gene expression and to identify novel splice variants of
+	genes. However, current software for aligning RNA-Seq data to a genome
+	relies on known splice junctions and cannot identify novel ones.
+	TopHat is an efficient read-mapping algorithm designed to align reads
+	from an RNA-Seq experiment to a reference genome without relying
+	on known splice sites. RESULTS: We mapped the RNA-Seq reads from
+	a recent mammalian RNA-Seq experiment and recovered more than 72\%
+	of the splice junctions reported by the annotation-based software
+	from that study, along with nearly 20,000 previously unreported junctions.
+	The TopHat pipeline is much faster than previous systems, mapping
+	nearly 2.2 million reads per CPU hour, which is sufficient to process
+	an entire RNA-Seq experiment in less than a day on a standard desktop
+	computer. We describe several challenges unique to ab initio splice
+	site discovery from RNA-Seq reads that will require further algorithm
+	development. AVAILABILITY: TopHat is free, open-source software available
+	from http://tophat.cbcb.umd.edu. SUPPLEMENTARY INFORMATION: Supplementary
+	data are available at Bioinformatics online.},
+  doi = {10.1093/bioinformatics/btp120},
+  file = {:TrapnellC_etal_2009-TopHat - discovering splice junctions with RNA-Seq.pdf:PDF},
+  institution = {Center for Bioinformatics and Computational Biology, University of
+	Maryland, College Park, MD 20742, USA. cole@cs.umd.edu},
+  owner = {hb},
+  pii = {btp120},
+  pmid = {19289445},
+  timestamp = {2009.05.20},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btp120}
 }
 
 @TECHREPORT{TridgellPackerras_1996,
@@ -12672,6 +12990,52 @@
   url = {http://dx.doi.org/10.1038/nature06358}
 }
 
+@ARTICLE{WiedemeyerR_etal_2008,
+  author = {Ruprecht Wiedemeyer and Cameron Brennan and Timothy P Heffernan and
+	Yonghong Xiao and John Mahoney and Alexei Protopopov and Hongwu Zheng
+	and Graham Bignell and Frank Furnari and Webster K Cavenee and William
+	C Hahn and Koichi Ichimura and V. Peter Collins and Gerald C Chu
+	and Michael R Stratton and Keith L Ligon and P. Andrew Futreal and
+	Lynda Chin},
+  title = {Feedback circuit among INK4 tumor suppressors constrains human glioblastoma
+	development.},
+  journal = {Cancer Cell},
+  year = {2008},
+  volume = {13},
+  pages = {355--364},
+  number = {4},
+  month = {Apr},
+  abstract = {We have developed a nonheuristic genome topography scan (GTS) algorithm
+	to characterize the patterns of genomic alterations in human glioblastoma
+	(GBM), identifying frequent p18(INK4C) and p16(INK4A) codeletion.
+	Functional reconstitution of p18(INK4C) in GBM cells null for both
+	p16(INK4A) and p18(INK4C) resulted in impaired cell-cycle progression
+	and tumorigenic potential. Conversely, RNAi-mediated depletion of
+	p18(INK4C) in p16(INK4A)-deficient primary astrocytes or established
+	GBM cells enhanced tumorigenicity in vitro and in vivo. Furthermore,
+	acute suppression of p16(INK4A) in primary astrocytes induced a concomitant
+	increase in p18(INK4C). Together, these findings uncover a feedback
+	regulatory circuit in the astrocytic lineage and demonstrate a bona
+	fide tumor suppressor role for p18(INK4C) in human GBM wherein it
+	functions cooperatively with other INK4 family members to constrain
+	inappropriate proliferation.},
+  doi = {10.1016/j.ccr.2008.02.010},
+  file = {:WiedemeyerR_etal_2008-Feedback circuit among {INK4} tumor suppressors
+	constrains human glioblastoma development.pdf:PDF;Supplementary Materials:WiedemeyerR_etal_2008-SupplMaterials.pdf:PDF},
+  institution = {115, USA.},
+  keywords = {Animals; Astrocytes, pathology; Cell Line, Tumor; Cells, Cultured;
+	Cyclin-Dependent Kinase Inhibitor p16, metabolism; Cyclin-Dependent
+	Kinase Inhibitor p18, metabolism; Feedback, Biochemical; Gene Deletion;
+	Gene Dosage; Gene Expression Regulation, Neoplastic; Genome, Human;
+	Glioblastoma, genetics/metabolism/pathology; Humans; Mice; Up-Regulation,
+	genetics},
+  owner = {hb},
+  pii = {S1535-6108(08)00046-9},
+  pmid = {18394558},
+  timestamp = {2009.05.18},
+  url = {http://dx.doi.org/10.1016/j.ccr.2008.02.010}
+}
+
 @ARTICLE{WiggintonJ_etal_2005,
   author = {Janis E Wigginton and David J Cutler and Goncalo R Abecasis},
   title = {{A} note on exact tests of {H}ardy-{W}einberg equilibrium.},
@@ -13003,6 +13367,55 @@
   year = {2002},
   month = {apr},
   format = {I only got a paper copy from Matt. /HB 030108}
+}
+
+@ARTICLE{WuC_etal_2007,
+  author = {Chunlei Wu and Haitao Zhao and Keith Baggerly and Roberto Carta and
+	Li Zhang},
+  title = {Short oligonucleotide probes containing G-stacks display abnormal
+	binding affinity on Affymetrix microarrays.},
+  journal = {Bioinformatics},
+  year = {2007},
+  volume = {23},
+  pages = {2566--2572},
+  number = {19},
+  month = {Oct},
+  abstract = {MOTIVATION: In microarray experiments, probe design is critical to
+	the specific and accurate measurement of target concentrations. Current
+	designs select suitable probes through in silico scanning of transcriptome/genome
+	based on first principles. However, due to lack of tools, the observed
+	microarray data have not been used to assess the performance of individual
+	probes to provide feedback to improve future designs. RESULT: In
+	this study, we describe a probe performance assessment method based
+	on the concordance of the observed signals from probes that share
+	common targets. Using this method, we found that probes containing
+	multiple guanines in a row (G-stacks) have abnormal binding behavior
+	compared with other probes, both in gene expression assays and genotyping
+	assays using Affymetrix microarrays. These probes are less likely
+	to covary with other probes that interrogate the same genes. Moreover,
+	we found that these probes are much more likely to produce outliers
+	when fitting the observed signals according to the positional dependent
+	nearest neighbor model, which gives reasonable estimates of binding
+	affinity for most other probes. These results suggest that probes
+	containing G-stacks tend to have increased cross hybridization signals
+	and reduced target-specific hybridization signals, presumably due
+	to multiplex binding forming G-quartet structures. Our findings are
+	expected to be useful in microarray design and data analysis.},
+  doi = {10.1093/bioinformatics/btm271},
+  file = {:WuC_etal_2007-Short oligonucleotide probes containing G-stacks display
+	abnormal binding affinity on Affymetrix microarrays.pdf:PDF},
+  institution = {Genomic Institute of Novartis Research Foundation, 10675 John Jay
+	Hopkins Dr, San Diego, CA 92121, USA.},
+  keywords = {Affinity Labels; Algorithms; Base Sequence; Gene Targeting, methods;
+	In Situ Hybridization, methods; Molecular Sequence Data; Oligonucleotide
+	Array Sequence Analysis, instrumentation/methods; Oligonucleotide
+	Probes, genetics; Protein Binding; Sequence Alignment, methods; Sequence
+	Analysis, DNA, methods; Software},
+  owner = {hb},
+  pii = {btm271},
+  pmid = {17537749},
+  timestamp = {2009.04.24},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btm271}
 }
 
 @INPROCEEDINGS{WuIrizarry_2004,
