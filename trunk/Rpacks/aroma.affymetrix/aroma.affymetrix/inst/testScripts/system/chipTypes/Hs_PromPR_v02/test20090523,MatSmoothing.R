@@ -22,18 +22,14 @@ csM <- process(mn, verbose=more(log, 30));
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Convert data set such that it maps to the "unique" CDF
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Get the "unique" CDF, which is generated if missing
-cdfU <- getUniqueCdf(cdf, verbose=more(log, 60));
-print(cdfU);
-
 csU <- convertToUnique(csM, verbose=log);
 print(csU);
 
-
-dm <- matrix(1, ncol=2);
-colnames(dm) <- sprintf("%s-%d", getNames(csU), 1:ncol(dm));
-ms <- MatSmoothing(csU, design=dm);
+dm <- matrix(1, nrow=nbrOfFiles(csU), ncol=3);
+rownames(dm) <- getNames(csU);
+colnames(dm) <- sprintf("MATSmoothingTest-%d", 1:ncol(dm));
+ms <- MatSmoothing(csU, design=dm, probeWindow=300, nProbes=10);
 print(ms);
 
-dsMS <- process(ms, verbose=verbose);
+dsMS <- process(ms, units=1:100, verbose=verbose);
 print(dsMS);
