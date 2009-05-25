@@ -37,24 +37,28 @@
 # @keyword programming
 #*/###########################################################################
 setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NULL, overwrite=FALSE, skip=!overwrite, version=c("4", "3"), methods=c("copy", "create"), clear=FALSE, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename' and 'path':
   pathname <- Arguments$getWritablePathname(filename, path=path);
 
   # Rename lower-case *.cel to *.CEL, if that is the case.  Old versions
   # of the package generated lower-case CEL files. /HB 2007-08-09
-  pathname <- AffymetrixFile$renameToUpperCaseExt(pathname); 
+  if (regexpr("[.]cel$", pathname) != -1) {
+    pathname <- AffymetrixFile$renameToUpperCaseExt(pathname); 
+  }
 
-  pathname <- Arguments$getWritablePathname(pathname, mustNotExist=(!overwrite && !skip));
+  pathname <- Arguments$getWritablePathname(pathname, 
+                                          mustNotExist=(!overwrite && !skip));
 
   # Argument 'version':
   version <- match.arg(version);
 
   # Argument 'methods':
   if (!all(methods %in% c("copy", "create"))) {
-    throw("Unknown value of argument 'methods': ", paste(methods, collapse=", "));
+    throw("Unknown value of argument 'methods': ", 
+                                              paste(methods, collapse=", "));
   }
 
   # Argument 'verbose':
@@ -111,7 +115,8 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
       }
 
       # 1. Create a temporary file    
-      res <- copyTo(this, filename=tmpPathname, path=NULL, verbose=less(verbose));
+      res <- copyTo(this, filename=tmpPathname, path=NULL, 
+                                             verbose=less(verbose));
 #      verbose && cat(verbose, "Temporary file:");
 #      verbose && print(verbose, res);
     

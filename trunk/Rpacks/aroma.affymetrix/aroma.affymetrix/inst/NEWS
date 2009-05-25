@@ -1,7 +1,21 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.7x [2009-05-20]
+Version: 1.0.8 [2009-05-23]
+o SPEED UP: Now process() of MatSmoothing skips already process 
+  output files.
+o ROBUSTNESS: Updated process() of MatSmoothing to write first to 
+  a temporary file which is then renamed.  This lower the risk for
+  corrupt output files due to processing interrupts.
+o ROBUSTNESS: Now the constructor of MatSmoothing does more tests
+  of the validity of the 'design' matrix argument.
+o Now the chip type validation of fromFiles() for AffymetrixCelSet
+  is aware of tags in the chip type of the CEL files. This may happen
+  if custom CDFs are used are their full chip types are stored in the
+  CEL files, e.g. Hs_PromPR_v02,Harvard,ROIs,unique.
+
+
+Version: 1.0.7 [2009-05-20]
 o Now readDataUnitChromosomePosition() for AffymetrixNetAffxCsvFile
   also recognize 'M' for chromosome 25.
 o GENERALIZATION: Updated fitCnProbes() of UnitModel to identify 

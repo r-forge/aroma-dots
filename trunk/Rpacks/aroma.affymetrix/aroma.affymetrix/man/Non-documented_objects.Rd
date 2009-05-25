@@ -1751,6 +1751,7 @@
 \alias{getFitFunction.HaarSegModel}
 \alias{fitOne}
 \alias{getAsteriskTags.CopyNumberSegmentationModel}
+\alias{getExpectedOutputFiles.MatSmoothing}
 
 \description{
   This page contains aliases for all "non-documented" objects that
