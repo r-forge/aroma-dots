@@ -1,6 +1,12 @@
 Package: aroma.core
 ===================
 
+Version: 1.0.8 [2009-05-25]
+o GENERALIZATION: The AromaTransforms class was generalized further
+  to handle cases where the number of output files does not map
+  one to one to the input files.
+
+
 Version: 1.0.7 [2009-05-18]
 o Added extractRawAlleleBFractions() for AromaUnitFracBCnBinaryFile.
 o Added exportFracBDiffSet() for AromaUnitFracBCnBinarySet.

@@ -221,12 +221,13 @@ setMethodS3("segmentByCBS", "RawGenomicSignals", function(this, ..., cache=FALSE
   cnr <- extractCopyNumberRegions(fit);
   cnrData <- as.data.frame(cnr);
   regions <- as.matrix(cnrData[,c("start", "stop")]);
+  nbrOfRegions <- nrow(regions);
   rm(cnr, cnrData);
   x <- data$x;
   y <- data$y;
   naValue <- as.double(NA);
-  sigmas <- rep(naValue, length(means));
-  for (kk in seq(length=nrow(regions))) {
+  sigmas <- rep(naValue, times=nbrOfRegions);
+  for (kk in seq(length=nbrOfRegions)) {
     keep <- whichVector(regions[kk,1] < x & x <= regions[kk,2]);
     t <- y[keep];
     t <- diff(t);

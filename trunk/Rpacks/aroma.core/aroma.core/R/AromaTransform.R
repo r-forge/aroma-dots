@@ -416,19 +416,36 @@ setMethodS3("isDone", "AromaTransform", function(this, ..., verbose=FALSE) {
 
   verbose && enter(verbose, "Checking if data set is \"done\"");
 
-  # Get input data set
-  ds <- getInputDataSet(this);
+  # Get expected output data files
+  filenames <- getExpectedOutputFiles(this, verbose=less(verbose, 25));
 
   # Scan for matching output files
   dsOut <- getOutputDataSet(this, incomplete=TRUE, ..., 
                                                     verbose=less(verbose,5));
   verbose && exit(verbose);
 
-  (nbrOfFiles(ds) == nbrOfFiles(dsOut));
+  (nbrOfFiles(dsOut) == length(filenames));
 })
 
 
+setMethodS3("getExpectedOutputFiles", "AromaTransform", function(this, ...) {
+  ds <- getInputDataSet(this);
+  pathnames <- getPathnames(ds);
+  basename(pathnames);
+}, protected=TRUE)
+
+
 setMethodS3("getOutputFiles", "AromaTransform", function(this, pattern=NULL, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
   # Argument 'pattern':
   if (is.null(pattern)) {
     # Default filename pattern find non-private (no dot prefix) files with
@@ -443,6 +460,64 @@ setMethodS3("getOutputFiles", "AromaTransform", function(this, pattern=NULL, ...
   outPath <- getPath(this);
   affxparser::findFiles(pattern=pattern, paths=outPath, firstOnly=FALSE);
 }, protected=TRUE)
+
+
+setMethodS3("getOutputDataSet0", "AromaTransform", function(this, pattern=NULL, className=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # Argument 'pattern':
+  if (!is.null(pattern)) {
+    pattern <- Arguments$getRegularExpression(pattern=pattern);
+  }
+
+
+  verbose && enter(verbose, "Retrieving existing set of output files");
+  ds <- getInputDataSet(this);
+  outPath <- getPath(this);
+  if (is.null(className)) {
+    className <- class(ds)[1];
+    verbose && cat(verbose, "Using the same class name as the input data set.");
+  }
+  verbose && enter(verbose, "Class: ", className);
+
+  path <- getPath(this);
+  verbose && cat(verbose, "Path: ", path);
+
+  if (is.null(pattern)) {
+    # Default filename pattern find non-private (no dot prefix) files with
+    # the same file name extension as the input data set.
+    df <- getFile(ds, 1);
+    fileExt <- gsub(".*[.]([^.]*)$", "\\1", getFilename(df));
+    fileExt <- c(fileExt, tolower(fileExt), toupper(fileExt));
+    fileExt <- sprintf("(%s)", paste(unique(fileExt), collapse="|"));
+    verbose && cat(verbose, "Expected file extensions: ", fileExt);
+    pattern <- sprintf("^[^.].*[.]%s$", fileExt);
+  }
+  verbose && cat(verbose, "Pattern: ", pattern);
+
+  verbose && enter(verbose, sprintf("Calling %s$forName()", className));
+  clazz <- Class$forName(className);
+  args <- list(path=path, pattern=pattern, ...);
+  verbose && str(verbose, args);
+  args$verbose <- less(verbose);
+  staticMethod <- clazz$fromFiles;
+  dsOut <- do.call("staticMethod", args=args);
+  rm(staticMethod, args); # Not needed anymore
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  dsOut;
+}, protected=TRUE)
+
 
 
 
@@ -476,17 +551,21 @@ setMethodS3("getOutputFiles", "AromaTransform", function(this, pattern=NULL, ...
 #   @seeclass
 # }
 #*/########################################################################### 
-setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., incomplete=FALSE, force=FALSE, verbose=FALSE) { 
+setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., incomplete=FALSE, className=NULL, force=FALSE, verbose=FALSE) { 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'className':
+  if (!is.null(className)) {
+    className <- Arguments$getCharacter(className);
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
   }
-
 
   verbose && enter(verbose, "Getting output data set for ", class(this)[1]);
 
@@ -498,36 +577,32 @@ setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., incomplete
     return(dsOut);
   }
 
-  verbose && enter(verbose, "Retrieving input data set");
-  ds <- getInputDataSet(this);
-  fullnames <- getFullNames(ds);
-  nbrOfFiles <- nbrOfFiles(ds);
+  verbose && enter(verbose, "Retrieving expected set of output files");
+  filenames <- getExpectedOutputFiles(this);
+  fullnames <- gsub("[.][^.]*$", "", filenames);
+  nbrOfFiles <- length(fullnames);
   verbose && exit(verbose);
 
   if (nbrOfFiles == 0) {
-    verbose && cat(verbose, "Input data set is empty: Output data set is NULL by definition.");
+    verbose && cat(verbose, "No output files are expected: Input data set could be empty.");
     verbose && exit(verbose);
     return(NULL);
   }
 
-  verbose && enter(verbose, "Retrieving all files for ", class(ds)[1], 
-                                                        " output data set");
-  path <- getPath(this);
-  verbose && cat(verbose, "Path: ", path);
 
-  clazz <- Class$forName(class(ds)[1]);
-  args <- list(path=path, ...);
-  args$verbose <- less(verbose);
-  staticMethod <- clazz$fromFiles;
-  dsOut <- do.call("staticMethod", args=args);
-  rm(staticMethod, args); # Not needed anymore
+  verbose && enter(verbose, "Retrieving all existing output files");
+  dsOut <- getOutputDataSet0(this, ..., verbose=less(verbose, 10));
+  verbose && print(verbose, dsOut);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Identifying matching input and output files");
+  verbose && cat(verbose, "Expected output fullnames:");
   verbose && str(verbose, fullnames);
   fullnamesOut <- getFullNames(dsOut);
+  verbose && cat(verbose, "Existing output fullnames:");
   verbose && str(verbose, fullnamesOut);
   idxs <- match(fullnames, fullnamesOut);
+  verbose && cat(verbose, "Indices of output files mapped to the expected ones:");
   verbose && str(verbose, idxs);
 
   if (anyMissing(idxs)) {
@@ -540,14 +615,14 @@ setMethodS3("getOutputDataSet", "AromaTransform", function(this, ..., incomplete
     verbose && exit(verbose);
   }
 
-  # Extracting matching files (in same order as input data set)
+  # Extracting matching files (in same order as the expected ones)
   dsOut <- extract(dsOut, idxs);
 
   verbose && exit(verbose);
 
 
   if (nbrOfFiles(dsOut) == nbrOfFiles) {
-    verbose && cat(verbose, "Output data set is complete (matches input data set)");
+    verbose && cat(verbose, "Output data set is complete (matches the expected data set)");
     # Sanity check
     stopifnot(identical(getFullNames(dsOut), fullnames));
     this$.outputDataSet <- dsOut;
@@ -607,6 +682,9 @@ setMethodS3("process", "AromaTransform", abstract=TRUE);
 
 ############################################################################
 # HISTORY:
+# 2009-05-25
+# o Added new getExpectedOutputFiles() and getOutputDataSet0() for 
+#   AromaTransform.
 # 2009-05-04
 # o Now getOutputDataSet() of AromaTransform returns a data set with files
 #   ordered such that the fullnames are ordered the same way as the input
