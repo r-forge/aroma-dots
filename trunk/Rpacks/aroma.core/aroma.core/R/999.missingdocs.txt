@@ -313,3 +313,6 @@ All user-level objects in a package should have documentation entries.
   extractRawMirroredAlleleBFractions.RawAlleleBFractions
  plot.RawMirroredAlleleBFractions 
 exportFracBDiffSet exportFracBDiffSet.AromaUnitFracBCnBinarySet
+ extractIGV extractIGV.CopyNumberRegions getExpectedOutputFiles
+  getExpectedOutputFiles.AromaTransform getOutputDataSet0
+  getOutputDataSet0.AromaTransform

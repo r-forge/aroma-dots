@@ -690,6 +690,12 @@
 \alias{plot.RawMirroredAlleleBFractions}
 \alias{exportFracBDiffSet}
 \alias{exportFracBDiffSet.AromaUnitFracBCnBinarySet}
+\alias{extractIGV}
+\alias{extractIGV.CopyNumberRegions}
+\alias{getExpectedOutputFiles}
+\alias{getExpectedOutputFiles.AromaTransform}
+\alias{getOutputDataSet0}
+\alias{getOutputDataSet0.AromaTransform}
 
 \description{
   This page contains aliases for all "non-documented" objects that
