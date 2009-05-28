@@ -308,7 +308,7 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
     o <- order(posM)  # calculate ordering
 	
     subsetInd <- seq(1,length(o), by=nc)
-	smoothedScore <- tmeanC(posM[o], dataMatrix[o], probeWindow=probeWindow, nProbes=nProbes, trim=meanTrim)
+	smoothedScore <- tmeanC(posM[o], dataMatrix[o], probeWindow=probeWindow, nProbes=nProbes*nc, trim=meanTrim)
 	
 	return(smoothedScore[subsetInd])
   }
