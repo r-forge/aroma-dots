@@ -11,9 +11,11 @@
 #
 # Data set:
 #  rawData/
-#   MNtest/
-#     Hs_PromPR_v02/
-#       TESTIP.CEL
+#    MATtest/
+#      Hs_PromPR_v02/
+#        Prec1_MeDNA_IP1.CEL
+#        Prec1_MeDNA_IP2.CEL
+#        Prec1_MeDNA_Input1.CEL
 #       TESTIP.bar.txt (estimates by MAT)
 ###########################################################################
 library("aroma.affymetrix");
@@ -23,12 +25,11 @@ log <- Arguments$getVerbose(-20, timestamp=TRUE);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup the tiling array data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cdf <- AffymetrixCdfFile$byChipType("Hs_PromPR_v02", tags="Harvard,ROIs");
+cdf <- AffymetrixCdfFile$byChipType("Hs_PromPR_v02");
 print(cdf);
 
-csR <- AffymetrixCelSet$byName("MNtest", cdf=cdf);
+csR <- AffymetrixCelSet$byName("MATtest", cdf=cdf);
 print(csR);
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Normalize the data using the MAT model
@@ -43,6 +44,27 @@ csM <- process(mn, verbose=more(log, 3));
 csU <- convertToUnique(csM, verbose=log);
 print(csU);
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Run 2 variations of MatSmoothing that will be compared to external estimates
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+require(limma);
+sampleNames <- getNames(csU);
+
+design1 <- makeContrasts(Prec1_MeDNA_IP1-Prec1_MeDNA_Input1,levels=sampleNames);
+colnames(design1) <- "Prec1_IP1_minus_Input";
+print(design1);
+
+ms1 <- MatSmoothing(csU, design=design1, probeWindow=600, tag="singleIP");
+csMS1 <- process(ms1, units=NULL,verbose=log);
+print(csMS1);
+
+design2 <- makeContrasts(Prec1_MeDNA_IP1+Prec1_MeDNA_IP2-Prec1_MeDNA_Input1,levels=sampleNames)
+colnames(design2) <- "Prec1_IPs_minus_Input"
+
+ms2 <- MatSmoothing(csU, design=design1, probeWindow=800, tag="multipleIP")
+csMS2 <- process(ms2, units=NULL,verbose=log)
+print(csMS2);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Compare to external estimates
@@ -51,7 +73,7 @@ print(csU);
 cdf <- getCdf(csU);
 units <- indexOf(cdf, "^chr1F");
 cells <- getCellIndices(cdf, units=units, stratifyBy="pm", 
-                                            unlist=TRUE, useNames=FALSE); 
+                        unlist=TRUE, useNames=FALSE); 
 
 # Get the chromosomal positions of these cells
 acp <- AromaCellPositionFile$byChipType(getChipType(cdf));
@@ -62,34 +84,84 @@ o <- order(pos);
 pos <- pos[o];
 cells <- cells[o];
 
-# Extract the corresponding signals of the first array
+# Extract the corresponding signals of the first array for each test
 cf <- getFile(csU, 1);
-y <- extractMatrix(cf, cells=cells, drop=TRUE, verbose=log);
+normSampleName <- getName(cf)
+yN <- extractMatrix(cf, cells=cells, drop=TRUE, verbose=log);
 
+cf <- getFile(csMS1, 1);
+y1 <- extractMatrix(cf, cells=cells, drop=TRUE, verbose=log);
 
-# Load external estimates
-bar <- TabularTextFile("TESTIP.bar.txt", path=getPath(csR), 
-                   columnNames=c("chromosome", "position", "signal"));
-data <- readDataFrame(bar, colClasses=colClasses("cin"), nrow=435000);
+cf <- getFile(csMS2, 1);
+y2 <- extractMatrix(cf, cells=cells, drop=TRUE, verbose=log);
 
-# Extract the subset available in the aroma.affymetrix estimate
-data <- subset(data, chromosome == "chr1" & position %in% pos);
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Load external and compare normalized signals
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# file with normalized signals
+normFile <- "Prec1_MeDNA_600_IP1-Input.tsv"
 
-# Order by position
-o <- order(data$position);
+tsv <- TabularTextFile(filename=normFile, path=getPath(csR))
+data <- readDataFrame(tsv, colClasses=colClasses("cinn"), nrow=435000);
+data <- subset(data, Chr == "chr1" & Pos %in% pos);
+o <- order(data$Pos);
 data <- data[o,,drop=FALSE];
 
-# Extract the external estimates
-yB <- data$signal;
+col <- grep(normSampleName, getColumnNames(tsv))
+yNB <- data[,col,drop=TRUE]
 
 # Compare on the log2 scale
-y <- log2(y);
+yN <- log2(yN);
 
-stopifnot(length(yB) == length(y));
+plot(yN, yNB, pch=".");
 
-avgDiff <- mean(y-yB)^2;
-cat(sprintf("avgDiff: %f\n", avgDiff));
-
-plot(yB, y, pch=".");
-
+stopifnot(length(yN) == length(yNB));
+avgDiff <- mean( (yN-yNB)^2 )
+cat(avgDiff,"\n")
 stopifnot(avgDiff < 0.001);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Load external and compare smoothed normalized signals
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# files with native-MAT summarized signals
+summaryFiles <- c("Prec1_MeDNA_600_IP1-Input.bar.txt","Prec1_MeDNA_800_IPs-Input.bar.txt")
+
+dataList <- lapply(summaryFiles,FUN=function(u) {
+  bar <- TabularTextFile(u, path=getPath(csR), columnNames=c("chromosome", "position", "signal"));
+  data <- readDataFrame(bar, colClasses=colClasses("cin"), nrow=435000);
+
+  # Extract the subset available in the aroma.affymetrix estimate
+  data <- subset(data, chromosome == "chr1" & position %in% pos);
+
+  # Order by position
+  o <- order(data$position);
+  data <- data[o,,drop=FALSE];
+  
+  # Extract the external estimates
+  data$signal
+})
+
+# Compare on the log2 scale
+y1 <- log2(y1);
+y2 <- log2(y2);
+
+yList <- list(y1,y2)
+
+for(i in 1:length(yList)) {
+  y <- yList[[i]]
+  d <- dataList[[i]]
+  
+  stopifnot(length(y) == length(d));
+  plot(y, d, pch=".");
+  
+  # our CDF scores a few probes that the external data doesn't, external data has these as 0
+  w <- d != 0
+
+  avgDiff <- median( (y[w]-d[w])^2 )
+  cat(avgDiff,"\n")
+  stopifnot(avgDiff < 0.2);
+}
+
+
+sessionInfo()
