@@ -61,7 +61,7 @@ print(csMS1);
 design2 <- makeContrasts(Prec1_MeDNA_IP1+Prec1_MeDNA_IP2-Prec1_MeDNA_Input1,levels=sampleNames)
 colnames(design2) <- "Prec1_IPs_minus_Input"
 
-ms2 <- MatSmoothing(csU, design=design1, probeWindow=800, tag="multipleIP")
+ms2 <- MatSmoothing(csU, design=design2, probeWindow=800, tag="multipleIP")
 csMS2 <- process(ms2, units=NULL,verbose=log)
 print(csMS2);
 
@@ -116,7 +116,7 @@ yN <- log2(yN);
 plot(yN, yNB, pch=".");
 
 stopifnot(length(yN) == length(yNB));
-avgDiff <- mean( (yN-yNB)^2 )
+avgDiff <- median( (yN-yNB)^2 )
 cat(avgDiff,"\n")
 stopifnot(avgDiff < 0.001);
 
@@ -158,9 +158,9 @@ for(i in 1:length(yList)) {
   # our CDF scores a few probes that the external data doesn't, external data has these as 0
   w <- d != 0
 
-  avgDiff <- median( (y[w]-d[w])^2 )
+  avgDiff <- mean( (y[w]-d[w])^2 )
   cat(avgDiff,"\n")
-  stopifnot(avgDiff < 0.2);
+  stopifnot(avgDiff < 0.06);
 }
 
 
