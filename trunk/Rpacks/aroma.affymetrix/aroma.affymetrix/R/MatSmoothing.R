@@ -297,17 +297,32 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   nProbes <- params$nProbes;
   meanTrim <- params$meanTrim;
   rm(params);
+  
+  # ------------------------------------------------------
+  # internal function to do trimmed mean smoothing 
+  # ------------------------------------------------------
+  calcSmoothed <- function(posVector, dataMatrix, probeWindow, nProbes, meanTrim) {
+    require(gsmoothr)
+    nc <- ncol(dataMatrix)
+    posM <- matrix(rep(posVector,nc), nc=nc)
+    o <- order(posM)  # calculate ordering
+	
+    subsetInd <- seq(1,length(o), by=nc)
+	smoothedScore <- tmeanC(posM[o], dataMatrix[o], probeWindow=probeWindow, nProbes=nProbes, trim=meanTrim)
+	
+	return(smoothedScore[subsetInd])
+  }
 
   
   # ------------------------------------------------------
   # get CEL indices for units 
   # ------------------------------------------------------
-  cdfIndices <- getCellIndices(cdf, units=units);
+  cdfIndices <- getCellIndices(cdf, stratifyBy="pm", units=units);
 
-  # ASSUMPTION: the following is ok for tiling arrays since all have nGroups=1
-  # MR /2008-2009
-  # Add sanity check to validate that this assumption hold?  To catch future
-  # cases where it is not true. /HB 2009-05-23
+  # sanity check to validate that each group for tiling array has this 1 element
+  nbrGroupsPerUnit <- nbrOfGroupsPerUnit(cdf)
+  stopifnot(all(nbrGroupsPerUnit==1))
+  
   cdfIndices <- lapply(cdfIndices, FUN=function(unit) unit$groups[[1]]$indices);
   unitNames <- names(cdfIndices);
   names(cdfIndices) <- NULL;
@@ -361,11 +376,11 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
       
     verbose && enter(verbose, "Reading probe data for the samples needed");
     dsII <- extract(ds, sampsKeep);
-    dd <- readUnits(dsII, units=units, verbose=verbose);
+    dataList <- readUnits(dsII, units=units, stratifyBy="pm", verbose=verbose);
     rm(dsII);
     verbose && exit(verbose);
     
-    dd <- base::lapply(dd, FUN=function(u) {
+    dataList <- base::lapply(dataList, FUN=function(u) {
       matrix(log2(u[[1]]$intensities), ncol=length(sampsKeep))
     });
     
@@ -383,7 +398,7 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
         nbrRows[[jj]] <- zeroes;
         outputList[[jj]] <- zeroes;
       }
-      if (jj %% 1000 == 1) {
+      if (jj %% 1000 == 0) {
         verbose && cat(verbose, sprintf("Completed %d/%d units ...", jj, nbrOfUnits));
       }
       
@@ -394,38 +409,19 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
       sampNeg <- which(posOrNeg < 0)
       nPos <- length(sampPos)
       nNeg <- length(sampNeg)
-      
-      # calculate the pairwise distance matrix
-      pos <- acp[indices,2, drop=TRUE];
-      dist <- outer(pos, pos, FUN="-");
-      ppsRows <- base::apply(dist, MARGIN=1, FUN=tolFun, tol=probeWindow);
-      
-      # for every row in matrix
-      ddJJ <- dd[[jj]];
-      for (rw in seq_len( nRows[jj] )) {
-
-        rows <- ppsRows[[rw]]
-
-        nbrRows[[jj]][rw] <- length(rows)
-                
-        if (length(rows) >= nProbes) {
-          rootLength <- sqrt( round(length(rows)*(1-2*meanTrim)) )
-          if (nPos > 0) {
-            vPos <- ddJJ[rows,sampPos]
-            matScorePos[[jj]][rw] <- matScorePos[[jj]][rw] + mean(vPos, trim=meanTrim)*rootLength*sqrt(nPos)
-          }
-
-          if (nNeg > 0) {
-            vNeg <- ddJJ[rows,sampNeg]
-            matScoreNeg[[jj]][rw] <- matScoreNeg[[jj]][rw] + mean(vNeg, trim=meanTrim)*rootLength*sqrt(nNeg)
-          }
-        }
-      } # for (rw ...)
-    } # for (jj ...)
-    verbose && cat(verbose);
+	  
+      # extract probe positions
+      pos <- acp[indices,2,drop=TRUE]
+	  
+      # if samples to smooth, do smoothing
+      if( nPos )
+	    matScorePos[[jj]] <- calcSmoothed(pos, dataList[[jj]][,sampPos,drop=FALSE], probeWindow=probeWindow, nProbes=nProbes, meanTrim=meanTrim)
+      if( nNeg )
+        matScoreNeg[[jj]] <- calcSmoothed(pos, dataList[[jj]][,sampNeg,drop=FALSE], probeWindow=probeWindow, nProbes=nProbes, meanTrim=meanTrim)
+	}
 
     # Memory cleanup
-    rm(dd, ddJJ);
+    rm(dataList);
 
     verbose && exit(verbose);
 
@@ -514,6 +510,11 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
 
 ############################################################################
 # HISTORY:
+# 2009-05-27 [MR]
+# o 
+# o Added sanity check for CDF file that all units have exactly 1 group
+# o Added 'stratifyBy="pm"' to the call to readUnits() and getCellIndices()
+#   since the smoothing is only to be done on PM probes
 # 2009-05-25 [HB]
 # o Added getExpectedOutputFiles() special to MatSmoothing. Removed 
 #   isDone().
