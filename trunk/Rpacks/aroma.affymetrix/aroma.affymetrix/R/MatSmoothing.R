@@ -201,9 +201,22 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # internal function to do trimmed mean smoothing 
+  calcSmoothed <- function(posVector, dataMatrix, probeWindow, nProbes, meanTrim) {
+    nc <- ncol(dataMatrix);
+    posM <- matrix(posVector, nrow=length(posVector), ncol=nc);
+    o <- order(posM);  # calculate ordering
+
+    smoothedScore <- gsmoothr::tmeanC(posM[o], dataMatrix[o], 
+           probeWindow=probeWindow, nProbes=nProbes*nc, trim=meanTrim);
+    subsetInd <- seq(from=1, to=length(o), by=nc);
+    return(smoothedScore[subsetInd]);
+  } # calcSmoothed()
+
+
   # calculates null distribution from first taking non-overlapping probes,
   # then replicating the negative half of the distribution.
-  calcNullDist <- function(ch, ps, x) {
+  calcNullDist0 <- function(ch, ps, x) {
     MIN <- -999999
     #inds <- 
     y <- rep(MIN,length(x))
@@ -230,14 +243,112 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
     y <- y[y <= md]
     #list( m=md, sd = sd( c(y,-y+2*md) ), inds=inds[inds > MIN])
     list( m=md, sd = sd( c(y,-y+2*md) ) )
-  } # callNullDist()
-    
-  # ------------------------------------------------------
-  # tolerance function to be used below to get indices
-  # ------------------------------------------------------
-  tolFun <- function(u, tol) {
-    which(abs(u) <= tol);
-  }
+  } # calcNullDist0()
+
+  # A version that is almost twice as fast. /HB 2009-05-27
+  calcNullDist <- function(chr, pos, x) {
+    dblProbeWindow <- 2*probeWindow;
+
+    n <- length(chr);
+    indices <- split(seq_len(n), chr);
+    nbrOfChromosomes <- length(indices);
+
+    # For each chromosome
+    yList <- list();
+    for (ii in seq_len(nbrOfChromosomes)) {
+      ind <- indices[[ii]];
+      nInd <- length(ind);
+
+      # Extract positions
+      posII <- pos[ind];
+      xII <- x[ind];
+
+      # Reorder along chromosome (don't assume)
+      o <- order(posII);
+      posII <- posII[o];
+      xII <- xII[o];
+
+      yII <- rep(-Inf, times=nInd);
+
+      # For each position on the current chromosome
+      lastPos <- posII[1];
+      for (jj in seq_len(nInd)) {
+        # Find next position outside the probe window
+        posJJ <- posII[jj];
+        if (posJJ-lastPos > dblProbeWindow) {
+          yII[jj] <- xII[jj];
+          lastPos <- posJJ;
+        }
+      } # for (jj ...)
+
+      yList[[ii]] <- yII;
+    } # for (ii ...)
+    y <- unlist(yList, use.names=FALSE);
+
+    y <- y[y > -Inf];
+    md <- median(y);
+    y <- y[y <= md];
+    list(m=md, sd=sd(c(y,-y+2*md)));
+  } # calcNullDist()
+
+
+
+  # A version that is even faster if ncol(X) > 1.
+  calcNullDists <- function(chr, pos, X) {
+    dblProbeWindow <- 2*probeWindow;
+
+    K <- ncol(X);
+    names <- colnames(X);
+
+    n <- length(chr);
+    idxList <- split(seq_len(n), chr);
+
+    # For each chromosome
+    YList <- list();
+    for (ii in seq(along=idxList)) {
+      idxs <- idxList[[ii]];
+
+      # Extract ordered along chromosome (don't assume)
+      posII <- pos[idxs];
+      o <- order(posII);
+      idxs <- idxs[o];
+
+      posII <- posII[o];
+      XII <- X[idxs,,drop=FALSE];
+
+      J <- length(idxs);
+      YII <- matrix(-Inf, nrow=J, ncol=K);
+
+      # For each position on the current chromosome
+      lastPos <- posII[1];
+      for (jj in seq_len(J)) {
+        # Find next position outside the probe window
+        posJJ <- posII[jj];
+        if (posJJ-lastPos > dblProbeWindow) {
+          YII[jj,] <- XII[jj,];
+          lastPos <- posJJ;
+        }
+      } # for (jj ...)
+
+      YList[[ii]] <- YII;
+    } # for (ii ...)
+
+    m <- sd <- double(K);
+    names(m) <- names(sd) <- names;
+
+    res <- list();
+    for (kk in seq_len(K)) {
+      yList <- lapply(YList, FUN=function(Y) Y[,kk, drop=TRUE]);
+      y <- unlist(yList, use.names=FALSE);
+      y <- y[y > -Inf];
+      m[kk] <- median(y);
+      y <- y[y <= m[kk]];
+      sd[kk] <- sd(c(y,-y+2*m[kk]));
+    }
+
+    list(m=m, sd=sd);
+  } # calcNullDists()
+
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -298,37 +409,27 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   meanTrim <- params$meanTrim;
   rm(params);
   
-  # ------------------------------------------------------
-  # internal function to do trimmed mean smoothing 
-  # ------------------------------------------------------
-  calcSmoothed <- function(posVector, dataMatrix, probeWindow, nProbes, meanTrim) {
-    require(gsmoothr)
-    nc <- ncol(dataMatrix)
-    posM <- matrix(rep(posVector,nc), nc=nc)
-    o <- order(posM)  # calculate ordering
-	
-    subsetInd <- seq(1,length(o), by=nc)
-	smoothedScore <- tmeanC(posM[o], dataMatrix[o], probeWindow=probeWindow, nProbes=nProbes*nc, trim=meanTrim)
-	
-	return(smoothedScore[subsetInd])
-  }
-
   
   # ------------------------------------------------------
   # get CEL indices for units 
   # ------------------------------------------------------
-  cdfIndices <- getCellIndices(cdf, stratifyBy="pm", units=units);
+  # Sanity check to validate that each group for tiling array 
+  # has this 1 element
+  nbrGroupsPerUnit <- nbrOfGroupsPerUnit(cdf);
+  stopifnot(all(nbrGroupsPerUnit == 1));
 
-  # sanity check to validate that each group for tiling array has this 1 element
-  nbrGroupsPerUnit <- nbrOfGroupsPerUnit(cdf)
-  stopifnot(all(nbrGroupsPerUnit==1))
+  verbose && enter(verbose, "Loading cell PM indices structured according to the CDF");
+  cdfCellsList <- getCellIndices(cdf, units=units, stratifyBy="pm");
+  unitNames <- names(cdfCellsList);
+  names(cdfCellsList) <- NULL;
+  verbose && exit(verbose);
   
-  cdfIndices <- lapply(cdfIndices, FUN=function(unit) unit$groups[[1]]$indices);
-  unitNames <- names(cdfIndices);
-  names(cdfIndices) <- NULL;
+  cellsList <- lapply(cdfCellsList, FUN=function(unit) {
+    unit$groups[[1]]$indices;
+  });
 
-  nRows <- base::sapply(cdfIndices, FUN=length);
-  allInds <- unlist(cdfIndices, use.names=FALSE);
+  nRows <- base::sapply(cellsList, FUN=length);
+  allInds <- unlist(cellsList, use.names=FALSE);
 
   nbrOfUnits <- length(units);
 
@@ -338,6 +439,12 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   verbose && cat(verbose, "Result/output names:");
   verbose && str(verbose, fullnamesOut);
 
+
+  # Preload all cell positions in order to avoid querying
+  # the annotation file for each unit. /HB 2009-05-27
+  verbose && enter(verbose, "Preloading genomic positions for all cells");
+  acpData <- acp[,1:2,drop=FALSE];
+  verbose && exit(verbose);
   
   # --------------------------------------------------------
   # loop through the number of columns in design matrix
@@ -364,7 +471,7 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
     pathnameT <- sprintf("%s.tmp", pathname);
     pathnameT <- Arguments$getWritablePathname(pathnameT, mustNotExist=TRUE);
 
-    matScoreNeg <- matScorePos <- nbrRows <- outputList <- vector("list", nbrOfUnits);
+    matScoreNeg <- matScorePos <- outputList <- vector("list", nbrOfUnits);
     names(outputList) <- unitNames;
   
     sampsKeep <- which(design[,ii] != 0);
@@ -376,7 +483,10 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
       
     verbose && enter(verbose, "Reading probe data for the samples needed");
     dsII <- extract(ds, sampsKeep);
-    dataList <- readUnits(dsII, units=units, stratifyBy="pm", verbose=verbose);
+    # Reuse the above cdfIndices structure...
+    dataList <- readUnits(dsII, units=cdfCellsList, verbose=verbose);
+    # ...instead of rereading all again
+    ## dataList <- readUnits(dsII, units=units, stratifyBy="pm", verbose=verbose);
     rm(dsII);
     verbose && exit(verbose);
     
@@ -385,84 +495,100 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
     });
     
     verbose && enter(verbose, "Computing trimmed means for all units");
+
     # ------------------------------------------------------
     # loop through each unit
     # ------------------------------------------------------
     for (jj in seq_len( nbrOfUnits )) {
-    
       # allocate space first time through
       if ( is.null( outputList[[jj]] ) ) {
         zeroes <- rep(0, times=nRows[jj]);
         matScorePos[[jj]] <- zeroes;
         matScoreNeg[[jj]] <- zeroes; 
-        nbrRows[[jj]] <- zeroes;
         outputList[[jj]] <- zeroes;
       }
       if (jj %% 1000 == 0) {
         verbose && cat(verbose, sprintf("Completed %d/%d units ...", jj, nbrOfUnits));
       }
-      
-      indices <- cdfIndices[[jj]]
-      
+           
       # loop through all columns in matrix
-      sampPos <- which(posOrNeg > 0)
-      sampNeg <- which(posOrNeg < 0)
-      nPos <- length(sampPos)
-      nNeg <- length(sampNeg)
-	  
+      sampPos <- which(posOrNeg > 0);
+      sampNeg <- which(posOrNeg < 0);
+      nPos <- length(sampPos);
+      nNeg <- length(sampNeg);
+
       # extract probe positions
-      pos <- acp[indices,2,drop=TRUE]
-	  
+      cells <- cellsList[[jj]];
+      pos <- acpData[cells,2,drop=TRUE];
+      # Was: # pos <- acp[cells,2,drop=TRUE];
+
       # if samples to smooth, do smoothing
-      if( nPos )
-	    matScorePos[[jj]] <- calcSmoothed(pos, dataList[[jj]][,sampPos,drop=FALSE], probeWindow=probeWindow, nProbes=nProbes, meanTrim=meanTrim)
-      if( nNeg )
-        matScoreNeg[[jj]] <- calcSmoothed(pos, dataList[[jj]][,sampNeg,drop=FALSE], probeWindow=probeWindow, nProbes=nProbes, meanTrim=meanTrim)
-	}
+      if (nPos > 0) {
+        matScorePos[[jj]] <- calcSmoothed(pos, dataList[[jj]][,sampPos,drop=FALSE], probeWindow=probeWindow, nProbes=nProbes, meanTrim=meanTrim);
+      }
+      if (nNeg > 0) {
+        matScoreNeg[[jj]] <- calcSmoothed(pos, dataList[[jj]][,sampNeg,drop=FALSE], probeWindow=probeWindow, nProbes=nProbes, meanTrim=meanTrim);
+      }
+    } # for (jj ...)
 
     # Memory cleanup
     rm(dataList);
 
     verbose && exit(verbose);
 
+    # MAT scores can be vectorized already here
+    matScorePos <- unlist(matScorePos, use.names=FALSE);
+    matScoreNeg <- unlist(matScoreNeg, use.names=FALSE);
     
     # calculate null distributions for scale factors
     if (length(sampNeg) > 0) {
+      verbose && enter(verbose, "Calculating scale factor via null distributions");
       verbose && enter(verbose, "Gathering common info for calculating null distributions");
-      chr <- acp[allInds,1, drop=TRUE];
-      pos <- acp[allInds,2, drop=TRUE];
+      chr <- acpData[allInds,1,drop=TRUE];
+      pos <- acpData[allInds,2,drop=TRUE];
+      # Faster than:
+      ## chr <- acp[allInds,1, drop=TRUE];
+      ## pos <- acp[allInds,2, drop=TRUE];
+      verbose && exit(verbose);
+
+      verbose && enter(verbose, "Calculating null distributions for controls and treatments in parallel");
+      nullX <- cbind(neg=matScoreNeg, pos=matScorePos);
+      nullDists <- calcNullDists(chr, pos, nullX);
+      rm(chr, pos, nullX);
+      verbose && str(verbose, nullDists);
       verbose && exit(verbose);
       
-      verbose && enter(verbose, "Calculating null distribution for controls");
-      nullX <- unlist(matScoreNeg, use.names=TRUE);
-      nullDistNeg <- calcNullDist(chr, pos, nullX);
+      scaleFactor <- nullDists$sd["pos"] / nullDists$sd["neg"];
+      verbose && printf(verbose, "Scale factor: %.4g\n", scaleFactor);
+      # Sanity check
+      stopifnot(is.finite(scaleFactor));
+      rm(nullDists);
       verbose && exit(verbose);
-      
-      verbose && enter(verbose, "Calculating null distribution for treatments");
-      nullX <- unlist(matScorePos, use.names=TRUE);
-      nullDistPos <- calcNullDist(chr, pos, nullX);
-      verbose && exit(verbose);
-      
-      scaleFactor <- nullDistPos$sd / nullDistNeg$sd;
-      
-      # Memory cleanup
-      rm(chr, nullX, nullDistNeg, nullDistPos);
-      gc <- gc();
     } else {
       scaleFactor <- 1;
     } # if (length(sampNeg) > 0)
 
-    
-    for (jj in seq_len( nbrOfUnits )) {
-      outputList[[jj]] <- matScorePos[[jj]] - scaleFactor*matScoreNeg[[jj]];
-    }
 
-    # Memory cleanup
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Calculate MAT scores
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    verbose && enter(verbose, "Calculating MAT scores (on intensity scale)");
+    matScores <- matScorePos - scaleFactor*matScoreNeg;
     rm(matScoreNeg, matScorePos);
-    
+    # ...on the intensity scale
+    matScores <- 2^matScores;
+    verbose && str(verbose, matScores);
+    verbose && summary(verbose, matScores);
+    verbose && exit(verbose);
+
+    # Sanity check
+    stopifnot(length(matScores) == length(allInds));
+
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     # Storing results
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    verbose && enter(verbose, "Storing results");
+
     # Always validate the output file just before writing
     pathnameT <- Arguments$getWritablePathname(pathnameT, mustNotExist=TRUE);
 
@@ -472,9 +598,11 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
     createFrom(df, filename=pathnameT, path=NULL, verbose=less(verbose));
     verbose && exit(verbose);
     
-    matScores <- unlist(outputList, use.names=FALSE);
-    matScores <- 2^matScores;
-    updateCel(pathnameT, indices=allInds, intensities=matScores, verbose=TRUE);
+    verbose && enter(verbose, "Updating data file");
+    verbose2 <- isVisible(verbose, -50);
+    updateCel(pathnameT, indices=allInds, intensities=matScores, 
+                                                        verbose=verbose2);
+    verbose && exit(verbose);
 
     # ...rename temporary file
     file.rename(pathnameT, pathname);
@@ -482,13 +610,14 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
       throw("Failed to rename temporary file: ", pathnameT, " -> ", pathname);
     }
     rm(filename, pathname, pathnameT);
+    verbose && exit(verbose);
 
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     # Next column in design matrix
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     # Memory cleanup
-    rm(matScores, outputList, nbrRows);
+    rm(matScores);
 
     # Garbage collect
     gc <- gc();
@@ -498,7 +627,7 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   } # for (ii ...)
 
   # Clean up
-  rm(cdfIndices, allInds);
+  rm(cellsList, allInds, acpData);
   
   outputDataSet <- getOutputDataSet(this, force=TRUE);
 
@@ -510,8 +639,14 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
 
 ############################################################################
 # HISTORY:
+# 2009-05-27 [HB]
+# o SPEED UP: Preloading acp[] data speeds things up > 5 times.
+# o SPEED UP: Replaces two calcNullDist() calls with one calcNullDists()
+#   call, which again is twice as fast.
+# o SPEED UP: Made calcNullDist() twice as fast.
+# o BUG FIX: calcNullDist() used the cell index instead of the cell 
+#   position for the first cell.
 # 2009-05-27 [MR]
-# o 
 # o Added sanity check for CDF file that all units have exactly 1 group
 # o Added 'stratifyBy="pm"' to the call to readUnits() and getCellIndices()
 #   since the smoothing is only to be done on PM probes

@@ -1,9 +1,9 @@
 Package: aroma.affymetrix
 =========================
 
-Version: 1.0.8 [2009-05-23]
-o SPEED UP: Now process() of MatSmoothing skips already process 
-  output files.
+Version: 1.0.8 [2009-05-27]
+o SPEED UP: Now process() of MatSmoothing is several times faster
+  due to code optimization and utilizing of the new 'gsmoothr' package.
 o ROBUSTNESS: Updated process() of MatSmoothing to write first to 
   a temporary file which is then renamed.  This lower the risk for
   corrupt output files due to processing interrupts.
