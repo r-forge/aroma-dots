@@ -105,7 +105,7 @@ setMethodS3("readBaseFile", "default", function(con, ..., verbose=FALSE) {
 
     # Open a file handler
     con <- file(filename, open="r");
-    on.exit(close(con), append=TRUE);
+    on.exit(close(con), add=TRUE);
   }
 
   # Argument 'verbose':

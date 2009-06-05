@@ -1,6 +1,6 @@
 Package: aroma.Base
-Version: 0.4.6
-Date: 2007-05-09
+Version: 0.4.7
+Date: 2007-06-05
 Title: A generic R plugin dispatcher for BASE
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
@@ -10,7 +10,4 @@ Description: This package provides R methods to interact with BioArray Software 
 License: LGPL version 2.1 or newer (the releases) 
 biocViews: Microarray, OneChannel, TwoChannel, DataImport, Preprocessing, Technology, Infrastructure, Visualization, ReportWriting 
 URL: http://www.braju.com/R/
-ContribURL: http://www.maths.lth.se/help/R/
-DevelURL: http://www.maths.lth.se/help/R/
 LazyLoad: TRUE
-

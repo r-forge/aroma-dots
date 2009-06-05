@@ -52,7 +52,7 @@ setMethodS3("writeBaseFile", "default", function(con, base, verbose=FALSE, ...) 
 
     # Open a file handler
     con <- file(filename, open="w");
-    on.exit(close(con), append=TRUE);
+    on.exit(close(con), add=TRUE);
   }
 
   # Argument 'verbose':
@@ -72,7 +72,7 @@ setMethodS3("writeBaseFile", "default", function(con, base, verbose=FALSE, ...) 
   # Main code
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Writing BASE file");
-  on.exit(verbose && exit(verbose), append=TRUE);
+  on.exit(verbose && exit(verbose), add=TRUE);
 
   cat(file=con, "BASEfile\n");
 

@@ -1,6 +1,8 @@
 #########################################################################/**
 # @RdocPackage aroma.Base
 #
+# \encoding{latin1}
+#
 # \description{
 #   @eval "getDescription(aroma.Base)". For a reference on BASE, see [1].
 #   The homepage for BASE is \url{http://base.thep.lu.se/}.

@@ -18,10 +18,6 @@
 #  @allmethods
 # }
 # 
-# \details{
-# }
-#
-#
 # @author
 #
 # \seealso{
@@ -152,8 +148,10 @@ setMethodS3("nbrOfParameters", "BaseFileParameters", function(this, ...) {
 #*/#########################################################################  
 setMethodS3("attachParameters", "BaseFileParameters", function(this, ..., envir=parent.frame()) {
   parameters <- getParameters(this, ...);
-  for (parameter in parameters) {
-    assign(parameter, value, envir=envir);
+  for (kk in seq(along=parameters)) {
+    name <- names(parameters)[kk];
+    value <- parameters[[kk]];
+    assign(name, value, envir=envir);
   }
 })
 
@@ -313,6 +311,8 @@ setMethodS3("getPluginVersion", "BaseFileParameters", function(this, ...) {
 
 ############################################################################
 # HISTORY: 
+# 2009-06-05
+# o BUG FIX: attachParameters() of BaseFileParameters did not work at all.
 # 2005-06-19
 # o Added all Rdoc comments.
 # 2005-06-16

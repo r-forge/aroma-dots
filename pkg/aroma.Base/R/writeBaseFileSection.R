@@ -52,7 +52,7 @@ setMethodS3("writeBaseFileSection", "default", function(con, section, verbose=FA
     }
 
     verbose && enter(verbose, "Writing headers");
-    on.exit(verbose && exit(verbose), append=TRUE);
+    on.exit(verbose && exit(verbose), add=TRUE);
 
     # Remove any 'dataFiles' headers.
     headers[["dataFiles"]] <- NULL;
@@ -79,7 +79,7 @@ setMethodS3("writeBaseFileSection", "default", function(con, section, verbose=FA
     data <- section$data;
 
     verbose && enter(verbose, "Writing data");
-    on.exit(verbose && exit(verbose), append=TRUE);
+    on.exit(verbose && exit(verbose), add=TRUE);
 
     verbose && cat(verbose, "Re-constructing data table.")
     dataFiles <- headers[["dataFiles"]];
@@ -130,7 +130,7 @@ setMethodS3("writeBaseFileSection", "default", function(con, section, verbose=FA
 
     # Open a file handler
     con <- file(filename, open="w");
-    on.exit(close(con), append=TRUE);
+    on.exit(close(con), add=TRUE);
   }
 
   # Argument 'verbose':
@@ -150,7 +150,7 @@ setMethodS3("writeBaseFileSection", "default", function(con, section, verbose=FA
   # Main code
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Writing section");
-  on.exit(verbose && exit(verbose), append=TRUE);
+  on.exit(verbose && exit(verbose), add=TRUE);
 
   # Each section contains a set of headers and an optional set of
   # data lines, which usually have tab-separated columns.
