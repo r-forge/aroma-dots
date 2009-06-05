@@ -89,7 +89,7 @@ setMethodS3("readBaseFileSection", "default", function(con, suppressSingleAssayL
   readBaseFileHeaders <- function(con, ...) {
     readHeader <- function(con, skipEmptyLines=FALSE, ...) {
       verbose && enter(verbose, level=-10, "Reading header");
-      on.exit(verbose && exit(verbose), append=TRUE);
+      on.exit(verbose && exit(verbose), add=TRUE);
   
       # Each header line consists of a name, optionally followed by a
       # tab and a value (which may contain tabs).
@@ -136,7 +136,7 @@ setMethodS3("readBaseFileSection", "default", function(con, suppressSingleAssayL
     } # readHeader()
   
     verbose && enter(verbose, "Reading headers");
-    on.exit(verbose && exit(verbose), append=TRUE);
+    on.exit(verbose && exit(verbose), add=TRUE);
 
     # Read headers
     headers <- list();
@@ -154,7 +154,7 @@ setMethodS3("readBaseFileSection", "default", function(con, suppressSingleAssayL
   
   readBaseFileData <- function(con, nrows=-1, assayFieldSep="_to_", ...) {
     verbose && enter(verbose, "Reading data");
-    on.exit(verbose && exit(verbose), append=TRUE);
+    on.exit(verbose && exit(verbose), add=TRUE);
   
     # Make use of a temporary file to read the data part.
     # Copy all lines until an empty line or EOF is detected.
@@ -165,7 +165,7 @@ setMethodS3("readBaseFileSection", "default", function(con, suppressSingleAssayL
       if (!is.null(fh)) close(fh);
       if (file.exists(tmpfile))
         file.remove(tmpfile);
-    }, append=TRUE);
+    }, add=TRUE);
 
     
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -244,7 +244,7 @@ setMethodS3("readBaseFileSection", "default", function(con, suppressSingleAssayL
 
     # Open a file handler
     con <- file(filename, open="r");
-    on.exit(close(con), append=TRUE);
+    on.exit(close(con), add=TRUE);
   }
 
   # Argument 'extractSpotsData':
@@ -278,7 +278,7 @@ setMethodS3("readBaseFileSection", "default", function(con, suppressSingleAssayL
   assayFieldSep <- "_of_";
 
   verbose && enter(verbose, "Reading section");
-  on.exit(verbose && exit(verbose), append=TRUE);
+  on.exit(verbose && exit(verbose), add=TRUE);
 
   # Each section contains a set of headers and an optional set of
   # data lines, which usually have tab-separated columns.

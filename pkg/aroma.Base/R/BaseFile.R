@@ -271,7 +271,7 @@ setMethodS3("isSerial", "BaseFile", function(this, ...) {
 #*/######################################################################### 
 setMethodS3("getAllDataFiles", "BaseFile", function(this, ...) {
   # Currently, it is only 'spots' sections that "cache" data on file.
-  spots <- getSections(base, "spots");
+  spots <- getSections(this, "spots");
   files <- unlist(lapply(spots, FUN=getDataFiles));
   files <- unique(files);
   files;
@@ -770,6 +770,9 @@ setMethodS3("hasSerialBioAssaySets", "BaseFile", function(this, ...) {
 
 ############################################################################
 # HISTORY: 
+# 2009-06-05
+# o BUG FIX: getAllDataFiles() for BaseFile referenced object 'base' 
+#   instead of 'this'.  Caught by the R code tools.
 # 2005-12-21
 # o Renamed argument 'name[s]' in getSection[s]() to 'type[s]' to be more
 #   consistent with the 'type' argument of the BaseFileSection constructor.

@@ -2,6 +2,18 @@
 Package: aroma.Base
 ===================
 
+Version: 0.4.7 [2009-06-05]
+o BUG FIX: attachParameters() of BaseFileParameters did not work at all.
+o BUG FIX: getAllDataFiles() for BaseFile referenced object 'base' 
+  instead of 'this'.  Caught by the R code tools.
+o BUG FIX: Replaced several occurances of on.exit(..., append=TRUE)
+  with on.exit(..., add=TRUE).
+o BUG FIX: setColumns() for BaseFileSpots references Argument instead
+  of Arguments.
+o BUG FIX: setDataFields() of BaseFileSpots references 'assays' which
+  was never assigned.
+
+
 Version: 0.4.6 [2007-05-09]
 o Package pass R CMD check on R v2.5.0.
 

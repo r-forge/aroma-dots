@@ -19,10 +19,6 @@
 #  @allmethods
 # }
 # 
-# \details{
-# }
-#
-#
 # @author
 #
 # \seealso{

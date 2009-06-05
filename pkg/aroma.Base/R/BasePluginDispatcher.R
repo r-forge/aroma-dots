@@ -876,7 +876,7 @@ setMethodS3("main", "BasePluginDispatcher", function(static, pluginPath=NULL, lo
   if (!is.null(workPath)) {
     opwd <- getwd();
     setwd(workPath);
-    on.exit(setwd(opwd), append=TRUE);
+    on.exit(setwd(opwd), add=TRUE);
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

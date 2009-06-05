@@ -240,7 +240,7 @@ setMethodS3("getColumns", "BaseFileSpots", function(this, ...) {
 # }
 #*/######################################################################### 
 setMethodS3("setColumns", "BaseFileSpots", function(this, names, ...) {
-  names <- Argument$getCharacters(names);
+  names <- Arguments$getCharacters(names);
 
   columns <- NextMethod("getColumns");
   hasAssayData <- any("assayData" %in% columns);
@@ -548,15 +548,17 @@ setMethodS3("setDataFields", "BaseFileSpots", function(this, assay=NULL, values,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  assays <- getAssays(this);
   # Argument 'assay':
   assay <- Arguments$getCharacter(assay, length=c(0,1), nchar=c(1,128));
   if (is.null(assay)) {
     if (nbrOfAssays(this) > 1)
       throw("Argument 'assay' must be given when there are more than one assay in the 'spots' section: ", nbrOfAssays(this));
-    assay <- getAssays(this)[1];
+    assay <- assays[1];
   } else {
-    if (!assay %in% getAssays(this))
+    if (!assay %in% assays) {
       throw("Argument 'assay' is not a known assay: ", assay);
+    }
   }
 
   # Argument 'values':
@@ -633,6 +635,11 @@ setMethodS3("setDataFields", "BaseFileSpots", function(this, assay=NULL, values,
 
 ############################################################################
 # HISTORY: 
+# 2009-06-05
+# o BUG FIX: setColumns() of BaseFileSpots references Argument instead
+#   of Arguments.
+# o BUG FIX: setDataFields() of BaseFileSpots references 'assays' which
+#   was never assigned.
 # 2005-12-20
 # o BUG FIX: When reading data cached to file, data cells containing spaces
 #   would generate an error in the internal read.table(). Forgot to specify
