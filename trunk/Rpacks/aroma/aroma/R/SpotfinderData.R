@@ -27,6 +27,7 @@
 #  17 columns:\cr
 #
 #  The first eigth column do always exist:\cr
+#  \itemize{
 #   \item{1}{spot row number. Range [0,ROWS] in Z+.}
 #   \item{2}{spot column number. Range [0,COLS] in Z+.}
 #   \item{3}{spot metarow/subrow number. Range [0,MROWS] in Z+.}
@@ -41,8 +42,10 @@
 #     (median local) background.  Note that saturated pixels are not used for calculations
 #     of intensities as they can skew the results. Range [0,MAXAREA*65535]
 #     in Z+.}
+#  }
 #
 #  Column 9-17 exists only in full TAV files:\cr
+#  \itemize{
 #   \item{9}{spot mean ratio. Range [0,?] in R+. == (Col 7)/(Col 8), i.e. \bold{Redundant}.}
 #
 #   \item{10}{spot total area in pixels. Range [0,MAXAREA] in Z+.}
@@ -57,12 +60,14 @@
 #   \item{15}{total spot background in channel B =(median(BkgB)* spotarea). This background was subtracted when the spot intensity was calculated. The background is calculated by measuring the average local background and multiplying it by the spot area. Range [0,MAXAREA*65535] in Z+.}
 #   \item{16}{spot flag in channel A. This flag is set by QC filter. Range: \{A,B,C,X,Y,Z\}.}
 #   \item{17}{spot flag in channel B. This flag is set by QC filter.Range: \{A,B,C,X,Y,Z\}.}
+# }
 #
 #   The foreground estimates for channel A (B) can be obtained as the sum of column 7 and 14 (column 8 and 14).
 # }
 #
 # \section{Information about spot QC flags}{
 #   Flag values are generated based on next conditions: 
+#  \itemize{
 #    \item{A}{number of non-saturated pixels in spot is 0. 
 #             \bold{Redundant}}
 #    \item{B}{number of non-saturated pixels in spot is between 0 and 50.
@@ -75,6 +80,7 @@
 #             \bold{Redundant}}
 #    \item{Z}{spot was not detected by the program. 
 #             \bold{Redundant}}
+#  }
 # }
 #
 # @author
@@ -114,7 +120,7 @@ setConstructorS3("SpotfinderData", function(layout=NULL) {
   )
 })
 
-setMethodS3("append", "SpotfinderData", function(this, other) {
+setMethodS3("append", "SpotfinderData", function(this, other, ...) {
   NextMethod("append");
   invisible(this);
 })
@@ -156,7 +162,7 @@ setMethodS3("append", "SpotfinderData", function(this, other) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("readOneFile", "SpotfinderData", function(this, filename, path=NULL, sep="auto", skip="auto", verbose=TRUE) {
+setMethodS3("readOneFile", "SpotfinderData", function(this, filename, path=NULL, sep="auto", skip="auto", verbose=TRUE, ...) {
   filename <- Arguments$getReadablePathname(filename, path);  
 
   if (verbose) cat("Reading file ", filename, "...", sep="");
@@ -250,7 +256,7 @@ setMethodS3("readOneFile", "SpotfinderData", function(this, filename, path=NULL,
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("write", "SpotfinderData", function(this, filename, path=NULL, slide=NULL, overwrite=FALSE, verbose=FALSE) {
+setMethodS3("write", "SpotfinderData", function(this, filename, path=NULL, slide=NULL, overwrite=FALSE, verbose=FALSE, ...) {
   filename <- Arguments$getWritablePathname(filename, path, mustNotExist=!overwrite);  
 
   slide <- validateArgumentSlide(this, slide=slide);
@@ -338,7 +344,7 @@ setMethodS3("read", "SpotfinderData", function(this, filename=NULL, path=NULL, p
 
 
 
-setMethodS3("extractLayout", "SpotfinderData", function(this, griddata) {
+setMethodS3("extractLayout", "SpotfinderData", function(this, griddata, ...) {
   metaRow <- max(griddata[,1]);
   metaCol <- max(griddata[,2]);
   spotRow <- max(griddata[,3]);
@@ -388,7 +394,7 @@ setMethodS3("extractLayout", "SpotfinderData", function(this, griddata) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getRawData", "SpotfinderData", function(this, slides=NULL) {
+setMethodS3("getRawData", "SpotfinderData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   fieldNames <- getFieldNames(this);
@@ -409,7 +415,7 @@ setMethodS3("as.RawData", "SpotfinderData", function(this, ...) {
 })
 
 
-setMethodS3("getBackground", "SpotfinderData", function(this, which=c("mean")) {
+setMethodS3("getBackground", "SpotfinderData", function(this, which=c("mean"), ...) {
   which <- match.arg(which);
 
   if (which == "mean") {
@@ -428,7 +434,7 @@ setMethodS3("getBackground", "SpotfinderData", function(this, which=c("mean")) {
 
 
 
-setMethodS3("getForeground", "SpotfinderData", function(this, which=c("mean")) {
+setMethodS3("getForeground", "SpotfinderData", function(this, which=c("mean"), ...) {
   which <- match.arg(which);
 
   if (which == "mean") {

@@ -121,7 +121,7 @@ setConstructorS3("RawData", function(R=NULL, G=NULL, Rb=NULL, Gb=NULL,
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("swapDyes", "RawData", function(this, slides=NULL) {
+setMethodS3("swapDyes", "RawData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   tmp <- this$R[,slides];
@@ -230,7 +230,7 @@ setMethodS3("as.RawData", "ANY", function(this, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSignal", "RawData", function(this, bgSubtract=TRUE, slides=NULL, bg.subtract=TRUE) {
+setMethodS3("getSignal", "RawData", function(this, bgSubtract=TRUE, slides=NULL, bg.subtract=TRUE, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   if (missing(bgSubtract) && !missing(bg.subtract)) {
     bgSubtract <- bg.subtract;
@@ -288,7 +288,7 @@ setMethodS3("getSignal", "RawData", function(this, bgSubtract=TRUE, slides=NULL,
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getForeground", "RawData", function(this, slides=NULL) {
+setMethodS3("getForeground", "RawData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   R <- this$R[,slides];
   G <- this$G[,slides];
@@ -337,7 +337,7 @@ setMethodS3("getForeground", "RawData", function(this, slides=NULL) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getBackground", "RawData", function(this, slides=NULL) {
+setMethodS3("getBackground", "RawData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   R <- this$Rb[,slides];
@@ -390,7 +390,7 @@ setMethodS3("getBackground", "RawData", function(this, slides=NULL) {
 #   @seeclass
 # }
 ############################################################################
-setMethodS3("getWithinChannelPairs", "RawData", function(this, channel, slides=NULL) {
+setMethodS3("getWithinChannelPairs", "RawData", function(this, channel, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   pairs <- getSlidePairs(this, slides=slides);
 
@@ -586,7 +586,7 @@ setMethodS3("range", "RawData", function(this, what="R", slide=NULL, na.rm=TRUE,
 })
 
 
-setMethodS3("read", "RawData", function(this, filename, path=NULL, layout=NULL, verbose=FALSE) {
+setMethodS3("read", "RawData", function(this, filename, path=NULL, layout=NULL, verbose=FALSE, ...) {
   fields <- c("R", "G", "Rb", "Gb");
   res <- MicroarrayData$readToList(filename, path=path,
                                    reqFields=fields, verbose=verbose);
@@ -605,7 +605,7 @@ setMethodS3("read", "RawData", function(this, filename, path=NULL, layout=NULL, 
   #      Oxford University Press.
   #      \url{http://nar.oupjournals.org/cgi/content/abstract/29/15/e75}.
 
-setMethodS3("getSNR1", "RawData", function(this, log=NULL) {
+setMethodS3("getSNR1", "RawData", function(this, log=NULL, ...) {
   R <- this$R;
   G <- this$G;
   Rb <- this$Rb;
@@ -624,7 +624,7 @@ setMethodS3("getSNR1", "RawData", function(this, log=NULL) {
   SNR;
 })
 
-setMethodS3("getSNR2", "RawData", function(this, log=NULL) {
+setMethodS3("getSNR2", "RawData", function(this, log=NULL, ...) {
   R <- this$R;
   G <- this$G;
   Rb <- this$Rb;
@@ -687,7 +687,7 @@ setMethodS3("getSNR2", "RawData", function(this, log=NULL) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("shift", "RawData", function(this, M=NULL, A=NULL, R=NULL, G=NULL, Rb=NULL, Gb=NULL, slides=NULL) {
+setMethodS3("shift", "RawData", function(this, M=NULL, A=NULL, R=NULL, G=NULL, Rb=NULL, Gb=NULL, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   foo <- function(x, X) {

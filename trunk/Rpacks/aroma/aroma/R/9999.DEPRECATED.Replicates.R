@@ -54,7 +54,7 @@ setMethodS3("str", "Replicates", function(object, ...) {
 
 
 
-setMethodS3("equals", "Replicates", function(this, obj) {
+setMethodS3("equals", "Replicates", function(this, obj, ...) {
   if (any(nbrOfGenes(this) != nbrOfGenes(obj)))
     return(FALSE);
   if (any(nbrOfSpots(this) != nbrOfSpots(obj)))
@@ -65,12 +65,12 @@ setMethodS3("equals", "Replicates", function(this, obj) {
 }, deprecated=TRUE)
 
 
-setMethodS3("nbrOfGenes", "Replicates", function(this) {
+setMethodS3("nbrOfGenes", "Replicates", function(this, ...) {
   length(this$replicates);
 }, deprecated=TRUE)
 
 
-setMethodS3("nbrOfSpots", "Replicates", function(this) {
+setMethodS3("nbrOfSpots", "Replicates", function(this, ...) {
   length(unlist(this$replicates));
 }, deprecated=TRUE)
 
@@ -99,7 +99,7 @@ setMethodS3("nbrOfSpots", "Replicates", function(this) {
 #  @seeclass
 # }
 #*/#########################################################################
-setMethodS3("nbrOfReplicates", "Replicates", function(this, genes=NULL) {
+setMethodS3("nbrOfReplicates", "Replicates", function(this, genes=NULL, ...) {
   nbr <- unlist(lapply(this$replicates, FUN=length));
   if (!is.null(genes))
     nbr <- nbr[genes];
@@ -146,7 +146,7 @@ setMethodS3("nbrOfReplicates", "Replicates", function(this, genes=NULL) {
 #  @seeclass
 # }
 #*/#########################################################################
-setMethodS3("hasReplicates", "Replicates", function(this) {
+setMethodS3("hasReplicates", "Replicates", function(this, ...) {
   (max(nbrOfReplicates(this)) > 1);
 }, deprecated=TRUE)
 
@@ -202,7 +202,7 @@ setMethodS3("hasReplicates", "Replicates", function(this) {
 #  @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSpot", "Replicates", function(this, genes=NULL, replicates=NULL) {
+setMethodS3("getSpot", "Replicates", function(this, genes=NULL, replicates=NULL, ...) {
   spots <- this$replicates;
   if (is.null(spots))
     throw("No replicates has been specified.");
@@ -224,7 +224,7 @@ setMethodS3("getSpot", "Replicates", function(this, genes=NULL, replicates=NULL)
   spots;
 }, deprecated=TRUE)
 
-setMethodS3("getGene", "Replicates", function(this, spots=NULL) {
+setMethodS3("getGene", "Replicates", function(this, spots=NULL, ...) {
   replicates <- this$replicates;
   if (is.null(replicates))
     throw("No replicates has been specified.");
@@ -292,7 +292,7 @@ setMethodS3("getGene", "Replicates", function(this, spots=NULL) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("set", "Replicates", function(this, replicates, genes=NULL) {
+setMethodS3("set", "Replicates", function(this, replicates, genes=NULL, ...) {
   # First, make sure 'replicates' is a list and save space by removing NA's.
   if (is.matrix(replicates))
     replicates <- matrixToList(replicates, na.rm=TRUE)
@@ -369,7 +369,7 @@ setMethodS3("set", "Replicates", function(this, replicates, genes=NULL) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("fromType", "Replicates", function(this, type, layout) {
+setMethodS3("fromType", "Replicates", function(this, type, layout, ...) {
   if (!inherits(layout, "Layout"))
     throw("The argument 'layout' must be of type Layout: ", data.class(layout));
 
@@ -424,7 +424,7 @@ setMethodS3("fromType", "Replicates", function(this, type, layout) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("fromLayout", "Replicates", function(this, layout, field="ID") {
+setMethodS3("fromLayout", "Replicates", function(this, layout, field="ID", ...) {
   if (field == "ID")
     x <- getID(layout)
   else if (field == "Name")
@@ -451,7 +451,7 @@ setMethodS3("fromLayout", "Replicates", function(this, layout, field="ID") {
 
 
 
-setMethodS3("setParameter", "Replicates", function(this, paramName, value) {
+setMethodS3("setParameter", "Replicates", function(this, paramName, value, ...) {
   replicates <- this$replicates;
   value <- rep(value, length.out=length(replicates));
   values <- list();
@@ -465,7 +465,7 @@ setMethodS3("setParameter", "Replicates", function(this, paramName, value) {
 }, deprecated=TRUE);
 
 
-setMethodS3("getParameter", "Replicates", function(this, paramName, genes=NULL) {
+setMethodS3("getParameter", "Replicates", function(this, paramName, genes=NULL, ...) {
   value <- this$parameter[[paramName]];
   if (!is.null(genes))
     value <- value[genes];

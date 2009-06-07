@@ -3,8 +3,6 @@
 % 
 %  RGData.NORM.R
 % 
-% on Tue Jan 15 18:36:04 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -207,7 +205,7 @@ rgC <- clone(rg0);
 fit <- calibrateMultiscan(rgC, average=NULL, project=FALSE);
 str(fit);
 
-Device$set(2, height="108\%");
+devSet(2);
 subplots(9);
 
 Alim <- c(0,20);

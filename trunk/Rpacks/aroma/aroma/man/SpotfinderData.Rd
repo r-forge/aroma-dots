@@ -3,8 +3,6 @@
 % 
 %  SpotfinderData.R
 % 
-% on Tue Jan 15 18:37:29 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -70,7 +68,7 @@ extends \link[aroma]{MicroarrayData}\cr
 addFlag, append, applyGenewise, applyGroupwise, applyPlatewise, applyPrintdipwise, applyPrinttipwise, as.character, as.data.frame, boxplot, clearCache, clearFlag, createColors, dataFrameToList, equals, extract, getBlank, getCache, getChannelNames, getColors, getExcludedSpots, getExtra, getExtreme, getFieldNames, getFlag, getInclude, getLabel, getLayout, getProbeWeights, getSignalWeights, getSlideNames, getSlidePairs, getSpotPosition, getSpotValue, getTreatments, getView, getWeights, getWeightsAsString, hasExcludedSpots, hasLayout, hasProbeWeights, hasSignalWeights, hasWeights, highlight, hist, isFieldColorable, keepSlides, keepSpots, listFlags, lowessCurve, nbrOfDataPoints, nbrOfFields, nbrOfSlides, nbrOfSpots, nbrOfTreatments, normalizePlatewise, normalizePrintorder, normalizeQuantile, plot, plotDensity, plotGene, plotPrintorder, plotReplicates, plotSpatial, plotSpatial3d, plotXY, points, putGene, putSlide, qqnorm, quantile, range, range2, read, readHeader, readToList, removeSlides, removeSpots, resetProbeWeights, resetSignalWeights, select, seq, setCache, setExcludedSpots, setExtra, setFlag, setLabel, setLayout, setProbeWeights, setSignalWeights, setSlideNames, setTreatments, setView, setWeights, size, str, subplots, summary, text, updateHeader, validateArgumentChannel, validateArgumentChannels, validateArgumentGroupBy, validateArgumentSlide, validateArgumentSlides, validateArgumentSpotIndex, validateArgumentWeights, write, writeHeader
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
 }
@@ -81,6 +79,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
  17 columns:\cr
 
  The first eigth column do always exist:\cr
+ \itemize{
   \item{1}{spot row number. Range [0,ROWS] in Z+.}
   \item{2}{spot column number. Range [0,COLS] in Z+.}
   \item{3}{spot metarow/subrow number. Range [0,MROWS] in Z+.}
@@ -95,8 +94,10 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
     (median local) background.  Note that saturated pixels are not used for calculations
     of intensities as they can skew the results. Range [0,MAXAREA*65535]
     in Z+.}
+ }
 
  Column 9-17 exists only in full TAV files:\cr
+ \itemize{
   \item{9}{spot mean ratio. Range [0,?] in R+. == (Col 7)/(Col 8), i.e. \bold{Redundant}.}
 
   \item{10}{spot total area in pixels. Range [0,MAXAREA] in Z+.}
@@ -111,12 +112,14 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
   \item{15}{total spot background in channel B =(median(BkgB)* spotarea). This background was subtracted when the spot intensity was calculated. The background is calculated by measuring the average local background and multiplying it by the spot area. Range [0,MAXAREA*65535] in Z+.}
   \item{16}{spot flag in channel A. This flag is set by QC filter. Range: \{A,B,C,X,Y,Z\}.}
   \item{17}{spot flag in channel B. This flag is set by QC filter.Range: \{A,B,C,X,Y,Z\}.}
+}
 
   The foreground estimates for channel A (B) can be obtained as the sum of column 7 and 14 (column 8 and 14).
 }
 
 \section{Information about spot QC flags}{
   Flag values are generated based on next conditions:
+ \itemize{
    \item{A}{number of non-saturated pixels in spot is 0.
             \bold{Redundant}}
    \item{B}{number of non-saturated pixels in spot is between 0 and 50.
@@ -129,6 +132,7 @@ $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach
             \bold{Redundant}}
    \item{Z}{spot was not detected by the program.
             \bold{Redundant}}
+ }
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

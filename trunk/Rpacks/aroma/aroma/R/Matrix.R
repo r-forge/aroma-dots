@@ -21,7 +21,7 @@ setConstructorS3("Matrix", function(x=0, nrow=1, ncol=1, byrow=FALSE, dimnames=N
 })
 
 
-setMethodS3("flip", "Matrix", function(this, MARGIN=1) {
+setMethodS3("flip", "Matrix", function(this, MARGIN=1, ...) {
   flip <- this;
   if (MARGIN == 1) {
     for (k in 1:ncol(this))
@@ -35,7 +35,7 @@ setMethodS3("flip", "Matrix", function(this, MARGIN=1) {
 
 
 
-setMethodS3("rotate", "Matrix", function(this, angle=90) {
+setMethodS3("rotate", "Matrix", function(this, angle=90, ...) {
   if (diff(dim(this)) != 0)
     stop("Only square matrices can be rotated.");
 
@@ -57,7 +57,7 @@ setMethodS3("rotate", "Matrix", function(this, angle=90) {
 
 
 
-## setMethodS3("as.DataFrame", "Matrix", function(this, row.names = NULL, optional = FALSE) {
+## setMethodS3("as.DataFrame", "Matrix", function(this, row.names=NULL, optional=FALSE, ...) {
 ##   DataFrame(as.data.frame(this, row.names=row.names, optional=optional));
 ## }, deprecated=TRUE)
 

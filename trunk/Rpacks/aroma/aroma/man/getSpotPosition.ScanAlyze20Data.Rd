@@ -3,8 +3,6 @@
 % 
 %  ScanAlyze20Data.R
 % 
-% on Tue Jan 15 18:36:41 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

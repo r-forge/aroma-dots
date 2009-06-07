@@ -17,6 +17,7 @@
 # }
 #
 # \section{Fields}{
+#  \itemize{
 #   \item{ch1 Intensity, ch2 Intensity, ...}{The spot intensity.
 #     What the authors mean by intensity is not clear, but on p46 in [2]
 #     it says "Quantitation. Output allows the user to choose the way
@@ -65,8 +66,10 @@
 #     \code{w} are weights.
 #     "Product") \code{cAll = (prod(c))^(1/Q)}.
 #   }
+#  }
 #
 #  \emph{Redundant fields}:\cr
+#  \itemize{
 #   \item{ch1 Percentage, ch2 Percentage, ...}{\bold{REDUNDANT!}
 #     \code{=="ch1 Intensity"/("ch1 Intensity"+"ch2 Intensity")} and so on.
 #     For each spot, the percentage of the total brightness (the sum of all
@@ -85,6 +88,7 @@
 #     \code{=="ch1 Intensity"/"ch1 Background Std Dev"} and so on.
 #     The ratio of the spot intensity to the standard deviation of the
 #     local background of all spots in the microarray.}
+#  }
 #
 #   Sources: Our own "research" and [2].
 # }
@@ -140,7 +144,7 @@ setConstructorS3("QuantArrayData", function(layout=NULL) {
 
 
 
-setMethodS3("read.table", "QuantArrayData", function(this, file, header=FALSE, sep="", quote="\"'", dec=".", row.names, col.names, as.is=FALSE, na.strings="NA", colClasses=NA, nrows=-1, skip=0, check.names=TRUE, fill=!blank.lines.skip, strip.white=FALSE, blank.lines.skip=TRUE, comment.char="#", flush=FALSE) {
+setMethodS3("read.table", "QuantArrayData", function(this, file, header=FALSE, sep="", quote="\"'", dec=".", row.names, col.names, as.is=FALSE, na.strings="NA", colClasses=NA, nrows=-1, skip=0, check.names=TRUE, fill=!blank.lines.skip, strip.white=FALSE, blank.lines.skip=TRUE, comment.char="#", flush=FALSE, ...) {
   # Open the file
   if (is.character(file)) {
     file <- file(file, "r")
@@ -330,7 +334,7 @@ setMethodS3("read.table", "QuantArrayData", function(this, file, header=FALSE, s
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("readOneFile", "QuantArrayData", function(this, filename, path=NULL, verbose=FALSE) {
+setMethodS3("readOneFile", "QuantArrayData", function(this, filename, path=NULL, verbose=FALSE, ...) {
   # Unicode references:
   #  [1] http://www.cl.cam.ac.uk/~mgk25/unicode.html
   isUnicoded <- function(filename) {
@@ -899,7 +903,7 @@ setMethodS3("write", "QuantArrayData", function(this, filename, path=NULL, slide
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getRawData", "QuantArrayData", function(qa, slides=NULL, fg="mean", bg="mean") {
+setMethodS3("getRawData", "QuantArrayData", function(qa, slides=NULL, fg="mean", bg="mean", ...) {
   slides <- validateArgumentSlides(qa, slides=slides);
   if (!inherits(qa, "QuantArrayData"))
     throw("Argument 'qa' is not of class QuantArrayData: ", data.class(qa));
@@ -937,7 +941,7 @@ setMethodS3("as.RawData", "QuantArrayData", function(this, ...) {
 
 
 
-setMethodS3("getForeground", "QuantArrayData", function(this, which=c("mean")) {
+setMethodS3("getForeground", "QuantArrayData", function(this, which=c("mean"), ...) {
   which <- match.arg(which);
   slides <- validateArgumentSlides(this, slides=slides);
   if (is.null(channels))
@@ -958,7 +962,7 @@ setMethodS3("getForeground", "QuantArrayData", function(this, which=c("mean")) {
 
 
 
-setMethodS3("getForegroundSD", "QuantArrayData", function(this, slides=NULL, channels=NULL) {
+setMethodS3("getForegroundSD", "QuantArrayData", function(this, slides=NULL, channels=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   if (is.null(channels))
     channels <- 1:2;
@@ -974,7 +978,7 @@ setMethodS3("getForegroundSD", "QuantArrayData", function(this, slides=NULL, cha
 })
 
 
-setMethodS3("getForegroundSNR", "QuantArrayData", function(this, slides=NULL, channels=NULL) {
+setMethodS3("getForegroundSNR", "QuantArrayData", function(this, slides=NULL, channels=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   if (is.null(channels))
     channels <- 1:2;
@@ -995,7 +999,7 @@ setMethodS3("getForegroundSNR", "QuantArrayData", function(this, slides=NULL, ch
   res;
 })
 
-setMethodS3("getBackground", "QuantArrayData", function(this, which=c("mean")) {
+setMethodS3("getBackground", "QuantArrayData", function(this, which=c("mean"), ...) {
   which <- match.arg(which);
 
   if (which == "mean") {
@@ -1013,7 +1017,7 @@ setMethodS3("getBackground", "QuantArrayData", function(this, which=c("mean")) {
 
 
 
-setMethodS3("getBackgroundSD", "QuantArrayData", function(this, slides=NULL, channels=NULL) {
+setMethodS3("getBackgroundSD", "QuantArrayData", function(this, slides=NULL, channels=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   if (is.null(channels))
     channels <- 1:2;
@@ -1031,7 +1035,7 @@ setMethodS3("getBackgroundSD", "QuantArrayData", function(this, slides=NULL, cha
 
 
 
-setMethodS3("setLayout", "QuantArrayData", function(this, layout) {
+setMethodS3("setLayout", "QuantArrayData", function(this, layout, ...) {
   warning("For a QuantArrayData object it should not be necessary to set the layout explicitly. The layout is automatically calculated when the data is loaded from file.");
   NextMethod("setLayout", this);
 })
@@ -1088,7 +1092,7 @@ setMethodS3("anonymize", "QuantArrayData", function(this, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSpotPosition", "QuantArrayData", function(this, slides=NULL, index=NULL) {
+setMethodS3("getSpotPosition", "QuantArrayData", function(this, slides=NULL, index=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   if (any(index < 1) || any(index > nbrOfSpots(this)))
     throw("Argument 'index' is out of range.");

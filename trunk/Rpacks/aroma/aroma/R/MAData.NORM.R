@@ -125,11 +125,11 @@ setMethodS3("normalizeAffine", "MAData", function(this, ...) {
 # }
 #
 # \references{
-#   \item{[1]}{S. Dudoit, Y. H. Yang, M. J. Callow, and T. P. Speed. Statistical
-#    methods for identifying differentially expressed genes in
-#    replicated cDNA microarray experiments (Statistics, UC Berkeley,
-#    Tech Report 578). 
-#    URL: \url{http://www.stat.berkeley.edu/users/terry/zarray/Html/papersindex.html}}
+# [1] S. Dudoit, Y. H. Yang, M. J. Callow, and T. P. Speed. 
+#     \emph{Statistical methods for identifying differentially expressed
+#     genes in replicated cDNA microarray experiments},
+#     Statistics, UC Berkeley, Tech Report 578. 
+#     \url{http://www.stat.berkeley.edu/users/terry/zarray/Html/papersindex.html}\cr
 # }
 #
 # \examples{
@@ -417,7 +417,7 @@ setMethodS3("normalizeWithinSlide", "MAData", function(this, method, slides=NULL
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("normalizeAcrossSlides", "MAData", function(this, slides=NULL, newMAD=NULL) {
+setMethodS3("normalizeAcrossSlides", "MAData", function(this, slides=NULL, newMAD=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -538,7 +538,7 @@ setMethodS3("normalizeQuantile", "MAData", function(this,
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("normalizeLogRatioShift", "MAData", function(this, slides=NULL, groupBy=NULL, method=c("median", "mean")) {
+setMethodS3("normalizeLogRatioShift", "MAData", function(this, slides=NULL, groupBy=NULL, method=c("median", "mean"), ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -627,6 +627,38 @@ setMethodS3("normalizeLogRatioShift", "MAData", function(this, slides=NULL, grou
 #*/#########################################################################
 setMethodS3("estimateMACurve", "MAData", function(this, slides=NULL, groupBy=NULL, weights=NULL, method=c("loess", "lowess", "spline", "robust.spline"), span=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  lowessFcn <- function(A, M, weights=NULL, span=0.3, ...) {
+    incl <- if (!is.null(weights)) (weights > 0) else TRUE;
+    fit <- doCall("lowess", x=A[incl], y=M[incl], f=span, ...);
+    fit$predictM <- function(newA) approx(fit, xout=newA, ties=mean)$y;
+    fit;
+  } # lowessFcn()
+
+  loessFcn <- function(A, M, weights=NULL, span=0.75, ...) {
+    fit <- doCall("loess", formula=M ~ A, weights=weights, 
+                  family="symmetric", degree=1, span=span, 
+                  control=loess.control(trace.hat="approximate", 
+                                   iterations=5, surface="direct"), ...);
+    fit$predictM <- function(newA) predict(fit, newdata=newA);
+    fit;
+  } # loessFcn()
+
+  splineFcn <- function(A, M, weights=NULL, span=0.75, ...) {
+    incl <- if (!is.null(weights)) (weights > 0) else TRUE;
+    fit <- doCall("smooth.spline", x=A[incl], y=M[incl], spar=span, ...);
+    fit$predictM <- function(newA) predict(fit, x=newA)$y;
+    fit;
+  } # splineFcn()
+
+  robustSplineFcn <- function(A, M, weights=NULL, span=0.75, ...) {
+    fit <- doCall("robustSmoothSpline", x=A, y=M, w=weights, spar=span, ...);
+    fit$predictM <- function(newA) predict(fit, x=newA)$y;
+    fit;
+  } # robustSplineFcn()
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   slides <- validateArgumentSlides(this, slides=slides);
@@ -636,44 +668,20 @@ setMethodS3("estimateMACurve", "MAData", function(this, slides=NULL, groupBy=NUL
 
   if (method == "lowess") {
     weights <- validateArgumentWeights(this, weights=weights, zeroOneOnly=TRUE);
-
-    fcn <- function(A, M, weights=NULL, span=0.3, ...) {
-      incl <- if (!is.null(weights)) (weights > 0) else TRUE;
-      fit <- doCall("lowess", x=A[incl], y=M[incl], f=span, ...);
-      fit$predictM <- function(newA) approx(fit, xout=newA, ties=mean)$y;
-      fit;
-    }
+    fcn <- lowessFcn;
     if (is.null(span))
       span <- 0.3;
   } else if (method == "loess") {
-    fcn <- function(A, M, weights=NULL, span=0.75, ...) {
-      fit <- doCall("loess", formula=M ~ A, weights=weights, 
-                    family="symmetric", degree=1, span=span, 
-                    control=loess.control(trace.hat="approximate", 
-                                     iterations=5, surface="direct"), ...);
-      fit$predictM <- function(newA) predict(fit, newdata=newA);
-      fit;
-    }
+    fcn <- loessFcn;
     if (is.null(span))
       span <- 0.75;
   } else if (method == "spline") {
     weights <- validateArgumentWeights(this, weights=weights, zeroOneOnly=TRUE);
-
-    fcn <- function(A, M, weights=NULL, span=0.75, ...) {
-      incl <- if (!is.null(weights)) (weights > 0) else TRUE;
-      fit <- doCall("smooth.spline", x=A[incl], y=M[incl], spar=span, ...);
-      fit$predictM <- function(newA) predict(fit, x=newA)$y;
-      fit;
-    }
+    fcn <- splineFcn;
     if (is.null(span))
       span <- 0.75;
   } else if (method == "robust.spline") {
-    fcn <- function(A, M, weights=NULL, span=0.75, ...) {
-      require(R.basic) || throw("Could not load package R.basic.");
-      fit <- doCall("robust.smooth.spline", x=A, y=M, w=weights, spar=span, ...);
-      fit$predictM <- function(newA) predict(fit, x=newA)$y;
-      fit;
-    }
+    fcn <- robustSplineFcn;
     if (is.null(span))
       span <- 0.75;
   }

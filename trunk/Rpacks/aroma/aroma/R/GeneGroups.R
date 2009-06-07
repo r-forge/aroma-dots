@@ -152,7 +152,7 @@ setMethodS3("as.character", "GeneGroups", function(x, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getNames", "GeneGroups", function(this) {
+setMethodS3("getNames", "GeneGroups", function(this, ...) {
   names(this$groups);
 })
 
@@ -179,7 +179,7 @@ setMethodS3("getNames", "GeneGroups", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("nbrOfGroups", "GeneGroups", function(this) {
+setMethodS3("nbrOfGroups", "GeneGroups", function(this, ...) {
   length(this$groups)
 })
 
@@ -205,7 +205,7 @@ setMethodS3("nbrOfGroups", "GeneGroups", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSizes", "GeneGroups", function(this) {
+setMethodS3("getSizes", "GeneGroups", function(this, ...) {
   unlist(lapply(this$groups, FUN=length))
 })
 
@@ -242,7 +242,7 @@ setMethodS3("getSizes", "GeneGroups", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSpots", "GeneGroups", function(this, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpots", "GeneGroups", function(this, groups=NULL, unlist=FALSE, ...) {
   if (is.null(groups)) {
     groups <- seq(nbrOfGroups(this))
   } else if (is.numeric(groups)) {
@@ -300,7 +300,7 @@ setMethodS3("getSpots", "GeneGroups", function(this, groups=NULL, unlist=FALSE) 
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getReplicates", "GeneGroups", function(this, nbrOfReplicates, value=NULL, asMatrix=TRUE) {
+setMethodS3("getReplicates", "GeneGroups", function(this, nbrOfReplicates, value=NULL, asMatrix=TRUE, ...) {
   idx <- getSpots(this);
 
   # Get all spots of length 'nbrOfReplicates'

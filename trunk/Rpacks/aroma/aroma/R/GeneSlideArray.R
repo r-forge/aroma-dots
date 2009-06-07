@@ -14,13 +14,18 @@ setConstructorS3("GeneSlideArray", function(array=NULL, layout=NULL) {
   )
 })
 
-setMethodS3("ncol", "GeneSlideArray", function(this) {
+setMethodS3("ncol", "GeneSlideArray", function(x) {
+  # To please R CMD check
+  this <- x;
   ncol(unclass(this));
-})
+}, appendVarArgs=FALSE, createGeneric=FALSE)
 
-setMethodS3("nrow", "GeneSlideArray", function(this) {
+setMethodS3("nrow", "GeneSlideArray", function(x) {
+  # To please R CMD check
+  this <- x;
   nbrOfSpots(this$.layout);
-})
+}, appendVarArgs=FALSE, createGeneric=FALSE)
+
 
 
 setMethodS3("getView", "GeneSlideArray", function(this, ...) {
@@ -30,7 +35,7 @@ setMethodS3("getView", "GeneSlideArray", function(this, ...) {
   view;
 })
 
-setMethodS3("as.matrix", "GeneSlideArray", function(x) {
+setMethodS3("as.matrix", "GeneSlideArray", function(x, ...) {
   # To please R CMD check...
   this <- x;
 
@@ -42,7 +47,7 @@ setMethodS3("getSpotOrGeneSlideValues", "GeneSlideArray", function(this, ...) {
   getGeneSlideValues(this, ...);
 })
 
-setMethodS3("getSpotSlideValues", "GeneSlideArray", function(this, spots=NULL, slides=NULL) {
+setMethodS3("getSpotSlideValues", "GeneSlideArray", function(this, spots=NULL, slides=NULL, ...) {
   layout <- getLayout(this);
   uthis <- unclass(this);
 
@@ -70,7 +75,7 @@ setMethodS3("getSpotSlideValues", "GeneSlideArray", function(this, spots=NULL, s
 
 
 
-setMethodS3("getGeneReplicateSlideValues", "GeneSlideArray", function(this, genes=NULL, replicates=NULL, slides=NULL) {
+setMethodS3("getGeneReplicateSlideValues", "GeneSlideArray", function(this, genes=NULL, replicates=NULL, slides=NULL, ...) {
   if (is.null(genes))
     genes <- seq(length(this));
 
@@ -96,7 +101,7 @@ setMethodS3("getGeneReplicateSlideValues", "GeneSlideArray", function(this, gene
 })
 
 
-setMethodS3("getGeneSlideValues", "GeneSlideArray", function(this, genes=NULL, slides=NULL) {
+setMethodS3("getGeneSlideValues", "GeneSlideArray", function(this, genes=NULL, slides=NULL, ...) {
   uthis <- unclass(this);
 
   if (is.null(genes))
@@ -109,7 +114,7 @@ setMethodS3("getGeneSlideValues", "GeneSlideArray", function(this, genes=NULL, s
 })
 
 
-setMethodS3("setGeneSlideValues", "GeneSlideArray", function(this, spots=NULL, slides=NULL, value) {
+setMethodS3("setGeneSlideValues", "GeneSlideArray", function(this, spots=NULL, slides=NULL, value, ...) {
   uthis <- unclass(this);
 
   if (is.null(spots))

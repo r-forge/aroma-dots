@@ -60,7 +60,7 @@ setConstructorS3("RejectFilter", function(input, reject=NULL, ...) {
 })
 
 
-setMethodS3("getIndex", "RejectFilter", function(this) {
+setMethodS3("getIndex", "RejectFilter", function(this, ...) {
   incl <- getIndex(this$.input);
   idx <- setdiff(incl, this$reject);
   attr(idx, "max") <- attr(incl, "max");

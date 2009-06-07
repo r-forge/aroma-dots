@@ -103,7 +103,7 @@ setConstructorS3("ParallelFilter", function(..., cex=NULL, col=NULL, pch=NULL, v
 #   @seeclass.
 # }
 #*/######################################################################### 
-setMethodS3("getInput", "ParallelFilter", function(this) {
+setMethodS3("getInput", "ParallelFilter", function(this, ...) {
   this$filters;
 })
 
@@ -136,7 +136,7 @@ setMethodS3("getInput", "ParallelFilter", function(this) {
 #   @seeclass.
 # }
 #*/######################################################################### 
-setMethodS3("changeInput", "ParallelFilter", function(this, newInput, oldInput=NULL, recursive=TRUE) {
+setMethodS3("changeInput", "ParallelFilter", function(this, newInput, oldInput=NULL, recursive=TRUE, ...) {
   filters <- this$filters;  
   for (k in 1:length(filters)) {
     if (is.null(oldInput) || filters[[k]] == oldInput)

@@ -38,7 +38,7 @@ setMethodS3("asGSRArray", "GSRArray", function(object, ...) {
   object;
 })
 
-setMethodS3("asGSRArray", "SSMatrix", function(object) {
+setMethodS3("asGSRArray", "SSMatrix", function(object, ...) {
   K <- ncol(object);  # nbrOfSlides;
   S <- nrow(object);  # nbrOfSpots;
   R <- object@nbrOfReplicates;
@@ -122,7 +122,7 @@ setMethodS3("apply", "GSRArray", function(this, MARGIN=c(), FUN, ...) {
 })
 
 
-setMethodS3("fromSSMatrix", "GSRArray", function(M, nbrOfReplicates=2, geneSpotMap="neighboring") {
+setMethodS3("fromSSMatrix", "GSRArray", function(M, nbrOfReplicates=2, geneSpotMap="neighboring", ...) {
   K <- ncol(M);  # nbrOfSlides;
   S <- nrow(M);  # nbrOfSpots;
   R <- nbrOfReplicates;

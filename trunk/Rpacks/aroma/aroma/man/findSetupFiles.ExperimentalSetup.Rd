@@ -31,8 +31,8 @@
 \arguments{
   \item{paths}{Vector of character strings or list of File objects
     specifying which directories to be searched.}
-  \item{recursive}{If \\code{\link[base:logical]{TRUE}}, all subdirectories will also be search.
-    If \\code{\link[base:logical]{FALSE}}, only the specified directory will be searched.
+  \item{recursive}{If \code{\link[base:logical]{TRUE}}, all subdirectories will also be search.
+    If \code{\link[base:logical]{FALSE}}, only the specified directory will be searched.
     If an integer is given, it specifies the maximum depth of the
     directory structure to be search; \code{recursive=0} and
     \code{recursive=FALSE} give the same results.}

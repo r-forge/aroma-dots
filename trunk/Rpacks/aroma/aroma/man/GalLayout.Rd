@@ -58,7 +58,7 @@ extends \link[aroma]{Layout}\cr
 anonymize, as.character, as.data.frame, as, as.Layout, equals, fromDataFrame, getBlank, getGeneGroups, getId, getIndex, getIndices, getLayoutGroupsByName, getLocation, getName, getPlate, getPlateGroups, getPlateNumber, getPosition, getPrintdipGroups, getPrintorder, getPrinttipGroups, getSlideColumnGroups, getSlideRowGroups, gridSize, hasIds, hasNames, hasPlates, indexOf, nbrOfColumns, nbrOfGrids, nbrOfPlates, nbrOfReplicates, nbrOfRows, nbrOfSpots, put, read, rename, set, setGeneGroups, setId, setName, setPlate, setPlateGroups, setPrintdipGroups, setPrintorder, setPrinttipGroups, setSlideColumnGroups, setSlideRowGroups, size, toXYMatrix, write
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
 }

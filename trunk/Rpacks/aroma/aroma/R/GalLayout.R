@@ -79,7 +79,7 @@ setConstructorS3("GalLayout", function(...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("read", "GalLayout", function(this, filename, path=NULL, solve=FALSE, verbose=FALSE) {
+setMethodS3("read", "GalLayout", function(this, filename, path=NULL, solve=FALSE, verbose=FALSE, ...) {
   filename <- Arguments$getReadablePathname(filename, path);  
 
   if (verbose) cat("Reading file ", filename, "...", sep="");
@@ -262,27 +262,27 @@ setMethodS3("read", "GalLayout", function(this, filename, path=NULL, solve=FALSE
 }, static=TRUE)  # read()
 
 
-setMethodS3("getFieldNames", "GalLayout", function(this) {
+setMethodS3("getFieldNames", "GalLayout", function(this, ...) {
   c("Block", "Row", "Column", "ID", "Name");
 })
 
-setMethodS3("nbrOfFields", "GalLayout", function(this) {
+setMethodS3("nbrOfFields", "GalLayout", function(this, ...) {
   length(getFieldNames(this));
 })
 
-setMethodS3("getBlock", "GalLayout", function(this) {
+setMethodS3("getBlock", "GalLayout", function(this, ...) {
   rep(1:nbrOfGrids(this), each=gridSize(this))
 })
 
-setMethodS3("getGridRow", "GalLayout", function(this) {
+setMethodS3("getGridRow", "GalLayout", function(this, ...) {
   ((getBlock(this)-1) %/% this$ngrid.c) + 1;
 })
 
-setMethodS3("getGridColumn", "GalLayout", function(this) {
+setMethodS3("getGridColumn", "GalLayout", function(this, ...) {
   ((getBlock(this)-1) %% this$ngrid.c) + 1;
 })
 
-setMethodS3("getRow", "GalLayout", function(this) {
+setMethodS3("getRow", "GalLayout", function(this, ...) {
   row <- matrix(1:this$nspot.r, nrow=this$nspot.r, ncol=this$nspot.c, byrow=FALSE);
   row <- as.vector(t(row));
   row <- rep(row, times=this$ngrid.r*this$ngrid.c);
@@ -292,7 +292,7 @@ setMethodS3("getRow", "GalLayout", function(this) {
   row;
 })
 
-setMethodS3("getColumn", "GalLayout", function(this) {
+setMethodS3("getColumn", "GalLayout", function(this, ...) {
   row <- matrix(1:this$nspot.r, nrow=this$nspot.r, ncol=this$nspot.c, byrow=FALSE);
   row <- as.vector(t(row));
   row <- rep(row, times=this$ngrid.r*this$ngrid.c);
@@ -302,7 +302,7 @@ setMethodS3("getColumn", "GalLayout", function(this) {
   col;
 })
 
-setMethodS3("as.data.frame", "GalLayout", function(x) {
+setMethodS3("as.data.frame", "GalLayout", function(x, ...) {
   # To please R CMD check...
   this <- x;
 
@@ -320,7 +320,7 @@ setMethodS3("as.data.frame", "GalLayout", function(x) {
 })
 
 
-setMethodS3("write", "GalLayout", function(this, filename, path=NULL, overwrite=FALSE, quote=FALSE, verbose=FALSE) {
+setMethodS3("write", "GalLayout", function(this, filename, path=NULL, overwrite=FALSE, quote=FALSE, verbose=FALSE, ...) {
   filename <- Arguments$getWritablePathname(filename, path, mustNotExist=!overwrite);  
 
   knownHeaders <- c("Block"="integer", "Column"="integer", "Row"="integer", "Name"="character", "ID"="character");

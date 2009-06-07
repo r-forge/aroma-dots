@@ -101,7 +101,7 @@ setMethodS3("as.character", "MicroarrayData", function(x, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("str", "MicroarrayData", function(object) {
+setMethodS3("str", "MicroarrayData", function(object, ...) {
   # To please R CMD check...
   this <- object;
 
@@ -184,7 +184,7 @@ setMethodS3("summary", "MicroarrayData", function(object, ...) {
 #   @seeclass
 # }
 #*/#########################################################################s
-setMethodS3("getChannelNames", "MicroarrayData", function(this) {
+setMethodS3("getChannelNames", "MicroarrayData", function(this, ...) {
   return(NULL);
 })
 
@@ -229,7 +229,7 @@ setMethodS3("getChannelNames", "MicroarrayData", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("append", "MicroarrayData", function(this, other) {
+setMethodS3("append", "MicroarrayData", function(this, other, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -320,7 +320,7 @@ setMethodS3("append", "MicroarrayData", function(this, other) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("removeSlides", "MicroarrayData", function(this, slides) {
+setMethodS3("removeSlides", "MicroarrayData", function(this, slides, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -377,7 +377,7 @@ setMethodS3("removeSlides", "MicroarrayData", function(this, slides) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("keepSlides", "MicroarrayData", function(this, slides) {
+setMethodS3("keepSlides", "MicroarrayData", function(this, slides, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -437,7 +437,7 @@ setMethodS3("keepSlides", "MicroarrayData", function(this, slides) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("keepSpots", "MicroarrayData", function(this, index) {
+setMethodS3("keepSpots", "MicroarrayData", function(this, index, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -494,7 +494,7 @@ setMethodS3("keepSpots", "MicroarrayData", function(this, index) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("removeSpots", "MicroarrayData", function(this, index) {
+setMethodS3("removeSpots", "MicroarrayData", function(this, index, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -552,7 +552,7 @@ setMethodS3("removeSpots", "MicroarrayData", function(this, index) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("isSaturated", "MicroarrayData", function(this, channels=NULL, index=NULL, slides=NULL, na.rm=TRUE) {
+setMethodS3("isSaturated", "MicroarrayData", function(this, channels=NULL, index=NULL, slides=NULL, na.rm=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -626,7 +626,7 @@ setMethodS3("isSaturated", "MicroarrayData", function(this, channels=NULL, index
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("setSaturated", "MicroarrayData", function(this, channel, index=NULL, slides=NULL, status=TRUE) {
+setMethodS3("setSaturated", "MicroarrayData", function(this, channel, index=NULL, slides=NULL, status=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -680,11 +680,13 @@ setMethodS3("setSaturated", "MicroarrayData", function(this, channel, index=NULL
 #  @TRUE if they are equal. For the MicroarrayData object \code{raw}
 #  to be equal to another Object \code{obj} it must be true that:
 #
-#  \item{1}{\code{obj} is of class MAData,}
-#  \item{2}{\code{size(raw) == size(obj)},}
-#  \item{3}{\code{equals(getLayout(raw), getLayout(obj))} is true, and}
-#  \item{4}{the Euclidian distance between the each field in the two objects
-#    is small.}
+#  \itemize{
+#   \item{1}{\code{obj} is of class MAData,}
+#   \item{2}{\code{size(raw) == size(obj)},}
+#   \item{3}{\code{equals(getLayout(raw), getLayout(obj))} is true, and}
+#   \item{4}{the Euclidian distance between the each field in the two objects
+#     is small.}
+#  }
 # }
 #
 # \examples{
@@ -710,7 +712,7 @@ setMethodS3("setSaturated", "MicroarrayData", function(this, channel, index=NULL
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("equals", "MicroarrayData", function(this, other) {
+setMethodS3("equals", "MicroarrayData", function(this, other, ...) {
   res <- FALSE;
 
   if (identical(this, other))
@@ -797,7 +799,7 @@ setMethodS3("equals", "MicroarrayData", function(this, other) {
 
 
 
-setMethodS3("getExcludedSpots", "MicroarrayData", function(this, slides=NULL) {
+setMethodS3("getExcludedSpots", "MicroarrayData", function(this, slides=NULL, ...) {
   if (!hasExcludedSpots(this))
     matrix(FALSE, nrow=nbrOfSpots(this), ncol=nbrOfSlides(this))
   else
@@ -805,12 +807,12 @@ setMethodS3("getExcludedSpots", "MicroarrayData", function(this, slides=NULL) {
 }, trial=TRUE)
 
 
-setMethodS3("hasExcludedSpots", "MicroarrayData", function(this, slides=NULL) {
+setMethodS3("hasExcludedSpots", "MicroarrayData", function(this, slides=NULL, ...) {
   (length(this$.exclude) > 0)
 }, trial=TRUE)
 
 
-setMethodS3("setExcludedSpots", "MicroarrayData", function(this, excludes, slides=NULL, add=TRUE) {
+setMethodS3("setExcludedSpots", "MicroarrayData", function(this, excludes, slides=NULL, add=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -856,7 +858,7 @@ setMethodS3("setExcludedSpots", "MicroarrayData", function(this, excludes, slide
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getFieldNames", "MicroarrayData", function(this) {
+setMethodS3("getFieldNames", "MicroarrayData", function(this, ...) {
   this$.fieldNames;
 }, protected=TRUE)
 
@@ -894,7 +896,7 @@ setMethodS3("getFieldNames", "MicroarrayData", function(this) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("getSlideNames", "MicroarrayData", function(this, slides=NULL) {
+setMethodS3("getSlideNames", "MicroarrayData", function(this, slides=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -937,7 +939,7 @@ setMethodS3("getSlideNames", "MicroarrayData", function(this, slides=NULL) {
 #   @seeclass
 # }
 #*/###########################################################################
-setMethodS3("setSlideNames", "MicroarrayData", function(this, names, slides=NULL) {
+setMethodS3("setSlideNames", "MicroarrayData", function(this, names, slides=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1016,7 +1018,7 @@ setMethodS3("setSlideName", "MicroarrayData", function(this, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getLabel", "MicroarrayData", function(this, field) {
+setMethodS3("getLabel", "MicroarrayData", function(this, field, ...) {
   label <- this$.labels[[field]];
   if (is.null(label)) field else label;
 })
@@ -1058,7 +1060,7 @@ setMethodS3("getLabel", "MicroarrayData", function(this, field) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("setLabel", "MicroarrayData", function(this, field, value) {
+setMethodS3("setLabel", "MicroarrayData", function(this, field, value, ...) {
   labels <- this$.labels;
   if (is.null(labels)) labels <- list();  # Should never happens!
   labels[[field]] <- value;
@@ -1108,7 +1110,7 @@ setMethodS3("setLabel", "MicroarrayData", function(this, field, value) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getFlag", "MicroarrayData", function(this, flag, slide=NULL) {
+setMethodS3("getFlag", "MicroarrayData", function(this, flag, slide=NULL, ...) {
   if (missing(flag))
     return(this$Flag);
 
@@ -1188,7 +1190,7 @@ setMethodS3("getFlag", "MicroarrayData", function(this, flag, slide=NULL) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("setFlag", "MicroarrayData", function(this, flag, include=NULL, exclude=NULL, slide=NULL, include.op="and", exclude.op="or") {
+setMethodS3("setFlag", "MicroarrayData", function(this, flag, include=NULL, exclude=NULL, slide=NULL, include.op="and", exclude.op="or", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1260,7 +1262,7 @@ setMethodS3("setFlag", "MicroarrayData", function(this, flag, include=NULL, excl
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("addFlag", "MicroarrayData", function(this, flag, include=NULL, exclude=NULL, slide=NULL, include.op="and", exclude.op="or") {
+setMethodS3("addFlag", "MicroarrayData", function(this, flag, include=NULL, exclude=NULL, slide=NULL, include.op="and", exclude.op="or", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1313,7 +1315,7 @@ setMethodS3("addFlag", "MicroarrayData", function(this, flag, include=NULL, excl
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("clearFlag", "MicroarrayData", function(this, flag) {
+setMethodS3("clearFlag", "MicroarrayData", function(this, flag, ...) {
   flags <- this$.flags;
   names <- names(flags);
   pos <- regexpr(flag, names);
@@ -1349,7 +1351,7 @@ setMethodS3("clearFlag", "MicroarrayData", function(this, flag) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("listFlags", "MicroarrayData", function(this, regexpr=NULL) {
+setMethodS3("listFlags", "MicroarrayData", function(this, regexpr=NULL, ...) {
   flags <- this$.flags;
   names <- names(flags);
   if (!is.null(regexpr)) {
@@ -1362,7 +1364,7 @@ setMethodS3("listFlags", "MicroarrayData", function(this, regexpr=NULL) {
 
 
 
-setMethodS3("getInclude", "MicroarrayData", function(this, include=NULL, exclude=NULL, slides=NULL, include.op="and", exclude.op="or") {
+setMethodS3("getInclude", "MicroarrayData", function(this, include=NULL, exclude=NULL, slides=NULL, include.op="and", exclude.op="or", ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1634,7 +1636,7 @@ setMethodS3("select", "MicroarrayData", function(this, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("extract", "MicroarrayData", function(this, fields=NULL, slides=NULL, index=NULL) {
+setMethodS3("extract", "MicroarrayData", function(this, fields=NULL, slides=NULL, index=NULL, ...) {
   virtualFields <- c("slide", "spot", "gene");
   
   if (is.null(fields))
@@ -1721,7 +1723,7 @@ setMethodS3("extract", "MicroarrayData", function(this, fields=NULL, slides=NULL
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("nbrOfFields", "MicroarrayData", function(this) {
+setMethodS3("nbrOfFields", "MicroarrayData", function(this, ...) {
   length(getFieldNames(this));
 })
 
@@ -1748,7 +1750,7 @@ setMethodS3("nbrOfFields", "MicroarrayData", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("nbrOfSlides", "MicroarrayData", function(this) {
+setMethodS3("nbrOfSlides", "MicroarrayData", function(this, ...) {
   field <- getFieldNames(this)[1];
   if (is.null(field)) return(0);
   attr(this, ".memberAccessorOrder") <- c(2,3,1,4,5);
@@ -1781,7 +1783,7 @@ setMethodS3("nbrOfSlides", "MicroarrayData", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("nbrOfSpots", "MicroarrayData", function(this) {
+setMethodS3("nbrOfSpots", "MicroarrayData", function(this, ...) {
   if (hasLayout(this))
     nbrOfSpots(getLayout(this))
   else if (!is.null(field <- getFieldNames(this)[1])) {
@@ -1793,7 +1795,7 @@ setMethodS3("nbrOfSpots", "MicroarrayData", function(this) {
 
 
 
-setMethodS3("nbrOfDataPoints", "MicroarrayData", function(this) {
+setMethodS3("nbrOfDataPoints", "MicroarrayData", function(this, ...) {
   if (!is.null(field <- getFieldNames(this)[1])) {
     attr(this, ".memberAccessorOrder") <- c(2,3,1,4,5);
     nrow(this[[field]][,])
@@ -1823,7 +1825,7 @@ setMethodS3("nbrOfDataPoints", "MicroarrayData", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("size", "MicroarrayData", function(this) {
+setMethodS3("size", "MicroarrayData", function(this, ...) {
   nbrOfSlides(this) * nbrOfSpots(this);
 })
 
@@ -1854,7 +1856,7 @@ setMethodS3("size", "MicroarrayData", function(this) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("hasLayout", "MicroarrayData", function(this) {
+setMethodS3("hasLayout", "MicroarrayData", function(this, ...) {
   !is.null(this$layout);
 })
 
@@ -1885,7 +1887,7 @@ setMethodS3("hasLayout", "MicroarrayData", function(this) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("getLayout", "MicroarrayData", function(this) {
+setMethodS3("getLayout", "MicroarrayData", function(this, ...) {
   if (hasLayout(this))
     this$layout
   else
@@ -1920,7 +1922,7 @@ setMethodS3("getLayout", "MicroarrayData", function(this) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("setLayout", "MicroarrayData", function(this, layout) {
+setMethodS3("setLayout", "MicroarrayData", function(this, layout, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1935,12 +1937,12 @@ setMethodS3("setLayout", "MicroarrayData", function(this, layout) {
 
 
 
-setMethodS3("getTreatments", "MicroarrayData", function(this) {
+setMethodS3("getTreatments", "MicroarrayData", function(this, ...) {
   this$.treatments;
 })
 
 
-setMethodS3("setTreatments", "MicroarrayData", function(this, newTreatments, slides=NULL) {
+setMethodS3("setTreatments", "MicroarrayData", function(this, newTreatments, slides=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1954,7 +1956,7 @@ setMethodS3("setTreatments", "MicroarrayData", function(this, newTreatments, sli
 })
 
 
-setMethodS3("nbrOfTreatments", "MicroarrayData", function(this) {
+setMethodS3("nbrOfTreatments", "MicroarrayData", function(this, ...) {
   length(unique(this$.treatments))
 })
 
@@ -2025,7 +2027,7 @@ setMethodS3("nbrOfTreatments", "MicroarrayData", function(this) {
 # }
 #
 #*/#########################################################################
-setMethodS3("getGeneSlideReplicateIndex", "MicroarrayData", function(this) {
+setMethodS3("getGeneSlideReplicateIndex", "MicroarrayData", function(this, ...) {
   layout <- getLayout(this);
   index <- getGeneReplicateIndex(layout);
   
@@ -2065,7 +2067,7 @@ setMethodS3("getGeneSlideReplicateIndex", "MicroarrayData", function(this) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("setExtra", "MicroarrayData", function(this, key, value) {
+setMethodS3("setExtra", "MicroarrayData", function(this, key, value, ...) {
   extras <- this$.extras;
   if (is.null(extras)) extras <- list(); # Should never happen!
   extras[[key]] <- value;
@@ -2097,13 +2099,13 @@ setMethodS3("setExtra", "MicroarrayData", function(this, key, value) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("getExtra", "MicroarrayData", function(this, key) {
+setMethodS3("getExtra", "MicroarrayData", function(this, key, ...) {
   this$.extras[[key]];
 }, trial=TRUE)
 
 
 
-setMethodS3("range", "MicroarrayData", function(this, fields, slide=NULL, na.rm=TRUE, inf.rm=TRUE) {
+setMethodS3("range", "MicroarrayData", function(this, fields, slide=NULL, na.rm=TRUE, inf.rm=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -2159,7 +2161,7 @@ setMethodS3("seq", "MicroarrayData", function(this, ...) {
 #  @seeclass
 # }
 ############################################################################
-setMethodS3("getSlidePairs", "MicroarrayData", function(this, slides=NULL) {
+setMethodS3("getSlidePairs", "MicroarrayData", function(this, slides=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -2190,7 +2192,7 @@ setMethodS3("getSlidePairs", "MicroarrayData", function(this, slides=NULL) {
 ############################################################################
 ############################################################################
 
-setMethodS3("getExtreme", "MicroarrayData", function(this, crit1=0.05, crit2=crit1, what="M", slide=1, include=NULL, exclude=NULL) {
+setMethodS3("getExtreme", "MicroarrayData", function(this, crit1=0.05, crit2=crit1, what="M", slide=1, include=NULL, exclude=NULL, ...) {
 
   include <- which(getInclude(this, include, exclude, slide=slide));
 
@@ -2218,7 +2220,7 @@ setMethodS3("getExtreme", "MicroarrayData", function(this, crit1=0.05, crit2=cri
 
 
 
-setMethodS3("range2", "MicroarrayData", function(this, na.rm=TRUE, inf.rm=TRUE) {
+setMethodS3("range2", "MicroarrayData", function(this, na.rm=TRUE, inf.rm=TRUE, ...) {
   range <- apply(as.data.frame(this), MARGIN=2, FUN=function(x) {
     if (inf.rm) x <- x[!is.infinite(x)];
     range(x, na.rm=na.rm);
@@ -2228,7 +2230,7 @@ setMethodS3("range2", "MicroarrayData", function(this, na.rm=TRUE, inf.rm=TRUE) 
 })
 
 
-setMethodS3("quantile", "MicroarrayData", function(x, probs=seq(0, 1, 0.25), na.rm=TRUE, inf.rm=TRUE, names=TRUE) {
+setMethodS3("quantile", "MicroarrayData", function(x, probs=seq(0, 1, 0.25), na.rm=TRUE, inf.rm=TRUE, names=TRUE, ...) {
   # To please R CMD check...
   this <- x;
 
@@ -2244,7 +2246,7 @@ setMethodS3("quantile", "MicroarrayData", function(x, probs=seq(0, 1, 0.25), na.
 
 
 
-setMethodS3("getSpotPosition", "MicroarrayData", function(this, slides=NULL, index=NULL) {
+setMethodS3("getSpotPosition", "MicroarrayData", function(this, slides=NULL, index=NULL, ...) {
   NULL;
 })
 
@@ -2255,7 +2257,7 @@ setMethodS3("getSpotPosition", "MicroarrayData", function(this, slides=NULL, ind
 
 
   
-setMethodS3("dataFrameToList", "MicroarrayData", function(this, df, reqFields) {
+setMethodS3("dataFrameToList", "MicroarrayData", function(this, df, reqFields, ...) {
   df.names <- names(df);
 
   # Extract or generate the slide index for each data points
@@ -2418,13 +2420,13 @@ setMethodS3("applyPlatewise", "MicroarrayData", function(this, field, ...) {
 })
 
 
-setMethodS3("getSpotValue", "MicroarrayData", function(this, field, slide=1) {
+setMethodS3("getSpotValue", "MicroarrayData", function(this, field, slide=1, ...) {
   # By default, assume that the data is stored spotwise.
   as.matrix(this[[field]])[,slide];
 })
 
 
-setMethodS3("clearCache", "MicroarrayData", function(this, fields=NULL) {
+setMethodS3("clearCache", "MicroarrayData", function(this, fields=NULL, ...) {
   if (is.null(fields))
     fields <- getFields(this, private=TRUE);
   cachedFields <- fields[grep("^[.]cached[.]", fields)];
@@ -2434,7 +2436,7 @@ setMethodS3("clearCache", "MicroarrayData", function(this, fields=NULL) {
   gc();
 })
 
-setMethodS3("getCache", "MicroarrayData", function(this, name, force=FALSE) {
+setMethodS3("getCache", "MicroarrayData", function(this, name, force=FALSE, ...) {
   if (force == TRUE)
     return(NULL);
   cacheName <- paste(".cached.", name, sep="");
@@ -2444,7 +2446,7 @@ setMethodS3("getCache", "MicroarrayData", function(this, name, force=FALSE) {
   value;
 })
 
-setMethodS3("setCache", "MicroarrayData", function(this, name, value) {
+setMethodS3("setCache", "MicroarrayData", function(this, name, value, ...) {
   cacheName <- paste(".cached.", name, sep="");
   if (!is.null(value) && !inherits(value, "Cache")) {
     class(value) <- unique(c("Cache", class(value)));

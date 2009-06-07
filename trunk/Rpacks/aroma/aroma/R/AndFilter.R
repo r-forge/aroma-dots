@@ -60,7 +60,7 @@ setConstructorS3("AndFilter", function(...) {
 #   @seeclass.
 # }
 #*/######################################################################### 
-setMethodS3("getIndex", "AndFilter", function(this) {
+setMethodS3("getIndex", "AndFilter", function(this, ...) {
   filters <- this$filters;
   filter <- filters[[1]];
   idx <- getIndex(filter);

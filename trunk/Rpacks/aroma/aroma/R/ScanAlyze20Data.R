@@ -68,7 +68,7 @@ setMethodS3("write", "ScanAlyze20Data", function(this, filename, path=NULL, slid
 
 
 
-setMethodS3("getKnownHeadersWithType", "ScanAlyze20Data", function(static) {
+setMethodS3("getKnownHeadersWithType", "ScanAlyze20Data", function(static, ...) {
   # This methods returns a list of all known headers and their known
   # R datatype to be used when read by read.table() etc. 
 
@@ -258,7 +258,7 @@ setMethodS3("getKnownHeadersWithType", "ScanAlyze20Data", function(static) {
 #
 # Source: http://array.mbb.yale.edu/analysis/manual/inputfiles/
 ##############################################################################
-setMethodS3("readInternal", "ScanAlyze20Data", function(this, filename) {
+setMethodS3("readInternal", "ScanAlyze20Data", function(this, filename, ...) {
   # This method assumes that there is a bunch of ! lines (comments), followed by 
   # a HEADER line, (that begins with SPOT). All following lines are then assumed 
   # to be Spot data lines (beginning with a number and then data entries 
@@ -407,7 +407,7 @@ setMethodS3("read", "ScanAlyze20Data", function(static, ...) {
 #   S I G N A L    E S T I M A T E S
 #
 ############################################################################
-setMethodS3("getForeground", "ScanAlyze20Data", function(this, which=c("median", "mean", "auto"), slides=NULL) {
+setMethodS3("getForeground", "ScanAlyze20Data", function(this, which=c("median", "mean", "auto"), slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   which <- match.arg(which);
   if (which == "auto")
@@ -434,7 +434,7 @@ setMethodS3("getForeground", "ScanAlyze20Data", function(this, which=c("median",
   }
 })
 
-setMethodS3("getForegroundSD", "ScanAlyze20Data", function(this, slides=NULL, index=NULL) {
+setMethodS3("getForegroundSD", "ScanAlyze20Data", function(this, slides=NULL, index=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   if (is.null(index))
     index <- 1:nbrOfSpots(this);
@@ -443,7 +443,7 @@ setMethodS3("getForegroundSD", "ScanAlyze20Data", function(this, slides=NULL, in
 })
 
 
-setMethodS3("getBackground", "ScanAlyze20Data", function(this, which=c("median", "mean", "auto"), slides=NULL) {
+setMethodS3("getBackground", "ScanAlyze20Data", function(this, which=c("median", "mean", "auto"), slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   which <- match.arg(which);
   if (which == "auto")
@@ -465,7 +465,7 @@ setMethodS3("getBackground", "ScanAlyze20Data", function(this, which=c("median",
 })
 
 
-setMethodS3("getBackgroundSD", "ScanAlyze20Data", function(this, slides=NULL, index=NULL) {
+setMethodS3("getBackgroundSD", "ScanAlyze20Data", function(this, slides=NULL, index=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   if (is.null(index))
     index <- 1:nbrOfSpots(this);
@@ -564,7 +564,7 @@ setMethodS3("getSpotColumn", "ScanAlyze20Data", function(this, slides=NULL, incl
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSpotPosition", "ScanAlyze20Data", function(this, slides=NULL, index=NULL) {
+setMethodS3("getSpotPosition", "ScanAlyze20Data", function(this, slides=NULL, index=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   if (is.null(index)) {

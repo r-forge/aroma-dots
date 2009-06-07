@@ -3,8 +3,6 @@
 % 
 %  MicroarrayData.R
 % 
-% on Tue Jan 15 18:34:02 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -24,11 +22,13 @@
  \code{\link[base:logical]{TRUE}} if they are equal. For the MicroarrayData object \code{raw}
  to be equal to another Object \code{obj} it must be true that:
 
- \item{1}{\code{obj} is of class MAData,}
- \item{2}{\code{size(raw) == size(obj)},}
- \item{3}{\code{equals(getLayout(raw), getLayout(obj))} is true, and}
- \item{4}{the Euclidian distance between the each field in the two objects
-   is small.}
+ \itemize{
+  \item{1}{\code{obj} is of class MAData,}
+  \item{2}{\code{size(raw) == size(obj)},}
+  \item{3}{\code{equals(getLayout(raw), getLayout(obj))} is true, and}
+  \item{4}{the Euclidian distance between the each field in the two objects
+    is small.}
+ }
 }
 
 \examples{

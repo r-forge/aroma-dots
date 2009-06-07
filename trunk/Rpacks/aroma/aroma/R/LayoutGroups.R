@@ -47,34 +47,34 @@ setMethodS3("as.character", "LayoutGroups", function(x, ...) {
   s;
 })
 
-setMethodS3("getLayout", "LayoutGroups", function(object) {
+setMethodS3("getLayout", "LayoutGroups", function(object, ...) {
   object$layout;
 })
 
-setMethodS3("setLayout", "LayoutGroups", function(object, layout) {
+setMethodS3("setLayout", "LayoutGroups", function(object, layout, ...) {
   if (!inherits(layout, "Layout"))
     throw("Argument 'layout' must of class Layout: ", data.class(layout));
   object$layout <- layout;
 })
 
-setMethodS3("getNames", "LayoutGroups", function(object) {
+setMethodS3("getNames", "LayoutGroups", function(object, ...) {
   NULL;
 }, abstract=TRUE)
 
-setMethodS3("nbrOfGroups", "LayoutGroups", function(object) {
+setMethodS3("nbrOfGroups", "LayoutGroups", function(object, ...) {
   length(getSpots(object));
 })
 
-setMethodS3("seq", "LayoutGroups", function(object) {
+setMethodS3("seq", "LayoutGroups", function(object, ...) {
   1:nbrOfGroups(object);
 })
 
-setMethodS3("getSpots", "LayoutGroups", function(object, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpots", "LayoutGroups", function(object, groups=NULL, unlist=FALSE, ...) {
   NULL;
 }, abstract=TRUE)
 
 
-setMethodS3("getGroupValues", "LayoutGroups", function(object, data, groups=NULL, unlist=FALSE) {
+setMethodS3("getGroupValues", "LayoutGroups", function(object, data, groups=NULL, unlist=FALSE, ...) {
   if (is.null(groups)) groups <- seq(object);
   data <- as.matrix(data);
   spots <- getSpots(object, groups=groups);
@@ -86,7 +86,7 @@ setMethodS3("getGroupValues", "LayoutGroups", function(object, data, groups=NULL
   if (unlist == TRUE) unlist(l,use.names=FALSE) else l
 })
 
-setMethodS3("getSpotValues", "LayoutGroups", function(object, data, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpotValues", "LayoutGroups", function(object, data, groups=NULL, unlist=FALSE, ...) {
   res <- rep(NA, nbrOfSpots(getLayout(object)));
   spots <- getSpots(object, groups=groups);
   for (k in 1:length(spots)) {
@@ -201,28 +201,28 @@ setMethodS3("as.character", "PlateGroups", function(x, ...) {
   s;
 })
 
-setMethodS3("getFirst", "PlateGroups", function(object) {
+setMethodS3("getFirst", "PlateGroups", function(object, ...) {
   matrix(unlist(object$groups), nrow=2)[1,]
 })
 
-setMethodS3("getLast", "PlateGroups", function(object) {
+setMethodS3("getLast", "PlateGroups", function(object, ...) {
   matrix(unlist(object$groups), nrow=2)[2,]
 })
 
-setMethodS3("getNames", "PlateGroups", function(object) {
+setMethodS3("getNames", "PlateGroups", function(object, ...) {
   names(object$groups);
 })
 
-setMethodS3("nbrOfGroups", "PlateGroups", function(object) {
+setMethodS3("nbrOfGroups", "PlateGroups", function(object, ...) {
   length(object$groups)
 })
 
-setMethodS3("getSizes", "PlateGroups", function(object) {
+setMethodS3("getSizes", "PlateGroups", function(object, ...) {
   unlist(lapply(object$groups, FUN=length))
 })
 
 
-setMethodS3("getPrintorderIndices", "PlateGroups", function(object, groups=NULL, unlist=FALSE) {
+setMethodS3("getPrintorderIndices", "PlateGroups", function(object, groups=NULL, unlist=FALSE, ...) {
   if (is.null(groups)) {
     groups <- seq(nbrOfGroups(object))
   } else if (is.numeric(groups)) {
@@ -242,7 +242,7 @@ setMethodS3("getPrintorderIndices", "PlateGroups", function(object, groups=NULL,
 })
 
 
-setMethodS3("getSpots", "PlateGroups", function(object, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpots", "PlateGroups", function(object, groups=NULL, unlist=FALSE, ...) {
   l0 <- getPrintorderIndices(object, groups=groups, unlist=unlist)
   m <- as.vector(toPrintorderMatrix(object$layout))
   l <- lapply(l0, FUN=function(i) m[i])
@@ -286,29 +286,29 @@ setMethodS3("as.character", "SuperGroups", function(x, ...) {
   s;
 })
 
-setMethodS3("getNames", "SuperGroups", function(object) {
+setMethodS3("getNames", "SuperGroups", function(object, ...) {
   NULL;
 }, abstract=TRUE)
 
-setMethodS3("getGroups", "SuperGroups", function(object) {
+setMethodS3("getGroups", "SuperGroups", function(object, ...) {
   object$groups;
 }, abstract=TRUE)
 
-setMethodS3("setGroups", "SuperGroups", function(object, groups) {
+setMethodS3("setGroups", "SuperGroups", function(object, groups, ...) {
   object$groups <- as.list(groups);
 }, abstract=TRUE)
 
-setMethodS3("nbrOfGroups", "SuperGroups", function(object) {
+setMethodS3("nbrOfGroups", "SuperGroups", function(object, ...) {
   length(object$groups);
 }, abstract=TRUE)
 
 
-setMethodS3("getSizes", "SuperGroups", function(object) {
+setMethodS3("getSizes", "SuperGroups", function(object, ...) {
   unlist(lapply(getSpots(object), FUN=length))
 })
 
 
-setMethodS3("getSpots", "SuperGroups", function(object, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpots", "SuperGroups", function(object, groups=NULL, unlist=FALSE, ...) {
   if (is.null(groups)) {
     groups <- seq(nbrOfGroups(object))
   } else if (is.numeric(groups)) {
@@ -389,20 +389,20 @@ setMethodS3("as.character", "SlideRowGroups", function(x, ...) {
   s;
 })
 
-setMethodS3("getNames", "SlideRowGroups", function(object) {
+setMethodS3("getNames", "SlideRowGroups", function(object, ...) {
   names(object$groups);
 })
 
-setMethodS3("nbrOfGroups", "SlideRowGroups", function(object) {
+setMethodS3("nbrOfGroups", "SlideRowGroups", function(object, ...) {
   length(object$groups)
 })
 
-setMethodS3("getSizes", "SlideRowGroups", function(object) {
+setMethodS3("getSizes", "SlideRowGroups", function(object, ...) {
   unlist(lapply(object$groups, FUN=length))
 })
 
 
-setMethodS3("getSpots", "SlideRowGroups", function(object, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpots", "SlideRowGroups", function(object, groups=NULL, unlist=FALSE, ...) {
   if (is.null(groups)) {
     groups <- seq(nbrOfGroups(object))
   } else if (is.numeric(groups)) {
@@ -482,20 +482,20 @@ setMethodS3("as.character", "SlideColumnGroups", function(x, ...) {
   s;
 })
 
-setMethodS3("getNames", "SlideColumnGroups", function(object) {
+setMethodS3("getNames", "SlideColumnGroups", function(object, ...) {
   names(object$groups);
 })
 
-setMethodS3("nbrOfGroups", "SlideColumnGroups", function(object) {
+setMethodS3("nbrOfGroups", "SlideColumnGroups", function(object, ...) {
   length(object$groups)
 })
 
-setMethodS3("getSizes", "SlideColumnGroups", function(object) {
+setMethodS3("getSizes", "SlideColumnGroups", function(object, ...) {
   unlist(lapply(object$groups, FUN=length))
 })
 
 
-setMethodS3("getSpots", "SlideColumnGroups", function(object, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpots", "SlideColumnGroups", function(object, groups=NULL, unlist=FALSE, ...) {
   if (is.null(groups)) {
     groups <- seq(nbrOfGroups(object))
   } else if (is.numeric(groups)) {

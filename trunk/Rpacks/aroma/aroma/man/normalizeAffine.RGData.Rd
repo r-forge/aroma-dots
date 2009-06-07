@@ -3,8 +3,6 @@
 % 
 %  RGData.NORM.R
 % 
-% on Tue Jan 15 18:36:04 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -246,7 +244,7 @@ rg <- clone(rg0);
 fit <- calibrateMultiscan(rg);
 
 
-Device$set(3, height="108\%");
+devSet(3);
 subplots(9, nrow=3);
 
 # Plot such that there is a right angle between the log(R) and log(G) axes.

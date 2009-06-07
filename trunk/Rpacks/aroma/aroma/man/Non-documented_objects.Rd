@@ -792,6 +792,7 @@
 \alias{range.RGData}
 \alias{range2}
 \alias{range2.MicroarrayData}
+\alias{read}
 \alias{read.MAData}
 \alias{read.RawData}
 \alias{read.RGData}
@@ -944,6 +945,8 @@
 \alias{var}
 \alias{var.default}
 \alias{var.MultiwayArray}
+\alias{write}
+\alias{write.default}
 \alias{write.GalLayout}
 \alias{writeHeader}
 \alias{writeHeader.MicroarrayData}

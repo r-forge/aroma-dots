@@ -3,8 +3,6 @@
 % 
 %  MicroarrayData.NORM.R
 % 
-% on Tue Jan 15 18:33:28 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -83,14 +81,14 @@
  }
 
  \references{
-  \item{[1]}{Henrik Bengtsson, Plate Effects in cDNA microarray data,
-    Matemathical Statistics, Centre for Matematical Sciences,
-    Lund University, Sweden. Manuscript, 2002.}
-  \item{[2]}{S. Dudoit, Y. H. Yang, M. J. Callow, and T. P. Speed. Statistical
-    methods for identifying differentially expressed genes in
-    replicated cDNA microarray experiments (Statistics, UC Berkeley,
-    Tech Report 578).
-    URL: \url{http://www.stat.berkeley.edu/users/terry/zarray/Html/papersindex.html}}
+  1] Henrik Bengtsson, \emph{Plate Effects in cDNA microarray data},
+     Matemathical Statistics, Centre for Matematical Sciences,
+     Lund University, Sweden. Manuscript, 2002.\cr
+ [2] S. Dudoit, Y. H. Yang, M. J. Callow, and T. P. Speed.
+     \emph{Statistical methods for identifying differentially
+     expressed genes in replicated cDNA microarray experiments},
+     Statistics, UC Berkeley, Tech Report 578.
+     \url{http://www.stat.berkeley.edu/users/terry/zarray/Html/papersindex.html}\cr
  }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}

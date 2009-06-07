@@ -34,7 +34,7 @@ setConstructorS3("MicroarrayWeights", function(...) {
 #   @seeclass.
 # } 
 #*/######################################################################### 
-setMethodS3("unite", "MicroarrayWeights", function(static, weights) {
+setMethodS3("unite", "MicroarrayWeights", function(static, weights, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -117,7 +117,7 @@ setConstructorS3("SignalWeights", function(...) {
 #   @seeclass.
 # } 
 #*/######################################################################### 
-setMethodS3("fromSaturatedSignals", "SignalWeights", function(static, x, satRatio=0.75, maxSignal=2^16-1) { 
+setMethodS3("fromSaturatedSignals", "SignalWeights", function(static, x, satRatio=0.75, maxSignal=2^16-1, ...) { 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

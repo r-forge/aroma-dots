@@ -204,7 +204,7 @@ setMethodS3("topSpots", "TMAData", function(this, X="A", Y="T", limits=NULL, ...
 
 
 setMethodS3("getPValues", "TMAData", function(this, 
-           alternative=c("two.sided", "less", "greater"), conf.level=0.95) {
+        alternative=c("two.sided", "less", "greater"), conf.level=0.95, ...) {
 
   # Define T as:
   #
@@ -246,15 +246,15 @@ setMethodS3("getPValues", "TMAData", function(this,
 }, deprecated=TRUE)
 
 
-setMethodS3("getDegreesOfFreedom", "TMAData", function(this) {
+setMethodS3("getDegreesOfFreedom", "TMAData", function(this, ...) {
   this$df;
 }, deprecated=TRUE)
 
-setMethodS3("getSE", "TMAData", function(this) {
+setMethodS3("getSE", "TMAData", function(this, ...) {
   cbind(this$stderr, this$stderr);
 }, deprecated=TRUE)
 
-setMethodS3("getStandardError", "TMAData", function(this) {
+setMethodS3("getStandardError", "TMAData", function(this, ...) {
   getSE(this);
 }, deprecated=TRUE)
 

@@ -26,7 +26,7 @@
 \arguments{
   \item{filename}{The filename of the setup file to be read.}
   \item{path}{Optional path to the setup file.}
-  \item{verbose}{If \\code{\link[base:logical]{TRUE}}, information will printed out during
+  \item{verbose}{If \code{\link[base:logical]{TRUE}}, information will printed out during
                  the file reading/parsing.}
 }
 

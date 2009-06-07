@@ -3,8 +3,6 @@
 % 
 %  QuantArrayData.R
 % 
-% on Tue Jan 15 18:35:00 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -44,6 +42,7 @@ extends \link[aroma]{MicroarrayData}\cr
 }
 
 \section{Fields}{
+ \itemize{
   \item{ch1 Intensity, ch2 Intensity, ...}{The spot intensity.
     What the authors mean by intensity is not clear, but on p46 in [2]
     it says "Quantitation. Output allows the user to choose the way
@@ -92,8 +91,10 @@ extends \link[aroma]{MicroarrayData}\cr
     \code{w} are weights.
     "Product") \code{cAll = (prod(c))^(1/Q)}.
   }
+ }
 
  \emph{Redundant fields}:\cr
+ \itemize{
   \item{ch1 Percentage, ch2 Percentage, ...}{\bold{REDUNDANT!}
     \code{=="ch1 Intensity"/("ch1 Intensity"+"ch2 Intensity")} and so on.
     For each spot, the percentage of the total brightness (the sum of all
@@ -112,6 +113,7 @@ extends \link[aroma]{MicroarrayData}\cr
     \code{=="ch1 Intensity"/"ch1 Background Std Dev"} and so on.
     The ratio of the spot intensity to the standard deviation of the
     local background of all spots in the microarray.}
+ }
 
   Sources: Our own "research" and [2].
 }
@@ -141,7 +143,7 @@ extends \link[aroma]{MicroarrayData}\cr
 addFlag, append, applyGenewise, applyGroupwise, applyPlatewise, applyPrintdipwise, applyPrinttipwise, as.character, as.data.frame, boxplot, clearCache, clearFlag, createColors, dataFrameToList, equals, extract, getBlank, getCache, getChannelNames, getColors, getExcludedSpots, getExtra, getExtreme, getFieldNames, getFlag, getInclude, getLabel, getLayout, getProbeWeights, getSignalWeights, getSlideNames, getSlidePairs, getSpotPosition, getSpotValue, getTreatments, getView, getWeights, getWeightsAsString, hasExcludedSpots, hasLayout, hasProbeWeights, hasSignalWeights, hasWeights, highlight, hist, isFieldColorable, keepSlides, keepSpots, listFlags, lowessCurve, nbrOfDataPoints, nbrOfFields, nbrOfSlides, nbrOfSpots, nbrOfTreatments, normalizePlatewise, normalizePrintorder, normalizeQuantile, plot, plotDensity, plotGene, plotPrintorder, plotReplicates, plotSpatial, plotSpatial3d, plotXY, points, putGene, putSlide, qqnorm, quantile, range, range2, read, readHeader, readToList, removeSlides, removeSpots, resetProbeWeights, resetSignalWeights, select, seq, setCache, setExcludedSpots, setExtra, setFlag, setLabel, setLayout, setProbeWeights, setSignalWeights, setSlideNames, setTreatments, setView, setWeights, size, str, subplots, summary, text, updateHeader, validateArgumentChannel, validateArgumentChannels, validateArgumentGroupBy, validateArgumentSlide, validateArgumentSlides, validateArgumentSpotIndex, validateArgumentWeights, write, writeHeader
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstanciationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
 
 
 }

@@ -7,7 +7,7 @@ setConstructorS3("DesignMatrix", function(matrix=NULL) {
   )
 })
 
-setMethodS3("as.matrix", "DesignMatrix", function(x) {
+setMethodS3("as.matrix", "DesignMatrix", function(x, ...) {
   # To please R CMD check...
   this <- x;
 
@@ -34,17 +34,17 @@ setConstructorS3("Analyzer", function(mao=NULL, design=NULL) {
 })
 
 
-setMethodS3("getDesignMatrix", "Analyzer", function(this) {
+setMethodS3("getDesignMatrix", "Analyzer", function(this, ...) {
   this$.design;
 })
 
-setMethodS3("setDesignMatrix", "Analyzer", function(this, design) {
+setMethodS3("setDesignMatrix", "Analyzer", function(this, design, ...) {
   this$.design <- design;
 })
 
 
 
-setMethodS3("qqplotTTest", "Analyzer", function(this, main="t-test diagnostic", col="black", pch=".", low=-5, high=+5) {
+setMethodS3("qqplotTTest", "Analyzer", function(this, main="t-test diagnostic", col="black", pch=".", low=-5, high=+5, ...) {
   tma <- this$tma;
   if (is.null(tma))
     ttest(this);
@@ -62,7 +62,7 @@ setMethodS3("qqplotTTest", "Analyzer", function(this, main="t-test diagnostic", 
 
 
 
-setMethodS3("plotTTest", "Analyzer", function(this, main="t-test diagnostic", col="black", pch=".", low=-5, high=+5) {
+setMethodS3("plotTTest", "Analyzer", function(this, main="t-test diagnostic", col="black", pch=".", low=-5, high=+5, ...) {
   if (is.null(this$tma))
     ttest(this);
   opar <- par("mar");
@@ -94,7 +94,7 @@ setMethodS3("plotTTest", "Analyzer", function(this, main="t-test diagnostic", co
 })
 
 
-setMethodS3("ttest", "Analyzer", function(this, treatments=getTreatments(this$.mao), var.equal=TRUE, verbose=TRUE) {
+setMethodS3("ttest", "Analyzer", function(this, treatments=getTreatments(this$.mao), var.equal=TRUE, verbose=TRUE, ...) {
   if (!is.null(treatments)) {
     if (length(treatments) != nbrOfSlides(this$.mao))
       throw("Argument 'treatments' must be of the same length as the number of slides in the MicroarrayData object: ", length(treatments));
@@ -238,7 +238,7 @@ setMethodS3("ttest", "Analyzer", function(this, treatments=getTreatments(this$.m
 })  # ttest()
 
 
-setMethodS3("lmGenewise", "Analyzer", function(this, field="M", weights=NULL) {
+setMethodS3("lmGenewise", "Analyzer", function(this, field="M", weights=NULL, ...) {
   nbrOfSlides <- nbrOfSlides(this$.mao);
 
   design <- getDesignMatrix(this);

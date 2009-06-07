@@ -82,7 +82,7 @@ setConstructorS3("ImaGeneData", function(layout=NULL) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("read", "ImaGeneData", function(this, filename, path=NULL, verbose=FALSE) {
+setMethodS3("read", "ImaGeneData", function(this, filename, path=NULL, verbose=FALSE, ...) {
   # Inner function parseHeader()
   parseHeader <- function(rows) {
     # Inner function parseSubtree()
@@ -545,7 +545,7 @@ setMethodS3("write", "ImaGeneData", function(this, filename, path=NULL, slide=1,
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getRawData", "ImaGeneData", function(igR, igG, slides=NULL, fg="median", bg="mean") {
+setMethodS3("getRawData", "ImaGeneData", function(igR, igG, slides=NULL, fg="median", bg="mean", ...) {
   if (!inherits(igG, "ImaGeneData"))
     throw("Argument 'igG' is not of class ImaGeneData: ", data.class(igG));
   slides <- validateArgumentSlides(igR, slides=slides);
@@ -595,7 +595,7 @@ setMethodS3("as.RawData", "ImaGeneData", function(this, ...) {
 
 
 
-setMethodS3("setLayout", "ImaGeneData", function(this, layout) {
+setMethodS3("setLayout", "ImaGeneData", function(this, layout, ...) {
   warning("For an ImaGeneData object it should not be necessary to set the layout explicitly. The layout is automatically calculated when the data is loaded from file.");
   NextMethod("setLayout", this);
 })
@@ -639,7 +639,7 @@ setMethodS3("anonymize", "ImaGeneData", function(this, ...) {
 
 
 
-setMethodS3("updateHeader", "ImaGeneData", function(this) {
+setMethodS3("updateHeader", "ImaGeneData", function(this, ...) {
   # Get the current header
 #  layout <- c(Metarows=max(this[["Meta Row"]]), Metacols=max(this[["Meta Column"]]), Row=max(this[["Row"]]), Col=max(this[["Column"]]));
   layout <- getLayout(this);
@@ -681,7 +681,7 @@ setMethodS3("updateHeader", "ImaGeneData", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSpotPosition", "ImaGeneData", function(this, slides=NULL, index=NULL) {
+setMethodS3("getSpotPosition", "ImaGeneData", function(this, slides=NULL, index=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   if (any(index < 1) || any(index > nbrOfSpots(this)))

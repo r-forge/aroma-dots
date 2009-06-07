@@ -51,20 +51,20 @@ setMethodS3("as.character", "PrinttipGroups", function(x, ...) {
   s;
 })
 
-setMethodS3("getNames", "PrinttipGroups", function(this) {
+setMethodS3("getNames", "PrinttipGroups", function(this, ...) {
   names(this$groups);
 })
 
-setMethodS3("nbrOfGroups", "PrinttipGroups", function(this) {
+setMethodS3("nbrOfGroups", "PrinttipGroups", function(this, ...) {
   length(this$groups)
 })
 
-setMethodS3("getSizes", "PrinttipGroups", function(this) {
+setMethodS3("getSizes", "PrinttipGroups", function(this, ...) {
   unlist(lapply(this$groups, FUN=length))
 })
 
 
-setMethodS3("getSpots", "PrinttipGroups", function(this, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpots", "PrinttipGroups", function(this, groups=NULL, unlist=FALSE, ...) {
   if (is.null(groups)) {
     groups <- seq(nbrOfGroups(this))
   } else if (is.numeric(groups)) {
