@@ -24,6 +24,7 @@
 # \section{Details}{
 #  A Spot file contains spot information for each spot on a single microarray slide. It consists of a header followed by a unspecified number of rows. The header contains 1+30 labels, and each row contains 31 fields. Each row corresponds to one spot. The fields are:\cr
 #
+#  \itemize{
 #   \item{<NO NAME>}{row number}
 #
 #   \item{indexs}{spot number on slide. Range [0,N] in N.}
@@ -63,6 +64,7 @@
 #   \item{perimeter}{== 2*sqrt(pi*area/circularity), i.e. \bold{Redundant}.}
 #   \item{circularity}{Shape of spot defined as 4*pi*area/perimeter**2.}
 #   \item{badspot}{If the spot area is greater than product of the horizontal and the vertical average spot separations, equal to \code{1}, otherwise \code{0}.}
+#  }
 # }
 #
 # \section{About IQR}{
@@ -135,18 +137,18 @@ setConstructorS3("SpotData", function(layout=NULL) {
 })
 
 
-setMethodS3("append", "SpotData", function(this, other) {
+setMethodS3("append", "SpotData", function(this, other, ...) {
   NextMethod("append");
   invisible(this);
 })
 
-setMethodS3("preferredLogBase", "SpotData", function(this, fields=getFieldNames(this)) {
+setMethodS3("preferredLogBase", "SpotData", function(this, fields=getFieldNames(this), ...) {
   logbase <- list(indexs=0, grid.r=0, grid.c=0, spot.r=0, spot.c=0, area=0, Gmean=2, Gmedian=2, GIQR=2, Rmean=2, Rmedian=2, RIQR=2, bgGmean=2, bgGmed=2, bgGSD=2, bgRmean=2, bgRmed=2, bgRSD=2, valleyG=2, valleyR=2, morphG=2, morphG.erode=2, morphG.close.open=2, morphR=2, morphR.erode=2, morphR.close.open=2, logratio=0, perimeter=0, circularity=0, badspot=0);
   unlist(logbase[fields]);
 }, trial=TRUE)
 
 
-setMethodS3("logPreferred", "SpotData", function(this) {
+setMethodS3("logPreferred", "SpotData", function(this, ...) {
   log.base <- preferredLogBase(this);
   field <- getFieldNames(this);
   for (k in seq(length(log.base))) {
@@ -164,7 +166,7 @@ setMethodS3("logPreferred", "SpotData", function(this) {
 #if (!exists("log.default"))
 #  log.default <- log;
 
-setMethodS3("log", "SpotData", function(x, field, base=2, ...) {
+setMethodS3("log", "SpotData", function(x, base=2, field, ...) {
   # To please R CMD check...
   this <- x;
 
@@ -217,7 +219,7 @@ setMethodS3("log", "SpotData", function(x, field, base=2, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("readOneFile", "SpotData", function(this, filename, path=NULL, sep="auto", skip="auto", verbose=TRUE) {
+setMethodS3("readOneFile", "SpotData", function(this, filename, path=NULL, sep="auto", skip="auto", verbose=TRUE, ...) {
   filename <- Arguments$getReadablePathname(filename, path);  
 
   if (verbose) cat("Reading file ", filename, "...", sep="");
@@ -426,7 +428,7 @@ setMethodS3("readAll", "SpotData", function(...) {
 
 
 
-setMethodS3("extractLayout", "SpotData", function(this, griddata) {
+setMethodS3("extractLayout", "SpotData", function(this, griddata, ...) {
   ngrid.r <- max(griddata$grid.r);
   ngrid.c <- max(griddata$grid.c);
   nspot.r <- max(griddata$spot.r);
@@ -436,7 +438,7 @@ setMethodS3("extractLayout", "SpotData", function(this, griddata) {
 
 
 
-setMethodS3("renameFields", "SpotData", function(this, header) {
+setMethodS3("renameFields", "SpotData", function(this, header, ...) {
   map <- c("grid_r"="grid.r", "grid_c"="grid.c", "spot_r"="spot.r", "spot_c"="spot.c");
   map <- c(map, "shape"="circularity");
   map <- c(map, "cy3mean"="Gmean", "cy3IQR"="GIQR", "cy5mean"="Rmean", "cy5IQR"="RIQR", "bg3mean"="bgGmean", "bg3med"="bgGmed", "bg3SD"="bgGSD", "bg5mean"="bgRmean", "bg5med"="bgRmed", "bg5SD"="bgRSD", "valley3"="valleyG", "valley5"="valleyR");
@@ -507,7 +509,7 @@ setMethodS3("renameFields", "SpotData", function(this, header) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getRawData", "SpotData", function(this, slides=NULL, fgs="auto", bgs="auto") {
+setMethodS3("getRawData", "SpotData", function(this, slides=NULL, fgs="auto", bgs="auto", ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   fieldNames <- getFieldNames(this);
   
@@ -689,7 +691,7 @@ setMethodS3("normalizeGenewise", "SpotData", function(this, fields=NULL, bias=0,
 })
 
 
-setMethodS3("getBackground", "SpotData", function(this, which=c("morph.close.open", "morph", "morph.erode", "valley", "bgmed", "bgmean")) {
+setMethodS3("getBackground", "SpotData", function(this, which=c("morph.close.open", "morph", "morph.erode", "valley", "bgmed", "bgmean"), ...) {
   which <- match.arg(which);
 
   if (which == "morph.erode") {
@@ -712,7 +714,7 @@ setMethodS3("getBackground", "SpotData", function(this, which=c("morph.close.ope
 })
 
 
-setMethodS3("getForeground", "SpotData", function(this, which=c("median","mean")) {
+setMethodS3("getForeground", "SpotData", function(this, which=c("median","mean"), ...) {
   which <- match.arg(which);
 
   if (which == "mean") {
@@ -840,7 +842,7 @@ setMethodS3("getBgArea", "SpotData", function(this, slides=NULL, include=NULL, .
 #   @seeclass
 # }
 #*/#########################################################################  
-setMethodS3("getForegroundSD", "SpotData", function(this) {
+setMethodS3("getForegroundSD", "SpotData", function(this, ...) {
 #  warning("SpotData does not contain estimates of the standard deviation of the foreground pixels, but the interquartile range (IQR) of the logarithm of them. The value returned by getForegroundSD() is an estimate based on the assumption that the noise is symmetric on the non-logaritmic scale.");
 
   res <- list();
@@ -899,7 +901,7 @@ setMethodS3("getForegroundSD", "SpotData", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################  
-setMethodS3("getForegroundSE", "SpotData", function(this) {
+setMethodS3("getForegroundSE", "SpotData", function(this, ...) {
   sd <- getForegroundSD(this);
   n <- getArea(this);
   sd <- lapply(sd, FUN=function(x) x / n);
@@ -937,7 +939,7 @@ setMethodS3("getForegroundSE", "SpotData", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSpotPosition", "SpotData", function(this, slides=NULL, index=NULL) {
+setMethodS3("getSpotPosition", "SpotData", function(this, slides=NULL, index=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   if (any(index < 1) || any(index > nbrOfSpots(this)))
@@ -962,35 +964,35 @@ setMethodS3("getSpotPosition", "SpotData", function(this, slides=NULL, index=NUL
 #   A r r a y   d i m e n s i o n s
 #
 ############################################################################
-setMethodS3("getArrayLeft", "SpotData", function(this, slide=NULL) {
+setMethodS3("getArrayLeft", "SpotData", function(this, slide=NULL, ...) {
   slide <- validateArgumentSlide(this, slide=slide);
   getLeftEdge(getSpotPosition(this, slide=slide));
 })
 
-setMethodS3("getArrayRight", "SpotData", function(this, slide=NULL) {
+setMethodS3("getArrayRight", "SpotData", function(this, slide=NULL, ...) {
   slide <- validateArgumentSlide(this, slide=slide);
   getRightEdge(getSpotPosition(this, slide=slide));
 })
 
-setMethodS3("getArrayTop", "SpotData", function(this, slide=NULL) {
+setMethodS3("getArrayTop", "SpotData", function(this, slide=NULL, ...) {
   slide <- validateArgumentSlide(this, slide=slide);
   getTopEdge(getSpotPosition(this, slide=slide));
 })
 
-setMethodS3("getArrayBottom", "SpotData", function(this, slide=NULL) {
+setMethodS3("getArrayBottom", "SpotData", function(this, slide=NULL, ...) {
   slide <- validateArgumentSlide(this, slide=slide);
   getBottomEdge(getSpotPosition(this, slide=slide));
 })
 
-setMethodS3("getArrayWidth", "SpotData", function(this, slide=NULL) {
+setMethodS3("getArrayWidth", "SpotData", function(this, slide=NULL, ...) {
   getMaxWidth(getSpotPosition(this, slide=slide));
 })
 
-setMethodS3("getArrayHeight", "SpotData", function(this, slide=NULL) {
+setMethodS3("getArrayHeight", "SpotData", function(this, slide=NULL, ...) {
   getMaxHeight(getSpotPosition(this, slide=slide));
 })
 
-setMethodS3("getArrayAspectRatio", "SpotData", function(this, slide=NULL) {
+setMethodS3("getArrayAspectRatio", "SpotData", function(this, slide=NULL, ...) {
   getAspectRatio(getSpotPosition(this, slide=slide));
 })
 

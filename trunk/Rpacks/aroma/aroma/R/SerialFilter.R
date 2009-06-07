@@ -80,7 +80,7 @@ setConstructorS3("SerialFilter", function(input=NULL, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getInput", "SerialFilter", function(this) {
+setMethodS3("getInput", "SerialFilter", function(this, ...) {
   list(this$.input);
 })
 
@@ -127,7 +127,7 @@ setMethodS3("getInput", "SerialFilter", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("changeInput", "SerialFilter", function(this, newInput, oldInput=NULL, recursive=FALSE) {
+setMethodS3("changeInput", "SerialFilter", function(this, newInput, oldInput=NULL, recursive=FALSE, ...) {
   if (is.null(oldInput) || identical(this$.input, oldInput)) {
     this$.input <- newInput;
     if (recursive) {

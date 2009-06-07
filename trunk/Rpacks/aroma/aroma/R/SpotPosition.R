@@ -74,7 +74,7 @@ setConstructorS3("SpotPosition", function(x=NULL, y=NULL) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("as.data.frame", "SpotPosition", function(x) {
+setMethodS3("as.data.frame", "SpotPosition", function(x, ...) {
   # To please R CMD check...
   this <- x;
 
@@ -84,7 +84,7 @@ setMethodS3("as.data.frame", "SpotPosition", function(x) {
 })
 
 
-setMethodS3("extract", "SpotPosition", function(this, slides=NULL) {
+setMethodS3("extract", "SpotPosition", function(this, slides=NULL, ...) {
   df <- as.data.frame(this);
   if (!is.null(slides)) {
     incl <- (df$slide %in% slides);
@@ -94,7 +94,7 @@ setMethodS3("extract", "SpotPosition", function(this, slides=NULL) {
 })
 
 
-setMethodS3("equals", "SpotPosition", function(this, other) {
+setMethodS3("equals", "SpotPosition", function(this, other, ...) {
   if (!inherits(other, "SpotPosition"))
     return(FALSE);
   
@@ -164,7 +164,7 @@ setMethodS3("as.character", "SpotPosition", function(x, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("nbrOfSlides", "SpotPosition", function(this) {
+setMethodS3("nbrOfSlides", "SpotPosition", function(this, ...) {
   ncol(this$x)
 })
 
@@ -188,7 +188,7 @@ setMethodS3("nbrOfSlides", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("nbrOfSpots", "SpotPosition", function(this) {
+setMethodS3("nbrOfSpots", "SpotPosition", function(this, ...) {
   nrow(this$x)
 })
 
@@ -212,7 +212,7 @@ setMethodS3("nbrOfSpots", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("size", "SpotPosition", function(this) {
+setMethodS3("size", "SpotPosition", function(this, ...) {
   length(this$x)
 })
 
@@ -237,7 +237,7 @@ setMethodS3("size", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getLeftEdge", "SpotPosition", function(this) {
+setMethodS3("getLeftEdge", "SpotPosition", function(this, ...) {
   min(this$x, na.rm=TRUE);
 })
 
@@ -259,7 +259,7 @@ setMethodS3("getLeftEdge", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getRightEdge", "SpotPosition", function(this) {
+setMethodS3("getRightEdge", "SpotPosition", function(this, ...) {
   max(this$x, na.rm=TRUE);
 })
 
@@ -282,7 +282,7 @@ setMethodS3("getRightEdge", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getTopEdge", "SpotPosition", function(this) {
+setMethodS3("getTopEdge", "SpotPosition", function(this, ...) {
   max(this$y, na.rm=TRUE);
 })
 
@@ -304,7 +304,7 @@ setMethodS3("getTopEdge", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getBottomEdge", "SpotPosition", function(this) {
+setMethodS3("getBottomEdge", "SpotPosition", function(this, ...) {
   min(this$y, na.rm=TRUE);
 })
 
@@ -327,7 +327,7 @@ setMethodS3("getBottomEdge", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getMaxWidth", "SpotPosition", function(this) {
+setMethodS3("getMaxWidth", "SpotPosition", function(this, ...) {
   abs(getRightEdge(this) - getLeftEdge(this));
 })
 
@@ -349,7 +349,7 @@ setMethodS3("getMaxWidth", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getMaxHeight", "SpotPosition", function(this) {
+setMethodS3("getMaxHeight", "SpotPosition", function(this, ...) {
   abs(getTopEdge(this) - getBottomEdge(this));
 })
 
@@ -373,7 +373,7 @@ setMethodS3("getMaxHeight", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getAspectRatio", "SpotPosition", function(this) {
+setMethodS3("getAspectRatio", "SpotPosition", function(this, ...) {
   getMaxHeight(this) / getMaxWidth(this);
 })
 
@@ -397,7 +397,7 @@ setMethodS3("getAspectRatio", "SpotPosition", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getDistancesTo", "SpotPosition", function(this, index) {
+setMethodS3("getDistancesTo", "SpotPosition", function(this, index, ...) {
   if (!is.numeric(index) || length(index) != 1)
     throw("Argument 'index' must be a numeric scalar.");
   if (index < 0 || index > nrow(this$x))
@@ -540,7 +540,7 @@ setMethodS3("write", "SpotPosition", function(this, filename, path=NULL, slides=
 
 
 
-setMethodS3("read", "SpotPosition", function(this, filename, path=NULL, verbose=FALSE) {
+setMethodS3("read", "SpotPosition", function(this, filename, path=NULL, verbose=FALSE, ...) {
   fields <- c("slide", "spot", "x", "y");
   res <- MicroarrayData$readToList(filename, path=path,
                                    reqFields=fields, verbose=verbose);

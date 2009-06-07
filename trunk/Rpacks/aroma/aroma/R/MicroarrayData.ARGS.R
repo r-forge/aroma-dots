@@ -25,7 +25,7 @@
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("validateArgumentSlide", "MicroarrayData", function(this, slide=NULL) {
+setMethodS3("validateArgumentSlide", "MicroarrayData", function(this, slide=NULL, ...) {
   arg <- slide;
   argStr <- paste(arg, collapse=", "); 
 
@@ -90,7 +90,7 @@ setMethodS3("validateArgumentSlide", "MicroarrayData", function(this, slide=NULL
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("validateArgumentSlides", "MicroarrayData", function(this, slides=NULL, unique=TRUE, sort=TRUE) {
+setMethodS3("validateArgumentSlides", "MicroarrayData", function(this, slides=NULL, unique=TRUE, sort=TRUE, ...) {
   arg <- slides;
   argStr <- paste(arg, collapse=", "); 
 
@@ -152,7 +152,7 @@ setMethodS3("validateArgumentSlides", "MicroarrayData", function(this, slides=NU
 
 
 
-setMethodS3("validateArgumentSpotIndex", "MicroarrayData", function(this, spotIndex=NULL, unique=TRUE, sort=TRUE) {
+setMethodS3("validateArgumentSpotIndex", "MicroarrayData", function(this, spotIndex=NULL, unique=TRUE, sort=TRUE, ...) {
   arg <- spotIndex;
   argStr <- paste(arg, collapse=", "); 
 
@@ -243,7 +243,7 @@ setMethodS3("validateArgumentSpotIndex", "MicroarrayData", function(this, spotIn
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("validateArgumentGroupBy", "MicroarrayData", function(this, groupBy) {
+setMethodS3("validateArgumentGroupBy", "MicroarrayData", function(this, groupBy, ...) {
   arg <- groupBy;
   argStr <- paste(arg, collapse=", "); 
 
@@ -300,7 +300,7 @@ setMethodS3("validateArgumentGroupBy", "MicroarrayData", function(this, groupBy)
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("validateArgumentWeights", "MicroarrayData", function(this, weights, slides=NULL, zeroOneOnly=FALSE) {
+setMethodS3("validateArgumentWeights", "MicroarrayData", function(this, weights, slides=NULL, zeroOneOnly=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -352,7 +352,7 @@ setMethodS3("validateArgumentWeights", "MicroarrayData", function(this, weights,
 })
 
 
-setMethodS3("validateArgumentChannels", "MicroarrayData", function(this, channels=NULL) {
+setMethodS3("validateArgumentChannels", "MicroarrayData", function(this, channels=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Pre-process
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -386,7 +386,7 @@ setMethodS3("validateArgumentChannels", "MicroarrayData", function(this, channel
 }) # validateArgumentChannels()
 
 
-setMethodS3("validateArgumentChannel", "MicroarrayData", function(this, channel=NULL) {
+setMethodS3("validateArgumentChannel", "MicroarrayData", function(this, channel=NULL, ...) {
   channel <- validateArgumentChannels(this, channels=channel);
   if (length(channel) != 1)
     throw("Argument 'channel' must be specify exactly one channel, not ", 

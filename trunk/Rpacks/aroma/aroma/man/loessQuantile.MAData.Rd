@@ -3,8 +3,6 @@
 % 
 %  MAData.R
 % 
-% on Tue Jan 15 18:33:22 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -32,7 +30,7 @@
      quantiles. If the data is Gaussian distributed the default factor
      \code{1.4826} makes the upper and lower quantile to correspond to
      one standard deviation.}
-   \item{family}{Family to be used by \code{\link[modreg]{loess}}.
+   \item{family}{Family to be used by \code{\link[stats]{loess}}.
      By default, a robust family is used.}
    \item{...}{Other arguments passed to \code{loess()}.}
  }

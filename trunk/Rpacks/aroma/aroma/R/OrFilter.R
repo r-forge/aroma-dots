@@ -58,7 +58,7 @@ setConstructorS3("OrFilter", function(...) {
 #   @seeclass.
 # }
 #*/######################################################################### 
-setMethodS3("getIndex", "OrFilter", function(this) {
+setMethodS3("getIndex", "OrFilter", function(this, ...) {
   filters <- this$filters;
   filter <- filters[[1]];
   idx <- getIndex(filter);

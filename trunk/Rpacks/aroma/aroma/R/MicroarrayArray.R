@@ -25,12 +25,12 @@ setMethodS3("str", "MicroarrayArray", function(object, ...) {
 })
 
 
-setMethodS3("getLayout", "MicroarrayArray", function(this) {
+setMethodS3("getLayout", "MicroarrayArray", function(this, ...) {
   attr(this, ".layout");
 })
 
 
-setMethodS3("getView", "MicroarrayArray", function(this, call=NULL, set=FALSE) {
+setMethodS3("getView", "MicroarrayArray", function(this, call=NULL, set=FALSE, ...) {
   view <- attr(this, ".view")[1];
 
   if (view == MicroarrayArray$AUTO.VIEW) {
@@ -73,7 +73,7 @@ setMethodS3("getView", "MicroarrayArray", function(this, call=NULL, set=FALSE) {
   view;
 })
 
-setMethodS3("setView", "MicroarrayArray", function(this, newView) {
+setMethodS3("setView", "MicroarrayArray", function(this, newView, ...) {
   if (is.null(newView))
     newView <- 0;
   if (!is.element(newView, 0:5))
@@ -82,7 +82,7 @@ setMethodS3("setView", "MicroarrayArray", function(this, newView) {
   invisible(this);
 })
 
-setMethodS3("pushView", "MicroarrayArray", function(this, view) {
+setMethodS3("pushView", "MicroarrayArray", function(this, view, ...) {
   if (is.null(view))
     view <- 0;
   if (!is.element(view, 0:5))
@@ -91,7 +91,7 @@ setMethodS3("pushView", "MicroarrayArray", function(this, view) {
   invisible(this);
 })
 
-setMethodS3("popView", "MicroarrayArray", function(this) {
+setMethodS3("popView", "MicroarrayArray", function(this, ...) {
   if (length(attr(this, ".view")) < 2)
     throw("Trying to pop from the view stack without pushing first.");
   view <- attr(this, ".view")[1];
@@ -99,7 +99,7 @@ setMethodS3("popView", "MicroarrayArray", function(this) {
   invisible(this);
 })
 
-setMethodS3("as.matrix", "MicroarrayArray", function(x) {
+setMethodS3("as.matrix", "MicroarrayArray", function(x, ...) {
   # To please R CMD check...
   this <- x;
 
@@ -119,7 +119,7 @@ setMethodS3("getGeneReplicateSlideValues", "MicroarrayArray", abstract=TRUE);
 setMethodS3("setGeneReplicateSlideValues", "MicroarrayArray", abstract=TRUE);
 
 
-setMethodS3("getSpotSlideValues", "ANY", function(x, spots=NULL, slides=NULL, drop=FALSE) {
+setMethodS3("getSpotSlideValues", "ANY", function(x, spots=NULL, slides=NULL, drop=FALSE, ...) {
   if (is.null(spots))
     spots <- seq(nrow(x))
   if (is.null(slides))
@@ -127,7 +127,7 @@ setMethodS3("getSpotSlideValues", "ANY", function(x, spots=NULL, slides=NULL, dr
   x[spots,slides, drop=drop];
 })
 
-setMethodS3("getGeneSlideValues", "ANY", function(x, genes=NULL, slides=NULL, drop=FALSE) {
+setMethodS3("getGeneSlideValues", "ANY", function(x, genes=NULL, slides=NULL, drop=FALSE, ...) {
   if (is.null(genes))
     genes <- seq(nrow(x))
   if (is.null(slides))
@@ -135,19 +135,19 @@ setMethodS3("getGeneSlideValues", "ANY", function(x, genes=NULL, slides=NULL, dr
   x[genes,slides, drop=drop];
 })
 
-setMethodS3("getGeneReplicateSlideValues", "ANY", function(x, genes=NULL, replicates=NULL, slides=NULL) {
+setMethodS3("getGeneReplicateSlideValues", "ANY", function(x, genes=NULL, replicates=NULL, slides=NULL, ...) {
   throw("Not implemented yet!")
 })
 
-setMethodS3("as.SpotSlideArray", "MicroarrayArray", function(this) {
+setMethodS3("as.SpotSlideArray", "MicroarrayArray", function(this, ...) {
   SpotSlideArray(getSpotSlideValues(this), layout=this$.layout);
 })
 
-setMethodS3("as.GeneSlideArray", "MicroarrayArray", function(this) {
+setMethodS3("as.GeneSlideArray", "MicroarrayArray", function(this, ...) {
   GeneSlideArray(getGeneSlideValues(this), layout=this$.layout);
 })
 
-setMethodS3("as.GeneReplicateSlideArray", "MicroarrayArray", function(this) {
+setMethodS3("as.GeneReplicateSlideArray", "MicroarrayArray", function(this, ...) {
   GeneReplicateSlideArray(getGeneReplicateSlideValues(this), layout=this$.layout);
 })
 
@@ -180,16 +180,16 @@ setMethodS3("[<-", "MicroarrayArray", function(this, i=NULL, j=NULL, k=NULL, val
 
 
 # Include these for backward compatibility.
-setMethodS3("pushView", "ANY", function(this, view) {
+setMethodS3("pushView", "ANY", function(this, view, ...) {
   invisible(this);
 })
 
-setMethodS3("popView", "ANY", function(this) {
+setMethodS3("popView", "ANY", function(this, ...) {
   invisible(this);
 })
 
 
-setMethodS3("getView", "ANY", function(this) {
+setMethodS3("getView", "ANY", function(this, ...) {
   MicroarrayArray$SPOT.SLIDE.VIEW;
 })
 

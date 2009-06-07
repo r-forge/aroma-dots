@@ -3,8 +3,6 @@
 % 
 %  RGData.NORM.R
 % 
-% on Tue Jan 15 18:36:04 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -213,7 +211,7 @@ rm(R,G)
 # Since we used project=TRUE all scans are identical now.
 keepSlides(rg, slide=1)
 
-Device$set(2, height="108\%");
+devSet(2);
 subplots(9, nrow=3);
 
 # Plot such that there is a right angle between the log(R) and log(G) axes.

@@ -145,7 +145,7 @@ if (!exists("fits")) {
 }
 for (channel in channels) {
   fig <- fig + 1;
-  Device$set(fig);
+  devSet(fig);
   col <- c(R="red", G="green")[channel];
 
   # Get initial estimate of \gamma_0 = (a_0 - \alpha_0)

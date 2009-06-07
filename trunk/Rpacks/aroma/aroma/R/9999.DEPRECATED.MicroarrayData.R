@@ -1,12 +1,12 @@
 
-setMethodS3("getAbsolutePath", "MicroarrayData", function(this, filename, path=NULL) {
+setMethodS3("getAbsolutePath", "MicroarrayData", function(this, filename, path=NULL, ...) {
   warning("getAbsolutePath() in MicroarrayData is deprecated. Use package R.utils instead.");
   getAbsolutePath(filePath(path, filename));
 }, protected=TRUE, static=TRUE, deprecated=TRUE);
 
 
 
-setMethodS3("getField", "MicroarrayData", function(this, field, viewFunction=NULL) {
+setMethodS3("getField", "MicroarrayData", function(this, field, viewFunction=NULL, ...) {
   # Assert that the specified 'field' is of type string.
   if (!is.character(field) || length(field) != 1)
     throw("Argument 'field' must be a single string.");
@@ -41,10 +41,10 @@ setMethodS3("getField", "MicroarrayData", function(this, field, viewFunction=NUL
 #     data. This argument should be a vector, matrix or a data frame and it
 #     must have the same number of columns as the number of specified fields
 #     (if fields are given).}
-#   \item{fields}{The field names to be set. If \@NULL, all fields are set.}
-#   \item{slides}{The slides that should be included. If \@NULL,
+#   \item{fields}{The field names to be set. If @NULL, all fields are set.}
+#   \item{slides}{The slides that should be included. If @NULL,
 #     all slides are included.}
-#   \item{index}{The spot indices that should be included. If \@NULL, 
+#   \item{index}{The spot indices that should be included. If @NULL, 
 #     all spots are included.}
 #   Any of the above arguments are optional.
 # }
@@ -88,7 +88,7 @@ setMethodS3("getField", "MicroarrayData", function(this, field, viewFunction=NUL
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("set", "MicroarrayData", function(this, value, fields=NULL, slides=NULL, index=NULL) {
+setMethodS3("set", "MicroarrayData", function(this, value, fields=NULL, slides=NULL, index=NULL, ...) {
   # Can't set the "slide" field. It is just a virtual field.
   fields <- setdiff(fields, "slide");
 

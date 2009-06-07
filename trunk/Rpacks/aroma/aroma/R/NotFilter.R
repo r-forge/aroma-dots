@@ -58,7 +58,7 @@ setConstructorS3("NotFilter", function(input, ...) {
 })
 
 
-setMethodS3("getIndex", "NotFilter", function(this) {
+setMethodS3("getIndex", "NotFilter", function(this, ...) {
   excl <- getIndex(this$.input);
   incl <- 1:attr(excl, "max");
   idx <- setdiff(incl, excl);

@@ -102,7 +102,7 @@ setMethodS3("as.character", "GeneAcceptFilter", function(x, ...) {
 
 
 
-setMethodS3("getIndex", "GeneAcceptFilter", function(this) {
+setMethodS3("getIndex", "GeneAcceptFilter", function(this, ...) {
   incl <- getIndex(this$.input);
   idx <- intersect(incl, this$accept);
   attr(idx, "max") <- attr(incl, "max");

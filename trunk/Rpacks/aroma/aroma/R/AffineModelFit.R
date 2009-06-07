@@ -161,25 +161,25 @@ setMethodS3("summary", "AffineModelFit", function(object, ...) {
   summary(this$t, ...);
 })
 
-setMethodS3("hasBootstrap", "AffineModelFit", function(this) {
+setMethodS3("hasBootstrap", "AffineModelFit", function(this, ...) {
   !is.null(this$t);
 })
 
-setMethodS3("fitted", "AffineModelFit", function(object) {
+setMethodS3("fitted", "AffineModelFit", function(object, ...) {
   # To please R CMD check...
   this <- object;
 
   this$fitted;
 })
 
-setMethodS3("residuals", "AffineModelFit", function(object) {
+setMethodS3("residuals", "AffineModelFit", function(object, ...) {
   # To please R CMD check...
   this <- object;
 
   this$residuals;
 })
 
-setMethodS3("getCoefficients", "AffineModelFit", function(this, names=NULL, bootstrap=hasBootstrap(this)) {
+setMethodS3("getCoefficients", "AffineModelFit", function(this, names=NULL, bootstrap=hasBootstrap(this), ...) {
   if (is.null(names)) {
     names <- seq(along=this$t0);
   } else {
@@ -223,7 +223,7 @@ setMethodS3("getB", "AffineModelFit", function(this, ...) {
 })
 
 
-setMethodS3("getDistance", "AffineModelFit", function(this, bootstrap=hasBootstrap(this)) {
+setMethodS3("getDistance", "AffineModelFit", function(this, bootstrap=hasBootstrap(this), ...) {
   if (bootstrap) {
     t <- this$t;
     if (is.null(t))

@@ -82,7 +82,7 @@ setConstructorS3("AcceptFilter", function(input, accept=NULL, ...) {
 #   @seeclass.
 # }
 #*/######################################################################### 
-setMethodS3("getIndex", "AcceptFilter", function(this) {
+setMethodS3("getIndex", "AcceptFilter", function(this, ...) {
   incl <- getIndex(this$.input);
   idx <- intersect(incl, this$accept);
   attr(idx, "max") <- attr(incl, "max");

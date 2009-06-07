@@ -115,7 +115,7 @@ setConstructorS3("FieldFilter", function(mad, field, bottom=NULL, top=NULL, rang
 #   @seeclass.
 # }
 #*/######################################################################### 
-setMethodS3("getIndex", "FieldFilter", function(this) {
+setMethodS3("getIndex", "FieldFilter", function(this, ...) {
   field <- this$field;
   mad <- this$.input;
   x <- extract(mad, field=field);
@@ -123,8 +123,8 @@ setMethodS3("getIndex", "FieldFilter", function(this) {
 })
 
 
-setMethodS3("getIndex0", "FieldFilter", function(this, x) {
-  require(R.basic) || throw("Package R.basic was not found!"); # top()
+setMethodS3("getIndex0", "FieldFilter", function(this, x, ...) {
+  require("R.basic") || throw("Package not loaded: R.basic"); # top()
 
   mad <- this$.input;
   

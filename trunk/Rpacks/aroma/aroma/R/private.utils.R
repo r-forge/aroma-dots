@@ -10,13 +10,13 @@ com.braju.sma.dimStr <- function(matrix) {
 }
 
 
-setMethodS3("matrixToList", "default", function(mat, na.rm=FALSE) {
+setMethodS3("matrixToList", "default", function(mat, na.rm=FALSE, ...) {
   l0 <- apply(mat, MARGIN=1, FUN=function(row) list(if (na.rm) na.omit(row) else row))
   l1 <- lapply(l0, FUN=function(row) unlist(row))
 })
 
 
-setMethodS3("listToMatrix", "default", function(list, fill.value=NA) {
+setMethodS3("listToMatrix", "default", function(list, fill.value=NA, ...) {
   ncol <- max(unlist(lapply(list, FUN=length)));
   filled.list <- lapply(list, FUN = function(row) {
                                       len <- length(row);
@@ -27,7 +27,7 @@ setMethodS3("listToMatrix", "default", function(list, fill.value=NA) {
 
 
 
-setMethodS3("is.above", "default", function(line, xy, na.replace=FALSE) {
+setMethodS3("is.above", "default", function(line, xy, na.replace=FALSE, ...) {
   x.idx <- apply(as.matrix(xy$x), MARGIN=1, FUN=function(x) {
       x0 <- which(x >= line$x);
       if (length(x0) == 0) 1 else max(x0);

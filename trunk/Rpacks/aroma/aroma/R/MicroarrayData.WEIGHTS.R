@@ -30,7 +30,7 @@
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("setProbeWeights", "MicroarrayData", function(this, weights, slides=NULL, .force=FALSE) {
+setMethodS3("setProbeWeights", "MicroarrayData", function(this, weights, slides=NULL, .force=FALSE, ...) {
   if (!.force) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Validate arguments
@@ -61,7 +61,7 @@ setMethodS3("setProbeWeights", "MicroarrayData", function(this, weights, slides=
 }) # setProbeWeights()
 
 
-setMethodS3("getProbeWeights", "MicroarrayData", function(this, slides=NULL, missingValue=NULL) {
+setMethodS3("getProbeWeights", "MicroarrayData", function(this, slides=NULL, missingValue=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -88,7 +88,7 @@ setMethodS3("getProbeWeights", "MicroarrayData", function(this, slides=NULL, mis
 }) # getProbeWeights()
 
 
-setMethodS3("resetProbeWeights", "MicroarrayData", function(this) {
+setMethodS3("resetProbeWeights", "MicroarrayData", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Assure that all weight fields exist
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -101,14 +101,14 @@ setMethodS3("resetProbeWeights", "MicroarrayData", function(this) {
 })
 
 
-setMethodS3("hasProbeWeights", "MicroarrayData", function(this) {
+setMethodS3("hasProbeWeights", "MicroarrayData", function(this, ...) {
   !is.null(this$weights$probe);
 }) # hasProbeWeights()
 
 
 
 
-setMethodS3("setSignalWeights", "MicroarrayData", function(this, weights, channel=NULL, slides=NULL, .force=FALSE) {
+setMethodS3("setSignalWeights", "MicroarrayData", function(this, weights, channel=NULL, slides=NULL, .force=FALSE, ...) {
   if (!.force) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Validate arguments
@@ -147,7 +147,7 @@ setMethodS3("setSignalWeights", "MicroarrayData", function(this, weights, channe
 
 
 
-setMethodS3("getSignalWeights", "MicroarrayData", function(this, slides=NULL, channel=NULL, missingValue=NULL) {
+setMethodS3("getSignalWeights", "MicroarrayData", function(this, slides=NULL, channel=NULL, missingValue=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -185,7 +185,7 @@ setMethodS3("getSignalWeights", "MicroarrayData", function(this, slides=NULL, ch
 
 
 
-setMethodS3("resetSignalWeights", "MicroarrayData", function(this, channel) {
+setMethodS3("resetSignalWeights", "MicroarrayData", function(this, channel, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -206,7 +206,7 @@ setMethodS3("resetSignalWeights", "MicroarrayData", function(this, channel) {
 
 
 
-setMethodS3("hasSignalWeights", "MicroarrayData", function(this, channel) {
+setMethodS3("hasSignalWeights", "MicroarrayData", function(this, channel, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -219,7 +219,7 @@ setMethodS3("hasSignalWeights", "MicroarrayData", function(this, channel) {
 
 
 
-setMethodS3("setWeights", "MicroarrayData", function(this, weights=NULL, .force=FALSE) {
+setMethodS3("setWeights", "MicroarrayData", function(this, weights=NULL, .force=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -233,7 +233,7 @@ setMethodS3("setWeights", "MicroarrayData", function(this, weights=NULL, .force=
 
 
 
-setMethodS3("getWeights", "MicroarrayData", function(this, slides=NULL) {
+setMethodS3("getWeights", "MicroarrayData", function(this, slides=NULL, ...) {
   weights <- list(
     probe = getProbeWeights(this, slides=slides)
   );
@@ -242,7 +242,7 @@ setMethodS3("getWeights", "MicroarrayData", function(this, slides=NULL) {
 
 
 
-setMethodS3("hasWeights", "MicroarrayData", function(this) {
+setMethodS3("hasWeights", "MicroarrayData", function(this, ...) {
   if (is.null(this$weights))
     return(FALSE);
 
@@ -250,7 +250,7 @@ setMethodS3("hasWeights", "MicroarrayData", function(this) {
 }) # hasWeights()
 
 
-setMethodS3("getWeightsAsString", "MicroarrayData", function(this) {
+setMethodS3("getWeightsAsString", "MicroarrayData", function(this, ...) {
   w <- sapply(this$weights, FUN=is.null)
   if (all(w)) {
     "No weights are specified.";

@@ -34,7 +34,7 @@
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("validateArgumentFileAndPath", "File", function(this, file=NULL, path=NULL, toWrite=FALSE, overwrite=FALSE, mkdir=toWrite) {
+setMethodS3("validateArgumentFileAndPath", "File", function(this, file=NULL, path=NULL, toWrite=FALSE, overwrite=FALSE, mkdir=toWrite, ...) {
   warning("File$validateArgumentFileAndPath() is deprecated. Please use the Arguments class in R.utils instead.");
 
   require(R.io);

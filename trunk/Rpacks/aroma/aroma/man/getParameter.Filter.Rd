@@ -23,7 +23,7 @@
   through \code{\link[aroma:setParameter.Filter]{*setParameter}()}, all indices accepted by the filter will
   be having this parameter set to the filters value.
   If the parameter is not set in the filter, or its value is \code{\link[base]{NULL}}
-  or \\code{\link[base]{NA}}, the filter asks all its input connections for assign
+  or \code{\link[base]{NA}}, the filter asks all its input connections for assign
   parameters to the indices. If more than one input filter tries to set
   the parameter of an index, only the \emph{last} assignment will be used.
   Hence, the order in which the input filters are specified might affect

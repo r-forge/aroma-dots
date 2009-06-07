@@ -120,7 +120,7 @@ setMethodS3("as.character", "Filter", function(x, ...) {
 #   @seeclass.
 # }
 #*/#########################################################################
-setMethodS3("getVisible", "Filter", function(obj) {
+setMethodS3("getVisible", "Filter", function(obj, ...) {
   obj$visible;
 })
 
@@ -151,7 +151,7 @@ setMethodS3("getVisible", "Filter", function(obj) {
 #   @seeclass.
 # }
 #*/#########################################################################
-setMethodS3("setVisible", "Filter", function(obj, visible) {
+setMethodS3("setVisible", "Filter", function(obj, visible, ...) {
   obj$visible <- visible;
 })
 
@@ -171,7 +171,7 @@ setMethodS3("setVisible", "Filter", function(obj, visible) {
 #   through @seemethod "setParameter", all indices accepted by the filter will
 #   be having this parameter set to the filters value.
 #   If the parameter is not set in the filter, or its value is @NULL
-#   or \@NA, the filter asks all its input connections for assign
+#   or @NA, the filter asks all its input connections for assign
 #   parameters to the indices. If more than one input filter tries to set
 #   the parameter of an index, only the \emph{last} assignment will be used.
 #   Hence, the order in which the input filters are specified might affect
@@ -186,7 +186,7 @@ setMethodS3("setVisible", "Filter", function(obj, visible) {
 #   @seeclass.
 # }
 #*/#########################################################################
-setMethodS3("getParameter", "Filter", function(this, paramName) {
+setMethodS3("getParameter", "Filter", function(this, paramName, ...) {
   parameter <- this$.parameter[[paramName]];
   if (is.null(parameter) || is.na(parameter)) {
     # If the parameter is not set, ask all input filters...
@@ -260,7 +260,7 @@ setMethodS3("getParameter", "Filter", function(this, paramName) {
 #   @seeclass.
 # }
 #*/#########################################################################
-setMethodS3("setParameter", "Filter", function(this, paramName, value) {
+setMethodS3("setParameter", "Filter", function(this, paramName, value, ...) {
   if (is.null(this$.parameter))
     this$.parameter <- list();
   this$.parameter[[paramName]] <- value;

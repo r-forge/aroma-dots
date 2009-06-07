@@ -172,7 +172,7 @@ setMethodS3("write", "MicroarrayData", function(this, filename, path=NULL, slide
 
 
 
-setMethodS3("readHeader", "MicroarrayData", function(static, filename, path=NULL, verbose=FALSE) {
+setMethodS3("readHeader", "MicroarrayData", function(static, filename, path=NULL, verbose=FALSE, ...) {
   filename <- Arguments$getReadablePathname(filename, path);  
 
   # Read the file
@@ -189,7 +189,7 @@ setMethodS3("readHeader", "MicroarrayData", function(static, filename, path=NULL
 
 
 
-setMethodS3("updateHeader", "MicroarrayData", function(this, header) {
+setMethodS3("updateHeader", "MicroarrayData", function(this, header, ...) {
   if (!inherits(this, header[["Class"]])) {
     throw("Can not update object of class ", class(this)[1],
           " with information from another class: ", header[["Class"]]);
@@ -205,7 +205,7 @@ setMethodS3("updateHeader", "MicroarrayData", function(this, header) {
 
 
 
-setMethodS3("writeHeader", "MicroarrayData", function(this, filename, path=NULL, overwrite=FALSE, verbose=FALSE) {
+setMethodS3("writeHeader", "MicroarrayData", function(this, filename, path=NULL, overwrite=FALSE, verbose=FALSE, ...) {
   filename <- Arguments$getWritablePathname(filename, path, mustNotExist=!overwrite);  
 
   header <- list(

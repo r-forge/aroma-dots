@@ -162,7 +162,7 @@ setConstructorS3("MAData", function(M=NULL, A=NULL, layout=NULL, extras=list()) 
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("swapDyes", "MAData", function(this, slides=NULL) {
+setMethodS3("swapDyes", "MAData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   
   this$M[,slides] <- -this$M[,slides];  
@@ -266,7 +266,7 @@ setMethodS3("as.MAData", "MAData", function(this, slides=NULL, ...) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("as.RGData", "MAData", function(this, slides=NULL) {
+setMethodS3("as.RGData", "MAData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   M <- this$M[,slides];
@@ -281,20 +281,20 @@ setMethodS3("as.RGData", "MAData", function(this, slides=NULL) {
 })  # as.RGData()
 
 
-setMethodS3("getR", "MAData", function(this) {
+setMethodS3("getR", "MAData", function(this, ...) {
   M <- this$M;
   A <- this$A;
   SpotSlideArray(sqrt(2^(2*A+M)), layout=getLayout(this));
 }, protected=TRUE)  # getR()
 
-setMethodS3("getG", "MAData", function(this) {
+setMethodS3("getG", "MAData", function(this, ...) {
   M <- this$M;
   A <- this$A;
   SpotSlideArray(sqrt(2^(2*A-M)), layout=getLayout(this));
 }, protected=TRUE)  # getG()
 
 
-setMethodS3("as.RawData", "MAData", function(this, slides=NULL) {
+setMethodS3("as.RawData", "MAData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   rg <- as.RGData(this);
@@ -429,7 +429,7 @@ setMethodS3("getColors", "MAData", function(this, what=c("A","M"), slide=1, incl
 
 
 
-setMethodS3("getDenseSpots", "MAData", function(this, x="A", y="M", nclass=10) {
+setMethodS3("getDenseSpots", "MAData", function(this, x="A", y="M", nclass=10, ...) {
   x <- this[[x]];
   y <- this[[y]];
 
@@ -638,7 +638,7 @@ setMethodS3("range", "MAData", function(this, what="M", slide=NULL, na.rm=TRUE, 
 
 
 
-setMethodS3("getRange", "MAData", function(this, what=c("M", "A"), slides=NULL) {
+setMethodS3("getRange", "MAData", function(this, what=c("M", "A"), slides=NULL, ...) {
   warning("getRange() is deprecated. Use range() instead!!!");
   slides <- validateArgumentSlides(this, slides=slides);
 
@@ -820,7 +820,7 @@ setMethodS3("getHistogram", "MAData", function(this, what="M", slide=1, ...) {
 #*/#########################################################################
 setMethodS3("topSpots", "MAData", function(this, n=50, nbins=1, slide=1, 
             include=NULL, exclude=NULL, limits=c("both", "upper", "lower"), 
-                                                             X="A", Y="M") {
+                                                       X="A", Y="M", ...) {
   if (is.null(X) && nbins > 1)
     throw("Argument 'X' must be given if 'nbins' is greater than one.");
 
@@ -980,7 +980,7 @@ setMethodS3("plot3d", "MAData", function(this, ...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getGeneVariability", "MAData", function(this, robust=TRUE, force=FALSE, slides=NULL) {
+setMethodS3("getGeneVariability", "MAData", function(this, robust=TRUE, force=FALSE, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   geneVariability <- getCache(this, "geneVariability", force=force);
@@ -1026,7 +1026,7 @@ setMethodS3("getGeneVariability", "MAData", function(this, robust=TRUE, force=FA
 })  # getGeneVariability()
 
 
-setMethodS3("getSpotVariability", "MAData", function(this, robust=TRUE, force=FALSE, slides=NULL) {
+setMethodS3("getSpotVariability", "MAData", function(this, robust=TRUE, force=FALSE, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   variability <- getCache(this, "spotVariability", force=force);
@@ -1128,7 +1128,7 @@ setMethodS3("getSpotVariability", "MAData", function(this, robust=TRUE, force=FA
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getMOR", "MAData", function(this, robust=TRUE, probs=NULL, force=FALSE, slides=NULL) {
+setMethodS3("getMOR", "MAData", function(this, robust=TRUE, probs=NULL, force=FALSE, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   if (is.null(probs)) probs <- -0.5;
@@ -1207,7 +1207,7 @@ setMethodS3("getMOR", "MAData", function(this, robust=TRUE, probs=NULL, force=FA
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("shift", "MAData", function(this, M=NULL, A=NULL, R=NULL, G=NULL, slides=NULL) {
+setMethodS3("shift", "MAData", function(this, M=NULL, A=NULL, R=NULL, G=NULL, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   foo <- function(x, X) {
@@ -1246,7 +1246,7 @@ setMethodS3("shift", "MAData", function(this, M=NULL, A=NULL, R=NULL, G=NULL, sl
   clearCache(this);
 }) # shift()
 
-setMethodS3("shiftEqualRG", "MAData", function(this, a=NULL, slides=NULL) {
+setMethodS3("shiftEqualRG", "MAData", function(this, a=NULL, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   if (is.character(a)) {
@@ -1452,7 +1452,7 @@ setMethodS3("loessQuantile", "MAData", function(this, slides=NULL, subset=NULL, 
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getAdjustedSpotVariability", "MAData", function(this, robust=TRUE, force=FALSE, slides=NULL) {
+setMethodS3("getAdjustedSpotVariability", "MAData", function(this, robust=TRUE, force=FALSE, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   loessQuantile <- getCache(this, "loessQuantile", force=force);
@@ -1539,7 +1539,7 @@ setMethodS3("getAdjustedSpotVariability", "MAData", function(this, robust=TRUE, 
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getMOR2003a", "MAData", function(this, robust=TRUE, probs=NULL, force=FALSE, slides=NULL) {
+setMethodS3("getMOR2003a", "MAData", function(this, robust=TRUE, probs=NULL, force=FALSE, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   if (is.null(probs)) probs <- -0.5;
   meanIdx <- (probs == -0.5);

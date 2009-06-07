@@ -25,7 +25,7 @@
 # each group. This function will both adjust the bias (if not FALSE) and
 # the scale (if not FALSE).
 ############################################################################
-setMethodS3("normalizeGroupsConstant", "MicroarrayData", function(this, y, spots, bias=TRUE, scale=TRUE, robust=TRUE) {
+setMethodS3("normalizeGroupsConstant", "MicroarrayData", function(this, y, spots, bias=TRUE, scale=TRUE, robust=TRUE, ...) {
   ngroups <- length(spots);
   # Remove the bias group by group, and at the same time
   # calculate the discrepancy for each group...
@@ -96,7 +96,7 @@ setMethodS3("normalizeGroupsConstant", "MicroarrayData", function(this, y, spots
 # intensity. This method will adjust the shift to have zero shift and
 # all groups having the same scale.
 ############################################################################
-setMethodS3("normalizeGroupsShiftFunction", "MicroarrayData", function(this, x, y, spots, span=0.3, scale=NULL, robust=TRUE) {
+setMethodS3("normalizeGroupsShiftFunction", "MicroarrayData", function(this, x, y, spots, span=0.3, scale=NULL, robust=TRUE, ...) {
   ngroups <- length(spots);
   # Remove the bias group by group, and at the same time
   # calculate the discrepancy for each group...
@@ -503,14 +503,14 @@ setMethodS3("normalizeSpatial", "MicroarrayData", function(this, fields, slides=
 # }
 #
 # \references{
-#  \item{[1]}{Henrik Bengtsson, Plate Effects in cDNA microarray data, 
-#    Matemathical Statistics, Centre for Matematical Sciences,
-#    Lund University, Sweden. Manuscript, 2002.}
-#  \item{[2]}{S. Dudoit, Y. H. Yang, M. J. Callow, and T. P. Speed. Statistical
-#    methods for identifying differentially expressed genes in
-#    replicated cDNA microarray experiments (Statistics, UC Berkeley,
-#    Tech Report 578). 
-#    URL: \url{http://www.stat.berkeley.edu/users/terry/zarray/Html/papersindex.html}}
+#  1] Henrik Bengtsson, \emph{Plate Effects in cDNA microarray data}, 
+#     Matemathical Statistics, Centre for Matematical Sciences,
+#     Lund University, Sweden. Manuscript, 2002.\cr
+# [2] S. Dudoit, Y. H. Yang, M. J. Callow, and T. P. Speed. 
+#     \emph{Statistical methods for identifying differentially
+#     expressed genes in replicated cDNA microarray experiments},
+#     Statistics, UC Berkeley, Tech Report 578. 
+#     \url{http://www.stat.berkeley.edu/users/terry/zarray/Html/papersindex.html}\cr
 # }
 #
 # @author
@@ -570,7 +570,7 @@ setMethodS3("normalizePlatewise", "MicroarrayData", function(this, field, method
 
 
 setMethodS3("normalizeQuantile", "MicroarrayData", function(this, 
-                                         fields, weights=1, robust=FALSE) {
+                                     fields, weights=1, robust=FALSE, ...) {
   for (field in fields) {
     mat <- unclass(this[[field]]);
     mat <- normalizeQuantile(mat, weights=weights, robust=robust);

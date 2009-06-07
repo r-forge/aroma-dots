@@ -183,7 +183,7 @@ setMethodS3("fitIWPCA", "RGData", function(static, X, w=NULL, constraint=c("diag
      Xmin <- NULL;
   }
 
-  require("R.basic") || throw("Package 'R.basic' not found.");
+  require("R.basic") || throw("Package not loaded: R.basic");
 
   if (bootstrap == TRUE)  {
     require("boot") || throw("Package not loaded: boot");

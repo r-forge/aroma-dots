@@ -116,7 +116,7 @@ setMethodS3("as.character", "RGData", function(x, ...) {
 })
 
 
-setMethodS3("getChannelNames", "RGData", function(this) {
+setMethodS3("getChannelNames", "RGData", function(this, ...) {
   c("R", "G");
 })
 
@@ -163,7 +163,7 @@ setMethodS3("getChannelNames", "RGData", function(this) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("swapDyes", "RGData", function(this, slides=NULL) {
+setMethodS3("swapDyes", "RGData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   
   tmp <- this$R[,slides];
@@ -241,11 +241,11 @@ setMethodS3("as.RGData", "RGData", function(this, slides=NULL, ...) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("getLogRatios", "RGData", function(this, slides=NULL) {
+setMethodS3("getLogRatios", "RGData", function(this, slides=NULL, ...) {
   getM(this, slides=slides);
 })
 
-setMethodS3("getM", "RGData", function(this, slides=NULL) {
+setMethodS3("getM", "RGData", function(this, slides=NULL, ...) {
   log.na <- function(x, ...) {
     ifelse(x > 0, log(x, ...), NA)
   }
@@ -302,11 +302,11 @@ setMethodS3("getM", "RGData", function(this, slides=NULL) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("getLogIntensities", "RGData", function(this, slides=NULL) {
+setMethodS3("getLogIntensities", "RGData", function(this, slides=NULL, ...) {
   getA(this, slides=slides);
 })
 
-setMethodS3("getA", "RGData", function(this, slides=NULL) {
+setMethodS3("getA", "RGData", function(this, slides=NULL, ...) {
   log.na <- function(x, ...) {
     ifelse(x > 0, log(x, ...), NA)
   }
@@ -366,7 +366,7 @@ setMethodS3("getA", "RGData", function(this, slides=NULL) {
 #
 # @author
 #*/#########################################################################
-setMethodS3("as.MAData", "RGData", function(this, slides=NULL) {
+setMethodS3("as.MAData", "RGData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   R <- this$R[,slides];
@@ -391,7 +391,7 @@ setMethodS3("as.MAData", "RGData", function(this, slides=NULL) {
 
 
 
-setMethodS3("as.RawData", "RGData", function(this, slides=NULL) {
+setMethodS3("as.RawData", "RGData", function(this, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   R <- this$R[,slides];
@@ -436,7 +436,7 @@ setMethodS3("as.RawData", "RGData", function(this, slides=NULL) {
 #   @seeclass
 # }
 ############################################################################
-setMethodS3("getWithinChannelPairs", "RGData", function(this, channel, slides=NULL) {
+setMethodS3("getWithinChannelPairs", "RGData", function(this, channel, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   pairs <- getSlidePairs(this, slides=slides);
 
@@ -500,7 +500,7 @@ setMethodS3("getColors", "RGData", function(this, what=c("A","M"), slide=1, incl
   } else {
     what <- what[1];
     x <- this[[what]];
-    x <- log(x, 2);
+    x <- log(x, base=2);
     x[is.na(x)] <- 0;
 
     if (is.null(palette)) palette <- "auto";
@@ -595,7 +595,7 @@ setMethodS3("log", "RGData", function(x, base=exp(1), ...) {
 
 
 
-setMethodS3("power", "RGData", function(this, base=exp(1)) {
+setMethodS3("power", "RGData", function(this, base=exp(1), ...) {
   res <- clone(this);
   if (base == exp(1)) {
     res$R <- exp(this$R);    # More efficient?
@@ -698,7 +698,7 @@ setMethodS3("var", "RGData", function(this, inf.rm=TRUE, na.rm=TRUE, ...) {
 
 
 
-setMethodS3("read", "RGData", function(this, filename, path=NULL, layout=NULL, verbose=FALSE) {
+setMethodS3("read", "RGData", function(this, filename, path=NULL, layout=NULL, verbose=FALSE, ...) {
   fields <- c("R", "G");
   res <- MicroarrayData$readToList(filename, path=path,
                                    reqFields=fields, verbose=verbose);
@@ -761,7 +761,7 @@ setMethodS3("normalizeQuantile", "RGData", function(this,
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("shift", "RGData", function(this, M=NULL, A=NULL, R=NULL, G=NULL, slides=NULL) {
+setMethodS3("shift", "RGData", function(this, M=NULL, A=NULL, R=NULL, G=NULL, slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   foo <- function(x, X) {

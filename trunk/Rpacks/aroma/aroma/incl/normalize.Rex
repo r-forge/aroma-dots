@@ -49,8 +49,8 @@ fig <- 1
 printTag(out, "h1", "Print order artifacts")
 
 imgfile <- File(path, "PrintorderArtifacts.png")
-if (!Device$isOpen(fig <- fig + 1)) {
-  Device$set(fig)
+if (devIsOpen(fig <- fig + 1)) {
+  devSet(fig)
   subplots(2, nrow=2)
 
   # If we order the data points in the same order as the spots where
@@ -99,8 +99,8 @@ rm(imgfile)
 # 2. Spatial artifacts
 ########################################################################
 printTag(out, "h1", "Spatial artifacts")
-if (!Device$isOpen(fig <- fig + 1)) {
-  Device$set(fig)
+if (devIsOpen(fig <- fig + 1)) {
+  devSet(fig)
   subplots(4)
 
   plotSpatial(ma, slide=1)
@@ -116,8 +116,8 @@ if (!Device$isOpen(fig <- fig + 1)) {
   smooth <- normalizeSpatial(ma.tmp, slide=1)
 }
 
-if (!Device$isOpen(fig <- fig + 1)) {
-  Device$set(fig)
+if (devIsOpen(fig <- fig + 1)) {
+  devSet(fig)
 
   xy <- getPosition(layout)
   x <- xy[,1]; x <- c(x,x)
@@ -133,8 +133,8 @@ if (!Device$isOpen(fig <- fig + 1)) {
 # 2. Intensity dependent artifacts
 ########################################################################
 printTag(out, "h1", "Intensity dependent artifacts")
-if (!Device$isOpen(fig <- fig + 1)) {
-  Device$set(fig)
+if (devIsOpen(fig <- fig + 1)) {
+  devSet(fig)
   subplots(4)
 
   plot(ma, slide=1); lowessCurve(ma, gridwise=TRUE)
@@ -149,8 +149,8 @@ if (!Device$isOpen(fig <- fig + 1)) {
 
 
 
-if (!Device$isOpen(fig <- fig + 1)) {
-  Device$set(fig)
+if (devIsOpen(fig <- fig + 1)) {
+  devSet(fig)
   subplots(4)
 
   if (!exists("bma"))

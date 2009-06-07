@@ -42,7 +42,7 @@ setConstructorS3("SMA", function() {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("as.RG", "SMA", function(this, obj) {
+setMethodS3("as.RG", "SMA", function(this, obj, ...) {
   if (is.null(obj))
     throw("Argument 'obj' is NULL.");
 
@@ -79,7 +79,7 @@ setMethodS3("as.RG", "SMA", function(this, obj) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("as.layout", "SMA", function(this, obj) {
+setMethodS3("as.layout", "SMA", function(this, obj, ...) {
   if (is.null(obj))
     throw("Argument 'obj' is NULL.");
 
@@ -96,7 +96,7 @@ setMethodS3("as.layout", "SMA", function(this, obj) {
 }, static=TRUE);
 
 
-setMethodS3("loadData", "SMA", function(this, names=NULL) {
+setMethodS3("loadData", "SMA", function(this, names=NULL, ...) {
   totalSize <- 0;
   require(sma);
   data(MouseArray); # Approximately 10Mb
@@ -131,7 +131,7 @@ setMethodS3("loadData", "SMA", function(this, names=NULL) {
 }, static=TRUE)
 
 
-setMethodS3("unloadData", "SMA", function(this, names=NULL, envir=.GlobalEnv) {
+setMethodS3("unloadData", "SMA", function(this, names=NULL, envir=globalenv(), ...) {
   # Saves about 10Mb if unloading everything.
   totalSize <- 0;
   if (is.null(names))

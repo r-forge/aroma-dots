@@ -10,13 +10,13 @@
 #   \item{value}{The values that should replace the specified subset of the
 #     data. This argument should be a vector, matrix or a data frame and it
 #     must have the same number of columns as the number of specified fields.}
-#   \item{fields}{The field names to be set. If \@NULL, all fields are
+#   \item{fields}{The field names to be set. If @NULL, all fields are
 #     set. Valid values are \code{"M"} and \code{"A"}.}
 # }
 #
 # \description{
 #   Sets one or many fields. The field names must be specified by the 
-#   argument \code{field} or if \code{field} is \@NULL all fields are
+#   argument \code{field} or if \code{field} is @NULL all fields are
 #   considered. The argument \code{value} must be able to be converted to
 #   a matrix by \code{as.matrix(value)} where the resulting matrix must
 #   have the same number of columns as the specified number of fields.
@@ -42,7 +42,7 @@
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("setField", "MAData", function(this, fields, value) {
+setMethodS3("setField", "MAData", function(this, fields, value, ...) {
   value <- as.matrix(value);
   ncol <- nbrOfSlides(this);
 
@@ -66,7 +66,7 @@ setMethodS3("setField", "MAData", function(this, fields, value) {
 ############################################################################
 # TO BE REMOVED?!?
 ############################################################################
-setMethodS3("getSlide", "MAData", function(this, slide) {
+setMethodS3("getSlide", "MAData", function(this, slide, ...) {
   if (slide < 1 || slide > nbrOfSlides(this))
     throw("Argument 'slide' is out of range: ", slide);
   M <- this$M[,slide];
@@ -77,7 +77,7 @@ setMethodS3("getSlide", "MAData", function(this, slide) {
   MAData(M=M, A=A, layout=getLayout(this), extras=this$.extras)
 }, trial=TRUE, deprecated=TRUE)
 
-setMethodS3("read", "MAData", function(this, filename, path=NULL, layout=NULL, verbose=FALSE) {
+setMethodS3("read", "MAData", function(this, filename, path=NULL, layout=NULL, verbose=FALSE, ...) {
   fields <- c("M", "A");
   res <- MicroarrayData$readToList(filename, path=path,
                                    reqFields=fields, verbose=verbose);
@@ -90,7 +90,7 @@ setMethodS3("read", "MAData", function(this, filename, path=NULL, layout=NULL, v
 ############################################################################
 # O B S O L E T E
 ############################################################################
-setMethodS3("getGenewiseResiduals", "MAData", function(this, robust=TRUE, na.rm=TRUE) {
+setMethodS3("getGenewiseResiduals", "MAData", function(this, robust=TRUE, na.rm=TRUE, ...) {
   res <- clone(this);
 
   fields <- c("M", "A");
@@ -115,7 +115,7 @@ setMethodS3("getGenewiseResiduals", "MAData", function(this, robust=TRUE, na.rm=
 # @synopsis
 #
 # \arguments{
-#   \item{robust}{If \@TRUE the median will be used for calculating
+#   \item{robust}{If @TRUE the median will be used for calculating
 #     the residuals, otherwise the mean will be used.}
 # }
 #
@@ -158,7 +158,7 @@ setMethodS3("getGenewiseResiduals", "MAData", function(this, robust=TRUE, na.rm=
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getGeneResiduals", "MAData", function(this, robust=TRUE) {
+setMethodS3("getGeneResiduals", "MAData", function(this, robust=TRUE, ...) {
   layout <- getLayout(this);
   geneGroups <- getGeneGroups(layout);
   genes <- getSpots(geneGroups);
@@ -199,7 +199,7 @@ setMethodS3("getGeneResiduals", "MAData", function(this, robust=TRUE) {
 }, private=TRUE, deprecated=TRUE)
 
 
-setMethodS3("getGeneDiscrepancies", "MAData", function(this, robust=TRUE, standardize=FALSE) {
+setMethodS3("getGeneDiscrepancies", "MAData", function(this, robust=TRUE, standardize=FALSE, ...) {
   warning("getGeneDiscrepancies() is deprecated. Use getGeneVariability() instead.")
   getGeneVariability(this, robust=robust);
 }, deprecated=TRUE)
@@ -244,7 +244,7 @@ setMethodS3("getGeneDiscrepancies", "MAData", function(this, robust=TRUE, standa
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("as.BMAData", "MAData", function(this, p=0.01, v=NULL, a=NULL, c=NULL, k=NULL, df=NULL, nw=1, useCache=TRUE, saveToCache=TRUE) {
+setMethodS3("as.BMAData", "MAData", function(this, p=0.01, v=NULL, a=NULL, c=NULL, k=NULL, df=NULL, nw=1, useCache=TRUE, saveToCache=TRUE, ...) {
   if (nbrOfSlides(this) < 2)
     throw("To calculate the b-statistics there need to be at least two slides.");
 
@@ -315,7 +315,7 @@ setMethodS3("as.BMAData", "MAData", function(this, p=0.01, v=NULL, a=NULL, c=NUL
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("as.TMAData", "MAData", function(this, treatments=getTreatments(this), var.equal=TRUE, verbose=TRUE) {
+setMethodS3("as.TMAData", "MAData", function(this, treatments=getTreatments(this), var.equal=TRUE, verbose=TRUE, ...) {
   if (!is.null(treatments)) {
     if (length(treatments) != nbrOfSlides(this))
       throw("Argument 'treatments' must be of the same length as the number of slides in the MicroarrayData object: ", length(treatments));

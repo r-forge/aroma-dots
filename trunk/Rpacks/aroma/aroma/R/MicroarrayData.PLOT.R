@@ -70,16 +70,16 @@
 ############################################################################
 
 
-setMethodS3("isFieldColorable", "MicroarrayData", function(this,  field) {
+setMethodS3("isFieldColorable", "MicroarrayData", function(this,  field, ...) {
   is.element(field, c("R", "G", "Rb", "Gb", "Ravg", "Gavg", 
                       "M", "A", "Mavg", "Aavg", "T"));
 })
 
-setMethodS3("setView", "MicroarrayData", function(this, newView) {
+setMethodS3("setView", "MicroarrayData", function(this, newView, ...) {
   this$.view <- newView;
 })
 
-setMethodS3("getView", "MicroarrayData", function(this) {
+setMethodS3("getView", "MicroarrayData", function(this, ...) {
   this$.view;
 })
 
@@ -220,6 +220,8 @@ setMethodS3("plot", "MicroarrayData", function(x, what, ..., style=NULL) {
 # }
 #*/#########################################################################
 setMethodS3("plotSpatial3d", "MicroarrayData", function(this, field, slide=1, pch=176, phi=40, theta=-25, xlab="x", ylab="y", zlab=field, log=NULL, ...) {
+  require("R.basic") || throw("Package not loaded: R.basic"); # plot3d()
+
   slide <- validateArgumentSlide(this, slide=slide);
   
   xy <- getSpotPosition(this, slide=slide);
@@ -1751,7 +1753,7 @@ setMethodS3("lowessLine", "MicroarrayData", function(this, ...) {
 # Color generators
 ############################################################################
 
-setMethodS3("createColors", "MicroarrayData", function(this, x, y, type="MA", palette=NULL, A.range=c(0,16), M.range=c(-2,2)) {
+setMethodS3("createColors", "MicroarrayData", function(this, x, y, type="MA", palette=NULL, A.range=c(0,16), M.range=c(-2,2), ...) {
   dim <- dim(x);
   
   if (!is.element(type, c("MA", "RG")))

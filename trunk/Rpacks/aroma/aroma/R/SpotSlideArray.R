@@ -19,7 +19,7 @@ setMethodS3("getView", "SpotSlideArray", function(this, ...) {
 })
 
 
-setMethodS3("as.matrix", "SpotSlideArray", function(x) {
+setMethodS3("as.matrix", "SpotSlideArray", function(x, ...) {
   # To please R CMD check...
   this <- x;
 
@@ -33,7 +33,7 @@ setMethodS3("getSpotOrGeneSlideValues", "SpotSlideArray", function(this, ...) {
 
 
 
-setMethodS3("getSpotSlideValues", "SpotSlideArray", function(this, spots=NULL, slides=NULL, drop=FALSE) {
+setMethodS3("getSpotSlideValues", "SpotSlideArray", function(this, spots=NULL, slides=NULL, drop=FALSE, ...) {
   uthis <- unclass(this);
 
   if (is.null(spots))
@@ -46,7 +46,7 @@ setMethodS3("getSpotSlideValues", "SpotSlideArray", function(this, spots=NULL, s
 })
 
 
-setMethodS3("setSpotSlideValues", "SpotSlideArray", function(this, spots=NULL, slides=NULL, value) {
+setMethodS3("setSpotSlideValues", "SpotSlideArray", function(this, spots=NULL, slides=NULL, value, ...) {
   uthis <- unclass(this);
 
   if (is.null(spots))
@@ -64,7 +64,7 @@ setMethodS3("setSpotSlideValues", "SpotSlideArray", function(this, spots=NULL, s
 
 
 
-setMethodS3("getGeneReplicateSlideValues", "SpotSlideArray", function(this, genes=NULL, replicates=NULL, slides=NULL, drop=FALSE) {
+setMethodS3("getGeneReplicateSlideValues", "SpotSlideArray", function(this, genes=NULL, replicates=NULL, slides=NULL, drop=FALSE, ...) {
   uthis <- unclass(this);   # Calling unclass() takes time!
 
   layout <- getLayout(this);
@@ -100,7 +100,7 @@ setMethodS3("getGeneReplicateSlideValues", "SpotSlideArray", function(this, gene
 })
 
 
-setMethodS3("getGeneSlideValues", "SpotSlideArray", function(this, genes=NULL, slides=NULL, drop=FALSE) {
+setMethodS3("getGeneSlideValues", "SpotSlideArray", function(this, genes=NULL, slides=NULL, drop=FALSE, ...) {
   throw("Not implement yet!");
 })
 

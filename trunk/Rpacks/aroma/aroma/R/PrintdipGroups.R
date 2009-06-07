@@ -51,20 +51,20 @@ setMethodS3("as.character", "PrintdipGroups", function(x, ...) {
   s;
 })
 
-setMethodS3("getNames", "PrintdipGroups", function(object) {
+setMethodS3("getNames", "PrintdipGroups", function(object, ...) {
   names(object$groups);
 })
 
-setMethodS3("nbrOfGroups", "PrintdipGroups", function(object) {
+setMethodS3("nbrOfGroups", "PrintdipGroups", function(object, ...) {
   length(object$groups)
 })
 
-setMethodS3("getSizes", "PrintdipGroups", function(object) {
+setMethodS3("getSizes", "PrintdipGroups", function(object, ...) {
   rep(nbrOfGrids(object$layout), nbrOfGroups(object))
 })
 
 
-setMethodS3("getSpots", "PrintdipGroups", function(this, groups=NULL, unlist=FALSE) {
+setMethodS3("getSpots", "PrintdipGroups", function(this, groups=NULL, unlist=FALSE, ...) {
   if (is.null(groups)) {
     groups <- seq(nbrOfGroups(this))
   } else if (is.numeric(groups)) {

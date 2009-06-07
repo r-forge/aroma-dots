@@ -3,8 +3,6 @@
 % 
 %  RawData.R
 % 
-% on Tue Jan 15 18:35:57 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

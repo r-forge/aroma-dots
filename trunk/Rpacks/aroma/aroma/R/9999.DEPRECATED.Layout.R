@@ -51,7 +51,7 @@
 ############################################################################
 ############################################################################
 
-setMethodS3("nbrOfReplicates", "Layout", function(object) {
+setMethodS3("nbrOfReplicates", "Layout", function(object, ...) {
   if (!hasReplicates(object)) 
     1
   else {
@@ -76,8 +76,8 @@ setMethodS3("nbrOfReplicates", "Layout", function(object) {
 # }
 #
 # \value{
-#   Returns \@TRUE if there are replicates of genes, otherwise 
-#   \@FALSE.
+#   Returns @TRUE if there are replicates of genes, otherwise 
+#   @FALSE.
 # }
 #
 # \examples{
@@ -100,7 +100,7 @@ setMethodS3("nbrOfReplicates", "Layout", function(object) {
 #  For more methods in this class see \code{\link{Layout}}.
 # }
 #*/#########################################################################
-setMethodS3("hasReplicates", "Layout", function(this) {
+setMethodS3("hasReplicates", "Layout", function(this, ...) {
   !is.null(this$replicates);
 }, deprecated=TRUE)
 
@@ -113,8 +113,8 @@ setMethodS3("hasReplicates", "Layout", function(this) {
 # @synopsis
 #
 # \arguments{
-#   \item{genes}{The genes whose replicates are retrieved. If \@NULL, 
-#     all genes are considered. Default value is \@NULL.}
+#   \item{genes}{The genes whose replicates are retrieved. If @NULL, 
+#     all genes are considered. Default value is @NULL.}
 # }
 #
 # \value{
@@ -150,7 +150,7 @@ setMethodS3("hasReplicates", "Layout", function(this) {
 #  For more methods in this class see \code{\link{Layout}}.
 # }
 #*/#########################################################################
-setMethodS3("getReplicates", "Layout", function(this) {
+setMethodS3("getReplicates", "Layout", function(this, ...) {
   this$replicates;
 }, deprecated=TRUE)
 
@@ -183,8 +183,8 @@ setMethodS3("getReplicates", "Layout", function(this) {
 #     replicates. Another special string is \code{"top-bottom"} which
 #     specifies that the second half of spots are replicates of the first
 #     half of spots.}
-#   \item{genes}{The genes whose replicates are set. If \@NULL, all
-#     genes are considered. Default value is \@NULL.}
+#   \item{genes}{The genes whose replicates are set. If @NULL, all
+#     genes are considered. Default value is @NULL.}
 # }
 #
 # \examples{
@@ -209,7 +209,7 @@ setMethodS3("getReplicates", "Layout", function(this) {
 #   For more methods in this class see \code{\link{Layout}}.
 # }
 #*/#########################################################################
-setMethodS3("setReplicates", "Layout", function(this, replicates) {
+setMethodS3("setReplicates", "Layout", function(this, replicates, ...) {
   if (inherits(replicates, "Replicates")) {
     this$replicates <- replicates;
   } else if (is.character(replicates)) {
@@ -226,7 +226,7 @@ setMethodS3("setReplicates", "Layout", function(this, replicates) {
 
 
 
-setMethodS3("getGeneIndex", "Layout", function(this, spots=NULL) {
+setMethodS3("getGeneIndex", "Layout", function(this, spots=NULL, ...) {
   if (!hasReplicates(this))
     throw("Could not get replicated genes. Replicates are not specified for this layout.");
 
@@ -235,7 +235,7 @@ setMethodS3("getGeneIndex", "Layout", function(this, spots=NULL) {
 
 
 
-setMethodS3("getSpotIndex", "Layout", function(this, genes=NULL, replicates=NULL) {
+setMethodS3("getSpotIndex", "Layout", function(this, genes=NULL, replicates=NULL, ...) {
   if (!hasReplicates(this))
     throw("Could not get replicated spots. Replicates are not specified for this layout.");
 
@@ -296,7 +296,7 @@ setMethodS3("getSpotIndex", "Layout", function(this, genes=NULL, replicates=NULL
 #    \code{\link{Microarray.getGeneSlideReplicateIndex}}.
 # }
 #*/#########################################################################
-setMethodS3("getGeneReplicateIndex", "Layout", function(this) {
+setMethodS3("getGeneReplicateIndex", "Layout", function(this, ...) {
   rep <- getReplicates(this)$replicates;
   if (is.null(rep))
     throw("Could not get replicated genes because replicates are not set.");

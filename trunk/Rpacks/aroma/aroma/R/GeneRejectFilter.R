@@ -95,7 +95,7 @@ setMethodS3("as.character", "GeneRejectFilter", function(x, ...) {
 })
 
 
-setMethodS3("getIndex", "GeneRejectFilter", function(this) {
+setMethodS3("getIndex", "GeneRejectFilter", function(this, ...) {
   incl <- getIndex(this$.input);
   idx <- setdiff(incl, this$reject);
   attr(idx, "max") <- attr(incl, "max");

@@ -67,7 +67,7 @@ setMethodS3("print", "ExperimentalSetup", function(x, ...) {
   print(as.data.frame(this, ...))
 })
 
-setMethodS3("getDataFiles", "ExperimentalSetup", function(this, channel=NULL) {
+setMethodS3("getDataFiles", "ExperimentalSetup", function(this, channel=NULL, ...) {
   if (is.null(channel))
     channel <- 1:4;
   fields <- paste("raw.file", channel, sep="");
@@ -84,7 +84,7 @@ setMethodS3("getDataFiles", "ExperimentalSetup", function(this, channel=NULL) {
   res;
 })
 
-setMethodS3("getLayoutFiles", "ExperimentalSetup", function(this) {
+setMethodS3("getLayoutFiles", "ExperimentalSetup", function(this, ...) {
   field <- "print.layout";
   value <- this[[field]];
   if (is.null(value))
@@ -98,29 +98,29 @@ setMethodS3("getLayoutFiles", "ExperimentalSetup", function(this) {
   res;
 })
 
-setMethodS3("getSampleUsed", "ExperimentalSetup", function(this) {
+setMethodS3("getSampleUsed", "ExperimentalSetup", function(this, ...) {
   fields <- paste("sample", 1:4, sep="");
   res <- unlist(sapply(fields, FUN=function(field) this[[field]]));
   unique(res[!is.na(res)]);
 })
 
-setMethodS3("getDyesUsed", "ExperimentalSetup", function(this) {
+setMethodS3("getDyesUsed", "ExperimentalSetup", function(this, ...) {
   fields <- paste("dye", 1:4, sep="");
   res <- unlist(sapply(fields, FUN=function(field) this[[field]]));
   unique(res[!is.na(res)]);
 })
 
-setMethodS3("getScannersUsed", "ExperimentalSetup", function(this) {
+setMethodS3("getScannersUsed", "ExperimentalSetup", function(this, ...) {
   res <- this[["scanner"]];
   unique(res[!is.na(res)]);
 })
 
-setMethodS3("getImageSoftwaresUsed", "ExperimentalSetup", function(this) {
+setMethodS3("getImageSoftwaresUsed", "ExperimentalSetup", function(this, ...) {
   res <- this[["image.software"]];
   unique(res[!is.na(res)]);
 })
 
-setMethodS3("nbrOfHybridizations", "ExperimentalSetup", function(this) {
+setMethodS3("nbrOfHybridizations", "ExperimentalSetup", function(this, ...) {
   firstField <- this$.fields[1]
   length(this[[firstField]])
 })
@@ -151,7 +151,7 @@ setMethodS3("as.data.frame", "ExperimentalSetup", function(x, ...) {
 # \arguments{
 #   \item{filename}{The filename of the setup file to be read.}
 #   \item{path}{Optional path to the setup file.}
-#   \item{verbose}{If \@TRUE, information will printed out during
+#   \item{verbose}{If @TRUE, information will printed out during
 #                  the file reading/parsing.}
 # }
 #
@@ -170,7 +170,7 @@ setMethodS3("as.data.frame", "ExperimentalSetup", function(x, ...) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("read", "ExperimentalSetup", function(static, filename, path=NULL) {
+setMethodS3("read", "ExperimentalSetup", function(static, filename, path=NULL, ...) {
   filename <- Arguments$getReadablePathname(filename, path); 
  
   # Read the setup file
@@ -217,8 +217,8 @@ setMethodS3("read", "ExperimentalSetup", function(static, filename, path=NULL) {
 # \arguments{
 #   \item{paths}{Vector of character strings or list of File objects 
 #     specifying which directories to be searched.}
-#   \item{recursive}{If \@TRUE, all subdirectories will also be search.
-#     If \@FALSE, only the specified directory will be searched.
+#   \item{recursive}{If @TRUE, all subdirectories will also be search.
+#     If @FALSE, only the specified directory will be searched.
 #     If an integer is given, it specifies the maximum depth of the 
 #     directory structure to be search; \code{recursive=0} and
 #     \code{recursive=FALSE} give the same results.}
@@ -243,7 +243,7 @@ setMethodS3("read", "ExperimentalSetup", function(static, filename, path=NULL) {
 #   @seeclass
 # }
 #*/######################################################################### 
-setMethodS3("findSetupFiles", "ExperimentalSetup", function(static, paths, recursive=TRUE) {
+setMethodS3("findSetupFiles", "ExperimentalSetup", function(static, paths, recursive=TRUE, ...) {
   require(R.io) || throw("Package R.io is missing!");
 
   if (is.logical(recursive) && recursive)

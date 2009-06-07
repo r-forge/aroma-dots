@@ -3,8 +3,6 @@
 % 
 %  MAData.NORM.R
 % 
-% on Tue Jan 15 18:33:06 2008.
-% 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -60,11 +58,11 @@
  }
 
  \references{
-   \item{[1]}{S. Dudoit, Y. H. Yang, M. J. Callow, and T. P. Speed. Statistical
-    methods for identifying differentially expressed genes in
-    replicated cDNA microarray experiments (Statistics, UC Berkeley,
-    Tech Report 578).
-    URL: \url{http://www.stat.berkeley.edu/users/terry/zarray/Html/papersindex.html}}
+ [1] S. Dudoit, Y. H. Yang, M. J. Callow, and T. P. Speed.
+     \emph{Statistical methods for identifying differentially expressed
+     genes in replicated cDNA microarray experiments},
+     Statistics, UC Berkeley, Tech Report 578.
+     \url{http://www.stat.berkeley.edu/users/terry/zarray/Html/papersindex.html}\cr
  }
 
  \examples{

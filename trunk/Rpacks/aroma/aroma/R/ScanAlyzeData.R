@@ -27,6 +27,7 @@
 #  starting with \code{SPOT} corresponds to one spot. Other rows starts 
 #  with \code{HEADER} or \code{REMARK}. The spot fields are:\cr
 #
+#  \itemize{
 #   \item{SPOT}{Unique index of spot in file. "Counting starts with 
 #     grid 1, moves along row 1 from column 1 until the last column, then
 #     advances to the next row; after all rows in grid 1 are assigned an 
@@ -58,6 +59,7 @@
 #   \item{FLAG}{User defined spot flag (default 0).}
 #   \item{CH1KSD, CH2KSD}{The value of the Komogorov-Smirnov statistic [3] that assesses the likelihood that the spot pixel intensity distribution is drawn from the background distribution.}
 #   \item{CH1KSP, CH2KSP}{The actual probabilities of the above statistic.}
+#  }
 # }
 #
 #
@@ -100,7 +102,7 @@ setConstructorS3("ScanAlyzeData", function(layout=NULL) {
 })
 
 
-setMethodS3("append", "ScanAlyzeData", function(this, other) {
+setMethodS3("append", "ScanAlyzeData", function(this, other, ...) {
   NextMethod("append");
   if (inherits(other, "ScanAlyzeData"))
     this$remark <- c(this$remark, other$remark)
@@ -154,7 +156,7 @@ setMethodS3("append", "ScanAlyzeData", function(this, other) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("readOneFile", "ScanAlyzeData", function(static, filename, path=NULL, safe=FALSE, verbose=FALSE) {
+setMethodS3("readOneFile", "ScanAlyzeData", function(static, filename, path=NULL, safe=FALSE, verbose=FALSE, ...) {
   filename <- Arguments$getReadablePathname(filename, path);  
 
   if (verbose) cat("Reading file ", filename, "...", sep="");
@@ -377,7 +379,7 @@ setMethodS3("write", "ScanAlyzeData", function(this, filename, path=NULL, slide=
 
 
 
-setMethodS3("getKnownHeadersWithType", "ScanAlyzeData", function(static) {
+setMethodS3("getKnownHeadersWithType", "ScanAlyzeData", function(static, ...) {
   # This methods returns a list of all known headers and their known
   # R datatype to be used when read by read.table() etc. 
 
@@ -523,7 +525,7 @@ setMethodS3("getKnownHeadersWithType", "ScanAlyzeData", function(static) {
 
 
 
-setMethodS3("readInternalSafe", "ScanAlyzeData", function(this, filename) {
+setMethodS3("readInternalSafe", "ScanAlyzeData", function(this, filename, ...) {
   headerV2.44 <- c("SPOT", "GRID", "TOP", "LEFT", "BOT", "RIGHT", "ROW", "COL", "CH1I", "CH1B", "CH1AB", "CH2I", "CH2B", "CH2AB", "SPIX", "BGPIX", "EDGE", "RAT2", "MRAT", "REGR", "CORR", "LFRAT", "CH1GTB1", "CH2GTB1", "CH1GTB2", "CH2GTB2", "CH1EDGEA", "CH2EDGEA", "FLAG", "CH1KSD", "CH1KSP", "CH2KSD", "CH2KSP");
 
   # This method assumes nothing about the file structure more than there is *one*
@@ -567,7 +569,7 @@ setMethodS3("readInternalSafe", "ScanAlyzeData", function(this, filename) {
 
 
 
-setMethodS3("readInternal", "ScanAlyzeData", function(this, filename) {
+setMethodS3("readInternal", "ScanAlyzeData", function(this, filename, ...) {
   headerV2.44 <- c("HEADER", "SPOT", "GRID", "TOP", "LEFT", "BOT", "RIGHT", "ROW", "COL", "CH1I", "CH1B", "CH1AB", "CH2I", "CH2B", "CH2AB", "SPIX", "BGPIX", "EDGE", "RAT2", "MRAT", "REGR", "CORR", "LFRAT", "CH1GTB1", "CH2GTB1", "CH1GTB2", "CH2GTB2", "CH1EDGEA", "CH2EDGEA", "FLAG", "CH1KSD", "CH1KSP", "CH2KSD", "CH2KSP");
   
   # This method assumes that there is a HEADER line, followed by some REMARK lines
@@ -773,7 +775,7 @@ setMethodS3("readAll", "ScanAlyzeData", function(...) {
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getRawData", "ScanAlyzeData", function(this, slides=NULL, fg=c("auto"), bg=("auto")) {
+setMethodS3("getRawData", "ScanAlyzeData", function(this, slides=NULL, fg=c("auto"), bg=("auto"), ...) {
   rgFg <- getForeground(this, which=fg, slides=slides);
   rgBg <- getBackground(this, which=bg, slides=slides);
   
@@ -893,7 +895,7 @@ setMethodS3("normalizeGenewise", "ScanAlyzeData", function(this, fields=NULL, bi
 #   S I G N A L    E S T I M A T E S
 #
 ############################################################################
-setMethodS3("getForeground", "ScanAlyzeData", function(this, which=c("mean","auto"), slides=NULL) {
+setMethodS3("getForeground", "ScanAlyzeData", function(this, which=c("mean","auto"), slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   which <- match.arg(which);
   if (which == "auto")
@@ -915,7 +917,7 @@ setMethodS3("getForeground", "ScanAlyzeData", function(this, which=c("mean","aut
 
 # Default value is \code{"median"} as recommended to be used by the 
 # author of the ScanAlyze software.
-setMethodS3("getBackground", "ScanAlyzeData", function(this, which=c("median", "mean", "auto"), slides=NULL) {
+setMethodS3("getBackground", "ScanAlyzeData", function(this, which=c("median", "mean", "auto"), slides=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
   which <- match.arg(which);
   if (which == "auto")
@@ -1069,7 +1071,7 @@ setMethodS3("getSpotColumn", "ScanAlyzeData", function(this, slides=NULL, includ
 #   @seeclass
 # }
 #*/#########################################################################
-setMethodS3("getSpotPosition", "ScanAlyzeData", function(this, slides=NULL, index=NULL) {
+setMethodS3("getSpotPosition", "ScanAlyzeData", function(this, slides=NULL, index=NULL, ...) {
   slides <- validateArgumentSlides(this, slides=slides);
 
   if (is.null(index)) {

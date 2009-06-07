@@ -1,6 +1,21 @@
 Package: aroma
 ==============
 
+Version: 0.95 [2009-06-06]
+o CLEAN UP: Package startup message is now generated using
+  the standard packageStartupMessage(), so that it can be
+  silented by options.
+o CLEAN UP: Reordered arguments for log() of SpotData.
+o CLEAN UP: Packages R.basic and R.io are no longer required, 
+  but only "suggested", although they are indirectly required
+  since R.graphics is required.
+o CLEAN UP: Decreased the number of warnings generated when
+  package is built.
+o CLEAN UP: Fixed several Rd errors.
+o CLEAN UP: Renamed the HISTORY file to NEWS.
+o Package pass R CMD check on R v2.9.0 with only two warnings.
+
+
 Version: 0.94 [2008-01-15]
 o BUG FIX: The package would not load in R v2.6.1 with "Error in
   as.function.default(c(value, if (is.null(bd)) list(bd) else bd),

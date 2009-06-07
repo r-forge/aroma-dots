@@ -31,7 +31,7 @@ setMethodS3("asSSMatrix", "SSMatrix", function(object, ...) {
 })
 
 
-setMethodS3("asSSMatrix", "GSRArray", function(Mnew, geneSpotMap="neighboring") {
+setMethodS3("asSSMatrix", "GSRArray", function(Mnew, geneSpotMap="neighboring", ...) {
   G <- dim(Mnew)[1];  # nbrOfGenes
   K <- dim(Mnew)[2];  # nbrOfSlides
   R <- dim(Mnew)[3];  # nbrOfReplicates
