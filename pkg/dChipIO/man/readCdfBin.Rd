@@ -15,7 +15,7 @@
  \description{
    Reads a dChip CDF.bin file.
 
-   Please not that this method is incomplete as it currently doesn't read
+   Please note that this method is incomplete as it currently doesn't read
    all fields.  It is only made available so that someelse can continue
    the development.
  }
@@ -45,6 +45,16 @@ print(hdr)
 data <- readCdfBin(pathname)
 str(data)
 
+# Read a subset of the units
+units <- c(10:11, 15:20, 150:105, 2,2,2)
+dataT <- readCdfBin(pathname, units=units)
+str(dataT)
+
+# Assert correctness
+for (ff in c("unitNames", "numProbes", "CellPos")) {
+  stopifnot(length(dataT[[ff]]) == length(units))
+  stopifnot(identical(dataT[[ff]], data[[ff]][units]))
+}
 }
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
