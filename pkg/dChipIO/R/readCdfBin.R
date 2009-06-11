@@ -6,7 +6,7 @@
 # \description{
 #   @get "title".
 #
-#   Please not that this method is incomplete as it currently doesn't read
+#   Please note that this method is incomplete as it currently doesn't read
 #   all fields.  It is only made available so that someelse can continue
 #   the development.
 # }
