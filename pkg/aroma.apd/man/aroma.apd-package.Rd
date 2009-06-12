@@ -15,9 +15,10 @@
 
 
 \description{
-  The (in-house) APD file format was initially developed to store Affymetrix probe-level data, e.g. normalized CEL intensites.  Chip types can be added to APD file and similar to methods in the affxparser package, this package provides methods to read APDs organized by units (probesets).  In addition, the probe elements can be arranged optimally such that the elements are guaranteed to be read in order when, for instance, data is read unit by unit.  This speed up the read substantially.  This package is supporting other packages and not intended for interactive use.
+  \emph{This package has been deprecated. Do not start building new
+  projects based on it.}
 
-  This package should be considered to be in "alpha" version.
+  THIS PACKAGE HAS BEEN DEPRECATED. (The (in-house) APD file format was initially developed to store Affymetrix probe-level data, e.g. normalized CEL intensites.  Chip types can be added to APD file and similar to methods in the affxparser package, this package provides methods to read APDs organized by units (probesets).  In addition, the probe elements can be arranged optimally such that the elements are guaranteed to be read in order when, for instance, data is read unit by unit.  This speed up the read substantially.  This package is supporting the aroma.affymetrix package and not intended to be used elsewhere.)
 }
 
 \section{Requirements}{

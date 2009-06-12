@@ -2,9 +2,10 @@
 # @RdocPackage aroma.apd
 #
 # \description{
-#   @eval "getDescription(aroma.apd)"
+#   \emph{This package has been deprecated. Do not start building new
+#   projects based on it.} 
 #
-#   This package should be considered to be in "alpha" version.
+#   @eval "getDescription(aroma.apd)"
 # }
 #
 # \section{Requirements}{
