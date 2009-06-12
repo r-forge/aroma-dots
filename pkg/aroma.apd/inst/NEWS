@@ -1,6 +1,11 @@
 Package: aroma.apd
 ==================
 
+Version: 0.1.6 [2009-06-11]
+o Made it explicit in the title and the description that this
+  package should now be considered deprecated.
+
+
 Version: 0.1.5 [2009-05-16]
 o Updated {read|update|write}Apd() to coerce argument 'writeMap' to
   integer indices.  readApd() also corce argument 'indices' to the
