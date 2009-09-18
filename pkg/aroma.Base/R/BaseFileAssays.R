@@ -53,6 +53,7 @@ setConstructorS3("BaseFileAssays", function(...) {
 setMethodS3("as.character", "BaseFileAssays", function(x, ...) {
   # To please R CMD check
   this <- x;
+  getLayout <- NULL; rm(getLayout);
 
   s <- paste(class(this)[1], ":", sep="");
   s <- paste(s, " Type: ", getType(this), sep="");
@@ -273,7 +274,6 @@ setMethodS3("nbrOfAssays", "BaseFileAssays", function(this, ...) {
 # @author
 #
 # \seealso{
-#   @seemethod "getColumns"
 #   @seeclass
 # }
 #*/######################################################################### 
@@ -343,7 +343,8 @@ setMethodS3("setAnnotationColumns", "BaseFileAssays", function(this, names, ...)
 # @synopsis
 #
 # \arguments{
-#  \item{...}{Passed to \code{\link[setData.BaseFileSection]{setData()}}.}
+#  \item{...}{Passed to 
+#            \code{\link[aroma.Base:setData.BaseFileSection]{setData()}}.}
 # }
 #
 # \value{
@@ -380,7 +381,7 @@ setMethodS3("setData", "BaseFileAssays", function(this, ...) {
 # \arguments{
 #  \item{ids}{Ids of assays to be returned.}
 #  \item{...}{Arguments passed to 
-#              \code{\link[getDataByKeys.BaseFileSection]{getDataByKeys()}}.}
+#  \code{\link[aroma.Base:getDataByKeys.BaseFileSection]{getDataByKeys()}}.}
 # }
 #
 # \value{

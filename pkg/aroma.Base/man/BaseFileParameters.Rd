@@ -55,7 +55,7 @@ extends \link[aroma.Base]{BaseFileSection}\cr
 addColumn, as.character, as.list, equals, getColumns, getData, getDataByKeys, getHeader, getHeaders, getType, hasColumns, hasData, hasHeaders, nbrOfHeaders, print, setColumns, setData, setDataFieldByKeys, setHeader, setType, sizeOfData, validate
 
  \bold{Methods inherited from Object}:\cr
-$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
 
  }
 

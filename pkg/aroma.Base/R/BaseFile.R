@@ -18,9 +18,6 @@
 #  @allmethods
 # }
 # 
-# \details{
-# }
-#
 # @examples "../incl/BaseFile.Rex"
 #
 # @author

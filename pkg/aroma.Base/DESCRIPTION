@@ -1,13 +1,13 @@
 Package: aroma.Base
-Version: 0.4.7
-Date: 2007-06-05
+Version: 0.4.8
+Date: 2009-09-17
 Title: A generic R plugin dispatcher for BASE
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Depends: R (>= 2.3.0), R.oo, R.utils
 Suggests: R.rsp
 Description: This package provides R methods to interact with BioArray Software Environment (BASE).  The BaseFile class provides an API for easy to loading, retrieving, modifying, and saving BASE files.  The static class BasePluginDispatcher is used to call R plugins by taking care of importing data from BASE, automatic exception handling, logging to file, returning data to BASE etc.
-License: LGPL version 2.1 or newer (the releases) 
+License: LGPL (>= 2.1)
 biocViews: Microarray, OneChannel, TwoChannel, DataImport, Preprocessing, Technology, Infrastructure, Visualization, ReportWriting 
 URL: http://www.braju.com/R/
 LazyLoad: TRUE
