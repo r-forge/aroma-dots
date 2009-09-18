@@ -60,7 +60,7 @@ HOW TO WRITE A PLUGIN USING AROMA.BASE:
 To write an R plugin for BASE, just create a file onRun.R that defines the function
 
   onRun <- function(data, ..., pluginVersion="1.0") {
-    <your code here>
+    # your code here
   }
 
 which should accept a BaseFile object as the first argument, and the plugin in parameters send from BASE as additional arguments. The BASE parameters are passed to onRun() as named R arguments.  The data sent from BASE (via standard input) is already parsed and easily accessed via the methods of the BaseFile class.  See ?BaseFile in R for details.
