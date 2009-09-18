@@ -51,7 +51,7 @@
 #   November 2005), header \code{count} is included by default and in 
 #   previous versions it is not available at all.
 #   If \code{count} is not specified, the table is first read line by line
-#   to a temporary file and then re-read by @see "base::read.table". (The 
+#   to a temporary file and then re-read by \code{read.table()}. (The 
 #   reason for this is that \code{read.table()} otherwise will read to end 
 #   of file, and not to the first empty line. Unfortunately, this means 
 #   that the reading of data is a bit slow.)

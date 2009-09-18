@@ -170,7 +170,7 @@ setMethodS3("attachParameters", "BaseFileParameters", function(this, ..., envir=
 # @synopsis
 #
 # \arguments{
-#  \item{...}{Arguments passed to @seemethod "getHeader".}
+#  \item{...}{Arguments passed to \code{getHeader()}.}
 # }
 #
 # \value{

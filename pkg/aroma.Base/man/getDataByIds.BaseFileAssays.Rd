@@ -24,7 +24,7 @@
  \arguments{
   \item{ids}{Ids of assays to be returned.}
   \item{...}{Arguments passed to
-              \code{\link[getDataByKeys.BaseFileSection]{getDataByKeys()}}.}
+  \code{\link[aroma.Base:getDataByKeys.BaseFileSection]{getDataByKeys()}}.}
  }
 
  \value{

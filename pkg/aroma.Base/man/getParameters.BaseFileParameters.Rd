@@ -23,7 +23,7 @@
  \usage{\method{getParameters}{BaseFileParameters}(this, ...)}
 
  \arguments{
-  \item{...}{Arguments passed to \code{\link[aroma.Base:getHeader.BaseFileParameters]{*getHeader}()}.}
+  \item{...}{Arguments passed to \code{getHeader()}.}
  }
 
  \value{

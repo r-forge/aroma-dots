@@ -2,6 +2,10 @@
 Package: aroma.Base
 ===================
 
+Version: 0.4.8 [2009-09-17]
+o Fixed some Rd errors.
+
+
 Version: 0.4.7 [2009-06-05]
 o BUG FIX: attachParameters() of BaseFileParameters did not work at all.
 o BUG FIX: getAllDataFiles() for BaseFile referenced object 'base' 

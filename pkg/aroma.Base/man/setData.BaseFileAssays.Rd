@@ -23,7 +23,8 @@
  \usage{\method{setData}{BaseFileAssays}(this, ...)}
 
  \arguments{
-  \item{...}{Passed to \code{\link[setData.BaseFileSection]{setData()}}.}
+  \item{...}{Passed to
+            \code{\link[aroma.Base:setData.BaseFileSection]{setData()}}.}
  }
 
  \value{

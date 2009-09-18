@@ -53,6 +53,7 @@ setConstructorS3("BaseFileBioassaysetinfo", function(...) {
 setMethodS3("as.character", "BaseFileBioassaysetinfo", function(x, ...) {
   # To please R CMD check
   this <- x;
+  getLayout <- NULL; rm(getLayout);
 
   s <- paste(class(this)[1], ":", sep="");
   s <- paste(s, " Type: ", getType(this), sep="");

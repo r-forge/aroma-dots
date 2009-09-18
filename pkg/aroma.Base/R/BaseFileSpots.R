@@ -54,6 +54,7 @@ setConstructorS3("BaseFileSpots", function(...) {
 setMethodS3("as.character", "BaseFileSpots", function(x, ...) {
   # To please R CMD check
   this <- x;
+  getLayout <- NULL; rm(getLayout);
 
   s <- paste(class(this)[1], ":", sep="");
 
