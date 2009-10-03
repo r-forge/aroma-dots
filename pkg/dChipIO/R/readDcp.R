@@ -45,11 +45,11 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   readFloat <- function(con, signed=TRUE, n=1, ...) {
-    readBin(con=con, what="double", size=4, signed=signed, n=n, ...);
+    readBin(con=con, what=double(), size=4, signed=signed, n=n, ...);
   }
 
   readInteger <- function(con, signed=TRUE, n=1, ...) {
-    readBin(con=con, what="integer", size=4, signed=signed, n=n, ...);
+    readBin(con=con, what=integer(), size=4, signed=signed, n=n, ...);
   }
 
   readElements <- function(con, idxs, nbrOfElements, size=1, skip=FALSE, ..., drop=TRUE) {
@@ -98,13 +98,13 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
   } # readElements()
 
 
-  readCells <- function(con, cells, what="integer", size=2, signed=FALSE, ...) {
+  readCells <- function(con, cells, what=integer(), size=2, signed=FALSE, ...) {
     readElements(con=con, idxs=cells, nbrOfElements=nbrOfCells,
                                    what=what, size=size, signed=signed, ...);
   }
 
 
-  readUnits <- function(con, units, what="float", size=2, signed=FALSE, ...) {
+  readUnits <- function(con, units, what=float(), size=2, signed=FALSE, ...) {
     readElements(con=con, idxs=units, nbrOfElements=nbrOfUnits, 
                                    what=what, size=size, signed=signed, ...);
   }
@@ -194,13 +194,13 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
 
   # Reading/skipping calls
   field <- "calls";
-  res[[field]] <- readUnits(con, units=units, what="raw", size=1, 
+  res[[field]] <- readUnits(con, units=units, what=raw(), size=1, 
                                        skip=(!field %in% fields), drop=TRUE);
 #  str(res);
 
   # Reading/skipping probe summaries
   skip <- !any(c("thetas", "thetaStds", "excludes") %in% fields);
-  raw <- readUnits(con, units=units, what="raw", size=12, skip=skip);
+  raw <- readUnits(con, units=units, what=raw(), size=12, skip=skip);
 
   # Parse probe summaries
   if (!skip) {

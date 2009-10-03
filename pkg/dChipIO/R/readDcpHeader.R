@@ -70,34 +70,34 @@ readDcpHeader <- function(con, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   hdr <- list();
 
-  hdr$Header <- readBin(con=con, what="raw", n=1000);
-  hdr$Format <- readBin(con=con, what="integer", size=1, signed=FALSE, n=1);
+  hdr$Header <- readBin(con=con, what=raw(), n=1000);
+  hdr$Format <- readBin(con=con, what=integer(), size=1, signed=FALSE, n=1);
 
   # Assert that the file format is correct/the expected on
   if (!is.element(hdr$Format, 3:4)) {
     stop("File format error: The DCP header format ('Format') is not v3 or v4: ", hdr$Format);
   }
 
-  hdr$Normalized <- readBin(con=con, what="logical", size=1, n=1);
-  hdr$ThetaValid <- readBin(con=con, what="logical", size=1, n=1);
+  hdr$Normalized <- readBin(con=con, what=logical(), size=1, n=1);
+  hdr$ThetaValid <- readBin(con=con, what=logical(), size=1, n=1);
 
   # Don't know why we have to add this one
-  hdr$dummy <- readBin(con=con, what="raw", n=1);
+  hdr$dummy <- readBin(con=con, what=raw(), n=1);
 # print(seek(con, read="r"));
 
-  hdr$Median <- readBin(con=con, what="integer", size=4, signed=TRUE, n=1);
-  hdr$MaxInten <- readBin(con=con, what="integer", size=4, signed=TRUE, n=1);
-  hdr$CellDim <- readBin(con=con, what="integer", size=4, signed=TRUE, n=1);
+  hdr$Median <- readBin(con=con, what=integer(), size=4, signed=TRUE, n=1);
+  hdr$MaxInten <- readBin(con=con, what=integer(), size=4, signed=TRUE, n=1);
+  hdr$CellDim <- readBin(con=con, what=integer(), size=4, signed=TRUE, n=1);
 # print(seek(con, read="r"));
 
-  hdr$DatFile <- rawToString(readBin(con=con, what="raw", n=1000));
+  hdr$DatFile <- rawToString(readBin(con=con, what=raw(), n=1000));
 # print(seek(con, read="r"));
-  hdr$BaselineFile <- rawToString(readBin(con=con, what="raw", n=1000));
+  hdr$BaselineFile <- rawToString(readBin(con=con, what=raw(), n=1000));
 # print(seek(con, read="r"));
 
-  hdr$ArrayOutlierPct <- readBin(con=con, what="double", size=4, signed=TRUE, n=1);
-  hdr$SingleOutlierPct <- readBin(con=con, what="double", size=4, signed=TRUE, n=1);
-  hdr$PresencePct <- readBin(con=con, what="double", size=4, signed=TRUE, n=1);
+  hdr$ArrayOutlierPct <- readBin(con=con, what=double(), size=4, signed=TRUE, n=1);
+  hdr$SingleOutlierPct <- readBin(con=con, what=double(), size=4, signed=TRUE, n=1);
+  hdr$PresencePct <- readBin(con=con, what=double(), size=4, signed=TRUE, n=1);
 # print(seek(con, read="r"));
 
 

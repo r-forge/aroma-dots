@@ -67,17 +67,17 @@ readCdfBinHeader <- function(con, ...) {
 
   LINE_LEN <- 1000;
   UNIT_NAME_LEN <- 50;
-  hdr$FileName <- rawToString(readBin(con=con, what="raw", n=LINE_LEN-1));
-  hdr$Format <- readBin(con=con, what="integer", size=1, signed=FALSE, n=1);
-  hdr$ChipType <- rawToString(readBin(con=con, what="raw", n=UNIT_NAME_LEN));
+  hdr$FileName <- rawToString(readBin(con=con, what=raw(), n=LINE_LEN-1));
+  hdr$Format <- readBin(con=con, what=integer(), size=1, signed=FALSE, n=1);
+  hdr$ChipType <- rawToString(readBin(con=con, what=raw(), n=UNIT_NAME_LEN));
 
   # Don't know why we have to add this, but in the dChip source code file
   # 'cdf.cpp' there is the following comment:
   # "// 11/11/05, +2 since allocation is in the unit of 4 bytes"
-  hdr$dummy <- readBin(con=con, what="raw", n=2);
+  hdr$dummy <- readBin(con=con, what=raw(), n=2);
 	
-  hdr$CellDim <- readBin(con=con, what="integer", size=4, signed=TRUE, n=1);
-  hdr$NumUnit <- readBin(con=con, what="integer", size=4, signed=TRUE, n=1);
+  hdr$CellDim <- readBin(con=con, what=integer(), size=4, signed=TRUE, n=1);
+  hdr$NumUnit <- readBin(con=con, what=integer(), size=4, signed=TRUE, n=1);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
