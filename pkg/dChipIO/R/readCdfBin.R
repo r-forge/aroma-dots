@@ -95,7 +95,7 @@ readCdfBin <- function(con, units=NULL, ...) {
   }
 
   # Read first to last unit...
-  raw <- readBin(con=con, what="raw", n=nbrOfUnitsToRead*CDF_UNIT_SIZE);
+  raw <- readBin(con=con, what=raw(), n=nbrOfUnitsToRead*CDF_UNIT_SIZE);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -118,11 +118,11 @@ readCdfBin <- function(con, units=NULL, ...) {
 
   # Extract 'NumProbe'
   idxs <- 1:2;
-  data$numProbes <- readBin(con=raw[idxs,,drop=FALSE], what="integer", 
+  data$numProbes <- readBin(con=raw[idxs,,drop=FALSE], what=integer(), 
                                        size=2, signed=FALSE, n=nbrOfUnits);
   raw <- raw[-idxs,,drop=FALSE];
 
-  data$CellPos <- readBin(con=raw, what="integer", size=4, signed=FALSE, 
+  data$CellPos <- readBin(con=raw, what=integer(), size=4, signed=FALSE, 
                                                              n=nbrOfUnits);
   rm(raw);
 
