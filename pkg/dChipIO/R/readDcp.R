@@ -55,7 +55,7 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
   readElements <- function(con, idxs, nbrOfElements, size=1, skip=FALSE, ..., drop=TRUE) {
     # Local functions
     readBin2 <- function(con, what, size, signed, n) {
-      if (what == "raw") {
+      if (mode(what) == "raw") {
         n <- n * size;
         size <- 1;
       }
@@ -104,7 +104,7 @@ readDcp <- function(con, fields=c("rawIntensities", "normalizedIntensities", "ca
   }
 
 
-  readUnits <- function(con, units, what=float(), size=2, signed=FALSE, ...) {
+  readUnits <- function(con, units, what=double(), size=2, signed=FALSE, ...) {
     readElements(con=con, idxs=units, nbrOfElements=nbrOfUnits, 
                                    what=what, size=size, signed=signed, ...);
   }
