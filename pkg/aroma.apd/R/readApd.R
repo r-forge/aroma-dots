@@ -70,7 +70,7 @@
 #   @see "createApd" and @see "updateApd".
 #   See also @see "readApdHeader".
 #   To create a cell-index read map from an CDF file, see 
-#   @see "affxparser::readCdfUnitsMap".
+#   @see "affxparser::readCdfUnitsWriteMap".
 # }
 # 
 # @keyword "file"

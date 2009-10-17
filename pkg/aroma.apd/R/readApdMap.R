@@ -33,7 +33,7 @@
 # \seealso{
 #   To search for an APD map file, see @see "findApdMap".
 #   To create a cell index map from an CDF file, see 
-#   @see "affxparser::readCdfUnitsMap".
+#   @see "affxparser::readCdfUnitsWriteMap".
 #   Internally, @see "readApd" is used.
 # }
 # 

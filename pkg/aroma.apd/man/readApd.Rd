@@ -79,7 +79,7 @@
    \code{\link{createApd}}() and \code{\link{updateApd}}().
    See also \code{\link{readApdHeader}}().
    To create a cell-index read map from an CDF file, see
-   \code{\link[affxparser]{readCdfUnitsMap}}.
+   \code{\link[affxparser]{readCdfUnitsWriteMap}}.
  }
 
 
