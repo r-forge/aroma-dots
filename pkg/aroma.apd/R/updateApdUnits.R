@@ -21,7 +21,7 @@
 #     structure.  If @NULL, the CDF file is searched for by
 #     @see "affxparser::findCdf".}
 #   \item{stratifyBy}{Argument passed to low-level method 
-#     @see "affxparser::readCdfCellIntensitites".}
+#     @see "affxparser::readCdfCellIndices".}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
 # 

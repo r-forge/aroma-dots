@@ -1,6 +1,10 @@
 Package: aroma.apd
 ==================
 
+Version: 0.1.7 [2009-10-16]
+o Fixed a few broken Rd links to the affxparser package.
+
+
 Version: 0.1.6 [2009-06-11]
 o Made it explicit in the title and the description that this
   package should now be considered deprecated.

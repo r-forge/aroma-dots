@@ -30,7 +30,7 @@
      structure.  If \code{\link[base]{NULL}}, the CDF file is searched for by
      \code{\link[affxparser]{findCdf}}.}
    \item{stratifyBy}{Argument passed to low-level method
-     \code{\link[affxparser]{readCdfCellIntensitites}}.}
+     \code{\link[affxparser]{readCdfCellIndices}}.}
    \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
  }
 

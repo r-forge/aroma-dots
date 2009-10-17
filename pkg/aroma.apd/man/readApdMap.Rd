@@ -42,7 +42,7 @@
  \seealso{
    To search for an APD map file, see \code{\link{findApdMap}}().
    To create a cell index map from an CDF file, see
-   \code{\link[affxparser]{readCdfUnitsMap}}.
+   \code{\link[affxparser]{readCdfUnitsWriteMap}}.
    Internally, \code{\link{readApd}}() is used.
  }
 
