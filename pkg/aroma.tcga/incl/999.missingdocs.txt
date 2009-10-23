@@ -1,0 +1,84 @@
+TcgaDccDownloader
+ as.character.TcgaDccDownloader downloadCoreTextFile
+ downloadCoreTextFile.TcgaDccDownloader downloadFile
+ downloadFile.TcgaDccDownloader downloadUrl
+ downloadUrl.TcgaDccDownloader getPassword
+ getPassword.TcgaDccDownloader getProtocol
+ getProtocol.TcgaDccDownloader getRootPath
+ getRootPath.TcgaDccDownloader getRootUrl getRootUrl.TcgaDccDownloader
+ getUrl.TcgaDccDownloader getUrlPath getUrlPath.TcgaDccDownloader
+ getUrlPathname getUrlPathname.TcgaDccDownloader
+ getUsername.TcgaDccDownloader listFiles listFiles.TcgaDccDownloader
+ readDescription readDescription.TcgaDccDownloader readIdf
+ readIdf.TcgaDccDownloader readLines readLines.default
+ readLines.TcgaDccDownloader readManifest
+ readManifest.TcgaDccDownloader readReadme
+ readReadme.TcgaDccDownloader readSampleInfo
+ readSampleInfo.TcgaDccDownloader readSdrf readSdrf.TcgaDccDownloader
+ readTextFile readTextFile.TcgaDccDownloader setPassword
+ setPassword.TcgaDccDownloader setUsername
+ setUsername.TcgaDccDownloader
+ downloadFiles downloadFiles.TcgaDccDownloader
+ setLogin setLogin.TcgaDccDownloader
+  getAccessRoot getAccessRoot.TcgaDccDownloader getArchive
+  getArchive.TcgaDccDownloader getCenter getCenter.TcgaDccDownloader
+  getCenterType getCenterType.TcgaDccDownloader getDataType
+  getDataType.TcgaDccDownloader getPlatform.TcgaDccDownloader
+  getTumorType getTumorType.TcgaDccDownloader
+  getHeader.MageTabDataMatrixFile
+  getReadArguments.MageTabDataMatrixFile MageTabDataMatrixFile
+  MageTabFile
+ getExtractNameByFilename getExtractNameByFilename.SdrfFile
+ getFilenameMap getFilenameMap.SdrfFile parseSdrfExtractName
+ pruneSDRF
+ readSDRFFile readSDRFFolder SdrfFile
+parseTcgaDccArchiveName tcgaDccFullnameTranslator
+  BroadAlleleSpecificCopyNumberTcgaDataFile
+  BroadAlleleSpecificThetaTcgaDataFile extractAlleleSpecificCopyNumbers
+  extractAlleleSpecificCopyNumbers.BroadAlleleSpecificCopyNumberTcgaDataFile
+  extractTheta extractTheta.BroadAlleleSpecificThetaTcgaDataFile
+  extractTotalAndFracB
+  extractTotalAndFracB.BroadAlleleSpecificCopyNumberTcgaDataFile
+  extractTotalAndFracB.BroadAlleleSpecificThetaTcgaDataFile
+  getFilenamePattern
+  getFilenamePattern.BroadAlleleSpecificCopyNumberTcgaDataFile
+  getFilenamePattern.BroadAlleleSpecificThetaTcgaDataFile
+  getFilenamePattern.TcgaDataFile
+  getReadArguments.BroadAlleleSpecificCopyNumberTcgaDataFile
+  getReadArguments.BroadAlleleSpecificThetaTcgaDataFile TcgaDataFile
+  BroadTotalCopyNumberTcgaDataFile
+  extractTotalAndFracB.BroadTotalCopyNumberTcgaDataFile
+  extractTotalCopyNumbers
+  extractTotalCopyNumbers.BroadTotalCopyNumberTcgaDataFile
+  getFilenamePattern.BroadTotalCopyNumberTcgaDataFile
+  getReadArguments.BroadTotalCopyNumberTcgaDataFile
+  makeFullNamesTranslator makeFullNamesTranslator.SdrfFile
+  setFullNamesTranslatorBySdrfFile
+  setFullNamesTranslatorBySdrfFile.GenericDataFileSet
+  byPath.SdrfFileSet makeFullNamesTranslator.SdrfFileSet SdrfFileSet
+  setFullNamesTranslatorBySdrfFileSet
+  setFullNamesTranslatorBySdrfFileSet.GenericDataFileSet
+  BiospecimenCoreResource findDataSets findDataSets.TcgaDccData
+  getBarcodePattern getBarcodePattern.BiospecimenCoreResource
+  getBarcodePatterns getBarcodePatterns.BiospecimenCoreResource
+  getDataSetPattern getDataSetPattern.TcgaDccData getDataSetPatterns
+  getDataSetPatterns.TcgaDccData getFullNameTranslator.MscnExport
+  MscnExport TcgaDccData
+  findDataSets2 findDataSets2.TcgaDccData hasFile.TcgaDccDownloader
+  hasFiles hasFiles.TcgaDccDownloader
+getKnownFilePatterns getKnownFilePatterns.TcgaDccDownloader
+  getDataSet getDataSet.TcgaDccDownloader getDataSetName
+  getDataSetName.TcgaDccDownloader
+  downloadFilesByPattern downloadFilesByPattern.TcgaDccDownloader
+ appendFullNamesTranslatorBySdrfFile
+ appendFullNamesTranslatorBySdrfFile.GenericDataFileSet
+ appendFullNamesTranslatorBySdrfFileSet
+ appendFullNamesTranslatorBySdrfFileSet.GenericDataFileSet
+ getBarcodeIdTranslator getBarcodeIdTranslator.TcgaFullNameTranslators
+ getBarcodeIdTranslators
+ getBarcodeIdTranslators.TcgaFullNameTranslators
+ TcgaFullNameTranslators
+ appendFullNameTranslatorBySdrfFile
+ appendFullNameTranslatorBySdrfFile.FullNameInterface
+ appendFullNameTranslatorBySdrfFileSet
+ appendFullNameTranslatorBySdrfFileSet.FullNameInterface
