@@ -1,0 +1,82 @@
+Package: aroma.tcga
+===================
+
+Version: 0.1.5 [2009-10-23]
+o OPTIMIZATION: Now makeFullNamesTranslator() of SdrfFileSet caches the
+  result in the memory so it does not have to reread the files each times.
+o Added appendFullNameTranslatorBySdrfFile{Set}() for FullNameInterface.
+  Dropped ditto for GenericDataFileSet.
+
+
+Version: 0.1.4 [2009-10-22]
+o Added TcgaFullNameTranslators.
+o Added argument 'onError' to downloadFile().
+o Added argument 'order' to downloadFilesByPattern().
+o Renamed downloadFiles() to downloadFilesByPattern().
+o Now downloadFile() only download files available in the MANIFEST file.
+o Added hasFiles() and hasFile() to TcgaDccDownloader. 
+o Added getKnownFilePatterns() to TcgaDccDownloader.  The information
+  is currently hardwired in the source code but should be handled by
+  customable data files.
+
+
+Version: 0.1.3 [2009-10-20]
+o Added static findDataSets() to TcgaDccData.
+
+
+Version: 0.1.2 [2009-10-16]
+o Stricter dependencies.
+
+
+Version: 0.1.1 [2009-10-02]
+o Added makeFullNamesTranslator() to SdrfFile and SdrfFileSet.
+o Added setFullNamesTranslatorBySdrfFile() to GenericDataFileSet.
+o Added the SdrfFileSet class.
+
+
+Version: 0.1.0 [2009-09-25]
+o Added testScripts/.
+
+
+Version: 0.0.9 [2009-09-24]
+p Added BroadTotalCopyNumberTcgaDataFile.
+o Added argument 'strict=FALSE' to getHeader() of MageTabDataMatrixFile.
+  If FALSE, empty "Hybridization REF" fields are removed.  This is
+  a workaround in order to read *.after_5NN.copynumber.data data files
+  from the Broad Institute.
+
+
+Version: 0.0.8 [2009-08-26]
+o Added BroadAlleleSpecificThetaTcgaDataFile.
+o Added BroadAlleleSpecificCopyNumberTcgaDataFile.
+o Added TcgaDataFile.
+
+
+Version: 0.0.7 [2009-08-20]
+o Now getHeader() of MageTabDataMatrixFile also recognizes columns 
+  named '(Rtum/Rnorm)'.
+
+
+Version: 0.0.6 [2009-05-22]
+o Added SdrfFile.
+
+
+Version: 0.0.5 [2009-05-18]
+o Added MageTabFile and MageTabDataMatrixFile classes.
+
+
+Version: 0.0.4 [2009-04-18]
+
+
+Version: 0.0.3 [2009-04-16]
+o Added downloadFiles() to TcgaDccDownloader.
+o Added setLogin() to TcgaDccDownloader.
+o BUG FIX: Root path was tgcaData/ (not tcgaData/).
+
+
+Version: 0.0.2 [2009-04-13]
+o Now tested for both public and protected data set.
+
+
+Version: 0.0.1 [2009-04-07]
+o Created.
