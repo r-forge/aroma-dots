@@ -27,7 +27,9 @@ setMethodS3("getExtractNameByFilename", "SdrfFile", function(this, name, ...) {
 
 setMethodS3("makeFullNamesTranslator", "SdrfFile", function(this, ...) {
   data <- getFilenameMap(this, ...);
-  data$fullNames <- gsub("[.](CEL|cel)$", "", data$arrayDataFile);
+  pattern <- "\\.[a-zA-Z]+$";
+  pattern <- toAsciiRegExprPattern(pattern);
+  data$fullNames <- gsub(pattern, "", data$arrayDataFile);
 
   # TO DO: The translator function must accept test names 'foo' and 'bar'.
   safe <- FALSE;
@@ -54,6 +56,8 @@ setMethodS3("makeFullNamesTranslator", "SdrfFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-10-23
+# o Now makeFullNamesTranslator() of SdrfFile translates all data types.
 # 2009-10-01
 # o Added makeFullNamesTranslator() to SdrfFile.
 # 2009-05-21
