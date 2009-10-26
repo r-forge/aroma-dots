@@ -4,8 +4,8 @@ setConstructorS3("BroadAlleleSpecificThetaTcgaDataFile", function(...) {
 })
 
 
-setMethodS3("getFilenamePattern", "BroadAlleleSpecificThetaTcgaDataFile", function(static, ...) {
-  "[.]ismpolish[.]data[.]txt$";
+setMethodS3("getExtensionPattern", "BroadAlleleSpecificThetaTcgaDataFile", function(static, ...) {
+  "[.](ismpolish[.]data[.]txt)$";
 }, static=TRUE)
 
 

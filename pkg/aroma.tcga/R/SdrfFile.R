@@ -27,6 +27,8 @@ setMethodS3("getExtractNameByFilename", "SdrfFile", function(this, name, ...) {
 
 setMethodS3("makeFullNamesTranslator", "SdrfFile", function(this, ...) {
   data <- getFilenameMap(this, ...);
+
+  # Drop the filename extension
   pattern <- "\\.[a-zA-Z]+$";
   pattern <- toAsciiRegExprPattern(pattern);
   data$fullNames <- gsub(pattern, "", data$arrayDataFile);

@@ -4,8 +4,8 @@ setConstructorS3("BroadAlleleSpecificCopyNumberTcgaDataFile", function(...) {
 })
 
 
-setMethodS3("getFilenamePattern", "BroadAlleleSpecificCopyNumberTcgaDataFile", function(static, ...) {
-  "[.]copynumber[.]byallele[.]data[.]txt$";
+setMethodS3("getExtensionPattern", "BroadAlleleSpecificCopyNumberTcgaDataFile", function(static, ...) {
+  "[.](copynumber[.]byallele[.]data[.]txt)$";
 }, static=TRUE)
 
 

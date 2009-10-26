@@ -4,8 +4,8 @@ setConstructorS3("BroadTotalCopyNumberTcgaDataFile", function(...) {
 })
 
 
-setMethodS3("getFilenamePattern", "BroadTotalCopyNumberTcgaDataFile", function(static, ...) {
-  ".*[.]after_5NN.copynumber[.]data[.]txt$";
+setMethodS3("getExtensionPattern", "BroadTotalCopyNumberTcgaDataFile", function(static, ...) {
+  "[.](after_5NN.copynumber[.]data[.]txt)$";
 }, static=TRUE)
 
 

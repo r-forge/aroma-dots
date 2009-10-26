@@ -2,8 +2,8 @@ setConstructorS3("TcgaDataFile", function(...) {
   extend(MageTabDataMatrixFile(...), "TcgaDataFile");
 })
 
-setMethodS3("getFilenamePattern", "TcgaDataFile", function(static, ...) {
-  "[.]data[.]txt$";
+setMethodS3("getExtensionPattern", "TcgaDataFile", function(static, ...) {
+  "[.](data[.]txt)$";
 }, static=TRUE)
 
 
