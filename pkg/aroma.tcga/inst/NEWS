@@ -1,6 +1,11 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.1.6 [2009-10-25]
+o Added BroadBirdseedGenotypeTcgaData(File|FileSet).
+o Added *FileSet classes for all *File classes.
+
+
 Version: 0.1.5 [2009-10-23]
 o OPTIMIZATION: Now makeFullNamesTranslator() of SdrfFileSet caches the
   result in the memory so it does not have to reread the files each times.

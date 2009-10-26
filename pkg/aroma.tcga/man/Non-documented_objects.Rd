@@ -160,6 +160,24 @@
 \alias{appendFullNameTranslatorBySdrfFile.FullNameInterface}
 \alias{appendFullNameTranslatorBySdrfFileSet}
 \alias{appendFullNameTranslatorBySdrfFileSet.FullNameInterface}
+\alias{getExtensionPattern.BroadAlleleSpecificCopyNumberTcgaDataFile}
+\alias{getExtensionPattern.BroadAlleleSpecificThetaTcgaDataFile}
+\alias{getExtensionPattern.BroadTotalCopyNumberTcgaDataFile}
+\alias{getExtensionPattern.TcgaDataFile}
+\alias{BroadBirdseedGenotypeTcgaDataFile}
+\alias{BroadBirdseedGenotypeTcgaDataFileSet}
+\alias{byPath.MageTabFileSet}
+\alias{extractCalls.BroadBirdseedGenotypeTcgaDataFile}
+\alias{extractConfidenceScores}
+\alias{extractConfidenceScores.BroadBirdseedGenotypeTcgaDataFile}
+\alias{getExtensionPattern.BroadBirdseedGenotypeTcgaDataFile}
+\alias{getReadArguments.BroadBirdseedGenotypeTcgaDataFile}
+\alias{MageTabFileSet}
+\alias{BroadAlleleSpecificCopyNumberTcgaDataFileSet}
+\alias{BroadAlleleSpecificThetaTcgaDataFileSet}
+\alias{BroadTotalCopyNumberTcgaDataFileSet}
+\alias{MageTabDataMatrixFileSet}
+\alias{TcgaDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
