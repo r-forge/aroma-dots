@@ -5,23 +5,15 @@
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.tcga");
-library("affxparser");  # findFiles()
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
 
-tcgaPath <- "tcgaData";
-tcgaPath <- Arguments$getReadablePath(tcgaPath);
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Scan for all TCGA data sets by searching for SDRF files
+# Scan for all TCGA data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Find all SDRF files
-pathnames <- findFiles(pattern=".sdrf.txt$", paths=tcgaPath, 
-                                      recursive=TRUE, firstOnly=FALSE);
-# Infer data set directories
-srcPaths <- dirname(pathnames);
-
+# Find all TCGA data sets
+srcPaths <- TcgaDccData$findDataSets();
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extra chip types
@@ -85,6 +77,8 @@ for (kk in seq(along=dataSets)) {
 
 ############################################################################
 # HISTORY:
+# 2009-10-26
+# o Removed requirement on affxparser by using TcgaDccData$findDataSets().
 # 2009-10-01
 # o Created.
 ############################################################################
