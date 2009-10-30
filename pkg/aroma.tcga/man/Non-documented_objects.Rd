@@ -178,6 +178,7 @@
 \alias{BroadTotalCopyNumberTcgaDataFileSet}
 \alias{MageTabDataMatrixFileSet}
 \alias{TcgaDataFileSet}
+\alias{exportGenotypeCallsAndConfidenceScores}
 
 \description{
   This page contains aliases for all "non-documented" objects that

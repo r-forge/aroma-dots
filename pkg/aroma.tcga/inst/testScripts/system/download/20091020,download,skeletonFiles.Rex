@@ -174,7 +174,7 @@ if (interactive()) {
 
 for (pp in seq(along=tddList)) {
   tdd <- tddList[[pp]];
-  urlPath <- getUrlPath(tdd);
+	  urlPath <- getUrlPath(tdd);
   verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
                                         pp, urlPath, length(tddList)));
 
