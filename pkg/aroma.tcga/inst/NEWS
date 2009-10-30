@@ -1,6 +1,13 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.1.7 [2009-10-29]
+o Added default argument 'ignore.case=TRUE' to listFiles(...)
+  of TcgaDccDownloader.
+o Added exportGenotypeCallsAndConfidenceScores() to
+  BroadBirdseedGenotypeTcgaDataFile.
+
+
 Version: 0.1.6 [2009-10-25]
 o Added BroadBirdseedGenotypeTcgaData(File|FileSet).
 o Added *FileSet classes for all *File classes.

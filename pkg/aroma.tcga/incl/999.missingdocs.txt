@@ -97,3 +97,4 @@ getKnownFilePatterns getKnownFilePatterns.TcgaDccDownloader
  BroadAlleleSpecificThetaTcgaDataFileSet
  BroadTotalCopyNumberTcgaDataFileSet MageTabDataMatrixFileSet
  TcgaDataFileSet
+exportGenotypeCallsAndConfidenceScores

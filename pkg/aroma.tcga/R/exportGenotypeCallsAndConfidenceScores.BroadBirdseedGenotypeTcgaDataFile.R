@@ -1,58 +1,62 @@
 ###########################################################################/**
-## @set "class=BroadBirdseedGenotypeTcgaDataFile"
-## @RdocMethod exportGenotypeCallsAndConfidenceScores
-##
-## @title "export genotype calls and confidence scores from TCGA Birdseed data to aroma binary files"
-##
-##
-## \description{
-##    Export genotype calls and corresponding confidence scores for one sample
-##    from a Birdseed data file to an "AromaUnitGenotypeCallFile"
-##    (genotype calls) and an "AromaUnitSignalBinaryFile" (confidence scores).
-##  }
-##
-## \arguments{
-##   \item{dataSet}{@character, data set name.}
-##   \item{chipType}{@character, chip type.}
-##   \item{...}{arguments passed to AromaUnitGenotypeCallFile$allocateFromUnitNamesFile.}
-##   \item{rootPath}{@character, root path for output files.}
-##   \item{verbose}{@see "Verbose" object.}
-## }
-##
-##
-## \author{
-##   Pierre Neuvial.
-## }
-##
-##
-## \details{
-##   A "UnitNamesFile" is inferred from "chipType" using "AffymetrixCdfFile$byChipType".
-##   Genotyping units (=SNPs) are ordered according to this "UnitNamesFile".
-##   Confidence scores are stored as one minus the input score as the latter is a p-value.
-## }
-##
-## \note{
-##   The implementation requires aroma.affymetrix only for the inference of
-##   a UnitNamesFile. However it is tied to Affymetrix data anyway because
-##   Birdseed only supports Affymetrix data.
-## }
-##
-##*/###########################################################################
-
+# @set "class=BroadBirdseedGenotypeTcgaDataFile"
+# @RdocMethod exportGenotypeCallsAndConfidenceScores
+#
+# @title "Exports genotype calls and confidence scores"
+#
+#
+# \description{
+#    Export genotype calls and corresponding confidence scores for one sample
+#    from a Birdseed data file to an 
+#     @see "aroma.core::AromaUnitGenotypeCallFile" (genotype calls) and
+#     an @see "aroma.core::AromaUnitSignalBinaryFile" (confidence scores).
+#  }
+#
+# \arguments{
+#   \item{dataSet}{@character, data set name.}
+#   \item{chipType}{@character, chip type.}
+#   \item{...}{arguments passed to 
+#      \code{AromaUnitGenotypeCallFile$allocateFromUnitNamesFile(...)}.}
+#   \item{rootPath}{@character, root path for output files.}
+#   \item{verbose}{@see "Verbose" object.}
+# }
+#
+#
+# \author{
+#   Pierre Neuvial.
+# }
+#
+#
+# \details{
+#   A @see "aroma.core::UnitNamesFile" is inferred from "chipType" using 
+#   \code{AffymetrixCdfFile$byChipType()}.
+#   Genotyping units (SNPs) are ordered according to this 
+#   @see "aroma.core::UnitNamesFile".
+#   Confidence scores are stored as one minus the input score as the
+#   latter is a p-value.
+# }
+#
+# \note{
+#   The implementation requires \pkg{aroma.affymetrix} only for the
+#   inference of a @see "aroma.core::UnitNamesFile".  However it is tied
+#   to Affymetrix data anyway because Birdseed only supports Affymetrix data.
+# }
+#
+#*/###########################################################################
 setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcgaDataFile", function(this, dataset, chipType, ..., rootPath="callData", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## Argument 'dataSet':
+  # Argument 'dataSet':
   dataSet <- Arguments$getCharacter(dataSet, length=c(1,1));
 
-  ## Argument 'chipType':
+  # Argument 'chipType':
   chipType <- Arguments$getCharacter(chipType, length=c(1,1));
 
-  ## Argument 'rootPath':
+  # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);
 
-  ## Argument 'verbose':
+  # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
@@ -63,7 +67,7 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 
   fullname <- getFullName(this);
   verbose && enter(verbose, "Exporting genotype calls and confidence scores for sample ", fullname);
-  ## Nothing to do ?
+  # Nothing to do ?
   genoFilename <- sprintf("%s,genotypes.acf", fullname);
   genoPathname <- Arguments$getWritablePathname(genoFilename, path=path, mustNotExist=FALSE);
   confFilename <- sprintf("%s,confidenceScores.asb", fullname);
@@ -75,8 +79,9 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
     asf <- AromaUnitSignalBinaryFile(confPathname);
     verbose && cat(verbose, "Already exported: ", getPathname(asf));
   } else {
-
-    ## Affy-specific
+    require("aroma.affymetrix") || 
+      throw("Package not loaded: aroma.affymetrix");
+    # Affy-specific
     verbose && enter(verbose, "Retrieving UnitNamesFile from chipType");
     unf <- AffymetrixCdfFile$byChipType(chipType, verbose=verbose);
     verbose && exit(verbose);
@@ -87,15 +92,15 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
                     checkSum = getChecksum(this));
     verbose && exit(verbose);
       
-    ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    ## Transforming data
-    ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Transforming data
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Extracting calls and confidence scores");
     calls <- extractCalls(this);
     verbose && str(verbose, calls);
     verbose && print(verbose, summary.factor(calls));
     
-    conf <- 1-extractConfidenceScores(this); ## input data are p-values...
+    conf <- 1-extractConfidenceScores(this); # input data are p-values...
     verbose && str(verbose, conf);
     
     verbose && enter(verbose, "Ordering units according to UnitNamesFile");
@@ -117,9 +122,9 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
       verbose && cat(verbose, "Already exported: ", getPathname(acf));
     } else {
       
-      ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      ## Writing data
-      ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Writing data
+      # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       pathnameT <- sprintf("%s.tmp", pathname);
       pathnameT <- Arguments$getWritablePathname(pathnameT, mustNotExist=TRUE);
       on.exit({
@@ -135,7 +140,7 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
       footer$srcFile <- srcFile;
       writeFooter(acf, footer);
       
-      ## Rename temporary file
+      # Rename temporary file
       res <- file.rename(pathnameT, pathname);
       if (!isFile(pathname)) {
         throw("Failed to rename temporary file: ", pathnameT, " -> ", pathname);
@@ -175,7 +180,7 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
       footer$srcFile <- srcFile;
       writeFooter(asf, footer);
       
-      ## Rename temporary file
+      # Rename temporary file
       res <- file.rename(pathnameT, pathname);
       if (!isFile(pathname)) {
         throw("Failed to rename temporary file: ", pathnameT, " -> ", pathname);
@@ -193,22 +198,21 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 })
 
 
-
 ############################################################################
-## HISTORY:
-## 2009-10-23
-## o CLEANUPS.
-## 2009-06-09
-## o Genotype calls are now directly updated using:
-##   'updateGenotypes(..., encoding="birdseed")' available in aroma.core v1.1.1.
-## 2009-06-07
-## o Added argument 'filenameFrom' to allow the output file name to be inferred 
-##   either from the input file name or its header.
-## o BUG FIX: NAs in input genotype files were converted to double
-##   deletions (0,0). They are now converted to NCs ("No Call").
-## 2009-05-28
-## o A UnitNamesFile is now inferred from "chipType",
-##   using "AffymetrixCdfFile$byChipType".
-## 2009-05-19
-## o Created.
+# HISTORY:
+# 2009-10-23
+# o CLEANUPS.
+# 2009-06-09
+# o Genotype calls are now directly updated using:
+#   'updateGenotypes(..., encoding="birdseed")' available in aroma.core v1.1.1.
+# 2009-06-07
+# o Added argument 'filenameFrom' to allow the output file name to be inferred 
+#   either from the input file name or its header.
+# o BUG FIX: NAs in input genotype files were converted to double
+#   deletions (0,0). They are now converted to NCs ("No Call").
+# 2009-05-28
+# o A UnitNamesFile is now inferred from "chipType",
+#   using "AffymetrixCdfFile$byChipType".
+# 2009-05-19
+# o Created.
 ############################################################################
