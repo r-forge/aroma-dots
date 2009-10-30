@@ -168,7 +168,7 @@ patterns <- unlist(patterns, use.names=FALSE);
 if (interactive()) {
   patterns <- selectMenu(sort(patterns));
 } else {
-  patterns <- "[.]CEL$";
+  patterns <- "[.](cel|CEL)$";
   patterns <- "[.]birdseed[.]data[.]txt$";
 }
 
