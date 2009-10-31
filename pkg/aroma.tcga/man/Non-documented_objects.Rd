@@ -179,6 +179,7 @@
 \alias{MageTabDataMatrixFileSet}
 \alias{TcgaDataFileSet}
 \alias{exportGenotypeCallsAndConfidenceScores}
+\alias{getFilenameMap.SdrfFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
