@@ -180,6 +180,9 @@
 \alias{TcgaDataFileSet}
 \alias{exportGenotypeCallsAndConfidenceScores}
 \alias{getFilenameMap.SdrfFileSet}
+\alias{exportTotalAndFracB}
+\alias{exportTotalAndFracB.BroadTotalCopyNumberTcgaDataFile}
+\alias{exportTotalAndFracB.BroadTotalCopyNumberTcgaDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

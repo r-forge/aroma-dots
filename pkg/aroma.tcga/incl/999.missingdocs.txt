@@ -99,3 +99,6 @@ getKnownFilePatterns getKnownFilePatterns.TcgaDccDownloader
  TcgaDataFileSet
 exportGenotypeCallsAndConfidenceScores
  getFilenameMap.SdrfFileSet
+  exportTotalAndFracB
+  exportTotalAndFracB.BroadTotalCopyNumberTcgaDataFile
+  exportTotalAndFracB.BroadTotalCopyNumberTcgaDataFileSet
