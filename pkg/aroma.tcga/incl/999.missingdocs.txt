@@ -98,3 +98,4 @@ getKnownFilePatterns getKnownFilePatterns.TcgaDccDownloader
  BroadTotalCopyNumberTcgaDataFileSet MageTabDataMatrixFileSet
  TcgaDataFileSet
 exportGenotypeCallsAndConfidenceScores
+ getFilenameMap.SdrfFileSet

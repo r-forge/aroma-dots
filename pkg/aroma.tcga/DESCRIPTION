@@ -1,10 +1,10 @@
 Package: aroma.tcga
-Version: 0.1.7
-Date: 2009-10-29
+Version: 0.1.8
+Date: 2009-10-30
 Title: Methods for accessing online The Cancer Genome Atlas (TCGA) data
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
-Depends: R (>= 2.9.0), R.methodsS3 (>= 1.0.3), R.oo (>= 1.6.4), R.utils (>= 1.2.4), R.cache (>= 0.2.0), R.filesets (>= 0.6.4), aroma.core (>= 1.2.3)
+Depends: R (>= 2.9.0), R.methodsS3 (>= 1.0.3), R.oo (>= 1.6.4), R.utils (>= 1.2.4), R.cache (>= 0.2.0), R.filesets (>= 0.6.5), aroma.core (>= 1.2.3)
 Imports:
 Suggests: gsubfn (>= 0.5-0), aroma.affymetrix (>= 1.2.0)
 Description: Utility functions for accessing the public and protected data files at the The Cancer Genome Atlas (TCGA) Data Collection Center (DCC).  This package is very much in an alpha stage where the API keeps changing from day to day.

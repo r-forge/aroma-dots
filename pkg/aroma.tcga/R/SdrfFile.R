@@ -10,9 +10,49 @@ setConstructorS3("SdrfFile", function(..., .verify=TRUE) {
 })
 
 
-setMethodS3("getFilenameMap", "SdrfFile", function(this, ...) {
+setMethodS3("getFilenameMap", "SdrfFile", function(this, ..., dropEmpty=TRUE, .validate=FALSE) {
   colClassPatterns <- c("(extractName|arrayDataFile)"="character");
-  readDataFrame(this, colClassPatterns=colClassPatterns);
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns);
+
+  # Trim (just in case)
+  for (key in colnames(data)) {
+    data[,key] <- trim(data[,key]);
+  }    
+
+  # Drop duplicates
+  keep <- which(!duplicated(data$arrayDataFile));
+  data <- data[keep,,drop=FALSE];
+
+  for (key in colnames(data)) {
+    data[,key] <- trim(data[,key]);
+  }    
+
+  # Validate
+  if (.validate) {
+    for (key in colnames(data)) {
+      values <- data[,key];
+      len <- nchar(values);
+      idxs <- which(len == 0);
+      if (length(idxs) > 0) {
+        msg <- sprintf("Invalid filename map. Column '%s' contains empty values: Rows %s", key, paste(head(idxs), collapse=", "));
+        throw(msg);
+      }
+    } # for (key ...)  
+  }
+
+  # Drop empty target names?
+  if (dropEmpty) {
+    keep <- which(nchar(data$extractName) > 0);
+    data <- data[keep,,drop=FALSE];
+  }
+
+  # Add rownames
+  # Drop the filename extension
+  pattern <- "\\.[a-zA-Z]+$";
+  pattern <- toAsciiRegExprPattern(pattern);
+  rownames(data) <- gsub(pattern, "", data$arrayDataFile);
+
+  data;
 })
 
 
@@ -25,30 +65,15 @@ setMethodS3("getExtractNameByFilename", "SdrfFile", function(this, name, ...) {
 })
 
 
-setMethodS3("makeFullNamesTranslator", "SdrfFile", function(this, ...) {
+setMethodS3("makeFullNamesTranslator", "SdrfFile", function(this, ..., failTag="notInSDRF") {
   data <- getFilenameMap(this, ...);
 
-  # Drop the filename extension
-  pattern <- "\\.[a-zA-Z]+$";
-  pattern <- toAsciiRegExprPattern(pattern);
-  data$fullNames <- gsub(pattern, "", data$arrayDataFile);
-
-  # TO DO: The translator function must accept test names 'foo' and 'bar'.
-  safe <- FALSE;
-
   translator <- function(names, ...) {
-    idxs <- match(names, data$fullNames);
-
-    # Are all fullnames defined?
-    ok <- is.finite(idxs);
-    if (safe && !all(ok)) {
-      missing <- names[!ok];
-      missing <- paste(head(missing), collapse=", ");
-      throw("Failed to translate the name of some data files. Unknown fullnames: ", missing);
-    }
-
-    names[ok] <- data$extractName[idxs[ok]];
-    names;
+    names2 <- data[names,"extractName"];
+    # Any failed translations?
+    nok <- is.na(names2);
+    names2[nok] <- paste(names[nok], failTag, sep=",");
+    names2;
   } # translator()
 
   # Return translator function
@@ -58,6 +83,14 @@ setMethodS3("makeFullNamesTranslator", "SdrfFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-10-30
+# o Now makeFullNamesTranslator() of SdrfFile|Set adds a "failTag" to the
+#   fullname of those fullnames that was not translated.
+# o Now the data frame returned by getFilenameMap() of SdrfFile has the
+#   default fullnames as rownames.  It also drops all rows that have empty
+#   extractName:s.
+# o ROBUSTNESS: Now getFilenameMap() of SdrfFile can assert that there are
+#   no empty values.
 # 2009-10-23
 # o Now makeFullNamesTranslator() of SdrfFile translates all data types.
 # 2009-10-01
