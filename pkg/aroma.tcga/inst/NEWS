@@ -2,8 +2,12 @@ Package: aroma.tcga
 ===================
 
 Version: 0.1.8 [2009-10-30]
+o Added exportTotalAndFracB() for BroadTotalCopyNumberTcgaDataFile
+  and BroadTotalCopyNumberTcgaDataFileSet.
 o Now makeFullNamesTranslator() of SdrfFile|Set adds a "failTag" 
   to the fullname of those fullnames that was not translated.
+o BUG FIX: getBarcodeIdTranslators() of TcgaFullNameTranslators 
+  would drop fullnames that did not match the pattern.
 
 
 Version: 0.1.7 [2009-10-29]
