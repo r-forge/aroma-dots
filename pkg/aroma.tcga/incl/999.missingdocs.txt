@@ -102,3 +102,10 @@ exportGenotypeCallsAndConfidenceScores
   exportTotalAndFracB
   exportTotalAndFracB.BroadTotalCopyNumberTcgaDataFile
   exportTotalAndFracB.BroadTotalCopyNumberTcgaDataFileSet
+  exportTotalAndFracB.HudsonAlphaBAlleleFreqTcgaDataFile
+  exportTotalAndFracB.HudsonAlphaBAlleleFreqTcgaDataFileSet
+  extractFracB extractFracB.HudsonAlphaBAlleleFreqTcgaDataFile
+  getExtensionPattern.HudsonAlphaBAlleleFreqTcgaDataFile
+  getReadArguments.HudsonAlphaBAlleleFreqTcgaDataFile
+  HudsonAlphaBAlleleFreqTcgaDataFile
+  HudsonAlphaBAlleleFreqTcgaDataFileSet

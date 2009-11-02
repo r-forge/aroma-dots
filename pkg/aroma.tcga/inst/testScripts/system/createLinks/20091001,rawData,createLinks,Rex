@@ -28,7 +28,7 @@ knownChipTypes <- c(
   "HG-CGH-415K_G4124A" = "HG-CGH-415K",
   "Genome_Wide_SNP_6"  = "GenomeWideSNP_6",
   "HumanHap550"        = "HumanHap550",
-  "Human1MDuo"         = "Human1MDuo"
+  "Human1MDuo"         = "Human1M-Duo"
 );
 
 # Translate
