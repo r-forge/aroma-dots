@@ -70,8 +70,9 @@ if (interactive()) {
   tddList <- tddList[keep];
 } else {
   ans <- "gbm";
+  ans <- "ov";
   keep <- is.element(tumorTypes, ans);
-  tddList <- tddList[keep];
+#  tddList <- tddList[keep];
 }
 verbose && print(verbose, tddList);
 
@@ -85,6 +86,7 @@ if (interactive()) {
   tddList <- tddList[keep];
 } else {
   ans <- "broad.mit.edu";
+#  ans <- "hudsonalpha.org";
   keep <- is.element(centers, ans);
   tddList <- tddList[keep];
 }
@@ -100,13 +102,14 @@ dataSetNames <- gsub(pattern, "\\1_\\2.\\3", dataSets);
 majorArchives <- as.integer(gsub(pattern, "\\5", dataSets));
 labels <- sprintf("%s.%02d", dataSetNames, majorArchives);
 o <- order(labels);
+labels <- labels[o];
 tddList <- tddList[o];
 
 dataSets <- sapply(tddList, FUN=getDataSet);
 uDataSets <- unique(dataSets);
 res <- list();
-for (kk in seq(along=dataSets)) {
-  name <- dataSets[kk];
+for (kk in seq(along=labels)) {
+  name <- labels[kk];
   res[[name]] <- c(res[[name]], tddList[kk]);
 }
 for (kk in seq(along=res)) {
@@ -128,6 +131,9 @@ for (kk in seq(along=res)) {
   res[[kk]] <- tddKK;
 } # for (kk ...)
 tddList <- res;
+o <- order(names(tddList));
+tddList <- tddList[o];
+names(tddList) <- sapply(tddList, FUN=getDataSet);
 verbose && print(verbose, tddList);
 
 
@@ -168,25 +174,49 @@ patterns <- unlist(patterns, use.names=FALSE);
 if (interactive()) {
   patterns <- selectMenu(sort(patterns));
 } else {
-  patterns <- "[.](cel|CEL)$";
+  patterns <- "[.]B_Allele_Freq[.]txt$";
   patterns <- "[.]birdseed[.]data[.]txt$";
+  patterns <- "[.]CEL$";
+  patterns <- "[.]after_5NN[.]copynumber[.]data[.]txt$";
 }
 
-for (pp in seq(along=tddList)) {
-  tdd <- tddList[[pp]];
-	  urlPath <- getUrlPath(tdd);
-  verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
-                                        pp, urlPath, length(tddList)));
+verbose && enter(verbose, "Download files by patterns");
+for (pp in seq(along=patterns)) {
+  pattern <- patterns[pp];
+  verbose && enter(verbose, sprintf("Pattern #%d of %d", pp, length(patterns)));
 
-  verbose && enter(verbose, "Download files by patterns");
-  for (kk in seq(along=patterns)) {
-    pattern <- patterns[kk];
-    verbose && enter(verbose, sprintf("Pattern #%d of %d", kk, length(patterns)));
-    downloadFilesByPattern(tdd, pattern=pattern, order="random", 
-                           onError="warning", verbose=less(verbose,10));
+  dsAll <- NULL;
+  for (qq in seq(along=tddList)) {
+    tdd <- tddList[[qq]];
+    urlPath <- getUrlPath(tdd);
+    verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
+                                        qq, urlPath, length(tddList)));
+
+    path <- file.path(rootPath, getUrlPath(tdd));
+    verbose && cat(verbose, "Download path: ", path);
+
+    verbose && enter(verbose, "Downloading");
+    res <- downloadFilesByPattern(tdd, pattern=pattern, order="random", 
+                                  onError="warning", verbose=less(verbose,10));
     verbose && exit(verbose);
-  } # for (kk ...)
-  verbose && exit(verbose);
+    
+    verbose && enter(verbose, "Setting up");
+    ds <- GenericDataFileSet$byPath(path, pattern=pattern, .validate=FALSE);
+    verbose && cat(verbose, "Data files downloaded:");
+    verbose && print(verbose, ds);
+    verbose && exit(verbose);
+
+    if (is.null(dsAll)) {
+      dsAll <- ds;
+    } else {
+      append(dsAll, ds);
+    }
+    verbose && print(verbose, dsAll);
+   
+    verbose && exit(verbose);
+  } # for (qq ...)
+
+  verbose && print(verbose, dsAll);
 
   verbose && exit(verbose);
 } # for (pp ...)
