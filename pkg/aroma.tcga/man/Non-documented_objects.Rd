@@ -183,6 +183,14 @@
 \alias{exportTotalAndFracB}
 \alias{exportTotalAndFracB.BroadTotalCopyNumberTcgaDataFile}
 \alias{exportTotalAndFracB.BroadTotalCopyNumberTcgaDataFileSet}
+\alias{exportTotalAndFracB.HudsonAlphaBAlleleFreqTcgaDataFile}
+\alias{exportTotalAndFracB.HudsonAlphaBAlleleFreqTcgaDataFileSet}
+\alias{extractFracB}
+\alias{extractFracB.HudsonAlphaBAlleleFreqTcgaDataFile}
+\alias{getExtensionPattern.HudsonAlphaBAlleleFreqTcgaDataFile}
+\alias{getReadArguments.HudsonAlphaBAlleleFreqTcgaDataFile}
+\alias{HudsonAlphaBAlleleFreqTcgaDataFile}
+\alias{HudsonAlphaBAlleleFreqTcgaDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -68,6 +68,13 @@ if (center == "broad.mit.edu") {
       clazz = BroadAlleleSpecificCopyNumberTcgaDataFileSet
     )
   );
+} else if (center == "hudsonalpha.org") {
+  typeList <- list(
+    "B_Allele_Freq" = list(
+      clazz = HudsonAlphaBAlleleFreqTcgaDataFileSet,
+      exportFcn = exportTotalAndFracB
+    )
+  );
 } else {
   throw("Unsupported center: ", center);
 }
@@ -93,11 +100,11 @@ verbose && enter(verbose, "Get unit names file");
 if (chipType == "GenomeWideSNP_6") {
   require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
   unf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6");
-} else if (platform == "Human1M-Duo") {
+} else if (chipType == "Human1M-Duo") {
   unf <- TextUnitNamesFile$byChipType(chipType, tags="TCGA,OV,hudsonalpha.org,HB20090506");
-} else if (platform == "HG-CGH-244A") {
+} else if (chipType == "HG-CGH-244A") {
   unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
-} else if (platform == "HG-CGH-415K") {
+} else if (chipType == "HG-CGH-415K") {
   unf <- TextUnitNamesFile$byChipType(chipType, tags="adf,TCGA,hms.harvard.edu,HB20090824");
 } else {
   throw("Unknown TCGA chip type: ", chipType);
