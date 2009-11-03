@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  exportGenotypeCallsAndConfidenceScores.BroadBirdseedGenotypeTcgaDataFile.R
+%  BroadBirdseedGenotypeTcgaDataFile.exportGenotypeCallsAndConfidenceScores.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,10 +26,11 @@
 
 \arguments{
   \item{dataSet}{\code{\link[base]{character}}, data set name.}
-  \item{chipType}{\code{\link[base]{character}}, chip type.}
+  \item{unf}{A \code{\link[aroma.core]{UnitNamesFile}}.}
   \item{...}{arguments passed to
      \code{AromaUnitGenotypeCallFile$allocateFromUnitNamesFile(...)}.}
   \item{rootPath}{\code{\link[base]{character}}, root path for output files.}
+  \item{force}{If \code{\link[base:logical]{TRUE}}, existing output files are rewritten.}
   \item{verbose}{\code{\link{Verbose}} object.}
 }
 
@@ -46,12 +47,6 @@
   \code{\link[aroma.core]{UnitNamesFile}}.
   Confidence scores are stored as one minus the input score as the
   latter is a p-value.
-}
-
-\note{
-  The implementation requires \pkg{aroma.affymetrix} only for the
-  inference of a \code{\link[aroma.core]{UnitNamesFile}}.  However it is tied
-  to Affymetrix data anyway because Birdseed only supports Affymetrix data.
 }
 \keyword{internal}
 \keyword{methods}

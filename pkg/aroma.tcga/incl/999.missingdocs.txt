@@ -109,3 +109,4 @@ exportGenotypeCallsAndConfidenceScores
   getReadArguments.HudsonAlphaBAlleleFreqTcgaDataFile
   HudsonAlphaBAlleleFreqTcgaDataFile
   HudsonAlphaBAlleleFreqTcgaDataFileSet
+ exportGenotypeCallsAndConfidenceScores.BroadBirdseedGenotypeTcgaDataFileSet
