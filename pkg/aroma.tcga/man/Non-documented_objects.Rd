@@ -191,6 +191,7 @@
 \alias{getReadArguments.HudsonAlphaBAlleleFreqTcgaDataFile}
 \alias{HudsonAlphaBAlleleFreqTcgaDataFile}
 \alias{HudsonAlphaBAlleleFreqTcgaDataFileSet}
+\alias{exportGenotypeCallsAndConfidenceScores.BroadBirdseedGenotypeTcgaDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that
