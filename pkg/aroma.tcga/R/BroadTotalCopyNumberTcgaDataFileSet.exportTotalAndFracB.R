@@ -1,7 +1,17 @@
-setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFileSet", function(this, unf, ..., rootPath="totalAndFracBData", verbose=FALSE) {
+setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFileSet", function(this, tags=c("*", "Birdseed"), unf, ..., rootPath="totalAndFracBData", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'tags':
+  if (!is.null(tags)) {
+    tags <- Arguments$getCharacters(tags);
+    tags <- unlist(strsplit(tags, split=","), use.names=FALSE);
+    tags <- tags[nchar(tags) > 0];
+    idxs <- which(tags == "*");
+    tags[idxs] <- getTags(this, collapse=",");
+    tags <- unlist(strsplit(tags, split=","), use.names=FALSE);
+  }
+
   # Argument 'unf':
   if (!inherits(unf, "UnitNamesFile")) {
     throw("Argument 'unf' is not a UnitNamesFile: ", class(unf)[1]);
@@ -19,7 +29,7 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFileSet", functi
 
 
   verbose && enter(verbose, "Exporting ", class(this)[1]);
-  dataSet <- getFullName(this);
+  dataSet <- paste(c(getName(this), tags), collapse=",");
   verbose && cat(verbose, "Full data set name: ", dataSet);
 
   chipType <- getChipType(unf, fullname=FALSE);
@@ -56,6 +66,9 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFileSet", functi
 
 ############################################################################
 # HISTORY:
+# 2009-11-02
+# o Now exportTotalAndFracB() of HBroadTotalCopyNumberTcgaDataFileSet
+#   adds default tags to the output data set.
 # 2009-10-30
 # o Added exportTotalAndFrac() for BroadTotalCopyNumberTcgaDataFile
 #   and BroadTotalCopyNumberTcgaDataFileSet.
