@@ -1,6 +1,11 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.2.2 [2009-11-02]
+o Now exportTotalAndFracB() of HudsonAlphaBAlleleFreqTcgaDataFileSet
+  adds default tags to the output data set.
+
+
 Version: 0.2.1 [2009-11-02]
 o HudsonAlphaBAlleleFreqTcgaDataFile|Set classes.
 
