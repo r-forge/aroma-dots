@@ -22,7 +22,7 @@ uCenters <- sort(unique(centers));
 if (interactive()) {
   center <- textMenu(uCenters, value=TRUE);
 } else {
-  center <- centers[1];
+  center <- "hudsonalpha.org";
 }
 verbose && cat(verbose, "TCGA center:");
 verbose && print(verbose, center);
@@ -43,6 +43,7 @@ if (interactive()) {
   chipType <- textMenu(uChipTypes, value=TRUE);
 } else {
   chipType <- uChipTypes[1];
+  chipType <- "Human1M-Duo";
 }
 verbose && cat(verbose, "Chip type:");
 verbose && print(verbose, chipType);
@@ -85,7 +86,8 @@ if (center == "broad.mit.edu") {
 if (interactive()) {
   typeName <- textMenu(names(typeList), value=TRUE);
 } else {
-  typeName <- names(typeList)[2];
+  typeName <- names(typeList)[1];
+  typeName <- "B_Allele_Freq";
 }
 verbose && cat(verbose, "Type of data: ", typeName);
 type <- typeList[[typeName]];
@@ -150,6 +152,7 @@ for (ii in seq(along=dataSets)) {
 ############################################################################
 # HISTORY:
 # 2009-11-02
+# o Updated to also import B_Allele_Freq.data.txt from hudsonalpha.org.
 # o Added support for importing broad.mit.edu Birdseed genotype calls.
 # o Added support for importing hudsonalpha.org BAFs.
 # 2009-09-24
