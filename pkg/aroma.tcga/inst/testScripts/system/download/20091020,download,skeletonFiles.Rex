@@ -86,7 +86,7 @@ if (interactive()) {
   tddList <- tddList[keep];
 } else {
   ans <- "broad.mit.edu";
-#  ans <- "hudsonalpha.org";
+  ans <- "hudsonalpha.org";
   keep <- is.element(centers, ans);
   tddList <- tddList[keep];
 }
@@ -174,10 +174,11 @@ patterns <- unlist(patterns, use.names=FALSE);
 if (interactive()) {
   patterns <- selectMenu(sort(patterns));
 } else {
-  patterns <- "[.]B_Allele_Freq[.]txt$";
   patterns <- "[.]birdseed[.]data[.]txt$";
   patterns <- "[.]CEL$";
   patterns <- "[.]after_5NN[.]copynumber[.]data[.]txt$";
+  patterns <- "[.]B_Allele_Freq[.]txt$";
+#  patterns <- "[.]XandYintensity[.]txt$";
 }
 
 verbose && enter(verbose, "Download files by patterns");
