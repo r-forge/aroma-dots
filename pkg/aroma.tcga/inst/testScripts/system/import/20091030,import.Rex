@@ -91,7 +91,8 @@ if (interactive()) {
   typeName <- textMenu(names(typeList), value=TRUE);
 } else {
   typeName <- names(typeList)[1];
-  typeName <- "B_Allele_Freq";
+  typeName <- "XandYintensity";
+#  typeName <- "B_Allele_Freq";
 }
 verbose && cat(verbose, "Type of data: ", typeName);
 type <- typeList[[typeName]];
@@ -110,6 +111,8 @@ verbose && enter(verbose, "Get unit names file");
 if (chipType == "GenomeWideSNP_6") {
   require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
   unf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6");
+} else if (chipType == "HumanHap550") {
+  unf <- TextUnitNamesFile$byChipType(chipType, tags="adf,TCGA,HB20091107");
 } else if (chipType == "Human1M-Duo") {
   unf <- TextUnitNamesFile$byChipType(chipType, tags="TCGA,OV,hudsonalpha.org,HB20090506");
 } else if (chipType == "HG-CGH-244A") {
