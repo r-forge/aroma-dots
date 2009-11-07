@@ -192,6 +192,14 @@
 \alias{HudsonAlphaBAlleleFreqTcgaDataFile}
 \alias{HudsonAlphaBAlleleFreqTcgaDataFileSet}
 \alias{exportGenotypeCallsAndConfidenceScores.BroadBirdseedGenotypeTcgaDataFileSet}
+\alias{exportTotalAndFracB.HudsonAlphaXYTcgaDataFile}
+\alias{exportTotalAndFracB.HudsonAlphaXYTcgaDataFileSet}
+\alias{extractTheta.HudsonAlphaXYTcgaDataFile}
+\alias{extractTotalAndFracB.HudsonAlphaXYTcgaDataFile}
+\alias{getExtensionPattern.HudsonAlphaXYTcgaDataFile}
+\alias{getReadArguments.HudsonAlphaXYTcgaDataFile}
+\alias{HudsonAlphaXYTcgaDataFile}
+\alias{HudsonAlphaXYTcgaDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

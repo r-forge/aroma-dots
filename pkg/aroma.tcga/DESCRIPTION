@@ -1,6 +1,6 @@
 Package: aroma.tcga
-Version: 0.2.2
-Date: 2009-11-02
+Version: 0.2.3
+Date: 2009-11-06
 Title: Methods for accessing online The Cancer Genome Atlas (TCGA) data
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>

@@ -1,9 +1,10 @@
-setConstructorS3("BroadBirdseedGenotypeTcgaDataFileSet", function(...) {
-  extend(TcgaDataFileSet(...), "BroadBirdseedGenotypeTcgaDataFileSet");
+setConstructorS3("HudsonAlphaXYTcgaDataFileSet", function(...) {
+  extend(TcgaDataFileSet(...), "HudsonAlphaXYTcgaDataFileSet");
 })
 
 
-setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcgaDataFileSet", function(this, tags=c("*", "Birdseed"), unf, ..., rootPath="callData", verbose=FALSE) {
+
+setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFileSet", function(this, tags=c("*", "XY"), unf, ..., rootPath="totalAndFracBData", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -42,15 +43,15 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
   path <- file.path(rootPath, dataSet, chipType);
   path <- Arguments$getWritablePath(path);
 
+
   for (kk in seq(this)) {
     df <- getFile(this, kk);
     
     verbose && enter(verbose, sprintf("Data file #%d ('%s') of %d", 
                                            kk, getName(df), length(this)));
 
-    dsKK <- exportGenotypeCallsAndConfidenceScores(df, 
-                dataSet=dataSet, unf=unf, rootPath=rootPath, ..., 
-                verbose=less(verbose, 5));
+    dsKK <- exportTotalAndFracB(df, dataSet=dataSet, unf=unf, 
+                           rootPath=rootPath, ..., verbose=less(verbose, 5));
     verbose && cat(verbose, "Written data:");
     verbose && print(verbose, dsKK);
 
@@ -59,9 +60,8 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 
   # Validating everything
   res <- list();
-  res$acs <- AromaUnitGenotypeCallSet$byPath(path);
-  pattern <- ".*,confidenceScores.asb$";
-  res$ass <- AromaUnitSignalBinarySet$byPath(path, pattern=pattern);
+  res$total <- AromaUnitTotalCnBinarySet$byPath(path);
+  res$fracB <- AromaUnitFracBCnBinarySet$byPath(path);
   verbose && print(verbose, res);
 
   verbose && exit(verbose);
@@ -72,9 +72,6 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 
 ############################################################################
 # HISTORY:
-# 2009-11-02
-# o Added exportGenotypeCallsAndConfidenceScores() to 
-#   BroadBirdseedGenotypeTcgaDataFileSet.
-# 2009-10-25
+# 2009-11-06
 # o Created.
 ############################################################################

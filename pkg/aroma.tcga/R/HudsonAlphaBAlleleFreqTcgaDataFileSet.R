@@ -1,9 +1,10 @@
-setConstructorS3("BroadBirdseedGenotypeTcgaDataFileSet", function(...) {
-  extend(TcgaDataFileSet(...), "BroadBirdseedGenotypeTcgaDataFileSet");
+setConstructorS3("HudsonAlphaBAlleleFreqTcgaDataFileSet", function(...) {
+  extend(TcgaDataFileSet(...), "HudsonAlphaBAlleleFreqTcgaDataFileSet");
 })
 
 
-setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcgaDataFileSet", function(this, tags=c("*", "Birdseed"), unf, ..., rootPath="callData", verbose=FALSE) {
+
+setMethodS3("exportTotalAndFracB", "HudsonAlphaBAlleleFreqTcgaDataFileSet", function(this, tags=c("*", "BAF"), unf, ..., rootPath="totalAndFracBData", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -42,39 +43,36 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
   path <- file.path(rootPath, dataSet, chipType);
   path <- Arguments$getWritablePath(path);
 
+
   for (kk in seq(this)) {
     df <- getFile(this, kk);
     
     verbose && enter(verbose, sprintf("Data file #%d ('%s') of %d", 
                                            kk, getName(df), length(this)));
 
-    dsKK <- exportGenotypeCallsAndConfidenceScores(df, 
-                dataSet=dataSet, unf=unf, rootPath=rootPath, ..., 
-                verbose=less(verbose, 5));
-    verbose && cat(verbose, "Written data:");
+    dsKK <- exportTotalAndFracB(df, dataSet=dataSet, unf=unf, 
+                           rootPath=rootPath, ..., verbose=less(verbose, 5));
+    verbose && cat(verbose, "Exported data set:");
     verbose && print(verbose, dsKK);
 
     verbose && exit(verbose);
   } # for (cc ...)
 
   # Validating everything
-  res <- list();
-  res$acs <- AromaUnitGenotypeCallSet$byPath(path);
-  pattern <- ".*,confidenceScores.asb$";
-  res$ass <- AromaUnitSignalBinarySet$byPath(path, pattern=pattern);
-  verbose && print(verbose, res);
+  ds <- AromaUnitFracBCnBinarySet$byPath(path);
+  verbose && print(verbose, ds);
 
   verbose && exit(verbose);
 
-  invisible(res);
+  invisible(ds);
 })
 
 
 ############################################################################
 # HISTORY:
 # 2009-11-02
-# o Added exportGenotypeCallsAndConfidenceScores() to 
-#   BroadBirdseedGenotypeTcgaDataFileSet.
-# 2009-10-25
+# o Now exportTotalAndFracB() of HudsonAlphaBAlleleFreqTcgaDataFileSet
+#   adds default tags to the output data set.
+# 2009-11-01
 # o Created.
 ############################################################################
