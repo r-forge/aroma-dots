@@ -75,6 +75,10 @@ if (center == "broad.mit.edu") {
   );
 } else if (center == "hudsonalpha.org") {
   typeList <- list(
+    "XandYintensity" = list(
+      clazz = HudsonAlphaXYTcgaDataFileSet,
+      exportFcn = exportTotalAndFracB
+    ),
     "B_Allele_Freq" = list(
       clazz = HudsonAlphaBAlleleFreqTcgaDataFileSet,
       exportFcn = exportTotalAndFracB

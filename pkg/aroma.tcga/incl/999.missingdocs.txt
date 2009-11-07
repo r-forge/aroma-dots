@@ -110,3 +110,10 @@ exportGenotypeCallsAndConfidenceScores
   HudsonAlphaBAlleleFreqTcgaDataFile
   HudsonAlphaBAlleleFreqTcgaDataFileSet
  exportGenotypeCallsAndConfidenceScores.BroadBirdseedGenotypeTcgaDataFileSet
+  exportTotalAndFracB.HudsonAlphaXYTcgaDataFile
+  exportTotalAndFracB.HudsonAlphaXYTcgaDataFileSet
+  extractTheta.HudsonAlphaXYTcgaDataFile
+  extractTotalAndFracB.HudsonAlphaXYTcgaDataFile
+  getExtensionPattern.HudsonAlphaXYTcgaDataFile
+  getReadArguments.HudsonAlphaXYTcgaDataFile HudsonAlphaXYTcgaDataFile
+  HudsonAlphaXYTcgaDataFileSet

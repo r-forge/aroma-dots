@@ -1,13 +1,17 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.2.3 [2009-11-06]
+o Added HudsonAlphaXYTcgaDataFile|Set classes.
+
+
 Version: 0.2.2 [2009-11-02]
 o Added exportGenotypeCallsAndConfidenceScores() to
   BroadBirdseedGenotypeTcgaDataFileSet.
 
 
 Version: 0.2.1 [2009-11-02]
-o HudsonAlphaBAlleleFreqTcgaDataFile|Set classes.
+o Added HudsonAlphaBAlleleFreqTcgaDataFile|Set classes.
 
 
 Version: 0.2.0 [2009-11-01]
