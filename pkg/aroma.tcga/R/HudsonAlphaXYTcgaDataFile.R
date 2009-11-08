@@ -162,18 +162,23 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, d
     # Map unit indices
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     if (is.null(units)) {
-      verbose && enter(verbose, "Mapping unit names to  indices");
-      colClassPatterns <- c("CompositeElement REF"="character");
-      data <- readDataFrame(this, colClassPatterns=colClassPatterns);
+      verbose && enter(verbose, "Mapping unit names to indices");
 
+      verbose && enter(verbose, "Reading unit names");
+      colClassPatterns <- c("*"="NULL", "CompositeElement REF"="character");
+      data <- readDataFrame(this, colClassPatterns=colClassPatterns);
       unitNames <- data[,1, drop=TRUE];
       verbose && cat(verbose, "Unit names:");
       verbose && str(verbose, unitNames);
+      verbose && exit(verbose);
 
+      verbose && enter(verbose, "Mapping to unit-names file");
       verbose && print(verbose, unf);
       units <- indexOf(unf, names=unitNames);
       verbose && cat(verbose, "Units:");
       verbose && str(verbose, units);
+      verbose && summary(verbose, units);
+      verbose && exit(verbose);
 
       # Sanity check
       if (anyMissing(units)) {
@@ -191,9 +196,11 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, d
     verbose && enter(verbose, "Reading data");
     verbose && cat(verbose, "Sample name: ", sampleName);
     pattern <- sprintf("%s,(X|Y)$", sampleName);
-    verbose && cat(verbose, "Column pattern: ", pattern);
     colClassPatterns <- c("double");
     names(colClassPatterns) <- pattern;
+    colClassPatterns <- c("*"="NULL", colClassPatterns);
+    verbose && cat(verbose, "Column pattern:");
+    verbose && print(verbose, colClassPatterns);
     data <- readDataFrame(this, colClassPatterns=colClassPatterns);
     verbose && cat(verbose, "Data read:");
     verbose && str(verbose, data);
