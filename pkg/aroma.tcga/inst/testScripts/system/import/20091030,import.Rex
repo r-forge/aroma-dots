@@ -44,6 +44,7 @@ if (interactive()) {
 } else {
   chipType <- uChipTypes[1];
   chipType <- "Human1M-Duo";
+  chipType <- "HumanHap550";
 }
 verbose && cat(verbose, "Chip type:");
 verbose && print(verbose, chipType);
@@ -158,8 +159,10 @@ for (ii in seq(along=dataSets)) {
 
 ############################################################################
 # HISTORY:
+# 2009-11-06
+# o Updated to also import XandYintensity.txt from hudsonalpha.org.
 # 2009-11-02
-# o Updated to also import B_Allele_Freq.data.txt from hudsonalpha.org.
+# o Updated to also import B_Allele_Freq.txt from hudsonalpha.org.
 # o Added support for importing broad.mit.edu Birdseed genotype calls.
 # o Added support for importing hudsonalpha.org BAFs.
 # 2009-09-24
