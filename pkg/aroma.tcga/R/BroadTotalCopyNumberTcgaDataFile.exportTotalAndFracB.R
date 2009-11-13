@@ -56,7 +56,7 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
     filename <- sprintf("%s.asb", fullname);
     pathname <- file.path(path, filename);
     # Nothing to do?
-    if (force || isFile(pathname)) {
+    if (!force || isFile(pathname)) {
       verbose && cat(verbose, "Column already exported. Skipping.");
       verbose && exit(verbose);
       next;
