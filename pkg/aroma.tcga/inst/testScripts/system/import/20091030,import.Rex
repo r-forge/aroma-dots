@@ -32,6 +32,10 @@ verbose && cat(verbose, "TCGA center:");
 verbose && print(verbose, center);
 dataSets <- dataSets[centers == center];
 
+verbose && cat(verbose, "Filtered data sets:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select chip type
@@ -56,6 +60,10 @@ keep <- sapply(chipTypeList, FUN=function(chipTypes) {
   any(chipTypes == chipType);
 });
 dataSets <- dataSets[keep];
+
+verbose && cat(verbose, "Filtered data sets:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -112,6 +120,9 @@ if (is.null(exportFcn)) {
   throw("No export function specified/implemented: ", typeName);
 }
 
+verbose && cat(verbose, "Data sets to be processed:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Get unit names file
