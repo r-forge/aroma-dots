@@ -200,6 +200,13 @@
 \alias{getReadArguments.HudsonAlphaXYTcgaDataFile}
 \alias{HudsonAlphaXYTcgaDataFile}
 \alias{HudsonAlphaXYTcgaDataFileSet}
+\alias{exportGenotypeCalls}
+\alias{exportGenotypeCalls.HudsonAlphaGenotypeTcgaDataFileSet}
+\alias{extractCalls.HudsonAlphaGenotypeTcgaDataFile}
+\alias{getExtensionPattern.HudsonAlphaGenotypeTcgaDataFile}
+\alias{getReadArguments.HudsonAlphaGenotypeTcgaDataFile}
+\alias{HudsonAlphaGenotypeTcgaDataFile}
+\alias{HudsonAlphaGenotypeTcgaDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

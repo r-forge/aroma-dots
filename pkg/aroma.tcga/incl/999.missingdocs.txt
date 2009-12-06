@@ -117,3 +117,10 @@ exportGenotypeCallsAndConfidenceScores
   getExtensionPattern.HudsonAlphaXYTcgaDataFile
   getReadArguments.HudsonAlphaXYTcgaDataFile HudsonAlphaXYTcgaDataFile
   HudsonAlphaXYTcgaDataFileSet
+  exportGenotypeCalls
+  exportGenotypeCalls.HudsonAlphaGenotypeTcgaDataFileSet
+  extractCalls.HudsonAlphaGenotypeTcgaDataFile
+  getExtensionPattern.HudsonAlphaGenotypeTcgaDataFile
+  getReadArguments.HudsonAlphaGenotypeTcgaDataFile
+  HudsonAlphaGenotypeTcgaDataFile HudsonAlphaGenotypeTcgaDataFileSet
+  

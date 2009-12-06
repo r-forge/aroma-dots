@@ -8,6 +8,7 @@
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.core");
+library("aroma.tcga");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
@@ -17,7 +18,15 @@ verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 rootPath <- "totalAndFracBData";
 rootPath <- Arguments$getReadablePath(rootPath);
 
-dataSets <- sort(list.files(pattern=",ov", path=rootPath));
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Identify all data sets
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pattern <- TcgaDccData$getDataSetPatterns()$dataset;
+dataSets <- list.files(path=rootPath, pattern=pattern);
+verbose && cat(verbose, "Available data sets:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
+
 dataSet <- textMenu(dataSets, value=TRUE); 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -79,7 +88,8 @@ stopifnot(identical(getNames(dsT), getNames(dsN)));
 # Calculate CN ratios, either as (i) M = log2(thetaT/thetaN), or 
 # (ii) M = MT - MN, depending on the type of input data.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-dsC <- exportTotalCnRatioSet(dsT, ref=dsN, tags="pairs", verbose=verbose);
+dsC <- exportTotalCnRatioSet(dsT, ref=dsN, logBase=2, tags="pairs", 
+                                                      verbose=verbose);
 setFullNamesTranslator(dsC, function(names, ...) {
   barcodePattern <- "(TCGA-[0-9]{2}-[0-9]{4}),([0-9]{2}[A-Z]),([^,]*)";
   pattern <- sprintf("^%s,ref=%s,(.*)$", barcodePattern, barcodePattern);

@@ -13,6 +13,10 @@ rootPath <- Arguments$getReadablePath(rootPath);
 pattern <- TcgaDccData$getDataSetPatterns()$dataset;
 dataSets <- list.files(path=rootPath, pattern=pattern);
 
+verbose && cat(verbose, "Available data sets:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select by center
@@ -76,6 +80,10 @@ if (center == "broad.mit.edu") {
   );
 } else if (center == "hudsonalpha.org") {
   typeList <- list(
+    "Genotypes" = list(
+      clazz = HudsonAlphaGenotypeTcgaDataFileSet,
+      exportFcn = exportGenotypeCalls
+    ),
     "XandYintensity" = list(
       clazz = HudsonAlphaXYTcgaDataFileSet,
       exportFcn = exportTotalAndFracB
@@ -159,6 +167,8 @@ for (ii in seq(along=dataSets)) {
 
 ############################################################################
 # HISTORY:
+# 2009-12-06
+# o Added support to import Genotypes.txt from hudsonalpha.org.
 # 2009-11-06
 # o Updated to also import XandYintensity.txt from hudsonalpha.org.
 # 2009-11-02
