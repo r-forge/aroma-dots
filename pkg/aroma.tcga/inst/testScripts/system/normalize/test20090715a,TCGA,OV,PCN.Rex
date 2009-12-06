@@ -18,7 +18,11 @@ tcgaFNT01 <- function(names, ...) {
 rootPath <- "totalAndFracBData";
 rootPath <- Arguments$getReadablePath(rootPath);
 
-dataSets <- sort(list.files(pattern=",ov", path=rootPath));
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Identify all data sets
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pattern <- TcgaDccData$getDataSetPatterns()$dataset;
+dataSets <- list.files(path=rootPath, pattern=pattern);
 
 verbose && cat(verbose, "Available data sets:");
 verbose && print(verbose, dataSets);

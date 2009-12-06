@@ -114,7 +114,7 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaBAlleleFreqTcgaDataFile", functio
     filename <- sprintf("%s.asb", fullname);
     pathname <- file.path(path, filename);
     # Nothing to do?
-    if (!force || isFile(pathname)) {
+    if (!force && isFile(pathname)) {
       verbose && cat(verbose, "Column already exported. Skipping.");
       verbose && exit(verbose);
       next;
@@ -212,6 +212,9 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaBAlleleFreqTcgaDataFile", functio
 
 ############################################################################
 # HISTORY:
+# 2009-12-05
+# o BUG FIX: exportTotalAndFracB() of HudsonAlphaBAlleleFreqTcgaDataFile
+#   would not export data unless force=TRUE.
 # 2009-11-01
 # o Created BroadTotalCopyNumberTcgaDataFile.R.
 ############################################################################
