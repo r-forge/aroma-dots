@@ -13,9 +13,7 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFileSet", functi
   }
 
   # Argument 'unf':
-  if (!inherits(unf, "UnitNamesFile")) {
-    throw("Argument 'unf' is not a UnitNamesFile: ", class(unf)[1]);
-  }
+  unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);

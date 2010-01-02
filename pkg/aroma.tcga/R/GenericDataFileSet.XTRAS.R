@@ -6,10 +6,7 @@ setMethodS3("appendFullNameTranslatorBySdrfFile", "FullNameInterface", function(
 
 setMethodS3("appendFullNameTranslatorBySdrfFileSet", "FullNameInterface", function(this, set, ...) {
   # Argument 'set':
-  className <- "SdrfFileSet";
-  if (!inherits(set, className)) {
-    throw("Argument 'sdrf' is not of class ", className, ": ", class(set)[1]);
-  }
+  set <- Arguments$getInstanceOf(set, "SdrfFileSet");
 
   # Build a fullnames translator function based on the SDRF
   fcn <- makeFullNamesTranslator(set, ...);

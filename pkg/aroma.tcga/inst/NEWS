@@ -1,6 +1,10 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.2.5 [2010-01-01]
+o ROBUSTNESS: Using new Arguments$getInstanceOf() were possible.
+
+
 Version: 0.2.4 [2009-12-05]
 o Added HudsonAlphaGenotypeTcgaDataFile(Set) with exportTotalCalls().
 o BUG FIX: exportTotalAndFracB() of HudsonAlphaBAlleleFreqTcgaDataFile
