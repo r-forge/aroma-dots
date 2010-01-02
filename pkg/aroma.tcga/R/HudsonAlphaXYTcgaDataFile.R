@@ -60,9 +60,7 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, d
   dataSet <- Arguments$getCharacter(dataSet, length=c(1,1));
 
   # Argument 'unf':
-  if (!inherits(unf, "UnitNamesFile")) {
-    throw("Argument 'unf' is not a UnitNamesFile: ", class(unf)[1]);
-  }
+  unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);

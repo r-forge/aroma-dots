@@ -10,18 +10,6 @@ setMethodS3("byPath", "SdrfFileSet", function(static, ..., pattern=".*[.]sdrf[.]
 })
 
 
-## setMethodS3("fromFileSet", "GenericDataFileSet", function(static, set, ...) {
-##   # Argument 'set':
-##   className <- "GenericDataFileSet"
-##   if (!inherits(set, className)) {
-##     throw("Argument 'set' is not a ", className, ": ", class(set)[1]);
-##   }
-##  
-##   path <- getPath(set);
-##   fromFiles(static, path=path, ...);
-## })
-
-
 
 setMethodS3("getFilenameMap", "SdrfFileSet", function(this, ...) {
   # Extract the data for each file
