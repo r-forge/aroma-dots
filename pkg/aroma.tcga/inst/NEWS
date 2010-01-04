@@ -1,6 +1,12 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.3.0 [2010-01-03]
+o Added HarvardTotalCopyNumberTcgaData(File|FileSet).
+o BUG FIX: exportTotalAndFracB(..., force=FALSE) for
+  BroadTotalCopyNumberTcgaDataFile would never export.
+
+
 Version: 0.2.5 [2010-01-01]
 o ROBUSTNESS: Using new Arguments$getInstanceOf() were possible.
 

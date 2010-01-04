@@ -207,6 +207,15 @@
 \alias{getReadArguments.HudsonAlphaGenotypeTcgaDataFile}
 \alias{HudsonAlphaGenotypeTcgaDataFile}
 \alias{HudsonAlphaGenotypeTcgaDataFileSet}
+\alias{exportTotal}
+\alias{exportTotal.HarvardTotalCopyNumberTcgaDataFile}
+\alias{exportTotal.HarvardTotalCopyNumberTcgaDataFileSet}
+\alias{extractTotalCopyNumbers.HarvardTotalCopyNumberTcgaDataFile}
+\alias{extractTotalLog2CopyNumbers}
+\alias{extractTotalLog2CopyNumbers.HarvardTotalCopyNumberTcgaDataFile}
+\alias{getReadArguments.HarvardTotalCopyNumberTcgaDataFile}
+\alias{HarvardTotalCopyNumberTcgaDataFile}
+\alias{HarvardTotalCopyNumberTcgaDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

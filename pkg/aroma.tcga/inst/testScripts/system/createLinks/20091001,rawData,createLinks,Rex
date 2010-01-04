@@ -2,6 +2,11 @@
 # Author: Henrik Bengtsson, hb@stat.berkeley.edu
 #
 # Description:
+# The purpose of this script is to create data sets under rawData/ that
+# links (via file system links) to the corresponding tcgaData/ directory.
+# For example rawData/mskcc.org_OV.CGH-1x1M_G4447A.18.1.0/HG-CGH-1x1M ->
+# tcgaData/anonymous/tumor/ov/cgcc/mskcc.org/cgh-1x1m_g4447a/cna/
+# mskcc.org_OV.CGH-1x1M_G4447A.18.1.0/.
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.tcga");
@@ -77,6 +82,8 @@ for (kk in seq(along=dataSets)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-02
+# o Added a description.
 # 2009-10-26
 # o Removed requirement on affxparser by using TcgaDccData$findDataSets().
 # 2009-10-01

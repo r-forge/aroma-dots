@@ -123,4 +123,11 @@ exportGenotypeCallsAndConfidenceScores
   getExtensionPattern.HudsonAlphaGenotypeTcgaDataFile
   getReadArguments.HudsonAlphaGenotypeTcgaDataFile
   HudsonAlphaGenotypeTcgaDataFile HudsonAlphaGenotypeTcgaDataFileSet
-  
+  exportTotal exportTotal.HarvardTotalCopyNumberTcgaDataFile
+  exportTotal.HarvardTotalCopyNumberTcgaDataFileSet
+  extractTotalCopyNumbers.HarvardTotalCopyNumberTcgaDataFile
+  extractTotalLog2CopyNumbers
+  extractTotalLog2CopyNumbers.HarvardTotalCopyNumberTcgaDataFile
+  getReadArguments.HarvardTotalCopyNumberTcgaDataFile
+  HarvardTotalCopyNumberTcgaDataFile
+  HarvardTotalCopyNumberTcgaDataFileSet
