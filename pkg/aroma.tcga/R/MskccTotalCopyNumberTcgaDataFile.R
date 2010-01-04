@@ -1,24 +1,24 @@
-setConstructorS3("HarvardTotalCopyNumberTcgaDataFile", function(...) {
-  this <- extend(TcgaDataFile(...), "HarvardTotalCopyNumberTcgaDataFile");
+setConstructorS3("MskccTotalCopyNumberTcgaDataFile", function(...) {
+  this <- extend(TcgaDataFile(...), "MskccTotalCopyNumberTcgaDataFile");
   this;
 })
 
 
-setMethodS3("getReadArguments", "HarvardTotalCopyNumberTcgaDataFile", function(this, ..., colClassPatterns=c("*"="character", "normalizedLog2Ratio$"="double")) {
+setMethodS3("getReadArguments", "MskccTotalCopyNumberTcgaDataFile", function(this, ..., colClassPatterns=c("*"="character", "Pos$"="integer", "signal:Log2$"="double")) {
   NextMethod("getReadArguments", this, ..., colClassPatterns=colClassPatterns);
 }, protected=TRUE)
 
 
 
-setMethodS3("extractTotalLog2CopyNumbers", "HarvardTotalCopyNumberTcgaDataFile", function(this, ..., drop=TRUE) {
-  colClassPatterns <- c("CompositeElement REF"="character", "normalizedLog2Ratio$"="double");
+setMethodS3("extractTotalLog2CopyNumbers", "MskccTotalCopyNumberTcgaDataFile", function(this, ..., drop=TRUE) {
+  colClassPatterns <- c("ProbeID"="character", "signal:Log2$"="double");
   data <- readDataFrame(this, colClassPatterns=colClassPatterns, ...);
-  idx <- match("CompositeElement REF", colnames(data));
+  idx <- match("ProbeID", colnames(data));
   unitNames <- data[,idx];
   data <- data[,-idx,drop=FALSE];
   names <- names(data);
 
-  pattern <- "(.*),(normalizedLog2Ratio)$";
+  pattern <- "(.*),(signal:Log2)$";
   sampleNames <- gsub(pattern, "\\1", names);
   nbrOfSamples <- length(sampleNames);
 
@@ -34,7 +34,7 @@ setMethodS3("extractTotalLog2CopyNumbers", "HarvardTotalCopyNumberTcgaDataFile",
   data;
 })
 
-setMethodS3("extractTotalCopyNumbers", "HarvardTotalCopyNumberTcgaDataFile", function(this, ...) {
+setMethodS3("extractTotalCopyNumbers", "MskccTotalCopyNumberTcgaDataFile", function(this, ...) {
   data <- extractTotalLog2CopyNumbers(this, ...);
 
   # Transform to non-logged CNs
@@ -42,7 +42,7 @@ setMethodS3("extractTotalCopyNumbers", "HarvardTotalCopyNumberTcgaDataFile", fun
 
   if (is.matrix(data)) {
     names <- colnames(data);
-    names <- gsub("normalizedLog2Ratio", "normalizedRatio", names, fixed=TRUE);
+    names <- gsub("signal:Log2", "ratio", names, fixed=TRUE);
     colnames(data) <- names;
   }
 
@@ -50,7 +50,7 @@ setMethodS3("extractTotalCopyNumbers", "HarvardTotalCopyNumberTcgaDataFile", fun
 })
 
 
-setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", force=FALSE, verbose=FALSE) {
+setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -85,7 +85,7 @@ setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, 
 
   # Export total signals
   allColumnNames <- getColumnNames(this);
-  pattern <- ",normalizedLog2Ratio$";
+  pattern <- ",signal:Log2$";
   columnNames <- grep(pattern, allColumnNames, value=TRUE);
   verbose && cat(verbose, "Columns to be processed:");
   verbose && print(verbose, columnNames);
@@ -129,7 +129,7 @@ setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, 
     # Map unit indices
     if (is.null(units)) {
       verbose && enter(verbose, "Mapping unit names to indices");
-      colClassPatterns <- c("CompositeElement REF"="character");
+      colClassPatterns <- c("ProbeID"="character");
       unitNames <- readDataFrame(this, colClassPatterns=colClassPatterns)[,1];
       verbose && cat(verbose, "Unit names:");
       verbose && str(verbose, unitNames);
@@ -210,8 +210,5 @@ setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, 
 ############################################################################
 # HISTORY:
 # 2010-01-03
-# o Added exportTotal().
-# o extractTotalCopyNumbers() uses extractTotalLog2CopyNumbers().
-# o Added extractTotalLog2CopyNumbers().
-# o Created from BroadTotalCopyNumberTcgaDataFile.R.
+# o Created from HarvardTotalCopyNumberTcgaDataFile.R.
 ############################################################################

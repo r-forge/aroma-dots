@@ -216,6 +216,14 @@
 \alias{getReadArguments.HarvardTotalCopyNumberTcgaDataFile}
 \alias{HarvardTotalCopyNumberTcgaDataFile}
 \alias{HarvardTotalCopyNumberTcgaDataFileSet}
+\alias{exportTotal.MskccTotalCopyNumberTcgaDataFile}
+\alias{exportTotal.MskccTotalCopyNumberTcgaDataFileSet}
+\alias{extractTotalCopyNumbers.MskccTotalCopyNumberTcgaDataFile}
+\alias{extractTotalLog2CopyNumbers.MskccTotalCopyNumberTcgaDataFile}
+\alias{getReadArguments.MskccTotalCopyNumberTcgaDataFile}
+\alias{MskccTotalCopyNumberTcgaDataFile}
+\alias{MskccTotalCopyNumberTcgaDataFileSet}
+\alias{getDefaultFullName.TcgaDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

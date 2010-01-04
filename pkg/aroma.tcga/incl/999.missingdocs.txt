@@ -131,3 +131,10 @@ exportGenotypeCallsAndConfidenceScores
   getReadArguments.HarvardTotalCopyNumberTcgaDataFile
   HarvardTotalCopyNumberTcgaDataFile
   HarvardTotalCopyNumberTcgaDataFileSet
+  exportTotal.MskccTotalCopyNumberTcgaDataFile
+  exportTotal.MskccTotalCopyNumberTcgaDataFileSet
+  extractTotalCopyNumbers.MskccTotalCopyNumberTcgaDataFile
+  extractTotalLog2CopyNumbers.MskccTotalCopyNumberTcgaDataFile
+  getReadArguments.MskccTotalCopyNumberTcgaDataFile
+  MskccTotalCopyNumberTcgaDataFile MskccTotalCopyNumberTcgaDataFileSet
+getDefaultFullName.TcgaDataFileSet
