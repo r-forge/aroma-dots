@@ -101,6 +101,13 @@ if (center == "broad.mit.edu") {
       exportFcn = exportTotalAndFracB
     )
   );
+} else if (center == "hms.harvard.edu") {
+  typeList <- list(
+    "TCN" = list(
+      clazz = HarvardTotalCopyNumberTcgaDataFileSet,
+      exportFcn = exportTotal
+    )
+  );
 } else {
   throw("Unsupported center: ", center);
 }
@@ -178,6 +185,8 @@ for (ii in seq(along=dataSets)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-03
+# o Added support to import total CNs from hms.harvard.edu.
 # 2009-12-06
 # o Added support to import Genotypes.txt from hudsonalpha.org.
 # 2009-11-06

@@ -1,4 +1,56 @@
-setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", force=FALSE, verbose=FALSE) {
+setConstructorS3("HarvardTotalCopyNumberTcgaDataFile", function(...) {
+  this <- extend(TcgaDataFile(...), "HarvardTotalCopyNumberTcgaDataFile");
+  this;
+})
+
+
+setMethodS3("getReadArguments", "HarvardTotalCopyNumberTcgaDataFile", function(this, ..., colClassPatterns=c("*"="character", "^normalizedLog2Ratio$"="double")) {
+  NextMethod("getReadArguments", this, ..., colClassPatterns=colClassPatterns);
+}, protected=TRUE)
+
+
+
+setMethodS3("extractTotalLog2CopyNumbers", "HarvardTotalCopyNumberTcgaDataFile", function(this, ..., drop=TRUE) {
+  colClassPatterns <- c("CompositeElement REF"="character", "normalizedLog2Ratio$"="double");
+  data <- readDataFrame(this, colClassPatterns=colClassPatterns, ...);
+  idx <- match("CompositeElement REF", colnames(data));
+  unitNames <- data[,idx];
+  data <- data[,-idx,drop=FALSE];
+  names <- names(data);
+
+  pattern <- "(.*),(normalizedLog2Ratio)$";
+  sampleNames <- gsub(pattern, "\\1", names);
+  nbrOfSamples <- length(sampleNames);
+
+  # Coerce to a matrix  
+  data <- as.matrix(data);
+  rownames(data) <- unitNames;
+
+  # A matrix? (probably never happens /HB 2009-08-23)
+  if (drop && nbrOfSamples == 1) {
+    data <- as.vector(data);
+  }
+  
+  data;
+})
+
+setMethodS3("extractTotalCopyNumbers", "HarvardTotalCopyNumberTcgaDataFile", function(this, ...) {
+  data <- extractTotalLog2CopyNumbers(this, ...);
+
+  # Transform to non-logged CNs
+  data <- 2*2^data;
+
+  if (is.matrix(data)) {
+    names <- colnames(data);
+    names <- gsub("normalizedLog2Ratio", "normalizedRatio", names, fixed=TRUE);
+    colnames(data) <- names;
+  }
+
+  data;
+})
+
+
+setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="rawCnData", force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -25,7 +77,6 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
   path <- file.path(rootPath, dataSet, chipType);
   path <- Arguments$getWritablePath(path);
 
-
   # Tags added to each exported file data file
   tags <- c("ratios", "total");
 
@@ -34,7 +85,7 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
 
   # Export total signals
   allColumnNames <- getColumnNames(this);
-  pattern <- ",Signal$";
+  pattern <- ",normalizedLog2Ratio$";
   columnNames <- grep(pattern, allColumnNames, value=TRUE);
   verbose && cat(verbose, "Columns to be processed:");
   verbose && print(verbose, columnNames);
@@ -53,6 +104,7 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
 
     filename <- sprintf("%s.asb", fullname);
     pathname <- file.path(path, filename);
+    verbose && cat(verbose, "Export pathname: ", pathname);
     # Nothing to do?
     if (!force && isFile(pathname)) {
       verbose && cat(verbose, "Column already exported. Skipping.");
@@ -67,14 +119,18 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
 
     # Read data
     verbose && enter(verbose, "Reading column data");
-    data <- extractTotalCopyNumbers(this, drop=FALSE, 
-                                            verbose=less(verbose,10));
+    columnIdx <- match(columnName, allColumnNames);
+    verbose && printf(verbose, "Column index: %d ('%s')\n", columnIdx, columnName);
+    data <- readColumns(this, column=columnIdx, colClass="double")[,1];
+    verbose && str(verbose, data);
+    verbose && summary(verbose, data);
     verbose && exit(verbose);
 
     # Map unit indices
     if (is.null(units)) {
       verbose && enter(verbose, "Mapping unit names to indices");
-      unitNames <- rownames(data);
+      colClassPatterns <- c("CompositeElement REF"="character");
+      unitNames <- readDataFrame(this, colClassPatterns=colClassPatterns)[,1];
       verbose && cat(verbose, "Unit names:");
       verbose && str(verbose, unitNames);
 
@@ -100,7 +156,7 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
       filename = getFilename(this),
       filesize = getFileSize(this),
       checksum = getChecksum(this),
-      column = cc,
+      column = columnIdx,
       columnName = columnName,
       valuesChecksum = digest(data)
     );
@@ -154,9 +210,8 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
 ############################################################################
 # HISTORY:
 # 2010-01-03
-# o BUG FIX: exportTotalAndFracB(..., force=FALSE) would never export.
-# 2009-10-30
-# o Added exportTotalAndFracB() for BroadTotalCopyNumberTcgaDataFile
-#   and BroadTotalCopyNumberTcgaDataFileSet.
-# o Created.
+# o Added exportTotal().
+# o extractTotalCopyNumbers() uses extractTotalLog2CopyNumbers().
+# o Added extractTotalLog2CopyNumbers().
+# o Created from BroadTotalCopyNumberTcgaDataFile.R.
 ############################################################################
