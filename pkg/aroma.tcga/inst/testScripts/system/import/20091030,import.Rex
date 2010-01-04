@@ -67,6 +67,19 @@ stopifnot(length(dataSets) > 0);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select data sets
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (interactive()) {
+  dataSets <- selectMenu(dataSets, selected=TRUE);
+
+  verbose && cat(verbose, "Filtered data sets:");
+  verbose && print(verbose, dataSets);
+  stopifnot(length(dataSets) > 0);
+}
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select type of data to import
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (center == "broad.mit.edu") {
@@ -133,6 +146,7 @@ exportFcn <- type$exportFcn;
 if (is.null(exportFcn)) {
   throw("No export function specified/implemented: ", typeName);
 }
+
 
 verbose && cat(verbose, "Data sets to be processed:");
 verbose && print(verbose, dataSets);
