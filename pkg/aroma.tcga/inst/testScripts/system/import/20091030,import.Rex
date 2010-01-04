@@ -108,6 +108,13 @@ if (center == "broad.mit.edu") {
       exportFcn = exportTotal
     )
   );
+} else if (center == "mskcc.org") {
+  typeList <- list(
+    "TCN" = list(
+      clazz = MskccTotalCopyNumberTcgaDataFileSet,
+      exportFcn = exportTotal
+    )
+  );
 } else {
   throw("Unsupported center: ", center);
 }
@@ -146,6 +153,8 @@ if (chipType == "GenomeWideSNP_6") {
   unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
 } else if (chipType == "HG-CGH-415K") {
   unf <- TextUnitNamesFile$byChipType(chipType, tags="adf,TCGA,hms.harvard.edu,HB20090824");
+} else if (chipType == "HG-CGH-1x1M") {
+  unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
 } else {
   throw("Unknown TCGA chip type: ", chipType);
 }
