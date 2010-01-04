@@ -1,5 +1,11 @@
 ############################################################################
-# Download missing files of existing TCGA data set directories
+# Author: Henrik Bengtsson
+#
+# Description:
+# 1. Identifies all data sets under tcgaData/.
+# 2. For each data set, download core data files, if missing, i.e.
+#    MANIFEST.txt, README.txt, *.idf.txt, *.sdrf.txt.
+# 3. For each data set, download user-selected data files, if missing.
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.tcga");
