@@ -4,7 +4,7 @@ setConstructorS3("HarvardTotalCopyNumberTcgaDataFileSet", function(...) {
 
 
 
-setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFileSet", function(this, tags=c("*"), unf, ..., rootPath="rawCnData", verbose=FALSE) {
+setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFileSet", function(this, tags=c("*"), unf, ..., rootPath="totalAndFracBData", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
