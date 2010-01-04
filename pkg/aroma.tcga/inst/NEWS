@@ -1,8 +1,11 @@
 Package: aroma.tcga
 ===================
 
-Version: 0.3.0 [2010-01-03]
+Version: 0.3.0 [2010-01-04]
+o Added MskccTotalCopyNumberTcgaData(File|FileSet).
 o Added HarvardTotalCopyNumberTcgaData(File|FileSet).
+o Added getDefaultFullName(... parent=1) to TcgaDataFileSet so that 
+  it handles the updated ditto in R.filesets (now with parent=0).
 o BUG FIX: exportTotalAndFracB(..., force=FALSE) for
   BroadTotalCopyNumberTcgaDataFile would never export.
 
