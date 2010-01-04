@@ -50,7 +50,7 @@ setMethodS3("extractTotalCopyNumbers", "HarvardTotalCopyNumberTcgaDataFile", fun
 })
 
 
-setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="rawCnData", force=FALSE, verbose=FALSE) {
+setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -78,7 +78,7 @@ setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, 
   path <- Arguments$getWritablePath(path);
 
   # Tags added to each exported file data file
-  tags <- c("ratios", "total");
+  tags <- c("log2ratio", "total");
 
   # Unit indices (to be inferred)
   units <- NULL;
