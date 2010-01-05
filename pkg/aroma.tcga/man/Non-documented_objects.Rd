@@ -224,6 +224,10 @@
 \alias{MskccTotalCopyNumberTcgaDataFile}
 \alias{MskccTotalCopyNumberTcgaDataFileSet}
 \alias{getDefaultFullName.TcgaDataFileSet}
+\alias{BroadAfter5NNTotalCopyNumberTcgaDataFile}
+\alias{BroadAfter5NNTotalCopyNumberTcgaDataFileSet}
+\alias{exportTotalAndFracB.BroadAfter5NNTotalCopyNumberTcgaDataFileSet}
+\alias{getExtensionPattern.BroadAfter5NNTotalCopyNumberTcgaDataFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

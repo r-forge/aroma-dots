@@ -1,11 +1,10 @@
 setConstructorS3("BroadTotalCopyNumberTcgaDataFile", function(...) {
-  this <- extend(TcgaDataFile(...), "BroadTotalCopyNumberTcgaDataFile");
-  this;
+  extend(TcgaDataFile(...), "BroadTotalCopyNumberTcgaDataFile");
 })
 
 
-setMethodS3("getExtensionPattern", "BroadTotalCopyNumberTcgaDataFile", function(static, ...) {
-  "[.](after_5NN.copynumber[.]data[.]txt)$";
+setMethodS3("getExtensionPattern", "BroadTotalCopyNumberTcgaDataFile", function(this, default="[.](copynumber[.]data[.]txt)$", ...) {
+  NextMethod("getExtensionPattern", this, default=default, ...);
 }, static=TRUE)
 
 

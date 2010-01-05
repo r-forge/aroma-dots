@@ -94,7 +94,7 @@ if (center == "broad.mit.edu") {
     "CN" = list(
       clazz = BroadTotalCopyNumberTcgaDataFileSet,
       exportFcn = exportTotalAndFracB,
-      extPattern = "^[^.]+[.](copynumber[.]data[.]txt)$",
+      extPattern = "^[^.]+[.](copynumber[.]data[.]txt)$"
     ),
     "5NN" = list(
       clazz = BroadAfter5NNTotalCopyNumberTcgaDataFileSet,
@@ -191,7 +191,12 @@ for (ii in seq(along=dataSets)) {
   verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
                                             ii, dataSet, length(dataSets)));
 
-  ds <- clazz$byName(dataSet, subdirs=chipType, paths=rootPath, pattern=extPattern);
+  if (is.null(extPattern) {
+    ds <- clazz$byName(dataSet, subdirs=chipType, paths=rootPath);
+  } else {
+    ds <- clazz$byName(dataSet, subdirs=chipType, paths=rootPath, 
+                                                  pattern=extPattern);
+  }
   setFullName(ds, dataSet);
   verbose && print(verbose, ds);
   # Nothing to do?
