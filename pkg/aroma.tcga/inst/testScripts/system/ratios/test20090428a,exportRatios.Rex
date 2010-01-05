@@ -1,16 +1,31 @@
 ############################################################################
-# Author: Henrik Bengtsson, hb@stat.berkeley.edu
+# Author: Henrik Bengtsson
+#
+# Usage:
+#  library("aroma.tcga"); library("R.menu");
+#  launchMenu(aroma.tcga, "testScripts/system/ratios/");
 #
 # Description:
-# Exports tumor-normal copy number ratios for samples of a given data set.
-# All TCGA ovarian data sets are identified.  The user choose which to
-# export.
+# Exports tumor-normal copy number ratios for samples of a given data set:
+# 1. TCGA data sets are identified.
+# 2. The user selects a data set.
+# 3. For each tumor-normal pair, relative CNs are calculated and exported
+#    to rawCnData/ adding a 'paired' tags to the data set.
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.core");
 library("aroma.tcga");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Local functions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+getTypeTag <- function(this, ...) {
+  gsub("[A-Z]$", "", getTags(df)[1]);
+}
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # User selects: data set
@@ -39,43 +54,59 @@ setFullNamesTranslator(ds, function(names, ...) {
   gsub(pattern, "\\1,\\2,\\3", names);
 });
 verbose && print(verbose, ds);
+ds0 <- ds;
 
 # Extract tuples of arrays for each unique sample
 sampleNames <- unique(getNames(ds));
 idxs <- indexOf(ds, sampleNames);
-if (!is.matrix(idxs)) {
-  # Drop non-pairs
-  ns <- sapply(idxs, length);
-  verbose && print(verbose, table(ns));
-  isPair <- (ns == 2);
-  idxs <- indexOf(ds, sampleNames[isPair]);
-  stopifnot(is.matrix(idxs));
-}
-stopifnot(nrow(idxs) == 2);
-dimnames(idxs) <- names(idxs) <- NULL;
-colnames(idxs) <- getNames(ds)[idxs[1,]];
+idxs <- split(idxs, names(idxs));
+ns <- sapply(idxs, length);
+verbose && print(verbose, table(ns));
 
-ds2 <- extract(ds, idxs);
-idxs <- matrix(seq(ds2), nrow=2);
+# Drop tuples for which lack either a tumor or a normal
+types <- sapply(ds, getTypeTag);
+idxs <- lapply(idxs, FUN=function(idxs) {
+  types <- types[idxs];
+  tIdx <- which(is.element(types, c("01"      )))[1];
+  nIdx <- which(is.element(types, c("10", "11")))[1];
+  idxs <- idxs[c(tIdx, nIdx)];
+  idxs;  
+});
 
-# Identify sample type, e.g. tumor or normal etc.
-types <- sapply(ds2, function(df) getTags(df)[1]);
-types <- gsub("[A-Z]$", "", types);
-dim(types) <- dim(idxs);
+keep <- sapply(idxs, FUN=function(x) all(is.finite(x)));
+idxs <- idxs[keep];
+
+# Sanity check
+ns <- sapply(idxs, length);
+stopifnot(all(ns == 2));
+
+dim <- c(2, length(idxs));
+
+ds <- extract(ds, unlist(idxs));
+
+# Sanity checks
+types <- sapply(ds, getTypeTag);
+dim(types) <- dim;
+stopifnot(all(types[1,] == "01"));
+stopifnot(all(is.element(types[2,], c("10", "11"))));
+
+# Sanity checks
+names <- sapply(ds, getName);
+stopifnot(all(names[1,] == names[2,]));
+
+# Create an index matrix
+idxs <- seq(ds);
+dim(idxs) <- dim;
+rownames(idxs) <- c("T", "N");
+colnames(idxs) <- names[1,];
+
 uTypes <- unique(as.vector(types));
 verbose && cat(verbose, "Identified types:");
 verbose && print(verbose, uTypes);
 
-# Sort each column according to sample type
-o <- apply(types, MARGIN=2, FUN=order);
-for (kk in seq(length=ncol(o))) {
-  types[,kk] <- types[o[,kk],kk];
-  idxs[,kk] <- idxs[o[,kk],kk];
-}
-stopifnot(all(is.finite(idxs)));
-
-dsT <- extract(ds2, idxs[1,]);
-dsN <- extract(ds2, idxs[2,]);
+# Extract tumors and normals
+dsT <- extract(ds, idxs["T",]);
+dsN <- extract(ds, idxs["N",]);
 verbose && cat(verbose, "Data set of tumors:");
 verbose && print(verbose, dsT);
 verbose && cat(verbose, "Data set of normals:");
@@ -100,29 +131,14 @@ verbose && print(verbose, dsC);
 verbose && cat(verbose, "All full names:");
 verbose && print(verbose, getFullNames(dsC));
 
-stop();
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Validation
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-dsC <- AromaUnitTotalCnBinarySet$byName(dataSet, tags=c(tags, "pairs"), chipType="*");
-setFullNamesTranslator(dsC, function(names, ...) {
-  barcodePattern <- "(TCGA-[0-9]{2}-[0-9]{4}),([0-9]{2}[A-Z]),([^,]*)";
-  pattern <- sprintf("^%s,ref=%s,(.*)$", barcodePattern, barcodePattern);
-  gsub(pattern, "\\1,\\2vs\\5,\\3vs\\6,\\7", names);
-});
-print(dsC);
-print(getFullNames(dsC));
-
-aa <- indexOf(dsC, "TCGA-09-0369");
-df <- getFile(dsC, aa);
-name <- paste(c(getName(df), getTags(df)[1]), collapse=",");
-cn <- extractRawCopyNumbers(df, chromosome=1);
-plot(cn, pch=".", xScale=1e-6);
-stext(side=3, pos=0, name);
-
 
 ############################################################################
 # HISTORY:
+# 2010-01-04
+# o Before the script would drop any samples with (n != 2) replicates.
+#   Now the script picks out a tumor-normal pair also for n > 2.
+# o Updated to work with new R.filesets v0.7.0, whose indexOf() no longer
+#   returns a list if there are multiple matches.
 # 2009-09-24
 # o Added header comments.
 # o Added verbose output.

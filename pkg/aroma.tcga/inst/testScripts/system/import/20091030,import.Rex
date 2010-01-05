@@ -6,10 +6,8 @@
 #  launchMenu(aroma.tcga, "testScripts/system/import/");
 #
 # Description:
-# 1. Loads the "table" of existing data sets (from ll,(gbm|ov).Rex)
-# 2. For each data set, if missing, creates an empty directory.
-#
-# This script should be called before try to download any TCGA data.
+# 1. ...
+# 2. ...
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.tcga");
