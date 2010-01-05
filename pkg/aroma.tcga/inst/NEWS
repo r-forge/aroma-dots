@@ -1,11 +1,21 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.3.1 [2010-01-04]
+o Added BroadAfter5NNTotalCopyNumberTcgaDataFile to match
+  *.after_5NN.copynumber.data.txt files.  The former one
+  BroadTotalCopyNumberTcgaDataFile now matches only
+  *.copynumber.data.txt files (not including the above).
+
+
 Version: 0.3.0 [2010-01-04]
 o Added MskccTotalCopyNumberTcgaData(File|FileSet).
 o Added HarvardTotalCopyNumberTcgaData(File|FileSet).
 o Added getDefaultFullName(... parent=1) to TcgaDataFileSet so that 
   it handles the updated ditto in R.filesets (now with parent=0).
+o ROBUSTNESS: Updated getKnownFilePatterns() of TcgaDccDownloader to
+  "^[^.]+[.]copynumber[.]data[.]txt$" in order to avoid getting 
+  "[.]no_outlier[.]copynumber[.]data[.]txt$" files too.
 o BUG FIX: exportTotalAndFracB(..., force=FALSE) for
   BroadTotalCopyNumberTcgaDataFile would never export.
 
