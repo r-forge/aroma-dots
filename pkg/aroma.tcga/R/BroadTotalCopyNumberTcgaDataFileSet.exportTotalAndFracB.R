@@ -1,4 +1,4 @@
-setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFileSet", function(this, tags=c("*", "Birdseed"), unf, ..., rootPath="totalAndFracBData", verbose=FALSE) {
+setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFileSet", function(this, tags="*", unf, ..., rootPath="totalAndFracBData", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -34,7 +34,7 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFileSet", functi
   
   path <- file.path(rootPath, dataSet, chipType);
   path <- Arguments$getWritablePath(path);
-
+  verbose && cat(verbose, "Exporting to path: ", path);
 
   for (kk in seq(this)) {
     df <- getFile(this, kk);

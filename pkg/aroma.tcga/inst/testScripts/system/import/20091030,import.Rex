@@ -1,7 +1,19 @@
+############################################################################
+# Author: Henrik Bengtsson
+#
+# Usage:
+#  library("aroma.tcga"); library("R.menu");
+#  launchMenu(aroma.tcga, "testScripts/system/import/");
+#
+# Description:
+# 1. Loads the "table" of existing data sets (from ll,(gbm|ov).Rex)
+# 2. For each data set, if missing, creates an empty directory.
+#
+# This script should be called before try to download any TCGA data.
+############################################################################
 if (interactive()) savehistory();
 library("aroma.tcga");
 library("R.menu");
-sourceDirectory("R/", modifiedOnly=TRUE);
 verbose <- Arguments$getVerbose(-10, timestamp=TRUE);
 
 rootPath <- "rawData/";

@@ -3,7 +3,7 @@ setConstructorS3("BroadAfter5NNTotalCopyNumberTcgaDataFileSet", function(...) {
 })
 
 
-setMethodS3("exportTotalAndFracB", "BroadAfter5NNTotalCopyNumberTcgaDataFileSet", function(this, tags=c("*", "Birdseed", "5NN"), ...) {
+setMethodS3("exportTotalAndFracB", "BroadAfter5NNTotalCopyNumberTcgaDataFileSet", function(this, tags=c("*", "5NN"), ...) {
   NextMethod("exportTotalAndFracB", this, tags=tags, ...);
 })
 
