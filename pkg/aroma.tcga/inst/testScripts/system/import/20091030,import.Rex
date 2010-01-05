@@ -191,7 +191,7 @@ for (ii in seq(along=dataSets)) {
   verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
                                             ii, dataSet, length(dataSets)));
 
-  if (is.null(extPattern) {
+  if (is.null(extPattern)) {
     ds <- clazz$byName(dataSet, subdirs=chipType, paths=rootPath);
   } else {
     ds <- clazz$byName(dataSet, subdirs=chipType, paths=rootPath, 
