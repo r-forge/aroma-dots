@@ -82,7 +82,7 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, d
   
   path <- file.path(rootPath, dataSet, chipType);
   path <- Arguments$getWritablePath(path);
-  verbose && cat(verbose, "Path: ", path);
+  verbose && cat(verbose, "Exporting to path: ", path);
 
   # Unit indices (to be inferred)
   units <- NULL;

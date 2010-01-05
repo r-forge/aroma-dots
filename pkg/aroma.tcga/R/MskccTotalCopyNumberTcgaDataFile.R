@@ -76,6 +76,7 @@ setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, da
   
   path <- file.path(rootPath, dataSet, chipType);
   path <- Arguments$getWritablePath(path);
+  verbose && cat(verbose, "Exporting to path: ", path);
 
   # Tags added to each exported file data file
   tags <- c("log2ratio", "total");

@@ -40,6 +40,7 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaBAlleleFreqTcgaDataFileSet", func
   
   path <- file.path(rootPath, dataSet, chipType);
   path <- Arguments$getWritablePath(path);
+  verbose && cat(verbose, "Exporting to path: ", path);
 
 
   for (kk in seq(this)) {

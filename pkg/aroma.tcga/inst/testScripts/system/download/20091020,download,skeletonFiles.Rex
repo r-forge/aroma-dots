@@ -1,11 +1,18 @@
 ############################################################################
 # Author: Henrik Bengtsson
 #
+# Usage:
+#  library("aroma.tcga"); library("R.menu");
+#  launchMenu(aroma.tcga, "testScripts/system/download/");
+#
 # Description:
 # 1. Identifies all data sets under tcgaData/.
 # 2. For each data set, download core data files, if missing, i.e.
 #    MANIFEST.txt, README.txt, *.idf.txt, *.sdrf.txt.
 # 3. For each data set, download user-selected data files, if missing.
+#
+# Before call this script, the tcgaData/ skeleton directories need to
+# be created.
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.tcga");

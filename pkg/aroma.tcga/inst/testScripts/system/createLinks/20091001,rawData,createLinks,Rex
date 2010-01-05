@@ -1,6 +1,10 @@
 ############################################################################
 # Author: Henrik Bengtsson, hb@stat.berkeley.edu
 #
+# Usage:
+#  library("aroma.tcga"); library("R.menu");
+#  launchMenu(aroma.tcga, "testScripts/system/createLinks/");
+#
 # Description:
 # The purpose of this script is to create data sets under rawData/ that
 # links (via file system links) to the corresponding tcgaData/ directory.
