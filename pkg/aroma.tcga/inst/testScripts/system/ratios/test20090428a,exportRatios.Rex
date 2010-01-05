@@ -23,7 +23,7 @@ verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 # Local functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 getTypeTag <- function(this, ...) {
-  gsub("[A-Z]$", "", getTags(df)[1]);
+  gsub("[A-Z]$", "", getTags(this)[1]);
 }
 
 
@@ -42,7 +42,14 @@ verbose && cat(verbose, "Available data sets:");
 verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);
 
-dataSet <- textMenu(dataSets, value=TRUE); 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# User selects a data set
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (interactive()) {
+  dataSet <- textMenu(dataSets, value=TRUE); 
+} else {
+  dataSet <- dataSets[1];
+}
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup (total,fracB) data set
@@ -56,57 +63,33 @@ setFullNamesTranslator(ds, function(names, ...) {
 verbose && print(verbose, ds);
 ds0 <- ds;
 
-# Extract tuples of arrays for each unique sample
-sampleNames <- unique(getNames(ds));
-idxs <- indexOf(ds, sampleNames);
-idxs <- split(idxs, names(idxs));
-ns <- sapply(idxs, length);
-verbose && print(verbose, table(ns));
 
-# Drop tuples for which lack either a tumor or a normal
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Extract tumor-normal pairs
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Identify sample types
 types <- sapply(ds, getTypeTag);
-idxs <- lapply(idxs, FUN=function(idxs) {
-  types <- types[idxs];
-  tIdx <- which(is.element(types, c("01"      )))[1];
-  nIdx <- which(is.element(types, c("10", "11")))[1];
-  idxs <- idxs[c(tIdx, nIdx)];
-  idxs;  
-});
 
-keep <- sapply(idxs, FUN=function(x) all(is.finite(x)));
-idxs <- idxs[keep];
+# Extract all tumors
+dsT <- extract(ds, (types == "01"));
 
-# Sanity check
-ns <- sapply(idxs, length);
-stopifnot(all(ns == 2));
+# Extract all normals
+dsN10 <- extract(ds, (types == "10"));
+dsN11 <- extract(ds, (types == "11"));
+dsN <- append(dsN10, dsN11);
 
-dim <- c(2, length(idxs));
+# Keep only samples for which there is both a tumor and a normal
+sampleNames <- intersect(getNames(dsT), getNames(dsN));
+verbose && cat(verbose, "Identified tumor-normal samples:");
+verbose && print(verbose, sampleNames);
 
-ds <- extract(ds, unlist(idxs));
+dsT <- extract(dsT, sampleNames);
+dsN <- extract(dsN, sampleNames);
 
-# Sanity checks
-types <- sapply(ds, getTypeTag);
-dim(types) <- dim;
-stopifnot(all(types[1,] == "01"));
-stopifnot(all(is.element(types[2,], c("10", "11"))));
+# Drop duplicated samples
+dsT <- extract(dsT, !duplicated(getNames(dsT)));
+dsN <- extract(dsN, !duplicated(getNames(dsN)));
 
-# Sanity checks
-names <- sapply(ds, getName);
-stopifnot(all(names[1,] == names[2,]));
-
-# Create an index matrix
-idxs <- seq(ds);
-dim(idxs) <- dim;
-rownames(idxs) <- c("T", "N");
-colnames(idxs) <- names[1,];
-
-uTypes <- unique(as.vector(types));
-verbose && cat(verbose, "Identified types:");
-verbose && print(verbose, uTypes);
-
-# Extract tumors and normals
-dsT <- extract(ds, idxs["T",]);
-dsN <- extract(ds, idxs["N",]);
 verbose && cat(verbose, "Data set of tumors:");
 verbose && print(verbose, dsT);
 verbose && cat(verbose, "Data set of normals:");
@@ -114,6 +97,7 @@ verbose && print(verbose, dsN);
 
 # Sanity check
 stopifnot(identical(getNames(dsT), getNames(dsN)));
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Calculate CN ratios, either as (i) M = log2(thetaT/thetaN), or 
