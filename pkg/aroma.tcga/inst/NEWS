@@ -1,11 +1,16 @@
 Package: aroma.tcga
 ===================
 
-Version: 0.3.1 [2010-01-04]
+Version: 0.3.1 [2010-01-05]
 o Added BroadAfter5NNTotalCopyNumberTcgaDataFile to match
   *.after_5NN.copynumber.data.txt files.  The former one
   BroadTotalCopyNumberTcgaDataFile now matches only
   *.copynumber.data.txt files (not including the above).
+o WORKAROUND: Added getColumnNames() for MskccTotalCopyNumberTcgaDataFile 
+  that detects empty column names and replaces them with a default name.
+o WORKAROUND: Some of the TCGA data files are not MAGE-TAB files,
+  but rather regular tab-delimited files.  Updated getHeader() of 
+  MageTabDataMatrixFile to detect this.
 
 
 Version: 0.3.0 [2010-01-04]

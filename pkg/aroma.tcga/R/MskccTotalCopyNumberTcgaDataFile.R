@@ -3,6 +3,25 @@ setConstructorS3("MskccTotalCopyNumberTcgaDataFile", function(...) {
   this;
 })
 
+setMethodS3("getColumnNames", "MskccTotalCopyNumberTcgaDataFile", function(this, ...) {
+  # Get full column names
+  fullnames <- NextMethod("getColumnNames", this, ...);
+
+  # Split into names and tags
+  parts <- strsplit(fullnames, split=",", fixed=TRUE);
+  names <- sapply(parts, FUN=function(x) x[1]);
+  tags <- sapply(parts, FUN=function(x) paste(x[-1], collapse=","));
+
+  # For sample column, translate empty one into 'log2ratio'
+  isSample <- (regexpr("^TCGA", names) != -1);
+  tags[isSample & (tags == "")] <- "signal:Log2";
+
+  # Recreate full column names  
+  fullnames <- paste(names, tags, sep=",");
+  fullnames <- gsub(",$", "", fullnames);
+  
+  fullnames;
+})
 
 setMethodS3("getReadArguments", "MskccTotalCopyNumberTcgaDataFile", function(this, ..., colClassPatterns=c("*"="character", "Pos$"="integer", "signal:Log2$"="double")) {
   NextMethod("getReadArguments", this, ..., colClassPatterns=colClassPatterns);
@@ -210,6 +229,9 @@ setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, da
 
 ############################################################################
 # HISTORY:
+# 2010-01-05
+# o Added getColumnNames() for MskccTotalCopyNumberTcgaDataFile that
+#   detects empty column names and replaces them with a default name.
 # 2010-01-03
 # o Created from HarvardTotalCopyNumberTcgaDataFile.R.
 ############################################################################
