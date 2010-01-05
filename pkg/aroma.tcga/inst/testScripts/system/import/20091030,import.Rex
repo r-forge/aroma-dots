@@ -91,8 +91,13 @@ if (center == "broad.mit.edu") {
     "ismpolish" = list(
       clazz = BroadAlleleSpecificThetaTcgaDataFileSet
     ),
-    "5NN" = list(
+    "CN" = list(
       clazz = BroadTotalCopyNumberTcgaDataFileSet,
+      exportFcn = exportTotalAndFracB,
+      extPattern = "^[^.]+[.](copynumber[.]data[.]txt)$",
+    ),
+    "5NN" = list(
+      clazz = BroadAfter5NNTotalCopyNumberTcgaDataFileSet,
       exportFcn = exportTotalAndFracB
     ),
     "ASCN" = list(
@@ -146,6 +151,7 @@ exportFcn <- type$exportFcn;
 if (is.null(exportFcn)) {
   throw("No export function specified/implemented: ", typeName);
 }
+extPattern <- type$extPattern;
 
 
 verbose && cat(verbose, "Data sets to be processed:");
@@ -185,7 +191,7 @@ for (ii in seq(along=dataSets)) {
   verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
                                             ii, dataSet, length(dataSets)));
 
-  ds <- clazz$byName(dataSet, subdirs=chipType, paths=rootPath);
+  ds <- clazz$byName(dataSet, subdirs=chipType, paths=rootPath, pattern=extPattern);
   setFullName(ds, dataSet);
   verbose && print(verbose, ds);
   # Nothing to do?
