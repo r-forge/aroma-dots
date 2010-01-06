@@ -3,7 +3,7 @@
 #
 # Usage:
 #  library("aroma.tcga"); library("R.menu");
-#  launchMenu(aroma.tcga, "testScripts/system/ratios/");
+#  launchMenu(aroma.tcga, "testScripts/system/");
 #
 # Description:
 # Exports tumor-normal copy number ratios for samples of a given data set:
@@ -71,12 +71,14 @@ sampleNames <- intersect(getNames(dsT), getNames(dsN));
 sampleNames <- unique(sampleNames);
 verbose && cat(verbose, "Identified tumor-normal samples:");
 verbose && print(verbose, sampleNames);
+stopifnot(length(sampleNames) > 0);
 
 # User can choose a subset of samples to process
 if (interactive()) {
   sampleNames <- selectMenu(sampleNames, selected=TRUE,
                             title="Select samples to normalize:");
 }
+stopifnot(length(sampleNames) > 0);
 
 dsT <- extract(dsT, sampleNames);
 dsN <- extract(dsN, sampleNames);
