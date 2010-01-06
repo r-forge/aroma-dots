@@ -34,7 +34,7 @@
 # }
 #
 #*/###########################################################################
-setMethodS3("exportGenotypeCalls", "HudsonAlphaGenotypeTcgaDataFile", function(this, dataSet, unf, ..., rootPath="callData", force=FALSE, verbose=FALSE) {
+setMethodS3("exportGenotypeCalls", "HudsonAlphaGenotypeTcgaDataFile", function(this, dataSet, unf, ..., rootPath="callData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -105,6 +105,7 @@ setMethodS3("exportGenotypeCalls", "HudsonAlphaGenotypeTcgaDataFile", function(t
     # Read data
     verbose && enter(verbose, "Reading column data");
     data <- extractCalls(this, sampleNames=sampleName, drop=FALSE, verbose=less(verbose,10));
+    verbose && str(verbose, data);
     verbose && exit(verbose);
 
     # Map unit indices
@@ -120,12 +121,26 @@ setMethodS3("exportGenotypeCalls", "HudsonAlphaGenotypeTcgaDataFile", function(t
       verbose && str(verbose, units);
 
       # Sanity check
-      if (anyMissing(units)) {
-        missing <- unitNames[is.na(units)];
-        throw("There are ", length(missing), " unknown unit names: ", 
-                                 paste(head(missing, 3), collapse=", "));
+      missing <- unitNames[is.na(units)];
+      n <- length(missing);
+      if (n > 0) {
+        if (n > 3) missing <- c(missing[1:2], "...", missing[n]);
+        missing <- paste(missing, collapse=", ");
+        msg <- sprintf("Detected %s unknown unit names: %s", n, missing);
+        verbose && cat(verbose, msg);
+        if (n > maxNbrOfUnknownUnitNames) throw(msg);
       }
       verbose && exit(verbose);
+    }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Dropping unknown units
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    if (anyMissing(units)) {
+      keep <- which(!is.na(units));
+      units <- units[keep];
+      data <- data[keep,,drop=FALSE];
+      rm(keep);
     }
 
     # Drop attributes

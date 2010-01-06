@@ -1,6 +1,12 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.3.2 [2010-01-05]
+o Added extractByTcgaType() for GenericDataFileSet.  It asserts
+  that the names of the files in the data set are valid TCGA names.
+o Added default maxNbrOfUnknownUnitNames=0 to all exportNnn() function.
+
+
 Version: 0.3.1 [2010-01-05]
 o Added BroadAfter5NNTotalCopyNumberTcgaDataFile to match
   *.after_5NN.copynumber.data.txt files.  The former one

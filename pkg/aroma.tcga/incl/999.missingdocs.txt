@@ -143,3 +143,4 @@ getDefaultFullName.TcgaDataFileSet
   exportTotalAndFracB.BroadAfter5NNTotalCopyNumberTcgaDataFileSet
   getExtensionPattern.BroadAfter5NNTotalCopyNumberTcgaDataFile
 getColumnNames.MskccTotalCopyNumberTcgaDataFile
+  extractByTcgaType extractByTcgaType.GenericDataFileSet

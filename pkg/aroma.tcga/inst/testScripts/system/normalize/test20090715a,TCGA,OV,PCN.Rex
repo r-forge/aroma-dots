@@ -1,11 +1,27 @@
+############################################################################
+# Author: Henrik Bengtsson
+#
+# Usage:
+#  library("aroma.tcga"); library("R.menu");
+#  launchMenu(aroma.tcga, "testScripts/system/normalize/");
+#
+# Description:
+# Normalized (tumor,normal) CN ratios using principal-curve normalization.
+#  1. ...
+#  2. ...
+############################################################################
 if (interactive()) savehistory();
 library("aroma.cn");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Local functions
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+getTypeTag <- function(this, ...) {
+  gsub("[A-Z]$", "", getTags(this)[1]);
+}
+
 tcgaFNT01 <- function(names, ...) {
   pattern <- "^(TCGA-[0-9]{2}-[0-9]{4})-([0-9]{2}[A-Z])[-]*(.*)";
   gsub(pattern, "\\1,\\2,\\3", names);
@@ -58,61 +74,60 @@ verbose && cat(verbose, "Data set:");
 verbose && print(verbose, dsR);
 
 
-# Extract tuples of arrays for each unique sample
-sampleNames <- unique(getNames(dsR));
-idxs <- indexOf(dsR, sampleNames);
-if (!is.matrix(idxs)) {
-  # Drop non-pairs
-  ns <- sapply(idxs, length);
-  print(table(ns));
-  isPair <- (ns == 2);
-  idxs <- indexOf(dsR, sampleNames[isPair]);
-  stopifnot(is.matrix(idxs));
-}
-stopifnot(nrow(idxs) == 2);
-dimnames(idxs) <- names(idxs) <- NULL;
-colnames(idxs) <- getNames(dsR)[idxs[1,]];
 
-dsR <- extract(dsR, idxs);
-idxs <- matrix(seq(dsR), nrow=2);
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Extract tumor-normal pairs
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Extract all tumors
+dsT <- extractByTcgaType(dsR, pattern="^01");
 
-# Identify sample type, e.g. tumor or normal etc.
-types <- sapply(dsR, function(df) getTags(df)[1]);
-types <- gsub("[A-Z]$", "", types);
-dim(types) <- dim(idxs);
-uTypes <- unique(as.vector(types));
+# Extract all normals
+dsN <- extractByTcgaType(dsR, pattern="^1[01]");
 
-verbose && cat(verbose, "Unique data type (01,10,11,...):");
-verbose && print(verbose, uTypes);
+# Keep only samples for which there is both a tumor and a normal
+sampleNames <- intersect(getNames(dsT), getNames(dsN));
+verbose && cat(verbose, "Identified tumor-normal samples:");
+verbose && print(verbose, sampleNames);
 
-# Sort each column according to sample type
-o <- apply(types, MARGIN=2, FUN=order);
-for (kk in seq(length=ncol(o))) {
-  types[,kk] <- types[o[,kk],kk];
-  idxs[,kk] <- idxs[o[,kk],kk];
-}
-stopifnot(all(is.finite(idxs)));
+dsT <- extract(dsT, sampleNames);
+dsN <- extract(dsN, sampleNames);
 
-dsT <- extract(dsR, idxs[1,]);
-dsN <- extract(dsR, idxs[2,]);
+# Drop duplicated samples
+dsT <- extract(dsT, !duplicated(getNames(dsT)));
+dsN <- extract(dsN, !duplicated(getNames(dsN)));
 
-verbose && cat(verbose, "Tumor data set:");
+verbose && cat(verbose, "Data set of tumors:");
 verbose && print(verbose, dsT);
-verbose && cat(verbose, "Normal data set:");
+verbose && cat(verbose, "Data set of normals:");
 verbose && print(verbose, dsN);
 
 # Sanity check
 stopifnot(identical(getNames(dsT), getNames(dsN)));
 
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Load data sets
+# Principal curve normalization
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (interactive()) {
+  choises <- c(TRUE, FALSE);
+  onLog2Scale <- textMenu(choises, title="Fit on log2 scale?", value=TRUE); 
+} else {
+  onLog2Scale <- TRUE;
+}
+
 setFullNamesTranslator(dsT, NULL);
 setFullNamesTranslator(dsN, NULL);
 pcn <- PrincipalCurveNormalization(dsT, dsN);
+# Fit on the log2 scale?
+if (onLog2Scale) {
+  pcn$.transformFcn <- function(x) log2(x);
+  pcn$.untransformFcn <- function(y) 2^y;
+  setTags(pcn, c("*", "log2"));
+}
 verbose && print(verbose, pcn);
 
 dsN <- process(pcn, verbose=verbose);
+
 verbose && cat(verbose, "Normalized data set:");
 verbose && print(verbose, dsN);
 
@@ -158,6 +173,10 @@ for (ds in dsList) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-05
+# o Updated script so that one can fit on the log2-scale (default).
+# o Updated code for identifying tumor-normal pairs.
+# o Added instructions to the header.
 # 2009-07-15
 # o Created.
 ############################################################################
