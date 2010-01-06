@@ -229,6 +229,8 @@
 \alias{exportTotalAndFracB.BroadAfter5NNTotalCopyNumberTcgaDataFileSet}
 \alias{getExtensionPattern.BroadAfter5NNTotalCopyNumberTcgaDataFile}
 \alias{getColumnNames.MskccTotalCopyNumberTcgaDataFile}
+\alias{extractByTcgaType}
+\alias{extractByTcgaType.GenericDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -192,6 +192,8 @@ verbose && print(verbose, unf);
 verbose && exit(verbose);
 
 
+# Maximum number of unknown unit names that are accepted (will be skipped)
+maxNbrOfUnknownUnitNames <- 2;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # 
@@ -218,7 +220,7 @@ for (ii in seq(along=dataSets)) {
 
   # Import each data file
   verbose && enter(verbose, "Exporting TCGA data as aroma files");
-  dsList <- exportFcn(ds, unf=unf, verbose=verbose);
+  dsList <- exportFcn(ds, unf=unf, maxNbrOfUnknownUnitNames=maxNbrOfUnknownUnitNames, verbose=verbose);
   verbose && print(verbose, dsList);
   verbose && exit(verbose);
   

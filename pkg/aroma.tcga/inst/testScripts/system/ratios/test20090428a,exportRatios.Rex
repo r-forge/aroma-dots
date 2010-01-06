@@ -67,16 +67,11 @@ ds0 <- ds;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extract tumor-normal pairs
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Identify sample types
-types <- sapply(ds, getTypeTag);
-
 # Extract all tumors
-dsT <- extract(ds, (types == "01"));
+dsT <- extractByTcgaType(ds, pattern="^01");
 
 # Extract all normals
-dsN10 <- extract(ds, (types == "10"));
-dsN11 <- extract(ds, (types == "11"));
-dsN <- append(dsN10, dsN11);
+dsN <- extractByTcgaType(ds, pattern="^1[01]");
 
 # Keep only samples for which there is both a tumor and a normal
 sampleNames <- intersect(getNames(dsT), getNames(dsN));

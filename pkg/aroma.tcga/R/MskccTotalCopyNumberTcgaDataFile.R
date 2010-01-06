@@ -69,7 +69,7 @@ setMethodS3("extractTotalCopyNumbers", "MskccTotalCopyNumberTcgaDataFile", funct
 })
 
 
-setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", force=FALSE, verbose=FALSE) {
+setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -141,7 +141,7 @@ setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, da
     verbose && enter(verbose, "Reading column data");
     columnIdx <- match(columnName, allColumnNames);
     verbose && printf(verbose, "Column index: %d ('%s')\n", columnIdx, columnName);
-    data <- readColumns(this, column=columnIdx, colClass="double")[,1];
+    data <- readColumns(this, column=columnIdx, colClass="double")[,1,drop=FALSE];
     verbose && str(verbose, data);
     verbose && summary(verbose, data);
     verbose && exit(verbose);
@@ -160,12 +160,26 @@ setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, da
       verbose && str(verbose, units);
 
       # Sanity check
-      if (anyMissing(units)) {
-        missing <- unitNames[is.na(units)];
-        throw("There are ", length(missing), " unknown unit names: ", 
-                                 paste(head(missing, 3), collapse=", "));
+      missing <- unitNames[is.na(units)];
+      n <- length(missing);
+      if (n > 0) {
+        if (n > 3) missing <- c(missing[1:2], "...", missing[n]);
+        missing <- paste(missing, collapse=", ");
+        msg <- sprintf("Detected %s unknown unit names: %s", n, missing);
+        verbose && cat(verbose, msg);
+        if (n > maxNbrOfUnknownUnitNames) throw(msg);
       }
       verbose && exit(verbose);
+    }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # Dropping unknown units
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    if (anyMissing(units)) {
+      keep <- which(!is.na(units));
+      units <- units[keep];
+      data <- data[keep,,drop=FALSE];
+      rm(keep);
     }
 
     # Drop attributes
