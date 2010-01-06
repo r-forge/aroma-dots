@@ -20,14 +20,6 @@ verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Local functions
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-getTypeTag <- function(this, ...) {
-  gsub("[A-Z]$", "", getTags(this)[1]);
-}
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # User selects: data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 rootPath <- "totalAndFracBData";
@@ -55,28 +47,36 @@ if (interactive()) {
 # Setup (total,fracB) data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 tags <- NULL;
-ds <- AromaUnitTotalCnBinarySet$byName(dataSet, tags=tags, chipType="*", paths="totalAndFracBData");
-setFullNamesTranslator(ds, function(names, ...) {
-  pattern <- "^(TCGA-[0-9]{2}-[0-9]{4})-([0-9]{2}[A-Z])[-]*(.*)";
-  gsub(pattern, "\\1,\\2,\\3", names);
+dsR <- AromaUnitTotalCnBinarySet$byName(dataSet, tags=tags, chipType="*", paths="totalAndFracBData");
+setFullNamesTranslator(dsR, function(names, ...) {
+  patterns <- BiospecimenCoreResource$getBarcodePatterns();
+  pattern <- sprintf("^(%s)-(%s)[-]*(.*)", 
+                     patterns$patient, patterns$sampleId);
+  gsub(pattern, "\\1,\\5,\\8", names);
 });
-verbose && print(verbose, ds);
-ds0 <- ds;
+verbose && print(verbose, dsR);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extract tumor-normal pairs
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extract all tumors
-dsT <- extractByTcgaType(ds, pattern="^01");
+dsT <- extractByTcgaType(dsR, pattern="^01");
 
 # Extract all normals
-dsN <- extractByTcgaType(ds, pattern="^1[01]");
+dsN <- extractByTcgaType(dsR, pattern="^1[01]");
 
 # Keep only samples for which there is both a tumor and a normal
 sampleNames <- intersect(getNames(dsT), getNames(dsN));
+sampleNames <- unique(sampleNames);
 verbose && cat(verbose, "Identified tumor-normal samples:");
 verbose && print(verbose, sampleNames);
+
+# User can choose a subset of samples to process
+if (interactive()) {
+  sampleNames <- selectMenu(sampleNames, selected=TRUE,
+                            title="Select samples to normalize:");
+}
 
 dsT <- extract(dsT, sampleNames);
 dsN <- extract(dsN, sampleNames);

@@ -1,5 +1,9 @@
 ############################################################################
-# Author: Henrik Bengtsson, hb@stat.berkeley.edu
+# Author: Henrik Bengtsson
+#
+# Usage:
+#  library("aroma.tcga"); library("R.menu");
+#  launchMenu(aroma.tcga, "testScripts/system/normalize/");
 #
 # Description:
 # Applies MSCN normalization to a set of samples, which are specified by
@@ -14,6 +18,7 @@ timeStamp <- format(Sys.time(), format="%Y-%m-%d %k:%M:%S %Z");
 pid <- sprintf("%s,%s", System$getHostname(), timeStamp);
 
 analysisTag <- "HB20091001";
+analysisTag <- "HB20100105";
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select set of samples to normalize
