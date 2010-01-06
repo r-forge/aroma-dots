@@ -40,6 +40,10 @@ rootPath <- Arguments$getReadablePath(rootPath);
 pattern <- TcgaDccData$getDataSetPatterns()$dataset;
 dataSets <- list.files(path=rootPath, pattern=pattern);
 
+# Drop already PCN normalized ones
+keep <- (regexpr(",PCN", dataSets) == -1);
+dataSets <- dataSets[keep];
+
 verbose && cat(verbose, "Available data sets:");
 verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);
