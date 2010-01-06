@@ -1,8 +1,13 @@
 ############################################################################
-# Author: Henrik Bengtsson, hb@stat.berkeley.edu
+# Author: Henrik Bengtsson
+#
+# Usage:
+#  library("aroma.tcga"); library("R.menu");
+#  launchMenu(aroma.tcga, "testScripts/system/normalize/");
 #
 # Description:
-# Identifies all data for each tumor-normal pair and performs MSCN.
+# 1. Identifies all tumor-normal pairs.
+# 2. Tabulates which data sources have each pair.
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.cn");
@@ -166,6 +171,8 @@ verbose && cat(verbose, "Summary table written: ", pathname);
 
 ############################################################################
 # HISTORY:
+# 2010-01-05
+# o Added header information.
 # 2009-10-05
 # o Now it is possible to scan both rawCnData/ and cnData/.
 # 2009-09-29

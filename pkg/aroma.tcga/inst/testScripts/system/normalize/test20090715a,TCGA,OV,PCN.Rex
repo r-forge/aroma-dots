@@ -12,19 +12,18 @@
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.cn");
+library("aroma.tcga");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Local functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-getTypeTag <- function(this, ...) {
-  gsub("[A-Z]$", "", getTags(this)[1]);
-}
-
 tcgaFNT01 <- function(names, ...) {
-  pattern <- "^(TCGA-[0-9]{2}-[0-9]{4})-([0-9]{2}[A-Z])[-]*(.*)";
-  gsub(pattern, "\\1,\\2,\\3", names);
+  patterns <- BiospecimenCoreResource$getBarcodePatterns();
+  pattern <- sprintf("^(%s)-(%s)[-]*(.*)", 
+                     patterns$patient, patterns$sampleId);
+  gsub(pattern, "\\1,\\5,\\8", names);
 }
 
 
@@ -90,8 +89,15 @@ dsN <- extractByTcgaType(dsR, pattern="^1[01]");
 
 # Keep only samples for which there is both a tumor and a normal
 sampleNames <- intersect(getNames(dsT), getNames(dsN));
+sampleNames <- unique(sampleNames);
 verbose && cat(verbose, "Identified tumor-normal samples:");
 verbose && print(verbose, sampleNames);
+
+# User can choose a subset of samples to process
+if (interactive()) {
+  sampleNames <- selectMenu(sampleNames, selected=TRUE,
+                            title="Select samples to normalize:");
+}
 
 dsT <- extract(dsT, sampleNames);
 dsN <- extract(dsN, sampleNames);
@@ -130,15 +136,19 @@ if (onLog2Scale) {
 }
 verbose && print(verbose, pcn);
 
-dsN <- process(pcn, verbose=verbose);
+dsTN <- process(pcn, verbose=verbose);
 
 verbose && cat(verbose, "Normalized data set:");
-verbose && print(verbose, dsN);
+verbose && print(verbose, dsTN);
 
-
+stop()
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Plots
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setFullNamesTranslator(dsN, tcgaFNT01);
+setFullNamesTranslator(dsT, tcgaFNT01);
+setFullNamesTranslator(dsTN, tcgaFNT01);
+
 chr <- 7;
 ugp <- getAromaUgpFile(dsR);
 units <- getUnitsOnChromosome(ugp, chromosome=chr);
@@ -148,36 +158,53 @@ lim <- c(0,6);
 Alim <- c(-5,3);
 Mlim <- c(-3,3);
 
-fullnames <- getFullNames(dsR);
-fullnames <- fullnames[idxs[,1]];
-dsList <- list(dsR, dsN);
-subplots(3*length(dsList), ncol=3, byrow=TRUE);
-for (ds in dsList) {
-  dsPair <- extract(ds, indexOf(ds, fullnames));
-  theta <- extractMatrix(dsPair, units=units);
+dsList <- list(dsT, dsTN);
 
-  plot(theta[,2:1], pch=".", xlim=lim, ylim=lim);
+sampleNames <- getNames(dsT);
+
+sampleName <- sampleNames[1];
+
+ds <- extract(dsN, sampleName);
+ds <- append(ds, extract(dsT, sampleName));
+ds <- append(ds, extract(dsTN, sampleName));
+theta <- extractMatrix(ds, units=units);
+colnames(theta) <- c("N", "T", "TN");
+
+ccsList <- list(
+ c("N", "T"),
+ c("N", "TN"),
+ c("T", "TN")
+);
+
+subplots(3*length(ccsList), ncol=3, byrow=TRUE);
+par(mar=c(3,3,3,1)+0.1);
+
+for (ccs in ccsList) {
+  plot(theta[,ccs], pch=".", xlim=lim, ylim=lim);
   abline(a=0, b=1, lwd=2, col="#999999");
   subset <- sample(1:nrow(theta), size=nrow(theta)/8);
-  fit <- fitPrincipalCurve(theta[subset,]);
+  fit <- fitPrincipalCurve(theta[subset,ccs]);
   xy <- fit$s[,2:1];
   xy <- xy[order(xy[,1]),];
   lines(xy, col="red", lwd=2);
-
-  plotMvsA(theta, pch=".", Alim=Alim);
+  
+  plotMvsA(theta[,ccs], pch=".", Alim=Alim);
   abline(h=0, lwd=2, col="#999999");
-
-  cn <- RawCopyNumbers(cn=log2(theta[,2]/theta[,1]), x=pos);
+  
+  cn <- RawCopyNumbers(cn=log2(theta[,ccs[2]]/theta[,ccs[1]]), x=pos);
   plot(cn, pch=".");
   stext(side=3, pos=1, sprintf("Chr %d", chr));
   cnS <- binnedSmoothing(cn, by=500e3);
   points(cnS, pch=".", cex=3, col="red");
-} # for (ds ...)
+} # for (ccs ...)
+
+
 
 
 ############################################################################
 # HISTORY:
 # 2010-01-05
+# o Updated the plot cut'n'paste code at the end.
 # o Updated script so that one can fit on the log2-scale (default).
 # o Updated code for identifying tumor-normal pairs.
 # o Added instructions to the header.
