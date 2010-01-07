@@ -78,7 +78,8 @@ tddList <- lapply(tddList, FUN=function(tdd) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 tumorTypes <- sapply(tddList, FUN=getTumorType);
 if (interactive()) {
-  ans <- selectMenu(sort(unique(tumorTypes)));
+  choices <- sort(unique(tumorTypes));
+  ans <- selectMenu(choices, selected=(length(choices) == 1));
   keep <- is.element(tumorTypes, ans);
   tddList <- tddList[keep];
 } else {
@@ -94,7 +95,8 @@ verbose && print(verbose, tddList);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 centers <- sapply(tddList, FUN=getCenter);
 if (interactive()) {
-  ans <- selectMenu(sort(unique(centers)));
+  choices <- sort(unique(centers));
+  ans <- selectMenu(choices, selected=(length(choices) == 1));
   keep <- is.element(centers, ans);
   tddList <- tddList[keep];
 } else {
@@ -155,7 +157,7 @@ verbose && print(verbose, tddList);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (interactive()) {
   names <- names(tddList);
-  names <- selectMenu(names, selected=rep(TRUE, length(names)));
+  names <- selectMenu(names, selected=(length(names) == 1));
   tddList <- tddList[names];
 }
 verbose && print(verbose, tddList);
@@ -185,7 +187,8 @@ tdd <- tddList[[1]];
 patterns <- getKnownFilePatterns(tdd);
 patterns <- unlist(patterns, use.names=FALSE);
 if (interactive()) {
-  patterns <- selectMenu(sort(patterns));
+  patterns <- sort(patterns);
+  patterns <- selectMenu(patterns, selected=(length(patterns) == 1));
 } else {
   patterns <- "[.]birdseed[.]data[.]txt$";
   patterns <- "[.]CEL$";

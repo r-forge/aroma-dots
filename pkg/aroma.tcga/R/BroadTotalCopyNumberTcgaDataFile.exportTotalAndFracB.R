@@ -1,4 +1,4 @@
-setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
+setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, samplePatterns=NULL, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -7,6 +7,13 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
 
   # Argument 'unf':
   unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
+
+  # Argument 'samplePatterns':
+  if (!is.null(samplePatterns)) {
+    samplePatterns <- sapply(samplePatterns, FUN=function(s) {
+      Arguments$getRegularExpression(s);
+    });
+  }
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);
@@ -132,6 +139,7 @@ setMethodS3("exportTotalAndFracB", "BroadTotalCopyNumberTcgaDataFile", function(
     verbose && enter(verbose, "Allocating temporary file");
     df <- AromaUnitTotalCnBinaryFile$allocateFromUnitNamesFile(unf, 
                                             filename=pathnameT, path=NULL);
+
     footer <- readFooter(df);
     footer$srcFile <- srcFile;
     writeFooter(df, footer);

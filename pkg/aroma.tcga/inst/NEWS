@@ -1,6 +1,16 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.3.3 [2010-01-07]
+o The testScripts/system/ now have more informative names, and
+  are more convenient in interactive mode.
+o Added argument 'samplePatterns' to exportTotalAndFracB() for
+  HudsonAlphaXYTcgaDataFile, which can be used to export a subset of
+  the data for particular TCGA samples.
+o BUG FIX: Forgot to assign default NAs to allocated files.  Updated
+  aroma.core v1.4.1 to assign NAs by default.
+
+
 Version: 0.3.2 [2010-01-06]
 o Added extractByTcgaType() for GenericDataFileSet.  It asserts
   that the names of the files in the data set are valid TCGA names.

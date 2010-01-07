@@ -77,10 +77,10 @@ verbose && cat(verbose, "Chip types:");
 verbose && print(verbose, chipTypes);
 
 if (interactive()) {
-  chipTypes <- selectMenu(chipTypes);
+  chipTypes <- selectMenu(chipTypes, selected=(length(chipTypes) == 1));
   sets <- subset(sets, chipType %in% chipTypes);
   dataSets <- sort(unique(sets$dataSet));
-  dataSets <- selectMenu(dataSets);
+  dataSets <- selectMenu(dataSets, selected=(length(dataSets) == 1));
   sets <- subset(sets, dataSet %in% dataSets);
 }
 

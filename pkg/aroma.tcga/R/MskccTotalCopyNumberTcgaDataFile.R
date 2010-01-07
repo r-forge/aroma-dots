@@ -69,7 +69,7 @@ setMethodS3("extractTotalCopyNumbers", "MskccTotalCopyNumberTcgaDataFile", funct
 })
 
 
-setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
+setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, dataSet, unf, samplePatterns=NULL, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -78,6 +78,13 @@ setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, da
 
   # Argument 'unf':
   unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
+
+  # Argument 'samplePatterns':
+  if (!is.null(samplePatterns)) {
+    samplePatterns <- sapply(samplePatterns, FUN=function(s) {
+      Arguments$getRegularExpression(s);
+    });
+  }
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);
@@ -206,6 +213,7 @@ setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, da
     verbose && enter(verbose, "Allocating temporary file");
     df <- AromaUnitTotalCnBinaryFile$allocateFromUnitNamesFile(unf, 
                                             filename=pathnameT, path=NULL);
+
     footer <- readFooter(df);
     footer$srcFile <- srcFile;
     writeFooter(df, footer);
@@ -243,6 +251,9 @@ setMethodS3("exportTotal", "MskccTotalCopyNumberTcgaDataFile", function(this, da
 
 ############################################################################
 # HISTORY:
+# 2010-01-06
+# o CLEAN UP: No need for assign NAs when allocating new files; this is now
+#   always the default way (in aroma.core v1.4.1).
 # 2010-01-05
 # o Added getColumnNames() for MskccTotalCopyNumberTcgaDataFile that
 #   detects empty column names and replaces them with a default name.

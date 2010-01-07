@@ -38,7 +38,7 @@
 # }
 #
 #*/###########################################################################
-setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcgaDataFile", function(this, dataSet, unf, ..., rootPath="callData", force=FALSE, verbose=FALSE) {
+setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcgaDataFile", function(this, dataSet, unf, samplePatterns=NULL, ..., rootPath="callData", force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -47,6 +47,13 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 
   # Argument 'unf':
   unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
+
+  # Argument 'samplePatterns':
+  if (!is.null(samplePatterns)) {
+    samplePatterns <- sapply(samplePatterns, FUN=function(s) {
+      Arguments$getRegularExpression(s);
+    });
+  }
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);
@@ -193,12 +200,12 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
     asf <- AromaUnitSignalBinaryFile$allocateFromUnitNamesFile(unf, 
              filename=pathnameT, types="double", size=4, signed=TRUE, 
              overwrite=force, ...);
-    naValue <- as.integer(NA);
-    asf[, 1] <- naValue;
+
     asf[units, 1] <- conf;
-    isNC <- (conf==0);
-    if (sum(isNC)) {
+    isNC <- (conf == 0);
+    if (sum(isNC) > 0) {
       idxs <- units[whichVector(isNC)];
+      naValue <- as.double(naValue);
       asf[idxs, 1] <- naValue;
     }
     footer <- readFooter(asf);
@@ -227,6 +234,9 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 
 ############################################################################
 # HISTORY:
+# 2010-01-06
+# o CLEAN UP: No need for assign NAs when allocating new files; this is now
+#   always the default way (in aroma.core v1.4.1).
 # 2009-11-02
 # o CLEAN UP: Restructured code a bit.  Made less redundant.
 # o Replaced argument 'chipType' with 'unf'; it's more generic.
