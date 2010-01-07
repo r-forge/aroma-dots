@@ -54,6 +54,9 @@ dataSets <- dataSets[keep];
 stopifnot(length(dataSets) > 0);
 
 
+# Human-style sorting
+## try(dataSets <- gtools::mixedsort(dataSets), silent=TRUE);
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # User selects a data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

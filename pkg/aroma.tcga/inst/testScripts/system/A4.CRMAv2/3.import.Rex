@@ -56,6 +56,9 @@ verbose && cat(verbose, "TCGA center:");
 verbose && print(verbose, center);
 dataSets <- dataSets[centers == center];
 
+# Human-style sorting
+## try(dataSets <- gtools::mixedsort(dataSets), silent=TRUE);
+
 verbose && cat(verbose, "Filtered data sets:");
 verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);
