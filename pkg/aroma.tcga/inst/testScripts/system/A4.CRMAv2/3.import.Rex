@@ -85,8 +85,20 @@ for (ii in seq(along=dataSets)) {
   combineAlleles <- FALSE;
   ds <- CnChipEffectSet$byName(dataSet, chipType=chipType, 
                            mergeStrands=TRUE, combineAlleles=combineAlleles);
+
+  # Replace aroma.affymetrix tags with the shorter version
   setFullNameTranslator(ds, function(names, ...) {
     gsub(crmaTags, names(crmaTags), names, fixed=TRUE);
+  });
+
+  # Replace comma-separated full names with TCGA style full names, e.g.
+  # 'TCGA-06-0168,10A,01D-0237-01' to 'TCGA-06-0168-10A-01D-0237-01'.
+  # Yes, this is like going back, but doing so will put all data files.
+  setFullNamesTranslator(ds, function(names, ...) {
+    patterns <- BiospecimenCoreResource$getBarcodePatterns();
+    pattern <- sprintf("(%s),(%s),(%s-%s)", patterns$patient, 
+          patterns$sampleId, patterns$portionId, patterns$plateBarcode);
+    gsub(pattern, "\\1-\\5-\\8", names);
   });
 
   verbose && print(verbose, ds);
@@ -115,6 +127,7 @@ patterns <- BiospecimenCoreResource$getBarcodePatterns();
 pattern <- sprintf("^(%s).*", patterns$patient);
 sampleNamesList <- lapply(dsList, FUN=function(ds) {
   names <- getNames(ds);
+  names <- gsub(pattern, "\\1", names);
   sort(unique(names));
 });
 
@@ -129,10 +142,19 @@ stopifnot(length(sampleNames) > 0);
 for (kk in seq(along=sampleNamesList)) {
   sampleNamesSet <- sampleNamesList[[kk]];
   ds <- dsList[[kk]];
-  keep <- sapply(sampleNamesSet, FUN=function(names) {
-    any(is.element(names, sampleNames));
-  });
+
+  names <- getNames(ds, translate=FALSE);
+  keep <- is.element(names, sampleNames);
   ds <- extract(ds, keep);
+
+  # BUG?  Why do we have to reset the fullnames translator here?!?
+##  setFullNamesTranslator(ds, function(names, ...) {
+##    patterns <- BiospecimenCoreResource$getBarcodePatterns();
+##    pattern <- sprintf("(%s),(%s),(%s-%s)", patterns$patient, 
+##          patterns$sampleId, patterns$portionId, patterns$plateBarcode);
+##    gsub(pattern, "\\1-\\5-\\8", names);
+##  });
+
   dsList[[kk]] <- ds;
 } # for (kk ...)
 

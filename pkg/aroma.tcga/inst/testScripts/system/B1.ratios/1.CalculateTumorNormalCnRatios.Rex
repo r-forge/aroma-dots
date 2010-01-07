@@ -28,7 +28,8 @@ rootPath <- Arguments$getReadablePath(rootPath);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pattern <- TcgaDccData$getDataSetPatterns()$dataset;
+patterns <- TcgaDccData$getDataSetPatterns();
+pattern <- patterns$dataset;
 dataSets <- list.files(path=rootPath, pattern=pattern);
 verbose && cat(verbose, "Available data sets:");
 verbose && print(verbose, dataSets);
