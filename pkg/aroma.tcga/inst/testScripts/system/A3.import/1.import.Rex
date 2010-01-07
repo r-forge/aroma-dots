@@ -71,6 +71,9 @@ keep <- sapply(chipTypeList, FUN=function(chipTypes) {
 });
 dataSets <- dataSets[keep];
 
+# Human-style sorting
+## try(dataSets <- gtools::mixedsort(dataSets), silent=TRUE);
+
 verbose && cat(verbose, "Filtered data sets:");
 verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);

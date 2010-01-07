@@ -83,6 +83,8 @@ keep <- is.element(types, uTypes);
 dataSets <- dataSets[keep];
 stopifnot(length(dataSets) > 0);
 
+# Human-style sorting
+## try(dataSets <- gtools::mixedsort(dataSets), silent=TRUE);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select data sets

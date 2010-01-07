@@ -36,7 +36,8 @@ rootPath <- Arguments$getReadablePath(rootPath);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pattern <- TcgaDccData$getDataSetPatterns()$dataset;
+patterns <- TcgaDccData$getDataSetPatterns();
+pattern <- patterns$dataset;
 dataSets <- list.files(path=rootPath, pattern=pattern);
 
 # Drop already PCN normalized ones
@@ -47,6 +48,32 @@ verbose && cat(verbose, "Available data sets:");
 verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select tumor types
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pattern <- sprintf("^%s.*", patterns$dataset);
+types <- gsub(pattern, "\\2", dataSets);
+uTypes <- sort(unique(types));
+
+# User selected types
+if (interactive()) {
+  uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1),
+                       title="Select type:");
+}
+
+keep <- is.element(types, uTypes);
+dataSets <- dataSets[keep];
+stopifnot(length(dataSets) > 0);
+
+
+# Human-style sorting
+## try(dataSets <- gtools::mixedsort(dataSets), silent=TRUE);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select data sets
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (interactive()) {
   dataSet <- textMenu(dataSets, value=TRUE); 
 } else {

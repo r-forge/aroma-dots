@@ -156,7 +156,8 @@ verbose && print(verbose, tddList);
 # Select data sets to download
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (interactive()) {
-  names <- names(tddList);
+  names <- sort(names(tddList));
+##  try(names <- gtools::mixedsort(names), silent=TRUE);
   names <- selectMenu(names, selected=(length(names) == 1));
   tddList <- tddList[names];
 }
