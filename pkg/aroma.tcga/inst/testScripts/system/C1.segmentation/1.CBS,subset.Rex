@@ -41,7 +41,8 @@ uTypes <- sort(unique(types));
 
 # User selected types
 if (interactive()) {
-  uTypes <- selectMenu(uTypes, selected=FALSE, title="Select type:");
+  uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1),
+                       title="Select type:");
 }
 
 keep <- is.element(types, uTypes);
@@ -58,7 +59,7 @@ uCenters <- sort(unique(centers));
 
 # User selected types
 if (interactive()) {
-  uCenters <- selectMenu(uCenters, selected=FALSE, title="Select centers:");
+  uCenters <- selectMenu(uCenters, selected=(length(uCenters) == 1), title="Select centers:");
 }
 
 keep <- is.element(centers, uCenters);
@@ -75,7 +76,7 @@ uTypes <- sort(unique(types));
 
 # User selected types
 if (interactive()) {
-  uTypes <- selectMenu(uTypes, selected=TRUE, title="Select preprocessing method:");
+  uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1), title="Select preprocessing method:");
 }
 
 keep <- is.element(types, uTypes);
@@ -87,7 +88,7 @@ stopifnot(length(dataSets) > 0);
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (interactive()) {
-  dataSets <- selectMenu(dataSets, selected=FALSE, title="Select dataset(s):");
+  dataSets <- selectMenu(dataSets, selected=(length(dataSets) == 1), title="Select dataset(s):");
 }
 stopifnot(length(dataSets) > 0);
 
@@ -101,18 +102,22 @@ dsList <- lapply(dataSets, FUN=function(dataSet) {
   AromaUnitTotalCnBinarySet$byName(dataSet, chipType="*", paths=rootPath);
 });
 
-dsList <- GenericDataFileSetList(dsList, allowDuplicates=FALSE);
-sampleNames <- getNames(dsList);
+sampleNames <- lapply(dsList, FUN=getNames);
+sampleNames <- sort(unique(unlist(sampleNames, use.names=FALSE)));
+stopifnot(length(sampleNames) > 0);
 
 # User selection
 if (interactive()) {
-  sampleNames <- selectMenu(sampleNames, selected=FALSE);
+  sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1));
 }
 
-dsList <- extract(dsList, sampleNames);
-sampleNames <- getNames(dsList);
+# Keep only samples and data sets of interest
+dsList <- lapply(dsList, extract, sampleNames, onMissing="drop");
+ns <- sapply(dsList, length);
+dsList <- dsList[ns > 0];
+stopifnot(length(dsList) > 0);
 
-dataSets <- unname(sapply(getSets(dsList), FUN=getFullName));
+dataSets <- unname(sapply(dsList, FUN=getFullName));
 verbose && cat(verbose, "Data sets to be processed:");
 verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);
@@ -123,9 +128,18 @@ stopifnot(length(sampleNames) > 0);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Chromosomes
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+chromosomes <- 1:24;
+if (interactive()) {
+  chromosomes <- selectMenu(chromosomes, selected=(length(chromosomes) == 1), title="Select chromosomes:");
+}
+stopifnot(length(chromosomes) > 0);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Process data set by data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-dsList <- getSets(dsList);
 for (kk in seq(along=dsList)) {
   ds <- dsList[[kk]];
   verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
@@ -158,10 +172,10 @@ for (kk in seq(along=dsList)) {
   cbs$.paired <- FALSE;   # AD HOC; to prevent extra "paired" tag.
   verbose && print(verbose, cbs);
 
-  ce <- ChromosomeExplorer(cbs);
+  ce <- ChromosomeExplorer(cbs, zooms=2^(0:2));
   print(ce);
   
-  process(ce, verbose=verbose);
+  process(ce, chromosomes=chromosomes, verbose=verbose);
 
   verbose && exit(verbose);
 } # for (ii ...)

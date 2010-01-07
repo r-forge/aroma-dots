@@ -80,7 +80,7 @@ stopifnot(length(dataSets) > 0);
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (interactive()) {
-  dataSets <- selectMenu(dataSets, selected=TRUE);
+  dataSets <- selectMenu(dataSets, selected=(length(dataSets) == 1));
 
   verbose && cat(verbose, "Filtered data sets:");
   verbose && print(verbose, dataSets);
@@ -168,36 +168,11 @@ verbose && cat(verbose, "Data sets to be processed:");
 verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Get unit names file
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-verbose && enter(verbose, "Get unit names file");
-if (chipType == "GenomeWideSNP_6") {
-  require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
-  unf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6");
-} else if (chipType == "HumanHap550") {
-  unf <- TextUnitNamesFile$byChipType(chipType, tags="adf,TCGA,HB20091107");
-} else if (chipType == "Human1M-Duo") {
-  unf <- TextUnitNamesFile$byChipType(chipType, tags="TCGA,OV,hudsonalpha.org,HB20090506");
-} else if (chipType == "HG-CGH-244A") {
-  unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
-} else if (chipType == "HG-CGH-415K") {
-  unf <- TextUnitNamesFile$byChipType(chipType, tags="adf,TCGA,hms.harvard.edu,HB20090824");
-} else if (chipType == "HG-CGH-1x1M") {
-  unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
-} else {
-  throw("Unknown TCGA chip type: ", chipType);
-}
-verbose && print(verbose, unf);
-verbose && exit(verbose);
-
-
-# Maximum number of unknown unit names that are accepted (will be skipped)
-maxNbrOfUnknownUnitNames <- 2;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# 
+# Setup list of data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+dsList <- list();
 for (ii in seq(along=dataSets)) {
   dataSet <- dataSets[ii];
   verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
@@ -218,9 +193,100 @@ for (ii in seq(along=dataSets)) {
     next;  
   }
 
+  dsList[[ii]] <- ds;
+  
+  verbose && exit(verbose);
+} # for (ii ...)
+
+# Drop empty
+ns <- sapply(dsList, FUN=length);
+dsList <- dsList[ns > 0];
+stopifnot(length(dsList) > 0);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Scan for all sample names
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+patterns <- BiospecimenCoreResource$getBarcodePatterns();
+pattern <- sprintf("^(%s).*", patterns$patient);
+sampleNamesList <- lapply(dsList, FUN=function(ds) {
+  lapply(ds, function(df) {
+    names <- getColumnNames(df);
+    names <- grep(pattern, names, value=TRUE);
+    names <- gsub(pattern, "\\1", names);
+    sort(unique(names));
+  });
+});
+
+sampleNames <- sort(unique(unlist(sampleNamesList, use.names=FALSE)));
+if (interactive()) {
+  sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1));
+}
+stopifnot(length(sampleNames) > 0);
+
+
+# Drop files that do not contain the samples of interest
+for (kk in seq(along=sampleNamesList)) {
+  sampleNamesSet <- sampleNamesList[[kk]];
+  ds <- dsList[[kk]];
+  keep <- sapply(sampleNamesSet, FUN=function(names) {
+    any(is.element(names, sampleNames));
+  });
+  ds <- extract(ds, keep);
+  dsList[[kk]] <- ds;
+} # for (kk ...)
+
+# Drop data sets that do not contain the samples of interest
+ns <- sapply(dsList, FUN=length);
+dsList <- dsList[ns > 0];
+stopifnot(length(dsList) > 0);
+
+verbose && cat(verbose, "Samples of interest:");
+verbose && print(verbose, sampleNames);
+
+samplePatterns <- sprintf("^%s", sampleNames);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Get unit names file
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+verbose && enter(verbose, "Get unit names file");
+if (chipType == "GenomeWideSNP_6") {
+  require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
+  unf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6");
+} else if (chipType == "HumanHap550") {
+  unf <- TextUnitNamesFile$byChipType(chipType, tags="TCGA,HB20100107");
+} else if (chipType == "Human1M-Duo") {
+  unf <- TextUnitNamesFile$byChipType(chipType, tags="TCGA,OV,hudsonalpha.org,HB20090506");
+} else if (chipType == "HG-CGH-244A") {
+  unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
+} else if (chipType == "HG-CGH-415K") {
+  unf <- TextUnitNamesFile$byChipType(chipType, tags="adf,TCGA,hms.harvard.edu,HB20090824");
+} else if (chipType == "HG-CGH-1x1M") {
+  unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
+} else {
+  throw("Unknown TCGA chip type: ", chipType);
+}
+verbose && print(verbose, unf);
+verbose && exit(verbose);
+
+
+# Maximum number of unknown unit names that are accepted (will be skipped)
+maxNbrOfUnknownUnitNames <- 2;
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Export signals
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+for (ii in seq(along=dsList)) {
+  ds <- dsList[[ii]];
+  verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
+                                      ii, getName(ds), length(dsList)));
+  verbose && print(verbose, ds);
+
   # Import each data file
   verbose && enter(verbose, "Exporting TCGA data as aroma files");
-  dsList <- exportFcn(ds, unf=unf, maxNbrOfUnknownUnitNames=maxNbrOfUnknownUnitNames, verbose=verbose);
+  dsList <- exportFcn(ds, unf=unf, samplePatterns=samplePatterns,
+       maxNbrOfUnknownUnitNames=maxNbrOfUnknownUnitNames, verbose=verbose);
   verbose && print(verbose, dsList);
   verbose && exit(verbose);
   
@@ -231,6 +297,8 @@ for (ii in seq(along=dataSets)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-06
+# o Added the option to select a subset of sample names too.
 # 2010-01-03
 # o Added support to import total CNs from hms.harvard.edu.
 # 2009-12-06

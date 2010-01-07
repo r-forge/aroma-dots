@@ -34,7 +34,7 @@
 # }
 #
 #*/###########################################################################
-setMethodS3("exportGenotypeCalls", "HudsonAlphaGenotypeTcgaDataFile", function(this, dataSet, unf, ..., rootPath="callData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
+setMethodS3("exportGenotypeCalls", "HudsonAlphaGenotypeTcgaDataFile", function(this, dataSet, unf, samplePatterns=NULL, ..., rootPath="callData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -43,6 +43,13 @@ setMethodS3("exportGenotypeCalls", "HudsonAlphaGenotypeTcgaDataFile", function(t
 
   # Argument 'unf':
   unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
+
+  # Argument 'samplePatterns':
+  if (!is.null(samplePatterns)) {
+    samplePatterns <- sapply(samplePatterns, FUN=function(s) {
+      Arguments$getRegularExpression(s);
+    });
+  }
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);

@@ -34,6 +34,25 @@ verbose && cat(verbose, "Available data sets:");
 verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select tumor types
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pattern <- sprintf("^%s.*", patterns$dataset);
+types <- gsub(pattern, "\\2", dataSets);
+uTypes <- sort(unique(types));
+
+# User selected types
+if (interactive()) {
+  uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1),
+                       title="Select type:");
+}
+
+keep <- is.element(types, uTypes);
+dataSets <- dataSets[keep];
+stopifnot(length(dataSets) > 0);
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # User selects a data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -75,7 +94,7 @@ stopifnot(length(sampleNames) > 0);
 
 # User can choose a subset of samples to process
 if (interactive()) {
-  sampleNames <- selectMenu(sampleNames, selected=TRUE,
+  sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1),
                             title="Select samples to normalize:");
 }
 stopifnot(length(sampleNames) > 0);

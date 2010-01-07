@@ -41,7 +41,7 @@ uTypes <- sort(unique(types));
 
 # User selected types
 if (interactive()) {
-  uTypes <- selectMenu(uTypes, selected=FALSE, title="Select type:");
+  uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1), title="Select type:");
 }
 
 keep <- is.element(types, uTypes);
@@ -58,7 +58,7 @@ uTypes <- sort(unique(types));
 
 # User selected types
 if (interactive()) {
-  uTypes <- selectMenu(uTypes, selected=TRUE, title="Select type:");
+  uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1), title="Select type:");
 }
 
 keep <- is.element(types, uTypes);
@@ -79,7 +79,7 @@ sampleNames <- getNames(dsList);
 
 # User selection
 if (interactive()) {
-  sampleNames <- selectMenu(sampleNames, selected=FALSE);
+  sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1));
 }
 
 dsList <- extract(dsList, sampleNames);

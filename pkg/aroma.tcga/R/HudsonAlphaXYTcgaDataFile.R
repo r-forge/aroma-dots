@@ -52,7 +52,7 @@ setMethodS3("extractTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, 
 })
 
 
-setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
+setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, dataSet, unf, samplePatterns=NULL, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,6 +61,13 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, d
 
   # Argument 'unf':
   unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
+
+  # Argument 'samplePatterns':
+  if (!is.null(samplePatterns)) {
+    samplePatterns <- sapply(samplePatterns, FUN=function(s) {
+      Arguments$getRegularExpression(s);
+    });
+  }
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);
@@ -98,6 +105,19 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, d
   sampleNames <- unique(sampleNames);
   verbose && cat(verbose, "Samples to be processed:");
   verbose && print(verbose, sampleNames);
+
+  # Subset samples by patterns?
+  if (!is.null(samplePatterns)) {
+    idxs <- lapply(samplePatterns, FUN=function(pattern) {
+      grep(pattern, sampleNames);
+    });
+    idxs <- unlist(idxs, use.names=FALSE);
+    idxs <- sort(unique(idxs));
+    sampleNames <- sampleNames[idxs];
+    verbose && cat(verbose, "Filtered set of samples to be processed:");
+    verbose && print(verbose, sampleNames);
+  }
+
   nbrOfSamples <- length(sampleNames);
 
   typeList <- list(
@@ -287,9 +307,7 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, d
       verbose && enter(verbose, "Allocating temporary file");
       df <- fileClazz$allocateFromUnitNamesFile(unf, 
                                  filename=pathnameT, path=NULL);
-      # Erase
-      naValue <- as.double(NA);
-      df[,1] <- naValue;
+
       footer <- readFooter(df);
       footer$srcFile <- srcFile;
       writeFooter(df, footer);
@@ -348,6 +366,12 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaXYTcgaDataFile", function(this, d
 
 ############################################################################
 # HISTORY:
+# 2010-01-06
+# o Added argument 'samplePatterns' to exportTotalAndFracB() for
+#   HudsonAlphaXYTcgaDataFile, which can be used to export a subset of
+#   the data for particular TCGA samples.
+# o CLEAN UP: No need for assign NAs when allocating new files; this is now
+#   always the default way (in aroma.core v1.4.1).
 # 2009-11-06
 # o Created.
 ############################################################################

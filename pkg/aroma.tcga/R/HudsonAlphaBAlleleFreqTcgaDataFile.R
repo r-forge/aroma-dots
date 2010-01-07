@@ -56,7 +56,7 @@ setMethodS3("extractFracB", "HudsonAlphaBAlleleFreqTcgaDataFile", function(this,
 
 
 
-setMethodS3("exportTotalAndFracB", "HudsonAlphaBAlleleFreqTcgaDataFile", function(this, dataSet, unf, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
+setMethodS3("exportTotalAndFracB", "HudsonAlphaBAlleleFreqTcgaDataFile", function(this, dataSet, unf, samplePatterns=NULL, ..., rootPath="totalAndFracBData", maxNbrOfUnknownUnitNames=0, force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -65,6 +65,13 @@ setMethodS3("exportTotalAndFracB", "HudsonAlphaBAlleleFreqTcgaDataFile", functio
 
   # Argument 'unf':
   unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
+
+  # Argument 'samplePatterns':
+  if (!is.null(samplePatterns)) {
+    samplePatterns <- sapply(samplePatterns, FUN=function(s) {
+      Arguments$getRegularExpression(s);
+    });
+  }
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);

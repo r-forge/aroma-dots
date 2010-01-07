@@ -95,7 +95,7 @@ verbose && print(verbose, sampleNames);
 
 # User can choose a subset of samples to process
 if (interactive()) {
-  sampleNames <- selectMenu(sampleNames, selected=TRUE,
+  sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1),
                             title="Select samples to normalize:");
 }
 
