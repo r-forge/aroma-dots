@@ -2,8 +2,9 @@ Package: aroma.tcga
 ===================
 
 Version: 0.3.3 [2010-01-07]
-o The testScripts/system/ now have more informative names, and
-  are more convenient in interactive mode.
+o SCRIPTS: Added script to import ASCRMAv2 chip-effect sets.
+o SCRIPTS: The testScripts/system/ now have more informative names, 
+  and are more convenient in interactive mode.
 o Added argument 'samplePatterns' to exportTotalAndFracB() for
   HudsonAlphaXYTcgaDataFile, which can be used to export a subset of
   the data for particular TCGA samples.
