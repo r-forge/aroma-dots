@@ -5,6 +5,10 @@
 #  library("aroma.tcga"); library("R.menu");
 #  launchMenu(aroma.tcga, "testScripts/system/import/");
 #
+# Command line:
+#  nohupR 1.import.Rex [--dataSets="<dataSet1>,...,<dataSetK>"]
+#    [--sampleNames="<sampleName1>,...,<sampleNameK>"
+#
 # Description:
 # 1. Identifies CRMAv2 (aroma.affymetrix) chip-effect data sets.
 # 2. Let user choose samples to export by tumor type and data set(s).
@@ -16,6 +20,26 @@ library("aroma.affymetrix");
 library("aroma.tcga");
 library("R.menu");
 verbose <- Arguments$getVerbose(-10, timestamp=TRUE);
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Command line options
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (!interactive()) {
+  args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, excludeEnvVars=TRUE)[-1];
+  verbose && cat(verbose, "Raw command line arguments:");
+  verbose && print(verbose, args);
+
+  # Optional arguments
+  if (!is.null(args$dataSets)) {
+    args$dataSets <- trim(strsplit(args$dataSets, split=", ")[[1]]);
+  }
+  if (!is.null(args$dataSets)) {
+    args$sampleNames <- trim(strsplit(args$sampleNames, split=", ")[[1]]);
+  }
+  verbose && cat(verbose, "Parsed command line arguments:");
+  verbose && print(verbose, args);
+}
+
 
 rootPath <- "plmData/";
 rootPath <- Arguments$getReadablePath(rootPath);
@@ -44,27 +68,6 @@ stopifnot(length(dataSets) > 0);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Select by center
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pattern <- TcgaDccData$getDataSetPatterns()$dataset;
-centers <- gsub(pattern, "\\1", dataSets);
-uCenters <- sort(unique(centers));
-if (interactive()) {
-  center <- textMenu(uCenters, value=TRUE);
-}
-verbose && cat(verbose, "TCGA center:");
-verbose && print(verbose, center);
-dataSets <- dataSets[centers == center];
-
-# Human-style sorting
-## try(dataSets <- gtools::mixedsort(dataSets), silent=TRUE);
-
-verbose && cat(verbose, "Filtered data sets:");
-verbose && print(verbose, dataSets);
-stopifnot(length(dataSets) > 0);
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (interactive()) {
@@ -72,8 +75,12 @@ if (interactive()) {
 
   verbose && cat(verbose, "Filtered data sets:");
   verbose && print(verbose, dataSets);
-  stopifnot(length(dataSets) > 0);
+} else {
+  if (!is.null(args$dataSets)) {
+    dataSets <- args$dataSets;
+  }
 }
+stopifnot(length(dataSets) > 0);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup list of data sets
@@ -137,6 +144,10 @@ sampleNamesList <- lapply(dsList, FUN=function(ds) {
 sampleNames <- sort(unique(unlist(sampleNamesList, use.names=FALSE)));
 if (interactive()) {
   sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1));
+} else {
+  if (!is.null(args$sampleNames)) {
+    sampleNames <- args$sampleNames;
+  }
 }
 stopifnot(length(sampleNames) > 0);
 

@@ -5,6 +5,10 @@
 #  library("aroma.tcga"); library("R.menu");
 #  launchMenu(aroma.tcga, "testScripts/system/import/");
 #
+# Command line:
+#  nohupR 1.import.Rex --center=<center> --chipType=<chipType> 
+#    --typeName=<typeName> [--dataSets="<dataSet1>,...,<dataSetK>"
+#
 # Description:
 # 1. ...
 # 2. ...
@@ -13,6 +17,28 @@ if (interactive()) savehistory();
 library("aroma.tcga");
 library("R.menu");
 verbose <- Arguments$getVerbose(-10, timestamp=TRUE);
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Command line options
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (!interactive()) {
+  args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, excludeEnvVars=TRUE)[-1];
+  verbose && cat(verbose, "Raw command line arguments:");
+  verbose && print(verbose, args);
+
+  # Required arguments
+  stopifnot(is.element("center", names(args)));
+  stopifnot(is.element("chipType", names(args)));
+  stopifnot(is.element("typeName", names(args)));
+
+  # Optional arguments
+  if (!is.null(args$dataSets)) {
+    args$dataSets <- trim(strsplit(args$dataSets, split=", ")[[1]]);
+  }
+  verbose && cat(verbose, "Parsed command line arguments:");
+  verbose && print(verbose, args);
+}
+
 
 rootPath <- "rawData/";
 rootPath <- Arguments$getReadablePath(rootPath);
@@ -36,7 +62,7 @@ uCenters <- sort(unique(centers));
 if (interactive()) {
   center <- textMenu(uCenters, value=TRUE);
 } else {
-  center <- "hudsonalpha.org";
+  center <- args$center;
 }
 verbose && cat(verbose, "TCGA center:");
 verbose && print(verbose, center);
@@ -60,9 +86,7 @@ uChipTypes <- sort(unique(unlist(chipTypeList, use.names=FALSE)));
 if (interactive()) {
   chipType <- textMenu(uChipTypes, value=TRUE);
 } else {
-  chipType <- uChipTypes[1];
-  chipType <- "Human1M-Duo";
-  chipType <- "HumanHap550";
+  chipType <- args$chipType;
 }
 verbose && cat(verbose, "Chip type:");
 verbose && print(verbose, chipType);
@@ -88,6 +112,10 @@ if (interactive()) {
   verbose && cat(verbose, "Filtered data sets:");
   verbose && print(verbose, dataSets);
   stopifnot(length(dataSets) > 0);
+} else {
+  if (!is.null(args$dataSets)) {
+    dataSets <- args$dataSets;
+  }
 }
 
 
@@ -152,9 +180,7 @@ if (center == "broad.mit.edu") {
 if (interactive()) {
   typeName <- textMenu(names(typeList), value=TRUE);
 } else {
-  typeName <- names(typeList)[1];
-  typeName <- "XandYintensity";
-#  typeName <- "B_Allele_Freq";
+  typeName <- args$typeName;
 }
 verbose && cat(verbose, "Type of data: ", typeName);
 type <- typeList[[typeName]];
