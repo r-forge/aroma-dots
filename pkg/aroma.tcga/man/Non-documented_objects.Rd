@@ -231,6 +231,8 @@
 \alias{getColumnNames.MskccTotalCopyNumberTcgaDataFile}
 \alias{extractByTcgaType}
 \alias{extractByTcgaType.GenericDataFileSet}
+\alias{readBCRSamplesTable}
+\alias{readBCRSamplesTable.TcgaDccDownloader}
 
 \description{
   This page contains aliases for all "non-documented" objects that
