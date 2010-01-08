@@ -3,7 +3,7 @@
 #
 # Usage:
 #  library("aroma.tcga"); library("R.menu");
-#  launchMenu(aroma.tcga, "testScripts/system/normalize/");
+#  launchMenu(aroma.tcga, "testScripts/system/");
 #
 # Description:
 # Applies MSCN normalization to a set of samples, which are specified by
