@@ -266,7 +266,7 @@ if (chipType == "GenomeWideSNP_6") {
 } else if (chipType == "HG-CGH-415K") {
   unf <- TextUnitNamesFile$byChipType(chipType, tags="adf,TCGA,hms.harvard.edu,HB20090824");
 } else if (chipType == "HG-CGH-1x1M") {
-  unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
+ unf <- TextUnitNamesFile$byChipType(chipType, tags="HB20090419");
 } else {
   throw("Unknown TCGA chip type: ", chipType);
 }
@@ -288,9 +288,9 @@ for (ii in seq(along=dsList)) {
 
   # Import each data file
   verbose && enter(verbose, "Exporting TCGA data as aroma files");
-  dsList <- exportFcn(ds, unf=unf, samplePatterns=samplePatterns,
+  dsListOut <- exportFcn(ds, unf=unf, samplePatterns=samplePatterns,
        maxNbrOfUnknownUnitNames=maxNbrOfUnknownUnitNames, verbose=verbose);
-  verbose && print(verbose, dsList);
+  verbose && print(verbose, dsListOut);
   verbose && exit(verbose);
   
   verbose && exit(verbose);
