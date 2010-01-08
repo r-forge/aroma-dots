@@ -144,3 +144,5 @@ getDefaultFullName.TcgaDataFileSet
   getExtensionPattern.BroadAfter5NNTotalCopyNumberTcgaDataFile
 getColumnNames.MskccTotalCopyNumberTcgaDataFile
   extractByTcgaType extractByTcgaType.GenericDataFileSet
+readBCRSamplesTable readBCRSamplesTable.TcgaDccDownloader
+

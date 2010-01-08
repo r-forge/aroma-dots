@@ -1,6 +1,12 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.4.0 [2010-01-07]
+o Added static readBCRSamplesTable() of TcgaDccDownloader for
+  downloading the BCR sample HTML table, converting it to a
+  tab-delimited text file, and returning it as a data frame. 
+
+
 Version: 0.3.3 [2010-01-07]
 o SCRIPTS: Added script to import ASCRMAv2 chip-effect sets.
 o SCRIPTS: The testScripts/system/ now have more informative names, 
