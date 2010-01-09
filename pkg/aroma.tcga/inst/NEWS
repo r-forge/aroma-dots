@@ -1,6 +1,10 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.4.1 [2010-01-08]
+o Added extractTumorNormalPairs() for GenericDataFileSet.
+
+
 Version: 0.4.0 [2010-01-07]
 o Added static readBCRSamplesTable() of TcgaDccDownloader for
   downloading the BCR sample HTML table, converting it to a
