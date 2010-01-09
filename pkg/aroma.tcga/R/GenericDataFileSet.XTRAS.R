@@ -53,7 +53,7 @@ setMethodS3("extractByTcgaType", "GenericDataFileSet", function(this, pattern, .
 })
 
 
-setMethodS3("extractTumorNormalPairs", "GenericDataFileSet", function(this, tumorPattern="^01", normalPattern="^1[01]", ..., onDuplicates=c("drop", "ignore"), verbose=FALSE) {
+setMethodS3("extractTumorNormalPairs", "GenericDataFileSet", function(this, tumorPattern="^(01|20)", normalPattern="^(10|11)", ..., onDuplicates=c("drop", "ignore"), verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
