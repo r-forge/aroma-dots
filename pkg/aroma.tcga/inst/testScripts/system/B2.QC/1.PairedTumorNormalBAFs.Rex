@@ -179,23 +179,24 @@ if (interactive()) {
   sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1),
                             title="Select samples of interest:");
   stopifnot(length(sampleNames) > 0);
-  dsPairList <- lapply(dsPairList, FUN=function(dsList) {
-    dsT <- extract(dsList$tumor, sampleNames, onMissing="drop");
-    dsN <- extract(dsList$normal, sampleNames, onMissing="drop");
-    # Sanity check
-    stopifnot(identical(getNames(dsT), getNames(dsN)));
-    list(tumor=dsT, normal=dsN);
-  });
-  ns <- lapply(dsPairList, function(dsList) {
-    length(dsList$tumor);
-  });
-  dsPairList <- dsPairList[ns > 0];
-  stopifnot(length(dsPairList) > 0);
 } else {
   if (!is.null(args$sampleNames)) {
     sampleNames <- intersect(sampleNames, args$sampleNames);
   }
 }
+
+dsPairList <- lapply(dsPairList, FUN=function(dsList) {
+  dsT <- extract(dsList$tumor, sampleNames, onMissing="drop");
+  dsN <- extract(dsList$normal, sampleNames, onMissing="drop");
+  # Sanity check
+  stopifnot(identical(getNames(dsT), getNames(dsN)));
+  list(tumor=dsT, normal=dsN);
+});
+ns <- lapply(dsPairList, function(dsList) {
+  length(dsList$tumor);
+});
+dsPairList <- dsPairList[ns > 0];
+stopifnot(length(dsPairList) > 0);
 
 verbose && print(verbose, dsPairList);
 
