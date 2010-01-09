@@ -233,6 +233,8 @@
 \alias{extractByTcgaType.GenericDataFileSet}
 \alias{readBCRSamplesTable}
 \alias{readBCRSamplesTable.TcgaDccDownloader}
+\alias{extractTumorNormalPairs}
+\alias{extractTumorNormalPairs.GenericDataFileSet}
 
 \description{
   This page contains aliases for all "non-documented" objects that

@@ -13,7 +13,6 @@
 #    to rawCnData/ adding a 'paired' tags to the data set.
 ############################################################################
 if (interactive()) savehistory();
-library("aroma.core");
 library("aroma.tcga");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
@@ -83,16 +82,12 @@ verbose && print(verbose, dsR);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extract tumor-normal pairs
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Extract all tumors
-dsT <- extractByTcgaType(dsR, pattern="^01");
+res <- extractTumorNormalPairs(dsR, verbose=verbose);
+dsT <- res$tumor;
+dsN <- res$normal;
 
-# Extract all normals
-dsN <- extractByTcgaType(dsR, pattern="^1[01]");
-
-# Keep only samples for which there is both a tumor and a normal
-sampleNames <- intersect(getNames(dsT), getNames(dsN));
-sampleNames <- unique(sampleNames);
 verbose && cat(verbose, "Identified tumor-normal samples:");
+sampleNames <- getNames(dsT);
 verbose && print(verbose, sampleNames);
 stopifnot(length(sampleNames) > 0);
 
@@ -100,15 +95,10 @@ stopifnot(length(sampleNames) > 0);
 if (interactive()) {
   sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1),
                             title="Select samples to normalize:");
+  stopifnot(length(sampleNames) > 0);
+  dsT <- extract(dsT, sampleNames);
+  dsN <- extract(dsN, sampleNames);
 }
-stopifnot(length(sampleNames) > 0);
-
-dsT <- extract(dsT, sampleNames);
-dsN <- extract(dsN, sampleNames);
-
-# Drop duplicated samples
-dsT <- extract(dsT, !duplicated(getNames(dsT)));
-dsN <- extract(dsN, !duplicated(getNames(dsN)));
 
 verbose && cat(verbose, "Data set of tumors:");
 verbose && print(verbose, dsT);
