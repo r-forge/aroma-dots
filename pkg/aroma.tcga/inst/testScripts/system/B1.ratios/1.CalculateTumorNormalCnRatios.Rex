@@ -7,7 +7,7 @@
 #
 # Command line:
 #  nohupR 1.PairedTumorNormalBAFs.Rex
-#    --types=<types> --types=<centers> [--dataSets="<dataSet1>,...,<dataSetK>"]
+#    --types=<types> --centers=<centers> [--dataSets="<dataSet1>,...,<dataSetK>"]
 #
 # Description:
 # Exports tumor-normal copy number ratios for samples of a given data set:

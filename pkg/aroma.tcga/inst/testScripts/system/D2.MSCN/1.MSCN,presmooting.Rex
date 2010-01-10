@@ -5,10 +5,22 @@
 #  library("aroma.tcga"); library("R.menu");
 #  launchMenu(aroma.tcga, "testScripts/system/");
 #
+# Command line:
+#  nohupR 1.MSCN,presmooting.Rex
+#    --types=<types> --centers=<centers> --methods=<methods> [--dataSets="<dataSet1>,...,<dataSetK>"]
+#
+# Example:
+#  nohupR testScripts/system/D2.MSCN/1.MSCN,presmooting.Rex --types=GBM --centers=broad.mit.edu --methods=ASCRMAv2,pairs &
+#
 # Description:
 # 1. Finds all data sets with CN ratios.
 # 2. Let user select by tumor type, centers, method, and data set names.
-# 3. Runs MSCN on each remaining sample.
+# 3. Runs the MSCN smoothing step on each remaining sample.
+#
+# Note that this script is optional, because MSCN will do it internally
+# otherwise.  However, it is useful for distributed batch processing,
+# because each data set can be smoothed independently of the others,
+# e.g. as soon as they get produced.
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.tcga");
@@ -16,12 +28,36 @@ library("aroma.cn");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
-timeStamp <- format(Sys.time(), format="%Y-%m-%d %k:%M:%S %Z");
-pid <- sprintf("%s,%s", System$getHostname(), timeStamp);
 
-analysisTag <- "HB20091001";
-analysisTag <- "HB20100105";
-analysisTag <- "HB20100107";
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Command line options
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (!interactive()) {
+  args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, excludeEnvVars=TRUE)[-1];
+  verbose && cat(verbose, "Raw command line arguments:");
+  verbose && print(verbose, args);
+
+  # Optional arguments
+  if (!is.null(args$types)) {
+    args$types <- trim(strsplit(args$types, split=", ")[[1]]);
+  }
+  if (!is.null(args$centers)) {
+    args$centers <- trim(strsplit(args$centers, split=", ")[[1]]);
+  }
+  if (!is.null(args$methods)) {
+    args$methods <- trim(strsplit(args$methods, split=", ")[[1]]);
+  }
+  if (!is.null(args$dataSets)) {
+    args$dataSets <- trim(strsplit(args$dataSets, split=", ")[[1]]);
+  }
+  if (!is.null(args$sampleNames)) {
+    args$sampleNames <- trim(strsplit(args$sampleNames, split=", ")[[1]]);
+  }
+  verbose && cat(verbose, "Parsed command line arguments:");
+  verbose && print(verbose, args);
+}
+
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all tumor-normal CN data sets
@@ -44,11 +80,37 @@ uTypes <- sort(unique(types));
 # User selected types
 if (interactive()) {
   uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1), title="Select type:");
+} else {
+  if (!is.null(args$types)) {
+    uTypes <- intersect(uTypes, args$types);
+  }
 }
 
 keep <- is.element(types, uTypes);
 dataSets <- dataSets[keep];
 stopifnot(length(dataSets) > 0);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select by center
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+centers <- gsub(pattern, "\\1", dataSets);
+uCenters <- sort(unique(centers));
+if (interactive()) {
+  uCenters <- selectMenu(uCenters);
+} else {
+  if (!is.null(args$centers)) {
+    uCenters <- intersect(uCenters, args$centers);
+  }
+}
+verbose && cat(verbose, "TCGA center:");
+verbose && print(verbose, uCenters);
+dataSets <- dataSets[is.element(centers, uCenters)];
+
+verbose && cat(verbose, "Filtered data sets:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
+
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,11 +123,27 @@ uTypes <- sort(unique(types));
 # User selected types
 if (interactive()) {
   uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1), title="Select type:");
+} else {
+  if (!is.null(args$methods)) {
+    uTypes <- intersect(uTypes, args$methods);
+  }
 }
 
 keep <- is.element(types, uTypes);
 dataSets <- dataSets[keep];
 stopifnot(length(dataSets) > 0);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select data sets
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (interactive()) {
+  dataSets <- selectMenu(dataSets, selected=(length(dataSets) == 1)); 
+} else {
+  if (!is.null(args$dataSets)) {
+    dataSets <- intersect(dataSets, args$dataSets);
+  }
+}
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -83,7 +161,12 @@ stopifnot(length(sampleNames) > 0);
 # User selection
 if (interactive()) {
   sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1));
+} else {
+  if (!is.null(args$sampleNames)) {
+    sampleNames <- intersect(sampleNames, args$sampleNames);
+  }
 }
+stopifnot(length(sampleNames) > 0);
 
 # Keep only samples and data sets of interest
 dsList <- lapply(dsList, extract, sampleNames, onMissing="drop");
@@ -101,19 +184,6 @@ verbose && cat(verbose, "Samples to be processed:");
 verbose && print(verbose, sampleNames);
 stopifnot(length(sampleNames) > 0);
 
-# MSCN requires at least to data sources
-stopifnot(length(dataSets) >= 2);
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Select data sets
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if (interactive()) {
-  ans <- selectMenu(dataSets, selected=TRUE, title="Select two or more data sets:");
-  keep <- is.element(dataSets, ans);
-  dsList <- dsList[keep];
-  stopifnot(length(dataSets) >= 2);
-}
 
 dataSets <- unname(sapply(dsList, FUN=getFullName));
 verbose && cat(verbose, "Data sets to be processed:");
@@ -128,84 +198,39 @@ stopifnot(length(sampleNames) > 0);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Target loci used for fitting the normalization curve
+# Target loci used for smoothing
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 fitUgp <- AromaUgpFile$byChipType("GenericHuman", tags="200kb,HB20090503");
 verbose && print(verbose, fitUgp);
 
-dsList <- GenericDataFileSetList(dsList);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Process sample by sample
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-for (kk in seq(along=sampleNames)) {
-  sampleName <- sampleNames[kk];
-  verbose && enter(verbose, sprintf("Sample #%d ('%s') of %d", 
-                   kk, sampleName, length(sampleNames)));
+dsSList <- list();
+for (kk in seq(along=dsList)) {
+  ds <- dsList[[kk]];
+  verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
+                   kk, getFullName(ds), length(dsList)));
 
-  dfList <- getFileList(dsList, sampleName, dropMissing=TRUE);
+  sd <- 50e3;
+  verbose && printf(verbose, "Kernel: %s\n", "Gaussian");
+  verbose && printf(verbose, "Bandwidth (sd): %.2f\n", sd);
 
-  # Sanity check - assert that multiple preprocessing methods not are used
-  pattern <- sprintf("(%s).*", TcgaDccData$getDataSetPatterns()$dataset);
-  dataSetsKK <- gsub(pattern, "\\1", names(dfList));
-  dups <- which(duplicated(dataSetsKK));
-  ndups <- length(dups);
-  stopifnot(ndups == 0);
+  sm <- TotalCnKernelSmoothing(ds, targetUgp=fitUgp, 
+                                   kernel="gaussian", bandwidth=sd);
+  verbose && print(verbose, sm);
+  dsS <- process(sm, verbose=less(verbose, 1));
+  verbose && print(verbose, dsS);
 
-  nbrOfSources <- length(dfList);
-  verbose && cat(verbose, "Number of sites that processed this sample: ", nbrOfSources);
-  if (nbrOfSources == 1) {
-    verbose && cat(verbose, "Nothing to do. This sample was only process by one site: ", sampleName);
-    verbose && exit(verbose);
-    next;
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Selecting target dimension
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  verbose && enter(verbose, "Identifying prioritized target dimension");
-  # Identify (center, chipType):s
-  pattern <- sprintf("^%s,.*", TcgaDccData$getDataSetPatterns()$dataset);
-  centers <- gsub(pattern, "\\1", names(dfList));
-  chipTypes <- unname(sapply(dfList, FUN=getChipType));
-  data <- data.frame(center=centers, chipType=chipTypes);
-  verbose && print(verbose, data);
-
-  # Identify target dimension
-  keyOrder <- c("mskcc.org/HG-CGH-1x1M", "broad.mit.edu/GenomeWideSNP_6", 
-                "hms.harvard.edu/HG-CGH-244A", "hudsonalpha.org/Human1M-Duo",
-                "hms.harvard.edu/HG-CGH-415K", "mskcc.org/HG-CGH-244A");
-  keys <- paste(data$center, data$chipType, sep="/");
-  idxs <- match(keyOrder, keys);
-  idxs <- na.omit(idxs);
-  targetDimension <- idxs[1];
-  stopifnot(is.finite(targetDimension));
-  verbose && cat(verbose, "Target (center, chipType):");
-  verbose && print(verbose, data[targetDimension,,drop=FALSE]);
-  verbose && exit(verbose);
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Multi-source CN normalization
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  dsListKK <- lapply(dfList, FUN=function(df) {
-    AromaUnitTotalCnBinarySet(list(df));
-  });
-  mscn <- MultiSourceCopyNumberNormalization(dsListKK, fitUgp=fitUgp, 
-             targetDimension=targetDimension, align="byChromosome", 
-                                         tags=c("*", analysisTag));
-  verbose && print(verbose, mscn);
-  
-  dsNList <- process(mscn, verbose=verbose);
-  verbose && print(verbose, dsNList);
+  dsSList[[kk]] <- dsS;
 
   verbose && exit(verbose);
 } # for (kk ...)
 
 
-
 ############################################################################
 # HISTORY:
-# 2010-01-05
-# o Created from test20090929,MSCN.Rex.
+# 2010-01-10
+# o Created.
 ############################################################################
