@@ -23,7 +23,7 @@ patterns <- TcgaDccData$getDataSetPatterns();
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all tumor-normal CN data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-rootPaths <- c("rawCnData", "cnData");
+rootPaths <- c("rawCnData", "cnData", "smoothCnData");
 rootPaths <- sapply(rootPaths, Arguments$getReadablePath, mustExist=FALSE);
 keep <- sapply(rootPaths, FUN=isDirectory);
 rootPaths <- rootPaths[keep];

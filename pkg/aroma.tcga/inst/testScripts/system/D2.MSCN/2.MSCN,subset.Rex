@@ -16,12 +16,18 @@ library("aroma.cn");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
+# Requires aroma.cn v0.4.5 or newer
+stopifnot(!isOlderThan(aroma.cn, "0.4.5"));
+
+figForce <- FALSE;
+
 timeStamp <- format(Sys.time(), format="%Y-%m-%d %k:%M:%S %Z");
 pid <- sprintf("%s,%s", System$getHostname(), timeStamp);
 
 analysisTag <- "HB20091001";
 analysisTag <- "HB20100105";
 analysisTag <- "HB20100107";
+analysisTag <- "HB20100114";
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all tumor-normal CN data sets
@@ -191,13 +197,60 @@ for (kk in seq(along=sampleNames)) {
   dsListKK <- lapply(dfList, FUN=function(df) {
     AromaUnitTotalCnBinarySet(list(df));
   });
+
+  # Use small degrees of freedom (df=3.5; default df=5).
+  # This solves the issue with Illumina MSCN data for the Ovarian
+  # TCGA-09-1670 (see email with Jun Li, 2009-11-19--2010-01-14).
+  df <- 3.5;
+  dfTag <- sprintf("df=%.1f", df);
   mscn <- MultiSourceCopyNumberNormalization(dsListKK, fitUgp=fitUgp, 
              targetDimension=targetDimension, align="byChromosome", 
-                                         tags=c("*", analysisTag));
+                                         tags=c("*", analysisTag, dfTag));
+  mscn$.pcBandwidth <- df;
   verbose && print(verbose, mscn);
   
   dsNList <- process(mscn, verbose=verbose);
   verbose && print(verbose, dsNList);
+
+
+  verbose && enter(verbose, "Doing MSCN QC plots");
+  name <- "TCGA";
+  tags <- getTags(mscn, collapse=",");
+  path <- file.path("reports", name, tags, "QC,pairs");
+  path <- Arguments$getWritablePath(path);
+
+  allNames <- getAllNames(mscn);
+  for (ii in seq(along=allNames)) {
+    sampleName <- allNames[ii];
+    verbose && enter(verbose, sprintf("Sample %d ('%s') of %d", 
+                                 ii, sampleName, length(allNames)));
+
+    figName <- sprintf("%s,pairs", sampleName);
+    filename <- sprintf("%s.png", figName);
+    pathname <- file.path(path, filename);
+    if (figForce || !isFile(pathname)) {
+      devNew("png", pathname, width=640, height=640);
+      par(mar=c(3.2,4.2,4.0,1.1), mgp=c(3,0.6,0), cex.axis=1.4, tcl=-0.2);
+      plotSmoothedPairsOne(mscn, sampleName=sampleName, 
+                                                 verbose=less(verbose, 5));
+      devDone();
+    }
+
+    figName <- sprintf("%s,pairs,backtransforms", sampleName);
+    filename <- sprintf("%s.png", figName);
+    pathname <- file.path(path, filename);
+    if (figForce || !isFile(pathname)) {
+      fit <- fitOne(mscn, sampleName, verbose=less(verbose, 5));
+      devNew("png", pathname, width=640, height=640);
+      par(mar=c(4.6,4.2,3.0,2.1), mgp=c(2,0.6,0), cex.axis=1.4, tcl=-0.2);
+      plotBacktransforms(fit);
+      title(main=sampleName, outer=TRUE, line=-1, cex.sub=1.2);
+      devDone();
+    }
+
+    verbose && exit(verbose);
+  } # for (ii ...)
+  verbose && exit(verbose);
 
   verbose && exit(verbose);
 } # for (kk ...)
@@ -206,6 +259,9 @@ for (kk in seq(along=sampleNames)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-14
+# o Added automatic generation of QCs after MSCN normalization.
+# o Changed the principal curve smoothness.
 # 2010-01-05
 # o Created from test20090929,MSCN.Rex.
 ############################################################################
