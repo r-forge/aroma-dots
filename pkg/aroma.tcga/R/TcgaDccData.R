@@ -6,7 +6,10 @@ setConstructorS3("TcgaDccData", function(...) {
   extend(Object(), "TcgaDccData");
 })
 
-setMethodS3("getDataSetPatterns", "TcgaDccData", function(static, ...) {
+setMethodS3("getDataSetPatterns", "TcgaDccData", function(static, version=c("3", "2"), ...) {
+  # Argument 'version':
+  version <- match.arg(version);
+
   patterns <- list();
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -20,10 +23,23 @@ setMethodS3("getDataSetPatterns", "TcgaDccData", function(static, ...) {
   patterns$platform <- "[A-Z][-_A-Za-z0-9]*";
   # TCGA archive version, e.g. 11.5.0, 1.0.0
   patterns$archive <- "([0-9]+)[.]([0-9]+)[.]([0-9]+)";
+  patterns$level <- "(Level_[0-9])";
   
-  patterns$dataset <- with(patterns, {
-    sprintf("(%s)_(%s)[.](%s)[.](%s)", center, tumor, platform, archive);
+  patterns$datasetV2 <- with(patterns, {
+    sprintf("(%s)_(%s)[.](%s)[.](%s)", 
+             center, tumor, platform, archive);
   });
+
+  patterns$datasetV3 <- with(patterns, {
+    sprintf("(%s)_(%s)[.](%s)[.](%s)[.](%s)", 
+             center, tumor, platform, level, archive);
+  });
+
+  if (version == 2) {
+    patterns$dataset <-patterns$datasetV2;
+  } else if (version == 3) {
+    patterns$dataset <-patterns$datasetV3;
+  }
 
   patterns;
 })
@@ -42,7 +58,7 @@ setMethodS3("findDataSets2", "TcgaDccData", function(static, pattern=NULL, rootP
   rootPathF <- Arguments$getReadablePath(rootPathF);
 
   # Build pattern
-  defaultPattern <- TcgaDccData$getDataSetPattern("dataset");
+  defaultPattern <- TcgaDccData$getDataSetPattern("dataset", ...);
   if (is.null(pattern)) {
     pattern <- defaultPattern;
   } else {
@@ -82,6 +98,8 @@ setMethodS3("findDataSets2", "TcgaDccData", function(static, pattern=NULL, rootP
 
 ############################################################################
 # HISTORY:
+# 2010-01-17
+# o Added data set patterns for new DCC v3 archive names (with Level_N).
 # 2009-10-20
 # o Added new static findDataSets().
 # o "Old" findDataSets() was renamed to findDataSets2().

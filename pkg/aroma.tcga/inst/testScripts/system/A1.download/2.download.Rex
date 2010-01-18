@@ -26,7 +26,12 @@ verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 rootPath <- "tcgaData";
 rootPath <- Arguments$getReadablePath(rootPath);
 
-paths <- TcgaDccData$findDataSets(rootPath=rootPath);
+if (interactive()) {
+  version <- textMenu(c("3", "2"), value=TRUE);
+} else {
+  version <- "3";
+}
+paths <- TcgaDccData$findDataSets(rootPath=rootPath, version=version);
 if (length(paths) == 0) {
   throw("No TCGA data set directories found.");
 }

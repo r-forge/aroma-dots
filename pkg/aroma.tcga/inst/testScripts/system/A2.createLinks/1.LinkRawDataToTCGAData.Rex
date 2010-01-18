@@ -18,17 +18,30 @@ library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Scan for all TCGA data sets
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Find all TCGA data sets
-srcPaths <- TcgaDccData$findDataSets();
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Scan for all TCGA archive directories
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+rootPath <- "tcgaData";
+rootPath <- Arguments$getReadablePath(rootPath);
 
+if (interactive()) {
+  version <- textMenu(c("3", "2"), value=TRUE);
+} else {
+  version <- "3";
+}
+srcPaths <- TcgaDccData$findDataSets(rootPath=rootPath, version=version);
+if (length(srcPaths) == 0) {
+  throw("No TCGA data set directories found.");
+}
+verbose && str(verbose, srcPaths);
+ 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Extra chip types
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 dataSets <- basename(srcPaths);
-pattern <- "^([^_]+)_([^.]+)[.]([^.]+)[.]([0-9]+[.][0-9]+[.][0-9])$";
+patterns <- TcgaDccData$getDataSetPatterns(version=version);
+pattern <- patterns$dataset;
+#pattern <- "^([^_]+)_([^.]+)[.]([^.]+)[.]([0-9]+[.][0-9]+[.][0-9])$";
 chipTypes <- gsub(pattern, "\\3", dataSets);
 
 knownChipTypes <- c(
@@ -86,6 +99,8 @@ for (kk in seq(along=dataSets)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-17
+# o Updated to handle DCC v3 as well.
 # 2010-01-02
 # o Added a description.
 # 2009-10-26

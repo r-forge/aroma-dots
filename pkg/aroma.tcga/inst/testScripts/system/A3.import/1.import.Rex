@@ -40,13 +40,19 @@ if (!interactive()) {
 }
 
 
-rootPath <- "rawData/";
-rootPath <- Arguments$getReadablePath(rootPath);
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pattern <- TcgaDccData$getDataSetPatterns()$dataset;
+if (interactive()) {
+  version <- textMenu(c("3", "2"), value=TRUE);
+} else {
+  version <- "3";
+}
+patterns <- TcgaDccData$getDataSetPatterns(version=version);
+pattern <- patterns$dataset;
+
+rootPath <- "rawData/";
+rootPath <- Arguments$getReadablePath(rootPath);
 dataSets <- list.files(path=rootPath, pattern=pattern);
 
 verbose && cat(verbose, "Available data sets:");
