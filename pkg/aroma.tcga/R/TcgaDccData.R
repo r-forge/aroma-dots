@@ -6,7 +6,7 @@ setConstructorS3("TcgaDccData", function(...) {
   extend(Object(), "TcgaDccData");
 })
 
-setMethodS3("getDataSetPatterns", "TcgaDccData", function(static, version=c("3", "2"), ...) {
+setMethodS3("getDataSetPatterns", "TcgaDccData", function(static, version=c("*", "3", "2"), ...) {
   # Argument 'version':
   version <- match.arg(version);
 
@@ -35,10 +35,17 @@ setMethodS3("getDataSetPatterns", "TcgaDccData", function(static, version=c("3",
              center, tumor, platform, level, archive);
   });
 
+  patterns$datasetV2V3 <- with(patterns, {
+    sprintf("(%s)_(%s)[.](%s)(|[.]%s)[.](%s)", 
+             center, tumor, platform, level, archive);
+  });
+
   if (version == 2) {
     patterns$dataset <-patterns$datasetV2;
   } else if (version == 3) {
     patterns$dataset <-patterns$datasetV3;
+  } else if (version == "*") {
+    patterns$dataset <-patterns$datasetV2V3;
   }
 
   patterns;

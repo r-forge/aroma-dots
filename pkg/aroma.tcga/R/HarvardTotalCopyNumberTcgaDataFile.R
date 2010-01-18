@@ -4,6 +4,11 @@ setConstructorS3("HarvardTotalCopyNumberTcgaDataFile", function(...) {
 })
 
 
+setMethodS3("getExtensionPattern", "HarvardTotalCopyNumberTcgaDataFile", function(this, default="[.](data[.]txt|tsv)$", ...) {
+  NextMethod("getExtensionPattern", this, default=default, ...);  
+}, static=TRUE)
+
+
 setMethodS3("getReadArguments", "HarvardTotalCopyNumberTcgaDataFile", function(this, ..., colClassPatterns=c("*"="character", "normalizedLog2Ratio$"="double")) {
   NextMethod("getReadArguments", this, ..., colClassPatterns=colClassPatterns);
 }, protected=TRUE)
@@ -232,6 +237,8 @@ setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, 
 
 ############################################################################
 # HISTORY:
+# 2010-01-17
+# o Updated getExtensionPattern() to also recognize *.tsv files.
 # 2010-01-03
 # o Added exportTotal().
 # o extractTotalCopyNumbers() uses extractTotalLog2CopyNumbers().

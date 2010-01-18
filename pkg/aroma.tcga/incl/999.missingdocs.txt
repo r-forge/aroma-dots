@@ -146,3 +146,4 @@ getColumnNames.MskccTotalCopyNumberTcgaDataFile
   extractByTcgaType extractByTcgaType.GenericDataFileSet
 readBCRSamplesTable readBCRSamplesTable.TcgaDccDownloader
 extractTumorNormalPairs extractTumorNormalPairs.GenericDataFileSet
+  getExtensionPattern.HarvardTotalCopyNumberTcgaDataFile

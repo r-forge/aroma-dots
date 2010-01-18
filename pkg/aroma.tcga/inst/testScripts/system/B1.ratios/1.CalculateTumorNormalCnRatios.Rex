@@ -60,6 +60,7 @@ rootPath <- Arguments$getReadablePath(rootPath);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 patterns <- TcgaDccData$getDataSetPatterns();
 pattern <- patterns$dataset;
+
 dataSets <- list.files(path=rootPath, pattern=pattern);
 verbose && cat(verbose, "Available data sets:");
 verbose && print(verbose, dataSets);

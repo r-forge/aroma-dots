@@ -43,12 +43,7 @@ if (!interactive()) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if (interactive()) {
-  version <- textMenu(c("3", "2"), value=TRUE);
-} else {
-  version <- "3";
-}
-patterns <- TcgaDccData$getDataSetPatterns(version=version);
+patterns <- TcgaDccData$getDataSetPatterns();
 pattern <- patterns$dataset;
 
 rootPath <- "rawData/";
