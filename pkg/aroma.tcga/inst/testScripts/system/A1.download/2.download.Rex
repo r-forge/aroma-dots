@@ -26,12 +26,7 @@ verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 rootPath <- "tcgaData";
 rootPath <- Arguments$getReadablePath(rootPath);
 
-if (interactive()) {
-  version <- textMenu(c("3", "2"), value=TRUE);
-} else {
-  version <- "3";
-}
-paths <- TcgaDccData$findDataSets(rootPath=rootPath, version=version);
+paths <- TcgaDccData$findDataSets(rootPath=rootPath);
 if (length(paths) == 0) {
   throw("No TCGA data set directories found.");
 }
@@ -116,10 +111,11 @@ verbose && print(verbose, tddList);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Drop old data sets if newer exists
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pattern <- TcgaDccData$getDataSetPatterns()$dataset;
+patterns <- TcgaDccData$getDataSetPatterns();
+pattern <- patterns$dataset;
 dataSets <- sapply(tddList, FUN=getDataSet);
 dataSetNames <- gsub(pattern, "\\1_\\2.\\3", dataSets);
-majorArchives <- as.integer(gsub(pattern, "\\5", dataSets));
+majorArchives <- as.integer(gsub(pattern, "\\7", dataSets));
 labels <- sprintf("%s.%02d", dataSetNames, majorArchives);
 o <- order(labels);
 labels <- labels[o];
@@ -136,7 +132,7 @@ for (kk in seq(along=res)) {
   tddKK <- res[[kk]];
   if (length(tddKK) > 1) {
     versionsKK <- sapply(tddKK, FUN=function(tdd) {
-      gsub(pattern, "\\6.\\7", getDataSet(tdd));
+      gsub(pattern, "\\8.\\9", getDataSet(tdd));
     });
     maxPos <- 1;
     for (jj in 2:length(versionsKK)) {
@@ -247,6 +243,8 @@ for (pp in seq(along=patterns)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-17
+# o Updated to work with new DCC v3 archive patterns.
 # 2009-10-23
 # o Added interactive selection of download filename patterns.
 # 2009-10-22

@@ -234,6 +234,40 @@ dsList <- dsList[ns > 0];
 stopifnot(length(dsList) > 0);
 
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Scan for all data files
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+filenamesList <- lapply(dsList, FUN=function(ds) {
+  sapply(ds, getFilename);
+});
+
+filenames <- sort(unique(unlist(filenamesList, use.names=FALSE)));
+if (interactive()) {
+  filenames <- selectMenu(filenames, selected=TRUE);
+}
+stopifnot(length(filenames) > 0);
+
+
+# Drop files that do not contain the samples of interest
+for (kk in seq(along=filenamesList)) {
+  filenamesSet <- filenamesList[[kk]];
+  ds <- dsList[[kk]];
+  keep <- sapply(filenamesSet, FUN=function(names) {
+    any(is.element(names, filenames));
+  });
+  ds <- extract(ds, keep);
+  dsList[[kk]] <- ds;
+} # for (kk ...)
+
+# Drop data sets that do not contain the samples of interest
+ns <- sapply(dsList, FUN=length);
+dsList <- dsList[ns > 0];
+stopifnot(length(dsList) > 0);
+
+
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Scan for all sample names
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
