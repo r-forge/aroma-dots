@@ -235,6 +235,7 @@
 \alias{readBCRSamplesTable.TcgaDccDownloader}
 \alias{extractTumorNormalPairs}
 \alias{extractTumorNormalPairs.GenericDataFileSet}
+\alias{getExtensionPattern.HarvardTotalCopyNumberTcgaDataFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
