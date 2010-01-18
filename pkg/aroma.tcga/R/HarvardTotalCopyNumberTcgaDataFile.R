@@ -16,9 +16,9 @@ setMethodS3("getReadArguments", "HarvardTotalCopyNumberTcgaDataFile", function(t
 
 
 setMethodS3("extractTotalLog2CopyNumbers", "HarvardTotalCopyNumberTcgaDataFile", function(this, ..., drop=TRUE) {
-  colClassPatterns <- c("CompositeElement REF"="character", "normalizedLog2Ratio$"="double");
+  colClassPatterns <- c("Composite[ ]*Element REF"="character", "normalizedLog2Ratio$"="double");
   data <- readDataFrame(this, colClassPatterns=colClassPatterns, ...);
-  idx <- match("CompositeElement REF", colnames(data));
+  idx <- grep("Composite[ ]*Element REF", colnames(data));
   unitNames <- data[,idx];
   data <- data[,-idx,drop=FALSE];
   names <- names(data);
@@ -142,7 +142,7 @@ setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, 
     # Map unit indices
     if (is.null(units)) {
       verbose && enter(verbose, "Mapping unit names to indices");
-      colClassPatterns <- c("CompositeElement REF"="character");
+      colClassPatterns <- c("Composite[ ]*Element REF"="character");
       unitNames <- readDataFrame(this, colClassPatterns=colClassPatterns)[,1];
       verbose && cat(verbose, "Unit names:");
       verbose && str(verbose, unitNames);
@@ -238,6 +238,9 @@ setMethodS3("exportTotal", "HarvardTotalCopyNumberTcgaDataFile", function(this, 
 ############################################################################
 # HISTORY:
 # 2010-01-17
+# o WORKAROUND: Some *.tsv files uses a "CompositeElement REF" header,
+#   others "Composite Element REF" (note the space).
+#   See https://gforge.nci.nih.gov/tracker/index.php?func=detail&aid=25869
 # o Updated getExtensionPattern() to also recognize *.tsv files.
 # 2010-01-03
 # o Added exportTotal().

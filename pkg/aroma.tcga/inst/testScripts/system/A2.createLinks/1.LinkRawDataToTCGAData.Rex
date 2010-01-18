@@ -24,12 +24,7 @@ verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 rootPath <- "tcgaData";
 rootPath <- Arguments$getReadablePath(rootPath);
 
-if (interactive()) {
-  version <- textMenu(c("3", "2"), value=TRUE);
-} else {
-  version <- "3";
-}
-srcPaths <- TcgaDccData$findDataSets(rootPath=rootPath, version=version);
+srcPaths <- TcgaDccData$findDataSets(rootPath=rootPath);
 if (length(srcPaths) == 0) {
   throw("No TCGA data set directories found.");
 }
@@ -39,9 +34,8 @@ verbose && str(verbose, srcPaths);
 # Extra chip types
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 dataSets <- basename(srcPaths);
-patterns <- TcgaDccData$getDataSetPatterns(version=version);
+patterns <- TcgaDccData$getDataSetPatterns();
 pattern <- patterns$dataset;
-#pattern <- "^([^_]+)_([^.]+)[.]([^.]+)[.]([0-9]+[.][0-9]+[.][0-9])$";
 chipTypes <- gsub(pattern, "\\3", dataSets);
 
 knownChipTypes <- c(
