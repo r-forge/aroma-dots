@@ -1,7 +1,8 @@
 Package: aroma.tcga
 ===================
 
-Version: 0.4.2 [2010-01-17]
+Version: 0.4.2 [2010-01-18]
+o Added a ASCRMAv2 script.
 o Started to update code and scripts to also recognize archives
   in the new DCC v3 format.  Still lots to add, e.g. MD5 file 
   checksum validation of downloads etc.
