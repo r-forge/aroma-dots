@@ -6,7 +6,7 @@
 #  launchMenu(aroma.tcga, "testScripts/system/import/");
 #
 # Command line:
-#  nohupR 1.import.Rex [--dataSets="<dataSet1>,...,<dataSetK>"]
+#  nohupR 1.ASCRMAv2.Rex [--dataSets="<dataSet1>,...,<dataSetK>"]
 #    [--sampleNames="<sampleName1>,...,<sampleNameK>"
 #
 # Description:
