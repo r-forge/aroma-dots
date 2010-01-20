@@ -262,7 +262,14 @@ for (kk in seq(along=dsList)) {
   
   # Sanity check
   stopifnot(identical(getNames(dsT), getNames(dsN)));
-  
+
+
+  # Nothing to do?
+  if (nbrOfFiles(dsT) == 0) {
+    next;
+    verbose && cat(verbose, "Nothing to do.");
+    verbose && exit(verbose);
+  }
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Principal curve normalization
@@ -289,6 +296,8 @@ for (kk in seq(along=dsList)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-18
+# o Now empty tumor/normal sets are ignored. 
 # 2010-01-17
 # o Extended to process multiple data sets
 # 2010-01-05
