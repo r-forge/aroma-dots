@@ -14,11 +14,35 @@ library("aroma.cn");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Command line options
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (!interactive()) {
+  args <- commandArgs(asValues=TRUE, excludeReserved=TRUE, excludeEnvVars=TRUE)[-1];
+  verbose && cat(verbose, "Raw command line arguments:");
+  verbose && print(verbose, args);
+
+  # Optional arguments
+  if (!is.null(args$file)) {
+    args$file <- trim(strsplit(args$file, split=", ")[[1]]);
+  }
+  verbose && cat(verbose, "Parsed command line arguments:");
+  verbose && print(verbose, args);
+
+  # Optional arguments
+  if (!is.null(args$batch)) {
+    args$batch <- trim(strsplit(args$batch, split=", ")[[1]]);
+  }
+  verbose && cat(verbose, "Parsed command line arguments:");
+  verbose && print(verbose, args);
+}
+
 timeStamp <- format(Sys.time(), format="%Y-%m-%d %k:%M:%S %Z");
 pid <- sprintf("%s,%s", System$getHostname(), timeStamp);
 
 analysisTag <- "HB20091001";
-analysisTag <- "HB20100105";
+analysisTag <- "HB20100120";
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select set of samples to normalize
@@ -26,15 +50,34 @@ analysisTag <- "HB20100105";
 pattern <- "^TCGA,[^,]+,CN,samples,([-0-9]+).Rbin$";
 filenames <- list.files(pattern=pattern, path=".");
 filenames <- sort(filenames, decreasing=TRUE);
+stopifnot(length(filenames) > 0);
+
 if (interactive()) {
   filename <- textMenu(filenames, value=TRUE);
 } else {
-  filename <- filenames[1];
+  if (!is.null(args$file)) {
+    filename <- args$file;
+  } else {
+    filename <- filenames[1];
+  }
 }
 data <- loadObject(filename);
 verbose && str(verbose, data);
 
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# In batches or all together?
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (interactive()) {
+  batch <- textMenu(c(TRUE, FALSE), "In batches?", value=TRUE);
+} else {
+  if (!is.null(args$batch)) {
+    batch <- args$batch;
+  } else {
+    batch <- FALSE;
+  }
+}
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify unique sample names
@@ -46,45 +89,48 @@ verbose && str(verbose, sampleNames);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Get "job queue"
+# Get "job queue"?
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-verbose && enter(verbose, "Grabbing samples from job queue");
-filename <- sprintf("MSCN,%s,jobs,queue.Rbin", analysisTag);
-pathname <- Arguments$getReadablePathname(filename, mustExist=FALSE);
-if (isFile(pathname)) {
-  # Load job queue
-  jobs <- loadObject(pathname);
-  chunks <- jobs$todo;
-} else {
-  # Split in 10 chunks;
-  nbrOfChunks <- 10;
-  chunkSize <- ceiling(nbrOfSamples/nbrOfChunks);
-  chunks <- splitInChunks(seq(length=nbrOfSamples), chunkSize=chunkSize);
-  jobs <- list(todo=chunks, done=NULL);
-}
-
-verbose && cat(verbose, "Jobs before:");
-verbose && str(verbose, jobs);
-
-# Work on chunk on top of queue
-chunk <- chunks[[1]];
-jobs$todo <- chunks[-1];
-job <- list(chunk);
-names(job) <- pid;
-jobs$done <- c(jobs$done, job);
-
-# Save job queue (for next host)
-saveObject(jobs, file=pathname);
-
-verbose && cat(verbose, "Jobs afterward:");
-verbose && str(verbose, jobs);
-verbose && exit(verbose);
+if (batch) {
+  verbose && enter(verbose, "Grabbing samples from job queue");
+  filename <- sprintf("MSCN,%s,jobs,queue.Rbin", analysisTag);
+  pathname <- Arguments$getReadablePathname(filename, mustExist=FALSE);
+  if (isFile(pathname)) {
+    # Load job queue
+    jobs <- loadObject(pathname);
+    chunks <- jobs$todo;
+  } else {
+    # Split in 10 chunks;
+    nbrOfChunks <- 10;
+    chunkSize <- ceiling(nbrOfSamples/nbrOfChunks);
+    chunks <- splitInChunks(seq(length=nbrOfSamples), chunkSize=chunkSize);
+    jobs <- list(todo=chunks, done=NULL);
+  }
+  
+  verbose && cat(verbose, "Jobs before:");
+  verbose && str(verbose, jobs);
+  
+  # Work on chunk on top of queue
+  chunk <- chunks[[1]];
+  jobs$todo <- chunks[-1];
+  job <- list(chunk);
+  names(job) <- pid;
+  jobs$done <- c(jobs$done, job);
+  
+  # Save job queue (for next host)
+  saveObject(jobs, file=pathname);
+  
+  verbose && cat(verbose, "Jobs afterward:");
+  verbose && str(verbose, jobs);
+  verbose && exit(verbose);
+  
+  sampleNames <- sampleNames[chunk];
+} # if (batch)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Samples to be processed
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sampleNames <- sampleNames[chunk];
 nbrOfSamples <- length(sampleNames);
 verbose && cat(verbose, "Samples to be processed:");
 verbose && print(verbose, sampleNames);
@@ -163,6 +209,9 @@ for (kk in seq(length=nbrOfSamples)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-20
+# o Added the options to processing all or in batches.
+# o Added support for command line options.
 # 2009-09-30
 # o Now 'targetDimension' is set according to a prioritized list.
 # 2009-09-29
