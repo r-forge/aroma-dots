@@ -49,48 +49,144 @@ getAnnotationDataFiles <- function(ds, ...) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Source and destination root directories
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-srcRootPath <- "cnData";
-srcRootPath <- Arguments$getWritablePath(srcRootPath);
-verbose && cat(verbose, "Source root path: ", srcRootPath);
+rootPath <- "cnData";
+rootPath <- Arguments$getWritablePath(rootPath);
+verbose && cat(verbose, "Source root path: ", rootPath);
 
-destRootPath <- sprintf("%s,txt", srcRootPath);
+destRootPath <- sprintf("%s,txt", rootPath);
 destRootPath <- Arguments$getWritablePath(destRootPath);
 verbose && cat(verbose, "Destination root path: ", destRootPath);
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# Locating all TCGA data sets
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# TO DO:
-# sets <- TcgaDccData$findDataSets2(pattern=pattern, tumorType="OV");
-pattern <- "^%s,ov,pairs";
-pattern <- "^%s,ov(,.*|),pairs,mscn,byChromosome,HB20091001$";
-sets <- TcgaDccData$findDataSets2(pattern=pattern, rootPath=srcRootPath);
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Identify all data sets
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+patterns <- TcgaDccData$getDataSetPatterns();
+pattern <- patterns$dataset;
+
+dataSets <- list.files(path=rootPath, pattern=pattern);
+verbose && cat(verbose, "Available data sets:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
+
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select tumor types
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pattern <- sprintf("^%s.*", patterns$dataset);
+types <- gsub(pattern, "\\2", dataSets);
+uTypes <- sort(unique(types));
+
+# User selected types
+if (interactive()) {
+  uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1),
+                       title="Select type:");
+} else {
+  if (!is.null(args$types)) {
+    uTypes <- intersect(uTypes, args$types);
+  }
+}
+
+keep <- is.element(types, uTypes);
+dataSets <- dataSets[keep];
+stopifnot(length(dataSets) > 0);
+
+
+# Human-style sorting
+## try(dataSets <- gtools::mixedsort(dataSets), silent=TRUE);
+
+tumorType <- uTypes[1];
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select preprocessing types
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pattern <- sprintf("^%s,", patterns$dataset);
+types <- gsub(pattern, "", dataSets);
+uTypes <- sort(unique(types));
+
+# User selected types
+if (interactive()) {
+  uTypes <- selectMenu(uTypes, selected=(length(uTypes) == 1), title="Select preprocessing methods:");
+} else {
+  if (!is.null(args$methods)) {
+    uTypes <- intersect(uTypes, args$methods);
+  }
+}
+
+
+keep <- is.element(types, uTypes);
+dataSets <- dataSets[keep];
+stopifnot(length(dataSets) > 0);
+
+# Human-style sorting
+## try(dataSets <- gtools::mixedsort(dataSets), silent=TRUE);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select data sets
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (interactive()) {
+  dataSets <- selectMenu(dataSets, selected=(length(dataSets) == 1), title="Select dataset(s):");
+}
+stopifnot(length(dataSets) > 0);
+
+verbose && cat(verbose, "Selected data sets:");
+verbose && print(verbose, dataSets);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Select samples to process
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Get all data sets
+dsList <- lapply(dataSets, FUN=function(dataSet) {
+  AromaUnitTotalCnBinarySet$byName(dataSet, chipType="*", paths=rootPath);
+});
+
+sampleNames <- lapply(dsList, FUN=getNames);
+sampleNames <- sort(unique(unlist(sampleNames, use.names=FALSE)));
+stopifnot(length(sampleNames) > 0);
+
+# User selection
+if (interactive()) {
+  sampleNames <- selectMenu(sampleNames, selected=(length(sampleNames) == 1));
+}
+
+# Keep only samples and data sets of interest
+dsList <- lapply(dsList, extract, sampleNames, onMissing="drop");
+ns <- sapply(dsList, length);
+dsList <- dsList[ns > 0];
+stopifnot(length(dsList) > 0);
+
+dataSets <- unname(sapply(dsList, FUN=getFullName));
+verbose && cat(verbose, "Data sets to be processed:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
+
+verbose && cat(verbose, "Samples to be processed:");
+verbose && print(verbose, sampleNames);
+stopifnot(length(sampleNames) > 0);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Choosing data sets
+# Choosing data sets by chip type
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 verbose && enter(verbose, "Making sure all annotation data is available");
-chipTypes <- sort(unique(sets$chipType));
+chipTypes <- sapply(dsList, getChipType);
+uChipTypes <- sort(unique(chipTypes));
 verbose && cat(verbose, "Chip types:");
 verbose && print(verbose, chipTypes);
 
 if (interactive()) {
-  chipTypes <- selectMenu(chipTypes, selected=(length(chipTypes) == 1));
-  sets <- subset(sets, chipType %in% chipTypes);
-  dataSets <- sort(unique(sets$dataSet));
-  dataSets <- selectMenu(dataSets, selected=(length(dataSets) == 1));
-  sets <- subset(sets, dataSet %in% dataSets);
+  uChipTypes <- selectMenu(uChipTypes, selected=TRUE);
+  keep <- is.element(uChipTypes, chipTypes);
+  dsList <- dsList[keep];
 }
 
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Loading all TCGA data sets
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-dsList <- lapply(sets$path, FUN=AromaUnitTotalCnBinarySet$byPath);
 stopifnot(length(dsList) > 0);
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Turn fullnames like this:
@@ -137,7 +233,7 @@ for (kk in seq(along=dsList)) {
   dataSet <- getFullName(ds);
   platform <- getPlatform(ds);
   chipType <- getChipType(ds);
-  verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
+ verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
                                             kk, dataSet, length(dsList)));
 
   # Output data set path
@@ -377,6 +473,8 @@ verbose && exit(verbose);
 
 ############################################################################
 # HISTORY:
+# 2010-01-21
+# o Updated to export TCGA OV data.
 # 2009-10-20
 # o Updated to use findDataSets2().
 # 2009-10-03
