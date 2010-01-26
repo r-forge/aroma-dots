@@ -17,19 +17,23 @@ analysisTag <- "HB20100124";
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Local functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-writeCopyNumberProfiles <- function(dfList, setName, tags=NULL, chromosomes=1:24, clim=c(0,8), logBase=NULL, chr01Width=2000, height=400, ...) {
+writeCopyNumberProfiles <- function(dfList, setName, tags="MSQC", modelTags=NULL, chromosomes=1:24, clim=c(0,8), logBase=NULL, zooms=c(1,2,4), chr01Width=1024, height=400, ...) {
   # Argument 'height':
   height <- Arguments$getInteger(height);
 
   # Argument 'chromosomes':
   chromosomes <- Arguments$getIndices(chromosomes);
 
+  # Argument 'zooms':
+  zooms <- Arguments$getIntegers(zooms, range=c(1,999));
+
   df <- dfList[[1]];
   chipType <- getChipType(df);
 
   fullname <- paste(setName, collapse=",");
   tags <- paste(tags, collapse=",");
-  figPath <- filePath("reports", fullname, chipType, tags);
+  modelTags <- paste(modelTags, collapse=",");
+  figPath <- filePath("reports", fullname, tags, chipType, modelTags);
   figPath <- Arguments$getWritablePath(figPath);
 
   chr01Length <- 247000001;
@@ -37,52 +41,73 @@ writeCopyNumberProfiles <- function(dfList, setName, tags=NULL, chromosomes=1:24
     chr <- chromosomes[cc];
     verbose && enter(verbose, sprintf("Chromosome #%d ('Chr%02d') of %d", 
                                            cc, chr, length(chromosomes)));
-    figName <- sprintf("%s,chr%02d", sampleName, chr);
-    filename <- sprintf("%s.png", figName);
-    pathname <- filePath(figPath, filename);
-    if (isFile(pathname)) {
-      verbose && cat(verbose, "Already plotted.");
+
+    cnList <- NULL;
+
+    for (zz in seq(along=zooms)) {
+      zoom <- zooms[zz];
+      verbose && enter(verbose, sprintf("Zoom #%d ('%d') of %d", zz, zoom, length(zooms)));
+
+      zoomTag <- sprintf("x%04d", zoom);
+      figName <- sprintf("%s,chr%02d,%s", sampleName, chr, zoomTag);
+      filename <- sprintf("%s.png", figName);
+      pathname <- filePath(figPath, filename);
+      verbose && print(verbose, pathname);
+
+      if (isFile(pathname)) {
+        verbose && cat(verbose, "Already plotted.");
+        verbose && exit(verbose);
+        next;
+      }
+
+      # Load data
+      if (is.null(cnList)) {
+        verbose && enter(verbose, "Load, merge and transform signals");
+
+        # Extract signals
+        cnList <- lapply(dfList, FUN=extractRawCopyNumbers, chromosome=chr);
+        verbose && print(verbose, cnList);
+
+        ns <- sapply(cnList, nbrOfLoci);
+        n <- ns[1];
+        # Sanity check
+        stopifnot(all(ns == n));
+    
+        # Merge and sort
+        cn <- Reduce(append, cnList);
+        cn <- sort(cn);
+        verbose && print(verbose, cn);
+
+        if (is.null(logBase)) {
+          # Report on the non-log scale, i.e. C = 2*tumor/normal.
+          cn$y <- 2*2^cn$y;
+        }
+
+        chrLength <- xMax(cn);
+
+        verbose && exit(verbose);
+      } # if (is.null(cnList))
+
+      width <- as.integer(zoom * chr01Width * chrLength / chr01Length);
+      verbose && printf(verbose, "Image dimension: %dx%d pixels\n", height, width);
+
+      devNew("png", pathname, width=width, height=height);
+      par(mar=c(3,3,1,1)+0.1, mgp=c(1.8,0.5,0), cex=1.2);
+
+      # Plot along chromosome
+      plot(cn, col=cols[cn$id], pch=".", cex=3, ylim=clim);
+      stext(side=3, pos=0, sampleName);
+      stext(side=3, pos=1, sprintf("Chr %02d", chr));
+      stext(side=4, pos=0, sprintf("n=%dx%d", length(dfList), n), cex=0.7);
+      stext(side=4, pos=1, chipType, cex=0.7);
+      labels <- gsub("/", "\n", sourceNames);
+      legend("topleft", labels, col=cols, pch=19, cex=0.9, pt.cex=1.5, 
+                        horiz=TRUE, bty="n");
+  
+      devDone();
+
       verbose && exit(verbose);
-      next;
-    }
-
-    # Extract signals
-    cnList <- lapply(dfList, FUN=extractRawCopyNumbers, chromosome=chr);
-    verbose && print(verbose, cnList);
-
-    ns <- sapply(cnList, nbrOfLoci);
-    n <- ns[1];
-    # Sanity check
-    stopifnot(all(ns == n));
-
-    # Merge and sort
-    cn <- Reduce(append, cnList);
-    cn <- sort(cn);
-    verbose && print(verbose, cn);
-
-    if (is.null(logBase)) {
-      # Report on the non-log scale, i.e. C = 2*tumor/normal.
-      cn$y <- 2*2^cn$y;
-    }
-
-    chrLength <- xMax(cn);
-    width <- as.integer(chr01Width * chrLength / chr01Length);
-    verbose && printf(verbose, "Image dimension: %dx%d pixels\n", height, width);
-
-    devNew("png", pathname, width=width, height=height);
-    par(mar=c(3,3,1,1)+0.1, mgp=c(1.8,0.5,0), cex=1.2);
-
-    # Plot along chromosome
-    plot(cn, col=cols[cn$id], pch=".", cex=3, ylim=clim);
-    stext(side=3, pos=0, sampleName);
-    stext(side=3, pos=1, sprintf("Chr %02d", chr));
-    stext(side=4, pos=0, sprintf("n=%dx%d", length(dfList), n), cex=0.7);
-    stext(side=4, pos=1, chipType, cex=0.7);
-    labels <- gsub("/", "\n", sourceNames);
-    legend("topleft", labels, col=cols, pch=19, cex=0.9, pt.cex=1.5, 
-                      horiz=TRUE, bty="n");
-
-    devDone();
+    } # for (zz ...)
 
     verbose && exit(verbose);
   } # for (chr ...)
@@ -304,8 +329,8 @@ for (ii in seq(along=sampleNames)) {
 
   setName <- c("TCGA", tumorType, analysisTag);
   verbose && enter(verbose, "Creating PNGs");
-  writeCopyNumberProfiles(dfList, setName=setName, tags=method, 
-                                          chromosomes=chromosomes);
+  writeCopyNumberProfiles(dfList, setName=setName, modelTags=method, 
+                         chromosomes=chromosomes, verbose=less(verbose, 1));
   verbose && exit(verbose);
 
   verbose && exit(verbose);
@@ -315,6 +340,11 @@ for (ii in seq(along=sampleNames)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-25
+# o Updated writeCopyNumberProfiles() to output ChromosomeExplorer 
+#   compatible directory structure and files.
+# 2010-01-24
+# o Recreated using the new data set selection filters.
 # 2009-09-30
 # o Created.
 ############################################################################
