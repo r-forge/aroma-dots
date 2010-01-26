@@ -62,9 +62,17 @@ if (!interactive()) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all tumor-normal CN data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-rootPath <- "rawCnData";
+rootPaths <- c("rawCnData", "cnData");
+if (interactive()) {
+  rootPath <- textMenu(rootPaths, value=TRUE);
+} else {
+  rootPath <- rootPaths[1];
+}
+
 rootPath <- Arguments$getReadablePath(rootPath, mustExist=TRUE);
-pattern <- TcgaDccData$getDataSetPatterns()$dataset;
+
+patterns <- TcgaDccData$getDataSetPatterns();
+pattern <- patterns$dataset;
 dataSets <- list.files(path=rootPath, pattern=pattern);
 verbose && cat(verbose, "Available data sets:");
 verbose && print(verbose, dataSets);
@@ -73,7 +81,7 @@ stopifnot(length(dataSets) > 0);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select tumor types
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pattern <- sprintf("^%s,.*", TcgaDccData$getDataSetPatterns()$dataset);
+pattern <- sprintf("^%s,.*", patterns$dataset);
 types <- gsub(pattern, "\\2", dataSets);
 uTypes <- sort(unique(types));
 
@@ -116,7 +124,7 @@ stopifnot(length(dataSets) > 0);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select preprocessing types
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pattern <- sprintf("^%s,", TcgaDccData$getDataSetPatterns()$dataset);
+pattern <- sprintf("^%s,", patterns$dataset);
 types <- gsub(pattern, "", dataSets);
 uTypes <- sort(unique(types));
 
@@ -231,6 +239,8 @@ for (kk in seq(along=dsList)) {
 
 ############################################################################
 # HISTORY:
+# 2010-01-25
+# o Now also MSCN normalized data can be smoothed.
 # 2010-01-10
 # o Created.
 ############################################################################
