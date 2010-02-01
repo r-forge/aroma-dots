@@ -130,7 +130,24 @@ stopifnot(length(dataSets) > 0);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Raw or MSCN normalized?
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-method <- "raw";
+methods <- c("mscn", "raw");
+if (interactive()) {
+  method <- textMenu(methods, value=TRUE);
+} else {
+  method <- methods[1];
+}
+
+pattern <- sprintf("^%s,.*,mscn,", patterns$dataset);
+if (method == "mscn") {
+  dataSets <- grep(pattern, dataSets, value=TRUE);
+} else {
+  dataSets <- grep(pattern, dataSets, invert=TRUE, value=TRUE);
+}
+
+verbose && cat(verbose, "Filtered data sets:");
+verbose && print(verbose, dataSets);
+stopifnot(length(dataSets) > 0);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select tumor types
@@ -155,7 +172,11 @@ stopifnot(length(dataSets) > 0);
 
 keep <- is.element(types, uTypes);
 dataSets <- dataSets[keep];
+
+verbose && cat(verbose, "Filtered data sets:");
+verbose && print(verbose, dataSets);
 stopifnot(length(dataSets) > 0);
+
 
 
 
