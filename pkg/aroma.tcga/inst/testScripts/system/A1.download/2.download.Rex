@@ -121,6 +121,7 @@ o <- order(labels);
 labels <- labels[o];
 tddList <- tddList[o];
 
+
 dataSets <- sapply(tddList, FUN=getDataSet);
 uDataSets <- unique(dataSets);
 res <- list();
@@ -203,6 +204,7 @@ verbose && enter(verbose, "Download files by patterns");
 for (pp in seq(along=patterns)) {
   pattern <- patterns[pp];
   verbose && enter(verbose, sprintf("Pattern #%d of %d", pp, length(patterns)));
+  verbose && cat(verbose, "Pattern: ", pattern);
 
   dsAll <- NULL;
   for (qq in seq(along=tddList)) {
