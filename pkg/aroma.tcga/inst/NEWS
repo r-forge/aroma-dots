@@ -1,6 +1,10 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.5.0 [2010-03-02]
+o Updates scripts so that download of Harvard CN files works again.
+
+
 Version: 0.4.2 [2010-01-18]
 o Added a ASCRMAv2 script.
 o Started to update code and scripts to also recognize archives

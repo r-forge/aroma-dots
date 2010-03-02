@@ -236,6 +236,34 @@
 \alias{extractTumorNormalPairs}
 \alias{extractTumorNormalPairs.GenericDataFileSet}
 \alias{getExtensionPattern.HarvardTotalCopyNumberTcgaDataFile}
+\alias{as.character.MultisourceChromosomalModel}
+\alias{clearCache.MultisourceChromosomalModel}
+\alias{extractRawCopyNumbers.MultisourceCopyNumberChromosomalModel}
+\alias{extractRawGenomicSignals.MultisourceChromosomalModel}
+\alias{fit.MultisourceChromosomalModel}
+\alias{getAsteriskTags.MultisourceChromosomalModel}
+\alias{getChipType.MultisourceChromosomalModel}
+\alias{getChipTypes.MultisourceChromosomalModel}
+\alias{getDataSetList}
+\alias{getDataSetList.MultisourceChromosomalModel}
+\alias{getFullName.MultisourceChromosomalModel}
+\alias{getFullNames.MultisourceChromosomalModel}
+\alias{getGenome.MultisourceChromosomalModel}
+\alias{getGenomeData.MultisourceChromosomalModel}
+\alias{getGenomeFile.MultisourceChromosomalModel}
+\alias{getName.MultisourceChromosomalModel}
+\alias{getParentPath.MultisourceChromosomalModel}
+\alias{getPath.MultisourceChromosomalModel}
+\alias{getReportPath.MultisourceChromosomalModel}
+\alias{getRootPath.MultisourceChromosomalModel}
+\alias{getSetTag.MultisourceChromosomalModel}
+\alias{getSetTag.RawMultisourceCopyNumberModel}
+\alias{getTags.MultisourceChromosomalModel}
+\alias{indexOf.MultisourceChromosomalModel}
+\alias{nbrOfSources}
+\alias{nbrOfSources.MultisourceChromosomalModel}
+\alias{setGenome.MultisourceChromosomalModel}
+\alias{setName.MultisourceChromosomalModel}
 
 \description{
   This page contains aliases for all "non-documented" objects that

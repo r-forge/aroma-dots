@@ -147,3 +147,29 @@ getColumnNames.MskccTotalCopyNumberTcgaDataFile
 readBCRSamplesTable readBCRSamplesTable.TcgaDccDownloader
 extractTumorNormalPairs extractTumorNormalPairs.GenericDataFileSet
   getExtensionPattern.HarvardTotalCopyNumberTcgaDataFile
+  as.character.MultisourceChromosomalModel
+  clearCache.MultisourceChromosomalModel
+  extractRawCopyNumbers.MultisourceCopyNumberChromosomalModel
+  extractRawGenomicSignals.MultisourceChromosomalModel
+  fit.MultisourceChromosomalModel
+  getAsteriskTags.MultisourceChromosomalModel
+  getChipType.MultisourceChromosomalModel
+  getChipTypes.MultisourceChromosomalModel getDataSetList
+  getDataSetList.MultisourceChromosomalModel
+  getFullName.MultisourceChromosomalModel
+  getFullNames.MultisourceChromosomalModel
+  getGenome.MultisourceChromosomalModel
+  getGenomeData.MultisourceChromosomalModel
+  getGenomeFile.MultisourceChromosomalModel
+  getName.MultisourceChromosomalModel
+  getParentPath.MultisourceChromosomalModel
+  getPath.MultisourceChromosomalModel
+  getReportPath.MultisourceChromosomalModel
+  getRootPath.MultisourceChromosomalModel
+  getSetTag.MultisourceChromosomalModel
+  getSetTag.RawMultisourceCopyNumberModel
+  getTags.MultisourceChromosomalModel
+  indexOf.MultisourceChromosomalModel nbrOfSources
+  nbrOfSources.MultisourceChromosomalModel
+  setGenome.MultisourceChromosomalModel
+  setName.MultisourceChromosomalModel
