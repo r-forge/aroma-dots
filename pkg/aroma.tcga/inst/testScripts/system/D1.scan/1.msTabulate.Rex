@@ -28,6 +28,24 @@ rootPath <- Arguments$getReadablePath(rootPath);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Locate 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+db <- TabularTextFile("tcgaData/BCRSamples.txt");
+verbose && print(verbose, db);
+colClassPattern <- c("(project|collectionCenter|patient)"="character",
+                                                  "batchNumber"="integer");
+df <- readDataFrame(db, colClassPattern=colClassPattern);
+df <- unique(df);
+df$sampleName <- paste(df$project, df$collectionCenter, df$patient, sep="-");
+df <- df[,c("sampleName", "batchNumber")];
+colnames(df) <- c("sampleName", "batch"); 
+sbMap <- df;
+rm(df);
+verbose && cat(verbose, "(sampleName, batch) map:");
+verbose && str(verbose, sbMap);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all data sets
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 patterns <- TcgaDccData$getDataSetPatterns();
@@ -205,6 +223,20 @@ nbrOfSamples <- length(sampleNames);
 verbose && cat(verbose, "Found ", nbrOfSamples, " unique samples:");
 verbose && str(verbose, sampleNames);
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Sanity check
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+unknown <- setdiff(sampleNames, sbMap[,"sampleName"]);
+nbrOfUnknown <- length(unknown);
+if (nbrOfUnknown > 0) {
+  if (nbrOfUnknown > 4) {
+    unknown <- c(unknown[1:2], "...", unknown[nbrOfUnknown]);
+  }
+  throw("Outdated (sampleName,batch) map detected.  There are ", nbrOfUnknown, " processed samples not in the map: ", paste(unknown, collapse=","));
+}
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify unique source names
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -237,6 +269,7 @@ t <- as.data.frame(t, stringsAsFactors=FALSE);
 df <- data.frame(sampleName=rownames(samples));
 df <- cbind(df, t);
 df$counts <- rowSums(samples);
+df <- merge(df, sbMap, by="sampleName");
 rownames(df) <- NULL;
 names(sourceNames) <- colnames(t);
 attr(df, "sourceNames") <- sourceNames;
