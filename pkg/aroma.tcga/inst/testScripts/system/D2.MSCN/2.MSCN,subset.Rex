@@ -16,9 +16,6 @@ library("aroma.cn");
 library("R.menu");
 verbose <- Arguments$getVerbose(-20, timestamp=TRUE);
 
-# Requires aroma.cn v0.4.5 or newer
-stopifnot(!isOlderThan(aroma.cn, "0.4.5"));
-
 figForce <- FALSE;
 
 timeStamp <- format(Sys.time(), format="%Y-%m-%d %k:%M:%S %Z");
@@ -28,6 +25,21 @@ analysisTag <- "HB20091001";
 analysisTag <- "HB20100105";
 analysisTag <- "HB20100107";
 analysisTag <- "HB20100114";
+analysisTag <- "HB20100308";
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Amount of smoothing of principal curves
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Use small degrees of freedom (df=3.5; default df=5).
+# This solves the issue with Illumina MSCN data for the Ovarian
+# TCGA-09-1670 (see email with Jun Li, 2009-11-19--2010-01-14).
+pcBandwidth <- 3.5;
+
+# Default for OV:s, because this is what they have be used/
+# troubleshooted since mid 2009. /HB 2010-03-08
+pcBandwidth <- 5.0;
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Identify all tumor-normal CN data sets
@@ -198,15 +210,11 @@ for (kk in seq(along=sampleNames)) {
     AromaUnitTotalCnBinarySet(list(df));
   });
 
-  # Use small degrees of freedom (df=3.5; default df=5).
-  # This solves the issue with Illumina MSCN data for the Ovarian
-  # TCGA-09-1670 (see email with Jun Li, 2009-11-19--2010-01-14).
-  df <- 3.5;
-  dfTag <- sprintf("df=%.1f", df);
+  dfTag <- sprintf("df=%.1f", pcBandwidth);
   mscn <- MultiSourceCopyNumberNormalization(dsListKK, fitUgp=fitUgp, 
              targetDimension=targetDimension, align="byChromosome", 
                                          tags=c("*", analysisTag, dfTag));
-  mscn$.pcBandwidth <- df;
+  mscn$.pcBandwidth <- pcBandwidth;
   verbose && print(verbose, mscn);
   
   dsNList <- process(mscn, verbose=verbose);
@@ -259,6 +267,8 @@ for (kk in seq(along=sampleNames)) {
 
 ############################################################################
 # HISTORY:
+# 2010-03-08
+# o Updated how the smoothness of PC is set.
 # 2010-01-14
 # o Added automatic generation of QCs after MSCN normalization.
 # o Changed the principal curve smoothness.

@@ -8,6 +8,14 @@
 # Description:
 # Applies MSCN normalization to a set of samples, which are specified by
 # loaded data fram of pre-scanned samples.
+#
+# If --batch=TRUE, then the the the first batch of samples in the job queue
+# is processed.  The default batch size is the total number of samples
+# divided by 10.
+#
+# Usage:
+# 1. Make sure to run a D1.scan/1.msTabulate.Rex first!
+# 2. Launch this script.
 ############################################################################
 if (interactive()) savehistory();
 library("aroma.cn");
@@ -42,7 +50,23 @@ timeStamp <- format(Sys.time(), format="%Y-%m-%d %k:%M:%S %Z");
 pid <- sprintf("%s,%s", System$getHostname(), timeStamp);
 
 analysisTag <- "HB20091001";
-analysisTag <- "HB20100120";
+analysisTag <- "HB20100105";
+analysisTag <- "HB20100107";
+analysisTag <- "HB20100114";
+analysisTag <- "HB20100308";
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Amount of smoothing of principal curves
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Use small degrees of freedom (df=3.5; default df=5).
+# This solves the issue with Illumina MSCN data for the Ovarian
+# TCGA-09-1670 (see email with Jun Li, 2009-11-19--2010-01-14).
+pcBandwidth <- 3.5;
+
+# Default for OV:s, because this is what they have be used/
+# troubleshooted since mid 2009. /HB 2010-03-08
+pcBandwidth <- 5.0;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select set of samples to normalize
@@ -194,9 +218,11 @@ for (kk in seq(length=nbrOfSamples)) {
                     targetDimension, sourceNames[targetDimension]);
   verbose && print(verbose, dsList[[targetDimension]]);
 
+  dfTag <- sprintf("df=%.1f", pcBandwidth);
   mscn <- MultiSourceCopyNumberNormalization(dsList, fitUgp=fitUgp, 
              targetDimension=targetDimension, align="byChromosome", 
-                                         tags=c("*", analysisTag));
+                                         tags=c("*", analysisTag, dfTag));
+  mscn$.pcBandwidth <- pcBandwidth;
   verbose && print(verbose, mscn);
   
   dsNList <- process(mscn, verbose=verbose);
@@ -209,6 +235,9 @@ for (kk in seq(length=nbrOfSamples)) {
 
 ############################################################################
 # HISTORY:
+# 2010-03-08
+# o Added more descriptions.
+# o Now the smoothness of PC can be set.
 # 2010-01-20
 # o Added the options to processing all or in batches.
 # o Added support for command line options.
