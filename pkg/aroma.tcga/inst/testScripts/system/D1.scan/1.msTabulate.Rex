@@ -209,7 +209,9 @@ verbose && str(verbose, data);
 verbose && exit(verbose);
 
 verbose && enter(verbose, "Saving data table of scanned samples");
-filename <- sprintf("TCGA,%s,CN,samples,%s.Rbin", tumorType, Sys.Date());
+dateStamp <- format(Sys.time(), format="%Y%m%d");
+fullname <- paste(c("TCGA", tumorType, rootPath, dateStamp), collapse=",");
+filename <- sprintf("%s.Rbin", fullname);
 pathname <- Arguments$getWritablePathname(filename, mustNotExist=FALSE);
 saveObject(data, file=pathname);
 verbose && cat(verbose, "Pathname: ", pathname);
@@ -291,12 +293,7 @@ if (cc[1] > cc[2]) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Write summary to file(s)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Date tag
-dateStamp <- format(Sys.time(), format="%Y%m%d");
-# Fullname
-fullname <- paste(c("TCGA", tumorType, rootPath, dateStamp), collapse=",");
 orderBys <- c("byCounts", "byBatch", "bySample");
-
 for (kk in seq(along=orderBys)) {
   orderBy <- orderBys[kk];
 

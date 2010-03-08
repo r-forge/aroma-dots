@@ -71,7 +71,7 @@ pcBandwidth <- 5.0;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Select set of samples to normalize
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pattern <- "^TCGA,[^,]+,CN,samples,([-0-9]+).Rbin$";
+pattern <- "^TCGA,[^,]+,(rawCnData|cnData),([-0-9]+).Rbin$";
 filenames <- list.files(pattern=pattern, path=".");
 filenames <- sort(filenames, decreasing=TRUE);
 stopifnot(length(filenames) > 0);

@@ -360,7 +360,7 @@ for (kk in seq(along=dsList)) {
     cat(file=pathnameT, columnNamesStr, sep="\n", append=TRUE);
 
     # Rounding results
-    nbrOfDecimals <- 5L;
+    nbrOfDecimals <- 4L;
     verbose && cat(verbose, "Number of decimals: ", nbrOfDecimals);
     fmtstr <- sprintf("%%.%df", nbrOfDecimals);
     valuesS <- sprintf(fmtstr, values);
@@ -473,6 +473,8 @@ verbose && exit(verbose);
 
 ############################################################################
 # HISTORY:
+# 2010-03-08
+# o Now signals are exported with 4 decimals (instead of 5).
 # 2010-01-21
 # o Updated to export TCGA OV data.
 # 2009-10-20
