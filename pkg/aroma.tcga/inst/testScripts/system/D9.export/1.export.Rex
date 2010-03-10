@@ -232,8 +232,9 @@ for (kk in seq(along=dsList)) {
   ds <- dsList[[kk]];
   dataSet <- getFullName(ds);
   platform <- getPlatform(ds);
-  chipType <- getChipType(ds);
- verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
+  chipTypeF <- getChipType(ds);
+  chipType <- getChipType(ds, fullname=FALSE);
+  verbose && enter(verbose, sprintf("Data set #%d ('%s') of %d", 
                                             kk, dataSet, length(dsList)));
 
   # Output data set path
@@ -304,7 +305,7 @@ for (kk in seq(along=dsList)) {
     author <- "Henrik Bengtsson, UC Berkeley";
     hdr <- c(hdr, sprintf("createdBy: %s", author));
     hdr <- c(hdr, sprintf("platform: %s", platform));
-    hdr <- c(hdr, sprintf("chipType: %s", chipType));
+    hdr <- c(hdr, sprintf("chipType: %s", chipTypeF));
     tags <- getTags(df);
     typeOfSignals <- tags[length(tags)-1];
     hdr <- c(hdr, sprintf("typeOfSignal: %s", typeOfSignals));
@@ -474,6 +475,7 @@ verbose && exit(verbose);
 ############################################################################
 # HISTORY:
 # 2010-03-08
+# o BUG FIX: The chip-type directory name was the full chip type.
 # o Now signals are exported with 4 decimals (instead of 5).
 # 2010-01-21
 # o Updated to export TCGA OV data.

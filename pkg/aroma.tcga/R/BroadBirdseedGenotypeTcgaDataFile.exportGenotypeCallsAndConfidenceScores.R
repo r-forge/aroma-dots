@@ -205,7 +205,7 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
     isNC <- (conf == 0);
     if (sum(isNC) > 0) {
       idxs <- units[whichVector(isNC)];
-      naValue <- as.double(naValue);
+      naValue <- as.double(NA);
       asf[idxs, 1] <- naValue;
     }
     footer <- readFooter(asf);
@@ -234,6 +234,10 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 
 ############################################################################
 # HISTORY:
+# 2010-03-10 [PN]
+# o BUG FIX: exportGenotypeCallsAndConfidenceScores() for class
+#   BroadBirdseedGenotypeTcgaDataFile could give the error message
+#   "object 'naValue' not found".
 # 2010-01-06
 # o CLEAN UP: No need for assign NAs when allocating new files; this is now
 #   always the default way (in aroma.core v1.4.1).
