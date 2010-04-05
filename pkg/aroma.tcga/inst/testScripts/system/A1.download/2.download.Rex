@@ -3,7 +3,7 @@
 #
 # Usage:
 #  library("aroma.tcga"); library("R.menu");
-#  launchMenu(aroma.tcga, "testScripts/system/download/");
+#  launchMenu(aroma.tcga, "testScripts/system/");
 #
 # Description:
 # 1. Identifies all data sets under tcgaData/.
@@ -245,6 +245,8 @@ for (pp in seq(along=patterns)) {
 
 ############################################################################
 # HISTORY:
+# 2010-04-05
+# o Updated 'Usage'.
 # 2010-01-17
 # o Updated to work with new DCC v3 archive patterns.
 # 2009-10-23

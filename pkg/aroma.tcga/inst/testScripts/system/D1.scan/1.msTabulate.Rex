@@ -3,7 +3,7 @@
 #
 # Usage:
 #  library("aroma.tcga"); library("R.menu");
-#  launchMenu(aroma.tcga, "testScripts/system/normalize/");
+#  launchMenu(aroma.tcga, "testScripts/system/");
 #
 # Description:
 # 1. Identifies all tumor-normal pairs.
@@ -332,6 +332,8 @@ for (kk in seq(along=orderBys)) {
 
 ############################################################################
 # HISTORY:
+# 2010-04-05
+# o Updated 'Usage'.
 # 2010-03-08 (100yrs!)
 # o Now multiple files are outputted ordered by different columns.
 # o Now the output table is joined with the (sample name, batch nbr) map.
