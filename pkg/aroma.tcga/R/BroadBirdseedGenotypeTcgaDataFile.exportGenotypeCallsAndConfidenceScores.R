@@ -29,16 +29,14 @@
 #
 #
 # \details{
-#   A @see "aroma.core::UnitNamesFile" is inferred from "chipType" using 
-#   \code{AffymetrixCdfFile$byChipType()}.
-#   Genotyping units (SNPs) are ordered according to this 
-#   @see "aroma.core::UnitNamesFile".
+#   Genotyping units (SNPs) are ordered according to the 
+#   @see "aroma.core::UnitNamesFile" provided as an argument.
 #   Confidence scores are stored as one minus the input score as the
 #   latter is a p-value.
 # }
 #
 #*/###########################################################################
-setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcgaDataFile", function(this, dataSet, unf, samplePatterns=NULL, ..., rootPath="callData", force=FALSE, verbose=FALSE) {
+setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcgaDataFile", function(this, dataSet, unf, ..., rootPath="callData", force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -47,13 +45,6 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 
   # Argument 'unf':
   unf <- Arguments$getInstanceOf(unf, "UnitNamesFile");
-
-  # Argument 'samplePatterns':
-  if (!is.null(samplePatterns)) {
-    samplePatterns <- sapply(samplePatterns, FUN=function(s) {
-      Arguments$getRegularExpression(s);
-    });
-  }
 
   # Argument 'rootPath':
   rootPath <- Arguments$getWritablePath(rootPath);
@@ -133,9 +124,10 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
   verbose && exit(verbose);
     
   verbose && enter(verbose, "Ordering according to UnitNamesFile");
-  data <- readDataFrame(this);
-  unitNames <- data[,"CompositeElement REF", drop=TRUE];
+  data <- readColumns(this, "CompositeElement REF", "character");
+  unitNames <- data[,, drop=TRUE];
   rm(data);
+  
   verbose && cat(verbose, "Unit names:");
   verbose && str(verbose, unitNames);
   units <- indexOf(unf, names=unitNames);
@@ -162,7 +154,6 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
       
     acf <- AromaUnitGenotypeCallFile$allocateFromUnitNamesFile(unf, 
              filename=pathnameT, overwrite=force, ...);
-      
     updateGenotypes(acf, units=units, calls=calls, encoding="birdseed", 
                     verbose=verbose);
     verbose && exit(verbose);
@@ -234,6 +225,10 @@ setMethodS3("exportGenotypeCallsAndConfidenceScores", "BroadBirdseedGenotypeTcga
 
 ############################################################################
 # HISTORY:
+# 2010-03-26 [PN]
+# o CLEAN UP: Removed unused argument 'samplePattern'.
+# o CLEAN UP: Made documentation consistent with current implementation.
+# o CLEAN UP: unitNames retrieved more efficiently.
 # 2010-03-10 [PN]
 # o BUG FIX: exportGenotypeCallsAndConfidenceScores() for class
 #   BroadBirdseedGenotypeTcgaDataFile could give the error message

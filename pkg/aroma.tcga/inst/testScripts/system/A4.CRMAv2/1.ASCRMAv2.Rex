@@ -3,7 +3,7 @@
 #
 # Usage:
 #  library("aroma.tcga"); library("R.menu");
-#  launchMenu(aroma.tcga, "testScripts/system/import/");
+#  launchMenu(aroma.tcga, "testScripts/system/");
 #
 # Command line:
 #  nohupR 1.ASCRMAv2.Rex [--dataSets="<dataSet1>,...,<dataSetK>"]
@@ -251,6 +251,8 @@ for (ii in seq(along=dsList)) {
 
 ############################################################################
 # HISTORY:
+# 2010-04-05
+# o Updated 'Usage'.
 # 2010-01-18
 # o Created.
 ############################################################################

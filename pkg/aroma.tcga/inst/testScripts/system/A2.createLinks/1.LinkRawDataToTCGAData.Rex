@@ -3,7 +3,7 @@
 #
 # Usage:
 #  library("aroma.tcga"); library("R.menu");
-#  launchMenu(aroma.tcga, "testScripts/system/createLinks/");
+#  launchMenu(aroma.tcga, "testScripts/system/");
 #
 # Description:
 # The purpose of this script is to create data sets under rawData/ that
@@ -93,6 +93,8 @@ for (kk in seq(along=dataSets)) {
 
 ############################################################################
 # HISTORY:
+# 2010-04-05
+# o Updated 'Usage'.
 # 2010-01-17
 # o Updated to handle DCC v3 as well.
 # 2010-01-02

@@ -3,7 +3,7 @@
 #
 # Usage:
 #  library("aroma.tcga"); library("R.menu");
-#  launchMenu(aroma.tcga, "testScripts/system/import/");
+#  launchMenu(aroma.tcga, "testScripts/system/");
 #
 # Command line:
 #  nohupR 1.import.Rex --center=<center> --chipType=<chipType> 
@@ -361,6 +361,8 @@ for (ii in seq(along=dsList)) {
 
 ############################################################################
 # HISTORY:
+# 2010-04-05
+# o Updated 'Usage'.
 # 2010-01-06
 # o Added the option to select a subset of sample names too.
 # 2010-01-03

@@ -15,8 +15,8 @@ setMethodS3("getDataSetPatterns", "TcgaDccData", function(static, version=c("*",
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # TCGA Data Set Patterns
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # TCGA center, e.g. broad.mit.edu, hudsonalpha.org
-  patterns$center <- "[a-z.]+";
+  # TCGA center, e.g. broad.mit.edu, hudsonalpha.org, jhu-usc.edu
+  patterns$center <- "[a-z.-]+";
   # TCGA tumor tag, e.g. GBM, OV
   patterns$tumor <- "[A-Z]+";
   # TCGA platform, e.g. CGH-1x1M_G4447A, Genome_Wide_SNP_6
@@ -105,6 +105,8 @@ setMethodS3("findDataSets2", "TcgaDccData", function(static, pattern=NULL, rootP
 
 ############################################################################
 # HISTORY:
+# 2010-04-05
+# o Updated center pattern to allow for '-' (such as in jhu-usc.edu).
 # 2010-01-17
 # o Added data set patterns for new DCC v3 archive names (with Level_N).
 # 2009-10-20
