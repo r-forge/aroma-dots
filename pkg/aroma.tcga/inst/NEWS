@@ -1,6 +1,10 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.5.2 [2010-04-04]
+o Increased the package dependency requirements.
+
+
 Version: 0.5.1 [2010-03-08]
 o BUG FIX: exportGenotypeCallsAndConfidenceScores() for class
   BroadBirdseedGenotypeTcgaDataFile could give the error message
