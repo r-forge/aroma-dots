@@ -1,6 +1,10 @@
 Package: aroma.apd
 ==================
 
+Version: 0.1.8 [2011-01-31]
+o Using packageStartupMessage() instead of cat().
+
+
 Version: 0.1.7 [2009-10-16]
 o Fixed a few broken Rd links to the affxparser package.
 
