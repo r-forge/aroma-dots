@@ -74,8 +74,6 @@ setMethodS3("backtransformAlleleRatiosByCentroids", "matrix", function(beta, mu,
   stopifnot(all(mu[,1] == 0));
   stopifnot(all(mu[,nbrOfCentroids] == 1));
 
-print(mu[1:10,]);
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # (b) Adjust such that AB centroids are at 1/2
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -86,8 +84,7 @@ print(mu[1:10,]);
       keep <- (beta[,kk] < mu[,2]);
       keep <- keep & is.finite(keep);
       beta[keep,kk] <- 0 + (beta[keep,kk] - 0) / c[keep];
-      keep <- (beta[,kk] >= mu[,2]);
-      keep <- keep & is.finite(keep);
+      keep <- !keep;
       beta[keep,kk] <- 1 - (1 - beta[keep,kk]) / d[keep];
     }
 
@@ -98,8 +95,7 @@ print(mu[1:10,]);
       keep <- (mu[,kk] < mu[,2]);
       keep <- keep & is.finite(keep);
       mu[keep,kk] <- mu[keep,kk] / c[keep];
-      keep <- (mu[,kk] >= mu[,2]);
-      keep <- keep & is.finite(keep);
+      keep <- !keep;
       mu[keep,kk] <- 1 - (1 - mu[keep,kk]) / d[keep];
     }
 
