@@ -13,6 +13,8 @@
 
 % Other missing docs
 \alias{IlluminaClusterPositionsTextFile}
+\alias{readCentroidMatrix}
+\alias{readCentroidMatrix.IlluminaClusterPositionsTextFile}
 \alias{dummy}
 
 \description{
