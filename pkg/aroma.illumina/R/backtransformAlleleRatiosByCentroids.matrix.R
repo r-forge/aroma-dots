@@ -80,23 +80,23 @@ setMethodS3("backtransformAlleleRatiosByCentroids", "matrix", function(beta, mu,
   if (nbrOfCentroids == 3) {
     c <- mu[,2] / (1/2);
     d <- (1-mu[,2]) / (1/2);
-    for (kk in seq(length=ncol(beta))) {
-      keep <- (beta[,kk] < mu[,2]);
+
+    # For each sample
+    for (ii in seq(length=ncol(beta))) {
+      keep <- (beta[,ii] < mu[,2]);
       keep <- keep & is.finite(keep);
-      beta[keep,kk] <- 0 + (beta[keep,kk] - 0) / c[keep];
+      beta[keep,ii] <- 0 + (beta[keep,ii] - 0) / c[keep];
       keep <- !keep;
-      beta[keep,kk] <- 1 - (1 - beta[keep,kk]) / d[keep];
+      beta[keep,ii] <- 1 - (1 - beta[keep,ii]) / d[keep];
     }
 
-    # Same for centroids; just for validation
-    c <- mu[,2] / (1/2);
-    d <- (1-mu[,2]) / (1/2);
-    for (kk in seq(length=nbrOfCentroids)) {
-      keep <- (mu[,kk] < mu[,2]);
+    # For each genotype centroid (just for sanity checking)
+    for (ii in seq(length=nbrOfCentroids)) {
+      keep <- (mu[,ii] < mu[,2]);
       keep <- keep & is.finite(keep);
-      mu[keep,kk] <- mu[keep,kk] / c[keep];
+      mu[keep,ii] <- mu[keep,ii] / c[keep];
       keep <- !keep;
-      mu[keep,kk] <- 1 - (1 - mu[keep,kk]) / d[keep];
+      mu[keep,ii] <- 1 - (1 - mu[keep,ii]) / d[keep];
     }
 
     # Sanity check
