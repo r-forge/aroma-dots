@@ -16,6 +16,8 @@
 \alias{readCentroidMatrix}
 \alias{readCentroidMatrix.IlluminaClusterPositionsTextFile}
 \alias{dummy}
+\alias{calculateExpectedRatiosByCentroids}
+\alias{calculateExpectedRatiosByCentroids.matrix}
 
 \description{
   This page contains aliases for all "non-documented" objects that
