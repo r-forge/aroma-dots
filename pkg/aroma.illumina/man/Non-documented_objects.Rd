@@ -18,10 +18,11 @@
 \alias{dummy}
 \alias{calculateExpectedRatiosByCentroids}
 \alias{calculateExpectedRatiosByCentroids.matrix}
-\alias{calculateXYFromThetaR}
-\alias{calculateXYFromThetaR.matrix}
 \alias{readUnitGenomePositions}
 \alias{readUnitGenomePositions.IlluminaClusterPositionsTextFile}
+\alias{calculateThetaRFromXY}
+\alias{calculateThetaRFromXY.array}
+\alias{calculateThetaRFromXY.matrix}
 
 \description{
   This page contains aliases for all "non-documented" objects that
