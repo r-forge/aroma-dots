@@ -23,8 +23,24 @@ setMethodS3("readCentroidMatrix", "IlluminaClusterPositionsTextFile", function(t
 }) # readCentroidMatrix()
 
 
+setMethodS3("readUnitGenomePositions", "IlluminaClusterPositionsTextFile", function(this, ...) {
+  patterns <- c(reporterId="character", chromosome="character", startPosition="integer");
+  data <- readDataFrame(this, colClassPatterns=patterns, ...);
+  unitNames <- data$reporterId;
+  chrs <- data$chromosome;
+  chrs[chrs == "X"] <- 23;
+  chrs[chrs == "Y"] <- 24;
+  chrs[chrs == "M"] <- 25;
+  gp <- matrix(c(chrs, data$startPosition), ncol=2);
+  rownames(gp) <- unitNames;
+  gp;
+}) # readUnitGenomePositions()
+
+
 ############################################################################
 # HISTORY:
+# 2011-03-28
+# o Added readUnitGenomePositions().
 # 2011-03-25
 # o Added readCentroidMatrix().
 # o Created.  Just a stub.
