@@ -4,3 +4,7 @@ IlluminaClusterPositionsTextFile
 dummy
   calculateExpectedRatiosByCentroids
   calculateExpectedRatiosByCentroids.matrix
+ calculateXYFromThetaR calculateXYFromThetaR.matrix
+ readUnitGenomePositions
+ readUnitGenomePositions.IlluminaClusterPositionsTextFile
+

@@ -1,9 +1,14 @@
 Package: aroma.illumina
 =======================
 
+Version: 0.0.3 [2011-03-28]
+o Added calculateThetaRFromXY().
+o Added readUnitGenomePositions().
+
+
 Version: 0.0.2 [2011-03-27]
-o Added calculateExpectedRatiosByCentroids()
-o Added backtransformAlleleRatiosByCentroids()
+o Added calculateExpectedRatiosByCentroids().
+o Added backtransformAlleleRatiosByCentroids().
 
 
 Version: 0.0.1 [2011-03-25]
