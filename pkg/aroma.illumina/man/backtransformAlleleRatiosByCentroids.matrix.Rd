@@ -34,7 +34,7 @@
 
  \section{B Allele Fractions by Peiffer et al. (2007)}{
    In [2], the authors describe how to normalize B Allele Fractions (BAFs)
-   based on predefined piece-wise linear regressions.  This method, which
+   based on predefined linear interpolation.  This method, which
    is used in the Illumina's BeadStudio software, is also described in [1].
    That method is obtained by passing \eqn{\theta} of [1] and [2] as
    argument \code{beta} while using a Jx3 \code{mu} centroid matrix and

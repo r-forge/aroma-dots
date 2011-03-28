@@ -1,6 +1,6 @@
 Package: aroma.illumina
-Version: 0.0.1
-Date: 2011-03-25
+Version: 0.0.2
+Date: 2011-03-28
 Title: Analysis of Illumina microarray data [A DRAFT - TRUE]
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>

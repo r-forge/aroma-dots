@@ -2,3 +2,5 @@ IlluminaClusterPositionsTextFile
   readCentroidMatrix
   readCentroidMatrix.IlluminaClusterPositionsTextFile
 dummy
+  calculateExpectedRatiosByCentroids
+  calculateExpectedRatiosByCentroids.matrix
