@@ -1,4 +1,8 @@
 setMethodS3("readCfnHeader", "default", function(pathname, ..., verbose=FALSE) {
+  # affxparser: findCdf(), readCdfUnitNames().
+  require("affxparser") || throw("Package not loaded: affxparser");
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
