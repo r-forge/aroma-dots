@@ -1,6 +1,10 @@
 Package: cnagIO
 ================
 
+Version: 0.1.2 [2010-03-28]
+o Added the 'affxparser' as a suggested package.
+
+
 Version: 0.1.1 [2009-02-13]
 o CLEAN UP: readCfhHeader() and readCfnHeader() no longer give
   warnings on "In rawToChar(...) : truncating string with embedded nul". 
