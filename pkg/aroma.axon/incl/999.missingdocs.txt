@@ -1,0 +1,10 @@
+ GenePixResultFile GenePixResultSet as.character.GenePixResultFile
+ byPath.GenePixResultSet getChipType.GenePixResultFile
+ getChipType.GenePixResultSet getExtensionPattern.GenePixResultFile
+ getPlatform.GenePixResultFile getPlatform.GenePixResultSet
+ verify.GenePixResultFile
+byName.GenePixResultSet findByName.GenePixResultSet
+ readLimmaRGList readLimmaRGList.GenePixResultSet
+  asAMArray asAMArray.RGArray extractAMArray
+  extractAMArray.GenePixResultSet extractRGArray
+  extractRGArray.GenePixResultSet
