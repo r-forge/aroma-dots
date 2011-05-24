@@ -1,0 +1,6 @@
+Package: aroma.axon
+===================
+
+Version: 0.1.0 [2011-05-23]
+o Added GenePixResultFile and GenePixResultFileSet.
+o Created.
