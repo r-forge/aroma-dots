@@ -1,6 +1,10 @@
 Package: aroma.axon
 ===================
 
+Version: 0.1.1 [2011-06-24]
+o Added asRGArray() for limma::RGList objects.
+
+
 Version: 0.1.0 [2011-05-23]
 o Added GenePixResultFile and GenePixResultFileSet.
 o Created.
