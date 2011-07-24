@@ -7,7 +7,8 @@ o Now the package depends on R.huge v0.3.0, which now also
 
 
 Version: 0.1.9 [2011-02-20]
-o Now this package will try to install affxparser, if missing.
+o Now this package will try to install affxparser, if missing
+  and in interactive mode.
 
 
 Version: 0.1.8 [2011-01-31]
