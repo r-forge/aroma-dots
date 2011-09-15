@@ -1,6 +1,10 @@
 Package: aroma.axon
 ===================
 
+Version: 0.1.2 [2011-09-14]
+o Added averageByGene() for RGArray.
+
+
 Version: 0.1.1 [2011-06-24]
 o Added asRGArray() for limma::RGList objects.
 

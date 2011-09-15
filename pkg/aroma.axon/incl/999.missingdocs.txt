@@ -9,4 +9,4 @@ byName.GenePixResultSet findByName.GenePixResultSet
   extractAMArray.GenePixResultSet extractRGArray
   extractRGArray.GenePixResultSet
   extractRGArray.RGList
-
+averageByGene averageByGene.RGArray lapplyByGene lapplyByGene.RGArray

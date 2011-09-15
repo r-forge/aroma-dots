@@ -33,6 +33,10 @@
 \alias{extractRGArray}
 \alias{extractRGArray.GenePixResultSet}
 \alias{extractRGArray.RGList}
+\alias{averageByGene}
+\alias{averageByGene.RGArray}
+\alias{lapplyByGene}
+\alias{lapplyByGene.RGArray}
 
 \description{
   This page contains aliases for all "non-documented" objects that
