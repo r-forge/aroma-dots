@@ -1,6 +1,15 @@
 Package: aroma.illumina
 =======================
 
+Version: 0.1.1 [2012-02-07]
+o Added IlluminaIDatFile and IlluminaIDatSet.
+o Added dependency on the illuminaIO package.
+
+
+Version: 0.1.0 [2012-02-07]
+o Added a NAMESPACE.
+
+
 Version: 0.0.3 [2011-03-28]
 o Added calculateThetaRFromXY().
 o Added readUnitGenomePositions().

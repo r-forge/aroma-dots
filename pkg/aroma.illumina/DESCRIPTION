@@ -1,11 +1,11 @@
 Package: aroma.illumina
-Version: 0.0.3
-Date: 2011-03-28
+Version: 0.1.1
+Date: 2012-02-07
 Title: Analysis of Illumina microarray data [A DRAFT - TRUE]
-Author: Henrik Bengtsson <henrikb@braju.com>
+Author: Henrik Bengtsson
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
-Depends: R (>= 2.12.0), R.methodsS3 (>= 1.2.1), R.oo (>= 1.7.5), aroma.core (>= 2.0.0)
-Imports: 
+Depends: R (>= 2.14.0), R.methodsS3 (>= 1.2.1), R.oo (>= 1.8.3), aroma.core (>= 2.4.6), illuminaIO (>= 0.2.1)
+Imports: R.utils (>= 1.9.11)
 Suggests:
 Description: This package provides method for analysis of Illumina data.
 License: LGPL (>= 2.1)
