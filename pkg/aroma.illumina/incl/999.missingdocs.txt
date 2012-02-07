@@ -1,10 +1,14 @@
 IlluminaClusterPositionsTextFile
   readCentroidMatrix
   readCentroidMatrix.IlluminaClusterPositionsTextFile
-dummy
   calculateExpectedRatiosByCentroids
   calculateExpectedRatiosByCentroids.matrix
  readUnitGenomePositions
  readUnitGenomePositions.IlluminaClusterPositionsTextFile
  calculateThetaRFromXY calculateThetaRFromXY.array
  calculateThetaRFromXY.matrix
+ IlluminaIDatFile IlluminaIDatSet extractMatrix.IlluminaIDatFile
+ extractMatrix.IlluminaIDatSet getPlatform.IlluminaIDatFile
+ getPlatform.IlluminaIDatSet readQuants
+ readQuants.IlluminaIDatFile readSignals
+ readSignals.IlluminaIDatFile

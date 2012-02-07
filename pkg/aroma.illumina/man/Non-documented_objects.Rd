@@ -15,7 +15,6 @@
 \alias{IlluminaClusterPositionsTextFile}
 \alias{readCentroidMatrix}
 \alias{readCentroidMatrix.IlluminaClusterPositionsTextFile}
-\alias{dummy}
 \alias{calculateExpectedRatiosByCentroids}
 \alias{calculateExpectedRatiosByCentroids.matrix}
 \alias{readUnitGenomePositions}
@@ -23,6 +22,16 @@
 \alias{calculateThetaRFromXY}
 \alias{calculateThetaRFromXY.array}
 \alias{calculateThetaRFromXY.matrix}
+\alias{IlluminaIDatFile}
+\alias{IlluminaIDatSet}
+\alias{extractMatrix.IlluminaIDatFile}
+\alias{extractMatrix.IlluminaIDatSet}
+\alias{getPlatform.IlluminaIDatFile}
+\alias{getPlatform.IlluminaIDatSet}
+\alias{readQuants}
+\alias{readQuants.IlluminaIDatFile}
+\alias{readSignals}
+\alias{readSignals.IlluminaIDatFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
