@@ -1,6 +1,6 @@
 Package: aroma.apd
-Version: 0.2.0
-Date: 2011-07-23
+Version: 0.2.1
+Date: 2012-04-01
 Title: A probe-level data file format used by aroma.affymetrix [DEPRECATED]
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
