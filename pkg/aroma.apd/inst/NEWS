@@ -1,6 +1,10 @@
 Package: aroma.apd
 ==================
 
+Version: 0.2.2 [2012-04-04]
+o Now package only imports R.methodsS3.
+
+
 Version: 0.2.1 [2012-04-01]
 o CLEANUP: Now package no longer gives an 'R CMD check' NOTE that
   .onAttach() tries to load the 'affxparser' package.
