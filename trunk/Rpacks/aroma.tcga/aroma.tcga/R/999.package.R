@@ -12,26 +12,19 @@
 # \section{Installation and updates}{
 #
 #   To install this package, see instructions at 
-#   \url{http://www.braju.com/R/}.
+#   \url{https://r-forge.r-project.org/R/?group_id=429}.
 # } 
 #
 # \author{
-#   Henrik Bengtsson.
+#  @eval "packageDescription('aroma.tcga')$Author".
 # }
 #
 # \section{License}{
-#   The releases of this package is licensed under 
-#   LGPL version 2.1 or newer.
-#
-#   The development code of the packages is under a private licence 
-#   (where applicable) and patches sent to the author fall under the
-#   latter license, but will be, if incorporated, released under the
-#   "release" license above.
+#  @eval "packageDescription('aroma.tcga')$License".
 # }
 # 
 # \references{
-#  Some of the reference below can be found at 
-#  \url{http://www.maths.lth.se/bioinformatics/publications/}.\cr
+#  @eval "paste(capture.output(citation('aroma.cn')), collapse='\n')"
 # }
 #*/#########################################################################
 
