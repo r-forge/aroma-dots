@@ -11,8 +11,8 @@ TcgaDccDownloader
  getUrlPathname getUrlPathname.TcgaDccDownloader
  getUsername.TcgaDccDownloader listFiles listFiles.TcgaDccDownloader
  readDescription readDescription.TcgaDccDownloader readIdf
- readIdf.TcgaDccDownloader readLines readLines.default
- readLines.TcgaDccDownloader readManifest
+ readIdf.TcgaDccDownloader 
+ readManifest
  readManifest.TcgaDccDownloader readReadme
  readReadme.TcgaDccDownloader readSampleInfo
  readSampleInfo.TcgaDccDownloader readSdrf readSdrf.TcgaDccDownloader
@@ -29,3 +29,4 @@ TcgaDccDownloader
   getHeader.MageTabDataMatrixFile
   getReadArguments.MageTabDataMatrixFile MageTabDataMatrixFile
   MageTabFile
+  readRows readRows.TcgaDccDownloader

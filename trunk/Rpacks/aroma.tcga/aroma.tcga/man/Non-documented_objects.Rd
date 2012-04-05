@@ -41,9 +41,6 @@
 \alias{readDescription.TcgaDccDownloader}
 \alias{readIdf}
 \alias{readIdf.TcgaDccDownloader}
-\alias{readLines}
-\alias{readLines.default}
-\alias{readLines.TcgaDccDownloader}
 \alias{readManifest}
 \alias{readManifest.TcgaDccDownloader}
 \alias{readReadme}
@@ -79,6 +76,8 @@
 \alias{getReadArguments.MageTabDataMatrixFile}
 \alias{MageTabDataMatrixFile}
 \alias{MageTabFile}
+\alias{readRows}
+\alias{readRows.TcgaDccDownloader}
 
 \description{
   This page contains aliases for all "non-documented" objects that

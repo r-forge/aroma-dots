@@ -25,25 +25,37 @@
  \section{Installation and updates}{
 
    To install this package, see instructions at
-   \url{http://www.braju.com/R/}.
+   \url{https://r-forge.r-project.org/R/?group_id=429}.
  }
 
  \author{
-   Henrik Bengtsson.
+  Henrik Bengtsson <henrikb@braju.com>.
  }
 
  \section{License}{
-   The releases of this package is licensed under
-   LGPL version 2.1 or newer.
-
-   The development code of the packages is under a private licence
-   (where applicable) and patches sent to the author fall under the
-   latter license, but will be, if incorporated, released under the
-   "release" license above.
+  LGPL (>= 2.1).
  }
 
  \references{
-  Some of the reference below can be found at
-  \url{http://www.maths.lth.se/bioinformatics/publications/}.\cr
+ 
+Please cite aroma.cn as
+
+  H. Bengtsson, P. Neuvial and T.P. SpeedTumorBoost: Normalization of
+  allele-specific tumor copy numbers from a single pair of tumor-normal
+  genotyping microarrays, BMC Bioinformatics, 2010
+
+  H. Bengtsson, A. Ray, P. Spellman and T.P. Speed. A single-sample
+  method for normalizing and combining full-resolutioncopy numbers from
+  multiple platforms, labs and analysis methods, Bioinformatics, 2009
+
+  H. Bengtsson; K. Simpson; J. Bullard; K. Hansen. aroma.affymetrix: A
+  generic framework in R for analyzing small to very large Affymetrix
+  data sets in bounded memory, Tech Report 745, Department of
+  Statistics, University of California, Berkeley, February 2008
+
+  H. Bengtsson, R. Irizarry, B. Carvalho, & T.P. Speed. Estimation and
+  assessment of raw copy numbers at the single locus level,
+  Bioinformatics, 2008
+
  }
 \keyword{package}
