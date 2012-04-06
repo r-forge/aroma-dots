@@ -1,6 +1,16 @@
 Package: aroma.tcga
 ===================
 
+Version: 0.2.0 [2012-04-05]
+o Added internal httpsGet(), which supports downloading URLs
+  either via 'curl' or 'wget', which ever works.
+
+
+Version: 0.1.1 [2012-04-05]
+o Updated listFiles() for TcgaDccDownloader to recognize
+  "new" MANIFEST.txt file format.
+
+
 Version: 0.1.0 [2012-04-05]
 o Now package passes 'R CMD check' with all OKs.
 o Renamed readLines() for TcgaDccDownloader to readRows().

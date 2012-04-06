@@ -30,3 +30,4 @@ TcgaDccDownloader
   getReadArguments.MageTabDataMatrixFile MageTabDataMatrixFile
   MageTabFile
   readRows readRows.TcgaDccDownloader
+httpsGet httpsGet.character
