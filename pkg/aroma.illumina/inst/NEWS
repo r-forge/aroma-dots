@@ -1,6 +1,10 @@
 Package: aroma.illumina
 =======================
 
+Version: 0.1.2 [2012-02-13]
+o Added IlluminaGenomeStudioTextFile.
+
+
 Version: 0.1.1 [2012-02-07]
 o Added IlluminaIDatFile and IlluminaIDatSet.
 o Added dependency on the illuminaIO package.
