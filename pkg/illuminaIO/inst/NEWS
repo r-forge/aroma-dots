@@ -1,0 +1,18 @@
+
+Package: illuminaIO
+===================
+
+Version: 0.2.1 [2012-02-07]
+o CLEANUP: readIDAT() and readBPM() no longer give warnings about
+  using readBin(..., signed=FALSE).
+
+
+Version: 0.2.0 [2012-02-07]
+o Added a NAMESPACE.
+
+
+Version: 0.1.0 [2011-03-28]
+o Copied readIDAT() and readBPM() from the crlmm package, which uses
+  the Artistic-2.0 license.  However, the two functions orginates
+  from Keith Baggerly, MD Anderson.
+o Created.
