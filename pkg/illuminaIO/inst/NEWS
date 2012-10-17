@@ -2,6 +2,12 @@
 Package: illuminaIO
 ===================
 
+Version: 0.2.2 [2012-10-17]
+o DEPRECATED: As of Oct 2012, this package has been deprecated in
+  favor the the Bioconductor 'illuminaio' package, cf. 
+  http://www.bioconductor.org/packages/devel/bioc/html/illuminaio.html.
+
+
 Version: 0.2.1 [2012-02-07]
 o CLEANUP: readIDAT() and readBPM() no longer give warnings about
   using readBin(..., signed=FALSE).

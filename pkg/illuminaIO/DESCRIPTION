@@ -1,12 +1,11 @@
 Package: illuminaIO
-Version: 0.2.1
-Date: 2012-02-07
+Version: 0.2.2
+Date: 2012-10-17
 Title: Low-level methods for reading Illumina data files
 Author: Henrik Bengtsson <henrikb@braju.com>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Depends: R (>= 2.14.0), R.oo (>= 1.8.3), R.utils (>= 1.9.11)
 Suggests: 
-Description: Low-level methods for reading Illumina data files
+Description: [DEPRECATED: As of Oct 2012, this package has been deprecated in favor the the Bioconductor 'illuminaio' package, cf. http://www.bioconductor.org/packages/devel/bioc/html/illuminaio.html] Low-level methods for reading Illumina data files
 License: Artistic-2.0
-URL: http://www.braju.com/R/
 LazyLoad: TRUE
