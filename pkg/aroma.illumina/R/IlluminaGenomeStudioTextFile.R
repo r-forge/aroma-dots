@@ -5,7 +5,7 @@ setConstructorS3("IlluminaGenomeStudioTextFile", function(...) {
 
 setMethodS3("as.character", "IlluminaGenomeStudioTextFile", function(x, ...) {
   this <- x;
-  s <- NextMethod(this, ...);
+  s <- NextMethod("as.character");
   class <- class(s);
 
   idx <- grep("^Columns", s);
