@@ -32,6 +32,31 @@
 \alias{readQuants.IlluminaIDatFile}
 \alias{readSignals}
 \alias{readSignals.IlluminaIDatFile}
+\alias{IlluminaGenomeStudioTextFile}
+\alias{as.character.IlluminaGenomeStudioTextFile}
+\alias{exportAromaUgpFile}
+\alias{exportAromaUgpFile.IlluminaGenomeStudioTextFile}
+\alias{exportTotalAndFracB}
+\alias{exportTotalAndFracB.IlluminaGenomeStudioTextFile}
+\alias{exportUnitNamesFile}
+\alias{exportUnitNamesFile.IlluminaGenomeStudioTextFile}
+\alias{extractTotalAndFracB}
+\alias{extractTotalAndFracB.IlluminaGenomeStudioTextFile}
+\alias{getChipType.IlluminaGenomeStudioTextFile}
+\alias{getDataSetName}
+\alias{getDataSetName.IlluminaGenomeStudioTextFile}
+\alias{getDataTypes}
+\alias{getDataTypes.IlluminaGenomeStudioTextFile}
+\alias{getPlatform.IlluminaGenomeStudioTextFile}
+\alias{getSampleNames.IlluminaGenomeStudioTextFile}
+\alias{getUnitNames.IlluminaGenomeStudioTextFile}
+\alias{getUnitNamesFile.IlluminaGenomeStudioTextFile}
+\alias{nbrOfSamples}
+\alias{nbrOfSamples.IlluminaGenomeStudioTextFile}
+\alias{nbrOfUnits.IlluminaGenomeStudioTextFile}
+\alias{readSampleData}
+\alias{readSampleData.IlluminaGenomeStudioTextFile}
+\alias{readUnitGenomePositions.IlluminaGenomeStudioTextFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that

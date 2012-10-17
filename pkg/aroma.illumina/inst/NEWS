@@ -1,6 +1,12 @@
 Package: aroma.illumina
 =======================
 
+Version: 0.2.1 [2012-10-16]
+o ROBUSTNESS/BUG FIX: No longer passing '...' to NextMethod(), cf.
+  R-devel thread 'Do *not* pass '...' to NextMethod() - it'll do it 
+  for you; missing documentation, a bug or just me?' on Oct 16, 2012.
+
+
 Version: 0.2.0 [2012-07-14]
 o Added several import and export methods for the
   IlluminaGenomeStudioTextFile class, methods which used to be
