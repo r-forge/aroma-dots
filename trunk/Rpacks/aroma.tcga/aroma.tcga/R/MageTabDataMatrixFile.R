@@ -32,7 +32,7 @@ setMethodS3("getHeader", "MageTabDataMatrixFile", function(this, ..., force=FALS
 
 
 setMethodS3("getReadArguments", "MageTabDataMatrixFile", function(this, ..., colClassPatterns=c("*"="character", "(Signal)$"="double")) {
-  NextMethod("getReadArguments", this, ..., colClassPatterns=colClassPatterns);
+  NextMethod("getReadArguments", colClassPatterns=colClassPatterns);
 }, protected=TRUE);
 
 

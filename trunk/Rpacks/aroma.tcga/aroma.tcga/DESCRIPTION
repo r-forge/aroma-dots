@@ -1,12 +1,14 @@
 Package: aroma.tcga
-Version: 0.2.0
-Date: 2012-04-05
-Title: Methods for accessing online The Cancer Genome Atlas (TCGA) data
-Author: Henrik Bengtsson <henrikb@braju.com>
-Maintainer: Henrik Bengtsson <henrikb@braju.com>
-Depends: R (>= 2.15.0), R.methodsS3 (>= 1.2.2), R.oo (>= 1.9.3), R.utils (>= 1.12.2), R.cache (>= 0.6.2), R.filesets (>= 1.1.5), aroma.core (>= 2.5.0)
-Imports: R.methodsS3 (>= 1.2.2)
+Version: 0.2.1
+Depends: R (>= 2.15.0), R.methodsS3 (>= 1.4.2), R.oo (>= 1.9.9), R.utils (>= 1.16.2), R.cache (>= 0.6.3), R.filesets (>= 1.1.5), aroma.core (>= 2.6.0)
+Imports: R.methodsS3 (>= 1.4.2)
 Suggests:
+Date: 2012-10-16
+Title: Methods for accessing online The Cancer Genome Atlas (TCGA) data
+Authors@R: c(person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
+                                          email = "henrikb@braju.com"))
+Author: Henrik Bengtsson
+Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Description: Utility functions for accessing the public and protected data files at the The Cancer Genome Atlas (TCGA) Data Collection Center (DCC)
 License: LGPL (>= 2.1)
 URL: http://www.aroma-project.org/
