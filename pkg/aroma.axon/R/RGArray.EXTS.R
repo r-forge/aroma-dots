@@ -44,8 +44,17 @@ setMethodS3("averageByGene", "RGArray", function(object, FUN=mean, na.rm=TRUE, .
 }) # averageByGene()
 
 
+setMethodS3("swapRG", "RGArray", function(this, ...) {
+  cc <- seq(length=dim(this)[2]);
+  this[,cc,] <- this[,rev(cc),];
+  this;
+}) # swapRG()
+
+
 ##############################################################################
 # HISTORY:
+# 2011-12-06
+# o Added swapRG() for RGArray.
 # 2011-09-14
 # o Added averageByGene() for RGArray.  Requires package 'abind'.
 # o Added lapplyByGene() for RGArray.
