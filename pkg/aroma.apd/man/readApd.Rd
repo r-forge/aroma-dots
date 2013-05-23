@@ -12,7 +12,10 @@
 
  \title{Reads an Affymetrix probe data (APD) file}
 
- \usage{\method{readApd}{default}(filename, indices=NULL, readMap="byMapType", name=NULL, ..., verbose=FALSE, .checkArgs=TRUE)}
+ \usage{
+\method{readApd}{default}(filename, indices=NULL, readMap="byMapType", name=NULL, ..., verbose=FALSE,
+  .checkArgs=TRUE)
+}
 
  \description{
    Reads an Affymetrix probe data (APD) file.
@@ -71,7 +74,7 @@
    \code{\link[R.huge]{FileVector}}.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \examples{\dontrun{#See ?createApd for an example.}}
 

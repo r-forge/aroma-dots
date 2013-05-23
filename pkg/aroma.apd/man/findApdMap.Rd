@@ -16,7 +16,9 @@
  Search for APD map files in multiple directories.
 }
 
-\usage{\method{findApdMap}{default}(mapType=NULL, paths=NULL, pattern="[.](a|A)(p|P)(m|M)$", ...)}
+\usage{
+\method{findApdMap}{default}(mapType=NULL, paths=NULL, pattern="[.](a|A)(p|P)(m|M)$", ...)
+}
 
 \arguments{
  \item{mapType}{A \code{\link[base]{character}} string of the map type to search for.}
@@ -47,7 +49,7 @@
   for more details.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 
 

@@ -12,7 +12,9 @@
 
  \title{Reads the header of an Affymetrix probe data (APD) file}
 
- \usage{\method{readApdHeader}{default}(filename, ..., verbose=FALSE, .checkArgs=TRUE)}
+ \usage{
+\method{readApdHeader}{default}(filename, ..., verbose=FALSE, .checkArgs=TRUE)
+}
 
  \description{
    Reads the header of an Affymetrix probe data (APD) file.
@@ -47,7 +49,7 @@
    file vector, and is \emph{not} stored in the above comment string.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \examples{\dontrun{#See ?createApd for an example.}}
 

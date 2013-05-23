@@ -12,7 +12,9 @@
 
  \title{Generates an APD file from an Affymetrix CEL file}
 
- \usage{\method{celToApd}{default}(filename, apdFile=NULL, mapType="asChipType", writeMap=NULL, ..., verbose=FALSE)}
+ \usage{
+\method{celToApd}{default}(filename, apdFile=NULL, mapType="asChipType", writeMap=NULL, ..., verbose=FALSE)
+}
 
  \description{
    Generates an APD file from an Affymetrix CEL file.
@@ -85,7 +87,7 @@ for (file in files[-1]) {
 rm(zzz, verbose, pattern)
 }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \seealso{
    To create an APD map file from a CDF file, see \code{\link{cdfToApdMap}}().

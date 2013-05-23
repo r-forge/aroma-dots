@@ -12,7 +12,10 @@
 
  \title{Creates an Affymetrix probe data (APD) file}
 
- \usage{\method{createApd}{default}(filename, nbrOfCells, dataType=c("float", "double", "integer", "short", "byte"), chipType=NULL, mapType=NULL, ..., verbose=FALSE, .checkArgs=TRUE)}
+ \usage{
+\method{createApd}{default}(filename, nbrOfCells, dataType=c("float", "double", "integer", "short",
+  "byte"), chipType=NULL, mapType=NULL, ..., verbose=FALSE, .checkArgs=TRUE)
+}
 
  \description{
    Creates an Affymetrix probe data (APD) file.
@@ -53,7 +56,7 @@
    (8 bytes).  This is why, the default data type is \code{"float"}.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \examples{
 

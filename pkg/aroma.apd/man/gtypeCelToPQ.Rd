@@ -16,7 +16,9 @@
  Function to immitate Affymetrix' gtype\_cel\_to\_pq software.
 }
 
-\usage{\method{gtypeCelToPQ}{default}(filename, units=NULL, ..., cdf=NULL, nbrOfQuartets=NULL, verbose=FALSE)}
+\usage{
+\method{gtypeCelToPQ}{default}(filename, units=NULL, ..., cdf=NULL, nbrOfQuartets=NULL, verbose=FALSE)
+}
 
 \arguments{
   \item{filename}{The name of a CEL file.}
@@ -60,7 +62,7 @@ rm(files)
  \code{\link[affxparser]{applyCdfGroups}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \references{
  [1] Affymetrix, \emph{Understanding Genotyping Probe Set Structure}, 2005.
