@@ -12,7 +12,9 @@
 
  \title{Generates an APD read map file from an Affymetrix CDF file}
 
- \usage{\method{cdfToApdMap}{default}(filename, mapType=NULL, mapFile=NULL, mapPath=NULL, ..., verbose=FALSE)}
+ \usage{
+\method{cdfToApdMap}{default}(filename, mapType=NULL, mapFile=NULL, mapPath=NULL, ..., verbose=FALSE)
+}
 
  \description{
    Generates an APD read map file from an Affymetrix CDF file.
@@ -38,7 +40,7 @@
    \item{readMap}{The generated read map \code{\link[base]{integer}} \code{\link[base]{vector}}.}
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \seealso{
    To read an APD map file, see \code{\link{readApdMap}}().

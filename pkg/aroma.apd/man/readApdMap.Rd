@@ -12,7 +12,9 @@
 
  \title{Reads an APD probe map file}
 
- \usage{\method{readApdMap}{default}(filename, path=NULL, ...)}
+ \usage{
+\method{readApdMap}{default}(filename, path=NULL, ...)
+}
 
  \description{
    Reads an APD probe map file.
@@ -37,7 +39,7 @@
    is thrown.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \seealso{
    To search for an APD map file, see \code{\link{findApdMap}}().

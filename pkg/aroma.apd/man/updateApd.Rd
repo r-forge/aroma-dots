@@ -12,7 +12,10 @@
 
  \title{Updates an Affymetrix probe data (APD) file}
 
- \usage{\method{updateApd}{default}(filename, indices=NULL, data, writeMap=NULL, ..., verbose=FALSE, .checkArgs=TRUE)}
+ \usage{
+\method{updateApd}{default}(filename, indices=NULL, data, writeMap=NULL, ..., verbose=FALSE,
+  .checkArgs=TRUE)
+}
 
  \description{
    Updates an Affymetrix probe data (APD) file.
@@ -34,7 +37,7 @@
    Returns (invisibly) the pathname of the file updated.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \examples{\dontrun{#See ?createApd for an example.}}
 

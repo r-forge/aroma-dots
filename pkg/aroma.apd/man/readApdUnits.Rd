@@ -12,7 +12,11 @@
 
  \title{Reads Affymetrix probe data (APD) as units (probesets)}
 
- \usage{\method{readApdUnits}{default}(filenames, units=NULL, ..., transforms=NULL, cdf=NULL, stratifyBy=c("nothing", "pmmm", "pm", "mm"), addDimnames=FALSE, readMap="byMapType", dropArrayDim=TRUE, verbose=FALSE)}
+ \usage{
+\method{readApdUnits}{default}(filenames, units=NULL, ..., transforms=NULL, cdf=NULL,
+  stratifyBy=c("nothing", "pmmm", "pm", "mm"), addDimnames=FALSE, readMap="byMapType",
+  dropArrayDim=TRUE, verbose=FALSE)
+}
 
  \description{
    Reads Affymetrix probe data (APD) as units (probesets) by using the unit and group definitions in the
@@ -69,7 +73,7 @@
    (\code{\link[affxparser]{readCel}}) to read data.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \examples{
 

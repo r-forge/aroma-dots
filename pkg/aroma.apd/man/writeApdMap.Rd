@@ -12,7 +12,9 @@
 
  \title{Writes an APD probe map file}
 
- \usage{\method{writeApdMap}{default}(filename, path=NULL, map, ...)}
+ \usage{
+\method{writeApdMap}{default}(filename, path=NULL, map, ...)
+}
 
  \description{
    Writes an APD probe map file.
@@ -29,7 +31,7 @@
    Returns (invisibly) the pathname to the create file.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \seealso{
    To read an APD map file, see \code{\link{readApdMap}}().

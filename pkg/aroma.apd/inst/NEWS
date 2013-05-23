@@ -1,6 +1,10 @@
 Package: aroma.apd
 ==================
 
+Version: 0.2.4 [2013-05-22]
+o CRAN POLICY: Now all Rd \usage{} lines are at most 90 characters long.
+
+
 Version: 0.2.3 [2012-06-30]
 o Updated package dependencies.
 

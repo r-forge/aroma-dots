@@ -12,7 +12,10 @@
 
  \title{Updates an Affymetrix probe data (APD) file by units (probesets)}
 
- \usage{\method{updateApdUnits}{default}(filename, units=NULL, data, ..., cdf=NULL, stratifyBy=c("nothing", "pmmm", "pm", "mm"), verbose=FALSE)}
+ \usage{
+\method{updateApdUnits}{default}(filename, units=NULL, data, ..., cdf=NULL, stratifyBy=c("nothing", "pmmm",
+  "pm", "mm"), verbose=FALSE)
+}
 
  \description{
    Updates an Affymetrix probe data (APD) file by units (probesets) by using the unit and group definitions in the
@@ -38,7 +41,7 @@
    Returns nothing.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \examples{\dontrun{#See ?createApd for an example.}}
 

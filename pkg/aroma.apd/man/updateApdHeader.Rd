@@ -12,7 +12,9 @@
 
  \title{Updates the header of an Affymetrix probe data (APD) file}
 
- \usage{\method{updateApdHeader}{default}(filename, path=NULL, ..., verbose=FALSE)}
+ \usage{
+\method{updateApdHeader}{default}(filename, path=NULL, ..., verbose=FALSE)
+}
 
  \description{
    Updates the header of an Affymetrix probe data (APD) file.
@@ -30,7 +32,7 @@
    Returns (invisibly) the pathname of the file updated.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \examples{\dontrun{#See ?createApd for an example.}}
 
