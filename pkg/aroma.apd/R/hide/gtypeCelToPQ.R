@@ -92,7 +92,7 @@ setMethodS3("gtypeCelToPQ", "default", function(filename, units=NULL, ..., cdf=N
   cel <- readCelUnits(filename, ..., cdf=cdf);
   verbose && exit(verbose);
 
-  rm(cdf); # Not needed anymore
+  cdf <- NULL; # Not needed anymore
 
 
 
@@ -138,4 +138,4 @@ setMethodS3("gtypeCelToPQ", "default", function(filename, units=NULL, ..., cdf=N
 # o Tried it.  It can be used to generate the same tab-delimited files as
 #   Affymetrix' gtype_cel_to_pq application.
 # o Created, partly to verify the correctness of affxparser.
-############################################################################  
+############################################################################

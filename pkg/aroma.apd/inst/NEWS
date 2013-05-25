@@ -1,6 +1,10 @@
 Package: aroma.apd
 ==================
 
+Version: 0.2.5 [2013-05-25]
+o Minor speedup by replacing rm() calls with NULL assignments. 
+
+
 Version: 0.2.4 [2013-05-22]
 o CRAN POLICY: Now all Rd \usage{} lines are at most 90 characters long.
 
