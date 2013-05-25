@@ -4,9 +4,9 @@
 
 
 .onAttach <- function(libname, pkgname) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   retrieveAffxparser <- function(pkgname, ...) {
     # Trick 'R CMD check' to not generate NOTEs.
     requireX <- base::require;
@@ -16,14 +16,14 @@
     res <- suppressWarnings({
       requireX(reqPkgName, character.only=TRUE);
     });
-  
+
     # Not installed?
     if (!res) {
       if (interactive()) {
         # Trick 'R CMD check' to not generate NOTEs.
         catX("Package 'affxparser' is not available or could not be loaded. Will now try to install it from Bioconductor (requires working internet connection):\n");
         # To please R CMD check
-        biocLite <- NULL; rm(biocLite);
+        biocLite <- NULL; rm(list="biocLite");
         source("http://www.bioconductor.org/biocLite.R");
         biocLite(reqPkgName);
         # Assert that the package can be successfully loaded
@@ -37,14 +37,14 @@
     }
   } # retrieveAffxparser()
 
-  
+
   # Loading/installing affxparser
   retrieveAffxparser(pkgname);
 
   pkg <- Package(pkgname);
   assign(pkgname, pkg, pos=getPosition(pkg));
 
-  packageStartupMessage(getName(pkg), " v", getVersion(pkg), " (", 
+  packageStartupMessage(getName(pkg), " v", getVersion(pkg), " (",
      getDate(pkg), ") successfully loaded. See ?", pkgname, " for help.");
 }
 

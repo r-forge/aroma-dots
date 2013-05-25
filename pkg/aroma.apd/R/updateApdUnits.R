@@ -3,48 +3,48 @@
 #
 # @title "Updates an Affymetrix probe data (APD) file by units (probesets)"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
-#   @get "title" by using the unit and group definitions in the 
+#   @get "title" by using the unit and group definitions in the
 #   corresponding Affymetrix CDF file.
 # }
-# 
+#
 # \arguments{
 #   \item{filename}{The filename of the APD file.}
-#   \item{units}{An @integer @vector of unit indices specifying which 
+#   \item{units}{An @integer @vector of unit indices specifying which
 #     units to be read.  If @NULL, all units are updated.}
 #   \item{data}{A @numeric @vector of data elements to be assigned.}
-#   \item{...}{Additional arguments passed to @see "updateApd", 
+#   \item{...}{Additional arguments passed to @see "updateApd",
 #     e.g. \code{writeMap}.}
 #   \item{cdf}{A @character filename of a CDF file, or a CDF @list
 #     structure.  If @NULL, the CDF file is searched for by
 #     @see "affxparser::findCdf".}
-#   \item{stratifyBy}{Argument passed to low-level method 
+#   \item{stratifyBy}{Argument passed to low-level method
 #     @see "affxparser::readCdfCellIndices".}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
-# 
+#
 # \value{
 #   Returns nothing.
 # }
 #
 # @author
-# 
+#
 # \examples{\dontrun{#See ?createApd for an example.}}
-# 
+#
 # \seealso{
 #   @see "readApdUnits" to read unit by units.
 #   @see "updateApd" to update cell by cell.
 # }
-# 
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("updateApdUnits", "default", function(filename, units=NULL, data, ..., cdf=NULL, stratifyBy=c("nothing", "pmmm", "pm", "mm"), verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename':
   filename <- Arguments$getReadablePathname(filename, mustExist=TRUE);
 
@@ -98,7 +98,7 @@ setMethodS3("updateApdUnits", "default", function(filename, units=NULL, data, ..
     } else {
       throw("Argument 'cdf' is of unknown format: The groups contains neither the fields 'indices' nor ('x' and 'y').");
     }
-    rm(aUnit, groups, aGroup);
+    aUnit <- groups <- aGroup <- NULL; # Not needed anymore
   } else {
     throw("Argument 'cdf' must be a filename, a CDF list structure or NULL: ", mode(cdf));
   }
@@ -198,7 +198,7 @@ setMethodS3("updateApdUnits", "default", function(filename, units=NULL, data, ..
     y <- unlist(applyCdfGroups(cdf, cdfGetFields, "y"), use.names=TRUE);
     ncol <- cdfHeader$cols;
     indices <- as.integer(y * ncol + x + 1);
-    rm(x,y,ncol);
+    x <- y <- ncol <- NULL; # Not needed anymore
     verbose && exit(verbose);
   }
 
@@ -230,4 +230,4 @@ setMethodS3("updateApdUnits", "default", function(filename, units=NULL, data, ..
 # o Added argument 'indexOffset' and made it one by default (as in R).
 # 2006-03-17
 # o Created.
-############################################################################  
+############################################################################

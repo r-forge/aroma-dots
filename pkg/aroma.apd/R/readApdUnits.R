@@ -3,20 +3,20 @@
 #
 # @title "Reads Affymetrix probe data (APD) as units (probesets)"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
-#   @get "title" by using the unit and group definitions in the 
+#   @get "title" by using the unit and group definitions in the
 #   corresponding Affymetrix CDF file.
 #
 #   If more than one APD file is read, all files are assumed to be of
 #   the same chip type, and have the same read map, if any.
-#   It is not possible to read APD files of different types at the 
+#   It is not possible to read APD files of different types at the
 #   same time.
 # }
-# 
+#
 # \arguments{
-#   \item{filenames}{The filenames of the APD files.  All APD files must 
+#   \item{filenames}{The filenames of the APD files.  All APD files must
 #     be of the same chip type.}
 #   \item{units}{An @integer @vector of unit indices specifying which units
 #     to be read.  If @NULL, all units are read.}
@@ -27,14 +27,14 @@
 #     function before being returned.}
 #   \item{cdf}{A @character filename of a CDF file, or a CDF @list
 #     structure.  If @NULL, the CDF file is searched for by
-#     @see "affxparser::findCdf" first starting from the current directory 
+#     @see "affxparser::findCdf" first starting from the current directory
 #     and then from the directory where the first APD file is.}
-#   \item{stratifyBy}{Argument passed to low-level method 
+#   \item{stratifyBy}{Argument passed to low-level method
 #     @see "affxparser::readCdfCellIndices".}
 #   \item{addDimnames}{If @TRUE, dimension names are added to arrays,
-#     otherwise not.  The size of the returned APD structure in bytes 
+#     otherwise not.  The size of the returned APD structure in bytes
 #     increases by 30-40\% with dimension names.}
-#   \item{readMap}{A @vector remapping cell indices to file indices.  
+#   \item{readMap}{A @vector remapping cell indices to file indices.
 #     If \code{"byMapType"}, the read map of type according to APD header
 #     will be search for and read.  It is much faster to specify the
 #     read map explicitly compared with searching for it each time.
@@ -43,10 +43,10 @@
 #     the group field do \emph{not} have an array dimension.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
-# 
+#
 # \value{
 #   A named @list where the names corresponds to the names of the units
-#   read.  Each element of the @list is in turn a @list structure 
+#   read.  Each element of the @list is in turn a @list structure
 #   with groups (aka blocks).
 # }
 #
@@ -54,23 +54,23 @@
 #   Since the cell indices are semi-randomized across the array and
 #   with units (probesets), it is very unlikely that the read will
 #   consist of subsequent cells (which would be faster to read).
-#   However, the speed of this method, which uses @see "R.huge::FileVector" 
-#   to read data, is comparable to the speed of 
-#   @see "affxparser::readCelUnits", which uses the Fusion SDK 
+#   However, the speed of this method, which uses @see "R.huge::FileVector"
+#   to read data, is comparable to the speed of
+#   @see "affxparser::readCelUnits", which uses the Fusion SDK
 #   (@see "affxparser::readCel") to read data.
 # }
 #
 # @author
-# 
+#
 # @examples "../incl/readApdUnits.Rex"
-# 
+#
 # \seealso{
 #   To read CEL units, @see "affxparser::readCelUnits".
 #   Internally, the @see "readApd" method is used for read probe data,
 #   and @see "readApdMap", if APD file has a map type specified and
 #   the read map was not given explicitly.
 # }
-# 
+#
 # \references{
 #   [1] Affymetrix Inc, Affymetrix GCOS 1.x compatible file formats,
 #       June 14, 2005.
@@ -83,9 +83,9 @@
 setMethodS3("readApdUnits", "default", function(filenames, units=NULL, ..., transforms=NULL, cdf=NULL, stratifyBy=c("nothing", "pmmm", "pm", "mm"), addDimnames=FALSE, readMap="byMapType", dropArrayDim=TRUE, verbose=FALSE) {
   apdHeader <- NULL;
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filenames':
   nbrOfArrays <- length(filenames);
   if (nbrOfArrays == 0)
@@ -142,7 +142,7 @@ setMethodS3("readApdUnits", "default", function(filenames, units=NULL, ..., tran
     } else {
       throw("Argument 'cdf' is of unknown format: The groups contains neither the fields 'indices' nor ('x' and 'y').");
     }
-    rm(aUnit, groups, aGroup);
+    aUnit <- groups <- aGroup <- NULL; # Not needed anymore
   } else {
     throw("Argument 'cdf' must be a filename, a CDF list structure or NULL: ", mode(cdf));
   }
@@ -260,7 +260,7 @@ setMethodS3("readApdUnits", "default", function(filenames, units=NULL, ..., tran
       y <- unlist(applyCdfGroups(cdf, cdfGetFields, "y"), use.names=FALSE);
       ncol <- cdfHeader$cols;
       indices <- as.integer(y * ncol + x + 1);
-      rm(x,y,ncol);
+      x <- y <- ncol <- NULL; # Not needed anymore
       verbose && exit(verbose);
     }
   }
@@ -304,7 +304,7 @@ setMethodS3("readApdUnits", "default", function(filenames, units=NULL, ..., tran
       }
 
       verbose && exit(verbose);
-    } 
+    }
 
     for (name in dataFields) {
       # Get read signals
@@ -320,7 +320,7 @@ setMethodS3("readApdUnits", "default", function(filenames, units=NULL, ..., tran
       apd[[name]][,kk] <- value;
     }
   }
-  rm(value, apdTmp);
+  value <- apdTmp <- NULL; # Not needed anymore
   verbose && exit(verbose);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -416,4 +416,4 @@ setMethodS3("readApdUnits", "default", function(filenames, units=NULL, ..., tran
 # o Removed all gc(). They slow down quite a bit.
 # 2006-02-27
 # o Created by HB.
-############################################################################  
+############################################################################
