@@ -1,6 +1,17 @@
 Package: aroma.apd
 ==================
 
+Version: 0.3.0 [2013-08-02]
+o CLEANUP: Package no longer attaches/loads R.utils and R.huge (only
+  imports them).   However, they will be attached dynamically, when
+  certain methods are called.
+o Utilizing new startupMessage() of R.oo.
+o BUG FIX: Several functions incorrectly assumed that the affxparser 
+  package had been attached ("loaded").  Although this is almost always
+  the case, because this package is only used by aroma.affymetrix which
+  loads affxparser, this was an incorrect assumption.
+
+
 Version: 0.2.5 [2013-05-25]
 o Minor speedup by replacing rm() calls with NULL assignments. 
 

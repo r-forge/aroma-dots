@@ -44,6 +44,14 @@
 # @keyword programming
 #**/#######################################################################
 setMethodS3("gtypeCelToPQ", "default", function(filename, units=NULL, ..., cdf=NULL, nbrOfQuartets=NULL, verbose=FALSE) {
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+  require("affxparser") || throw("Package not loaded: affxparser");
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

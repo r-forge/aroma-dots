@@ -3,37 +3,37 @@
 #
 # @title "Reads an Affymetrix probe data (APD) file"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
 #   @get "title".
 # }
-# 
+#
 # \arguments{
 #   \item{filename}{The filename of the APD file.}
 #   \item{indices}{An optional @numeric @vector of cell (probe) indices
 #     specifying what cells to read.  If @NULL, all are read.}
-#   \item{readMap}{A @vector remapping cell indices to file indices.  
+#   \item{readMap}{A @vector remapping cell indices to file indices.
 #     If \code{"byMapType"}, the read map of type according to APD header
 #     will be search for and read.  It is much faster to specify the
 #     read map explicitly compared with searching for it each time.
 #     If @NULL, no map is used.}
-#   \item{name}{The name of the data field. 
+#   \item{name}{The name of the data field.
 #     If @NULL, the APD header \code{name} is used.  If not specified,
 #     it defaults to \code{"intensities"}.}
 #   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 #   \item{.checkArgs}{If @TRUE, arguments are validated, otherwise not.}
 # }
-# 
+#
 # \value{
-#   A named @list with the two elements \code{header} and 
+#   A named @list with the two elements \code{header} and
 #   \code{data}.  The header is in turn a @list structure and
 #   the second is a @numeric @vector holding the queried data.
 # }
 #
 # \details{
-#   To read one \emph{large} contiguous block of elements is faster than 
+#   To read one \emph{large} contiguous block of elements is faster than
 #   to read individual elements one by one.  For this reason, internally
 #   more elements than requested may be read and therefore allocation more
 #   memory than necessary.  This means, in worst case \eqn{N} elements
@@ -45,11 +45,11 @@
 # }
 #
 # \section{Remapping indices}{
-#   Argument \code{readMap} can be used to remap indices.  For instance, 
+#   Argument \code{readMap} can be used to remap indices.  For instance,
 #   the indices of the probes can be reorder such that the probes within
 #   a probeset is in a contiguous set of probe indices.  Then, given that
-#   the values are stored in such an order, when reading complete probesets, 
-#   data will be access much faster from file than if the values were 
+#   the values are stored in such an order, when reading complete probesets,
+#   data will be access much faster from file than if the values were
 #   scatter all over the file.
 #
 #   Example of speed improvements.  Reading all 40000 values in units
@@ -63,25 +63,37 @@
 # }
 #
 # @author
-# 
+#
 # \examples{\dontrun{#See ?createApd for an example.}}
-# 
+#
 # \seealso{
 #   @see "createApd" and @see "updateApd".
 #   See also @see "readApdHeader".
-#   To create a cell-index read map from an CDF file, see 
+#   To create a cell-index read map from an CDF file, see
 #   @see "affxparser::readCdfUnitsWriteMap".
 # }
-# 
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMapType", name=NULL, ..., verbose=FALSE, .checkArgs=TRUE) {
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+  # WORKAROUND: Until getStaticInstance() of R.oo is capable of locating
+  # Class objects within namespaces (of packages that are not attached).
+  # /HB 2013-08-02
+  pkgName <- "R.huge";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.huge");
+
+
   header <- NULL;
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename':
   if (.checkArgs) {
     filename <- Arguments$getReadablePathname(filename, mustExists=TRUE);
@@ -97,7 +109,7 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
       # An APD file has zero- or one-based indices
       indices <- Arguments$getIndices(indices, range=c(1, nbrOfProbes));
     }
-  
+
     # Argument 'readMap':
     if (is.null(readMap)) {
       # No probe map specified.
@@ -106,7 +118,7 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
       readMap <- Arguments$getIndices(readMap, range=c(1, nbrOfProbes),
                                                      length=nbrOfProbes);
     }
-  
+
     # Argument 'name':
     if (!is.null(name)) {
       name <- Arguments$getCharacter(name, nchar=c(1,256));
@@ -138,9 +150,9 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
     readMap <- readApdMap(mapFile)$map;
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get APD header and data
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   res <- list();
   if (is.null(header))
     header <- readApdHeader(apd);
@@ -153,13 +165,13 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
       name <- "intensities";
     }
   }
-  
+
   # Affymetrix probe data is stored in a file vector.
   if (is.null(indices)) {
     # Read all values
     values <- readAllValues(apd, verbose=verbose);
     # Re-map indices?
-    if (!is.null(readMap)) 
+    if (!is.null(readMap))
       values <- values[readMap];
   } else {
     # Re-map ?
@@ -167,7 +179,7 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
       indices <- readMap[indices];
     }
     # To speed things up a lot, we read the data in one big patch and then
-    # keep only those values we are interested in.  However, we only read 
+    # keep only those values we are interested in.  However, we only read
     # the necessary range of values, i.e. the first to the last.
     range <- range(indices);
     first <- range[1];
@@ -204,4 +216,4 @@ setMethodS3("readApd", "default", function(filename, indices=NULL, readMap="byMa
 # o Added support for index maps.
 # 2006-02-27
 # o Created by HB.
-############################################################################  
+############################################################################

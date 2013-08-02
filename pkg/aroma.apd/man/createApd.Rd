@@ -6,59 +6,59 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{createApd}
+\name{createApd}
 \alias{createApd.default}
 \alias{createApd}
 
- \title{Creates an Affymetrix probe data (APD) file}
+\title{Creates an Affymetrix probe data (APD) file}
 
- \usage{
+\usage{
 \method{createApd}{default}(filename, nbrOfCells, dataType=c("float", "double", "integer", "short",
   "byte"), chipType=NULL, mapType=NULL, ..., verbose=FALSE, .checkArgs=TRUE)
 }
 
- \description{
-   Creates an Affymetrix probe data (APD) file.
+\description{
+  Creates an Affymetrix probe data (APD) file.
 
-   An Affymetrix probe data (APD) structure can hold a header and
-   a numeric data vector.  Since the APD structure is kept on file
-   all the time, the number of elements in the data vector is only
-   limited by the file system and not the amount of system memory
-   available.  For more details, see the \code{\link[R.huge]{FileVector}}
-   class (and its superclass), which is used internally.
- }
+  An Affymetrix probe data (APD) structure can hold a header and
+  a numeric data vector.  Since the APD structure is kept on file
+  all the time, the number of elements in the data vector is only
+  limited by the file system and not the amount of system memory
+  available.  For more details, see the \code{\link[R.huge]{FileVector}}
+  class (and its superclass), which is used internally.
+}
 
- \arguments{
-   \item{filename}{The filename of the APD file.}
-   \item{nbrOfCells}{The number of cells (probes) data elements the
-      APD file structure should hold.}
-   \item{dataType}{The data type of the data elements.}
-   \item{chipType}{An (optional) \code{\link[base]{character}} string specifying the
-      chip type.}
-   \item{mapType}{An (optional) \code{\link[base]{character}} string specifying the
-      probe-index map.  Use by \code{\link{findApdMap}}() to find read map.}
-   \item{...}{Additional named arguments added to the header of the
-      APD file structure.}
-   \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
-   \item{.checkArgs}{If \code{\link[base:logical]{TRUE}}, arguments are checked, otherwise not.}
- }
+\arguments{
+  \item{filename}{The filename of the APD file.}
+  \item{nbrOfCells}{The number of cells (probes) data elements the
+     APD file structure should hold.}
+  \item{dataType}{The data type of the data elements.}
+  \item{chipType}{An (optional) \code{\link[base]{character}} string specifying the
+     chip type.}
+  \item{mapType}{An (optional) \code{\link[base]{character}} string specifying the
+     probe-index map.  Use by \code{\link{findApdMap}}() to find read map.}
+  \item{...}{Additional named arguments added to the header of the
+     APD file structure.}
+  \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
+  \item{.checkArgs}{If \code{\link[base:logical]{TRUE}}, arguments are checked, otherwise not.}
+}
 
- \value{
-   Returns (invisibly) the pathname of the file created.
- }
+\value{
+  Returns (invisibly) the pathname of the file created.
+}
 
- \section{Data type}{
-   Valid data types are: byte (1 byte), short (2 bytes), integer (4 bytes),
-   float (4 bytes), and double (8 bytes).
+\section{Data type}{
+  Valid data types are: byte (1 byte), short (2 bytes), integer (4 bytes),
+  float (4 bytes), and double (8 bytes).
 
-   Note that in Affymetrix CEL files, the probe intensities as well as
-   the standard deviations are stored as floats (4 bytes) and not doubles
-   (8 bytes).  This is why, the default data type is \code{"float"}.
- }
+  Note that in Affymetrix CEL files, the probe intensities as well as
+  the standard deviations are stored as floats (4 bytes) and not doubles
+  (8 bytes).  This is why, the default data type is \code{"float"}.
+}
 
- \author{Henrik Bengtsson}
+\author{Henrik Bengtsson}
 
- \examples{
+\examples{
 
 for (zzz in 0) {
 
@@ -144,10 +144,10 @@ rm(zzz, tol, chipType, nbrOfCells, pathname, header, cells, signals,
                                                         apd, cdfFile)
 }
 
- \seealso{
-   \code{\link{updateApd}}() and \code{\link{readApd}}().
-   To find a map of a certain type, see \code{\link{findApdMap}}().
- }
+\seealso{
+  \code{\link{updateApd}}() and \code{\link{readApd}}().
+  To find a map of a certain type, see \code{\link{findApdMap}}().
+}
 
 
 

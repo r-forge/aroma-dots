@@ -26,7 +26,7 @@
    The current directory is always searched at the beginning.
    If \code{\link[base]{NULL}}, default paths are searched.  For more details, see below.}
  \item{pattern}{A regular expression file name pattern to match.}
- \item{...}{Additional arguments passed to \code{\link[affxparser]{findFiles}}.}
+ \item{...}{Additional arguments passed to \code{\link[R.utils]{findFiles}}.}
 }
 
 \value{

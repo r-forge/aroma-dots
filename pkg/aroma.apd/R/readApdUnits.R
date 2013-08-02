@@ -81,6 +81,14 @@
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("readApdUnits", "default", function(filenames, units=NULL, ..., transforms=NULL, cdf=NULL, stratifyBy=c("nothing", "pmmm", "pm", "mm"), addDimnames=FALSE, readMap="byMapType", dropArrayDim=TRUE, verbose=FALSE) {
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+  require("affxparser") || throw("Package not loaded: affxparser");
+
+
   apdHeader <- NULL;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

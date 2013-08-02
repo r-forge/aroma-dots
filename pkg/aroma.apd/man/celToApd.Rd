@@ -6,46 +6,48 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{celToApd}
+\name{celToApd}
 \alias{celToApd.default}
 \alias{celToApd}
 
- \title{Generates an APD file from an Affymetrix CEL file}
+\title{Generates an APD file from an Affymetrix CEL file}
 
- \usage{
+\usage{
 \method{celToApd}{default}(filename, apdFile=NULL, mapType="asChipType", writeMap=NULL, ..., verbose=FALSE)
 }
 
- \description{
-   Generates an APD file from an Affymetrix CEL file.
- }
+\description{
+  Generates an APD file from an Affymetrix CEL file.
+}
 
- \arguments{
-   \item{filename}{The pathname of the CEL file.}
-   \item{apdFile}{An optional pathname of the APD file, otherwise
-     it will be the same as the CEL file with extension replaced
-     with 'apd'.}
-   \item{mapType}{The type of read map for the generated APD file.
-     If \code{\link[base]{NULL}}, no remapping of the cell indices is done.
-     If \code{"asChipType"}, the map type is the same as the chip type
-     of the CEL file.
-     If any other \code{\link[base]{character}} string, it sets the map type to that string.
-     Note that there must be a APD map file with this type that can
-     be found by \code{\link{findApdMap}}().
-   }
-   \item{writeMap}{An optional \emph{write} map \code{\link[base]{integer}} \code{\link[base]{vector}} used
-     to remap the cell indices for optimal reading speed.  If \code{\link[base]{NULL}},
-     the write map may be obtained from the read map file specified by
-     the \code{mapType} argument.}
-   \item{...}{Additional arguments passed to \code{\link{writeApd}}().}
-   \item{verbose}{A \code{\link[R.utils]{Verbose}} object.}
- }
+\arguments{
+  \item{filename}{The pathname of the CEL file.}
+  \item{apdFile}{An optional pathname of the APD file, otherwise
+    it will be the same as the CEL file with extension replaced
+    with 'apd'.}
+  \item{mapType}{The type of read map for the generated APD file.
+    If \code{\link[base]{NULL}}, no remapping of the cell indices is done.
+    If \code{"asChipType"}, the map type is the same as the chip type
+    of the CEL file.
+    If any other \code{\link[base]{character}} string, it sets the map type to that string.
+    Note that there must be a APD map file with this type that can
+    be found by \code{\link{findApdMap}}().
+  }
+  \item{writeMap}{An optional \emph{write} map \code{\link[base]{integer}} \code{\link[base]{vector}} used
+    to remap the cell indices for optimal reading speed.  If \code{\link[base]{NULL}},
+    the write map may be obtained from the read map file specified by
+    the \code{mapType} argument.}
+  \item{...}{Additional arguments passed to \code{\link{writeApd}}().}
+  \item{verbose}{A \code{\link[R.utils]{Verbose}} object.}
+}
 
- \value{
-   Returns (invisibly) the pathname of the written APD file.
- }
+\value{
+  Returns (invisibly) the pathname of the written APD file.
+}
 
- \examples{
+\examples{
+
+library("R.utils")
 
 for (zzz in 0) {
 
@@ -87,13 +89,13 @@ for (file in files[-1]) {
 rm(zzz, verbose, pattern)
 }
 
- \author{Henrik Bengtsson}
+\author{Henrik Bengtsson}
 
- \seealso{
-   To create an APD map file from a CDF file, see \code{\link{cdfToApdMap}}().
-   To read an APD file, see \code{\link{readApd}}().
-   To read an APD map file, see \code{\link{readApdMap}}().
- }
+\seealso{
+  To create an APD map file from a CDF file, see \code{\link{cdfToApdMap}}().
+  To read an APD file, see \code{\link{readApd}}().
+  To read an APD map file, see \code{\link{readApdMap}}().
+}
 
 
 

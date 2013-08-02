@@ -3,12 +3,12 @@
 #
 # @title "Generates an APD file from an Affymetrix CEL file"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
 #   @get "title".
 # }
-# 
+#
 # \arguments{
 #   \item{filename}{The pathname of the CEL file.}
 #   \item{apdFile}{An optional pathname of the APD file, otherwise
@@ -17,7 +17,7 @@
 #   \item{mapType}{The type of read map for the generated APD file.
 #     If @NULL, no remapping of the cell indices is done.
 #     If \code{"asChipType"}, the map type is the same as the chip type
-#     of the CEL file.  
+#     of the CEL file.
 #     If any other @character string, it sets the map type to that string.
 #     Note that there must be a APD map file with this type that can
 #     be found by @see "findApdMap".
@@ -29,7 +29,7 @@
 #   \item{...}{Additional arguments passed to @see "writeApd".}
 #   \item{verbose}{A @see "R.utils::Verbose" object.}
 # }
-# 
+#
 # \value{
 #   Returns (invisibly) the pathname of the written APD file.
 # }
@@ -37,17 +37,26 @@
 # @examples "../incl/celToApd.Rex"
 #
 # @author
-# 
+#
 # \seealso{
 #   To create an APD map file from a CDF file, see @see "cdfToApdMap".
 #   To read an APD file, see @see "readApd".
 #   To read an APD map file, see @see "readApdMap".
 # }
-# 
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("celToApd", "default", function(filename, apdFile=NULL, mapType="asChipType", writeMap=NULL, ..., verbose=FALSE) {
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'apdFile':
   if (is.null(apdFile)) {
     apdFile <- gsub("[.](c|C)(e|E)(l|L)$", ".apd", filename);
@@ -111,7 +120,7 @@ setMethodS3("celToApd", "default", function(filename, apdFile=NULL, mapType="asC
   # Save APD file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Saving APD file '", apdFile, "'");
-  writeApd(apdFile, data=cel$intensities, chipType=chipType, mapType=mapType, 
+  writeApd(apdFile, data=cel$intensities, chipType=chipType, mapType=mapType,
                                                      writeMap=writeMap, ...);
   verbose && exit(verbose);
 
@@ -125,4 +134,4 @@ setMethodS3("celToApd", "default", function(filename, apdFile=NULL, mapType="asC
 # o Added argument 'writeMap' (again).
 # 2006-03-30
 # o Created.
-############################################################################# 
+#############################################################################

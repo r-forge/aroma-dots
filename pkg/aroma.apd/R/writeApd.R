@@ -3,38 +3,44 @@
 #
 # @title "Writes an APD probe data file"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
 #   @get "title".
 # }
-# 
+#
 # \arguments{
 #   \item{filename}{The filename of the APD file.}
 #   \item{data}{A @numeric @vector of elements to be written.}
-#   \item{...}{Arguments passed to @see "createApd", e.g. \code{chipType}, 
+#   \item{...}{Arguments passed to @see "createApd", e.g. \code{chipType},
 #      \code{mapType} etc.}
 #   \item{writeMap}{A @vector of indicies used to change the order how
 #      data elements are \emph{written} (by default).}
 # }
-# 
+#
 # \value{
 #   Returns (invisibly) the pathname to the created file.
 # }
 #
 # @author
-# 
+#
 # \seealso{
 #   To create an APD map file, see @see "readApdMap".
 # }
-# 
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("writeApd", "default", function(filename, data, ..., writeMap=NULL) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename':
   filename <- Arguments$getWritablePathname(filename, mustNotExist=TRUE);
 
@@ -49,16 +55,16 @@ setMethodS3("writeApd", "default", function(filename, data, ..., writeMap=NULL) 
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Reorder data elements according to the write map
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(writeMap)) {
     data <- data[writeMap];
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Write APD file
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create the APD file
   createApd(filename, nbrOfCells=nbrOfCells, ...);
 
@@ -75,10 +81,10 @@ setMethodS3("writeApd", "default", function(filename, data, ..., writeMap=NULL) 
 ############################################################################
 # HISTORY:
 # 2009-05-16
-# o Updated writeApd() to coerce argument 'writeMap' to integer indices.  
+# o Updated writeApd() to coerce argument 'writeMap' to integer indices.
 #   Before it used to coerce to doubles (before updating R.utils).
 # 2006-03-28
 # o Renamed argument 'map' to 'writeMap'.  Removed argument 'isWriteMap'.
 # 2006-03-14
 # o Created.
-############################################################################  
+############################################################################

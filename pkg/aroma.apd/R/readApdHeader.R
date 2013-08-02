@@ -3,26 +3,26 @@
 #
 # @title "Reads the header of an Affymetrix probe data (APD) file"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
 #   @get "title".
 # }
-# 
+#
 # \arguments{
 #   \item{filename}{The filename of the APD file.}
 #   \item{...}{Not used.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 #   \item{.checkArgs}{If @TRUE, arguments are validated, otherwise not.}
 # }
-# 
+#
 # \value{
 #   A named @list.
 #   The @numeric element \code{nbrOfProbes} is the number of probe values
 #   available in the APD file.
 #   The optional @character element \code{name} specifies the name of
 #   the APD vector.
-#   The optional @character element \code{chipType} specifies the 
+#   The optional @character element \code{chipType} specifies the
 #   chip type, cf. the same field in @see "affxparser::readCelHeader".
 #   The optional @character element \code{maptype} specifies the type of
 #   probe-index map for this APD file.  Its value can be used to find
@@ -39,20 +39,32 @@
 # }
 #
 # @author
-# 
+#
 # \examples{\dontrun{#See ?createApd for an example.}}
-# 
+#
 # \seealso{
 #   @see "readApd".
 # }
-# 
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("readApdHeader", "default", function(filename, ..., verbose=FALSE, .checkArgs=TRUE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+  # WORKAROUND: Until getStaticInstance() of R.oo is capable of locating
+  # Class objects within namespaces (of packages that are not attached).
+  # /HB 2013-08-02
+  pkgName <- "R.huge";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.huge");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'pathname':
   if (inherits(filename, "FileVector")) {
     apd <- filename;
@@ -111,4 +123,4 @@ setMethodS3("readApdHeader", "default", function(filename, ..., verbose=FALSE, .
 # o Added virtual header 'nbrOfProbes' for conveniency.
 # 2006-02-27
 # o Created by HB.
-############################################################################  
+############################################################################

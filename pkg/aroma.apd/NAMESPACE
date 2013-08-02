@@ -1,3 +1,28 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# IMPORTS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+importFrom("R.methodsS3", "setMethodS3")
+importFrom("R.methodsS3", "throw")
+
+importFrom("R.oo", "Package")
+importFrom("R.oo", "getPosition")
+importFrom("R.oo", "startupMessage")
+
+import("R.utils")
+
+importFrom("R.huge", "FileVector")
+importFrom("R.huge", "readAllValues")
+importFrom("R.huge", "readContiguousValues")
+importFrom("R.huge", "getComments")
+importFrom("R.huge", "writeValues")
+importFrom("R.huge", "setComments")
+importFrom("R.huge", "writeAllValues")
+importFrom("R.huge", "AbstractFileArray")
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# EXPORTS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Export all public methods, that is, those without a preceeding dot
 # in their names.
 exportPattern("^[^\\.]")

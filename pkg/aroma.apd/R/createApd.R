@@ -57,6 +57,18 @@
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("createApd", "default", function(filename, nbrOfCells, dataType=c("float", "double", "integer", "short", "byte"), chipType=NULL, mapType=NULL, ..., verbose=FALSE, .checkArgs=TRUE) {
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+  # WORKAROUND: Until getStaticInstance() of R.oo is capable of locating
+  # Class objects within namespaces (of packages that are not attached).
+  # /HB 2013-08-02
+  pkgName <- "R.huge";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.huge");
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
