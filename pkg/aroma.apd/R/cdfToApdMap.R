@@ -3,12 +3,12 @@
 #
 # @title "Generates an APD read map file from an Affymetrix CDF file"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
 #   @get "title".
 # }
-# 
+#
 # \arguments{
 #   \item{filename}{The pathname of the CDF file.}
 #   \item{mapType}{A @character string naming the type of the map.
@@ -20,7 +20,7 @@
 #      @see "affxparser::readCdfUnitsWriteMap", e.g. \code{units}.}
 #   \item{verbose}{A @see "R.utils::Verbose" object.}
 # }
-# 
+#
 # \value{
 #   Returns (invisibly) a @list structure with elements:
 #   \item{pathname}{The pathname of the generated APD map file.}
@@ -30,25 +30,36 @@
 # }
 #
 # @author
-# 
+#
 # \seealso{
 #   To read an APD map file, see @see "readApdMap".
 # }
-# 
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("cdfToApdMap", "default", function(filename, mapType=NULL, mapFile=NULL, mapPath=NULL, ..., verbose=FALSE) {
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+  require("affxparser") || throw("Package not loaded: affxparser");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename':
   filename <- Arguments$getReadablePathname(filename, mustExist=TRUE);
 
   # Get chip type from CDF header
   header <- readCdfHeader(filename);
-  chipType <- header$chiptype; 
+  chipType <- header$chiptype;
 
   # Argument 'mapType':
   if (is.null(mapType)) {
-    mapType <- chipType;   
+    mapType <- chipType;
   }
 
   # Argument 'mapFile':
@@ -69,7 +80,7 @@ setMethodS3("cdfToApdMap", "default", function(filename, mapType=NULL, mapFile=N
   readMap <- invertMap(writeMap);
   verbose && exit(verbose);
 
- 
+
   verbose && cat(verbose, "Saving map file '", mapFile, "'");
   writeApdMap(mapFile, chipType=chipType, map=readMap);
   verbose && exit(verbose);
@@ -87,4 +98,4 @@ setMethodS3("cdfToApdMap", "default", function(filename, mapType=NULL, mapFile=N
 # HISTORY:
 # 2006-03-30
 # o Created.
-############################################################################  
+############################################################################

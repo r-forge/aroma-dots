@@ -6,41 +6,41 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \name{readApdRectangle}
+\name{readApdRectangle}
 \alias{readApdRectangle.default}
 \alias{readApdRectangle}
 
- \title{Reads a spatial subset of probe-level data from Affymetrix APD files}
+\title{Reads a spatial subset of probe-level data from Affymetrix APD files}
 
- \usage{
+\usage{
 \method{readApdRectangle}{default}(filename, xrange=c(0, Inf), yrange=c(0, Inf), ..., asMatrix=TRUE)
 }
 
- \description{
-   Reads a spatial subset of probe-level data from Affymetrix APD files.
- }
+\description{
+  Reads a spatial subset of probe-level data from Affymetrix APD files.
+}
 
- \arguments{
-   \item{filename}{The pathname of the APD file.}
-   \item{xrange}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of length two giving the left
-     and right coordinates of the cells to be returned.}
-   \item{yrange}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of length two giving the top
-     and bottom coordinates of the cells to be returned.}
-   \item{...}{Additional arguments passed to \code{\link{readApd}}().}
-   \item{asMatrix}{If \code{\link[base:logical]{TRUE}}, the APD data fields are returned as
-     matrices with element (1,1) corresponding to cell
-     (xrange[1],yrange[1]).}
- }
+\arguments{
+  \item{filename}{The pathname of the APD file.}
+  \item{xrange}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of length two giving the left
+    and right coordinates of the cells to be returned.}
+  \item{yrange}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of length two giving the top
+    and bottom coordinates of the cells to be returned.}
+  \item{...}{Additional arguments passed to \code{\link{readApd}}().}
+  \item{asMatrix}{If \code{\link[base:logical]{TRUE}}, the APD data fields are returned as
+    matrices with element (1,1) corresponding to cell
+    (xrange[1],yrange[1]).}
+}
 
- \value{
-   A named \code{\link[base]{list}} APD structure similar to what \code{\link{readApd}}().
-   In addition, if \code{asMatrix} is \code{\link[base:logical]{TRUE}}, the APD data fields
-   are returned as matrices, otherwise not.
- }
+\value{
+  A named \code{\link[base]{list}} APD structure similar to what \code{\link{readApd}}().
+  In addition, if \code{asMatrix} is \code{\link[base:logical]{TRUE}}, the APD data fields
+  are returned as matrices, otherwise not.
+}
 
- \author{Henrik Bengtsson}
+\author{Henrik Bengtsson}
 
- \examples{
+\examples{
 
 for (zzz in 0) {
 
@@ -74,9 +74,9 @@ rm(rotate270, files, apdFile, apd, z, sub)
 rm(zzz)
 }
 
- \seealso{
-   The \code{\link{readApd}}() method is used internally.
- }
+\seealso{
+  The \code{\link{readApd}}() method is used internally.
+}
 
 
 

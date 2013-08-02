@@ -1,4 +1,6 @@
 
+library("R.utils")
+
 for (zzz in 0) {
 
 verbose <- Arguments$getVerbose(TRUE)

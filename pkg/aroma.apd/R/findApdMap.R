@@ -11,11 +11,11 @@
 #
 # \arguments{
 #  \item{mapType}{A @character string of the map type to search for.}
-#  \item{paths}{A @character @vector of paths to be searched.  
+#  \item{paths}{A @character @vector of paths to be searched.
 #    The current directory is always searched at the beginning.
 #    If @NULL, default paths are searched.  For more details, see below.}
 #  \item{pattern}{A regular expression file name pattern to match.}
-#  \item{...}{Additional arguments passed to @see "affxparser::findFiles".}
+#  \item{...}{Additional arguments passed to @see "R.utils::findFiles".}
 # }
 #
 # \value{
@@ -34,7 +34,7 @@
 #   }
 #
 #   One of the easiest ways to set system variables for \R is to
-#   set them in an \code{.Renviron} file, see @see "base::Startup" 
+#   set them in an \code{.Renviron} file, see @see "base::Startup"
 #   for more details.
 # }
 #
@@ -49,8 +49,8 @@ setMethodS3("findApdMap", "default", function(mapType=NULL, paths=NULL, pattern=
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'paths':
   if (is.null(paths)) {
-    paths <- paste(".", 
-                   getOption("AFFX_APD_PATH"), 
+    paths <- paste(".",
+                   getOption("AFFX_APD_PATH"),
                    Sys.getenv("AFFX_APD_PATH"),
              sep=";", collapse=";");
   }
@@ -61,11 +61,11 @@ setMethodS3("findApdMap", "default", function(mapType=NULL, paths=NULL, pattern=
   }
 
   findFiles(pattern=pattern, paths=paths, ...);
-}) 
+})
 
 
 ############################################################################
 # HISTORY:
 # 2006-03-14
 # o Created from findCdf.R now in the affxparser package.
-############################################################################  
+############################################################################

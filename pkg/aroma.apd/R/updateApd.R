@@ -3,15 +3,15 @@
 #
 # @title "Updates an Affymetrix probe data (APD) file"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
 #   @get "title".
 # }
-# 
+#
 # \arguments{
 #   \item{filename}{The filename of the APD file.}
-#   \item{indices}{A @numeric @vector of cell (probe) indices specifying 
+#   \item{indices}{A @numeric @vector of cell (probe) indices specifying
 #     which cells to updated.}
 #   \item{data}{A @numeric @vector of data elements to be assigned.}
 #   \item{writeMap}{A @vector of indicies used to change the order how
@@ -20,26 +20,38 @@
 #   \item{verbose}{See @see "R.utils::Verbose".}
 #   \item{.checkArgs}{If @TRUE, arguments are checked, otherwise not.}
 # }
-# 
+#
 # \value{
 #   Returns (invisibly) the pathname of the file updated.
 # }
 #
 # @author
-# 
+#
 # \examples{\dontrun{#See ?createApd for an example.}}
-# 
+#
 # \seealso{
 #   @see "createApd" and @see "updateApd".
 # }
-# 
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("updateApd", "default", function(filename, indices=NULL, data, writeMap=NULL, ..., verbose=FALSE, .checkArgs=TRUE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+  # WORKAROUND: Until getStaticInstance() of R.oo is capable of locating
+  # Class objects within namespaces (of packages that are not attached).
+  # /HB 2013-08-02
+  pkgName <- "R.huge";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.huge");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (.checkArgs) {
     # Argument 'filename':
     filename <- Arguments$getReadablePathname(filename, mustExist=TRUE);
@@ -49,11 +61,11 @@ setMethodS3("updateApd", "default", function(filename, indices=NULL, data, write
   apd <- FileVector(filename);
   on.exit(close(apd));
   nbrOfProbes <- length(apd);
-  
+
   if (.checkArgs) {
     # Argument 'data':
     data <- Arguments$getNumerics(data);
-  
+
     # Argument 'indices':
     if (is.null(indices)) {
       nbrOfIndices <- nbrOfProbes;
@@ -62,24 +74,24 @@ setMethodS3("updateApd", "default", function(filename, indices=NULL, data, write
       indices <- Arguments$getIntegers(indices, range=c(1, nbrOfProbes));
       nbrOfIndices <- length(indices);
     }
-  
+
     # Argument 'data':
     if (length(data) != nbrOfIndices) {
       throw("Length of argument 'data' does not match the number of cell indices: ", length(data), " != ", nbrOfIndices);
     }
-    
+
     # Argument 'writeMap':
     if (!is.null(writeMap)) {
       writeMap <- Arguments$getIndices(writeMap, range=c(1,nbrOfProbes));
     }
-  
+
     # Argument 'verbose':
     verbose <- Arguments$getVerbose(verbose);
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Reorder indices and data elements according to the write map
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(writeMap)) {
     if (is.null(indices)) {
       data <- data[writeMap];
@@ -95,9 +107,9 @@ setMethodS3("updateApd", "default", function(filename, indices=NULL, data, write
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Write data to file
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   writeValues(apd, indices=indices, values=data);
 
   invisible(filename);
@@ -107,7 +119,7 @@ setMethodS3("updateApd", "default", function(filename, indices=NULL, data, write
 ############################################################################
 # HISTORY:
 # 2009-05-16
-# o Updated updateApd() to coerce argument 'writeMap' to integer indices.  
+# o Updated updateApd() to coerce argument 'writeMap' to integer indices.
 #   Before it used to coerce to doubles (before updating R.utils).
 # 2006-03-28
 # o Removed argument 'indexOffset'.
@@ -115,4 +127,4 @@ setMethodS3("updateApd", "default", function(filename, indices=NULL, data, write
 # o Added argument 'indexOffset' and made it one by default (as in R).
 # 2006-02-27
 # o Created by HB.
-############################################################################  
+############################################################################

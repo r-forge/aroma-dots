@@ -3,41 +3,53 @@
 #
 # @title "Updates the header of an Affymetrix probe data (APD) file"
 #
-# @synopsis 
-# 
+# @synopsis
+#
 # \description{
 #   @get "title".
 # }
-# 
+#
 # \arguments{
 #   \item{filename}{The filename of the APD file.}
 #   \item{path}{The path to the APD file.}
-#   \item{...}{A set of named header values to be updated/added to the 
+#   \item{...}{A set of named header values to be updated/added to the
 #      header.  A value of @NULL will be removed from the current header.}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
-# 
+#
 # \value{
 #   Returns (invisibly) the pathname of the file updated.
 # }
 #
 # @author
-# 
+#
 # \examples{\dontrun{#See ?createApd for an example.}}
-# 
+#
 # \seealso{
 #   @see "createApd" and @see "updateApd".
 # }
-# 
+#
 # @keyword "file"
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("updateApdHeader", "default", function(filename, path=NULL, ..., verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # WORKAROUND: Until Arguments$...() can be called without
+  # attaching R.utils. /HB 2013-07-03
+  pkgName <- "R.utils";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
+
+  # WORKAROUND: Until getStaticInstance() of R.oo is capable of locating
+  # Class objects within namespaces (of packages that are not attached).
+  # /HB 2013-08-02
+  pkgName <- "R.huge";
+  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.huge");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'pathname':
-  pathname <- Arguments$getReadablePathname(filename, path=path, 
+  pathname <- Arguments$getReadablePathname(filename, path=path,
                                                           mustExists=TRUE);
 
   # Argument 'nbrOfCells':
@@ -47,14 +59,14 @@ setMethodS3("updateApdHeader", "default", function(filename, path=NULL, ..., ver
   verbose <- Arguments$getVerbose(verbose);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get current header
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   header <- readApdHeader(filename, path=path);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create APD header
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the header elements to be set
   args <- list(...);
 
@@ -74,9 +86,9 @@ setMethodS3("updateApdHeader", "default", function(filename, path=NULL, ..., ver
     header[[name]] <- value;
   }
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Wrap up the APD header in the file vector header comments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   comments <- c();
   for (kk in seq(along=header)) {
     key <- names(header)[kk];
@@ -86,9 +98,9 @@ setMethodS3("updateApdHeader", "default", function(filename, path=NULL, ..., ver
   }
   comments <- paste(comments, collapse="\n");
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Create the file vector
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   apd <- FileVector(pathname);
   on.exit(close(apd));
 
@@ -102,4 +114,4 @@ setMethodS3("updateApdHeader", "default", function(filename, path=NULL, ..., ver
 # HISTORY:
 # 2006-03-14
 # o Created.
-############################################################################  
+############################################################################

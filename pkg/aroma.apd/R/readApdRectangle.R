@@ -39,6 +39,8 @@
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("readApdRectangle", "default", function(filename, xrange=c(0,Inf), yrange=c(0,Inf), ..., asMatrix=TRUE) {
+  require("affxparser") || throw("Package not loaded: affxparser");
+
   # Get the chip layout from the APD header
   header <- readApdHeader(filename);
   chipType <- header$chipType;
