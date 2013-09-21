@@ -1,9 +1,15 @@
 Package: aroma.apd
 ==================
 
-Version: 0.3.1 [2013-08-21]
+Version: 0.3.1 [2013-09-21]
+o CLEANUP: Removed fallback attachments of 'R.utils' and 'R.huge' as
+  these are no longer needed with R.oo (>= 1.15.1).
+o CLEANUP: Package no longer utilizes import(), only importFrom():s.
 o CLEANUP: Now only using 'Authors@R' in DESCRIPTION, which is possible
   since R (>= 2.14.0).
+o CLEANUP: Dropped obsolete R (< 2.0.0) code that was never used.
+o BUG FIX: cdfToApdMap() did not validate and assign argument 'verbose'.
+o BUG FIX: Forgot to import trim() from 'R.oo'.
 
 
 Version: 0.3.0 [2013-08-02]
@@ -11,14 +17,14 @@ o CLEANUP: Package no longer attaches/loads R.utils and R.huge (only
   imports them).   However, they will be attached dynamically, when
   certain methods are called.
 o Utilizing new startupMessage() of R.oo.
-o BUG FIX: Several functions incorrectly assumed that the affxparser 
+o BUG FIX: Several functions incorrectly assumed that the affxparser
   package had been attached ("loaded").  Although this is almost always
   the case, because this package is only used by aroma.affymetrix which
   loads affxparser, this was an incorrect assumption.
 
 
 Version: 0.2.5 [2013-05-25]
-o Minor speedup by replacing rm() calls with NULL assignments. 
+o Minor speedup by replacing rm() calls with NULL assignments.
 
 
 Version: 0.2.4 [2013-05-22]
@@ -82,7 +88,7 @@ o Forgot to use autoload("setMethodS3", package="R.oo") etc.
 
 
 Version: 0.1.2 [2006-03-18]
-o Added updateApdUnits(). 
+o Added updateApdUnits().
 o Now all probe indices are not longer zero-based but one-based.
   However, there is still an option to change this to zero-based
   indices again by using argument 'indexOffset=0'.  This option

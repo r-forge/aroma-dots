@@ -39,11 +39,6 @@
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("cdfToApdMap", "default", function(filename, mapType=NULL, mapFile=NULL, mapPath=NULL, ..., verbose=FALSE) {
-  # WORKAROUND: Until Arguments$...() can be called without
-  # attaching R.utils. /HB 2013-07-03
-  pkgName <- "R.utils";
-  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
-
   require("affxparser") || throw("Package not loaded: affxparser");
 
 
@@ -75,6 +70,10 @@ setMethodS3("cdfToApdMap", "default", function(filename, mapType=NULL, mapFile=N
   # Argument 'mapFile':
   mapFile <- Arguments$getWritablePathname(mapFile, mustNotExist=TRUE);
 
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+
+
   verbose && enter(verbose, "Creating read map from CDF file");
   writeMap <- readCdfUnitsWriteMap(filename, ...);
   readMap <- invertMap(writeMap);
@@ -96,6 +95,8 @@ setMethodS3("cdfToApdMap", "default", function(filename, mapType=NULL, mapFile=N
 
 ############################################################################
 # HISTORY:
+# 2013-09-21
+# o BUG FIX: cdfToApdMap() did not validate and assign argument 'verbose'.
 # 2006-03-30
 # o Created.
 ############################################################################

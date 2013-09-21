@@ -1,9 +1,9 @@
 Package: aroma.apd
 Version: 0.3.1
 Depends: R (>= 2.14.0)
-Imports: R.methodsS3 (>= 1.5.1), R.oo (>= 1.15.1), R.utils (>= 1.27.1), R.huge (>= 0.5.0)
+Imports: R.methodsS3 (>= 1.5.1), R.oo (>= 1.15.1), R.utils (>= 1.27.1), R.huge (>= 0.6.0)
 Suggests: affxparser
-Date: 2013-08-21
+Date: 2013-09-21
 Title: A probe-level data file format used by aroma.affymetrix [DEPRECATED]
 Authors@R: c(person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
                                           email = "henrikb@braju.com"))
