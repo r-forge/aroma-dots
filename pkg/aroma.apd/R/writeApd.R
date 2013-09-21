@@ -32,12 +32,6 @@
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("writeApd", "default", function(filename, data, ..., writeMap=NULL) {
-  # WORKAROUND: Until Arguments$...() can be called without
-  # attaching R.utils. /HB 2013-07-03
-  pkgName <- "R.utils";
-  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
-
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

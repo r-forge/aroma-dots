@@ -41,12 +41,6 @@
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("readApdMap", "default", function(filename, path=NULL, ...) {
-  # WORKAROUND: Until Arguments$...() can be called without
-  # attaching R.utils. /HB 2013-07-03
-  pkgName <- "R.utils";
-  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
-
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

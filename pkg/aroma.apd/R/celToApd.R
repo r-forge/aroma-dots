@@ -48,12 +48,6 @@
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("celToApd", "default", function(filename, apdFile=NULL, mapType="asChipType", writeMap=NULL, ..., verbose=FALSE) {
-  # WORKAROUND: Until Arguments$...() can be called without
-  # attaching R.utils. /HB 2013-07-03
-  pkgName <- "R.utils";
-  require(pkgName, character.only=TRUE) || throw("Package not loaded: R.utils");
-
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
