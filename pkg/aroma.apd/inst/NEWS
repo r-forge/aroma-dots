@@ -1,6 +1,11 @@
 Package: aroma.apd
 ==================
 
+Version: 0.3.1 [2013-08-21]
+o CLEANUP: Now only using 'Authors@R' in DESCRIPTION, which is possible
+  since R (>= 2.14.0).
+
+
 Version: 0.3.0 [2013-08-02]
 o CLEANUP: Package no longer attaches/loads R.utils and R.huge (only
   imports them).   However, they will be attached dynamically, when
