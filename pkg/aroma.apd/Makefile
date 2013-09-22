@@ -51,6 +51,7 @@ R_CHECK_OUTDIR := $(R_OUTDIR)/$(PKG_NAME).Rcheck
 R_CHECK_OPTS = --as-cran --timings
 R_CRAN_OUTDIR := $(R_OUTDIR)/$(PKG_NAME)_$(PKG_VERSION).CRAN
 
+HAS_ASPELL := $(shell $(R_SCRIPT) -e "cat(!is.na(utils:::aspell_find_program('aspell')))")
 
 all: build install check
 
@@ -64,6 +65,8 @@ debug:
 	@echo PKG_NAME=\'$(PKG_NAME)\'
 	@echo PKG_VERSION=\'$(PKG_VERSION)\'
 	@echo PKG_TARBALL=\'$(PKG_TARBALL)\'
+	@echo
+	@echo HAS_ASPELL=\'$(HAS_ASPELL)\'
 	@echo
 	@echo R=\'$(R)\'
 	@echo R_CMD=\'$(R_CMD)\'
@@ -139,7 +142,7 @@ install_force:
 	export _R_CHECK_CRAN_INCOMING_=1;\
 	export _R_CHECK_DOT_INTERNAL_=1;\
 	export _R_CHECK_USE_CODETOOLS_=1;\
-	export _R_CHECK_CRAN_INCOMING_USE_ASPELL_=1;\
+	export _R_CHECK_CRAN_INCOMING_USE_ASPELL_=$(HAS_ASPELL);\
 	export _R_CHECK_FORCE_SUGGESTS_=0;\
 	export _R_CHECK_FULL_=1;\
 	$(R_CMD) check $(R_CHECK_OPTS) $(PKG_TARBALL);\
