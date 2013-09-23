@@ -219,10 +219,10 @@ test: ../$(R_OUTDIR)/tests/%.R
 
 ../$(R_CRAN_OUTDIR)/$(PKG_NAME),EmailToCRAN.txt: ../$(R_CRAN_OUTDIR)/$(PKG_TARBALL)
 	$(CD) ../$(R_CRAN_OUTDIR);\
-	$(R_SCRIPT) -e "RCmdCheckTools::testPkgsToSubmit(delta=0.1)"
+	$(R_SCRIPT) -e "RCmdCheckTools::testPkgsToSubmit(delta=2/3)"
 
 cran_setup: ../$(R_CRAN_OUTDIR)/$(PKG_TARBALL)
-	$(R_SCRIPT) -e "if (is.na(packageVersion('RCmdCheckTools'))) { source('http://aroma-project.org/hbLite.R'); hbLite('RCmdCheckTools', devel=TRUE); }"
+	$(R_SCRIPT) -e "if (!nzchar(system.file(package='RCmdCheckTools'))) { source('http://aroma-project.org/hbLite.R'); hbLite('RCmdCheckTools', devel=TRUE); }"
 
 cran: cran_setup ../$(R_CRAN_OUTDIR)/$(PKG_NAME),EmailToCRAN.txt
 
