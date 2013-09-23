@@ -1,7 +1,7 @@
 Package: aroma.apd
 ==================
 
-Version: 0.3.1 [2013-09-21]
+Version: 0.4.0 [2013-09-21]
 o CLEANUP: Removed fallback attachments of 'R.utils' and 'R.huge' as
   these are no longer needed with R.oo (>= 1.15.1).
 o CLEANUP: Package no longer utilizes import(), only importFrom():s.
