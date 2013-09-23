@@ -1,5 +1,5 @@
 Package: aroma.apd
-Version: 0.3.1
+Version: 0.4.0
 Depends: R (>= 2.14.0)
 Imports: R.methodsS3 (>= 1.5.1), R.oo (>= 1.15.1), R.utils (>= 1.27.1), R.huge (>= 0.6.0)
 Suggests: affxparser
