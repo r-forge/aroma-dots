@@ -105,6 +105,10 @@ setMethodS3("celToApd", "default", function(filename, apdFile=NULL, mapType="asC
   } else if (is.null(writeMap)) {
     verbose && enter(verbose, "Reading read map from APD map file");
     mapFile <- findApdMap(mapType);
+    if (length(mapFile) == 0L) {
+      throw("No APD map file found for the given map type: ", mapType);
+    }
+    verbose && cat(verbose, "Located APD map file: ", mapFile);
     readMap <- readApdMap(mapFile)$map;
     verbose && exit(verbose);
     verbose && enter(verbose, "Calculating write map from read map");
@@ -127,6 +131,8 @@ setMethodS3("celToApd", "default", function(filename, apdFile=NULL, mapType="asC
 #############################################################################
 # HISTORY:
 # 2014-01-05
+# o Now celToApd() throws a more informative error message if it fails
+#   to located an APD map file.
 # o ROBUSTNESS: celToApd() assumed that affxparser was already attached.
 # 2006-04-21
 # o Added argument 'writeMap' (again).

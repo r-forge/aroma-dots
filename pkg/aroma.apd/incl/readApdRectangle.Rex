@@ -8,7 +8,7 @@ rotate270 <- function(x, ...) {
 }
 
 # Scan current directory for APD files
-files <- list.files(pattern="[.](a|A)(p|P)(d|D)$")
+files <- list.files(pattern="[.](apd|APD)$")
 files <- files[!file.info(files)$isdir]
 if (length(files) > 0) {
   apdFile <- files[1]
