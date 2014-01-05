@@ -60,11 +60,10 @@
 
 \examples{
 
-for (zzz in 0) {
-
 # Float precision
 .Machine$float.eps <- (2^((8-4)*8)*.Machine$double.eps)
 tol <- .Machine$float.eps ^ 0.5
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # 1. Create an Affymetrix Probe Signal (APD) file for a
@@ -105,43 +104,38 @@ stopifnot(all.equal(signals, apd$intensities, tolerance=tol))
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # 4. Re-read the signals for a subset of probes
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cdfFile <- findCdf(chipType)
-if (length(cdfFile) == 0)
-  break
-
-apd <- readApdUnits(pathname, units=100:104)
-
-# Sample new data (with one decimal precision)
-apd2 <- lapply(apd, function(unit) {
-  lapply(unit, function(groups) {
-    n <- length(groups$intensities)
-    values <- as.integer(runif(n, max=655350))/10
-    list(intensities=values)
-  })
-})
-
-# Update APD file with new data
-updateApdUnits(pathname, units=100:104, data=apd2)
-
-# Re-read data to verify correctness
-apd <- readApdUnits(pathname, units=100:104)
-
-# Signals in APD files are stored as floats (since this is
-# the precision in CEL files).
-stopifnot(all.equal(apd2, apd, tolerance=tol))
+if (require("affxparser")) {
+  cdfFile <- findCdf(chipType)
+  if (length(cdfFile) > 0) {
+ 
+    apd <- readApdUnits(pathname, units=100:104)
+   
+    # Sample new data (with one decimal precision)
+    apd2 <- lapply(apd, function(unit) {
+      lapply(unit, function(groups) {
+        n <- length(groups$intensities)
+        values <- as.integer(runif(n, max=655350))/10
+        list(intensities=values)
+      })
+    })
+   
+    # Update APD file with new data
+    updateApdUnits(pathname, units=100:104, data=apd2)
+   
+    # Re-read data to verify correctness
+    apd <- readApdUnits(pathname, units=100:104)
+   
+    # Signals in APD files are stored as floats (since this is
+    # the precision in CEL files).
+    stopifnot(all.equal(apd2, apd, tolerance=tol))
+  } # if (length(cdfFile) > 0 ...)
+} # if (require("affxparser"))
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # 4. Clean up
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 file.remove(pathname)
-
-rm(apd2)
-
-} # for (zzz in 0)
-
-rm(zzz, tol, chipType, nbrOfCells, pathname, header, cells, signals,
-                                                        apd, cdfFile)
 }
 
 \seealso{

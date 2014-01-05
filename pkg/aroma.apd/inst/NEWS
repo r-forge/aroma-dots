@@ -1,6 +1,12 @@
 Package: aroma.apd
 ==================
 
+Version: 0.4.1 [2014-01-05]
+o ROBUSTNESS: Some of the examples assumed that the suggested 
+  'affxparser' was installed and attached.
+o Bumped up package version requirements.
+
+
 Version: 0.4.0 [2013-09-21]
 o CLEANUP: Removed fallback attachments of 'R.utils' and 'R.huge' as
   these are no longer needed with R.oo (>= 1.15.1).

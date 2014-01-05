@@ -7,10 +7,4 @@ for (file in files) {
   file.remove(rawFile)
   cel <- gtypeCelToPQ(file, verbose=TRUE)
   write.table(file=rawFile, cel, sep="\t", quote=FALSE)
-
-  rm(file, rawFile, cel)
-  gc()
 }
-
-# Clean up
-rm(files)
