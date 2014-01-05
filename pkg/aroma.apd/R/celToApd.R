@@ -48,6 +48,8 @@
 # @keyword "IO"
 #*/#########################################################################
 setMethodS3("celToApd", "default", function(filename, apdFile=NULL, mapType="asChipType", writeMap=NULL, ..., verbose=FALSE) {
+  require("affxparser") || throw("Package not loaded: affxparser");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -124,6 +126,8 @@ setMethodS3("celToApd", "default", function(filename, apdFile=NULL, mapType="asC
 
 #############################################################################
 # HISTORY:
+# 2014-01-05
+# o ROBUSTNESS: celToApd() assumed that affxparser was already attached.
 # 2006-04-21
 # o Added argument 'writeMap' (again).
 # 2006-03-30

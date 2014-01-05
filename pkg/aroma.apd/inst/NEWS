@@ -2,8 +2,11 @@ Package: aroma.apd
 ==================
 
 Version: 0.4.1 [2014-01-05]
-o ROBUSTNESS: Some of the examples assumed that the suggested 
+o Now the 'aroma.apd' Package object is also available when the
+  package is only loaded (but not attached).
+o ROBUSTNESS: Some of the examples assumed that the suggested
   'affxparser' was installed and attached.
+o BUG FIX: celToApd() assumed that affxparser was already attached.
 o Bumped up package version requirements.
 
 
