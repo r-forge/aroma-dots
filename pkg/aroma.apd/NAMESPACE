@@ -5,7 +5,6 @@ importFrom("R.methodsS3", "setMethodS3")
 importFrom("R.methodsS3", "throw")
 
 importFrom("R.oo", "Package")
-importFrom("R.oo", "getPosition")
 importFrom("R.oo", "startupMessage")
 importFrom("R.oo", "trim")
 
