@@ -1,5 +1,5 @@
 # Scan for CEL files
-files <- list.files(pattern="[.](c|C)(e|E)(l|L)$")
+files <- list.files(pattern="[.](cel|CEL)$")
 
 # Convert each to RAW file
 for (file in files) {

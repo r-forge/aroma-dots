@@ -7,8 +7,7 @@ verbose <- Arguments$getVerbose(TRUE)
 # 1. Scan for existing CEL files
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # a) Scan current directory for CEL files
-pattern <- "[.](c|C)(e|E)(l|L)$"
-files <- list.files(pattern=pattern)
+files <- list.files(pattern="[.](cel|CEL)$")
 files <- files[!file.info(files)$isdir]
 
 if (length(files) > 0 && require("affxparser")) {
