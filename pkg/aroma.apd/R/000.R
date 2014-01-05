@@ -1,11 +1,5 @@
-##############################################################################
-# This code has to come first in a library. To do this make sure this file
-# is named "000.R" (zeros).
-##############################################################################
-# Is autoload() allowed in R v2.0.0 or higher? According to the help one
-# should not use require(). These methods are need to load the package.
-autoload("appendVarArgs", package="R.oo")
-autoload("hasVarArgs", package="R.oo")
-autoload("setMethodS3", package="R.oo")
-autoload("setConstructorS3", package="R.oo")
+## Look for existing generic functions also in imported namespaces.
+## This will affect whether setGenericS3() creates a generic function
+## or not.
+options("R.methodsS3:checkImports:setGenericS3"=TRUE)
 
