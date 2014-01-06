@@ -12,6 +12,8 @@ importFrom("R.utils", "Arguments")
 importFrom("R.utils", "enter")
 importFrom("R.utils", "exit")
 importFrom("R.utils", "findFiles")
+importFrom("R.utils", "pushTemporaryFile")
+importFrom("R.utils", "popTemporaryFile")
 
 importFrom("R.huge", "FileVector")
 importFrom("R.huge", "readAllValues")
