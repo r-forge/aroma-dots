@@ -36,7 +36,7 @@ setMethodS3("writeApd", "default", function(filename, data, ..., writeMap=NULL) 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'filename':
-  filename <- Arguments$getWritablePathname(filename, mustNotExist=TRUE);
+  pathname <- Arguments$getWritablePathname(filename, mustNotExist=TRUE);
 
   # Argument 'data':
   data <- Arguments$getNumerics(data);
@@ -59,21 +59,37 @@ setMethodS3("writeApd", "default", function(filename, data, ..., writeMap=NULL) 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Write APD file
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Write to a temporary pathname
+  pathnameT <- pushTemporaryFile(pathname);
+
   # Create the APD file
-  createApd(filename, nbrOfCells=nbrOfCells, ...);
+  createApd(pathnameT, nbrOfCells=nbrOfCells, ...);
 
   # Write the values
-  apd <- FileVector(filename);
-  on.exit(close(apd));
+  apd <- FileVector(pathnameT);
+  # Close on exit, in case of error/interrupt.
+  on.exit(if (!is.null(apd)) close(apd));
 
   writeAllValues(apd, data);
 
-  invisible(filename);
+  # Not needed anymore
+  data <- NULL;
+
+  # Close
+  close(apd); apd <- NULL;
+
+  # Rename temporary pathname
+  pathname <- popTemporaryFile(pathnameT);
+
+  invisible(pathname);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2014-01-05
+# o ROBUSTNESS: Now writeApd() is atomic, which is achieved by first
+#   writing to a temporary file which is then renamed upon completion.
 # 2009-05-16
 # o Updated writeApd() to coerce argument 'writeMap' to integer indices.
 #   Before it used to coerce to doubles (before updating R.utils).

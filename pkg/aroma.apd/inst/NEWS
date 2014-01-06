@@ -7,6 +7,8 @@ o Now celToApd() throws a more informative error message if it fails
 o Now the 'aroma.apd' Package object is also available when the
   package is only loaded (but not attached).
 o CLEANUP: Removed unnecessary import statements from NAMESPACE.
+o ROBUSTNESS: Now writeApd() is atomic, which is achieved by first
+  writing to a temporary file which is then renamed upon completion.
 o ROBUSTNESS: Some of the examples assumed that the suggested
   'affxparser' was installed and attached.
 o BUG FIX: celToApd() assumed that affxparser was already attached.
