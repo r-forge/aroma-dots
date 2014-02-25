@@ -1,6 +1,10 @@
 Package: aroma.apd
 ==================
 
+Version: 0.5.0 [2014-02-25]
+o Bumped up package requirements.
+
+
 Version: 0.4.1 [2014-01-05]
 o Now celToApd() throws a more informative error message if it fails
   to located an APD map file.
