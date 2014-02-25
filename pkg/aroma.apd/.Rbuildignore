@@ -3,3 +3,4 @@
 ^inst/doc/[.].*[.]rsp$
 ^R/hide
 ^R/old
+^nohup
