@@ -1,6 +1,13 @@
+^vignettes/.*[.](pdf|PDF)$
+^vignettes/.*[.](r|R)$
+^vignettes/[.]install_extras$
 ^Makefile$
 ^incl
-^inst/doc/[.].*[.]rsp$
-^R/hide
-^R/old
-^nohup
+^NAMESPACE,.*[.]txt$
+^nohup.*$
+^.travis.yml$
+^.svn
+^.git
+^.check
+^.test
+README.md
