@@ -12,7 +12,10 @@
 
  \title{Reads a spatial subset of probe-level data from a dChip DCP file}
 
- \usage{readDcpRectangle(filename, fields=c("rawIntensities", "normalizedIntensities"), xrange=c(0, Inf), yrange=c(0, Inf), ..., asMatrix=TRUE)}
+ \usage{
+readDcpRectangle(filename, fields=c("rawIntensities", "normalizedIntensities"),
+  xrange=c(0, Inf), yrange=c(0, Inf), ..., asMatrix=TRUE)
+}
 
  \description{
    Reads a spatial subset of probe-level data from a dChip DCP file.
@@ -37,7 +40,7 @@
    are returned as matrices, otherwise not.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \examples{
 path <- system.file("exData", package="dChipIO")

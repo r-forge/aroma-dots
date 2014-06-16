@@ -16,7 +16,10 @@
    Reads a dChip DCP file.
  }
 
- \usage{readDcp(con, fields=c("rawIntensities", "normalizedIntensities", "calls", "thetas", "thetaStds", "excludes"), cells=NULL, units=NULL, .nbrOfUnits=NULL, ...)}
+ \usage{
+readDcp(con, fields=c("rawIntensities", "normalizedIntensities", "calls", "thetas",
+  "thetaStds", "excludes"), cells=NULL, units=NULL, .nbrOfUnits=NULL, ...)
+}
 
  \arguments{
    \item{con}{A \code{\link[base:connections]{connection}} or a \code{\link[base]{character}} filename.}
@@ -50,9 +53,19 @@ print(hdr)
 data <- readDcp(pathname)
 str(data)
 
+# Read a subset of the units
+units <- c(10:11, 15:20, 150:105, 2,2,2)
+dataT <- readDcp(pathname, units=units)
+str(dataT)
+
+# Assert correctness
+for (ff in c("calls", "thetas", "thetaStds", "excludes")) {
+  stopifnot(length(dataT[[ff]]) == length(units))
+  stopifnot(identical(dataT[[ff]], data[[ff]][units]))
+}
 }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \seealso{
    To read only the DCP file header, see \code{\link{readDcpHeader}}().

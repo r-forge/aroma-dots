@@ -1,6 +1,10 @@
 Package: dChipIO
 ================
 
+Version: 0.1.2 [2014-06-16]
+o Fixed 'R CMD check' notes appearing in more recent versions of R.
+
+
 Version: 0.1.1 [2009-02-13]
 o CLEAN UP: readCdfBinHeader() and readDcpHeader() no longer give
   warnings on "In rawToChar(...) : truncating string with embedded nul".
