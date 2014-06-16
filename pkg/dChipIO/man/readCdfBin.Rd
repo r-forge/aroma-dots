@@ -20,7 +20,9 @@
    the development.
  }
 
- \usage{readCdfBin(con, units=NULL, ...)}
+ \usage{
+readCdfBin(con, units=NULL, ...)
+}
 
  \arguments{
    \item{con}{A \code{\link[base:connections]{connection}} or a \code{\link[base]{character}} filename.}
@@ -57,7 +59,7 @@ for (ff in c("unitNames", "numProbes", "CellPos")) {
 }
 }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson}
 
  \seealso{
    To read only the CDF.bin file header, see \code{\link{readCdfBinHeader}}().

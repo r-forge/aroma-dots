@@ -16,7 +16,9 @@
   Reads the file header of a dChip DCP file.
 }
 
-\usage{readDcpHeader(con, ...)}
+\usage{
+readDcpHeader(con, ...)
+}
 
 \arguments{
   \item{con}{A \code{\link[base:connections]{connection}} or a \code{\link[base]{character}} filename.}
@@ -27,7 +29,7 @@
   Returns a \code{\link[base]{list}} structure containing the file header.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   To read also the DCP file data, see \code{\link{readDcp}}().
