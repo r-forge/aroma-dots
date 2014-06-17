@@ -1,6 +1,10 @@
 Package: cnagIO
 ================
 
+Version: 0.1.3 [2014-06-16]
+o Fixed 'R CMD check' notes appearing in more recent versions of R.
+
+
 Version: 0.1.2 [2010-03-28]
 o Added the 'affxparser' as a suggested package.
 

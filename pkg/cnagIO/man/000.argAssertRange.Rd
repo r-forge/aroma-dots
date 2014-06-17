@@ -16,7 +16,9 @@
   A private function.
 }
 
-\usage{.argAssertRange(x, range, ...)}
+\usage{
+.argAssertRange(x, range, ...)
+}
 
 \arguments{
   \item{x}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} to be validated.}
@@ -28,7 +30,7 @@
   Returns \code{x} if valid, otherwise an error is thrown.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 
 
